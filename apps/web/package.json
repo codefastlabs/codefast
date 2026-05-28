@@ -30,6 +30,7 @@
     "react": "catalog:",
     "react-dom": "catalog:",
     "recharts": "catalog:",
+    "shiki": "catalog:",
     "tailwindcss": "catalog:",
     "tw-animate-css": "catalog:"
   },

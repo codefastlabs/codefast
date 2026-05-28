@@ -7,11 +7,20 @@ interface PreviewCardProps {
   path: string;
   description: string;
   code: string;
+  highlightedCode: string;
   children: ReactNode;
   wide?: boolean;
 }
 
-export function PreviewCard({ name, path, description, code, children, wide }: PreviewCardProps) {
+export function PreviewCard({
+  name,
+  path,
+  description,
+  code,
+  highlightedCode,
+  children,
+  wide,
+}: PreviewCardProps) {
   const [tab, setTab] = useState<"preview" | "code">("preview");
   const [copied, setCopied] = useState(false);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -71,9 +80,10 @@ export function PreviewCard({ name, path, description, code, children, wide }: P
         </div>
       ) : (
         <div className="relative min-h-40">
-          <pre className="h-full overflow-x-auto bg-(--code-surface) p-5 text-xs leading-relaxed text-(--code-text)">
-            <code>{code}</code>
-          </pre>
+          <div
+            className="shiki-wrap h-full min-h-40 overflow-x-auto"
+            dangerouslySetInnerHTML={{ __html: highlightedCode }}
+          />
           <button
             type="button"
             onClick={() => void handleCopy()}

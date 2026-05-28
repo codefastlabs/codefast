@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import { useMemo, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { Badge } from "@codefast/ui/badge";
+import { highlightMany } from "#/lib/highlighter.ts";
 import { PreviewCard } from "#/components/preview-card";
 import { ALL_COMPONENTS } from "#/data/components";
 import type { CategoryId } from "#/data/components";
@@ -58,7 +59,6 @@ import { BreadcrumbDemo } from "#/components/examples/navigation/breadcrumb-demo
 import { MenubarDemo } from "#/components/examples/navigation/menubar-demo";
 import { NavigationMenuDemo } from "#/components/examples/navigation/navigation-menu-demo";
 import { PaginationDemo } from "#/components/examples/navigation/pagination-demo";
-import { SidebarDemo } from "#/components/examples/navigation/sidebar-demo";
 import { TabsDemo } from "#/components/examples/navigation/tabs-demo";
 import { CommandDemo } from "#/components/examples/overlay/command-demo";
 import { ContextMenuDemo } from "#/components/examples/overlay/context-menu-demo";
@@ -123,7 +123,6 @@ import {
   menubarDemoCode,
   navigationMenuDemoCode,
   paginationDemoCode,
-  sidebarDemoCode,
   tabsDemoCode,
   commandDemoCode,
   contextMenuDemoCode,
@@ -136,7 +135,85 @@ import {
   tooltipDemoCode,
 } from "#/components/examples/codes";
 
-export const Route = createFileRoute("/components")({ component: ComponentsPage });
+/* -------------------------------------------------------------------------- */
+/* Code map — keys used to look up pre-highlighted HTML from loader data      */
+/* -------------------------------------------------------------------------- */
+
+const CODE_MAP = {
+  badge: badgeDemoCode,
+  alert: alertDemoCode,
+  avatar: avatarDemoCode,
+  spinner: spinnerDemoCode,
+  kbd: kbdDemoCode,
+  aspectRatio: aspectRatioDemoCode,
+  carousel: carouselDemoCode,
+  chart: chartDemoCode,
+  empty: emptyDemoCode,
+  item: itemDemoCode,
+  table: tableDemoCode,
+  button: buttonDemoCode,
+  buttonGroup: buttonGroupDemoCode,
+  input: inputDemoCode,
+  inputGroup: inputGroupDemoCode,
+  inputNumber: inputNumberDemoCode,
+  inputOtp: inputOtpDemoCode,
+  inputPassword: inputPasswordDemoCode,
+  inputSearch: inputSearchDemoCode,
+  textarea: textareaDemoCode,
+  select: selectDemoCode,
+  nativeSelect: nativeSelectDemoCode,
+  checkbox: checkboxDemoCode,
+  checkboxGroup: checkboxGroupDemoCode,
+  checkboxCards: checkboxCardsDemoCode,
+  radio: radioDemoCode,
+  radioGroup: radioGroupDemoCode,
+  radioCards: radioCardsDemoCode,
+  switch: switchDemoCode,
+  slider: sliderDemoCode,
+  toggle: toggleDemoCode,
+  toggleGroup: toggleGroupDemoCode,
+  calendar: calendarDemoCode,
+  label: labelDemoCode,
+  field: fieldDemoCode,
+  form: formDemoCode,
+  tabs: tabsDemoCode,
+  breadcrumb: breadcrumbDemoCode,
+  pagination: paginationDemoCode,
+  menubar: menubarDemoCode,
+  navigationMenu: navigationMenuDemoCode,
+  dialog: dialogDemoCode,
+  tooltip: tooltipDemoCode,
+  popover: popoverDemoCode,
+  dropdownMenu: dropdownMenuDemoCode,
+  alertDialog: alertDialogDemoCode,
+  command: commandDemoCode,
+  contextMenu: contextMenuDemoCode,
+  drawer: drawerDemoCode,
+  hoverCard: hoverCardDemoCode,
+  sheet: sheetDemoCode,
+  progress: progressDemoCode,
+  progressCircle: progressCircleDemoCode,
+  skeleton: skeletonDemoCode,
+  sonner: sonnerDemoCode,
+  card: cardDemoCode,
+  accordion: accordionDemoCode,
+  separator: separatorDemoCode,
+  scrollArea: scrollAreaDemoCode,
+  collapsible: collapsibleDemoCode,
+  resizable: resizableDemoCode,
+} as const;
+
+type HighlightedCodes = Record<keyof typeof CODE_MAP, string>;
+
+export const Route = createFileRoute("/components")({
+  loader: async (): Promise<HighlightedCodes> => {
+    const keys = Object.keys(CODE_MAP) as Array<keyof typeof CODE_MAP>;
+    const highlighted = await highlightMany(Object.values(CODE_MAP));
+    return Object.fromEntries(keys.map((key, i) => [key, highlighted[i]])) as HighlightedCodes;
+  },
+  staleTime: Infinity,
+  component: ComponentsPage,
+});
 
 /* -------------------------------------------------------------------------- */
 /* Shared section component                                                    */
@@ -184,10 +261,12 @@ const CATEGORIES = [
 
 type FilterId = "all" | CategoryId;
 
+const DEMO_COMPONENTS = ALL_COMPONENTS.filter((component) => component.name !== "Sidebar");
+
 const CATEGORY_COUNTS = Object.fromEntries(
   CATEGORIES.map(({ id }): [CategoryId, number] => [
     id,
-    ALL_COMPONENTS.filter((c) => c.category === id).length,
+    DEMO_COMPONENTS.filter((c) => c.category === id).length,
   ]),
 ) as Record<CategoryId, number>;
 
@@ -196,13 +275,14 @@ type FilterOption = { readonly id: FilterId; readonly label: string };
 const FILTER_OPTIONS: ReadonlyArray<FilterOption> = [{ id: "all", label: "All" }, ...CATEGORIES];
 
 function ComponentsPage() {
+  const hl = Route.useLoaderData();
   const [activeFilter, setActiveFilter] = useState<FilterId>("all");
 
   const filteredAll = useMemo(
     () =>
       activeFilter === "all"
-        ? ALL_COMPONENTS
-        : ALL_COMPONENTS.filter((c) => c.category === activeFilter),
+        ? DEMO_COMPONENTS
+        : DEMO_COMPONENTS.filter((c) => c.category === activeFilter),
     [activeFilter],
   );
 
@@ -214,7 +294,7 @@ function ComponentsPage() {
           Components
         </Badge>
         <h1 className="display-title mb-5 text-[clamp(40px,5vw,64px)] font-bold text-(--sea-ink)">
-          {ALL_COMPONENTS.length}+ ready-to-use{" "}
+          {DEMO_COMPONENTS.length}+ ready-to-use{" "}
           <span className="bg-linear-to-br from-(--lagoon) to-(--lagoon-deep) bg-clip-text text-transparent">
             components.
           </span>
@@ -293,6 +373,7 @@ function ComponentsPage() {
           path="@codefast/ui/badge"
           description="Compact label for status, category, or count. Four variants cover most use cases."
           code={badgeDemoCode}
+          highlightedCode={hl.badge}
         >
           <BadgeDemo />
         </PreviewCard>
@@ -303,6 +384,7 @@ function ComponentsPage() {
           description="Contextual banner with icon, title, and body. Supports default and destructive variants."
           wide
           code={alertDemoCode}
+          highlightedCode={hl.alert}
         >
           <AlertDemo />
         </PreviewCard>
@@ -312,6 +394,7 @@ function ComponentsPage() {
           path="@codefast/ui/avatar"
           description="User icon with image support and initials fallback. Compose with AvatarGroup for stacks."
           code={avatarDemoCode}
+          highlightedCode={hl.avatar}
         >
           <AvatarDemo />
         </PreviewCard>
@@ -321,6 +404,7 @@ function ComponentsPage() {
           path="@codefast/ui/spinner"
           description="Indeterminate loading indicator. Wrap children — shown when loading is false."
           code={spinnerDemoCode}
+          highlightedCode={hl.spinner}
         >
           <SpinnerDemo />
         </PreviewCard>
@@ -330,6 +414,7 @@ function ComponentsPage() {
           path="@codefast/ui/kbd"
           description="Keyboard shortcut display. Use KbdGroup to compose multi-key combos."
           code={kbdDemoCode}
+          highlightedCode={hl.kbd}
         >
           <KbdDemo />
         </PreviewCard>
@@ -339,6 +424,7 @@ function ComponentsPage() {
           path="@codefast/ui/aspect-ratio"
           description="Locks content to a specific width-to-height ratio. Useful for images, videos, and embeds."
           code={aspectRatioDemoCode}
+          highlightedCode={hl.aspectRatio}
         >
           <AspectRatioDemo />
         </PreviewCard>
@@ -348,6 +434,7 @@ function ComponentsPage() {
           path="@codefast/ui/carousel"
           description="Embla-powered slide carousel with prev/next controls. Supports horizontal and vertical axes."
           code={carouselDemoCode}
+          highlightedCode={hl.carousel}
         >
           <CarouselDemo />
         </PreviewCard>
@@ -358,6 +445,7 @@ function ComponentsPage() {
           description="Recharts wrapper with consistent theming, tooltip, and legend. Supports all chart types."
           wide
           code={chartDemoCode}
+          highlightedCode={hl.chart}
         >
           <ChartDemo />
         </PreviewCard>
@@ -367,6 +455,7 @@ function ComponentsPage() {
           path="@codefast/ui/empty"
           description="Empty-state layout with media, title, description, and action slots."
           code={emptyDemoCode}
+          highlightedCode={hl.empty}
         >
           <EmptyDemo />
         </PreviewCard>
@@ -377,6 +466,7 @@ function ComponentsPage() {
           description="Row layout for lists. Composes media, content, title, description, and action slots."
           wide
           code={itemDemoCode}
+          highlightedCode={hl.item}
         >
           <ItemDemo />
         </PreviewCard>
@@ -387,6 +477,7 @@ function ComponentsPage() {
           description="Semantic HTML table with styled header, body, footer, and caption slots."
           wide
           code={tableDemoCode}
+          highlightedCode={hl.table}
         >
           <TableDemo />
         </PreviewCard>
@@ -408,6 +499,7 @@ function ComponentsPage() {
           description="Six variants and four sizes. Supports icons, loading state, and asChild composition."
           wide
           code={buttonDemoCode}
+          highlightedCode={hl.button}
         >
           <ButtonDemo />
         </PreviewCard>
@@ -417,6 +509,7 @@ function ComponentsPage() {
           path="@codefast/ui/button-group"
           description="Horizontal or vertical group that visually joins adjacent buttons into a single control."
           code={buttonGroupDemoCode}
+          highlightedCode={hl.buttonGroup}
         >
           <ButtonGroupDemo />
         </PreviewCard>
@@ -426,6 +519,7 @@ function ComponentsPage() {
           path="@codefast/ui/input"
           description="Text input with focus ring, disabled state, and file input styling."
           code={inputDemoCode}
+          highlightedCode={hl.input}
         >
           <InputDemo />
         </PreviewCard>
@@ -436,6 +530,7 @@ function ComponentsPage() {
           description="Composes an input with leading/trailing addons, text labels, and icon buttons."
           wide
           code={inputGroupDemoCode}
+          highlightedCode={hl.inputGroup}
         >
           <InputGroupDemo />
         </PreviewCard>
@@ -445,6 +540,7 @@ function ComponentsPage() {
           path="@codefast/ui/input-number"
           description="Numeric input with increment/decrement controls, min/max/step, and format options."
           code={inputNumberDemoCode}
+          highlightedCode={hl.inputNumber}
         >
           <InputNumberDemo />
         </PreviewCard>
@@ -454,6 +550,7 @@ function ComponentsPage() {
           path="@codefast/ui/input-otp"
           description="One-time password input with slot groups and separator. Built on input-otp."
           code={inputOtpDemoCode}
+          highlightedCode={hl.inputOtp}
         >
           <InputOTPDemo />
         </PreviewCard>
@@ -463,6 +560,7 @@ function ComponentsPage() {
           path="@codefast/ui/input-password"
           description="Password field with a show/hide toggle. Extends Input Group with no extra markup."
           code={inputPasswordDemoCode}
+          highlightedCode={hl.inputPassword}
         >
           <InputPasswordDemo />
         </PreviewCard>
@@ -472,6 +570,7 @@ function ComponentsPage() {
           path="@codefast/ui/input-search"
           description="Search field with a leading icon and a one-click clear button. Controlled or uncontrolled."
           code={inputSearchDemoCode}
+          highlightedCode={hl.inputSearch}
         >
           <InputSearchDemo />
         </PreviewCard>
@@ -481,6 +580,7 @@ function ComponentsPage() {
           path="@codefast/ui/textarea"
           description="Multiline text input. Pair with Label and field utilities for accessible forms."
           code={textareaDemoCode}
+          highlightedCode={hl.textarea}
         >
           <TextareaDemo />
         </PreviewCard>
@@ -490,6 +590,7 @@ function ComponentsPage() {
           path="@codefast/ui/select"
           description="Accessible dropdown selector. Supports groups, disabled options, and custom triggers."
           code={selectDemoCode}
+          highlightedCode={hl.select}
         >
           <SelectDemo />
         </PreviewCard>
@@ -499,6 +600,7 @@ function ComponentsPage() {
           path="@codefast/ui/native-select"
           description="Styled HTML select element with option groups. Zero JS — best for mobile forms."
           code={nativeSelectDemoCode}
+          highlightedCode={hl.nativeSelect}
         >
           <NativeSelectDemo />
         </PreviewCard>
@@ -508,6 +610,7 @@ function ComponentsPage() {
           path="@codefast/ui/checkbox"
           description="Binary control with indeterminate state. Controlled or uncontrolled via onCheckedChange."
           code={checkboxDemoCode}
+          highlightedCode={hl.checkbox}
         >
           <CheckboxDemo />
         </PreviewCard>
@@ -517,6 +620,7 @@ function ComponentsPage() {
           path="@codefast/ui/checkbox-group"
           description="Multi-select group of checkboxes sharing a value array. Supports disabled items."
           code={checkboxGroupDemoCode}
+          highlightedCode={hl.checkboxGroup}
         >
           <CheckboxGroupDemo />
         </PreviewCard>
@@ -526,6 +630,7 @@ function ComponentsPage() {
           path="@codefast/ui/checkbox-cards"
           description="Card-style multi-select. Each card has a built-in checkbox with highlighted selected state."
           code={checkboxCardsDemoCode}
+          highlightedCode={hl.checkboxCards}
         >
           <CheckboxCardsDemo />
         </PreviewCard>
@@ -535,6 +640,7 @@ function ComponentsPage() {
           path="@codefast/ui/radio"
           description="Single native radio input. Use Radio Group for accessible keyboard-navigable groups."
           code={radioDemoCode}
+          highlightedCode={hl.radio}
         >
           <RadioDemo />
         </PreviewCard>
@@ -544,6 +650,7 @@ function ComponentsPage() {
           path="@codefast/ui/radio-group"
           description="Single-selection group. Use value + onValueChange for controlled behaviour."
           code={radioGroupDemoCode}
+          highlightedCode={hl.radioGroup}
         >
           <RadioGroupDemo />
         </PreviewCard>
@@ -553,6 +660,7 @@ function ComponentsPage() {
           path="@codefast/ui/radio-cards"
           description="Card-style single-select. Each card highlights when selected, ideal for plan pickers."
           code={radioCardsDemoCode}
+          highlightedCode={hl.radioCards}
         >
           <RadioCardsDemo />
         </PreviewCard>
@@ -562,6 +670,7 @@ function ComponentsPage() {
           path="@codefast/ui/switch"
           description="Toggle control for boolean settings. Fires onCheckedChange with the new boolean value."
           code={switchDemoCode}
+          highlightedCode={hl.switch}
         >
           <SwitchDemo />
         </PreviewCard>
@@ -571,6 +680,7 @@ function ComponentsPage() {
           path="@codefast/ui/slider"
           description="Range input with keyboard support. Supports min, max, step, and multiple thumbs."
           code={sliderDemoCode}
+          highlightedCode={hl.slider}
         >
           <SliderDemo />
         </PreviewCard>
@@ -580,6 +690,7 @@ function ComponentsPage() {
           path="@codefast/ui/toggle"
           description="Pressable button with active/inactive state. Use ToggleGroup for exclusive selection."
           code={toggleDemoCode}
+          highlightedCode={hl.toggle}
         >
           <ToggleDemo />
         </PreviewCard>
@@ -589,6 +700,7 @@ function ComponentsPage() {
           path="@codefast/ui/toggle-group"
           description="Single or multiple selection group of toggle buttons. Ideal for toolbars and alignment pickers."
           code={toggleGroupDemoCode}
+          highlightedCode={hl.toggleGroup}
         >
           <ToggleGroupDemo />
         </PreviewCard>
@@ -598,6 +710,7 @@ function ComponentsPage() {
           path="@codefast/ui/calendar"
           description="Full calendar built on react-day-picker. Supports single, multiple, and range selection."
           code={calendarDemoCode}
+          highlightedCode={hl.calendar}
         >
           <CalendarDemo />
         </PreviewCard>
@@ -607,6 +720,7 @@ function ComponentsPage() {
           path="@codefast/ui/label"
           description="Accessible form label that forwards htmlFor. Pairs with any form control."
           code={labelDemoCode}
+          highlightedCode={hl.label}
         >
           <LabelDemo />
         </PreviewCard>
@@ -617,6 +731,7 @@ function ComponentsPage() {
           description="Layout wrapper that composes label, description, error, and control in vertical or horizontal orientation."
           wide
           code={fieldDemoCode}
+          highlightedCode={hl.field}
         >
           <FieldDemo />
         </PreviewCard>
@@ -626,6 +741,7 @@ function ComponentsPage() {
           path="@codefast/ui/form"
           description="React Hook Form integration with accessible label, description, and error message binding."
           code={formDemoCode}
+          highlightedCode={hl.form}
         >
           <FormDemo />
         </PreviewCard>
@@ -647,6 +763,7 @@ function ComponentsPage() {
           description="Accessible tabbed interface. Automatic or manual activation via activationMode."
           wide
           code={tabsDemoCode}
+          highlightedCode={hl.tabs}
         >
           <TabsDemo />
         </PreviewCard>
@@ -656,6 +773,7 @@ function ComponentsPage() {
           path="@codefast/ui/breadcrumb"
           description="Hierarchical location trail. Supports custom separators, ellipsis, and asChild links."
           code={breadcrumbDemoCode}
+          highlightedCode={hl.breadcrumb}
         >
           <BreadcrumbDemo />
         </PreviewCard>
@@ -665,6 +783,7 @@ function ComponentsPage() {
           path="@codefast/ui/pagination"
           description="Page navigation with prev/next, ellipsis, and active page. Compose with your router."
           code={paginationDemoCode}
+          highlightedCode={hl.pagination}
         >
           <PaginationDemo />
         </PreviewCard>
@@ -675,6 +794,7 @@ function ComponentsPage() {
           description="Horizontal menu bar with dropdowns, checkboxes, radio items, and keyboard navigation."
           wide
           code={menubarDemoCode}
+          highlightedCode={hl.menubar}
         >
           <MenubarDemo />
         </PreviewCard>
@@ -685,18 +805,9 @@ function ComponentsPage() {
           description="Animated mega-menu with animated content panels. Built on Radix NavigationMenu."
           wide
           code={navigationMenuDemoCode}
+          highlightedCode={hl.navigationMenu}
         >
           <NavigationMenuDemo />
-        </PreviewCard>
-
-        <PreviewCard
-          name="Sidebar"
-          path="@codefast/ui/sidebar"
-          description="Collapsible app sidebar with header, footer, groups, menu items, and badge support."
-          wide
-          code={sidebarDemoCode}
-        >
-          <SidebarDemo />
         </PreviewCard>
       </Section>
 
@@ -715,6 +826,7 @@ function ComponentsPage() {
           path="@codefast/ui/dialog"
           description="Modal window with focus trap, backdrop blur, and accessible close. Use AlertDialog for destructive confirms."
           code={dialogDemoCode}
+          highlightedCode={hl.dialog}
         >
           <DialogDemo />
         </PreviewCard>
@@ -724,6 +836,7 @@ function ComponentsPage() {
           path="@codefast/ui/tooltip"
           description="Hover label with delay and side placement control. Supports rich content including Kbd."
           code={tooltipDemoCode}
+          highlightedCode={hl.tooltip}
         >
           <TooltipDemo />
         </PreviewCard>
@@ -733,6 +846,7 @@ function ComponentsPage() {
           path="@codefast/ui/popover"
           description="Non-modal floating panel anchored to a trigger. Use for settings panels and pickers."
           code={popoverDemoCode}
+          highlightedCode={hl.popover}
         >
           <PopoverDemo />
         </PreviewCard>
@@ -742,6 +856,7 @@ function ComponentsPage() {
           path="@codefast/ui/dropdown-menu"
           description="Contextual action menu with keyboard navigation, shortcuts, checkboxes, and radio groups."
           code={dropdownMenuDemoCode}
+          highlightedCode={hl.dropdownMenu}
         >
           <DropdownMenuDemo />
         </PreviewCard>
@@ -751,6 +866,7 @@ function ComponentsPage() {
           path="@codefast/ui/alert-dialog"
           description="Blocking confirmation modal requiring an explicit decision. Backs the browser back button."
           code={alertDialogDemoCode}
+          highlightedCode={hl.alertDialog}
         >
           <AlertDialogDemo />
         </PreviewCard>
@@ -760,6 +876,7 @@ function ComponentsPage() {
           path="@codefast/ui/command"
           description="Command palette with fuzzy search, groups, keyboard shortcuts, and empty state."
           code={commandDemoCode}
+          highlightedCode={hl.command}
         >
           <CommandDemo />
         </PreviewCard>
@@ -769,6 +886,7 @@ function ComponentsPage() {
           path="@codefast/ui/context-menu"
           description="Right-click menu with items, checkboxes, radio groups, submenus, and shortcuts."
           code={contextMenuDemoCode}
+          highlightedCode={hl.contextMenu}
         >
           <ContextMenuDemo />
         </PreviewCard>
@@ -778,6 +896,7 @@ function ComponentsPage() {
           path="@codefast/ui/drawer"
           description="Bottom sheet drawer built on Vaul. Supports drag-to-dismiss and scale background."
           code={drawerDemoCode}
+          highlightedCode={hl.drawer}
         >
           <DrawerDemo />
         </PreviewCard>
@@ -787,6 +906,7 @@ function ComponentsPage() {
           path="@codefast/ui/hover-card"
           description="Rich preview card that appears on hover. Ideal for user profiles and link previews."
           code={hoverCardDemoCode}
+          highlightedCode={hl.hoverCard}
         >
           <HoverCardDemo />
         </PreviewCard>
@@ -796,6 +916,7 @@ function ComponentsPage() {
           path="@codefast/ui/sheet"
           description="Side-anchored panel (left, right, top, or bottom). Useful for settings and detail drawers."
           code={sheetDemoCode}
+          highlightedCode={hl.sheet}
         >
           <SheetDemo />
         </PreviewCard>
@@ -816,6 +937,7 @@ function ComponentsPage() {
           path="@codefast/ui/progress"
           description="Determinate progress bar. Pass value 0–100. Colour via className on the indicator slot."
           code={progressDemoCode}
+          highlightedCode={hl.progress}
         >
           <ProgressDemo />
         </PreviewCard>
@@ -825,6 +947,7 @@ function ComponentsPage() {
           path="@codefast/ui/progress-circle"
           description="Circular progress indicator with optional value label and animation. Multiple sizes."
           code={progressCircleDemoCode}
+          highlightedCode={hl.progressCircle}
         >
           <ProgressCircleDemo />
         </PreviewCard>
@@ -835,6 +958,7 @@ function ComponentsPage() {
           description="Shimmer placeholder for any shape of content — cards, text lines, avatars."
           wide
           code={skeletonDemoCode}
+          highlightedCode={hl.skeleton}
         >
           <SkeletonDemo />
         </PreviewCard>
@@ -845,6 +969,7 @@ function ComponentsPage() {
           description="Toast notifications via Sonner. Supports success, error, warning, and custom durations."
           wide
           code={sonnerDemoCode}
+          highlightedCode={hl.sonner}
         >
           <SonnerDemo />
         </PreviewCard>
@@ -865,6 +990,7 @@ function ComponentsPage() {
           path="@codefast/ui/card"
           description="Elevated surface for grouping related content. Compose Header, Content, and Footer slots freely."
           code={cardDemoCode}
+          highlightedCode={hl.card}
         >
           <CardDemo />
         </PreviewCard>
@@ -875,6 +1001,7 @@ function ComponentsPage() {
           description="Expandable sections with smooth animation. Supports single or multiple open items."
           wide
           code={accordionDemoCode}
+          highlightedCode={hl.accordion}
         >
           <AccordionDemo />
         </PreviewCard>
@@ -884,6 +1011,7 @@ function ComponentsPage() {
           path="@codefast/ui/separator"
           description="Semantic horizontal or vertical divider. Renders as hr with role=separator."
           code={separatorDemoCode}
+          highlightedCode={hl.separator}
         >
           <SeparatorDemo />
         </PreviewCard>
@@ -893,6 +1021,7 @@ function ComponentsPage() {
           path="@codefast/ui/scroll-area"
           description="Custom-styled scrollbar that matches your design system. Hides native OS scrollbars."
           code={scrollAreaDemoCode}
+          highlightedCode={hl.scrollArea}
         >
           <ScrollAreaDemo />
         </PreviewCard>
@@ -902,6 +1031,7 @@ function ComponentsPage() {
           path="@codefast/ui/collapsible"
           description="Togglable content section with animated expand/collapse. Controlled or uncontrolled."
           code={collapsibleDemoCode}
+          highlightedCode={hl.collapsible}
         >
           <CollapsibleDemo />
         </PreviewCard>
@@ -912,6 +1042,7 @@ function ComponentsPage() {
           description="Drag-to-resize panel groups. Supports horizontal, vertical, and nested layouts."
           wide
           code={resizableDemoCode}
+          highlightedCode={hl.resizable}
         >
           <ResizableDemo />
         </PreviewCard>

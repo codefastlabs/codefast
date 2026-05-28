@@ -3,8 +3,7 @@
   "include": ["**/*.ts", "**/*.tsx"],
   "compilerOptions": {
     "paths": {
-      "#/*": ["./src/*"],
-      "@/*": ["./src/*"]
+      "#/*": ["./src/*"]
     },
     "types": ["vite/client"],
     "allowImportingTsExtensions": true,
