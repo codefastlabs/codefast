@@ -236,6 +236,9 @@ async function generateCssExports(
   return cssExports;
 }
 
+/**
+ * @since 0.3.16-canary.3
+ */
 export interface GenerateExportsOptions {
   /** Include a `source` condition pointing to the original source file. Pass `true` to
    *  auto-derive via `resolveSourcePath`, or a string to set an explicit path for the

@@ -8,6 +8,9 @@ interface KpiGridProps {
   latestRun: EmbeddedRun | undefined;
 }
 
+/**
+ * @since 0.3.16-canary.3
+ */
 export function KpiGrid({ runCount, scenarioCount, latestRun }: KpiGridProps) {
   return (
     <div aria-label="History overview" className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">

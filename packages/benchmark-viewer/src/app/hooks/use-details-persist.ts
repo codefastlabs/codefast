@@ -7,6 +7,9 @@ const ITEMS = [
   { id: "snapshot-details", key: "bh-snapshot-open" },
 ] as const;
 
+/**
+ * @since 0.3.16-canary.3
+ */
 export function useDetailsPersist(payload: EmbeddedViewerPayload | null): void {
   useEffect(() => {
     for (const detailsItem of ITEMS) {

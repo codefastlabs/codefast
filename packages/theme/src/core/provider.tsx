@@ -67,6 +67,9 @@ function createColorSchemeChannel(): BroadcastChannel | null {
  * Props
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.3
+ */
 export type AppearanceProviderProps = {
   readonly children: ReactNode;
   /**

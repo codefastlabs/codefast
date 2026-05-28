@@ -21,6 +21,9 @@ const COLOR_SCHEME_VALID_CHECK = colorSchemes.map((s) => `s===${toScriptSafe(s)}
  * Props
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.3.16-canary.3
+ */
 export type AppearanceScriptProps = {
   /**
    * Initial color scheme from server (e.g., from cookie via loader).
