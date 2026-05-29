@@ -63,9 +63,9 @@ function CommandDialog({ children, ...props }: CommandDialogProps): JSX.Element 
         </VisuallyHidden>
         <Command
           className={cn(
-            "[&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-muted-foreground",
+            "**:[[cmdk-group-heading]]:px-2 **:[[cmdk-group-heading]]:font-medium **:[[cmdk-group-heading]]:text-muted-foreground",
             "[&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0",
-            "[&_[cmdk-input]]:h-12",
+            "**:[[cmdk-input]]:h-12",
           )}
         >
           {children}
@@ -90,7 +90,7 @@ type CommandInputProps = ComponentProps<typeof CommandPrimitive.Input>;
 function CommandInput({ className, ...props }: CommandInputProps): JSX.Element {
   return (
     <div
-      cmdk-input-wrapper
+      cmdk-input-wrapper=""
       className={cn("flex items-center gap-2", "px-3", "border-b")}
       data-slot="command-input-wrapper"
     >
@@ -173,7 +173,7 @@ function CommandGroup({ className, ...props }: CommandGroupProps): JSX.Element {
     <CommandPrimitive.Group
       className={cn(
         "overflow-hidden p-1 text-foreground",
-        "[&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:py-1.5 [&_[cmdk-group-heading]]:text-xs [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-muted-foreground",
+        "**:[[cmdk-group-heading]]:px-2 **:[[cmdk-group-heading]]:py-1.5 **:[[cmdk-group-heading]]:text-xs **:[[cmdk-group-heading]]:font-medium **:[[cmdk-group-heading]]:text-muted-foreground",
         className,
       )}
       data-slot="command-group"
