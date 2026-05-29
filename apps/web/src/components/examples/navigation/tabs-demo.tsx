@@ -10,18 +10,18 @@ export function TabsDemo() {
       </TabsList>
       <TabsContent
         value="preview"
-        className="mt-3 rounded-lg border border-(--line) p-4 text-sm text-(--sea-ink-soft)"
+        className="mt-3 rounded-lg border border-border p-4 text-sm text-muted-foreground"
       >
         Live component preview renders here.
       </TabsContent>
       <TabsContent value="code" className="mt-3 overflow-hidden rounded-lg">
-        <pre className="bg-(--code-surface) p-4 font-mono text-xs text-(--code-text)">
+        <pre className="bg-neutral-900 p-4 font-mono text-xs text-neutral-100">
           <code>{`<Button variant="outline">Click me</Button>`}</code>
         </pre>
       </TabsContent>
       <TabsContent
         value="docs"
-        className="mt-3 rounded-lg border border-(--line) p-4 text-sm text-(--sea-ink-soft)"
+        className="mt-3 rounded-lg border border-border p-4 text-sm text-muted-foreground"
       >
         Full API reference and usage examples.
       </TabsContent>

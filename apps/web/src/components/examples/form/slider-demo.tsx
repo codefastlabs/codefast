@@ -7,7 +7,7 @@ export function SliderDemo() {
   return (
     <div className="w-full max-w-xs space-y-3">
       <Slider value={value} onValueChange={setValue} max={100} step={1} />
-      <p className="text-center text-xs text-(--sea-ink-soft)">Value: {value[0]}</p>
+      <p className="text-center text-xs text-muted-foreground">Value: {value[0]}</p>
     </div>
   );
 }
