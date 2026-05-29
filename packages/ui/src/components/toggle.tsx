@@ -1,5 +1,3 @@
-"use client";
-
 import type { ToggleVariants } from "#/variants/toggle";
 import type { ComponentProps, JSX } from "react";
 

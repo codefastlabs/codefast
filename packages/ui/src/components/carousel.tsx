@@ -1,5 +1,3 @@
-"use client";
-
 import type { Scope } from "@radix-ui/react-context";
 import type { UseEmblaCarouselType } from "embla-carousel-react";
 import type { ComponentProps, JSX, KeyboardEvent } from "react";

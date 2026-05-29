@@ -1,5 +1,3 @@
-"use client";
-
 import type { FieldVariants } from "#/variants/field";
 import type { ComponentProps, JSX, ReactNode } from "react";
 

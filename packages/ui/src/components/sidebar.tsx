@@ -1,5 +1,3 @@
-"use client";
-
 import type { SidebarMenuButtonVariants } from "#/variants/sidebar";
 import type { ComponentProps, CSSProperties, Dispatch, JSX, SetStateAction } from "react";
 
