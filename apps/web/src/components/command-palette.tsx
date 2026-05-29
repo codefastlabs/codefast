@@ -10,6 +10,8 @@ import {
   CommandList,
 } from "@codefast/ui/command";
 import { ALL_COMPONENTS } from "#/data/components";
+import { Button } from "@codefast/ui/button";
+import { Kbd } from "@codefast/ui/kbd";
 
 const PAGES = [
   { to: "/", label: "Home" },
@@ -67,20 +69,17 @@ export function CommandPalette() {
 
   return (
     <>
-      <button
-        type="button"
+      <Button
         onClick={() => {
           setOpen(true);
         }}
         aria-label="Search components"
-        className="flex items-center gap-2 rounded-lg border border-border bg-muted px-2 py-1.5 text-muted-foreground transition-colors hover:text-foreground sm:w-56 sm:px-2.5"
+        variant="secondary"
       >
         <SearchIcon className="size-4 shrink-0" />
         <span className="hidden flex-1 text-left text-[13px] sm:inline">Search components…</span>
-        <kbd className="hidden items-center gap-0.5 rounded border border-border bg-card px-1.5 font-mono text-[10px] font-medium text-muted-foreground sm:inline-flex">
-          ⌘K
-        </kbd>
-      </button>
+        <Kbd className="hidden sm:inline-flex">⌘K</Kbd>
+      </Button>
 
       <CommandDialog open={open} onOpenChange={setOpen}>
         <CommandInput placeholder="Search components and pages…" />

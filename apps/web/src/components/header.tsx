@@ -11,7 +11,7 @@ import {
   SheetTrigger,
 } from "@codefast/ui/sheet";
 import { CommandPalette } from "#/components/command-palette";
-import { FooterAppearanceToggle } from "#/components/footer-appearance-toggle";
+import { AppearanceToggle } from "#/components/appearance-toggle.tsx";
 
 const NAV_LINKS = [
   { to: "/", label: "Home" },
@@ -95,7 +95,7 @@ export function Header() {
         <div className="ml-auto flex items-center gap-1.5">
           <CommandPalette />
           <div className="hidden sm:block">
-            <FooterAppearanceToggle />
+            <AppearanceToggle />
           </div>
           <GitHubLink />
 
@@ -141,7 +141,7 @@ export function Header() {
                     Appearance
                   </p>
                   <div className="px-3">
-                    <FooterAppearanceToggle />
+                    <AppearanceToggle />
                   </div>
                 </div>
               </SheetBody>

@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { FooterAppearanceToggle } from "#/components/footer-appearance-toggle";
+import { AppearanceToggle } from "#/components/appearance-toggle.tsx";
 
 export function Footer() {
   const year = new Date().getFullYear();
@@ -16,7 +16,7 @@ export function Footer() {
             <p className="mb-4 text-sm leading-6 text-muted-foreground">
               Accessible, composable React components built on Radix UI and Tailwind CSS v4.
             </p>
-            <FooterAppearanceToggle />
+            <AppearanceToggle />
           </div>
 
           {/* Links */}
