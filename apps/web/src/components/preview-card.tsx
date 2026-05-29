@@ -1,6 +1,8 @@
 import type { ReactNode } from "react";
-import { useEffect, useRef, useState } from "react";
-import { CheckIcon, CopyIcon } from "lucide-react";
+import { useState } from "react";
+import { Link } from "@tanstack/react-router";
+import { ArrowUpRightIcon } from "lucide-react";
+import { CodeBlock } from "#/components/code-block";
 
 interface PreviewCardProps {
   name: string;
@@ -10,6 +12,9 @@ interface PreviewCardProps {
   highlightedCode: string;
   children: ReactNode;
   wide?: boolean;
+  id?: string;
+  /** When set, the card title links to /components/<slug>. */
+  slug?: string;
 }
 
 export function PreviewCard({
@@ -20,35 +25,15 @@ export function PreviewCard({
   highlightedCode,
   children,
   wide,
+  id,
+  slug,
 }: PreviewCardProps) {
   const [tab, setTab] = useState<"preview" | "code">("preview");
-  const [copied, setCopied] = useState(false);
-  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  useEffect(() => {
-    return () => {
-      if (timerRef.current !== null) {
-        clearTimeout(timerRef.current);
-      }
-    };
-  }, []);
-
-  async function handleCopy() {
-    try {
-      await navigator.clipboard.writeText(code);
-      setCopied(true);
-      if (timerRef.current !== null) {
-        clearTimeout(timerRef.current);
-      }
-      timerRef.current = setTimeout(() => setCopied(false), 2000);
-    } catch {
-      // Clipboard access denied — no visual change
-    }
-  }
 
   return (
     <div
-      className={`flex flex-col overflow-hidden rounded-2xl border border-border bg-card ${wide ? "sm:col-span-2" : ""}`}
+      id={id}
+      className={`flex scroll-mt-28 flex-col overflow-hidden rounded-2xl border border-border bg-card ${wide ? "sm:col-span-2" : ""}`}
     >
       {/* Tab bar */}
       <div className="flex min-w-0 items-center justify-between gap-2 border-b border-border px-3">
@@ -79,25 +64,23 @@ export function PreviewCard({
           {children}
         </div>
       ) : (
-        <div className="relative min-h-40">
-          <div
-            className="h-full min-h-40 overflow-x-auto [&_.shiki]:min-h-full [&_.shiki]:overflow-x-auto [&_.shiki]:bg-neutral-900! [&_.shiki]:p-5 [&_.shiki]:text-xs [&_.shiki]:leading-[1.75] [&_.shiki]:tab-2!"
-            dangerouslySetInnerHTML={{ __html: highlightedCode }}
-          />
-          <button
-            type="button"
-            onClick={() => void handleCopy()}
-            className="absolute top-3 right-3 flex items-center gap-1.5 rounded-lg border border-white/10 bg-white/10 px-2.5 py-1.5 text-[10px] font-medium text-white/70 transition-colors hover:bg-white/20 hover:text-white"
-          >
-            {copied ? <CheckIcon className="size-3" /> : <CopyIcon className="size-3" />}
-            {copied ? "Copied!" : "Copy"}
-          </button>
-        </div>
+        <CodeBlock code={code} highlightedCode={highlightedCode} className="h-full min-h-40" />
       )}
 
       {/* Meta */}
       <div className="border-t border-border px-4 py-3">
-        <p className="text-sm font-semibold text-foreground">{name}</p>
+        {slug ? (
+          <Link
+            to="/components/$slug"
+            params={{ slug }}
+            className="group inline-flex items-center gap-1 text-sm font-semibold text-foreground no-underline"
+          >
+            {name}
+            <ArrowUpRightIcon className="size-3.5 text-muted-foreground transition-colors group-hover:text-primary" />
+          </Link>
+        ) : (
+          <p className="text-sm font-semibold text-foreground">{name}</p>
+        )}
         <p className="mt-0.5 text-xs leading-5 text-muted-foreground">{description}</p>
       </div>
     </div>

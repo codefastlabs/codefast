@@ -1,9 +1,23 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { Button } from "@codefast/ui/button";
 import { Badge } from "@codefast/ui/badge";
 import { ALL_COMPONENTS } from "#/data/components";
 
-export const Route = createFileRoute("/about")({ component: GettingStarted });
+const COMPONENT_COUNT = ALL_COMPONENTS.length;
+
+export const Route = createFileRoute("/about")({
+  head: () => ({
+    meta: [
+      { title: "Getting Started — codefast/ui" },
+      {
+        name: "description",
+        content:
+          "Install @codefast/ui, wire up the CSS, and start building. No config files required.",
+      },
+    ],
+  }),
+  component: GettingStarted,
+});
 
 const STEPS = [
   {
@@ -97,10 +111,10 @@ function GettingStarted() {
           Library
         </p>
         <h2 className="mb-3 text-3xl leading-[1.05] font-bold tracking-[-0.035em] text-foreground">
-          60+ components available
+          {COMPONENT_COUNT}+ components available
         </h2>
         <p className="mb-8 text-muted-foreground">
-          From primitives like Button and Badge to complex patterns like Combobox, DataTable, and
+          From primitives like Button and Badge to complex patterns like Command, Calendar, and
           Sidebar — everything follows the same composable API.
         </p>
         <div className="mb-8 flex flex-wrap gap-2">
@@ -112,7 +126,7 @@ function GettingStarted() {
         </div>
         <div className="flex flex-wrap gap-3">
           <Button asChild>
-            <a href="/components">Browse components →</a>
+            <Link to="/components">Browse components →</Link>
           </Button>
           <Button variant="outline" asChild>
             <a href="https://github.com/codefastlabs/codefast" target="_blank" rel="noreferrer">

@@ -10,7 +10,12 @@ import { Separator } from "@codefast/ui/separator";
 import { Switch } from "@codefast/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@codefast/ui/tabs";
 
-export const Route = createFileRoute("/")({ component: HomePage });
+export const Route = createFileRoute("/")({
+  head: () => ({
+    meta: [{ title: "codefast/ui — Beautiful, accessible React components for React 19" }],
+  }),
+  component: HomePage,
+});
 
 /* -------------------------------------------------------------------------- */
 /* Data                                                                        */
@@ -45,6 +50,7 @@ const FEATURES = [
 
 // Derived from ALL_COMPONENTS — single source of truth in src/data/components.ts
 const COMPONENT_NAMES = ALL_COMPONENTS.map((c) => c.name);
+const COMPONENT_COUNT = ALL_COMPONENTS.length;
 
 /* -------------------------------------------------------------------------- */
 /* Hero visual card                                                             */
@@ -207,8 +213,8 @@ function HomePage() {
           </h1>
 
           <p className="mx-auto max-w-md text-[18px] leading-relaxed text-muted-foreground">
-            60+ accessible components built on Radix UI and Tailwind CSS v4. Copy the source. Own
-            the code.
+            {COMPONENT_COUNT}+ accessible components built on Radix UI and Tailwind CSS v4. Copy the
+            source. Own the code.
           </p>
 
           <div className="mt-8 flex items-center justify-center gap-7">
@@ -236,18 +242,20 @@ function HomePage() {
       </section>
 
       {/* ── Stats band ───────────────────────────────────────────────── */}
-      <section className="bg-black px-4 py-24 text-neutral-100 dark:bg-neutral-900">
+      {/* Inverted surface: black-on-white in light, white-on-dark in dark — */}
+      {/* always maximal contrast against the page background in either theme. */}
+      <section className="bg-foreground px-4 py-24 text-background">
         <div className="mx-auto w-[min(1080px,calc(100%-2rem))]">
           {/* Stats — large numbers, no borders */}
           <div className="mb-20 grid grid-cols-3 gap-4 text-center">
             {[
-              { value: "60+", label: "components" },
+              { value: `${COMPONENT_COUNT}+`, label: "components" },
               { value: "100%", label: "accessible" },
               { value: "0", label: "config files" },
             ].map(({ value, label }) => (
               <div key={label}>
                 <p
-                  className="font-bold text-white tabular-nums"
+                  className="font-bold text-background tabular-nums"
                   style={{ fontSize: "clamp(44px,6vw,80px)", letterSpacing: "-0.04em" }}
                 >
                   {value}
@@ -258,17 +266,17 @@ function HomePage() {
           </div>
 
           {/* Divider */}
-          <div className="mb-8 border-t border-white/10" />
+          <div className="mb-8 border-t border-background/15" />
 
           {/* Component chips */}
-          <p className="mb-6 text-center text-[11px] font-semibold tracking-widest text-white/30 uppercase">
+          <p className="mb-6 text-center text-[11px] font-semibold tracking-widest text-background/40 uppercase">
             everything in the box
           </p>
           <div className="flex flex-wrap justify-center gap-2">
             {COMPONENT_NAMES.map((name) => (
               <span
                 key={name}
-                className="rounded-full border border-white/10 bg-white/4 px-3 py-1 text-xs text-[#a1a1a6] transition-colors hover:border-primary/40 hover:text-white"
+                className="rounded-full border border-background/15 bg-background/5 px-3 py-1 text-xs text-background/60 transition-colors hover:border-primary/50 hover:text-background"
               >
                 {name}
               </span>
@@ -302,26 +310,26 @@ function HomePage() {
       </section>
 
       {/* ── Install CTA ──────────────────────────────────────────────── */}
-      <section className="bg-black px-4 py-24 text-neutral-100 sm:py-32 dark:bg-neutral-900">
+      <section className="bg-foreground px-4 py-24 text-background sm:py-32">
         <div className="mx-auto w-[min(1080px,calc(100%-2rem))] text-center">
           <h2
-            className="mx-auto mb-5 max-w-xl leading-[1.05] font-bold tracking-[-0.035em] text-white"
+            className="mx-auto mb-5 max-w-xl leading-[1.05] font-bold tracking-[-0.035em] text-background"
             style={{ fontSize: "clamp(36px,4.5vw,56px)" }}
           >
             One command to start.
           </h2>
-          <p className="mx-auto mb-12 max-w-sm text-[17px] text-white/50">
+          <p className="mx-auto mb-12 max-w-sm text-[17px] text-background/55">
             Tokens, dark mode, and accessibility come pre-configured.
           </p>
 
-          <div className="mx-auto mb-8 w-fit rounded-xl border border-white/10 bg-white/5 px-7 py-3.5 font-mono text-sm text-primary">
-            <span className="mr-2 opacity-30 select-none">$</span>
+          <div className="mx-auto mb-8 w-fit rounded-xl border border-background/15 bg-background/10 px-7 py-3.5 font-mono text-sm text-primary">
+            <span className="mr-2 opacity-40 select-none">$</span>
             pnpm add @codefast/ui
           </div>
 
           <Link
             to="/about"
-            className="text-[15px] font-medium text-white/60 no-underline hover:text-white"
+            className="text-[15px] font-medium text-background/60 no-underline hover:text-background"
           >
             Read the docs ›
           </Link>
