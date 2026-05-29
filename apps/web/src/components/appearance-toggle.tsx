@@ -28,7 +28,7 @@ function isColorScheme(value: string): value is ColorScheme {
   return colorSchemeSchema.safeParse(value).success;
 }
 
-export function FooterAppearanceToggle(): ReactElement {
+export function AppearanceToggle(): ReactElement {
   const { colorScheme, setColorScheme } = useColorScheme();
 
   function handleValueChange(value: string): void {
@@ -44,7 +44,7 @@ export function FooterAppearanceToggle(): ReactElement {
       onValueChange={handleValueChange}
       aria-label="Appearance"
       spacing={0}
-      className="gap-0 rounded-full border border-border bg-muted p-0.5"
+      className="bg-secondary"
     >
       {SCHEME_KEYS.map((value) => {
         const { label, Icon } = SCHEME_CONFIG[value];
@@ -55,7 +55,7 @@ export function FooterAppearanceToggle(): ReactElement {
             value={value}
             aria-label={label}
             title={label}
-            className="size-8 min-w-8 rounded-full! border-0 bg-transparent p-0 text-muted-foreground shadow-none hover:bg-transparent hover:text-foreground focus-visible:ring-2 focus-visible:ring-primary/30 data-[spacing=0]:rounded-full! data-[state=on]:bg-accent data-[state=on]:text-foreground"
+            className="text-muted-foreground data-[state=on]:text-foreground"
           >
             <Icon className="size-4" strokeWidth={1.75} />
           </ToggleGroupItem>
