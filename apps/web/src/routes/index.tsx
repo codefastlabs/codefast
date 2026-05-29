@@ -202,7 +202,7 @@ function HomePage() {
     <main>
       {/* ── Hero ─────────────────────────────────────────────────────── */}
       <section className="flex min-h-screen flex-col items-center justify-center gap-16 px-4 pt-16 pb-20 text-center">
-        <div className="animate-in duration-[800ms] ease-out fill-mode-both fade-in slide-in-from-bottom-4">
+        <div className="animate-in duration-800 ease-out fill-mode-both fade-in slide-in-from-bottom-4">
           <h1
             className="mx-auto mb-5 max-w-4xl leading-[1.02] font-bold tracking-[-0.045em] text-foreground"
             style={{ fontSize: "clamp(56px, 8vw, 96px)" }}
@@ -234,7 +234,7 @@ function HomePage() {
         </div>
 
         <div
-          className="w-full max-w-sm animate-in duration-[800ms] ease-out fill-mode-both fade-in slide-in-from-bottom-4"
+          className="w-full max-w-sm animate-in duration-800 ease-out fill-mode-both fade-in slide-in-from-bottom-4"
           style={{ animationDelay: "120ms" }}
         >
           <HeroCard />
