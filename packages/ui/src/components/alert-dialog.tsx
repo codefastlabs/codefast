@@ -1,7 +1,6 @@
 import type { VariantProps } from "#/lib/utils";
-import type { ComponentProps, JSX } from "react";
-
 import { cn } from "#/lib/utils";
+import type { ComponentProps, JSX } from "react";
 import * as AlertDialogPrimitive from "@radix-ui/react-alert-dialog";
 
 import { buttonVariants } from "#/variants/button";
@@ -270,7 +269,7 @@ interface AlertDialogCancelProps extends ComponentProps<typeof AlertDialogPrimit
 function AlertDialogCancel({
   className,
   size,
-  variant,
+  variant = "outline",
   ...props
 }: AlertDialogCancelProps): JSX.Element {
   return (
