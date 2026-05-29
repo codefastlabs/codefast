@@ -44,7 +44,7 @@ function RootDocument({ children }: { children: ReactNode }) {
   return (
     <html
       lang="en"
-      className={resolvedColorScheme}
+      className={`${resolvedColorScheme} min-h-full`}
       style={{ colorScheme: resolvedColorScheme }}
       suppressHydrationWarning
     >
@@ -52,7 +52,7 @@ function RootDocument({ children }: { children: ReactNode }) {
         <AppearanceScript colorScheme={colorScheme} />
         <HeadContent />
       </head>
-      <body className="font-sans wrap-anywhere antialiased selection:bg-[rgba(79,184,178,0.24)]">
+      <body className="min-h-full overflow-x-hidden bg-background font-sans wrap-anywhere text-foreground antialiased selection:bg-foreground/15">
         <AppearanceProvider
           colorScheme={colorScheme}
           ssrColorScheme={ssrColorScheme}

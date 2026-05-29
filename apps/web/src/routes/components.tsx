@@ -231,13 +231,17 @@ type SectionProps = {
 function Section({ id, label, title, description, count, children }: SectionProps) {
   return (
     <section id={id} className="mb-20">
-      <div className="mb-8 flex flex-col gap-3 border-b border-(--line) pb-6 sm:flex-row sm:items-end sm:justify-between">
+      <div className="mb-8 flex flex-col gap-3 border-b border-border pb-6 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <p className="island-kicker mb-2">{label}</p>
-          <h2 className="display-title text-2xl font-bold text-(--sea-ink)">{title}</h2>
-          <p className="mt-1.5 max-w-xl text-sm leading-6 text-(--sea-ink-soft)">{description}</p>
+          <p className="mb-2 text-[0.7rem] font-semibold tracking-[0.1em] text-primary uppercase">
+            {label}
+          </p>
+          <h2 className="text-2xl leading-[1.05] font-bold tracking-[-0.035em] text-foreground">
+            {title}
+          </h2>
+          <p className="mt-1.5 max-w-xl text-sm leading-6 text-muted-foreground">{description}</p>
         </div>
-        <span className="w-fit shrink-0 rounded-full border border-(--line) bg-(--chip-bg) px-2.5 py-1 text-xs font-semibold text-(--sea-ink-soft) tabular-nums">
+        <span className="w-fit shrink-0 rounded-full border border-border bg-muted px-2.5 py-1 text-xs font-semibold text-muted-foreground tabular-nums">
           {count} components
         </span>
       </div>
@@ -287,30 +291,27 @@ function ComponentsPage() {
   );
 
   return (
-    <main className="page-wrap px-4 pt-16 pb-32">
+    <main className="mx-auto w-[min(1080px,calc(100%-2rem))] px-4 pt-16 pb-32">
       {/* ── Header ───────────────────────────────────────────────────── */}
-      <section className="rise-in mb-16 max-w-2xl">
-        <Badge variant="outline" className="mb-5 border-(--line) text-(--sea-ink-soft)">
+      <section className="mb-16 max-w-2xl animate-in duration-[800ms] ease-out fill-mode-both fade-in slide-in-from-bottom-4">
+        <Badge variant="outline" className="mb-5 border-border text-muted-foreground">
           Components
         </Badge>
-        <h1 className="display-title mb-5 text-[clamp(40px,5vw,64px)] font-bold text-(--sea-ink)">
-          {DEMO_COMPONENTS.length}+ ready-to-use{" "}
-          <span className="bg-linear-to-br from-(--lagoon) to-(--lagoon-deep) bg-clip-text text-transparent">
-            components.
-          </span>
+        <h1 className="mb-5 text-[clamp(40px,5vw,64px)] leading-[1.05] font-bold tracking-[-0.035em] text-foreground">
+          {DEMO_COMPONENTS.length}+ ready-to-use <span className="text-primary">components.</span>
         </h1>
-        <p className="text-[17px] leading-relaxed text-(--sea-ink-soft)">
+        <p className="text-[17px] leading-relaxed text-muted-foreground">
           Built on Radix UI primitives with Tailwind CSS v4. Each component ships as a named
           sub-path import — no barrel files, no tree-shaking surprises, no config required.
         </p>
       </section>
 
       {/* ── Full component map ───────────────────────────────────────── */}
-      <section className="mb-16 rounded-2xl border border-(--line) bg-(--chip-bg) p-6 sm:p-8">
+      <section className="mb-16 rounded-2xl border border-border bg-muted p-6 sm:p-8">
         <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
-          <p className="text-sm font-semibold text-(--sea-ink)">
+          <p className="text-sm font-semibold text-foreground">
             All components
-            <span className="ml-2 font-normal text-(--sea-ink-soft)">
+            <span className="ml-2 font-normal text-muted-foreground">
               · {filteredAll.length} shown
             </span>
           </p>
@@ -322,8 +323,8 @@ function ComponentsPage() {
                 onClick={() => setActiveFilter(id)}
                 className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
                   activeFilter === id
-                    ? "bg-(--sea-ink) text-(--bg-base)"
-                    : "border border-(--line) bg-(--surface) text-(--sea-ink-soft) hover:text-(--sea-ink)"
+                    ? "bg-foreground text-background"
+                    : "border border-border bg-card text-muted-foreground hover:text-foreground"
                 }`}
               >
                 {label}
@@ -336,7 +337,7 @@ function ComponentsPage() {
             <a
               key={name}
               href={`#${category}`}
-              className="rounded-full border border-(--line) bg-(--surface) px-3 py-1 text-xs font-medium text-(--sea-ink-soft) no-underline transition-colors hover:border-(--lagoon) hover:text-(--sea-ink)"
+              className="rounded-full border border-border bg-card px-3 py-1 text-xs font-medium text-muted-foreground no-underline transition-colors hover:border-primary hover:text-foreground"
             >
               {name}
             </a>
@@ -350,7 +351,7 @@ function ComponentsPage() {
           <a
             key={id}
             href={`#${id}`}
-            className="flex items-center gap-1.5 rounded-full border border-(--line) bg-(--chip-bg) px-4 py-1.5 text-xs font-semibold text-(--sea-ink-soft) no-underline transition-colors hover:border-(--lagoon) hover:text-(--sea-ink)"
+            className="flex items-center gap-1.5 rounded-full border border-border bg-muted px-4 py-1.5 text-xs font-semibold text-muted-foreground no-underline transition-colors hover:border-primary hover:text-foreground"
           >
             {label}
             <span className="tabular-nums opacity-60">{CATEGORY_COUNTS[id]}</span>

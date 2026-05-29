@@ -48,10 +48,10 @@ export function PreviewCard({
 
   return (
     <div
-      className={`flex flex-col overflow-hidden rounded-2xl border border-(--line) bg-(--surface) ${wide ? "sm:col-span-2" : ""}`}
+      className={`flex flex-col overflow-hidden rounded-2xl border border-border bg-card ${wide ? "sm:col-span-2" : ""}`}
     >
       {/* Tab bar */}
-      <div className="flex min-w-0 items-center justify-between gap-2 border-b border-(--line) px-3">
+      <div className="flex min-w-0 items-center justify-between gap-2 border-b border-border px-3">
         <div className="flex shrink-0">
           {(["preview", "code"] as const).map((t) => (
             <button
@@ -60,28 +60,28 @@ export function PreviewCard({
               onClick={() => setTab(t)}
               className={`border-b-2 px-3 py-2.5 text-xs font-medium capitalize transition-colors ${
                 tab === t
-                  ? "border-(--sea-ink) text-(--sea-ink)"
-                  : "border-transparent text-(--sea-ink-soft) hover:text-(--sea-ink)"
+                  ? "border-foreground text-foreground"
+                  : "border-transparent text-muted-foreground hover:text-foreground"
               }`}
             >
               {t}
             </button>
           ))}
         </div>
-        <code className="min-w-0 truncate rounded border border-(--line) bg-(--chip-bg) px-1.5 py-0.5 font-mono text-[10px] text-(--sea-ink-soft)">
+        <code className="min-w-0 truncate rounded border border-border bg-muted px-1.5 py-0.5 font-mono text-[10px] text-muted-foreground">
           {path}
         </code>
       </div>
 
       {/* Content */}
       {tab === "preview" ? (
-        <div className="flex min-h-40 flex-1 items-center justify-center bg-(--chip-bg) p-6">
+        <div className="flex min-h-40 flex-1 items-center justify-center bg-muted p-6">
           {children}
         </div>
       ) : (
         <div className="relative min-h-40">
           <div
-            className="shiki-wrap h-full min-h-40 overflow-x-auto"
+            className="h-full min-h-40 overflow-x-auto [&_.shiki]:min-h-full [&_.shiki]:overflow-x-auto [&_.shiki]:bg-neutral-900! [&_.shiki]:p-5 [&_.shiki]:text-xs [&_.shiki]:leading-[1.75] [&_.shiki]:tab-2!"
             dangerouslySetInnerHTML={{ __html: highlightedCode }}
           />
           <button
@@ -96,9 +96,9 @@ export function PreviewCard({
       )}
 
       {/* Meta */}
-      <div className="border-t border-(--line) px-4 py-3">
-        <p className="text-sm font-semibold text-(--sea-ink)">{name}</p>
-        <p className="mt-0.5 text-xs leading-5 text-(--sea-ink-soft)">{description}</p>
+      <div className="border-t border-border px-4 py-3">
+        <p className="text-sm font-semibold text-foreground">{name}</p>
+        <p className="mt-0.5 text-xs leading-5 text-muted-foreground">{description}</p>
       </div>
     </div>
   );

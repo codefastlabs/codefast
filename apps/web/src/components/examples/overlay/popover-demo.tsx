@@ -11,7 +11,7 @@ export function PopoverDemo() {
       </PopoverTrigger>
       <PopoverContent className="w-56">
         <div className="grid gap-3">
-          <p className="text-sm font-medium text-(--sea-ink)">Dimensions</p>
+          <p className="text-sm font-medium text-foreground">Dimensions</p>
           <div className="grid gap-2">
             <div className="grid grid-cols-3 items-center gap-3">
               <Label className="text-xs">Width</Label>

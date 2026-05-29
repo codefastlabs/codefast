@@ -52,18 +52,18 @@ const COMPONENT_NAMES = ALL_COMPONENTS.map((c) => c.name);
 
 function HeroCard() {
   return (
-    <div className="w-full max-w-sm overflow-hidden rounded-2xl border border-(--line) bg-(--surface) shadow-2xl shadow-black/20 dark:shadow-black/60">
+    <div className="w-full max-w-sm overflow-hidden rounded-2xl border border-border bg-card shadow-2xl shadow-black/20 dark:shadow-black/60">
       {/* Card header */}
-      <div className="flex items-center justify-between border-b border-(--line) px-5 py-4">
+      <div className="flex items-center justify-between border-b border-border px-5 py-4">
         <div className="flex items-center gap-2.5">
           <Avatar className="size-7">
-            <AvatarFallback className="bg-(--lagoon) text-[10px] font-bold text-white">
+            <AvatarFallback className="bg-primary text-[10px] font-bold text-white">
               CF
             </AvatarFallback>
           </Avatar>
           <div>
-            <p className="text-[13px] font-semibold text-(--sea-ink)">Workspace settings</p>
-            <p className="text-[11px] text-(--sea-ink-soft)">codefast/ui · Pro plan</p>
+            <p className="text-[13px] font-semibold text-foreground">Workspace settings</p>
+            <p className="text-[11px] text-muted-foreground">codefast/ui · Pro plan</p>
           </div>
         </div>
         <Badge variant="secondary" className="text-[10px]">
@@ -88,7 +88,7 @@ function HeroCard() {
         <TabsContent value="notifications" className="mt-0 space-y-4">
           {/* Email input */}
           <div className="space-y-1.5">
-            <Label className="text-xs text-(--sea-ink-soft)">Notify email</Label>
+            <Label className="text-xs text-muted-foreground">Notify email</Label>
             <Input type="email" defaultValue="you@company.com" className="h-8 text-xs" />
           </div>
 
@@ -112,7 +112,7 @@ function HeroCard() {
 
           {/* Storage */}
           <div>
-            <div className="mb-1.5 flex justify-between text-[11px] text-(--sea-ink-soft)">
+            <div className="mb-1.5 flex justify-between text-[11px] text-muted-foreground">
               <span>Storage</span>
               <span>6.8 GB / 10 GB</span>
             </div>
@@ -132,18 +132,18 @@ function HeroCard() {
 
         <TabsContent value="general" className="mt-0 space-y-4">
           <div className="space-y-1.5">
-            <Label className="text-xs text-(--sea-ink-soft)">Workspace name</Label>
+            <Label className="text-xs text-muted-foreground">Workspace name</Label>
             <Input defaultValue="codefast/ui" className="h-8 text-xs" />
           </div>
           <div className="space-y-1.5">
-            <Label className="text-xs text-(--sea-ink-soft)">Display URL</Label>
+            <Label className="text-xs text-muted-foreground">Display URL</Label>
             <Input defaultValue="codefast.dev" className="h-8 text-xs" />
           </div>
           <Separator />
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-xs font-medium text-(--sea-ink)">Public profile</p>
-              <p className="text-[11px] text-(--sea-ink-soft)">Show workspace in directory</p>
+              <p className="text-xs font-medium text-foreground">Public profile</p>
+              <p className="text-[11px] text-muted-foreground">Show workspace in directory</p>
             </div>
             <Switch defaultChecked className="scale-90" />
           </div>
@@ -158,19 +158,19 @@ function HeroCard() {
         </TabsContent>
 
         <TabsContent value="billing" className="mt-0 space-y-4">
-          <div className="rounded-lg border border-(--line) p-3">
+          <div className="rounded-lg border border-border p-3">
             <div className="mb-2 flex items-center justify-between">
-              <p className="text-xs font-semibold text-(--sea-ink)">Pro plan</p>
+              <p className="text-xs font-semibold text-foreground">Pro plan</p>
               <Badge className="text-[10px]">Active</Badge>
             </div>
-            <p className="mb-2 text-[11px] text-(--sea-ink-soft)">Up to 10 seats · 10 GB storage</p>
-            <p className="text-[11px] text-(--sea-ink-soft)">
-              Next billing: <span className="text-(--sea-ink)">Jun 1, 2026 · $49.00</span>
+            <p className="mb-2 text-[11px] text-muted-foreground">Up to 10 seats · 10 GB storage</p>
+            <p className="text-[11px] text-muted-foreground">
+              Next billing: <span className="text-foreground">Jun 1, 2026 · $49.00</span>
             </p>
           </div>
           <Separator />
           <div>
-            <div className="mb-1.5 flex justify-between text-[11px] text-(--sea-ink-soft)">
+            <div className="mb-1.5 flex justify-between text-[11px] text-muted-foreground">
               <span>Seats used</span>
               <span>4 / 10</span>
             </div>
@@ -196,19 +196,17 @@ function HomePage() {
     <main>
       {/* ── Hero ─────────────────────────────────────────────────────── */}
       <section className="flex min-h-screen flex-col items-center justify-center gap-16 px-4 pt-16 pb-20 text-center">
-        <div className="rise-in">
+        <div className="animate-in duration-[800ms] ease-out fill-mode-both fade-in slide-in-from-bottom-4">
           <h1
-            className="mx-auto mb-5 max-w-4xl leading-[1.02] font-bold tracking-[-0.045em] text-(--sea-ink)"
+            className="mx-auto mb-5 max-w-4xl leading-[1.02] font-bold tracking-[-0.045em] text-foreground"
             style={{ fontSize: "clamp(56px, 8vw, 96px)" }}
           >
             Beautiful components
             <br />
-            <span className="bg-linear-to-br from-(--lagoon) to-(--lagoon-deep) bg-clip-text text-transparent">
-              for React 19.
-            </span>
+            <span className="text-primary">for React 19.</span>
           </h1>
 
-          <p className="mx-auto max-w-md text-[18px] leading-relaxed text-(--sea-ink-soft)">
+          <p className="mx-auto max-w-md text-[18px] leading-relaxed text-muted-foreground">
             60+ accessible components built on Radix UI and Tailwind CSS v4. Copy the source. Own
             the code.
           </p>
@@ -216,27 +214,30 @@ function HomePage() {
           <div className="mt-8 flex items-center justify-center gap-7">
             <Link
               to="/components"
-              className="text-[15px] font-medium text-(--lagoon) no-underline hover:underline"
+              className="text-[15px] font-medium text-primary no-underline hover:underline"
             >
               Browse components ›
             </Link>
             <Link
               to="/about"
-              className="text-[15px] text-(--sea-ink-soft) no-underline hover:text-(--sea-ink)"
+              className="text-[15px] text-muted-foreground no-underline hover:text-foreground"
             >
               Get started ›
             </Link>
           </div>
         </div>
 
-        <div className="rise-in w-full max-w-sm" style={{ animationDelay: "120ms" }}>
+        <div
+          className="w-full max-w-sm animate-in duration-[800ms] ease-out fill-mode-both fade-in slide-in-from-bottom-4"
+          style={{ animationDelay: "120ms" }}
+        >
           <HeroCard />
         </div>
       </section>
 
       {/* ── Stats band ───────────────────────────────────────────────── */}
-      <section className="dark-band px-4 py-24">
-        <div className="page-wrap">
+      <section className="bg-black px-4 py-24 text-neutral-100 dark:bg-neutral-900">
+        <div className="mx-auto w-[min(1080px,calc(100%-2rem))]">
           {/* Stats — large numbers, no borders */}
           <div className="mb-20 grid grid-cols-3 gap-4 text-center">
             {[
@@ -251,7 +252,7 @@ function HomePage() {
                 >
                   {value}
                 </p>
-                <p className="mt-1 text-sm text-(--lagoon)">{label}</p>
+                <p className="mt-1 text-sm text-primary">{label}</p>
               </div>
             ))}
           </div>
@@ -267,7 +268,7 @@ function HomePage() {
             {COMPONENT_NAMES.map((name) => (
               <span
                 key={name}
-                className="rounded-full border border-white/10 bg-white/4 px-3 py-1 text-xs text-[#a1a1a6] transition-colors hover:border-(--lagoon)/40 hover:text-white"
+                className="rounded-full border border-white/10 bg-white/4 px-3 py-1 text-xs text-[#a1a1a6] transition-colors hover:border-primary/40 hover:text-white"
               >
                 {name}
               </span>
@@ -278,9 +279,9 @@ function HomePage() {
 
       {/* ── Features ─────────────────────────────────────────────────── */}
       <section className="px-4 py-24 sm:py-32">
-        <div className="page-wrap">
+        <div className="mx-auto w-[min(1080px,calc(100%-2rem))]">
           <h2
-            className="display-title mb-16 max-w-xl font-bold text-(--sea-ink)"
+            className="mb-16 max-w-xl leading-[1.05] font-bold tracking-[-0.035em] text-foreground"
             style={{ fontSize: "clamp(36px,4.5vw,56px)" }}
           >
             Built for the way
@@ -288,12 +289,12 @@ function HomePage() {
             you actually work.
           </h2>
 
-          <div className="divide-y divide-(--line)">
+          <div className="divide-y divide-border">
             {FEATURES.map(({ number, title, description }) => (
               <div key={title} className="grid gap-4 py-10 sm:grid-cols-[56px_1fr_1.5fr] sm:gap-10">
-                <p className="font-mono text-sm text-(--sea-ink-soft) tabular-nums">{number}</p>
-                <h3 className="text-base font-semibold text-(--sea-ink)">{title}</h3>
-                <p className="text-[15px] leading-relaxed text-(--sea-ink-soft)">{description}</p>
+                <p className="font-mono text-sm text-muted-foreground tabular-nums">{number}</p>
+                <h3 className="text-base font-semibold text-foreground">{title}</h3>
+                <p className="text-[15px] leading-relaxed text-muted-foreground">{description}</p>
               </div>
             ))}
           </div>
@@ -301,10 +302,10 @@ function HomePage() {
       </section>
 
       {/* ── Install CTA ──────────────────────────────────────────────── */}
-      <section className="dark-band px-4 py-24 sm:py-32">
-        <div className="page-wrap text-center">
+      <section className="bg-black px-4 py-24 text-neutral-100 sm:py-32 dark:bg-neutral-900">
+        <div className="mx-auto w-[min(1080px,calc(100%-2rem))] text-center">
           <h2
-            className="display-title mx-auto mb-5 max-w-xl font-bold text-white"
+            className="mx-auto mb-5 max-w-xl leading-[1.05] font-bold tracking-[-0.035em] text-white"
             style={{ fontSize: "clamp(36px,4.5vw,56px)" }}
           >
             One command to start.
@@ -313,7 +314,7 @@ function HomePage() {
             Tokens, dark mode, and accessibility come pre-configured.
           </p>
 
-          <div className="mx-auto mb-8 w-fit rounded-xl border border-white/10 bg-white/5 px-7 py-3.5 font-mono text-sm text-(--lagoon)">
+          <div className="mx-auto mb-8 w-fit rounded-xl border border-white/10 bg-white/5 px-7 py-3.5 font-mono text-sm text-primary">
             <span className="mr-2 opacity-30 select-none">$</span>
             pnpm add @codefast/ui
           </div>
