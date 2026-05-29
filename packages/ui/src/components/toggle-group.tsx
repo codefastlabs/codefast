@@ -1,13 +1,13 @@
 import type { Scope } from "@radix-ui/react-context";
+import { createContextScope } from "@radix-ui/react-context";
 import type { ComponentProps, CSSProperties, JSX } from "react";
 
+import type { VariantProps } from "#/lib/utils";
 import { cn } from "#/lib/utils";
-import { createContextScope } from "@radix-ui/react-context";
 import * as ToggleGroupPrimitive from "@radix-ui/react-toggle-group";
 import { createToggleGroupScope } from "@radix-ui/react-toggle-group";
 
 import { toggleVariants } from "#/variants/toggle";
-import type { VariantProps } from "#/lib/utils";
 
 /* -----------------------------------------------------------------------------
  * Context: ToggleGroup
@@ -57,7 +57,7 @@ function ToggleGroup({
     <ToggleGroupProvider scope={__scopeToggleGroup} size={size} spacing={spacing} variant={variant}>
       <ToggleGroupPrimitive.Root
         className={cn(
-          "group/toggle-group flex w-fit items-center gap-[--spacing(var(--gap))]",
+          "group/toggle-group flex w-fit items-center gap-(--spacing(var(--gap)))",
           "rounded-lg",
           "data-[spacing=default]:data-[variant=outline]:shadow-xs",
           className,
