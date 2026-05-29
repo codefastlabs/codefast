@@ -1,5 +1,3 @@
-"use client";
-
 import type { ButtonVariants } from "#/variants/button";
 import { buttonVariants } from "#/variants/button";
 import type { SheetContentVariants } from "#/variants/sheet";

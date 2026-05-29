@@ -1,5 +1,3 @@
-"use client";
-
 import type { Scope } from "@radix-ui/react-context";
 import type * as LabelPrimitive from "@radix-ui/react-label";
 import type { ComponentProps, JSX, ReactNode } from "react";

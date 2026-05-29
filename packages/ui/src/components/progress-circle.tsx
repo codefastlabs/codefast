@@ -1,5 +1,3 @@
-"use client";
-
 import type { ProgressCircleVariants } from "#/variants/progress-circle";
 import type { ComponentProps, CSSProperties, JSX } from "react";
 

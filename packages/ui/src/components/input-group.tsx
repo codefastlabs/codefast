@@ -1,5 +1,3 @@
-"use client";
-
 import type { InputGroupAddonVariants, InputGroupButtonVariants } from "#/variants/input-group";
 import type { ComponentProps, JSX } from "react";
 

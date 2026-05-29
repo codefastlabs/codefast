@@ -1,5 +1,3 @@
-"use client";
-
 import type { ButtonGroupVariants } from "#/variants/button-group";
 import type { ComponentProps, JSX } from "react";
 

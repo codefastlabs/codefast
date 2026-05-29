@@ -1,5 +1,3 @@
-"use client";
-
 import type { BadgeVariants } from "#/variants/badge";
 import type { ComponentProps, JSX } from "react";
 

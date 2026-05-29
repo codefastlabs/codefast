@@ -1,5 +1,3 @@
-"use client";
-
 import type { Scope } from "@radix-ui/react-context";
 import type { ComponentProps, ReactNode } from "react";
 

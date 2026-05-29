@@ -1,5 +1,3 @@
-"use client";
-
 import type { ScrollAreaScrollbarVariants } from "#/variants/scroll-area";
 import type { Scope } from "@radix-ui/react-context";
 import type { ComponentProps, JSX } from "react";

@@ -1,5 +1,3 @@
-"use client";
-
 import type { SeparatorVariants } from "#/variants/separator";
 import type { ComponentProps, JSX } from "react";
 

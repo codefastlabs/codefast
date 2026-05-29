@@ -1,5 +1,3 @@
-"use client";
-
 import type { ComponentProps, JSX } from "react";
 import type { Chevron, DayButton, Root, WeekNumber } from "react-day-picker";
 
