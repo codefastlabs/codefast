@@ -1,9 +1,16 @@
+import { endAfterOptionalCommaFollowingInSource } from "#/core/source-text-edit";
 import {
+  forEachDomainChild,
+  isDomainIdentifier,
   isDomainImportDeclaration,
   isDomainNamedImports,
   isDomainStringLiteral,
 } from "#/arrange/domain/ast/ast-node";
-import type { DomainSourceFile } from "#/arrange/domain/ast/ast-node";
+import type {
+  DomainAstNode,
+  DomainImportSpecifier,
+  DomainSourceFile,
+} from "#/arrange/domain/ast/ast-node";
 
 function sourceFileImportsCn(sourceFile: DomainSourceFile): boolean {
   for (const statement of sourceFile.statements) {
@@ -47,6 +54,79 @@ function findImportDeclarationFromModule(sourceFile: DomainSourceFile, moduleSpe
     }
   }
   return undefined;
+}
+
+function cnIsUsedInBody(node: DomainAstNode): boolean {
+  if (isDomainIdentifier(node) && node.text === "cn") {
+    return true;
+  }
+  let found = false;
+  forEachDomainChild(node, (child) => {
+    if (!found) {
+      found = cnIsUsedInBody(child);
+    }
+  });
+  return found;
+}
+
+function removeCnSpecifier(
+  sourceText: string,
+  specifier: DomainImportSpecifier,
+  allSpecifiers: ReadonlyArray<DomainImportSpecifier>,
+): string {
+  const idx = allSpecifiers.indexOf(specifier);
+  if (idx === 0) {
+    // First specifier: remove "cn, " up to the start of the next one
+    const next = allSpecifiers[1];
+    if (!next) {return sourceText;}
+    return sourceText.slice(0, specifier.pos) + sourceText.slice(next.pos);
+  }
+  // Non-first specifier: remove from end of previous specifier to end of cn specifier
+  // (covers the ", cn" including any trailing comma)
+  const prev = allSpecifiers[idx - 1];
+  if (!prev) {return sourceText;}
+  const endWithTrailingComma = endAfterOptionalCommaFollowingInSource(sourceText, specifier.end);
+  return sourceText.slice(0, prev.end) + sourceText.slice(endWithTrailingComma);
+}
+
+/**
+ * After simplify rewrites, drop the `cn` import specifier when `cn` is no
+ * longer referenced anywhere outside the import declarations.
+ *
+ * @since 0.3.16-canary.0
+ */
+export function dropCnImportIfUnused(sourceFile: DomainSourceFile): string {
+  const sourceText = sourceFile.text;
+
+  // Check if cn is still used in the file body (skip import statements)
+  for (const stmt of sourceFile.statements) {
+    if (isDomainImportDeclaration(stmt)) {continue;}
+    if (cnIsUsedInBody(stmt)) {return sourceText;}
+  }
+
+  // Find the import declaration that contains cn
+  for (const stmt of sourceFile.statements) {
+    if (!isDomainImportDeclaration(stmt) || !stmt.importClause) {continue;}
+    const clause = stmt.importClause;
+    if (!clause.namedBindings || !isDomainNamedImports(clause.namedBindings)) {continue;}
+
+    const elements = clause.namedBindings.elements;
+    const cnSpecifier = elements.find((el) => el.name.text === "cn");
+    if (!cnSpecifier) {continue;}
+
+    if (elements.length === 1) {
+      // cn is the only named import — remove the entire import line (including trailing newline)
+      const lineEnd = sourceText.indexOf("\n", stmt.end);
+      return (
+        sourceText.slice(0, stmt.pos) +
+        (lineEnd !== -1 ? sourceText.slice(lineEnd + 1) : sourceText.slice(stmt.end))
+      );
+    }
+
+    return removeCnSpecifier(sourceText, cnSpecifier, elements);
+  }
+
+  return sourceText;
 }
 
 /**

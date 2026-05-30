@@ -17,6 +17,8 @@
     "cli:arrange-analyze": "pnpm run codefast arrange analyze",
     "cli:arrange-apply": "pnpm run codefast arrange apply",
     "cli:arrange-preview": "pnpm run codefast arrange preview",
+    "cli:arrange-simplify": "pnpm run codefast arrange simplify",
+    "cli:arrange-simplify-preview": "pnpm run codefast arrange simplify-preview",
     "cli:mirror-sync": "pnpm run codefast mirror sync",
     "deps:install": "pnpm install && pnpm build:packages",
     "deps:outdated": "pnpm outdated --recursive",
