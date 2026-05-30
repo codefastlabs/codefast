@@ -10,7 +10,14 @@ interface PaletteAction {
 }
 
 const paletteItem = tv({
-  base: "focus-visible:outline-bh-blue mb-0.5 w-full cursor-pointer rounded-lg px-3 py-2.5 text-left text-sm text-zinc-200 hover:bg-white/6 focus-visible:outline focus-visible:outline-offset-2",
+  base: [
+    "mb-0.5 w-full px-3 py-2.5",
+    "rounded-lg",
+    "text-left text-sm text-zinc-200",
+    "cursor-pointer",
+    "focus-visible:outline-bh-blue focus-visible:outline focus-visible:outline-offset-2",
+    "hover:bg-white/6",
+  ],
   variants: {
     active: {
       true: "bg-white/10 text-white",
@@ -31,7 +38,13 @@ function PaletteShortcutHint() {
   return (
     <>
       Esc closes ·{" "}
-      <kbd className="rounded border border-zinc-700 bg-zinc-800 px-1.5 py-px font-mono text-zinc-300">
+      <kbd
+        className={cn(
+          "px-1.5 py-px",
+          "rounded border border-zinc-700",
+          "bg-zinc-800 font-mono text-zinc-300",
+        )}
+      >
         {label}
       </kbd>{" "}
       toggles · ↑↓ navigate · Enter runs
@@ -161,7 +174,9 @@ export function CommandPalette({
       aria-labelledby="command-palette-title"
       aria-modal="true"
       className={cn(
-        "fixed inset-0 z-400 flex items-start justify-center px-3 pt-[max(0.75rem,env(safe-area-inset-top,0px))] sm:px-4 sm:pt-[min(20vh,10rem)]",
+        "fixed inset-0 z-400 flex items-start justify-center",
+        "px-3 pt-[max(0.75rem,env(safe-area-inset-top,0px))]",
+        "sm:px-4 sm:pt-[min(20vh,10rem)]",
         { hidden: !isOpen },
       )}
       id="command-palette"
@@ -170,15 +185,37 @@ export function CommandPalette({
     >
       <div
         aria-label="Close command palette"
-        className="bg-bh-overlay/75 absolute inset-0 m-0 cursor-default border-0 p-0 backdrop-blur-[0.35rem]"
+        className={cn(
+          "absolute inset-0",
+          "m-0 p-0",
+          "border-0",
+          "bg-bh-overlay/75",
+          "backdrop-blur-[0.35rem]",
+          "cursor-default",
+        )}
         onClick={onClose}
         onKeyDown={onClose}
         role="button"
         tabIndex={0}
       />
-      <div className="border-bh-border bg-bh-surface relative z-1 mt-2 max-h-[min(85dvh,calc(100dvh-2.5rem))] w-full max-w-lg overflow-hidden rounded-[1.25rem] border p-0 shadow-(--shadow-bh-glass) backdrop-blur-xl backdrop-saturate-180 sm:mt-0 sm:max-h-none">
+      <div
+        className={cn(
+          "relative z-1",
+          "mt-2 max-h-[min(85dvh,calc(100dvh-2.5rem))] w-full max-w-lg overflow-hidden p-0",
+          "border-bh-border rounded-[1.25rem] border",
+          "bg-bh-surface shadow-(--shadow-bh-glass)",
+          "backdrop-blur-xl backdrop-saturate-180",
+          "sm:mt-0 sm:max-h-none",
+        )}
+      >
         <p
-          className="absolute -m-px h-px w-px overflow-hidden border-0 p-0 whitespace-nowrap [clip:rect(0,0,0,0)]"
+          className={cn(
+            "absolute",
+            "-m-px h-px w-px overflow-hidden p-0",
+            "border-0",
+            "whitespace-nowrap",
+            "[clip:rect(0,0,0,0)]",
+          )}
           id="command-palette-title"
         >
           Command palette
@@ -191,7 +228,15 @@ export function CommandPalette({
           aria-haspopup="listbox"
           aria-label="Search actions"
           autoComplete="off"
-          className="focus:border-bh-blue focus:ring-bh-blue/35 focus-visible:outline-bh-blue w-full rounded-none border-0 border-b border-white/8 bg-black/25 px-4 py-3 text-sm text-zinc-100 shadow-(--shadow-bh-field-inset) placeholder:text-zinc-500 focus:ring-2 focus:outline-none focus-visible:outline focus-visible:outline-offset-2"
+          className={cn(
+            "w-full px-4 py-3",
+            "rounded-none border-0 border-b border-white/8",
+            "bg-black/25 shadow-(--shadow-bh-field-inset)",
+            "text-sm text-zinc-100",
+            "focus:border-bh-blue focus:ring-bh-blue/35 focus:ring-2 focus:outline-none",
+            "focus-visible:outline-bh-blue focus-visible:outline focus-visible:outline-offset-2",
+            "placeholder:text-zinc-500",
+          )}
           onChange={(e) => onQueryChange(e.target.value)}
           placeholder="Search actions…"
           ref={inputRef}
@@ -200,12 +245,19 @@ export function CommandPalette({
         />
         <ul
           aria-multiselectable={false}
-          className="max-h-[min(50dvh,17.5rem)] list-none overflow-y-auto overscroll-contain p-2 sm:max-h-[min(48vh,17.5rem)]"
+          className={cn(
+            "max-h-[min(50dvh,17.5rem)] list-none overflow-y-auto p-2",
+            "overscroll-contain",
+            "sm:max-h-[min(48vh,17.5rem)]",
+          )}
           id="command-palette-list"
           role="listbox"
         >
           {filtered.length === 0 ? (
-            <li className="px-3 py-6 text-center text-sm text-zinc-500" role="presentation">
+            <li
+              className={cn("px-3 py-6", "text-center text-sm text-zinc-500")}
+              role="presentation"
+            >
               No matching actions
             </li>
           ) : (
@@ -230,7 +282,7 @@ export function CommandPalette({
             ))
           )}
         </ul>
-        <p className="border-t border-white/6 px-3 py-2 text-[0.6875rem] text-zinc-500">
+        <p className={cn("px-3 py-2", "border-t border-white/6", "text-[0.6875rem] text-zinc-500")}>
           <PaletteShortcutHint />
         </p>
       </div>

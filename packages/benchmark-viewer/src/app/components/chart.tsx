@@ -28,7 +28,15 @@ function SegButton({ className, ...props }: ComponentProps<"button">) {
     <button
       {...props}
       className={cn(
-        "text-bh-seg-ink border-r-bh-border bg-bh-surface-seg hover:bg-bh-surface-seg-hover disabled:hover:bg-bh-table-seg-disabled m-0 rounded-none border-0 border-r px-3 py-[0.35rem] text-[0.8125rem] leading-5 font-medium last:border-r-0 focus:z-1 focus:outline-none focus-visible:z-1 focus-visible:shadow-[inset_0_0_0_0.125rem_var(--color-bh-blue)] disabled:cursor-not-allowed disabled:opacity-40",
+        "m-0 px-3 py-[0.35rem]",
+        "border-r-bh-border rounded-none border-0 border-r",
+        "bg-bh-surface-seg text-bh-seg-ink text-[0.8125rem] leading-5 font-medium",
+        "hover:bg-bh-surface-seg-hover",
+        "disabled:hover:bg-bh-table-seg-disabled",
+        "last:border-r-0",
+        "focus:z-1 focus:outline-none",
+        "focus-visible:z-1 focus-visible:shadow-[inset_0_0_0_0.125rem_var(--color-bh-blue)]",
+        "disabled:cursor-not-allowed disabled:opacity-40",
         className,
       )}
       type="button"
@@ -40,7 +48,10 @@ function ChartTh({ className, ...props }: ComponentProps<"th">) {
   return (
     <th
       className={cn(
-        "border-b-bh-table-line bg-bh-table-head text-bh-label z-3 border-b px-[0.65rem] py-[0.15rem] text-left text-[0.7rem] font-semibold tracking-wider whitespace-nowrap uppercase",
+        "z-3",
+        "px-[0.65rem] py-[0.15rem]",
+        "border-b-bh-table-line border-b",
+        "bg-bh-table-head text-bh-label text-left text-[0.7rem] font-semibold tracking-wider whitespace-nowrap uppercase",
         className,
       )}
       {...props}
@@ -52,7 +63,9 @@ function ChartTd({ className, ...props }: ComponentProps<"td">) {
   return (
     <td
       className={cn(
-        "border-b-bh-table-line border-b px-[0.65rem] py-[0.15rem] text-left",
+        "px-[0.65rem] py-[0.15rem]",
+        "border-b-bh-table-line border-b",
+        "text-left",
         className,
       )}
       {...props}
@@ -515,9 +528,21 @@ export function ChartPanel({
   return (
     <section
       aria-labelledby="chart-section-title"
-      className="border-bh-border bg-bh-surface overflow-x-clip rounded-[1.25rem] border px-4 py-4 shadow-(--shadow-bh-glass) backdrop-blur-xl backdrop-saturate-180 sm:px-6 sm:py-5"
+      className={cn(
+        "overflow-x-clip px-4 py-4",
+        "border-bh-border rounded-[1.25rem] border",
+        "bg-bh-surface shadow-(--shadow-bh-glass)",
+        "backdrop-blur-xl backdrop-saturate-180",
+        "sm:px-6 sm:py-5",
+      )}
     >
-      <div className="flex flex-wrap items-start justify-between gap-3 border-b border-white/6 pb-4">
+      <div
+        className={cn(
+          "flex flex-wrap items-start justify-between gap-3",
+          "pb-4",
+          "border-b border-white/6",
+        )}
+      >
         <div>
           <h2
             className="text-[0.9375rem] font-semibold tracking-[-0.01em] text-zinc-50"
@@ -525,7 +550,7 @@ export function ChartPanel({
           >
             Throughput over filtered runs
           </h2>
-          <p className="mt-1.5 text-[0.8125rem] leading-snug text-zinc-500">
+          <p className={cn("mt-1.5", "text-[0.8125rem] leading-snug text-zinc-500")}>
             {hasData ? buildChartSubtitle(scenario, runIndices, baseRunIndices, envKey) : "—"}
           </p>
         </div>
@@ -533,7 +558,12 @@ export function ChartPanel({
 
       <div
         aria-label="Chart pan and zoom"
-        className="border-bh-border bg-bh-surface-toolbar shadow-bh-toolbar mt-4 mb-2 inline-flex flex-wrap overflow-hidden rounded-xl border backdrop-blur-md backdrop-saturate-150"
+        className={cn(
+          "mt-4 mb-2 inline-flex flex-wrap overflow-hidden",
+          "border-bh-border rounded-xl border",
+          "bg-bh-surface-toolbar shadow-bh-toolbar",
+          "backdrop-blur-md backdrop-saturate-150",
+        )}
         role="toolbar"
       >
         <SegButton
@@ -581,21 +611,41 @@ export function ChartPanel({
 
       <section
         aria-label="Throughput over time chart"
-        className="relative mt-5 h-[min(32rem,70dvh)] min-h-80 w-full scroll-mt-[calc(max(0.5rem,env(safe-area-inset-top,0))+7.5rem)] overflow-hidden rounded-2xl bg-black/40 shadow-(--shadow-bh-glass-tight) ring-1 ring-white/8 focus:outline-none"
+        className={cn(
+          "relative",
+          "mt-5 h-[min(32rem,70dvh)] min-h-80 w-full overflow-hidden",
+          "rounded-2xl ring-1 ring-white/8",
+          "bg-black/40 shadow-(--shadow-bh-glass-tight)",
+          "scroll-mt-[calc(max(0.5rem,env(safe-area-inset-top,0))+7.5rem)]",
+          "focus:outline-none",
+        )}
         id={CHART_SKIP_TARGET_ID}
         tabIndex={-1}
       >
         {!hasData && (
           <div
             aria-live="polite"
-            className="bg-bh-overlay-soft absolute inset-0 z-10 flex flex-col items-center justify-center gap-4 rounded-2xl p-6 text-center backdrop-blur-md"
+            className={cn(
+              "absolute inset-0 z-10 flex flex-col items-center justify-center gap-4",
+              "p-6",
+              "rounded-2xl",
+              "bg-bh-overlay-soft text-center",
+              "backdrop-blur-md",
+            )}
             id="chart-empty-state"
           >
             <p className="text-bh-meta max-w-[24rem] text-sm leading-normal">{emptyReason}</p>
             <div className="flex flex-wrap items-center justify-center gap-2">
               {envKey && (
                 <button
-                  className="focus-visible:ring-bh-blue inline-flex rounded-xl border border-white/12 bg-white/8 px-3.5 py-2 text-sm font-medium text-zinc-100 hover:bg-white/14 focus-visible:ring-2 focus-visible:outline-none"
+                  className={cn(
+                    "inline-flex",
+                    "px-3.5 py-2",
+                    "rounded-xl border border-white/12",
+                    "bg-white/8 text-sm font-medium text-zinc-100",
+                    "focus-visible:ring-bh-blue focus-visible:ring-2 focus-visible:outline-none",
+                    "hover:bg-white/14",
+                  )}
                   onClick={onClearEnv}
                   type="button"
                 >
@@ -603,14 +653,28 @@ export function ChartPanel({
                 </button>
               )}
               <button
-                className="focus-visible:ring-bh-blue inline-flex rounded-xl border border-white/12 bg-white/8 px-3.5 py-2 text-sm font-medium text-zinc-100 hover:bg-white/14 focus-visible:ring-2 focus-visible:outline-none"
+                className={cn(
+                  "inline-flex",
+                  "px-3.5 py-2",
+                  "rounded-xl border border-white/12",
+                  "bg-white/8 text-sm font-medium text-zinc-100",
+                  "focus-visible:ring-bh-blue focus-visible:ring-2 focus-visible:outline-none",
+                  "hover:bg-white/14",
+                )}
                 onClick={onClearSearch}
                 type="button"
               >
                 Clear search
               </button>
               <button
-                className="focus-visible:ring-bh-blue inline-flex rounded-xl border border-white/12 bg-white/8 px-3.5 py-2 text-sm font-medium text-zinc-100 hover:bg-white/14 focus-visible:ring-2 focus-visible:outline-none"
+                className={cn(
+                  "inline-flex",
+                  "px-3.5 py-2",
+                  "rounded-xl border border-white/12",
+                  "bg-white/8 text-sm font-medium text-zinc-100",
+                  "focus-visible:ring-bh-blue focus-visible:ring-2 focus-visible:outline-none",
+                  "hover:bg-white/14",
+                )}
                 onClick={onClearGroup}
                 type="button"
               >
@@ -621,7 +685,7 @@ export function ChartPanel({
         )}
         <canvas
           aria-label="Throughput over time chart"
-          className="block h-full w-full"
+          className={cn("block", "h-full w-full")}
           id="bench-chart"
           ref={canvasRef}
         />
@@ -629,45 +693,123 @@ export function ChartPanel({
 
       {/* Display toggles — `group` enables group-open: chevron rotation */}
       <details
-        className="group mt-1 border-t border-white/6 sm:mt-0 sm:border-t-0"
+        className={cn("group", "mt-1", "border-t border-white/6", "sm:mt-0 sm:border-t-0")}
         ref={displayDetailsRef}
       >
-        <summary className="focus-visible:outline-bh-blue flex cursor-pointer list-none items-center justify-between gap-3 rounded-xl py-2.5 pr-0.5 text-zinc-200 select-none marker:content-[''] focus-visible:outline focus-visible:outline-offset-2 max-sm:-mx-0.5 max-sm:px-1 max-sm:active:bg-white/4 sm:hidden [&::-webkit-details-marker]:hidden">
+        <summary
+          className={cn(
+            "flex items-center justify-between gap-3",
+            "py-2.5 pr-0.5",
+            "rounded-xl",
+            "list-none text-zinc-200",
+            "cursor-pointer select-none",
+            "focus-visible:outline-bh-blue focus-visible:outline focus-visible:outline-offset-2",
+            "marker:content-['']",
+            "max-sm:-mx-0.5 max-sm:px-1",
+            "max-sm:active:bg-white/4",
+            "sm:hidden",
+            "[&::-webkit-details-marker]:hidden",
+          )}
+        >
           <span className="text-bh-label text-[0.65rem] font-semibold tracking-[0.14em] uppercase">
             Display &amp; export
           </span>
-          <ChevronDownIcon className="size-4 shrink-0 text-zinc-500 transition-transform duration-200 ease-out group-open:rotate-180 sm:hidden" />
+          <ChevronDownIcon
+            className={cn(
+              "size-4 shrink-0 text-zinc-500",
+              "transition-transform duration-200 ease-out",
+              "group-open:rotate-180",
+              "sm:hidden",
+            )}
+          />
         </summary>
-        <div className="flex flex-col gap-3 text-[0.9rem] text-zinc-300 max-sm:gap-0 max-sm:divide-y max-sm:divide-white/6 max-sm:overflow-hidden max-sm:rounded-xl max-sm:bg-black/22 max-sm:py-0 max-sm:ring-1 max-sm:ring-white/6 sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-5 sm:gap-y-2 sm:divide-y-0 sm:pt-4">
-          <span className="text-bh-label-muted hidden text-[0.62rem] tracking-[0.12em] sm:inline">
+        <div
+          className={cn(
+            "flex flex-col gap-3 text-[0.9rem] text-zinc-300",
+            "max-sm:gap-0 max-sm:divide-y max-sm:divide-white/6 max-sm:overflow-hidden max-sm:rounded-xl max-sm:bg-black/22 max-sm:py-0 max-sm:ring-1 max-sm:ring-white/6",
+            "sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-5 sm:gap-y-2 sm:divide-y-0 sm:pt-4",
+          )}
+        >
+          <span
+            className={cn(
+              "hidden",
+              "text-bh-label-muted text-[0.62rem] tracking-[0.12em]",
+              "sm:inline",
+            )}
+          >
             Display
           </span>
-          <label className="inline-flex cursor-pointer items-center gap-2.5 rounded-lg py-0.5 hover:text-zinc-100 max-sm:min-h-11 max-sm:justify-between max-sm:gap-3 max-sm:border-0 max-sm:px-3 max-sm:py-2.5">
+          <label
+            className={cn(
+              "inline-flex items-center gap-2.5",
+              "py-0.5",
+              "rounded-lg",
+              "cursor-pointer",
+              "hover:text-zinc-100",
+              "max-sm:min-h-11 max-sm:justify-between max-sm:gap-3 max-sm:border-0 max-sm:px-3 max-sm:py-2.5",
+            )}
+          >
             <input
               aria-label="P25–P75 band"
               checked={showBands}
-              className="text-bh-blue accent-bh-blue focus:ring-bh-blue/50 size-4 rounded border-white/20 bg-black/30 focus:ring-2 focus:outline-none"
+              className={cn(
+                "size-4",
+                "rounded border-white/20",
+                "text-bh-blue bg-black/30",
+                "accent-bh-blue",
+                "focus:ring-bh-blue/50 focus:ring-2 focus:outline-none",
+              )}
               onChange={(e) => showBandsChange(e.target.checked)}
               title="Per-trial P25–P75 spread around each run median"
               type="checkbox"
             />
             <span>P25–P75 band</span>
           </label>
-          <label className="inline-flex cursor-pointer items-center gap-2.5 rounded-lg py-0.5 hover:text-zinc-100 max-sm:min-h-11 max-sm:justify-between max-sm:gap-3 max-sm:border-0 max-sm:px-3 max-sm:py-2.5">
+          <label
+            className={cn(
+              "inline-flex items-center gap-2.5",
+              "py-0.5",
+              "rounded-lg",
+              "cursor-pointer",
+              "hover:text-zinc-100",
+              "max-sm:min-h-11 max-sm:justify-between max-sm:gap-3 max-sm:border-0 max-sm:px-3 max-sm:py-2.5",
+            )}
+          >
             <input
               aria-label="Log Y axis"
               checked={useLogScale}
-              className="text-bh-blue accent-bh-blue focus:ring-bh-blue/50 size-4 rounded border-white/20 bg-black/30 focus:ring-2 focus:outline-none"
+              className={cn(
+                "size-4",
+                "rounded border-white/20",
+                "text-bh-blue bg-black/30",
+                "accent-bh-blue",
+                "focus:ring-bh-blue/50 focus:ring-2 focus:outline-none",
+              )}
               onChange={(e) => logScaleChange(e.target.checked)}
               type="checkbox"
             />
             Log Y axis
           </label>
-          <label className="inline-flex cursor-pointer items-center gap-2.5 rounded-lg py-0.5 hover:text-zinc-100 max-sm:min-h-11 max-sm:justify-between max-sm:gap-3 max-sm:border-0 max-sm:px-3 max-sm:py-2.5">
+          <label
+            className={cn(
+              "inline-flex items-center gap-2.5",
+              "py-0.5",
+              "rounded-lg",
+              "cursor-pointer",
+              "hover:text-zinc-100",
+              "max-sm:min-h-11 max-sm:justify-between max-sm:gap-3 max-sm:border-0 max-sm:px-3 max-sm:py-2.5",
+            )}
+          >
             <input
               aria-label="Primary ratios"
               checked={showRatio}
-              className="text-bh-blue accent-bh-blue focus:ring-bh-blue/50 size-4 rounded border-white/20 bg-black/30 focus:ring-2 focus:outline-none"
+              className={cn(
+                "size-4",
+                "rounded border-white/20",
+                "text-bh-blue bg-black/30",
+                "accent-bh-blue",
+                "focus:ring-bh-blue/50 focus:ring-2 focus:outline-none",
+              )}
               onChange={(e) => showRatioChange(e.target.checked)}
               type="checkbox"
             />
@@ -676,7 +818,18 @@ export function ChartPanel({
               : "Primary ratios"}
           </label>
           <button
-            className="text-bh-ink border-bh-border bg-bh-fill-white-4 shadow-bh-btn-reload hover:text-bh-ink-hover hover:border-bh-border-strong hover:bg-bh-fill-white-7 focus-visible:outline-bh-blue order-last w-full shrink-0 justify-center rounded-xl border px-4 py-2.5 font-[inherit] text-[0.8125rem] font-medium tracking-[-0.015em] backdrop-blur-[0.875rem] backdrop-saturate-160 [transition:background_0.18s_ease,border-color_0.18s_ease,color_0.18s_ease] focus-visible:outline focus-visible:outline-offset-[0.1875rem] max-sm:mt-0 max-sm:min-h-11 max-sm:rounded-none max-sm:border-0 max-sm:py-3 sm:order-0 sm:ml-auto sm:w-auto sm:py-2"
+            className={cn(
+              "order-last w-full shrink-0 justify-center px-4 py-2.5",
+              "border-bh-border rounded-xl border",
+              "bg-bh-fill-white-4 shadow-bh-btn-reload",
+              "text-bh-ink font-[inherit] text-[0.8125rem] font-medium tracking-[-0.015em]",
+              "backdrop-blur-[0.875rem] backdrop-saturate-160",
+              "hover:bg-bh-fill-white-7 hover:border-bh-border-strong hover:text-bh-ink-hover",
+              "focus-visible:outline-bh-blue focus-visible:outline focus-visible:outline-offset-[0.1875rem]",
+              "max-sm:mt-0 max-sm:min-h-11 max-sm:rounded-none max-sm:border-0 max-sm:py-3",
+              "sm:order-0 sm:ml-auto sm:w-auto sm:py-2",
+              "[transition:background_0.18s_ease,border-color_0.18s_ease,color_0.18s_ease]",
+            )}
             id="chart-download-png-btn"
             onClick={() => onDownloadPng(chartRef)}
             title="Capture current chart view as PNG"
@@ -689,18 +842,43 @@ export function ChartPanel({
 
       {/* Tabular data for accessibility */}
       <details
-        className="border-bh-border bg-bh-surface open:bg-bh-surface-open mt-6 rounded-2xl border px-4 py-3 shadow-(--shadow-bh-glass-tight) backdrop-blur-xl backdrop-saturate-180 sm:px-5"
+        className={cn(
+          "mt-6 px-4 py-3",
+          "border-bh-border rounded-2xl border",
+          "bg-bh-surface shadow-(--shadow-bh-glass-tight)",
+          "backdrop-blur-xl backdrop-saturate-180",
+          "open:bg-bh-surface-open",
+          "sm:px-5",
+        )}
         id="chart-data-details"
       >
-        <summary className="cursor-pointer list-none text-sm font-semibold text-zinc-100 select-none marker:content-[''] hover:text-white [&::-webkit-details-marker]:hidden">
+        <summary
+          className={cn(
+            "list-none text-sm font-semibold text-zinc-100",
+            "cursor-pointer select-none",
+            "marker:content-['']",
+            "hover:text-white",
+            "[&::-webkit-details-marker]:hidden",
+          )}
+        >
           Tabular data for the current chart (accessibility)
         </summary>
-        <p className="mt-2 text-xs leading-relaxed text-zinc-500">
+        <p className={cn("mt-2", "text-xs leading-relaxed text-zinc-500")}>
           Same points and libraries as the line chart above; newest run first. Useful for screen
           readers and copy‑paste.
         </p>
-        <div className="border-bh-border bg-bh-scrim-table mt-3 overflow-x-auto rounded-xl border [-webkit-overflow-scrolling:touch]">
-          <table aria-label="Chart series data" className="w-full border-collapse text-[0.8rem]">
+        <div
+          className={cn(
+            "mt-3 overflow-x-auto",
+            "border-bh-border rounded-xl border",
+            "bg-bh-scrim-table",
+            "[-webkit-overflow-scrolling:touch]",
+          )}
+        >
+          <table
+            aria-label="Chart series data"
+            className={cn("w-full", "border-collapse", "text-[0.8rem]")}
+          >
             {hasData && (
               <thead>
                 <ChartTableHeader compareLibs={compareLibs} orderedLibraries={orderedLibraries} />
@@ -737,11 +915,23 @@ function WheelHint() {
   return (
     <span suppressHydrationWarning>
       {isMacLikePlatform() ? (
-        <kbd className="rounded border border-zinc-700 bg-zinc-800 px-1.5 py-px font-mono text-zinc-300">
+        <kbd
+          className={cn(
+            "px-1.5 py-px",
+            "rounded border border-zinc-700",
+            "bg-zinc-800 font-mono text-zinc-300",
+          )}
+        >
           ⌃ Control
         </kbd>
       ) : (
-        <kbd className="rounded border border-zinc-700 bg-zinc-800 px-1.5 py-px font-mono text-zinc-300">
+        <kbd
+          className={cn(
+            "px-1.5 py-px",
+            "rounded border border-zinc-700",
+            "bg-zinc-800 font-mono text-zinc-300",
+          )}
+        >
           Ctrl
         </kbd>
       )}
@@ -819,7 +1009,13 @@ function ChartTableRow({
   const primaryHz = primaryLib ? (libHzMap[primaryLib.key] ?? null) : null;
 
   return (
-    <tr className="hover:bg-bh-table-hover even:bg-bh-table-zebra even:hover:bg-bh-table-zebra-hover">
+    <tr
+      className={cn(
+        "hover:bg-bh-table-hover",
+        "even:bg-bh-table-zebra",
+        "even:hover:bg-bh-table-zebra-hover",
+      )}
+    >
       <ChartTd>{localClock}</ChartTd>
       <ChartTd>{run.folder}</ChartTd>
       {orderedLibraries.map((lib) => {
