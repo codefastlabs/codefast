@@ -18,8 +18,9 @@ const inputNumberVariants = tv({
      * Split layout: trailing increment button (always on the inline end).
      */
     incrementButton: [
-      "order-last h-full w-9 shrink-0 rounded-none text-muted-foreground",
-      "rounded-r-[calc(var(--radius-lg)-1px)] border-l border-input",
+      "order-last h-full w-9 shrink-0",
+      "rounded-none rounded-r-[calc(var(--radius-lg)-1px)] border-l border-input",
+      "text-muted-foreground",
       "focus-visible:bg-ring/50 focus-visible:ring-0",
       "group-focus-within/input-number:border-l-ring",
       "group-has-aria-invalid/input-number:border-l-destructive",
@@ -30,8 +31,9 @@ const inputNumberVariants = tv({
      * Split layout: leading decrement button (always on the inline start).
      */
     decrementButton: [
-      "order-first h-full w-9 shrink-0 rounded-none text-muted-foreground",
-      "rounded-l-[calc(var(--radius-lg)-1px)] border-r border-input",
+      "order-first h-full w-9 shrink-0",
+      "rounded-none rounded-l-[calc(var(--radius-lg)-1px)] border-r border-input",
+      "text-muted-foreground",
       "focus-visible:bg-ring/50 focus-visible:ring-0",
       "group-focus-within/input-number:border-r-ring",
       "group-has-aria-invalid/input-number:border-r-destructive",
@@ -53,8 +55,8 @@ const inputNumberVariants = tv({
      */
     root: [
       "group/input-number relative flex h-9 w-full min-w-0 items-center overflow-hidden",
-      "rounded-lg border border-input bg-transparent",
-      "text-base",
+      "rounded-lg border border-input",
+      "bg-transparent text-base",
       "transition-[color,box-shadow]",
       "motion-reduce:transition-none",
       "not-has-disabled:shadow-xs",
@@ -62,11 +64,11 @@ const inputNumberVariants = tv({
       "hover:not-has-disabled:not-focus-within:border-ring/60",
       "focus-within:has-aria-invalid:ring-destructive/20",
       "hover:not-has-disabled:not-focus-within:has-aria-invalid:border-destructive/60",
-      "has-disabled:opacity-50",
-      "has-aria-invalid:border-destructive",
       "md:text-sm",
       "dark:bg-input/30",
       "dark:focus-within:has-aria-invalid:ring-destructive/40",
+      "has-disabled:opacity-50",
+      "has-aria-invalid:border-destructive",
       "[&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
     ],
     /**
@@ -86,7 +88,7 @@ const inputNumberVariants = tv({
     /**
      * Stepper layout: individual chevron button (shared by increment/decrement).
      */
-    stepperButton: "h-auto min-w-0 rounded-none px-0 text-muted-foreground",
+    stepperButton: ["h-auto min-w-0 px-0", "rounded-none", "text-muted-foreground"],
   },
   variants: {
     variant: {
