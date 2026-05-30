@@ -244,8 +244,8 @@ function HomePage() {
       {/* ── Stats band ───────────────────────────────────────────────── */}
       {/* Inverted surface: black-on-white in light, white-on-dark in dark — */}
       {/* always maximal contrast against the page background in either theme. */}
-      <section className="bg-foreground px-4 py-24 text-background">
-        <div className="mx-auto w-[min(1080px,calc(100%-2rem))]">
+      <section className="bg-foreground py-24 text-background">
+        <div className="container mx-auto px-4">
           {/* Stats — large numbers, no borders */}
           <div className="mb-20 grid grid-cols-3 gap-4 text-center">
             {[
@@ -286,8 +286,8 @@ function HomePage() {
       </section>
 
       {/* ── Features ─────────────────────────────────────────────────── */}
-      <section className="px-4 py-24 sm:py-32">
-        <div className="mx-auto w-[min(1080px,calc(100%-2rem))]">
+      <section className="py-24 sm:py-32">
+        <div className="container mx-auto px-4">
           <h2
             className="mb-16 max-w-xl leading-[1.05] font-bold tracking-[-0.035em] text-foreground"
             style={{ fontSize: "clamp(36px,4.5vw,56px)" }}
@@ -310,8 +310,8 @@ function HomePage() {
       </section>
 
       {/* ── Install CTA ──────────────────────────────────────────────── */}
-      <section className="bg-foreground px-4 py-24 text-background sm:py-32">
-        <div className="mx-auto w-[min(1080px,calc(100%-2rem))] text-center">
+      <section className="bg-foreground py-24 text-background sm:py-32">
+        <div className="container mx-auto px-4 text-center">
           <h2
             className="mx-auto mb-5 max-w-xl leading-[1.05] font-bold tracking-[-0.035em] text-background"
             style={{ fontSize: "clamp(36px,4.5vw,56px)" }}

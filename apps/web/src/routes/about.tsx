@@ -51,7 +51,7 @@ const REQUIREMENTS = [
 
 function GettingStarted() {
   return (
-    <main className="mx-auto w-[min(1080px,calc(100%-2rem))] px-4 pt-16 pb-32">
+    <main className="container mx-auto px-4 pt-16 pb-32">
       {/* Header */}
       <section className="mb-16 max-w-2xl animate-in duration-[800ms] ease-out fill-mode-both fade-in slide-in-from-bottom-4">
         <Badge variant="outline" className="mb-5 border-border text-muted-foreground">

@@ -52,7 +52,7 @@ export const Route = createFileRoute("/components/$slug")({
 
 function ComponentNotFound() {
   return (
-    <main className="mx-auto flex w-[min(1080px,calc(100%-2rem))] flex-col items-center px-4 pt-32 pb-32 text-center">
+    <main className="container mx-auto flex flex-col items-center px-4 pt-32 pb-32 text-center">
       <Badge variant="outline" className="mb-5 border-border text-muted-foreground">
         404
       </Badge>
@@ -88,7 +88,7 @@ function ComponentDetailPage() {
     index >= 0 && index < DEMO_COMPONENTS.length - 1 ? DEMO_COMPONENTS[index + 1] : undefined;
 
   return (
-    <main className="mx-auto w-[min(1080px,calc(100%-2rem))] px-4 pt-10 pb-32">
+    <main className="container mx-auto px-4 pt-10 pb-32">
       {/* Breadcrumb */}
       <Breadcrumb className="mb-8">
         <BreadcrumbList>
