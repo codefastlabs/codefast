@@ -1,3 +1,4 @@
+import { cn } from "@codefast/tailwind-variants";
 import type { ReactNode } from "react";
 import { HeadContent, Link, Scripts, createRootRoute } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
@@ -62,11 +63,19 @@ function CenteredMessage({
   children?: ReactNode;
 }) {
   return (
-    <main className="container mx-auto flex flex-col items-center px-4 pt-32 pb-32 text-center">
-      <Badge variant="outline" className="mb-5 border-border text-muted-foreground">
+    <main
+      className={cn(
+        "container flex flex-col items-center",
+        "mx-auto px-4 pt-32 pb-32",
+        "text-center",
+      )}
+    >
+      <Badge variant="outline" className={cn("mb-5", "border-border", "text-muted-foreground")}>
         {badge}
       </Badge>
-      <h1 className="mb-3 text-3xl font-bold tracking-[-0.035em] text-foreground">{title}</h1>
+      <h1 className={cn("mb-3", "text-3xl font-bold tracking-[-0.035em] text-foreground")}>
+        {title}
+      </h1>
       <p className="mb-8 max-w-md text-muted-foreground">{description}</p>
       {children}
     </main>
@@ -116,7 +125,13 @@ function RootDocument({ children }: { children: ReactNode }) {
         <AppearanceScript colorScheme={colorScheme} />
         <HeadContent />
       </head>
-      <body className="min-h-full overflow-x-hidden bg-background font-sans wrap-anywhere text-foreground antialiased selection:bg-foreground/15">
+      <body
+        className={cn(
+          "min-h-full overflow-x-hidden wrap-anywhere",
+          "bg-background font-sans text-foreground antialiased",
+          "selection:bg-foreground/15",
+        )}
+      >
         <AppearanceProvider
           colorScheme={colorScheme}
           ssrColorScheme={ssrColorScheme}

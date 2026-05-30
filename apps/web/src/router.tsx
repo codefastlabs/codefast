@@ -1,3 +1,4 @@
+import { cn } from "@codefast/tailwind-variants";
 import { createRouter as createTanStackRouter } from "@tanstack/react-router";
 import { routeTree } from "#/routeTree.gen";
 
@@ -14,8 +15,14 @@ export function getRouter() {
 
 function DefaultNotFound() {
   return (
-    <main className="container mx-auto flex flex-col items-center px-4 pt-24 pb-32 text-center">
-      <h1 className="mb-3 text-3xl font-bold tracking-[-0.035em] text-foreground">
+    <main
+      className={cn(
+        "container flex flex-col items-center",
+        "mx-auto px-4 pt-24 pb-32",
+        "text-center",
+      )}
+    >
+      <h1 className={cn("mb-3", "text-3xl font-bold tracking-[-0.035em] text-foreground")}>
         Page not found
       </h1>
       <p className="max-w-sm text-muted-foreground">

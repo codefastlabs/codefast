@@ -1,3 +1,4 @@
+import { cn } from "@codefast/tailwind-variants";
 import {
   Sidebar,
   SidebarContent,
@@ -24,9 +25,9 @@ const NAV_ITEMS = [
 
 export function SidebarDemo() {
   return (
-    <SidebarProvider className="h-72 w-full max-w-sm overflow-hidden rounded-xl border">
+    <SidebarProvider className={cn("h-72 w-full max-w-sm overflow-hidden", "rounded-xl border")}>
       <Sidebar>
-        <SidebarHeader className="px-4 py-3 text-sm font-semibold">My App</SidebarHeader>
+        <SidebarHeader className={cn("px-4 py-3", "text-sm font-semibold")}>My App</SidebarHeader>
         <SidebarContent>
           <SidebarGroup>
             <SidebarGroupLabel>Navigation</SidebarGroupLabel>
@@ -44,9 +45,11 @@ export function SidebarDemo() {
             </SidebarGroupContent>
           </SidebarGroup>
         </SidebarContent>
-        <SidebarFooter className="px-4 py-3 text-xs text-muted-foreground">v1.0.0</SidebarFooter>
+        <SidebarFooter className={cn("px-4 py-3", "text-xs text-muted-foreground")}>
+          v1.0.0
+        </SidebarFooter>
       </Sidebar>
-      <main className="flex flex-1 flex-col gap-2 p-4">
+      <main className={cn("flex flex-1 flex-col gap-2", "p-4")}>
         <SidebarTrigger />
         <p className="text-sm text-muted-foreground">Main content area</p>
       </main>

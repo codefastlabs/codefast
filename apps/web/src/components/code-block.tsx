@@ -1,3 +1,4 @@
+import { cn } from "@codefast/tailwind-variants";
 import { useEffect, useRef, useState } from "react";
 import { CheckIcon, CopyIcon } from "lucide-react";
 
@@ -51,7 +52,14 @@ export function CodeBlock({ code, highlightedCode, className }: CodeBlockProps) 
         type="button"
         onClick={() => void handleCopy()}
         aria-label="Copy code"
-        className="absolute top-3 right-3 flex items-center gap-1.5 rounded-lg border border-white/10 bg-white/10 px-2.5 py-1.5 text-[10px] font-medium text-white/70 transition-colors hover:bg-white/20 hover:text-white"
+        className={cn(
+          "absolute top-3 right-3 flex items-center gap-1.5",
+          "px-2.5 py-1.5",
+          "rounded-lg border border-white/10",
+          "bg-white/10 text-[10px] font-medium text-white/70",
+          "transition-colors",
+          "hover:bg-white/20 hover:text-white",
+        )}
       >
         {copied ? <CheckIcon className="size-3" /> : <CopyIcon className="size-3" />}
         {copied ? "Copied!" : "Copy"}

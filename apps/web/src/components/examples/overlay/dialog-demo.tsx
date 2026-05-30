@@ -1,3 +1,4 @@
+import { cn } from "@codefast/tailwind-variants";
 import { Button } from "@codefast/ui/button";
 import {
   Dialog,
@@ -25,7 +26,7 @@ export function DialogDemo() {
           <DialogDescription>Make changes here. Click save when done.</DialogDescription>
         </DialogHeader>
         <DialogBody>
-          <div className="grid gap-3 py-2">
+          <div className={cn("grid gap-3", "py-2")}>
             <div className="grid gap-1.5">
               <Label htmlFor="dialog-name">Name</Label>
               <Input id="dialog-name" defaultValue="Vuong Phan" />
@@ -37,7 +38,7 @@ export function DialogDemo() {
           </div>
         </DialogBody>
         <DialogFooter>
-          <div className="flex justify-end gap-2 pt-1">
+          <div className={cn("flex justify-end gap-2", "pt-1")}>
             <DialogClose variant="outline" size="sm">
               Cancel
             </DialogClose>
