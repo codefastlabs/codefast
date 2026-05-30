@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { createFileRoute, useLocation } from "@tanstack/react-router";
 import { Badge } from "@codefast/ui/badge";
 import { highlightMany } from "#/lib/highlighter.ts";
@@ -56,9 +56,6 @@ function Section({ id, label, description, count, children }: SectionProps) {
     <section id={id} className="mb-20 scroll-mt-28">
       <div className="mb-8 flex flex-col gap-3 border-b border-border pb-6 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <p className="mb-2 text-[0.7rem] font-semibold tracking-widest text-primary uppercase">
-            {label}
-          </p>
           <h2 className="text-2xl leading-[1.05] font-bold tracking-[-0.035em] text-foreground">
             {label}
           </h2>
@@ -76,8 +73,6 @@ function Section({ id, label, description, count, children }: SectionProps) {
 /* -------------------------------------------------------------------------- */
 /* Page                                                                        */
 /* -------------------------------------------------------------------------- */
-
-type FilterId = "all" | CategoryId;
 
 const CATEGORY_IDS = CATEGORIES.map((c) => c.id);
 
@@ -122,16 +117,8 @@ const CATEGORY_COUNTS = Object.fromEntries(
   ]),
 ) as Record<CategoryId, number>;
 
-type FilterOption = { readonly id: FilterId; readonly label: string };
-
-const FILTER_OPTIONS: ReadonlyArray<FilterOption> = [
-  { id: "all", label: "All" },
-  ...CATEGORIES.map(({ id, label }) => ({ id, label })),
-];
-
 function ComponentsPage() {
   const hl = Route.useLoaderData();
-  const [activeFilter, setActiveFilter] = useState<FilterId>("all");
   const activeSection = useActiveSection(CATEGORY_IDS);
   const hash = useLocation({ select: (location) => location.hash });
 
@@ -154,14 +141,6 @@ function ComponentsPage() {
     };
   }, [hash]);
 
-  const filteredAll = useMemo(
-    () =>
-      activeFilter === "all"
-        ? DEMO_COMPONENTS
-        : DEMO_COMPONENTS.filter((c) => c.category === activeFilter),
-    [activeFilter],
-  );
-
   return (
     <main className="mx-auto w-[min(1080px,calc(100%-2rem))] px-4 pt-16 pb-32">
       {/* ── Header ───────────────────────────────────────────────────── */}
@@ -180,36 +159,17 @@ function ComponentsPage() {
 
       {/* ── Full component map ───────────────────────────────────────── */}
       <section className="mb-16 rounded-2xl border border-border bg-muted p-6 sm:p-8">
-        <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
-          <p className="text-sm font-semibold text-foreground">
-            All components
-            <span className="ml-2 font-normal text-muted-foreground">
-              · {filteredAll.length} shown
-            </span>
-          </p>
-          <div className="flex flex-wrap gap-1.5">
-            {FILTER_OPTIONS.map(({ id, label }) => (
-              <button
-                key={id}
-                type="button"
-                aria-pressed={activeFilter === id}
-                onClick={() => setActiveFilter(id)}
-                className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
-                  activeFilter === id
-                    ? "bg-foreground text-background"
-                    : "border border-border bg-card text-muted-foreground hover:text-foreground"
-                }`}
-              >
-                {label}
-              </button>
-            ))}
-          </div>
-        </div>
+        <p className="mb-5 text-sm font-semibold text-foreground">
+          All components
+          <span className="ml-2 font-normal text-muted-foreground">
+            · {DEMO_COMPONENTS.length} components
+          </span>
+        </p>
         <div className="flex flex-wrap gap-2">
-          {filteredAll.map(({ name, slug, category }) => (
+          {DEMO_COMPONENTS.map(({ name, slug }) => (
             <a
               key={slug}
-              href={`#${category}`}
+              href={`#${slug}`}
               className="rounded-full border border-border bg-card px-3 py-1 text-xs font-medium text-muted-foreground no-underline transition-colors hover:border-primary hover:text-foreground"
             >
               {name}
