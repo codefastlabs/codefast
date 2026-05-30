@@ -46,9 +46,13 @@ export function LazyVisible({ children, minHeight = 160, rootMargin = "300px" }:
     };
   }, [rootMargin]);
 
-  return (
-    <div ref={ref} style={visible ? undefined : { minHeight }}>
-      {visible ? children : null}
-    </div>
-  );
+  // Once visible, drop the placeholder wrapper entirely and render children
+  // directly so they inherit the parent's layout (flex/grid sizing). The div is
+  // only needed before mount, as a stable target for the observer to watch and
+  // to reserve height against layout shift.
+  if (visible) {
+    return <>{children}</>;
+  }
+
+  return <div ref={ref} style={{ minHeight }} />;
 }
