@@ -1,8 +1,10 @@
 import type { ComponentProps, JSX } from "react";
 
-import { cn } from "#/lib/utils";
-import { ChevronDownIcon, ChevronUpIcon } from "lucide-react";
+import { ChevronDownIcon, ChevronUpIcon, MinusIcon, PlusIcon } from "lucide-react";
 
+import type { InputNumberVariants } from "#/variants/input-number";
+
+import { inputNumberVariants } from "#/variants/input-number";
 import { buttonVariants } from "#/variants/button";
 import { Spinner } from "#/components/spinner";
 import * as InputNumberPrimitive from "#/primitives/input-number";
@@ -17,7 +19,8 @@ import * as InputNumberPrimitive from "#/primitives/input-number";
 interface InputNumberProps
   extends
     ComponentProps<typeof InputNumberPrimitive.Field>,
-    ComponentProps<typeof InputNumberPrimitive.Root> {}
+    ComponentProps<typeof InputNumberPrimitive.Root>,
+    InputNumberVariants {}
 
 /**
  * @since 0.3.16-canary.0
@@ -41,33 +44,20 @@ function InputNumber({
   step,
   suffix,
   value,
+  variant = "stepper",
   ...props
 }: InputNumberProps): JSX.Element {
+  const isSplit = variant === "split";
+  const { decrementButton, field, incrementButton, root, stepper, stepperButton } =
+    inputNumberVariants({ variant });
+
   return (
     <InputNumberPrimitive.Root
       ariaDecrementLabel={ariaDecrementLabel}
       ariaIncrementLabel={ariaIncrementLabel}
-      className={cn(
-        "group peer flex h-9 w-full grow items-center gap-3 px-3 pr-0",
-        "rounded-lg border border-input",
-        "text-base",
-        "transition",
-        "motion-reduce:transition-none",
-        "not-has-disabled:shadow-xs",
-        "focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/50",
-        "hover:not-has-disabled:not-focus-within:border-ring/60",
-        "focus-within:has-aria-invalid:ring-destructive/20",
-        "hover:not-has-disabled:not-focus-within:has-aria-invalid:border-destructive/60",
-        "md:text-sm",
-        "dark:bg-input/30",
-        "dark:focus-within:has-aria-invalid:ring-destructive/40",
-        "has-disabled:opacity-50",
-        "has-aria-invalid:border-destructive",
-        "[&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
-        "[&>svg]:text-muted-foreground",
-        className,
-      )}
+      className={root({ className })}
       data-slot="input-number"
+      data-variant={variant}
       defaultValue={defaultValue}
       disabled={disabled}
       formatOptions={formatOptions}
@@ -84,69 +74,64 @@ function InputNumber({
       value={value}
       onChange={onChange}
     >
-      <InputNumberPrimitive.Field
-        autoCapitalize="none"
-        autoComplete="off"
-        autoCorrect="off"
-        className={cn(
-          "h-9 w-full min-w-0 px-3 py-1",
-          "rounded-md border border-input",
-          "bg-transparent shadow-xs outline-none",
-          "text-base",
-          "transition-[color,box-shadow]",
-          "motion-reduce:transition-none",
-          "selection:bg-primary selection:text-primary-foreground",
-          "file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground",
-          "placeholder:text-muted-foreground",
-          "focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50",
-          "disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50",
-          "aria-invalid:border-destructive aria-invalid:ring-destructive/20",
-          "md:text-sm",
-          "dark:bg-input/30",
-          "dark:aria-invalid:ring-destructive/40",
-        )}
-        spellCheck="false"
-        {...props}
-      />
-      <div
-        className={cn(
-          "order-last ml-auto grid h-full shrink-0",
-          "divide-y divide-input border-l border-l-input",
-          "transition",
-          "motion-reduce:transition-none",
-          "group-hover:not-group-focus-within:not-has-disabled:border-l-border-ring/60 group-hover:not-group-focus-within:not-has-disabled:divide-border-ring/60",
-          "group-focus-within:divide-ring group-focus-within:border-l-ring",
-          "group-has-aria-invalid:divide-destructive group-has-aria-invalid:border-l-destructive",
-          "group-hover:group-has-aria-invalid:not-group-focus-within:not-has-disabled:divide-destructive/60 group-hover:group-has-aria-invalid:not-group-focus-within:not-has-disabled:border-l-destructive/60",
-          "*:[button]:focus-visible:bg-ring/50 *:[button]:focus-visible:ring-0",
-          "group-has-aria-invalid:*:[button]:focus-visible:bg-destructive/20",
-          "dark:group-has-aria-invalid:*:[button]:focus-visible:bg-destructive/40",
-        )}
-        data-slot="input-number-buttons"
-      >
-        <InputNumberPrimitive.IncrementButton
-          aria-label="Increment"
-          className={buttonVariants({
-            className:
-              "text-muted-foreground h-auto rounded-none rounded-tr-[calc(var(--radius-lg)-1px)]",
-            variant: "ghost",
-          })}
-          data-slot="input-number-increment-button"
-        >
-          <ChevronUpIcon />
-        </InputNumberPrimitive.IncrementButton>
+      {isSplit ? (
         <InputNumberPrimitive.DecrementButton
           aria-label="Decrement"
           className={buttonVariants({
-            className:
-              "text-muted-foreground h-auto rounded-none rounded-br-[calc(var(--radius-lg)-1px)]",
+            className: decrementButton(),
             variant: "ghost",
           })}
           data-slot="input-number-decrement-button"
         >
-          <ChevronDownIcon />
+          <MinusIcon />
         </InputNumberPrimitive.DecrementButton>
-      </div>
+      ) : null}
+
+      <InputNumberPrimitive.Field
+        autoCapitalize="none"
+        autoComplete="off"
+        autoCorrect="off"
+        className={field()}
+        spellCheck="false"
+        {...props}
+      />
+
+      {isSplit ? (
+        <InputNumberPrimitive.IncrementButton
+          aria-label="Increment"
+          className={buttonVariants({
+            className: incrementButton(),
+            variant: "ghost",
+          })}
+          data-slot="input-number-increment-button"
+        >
+          <PlusIcon />
+        </InputNumberPrimitive.IncrementButton>
+      ) : (
+        <div className={stepper()} data-slot="input-number-buttons">
+          <InputNumberPrimitive.IncrementButton
+            aria-label="Increment"
+            className={buttonVariants({
+              className: stepperButton(),
+              variant: "ghost",
+            })}
+            data-slot="input-number-increment-button"
+          >
+            <ChevronUpIcon className="size-3.5" />
+          </InputNumberPrimitive.IncrementButton>
+
+          <InputNumberPrimitive.DecrementButton
+            aria-label="Decrement"
+            className={buttonVariants({
+              className: stepperButton(),
+              variant: "ghost",
+            })}
+            data-slot="input-number-decrement-button"
+          >
+            <ChevronDownIcon className="size-3.5" />
+          </InputNumberPrimitive.DecrementButton>
+        </div>
+      )}
     </InputNumberPrimitive.Root>
   );
 }
