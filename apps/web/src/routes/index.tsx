@@ -79,7 +79,7 @@ function HeroCard() {
 
       {/* Tabs */}
       <Tabs defaultValue="notifications" className="p-5">
-        <TabsList className="mb-4 h-8 w-full">
+        <TabsList className="mb-4 w-full">
           <TabsTrigger value="general" className="flex-1 text-xs">
             General
           </TabsTrigger>
@@ -95,7 +95,7 @@ function HeroCard() {
           {/* Email input */}
           <div className="space-y-1.5">
             <Label className="text-xs text-muted-foreground">Notify email</Label>
-            <Input type="email" defaultValue="you@company.com" className="h-8 text-xs" />
+            <Input type="email" defaultValue="you@company.com" />
           </div>
 
           <Separator />
@@ -127,39 +127,35 @@ function HeroCard() {
 
           {/* Actions */}
           <div className="flex justify-end gap-2 pt-1">
-            <Button variant="outline" size="sm" className="h-7 text-xs">
+            <Button variant="outline" size="sm">
               Discard
             </Button>
-            <Button size="sm" className="h-7 text-xs">
-              Save changes
-            </Button>
+            <Button size="sm">Save changes</Button>
           </div>
         </TabsContent>
 
         <TabsContent value="general" className="mt-0 space-y-4">
           <div className="space-y-1.5">
             <Label className="text-xs text-muted-foreground">Workspace name</Label>
-            <Input defaultValue="codefast/ui" className="h-8 text-xs" />
+            <Input defaultValue="codefast/ui" />
           </div>
           <div className="space-y-1.5">
             <Label className="text-xs text-muted-foreground">Display URL</Label>
-            <Input defaultValue="codefast.dev" className="h-8 text-xs" />
+            <Input defaultValue="codefast.dev" />
           </div>
           <Separator />
           <div className="flex items-center justify-between">
-            <div>
+            <div className="text-left">
               <p className="text-xs font-medium text-foreground">Public profile</p>
               <p className="text-[11px] text-muted-foreground">Show workspace in directory</p>
             </div>
             <Switch defaultChecked className="scale-90" />
           </div>
           <div className="flex justify-end gap-2 pt-1">
-            <Button variant="outline" size="sm" className="h-7 text-xs">
+            <Button variant="outline" size="sm">
               Discard
             </Button>
-            <Button size="sm" className="h-7 text-xs">
-              Save changes
-            </Button>
+            <Button size="sm">Save changes</Button>
           </div>
         </TabsContent>
 
@@ -183,7 +179,7 @@ function HeroCard() {
             <Progress value={40} className="h-1" />
           </div>
           <div className="flex justify-end">
-            <Button variant="outline" size="sm" className="h-7 text-xs">
+            <Button variant="outline" size="sm">
               Manage billing ›
             </Button>
           </div>
