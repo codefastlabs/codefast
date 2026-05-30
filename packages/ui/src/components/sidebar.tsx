@@ -727,7 +727,7 @@ function SidebarMenuButton({
 
   const button = (
     <Component
-      className={cn(sidebarMenuButtonVariants({ size, variant }), className)}
+      className={sidebarMenuButtonVariants({ size, variant, className })}
       data-active={isActive}
       data-sidebar="menu-button"
       data-size={size}

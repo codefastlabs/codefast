@@ -59,7 +59,7 @@ function InputGroupAddon({
 }: InputGroupAddonProps): JSX.Element {
   return (
     <div
-      className={cn(inputGroupAddonVariants({ align }), className)}
+      className={inputGroupAddonVariants({ align, className })}
       data-align={align}
       data-slot="input-group-addon"
       role="group"
@@ -102,7 +102,7 @@ function InputGroupButton({
 }: InputGroupButtonProps): JSX.Element {
   return (
     <Button
-      className={cn(inputGroupButtonVariants({ size }), className)}
+      className={inputGroupButtonVariants({ size, className })}
       data-size={size}
       data-slot="input-group-button"
       type={type}
