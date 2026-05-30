@@ -12,10 +12,12 @@ import {
 import { prepareArrangeWorkspace } from "#/arrange/workspace";
 import { analyzeDirectory } from "#/arrange/analyze";
 import { runArrangeSync } from "#/arrange/sync";
+import { runArrangeSimplify } from "#/arrange/simplify-sync";
 import { suggestCnGroupsFromCli } from "#/arrange/suggest";
 import {
   printAnalyzeReport,
   printGroupFilePreviewFromWork,
+  printSimplifyResult,
   printSyncResult,
 } from "#/arrange/output";
 import type { AnalyzeReport, ArrangeRunResult } from "#/arrange/domain/types";
@@ -115,6 +117,47 @@ export function createArrangeCommand(): Command {
     .option("--cn-import <spec>", "Override module specifier when adding cn import")
     .option("--json", "Print one JSON object on stdout (suppresses human progress)", false)
     .action(previewOrApply(true));
+
+  const simplifyOrPreviewSimplify =
+    (write: boolean) => async (target: string | undefined, opts: Record<string, unknown>) => {
+      const prelude = await prepareArrangeWorkspace(nodeFilesystem, {
+        currentWorkingDirectory: process.cwd(),
+        rawTarget: readOptionalPositionalArg(target),
+      });
+      if (!consumeCliAppError(prelude)) {
+        return;
+      }
+      const { resolvedTarget } = prelude.value;
+      await runCliResultAsync(
+        runArrangeSimplify(nodeFilesystem, { targetPath: resolvedTarget, write }),
+        (value) => {
+          if (opts.json) {
+            logger.out(
+              JSON.stringify({ schemaVersion: 1 as const, ok: true, write, result: value }),
+            );
+            return CLI_EXIT_SUCCESS;
+          }
+          printSimplifyResult(value, write);
+          return CLI_EXIT_SUCCESS;
+        },
+      );
+    };
+
+  cmd
+    .command("simplify")
+    .description(
+      "Flatten grouped arrays and static-only cn() calls back to plain strings in tv() slots",
+    )
+    .argument("[target]", "Directory or file (default: nearest package directory from cwd)")
+    .option("--json", "Print one JSON object on stdout (suppresses human progress)", false)
+    .action(simplifyOrPreviewSimplify(true));
+
+  cmd
+    .command("simplify-preview")
+    .description("Dry-run: show what simplify would change without writing files")
+    .argument("[target]", "Directory or file (default: nearest package directory from cwd)")
+    .option("--json", "Print one JSON object on stdout (suppresses human progress)", false)
+    .action(simplifyOrPreviewSimplify(false));
 
   cmd
     .command("group")

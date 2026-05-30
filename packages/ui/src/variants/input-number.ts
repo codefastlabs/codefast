@@ -81,9 +81,9 @@ const inputNumberVariants = tv({
       "motion-reduce:transition-none",
       "group-focus-within/input-number:divide-ring group-focus-within/input-number:border-l-ring",
       "group-has-aria-invalid/input-number:divide-destructive group-has-aria-invalid/input-number:border-l-destructive",
-      "*:[button]:focus-visible:bg-ring/50 *:[button]:focus-visible:ring-0",
       "group-has-aria-invalid/input-number:*:[button]:focus-visible:bg-destructive/20",
       "dark:group-has-aria-invalid/input-number:*:[button]:focus-visible:bg-destructive/40",
+      "*:[button]:focus-visible:bg-ring/50 *:[button]:focus-visible:ring-0",
     ],
     /**
      * Stepper layout: individual chevron button (shared by increment/decrement).

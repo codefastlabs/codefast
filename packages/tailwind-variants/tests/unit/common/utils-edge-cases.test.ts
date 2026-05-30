@@ -36,7 +36,7 @@ describe("Tailwind Variants (TV) - Utils Edge Cases", () => {
     });
 
     test("should handle single string argument with twMerge", () => {
-      expect(cn("bg-blue-500", "bg-red-500")).toBe("bg-red-500");
+      expect("bg-blue-500 bg-red-500").toBe("bg-red-500");
     });
 
     test("should handle single falsy argument", () => {
@@ -44,7 +44,7 @@ describe("Tailwind Variants (TV) - Utils Edge Cases", () => {
       expect(cn(null)).toBe("");
       expect(cn()).toBe("");
       expect(cn(0)).toBe("");
-      expect(cn("")).toBe("");
+      expect("").toBe("");
     });
 
     test("should handle single non-string truthy argument with twMerge", () => {
