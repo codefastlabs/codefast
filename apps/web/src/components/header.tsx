@@ -70,7 +70,7 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-background/75 backdrop-blur-[20px] backdrop-saturate-150">
-      <div className="mx-auto flex h-12 w-[min(1080px,calc(100%-2rem))] items-center gap-8 px-4">
+      <div className="container mx-auto flex h-12 items-center gap-8 px-4">
         <Logo />
 
         {/* Desktop nav */}

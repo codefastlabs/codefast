@@ -62,7 +62,7 @@ function CenteredMessage({
   children?: ReactNode;
 }) {
   return (
-    <main className="mx-auto flex w-[min(1080px,calc(100%-2rem))] flex-col items-center px-4 pt-32 pb-32 text-center">
+    <main className="container mx-auto flex flex-col items-center px-4 pt-32 pb-32 text-center">
       <Badge variant="outline" className="mb-5 border-border text-muted-foreground">
         {badge}
       </Badge>
