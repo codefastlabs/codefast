@@ -23,6 +23,7 @@ import {
 import {
   isDomainArrayLiteralExpression,
   isDomainJsxAttribute,
+  isDomainPropertyAssignment,
   isDomainTailwindClassLiteral,
   forEachDomainChild,
 } from "#/arrange/domain/ast/ast-node";
@@ -176,26 +177,45 @@ export function planGroupEditForTarget(
 
   if (!target.item.cnCall) {
     const anchorClassLiteral = target.item.primaryClassLiteral;
+    const parentNode = anchorClassLiteral.parent;
     const parentArray =
       target.item.nodes.length > 1 &&
-      anchorClassLiteral.parent !== null &&
-      isDomainArrayLiteralExpression(anchorClassLiteral.parent)
-        ? anchorClassLiteral.parent
+      parentNode !== null &&
+      isDomainArrayLiteralExpression(parentNode)
+        ? parentNode
         : null;
-    const start = parentArray ? parentArray.pos : anchorClassLiteral.pos;
-    const end = parentArray
-      ? parentArray.end
-      : endAfterOptionalCommaFollowingInSource(textAfterUnwrap, anchorClassLiteral.end);
-    const baseIndent = indentOfLineContaining(textAfterUnwrap, start);
-    const replacement = parentArray
-      ? formatArray(groups)
-          .split("\n")
-          .map((line, lineIndex) => (lineIndex === 0 ? line : `${baseIndent}${line}`))
-          .join("\n")
-      : formatArrayElementsAsSiblingLines(
-          groups,
-          textPrefixFromLineStartToPosition(textAfterUnwrap, start),
-        );
+    // A bare string value of a property (e.g. `slot: "a b c"`) must be wrapped in
+    // an array literal. Emitting sibling lines would prepend the property prefix
+    // (`slot: `) to each continuation line, producing duplicate object keys.
+    const bareStringProperty =
+      !parentArray && parentNode !== null && isDomainPropertyAssignment(parentNode);
+
+    if (parentArray || bareStringProperty) {
+      const start = parentArray ? parentArray.pos : anchorClassLiteral.pos;
+      const end = parentArray ? parentArray.end : anchorClassLiteral.end;
+      const baseIndent = indentOfLineContaining(textAfterUnwrap, start);
+      const replacement = formatArray(groups)
+        .split("\n")
+        .map((line, lineIndex) => (lineIndex === 0 ? line : `${baseIndent}${line}`))
+        .join("\n");
+      return {
+        start,
+        end,
+        replacement,
+        bucketSummary: summarizeGroupBucketLabels(groups),
+        jsxCn: false,
+        lineSf: target.item.sf,
+        reportNode: anchorClassLiteral,
+        label: target.item.isTvContext ? "tv" : "cn",
+      };
+    }
+
+    const start = anchorClassLiteral.pos;
+    const end = endAfterOptionalCommaFollowingInSource(textAfterUnwrap, anchorClassLiteral.end);
+    const replacement = formatArrayElementsAsSiblingLines(
+      groups,
+      textPrefixFromLineStartToPosition(textAfterUnwrap, start),
+    );
     return {
       start,
       end,
