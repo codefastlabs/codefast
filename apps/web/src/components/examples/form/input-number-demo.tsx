@@ -3,11 +3,12 @@ import { InputNumber } from "@codefast/ui/input-number";
 
 export function InputNumberDemo() {
   return (
-    <div className="w-full max-w-xs space-y-3">
+    <div className="grid w-full max-w-xs gap-4">
       <div className="grid gap-1.5">
         <Label htmlFor="qty">Quantity</Label>
         <InputNumber defaultValue={1} id="qty" max={99} min={0} />
       </div>
+
       <div className="grid gap-1.5">
         <Label htmlFor="price">Price ($)</Label>
         <InputNumber
@@ -17,6 +18,11 @@ export function InputNumberDemo() {
           min={0}
           step={0.01}
         />
+      </div>
+
+      <div className="grid gap-1.5">
+        <Label htmlFor="cart">Cart quantity</Label>
+        <InputNumber defaultValue={2} id="cart" max={10} min={0} variant="split" />
       </div>
     </div>
   );
