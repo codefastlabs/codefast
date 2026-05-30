@@ -1,3 +1,4 @@
+import { cn } from "@codefast/tailwind-variants";
 import { Fragment } from "react";
 
 import { Button } from "@codefast/ui/button";
@@ -21,7 +22,7 @@ const ITEMS = [
 
 export function ItemDemo() {
   return (
-    <ItemGroup className="w-full max-w-sm rounded-xl border">
+    <ItemGroup className={cn("w-full max-w-sm", "rounded-xl border")}>
       {ITEMS.map(({ id, title, description, Icon }, idx) => (
         <Fragment key={id}>
           {idx > 0 && <ItemSeparator />}

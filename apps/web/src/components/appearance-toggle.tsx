@@ -1,3 +1,4 @@
+import { cn } from "@codefast/tailwind-variants";
 import type { ReactElement } from "react";
 import type { ColorScheme } from "@codefast/theme";
 import { colorSchemeSchema, useColorScheme } from "@codefast/theme";
@@ -55,7 +56,7 @@ export function AppearanceToggle(): ReactElement {
             value={value}
             aria-label={label}
             title={label}
-            className="text-muted-foreground data-[state=on]:text-foreground"
+            className={cn("text-muted-foreground", "data-[state=on]:text-foreground")}
           >
             <Icon className="size-4" strokeWidth={1.75} />
           </ToggleGroupItem>

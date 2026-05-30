@@ -1,3 +1,4 @@
+import { cn } from "@codefast/tailwind-variants";
 import {
   ContextMenu,
   ContextMenuContent,
@@ -10,7 +11,14 @@ import {
 export function ContextMenuDemo() {
   return (
     <ContextMenu>
-      <ContextMenuTrigger className="flex h-32 w-64 items-center justify-center rounded-xl border border-dashed text-sm text-muted-foreground select-none">
+      <ContextMenuTrigger
+        className={cn(
+          "flex h-32 w-64 items-center justify-center",
+          "rounded-xl border border-dashed",
+          "text-sm text-muted-foreground",
+          "select-none",
+        )}
+      >
         Right-click here
       </ContextMenuTrigger>
       <ContextMenuContent>

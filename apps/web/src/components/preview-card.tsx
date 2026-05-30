@@ -1,3 +1,4 @@
+import { cn } from "@codefast/tailwind-variants";
 import type { ReactNode } from "react";
 import { useState } from "react";
 import { Link } from "@tanstack/react-router";
@@ -36,7 +37,12 @@ export function PreviewCard({
       className={`flex scroll-mt-28 flex-col overflow-hidden rounded-2xl border border-border bg-card ${wide ? "sm:col-span-2" : ""}`}
     >
       {/* Tab bar */}
-      <div className="flex min-w-0 items-center justify-between gap-2 border-b border-border px-3">
+      <div
+        className={cn(
+          "flex min-w-0 items-center justify-between gap-2 px-3",
+          "border-b border-border",
+        )}
+      >
         <div className="flex shrink-0">
           {(["preview", "code"] as const).map((t) => (
             <button
@@ -53,14 +59,20 @@ export function PreviewCard({
             </button>
           ))}
         </div>
-        <code className="min-w-0 truncate rounded border border-border bg-muted px-1.5 py-0.5 font-mono text-[10px] text-muted-foreground">
+        <code
+          className={cn(
+            "min-w-0 px-1.5 py-0.5",
+            "rounded border border-border",
+            "truncate bg-muted font-mono text-[10px] text-muted-foreground",
+          )}
+        >
           {path}
         </code>
       </div>
 
       {/* Content */}
       {tab === "preview" ? (
-        <div className="flex min-h-40 flex-1 items-center justify-center bg-muted p-6">
+        <div className={cn("flex min-h-40 flex-1 items-center justify-center p-6", "bg-muted")}>
           {children}
         </div>
       ) : (
@@ -68,7 +80,7 @@ export function PreviewCard({
       )}
 
       {/* Meta */}
-      <div className="border-t border-border px-4 py-3">
+      <div className={cn("px-4 py-3", "border-t border-border")}>
         {slug ? (
           <Link
             to="/components/$slug"
@@ -76,12 +88,18 @@ export function PreviewCard({
             className="group inline-flex items-center gap-1 text-sm font-semibold text-foreground no-underline"
           >
             {name}
-            <ArrowUpRightIcon className="size-3.5 text-muted-foreground transition-colors group-hover:text-primary" />
+            <ArrowUpRightIcon
+              className={cn(
+                "size-3.5 text-muted-foreground",
+                "transition-colors",
+                "group-hover:text-primary",
+              )}
+            />
           </Link>
         ) : (
           <p className="text-sm font-semibold text-foreground">{name}</p>
         )}
-        <p className="mt-0.5 text-xs leading-5 text-muted-foreground">{description}</p>
+        <p className={cn("mt-0.5", "text-xs leading-5 text-muted-foreground")}>{description}</p>
       </div>
     </div>
   );
