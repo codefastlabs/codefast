@@ -312,31 +312,31 @@ const classes = cn("rounded-md px-3 py-1", disabled && "opacity-50");
 
 If you ship TanStack Start behind **[Nitro](https://v3.nitro.build/)** and **Vite 8 (Rolldown)**, you may hit a server-side `TypeError` referencing `__extends` or `__toESM(...).default` during route loaders or SSR. It originates from CJS `tslib` usage inside overlay-related dependencies (Dialog, Sheet, Menu, …) that reach for `react-remove-scroll-bar` and friends.
 
-**Preferred fix** — make Nitro pick ESM entry points from those packages:
+**Fix** — make Nitro resolve the ESM entry points of those packages via the `module` export condition. Pass it to the `nitro` plugin so the server build picks ESM over CJS:
 
 ```ts
 // vite.config.ts
 import { defineConfig } from "vite";
+import { nitro } from "nitro/vite";
 
 export default defineConfig({
-  nitro: {
-    exportConditions: ["import", "module", "default"],
-  },
-  // plugins: [tanstackStart(), nitro(), …],
+  plugins: [
+    // tanstackStart(), …
+    nitro({ exportConditions: ["module"] }),
+  ],
 });
 ```
 
-**Fallback** — alias `tslib` to its ESM build:
+Keep the client `resolve.conditions` aligned with the server so both sides resolve the same entry points — a mismatch can otherwise surface as a hydration warning:
 
 ```ts
 export default defineConfig({
   resolve: {
-    alias: { tslib: "tslib/tslib.es6.mjs" },
+    conditions: ["module"],
   },
+  // …
 });
 ```
-
-> Don't use `nitro.alias` for the bare specifier `tslib`. In Nitro v3 that option is for unenv path overrides, not npm package names, and produces broken resolutions.
 
 ---
 
@@ -347,7 +347,7 @@ export default defineConfig({
 | Components render unstyled                       | Make sure CSS imports run before the first component mounts (import from the app entry).          |
 | Tailwind output is duplicated                    | Use the palette + `preset.css` import — don't also import `css/style.css` in the same app.        |
 | Dark mode doesn't apply                          | Add the `dark` class to `<html>` (or any ancestor). See [Dark mode](#dark-mode).                  |
-| `Cannot destructure property '__extends'` in SSR | Set `nitro.exportConditions: ["import", "module", "default"]` (see above).                        |
+| `Cannot destructure property '__extends'` in SSR | Pass `exportConditions: ["module"]` to the `nitro` plugin (see above).                            |
 | Missing font or radius after palette switch      | Re-import the palette **before** `preset.css`. Preset depends on palette variables being defined. |
 
 ---

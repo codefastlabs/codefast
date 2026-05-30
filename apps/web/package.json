@@ -17,6 +17,7 @@
     "@codefast/theme": "workspace:*",
     "@codefast/ui": "workspace:*",
     "@fontsource-variable/inter": "catalog:",
+    "@rolldown/plugin-babel": "catalog:",
     "@tailwindcss/vite": "catalog:",
     "@tanstack/react-devtools": "catalog:",
     "@tanstack/react-router": "catalog:",
