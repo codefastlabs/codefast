@@ -11,18 +11,24 @@ export function InputGroupDemo() {
   return (
     <div className="w-full max-w-sm space-y-3">
       <InputGroup>
-        <InputGroupText>https://</InputGroupText>
+        <InputGroupAddon>
+          <InputGroupText>https://</InputGroupText>
+        </InputGroupAddon>
         <InputGroupInput placeholder="example.com" />
       </InputGroup>
+
       <InputGroup>
         <InputGroupAddon align="inline-start">
           <SearchIcon />
         </InputGroupAddon>
         <InputGroupInput placeholder="Search…" />
       </InputGroup>
+
       <InputGroup>
         <InputGroupInput placeholder="Amount" type="number" />
-        <InputGroupButton variant="outline">USD</InputGroupButton>
+        <InputGroupAddon align={"inline-end"}>
+          <InputGroupButton variant="outline">USD</InputGroupButton>
+        </InputGroupAddon>
       </InputGroup>
     </div>
   );
