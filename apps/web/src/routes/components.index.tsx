@@ -135,8 +135,9 @@ function ComponentsPage() {
   const activeSection = useActiveSection(CATEGORY_IDS);
   const hash = useLocation({ select: (location) => location.hash });
 
-  // Scroll to the targeted component/section after navigation. Runs after
-  // layout (and wins over scroll restoration) via a short delay; scroll-margin
+  // Scroll to the targeted component/section after navigation. A single rAF
+  // defers the scroll until after the post-navigation layout has committed, so
+  // it lands on the right element and wins over scroll restoration; scroll-margin
   // on the targets handles the sticky header + category-nav offset.
   useEffect(() => {
     if (!hash) {
@@ -144,12 +145,12 @@ function ComponentsPage() {
     }
 
     const id = hash.replace(/^#/, "");
-    const timer = setTimeout(() => {
+    const frame = requestAnimationFrame(() => {
       document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
-    }, 80);
+    });
 
     return () => {
-      clearTimeout(timer);
+      cancelAnimationFrame(frame);
     };
   }, [hash]);
 
