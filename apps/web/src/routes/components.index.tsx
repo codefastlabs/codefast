@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { createFileRoute, useLocation } from "@tanstack/react-router";
 import { Badge } from "@codefast/ui/badge";
 import { highlightMany } from "#/lib/highlighter.ts";
+import { LazyVisible } from "#/components/lazy-visible";
 import { PreviewCard } from "#/components/preview-card";
 import { DEMOS } from "#/components/examples/demos";
 import type { CategoryId } from "#/data/components";
@@ -269,7 +270,9 @@ function ComponentsPage() {
                   code={demo.code}
                   highlightedCode={hl[c.slug] ?? ""}
                 >
-                  <Demo />
+                  <LazyVisible>
+                    <Demo />
+                  </LazyVisible>
                 </PreviewCard>
               );
             })}
