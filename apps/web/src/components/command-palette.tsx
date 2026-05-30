@@ -77,8 +77,8 @@ export function CommandPalette() {
         variant="secondary"
       >
         <SearchIcon className="size-4 shrink-0" />
-        <span className="hidden flex-1 text-left text-[13px] sm:inline">Search components…</span>
-        <Kbd className="hidden sm:inline-flex">⌘K</Kbd>
+        <span className="hidden flex-1 text-left text-[13px] lg:inline">Search components…</span>
+        <Kbd className="hidden lg:inline-flex">⌘K</Kbd>
       </Button>
 
       <CommandDialog open={open} onOpenChange={setOpen}>
