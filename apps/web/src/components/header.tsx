@@ -74,7 +74,7 @@ export function Header() {
         <Logo />
 
         {/* Desktop nav */}
-        <nav className="hidden items-center gap-0.5 lg:flex" aria-label="Main navigation">
+        <nav className="hidden items-center gap-0.5 md:flex" aria-label="Main navigation">
           {NAV_LINKS.map(({ to, label }) => (
             <Link
               key={to}
@@ -94,7 +94,7 @@ export function Header() {
         {/* Right */}
         <div className="ml-auto flex items-center gap-1.5">
           <CommandPalette />
-          <div className="hidden lg:block">
+          <div className="hidden md:block">
             <AppearanceToggle />
           </div>
           <GitHubLink />
@@ -105,7 +105,7 @@ export function Header() {
               <Button
                 variant="ghost"
                 size="icon"
-                className="lg:hidden"
+                className="md:hidden"
                 aria-label="Open navigation menu"
               >
                 <MenuIcon className="size-5" />
