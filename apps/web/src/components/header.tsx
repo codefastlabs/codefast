@@ -1,4 +1,3 @@
-import { cn } from "@codefast/tailwind-variants";
 import { useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { MenuIcon } from "lucide-react";
@@ -70,30 +69,17 @@ export function Header() {
   const [open, setOpen] = useState(false);
 
   return (
-    <header
-      className={cn(
-        "sticky top-0 z-50",
-        "border-b border-border",
-        "bg-background/75",
-        "backdrop-blur-[20px] backdrop-saturate-150",
-      )}
-    >
+    <header className="sticky top-0 z-50 border-b border-border bg-background/75 backdrop-blur-[20px] backdrop-saturate-150">
       <div className="container mx-auto flex h-12 items-center gap-8 px-4">
         <Logo />
 
         {/* Desktop nav */}
-        <nav className={cn("hidden items-center gap-0.5", "md:flex")} aria-label="Main navigation">
+        <nav className="hidden items-center gap-0.5 md:flex" aria-label="Main navigation">
           {NAV_LINKS.map(({ to, label }) => (
             <Link
               key={to}
               to={to}
-              className={cn(
-                "px-3 py-1.5",
-                "rounded-lg",
-                "text-[13px] text-muted-foreground no-underline",
-                "transition-colors",
-                "hover:bg-accent hover:text-foreground",
-              )}
+              className="rounded-lg px-3 py-1.5 text-[13px] text-muted-foreground no-underline transition-colors hover:bg-accent hover:text-foreground"
               activeProps={{
                 className:
                   "rounded-lg px-3 py-1.5 text-[13px] no-underline font-medium text-foreground bg-accent",
@@ -106,9 +92,9 @@ export function Header() {
         </nav>
 
         {/* Right */}
-        <div className={cn("flex items-center gap-1.5", "ml-auto")}>
+        <div className="ml-auto flex items-center gap-1.5">
           <CommandPalette />
-          <div className={cn("hidden", "md:block")}>
+          <div className="hidden md:block">
             <AppearanceToggle />
           </div>
           <GitHubLink />
@@ -138,13 +124,7 @@ export function Header() {
                       key={to}
                       to={to}
                       onClick={() => setOpen(false)}
-                      className={cn(
-                        "px-3 py-2",
-                        "rounded-lg",
-                        "text-sm text-muted-foreground no-underline",
-                        "transition-colors",
-                        "hover:bg-accent hover:text-foreground",
-                      )}
+                      className="rounded-lg px-3 py-2 text-sm text-muted-foreground no-underline transition-colors hover:bg-accent hover:text-foreground"
                       activeProps={{
                         className:
                           "rounded-lg px-3 py-2 text-sm no-underline font-medium text-foreground bg-accent",
@@ -156,13 +136,8 @@ export function Header() {
                   ))}
                 </nav>
 
-                <div className={cn("flex flex-col gap-3", "mt-6 pt-6", "border-t border-border")}>
-                  <p
-                    className={cn(
-                      "px-3",
-                      "text-xs font-semibold tracking-widest text-muted-foreground uppercase",
-                    )}
-                  >
+                <div className="mt-6 flex flex-col gap-3 border-t border-border pt-6">
+                  <p className="px-3 text-xs font-semibold tracking-widest text-muted-foreground uppercase">
                     Appearance
                   </p>
                   <div className="px-3">

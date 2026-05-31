@@ -1,4 +1,3 @@
-import { cn } from "@codefast/tailwind-variants";
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { SearchIcon } from "lucide-react";
@@ -78,10 +77,8 @@ export function CommandPalette() {
         variant="secondary"
       >
         <SearchIcon className="size-4 shrink-0" />
-        <span className={cn("hidden flex-1 text-left text-[13px]", "lg:inline")}>
-          Search components…
-        </span>
-        <Kbd className={cn("hidden", "lg:inline-flex")}>⌘K</Kbd>
+        <span className="hidden flex-1 text-left text-[13px] lg:inline">Search components…</span>
+        <Kbd className="hidden lg:inline-flex">⌘K</Kbd>
       </Button>
 
       <CommandDialog open={open} onOpenChange={setOpen}>
@@ -111,7 +108,7 @@ export function CommandPalette() {
                 }}
               >
                 <span>{component.name}</span>
-                <span className={cn("ml-auto", "text-xs text-muted-foreground capitalize")}>
+                <span className="ml-auto text-xs text-muted-foreground capitalize">
                   {component.category}
                 </span>
               </CommandItem>

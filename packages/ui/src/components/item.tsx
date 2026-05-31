@@ -127,11 +127,7 @@ type ItemContentProps = ComponentProps<"div">;
 function ItemContent({ className, ...props }: ItemContentProps): JSX.Element {
   return (
     <div
-      className={cn(
-        "flex flex-1 flex-col gap-1",
-        "[&+[data-slot=item-content]]:flex-none",
-        className,
-      )}
+      className={cn("flex flex-1 flex-col gap-1 [&+[data-slot=item-content]]:flex-none", className)}
       data-slot="item-content"
       {...props}
     />
@@ -153,7 +149,7 @@ type ItemTitleProps = ComponentProps<"div">;
 function ItemTitle({ className, ...props }: ItemTitleProps): JSX.Element {
   return (
     <div
-      className={cn("flex w-fit items-center gap-2", "text-sm leading-snug font-medium", className)}
+      className={cn("flex w-fit items-center gap-2 text-sm leading-snug font-medium", className)}
       data-slot="item-title"
       {...props}
     />
@@ -176,9 +172,7 @@ function ItemDescription({ className, ...props }: ItemDescriptionProps): JSX.Ele
   return (
     <p
       className={cn(
-        "line-clamp-2 text-sm leading-normal font-normal text-balance text-muted-foreground",
-        "[&>a]:underline [&>a]:underline-offset-4",
-        "[&>a:hover]:text-primary",
+        "line-clamp-2 text-sm leading-normal font-normal text-balance text-muted-foreground [&>a]:underline [&>a]:underline-offset-4 [&>a:hover]:text-primary",
         className,
       )}
       data-slot="item-description"

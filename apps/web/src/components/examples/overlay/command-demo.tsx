@@ -1,4 +1,3 @@
-import { cn } from "@codefast/tailwind-variants";
 import {
   Command,
   CommandEmpty,
@@ -13,7 +12,7 @@ import { CalendarIcon, FileIcon, SearchIcon, SettingsIcon, UserIcon } from "luci
 
 export function CommandDemo() {
   return (
-    <Command className={cn("w-full max-w-xs", "rounded-xl border shadow-md")}>
+    <Command className="w-full max-w-xs rounded-xl border shadow-md">
       <CommandInput placeholder="Type a command or search…" />
       <CommandList>
         <CommandEmpty>No results found.</CommandEmpty>

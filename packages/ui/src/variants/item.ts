@@ -10,25 +10,15 @@ import { tv } from "#/lib/utils";
  * @since 0.3.16-canary.0
  */
 const itemVariants = tv({
-  base: [
-    "group/item flex flex-wrap items-center",
-    "rounded-lg border border-transparent outline-hidden",
-    "text-sm",
-    "transition-colors duration-100",
-    "motion-reduce:transition-none motion-reduce:duration-0",
-    "focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50",
-    "[a]:transition-colors",
-    "[a]:motion-reduce:transition-none",
-    "[a]:hover:bg-accent/50",
-  ],
+  base: "group/item flex flex-wrap items-center rounded-lg border border-transparent text-sm outline-hidden transition-colors duration-100 focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 motion-reduce:transition-none motion-reduce:duration-0 [a]:transition-colors [a]:hover:bg-accent/50 [a]:motion-reduce:transition-none",
   defaultVariants: {
     size: "default",
     variant: "default",
   },
   variants: {
     size: {
-      default: ["gap-4", "p-4"],
-      sm: ["gap-2.5", "px-4 py-3"],
+      default: "gap-4 p-4",
+      sm: "gap-2.5 px-4 py-3",
     },
     variant: {
       default: "bg-transparent",
@@ -46,28 +36,15 @@ const itemVariants = tv({
  * @since 0.3.16-canary.0
  */
 const itemMediaVariants = tv({
-  base: [
-    "flex shrink-0 items-center justify-center gap-2",
-    "group-has-[[data-slot=item-description]]/item:translate-y-0.5 group-has-[[data-slot=item-description]]/item:self-start",
-    "[&_svg]:pointer-events-none",
-  ],
+  base: "flex shrink-0 items-center justify-center gap-2 group-has-[[data-slot=item-description]]/item:translate-y-0.5 group-has-[[data-slot=item-description]]/item:self-start [&_svg]:pointer-events-none",
   defaultVariants: {
     variant: "default",
   },
   variants: {
     variant: {
       default: "bg-transparent",
-      icon: [
-        "size-8 shrink-0",
-        "rounded-md border",
-        "bg-muted",
-        "[&_svg:not([class*='size-'])]:size-4",
-      ],
-      image: [
-        "size-10 shrink-0 overflow-hidden",
-        "rounded-md",
-        "[&_img]:size-full [&_img]:object-cover",
-      ],
+      icon: "size-8 shrink-0 rounded-md border bg-muted [&_svg:not([class*='size-'])]:size-4",
+      image: "size-10 shrink-0 overflow-hidden rounded-md [&_img]:size-full [&_img]:object-cover",
     },
   },
 });

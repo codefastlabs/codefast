@@ -1,4 +1,3 @@
-import { cn } from "@codefast/tailwind-variants";
 import { useState } from "react";
 import { Checkbox } from "@codefast/ui/checkbox";
 import { Label } from "@codefast/ui/label";
@@ -16,7 +15,7 @@ export function CheckboxDemo() {
         <Checkbox id="c2" defaultChecked />
         <Label htmlFor="c2">Subscribe to newsletter</Label>
       </div>
-      <div className={cn("flex items-center gap-2", "opacity-50")}>
+      <div className="flex items-center gap-2 opacity-50">
         <Checkbox id="c3" disabled />
         <Label htmlFor="c3">Disabled option</Label>
       </div>

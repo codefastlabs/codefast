@@ -1,4 +1,3 @@
-import { cn } from "@codefast/tailwind-variants";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Button } from "@codefast/ui/button";
 import { Badge } from "@codefast/ui/badge";
@@ -52,25 +51,13 @@ const REQUIREMENTS = [
 
 function GettingStarted() {
   return (
-    <main className={cn("container", "mx-auto px-4 pt-16 pb-32")}>
+    <main className="container mx-auto px-4 pt-16 pb-32">
       {/* Header */}
-      <section
-        className={cn(
-          "mb-16 max-w-2xl",
-          "fill-mode-both",
-          "animate-in duration-[800ms] ease-out",
-          "fade-in slide-in-from-bottom-4",
-        )}
-      >
-        <Badge variant="outline" className={cn("mb-5", "border-border", "text-muted-foreground")}>
+      <section className="mb-16 max-w-2xl animate-in duration-[800ms] ease-out fill-mode-both fade-in slide-in-from-bottom-4">
+        <Badge variant="outline" className="mb-5 border-border text-muted-foreground">
           Getting Started
         </Badge>
-        <h1
-          className={cn(
-            "mb-5",
-            "text-[clamp(40px,5vw,64px)] leading-[1.05] font-bold tracking-[-0.035em] text-foreground",
-          )}
-        >
+        <h1 className="mb-5 text-[clamp(40px,5vw,64px)] leading-[1.05] font-bold tracking-[-0.035em] text-foreground">
           Up and running <span className="text-primary">in minutes.</span>
         </h1>
         <p className="text-[17px] leading-relaxed text-muted-foreground">
@@ -81,26 +68,13 @@ function GettingStarted() {
 
       {/* Requirements */}
       <section className="mb-16">
-        <p
-          className={cn(
-            "mb-4",
-            "text-[0.7rem] font-semibold tracking-[0.1em] text-primary uppercase",
-          )}
-        >
+        <p className="mb-4 text-[0.7rem] font-semibold tracking-[0.1em] text-primary uppercase">
           Requirements
         </p>
-        <div
-          className={cn(
-            "inline-grid grid-cols-2 gap-x-12 gap-y-5",
-            "p-6",
-            "rounded-2xl border border-border",
-            "bg-muted",
-            "sm:grid-cols-4",
-          )}
-        >
+        <div className="inline-grid grid-cols-2 gap-x-12 gap-y-5 rounded-2xl border border-border bg-muted p-6 sm:grid-cols-4">
           {REQUIREMENTS.map(({ label, value }) => (
             <div key={label}>
-              <p className={cn("mb-0.5", "text-xs text-muted-foreground")}>{label}</p>
+              <p className="mb-0.5 text-xs text-muted-foreground">{label}</p>
               <p className="text-sm font-semibold text-foreground">{value}</p>
             </div>
           ))}
@@ -109,39 +83,20 @@ function GettingStarted() {
 
       {/* Steps */}
       <section className="mb-20">
-        <p
-          className={cn(
-            "mb-8",
-            "text-[0.7rem] font-semibold tracking-[0.1em] text-primary uppercase",
-          )}
-        >
+        <p className="mb-8 text-[0.7rem] font-semibold tracking-[0.1em] text-primary uppercase">
           Installation
         </p>
 
         <ol className="flex flex-col gap-10">
           {STEPS.map(({ step, title, description, code }) => (
-            <li key={step} className={cn("grid gap-5", "sm:grid-cols-[56px_1fr]")}>
-              <div
-                className={cn(
-                  "flex size-10 shrink-0 items-center justify-center",
-                  "rounded-full border border-border",
-                  "bg-muted font-mono text-xs font-bold text-muted-foreground",
-                )}
-              >
+            <li key={step} className="grid gap-5 sm:grid-cols-[56px_1fr]">
+              <div className="flex size-10 shrink-0 items-center justify-center rounded-full border border-border bg-muted font-mono text-xs font-bold text-muted-foreground">
                 {step}
               </div>
               <div>
-                <h3 className={cn("mb-2", "text-base font-semibold text-foreground")}>{title}</h3>
-                <p className={cn("mb-4", "text-sm leading-6 text-muted-foreground")}>
-                  {description}
-                </p>
-                <pre
-                  className={cn(
-                    "overflow-x-auto p-5",
-                    "rounded-xl border border-border",
-                    "bg-neutral-900 text-sm text-neutral-100",
-                  )}
-                >
+                <h3 className="mb-2 text-base font-semibold text-foreground">{title}</h3>
+                <p className="mb-4 text-sm leading-6 text-muted-foreground">{description}</p>
+                <pre className="overflow-x-auto rounded-xl border border-border bg-neutral-900 p-5 text-sm text-neutral-100">
                   <code>{code}</code>
                 </pre>
               </div>
@@ -151,28 +106,18 @@ function GettingStarted() {
       </section>
 
       {/* Component list */}
-      <section className={cn("p-8", "rounded-2xl border border-border", "bg-muted", "sm:p-10")}>
-        <p
-          className={cn(
-            "mb-3",
-            "text-[0.7rem] font-semibold tracking-[0.1em] text-primary uppercase",
-          )}
-        >
+      <section className="rounded-2xl border border-border bg-muted p-8 sm:p-10">
+        <p className="mb-3 text-[0.7rem] font-semibold tracking-[0.1em] text-primary uppercase">
           Library
         </p>
-        <h2
-          className={cn(
-            "mb-3",
-            "text-3xl leading-[1.05] font-bold tracking-[-0.035em] text-foreground",
-          )}
-        >
+        <h2 className="mb-3 text-3xl leading-[1.05] font-bold tracking-[-0.035em] text-foreground">
           {COMPONENT_COUNT}+ components available
         </h2>
-        <p className={cn("mb-8", "text-muted-foreground")}>
+        <p className="mb-8 text-muted-foreground">
           From primitives like Button and Badge to complex patterns like Command, Calendar, and
           Sidebar — everything follows the same composable API.
         </p>
-        <div className={cn("flex flex-wrap gap-2", "mb-8")}>
+        <div className="mb-8 flex flex-wrap gap-2">
           {ALL_COMPONENTS.map(({ name }) => (
             <Badge key={name} variant="secondary" className="font-normal">
               {name}

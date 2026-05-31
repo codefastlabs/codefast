@@ -14,17 +14,7 @@ function ReloadButton({ className, ...props }: ComponentProps<"button">) {
       type="button"
       {...props}
       className={cn(
-        "inline-flex items-center justify-center gap-[0.4rem]",
-        "px-[0.95rem] py-[0.38rem]",
-        "border-bh-border bh-hover-ready:border-bh-border-strong rounded-full border",
-        "bg-bh-fill-white-4 bh-hover-ready:bg-bh-fill-white-7 shadow-bh-btn-reload",
-        "text-bh-ink bh-hover-ready:text-bh-ink-hover font-[inherit] text-[0.8125rem] leading-tight font-medium tracking-[-0.015em]",
-        "bh-aria-busy:opacity-55 backdrop-blur-[0.875rem] backdrop-saturate-160",
-        "bh-aria-busy:cursor-wait",
-        "focus-visible:outline-bh-blue focus-visible:outline focus-visible:outline-offset-[0.1875rem]",
-        "disabled:cursor-not-allowed disabled:opacity-40",
-        "motion-reduce:transition-none",
-        "[transition:background_0.18s_ease,border-color_0.18s_ease,color_0.18s_ease]",
+        "border-bh-border bh-hover-ready:border-bh-border-strong bg-bh-fill-white-4 bh-hover-ready:bg-bh-fill-white-7 shadow-bh-btn-reload text-bh-ink bh-hover-ready:text-bh-ink-hover bh-aria-busy:opacity-55 bh-aria-busy:cursor-wait focus-visible:outline-bh-blue inline-flex items-center justify-center gap-[0.4rem] rounded-full border px-[0.95rem] py-[0.38rem] font-[inherit] text-[0.8125rem] leading-tight font-medium tracking-[-0.015em] backdrop-blur-[0.875rem] backdrop-saturate-160 [transition:background_0.18s_ease,border-color_0.18s_ease,color_0.18s_ease] focus-visible:outline focus-visible:outline-offset-[0.1875rem] disabled:cursor-not-allowed disabled:opacity-40 motion-reduce:transition-none",
         className,
       )}
     />
@@ -35,7 +25,7 @@ function FieldLabel({ className, ...props }: ComponentProps<"span">) {
   return (
     <span
       {...props}
-      className={cn("block", "mb-1.5", "text-[0.8125rem] font-medium text-zinc-400", className)}
+      className={cn("mb-1.5 block text-[0.8125rem] font-medium text-zinc-400", className)}
     />
   );
 }
@@ -45,14 +35,7 @@ function FieldSelect({ className, ...props }: ComponentProps<"select">) {
     <select
       {...props}
       className={cn(
-        "h-10 w-full px-3",
-        "rounded-xl border border-white/10",
-        "bg-black/30 shadow-(--shadow-bh-field-inset)",
-        "text-sm leading-normal text-zinc-100",
-        "focus:border-bh-blue focus:ring-bh-blue/35 focus:ring-2 focus:outline-none",
-        "focus-visible:outline-bh-blue focus-visible:outline focus-visible:outline-offset-2",
-        "placeholder:text-zinc-500",
-        "box-border",
+        "focus:border-bh-blue focus:ring-bh-blue/35 focus-visible:outline-bh-blue box-border h-10 w-full rounded-xl border border-white/10 bg-black/30 px-3 text-sm leading-normal text-zinc-100 shadow-(--shadow-bh-field-inset) placeholder:text-zinc-500 focus:ring-2 focus:outline-none focus-visible:outline focus-visible:outline-offset-2",
         className,
       )}
     />
@@ -65,17 +48,7 @@ function SegButton({ className, ...props }: ComponentProps<"button">) {
       type="button"
       {...props}
       className={cn(
-        "m-0 inline-flex min-h-0 items-center justify-center self-stretch px-2.5 py-[0.35rem]",
-        "border-r-bh-border rounded-none border-0 border-r",
-        "bg-bh-surface-seg text-bh-seg-ink text-[0.8125rem] leading-5 font-medium",
-        "hover:bg-bh-surface-seg-hover",
-        "disabled:hover:bg-bh-table-seg-disabled",
-        "last:border-r-0",
-        "focus:z-1 focus:outline-none",
-        "focus-visible:z-1 focus-visible:shadow-[inset_0_0_0_0.125rem_var(--color-bh-blue)]",
-        "disabled:cursor-not-allowed disabled:opacity-40",
-        "max-sm:flex-[1_1_0] max-sm:px-3",
-        "box-border",
+        "border-r-bh-border bg-bh-surface-seg text-bh-seg-ink hover:bg-bh-surface-seg-hover disabled:hover:bg-bh-table-seg-disabled m-0 box-border inline-flex min-h-0 items-center justify-center self-stretch rounded-none border-0 border-r px-2.5 py-[0.35rem] text-[0.8125rem] leading-5 font-medium last:border-r-0 focus:z-1 focus:outline-none focus-visible:z-1 focus-visible:shadow-[inset_0_0_0_0.125rem_var(--color-bh-blue)] disabled:cursor-not-allowed disabled:opacity-40 max-sm:flex-[1_1_0] max-sm:px-3",
         className,
       )}
     />
@@ -125,25 +98,10 @@ export function ChartControlPanel({
   return (
     <div
       aria-label="Chart data selection"
-      className={cn(
-        "sticky top-[max(0.5rem,env(safe-area-inset-top,0px))] z-40 flex flex-col gap-3",
-        "mt-6 mb-5 px-3 py-3",
-        "border-bh-border rounded-[1.25rem] border",
-        "bg-bh-surface-sticky shadow-bh-sticky",
-        "backdrop-blur-[2.25rem] backdrop-saturate-200",
-        "max-sm:gap-2 max-sm:py-2.5",
-        "sm:top-3 sm:-mx-2 sm:mt-8 sm:mb-6 sm:gap-4 sm:px-5 sm:py-4",
-      )}
+      className="border-bh-border bg-bh-surface-sticky shadow-bh-sticky sticky top-[max(0.5rem,env(safe-area-inset-top,0px))] z-40 mt-6 mb-5 flex flex-col gap-3 rounded-[1.25rem] border px-3 py-3 backdrop-blur-[2.25rem] backdrop-saturate-200 max-sm:gap-2 max-sm:py-2.5 sm:top-3 sm:-mx-2 sm:mt-8 sm:mb-6 sm:gap-4 sm:px-5 sm:py-4"
     >
-      <div
-        className={cn("flex flex-wrap items-center justify-between gap-2 gap-y-2", "sm:gap-y-1")}
-      >
-        <p
-          className={cn(
-            "mb-0",
-            "text-bh-label text-[0.65rem] font-semibold tracking-[0.14em] uppercase",
-          )}
-        >
+      <div className="flex flex-wrap items-center justify-between gap-2 gap-y-2 sm:gap-y-1">
+        <p className="text-bh-label mb-0 text-[0.65rem] font-semibold tracking-[0.14em] uppercase">
           Chart data
         </p>
         <div className="flex shrink-0 items-center gap-2">
@@ -171,22 +129,10 @@ export function ChartControlPanel({
           </ReloadButton>
         </div>
       </div>
-      <div
-        className={cn(
-          "flex flex-col gap-4",
-          "max-sm:grid max-sm:grid-cols-2 max-sm:gap-2 max-sm:rounded-xl max-sm:bg-black/22 max-sm:p-2 max-sm:[box-shadow:inset_0_0.0625rem_0_rgba(255,255,255,0.05),0_0_0_0.0625rem_rgba(255,255,255,0.06)]",
-          "sm:flex-row sm:flex-wrap sm:items-end sm:gap-3",
-        )}
-      >
-        <div
-          className={cn(
-            "flex w-full min-w-0 flex-col gap-2",
-            "max-sm:col-span-full max-sm:mb-0.5 max-sm:gap-1.5 max-sm:border-b max-sm:border-white/6 max-sm:pb-2",
-            "sm:w-auto sm:max-w-none sm:flex-[1_1_20rem] sm:flex-row sm:flex-wrap sm:items-end",
-          )}
-        >
+      <div className="flex flex-col gap-4 max-sm:grid max-sm:grid-cols-2 max-sm:gap-2 max-sm:rounded-xl max-sm:bg-black/22 max-sm:p-2 max-sm:[box-shadow:inset_0_0.0625rem_0_rgba(255,255,255,0.05),0_0_0_0.0625rem_rgba(255,255,255,0.06)] sm:flex-row sm:flex-wrap sm:items-end sm:gap-3">
+        <div className="flex w-full min-w-0 flex-col gap-2 max-sm:col-span-full max-sm:mb-0.5 max-sm:gap-1.5 max-sm:border-b max-sm:border-white/6 max-sm:pb-2 sm:w-auto sm:max-w-none sm:flex-[1_1_20rem] sm:flex-row sm:flex-wrap sm:items-end">
           <label
-            className={cn("w-full min-w-0 flex-1", "sm:w-auto sm:max-w-md sm:min-w-56")}
+            className="w-full min-w-0 flex-1 sm:w-auto sm:max-w-md sm:min-w-56"
             htmlFor="ctrl-scenario"
           >
             <FieldLabel className="max-sm:mb-[0.2rem] max-sm:text-[0.6875rem] max-sm:leading-[1.2]">
@@ -208,15 +154,7 @@ export function ChartControlPanel({
           </label>
           <div
             aria-label="Previous or next scenario in the filtered list"
-            className={cn(
-              "inline-flex h-10 w-full shrink-0 flex-wrap items-stretch overflow-hidden",
-              "border-bh-border rounded-xl border",
-              "bg-bh-surface-toolbar shadow-bh-toolbar",
-              "backdrop-blur-md backdrop-saturate-150",
-              "max-sm:h-auto max-sm:min-h-11 max-sm:w-full",
-              "sm:w-auto",
-              "box-border",
-            )}
+            className="border-bh-border bg-bh-surface-toolbar shadow-bh-toolbar box-border inline-flex h-10 w-full shrink-0 flex-wrap items-stretch overflow-hidden rounded-xl border backdrop-blur-md backdrop-saturate-150 max-sm:h-auto max-sm:min-h-11 max-sm:w-full sm:w-auto"
             role="group"
           >
             <SegButton
@@ -240,10 +178,7 @@ export function ChartControlPanel({
           </div>
         </div>
         <label
-          className={cn(
-            "w-full min-w-0",
-            "sm:w-auto sm:max-w-88 sm:min-w-[min(100%,16.25rem)] sm:flex-[1.1]",
-          )}
+          className="w-full min-w-0 sm:w-auto sm:max-w-88 sm:min-w-[min(100%,16.25rem)] sm:flex-[1.1]"
           htmlFor="ctrl-env"
         >
           <FieldLabel className="max-sm:mb-[0.2rem] max-sm:text-[0.6875rem] max-sm:leading-[1.2]">
@@ -265,10 +200,7 @@ export function ChartControlPanel({
           </FieldSelect>
         </label>
         <label
-          className={cn(
-            "w-full min-w-0 shrink-0",
-            "sm:w-auto sm:max-w-44 sm:min-w-[min(100%,10rem)]",
-          )}
+          className="w-full min-w-0 shrink-0 sm:w-auto sm:max-w-44 sm:min-w-[min(100%,10rem)]"
           htmlFor="ctrl-run-window"
         >
           <FieldLabel className="max-sm:mb-[0.2rem] max-sm:text-[0.6875rem] max-sm:leading-[1.2]">

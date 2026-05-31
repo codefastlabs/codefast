@@ -18,23 +18,12 @@ type ProgressProps = ComponentProps<typeof ProgressPrimitive.Root>;
 function Progress({ className, value, ...props }: ProgressProps): JSX.Element {
   return (
     <ProgressPrimitive.Root
-      className={cn(
-        "relative",
-        "h-2 w-full overflow-hidden",
-        "rounded-full",
-        "bg-primary/20",
-        className,
-      )}
+      className={cn("relative h-2 w-full overflow-hidden rounded-full bg-primary/20", className)}
       data-slot="progress"
       {...props}
     >
       <ProgressPrimitive.Indicator
-        className={cn(
-          "size-full flex-1",
-          "bg-primary",
-          "transition-[transform] duration-500 ease-gentle",
-          "motion-reduce:transition-none motion-reduce:duration-0",
-        )}
+        className="size-full flex-1 bg-primary transition-[transform] duration-500 ease-gentle motion-reduce:transition-none motion-reduce:duration-0"
         data-slot="progress-indicator"
         style={{
           transform: `translateX(-${(100 - (value ?? 0)).toString()}%)`,

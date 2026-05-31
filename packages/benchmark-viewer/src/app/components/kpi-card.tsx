@@ -9,13 +9,7 @@ export function KpiCard({ className, ...props }: ComponentProps<"div">) {
   return (
     <div
       className={cn(
-        "px-[1.05rem] py-[0.85rem]",
-        "border-bh-border rounded-2xl border",
-        "bg-bh-surface-elevated shadow-bh-card",
-        "backdrop-blur-lg backdrop-saturate-160",
-        "hover:border-bh-border-strong hover:shadow-bh-card-hover",
-        "motion-reduce:transition-none",
-        "[transition:border-color_0.2s_ease,box-shadow_0.2s_ease]",
+        "border-bh-border bg-bh-surface-elevated shadow-bh-card hover:border-bh-border-strong hover:shadow-bh-card-hover rounded-2xl border px-[1.05rem] py-[0.85rem] backdrop-blur-lg backdrop-saturate-160 [transition:border-color_0.2s_ease,box-shadow_0.2s_ease] motion-reduce:transition-none",
         className,
       )}
       {...props}
@@ -30,8 +24,7 @@ export function KpiCardLabel({ className, ...props }: ComponentProps<"div">) {
   return (
     <div
       className={cn(
-        "mb-[0.4rem]",
-        "text-bh-label text-[0.625rem] font-semibold tracking-[0.09em] uppercase",
+        "text-bh-label mb-[0.4rem] text-[0.625rem] font-semibold tracking-[0.09em] uppercase",
         className,
       )}
       {...props}

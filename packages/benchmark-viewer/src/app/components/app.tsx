@@ -101,32 +101,21 @@ export function App({ initialPayload }: { initialPayload?: EmbeddedViewerPayload
         <SkipToChartLink />
         <div
           aria-live="polite"
-          className={cn(
-            "fixed inset-0 z-100 flex items-center justify-center",
-            "bg-bh-overlay",
-            "backdrop-blur-lg",
-          )}
+          className="bg-bh-overlay fixed inset-0 z-100 flex items-center justify-center backdrop-blur-lg"
           id="loading-overlay"
           role="status"
         >
           {loadError ? (
             <div className="text-center">
               <p className="text-sm text-red-400">Failed to load bench data.</p>
-              <p className={cn("mt-1", "text-xs text-zinc-500")}>{loadError}</p>
-              <p className={cn("mt-3", "text-xs text-zinc-600")}>
+              <p className="mt-1 text-xs text-zinc-500">{loadError}</p>
+              <p className="mt-3 text-xs text-zinc-600">
                 Run <code className="text-indigo-400">pnpm bench</code> first to generate data.
               </p>
             </div>
           ) : (
             <div className="text-center">
-              <div
-                className={cn(
-                  "mx-auto mb-4 h-8 w-8",
-                  "border-t-bh-blue rounded-full border-2 border-zinc-600/80",
-                  "animate-spin",
-                  "motion-reduce:animate-none",
-                )}
-              />
+              <div className="border-t-bh-blue mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-2 border-zinc-600/80 motion-reduce:animate-none" />
               <p className="text-sm text-zinc-400">Loading bench data…</p>
             </div>
           )}
@@ -140,23 +129,14 @@ export function App({ initialPayload }: { initialPayload?: EmbeddedViewerPayload
       <SkipToChartLink />
 
       <main
-        className={cn(
-          "mx-auto max-w-7xl px-3 pt-6 pb-[max(5.5rem,calc(env(safe-area-inset-bottom,0px)+4.5rem))]",
-          "sm:px-6 sm:pt-10 sm:pb-[max(5rem,calc(env(safe-area-inset-bottom,0px)+3.5rem))]",
-        )}
+        className="mx-auto max-w-7xl px-3 pt-6 pb-[max(5.5rem,calc(env(safe-area-inset-bottom,0px)+4.5rem))] sm:px-6 sm:pt-10 sm:pb-[max(5rem,calc(env(safe-area-inset-bottom,0px)+3.5rem))]"
         id="app"
       >
         <PageHeader title={payload.title} onCopyLink={copyViewLink} />
 
         {payload.benchResultsWarning !== undefined && payload.benchResultsWarning.length > 0 && (
           <div
-            className={cn(
-              "mt-5 px-4 py-3",
-              "rounded-xl border border-amber-400/20",
-              "bg-amber-500/9 shadow-sm shadow-amber-950/20",
-              "text-sm text-amber-100/95",
-              "backdrop-blur-md backdrop-saturate-150",
-            )}
+            className="mt-5 rounded-xl border border-amber-400/20 bg-amber-500/9 px-4 py-3 text-sm text-amber-100/95 shadow-sm shadow-amber-950/20 backdrop-blur-md backdrop-saturate-150"
             role="alert"
           >
             <strong className="font-semibold text-amber-200">Bench results directory.</strong>{" "}
@@ -166,13 +146,7 @@ export function App({ initialPayload }: { initialPayload?: EmbeddedViewerPayload
 
         {showMultiEnvBanner && (
           <div
-            className={cn(
-              "mt-5 px-4 py-3",
-              "rounded-xl border border-amber-400/20",
-              "bg-amber-500/9 shadow-sm shadow-amber-950/20",
-              "text-sm text-amber-100/95",
-              "backdrop-blur-md backdrop-saturate-150",
-            )}
+            className="mt-5 rounded-xl border border-amber-400/20 bg-amber-500/9 px-4 py-3 text-sm text-amber-100/95 shadow-sm shadow-amber-950/20 backdrop-blur-md backdrop-saturate-150"
             role="status"
           >
             <strong className="font-semibold text-amber-200">
@@ -259,13 +233,7 @@ export function App({ initialPayload }: { initialPayload?: EmbeddedViewerPayload
           snapshotRows={snapshotRows}
         />
 
-        <p
-          className={cn(
-            "mt-10 pt-6",
-            "border-t border-white/6",
-            "text-[0.8125rem] leading-relaxed text-zinc-500",
-          )}
-        >
+        <p className="mt-10 border-t border-white/6 pt-6 text-[0.8125rem] leading-relaxed text-zinc-500">
           Reload data from Chart data or refresh the page for the latest snapshot ·{" "}
           {payload.runs.length} runs · {payload.scenarios.length} scenarios.
           {payload.generatedAtIso ? (
@@ -292,15 +260,7 @@ export function App({ initialPayload }: { initialPayload?: EmbeddedViewerPayload
         aria-atomic="true"
         aria-live="polite"
         className={cn(
-          "fixed right-[max(1rem,env(safe-area-inset-right,0px))] bottom-[max(1rem,env(safe-area-inset-bottom,0px))] z-200",
-          "max-w-[min(20rem,calc(100vw-2rem))] px-[1.05rem] py-[0.7rem]",
-          "border-bh-blue-ring rounded-[0.875rem] border",
-          "bg-bh-surface-toast shadow-bh-toast",
-          "text-bh-toast-ink text-[0.8125rem] font-medium",
-          "bh-toast-visible:opacity-100 bh-toast-visible:translate-y-0 bh-toast-visible:scale-100 translate-y-2 scale-[0.98] opacity-0 backdrop-blur-[1.25rem] backdrop-saturate-180",
-          "bh-toast-visible:pointer-events-auto pointer-events-none",
-          "motion-reduce:transition-none",
-          "[transition:opacity_0.22s_ease,transform_0.22s_cubic-bezier(0.2,0.8,0.2,1)]",
+          "border-bh-blue-ring bg-bh-surface-toast shadow-bh-toast text-bh-toast-ink bh-toast-visible:opacity-100 bh-toast-visible:translate-y-0 bh-toast-visible:scale-100 bh-toast-visible:pointer-events-auto pointer-events-none fixed right-[max(1rem,env(safe-area-inset-right,0px))] bottom-[max(1rem,env(safe-area-inset-bottom,0px))] z-200 max-w-[min(20rem,calc(100vw-2rem))] translate-y-2 scale-[0.98] rounded-[0.875rem] border px-[1.05rem] py-[0.7rem] text-[0.8125rem] font-medium opacity-0 backdrop-blur-[1.25rem] backdrop-saturate-180 [transition:opacity_0.22s_ease,transform_0.22s_cubic-bezier(0.2,0.8,0.2,1)] motion-reduce:transition-none",
           { "is-visible": toastMsg },
         )}
         id="bh-toast"

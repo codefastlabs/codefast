@@ -11,16 +11,11 @@ interface MetricsPanelProps {
 }
 
 const chip = tv({
-  base: [
-    "inline-flex items-center",
-    "px-[0.65rem] py-[0.15rem]",
-    "rounded-full",
-    "text-[0.7rem] font-medium",
-  ],
+  base: "inline-flex items-center rounded-full px-[0.65rem] py-[0.15rem] text-[0.7rem] font-medium",
   variants: {
     variant: {
-      warn: ["border-bh-warn-border border", "bg-bh-warn-bg text-bh-warn-fg"],
-      ok: ["border-bh-ok-border border", "bg-bh-ok-bg text-bh-ok-fg"],
+      warn: "border-bh-warn-border bg-bh-warn-bg text-bh-warn-fg border",
+      ok: "border-bh-ok-border bg-bh-ok-bg text-bh-ok-fg border",
     },
   },
 });
@@ -36,9 +31,7 @@ function renderMetaItem(item: MetaItem) {
     case "text":
       return item.value;
     case "fine-text":
-      return (
-        <span className={cn("text-[0.6875rem] leading-[1.45]", "opacity-90")}>{item.value}</span>
-      );
+      return <span className="text-[0.6875rem] leading-[1.45] opacity-90">{item.value}</span>;
     case "ratio-paired":
       return (
         <>
@@ -50,7 +43,7 @@ function renderMetaItem(item: MetaItem) {
       );
     case "iqr-table":
       return (
-        <div className={cn("flex flex-col gap-[0.42rem]", "mt-[0.28rem]")}>
+        <div className="mt-[0.28rem] flex flex-col gap-[0.42rem]">
           {item.rows.map((row) => (
             <div
               className="flex items-baseline justify-between gap-3 text-[0.72rem] leading-[1.35] tracking-[-0.012em]"
@@ -74,13 +67,7 @@ export function MetricsPanel({ currentScenario, runIndices, metricsData }: Metri
   return (
     <section
       aria-live="polite"
-      className={cn(
-        "mt-8 mb-8 px-4 py-4",
-        "border-bh-border rounded-2xl border",
-        "bg-bh-surface shadow-(--shadow-bh-glass-tight)",
-        "backdrop-blur-xl backdrop-saturate-180",
-        "sm:mt-10 sm:px-6 sm:py-5",
-      )}
+      className="border-bh-border bg-bh-surface mt-8 mb-8 rounded-2xl border px-4 py-4 shadow-(--shadow-bh-glass-tight) backdrop-blur-xl backdrop-saturate-180 sm:mt-10 sm:px-6 sm:py-5"
       id="summary"
     >
       <div className="flex flex-wrap items-baseline gap-2 gap-y-1">
@@ -94,25 +81,15 @@ export function MetricsPanel({ currentScenario, runIndices, metricsData }: Metri
         )}
       </div>
       {currentScenario?.what && (
-        <p className={cn("mt-2", "text-sm leading-relaxed text-zinc-400")}>
-          {currentScenario.what}
-        </p>
+        <p className="mt-2 text-sm leading-relaxed text-zinc-400">{currentScenario.what}</p>
       )}
-      <div
-        className={cn(
-          "grid grid-cols-[1fr] gap-3",
-          "mt-5",
-          "sm:grid-cols-[repeat(auto-fill,minmax(10.5rem,1fr))]",
-        )}
-      >
+      <div className="mt-5 grid grid-cols-[1fr] gap-3 sm:grid-cols-[repeat(auto-fill,minmax(10.5rem,1fr))]">
         {metricsData?.cards.map((card) => (
           <MetricCard key={card.label} {...card} />
         ))}
       </div>
       {metricsData?.footnote && (
-        <p className={cn("mt-3", "text-xs leading-relaxed text-zinc-500")}>
-          {metricsData.footnote}
-        </p>
+        <p className="mt-3 text-xs leading-relaxed text-zinc-500">{metricsData.footnote}</p>
       )}
     </section>
   );
@@ -123,13 +100,7 @@ function MetricCard({ label, value, meta, accentColor, isRatio }: MetricCardProp
     <div
       aria-label={label}
       className={cn(
-        "px-[1.05rem] py-[0.85rem]",
-        "border-bh-border rounded-2xl border",
-        "bg-bh-surface-elevated shadow-bh-card",
-        "backdrop-blur-lg backdrop-saturate-160",
-        "hover:border-bh-border-strong hover:shadow-bh-card-hover",
-        "motion-reduce:transition-none",
-        "[transition:border-color_0.2s_ease,box-shadow_0.2s_ease]",
+        "border-bh-border bg-bh-surface-elevated shadow-bh-card hover:border-bh-border-strong hover:shadow-bh-card-hover rounded-2xl border px-[1.05rem] py-[0.85rem] backdrop-blur-lg backdrop-saturate-160 [transition:border-color_0.2s_ease,box-shadow_0.2s_ease] motion-reduce:transition-none",
         { "[--color-bh-metric-accent:var(--color-bh-ratio-accent)]": isRatio },
       )}
       role="group"
@@ -139,12 +110,7 @@ function MetricCard({ label, value, meta, accentColor, isRatio }: MetricCardProp
           : undefined
       }
     >
-      <div
-        className={cn(
-          "mb-[0.4rem]",
-          "text-bh-metric-accent text-[0.625rem] font-semibold tracking-[0.09em] uppercase",
-        )}
-      >
+      <div className="text-bh-metric-accent mb-[0.4rem] text-[0.625rem] font-semibold tracking-[0.09em] uppercase">
         {label}
       </div>
       <div className="text-bh-metric-accent text-[1.05rem] leading-[1.3] font-semibold tracking-[-0.028em] wrap-break-word tabular-nums">

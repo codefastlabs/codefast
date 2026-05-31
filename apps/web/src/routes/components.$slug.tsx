@@ -1,4 +1,3 @@
-import { cn } from "@codefast/tailwind-variants";
 import { Link, createFileRoute, notFound } from "@tanstack/react-router";
 import { ArrowLeftIcon, ArrowRightIcon, ChevronRightIcon } from "lucide-react";
 import { Badge } from "@codefast/ui/badge";
@@ -53,17 +52,11 @@ export const Route = createFileRoute("/components/$slug")({
 
 function ComponentNotFound() {
   return (
-    <main
-      className={cn(
-        "container flex flex-col items-center",
-        "mx-auto px-4 pt-32 pb-32",
-        "text-center",
-      )}
-    >
-      <Badge variant="outline" className={cn("mb-5", "border-border", "text-muted-foreground")}>
+    <main className="container mx-auto flex flex-col items-center px-4 pt-32 pb-32 text-center">
+      <Badge variant="outline" className="mb-5 border-border text-muted-foreground">
         404
       </Badge>
-      <h1 className={cn("mb-3", "text-3xl font-bold tracking-[-0.035em] text-foreground")}>
+      <h1 className="mb-3 text-3xl font-bold tracking-[-0.035em] text-foreground">
         Component not found
       </h1>
       <p className="mb-8 max-w-sm text-muted-foreground">
@@ -95,7 +88,7 @@ function ComponentDetailPage() {
     index >= 0 && index < DEMO_COMPONENTS.length - 1 ? DEMO_COMPONENTS[index + 1] : undefined;
 
   return (
-    <main className={cn("container", "mx-auto px-4 pt-10 pb-32")}>
+    <main className="container mx-auto px-4 pt-10 pb-32">
       {/* Breadcrumb */}
       <Breadcrumb className="mb-8">
         <BreadcrumbList>
@@ -125,81 +118,40 @@ function ComponentDetailPage() {
 
       {/* Header */}
       <header className="mb-10 max-w-2xl">
-        <Badge
-          variant="outline"
-          className={cn("mb-4", "border-border", "text-muted-foreground capitalize")}
-        >
+        <Badge variant="outline" className="mb-4 border-border text-muted-foreground capitalize">
           {category?.label ?? component.category}
         </Badge>
-        <h1
-          className={cn(
-            "mb-4",
-            "text-[clamp(32px,4vw,48px)] leading-[1.05] font-bold tracking-[-0.035em] text-foreground",
-          )}
-        >
+        <h1 className="mb-4 text-[clamp(32px,4vw,48px)] leading-[1.05] font-bold tracking-[-0.035em] text-foreground">
           {component.name}
         </h1>
         <p className="text-[17px] leading-relaxed text-muted-foreground">{component.description}</p>
       </header>
 
       {/* Install + import path */}
-      <div className={cn("grid gap-3", "mb-12", "sm:grid-cols-2")}>
+      <div className="mb-12 grid gap-3 sm:grid-cols-2">
         <div>
-          <p
-            className={cn(
-              "mb-1.5",
-              "text-xs font-semibold tracking-widest text-muted-foreground uppercase",
-            )}
-          >
+          <p className="mb-1.5 text-xs font-semibold tracking-widest text-muted-foreground uppercase">
             Install
           </p>
-          <div
-            className={cn(
-              "px-4 py-2.5",
-              "rounded-xl border border-border",
-              "bg-muted font-mono text-sm text-foreground",
-            )}
-          >
+          <div className="rounded-xl border border-border bg-muted px-4 py-2.5 font-mono text-sm text-foreground">
             pnpm add @codefast/ui
           </div>
         </div>
         <div>
-          <p
-            className={cn(
-              "mb-1.5",
-              "text-xs font-semibold tracking-widest text-muted-foreground uppercase",
-            )}
-          >
+          <p className="mb-1.5 text-xs font-semibold tracking-widest text-muted-foreground uppercase">
             Import path
           </p>
-          <div
-            className={cn(
-              "px-4 py-2.5",
-              "rounded-xl border border-border",
-              "truncate bg-muted font-mono text-sm text-primary",
-            )}
-          >
+          <div className="truncate rounded-xl border border-border bg-muted px-4 py-2.5 font-mono text-sm text-primary">
             {componentPath(slug)}
           </div>
         </div>
       </div>
 
       {/* Live preview */}
-      <p
-        className={cn(
-          "mb-3",
-          "text-xs font-semibold tracking-widest text-muted-foreground uppercase",
-        )}
-      >
+      <p className="mb-3 text-xs font-semibold tracking-widest text-muted-foreground uppercase">
         Preview
       </p>
-      <div
-        className={cn(
-          "flex min-h-64 items-center justify-center p-10",
-          "rounded-2xl border border-border",
-          "bg-muted",
-        )}
-      >
+      <div className="flex min-h-64 items-center justify-center rounded-2xl border border-border bg-muted p-10">
         {demo ? (
           <demo.Demo />
         ) : (
@@ -212,42 +164,28 @@ function ComponentDetailPage() {
       {/* Source code */}
       {demo ? (
         <>
-          <p
-            className={cn(
-              "mt-12 mb-3",
-              "text-xs font-semibold tracking-widest text-muted-foreground uppercase",
-            )}
-          >
+          <p className="mt-12 mb-3 text-xs font-semibold tracking-widest text-muted-foreground uppercase">
             Example source
           </p>
-          <div className={cn("overflow-hidden", "rounded-2xl border border-border")}>
+          <div className="overflow-hidden rounded-2xl border border-border">
             <CodeBlock code={demo.code} highlightedCode={highlightedCode} />
           </div>
         </>
       ) : null}
 
       {/* Prev / next */}
-      <nav className={cn("grid gap-4", "mt-16 pt-8", "border-t border-border", "sm:grid-cols-2")}>
+      <nav className="mt-16 grid gap-4 border-t border-border pt-8 sm:grid-cols-2">
         {previous ? (
           <Link
             to="/components/$slug"
             params={{ slug: previous.slug }}
-            className={cn(
-              "group flex flex-col gap-1",
-              "p-4",
-              "rounded-xl border border-border",
-              "no-underline",
-              "transition-colors",
-              "hover:border-primary",
-            )}
+            className="group flex flex-col gap-1 rounded-xl border border-border p-4 no-underline transition-colors hover:border-primary"
           >
             <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
               <ArrowLeftIcon className="size-3.5" />
               Previous
             </span>
-            <span
-              className={cn("text-sm font-semibold text-foreground", "group-hover:text-primary")}
-            >
+            <span className="text-sm font-semibold text-foreground group-hover:text-primary">
               {previous.name}
             </span>
           </Link>
@@ -258,23 +196,13 @@ function ComponentDetailPage() {
           <Link
             to="/components/$slug"
             params={{ slug: next.slug }}
-            className={cn(
-              "group flex flex-col items-end gap-1",
-              "p-4",
-              "rounded-xl border border-border",
-              "text-right no-underline",
-              "transition-colors",
-              "hover:border-primary",
-              "sm:col-start-2",
-            )}
+            className="group flex flex-col items-end gap-1 rounded-xl border border-border p-4 text-right no-underline transition-colors hover:border-primary sm:col-start-2"
           >
             <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
               Next
               <ArrowRightIcon className="size-3.5" />
             </span>
-            <span
-              className={cn("text-sm font-semibold text-foreground", "group-hover:text-primary")}
-            >
+            <span className="text-sm font-semibold text-foreground group-hover:text-primary">
               {next.name}
             </span>
           </Link>

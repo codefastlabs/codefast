@@ -36,7 +36,7 @@ type AccordionItemProps = ComponentProps<typeof AccordionPrimitive.Item>;
 function AccordionItem({ className, ...props }: AccordionItemProps): JSX.Element {
   return (
     <AccordionPrimitive.Item
-      className={cn("border-b", "last:border-b-0", className)}
+      className={cn("border-b last:border-b-0", className)}
       data-slot="accordion-item"
       {...props}
     />
@@ -65,9 +65,7 @@ function AccordionIcon({ asChild, className, ...props }: AccordionIconProps): JS
     <Component
       aria-hidden
       className={cn(
-        "size-4 shrink-0 text-muted-foreground",
-        "translate-y-0.5 transition-transform duration-300 ease-spring",
-        "motion-reduce:transition-none motion-reduce:duration-0",
+        "size-4 shrink-0 translate-y-0.5 text-muted-foreground transition-transform duration-300 ease-spring motion-reduce:transition-none motion-reduce:duration-0",
         className,
       )}
       data-slot="accordion-icon"
@@ -93,13 +91,7 @@ function AccordionTrigger({ children, className, ...props }: AccordionTriggerPro
     <AccordionPrimitive.Header className="flex" data-slot="accordion-trigger-wrapper">
       <AccordionPrimitive.Trigger
         className={cn(
-          "group/accordion-trigger flex grow items-start justify-between gap-4 py-4",
-          "rounded-md outline-hidden",
-          "text-left text-sm font-medium",
-          "hover:not-disabled:underline",
-          "focus-visible:ring-3 focus-visible:ring-ring/50",
-          "disabled:opacity-50",
-          "[&[data-state=open]>svg]:rotate-180",
+          "group/accordion-trigger flex grow items-start justify-between gap-4 rounded-md py-4 text-left text-sm font-medium outline-hidden hover:not-disabled:underline focus-visible:ring-3 focus-visible:ring-ring/50 disabled:opacity-50 [&[data-state=open]>svg]:rotate-180",
           className,
         )}
         data-slot="accordion-trigger"
@@ -126,16 +118,11 @@ type AccordionContentProps = ComponentProps<typeof AccordionPrimitive.Content>;
 function AccordionContent({ children, className, ...props }: AccordionContentProps): JSX.Element {
   return (
     <AccordionPrimitive.Content
-      className={cn(
-        "overflow-hidden",
-        "data-open:animate-collapsible-down data-open:ease-snappy",
-        "data-closed:animate-collapsible-up data-closed:ease-snappy",
-        "motion-reduce:animate-none motion-reduce:transition-none",
-      )}
+      className="overflow-hidden motion-reduce:animate-none motion-reduce:transition-none data-open:animate-collapsible-down data-open:ease-snappy data-closed:animate-collapsible-up data-closed:ease-snappy"
       data-slot="accordion-content"
       {...props}
     >
-      <div className={cn("pt-0 pb-4", "text-sm", className)}>{children}</div>
+      <div className={cn("pt-0 pb-4 text-sm", className)}>{children}</div>
     </AccordionPrimitive.Content>
   );
 }

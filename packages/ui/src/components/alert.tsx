@@ -43,7 +43,7 @@ type AlertTitleProps = ComponentProps<"div">;
 function AlertTitle({ children, className, ...props }: AlertTitleProps): JSX.Element {
   return (
     <div
-      className={cn("col-start-2 min-h-4", "line-clamp-1 font-medium tracking-tight", className)}
+      className={cn("col-start-2 line-clamp-1 min-h-4 font-medium tracking-tight", className)}
       data-slot="alert-title"
       {...props}
     >
@@ -68,8 +68,7 @@ function AlertDescription({ className, ...props }: AlertDescriptionProps): JSX.E
   return (
     <div
       className={cn(
-        "col-start-2 grid justify-items-start gap-1 text-sm text-muted-foreground",
-        "[&_p]:leading-relaxed",
+        "col-start-2 grid justify-items-start gap-1 text-sm text-muted-foreground [&_p]:leading-relaxed",
         className,
       )}
       data-slot="alert-description"

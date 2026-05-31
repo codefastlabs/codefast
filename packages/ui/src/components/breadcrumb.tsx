@@ -38,8 +38,7 @@ function BreadcrumbList({ className, ...props }: BreadcrumbListProps): JSX.Eleme
   return (
     <ol
       className={cn(
-        "flex flex-wrap items-center gap-1.5 text-sm break-words text-muted-foreground",
-        "sm:gap-2",
+        "flex flex-wrap items-center gap-1.5 text-sm break-words text-muted-foreground sm:gap-2",
         className,
       )}
       data-slot="breadcrumb-list"
@@ -90,8 +89,7 @@ function BreadcrumbLink({ asChild, className, ...props }: BreadcrumbLinkProps): 
   return (
     <Component
       className={cn(
-        "transition-colors motion-reduce:transition-none",
-        "hover:text-foreground",
+        "transition-colors hover:text-foreground motion-reduce:transition-none",
         className,
       )}
       data-slot="breadcrumb-link"
