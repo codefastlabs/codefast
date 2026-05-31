@@ -19,7 +19,7 @@ export function RadioCardsDemo() {
             <span className="text-sm font-medium">
               {label} — {price}
             </span>
-            <span className="text-xs text-muted-foreground">{description}</span>
+            <span className="text-xs text-ui-muted">{description}</span>
           </div>
         </RadioCardsItem>
       ))}

@@ -10,7 +10,7 @@ import {
 export function ContextMenuDemo() {
   return (
     <ContextMenu>
-      <ContextMenuTrigger className="flex h-32 w-64 items-center justify-center rounded-xl border border-dashed text-sm text-muted-foreground select-none">
+      <ContextMenuTrigger className="flex h-32 w-64 items-center justify-center rounded-xl border border-dashed border-ui-border text-sm text-ui-muted select-none">
         Right-click here
       </ContextMenuTrigger>
       <ContextMenuContent>

@@ -77,7 +77,7 @@ export function CommandPalette() {
         variant="secondary"
       >
         <SearchIcon className="size-4 shrink-0" />
-        <span className="hidden flex-1 text-left text-[13px] lg:inline">Search components…</span>
+        <span className="hidden flex-1 text-left text-sm lg:inline">Search components…</span>
         <Kbd className="hidden lg:inline-flex">⌘K</Kbd>
       </Button>
 
@@ -108,7 +108,7 @@ export function CommandPalette() {
                 }}
               >
                 <span>{component.name}</span>
-                <span className="ml-auto text-xs text-muted-foreground capitalize">
+                <span className="ml-auto text-xs text-ui-muted capitalize">
                   {component.category}
                 </span>
               </CommandItem>

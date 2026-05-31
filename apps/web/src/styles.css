@@ -6,4 +6,34 @@
 @theme {
   --font-sans:
     "Inter Variable", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  --color-ui-bg: var(--ui-bg);
+  --color-ui-surface: var(--ui-surface);
+  --color-ui-card: var(--ui-card);
+  --color-ui-border: var(--ui-border);
+  --color-ui-fg: var(--ui-fg);
+  --color-ui-muted: var(--ui-muted);
+  --color-ui-brand: var(--ui-brand);
+  --color-ui-inverse: var(--ui-inverse);
+}
+
+:root {
+  --ui-bg: var(--color-neutral-50);
+  --ui-surface: var(--color-neutral-100);
+  --ui-card: var(--color-white);
+  --ui-border: var(--color-neutral-200);
+  --ui-fg: var(--color-neutral-900);
+  --ui-muted: var(--color-neutral-600);
+  --ui-brand: var(--color-sky-600);
+  --ui-inverse: var(--color-neutral-50);
+}
+
+.dark {
+  --ui-bg: var(--color-neutral-950);
+  --ui-surface: var(--color-neutral-900);
+  --ui-card: var(--color-neutral-900);
+  --ui-border: var(--color-neutral-800);
+  --ui-fg: var(--color-neutral-100);
+  --ui-muted: var(--color-neutral-400);
+  --ui-brand: var(--color-sky-400);
+  --ui-inverse: var(--color-neutral-950);
 }

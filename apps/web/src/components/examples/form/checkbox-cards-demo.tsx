@@ -23,7 +23,7 @@ export function CheckboxCardsDemo() {
         <CheckboxCardsItem key={value} value={value}>
           <div className="flex flex-col gap-0.5">
             <span className="text-sm font-medium">{label}</span>
-            <span className="text-xs text-muted-foreground">{description}</span>
+            <span className="text-xs text-ui-muted">{description}</span>
           </div>
         </CheckboxCardsItem>
       ))}

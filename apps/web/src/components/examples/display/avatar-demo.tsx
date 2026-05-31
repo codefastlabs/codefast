@@ -7,7 +7,7 @@ export function AvatarDemo() {
         <AvatarFallback>VP</AvatarFallback>
       </Avatar>
       <Avatar className="size-10">
-        <AvatarFallback className="bg-primary text-white">JD</AvatarFallback>
+        <AvatarFallback className="bg-ui-brand text-white">JD</AvatarFallback>
       </Avatar>
       <Avatar className="size-10">
         <AvatarFallback className="bg-violet-500 text-white">AS</AvatarFallback>

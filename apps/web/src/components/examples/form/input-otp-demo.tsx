@@ -16,7 +16,7 @@ export function InputOTPDemo() {
           <InputOTPSlot index={5} />
         </InputOTPGroup>
       </InputOTP>
-      <p className="text-sm text-muted-foreground">Enter the 6-digit code sent to your phone.</p>
+      <p className="text-sm text-ui-muted">Enter the 6-digit code sent to your phone.</p>
     </div>
   );
 }

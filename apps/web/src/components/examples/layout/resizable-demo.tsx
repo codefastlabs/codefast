@@ -5,7 +5,7 @@ export function ResizableDemo() {
     <ResizableGroup className="h-48 w-full max-w-md rounded-xl border">
       <ResizablePanel defaultSize={30} minSize={20}>
         <div className="flex h-full items-center justify-center p-4">
-          <span className="text-sm text-muted-foreground">Sidebar</span>
+          <span className="text-sm text-ui-muted">Sidebar</span>
         </div>
       </ResizablePanel>
       <ResizableSeparator />
@@ -13,13 +13,13 @@ export function ResizableDemo() {
         <ResizableGroup orientation="vertical">
           <ResizablePanel defaultSize={60}>
             <div className="flex h-full items-center justify-center p-4">
-              <span className="text-sm text-muted-foreground">Content</span>
+              <span className="text-sm text-ui-muted">Content</span>
             </div>
           </ResizablePanel>
           <ResizableSeparator />
           <ResizablePanel defaultSize={40}>
             <div className="flex h-full items-center justify-center p-4">
-              <span className="text-sm text-muted-foreground">Panel</span>
+              <span className="text-sm text-ui-muted">Panel</span>
             </div>
           </ResizablePanel>
         </ResizableGroup>

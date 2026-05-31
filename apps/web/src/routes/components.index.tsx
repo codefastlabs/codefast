@@ -54,14 +54,12 @@ type SectionProps = {
 function Section({ id, label, description, count, children }: SectionProps) {
   return (
     <section id={id} className="mb-20 scroll-mt-28">
-      <div className="mb-8 flex flex-col gap-3 border-b border-border pb-6 sm:flex-row sm:items-end sm:justify-between">
+      <div className="mb-8 flex flex-col gap-3 border-b border-ui-border pb-6 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h2 className="text-2xl leading-[1.05] font-bold tracking-[-0.035em] text-foreground">
-            {label}
-          </h2>
-          <p className="mt-1.5 max-w-xl text-sm leading-6 text-muted-foreground">{description}</p>
+          <h2 className="text-2xl leading-none font-bold tracking-tighter text-ui-fg">{label}</h2>
+          <p className="mt-1.5 max-w-xl text-sm leading-6 text-ui-muted">{description}</p>
         </div>
-        <span className="w-fit shrink-0 rounded-full border border-border bg-muted px-2.5 py-1 text-xs font-semibold text-muted-foreground tabular-nums">
+        <span className="w-fit shrink-0 rounded-full border border-ui-border bg-ui-surface px-2.5 py-1 text-xs font-semibold text-ui-muted tabular-nums">
           {count} components
         </span>
       </div>
@@ -145,23 +143,23 @@ function ComponentsPage() {
     <main className="container mx-auto px-4 pt-16 pb-32">
       {/* ── Header ───────────────────────────────────────────────────── */}
       <section className="mb-16 max-w-2xl animate-in duration-800 ease-out fill-mode-both fade-in slide-in-from-bottom-4">
-        <Badge variant="outline" className="mb-5 border-border text-muted-foreground">
+        <Badge variant="outline" className="mb-5 border-ui-border text-ui-muted">
           Components
         </Badge>
-        <h1 className="mb-5 text-[clamp(40px,5vw,64px)] leading-[1.05] font-bold tracking-[-0.035em] text-foreground">
-          {ALL_COMPONENTS.length}+ ready-to-use <span className="text-primary">components.</span>
+        <h1 className="mb-5 text-5xl leading-none font-bold tracking-tighter text-ui-fg md:text-6xl">
+          {ALL_COMPONENTS.length}+ ready-to-use <span className="text-ui-brand">components.</span>
         </h1>
-        <p className="text-[17px] leading-relaxed text-muted-foreground">
+        <p className="text-base leading-relaxed text-ui-muted">
           Built on Radix UI primitives with Tailwind CSS v4. Each component ships as a named
           sub-path import — no barrel files, no tree-shaking surprises, no config required.
         </p>
       </section>
 
       {/* ── Full component map ───────────────────────────────────────── */}
-      <section className="mb-16 rounded-2xl border border-border bg-muted p-6 sm:p-8">
-        <p className="mb-5 text-sm font-semibold text-foreground">
+      <section className="mb-16 rounded-2xl border border-ui-border bg-ui-surface p-6 sm:p-8">
+        <p className="mb-5 text-sm font-semibold text-ui-fg">
           All components
-          <span className="ml-2 font-normal text-muted-foreground">
+          <span className="ml-2 font-normal text-ui-muted">
             · {DEMO_COMPONENTS.length} components
           </span>
         </p>
@@ -170,7 +168,7 @@ function ComponentsPage() {
             <a
               key={slug}
               href={`#${slug}`}
-              className="rounded-full border border-border bg-card px-3 py-1 text-xs font-medium text-muted-foreground no-underline transition-colors hover:border-primary hover:text-foreground"
+              className="rounded-full border border-ui-border bg-ui-card px-3 py-1 text-xs font-medium text-ui-muted no-underline transition-colors hover:border-ui-brand hover:text-ui-fg"
             >
               {name}
             </a>
@@ -180,7 +178,7 @@ function ComponentsPage() {
 
       {/* ── Category quick-nav ──────────────────────────────────────── */}
       <nav
-        className="sticky top-12 z-30 -mx-4 mb-16 flex flex-wrap gap-2 bg-background/75 px-4 py-3 backdrop-blur-[20px]"
+        className="sticky top-12 z-30 -mx-4 mb-16 flex flex-wrap gap-2 bg-ui-bg/75 px-4 py-3 backdrop-blur-[20px]"
         aria-label="Component categories"
       >
         {CATEGORIES.map(({ id, label }) => {
@@ -193,8 +191,8 @@ function ComponentsPage() {
               aria-current={isActive ? "location" : undefined}
               className={`flex items-center gap-1.5 rounded-full border px-4 py-1.5 text-xs font-semibold no-underline transition-colors ${
                 isActive
-                  ? "border-primary bg-card text-foreground"
-                  : "border-border bg-muted text-muted-foreground hover:border-primary hover:text-foreground"
+                  ? "border-ui-brand bg-ui-card text-ui-fg"
+                  : "border-ui-border bg-ui-surface text-ui-muted hover:border-ui-brand hover:text-ui-fg"
               }`}
             >
               {label}
