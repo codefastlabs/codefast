@@ -121,7 +121,7 @@ function PaginationPrevious({ ...props }: PaginationPreviousProps): JSX.Element 
     <PaginationLink
       aria-label="Go to previous page"
       data-slot="pagination-previous"
-      size="md"
+      size="default"
       {...props}
     >
       <ChevronLeftIcon className="size-4" />
@@ -147,7 +147,12 @@ interface PaginationNextProps
  */
 function PaginationNext({ ...props }: PaginationNextProps): JSX.Element {
   return (
-    <PaginationLink aria-label="Go to next page" data-slot="pagination-next" size="md" {...props}>
+    <PaginationLink
+      aria-label="Go to next page"
+      data-slot="pagination-next"
+      size="default"
+      {...props}
+    >
       <span>Next</span>
       <ChevronRightIcon />
     </PaginationLink>

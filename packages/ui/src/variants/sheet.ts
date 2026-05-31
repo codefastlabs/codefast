@@ -10,7 +10,7 @@ import { tv } from "#/lib/utils";
  * @since 0.3.16-canary.0
  */
 const sheetContentVariants = tv({
-  base: "fixed z-50 flex flex-col overflow-auto bg-background shadow-lg ease-ui motion-reduce:animate-none motion-reduce:transition-none motion-reduce:duration-0 data-open:animate-in data-open:animation-duration-500 data-closed:animate-out data-closed:animation-duration-500",
+  base: "fixed z-50 flex flex-col overflow-auto bg-popover text-popover-foreground shadow-lg ease-ui motion-reduce:animate-none motion-reduce:transition-none motion-reduce:duration-0 data-open:animate-in data-open:animation-duration-500 data-closed:animate-out data-closed:animation-duration-500",
   defaultVariants: {
     side: "right",
   },

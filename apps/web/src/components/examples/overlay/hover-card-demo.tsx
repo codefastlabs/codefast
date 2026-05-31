@@ -14,7 +14,7 @@ export function HoverCardDemo() {
       </HoverCardTrigger>
       <HoverCardContent className="w-72">
         <div className="flex gap-3">
-          <div className="flex size-10 items-center justify-center rounded-full bg-ui-brand text-sm font-bold text-white">
+          <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-ui-brand text-sm font-bold text-white">
             CF
           </div>
           <div className="flex flex-col gap-1">

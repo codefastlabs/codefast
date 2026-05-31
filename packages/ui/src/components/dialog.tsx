@@ -68,7 +68,7 @@ function DialogContent({
     <DialogPrimitive.Portal>
       <DialogPrimitive.Overlay
         className={cn(
-          "fixed inset-0 z-50 bg-black/40 backdrop-blur-sm ease-gentle motion-reduce:animate-none motion-reduce:transition-none motion-reduce:duration-0 data-open:animate-in data-open:duration-300 data-open:fade-in-0 data-closed:animate-out data-closed:duration-200 data-closed:fade-out-0",
+          "fixed inset-0 z-50 bg-black/10 ease-gentle supports-backdrop-filter:backdrop-blur-xs motion-reduce:animate-none motion-reduce:transition-none motion-reduce:duration-0 data-open:animate-in data-open:duration-300 data-open:fade-in-0 data-closed:animate-out data-closed:duration-200 data-closed:fade-out-0",
           classNames?.overlay,
         )}
         data-slot="dialog-overlay"
@@ -83,7 +83,7 @@ function DialogContent({
       >
         <div
           className={cn(
-            "relative row-start-2 flex w-full flex-col rounded-t-2xl border bg-popover text-popover-foreground shadow-lg sm:max-w-lg sm:rounded-2xl",
+            "relative row-start-2 flex w-full flex-col rounded-t-xl bg-popover text-popover-foreground ring-1 ring-foreground/10 sm:max-w-lg sm:rounded-xl",
             classNames?.content,
             className,
           )}

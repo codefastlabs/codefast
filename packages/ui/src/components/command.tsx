@@ -47,7 +47,7 @@ type CommandDialogProps = ComponentProps<typeof Dialog>;
 function CommandDialog({ children, ...props }: CommandDialogProps): JSX.Element {
   return (
     <Dialog data-slot="command-dialog" {...props}>
-      <DialogContent className="rounded-t-lg sm:rounded-lg" data-slot="command-dialog-content">
+      <DialogContent className="rounded-t-xl sm:rounded-xl" data-slot="command-dialog-content">
         <VisuallyHidden>
           <DialogTitle>Search command</DialogTitle>
           <DialogDescription>

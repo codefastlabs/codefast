@@ -19,7 +19,7 @@ function Label({ className, ...props }: LabelProps): JSX.Element {
   return (
     <LabelPrimitive.Root
       className={cn(
-        "inline-block text-sm leading-none font-medium group-data-disabled:opacity-50 peer-disabled:opacity-50 peer-aria-invalid:text-destructive peer-data-disabled:opacity-50 data-invalid:text-destructive",
+        "flex items-center gap-2 text-sm leading-none font-medium select-none group-data-disabled:pointer-events-none group-data-disabled:opacity-50 peer-disabled:cursor-not-allowed peer-disabled:opacity-50 peer-aria-invalid:text-destructive peer-data-disabled:opacity-50 data-invalid:text-destructive",
         className,
       )}
       data-slot="label"

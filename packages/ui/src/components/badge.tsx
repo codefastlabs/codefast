@@ -23,7 +23,12 @@ function Badge({ asChild, className, variant, ...props }: BadgeProps): JSX.Eleme
   const Component = asChild ? Slot : "span";
 
   return (
-    <Component className={badgeVariants({ className, variant })} data-slot="badge" {...props} />
+    <Component
+      className={badgeVariants({ className, variant })}
+      data-slot="badge"
+      data-variant={variant}
+      {...props}
+    />
   );
 }
 

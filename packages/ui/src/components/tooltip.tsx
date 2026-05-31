@@ -73,7 +73,7 @@ function TooltipContent({
     <TooltipPrimitive.Portal>
       <TooltipPrimitive.Content
         className={cn(
-          "z-50 w-fit max-w-(--radix-tooltip-content-available-width) origin-(--radix-tooltip-content-transform-origin) rounded-md bg-primary px-3 py-1.5 text-xs text-balance text-primary-foreground ease-snappy data-[state=delayed-open]:animate-in data-[state=delayed-open]:duration-150 data-[state=delayed-open]:fade-in-0 data-[state=delayed-open]:zoom-in-95 motion-reduce:animate-none motion-reduce:transition-none motion-reduce:duration-0 data-[state=delayed-open]:data-side-top:slide-in-from-bottom-2 data-[state=delayed-open]:data-side-right:slide-in-from-left-2 data-[state=delayed-open]:data-side-bottom:slide-in-from-top-2 data-[state=delayed-open]:data-side-left:slide-in-from-right-2 data-closed:animate-out data-closed:duration-100 data-closed:fade-out-0 data-closed:zoom-out-95 data-closed:data-side-top:slide-out-to-bottom-2 data-closed:data-side-right:slide-out-to-left-2 data-closed:data-side-bottom:slide-out-to-top-2 data-closed:data-side-left:slide-out-to-right-2",
+          "z-50 w-fit max-w-(--radix-tooltip-content-available-width) origin-(--radix-tooltip-content-transform-origin) rounded-md bg-foreground px-3 py-1.5 text-xs text-balance text-background ease-snappy data-[state=delayed-open]:animate-in data-[state=delayed-open]:duration-150 data-[state=delayed-open]:fade-in-0 data-[state=delayed-open]:zoom-in-95 motion-reduce:animate-none motion-reduce:transition-none motion-reduce:duration-0 data-[state=delayed-open]:data-side-top:slide-in-from-bottom-2 data-[state=delayed-open]:data-side-right:slide-in-from-left-2 data-[state=delayed-open]:data-side-bottom:slide-in-from-top-2 data-[state=delayed-open]:data-side-left:slide-in-from-right-2 data-closed:animate-out data-closed:duration-100 data-closed:fade-out-0 data-closed:zoom-out-95 data-closed:data-side-top:slide-out-to-bottom-2 data-closed:data-side-right:slide-out-to-left-2 data-closed:data-side-bottom:slide-out-to-top-2 data-closed:data-side-left:slide-out-to-right-2",
           className,
         )}
         collisionPadding={8}
@@ -103,7 +103,7 @@ type TooltipArrowProps = ComponentProps<typeof TooltipPrimitive.Arrow>;
 function TooltipArrow({ className, ...props }: TooltipArrowProps): JSX.Element {
   return (
     <TooltipPrimitive.Arrow
-      className={cn("fill-primary", className)}
+      className={cn("fill-foreground", className)}
       data-slot="tooltip-arrow"
       {...props}
     />

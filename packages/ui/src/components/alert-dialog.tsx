@@ -65,7 +65,7 @@ function AlertDialogContent({
     <AlertDialogPrimitive.Portal>
       <AlertDialogPrimitive.Overlay
         className={cn(
-          "fixed inset-0 z-50 bg-black/50 ease-ui motion-reduce:animate-none motion-reduce:transition-none data-open:animate-in data-open:fade-in-0 data-closed:animate-out data-closed:fade-out-0",
+          "fixed inset-0 z-50 bg-black/10 ease-ui supports-backdrop-filter:backdrop-blur-xs motion-reduce:animate-none motion-reduce:transition-none data-open:animate-in data-open:fade-in-0 data-closed:animate-out data-closed:fade-out-0",
           classNames?.overlay,
         )}
         data-slot="alert-dialog-overlay"
@@ -80,7 +80,7 @@ function AlertDialogContent({
       >
         <div
           className={cn(
-            "relative row-start-2 flex w-full max-w-lg flex-col rounded-2xl border bg-popover text-popover-foreground shadow-lg",
+            "relative row-start-2 flex w-full max-w-lg flex-col rounded-xl bg-popover text-popover-foreground ring-1 ring-foreground/10",
             classNames?.content,
             className,
           )}
