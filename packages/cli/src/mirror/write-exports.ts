@@ -22,6 +22,7 @@ export async function writePackageJsonExportsAtomic(
     managedExportSpecifiers: Array<string>;
     originalPathBySpecifier: ExportOriginalPathBySpecifier;
   },
+  write = true,
 ): Promise<{ prunedKeys: Array<string> }> {
   function containsDistTarget(value: unknown): boolean {
     if (typeof value === "string") {
@@ -162,6 +163,11 @@ export async function writePackageJsonExportsAtomic(
     ),
   )) {
     sortedExportMap[exportSpecifier] = mergedExportMap[exportSpecifier];
+  }
+
+  // Dry-run: skip the on-disk mutation but still report what would have been pruned.
+  if (!write) {
+    return { prunedKeys };
   }
 
   packageJson.exports = sortedExportMap;

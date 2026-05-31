@@ -15,14 +15,23 @@ const cliLogger: CliLoggerLike = logger;
 export class MirrorSyncProgressPresenter implements MirrorSyncProgressListener {
   private readonly reporter = new MirrorSyncReporter();
   private verbose = false;
+  private dryRun = false;
 
-  configure(options: { readonly noColor: boolean; readonly verbose: boolean }): void {
+  configure(options: {
+    readonly noColor: boolean;
+    readonly verbose: boolean;
+    readonly dryRun: boolean;
+  }): void {
     this.verbose = options.verbose;
+    this.dryRun = options.dryRun;
     this.reporter.configureMirrorColors(options.noColor);
   }
 
   onBanner(): void {
     this.reporter.mirrorBanner(cliLogger);
+    if (this.dryRun) {
+      this.reporter.mirrorDryRunNotice(cliLogger);
+    }
   }
 
   onProcessingMode(mode: MirrorProcessingModeInput): void {

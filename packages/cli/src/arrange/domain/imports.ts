@@ -78,13 +78,17 @@ function removeCnSpecifier(
   if (idx === 0) {
     // First specifier: remove "cn, " up to the start of the next one
     const next = allSpecifiers[1];
-    if (!next) {return sourceText;}
+    if (!next) {
+      return sourceText;
+    }
     return sourceText.slice(0, specifier.pos) + sourceText.slice(next.pos);
   }
   // Non-first specifier: remove from end of previous specifier to end of cn specifier
   // (covers the ", cn" including any trailing comma)
   const prev = allSpecifiers[idx - 1];
-  if (!prev) {return sourceText;}
+  if (!prev) {
+    return sourceText;
+  }
   const endWithTrailingComma = endAfterOptionalCommaFollowingInSource(sourceText, specifier.end);
   return sourceText.slice(0, prev.end) + sourceText.slice(endWithTrailingComma);
 }
@@ -100,19 +104,29 @@ export function dropCnImportIfUnused(sourceFile: DomainSourceFile): string {
 
   // Check if cn is still used in the file body (skip import statements)
   for (const stmt of sourceFile.statements) {
-    if (isDomainImportDeclaration(stmt)) {continue;}
-    if (cnIsUsedInBody(stmt)) {return sourceText;}
+    if (isDomainImportDeclaration(stmt)) {
+      continue;
+    }
+    if (cnIsUsedInBody(stmt)) {
+      return sourceText;
+    }
   }
 
   // Find the import declaration that contains cn
   for (const stmt of sourceFile.statements) {
-    if (!isDomainImportDeclaration(stmt) || !stmt.importClause) {continue;}
+    if (!isDomainImportDeclaration(stmt) || !stmt.importClause) {
+      continue;
+    }
     const clause = stmt.importClause;
-    if (!clause.namedBindings || !isDomainNamedImports(clause.namedBindings)) {continue;}
+    if (!clause.namedBindings || !isDomainNamedImports(clause.namedBindings)) {
+      continue;
+    }
 
     const elements = clause.namedBindings.elements;
     const cnSpecifier = elements.find((el) => el.name.text === "cn");
-    if (!cnSpecifier) {continue;}
+    if (!cnSpecifier) {
+      continue;
+    }
 
     if (elements.length === 1) {
       // cn is the only named import — remove the entire import line (including trailing newline)

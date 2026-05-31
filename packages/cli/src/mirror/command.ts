@@ -16,20 +16,16 @@ import { MirrorSyncProgressPresenter } from "#/mirror/output";
  * @since 0.3.16-canary.0
  */
 export function createMirrorCommand(): Command {
-  const cmd = new Command("mirror").description(
-    "Keep package manifests aligned with what you ship",
-  );
-
-  cmd
-    .command("sync")
+  const cmd = new Command("mirror")
     .description("Write package.json exports from dist/ for workspace packages")
     .argument("[package]", "Optional package path relative to repo root (e.g. packages/ui)")
+    .option("--dry-run", "Report what would change without writing package.json", false)
     .option("-v, --verbose", "Print extra diagnostics", false)
     .option("--json", "Print one JSON summary on stdout (suppresses human progress)", false)
     .action(
       async (
         packageArg: string | undefined,
-        opts: { verbose?: boolean; json?: boolean },
+        opts: { dryRun?: boolean; verbose?: boolean; json?: boolean },
         command: Command,
       ) => {
         const globalsOptionCarrier =
@@ -51,11 +47,13 @@ export function createMirrorCommand(): Command {
         if (!consumeCliAppError(prelude)) {
           return;
         }
+        const write = !opts.dryRun;
         const { rootDir, config, packageFilter } = prelude.value;
         const parsed = parseWithSchema(mirrorSyncRunRequestSchema, {
           rootDir,
           config: config.mirror ?? {},
           packageFilter,
+          write,
         });
         if (!consumeCliAppError(parsed)) {
           return;
@@ -68,7 +66,7 @@ export function createMirrorCommand(): Command {
         const progressPresenter = new MirrorSyncProgressPresenter();
         const listener = json ? undefined : progressPresenter;
         if (!json) {
-          progressPresenter.configure({ noColor, verbose });
+          progressPresenter.configure({ noColor, verbose, dryRun: !write });
         }
 
         const startTime = performance.now();
@@ -81,7 +79,11 @@ export function createMirrorCommand(): Command {
         }
         if (json) {
           logger.out(
-            formatMirrorSyncJsonOutput(outcome.value, (performance.now() - startTime) / 1000),
+            formatMirrorSyncJsonOutput(
+              outcome.value,
+              (performance.now() - startTime) / 1000,
+              write,
+            ),
           );
         }
         process.exitCode = exitCodeForMirrorSyncResult(outcome.value);

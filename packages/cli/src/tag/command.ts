@@ -18,11 +18,7 @@ import { exitCodeForTagSyncResult } from "#/tag/cli-result";
 export function createTagCommand(): Command {
   const cmd = new Command("tag")
     .description("Add @since <version> JSDoc tags to exported declarations")
-    .alias("annotate")
-    .argument(
-      "[target]",
-      "Directory or file to annotate (default: auto-discover workspace packages)",
-    )
+    .argument("[target]", "Directory or file to tag (default: auto-discover workspace packages)")
     .option("--dry-run", "Show summary without writing files", false)
     .option("--json", "Print one JSON summary on stdout (suppresses human progress)", false)
     .action(async (target: string | undefined, opts: { dryRun?: boolean; json?: boolean }) => {

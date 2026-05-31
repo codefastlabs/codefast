@@ -29,6 +29,9 @@ export async function runCli(argv: Array<string>): Promise<number> {
     .description("Codefast monorepo developer CLI")
     .version(readVersion())
     .option("--no-color", "Disable ANSI color output")
+    // Required so options after a subcommand bind to that subcommand rather than
+    // the program — e.g. `arrange inspect <target> --json` (see arrange/command.ts).
+    .enablePositionalOptions()
     .configureHelp({ sortSubcommands: true })
     .showHelpAfterError("(use --help for usage)");
 

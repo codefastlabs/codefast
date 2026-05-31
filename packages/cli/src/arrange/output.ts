@@ -71,7 +71,7 @@ export function printSyncResult(result: ArrangeRunResult, write: boolean): void 
     logger.out(`Applied: ${result.totalChanged} site(s) updated.`);
   } else {
     logger.out(
-      `(Run "apply" to write changes, or "pnpm cli:arrange-apply" / "pnpm exec codefast arrange apply")`,
+      `(Re-run without --dry-run to write changes, or "pnpm cli:arrange" / "pnpm exec codefast arrange")`,
     );
   }
   const shouldShowCascadeHint = write ? result.totalChanged > 0 : result.totalFound > 0;

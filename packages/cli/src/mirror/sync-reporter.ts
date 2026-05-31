@@ -28,6 +28,7 @@ export type CliLoggerLike = {
 export interface MirrorSyncReporterPort {
   configureMirrorColors(noColor: boolean): void;
   mirrorBanner(logger: CliLoggerLike): void;
+  mirrorDryRunNotice(logger: CliLoggerLike): void;
   mirrorProcessingMode(logger: CliLoggerLike, mode: MirrorProcessingModeInput): void;
   mirrorNoPackages(logger: CliLoggerLike): void;
   logSkippedWorkspacePackage(
@@ -72,7 +73,7 @@ const ANSI = {
 } as const;
 
 /**
- * Console implementation: ANSI styling and layout for mirror sync.
+ * Console implementation: ANSI styling and layout for the mirror command.
  *
  * @since 0.3.16-canary.0
  */
@@ -86,6 +87,10 @@ export class MirrorSyncReporter implements MirrorSyncReporterPort {
   mirrorBanner(logger: CliLoggerLike): void {
     logger.out(`\n${this.paint("📦 Mirror — package exports", ANSI.bold + ANSI.cyan)}`);
     logger.out(`${this.paint("═".repeat(60), ANSI.dim)}\n`);
+  }
+
+  mirrorDryRunNotice(logger: CliLoggerLike): void {
+    logger.out(`${this.paint("Dry run — no files will be written.", ANSI.yellow)}\n`);
   }
 
   mirrorProcessingMode(logger: CliLoggerLike, mode: MirrorProcessingModeInput): void {

@@ -35,6 +35,7 @@ export async function runMirrorSync(
 ): Promise<Result<GlobalStats, AppError>> {
   const config = (input.config ?? {}) as MirrorConfig;
   const { listener } = input;
+  const write = input.write ?? true;
 
   listener?.onBanner();
 
@@ -78,7 +79,13 @@ export async function runMirrorSync(
 
     let ordinal = 1;
     for (const pkgPath of targetPackages) {
-      const pkgStats = await syncExportsForWorkspacePackage(fs, input.rootDir, pkgPath, config);
+      const pkgStats = await syncExportsForWorkspacePackage(
+        fs,
+        input.rootDir,
+        pkgPath,
+        config,
+        write,
+      );
       stats.packageDetails.push(pkgStats);
       listener?.onPackageComplete(pkgStats, ordinal, targetPackages.length);
       ordinal++;

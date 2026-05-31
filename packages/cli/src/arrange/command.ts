@@ -29,43 +29,18 @@ import { readOptionalPositionalArg } from "#/core/cli/positional";
  * @since 0.3.16-canary.0
  */
 export function createArrangeCommand(): Command {
-  const cmd = new Command("arrange").description(
-    "Analyze and regroup Tailwind classes in cn() / tv() calls (Tailwind v4)",
-  );
-
-  cmd
-    .command("analyze")
-    .description("Report long strings, nested cn in tv(), and related findings")
+  const cmd = new Command("arrange")
+    .description("Regroup Tailwind classes in cn() / tv() calls in render-pipeline order")
+    // The parent action shares option names (--json) with subcommands; positional
+    // options ensure tokens after a subcommand bind to that subcommand, not the parent.
+    .enablePositionalOptions()
     .argument("[target]", "Directory or file (default: nearest package directory from cwd)")
-    .option("--json", "Print one JSON object on stdout instead of a human report", false)
-    .action(async (target: string | undefined, opts: { json?: boolean }) => {
-      const prelude = await prepareArrangeWorkspace(nodeFilesystem, {
-        currentWorkingDirectory: process.cwd(),
-        rawTarget: readOptionalPositionalArg(target),
-      });
-      if (!consumeCliAppError(prelude)) {
-        return;
-      }
-      const { resolvedTarget } = prelude.value;
-      const parsed = parseWithSchema(arrangeAnalyzeDirectoryRequestSchema, {
-        analyzeRootPath: resolvedTarget,
-      });
-      if (!consumeCliAppError(parsed)) {
-        return;
-      }
-      const outcome = analyzeDirectory(nodeFilesystem, parsed.value.analyzeRootPath);
-      if (!consumeCliAppError(outcome)) {
-        return;
-      }
-      if (opts.json) {
-        logger.out(formatArrangeAnalyzeJsonOutput(resolvedTarget, outcome.value));
-      } else {
-        printAnalyzeReport(resolvedTarget, outcome.value);
-      }
-    });
-
-  const previewOrApply =
-    (write: boolean) => async (target: string | undefined, opts: Record<string, unknown>) => {
+    .option("--dry-run", "Preview suggested replacements without writing files", false)
+    .option("--with-classname, --with-class-name", "Append className as final cn() argument", false)
+    .option("--cn-import <spec>", "Override module specifier when adding cn import")
+    .option("--json", "Print one JSON object on stdout (suppresses human progress)", false)
+    .action(async (target: string | undefined, opts: Record<string, unknown>) => {
+      const write = !opts.dryRun;
       const prelude = await prepareArrangeWorkspace(nodeFilesystem, {
         currentWorkingDirectory: process.cwd(),
         rawTarget: readOptionalPositionalArg(target),
@@ -98,28 +73,49 @@ export function createArrangeCommand(): Command {
         printSyncResult(value, write);
         return exitCodeForArrangeSyncResult(value);
       });
-    };
+    });
 
   cmd
-    .command("preview")
-    .description("Dry-run: print suggested replacements without writing files")
+    .command("inspect")
+    .description("Report long strings, nested cn in tv(), and related findings (read-only)")
     .argument("[target]", "Directory or file (default: nearest package directory from cwd)")
-    .option("--with-classname, --with-class-name", "Append className as final cn() argument", false)
-    .option("--cn-import <spec>", "Override module specifier when adding cn import")
-    .option("--json", "Print one JSON object on stdout (suppresses human progress)", false)
-    .action(previewOrApply(false));
+    .option("--json", "Print one JSON object on stdout instead of a human report", false)
+    .action(async (target: string | undefined, opts: { json?: boolean }) => {
+      const prelude = await prepareArrangeWorkspace(nodeFilesystem, {
+        currentWorkingDirectory: process.cwd(),
+        rawTarget: readOptionalPositionalArg(target),
+      });
+      if (!consumeCliAppError(prelude)) {
+        return;
+      }
+      const { resolvedTarget } = prelude.value;
+      const parsed = parseWithSchema(arrangeAnalyzeDirectoryRequestSchema, {
+        analyzeRootPath: resolvedTarget,
+      });
+      if (!consumeCliAppError(parsed)) {
+        return;
+      }
+      const outcome = analyzeDirectory(nodeFilesystem, parsed.value.analyzeRootPath);
+      if (!consumeCliAppError(outcome)) {
+        return;
+      }
+      if (opts.json) {
+        logger.out(formatArrangeAnalyzeJsonOutput(resolvedTarget, outcome.value));
+      } else {
+        printAnalyzeReport(resolvedTarget, outcome.value);
+      }
+    });
 
   cmd
-    .command("apply")
-    .description("Apply grouping and cn-in-tv unwrap edits to files")
+    .command("simplify")
+    .description(
+      "Flatten grouped arrays and static-only cn() calls back to plain strings in tv() slots",
+    )
     .argument("[target]", "Directory or file (default: nearest package directory from cwd)")
-    .option("--with-classname, --with-class-name", "Append className as final cn() argument", false)
-    .option("--cn-import <spec>", "Override module specifier when adding cn import")
+    .option("--dry-run", "Show what simplify would change without writing files", false)
     .option("--json", "Print one JSON object on stdout (suppresses human progress)", false)
-    .action(previewOrApply(true));
-
-  const simplifyOrPreviewSimplify =
-    (write: boolean) => async (target: string | undefined, opts: Record<string, unknown>) => {
+    .action(async (target: string | undefined, opts: Record<string, unknown>) => {
+      const write = !opts.dryRun;
       const prelude = await prepareArrangeWorkspace(nodeFilesystem, {
         currentWorkingDirectory: process.cwd(),
         rawTarget: readOptionalPositionalArg(target),
@@ -141,23 +137,7 @@ export function createArrangeCommand(): Command {
           return CLI_EXIT_SUCCESS;
         },
       );
-    };
-
-  cmd
-    .command("simplify")
-    .description(
-      "Flatten grouped arrays and static-only cn() calls back to plain strings in tv() slots",
-    )
-    .argument("[target]", "Directory or file (default: nearest package directory from cwd)")
-    .option("--json", "Print one JSON object on stdout (suppresses human progress)", false)
-    .action(simplifyOrPreviewSimplify(true));
-
-  cmd
-    .command("simplify-preview")
-    .description("Dry-run: show what simplify would change without writing files")
-    .argument("[target]", "Directory or file (default: nearest package directory from cwd)")
-    .option("--json", "Print one JSON object on stdout (suppresses human progress)", false)
-    .action(simplifyOrPreviewSimplify(false));
+    });
 
   cmd
     .command("group")

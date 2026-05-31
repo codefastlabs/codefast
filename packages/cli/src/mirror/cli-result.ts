@@ -11,10 +11,15 @@ export function exitCodeForMirrorSyncResult(stats: GlobalStats): number {
 /**
  * @since 0.3.16-canary.0
  */
-export function formatMirrorSyncJsonOutput(stats: GlobalStats, elapsedSeconds: number): string {
+export function formatMirrorSyncJsonOutput(
+  stats: GlobalStats,
+  elapsedSeconds: number,
+  write = true,
+): string {
   return JSON.stringify({
     schemaVersion: 1 as const,
     ok: stats.packagesErrored === 0,
+    write,
     elapsedSeconds,
     stats,
   });
