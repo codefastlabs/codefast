@@ -44,7 +44,7 @@ export function AppearanceToggle(): ReactElement {
       onValueChange={handleValueChange}
       aria-label="Appearance"
       spacing={0}
-      className="bg-secondary"
+      className="bg-ui-surface"
     >
       {SCHEME_KEYS.map((value) => {
         const { label, Icon } = SCHEME_CONFIG[value];
@@ -55,7 +55,7 @@ export function AppearanceToggle(): ReactElement {
             value={value}
             aria-label={label}
             title={label}
-            className="text-muted-foreground data-[state=on]:text-foreground"
+            className="text-ui-muted data-[state=on]:text-ui-fg"
           >
             <Icon className="size-4" strokeWidth={1.75} />
           </ToggleGroupItem>

@@ -44,14 +44,14 @@ export function CodeBlock({ code, highlightedCode, className }: CodeBlockProps) 
   return (
     <div className="relative">
       <div
-        className={`overflow-x-auto [&_.shiki]:overflow-x-auto [&_.shiki]:bg-neutral-900! [&_.shiki]:p-5 [&_.shiki]:text-xs [&_.shiki]:leading-[1.75] [&_.shiki]:tab-2! ${className ?? ""}`}
+        className={`overflow-x-auto [&_.shiki]:overflow-x-auto [&_.shiki]:bg-neutral-900! [&_.shiki]:p-5 [&_.shiki]:text-xs [&_.shiki]:leading-relaxed [&_.shiki]:tab-2! ${className ?? ""}`}
         dangerouslySetInnerHTML={{ __html: highlightedCode }}
       />
       <button
         type="button"
         onClick={() => void handleCopy()}
         aria-label="Copy code"
-        className="absolute top-3 right-3 flex items-center gap-1.5 rounded-lg border border-white/10 bg-white/10 px-2.5 py-1.5 text-[10px] font-medium text-white/70 transition-colors hover:bg-white/20 hover:text-white"
+        className="absolute top-3 right-3 flex items-center gap-1.5 rounded-lg border border-white/10 bg-white/10 px-2.5 py-1.5 text-xs font-medium text-white/70 transition-colors hover:bg-white/20 hover:text-white"
       >
         {copied ? <CheckIcon className="size-3" /> : <CopyIcon className="size-3" />}
         {copied ? "Copied!" : "Copy"}

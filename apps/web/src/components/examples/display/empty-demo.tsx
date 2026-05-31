@@ -14,7 +14,7 @@ export function EmptyDemo() {
     <Empty className="border">
       <EmptyHeader>
         <EmptyMedia>
-          <InboxIcon className="size-10 text-muted-foreground" />
+          <InboxIcon className="size-10 text-ui-muted" />
         </EmptyMedia>
         <EmptyTitle>No messages yet</EmptyTitle>
         <EmptyDescription>When you receive messages, they will appear here.</EmptyDescription>

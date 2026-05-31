@@ -10,7 +10,7 @@ export function TabsDemo() {
       </TabsList>
       <TabsContent
         value="preview"
-        className="mt-3 rounded-lg border border-border p-4 text-sm text-muted-foreground"
+        className="mt-3 rounded-lg border border-ui-border p-4 text-sm text-ui-muted"
       >
         Live component preview renders here.
       </TabsContent>
@@ -21,7 +21,7 @@ export function TabsDemo() {
       </TabsContent>
       <TabsContent
         value="docs"
-        className="mt-3 rounded-lg border border-border p-4 text-sm text-muted-foreground"
+        className="mt-3 rounded-lg border border-ui-border p-4 text-sm text-ui-muted"
       >
         Full API reference and usage examples.
       </TabsContent>

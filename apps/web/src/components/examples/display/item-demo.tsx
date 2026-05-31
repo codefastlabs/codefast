@@ -27,7 +27,7 @@ export function ItemDemo() {
           {idx > 0 && <ItemSeparator />}
           <Item>
             <ItemMedia>
-              <Icon className="size-5 text-muted-foreground" />
+              <Icon className="size-5 text-ui-muted" />
             </ItemMedia>
             <ItemContent>
               <ItemTitle>{title}</ItemTitle>

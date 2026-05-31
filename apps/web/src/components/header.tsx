@@ -31,7 +31,7 @@ function Logo() {
         height="16"
         viewBox="0 0 16 16"
         fill="none"
-        className="text-foreground"
+        className="text-ui-fg"
         aria-hidden="true"
       >
         <rect x="1" y="1" width="6" height="6" rx="1.5" fill="currentColor" />
@@ -39,8 +39,8 @@ function Logo() {
         <rect x="1" y="9" width="6" height="6" rx="1.5" fill="currentColor" opacity="0.4" />
         <rect x="9" y="9" width="6" height="6" rx="1.5" fill="currentColor" opacity="0.15" />
       </svg>
-      <span className="text-sm font-semibold tracking-tight text-foreground">
-        codefast<span className="text-primary">/ui</span>
+      <span className="text-sm font-semibold tracking-tight text-ui-fg">
+        codefast<span className="text-ui-brand">/ui</span>
       </span>
     </Link>
   );
@@ -55,7 +55,7 @@ function GitHubLink({ className }: { className?: string }) {
       aria-label="GitHub repository"
       className={
         className ??
-        "rounded-lg p-2 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+        "rounded-lg p-2 text-ui-muted transition-colors hover:bg-ui-surface hover:text-ui-fg"
       }
     >
       <svg viewBox="0 0 16 16" aria-hidden="true" width="16" height="16" fill="currentColor">
@@ -69,7 +69,7 @@ export function Header() {
   const [open, setOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-border bg-background/75 backdrop-blur-[20px] backdrop-saturate-150">
+    <header className="sticky top-0 z-50 border-b border-ui-border bg-ui-bg/75 backdrop-blur-[20px] backdrop-saturate-150">
       <div className="container mx-auto flex h-12 items-center gap-8 px-4">
         <Logo />
 
@@ -79,10 +79,10 @@ export function Header() {
             <Link
               key={to}
               to={to}
-              className="rounded-lg px-3 py-1.5 text-[13px] text-muted-foreground no-underline transition-colors hover:bg-accent hover:text-foreground"
+              className="rounded-lg px-3 py-1.5 text-sm text-ui-muted no-underline transition-colors hover:bg-ui-surface hover:text-ui-fg"
               activeProps={{
                 className:
-                  "rounded-lg px-3 py-1.5 text-[13px] no-underline font-medium text-foreground bg-accent",
+                  "rounded-lg bg-ui-surface px-3 py-1.5 text-sm font-medium text-ui-fg no-underline",
               }}
               activeOptions={{ exact: to === "/" }}
             >
@@ -124,10 +124,10 @@ export function Header() {
                       key={to}
                       to={to}
                       onClick={() => setOpen(false)}
-                      className="rounded-lg px-3 py-2 text-sm text-muted-foreground no-underline transition-colors hover:bg-accent hover:text-foreground"
+                      className="rounded-lg px-3 py-2 text-sm text-ui-muted no-underline transition-colors hover:bg-ui-surface hover:text-ui-fg"
                       activeProps={{
                         className:
-                          "rounded-lg px-3 py-2 text-sm no-underline font-medium text-foreground bg-accent",
+                          "rounded-lg bg-ui-surface px-3 py-2 text-sm font-medium text-ui-fg no-underline",
                       }}
                       activeOptions={{ exact: to === "/" }}
                     >
@@ -136,8 +136,8 @@ export function Header() {
                   ))}
                 </nav>
 
-                <div className="mt-6 flex flex-col gap-3 border-t border-border pt-6">
-                  <p className="px-3 text-xs font-semibold tracking-widest text-muted-foreground uppercase">
+                <div className="mt-6 flex flex-col gap-3 border-t border-ui-border pt-6">
+                  <p className="px-3 text-xs font-semibold tracking-widest text-ui-muted uppercase">
                     Appearance
                   </p>
                   <div className="px-3">

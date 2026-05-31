@@ -4,7 +4,7 @@ export function ProgressDemo() {
   return (
     <div className="w-full max-w-xs space-y-3">
       <div>
-        <div className="mb-1.5 flex justify-between text-xs text-muted-foreground">
+        <div className="mb-1.5 flex justify-between text-xs text-ui-muted">
           <span>Uploading…</span>
           <span>68%</span>
         </div>

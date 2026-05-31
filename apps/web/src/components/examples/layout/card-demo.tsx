@@ -9,8 +9,8 @@ export function CardDemo() {
         <CardDescription>Up to 20 seats, unlimited projects.</CardDescription>
       </CardHeader>
       <CardContent>
-        <p className="text-2xl font-bold text-foreground">
-          $49<span className="text-sm font-normal text-muted-foreground">/mo</span>
+        <p className="text-2xl font-bold text-ui-fg">
+          $49<span className="text-sm font-normal text-ui-muted">/mo</span>
         </p>
         <Button className="mt-4 w-full" size="sm">
           Upgrade now

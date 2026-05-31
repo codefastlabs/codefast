@@ -17,19 +17,17 @@ export function NavigationMenuDemo() {
             <ul className="grid w-64 gap-3 p-4">
               <li>
                 <NavigationMenuLink asChild>
-                  <a className="block rounded-md p-3 hover:bg-accent" href="/docs/introduction">
+                  <a className="block rounded-md p-3 hover:bg-ui-surface" href="/docs/introduction">
                     <div className="text-sm font-medium">Introduction</div>
-                    <p className="mt-1 text-xs text-muted-foreground">
-                      Overview of the design system.
-                    </p>
+                    <p className="mt-1 text-xs text-ui-muted">Overview of the design system.</p>
                   </a>
                 </NavigationMenuLink>
               </li>
               <li>
                 <NavigationMenuLink asChild>
-                  <a className="block rounded-md p-3 hover:bg-accent" href="/docs/installation">
+                  <a className="block rounded-md p-3 hover:bg-ui-surface" href="/docs/installation">
                     <div className="text-sm font-medium">Installation</div>
-                    <p className="mt-1 text-xs text-muted-foreground">Step-by-step setup guide.</p>
+                    <p className="mt-1 text-xs text-ui-muted">Step-by-step setup guide.</p>
                   </a>
                 </NavigationMenuLink>
               </li>
@@ -44,7 +42,7 @@ export function NavigationMenuDemo() {
                 <li key={name}>
                   <NavigationMenuLink asChild>
                     <a
-                      className="block rounded-md px-3 py-2 text-sm hover:bg-accent"
+                      className="block rounded-md px-3 py-2 text-sm hover:bg-ui-surface"
                       href="/components"
                     >
                       {name}

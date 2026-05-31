@@ -44,11 +44,11 @@ export function SidebarDemo() {
             </SidebarGroupContent>
           </SidebarGroup>
         </SidebarContent>
-        <SidebarFooter className="px-4 py-3 text-xs text-muted-foreground">v1.0.0</SidebarFooter>
+        <SidebarFooter className="px-4 py-3 text-xs text-ui-muted">v1.0.0</SidebarFooter>
       </Sidebar>
       <main className="flex flex-1 flex-col gap-2 p-4">
         <SidebarTrigger />
-        <p className="text-sm text-muted-foreground">Main content area</p>
+        <p className="text-sm text-ui-muted">Main content area</p>
       </main>
     </SidebarProvider>
   );

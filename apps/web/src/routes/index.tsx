@@ -58,21 +58,19 @@ const COMPONENT_COUNT = ALL_COMPONENTS.length;
 
 function HeroCard() {
   return (
-    <div className="w-full max-w-sm overflow-hidden rounded-2xl border border-border bg-card shadow-2xl shadow-black/20 dark:shadow-black/60">
+    <div className="w-full max-w-sm overflow-hidden rounded-2xl border border-ui-border bg-ui-card shadow-2xl shadow-black/20 dark:shadow-black/60">
       {/* Card header */}
-      <div className="flex items-center justify-between border-b border-border px-5 py-4">
+      <div className="flex items-center justify-between border-b border-ui-border px-5 py-4">
         <div className="flex items-center gap-2.5">
           <Avatar className="size-7">
-            <AvatarFallback className="bg-primary text-[10px] font-bold text-white">
-              CF
-            </AvatarFallback>
+            <AvatarFallback className="bg-ui-brand text-xs font-bold text-white">CF</AvatarFallback>
           </Avatar>
           <div>
-            <p className="text-[13px] font-semibold text-foreground">Workspace settings</p>
-            <p className="text-[11px] text-muted-foreground">codefast/ui · Pro plan</p>
+            <p className="text-sm font-semibold text-ui-fg">Workspace settings</p>
+            <p className="text-xs text-ui-muted">codefast/ui · Pro plan</p>
           </div>
         </div>
-        <Badge variant="secondary" className="text-[10px]">
+        <Badge variant="secondary" className="text-xs">
           Saved
         </Badge>
       </div>
@@ -94,7 +92,7 @@ function HeroCard() {
         <TabsContent value="notifications" className="mt-0 space-y-4">
           {/* Email input */}
           <div className="space-y-1.5">
-            <Label className="text-xs text-muted-foreground">Notify email</Label>
+            <Label className="text-xs text-ui-muted">Notify email</Label>
             <Input type="email" defaultValue="you@company.com" />
           </div>
 
@@ -118,7 +116,7 @@ function HeroCard() {
 
           {/* Storage */}
           <div>
-            <div className="mb-1.5 flex justify-between text-[11px] text-muted-foreground">
+            <div className="mb-1.5 flex justify-between text-xs text-ui-muted">
               <span>Storage</span>
               <span>6.8 GB / 10 GB</span>
             </div>
@@ -136,18 +134,18 @@ function HeroCard() {
 
         <TabsContent value="general" className="mt-0 space-y-4">
           <div className="space-y-1.5">
-            <Label className="text-xs text-muted-foreground">Workspace name</Label>
+            <Label className="text-xs text-ui-muted">Workspace name</Label>
             <Input defaultValue="codefast/ui" />
           </div>
           <div className="space-y-1.5">
-            <Label className="text-xs text-muted-foreground">Display URL</Label>
+            <Label className="text-xs text-ui-muted">Display URL</Label>
             <Input defaultValue="codefast.dev" />
           </div>
           <Separator />
           <div className="flex items-center justify-between">
             <div className="text-left">
-              <p className="text-xs font-medium text-foreground">Public profile</p>
-              <p className="text-[11px] text-muted-foreground">Show workspace in directory</p>
+              <p className="text-xs font-medium text-ui-fg">Public profile</p>
+              <p className="text-xs text-ui-muted">Show workspace in directory</p>
             </div>
             <Switch defaultChecked className="scale-90" />
           </div>
@@ -160,19 +158,19 @@ function HeroCard() {
         </TabsContent>
 
         <TabsContent value="billing" className="mt-0 space-y-4">
-          <div className="rounded-lg border border-border p-3">
+          <div className="rounded-lg border border-ui-border p-3">
             <div className="mb-2 flex items-center justify-between">
-              <p className="text-xs font-semibold text-foreground">Pro plan</p>
-              <Badge className="text-[10px]">Active</Badge>
+              <p className="text-xs font-semibold text-ui-fg">Pro plan</p>
+              <Badge className="text-xs">Active</Badge>
             </div>
-            <p className="mb-2 text-[11px] text-muted-foreground">Up to 10 seats · 10 GB storage</p>
-            <p className="text-[11px] text-muted-foreground">
-              Next billing: <span className="text-foreground">Jun 1, 2026 · $49.00</span>
+            <p className="mb-2 text-xs text-ui-muted">Up to 10 seats · 10 GB storage</p>
+            <p className="text-xs text-ui-muted">
+              Next billing: <span className="text-ui-fg">Jun 1, 2026 · $49.00</span>
             </p>
           </div>
           <Separator />
           <div>
-            <div className="mb-1.5 flex justify-between text-[11px] text-muted-foreground">
+            <div className="mb-1.5 flex justify-between text-xs text-ui-muted">
               <span>Seats used</span>
               <span>4 / 10</span>
             </div>
@@ -200,15 +198,15 @@ function HomePage() {
       <section className="flex min-h-screen flex-col items-center justify-center gap-16 px-4 pt-16 pb-20 text-center">
         <div className="animate-in duration-800 ease-out fill-mode-both fade-in slide-in-from-bottom-4">
           <h1
-            className="mx-auto mb-5 max-w-4xl leading-[1.02] font-bold tracking-[-0.045em] text-foreground"
+            className="mx-auto mb-5 max-w-4xl leading-none font-bold tracking-tighter text-ui-fg"
             style={{ fontSize: "clamp(56px, 8vw, 96px)" }}
           >
             Beautiful components
             <br />
-            <span className="text-primary">for React 19.</span>
+            <span className="text-ui-brand">for React 19.</span>
           </h1>
 
-          <p className="mx-auto max-w-md text-[18px] leading-relaxed text-muted-foreground">
+          <p className="mx-auto max-w-md text-lg leading-relaxed text-ui-muted">
             {COMPONENT_COUNT}+ accessible components built on Radix UI and Tailwind CSS v4. Copy the
             source. Own the code.
           </p>
@@ -216,14 +214,11 @@ function HomePage() {
           <div className="mt-8 flex items-center justify-center gap-7">
             <Link
               to="/components"
-              className="text-[15px] font-medium text-primary no-underline hover:underline"
+              className="text-sm font-medium text-ui-brand no-underline hover:underline"
             >
               Browse components ›
             </Link>
-            <Link
-              to="/about"
-              className="text-[15px] text-muted-foreground no-underline hover:text-foreground"
-            >
+            <Link to="/about" className="text-sm text-ui-muted no-underline hover:text-ui-fg">
               Get started ›
             </Link>
           </div>
@@ -240,7 +235,7 @@ function HomePage() {
       {/* ── Stats band ───────────────────────────────────────────────── */}
       {/* Inverted surface: black-on-white in light, white-on-dark in dark — */}
       {/* always maximal contrast against the page background in either theme. */}
-      <section className="bg-foreground py-24 text-background">
+      <section className="bg-ui-fg py-24 text-ui-inverse">
         <div className="container mx-auto px-4">
           {/* Stats — large numbers, no borders */}
           <div className="mb-20 grid grid-cols-3 gap-4 text-center">
@@ -251,28 +246,28 @@ function HomePage() {
             ].map(({ value, label }) => (
               <div key={label}>
                 <p
-                  className="font-bold text-background tabular-nums"
+                  className="font-bold text-ui-inverse tabular-nums"
                   style={{ fontSize: "clamp(44px,6vw,80px)", letterSpacing: "-0.04em" }}
                 >
                   {value}
                 </p>
-                <p className="mt-1 text-sm text-primary">{label}</p>
+                <p className="mt-1 text-sm text-ui-brand">{label}</p>
               </div>
             ))}
           </div>
 
           {/* Divider */}
-          <div className="mb-8 border-t border-background/15" />
+          <div className="mb-8 border-t border-ui-inverse/15" />
 
           {/* Component chips */}
-          <p className="mb-6 text-center text-[11px] font-semibold tracking-widest text-background/40 uppercase">
+          <p className="mb-6 text-center text-xs font-semibold tracking-widest text-ui-inverse/40 uppercase">
             everything in the box
           </p>
           <div className="flex flex-wrap justify-center gap-2">
             {COMPONENT_NAMES.map((name) => (
               <span
                 key={name}
-                className="rounded-full border border-background/15 bg-background/5 px-3 py-1 text-xs text-background/60 transition-colors hover:border-primary/50 hover:text-background"
+                className="rounded-full border border-ui-inverse/15 bg-ui-inverse/5 px-3 py-1 text-xs text-ui-inverse/60 transition-colors hover:border-ui-brand/50 hover:text-ui-inverse"
               >
                 {name}
               </span>
@@ -285,7 +280,7 @@ function HomePage() {
       <section className="py-24 sm:py-32">
         <div className="container mx-auto px-4">
           <h2
-            className="mb-16 max-w-xl leading-[1.05] font-bold tracking-[-0.035em] text-foreground"
+            className="mb-16 max-w-xl leading-none font-bold tracking-tighter text-ui-fg"
             style={{ fontSize: "clamp(36px,4.5vw,56px)" }}
           >
             Built for the way
@@ -293,12 +288,12 @@ function HomePage() {
             you actually work.
           </h2>
 
-          <div className="divide-y divide-border">
+          <div className="divide-y divide-ui-border">
             {FEATURES.map(({ number, title, description }) => (
               <div key={title} className="grid gap-4 py-10 sm:grid-cols-[56px_1fr_1.5fr] sm:gap-10">
-                <p className="font-mono text-sm text-muted-foreground tabular-nums">{number}</p>
-                <h3 className="text-base font-semibold text-foreground">{title}</h3>
-                <p className="text-[15px] leading-relaxed text-muted-foreground">{description}</p>
+                <p className="font-mono text-sm text-ui-muted tabular-nums">{number}</p>
+                <h3 className="text-base font-semibold text-ui-fg">{title}</h3>
+                <p className="text-sm leading-relaxed text-ui-muted">{description}</p>
               </div>
             ))}
           </div>
@@ -306,26 +301,26 @@ function HomePage() {
       </section>
 
       {/* ── Install CTA ──────────────────────────────────────────────── */}
-      <section className="bg-foreground py-24 text-background sm:py-32">
+      <section className="bg-ui-fg py-24 text-ui-inverse sm:py-32">
         <div className="container mx-auto px-4 text-center">
           <h2
-            className="mx-auto mb-5 max-w-xl leading-[1.05] font-bold tracking-[-0.035em] text-background"
+            className="mx-auto mb-5 max-w-xl leading-none font-bold tracking-tighter text-ui-inverse"
             style={{ fontSize: "clamp(36px,4.5vw,56px)" }}
           >
             One command to start.
           </h2>
-          <p className="mx-auto mb-12 max-w-sm text-[17px] text-background/55">
+          <p className="mx-auto mb-12 max-w-sm text-base text-ui-inverse/55">
             Tokens, dark mode, and accessibility come pre-configured.
           </p>
 
-          <div className="mx-auto mb-8 w-fit rounded-xl border border-background/15 bg-background/10 px-7 py-3.5 font-mono text-sm text-primary">
+          <div className="mx-auto mb-8 w-fit rounded-xl border border-ui-inverse/15 bg-ui-inverse/10 px-7 py-3.5 font-mono text-sm text-ui-brand">
             <span className="mr-2 opacity-40 select-none">$</span>
             pnpm add @codefast/ui
           </div>
 
           <Link
             to="/about"
-            className="text-[15px] font-medium text-background/60 no-underline hover:text-background"
+            className="text-sm font-medium text-ui-inverse/60 no-underline hover:text-ui-inverse"
           >
             Read the docs ›
           </Link>
