@@ -134,10 +134,20 @@ type BreadcrumbSeparatorProps = ComponentProps<"li">;
 /**
  * @since 0.3.16-canary.0
  */
-function BreadcrumbSeparator({ children, ...props }: BreadcrumbSeparatorProps): JSX.Element {
+function BreadcrumbSeparator({
+  children,
+  className,
+  ...props
+}: BreadcrumbSeparatorProps): JSX.Element {
   return (
-    <li aria-hidden="true" data-slot="breadcrumb-separator" role="presentation" {...props}>
-      {children ?? <ChevronRightIcon className="size-3.5" />}
+    <li
+      aria-hidden="true"
+      data-slot="breadcrumb-separator"
+      role="presentation"
+      className={cn("[&>svg]:size-3.5", className)}
+      {...props}
+    >
+      {children ?? <ChevronRightIcon />}
     </li>
   );
 }
