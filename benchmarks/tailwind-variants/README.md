@@ -181,4 +181,4 @@ For a plain run (no `BENCH_FAST` / `BENCH_FULL`), subprocesses use `BENCHMARK_SU
 
 **Development:** `@codefast/typescript-config`, `@types/node`, `typescript`, `@typescript/native-preview`.
 
-**Engines:** Node `>=22` (see `package.json`).
+**Engines:** Node `>=24` (see `package.json`).

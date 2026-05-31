@@ -133,7 +133,7 @@ export default function App() {
 
 #### Prerequisites
 
-- **Node.js** >= 22.0.0
+- **Node.js** >= 24.0.0
 - **pnpm** 10.33.0
 
 #### Setup

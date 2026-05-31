@@ -60,7 +60,7 @@ flowchart LR
 
 ## Requirements
 
-- Node.js `>= 22.0.0`
+- Node.js `>= 24.0.0`
 - pnpm (recommended — the CLI discovers workspaces via `pnpm-workspace.yaml`)
 
 ---
