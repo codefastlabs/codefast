@@ -18,7 +18,7 @@ const invoices = [
 
 export function TableDemo() {
   return (
-    <Table className="w-full max-w-md">
+    <Table className="w-full">
       <TableCaption>A list of recent invoices.</TableCaption>
       <TableHeader>
         <TableRow>
