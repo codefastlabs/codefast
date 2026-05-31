@@ -62,7 +62,7 @@ Type-safe, ESM-only dependency injection for modern TypeScript — built on TC39
 
 ## Requirements
 
-- Node.js `>= 22.0.0` (see `package.json` → `engines`)
+- Node.js `>= 24.0.0` (see `package.json` → `engines`)
 - TypeScript `>= 5.2` with native Stage 3 decorators (TypeScript `5.9+` recommended for best inference, consistent with other Codefast packages)
 
 Enable native decorators in `tsconfig.json` — do **not** enable `experimentalDecorators`:

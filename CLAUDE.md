@@ -1,6 +1,6 @@
 # Codefast Monorepo
 
-Đây là monorepo dùng **pnpm workspaces** + **Turborepo**. Package manager: `pnpm`. Node ≥ 22.
+Đây là monorepo dùng **pnpm workspaces** + **Turborepo**. Package manager: `pnpm`. Node ≥ 24.
 
 ## Code Quality — BẮT BUỘC
 
