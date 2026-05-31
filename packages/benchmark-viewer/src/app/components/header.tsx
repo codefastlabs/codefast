@@ -1,4 +1,3 @@
-import { cn } from "@codefast/tailwind-variants";
 interface PageHeaderProps {
   title: string;
   onCopyLink: () => void;
@@ -9,73 +8,31 @@ interface PageHeaderProps {
  */
 export function PageHeader({ title, onCopyLink }: PageHeaderProps) {
   return (
-    <header className={cn("mb-8 max-w-4xl pb-6", "border-b border-white/6", "sm:mb-10 sm:pb-8")}>
+    <header className="mb-8 max-w-4xl border-b border-white/6 pb-6 sm:mb-10 sm:pb-8">
       <p className="text-[0.6875rem] font-semibold tracking-[0.22em] text-cyan-300/90 uppercase">
         Bench history viewer
       </p>
-      <h1
-        className={cn(
-          "wrap-break-word",
-          "mt-3",
-          "text-2xl font-semibold tracking-[-0.02em] text-zinc-50",
-          "sm:text-[1.75rem] sm:leading-tight",
-        )}
-      >
+      <h1 className="mt-3 text-2xl font-semibold tracking-[-0.02em] wrap-break-word text-zinc-50 sm:text-[1.75rem] sm:leading-tight">
         {title}
         <span className="font-normal text-zinc-400"> · hz/op median per run</span>
       </h1>
-      <div
-        className={cn(
-          "flex flex-col items-start gap-3",
-          "mt-3",
-          "sm:flex-row sm:items-center sm:justify-between",
-        )}
-      >
+      <div className="mt-3 flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between">
         <p className="max-w-prose text-[0.9375rem] leading-relaxed text-pretty wrap-break-word text-zinc-400/95">
           Median hz/op per saved run, optional P25–P75 bands, and primary-vs-compare ratios.{" "}
           <span className="text-zinc-500">Press</span>{" "}
-          <kbd
-            className={cn(
-              "px-1.5 py-px",
-              "rounded border border-zinc-700",
-              "bg-zinc-800 font-mono text-zinc-300",
-            )}
-          >
+          <kbd className="rounded border border-zinc-700 bg-zinc-800 px-1.5 py-px font-mono text-zinc-300">
             ⌘K
           </kbd>{" "}
           <span className="text-zinc-500">or</span>{" "}
-          <kbd
-            className={cn(
-              "px-1.5 py-px",
-              "rounded border border-zinc-700",
-              "bg-zinc-800 font-mono text-zinc-300",
-            )}
-          >
+          <kbd className="rounded border border-zinc-700 bg-zinc-800 px-1.5 py-px font-mono text-zinc-300">
             Ctrl+K
           </kbd>{" "}
           <span className="text-zinc-500">for quick actions.</span>
         </p>
-        <div
-          className={cn(
-            "flex w-full shrink-0 flex-wrap items-stretch gap-2",
-            "sm:w-auto sm:items-center sm:justify-end",
-          )}
-        >
+        <div className="flex w-full shrink-0 flex-wrap items-stretch gap-2 sm:w-auto sm:items-center sm:justify-end">
           <button
             aria-label="Copy link to this view"
-            className={cn(
-              "inline-flex min-h-11 items-center justify-center gap-[0.4rem] px-[0.95rem] py-[0.38rem]",
-              "border-bh-border bh-hover-ready:border-bh-border-strong rounded-full border",
-              "bg-bh-fill-white-4 bh-hover-ready:bg-bh-fill-white-7 shadow-bh-btn-reload",
-              "text-bh-ink bh-hover-ready:text-bh-ink-hover font-[inherit] text-[0.8125rem] leading-tight font-medium tracking-[-0.015em]",
-              "bh-aria-busy:opacity-55 backdrop-blur-[0.875rem] backdrop-saturate-160",
-              "bh-aria-busy:cursor-wait",
-              "focus-visible:outline-bh-blue focus-visible:outline focus-visible:outline-offset-[0.1875rem]",
-              "disabled:cursor-not-allowed disabled:opacity-40",
-              "motion-reduce:transition-none",
-              "sm:min-h-0",
-              "[transition:background_0.18s_ease,border-color_0.18s_ease,color_0.18s_ease]",
-            )}
+            className="border-bh-border bh-hover-ready:border-bh-border-strong bg-bh-fill-white-4 bh-hover-ready:bg-bh-fill-white-7 shadow-bh-btn-reload text-bh-ink bh-hover-ready:text-bh-ink-hover bh-aria-busy:opacity-55 bh-aria-busy:cursor-wait focus-visible:outline-bh-blue inline-flex min-h-11 items-center justify-center gap-[0.4rem] rounded-full border px-[0.95rem] py-[0.38rem] font-[inherit] text-[0.8125rem] leading-tight font-medium tracking-[-0.015em] backdrop-blur-[0.875rem] backdrop-saturate-160 [transition:background_0.18s_ease,border-color_0.18s_ease,color_0.18s_ease] focus-visible:outline focus-visible:outline-offset-[0.1875rem] disabled:cursor-not-allowed disabled:opacity-40 motion-reduce:transition-none sm:min-h-0"
             onClick={onCopyLink}
             title="Copies URL including filters, scenario, and display toggles"
             type="button"
@@ -85,42 +42,16 @@ export function PageHeader({ title, onCopyLink }: PageHeaderProps) {
         </div>
       </div>
       <details
-        className={cn(
-          "mt-5 px-4 py-3",
-          "border-bh-border rounded-2xl border",
-          "bg-bh-surface shadow-(--shadow-bh-glass-tight)",
-          "backdrop-blur-xl backdrop-saturate-180",
-          "sm:px-5 sm:py-3.5",
-        )}
+        className="border-bh-border bg-bh-surface mt-5 rounded-2xl border px-4 py-3 shadow-(--shadow-bh-glass-tight) backdrop-blur-xl backdrop-saturate-180 sm:px-5 sm:py-3.5"
         id="intro-howto-details"
       >
-        <summary
-          className={cn(
-            "list-none text-sm font-semibold text-zinc-100",
-            "cursor-pointer select-none",
-            "marker:content-['']",
-            "hover:text-white",
-            "[&::-webkit-details-marker]:hidden",
-          )}
-        >
+        <summary className="cursor-pointer list-none text-sm font-semibold text-zinc-100 select-none marker:content-[''] hover:text-white [&::-webkit-details-marker]:hidden">
           How to read this viewer
         </summary>
-        <div
-          className={cn(
-            "mt-3 pt-3",
-            "border-t border-white/6",
-            "text-sm leading-relaxed text-zinc-400",
-          )}
-        >
+        <div className="mt-3 border-t border-white/6 pt-3 text-sm leading-relaxed text-zinc-400">
           <p>
             Quantiles mirror{" "}
-            <code
-              className={cn(
-                "px-1.5 py-0.5",
-                "rounded-md",
-                "bg-white/8 font-mono text-[0.88em] text-cyan-200/90",
-              )}
-            >
+            <code className="rounded-md bg-white/8 px-1.5 py-0.5 font-mono text-[0.88em] text-cyan-200/90">
               report.ts
             </code>{" "}
             across trials. Bands are per‑trial hz/op spread (P25–P75); tooltip IQR% and a dispersion

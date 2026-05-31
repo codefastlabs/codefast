@@ -1,4 +1,3 @@
-import { cn } from "#/lib/utils";
 import type { ComponentProps, JSX, MouseEventHandler } from "react";
 
 import { EyeIcon, EyeOffIcon } from "lucide-react";
@@ -46,11 +45,7 @@ function InputPassword({
       />
       <InputGroupButton
         aria-label={type === "password" ? "Show password" : "Hide password"}
-        className={cn(
-          "rounded-full",
-          "focus-visible:ring-0",
-          "focus-visible:not-disabled:bg-input",
-        )}
+        className="rounded-full focus-visible:ring-0 focus-visible:not-disabled:bg-input"
         data-slot="input-password-toggle"
         disabled={disabled}
         size="icon-sm"

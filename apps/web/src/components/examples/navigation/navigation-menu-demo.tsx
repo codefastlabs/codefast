@@ -1,4 +1,3 @@
-import { cn } from "@codefast/tailwind-variants";
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -18,12 +17,9 @@ export function NavigationMenuDemo() {
             <ul className="grid w-64 gap-3 p-4">
               <li>
                 <NavigationMenuLink asChild>
-                  <a
-                    className={cn("block", "p-3", "rounded-md", "hover:bg-accent")}
-                    href="/docs/introduction"
-                  >
+                  <a className="block rounded-md p-3 hover:bg-accent" href="/docs/introduction">
                     <div className="text-sm font-medium">Introduction</div>
-                    <p className={cn("mt-1", "text-xs text-muted-foreground")}>
+                    <p className="mt-1 text-xs text-muted-foreground">
                       Overview of the design system.
                     </p>
                   </a>
@@ -31,14 +27,9 @@ export function NavigationMenuDemo() {
               </li>
               <li>
                 <NavigationMenuLink asChild>
-                  <a
-                    className={cn("block", "p-3", "rounded-md", "hover:bg-accent")}
-                    href="/docs/installation"
-                  >
+                  <a className="block rounded-md p-3 hover:bg-accent" href="/docs/installation">
                     <div className="text-sm font-medium">Installation</div>
-                    <p className={cn("mt-1", "text-xs text-muted-foreground")}>
-                      Step-by-step setup guide.
-                    </p>
+                    <p className="mt-1 text-xs text-muted-foreground">Step-by-step setup guide.</p>
                   </a>
                 </NavigationMenuLink>
               </li>
@@ -53,13 +44,7 @@ export function NavigationMenuDemo() {
                 <li key={name}>
                   <NavigationMenuLink asChild>
                     <a
-                      className={cn(
-                        "block",
-                        "px-3 py-2",
-                        "rounded-md",
-                        "text-sm",
-                        "hover:bg-accent",
-                      )}
+                      className="block rounded-md px-3 py-2 text-sm hover:bg-accent"
                       href="/components"
                     >
                       {name}
@@ -72,7 +57,7 @@ export function NavigationMenuDemo() {
         </NavigationMenuItem>
         <NavigationMenuItem>
           <NavigationMenuLink asChild>
-            <a className={cn("px-3 py-2", "text-sm font-medium")} href="/docs">
+            <a className="px-3 py-2 text-sm font-medium" href="/docs">
               Docs
             </a>
           </NavigationMenuLink>

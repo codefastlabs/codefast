@@ -19,13 +19,7 @@ type MenubarProps = ComponentProps<typeof MenubarPrimitive.Root>;
 function Menubar({ className, ...props }: MenubarProps): JSX.Element {
   return (
     <MenubarPrimitive.Root
-      className={cn(
-        "flex items-center space-x-1",
-        "p-1",
-        "rounded-lg border",
-        "bg-background",
-        className,
-      )}
+      className={cn("flex items-center space-x-1 rounded-lg border bg-background p-1", className)}
       data-slot="menubar"
       {...props}
     />
@@ -112,13 +106,7 @@ function MenubarTrigger({ className, ...props }: MenubarTriggerProps): JSX.Eleme
   return (
     <MenubarPrimitive.Trigger
       className={cn(
-        "flex items-center gap-x-2",
-        "px-2 py-1.5",
-        "rounded-sm outline-hidden",
-        "text-sm font-medium",
-        "select-none",
-        "focus:bg-accent focus:text-accent-foreground",
-        "data-open:bg-accent data-open:text-accent-foreground",
+        "flex items-center gap-x-2 rounded-sm px-2 py-1.5 text-sm font-medium outline-hidden select-none focus:bg-accent focus:text-accent-foreground data-open:bg-accent data-open:text-accent-foreground",
         className,
       )}
       data-slot="menubar-trigger"
@@ -150,14 +138,7 @@ function MenubarSubTrigger({
   return (
     <MenubarPrimitive.SubTrigger
       className={cn(
-        "flex items-center gap-x-2",
-        "px-2 py-1.5",
-        "rounded-sm outline-hidden",
-        "text-sm",
-        "cursor-default select-none",
-        "focus:bg-accent focus:text-accent-foreground",
-        "data-inset:pl-8",
-        "data-open:bg-accent data-open:text-accent-foreground",
+        "flex cursor-default items-center gap-x-2 rounded-sm px-2 py-1.5 text-sm outline-hidden select-none focus:bg-accent focus:text-accent-foreground data-inset:pl-8 data-open:bg-accent data-open:text-accent-foreground",
         className,
       )}
       data-inset={inset}
@@ -165,7 +146,7 @@ function MenubarSubTrigger({
       {...props}
     >
       {children}
-      <ChevronRightIcon className={cn("size-4", "ml-auto")} />
+      <ChevronRightIcon className="ml-auto size-4" />
     </MenubarPrimitive.SubTrigger>
   );
 }
@@ -187,22 +168,7 @@ function MenubarSubContent({ className, ...props }: MenubarSubContentProps): JSX
     <MenubarPrimitive.Portal>
       <MenubarPrimitive.SubContent
         className={cn(
-          "z-50",
-          "min-w-32 overflow-hidden p-1",
-          "rounded-lg border",
-          "bg-popover text-popover-foreground shadow-lg",
-          "ease-snappy data-open:animate-in data-open:duration-200 data-open:fade-in-0 data-open:zoom-in-95",
-          "data-open:data-side-top:slide-in-from-bottom-2",
-          "data-open:data-side-right:slide-in-from-left-2",
-          "data-open:data-side-bottom:slide-in-from-top-2",
-          "data-open:data-side-left:slide-in-from-right-2",
-          "data-closed:animate-out data-closed:duration-150 data-closed:fade-out-0 data-closed:zoom-out-95",
-          "data-closed:data-side-top:slide-out-to-bottom-2",
-          "data-closed:data-side-right:slide-out-to-left-2",
-          "data-closed:data-side-bottom:slide-out-to-top-2",
-          "data-closed:data-side-left:slide-out-to-right-2",
-          "motion-reduce:animate-none motion-reduce:transition-none motion-reduce:duration-0",
-          "origin-(--radix-menubar-content-transform-origin)",
+          "z-50 min-w-32 origin-(--radix-menubar-content-transform-origin) overflow-hidden rounded-lg border bg-popover p-1 text-popover-foreground shadow-lg ease-snappy motion-reduce:animate-none motion-reduce:transition-none motion-reduce:duration-0 data-open:animate-in data-open:duration-200 data-open:fade-in-0 data-open:zoom-in-95 data-open:data-side-top:slide-in-from-bottom-2 data-open:data-side-right:slide-in-from-left-2 data-open:data-side-bottom:slide-in-from-top-2 data-open:data-side-left:slide-in-from-right-2 data-closed:animate-out data-closed:duration-150 data-closed:fade-out-0 data-closed:zoom-out-95 data-closed:data-side-top:slide-out-to-bottom-2 data-closed:data-side-right:slide-out-to-left-2 data-closed:data-side-bottom:slide-out-to-top-2 data-closed:data-side-left:slide-out-to-right-2",
           className,
         )}
         data-slot="menubar-sub-content"
@@ -237,17 +203,7 @@ function MenubarContent({
         align={align}
         alignOffset={alignOffset}
         className={cn(
-          "z-50",
-          "min-w-32 overflow-hidden p-1",
-          "rounded-lg border",
-          "bg-popover text-popover-foreground shadow-lg",
-          "ease-snappy data-open:animate-in data-open:duration-200 data-open:fade-in-0 data-open:zoom-in-95",
-          "data-open:data-side-top:slide-in-from-bottom-2",
-          "data-open:data-side-right:slide-in-from-left-2",
-          "data-open:data-side-bottom:slide-in-from-top-2",
-          "data-open:data-side-left:slide-in-from-right-2",
-          "motion-reduce:animate-none motion-reduce:transition-none motion-reduce:duration-0",
-          "origin-(--radix-menubar-content-transform-origin)",
+          "z-50 min-w-32 origin-(--radix-menubar-content-transform-origin) overflow-hidden rounded-lg border bg-popover p-1 text-popover-foreground shadow-lg ease-snappy motion-reduce:animate-none motion-reduce:transition-none motion-reduce:duration-0 data-open:animate-in data-open:duration-200 data-open:fade-in-0 data-open:zoom-in-95 data-open:data-side-top:slide-in-from-bottom-2 data-open:data-side-right:slide-in-from-left-2 data-open:data-side-bottom:slide-in-from-top-2 data-open:data-side-left:slide-in-from-right-2",
           className,
         )}
         data-slot="menubar-content"
@@ -277,20 +233,7 @@ function MenubarItem({ className, inset, variant, ...props }: MenubarItemProps):
   return (
     <MenubarPrimitive.Item
       className={cn(
-        "group/menubar-item relative flex items-center gap-x-2",
-        "px-2 py-1.5",
-        "rounded-sm outline-hidden",
-        "text-sm",
-        "cursor-default select-none",
-        "focus:bg-accent focus:text-accent-foreground",
-        "aria-disabled:opacity-50",
-        "data-inset:pl-8",
-        "data-[variant=destructive]:text-destructive",
-        "data-[variant=destructive]:focus:bg-destructive/10",
-        "dark:data-[variant=destructive]:focus:bg-destructive/20",
-        "data-[variant=destructive]:[&_svg:not([class*='text-'])]:text-destructive/80",
-        "[&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
-        "[&_svg:not([class*='text-'])]:text-muted-foreground",
+        "group/menubar-item relative flex cursor-default items-center gap-x-2 rounded-sm px-2 py-1.5 text-sm outline-hidden select-none focus:bg-accent focus:text-accent-foreground aria-disabled:opacity-50 data-inset:pl-8 data-[variant=destructive]:text-destructive data-[variant=destructive]:focus:bg-destructive/10 dark:data-[variant=destructive]:focus:bg-destructive/20 [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 [&_svg:not([class*='text-'])]:text-muted-foreground data-[variant=destructive]:[&_svg:not([class*='text-'])]:text-destructive/80",
         className,
       )}
       data-inset={inset}
@@ -323,20 +266,13 @@ function MenubarCheckboxItem({
     <MenubarPrimitive.CheckboxItem
       checked={checked}
       className={cn(
-        "group/menubar-item relative flex items-center gap-x-2",
-        "py-1.5 pr-2 pl-8",
-        "rounded-sm outline-hidden",
-        "text-sm",
-        "cursor-default select-none",
-        "focus:bg-accent focus:text-accent-foreground",
-        "aria-disabled:opacity-50",
-        "[&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+        "group/menubar-item relative flex cursor-default items-center gap-x-2 rounded-sm py-1.5 pr-2 pl-8 text-sm outline-hidden select-none focus:bg-accent focus:text-accent-foreground aria-disabled:opacity-50 [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
         className,
       )}
       data-slot="menubar-checkbox-item"
       {...props}
     >
-      <span className={cn("absolute flex items-center justify-center", "left-2")}>
+      <span className="absolute left-2 flex items-center justify-center">
         <MenubarPrimitive.ItemIndicator>
           <CheckIcon className="size-4" />
         </MenubarPrimitive.ItemIndicator>
@@ -362,22 +298,15 @@ function MenubarRadioItem({ children, className, ...props }: MenubarRadioItemPro
   return (
     <MenubarPrimitive.RadioItem
       className={cn(
-        "group/menubar-item relative flex items-center gap-x-2",
-        "py-1.5 pr-2 pl-8",
-        "rounded-sm outline-hidden",
-        "text-sm",
-        "cursor-default select-none",
-        "focus:bg-accent focus:text-accent-foreground",
-        "aria-disabled:opacity-50",
-        "[&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+        "group/menubar-item relative flex cursor-default items-center gap-x-2 rounded-sm py-1.5 pr-2 pl-8 text-sm outline-hidden select-none focus:bg-accent focus:text-accent-foreground aria-disabled:opacity-50 [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
         className,
       )}
       data-slot="menubar-radio-item"
       {...props}
     >
-      <span className={cn("absolute flex items-center justify-center", "left-2")}>
+      <span className="absolute left-2 flex items-center justify-center">
         <MenubarPrimitive.ItemIndicator>
-          <DotIcon className={cn("size-4", "fill-current")} />
+          <DotIcon className="size-4 fill-current" />
         </MenubarPrimitive.ItemIndicator>
       </span>
       {children}
@@ -403,10 +332,7 @@ function MenubarLabel({ className, inset, ...props }: MenubarLabelProps): JSX.El
   return (
     <MenubarPrimitive.Label
       className={cn(
-        "flex items-center gap-x-2",
-        "px-2 py-1.5",
-        "text-sm font-semibold",
-        "data-inset:pl-8",
+        "flex items-center gap-x-2 px-2 py-1.5 text-sm font-semibold data-inset:pl-8",
         className,
       )}
       data-inset={inset}
@@ -431,7 +357,7 @@ type MenubarSeparatorProps = ComponentProps<typeof MenubarPrimitive.Separator>;
 function MenubarSeparator({ className, ...props }: MenubarSeparatorProps): JSX.Element {
   return (
     <MenubarPrimitive.Separator
-      className={cn("mx-2 my-1 h-px", "bg-border", className)}
+      className={cn("mx-2 my-1 h-px bg-border", className)}
       data-slot="menubar-separator"
       {...props}
     />
@@ -454,9 +380,7 @@ function MenubarShortcut({ className, ...props }: MenubarShortcutProps): JSX.Ele
   return (
     <span
       className={cn(
-        "ml-auto",
-        "text-xs tracking-widest text-muted-foreground",
-        "group-data-[variant=destructive]/menubar-item:text-destructive/80",
+        "ml-auto text-xs tracking-widest text-muted-foreground group-data-[variant=destructive]/menubar-item:text-destructive/80",
         className,
       )}
       data-slot="menubar-shortcut"

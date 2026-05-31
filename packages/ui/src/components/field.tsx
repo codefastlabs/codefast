@@ -25,9 +25,7 @@ function FieldSet({ className, ...props }: FieldSetProps): JSX.Element {
   return (
     <fieldset
       className={cn(
-        "flex flex-col gap-6",
-        "has-[>[data-slot=checkbox-group]]:gap-3",
-        "has-[>[data-slot=radio-group]]:gap-3",
+        "flex flex-col gap-6 has-[>[data-slot=checkbox-group]]:gap-3 has-[>[data-slot=radio-group]]:gap-3",
         className,
       )}
       data-slot="field-set"
@@ -53,7 +51,7 @@ type FieldLegendProps = ComponentProps<"legend"> & {
 function FieldLegend({ className, variant = "legend", ...props }: FieldLegendProps): JSX.Element {
   return (
     <legend
-      className={cn("mb-3", "text-base font-medium", "data-[variant=label]:text-sm", className)}
+      className={cn("mb-3 text-base font-medium data-[variant=label]:text-sm", className)}
       data-slot="field-legend"
       data-variant={variant}
       {...props}
@@ -77,9 +75,7 @@ function FieldGroup({ className, ...props }: FieldGroupProps): JSX.Element {
   return (
     <div
       className={cn(
-        "group/field-group @container/field-group flex w-full flex-col gap-7",
-        "data-[slot=checkbox-group]:gap-3",
-        "[&>[data-slot=field-group]]:gap-4",
+        "group/field-group @container/field-group flex w-full flex-col gap-7 data-[slot=checkbox-group]:gap-3 [&>[data-slot=field-group]]:gap-4",
         className,
       )}
       data-slot="field-group"
@@ -127,7 +123,7 @@ type FieldContentProps = ComponentProps<"div">;
 function FieldContent({ className, ...props }: FieldContentProps): JSX.Element {
   return (
     <div
-      className={cn("group/field-content flex flex-1 flex-col gap-1.5", "leading-snug", className)}
+      className={cn("group/field-content flex flex-1 flex-col gap-1.5 leading-snug", className)}
       data-slot="field-content"
       {...props}
     />
@@ -150,12 +146,7 @@ function FieldLabel({ className, ...props }: FieldLabelProps): JSX.Element {
   return (
     <Label
       className={cn(
-        "group/field-label peer/field-label flex w-fit gap-2 leading-snug",
-        "group-data-disabled/field:opacity-50",
-        "has-[>[data-slot=field]]:w-full has-[>[data-slot=field]]:flex-col has-[>[data-slot=field]]:rounded-lg has-[>[data-slot=field]]:border",
-        "has-data-checked:border-primary has-data-checked:bg-primary/5",
-        "dark:has-data-checked:bg-primary/10",
-        "[&>*]:data-[slot=field]:p-4",
+        "group/field-label peer/field-label flex w-fit gap-2 leading-snug group-data-disabled/field:opacity-50 has-data-checked:border-primary has-data-checked:bg-primary/5 has-[>[data-slot=field]]:w-full has-[>[data-slot=field]]:flex-col has-[>[data-slot=field]]:rounded-lg has-[>[data-slot=field]]:border dark:has-data-checked:bg-primary/10 [&>*]:data-[slot=field]:p-4",
         className,
       )}
       data-slot="field-label"
@@ -180,8 +171,7 @@ function FieldTitle({ className, ...props }: FieldTitleProps): JSX.Element {
   return (
     <div
       className={cn(
-        "flex w-fit items-center gap-2 text-sm leading-snug font-medium",
-        "group-data-disabled/field:opacity-50",
+        "flex w-fit items-center gap-2 text-sm leading-snug font-medium group-data-disabled/field:opacity-50",
         className,
       )}
       data-slot="field-label"
@@ -206,13 +196,7 @@ function FieldDescription({ className, ...props }: FieldDescriptionProps): JSX.E
   return (
     <p
       className={cn(
-        "text-sm leading-normal font-normal text-muted-foreground",
-        "group-has-data-[orientation=horizontal]/field:text-balance",
-        "last:mt-0",
-        "nth-last-2:-mt-1",
-        "[&>a]:underline [&>a]:underline-offset-4",
-        "[&>a:hover]:text-primary",
-        "[[data-variant=legend]+&]:-mt-1.5",
+        "text-sm leading-normal font-normal text-muted-foreground group-has-data-[orientation=horizontal]/field:text-balance last:mt-0 nth-last-2:-mt-1 [&>a]:underline [&>a]:underline-offset-4 [&>a:hover]:text-primary [[data-variant=legend]+&]:-mt-1.5",
         className,
       )}
       data-slot="field-description"
@@ -241,23 +225,17 @@ function FieldSeparator({ children, className, ...props }: FieldSeparatorProps):
   return (
     <div
       className={cn(
-        "relative",
-        "-my-2 h-5 text-sm",
-        "group-data-[variant=outline]/field-group:-mb-2",
+        "relative -my-2 h-5 text-sm group-data-[variant=outline]/field-group:-mb-2",
         className,
       )}
       data-content={hasContent}
       data-slot="field-separator"
       {...props}
     >
-      <Separator className={cn("absolute", "inset-0 top-1/2")} />
+      <Separator className="absolute inset-0 top-1/2" />
       {hasContent ? (
         <span
-          className={cn(
-            "relative block",
-            "mx-auto w-fit px-2",
-            "bg-background text-muted-foreground",
-          )}
+          className="relative mx-auto block w-fit bg-background px-2 text-muted-foreground"
           data-slot="field-separator-content"
         >
           {children}
@@ -303,7 +281,7 @@ function FieldError({
     }
 
     return (
-      <ul className={cn("flex flex-col gap-1", "ml-4", "list-disc")}>
+      <ul className="ml-4 flex list-disc flex-col gap-1">
         {uniqueErrors.map((error) =>
           error?.message ? <li key={error.message}>{error.message}</li> : null,
         )}

@@ -128,8 +128,7 @@ function InputGroupText({ className, ...props }: InputGroupTextProps): JSX.Eleme
   return (
     <span
       className={cn(
-        "flex items-center gap-2 text-sm text-muted-foreground",
-        "[&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4",
+        "flex items-center gap-2 text-sm text-muted-foreground [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4",
         className,
       )}
       data-slot="input-group-text"
@@ -154,12 +153,7 @@ function InputGroupInput({ className, ...props }: InputGroupInputProps): JSX.Ele
   return (
     <Input
       className={cn(
-        "flex-1",
-        "px-3 py-1",
-        "rounded-none border-0",
-        "bg-transparent shadow-none",
-        "focus-visible:ring-0",
-        "dark:bg-transparent",
+        "flex-1 rounded-none border-0 bg-transparent px-3 py-1 shadow-none focus-visible:ring-0 dark:bg-transparent",
         className,
       )}
       data-slot="input-group-control"
@@ -184,13 +178,7 @@ function InputGroupTextarea({ className, ...props }: InputGroupTextareaProps): J
   return (
     <Textarea
       className={cn(
-        "flex-1",
-        "py-3",
-        "rounded-none border-0",
-        "bg-transparent shadow-none",
-        "resize-none",
-        "focus-visible:ring-0",
-        "dark:bg-transparent",
+        "flex-1 resize-none rounded-none border-0 bg-transparent py-3 shadow-none focus-visible:ring-0 dark:bg-transparent",
         className,
       )}
       data-slot="input-group-control"

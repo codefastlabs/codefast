@@ -19,37 +19,14 @@ function Switch({ className, ...props }: SwitchProps): JSX.Element {
   return (
     <SwitchPrimitives.Root
       className={cn(
-        "peer group/switch inline-flex h-5 w-9 shrink-0 items-center p-0.75",
-        "rounded-full border border-transparent shadow-xs outline-hidden",
-        "transition-[background-color,box-shadow] duration-200 ease-snappy",
-        "motion-reduce:transition-none motion-reduce:duration-0",
-        "active:not-disabled:inset-shadow-sm",
-        "focus-visible:ring-3 focus-visible:ring-ring/50",
-        "focus-visible:not-data-checked:border-ring/60",
-        "disabled:opacity-50",
-        "data-checked:bg-primary",
-        "data-checked:focus-visible:ring-primary/20",
-        "dark:data-checked:focus-visible:ring-primary/40",
-        "data-unchecked:bg-input",
-        "dark:data-unchecked:bg-input/80",
+        "peer group/switch inline-flex h-5 w-9 shrink-0 items-center rounded-full border border-transparent p-0.75 shadow-xs outline-hidden transition-[background-color,box-shadow] duration-200 ease-snappy focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:not-data-checked:border-ring/60 active:not-disabled:inset-shadow-sm disabled:opacity-50 motion-reduce:transition-none motion-reduce:duration-0 data-checked:bg-primary data-checked:focus-visible:ring-primary/20 dark:data-checked:focus-visible:ring-primary/40 data-unchecked:bg-input dark:data-unchecked:bg-input/80",
         className,
       )}
       data-slot="switch"
       {...props}
     >
       <SwitchPrimitives.Thumb
-        className={cn(
-          "block",
-          "size-3.5",
-          "rounded-full",
-          "bg-background shadow-sm",
-          "pointer-events-none",
-          "transition-transform duration-300 ease-spring",
-          "motion-reduce:transition-none motion-reduce:duration-0",
-          "dark:not-data-checked:bg-foreground",
-          "data-checked:translate-x-3.5",
-          "data-unchecked:translate-x-0",
-        )}
+        className="pointer-events-none block size-3.5 rounded-full bg-background shadow-sm transition-transform duration-300 ease-spring motion-reduce:transition-none motion-reduce:duration-0 dark:not-data-checked:bg-foreground data-checked:translate-x-3.5 data-unchecked:translate-x-0"
         data-slot="switch-thumb"
       />
     </SwitchPrimitives.Root>

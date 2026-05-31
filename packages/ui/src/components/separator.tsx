@@ -52,12 +52,7 @@ type SeparatorItemProps = ComponentProps<"div">;
 function SeparatorItem({ className, ...props }: SeparatorItemProps): JSX.Element {
   return (
     <div
-      className={cn(
-        "absolute",
-        "mx-2 px-2",
-        "bg-background text-sm text-muted-foreground",
-        className,
-      )}
+      className={cn("absolute mx-2 bg-background px-2 text-sm text-muted-foreground", className)}
       data-slot="separator-item"
       {...props}
     />

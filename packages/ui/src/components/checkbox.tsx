@@ -20,33 +20,14 @@ function Checkbox({ className, ...props }: CheckboxProps): JSX.Element {
   return (
     <CheckboxPrimitive.Root
       className={cn(
-        "peer flex size-4 shrink-0 items-center justify-center",
-        "rounded-sm border border-input shadow-xs outline-hidden",
-        "text-primary-foreground",
-        "transition-[border-color,background-color,box-shadow] duration-150 ease-spring",
-        "motion-reduce:transition-none motion-reduce:duration-0",
-        "hover:not-disabled:not-aria-checked:border-ring/60",
-        "focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50",
-        "disabled:opacity-50",
-        "aria-checked:border-primary aria-checked:bg-primary",
-        "aria-checked:focus-visible:ring-primary/20",
-        "aria-invalid:border-destructive aria-invalid:ring-destructive/20",
-        "hover:not-disabled:not-aria-checked:aria-invalid:border-destructive/60",
-        "aria-checked:aria-invalid:bg-destructive",
-        "dark:bg-input/30",
-        "dark:aria-checked:focus-visible:ring-primary/40",
-        "dark:aria-invalid:ring-destructive/40",
+        "peer flex size-4 shrink-0 items-center justify-center rounded-sm border border-input text-primary-foreground shadow-xs outline-hidden transition-[border-color,background-color,box-shadow] duration-150 ease-spring hover:not-disabled:not-aria-checked:border-ring/60 focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:opacity-50 aria-checked:border-primary aria-checked:bg-primary aria-checked:focus-visible:ring-primary/20 aria-invalid:border-destructive aria-invalid:ring-destructive/20 hover:not-disabled:not-aria-checked:aria-invalid:border-destructive/60 aria-checked:aria-invalid:bg-destructive motion-reduce:transition-none motion-reduce:duration-0 dark:bg-input/30 dark:aria-checked:focus-visible:ring-primary/40 dark:aria-invalid:ring-destructive/40",
         className,
       )}
       data-slot="checkbox"
       {...props}
     >
       <CheckboxPrimitive.Indicator
-        className={cn(
-          "flex items-center justify-center text-current",
-          "animate-in duration-150 ease-spring zoom-in-50",
-          "motion-reduce:animate-none motion-reduce:transition-none motion-reduce:duration-0",
-        )}
+        className="flex animate-in items-center justify-center text-current duration-150 ease-spring zoom-in-50 motion-reduce:animate-none motion-reduce:transition-none motion-reduce:duration-0"
         data-slot="checkbox-indicator"
       >
         <CheckIcon className="size-3.5" />

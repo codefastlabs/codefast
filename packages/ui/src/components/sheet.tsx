@@ -74,11 +74,7 @@ function SheetContent({
     <SheetPrimitive.Portal>
       <SheetPrimitive.Overlay
         className={cn(
-          "fixed inset-0 z-50",
-          "bg-black/40 backdrop-blur-sm",
-          "ease-gentle data-open:animate-in data-open:animation-duration-380 data-open:fade-in-0",
-          "data-closed:animate-out data-closed:animation-duration-280 data-closed:fade-out-0",
-          "motion-reduce:animate-none motion-reduce:transition-none motion-reduce:duration-0",
+          "fixed inset-0 z-50 bg-black/40 backdrop-blur-sm ease-gentle motion-reduce:animate-none motion-reduce:transition-none motion-reduce:duration-0 data-open:animate-in data-open:animation-duration-380 data-open:fade-in-0 data-closed:animate-out data-closed:animation-duration-280 data-closed:fade-out-0",
           classNames?.overlay,
         )}
         data-slot="sheet-overlay"
@@ -121,8 +117,7 @@ function SheetHeader({ className, ...props }: SheetHeaderProps): JSX.Element {
   return (
     <header
       className={cn(
-        "flex shrink-0 flex-col gap-1.5 px-6 pt-6 pb-4 text-center",
-        "sm:text-left",
+        "flex shrink-0 flex-col gap-1.5 px-6 pt-6 pb-4 text-center sm:text-left",
         className,
       )}
       data-slot="sheet-header"
@@ -145,11 +140,7 @@ type SheetBodyProps = ComponentProps<"div">;
  */
 function SheetBody({ className, ...props }: SheetBodyProps): JSX.Element {
   return (
-    <main
-      className={cn("overflow-auto", "px-6 py-2", className)}
-      data-slot="sheet-body"
-      {...props}
-    />
+    <main className={cn("overflow-auto px-6 py-2", className)} data-slot="sheet-body" {...props} />
   );
 }
 
@@ -169,8 +160,7 @@ function SheetFooter({ className, ...props }: SheetFooterProps): JSX.Element {
   return (
     <footer
       className={cn(
-        "flex shrink-0 flex-col-reverse gap-2 px-6 pt-4 pb-6",
-        "sm:flex-row sm:justify-end",
+        "flex shrink-0 flex-col-reverse gap-2 px-6 pt-4 pb-6 sm:flex-row sm:justify-end",
         className,
       )}
       data-slot="sheet-footer"

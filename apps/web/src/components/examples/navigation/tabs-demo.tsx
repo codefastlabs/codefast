@@ -1,4 +1,3 @@
-import { cn } from "@codefast/tailwind-variants";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@codefast/ui/tabs";
 
 export function TabsDemo() {
@@ -11,26 +10,18 @@ export function TabsDemo() {
       </TabsList>
       <TabsContent
         value="preview"
-        className={cn(
-          "mt-3 p-4",
-          "rounded-lg border border-border",
-          "text-sm text-muted-foreground",
-        )}
+        className="mt-3 rounded-lg border border-border p-4 text-sm text-muted-foreground"
       >
         Live component preview renders here.
       </TabsContent>
-      <TabsContent value="code" className={cn("mt-3 overflow-hidden", "rounded-lg")}>
-        <pre className={cn("p-4", "bg-neutral-900 font-mono text-xs text-neutral-100")}>
+      <TabsContent value="code" className="mt-3 overflow-hidden rounded-lg">
+        <pre className="bg-neutral-900 p-4 font-mono text-xs text-neutral-100">
           <code>{`<Button variant="outline">Click me</Button>`}</code>
         </pre>
       </TabsContent>
       <TabsContent
         value="docs"
-        className={cn(
-          "mt-3 p-4",
-          "rounded-lg border border-border",
-          "text-sm text-muted-foreground",
-        )}
+        className="mt-3 rounded-lg border border-border p-4 text-sm text-muted-foreground"
       >
         Full API reference and usage examples.
       </TabsContent>

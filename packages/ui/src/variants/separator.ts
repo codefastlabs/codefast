@@ -10,7 +10,7 @@ import { tv } from "#/lib/utils";
  * @since 0.3.16-canary.0
  */
 const separatorVariants = tv({
-  base: ["relative flex shrink-0 items-center", "bg-border"],
+  base: "relative flex shrink-0 items-center bg-border",
   defaultVariants: {
     align: "center",
     orientation: "horizontal",

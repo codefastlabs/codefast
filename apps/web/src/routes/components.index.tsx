@@ -1,4 +1,3 @@
-import { cn } from "@codefast/tailwind-variants";
 import type { ReactNode } from "react";
 import { useEffect, useState } from "react";
 import { createFileRoute, useLocation } from "@tanstack/react-router";
@@ -54,34 +53,19 @@ type SectionProps = {
 
 function Section({ id, label, description, count, children }: SectionProps) {
   return (
-    <section id={id} className={cn("mb-20", "scroll-mt-28")}>
-      <div
-        className={cn(
-          "flex flex-col gap-3",
-          "mb-8 pb-6",
-          "border-b border-border",
-          "sm:flex-row sm:items-end sm:justify-between",
-        )}
-      >
+    <section id={id} className="mb-20 scroll-mt-28">
+      <div className="mb-8 flex flex-col gap-3 border-b border-border pb-6 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <h2 className="text-2xl leading-[1.05] font-bold tracking-[-0.035em] text-foreground">
             {label}
           </h2>
-          <p className={cn("mt-1.5 max-w-xl", "text-sm leading-6 text-muted-foreground")}>
-            {description}
-          </p>
+          <p className="mt-1.5 max-w-xl text-sm leading-6 text-muted-foreground">{description}</p>
         </div>
-        <span
-          className={cn(
-            "w-fit shrink-0 px-2.5 py-1",
-            "rounded-full border border-border",
-            "bg-muted text-xs font-semibold text-muted-foreground tabular-nums",
-          )}
-        >
+        <span className="w-fit shrink-0 rounded-full border border-border bg-muted px-2.5 py-1 text-xs font-semibold text-muted-foreground tabular-nums">
           {count} components
         </span>
       </div>
-      <div className={cn("grid gap-4", "sm:grid-cols-2", "lg:grid-cols-3")}>{children}</div>
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">{children}</div>
     </section>
   );
 }
@@ -158,25 +142,13 @@ function ComponentsPage() {
   }, [hash]);
 
   return (
-    <main className={cn("container", "mx-auto px-4 pt-16 pb-32")}>
+    <main className="container mx-auto px-4 pt-16 pb-32">
       {/* ── Header ───────────────────────────────────────────────────── */}
-      <section
-        className={cn(
-          "mb-16 max-w-2xl",
-          "fill-mode-both",
-          "animate-in duration-800 ease-out",
-          "fade-in slide-in-from-bottom-4",
-        )}
-      >
-        <Badge variant="outline" className={cn("mb-5", "border-border", "text-muted-foreground")}>
+      <section className="mb-16 max-w-2xl animate-in duration-800 ease-out fill-mode-both fade-in slide-in-from-bottom-4">
+        <Badge variant="outline" className="mb-5 border-border text-muted-foreground">
           Components
         </Badge>
-        <h1
-          className={cn(
-            "mb-5",
-            "text-[clamp(40px,5vw,64px)] leading-[1.05] font-bold tracking-[-0.035em] text-foreground",
-          )}
-        >
+        <h1 className="mb-5 text-[clamp(40px,5vw,64px)] leading-[1.05] font-bold tracking-[-0.035em] text-foreground">
           {ALL_COMPONENTS.length}+ ready-to-use <span className="text-primary">components.</span>
         </h1>
         <p className="text-[17px] leading-relaxed text-muted-foreground">
@@ -186,12 +158,10 @@ function ComponentsPage() {
       </section>
 
       {/* ── Full component map ───────────────────────────────────────── */}
-      <section
-        className={cn("mb-16 p-6", "rounded-2xl border border-border", "bg-muted", "sm:p-8")}
-      >
-        <p className={cn("mb-5", "text-sm font-semibold text-foreground")}>
+      <section className="mb-16 rounded-2xl border border-border bg-muted p-6 sm:p-8">
+        <p className="mb-5 text-sm font-semibold text-foreground">
           All components
-          <span className={cn("ml-2", "font-normal text-muted-foreground")}>
+          <span className="ml-2 font-normal text-muted-foreground">
             · {DEMO_COMPONENTS.length} components
           </span>
         </p>
@@ -200,13 +170,7 @@ function ComponentsPage() {
             <a
               key={slug}
               href={`#${slug}`}
-              className={cn(
-                "px-3 py-1",
-                "rounded-full border border-border",
-                "bg-card text-xs font-medium text-muted-foreground no-underline",
-                "transition-colors",
-                "hover:border-primary hover:text-foreground",
-              )}
+              className="rounded-full border border-border bg-card px-3 py-1 text-xs font-medium text-muted-foreground no-underline transition-colors hover:border-primary hover:text-foreground"
             >
               {name}
             </a>
@@ -216,12 +180,7 @@ function ComponentsPage() {
 
       {/* ── Category quick-nav ──────────────────────────────────────── */}
       <nav
-        className={cn(
-          "sticky top-12 z-30 flex flex-wrap gap-2",
-          "-mx-4 mb-16 px-4 py-3",
-          "bg-background/75",
-          "backdrop-blur-[20px]",
-        )}
+        className="sticky top-12 z-30 -mx-4 mb-16 flex flex-wrap gap-2 bg-background/75 px-4 py-3 backdrop-blur-[20px]"
         aria-label="Component categories"
       >
         {CATEGORIES.map(({ id, label }) => {
@@ -239,7 +198,7 @@ function ComponentsPage() {
               }`}
             >
               {label}
-              <span className={cn("tabular-nums", "opacity-60")}>{CATEGORY_COUNTS[id]}</span>
+              <span className="tabular-nums opacity-60">{CATEGORY_COUNTS[id]}</span>
             </a>
           );
         })}

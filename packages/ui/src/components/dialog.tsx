@@ -68,26 +68,14 @@ function DialogContent({
     <DialogPrimitive.Portal>
       <DialogPrimitive.Overlay
         className={cn(
-          "fixed inset-0 z-50",
-          "bg-black/40 backdrop-blur-sm",
-          "ease-gentle data-open:animate-in data-open:duration-300 data-open:fade-in-0",
-          "data-closed:animate-out data-closed:duration-200 data-closed:fade-out-0",
-          "motion-reduce:animate-none motion-reduce:transition-none motion-reduce:duration-0",
+          "fixed inset-0 z-50 bg-black/40 backdrop-blur-sm ease-gentle motion-reduce:animate-none motion-reduce:transition-none motion-reduce:duration-0 data-open:animate-in data-open:duration-300 data-open:fade-in-0 data-closed:animate-out data-closed:duration-200 data-closed:fade-out-0",
           classNames?.overlay,
         )}
         data-slot="dialog-overlay"
       />
       <DialogPrimitive.Content
         className={cn(
-          "fixed inset-0 z-50 grid grid-rows-[1fr_auto] justify-items-center overflow-auto",
-          "sm:grid-rows-[1fr_auto_3fr] sm:p-4",
-          "ease-gentle data-open:animate-in data-open:duration-300",
-          "max-sm:data-open:animation-duration-380 max-sm:data-open:slide-in-from-bottom",
-          "sm:data-open:fade-in-0 sm:data-open:zoom-in-95",
-          "data-closed:animate-out data-closed:duration-200",
-          "max-sm:data-closed:animation-duration-280 max-sm:data-closed:slide-out-to-bottom",
-          "sm:data-closed:fade-out-0 sm:data-closed:zoom-out-95",
-          "motion-reduce:animate-none motion-reduce:transition-none motion-reduce:duration-0",
+          "fixed inset-0 z-50 grid grid-rows-[1fr_auto] justify-items-center overflow-auto ease-gentle motion-reduce:animate-none motion-reduce:transition-none motion-reduce:duration-0 sm:grid-rows-[1fr_auto_3fr] sm:p-4 data-open:animate-in data-open:duration-300 max-sm:data-open:animation-duration-380 max-sm:data-open:slide-in-from-bottom sm:data-open:fade-in-0 sm:data-open:zoom-in-95 data-closed:animate-out data-closed:duration-200 max-sm:data-closed:animation-duration-280 max-sm:data-closed:slide-out-to-bottom sm:data-closed:fade-out-0 sm:data-closed:zoom-out-95",
           classNames?.wrapper,
         )}
         data-slot="dialog-content-wrapper"
@@ -95,10 +83,7 @@ function DialogContent({
       >
         <div
           className={cn(
-            "relative row-start-2 flex w-full flex-col",
-            "rounded-t-2xl border",
-            "bg-popover text-popover-foreground shadow-lg",
-            "sm:max-w-lg sm:rounded-2xl",
+            "relative row-start-2 flex w-full flex-col rounded-t-2xl border bg-popover text-popover-foreground shadow-lg sm:max-w-lg sm:rounded-2xl",
             classNames?.content,
             className,
           )}
@@ -138,8 +123,7 @@ function DialogHeader({ className, ...props }: DialogHeaderProps): JSX.Element {
   return (
     <header
       className={cn(
-        "flex shrink-0 flex-col gap-1.5 px-6 pt-6 pb-2 text-center",
-        "sm:text-left",
+        "flex shrink-0 flex-col gap-1.5 px-6 pt-6 pb-2 text-center sm:text-left",
         className,
       )}
       data-slot="dialog-header"
@@ -162,11 +146,7 @@ type DialogBodyProps = ComponentProps<"div">;
  */
 function DialogBody({ className, ...props }: DialogBodyProps): JSX.Element {
   return (
-    <main
-      className={cn("overflow-auto", "px-6 py-2", className)}
-      data-slot="dialog-body"
-      {...props}
-    />
+    <main className={cn("overflow-auto px-6 py-2", className)} data-slot="dialog-body" {...props} />
   );
 }
 
@@ -186,8 +166,7 @@ function DialogFooter({ className, ...props }: DialogFooterProps): JSX.Element {
   return (
     <footer
       className={cn(
-        "flex shrink-0 flex-col-reverse gap-2 px-6 pt-2 pb-6",
-        "sm:flex-row sm:justify-end",
+        "flex shrink-0 flex-col-reverse gap-2 px-6 pt-2 pb-6 sm:flex-row sm:justify-end",
         className,
       )}
       data-slot="dialog-footer"

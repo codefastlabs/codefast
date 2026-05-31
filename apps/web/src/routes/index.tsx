@@ -1,4 +1,3 @@
-import { cn } from "@codefast/tailwind-variants";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ALL_COMPONENTS } from "#/data/components";
 import { Avatar, AvatarFallback } from "@codefast/ui/avatar";
@@ -59,18 +58,9 @@ const COMPONENT_COUNT = ALL_COMPONENTS.length;
 
 function HeroCard() {
   return (
-    <div
-      className={cn(
-        "w-full max-w-sm overflow-hidden",
-        "rounded-2xl border border-border",
-        "bg-card shadow-2xl shadow-black/20",
-        "dark:shadow-black/60",
-      )}
-    >
+    <div className="w-full max-w-sm overflow-hidden rounded-2xl border border-border bg-card shadow-2xl shadow-black/20 dark:shadow-black/60">
       {/* Card header */}
-      <div
-        className={cn("flex items-center justify-between", "px-5 py-4", "border-b border-border")}
-      >
+      <div className="flex items-center justify-between border-b border-border px-5 py-4">
         <div className="flex items-center gap-2.5">
           <Avatar className="size-7">
             <AvatarFallback className="bg-primary text-[10px] font-bold text-white">
@@ -101,7 +91,7 @@ function HeroCard() {
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="notifications" className={cn("space-y-4", "mt-0")}>
+        <TabsContent value="notifications" className="mt-0 space-y-4">
           {/* Email input */}
           <div className="space-y-1.5">
             <Label className="text-xs text-muted-foreground">Notify email</Label>
@@ -128,9 +118,7 @@ function HeroCard() {
 
           {/* Storage */}
           <div>
-            <div
-              className={cn("flex justify-between", "mb-1.5", "text-[11px] text-muted-foreground")}
-            >
+            <div className="mb-1.5 flex justify-between text-[11px] text-muted-foreground">
               <span>Storage</span>
               <span>6.8 GB / 10 GB</span>
             </div>
@@ -138,7 +126,7 @@ function HeroCard() {
           </div>
 
           {/* Actions */}
-          <div className={cn("flex justify-end gap-2", "pt-1")}>
+          <div className="flex justify-end gap-2 pt-1">
             <Button variant="outline" size="sm">
               Discard
             </Button>
@@ -146,7 +134,7 @@ function HeroCard() {
           </div>
         </TabsContent>
 
-        <TabsContent value="general" className={cn("space-y-4", "mt-0")}>
+        <TabsContent value="general" className="mt-0 space-y-4">
           <div className="space-y-1.5">
             <Label className="text-xs text-muted-foreground">Workspace name</Label>
             <Input defaultValue="codefast/ui" />
@@ -163,7 +151,7 @@ function HeroCard() {
             </div>
             <Switch defaultChecked className="scale-90" />
           </div>
-          <div className={cn("flex justify-end gap-2", "pt-1")}>
+          <div className="flex justify-end gap-2 pt-1">
             <Button variant="outline" size="sm">
               Discard
             </Button>
@@ -171,24 +159,20 @@ function HeroCard() {
           </div>
         </TabsContent>
 
-        <TabsContent value="billing" className={cn("space-y-4", "mt-0")}>
-          <div className={cn("p-3", "rounded-lg border border-border")}>
-            <div className={cn("flex items-center justify-between", "mb-2")}>
+        <TabsContent value="billing" className="mt-0 space-y-4">
+          <div className="rounded-lg border border-border p-3">
+            <div className="mb-2 flex items-center justify-between">
               <p className="text-xs font-semibold text-foreground">Pro plan</p>
               <Badge className="text-[10px]">Active</Badge>
             </div>
-            <p className={cn("mb-2", "text-[11px] text-muted-foreground")}>
-              Up to 10 seats · 10 GB storage
-            </p>
+            <p className="mb-2 text-[11px] text-muted-foreground">Up to 10 seats · 10 GB storage</p>
             <p className="text-[11px] text-muted-foreground">
               Next billing: <span className="text-foreground">Jun 1, 2026 · $49.00</span>
             </p>
           </div>
           <Separator />
           <div>
-            <div
-              className={cn("flex justify-between", "mb-1.5", "text-[11px] text-muted-foreground")}
-            >
+            <div className="mb-1.5 flex justify-between text-[11px] text-muted-foreground">
               <span>Seats used</span>
               <span>4 / 10</span>
             </div>
@@ -214,18 +198,9 @@ function HomePage() {
     <main>
       {/* ── Hero ─────────────────────────────────────────────────────── */}
       <section className="flex min-h-screen flex-col items-center justify-center gap-16 px-4 pt-16 pb-20 text-center">
-        <div
-          className={cn(
-            "fill-mode-both",
-            "animate-in duration-800 ease-out",
-            "fade-in slide-in-from-bottom-4",
-          )}
-        >
+        <div className="animate-in duration-800 ease-out fill-mode-both fade-in slide-in-from-bottom-4">
           <h1
-            className={cn(
-              "mx-auto mb-5 max-w-4xl",
-              "leading-[1.02] font-bold tracking-[-0.045em] text-foreground",
-            )}
+            className="mx-auto mb-5 max-w-4xl leading-[1.02] font-bold tracking-[-0.045em] text-foreground"
             style={{ fontSize: "clamp(56px, 8vw, 96px)" }}
           >
             Beautiful components
@@ -233,26 +208,21 @@ function HomePage() {
             <span className="text-primary">for React 19.</span>
           </h1>
 
-          <p
-            className={cn("mx-auto max-w-md", "text-[18px] leading-relaxed text-muted-foreground")}
-          >
+          <p className="mx-auto max-w-md text-[18px] leading-relaxed text-muted-foreground">
             {COMPONENT_COUNT}+ accessible components built on Radix UI and Tailwind CSS v4. Copy the
             source. Own the code.
           </p>
 
-          <div className={cn("flex items-center justify-center gap-7", "mt-8")}>
+          <div className="mt-8 flex items-center justify-center gap-7">
             <Link
               to="/components"
-              className={cn("text-[15px] font-medium text-primary no-underline", "hover:underline")}
+              className="text-[15px] font-medium text-primary no-underline hover:underline"
             >
               Browse components ›
             </Link>
             <Link
               to="/about"
-              className={cn(
-                "text-[15px] text-muted-foreground no-underline",
-                "hover:text-foreground",
-              )}
+              className="text-[15px] text-muted-foreground no-underline hover:text-foreground"
             >
               Get started ›
             </Link>
@@ -260,12 +230,7 @@ function HomePage() {
         </div>
 
         <div
-          className={cn(
-            "w-full max-w-sm",
-            "fill-mode-both",
-            "animate-in duration-800 ease-out",
-            "fade-in slide-in-from-bottom-4",
-          )}
+          className="w-full max-w-sm animate-in duration-800 ease-out fill-mode-both fade-in slide-in-from-bottom-4"
           style={{ animationDelay: "120ms" }}
         >
           <HeroCard />
@@ -275,10 +240,10 @@ function HomePage() {
       {/* ── Stats band ───────────────────────────────────────────────── */}
       {/* Inverted surface: black-on-white in light, white-on-dark in dark — */}
       {/* always maximal contrast against the page background in either theme. */}
-      <section className={cn("py-24", "bg-foreground text-background")}>
-        <div className={cn("container", "mx-auto px-4")}>
+      <section className="bg-foreground py-24 text-background">
+        <div className="container mx-auto px-4">
           {/* Stats — large numbers, no borders */}
-          <div className={cn("grid grid-cols-3 gap-4", "mb-20", "text-center")}>
+          <div className="mb-20 grid grid-cols-3 gap-4 text-center">
             {[
               { value: `${COMPONENT_COUNT}+`, label: "components" },
               { value: "100%", label: "accessible" },
@@ -291,34 +256,23 @@ function HomePage() {
                 >
                   {value}
                 </p>
-                <p className={cn("mt-1", "text-sm text-primary")}>{label}</p>
+                <p className="mt-1 text-sm text-primary">{label}</p>
               </div>
             ))}
           </div>
 
           {/* Divider */}
-          <div className={cn("mb-8", "border-t border-background/15")} />
+          <div className="mb-8 border-t border-background/15" />
 
           {/* Component chips */}
-          <p
-            className={cn(
-              "mb-6",
-              "text-center text-[11px] font-semibold tracking-widest text-background/40 uppercase",
-            )}
-          >
+          <p className="mb-6 text-center text-[11px] font-semibold tracking-widest text-background/40 uppercase">
             everything in the box
           </p>
           <div className="flex flex-wrap justify-center gap-2">
             {COMPONENT_NAMES.map((name) => (
               <span
                 key={name}
-                className={cn(
-                  "px-3 py-1",
-                  "rounded-full border border-background/15",
-                  "bg-background/5 text-xs text-background/60",
-                  "transition-colors",
-                  "hover:border-primary/50 hover:text-background",
-                )}
+                className="rounded-full border border-background/15 bg-background/5 px-3 py-1 text-xs text-background/60 transition-colors hover:border-primary/50 hover:text-background"
               >
                 {name}
               </span>
@@ -328,13 +282,10 @@ function HomePage() {
       </section>
 
       {/* ── Features ─────────────────────────────────────────────────── */}
-      <section className={cn("py-24", "sm:py-32")}>
-        <div className={cn("container", "mx-auto px-4")}>
+      <section className="py-24 sm:py-32">
+        <div className="container mx-auto px-4">
           <h2
-            className={cn(
-              "mb-16 max-w-xl",
-              "leading-[1.05] font-bold tracking-[-0.035em] text-foreground",
-            )}
+            className="mb-16 max-w-xl leading-[1.05] font-bold tracking-[-0.035em] text-foreground"
             style={{ fontSize: "clamp(36px,4.5vw,56px)" }}
           >
             Built for the way
@@ -344,10 +295,7 @@ function HomePage() {
 
           <div className="divide-y divide-border">
             {FEATURES.map(({ number, title, description }) => (
-              <div
-                key={title}
-                className={cn("grid gap-4", "py-10", "sm:grid-cols-[56px_1fr_1.5fr] sm:gap-10")}
-              >
+              <div key={title} className="grid gap-4 py-10 sm:grid-cols-[56px_1fr_1.5fr] sm:gap-10">
                 <p className="font-mono text-sm text-muted-foreground tabular-nums">{number}</p>
                 <h3 className="text-base font-semibold text-foreground">{title}</h3>
                 <p className="text-[15px] leading-relaxed text-muted-foreground">{description}</p>
@@ -358,38 +306,26 @@ function HomePage() {
       </section>
 
       {/* ── Install CTA ──────────────────────────────────────────────── */}
-      <section className={cn("py-24", "bg-foreground text-background", "sm:py-32")}>
-        <div className={cn("container", "mx-auto px-4", "text-center")}>
+      <section className="bg-foreground py-24 text-background sm:py-32">
+        <div className="container mx-auto px-4 text-center">
           <h2
-            className={cn(
-              "mx-auto mb-5 max-w-xl",
-              "leading-[1.05] font-bold tracking-[-0.035em] text-background",
-            )}
+            className="mx-auto mb-5 max-w-xl leading-[1.05] font-bold tracking-[-0.035em] text-background"
             style={{ fontSize: "clamp(36px,4.5vw,56px)" }}
           >
             One command to start.
           </h2>
-          <p className={cn("mx-auto mb-12 max-w-sm", "text-[17px] text-background/55")}>
+          <p className="mx-auto mb-12 max-w-sm text-[17px] text-background/55">
             Tokens, dark mode, and accessibility come pre-configured.
           </p>
 
-          <div
-            className={cn(
-              "mx-auto mb-8 w-fit px-7 py-3.5",
-              "rounded-xl border border-background/15",
-              "bg-background/10 font-mono text-sm text-primary",
-            )}
-          >
-            <span className={cn("mr-2", "opacity-40", "select-none")}>$</span>
+          <div className="mx-auto mb-8 w-fit rounded-xl border border-background/15 bg-background/10 px-7 py-3.5 font-mono text-sm text-primary">
+            <span className="mr-2 opacity-40 select-none">$</span>
             pnpm add @codefast/ui
           </div>
 
           <Link
             to="/about"
-            className={cn(
-              "text-[15px] font-medium text-background/60 no-underline",
-              "hover:text-background",
-            )}
+            className="text-[15px] font-medium text-background/60 no-underline hover:text-background"
           >
             Read the docs ›
           </Link>
