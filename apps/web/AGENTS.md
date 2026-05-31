@@ -72,9 +72,13 @@ pnpm preview
 ```
 src/
   routes/
-    __root.tsx          # Root layout: <html>, <head>, Header, Footer, devtools
-    index.tsx           # / route
-    about.tsx           # /about route
+    __root.tsx              # Root layout: <html>, <head>, Header, Footer, devtools
+    index.tsx               # / route (only exception — home page)
+    about/
+      route.tsx             # /about (single-page segment)
+    components/
+      index.tsx             # /components (index when segment has child routes)
+      $slug.tsx             # /components/$slug
   components/
     header.tsx
     footer.tsx
@@ -89,9 +93,14 @@ tsconfig.json
 ## Route Conventions
 
 - File-based routing via `@tanstack/router-plugin` — files under `src/routes/` become routes automatically.
+- **Folder-per-segment** — every URL segment is a directory under `src/routes/`. No flat route files like `about.tsx`.
+- Only two files may sit directly under `src/routes/`: `__root.tsx` (document shell) and `index.tsx` (home `/`).
+- **Single-page segment** → `{segment}/route.tsx` with `createFileRoute('/{segment}')`.
+- **Segment with child routes** → `{segment}/index.tsx` (index) + `{segment}/$param.tsx` (dynamic), etc. No `route.tsx` unless you need a shared layout wrapping children (`<Outlet />`).
 - `__root.tsx` exports `Route = createRootRoute({ ... })` with a `shellComponent` (the full HTML document shell).
-- New routes: create `src/routes/my-page.tsx` → exports `Route = createFileRoute('/my-page')({ ... })`.
-- Nested layouts: prefix with `_layoutName` (underscore = pathless layout route).
+- The plugin sets `createFileRoute(...)` path strings — do not edit them by hand.
+- Pathless layout routes: prefix folder or file with `_` (underscore = no URL segment).
+- Non-route helpers in `src/routes/`: prefix filename with `-` (ignored by the plugin).
 - `routeTree.gen.ts` is regenerated on every `vite dev` / `vite build` run — never edit it by hand.
 
 ## Path Aliases
