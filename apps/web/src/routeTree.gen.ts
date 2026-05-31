@@ -11,8 +11,8 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as ComponentsIndexRouteImport } from './routes/components.index'
-import { Route as ComponentsSlugRouteImport } from './routes/components.$slug'
+import { Route as ComponentsIndexRouteImport } from './routes/components/index'
+import { Route as ComponentsSlugRouteImport } from './routes/components/$slug'
 
 const AboutRoute = AboutRouteImport.update({
   id: '/about',
