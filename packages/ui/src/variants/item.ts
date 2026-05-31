@@ -10,7 +10,7 @@ import { tv } from "#/lib/utils";
  * @since 0.3.16-canary.0
  */
 const itemVariants = tv({
-  base: "group/item flex flex-wrap items-center rounded-lg border border-transparent text-sm outline-hidden transition-colors duration-100 focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 motion-reduce:transition-none motion-reduce:duration-0 [a]:transition-colors [a]:hover:bg-accent/50 [a]:motion-reduce:transition-none",
+  base: "group/item flex flex-wrap items-center rounded-md border border-transparent text-sm outline-hidden transition-colors duration-100 focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 motion-reduce:transition-none motion-reduce:duration-0 [a]:transition-colors [a]:hover:bg-accent/50 [a]:motion-reduce:transition-none",
   defaultVariants: {
     size: "default",
     variant: "default",

@@ -56,7 +56,7 @@ function ButtonGroupText({
   return (
     <Component
       className={cn(
-        "flex items-center gap-2 rounded-lg border bg-muted px-4 text-sm font-medium shadow-xs [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4",
+        "flex items-center gap-2 rounded-md border bg-muted px-2.5 text-sm font-medium shadow-xs [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4",
         className,
       )}
       {...props}
@@ -83,7 +83,10 @@ function ButtonGroupSeparator({
 }: ButtonGroupSeparatorProps): JSX.Element {
   return (
     <Separator
-      className={cn("relative !m-0 self-stretch bg-input data-vertical:h-auto", className)}
+      className={cn(
+        "relative self-stretch bg-input data-horizontal:mx-px data-horizontal:w-auto data-vertical:my-px data-vertical:h-auto",
+        className,
+      )}
       data-slot="button-group-separator"
       orientation={orientation}
       {...props}

@@ -9,33 +9,37 @@ import { tv } from "#/lib/utils";
  * @since 0.3.16-canary.0
  */
 const buttonVariants = tv({
-  base: "inline-flex shrink-0 items-center justify-center gap-2 rounded-lg text-sm font-medium whitespace-nowrap outline-hidden transition duration-150 ease-snappy select-none focus-visible:ring-3 disabled:opacity-50 motion-reduce:transition-none motion-reduce:duration-0 [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+  base: "group/button inline-flex shrink-0 items-center justify-center rounded-md border border-transparent bg-clip-padding text-sm font-medium whitespace-nowrap outline-hidden transition-all duration-150 ease-snappy select-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 active:not-aria-[haspopup]:translate-y-px disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 motion-reduce:transition-none motion-reduce:duration-0 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
   defaultVariants: {
-    size: "md",
+    size: "default",
     variant: "default",
   },
   variants: {
     size: {
-      "icon-sm": "size-8", // 32px
-      icon: "size-9", // 36px
-      "icon-lg": "size-10", // 40px
+      default:
+        "h-9 gap-1.5 px-2.5 in-data-[slot=button-group]:rounded-md has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2", // 36px
+      xs: "h-6 gap-1 rounded-[min(var(--radius-md),8px)] px-2 text-xs in-data-[slot=button-group]:rounded-md has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5 [&_svg:not([class*='size-'])]:size-3", // 24px
+      sm: "h-8 gap-1 rounded-[min(var(--radius-md),10px)] px-2.5 in-data-[slot=button-group]:rounded-md has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5", // 32px
+      lg: "h-10 gap-1.5 px-2.5 has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2", // 40px
 
-      sm: "h-8 px-3 has-[>svg]:px-2.5", // 32px
-      md: "h-9 px-4 has-[>svg]:px-3", // 36px
-      lg: "h-10 px-6 has-[>svg]:px-4", // 40px
+      icon: "size-9", // 36px
+      "icon-xs":
+        "size-6 rounded-[min(var(--radius-md),8px)] in-data-[slot=button-group]:rounded-md [&_svg:not([class*='size-'])]:size-3", // 24px
+      "icon-sm":
+        "size-8 rounded-[min(var(--radius-md),10px)] in-data-[slot=button-group]:rounded-md", // 32px
+      "icon-lg": "size-10", // 40px
     },
     variant: {
-      default:
-        "bg-primary text-primary-foreground hover:not-disabled:bg-primary/80 focus-visible:ring-primary/20 dark:focus-visible:ring-primary/40",
+      default: "bg-primary text-primary-foreground hover:bg-primary/80",
       destructive:
-        "bg-destructive text-white hover:not-disabled:bg-destructive/90 focus-visible:ring-destructive/20 dark:bg-destructive/60 dark:focus-visible:ring-destructive/40",
+        "bg-destructive/10 text-destructive hover:bg-destructive/20 focus-visible:border-destructive/40 focus-visible:ring-destructive/20 dark:bg-destructive/20 dark:hover:bg-destructive/30 dark:focus-visible:ring-destructive/40",
       ghost:
-        "hover:not-disabled:bg-secondary hover:not-disabled:text-secondary-foreground focus-visible:ring-ring/50 dark:hover:not-disabled:bg-secondary/50",
-      link: "text-primary underline-offset-4 hover:not-disabled:underline focus-visible:ring-ring/50",
+        "hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground dark:hover:bg-muted/50",
+      link: "text-primary underline-offset-4 hover:underline",
       outline:
-        "border border-input shadow-xs hover:not-disabled:border-ring/60 hover:not-disabled:bg-secondary hover:not-disabled:text-secondary-foreground focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:border-destructive focus-within:aria-invalid:ring-destructive/20 hover:not-disabled:aria-invalid:border-destructive/60 dark:bg-input/30 dark:hover:not-disabled:bg-input/50 dark:aria-invalid:border-destructive/70 dark:focus-within:aria-invalid:ring-destructive/40",
+        "border-border bg-background shadow-xs hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground dark:border-input dark:bg-input/30 dark:hover:bg-input/50",
       secondary:
-        "bg-secondary text-secondary-foreground hover:not-disabled:bg-secondary/80 focus-visible:ring-ring/50",
+        "bg-secondary text-secondary-foreground hover:bg-[color-mix(in_oklch,var(--secondary),var(--foreground)_5%)] aria-expanded:bg-secondary aria-expanded:text-secondary-foreground",
     },
   },
 });

@@ -36,6 +36,7 @@ function Button({
     return (
       <Comp
         className={buttonVariants({ className, size, variant })}
+        data-size={size}
         data-slot="button"
         data-variant={variant}
         {...props}
@@ -48,6 +49,7 @@ function Button({
   return (
     <button
       className={buttonVariants({ className, size, variant })}
+      data-size={size}
       data-slot="button"
       data-variant={variant}
       type={type}

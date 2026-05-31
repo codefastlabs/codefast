@@ -9,17 +9,17 @@ import { tv } from "#/lib/utils";
  * @since 0.3.16-canary.0
  */
 const toggleVariants = tv({
-  base: "inline-flex items-center justify-center gap-2 rounded-lg text-sm font-medium whitespace-nowrap transition-[color,background-color,box-shadow] duration-150 ease-snappy outline-none hover:bg-muted hover:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 data-[state=on]:bg-accent data-[state=on]:text-accent-foreground motion-reduce:transition-none motion-reduce:duration-0 dark:aria-invalid:ring-destructive/40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+  base: "group/toggle inline-flex items-center justify-center gap-1 rounded-md text-sm font-medium whitespace-nowrap outline-hidden transition-[color,box-shadow] duration-150 ease-snappy hover:bg-muted hover:text-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 aria-pressed:bg-muted data-[state=on]:bg-muted motion-reduce:transition-none motion-reduce:duration-0 dark:aria-invalid:ring-destructive/40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
   variants: {
     size: {
-      sm: "h-8 min-w-8 px-1.5",
-      default: "h-9 min-w-9 px-2",
-      lg: "h-10 min-w-10 px-2.5",
+      sm: "h-8 min-w-8 px-2.5 has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5",
+      default:
+        "h-9 min-w-9 px-2.5 has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2",
+      lg: "h-10 min-w-10 px-2.5 has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2",
     },
     variant: {
       default: "bg-transparent",
-      outline:
-        "border border-input bg-transparent shadow-xs hover:bg-accent hover:text-accent-foreground",
+      outline: "border border-input bg-transparent shadow-xs hover:bg-muted",
     },
   },
   defaultVariants: {
