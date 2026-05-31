@@ -8,4 +8,5 @@ export const mirrorSyncRunRequestSchema: z.ZodType<MirrorSyncRunRequest> = z.obj
   rootDir: z.string().min(1),
   packageFilter: z.string().optional(),
   config: z.unknown().optional(),
+  write: z.boolean().optional(),
 });

@@ -11,13 +11,19 @@ export type MirrorSyncRunRequest = {
   rootDir: string;
   packageFilter?: string;
   config?: unknown;
+  /** When false, compute and report changes without writing package.json. Defaults to true. */
+  write?: boolean;
 };
 
 /**
  * @since 0.3.16-canary.0
  */
 export type MirrorSyncProgressListener = {
-  configure(options: { readonly noColor: boolean; readonly verbose: boolean }): void;
+  configure(options: {
+    readonly noColor: boolean;
+    readonly verbose: boolean;
+    readonly dryRun: boolean;
+  }): void;
   onBanner(): void;
   onProcessingMode(
     mode:

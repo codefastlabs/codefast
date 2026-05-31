@@ -59,7 +59,9 @@ function isAllStaticLiterals(args: ReadonlyArray<DomainAstNode>): boolean {
  */
 function buildMixedCnReplacement(call: DomainCallExpression, sourceText: string): string | null {
   const args = [...call.arguments];
-  if (args.length === 0) {return null;}
+  if (args.length === 0) {
+    return null;
+  }
 
   const staticTexts: Array<string> = [];
   const dynamicSrcs: Array<string> = [];
@@ -72,7 +74,9 @@ function buildMixedCnReplacement(call: DomainCallExpression, sourceText: string)
     }
   }
 
-  if (staticTexts.length === 0) {return null;}
+  if (staticTexts.length === 0) {
+    return null;
+  }
 
   // Already simplest form: 1 static arg already at the front.
   const firstArg = args[0];

@@ -18,8 +18,8 @@ A small developer CLI for maintenance tasks in a TypeScript monorepo — Tailwin
 - [Global options](#global-options)
 - [Exit codes](#exit-codes)
 - [`arrange`](#arrange)
-- [`mirror sync`](#mirror-sync)
-- [`tag` / `annotate`](#tag--annotate)
+- [`mirror`](#mirror)
+- [`tag`](#tag)
 - [Configuration (`codefast.config.*`)](#configuration-codefastconfig)
   - [Full skeleton](#full-skeleton)
   - [`mirror` configuration](#mirror-configuration)
@@ -40,7 +40,9 @@ Three recurring maintenance chores you don't want to script by hand:
 
 - **`arrange`** — regroup Tailwind class strings inside `cn()` / `tv()` calls in render-pipeline order.
 - **`mirror`** — regenerate `package.json` `exports` fields from built `dist/` trees across a pnpm workspace.
-- **`tag`** (alias **`annotate`**) — add `@since <version>` JSDoc tags to exported declarations that are missing version metadata.
+- **`tag`** — add `@since <version>` JSDoc tags to exported declarations that are missing version metadata.
+
+Each top-level command **performs its action by default** (writing files). Pass `--dry-run` to preview without writing. `arrange` additionally exposes a read-only `inspect` report.
 
 ```mermaid
 flowchart LR
@@ -49,12 +51,9 @@ flowchart LR
   R --> M[mirror]
   R --> T[tag]
 
-  A --> A0[analyze]
-  A --> A1[preview]
-  A --> A2[apply]
-  A --> A3[group]
-
-  M --> M0[sync]
+  A --> A0[inspect]
+  A --> A1[simplify]
+  A --> A2[group]
 ```
 
 ---
@@ -87,17 +86,17 @@ npx @codefast/cli --help
 ## Quick Start
 
 ```bash
-# Analyze Tailwind classes in the nearest package
-codefast arrange analyze
+# Inspect Tailwind classes in the nearest package (read-only report)
+codefast arrange inspect
 
 # Preview proposed rewrites — no files written
-codefast arrange preview packages/ui/src/components
+codefast arrange --dry-run packages/ui/src/components
 
 # Apply after reviewing
-codefast arrange apply packages/ui/src/components
+codefast arrange packages/ui/src/components
 
 # Regenerate every package's `exports` from built dist/
-codefast mirror sync
+codefast mirror
 
 # Add @since <version> to exported APIs under ./src
 codefast tag
@@ -113,15 +112,17 @@ codefast tag
 | `-V`, `--version` | Print the CLI version and exit.                                        |
 | `-h`, `--help`    | Show contextual help for the invoked command.                          |
 
+> **Placement.** Global flags must come **before** the command name (git-style), e.g. `codefast --no-color mirror`. A flag after the command name binds to that command.
+
 ---
 
 ## Exit codes
 
-| Code | Meaning                                                                                                  |
-| ---- | -------------------------------------------------------------------------------------------------------- |
-| `0`  | Success.                                                                                                 |
-| `1`  | General failure (missing paths, infrastructure errors, partial failures in `mirror sync`, failed hooks). |
-| `2`  | Invalid invocation or input (Zod schema validation on CLI requests — `CLI_EXIT_USAGE`).                  |
+| Code | Meaning                                                                                             |
+| ---- | --------------------------------------------------------------------------------------------------- |
+| `0`  | Success.                                                                                            |
+| `1`  | General failure (missing paths, infrastructure errors, partial failures in `mirror`, failed hooks). |
+| `2`  | Invalid invocation or input (Zod schema validation on CLI requests — `CLI_EXIT_USAGE`).             |
 
 Diagnostics go to **stderr**; primary command output goes to **stdout**. When a subcommand accepts `--json`, only the JSON object is written to stdout and all human progress is suppressed, so the stream stays pipeline-safe.
 
@@ -137,25 +138,26 @@ When `[target]` is omitted, `arrange` auto-detects the **nearest package directo
 
 ### Workflow
 
-| Step | Command                             | Effect                                |
-| ---- | ----------------------------------- | ------------------------------------- |
-| 1    | `codefast arrange analyze [target]` | Report only — no files changed        |
-| 2    | `codefast arrange preview [target]` | Show exactly what `apply` would write |
-| 3    | `codefast arrange apply [target]`   | Write the changes                     |
+| Step | Command                               | Effect                                         |
+| ---- | ------------------------------------- | ---------------------------------------------- |
+| 1    | `codefast arrange inspect [target]`   | Report only — no files changed                 |
+| 2    | `codefast arrange --dry-run [target]` | Show exactly what a bare `arrange` would write |
+| 3    | `codefast arrange [target]`           | Write the changes                              |
 
-### Flags (preview / apply)
+### Flags (`arrange`)
 
 | Flag                 | Description                                                                 |
 | -------------------- | --------------------------------------------------------------------------- |
+| `--dry-run`          | Preview the rewrite without writing files.                                  |
 | `--with-class-name`  | Append `className` as the last argument when rewriting a `cn(...)` call.    |
 | `--cn-import <spec>` | Override the module specifier used when a missing `cn` import is added.     |
 | `--json`             | Print a single JSON object on stdout; suppresses human progress and colors. |
 
-`analyze` also supports `--json`.
+`inspect` also supports `--json`. `simplify` accepts `--dry-run` and `--json`.
 
 ### `arrange group` — one-shot classification
 
-Groups a class string without touching the filesystem. Useful for checking how classes would be grouped before running `apply`:
+Groups a class string without touching the filesystem. Useful for checking how classes would be grouped before running `arrange`:
 
 ```bash
 # Quoted string
@@ -176,44 +178,47 @@ codefast arrange group --tv "flex items-center gap-2"
 
 ### `--json` payloads
 
-| Subcommand          | Payload highlights                                                                                                                         |
-| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
-| `analyze`           | `schemaVersion`, `analyzeRootPath`, full `report` (same data as the human report).                                                         |
-| `preview` / `apply` | `schemaVersion`, `write`, `ok` (`false` if the `onAfterWrite` hook failed), full `result` (`filePaths`, `modifiedFiles`, `totalFound`, …). |
-| `group`             | `schemaVersion`, `primaryLine`, `bucketsCommentLine`.                                                                                      |
+| Subcommand | Payload highlights                                                                                                                         |
+| ---------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| `arrange`  | `schemaVersion`, `write`, `ok` (`false` if the `onAfterWrite` hook failed), full `result` (`filePaths`, `modifiedFiles`, `totalFound`, …). |
+| `inspect`  | `schemaVersion`, `analyzeRootPath`, full `report` (same data as the human report).                                                         |
+| `simplify` | `schemaVersion`, `write`, `ok`, full `result`.                                                                                             |
+| `group`    | `schemaVersion`, `primaryLine`, `bucketsCommentLine`.                                                                                      |
 
 ---
 
-## `mirror sync`
+## `mirror`
 
 Scans built `dist/` trees and regenerates the `exports` field of every workspace package. Run it from anywhere inside the monorepo — the workspace root is discovered via `pnpm-workspace.yaml`.
 
 ```bash
-codefast mirror sync                 # all workspace packages
-codefast mirror sync packages/ui     # one package (path relative to repo root)
-codefast mirror sync -v              # verbose diagnostics
-codefast mirror sync --json          # JSON summary for scripts / CI
+codefast mirror                 # all workspace packages
+codefast mirror packages/ui     # one package (path relative to repo root)
+codefast mirror --dry-run       # preview — report changes without writing
+codefast mirror -v              # verbose diagnostics
+codefast mirror --json          # JSON summary for scripts / CI
 ```
 
-| Flag              | Description                                                           |
-| ----------------- | --------------------------------------------------------------------- |
-| `-v`, `--verbose` | Print extra diagnostics.                                              |
-| `--json`          | Print a single `{ schemaVersion, ok, elapsedSeconds, stats }` object. |
+| Flag              | Description                                                                  |
+| ----------------- | ---------------------------------------------------------------------------- |
+| `--dry-run`       | Report what would change without writing any `package.json`.                 |
+| `-v`, `--verbose` | Print extra diagnostics.                                                     |
+| `--json`          | Print a single `{ schemaVersion, ok, write, elapsedSeconds, stats }` object. |
 
-> **Build first.** `mirror sync` reads from `dist/`. Run your build before syncing or exports will reflect stale output.
+> **Build first.** `mirror` reads from `dist/`. Run your build before syncing or exports will reflect stale output.
 
 Exit code is `1` when any package fails (`stats.packagesErrored > 0`), `0` otherwise.
 
 ---
 
-## `tag` / `annotate`
+## `tag`
 
 Scans `.ts` / `.tsx` sources and adds `@since <current-package-version>` to exported declarations that don't already carry one. The version is read from the nearest `package.json` walking up from the target path.
 
 ```bash
 codefast tag                   # auto-discover workspace packages from cwd
-codefast tag packages/ui/src   # annotate a custom target
-codefast annotate --dry-run    # preview only, do not write
+codefast tag packages/ui/src   # tag a custom target
+codefast tag --dry-run         # preview only, do not write
 codefast tag --json            # JSON summary for scripts / CI
 ```
 
@@ -296,7 +301,7 @@ export default {
 
 #### Skipping a package
 
-Set a package to `false` to exclude it from `codefast mirror sync` entirely:
+Set a package to `false` to exclude it from `codefast mirror` entirely:
 
 ```javascript
 mirror: {
@@ -362,7 +367,7 @@ Keeps the existing `package.json#exports` map exactly as-is and only fills in mi
 
 #### `css`
 
-Controls CSS file export generation. `mirror sync` scans `dist/` for `.css` files and writes wildcard or per-file export entries.
+Controls CSS file export generation. `mirror` scans `dist/` for `.css` files and writes wildcard or per-file export entries.
 
 ```javascript
 // Shorthand: auto-detect all CSS files in dist/
@@ -387,7 +392,7 @@ Controls CSS file export generation. `mirror sync` scans `dist/` for `.css` file
 
 When `css` is omitted, CSS files found in `dist/` are still exported by default.
 
-#### What `mirror sync` writes
+#### What `mirror` writes
 
 For a package with `dist/button.mjs`, `dist/button.d.ts`, and `source: true`, the generated export entry looks like:
 
@@ -430,22 +435,22 @@ tag: {
 
 ```javascript
 arrange: {
-  // Called after files are written by `codefast arrange apply`
+  // Called after files are written by `codefast arrange`
   onAfterWrite: ({ files }) => {
     execSync(`oxfmt ${files.join(" ")}`, { stdio: "inherit" });
   },
 }
 ```
 
-| Field          | Type                                                  | Description                                                                                |
-| -------------- | ----------------------------------------------------- | ------------------------------------------------------------------------------------------ |
-| `onAfterWrite` | `(ctx: { files: string[] }) => void \| Promise<void>` | Lifecycle hook — runs after `arrange apply` writes files. Not called by `arrange preview`. |
+| Field          | Type                                                  | Description                                                                      |
+| -------------- | ----------------------------------------------------- | -------------------------------------------------------------------------------- |
+| `onAfterWrite` | `(ctx: { files: string[] }) => void \| Promise<void>` | Lifecycle hook — runs after `arrange` writes files. Not called with `--dry-run`. |
 
 ---
 
 ## Lifecycle hooks
 
-Both `tag` and `arrange apply` call `onAfterWrite` immediately after writing files to disk. The hook receives the list of written file paths and can run any synchronous or asynchronous work — formatters, linters, codegen, notifications.
+Both `tag` and `arrange` call `onAfterWrite` immediately after writing files to disk. The hook receives the list of written file paths and can run any synchronous or asynchronous work — formatters, linters, codegen, notifications.
 
 ```javascript
 export default {
@@ -467,8 +472,8 @@ export default {
 Contract:
 
 - `tag.onAfterWrite` fires after `codefast tag` writes JSDoc annotations.
-- `arrange.onAfterWrite` fires after `codefast arrange apply` rewrites class strings.
-- Hook is **not** called on `--dry-run` or `arrange preview`.
+- `arrange.onAfterWrite` fires after `codefast arrange` rewrites class strings.
+- Hook is **not** called on `--dry-run`.
 - Hooks may be synchronous or `async` (`void | Promise<void>`).
 - If the hook throws or rejects, the command reports the error on stderr and exits with code `1`.
 
@@ -509,14 +514,14 @@ To change placement, extend `classifyBareUtility` in `packages/cli/src/arrange/d
 **`codefast: command not found`**
 Install globally with `pnpm add -g @codefast/cli`, or run via `pnpm dlx @codefast/cli <command>`.
 
-**`mirror sync` writes little or no output**
-Packages must be built first. Ensure `dist/` exists by running your build step, then re-run `codefast mirror sync`.
+**`mirror` writes little or no output**
+Packages must be built first. Ensure `dist/` exists by running your build step, then re-run `codefast mirror`.
 
-**Unexpected class reorder after `arrange apply`**
-Run `arrange preview` first and smoke-test the UI. Some components rely on cascade-sensitive ordering that `arrange` cannot detect automatically.
+**Unexpected class reorder after `arrange`**
+Run `arrange --dry-run` first and smoke-test the UI. Some components rely on cascade-sensitive ordering that `arrange` cannot detect automatically.
 
 **`--json` output mixed with progress lines**
-Some shells buffer progress writes on stderr into stdout when piping — redirect stderr explicitly: `codefast mirror sync --json 2>/dev/null | jq`.
+Some shells buffer progress writes on stderr into stdout when piping — redirect stderr explicitly: `codefast mirror --json 2>/dev/null | jq`.
 
 ---
 
@@ -538,7 +543,7 @@ A few naming conventions:
 
 - **`codefast <command>`** refers to CLI commands exposed via the `bin` entry in `@codefast/cli`.
 - **Scripts in `packages/cli/package.json`** (`build`, `test`, …) are package-local dev scripts, not CLI commands.
-- The root `package.json` includes optional convenience wrappers (e.g. `cli:mirror-sync`, `cli:arrange-analyze`) for common dev workflows.
+- The root `package.json` includes optional convenience wrappers (e.g. `cli:mirror`, `cli:arrange-inspect`) for common dev workflows.
 
 ---
 

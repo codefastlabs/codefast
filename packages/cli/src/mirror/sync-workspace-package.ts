@@ -21,6 +21,7 @@ export async function syncExportsForWorkspacePackage(
   rootDir: string,
   packagePathStr: string,
   config: MirrorConfig,
+  write = true,
 ): Promise<PackageStats> {
   const pathJoin = path.join;
   const pathResolve = path.resolve;
@@ -113,6 +114,7 @@ export async function syncExportsForWorkspacePackage(
         packageJsonPath,
         packageDir,
         exportOptions,
+        write,
       );
       pkgStats.totalExports = supplementedSpecifiers.length;
     } else {
@@ -137,11 +139,16 @@ export async function syncExportsForWorkspacePackage(
         exportOptions,
       );
 
-      const { prunedKeys } = await writePackageJsonExportsAtomic(fs, packageJsonPath, {
-        generatedExports: generatedExports.exports,
-        managedExportSpecifiers: Object.keys(generatedExports.exports),
-        originalPathBySpecifier: generatedExports.originalPathBySpecifier,
-      });
+      const { prunedKeys } = await writePackageJsonExportsAtomic(
+        fs,
+        packageJsonPath,
+        {
+          generatedExports: generatedExports.exports,
+          managedExportSpecifiers: Object.keys(generatedExports.exports),
+          originalPathBySpecifier: generatedExports.originalPathBySpecifier,
+        },
+        write,
+      );
 
       pkgStats.jsModules = generatedExports.jsCount;
       pkgStats.cssExports = generatedExports.cssCount;

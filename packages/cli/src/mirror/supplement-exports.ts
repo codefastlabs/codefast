@@ -152,6 +152,7 @@ export async function supplementExportsInPackageJson(
     import: boolean;
     resolveSourcePath: (modulePath: string) => string;
   },
+  write = true,
 ): Promise<SupplementResult> {
   const raw = await fs.readFile(packageJsonPath, "utf8");
   const packageJson = JSON.parse(raw) as PackageJsonShape;
@@ -193,13 +194,18 @@ export async function supplementExportsInPackageJson(
     originalPathBySpecifier[specifier] = specifier;
   }
 
-  await writePackageJsonExportsAtomic(fs, packageJsonPath, {
-    generatedExports: supplementedExports as Parameters<
-      typeof writePackageJsonExportsAtomic
-    >[2]["generatedExports"],
-    managedExportSpecifiers: Object.keys(supplementedExports),
-    originalPathBySpecifier,
-  });
+  await writePackageJsonExportsAtomic(
+    fs,
+    packageJsonPath,
+    {
+      generatedExports: supplementedExports as Parameters<
+        typeof writePackageJsonExportsAtomic
+      >[2]["generatedExports"],
+      managedExportSpecifiers: Object.keys(supplementedExports),
+      originalPathBySpecifier,
+    },
+    write,
+  );
 
   return { supplementedSpecifiers };
 }
