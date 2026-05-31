@@ -9,12 +9,12 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as AboutRouteImport } from './routes/about'
+import { Route as AboutRouteRouteImport } from './routes/about/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ComponentsIndexRouteImport } from './routes/components/index'
 import { Route as ComponentsSlugRouteImport } from './routes/components/$slug'
 
-const AboutRoute = AboutRouteImport.update({
+const AboutRouteRoute = AboutRouteRouteImport.update({
   id: '/about',
   path: '/about',
   getParentRoute: () => rootRouteImport,
@@ -37,20 +37,20 @@ const ComponentsSlugRoute = ComponentsSlugRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/about': typeof AboutRoute
+  '/about': typeof AboutRouteRoute
   '/components/$slug': typeof ComponentsSlugRoute
   '/components/': typeof ComponentsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/about': typeof AboutRoute
+  '/about': typeof AboutRouteRoute
   '/components/$slug': typeof ComponentsSlugRoute
   '/components': typeof ComponentsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/about': typeof AboutRoute
+  '/about': typeof AboutRouteRoute
   '/components/$slug': typeof ComponentsSlugRoute
   '/components/': typeof ComponentsIndexRoute
 }
@@ -64,7 +64,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AboutRoute: typeof AboutRoute
+  AboutRouteRoute: typeof AboutRouteRoute
   ComponentsSlugRoute: typeof ComponentsSlugRoute
   ComponentsIndexRoute: typeof ComponentsIndexRoute
 }
@@ -75,7 +75,7 @@ declare module '@tanstack/react-router' {
       id: '/about'
       path: '/about'
       fullPath: '/about'
-      preLoaderRoute: typeof AboutRouteImport
+      preLoaderRoute: typeof AboutRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -104,7 +104,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  AboutRoute: AboutRoute,
+  AboutRouteRoute: AboutRouteRoute,
   ComponentsSlugRoute: ComponentsSlugRoute,
   ComponentsIndexRoute: ComponentsIndexRoute,
 }
