@@ -155,6 +155,8 @@ When `[target]` is omitted, `arrange` auto-detects the **nearest package directo
 
 `inspect` also supports `--json`. `simplify` accepts `--dry-run` and `--json`.
 
+> **Test files are skipped.** Directory scans exclude `*.test.*` / `*.spec.*` files — a `cn(...)` inside an assertion is test data, not styling to reformat. Pass such a file explicitly to override.
+
 ### `arrange group` — one-shot classification
 
 Groups a class string without touching the filesystem. Useful for checking how classes would be grouped before running `arrange`:
