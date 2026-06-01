@@ -36,7 +36,7 @@ type RadioCardsItemProps = ComponentProps<typeof RadioGroupPrimitive.Item>;
 function RadioCardsItem({ children, className, ...props }: RadioCardsItemProps): JSX.Element {
   return (
     <Label
-      className="flex items-start gap-3 rounded-md border border-input p-3 transition hover:not-has-disabled:not-has-aria-checked:bg-secondary has-focus-visible:border-ring has-disabled:opacity-50 has-aria-checked:border-primary has-aria-checked:bg-primary/10"
+      className="flex items-start gap-3 rounded-md border border-input p-3 transition has-focus-visible:border-ring has-disabled:opacity-50 has-aria-checked:border-primary has-aria-checked:bg-primary/10"
       data-slot="radio-card"
     >
       <RadioGroupPrimitive.Item
