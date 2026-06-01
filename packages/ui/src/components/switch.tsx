@@ -19,7 +19,7 @@ function Switch({ className, ...props }: SwitchProps): JSX.Element {
   return (
     <SwitchPrimitives.Root
       className={cn(
-        "peer group/switch inline-flex h-5 w-9 shrink-0 items-center rounded-full border border-transparent p-0.75 shadow-xs outline-hidden transition-[background-color,box-shadow] duration-200 ease-snappy focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:not-data-checked:border-ring/60 active:not-disabled:inset-shadow-sm disabled:opacity-50 motion-reduce:transition-none motion-reduce:duration-0 data-checked:bg-primary data-checked:focus-visible:ring-primary/20 dark:data-checked:focus-visible:ring-primary/40 data-unchecked:bg-input dark:data-unchecked:bg-input/80",
+        "peer group/switch inline-flex h-5 w-9 shrink-0 items-center rounded-full border border-transparent p-0.75 shadow-xs outline-hidden transition-[background-color,box-shadow] duration-200 ease-snappy focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 active:not-disabled:inset-shadow-sm disabled:opacity-50 motion-reduce:transition-none motion-reduce:duration-0 data-checked:bg-primary data-unchecked:bg-input dark:data-unchecked:bg-input/80",
         className,
       )}
       data-slot="switch"

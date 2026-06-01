@@ -37,7 +37,6 @@ function InputPassword({
     >
       <InputGroupInput
         autoCapitalize="none"
-        data-slot="input-password-item"
         disabled={disabled}
         readOnly={readOnly}
         type={type}
@@ -45,7 +44,7 @@ function InputPassword({
       />
       <InputGroupButton
         aria-label={type === "password" ? "Show password" : "Hide password"}
-        className="rounded-full focus-visible:ring-0 focus-visible:not-disabled:bg-input"
+        className="rounded-full"
         data-slot="input-password-toggle"
         disabled={disabled}
         size="icon-sm"

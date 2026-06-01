@@ -58,7 +58,7 @@ function Slider({
         <SliderPrimitive.Thumb
           key={index}
           aria-label="Volume"
-          className="flex size-4 items-center justify-center rounded-full border-2 border-primary bg-primary shadow-sm outline-hidden after:size-full after:rounded-full after:bg-background after:transition-[width,height] after:duration-200 after:ease-spring focus-visible:ring-4 focus-visible:ring-primary/20 active:not-data-disabled:after:size-1 motion-reduce:after:transition-none motion-reduce:after:duration-0 dark:focus-visible:ring-primary/40"
+          className="flex size-4 items-center justify-center rounded-full border-2 border-primary bg-primary shadow-sm ring-ring/50 outline-hidden transition-[color,box-shadow] after:size-full after:rounded-full after:bg-background after:transition-[width,height] after:duration-200 after:ease-spring hover:ring-4 focus-visible:ring-4 active:not-data-disabled:after:size-1 motion-reduce:transition-none motion-reduce:after:transition-none motion-reduce:after:duration-0"
           data-slot="slider-thumb"
         />
       ))}
