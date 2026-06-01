@@ -1,10 +1,7 @@
-import type { VariantProps } from "#/lib/utils";
 import { cn } from "#/lib/utils";
 import type { ComponentProps, JSX } from "react";
 import * as SelectPrimitive from "@radix-ui/react-select";
 import { CheckIcon, ChevronDownIcon, ChevronUpIcon } from "lucide-react";
-
-import { buttonVariants } from "#/variants/button";
 
 /* -----------------------------------------------------------------------------
  * Component: Select
@@ -62,29 +59,30 @@ function SelectValue({ ...props }: SelectValueProps): JSX.Element {
  * @since 0.3.16-canary.0
  */
 interface SelectTriggerProps extends ComponentProps<typeof SelectPrimitive.Trigger> {
-  size?: VariantProps<typeof buttonVariants>["size"];
+  size?: "default" | "sm";
 }
 
 /**
  * @since 0.3.16-canary.0
  */
-function SelectTrigger({ children, className, size, ...props }: SelectTriggerProps): JSX.Element {
+function SelectTrigger({
+  children,
+  className,
+  size = "default",
+  ...props
+}: SelectTriggerProps): JSX.Element {
   return (
     <SelectPrimitive.Trigger
-      className={buttonVariants({
-        className: [
-          "[&_svg:not([class*='text-'])]:text-muted-foreground focus:ring-ring/50 focus:border-ring w-fit justify-between px-3 font-normal focus:ring-3 *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-2 *:data-[slot=select-value]:truncate",
-          className,
-        ],
-        size,
-        variant: "outline",
-      })}
+      className={cn(
+        "flex w-fit items-center justify-between gap-1.5 rounded-md border border-input bg-transparent py-2 pr-2 pl-2.5 text-sm font-normal whitespace-nowrap shadow-xs outline-hidden transition-[color,box-shadow] focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 data-[size=default]:h-9 data-[size=sm]:h-8 *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-2 *:data-[slot=select-value]:truncate dark:bg-input/30 dark:hover:bg-input/50 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 [&_svg:not([class*='text-'])]:text-muted-foreground",
+        className,
+      )}
       data-size={size}
       data-slot="select-trigger"
       {...props}
     >
       {children}
-      <SelectPrimitive.Icon asChild className="size-4 shrink-0 opacity-50">
+      <SelectPrimitive.Icon asChild className="size-4 shrink-0 text-muted-foreground">
         <ChevronDownIcon />
       </SelectPrimitive.Icon>
     </SelectPrimitive.Trigger>

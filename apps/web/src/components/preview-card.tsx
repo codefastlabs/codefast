@@ -33,7 +33,7 @@ export function PreviewCard({
   return (
     <div
       id={id}
-      className={`flex scroll-mt-28 flex-col overflow-hidden rounded-2xl border border-ui-border bg-ui-card ${wide ? "sm:col-span-2" : ""}`}
+      className={`flex scroll-mt-28 flex-col rounded-2xl border border-ui-border bg-ui-card ${wide ? "sm:col-span-2" : ""}`}
     >
       {/* Tab bar */}
       <div className="flex min-w-0 items-center justify-between gap-2 border-b border-ui-border px-3">

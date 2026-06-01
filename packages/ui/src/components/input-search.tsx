@@ -54,7 +54,6 @@ function InputSearch({
         <SearchIcon />
       </InputGroupAddon>
       <InputGroupInput
-        data-slot="input-search-item"
         disabled={disabled}
         readOnly={readOnly}
         type="search"
@@ -67,10 +66,11 @@ function InputSearch({
       {value ? (
         <InputGroupButton
           aria-label="Clear search"
-          className="rounded-full focus-visible:ring-0 focus-visible:not-disabled:bg-input"
+          className="rounded-full"
           data-slot="input-search-clear"
           disabled={disabled ?? readOnly}
           size="icon-sm"
+          type="button"
           variant="ghost"
           onClick={() => {
             setValue("");
