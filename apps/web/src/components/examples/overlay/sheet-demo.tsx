@@ -3,6 +3,7 @@ import { Input } from "@codefast/ui/input";
 import { Label } from "@codefast/ui/label";
 import {
   Sheet,
+  SheetBody,
   SheetClose,
   SheetContent,
   SheetDescription,
@@ -23,7 +24,7 @@ export function SheetDemo() {
           <SheetTitle>Edit profile</SheetTitle>
           <SheetDescription>Update your profile details and save changes.</SheetDescription>
         </SheetHeader>
-        <div className="grid gap-3 overflow-auto px-4">
+        <SheetBody className="grid gap-3">
           <div className="grid gap-1.5">
             <Label htmlFor="sheet-name">Name</Label>
             <Input id="sheet-name" defaultValue="Vuong Phan" />
@@ -32,7 +33,7 @@ export function SheetDemo() {
             <Label htmlFor="sheet-email">Email</Label>
             <Input id="sheet-email" defaultValue="mr.thevuong@gmail.com" type="email" />
           </div>
-        </div>
+        </SheetBody>
         <SheetFooter>
           <SheetClose size="sm" variant="outline">
             Cancel
