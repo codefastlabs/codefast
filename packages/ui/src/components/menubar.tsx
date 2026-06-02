@@ -106,7 +106,7 @@ function MenubarTrigger({ className, ...props }: MenubarTriggerProps): JSX.Eleme
   return (
     <MenubarPrimitive.Trigger
       className={cn(
-        "flex items-center gap-x-2 rounded-sm px-2 py-1.5 text-sm font-medium outline-hidden select-none hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground data-open:bg-accent data-open:text-accent-foreground",
+        "flex items-center gap-x-2 rounded-sm px-2 py-1.5 text-sm font-medium outline-hidden select-none hover:bg-muted focus:bg-accent focus:text-accent-foreground data-open:bg-accent data-open:text-accent-foreground",
         className,
       )}
       data-slot="menubar-trigger"
@@ -233,7 +233,7 @@ function MenubarItem({ className, inset, variant, ...props }: MenubarItemProps):
   return (
     <MenubarPrimitive.Item
       className={cn(
-        "group/menubar-item relative flex cursor-default items-center gap-x-2 rounded-sm px-2 py-1.5 text-sm outline-hidden select-none focus:bg-accent focus:text-accent-foreground aria-disabled:opacity-50 data-inset:pl-8 data-[variant=destructive]:text-destructive data-[variant=destructive]:focus:bg-destructive/10 dark:data-[variant=destructive]:focus:bg-destructive/20 [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 [&_svg:not([class*='text-'])]:text-muted-foreground data-[variant=destructive]:[&_svg:not([class*='text-'])]:text-destructive/80",
+        "group/menubar-item relative flex cursor-default items-center gap-x-2 rounded-sm px-2 py-1.5 text-sm outline-hidden select-none focus:bg-accent focus:text-accent-foreground aria-disabled:opacity-50 data-inset:pl-8 data-[variant=destructive]:text-destructive data-[variant=destructive]:focus:bg-destructive/10 data-[variant=destructive]:focus:text-destructive dark:data-[variant=destructive]:focus:bg-destructive/20 [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 [&_svg:not([class*='text-'])]:text-muted-foreground data-[variant=destructive]:[&_svg:not([class*='text-'])]:text-destructive/80",
         className,
       )}
       data-inset={inset}

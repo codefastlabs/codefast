@@ -755,5 +755,7 @@ export { sheetContentVariants } from "#/variants/sheet";
 export type { SheetContentVariants } from "#/variants/sheet";
 export { sidebarMenuButtonVariants } from "#/variants/sidebar";
 export type { SidebarMenuButtonVariants } from "#/variants/sidebar";
+export { tabsListVariants } from "#/variants/tabs";
+export type { TabsListVariants } from "#/variants/tabs";
 export { toggleVariants } from "#/variants/toggle";
 export type { ToggleVariants } from "#/variants/toggle";
