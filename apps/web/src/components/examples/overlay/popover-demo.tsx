@@ -1,7 +1,14 @@
 import { Button } from "@codefast/ui/button";
 import { Input } from "@codefast/ui/input";
 import { Label } from "@codefast/ui/label";
-import { Popover, PopoverContent, PopoverTrigger } from "@codefast/ui/popover";
+import {
+  Popover,
+  PopoverContent,
+  PopoverDescription,
+  PopoverHeader,
+  PopoverTitle,
+  PopoverTrigger,
+} from "@codefast/ui/popover";
 
 export function PopoverDemo() {
   return (
@@ -11,7 +18,10 @@ export function PopoverDemo() {
       </PopoverTrigger>
       <PopoverContent className="w-56">
         <div className="grid gap-3">
-          <p className="text-sm font-medium text-ui-fg">Dimensions</p>
+          <PopoverHeader>
+            <PopoverTitle>Dimensions</PopoverTitle>
+            <PopoverDescription>Set the dimensions for the layer.</PopoverDescription>
+          </PopoverHeader>
           <div className="grid gap-2">
             <div className="grid grid-cols-3 items-center gap-3">
               <Label className="text-xs">Width</Label>

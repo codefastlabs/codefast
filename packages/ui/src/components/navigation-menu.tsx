@@ -227,17 +227,21 @@ function NavigationMenuIndicator({
 export {
   NavigationMenu,
   NavigationMenuContent,
+  NavigationMenuIndicator,
   NavigationMenuItem,
   NavigationMenuLink,
   NavigationMenuList,
   NavigationMenuTrigger,
+  NavigationMenuViewport,
 };
 
 export type {
   NavigationMenuContentProps,
+  NavigationMenuIndicatorProps,
   NavigationMenuItemProps,
   NavigationMenuLinkProps,
   NavigationMenuListProps,
   NavigationMenuProps,
   NavigationMenuTriggerProps,
+  NavigationMenuViewportProps,
 };

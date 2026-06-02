@@ -6,10 +6,12 @@ import {
   AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
+  AlertDialogMedia,
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@codefast/ui/alert-dialog";
 import { Button } from "@codefast/ui/button";
+import { TriangleAlertIcon } from "lucide-react";
 
 export function AlertDialogDemo() {
   return (
@@ -21,6 +23,9 @@ export function AlertDialogDemo() {
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
+          <AlertDialogMedia className="text-destructive">
+            <TriangleAlertIcon />
+          </AlertDialogMedia>
           <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
           <AlertDialogDescription>
             This action cannot be undone. Your account will be permanently deleted.

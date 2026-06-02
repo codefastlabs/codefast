@@ -2,14 +2,7 @@ import { useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { MenuIcon } from "lucide-react";
 import { Button } from "@codefast/ui/button";
-import {
-  Sheet,
-  SheetBody,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@codefast/ui/sheet";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@codefast/ui/sheet";
 import { CommandPalette } from "#/components/command-palette";
 import { AppearanceToggle } from "#/components/appearance-toggle.tsx";
 
@@ -117,7 +110,7 @@ export function Header() {
                   <Logo />
                 </SheetTitle>
               </SheetHeader>
-              <SheetBody>
+              <div className="flex flex-col overflow-auto px-4 pb-4">
                 <nav className="flex flex-col gap-1" aria-label="Mobile navigation">
                   {NAV_LINKS.map(({ to, label }) => (
                     <Link
@@ -144,7 +137,7 @@ export function Header() {
                     <AppearanceToggle />
                   </div>
                 </div>
-              </SheetBody>
+              </div>
             </SheetContent>
           </Sheet>
         </div>

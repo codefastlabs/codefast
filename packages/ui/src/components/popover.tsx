@@ -108,14 +108,86 @@ function PopoverArrow({ className, ...props }: PopoverArrowProps): JSX.Element {
 }
 
 /* -----------------------------------------------------------------------------
+ * Component: PopoverHeader
+ * -------------------------------------------------------------------------- */
+
+/**
+ * @since 0.3.16-canary.0
+ */
+type PopoverHeaderProps = ComponentProps<"div">;
+
+/**
+ * @since 0.3.16-canary.0
+ */
+function PopoverHeader({ className, ...props }: PopoverHeaderProps): JSX.Element {
+  return (
+    <div
+      className={cn("flex flex-col gap-1 text-sm", className)}
+      data-slot="popover-header"
+      {...props}
+    />
+  );
+}
+
+/* -----------------------------------------------------------------------------
+ * Component: PopoverTitle
+ * -------------------------------------------------------------------------- */
+
+/**
+ * @since 0.3.16-canary.0
+ */
+type PopoverTitleProps = ComponentProps<"div">;
+
+/**
+ * @since 0.3.16-canary.0
+ */
+function PopoverTitle({ className, ...props }: PopoverTitleProps): JSX.Element {
+  return <div className={cn("font-medium", className)} data-slot="popover-title" {...props} />;
+}
+
+/* -----------------------------------------------------------------------------
+ * Component: PopoverDescription
+ * -------------------------------------------------------------------------- */
+
+/**
+ * @since 0.3.16-canary.0
+ */
+type PopoverDescriptionProps = ComponentProps<"p">;
+
+/**
+ * @since 0.3.16-canary.0
+ */
+function PopoverDescription({ className, ...props }: PopoverDescriptionProps): JSX.Element {
+  return (
+    <p
+      className={cn("text-muted-foreground", className)}
+      data-slot="popover-description"
+      {...props}
+    />
+  );
+}
+
+/* -----------------------------------------------------------------------------
  * Exports
  * -------------------------------------------------------------------------- */
 
-export { Popover, PopoverAnchor, PopoverArrow, PopoverContent, PopoverTrigger };
+export {
+  Popover,
+  PopoverAnchor,
+  PopoverArrow,
+  PopoverContent,
+  PopoverDescription,
+  PopoverHeader,
+  PopoverTitle,
+  PopoverTrigger,
+};
 export type {
   PopoverAnchorProps,
   PopoverArrowProps,
   PopoverContentProps,
+  PopoverDescriptionProps,
+  PopoverHeaderProps,
   PopoverProps,
+  PopoverTitleProps,
   PopoverTriggerProps,
 };
