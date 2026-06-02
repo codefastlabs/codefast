@@ -271,9 +271,9 @@ function CarouselPrevious({
     <Button
       aria-label="Previous slide"
       className={cn(
-        "absolute size-8 rounded-full shadow-none",
+        "absolute size-8 touch-manipulation rounded-full shadow-none",
         orientation === "horizontal"
-          ? "top-1/2 -left-12 -translate-y-1/2"
+          ? "top-1/2 -left-12 -translate-y-1/2 active:not-aria-[haspopup]:translate-y-[calc(-50%+1px)]"
           : "-top-12 left-1/2 -translate-x-1/2 rotate-90",
         className,
       )}
@@ -320,9 +320,9 @@ function CarouselNext({
     <Button
       aria-label="Next slide"
       className={cn(
-        "absolute size-8 rounded-full shadow-none",
+        "absolute size-8 touch-manipulation rounded-full shadow-none",
         orientation === "horizontal"
-          ? "top-1/2 -right-12 -translate-y-1/2"
+          ? "top-1/2 -right-12 -translate-y-1/2 active:not-aria-[haspopup]:translate-y-[calc(-50%+1px)]"
           : "-bottom-12 left-1/2 -translate-x-1/2 rotate-90",
         className,
       )}
