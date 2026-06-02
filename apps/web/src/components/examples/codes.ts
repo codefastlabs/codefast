@@ -129,3 +129,51 @@ export { default as switchDisabledCode } from "#/components/examples/docs/switch
 // — tooltip —
 export { default as tooltipSidesCode } from "#/components/examples/docs/tooltip/sides?raw";
 export { default as tooltipWithShortcutCode } from "#/components/examples/docs/tooltip/with-shortcut?raw";
+
+// — select —
+export { default as selectStatusCode } from "#/components/examples/docs/select/status?raw";
+export { default as selectGroupedCode } from "#/components/examples/docs/select/grouped?raw";
+
+// — slider —
+export { default as sliderVolumeCode } from "#/components/examples/docs/slider/volume?raw";
+export { default as sliderRangeCode } from "#/components/examples/docs/slider/range?raw";
+
+// — checkbox —
+export { default as checkboxSelectAllCode } from "#/components/examples/docs/checkbox/select-all?raw";
+export { default as checkboxWithDescriptionCode } from "#/components/examples/docs/checkbox/with-description?raw";
+
+// — popover —
+export { default as popoverShareCode } from "#/components/examples/docs/popover/share?raw";
+export { default as popoverDimensionsCode } from "#/components/examples/docs/popover/dimensions?raw";
+
+// — sonner —
+export { default as sonnerTypesCode } from "#/components/examples/docs/sonner/types?raw";
+export { default as sonnerActionCode } from "#/components/examples/docs/sonner/action?raw";
+
+// — radio-cards —
+export { default as radioCardsPlansCode } from "#/components/examples/docs/radio-cards/plans?raw";
+export { default as radioCardsIntervalCode } from "#/components/examples/docs/radio-cards/interval?raw";
+
+// — calendar —
+export { default as calendarSingleCode } from "#/components/examples/docs/calendar/single?raw";
+export { default as calendarRangeCode } from "#/components/examples/docs/calendar/range?raw";
+
+// — command —
+export { default as commandPaletteCode } from "#/components/examples/docs/command/palette?raw";
+export { default as commandDialogCode } from "#/components/examples/docs/command/dialog?raw";
+
+// — field —
+export { default as fieldValidationCode } from "#/components/examples/docs/field/validation?raw";
+export { default as fieldLayoutsCode } from "#/components/examples/docs/field/layouts?raw";
+
+// — dropdown-menu —
+export { default as dropdownCheckboxesCode } from "#/components/examples/docs/dropdown-menu/checkboxes?raw";
+export { default as dropdownRadioCode } from "#/components/examples/docs/dropdown-menu/radio?raw";
+
+// — progress —
+export { default as progressAnimatedCode } from "#/components/examples/docs/progress/animated?raw";
+export { default as progressColorsCode } from "#/components/examples/docs/progress/colors?raw";
+
+// — sheet —
+export { default as sheetSidesCode } from "#/components/examples/docs/sheet/sides?raw";
+export { default as sheetProfileCode } from "#/components/examples/docs/sheet/profile?raw";
