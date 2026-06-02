@@ -82,3 +82,50 @@ export { default as collapsibleDemoCode } from "#/components/examples/layout/col
 export { default as resizableDemoCode } from "#/components/examples/layout/resizable-demo?raw";
 export { default as scrollAreaDemoCode } from "#/components/examples/layout/scroll-area-demo?raw";
 export { default as separatorDemoCode } from "#/components/examples/layout/separator-demo?raw";
+
+/* -------------------------------------------------------------------------- */
+/* Detail-page doc examples — multiple per component, grouped by slug.         */
+/* These live under `docs/<slug>/` and back the rich `/components/$slug` pages. */
+/* -------------------------------------------------------------------------- */
+
+// — button —
+export { default as buttonVariantsCode } from "#/components/examples/docs/button/variants?raw";
+export { default as buttonSizesCode } from "#/components/examples/docs/button/sizes?raw";
+export { default as buttonIconsCode } from "#/components/examples/docs/button/icons?raw";
+export { default as buttonLoadingCode } from "#/components/examples/docs/button/loading?raw";
+export { default as buttonAsChildCode } from "#/components/examples/docs/button/as-child?raw";
+
+// — badge —
+export { default as badgeVariantsCode } from "#/components/examples/docs/badge/variants?raw";
+export { default as badgeWithIconCode } from "#/components/examples/docs/badge/with-icon?raw";
+export { default as badgeAsLinkCode } from "#/components/examples/docs/badge/as-link?raw";
+
+// — input —
+export { default as inputDefaultCode } from "#/components/examples/docs/input/default?raw";
+export { default as inputStatesCode } from "#/components/examples/docs/input/states?raw";
+export { default as inputFileCode } from "#/components/examples/docs/input/file?raw";
+
+// — tabs —
+export { default as tabsDefaultCode } from "#/components/examples/docs/tabs/default?raw";
+export { default as tabsLineCode } from "#/components/examples/docs/tabs/line?raw";
+
+// — dialog —
+export { default as dialogBasicCode } from "#/components/examples/docs/dialog/basic?raw";
+export { default as dialogScrollCode } from "#/components/examples/docs/dialog/scroll?raw";
+
+// — accordion —
+export { default as accordionSingleCode } from "#/components/examples/docs/accordion/single?raw";
+export { default as accordionMultipleCode } from "#/components/examples/docs/accordion/multiple?raw";
+
+// — card —
+export { default as cardOverviewCode } from "#/components/examples/docs/card/overview?raw";
+export { default as cardSimpleCode } from "#/components/examples/docs/card/simple?raw";
+
+// — switch —
+export { default as switchWithLabelCode } from "#/components/examples/docs/switch/with-label?raw";
+export { default as switchSizesCode } from "#/components/examples/docs/switch/sizes?raw";
+export { default as switchDisabledCode } from "#/components/examples/docs/switch/disabled?raw";
+
+// — tooltip —
+export { default as tooltipSidesCode } from "#/components/examples/docs/tooltip/sides?raw";
+export { default as tooltipWithShortcutCode } from "#/components/examples/docs/tooltip/with-shortcut?raw";
