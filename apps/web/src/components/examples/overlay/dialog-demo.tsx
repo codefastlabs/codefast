@@ -1,6 +1,7 @@
 import { Button } from "@codefast/ui/button";
 import {
   Dialog,
+  DialogBody,
   DialogClose,
   DialogContent,
   DialogDescription,
@@ -23,7 +24,7 @@ export function DialogDemo() {
           <DialogTitle>Edit profile</DialogTitle>
           <DialogDescription>Make changes here. Click save when done.</DialogDescription>
         </DialogHeader>
-        <div className="grid gap-3">
+        <DialogBody className="grid gap-3">
           <div className="grid gap-1.5">
             <Label htmlFor="dialog-name">Name</Label>
             <Input id="dialog-name" defaultValue="Vuong Phan" />
@@ -32,7 +33,7 @@ export function DialogDemo() {
             <Label htmlFor="dialog-user">Username</Label>
             <Input id="dialog-user" defaultValue="@vuongphan" />
           </div>
-        </div>
+        </DialogBody>
         <DialogFooter>
           <DialogClose variant="outline" size="sm">
             Cancel

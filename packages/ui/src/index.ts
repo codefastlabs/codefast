@@ -22,6 +22,7 @@ export type {
 export {
   AlertDialog,
   AlertDialogAction,
+  AlertDialogBody,
   AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
@@ -35,6 +36,7 @@ export {
 } from "#/components/alert-dialog";
 export type {
   AlertDialogActionProps,
+  AlertDialogBodyProps,
   AlertDialogCancelProps,
   AlertDialogContentProps,
   AlertDialogDescriptionProps,
@@ -218,6 +220,7 @@ export type {
 } from "#/components/context-menu";
 export {
   Dialog,
+  DialogBody,
   DialogClose,
   DialogContent,
   DialogDescription,
@@ -229,6 +232,7 @@ export {
   DialogTrigger,
 } from "#/components/dialog";
 export type {
+  DialogBodyProps,
   DialogCloseProps,
   DialogContentProps,
   DialogDescriptionProps,
@@ -582,6 +586,7 @@ export { Separator, SeparatorItem } from "#/components/separator";
 export type { SeparatorItemProps, SeparatorProps } from "#/components/separator";
 export {
   Sheet,
+  SheetBody,
   SheetClose,
   SheetContent,
   SheetDescription,
@@ -593,6 +598,7 @@ export {
   SheetTrigger,
 } from "#/components/sheet";
 export type {
+  SheetBodyProps,
   SheetCloseProps,
   SheetContentProps,
   SheetDescriptionProps,

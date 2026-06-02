@@ -150,8 +150,34 @@ type SheetHeaderProps = ComponentProps<"div">;
 function SheetHeader({ className, ...props }: SheetHeaderProps): JSX.Element {
   return (
     <div
-      className={cn("flex flex-col gap-1.5 p-4", className)}
+      className={cn("flex shrink-0 flex-col gap-1.5 p-4", className)}
       data-slot="sheet-header"
+      {...props}
+    />
+  );
+}
+
+/* -----------------------------------------------------------------------------
+ * Component: SheetBody
+ * -------------------------------------------------------------------------- */
+
+/**
+ * Optional scrollable region for long content. When used, the Header and Footer
+ * stay pinned (shrink-0) and only this body scrolls. A codefast enhancement over
+ * radix-vega.
+ *
+ * @since 0.3.16-canary.0
+ */
+type SheetBodyProps = ComponentProps<"div">;
+
+/**
+ * @since 0.3.16-canary.0
+ */
+function SheetBody({ className, ...props }: SheetBodyProps): JSX.Element {
+  return (
+    <div
+      className={cn("min-h-0 flex-1 overflow-y-auto px-4", className)}
+      data-slot="sheet-body"
       {...props}
     />
   );
@@ -172,7 +198,7 @@ type SheetFooterProps = ComponentProps<"div">;
 function SheetFooter({ className, ...props }: SheetFooterProps): JSX.Element {
   return (
     <div
-      className={cn("mt-auto flex flex-col gap-2 p-4", className)}
+      className={cn("mt-auto flex shrink-0 flex-col gap-2 p-4", className)}
       data-slot="sheet-footer"
       {...props}
     />
@@ -254,6 +280,7 @@ function SheetClose({ className, size, variant, ...props }: SheetCloseProps): JS
 
 export {
   Sheet,
+  SheetBody,
   SheetClose,
   SheetContent,
   SheetDescription,
@@ -265,6 +292,7 @@ export {
   SheetTrigger,
 };
 export type {
+  SheetBodyProps,
   SheetCloseProps,
   SheetContentProps,
   SheetDescriptionProps,
