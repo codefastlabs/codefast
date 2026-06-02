@@ -170,12 +170,26 @@ const CAROUSEL_CONTENT_NAME = "CarouselContent";
  */
 interface CarouselContentProps extends ComponentProps<"div"> {
   classNames?: {
+    /** Class applied to the flex track that holds the slides. */
     content?: string;
+    /** Class applied to the scroll viewport (the `overflow-hidden` element). */
     wrapper?: string;
   };
 }
 
 /**
+ * The scroll viewport requires `overflow-hidden` (Embla hides off-screen slides
+ * with it), so any ring/shadow on slide content that sits OUTSIDE the slide's
+ * border-box is clipped where the slide meets the viewport edge. This is
+ * inherent to every Embla-based carousel — the active slide is flush with both
+ * scroll-axis edges, so left/right rings (horizontal) cannot show without
+ * revealing the neighbouring slide.
+ *
+ * To give content shadows/rings breathing room on the CROSS axis (top/bottom
+ * for horizontal carousels), add a negative-margin + matching padding via
+ * `classNames.wrapper`, e.g. `classNames={{ wrapper: "-my-2 py-2" }}`. This
+ * shifts no layout but lets the clip happen `n`px further out.
+ *
  * @since 0.3.16-canary.0
  */
 function CarouselContent({
