@@ -9,18 +9,21 @@ import { cn } from "#/lib/utils";
 /**
  * @since 0.3.16-canary.0
  */
-type CardProps = ComponentProps<"div">;
+type CardProps = ComponentProps<"div"> & {
+  size?: "default" | "sm";
+};
 
 /**
  * @since 0.3.16-canary.0
  */
-function Card({ className, ...props }: CardProps): JSX.Element {
+function Card({ className, size = "default", ...props }: CardProps): JSX.Element {
   return (
     <div
       className={cn(
-        "flex flex-col gap-6 overflow-auto rounded-xl border bg-card py-6 text-card-foreground shadow-sm",
+        "group/card flex flex-col gap-6 overflow-hidden rounded-xl bg-card py-6 text-sm text-card-foreground shadow-xs ring-1 ring-foreground/10 has-[>img:first-child]:pt-0 data-[size=sm]:gap-4 data-[size=sm]:py-4 *:[img:first-child]:rounded-t-xl *:[img:last-child]:rounded-b-xl",
         className,
       )}
+      data-size={size}
       data-slot="card"
       {...props}
     />
@@ -43,7 +46,7 @@ function CardHeader({ className, ...props }: CardHeaderProps): JSX.Element {
   return (
     <div
       className={cn(
-        "@container/card-header grid auto-rows-min grid-rows-[auto_auto] items-start gap-1.5 px-6 has-[data-slot=card-action]:grid-cols-[1fr_auto] [.border-b]:pb-6",
+        "group/card-header @container/card-header grid auto-rows-min items-start gap-1 rounded-t-xl px-6 group-data-[size=sm]/card:px-4 has-data-[slot=card-action]:grid-cols-[1fr_auto] has-data-[slot=card-description]:grid-rows-[auto_auto] [.border-b]:pb-6 group-data-[size=sm]/card:[.border-b]:pb-4",
         className,
       )}
       data-slot="card-header"
@@ -66,7 +69,14 @@ type CardTitleProps = ComponentProps<"div">;
  */
 function CardTitle({ children, className, ...props }: CardTitleProps): JSX.Element {
   return (
-    <div className={cn("leading-none font-semibold", className)} data-slot="card-title" {...props}>
+    <div
+      className={cn(
+        "cn-font-heading text-base leading-normal font-medium group-data-[size=sm]/card:text-sm",
+        className,
+      )}
+      data-slot="card-title"
+      {...props}
+    >
       {children}
     </div>
   );
@@ -107,7 +117,13 @@ type CardContentProps = ComponentProps<"div">;
  * @since 0.3.16-canary.0
  */
 function CardContent({ className, ...props }: CardContentProps): JSX.Element {
-  return <div className={cn("px-6", className)} data-slot="card-content" {...props} />;
+  return (
+    <div
+      className={cn("px-6 group-data-[size=sm]/card:px-4", className)}
+      data-slot="card-content"
+      {...props}
+    />
+  );
 }
 
 /* -----------------------------------------------------------------------------
@@ -125,7 +141,10 @@ type CardFooterProps = ComponentProps<"div">;
 function CardFooter({ className, ...props }: CardFooterProps): JSX.Element {
   return (
     <div
-      className={cn("flex items-center px-6 [.border-t]:pt-6", className)}
+      className={cn(
+        "flex items-center rounded-b-xl px-6 group-data-[size=sm]/card:px-4 [.border-t]:pt-6 group-data-[size=sm]/card:[.border-t]:pt-4",
+        className,
+      )}
       data-slot="card-footer"
       {...props}
     />

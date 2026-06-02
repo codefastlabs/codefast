@@ -460,6 +460,11 @@
       "types": "./dist/variants/input-group.d.mts",
       "import": "./dist/variants/input-group.mjs"
     },
+    "./variants/input-number": {
+      "source": "./src/variants/input-number.ts",
+      "types": "./dist/variants/input-number.d.mts",
+      "import": "./dist/variants/input-number.mjs"
+    },
     "./variants/item": {
       "source": "./src/variants/item.ts",
       "types": "./dist/variants/item.d.mts",
@@ -494,6 +499,11 @@
       "source": "./src/variants/sidebar.ts",
       "types": "./dist/variants/sidebar.d.mts",
       "import": "./dist/variants/sidebar.mjs"
+    },
+    "./variants/tabs": {
+      "source": "./src/variants/tabs.ts",
+      "types": "./dist/variants/tabs.d.mts",
+      "import": "./dist/variants/tabs.mjs"
     },
     "./variants/toggle": {
       "source": "./src/variants/toggle.ts",
