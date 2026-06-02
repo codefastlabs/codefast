@@ -12,36 +12,59 @@ export type {
   AccordionProps,
   AccordionTriggerProps,
 } from "#/components/accordion";
-export { Alert, AlertDescription, AlertTitle } from "#/components/alert";
-export type { AlertDescriptionProps, AlertProps, AlertTitleProps } from "#/components/alert";
+export { Alert, AlertAction, AlertDescription, AlertTitle } from "#/components/alert";
+export type {
+  AlertActionProps,
+  AlertDescriptionProps,
+  AlertProps,
+  AlertTitleProps,
+} from "#/components/alert";
 export {
   AlertDialog,
   AlertDialogAction,
-  AlertDialogBody,
   AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
+  AlertDialogMedia,
+  AlertDialogOverlay,
+  AlertDialogPortal,
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "#/components/alert-dialog";
 export type {
   AlertDialogActionProps,
-  AlertDialogBodyProps,
   AlertDialogCancelProps,
   AlertDialogContentProps,
   AlertDialogDescriptionProps,
   AlertDialogFooterProps,
   AlertDialogHeaderProps,
+  AlertDialogMediaProps,
+  AlertDialogOverlayProps,
+  AlertDialogPortalProps,
   AlertDialogProps,
   AlertDialogTitleProps,
   AlertDialogTriggerProps,
 } from "#/components/alert-dialog";
 export { AspectRatio } from "#/components/aspect-ratio";
 export type { AspectRatioProps } from "#/components/aspect-ratio";
-export { Avatar, AvatarFallback, AvatarImage } from "#/components/avatar";
-export type { AvatarFallbackProps, AvatarImageProps, AvatarProps } from "#/components/avatar";
+export {
+  Avatar,
+  AvatarBadge,
+  AvatarFallback,
+  AvatarGroup,
+  AvatarGroupCount,
+  AvatarImage,
+} from "#/components/avatar";
+export type {
+  AvatarBadgeProps,
+  AvatarFallbackProps,
+  AvatarGroupCountProps,
+  AvatarGroupProps,
+  AvatarImageProps,
+  AvatarProps,
+} from "#/components/avatar";
 export { Badge } from "#/components/badge";
 export type { BadgeProps } from "#/components/badge";
 export { ButtonGroup, ButtonGroupSeparator, ButtonGroupText } from "#/components/button-group";
@@ -195,44 +218,48 @@ export type {
 } from "#/components/context-menu";
 export {
   Dialog,
-  DialogBody,
   DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
+  DialogOverlay,
+  DialogPortal,
   DialogTitle,
   DialogTrigger,
 } from "#/components/dialog";
 export type {
-  DialogBodyProps,
   DialogCloseProps,
   DialogContentProps,
   DialogDescriptionProps,
   DialogFooterProps,
   DialogHeaderProps,
+  DialogOverlayProps,
+  DialogPortalProps,
   DialogProps,
   DialogTitleProps,
   DialogTriggerProps,
 } from "#/components/dialog";
 export {
   Drawer,
-  DrawerBody,
   DrawerClose,
   DrawerContent,
   DrawerDescription,
   DrawerFooter,
   DrawerHeader,
+  DrawerOverlay,
+  DrawerPortal,
   DrawerTitle,
   DrawerTrigger,
 } from "#/components/drawer";
 export type {
-  DrawerBodyProps,
   DrawerCloseProps,
   DrawerContentProps,
   DrawerDescriptionProps,
   DrawerFooterProps,
   DrawerHeaderProps,
+  DrawerOverlayProps,
+  DrawerPortalProps,
   DrawerProps,
   DrawerTitleProps,
   DrawerTriggerProps,
@@ -448,18 +475,22 @@ export type {
 export {
   NavigationMenu,
   NavigationMenuContent,
+  NavigationMenuIndicator,
   NavigationMenuItem,
   NavigationMenuLink,
   NavigationMenuList,
   NavigationMenuTrigger,
+  NavigationMenuViewport,
 } from "#/components/navigation-menu";
 export type {
   NavigationMenuContentProps,
+  NavigationMenuIndicatorProps,
   NavigationMenuItemProps,
   NavigationMenuLinkProps,
   NavigationMenuListProps,
   NavigationMenuProps,
   NavigationMenuTriggerProps,
+  NavigationMenuViewportProps,
 } from "#/components/navigation-menu";
 export { NativeSelect, NativeSelectOptGroup, NativeSelectOption } from "#/components/native-select";
 export type {
@@ -490,13 +521,19 @@ export {
   PopoverAnchor,
   PopoverArrow,
   PopoverContent,
+  PopoverDescription,
+  PopoverHeader,
+  PopoverTitle,
   PopoverTrigger,
 } from "#/components/popover";
 export type {
   PopoverAnchorProps,
   PopoverArrowProps,
   PopoverContentProps,
+  PopoverDescriptionProps,
+  PopoverHeaderProps,
   PopoverProps,
+  PopoverTitleProps,
   PopoverTriggerProps,
 } from "#/components/popover";
 export { Progress } from "#/components/progress";
@@ -545,22 +582,24 @@ export { Separator, SeparatorItem } from "#/components/separator";
 export type { SeparatorItemProps, SeparatorProps } from "#/components/separator";
 export {
   Sheet,
-  SheetBody,
   SheetClose,
   SheetContent,
   SheetDescription,
   SheetFooter,
   SheetHeader,
+  SheetOverlay,
+  SheetPortal,
   SheetTitle,
   SheetTrigger,
 } from "#/components/sheet";
 export type {
-  SheetBodyProps,
   SheetCloseProps,
   SheetContentProps,
   SheetDescriptionProps,
   SheetFooterProps,
   SheetHeaderProps,
+  SheetOverlayProps,
+  SheetPortalProps,
   SheetProps,
   SheetTitleProps,
   SheetTriggerProps,

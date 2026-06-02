@@ -40,6 +40,47 @@ function DialogTrigger({ ...props }: DialogTriggerProps): JSX.Element {
 }
 
 /* -----------------------------------------------------------------------------
+ * Component: DialogPortal
+ * -------------------------------------------------------------------------- */
+
+/**
+ * @since 0.3.16-canary.0
+ */
+type DialogPortalProps = ComponentProps<typeof DialogPrimitive.Portal>;
+
+/**
+ * @since 0.3.16-canary.0
+ */
+function DialogPortal({ ...props }: DialogPortalProps): JSX.Element {
+  return <DialogPrimitive.Portal data-slot="dialog-portal" {...props} />;
+}
+
+/* -----------------------------------------------------------------------------
+ * Component: DialogOverlay
+ * -------------------------------------------------------------------------- */
+
+/**
+ * @since 0.3.16-canary.0
+ */
+type DialogOverlayProps = ComponentProps<typeof DialogPrimitive.Overlay>;
+
+/**
+ * @since 0.3.16-canary.0
+ */
+function DialogOverlay({ className, ...props }: DialogOverlayProps): JSX.Element {
+  return (
+    <DialogPrimitive.Overlay
+      className={cn(
+        "fixed inset-0 isolate z-50 bg-black/10 ease-gentle supports-backdrop-filter:backdrop-blur-xs motion-reduce:animate-none motion-reduce:transition-none motion-reduce:duration-0 data-open:animate-in data-open:duration-300 data-open:fade-in-0 data-closed:animate-out data-closed:duration-200 data-closed:fade-out-0",
+        className,
+      )}
+      data-slot="dialog-overlay"
+      {...props}
+    />
+  );
+}
+
+/* -----------------------------------------------------------------------------
  * Component: DialogContent
  * -------------------------------------------------------------------------- */
 
@@ -47,12 +88,7 @@ function DialogTrigger({ ...props }: DialogTriggerProps): JSX.Element {
  * @since 0.3.16-canary.0
  */
 interface DialogContentProps extends ComponentProps<typeof DialogPrimitive.Content> {
-  classNames?: {
-    close?: string;
-    content?: string;
-    overlay?: string;
-    wrapper?: string;
-  };
+  showCloseButton?: boolean;
 }
 
 /**
@@ -61,49 +97,36 @@ interface DialogContentProps extends ComponentProps<typeof DialogPrimitive.Conte
 function DialogContent({
   children,
   className,
-  classNames,
+  showCloseButton = true,
   ...props
 }: DialogContentProps): JSX.Element {
   return (
-    <DialogPrimitive.Portal>
-      <DialogPrimitive.Overlay
-        className={cn(
-          "fixed inset-0 z-50 bg-black/10 ease-gentle supports-backdrop-filter:backdrop-blur-xs motion-reduce:animate-none motion-reduce:transition-none motion-reduce:duration-0 data-open:animate-in data-open:duration-300 data-open:fade-in-0 data-closed:animate-out data-closed:duration-200 data-closed:fade-out-0",
-          classNames?.overlay,
-        )}
-        data-slot="dialog-overlay"
-      />
+    <DialogPortal>
+      <DialogOverlay />
       <DialogPrimitive.Content
         className={cn(
-          "fixed inset-0 z-50 grid grid-rows-[1fr_auto] justify-items-center overflow-auto ease-gentle motion-reduce:animate-none motion-reduce:transition-none motion-reduce:duration-0 sm:grid-rows-[1fr_auto_3fr] sm:p-4 data-open:animate-in data-open:duration-300 max-sm:data-open:animation-duration-380 max-sm:data-open:slide-in-from-bottom sm:data-open:fade-in-0 sm:data-open:zoom-in-95 data-closed:animate-out data-closed:duration-200 max-sm:data-closed:animation-duration-280 max-sm:data-closed:slide-out-to-bottom sm:data-closed:fade-out-0 sm:data-closed:zoom-out-95",
-          classNames?.wrapper,
+          "fixed top-1/2 left-1/2 z-50 grid w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 gap-6 rounded-xl bg-popover p-6 text-sm text-popover-foreground ring-1 ring-foreground/10 ease-gentle outline-none motion-reduce:animate-none motion-reduce:transition-none motion-reduce:duration-0 sm:max-w-lg data-open:animate-in data-open:duration-300 data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:duration-200 data-closed:fade-out-0 data-closed:zoom-out-95",
+          className,
         )}
-        data-slot="dialog-content-wrapper"
+        data-slot="dialog-content"
         {...props}
       >
-        <div
-          className={cn(
-            "relative row-start-2 flex w-full flex-col rounded-t-xl bg-popover text-popover-foreground ring-1 ring-foreground/10 sm:max-w-lg sm:rounded-xl",
-            classNames?.content,
-            className,
-          )}
-          data-slot="dialog-content"
-        >
-          {children}
+        {children}
+        {showCloseButton ? (
           <DialogPrimitive.Close
             className={buttonVariants({
-              className: ["absolute top-2.5 right-2.5 size-7", classNames?.close],
-              size: "icon",
+              className: "absolute top-4 right-4",
+              size: "icon-sm",
               variant: "ghost",
             })}
             data-slot="dialog-close"
           >
-            <XIcon className="size-4" />
+            <XIcon />
             <span className="sr-only">Close</span>
           </DialogPrimitive.Close>
-        </div>
+        ) : null}
       </DialogPrimitive.Content>
-    </DialogPrimitive.Portal>
+    </DialogPortal>
   );
 }
 
@@ -121,32 +144,11 @@ type DialogHeaderProps = ComponentProps<"div">;
  */
 function DialogHeader({ className, ...props }: DialogHeaderProps): JSX.Element {
   return (
-    <header
-      className={cn(
-        "flex shrink-0 flex-col gap-1.5 px-6 pt-6 pb-2 text-center sm:text-left",
-        className,
-      )}
+    <div
+      className={cn("flex flex-col gap-2 text-center sm:text-left", className)}
       data-slot="dialog-header"
       {...props}
     />
-  );
-}
-
-/* -----------------------------------------------------------------------------
- * Component: DialogBody
- * -------------------------------------------------------------------------- */
-
-/**
- * @since 0.3.16-canary.0
- */
-type DialogBodyProps = ComponentProps<"div">;
-
-/**
- * @since 0.3.16-canary.0
- */
-function DialogBody({ className, ...props }: DialogBodyProps): JSX.Element {
-  return (
-    <main className={cn("overflow-auto px-6 py-2", className)} data-slot="dialog-body" {...props} />
   );
 }
 
@@ -164,11 +166,8 @@ type DialogFooterProps = ComponentProps<"div">;
  */
 function DialogFooter({ className, ...props }: DialogFooterProps): JSX.Element {
   return (
-    <footer
-      className={cn(
-        "flex shrink-0 flex-col-reverse gap-2 px-6 pt-2 pb-6 sm:flex-row sm:justify-end",
-        className,
-      )}
+    <div
+      className={cn("flex flex-col-reverse gap-2 sm:flex-row sm:justify-end", className)}
       data-slot="dialog-footer"
       {...props}
     />
@@ -190,7 +189,7 @@ type DialogTitleProps = ComponentProps<typeof DialogPrimitive.Title>;
 function DialogTitle({ className, ...props }: DialogTitleProps): JSX.Element {
   return (
     <DialogPrimitive.Title
-      className={cn("text-lg leading-none font-semibold tracking-tight", className)}
+      className={cn("cn-font-heading leading-none font-medium", className)}
       data-slot="dialog-title"
       {...props}
     />
@@ -212,7 +211,10 @@ type DialogDescriptionProps = ComponentProps<typeof DialogPrimitive.Description>
 function DialogDescription({ className, ...props }: DialogDescriptionProps): JSX.Element {
   return (
     <DialogPrimitive.Description
-      className={cn("text-sm text-muted-foreground", className)}
+      className={cn(
+        "text-sm text-muted-foreground *:[a]:underline *:[a]:underline-offset-3 *:[a]:hover:text-foreground",
+        className,
+      )}
       data-slot="dialog-description"
       {...props}
     />
@@ -250,22 +252,24 @@ function DialogClose({ className, size, variant, ...props }: DialogCloseProps): 
 
 export {
   Dialog,
-  DialogBody,
   DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
+  DialogOverlay,
+  DialogPortal,
   DialogTitle,
   DialogTrigger,
 };
 export type {
-  DialogBodyProps,
   DialogCloseProps,
   DialogContentProps,
   DialogDescriptionProps,
   DialogFooterProps,
   DialogHeaderProps,
+  DialogOverlayProps,
+  DialogPortalProps,
   DialogProps,
   DialogTitleProps,
   DialogTriggerProps,

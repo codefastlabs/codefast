@@ -1,7 +1,6 @@
 import { Button } from "@codefast/ui/button";
 import {
   Drawer,
-  DrawerBody,
   DrawerClose,
   DrawerContent,
   DrawerDescription,
@@ -24,25 +23,21 @@ export function DrawerDemo() {
           <DrawerTitle>Edit profile</DrawerTitle>
           <DrawerDescription>Make changes and save when done.</DrawerDescription>
         </DrawerHeader>
-        <DrawerBody>
-          <div className="grid gap-3">
-            <div className="grid gap-1.5">
-              <Label htmlFor="drawer-name">Name</Label>
-              <Input id="drawer-name" defaultValue="Vuong Phan" />
-            </div>
-            <div className="grid gap-1.5">
-              <Label htmlFor="drawer-username">Username</Label>
-              <Input id="drawer-username" defaultValue="@vuongphan" />
-            </div>
+        <div className="grid gap-3 overflow-auto px-4">
+          <div className="grid gap-1.5">
+            <Label htmlFor="drawer-name">Name</Label>
+            <Input id="drawer-name" defaultValue="Vuong Phan" />
           </div>
-        </DrawerBody>
+          <div className="grid gap-1.5">
+            <Label htmlFor="drawer-username">Username</Label>
+            <Input id="drawer-username" defaultValue="@vuongphan" />
+          </div>
+        </div>
         <DrawerFooter>
-          <div className="flex justify-end gap-2">
-            <DrawerClose size="sm" variant="outline">
-              Cancel
-            </DrawerClose>
-            <DrawerClose size="sm">Save changes</DrawerClose>
-          </div>
+          <DrawerClose size="sm" variant="outline">
+            Cancel
+          </DrawerClose>
+          <DrawerClose size="sm">Save changes</DrawerClose>
         </DrawerFooter>
       </DrawerContent>
     </Drawer>

@@ -45,6 +45,47 @@ function SheetTrigger({ ...props }: SheetTriggerProps): JSX.Element {
 }
 
 /* -----------------------------------------------------------------------------
+ * Component: SheetPortal
+ * -------------------------------------------------------------------------- */
+
+/**
+ * @since 0.3.16-canary.0
+ */
+type SheetPortalProps = ComponentProps<typeof SheetPrimitive.Portal>;
+
+/**
+ * @since 0.3.16-canary.0
+ */
+function SheetPortal({ ...props }: SheetPortalProps): JSX.Element {
+  return <SheetPrimitive.Portal data-slot="sheet-portal" {...props} />;
+}
+
+/* -----------------------------------------------------------------------------
+ * Component: SheetOverlay
+ * -------------------------------------------------------------------------- */
+
+/**
+ * @since 0.3.16-canary.0
+ */
+type SheetOverlayProps = ComponentProps<typeof SheetPrimitive.Overlay>;
+
+/**
+ * @since 0.3.16-canary.0
+ */
+function SheetOverlay({ className, ...props }: SheetOverlayProps): JSX.Element {
+  return (
+    <SheetPrimitive.Overlay
+      className={cn(
+        "fixed inset-0 z-50 bg-black/10 ease-gentle supports-backdrop-filter:backdrop-blur-xs motion-reduce:animate-none motion-reduce:transition-none motion-reduce:duration-0 data-open:animate-in data-open:animation-duration-380 data-open:fade-in-0 data-closed:animate-out data-closed:animation-duration-280 data-closed:fade-out-0",
+        className,
+      )}
+      data-slot="sheet-overlay"
+      {...props}
+    />
+  );
+}
+
+/* -----------------------------------------------------------------------------
  * Component: SheetContent
  * -------------------------------------------------------------------------- */
 
@@ -53,11 +94,7 @@ function SheetTrigger({ ...props }: SheetTriggerProps): JSX.Element {
  */
 interface SheetContentProps
   extends ComponentProps<typeof SheetPrimitive.Content>, SheetContentVariants {
-  classNames?: {
-    close?: string;
-    content?: string;
-    overlay?: string;
-  };
+  showCloseButton?: boolean;
 }
 
 /**
@@ -66,38 +103,35 @@ interface SheetContentProps
 function SheetContent({
   children,
   className,
-  classNames,
+  showCloseButton = true,
   side = "right",
   ...props
 }: SheetContentProps): JSX.Element {
   return (
-    <SheetPrimitive.Portal>
-      <SheetPrimitive.Overlay
-        className={cn(
-          "fixed inset-0 z-50 bg-black/10 ease-gentle supports-backdrop-filter:backdrop-blur-xs motion-reduce:animate-none motion-reduce:transition-none motion-reduce:duration-0 data-open:animate-in data-open:animation-duration-380 data-open:fade-in-0 data-closed:animate-out data-closed:animation-duration-280 data-closed:fade-out-0",
-          classNames?.overlay,
-        )}
-        data-slot="sheet-overlay"
-      />
+    <SheetPortal>
+      <SheetOverlay />
       <SheetPrimitive.Content
-        className={sheetContentVariants({ className: [classNames?.content, className], side })}
+        className={sheetContentVariants({ className, side })}
+        data-side={side}
         data-slot="sheet-content"
         {...props}
       >
         {children}
-        <SheetPrimitive.Close
-          className={buttonVariants({
-            className: ["absolute top-4 right-4 size-7", classNames?.close],
-            size: "icon",
-            variant: "ghost",
-          })}
-          data-slot="sheet-close"
-        >
-          <XIcon className="size-4" />
-          <span className="sr-only">Close</span>
-        </SheetPrimitive.Close>
+        {showCloseButton ? (
+          <SheetPrimitive.Close
+            className={buttonVariants({
+              className: "absolute top-4 right-4",
+              size: "icon-sm",
+              variant: "ghost",
+            })}
+            data-slot="sheet-close"
+          >
+            <XIcon />
+            <span className="sr-only">Close</span>
+          </SheetPrimitive.Close>
+        ) : null}
       </SheetPrimitive.Content>
-    </SheetPrimitive.Portal>
+    </SheetPortal>
   );
 }
 
@@ -115,32 +149,11 @@ type SheetHeaderProps = ComponentProps<"div">;
  */
 function SheetHeader({ className, ...props }: SheetHeaderProps): JSX.Element {
   return (
-    <header
-      className={cn(
-        "flex shrink-0 flex-col gap-1.5 px-6 pt-6 pb-4 text-center sm:text-left",
-        className,
-      )}
+    <div
+      className={cn("flex flex-col gap-1.5 p-4", className)}
       data-slot="sheet-header"
       {...props}
     />
-  );
-}
-
-/* -----------------------------------------------------------------------------
- * Component: SheetBody
- * -------------------------------------------------------------------------- */
-
-/**
- * @since 0.3.16-canary.0
- */
-type SheetBodyProps = ComponentProps<"div">;
-
-/**
- * @since 0.3.16-canary.0
- */
-function SheetBody({ className, ...props }: SheetBodyProps): JSX.Element {
-  return (
-    <main className={cn("overflow-auto px-6 py-2", className)} data-slot="sheet-body" {...props} />
   );
 }
 
@@ -158,11 +171,8 @@ type SheetFooterProps = ComponentProps<"div">;
  */
 function SheetFooter({ className, ...props }: SheetFooterProps): JSX.Element {
   return (
-    <footer
-      className={cn(
-        "flex shrink-0 flex-col-reverse gap-2 px-6 pt-4 pb-6 sm:flex-row sm:justify-end",
-        className,
-      )}
+    <div
+      className={cn("mt-auto flex flex-col gap-2 p-4", className)}
       data-slot="sheet-footer"
       {...props}
     />
@@ -184,7 +194,7 @@ type SheetTitleProps = ComponentProps<typeof SheetPrimitive.Title>;
 function SheetTitle({ className, ...props }: SheetTitleProps): JSX.Element {
   return (
     <SheetPrimitive.Title
-      className={cn("text-lg font-semibold text-foreground", className)}
+      className={cn("cn-font-heading font-medium text-foreground", className)}
       data-slot="sheet-title"
       {...props}
     />
@@ -244,22 +254,24 @@ function SheetClose({ className, size, variant, ...props }: SheetCloseProps): JS
 
 export {
   Sheet,
-  SheetBody,
   SheetClose,
   SheetContent,
   SheetDescription,
   SheetFooter,
   SheetHeader,
+  SheetOverlay,
+  SheetPortal,
   SheetTitle,
   SheetTrigger,
 };
 export type {
-  SheetBodyProps,
   SheetCloseProps,
   SheetContentProps,
   SheetDescriptionProps,
   SheetFooterProps,
   SheetHeaderProps,
+  SheetOverlayProps,
+  SheetPortalProps,
   SheetProps,
   SheetTitleProps,
   SheetTriggerProps,

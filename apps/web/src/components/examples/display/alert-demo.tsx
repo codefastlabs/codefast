@@ -1,5 +1,6 @@
-import { Alert, AlertDescription, AlertTitle } from "@codefast/ui/alert";
-import { AlertTriangleIcon, InfoIcon } from "lucide-react";
+import { Alert, AlertAction, AlertDescription, AlertTitle } from "@codefast/ui/alert";
+import { Button } from "@codefast/ui/button";
+import { AlertTriangleIcon, InfoIcon, XIcon } from "lucide-react";
 
 export function AlertDemo() {
   return (
@@ -8,6 +9,11 @@ export function AlertDemo() {
         <InfoIcon />
         <AlertTitle>Heads up</AlertTitle>
         <AlertDescription>You can add components using the CLI.</AlertDescription>
+        <AlertAction>
+          <Button aria-label="Dismiss" size="icon-xs" variant="ghost">
+            <XIcon />
+          </Button>
+        </AlertAction>
       </Alert>
       <Alert variant="destructive">
         <AlertTriangleIcon />
