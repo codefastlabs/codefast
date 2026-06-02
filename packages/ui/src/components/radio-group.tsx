@@ -18,7 +18,7 @@ type RadioGroupProps = ComponentProps<typeof RadioGroupPrimitive.Root>;
 function RadioGroup({ className, ...props }: RadioGroupProps): JSX.Element {
   return (
     <RadioGroupPrimitive.Root
-      className={cn("grid gap-2", className)}
+      className={cn("grid w-full gap-3", className)}
       data-slot="radio-group"
       {...props}
     />
