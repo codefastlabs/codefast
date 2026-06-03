@@ -36,6 +36,12 @@ export default defineConfig(({ command }) => {
       nitro({
         preset: "vercel",
         exportConditions: isDev ? ["source"] : ["module"],
+        // react@19 and use-sync-external-store are CJS-only, so the inlined
+        // shim keeps a runtime `require("react")` that no export condition can
+        // turn into a static import. Trace react/react-dom so they end up in
+        // the serverless function's node_modules; otherwise the deployed
+        // function throws "Cannot find module 'react'".
+        traceDeps: ["react", "react-dom"],
       }),
       viteReact(),
       babel({ presets: [reactCompilerPreset()] }),
