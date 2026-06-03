@@ -1,5 +1,9 @@
 import type { ComponentDoc } from "#/components/examples/docs/types";
-import { popoverDimensionsCode, popoverShareCode } from "#/components/examples/codes";
+import {
+  popoverAnatomyCode,
+  popoverDimensionsCode,
+  popoverShareCode,
+} from "#/components/examples/codes";
 import { PopoverDimensions } from "#/components/examples/docs/popover/dimensions";
 import { PopoverShare } from "#/components/examples/docs/popover/share";
 
@@ -22,20 +26,7 @@ export const popoverDoc: ComponentDoc = {
       previewClassName: "min-h-40",
     },
   ],
-  anatomy: `import {
-  Popover, PopoverTrigger, PopoverContent,
-  PopoverHeader, PopoverTitle, PopoverDescription,
-} from "@codefast/ui/popover";
-
-<Popover>
-  <PopoverTrigger asChild>…</PopoverTrigger>
-  <PopoverContent>
-    <PopoverHeader>
-      <PopoverTitle>…</PopoverTitle>
-    </PopoverHeader>
-    …
-  </PopoverContent>
-</Popover>`,
+  anatomy: popoverAnatomyCode,
   api: [
     {
       name: "Popover",

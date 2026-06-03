@@ -1,5 +1,5 @@
 import type { ComponentDoc } from "#/components/examples/docs/types";
-import { cardOverviewCode, cardSimpleCode } from "#/components/examples/codes";
+import { cardAnatomyCode, cardOverviewCode, cardSimpleCode } from "#/components/examples/codes";
 import { CardOverview } from "#/components/examples/docs/card/overview";
 import { CardSimple } from "#/components/examples/docs/card/simple";
 
@@ -22,20 +22,7 @@ export const cardDoc: ComponentDoc = {
       previewClassName: "items-start",
     },
   ],
-  anatomy: `import {
-  Card, CardHeader, CardTitle, CardDescription,
-  CardAction, CardContent, CardFooter,
-} from "@codefast/ui/card";
-
-<Card>
-  <CardHeader>
-    <CardTitle>…</CardTitle>
-    <CardDescription>…</CardDescription>
-    <CardAction>…</CardAction>
-  </CardHeader>
-  <CardContent>…</CardContent>
-  <CardFooter>…</CardFooter>
-</Card>`,
+  anatomy: cardAnatomyCode,
   api: [
     {
       name: "Card",

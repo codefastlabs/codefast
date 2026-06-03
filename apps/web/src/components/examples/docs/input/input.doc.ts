@@ -1,5 +1,10 @@
 import type { ComponentDoc } from "#/components/examples/docs/types";
-import { inputDefaultCode, inputFileCode, inputStatesCode } from "#/components/examples/codes";
+import {
+  inputAnatomyCode,
+  inputDefaultCode,
+  inputFileCode,
+  inputStatesCode,
+} from "#/components/examples/codes";
 import { InputDefault } from "#/components/examples/docs/input/default";
 import { InputFile } from "#/components/examples/docs/input/file";
 import { InputStates } from "#/components/examples/docs/input/states";
@@ -28,11 +33,7 @@ export const inputDoc: ComponentDoc = {
       code: inputFileCode,
     },
   ],
-  anatomy: `import { Input } from "@codefast/ui/input";
-import { Label } from "@codefast/ui/label";
-
-<Label htmlFor="email">Email</Label>
-<Input id="email" type="email" />`,
+  anatomy: inputAnatomyCode,
   api: [
     {
       name: "Input",

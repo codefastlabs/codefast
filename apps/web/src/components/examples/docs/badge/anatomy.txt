@@ -1,0 +1,3 @@
+import { Badge } from "@codefast/ui/badge";
+
+<Badge variant="default">Label</Badge>

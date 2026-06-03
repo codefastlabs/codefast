@@ -1,5 +1,9 @@
 import type { ComponentDoc } from "#/components/examples/docs/types";
-import { accordionMultipleCode, accordionSingleCode } from "#/components/examples/codes";
+import {
+  accordionAnatomyCode,
+  accordionMultipleCode,
+  accordionSingleCode,
+} from "#/components/examples/codes";
 import { AccordionMultiple } from "#/components/examples/docs/accordion/multiple";
 import { AccordionSingle } from "#/components/examples/docs/accordion/single";
 
@@ -22,16 +26,7 @@ export const accordionDoc: ComponentDoc = {
       previewClassName: "items-start",
     },
   ],
-  anatomy: `import {
-  Accordion, AccordionItem, AccordionTrigger, AccordionContent,
-} from "@codefast/ui/accordion";
-
-<Accordion type="single" collapsible>
-  <AccordionItem value="a">
-    <AccordionTrigger>…</AccordionTrigger>
-    <AccordionContent>…</AccordionContent>
-  </AccordionItem>
-</Accordion>`,
+  anatomy: accordionAnatomyCode,
   api: [
     {
       name: "Accordion",

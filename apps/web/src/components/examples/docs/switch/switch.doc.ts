@@ -1,5 +1,6 @@
 import type { ComponentDoc } from "#/components/examples/docs/types";
 import {
+  switchAnatomyCode,
   switchDisabledCode,
   switchSizesCode,
   switchWithLabelCode,
@@ -32,11 +33,7 @@ export const switchDoc: ComponentDoc = {
       code: switchDisabledCode,
     },
   ],
-  anatomy: `import { Switch } from "@codefast/ui/switch";
-import { Label } from "@codefast/ui/label";
-
-<Switch id="s" />
-<Label htmlFor="s">Label</Label>`,
+  anatomy: switchAnatomyCode,
   api: [
     {
       name: "Switch",

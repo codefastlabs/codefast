@@ -1,5 +1,5 @@
 import type { ComponentDoc } from "#/components/examples/docs/types";
-import { sheetProfileCode, sheetSidesCode } from "#/components/examples/codes";
+import { sheetAnatomyCode, sheetProfileCode, sheetSidesCode } from "#/components/examples/codes";
 import { SheetProfile } from "#/components/examples/docs/sheet/profile";
 import { SheetSides } from "#/components/examples/docs/sheet/sides";
 
@@ -24,20 +24,7 @@ export const sheetDoc: ComponentDoc = {
       previewClassName: "min-h-40",
     },
   ],
-  anatomy: `import {
-  Sheet, SheetTrigger, SheetContent,
-  SheetHeader, SheetTitle, SheetDescription,
-  SheetBody, SheetFooter, SheetClose,
-} from "@codefast/ui/sheet";
-
-<Sheet>
-  <SheetTrigger asChild>…</SheetTrigger>
-  <SheetContent side="right">
-    <SheetHeader><SheetTitle>…</SheetTitle></SheetHeader>
-    <SheetBody>…</SheetBody>
-    <SheetFooter><SheetClose>…</SheetClose></SheetFooter>
-  </SheetContent>
-</Sheet>`,
+  anatomy: sheetAnatomyCode,
   api: [
     {
       name: "Sheet",

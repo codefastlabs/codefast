@@ -1,5 +1,9 @@
 import type { ComponentDoc } from "#/components/examples/docs/types";
-import { commandDialogCode, commandPaletteCode } from "#/components/examples/codes";
+import {
+  commandAnatomyCode,
+  commandDialogCode,
+  commandPaletteCode,
+} from "#/components/examples/codes";
 import { CommandDialogExample } from "#/components/examples/docs/command/dialog";
 import { CommandPalette } from "#/components/examples/docs/command/palette";
 
@@ -22,20 +26,7 @@ export const commandDoc: ComponentDoc = {
       previewClassName: "min-h-40",
     },
   ],
-  anatomy: `import {
-  Command, CommandInput, CommandList,
-  CommandEmpty, CommandGroup, CommandItem,
-} from "@codefast/ui/command";
-
-<Command>
-  <CommandInput placeholder="Search…" />
-  <CommandList>
-    <CommandEmpty>No results.</CommandEmpty>
-    <CommandGroup heading="…">
-      <CommandItem onSelect={run}>…</CommandItem>
-    </CommandGroup>
-  </CommandList>
-</Command>`,
+  anatomy: commandAnatomyCode,
   api: [
     {
       name: "Command",

@@ -1,5 +1,9 @@
 import type { ComponentDoc } from "#/components/examples/docs/types";
-import { progressAnimatedCode, progressColorsCode } from "#/components/examples/codes";
+import {
+  progressAnatomyCode,
+  progressAnimatedCode,
+  progressColorsCode,
+} from "#/components/examples/codes";
 import { ProgressAnimated } from "#/components/examples/docs/progress/animated";
 import { ProgressColors } from "#/components/examples/docs/progress/colors";
 
@@ -20,15 +24,7 @@ export const progressDoc: ComponentDoc = {
       code: progressColorsCode,
     },
   ],
-  anatomy: `import { Progress } from "@codefast/ui/progress";
-
-<Progress value={68} />
-
-// recolour the indicator
-<Progress
-  value={92}
-  className="**:data-[slot=progress-indicator]:bg-rose-500"
-/>`,
+  anatomy: progressAnatomyCode,
   api: [
     {
       name: "Progress",

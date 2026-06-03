@@ -177,3 +177,85 @@ export { default as progressColorsCode } from "#/components/examples/docs/progre
 // — sheet —
 export { default as sheetSidesCode } from "#/components/examples/docs/sheet/sides?raw";
 export { default as sheetProfileCode } from "#/components/examples/docs/sheet/profile?raw";
+
+// — carousel —
+export { default as carouselGalleryCode } from "#/components/examples/docs/carousel/gallery?raw";
+export { default as carouselVerticalCode } from "#/components/examples/docs/carousel/vertical?raw";
+
+// — toggle-group —
+export { default as toggleGroupAlignmentCode } from "#/components/examples/docs/toggle-group/alignment?raw";
+export { default as toggleGroupFormattingCode } from "#/components/examples/docs/toggle-group/formatting?raw";
+
+// — input-otp —
+export { default as inputOtpVerifyCode } from "#/components/examples/docs/input-otp/verify?raw";
+export { default as inputOtpPatternCode } from "#/components/examples/docs/input-otp/pattern?raw";
+
+// — context-menu —
+export { default as contextMenuEditorCode } from "#/components/examples/docs/context-menu/editor?raw";
+export { default as contextMenuActionsCode } from "#/components/examples/docs/context-menu/actions?raw";
+
+/* -------------------------------------------------------------------------- */
+/* Anatomy snippets — composition skeletons kept in .txt files, not literals.  */
+/* -------------------------------------------------------------------------- */
+
+export { default as accordionAnatomyCode } from "#/components/examples/docs/accordion/anatomy.txt?raw";
+export { default as badgeAnatomyCode } from "#/components/examples/docs/badge/anatomy.txt?raw";
+export { default as buttonAnatomyCode } from "#/components/examples/docs/button/anatomy.txt?raw";
+export { default as calendarAnatomyCode } from "#/components/examples/docs/calendar/anatomy.txt?raw";
+export { default as cardAnatomyCode } from "#/components/examples/docs/card/anatomy.txt?raw";
+export { default as carouselAnatomyCode } from "#/components/examples/docs/carousel/anatomy.txt?raw";
+export { default as checkboxAnatomyCode } from "#/components/examples/docs/checkbox/anatomy.txt?raw";
+export { default as commandAnatomyCode } from "#/components/examples/docs/command/anatomy.txt?raw";
+export { default as contextMenuAnatomyCode } from "#/components/examples/docs/context-menu/anatomy.txt?raw";
+export { default as dialogAnatomyCode } from "#/components/examples/docs/dialog/anatomy.txt?raw";
+export { default as dropdownMenuAnatomyCode } from "#/components/examples/docs/dropdown-menu/anatomy.txt?raw";
+export { default as fieldAnatomyCode } from "#/components/examples/docs/field/anatomy.txt?raw";
+export { default as inputAnatomyCode } from "#/components/examples/docs/input/anatomy.txt?raw";
+export { default as inputOtpAnatomyCode } from "#/components/examples/docs/input-otp/anatomy.txt?raw";
+export { default as popoverAnatomyCode } from "#/components/examples/docs/popover/anatomy.txt?raw";
+export { default as progressAnatomyCode } from "#/components/examples/docs/progress/anatomy.txt?raw";
+export { default as radioCardsAnatomyCode } from "#/components/examples/docs/radio-cards/anatomy.txt?raw";
+export { default as selectAnatomyCode } from "#/components/examples/docs/select/anatomy.txt?raw";
+export { default as sheetAnatomyCode } from "#/components/examples/docs/sheet/anatomy.txt?raw";
+export { default as sliderAnatomyCode } from "#/components/examples/docs/slider/anatomy.txt?raw";
+export { default as sonnerAnatomyCode } from "#/components/examples/docs/sonner/anatomy.txt?raw";
+export { default as switchAnatomyCode } from "#/components/examples/docs/switch/anatomy.txt?raw";
+export { default as tabsAnatomyCode } from "#/components/examples/docs/tabs/anatomy.txt?raw";
+export { default as toggleGroupAnatomyCode } from "#/components/examples/docs/toggle-group/anatomy.txt?raw";
+export { default as tooltipAnatomyCode } from "#/components/examples/docs/tooltip/anatomy.txt?raw";
+
+// — avatar —
+export { default as avatarFallbackCode } from "#/components/examples/docs/avatar/fallback?raw";
+export { default as avatarGroupCode } from "#/components/examples/docs/avatar/group?raw";
+export { default as avatarAnatomyCode } from "#/components/examples/docs/avatar/anatomy.txt?raw";
+
+// — spinner —
+export { default as spinnerSizesCode } from "#/components/examples/docs/spinner/sizes?raw";
+export { default as spinnerInButtonCode } from "#/components/examples/docs/spinner/in-button?raw";
+export { default as spinnerAnatomyCode } from "#/components/examples/docs/spinner/anatomy.txt?raw";
+
+// — kbd —
+export { default as kbdShortcutsCode } from "#/components/examples/docs/kbd/shortcuts?raw";
+export { default as kbdInlineCode } from "#/components/examples/docs/kbd/inline?raw";
+export { default as kbdAnatomyCode } from "#/components/examples/docs/kbd/anatomy.txt?raw";
+
+// — separator —
+export { default as separatorOrientationsCode } from "#/components/examples/docs/separator/orientations?raw";
+export { default as separatorAnatomyCode } from "#/components/examples/docs/separator/anatomy.txt?raw";
+
+// — skeleton —
+export { default as skeletonCardCode } from "#/components/examples/docs/skeleton/card?raw";
+export { default as skeletonListCode } from "#/components/examples/docs/skeleton/list?raw";
+export { default as skeletonAnatomyCode } from "#/components/examples/docs/skeleton/anatomy.txt?raw";
+
+// — empty —
+export { default as emptyStateCode } from "#/components/examples/docs/empty/state?raw";
+export { default as emptyAnatomyCode } from "#/components/examples/docs/empty/anatomy.txt?raw";
+
+// — aspect-ratio —
+export { default as aspectRatioRatiosCode } from "#/components/examples/docs/aspect-ratio/ratios?raw";
+export { default as aspectRatioAnatomyCode } from "#/components/examples/docs/aspect-ratio/anatomy.txt?raw";
+
+// — label —
+export { default as labelWithControlsCode } from "#/components/examples/docs/label/with-controls?raw";
+export { default as labelAnatomyCode } from "#/components/examples/docs/label/anatomy.txt?raw";

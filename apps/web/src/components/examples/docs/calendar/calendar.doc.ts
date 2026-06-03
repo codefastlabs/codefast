@@ -1,5 +1,9 @@
 import type { ComponentDoc } from "#/components/examples/docs/types";
-import { calendarRangeCode, calendarSingleCode } from "#/components/examples/codes";
+import {
+  calendarAnatomyCode,
+  calendarRangeCode,
+  calendarSingleCode,
+} from "#/components/examples/codes";
 import { CalendarRange } from "#/components/examples/docs/calendar/range";
 import { CalendarSingle } from "#/components/examples/docs/calendar/single";
 
@@ -20,13 +24,7 @@ export const calendarDoc: ComponentDoc = {
       code: calendarRangeCode,
     },
   ],
-  anatomy: `import { Calendar } from "@codefast/ui/calendar";
-
-<Calendar
-  mode="single"          // "single" | "range" | "multiple"
-  selected={date}
-  onSelect={setDate}
-/>`,
+  anatomy: calendarAnatomyCode,
   api: [
     {
       name: "Calendar",

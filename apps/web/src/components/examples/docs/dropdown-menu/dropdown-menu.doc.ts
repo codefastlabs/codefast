@@ -1,5 +1,9 @@
 import type { ComponentDoc } from "#/components/examples/docs/types";
-import { dropdownCheckboxesCode, dropdownRadioCode } from "#/components/examples/codes";
+import {
+  dropdownMenuAnatomyCode,
+  dropdownCheckboxesCode,
+  dropdownRadioCode,
+} from "#/components/examples/codes";
 import { DropdownCheckboxes } from "#/components/examples/docs/dropdown-menu/checkboxes";
 import { DropdownRadio } from "#/components/examples/docs/dropdown-menu/radio";
 
@@ -22,17 +26,7 @@ export const dropdownMenuDoc: ComponentDoc = {
       previewClassName: "min-h-40",
     },
   ],
-  anatomy: `import {
-  DropdownMenu, DropdownMenuTrigger, DropdownMenuContent,
-  DropdownMenuItem, DropdownMenuCheckboxItem, DropdownMenuRadioGroup,
-} from "@codefast/ui/dropdown-menu";
-
-<DropdownMenu>
-  <DropdownMenuTrigger asChild>…</DropdownMenuTrigger>
-  <DropdownMenuContent>
-    <DropdownMenuItem>…</DropdownMenuItem>
-  </DropdownMenuContent>
-</DropdownMenu>`,
+  anatomy: dropdownMenuAnatomyCode,
   api: [
     {
       name: "DropdownMenuCheckboxItem",
