@@ -1,5 +1,9 @@
 import type { ComponentDoc } from "#/components/examples/docs/types";
-import { checkboxSelectAllCode, checkboxWithDescriptionCode } from "#/components/examples/codes";
+import {
+  checkboxAnatomyCode,
+  checkboxSelectAllCode,
+  checkboxWithDescriptionCode,
+} from "#/components/examples/codes";
 import { CheckboxSelectAll } from "#/components/examples/docs/checkbox/select-all";
 import { CheckboxWithDescription } from "#/components/examples/docs/checkbox/with-description";
 
@@ -23,11 +27,7 @@ export const checkboxDoc: ComponentDoc = {
       previewClassName: "items-start",
     },
   ],
-  anatomy: `import { Checkbox } from "@codefast/ui/checkbox";
-import { Label } from "@codefast/ui/label";
-
-<Checkbox id="c" />
-<Label htmlFor="c">Label</Label>`,
+  anatomy: checkboxAnatomyCode,
   api: [
     {
       name: "Checkbox",

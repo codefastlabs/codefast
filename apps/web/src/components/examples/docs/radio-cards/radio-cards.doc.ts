@@ -1,5 +1,9 @@
 import type { ComponentDoc } from "#/components/examples/docs/types";
-import { radioCardsIntervalCode, radioCardsPlansCode } from "#/components/examples/codes";
+import {
+  radioCardsAnatomyCode,
+  radioCardsIntervalCode,
+  radioCardsPlansCode,
+} from "#/components/examples/codes";
 import { RadioCardsInterval } from "#/components/examples/docs/radio-cards/interval";
 import { RadioCardsPlans } from "#/components/examples/docs/radio-cards/plans";
 
@@ -21,12 +25,7 @@ export const radioCardsDoc: ComponentDoc = {
       code: radioCardsIntervalCode,
     },
   ],
-  anatomy: `import { RadioCards, RadioCardsItem } from "@codefast/ui/radio-cards";
-
-<RadioCards value={v} onValueChange={setV}>
-  <RadioCardsItem value="a">…</RadioCardsItem>
-  <RadioCardsItem value="b">…</RadioCardsItem>
-</RadioCards>`,
+  anatomy: radioCardsAnatomyCode,
   api: [
     {
       name: "RadioCards",

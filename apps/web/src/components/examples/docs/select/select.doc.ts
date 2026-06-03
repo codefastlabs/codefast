@@ -1,5 +1,9 @@
 import type { ComponentDoc } from "#/components/examples/docs/types";
-import { selectGroupedCode, selectStatusCode } from "#/components/examples/codes";
+import {
+  selectAnatomyCode,
+  selectGroupedCode,
+  selectStatusCode,
+} from "#/components/examples/codes";
 import { SelectGrouped } from "#/components/examples/docs/select/grouped";
 import { SelectStatus } from "#/components/examples/docs/select/status";
 
@@ -22,19 +26,7 @@ export const selectDoc: ComponentDoc = {
       code: selectGroupedCode,
     },
   ],
-  anatomy: `import {
-  Select, SelectTrigger, SelectValue,
-  SelectContent, SelectItem,
-} from "@codefast/ui/select";
-
-<Select value={v} onValueChange={setV}>
-  <SelectTrigger>
-    <SelectValue placeholder="Choose…" />
-  </SelectTrigger>
-  <SelectContent>
-    <SelectItem value="a">A</SelectItem>
-  </SelectContent>
-</Select>`,
+  anatomy: selectAnatomyCode,
   api: [
     {
       name: "Select",

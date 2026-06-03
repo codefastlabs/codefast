@@ -1,5 +1,5 @@
 import type { ComponentDoc } from "#/components/examples/docs/types";
-import { sliderRangeCode, sliderVolumeCode } from "#/components/examples/codes";
+import { sliderAnatomyCode, sliderRangeCode, sliderVolumeCode } from "#/components/examples/codes";
 import { SliderRange } from "#/components/examples/docs/slider/range";
 import { SliderVolume } from "#/components/examples/docs/slider/volume";
 
@@ -20,13 +20,7 @@ export const sliderDoc: ComponentDoc = {
       code: sliderRangeCode,
     },
   ],
-  anatomy: `import { Slider } from "@codefast/ui/slider";
-
-// single
-<Slider value={[60]} onValueChange={setValue} max={100} />
-
-// range — two thumbs
-<Slider value={[200, 700]} onValueChange={setRange} max={1000} />`,
+  anatomy: sliderAnatomyCode,
   api: [
     {
       name: "Slider",

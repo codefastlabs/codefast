@@ -1,0 +1,10 @@
+import {
+  Accordion, AccordionItem, AccordionTrigger, AccordionContent,
+} from "@codefast/ui/accordion";
+
+<Accordion type="single" collapsible>
+  <AccordionItem value="a">
+    <AccordionTrigger>…</AccordionTrigger>
+    <AccordionContent>…</AccordionContent>
+  </AccordionItem>
+</Accordion>

@@ -1,5 +1,6 @@
 import type { ComponentDoc } from "#/components/examples/docs/types";
 import {
+  buttonAnatomyCode,
   buttonAsChildCode,
   buttonIconsCode,
   buttonLoadingCode,
@@ -52,11 +53,7 @@ export const buttonDoc: ComponentDoc = {
       code: buttonAsChildCode,
     },
   ],
-  anatomy: `import { Button } from "@codefast/ui/button";
-
-<Button variant="default" size="default">
-  Label
-</Button>`,
+  anatomy: buttonAnatomyCode,
   api: [
     {
       name: "Button",

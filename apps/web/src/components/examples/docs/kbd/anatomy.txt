@@ -1,0 +1,6 @@
+import { Kbd, KbdGroup } from "@codefast/ui/kbd";
+
+<KbdGroup>
+  <Kbd>⌘</Kbd>
+  <Kbd>K</Kbd>
+</KbdGroup>

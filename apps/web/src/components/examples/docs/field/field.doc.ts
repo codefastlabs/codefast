@@ -1,5 +1,9 @@
 import type { ComponentDoc } from "#/components/examples/docs/types";
-import { fieldLayoutsCode, fieldValidationCode } from "#/components/examples/codes";
+import {
+  fieldAnatomyCode,
+  fieldLayoutsCode,
+  fieldValidationCode,
+} from "#/components/examples/codes";
 import { FieldLayouts } from "#/components/examples/docs/field/layouts";
 import { FieldValidation } from "#/components/examples/docs/field/validation";
 
@@ -24,16 +28,7 @@ export const fieldDoc: ComponentDoc = {
       previewClassName: "items-start",
     },
   ],
-  anatomy: `import {
-  Field, FieldLabel, FieldDescription, FieldError,
-} from "@codefast/ui/field";
-
-<Field>
-  <FieldLabel htmlFor="email">Email</FieldLabel>
-  <Input id="email" aria-invalid={invalid} />
-  <FieldDescription>Helper text</FieldDescription>
-  {invalid && <FieldError>Required.</FieldError>}
-</Field>`,
+  anatomy: fieldAnatomyCode,
   api: [
     {
       name: "Field",

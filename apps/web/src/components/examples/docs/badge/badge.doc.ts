@@ -1,5 +1,10 @@
 import type { ComponentDoc } from "#/components/examples/docs/types";
-import { badgeAsLinkCode, badgeVariantsCode, badgeWithIconCode } from "#/components/examples/codes";
+import {
+  badgeAnatomyCode,
+  badgeAsLinkCode,
+  badgeVariantsCode,
+  badgeWithIconCode,
+} from "#/components/examples/codes";
 import { BadgeAsLink } from "#/components/examples/docs/badge/as-link";
 import { BadgeVariants } from "#/components/examples/docs/badge/variants";
 import { BadgeWithIcon } from "#/components/examples/docs/badge/with-icon";
@@ -28,9 +33,7 @@ export const badgeDoc: ComponentDoc = {
       code: badgeAsLinkCode,
     },
   ],
-  anatomy: `import { Badge } from "@codefast/ui/badge";
-
-<Badge variant="default">Label</Badge>`,
+  anatomy: badgeAnatomyCode,
   api: [
     {
       name: "Badge",

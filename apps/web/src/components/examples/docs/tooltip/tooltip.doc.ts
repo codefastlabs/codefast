@@ -1,5 +1,9 @@
 import type { ComponentDoc } from "#/components/examples/docs/types";
-import { tooltipSidesCode, tooltipWithShortcutCode } from "#/components/examples/codes";
+import {
+  tooltipAnatomyCode,
+  tooltipSidesCode,
+  tooltipWithShortcutCode,
+} from "#/components/examples/codes";
 import { TooltipSides } from "#/components/examples/docs/tooltip/sides";
 import { TooltipWithShortcut } from "#/components/examples/docs/tooltip/with-shortcut";
 
@@ -20,16 +24,7 @@ export const tooltipDoc: ComponentDoc = {
       code: tooltipWithShortcutCode,
     },
   ],
-  anatomy: `import {
-  TooltipProvider, Tooltip, TooltipTrigger, TooltipContent,
-} from "@codefast/ui/tooltip";
-
-<TooltipProvider>
-  <Tooltip>
-    <TooltipTrigger asChild>…</TooltipTrigger>
-    <TooltipContent side="top">…</TooltipContent>
-  </Tooltip>
-</TooltipProvider>`,
+  anatomy: tooltipAnatomyCode,
   api: [
     {
       name: "TooltipProvider",

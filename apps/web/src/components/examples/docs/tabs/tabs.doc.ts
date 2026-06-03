@@ -1,5 +1,5 @@
 import type { ComponentDoc } from "#/components/examples/docs/types";
-import { tabsDefaultCode, tabsLineCode } from "#/components/examples/codes";
+import { tabsAnatomyCode, tabsDefaultCode, tabsLineCode } from "#/components/examples/codes";
 import { TabsDefault } from "#/components/examples/docs/tabs/default";
 import { TabsLine } from "#/components/examples/docs/tabs/line";
 
@@ -20,14 +20,7 @@ export const tabsDoc: ComponentDoc = {
       code: tabsLineCode,
     },
   ],
-  anatomy: `import { Tabs, TabsContent, TabsList, TabsTrigger } from "@codefast/ui/tabs";
-
-<Tabs defaultValue="a">
-  <TabsList>
-    <TabsTrigger value="a">A</TabsTrigger>
-  </TabsList>
-  <TabsContent value="a">…</TabsContent>
-</Tabs>`,
+  anatomy: tabsAnatomyCode,
   api: [
     {
       name: "Tabs",

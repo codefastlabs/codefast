@@ -1,5 +1,5 @@
 import type { ComponentDoc } from "#/components/examples/docs/types";
-import { sonnerActionCode, sonnerTypesCode } from "#/components/examples/codes";
+import { sonnerAnatomyCode, sonnerActionCode, sonnerTypesCode } from "#/components/examples/codes";
 import { SonnerAction } from "#/components/examples/docs/sonner/action";
 import { SonnerTypes } from "#/components/examples/docs/sonner/types";
 
@@ -21,13 +21,7 @@ export const sonnerDoc: ComponentDoc = {
       code: sonnerActionCode,
     },
   ],
-  anatomy: `import { Toaster, toast } from "@codefast/ui/sonner";
-
-// once, near the root of your app
-<Toaster />
-
-// anywhere
-toast.success("Saved!");`,
+  anatomy: sonnerAnatomyCode,
   api: [
     {
       name: "toast()",

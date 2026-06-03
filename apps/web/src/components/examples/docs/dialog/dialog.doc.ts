@@ -1,5 +1,5 @@
 import type { ComponentDoc } from "#/components/examples/docs/types";
-import { dialogBasicCode, dialogScrollCode } from "#/components/examples/codes";
+import { dialogAnatomyCode, dialogBasicCode, dialogScrollCode } from "#/components/examples/codes";
 import { DialogBasic } from "#/components/examples/docs/dialog/basic";
 import { DialogScroll } from "#/components/examples/docs/dialog/scroll";
 
@@ -22,25 +22,7 @@ export const dialogDoc: ComponentDoc = {
       previewClassName: "min-h-40",
     },
   ],
-  anatomy: `import {
-  Dialog, DialogTrigger, DialogContent,
-  DialogHeader, DialogTitle, DialogDescription,
-  DialogBody, DialogFooter, DialogClose,
-} from "@codefast/ui/dialog";
-
-<Dialog>
-  <DialogTrigger asChild>…</DialogTrigger>
-  <DialogContent>
-    <DialogHeader>
-      <DialogTitle>…</DialogTitle>
-      <DialogDescription>…</DialogDescription>
-    </DialogHeader>
-    <DialogBody>…</DialogBody>
-    <DialogFooter>
-      <DialogClose>…</DialogClose>
-    </DialogFooter>
-  </DialogContent>
-</Dialog>`,
+  anatomy: dialogAnatomyCode,
   api: [
     {
       name: "Dialog",
