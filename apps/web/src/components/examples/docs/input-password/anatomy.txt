@@ -1,0 +1,3 @@
+import { InputPassword } from "@codefast/ui/input-password";
+
+<InputPassword placeholder="••••••••" />

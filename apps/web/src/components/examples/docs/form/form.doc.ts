@@ -1,0 +1,55 @@
+import type { ComponentDoc } from "#/components/examples/docs/types";
+import { formAnatomyCode, formSignInCode } from "#/components/examples/codes";
+import { FormSignIn } from "#/components/examples/docs/form/sign-in";
+
+export const formDoc: ComponentDoc = {
+  examples: [
+    {
+      id: "sign-in",
+      title: "Sign-in with validation",
+      description:
+        "A controlled form: submit invalid values to see inline errors, valid ones to succeed.",
+      Demo: FormSignIn,
+      code: formSignInCode,
+      previewClassName: "items-start",
+    },
+  ],
+  anatomy: formAnatomyCode,
+  api: [
+    {
+      name: "Form (react-hook-form)",
+      description:
+        "The Form parts bind react-hook-form to accessible Field markup. Pair Form / FormField with useForm; the example here uses plain state + Field to stay dependency-free.",
+      props: [
+        {
+          name: "FormField",
+          type: "{ control, name, render }",
+          description: "Connects a control to RHF and wires label, description, and error ids.",
+        },
+        {
+          name: "FormMessage",
+          type: "ReactNode",
+          description: "Renders the field’s validation error from RHF state.",
+        },
+      ],
+    },
+  ],
+  accessibility: {
+    notes: [
+      "Associate every control with a label, and link errors via aria-describedby.",
+      "Set aria-invalid on a control when its value fails validation.",
+      "Validate on submit (and optionally on blur) — show errors as text, not only colour.",
+    ],
+  },
+  guidelines: {
+    do: [
+      "Keep forms short; group related fields with Field / FieldSet.",
+      "Show a clear success state after submit.",
+    ],
+    dont: [
+      "Don’t validate aggressively on every keystroke before first submit.",
+      "Don’t rely on placeholder text instead of labels.",
+    ],
+  },
+  related: ["field", "input", "input-password"],
+};

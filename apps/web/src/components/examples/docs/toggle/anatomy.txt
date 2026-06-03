@@ -1,0 +1,5 @@
+import { Toggle } from "@codefast/ui/toggle";
+
+<Toggle pressed={on} onPressedChange={setOn} aria-label="Bold">
+  <BoldIcon />
+</Toggle>

@@ -1,0 +1,67 @@
+import type { ComponentDoc } from "#/components/examples/docs/types";
+import {
+  inputPasswordAnatomyCode,
+  inputPasswordFieldsCode,
+  inputPasswordStrengthCode,
+} from "#/components/examples/codes";
+import { InputPasswordFields } from "#/components/examples/docs/input-password/fields";
+import { InputPasswordStrength } from "#/components/examples/docs/input-password/strength";
+
+export const inputPasswordDoc: ComponentDoc = {
+  examples: [
+    {
+      id: "fields",
+      title: "Show / hide toggle",
+      description: "A built-in eye button reveals the value — no extra markup needed.",
+      Demo: InputPasswordFields,
+      code: inputPasswordFieldsCode,
+      previewClassName: "items-start",
+    },
+    {
+      id: "strength",
+      title: "Live strength meter",
+      description: "Drive a strength bar from the controlled value as the user types.",
+      Demo: InputPasswordStrength,
+      code: inputPasswordStrengthCode,
+      previewClassName: "items-start",
+    },
+  ],
+  anatomy: inputPasswordAnatomyCode,
+  api: [
+    {
+      name: "InputPassword",
+      description: "Extends Input with a reveal toggle. Forwards all native input props.",
+      props: [
+        {
+          name: "value / onChange",
+          type: "string / (event) => void",
+          description: "Standard controlled input props.",
+        },
+        {
+          name: "disabled",
+          type: "boolean",
+          default: "false",
+          description: "Disables the field and the toggle.",
+        },
+      ],
+    },
+  ],
+  accessibility: {
+    notes: [
+      "The reveal button is labelled and toggles aria-pressed for assistive tech.",
+      "Set autoComplete (current-password / new-password) to help password managers.",
+      "Associate a Label via htmlFor / id.",
+    ],
+  },
+  guidelines: {
+    do: [
+      "Offer the reveal toggle so users can check what they typed.",
+      "Show password requirements and live feedback on sign-up.",
+    ],
+    dont: [
+      "Don’t block paste — it breaks password managers.",
+      "Don’t impose arbitrary maximum lengths.",
+    ],
+  },
+  related: ["input", "input-group", "field"],
+};

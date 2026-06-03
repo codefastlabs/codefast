@@ -1,0 +1,5 @@
+import { CheckboxCards, CheckboxCardsItem } from "@codefast/ui/checkbox-cards";
+
+<CheckboxCards value={list} onValueChange={setList}>
+  <CheckboxCardsItem value="a">…</CheckboxCardsItem>
+</CheckboxCards>
