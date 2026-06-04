@@ -1,5 +1,5 @@
 import type { ComponentDoc } from "#/components/examples/docs/types";
-import { drawerAnatomyCode, drawerProfileCode } from "#/components/examples/codes";
+import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { DrawerProfile } from "#/components/examples/docs/drawer/profile";
 
 export const drawerDoc: ComponentDoc = {
@@ -9,11 +9,11 @@ export const drawerDoc: ComponentDoc = {
       title: "Edit form",
       description: "A bottom sheet with drag-to-dismiss, holding a short form.",
       Demo: DrawerProfile,
-      code: drawerProfileCode,
+      code: docSource("drawer", "profile"),
       previewClassName: "min-h-40",
     },
   ],
-  anatomy: drawerAnatomyCode,
+  anatomy: docAnatomy("drawer"),
   api: [
     {
       name: "Drawer",

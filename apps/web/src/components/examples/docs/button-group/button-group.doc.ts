@@ -1,5 +1,5 @@
 import type { ComponentDoc } from "#/components/examples/docs/types";
-import { buttonGroupAnatomyCode, buttonGroupGroupsCode } from "#/components/examples/codes";
+import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { ButtonGroupGroups } from "#/components/examples/docs/button-group/groups";
 
 export const buttonGroupDoc: ComponentDoc = {
@@ -10,10 +10,10 @@ export const buttonGroupDoc: ComponentDoc = {
       description:
         "Visually join buttons; add a separator or a text label, horizontal or vertical.",
       Demo: ButtonGroupGroups,
-      code: buttonGroupGroupsCode,
+      code: docSource("button-group", "groups"),
     },
   ],
-  anatomy: buttonGroupAnatomyCode,
+  anatomy: docAnatomy("button-group"),
   api: [
     {
       name: "ButtonGroup",

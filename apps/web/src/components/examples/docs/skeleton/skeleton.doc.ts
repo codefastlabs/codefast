@@ -1,9 +1,5 @@
 import type { ComponentDoc } from "#/components/examples/docs/types";
-import {
-  skeletonAnatomyCode,
-  skeletonCardCode,
-  skeletonListCode,
-} from "#/components/examples/codes";
+import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { SkeletonCard } from "#/components/examples/docs/skeleton/card";
 import { SkeletonList } from "#/components/examples/docs/skeleton/list";
 
@@ -14,7 +10,7 @@ export const skeletonDoc: ComponentDoc = {
       title: "Card placeholder",
       description: "Mirror the real layout so content doesn’t jump when it loads.",
       Demo: SkeletonCard,
-      code: skeletonCardCode,
+      code: docSource("skeleton", "card"),
       previewClassName: "items-start",
     },
     {
@@ -22,11 +18,11 @@ export const skeletonDoc: ComponentDoc = {
       title: "List rows",
       description: "Repeat a simple row shape for lists and feeds.",
       Demo: SkeletonList,
-      code: skeletonListCode,
+      code: docSource("skeleton", "list"),
       previewClassName: "items-start",
     },
   ],
-  anatomy: skeletonAnatomyCode,
+  anatomy: docAnatomy("skeleton"),
   api: [
     {
       name: "Skeleton",

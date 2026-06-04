@@ -1,5 +1,5 @@
 import type { ComponentDoc } from "#/components/examples/docs/types";
-import { labelAnatomyCode, labelWithControlsCode } from "#/components/examples/codes";
+import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { LabelWithControls } from "#/components/examples/docs/label/with-controls";
 
 export const labelDoc: ComponentDoc = {
@@ -9,11 +9,11 @@ export const labelDoc: ComponentDoc = {
       title: "With controls",
       description: "Link a label to an input via htmlFor, or pair it beside a checkbox.",
       Demo: LabelWithControls,
-      code: labelWithControlsCode,
+      code: docSource("label", "with-controls"),
       previewClassName: "items-start",
     },
   ],
-  anatomy: labelAnatomyCode,
+  anatomy: docAnatomy("label"),
   api: [
     {
       name: "Label",

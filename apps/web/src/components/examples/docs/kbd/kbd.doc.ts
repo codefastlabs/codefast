@@ -1,5 +1,5 @@
 import type { ComponentDoc } from "#/components/examples/docs/types";
-import { kbdAnatomyCode, kbdInlineCode, kbdShortcutsCode } from "#/components/examples/codes";
+import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { KbdInline } from "#/components/examples/docs/kbd/inline";
 import { KbdShortcuts } from "#/components/examples/docs/kbd/shortcuts";
 
@@ -10,17 +10,17 @@ export const kbdDoc: ComponentDoc = {
       title: "Key combinations",
       description: "Compose multi-key shortcuts with KbdGroup; use a lone Kbd for single keys.",
       Demo: KbdShortcuts,
-      code: kbdShortcutsCode,
+      code: docSource("kbd", "shortcuts"),
     },
     {
       id: "inline",
       title: "Inline in text",
       description: "Kbd flows inline, so you can reference shortcuts mid-sentence.",
       Demo: KbdInline,
-      code: kbdInlineCode,
+      code: docSource("kbd", "inline"),
     },
   ],
-  anatomy: kbdAnatomyCode,
+  anatomy: docAnatomy("kbd"),
   api: [
     {
       name: "Kbd",

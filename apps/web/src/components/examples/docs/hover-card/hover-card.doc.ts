@@ -1,5 +1,5 @@
 import type { ComponentDoc } from "#/components/examples/docs/types";
-import { hoverCardAnatomyCode, hoverCardProfileCode } from "#/components/examples/codes";
+import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { HoverCardProfile } from "#/components/examples/docs/hover-card/profile";
 
 export const hoverCardDoc: ComponentDoc = {
@@ -9,11 +9,11 @@ export const hoverCardDoc: ComponentDoc = {
       title: "Profile preview",
       description: "Hover the trigger to reveal a rich preview after a short delay.",
       Demo: HoverCardProfile,
-      code: hoverCardProfileCode,
+      code: docSource("hover-card", "profile"),
       previewClassName: "min-h-40",
     },
   ],
-  anatomy: hoverCardAnatomyCode,
+  anatomy: docAnatomy("hover-card"),
   api: [
     {
       name: "HoverCard",

@@ -1,5 +1,5 @@
 import type { ComponentDoc } from "#/components/examples/docs/types";
-import { formAnatomyCode, formSignInCode } from "#/components/examples/codes";
+import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { FormSignIn } from "#/components/examples/docs/form/sign-in";
 
 export const formDoc: ComponentDoc = {
@@ -10,11 +10,11 @@ export const formDoc: ComponentDoc = {
       description:
         "A controlled form: submit invalid values to see inline errors, valid ones to succeed.",
       Demo: FormSignIn,
-      code: formSignInCode,
+      code: docSource("form", "sign-in"),
       previewClassName: "items-start",
     },
   ],
-  anatomy: formAnatomyCode,
+  anatomy: docAnatomy("form"),
   api: [
     {
       name: "Form (react-hook-form)",

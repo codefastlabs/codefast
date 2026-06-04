@@ -1,9 +1,5 @@
 import type { ComponentDoc } from "#/components/examples/docs/types";
-import {
-  checkboxAnatomyCode,
-  checkboxSelectAllCode,
-  checkboxWithDescriptionCode,
-} from "#/components/examples/codes";
+import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { CheckboxSelectAll } from "#/components/examples/docs/checkbox/select-all";
 import { CheckboxWithDescription } from "#/components/examples/docs/checkbox/with-description";
 
@@ -15,7 +11,7 @@ export const checkboxDoc: ComponentDoc = {
       description:
         "The classic parent/child pattern: the parent reflects an indeterminate state when only some children are checked.",
       Demo: CheckboxSelectAll,
-      code: checkboxSelectAllCode,
+      code: docSource("checkbox", "select-all"),
       previewClassName: "items-start",
     },
     {
@@ -23,11 +19,11 @@ export const checkboxDoc: ComponentDoc = {
       title: "With description",
       description: "Pair a checkbox with a label and helper text for consent and settings rows.",
       Demo: CheckboxWithDescription,
-      code: checkboxWithDescriptionCode,
+      code: docSource("checkbox", "with-description"),
       previewClassName: "items-start",
     },
   ],
-  anatomy: checkboxAnatomyCode,
+  anatomy: docAnatomy("checkbox"),
   api: [
     {
       name: "Checkbox",

@@ -1,9 +1,5 @@
 import type { ComponentDoc } from "#/components/examples/docs/types";
-import {
-  tooltipAnatomyCode,
-  tooltipSidesCode,
-  tooltipWithShortcutCode,
-} from "#/components/examples/codes";
+import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { TooltipSides } from "#/components/examples/docs/tooltip/sides";
 import { TooltipWithShortcut } from "#/components/examples/docs/tooltip/with-shortcut";
 
@@ -14,17 +10,17 @@ export const tooltipDoc: ComponentDoc = {
       title: "Placement",
       description: "Anchor the tooltip to any side of the trigger.",
       Demo: TooltipSides,
-      code: tooltipSidesCode,
+      code: docSource("tooltip", "sides"),
     },
     {
       id: "with-shortcut",
       title: "With shortcut",
       description: "Tooltips can hold rich content, including Kbd shortcut hints.",
       Demo: TooltipWithShortcut,
-      code: tooltipWithShortcutCode,
+      code: docSource("tooltip", "with-shortcut"),
     },
   ],
-  anatomy: tooltipAnatomyCode,
+  anatomy: docAnatomy("tooltip"),
   api: [
     {
       name: "TooltipProvider",

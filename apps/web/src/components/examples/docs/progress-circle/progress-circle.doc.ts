@@ -1,9 +1,5 @@
 import type { ComponentDoc } from "#/components/examples/docs/types";
-import {
-  progressCircleAnatomyCode,
-  progressCircleAnimatedCode,
-  progressCircleValuesCode,
-} from "#/components/examples/codes";
+import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { ProgressCircleAnimated } from "#/components/examples/docs/progress-circle/animated";
 import { ProgressCircleValues } from "#/components/examples/docs/progress-circle/values";
 
@@ -14,17 +10,17 @@ export const progressCircleDoc: ComponentDoc = {
       title: "Animated",
       description: "Press Start — the ring fills over time with the value shown in the centre.",
       Demo: ProgressCircleAnimated,
-      code: progressCircleAnimatedCode,
+      code: docSource("progress-circle", "animated"),
     },
     {
       id: "values",
       title: "Fixed values",
       description: "Any value 0–100; toggle showValue to print the number inside.",
       Demo: ProgressCircleValues,
-      code: progressCircleValuesCode,
+      code: docSource("progress-circle", "values"),
     },
   ],
-  anatomy: progressCircleAnatomyCode,
+  anatomy: docAnatomy("progress-circle"),
   api: [
     {
       name: "ProgressCircle",

@@ -1,5 +1,5 @@
 import type { ComponentDoc } from "#/components/examples/docs/types";
-import { sheetAnatomyCode, sheetProfileCode, sheetSidesCode } from "#/components/examples/codes";
+import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { SheetProfile } from "#/components/examples/docs/sheet/profile";
 import { SheetSides } from "#/components/examples/docs/sheet/sides";
 
@@ -11,7 +11,7 @@ export const sheetDoc: ComponentDoc = {
       description:
         "Controlled open state plus a side prop — slide in from top, right, bottom, or left.",
       Demo: SheetSides,
-      code: sheetSidesCode,
+      code: docSource("sheet", "sides"),
       previewClassName: "min-h-40",
     },
     {
@@ -20,11 +20,11 @@ export const sheetDoc: ComponentDoc = {
       description:
         "A trigger-driven sheet holding a short form with header, body, and footer actions.",
       Demo: SheetProfile,
-      code: sheetProfileCode,
+      code: docSource("sheet", "profile"),
       previewClassName: "min-h-40",
     },
   ],
-  anatomy: sheetAnatomyCode,
+  anatomy: docAnatomy("sheet"),
   api: [
     {
       name: "Sheet",

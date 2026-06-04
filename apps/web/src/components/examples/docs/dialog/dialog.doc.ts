@@ -1,5 +1,5 @@
 import type { ComponentDoc } from "#/components/examples/docs/types";
-import { dialogAnatomyCode, dialogBasicCode, dialogScrollCode } from "#/components/examples/codes";
+import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { DialogBasic } from "#/components/examples/docs/dialog/basic";
 import { DialogScroll } from "#/components/examples/docs/dialog/scroll";
 
@@ -10,7 +10,7 @@ export const dialogDoc: ComponentDoc = {
       title: "Basic",
       description: "A focus-trapped modal with header, body, and footer actions.",
       Demo: DialogBasic,
-      code: dialogBasicCode,
+      code: docSource("dialog", "basic"),
       previewClassName: "min-h-40",
     },
     {
@@ -18,11 +18,11 @@ export const dialogDoc: ComponentDoc = {
       title: "Scrollable body",
       description: "Keep the header and footer fixed while the body scrolls.",
       Demo: DialogScroll,
-      code: dialogScrollCode,
+      code: docSource("dialog", "scroll"),
       previewClassName: "min-h-40",
     },
   ],
-  anatomy: dialogAnatomyCode,
+  anatomy: docAnatomy("dialog"),
   api: [
     {
       name: "Dialog",

@@ -1,9 +1,5 @@
 import type { ComponentDoc } from "#/components/examples/docs/types";
-import {
-  accordionAnatomyCode,
-  accordionMultipleCode,
-  accordionSingleCode,
-} from "#/components/examples/codes";
+import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { AccordionMultiple } from "#/components/examples/docs/accordion/multiple";
 import { AccordionSingle } from "#/components/examples/docs/accordion/single";
 
@@ -14,7 +10,7 @@ export const accordionDoc: ComponentDoc = {
       title: "Single (collapsible)",
       description: "Only one panel open at a time; collapsible lets them all close.",
       Demo: AccordionSingle,
-      code: accordionSingleCode,
+      code: docSource("accordion", "single"),
       previewClassName: "items-start",
     },
     {
@@ -22,11 +18,11 @@ export const accordionDoc: ComponentDoc = {
       title: "Multiple",
       description: "Allow several panels to stay open at once.",
       Demo: AccordionMultiple,
-      code: accordionMultipleCode,
+      code: docSource("accordion", "multiple"),
       previewClassName: "items-start",
     },
   ],
-  anatomy: accordionAnatomyCode,
+  anatomy: docAnatomy("accordion"),
   api: [
     {
       name: "Accordion",

@@ -1,5 +1,5 @@
 import type { ComponentDoc } from "#/components/examples/docs/types";
-import { alertDialogAnatomyCode, alertDialogConfirmCode } from "#/components/examples/codes";
+import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { AlertDialogConfirm } from "#/components/examples/docs/alert-dialog/confirm";
 
 export const alertDialogDoc: ComponentDoc = {
@@ -9,11 +9,11 @@ export const alertDialogDoc: ComponentDoc = {
       title: "Destructive confirm",
       description: "A blocking modal that forces an explicit Cancel or confirm decision.",
       Demo: AlertDialogConfirm,
-      code: alertDialogConfirmCode,
+      code: docSource("alert-dialog", "confirm"),
       previewClassName: "min-h-40",
     },
   ],
-  anatomy: alertDialogAnatomyCode,
+  anatomy: docAnatomy("alert-dialog"),
   api: [
     {
       name: "AlertDialog",

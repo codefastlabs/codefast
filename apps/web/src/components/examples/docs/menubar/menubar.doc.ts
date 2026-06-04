@@ -1,5 +1,5 @@
 import type { ComponentDoc } from "#/components/examples/docs/types";
-import { menubarAnatomyCode, menubarAppMenuCode } from "#/components/examples/codes";
+import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { MenubarAppMenu } from "#/components/examples/docs/menubar/app-menu";
 
 export const menubarDoc: ComponentDoc = {
@@ -9,11 +9,11 @@ export const menubarDoc: ComponentDoc = {
       title: "Application menu",
       description: "A desktop-style menu bar with File / Edit / View menus and shortcuts.",
       Demo: MenubarAppMenu,
-      code: menubarAppMenuCode,
+      code: docSource("menubar", "app-menu"),
       previewClassName: "items-start",
     },
   ],
-  anatomy: menubarAnatomyCode,
+  anatomy: docAnatomy("menubar"),
   api: [
     {
       name: "Menubar / MenubarMenu",

@@ -1,5 +1,5 @@
 import type { ComponentDoc } from "#/components/examples/docs/types";
-import { aspectRatioAnatomyCode, aspectRatioRatiosCode } from "#/components/examples/codes";
+import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { AspectRatioRatios } from "#/components/examples/docs/aspect-ratio/ratios";
 
 export const aspectRatioDoc: ComponentDoc = {
@@ -9,10 +9,10 @@ export const aspectRatioDoc: ComponentDoc = {
       title: "Common ratios",
       description: "Lock content to 16/9, 1/1, or 4/3 — the box holds the shape at any width.",
       Demo: AspectRatioRatios,
-      code: aspectRatioRatiosCode,
+      code: docSource("aspect-ratio", "ratios"),
     },
   ],
-  anatomy: aspectRatioAnatomyCode,
+  anatomy: docAnatomy("aspect-ratio"),
   api: [
     {
       name: "AspectRatio",

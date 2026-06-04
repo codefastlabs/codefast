@@ -1,9 +1,5 @@
 import type { ComponentDoc } from "#/components/examples/docs/types";
-import {
-  fieldAnatomyCode,
-  fieldLayoutsCode,
-  fieldValidationCode,
-} from "#/components/examples/codes";
+import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { FieldLayouts } from "#/components/examples/docs/field/layouts";
 import { FieldValidation } from "#/components/examples/docs/field/validation";
 
@@ -15,7 +11,7 @@ export const fieldDoc: ComponentDoc = {
       description:
         "A real form: submit with an invalid email to see FieldError and the error ring appear.",
       Demo: FieldValidation,
-      code: fieldValidationCode,
+      code: docSource("field", "validation"),
       previewClassName: "items-start",
     },
     {
@@ -24,11 +20,11 @@ export const fieldDoc: ComponentDoc = {
       description:
         "Vertical and horizontal orientation, plus FieldSet + FieldLegend to group related fields.",
       Demo: FieldLayouts,
-      code: fieldLayoutsCode,
+      code: docSource("field", "layouts"),
       previewClassName: "items-start",
     },
   ],
-  anatomy: fieldAnatomyCode,
+  anatomy: docAnatomy("field"),
   api: [
     {
       name: "Field",

@@ -1,5 +1,5 @@
 import type { ComponentDoc } from "#/components/examples/docs/types";
-import { sliderAnatomyCode, sliderRangeCode, sliderVolumeCode } from "#/components/examples/codes";
+import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { SliderRange } from "#/components/examples/docs/slider/range";
 import { SliderVolume } from "#/components/examples/docs/slider/volume";
 
@@ -10,17 +10,17 @@ export const sliderDoc: ComponentDoc = {
       title: "Single value",
       description: "A volume control: an icon that reacts to the value and a live percentage.",
       Demo: SliderVolume,
-      code: sliderVolumeCode,
+      code: docSource("slider", "volume"),
     },
     {
       id: "range",
       title: "Range (two thumbs)",
       description: "Pass an array of two values to get a min–max range, e.g. a price filter.",
       Demo: SliderRange,
-      code: sliderRangeCode,
+      code: docSource("slider", "range"),
     },
   ],
-  anatomy: sliderAnatomyCode,
+  anatomy: docAnatomy("slider"),
   api: [
     {
       name: "Slider",

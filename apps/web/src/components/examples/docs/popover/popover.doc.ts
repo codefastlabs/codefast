@@ -1,9 +1,5 @@
 import type { ComponentDoc } from "#/components/examples/docs/types";
-import {
-  popoverAnatomyCode,
-  popoverDimensionsCode,
-  popoverShareCode,
-} from "#/components/examples/codes";
+import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { PopoverDimensions } from "#/components/examples/docs/popover/dimensions";
 import { PopoverShare } from "#/components/examples/docs/popover/share";
 
@@ -14,7 +10,7 @@ export const popoverDoc: ComponentDoc = {
       title: "Share link",
       description: "A working copy-to-clipboard panel — interactive, with a confirmation state.",
       Demo: PopoverShare,
-      code: popoverShareCode,
+      code: docSource("popover", "share"),
       previewClassName: "min-h-40",
     },
     {
@@ -22,11 +18,11 @@ export const popoverDoc: ComponentDoc = {
       title: "Settings form",
       description: "A non-modal panel of inputs anchored to its trigger — ideal for quick edits.",
       Demo: PopoverDimensions,
-      code: popoverDimensionsCode,
+      code: docSource("popover", "dimensions"),
       previewClassName: "min-h-40",
     },
   ],
-  anatomy: popoverAnatomyCode,
+  anatomy: docAnatomy("popover"),
   api: [
     {
       name: "Popover",

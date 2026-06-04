@@ -1,5 +1,5 @@
 import type { ComponentDoc } from "#/components/examples/docs/types";
-import { separatorAnatomyCode, separatorOrientationsCode } from "#/components/examples/codes";
+import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { SeparatorOrientations } from "#/components/examples/docs/separator/orientations";
 
 export const separatorDoc: ComponentDoc = {
@@ -9,11 +9,11 @@ export const separatorDoc: ComponentDoc = {
       title: "Horizontal & vertical",
       description: "Divide stacked blocks horizontally, or inline items vertically.",
       Demo: SeparatorOrientations,
-      code: separatorOrientationsCode,
+      code: docSource("separator", "orientations"),
       previewClassName: "items-start",
     },
   ],
-  anatomy: separatorAnatomyCode,
+  anatomy: docAnatomy("separator"),
   api: [
     {
       name: "Separator",

@@ -1,9 +1,5 @@
 import type { ComponentDoc } from "#/components/examples/docs/types";
-import {
-  dropdownMenuAnatomyCode,
-  dropdownCheckboxesCode,
-  dropdownRadioCode,
-} from "#/components/examples/codes";
+import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { DropdownCheckboxes } from "#/components/examples/docs/dropdown-menu/checkboxes";
 import { DropdownRadio } from "#/components/examples/docs/dropdown-menu/radio";
 
@@ -14,7 +10,7 @@ export const dropdownMenuDoc: ComponentDoc = {
       title: "Checkbox items",
       description: "A column-toggle menu — checkbox items drive state, with a live count below.",
       Demo: DropdownCheckboxes,
-      code: dropdownCheckboxesCode,
+      code: docSource("dropdown-menu", "checkboxes"),
       previewClassName: "min-h-40",
     },
     {
@@ -22,11 +18,11 @@ export const dropdownMenuDoc: ComponentDoc = {
       title: "Radio group",
       description: "A single-choice sort menu backed by DropdownMenuRadioGroup.",
       Demo: DropdownRadio,
-      code: dropdownRadioCode,
+      code: docSource("dropdown-menu", "radio"),
       previewClassName: "min-h-40",
     },
   ],
-  anatomy: dropdownMenuAnatomyCode,
+  anatomy: docAnatomy("dropdown-menu"),
   api: [
     {
       name: "DropdownMenuCheckboxItem",

@@ -1,5 +1,5 @@
 import type { ComponentDoc } from "#/components/examples/docs/types";
-import { chartAnatomyCode, chartBarCode } from "#/components/examples/codes";
+import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { ChartBar } from "#/components/examples/docs/chart/bar";
 
 export const chartDoc: ComponentDoc = {
@@ -9,10 +9,10 @@ export const chartDoc: ComponentDoc = {
       title: "Bar chart",
       description: "A Recharts chart wrapped with consistent theming, tooltip, and config.",
       Demo: ChartBar,
-      code: chartBarCode,
+      code: docSource("chart", "bar"),
     },
   ],
-  anatomy: chartAnatomyCode,
+  anatomy: docAnatomy("chart"),
   api: [
     {
       name: "ChartContainer",

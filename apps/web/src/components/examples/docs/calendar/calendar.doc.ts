@@ -1,9 +1,5 @@
 import type { ComponentDoc } from "#/components/examples/docs/types";
-import {
-  calendarAnatomyCode,
-  calendarRangeCode,
-  calendarSingleCode,
-} from "#/components/examples/codes";
+import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { CalendarRange } from "#/components/examples/docs/calendar/range";
 import { CalendarSingle } from "#/components/examples/docs/calendar/single";
 
@@ -14,17 +10,17 @@ export const calendarDoc: ComponentDoc = {
       title: "Single date",
       description: "Controlled selection with a live, formatted readout.",
       Demo: CalendarSingle,
-      code: calendarSingleCode,
+      code: docSource("calendar", "single"),
     },
     {
       id: "range",
       title: "Date range",
       description: 'mode="range" over two months, with the picked span shown below.',
       Demo: CalendarRange,
-      code: calendarRangeCode,
+      code: docSource("calendar", "range"),
     },
   ],
-  anatomy: calendarAnatomyCode,
+  anatomy: docAnatomy("calendar"),
   api: [
     {
       name: "Calendar",

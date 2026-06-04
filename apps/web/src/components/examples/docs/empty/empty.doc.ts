@@ -1,5 +1,5 @@
 import type { ComponentDoc } from "#/components/examples/docs/types";
-import { emptyAnatomyCode, emptyStateCode } from "#/components/examples/codes";
+import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { EmptyState } from "#/components/examples/docs/empty/state";
 
 export const emptyDoc: ComponentDoc = {
@@ -9,11 +9,11 @@ export const emptyDoc: ComponentDoc = {
       title: "Empty state with action",
       description: "Media, title, description, and a clear next step in one composed block.",
       Demo: EmptyState,
-      code: emptyStateCode,
+      code: docSource("empty", "state"),
       previewClassName: "items-start",
     },
   ],
-  anatomy: emptyAnatomyCode,
+  anatomy: docAnatomy("empty"),
   api: [
     {
       name: "Empty",

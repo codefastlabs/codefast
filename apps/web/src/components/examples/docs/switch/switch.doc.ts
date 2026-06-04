@@ -1,10 +1,5 @@
 import type { ComponentDoc } from "#/components/examples/docs/types";
-import {
-  switchAnatomyCode,
-  switchDisabledCode,
-  switchSizesCode,
-  switchWithLabelCode,
-} from "#/components/examples/codes";
+import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { SwitchDisabled } from "#/components/examples/docs/switch/disabled";
 import { SwitchSizes } from "#/components/examples/docs/switch/sizes";
 import { SwitchWithLabel } from "#/components/examples/docs/switch/with-label";
@@ -16,24 +11,24 @@ export const switchDoc: ComponentDoc = {
       title: "With label",
       description: "Controlled via checked + onCheckedChange, paired with a Label.",
       Demo: SwitchWithLabel,
-      code: switchWithLabelCode,
+      code: docSource("switch", "with-label"),
     },
     {
       id: "sizes",
       title: "Sizes",
       description: "Two sizes: sm and the default.",
       Demo: SwitchSizes,
-      code: switchSizesCode,
+      code: docSource("switch", "sizes"),
     },
     {
       id: "disabled",
       title: "Disabled",
       description: "Non-interactive in both the on and off positions.",
       Demo: SwitchDisabled,
-      code: switchDisabledCode,
+      code: docSource("switch", "disabled"),
     },
   ],
-  anatomy: switchAnatomyCode,
+  anatomy: docAnatomy("switch"),
   api: [
     {
       name: "Switch",

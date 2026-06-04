@@ -1,10 +1,5 @@
 import type { ComponentDoc } from "#/components/examples/docs/types";
-import {
-  inputAnatomyCode,
-  inputDefaultCode,
-  inputFileCode,
-  inputStatesCode,
-} from "#/components/examples/codes";
+import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { InputDefault } from "#/components/examples/docs/input/default";
 import { InputFile } from "#/components/examples/docs/input/file";
 import { InputStates } from "#/components/examples/docs/input/states";
@@ -16,24 +11,24 @@ export const inputDoc: ComponentDoc = {
       title: "With label",
       description: "Pair Input with a Label and a helper line for an accessible field.",
       Demo: InputDefault,
-      code: inputDefaultCode,
+      code: docSource("input", "default"),
     },
     {
       id: "states",
       title: "States",
       description: "Default, disabled, read-only, and invalid (aria-invalid) styling.",
       Demo: InputStates,
-      code: inputStatesCode,
+      code: docSource("input", "states"),
     },
     {
       id: "file",
       title: "File input",
       description: 'type="file" is styled to match the rest of the form controls.',
       Demo: InputFile,
-      code: inputFileCode,
+      code: docSource("input", "file"),
     },
   ],
-  anatomy: inputAnatomyCode,
+  anatomy: docAnatomy("input"),
   api: [
     {
       name: "Input",

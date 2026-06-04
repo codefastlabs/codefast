@@ -1,5 +1,5 @@
 import type { ComponentDoc } from "#/components/examples/docs/types";
-import { sonnerAnatomyCode, sonnerActionCode, sonnerTypesCode } from "#/components/examples/codes";
+import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { SonnerAction } from "#/components/examples/docs/sonner/action";
 import { SonnerTypes } from "#/components/examples/docs/sonner/types";
 
@@ -10,7 +10,7 @@ export const sonnerDoc: ComponentDoc = {
       title: "Toast types",
       description: "Click to fire a real toast — default, success, error, and warning.",
       Demo: SonnerTypes,
-      code: sonnerTypesCode,
+      code: docSource("sonner", "types"),
     },
     {
       id: "action-promise",
@@ -18,10 +18,10 @@ export const sonnerDoc: ComponentDoc = {
       description:
         "Attach an Undo action, or hand toast.promise a promise to auto-cycle loading → result.",
       Demo: SonnerAction,
-      code: sonnerActionCode,
+      code: docSource("sonner", "action"),
     },
   ],
-  anatomy: sonnerAnatomyCode,
+  anatomy: docAnatomy("sonner"),
   api: [
     {
       name: "toast()",

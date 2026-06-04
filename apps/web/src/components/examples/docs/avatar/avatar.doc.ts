@@ -1,9 +1,5 @@
 import type { ComponentDoc } from "#/components/examples/docs/types";
-import {
-  avatarAnatomyCode,
-  avatarFallbackCode,
-  avatarGroupCode,
-} from "#/components/examples/codes";
+import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { AvatarFallbackExample } from "#/components/examples/docs/avatar/fallback";
 import { AvatarGroupExample } from "#/components/examples/docs/avatar/group";
 
@@ -14,17 +10,17 @@ export const avatarDoc: ComponentDoc = {
       title: "Image, fallback & badge",
       description: "Show a photo, fall back to initials when it fails, and add a status badge.",
       Demo: AvatarFallbackExample,
-      code: avatarFallbackCode,
+      code: docSource("avatar", "fallback"),
     },
     {
       id: "group",
       title: "Stacked group",
       description: "Overlap avatars with AvatarGroup and cap the overflow with a count.",
       Demo: AvatarGroupExample,
-      code: avatarGroupCode,
+      code: docSource("avatar", "group"),
     },
   ],
-  anatomy: avatarAnatomyCode,
+  anatomy: docAnatomy("avatar"),
   api: [
     {
       name: "Avatar",

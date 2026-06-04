@@ -59,6 +59,9 @@ export type CategoryId = (typeof CATEGORIES)[number]["id"];
 /* Components                                                                  */
 /* -------------------------------------------------------------------------- */
 
+/** Lifecycle maturity, surfaced as a badge on the detail page. */
+export type ComponentStatus = "stable" | "beta" | "deprecated";
+
 export interface ComponentMeta {
   /** Display name, e.g. "Alert Dialog". */
   readonly name: string;
@@ -73,6 +76,8 @@ export interface ComponentMeta {
    * Sidebar is a real export but too large for a card, so it has no demo.
    */
   readonly hasDemo: boolean;
+  /** Lifecycle maturity. Absent means `stable`; a badge shows only when not stable. */
+  readonly status?: ComponentStatus;
 }
 
 /**
