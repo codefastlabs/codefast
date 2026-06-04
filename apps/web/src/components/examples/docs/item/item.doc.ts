@@ -1,5 +1,5 @@
 import type { ComponentDoc } from "#/components/examples/docs/types";
-import { itemAnatomyCode, itemListCode } from "#/components/examples/codes";
+import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { ItemList } from "#/components/examples/docs/item/list";
 
 export const itemDoc: ComponentDoc = {
@@ -9,11 +9,11 @@ export const itemDoc: ComponentDoc = {
       title: "List rows",
       description: "Compose media, title, description, and actions into a divided list.",
       Demo: ItemList,
-      code: itemListCode,
+      code: docSource("item", "list"),
       previewClassName: "items-start",
     },
   ],
-  anatomy: itemAnatomyCode,
+  anatomy: docAnatomy("item"),
   api: [
     {
       name: "Item / ItemGroup",

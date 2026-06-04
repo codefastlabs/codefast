@@ -1,9 +1,5 @@
 import type { ComponentDoc } from "#/components/examples/docs/types";
-import {
-  inputOtpAnatomyCode,
-  inputOtpPatternCode,
-  inputOtpVerifyCode,
-} from "#/components/examples/codes";
+import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { InputOTPPattern } from "#/components/examples/docs/input-otp/pattern";
 import { InputOTPVerify } from "#/components/examples/docs/input-otp/verify";
 
@@ -14,17 +10,17 @@ export const inputOtpDoc: ComponentDoc = {
       title: "Verify a code",
       description: "Controlled value — the demo validates 123456 and reacts the moment all 6 land.",
       Demo: InputOTPVerify,
-      code: inputOtpVerifyCode,
+      code: docSource("input-otp", "verify"),
     },
     {
       id: "pattern",
       title: "Digits only",
       description: "Pass a pattern (REGEXP_ONLY_DIGITS) to reject non-matching keystrokes.",
       Demo: InputOTPPattern,
-      code: inputOtpPatternCode,
+      code: docSource("input-otp", "pattern"),
     },
   ],
-  anatomy: inputOtpAnatomyCode,
+  anatomy: docAnatomy("input-otp"),
   api: [
     {
       name: "InputOTP",

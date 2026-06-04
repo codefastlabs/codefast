@@ -1,5 +1,5 @@
 import type { ComponentDoc } from "#/components/examples/docs/types";
-import { tabsAnatomyCode, tabsDefaultCode, tabsLineCode } from "#/components/examples/codes";
+import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { TabsDefault } from "#/components/examples/docs/tabs/default";
 import { TabsLine } from "#/components/examples/docs/tabs/line";
 
@@ -10,17 +10,17 @@ export const tabsDoc: ComponentDoc = {
       title: "Default",
       description: "The solid pill style, ideal for settings panels.",
       Demo: TabsDefault,
-      code: tabsDefaultCode,
+      code: docSource("tabs", "default"),
     },
     {
       id: "line",
       title: "Line variant",
       description: "An underline style for content-level navigation.",
       Demo: TabsLine,
-      code: tabsLineCode,
+      code: docSource("tabs", "line"),
     },
   ],
-  anatomy: tabsAnatomyCode,
+  anatomy: docAnatomy("tabs"),
   api: [
     {
       name: "Tabs",

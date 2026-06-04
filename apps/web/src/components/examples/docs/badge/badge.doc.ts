@@ -1,10 +1,5 @@
 import type { ComponentDoc } from "#/components/examples/docs/types";
-import {
-  badgeAnatomyCode,
-  badgeAsLinkCode,
-  badgeVariantsCode,
-  badgeWithIconCode,
-} from "#/components/examples/codes";
+import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { BadgeAsLink } from "#/components/examples/docs/badge/as-link";
 import { BadgeVariants } from "#/components/examples/docs/badge/variants";
 import { BadgeWithIcon } from "#/components/examples/docs/badge/with-icon";
@@ -16,24 +11,24 @@ export const badgeDoc: ComponentDoc = {
       title: "Variants",
       description: "Five styles for status, category, and emphasis.",
       Demo: BadgeVariants,
-      code: badgeVariantsCode,
+      code: docSource("badge", "variants"),
     },
     {
       id: "with-icon",
       title: "With icon & counts",
       description: "Add a leading icon, or use a bare number as a count indicator.",
       Demo: BadgeWithIcon,
-      code: badgeWithIconCode,
+      code: docSource("badge", "with-icon"),
     },
     {
       id: "as-link",
       title: "As a link",
       description: "Render the badge as an anchor with asChild to make it interactive.",
       Demo: BadgeAsLink,
-      code: badgeAsLinkCode,
+      code: docSource("badge", "as-link"),
     },
   ],
-  anatomy: badgeAnatomyCode,
+  anatomy: docAnatomy("badge"),
   api: [
     {
       name: "Badge",

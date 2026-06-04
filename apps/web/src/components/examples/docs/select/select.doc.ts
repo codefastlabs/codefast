@@ -1,9 +1,5 @@
 import type { ComponentDoc } from "#/components/examples/docs/types";
-import {
-  selectAnatomyCode,
-  selectGroupedCode,
-  selectStatusCode,
-} from "#/components/examples/codes";
+import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { SelectGrouped } from "#/components/examples/docs/select/grouped";
 import { SelectStatus } from "#/components/examples/docs/select/status";
 
@@ -15,7 +11,7 @@ export const selectDoc: ComponentDoc = {
       description:
         "A real issue-status picker: controlled value, colour markers, and a live readout.",
       Demo: SelectStatus,
-      code: selectStatusCode,
+      code: docSource("select", "status"),
     },
     {
       id: "grouped",
@@ -23,10 +19,10 @@ export const selectDoc: ComponentDoc = {
       description:
         "Organise long lists with SelectGroup + SelectLabel, divide with SelectSeparator, and disable any item.",
       Demo: SelectGrouped,
-      code: selectGroupedCode,
+      code: docSource("select", "grouped"),
     },
   ],
-  anatomy: selectAnatomyCode,
+  anatomy: docAnatomy("select"),
   api: [
     {
       name: "Select",

@@ -1,5 +1,5 @@
 import type { ComponentDoc } from "#/components/examples/docs/types";
-import { radioAnatomyCode, radioSizesCode } from "#/components/examples/codes";
+import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { RadioSizes } from "#/components/examples/docs/radio/sizes";
 
 export const radioDoc: ComponentDoc = {
@@ -9,11 +9,11 @@ export const radioDoc: ComponentDoc = {
       title: "Single radios",
       description: "Standalone radios sharing a name; the selected value is echoed below.",
       Demo: RadioSizes,
-      code: radioSizesCode,
+      code: docSource("radio", "sizes"),
       previewClassName: "items-start",
     },
   ],
-  anatomy: radioAnatomyCode,
+  anatomy: docAnatomy("radio"),
   api: [
     {
       name: "Radio",

@@ -1,5 +1,5 @@
 import type { ComponentDoc } from "#/components/examples/docs/types";
-import { scrollAreaAnatomyCode, scrollAreaListCode } from "#/components/examples/codes";
+import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { ScrollAreaList } from "#/components/examples/docs/scroll-area/list";
 
 export const scrollAreaDoc: ComponentDoc = {
@@ -9,10 +9,10 @@ export const scrollAreaDoc: ComponentDoc = {
       title: "Scrollable list",
       description: "A fixed-height region with a custom, design-system scrollbar.",
       Demo: ScrollAreaList,
-      code: scrollAreaListCode,
+      code: docSource("scroll-area", "list"),
     },
   ],
-  anatomy: scrollAreaAnatomyCode,
+  anatomy: docAnatomy("scroll-area"),
   api: [
     {
       name: "ScrollArea",

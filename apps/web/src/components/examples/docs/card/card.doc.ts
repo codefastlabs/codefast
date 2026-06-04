@@ -1,5 +1,5 @@
 import type { ComponentDoc } from "#/components/examples/docs/types";
-import { cardAnatomyCode, cardOverviewCode, cardSimpleCode } from "#/components/examples/codes";
+import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { CardOverview } from "#/components/examples/docs/card/overview";
 import { CardSimple } from "#/components/examples/docs/card/simple";
 
@@ -10,7 +10,7 @@ export const cardDoc: ComponentDoc = {
       title: "Overview",
       description: "All slots together: header, action, content, and footer.",
       Demo: CardOverview,
-      code: cardOverviewCode,
+      code: docSource("card", "overview"),
       previewClassName: "items-start",
     },
     {
@@ -18,11 +18,11 @@ export const cardDoc: ComponentDoc = {
       title: "Header + content",
       description: "Every slot is optional — use only what you need.",
       Demo: CardSimple,
-      code: cardSimpleCode,
+      code: docSource("card", "simple"),
       previewClassName: "items-start",
     },
   ],
-  anatomy: cardAnatomyCode,
+  anatomy: docAnatomy("card"),
   api: [
     {
       name: "Card",

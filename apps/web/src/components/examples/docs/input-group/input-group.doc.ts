@@ -1,5 +1,5 @@
 import type { ComponentDoc } from "#/components/examples/docs/types";
-import { inputGroupAddonsCode, inputGroupAnatomyCode } from "#/components/examples/codes";
+import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { InputGroupAddons } from "#/components/examples/docs/input-group/addons";
 
 export const inputGroupDoc: ComponentDoc = {
@@ -9,11 +9,11 @@ export const inputGroupDoc: ComponentDoc = {
       title: "Leading & trailing addons",
       description: "Prefix text, a leading icon, or a trailing button — all share one focus ring.",
       Demo: InputGroupAddons,
-      code: inputGroupAddonsCode,
+      code: docSource("input-group", "addons"),
       previewClassName: "items-start",
     },
   ],
-  anatomy: inputGroupAnatomyCode,
+  anatomy: docAnatomy("input-group"),
   api: [
     {
       name: "InputGroup / InputGroupInput",

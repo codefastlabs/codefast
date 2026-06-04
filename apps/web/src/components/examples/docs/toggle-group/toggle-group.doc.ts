@@ -1,9 +1,5 @@
 import type { ComponentDoc } from "#/components/examples/docs/types";
-import {
-  toggleGroupAnatomyCode,
-  toggleGroupAlignmentCode,
-  toggleGroupFormattingCode,
-} from "#/components/examples/codes";
+import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { ToggleGroupAlignment } from "#/components/examples/docs/toggle-group/alignment";
 import { ToggleGroupFormatting } from "#/components/examples/docs/toggle-group/formatting";
 
@@ -14,17 +10,17 @@ export const toggleGroupDoc: ComponentDoc = {
       title: "Single (alignment)",
       description: 'type="single" keeps exactly one button pressed — an alignment toolbar.',
       Demo: ToggleGroupAlignment,
-      code: toggleGroupAlignmentCode,
+      code: docSource("toggle-group", "alignment"),
     },
     {
       id: "multiple",
       title: "Multiple (text marks)",
       description: 'type="multiple" lets several toggle at once — bold / italic / underline.',
       Demo: ToggleGroupFormatting,
-      code: toggleGroupFormattingCode,
+      code: docSource("toggle-group", "formatting"),
     },
   ],
-  anatomy: toggleGroupAnatomyCode,
+  anatomy: docAnatomy("toggle-group"),
   api: [
     {
       name: "ToggleGroup",

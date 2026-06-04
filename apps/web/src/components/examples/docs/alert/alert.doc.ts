@@ -1,5 +1,5 @@
 import type { ComponentDoc } from "#/components/examples/docs/types";
-import { alertAnatomyCode, alertVariantsCode } from "#/components/examples/codes";
+import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { AlertVariants } from "#/components/examples/docs/alert/variants";
 
 export const alertDoc: ComponentDoc = {
@@ -9,11 +9,11 @@ export const alertDoc: ComponentDoc = {
       title: "Default & destructive",
       description: "An icon, title, and body — plus an optional action slot for dismiss.",
       Demo: AlertVariants,
-      code: alertVariantsCode,
+      code: docSource("alert", "variants"),
       previewClassName: "items-start",
     },
   ],
-  anatomy: alertAnatomyCode,
+  anatomy: docAnatomy("alert"),
   api: [
     {
       name: "Alert",

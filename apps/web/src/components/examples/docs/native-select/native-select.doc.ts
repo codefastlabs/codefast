@@ -1,5 +1,5 @@
 import type { ComponentDoc } from "#/components/examples/docs/types";
-import { nativeSelectAnatomyCode, nativeSelectCountryCode } from "#/components/examples/codes";
+import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { NativeSelectCountry } from "#/components/examples/docs/native-select/country";
 
 export const nativeSelectDoc: ComponentDoc = {
@@ -9,11 +9,11 @@ export const nativeSelectDoc: ComponentDoc = {
       title: "Grouped options",
       description: "A controlled native <select> with option groups and a live readout.",
       Demo: NativeSelectCountry,
-      code: nativeSelectCountryCode,
+      code: docSource("native-select", "country"),
       previewClassName: "items-start",
     },
   ],
-  anatomy: nativeSelectAnatomyCode,
+  anatomy: docAnatomy("native-select"),
   api: [
     {
       name: "NativeSelect",

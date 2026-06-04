@@ -1,5 +1,5 @@
 import type { ComponentDoc } from "#/components/examples/docs/types";
-import { checkboxCardsAnatomyCode, checkboxCardsFeaturesCode } from "#/components/examples/codes";
+import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { CheckboxCardsFeatures } from "#/components/examples/docs/checkbox-cards/features";
 
 export const checkboxCardsDoc: ComponentDoc = {
@@ -9,11 +9,11 @@ export const checkboxCardsDoc: ComponentDoc = {
       title: "Multi-select cards",
       description: "Card-style multi-select with highlighted state and a live list of choices.",
       Demo: CheckboxCardsFeatures,
-      code: checkboxCardsFeaturesCode,
+      code: docSource("checkbox-cards", "features"),
       previewClassName: "items-start",
     },
   ],
-  anatomy: checkboxCardsAnatomyCode,
+  anatomy: docAnatomy("checkbox-cards"),
   api: [
     {
       name: "CheckboxCards",

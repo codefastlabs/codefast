@@ -1,5 +1,5 @@
 import type { ComponentDoc } from "#/components/examples/docs/types";
-import { inputSearchAnatomyCode, inputSearchControlledCode } from "#/components/examples/codes";
+import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { InputSearchControlled } from "#/components/examples/docs/input-search/controlled";
 
 export const inputSearchDoc: ComponentDoc = {
@@ -9,11 +9,11 @@ export const inputSearchDoc: ComponentDoc = {
       title: "Controlled with clear",
       description: "A leading icon, a one-click clear button, and a live query readout.",
       Demo: InputSearchControlled,
-      code: inputSearchControlledCode,
+      code: docSource("input-search", "controlled"),
       previewClassName: "items-start",
     },
   ],
-  anatomy: inputSearchAnatomyCode,
+  anatomy: docAnatomy("input-search"),
   api: [
     {
       name: "InputSearch",

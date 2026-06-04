@@ -1,5 +1,5 @@
 import type { ComponentDoc } from "#/components/examples/docs/types";
-import { radioGroupAnatomyCode, radioGroupDensityCode } from "#/components/examples/codes";
+import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { RadioGroupDensity } from "#/components/examples/docs/radio-group/density";
 
 export const radioGroupDoc: ComponentDoc = {
@@ -9,11 +9,11 @@ export const radioGroupDoc: ComponentDoc = {
       title: "Controlled single-select",
       description: "Exactly one option is selected; the choice is echoed live below.",
       Demo: RadioGroupDensity,
-      code: radioGroupDensityCode,
+      code: docSource("radio-group", "density"),
       previewClassName: "items-start",
     },
   ],
-  anatomy: radioGroupAnatomyCode,
+  anatomy: docAnatomy("radio-group"),
   api: [
     {
       name: "RadioGroup",

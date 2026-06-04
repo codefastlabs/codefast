@@ -1,8 +1,5 @@
 import type { ComponentDoc } from "#/components/examples/docs/types";
-import {
-  checkboxGroupAnatomyCode,
-  checkboxGroupPermissionsCode,
-} from "#/components/examples/codes";
+import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { CheckboxGroupPermissions } from "#/components/examples/docs/checkbox-group/permissions";
 
 export const checkboxGroupDoc: ComponentDoc = {
@@ -12,11 +9,11 @@ export const checkboxGroupDoc: ComponentDoc = {
       title: "Controlled multi-select",
       description: "Several options share one value array; a disabled item is skipped.",
       Demo: CheckboxGroupPermissions,
-      code: checkboxGroupPermissionsCode,
+      code: docSource("checkbox-group", "permissions"),
       previewClassName: "items-start",
     },
   ],
-  anatomy: checkboxGroupAnatomyCode,
+  anatomy: docAnatomy("checkbox-group"),
   api: [
     {
       name: "CheckboxGroup",

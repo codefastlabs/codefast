@@ -23,15 +23,6 @@ export default defineConfig({
   },
   overrides: [
     {
-      // Vite's ?raw suffix produces a default-string export that oxlint's import
-      // resolver cannot resolve. All ?raw re-exports are centralised in this one
-      // barrel so the suppression stays in config, not scattered as inline comments.
-      files: ["apps/web/src/components/examples/codes.ts"],
-      rules: {
-        "import/default": "off",
-      },
-    },
-    {
       files: ["**/*.test.{ts,tsx,mts,cts,js,jsx,mjs,cjs}"],
       rules: {
         // Inference from implementations is enough; explicit vi.fn<...>() everywhere is noisy.

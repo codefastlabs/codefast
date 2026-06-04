@@ -1,5 +1,5 @@
 import type { ComponentDoc } from "#/components/examples/docs/types";
-import { collapsibleAnatomyCode, collapsibleReposCode } from "#/components/examples/codes";
+import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { CollapsibleRepos } from "#/components/examples/docs/collapsible/repos";
 
 export const collapsibleDoc: ComponentDoc = {
@@ -9,11 +9,11 @@ export const collapsibleDoc: ComponentDoc = {
       title: "Show more / less",
       description: "Controlled open state reveals extra rows with a smooth height animation.",
       Demo: CollapsibleRepos,
-      code: collapsibleReposCode,
+      code: docSource("collapsible", "repos"),
       previewClassName: "items-start",
     },
   ],
-  anatomy: collapsibleAnatomyCode,
+  anatomy: docAnatomy("collapsible"),
   api: [
     {
       name: "Collapsible",

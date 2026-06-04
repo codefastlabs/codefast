@@ -1,9 +1,5 @@
 import type { ComponentDoc } from "#/components/examples/docs/types";
-import {
-  carouselAnatomyCode,
-  carouselGalleryCode,
-  carouselVerticalCode,
-} from "#/components/examples/codes";
+import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { CarouselGallery } from "#/components/examples/docs/carousel/gallery";
 import { CarouselVertical } from "#/components/examples/docs/carousel/vertical";
 
@@ -15,17 +11,17 @@ export const carouselDoc: ComponentDoc = {
       description:
         "Track the active slide via setApi — drive clickable dots and a live “X of N” counter.",
       Demo: CarouselGallery,
-      code: carouselGalleryCode,
+      code: docSource("carousel", "gallery"),
     },
     {
       id: "vertical",
       title: "Vertical axis",
       description: 'Set orientation="vertical" to stack slides and scroll up/down.',
       Demo: CarouselVertical,
-      code: carouselVerticalCode,
+      code: docSource("carousel", "vertical"),
     },
   ],
-  anatomy: carouselAnatomyCode,
+  anatomy: docAnatomy("carousel"),
   api: [
     {
       name: "Carousel",

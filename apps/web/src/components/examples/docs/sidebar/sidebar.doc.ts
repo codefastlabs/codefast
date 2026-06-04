@@ -1,5 +1,5 @@
 import type { ComponentDoc } from "#/components/examples/docs/types";
-import { sidebarAnatomyCode, sidebarAppShellCode } from "#/components/examples/codes";
+import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { SidebarAppShell } from "#/components/examples/docs/sidebar/app-shell";
 
 export const sidebarDoc: ComponentDoc = {
@@ -9,11 +9,11 @@ export const sidebarDoc: ComponentDoc = {
       title: "App shell",
       description: "A collapsible sidebar with grouped menu — toggle the rail with the trigger.",
       Demo: SidebarAppShell,
-      code: sidebarAppShellCode,
+      code: docSource("sidebar", "app-shell"),
       previewClassName: "items-stretch",
     },
   ],
-  anatomy: sidebarAnatomyCode,
+  anatomy: docAnatomy("sidebar"),
   api: [
     {
       name: "SidebarProvider",

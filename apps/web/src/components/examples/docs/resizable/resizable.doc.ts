@@ -1,5 +1,5 @@
 import type { ComponentDoc } from "#/components/examples/docs/types";
-import { resizableAnatomyCode, resizablePanelsCode } from "#/components/examples/codes";
+import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { ResizablePanels } from "#/components/examples/docs/resizable/panels";
 
 export const resizableDoc: ComponentDoc = {
@@ -9,10 +9,10 @@ export const resizableDoc: ComponentDoc = {
       title: "Nested panels",
       description: "Drag the handles to resize — groups nest horizontally and vertically.",
       Demo: ResizablePanels,
-      code: resizablePanelsCode,
+      code: docSource("resizable", "panels"),
     },
   ],
-  anatomy: resizableAnatomyCode,
+  anatomy: docAnatomy("resizable"),
   api: [
     {
       name: "ResizableGroup",

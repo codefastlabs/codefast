@@ -1,9 +1,5 @@
 import type { ComponentDoc } from "#/components/examples/docs/types";
-import {
-  commandAnatomyCode,
-  commandDialogCode,
-  commandPaletteCode,
-} from "#/components/examples/codes";
+import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { CommandDialogExample } from "#/components/examples/docs/command/dialog";
 import { CommandPalette } from "#/components/examples/docs/command/palette";
 
@@ -14,7 +10,7 @@ export const commandDoc: ComponentDoc = {
       title: "Inline palette",
       description: "Type to fuzzy-filter; pick an item to run it. The choice shows below.",
       Demo: CommandPalette,
-      code: commandPaletteCode,
+      code: docSource("command", "palette"),
       previewClassName: "items-start",
     },
     {
@@ -22,11 +18,11 @@ export const commandDoc: ComponentDoc = {
       title: "Command dialog",
       description: "The same palette in a modal — the most common ⌘K pattern.",
       Demo: CommandDialogExample,
-      code: commandDialogCode,
+      code: docSource("command", "dialog"),
       previewClassName: "min-h-40",
     },
   ],
-  anatomy: commandAnatomyCode,
+  anatomy: docAnatomy("command"),
   api: [
     {
       name: "Command",

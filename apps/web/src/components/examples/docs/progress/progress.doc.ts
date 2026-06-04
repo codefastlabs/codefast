@@ -1,9 +1,5 @@
 import type { ComponentDoc } from "#/components/examples/docs/types";
-import {
-  progressAnatomyCode,
-  progressAnimatedCode,
-  progressColorsCode,
-} from "#/components/examples/codes";
+import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { ProgressAnimated } from "#/components/examples/docs/progress/animated";
 import { ProgressColors } from "#/components/examples/docs/progress/colors";
 
@@ -14,17 +10,17 @@ export const progressDoc: ComponentDoc = {
       title: "Animated",
       description: "Press Start — the value climbs over time and the indicator animates smoothly.",
       Demo: ProgressAnimated,
-      code: progressAnimatedCode,
+      code: docSource("progress", "animated"),
     },
     {
       id: "colors",
       title: "Themed bars",
       description: "Recolour the indicator slot per threshold to signal healthy → critical.",
       Demo: ProgressColors,
-      code: progressColorsCode,
+      code: docSource("progress", "colors"),
     },
   ],
-  anatomy: progressAnatomyCode,
+  anatomy: docAnatomy("progress"),
   api: [
     {
       name: "Progress",

@@ -1,9 +1,5 @@
 import type { ComponentDoc } from "#/components/examples/docs/types";
-import {
-  inputPasswordAnatomyCode,
-  inputPasswordFieldsCode,
-  inputPasswordStrengthCode,
-} from "#/components/examples/codes";
+import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { InputPasswordFields } from "#/components/examples/docs/input-password/fields";
 import { InputPasswordStrength } from "#/components/examples/docs/input-password/strength";
 
@@ -14,7 +10,7 @@ export const inputPasswordDoc: ComponentDoc = {
       title: "Show / hide toggle",
       description: "A built-in eye button reveals the value — no extra markup needed.",
       Demo: InputPasswordFields,
-      code: inputPasswordFieldsCode,
+      code: docSource("input-password", "fields"),
       previewClassName: "items-start",
     },
     {
@@ -22,11 +18,11 @@ export const inputPasswordDoc: ComponentDoc = {
       title: "Live strength meter",
       description: "Drive a strength bar from the controlled value as the user types.",
       Demo: InputPasswordStrength,
-      code: inputPasswordStrengthCode,
+      code: docSource("input-password", "strength"),
       previewClassName: "items-start",
     },
   ],
-  anatomy: inputPasswordAnatomyCode,
+  anatomy: docAnatomy("input-password"),
   api: [
     {
       name: "InputPassword",

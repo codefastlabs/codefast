@@ -1,5 +1,5 @@
 import type { ComponentDoc } from "#/components/examples/docs/types";
-import { textareaAnatomyCode, textareaCounterCode } from "#/components/examples/codes";
+import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { TextareaCounter } from "#/components/examples/docs/textarea/counter";
 
 export const textareaDoc: ComponentDoc = {
@@ -9,11 +9,11 @@ export const textareaDoc: ComponentDoc = {
       title: "With character counter",
       description: "Controlled value plus maxLength drives a live remaining-characters count.",
       Demo: TextareaCounter,
-      code: textareaCounterCode,
+      code: docSource("textarea", "counter"),
       previewClassName: "items-start",
     },
   ],
-  anatomy: textareaAnatomyCode,
+  anatomy: docAnatomy("textarea"),
   api: [
     {
       name: "Textarea",

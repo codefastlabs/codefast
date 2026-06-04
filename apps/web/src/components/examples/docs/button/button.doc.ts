@@ -1,12 +1,5 @@
 import type { ComponentDoc } from "#/components/examples/docs/types";
-import {
-  buttonAnatomyCode,
-  buttonAsChildCode,
-  buttonIconsCode,
-  buttonLoadingCode,
-  buttonSizesCode,
-  buttonVariantsCode,
-} from "#/components/examples/codes";
+import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { ButtonAsChild } from "#/components/examples/docs/button/as-child";
 import { ButtonIcons } from "#/components/examples/docs/button/icons";
 import { ButtonLoading } from "#/components/examples/docs/button/loading";
@@ -20,14 +13,14 @@ export const buttonDoc: ComponentDoc = {
       title: "Variants",
       description: "Six visual styles cover primary actions, secondary actions, and links.",
       Demo: ButtonVariants,
-      code: buttonVariantsCode,
+      code: docSource("button", "variants"),
     },
     {
       id: "sizes",
       title: "Sizes",
       description: "Four text sizes plus square icon sizes for icon-only buttons.",
       Demo: ButtonSizes,
-      code: buttonSizesCode,
+      code: docSource("button", "sizes"),
     },
     {
       id: "with-icon",
@@ -35,14 +28,14 @@ export const buttonDoc: ComponentDoc = {
       description:
         "Place an icon before or after the label. Add data-icon to fine-tune the padding.",
       Demo: ButtonIcons,
-      code: buttonIconsCode,
+      code: docSource("button", "icons"),
     },
     {
       id: "loading",
       title: "Loading state",
       description: "Compose with Spinner and disable the button while an action is in flight.",
       Demo: ButtonLoading,
-      code: buttonLoadingCode,
+      code: docSource("button", "loading"),
     },
     {
       id: "as-child",
@@ -50,10 +43,10 @@ export const buttonDoc: ComponentDoc = {
       description:
         "Render the button styles on a different element — an anchor, a router Link — via Radix Slot.",
       Demo: ButtonAsChild,
-      code: buttonAsChildCode,
+      code: docSource("button", "as-child"),
     },
   ],
-  anatomy: buttonAnatomyCode,
+  anatomy: docAnatomy("button"),
   api: [
     {
       name: "Button",

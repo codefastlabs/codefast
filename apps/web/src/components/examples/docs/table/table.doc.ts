@@ -1,5 +1,5 @@
 import type { ComponentDoc } from "#/components/examples/docs/types";
-import { tableAnatomyCode, tableInvoicesCode } from "#/components/examples/codes";
+import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { TableInvoices } from "#/components/examples/docs/table/invoices";
 
 export const tableDoc: ComponentDoc = {
@@ -9,11 +9,11 @@ export const tableDoc: ComponentDoc = {
       title: "Data table",
       description: "A semantic table with header, footer, caption, and a status Badge per row.",
       Demo: TableInvoices,
-      code: tableInvoicesCode,
+      code: docSource("table", "invoices"),
       previewClassName: "items-start",
     },
   ],
-  anatomy: tableAnatomyCode,
+  anatomy: docAnatomy("table"),
   api: [
     {
       name: "Table parts",

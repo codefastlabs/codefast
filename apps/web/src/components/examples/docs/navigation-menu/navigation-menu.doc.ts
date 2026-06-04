@@ -1,5 +1,5 @@
 import type { ComponentDoc } from "#/components/examples/docs/types";
-import { navigationMenuAnatomyCode, navigationMenuMegaCode } from "#/components/examples/codes";
+import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { NavigationMenuMega } from "#/components/examples/docs/navigation-menu/mega";
 
 export const navigationMenuDoc: ComponentDoc = {
@@ -9,11 +9,11 @@ export const navigationMenuDoc: ComponentDoc = {
       title: "Mega menu",
       description: "Hover or focus a trigger to reveal an animated panel of links.",
       Demo: NavigationMenuMega,
-      code: navigationMenuMegaCode,
+      code: docSource("navigation-menu", "mega"),
       previewClassName: "min-h-44 items-start",
     },
   ],
-  anatomy: navigationMenuAnatomyCode,
+  anatomy: docAnatomy("navigation-menu"),
   api: [
     {
       name: "NavigationMenu",

@@ -1,5 +1,5 @@
 import type { ComponentDoc } from "#/components/examples/docs/types";
-import { breadcrumbAnatomyCode, breadcrumbPathCode } from "#/components/examples/codes";
+import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { BreadcrumbPath } from "#/components/examples/docs/breadcrumb/path";
 
 export const breadcrumbDoc: ComponentDoc = {
@@ -9,10 +9,10 @@ export const breadcrumbDoc: ComponentDoc = {
       title: "Location trail",
       description: "A hierarchy of links ending in the current page, with custom separators.",
       Demo: BreadcrumbPath,
-      code: breadcrumbPathCode,
+      code: docSource("breadcrumb", "path"),
     },
   ],
-  anatomy: breadcrumbAnatomyCode,
+  anatomy: docAnatomy("breadcrumb"),
   api: [
     {
       name: "Breadcrumb parts",

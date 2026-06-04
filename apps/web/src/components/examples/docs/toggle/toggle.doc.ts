@@ -1,5 +1,5 @@
 import type { ComponentDoc } from "#/components/examples/docs/types";
-import { toggleAnatomyCode, togglePinCode, toggleToolbarCode } from "#/components/examples/codes";
+import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { TogglePin } from "#/components/examples/docs/toggle/pin";
 import { ToggleToolbar } from "#/components/examples/docs/toggle/toolbar";
 
@@ -10,17 +10,17 @@ export const toggleDoc: ComponentDoc = {
       title: "Icon toggles",
       description: "Independent on/off buttons — each keeps its own pressed state.",
       Demo: ToggleToolbar,
-      code: toggleToolbarCode,
+      code: docSource("toggle", "toolbar"),
     },
     {
       id: "controlled",
       title: "Controlled with label",
       description: "Drive the pressed state yourself and swap the label to match.",
       Demo: TogglePin,
-      code: togglePinCode,
+      code: docSource("toggle", "pin"),
     },
   ],
-  anatomy: toggleAnatomyCode,
+  anatomy: docAnatomy("toggle"),
   api: [
     {
       name: "Toggle",

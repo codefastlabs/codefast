@@ -1,9 +1,5 @@
 import type { ComponentDoc } from "#/components/examples/docs/types";
-import {
-  spinnerAnatomyCode,
-  spinnerInButtonCode,
-  spinnerSizesCode,
-} from "#/components/examples/codes";
+import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { SpinnerInButton } from "#/components/examples/docs/spinner/in-button";
 import { SpinnerSizes } from "#/components/examples/docs/spinner/sizes";
 
@@ -15,17 +11,17 @@ export const spinnerDoc: ComponentDoc = {
       description:
         "Size and colour the spinner with className — it inherits the current text colour.",
       Demo: SpinnerSizes,
-      code: spinnerSizesCode,
+      code: docSource("spinner", "sizes"),
     },
     {
       id: "in-button",
       title: "In a button & with a label",
       description: "Drop it into a disabled button, or pass children as a screen-reader label.",
       Demo: SpinnerInButton,
-      code: spinnerInButtonCode,
+      code: docSource("spinner", "in-button"),
     },
   ],
-  anatomy: spinnerAnatomyCode,
+  anatomy: docAnatomy("spinner"),
   api: [
     {
       name: "Spinner",

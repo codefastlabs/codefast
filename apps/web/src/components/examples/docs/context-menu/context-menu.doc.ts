@@ -1,9 +1,5 @@
 import type { ComponentDoc } from "#/components/examples/docs/types";
-import {
-  contextMenuAnatomyCode,
-  contextMenuActionsCode,
-  contextMenuEditorCode,
-} from "#/components/examples/codes";
+import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { ContextMenuActions } from "#/components/examples/docs/context-menu/actions";
 import { ContextMenuEditor } from "#/components/examples/docs/context-menu/editor";
 
@@ -15,7 +11,7 @@ export const contextMenuDoc: ComponentDoc = {
       description:
         "Right-click the canvas — checkbox items and a radio group drive state, echoed below.",
       Demo: ContextMenuEditor,
-      code: contextMenuEditorCode,
+      code: docSource("context-menu", "editor"),
       previewClassName: "min-h-44",
     },
     {
@@ -23,11 +19,11 @@ export const contextMenuDoc: ComponentDoc = {
       title: "Actions & submenu",
       description: "A classic actions menu with shortcuts and a nested submenu.",
       Demo: ContextMenuActions,
-      code: contextMenuActionsCode,
+      code: docSource("context-menu", "actions"),
       previewClassName: "min-h-44",
     },
   ],
-  anatomy: contextMenuAnatomyCode,
+  anatomy: docAnatomy("context-menu"),
   api: [
     {
       name: "ContextMenuTrigger",

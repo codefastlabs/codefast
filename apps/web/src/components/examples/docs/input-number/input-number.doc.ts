@@ -1,9 +1,5 @@
 import type { ComponentDoc } from "#/components/examples/docs/types";
-import {
-  inputNumberAnatomyCode,
-  inputNumberFormatsCode,
-  inputNumberQuantityCode,
-} from "#/components/examples/codes";
+import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { InputNumberFormats } from "#/components/examples/docs/input-number/formats";
 import { InputNumberQuantity } from "#/components/examples/docs/input-number/quantity";
 
@@ -14,7 +10,7 @@ export const inputNumberDoc: ComponentDoc = {
       title: "Stepper with bounds",
       description: "Increment/decrement controls plus min, max, and step keep input valid.",
       Demo: InputNumberQuantity,
-      code: inputNumberQuantityCode,
+      code: docSource("input-number", "quantity"),
       previewClassName: "items-start",
     },
     {
@@ -22,11 +18,11 @@ export const inputNumberDoc: ComponentDoc = {
       title: "Formats & variants",
       description: "Format as currency with Intl options, or use the split stepper layout.",
       Demo: InputNumberFormats,
-      code: inputNumberFormatsCode,
+      code: docSource("input-number", "formats"),
       previewClassName: "items-start",
     },
   ],
-  anatomy: inputNumberAnatomyCode,
+  anatomy: docAnatomy("input-number"),
   api: [
     {
       name: "InputNumber",

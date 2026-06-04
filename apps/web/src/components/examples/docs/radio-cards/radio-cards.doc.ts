@@ -1,9 +1,5 @@
 import type { ComponentDoc } from "#/components/examples/docs/types";
-import {
-  radioCardsAnatomyCode,
-  radioCardsIntervalCode,
-  radioCardsPlansCode,
-} from "#/components/examples/codes";
+import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { RadioCardsInterval } from "#/components/examples/docs/radio-cards/interval";
 import { RadioCardsPlans } from "#/components/examples/docs/radio-cards/plans";
 
@@ -14,7 +10,7 @@ export const radioCardsDoc: ComponentDoc = {
       title: "Plan picker",
       description: "A controlled single-select with a highlighted card and a live readout.",
       Demo: RadioCardsPlans,
-      code: radioCardsPlansCode,
+      code: docSource("radio-cards", "plans"),
       previewClassName: "items-start",
     },
     {
@@ -22,10 +18,10 @@ export const radioCardsDoc: ComponentDoc = {
       title: "Billing interval",
       description: "Lay cards out in a grid; mix in a Badge to flag the better deal.",
       Demo: RadioCardsInterval,
-      code: radioCardsIntervalCode,
+      code: docSource("radio-cards", "interval"),
     },
   ],
-  anatomy: radioCardsAnatomyCode,
+  anatomy: docAnatomy("radio-cards"),
   api: [
     {
       name: "RadioCards",

@@ -1,5 +1,5 @@
 import type { ComponentDoc } from "#/components/examples/docs/types";
-import { paginationAnatomyCode, paginationControlledCode } from "#/components/examples/codes";
+import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { PaginationControlled } from "#/components/examples/docs/pagination/controlled";
 
 export const paginationDoc: ComponentDoc = {
@@ -10,10 +10,10 @@ export const paginationDoc: ComponentDoc = {
       description:
         "Click pages or prev/next — the windowed list and disabled ends update from state.",
       Demo: PaginationControlled,
-      code: paginationControlledCode,
+      code: docSource("pagination", "controlled"),
     },
   ],
-  anatomy: paginationAnatomyCode,
+  anatomy: docAnatomy("pagination"),
   api: [
     {
       name: "Pagination parts",
