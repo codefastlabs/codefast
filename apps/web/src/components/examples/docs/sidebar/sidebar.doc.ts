@@ -2,6 +2,9 @@ import type { ComponentDoc } from "#/components/examples/docs/types";
 import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { SidebarAppShell } from "#/components/examples/docs/sidebar/app-shell";
 
+import { SidebarSubmenu } from "#/components/examples/docs/sidebar/submenu";
+import { SidebarBadges } from "#/components/examples/docs/sidebar/badges";
+
 export const sidebarDoc: ComponentDoc = {
   examples: [
     {
@@ -11,6 +14,22 @@ export const sidebarDoc: ComponentDoc = {
       Demo: SidebarAppShell,
       code: docSource("sidebar", "app-shell"),
       previewClassName: "items-stretch",
+    },
+    {
+      id: "submenu",
+      title: "Nested items",
+      description: "Expand a menu item into an indented sub-menu.",
+      Demo: SidebarSubmenu,
+      code: docSource("sidebar", "submenu"),
+      previewClassName: "items-start",
+    },
+    {
+      id: "badges",
+      title: "Active state & badges",
+      description: "Highlight the current item and show counts.",
+      Demo: SidebarBadges,
+      code: docSource("sidebar", "badges"),
+      previewClassName: "items-start",
     },
   ],
   anatomy: docAnatomy("sidebar"),

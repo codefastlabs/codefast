@@ -3,6 +3,8 @@ import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { ContextMenuActions } from "#/components/examples/docs/context-menu/actions";
 import { ContextMenuEditor } from "#/components/examples/docs/context-menu/editor";
 
+import { ContextMenuSimple } from "#/components/examples/docs/context-menu/simple";
+
 export const contextMenuDoc: ComponentDoc = {
   examples: [
     {
@@ -21,6 +23,13 @@ export const contextMenuDoc: ComponentDoc = {
       Demo: ContextMenuActions,
       code: docSource("context-menu", "actions"),
       previewClassName: "min-h-44",
+    },
+    {
+      id: "simple",
+      title: "Basic actions",
+      description: "Cut, copy, paste — the everyday right-click menu.",
+      Demo: ContextMenuSimple,
+      code: docSource("context-menu", "simple"),
     },
   ],
   anatomy: docAnatomy("context-menu"),

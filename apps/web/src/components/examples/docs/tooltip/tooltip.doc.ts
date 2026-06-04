@@ -3,6 +3,8 @@ import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { TooltipSides } from "#/components/examples/docs/tooltip/sides";
 import { TooltipWithShortcut } from "#/components/examples/docs/tooltip/with-shortcut";
 
+import { TooltipToolbar } from "#/components/examples/docs/tooltip/toolbar";
+
 export const tooltipDoc: ComponentDoc = {
   examples: [
     {
@@ -18,6 +20,13 @@ export const tooltipDoc: ComponentDoc = {
       description: "Tooltips can hold rich content, including Kbd shortcut hints.",
       Demo: TooltipWithShortcut,
       code: docSource("tooltip", "with-shortcut"),
+    },
+    {
+      id: "toolbar",
+      title: "Icon toolbar",
+      description: "One tooltip per icon button in a toolbar.",
+      Demo: TooltipToolbar,
+      code: docSource("tooltip", "toolbar"),
     },
   ],
   anatomy: docAnatomy("tooltip"),

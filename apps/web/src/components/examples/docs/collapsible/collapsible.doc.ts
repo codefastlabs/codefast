@@ -2,6 +2,9 @@ import type { ComponentDoc } from "#/components/examples/docs/types";
 import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { CollapsibleRepos } from "#/components/examples/docs/collapsible/repos";
 
+import { CollapsibleFaq } from "#/components/examples/docs/collapsible/faq";
+import { CollapsibleShowMore } from "#/components/examples/docs/collapsible/show-more";
+
 export const collapsibleDoc: ComponentDoc = {
   examples: [
     {
@@ -10,6 +13,22 @@ export const collapsibleDoc: ComponentDoc = {
       description: "Controlled open state reveals extra rows with a smooth height animation.",
       Demo: CollapsibleRepos,
       code: docSource("collapsible", "repos"),
+      previewClassName: "items-start",
+    },
+    {
+      id: "faq",
+      title: "FAQ list",
+      description: "Independent collapsibles with a rotating open indicator.",
+      Demo: CollapsibleFaq,
+      code: docSource("collapsible", "faq"),
+      previewClassName: "items-start",
+    },
+    {
+      id: "show-more",
+      title: "Inline show more",
+      description: "Reveal extra copy under a trigger styled as a link.",
+      Demo: CollapsibleShowMore,
+      code: docSource("collapsible", "show-more"),
       previewClassName: "items-start",
     },
   ],

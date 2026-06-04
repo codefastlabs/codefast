@@ -3,6 +3,8 @@ import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { KbdInline } from "#/components/examples/docs/kbd/inline";
 import { KbdShortcuts } from "#/components/examples/docs/kbd/shortcuts";
 
+import { KbdInButton } from "#/components/examples/docs/kbd/in-button";
+
 export const kbdDoc: ComponentDoc = {
   examples: [
     {
@@ -18,6 +20,13 @@ export const kbdDoc: ComponentDoc = {
       description: "Kbd flows inline, so you can reference shortcuts mid-sentence.",
       Demo: KbdInline,
       code: docSource("kbd", "inline"),
+    },
+    {
+      id: "in-button",
+      title: "Inside controls",
+      description: "Pair a shortcut hint with the action it triggers.",
+      Demo: KbdInButton,
+      code: docSource("kbd", "in-button"),
     },
   ],
   anatomy: docAnatomy("kbd"),

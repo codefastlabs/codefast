@@ -3,6 +3,8 @@ import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { ProgressCircleAnimated } from "#/components/examples/docs/progress-circle/animated";
 import { ProgressCircleValues } from "#/components/examples/docs/progress-circle/values";
 
+import { ProgressCircleDashboard } from "#/components/examples/docs/progress-circle/dashboard";
+
 export const progressCircleDoc: ComponentDoc = {
   examples: [
     {
@@ -18,6 +20,13 @@ export const progressCircleDoc: ComponentDoc = {
       description: "Any value 0–100; toggle showValue to print the number inside.",
       Demo: ProgressCircleValues,
       code: docSource("progress-circle", "values"),
+    },
+    {
+      id: "dashboard",
+      title: "Labeled metrics",
+      description: "Group circles into a compact metrics dashboard.",
+      Demo: ProgressCircleDashboard,
+      code: docSource("progress-circle", "dashboard"),
     },
   ],
   anatomy: docAnatomy("progress-circle"),

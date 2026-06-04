@@ -3,6 +3,8 @@ import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { DialogBasic } from "#/components/examples/docs/dialog/basic";
 import { DialogScroll } from "#/components/examples/docs/dialog/scroll";
 
+import { DialogControlled } from "#/components/examples/docs/dialog/controlled";
+
 export const dialogDoc: ComponentDoc = {
   examples: [
     {
@@ -20,6 +22,13 @@ export const dialogDoc: ComponentDoc = {
       Demo: DialogScroll,
       code: docSource("dialog", "scroll"),
       previewClassName: "min-h-40",
+    },
+    {
+      id: "controlled",
+      title: "Controlled open",
+      description: "Drive the open state from your component.",
+      Demo: DialogControlled,
+      code: docSource("dialog", "controlled"),
     },
   ],
   anatomy: docAnatomy("dialog"),

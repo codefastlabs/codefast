@@ -2,6 +2,9 @@ import type { ComponentDoc } from "#/components/examples/docs/types";
 import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { RadioSizes } from "#/components/examples/docs/radio/sizes";
 
+import { RadioHorizontal } from "#/components/examples/docs/radio/horizontal";
+import { RadioDisabled } from "#/components/examples/docs/radio/disabled";
+
 export const radioDoc: ComponentDoc = {
   examples: [
     {
@@ -11,6 +14,20 @@ export const radioDoc: ComponentDoc = {
       Demo: RadioSizes,
       code: docSource("radio", "sizes"),
       previewClassName: "items-start",
+    },
+    {
+      id: "horizontal",
+      title: "Horizontal",
+      description: "Lay standalone radios out in a row.",
+      Demo: RadioHorizontal,
+      code: docSource("radio", "horizontal"),
+    },
+    {
+      id: "disabled",
+      title: "Disabled option",
+      description: "Disable an individual choice while keeping it visible.",
+      Demo: RadioDisabled,
+      code: docSource("radio", "disabled"),
     },
   ],
   anatomy: docAnatomy("radio"),

@@ -3,6 +3,8 @@ import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { CarouselGallery } from "#/components/examples/docs/carousel/gallery";
 import { CarouselVertical } from "#/components/examples/docs/carousel/vertical";
 
+import { CarouselMultiple } from "#/components/examples/docs/carousel/multiple";
+
 export const carouselDoc: ComponentDoc = {
   examples: [
     {
@@ -19,6 +21,13 @@ export const carouselDoc: ComponentDoc = {
       description: 'Set orientation="vertical" to stack slides and scroll up/down.',
       Demo: CarouselVertical,
       code: docSource("carousel", "vertical"),
+    },
+    {
+      id: "multiple",
+      title: "Multiple per view",
+      description: "Show several items at once with basis utilities.",
+      Demo: CarouselMultiple,
+      code: docSource("carousel", "multiple"),
     },
   ],
   anatomy: docAnatomy("carousel"),

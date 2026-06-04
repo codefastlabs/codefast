@@ -1,6 +1,8 @@
 import type { ComponentDoc } from "#/components/examples/docs/types";
 import { docSource, docAnatomy } from "#/components/examples/docs/source";
+import { AlertCompact } from "#/components/examples/docs/alert/compact";
 import { AlertVariants } from "#/components/examples/docs/alert/variants";
+import { AlertWithAction } from "#/components/examples/docs/alert/with-action";
 
 export const alertDoc: ComponentDoc = {
   examples: [
@@ -10,6 +12,22 @@ export const alertDoc: ComponentDoc = {
       description: "An icon, title, and body — plus an optional action slot for dismiss.",
       Demo: AlertVariants,
       code: docSource("alert", "variants"),
+      previewClassName: "items-start",
+    },
+    {
+      id: "compact",
+      title: "Title only",
+      description: "Drop the description for a terse, single-line status banner.",
+      Demo: AlertCompact,
+      code: docSource("alert", "compact"),
+      previewClassName: "items-start",
+    },
+    {
+      id: "with-action",
+      title: "With call to action",
+      description: "Use the action slot for a trailing button — upgrade, retry, or undo.",
+      Demo: AlertWithAction,
+      code: docSource("alert", "with-action"),
       previewClassName: "items-start",
     },
   ],

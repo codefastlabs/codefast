@@ -2,6 +2,9 @@ import type { ComponentDoc } from "#/components/examples/docs/types";
 import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { TextareaCounter } from "#/components/examples/docs/textarea/counter";
 
+import { TextareaStates } from "#/components/examples/docs/textarea/states";
+import { TextareaRows } from "#/components/examples/docs/textarea/rows";
+
 export const textareaDoc: ComponentDoc = {
   examples: [
     {
@@ -10,6 +13,22 @@ export const textareaDoc: ComponentDoc = {
       description: "Controlled value plus maxLength drives a live remaining-characters count.",
       Demo: TextareaCounter,
       code: docSource("textarea", "counter"),
+      previewClassName: "items-start",
+    },
+    {
+      id: "states",
+      title: "Disabled & invalid",
+      description: "Built-in disabled and aria-invalid styling.",
+      Demo: TextareaStates,
+      code: docSource("textarea", "states"),
+      previewClassName: "items-start",
+    },
+    {
+      id: "rows",
+      title: "Row heights",
+      description: "Set the initial height with the rows attribute.",
+      Demo: TextareaRows,
+      code: docSource("textarea", "rows"),
       previewClassName: "items-start",
     },
   ],

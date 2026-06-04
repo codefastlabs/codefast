@@ -2,6 +2,9 @@ import type { ComponentDoc } from "#/components/examples/docs/types";
 import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { ItemList } from "#/components/examples/docs/item/list";
 
+import { ItemCompact } from "#/components/examples/docs/item/compact";
+import { ItemNotifications } from "#/components/examples/docs/item/notifications";
+
 export const itemDoc: ComponentDoc = {
   examples: [
     {
@@ -10,6 +13,22 @@ export const itemDoc: ComponentDoc = {
       description: "Compose media, title, description, and actions into a divided list.",
       Demo: ItemList,
       code: docSource("item", "list"),
+      previewClassName: "items-start",
+    },
+    {
+      id: "compact",
+      title: "Single-line rows",
+      description: "Drop the description for a dense file or option list.",
+      Demo: ItemCompact,
+      code: docSource("item", "compact"),
+      previewClassName: "items-start",
+    },
+    {
+      id: "notifications",
+      title: "With trailing badge",
+      description: "Surface unread state with a Badge in the actions slot.",
+      Demo: ItemNotifications,
+      code: docSource("item", "notifications"),
       previewClassName: "items-start",
     },
   ],

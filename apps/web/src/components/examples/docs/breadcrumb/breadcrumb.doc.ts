@@ -2,6 +2,9 @@ import type { ComponentDoc } from "#/components/examples/docs/types";
 import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { BreadcrumbPath } from "#/components/examples/docs/breadcrumb/path";
 
+import { BreadcrumbCollapsed } from "#/components/examples/docs/breadcrumb/collapsed";
+import { BreadcrumbCustomSeparator } from "#/components/examples/docs/breadcrumb/custom-separator";
+
 export const breadcrumbDoc: ComponentDoc = {
   examples: [
     {
@@ -10,6 +13,20 @@ export const breadcrumbDoc: ComponentDoc = {
       description: "A hierarchy of links ending in the current page, with custom separators.",
       Demo: BreadcrumbPath,
       code: docSource("breadcrumb", "path"),
+    },
+    {
+      id: "collapsed",
+      title: "Collapsed middle",
+      description: "Hide intermediate levels behind an ellipsis.",
+      Demo: BreadcrumbCollapsed,
+      code: docSource("breadcrumb", "collapsed"),
+    },
+    {
+      id: "custom-separator",
+      title: "Custom separator",
+      description: "Swap the chevron for any node — here, a slash.",
+      Demo: BreadcrumbCustomSeparator,
+      code: docSource("breadcrumb", "custom-separator"),
     },
   ],
   anatomy: docAnatomy("breadcrumb"),

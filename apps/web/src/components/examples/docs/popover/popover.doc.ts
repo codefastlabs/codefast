@@ -3,6 +3,8 @@ import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { PopoverDimensions } from "#/components/examples/docs/popover/dimensions";
 import { PopoverShare } from "#/components/examples/docs/popover/share";
 
+import { PopoverSimple } from "#/components/examples/docs/popover/simple";
+
 export const popoverDoc: ComponentDoc = {
   examples: [
     {
@@ -20,6 +22,13 @@ export const popoverDoc: ComponentDoc = {
       Demo: PopoverDimensions,
       code: docSource("popover", "dimensions"),
       previewClassName: "min-h-40",
+    },
+    {
+      id: "simple",
+      title: "Plain content",
+      description: "A minimal popover for contextual information.",
+      Demo: PopoverSimple,
+      code: docSource("popover", "simple"),
     },
   ],
   anatomy: docAnatomy("popover"),

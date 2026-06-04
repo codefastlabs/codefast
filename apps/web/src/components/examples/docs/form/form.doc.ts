@@ -2,6 +2,9 @@ import type { ComponentDoc } from "#/components/examples/docs/types";
 import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { FormSignIn } from "#/components/examples/docs/form/sign-in";
 
+import { FormContact } from "#/components/examples/docs/form/contact";
+import { FormNewsletter } from "#/components/examples/docs/form/newsletter";
+
 export const formDoc: ComponentDoc = {
   examples: [
     {
@@ -11,6 +14,22 @@ export const formDoc: ComponentDoc = {
         "A controlled form: submit invalid values to see inline errors, valid ones to succeed.",
       Demo: FormSignIn,
       code: docSource("form", "sign-in"),
+      previewClassName: "items-start",
+    },
+    {
+      id: "contact",
+      title: "Contact form",
+      description: "Field + Textarea with inline validation and a helper.",
+      Demo: FormContact,
+      code: docSource("form", "contact"),
+      previewClassName: "items-start",
+    },
+    {
+      id: "newsletter",
+      title: "With consent",
+      description: "Combine an input with a required consent checkbox.",
+      Demo: FormNewsletter,
+      code: docSource("form", "newsletter"),
       previewClassName: "items-start",
     },
   ],

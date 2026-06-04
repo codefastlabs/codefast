@@ -3,6 +3,8 @@ import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { InputPasswordFields } from "#/components/examples/docs/input-password/fields";
 import { InputPasswordStrength } from "#/components/examples/docs/input-password/strength";
 
+import { InputPasswordConfirm } from "#/components/examples/docs/input-password/confirm";
+
 export const inputPasswordDoc: ComponentDoc = {
   examples: [
     {
@@ -19,6 +21,14 @@ export const inputPasswordDoc: ComponentDoc = {
       description: "Drive a strength bar from the controlled value as the user types.",
       Demo: InputPasswordStrength,
       code: docSource("input-password", "strength"),
+      previewClassName: "items-start",
+    },
+    {
+      id: "confirm",
+      title: "Confirm match",
+      description: "Two fields with a live match check.",
+      Demo: InputPasswordConfirm,
+      code: docSource("input-password", "confirm"),
       previewClassName: "items-start",
     },
   ],

@@ -3,6 +3,8 @@ import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { CalendarRange } from "#/components/examples/docs/calendar/range";
 import { CalendarSingle } from "#/components/examples/docs/calendar/single";
 
+import { CalendarDisabled } from "#/components/examples/docs/calendar/disabled";
+
 export const calendarDoc: ComponentDoc = {
   examples: [
     {
@@ -18,6 +20,13 @@ export const calendarDoc: ComponentDoc = {
       description: 'mode="range" over two months, with the picked span shown below.',
       Demo: CalendarRange,
       code: docSource("calendar", "range"),
+    },
+    {
+      id: "disabled",
+      title: "Disabled dates",
+      description: "Block days with a matcher — here, weekends.",
+      Demo: CalendarDisabled,
+      code: docSource("calendar", "disabled"),
     },
   ],
   anatomy: docAnatomy("calendar"),

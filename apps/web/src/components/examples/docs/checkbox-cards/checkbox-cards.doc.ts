@@ -2,6 +2,9 @@ import type { ComponentDoc } from "#/components/examples/docs/types";
 import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { CheckboxCardsFeatures } from "#/components/examples/docs/checkbox-cards/features";
 
+import { CheckboxCardsColumns } from "#/components/examples/docs/checkbox-cards/columns";
+import { CheckboxCardsDisabled } from "#/components/examples/docs/checkbox-cards/disabled";
+
 export const checkboxCardsDoc: ComponentDoc = {
   examples: [
     {
@@ -10,6 +13,21 @@ export const checkboxCardsDoc: ComponentDoc = {
       description: "Card-style multi-select with highlighted state and a live list of choices.",
       Demo: CheckboxCardsFeatures,
       code: docSource("checkbox-cards", "features"),
+      previewClassName: "items-start",
+    },
+    {
+      id: "columns",
+      title: "Two columns",
+      description: "Lay cards out in a grid for compact add-on pickers.",
+      Demo: CheckboxCardsColumns,
+      code: docSource("checkbox-cards", "columns"),
+    },
+    {
+      id: "disabled",
+      title: "Disabled option",
+      description: "Mark an option unavailable while keeping it visible.",
+      Demo: CheckboxCardsDisabled,
+      code: docSource("checkbox-cards", "disabled"),
       previewClassName: "items-start",
     },
   ],

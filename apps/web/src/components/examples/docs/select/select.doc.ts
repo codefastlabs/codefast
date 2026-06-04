@@ -3,6 +3,8 @@ import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { SelectGrouped } from "#/components/examples/docs/select/grouped";
 import { SelectStatus } from "#/components/examples/docs/select/status";
 
+import { SelectControlled } from "#/components/examples/docs/select/controlled";
+
 export const selectDoc: ComponentDoc = {
   examples: [
     {
@@ -20,6 +22,13 @@ export const selectDoc: ComponentDoc = {
         "Organise long lists with SelectGroup + SelectLabel, divide with SelectSeparator, and disable any item.",
       Demo: SelectGrouped,
       code: docSource("select", "grouped"),
+    },
+    {
+      id: "controlled",
+      title: "Controlled value",
+      description: "Bind the value to state and read it back.",
+      Demo: SelectControlled,
+      code: docSource("select", "controlled"),
     },
   ],
   anatomy: docAnatomy("select"),

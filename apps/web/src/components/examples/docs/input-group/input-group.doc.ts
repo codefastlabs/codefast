@@ -2,6 +2,9 @@ import type { ComponentDoc } from "#/components/examples/docs/types";
 import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { InputGroupAddons } from "#/components/examples/docs/input-group/addons";
 
+import { InputGroupCopy } from "#/components/examples/docs/input-group/copy";
+import { InputGroupValidation } from "#/components/examples/docs/input-group/validation";
+
 export const inputGroupDoc: ComponentDoc = {
   examples: [
     {
@@ -10,6 +13,22 @@ export const inputGroupDoc: ComponentDoc = {
       description: "Prefix text, a leading icon, or a trailing button — all share one focus ring.",
       Demo: InputGroupAddons,
       code: docSource("input-group", "addons"),
+      previewClassName: "items-start",
+    },
+    {
+      id: "copy",
+      title: "Copy button",
+      description: "Pair a read-only value with a trailing action button.",
+      Demo: InputGroupCopy,
+      code: docSource("input-group", "copy"),
+      previewClassName: "items-start",
+    },
+    {
+      id: "validation",
+      title: "Status & prefix",
+      description: "Show a validation icon, or a fixed prefix addon.",
+      Demo: InputGroupValidation,
+      code: docSource("input-group", "validation"),
       previewClassName: "items-start",
     },
   ],

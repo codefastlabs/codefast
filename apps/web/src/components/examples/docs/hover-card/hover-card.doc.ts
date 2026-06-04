@@ -2,6 +2,9 @@ import type { ComponentDoc } from "#/components/examples/docs/types";
 import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { HoverCardProfile } from "#/components/examples/docs/hover-card/profile";
 
+import { HoverCardLinkPreview } from "#/components/examples/docs/hover-card/link-preview";
+import { HoverCardStat } from "#/components/examples/docs/hover-card/stat";
+
 export const hoverCardDoc: ComponentDoc = {
   examples: [
     {
@@ -11,6 +14,20 @@ export const hoverCardDoc: ComponentDoc = {
       Demo: HoverCardProfile,
       code: docSource("hover-card", "profile"),
       previewClassName: "min-h-40",
+    },
+    {
+      id: "link-preview",
+      title: "Inline link preview",
+      description: "Reveal context when hovering an inline link.",
+      Demo: HoverCardLinkPreview,
+      code: docSource("hover-card", "link-preview"),
+    },
+    {
+      id: "stat",
+      title: "Stat breakdown",
+      description: "Expand a summary number into its details on hover.",
+      Demo: HoverCardStat,
+      code: docSource("hover-card", "stat"),
     },
   ],
   anatomy: docAnatomy("hover-card"),

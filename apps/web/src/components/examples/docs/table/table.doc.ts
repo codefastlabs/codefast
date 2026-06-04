@@ -2,6 +2,9 @@ import type { ComponentDoc } from "#/components/examples/docs/types";
 import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { TableInvoices } from "#/components/examples/docs/table/invoices";
 
+import { TableSimple } from "#/components/examples/docs/table/simple";
+import { TableSelection } from "#/components/examples/docs/table/selection";
+
 export const tableDoc: ComponentDoc = {
   examples: [
     {
@@ -10,6 +13,22 @@ export const tableDoc: ComponentDoc = {
       description: "A semantic table with header, footer, caption, and a status Badge per row.",
       Demo: TableInvoices,
       code: docSource("table", "invoices"),
+      previewClassName: "items-start",
+    },
+    {
+      id: "simple",
+      title: "Simple table",
+      description: "Header and rows only — no caption or footer.",
+      Demo: TableSimple,
+      code: docSource("table", "simple"),
+      previewClassName: "items-start",
+    },
+    {
+      id: "selection",
+      title: "Row selection",
+      description: "A checkbox column with select-all and per-row state.",
+      Demo: TableSelection,
+      code: docSource("table", "selection"),
       previewClassName: "items-start",
     },
   ],

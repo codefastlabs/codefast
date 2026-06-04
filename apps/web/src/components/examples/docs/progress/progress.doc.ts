@@ -3,6 +3,8 @@ import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { ProgressAnimated } from "#/components/examples/docs/progress/animated";
 import { ProgressColors } from "#/components/examples/docs/progress/colors";
 
+import { ProgressLabeled } from "#/components/examples/docs/progress/labeled";
+
 export const progressDoc: ComponentDoc = {
   examples: [
     {
@@ -18,6 +20,14 @@ export const progressDoc: ComponentDoc = {
       description: "Recolour the indicator slot per threshold to signal healthy → critical.",
       Demo: ProgressColors,
       code: docSource("progress", "colors"),
+    },
+    {
+      id: "labeled",
+      title: "With labels",
+      description: "Pair each bar with a name and a percentage.",
+      Demo: ProgressLabeled,
+      code: docSource("progress", "labeled"),
+      previewClassName: "items-start",
     },
   ],
   anatomy: docAnatomy("progress"),

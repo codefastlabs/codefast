@@ -2,6 +2,9 @@ import type { ComponentDoc } from "#/components/examples/docs/types";
 import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { ChartBar } from "#/components/examples/docs/chart/bar";
 
+import { ChartLine } from "#/components/examples/docs/chart/line";
+import { ChartArea } from "#/components/examples/docs/chart/area";
+
 export const chartDoc: ComponentDoc = {
   examples: [
     {
@@ -10,6 +13,20 @@ export const chartDoc: ComponentDoc = {
       description: "A Recharts chart wrapped with consistent theming, tooltip, and config.",
       Demo: ChartBar,
       code: docSource("chart", "bar"),
+    },
+    {
+      id: "line",
+      title: "Line chart",
+      description: "Plot a trend over time with a single series.",
+      Demo: ChartLine,
+      code: docSource("chart", "line"),
+    },
+    {
+      id: "area",
+      title: "Area chart",
+      description: "Emphasise volume with a filled area under the line.",
+      Demo: ChartArea,
+      code: docSource("chart", "area"),
     },
   ],
   anatomy: docAnatomy("chart"),
