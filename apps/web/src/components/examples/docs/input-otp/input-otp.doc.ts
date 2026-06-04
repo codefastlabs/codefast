@@ -3,6 +3,8 @@ import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { InputOTPPattern } from "#/components/examples/docs/input-otp/pattern";
 import { InputOTPVerify } from "#/components/examples/docs/input-otp/verify";
 
+import { InputOTPDisabled } from "#/components/examples/docs/input-otp/disabled";
+
 export const inputOtpDoc: ComponentDoc = {
   examples: [
     {
@@ -18,6 +20,13 @@ export const inputOtpDoc: ComponentDoc = {
       description: "Pass a pattern (REGEXP_ONLY_DIGITS) to reject non-matching keystrokes.",
       Demo: InputOTPPattern,
       code: docSource("input-otp", "pattern"),
+    },
+    {
+      id: "disabled",
+      title: "Disabled",
+      description: "A non-interactive code input.",
+      Demo: InputOTPDisabled,
+      code: docSource("input-otp", "disabled"),
     },
   ],
   anatomy: docAnatomy("input-otp"),

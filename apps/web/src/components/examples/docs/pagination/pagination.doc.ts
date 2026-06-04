@@ -2,6 +2,9 @@ import type { ComponentDoc } from "#/components/examples/docs/types";
 import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { PaginationControlled } from "#/components/examples/docs/pagination/controlled";
 
+import { PaginationSimple } from "#/components/examples/docs/pagination/simple";
+import { PaginationPrevNext } from "#/components/examples/docs/pagination/prev-next";
+
 export const paginationDoc: ComponentDoc = {
   examples: [
     {
@@ -11,6 +14,20 @@ export const paginationDoc: ComponentDoc = {
         "Click pages or prev/next — the windowed list and disabled ends update from state.",
       Demo: PaginationControlled,
       code: docSource("pagination", "controlled"),
+    },
+    {
+      id: "simple",
+      title: "Simple",
+      description: "Static markup with an active page and prev / next.",
+      Demo: PaginationSimple,
+      code: docSource("pagination", "simple"),
+    },
+    {
+      id: "prev-next",
+      title: "Previous / next only",
+      description: "A minimal pager with disabled edges and a counter.",
+      Demo: PaginationPrevNext,
+      code: docSource("pagination", "prev-next"),
     },
   ],
   anatomy: docAnatomy("pagination"),

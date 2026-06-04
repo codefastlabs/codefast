@@ -2,6 +2,9 @@ import type { ComponentDoc } from "#/components/examples/docs/types";
 import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { RadioGroupDensity } from "#/components/examples/docs/radio-group/density";
 
+import { RadioGroupPlans } from "#/components/examples/docs/radio-group/plans";
+import { RadioGroupHorizontal } from "#/components/examples/docs/radio-group/horizontal";
+
 export const radioGroupDoc: ComponentDoc = {
   examples: [
     {
@@ -11,6 +14,21 @@ export const radioGroupDoc: ComponentDoc = {
       Demo: RadioGroupDensity,
       code: docSource("radio-group", "density"),
       previewClassName: "items-start",
+    },
+    {
+      id: "plans",
+      title: "Selectable cards",
+      description: "Wrap each option in a Label card that highlights when checked.",
+      Demo: RadioGroupPlans,
+      code: docSource("radio-group", "plans"),
+      previewClassName: "items-start",
+    },
+    {
+      id: "horizontal",
+      title: "Horizontal",
+      description: "Arrange options in a single row.",
+      Demo: RadioGroupHorizontal,
+      code: docSource("radio-group", "horizontal"),
     },
   ],
   anatomy: docAnatomy("radio-group"),

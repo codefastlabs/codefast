@@ -3,6 +3,8 @@ import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { DropdownCheckboxes } from "#/components/examples/docs/dropdown-menu/checkboxes";
 import { DropdownRadio } from "#/components/examples/docs/dropdown-menu/radio";
 
+import { DropdownActions } from "#/components/examples/docs/dropdown-menu/actions";
+
 export const dropdownMenuDoc: ComponentDoc = {
   examples: [
     {
@@ -20,6 +22,13 @@ export const dropdownMenuDoc: ComponentDoc = {
       Demo: DropdownRadio,
       code: docSource("dropdown-menu", "radio"),
       previewClassName: "min-h-40",
+    },
+    {
+      id: "actions",
+      title: "Account menu",
+      description: "Items, shortcuts, and a destructive action.",
+      Demo: DropdownActions,
+      code: docSource("dropdown-menu", "actions"),
     },
   ],
   anatomy: docAnatomy("dropdown-menu"),

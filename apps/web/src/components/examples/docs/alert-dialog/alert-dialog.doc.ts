@@ -2,6 +2,9 @@ import type { ComponentDoc } from "#/components/examples/docs/types";
 import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { AlertDialogConfirm } from "#/components/examples/docs/alert-dialog/confirm";
 
+import { AlertDialogDiscard } from "#/components/examples/docs/alert-dialog/discard";
+import { AlertDialogControlled } from "#/components/examples/docs/alert-dialog/controlled";
+
 export const alertDialogDoc: ComponentDoc = {
   examples: [
     {
@@ -11,6 +14,20 @@ export const alertDialogDoc: ComponentDoc = {
       Demo: AlertDialogConfirm,
       code: docSource("alert-dialog", "confirm"),
       previewClassName: "min-h-40",
+    },
+    {
+      id: "discard",
+      title: "Neutral confirmation",
+      description: "Not every confirm is destructive — keep the default action calm.",
+      Demo: AlertDialogDiscard,
+      code: docSource("alert-dialog", "discard"),
+    },
+    {
+      id: "controlled",
+      title: "Controlled open",
+      description: "Open the dialog from your own state and react to the result.",
+      Demo: AlertDialogControlled,
+      code: docSource("alert-dialog", "controlled"),
     },
   ],
   anatomy: docAnatomy("alert-dialog"),

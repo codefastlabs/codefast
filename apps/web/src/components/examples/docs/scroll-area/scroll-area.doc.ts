@@ -2,6 +2,9 @@ import type { ComponentDoc } from "#/components/examples/docs/types";
 import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { ScrollAreaList } from "#/components/examples/docs/scroll-area/list";
 
+import { ScrollAreaHorizontal } from "#/components/examples/docs/scroll-area/horizontal";
+import { ScrollAreaProse } from "#/components/examples/docs/scroll-area/prose";
+
 export const scrollAreaDoc: ComponentDoc = {
   examples: [
     {
@@ -10,6 +13,20 @@ export const scrollAreaDoc: ComponentDoc = {
       description: "A fixed-height region with a custom, design-system scrollbar.",
       Demo: ScrollAreaList,
       code: docSource("scroll-area", "list"),
+    },
+    {
+      id: "horizontal",
+      title: "Horizontal scroll",
+      description: "Scroll a wide row of cards along the x-axis.",
+      Demo: ScrollAreaHorizontal,
+      code: docSource("scroll-area", "horizontal"),
+    },
+    {
+      id: "prose",
+      title: "Long-form text",
+      description: "Contain lengthy terms or release notes in a fixed box.",
+      Demo: ScrollAreaProse,
+      code: docSource("scroll-area", "prose"),
     },
   ],
   anatomy: docAnatomy("scroll-area"),

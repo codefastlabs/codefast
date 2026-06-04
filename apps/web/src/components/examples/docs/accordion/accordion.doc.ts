@@ -3,6 +3,8 @@ import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { AccordionMultiple } from "#/components/examples/docs/accordion/multiple";
 import { AccordionSingle } from "#/components/examples/docs/accordion/single";
 
+import { AccordionIcons } from "#/components/examples/docs/accordion/with-icons";
+
 export const accordionDoc: ComponentDoc = {
   examples: [
     {
@@ -20,6 +22,13 @@ export const accordionDoc: ComponentDoc = {
       Demo: AccordionMultiple,
       code: docSource("accordion", "multiple"),
       previewClassName: "items-start",
+    },
+    {
+      id: "with-icons",
+      title: "With icons",
+      description: "Lead each trigger with an icon for scannable sections.",
+      Demo: AccordionIcons,
+      code: docSource("accordion", "with-icons"),
     },
   ],
   anatomy: docAnatomy("accordion"),

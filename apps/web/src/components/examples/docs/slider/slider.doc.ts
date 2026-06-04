@@ -3,6 +3,8 @@ import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { SliderRange } from "#/components/examples/docs/slider/range";
 import { SliderVolume } from "#/components/examples/docs/slider/volume";
 
+import { SliderStepped } from "#/components/examples/docs/slider/stepped";
+
 export const sliderDoc: ComponentDoc = {
   examples: [
     {
@@ -18,6 +20,13 @@ export const sliderDoc: ComponentDoc = {
       description: "Pass an array of two values to get a min–max range, e.g. a price filter.",
       Demo: SliderRange,
       code: docSource("slider", "range"),
+    },
+    {
+      id: "stepped",
+      title: "Stepped with marks",
+      description: "Snap to steps and label each stop.",
+      Demo: SliderStepped,
+      code: docSource("slider", "stepped"),
     },
   ],
   anatomy: docAnatomy("slider"),

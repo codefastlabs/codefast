@@ -2,6 +2,9 @@ import type { ComponentDoc } from "#/components/examples/docs/types";
 import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { SeparatorOrientations } from "#/components/examples/docs/separator/orientations";
 
+import { SeparatorListSections } from "#/components/examples/docs/separator/list-sections";
+import { SeparatorStats } from "#/components/examples/docs/separator/stats";
+
 export const separatorDoc: ComponentDoc = {
   examples: [
     {
@@ -11,6 +14,21 @@ export const separatorDoc: ComponentDoc = {
       Demo: SeparatorOrientations,
       code: docSource("separator", "orientations"),
       previewClassName: "items-start",
+    },
+    {
+      id: "list-sections",
+      title: "Grouped list",
+      description: "Separate the sections of a settings or navigation list.",
+      Demo: SeparatorListSections,
+      code: docSource("separator", "list-sections"),
+      previewClassName: "items-start",
+    },
+    {
+      id: "stats",
+      title: "Vertical dividers",
+      description: "Split inline stats with vertical rules of a fixed height.",
+      Demo: SeparatorStats,
+      code: docSource("separator", "stats"),
     },
   ],
   anatomy: docAnatomy("separator"),

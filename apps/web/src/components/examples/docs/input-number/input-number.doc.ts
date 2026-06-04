@@ -3,6 +3,8 @@ import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { InputNumberFormats } from "#/components/examples/docs/input-number/formats";
 import { InputNumberQuantity } from "#/components/examples/docs/input-number/quantity";
 
+import { InputNumberStates } from "#/components/examples/docs/input-number/states";
+
 export const inputNumberDoc: ComponentDoc = {
   examples: [
     {
@@ -19,6 +21,14 @@ export const inputNumberDoc: ComponentDoc = {
       description: "Format as currency with Intl options, or use the split stepper layout.",
       Demo: InputNumberFormats,
       code: docSource("input-number", "formats"),
+      previewClassName: "items-start",
+    },
+    {
+      id: "states",
+      title: "Disabled & invalid",
+      description: "Native disabled plus aria-invalid styling.",
+      Demo: InputNumberStates,
+      code: docSource("input-number", "states"),
       previewClassName: "items-start",
     },
   ],

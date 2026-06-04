@@ -3,6 +3,8 @@ import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { SkeletonCard } from "#/components/examples/docs/skeleton/card";
 import { SkeletonList } from "#/components/examples/docs/skeleton/list";
 
+import { SkeletonText } from "#/components/examples/docs/skeleton/text";
+
 export const skeletonDoc: ComponentDoc = {
   examples: [
     {
@@ -19,6 +21,14 @@ export const skeletonDoc: ComponentDoc = {
       description: "Repeat a simple row shape for lists and feeds.",
       Demo: SkeletonList,
       code: docSource("skeleton", "list"),
+      previewClassName: "items-start",
+    },
+    {
+      id: "text",
+      title: "Text lines",
+      description: "Stand in for a paragraph while content loads.",
+      Demo: SkeletonText,
+      code: docSource("skeleton", "text"),
       previewClassName: "items-start",
     },
   ],

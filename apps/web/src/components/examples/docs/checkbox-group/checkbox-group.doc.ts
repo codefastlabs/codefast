@@ -2,6 +2,9 @@ import type { ComponentDoc } from "#/components/examples/docs/types";
 import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { CheckboxGroupPermissions } from "#/components/examples/docs/checkbox-group/permissions";
 
+import { CheckboxGroupHorizontal } from "#/components/examples/docs/checkbox-group/horizontal";
+import { CheckboxGroupWithDescriptions } from "#/components/examples/docs/checkbox-group/with-descriptions";
+
 export const checkboxGroupDoc: ComponentDoc = {
   examples: [
     {
@@ -10,6 +13,21 @@ export const checkboxGroupDoc: ComponentDoc = {
       description: "Several options share one value array; a disabled item is skipped.",
       Demo: CheckboxGroupPermissions,
       code: docSource("checkbox-group", "permissions"),
+      previewClassName: "items-start",
+    },
+    {
+      id: "horizontal",
+      title: "Horizontal layout",
+      description: "Lay items out in a wrapping row.",
+      Demo: CheckboxGroupHorizontal,
+      code: docSource("checkbox-group", "horizontal"),
+    },
+    {
+      id: "with-descriptions",
+      title: "With descriptions",
+      description: "Pair each option with a secondary hint.",
+      Demo: CheckboxGroupWithDescriptions,
+      code: docSource("checkbox-group", "with-descriptions"),
       previewClassName: "items-start",
     },
   ],

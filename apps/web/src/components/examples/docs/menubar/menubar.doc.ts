@@ -2,6 +2,9 @@ import type { ComponentDoc } from "#/components/examples/docs/types";
 import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { MenubarAppMenu } from "#/components/examples/docs/menubar/app-menu";
 
+import { MenubarSelections } from "#/components/examples/docs/menubar/selections";
+import { MenubarSubmenu } from "#/components/examples/docs/menubar/submenu";
+
 export const menubarDoc: ComponentDoc = {
   examples: [
     {
@@ -11,6 +14,20 @@ export const menubarDoc: ComponentDoc = {
       Demo: MenubarAppMenu,
       code: docSource("menubar", "app-menu"),
       previewClassName: "items-start",
+    },
+    {
+      id: "selections",
+      title: "Checkbox & radio items",
+      description: "Toggle options and pick one from a radio group.",
+      Demo: MenubarSelections,
+      code: docSource("menubar", "selections"),
+    },
+    {
+      id: "submenu",
+      title: "Nested submenu",
+      description: "Reveal a second level with a sub-trigger.",
+      Demo: MenubarSubmenu,
+      code: docSource("menubar", "submenu"),
     },
   ],
   anatomy: docAnatomy("menubar"),

@@ -2,6 +2,9 @@ import type { ComponentDoc } from "#/components/examples/docs/types";
 import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { EmptyState } from "#/components/examples/docs/empty/state";
 
+import { EmptySearch } from "#/components/examples/docs/empty/search";
+import { EmptyMinimal } from "#/components/examples/docs/empty/minimal";
+
 export const emptyDoc: ComponentDoc = {
   examples: [
     {
@@ -10,6 +13,22 @@ export const emptyDoc: ComponentDoc = {
       description: "Media, title, description, and a clear next step in one composed block.",
       Demo: EmptyState,
       code: docSource("empty", "state"),
+      previewClassName: "items-start",
+    },
+    {
+      id: "search",
+      title: "No search results",
+      description: "Swap the icon and action for a zero-results state.",
+      Demo: EmptySearch,
+      code: docSource("empty", "search"),
+      previewClassName: "items-start",
+    },
+    {
+      id: "minimal",
+      title: "Without media",
+      description: "Just a title and description — no icon or action.",
+      Demo: EmptyMinimal,
+      code: docSource("empty", "minimal"),
       previewClassName: "items-start",
     },
   ],

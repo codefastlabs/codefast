@@ -3,6 +3,8 @@ import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { CheckboxSelectAll } from "#/components/examples/docs/checkbox/select-all";
 import { CheckboxWithDescription } from "#/components/examples/docs/checkbox/with-description";
 
+import { CheckboxStates } from "#/components/examples/docs/checkbox/states";
+
 export const checkboxDoc: ComponentDoc = {
   examples: [
     {
@@ -20,6 +22,14 @@ export const checkboxDoc: ComponentDoc = {
       description: "Pair a checkbox with a label and helper text for consent and settings rows.",
       Demo: CheckboxWithDescription,
       code: docSource("checkbox", "with-description"),
+      previewClassName: "items-start",
+    },
+    {
+      id: "states",
+      title: "States",
+      description: "Default, checked, and disabled combinations.",
+      Demo: CheckboxStates,
+      code: docSource("checkbox", "states"),
       previewClassName: "items-start",
     },
   ],

@@ -2,6 +2,9 @@ import type { ComponentDoc } from "#/components/examples/docs/types";
 import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { DrawerProfile } from "#/components/examples/docs/drawer/profile";
 
+import { DrawerCart } from "#/components/examples/docs/drawer/cart";
+import { DrawerSide } from "#/components/examples/docs/drawer/side";
+
 export const drawerDoc: ComponentDoc = {
   examples: [
     {
@@ -11,6 +14,20 @@ export const drawerDoc: ComponentDoc = {
       Demo: DrawerProfile,
       code: docSource("drawer", "profile"),
       previewClassName: "min-h-40",
+    },
+    {
+      id: "cart",
+      title: "Content drawer",
+      description: "Hold a list, summary, or any rich content above the footer.",
+      Demo: DrawerCart,
+      code: docSource("drawer", "cart"),
+    },
+    {
+      id: "side",
+      title: "From the side",
+      description: "Use the direction prop to slide in from an edge.",
+      Demo: DrawerSide,
+      code: docSource("drawer", "side"),
     },
   ],
   anatomy: docAnatomy("drawer"),

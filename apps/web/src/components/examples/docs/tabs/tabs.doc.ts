@@ -3,6 +3,8 @@ import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { TabsDefault } from "#/components/examples/docs/tabs/default";
 import { TabsLine } from "#/components/examples/docs/tabs/line";
 
+import { TabsWithIcons } from "#/components/examples/docs/tabs/with-icons";
+
 export const tabsDoc: ComponentDoc = {
   examples: [
     {
@@ -18,6 +20,13 @@ export const tabsDoc: ComponentDoc = {
       description: "An underline style for content-level navigation.",
       Demo: TabsLine,
       code: docSource("tabs", "line"),
+    },
+    {
+      id: "with-icons",
+      title: "With icons",
+      description: "Add an icon before each tab label.",
+      Demo: TabsWithIcons,
+      code: docSource("tabs", "with-icons"),
     },
   ],
   anatomy: docAnatomy("tabs"),

@@ -3,6 +3,8 @@ import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { RadioCardsInterval } from "#/components/examples/docs/radio-cards/interval";
 import { RadioCardsPlans } from "#/components/examples/docs/radio-cards/plans";
 
+import { RadioCardsPayment } from "#/components/examples/docs/radio-cards/payment";
+
 export const radioCardsDoc: ComponentDoc = {
   examples: [
     {
@@ -19,6 +21,13 @@ export const radioCardsDoc: ComponentDoc = {
       description: "Lay cards out in a grid; mix in a Badge to flag the better deal.",
       Demo: RadioCardsInterval,
       code: docSource("radio-cards", "interval"),
+    },
+    {
+      id: "payment",
+      title: "Icon cards",
+      description: "Compact cards with an icon per option.",
+      Demo: RadioCardsPayment,
+      code: docSource("radio-cards", "payment"),
     },
   ],
   anatomy: docAnatomy("radio-cards"),

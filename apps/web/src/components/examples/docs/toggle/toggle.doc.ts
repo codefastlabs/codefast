@@ -3,6 +3,8 @@ import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { TogglePin } from "#/components/examples/docs/toggle/pin";
 import { ToggleToolbar } from "#/components/examples/docs/toggle/toolbar";
 
+import { ToggleSizes } from "#/components/examples/docs/toggle/sizes";
+
 export const toggleDoc: ComponentDoc = {
   examples: [
     {
@@ -18,6 +20,13 @@ export const toggleDoc: ComponentDoc = {
       description: "Drive the pressed state yourself and swap the label to match.",
       Demo: TogglePin,
       code: docSource("toggle", "pin"),
+    },
+    {
+      id: "sizes",
+      title: "Sizes",
+      description: "sm, default, and lg toggles.",
+      Demo: ToggleSizes,
+      code: docSource("toggle", "sizes"),
     },
   ],
   anatomy: docAnatomy("toggle"),

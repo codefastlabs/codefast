@@ -3,6 +3,8 @@ import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { SpinnerInButton } from "#/components/examples/docs/spinner/in-button";
 import { SpinnerSizes } from "#/components/examples/docs/spinner/sizes";
 
+import { SpinnerLabeled } from "#/components/examples/docs/spinner/labeled";
+
 export const spinnerDoc: ComponentDoc = {
   examples: [
     {
@@ -19,6 +21,13 @@ export const spinnerDoc: ComponentDoc = {
       description: "Drop it into a disabled button, or pass children as a screen-reader label.",
       Demo: SpinnerInButton,
       code: docSource("spinner", "in-button"),
+    },
+    {
+      id: "labeled",
+      title: "Loading block",
+      description: "A centered spinner with a status label.",
+      Demo: SpinnerLabeled,
+      code: docSource("spinner", "labeled"),
     },
   ],
   anatomy: docAnatomy("spinner"),

@@ -3,6 +3,8 @@ import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { FieldLayouts } from "#/components/examples/docs/field/layouts";
 import { FieldValidation } from "#/components/examples/docs/field/validation";
 
+import { FieldWithSelect } from "#/components/examples/docs/field/with-select";
+
 export const fieldDoc: ComponentDoc = {
   examples: [
     {
@@ -21,6 +23,14 @@ export const fieldDoc: ComponentDoc = {
         "Vertical and horizontal orientation, plus FieldSet + FieldLegend to group related fields.",
       Demo: FieldLayouts,
       code: docSource("field", "layouts"),
+      previewClassName: "items-start",
+    },
+    {
+      id: "with-select",
+      title: "Wrapping a select",
+      description: "Field works with any control, not just inputs.",
+      Demo: FieldWithSelect,
+      code: docSource("field", "with-select"),
       previewClassName: "items-start",
     },
   ],

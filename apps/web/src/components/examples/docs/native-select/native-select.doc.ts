@@ -2,6 +2,9 @@ import type { ComponentDoc } from "#/components/examples/docs/types";
 import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { NativeSelectCountry } from "#/components/examples/docs/native-select/country";
 
+import { NativeSelectStates } from "#/components/examples/docs/native-select/states";
+import { NativeSelectSimple } from "#/components/examples/docs/native-select/simple";
+
 export const nativeSelectDoc: ComponentDoc = {
   examples: [
     {
@@ -10,6 +13,22 @@ export const nativeSelectDoc: ComponentDoc = {
       description: "A controlled native <select> with option groups and a live readout.",
       Demo: NativeSelectCountry,
       code: docSource("native-select", "country"),
+      previewClassName: "items-start",
+    },
+    {
+      id: "states",
+      title: "Disabled & invalid",
+      description: "Native disabled and aria-invalid states.",
+      Demo: NativeSelectStates,
+      code: docSource("native-select", "states"),
+      previewClassName: "items-start",
+    },
+    {
+      id: "simple",
+      title: "Ungrouped options",
+      description: "A flat list of options without opt-groups.",
+      Demo: NativeSelectSimple,
+      code: docSource("native-select", "simple"),
       previewClassName: "items-start",
     },
   ],

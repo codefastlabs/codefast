@@ -3,6 +3,8 @@ import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { AvatarFallbackExample } from "#/components/examples/docs/avatar/fallback";
 import { AvatarGroupExample } from "#/components/examples/docs/avatar/group";
 
+import { AvatarSizes } from "#/components/examples/docs/avatar/sizes";
+
 export const avatarDoc: ComponentDoc = {
   examples: [
     {
@@ -18,6 +20,13 @@ export const avatarDoc: ComponentDoc = {
       description: "Overlap avatars with AvatarGroup and cap the overflow with a count.",
       Demo: AvatarGroupExample,
       code: docSource("avatar", "group"),
+    },
+    {
+      id: "sizes",
+      title: "Sizes",
+      description: "From xs to lg through the size prop.",
+      Demo: AvatarSizes,
+      code: docSource("avatar", "sizes"),
     },
   ],
   anatomy: docAnatomy("avatar"),

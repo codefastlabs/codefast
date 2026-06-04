@@ -2,6 +2,9 @@ import type { ComponentDoc } from "#/components/examples/docs/types";
 import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { LabelWithControls } from "#/components/examples/docs/label/with-controls";
 
+import { LabelRequired } from "#/components/examples/docs/label/required";
+import { LabelSwitchRow } from "#/components/examples/docs/label/switch-row";
+
 export const labelDoc: ComponentDoc = {
   examples: [
     {
@@ -10,6 +13,22 @@ export const labelDoc: ComponentDoc = {
       description: "Link a label to an input via htmlFor, or pair it beside a checkbox.",
       Demo: LabelWithControls,
       code: docSource("label", "with-controls"),
+      previewClassName: "items-start",
+    },
+    {
+      id: "required",
+      title: "Required field",
+      description: "Mark a required input and pair it with helper text.",
+      Demo: LabelRequired,
+      code: docSource("label", "required"),
+      previewClassName: "items-start",
+    },
+    {
+      id: "switch-row",
+      title: "Beside a switch",
+      description: "Associate a label with a switch in a settings row.",
+      Demo: LabelSwitchRow,
+      code: docSource("label", "switch-row"),
       previewClassName: "items-start",
     },
   ],

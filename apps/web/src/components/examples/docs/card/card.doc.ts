@@ -3,6 +3,8 @@ import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { CardOverview } from "#/components/examples/docs/card/overview";
 import { CardSimple } from "#/components/examples/docs/card/simple";
 
+import { CardLogin } from "#/components/examples/docs/card/login";
+
 export const cardDoc: ComponentDoc = {
   examples: [
     {
@@ -20,6 +22,13 @@ export const cardDoc: ComponentDoc = {
       Demo: CardSimple,
       code: docSource("card", "simple"),
       previewClassName: "items-start",
+    },
+    {
+      id: "login",
+      title: "Form card",
+      description: "Compose inputs and actions inside the card slots.",
+      Demo: CardLogin,
+      code: docSource("card", "login"),
     },
   ],
   anatomy: docAnatomy("card"),

@@ -2,6 +2,9 @@ import type { ComponentDoc } from "#/components/examples/docs/types";
 import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { NavigationMenuMega } from "#/components/examples/docs/navigation-menu/mega";
 
+import { NavigationMenuSimple } from "#/components/examples/docs/navigation-menu/simple";
+import { NavigationMenuDropdown } from "#/components/examples/docs/navigation-menu/dropdown";
+
 export const navigationMenuDoc: ComponentDoc = {
   examples: [
     {
@@ -11,6 +14,20 @@ export const navigationMenuDoc: ComponentDoc = {
       Demo: NavigationMenuMega,
       code: docSource("navigation-menu", "mega"),
       previewClassName: "min-h-44 items-start",
+    },
+    {
+      id: "simple",
+      title: "Plain links",
+      description: "A flat menu with no dropdowns — just top-level links.",
+      Demo: NavigationMenuSimple,
+      code: docSource("navigation-menu", "simple"),
+    },
+    {
+      id: "dropdown",
+      title: "Single dropdown",
+      description: "One trigger opening a list of described links.",
+      Demo: NavigationMenuDropdown,
+      code: docSource("navigation-menu", "dropdown"),
     },
   ],
   anatomy: docAnatomy("navigation-menu"),

@@ -3,6 +3,8 @@ import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { CommandDialogExample } from "#/components/examples/docs/command/dialog";
 import { CommandPalette } from "#/components/examples/docs/command/palette";
 
+import { CommandSimple } from "#/components/examples/docs/command/simple";
+
 export const commandDoc: ComponentDoc = {
   examples: [
     {
@@ -20,6 +22,13 @@ export const commandDoc: ComponentDoc = {
       Demo: CommandDialogExample,
       code: docSource("command", "dialog"),
       previewClassName: "min-h-40",
+    },
+    {
+      id: "simple",
+      title: "Minimal palette",
+      description: "A single filterable group with no shortcuts.",
+      Demo: CommandSimple,
+      code: docSource("command", "simple"),
     },
   ],
   anatomy: docAnatomy("command"),

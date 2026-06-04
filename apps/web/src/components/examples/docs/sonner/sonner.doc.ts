@@ -3,6 +3,8 @@ import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { SonnerAction } from "#/components/examples/docs/sonner/action";
 import { SonnerTypes } from "#/components/examples/docs/sonner/types";
 
+import { SonnerLoading } from "#/components/examples/docs/sonner/loading";
+
 export const sonnerDoc: ComponentDoc = {
   examples: [
     {
@@ -19,6 +21,13 @@ export const sonnerDoc: ComponentDoc = {
         "Attach an Undo action, or hand toast.promise a promise to auto-cycle loading → result.",
       Demo: SonnerAction,
       code: docSource("sonner", "action"),
+    },
+    {
+      id: "loading",
+      title: "Loading → success",
+      description: "Start a loading toast and resolve it in place by id.",
+      Demo: SonnerLoading,
+      code: docSource("sonner", "loading"),
     },
   ],
   anatomy: docAnatomy("sonner"),

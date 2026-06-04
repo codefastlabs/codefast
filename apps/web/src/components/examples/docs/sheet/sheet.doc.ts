@@ -3,6 +3,8 @@ import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { SheetProfile } from "#/components/examples/docs/sheet/profile";
 import { SheetSides } from "#/components/examples/docs/sheet/sides";
 
+import { SheetNavigation } from "#/components/examples/docs/sheet/navigation";
+
 export const sheetDoc: ComponentDoc = {
   examples: [
     {
@@ -22,6 +24,13 @@ export const sheetDoc: ComponentDoc = {
       Demo: SheetProfile,
       code: docSource("sheet", "profile"),
       previewClassName: "min-h-40",
+    },
+    {
+      id: "navigation",
+      title: "Side navigation",
+      description: "A left-anchored sheet as a mobile nav menu.",
+      Demo: SheetNavigation,
+      code: docSource("sheet", "navigation"),
     },
   ],
   anatomy: docAnatomy("sheet"),

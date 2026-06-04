@@ -3,6 +3,8 @@ import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { ToggleGroupAlignment } from "#/components/examples/docs/toggle-group/alignment";
 import { ToggleGroupFormatting } from "#/components/examples/docs/toggle-group/formatting";
 
+import { ToggleGroupViews } from "#/components/examples/docs/toggle-group/views";
+
 export const toggleGroupDoc: ComponentDoc = {
   examples: [
     {
@@ -18,6 +20,13 @@ export const toggleGroupDoc: ComponentDoc = {
       description: 'type="multiple" lets several toggle at once — bold / italic / underline.',
       Demo: ToggleGroupFormatting,
       code: docSource("toggle-group", "formatting"),
+    },
+    {
+      id: "views",
+      title: "Text options",
+      description: "A single-select view switcher with labels.",
+      Demo: ToggleGroupViews,
+      code: docSource("toggle-group", "views"),
     },
   ],
   anatomy: docAnatomy("toggle-group"),

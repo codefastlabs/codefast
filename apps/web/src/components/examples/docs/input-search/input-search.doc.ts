@@ -2,6 +2,9 @@ import type { ComponentDoc } from "#/components/examples/docs/types";
 import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { InputSearchControlled } from "#/components/examples/docs/input-search/controlled";
 
+import { InputSearchWithResults } from "#/components/examples/docs/input-search/with-results";
+import { InputSearchDisabled } from "#/components/examples/docs/input-search/disabled";
+
 export const inputSearchDoc: ComponentDoc = {
   examples: [
     {
@@ -11,6 +14,21 @@ export const inputSearchDoc: ComponentDoc = {
       Demo: InputSearchControlled,
       code: docSource("input-search", "controlled"),
       previewClassName: "items-start",
+    },
+    {
+      id: "with-results",
+      title: "Live filtering",
+      description: "Drive a results list from the controlled value.",
+      Demo: InputSearchWithResults,
+      code: docSource("input-search", "with-results"),
+      previewClassName: "items-start",
+    },
+    {
+      id: "disabled",
+      title: "Disabled",
+      description: "A non-interactive search field.",
+      Demo: InputSearchDisabled,
+      code: docSource("input-search", "disabled"),
     },
   ],
   anatomy: docAnatomy("input-search"),

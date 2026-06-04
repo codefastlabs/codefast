@@ -2,6 +2,9 @@ import type { ComponentDoc } from "#/components/examples/docs/types";
 import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { ResizablePanels } from "#/components/examples/docs/resizable/panels";
 
+import { ResizableHorizontal } from "#/components/examples/docs/resizable/horizontal";
+import { ResizableVertical } from "#/components/examples/docs/resizable/vertical";
+
 export const resizableDoc: ComponentDoc = {
   examples: [
     {
@@ -10,6 +13,20 @@ export const resizableDoc: ComponentDoc = {
       description: "Drag the handles to resize — groups nest horizontally and vertically.",
       Demo: ResizablePanels,
       code: docSource("resizable", "panels"),
+    },
+    {
+      id: "horizontal",
+      title: "Two panels",
+      description: "The simplest case — drag the handle between two panels.",
+      Demo: ResizableHorizontal,
+      code: docSource("resizable", "horizontal"),
+    },
+    {
+      id: "vertical",
+      title: "Vertical split",
+      description: "Stack panels and resize along the vertical axis.",
+      Demo: ResizableVertical,
+      code: docSource("resizable", "vertical"),
     },
   ],
   anatomy: docAnatomy("resizable"),

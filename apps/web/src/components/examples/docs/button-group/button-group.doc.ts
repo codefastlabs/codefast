@@ -2,6 +2,9 @@ import type { ComponentDoc } from "#/components/examples/docs/types";
 import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { ButtonGroupGroups } from "#/components/examples/docs/button-group/groups";
 
+import { ButtonGroupIcons } from "#/components/examples/docs/button-group/icons";
+import { ButtonGroupSizes } from "#/components/examples/docs/button-group/sizes";
+
 export const buttonGroupDoc: ComponentDoc = {
   examples: [
     {
@@ -11,6 +14,20 @@ export const buttonGroupDoc: ComponentDoc = {
         "Visually join buttons; add a separator or a text label, horizontal or vertical.",
       Demo: ButtonGroupGroups,
       code: docSource("button-group", "groups"),
+    },
+    {
+      id: "icons",
+      title: "Icon toolbar",
+      description: "Group icon-only buttons into a seamless toolbar.",
+      Demo: ButtonGroupIcons,
+      code: docSource("button-group", "icons"),
+    },
+    {
+      id: "sizes",
+      title: "Sizes",
+      description: "Match the group to its context with sm, default, or lg.",
+      Demo: ButtonGroupSizes,
+      code: docSource("button-group", "sizes"),
     },
   ],
   anatomy: docAnatomy("button-group"),
