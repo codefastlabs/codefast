@@ -1,9 +1,8 @@
-import type { Scope } from "@radix-ui/react-context";
 import type { UseEmblaCarouselType } from "embla-carousel-react";
 import type { ComponentProps, JSX, KeyboardEvent } from "react";
 
 import { cn } from "#/lib/utils";
-import { createContextScope } from "@radix-ui/react-context";
+import { Context } from "radix-ui/internal";
 import useEmblaCarousel from "embla-carousel-react";
 import { ArrowLeftIcon, ArrowRightIcon } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
@@ -16,9 +15,9 @@ import { Button } from "#/components/button";
 
 const CAROUSEL_NAME = "Carousel";
 
-type ScopedProps<P> = P & { __scopeCarousel?: Scope };
+type ScopedProps<P> = P & { __scopeCarousel?: Context.Scope };
 
-const [createCarouselContext, createCarouselScope] = createContextScope(CAROUSEL_NAME);
+const [createCarouselContext, createCarouselScope] = Context.createContextScope(CAROUSEL_NAME);
 
 /**
  * @since 0.3.16-canary.0

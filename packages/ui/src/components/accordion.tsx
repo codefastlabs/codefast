@@ -1,8 +1,8 @@
 import type { ComponentProps, JSX } from "react";
 
 import { cn } from "#/lib/utils";
-import * as AccordionPrimitive from "@radix-ui/react-accordion";
-import { Slot } from "@radix-ui/react-slot";
+import { Accordion as AccordionPrimitive } from "radix-ui";
+import { Slot } from "radix-ui";
 import { ChevronDownIcon } from "lucide-react";
 
 /* -----------------------------------------------------------------------------
@@ -50,7 +50,7 @@ function AccordionItem({ className, ...props }: AccordionItemProps): JSX.Element
 /**
  * @since 0.3.16-canary.0
  */
-interface AccordionIconProps extends ComponentProps<typeof Slot> {
+interface AccordionIconProps extends ComponentProps<typeof Slot.Root> {
   asChild?: boolean;
   className?: string;
 }
@@ -59,7 +59,7 @@ interface AccordionIconProps extends ComponentProps<typeof Slot> {
  * @since 0.3.16-canary.0
  */
 function AccordionIcon({ asChild, className, ...props }: AccordionIconProps): JSX.Element {
-  const Component = (asChild ? Slot : ChevronDownIcon) as typeof Slot;
+  const Component = (asChild ? Slot.Root : ChevronDownIcon) as typeof Slot.Root;
 
   return (
     <Component

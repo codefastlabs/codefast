@@ -1,4 +1,3 @@
-import type { Scope } from "@radix-ui/react-context";
 import type {
   ComponentProps,
   JSX,
@@ -8,8 +7,8 @@ import type {
   RefObject,
 } from "react";
 
-import { useComposedRefs } from "@radix-ui/react-compose-refs";
-import { createContextScope } from "@radix-ui/react-context";
+import { useComposedRefs } from "radix-ui/internal";
+import { Context } from "radix-ui/internal";
 import { useRef } from "react";
 
 /* -----------------------------------------------------------------------------
@@ -23,12 +22,12 @@ const INPUT_NAME = "Input";
  */
 type ScopedProps<P> = P & {
   /**
-   * Scope for the Input component context
+   * Context.Scope for the Input component context
    */
-  __scopeInput?: Scope;
+  __scopeInput?: Context.Scope;
 };
 
-const [createInputContext, createInputScope] = createContextScope(INPUT_NAME);
+const [createInputContext, createInputScope] = Context.createContextScope(INPUT_NAME);
 
 /**
  * Context value for the Input component

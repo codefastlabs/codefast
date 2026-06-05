@@ -1,6 +1,6 @@
 import type { ComponentProps, JSX } from "react";
 
-import { useControllableState } from "@radix-ui/react-use-controllable-state";
+import { useControllableState } from "radix-ui/internal";
 import { SearchIcon, XIcon } from "lucide-react";
 
 import {

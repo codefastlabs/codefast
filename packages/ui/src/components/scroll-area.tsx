@@ -1,12 +1,11 @@
 import type { ScrollAreaScrollbarVariants } from "#/variants/scroll-area";
-import type { Scope } from "@radix-ui/react-context";
 import type { ComponentProps, JSX } from "react";
 
 import { cn } from "#/lib/utils";
 
 import { scrollAreaScrollbarVariants } from "#/variants/scroll-area";
-import { createContextScope } from "@radix-ui/react-context";
-import * as ScrollAreaPrimitive from "@radix-ui/react-scroll-area";
+import { Context } from "radix-ui/internal";
+import { ScrollArea as ScrollAreaPrimitive } from "radix-ui";
 
 /* -----------------------------------------------------------------------------
  * Context: ScrollArea
@@ -14,9 +13,9 @@ import * as ScrollAreaPrimitive from "@radix-ui/react-scroll-area";
 
 const SCROLL_AREA_NAME = "ScrollArea";
 
-type ScopedProps<P> = P & { __scopeScrollArea?: Scope };
+type ScopedProps<P> = P & { __scopeScrollArea?: Context.Scope };
 
-const [createScrollAreaContext] = createContextScope(SCROLL_AREA_NAME);
+const [createScrollAreaContext] = Context.createContextScope(SCROLL_AREA_NAME);
 
 type ScrollAreaContextValue = Pick<ScrollAreaScrollbarVariants, "size">;
 

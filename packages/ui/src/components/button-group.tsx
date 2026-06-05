@@ -4,7 +4,7 @@ import type { ComponentProps, JSX } from "react";
 import { cn } from "#/lib/utils";
 
 import { buttonGroupVariants } from "#/variants/button-group";
-import { Slot } from "@radix-ui/react-slot";
+import { Slot } from "radix-ui";
 
 import { Separator } from "#/components/separator";
 
@@ -51,7 +51,7 @@ function ButtonGroupText({
   className,
   ...props
 }: ButtonGroupTextProps): JSX.Element {
-  const Component = asChild ? Slot : "div";
+  const Component = asChild ? Slot.Root : "div";
 
   return (
     <Component

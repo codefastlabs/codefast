@@ -4,7 +4,7 @@ import type { ComponentProps, JSX } from "react";
 import { cn } from "#/lib/utils";
 
 import { itemMediaVariants, itemVariants } from "#/variants/item";
-import { Slot } from "@radix-ui/react-slot";
+import { Slot } from "radix-ui";
 
 import { Separator } from "#/components/separator";
 
@@ -76,7 +76,7 @@ function Item({
   variant = "default",
   ...props
 }: ItemProps): JSX.Element {
-  const Component = asChild ? Slot : "div";
+  const Component = asChild ? Slot.Root : "div";
 
   return (
     <Component

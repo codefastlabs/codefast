@@ -1,7 +1,7 @@
 import type { ComponentProps, JSX } from "react";
 
 import { cn } from "#/lib/utils";
-import { composeEventHandlers } from "@radix-ui/primitive";
+import { composeEventHandlers } from "radix-ui/internal";
 
 /* -----------------------------------------------------------------------------
  * Component: Radio

@@ -1,7 +1,7 @@
 import type { ComponentProps, JSX, ReactNode } from "react";
 
 import { cn } from "#/lib/utils";
-import { Slot } from "@radix-ui/react-slot";
+import { Slot } from "radix-ui";
 import { ChevronRightIcon, EllipsisIcon } from "lucide-react";
 
 /* -----------------------------------------------------------------------------
@@ -84,7 +84,7 @@ interface BreadcrumbLinkProps extends ComponentProps<"a"> {
  * @since 0.3.16-canary.0
  */
 function BreadcrumbLink({ asChild, className, ...props }: BreadcrumbLinkProps): JSX.Element {
-  const Component = asChild ? Slot : "a";
+  const Component = asChild ? Slot.Root : "a";
 
   return (
     <Component
