@@ -11,24 +11,23 @@ import {
 } from "@codefast/ui/alert-dialog";
 import { Button } from "@codefast/ui/button";
 
-export function AlertDialogDiscard() {
+export function AlertDialogBasic() {
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button variant="outline" size="sm">
-          Discard draft
-        </Button>
+        <Button variant="outline">Show Dialog</Button>
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Discard this draft?</AlertDialogTitle>
+          <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
           <AlertDialogDescription>
-            Your unsaved changes will be lost. This can’t be undone.
+            This action cannot be undone. This will permanently delete your account and remove your
+            data from our servers.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel>Keep editing</AlertDialogCancel>
-          <AlertDialogAction>Discard</AlertDialogAction>
+          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogAction>Continue</AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

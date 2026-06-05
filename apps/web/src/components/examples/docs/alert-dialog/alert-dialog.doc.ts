@@ -1,33 +1,71 @@
 import type { ComponentDoc } from "#/components/examples/docs/types";
 import { docSource, docAnatomy } from "#/components/examples/docs/source";
-import { AlertDialogConfirm } from "#/components/examples/docs/alert-dialog/confirm";
-
-import { AlertDialogDiscard } from "#/components/examples/docs/alert-dialog/discard";
-import { AlertDialogControlled } from "#/components/examples/docs/alert-dialog/controlled";
+import { AlertDialogBasic } from "#/components/examples/docs/alert-dialog/alert-dialog-basic";
+import { AlertDialogDemo } from "#/components/examples/docs/alert-dialog/alert-dialog-demo";
+import { AlertDialogDestructive } from "#/components/examples/docs/alert-dialog/alert-dialog-destructive";
+import { AlertDialogRtl } from "#/components/examples/docs/alert-dialog/alert-dialog-rtl";
+import { AlertDialogSmall } from "#/components/examples/docs/alert-dialog/alert-dialog-small";
+import { AlertDialogSmallWithMedia } from "#/components/examples/docs/alert-dialog/alert-dialog-small-media";
+import { AlertDialogWithMedia } from "#/components/examples/docs/alert-dialog/alert-dialog-media";
 
 export const alertDialogDoc: ComponentDoc = {
   examples: [
     {
-      id: "confirm",
-      title: "Destructive confirm",
+      id: "alert-dialog-demo",
+      title: "Demo",
       description: "A blocking modal that forces an explicit Cancel or confirm decision.",
-      Demo: AlertDialogConfirm,
-      code: docSource("alert-dialog", "confirm"),
+      Demo: AlertDialogDemo,
+      code: docSource("alert-dialog", "alert-dialog-demo"),
       previewClassName: "min-h-40",
     },
     {
-      id: "discard",
-      title: "Neutral confirmation",
-      description: "Not every confirm is destructive — keep the default action calm.",
-      Demo: AlertDialogDiscard,
-      code: docSource("alert-dialog", "discard"),
+      id: "alert-dialog-basic",
+      title: "Basic",
+      description: "A basic alert dialog with a header, description, and confirm/cancel actions.",
+      Demo: AlertDialogBasic,
+      code: docSource("alert-dialog", "alert-dialog-basic"),
+      previewClassName: "min-h-40",
     },
     {
-      id: "controlled",
-      title: "Controlled open",
-      description: "Open the dialog from your own state and react to the result.",
-      Demo: AlertDialogControlled,
-      code: docSource("alert-dialog", "controlled"),
+      id: "alert-dialog-small",
+      title: "Small",
+      description: "Use size=sm for a compact, centered confirmation.",
+      Demo: AlertDialogSmall,
+      code: docSource("alert-dialog", "alert-dialog-small"),
+      previewClassName: "min-h-40",
+    },
+    {
+      id: "alert-dialog-media",
+      title: "Media",
+      description: "Lead the header with an AlertDialogMedia icon for visual emphasis.",
+      Demo: AlertDialogWithMedia,
+      code: docSource("alert-dialog", "alert-dialog-media"),
+      previewClassName: "min-h-40",
+    },
+    {
+      id: "alert-dialog-small-media",
+      title: "Small with media",
+      description: "Combine the compact size with a media icon.",
+      Demo: AlertDialogSmallWithMedia,
+      code: docSource("alert-dialog", "alert-dialog-small-media"),
+      previewClassName: "min-h-40",
+    },
+    {
+      id: "alert-dialog-destructive",
+      title: "Destructive",
+      description: "Pair a destructive media icon with a destructive action button.",
+      Demo: AlertDialogDestructive,
+      code: docSource("alert-dialog", "alert-dialog-destructive"),
+      previewClassName: "min-h-40",
+    },
+    {
+      id: "alert-dialog-rtl",
+      title: "RTL",
+      description: "Right-to-left layout support for languages such as Arabic and Hebrew.",
+      Demo: AlertDialogRtl,
+      code: docSource("alert-dialog", "alert-dialog-rtl"),
+      previewClassName: "min-h-40",
+      direction: "rtl",
     },
   ],
   anatomy: docAnatomy("alert-dialog"),
