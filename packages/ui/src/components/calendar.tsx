@@ -1,10 +1,10 @@
 import type { ComponentProps, JSX } from "react";
-import type { Chevron, DayButton, Root, WeekNumber } from "react-day-picker";
+import type { Chevron, DayButton, Root, WeekNumber } from "@daypicker/react";
 
 import { cn } from "#/lib/utils";
 import { ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import { useEffect, useRef } from "react";
-import { DayPicker, getDefaultClassNames } from "react-day-picker";
+import { DayPicker, getDefaultClassNames } from "@daypicker/react";
 
 import { Button } from "#/components/button";
 import { buttonVariants } from "#/variants/button";

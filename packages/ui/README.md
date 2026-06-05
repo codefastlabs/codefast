@@ -258,7 +258,7 @@ All components are also re-exported from the root entry `@codefast/ui`.
 | `Alert`          | `@codefast/ui/alert`           | Inline status message.          |
 | `Avatar`         | `@codefast/ui/avatar`          | User avatar with fallback.      |
 | `Badge`          | `@codefast/ui/badge`           | Status pill.                    |
-| `Calendar`       | `@codefast/ui/calendar`        | Date picker (react-day-picker). |
+| `Calendar`       | `@codefast/ui/calendar`        | Date picker (@daypicker/react). |
 | `Carousel`       | `@codefast/ui/carousel`        | Slider (embla-carousel).        |
 | `Chart`          | `@codefast/ui/chart`           | Responsive charts (recharts).   |
 | `Collapsible`    | `@codefast/ui/collapsible`     | Expand/collapse primitive.      |
