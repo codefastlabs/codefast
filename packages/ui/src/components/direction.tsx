@@ -1,29 +1,21 @@
-import type { FC, ReactNode } from "react";
-
 import { Direction } from "radix-ui";
+import type { ComponentProps } from "react";
 
 /* -----------------------------------------------------------------------------
  * Component: DirectionProvider
  * -------------------------------------------------------------------------- */
 
-type TextDirection = "ltr" | "rtl";
+type DirectionProviderProps = ComponentProps<typeof Direction.DirectionProvider> & {
+  direction?: ComponentProps<typeof Direction.DirectionProvider>["dir"];
+};
 
-/**
- * Propagates a reading direction (`ltr` / `rtl`) to every descendant Radix
- * primitive, so components flip their layout and keyboard navigation without
- * each one having to thread a `dir` prop. Wrap an RTL subtree once near its
- * root. Renders no DOM element of its own — it only provides context.
- */
-interface DirectionProviderProps {
-  children?: ReactNode;
-  dir: TextDirection;
+function DirectionProvider({ dir, direction, children }: DirectionProviderProps) {
+  return (
+    <Direction.DirectionProvider dir={direction ?? dir}>{children}</Direction.DirectionProvider>
+  );
 }
 
-const DirectionProvider: FC<DirectionProviderProps> = Direction.DirectionProvider;
-
-function useDirection(localDir?: TextDirection): TextDirection {
-  return Direction.useDirection(localDir);
-}
+const useDirection = Direction.useDirection;
 
 /* -----------------------------------------------------------------------------
  * Exports
