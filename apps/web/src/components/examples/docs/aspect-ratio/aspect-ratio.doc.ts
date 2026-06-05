@@ -1,32 +1,40 @@
 import type { ComponentDoc } from "#/components/examples/docs/types";
 import { docSource, docAnatomy } from "#/components/examples/docs/source";
-import { AspectRatioRatios } from "#/components/examples/docs/aspect-ratio/ratios";
-
-import { AspectRatioBanner } from "#/components/examples/docs/aspect-ratio/banner";
-import { AspectRatioMedia } from "#/components/examples/docs/aspect-ratio/media";
+import { AspectRatioDemo } from "#/components/examples/docs/aspect-ratio/aspect-ratio-demo";
+import { AspectRatioPortrait } from "#/components/examples/docs/aspect-ratio/aspect-ratio-portrait";
+import { AspectRatioRtl } from "#/components/examples/docs/aspect-ratio/aspect-ratio-rtl";
+import { AspectRatioSquare } from "#/components/examples/docs/aspect-ratio/aspect-ratio-square";
 
 export const aspectRatioDoc: ComponentDoc = {
   examples: [
     {
-      id: "ratios",
-      title: "Common ratios",
-      description: "Lock content to 16/9, 1/1, or 4/3 — the box holds the shape at any width.",
-      Demo: AspectRatioRatios,
-      code: docSource("aspect-ratio", "ratios"),
+      id: "aspect-ratio-demo",
+      title: "Demo",
+      description: "Lock an image to a 16/9 box — it holds the shape at any width.",
+      Demo: AspectRatioDemo,
+      code: docSource("aspect-ratio", "aspect-ratio-demo"),
     },
     {
-      id: "banner",
-      title: "Ultra-wide banner",
-      description: "Lock a hero header to a 21/9 cinematic ratio.",
-      Demo: AspectRatioBanner,
-      code: docSource("aspect-ratio", "banner"),
+      id: "aspect-ratio-square",
+      title: "Square",
+      description: "A 1/1 square crop for avatars and thumbnails.",
+      Demo: AspectRatioSquare,
+      code: docSource("aspect-ratio", "aspect-ratio-square"),
     },
     {
-      id: "media",
-      title: "Media thumbnail",
-      description: "A 16/9 video thumbnail with an overlaid play control.",
-      Demo: AspectRatioMedia,
-      code: docSource("aspect-ratio", "media"),
+      id: "aspect-ratio-portrait",
+      title: "Portrait",
+      description: "A 9/16 portrait box for vertical media.",
+      Demo: AspectRatioPortrait,
+      code: docSource("aspect-ratio", "aspect-ratio-portrait"),
+    },
+    {
+      id: "aspect-ratio-rtl",
+      title: "RTL",
+      description: "Right-to-left layout support for languages such as Arabic and Hebrew.",
+      Demo: AspectRatioRtl,
+      code: docSource("aspect-ratio", "aspect-ratio-rtl"),
+      direction: "rtl",
     },
   ],
   anatomy: docAnatomy("aspect-ratio"),
