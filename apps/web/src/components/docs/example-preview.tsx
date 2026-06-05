@@ -1,7 +1,15 @@
 import type { ReactNode } from "react";
+import { DirectionProvider } from "@codefast/ui/direction";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@codefast/ui/tabs";
 import { cn } from "@codefast/ui/lib/utils";
 import { CodeBlock } from "#/components/code-block";
+import {
+  LanguageProvider,
+  LanguageSelector,
+  useLanguageContext,
+  useTranslation,
+  type Translations,
+} from "#/components/docs/language-selector";
 
 interface ExamplePreviewProps {
   /** Anchor id for deep-linking and the On-this-page TOC. */
@@ -14,6 +22,8 @@ interface ExamplePreviewProps {
   readonly highlightedCode: string;
   /** Extra classes for the live preview surface — alignment, height, padding. */
   readonly previewClassName?: string | undefined;
+  /** Reading direction; `"rtl"` adds a language switcher and flips the layout. */
+  readonly direction?: "ltr" | "rtl" | undefined;
   /** The live demo to render in the Preview tab. */
   readonly children: ReactNode;
 }
@@ -32,6 +42,7 @@ export function ExamplePreview({
   code,
   highlightedCode,
   previewClassName,
+  direction = "ltr",
   children,
 }: ExamplePreviewProps) {
   return (
@@ -58,14 +69,13 @@ export function ExamplePreview({
         </TabsList>
 
         <TabsContent value="preview" className="mt-3">
-          <div
-            className={cn(
-              "flex min-h-56 flex-wrap items-center justify-center gap-3 rounded-2xl border border-ui-border bg-ui-surface p-10",
-              previewClassName,
-            )}
-          >
-            {children}
-          </div>
+          {direction === "rtl" ? (
+            <LanguageProvider defaultLanguage="ar">
+              <RtlPreviewSurface previewClassName={previewClassName}>{children}</RtlPreviewSurface>
+            </LanguageProvider>
+          ) : (
+            <div className={previewSurfaceClassName(previewClassName)}>{children}</div>
+          )}
         </TabsContent>
 
         <TabsContent value="code" className="mt-3">
@@ -74,6 +84,62 @@ export function ExamplePreview({
           </div>
         </TabsContent>
       </Tabs>
+    </div>
+  );
+}
+
+/** Shared classes for the live preview surface. */
+function previewSurfaceClassName(previewClassName?: string): string {
+  return cn(
+    "flex min-h-56 flex-wrap items-center justify-center gap-3 rounded-2xl border border-ui-border bg-ui-surface p-10",
+    previewClassName,
+  );
+}
+
+/** Tracks the document direction for the active language. */
+const directionTranslations: Translations<Record<string, never>> = {
+  en: { dir: "ltr", values: {} },
+  ar: { dir: "rtl", values: {} },
+  he: { dir: "rtl", values: {} },
+};
+
+/**
+ * RTL preview chrome: a top toolbar with the language switcher, plus the demo
+ * wrapped in a `DirectionProvider` so every Radix primitive inside flips. The
+ * surface itself carries `dir` / `data-lang` so plain DOM and CSS flip too.
+ */
+function RtlPreviewSurface({
+  previewClassName,
+  children,
+}: {
+  previewClassName?: string | undefined;
+  children: ReactNode;
+}): ReactNode {
+  const context = useLanguageContext();
+  const { dir, language } = useTranslation(directionTranslations, "ar");
+
+  return (
+    <div className="overflow-hidden rounded-2xl border border-ui-border">
+      <div className="flex items-center border-b border-ui-border px-4 py-2">
+        {context ? (
+          <LanguageSelector value={context.language} onValueChange={context.setLanguage} />
+        ) : null}
+        <p className="ml-auto text-xs text-ui-muted">
+          Translations are AI-generated for demonstration and may be imperfect.
+        </p>
+      </div>
+      <DirectionProvider dir={dir}>
+        <div
+          dir={dir}
+          data-lang={dir === "rtl" ? language : undefined}
+          className={cn(
+            "flex min-h-56 flex-wrap items-center justify-center gap-3 bg-ui-surface p-10",
+            previewClassName,
+          )}
+        >
+          {children}
+        </div>
+      </DirectionProvider>
     </div>
   );
 }

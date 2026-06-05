@@ -1,34 +1,73 @@
 import type { ComponentDoc } from "#/components/examples/docs/types";
 import { docSource, docAnatomy } from "#/components/examples/docs/source";
-import { AccordionMultiple } from "#/components/examples/docs/accordion/multiple";
-import { AccordionSingle } from "#/components/examples/docs/accordion/single";
-
-import { AccordionIcons } from "#/components/examples/docs/accordion/with-icons";
+import { AccordionBasic } from "#/components/examples/docs/accordion/accordion-basic";
+import { AccordionBorders } from "#/components/examples/docs/accordion/accordion-borders";
+import { AccordionCard } from "#/components/examples/docs/accordion/accordion-card";
+import { AccordionDemo } from "#/components/examples/docs/accordion/accordion-demo";
+import { AccordionDisabled } from "#/components/examples/docs/accordion/accordion-disabled";
+import { AccordionMultiple } from "#/components/examples/docs/accordion/accordion-multiple";
+import { AccordionRtl } from "#/components/examples/docs/accordion/accordion-rtl";
 
 export const accordionDoc: ComponentDoc = {
   examples: [
     {
-      id: "single",
-      title: "Single (collapsible)",
-      description: "Only one panel open at a time; collapsible lets them all close.",
-      Demo: AccordionSingle,
-      code: docSource("accordion", "single"),
+      id: "accordion-demo",
+      title: "Demo",
+      description:
+        "A vertically stacked set of interactive headings that each reveal a section of content.",
+      Demo: AccordionDemo,
+      code: docSource("accordion", "accordion-demo"),
       previewClassName: "items-start",
     },
     {
-      id: "multiple",
+      id: "accordion-basic",
+      title: "Basic",
+      description:
+        "A basic accordion that shows one item at a time. The first item is open by default.",
+      Demo: AccordionBasic,
+      code: docSource("accordion", "accordion-basic"),
+      previewClassName: "items-start",
+    },
+    {
+      id: "accordion-multiple",
       title: "Multiple",
-      description: "Allow several panels to stay open at once.",
+      description: "Use type=multiple to allow multiple items to be open at the same time.",
       Demo: AccordionMultiple,
-      code: docSource("accordion", "multiple"),
+      code: docSource("accordion", "accordion-multiple"),
       previewClassName: "items-start",
     },
     {
-      id: "with-icons",
-      title: "With icons",
-      description: "Lead each trigger with an icon for scannable sections.",
-      Demo: AccordionIcons,
-      code: docSource("accordion", "with-icons"),
+      id: "accordion-disabled",
+      title: "Disabled",
+      description: "Use the disabled prop on AccordionItem to disable individual items.",
+      Demo: AccordionDisabled,
+      code: docSource("accordion", "accordion-disabled"),
+      previewClassName: "items-start",
+    },
+    {
+      id: "accordion-borders",
+      title: "Borders",
+      description: "Add borders to the Accordion and items for a more defined separation.",
+      Demo: AccordionBorders,
+      code: docSource("accordion", "accordion-borders"),
+      previewClassName: "items-start",
+    },
+    {
+      id: "accordion-card",
+      title: "Card",
+      description: "Wrap the Accordion in a Card component.",
+      Demo: AccordionCard,
+      code: docSource("accordion", "accordion-card"),
+      previewClassName: "items-start",
+    },
+    {
+      id: "accordion-rtl",
+      title: "RTL",
+      description: "Right-to-left layout support for languages such as Arabic and Hebrew.",
+      Demo: AccordionRtl,
+      code: docSource("accordion", "accordion-rtl"),
+      previewClassName: "items-start",
+      direction: "rtl",
     },
   ],
   anatomy: docAnatomy("accordion"),

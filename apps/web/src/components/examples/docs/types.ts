@@ -19,6 +19,12 @@ export interface DocExample {
   readonly code: string;
   /** Override the preview surface — alignment, min-height, padding. */
   readonly previewClassName?: string;
+  /**
+   * Reading direction for the preview. `"rtl"` wraps the demo in a language
+   * switcher + `DirectionProvider` so it can be exercised in Arabic / Hebrew.
+   * Defaults to `"ltr"`.
+   */
+  readonly direction?: "ltr" | "rtl";
 }
 
 export interface ApiGroup {

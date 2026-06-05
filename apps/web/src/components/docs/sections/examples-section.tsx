@@ -32,6 +32,7 @@ export function ExamplesSection({ examples, highlighted, showHint }: ExamplesSec
             code={example.code}
             highlightedCode={highlighted[example.id] ?? ""}
             previewClassName={example.previewClassName}
+            direction={example.direction}
           >
             <example.Demo />
           </ExamplePreview>
