@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Calendar } from "@codefast/ui/calendar";
 
-/** Structural match for react-day-picker's DateRange (kept local to avoid a transitive import). */
+/** Structural match for @daypicker/react's DateRange (kept local to avoid a transitive import). */
 interface DateRange {
   from: Date | undefined;
   to?: Date | undefined;

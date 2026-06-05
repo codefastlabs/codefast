@@ -11,7 +11,7 @@ interface LazyVisibleProps {
 
 /**
  * Defers mounting its children until they scroll near the viewport. Heavy demos
- * (recharts, embla, react-day-picker, …) otherwise all mount and run effects on
+ * (recharts, embla, @daypicker/react, …) otherwise all mount and run effects on
  * first paint of the gallery.
  *
  * SSR-safe: renders an empty placeholder on the server and on the first client
