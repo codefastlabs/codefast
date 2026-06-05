@@ -1,34 +1,62 @@
 import type { ComponentDoc } from "#/components/examples/docs/types";
 import { docSource, docAnatomy } from "#/components/examples/docs/source";
-import { AlertCompact } from "#/components/examples/docs/alert/compact";
-import { AlertVariants } from "#/components/examples/docs/alert/variants";
-import { AlertWithAction } from "#/components/examples/docs/alert/with-action";
+import { AlertActionExample } from "#/components/examples/docs/alert/alert-action";
+import { AlertBasic } from "#/components/examples/docs/alert/alert-basic";
+import { AlertColors } from "#/components/examples/docs/alert/alert-colors";
+import { AlertDemo } from "#/components/examples/docs/alert/alert-demo";
+import { AlertDestructive } from "#/components/examples/docs/alert/alert-destructive";
+import { AlertRtl } from "#/components/examples/docs/alert/alert-rtl";
 
 export const alertDoc: ComponentDoc = {
   examples: [
     {
-      id: "variants",
-      title: "Default & destructive",
-      description: "An icon, title, and body — plus an optional action slot for dismiss.",
-      Demo: AlertVariants,
-      code: docSource("alert", "variants"),
+      id: "alert-demo",
+      title: "Demo",
+      description: "Stack alerts to surface several status messages at once.",
+      Demo: AlertDemo,
+      code: docSource("alert", "alert-demo"),
       previewClassName: "items-start",
     },
     {
-      id: "compact",
-      title: "Title only",
-      description: "Drop the description for a terse, single-line status banner.",
-      Demo: AlertCompact,
-      code: docSource("alert", "compact"),
+      id: "alert-basic",
+      title: "Basic",
+      description: "A basic alert with an icon, title and description.",
+      Demo: AlertBasic,
+      code: docSource("alert", "alert-basic"),
       previewClassName: "items-start",
     },
     {
-      id: "with-action",
-      title: "With call to action",
-      description: "Use the action slot for a trailing button — upgrade, retry, or undo.",
-      Demo: AlertWithAction,
-      code: docSource("alert", "with-action"),
+      id: "alert-destructive",
+      title: "Destructive",
+      description: "Use variant=destructive to create a destructive alert.",
+      Demo: AlertDestructive,
+      code: docSource("alert", "alert-destructive"),
       previewClassName: "items-start",
+    },
+    {
+      id: "alert-action",
+      title: "Action",
+      description: "Use AlertAction to add a button or other action element to the alert.",
+      Demo: AlertActionExample,
+      code: docSource("alert", "alert-action"),
+      previewClassName: "items-start",
+    },
+    {
+      id: "alert-colors",
+      title: "Custom colors",
+      description: "Customize the alert colors by adding utility classes to the Alert component.",
+      Demo: AlertColors,
+      code: docSource("alert", "alert-colors"),
+      previewClassName: "items-start",
+    },
+    {
+      id: "alert-rtl",
+      title: "RTL",
+      description: "Right-to-left layout support for languages such as Arabic and Hebrew.",
+      Demo: AlertRtl,
+      code: docSource("alert", "alert-rtl"),
+      previewClassName: "items-start",
+      direction: "rtl",
     },
   ],
   anatomy: docAnatomy("alert"),
