@@ -4,7 +4,7 @@ import type { ComponentProps, JSX } from "react";
 import { cn } from "#/lib/utils";
 
 import { separatorVariants } from "#/variants/separator";
-import * as SeparatorPrimitive from "@radix-ui/react-separator";
+import { Separator as SeparatorPrimitive } from "radix-ui";
 
 /* -----------------------------------------------------------------------------
  * Component: Separator

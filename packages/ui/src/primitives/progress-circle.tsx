@@ -1,7 +1,6 @@
-import type { Scope } from "@radix-ui/react-context";
 import type { ComponentProps, ReactNode } from "react";
 
-import { createContextScope } from "@radix-ui/react-context";
+import { Context } from "radix-ui/internal";
 import { useId, useMemo } from "react";
 
 /* -----------------------------------------------------------------------------
@@ -10,7 +9,7 @@ import { useId, useMemo } from "react";
 
 const PROGRESS_CIRCLE_PROVIDER_NAME = "ProgressCircleProvider";
 
-type ScopedProps<P> = P & { __scopeProgressCircle?: Scope };
+type ScopedProps<P> = P & { __scopeProgressCircle?: Context.Scope };
 
 /**
  * Defines color thresholds based on progress values
@@ -107,7 +106,7 @@ interface ProgressCircleContextValue {
   valueText: string;
 }
 
-const [createProgressCircleContext, createProgressCircleScope] = createContextScope(
+const [createProgressCircleContext, createProgressCircleScope] = Context.createContextScope(
   PROGRESS_CIRCLE_PROVIDER_NAME,
 );
 

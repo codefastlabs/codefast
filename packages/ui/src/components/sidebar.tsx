@@ -4,8 +4,8 @@ import type { ComponentProps, CSSProperties, Dispatch, JSX, SetStateAction } fro
 import { cn } from "#/lib/utils";
 
 import { sidebarMenuButtonVariants } from "#/variants/sidebar";
-import { createContext } from "@radix-ui/react-context";
-import { Slot } from "@radix-ui/react-slot";
+import { Context } from "radix-ui/internal";
+import { Slot } from "radix-ui";
 import { PanelLeftIcon } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 
@@ -41,7 +41,7 @@ interface SidebarContextValue {
 const SIDEBAR_PROVIDER_NAME = "SidebarProvider";
 
 const [SidebarContextProvider, useSidebar] =
-  createContext<SidebarContextValue>(SIDEBAR_PROVIDER_NAME);
+  Context.createContext<SidebarContextValue>(SIDEBAR_PROVIDER_NAME);
 
 /* -----------------------------------------------------------------------------
  * Component: SidebarProvider
@@ -520,7 +520,7 @@ function SidebarGroupLabel({
   className,
   ...props
 }: SidebarGroupLabelProps): JSX.Element {
-  const Component = asChild ? Slot : "div";
+  const Component = asChild ? Slot.Root : "div";
 
   return (
     <Component
@@ -554,7 +554,7 @@ function SidebarGroupAction({
   className,
   ...props
 }: SidebarGroupActionProps): JSX.Element {
-  const Component = asChild ? Slot : "button";
+  const Component = asChild ? Slot.Root : "button";
 
   return (
     <Component
@@ -665,7 +665,7 @@ function SidebarMenuButton({
   variant = "default",
   ...props
 }: SidebarMenuButtonProps): JSX.Element {
-  const Component = asChild ? Slot : "button";
+  const Component = asChild ? Slot.Root : "button";
   const { isMobile, state } = useSidebar(SIDEBAR_MENU_BUTTON_NAME);
 
   const button = (
@@ -723,7 +723,7 @@ function SidebarMenuAction({
   showOnHover = false,
   ...props
 }: SidebarMenuActionProps): JSX.Element {
-  const Component = asChild ? Slot : "button";
+  const Component = asChild ? Slot.Root : "button";
 
   return (
     <Component
@@ -883,7 +883,7 @@ function SidebarMenuSubButton({
   size = "md",
   ...props
 }: SidebarMenuSubButtonProps): JSX.Element {
-  const Component = asChild ? Slot : "a";
+  const Component = asChild ? Slot.Root : "a";
 
   return (
     <Component

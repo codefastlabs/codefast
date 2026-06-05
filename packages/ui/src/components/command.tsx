@@ -1,7 +1,7 @@
 import type { ComponentProps, JSX } from "react";
 
 import { cn } from "#/lib/utils";
-import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
+import { VisuallyHidden } from "radix-ui";
 import { Command as CommandPrimitive } from "cmdk";
 import { SearchIcon } from "lucide-react";
 
@@ -48,12 +48,12 @@ function CommandDialog({ children, ...props }: CommandDialogProps): JSX.Element 
   return (
     <Dialog data-slot="command-dialog" {...props}>
       <DialogContent className="rounded-t-xl sm:rounded-xl" data-slot="command-dialog-content">
-        <VisuallyHidden>
+        <VisuallyHidden.Root>
           <DialogTitle>Search command</DialogTitle>
           <DialogDescription>
             Use the search bar to find and select the desired command.
           </DialogDescription>
-        </VisuallyHidden>
+        </VisuallyHidden.Root>
         <Command className="[&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0 **:[[cmdk-group-heading]]:px-2 **:[[cmdk-group-heading]]:font-medium **:[[cmdk-group-heading]]:text-muted-foreground **:[[cmdk-input]]:h-12">
           {children}
         </Command>

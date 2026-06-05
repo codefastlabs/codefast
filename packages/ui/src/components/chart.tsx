@@ -1,10 +1,9 @@
-import type { Scope } from "@radix-ui/react-context";
 import type { ComponentProps, ComponentType, CSSProperties, JSX, ReactNode } from "react";
 import type { NameType, Payload, ValueType } from "recharts/types/component/DefaultTooltipContent";
 import type { TooltipContentProps, TooltipProps } from "recharts";
 
 import { cn } from "#/lib/utils";
-import { createContextScope } from "@radix-ui/react-context";
+import { Context } from "radix-ui/internal";
 import { useId, useMemo } from "react";
 import * as RechartsPrimitive from "recharts";
 
@@ -42,7 +41,7 @@ type ChartConfig = Record<
 
 const CHART_PROVIDER_NAME = "ChartProvider";
 
-type ScopedProps<P> = P & { __scopeChart?: Scope };
+type ScopedProps<P> = P & { __scopeChart?: Context.Scope };
 
 /**
  * Value provided by Chart Context
@@ -54,7 +53,7 @@ interface ChartContextValue {
   config: ChartConfig;
 }
 
-const [createChartContext, createChartScope] = createContextScope(CHART_PROVIDER_NAME);
+const [createChartContext, createChartScope] = Context.createContextScope(CHART_PROVIDER_NAME);
 
 const [ChartContextProvider, useChartContext] =
   createChartContext<ChartContextValue>(CHART_PROVIDER_NAME);

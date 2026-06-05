@@ -1,11 +1,9 @@
-import type { Scope } from "@radix-ui/react-context";
-import { createContextScope } from "@radix-ui/react-context";
+import { Context } from "radix-ui/internal";
 import type { ComponentProps, CSSProperties, JSX } from "react";
 
 import type { VariantProps } from "#/lib/utils";
 import { cn } from "#/lib/utils";
-import * as ToggleGroupPrimitive from "@radix-ui/react-toggle-group";
-import { createToggleGroupScope } from "@radix-ui/react-toggle-group";
+import { ToggleGroup as ToggleGroupPrimitive } from "radix-ui";
 
 import { toggleVariants } from "#/variants/toggle";
 
@@ -15,11 +13,13 @@ import { toggleVariants } from "#/variants/toggle";
 
 const TOGGLE_GROUP_NAME = "ToggleGroup";
 
-type ScopedProps<P> = P & { __scopeToggleGroup?: Scope };
+type ScopedProps<P> = P & { __scopeToggleGroup?: Context.Scope };
 
-const [createToggleGroupContext] = createContextScope(TOGGLE_GROUP_NAME, [createToggleGroupScope]);
+const [createToggleGroupContext] = Context.createContextScope(TOGGLE_GROUP_NAME, [
+  ToggleGroupPrimitive.createToggleGroupScope,
+]);
 
-const useToggleGroupScope = createToggleGroupScope();
+const useToggleGroupScope = ToggleGroupPrimitive.createToggleGroupScope();
 
 const [ToggleGroupProvider, useToggleGroupContext] = createToggleGroupContext<
   VariantProps<typeof toggleVariants> & {

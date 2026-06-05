@@ -2,7 +2,7 @@ import type { VariantProps } from "#/lib/utils";
 import type { ComponentProps, JSX } from "react";
 
 import { cn } from "#/lib/utils";
-import * as DialogPrimitive from "@radix-ui/react-dialog";
+import { Dialog as DialogPrimitive } from "radix-ui";
 import { XIcon } from "lucide-react";
 
 import { buttonVariants } from "#/variants/button";

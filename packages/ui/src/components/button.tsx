@@ -1,7 +1,7 @@
 import type { ButtonVariants } from "#/variants/button";
 import type { ComponentProps, JSX } from "react";
 
-import { Slot } from "@radix-ui/react-slot";
+import { Slot } from "radix-ui";
 
 import { buttonVariants } from "#/variants/button";
 
@@ -30,7 +30,7 @@ function Button({
   variant,
   ...props
 }: ButtonProps): JSX.Element {
-  const Comp = asChild ? Slot : "button";
+  const Comp = asChild ? Slot.Root : "button";
 
   if (asChild) {
     return (

@@ -1,11 +1,10 @@
-import type { Scope } from "@radix-ui/react-context";
-import type * as LabelPrimitive from "@radix-ui/react-label";
+import type { Label as LabelPrimitive } from "radix-ui";
 import type { ComponentProps, JSX, ReactNode } from "react";
 import type { ControllerProps, FieldError, FieldPath, FieldValues } from "react-hook-form";
 
 import { cn } from "#/lib/utils";
-import { createContextScope } from "@radix-ui/react-context";
-import { Slot } from "@radix-ui/react-slot";
+import { Context } from "radix-ui/internal";
+import { Slot } from "radix-ui";
 import { useId } from "react";
 import { Controller, FormProvider, useFormContext, useFormState } from "react-hook-form";
 
@@ -31,9 +30,9 @@ const Form: typeof FormProvider = FormProvider;
 
 const FORM_FIELD_NAME = "FormField";
 
-type ScopedProps<P> = P & { __scopeFormField?: Scope };
+type ScopedProps<P> = P & { __scopeFormField?: Context.Scope };
 
-const [createFormFieldContext, createFormFieldScope] = createContextScope(FORM_FIELD_NAME);
+const [createFormFieldContext, createFormFieldScope] = Context.createContextScope(FORM_FIELD_NAME);
 
 interface FormFieldContextValue<
   TFieldValues extends FieldValues = FieldValues,
@@ -47,7 +46,7 @@ const [FormFieldContextProvider, useFormFieldContext] =
 
 function useFormItem(
   consumerName: string,
-  scope: Scope,
+  scope: Context.Scope,
 ): {
   formDescriptionId: string;
   formItemId: string;
@@ -179,7 +178,7 @@ const FORM_CONTROL_NAME = "FormControl";
 /**
  * @since 0.3.16-canary.0
  */
-type FormControlProps = ComponentProps<typeof Slot>;
+type FormControlProps = ComponentProps<typeof Slot.Root>;
 
 /**
  * @since 0.3.16-canary.0
@@ -191,7 +190,7 @@ function FormControl({ __scopeFormField, ...props }: ScopedProps<FormControlProp
   );
 
   return (
-    <Slot
+    <Slot.Root
       aria-describedby={error ? `${formDescriptionId} ${formMessageId}` : formDescriptionId}
       aria-invalid={Boolean(error)}
       data-slot="form-control"

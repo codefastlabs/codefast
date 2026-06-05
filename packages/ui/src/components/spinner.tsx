@@ -1,7 +1,7 @@
 import type { ComponentProps, CSSProperties, ReactNode } from "react";
 
 import { cn } from "#/lib/utils";
-import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
+import { VisuallyHidden } from "radix-ui";
 
 /* -----------------------------------------------------------------------------
  * Component: Spinner
@@ -55,7 +55,7 @@ function Spinner({ children, className, loading = true, ...props }: SpinnerProps
       <span aria-hidden className="invisible contents">
         {children}
       </span>
-      <VisuallyHidden>{children}</VisuallyHidden>
+      <VisuallyHidden.Root>{children}</VisuallyHidden.Root>
       <span className="absolute inset-0 flex items-center justify-center">{spinner}</span>
     </span>
   );

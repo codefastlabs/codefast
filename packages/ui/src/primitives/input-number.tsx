@@ -1,4 +1,3 @@
-import type { Scope } from "@radix-ui/react-context";
 import type {
   ComponentProps,
   FocusEventHandler,
@@ -10,9 +9,9 @@ import type {
   RefObject,
 } from "react";
 
-import { composeEventHandlers } from "@radix-ui/primitive";
-import { createContextScope } from "@radix-ui/react-context";
-import { useControllableState } from "@radix-ui/react-use-controllable-state";
+import { composeEventHandlers } from "radix-ui/internal";
+import { Context } from "radix-ui/internal";
+import { useControllableState } from "radix-ui/internal";
 import { useCallback, useEffect, useMemo, useRef } from "react";
 
 import * as InputPrimitive from "#/primitives/input";
@@ -34,12 +33,13 @@ type ScopedProps<P> = P & {
   /**
    * Optional scope for the InputNumber component context
    */
-  __scopeInputNumber?: Scope;
+  __scopeInputNumber?: Context.Scope;
 };
 
-const [createInputNumberContext, createInputNumberScope] = createContextScope(NUMBER_INPUT_NAME, [
-  createInputScope,
-]);
+const [createInputNumberContext, createInputNumberScope] = Context.createContextScope(
+  NUMBER_INPUT_NAME,
+  [createInputScope],
+);
 const useInputScope = createInputScope();
 
 /**
@@ -232,7 +232,7 @@ function InputNumber(numberInputProps: ScopedProps<InputNumberProps>): JSX.Eleme
   } = numberInputProps;
 
   /**
-   * Scope for the input component
+   * Context.Scope for the input component
    */
   const inputScope = useInputScope(__scopeInputNumber);
 
