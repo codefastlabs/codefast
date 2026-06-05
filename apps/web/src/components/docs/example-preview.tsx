@@ -74,7 +74,14 @@ export function ExamplePreview({
               <RtlPreviewSurface previewClassName={previewClassName}>{children}</RtlPreviewSurface>
             </LanguageProvider>
           ) : (
-            <div className={previewSurfaceClassName(previewClassName)}>{children}</div>
+            <div
+              className={cn(
+                "flex min-h-56 flex-wrap items-center justify-center gap-3 rounded-2xl border border-ui-border bg-ui-surface p-10",
+                previewClassName,
+              )}
+            >
+              {children}
+            </div>
           )}
         </TabsContent>
 
@@ -85,14 +92,6 @@ export function ExamplePreview({
         </TabsContent>
       </Tabs>
     </div>
-  );
-}
-
-/** Shared classes for the live preview surface. */
-function previewSurfaceClassName(previewClassName?: string): string {
-  return cn(
-    "flex min-h-56 flex-wrap items-center justify-center gap-3 rounded-2xl border border-ui-border bg-ui-surface p-10",
-    previewClassName,
   );
 }
 
