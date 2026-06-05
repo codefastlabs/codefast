@@ -11,29 +11,27 @@ import {
   AlertDialogTrigger,
 } from "@codefast/ui/alert-dialog";
 import { Button } from "@codefast/ui/button";
-import { TriangleAlertIcon } from "lucide-react";
+import { CircleFadingPlusIcon } from "lucide-react";
 
-export function AlertDialogConfirm() {
+export function AlertDialogWithMedia() {
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button variant="destructive" size="sm">
-          Delete account
-        </Button>
+        <Button variant="outline">Share Project</Button>
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogMedia className="text-destructive">
-            <TriangleAlertIcon />
+          <AlertDialogMedia>
+            <CircleFadingPlusIcon />
           </AlertDialogMedia>
-          <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+          <AlertDialogTitle>Share this project?</AlertDialogTitle>
           <AlertDialogDescription>
-            This action cannot be undone. Your account will be permanently deleted.
+            Anyone with the link will be able to view and edit this project.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction>Delete</AlertDialogAction>
+          <AlertDialogAction>Share</AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
