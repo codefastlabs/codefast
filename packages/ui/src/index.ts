@@ -244,6 +244,8 @@ export type {
   DialogTitleProps,
   DialogTriggerProps,
 } from "#/components/dialog";
+export { DirectionProvider, useDirection } from "#/components/direction";
+export type { DirectionProviderProps } from "#/components/direction";
 export {
   Drawer,
   DrawerClose,
