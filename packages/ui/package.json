@@ -160,6 +160,11 @@
       "types": "./dist/components/dialog.d.mts",
       "import": "./dist/components/dialog.mjs"
     },
+    "./direction": {
+      "source": "./src/components/direction.tsx",
+      "types": "./dist/components/direction.d.mts",
+      "import": "./dist/components/direction.mjs"
+    },
     "./drawer": {
       "source": "./src/components/drawer.tsx",
       "types": "./dist/components/drawer.d.mts",
