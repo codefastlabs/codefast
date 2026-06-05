@@ -33,7 +33,7 @@ export const calendarDoc: ComponentDoc = {
   api: [
     {
       name: "Calendar",
-      description: "Wraps react-day-picker; every DayPicker prop is forwarded.",
+      description: "Wraps @daypicker/react; every DayPicker prop is forwarded.",
       props: [
         {
           name: "mode",
@@ -74,7 +74,7 @@ export const calendarDoc: ComponentDoc = {
       { keys: ["Page Up"], description: "Jumps to the previous month." },
     ],
     notes: [
-      "Built on react-day-picker, which implements the WAI-ARIA grid pattern.",
+      "Built on @daypicker/react, which implements the WAI-ARIA grid pattern.",
       "Pair with a readout or input so the selection isn’t conveyed only by colour.",
       "For a popover date field, mount Calendar inside a Popover with a trigger button.",
     ],

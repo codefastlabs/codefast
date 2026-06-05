@@ -343,7 +343,7 @@ export const ALL_COMPONENTS: ReadonlyArray<ComponentMeta> = [
     slug: "calendar",
     category: "form",
     description:
-      "Full calendar built on react-day-picker. Supports single, multiple, and range selection.",
+      "Full calendar built on @daypicker/react. Supports single, multiple, and range selection.",
     hasDemo: true,
   },
   {

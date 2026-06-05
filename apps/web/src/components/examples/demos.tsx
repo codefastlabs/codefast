@@ -4,7 +4,7 @@
  *
  * AUTO-DISCOVERED — every `examples/<category>/<slug>-demo.tsx` is registered by
  * its filename; there is no hand-maintained list to keep in sync. `import.meta.glob`
- * eagerly pulls in every demo (recharts, embla, react-day-picker, …), so this module
+ * eagerly pulls in every demo (recharts, embla, @daypicker/react, …), so this module
  * must ONLY be imported by the `/components` route — never by lightweight metadata
  * consumers like the home page or the header ⌘K palette.
  *
