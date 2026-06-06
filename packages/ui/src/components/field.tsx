@@ -51,7 +51,10 @@ type FieldLegendProps = ComponentProps<"legend"> & {
 function FieldLegend({ className, variant = "legend", ...props }: FieldLegendProps): JSX.Element {
   return (
     <legend
-      className={cn("mb-3 text-base font-medium data-[variant=label]:text-sm", className)}
+      className={cn(
+        "mb-3 font-medium data-[variant=label]:text-sm data-[variant=legend]:text-base",
+        className,
+      )}
       data-slot="field-legend"
       data-variant={variant}
       {...props}
@@ -75,7 +78,7 @@ function FieldGroup({ className, ...props }: FieldGroupProps): JSX.Element {
   return (
     <div
       className={cn(
-        "group/field-group @container/field-group flex w-full flex-col gap-7 data-[slot=checkbox-group]:gap-3 [&>[data-slot=field-group]]:gap-4",
+        "group/field-group @container/field-group flex w-full flex-col gap-7 data-[slot=checkbox-group]:gap-3 *:data-[slot=field-group]:gap-4",
         className,
       )}
       data-slot="field-group"
@@ -123,7 +126,7 @@ type FieldContentProps = ComponentProps<"div">;
 function FieldContent({ className, ...props }: FieldContentProps): JSX.Element {
   return (
     <div
-      className={cn("group/field-content flex flex-1 flex-col gap-1.5 leading-snug", className)}
+      className={cn("group/field-content flex flex-1 flex-col gap-1 leading-snug", className)}
       data-slot="field-content"
       {...props}
     />
@@ -146,7 +149,8 @@ function FieldLabel({ className, ...props }: FieldLabelProps): JSX.Element {
   return (
     <Label
       className={cn(
-        "group/field-label peer/field-label flex w-fit gap-2 leading-snug group-data-disabled/field:opacity-50 has-data-checked:border-primary has-data-checked:bg-primary/5 has-[>[data-slot=field]]:w-full has-[>[data-slot=field]]:flex-col has-[>[data-slot=field]]:rounded-md has-[>[data-slot=field]]:border dark:has-data-checked:bg-primary/10 [&>*]:data-[slot=field]:p-3",
+        "group/field-label peer/field-label flex w-fit gap-2 leading-snug group-data-[disabled=true]/field:opacity-50 has-data-checked:border-primary/30 has-data-checked:bg-primary/5 has-[>[data-slot=field]]:rounded-md has-[>[data-slot=field]]:border *:data-[slot=field]:p-3 dark:has-data-checked:border-primary/20 dark:has-data-checked:bg-primary/10",
+        "has-[>[data-slot=field]]:w-full has-[>[data-slot=field]]:flex-col",
         className,
       )}
       data-slot="field-label"
@@ -171,7 +175,7 @@ function FieldTitle({ className, ...props }: FieldTitleProps): JSX.Element {
   return (
     <div
       className={cn(
-        "flex w-fit items-center gap-2 text-sm leading-snug font-medium group-data-disabled/field:opacity-50",
+        "flex w-fit items-center gap-2 text-sm font-medium group-data-[disabled=true]/field:opacity-50",
         className,
       )}
       data-slot="field-label"
@@ -196,7 +200,9 @@ function FieldDescription({ className, ...props }: FieldDescriptionProps): JSX.E
   return (
     <p
       className={cn(
-        "text-sm leading-normal font-normal text-muted-foreground group-has-data-[orientation=horizontal]/field:text-balance last:mt-0 nth-last-2:-mt-1 [&>a]:underline [&>a]:underline-offset-4 [&>a:hover]:text-primary [[data-variant=legend]+&]:-mt-1.5",
+        "text-left text-sm leading-normal font-normal text-muted-foreground group-has-data-horizontal/field:text-balance [[data-variant=legend]+&]:-mt-1.5",
+        "last:mt-0 nth-last-2:-mt-1",
+        "[&>a]:underline [&>a]:underline-offset-4 [&>a:hover]:text-primary",
         className,
       )}
       data-slot="field-description"
