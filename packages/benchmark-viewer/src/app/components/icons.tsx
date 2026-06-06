@@ -3,7 +3,7 @@ import type { SVGProps } from "react";
 
 type IconProps = SVGProps<SVGSVGElement>;
 
-function Icon({ children, ...props }: IconProps) {
+function Icon({ ...props }: IconProps) {
   return (
     <svg
       aria-hidden="true"
@@ -15,9 +15,7 @@ function Icon({ children, ...props }: IconProps) {
       viewBox="0 0 24 24"
       xmlns="http://www.w3.org/2000/svg"
       {...props}
-    >
-      {children}
-    </svg>
+    />
   );
 }
 

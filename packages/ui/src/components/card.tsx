@@ -67,7 +67,7 @@ type CardTitleProps = ComponentProps<"div">;
 /**
  * @since 0.3.16-canary.0
  */
-function CardTitle({ children, className, ...props }: CardTitleProps): JSX.Element {
+function CardTitle({ className, ...props }: CardTitleProps): JSX.Element {
   return (
     <div
       className={cn(
@@ -76,9 +76,7 @@ function CardTitle({ children, className, ...props }: CardTitleProps): JSX.Eleme
       )}
       data-slot="card-title"
       {...props}
-    >
-      {children}
-    </div>
+    />
   );
 }
 

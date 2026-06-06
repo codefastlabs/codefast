@@ -20,12 +20,8 @@ type SheetProps = ComponentProps<typeof SheetPrimitive.Root>;
 /**
  * @since 0.3.16-canary.0
  */
-function Sheet({ children, ...props }: SheetProps): JSX.Element {
-  return (
-    <SheetPrimitive.Root data-slot="sheet" {...props}>
-      {children}
-    </SheetPrimitive.Root>
-  );
+function Sheet({ ...props }: SheetProps): JSX.Element {
+  return <SheetPrimitive.Root data-slot="sheet" {...props} />;
 }
 
 /* -----------------------------------------------------------------------------

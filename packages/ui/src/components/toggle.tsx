@@ -17,15 +17,13 @@ interface ToggleProps extends ComponentProps<typeof TogglePrimitive.Root>, Toggl
 /**
  * @since 0.3.16-canary.0
  */
-function Toggle({ children, className, size, variant, ...props }: ToggleProps): JSX.Element {
+function Toggle({ className, size, variant, ...props }: ToggleProps): JSX.Element {
   return (
     <TogglePrimitive.Root
       className={toggleVariants({ className, size, variant })}
       data-slot="toggle"
       {...props}
-    >
-      {children}
-    </TogglePrimitive.Root>
+    />
   );
 }
 
