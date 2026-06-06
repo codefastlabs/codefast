@@ -1,11 +1,10 @@
-import type { VariantProps } from "#/lib/utils";
 import type { ComponentProps, JSX } from "react";
 
 import { cn } from "#/lib/utils";
 import { Dialog as DialogPrimitive } from "radix-ui";
 import { XIcon } from "lucide-react";
 
-import { buttonVariants } from "#/variants/button";
+import { Button } from "#/components/button";
 
 /* -----------------------------------------------------------------------------
  * Component: Dialog
@@ -113,16 +112,11 @@ function DialogContent({
       >
         {children}
         {showCloseButton ? (
-          <DialogPrimitive.Close
-            className={buttonVariants({
-              className: "absolute top-4 right-4",
-              size: "icon-sm",
-              variant: "ghost",
-            })}
-            data-slot="dialog-close"
-          >
-            <XIcon />
-            <span className="sr-only">Close</span>
+          <DialogPrimitive.Close asChild data-slot="dialog-close">
+            <Button className="absolute top-4 right-4" size="icon-sm" variant="ghost">
+              <XIcon />
+              <span className="sr-only">Close</span>
+            </Button>
           </DialogPrimitive.Close>
         ) : null}
       </DialogPrimitive.Content>
@@ -182,18 +176,32 @@ function DialogBody({ className, ...props }: DialogBodyProps): JSX.Element {
 /**
  * @since 0.3.16-canary.0
  */
-type DialogFooterProps = ComponentProps<"div">;
+interface DialogFooterProps extends ComponentProps<"div"> {
+  showCloseButton?: boolean;
+}
 
 /**
  * @since 0.3.16-canary.0
  */
-function DialogFooter({ className, ...props }: DialogFooterProps): JSX.Element {
+function DialogFooter({
+  children,
+  className,
+  showCloseButton = false,
+  ...props
+}: DialogFooterProps): JSX.Element {
   return (
     <div
       className={cn("flex flex-col-reverse gap-2 sm:flex-row sm:justify-end", className)}
       data-slot="dialog-footer"
       {...props}
-    />
+    >
+      {children}
+      {showCloseButton ? (
+        <DialogPrimitive.Close asChild>
+          <Button variant="outline">Close</Button>
+        </DialogPrimitive.Close>
+      ) : null}
+    </div>
   );
 }
 
@@ -251,22 +259,13 @@ function DialogDescription({ className, ...props }: DialogDescriptionProps): JSX
 /**
  * @since 0.3.16-canary.0
  */
-interface DialogCloseProps extends Omit<ComponentProps<typeof DialogPrimitive.Close>, "ref"> {
-  size?: VariantProps<typeof buttonVariants>["size"];
-  variant?: VariantProps<typeof buttonVariants>["variant"];
-}
+type DialogCloseProps = ComponentProps<typeof DialogPrimitive.Close>;
 
 /**
  * @since 0.3.16-canary.0
  */
-function DialogClose({ className, size, variant, ...props }: DialogCloseProps): JSX.Element {
-  return (
-    <DialogPrimitive.Close
-      className={buttonVariants({ className, size, variant })}
-      data-slot="dialog-close"
-      {...props}
-    />
-  );
+function DialogClose({ ...props }: DialogCloseProps): JSX.Element {
+  return <DialogPrimitive.Close data-slot="dialog-close" {...props} />;
 }
 
 /* -----------------------------------------------------------------------------
