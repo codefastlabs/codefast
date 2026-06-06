@@ -76,7 +76,7 @@ function SheetOverlay({ className, ...props }: SheetOverlayProps): JSX.Element {
   return (
     <SheetPrimitive.Overlay
       className={cn(
-        "fixed inset-0 z-50 bg-black/10 ease-gentle supports-backdrop-filter:backdrop-blur-xs motion-reduce:animate-none motion-reduce:transition-none motion-reduce:duration-0 data-open:animate-in data-open:animation-duration-380 data-open:fade-in-0 data-closed:animate-out data-closed:animation-duration-280 data-closed:fade-out-0",
+        "fixed inset-0 z-50 bg-black/10 duration-100 supports-backdrop-filter:backdrop-blur-xs data-open:animate-in data-open:fade-in-0 data-closed:animate-out data-closed:fade-out-0",
         className,
       )}
       data-slot="sheet-overlay"
@@ -150,7 +150,7 @@ type SheetHeaderProps = ComponentProps<"div">;
 function SheetHeader({ className, ...props }: SheetHeaderProps): JSX.Element {
   return (
     <div
-      className={cn("flex shrink-0 flex-col gap-1.5 p-4", className)}
+      className={cn("flex flex-col gap-1.5 p-4", className)}
       data-slot="sheet-header"
       {...props}
     />
