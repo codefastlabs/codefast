@@ -31,10 +31,14 @@ export function DialogScroll() {
           ))}
         </DialogBody>
         <DialogFooter>
-          <DialogClose variant="outline" size="sm">
-            Decline
+          <DialogClose asChild>
+            <Button size="sm" variant="outline">
+              Decline
+            </Button>
           </DialogClose>
-          <DialogClose size="sm">Accept</DialogClose>
+          <DialogClose asChild>
+            <Button size="sm">Accept</Button>
+          </DialogClose>
         </DialogFooter>
       </DialogContent>
     </Dialog>

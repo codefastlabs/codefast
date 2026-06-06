@@ -35,10 +35,14 @@ export function DialogBasic() {
           </div>
         </DialogBody>
         <DialogFooter>
-          <DialogClose variant="outline" size="sm">
-            Cancel
+          <DialogClose asChild>
+            <Button size="sm" variant="outline">
+              Cancel
+            </Button>
           </DialogClose>
-          <DialogClose size="sm">Save changes</DialogClose>
+          <DialogClose asChild>
+            <Button size="sm">Save changes</Button>
+          </DialogClose>
         </DialogFooter>
       </DialogContent>
     </Dialog>
