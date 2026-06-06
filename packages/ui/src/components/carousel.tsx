@@ -210,7 +210,7 @@ function CarouselContent({
       <div
         className={cn(
           "flex",
-          orientation === "horizontal" ? "-ml-4" : "-mt-4 flex-col",
+          orientation === "horizontal" ? "-ml-4" : "-mt-4 h-full flex-col",
           classNames?.content,
           className,
         )}
@@ -288,7 +288,7 @@ function CarouselPrevious({
       className={cn(
         "absolute touch-manipulation rounded-full",
         orientation === "horizontal"
-          ? "top-1/2 -left-12 -translate-y-1/2"
+          ? "top-1/2 -left-12 -translate-y-1/2 active:not-aria-[haspopup]:translate-y-[calc(-50%+1px)]"
           : "-top-12 left-1/2 -translate-x-1/2 rotate-90",
         className,
       )}
@@ -337,7 +337,7 @@ function CarouselNext({
       className={cn(
         "absolute touch-manipulation rounded-full",
         orientation === "horizontal"
-          ? "top-1/2 -right-12 -translate-y-1/2"
+          ? "top-1/2 -right-12 -translate-y-1/2 active:not-aria-[haspopup]:translate-y-[calc(-50%+1px)]"
           : "-bottom-12 left-1/2 -translate-x-1/2 rotate-90",
         className,
       )}
