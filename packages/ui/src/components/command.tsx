@@ -1,11 +1,16 @@
 import type { ComponentProps, JSX } from "react";
 
 import { cn } from "#/lib/utils";
-import { VisuallyHidden } from "radix-ui";
 import { Command as CommandPrimitive } from "cmdk";
 import { CheckIcon, SearchIcon } from "lucide-react";
 
-import { Dialog, DialogContent, DialogDescription, DialogTitle } from "#/components/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "#/components/dialog";
 import { InputGroup, InputGroupAddon } from "#/components/input-group";
 
 /* -----------------------------------------------------------------------------
@@ -42,25 +47,33 @@ function Command({ className, ...props }: CommandProps): JSX.Element {
  */
 interface CommandDialogProps extends ComponentProps<typeof Dialog> {
   className?: string;
+  description?: string;
+  showCloseButton?: boolean;
+  title?: string;
 }
 
 /**
  * @since 0.3.16-canary.0
  */
-function CommandDialog({ children, className, ...props }: CommandDialogProps): JSX.Element {
+function CommandDialog({
+  children,
+  className,
+  description = "Search for a command to run...",
+  showCloseButton = false,
+  title = "Command Palette",
+  ...props
+}: CommandDialogProps): JSX.Element {
   return (
     <Dialog data-slot="command-dialog" {...props}>
+      <DialogHeader className="sr-only">
+        <DialogTitle>{title}</DialogTitle>
+        <DialogDescription>{description}</DialogDescription>
+      </DialogHeader>
       <DialogContent
         className={cn("top-1/3 translate-y-0 overflow-hidden rounded-xl! p-0", className)}
         data-slot="command-dialog-content"
-        showCloseButton={false}
+        showCloseButton={showCloseButton}
       >
-        <VisuallyHidden.Root>
-          <DialogTitle>Search command</DialogTitle>
-          <DialogDescription>
-            Use the search bar to find and select the desired command.
-          </DialogDescription>
-        </VisuallyHidden.Root>
         {children}
       </DialogContent>
     </Dialog>
