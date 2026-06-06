@@ -19,7 +19,12 @@ interface BadgeProps extends ComponentProps<"span">, BadgeVariants {
 /**
  * @since 0.3.16-canary.0
  */
-function Badge({ asChild, className, variant, ...props }: BadgeProps): JSX.Element {
+function Badge({
+  asChild = false,
+  className,
+  variant = "default",
+  ...props
+}: BadgeProps): JSX.Element {
   const Component = asChild ? Slot.Root : "span";
 
   return (
