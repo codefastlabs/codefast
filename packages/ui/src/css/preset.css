@@ -152,6 +152,24 @@
 
   --animate-shimmer: shimmer 2.2s linear infinite;
 
+  @keyframes accordion-down {
+    from {
+      height: 0;
+    }
+    to {
+      height: var(--radix-accordion-content-height, var(--accordion-panel-height, auto));
+    }
+  }
+
+  @keyframes accordion-up {
+    from {
+      height: var(--radix-accordion-content-height, var(--accordion-panel-height, auto));
+    }
+    to {
+      height: 0;
+    }
+  }
+
   @keyframes shimmer {
     from {
       background-position: 200% center;

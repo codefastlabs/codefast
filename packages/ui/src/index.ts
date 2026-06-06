@@ -1,13 +1,11 @@
 export {
   Accordion,
   AccordionContent,
-  AccordionIcon,
   AccordionItem,
   AccordionTrigger,
 } from "#/components/accordion";
 export type {
   AccordionContentProps,
-  AccordionIconProps,
   AccordionItemProps,
   AccordionProps,
   AccordionTriggerProps,
