@@ -147,8 +147,10 @@ function Carousel({
       scrollPrev={scrollPrevious}
     >
       <div
+        aria-roledescription="carousel"
         className={cn("relative", className)}
         data-slot="carousel"
+        role="region"
         onKeyDownCapture={handleKeyDown}
         {...props}
       >
@@ -271,7 +273,7 @@ type CarouselPreviousProps = ComponentProps<typeof Button>;
 function CarouselPrevious({
   __scopeCarousel,
   className,
-  size = "icon",
+  size = "icon-sm",
   variant = "outline",
   ...props
 }: ScopedProps<CarouselPreviousProps>): JSX.Element {
@@ -284,9 +286,9 @@ function CarouselPrevious({
     <Button
       aria-label="Previous slide"
       className={cn(
-        "absolute size-8 touch-manipulation rounded-full shadow-none",
+        "absolute touch-manipulation rounded-full",
         orientation === "horizontal"
-          ? "top-1/2 -left-12 -translate-y-1/2 active:not-aria-[haspopup]:translate-y-[calc(-50%+1px)]"
+          ? "top-1/2 -left-12 -translate-y-1/2"
           : "-top-12 left-1/2 -translate-x-1/2 rotate-90",
         className,
       )}
@@ -297,7 +299,7 @@ function CarouselPrevious({
       onClick={scrollPrev}
       {...props}
     >
-      <ArrowLeftIcon />
+      <ArrowLeftIcon className="cf-rtl-flip" />
       <span className="sr-only">Previous slide</span>
     </Button>
   );
@@ -320,7 +322,7 @@ type CarouselNextProps = ComponentProps<typeof Button>;
 function CarouselNext({
   __scopeCarousel,
   className,
-  size = "icon",
+  size = "icon-sm",
   variant = "outline",
   ...props
 }: ScopedProps<CarouselNextProps>): JSX.Element {
@@ -333,9 +335,9 @@ function CarouselNext({
     <Button
       aria-label="Next slide"
       className={cn(
-        "absolute size-8 touch-manipulation rounded-full shadow-none",
+        "absolute touch-manipulation rounded-full",
         orientation === "horizontal"
-          ? "top-1/2 -right-12 -translate-y-1/2 active:not-aria-[haspopup]:translate-y-[calc(-50%+1px)]"
+          ? "top-1/2 -right-12 -translate-y-1/2"
           : "-bottom-12 left-1/2 -translate-x-1/2 rotate-90",
         className,
       )}
@@ -346,7 +348,7 @@ function CarouselNext({
       onClick={scrollNext}
       {...props}
     >
-      <ArrowRightIcon />
+      <ArrowRightIcon className="cf-rtl-flip" />
       <span className="sr-only">Next slide</span>
     </Button>
   );
