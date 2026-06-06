@@ -23,6 +23,7 @@ const useToggleGroupScope = ToggleGroupPrimitive.createToggleGroupScope();
 
 const [ToggleGroupProvider, useToggleGroupContext] = createToggleGroupContext<
   VariantProps<typeof toggleVariants> & {
+    orientation?: "horizontal" | "vertical";
     spacing?: number;
   }
 >(TOGGLE_GROUP_NAME);
@@ -36,6 +37,7 @@ const [ToggleGroupProvider, useToggleGroupContext] = createToggleGroupContext<
  */
 type ToggleGroupProps = ComponentProps<typeof ToggleGroupPrimitive.Root> &
   VariantProps<typeof toggleVariants> & {
+    orientation?: "horizontal" | "vertical";
     spacing?: number;
   };
 
@@ -46,20 +48,28 @@ function ToggleGroup({
   __scopeToggleGroup,
   children,
   className,
+  orientation = "horizontal",
   size,
-  spacing = 0,
+  spacing = 2,
   variant,
   ...props
 }: ScopedProps<ToggleGroupProps>): JSX.Element {
   const toggleGroupScope = useToggleGroupScope(__scopeToggleGroup);
 
   return (
-    <ToggleGroupProvider scope={__scopeToggleGroup} size={size} spacing={spacing} variant={variant}>
+    <ToggleGroupProvider
+      orientation={orientation}
+      scope={__scopeToggleGroup}
+      size={size}
+      spacing={spacing}
+      variant={variant}
+    >
       <ToggleGroupPrimitive.Root
         className={cn(
-          "group/toggle-group flex w-fit items-center gap-(--spacing(var(--gap))) rounded-md data-[spacing=0]:data-[variant=outline]:shadow-xs",
+          "group/toggle-group flex w-fit flex-row items-center gap-[--spacing(var(--gap))] rounded-md data-[spacing=0]:data-[variant=outline]:shadow-xs data-vertical:flex-col data-vertical:items-stretch",
           className,
         )}
+        data-orientation={orientation}
         data-size={size}
         data-slot="toggle-group"
         data-spacing={spacing}
@@ -83,7 +93,9 @@ const TOGGLE_GROUP_ITEM_NAME = "ToggleGroupItem";
 /**
  * @since 0.3.16-canary.0
  */
-type ToggleGroupItemProps = ScopedProps<ComponentProps<typeof ToggleGroupPrimitive.Item>>;
+type ToggleGroupItemProps = ScopedProps<
+  ComponentProps<typeof ToggleGroupPrimitive.Item> & VariantProps<typeof toggleVariants>
+>;
 
 /**
  * @since 0.3.16-canary.0
@@ -92,28 +104,27 @@ function ToggleGroupItem({
   __scopeToggleGroup,
   children,
   className,
+  size = "default",
+  variant = "default",
   ...props
 }: ToggleGroupItemProps): JSX.Element {
-  const { size, spacing, variant } = useToggleGroupContext(
-    TOGGLE_GROUP_ITEM_NAME,
-    __scopeToggleGroup,
-  );
+  const context = useToggleGroupContext(TOGGLE_GROUP_ITEM_NAME, __scopeToggleGroup);
   const toggleGroupScope = useToggleGroupScope(__scopeToggleGroup);
 
   return (
     <ToggleGroupPrimitive.Item
       className={cn(
-        "w-auto min-w-0 shrink-0 px-3 focus:z-10 focus-visible:z-10 data-[spacing=0]:rounded-none data-[spacing=0]:shadow-none data-[spacing=0]:first:rounded-l-md data-[spacing=0]:last:rounded-r-md data-[spacing=0]:data-[variant=outline]:border-l-0 data-[spacing=0]:data-[variant=outline]:first:border-l",
+        "shrink-0 group-data-[spacing=0]/toggle-group:rounded-none group-data-[spacing=0]/toggle-group:px-2 group-data-[spacing=0]/toggle-group:shadow-none focus:z-10 focus-visible:z-10 group-data-[spacing=0]/toggle-group:has-data-[icon=inline-end]:pr-1.5 group-data-[spacing=0]/toggle-group:has-data-[icon=inline-start]:pl-1.5 group-data-horizontal/toggle-group:data-[spacing=0]:first:rounded-l-md group-data-vertical/toggle-group:data-[spacing=0]:first:rounded-t-md group-data-horizontal/toggle-group:data-[spacing=0]:last:rounded-r-md group-data-vertical/toggle-group:data-[spacing=0]:last:rounded-b-md data-[state=on]:bg-muted group-data-horizontal/toggle-group:data-[spacing=0]:data-[variant=outline]:border-l-0 group-data-vertical/toggle-group:data-[spacing=0]:data-[variant=outline]:border-t-0 group-data-horizontal/toggle-group:data-[spacing=0]:data-[variant=outline]:first:border-l group-data-vertical/toggle-group:data-[spacing=0]:data-[variant=outline]:first:border-t",
         toggleVariants({
           className,
-          size,
-          variant,
+          size: context.size ?? size,
+          variant: context.variant ?? variant,
         }),
       )}
-      data-size={size}
+      data-size={context.size ?? size}
       data-slot="toggle-group-item"
-      data-spacing={spacing}
-      data-variant={variant}
+      data-spacing={context.spacing}
+      data-variant={context.variant ?? variant}
       {...toggleGroupScope}
       {...props}
     >
