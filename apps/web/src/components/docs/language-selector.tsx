@@ -45,19 +45,15 @@ const LanguageContext = createContext<LanguageContextValue | undefined>(undefine
  * demo body stay in sync. Scope one provider per example preview.
  */
 export function LanguageProvider({
-  children,
   defaultLanguage = "ar",
+  ...props
 }: {
   children: ReactNode;
   defaultLanguage?: Language;
 }): ReactNode {
   const [language, setLanguage] = useState<Language>(defaultLanguage);
 
-  return (
-    <LanguageContext.Provider value={{ language, setLanguage }}>
-      {children}
-    </LanguageContext.Provider>
-  );
+  return <LanguageContext.Provider value={{ language, setLanguage }} {...props} />;
 }
 
 export function useLanguageContext(): LanguageContextValue | undefined {
