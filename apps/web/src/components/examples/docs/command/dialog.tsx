@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Button } from "@codefast/ui/button";
 import {
+  Command,
   CommandDialog,
   CommandEmpty,
   CommandGroup,
@@ -40,24 +41,26 @@ export function CommandDialogExample() {
         )}
       </p>
       <CommandDialog open={open} onOpenChange={setOpen}>
-        <CommandInput placeholder="Search pages…" />
-        <CommandList>
-          <CommandEmpty>No results found.</CommandEmpty>
-          <CommandGroup heading="Pages">
-            {PAGES.map(({ label, icon: Icon }) => (
-              <CommandItem
-                key={label}
-                onSelect={() => {
-                  setPage(label);
-                  setOpen(false);
-                }}
-              >
-                <Icon />
-                <span>{label}</span>
-              </CommandItem>
-            ))}
-          </CommandGroup>
-        </CommandList>
+        <Command>
+          <CommandInput placeholder="Search pages…" />
+          <CommandList>
+            <CommandEmpty>No results found.</CommandEmpty>
+            <CommandGroup heading="Pages">
+              {PAGES.map(({ label, icon: Icon }) => (
+                <CommandItem
+                  key={label}
+                  onSelect={() => {
+                    setPage(label);
+                    setOpen(false);
+                  }}
+                >
+                  <Icon />
+                  <span>{label}</span>
+                </CommandItem>
+              ))}
+            </CommandGroup>
+          </CommandList>
+        </Command>
       </CommandDialog>
     </div>
   );
