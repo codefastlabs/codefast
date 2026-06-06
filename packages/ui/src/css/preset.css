@@ -95,6 +95,14 @@
   @apply rtl:rotate-180;
 }
 
+@utility cf-calendar-dropdown-root {
+  @apply border border-input shadow-xs has-focus:border-ring has-focus:ring-3 has-focus:ring-ring/50;
+}
+
+@utility cf-calendar-caption-label {
+  @apply h-8 pr-1 pl-2;
+}
+
 :root {
   --radius: 0.375rem;
 }
