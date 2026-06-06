@@ -34,8 +34,10 @@ export function DialogControlled() {
             Close it from a button, a side effect, or the ✕.
           </DialogBody>
           <DialogFooter>
-            <DialogClose variant="outline" size="sm">
-              Maybe later
+            <DialogClose asChild>
+              <Button size="sm" variant="outline">
+                Maybe later
+              </Button>
             </DialogClose>
             <Button
               size="sm"
