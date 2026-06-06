@@ -4,7 +4,7 @@ import type { ComponentProps, JSX, KeyboardEvent } from "react";
 import { cn } from "#/lib/utils";
 import { Context } from "radix-ui/internal";
 import useEmblaCarousel from "embla-carousel-react";
-import { ArrowLeftIcon, ArrowRightIcon } from "lucide-react";
+import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 
 import { Button } from "#/components/button";
@@ -299,7 +299,7 @@ function CarouselPrevious({
       onClick={scrollPrev}
       {...props}
     >
-      <ArrowLeftIcon className="rtl:rotate-180" />
+      <ChevronLeftIcon className="rtl:rotate-180" />
       <span className="sr-only">Previous slide</span>
     </Button>
   );
@@ -348,7 +348,7 @@ function CarouselNext({
       onClick={scrollNext}
       {...props}
     >
-      <ArrowRightIcon className="rtl:rotate-180" />
+      <ChevronRightIcon className="rtl:rotate-180" />
       <span className="sr-only">Next slide</span>
     </Button>
   );
