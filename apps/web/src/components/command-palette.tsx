@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { SearchIcon } from "lucide-react";
 import {
+  Command,
   CommandDialog,
   CommandEmpty,
   CommandGroup,
@@ -82,39 +83,44 @@ export function CommandPalette() {
       </Button>
 
       <CommandDialog open={open} onOpenChange={setOpen}>
-        <CommandInput placeholder="Search components and pages…" />
-        <CommandList>
-          <CommandEmpty>No results found.</CommandEmpty>
-          <CommandGroup heading="Pages">
-            {PAGES.map((page) => (
-              <CommandItem
-                key={page.to}
-                value={`page ${page.label}`}
-                onSelect={() => {
-                  goToPage(page.to);
-                }}
-              >
-                {page.label}
-              </CommandItem>
-            ))}
-          </CommandGroup>
-          <CommandGroup heading="Components">
-            {ALL_COMPONENTS.map((component) => (
-              <CommandItem
-                key={component.slug}
-                value={`${component.name} ${component.category}`}
-                onSelect={() => {
-                  goToComponent(component.slug, component.hasDemo, component.category);
-                }}
-              >
-                <span>{component.name}</span>
-                <span className="ml-auto text-xs text-ui-muted capitalize">
-                  {component.category}
-                </span>
-              </CommandItem>
-            ))}
-          </CommandGroup>
-        </CommandList>
+        <Command>
+          <CommandInput placeholder="Search components and pages…" />
+          <CommandList>
+            <CommandEmpty>No results found.</CommandEmpty>
+            <CommandGroup heading="Pages">
+              {PAGES.map((page) => (
+                <CommandItem
+                  key={page.to}
+                  value={`page ${page.label}`}
+                  onSelect={() => {
+                    goToPage(page.to);
+                  }}
+                >
+                  {page.label}
+                </CommandItem>
+              ))}
+            </CommandGroup>
+            <CommandGroup heading="Components">
+              {ALL_COMPONENTS.map((component) => (
+                <CommandItem
+                  key={component.slug}
+                  value={`${component.name} ${component.category}`}
+                  onSelect={() => {
+                    goToComponent(component.slug, component.hasDemo, component.category);
+                  }}
+                >
+                  <span className="grow">{component.name}</span>
+                  <span
+                    className="ml-auto text-xs text-ui-muted capitalize"
+                    data-slot="command-shortcut"
+                  >
+                    {component.category}
+                  </span>
+                </CommandItem>
+              ))}
+            </CommandGroup>
+          </CommandList>
+        </Command>
       </CommandDialog>
     </>
   );
