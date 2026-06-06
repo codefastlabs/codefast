@@ -212,7 +212,7 @@ type DialogTitleProps = ComponentProps<typeof DialogPrimitive.Title>;
 function DialogTitle({ className, ...props }: DialogTitleProps): JSX.Element {
   return (
     <DialogPrimitive.Title
-      className={cn("cf-font-heading leading-none font-medium", className)}
+      className={cn("font-heading leading-none font-medium", className)}
       data-slot="dialog-title"
       {...props}
     />

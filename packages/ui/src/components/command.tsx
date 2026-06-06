@@ -115,7 +115,7 @@ function CommandList({ className, ...props }: CommandListProps): JSX.Element {
   return (
     <CommandPrimitive.List
       className={cn(
-        "no-scrollbar max-h-72 scroll-py-1 overflow-x-hidden overflow-y-auto outline-none",
+        "max-h-72 scroll-py-1 scrollbar-none overflow-x-hidden overflow-y-auto outline-none",
         className,
       )}
       data-slot="command-list"

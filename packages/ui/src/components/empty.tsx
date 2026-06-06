@@ -90,7 +90,7 @@ type EmptyTitleProps = ComponentProps<"div">;
 function EmptyTitle({ className, ...props }: EmptyTitleProps): JSX.Element {
   return (
     <div
-      className={cn("cf-font-heading text-lg font-medium tracking-tight", className)}
+      className={cn("font-heading text-lg font-medium tracking-tight", className)}
       data-slot="empty-title"
       {...props}
     />

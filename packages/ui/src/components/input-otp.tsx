@@ -22,10 +22,7 @@ function InputOTP({ className, containerClassName, ...props }: InputOTPProps): J
     <OTPInput
       aria-label="One-time password"
       className={cn("disabled:cursor-not-allowed", className)}
-      containerClassName={cn(
-        "flex items-center cf-input-otp has-disabled:opacity-50",
-        containerClassName,
-      )}
+      containerClassName={cn("flex items-center gap-2 has-disabled:opacity-50", containerClassName)}
       data-slot="input-otp"
       spellCheck={false}
       {...props}

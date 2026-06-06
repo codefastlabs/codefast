@@ -294,7 +294,7 @@ function SidebarTrigger({ className, onClick, ...props }: SidebarTriggerProps): 
       }}
       {...props}
     >
-      <PanelLeftIcon className="cf-rtl-flip" />
+      <PanelLeftIcon className="rtl:rotate-180" />
       <span className="sr-only">Toggle Sidebar</span>
     </Button>
   );
@@ -466,7 +466,7 @@ function SidebarContent({ className, ...props }: SidebarContentProps): JSX.Eleme
   return (
     <div
       className={cn(
-        "no-scrollbar flex min-h-0 flex-1 flex-col gap-2 overflow-auto group-data-[collapsible=icon]:overflow-hidden",
+        "flex min-h-0 flex-1 scrollbar-none flex-col gap-2 overflow-auto group-data-[collapsible=icon]:overflow-hidden",
         className,
       )}
       data-sidebar="content"

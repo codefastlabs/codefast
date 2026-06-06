@@ -162,7 +162,7 @@ function MenubarSubTrigger({
       {...props}
     >
       {children}
-      <ChevronRightIcon className="ml-auto size-4 cf-rtl-flip" />
+      <ChevronRightIcon className="ml-auto size-4 rtl:rotate-180" />
     </MenubarPrimitive.SubTrigger>
   );
 }

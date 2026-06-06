@@ -147,7 +147,7 @@ function BreadcrumbSeparator({
       role="presentation"
       {...props}
     >
-      {children ?? <ChevronRightIcon className="cf-rtl-flip" />}
+      {children ?? <ChevronRightIcon className="rtl:rotate-180" />}
     </li>
   );
 }

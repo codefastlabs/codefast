@@ -178,7 +178,7 @@ type DrawerTitleProps = ComponentProps<typeof DrawerPrimitive.Title>;
 function DrawerTitle({ className, ...props }: DrawerTitleProps): JSX.Element {
   return (
     <DrawerPrimitive.Title
-      className={cn("cf-font-heading font-medium text-foreground", className)}
+      className={cn("font-heading font-medium text-foreground", className)}
       data-slot="drawer-title"
       {...props}
     />
