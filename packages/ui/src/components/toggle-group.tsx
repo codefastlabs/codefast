@@ -102,7 +102,6 @@ type ToggleGroupItemProps = ScopedProps<
  */
 function ToggleGroupItem({
   __scopeToggleGroup,
-  children,
   className,
   size = "default",
   variant = "default",
@@ -127,9 +126,7 @@ function ToggleGroupItem({
       data-variant={context.variant ?? variant}
       {...toggleGroupScope}
       {...props}
-    >
-      {children}
-    </ToggleGroupPrimitive.Item>
+    />
   );
 }
 

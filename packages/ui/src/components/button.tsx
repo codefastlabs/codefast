@@ -23,7 +23,6 @@ type ButtonProps = ComponentProps<"button"> &
  */
 function Button({
   asChild = false,
-  children,
   className,
   size,
   type = "button",
@@ -40,9 +39,7 @@ function Button({
         data-slot="button"
         data-variant={variant}
         {...props}
-      >
-        {children}
-      </Comp>
+      />
     );
   }
 
@@ -54,9 +51,7 @@ function Button({
       data-variant={variant}
       type={type}
       {...props}
-    >
-      {children}
-    </button>
+    />
   );
 }
 
