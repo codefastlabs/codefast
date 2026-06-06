@@ -21,7 +21,7 @@ function Empty({ className, ...props }: EmptyProps): JSX.Element {
   return (
     <div
       className={cn(
-        "flex min-w-0 flex-1 flex-col items-center justify-center gap-6 rounded-lg border-dashed p-6 text-center text-balance md:p-12",
+        "flex w-full min-w-0 flex-1 flex-col items-center justify-center gap-4 rounded-lg border-dashed p-12 text-center text-balance",
         className,
       )}
       data-slot="empty"
@@ -45,7 +45,7 @@ type EmptyHeaderProps = ComponentProps<"div">;
 function EmptyHeader({ className, ...props }: EmptyHeaderProps): JSX.Element {
   return (
     <div
-      className={cn("flex max-w-sm flex-col items-center gap-2 text-center", className)}
+      className={cn("flex max-w-sm flex-col items-center gap-2", className)}
       data-slot="empty-header"
       {...props}
     />
@@ -90,7 +90,7 @@ type EmptyTitleProps = ComponentProps<"div">;
 function EmptyTitle({ className, ...props }: EmptyTitleProps): JSX.Element {
   return (
     <div
-      className={cn("text-lg font-medium tracking-tight", className)}
+      className={cn("cf-font-heading text-lg font-medium tracking-tight", className)}
       data-slot="empty-title"
       {...props}
     />
