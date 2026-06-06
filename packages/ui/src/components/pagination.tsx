@@ -2,7 +2,7 @@ import type { VariantProps } from "#/lib/utils";
 import type { ComponentProps, JSX } from "react";
 
 import { cn } from "#/lib/utils";
-import { ChevronLeftIcon, ChevronRightIcon, EllipsisIcon } from "lucide-react";
+import { ChevronLeftIcon, ChevronRightIcon, MoreHorizontalIcon } from "lucide-react";
 
 import { buttonVariants } from "#/variants/button";
 
@@ -44,7 +44,7 @@ type PaginationContentProps = ComponentProps<"ul">;
 function PaginationContent({ className, ...props }: PaginationContentProps): JSX.Element {
   return (
     <ul
-      className={cn("flex flex-row items-center gap-1", className)}
+      className={cn("flex items-center gap-1", className)}
       data-slot="pagination-content"
       {...props}
     />
@@ -93,6 +93,7 @@ function PaginationLink({
     <a
       aria-current={isActive ? "page" : undefined}
       className={buttonVariants({ className, size, variant: isActive ? "outline" : "ghost" })}
+      data-active={isActive}
       data-slot="pagination-link"
       {...props}
     >
@@ -111,21 +112,27 @@ function PaginationLink({
 interface PaginationPreviousProps
   extends ComponentProps<"a">, Pick<VariantProps<typeof buttonVariants>, "size"> {
   isActive?: boolean;
+  text?: string;
 }
 
 /**
  * @since 0.3.16-canary.0
  */
-function PaginationPrevious({ ...props }: PaginationPreviousProps): JSX.Element {
+function PaginationPrevious({
+  className,
+  text = "Previous",
+  ...props
+}: PaginationPreviousProps): JSX.Element {
   return (
     <PaginationLink
       aria-label="Go to previous page"
+      className={cn("pl-2!", className)}
       data-slot="pagination-previous"
       size="default"
       {...props}
     >
-      <ChevronLeftIcon className="size-4" />
-      <span>Previous</span>
+      <ChevronLeftIcon className="cf-rtl-flip" data-icon="inline-start" />
+      <span className="hidden sm:block">{text}</span>
     </PaginationLink>
   );
 }
@@ -140,21 +147,23 @@ function PaginationPrevious({ ...props }: PaginationPreviousProps): JSX.Element 
 interface PaginationNextProps
   extends ComponentProps<"a">, Pick<VariantProps<typeof buttonVariants>, "size"> {
   isActive?: boolean;
+  text?: string;
 }
 
 /**
  * @since 0.3.16-canary.0
  */
-function PaginationNext({ ...props }: PaginationNextProps): JSX.Element {
+function PaginationNext({ className, text = "Next", ...props }: PaginationNextProps): JSX.Element {
   return (
     <PaginationLink
       aria-label="Go to next page"
+      className={cn("pr-2!", className)}
       data-slot="pagination-next"
       size="default"
       {...props}
     >
-      <span>Next</span>
-      <ChevronRightIcon />
+      <span className="hidden sm:block">{text}</span>
+      <ChevronRightIcon className="cf-rtl-flip" data-icon="inline-end" />
     </PaginationLink>
   );
 }
@@ -175,11 +184,14 @@ function PaginationEllipsis({ className, ...props }: PaginationEllipsisProps): J
   return (
     <span
       aria-hidden
-      className={cn("flex size-10 items-center justify-center", className)}
+      className={cn(
+        "flex size-9 items-center justify-center [&_svg:not([class*='size-'])]:size-4",
+        className,
+      )}
       data-slot="pagination-ellipsis"
       {...props}
     >
-      <EllipsisIcon className="size-4" />
+      <MoreHorizontalIcon />
       <span className="sr-only">More pages</span>
     </span>
   );
