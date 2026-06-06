@@ -31,7 +31,7 @@ const STEPS = [
     title: "Import the CSS",
     description:
       "Add the design-system stylesheet to your global CSS. It ships neutral tokens, custom Tailwind variants, and animation utilities.",
-    code: `@import "tailwindcss";\n@import "@codefast/ui/css/neutral.css";\n@import "@codefast/ui/css/preset.css";`,
+    code: `@import "tailwindcss";\n@import "@codefast/ui/css/themes/neutral.css";\n@import "@codefast/ui/css/preset.css";`,
   },
   {
     step: "03",
