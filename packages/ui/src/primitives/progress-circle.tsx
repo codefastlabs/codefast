@@ -203,6 +203,7 @@ interface ProgressCircleProviderProps {
  */
 function ProgressCircleProvider({
   __scopeProgressCircle,
+  children,
   formatValue,
   id: propertyId,
   max = 100,
@@ -288,7 +289,9 @@ function ProgressCircleProvider({
       threshold={threshold}
       value={value ?? 0}
       valueText={valueText}
-    />
+    >
+      {children}
+    </ProgressCircleContextProvider>
   );
 }
 
