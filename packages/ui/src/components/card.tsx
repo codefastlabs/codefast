@@ -71,7 +71,7 @@ function CardTitle({ children, className, ...props }: CardTitleProps): JSX.Eleme
   return (
     <div
       className={cn(
-        "cn-font-heading text-base leading-normal font-medium group-data-[size=sm]/card:text-sm",
+        "cf-font-heading text-base leading-normal font-medium group-data-[size=sm]/card:text-sm",
         className,
       )}
       data-slot="card-title"

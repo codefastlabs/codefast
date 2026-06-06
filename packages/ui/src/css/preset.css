@@ -87,6 +87,14 @@
   }
 }
 
+@utility cf-font-heading {
+  font-family: var(--font-heading, inherit);
+}
+
+@utility cf-rtl-flip {
+  @apply rtl:rotate-180;
+}
+
 :root {
   --radius: 0.375rem;
 }

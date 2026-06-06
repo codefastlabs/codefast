@@ -220,7 +220,7 @@ type SheetTitleProps = ComponentProps<typeof SheetPrimitive.Title>;
 function SheetTitle({ className, ...props }: SheetTitleProps): JSX.Element {
   return (
     <SheetPrimitive.Title
-      className={cn("cn-font-heading font-medium text-foreground", className)}
+      className={cn("cf-font-heading font-medium text-foreground", className)}
       data-slot="sheet-title"
       {...props}
     />
