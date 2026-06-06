@@ -72,7 +72,7 @@ function Calendar({
           defaultClassNames.dropdowns,
         ),
         dropdown_root: cn(
-          "relative rounded-(--cell-radius) cf-calendar-dropdown-root",
+          "relative rounded-(--cell-radius) border border-input shadow-xs has-focus:border-ring has-focus:ring-3 has-focus:ring-ring/50",
           defaultClassNames.dropdown_root,
         ),
         dropdown: cn("absolute inset-0 bg-popover opacity-0", defaultClassNames.dropdown),
@@ -80,7 +80,7 @@ function Calendar({
           "font-medium select-none",
           captionLayout === "label"
             ? "cf-calendar-caption text-sm"
-            : "flex cf-calendar-caption-label items-center gap-1 rounded-(--cell-radius) text-sm [&>svg]:size-3.5 [&>svg]:text-muted-foreground",
+            : "flex h-8 items-center gap-1 rounded-(--cell-radius) pr-1 pl-2 text-sm [&>svg]:size-3.5 [&>svg]:text-muted-foreground",
           defaultClassNames.caption_label,
         ),
         month_grid: cn("w-full border-collapse", defaultClassNames.month_grid),
@@ -151,11 +151,11 @@ function CalendarChevron({
   ...props
 }: ComponentProps<typeof Chevron>): JSX.Element {
   if (orientation === "left") {
-    return <ChevronLeftIcon className={cn("size-4 cf-rtl-flip", className)} {...props} />;
+    return <ChevronLeftIcon className={cn("size-4 rtl:rotate-180", className)} {...props} />;
   }
 
   if (orientation === "right") {
-    return <ChevronRightIcon className={cn("size-4 cf-rtl-flip", className)} {...props} />;
+    return <ChevronRightIcon className={cn("size-4 rtl:rotate-180", className)} {...props} />;
   }
 
   return <ChevronDownIcon className={cn("size-4", className)} {...props} />;

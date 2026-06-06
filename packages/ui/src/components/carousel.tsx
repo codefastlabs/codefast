@@ -299,7 +299,7 @@ function CarouselPrevious({
       onClick={scrollPrev}
       {...props}
     >
-      <ArrowLeftIcon className="cf-rtl-flip" />
+      <ArrowLeftIcon className="rtl:rotate-180" />
       <span className="sr-only">Previous slide</span>
     </Button>
   );
@@ -348,7 +348,7 @@ function CarouselNext({
       onClick={scrollNext}
       {...props}
     >
-      <ArrowRightIcon className="cf-rtl-flip" />
+      <ArrowRightIcon className="rtl:rotate-180" />
       <span className="sr-only">Next slide</span>
     </Button>
   );

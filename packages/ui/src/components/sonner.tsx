@@ -47,7 +47,7 @@ function Toaster({ ...props }: ToasterProps): JSX.Element {
       theme={theme as ToasterProps["theme"]}
       toastOptions={{
         classNames: {
-          toast: "cf-toast",
+          toast: "rounded-2xl",
         },
       }}
       {...props}
