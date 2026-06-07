@@ -146,7 +146,7 @@ type SheetHeaderProps = ComponentProps<"div">;
 function SheetHeader({ className, ...props }: SheetHeaderProps): JSX.Element {
   return (
     <div
-      className={cn("flex flex-col gap-1.5 p-4", className)}
+      className={cn("flex shrink-0 flex-col gap-1.5 p-4", className)}
       data-slot="sheet-header"
       {...props}
     />
