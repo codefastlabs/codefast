@@ -43,17 +43,17 @@ function CheckboxGroupItem({ className, ...props }: CheckboxGroupItemProps): JSX
   return (
     <CheckboxGroupPrimitive.Item
       className={cn(
-        "peer flex size-4 shrink-0 items-center justify-center rounded-sm border border-input text-primary-foreground shadow-xs outline-hidden transition focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:opacity-50 aria-checked:border-primary aria-checked:bg-primary aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 aria-checked:aria-invalid:bg-destructive dark:bg-input/30 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40",
+        "peer relative flex size-4 shrink-0 items-center justify-center rounded-md border border-input shadow-xs transition-shadow outline-none group-has-disabled/field:opacity-50 after:absolute after:-inset-x-3 after:-inset-y-2 focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 aria-invalid:aria-checked:border-primary dark:bg-input/30 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40 data-checked:border-primary data-checked:bg-primary data-checked:text-primary-foreground dark:data-checked:bg-primary",
         className,
       )}
       data-slot="checkbox-group-item"
       {...props}
     >
       <CheckboxGroupPrimitive.CheckboxGroupIndicator
-        className="flex items-center justify-center text-current transition-none"
+        className="grid place-content-center text-current transition-none [&>svg]:size-3.5"
         data-slot="checkbox-group-indicator"
       >
-        <CheckIcon className="size-3.5" />
+        <CheckIcon />
       </CheckboxGroupPrimitive.CheckboxGroupIndicator>
     </CheckboxGroupPrimitive.Item>
   );
