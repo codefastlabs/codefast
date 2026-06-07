@@ -1,6 +1,14 @@
 import { useState } from "react";
 import { cn } from "@codefast/ui/lib/utils";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@codefast/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@codefast/ui/select";
 
 const STATUSES = [
   { value: "backlog", label: "Backlog", color: "bg-neutral-400" },
@@ -21,12 +29,15 @@ export function SelectStatus() {
           <SelectValue />
         </SelectTrigger>
         <SelectContent>
-          {STATUSES.map((status) => (
-            <SelectItem key={status.value} value={status.value}>
-              <span className={cn("mr-2 inline-block size-2 rounded-full", status.color)} />
-              {status.label}
-            </SelectItem>
-          ))}
+          <SelectGroup>
+            <SelectLabel>Status</SelectLabel>
+            {STATUSES.map((status) => (
+              <SelectItem key={status.value} value={status.value}>
+                <span className={cn("mr-2 inline-block size-2 rounded-full", status.color)} />
+                {status.label}
+              </SelectItem>
+            ))}
+          </SelectGroup>
         </SelectContent>
       </Select>
       <p className="text-center text-xs text-ui-muted">
