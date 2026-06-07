@@ -21,7 +21,7 @@ const inputGroupVariants = tv({
  * @since 0.3.16-canary.0
  */
 const inputGroupAddonVariants = tv({
-  base: "flex h-auto cursor-text items-center justify-center gap-2 py-1.5 text-sm font-medium text-muted-foreground select-none group-data-[disabled=true]/input-group:opacity-50 [&>kbd]:rounded-[calc(var(--radius)-5px)] [&>svg:not([class*='size-'])]:size-4",
+  base: "flex h-auto cursor-text items-center justify-center gap-2 py-1.5 text-sm font-medium text-muted-foreground select-none group-data-[disabled=true]/input-group:opacity-50 [&>kbd]:rounded-[calc(var(--radius)-3px)] [&>svg:not([class*='size-'])]:size-4",
   defaultVariants: {
     align: "inline-start",
   },
@@ -51,10 +51,10 @@ const inputGroupButtonVariants = tv({
   },
   variants: {
     size: {
-      "icon-xs": "size-6 rounded-[calc(var(--radius)-5px)] p-0 has-[>svg]:p-0",
+      "icon-xs": "size-6 rounded-[calc(var(--radius)-3px)] p-0 has-[>svg]:p-0",
       "icon-sm": "size-8 p-0 has-[>svg]:p-0",
       sm: "",
-      xs: "h-6 gap-1 rounded-[calc(var(--radius)-5px)] px-1.5 [&>svg:not([class*='size-'])]:size-3.5",
+      xs: "h-6 gap-1 rounded-[calc(var(--radius)-3px)] px-1.5 [&>svg:not([class*='size-'])]:size-3.5",
     },
   },
 });
