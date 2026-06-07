@@ -16,7 +16,7 @@ const CONFIG = {
 
 export function ChartBar() {
   return (
-    <ChartContainer config={CONFIG} className="min-h-[220px] w-full max-w-md">
+    <ChartContainer config={CONFIG} className="min-h-55 w-full max-w-md">
       <BarChart accessibilityLayer data={DATA}>
         <CartesianGrid vertical={false} />
         <XAxis dataKey="month" axisLine={false} tickLine={false} tickMargin={8} />

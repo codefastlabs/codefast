@@ -16,7 +16,7 @@ const CONFIG = {
 
 export function ChartLine() {
   return (
-    <ChartContainer config={CONFIG} className="min-h-[220px] w-full max-w-md">
+    <ChartContainer config={CONFIG} className="min-h-55 w-full max-w-md">
       <LineChart accessibilityLayer data={DATA} margin={{ left: 12, right: 12 }}>
         <CartesianGrid vertical={false} />
         <XAxis dataKey="month" axisLine={false} tickLine={false} tickMargin={8} />
