@@ -1,5 +1,13 @@
 import { useState } from "react";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@codefast/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@codefast/ui/select";
 
 const FRUITS = [
   { value: "apple", label: "Apple" },
@@ -18,11 +26,14 @@ export function SelectControlled() {
           <SelectValue />
         </SelectTrigger>
         <SelectContent>
-          {FRUITS.map((fruit) => (
-            <SelectItem key={fruit.value} value={fruit.value}>
-              {fruit.label}
-            </SelectItem>
-          ))}
+          <SelectGroup>
+            <SelectLabel>Fruit</SelectLabel>
+            {FRUITS.map((fruit) => (
+              <SelectItem key={fruit.value} value={fruit.value}>
+                {fruit.label}
+              </SelectItem>
+            ))}
+          </SelectGroup>
         </SelectContent>
       </Select>
       <p className="text-xs text-ui-muted">

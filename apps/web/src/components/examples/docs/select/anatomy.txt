@@ -1,6 +1,6 @@
 import {
   Select, SelectTrigger, SelectValue,
-  SelectContent, SelectItem,
+  SelectContent, SelectGroup, SelectLabel, SelectItem,
 } from "@codefast/ui/select";
 
 <Select value={v} onValueChange={setV}>
@@ -8,6 +8,9 @@ import {
     <SelectValue placeholder="Choose…" />
   </SelectTrigger>
   <SelectContent>
-    <SelectItem value="a">A</SelectItem>
+    <SelectGroup>
+      <SelectLabel>Group</SelectLabel>
+      <SelectItem value="a">A</SelectItem>
+    </SelectGroup>
   </SelectContent>
 </Select>

@@ -56,6 +56,19 @@ export const selectDoc: ComponentDoc = {
       ],
     },
     {
+      name: "SelectGroup / SelectLabel",
+      description:
+        "Wrap related options so screen readers announce the group, not just visual spacing.",
+      props: [
+        {
+          name: "SelectLabel children",
+          type: "ReactNode",
+          description:
+            "Heading text for the group (required inside SelectGroup for accessibility).",
+        },
+      ],
+    },
+    {
       name: "SelectItem",
       props: [
         {
