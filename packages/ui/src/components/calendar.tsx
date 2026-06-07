@@ -79,7 +79,7 @@ function Calendar({
         caption_label: cn(
           "font-medium select-none",
           captionLayout === "label"
-            ? "cf-calendar-caption text-sm"
+            ? "text-sm"
             : "flex h-8 items-center gap-1 rounded-(--cell-radius) pr-1 pl-2 text-sm [&>svg]:size-3.5 [&>svg]:text-muted-foreground",
           defaultClassNames.caption_label,
         ),
