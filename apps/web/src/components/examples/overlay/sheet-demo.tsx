@@ -24,7 +24,7 @@ export function SheetDemo() {
           <SheetTitle>Edit profile</SheetTitle>
           <SheetDescription>Update your profile details and save changes.</SheetDescription>
         </SheetHeader>
-        <SheetBody className="grid gap-3">
+        <SheetBody className="flex flex-col gap-3">
           <div className="grid gap-1.5">
             <Label htmlFor="sheet-name">Name</Label>
             <Input id="sheet-name" defaultValue="Vuong Phan" />
