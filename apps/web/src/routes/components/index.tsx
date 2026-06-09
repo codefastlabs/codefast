@@ -3,11 +3,11 @@ import { createFileRoute, useLocation } from "@tanstack/react-router";
 import { Badge } from "@codefast/ui/badge";
 import { highlightMany } from "#/lib/highlighter.ts";
 import { DEMOS } from "#/components/examples/demos";
-import { GroupSection } from "#/components/showcase/group-section";
-import { MobileNav } from "#/components/showcase/mobile-nav";
-import { SidebarNav } from "#/components/showcase/sidebar-nav";
+import { GroupSection } from "#/components/showcase/components/group-section";
+import { MobileNav } from "#/components/showcase/components/mobile-nav";
+import { SidebarNav } from "#/components/showcase/components/sidebar-nav";
 import type { HighlightedCodes, ViewMode } from "#/components/showcase/types";
-import { useActiveSection } from "#/components/showcase/use-active-section";
+import { useActiveSection } from "#/components/showcase/hooks/use-active-section";
 import { ALL_COMPONENTS } from "#/data/components";
 import {
   ALPHABET_GROUPS,
