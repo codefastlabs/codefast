@@ -1,3 +1,18 @@
+/*
+ * Custom Tailwind variants for @codefast/ui.
+ *
+ * Shorthand usage (composes with group-, peer-, in-, has- modifiers):
+ *   data-open:           → [data-state="open"] or [data-open]:not([data-open="false"])
+ *   group-data-disabled: → ancestor .group with matching data-disabled
+ *   in-data-side-left:   → ancestor with [data-side="left"]
+ *
+ * Prefer these over verbose arbitrary variants (data-[state=open]:, data-[side=left]:).
+ */
+
+/* -------------------------------------------------------------------------
+ * Theme
+ * ------------------------------------------------------------------------- */
+
 @custom-variant dark {
   &:where(.dark, .dark *) {
     @slot;
@@ -10,6 +25,10 @@
   }
 }
 
+/* -------------------------------------------------------------------------
+ * Layout — orientation & placement (Radix Popper)
+ * ------------------------------------------------------------------------- */
+
 @custom-variant data-horizontal (&:where([data-orientation="horizontal"]));
 @custom-variant data-vertical (&:where([data-orientation="vertical"]));
 
@@ -18,6 +37,14 @@
 @custom-variant data-side-bottom (&:where([data-side="bottom"]));
 @custom-variant data-side-left (&:where([data-side="left"]));
 
+/* -------------------------------------------------------------------------
+ * State — boolean & Radix data-state
+ *
+ * Block variants match both Radix data-state="…" and boolean data-* attrs
+ * so components can use one shorthand regardless of attribute source.
+ * ------------------------------------------------------------------------- */
+
+/* Matches Radix data-state="open" and boolean data-open (not "false"). */
 @custom-variant data-open {
   &:where([data-state="open"]),
   &:where([data-open]:not([data-open="false"])) {
@@ -46,6 +73,7 @@
   }
 }
 
+/* data-selected only matches explicit true, not bare data-selected. */
 @custom-variant data-selected {
   &:where([data-state="selected"]),
   &:where([data-selected="true"]) {
@@ -73,3 +101,13 @@
     @slot;
   }
 }
+
+/* -------------------------------------------------------------------------
+ * State — Radix-only (no boolean data-* equivalent)
+ * ------------------------------------------------------------------------- */
+
+@custom-variant data-on (&:where([data-state="on"]));
+@custom-variant data-collapsed (&:where([data-state="collapsed"]));
+@custom-variant data-hidden (&:where([data-state="hidden"]));
+@custom-variant data-visible (&:where([data-state="visible"]));
+@custom-variant data-delayed-open (&:where([data-state="delayed-open"]));
