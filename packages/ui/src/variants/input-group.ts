@@ -21,7 +21,7 @@ const inputGroupVariants = tv({
  * @since 0.3.16-canary.0
  */
 const inputGroupAddonVariants = tv({
-  base: "flex h-auto cursor-text items-center justify-center gap-2 py-1.5 text-sm font-medium text-muted-foreground select-none group-data-[disabled=true]/input-group:opacity-50 [&>kbd]:rounded-[calc(var(--radius)-3px)] [&>svg:not([class*='size-'])]:size-4",
+  base: "flex h-auto cursor-text items-center justify-center gap-2 py-1.5 text-sm font-medium text-muted-foreground select-none group-data-disabled/input-group:opacity-50 [&>kbd]:rounded-[calc(var(--radius)-3px)] [&>svg:not([class*='size-'])]:size-4",
   defaultVariants: {
     align: "inline-start",
   },
