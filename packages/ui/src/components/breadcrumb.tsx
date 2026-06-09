@@ -18,10 +18,8 @@ interface BreadcrumbProps extends ComponentProps<"nav"> {
 /**
  * @since 0.3.16-canary.0
  */
-function Breadcrumb({ className, ...props }: BreadcrumbProps): JSX.Element {
-  return (
-    <nav aria-label="breadcrumb" className={cn(className)} data-slot="breadcrumb" {...props} />
-  );
+function Breadcrumb({ ...props }: BreadcrumbProps): JSX.Element {
+  return <nav aria-label="breadcrumb" data-slot="breadcrumb" {...props} />;
 }
 
 /* -----------------------------------------------------------------------------

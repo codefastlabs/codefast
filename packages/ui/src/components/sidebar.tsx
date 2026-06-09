@@ -278,12 +278,11 @@ type SidebarTriggerProps = ComponentProps<typeof Button>;
 /**
  * @since 0.3.16-canary.0
  */
-function SidebarTrigger({ className, onClick, ...props }: SidebarTriggerProps): JSX.Element {
+function SidebarTrigger({ onClick, ...props }: SidebarTriggerProps): JSX.Element {
   const { toggleSidebar } = useSidebar(SIDEBAR_TRIGGER_NAME);
 
   return (
     <Button
-      className={cn(className)}
       data-sidebar="trigger"
       data-slot="sidebar-trigger"
       size="icon-sm"
