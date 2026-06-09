@@ -24,7 +24,7 @@ const NAV = [
 
 export function SidebarAppShell() {
   return (
-    <SidebarProvider className="h-72 w-full max-w-sm overflow-hidden rounded-xl border">
+    <SidebarProvider className="h-72 min-h-0 w-full max-w-sm overflow-hidden rounded-xl border [contain:layout]">
       <Sidebar>
         <SidebarHeader className="px-4 py-3 text-sm font-semibold">My App</SidebarHeader>
         <SidebarContent>
