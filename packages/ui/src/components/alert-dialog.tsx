@@ -280,18 +280,13 @@ interface AlertDialogActionProps
  * @since 0.3.16-canary.0
  */
 function AlertDialogAction({
-  className,
   size = "default",
   variant = "default",
   ...props
 }: AlertDialogActionProps): JSX.Element {
   return (
     <Button asChild size={size} variant={variant}>
-      <AlertDialogPrimitive.Action
-        className={cn(className)}
-        data-slot="alert-dialog-action"
-        {...props}
-      />
+      <AlertDialogPrimitive.Action data-slot="alert-dialog-action" {...props} />
     </Button>
   );
 }
@@ -312,18 +307,13 @@ interface AlertDialogCancelProps
  * @since 0.3.16-canary.0
  */
 function AlertDialogCancel({
-  className,
   size = "default",
   variant = "outline",
   ...props
 }: AlertDialogCancelProps): JSX.Element {
   return (
     <Button asChild size={size} variant={variant}>
-      <AlertDialogPrimitive.Cancel
-        className={cn(className)}
-        data-slot="alert-dialog-cancel"
-        {...props}
-      />
+      <AlertDialogPrimitive.Cancel data-slot="alert-dialog-cancel" {...props} />
     </Button>
   );
 }

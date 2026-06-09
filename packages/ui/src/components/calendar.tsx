@@ -165,8 +165,8 @@ function CalendarChevron({
  * Component: CalendarRoot (internal)
  * -------------------------------------------------------------------------- */
 
-function CalendarRoot({ className, rootRef, ...props }: ComponentProps<typeof Root>): JSX.Element {
-  return <div ref={rootRef} className={cn(className)} data-slot="calendar" {...props} />;
+function CalendarRoot({ rootRef, ...props }: ComponentProps<typeof Root>): JSX.Element {
+  return <div ref={rootRef} data-slot="calendar" {...props} />;
 }
 
 /* -----------------------------------------------------------------------------
