@@ -19,7 +19,7 @@ const PROJECTS = ["Website", "Mobile app", "Design system"];
 
 export function SidebarSubmenu() {
   return (
-    <SidebarProvider className="h-72 w-full max-w-sm overflow-hidden rounded-xl border">
+    <SidebarProvider className="h-72 min-h-0 w-full max-w-sm overflow-hidden rounded-xl border [contain:layout]">
       <Sidebar>
         <SidebarContent>
           <SidebarGroup>
