@@ -1,5 +1,7 @@
 import { Fragment } from "react";
 
+import { Avatar, AvatarFallback } from "@codefast/ui/avatar";
+import { Badge } from "@codefast/ui/badge";
 import { Button } from "@codefast/ui/button";
 import {
   Item,
@@ -11,31 +13,58 @@ import {
   ItemSeparator,
   ItemTitle,
 } from "@codefast/ui/item";
-import { BellIcon, MailIcon, UserIcon } from "lucide-react";
+import { MoreHorizontalIcon } from "lucide-react";
 
-const ITEMS = [
-  { id: 1, title: "Profile", description: "Update your personal information", Icon: UserIcon },
-  { id: 2, title: "Notifications", description: "Manage notification preferences", Icon: BellIcon },
-  { id: 3, title: "Messages", description: "View your inbox and sent items", Icon: MailIcon },
+const MEMBERS = [
+  {
+    id: 1,
+    name: "Vuong Phan",
+    email: "mr.thevuong@gmail.com",
+    role: "Owner",
+    initials: "VP",
+    color: "bg-ui-brand",
+    roleVariant: "default" as const,
+  },
+  {
+    id: 2,
+    name: "Sarah Müller",
+    email: "sarah@acme.io",
+    role: "Admin",
+    initials: "SM",
+    color: "bg-violet-500",
+    roleVariant: "secondary" as const,
+  },
+  {
+    id: 3,
+    name: "James Doe",
+    email: "james@acme.io",
+    role: "Member",
+    initials: "JD",
+    color: "bg-emerald-500",
+    roleVariant: "outline" as const,
+  },
 ];
 
 export function ItemDemo() {
   return (
-    <ItemGroup className="w-full max-w-sm rounded-xl border">
-      {ITEMS.map(({ id, title, description, Icon }, idx) => (
+    <ItemGroup className="w-full max-w-md gap-0 rounded-xl border">
+      {MEMBERS.map(({ id, name, email, role, initials, color, roleVariant }, idx) => (
         <Fragment key={id}>
-          {idx > 0 && <ItemSeparator />}
+          {idx > 0 && <ItemSeparator className="my-0" />}
           <Item>
             <ItemMedia>
-              <Icon className="size-5 text-ui-muted" />
+              <Avatar>
+                <AvatarFallback className={`${color} text-white`}>{initials}</AvatarFallback>
+              </Avatar>
             </ItemMedia>
             <ItemContent>
-              <ItemTitle>{title}</ItemTitle>
-              <ItemDescription>{description}</ItemDescription>
+              <ItemTitle>{name}</ItemTitle>
+              <ItemDescription>{email}</ItemDescription>
             </ItemContent>
             <ItemActions>
-              <Button size="icon" variant="ghost">
-                <Icon className="size-4" />
+              <Badge variant={roleVariant}>{role}</Badge>
+              <Button aria-label={`Options for ${name}`} size="icon-sm" variant="ghost">
+                <MoreHorizontalIcon />
               </Button>
             </ItemActions>
           </Item>

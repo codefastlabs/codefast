@@ -1,36 +1,83 @@
+import { useState } from "react";
+
 import {
   ContextMenu,
+  ContextMenuCheckboxItem,
   ContextMenuContent,
   ContextMenuItem,
   ContextMenuSeparator,
   ContextMenuShortcut,
+  ContextMenuSub,
+  ContextMenuSubContent,
+  ContextMenuSubTrigger,
   ContextMenuTrigger,
 } from "@codefast/ui/context-menu";
+import {
+  CopyIcon,
+  DownloadIcon,
+  FolderIcon,
+  PencilIcon,
+  Share2Icon,
+  Trash2Icon,
+} from "lucide-react";
 
 export function ContextMenuDemo() {
+  const [favorite, setFavorite] = useState(true);
+
   return (
     <ContextMenu>
-      <ContextMenuTrigger className="flex h-32 w-64 items-center justify-center rounded-xl border border-dashed border-ui-border text-sm text-ui-muted select-none">
-        Right-click here
+      <ContextMenuTrigger className="flex w-56 flex-col gap-3 rounded-xl border bg-ui-card p-3 select-none">
+        <div className="aspect-video rounded-lg bg-gradient-to-br from-sky-400 to-violet-500" />
+        <div className="flex flex-col gap-0.5">
+          <span className="text-sm font-medium text-ui-fg">cover-art.png</span>
+          <span className="text-xs text-ui-muted">Right-click to edit</span>
+        </div>
       </ContextMenuTrigger>
-      <ContextMenuContent>
+      <ContextMenuContent className="w-52">
         <ContextMenuItem>
-          Back <ContextMenuShortcut>⌘[</ContextMenuShortcut>
+          <PencilIcon />
+          Rename
+          <ContextMenuShortcut>⌘E</ContextMenuShortcut>
         </ContextMenuItem>
         <ContextMenuItem>
-          Forward <ContextMenuShortcut>⌘]</ContextMenuShortcut>
+          <CopyIcon />
+          Duplicate
+          <ContextMenuShortcut>⌘D</ContextMenuShortcut>
         </ContextMenuItem>
         <ContextMenuItem>
-          Reload <ContextMenuShortcut>⌘R</ContextMenuShortcut>
+          <DownloadIcon />
+          Download
+        </ContextMenuItem>
+        <ContextMenuSub>
+          <ContextMenuSubTrigger>
+            <FolderIcon />
+            Move to
+          </ContextMenuSubTrigger>
+          <ContextMenuSubContent className="w-40">
+            <ContextMenuItem>Projects</ContextMenuItem>
+            <ContextMenuItem>Drafts</ContextMenuItem>
+            <ContextMenuItem>Archive</ContextMenuItem>
+          </ContextMenuSubContent>
+        </ContextMenuSub>
+        <ContextMenuSeparator />
+        <ContextMenuCheckboxItem
+          checked={favorite}
+          onCheckedChange={(value) => {
+            setFavorite(value === true);
+          }}
+        >
+          Add to favorites
+        </ContextMenuCheckboxItem>
+        <ContextMenuItem>
+          <Share2Icon />
+          Share…
         </ContextMenuItem>
         <ContextMenuSeparator />
-        <ContextMenuItem>
-          Save As… <ContextMenuShortcut>⌘S</ContextMenuShortcut>
+        <ContextMenuItem variant="destructive">
+          <Trash2Icon />
+          Delete
+          <ContextMenuShortcut>⌫</ContextMenuShortcut>
         </ContextMenuItem>
-        <ContextMenuItem>Print… </ContextMenuItem>
-        <ContextMenuSeparator />
-        <ContextMenuItem>View Source</ContextMenuItem>
-        <ContextMenuItem>Inspect</ContextMenuItem>
       </ContextMenuContent>
     </ContextMenu>
   );

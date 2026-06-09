@@ -1,33 +1,53 @@
+import { useState } from "react";
+
 import {
   Menubar,
+  MenubarCheckboxItem,
   MenubarContent,
   MenubarItem,
+  MenubarLabel,
   MenubarMenu,
+  MenubarRadioGroup,
+  MenubarRadioItem,
   MenubarSeparator,
   MenubarShortcut,
+  MenubarSub,
+  MenubarSubContent,
+  MenubarSubTrigger,
   MenubarTrigger,
 } from "@codefast/ui/menubar";
 
 export function MenubarDemo() {
+  const [showToolbar, setShowToolbar] = useState(true);
+  const [showGrid, setShowGrid] = useState(false);
+  const [zoom, setZoom] = useState("100");
+
   return (
     <Menubar>
       <MenubarMenu>
         <MenubarTrigger>File</MenubarTrigger>
         <MenubarContent>
           <MenubarItem>
-            New Tab <MenubarShortcut>⌘T</MenubarShortcut>
+            New File <MenubarShortcut>⌘N</MenubarShortcut>
           </MenubarItem>
           <MenubarItem>
-            New Window <MenubarShortcut>⌘N</MenubarShortcut>
+            Open… <MenubarShortcut>⌘O</MenubarShortcut>
           </MenubarItem>
+          <MenubarSub>
+            <MenubarSubTrigger>Share</MenubarSubTrigger>
+            <MenubarSubContent>
+              <MenubarItem>Copy link</MenubarItem>
+              <MenubarItem>Email link</MenubarItem>
+              <MenubarItem>Embed</MenubarItem>
+            </MenubarSubContent>
+          </MenubarSub>
           <MenubarSeparator />
           <MenubarItem>
-            Save <MenubarShortcut>⌘S</MenubarShortcut>
+            Print… <MenubarShortcut>⌘P</MenubarShortcut>
           </MenubarItem>
-          <MenubarSeparator />
-          <MenubarItem>Print…</MenubarItem>
         </MenubarContent>
       </MenubarMenu>
+
       <MenubarMenu>
         <MenubarTrigger>Edit</MenubarTrigger>
         <MenubarContent>
@@ -49,13 +69,33 @@ export function MenubarDemo() {
           </MenubarItem>
         </MenubarContent>
       </MenubarMenu>
+
       <MenubarMenu>
         <MenubarTrigger>View</MenubarTrigger>
         <MenubarContent>
-          <MenubarItem>Zoom In</MenubarItem>
-          <MenubarItem>Zoom Out</MenubarItem>
+          <MenubarCheckboxItem
+            checked={showToolbar}
+            onCheckedChange={(value) => {
+              setShowToolbar(value === true);
+            }}
+          >
+            Show toolbar
+          </MenubarCheckboxItem>
+          <MenubarCheckboxItem
+            checked={showGrid}
+            onCheckedChange={(value) => {
+              setShowGrid(value === true);
+            }}
+          >
+            Show grid
+          </MenubarCheckboxItem>
           <MenubarSeparator />
-          <MenubarItem>Toggle Fullscreen</MenubarItem>
+          <MenubarLabel>Zoom</MenubarLabel>
+          <MenubarRadioGroup value={zoom} onValueChange={setZoom}>
+            <MenubarRadioItem value="50">50%</MenubarRadioItem>
+            <MenubarRadioItem value="100">100%</MenubarRadioItem>
+            <MenubarRadioItem value="150">150%</MenubarRadioItem>
+          </MenubarRadioGroup>
         </MenubarContent>
       </MenubarMenu>
     </Menubar>
