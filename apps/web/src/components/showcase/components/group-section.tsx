@@ -1,6 +1,6 @@
 import type { ComponentGroup } from "#/data/component-groups";
 import type { HighlightedCodes } from "#/components/showcase/types";
-import { ComponentCard } from "#/components/showcase/component-card";
+import { ComponentCard } from "#/components/showcase/components/component-card";
 
 /** A titled band with a count badge and the responsive card grid. */
 export function GroupSection({ group, hl }: { group: ComponentGroup; hl: HighlightedCodes }) {
