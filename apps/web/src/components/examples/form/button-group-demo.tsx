@@ -1,18 +1,27 @@
 import { Button } from "@codefast/ui/button";
 import { ButtonGroup } from "@codefast/ui/button-group";
+import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 
 export function ButtonGroupDemo() {
   return (
     <div className="flex flex-col items-center gap-4">
+      {/* Segmented view switcher */}
       <ButtonGroup>
-        <Button variant="outline">Copy</Button>
-        <Button variant="outline">Paste</Button>
-        <Button variant="outline">Cut</Button>
+        <Button variant="secondary">List</Button>
+        <Button variant="outline">Board</Button>
+        <Button variant="outline">Timeline</Button>
       </ButtonGroup>
-      <ButtonGroup orientation="vertical">
-        <Button variant="outline">Top</Button>
-        <Button variant="outline">Middle</Button>
-        <Button variant="outline">Bottom</Button>
+
+      {/* Pager */}
+      <ButtonGroup>
+        <Button variant="outline">
+          <ChevronLeftIcon />
+          Previous
+        </Button>
+        <Button variant="outline">
+          Next
+          <ChevronRightIcon />
+        </Button>
       </ButtonGroup>
     </div>
   );

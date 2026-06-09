@@ -1,29 +1,38 @@
+import { Button } from "@codefast/ui/button";
+import { Input } from "@codefast/ui/input";
+import { Label } from "@codefast/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@codefast/ui/tabs";
 
 export function TabsDemo() {
   return (
-    <Tabs defaultValue="preview" className="w-full max-w-sm">
+    <Tabs defaultValue="account" className="w-full max-w-sm">
       <TabsList>
-        <TabsTrigger value="preview">Preview</TabsTrigger>
-        <TabsTrigger value="code">Code</TabsTrigger>
-        <TabsTrigger value="docs">Docs</TabsTrigger>
+        <TabsTrigger value="account">Account</TabsTrigger>
+        <TabsTrigger value="password">Password</TabsTrigger>
       </TabsList>
-      <TabsContent
-        value="preview"
-        className="mt-3 rounded-lg border border-ui-border p-4 text-sm text-ui-muted"
-      >
-        Live component preview renders here.
+
+      <TabsContent value="account" className="mt-4 space-y-3">
+        <div className="grid gap-1.5">
+          <Label htmlFor="tabs-name">Name</Label>
+          <Input id="tabs-name" defaultValue="Vuong Phan" />
+        </div>
+        <div className="grid gap-1.5">
+          <Label htmlFor="tabs-username">Username</Label>
+          <Input id="tabs-username" defaultValue="@vuongphan" />
+        </div>
+        <Button size="sm">Save changes</Button>
       </TabsContent>
-      <TabsContent value="code" className="mt-3 overflow-hidden rounded-lg">
-        <pre className="bg-neutral-900 p-4 font-mono text-xs text-neutral-100">
-          <code>{`<Button variant="outline">Click me</Button>`}</code>
-        </pre>
-      </TabsContent>
-      <TabsContent
-        value="docs"
-        className="mt-3 rounded-lg border border-ui-border p-4 text-sm text-ui-muted"
-      >
-        Full API reference and usage examples.
+
+      <TabsContent value="password" className="mt-4 space-y-3">
+        <div className="grid gap-1.5">
+          <Label htmlFor="tabs-current">Current password</Label>
+          <Input id="tabs-current" type="password" placeholder="••••••••" />
+        </div>
+        <div className="grid gap-1.5">
+          <Label htmlFor="tabs-new">New password</Label>
+          <Input id="tabs-new" type="password" placeholder="Min. 8 characters" />
+        </div>
+        <Button size="sm">Update password</Button>
       </TabsContent>
     </Tabs>
   );
