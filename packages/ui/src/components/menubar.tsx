@@ -59,22 +59,6 @@ function MenubarGroup({ ...props }: MenubarGroupProps): JSX.Element {
 }
 
 /* -----------------------------------------------------------------------------
- * Component: MenubarPortal
- * -------------------------------------------------------------------------- */
-
-/**
- * @since 0.3.16-canary.0
- */
-type MenubarPortalProps = ComponentProps<typeof MenubarPrimitive.Portal>;
-
-/**
- * @since 0.3.16-canary.0
- */
-function MenubarPortal({ ...props }: MenubarPortalProps): JSX.Element {
-  return <MenubarPrimitive.Portal data-slot="menubar-portal" {...props} />;
-}
-
-/* -----------------------------------------------------------------------------
  * Component: MenubarSub
  * -------------------------------------------------------------------------- */
 
@@ -181,14 +165,16 @@ type MenubarSubContentProps = ComponentProps<typeof MenubarPrimitive.SubContent>
  */
 function MenubarSubContent({ className, ...props }: MenubarSubContentProps): JSX.Element {
   return (
-    <MenubarPrimitive.SubContent
-      className={cn(
-        "z-50 min-w-32 origin-(--radix-menubar-content-transform-origin) overflow-hidden rounded-md bg-popover p-1 text-popover-foreground shadow-lg ring-1 ring-foreground/10 duration-100 data-side-top:slide-in-from-bottom-2 data-side-right:slide-in-from-left-2 data-side-bottom:slide-in-from-top-2 data-side-left:slide-in-from-right-2 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95",
-        className,
-      )}
-      data-slot="menubar-sub-content"
-      {...props}
-    />
+    <MenubarPrimitive.Portal data-slot="menubar-portal">
+      <MenubarPrimitive.SubContent
+        className={cn(
+          "z-50 min-w-32 origin-(--radix-menubar-content-transform-origin) overflow-hidden rounded-md bg-popover p-1 text-popover-foreground shadow-lg ring-1 ring-foreground/10 ease-snappy data-open:animate-in data-open:duration-200 data-open:fade-in-0 data-open:zoom-in-95 data-open:data-side-top:slide-in-from-bottom-2 data-open:data-side-right:slide-in-from-left-2 data-open:data-side-bottom:slide-in-from-top-2 data-open:data-side-left:slide-in-from-right-2 data-closed:animate-out data-closed:duration-150 data-closed:fade-out-0 data-closed:zoom-out-95 data-closed:data-side-top:slide-out-to-bottom-2 data-closed:data-side-right:slide-out-to-left-2 data-closed:data-side-bottom:slide-out-to-top-2 data-closed:data-side-left:slide-out-to-right-2",
+          className,
+        )}
+        data-slot="menubar-sub-content"
+        {...props}
+      />
+    </MenubarPrimitive.Portal>
   );
 }
 
@@ -212,19 +198,19 @@ function MenubarContent({
   ...props
 }: MenubarContentProps): JSX.Element {
   return (
-    <MenubarPortal>
+    <MenubarPrimitive.Portal data-slot="menubar-portal">
       <MenubarPrimitive.Content
         align={align}
         alignOffset={alignOffset}
         className={cn(
-          "z-50 min-w-36 origin-(--radix-menubar-content-transform-origin) overflow-hidden rounded-md bg-popover p-1 text-popover-foreground shadow-md ring-1 ring-foreground/10 duration-100 data-side-top:slide-in-from-bottom-2 data-side-right:slide-in-from-left-2 data-side-bottom:slide-in-from-top-2 data-side-left:slide-in-from-right-2 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95",
+          "z-50 min-w-36 origin-(--radix-menubar-content-transform-origin) overflow-hidden rounded-md bg-popover p-1 text-popover-foreground shadow-md ring-1 ring-foreground/10 ease-snappy data-open:animate-in data-open:duration-200 data-open:fade-in-0 data-open:zoom-in-95 data-open:data-side-top:slide-in-from-bottom-2 data-open:data-side-right:slide-in-from-left-2 data-open:data-side-bottom:slide-in-from-top-2 data-open:data-side-left:slide-in-from-right-2",
           className,
         )}
         data-slot="menubar-content"
         sideOffset={sideOffset}
         {...props}
       />
-    </MenubarPortal>
+    </MenubarPrimitive.Portal>
   );
 }
 
@@ -452,7 +438,6 @@ export {
   MenubarItem,
   MenubarLabel,
   MenubarMenu,
-  MenubarPortal,
   MenubarRadioGroup,
   MenubarRadioItem,
   MenubarSeparator,
@@ -470,7 +455,6 @@ export type {
   MenubarItemProps,
   MenubarLabelProps,
   MenubarMenuProps,
-  MenubarPortalProps,
   MenubarProps,
   MenubarRadioGroupProps,
   MenubarRadioItemProps,
