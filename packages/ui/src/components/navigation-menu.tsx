@@ -112,7 +112,7 @@ function NavigationMenuTrigger({
 }: NavigationMenuTriggerProps): JSX.Element {
   return (
     <NavigationMenuPrimitive.Trigger
-      className={navigationMenuTriggerVariants({ className: cn("group", className) })}
+      className={navigationMenuTriggerVariants({ className: ["group", className] })}
       data-slot="navigation-menu-trigger"
       {...props}
     >
