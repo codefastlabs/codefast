@@ -156,7 +156,7 @@ const resolveVariantClasses = <T extends VariantSchema>(
  *
  * @since 0.3.16-canary.0
  */
-export function tv<T extends VariantSchema>(
+export function tv<T extends VariantSchema = Record<never, never>>(
   config: VariantConfig<T>,
   tvConfig?: TailwindVariantsOptions,
 ): VariantResolver<T, Record<string, never>>;
@@ -391,7 +391,7 @@ export function createTV(globalConfiguration: TailwindVariantsOptions = {}): Tai
    * @param localConfiguration - Optional local configuration override
    * @returns A variant function for regular components
    */
-  function tvFactory<T extends VariantSchema>(
+  function tvFactory<T extends VariantSchema = Record<never, never>>(
     configuration: VariantConfig<T>,
     localConfiguration?: TailwindVariantsOptions,
   ): VariantResolver<T, Record<string, never>>;
