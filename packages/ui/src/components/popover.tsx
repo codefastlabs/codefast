@@ -70,7 +70,7 @@ function PopoverContent({
   ...props
 }: PopoverContentProps): JSX.Element {
   return (
-    <PopoverPrimitive.Portal>
+    <PopoverPrimitive.Portal data-slot="popover-portal">
       <PopoverPrimitive.Content
         align={align}
         className={cn(

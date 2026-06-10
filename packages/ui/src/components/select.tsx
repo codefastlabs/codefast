@@ -170,7 +170,7 @@ function SelectContent({
   ...props
 }: SelectContentProps): JSX.Element {
   return (
-    <SelectPrimitive.Portal>
+    <SelectPrimitive.Portal data-slot="select-portal">
       <SelectPrimitive.Content
         align={align}
         className={cn(

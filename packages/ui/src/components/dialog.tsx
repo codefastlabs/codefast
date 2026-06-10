@@ -39,47 +39,6 @@ function DialogTrigger({ ...props }: DialogTriggerProps): JSX.Element {
 }
 
 /* -----------------------------------------------------------------------------
- * Component: DialogPortal
- * -------------------------------------------------------------------------- */
-
-/**
- * @since 0.3.16-canary.0
- */
-type DialogPortalProps = ComponentProps<typeof DialogPrimitive.Portal>;
-
-/**
- * @since 0.3.16-canary.0
- */
-function DialogPortal({ ...props }: DialogPortalProps): JSX.Element {
-  return <DialogPrimitive.Portal data-slot="dialog-portal" {...props} />;
-}
-
-/* -----------------------------------------------------------------------------
- * Component: DialogOverlay
- * -------------------------------------------------------------------------- */
-
-/**
- * @since 0.3.16-canary.0
- */
-type DialogOverlayProps = ComponentProps<typeof DialogPrimitive.Overlay>;
-
-/**
- * @since 0.3.16-canary.0
- */
-function DialogOverlay({ className, ...props }: DialogOverlayProps): JSX.Element {
-  return (
-    <DialogPrimitive.Overlay
-      className={cn(
-        "fixed inset-0 isolate z-50 bg-black/10 duration-100 supports-backdrop-filter:backdrop-blur-xs data-open:animate-in data-open:fade-in-0 data-closed:animate-out data-closed:fade-out-0",
-        className,
-      )}
-      data-slot="dialog-overlay"
-      {...props}
-    />
-  );
-}
-
-/* -----------------------------------------------------------------------------
  * Component: DialogContent
  * -------------------------------------------------------------------------- */
 
@@ -100,8 +59,15 @@ function DialogContent({
   ...props
 }: DialogContentProps): JSX.Element {
   return (
-    <DialogPortal>
-      <DialogOverlay />
+    <DialogPrimitive.Portal data-slot="dialog-portal">
+      <DialogPrimitive.Overlay
+        className={cn(
+          "fixed inset-0 isolate z-50 bg-black/10 duration-100 supports-backdrop-filter:backdrop-blur-xs data-open:animate-in data-open:fade-in-0 data-closed:animate-out data-closed:fade-out-0",
+          className,
+        )}
+        data-slot="dialog-overlay"
+        {...props}
+      />
       <DialogPrimitive.Content
         className={cn(
           "fixed top-1/2 left-1/2 z-50 flex max-h-[calc(100dvh-2rem)] w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 flex-col gap-6 overflow-y-auto rounded-xl bg-popover p-6 text-sm text-popover-foreground ring-1 ring-foreground/10 duration-100 outline-none sm:max-w-md data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95",
@@ -120,7 +86,7 @@ function DialogContent({
           </DialogPrimitive.Close>
         ) : null}
       </DialogPrimitive.Content>
-    </DialogPortal>
+    </DialogPrimitive.Portal>
   );
 }
 
@@ -284,8 +250,6 @@ export {
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogOverlay,
-  DialogPortal,
   DialogTitle,
   DialogTrigger,
 };
@@ -296,8 +260,6 @@ export type {
   DialogDescriptionProps,
   DialogFooterProps,
   DialogHeaderProps,
-  DialogOverlayProps,
-  DialogPortalProps,
   DialogProps,
   DialogTitleProps,
   DialogTriggerProps,

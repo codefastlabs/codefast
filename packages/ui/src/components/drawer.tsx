@@ -45,47 +45,6 @@ function DrawerTrigger({ ...props }: DrawerTriggerProps): JSX.Element {
 }
 
 /* -----------------------------------------------------------------------------
- * Component: DrawerPortal
- * -------------------------------------------------------------------------- */
-
-/**
- * @since 0.3.16-canary.0
- */
-type DrawerPortalProps = ComponentProps<typeof DrawerPrimitive.Portal>;
-
-/**
- * @since 0.3.16-canary.0
- */
-function DrawerPortal({ ...props }: DrawerPortalProps): JSX.Element {
-  return <DrawerPrimitive.Portal data-slot="drawer-portal" {...props} />;
-}
-
-/* -----------------------------------------------------------------------------
- * Component: DrawerOverlay
- * -------------------------------------------------------------------------- */
-
-/**
- * @since 0.3.16-canary.0
- */
-type DrawerOverlayProps = ComponentProps<typeof DrawerPrimitive.Overlay>;
-
-/**
- * @since 0.3.16-canary.0
- */
-function DrawerOverlay({ className, ...props }: DrawerOverlayProps): JSX.Element {
-  return (
-    <DrawerPrimitive.Overlay
-      className={cn(
-        "fixed inset-0 z-50 bg-black/10 supports-backdrop-filter:backdrop-blur-xs data-open:animate-in data-open:fade-in-0 data-closed:animate-out data-closed:fade-out-0",
-        className,
-      )}
-      data-slot="drawer-overlay"
-      {...props}
-    />
-  );
-}
-
-/* -----------------------------------------------------------------------------
  * Component: DrawerContent
  * -------------------------------------------------------------------------- */
 
@@ -99,8 +58,15 @@ type DrawerContentProps = ComponentProps<typeof DrawerPrimitive.Content>;
  */
 function DrawerContent({ children, className, ...props }: DrawerContentProps): JSX.Element {
   return (
-    <DrawerPortal>
-      <DrawerOverlay />
+    <DrawerPrimitive.Portal data-slot="drawer-portal">
+      <DrawerPrimitive.Overlay
+        className={cn(
+          "fixed inset-0 z-50 bg-black/10 supports-backdrop-filter:backdrop-blur-xs data-open:animate-in data-open:fade-in-0 data-closed:animate-out data-closed:fade-out-0",
+          className,
+        )}
+        data-slot="drawer-overlay"
+        {...props}
+      />
       <DrawerPrimitive.Content
         className={cn(
           "group/drawer-content fixed z-50 flex h-auto flex-col bg-popover text-sm text-popover-foreground data-[vaul-drawer-direction=bottom]:inset-x-0 data-[vaul-drawer-direction=bottom]:bottom-0 data-[vaul-drawer-direction=bottom]:mt-24 data-[vaul-drawer-direction=bottom]:max-h-[80vh] data-[vaul-drawer-direction=bottom]:rounded-t-xl data-[vaul-drawer-direction=bottom]:border-t data-[vaul-drawer-direction=left]:inset-y-0 data-[vaul-drawer-direction=left]:left-0 data-[vaul-drawer-direction=left]:w-3/4 data-[vaul-drawer-direction=left]:rounded-r-xl data-[vaul-drawer-direction=left]:border-r data-[vaul-drawer-direction=right]:inset-y-0 data-[vaul-drawer-direction=right]:right-0 data-[vaul-drawer-direction=right]:w-3/4 data-[vaul-drawer-direction=right]:rounded-l-xl data-[vaul-drawer-direction=right]:border-l data-[vaul-drawer-direction=top]:inset-x-0 data-[vaul-drawer-direction=top]:top-0 data-[vaul-drawer-direction=top]:mb-24 data-[vaul-drawer-direction=top]:max-h-[80vh] data-[vaul-drawer-direction=top]:rounded-b-xl data-[vaul-drawer-direction=top]:border-b data-[vaul-drawer-direction=left]:sm:max-w-sm data-[vaul-drawer-direction=right]:sm:max-w-sm",
@@ -112,7 +78,7 @@ function DrawerContent({ children, className, ...props }: DrawerContentProps): J
         <div className="mx-auto mt-4 hidden h-1.5 w-25 shrink-0 rounded-full bg-muted group-data-[vaul-drawer-direction=bottom]/drawer-content:block" />
         {children}
       </DrawerPrimitive.Content>
-    </DrawerPortal>
+    </DrawerPrimitive.Portal>
   );
 }
 
@@ -243,8 +209,6 @@ export {
   DrawerDescription,
   DrawerFooter,
   DrawerHeader,
-  DrawerOverlay,
-  DrawerPortal,
   DrawerTitle,
   DrawerTrigger,
 };
@@ -254,8 +218,6 @@ export type {
   DrawerDescriptionProps,
   DrawerFooterProps,
   DrawerHeaderProps,
-  DrawerOverlayProps,
-  DrawerPortalProps,
   DrawerProps,
   DrawerTitleProps,
   DrawerTriggerProps,
