@@ -167,7 +167,7 @@ type ContextMenuContentProps = ComponentProps<typeof ContextMenuPrimitive.Conten
  */
 function ContextMenuContent({ className, ...props }: ContextMenuContentProps): JSX.Element {
   return (
-    <ContextMenuPrimitive.Portal>
+    <ContextMenuPrimitive.Portal data-slot="context-menu-portal">
       <ContextMenuPrimitive.Content
         className={cn(
           "z-50 max-h-(--radix-context-menu-content-available-height) min-w-36 origin-(--radix-context-menu-content-transform-origin) overflow-x-hidden overflow-y-auto rounded-md bg-popover p-1 text-popover-foreground shadow-md ring-1 ring-foreground/10 ease-snappy data-open:animate-in data-open:duration-200 data-open:fade-in-0 data-open:zoom-in-95 data-open:data-side-top:slide-in-from-bottom-2 data-open:data-side-right:slide-in-from-left-2 data-open:data-side-bottom:slide-in-from-top-2 data-open:data-side-left:slide-in-from-right-2",

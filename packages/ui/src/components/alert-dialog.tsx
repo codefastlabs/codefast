@@ -38,47 +38,6 @@ function AlertDialogTrigger({ ...props }: AlertDialogTriggerProps): JSX.Element 
 }
 
 /* -----------------------------------------------------------------------------
- * Component: AlertDialogPortal
- * -------------------------------------------------------------------------- */
-
-/**
- * @since 0.3.16-canary.0
- */
-type AlertDialogPortalProps = ComponentProps<typeof AlertDialogPrimitive.Portal>;
-
-/**
- * @since 0.3.16-canary.0
- */
-function AlertDialogPortal({ ...props }: AlertDialogPortalProps): JSX.Element {
-  return <AlertDialogPrimitive.Portal data-slot="alert-dialog-portal" {...props} />;
-}
-
-/* -----------------------------------------------------------------------------
- * Component: AlertDialogOverlay
- * -------------------------------------------------------------------------- */
-
-/**
- * @since 0.3.16-canary.0
- */
-type AlertDialogOverlayProps = ComponentProps<typeof AlertDialogPrimitive.Overlay>;
-
-/**
- * @since 0.3.16-canary.0
- */
-function AlertDialogOverlay({ className, ...props }: AlertDialogOverlayProps): JSX.Element {
-  return (
-    <AlertDialogPrimitive.Overlay
-      className={cn(
-        "fixed inset-0 z-50 bg-black/10 duration-100 supports-backdrop-filter:backdrop-blur-xs data-open:animate-in data-open:fade-in-0 data-closed:animate-out data-closed:fade-out-0",
-        className,
-      )}
-      data-slot="alert-dialog-overlay"
-      {...props}
-    />
-  );
-}
-
-/* -----------------------------------------------------------------------------
  * Component: AlertDialogContent
  * -------------------------------------------------------------------------- */
 
@@ -98,8 +57,14 @@ function AlertDialogContent({
   ...props
 }: AlertDialogContentProps): JSX.Element {
   return (
-    <AlertDialogPortal>
-      <AlertDialogOverlay />
+    <AlertDialogPrimitive.Portal data-slot="alert-dialog-portal">
+      <AlertDialogPrimitive.Overlay
+        className={cn(
+          "fixed inset-0 z-50 bg-black/10 duration-100 supports-backdrop-filter:backdrop-blur-xs data-open:animate-in data-open:fade-in-0 data-closed:animate-out data-closed:fade-out-0",
+          className,
+        )}
+        data-slot="alert-dialog-overlay"
+      />
       <AlertDialogPrimitive.Content
         className={cn(
           "group/alert-dialog-content fixed top-1/2 left-1/2 z-50 flex max-h-[calc(100dvh-2rem)] w-full -translate-x-1/2 -translate-y-1/2 flex-col gap-6 overflow-y-auto rounded-xl bg-popover p-6 text-popover-foreground ring-1 ring-foreground/10 duration-100 outline-none data-[size=default]:max-w-xs data-[size=sm]:max-w-xs data-[size=default]:sm:max-w-lg data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95",
@@ -109,7 +74,7 @@ function AlertDialogContent({
         data-slot="alert-dialog-content"
         {...props}
       />
-    </AlertDialogPortal>
+    </AlertDialogPrimitive.Portal>
   );
 }
 
@@ -332,8 +297,6 @@ export {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogMedia,
-  AlertDialogOverlay,
-  AlertDialogPortal,
   AlertDialogTitle,
   AlertDialogTrigger,
 };
@@ -346,8 +309,6 @@ export type {
   AlertDialogFooterProps,
   AlertDialogHeaderProps,
   AlertDialogMediaProps,
-  AlertDialogOverlayProps,
-  AlertDialogPortalProps,
   AlertDialogProps,
   AlertDialogTitleProps,
   AlertDialogTriggerProps,

@@ -41,47 +41,6 @@ function SheetTrigger({ ...props }: SheetTriggerProps): JSX.Element {
 }
 
 /* -----------------------------------------------------------------------------
- * Component: SheetPortal
- * -------------------------------------------------------------------------- */
-
-/**
- * @since 0.3.16-canary.0
- */
-type SheetPortalProps = ComponentProps<typeof SheetPrimitive.Portal>;
-
-/**
- * @since 0.3.16-canary.0
- */
-function SheetPortal({ ...props }: SheetPortalProps): JSX.Element {
-  return <SheetPrimitive.Portal data-slot="sheet-portal" {...props} />;
-}
-
-/* -----------------------------------------------------------------------------
- * Component: SheetOverlay
- * -------------------------------------------------------------------------- */
-
-/**
- * @since 0.3.16-canary.0
- */
-type SheetOverlayProps = ComponentProps<typeof SheetPrimitive.Overlay>;
-
-/**
- * @since 0.3.16-canary.0
- */
-function SheetOverlay({ className, ...props }: SheetOverlayProps): JSX.Element {
-  return (
-    <SheetPrimitive.Overlay
-      className={cn(
-        "fixed inset-0 z-50 bg-black/10 duration-100 supports-backdrop-filter:backdrop-blur-xs data-open:animate-in data-open:fade-in-0 data-closed:animate-out data-closed:fade-out-0",
-        className,
-      )}
-      data-slot="sheet-overlay"
-      {...props}
-    />
-  );
-}
-
-/* -----------------------------------------------------------------------------
  * Component: SheetContent
  * -------------------------------------------------------------------------- */
 
@@ -104,8 +63,14 @@ function SheetContent({
   ...props
 }: SheetContentProps): JSX.Element {
   return (
-    <SheetPortal>
-      <SheetOverlay />
+    <SheetPrimitive.Portal data-slot="sheet-portal">
+      <SheetPrimitive.Overlay
+        className={cn(
+          "fixed inset-0 z-50 bg-black/10 duration-100 supports-backdrop-filter:backdrop-blur-xs data-open:animate-in data-open:fade-in-0 data-closed:animate-out data-closed:fade-out-0",
+          className,
+        )}
+        data-slot="sheet-overlay"
+      />
       <SheetPrimitive.Content
         className={sheetContentVariants({ className, side })}
         data-side={side}
@@ -127,7 +92,7 @@ function SheetContent({
           </SheetPrimitive.Close>
         ) : null}
       </SheetPrimitive.Content>
-    </SheetPortal>
+    </SheetPrimitive.Portal>
   );
 }
 
@@ -282,8 +247,6 @@ export {
   SheetDescription,
   SheetFooter,
   SheetHeader,
-  SheetOverlay,
-  SheetPortal,
   SheetTitle,
   SheetTrigger,
 };
@@ -294,8 +257,6 @@ export type {
   SheetDescriptionProps,
   SheetFooterProps,
   SheetHeaderProps,
-  SheetOverlayProps,
-  SheetPortalProps,
   SheetProps,
   SheetTitleProps,
   SheetTriggerProps,
