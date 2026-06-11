@@ -4,11 +4,13 @@
 
 ## Code Quality — BẮT BUỘC
 
-**Sau khi viết hoặc sửa bất kỳ file nào**, Claude phải tự chạy kiểm tra chất lượng. Không bao giờ kết thúc task mà bỏ qua bước này.
+**Sau khi viết hoặc sửa bất kỳ file nào**, Claude phải tự chạy kiểm tra chất lượng **ở mức repo** theo bảng dưới. Không bao giờ kết thúc task mà bỏ qua bước này.
 
 ### Quy trình chuẩn
 
-> Hook PostToolUse trong `.claude/settings.json` đã **tự động chạy oxfmt + oxlint trên từng file** ngay sau khi Claude ghi/sửa. Không cần chạy lại format/lint thủ công cho từng file — chỉ cần các bước kiểm tra ở mức repo dưới đây.
+> Hook PostToolUse trong `.claude/settings.json` đã **tự động chạy oxfmt + oxlint trên từng file** ngay sau khi Claude ghi/sửa qua tool Write/Edit. Không cần chạy lại format/lint thủ công cho từng file đó.
+>
+> **Ngoại lệ**: file được tạo/sửa qua **Bash** (codegen, script, `codefast arrange`, …) không đi qua hook — sau các thao tác đó phải chạy `pnpm run format` (và `pnpm run lint:fix` nếu là file TS/JS).
 
 1. **Type check** (không auto-fix, đọc output và sửa tay):
 
@@ -45,6 +47,7 @@ pnpm run build        # Build toàn bộ
 pnpm run build:packages  # Build chỉ packages (thường cần sau khi sửa packages/)
 pnpm run test         # Chạy toàn bộ tests
 pnpm run test:unit    # Chỉ unit tests
+pnpm run verify       # Tổng hợp: build packages + lint:fix + format + check-types + test:coverage
 pnpm run clean        # Xóa build cache
 ```
 

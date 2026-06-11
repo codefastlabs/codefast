@@ -1,4 +1,5 @@
 {
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
   "permissions": {
     "allow": [
       "Bash(pnpm run *)",
@@ -33,7 +34,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "f=$(jq -r '.tool_input.file_path // empty'); [ -z \"$f\" ] && exit 0; pnpm exec oxfmt \"$f\" 2>/dev/null || true; case \"$f\" in *.ts|*.tsx|*.js|*.jsx|*.mjs|*.cjs) LINT=$(pnpm exec oxlint \"$f\" 2>&1); echo \"$LINT\" | grep -qE 'warning|error' && jq -n --arg ctx \"Lint issues found in $f — fix before finishing:\\n$LINT\" '{\"hookSpecificOutput\":{\"hookEventName\":\"PostToolUse\",\"additionalContext\":$ctx}}' || true ;; esac; exit 0",
+            "command": "f=$(jq -r '.tool_input.file_path // empty'); [ -z \"$f\" ] && exit 0; pnpm exec oxfmt \"$f\" >/dev/null 2>&1 || true; case \"$f\" in *.ts|*.tsx|*.mts|*.cts|*.js|*.jsx|*.mjs|*.cjs) LINT=$(pnpm exec oxlint \"$f\" 2>&1); echo \"$LINT\" | grep -qE 'warning|error' && jq -n --arg ctx \"Lint issues found in $f — fix before finishing:\\n$LINT\" '{\"hookSpecificOutput\":{\"hookEventName\":\"PostToolUse\",\"additionalContext\":$ctx}}' || true ;; esac; exit 0",
             "timeout": 30,
             "statusMessage": "Formatting & linting..."
           }
