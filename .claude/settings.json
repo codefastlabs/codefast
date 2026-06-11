@@ -23,7 +23,8 @@
         "hooks": [
           {
             "type": "command",
-            "command": "jq -r '.tool_input.command // \"\"' | grep -q 'git commit' && echo '{\"hookSpecificOutput\":{\"hookEventName\":\"PostToolUse\",\"additionalContext\":\"Git commit completed. You MUST now run `pnpm changeset add` to create a changeset for this commit. Do not skip this step unless the user explicitly says no changeset is needed.\"}}' || true"
+            "if": "Bash(git *)",
+            "command": "jq -r '.tool_input.command // \"\"' | grep -q 'git commit' && echo '{\"hookSpecificOutput\":{\"hookEventName\":\"PostToolUse\",\"additionalContext\":\"Git commit completed. If the commit changes any publishable package, create a changeset now. Do NOT run `pnpm changeset add` (interactive TUI). Instead write a `.changeset/<kebab-case-name>.md` file yourself: YAML frontmatter mapping each affected package to a bump type (patch/minor/major), then a one-sentence summary for the changelog. Include it in the same commit when possible (stage it before committing, or `git commit --amend --no-edit`). Skip only when nothing publishable changed (repo tooling, tests, docs, packages in the changeset ignore list) or the user explicitly says no changeset is needed.\"}}' || true"
           }
         ]
       },
