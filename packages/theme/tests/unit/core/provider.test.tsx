@@ -1,14 +1,13 @@
-import type React from "react";
-
 import { act, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import type React from "react";
 import { renderToString } from "react-dom/server";
 
+import { SYNC_CHANNEL } from "#/constants";
 import { AppearanceProvider } from "#/core/provider";
 import { useColorScheme } from "#/core/use-theme";
-import { SYNC_CHANNEL } from "#/constants";
-import type { ColorScheme } from "#/types";
 import { createMockMediaQueryList, mockMatchMedia } from "#/tests/support/mocks";
+import type { ColorScheme } from "#/types";
 
 describe("AppearanceProvider", () => {
   const originalMatchMedia = window.matchMedia;
@@ -529,7 +528,7 @@ describe("AppearanceProvider", () => {
             return;
           }
           const event = { data } as MessageEvent;
-          for (const fn of [...set]) {
+          for (const fn of Array.from(set)) {
             fn(event);
           }
         }
