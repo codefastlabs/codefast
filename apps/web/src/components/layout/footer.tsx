@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 
-import { AppearanceToggle } from "#/components/appearance-toggle.tsx";
+import { AppearanceToggle } from "#/components/layout/appearance-toggle";
 
 export function Footer() {
   const year = new Date().getFullYear();

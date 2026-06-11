@@ -11,8 +11,8 @@ import { Button } from "@codefast/ui/button";
 import { Link } from "@tanstack/react-router";
 import { ChevronRightIcon, CodeIcon, PackageIcon } from "lucide-react";
 
-import type { ComponentMeta } from "#/data/components";
-import { CATEGORIES, componentPath } from "#/data/components";
+import type { ComponentMeta } from "#/components/examples/meta";
+import { CATEGORIES, componentPath } from "#/components/examples/meta";
 
 const GITHUB_SRC = "https://github.com/codefastlabs/codefast/tree/main/packages/ui/src/components";
 const NPM_URL = "https://www.npmjs.com/package/@codefast/ui";

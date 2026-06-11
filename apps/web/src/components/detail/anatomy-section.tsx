@@ -1,5 +1,5 @@
-import { CodeBlock } from "#/components/code-block";
-import { DocSection } from "#/components/docs/doc-section";
+import { DocSection } from "#/components/detail/doc-section";
+import { CodeBlock } from "#/components/shared/code-block";
 
 interface AnatomySectionProps {
   readonly code: string;

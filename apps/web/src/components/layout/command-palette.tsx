@@ -13,7 +13,7 @@ import { useNavigate } from "@tanstack/react-router";
 import { SearchIcon } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 
-import { ALL_COMPONENTS } from "#/data/components";
+import { COMPONENTS } from "#/components/examples/meta";
 
 const PAGES = [
   { to: "/", label: "Home" },
@@ -102,7 +102,7 @@ export function CommandPalette() {
               ))}
             </CommandGroup>
             <CommandGroup heading="Components">
-              {ALL_COMPONENTS.map((component) => (
+              {COMPONENTS.map((component) => (
                 <CommandItem
                   key={component.slug}
                   value={`${component.name} ${component.category}`}

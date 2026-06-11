@@ -1,7 +1,7 @@
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 
-import { CodeBlock } from "#/components/code-block";
+import { CodeBlock } from "#/components/shared/code-block";
 
 afterEach(() => {
   cleanup();

@@ -1,6 +1,6 @@
-import { DocSection } from "#/components/docs/doc-section";
-import { ExamplePreview } from "#/components/docs/example-preview";
-import type { ResolvedDocExample } from "#/components/examples/docs/types";
+import { DocSection } from "#/components/detail/doc-section";
+import { ExamplePreview } from "#/components/detail/example-preview";
+import type { ResolvedDocExample } from "#/components/examples/types";
 
 interface ExamplesSectionProps {
   /** Examples with their source already resolved to raw text + Shiki HTML. */

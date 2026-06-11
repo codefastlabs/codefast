@@ -4,7 +4,7 @@ import { ArrowUpRightIcon } from "lucide-react";
 import type { ReactNode } from "react";
 import { useState } from "react";
 
-import { LazyCodeBlock } from "#/components/lazy-code-block";
+import { LazyCodeBlock } from "#/components/showcase/lazy-code-block";
 import type { HighlightedSource } from "#/lib/highlight";
 
 interface PreviewCardProps {

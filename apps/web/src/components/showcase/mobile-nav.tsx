@@ -1,9 +1,9 @@
 import { cn } from "@codefast/ui/lib/utils";
 import type { ReactNode } from "react";
 
-import { ViewToggle } from "#/components/showcase/components/view-toggle";
+import type { ComponentGroup } from "#/components/showcase/groups";
 import type { ViewMode } from "#/components/showcase/types";
-import type { ComponentGroup } from "#/data/component-groups";
+import { ViewToggle } from "#/components/showcase/view-toggle";
 
 /** A pill link used in the mobile jump nav, styled by active state. */
 function NavChip({ href, isActive, children }: { href: string; isActive: boolean; children: ReactNode }) {

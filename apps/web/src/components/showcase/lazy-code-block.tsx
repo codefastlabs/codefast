@@ -1,7 +1,7 @@
 import { cn } from "@codefast/ui/lib/utils";
 import { useEffect, useState } from "react";
 
-import { CodeBlock } from "#/components/code-block";
+import { CodeBlock } from "#/components/shared/code-block";
 import type { HighlightedSource } from "#/lib/highlight";
 
 interface LazyCodeBlockProps {
