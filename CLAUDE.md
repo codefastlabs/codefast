@@ -8,27 +8,17 @@
 
 ### Quy trình chuẩn
 
-1. **Format** (auto-fix, chạy trước):
+> Hook PostToolUse trong `.claude/settings.json` đã **tự động chạy oxfmt + oxlint trên từng file** ngay sau khi Claude ghi/sửa. Không cần chạy lại format/lint thủ công cho từng file — chỉ cần các bước kiểm tra ở mức repo dưới đây.
 
-   ```bash
-   pnpm run format
-   ```
-
-2. **Lint** (auto-fix warnings):
-
-   ```bash
-   pnpm run lint:fix
-   ```
-
-3. **Type check** (không auto-fix, đọc output và sửa tay):
+1. **Type check** (không auto-fix, đọc output và sửa tay):
 
    ```bash
    pnpm run check-types
    ```
 
-4. Hoặc chạy tất cả cùng lúc:
+2. Khi refactor lớn hoặc nghi ngờ trạng thái toàn repo:
    ```bash
-   pnpm run check:fix   # lint:fix + format
+   pnpm run check:fix   # lint:fix + format toàn repo
    pnpm run check       # lint + format:check + check-types (không fix)
    ```
 
@@ -36,7 +26,7 @@
 
 | Tình huống                  | Lệnh                                         |
 | --------------------------- | -------------------------------------------- |
-| Sửa 1–2 file nhỏ            | `pnpm run format && pnpm run check-types`    |
+| Sửa 1–2 file nhỏ            | `pnpm run check-types`                       |
 | Sửa logic lớn / refactor    | `pnpm run check:fix && pnpm run check-types` |
 | Trước khi kết thúc mọi task | `pnpm run check`                             |
 | Có lỗi build                | `pnpm run build:packages`                    |
