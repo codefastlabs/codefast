@@ -3,9 +3,9 @@ import { Button } from "@codefast/ui/button";
 import { Link, createFileRoute, notFound } from "@tanstack/react-router";
 import { Suspense } from "react";
 
-import { DETAIL_BODIES, preloadDetail } from "#/components/docs/detail-body";
-import { ComponentDetailHeader } from "#/components/docs/sections/detail-header";
-import { COMPONENT_BY_SLUG } from "#/data/components";
+import { DETAIL_BODY_BY_SLUG, preloadDetail } from "#/components/detail/detail-body";
+import { ComponentDetailHeader } from "#/components/detail/detail-header";
+import { COMPONENT_BY_SLUG } from "#/components/examples/meta";
 
 export const Route = createFileRoute("/components/$slug")({
   head: ({ params }: { params: { slug: string } }) => {
@@ -73,7 +73,7 @@ function ComponentDetailPage() {
   }
 
   // Per-slug code-split body: only this component's doc/examples chunk loads.
-  const Body = DETAIL_BODIES.get(slug);
+  const Body = DETAIL_BODY_BY_SLUG.get(slug);
 
   return (
     <main className="container mx-auto px-4 pt-10 pb-32">

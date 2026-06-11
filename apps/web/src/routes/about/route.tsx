@@ -2,9 +2,9 @@ import { Badge } from "@codefast/ui/badge";
 import { Button } from "@codefast/ui/button";
 import { createFileRoute, Link } from "@tanstack/react-router";
 
-import { ALL_COMPONENTS } from "#/data/components";
+import { COMPONENTS } from "#/components/examples/meta";
 
-const COMPONENT_COUNT = ALL_COMPONENTS.length;
+const COMPONENT_COUNT = COMPONENTS.length;
 
 export const Route = createFileRoute("/about")({
   head: () => ({
@@ -111,7 +111,7 @@ function GettingStarted() {
           follows the same composable API.
         </p>
         <div className="mb-8 flex flex-wrap gap-2">
-          {ALL_COMPONENTS.map(({ name }) => (
+          {COMPONENTS.map(({ name }) => (
             <Badge key={name} variant="secondary" className="font-normal">
               {name}
             </Badge>

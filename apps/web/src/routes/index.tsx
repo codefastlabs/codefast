@@ -9,7 +9,7 @@ import { Switch } from "@codefast/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@codefast/ui/tabs";
 import { createFileRoute, Link } from "@tanstack/react-router";
 
-import { ALL_COMPONENTS } from "#/data/components";
+import { COMPONENTS } from "#/components/examples/meta";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -49,9 +49,9 @@ const FEATURES = [
   },
 ] as const;
 
-// Derived from ALL_COMPONENTS — single source of truth in src/data/components.ts
-const COMPONENT_NAMES = ALL_COMPONENTS.map((c) => c.name);
-const COMPONENT_COUNT = ALL_COMPONENTS.length;
+// Derived from COMPONENTS — single source of truth in src/components/examples/meta.ts
+const COMPONENT_NAMES = COMPONENTS.map((c) => c.name);
+const COMPONENT_COUNT = COMPONENTS.length;
 
 /* -------------------------------------------------------------------------- */
 /* Hero visual card                                                             */
