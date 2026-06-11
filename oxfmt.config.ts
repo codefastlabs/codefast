@@ -6,7 +6,7 @@ export default defineConfig({
   // ---------------------------------------------------------------------------
   endOfLine: "lf",
   insertFinalNewline: true,
-  printWidth: 100,
+  printWidth: 120,
   proseWrap: "preserve",
 
   // ---------------------------------------------------------------------------
@@ -27,18 +27,6 @@ export default defineConfig({
     stylesheet: "apps/web/src/styles.css",
     functions: ["cn", "cva", "tv"],
   },
-
-  // ---------------------------------------------------------------------------
-  // Per-file-type overrides
-  // ---------------------------------------------------------------------------
-  overrides: [
-    {
-      files: ["**/*.{json,jsonc}"],
-      options: {
-        printWidth: 120,
-      },
-    },
-  ],
 
   // ---------------------------------------------------------------------------
   // Ignored paths (generated output, caches, lockfiles)
