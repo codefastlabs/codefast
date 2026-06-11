@@ -1,3 +1,14 @@
+import {
+  isDomainArrayLiteralExpression,
+  isDomainJsxAttribute,
+  isDomainPropertyAssignment,
+  isDomainTailwindClassLiteral,
+  forEachDomainChild,
+} from "#/arrange/domain/ast/ast-node";
+import type { DomainAstNode, DomainSourceFile } from "#/arrange/domain/ast/ast-node";
+import { isUnsafeLiteralForCnStyleApplySplit } from "#/arrange/domain/ast/collectors-cn";
+import { jsxClassNameStaticLiteral } from "#/arrange/domain/ast/collectors-jsx";
+import { collectGroupableStringNodes, slotClassString } from "#/arrange/domain/ast/collectors-tv";
 import { APPLY_MIN_TOKENS } from "#/arrange/domain/constants";
 import {
   areCnTailwindPartitionsEquivalent,
@@ -10,24 +21,13 @@ import {
   formatArrayElementsAsSiblingLines,
   formatJsxCnAttributeValue,
 } from "#/arrange/domain/source-text-formatters";
-import type { GroupTarget, PlannedGroupEdit, StringNode } from "#/arrange/domain/types";
 import { tokenizeClassString } from "#/arrange/domain/tailwind-token";
-import { isUnsafeLiteralForCnStyleApplySplit } from "#/arrange/domain/ast/collectors-cn";
-import { jsxClassNameStaticLiteral } from "#/arrange/domain/ast/collectors-jsx";
-import { collectGroupableStringNodes, slotClassString } from "#/arrange/domain/ast/collectors-tv";
+import type { GroupTarget, PlannedGroupEdit, StringNode } from "#/arrange/domain/types";
 import {
   endAfterOptionalCommaFollowingInSource,
   indentOfLineContaining,
   textPrefixFromLineStartToPosition,
 } from "#/core/source-text-edit";
-import {
-  isDomainArrayLiteralExpression,
-  isDomainJsxAttribute,
-  isDomainPropertyAssignment,
-  isDomainTailwindClassLiteral,
-  forEachDomainChild,
-} from "#/arrange/domain/ast/ast-node";
-import type { DomainAstNode, DomainSourceFile } from "#/arrange/domain/ast/ast-node";
 
 /**
  * @since 0.3.16-canary.0
@@ -127,7 +127,7 @@ function formatCnCallReplacement(
   // Keep formatter behavior explicit: multiline cn() calls with multiple args use trailing comma.
   const commaAfterLastArg = allArgs.length > 1;
   const argLines = allArgs.map((argLine, lineIndex) =>
-    lineIndex < allArgs.length - 1 || commaAfterLastArg ? `${argLine},` : `${argLine}`,
+    lineIndex < allArgs.length - 1 || commaAfterLastArg ? `${argLine},` : argLine,
   );
   return `cn(\n${argLines.join("\n")}\n${baseIndent})`;
 }
