@@ -1,3 +1,4 @@
+import { cn } from "@codefast/ui/lib/utils";
 import { useEffect, useRef } from "react";
 
 import { ViewToggle } from "#/components/showcase/components/view-toggle";
@@ -8,9 +9,10 @@ import type { ComponentMeta } from "#/data/components";
 /** A single component entry in the sidebar; anchors to its on-page card, or
  *  links out to the detail page for docs-only components. */
 function SidebarLink({ component, isActive }: { component: ComponentMeta; isActive: boolean }) {
-  const className = `block truncate rounded-md px-2 py-1 text-xs no-underline transition-colors ${
-    isActive ? "bg-ui-surface font-medium text-ui-fg" : "text-ui-muted hover:bg-ui-surface hover:text-ui-fg"
-  }`;
+  const className = cn(
+    "block truncate rounded-md px-2 py-1 text-xs no-underline transition-colors",
+    isActive ? "bg-ui-surface font-medium text-ui-fg" : "text-ui-muted hover:bg-ui-surface hover:text-ui-fg",
+  );
 
   return (
     <a href={`#${component.slug}`} aria-current={isActive ? "location" : undefined} className={className}>
@@ -71,9 +73,10 @@ export function SidebarNav({
                 <a
                   href={`#${group.id}`}
                   aria-current={isActive ? "location" : undefined}
-                  className={`flex items-center justify-between gap-2 rounded-md px-2 py-1 text-xs font-semibold tracking-wide uppercase no-underline transition-colors ${
-                    isActive ? "text-ui-fg" : "text-ui-muted hover:text-ui-fg"
-                  }`}
+                  className={cn(
+                    "flex items-center justify-between gap-2 rounded-md px-2 py-1 text-xs font-semibold tracking-wide uppercase no-underline transition-colors",
+                    isActive ? "text-ui-fg" : "text-ui-muted hover:text-ui-fg",
+                  )}
                 >
                   {group.label}
                   <span className="tabular-nums opacity-60">{group.items.length}</span>

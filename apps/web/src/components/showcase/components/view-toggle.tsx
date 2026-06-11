@@ -1,3 +1,5 @@
+import { cn } from "@codefast/ui/lib/utils";
+
 import type { ViewMode } from "#/components/showcase/types";
 
 const VIEW_OPTIONS = [
@@ -19,7 +21,10 @@ export function ViewToggle({
     <div
       role="group"
       aria-label="Layout"
-      className={`flex items-center gap-0.5 rounded-full border border-ui-border bg-ui-surface p-0.5 text-xs font-semibold ${className ?? ""}`}
+      className={cn(
+        "flex items-center gap-0.5 rounded-full border border-ui-border bg-ui-surface p-0.5 text-xs font-semibold",
+        className,
+      )}
     >
       {VIEW_OPTIONS.map(({ value: option, label }) => {
         const isActive = value === option;
@@ -32,9 +37,10 @@ export function ViewToggle({
             onClick={() => {
               onChange(option);
             }}
-            className={`flex-1 rounded-full px-3 py-1 whitespace-nowrap transition-colors ${
-              isActive ? "bg-ui-card text-ui-fg shadow-sm" : "text-ui-muted hover:text-ui-fg"
-            }`}
+            className={cn(
+              "flex-1 rounded-full px-3 py-1 whitespace-nowrap transition-colors",
+              isActive ? "bg-ui-card text-ui-fg shadow-sm" : "text-ui-muted hover:text-ui-fg",
+            )}
           >
             {label}
           </button>

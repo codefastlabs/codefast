@@ -1,3 +1,4 @@
+import { cn } from "@codefast/ui/lib/utils";
 import type { ReactNode } from "react";
 
 import { ViewToggle } from "#/components/showcase/components/view-toggle";
@@ -10,11 +11,12 @@ function NavChip({ href, isActive, children }: { href: string; isActive: boolean
     <a
       href={href}
       aria-current={isActive ? "location" : undefined}
-      className={`flex items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-xs font-semibold no-underline transition-colors ${
+      className={cn(
+        "flex items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-xs font-semibold no-underline transition-colors",
         isActive
           ? "border-ui-brand bg-ui-card text-ui-fg"
-          : "border-ui-border bg-ui-surface text-ui-muted hover:border-ui-brand hover:text-ui-fg"
-      }`}
+          : "border-ui-border bg-ui-surface text-ui-muted hover:border-ui-brand hover:text-ui-fg",
+      )}
     >
       {children}
     </a>
