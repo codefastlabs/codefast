@@ -1,8 +1,15 @@
 import { describe, expect, it } from "vitest";
 
 import { DEMOS } from "#/components/examples/demos";
-import { COMPONENT_DOCS } from "#/components/examples/docs";
-import { ALL_COMPONENTS, CATEGORIES, DEMO_COMPONENTS, componentPath } from "#/data/components";
+import { DOC_SLUGS, loadComponentDoc } from "#/components/examples/docs";
+import {
+  ALL_COMPONENTS,
+  CATEGORIES,
+  COMPONENT_BY_SLUG,
+  DEMO_COMPONENTS,
+  DEMO_NEIGHBORS,
+  componentPath,
+} from "#/data/components";
 
 const CATEGORY_IDS = new Set(CATEGORIES.map((c) => c.id));
 
@@ -31,6 +38,24 @@ describe("component registry", () => {
   it("derives DEMO_COMPONENTS as exactly the entries with hasDemo", () => {
     expect(DEMO_COMPONENTS).toEqual(ALL_COMPONENTS.filter((c) => c.hasDemo));
   });
+
+  it("indexes every component in COMPONENT_BY_SLUG", () => {
+    expect(COMPONENT_BY_SLUG.size).toBe(ALL_COMPONENTS.length);
+
+    for (const component of ALL_COMPONENTS) {
+      expect(COMPONENT_BY_SLUG.get(component.slug)).toBe(component);
+    }
+  });
+
+  it("links DEMO_NEIGHBORS into the exact DEMO_COMPONENTS order", () => {
+    expect(DEMO_NEIGHBORS.size).toBe(DEMO_COMPONENTS.length);
+
+    DEMO_COMPONENTS.forEach((component, index) => {
+      const neighbors = DEMO_NEIGHBORS.get(component.slug);
+      expect(neighbors?.previous).toBe(DEMO_COMPONENTS[index - 1]);
+      expect(neighbors?.next).toBe(DEMO_COMPONENTS[index + 1]);
+    });
+  });
 });
 
 describe("demo registry ↔ metadata", () => {
@@ -52,10 +77,14 @@ describe("demo registry ↔ metadata", () => {
     }
   });
 
-  it("gives every demo a renderable component and non-empty source", () => {
+  it("gives every demo a renderable component and a highlighted source", async () => {
     for (const [slug, entry] of Object.entries(DEMOS)) {
-      expect(typeof entry.Demo, `${slug} Demo`).toBe("function");
-      expect(entry.code.length, `${slug} code`).toBeGreaterThan(0);
+      const Demo = await entry.load();
+      expect(typeof Demo, `${slug} Demo`).toBe("function");
+
+      const source = await entry.loadSource();
+      expect(source.code.length, `${slug} code`).toBeGreaterThan(0);
+      expect(source.html, `${slug} html`).toContain("shiki");
     }
   });
 });
@@ -63,34 +92,45 @@ describe("demo registry ↔ metadata", () => {
 describe("doc registry ↔ metadata", () => {
   it("keys every doc to a known component slug", () => {
     const slugs = new Set(ALL_COMPONENTS.map((c) => c.slug));
-    const orphans = Object.keys(COMPONENT_DOCS).filter((slug) => !slugs.has(slug));
+    const orphans = [...DOC_SLUGS].filter((slug) => !slugs.has(slug));
     expect(orphans).toEqual([]);
   });
 
-  it("gives every doc at least one renderable example with source", () => {
-    for (const [slug, doc] of Object.entries(COMPONENT_DOCS)) {
-      expect(doc.examples.length, `${slug} examples`).toBeGreaterThan(0);
+  it("returns undefined for components without a doc", async () => {
+    await expect(loadComponentDoc("not-a-component")).resolves.toBeUndefined();
+  });
 
-      for (const example of doc.examples) {
+  it("resolves every doc to renderable examples with highlighted sources", async () => {
+    for (const slug of DOC_SLUGS) {
+      const doc = await loadComponentDoc(slug);
+
+      expect(doc, `${slug} doc`).toBeDefined();
+      expect(doc?.examples.length, `${slug} examples`).toBeGreaterThan(0);
+
+      for (const example of doc?.examples ?? []) {
         expect(typeof example.Demo, `${slug}/${example.id} Demo`).toBe("function");
         expect(example.code.length, `${slug}/${example.id} code`).toBeGreaterThan(0);
+        expect(example.html, `${slug}/${example.id} html`).toContain("shiki");
       }
     }
   });
 
-  it("uses unique example ids within each doc", () => {
-    for (const [slug, doc] of Object.entries(COMPONENT_DOCS)) {
-      const ids = doc.examples.map((example) => example.id);
+  it("uses unique example ids within each doc", async () => {
+    for (const slug of DOC_SLUGS) {
+      const doc = await loadComponentDoc(slug);
+      const ids = doc?.examples.map((example) => example.id) ?? [];
       expect(new Set(ids).size, `${slug} example ids`).toBe(ids.length);
     }
   });
 
-  it("only cross-links to components that exist", () => {
+  it("only cross-links to components that exist", async () => {
     const slugs = new Set(ALL_COMPONENTS.map((c) => c.slug));
     const broken: Array<string> = [];
 
-    for (const [slug, doc] of Object.entries(COMPONENT_DOCS)) {
-      for (const related of doc.related ?? []) {
+    for (const slug of DOC_SLUGS) {
+      const doc = await loadComponentDoc(slug);
+
+      for (const related of doc?.related ?? []) {
         if (!slugs.has(related)) {
           broken.push(`${slug} → ${related}`);
         }

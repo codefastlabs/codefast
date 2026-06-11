@@ -549,6 +549,24 @@ export type ComponentEntry = (typeof ALL_COMPONENTS)[number];
 /** Components that ship a live card demo on /components (everything except Sidebar). */
 export const DEMO_COMPONENTS = ALL_COMPONENTS.filter((component) => component.hasDemo);
 
+/** O(1) slug lookup — routes resolve params against this instead of scanning. */
+export const COMPONENT_BY_SLUG: ReadonlyMap<string, ComponentMeta> = new Map(
+  ALL_COMPONENTS.map((component) => [component.slug, component]),
+);
+
+export interface DemoNeighbors {
+  readonly previous?: ComponentMeta | undefined;
+  readonly next?: ComponentMeta | undefined;
+}
+
+/** Precomputed previous/next within DEMO_COMPONENTS, for the detail-page pager. */
+export const DEMO_NEIGHBORS: ReadonlyMap<string, DemoNeighbors> = new Map(
+  DEMO_COMPONENTS.map((component, index) => [
+    component.slug,
+    { previous: DEMO_COMPONENTS[index - 1], next: DEMO_COMPONENTS[index + 1] },
+  ]),
+);
+
 /** `@codefast/ui/<slug>` import path for a component. */
 export function componentPath(slug: string): string {
   return `@codefast/ui/${slug}`;
