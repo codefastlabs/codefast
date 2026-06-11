@@ -15,7 +15,7 @@ export const accordionDoc: ComponentDoc = {
       title: "Demo",
       description: "A vertically stacked set of interactive headings that each reveal a section of content.",
       Demo: AccordionDemo,
-      code: docSource("accordion", "accordion-demo"),
+      source: docSource("accordion", "accordion-demo"),
       previewClassName: "items-start",
     },
     {
@@ -23,7 +23,7 @@ export const accordionDoc: ComponentDoc = {
       title: "Basic",
       description: "A basic accordion that shows one item at a time. The first item is open by default.",
       Demo: AccordionBasic,
-      code: docSource("accordion", "accordion-basic"),
+      source: docSource("accordion", "accordion-basic"),
       previewClassName: "items-start",
     },
     {
@@ -31,7 +31,7 @@ export const accordionDoc: ComponentDoc = {
       title: "Multiple",
       description: "Use type=multiple to allow multiple items to be open at the same time.",
       Demo: AccordionMultiple,
-      code: docSource("accordion", "accordion-multiple"),
+      source: docSource("accordion", "accordion-multiple"),
       previewClassName: "items-start",
     },
     {
@@ -39,7 +39,7 @@ export const accordionDoc: ComponentDoc = {
       title: "Disabled",
       description: "Use the disabled prop on AccordionItem to disable individual items.",
       Demo: AccordionDisabled,
-      code: docSource("accordion", "accordion-disabled"),
+      source: docSource("accordion", "accordion-disabled"),
       previewClassName: "items-start",
     },
     {
@@ -47,7 +47,7 @@ export const accordionDoc: ComponentDoc = {
       title: "Borders",
       description: "Add borders to the Accordion and items for a more defined separation.",
       Demo: AccordionBorders,
-      code: docSource("accordion", "accordion-borders"),
+      source: docSource("accordion", "accordion-borders"),
       previewClassName: "items-start",
     },
     {
@@ -55,7 +55,7 @@ export const accordionDoc: ComponentDoc = {
       title: "Card",
       description: "Wrap the Accordion in a Card component.",
       Demo: AccordionCard,
-      code: docSource("accordion", "accordion-card"),
+      source: docSource("accordion", "accordion-card"),
       previewClassName: "items-start",
     },
     {
@@ -63,7 +63,7 @@ export const accordionDoc: ComponentDoc = {
       title: "RTL",
       description: "Right-to-left layout support for languages such as Arabic and Hebrew.",
       Demo: AccordionRtl,
-      code: docSource("accordion", "accordion-rtl"),
+      source: docSource("accordion", "accordion-rtl"),
       previewClassName: "items-start",
       direction: "rtl",
     },

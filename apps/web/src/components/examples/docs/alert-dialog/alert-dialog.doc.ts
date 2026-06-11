@@ -15,7 +15,7 @@ export const alertDialogDoc: ComponentDoc = {
       title: "Demo",
       description: "A blocking modal that forces an explicit Cancel or confirm decision.",
       Demo: AlertDialogDemo,
-      code: docSource("alert-dialog", "alert-dialog-demo"),
+      source: docSource("alert-dialog", "alert-dialog-demo"),
       previewClassName: "min-h-40",
     },
     {
@@ -23,7 +23,7 @@ export const alertDialogDoc: ComponentDoc = {
       title: "Basic",
       description: "A basic alert dialog with a header, description, and confirm/cancel actions.",
       Demo: AlertDialogBasic,
-      code: docSource("alert-dialog", "alert-dialog-basic"),
+      source: docSource("alert-dialog", "alert-dialog-basic"),
       previewClassName: "min-h-40",
     },
     {
@@ -31,7 +31,7 @@ export const alertDialogDoc: ComponentDoc = {
       title: "Small",
       description: "Use size=sm for a compact, centered confirmation.",
       Demo: AlertDialogSmall,
-      code: docSource("alert-dialog", "alert-dialog-small"),
+      source: docSource("alert-dialog", "alert-dialog-small"),
       previewClassName: "min-h-40",
     },
     {
@@ -39,7 +39,7 @@ export const alertDialogDoc: ComponentDoc = {
       title: "Media",
       description: "Lead the header with an AlertDialogMedia icon for visual emphasis.",
       Demo: AlertDialogWithMedia,
-      code: docSource("alert-dialog", "alert-dialog-media"),
+      source: docSource("alert-dialog", "alert-dialog-media"),
       previewClassName: "min-h-40",
     },
     {
@@ -47,7 +47,7 @@ export const alertDialogDoc: ComponentDoc = {
       title: "Small with media",
       description: "Combine the compact size with a media icon.",
       Demo: AlertDialogSmallWithMedia,
-      code: docSource("alert-dialog", "alert-dialog-small-media"),
+      source: docSource("alert-dialog", "alert-dialog-small-media"),
       previewClassName: "min-h-40",
     },
     {
@@ -55,7 +55,7 @@ export const alertDialogDoc: ComponentDoc = {
       title: "Destructive",
       description: "Pair a destructive media icon with a destructive action button.",
       Demo: AlertDialogDestructive,
-      code: docSource("alert-dialog", "alert-dialog-destructive"),
+      source: docSource("alert-dialog", "alert-dialog-destructive"),
       previewClassName: "min-h-40",
     },
     {
@@ -63,7 +63,7 @@ export const alertDialogDoc: ComponentDoc = {
       title: "RTL",
       description: "Right-to-left layout support for languages such as Arabic and Hebrew.",
       Demo: AlertDialogRtl,
-      code: docSource("alert-dialog", "alert-dialog-rtl"),
+      source: docSource("alert-dialog", "alert-dialog-rtl"),
       previewClassName: "min-h-40",
       direction: "rtl",
     },

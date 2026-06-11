@@ -11,7 +11,7 @@ export const emptyDoc: ComponentDoc = {
       title: "Empty state with action",
       description: "Media, title, description, and a clear next step in one composed block.",
       Demo: EmptyState,
-      code: docSource("empty", "state"),
+      source: docSource("empty", "state"),
       previewClassName: "items-start",
     },
     {
@@ -19,7 +19,7 @@ export const emptyDoc: ComponentDoc = {
       title: "No search results",
       description: "Swap the icon and action for a zero-results state.",
       Demo: EmptySearch,
-      code: docSource("empty", "search"),
+      source: docSource("empty", "search"),
       previewClassName: "items-start",
     },
     {
@@ -27,7 +27,7 @@ export const emptyDoc: ComponentDoc = {
       title: "Without media",
       description: "Just a title and description — no icon or action.",
       Demo: EmptyMinimal,
-      code: docSource("empty", "minimal"),
+      source: docSource("empty", "minimal"),
       previewClassName: "items-start",
     },
   ],

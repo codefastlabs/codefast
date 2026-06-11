@@ -11,7 +11,7 @@ export const sheetDoc: ComponentDoc = {
       title: "Any edge",
       description: "Controlled open state plus a side prop — slide in from top, right, bottom, or left.",
       Demo: SheetSides,
-      code: docSource("sheet", "sides"),
+      source: docSource("sheet", "sides"),
       previewClassName: "min-h-40",
     },
     {
@@ -19,7 +19,7 @@ export const sheetDoc: ComponentDoc = {
       title: "Edit form",
       description: "A trigger-driven sheet holding a short form with header, body, and footer actions.",
       Demo: SheetProfile,
-      code: docSource("sheet", "profile"),
+      source: docSource("sheet", "profile"),
       previewClassName: "min-h-40",
     },
     {
@@ -27,7 +27,7 @@ export const sheetDoc: ComponentDoc = {
       title: "Side navigation",
       description: "A left-anchored sheet as a mobile nav menu.",
       Demo: SheetNavigation,
-      code: docSource("sheet", "navigation"),
+      source: docSource("sheet", "navigation"),
     },
   ],
   anatomy: docAnatomy("sheet"),

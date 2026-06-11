@@ -11,7 +11,7 @@ export const textareaDoc: ComponentDoc = {
       title: "With character counter",
       description: "Controlled value plus maxLength drives a live remaining-characters count.",
       Demo: TextareaCounter,
-      code: docSource("textarea", "counter"),
+      source: docSource("textarea", "counter"),
       previewClassName: "items-start",
     },
     {
@@ -19,7 +19,7 @@ export const textareaDoc: ComponentDoc = {
       title: "Disabled & invalid",
       description: "Built-in disabled and aria-invalid styling.",
       Demo: TextareaStates,
-      code: docSource("textarea", "states"),
+      source: docSource("textarea", "states"),
       previewClassName: "items-start",
     },
     {
@@ -27,7 +27,7 @@ export const textareaDoc: ComponentDoc = {
       title: "Row heights",
       description: "Set the initial height with the rows attribute.",
       Demo: TextareaRows,
-      code: docSource("textarea", "rows"),
+      source: docSource("textarea", "rows"),
       previewClassName: "items-start",
     },
   ],

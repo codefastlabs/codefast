@@ -11,7 +11,7 @@ export const labelDoc: ComponentDoc = {
       title: "With controls",
       description: "Link a label to an input via htmlFor, or pair it beside a checkbox.",
       Demo: LabelWithControls,
-      code: docSource("label", "with-controls"),
+      source: docSource("label", "with-controls"),
       previewClassName: "items-start",
     },
     {
@@ -19,7 +19,7 @@ export const labelDoc: ComponentDoc = {
       title: "Required field",
       description: "Mark a required input and pair it with helper text.",
       Demo: LabelRequired,
-      code: docSource("label", "required"),
+      source: docSource("label", "required"),
       previewClassName: "items-start",
     },
     {
@@ -27,7 +27,7 @@ export const labelDoc: ComponentDoc = {
       title: "Beside a switch",
       description: "Associate a label with a switch in a settings row.",
       Demo: LabelSwitchRow,
-      code: docSource("label", "switch-row"),
+      source: docSource("label", "switch-row"),
       previewClassName: "items-start",
     },
   ],

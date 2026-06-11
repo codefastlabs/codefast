@@ -12,7 +12,7 @@ export const checkboxDoc: ComponentDoc = {
       description:
         "The classic parent/child pattern: the parent reflects an indeterminate state when only some children are checked.",
       Demo: CheckboxSelectAll,
-      code: docSource("checkbox", "select-all"),
+      source: docSource("checkbox", "select-all"),
       previewClassName: "items-start",
     },
     {
@@ -20,7 +20,7 @@ export const checkboxDoc: ComponentDoc = {
       title: "With description",
       description: "Pair a checkbox with a label and helper text for consent and settings rows.",
       Demo: CheckboxWithDescription,
-      code: docSource("checkbox", "with-description"),
+      source: docSource("checkbox", "with-description"),
       previewClassName: "items-start",
     },
     {
@@ -28,7 +28,7 @@ export const checkboxDoc: ComponentDoc = {
       title: "States",
       description: "Default, checked, and disabled combinations.",
       Demo: CheckboxStates,
-      code: docSource("checkbox", "states"),
+      source: docSource("checkbox", "states"),
       previewClassName: "items-start",
     },
   ],

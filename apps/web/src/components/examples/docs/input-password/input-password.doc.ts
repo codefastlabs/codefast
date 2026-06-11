@@ -11,7 +11,7 @@ export const inputPasswordDoc: ComponentDoc = {
       title: "Show / hide toggle",
       description: "A built-in eye button reveals the value — no extra markup needed.",
       Demo: InputPasswordFields,
-      code: docSource("input-password", "fields"),
+      source: docSource("input-password", "fields"),
       previewClassName: "items-start",
     },
     {
@@ -19,7 +19,7 @@ export const inputPasswordDoc: ComponentDoc = {
       title: "Live strength meter",
       description: "Drive a strength bar from the controlled value as the user types.",
       Demo: InputPasswordStrength,
-      code: docSource("input-password", "strength"),
+      source: docSource("input-password", "strength"),
       previewClassName: "items-start",
     },
     {
@@ -27,7 +27,7 @@ export const inputPasswordDoc: ComponentDoc = {
       title: "Confirm match",
       description: "Two fields with a live match check.",
       Demo: InputPasswordConfirm,
-      code: docSource("input-password", "confirm"),
+      source: docSource("input-password", "confirm"),
       previewClassName: "items-start",
     },
   ],

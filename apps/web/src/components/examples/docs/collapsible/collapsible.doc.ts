@@ -11,7 +11,7 @@ export const collapsibleDoc: ComponentDoc = {
       title: "Show more / less",
       description: "Controlled open state reveals extra rows with a smooth height animation.",
       Demo: CollapsibleRepos,
-      code: docSource("collapsible", "repos"),
+      source: docSource("collapsible", "repos"),
       previewClassName: "items-start",
     },
     {
@@ -19,7 +19,7 @@ export const collapsibleDoc: ComponentDoc = {
       title: "FAQ list",
       description: "Independent collapsibles with a rotating open indicator.",
       Demo: CollapsibleFaq,
-      code: docSource("collapsible", "faq"),
+      source: docSource("collapsible", "faq"),
       previewClassName: "items-start",
     },
     {
@@ -27,7 +27,7 @@ export const collapsibleDoc: ComponentDoc = {
       title: "Inline show more",
       description: "Reveal extra copy under a trigger styled as a link.",
       Demo: CollapsibleShowMore,
-      code: docSource("collapsible", "show-more"),
+      source: docSource("collapsible", "show-more"),
       previewClassName: "items-start",
     },
   ],

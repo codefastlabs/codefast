@@ -1,30 +1,44 @@
 /**
- * Aggregated rich-documentation registry for the per-component detail page
+ * Lazy rich-documentation registry for the per-component detail page
  * (`/components/$slug`), keyed by the component `slug` from `data/components.ts`.
  *
  * AUTO-DISCOVERED — every `docs/<slug>/<slug>.doc.ts` is registered by its folder
- * name; there is no hand-maintained list. Like `demos.tsx`, this barrel eagerly
- * imports heavy example components, so it must ONLY be imported by the `$slug`
- * route — never by lightweight metadata consumers.
+ * name; there is no hand-maintained list. Nothing here is eager: a doc (and the
+ * example components + sources it pulls in) is its own chunk, loaded by
+ * `loadComponentDoc(slug)` only when that component's detail page renders.
+ * Importing this module costs ~nothing, so any route may use it.
  *
- * Components without a doc fall back to the single card demo from `demos.tsx`, so
- * every detail page still renders.
+ * Components without a doc fall back to the single card demo from `demos.tsx`,
+ * so every detail page still renders.
  *
  * TO ADD A COMPONENT
  * 1. Create `docs/<slug>/` with one file per example, an `anatomy.txt` skeleton,
- *    and a `<slug>.doc.ts` exporting a single `ComponentDoc`.
- * 2. Register the example sources AND `anatomy.txt` in `../codes.ts` (the single
- *    ?raw barrel) — no source code is ever stored as a string literal.
- * The doc is then picked up automatically; no registration here is needed.
+ *    and a `<slug>.doc.ts` exporting a single `ComponentDoc` whose examples
+ *    point at their files via `docSource(slug, name)` / `docAnatomy(slug)`.
+ * The doc is then picked up automatically; no registration is needed.
  */
-import type { ComponentDoc } from "#/components/examples/docs/types";
+import type {
+  ComponentDoc,
+  ResolvedComponentDoc,
+  ResolvedDocExample,
+  SourceRef,
+} from "#/components/examples/docs/types";
+import type { HighlightedSource } from "#/lib/highlight";
 
-export type { ApiGroup, ComponentDoc, DocExample } from "#/components/examples/docs/types";
+export type {
+  ApiGroup,
+  ComponentDoc,
+  DocExample,
+  ResolvedComponentDoc,
+  ResolvedDocExample,
+  SourceRef,
+} from "#/components/examples/docs/types";
 
-/** Doc modules, keyed by path e.g. `./button/button.doc.ts`. */
-const docModules = import.meta.glob<Record<string, unknown>>("./*/*.doc.ts", {
-  eager: true,
-});
+/** Doc module loaders, keyed by path e.g. `./button/button.doc.ts`. */
+const docModules = import.meta.glob<Record<string, unknown>>("./*/*.doc.ts");
+
+/** Every example/anatomy file pre-highlighted at build time, keyed by SourceRef. */
+const sourceModules = import.meta.glob<HighlightedSource>("./*/*.{tsx,txt}", { query: "?shiki" });
 
 /** `./button/button.doc.ts` → `button`. */
 function slugFromDocPath(path: string): string {
@@ -33,16 +47,51 @@ function slugFromDocPath(path: string): string {
   return segments[segments.length - 2] ?? "";
 }
 
-export const COMPONENT_DOCS: Record<string, ComponentDoc> = Object.fromEntries(
-  Object.entries(docModules).map(([path, module]) => {
-    const doc = Object.values(module).find((value) => value !== null && typeof value === "object") as
-      | ComponentDoc
-      | undefined;
+const docLoadersBySlug = new Map(Object.entries(docModules).map(([path, load]) => [slugFromDocPath(path), load]));
 
-    if (!doc) {
-      throw new Error(`Doc file ${path} must export exactly one ComponentDoc.`);
-    }
+/** Slugs that ship a rich doc — known synchronously from the glob keys. */
+export const DOC_SLUGS: ReadonlySet<string> = new Set(docLoadersBySlug.keys());
 
-    return [slugFromDocPath(path), doc];
-  }),
-);
+async function loadSource(ref: SourceRef): Promise<HighlightedSource> {
+  const load = sourceModules[ref];
+
+  if (!load) {
+    throw new Error(`No source file for ref "${ref}" under docs/.`);
+  }
+
+  return load();
+}
+
+async function resolveExample(example: ComponentDoc["examples"][number]): Promise<ResolvedDocExample> {
+  const { code, html } = await loadSource(example.source);
+
+  return { ...example, code, html };
+}
+
+/**
+ * Loads a component's doc chunk and resolves every source ref to its raw text
+ * and pre-highlighted HTML. Returns `undefined` for components without a doc.
+ */
+export async function loadComponentDoc(slug: string): Promise<ResolvedComponentDoc | undefined> {
+  const loadModule = docLoadersBySlug.get(slug);
+
+  if (!loadModule) {
+    return undefined;
+  }
+
+  const module = await loadModule();
+  const doc = Object.values(module).find((value) => value !== null && typeof value === "object") as
+    | ComponentDoc
+    | undefined;
+
+  if (!doc) {
+    throw new Error(`Doc module for "${slug}" must export exactly one ComponentDoc.`);
+  }
+
+  const [examples, anatomy] = await Promise.all([
+    Promise.all(doc.examples.map(resolveExample)),
+    doc.anatomy === undefined ? undefined : loadSource(doc.anatomy),
+  ]);
+
+  return { ...doc, examples, anatomy };
+}

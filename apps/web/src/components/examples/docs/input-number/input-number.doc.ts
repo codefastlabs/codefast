@@ -11,7 +11,7 @@ export const inputNumberDoc: ComponentDoc = {
       title: "Stepper with bounds",
       description: "Increment/decrement controls plus min, max, and step keep input valid.",
       Demo: InputNumberQuantity,
-      code: docSource("input-number", "quantity"),
+      source: docSource("input-number", "quantity"),
       previewClassName: "items-start",
     },
     {
@@ -19,7 +19,7 @@ export const inputNumberDoc: ComponentDoc = {
       title: "Formats & variants",
       description: "Format as currency with Intl options, or use the split stepper layout.",
       Demo: InputNumberFormats,
-      code: docSource("input-number", "formats"),
+      source: docSource("input-number", "formats"),
       previewClassName: "items-start",
     },
     {
@@ -27,7 +27,7 @@ export const inputNumberDoc: ComponentDoc = {
       title: "Disabled & invalid",
       description: "Native disabled plus aria-invalid styling.",
       Demo: InputNumberStates,
-      code: docSource("input-number", "states"),
+      source: docSource("input-number", "states"),
       previewClassName: "items-start",
     },
   ],

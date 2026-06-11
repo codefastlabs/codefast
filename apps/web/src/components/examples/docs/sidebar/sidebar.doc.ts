@@ -11,7 +11,7 @@ export const sidebarDoc: ComponentDoc = {
       title: "App shell",
       description: "A collapsible sidebar with grouped menu — toggle the rail with the trigger.",
       Demo: SidebarAppShell,
-      code: docSource("sidebar", "app-shell"),
+      source: docSource("sidebar", "app-shell"),
       previewClassName: "items-stretch",
     },
     {
@@ -19,7 +19,7 @@ export const sidebarDoc: ComponentDoc = {
       title: "Nested items",
       description: "Expand a menu item into an indented sub-menu.",
       Demo: SidebarSubmenu,
-      code: docSource("sidebar", "submenu"),
+      source: docSource("sidebar", "submenu"),
       previewClassName: "items-start",
     },
     {
@@ -27,7 +27,7 @@ export const sidebarDoc: ComponentDoc = {
       title: "Active state & badges",
       description: "Highlight the current item and show counts.",
       Demo: SidebarBadges,
-      code: docSource("sidebar", "badges"),
+      source: docSource("sidebar", "badges"),
       previewClassName: "items-start",
     },
   ],

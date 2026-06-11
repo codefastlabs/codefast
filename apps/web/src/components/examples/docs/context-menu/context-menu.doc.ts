@@ -11,7 +11,7 @@ export const contextMenuDoc: ComponentDoc = {
       title: "Checkbox & radio",
       description: "Right-click the canvas — checkbox items and a radio group drive state, echoed below.",
       Demo: ContextMenuEditor,
-      code: docSource("context-menu", "editor"),
+      source: docSource("context-menu", "editor"),
       previewClassName: "min-h-44",
     },
     {
@@ -19,7 +19,7 @@ export const contextMenuDoc: ComponentDoc = {
       title: "Actions & submenu",
       description: "A classic actions menu with shortcuts and a nested submenu.",
       Demo: ContextMenuActions,
-      code: docSource("context-menu", "actions"),
+      source: docSource("context-menu", "actions"),
       previewClassName: "min-h-44",
     },
     {
@@ -27,7 +27,7 @@ export const contextMenuDoc: ComponentDoc = {
       title: "Basic actions",
       description: "Cut, copy, paste — the everyday right-click menu.",
       Demo: ContextMenuSimple,
-      code: docSource("context-menu", "simple"),
+      source: docSource("context-menu", "simple"),
     },
   ],
   anatomy: docAnatomy("context-menu"),

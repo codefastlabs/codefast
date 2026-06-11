@@ -1,51 +1,71 @@
 /**
- * Heavy demo registry: maps each component slug to its live card demo and its raw
- * source string, for the `/components` showcase grid.
+ * Lazy demo registry: maps each component slug to a code-split live demo and a
+ * loader for its build-time-highlighted source, for the `/components` showcase.
  *
  * AUTO-DISCOVERED — every `examples/<category>/<slug>-demo.tsx` is registered by
- * its filename; there is no hand-maintained list to keep in sync. `import.meta.glob`
- * eagerly pulls in every demo (recharts, embla, @daypicker/react, …), so this module
- * must ONLY be imported by the `/components` route — never by lightweight metadata
- * consumers like the home page or the header ⌘K palette.
+ * its filename; there is no hand-maintained list to keep in sync. Nothing here
+ * is eager: each demo is its own chunk that downloads when its card scrolls into
+ * view (`<LazyVisible>` + `React.lazy`), and each source (`?shiki`, raw text +
+ * pre-highlighted HTML) downloads only when a Code tab opens. Importing this
+ * module costs ~nothing, so any route may use it.
  *
  * TO ADD A DEMO: create `examples/<category>/<slug>-demo.tsx` exporting a single
- * component. The `<slug>` (filename minus `-demo`) becomes the registry key and must
- * match a `slug` in `src/data/components.ts`.
+ * component. The `<slug>` (filename minus `-demo`) becomes the registry key and
+ * must match a `slug` in `src/data/components.ts`.
  */
-import type { ComponentType } from "react";
+import type { ComponentType, LazyExoticComponent } from "react";
+import { lazy } from "react";
+
+import type { HighlightedSource } from "#/lib/highlight";
 
 export interface DemoEntry {
-  readonly Demo: ComponentType;
-  readonly code: string;
+  /** Code-split demo — render inside `<Suspense>`; the chunk loads on first render. */
+  readonly Demo: LazyExoticComponent<ComponentType>;
+  /** Awaits the demo component itself (detail-page fallback example). */
+  readonly load: () => Promise<ComponentType>;
+  /** Awaits the demo's raw source + pre-highlighted HTML (Code tab). */
+  readonly loadSource: () => Promise<HighlightedSource>;
 }
 
-/** Live demo modules, keyed by path e.g. `./form/button-demo.tsx`. */
-const demoModules = import.meta.glob<Record<string, unknown>>("./*/*-demo.tsx", {
-  eager: true,
-});
+/** Live demo module loaders, keyed by path e.g. `./form/button-demo.tsx`. */
+const demoModules = import.meta.glob<Record<string, unknown>>("./*/*-demo.tsx");
 
-/** The same files as raw source strings (Vite `?raw`), keyed identically. */
-const demoSources = import.meta.glob("./*/*-demo.tsx", {
-  eager: true,
-  import: "default",
-  query: "?raw",
-});
+/** The same files pre-highlighted at build time (`?shiki`), keyed identically. */
+const demoSources = import.meta.glob<HighlightedSource>("./*/*-demo.tsx", { query: "?shiki" });
 
 /** `./form/button-demo.tsx` → `button`. */
 function slugFromDemoPath(path: string): string {
   return path.slice(path.lastIndexOf("/") + 1).replace(/-demo\.tsx$/, "");
 }
 
+/** The demo file's single component export. */
+function componentFrom(module: Record<string, unknown>, path: string): ComponentType {
+  const Demo = Object.values(module).find((value) => typeof value === "function") as ComponentType | undefined;
+
+  if (!Demo) {
+    throw new Error(`Demo file ${path} must export exactly one component.`);
+  }
+
+  return Demo;
+}
+
 /** Keyed by the component `slug` from `src/data/components.ts`. */
 export const DEMOS: Record<string, DemoEntry> = Object.fromEntries(
-  Object.entries(demoModules).map(([path, module]) => {
-    const slug = slugFromDemoPath(path);
-    const Demo = Object.values(module).find((value) => typeof value === "function") as ComponentType | undefined;
+  Object.entries(demoModules).map(([path, loadModule]) => {
+    const load = async (): Promise<ComponentType> => componentFrom(await loadModule(), path);
+    const loadSource = demoSources[path];
 
-    if (!Demo) {
-      throw new Error(`Demo file ${path} must export exactly one component.`);
+    if (!loadSource) {
+      throw new Error(`Demo file ${path} has no ?shiki source module.`);
     }
 
-    return [slug, { Demo, code: (demoSources[path] as string | undefined) ?? "" }];
+    return [
+      slugFromDemoPath(path),
+      {
+        Demo: lazy(async () => ({ default: await load() })),
+        load,
+        loadSource,
+      } satisfies DemoEntry,
+    ];
   }),
 );

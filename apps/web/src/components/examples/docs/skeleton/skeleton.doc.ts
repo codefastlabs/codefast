@@ -11,7 +11,7 @@ export const skeletonDoc: ComponentDoc = {
       title: "Card placeholder",
       description: "Mirror the real layout so content doesn’t jump when it loads.",
       Demo: SkeletonCard,
-      code: docSource("skeleton", "card"),
+      source: docSource("skeleton", "card"),
       previewClassName: "items-start",
     },
     {
@@ -19,7 +19,7 @@ export const skeletonDoc: ComponentDoc = {
       title: "List rows",
       description: "Repeat a simple row shape for lists and feeds.",
       Demo: SkeletonList,
-      code: docSource("skeleton", "list"),
+      source: docSource("skeleton", "list"),
       previewClassName: "items-start",
     },
     {
@@ -27,7 +27,7 @@ export const skeletonDoc: ComponentDoc = {
       title: "Text lines",
       description: "Stand in for a paragraph while content loads.",
       Demo: SkeletonText,
-      code: docSource("skeleton", "text"),
+      source: docSource("skeleton", "text"),
       previewClassName: "items-start",
     },
   ],

@@ -11,7 +11,7 @@ export const fieldDoc: ComponentDoc = {
       title: "Live validation",
       description: "A real form: submit with an invalid email to see FieldError and the error ring appear.",
       Demo: FieldValidation,
-      code: docSource("field", "validation"),
+      source: docSource("field", "validation"),
       previewClassName: "items-start",
     },
     {
@@ -19,7 +19,7 @@ export const fieldDoc: ComponentDoc = {
       title: "Layouts & groups",
       description: "Vertical and horizontal orientation, plus FieldSet + FieldLegend to group related fields.",
       Demo: FieldLayouts,
-      code: docSource("field", "layouts"),
+      source: docSource("field", "layouts"),
       previewClassName: "items-start",
     },
     {
@@ -27,7 +27,7 @@ export const fieldDoc: ComponentDoc = {
       title: "Wrapping a select",
       description: "Field works with any control, not just inputs.",
       Demo: FieldWithSelect,
-      code: docSource("field", "with-select"),
+      source: docSource("field", "with-select"),
       previewClassName: "items-start",
     },
   ],

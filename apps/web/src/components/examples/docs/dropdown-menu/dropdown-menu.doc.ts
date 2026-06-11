@@ -11,7 +11,7 @@ export const dropdownMenuDoc: ComponentDoc = {
       title: "Checkbox items",
       description: "A column-toggle menu — checkbox items drive state, with a live count below.",
       Demo: DropdownCheckboxes,
-      code: docSource("dropdown-menu", "checkboxes"),
+      source: docSource("dropdown-menu", "checkboxes"),
       previewClassName: "min-h-40",
     },
     {
@@ -19,7 +19,7 @@ export const dropdownMenuDoc: ComponentDoc = {
       title: "Radio group",
       description: "A single-choice sort menu backed by DropdownMenuRadioGroup.",
       Demo: DropdownRadio,
-      code: docSource("dropdown-menu", "radio"),
+      source: docSource("dropdown-menu", "radio"),
       previewClassName: "min-h-40",
     },
     {
@@ -27,7 +27,7 @@ export const dropdownMenuDoc: ComponentDoc = {
       title: "Account menu",
       description: "Items, shortcuts, and a destructive action.",
       Demo: DropdownActions,
-      code: docSource("dropdown-menu", "actions"),
+      source: docSource("dropdown-menu", "actions"),
     },
   ],
   anatomy: docAnatomy("dropdown-menu"),

@@ -10,6 +10,15 @@ import type { ComponentType } from "react";
 
 import type { KeyRow } from "#/components/docs/keyboard-table";
 import type { PropRow } from "#/components/docs/props-table";
+import type { HighlightedSource } from "#/lib/highlight";
+
+/**
+ * Glob key of a source file under `docs/` (e.g. `./button/variants.tsx`), as
+ * built by `docSource`/`docAnatomy`. The registry resolves it to the raw text +
+ * pre-highlighted HTML (`?shiki`) when the doc's chunk loads — authored docs
+ * never embed source content.
+ */
+export type SourceRef = string;
 
 export interface DocExample {
   /** Anchor id, unique within a component page. */
@@ -17,7 +26,8 @@ export interface DocExample {
   readonly title: string;
   readonly description?: string;
   readonly Demo: ComponentType;
-  readonly code: string;
+  /** Ref to this example's source file — use `docSource(slug, name)`. */
+  readonly source: SourceRef;
   /** Override the preview surface — alignment, min-height, padding. */
   readonly previewClassName?: string;
   /**
@@ -37,8 +47,8 @@ export interface ApiGroup {
 
 export interface ComponentDoc {
   readonly examples: ReadonlyArray<DocExample>;
-  /** Composition skeleton shown verbatim in the Anatomy section. */
-  readonly anatomy?: string;
+  /** Ref to the composition skeleton (`docAnatomy(slug)`), shown verbatim in Anatomy. */
+  readonly anatomy?: SourceRef;
   readonly api?: ReadonlyArray<ApiGroup>;
   readonly accessibility?: {
     readonly keyboard?: ReadonlyArray<KeyRow>;
@@ -52,4 +62,18 @@ export interface ComponentDoc {
   readonly dependencies?: ReadonlyArray<string>;
   /** Slugs of related components, rendered as chips. */
   readonly related?: ReadonlyArray<string>;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Resolved shapes — what the detail page consumes after the registry loads    */
+/* a doc chunk and swaps every SourceRef for its highlighted content.          */
+/* -------------------------------------------------------------------------- */
+
+/** A doc example with its source resolved to raw text + pre-highlighted HTML. */
+export interface ResolvedDocExample extends Omit<DocExample, "source">, HighlightedSource {}
+
+/** A component doc with every source ref resolved. */
+export interface ResolvedComponentDoc extends Omit<ComponentDoc, "examples" | "anatomy"> {
+  readonly examples: ReadonlyArray<ResolvedDocExample>;
+  readonly anatomy?: HighlightedSource | undefined;
 }
