@@ -2,13 +2,13 @@ import { Badge } from "@codefast/ui/badge";
 import { createFileRoute, useLocation } from "@tanstack/react-router";
 import { useEffect } from "react";
 
-import { GroupSection } from "#/components/showcase/components/group-section";
-import { MobileNav } from "#/components/showcase/components/mobile-nav";
-import { SidebarNav } from "#/components/showcase/components/sidebar-nav";
-import { useActiveSection } from "#/components/showcase/hooks/use-active-section";
+import { COMPONENTS } from "#/components/examples/meta";
+import { GroupSection } from "#/components/showcase/group-section";
+import { SHOWCASE_VIEWS } from "#/components/showcase/groups";
+import { MobileNav } from "#/components/showcase/mobile-nav";
+import { SidebarNav } from "#/components/showcase/sidebar-nav";
 import type { ViewMode } from "#/components/showcase/types";
-import { ALPHABET_GROUPS, CATEGORY_GROUPS, CATEGORY_NAV_IDS, LETTER_NAV_IDS } from "#/data/component-groups";
-import { ALL_COMPONENTS } from "#/data/components";
+import { useActiveSection } from "#/components/showcase/use-active-section";
 
 /* -------------------------------------------------------------------------- */
 /* Route                                                                       */
@@ -54,7 +54,7 @@ function ComponentsPage() {
   // layout; absent the param we fall back to "category" and let the effect below
   // upgrade to the visitor's stored preference.
   const mode: ViewMode = search.view ?? "category";
-  const groups = mode === "category" ? CATEGORY_GROUPS : ALPHABET_GROUPS;
+  const { groups, navIds } = SHOWCASE_VIEWS[mode];
 
   const setMode = (next: ViewMode): void => {
     localStorage.setItem(VIEW_STORAGE_KEY, next);
@@ -73,7 +73,6 @@ function ComponentsPage() {
     }
   }, [search.view, navigate]);
 
-  const navIds = mode === "category" ? CATEGORY_NAV_IDS : LETTER_NAV_IDS;
   const activeSection = useActiveSection(navIds);
   const hash = useLocation({ select: (location) => location.hash });
 
@@ -104,7 +103,7 @@ function ComponentsPage() {
           Components
         </Badge>
         <h1 className="mb-5 text-5xl leading-none font-bold tracking-tighter text-ui-fg md:text-6xl">
-          {ALL_COMPONENTS.length}+ ready-to-use <span className="text-ui-brand">components.</span>
+          {COMPONENTS.length}+ ready-to-use <span className="text-ui-brand">components.</span>
         </h1>
         <p className="text-base leading-relaxed text-ui-muted">
           Built on Radix UI primitives with Tailwind CSS v4. Each component ships as a named sub-path import — no barrel
