@@ -2,6 +2,7 @@ import { AppearanceProvider, AppearanceScript, resolveColorScheme } from "@codef
 import { getRootColorSchemeServerFn, getColorSchemeServerFn, persistColorSchemeCookie } from "@codefast/theme/start";
 import { Badge } from "@codefast/ui/badge";
 import { Button } from "@codefast/ui/button";
+import { cn } from "@codefast/ui/lib/utils";
 import { TanStackDevtools } from "@tanstack/react-devtools";
 import { HeadContent, Link, Scripts, createRootRoute } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
@@ -106,7 +107,7 @@ function RootDocument({ children }: { children: ReactNode }) {
   return (
     <html
       lang="en"
-      className={`${resolvedColorScheme} min-h-full`}
+      className={cn(resolvedColorScheme, "min-h-full")}
       style={{ colorScheme: resolvedColorScheme }}
       suppressHydrationWarning
     >
