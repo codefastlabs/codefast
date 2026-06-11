@@ -1,3 +1,4 @@
+import { cn } from "@codefast/ui/lib/utils";
 import { CheckIcon, CopyIcon } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
@@ -44,7 +45,10 @@ export function CodeBlock({ code, highlightedCode, className }: CodeBlockProps) 
   return (
     <div className="relative">
       <div
-        className={`overflow-x-auto [&_.shiki]:overflow-x-auto [&_.shiki]:bg-neutral-900! [&_.shiki]:p-5 [&_.shiki]:text-xs [&_.shiki]:leading-relaxed [&_.shiki]:tab-2! ${className ?? ""}`}
+        className={cn(
+          "overflow-x-auto [&_.shiki]:overflow-x-auto [&_.shiki]:bg-neutral-900! [&_.shiki]:p-5 [&_.shiki]:text-xs [&_.shiki]:leading-relaxed [&_.shiki]:tab-2!",
+          className,
+        )}
         dangerouslySetInnerHTML={{ __html: highlightedCode }}
       />
       <button
