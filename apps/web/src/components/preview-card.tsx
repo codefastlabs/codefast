@@ -1,3 +1,4 @@
+import { cn } from "@codefast/ui/lib/utils";
 import { Link } from "@tanstack/react-router";
 import { ArrowUpRightIcon } from "lucide-react";
 import type { ReactNode } from "react";
@@ -34,7 +35,10 @@ export function PreviewCard({
   return (
     <div
       id={id}
-      className={`flex scroll-mt-28 flex-col rounded-2xl border border-ui-border bg-ui-card ${wide ? "sm:col-span-2" : ""}`}
+      className={cn(
+        "flex scroll-mt-28 flex-col rounded-2xl border border-ui-border bg-ui-card",
+        wide && "sm:col-span-2",
+      )}
     >
       {/* Tab bar */}
       <div className="flex min-w-0 items-center justify-between gap-2 border-b border-ui-border px-3">
@@ -44,9 +48,10 @@ export function PreviewCard({
               key={t}
               type="button"
               onClick={() => setTab(t)}
-              className={`border-b-2 px-3 py-2.5 text-xs font-medium capitalize transition-colors ${
-                tab === t ? "border-ui-fg text-ui-fg" : "border-transparent text-ui-muted hover:text-ui-fg"
-              }`}
+              className={cn(
+                "border-b-2 px-3 py-2.5 text-xs font-medium capitalize transition-colors",
+                tab === t ? "border-ui-fg text-ui-fg" : "border-transparent text-ui-muted hover:text-ui-fg",
+              )}
             >
               {t}
             </button>
