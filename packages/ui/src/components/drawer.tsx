@@ -18,13 +18,7 @@ type DrawerProps = ComponentProps<typeof DrawerPrimitive.Root>;
  * @since 0.3.16-canary.0
  */
 function Drawer({ shouldScaleBackground = true, ...props }: DrawerProps): JSX.Element {
-  return (
-    <DrawerPrimitive.Root
-      data-slot="drawer"
-      shouldScaleBackground={shouldScaleBackground}
-      {...props}
-    />
-  );
+  return <DrawerPrimitive.Root data-slot="drawer" shouldScaleBackground={shouldScaleBackground} {...props} />;
 }
 
 /* -----------------------------------------------------------------------------
@@ -119,13 +113,7 @@ type DrawerFooterProps = ComponentProps<"div">;
  * @since 0.3.16-canary.0
  */
 function DrawerFooter({ className, ...props }: DrawerFooterProps): JSX.Element {
-  return (
-    <div
-      className={cn("mt-auto flex flex-col gap-2 p-4", className)}
-      data-slot="drawer-footer"
-      {...props}
-    />
-  );
+  return <div className={cn("mt-auto flex flex-col gap-2 p-4", className)} data-slot="drawer-footer" {...props} />;
 }
 
 /* -----------------------------------------------------------------------------

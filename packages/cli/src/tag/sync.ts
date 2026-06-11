@@ -46,17 +46,10 @@ export async function runTagSync(
   try {
     const tagConfig = input.config as CodefastTagConfig | undefined;
     const targetCandidates = await resolveTagTargetCandidates(fs, input.rootDir, input.targetPath);
-    const { includedCandidates, skippedPackages } = filterSkippedCandidates(
-      targetCandidates,
-      input.skipPackages,
-    );
-    const selectedTargets = includedCandidates.map((candidate) =>
-      resolveTargetSelection(fs, candidate, input.rootDir),
-    );
+    const { includedCandidates, skippedPackages } = filterSkippedCandidates(targetCandidates, input.skipPackages);
+    const selectedTargets = includedCandidates.map((candidate) => resolveTargetSelection(fs, candidate, input.rootDir));
     const targetExecutionResults = await Promise.all(
-      selectedTargets.map((resolvedTarget) =>
-        runOnResolvedTarget(fs, resolvedTarget, input.write, input.listener),
-      ),
+      selectedTargets.map((resolvedTarget) => runOnResolvedTarget(fs, resolvedTarget, input.write, input.listener)),
     );
     const allFileResults: Array<TagFileResult> = targetExecutionResults.flatMap(
       (targetResult) => targetResult.result?.fileResults ?? [],
@@ -73,9 +66,7 @@ export async function runTagSync(
       (sum, targetResult) => sum + (targetResult.result?.taggedDeclarations ?? 0),
       0,
     );
-    const modifiedFiles = allFileResults
-      .filter((entry) => entry.changed)
-      .map((entry) => entry.filePath);
+    const modifiedFiles = allFileResults.filter((entry) => entry.changed).map((entry) => entry.filePath);
     const hookError =
       input.write && modifiedFiles.length > 0
         ? await runTagOnAfterWriteHook(tagConfig?.onAfterWrite, modifiedFiles)
@@ -163,16 +154,9 @@ function chooseWorkspacePackageTargetPath(
   };
 }
 
-function resolveTargetSelection(
-  fs: FilesystemPort,
-  candidate: TagTargetCandidate,
-  rootDir: string,
-): TagResolvedTarget {
+function resolveTargetSelection(fs: FilesystemPort, candidate: TagTargetCandidate, rootDir: string): TagResolvedTarget {
   const selectedTarget = chooseWorkspacePackageTargetPath(fs, candidate);
-  const rootRelativeTargetPath = path
-    .relative(rootDir, selectedTarget.targetPath)
-    .split(path.sep)
-    .join("/");
+  const rootRelativeTargetPath = path.relative(rootDir, selectedTarget.targetPath).split(path.sep).join("/");
   return {
     targetPath: selectedTarget.targetPath,
     rootRelativeTargetPath: rootRelativeTargetPath || ".",

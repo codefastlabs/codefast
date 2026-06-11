@@ -29,9 +29,7 @@ export type RunBenchmarkChildMainParameters = Readonly<{
  *
  * @since 0.3.16-canary.0
  */
-export async function runBenchmarkChildMain(
-  parameters: RunBenchmarkChildMainParameters,
-): Promise<void> {
+export async function runBenchmarkChildMain(parameters: RunBenchmarkChildMainParameters): Promise<void> {
   const { libraryName, scenarioName, packageRoot, collectScenarios, benchDefaults } = parameters;
 
   console.error(`[bench] subprocess ${scenarioName} started`);

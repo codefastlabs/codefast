@@ -25,8 +25,7 @@ export const buttonDoc: ComponentDoc = {
     {
       id: "with-icon",
       title: "With icon",
-      description:
-        "Place an icon before or after the label. Add data-icon to fine-tune the padding.",
+      description: "Place an icon before or after the label. Add data-icon to fine-tune the padding.",
       Demo: ButtonIcons,
       code: docSource("button", "icons"),
     },
@@ -40,8 +39,7 @@ export const buttonDoc: ComponentDoc = {
     {
       id: "as-child",
       title: "asChild composition",
-      description:
-        "Render the button styles on a different element — an anchor, a router Link — via Radix Slot.",
+      description: "Render the button styles on a different element — an anchor, a router Link — via Radix Slot.",
       Demo: ButtonAsChild,
       code: docSource("button", "as-child"),
     },
@@ -62,8 +60,7 @@ export const buttonDoc: ComponentDoc = {
           name: "size",
           type: '"xs" | "sm" | "default" | "lg" | "icon" | "icon-xs" | "icon-sm" | "icon-lg"',
           default: '"default"',
-          description:
-            "Controls height and horizontal padding. Use icon sizes for icon-only buttons.",
+          description: "Controls height and horizontal padding. Use icon sizes for icon-only buttons.",
         },
         {
           name: "asChild",

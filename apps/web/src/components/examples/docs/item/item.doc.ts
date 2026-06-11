@@ -63,14 +63,8 @@ export const itemDoc: ComponentDoc = {
     ],
   },
   guidelines: {
-    do: [
-      "Use for settings lists, inboxes, and search results.",
-      "Keep one primary action per row.",
-    ],
-    dont: [
-      "Don’t nest multiple competing actions in a row.",
-      "Don’t use Item where a Table’s columns fit better.",
-    ],
+    do: ["Use for settings lists, inboxes, and search results.", "Keep one primary action per row."],
+    dont: ["Don’t nest multiple competing actions in a row.", "Don’t use Item where a Table’s columns fit better."],
   },
   related: ["card", "table", "separator"],
 };

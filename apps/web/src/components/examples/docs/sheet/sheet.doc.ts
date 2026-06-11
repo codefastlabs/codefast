@@ -9,8 +9,7 @@ export const sheetDoc: ComponentDoc = {
     {
       id: "sides",
       title: "Any edge",
-      description:
-        "Controlled open state plus a side prop — slide in from top, right, bottom, or left.",
+      description: "Controlled open state plus a side prop — slide in from top, right, bottom, or left.",
       Demo: SheetSides,
       code: docSource("sheet", "sides"),
       previewClassName: "min-h-40",
@@ -18,8 +17,7 @@ export const sheetDoc: ComponentDoc = {
     {
       id: "form",
       title: "Edit form",
-      description:
-        "A trigger-driven sheet holding a short form with header, body, and footer actions.",
+      description: "A trigger-driven sheet holding a short form with header, body, and footer actions.",
       Demo: SheetProfile,
       code: docSource("sheet", "profile"),
       previewClassName: "min-h-40",
@@ -80,10 +78,7 @@ export const sheetDoc: ComponentDoc = {
       "Use for secondary tasks — filters, details, quick edits.",
       "Anchor navigation sheets to the left, content/detail sheets to the right.",
     ],
-    dont: [
-      "Don’t put a multi-step primary flow in a sheet — use a page.",
-      "Don’t stack a sheet over a dialog.",
-    ],
+    dont: ["Don’t put a multi-step primary flow in a sheet — use a page.", "Don’t stack a sheet over a dialog."],
   },
   related: ["dialog", "drawer", "popover"],
 };

@@ -7,14 +7,8 @@ import type { BenchScenario } from "#/scenarios/types";
 type CompoundProps = (typeof compoundSlotsTestProps)[number];
 type CompoundSlotsRenderer = (props: CompoundProps) => CompoundPaginationSlots;
 
-const npmNoMerge = tailwindVariantsTv(
-  compoundSlotsVariants,
-  TV_MERGE_DISABLED,
-) as CompoundSlotsRenderer;
-const npmWithMerge = tailwindVariantsTv(
-  compoundSlotsVariants,
-  TV_MERGE_ENABLED,
-) as CompoundSlotsRenderer;
+const npmNoMerge = tailwindVariantsTv(compoundSlotsVariants, TV_MERGE_DISABLED) as CompoundSlotsRenderer;
+const npmWithMerge = tailwindVariantsTv(compoundSlotsVariants, TV_MERGE_ENABLED) as CompoundSlotsRenderer;
 
 function runCompoundSlotLoop(renderer: CompoundSlotsRenderer): void {
   for (const props of compoundSlotsTestProps) {

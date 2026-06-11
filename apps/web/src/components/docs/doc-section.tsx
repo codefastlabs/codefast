@@ -20,10 +20,7 @@ export function DocSection({ id, title, description, children, className }: DocS
     <section id={id} className={cn("scroll-mt-24", className)}>
       <a href={`#${id}`} className="group/anchor mb-1 flex w-fit items-center gap-2 no-underline">
         <h2 className="text-2xl font-bold tracking-tighter text-ui-fg">{title}</h2>
-        <span
-          aria-hidden
-          className="text-ui-muted opacity-0 transition-opacity group-hover/anchor:opacity-100"
-        >
+        <span aria-hidden className="text-ui-muted opacity-0 transition-opacity group-hover/anchor:opacity-100">
           #
         </span>
       </a>

@@ -110,9 +110,7 @@ export function createArrangeCommand(): Command {
 
   cmd
     .command("simplify")
-    .description(
-      "Flatten grouped arrays and static-only cn() calls back to plain strings in tv() slots",
-    )
+    .description("Flatten grouped arrays and static-only cn() calls back to plain strings in tv() slots")
     .argument("[target]", "Directory or file (default: nearest package directory from cwd)")
     .option("--dry-run", "Show what simplify would change without writing files", false)
     .option("--json", "Print one JSON object on stdout (suppresses human progress)", false)
@@ -126,19 +124,14 @@ export function createArrangeCommand(): Command {
         return;
       }
       const { resolvedTarget } = prelude.value;
-      await runCliResultAsync(
-        runArrangeSimplify(nodeFilesystem, { targetPath: resolvedTarget, write }),
-        (value) => {
-          if (opts.json) {
-            logger.out(
-              JSON.stringify({ schemaVersion: 1 as const, ok: true, write, result: value }),
-            );
-            return CLI_EXIT_SUCCESS;
-          }
-          printSimplifyResult(value, write);
+      await runCliResultAsync(runArrangeSimplify(nodeFilesystem, { targetPath: resolvedTarget, write }), (value) => {
+        if (opts.json) {
+          logger.out(JSON.stringify({ schemaVersion: 1 as const, ok: true, write, result: value }));
           return CLI_EXIT_SUCCESS;
-        },
-      );
+        }
+        printSimplifyResult(value, write);
+        return CLI_EXIT_SUCCESS;
+      });
     });
 
   cmd

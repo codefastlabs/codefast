@@ -9,8 +9,7 @@ export const fieldDoc: ComponentDoc = {
     {
       id: "validation",
       title: "Live validation",
-      description:
-        "A real form: submit with an invalid email to see FieldError and the error ring appear.",
+      description: "A real form: submit with an invalid email to see FieldError and the error ring appear.",
       Demo: FieldValidation,
       code: docSource("field", "validation"),
       previewClassName: "items-start",
@@ -18,8 +17,7 @@ export const fieldDoc: ComponentDoc = {
     {
       id: "layouts",
       title: "Layouts & groups",
-      description:
-        "Vertical and horizontal orientation, plus FieldSet + FieldLegend to group related fields.",
+      description: "Vertical and horizontal orientation, plus FieldSet + FieldLegend to group related fields.",
       Demo: FieldLayouts,
       code: docSource("field", "layouts"),
       previewClassName: "items-start",
@@ -82,10 +80,7 @@ export const fieldDoc: ComponentDoc = {
       "Pair every control with a FieldLabel.",
       "Show errors next to the field, on submit or on blur — not only as a toast.",
     ],
-    dont: [
-      "Don’t rely on the red ring alone — always give a text error.",
-      "Don’t use placeholder text as the label.",
-    ],
+    dont: ["Don’t rely on the red ring alone — always give a text error.", "Don’t use placeholder text as the label."],
   },
   related: ["form", "input", "label", "checkbox"],
 };

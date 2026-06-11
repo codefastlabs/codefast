@@ -44,11 +44,7 @@ interface ButtonGroupTextProps extends ComponentProps<"div"> {
 /**
  * @since 0.3.16-canary.0
  */
-function ButtonGroupText({
-  asChild = false,
-  className,
-  ...props
-}: ButtonGroupTextProps): JSX.Element {
+function ButtonGroupText({ asChild = false, className, ...props }: ButtonGroupTextProps): JSX.Element {
   const Component = asChild ? Slot.Root : "div";
 
   return (

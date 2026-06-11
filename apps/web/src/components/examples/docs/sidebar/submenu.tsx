@@ -40,9 +40,7 @@ export function SidebarSubmenu() {
                   <SidebarMenuSub>
                     {PROJECTS.map((project, index) => (
                       <SidebarMenuSubItem key={project}>
-                        <SidebarMenuSubButton isActive={index === 0}>
-                          {project}
-                        </SidebarMenuSubButton>
+                        <SidebarMenuSubButton isActive={index === 0}>{project}</SidebarMenuSubButton>
                       </SidebarMenuSubItem>
                     ))}
                   </SidebarMenuSub>

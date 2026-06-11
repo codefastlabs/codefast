@@ -23,24 +23,12 @@ export function resolveMirrorPackageFromCliArg(
   }
   const rootReal = fs.canonicalPathSync(path.resolve(rootDir));
   const cwdReal = fs.canonicalPathSync(currentWorkingDirectory);
-  const resolved = path.isAbsolute(packageArg)
-    ? path.resolve(packageArg)
-    : path.resolve(cwdReal, packageArg);
+  const resolved = path.isAbsolute(packageArg) ? path.resolve(packageArg) : path.resolve(cwdReal, packageArg);
   const targetReal = fs.canonicalPathSync(resolved);
   const relativePath = path.relative(rootReal, targetReal);
   const normalized = normalizePath(relativePath);
-  if (
-    normalized.startsWith("..") ||
-    path.isAbsolute(normalized) ||
-    normalized === "" ||
-    normalized === "."
-  ) {
-    return err(
-      new AppError(
-        "VALIDATION_ERROR",
-        `Package path must be a subdirectory under monorepo root: ${rootDir}`,
-      ),
-    );
+  if (normalized.startsWith("..") || path.isAbsolute(normalized) || normalized === "" || normalized === ".") {
+    return err(new AppError("VALIDATION_ERROR", `Package path must be a subdirectory under monorepo root: ${rootDir}`));
   }
   return ok(normalized);
 }
@@ -60,18 +48,8 @@ export function resolvePackageFilterUnderRoot(
     : fs.canonicalPathSync(path.join(rootReal, packageFilter));
   const relativePath = path.relative(rootReal, resolved);
   const normalized = normalizePath(relativePath);
-  if (
-    normalized.startsWith("..") ||
-    path.isAbsolute(normalized) ||
-    normalized === "" ||
-    normalized === "."
-  ) {
-    return err(
-      new AppError(
-        "VALIDATION_ERROR",
-        `Package path must be a subdirectory under monorepo root: ${rootDir}`,
-      ),
-    );
+  if (normalized.startsWith("..") || path.isAbsolute(normalized) || normalized === "" || normalized === ".") {
+    return err(new AppError("VALIDATION_ERROR", `Package path must be a subdirectory under monorepo root: ${rootDir}`));
   }
   return ok(normalized);
 }

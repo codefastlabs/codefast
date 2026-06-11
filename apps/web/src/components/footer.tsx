@@ -23,9 +23,7 @@ export function Footer() {
           {/* Links */}
           <div className="flex gap-16 text-sm">
             <div className="flex flex-col gap-3">
-              <p className="text-xs font-semibold tracking-widest text-ui-muted uppercase">
-                Library
-              </p>
+              <p className="text-xs font-semibold tracking-widest text-ui-muted uppercase">Library</p>
               <Link to="/" className="text-ui-muted no-underline hover:text-ui-fg">
                 Home
               </Link>
@@ -37,9 +35,7 @@ export function Footer() {
               </Link>
             </div>
             <div className="flex flex-col gap-3">
-              <p className="text-xs font-semibold tracking-widest text-ui-muted uppercase">
-                Resources
-              </p>
+              <p className="text-xs font-semibold tracking-widest text-ui-muted uppercase">Resources</p>
               <a
                 href="https://github.com/codefastlabs/codefast"
                 target="_blank"

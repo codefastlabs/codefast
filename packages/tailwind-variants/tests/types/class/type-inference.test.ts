@@ -32,9 +32,7 @@ describe("Real-World Type Inference Tests", () => {
     const button = buttonVariants({ size: "lg", variant: "destructive" });
 
     type ButtonProps = VariantProps<typeof buttonVariants>;
-    expectTypeOf<ButtonProps["size"]>().toEqualTypeOf<
-      "default" | "icon" | "lg" | "sm" | undefined
-    >();
+    expectTypeOf<ButtonProps["size"]>().toEqualTypeOf<"default" | "icon" | "lg" | "sm" | undefined>();
     expectTypeOf<ButtonProps["variant"]>().toEqualTypeOf<
       "default" | "destructive" | "ghost" | "link" | "outline" | "secondary" | undefined
     >();
@@ -90,9 +88,7 @@ describe("Real-World Type Inference Tests", () => {
 
     type CardProps = VariantProps<typeof cardVariants>;
     expectTypeOf<CardProps["size"]>().toEqualTypeOf<"default" | "lg" | "sm" | undefined>();
-    expectTypeOf<CardProps["variant"]>().toEqualTypeOf<
-      "default" | "destructive" | "success" | undefined
-    >();
+    expectTypeOf<CardProps["variant"]>().toEqualTypeOf<"default" | "destructive" | "success" | undefined>();
 
     expectTypeOf(card).toHaveProperty("base");
     expectTypeOf(card).toHaveProperty("content");
@@ -217,9 +213,7 @@ describe("Real-World Type Inference Tests", () => {
     const navigation = navigationMenuVariants({ orientation: "vertical", variant: "pills" });
 
     type NavigationProps = VariantProps<typeof navigationMenuVariants>;
-    expectTypeOf<NavigationProps["orientation"]>().toEqualTypeOf<
-      "horizontal" | "vertical" | undefined
-    >();
+    expectTypeOf<NavigationProps["orientation"]>().toEqualTypeOf<"horizontal" | "vertical" | undefined>();
     expectTypeOf<NavigationProps["variant"]>().toEqualTypeOf<"default" | "pills" | undefined>();
 
     expectTypeOf(navigation).toHaveProperty("list");
@@ -318,8 +312,7 @@ describe("Real-World Type Inference Tests", () => {
       variants: {
         variant: {
           default: "bg-background text-foreground",
-          destructive:
-            "border-destructive/50 text-destructive dark:border-destructive [&>svg]:text-destructive",
+          destructive: "border-destructive/50 text-destructive dark:border-destructive [&>svg]:text-destructive",
         },
       },
     });
@@ -503,9 +496,7 @@ describe("Real-World Type Inference Tests", () => {
     type MixedProps = VariantProps<typeof mixedVariants>;
     expectTypeOf<MixedProps["size"]>().toEqualTypeOf<"lg" | "md" | "sm" | undefined>();
     expectTypeOf<MixedProps["disabled"]>().toEqualTypeOf<boolean | undefined>();
-    expectTypeOf<MixedProps["color"]>().toEqualTypeOf<
-      "primary" | "secondary" | "success" | undefined
-    >();
+    expectTypeOf<MixedProps["color"]>().toEqualTypeOf<"primary" | "secondary" | "success" | undefined>();
 
     expectTypeOf(mixed).toEqualTypeOf<string | undefined>();
   });
@@ -542,12 +533,8 @@ describe("Real-World Type Inference Tests", () => {
     const conditional = conditionalVariants({ intent: "primary", size: "large" });
 
     type ConditionalProps = VariantProps<typeof conditionalVariants>;
-    expectTypeOf<ConditionalProps["intent"]>().toEqualTypeOf<
-      "danger" | "primary" | "secondary" | undefined
-    >();
-    expectTypeOf<ConditionalProps["size"]>().toEqualTypeOf<
-      "large" | "medium" | "small" | undefined
-    >();
+    expectTypeOf<ConditionalProps["intent"]>().toEqualTypeOf<"danger" | "primary" | "secondary" | undefined>();
+    expectTypeOf<ConditionalProps["size"]>().toEqualTypeOf<"large" | "medium" | "small" | undefined>();
 
     expectTypeOf(conditional).toEqualTypeOf<string | undefined>();
   });

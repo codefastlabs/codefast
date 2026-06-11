@@ -48,10 +48,7 @@ function Calendar({
         root: cn("w-fit", defaultClassNames.root),
         months: cn("relative flex flex-col gap-4 md:flex-row", defaultClassNames.months),
         month: cn("flex w-full flex-col gap-4", defaultClassNames.month),
-        nav: cn(
-          "absolute inset-x-0 top-0 flex w-full items-center justify-between gap-1",
-          defaultClassNames.nav,
-        ),
+        nav: cn("absolute inset-x-0 top-0 flex w-full items-center justify-between gap-1", defaultClassNames.nav),
         button_previous: cn(
           buttonVariants({ variant: buttonVariant }),
           "size-(--cell-size) p-0 select-none aria-disabled:opacity-50",
@@ -90,10 +87,7 @@ function Calendar({
         ),
         week: cn("mt-2 flex w-full", defaultClassNames.week),
         week_number_header: cn("w-(--cell-size) select-none", defaultClassNames.week_number_header),
-        week_number: cn(
-          "text-[0.8rem] text-muted-foreground select-none",
-          defaultClassNames.week_number,
-        ),
+        week_number: cn("text-[0.8rem] text-muted-foreground select-none", defaultClassNames.week_number),
         day: cn(
           "group/day relative aspect-square h-full w-full rounded-(--cell-radius) p-0 text-center select-none [&:last-child[data-selected=true]_button]:rounded-r-(--cell-radius)",
           props.showWeekNumber
@@ -114,10 +108,7 @@ function Calendar({
           "rounded-(--cell-radius) bg-muted text-foreground data-[selected=true]:rounded-none",
           defaultClassNames.today,
         ),
-        outside: cn(
-          "text-muted-foreground aria-selected:text-muted-foreground",
-          defaultClassNames.outside,
-        ),
+        outside: cn("text-muted-foreground aria-selected:text-muted-foreground", defaultClassNames.outside),
         disabled: cn("text-muted-foreground opacity-50", defaultClassNames.disabled),
         hidden: cn("invisible", defaultClassNames.hidden),
         ...classNames,
@@ -144,11 +135,7 @@ function Calendar({
  * Component: CalendarChevron (internal)
  * -------------------------------------------------------------------------- */
 
-function CalendarChevron({
-  className,
-  orientation,
-  ...props
-}: ComponentProps<typeof Chevron>): JSX.Element {
+function CalendarChevron({ className, orientation, ...props }: ComponentProps<typeof Chevron>): JSX.Element {
   if (orientation === "left") {
     return <ChevronLeftIcon className={cn("size-4 rtl:rotate-180", className)} {...props} />;
   }
@@ -172,15 +159,10 @@ function CalendarRoot({ rootRef, ...props }: ComponentProps<typeof Root>): JSX.E
  * Component: CalendarWeekNumber (internal)
  * -------------------------------------------------------------------------- */
 
-function CalendarWeekNumber({
-  children,
-  ...props
-}: ComponentProps<typeof WeekNumber>): JSX.Element {
+function CalendarWeekNumber({ children, ...props }: ComponentProps<typeof WeekNumber>): JSX.Element {
   return (
     <td {...props}>
-      <div className="flex size-(--cell-size) items-center justify-center text-center">
-        {children}
-      </div>
+      <div className="flex size-(--cell-size) items-center justify-center text-center">{children}</div>
     </td>
   );
 }
@@ -199,13 +181,7 @@ type CalendarDayButtonProps = ComponentProps<typeof DayButton> & {
 /**
  * @since 0.3.16-canary.0
  */
-function CalendarDayButton({
-  className,
-  day,
-  locale,
-  modifiers,
-  ...props
-}: CalendarDayButtonProps): JSX.Element {
+function CalendarDayButton({ className, day, locale, modifiers, ...props }: CalendarDayButtonProps): JSX.Element {
   const defaultClassNames = getDefaultClassNames();
 
   const ref = useRef<HTMLButtonElement>(null);
@@ -229,10 +205,7 @@ function CalendarDayButton({
       data-range-middle={modifiers.range_middle}
       data-range-start={modifiers.range_start}
       data-selected-single={
-        modifiers.selected &&
-        !modifiers.range_start &&
-        !modifiers.range_end &&
-        !modifiers.range_middle
+        modifiers.selected && !modifiers.range_start && !modifiers.range_end && !modifiers.range_middle
       }
       size="icon"
       variant="ghost"

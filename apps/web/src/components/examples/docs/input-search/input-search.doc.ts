@@ -63,14 +63,8 @@ export const inputSearchDoc: ComponentDoc = {
     ],
   },
   guidelines: {
-    do: [
-      "Use for filtering lists and global search.",
-      "Show the active query and a way to clear it.",
-    ],
-    dont: [
-      "Don’t use it for non-search text entry.",
-      "Don’t hide the clear affordance once there’s a value.",
-    ],
+    do: ["Use for filtering lists and global search.", "Show the active query and a way to clear it."],
+    dont: ["Don’t use it for non-search text entry.", "Don’t hide the clear affordance once there’s a value."],
   },
   related: ["input", "command", "input-group"],
 };

@@ -38,8 +38,7 @@ interface SidebarContextValue {
 
 const SIDEBAR_PROVIDER_NAME = "SidebarProvider";
 
-const [SidebarContextProvider, useSidebar] =
-  Context.createContext<SidebarContextValue>(SIDEBAR_PROVIDER_NAME);
+const [SidebarContextProvider, useSidebar] = Context.createContext<SidebarContextValue>(SIDEBAR_PROVIDER_NAME);
 
 /* -----------------------------------------------------------------------------
  * Component: SidebarProvider
@@ -130,10 +129,7 @@ function SidebarProvider({
     >
       <TooltipProvider delayDuration={0}>
         <div
-          className={cn(
-            "group/sidebar-wrapper flex min-h-svh w-full has-data-[variant=inset]:bg-sidebar",
-            className,
-          )}
+          className={cn("group/sidebar-wrapper flex min-h-svh w-full has-data-[variant=inset]:bg-sidebar", className)}
           data-slot="sidebar-wrapper"
           style={
             {
@@ -182,10 +178,7 @@ function Sidebar({
   if (collapsible === "none") {
     return (
       <div
-        className={cn(
-          "flex h-full w-(--sidebar-width) flex-col bg-sidebar text-sidebar-foreground",
-          className,
-        )}
+        className={cn("flex h-full w-(--sidebar-width) flex-col bg-sidebar text-sidebar-foreground", className)}
         data-slot="sidebar"
         {...props}
       >
@@ -510,11 +503,7 @@ interface SidebarGroupLabelProps extends ComponentProps<"div"> {
 /**
  * @since 0.3.16-canary.0
  */
-function SidebarGroupLabel({
-  asChild = false,
-  className,
-  ...props
-}: SidebarGroupLabelProps): JSX.Element {
+function SidebarGroupLabel({ asChild = false, className, ...props }: SidebarGroupLabelProps): JSX.Element {
   const Component = asChild ? Slot.Root : "div";
 
   return (
@@ -544,11 +533,7 @@ interface SidebarGroupActionProps extends ComponentProps<"button"> {
 /**
  * @since 0.3.16-canary.0
  */
-function SidebarGroupAction({
-  asChild = false,
-  className,
-  ...props
-}: SidebarGroupActionProps): JSX.Element {
+function SidebarGroupAction({ asChild = false, className, ...props }: SidebarGroupActionProps): JSX.Element {
   const Component = asChild ? Slot.Root : "button";
 
   return (
@@ -687,12 +672,7 @@ function SidebarMenuButton({
   return (
     <Tooltip>
       <TooltipTrigger asChild>{button}</TooltipTrigger>
-      <TooltipContent
-        align="center"
-        hidden={state !== "collapsed" || isMobile}
-        side="right"
-        {...tooltip}
-      />
+      <TooltipContent align="center" hidden={state !== "collapsed" || isMobile} side="right" {...tooltip} />
     </Tooltip>
   );
 }
@@ -775,11 +755,7 @@ interface SidebarMenuSkeletonProps extends ComponentProps<"div"> {
 /**
  * @since 0.3.16-canary.0
  */
-function SidebarMenuSkeleton({
-  className,
-  showIcon = false,
-  ...props
-}: SidebarMenuSkeletonProps): JSX.Element {
+function SidebarMenuSkeleton({ className, showIcon = false, ...props }: SidebarMenuSkeletonProps): JSX.Element {
   // Random width between 50 to 90% - use useState with lazy initializer to avoid calling Math.random during render
   const [width] = useState(() => `${String(Math.floor(Math.random() * 40) + 50)}%`);
 
@@ -790,9 +766,7 @@ function SidebarMenuSkeleton({
       data-slot="sidebar-menu-skeleton"
       {...props}
     >
-      {showIcon ? (
-        <Skeleton className="size-4 rounded-md" data-sidebar="menu-skeleton-icon" />
-      ) : null}
+      {showIcon ? <Skeleton className="size-4 rounded-md" data-sidebar="menu-skeleton-icon" /> : null}
       <Skeleton
         className="h-4 max-w-(--skeleton-width) flex-1"
         data-sidebar="menu-skeleton-text"

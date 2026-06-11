@@ -129,12 +129,7 @@ interface MenubarSubTriggerProps extends ComponentProps<typeof MenubarPrimitive.
 /**
  * @since 0.3.16-canary.0
  */
-function MenubarSubTrigger({
-  children,
-  className,
-  inset,
-  ...props
-}: MenubarSubTriggerProps): JSX.Element {
+function MenubarSubTrigger({ children, className, inset, ...props }: MenubarSubTriggerProps): JSX.Element {
   return (
     <MenubarPrimitive.SubTrigger
       className={cn(
@@ -229,12 +224,7 @@ interface MenubarItemProps extends ComponentProps<typeof MenubarPrimitive.Item> 
 /**
  * @since 0.3.16-canary.0
  */
-function MenubarItem({
-  className,
-  inset,
-  variant = "default",
-  ...props
-}: MenubarItemProps): JSX.Element {
+function MenubarItem({ className, inset, variant = "default", ...props }: MenubarItemProps): JSX.Element {
   return (
     <MenubarPrimitive.Item
       className={cn(
@@ -263,13 +253,7 @@ interface MenubarCheckboxItemProps extends ComponentProps<typeof MenubarPrimitiv
 /**
  * @since 0.3.16-canary.0
  */
-function MenubarCheckboxItem({
-  checked,
-  children,
-  className,
-  inset,
-  ...props
-}: MenubarCheckboxItemProps): JSX.Element {
+function MenubarCheckboxItem({ checked, children, className, inset, ...props }: MenubarCheckboxItemProps): JSX.Element {
   return (
     <MenubarPrimitive.CheckboxItem
       checked={checked}
@@ -305,12 +289,7 @@ interface MenubarRadioItemProps extends ComponentProps<typeof MenubarPrimitive.R
 /**
  * @since 0.3.16-canary.0
  */
-function MenubarRadioItem({
-  children,
-  className,
-  inset,
-  ...props
-}: MenubarRadioItemProps): JSX.Element {
+function MenubarRadioItem({ children, className, inset, ...props }: MenubarRadioItemProps): JSX.Element {
   return (
     <MenubarPrimitive.RadioItem
       className={cn(
@@ -416,13 +395,7 @@ type MenubarArrowProps = ComponentProps<typeof MenubarPrimitive.Arrow>;
  * @since 0.3.16-canary.0
  */
 function MenubarArrow({ className, ...props }: MenubarArrowProps): JSX.Element {
-  return (
-    <MenubarPrimitive.Arrow
-      className={cn("fill-popover", className)}
-      data-slot="menubar-arrow"
-      {...props}
-    />
-  );
+  return <MenubarPrimitive.Arrow className={cn("fill-popover", className)} data-slot="menubar-arrow" {...props} />;
 }
 
 /* -----------------------------------------------------------------------------

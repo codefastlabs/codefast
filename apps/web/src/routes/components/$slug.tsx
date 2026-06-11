@@ -161,8 +161,7 @@ function ComponentDetailPage() {
 
   const index = DEMO_COMPONENTS.findIndex((c) => c.slug === slug);
   const previous = index > 0 ? DEMO_COMPONENTS[index - 1] : undefined;
-  const next =
-    index >= 0 && index < DEMO_COMPONENTS.length - 1 ? DEMO_COMPONENTS[index + 1] : undefined;
+  const next = index >= 0 && index < DEMO_COMPONENTS.length - 1 ? DEMO_COMPONENTS[index + 1] : undefined;
 
   const hasRelated = (doc?.related?.length ?? 0) > 0 || (doc?.dependencies?.length ?? 0) > 0;
   const toc = buildToc(examples, doc);
@@ -184,26 +183,17 @@ function ComponentDetailPage() {
             </div>
           )}
 
-          {doc?.anatomy ? (
-            <AnatomySection code={doc.anatomy} highlightedCode={highlighted[ANATOMY_KEY] ?? ""} />
-          ) : null}
+          {doc?.anatomy ? <AnatomySection code={doc.anatomy} highlightedCode={highlighted[ANATOMY_KEY] ?? ""} /> : null}
 
           {doc?.api?.length ? <ApiSection groups={doc.api} /> : null}
 
           {doc?.accessibility ? (
-            <AccessibilitySection
-              keyboard={doc.accessibility.keyboard}
-              notes={doc.accessibility.notes}
-            />
+            <AccessibilitySection keyboard={doc.accessibility.keyboard} notes={doc.accessibility.notes} />
           ) : null}
 
-          {doc?.guidelines ? (
-            <GuidelinesSection do={doc.guidelines.do} dont={doc.guidelines.dont} />
-          ) : null}
+          {doc?.guidelines ? <GuidelinesSection do={doc.guidelines.do} dont={doc.guidelines.dont} /> : null}
 
-          {hasRelated ? (
-            <RelatedSection dependencies={doc?.dependencies} related={doc?.related} />
-          ) : null}
+          {hasRelated ? <RelatedSection dependencies={doc?.dependencies} related={doc?.related} /> : null}
 
           <ComponentPager previous={previous} next={next} />
         </div>

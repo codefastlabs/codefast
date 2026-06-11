@@ -20,14 +20,7 @@ type ButtonProps = ComponentProps<"button"> &
 /**
  * @since 0.3.16-canary.0
  */
-function Button({
-  asChild = false,
-  className,
-  size,
-  type = "button",
-  variant,
-  ...props
-}: ButtonProps): JSX.Element {
+function Button({ asChild = false, className, size, type = "button", variant, ...props }: ButtonProps): JSX.Element {
   const Comp = asChild ? Slot.Root : "button";
 
   if (asChild) {

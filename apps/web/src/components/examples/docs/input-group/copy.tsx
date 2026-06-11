@@ -1,9 +1,4 @@
-import {
-  InputGroup,
-  InputGroupAddon,
-  InputGroupButton,
-  InputGroupInput,
-} from "@codefast/ui/input-group";
+import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from "@codefast/ui/input-group";
 import { CopyIcon } from "lucide-react";
 
 export function InputGroupCopy() {

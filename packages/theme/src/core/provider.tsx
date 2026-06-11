@@ -11,12 +11,7 @@ import {
   useSyncExternalStore,
 } from "react";
 
-import {
-  DEFAULT_RESOLVED_COLOR_SCHEME,
-  DEFAULT_COLOR_SCHEME,
-  MEDIA,
-  SYNC_CHANNEL,
-} from "#/constants";
+import { DEFAULT_RESOLVED_COLOR_SCHEME, DEFAULT_COLOR_SCHEME, MEDIA, SYNC_CHANNEL } from "#/constants";
 import { ColorSchemeContext } from "#/core/context";
 import type { ResolvedColorScheme, ColorScheme, ColorSchemeContextType } from "#/types";
 import { colorSchemeSchema } from "#/types";
@@ -198,9 +193,7 @@ export function AppearanceProvider({
   // C1: Re-sync state when the server (loader) provides a new color scheme value after mount
   useEffect(() => {
     startTransition(() => {
-      setColorSchemeState((prev) =>
-        prev === safeInitialColorScheme ? prev : safeInitialColorScheme,
-      );
+      setColorSchemeState((prev) => (prev === safeInitialColorScheme ? prev : safeInitialColorScheme));
     });
   }, [safeInitialColorScheme]);
 
@@ -243,11 +236,7 @@ export function AppearanceProvider({
   }, [ssrColorScheme]);
 
   // Subscribe to OS preference changes (SSR-safe via useSyncExternalStore)
-  const systemColorScheme = useSyncExternalStore(
-    subscribeToSystemColorScheme,
-    getSystemColorScheme,
-    getServerSnapshot,
-  );
+  const systemColorScheme = useSyncExternalStore(subscribeToSystemColorScheme, getSystemColorScheme, getServerSnapshot);
 
   // Compute the actual color scheme to apply: resolve 'automatic' to light/dark
   const resolvedColorScheme = useMemo<ResolvedColorScheme>(

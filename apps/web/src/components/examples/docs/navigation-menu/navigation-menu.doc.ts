@@ -66,14 +66,8 @@ export const navigationMenuDoc: ComponentDoc = {
     ],
   },
   guidelines: {
-    do: [
-      "Use for primary site navigation with grouped destinations.",
-      "Keep panels shallow and scannable.",
-    ],
-    dont: [
-      "Don’t put forms or complex controls in a nav panel.",
-      "Don’t bury key links several levels deep.",
-    ],
+    do: ["Use for primary site navigation with grouped destinations.", "Keep panels shallow and scannable."],
+    dont: ["Don’t put forms or complex controls in a nav panel.", "Don’t bury key links several levels deep."],
   },
   related: ["menubar", "breadcrumb", "tabs"],
 };

@@ -60,13 +60,7 @@ type BreadcrumbItemProps = ComponentProps<"li">;
  * @since 0.3.16-canary.0
  */
 function BreadcrumbItem({ className, ...props }: BreadcrumbItemProps): JSX.Element {
-  return (
-    <li
-      className={cn("inline-flex items-center gap-1.5", className)}
-      data-slot="breadcrumb-item"
-      {...props}
-    />
-  );
+  return <li className={cn("inline-flex items-center gap-1.5", className)} data-slot="breadcrumb-item" {...props} />;
 }
 
 /* -----------------------------------------------------------------------------
@@ -132,11 +126,7 @@ type BreadcrumbSeparatorProps = ComponentProps<"li">;
 /**
  * @since 0.3.16-canary.0
  */
-function BreadcrumbSeparator({
-  children,
-  className,
-  ...props
-}: BreadcrumbSeparatorProps): JSX.Element {
+function BreadcrumbSeparator({ children, className, ...props }: BreadcrumbSeparatorProps): JSX.Element {
   return (
     <li
       aria-hidden="true"

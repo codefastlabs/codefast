@@ -1,8 +1,4 @@
-import {
-  COMPATIBLE_BUCKET_SETS,
-  RESPONSIVE_PREFIX,
-  STATE_PREFIXES,
-} from "#/arrange/domain/constants";
+import { COMPATIBLE_BUCKET_SETS, RESPONSIVE_PREFIX, STATE_PREFIXES } from "#/arrange/domain/constants";
 import { indexOfFirstVariantColon, stripVariants } from "#/arrange/domain/tailwind-token";
 import type { Bucket } from "#/arrange/domain/types";
 
@@ -35,11 +31,7 @@ function isCompoundOrMediaVariantPrefix(prefix: string): boolean {
   ) {
     return true;
   }
-  if (
-    /^(?:user-valid|user-invalid|contrast-more|contrast-less|forced-colors|inverted-colors)$/.test(
-      prefix,
-    )
-  ) {
+  if (/^(?:user-valid|user-invalid|contrast-more|contrast-less|forced-colors|inverted-colors)$/.test(prefix)) {
     return true;
   }
   if (/^(?:any-)?pointer-(?:fine|coarse|none)$/.test(prefix)) {
@@ -152,30 +144,16 @@ function isStateToken(token: string): boolean {
  */
 export function compositeSecondaryOrder(bareUtility: string): number {
   const b = bareUtility;
-  if (
-    /^opacity(?:-|$)/.test(b) ||
-    b.startsWith("mix-blend-") ||
-    /^isolation(?:-|$)/.test(b) ||
-    b === "isolate"
-  ) {
+  if (/^opacity(?:-|$)/.test(b) || b.startsWith("mix-blend-") || /^isolation(?:-|$)/.test(b) || b === "isolate") {
     return 0;
   }
   if (b === "transform-3d" || /^perspective(?:-|$)/.test(b)) {
     return 10;
   }
-  if (
-    /^rotate-[xyz](?:-|$)/.test(b) ||
-    /^translate-z(?:-|$)/.test(b) ||
-    /^scale-z(?:-|$)/.test(b)
-  ) {
+  if (/^rotate-[xyz](?:-|$)/.test(b) || /^translate-z(?:-|$)/.test(b) || /^scale-z(?:-|$)/.test(b)) {
     return 20;
   }
-  if (
-    /^translate(?:-|$)/.test(b) ||
-    /^scale(?:-|$)/.test(b) ||
-    /^rotate(?:-|$)/.test(b) ||
-    /^skew(?:-|$)/.test(b)
-  ) {
+  if (/^translate(?:-|$)/.test(b) || /^scale(?:-|$)/.test(b) || /^rotate(?:-|$)/.test(b) || /^skew(?:-|$)/.test(b)) {
     return 30;
   }
   if (/^transform(?:-(?:gpu|cpu|none))?$/.test(b)) {
@@ -244,16 +222,12 @@ function classifyBareUtility(bareUtility: string): Bucket {
   // --- Layout ---
   if (
     /^(?:flex|inline-flex|grid|inline-grid|subgrid|masonry)(?:$|-)/.test(b) ||
-    /^(?:items|justify|justify-items|justify-self|content|self|place|place-content|place-items|place-self)-/.test(
-      b,
-    ) ||
+    /^(?:items|justify|justify-items|justify-self|content|self|place|place-content|place-items|place-self)-/.test(b) ||
     /^-?(?:gap|space-[xy]|col-|row-|grid-|auto-cols|auto-rows|order-|order$)/.test(b) ||
     /^-?(?:auto-flow|grid-flow)-/.test(b) ||
     /^(?:columns-|break-after|break-before|break-inside)-/.test(b) ||
     /^(?:float|clear)-/.test(b) ||
-    /^(?:wrap-|flex-wrap|flex-nowrap|flex-row|flex-col|flex-auto|flex-initial|flex-none|flex-1|flex-\[)/.test(
-      b,
-    ) ||
+    /^(?:wrap-|flex-wrap|flex-nowrap|flex-row|flex-col|flex-auto|flex-initial|flex-none|flex-1|flex-\[)/.test(b) ||
     /^container$/.test(b)
   ) {
     return "layout";
@@ -504,10 +478,7 @@ const SELECTOR_KEY_SEP = "\u001f";
  * @since 0.3.16-canary.0
  */
 export function selectorKey(token: string): string {
-  return stateKey(token)
-    .split(SELECTOR_KEY_SEP)
-    .map(normalizeSelectorVariantLayer)
-    .join(SELECTOR_KEY_SEP);
+  return stateKey(token).split(SELECTOR_KEY_SEP).map(normalizeSelectorVariantLayer).join(SELECTOR_KEY_SEP);
 }
 
 function normalizeSelectorVariantLayer(layer: string): string {

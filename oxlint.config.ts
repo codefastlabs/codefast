@@ -11,17 +11,7 @@ export default defineConfig({
   // Built-in plugins relevant to this monorepo: TypeScript libraries (di,
   // tailwind-variants, cli), React 19 UI packages (ui, theme, benchmark-viewer),
   // a TanStack Start app (web), and vitest test suites.
-  plugins: [
-    "import",
-    "jsx-a11y",
-    "node",
-    "oxc",
-    "promise",
-    "react",
-    "typescript",
-    "unicorn",
-    "vitest",
-  ],
+  plugins: ["import", "jsx-a11y", "node", "oxc", "promise", "react", "typescript", "unicorn", "vitest"],
   // Correctness only (oxlint's recommended default scope) — broader categories
   // (suspicious, pedantic) are too noisy for this codebase under denyWarnings.
   categories: {
@@ -50,10 +40,7 @@ export default defineConfig({
 
     // House style: generic array syntax (Array<T>), separate `import type`.
     "typescript/array-type": ["error", { default: "generic" }],
-    "typescript/consistent-type-imports": [
-      "error",
-      { prefer: "type-imports", fixStyle: "separate-type-imports" },
-    ],
+    "typescript/consistent-type-imports": ["error", { prefer: "type-imports", fixStyle: "separate-type-imports" }],
     "typescript/no-explicit-any": "warn",
 
     // Type-aware promise safety (requires `typeAware: true`).
@@ -76,10 +63,7 @@ export default defineConfig({
       files: ["**/*.test.{ts,tsx,mts,cts,js,jsx,mjs,cjs}"],
       rules: {
         // Type-level tests assert via expectTypeOf/assertType from expect-type.
-        "vitest/expect-expect": [
-          "warn",
-          { assertFunctionNames: ["expect", "expectTypeOf", "assertType"] },
-        ],
+        "vitest/expect-expect": ["warn", { assertFunctionNames: ["expect", "expectTypeOf", "assertType"] }],
         // Inference from implementations is enough; explicit vi.fn<...>() everywhere is noisy.
         "vitest/require-mock-type-parameters": "off",
       },

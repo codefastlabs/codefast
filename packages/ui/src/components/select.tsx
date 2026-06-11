@@ -33,13 +33,7 @@ type SelectGroupProps = ComponentProps<typeof SelectPrimitive.Group>;
  * @since 0.3.16-canary.0
  */
 function SelectGroup({ className, ...props }: SelectGroupProps): JSX.Element {
-  return (
-    <SelectPrimitive.Group
-      className={cn("scroll-my-1 p-1", className)}
-      data-slot="select-group"
-      {...props}
-    />
-  );
+  return <SelectPrimitive.Group className={cn("scroll-my-1 p-1", className)} data-slot="select-group" {...props} />;
 }
 
 /* -----------------------------------------------------------------------------
@@ -72,12 +66,7 @@ interface SelectTriggerProps extends ComponentProps<typeof SelectPrimitive.Trigg
 /**
  * @since 0.3.16-canary.0
  */
-function SelectTrigger({
-  children,
-  className,
-  size = "default",
-  ...props
-}: SelectTriggerProps): JSX.Element {
+function SelectTrigger({ children, className, size = "default", ...props }: SelectTriggerProps): JSX.Element {
   return (
     <SelectPrimitive.Trigger
       className={cn(

@@ -36,9 +36,7 @@ export function KeyboardTable({ rows }: KeyboardTableProps) {
                   ))}
                 </KbdGroup>
               </TableCell>
-              <TableCell className="align-top text-sm leading-relaxed text-ui-muted">
-                {row.description}
-              </TableCell>
+              <TableCell className="align-top text-sm leading-relaxed text-ui-muted">{row.description}</TableCell>
             </TableRow>
           ))}
         </TableBody>

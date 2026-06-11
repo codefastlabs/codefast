@@ -9,8 +9,7 @@ export const contextMenuDoc: ComponentDoc = {
     {
       id: "stateful",
       title: "Checkbox & radio",
-      description:
-        "Right-click the canvas — checkbox items and a radio group drive state, echoed below.",
+      description: "Right-click the canvas — checkbox items and a radio group drive state, echoed below.",
       Demo: ContextMenuEditor,
       code: docSource("context-menu", "editor"),
       previewClassName: "min-h-44",
@@ -88,10 +87,7 @@ export const contextMenuDoc: ComponentDoc = {
       "Use for contextual shortcuts on an element (canvas, row, file).",
       "Mirror the most-used items in a visible toolbar or button menu.",
     ],
-    dont: [
-      "Don’t hide primary actions only behind right-click.",
-      "Don’t nest submenus more than one level deep.",
-    ],
+    dont: ["Don’t hide primary actions only behind right-click.", "Don’t nest submenus more than one level deep."],
   },
   related: ["dropdown-menu", "menubar", "command"],
 };

@@ -10,9 +10,7 @@ export function SonnerDemo() {
       </Button>
       <Button
         variant="outline"
-        onClick={() =>
-          toast.success("Profile updated.", { description: "Your changes have been saved." })
-        }
+        onClick={() => toast.success("Profile updated.", { description: "Your changes have been saved." })}
       >
         Success
       </Button>
@@ -24,9 +22,7 @@ export function SonnerDemo() {
       </Button>
       <Button
         variant="outline"
-        onClick={() =>
-          toast.warning("Storage almost full.", { description: "Free up some space." })
-        }
+        onClick={() => toast.warning("Storage almost full.", { description: "Free up some space." })}
       >
         Warning
       </Button>

@@ -51,11 +51,7 @@ interface AlertDialogContentProps extends ComponentProps<typeof AlertDialogPrimi
 /**
  * @since 0.3.16-canary.0
  */
-function AlertDialogContent({
-  className,
-  size = "default",
-  ...props
-}: AlertDialogContentProps): JSX.Element {
+function AlertDialogContent({ className, size = "default", ...props }: AlertDialogContentProps): JSX.Element {
   return (
     <AlertDialogPrimitive.Portal data-slot="alert-dialog-portal">
       <AlertDialogPrimitive.Overlay
@@ -237,18 +233,12 @@ function AlertDialogDescription({ className, ...props }: AlertDialogDescriptionP
  * @since 0.3.16-canary.0
  */
 interface AlertDialogActionProps
-  extends
-    ComponentProps<typeof AlertDialogPrimitive.Action>,
-    Pick<ButtonProps, "size" | "variant"> {}
+  extends ComponentProps<typeof AlertDialogPrimitive.Action>, Pick<ButtonProps, "size" | "variant"> {}
 
 /**
  * @since 0.3.16-canary.0
  */
-function AlertDialogAction({
-  size = "default",
-  variant = "default",
-  ...props
-}: AlertDialogActionProps): JSX.Element {
+function AlertDialogAction({ size = "default", variant = "default", ...props }: AlertDialogActionProps): JSX.Element {
   return (
     <Button asChild size={size} variant={variant}>
       <AlertDialogPrimitive.Action data-slot="alert-dialog-action" {...props} />
@@ -264,18 +254,12 @@ function AlertDialogAction({
  * @since 0.3.16-canary.0
  */
 interface AlertDialogCancelProps
-  extends
-    ComponentProps<typeof AlertDialogPrimitive.Cancel>,
-    Pick<ButtonProps, "size" | "variant"> {}
+  extends ComponentProps<typeof AlertDialogPrimitive.Cancel>, Pick<ButtonProps, "size" | "variant"> {}
 
 /**
  * @since 0.3.16-canary.0
  */
-function AlertDialogCancel({
-  size = "default",
-  variant = "outline",
-  ...props
-}: AlertDialogCancelProps): JSX.Element {
+function AlertDialogCancel({ size = "default", variant = "outline", ...props }: AlertDialogCancelProps): JSX.Element {
   return (
     <Button asChild size={size} variant={variant}>
       <AlertDialogPrimitive.Cancel data-slot="alert-dialog-cancel" {...props} />

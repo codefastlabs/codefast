@@ -1,12 +1,5 @@
 import { cn } from "@codefast/ui/lib/utils";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@codefast/ui/select";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@codefast/ui/select";
 import type { ReactNode } from "react";
 import { createContext, useContext, useState } from "react";
 
@@ -102,12 +95,7 @@ export function LanguageSelector({
 }: LanguageSelectorProps): ReactNode {
   return (
     <Select value={value} onValueChange={(next) => onValueChange(next as Language)}>
-      <SelectTrigger
-        size="sm"
-        dir="ltr"
-        data-name="language-selector"
-        className={cn("w-36", className)}
-      >
+      <SelectTrigger size="sm" dir="ltr" data-name="language-selector" className={cn("w-36", className)}>
         <SelectValue />
       </SelectTrigger>
       <SelectContent dir="ltr">

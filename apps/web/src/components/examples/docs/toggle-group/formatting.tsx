@@ -19,8 +19,7 @@ export function ToggleGroupFormatting() {
         </ToggleGroupItem>
       </ToggleGroup>
       <p className="text-xs text-ui-muted">
-        Active:{" "}
-        <span className="font-medium text-ui-fg">{marks.length ? marks.join(", ") : "none"}</span>
+        Active: <span className="font-medium text-ui-fg">{marks.length ? marks.join(", ") : "none"}</span>
       </p>
     </div>
   );

@@ -133,12 +133,6 @@ function buildLookupBindingsScenario(): BenchScenario {
 /**
  * @since 0.3.16-canary.0
  */
-export function buildCodefastInitializeInspectScenarios(): ReadonlyArray<
-  AsyncBenchScenario | BenchScenario
-> {
-  return [
-    buildInitializeAsyncWarmupScenario(),
-    buildInspectSnapshotScenario(),
-    buildLookupBindingsScenario(),
-  ];
+export function buildCodefastInitializeInspectScenarios(): ReadonlyArray<AsyncBenchScenario | BenchScenario> {
+  return [buildInitializeAsyncWarmupScenario(), buildInspectSnapshotScenario(), buildLookupBindingsScenario()];
 }

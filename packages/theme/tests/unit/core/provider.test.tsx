@@ -110,9 +110,7 @@ describe("AppearanceProvider", () => {
     });
 
     test('should resolve "automatic" color scheme to OS preference (dark)', () => {
-      mockMatchMedia((query) =>
-        createMockMediaQueryList(query === "(prefers-color-scheme: dark)", query),
-      );
+      mockMatchMedia((query) => createMockMediaQueryList(query === "(prefers-color-scheme: dark)", query));
 
       const TestConsumer = (): React.ReactElement => {
         const { resolvedColorScheme } = useColorScheme();
@@ -740,11 +738,7 @@ describe("AppearanceProvider", () => {
       };
 
       render(
-        <AppearanceProvider
-          onPersistError={onPersistError}
-          persistColorScheme={persistColorScheme}
-          colorScheme="light"
-        >
+        <AppearanceProvider onPersistError={onPersistError} persistColorScheme={persistColorScheme} colorScheme="light">
           <TestConsumer />
         </AppearanceProvider>,
       );

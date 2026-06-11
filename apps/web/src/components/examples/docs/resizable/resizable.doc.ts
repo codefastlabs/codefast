@@ -76,10 +76,7 @@ export const resizableDoc: ComponentDoc = {
     ],
   },
   guidelines: {
-    do: [
-      "Use for app shells — sidebars, editors, split views.",
-      "Set min/max sizes to keep panels usable.",
-    ],
+    do: ["Use for app shells — sidebars, editors, split views.", "Set min/max sizes to keep panels usable."],
     dont: [
       "Don’t use for simple content that doesn’t need resizing.",
       "Don’t allow a panel to shrink below a readable size.",

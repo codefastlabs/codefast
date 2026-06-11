@@ -16,14 +16,7 @@ type SliderProps = ComponentProps<typeof SliderPrimitive.Root>;
 /**
  * @since 0.3.16-canary.0
  */
-function Slider({
-  className,
-  defaultValue,
-  max = 100,
-  min = 0,
-  value,
-  ...props
-}: SliderProps): JSX.Element {
+function Slider({ className, defaultValue, max = 100, min = 0, value, ...props }: SliderProps): JSX.Element {
   const _values = useMemo(() => {
     if (Array.isArray(value)) {
       return value;

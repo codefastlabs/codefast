@@ -13,8 +13,7 @@ export const accordionDoc: ComponentDoc = {
     {
       id: "accordion-demo",
       title: "Demo",
-      description:
-        "A vertically stacked set of interactive headings that each reveal a section of content.",
+      description: "A vertically stacked set of interactive headings that each reveal a section of content.",
       Demo: AccordionDemo,
       code: docSource("accordion", "accordion-demo"),
       previewClassName: "items-start",
@@ -22,8 +21,7 @@ export const accordionDoc: ComponentDoc = {
     {
       id: "accordion-basic",
       title: "Basic",
-      description:
-        "A basic accordion that shows one item at a time. The first item is open by default.",
+      description: "A basic accordion that shows one item at a time. The first item is open by default.",
       Demo: AccordionBasic,
       code: docSource("accordion", "accordion-basic"),
       previewClassName: "items-start",
@@ -108,10 +106,7 @@ export const accordionDoc: ComponentDoc = {
     ],
   },
   guidelines: {
-    do: [
-      "Use for FAQs and progressively-disclosed settings.",
-      "Keep trigger labels scannable and self-explanatory.",
-    ],
+    do: ["Use for FAQs and progressively-disclosed settings.", "Keep trigger labels scannable and self-explanatory."],
     dont: [
       "Don’t hide content the user needs to see at a glance.",
       "Don’t nest accordions deeply — it gets hard to track state.",

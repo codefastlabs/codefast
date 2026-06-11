@@ -82,13 +82,7 @@ type HoverCardArrowProps = ComponentProps<typeof HoverCardPrimitive.Arrow>;
  * @since 0.3.16-canary.0
  */
 function HoverCardArrow({ className, ...props }: HoverCardArrowProps): JSX.Element {
-  return (
-    <HoverCardPrimitive.Arrow
-      className={cn("fill-popover", className)}
-      data-slot="hover-card-arrow"
-      {...props}
-    />
-  );
+  return <HoverCardPrimitive.Arrow className={cn("fill-popover", className)} data-slot="hover-card-arrow" {...props} />;
 }
 
 /* -----------------------------------------------------------------------------

@@ -47,7 +47,5 @@ export interface MetadataReader {
   getLifecycleMetadata(target: Constructor): LifecycleMetadata | undefined;
   getAccessorMetadata?(
     target: Constructor,
-  ):
-    | ReadonlyArray<{ readonly key: string | symbol; readonly descriptor: InjectionDescriptor }>
-    | undefined;
+  ): ReadonlyArray<{ readonly key: string | symbol; readonly descriptor: InjectionDescriptor }> | undefined;
 }

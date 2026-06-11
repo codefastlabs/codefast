@@ -3,12 +3,7 @@
  *
  * @since 0.3.16-canary.0
  */
-export function resolvePackageDisplayName(
-  packageJson: { name?: unknown },
-  folderBasename: string,
-): string {
+export function resolvePackageDisplayName(packageJson: { name?: unknown }, folderBasename: string): string {
   const declaredName = packageJson.name;
-  return typeof declaredName === "string" && declaredName.length > 0
-    ? declaredName
-    : folderBasename;
+  return typeof declaredName === "string" && declaredName.length > 0 ? declaredName : folderBasename;
 }

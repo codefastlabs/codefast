@@ -82,10 +82,7 @@ export const tabsDoc: ComponentDoc = {
       "Keep tab labels to one or two words.",
       "Use tabs for peer views of the same context, not for a multi-step flow.",
     ],
-    dont: [
-      "Don’t nest tabs more than one level deep.",
-      "Don’t hide critical actions behind a non-default tab.",
-    ],
+    dont: ["Don’t nest tabs more than one level deep.", "Don’t hide critical actions behind a non-default tab."],
   },
   related: ["navigation-menu", "menubar", "accordion"],
 };

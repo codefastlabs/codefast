@@ -12,11 +12,7 @@ export function RadioGroupPlans() {
   const [plan, setPlan] = useState("pro");
 
   return (
-    <RadioGroup
-      className="w-full max-w-xs gap-3"
-      value={plan}
-      onValueChange={(value) => setPlan(value)}
-    >
+    <RadioGroup className="w-full max-w-xs gap-3" value={plan} onValueChange={(value) => setPlan(value)}>
       {PLANS.map((item) => (
         <Label
           key={item.value}

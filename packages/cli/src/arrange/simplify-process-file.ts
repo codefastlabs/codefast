@@ -20,14 +20,11 @@ export function processArrangeSimplifyFile(
   const domainSf = parseDomainSourceFile(filePath, sourceText);
   const edits = collectSimplifyTargets(domainSf);
 
-  const meaningful = edits.filter(
-    (edit) => sourceText.slice(edit.start, edit.end) !== edit.replacement,
-  );
+  const meaningful = edits.filter((edit) => sourceText.slice(edit.start, edit.end) !== edit.replacement);
 
   // Apply class-simplification edits first, then prune any cn import that
   // became (or was already) unused.
-  const textAfterEdits =
-    meaningful.length > 0 ? applyEditsDescending(sourceText, meaningful) : sourceText;
+  const textAfterEdits = meaningful.length > 0 ? applyEditsDescending(sourceText, meaningful) : sourceText;
 
   const textAfterImportDrop = dropCnImportIfUnused(parseDomainSourceFile(filePath, textAfterEdits));
 

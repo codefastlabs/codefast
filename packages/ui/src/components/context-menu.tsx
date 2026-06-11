@@ -97,21 +97,14 @@ function ContextMenuRadioGroup({ ...props }: ContextMenuRadioGroupProps): JSX.El
 /**
  * @since 0.3.16-canary.0
  */
-interface ContextMenuSubTriggerProps extends ComponentProps<
-  typeof ContextMenuPrimitive.SubTrigger
-> {
+interface ContextMenuSubTriggerProps extends ComponentProps<typeof ContextMenuPrimitive.SubTrigger> {
   inset?: boolean;
 }
 
 /**
  * @since 0.3.16-canary.0
  */
-function ContextMenuSubTrigger({
-  children,
-  className,
-  inset,
-  ...props
-}: ContextMenuSubTriggerProps): JSX.Element {
+function ContextMenuSubTrigger({ children, className, inset, ...props }: ContextMenuSubTriggerProps): JSX.Element {
   return (
     <ContextMenuPrimitive.SubTrigger
       className={cn(
@@ -195,12 +188,7 @@ interface ContextMenuItemProps extends ComponentProps<typeof ContextMenuPrimitiv
 /**
  * @since 0.3.16-canary.0
  */
-function ContextMenuItem({
-  className,
-  inset,
-  variant = "default",
-  ...props
-}: ContextMenuItemProps): JSX.Element {
+function ContextMenuItem({ className, inset, variant = "default", ...props }: ContextMenuItemProps): JSX.Element {
   return (
     <ContextMenuPrimitive.Item
       className={cn(
@@ -222,9 +210,7 @@ function ContextMenuItem({
 /**
  * @since 0.3.16-canary.0
  */
-interface ContextMenuCheckboxItemProps extends ComponentProps<
-  typeof ContextMenuPrimitive.CheckboxItem
-> {
+interface ContextMenuCheckboxItemProps extends ComponentProps<typeof ContextMenuPrimitive.CheckboxItem> {
   inset?: boolean;
 }
 
@@ -273,12 +259,7 @@ interface ContextMenuRadioItemProps extends ComponentProps<typeof ContextMenuPri
 /**
  * @since 0.3.16-canary.0
  */
-function ContextMenuRadioItem({
-  children,
-  className,
-  inset,
-  ...props
-}: ContextMenuRadioItemProps): JSX.Element {
+function ContextMenuRadioItem({ children, className, inset, ...props }: ContextMenuRadioItemProps): JSX.Element {
   return (
     <ContextMenuPrimitive.RadioItem
       className={cn(
@@ -316,10 +297,7 @@ interface ContextMenuLabelProps extends ComponentProps<typeof ContextMenuPrimiti
 function ContextMenuLabel({ className, inset, ...props }: ContextMenuLabelProps): JSX.Element {
   return (
     <ContextMenuPrimitive.Label
-      className={cn(
-        "px-2 py-1.5 text-xs font-medium text-muted-foreground data-inset:pl-8",
-        className,
-      )}
+      className={cn("px-2 py-1.5 text-xs font-medium text-muted-foreground data-inset:pl-8", className)}
       data-inset={inset}
       data-slot="context-menu-label"
       {...props}
@@ -388,11 +366,7 @@ type ContextMenuArrowProps = ComponentProps<typeof ContextMenuPrimitive.Arrow>;
  */
 function ContextMenuArrow({ className, ...props }: ContextMenuArrowProps): JSX.Element {
   return (
-    <ContextMenuPrimitive.Arrow
-      className={cn("fill-popover", className)}
-      data-slot="context-menu-arrow"
-      {...props}
-    />
+    <ContextMenuPrimitive.Arrow className={cn("fill-popover", className)} data-slot="context-menu-arrow" {...props} />
   );
 }
 

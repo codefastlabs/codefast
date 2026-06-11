@@ -24,10 +24,7 @@ export function NavigationMenuDropdown() {
               {RESOURCES.map((resource) => (
                 <li key={resource.title}>
                   <NavigationMenuLink asChild>
-                    <a
-                      className="block rounded-md p-3 hover:bg-ui-surface"
-                      href={`#${resource.title.toLowerCase()}`}
-                    >
+                    <a className="block rounded-md p-3 hover:bg-ui-surface" href={`#${resource.title.toLowerCase()}`}>
                       <div className="text-sm font-medium">{resource.title}</div>
                       <p className="mt-0.5 text-xs text-ui-muted">{resource.description}</p>
                     </a>

@@ -51,16 +51,11 @@ export function ExamplePreview({
       <div className="mb-3">
         <a href={`#${id}`} className="group/ex flex w-fit items-center gap-2 no-underline">
           <h3 className="text-sm font-semibold text-ui-fg">{title}</h3>
-          <span
-            aria-hidden
-            className="text-xs text-ui-muted opacity-0 transition-opacity group-hover/ex:opacity-100"
-          >
+          <span aria-hidden className="text-xs text-ui-muted opacity-0 transition-opacity group-hover/ex:opacity-100">
             #
           </span>
         </a>
-        {description ? (
-          <p className="mt-1 max-w-2xl text-sm leading-relaxed text-ui-muted">{description}</p>
-        ) : null}
+        {description ? <p className="mt-1 max-w-2xl text-sm leading-relaxed text-ui-muted">{description}</p> : null}
       </div>
 
       <Tabs defaultValue="preview" className="w-full">
@@ -121,9 +116,7 @@ function RtlPreviewSurface({
   return (
     <div className="overflow-hidden rounded-2xl border border-ui-border">
       <div className="flex items-center border-b border-ui-border px-4 py-2">
-        {context ? (
-          <LanguageSelector value={context.language} onValueChange={context.setLanguage} />
-        ) : null}
+        {context ? <LanguageSelector value={context.language} onValueChange={context.setLanguage} /> : null}
         <p className="ml-auto text-xs text-ui-muted">
           Translations are AI-generated for demonstration and may be imperfect.
         </p>

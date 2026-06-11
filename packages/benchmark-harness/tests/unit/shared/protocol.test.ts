@@ -1,10 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import {
-  BENCH_RESULT_JSON_END,
-  BENCH_RESULT_JSON_START,
-  extractSubprocessPayload,
-} from "#/shared/protocol";
+import { BENCH_RESULT_JSON_END, BENCH_RESULT_JSON_START, extractSubprocessPayload } from "#/shared/protocol";
 
 describe("extractSubprocessPayload", () => {
   it("extracts framed payload from noisy stdout", () => {
@@ -39,8 +35,6 @@ describe("extractSubprocessPayload", () => {
   });
 
   it("returns undefined when framing markers are missing", () => {
-    expect(
-      extractSubprocessPayload('{"fingerprint":{},"trials":[],"sanityFailures":[]}'),
-    ).toBeUndefined();
+    expect(extractSubprocessPayload('{"fingerprint":{},"trials":[],"sanityFailures":[]}')).toBeUndefined();
   });
 });

@@ -50,8 +50,7 @@ export function ResizableDemo() {
             <ResizableSeparator withHandle />
             <ResizablePanel defaultSize={36} minSize={20}>
               <div className="h-full bg-ui-surface p-3 font-mono text-xs">
-                <span className="text-emerald-500">➜</span>{" "}
-                <span className="text-ui-muted">~/app</span> pnpm dev
+                <span className="text-emerald-500">➜</span> <span className="text-ui-muted">~/app</span> pnpm dev
                 <div className="mt-1 text-ui-muted">VITE ready in 312 ms</div>
               </div>
             </ResizablePanel>

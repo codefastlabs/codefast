@@ -163,9 +163,7 @@ export const isSlotClassMap = (value: ClassValue): value is Record<string, Class
  *
  * @since 0.3.16-canary.0
  */
-export const hasBooleanVariantValues = <T extends Record<string, unknown>>(
-  variantGroup: T,
-): variantGroup is T => {
+export const hasBooleanVariantValues = <T extends Record<string, unknown>>(variantGroup: T): variantGroup is T => {
   return "true" in variantGroup || "false" in variantGroup;
 };
 
@@ -199,10 +197,7 @@ export const hasSlotsConfig = <T extends VariantSchema, S extends SlotSchema>(
  * @since 0.3.16-canary.0
  */
 export const hasExtendConfig = <T extends VariantSchema, S extends SlotSchema>(
-  configuration:
-    | VariantConfig<T>
-    | SlotVariantConfig<T, S>
-    | ExtendedVariantConfig<VariantSchema, T, SlotSchema, S>,
+  configuration: VariantConfig<T> | SlotVariantConfig<T, S> | ExtendedVariantConfig<VariantSchema, T, SlotSchema, S>,
 ): configuration is ExtendedVariantConfig<VariantSchema, T, SlotSchema, S> & {
   readonly extend: VariantResolver<VariantSchema>;
 } => {

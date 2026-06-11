@@ -61,9 +61,7 @@ export function writeJsonlRun(
   outputPath: string,
   libraries: ReadonlyArray<{ fingerprint: Fingerprint; trials: ReadonlyArray<TrialPayload> }>,
 ): void {
-  const allObservations = libraries.flatMap((library) =>
-    flattenLibraryToJsonl(library.fingerprint, library.trials),
-  );
+  const allObservations = libraries.flatMap((library) => flattenLibraryToJsonl(library.fingerprint, library.trials));
   const serialised = allObservations.map((observation) => JSON.stringify(observation)).join("\n");
   mkdirSync(dirname(outputPath), { recursive: true });
   writeFileSync(outputPath, `${serialised}\n`, "utf8");

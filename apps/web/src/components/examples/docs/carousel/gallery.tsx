@@ -1,11 +1,5 @@
 import { Card, CardContent } from "@codefast/ui/card";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@codefast/ui/carousel";
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@codefast/ui/carousel";
 import { cn } from "@codefast/ui/lib/utils";
 import type { ComponentProps } from "react";
 import { useEffect, useState } from "react";

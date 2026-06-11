@@ -6,14 +6,7 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
 } from "@codefast/ui/navigation-menu";
-import {
-  BookOpenIcon,
-  LayoutGridIcon,
-  PaletteIcon,
-  RocketIcon,
-  SquareMousePointerIcon,
-  TableIcon,
-} from "lucide-react";
+import { BookOpenIcon, LayoutGridIcon, PaletteIcon, RocketIcon, SquareMousePointerIcon, TableIcon } from "lucide-react";
 import type { ComponentType } from "react";
 
 const GUIDES = [

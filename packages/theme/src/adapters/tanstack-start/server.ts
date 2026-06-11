@@ -21,8 +21,7 @@ function readColorSchemeFromCookie(): ColorScheme {
 }
 
 function readSsrColorSchemeFromHeaders(): ResolvedColorScheme {
-  const hint =
-    getRequestHeader("Sec-CH-Prefers-Color-Scheme") ?? getRequestHeader("Prefers-Color-Scheme");
+  const hint = getRequestHeader("Sec-CH-Prefers-Color-Scheme") ?? getRequestHeader("Prefers-Color-Scheme");
 
   if (hint === "dark") {
     return "dark";
@@ -90,9 +89,7 @@ export const getRootColorSchemeServerFn = createServerFn().handler(
  *
  * @since 0.3.16-canary.0
  */
-export const getColorSchemeServerFn = createServerFn().handler(
-  (): ColorScheme => readColorSchemeFromCookie(),
-);
+export const getColorSchemeServerFn = createServerFn().handler((): ColorScheme => readColorSchemeFromCookie());
 
 /**
  * Resolved OS color scheme for SSR / hydration, from Client Hints when the browser sends them.

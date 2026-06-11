@@ -16,8 +16,7 @@ export const sonnerDoc: ComponentDoc = {
     {
       id: "action-promise",
       title: "Action & promise",
-      description:
-        "Attach an Undo action, or hand toast.promise a promise to auto-cycle loading → result.",
+      description: "Attach an Undo action, or hand toast.promise a promise to auto-cycle loading → result.",
       Demo: SonnerAction,
       code: docSource("sonner", "action"),
     },

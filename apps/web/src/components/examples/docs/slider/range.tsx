@@ -6,14 +6,7 @@ export function SliderRange() {
 
   return (
     <div className="w-full max-w-xs space-y-3">
-      <Slider
-        value={range}
-        onValueChange={setRange}
-        min={0}
-        max={1000}
-        step={10}
-        aria-label="Price range"
-      />
+      <Slider value={range} onValueChange={setRange} min={0} max={1000} step={10} aria-label="Price range" />
       <p className="text-center text-xs text-ui-muted tabular-nums">
         ${range[0]} – ${range[1]}
       </p>

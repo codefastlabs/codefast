@@ -10,14 +10,7 @@ import {
   ContextMenuSubTrigger,
   ContextMenuTrigger,
 } from "@codefast/ui/context-menu";
-import {
-  CopyIcon,
-  DownloadIcon,
-  FolderIcon,
-  PencilIcon,
-  Share2Icon,
-  Trash2Icon,
-} from "lucide-react";
+import { CopyIcon, DownloadIcon, FolderIcon, PencilIcon, Share2Icon, Trash2Icon } from "lucide-react";
 import { useState } from "react";
 
 export function ContextMenuDemo() {

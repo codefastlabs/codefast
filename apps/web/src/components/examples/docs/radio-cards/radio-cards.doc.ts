@@ -87,10 +87,7 @@ export const radioCardsDoc: ComponentDoc = {
       "Use for picking one option from a small set of rich choices (plans, methods).",
       "Show price or key detail directly on each card.",
     ],
-    dont: [
-      "Don’t use for multi-select — that’s Checkbox Cards.",
-      "Don’t overload a card with multiple actions.",
-    ],
+    dont: ["Don’t use for multi-select — that’s Checkbox Cards.", "Don’t overload a card with multiple actions."],
   },
   related: ["radio-group", "checkbox-cards", "card"],
 };

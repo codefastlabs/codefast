@@ -8,11 +8,7 @@ export function NativeSelectCountry() {
   return (
     <div className="grid w-full max-w-xs gap-1.5">
       <Label htmlFor="country">Country</Label>
-      <NativeSelect
-        id="country"
-        value={country}
-        onChange={(event) => setCountry(event.target.value)}
-      >
+      <NativeSelect id="country" value={country} onChange={(event) => setCountry(event.target.value)}>
         <NativeSelectOptGroup label="Asia">
           <NativeSelectOption value="vn">Vietnam</NativeSelectOption>
           <NativeSelectOption value="jp">Japan</NativeSelectOption>

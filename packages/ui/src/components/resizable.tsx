@@ -55,11 +55,7 @@ interface ResizableSeparatorProps extends ComponentProps<typeof ResizablePrimiti
 /**
  * @since 0.3.16-canary.0
  */
-function ResizableSeparator({
-  className,
-  withHandle,
-  ...props
-}: ResizableSeparatorProps): JSX.Element {
+function ResizableSeparator({ className, withHandle, ...props }: ResizableSeparatorProps): JSX.Element {
   return (
     <ResizablePrimitive.Separator
       className={cn(

@@ -21,10 +21,7 @@ function formatSchemaIssues(issues: ReadonlyArray<SchemaIssue>): string {
 /**
  * @since 0.3.16-canary.0
  */
-export function parseWithSchema<Value>(
-  schema: ZodType<Value>,
-  input: unknown,
-): Result<Value, AppError> {
+export function parseWithSchema<Value>(schema: ZodType<Value>, input: unknown): Result<Value, AppError> {
   const parsed = schema.safeParse(input);
   if (!parsed.success) {
     return err(new AppError("VALIDATION_ERROR", formatSchemaIssues(parsed.error.issues)));

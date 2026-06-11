@@ -39,11 +39,7 @@ function toRootRelativePath(rootDir: string, absolutePath: string): string {
   return relativePath ? toPosix(relativePath) : ".";
 }
 
-function toPackageTargetCandidate(
-  fs: FilesystemPort,
-  rootDir: string,
-  packageDir: string,
-): TagTargetCandidate {
+function toPackageTargetCandidate(fs: FilesystemPort, rootDir: string, packageDir: string): TagTargetCandidate {
   const packageName = readPackageName(fs, packageDir);
   return {
     candidatePath: packageDir,

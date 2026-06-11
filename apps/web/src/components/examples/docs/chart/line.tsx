@@ -21,13 +21,7 @@ export function ChartLine() {
         <CartesianGrid vertical={false} />
         <XAxis dataKey="month" axisLine={false} tickLine={false} tickMargin={8} />
         <ChartTooltip content={<ChartTooltipContent />} />
-        <Line
-          dataKey="revenue"
-          type="monotone"
-          stroke="var(--color-revenue)"
-          strokeWidth={2}
-          dot={false}
-        />
+        <Line dataKey="revenue" type="monotone" stroke="var(--color-revenue)" strokeWidth={2} dot={false} />
       </LineChart>
     </ChartContainer>
   );

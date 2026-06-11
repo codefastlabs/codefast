@@ -2,12 +2,7 @@ import { SearchIcon, XIcon } from "lucide-react";
 import { useControllableState } from "radix-ui/internal";
 import type { ComponentProps, JSX } from "react";
 
-import {
-  InputGroup,
-  InputGroupAddon,
-  InputGroupButton,
-  InputGroupInput,
-} from "#/components/input-group";
+import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from "#/components/input-group";
 
 /* -----------------------------------------------------------------------------
  * Component: InputSearch
@@ -44,11 +39,7 @@ function InputSearch({
   });
 
   return (
-    <InputGroup
-      className={className}
-      data-disabled={disabled ? "true" : undefined}
-      data-slot="input-search"
-    >
+    <InputGroup className={className} data-disabled={disabled ? "true" : undefined} data-slot="input-search">
       <InputGroupAddon align="inline-start">
         <SearchIcon />
       </InputGroupAddon>

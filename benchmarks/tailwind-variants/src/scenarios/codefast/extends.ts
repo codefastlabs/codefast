@@ -1,8 +1,4 @@
-import {
-  extendsBaseVariants,
-  extendsExtensionVariants,
-  extendsTestProps,
-} from "#/fixtures/extends";
+import { extendsBaseVariants, extendsExtensionVariants, extendsTestProps } from "#/fixtures/extends";
 import { TV_MERGE_DISABLED, TV_MERGE_ENABLED } from "#/harness/bench-options";
 import { codefastTvFn } from "#/lib/tv-shims";
 import type { BenchScenario } from "#/scenarios/types";

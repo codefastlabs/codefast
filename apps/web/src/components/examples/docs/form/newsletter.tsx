@@ -34,9 +34,7 @@ export function FormNewsletter() {
           I agree to receive product news. Unsubscribe at any time.
         </Label>
       </div>
-      {touched && !agreed ? (
-        <p className="text-xs text-rose-500">Please accept to continue.</p>
-      ) : null}
+      {touched && !agreed ? <p className="text-xs text-rose-500">Please accept to continue.</p> : null}
       <Button type="submit" className="w-full">
         Subscribe
       </Button>

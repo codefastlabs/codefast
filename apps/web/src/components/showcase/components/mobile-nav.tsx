@@ -5,15 +5,7 @@ import type { ViewMode } from "#/components/showcase/types";
 import type { ComponentGroup } from "#/data/component-groups";
 
 /** A pill link used in the mobile jump nav, styled by active state. */
-function NavChip({
-  href,
-  isActive,
-  children,
-}: {
-  href: string;
-  isActive: boolean;
-  children: ReactNode;
-}) {
+function NavChip({ href, isActive, children }: { href: string; isActive: boolean; children: ReactNode }) {
   return (
     <a
       href={href}

@@ -27,11 +27,7 @@ export function postConstruct(): (target: unknown, context: ClassMethodDecorator
     if (!meta[LIFECYCLE_KEY]) {
       meta[LIFECYCLE_KEY] = { postConstruct: [], preDestroy: [] };
     }
-    appendUniqueMethod(
-      meta[LIFECYCLE_KEY] as MutableLifecycleMetadata,
-      "postConstruct",
-      methodName,
-    );
+    appendUniqueMethod(meta[LIFECYCLE_KEY] as MutableLifecycleMetadata, "postConstruct", methodName);
   };
 }
 

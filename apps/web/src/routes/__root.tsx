@@ -1,9 +1,5 @@
 import { AppearanceProvider, AppearanceScript, resolveColorScheme } from "@codefast/theme";
-import {
-  getRootColorSchemeServerFn,
-  getColorSchemeServerFn,
-  persistColorSchemeCookie,
-} from "@codefast/theme/start";
+import { getRootColorSchemeServerFn, getColorSchemeServerFn, persistColorSchemeCookie } from "@codefast/theme/start";
 import { Badge } from "@codefast/ui/badge";
 import { Button } from "@codefast/ui/button";
 import { TanStackDevtools } from "@tanstack/react-devtools";

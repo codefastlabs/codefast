@@ -7,9 +7,7 @@ import type { BenchScenario } from "#/scenarios/types";
 const FAN_OUT_TREE_BATCH = 20;
 
 function buildFanOutTreeDepthThreeBreadthFourScenario(): BenchScenario {
-  const { container, rootIdentifier } = buildInversifyRealisticContainer(
-    FAN_OUT_TREE_DEPTH_3_BREADTH_4,
-  );
+  const { container, rootIdentifier } = buildInversifyRealisticContainer(FAN_OUT_TREE_DEPTH_3_BREADTH_4);
   const firstResolution = container.get(rootIdentifier);
 
   return {

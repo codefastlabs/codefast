@@ -78,14 +78,8 @@ export const sidebarDoc: ComponentDoc = {
     ],
   },
   guidelines: {
-    do: [
-      "Use for app shells with persistent navigation.",
-      "Group links with labels and keep the list shallow.",
-    ],
-    dont: [
-      "Don’t use a sidebar for a content site with few pages.",
-      "Don’t hide the toggle — users need a way back.",
-    ],
+    do: ["Use for app shells with persistent navigation.", "Group links with labels and keep the list shallow."],
+    dont: ["Don’t use a sidebar for a content site with few pages.", "Don’t hide the toggle — users need a way back."],
   },
   related: ["resizable", "navigation-menu", "sheet"],
 };

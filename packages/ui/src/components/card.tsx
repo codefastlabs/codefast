@@ -70,10 +70,7 @@ type CardTitleProps = ComponentProps<"div">;
 function CardTitle({ className, ...props }: CardTitleProps): JSX.Element {
   return (
     <div
-      className={cn(
-        "font-heading text-base leading-normal font-medium group-data-[size=sm]/card:text-sm",
-        className,
-      )}
+      className={cn("font-heading text-base leading-normal font-medium group-data-[size=sm]/card:text-sm", className)}
       data-slot="card-title"
       {...props}
     />
@@ -93,13 +90,7 @@ type CardDescriptionProps = ComponentProps<"div">;
  * @since 0.3.16-canary.0
  */
 function CardDescription({ className, ...props }: CardDescriptionProps): JSX.Element {
-  return (
-    <div
-      className={cn("text-sm text-muted-foreground", className)}
-      data-slot="card-description"
-      {...props}
-    />
-  );
+  return <div className={cn("text-sm text-muted-foreground", className)} data-slot="card-description" {...props} />;
 }
 
 /* -----------------------------------------------------------------------------
@@ -115,9 +106,7 @@ type CardContentProps = ComponentProps<"div">;
  * @since 0.3.16-canary.0
  */
 function CardContent({ className, ...props }: CardContentProps): JSX.Element {
-  return (
-    <div className={cn("px-(--card-spacing)", className)} data-slot="card-content" {...props} />
-  );
+  return <div className={cn("px-(--card-spacing)", className)} data-slot="card-content" {...props} />;
 }
 
 /* -----------------------------------------------------------------------------
@@ -135,10 +124,7 @@ type CardFooterProps = ComponentProps<"div">;
 function CardFooter({ className, ...props }: CardFooterProps): JSX.Element {
   return (
     <div
-      className={cn(
-        "flex items-center rounded-b-xl px-(--card-spacing) [.border-t]:pt-(--card-spacing)",
-        className,
-      )}
+      className={cn("flex items-center rounded-b-xl px-(--card-spacing) [.border-t]:pt-(--card-spacing)", className)}
       data-slot="card-footer"
       {...props}
     />

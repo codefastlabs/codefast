@@ -9,28 +9,17 @@ import { resolveNearestPackageVersion } from "#/tag/version-resolver";
 /**
  * @since 0.3.16-canary.0
  */
-export function runTagOnTarget(
-  fs: FilesystemPort,
-  targetPath: string,
-  opts: TagRunOptions,
-): TagRunResult {
+export function runTagOnTarget(fs: FilesystemPort, targetPath: string, opts: TagRunOptions): TagRunResult {
   const resolvedTarget = path.resolve(targetPath);
   const version = resolveNearestPackageVersion(fs, resolvedTarget);
 
-  const files = fs.statSync(resolvedTarget).isDirectory()
-    ? walkTsxFiles(resolvedTarget, fs)
-    : [resolvedTarget];
+  const files = fs.statSync(resolvedTarget).isDirectory() ? walkTsxFiles(resolvedTarget, fs) : [resolvedTarget];
   const tsFiles = files.filter((filePath) => filePath.endsWith(".ts") || filePath.endsWith(".tsx"));
 
   const sinceWriter = new TagSinceWriter(fs);
-  const fileResults = tsFiles.map((filePath) =>
-    sinceWriter.applySinceTagsToFile(filePath, version, opts.write),
-  );
+  const fileResults = tsFiles.map((filePath) => sinceWriter.applySinceTagsToFile(filePath, version, opts.write));
   const filesChanged = fileResults.filter((result) => result.changed).length;
-  const taggedDeclarations = fileResults.reduce(
-    (sum, result) => sum + result.taggedDeclarations,
-    0,
-  );
+  const taggedDeclarations = fileResults.reduce((sum, result) => sum + result.taggedDeclarations, 0);
 
   return {
     version,

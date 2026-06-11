@@ -22,9 +22,7 @@ export function ComponentPager({ previous, next }: ComponentPagerProps) {
             <ArrowLeftIcon className="size-3.5" />
             Previous
           </span>
-          <span className="text-sm font-semibold text-ui-fg group-hover:text-ui-brand">
-            {previous.name}
-          </span>
+          <span className="text-sm font-semibold text-ui-fg group-hover:text-ui-brand">{previous.name}</span>
         </Link>
       ) : (
         <span />
@@ -39,9 +37,7 @@ export function ComponentPager({ previous, next }: ComponentPagerProps) {
             Next
             <ArrowRightIcon className="size-3.5" />
           </span>
-          <span className="text-sm font-semibold text-ui-fg group-hover:text-ui-brand">
-            {next.name}
-          </span>
+          <span className="text-sm font-semibold text-ui-fg group-hover:text-ui-brand">{next.name}</span>
         </Link>
       ) : null}
     </nav>

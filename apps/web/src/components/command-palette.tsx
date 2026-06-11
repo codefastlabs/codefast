@@ -111,10 +111,7 @@ export function CommandPalette() {
                   }}
                 >
                   <span className="grow">{component.name}</span>
-                  <span
-                    className="ml-auto text-xs text-ui-muted capitalize"
-                    data-slot="command-shortcut"
-                  >
+                  <span className="ml-auto text-xs text-ui-muted capitalize" data-slot="command-shortcut">
                     {component.category}
                   </span>
                 </CommandItem>

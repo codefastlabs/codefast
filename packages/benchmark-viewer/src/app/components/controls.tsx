@@ -5,9 +5,7 @@ import type { ViewState } from "#/app/lib/hash";
 import { cn } from "#/app/lib/utils";
 import type { EmbeddedScenarioSeries } from "#/types";
 
-const RUN_WINDOW_VALUES = ["all", "10", "20"] as const satisfies ReadonlyArray<
-  ViewState["runWindow"]
->;
+const RUN_WINDOW_VALUES = ["all", "10", "20"] as const satisfies ReadonlyArray<ViewState["runWindow"]>;
 
 function ReloadButton({ className, ...props }: ComponentProps<"button">) {
   return (
@@ -23,12 +21,7 @@ function ReloadButton({ className, ...props }: ComponentProps<"button">) {
 }
 
 function FieldLabel({ className, ...props }: ComponentProps<"span">) {
-  return (
-    <span
-      {...props}
-      className={cn("mb-1.5 block text-[0.8125rem] font-medium text-zinc-400", className)}
-    />
-  );
+  return <span {...props} className={cn("mb-1.5 block text-[0.8125rem] font-medium text-zinc-400", className)} />;
 }
 
 function FieldSelect({ className, ...props }: ComponentProps<"select">) {
@@ -102,9 +95,7 @@ export function ChartControlPanel({
       className="border-bh-border bg-bh-surface-sticky shadow-bh-sticky sticky top-[max(0.5rem,env(safe-area-inset-top,0px))] z-40 mt-6 mb-5 flex flex-col gap-3 rounded-[1.25rem] border px-3 py-3 backdrop-blur-[2.25rem] backdrop-saturate-200 max-sm:gap-2 max-sm:py-2.5 sm:top-3 sm:-mx-2 sm:mt-8 sm:mb-6 sm:gap-4 sm:px-5 sm:py-4"
     >
       <div className="flex flex-wrap items-center justify-between gap-2 gap-y-2 sm:gap-y-1">
-        <p className="text-bh-label mb-0 text-[0.65rem] font-semibold tracking-[0.14em] uppercase">
-          Chart data
-        </p>
+        <p className="text-bh-label mb-0 text-[0.65rem] font-semibold tracking-[0.14em] uppercase">Chart data</p>
         <div className="flex shrink-0 items-center gap-2">
           {hasMore && (
             <ReloadButton
@@ -132,10 +123,7 @@ export function ChartControlPanel({
       </div>
       <div className="flex flex-col gap-4 max-sm:grid max-sm:grid-cols-2 max-sm:gap-2 max-sm:rounded-xl max-sm:bg-black/22 max-sm:p-2 max-sm:[box-shadow:inset_0_0.0625rem_0_rgba(255,255,255,0.05),0_0_0_0.0625rem_rgba(255,255,255,0.06)] sm:flex-row sm:flex-wrap sm:items-end sm:gap-3">
         <div className="flex w-full min-w-0 flex-col gap-2 max-sm:col-span-full max-sm:mb-0.5 max-sm:gap-1.5 max-sm:border-b max-sm:border-white/6 max-sm:pb-2 sm:w-auto sm:max-w-none sm:flex-[1_1_20rem] sm:flex-row sm:flex-wrap sm:items-end">
-          <label
-            className="w-full min-w-0 flex-1 sm:w-auto sm:max-w-md sm:min-w-56"
-            htmlFor="ctrl-scenario"
-          >
+          <label className="w-full min-w-0 flex-1 sm:w-auto sm:max-w-md sm:min-w-56" htmlFor="ctrl-scenario">
             <FieldLabel className="max-sm:mb-[0.2rem] max-sm:text-[0.6875rem] max-sm:leading-[1.2]">
               Scenario
             </FieldLabel>

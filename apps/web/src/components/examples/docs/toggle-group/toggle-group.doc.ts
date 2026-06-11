@@ -87,10 +87,7 @@ export const toggleGroupDoc: ComponentDoc = {
       "Use single for mutually-exclusive choices (alignment).",
       "Use multiple for independent marks (bold, italic).",
     ],
-    dont: [
-      "Don’t mix unrelated actions into one group.",
-      "Don’t leave icon items without an accessible label.",
-    ],
+    dont: ["Don’t mix unrelated actions into one group.", "Don’t leave icon items without an accessible label."],
   },
   related: ["toggle", "button-group", "radio-group"],
 };

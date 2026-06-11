@@ -44,11 +44,7 @@ export function createEmptyAnalyzeReport(): AnalyzeReport {
   };
 }
 
-function analyzeCnCall(
-  domainSf: DomainSourceFile,
-  call: DomainCallExpression,
-  report: AnalyzeReport,
-): void {
+function analyzeCnCall(domainSf: DomainSourceFile, call: DomainCallExpression, report: AnalyzeReport): void {
   for (const arg of call.arguments) {
     forEachStringLiteralInClassExpression(arg, (lit) => {
       const text = lit.text;

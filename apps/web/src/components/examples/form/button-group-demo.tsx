@@ -1,11 +1,6 @@
 import { Button } from "@codefast/ui/button";
 import { ButtonGroup, ButtonGroupSeparator, ButtonGroupText } from "@codefast/ui/button-group";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@codefast/ui/dropdown-menu";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@codefast/ui/dropdown-menu";
 import { ChevronDownIcon, PlusIcon } from "lucide-react";
 
 export function ButtonGroupDemo() {

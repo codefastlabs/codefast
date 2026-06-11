@@ -4,10 +4,7 @@ export function HoverCardStat() {
   return (
     <HoverCard>
       <HoverCardTrigger asChild>
-        <button
-          type="button"
-          className="cursor-pointer rounded-lg border border-ui-border px-4 py-2 text-center"
-        >
+        <button type="button" className="cursor-pointer rounded-lg border border-ui-border px-4 py-2 text-center">
           <span className="block text-lg font-semibold text-ui-fg tabular-nums">2,847</span>
           <span className="text-xs text-ui-muted">Total stars</span>
         </button>

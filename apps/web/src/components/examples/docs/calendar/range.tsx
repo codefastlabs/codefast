@@ -17,25 +17,15 @@ export function CalendarRange() {
 
   return (
     <div className="space-y-3">
-      <Calendar
-        className="rounded-xl border"
-        mode="range"
-        numberOfMonths={2}
-        selected={range}
-        onSelect={setRange}
-      />
+      <Calendar className="rounded-xl border" mode="range" numberOfMonths={2} selected={range} onSelect={setRange} />
       <p className="text-center text-xs text-ui-muted">
         {range?.from ? (
           <>
-            <span className="font-medium text-ui-fg">
-              {range.from.toLocaleDateString(undefined, FORMAT)}
-            </span>
+            <span className="font-medium text-ui-fg">{range.from.toLocaleDateString(undefined, FORMAT)}</span>
             {range.to ? (
               <>
                 {" – "}
-                <span className="font-medium text-ui-fg">
-                  {range.to.toLocaleDateString(undefined, FORMAT)}
-                </span>
+                <span className="font-medium text-ui-fg">{range.to.toLocaleDateString(undefined, FORMAT)}</span>
               </>
             ) : null}
           </>

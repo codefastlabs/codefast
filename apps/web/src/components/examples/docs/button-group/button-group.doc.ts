@@ -9,8 +9,7 @@ export const buttonGroupDoc: ComponentDoc = {
     {
       id: "groups",
       title: "Joined controls",
-      description:
-        "Visually join buttons; add a separator or a text label, horizontal or vertical.",
+      description: "Visually join buttons; add a separator or a text label, horizontal or vertical.",
       Demo: ButtonGroupGroups,
       code: docSource("button-group", "groups"),
     },
@@ -62,14 +61,8 @@ export const buttonGroupDoc: ComponentDoc = {
     ],
   },
   guidelines: {
-    do: [
-      "Group closely-related actions (copy/paste, prev/next).",
-      "Add a ButtonGroupText label for split controls.",
-    ],
-    dont: [
-      "Don’t put toggle state here — use Toggle Group.",
-      "Don’t cram unrelated actions into one group.",
-    ],
+    do: ["Group closely-related actions (copy/paste, prev/next).", "Add a ButtonGroupText label for split controls."],
+    dont: ["Don’t put toggle state here — use Toggle Group.", "Don’t cram unrelated actions into one group."],
   },
   related: ["button", "toggle-group", "pagination"],
 };

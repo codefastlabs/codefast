@@ -16,9 +16,7 @@ export function RelatedSection({ dependencies, related }: RelatedSectionProps) {
     <DocSection id="related" title="Related">
       {dependencies?.length ? (
         <div className="mb-6">
-          <p className="mb-2 text-xs font-semibold tracking-widest text-ui-muted uppercase">
-            Built on
-          </p>
+          <p className="mb-2 text-xs font-semibold tracking-widest text-ui-muted uppercase">Built on</p>
           <div className="flex flex-wrap gap-2">
             {dependencies.map((dep) => (
               <span
@@ -33,9 +31,7 @@ export function RelatedSection({ dependencies, related }: RelatedSectionProps) {
       ) : null}
       {related?.length ? (
         <div>
-          <p className="mb-2 text-xs font-semibold tracking-widest text-ui-muted uppercase">
-            Related components
-          </p>
+          <p className="mb-2 text-xs font-semibold tracking-widest text-ui-muted uppercase">Related components</p>
           <div className="flex flex-wrap gap-2">
             {related.map((relatedSlug) => {
               const target = ALL_COMPONENTS.find((component) => component.slug === relatedSlug);

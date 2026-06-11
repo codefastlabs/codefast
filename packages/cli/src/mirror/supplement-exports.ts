@@ -54,11 +54,7 @@ function findDtsSpecifier(fs: FilesystemPort, distDir: string, modulePath: strin
   return null;
 }
 
-function findImportSpecifier(
-  fs: FilesystemPort,
-  distDir: string,
-  modulePath: string,
-): string | null {
+function findImportSpecifier(fs: FilesystemPort, distDir: string, modulePath: string): string | null {
   for (const ext of JS_EXTENSIONS) {
     if (fs.existsSync(path.join(distDir, `${modulePath}${ext}`))) {
       return `./dist/${modulePath}${ext}`;
@@ -177,14 +173,7 @@ export async function supplementExportsInPackageJson(
 
     const entryRecord = entry as Record<string, unknown>;
     const modulePath = inferModulePath(specifier, entryRecord);
-    const supplemented = buildSupplementedEntry(
-      specifier,
-      entryRecord,
-      modulePath,
-      distDir,
-      fs,
-      options,
-    );
+    const supplemented = buildSupplementedEntry(specifier, entryRecord, modulePath, distDir, fs, options);
 
     const wasChanged = JSON.stringify(supplemented) !== JSON.stringify(entryRecord);
     if (wasChanged) {
@@ -199,9 +188,7 @@ export async function supplementExportsInPackageJson(
     fs,
     packageJsonPath,
     {
-      generatedExports: supplementedExports as Parameters<
-        typeof writePackageJsonExportsAtomic
-      >[2]["generatedExports"],
+      generatedExports: supplementedExports as Parameters<typeof writePackageJsonExportsAtomic>[2]["generatedExports"],
       managedExportSpecifiers: Object.keys(supplementedExports),
       originalPathBySpecifier,
     },
@@ -217,10 +204,7 @@ export async function supplementExportsInPackageJson(
  *
  * @since 0.3.16-canary.0
  */
-export function buildSourcePathResolver(
-  fs: FilesystemPort,
-  packageDir: string,
-): (modulePath: string) => string {
+export function buildSourcePathResolver(fs: FilesystemPort, packageDir: string): (modulePath: string) => string {
   const srcDir = path.join(packageDir, "src");
   return (modulePath) => {
     const tsxPath = path.join(srcDir, `${modulePath}.tsx`);

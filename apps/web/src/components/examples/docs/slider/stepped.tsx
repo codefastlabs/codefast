@@ -8,14 +8,7 @@ export function SliderStepped() {
 
   return (
     <div className="w-full max-w-xs space-y-2">
-      <Slider
-        value={value}
-        onValueChange={setValue}
-        min={0}
-        max={100}
-        step={25}
-        aria-label="Quality"
-      />
+      <Slider value={value} onValueChange={setValue} min={0} max={100} step={25} aria-label="Quality" />
       <div className="flex justify-between text-xs text-ui-muted tabular-nums">
         {MARKS.map((mark) => (
           <span key={mark} className={value[0] === mark ? "font-medium text-ui-fg" : ""}>

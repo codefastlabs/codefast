@@ -155,8 +155,7 @@ export const extremeVariants = {
       "orange-red": "bg-linear-to-r from-orange-500 to-red-600",
       "pink-purple": "bg-linear-to-r from-pink-500 to-purple-600",
       "purple-pink": "bg-linear-to-r from-purple-500 to-pink-500",
-      rainbow:
-        "bg-linear-to-r from-red-500 via-yellow-500 via-green-500 via-blue-500 to-purple-500",
+      rainbow: "bg-linear-to-r from-red-500 via-yellow-500 via-green-500 via-blue-500 to-purple-500",
       sunset: "bg-linear-to-r from-orange-400 via-pink-500 to-purple-600",
       "teal-green": "bg-linear-to-r from-teal-400 to-green-500",
       "yellow-orange": "bg-linear-to-r from-yellow-400 to-orange-500",
@@ -328,8 +327,7 @@ export const extremeSlotsVariants = {
     badge: "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium",
     close:
       "absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2",
-    content:
-      "relative z-50 grid w-full max-w-lg gap-4 border bg-background p-6 shadow-lg duration-200",
+    content: "relative z-50 grid w-full max-w-lg gap-4 border bg-background p-6 shadow-lg duration-200",
     description: "text-sm text-muted-foreground",
     footer: "flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2",
     header: "flex flex-col space-y-1.5 text-center sm:text-left",

@@ -35,12 +35,7 @@ interface CheckboxCardsItemProps extends ComponentProps<typeof CheckboxGroupPrim
 /**
  * @since 0.3.16-canary.0
  */
-function CheckboxCardsItem({
-  checkboxClassName,
-  children,
-  className,
-  ...props
-}: CheckboxCardsItemProps): JSX.Element {
+function CheckboxCardsItem({ checkboxClassName, children, className, ...props }: CheckboxCardsItemProps): JSX.Element {
   return (
     <Label
       className={cn(

@@ -47,8 +47,7 @@ function SheetTrigger({ ...props }: SheetTriggerProps): JSX.Element {
 /**
  * @since 0.3.16-canary.0
  */
-interface SheetContentProps
-  extends ComponentProps<typeof SheetPrimitive.Content>, SheetContentVariants {
+interface SheetContentProps extends ComponentProps<typeof SheetPrimitive.Content>, SheetContentVariants {
   showCloseButton?: boolean;
 }
 
@@ -109,13 +108,7 @@ type SheetHeaderProps = ComponentProps<"div">;
  * @since 0.3.16-canary.0
  */
 function SheetHeader({ className, ...props }: SheetHeaderProps): JSX.Element {
-  return (
-    <div
-      className={cn("flex shrink-0 flex-col gap-1.5 p-4", className)}
-      data-slot="sheet-header"
-      {...props}
-    />
-  );
+  return <div className={cn("flex shrink-0 flex-col gap-1.5 p-4", className)} data-slot="sheet-header" {...props} />;
 }
 
 /* -----------------------------------------------------------------------------
@@ -135,13 +128,7 @@ type SheetBodyProps = ComponentProps<"div">;
  * @since 0.3.16-canary.0
  */
 function SheetBody({ className, ...props }: SheetBodyProps): JSX.Element {
-  return (
-    <div
-      className={cn("min-h-0 flex-1 overflow-y-auto px-4", className)}
-      data-slot="sheet-body"
-      {...props}
-    />
-  );
+  return <div className={cn("min-h-0 flex-1 overflow-y-auto px-4", className)} data-slot="sheet-body" {...props} />;
 }
 
 /* -----------------------------------------------------------------------------
@@ -158,11 +145,7 @@ type SheetFooterProps = ComponentProps<"div">;
  */
 function SheetFooter({ className, ...props }: SheetFooterProps): JSX.Element {
   return (
-    <div
-      className={cn("mt-auto flex shrink-0 flex-col gap-2 p-4", className)}
-      data-slot="sheet-footer"
-      {...props}
-    />
+    <div className={cn("mt-auto flex shrink-0 flex-col gap-2 p-4", className)} data-slot="sheet-footer" {...props} />
   );
 }
 
@@ -227,11 +210,7 @@ interface SheetCloseProps extends ComponentProps<typeof SheetPrimitive.Close> {
  */
 function SheetClose({ className, size, variant, ...props }: SheetCloseProps): JSX.Element {
   return (
-    <SheetPrimitive.Close
-      className={buttonVariants({ className, size, variant })}
-      data-slot="sheet-close"
-      {...props}
-    />
+    <SheetPrimitive.Close className={buttonVariants({ className, size, variant })} data-slot="sheet-close" {...props} />
   );
 }
 

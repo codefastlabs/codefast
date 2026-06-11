@@ -85,10 +85,7 @@ export const dropdownMenuDoc: ComponentDoc = {
       "Group related actions and label the groups.",
       "Use checkbox items for toggles and a radio group for one-of-many.",
     ],
-    dont: [
-      "Don’t nest more than one level of submenus.",
-      "Don’t put primary page actions only in a dropdown.",
-    ],
+    dont: ["Don’t nest more than one level of submenus.", "Don’t put primary page actions only in a dropdown."],
   },
   related: ["context-menu", "select", "menubar", "command"],
 };

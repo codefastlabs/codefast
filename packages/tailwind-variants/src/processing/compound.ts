@@ -43,11 +43,7 @@ export const matchesCompoundDefinition = (
       continue;
     }
 
-    if (
-      compoundKey === "className" ||
-      compoundKey === "class" ||
-      (skipSlots && compoundKey === "slots")
-    ) {
+    if (compoundKey === "className" || compoundKey === "class" || (skipSlots && compoundKey === "slots")) {
       continue;
     }
 
@@ -57,8 +53,7 @@ export const matchesCompoundDefinition = (
     const compoundValue = compoundDefinition[compoundKey];
 
     if (typeof compoundValue === "boolean") {
-      const resolvedValue =
-        propertyValue === undefined && coerceMissingBoolean ? false : propertyValue;
+      const resolvedValue = propertyValue === undefined && coerceMissingBoolean ? false : propertyValue;
 
       if (resolvedValue !== compoundValue) {
         return false;
@@ -82,9 +77,7 @@ export const getCompoundClass = (compoundDefinition: {
   readonly class?: ClassValue;
   readonly className?: ClassValue;
 }): ClassValue => {
-  return compoundDefinition.className === undefined
-    ? compoundDefinition.class
-    : compoundDefinition.className;
+  return compoundDefinition.className === undefined ? compoundDefinition.class : compoundDefinition.className;
 };
 
 /**

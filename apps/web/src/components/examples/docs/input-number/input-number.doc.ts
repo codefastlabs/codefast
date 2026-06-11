@@ -73,10 +73,7 @@ export const inputNumberDoc: ComponentDoc = {
     ],
   },
   guidelines: {
-    do: [
-      "Set min, max, and step to express the valid range.",
-      "Use formatOptions for currency, percent, and units.",
-    ],
+    do: ["Set min, max, and step to express the valid range.", "Use formatOptions for currency, percent, and units."],
     dont: ["Don’t use it for codes or phone numbers — use Input.", "Don’t omit a label."],
   },
   related: ["input", "slider", "field"],

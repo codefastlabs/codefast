@@ -18,9 +18,7 @@ export function TableSelection() {
   }
 
   function toggleRow(id: string, checked: boolean) {
-    setSelected((current) =>
-      checked ? [...current, id] : current.filter((rowId) => rowId !== id),
-    );
+    setSelected((current) => (checked ? [...current, id] : current.filter((rowId) => rowId !== id)));
   }
 
   return (

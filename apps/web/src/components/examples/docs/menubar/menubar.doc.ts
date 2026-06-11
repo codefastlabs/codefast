@@ -48,8 +48,7 @@ export const menubarDoc: ComponentDoc = {
         {
           name: "children",
           type: "ReactNode",
-          description:
-            "A command row; MenubarShortcut shows its key hint. Also supports checkbox/radio items.",
+          description: "A command row; MenubarShortcut shows its key hint. Also supports checkbox/radio items.",
         },
       ],
     },
@@ -68,10 +67,7 @@ export const menubarDoc: ComponentDoc = {
     ],
   },
   guidelines: {
-    do: [
-      "Group commands the way a desktop app would (File, Edit, View).",
-      "Show shortcuts so power users learn them.",
-    ],
+    do: ["Group commands the way a desktop app would (File, Edit, View).", "Show shortcuts so power users learn them."],
     dont: ["Don’t use a menubar as primary site navigation.", "Don’t nest menus deeply."],
   },
   related: ["dropdown-menu", "context-menu", "navigation-menu"],

@@ -7,14 +7,8 @@ import type { BenchScenario } from "#/scenarios/types";
 type ExtremeSlotsProps = (typeof extremeSlotsTestProps)[number];
 type ExtremeSlotsRenderer = (props: ExtremeSlotsProps) => ExtremeDialogSlots;
 
-const codefastNoMerge = codefastTvFn(
-  extremeSlotsVariants,
-  TV_MERGE_DISABLED,
-) as ExtremeSlotsRenderer;
-const codefastWithMerge = codefastTvFn(
-  extremeSlotsVariants,
-  TV_MERGE_ENABLED,
-) as ExtremeSlotsRenderer;
+const codefastNoMerge = codefastTvFn(extremeSlotsVariants, TV_MERGE_DISABLED) as ExtremeSlotsRenderer;
+const codefastWithMerge = codefastTvFn(extremeSlotsVariants, TV_MERGE_ENABLED) as ExtremeSlotsRenderer;
 
 function invokeAllSlots(slots: ExtremeDialogSlots): void {
   slots.trigger();

@@ -8,11 +8,7 @@ import type { TextareaProps } from "#/components/textarea";
 import { Textarea } from "#/components/textarea";
 import { cn } from "#/lib/utils";
 import type { InputGroupAddonVariants, InputGroupButtonVariants } from "#/variants/input-group";
-import {
-  inputGroupAddonVariants,
-  inputGroupButtonVariants,
-  inputGroupVariants,
-} from "#/variants/input-group";
+import { inputGroupAddonVariants, inputGroupButtonVariants, inputGroupVariants } from "#/variants/input-group";
 
 /* -----------------------------------------------------------------------------
  * Component: InputGroup
@@ -27,14 +23,7 @@ type InputGroupProps = ComponentProps<"div">;
  * @since 0.3.16-canary.0
  */
 function InputGroup({ className, ...props }: InputGroupProps): JSX.Element {
-  return (
-    <div
-      className={inputGroupVariants({ className })}
-      data-slot="input-group"
-      role="group"
-      {...props}
-    />
-  );
+  return <div className={inputGroupVariants({ className })} data-slot="input-group" role="group" {...props} />;
 }
 
 /* -----------------------------------------------------------------------------
@@ -49,11 +38,7 @@ type InputGroupAddonProps = ComponentProps<"div"> & InputGroupAddonVariants;
 /**
  * @since 0.3.16-canary.0
  */
-function InputGroupAddon({
-  align = "inline-start",
-  className,
-  ...props
-}: InputGroupAddonProps): JSX.Element {
+function InputGroupAddon({ align = "inline-start", className, ...props }: InputGroupAddonProps): JSX.Element {
   return (
     <div
       className={inputGroupAddonVariants({ align, className })}
@@ -188,14 +173,7 @@ function InputGroupTextarea({ className, ...props }: InputGroupTextareaProps): J
  * Exports
  * -------------------------------------------------------------------------- */
 
-export {
-  InputGroup,
-  InputGroupAddon,
-  InputGroupButton,
-  InputGroupInput,
-  InputGroupText,
-  InputGroupTextarea,
-};
+export { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput, InputGroupText, InputGroupTextarea };
 
 export type {
   InputGroupAddonProps,

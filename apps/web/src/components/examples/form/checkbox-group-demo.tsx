@@ -22,11 +22,7 @@ export function CheckboxGroupDemo() {
     >
       {PERMISSIONS.map(({ value, label, disabled }) => (
         <div key={value} className="flex items-center gap-2">
-          <CheckboxGroupItem
-            {...(disabled ? { disabled } : {})}
-            id={`perm-${value}`}
-            value={value}
-          />
+          <CheckboxGroupItem {...(disabled ? { disabled } : {})} id={`perm-${value}`} value={value} />
           <Label className={disabled ? "opacity-50" : ""} htmlFor={`perm-${value}`}>
             {label}
           </Label>

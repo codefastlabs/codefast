@@ -70,14 +70,8 @@ export const collapsibleDoc: ComponentDoc = {
     ],
   },
   guidelines: {
-    do: [
-      "Use to hide secondary detail behind a single toggle.",
-      "Show a clear summary of what’s hidden.",
-    ],
-    dont: [
-      "Don’t hide content users need at a glance.",
-      "Don’t use for many sections — that’s an Accordion.",
-    ],
+    do: ["Use to hide secondary detail behind a single toggle.", "Show a clear summary of what’s hidden."],
+    dont: ["Don’t hide content users need at a glance.", "Don’t use for many sections — that’s an Accordion."],
   },
   related: ["accordion", "tabs", "card"],
 };

@@ -9,8 +9,7 @@ export const paginationDoc: ComponentDoc = {
     {
       id: "controlled",
       title: "Controlled with a window",
-      description:
-        "Click pages or prev/next — the windowed list and disabled ends update from state.",
+      description: "Click pages or prev/next — the windowed list and disabled ends update from state.",
       Demo: PaginationControlled,
       code: docSource("pagination", "controlled"),
     },
@@ -65,10 +64,7 @@ export const paginationDoc: ComponentDoc = {
       "Show first, last, current, and neighbours; collapse the rest with an ellipsis.",
       "Keep the active page clearly highlighted.",
     ],
-    dont: [
-      "Don’t render dozens of page links — window them.",
-      "Don’t leave prev/next clickable at the bounds.",
-    ],
+    dont: ["Don’t render dozens of page links — window them.", "Don’t leave prev/next clickable at the bounds."],
   },
   related: ["breadcrumb", "button-group", "table"],
 };

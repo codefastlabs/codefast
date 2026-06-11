@@ -11,8 +11,8 @@ export function PopoverSimple() {
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-64 text-sm text-ui-muted">
-        Popovers are non-modal — click outside or press Escape to dismiss. Use them for contextual
-        details or a quick form.
+        Popovers are non-modal — click outside or press Escape to dismiss. Use them for contextual details or a quick
+        form.
       </PopoverContent>
     </Popover>
   );

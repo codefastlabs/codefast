@@ -6,9 +6,7 @@ import type { ArrangeSuggestGroupsOutput } from "#/arrange/domain/types";
 /**
  * @since 0.3.16-canary.0
  */
-export function suggestCnGroupsFromCli(
-  request: ArrangeSuggestGroupsRequest,
-): ArrangeSuggestGroupsOutput {
+export function suggestCnGroupsFromCli(request: ArrangeSuggestGroupsRequest): ArrangeSuggestGroupsOutput {
   const groups = suggestCnGroups(request.inlineClasses);
   const primaryLine = request.emitTvStyleArray
     ? formatArray(groups)

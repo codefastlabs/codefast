@@ -1,13 +1,5 @@
 import { Badge } from "@codefast/ui/badge";
-import {
-  Item,
-  ItemContent,
-  ItemDescription,
-  ItemGroup,
-  ItemMedia,
-  ItemSeparator,
-  ItemTitle,
-} from "@codefast/ui/item";
+import { Item, ItemContent, ItemDescription, ItemGroup, ItemMedia, ItemSeparator, ItemTitle } from "@codefast/ui/item";
 import { GitPullRequestIcon, MessageSquareIcon, StarIcon } from "lucide-react";
 import { Fragment } from "react";
 

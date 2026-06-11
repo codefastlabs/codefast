@@ -2,13 +2,7 @@ import { Command as CommandPrimitive } from "cmdk";
 import { CheckIcon, SearchIcon } from "lucide-react";
 import type { ComponentProps, JSX } from "react";
 
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "#/components/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "#/components/dialog";
 import { InputGroup, InputGroupAddon } from "#/components/input-group";
 import { cn } from "#/lib/utils";
 
@@ -96,10 +90,7 @@ function CommandInput({ className, ...props }: CommandInputProps): JSX.Element {
     <div className="p-1 pb-0" data-slot="command-input-wrapper">
       <InputGroup className="h-8! rounded-lg! border-input/30 bg-input/30 shadow-none! *:data-[slot=input-group-addon]:pl-2!">
         <CommandPrimitive.Input
-          className={cn(
-            "w-full text-sm outline-hidden disabled:cursor-not-allowed disabled:opacity-50",
-            className,
-          )}
+          className={cn("w-full text-sm outline-hidden disabled:cursor-not-allowed disabled:opacity-50", className)}
           data-slot="command-input"
           {...props}
         />
@@ -126,10 +117,7 @@ type CommandListProps = ComponentProps<typeof CommandPrimitive.List>;
 function CommandList({ className, ...props }: CommandListProps): JSX.Element {
   return (
     <CommandPrimitive.List
-      className={cn(
-        "max-h-72 scroll-py-1 scrollbar-none overflow-x-hidden overflow-y-auto outline-none",
-        className,
-      )}
+      className={cn("max-h-72 scroll-py-1 scrollbar-none overflow-x-hidden overflow-y-auto outline-none", className)}
       data-slot="command-list"
       {...props}
     />

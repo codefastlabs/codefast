@@ -16,11 +16,7 @@ export function ExamplesSection({ examples, highlighted, showHint }: ExamplesSec
     <DocSection
       id="examples"
       title="Examples"
-      description={
-        showHint
-          ? "Live preview and copy-ready source. Explore more variants in your own app."
-          : undefined
-      }
+      description={showHint ? "Live preview and copy-ready source. Explore more variants in your own app." : undefined}
     >
       <div className="space-y-10">
         {examples.map((example) => (

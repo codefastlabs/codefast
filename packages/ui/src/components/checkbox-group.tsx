@@ -17,13 +17,7 @@ type CheckboxGroupProps = ComponentProps<typeof CheckboxGroupPrimitive.Root>;
  * @since 0.3.16-canary.0
  */
 function CheckboxGroup({ className, ...props }: CheckboxGroupProps): JSX.Element {
-  return (
-    <CheckboxGroupPrimitive.Root
-      className={cn("grid gap-2", className)}
-      data-slot="checkbox-group"
-      {...props}
-    />
-  );
+  return <CheckboxGroupPrimitive.Root className={cn("grid gap-2", className)} data-slot="checkbox-group" {...props} />;
 }
 
 /* -----------------------------------------------------------------------------

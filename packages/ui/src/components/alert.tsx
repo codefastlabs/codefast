@@ -17,14 +17,7 @@ interface AlertProps extends ComponentProps<"div">, AlertVariants {}
  * @since 0.3.16-canary.0
  */
 function Alert({ className, variant, ...props }: AlertProps): JSX.Element {
-  return (
-    <div
-      className={alertVariants({ className, variant })}
-      data-slot="alert"
-      role="alert"
-      {...props}
-    />
-  );
+  return <div className={alertVariants({ className, variant })} data-slot="alert" role="alert" {...props} />;
 }
 
 /* -----------------------------------------------------------------------------
@@ -90,13 +83,7 @@ type AlertActionProps = ComponentProps<"div">;
  * @since 0.3.16-canary.0
  */
 function AlertAction({ className, ...props }: AlertActionProps): JSX.Element {
-  return (
-    <div
-      className={cn("absolute top-2.5 right-3", className)}
-      data-slot="alert-action"
-      {...props}
-    />
-  );
+  return <div className={cn("absolute top-2.5 right-3", className)} data-slot="alert-action" {...props} />;
 }
 
 /* -----------------------------------------------------------------------------

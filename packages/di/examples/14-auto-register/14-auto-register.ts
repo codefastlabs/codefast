@@ -183,10 +183,10 @@ class UserManager implements UserService {
   }
 }
 
-@injectable(
-  [inject(OrderRepositoryToken), inject(UserServiceToken), inject(NotificationServiceToken)],
-  { autoRegister: applicationRegistry, scope: "singleton" },
-)
+@injectable([inject(OrderRepositoryToken), inject(UserServiceToken), inject(NotificationServiceToken)], {
+  autoRegister: applicationRegistry,
+  scope: "singleton",
+})
 class OrderProcessor implements OrderService {
   constructor(
     private readonly orderRepository: OrderRepository,
@@ -244,9 +244,7 @@ const infrastructureCount = container.loadAutoRegistered(infrastructureRegistry)
 const domainCount = container.loadAutoRegistered(domainRegistry);
 const applicationCount = container.loadAutoRegistered(applicationRegistry);
 
-console.log(
-  `Auto-registered: ${infrastructureCount} infra + ${domainCount} domain + ${applicationCount} app`,
-);
+console.log(`Auto-registered: ${infrastructureCount} infra + ${domainCount} domain + ${applicationCount} app`);
 
 // Alias interface tokens → concrete singletons (already bound by loadAutoRegistered).
 container.bind(UserRepositoryToken).to(SqlUserRepository).singleton();

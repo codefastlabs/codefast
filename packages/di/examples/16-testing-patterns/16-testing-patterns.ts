@@ -273,9 +273,7 @@ await test("payment failure causes placeOrder to throw", async () => {
   // Swap only the payment gateway — everything else stays real.
   const stubPayment = new StubPaymentGateway().failNextCharge();
   testContainer.rebind(PaymentGatewayToken).toConstantValue(stubPayment);
-  testContainer
-    .rebind(UserServiceToken)
-    .toConstantValue(new StubUserService().seed("u1", "alice@example.com"));
+  testContainer.rebind(UserServiceToken).toConstantValue(new StubUserService().seed("u1", "alice@example.com"));
 
   const orderService = testContainer.resolve(OrderServiceToken);
 
@@ -327,17 +325,13 @@ await test("two independent child containers do not share state", async () => {
   const childBPayment = new StubPaymentGateway();
 
   const childAContainer = productionContainer.createChild();
-  childAContainer
-    .bind(UserServiceToken)
-    .toConstantValue(new StubUserService().seed("u1", "alice@example.com"));
+  childAContainer.bind(UserServiceToken).toConstantValue(new StubUserService().seed("u1", "alice@example.com"));
   childAContainer.bind(PaymentGatewayToken).toConstantValue(childAPayment);
   childAContainer.bind(EmailServiceToken).toConstantValue(new StubEmailService());
   childAContainer.bind(OrderServiceToken).to(OrderProcessor).singleton();
 
   const childBContainer = productionContainer.createChild();
-  childBContainer
-    .bind(UserServiceToken)
-    .toConstantValue(new StubUserService().seed("u1", "alice@example.com"));
+  childBContainer.bind(UserServiceToken).toConstantValue(new StubUserService().seed("u1", "alice@example.com"));
   childBContainer.bind(PaymentGatewayToken).toConstantValue(childBPayment);
   childBContainer.bind(EmailServiceToken).toConstantValue(new StubEmailService());
   childBContainer.bind(OrderServiceToken).to(OrderProcessor).singleton();

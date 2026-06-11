@@ -63,10 +63,7 @@ export const textareaDoc: ComponentDoc = {
     ],
   },
   guidelines: {
-    do: [
-      "Use for free-form, multi-line input like notes and bios.",
-      "Show a counter when there’s a length limit.",
-    ],
+    do: ["Use for free-form, multi-line input like notes and bios.", "Show a counter when there’s a length limit."],
     dont: [
       "Don’t use a textarea for single-line input — use Input.",
       "Don’t disable resize unless the layout truly requires it.",

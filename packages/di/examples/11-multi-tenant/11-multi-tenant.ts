@@ -311,9 +311,7 @@ class TenantUserManager implements UserService {
       return cachedUsers;
     }
 
-    const users = await this.database.query<User>(
-      "SELECT id, email, role FROM users ORDER BY created_at",
-    );
+    const users = await this.database.query<User>("SELECT id, email, role FROM users ORDER BY created_at");
     await this.cache.set(cacheKey, users, 60);
     this.logger.info("users.listed", { count: users.length });
     return users;
@@ -358,9 +356,7 @@ class TenantInviteManager implements InviteService {
     }
 
     if (!this.rateLimiter.checkQuota("invite")) {
-      throw new Error(
-        `[${this.tenant.tenantId}] Invite quota exhausted (plan: ${this.tenant.plan})`,
-      );
+      throw new Error(`[${this.tenant.tenantId}] Invite quota exhausted (plan: ${this.tenant.plan})`);
     }
 
     const inviteId = `inv_${randomBytes(8).toString("hex")}`;
@@ -430,12 +426,9 @@ function createTenantContainer(
       const { tenantId, plan } = ctx.resolve(TenantContextToken);
       const prefix = `[${tenantId}/${plan}]`;
       return {
-        info: (msg, meta) =>
-          console.log(`  ${prefix} INFO  ${msg}`, meta ? JSON.stringify(meta) : ""),
-        warn: (msg, meta) =>
-          console.log(`  ${prefix} WARN  ${msg}`, meta ? JSON.stringify(meta) : ""),
-        error: (msg, meta) =>
-          console.error(`  ${prefix} ERROR ${msg}`, meta ? JSON.stringify(meta) : ""),
+        info: (msg, meta) => console.log(`  ${prefix} INFO  ${msg}`, meta ? JSON.stringify(meta) : ""),
+        warn: (msg, meta) => console.log(`  ${prefix} WARN  ${msg}`, meta ? JSON.stringify(meta) : ""),
+        error: (msg, meta) => console.error(`  ${prefix} ERROR ${msg}`, meta ? JSON.stringify(meta) : ""),
       };
     })
     .scoped();
@@ -581,14 +574,10 @@ async function main(): Promise<void> {
   // Each tenant's UserService is a distinct instance
   const tenantAUserService2 = tenantAContainer.resolve(UserServiceToken);
   const tenantBUserService2 = tenantBContainer.resolve(UserServiceToken);
-  console.log(
-    `  Tenant A UserService === Tenant B UserService: ${tenantAUserService2 === tenantBUserService2}`,
-  ); // false
+  console.log(`  Tenant A UserService === Tenant B UserService: ${tenantAUserService2 === tenantBUserService2}`); // false
 
   // Within the same tenant container, the same scoped instance is reused
-  console.log(
-    `  Tenant A UserService scoped identity: ${tenantAUserService === tenantAUserService2}`,
-  ); // true
+  console.log(`  Tenant A UserService scoped identity: ${tenantAUserService === tenantAUserService2}`); // true
 
   // rootContainer.dispose() at scope exit fires pool.close()
 }

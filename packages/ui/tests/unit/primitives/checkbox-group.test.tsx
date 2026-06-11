@@ -3,11 +3,7 @@ import userEvent from "@testing-library/user-event";
 import { axe } from "jest-axe";
 import { createRef } from "react";
 
-import {
-  CheckboxGroup,
-  CheckboxGroupIndicator,
-  CheckboxGroupItem,
-} from "#/primitives/checkbox-group";
+import { CheckboxGroup, CheckboxGroupIndicator, CheckboxGroupItem } from "#/primitives/checkbox-group";
 
 describe("checkbox-group", () => {
   describe("CheckboxGroup component", () => {

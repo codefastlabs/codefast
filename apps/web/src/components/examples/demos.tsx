@@ -40,9 +40,7 @@ function slugFromDemoPath(path: string): string {
 export const DEMOS: Record<string, DemoEntry> = Object.fromEntries(
   Object.entries(demoModules).map(([path, module]) => {
     const slug = slugFromDemoPath(path);
-    const Demo = Object.values(module).find((value) => typeof value === "function") as
-      | ComponentType
-      | undefined;
+    const Demo = Object.values(module).find((value) => typeof value === "function") as ComponentType | undefined;
 
     if (!Demo) {
       throw new Error(`Demo file ${path} must export exactly one component.`);

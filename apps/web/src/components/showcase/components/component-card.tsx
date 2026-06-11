@@ -8,13 +8,7 @@ import type { ComponentMeta } from "#/data/components";
 import { componentPath } from "#/data/components";
 
 /** A live-demo preview card, or a docs-only card for components without a demo. */
-export function ComponentCard({
-  component,
-  highlighted,
-}: {
-  component: ComponentMeta;
-  highlighted: string;
-}) {
+export function ComponentCard({ component, highlighted }: { component: ComponentMeta; highlighted: string }) {
   const demo = DEMOS[component.slug];
 
   if (!demo) {

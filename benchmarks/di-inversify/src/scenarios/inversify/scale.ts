@@ -24,9 +24,7 @@ function buildScaleDeepTransientChainScenario(): BenchScenario {
     const currentChainIdentifier = chainIdentifiers[chainIndex]!;
     container
       .bind<number>(currentChainIdentifier)
-      .toDynamicValue(
-        (resolutionContext) => resolutionContext.get<number>(previousChainIdentifier) + 1,
-      )
+      .toDynamicValue((resolutionContext) => resolutionContext.get<number>(previousChainIdentifier) + 1)
       .inTransientScope();
   }
 
