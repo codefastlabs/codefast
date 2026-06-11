@@ -4,8 +4,8 @@ import { Link } from "@tanstack/react-router";
 import { MenuIcon } from "lucide-react";
 import { useState } from "react";
 
-import { AppearanceToggle } from "#/components/appearance-toggle.tsx";
-import { CommandPalette } from "#/components/command-palette";
+import { AppearanceToggle } from "#/components/layout/appearance-toggle";
+import { CommandPalette } from "#/components/layout/command-palette";
 
 const NAV_LINKS = [
   { to: "/", label: "Home" },

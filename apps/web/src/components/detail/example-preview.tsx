@@ -3,14 +3,14 @@ import { cn } from "@codefast/ui/lib/utils";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@codefast/ui/tabs";
 import type { ReactNode } from "react";
 
-import { CodeBlock } from "#/components/code-block";
 import {
   LanguageProvider,
   LanguageSelector,
   useLanguageContext,
   useTranslation,
   type Translations,
-} from "#/components/docs/language-selector";
+} from "#/components/detail/language-selector";
+import { CodeBlock } from "#/components/shared/code-block";
 
 interface ExamplePreviewProps {
   /** Anchor id for deep-linking and the On-this-page TOC. */

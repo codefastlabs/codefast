@@ -8,8 +8,8 @@ import { HeadContent, Link, Scripts, createRootRoute } from "@tanstack/react-rou
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import type { ReactNode } from "react";
 
-import { Footer } from "#/components/footer";
-import { Header } from "#/components/header";
+import { Footer } from "#/components/layout/footer";
+import { Header } from "#/components/layout/header";
 
 import appCss from "#/styles.css?url";
 

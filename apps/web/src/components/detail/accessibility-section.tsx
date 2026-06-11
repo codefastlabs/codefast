@@ -1,8 +1,8 @@
 import { CheckIcon } from "lucide-react";
 
-import { DocSection } from "#/components/docs/doc-section";
-import type { KeyRow } from "#/components/docs/keyboard-table";
-import { KeyboardTable } from "#/components/docs/keyboard-table";
+import { DocSection } from "#/components/detail/doc-section";
+import type { KeyRow } from "#/components/detail/keyboard-table";
+import { KeyboardTable } from "#/components/detail/keyboard-table";
 
 interface AccessibilitySectionProps {
   readonly keyboard?: ReadonlyArray<KeyRow> | undefined;

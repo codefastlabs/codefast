@@ -1,7 +1,7 @@
 /**
  * Per-slug, code-split body of the component detail page.
  *
- * `DETAIL_BODIES` maps every component slug to a `React.lazy` component that —
+ * `DETAIL_BODY_BY_SLUG` maps every component slug to a `React.lazy` component that —
  * on first render — loads ONLY that component's doc chunk (examples, sources
  * pre-highlighted at build time) and renders the full page body. Streaming SSR
  * awaits the chunk and ships complete HTML; on the client, navigating to
@@ -10,19 +10,19 @@
 import type { ComponentType, LazyExoticComponent } from "react";
 import { lazy } from "react";
 
-import { OnThisPage, type TocItem } from "#/components/docs/on-this-page";
-import { AccessibilitySection } from "#/components/docs/sections/accessibility-section";
-import { AnatomySection } from "#/components/docs/sections/anatomy-section";
-import { ApiSection } from "#/components/docs/sections/api-section";
-import { ComponentPager } from "#/components/docs/sections/component-pager";
-import { ExamplesSection } from "#/components/docs/sections/examples-section";
-import { GuidelinesSection } from "#/components/docs/sections/guidelines-section";
-import { RelatedSection } from "#/components/docs/sections/related-section";
-import { DEMOS } from "#/components/examples/demos";
-import { loadComponentDoc } from "#/components/examples/docs";
-import type { ResolvedComponentDoc, ResolvedDocExample } from "#/components/examples/docs/types";
-import type { ComponentMeta } from "#/data/components";
-import { ALL_COMPONENTS, COMPONENT_BY_SLUG, DEMO_NEIGHBORS } from "#/data/components";
+import { AccessibilitySection } from "#/components/detail/accessibility-section";
+import { AnatomySection } from "#/components/detail/anatomy-section";
+import { ApiSection } from "#/components/detail/api-section";
+import { ComponentPager } from "#/components/detail/component-pager";
+import { ExamplesSection } from "#/components/detail/examples-section";
+import { GuidelinesSection } from "#/components/detail/guidelines-section";
+import { OnThisPage, type TocItem } from "#/components/detail/on-this-page";
+import { RelatedSection } from "#/components/detail/related-section";
+import { DEMO_BY_SLUG } from "#/components/examples/demos";
+import { loadDoc } from "#/components/examples/docs";
+import type { ComponentMeta } from "#/components/examples/meta";
+import { COMPONENTS, COMPONENT_BY_SLUG, NEIGHBORS_BY_SLUG } from "#/components/examples/meta";
+import type { ResolvedComponentDoc, ResolvedDocExample } from "#/components/examples/types";
 
 interface ComponentDetail {
   readonly component: ComponentMeta;
@@ -37,13 +37,13 @@ interface ComponentDetail {
  * registry, or a single example synthesised from the card demo as a fallback.
  */
 async function loadDetail(component: ComponentMeta): Promise<ComponentDetail> {
-  const doc = await loadComponentDoc(component.slug);
+  const doc = await loadDoc(component.slug);
 
   if (doc) {
     return { component, doc, examples: doc.examples };
   }
 
-  const demo = DEMOS[component.slug];
+  const demo = DEMO_BY_SLUG.get(component.slug);
 
   if (demo) {
     const [Demo, source] = await Promise.all([demo.load(), demo.loadSource()]);
@@ -124,7 +124,7 @@ function buildToc({ doc, examples }: ComponentDetail): Array<TocItem> {
 
 function DetailBody({ detail }: { detail: ComponentDetail }) {
   const { component, doc, examples } = detail;
-  const neighbors = DEMO_NEIGHBORS.get(component.slug);
+  const neighbors = NEIGHBORS_BY_SLUG.get(component.slug);
   const hasRelated = (doc?.related?.length ?? 0) > 0 || (doc?.dependencies?.length ?? 0) > 0;
   const toc = buildToc(detail);
 
@@ -169,8 +169,8 @@ function DetailBody({ detail }: { detail: ComponentDetail }) {
  * One lazy body per component. Created once at module scope so `React.lazy`'s
  * internal cache survives re-renders and route remounts.
  */
-export const DETAIL_BODIES: ReadonlyMap<string, LazyExoticComponent<ComponentType>> = new Map(
-  ALL_COMPONENTS.map((component) => [
+export const DETAIL_BODY_BY_SLUG: ReadonlyMap<string, LazyExoticComponent<ComponentType>> = new Map(
+  COMPONENTS.map((component) => [
     component.slug,
     lazy(async () => {
       const detail = await fetchDetail(component);
