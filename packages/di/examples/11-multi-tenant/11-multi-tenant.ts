@@ -36,8 +36,9 @@
  *   └── UserServiceToken    → uses all of the above
  */
 
-import { Container, Module, inject, injectable, token } from "@codefast/di";
 import { randomBytes } from "node:crypto";
+
+import { Container, Module, inject, injectable, token } from "@codefast/di";
 
 // ============================================================================
 // Global types
@@ -569,7 +570,7 @@ async function main(): Promise<void> {
   // Use the already-resolved sharedDatabasePool (resolved earlier as async).
   const poolStats = sharedDatabasePool.stats();
   console.log(
-    `  Shared pool: ${poolStats.activeConnections} active / ${poolStats.idleConnections} idle connections (shared across all ${3} tenant containers)`,
+    `  Shared pool: ${poolStats.activeConnections} active / ${poolStats.idleConnections} idle connections (shared across all 3 tenant containers)`,
   );
 
   // Each tenant has its own cache namespace — writes don't bleed across tenants

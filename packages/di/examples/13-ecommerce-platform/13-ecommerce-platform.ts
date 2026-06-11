@@ -397,7 +397,7 @@ class ConsoleLogger implements Logger {
       level,
       msg,
       ...this.bindings,
-      ...(meta ?? {}),
+      ...meta,
       ts: new Date().toISOString(),
     };
     console.log(JSON.stringify(line));
@@ -1464,7 +1464,7 @@ class ShippingFulfillmentService implements FulfillmentService {
     const shippingQuotes = await Promise.all(
       this.carriers.map((carrier) => carrier.getQuote(address, items)),
     );
-    return shippingQuotes.sort((leftQuote, rightQuote) => leftQuote.cost - rightQuote.cost);
+    return shippingQuotes.toSorted((leftQuote, rightQuote) => leftQuote.cost - rightQuote.cost);
   }
 
   async createShipment(
