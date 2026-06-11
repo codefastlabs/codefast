@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 
 import { DocSection } from "#/components/docs/doc-section";
-import { ALL_COMPONENTS } from "#/data/components";
+import { COMPONENT_BY_SLUG } from "#/data/components";
 
 interface RelatedSectionProps {
   /** Third-party packages the component is built on. */
@@ -34,7 +34,7 @@ export function RelatedSection({ dependencies, related }: RelatedSectionProps) {
           <p className="mb-2 text-xs font-semibold tracking-widest text-ui-muted uppercase">Related components</p>
           <div className="flex flex-wrap gap-2">
             {related.map((relatedSlug) => {
-              const target = ALL_COMPONENTS.find((component) => component.slug === relatedSlug);
+              const target = COMPONENT_BY_SLUG.get(relatedSlug);
 
               if (!target) {
                 return null;

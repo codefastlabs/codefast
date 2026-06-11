@@ -3,7 +3,7 @@ import { Button } from "@codefast/ui/button";
 import { Link, createFileRoute, notFound } from "@tanstack/react-router";
 import { Suspense } from "react";
 
-import { DETAIL_BODIES } from "#/components/docs/detail-body";
+import { DETAIL_BODIES, preloadDetail } from "#/components/docs/detail-body";
 import { ComponentDetailHeader } from "#/components/docs/sections/detail-header";
 import { COMPONENT_BY_SLUG } from "#/data/components";
 
@@ -25,6 +25,11 @@ export const Route = createFileRoute("/components/$slug")({
     if (!COMPONENT_BY_SLUG.has(params.slug)) {
       throw notFound();
     }
+
+    // Fire-and-forget warm-up. The router runs this loader on link intent
+    // (defaultPreload: "intent"), so hovering any detail link fetches that
+    // slug's body chunk before the click lands.
+    preloadDetail(params.slug);
   },
   notFoundComponent: ComponentNotFound,
   component: ComponentDetailPage,
