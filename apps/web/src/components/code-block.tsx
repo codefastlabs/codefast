@@ -8,7 +8,7 @@ interface CodeBlockProps {
   /** Pre-highlighted Shiki HTML, injected verbatim. */
   highlightedCode: string;
   /** Extra classes for the scroll container (e.g. a min-height). */
-  className?: string;
+  className?: string | undefined;
 }
 
 /**

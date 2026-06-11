@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { ArrowUpRightIcon } from "lucide-react";
+import { Suspense } from "react";
 
 import { DEMOS } from "#/components/examples/demos";
 import { LazyVisible } from "#/components/lazy-visible";
@@ -8,7 +9,7 @@ import type { ComponentMeta } from "#/data/components";
 import { componentPath } from "#/data/components";
 
 /** A live-demo preview card, or a docs-only card for components without a demo. */
-export function ComponentCard({ component, highlighted }: { component: ComponentMeta; highlighted: string }) {
+export function ComponentCard({ component }: { component: ComponentMeta }) {
   const demo = DEMOS[component.slug];
 
   if (!demo) {
@@ -47,11 +48,14 @@ export function ComponentCard({ component, highlighted }: { component: Component
       path={componentPath(component.slug)}
       description={component.description}
       wide={component.wide ?? false}
-      code={demo.code}
-      highlightedCode={highlighted}
+      loadSource={demo.loadSource}
     >
+      {/* LazyVisible defers the mount until the card nears the viewport, which
+          is also what triggers the React.lazy chunk download. */}
       <LazyVisible>
-        <Demo />
+        <Suspense fallback={null}>
+          <Demo />
+        </Suspense>
       </LazyVisible>
     </PreviewCard>
   );
