@@ -3,5 +3,5 @@ export default {
     "pnpm exec oxfmt",
     "pnpm exec oxlint --fix --deny-warnings",
   ],
-  "*.{md,json,jsonc,css}": "pnpm exec oxfmt",
+  "*.{md,json,jsonc,css,yml,yaml}": "pnpm exec oxfmt",
 };
