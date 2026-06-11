@@ -52,9 +52,7 @@ export function printAnalyzeReport(resolvedTargetPath: string, report: AnalyzeRe
     `\ncn(...) nested inside tv({...}) (prefer a string or array — preview/apply can rewrite): ${report.cnInsideTvCalls.length}`,
   );
   for (const findingEntry of report.cnInsideTvCalls.slice(0, MAX_REPORT_LINES)) {
-    logger.out(
-      `  ${findingEntry.file}:${findingEntry.line}  (${findingEntry.argCount} args)  ${findingEntry.preview}`,
-    );
+    logger.out(`  ${findingEntry.file}:${findingEntry.line}  (${findingEntry.argCount} args)  ${findingEntry.preview}`);
   }
   if (report.cnInsideTvCalls.length > MAX_REPORT_LINES) {
     logger.out(`  … and ${report.cnInsideTvCalls.length - MAX_REPORT_LINES} more`);
@@ -71,15 +69,11 @@ export function printSyncResult(result: ArrangeRunResult, write: boolean): void 
   if (write) {
     logger.out(`Applied: ${result.totalChanged} site(s) updated.`);
   } else {
-    logger.out(
-      `(Re-run without --dry-run to write changes, or "pnpm cli:arrange" / "pnpm exec codefast arrange")`,
-    );
+    logger.out(`(Re-run without --dry-run to write changes, or "pnpm cli:arrange" / "pnpm exec codefast arrange")`);
   }
   const shouldShowCascadeHint = write ? result.totalChanged > 0 : result.totalFound > 0;
   if (shouldShowCascadeHint) {
-    logger.out(
-      "Note: class order may change across concern groups — smoke-test the UI if you rely on cascade order.",
-    );
+    logger.out("Note: class order may change across concern groups — smoke-test the UI if you rely on cascade order.");
   }
   if (result.hookError !== null) {
     logger.err(result.hookError);
@@ -90,9 +84,7 @@ export function printSyncResult(result: ArrangeRunResult, write: boolean): void 
  * @since 0.3.16-canary.0
  */
 export function printSimplifyResult(result: ArrangeRunResult, write: boolean): void {
-  logger.out(
-    `\nTotal: ${result.filePaths.length} file(s), ${result.totalFound} site(s) to simplify.`,
-  );
+  logger.out(`\nTotal: ${result.filePaths.length} file(s), ${result.totalFound} site(s) to simplify.`);
   if (write) {
     logger.out(`Applied: ${result.totalChanged} site(s) updated.`);
   } else {
@@ -164,9 +156,7 @@ function printGroupFilePreviewBody(args: {
     logger.out(`  ${replacement.split("\n").join("\n  ")}`);
   }
   if (unwrapEdits.length > 0 && plannedGroupEdits.length > 0) {
-    logger.out(
-      "  ([cn] / [tv] / [JSX className] lines below reflect content after unwrap of cn inside tv.)",
-    );
+    logger.out("  ([cn] / [tv] / [JSX className] lines below reflect content after unwrap of cn inside tv.)");
   }
   for (const plan of plannedGroupEdits) {
     logger.out(`  Line ${lineOf(plan.lineSf, plan.reportNode)} [${plan.label}]:`);

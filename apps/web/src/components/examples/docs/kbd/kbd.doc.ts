@@ -60,14 +60,8 @@ export const kbdDoc: ComponentDoc = {
     ],
   },
   guidelines: {
-    do: [
-      "Use to document shortcuts in menus, tooltips, and help text.",
-      "Group multi-key combos with KbdGroup.",
-    ],
-    dont: [
-      "Don’t use Kbd for non-keyboard content.",
-      "Don’t invent symbols users won’t recognise.",
-    ],
+    do: ["Use to document shortcuts in menus, tooltips, and help text.", "Group multi-key combos with KbdGroup."],
+    dont: ["Don’t use Kbd for non-keyboard content.", "Don’t invent symbols users won’t recognise."],
   },
   related: ["tooltip", "command", "badge"],
 };

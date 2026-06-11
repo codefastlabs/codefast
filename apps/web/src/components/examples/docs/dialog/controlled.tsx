@@ -30,9 +30,7 @@ export function DialogControlled() {
             <DialogTitle>Subscribe</DialogTitle>
             <DialogDescription>The dialog’s open state lives in your component.</DialogDescription>
           </DialogHeader>
-          <DialogBody className="text-sm text-ui-muted">
-            Close it from a button, a side effect, or the ✕.
-          </DialogBody>
+          <DialogBody className="text-sm text-ui-muted">Close it from a button, a side effect, or the ✕.</DialogBody>
           <DialogFooter>
             <DialogClose asChild>
               <Button size="sm" variant="outline">

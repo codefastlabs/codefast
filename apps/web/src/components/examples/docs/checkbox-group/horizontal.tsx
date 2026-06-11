@@ -9,11 +9,7 @@ export function CheckboxGroupHorizontal() {
 
   return (
     <div className="space-y-3">
-      <CheckboxGroup
-        className="flex flex-wrap gap-4"
-        value={days}
-        onValueChange={(value) => setDays(value ?? [])}
-      >
+      <CheckboxGroup className="flex flex-wrap gap-4" value={days} onValueChange={(value) => setDays(value ?? [])}>
         {DAYS.map((day) => (
           <div key={day} className="flex items-center gap-2">
             <CheckboxGroupItem id={`day-${day}`} value={day} />

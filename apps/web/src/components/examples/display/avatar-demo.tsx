@@ -1,10 +1,4 @@
-import {
-  Avatar,
-  AvatarBadge,
-  AvatarFallback,
-  AvatarGroup,
-  AvatarGroupCount,
-} from "@codefast/ui/avatar";
+import { Avatar, AvatarBadge, AvatarFallback, AvatarGroup, AvatarGroupCount } from "@codefast/ui/avatar";
 
 export function AvatarDemo() {
   return (

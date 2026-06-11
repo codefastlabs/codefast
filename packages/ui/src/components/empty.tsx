@@ -43,11 +43,7 @@ type EmptyHeaderProps = ComponentProps<"div">;
  */
 function EmptyHeader({ className, ...props }: EmptyHeaderProps): JSX.Element {
   return (
-    <div
-      className={cn("flex max-w-sm flex-col items-center gap-2", className)}
-      data-slot="empty-header"
-      {...props}
-    />
+    <div className={cn("flex max-w-sm flex-col items-center gap-2", className)} data-slot="empty-header" {...props} />
   );
 }
 
@@ -136,10 +132,7 @@ type EmptyContentProps = ComponentProps<"div">;
 function EmptyContent({ className, ...props }: EmptyContentProps): JSX.Element {
   return (
     <div
-      className={cn(
-        "flex w-full max-w-sm min-w-0 flex-col items-center gap-4 text-sm text-balance",
-        className,
-      )}
+      className={cn("flex w-full max-w-sm min-w-0 flex-col items-center gap-4 text-sm text-balance", className)}
       data-slot="empty-content"
       {...props}
     />

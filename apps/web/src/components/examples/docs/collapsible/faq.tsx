@@ -21,9 +21,7 @@ export function CollapsibleFaq() {
             {item.q}
             <PlusIcon className="size-4 shrink-0 text-ui-muted transition-transform group-data-[state=open]:rotate-45" />
           </CollapsibleTrigger>
-          <CollapsibleContent className="pt-2 text-sm leading-relaxed text-ui-muted">
-            {item.a}
-          </CollapsibleContent>
+          <CollapsibleContent className="pt-2 text-sm leading-relaxed text-ui-muted">{item.a}</CollapsibleContent>
         </Collapsible>
       ))}
     </div>

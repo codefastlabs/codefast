@@ -48,11 +48,7 @@ export function useHashSync({ payload, view, patchView }: HashSyncOptions) {
       if (window.location.hash === withHash) {
         return;
       }
-      window.history.replaceState(
-        null,
-        "",
-        window.location.pathname + window.location.search + withHash,
-      );
+      window.history.replaceState(null, "", window.location.pathname + window.location.search + withHash);
     }, 120);
     return () => clearTimeout(timer);
   }, [view, payload]);

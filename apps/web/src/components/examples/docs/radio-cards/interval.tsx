@@ -6,11 +6,7 @@ export function RadioCardsInterval() {
   const [interval, setInterval] = useState("yearly");
 
   return (
-    <RadioCards
-      className="grid w-full max-w-sm grid-cols-2 gap-2"
-      value={interval}
-      onValueChange={setInterval}
-    >
+    <RadioCards className="grid w-full max-w-sm grid-cols-2 gap-2" value={interval} onValueChange={setInterval}>
       <RadioCardsItem value="monthly">
         <div className="flex flex-col gap-0.5 text-left">
           <span className="text-sm font-medium">Monthly</span>

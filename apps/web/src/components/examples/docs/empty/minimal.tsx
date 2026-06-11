@@ -5,9 +5,7 @@ export function EmptyMinimal() {
     <Empty className="w-full max-w-sm border">
       <EmptyHeader>
         <EmptyTitle>Nothing here yet</EmptyTitle>
-        <EmptyDescription>
-          Items you add will show up in this space. No media or actions required.
-        </EmptyDescription>
+        <EmptyDescription>Items you add will show up in this space. No media or actions required.</EmptyDescription>
       </EmptyHeader>
     </Empty>
   );

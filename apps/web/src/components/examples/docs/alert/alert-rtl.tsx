@@ -8,19 +8,16 @@ const translations: Translations = {
     dir: "ltr",
     values: {
       paymentTitle: "Payment successful",
-      paymentDescription:
-        "Your payment of $29.99 has been processed. A receipt has been sent to your email address.",
+      paymentDescription: "Your payment of $29.99 has been processed. A receipt has been sent to your email address.",
       featureTitle: "New feature available",
-      featureDescription:
-        "We've added dark mode support. You can enable it in your account settings.",
+      featureDescription: "We've added dark mode support. You can enable it in your account settings.",
     },
   },
   ar: {
     dir: "rtl",
     values: {
       paymentTitle: "تم الدفع بنجاح",
-      paymentDescription:
-        "تمت معالجة دفعتك البالغة 29.99 دولارًا. تم إرسال إيصال إلى عنوان بريدك الإلكتروني.",
+      paymentDescription: "تمت معالجة دفعتك البالغة 29.99 دولارًا. تم إرسال إيصال إلى عنوان بريدك الإلكتروني.",
       featureTitle: "ميزة جديدة متاحة",
       featureDescription: "لقد أضفنا دعم الوضع الداكن. يمكنك تفعيله في إعدادات حسابك.",
     },

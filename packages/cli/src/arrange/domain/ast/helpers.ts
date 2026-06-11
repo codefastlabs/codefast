@@ -146,10 +146,7 @@ export { applyEditsDescending };
  *
  * @since 0.3.16-canary.0
  */
-export function unwrapCnInsideTvCallReplacement(
-  call: DomainCallExpression,
-  sourceText: string,
-): string | undefined {
+export function unwrapCnInsideTvCallReplacement(call: DomainCallExpression, sourceText: string): string | undefined {
   const args = call.arguments;
   if (args.length === 0) {
     return undefined;

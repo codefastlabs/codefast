@@ -12,9 +12,7 @@ export function SeparatorListSections() {
         <div key={section.label}>
           {index > 0 ? <Separator /> : null}
           <div className="p-3">
-            <p className="mb-2 text-xs font-semibold tracking-wide text-ui-muted uppercase">
-              {section.label}
-            </p>
+            <p className="mb-2 text-xs font-semibold tracking-wide text-ui-muted uppercase">{section.label}</p>
             <div className="space-y-1">
               {section.items.map((item) => (
                 <p key={item} className="text-sm text-ui-fg">

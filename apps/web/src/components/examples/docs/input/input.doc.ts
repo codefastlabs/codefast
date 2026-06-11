@@ -64,10 +64,7 @@ export const inputDoc: ComponentDoc = {
     ],
   },
   guidelines: {
-    do: [
-      "Give every input a visible label.",
-      "Use the correct type so mobile keyboards and autofill behave well.",
-    ],
+    do: ["Give every input a visible label.", "Use the correct type so mobile keyboards and autofill behave well."],
     dont: [
       "Don’t use placeholder text as a replacement for a label.",
       "Don’t disable a field when a read-only state would communicate intent better.",

@@ -9,8 +9,7 @@ export const formDoc: ComponentDoc = {
     {
       id: "sign-in",
       title: "Sign-in with validation",
-      description:
-        "A controlled form: submit invalid values to see inline errors, valid ones to succeed.",
+      description: "A controlled form: submit invalid values to see inline errors, valid ones to succeed.",
       Demo: FormSignIn,
       code: docSource("form", "sign-in"),
       previewClassName: "items-start",
@@ -60,10 +59,7 @@ export const formDoc: ComponentDoc = {
     ],
   },
   guidelines: {
-    do: [
-      "Keep forms short; group related fields with Field / FieldSet.",
-      "Show a clear success state after submit.",
-    ],
+    do: ["Keep forms short; group related fields with Field / FieldSet.", "Show a clear success state after submit."],
     dont: [
       "Don’t validate aggressively on every keystroke before first submit.",
       "Don’t rely on placeholder text instead of labels.",

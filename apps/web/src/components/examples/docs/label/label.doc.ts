@@ -53,10 +53,7 @@ export const labelDoc: ComponentDoc = {
     ],
   },
   guidelines: {
-    do: [
-      "Give every input, checkbox, and switch a Label.",
-      "Keep labels short and in sentence case.",
-    ],
+    do: ["Give every input, checkbox, and switch a Label.", "Keep labels short and in sentence case."],
     dont: [
       "Don’t replace a label with placeholder text.",
       "Don’t leave a control unlabelled and rely on nearby text alone.",

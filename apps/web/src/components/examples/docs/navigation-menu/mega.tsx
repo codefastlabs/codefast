@@ -43,10 +43,7 @@ export function NavigationMenuMega() {
               {COMPONENTS.map((name) => (
                 <li key={name}>
                   <NavigationMenuLink asChild>
-                    <a
-                      className="block rounded-md px-3 py-2 text-sm hover:bg-ui-surface"
-                      href="#components"
-                    >
+                    <a className="block rounded-md px-3 py-2 text-sm hover:bg-ui-surface" href="#components">
                       {name}
                     </a>
                   </NavigationMenuLink>

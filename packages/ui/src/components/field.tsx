@@ -49,10 +49,7 @@ type FieldLegendProps = ComponentProps<"legend"> & {
 function FieldLegend({ className, variant = "legend", ...props }: FieldLegendProps): JSX.Element {
   return (
     <legend
-      className={cn(
-        "mb-3 font-medium data-[variant=label]:text-sm data-[variant=legend]:text-base",
-        className,
-      )}
+      className={cn("mb-3 font-medium data-[variant=label]:text-sm data-[variant=legend]:text-base", className)}
       data-slot="field-legend"
       data-variant={variant}
       {...props}
@@ -228,10 +225,7 @@ function FieldSeparator({ children, className, ...props }: FieldSeparatorProps):
 
   return (
     <div
-      className={cn(
-        "relative -my-2 h-5 text-sm group-data-[variant=outline]/field-group:-mb-2",
-        className,
-      )}
+      className={cn("relative -my-2 h-5 text-sm group-data-[variant=outline]/field-group:-mb-2", className)}
       data-content={hasContent}
       data-slot="field-separator"
       {...props}
@@ -267,12 +261,7 @@ interface FieldErrorProps extends ComponentProps<"div"> {
 /**
  * @since 0.3.16-canary.0
  */
-function FieldError({
-  children,
-  className,
-  errors,
-  ...props
-}: FieldErrorProps): JSX.Element | null {
+function FieldError({ children, className, errors, ...props }: FieldErrorProps): JSX.Element | null {
   const fallbackContent = useMemo<null | ReactNode>(() => {
     if (!errors?.length) {
       return null;
@@ -286,9 +275,7 @@ function FieldError({
 
     return (
       <ul className="ml-4 flex list-disc flex-col gap-1">
-        {uniqueErrors.map((error) =>
-          error?.message ? <li key={error.message}>{error.message}</li> : null,
-        )}
+        {uniqueErrors.map((error) => (error?.message ? <li key={error.message}>{error.message}</li> : null))}
       </ul>
     );
   }, [errors]);

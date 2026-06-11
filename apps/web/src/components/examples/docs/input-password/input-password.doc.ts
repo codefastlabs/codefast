@@ -63,10 +63,7 @@ export const inputPasswordDoc: ComponentDoc = {
       "Offer the reveal toggle so users can check what they typed.",
       "Show password requirements and live feedback on sign-up.",
     ],
-    dont: [
-      "Don’t block paste — it breaks password managers.",
-      "Don’t impose arbitrary maximum lengths.",
-    ],
+    dont: ["Don’t block paste — it breaks password managers.", "Don’t impose arbitrary maximum lengths."],
   },
   related: ["input", "input-group", "field"],
 };

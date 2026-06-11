@@ -1,11 +1,4 @@
-import {
-  Item,
-  ItemContent,
-  ItemGroup,
-  ItemMedia,
-  ItemSeparator,
-  ItemTitle,
-} from "@codefast/ui/item";
+import { Item, ItemContent, ItemGroup, ItemMedia, ItemSeparator, ItemTitle } from "@codefast/ui/item";
 import { FileTextIcon, ImageIcon, SheetIcon } from "lucide-react";
 import { Fragment } from "react";
 

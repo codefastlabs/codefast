@@ -27,18 +27,10 @@ export function PropsTable({ rows }: PropsTableProps) {
         <TableBody>
           {rows.map((row) => (
             <TableRow key={row.name}>
-              <TableCell className="align-top font-mono text-xs font-medium text-ui-brand">
-                {row.name}
-              </TableCell>
-              <TableCell className="align-top font-mono text-xs whitespace-pre-wrap text-ui-fg">
-                {row.type}
-              </TableCell>
-              <TableCell className="align-top font-mono text-xs text-ui-muted">
-                {row.default ?? "—"}
-              </TableCell>
-              <TableCell className="align-top text-sm leading-relaxed text-ui-muted">
-                {row.description}
-              </TableCell>
+              <TableCell className="align-top font-mono text-xs font-medium text-ui-brand">{row.name}</TableCell>
+              <TableCell className="align-top font-mono text-xs whitespace-pre-wrap text-ui-fg">{row.type}</TableCell>
+              <TableCell className="align-top font-mono text-xs text-ui-muted">{row.default ?? "—"}</TableCell>
+              <TableCell className="align-top text-sm leading-relaxed text-ui-muted">{row.description}</TableCell>
             </TableRow>
           ))}
         </TableBody>

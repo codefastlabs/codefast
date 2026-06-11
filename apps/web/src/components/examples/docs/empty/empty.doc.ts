@@ -64,10 +64,7 @@ export const emptyDoc: ComponentDoc = {
   },
   guidelines: {
     do: ["Explain why it’s empty and what to do next.", "Offer a single, primary action."],
-    dont: [
-      "Don’t leave a blank area with no guidance.",
-      "Don’t pile on multiple competing actions.",
-    ],
+    dont: ["Don’t leave a blank area with no guidance.", "Don’t pile on multiple competing actions."],
   },
   related: ["card", "item", "button"],
 };

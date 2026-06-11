@@ -45,9 +45,7 @@ export function PreviewCard({
               type="button"
               onClick={() => setTab(t)}
               className={`border-b-2 px-3 py-2.5 text-xs font-medium capitalize transition-colors ${
-                tab === t
-                  ? "border-ui-fg text-ui-fg"
-                  : "border-transparent text-ui-muted hover:text-ui-fg"
+                tab === t ? "border-ui-fg text-ui-fg" : "border-transparent text-ui-muted hover:text-ui-fg"
               }`}
             >
               {t}
@@ -61,9 +59,7 @@ export function PreviewCard({
 
       {/* Content */}
       {tab === "preview" ? (
-        <div className="flex min-h-40 flex-1 items-center justify-center bg-ui-surface p-6">
-          {children}
-        </div>
+        <div className="flex min-h-40 flex-1 items-center justify-center bg-ui-surface p-6">{children}</div>
       ) : (
         <CodeBlock code={code} highlightedCode={highlightedCode} className="h-full min-h-40" />
       )}

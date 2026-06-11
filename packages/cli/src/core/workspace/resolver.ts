@@ -39,10 +39,7 @@ export function findRepoRoot(fromDirectory: string, fs: FilesystemPort): string 
 /**
  * @since 0.3.16-canary.0
  */
-export type WorkspacePackageLayoutSource =
-  | "pnpm-workspace-yaml"
-  | "default-patterns"
-  | "declared-empty";
+export type WorkspacePackageLayoutSource = "pnpm-workspace-yaml" | "default-patterns" | "declared-empty";
 
 /**
  * @since 0.3.16-canary.0

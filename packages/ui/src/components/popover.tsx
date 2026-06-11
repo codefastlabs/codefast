@@ -63,12 +63,7 @@ type PopoverContentProps = ComponentProps<typeof PopoverPrimitive.Content>;
 /**
  * @since 0.3.16-canary.0
  */
-function PopoverContent({
-  align = "center",
-  className,
-  sideOffset = 4,
-  ...props
-}: PopoverContentProps): JSX.Element {
+function PopoverContent({ align = "center", className, sideOffset = 4, ...props }: PopoverContentProps): JSX.Element {
   return (
     <PopoverPrimitive.Portal data-slot="popover-portal">
       <PopoverPrimitive.Content
@@ -98,13 +93,7 @@ type PopoverArrowProps = ComponentProps<typeof PopoverPrimitive.Arrow>;
  * @since 0.3.16-canary.0
  */
 function PopoverArrow({ className, ...props }: PopoverArrowProps): JSX.Element {
-  return (
-    <PopoverPrimitive.Arrow
-      className={cn("fill-popover", className)}
-      data-slot="popover-arrow"
-      {...props}
-    />
-  );
+  return <PopoverPrimitive.Arrow className={cn("fill-popover", className)} data-slot="popover-arrow" {...props} />;
 }
 
 /* -----------------------------------------------------------------------------
@@ -120,13 +109,7 @@ type PopoverHeaderProps = ComponentProps<"div">;
  * @since 0.3.16-canary.0
  */
 function PopoverHeader({ className, ...props }: PopoverHeaderProps): JSX.Element {
-  return (
-    <div
-      className={cn("flex flex-col gap-1 text-sm", className)}
-      data-slot="popover-header"
-      {...props}
-    />
-  );
+  return <div className={cn("flex flex-col gap-1 text-sm", className)} data-slot="popover-header" {...props} />;
 }
 
 /* -----------------------------------------------------------------------------
@@ -158,13 +141,7 @@ type PopoverDescriptionProps = ComponentProps<"p">;
  * @since 0.3.16-canary.0
  */
 function PopoverDescription({ className, ...props }: PopoverDescriptionProps): JSX.Element {
-  return (
-    <p
-      className={cn("text-muted-foreground", className)}
-      data-slot="popover-description"
-      {...props}
-    />
-  );
+  return <p className={cn("text-muted-foreground", className)} data-slot="popover-description" {...props} />;
 }
 
 /* -----------------------------------------------------------------------------

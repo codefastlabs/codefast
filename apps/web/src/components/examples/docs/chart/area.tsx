@@ -21,13 +21,7 @@ export function ChartArea() {
         <CartesianGrid vertical={false} />
         <XAxis dataKey="month" axisLine={false} tickLine={false} tickMargin={8} />
         <ChartTooltip content={<ChartTooltipContent />} />
-        <Area
-          dataKey="users"
-          type="natural"
-          stroke="var(--color-users)"
-          fill="var(--color-users)"
-          fillOpacity={0.25}
-        />
+        <Area dataKey="users" type="natural" stroke="var(--color-users)" fill="var(--color-users)" fillOpacity={0.25} />
       </AreaChart>
     </ChartContainer>
   );

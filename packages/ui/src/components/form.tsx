@@ -40,8 +40,7 @@ interface FormFieldContextValue<
   name: TName;
 }
 
-const [FormFieldContextProvider, useFormFieldContext] =
-  createFormFieldContext<FormFieldContextValue>(FORM_FIELD_NAME);
+const [FormFieldContextProvider, useFormFieldContext] = createFormFieldContext<FormFieldContextValue>(FORM_FIELD_NAME);
 
 function useFormItem(
   consumerName: string,
@@ -112,8 +111,7 @@ interface FormItemContextValue {
   id: string;
 }
 
-const [FormItemContextProvider, useFormItemContext] =
-  createFormFieldContext<FormItemContextValue>(FORM_ITEM_NAME);
+const [FormItemContextProvider, useFormItemContext] = createFormFieldContext<FormItemContextValue>(FORM_ITEM_NAME);
 
 /* -----------------------------------------------------------------------------
  * Component: FormItem
@@ -127,11 +125,7 @@ type FormItemProps = ComponentProps<"div">;
 /**
  * @since 0.3.16-canary.0
  */
-function FormItem({
-  __scopeFormField,
-  className,
-  ...props
-}: ScopedProps<FormItemProps>): JSX.Element {
+function FormItem({ __scopeFormField, className, ...props }: ScopedProps<FormItemProps>): JSX.Element {
   const id = useId();
 
   return (
@@ -158,14 +152,7 @@ type FormLabelProps = ComponentProps<typeof LabelPrimitive.Root>;
 function FormLabel({ __scopeFormField, ...props }: ScopedProps<FormLabelProps>): JSX.Element {
   const { error, formItemId } = useFormItem(FORM_LABEL_NAME, __scopeFormField);
 
-  return (
-    <Label
-      data-invalid={error ? true : undefined}
-      data-slot="form-label"
-      htmlFor={formItemId}
-      {...props}
-    />
-  );
+  return <Label data-invalid={error ? true : undefined} data-slot="form-label" htmlFor={formItemId} {...props} />;
 }
 
 /* -----------------------------------------------------------------------------
@@ -183,10 +170,7 @@ type FormControlProps = ComponentProps<typeof Slot.Root>;
  * @since 0.3.16-canary.0
  */
 function FormControl({ __scopeFormField, ...props }: ScopedProps<FormControlProps>): JSX.Element {
-  const { error, formDescriptionId, formItemId, formMessageId } = useFormItem(
-    FORM_CONTROL_NAME,
-    __scopeFormField,
-  );
+  const { error, formDescriptionId, formItemId, formMessageId } = useFormItem(FORM_CONTROL_NAME, __scopeFormField);
 
   return (
     <Slot.Root
@@ -211,11 +195,7 @@ type FormDescriptionProps = ComponentProps<"p">;
 /**
  * @since 0.3.16-canary.0
  */
-function FormDescription({
-  __scopeFormField,
-  className,
-  ...props
-}: ScopedProps<FormDescriptionProps>): JSX.Element {
+function FormDescription({ __scopeFormField, className, ...props }: ScopedProps<FormDescriptionProps>): JSX.Element {
   const { formDescriptionId } = useFormItem(FORM_MESSAGE_NAME, __scopeFormField);
 
   return (
@@ -242,12 +222,7 @@ type FormMessageProps = ComponentProps<"p">;
 /**
  * @since 0.3.16-canary.0
  */
-function FormMessage({
-  __scopeFormField,
-  children,
-  className,
-  ...props
-}: ScopedProps<FormMessageProps>): ReactNode {
+function FormMessage({ __scopeFormField, children, className, ...props }: ScopedProps<FormMessageProps>): ReactNode {
   const { error, formMessageId } = useFormItem(FORM_MESSAGE_NAME, __scopeFormField);
   const body = error?.message ?? children;
 
@@ -257,11 +232,7 @@ function FormMessage({
 
   return (
     <p
-      className={cn(
-        "text-xs",
-        error?.message ? "font-medium text-destructive" : "text-muted-foreground",
-        className,
-      )}
+      className={cn("text-xs", error?.message ? "font-medium text-destructive" : "text-muted-foreground", className)}
       data-slot="form-message"
       id={formMessageId}
       {...props}
@@ -284,13 +255,4 @@ export type {
   FormMessageProps,
   FormProps,
 };
-export {
-  createFormFieldScope,
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-};
+export { createFormFieldScope, Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage };

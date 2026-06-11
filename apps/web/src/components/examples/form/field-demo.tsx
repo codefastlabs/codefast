@@ -23,12 +23,7 @@ export function FieldDemo() {
 
       <Field>
         <FieldLabel htmlFor="field-bio">Bio</FieldLabel>
-        <Textarea
-          id="field-bio"
-          className="resize-none"
-          rows={2}
-          placeholder="Tell us a little about yourself"
-        />
+        <Textarea id="field-bio" className="resize-none" rows={2} placeholder="Tell us a little about yourself" />
         <FieldDescription>Brief description for your profile. Max 160 characters.</FieldDescription>
       </Field>
 

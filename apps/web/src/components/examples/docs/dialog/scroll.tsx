@@ -25,8 +25,8 @@ export function DialogScroll() {
         <DialogBody className="max-h-64 space-y-3 overflow-y-auto text-sm text-ui-muted">
           {Array.from({ length: 8 }, (_, index) => (
             <p key={index}>
-              {index + 1}. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio
-              praesent libero sed cursus ante dapibus diam.
+              {index + 1}. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio praesent libero sed
+              cursus ante dapibus diam.
             </p>
           ))}
         </DialogBody>

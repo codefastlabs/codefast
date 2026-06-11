@@ -75,36 +75,18 @@ export interface Container {
   unloadAsync(...modules: Array<SyncModule | AsyncModule>): Promise<void>;
   loadAutoRegistered(registry: AutoRegisterRegistry): number;
 
-  onActivation<const Value>(
-    token: Token<Value> | Constructor<Value>,
-    handler: ActivationHandler<Value>,
-  ): void;
-  onDeactivation<const Value>(
-    token: Token<Value> | Constructor<Value>,
-    handler: DeactivationHandler<Value>,
-  ): void;
+  onActivation<const Value>(token: Token<Value> | Constructor<Value>, handler: ActivationHandler<Value>): void;
+  onDeactivation<const Value>(token: Token<Value> | Constructor<Value>, handler: DeactivationHandler<Value>): void;
 
   resolve<const Value>(token: Token<Value> | Constructor<Value>, hint?: ResolveOptions): Value;
-  resolveAsync<const Value>(
-    token: Token<Value> | Constructor<Value>,
-    hint?: ResolveOptions,
-  ): Promise<Value>;
-  resolveOptional<const Value>(
-    token: Token<Value> | Constructor<Value>,
-    hint?: ResolveOptions,
-  ): Value | undefined;
+  resolveAsync<const Value>(token: Token<Value> | Constructor<Value>, hint?: ResolveOptions): Promise<Value>;
+  resolveOptional<const Value>(token: Token<Value> | Constructor<Value>, hint?: ResolveOptions): Value | undefined;
   resolveOptionalAsync<const Value>(
     token: Token<Value> | Constructor<Value>,
     hint?: ResolveOptions,
   ): Promise<Value | undefined>;
-  resolveAll<const Value>(
-    token: Token<Value> | Constructor<Value>,
-    hint?: ResolveOptions,
-  ): Array<Value>;
-  resolveAllAsync<const Value>(
-    token: Token<Value> | Constructor<Value>,
-    hint?: ResolveOptions,
-  ): Promise<Array<Value>>;
+  resolveAll<const Value>(token: Token<Value> | Constructor<Value>, hint?: ResolveOptions): Array<Value>;
+  resolveAllAsync<const Value>(token: Token<Value> | Constructor<Value>, hint?: ResolveOptions): Promise<Array<Value>>;
 
   createChild(): Container;
 
@@ -117,9 +99,7 @@ export interface Container {
 
   has(token: Token<unknown> | Constructor, hint?: ResolveOptions): boolean;
   hasOwn(token: Token<unknown> | Constructor, hint?: ResolveOptions): boolean;
-  lookupBindings<const Value>(
-    token: Token<Value> | Constructor<Value>,
-  ): ReadonlyArray<BindingSnapshot>;
+  lookupBindings<const Value>(token: Token<Value> | Constructor<Value>): ReadonlyArray<BindingSnapshot>;
   inspect(): ContainerSnapshot;
   generateDependencyGraph(options?: GraphOptions): ContainerGraphJson;
 }
@@ -154,12 +134,7 @@ class DefaultContainer implements Container {
     this._registry = new BindingRegistry();
     this._scope = new ScopeManager(parent !== undefined);
     this._lifecycle = new LifecycleManager();
-    this._inspector = new Inspector(
-      this._registry,
-      this._scope,
-      parent !== undefined,
-      () => this._disposed,
-    );
+    this._inspector = new Inspector(this._registry, this._scope, parent !== undefined, () => this._disposed);
     this._initResolver();
   }
 
@@ -310,9 +285,7 @@ class DefaultContainer implements Container {
     return this._createBindToBuilder(token);
   }
 
-  private _getBindingsForTokenOrId(
-    tokenOrId: Token<unknown> | Constructor | BindingIdentifier,
-  ): Array<Binding> {
+  private _getBindingsForTokenOrId(tokenOrId: Token<unknown> | Constructor | BindingIdentifier): Array<Binding> {
     if (typeof tokenOrId === "string") {
       // It's a BindingIdentifier (string)
       const binding = this._registry.getById(tokenOrId);
@@ -347,9 +320,7 @@ class DefaultContainer implements Container {
     }
   }
 
-  private _collectModuleDeps(
-    modules: Array<SyncModule | AsyncModule>,
-  ): Array<SyncModule | AsyncModule> {
+  private _collectModuleDeps(modules: Array<SyncModule | AsyncModule>): Array<SyncModule | AsyncModule> {
     const seen = new Set<object>();
     const result: Array<SyncModule | AsyncModule> = [];
 
@@ -409,10 +380,7 @@ class DefaultContainer implements Container {
     };
   }
 
-  private _createAsyncModuleBuilder(
-    moduleRef: object,
-    importPromises: Array<Promise<void>>,
-  ): AsyncModuleBuilder {
+  private _createAsyncModuleBuilder(moduleRef: object, importPromises: Array<Promise<void>>): AsyncModuleBuilder {
     return {
       bind: <const Value>(token: Token<Value> | Constructor<Value>): BindToBuilder<Value> =>
         this._createBindToBuilder(token, moduleRef),
@@ -500,18 +468,12 @@ class DefaultContainer implements Container {
 
   // ── Lifecycle hooks ────────────────────────────────────────────────────────
 
-  onActivation<const Value>(
-    token: Token<Value> | Constructor<Value>,
-    handler: ActivationHandler<Value>,
-  ): void {
+  onActivation<const Value>(token: Token<Value> | Constructor<Value>, handler: ActivationHandler<Value>): void {
     this._assertNotDisposed();
     this._lifecycle.registerActivation(token, handler);
   }
 
-  onDeactivation<const Value>(
-    token: Token<Value> | Constructor<Value>,
-    handler: DeactivationHandler<Value>,
-  ): void {
+  onDeactivation<const Value>(token: Token<Value> | Constructor<Value>, handler: DeactivationHandler<Value>): void {
     this._assertNotDisposed();
     this._lifecycle.registerDeactivation(token, handler);
   }
@@ -526,10 +488,7 @@ class DefaultContainer implements Container {
     return this._resolver.resolve(token, hint, [], []);
   }
 
-  resolveAsync<const Value>(
-    token: Token<Value> | Constructor<Value>,
-    hint?: ResolveOptions,
-  ): Promise<Value> {
+  resolveAsync<const Value>(token: Token<Value> | Constructor<Value>, hint?: ResolveOptions): Promise<Value> {
     this._assertNotDisposed();
     if (hint === undefined) {
       return this._resolver.resolveAsyncFromContext(token, [], []);
@@ -537,10 +496,7 @@ class DefaultContainer implements Container {
     return this._resolver.resolveAsync(token, hint, [], []);
   }
 
-  resolveOptional<const Value>(
-    token: Token<Value> | Constructor<Value>,
-    hint?: ResolveOptions,
-  ): Value | undefined {
+  resolveOptional<const Value>(token: Token<Value> | Constructor<Value>, hint?: ResolveOptions): Value | undefined {
     this._assertNotDisposed();
     return this._resolver.resolveOptional(token, hint, [], []);
   }
@@ -553,18 +509,12 @@ class DefaultContainer implements Container {
     return this._resolver.resolveOptionalAsync(token, hint, [], []);
   }
 
-  resolveAll<const Value>(
-    token: Token<Value> | Constructor<Value>,
-    hint?: ResolveOptions,
-  ): Array<Value> {
+  resolveAll<const Value>(token: Token<Value> | Constructor<Value>, hint?: ResolveOptions): Array<Value> {
     this._assertNotDisposed();
     return this._resolver.resolveAll(token, hint, [], []);
   }
 
-  resolveAllAsync<const Value>(
-    token: Token<Value> | Constructor<Value>,
-    hint?: ResolveOptions,
-  ): Promise<Array<Value>> {
+  resolveAllAsync<const Value>(token: Token<Value> | Constructor<Value>, hint?: ResolveOptions): Promise<Array<Value>> {
     this._assertNotDisposed();
     return this._resolver.resolveAllAsync(token, hint, [], []);
   }
@@ -647,9 +597,7 @@ class DefaultContainer implements Container {
     if (effectiveBindingScope(binding) !== "singleton") {
       return false;
     }
-    return (
-      binding.kind === "class" || binding.kind === "resolved" || binding.kind === "resolved-async"
-    );
+    return binding.kind === "class" || binding.kind === "resolved" || binding.kind === "resolved-async";
   }
 
   /**
@@ -659,11 +607,7 @@ class DefaultContainer implements Container {
   private _validateSingletonBindingGraph(root: Binding, reader: MetadataReader): void {
     const rootName = tokenName(root.token as Token<unknown>);
 
-    const dfs = (
-      current: Binding,
-      pathNames: Array<string>,
-      pathBindingIds: Set<BindingIdentifier>,
-    ): void => {
+    const dfs = (current: Binding, pathNames: Array<string>, pathBindingIds: Set<BindingIdentifier>): void => {
       if (pathBindingIds.has(current.id)) {
         return;
       }
@@ -685,11 +629,7 @@ class DefaultContainer implements Container {
             path: [...pathNames, depTokenName],
           });
         }
-        if (
-          terminal.kind === "class" ||
-          terminal.kind === "resolved" ||
-          terminal.kind === "resolved-async"
-        ) {
+        if (terminal.kind === "class" || terminal.kind === "resolved" || terminal.kind === "resolved-async") {
           dfs(terminal, [...pathNames, depTokenName], extendedPathIds);
         }
       }
@@ -718,10 +658,7 @@ class DefaultContainer implements Container {
     }
   }
 
-  private _followAliasChainToTerminal(
-    binding: Binding,
-    hint: ResolveOptions | undefined,
-  ): Binding | undefined {
+  private _followAliasChainToTerminal(binding: Binding, hint: ResolveOptions | undefined): Binding | undefined {
     const cyclePath: Array<string> = [];
     const seenAliasIds = new Set<BindingIdentifier>();
     let current: Binding | undefined = binding;
@@ -829,9 +766,7 @@ class DefaultContainer implements Container {
     return this._inspector.hasOwn(token, hint);
   }
 
-  lookupBindings<const Value>(
-    token: Token<Value> | Constructor<Value>,
-  ): ReadonlyArray<BindingSnapshot> {
+  lookupBindings<const Value>(token: Token<Value> | Constructor<Value>): ReadonlyArray<BindingSnapshot> {
     this._assertNotDisposed();
     return this._inspector.lookupBindings(token);
   }
@@ -843,12 +778,7 @@ class DefaultContainer implements Container {
 
   generateDependencyGraph(options?: GraphOptions): ContainerGraphJson {
     this._assertNotDisposed();
-    return buildDependencyGraph(
-      this._registry,
-      this._getMetadataReader(),
-      options,
-      this._parent?._registry,
-    );
+    return buildDependencyGraph(this._registry, this._getMetadataReader(), options, this._parent?._registry);
   }
 
   // ── Internal ──────────────────────────────────────────────────────────────
@@ -920,11 +850,7 @@ class BindingEntry<Value> implements BindToBuilder<Value> {
   ) {}
 
   to(type: Constructor<Value>): BindingBuilder<Value> {
-    return new ConstraintBuilder<Value>(
-      this._token,
-      { kind: "class", target: type, scope: "transient" },
-      this._commit,
-    );
+    return new ConstraintBuilder<Value>(this._token, { kind: "class", target: type, scope: "transient" }, this._commit);
   }
 
   toSelf(): BindingBuilder<Value> {
@@ -943,11 +869,7 @@ class BindingEntry<Value> implements BindToBuilder<Value> {
   }
 
   toDynamic(factory: (ctx: ResolutionContext) => Value): BindingBuilder<Value> {
-    return new ConstraintBuilder<Value>(
-      this._token,
-      { kind: "dynamic", factory, scope: "transient" },
-      this._commit,
-    );
+    return new ConstraintBuilder<Value>(this._token, { kind: "dynamic", factory, scope: "transient" }, this._commit);
   }
 
   toDynamicAsync(factory: (ctx: ResolutionContext) => Promise<Value>): BindingBuilder<Value> {

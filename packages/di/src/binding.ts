@@ -34,11 +34,7 @@ export function bindingSlotEquals(left: BindingSlot, right: BindingSlot): boolea
     return false;
   }
   for (const [tagKey, tagValue] of left.tags) {
-    if (
-      !right.tags.some(
-        ([otherKey, otherValue]) => otherKey === tagKey && Object.is(otherValue, tagValue),
-      )
-    ) {
+    if (!right.tags.some(([otherKey, otherValue]) => otherKey === tagKey && Object.is(otherValue, tagValue))) {
       return false;
     }
   }

@@ -59,10 +59,7 @@ export const separatorDoc: ComponentDoc = {
     ],
   },
   guidelines: {
-    do: [
-      "Use to group and separate related sections.",
-      "Keep separators subtle — they organise, not decorate.",
-    ],
+    do: ["Use to group and separate related sections.", "Keep separators subtle — they organise, not decorate."],
     dont: [
       "Don’t overuse separators where spacing alone would do.",
       "Don’t forget a height on vertical separators, or they won’t show.",

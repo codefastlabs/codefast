@@ -1,9 +1,4 @@
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@codefast/ui/accordion";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@codefast/ui/accordion";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@codefast/ui/card";
 
 const items = [
@@ -32,9 +27,7 @@ export function AccordionCard() {
     <Card className="w-full max-w-sm">
       <CardHeader>
         <CardTitle>Subscription & Billing</CardTitle>
-        <CardDescription>
-          Common questions about your account, plans, payments and cancellations.
-        </CardDescription>
+        <CardDescription>Common questions about your account, plans, payments and cancellations.</CardDescription>
       </CardHeader>
       <CardContent>
         <Accordion type="single" collapsible defaultValue="plans">

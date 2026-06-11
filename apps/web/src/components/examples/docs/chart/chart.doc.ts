@@ -65,14 +65,8 @@ export const chartDoc: ComponentDoc = {
     ],
   },
   guidelines: {
-    do: [
-      "Define every series in config so colours and labels stay consistent.",
-      "Keep axes and tooltips uncluttered.",
-    ],
-    dont: [
-      "Don’t encode meaning with colour only.",
-      "Don’t use a chart where a single number or table is clearer.",
-    ],
+    do: ["Define every series in config so colours and labels stay consistent.", "Keep axes and tooltips uncluttered."],
+    dont: ["Don’t encode meaning with colour only.", "Don’t use a chart where a single number or table is clearer."],
   },
   related: ["table", "card", "progress"],
 };

@@ -24,14 +24,10 @@ export const nodeFilesystem: FilesystemPort = {
 
   readFile: (filePath: string, enc: CliFileEncoding) => fsPromises.readFile(filePath, enc),
 
-  writeFile: (filePath: string, data: string, enc: CliFileEncoding) =>
-    fsPromises.writeFile(filePath, data, enc),
+  writeFile: (filePath: string, data: string, enc: CliFileEncoding) => fsPromises.writeFile(filePath, data, enc),
 
   readdir: async (filePath: string, opts?: { recursive?: boolean; withFileTypes?: boolean }) => {
-    const raw = await fsPromises.readdir(
-      filePath,
-      opts as Parameters<typeof fsPromises.readdir>[1],
-    );
+    const raw = await fsPromises.readdir(filePath, opts as Parameters<typeof fsPromises.readdir>[1]);
     if (!opts?.withFileTypes) {
       return raw as unknown as Array<string>;
     }

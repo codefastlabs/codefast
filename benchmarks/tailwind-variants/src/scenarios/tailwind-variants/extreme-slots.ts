@@ -7,14 +7,8 @@ import type { BenchScenario } from "#/scenarios/types";
 type ExtremeSlotsProps = (typeof extremeSlotsTestProps)[number];
 type ExtremeSlotsRenderer = (props: ExtremeSlotsProps) => ExtremeDialogSlots;
 
-const npmNoMerge = tailwindVariantsTv(
-  extremeSlotsVariants,
-  TV_MERGE_DISABLED,
-) as ExtremeSlotsRenderer;
-const npmWithMerge = tailwindVariantsTv(
-  extremeSlotsVariants,
-  TV_MERGE_ENABLED,
-) as ExtremeSlotsRenderer;
+const npmNoMerge = tailwindVariantsTv(extremeSlotsVariants, TV_MERGE_DISABLED) as ExtremeSlotsRenderer;
+const npmWithMerge = tailwindVariantsTv(extremeSlotsVariants, TV_MERGE_ENABLED) as ExtremeSlotsRenderer;
 
 function invokeAllSlots(slots: ExtremeDialogSlots): void {
   slots.trigger();

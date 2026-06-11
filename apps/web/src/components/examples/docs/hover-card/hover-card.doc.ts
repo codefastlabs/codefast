@@ -68,14 +68,8 @@ export const hoverCardDoc: ComponentDoc = {
     ],
   },
   guidelines: {
-    do: [
-      "Use for non-essential previews — profiles, link cards.",
-      "Keep the trigger a real link or button.",
-    ],
-    dont: [
-      "Don’t put interactive controls inside — use a Popover.",
-      "Don’t hide critical content behind hover.",
-    ],
+    do: ["Use for non-essential previews — profiles, link cards.", "Keep the trigger a real link or button."],
+    dont: ["Don’t put interactive controls inside — use a Popover.", "Don’t hide critical content behind hover."],
   },
   related: ["popover", "tooltip", "avatar"],
 };

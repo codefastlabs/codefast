@@ -28,27 +28,15 @@ const [ScrollAreaContextProvider, useScrollAreaContext] =
 /**
  * @since 0.3.16-canary.0
  */
-type ScrollAreaProps = ScopedProps<
-  ComponentProps<typeof ScrollAreaPrimitive.Root> & ScrollAreaContextValue
->;
+type ScrollAreaProps = ScopedProps<ComponentProps<typeof ScrollAreaPrimitive.Root> & ScrollAreaContextValue>;
 
 /**
  * @since 0.3.16-canary.0
  */
-function ScrollArea({
-  __scopeScrollArea,
-  children,
-  className,
-  size,
-  ...props
-}: ScrollAreaProps): JSX.Element {
+function ScrollArea({ __scopeScrollArea, children, className, size, ...props }: ScrollAreaProps): JSX.Element {
   return (
     <ScrollAreaContextProvider scope={__scopeScrollArea} size={size}>
-      <ScrollAreaPrimitive.Root
-        className={cn("relative", className)}
-        data-slot="scroll-area"
-        {...props}
-      >
+      <ScrollAreaPrimitive.Root className={cn("relative", className)} data-slot="scroll-area" {...props}>
         <ScrollAreaPrimitive.Viewport
           className="size-full rounded-[inherit] transition-[color,box-shadow] outline-none focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-1"
           data-slot="scroll-area-viewport"

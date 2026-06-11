@@ -20,13 +20,7 @@ function Th({ className, ...props }: ComponentProps<"th">) {
 
 function Td({ className, ...props }: ComponentProps<"td">) {
   return (
-    <td
-      className={cn(
-        "border-b-bh-table-line border-b px-[0.65rem] py-[0.15rem] text-left",
-        className,
-      )}
-      {...props}
-    />
+    <td className={cn("border-b-bh-table-line border-b px-[0.65rem] py-[0.15rem] text-left", className)} {...props} />
   );
 }
 
@@ -56,18 +50,14 @@ export function SnapshotSection({
       id="snapshot-details"
     >
       <summary className="cursor-pointer list-none py-1 text-sm leading-snug font-semibold text-zinc-100 marker:content-[''] [&::-webkit-details-marker]:hidden">
-        Snapshot of <span className="text-cyan-200/90">globally newest</span> bench folder —
-        throughput by scenario (table)
+        Snapshot of <span className="text-cyan-200/90">globally newest</span> bench folder — throughput by scenario
+        (table)
       </summary>
       <p className="mb-3 text-xs leading-relaxed text-zinc-500" id="snapshot-desc">
-        Rows use the chronologically last run directory ({runCount} total), independent of the
-        Environment selector.
+        Rows use the chronologically last run directory ({runCount} total), independent of the Environment selector.
       </p>
       <div className="border-bh-border bg-bh-scrim-table overflow-x-auto rounded-xl border [-webkit-overflow-scrolling:touch]">
-        <table
-          aria-label="Latest run throughput by scenario"
-          className="w-full border-collapse text-[0.8rem]"
-        >
+        <table aria-label="Latest run throughput by scenario" className="w-full border-collapse text-[0.8rem]">
           <thead>
             <tr>
               <Th
@@ -93,11 +83,7 @@ export function SnapshotSection({
                 </Th>
               ))}
               {compareLibs.map((cmp) => (
-                <Th
-                  className="text-bh-ratio-accent text-right tabular-nums"
-                  key={cmp.key}
-                  scope="col"
-                >
+                <Th className="text-bh-ratio-accent text-right tabular-nums" key={cmp.key} scope="col">
                   ÷ {cmp.displayName}
                 </Th>
               ))}
@@ -132,8 +118,7 @@ export function SnapshotSection({
       </div>
       {latestRun && (
         <div className="mt-2 text-xs text-zinc-600" suppressHydrationWarning>
-          Folder {latestRun.folder} · {formatLocal(latestRun.timestampIso, latestRun.folder)}{" "}
-          (local)
+          Folder {latestRun.folder} · {formatLocal(latestRun.timestampIso, latestRun.folder)} (local)
         </div>
       )}
     </details>

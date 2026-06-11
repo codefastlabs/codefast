@@ -27,8 +27,8 @@ export function AlertDialogDestructive() {
           <AlertDialogTitle>Delete chat?</AlertDialogTitle>
           <AlertDialogDescription>
             This will permanently delete this chat conversation. Visit{" "}
-            <span className="underline underline-offset-4">Settings</span> to delete any memories
-            saved during this chat.
+            <span className="underline underline-offset-4">Settings</span> to delete any memories saved during this
+            chat.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>

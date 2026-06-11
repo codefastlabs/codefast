@@ -46,13 +46,7 @@ describe("Tailwind Variants (TV) - Slots", () => {
 
     const { base, item, list, title, wrapper } = menu();
 
-    expect(base()).toHaveClassName([
-      "text-3xl",
-      "font-bold",
-      "underline",
-      "color--primary",
-      "size--sm",
-    ]);
+    expect(base()).toHaveClassName(["text-3xl", "font-bold", "underline", "color--primary", "size--sm"]);
     expect(title()).toHaveClassName(["text-2xl"]);
     expect(item()).toHaveClassName(["text-xl", "enabled--item"]);
     expect(list()).toHaveClassName(["list-none"]);
@@ -129,18 +123,8 @@ describe("Tailwind Variants (TV) - Slots", () => {
 
     const { base, item, list, title, wrapper } = menu();
 
-    expect(base({ class: "text-lg" })).toHaveClassName([
-      "font-bold",
-      "underline",
-      "bg-blue-500",
-      "text-lg",
-    ]);
-    expect(base({ class: "text-lg" })).toHaveClassName([
-      "font-bold",
-      "underline",
-      "bg-blue-500",
-      "text-lg",
-    ]);
+    expect(base({ class: "text-lg" })).toHaveClassName(["font-bold", "underline", "bg-blue-500", "text-lg"]);
+    expect(base({ class: "text-lg" })).toHaveClassName(["font-bold", "underline", "bg-blue-500", "text-lg"]);
     expect(title({ class: "text-2xl" })).toHaveClassName(["text-2xl"]);
     expect(title({ class: "text-2xl" })).toHaveClassName(["text-2xl"]);
     expect(item({ class: "text-sm" })).toHaveClassName(["text-sm", "opacity-100"]);
@@ -310,10 +294,6 @@ describe("Tailwind Variants (TV) - Slots", () => {
     expect(base()).toHaveClassName(["text-3xl", "color--primary-base"]);
     expect(title()).toHaveClassName(["text-2xl", "color--primary-title"]);
     expect(base({ color: "secondary" })).toHaveClassName(["text-3xl", "color--secondary-base"]);
-    expect(title({ color: "secondary" })).toHaveClassName([
-      "text-2xl",
-      "color--secondary-title",
-      "truncate",
-    ]);
+    expect(title({ color: "secondary" })).toHaveClassName(["text-2xl", "color--secondary-title", "truncate"]);
   });
 });

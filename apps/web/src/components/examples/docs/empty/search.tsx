@@ -1,12 +1,5 @@
 import { Button } from "@codefast/ui/button";
-import {
-  Empty,
-  EmptyContent,
-  EmptyDescription,
-  EmptyHeader,
-  EmptyMedia,
-  EmptyTitle,
-} from "@codefast/ui/empty";
+import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@codefast/ui/empty";
 import { SearchXIcon } from "lucide-react";
 
 export function EmptySearch() {

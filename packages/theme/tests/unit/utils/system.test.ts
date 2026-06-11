@@ -15,9 +15,7 @@ describe("System Color Scheme Detection", () => {
 
   describe("getSystemColorScheme", () => {
     test('should return "dark" when system prefers dark mode', () => {
-      mockMatchMedia((query) =>
-        createMockMediaQueryList(query === "(prefers-color-scheme: dark)", query),
-      );
+      mockMatchMedia((query) => createMockMediaQueryList(query === "(prefers-color-scheme: dark)", query));
 
       expect(getSystemColorScheme()).toBe("dark");
     });
@@ -51,9 +49,7 @@ describe("System Color Scheme Detection", () => {
     });
 
     test('should resolve "automatic" to system preference (dark)', () => {
-      mockMatchMedia((query) =>
-        createMockMediaQueryList(query === "(prefers-color-scheme: dark)", query),
-      );
+      mockMatchMedia((query) => createMockMediaQueryList(query === "(prefers-color-scheme: dark)", query));
 
       expect(resolveColorScheme("automatic")).toBe("dark");
     });

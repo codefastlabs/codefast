@@ -54,13 +54,11 @@ export const buttonVariants = {
       xs: "h-8 px-2 py-1 text-xs min-w-8",
     },
     variant: {
-      default:
-        "bg-primary text-primary-foreground hover:bg-primary/90 active:bg-primary/80 focus:bg-primary/90",
+      default: "bg-primary text-primary-foreground hover:bg-primary/90 active:bg-primary/80 focus:bg-primary/90",
       destructive:
         "bg-destructive text-destructive-foreground hover:bg-destructive/90 active:bg-destructive/80 focus:bg-destructive/90",
       ghost: "hover:bg-accent hover:text-accent-foreground active:bg-accent/80 focus:bg-accent",
-      gradient:
-        "bg-linear-to-r from-purple-500 to-pink-500 text-white hover:from-purple-600 hover:to-pink-600",
+      gradient: "bg-linear-to-r from-purple-500 to-pink-500 text-white hover:from-purple-600 hover:to-pink-600",
       info: "bg-blue-600 text-white hover:bg-blue-700 active:bg-blue-800 focus:bg-blue-700",
       link: "text-primary underline-offset-4 hover:underline active:text-primary/80 focus:text-primary/90",
       outline:
@@ -68,8 +66,7 @@ export const buttonVariants = {
       secondary:
         "bg-secondary text-secondary-foreground hover:bg-secondary/80 active:bg-secondary/70 focus:bg-secondary/80",
       success: "bg-green-600 text-white hover:bg-green-700 active:bg-green-800 focus:bg-green-700",
-      warning:
-        "bg-yellow-600 text-white hover:bg-yellow-700 active:bg-yellow-800 focus:bg-yellow-700",
+      warning: "bg-yellow-600 text-white hover:bg-yellow-700 active:bg-yellow-800 focus:bg-yellow-700",
     },
   },
 };

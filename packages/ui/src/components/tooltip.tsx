@@ -16,13 +16,7 @@ type TooltipProviderProps = ComponentProps<typeof TooltipPrimitive.Provider>;
  * @since 0.3.16-canary.0
  */
 function TooltipProvider({ delayDuration = 0, ...props }: TooltipProviderProps): JSX.Element {
-  return (
-    <TooltipPrimitive.Provider
-      data-slot="tooltip-provider"
-      delayDuration={delayDuration}
-      {...props}
-    />
-  );
+  return <TooltipPrimitive.Provider data-slot="tooltip-provider" delayDuration={delayDuration} {...props} />;
 }
 
 /* -----------------------------------------------------------------------------
@@ -69,12 +63,7 @@ type TooltipContentProps = ComponentProps<typeof TooltipPrimitive.Content>;
 /**
  * @since 0.3.16-canary.0
  */
-function TooltipContent({
-  children,
-  className,
-  sideOffset = 0,
-  ...props
-}: TooltipContentProps): JSX.Element {
+function TooltipContent({ children, className, sideOffset = 0, ...props }: TooltipContentProps): JSX.Element {
   return (
     <TooltipPrimitive.Portal data-slot="tooltip-portal">
       <TooltipPrimitive.Content
@@ -123,10 +112,4 @@ function TooltipArrow({ className, ...props }: TooltipArrowProps): JSX.Element {
  * -------------------------------------------------------------------------- */
 
 export { Tooltip, TooltipArrow, TooltipContent, TooltipProvider, TooltipTrigger };
-export type {
-  TooltipArrowProps,
-  TooltipContentProps,
-  TooltipProps,
-  TooltipProviderProps,
-  TooltipTriggerProps,
-};
+export type { TooltipArrowProps, TooltipContentProps, TooltipProps, TooltipProviderProps, TooltipTriggerProps };

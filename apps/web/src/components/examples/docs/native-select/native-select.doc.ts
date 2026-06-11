@@ -69,14 +69,8 @@ export const nativeSelectDoc: ComponentDoc = {
     ],
   },
   guidelines: {
-    do: [
-      "Use on mobile forms and when you want the native picker.",
-      "Group long option lists with opt-groups.",
-    ],
-    dont: [
-      "Don’t use it when you need custom option rendering — use Select.",
-      "Don’t omit a label.",
-    ],
+    do: ["Use on mobile forms and when you want the native picker.", "Group long option lists with opt-groups."],
+    dont: ["Don’t use it when you need custom option rendering — use Select.", "Don’t omit a label."],
   },
   related: ["select", "input", "field"],
 };

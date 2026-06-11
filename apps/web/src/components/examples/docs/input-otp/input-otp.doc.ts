@@ -80,10 +80,7 @@ export const inputOtpDoc: ComponentDoc = {
     ],
   },
   guidelines: {
-    do: [
-      "Match the slot count to the real code length.",
-      "Group long codes (3 + 3) with a separator for readability.",
-    ],
+    do: ["Match the slot count to the real code length.", "Group long codes (3 + 3) with a separator for readability."],
     dont: [
       "Don’t use OTP slots for general text — use Input.",
       "Don’t block paste; many users paste the code from another app.",

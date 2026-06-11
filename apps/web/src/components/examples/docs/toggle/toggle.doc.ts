@@ -73,14 +73,8 @@ export const toggleDoc: ComponentDoc = {
     ],
   },
   guidelines: {
-    do: [
-      "Use for a single independent on/off, like a formatting mark.",
-      "Group related toggles with Toggle Group.",
-    ],
-    dont: [
-      "Don’t use a Toggle where a Switch or Checkbox fits better.",
-      "Don’t leave icon toggles unlabelled.",
-    ],
+    do: ["Use for a single independent on/off, like a formatting mark.", "Group related toggles with Toggle Group."],
+    dont: ["Don’t use a Toggle where a Switch or Checkbox fits better.", "Don’t leave icon toggles unlabelled."],
   },
   related: ["toggle-group", "switch", "button"],
 };

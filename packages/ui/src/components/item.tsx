@@ -45,14 +45,7 @@ type ItemSeparatorProps = ComponentProps<typeof Separator>;
  * @since 0.3.16-canary.0
  */
 function ItemSeparator({ className, ...props }: ItemSeparatorProps): JSX.Element {
-  return (
-    <Separator
-      className={cn("my-2", className)}
-      data-slot="item-separator"
-      orientation="horizontal"
-      {...props}
-    />
-  );
+  return <Separator className={cn("my-2", className)} data-slot="item-separator" orientation="horizontal" {...props} />;
 }
 
 /* -----------------------------------------------------------------------------
@@ -70,13 +63,7 @@ type ItemProps = ComponentProps<"div"> &
 /**
  * @since 0.3.16-canary.0
  */
-function Item({
-  asChild = false,
-  className,
-  size = "default",
-  variant = "default",
-  ...props
-}: ItemProps): JSX.Element {
+function Item({ asChild = false, className, size = "default", variant = "default", ...props }: ItemProps): JSX.Element {
   const Component = asChild ? Slot.Root : "div";
 
   return (
@@ -201,9 +188,7 @@ type ItemActionsProps = ComponentProps<"div">;
  * @since 0.3.16-canary.0
  */
 function ItemActions({ className, ...props }: ItemActionsProps): JSX.Element {
-  return (
-    <div className={cn("flex items-center gap-2", className)} data-slot="item-actions" {...props} />
-  );
+  return <div className={cn("flex items-center gap-2", className)} data-slot="item-actions" {...props} />;
 }
 
 /* -----------------------------------------------------------------------------

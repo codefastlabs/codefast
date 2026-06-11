@@ -1,11 +1,4 @@
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from "@codefast/ui/command";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@codefast/ui/command";
 
 const FRAMEWORKS = ["Next.js", "Remix", "Astro", "Nuxt", "SvelteKit", "TanStack Start"];
 

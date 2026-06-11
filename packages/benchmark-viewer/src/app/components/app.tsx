@@ -150,11 +150,8 @@ export function App({ initialPayload }: { initialPayload?: EmbeddedViewerPayload
             className="mt-5 rounded-xl border border-amber-400/20 bg-amber-500/9 px-4 py-3 text-sm text-amber-100/95 shadow-sm shadow-amber-950/20 backdrop-blur-md backdrop-saturate-150"
             role="status"
           >
-            <strong className="font-semibold text-amber-200">
-              Multiple environments in history.
-            </strong>{" "}
-            Prefer an Environment filter before comparing regimes (CPU × Node fingerprints differ
-            across machines).
+            <strong className="font-semibold text-amber-200">Multiple environments in history.</strong> Prefer an
+            Environment filter before comparing regimes (CPU × Node fingerprints differ across machines).
           </div>
         )}
 
@@ -213,17 +210,9 @@ export function App({ initialPayload }: { initialPayload?: EmbeddedViewerPayload
           useLogScale={view.useLogScale}
         />
 
-        <MetricsPanel
-          currentScenario={currentScenario}
-          metricsData={metricsData}
-          runIndices={runIndices}
-        />
+        <MetricsPanel currentScenario={currentScenario} metricsData={metricsData} runIndices={runIndices} />
 
-        <KpiGrid
-          latestRun={latestRun}
-          runCount={payload.runs.length}
-          scenarioCount={payload.scenarios.length}
-        />
+        <KpiGrid latestRun={latestRun} runCount={payload.runs.length} scenarioCount={payload.scenarios.length} />
 
         <SnapshotSection
           compareLibs={compareLibs}
@@ -235,8 +224,8 @@ export function App({ initialPayload }: { initialPayload?: EmbeddedViewerPayload
         />
 
         <p className="mt-10 border-t border-white/6 pt-6 text-[0.8125rem] leading-relaxed text-zinc-500">
-          Reload data from Chart data or refresh the page for the latest snapshot ·{" "}
-          {payload.runs.length} runs · {payload.scenarios.length} scenarios.
+          Reload data from Chart data or refresh the page for the latest snapshot · {payload.runs.length} runs ·{" "}
+          {payload.scenarios.length} scenarios.
           {payload.generatedAtIso ? (
             <>
               {" "}

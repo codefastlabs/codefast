@@ -8,11 +8,7 @@ import viteReact, { reactCompilerPreset } from "@vitejs/plugin-react";
 import { nitro } from "nitro/vite";
 import { defineConfig } from "vite";
 
-const openInWebStorm = async (
-  path: string,
-  lineNumber: string | undefined,
-  columnNumber?: string,
-) => {
+const openInWebStorm = async (path: string, lineNumber: string | undefined, columnNumber?: string) => {
   const safePath = path.replaceAll("$", String.raw`\$`);
   exec(`webstorm --line ${lineNumber ?? 1} --column ${columnNumber ?? 1} "${safePath}"`);
 };

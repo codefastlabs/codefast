@@ -1,12 +1,5 @@
 import { ToggleGroup, ToggleGroupItem } from "@codefast/ui/toggle-group";
-import {
-  AlignCenterIcon,
-  AlignLeftIcon,
-  AlignRightIcon,
-  BoldIcon,
-  ItalicIcon,
-  UnderlineIcon,
-} from "lucide-react";
+import { AlignCenterIcon, AlignLeftIcon, AlignRightIcon, BoldIcon, ItalicIcon, UnderlineIcon } from "lucide-react";
 
 export function ToggleGroupDemo() {
   return (

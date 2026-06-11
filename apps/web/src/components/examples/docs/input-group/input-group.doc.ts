@@ -73,10 +73,7 @@ export const inputGroupDoc: ComponentDoc = {
     ],
   },
   guidelines: {
-    do: [
-      "Use for units, prefixes, and inline actions tied to a field.",
-      "Keep addons short and scannable.",
-    ],
+    do: ["Use for units, prefixes, and inline actions tied to a field.", "Keep addons short and scannable."],
     dont: ["Don’t overload a field with many addons.", "Don’t hide the field’s real label."],
   },
   related: ["input", "input-password", "input-search"],

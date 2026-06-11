@@ -29,10 +29,7 @@ export interface InjectionDescriptor<Value = unknown> {
 /**
  * @since 0.3.16-canary.0
  */
-export type InjectableDependency<Value = unknown> =
-  | Token<Value>
-  | Constructor<Value>
-  | InjectionDescriptor<Value>;
+export type InjectableDependency<Value = unknown> = Token<Value> | Constructor<Value> | InjectionDescriptor<Value>;
 
 /**
  * @since 0.3.16-canary.0
@@ -81,10 +78,7 @@ function materializeInjectionDescriptor(dependency: InjectionDescriptor): Inject
   };
   const nameDesc = Object.getOwnPropertyDescriptor(dualRole, "name");
   const tagsDesc = Object.getOwnPropertyDescriptor(dualRole, "tags");
-  const explicitName =
-    nameDesc?.enumerable === true && typeof nameDesc.value === "string"
-      ? nameDesc.value
-      : undefined;
+  const explicitName = nameDesc?.enumerable === true && typeof nameDesc.value === "string" ? nameDesc.value : undefined;
   const explicitTags = tagsDesc?.enumerable === true ? tagsDesc.value : undefined;
 
   if (explicitName !== undefined && explicitTags !== undefined) {
@@ -155,9 +149,7 @@ export function inject<const Value>(
     if (!Array.isArray(meta[INJECT_ACCESSOR_KEY])) {
       meta[INJECT_ACCESSOR_KEY] = [];
     }
-    (
-      meta[INJECT_ACCESSOR_KEY] as Array<{ key: string | symbol; descriptor: InjectionDescriptor }>
-    ).push({
+    (meta[INJECT_ACCESSOR_KEY] as Array<{ key: string | symbol; descriptor: InjectionDescriptor }>).push({
       key: context.name,
       descriptor,
     });
@@ -174,9 +166,7 @@ export function inject<const Value>(
               ...(options.name !== undefined ? { name: options.name } : {}),
               ...(options.tags !== undefined ? { tags: options.tags } : {}),
             });
-      const value = descriptor.optional
-        ? container.resolveOptional(token, hint)
-        : container.resolve(token, hint);
+      const value = descriptor.optional ? container.resolveOptional(token, hint) : container.resolve(token, hint);
       context.access.set(this, value as Value);
     });
 
@@ -190,8 +180,7 @@ export function inject<const Value>(
   }
   Object.defineProperties(decoratorFn, props);
 
-  return decoratorFn as unknown as InjectionDescriptor<Value> &
-    ClassAccessorDecorator<unknown, Value>;
+  return decoratorFn as unknown as InjectionDescriptor<Value> & ClassAccessorDecorator<unknown, Value>;
 }
 
 // ── optional() ────────────────────────────────────────────────────────────────

@@ -46,8 +46,7 @@ function InputNumber({
   ...props
 }: InputNumberProps): JSX.Element {
   const isSplit = variant === "split";
-  const { decrementButton, field, incrementButton, root, stepper, stepperButton } =
-    inputNumberVariants({ variant });
+  const { decrementButton, field, incrementButton, root, stepper, stepperButton } = inputNumberVariants({ variant });
 
   return (
     <InputNumberPrimitive.Root

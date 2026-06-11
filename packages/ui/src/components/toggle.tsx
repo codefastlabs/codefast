@@ -18,11 +18,7 @@ interface ToggleProps extends ComponentProps<typeof TogglePrimitive.Root>, Toggl
  */
 function Toggle({ className, size, variant, ...props }: ToggleProps): JSX.Element {
   return (
-    <TogglePrimitive.Root
-      className={toggleVariants({ className, size, variant })}
-      data-slot="toggle"
-      {...props}
-    />
+    <TogglePrimitive.Root className={toggleVariants({ className, size, variant })} data-slot="toggle" {...props} />
   );
 }
 

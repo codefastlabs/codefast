@@ -49,9 +49,7 @@ export function suppressTransitions(nonce?: string): () => void {
   }
 
   // Respect user's motion preferences
-  const prefersReducedMotion = globalThis.window.matchMedia(
-    "(prefers-reduced-motion: reduce)",
-  ).matches;
+  const prefersReducedMotion = globalThis.window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   if (prefersReducedMotion) {
     return () => {

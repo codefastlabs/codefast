@@ -8,12 +8,7 @@ import { MobileNav } from "#/components/showcase/components/mobile-nav";
 import { SidebarNav } from "#/components/showcase/components/sidebar-nav";
 import { useActiveSection } from "#/components/showcase/hooks/use-active-section";
 import type { HighlightedCodes, ViewMode } from "#/components/showcase/types";
-import {
-  ALPHABET_GROUPS,
-  CATEGORY_GROUPS,
-  CATEGORY_NAV_IDS,
-  LETTER_NAV_IDS,
-} from "#/data/component-groups";
+import { ALPHABET_GROUPS, CATEGORY_GROUPS, CATEGORY_NAV_IDS, LETTER_NAV_IDS } from "#/data/component-groups";
 import { ALL_COMPONENTS } from "#/data/components";
 import { highlightMany } from "#/lib/highlighter.ts";
 
@@ -126,8 +121,8 @@ function ComponentsPage() {
           {ALL_COMPONENTS.length}+ ready-to-use <span className="text-ui-brand">components.</span>
         </h1>
         <p className="text-base leading-relaxed text-ui-muted">
-          Built on Radix UI primitives with Tailwind CSS v4. Each component ships as a named
-          sub-path import — no barrel files, no tree-shaking surprises, no config required.
+          Built on Radix UI primitives with Tailwind CSS v4. Each component ships as a named sub-path import — no barrel
+          files, no tree-shaking surprises, no config required.
         </p>
       </section>
 
@@ -136,12 +131,7 @@ function ComponentsPage() {
 
       {/* ── Two-column docs layout: sticky sidebar + card grid ────────── */}
       <div className="lg:grid lg:grid-cols-[200px_minmax(0,1fr)] lg:gap-10 xl:grid-cols-[220px_minmax(0,1fr)]">
-        <SidebarNav
-          groups={groups}
-          activeSection={activeSection}
-          mode={mode}
-          onModeChange={setMode}
-        />
+        <SidebarNav groups={groups} activeSection={activeSection} mode={mode} onModeChange={setMode} />
 
         <div className="min-w-0">
           {groups.map((group) => (

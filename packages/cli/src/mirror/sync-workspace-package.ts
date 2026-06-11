@@ -8,10 +8,7 @@ import { DIST_DIR, PACKAGE_JSON } from "#/mirror/domain/constants";
 import { createPathTransform, generateExports } from "#/mirror/domain/exports";
 import { resolvePackageDisplayName } from "#/mirror/domain/package-display-name";
 import type { PackageJsonShape, PackageStats } from "#/mirror/domain/types";
-import {
-  buildSourcePathResolver,
-  supplementExportsInPackageJson,
-} from "#/mirror/supplement-exports";
+import { buildSourcePathResolver, supplementExportsInPackageJson } from "#/mirror/supplement-exports";
 import { writePackageJsonExportsAtomic } from "#/mirror/write-exports";
 
 /**
@@ -61,11 +58,7 @@ export async function syncExportsForWorkspacePackage(
   try {
     const packageContent = await fs.readFile(packageJsonPath, "utf8");
     const rawPackageJson = JSON.parse(packageContent) as unknown;
-    if (
-      rawPackageJson === null ||
-      typeof rawPackageJson !== "object" ||
-      Array.isArray(rawPackageJson)
-    ) {
+    if (rawPackageJson === null || typeof rawPackageJson !== "object" || Array.isArray(rawPackageJson)) {
       throw new SyntaxError("package.json root must be a JSON object");
     }
     parsedPackageJson = rawPackageJson as PackageJsonShape;

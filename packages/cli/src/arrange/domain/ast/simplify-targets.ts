@@ -80,11 +80,7 @@ function buildMixedCnReplacement(call: DomainCallExpression, sourceText: string)
 
   // Already simplest form: 1 static arg already at the front.
   const firstArg = args[0];
-  if (
-    staticTexts.length === 1 &&
-    firstArg !== undefined &&
-    isDomainTailwindClassLiteral(firstArg)
-  ) {
+  if (staticTexts.length === 1 && firstArg !== undefined && isDomainTailwindClassLiteral(firstArg)) {
     return null;
   }
 
@@ -158,10 +154,7 @@ export function collectSimplifyTargets(sourceFile: DomainSourceFile): Array<Plan
         if (arg0 && isDomainObjectLiteralExpression(arg0)) {
           collectTvArrayEdits(arg0, results, 0);
         }
-      } else if (
-        isCnOrTvIdentifier(node.expression, "cn", knownBindings) &&
-        !seenCnPos.has(node.pos)
-      ) {
+      } else if (isCnOrTvIdentifier(node.expression, "cn", knownBindings) && !seenCnPos.has(node.pos)) {
         seenCnPos.add(node.pos);
         const args = [...node.arguments];
 
@@ -169,12 +162,7 @@ export function collectSimplifyTargets(sourceFile: DomainSourceFile): Array<Plan
           // All static → remove cn() wrapper entirely
           const flat = joinLiterals(args);
           const parent = node.parent;
-          if (
-            parent &&
-            isDomainJsxExpression(parent) &&
-            parent.parent &&
-            isDomainJsxAttribute(parent.parent)
-          ) {
+          if (parent && isDomainJsxExpression(parent) && parent.parent && isDomainJsxAttribute(parent.parent)) {
             // className={cn("a", "b")} → className="a b"
             results.push({
               start: parent.pos,

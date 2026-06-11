@@ -165,9 +165,7 @@ export function assertGraphIsWellFormed(graph: GraphDescriptor): void {
   for (const node of graph.nodes) {
     for (const dependencyId of node.dependencies) {
       if (!nodeIds.has(dependencyId)) {
-        throw new Error(
-          `Node "${node.id}" depends on unknown node "${dependencyId}". Descriptor typo?`,
-        );
+        throw new Error(`Node "${node.id}" depends on unknown node "${dependencyId}". Descriptor typo?`);
       }
       if (dependencyId === node.id) {
         throw new Error(`Node "${node.id}" depends on itself. Descriptor typo?`);

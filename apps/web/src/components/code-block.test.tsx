@@ -9,12 +9,7 @@ afterEach(() => {
 
 describe("CodeBlock", () => {
   it("injects the pre-highlighted HTML", () => {
-    render(
-      <CodeBlock
-        code={`const a = 1;`}
-        highlightedCode={`<pre class="shiki"><code>const a = 1;</code></pre>`}
-      />,
-    );
+    render(<CodeBlock code={`const a = 1;`} highlightedCode={`<pre class="shiki"><code>const a = 1;</code></pre>`} />);
 
     expect(screen.getByText("const a = 1;")).toBeTruthy();
   });

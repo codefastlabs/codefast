@@ -57,10 +57,7 @@ function computeEtag(hashInput: Buffer | string): string {
 }
 
 function asArrayBuffer(nodeBuffer: Buffer): ArrayBuffer {
-  return nodeBuffer.buffer.slice(
-    nodeBuffer.byteOffset,
-    nodeBuffer.byteOffset + nodeBuffer.byteLength,
-  ) as ArrayBuffer;
+  return nodeBuffer.buffer.slice(nodeBuffer.byteOffset, nodeBuffer.byteOffset + nodeBuffer.byteLength) as ArrayBuffer;
 }
 
 function loadAsset(filePath: string, httpCacheControl: string): InMemoryAsset {
@@ -69,9 +66,7 @@ function loadAsset(filePath: string, httpCacheControl: string): InMemoryAsset {
   return { content: fileBytes, contentType, httpCacheControl, etag: computeEtag(fileBytes) };
 }
 
-function resolveStaticFile(
-  pathname: string,
-): { filePath: string; httpCacheControl: string } | null {
+function resolveStaticFile(pathname: string): { filePath: string; httpCacheControl: string } | null {
   const stripped = pathname.slice(1);
 
   const appPath = resolve(appDir, stripped);
@@ -92,20 +87,14 @@ function parseLimitParam(limitParam: string | null, defaultLimit: number): numbe
     return defaultLimit;
   }
   const parsedLimit = parseInt(limitParam, 10);
-  return Number.isFinite(parsedLimit) && parsedLimit > 0
-    ? Math.min(parsedLimit, 10_000)
-    : defaultLimit;
+  return Number.isFinite(parsedLimit) && parsedLimit > 0 ? Math.min(parsedLimit, 10_000) : defaultLimit;
 }
 
 async function getOrBuildPayload(state: ServerState, runLimit: number): Promise<InMemoryPayload> {
   if (state.payloadMemoryCache !== null && state.payloadMemoryCache.limit === runLimit) {
     return state.payloadMemoryCache;
   }
-  const {
-    runs: rawRuns,
-    hasMore,
-    warning,
-  } = await listRawRuns(state.options.benchResultsDir, runLimit);
+  const { runs: rawRuns, hasMore, warning } = await listRawRuns(state.options.benchResultsDir, runLimit);
   const payload = buildEmbeddedPayload(rawRuns, state.options, hasMore, runLimit, warning);
   const rawJson = JSON.stringify(payload);
   const payloadEntry: InMemoryPayload = {
@@ -145,11 +134,7 @@ export function createBenchServer(options: BenchServerOptions): Server {
     c.header("Cache-Control", HTTP_NO_CACHE);
     c.header("ETag", cachedPayload.etag);
     return stream(c, async (responseStream) => {
-      const htmlStream = await renderDocument(
-        cachedPayload.payload,
-        cachedPayload.rawJson,
-        c.req.raw.signal,
-      );
+      const htmlStream = await renderDocument(cachedPayload.payload, cachedPayload.rawJson, c.req.raw.signal);
       await responseStream.pipe(htmlStream);
     });
   });

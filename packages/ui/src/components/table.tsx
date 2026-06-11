@@ -17,11 +17,7 @@ type TableProps = ComponentProps<"table">;
 function Table({ className, ...props }: TableProps): JSX.Element {
   return (
     <div className="relative w-full overflow-x-auto" data-slot="table-container">
-      <table
-        className={cn("w-full caption-bottom text-sm", className)}
-        data-slot="table"
-        {...props}
-      />
+      <table className={cn("w-full caption-bottom text-sm", className)} data-slot="table" {...props} />
     </div>
   );
 }
@@ -55,13 +51,7 @@ type TableBodyProps = ComponentProps<"tbody">;
  * @since 0.3.16-canary.0
  */
 function TableBody({ className, ...props }: TableBodyProps): JSX.Element {
-  return (
-    <tbody
-      className={cn("[&_tr:last-child]:border-0", className)}
-      data-slot="table-body"
-      {...props}
-    />
-  );
+  return <tbody className={cn("[&_tr:last-child]:border-0", className)} data-slot="table-body" {...props} />;
 }
 
 /* -----------------------------------------------------------------------------
@@ -172,11 +162,7 @@ type TableCaptionProps = ComponentProps<"caption">;
  */
 function TableCaption({ className, ...props }: TableCaptionProps): JSX.Element {
   return (
-    <caption
-      className={cn("mt-4 text-sm text-muted-foreground", className)}
-      data-slot="table-caption"
-      {...props}
-    />
+    <caption className={cn("mt-4 text-sm text-muted-foreground", className)} data-slot="table-caption" {...props} />
   );
 }
 

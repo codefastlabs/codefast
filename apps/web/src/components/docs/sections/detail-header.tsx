@@ -77,9 +77,7 @@ export function ComponentDetailHeader({ component }: ComponentDetailHeaderProps)
             </Badge>
           ) : null}
         </div>
-        <h1 className="mb-4 text-4xl leading-none font-bold tracking-tighter text-ui-fg md:text-5xl">
-          {name}
-        </h1>
+        <h1 className="mb-4 text-4xl leading-none font-bold tracking-tighter text-ui-fg md:text-5xl">{name}</h1>
         <p className="mb-6 text-base leading-relaxed text-ui-muted">{description}</p>
         <div className="flex flex-wrap gap-2">
           <Button asChild size="sm" variant="outline">
@@ -99,17 +97,13 @@ export function ComponentDetailHeader({ component }: ComponentDetailHeaderProps)
 
       <div className="mb-12 grid gap-3 sm:grid-cols-2">
         <div>
-          <p className="mb-1.5 text-xs font-semibold tracking-widest text-ui-muted uppercase">
-            Install
-          </p>
+          <p className="mb-1.5 text-xs font-semibold tracking-widest text-ui-muted uppercase">Install</p>
           <div className="rounded-xl border border-ui-border bg-ui-surface px-4 py-2.5 font-mono text-sm text-ui-fg">
             pnpm add @codefast/ui
           </div>
         </div>
         <div>
-          <p className="mb-1.5 text-xs font-semibold tracking-widest text-ui-muted uppercase">
-            Import path
-          </p>
+          <p className="mb-1.5 text-xs font-semibold tracking-widest text-ui-muted uppercase">Import path</p>
           <div className="truncate rounded-xl border border-ui-border bg-ui-surface px-4 py-2.5 font-mono text-sm text-ui-brand">
             {componentPath(slug)}
           </div>

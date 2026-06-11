@@ -41,13 +41,7 @@ type PaginationContentProps = ComponentProps<"ul">;
  * @since 0.3.16-canary.0
  */
 function PaginationContent({ className, ...props }: PaginationContentProps): JSX.Element {
-  return (
-    <ul
-      className={cn("flex items-center gap-1", className)}
-      data-slot="pagination-content"
-      {...props}
-    />
-  );
+  return <ul className={cn("flex items-center gap-1", className)} data-slot="pagination-content" {...props} />;
 }
 
 /* -----------------------------------------------------------------------------
@@ -73,21 +67,14 @@ function PaginationItem(props: PaginationItemProps): JSX.Element {
 /**
  * @since 0.3.16-canary.0
  */
-interface PaginationLinkProps
-  extends ComponentProps<"a">, Pick<VariantProps<typeof buttonVariants>, "size"> {
+interface PaginationLinkProps extends ComponentProps<"a">, Pick<VariantProps<typeof buttonVariants>, "size"> {
   isActive?: boolean;
 }
 
 /**
  * @since 0.3.16-canary.0
  */
-function PaginationLink({
-  children,
-  className,
-  isActive,
-  size = "icon",
-  ...props
-}: PaginationLinkProps): JSX.Element {
+function PaginationLink({ children, className, isActive, size = "icon", ...props }: PaginationLinkProps): JSX.Element {
   return (
     <a
       aria-current={isActive ? "page" : undefined}
@@ -108,8 +95,7 @@ function PaginationLink({
 /**
  * @since 0.3.16-canary.0
  */
-interface PaginationPreviousProps
-  extends ComponentProps<"a">, Pick<VariantProps<typeof buttonVariants>, "size"> {
+interface PaginationPreviousProps extends ComponentProps<"a">, Pick<VariantProps<typeof buttonVariants>, "size"> {
   isActive?: boolean;
   text?: string;
 }
@@ -117,11 +103,7 @@ interface PaginationPreviousProps
 /**
  * @since 0.3.16-canary.0
  */
-function PaginationPrevious({
-  className,
-  text = "Previous",
-  ...props
-}: PaginationPreviousProps): JSX.Element {
+function PaginationPrevious({ className, text = "Previous", ...props }: PaginationPreviousProps): JSX.Element {
   return (
     <PaginationLink
       aria-label="Go to previous page"
@@ -143,8 +125,7 @@ function PaginationPrevious({
 /**
  * @since 0.3.16-canary.0
  */
-interface PaginationNextProps
-  extends ComponentProps<"a">, Pick<VariantProps<typeof buttonVariants>, "size"> {
+interface PaginationNextProps extends ComponentProps<"a">, Pick<VariantProps<typeof buttonVariants>, "size"> {
   isActive?: boolean;
   text?: string;
 }
@@ -183,10 +164,7 @@ function PaginationEllipsis({ className, ...props }: PaginationEllipsisProps): J
   return (
     <span
       aria-hidden
-      className={cn(
-        "flex size-9 items-center justify-center [&_svg:not([class*='size-'])]:size-4",
-        className,
-      )}
+      className={cn("flex size-9 items-center justify-center [&_svg:not([class*='size-'])]:size-4", className)}
       data-slot="pagination-ellipsis"
       {...props}
     >

@@ -9,8 +9,7 @@ export const selectDoc: ComponentDoc = {
     {
       id: "status",
       title: "Controlled with icons",
-      description:
-        "A real issue-status picker: controlled value, colour markers, and a live readout.",
+      description: "A real issue-status picker: controlled value, colour markers, and a live readout.",
       Demo: SelectStatus,
       code: docSource("select", "status"),
     },
@@ -56,14 +55,12 @@ export const selectDoc: ComponentDoc = {
     },
     {
       name: "SelectGroup / SelectLabel",
-      description:
-        "Wrap related options so screen readers announce the group, not just visual spacing.",
+      description: "Wrap related options so screen readers announce the group, not just visual spacing.",
       props: [
         {
           name: "SelectLabel children",
           type: "ReactNode",
-          description:
-            "Heading text for the group (required inside SelectGroup for accessibility).",
+          description: "Heading text for the group (required inside SelectGroup for accessibility).",
         },
       ],
     },

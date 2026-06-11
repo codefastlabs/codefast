@@ -78,10 +78,7 @@ export const tooltipDoc: ComponentDoc = {
     ],
   },
   guidelines: {
-    do: [
-      "Keep tooltip text to a short phrase.",
-      "Use for naming icon-only controls and surfacing shortcuts.",
-    ],
+    do: ["Keep tooltip text to a short phrase.", "Use for naming icon-only controls and surfacing shortcuts."],
     dont: [
       "Don’t place interactive controls inside a tooltip — use a Popover.",
       "Don’t hide information the user needs to complete a task.",

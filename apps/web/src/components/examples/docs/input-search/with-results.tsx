@@ -10,18 +10,11 @@ export function InputSearchWithResults() {
 
   return (
     <div className="w-full max-w-xs space-y-2">
-      <InputSearch
-        placeholder="Filter fruit…"
-        value={query}
-        onChange={(value) => setQuery(value ?? "")}
-      />
+      <InputSearch placeholder="Filter fruit…" value={query} onChange={(value) => setQuery(value ?? "")} />
       <ul className="rounded-lg border border-ui-border">
         {matches.length > 0 ? (
           matches.map((fruit) => (
-            <li
-              key={fruit}
-              className="border-b border-ui-border/60 px-3 py-1.5 text-sm text-ui-fg last:border-0"
-            >
+            <li key={fruit} className="border-b border-ui-border/60 px-3 py-1.5 text-sm text-ui-fg last:border-0">
               {fruit}
             </li>
           ))

@@ -10,11 +10,7 @@ interface GuidelinesSectionProps {
 /** The "Guidelines" section: paired do / don't usage conventions. */
 export function GuidelinesSection({ do: dos, dont: donts }: GuidelinesSectionProps) {
   return (
-    <DocSection
-      id="guidelines"
-      title="Guidelines"
-      description="Conventions that keep usage consistent across an app."
-    >
+    <DocSection id="guidelines" title="Guidelines" description="Conventions that keep usage consistent across an app.">
       <div className="grid gap-4 sm:grid-cols-2">
         {dos?.length ? (
           <div className="rounded-2xl border border-ui-border bg-ui-surface p-5">

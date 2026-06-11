@@ -48,11 +48,7 @@ function buildMultiTagSlotResolveScenario(): BenchScenario {
   const container = Container.create();
 
   for (const [env, tier] of SLOT_VARIANTS) {
-    container
-      .bind(slottedServiceToken)
-      .toConstantValue({ env, tier })
-      .whenTagged("env", env)
-      .whenTagged("tier", tier);
+    container.bind(slottedServiceToken).toConstantValue({ env, tier }).whenTagged("env", env).whenTagged("tier", tier);
   }
 
   container.resolve(slottedServiceToken, { tags: TARGET_SLOT_TAGS });

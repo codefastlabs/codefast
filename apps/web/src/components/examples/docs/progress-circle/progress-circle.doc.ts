@@ -67,14 +67,8 @@ export const progressCircleDoc: ComponentDoc = {
     ],
   },
   guidelines: {
-    do: [
-      "Use in compact spots — cards, avatars, dashboards.",
-      "Show the value for precise, glanceable feedback.",
-    ],
-    dont: [
-      "Don’t use for indeterminate progress.",
-      "Don’t rely on colour alone to signal a threshold.",
-    ],
+    do: ["Use in compact spots — cards, avatars, dashboards.", "Show the value for precise, glanceable feedback."],
+    dont: ["Don’t use for indeterminate progress.", "Don’t rely on colour alone to signal a threshold."],
   },
   related: ["progress", "spinner", "slider"],
 };

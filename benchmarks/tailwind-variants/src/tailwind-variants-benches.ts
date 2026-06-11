@@ -15,6 +15,4 @@ void runBenchmarkChildMain({
   packageRoot: resolveBenchmarkPackageRootFromImportMetaUrl(import.meta.url),
   collectScenarios: collectAllTailwindVariantsNpmScenarios,
   benchDefaults: BENCHMARK_SUITE_DEFAULT_BENCH_OPTIONS,
-}).catch((error: unknown) =>
-  exitBenchmarkChildProcessOnFailure(TAILWIND_VARIANTS.libraryName, error),
-);
+}).catch((error: unknown) => exitBenchmarkChildProcessOnFailure(TAILWIND_VARIANTS.libraryName, error));

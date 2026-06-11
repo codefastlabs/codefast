@@ -77,14 +77,8 @@ export const checkboxCardsDoc: ComponentDoc = {
     ],
   },
   guidelines: {
-    do: [
-      "Use for picking several rich options (features, add-ons).",
-      "Show a short description on each card.",
-    ],
-    dont: [
-      "Don’t use for single-select — that’s Radio Cards.",
-      "Don’t put multiple actions inside a card.",
-    ],
+    do: ["Use for picking several rich options (features, add-ons).", "Show a short description on each card."],
+    dont: ["Don’t use for single-select — that’s Radio Cards.", "Don’t put multiple actions inside a card."],
   },
   related: ["checkbox-group", "radio-cards", "checkbox"],
 };

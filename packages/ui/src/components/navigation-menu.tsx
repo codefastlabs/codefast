@@ -19,18 +19,10 @@ interface NavigationMenuProps extends ComponentProps<typeof NavigationMenuPrimit
 /**
  * @since 0.3.16-canary.0
  */
-function NavigationMenu({
-  children,
-  className,
-  viewport = true,
-  ...props
-}: NavigationMenuProps): JSX.Element {
+function NavigationMenu({ children, className, viewport = true, ...props }: NavigationMenuProps): JSX.Element {
   return (
     <NavigationMenuPrimitive.Root
-      className={cn(
-        "group/navigation-menu relative flex max-w-max flex-1 items-center justify-center",
-        className,
-      )}
+      className={cn("group/navigation-menu relative flex max-w-max flex-1 items-center justify-center", className)}
       data-slot="navigation-menu"
       data-viewport={viewport}
       {...props}
@@ -53,11 +45,7 @@ type NavigationMenuListProps = ComponentProps<typeof NavigationMenuPrimitive.Lis
 /**
  * @since 0.3.16-canary.0
  */
-function NavigationMenuList({
-  children,
-  className,
-  ...props
-}: NavigationMenuListProps): JSX.Element {
+function NavigationMenuList({ children, className, ...props }: NavigationMenuListProps): JSX.Element {
   return (
     <NavigationMenuPrimitive.List
       className={cn("group flex flex-1 list-none items-center justify-center gap-0", className)}
@@ -84,11 +72,7 @@ type NavigationMenuItemProps = ComponentProps<typeof NavigationMenuPrimitive.Ite
  */
 function NavigationMenuItem({ className, ...props }: NavigationMenuItemProps): JSX.Element {
   return (
-    <NavigationMenuPrimitive.Item
-      className={cn("relative", className)}
-      data-slot="navigation-menu-item"
-      {...props}
-    />
+    <NavigationMenuPrimitive.Item className={cn("relative", className)} data-slot="navigation-menu-item" {...props} />
   );
 }
 
@@ -104,11 +88,7 @@ type NavigationMenuTriggerProps = ComponentProps<typeof NavigationMenuPrimitive.
 /**
  * @since 0.3.16-canary.0
  */
-function NavigationMenuTrigger({
-  children,
-  className,
-  ...props
-}: NavigationMenuTriggerProps): JSX.Element {
+function NavigationMenuTrigger({ children, className, ...props }: NavigationMenuTriggerProps): JSX.Element {
   return (
     <NavigationMenuPrimitive.Trigger
       className={navigationMenuTriggerVariants({ className: ["group", className] })}
@@ -201,10 +181,7 @@ function NavigationMenuViewport({ className, ...props }: NavigationMenuViewportP
 
 type NavigationMenuIndicatorProps = ComponentProps<typeof NavigationMenuPrimitive.Indicator>;
 
-function NavigationMenuIndicator({
-  className,
-  ...props
-}: NavigationMenuIndicatorProps): JSX.Element {
+function NavigationMenuIndicator({ className, ...props }: NavigationMenuIndicatorProps): JSX.Element {
   return (
     <NavigationMenuPrimitive.Indicator
       className={cn(

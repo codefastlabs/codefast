@@ -91,10 +91,7 @@ export const alertDoc: ComponentDoc = {
     ],
   },
   guidelines: {
-    do: [
-      "Use inline alerts for contextual, non-blocking messages.",
-      "Pair destructive alerts with a clear next step.",
-    ],
+    do: ["Use inline alerts for contextual, non-blocking messages.", "Pair destructive alerts with a clear next step."],
     dont: [
       "Don’t use an inline Alert for a decision that must block — use Alert Dialog.",
       "Don’t stack many alerts; summarise instead.",

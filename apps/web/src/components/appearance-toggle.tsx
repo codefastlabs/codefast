@@ -18,9 +18,7 @@ const SCHEME_CONFIG = {
 
 const SCHEME_KEYS = getRecordKeys(SCHEME_CONFIG);
 
-function getRecordKeys<KeyName extends string>(
-  record: Readonly<Record<KeyName, unknown>>,
-): ReadonlyArray<KeyName> {
+function getRecordKeys<KeyName extends string>(record: Readonly<Record<KeyName, unknown>>): ReadonlyArray<KeyName> {
   return Object.keys(record) as Array<KeyName>;
 }
 

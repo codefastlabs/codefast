@@ -22,8 +22,7 @@ const translations: Translations = {
       showDialog: "Show Dialog",
       showDialogSm: "Show Dialog (sm)",
       title: "Are you absolutely sure?",
-      description:
-        "This action cannot be undone. This will permanently delete your account from our servers.",
+      description: "This action cannot be undone. This will permanently delete your account from our servers.",
       cancel: "Cancel",
       continue: "Continue",
       smallTitle: "Allow accessory to connect?",

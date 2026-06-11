@@ -45,9 +45,7 @@ class PreDestroyTrackedService {
 const postConstructSingletonServiceToken = token<PostConstructSingletonService>(
   "bench-cf-lifecycle-post-construct-service",
 );
-const preDestroyTrackedServiceToken = token<PreDestroyTrackedService>(
-  "bench-cf-lifecycle-pre-destroy-service",
-);
+const preDestroyTrackedServiceToken = token<PreDestroyTrackedService>("bench-cf-lifecycle-pre-destroy-service");
 
 function buildLifecyclePostConstructSingletonScenario(): BenchScenario {
   const container = Container.create();

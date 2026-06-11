@@ -1,9 +1,4 @@
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@codefast/ui/accordion";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@codefast/ui/accordion";
 
 const items = [
   {

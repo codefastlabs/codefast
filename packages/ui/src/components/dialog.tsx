@@ -51,12 +51,7 @@ interface DialogContentProps extends ComponentProps<typeof DialogPrimitive.Conte
 /**
  * @since 0.3.16-canary.0
  */
-function DialogContent({
-  children,
-  className,
-  showCloseButton = true,
-  ...props
-}: DialogContentProps): JSX.Element {
+function DialogContent({ children, className, showCloseButton = true, ...props }: DialogContentProps): JSX.Element {
   return (
     <DialogPrimitive.Portal data-slot="dialog-portal">
       <DialogPrimitive.Overlay
@@ -102,13 +97,7 @@ type DialogHeaderProps = ComponentProps<"div">;
  * @since 0.3.16-canary.0
  */
 function DialogHeader({ className, ...props }: DialogHeaderProps): JSX.Element {
-  return (
-    <div
-      className={cn("flex shrink-0 flex-col gap-2", className)}
-      data-slot="dialog-header"
-      {...props}
-    />
-  );
+  return <div className={cn("flex shrink-0 flex-col gap-2", className)} data-slot="dialog-header" {...props} />;
 }
 
 /* -----------------------------------------------------------------------------
@@ -130,11 +119,7 @@ type DialogBodyProps = ComponentProps<"div">;
  */
 function DialogBody({ className, ...props }: DialogBodyProps): JSX.Element {
   return (
-    <div
-      className={cn("-mx-6 min-h-0 flex-1 overflow-y-auto px-6", className)}
-      data-slot="dialog-body"
-      {...props}
-    />
+    <div className={cn("-mx-6 min-h-0 flex-1 overflow-y-auto px-6", className)} data-slot="dialog-body" {...props} />
   );
 }
 
@@ -152,12 +137,7 @@ interface DialogFooterProps extends ComponentProps<"div"> {
 /**
  * @since 0.3.16-canary.0
  */
-function DialogFooter({
-  children,
-  className,
-  showCloseButton = false,
-  ...props
-}: DialogFooterProps): JSX.Element {
+function DialogFooter({ children, className, showCloseButton = false, ...props }: DialogFooterProps): JSX.Element {
   return (
     <div
       className={cn("flex shrink-0 flex-col-reverse gap-2 sm:flex-row sm:justify-end", className)}

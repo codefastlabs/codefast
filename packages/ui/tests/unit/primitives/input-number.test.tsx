@@ -235,13 +235,7 @@ describe("input-number", () => {
       const user = userEvent.setup();
 
       render(
-        <InputNumber
-          data-testid="input-number"
-          defaultValue={5}
-          max={10}
-          min={0}
-          onChange={handleChange}
-        >
+        <InputNumber data-testid="input-number" defaultValue={5} max={10} min={0} onChange={handleChange}>
           <InputNumberDecrementButton data-testid="decrement-btn">-</InputNumberDecrementButton>
           <InputNumberField data-testid="input-item" />
           <InputNumberIncrementButton data-testid="increment-btn">+</InputNumberIncrementButton>
@@ -393,13 +387,7 @@ describe("input-number", () => {
       const user = userEvent.setup();
 
       render(
-        <InputNumber
-          data-testid="input-number"
-          defaultValue={9}
-          max={10}
-          min={0}
-          onChange={handleChange}
-        >
+        <InputNumber data-testid="input-number" defaultValue={9} max={10} min={0} onChange={handleChange}>
           <InputNumberDecrementButton data-testid="decrement-btn">-</InputNumberDecrementButton>
           <InputNumberField data-testid="input-item" />
           <InputNumberIncrementButton data-testid="increment-btn">+</InputNumberIncrementButton>
@@ -420,13 +408,7 @@ describe("input-number", () => {
       expect(input).toHaveValue("9");
 
       render(
-        <InputNumber
-          data-testid="input-number-min"
-          defaultValue={1}
-          max={10}
-          min={0}
-          onChange={handleChange}
-        >
+        <InputNumber data-testid="input-number-min" defaultValue={1} max={10} min={0} onChange={handleChange}>
           <InputNumberDecrementButton data-testid="decrement-btn-min">-</InputNumberDecrementButton>
           <InputNumberField data-testid="input-item-min" />
           <InputNumberIncrementButton data-testid="increment-btn-min">+</InputNumberIncrementButton>
@@ -1062,14 +1044,7 @@ describe("input-number", () => {
       const user = userEvent.setup();
 
       render(
-        <InputNumber
-          data-testid="number-input"
-          defaultValue={50}
-          max={100}
-          min={0}
-          step={5}
-          onChange={handleChange}
-        >
+        <InputNumber data-testid="number-input" defaultValue={50} max={100} min={0} step={5} onChange={handleChange}>
           <InputNumberDecrementButton data-testid="decrement">-</InputNumberDecrementButton>
           <InputNumberField data-testid="input" />
           <InputNumberIncrementButton data-testid="increment">+</InputNumberIncrementButton>

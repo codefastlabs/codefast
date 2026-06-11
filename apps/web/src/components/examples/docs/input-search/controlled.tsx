@@ -6,11 +6,7 @@ export function InputSearchControlled() {
 
   return (
     <div className="w-full max-w-xs space-y-3">
-      <InputSearch
-        placeholder="Search components…"
-        value={query}
-        onChange={(value) => setQuery(value ?? "")}
-      />
+      <InputSearch placeholder="Search components…" value={query} onChange={(value) => setQuery(value ?? "")} />
       <p className="text-center text-xs text-ui-muted">
         {query ? (
           <>

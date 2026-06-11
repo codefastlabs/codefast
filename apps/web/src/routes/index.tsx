@@ -208,15 +208,12 @@ function HomePage() {
           </h1>
 
           <p className="mx-auto max-w-md text-lg leading-relaxed text-ui-muted">
-            {COMPONENT_COUNT}+ accessible components built on Radix UI and Tailwind CSS v4. Copy the
-            source. Own the code.
+            {COMPONENT_COUNT}+ accessible components built on Radix UI and Tailwind CSS v4. Copy the source. Own the
+            code.
           </p>
 
           <div className="mt-8 flex items-center justify-center gap-7">
-            <Link
-              to="/components"
-              className="text-sm font-medium text-ui-brand no-underline hover:underline"
-            >
+            <Link to="/components" className="text-sm font-medium text-ui-brand no-underline hover:underline">
               Browse components ›
             </Link>
             <Link to="/about" className="text-sm text-ui-muted no-underline hover:text-ui-fg">
@@ -319,10 +316,7 @@ function HomePage() {
             pnpm add @codefast/ui
           </div>
 
-          <Link
-            to="/about"
-            className="text-sm font-medium text-ui-inverse/60 no-underline hover:text-ui-inverse"
-          >
+          <Link to="/about" className="text-sm font-medium text-ui-inverse/60 no-underline hover:text-ui-inverse">
             Read the docs ›
           </Link>
         </div>

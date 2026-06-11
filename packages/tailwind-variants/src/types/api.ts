@@ -108,10 +108,7 @@ export type SlotClassMap<S extends SlotSchema> = {
  */
 export type CompoundVariant<T extends VariantSchema> = Partial<{
   readonly [Variant in keyof T]: HasBooleanVariant<T[Variant]> extends true
-    ?
-        | boolean
-        | ReadonlyArray<boolean | VariantValue<keyof T[Variant]>>
-        | VariantValue<keyof T[Variant]>
+    ? boolean | ReadonlyArray<boolean | VariantValue<keyof T[Variant]>> | VariantValue<keyof T[Variant]>
     : ReadonlyArray<VariantValue<keyof T[Variant]>> | VariantValue<keyof T[Variant]>;
 }> & {
   className?: ClassValue;
@@ -128,10 +125,7 @@ export type CompoundVariant<T extends VariantSchema> = Partial<{
  */
 export type SlotCompoundVariant<T extends VariantSchema, S extends SlotSchema> = Partial<{
   readonly [Variant in keyof T]: HasBooleanVariant<T[Variant]> extends true
-    ?
-        | boolean
-        | ReadonlyArray<boolean | VariantValue<keyof T[Variant]>>
-        | VariantValue<keyof T[Variant]>
+    ? boolean | ReadonlyArray<boolean | VariantValue<keyof T[Variant]>> | VariantValue<keyof T[Variant]>
     : ReadonlyArray<VariantValue<keyof T[Variant]>> | VariantValue<keyof T[Variant]>;
 }> & {
   className?: ClassValue | SlotClassMap<S>;
@@ -216,9 +210,7 @@ export interface TailwindVariantsOptions {
  *
  * @since 0.3.16-canary.0
  */
-export type SlotClassResolver<T extends VariantSchema> = (
-  props?: SlotResolverProps<T>,
-) => string | undefined;
+export type SlotClassResolver<T extends VariantSchema> = (props?: SlotResolverProps<T>) => string | undefined;
 
 /**
  * Properties that can be passed to slot functions.
@@ -247,10 +239,7 @@ export type SlotResolverProps<T extends VariantSchema> =
  *
  * @since 0.3.16-canary.0
  */
-export type VariantResolverResult<
-  T extends VariantSchema,
-  S extends SlotSchema,
-> = keyof S extends never
+export type VariantResolverResult<T extends VariantSchema, S extends SlotSchema> = keyof S extends never
   ? SlotClassResolver<T>
   : {
       readonly [K in keyof S]: SlotClassResolver<T>;
@@ -269,9 +258,7 @@ export type VariantResolverResult<
 export interface VariantResolver<T extends VariantSchema, S extends SlotSchema = SlotSchema> {
   config: VariantConfig<T> | SlotVariantConfig<T, S>;
 
-  (
-    props?: VariantSelection<T>,
-  ): S extends Record<string, never> ? string | undefined : VariantResolverResult<T, S>;
+  (props?: VariantSelection<T>): S extends Record<string, never> ? string | undefined : VariantResolverResult<T, S>;
 }
 
 /**
@@ -330,10 +317,7 @@ export interface TailwindVariantsApi {
  *
  * @since 0.3.16-canary.0
  */
-export type MergedVariantSchema<
-  TBase extends VariantSchema,
-  TExtension extends VariantSchema,
-> = TBase & TExtension;
+export type MergedVariantSchema<TBase extends VariantSchema, TExtension extends VariantSchema> = TBase & TExtension;
 
 /**
  * Type for merged slot configuration schemas.
@@ -343,8 +327,7 @@ export type MergedVariantSchema<
  *
  * @since 0.3.16-canary.0
  */
-export type MergedSlotSchema<SBase extends SlotSchema, SExtension extends SlotSchema> = SBase &
-  SExtension;
+export type MergedSlotSchema<SBase extends SlotSchema, SExtension extends SlotSchema> = SBase & SExtension;
 
 /**
  * Configuration interface for extending existing variant resolvers.

@@ -33,10 +33,7 @@ export function createMirrorCommand(): Command {
         const globalsOptionCarrier =
           (command.optsWithGlobals?.() as Record<string, unknown> | undefined) ??
           (command.opts() as Record<string, unknown>);
-        const globalOptionsOutcome = parseWithSchema(
-          globalCliCommanderOptionsSchema,
-          globalsOptionCarrier,
-        );
+        const globalOptionsOutcome = parseWithSchema(globalCliCommanderOptionsSchema, globalsOptionCarrier);
         if (!consumeCliAppError(globalOptionsOutcome)) {
           return;
         }
@@ -80,13 +77,7 @@ export function createMirrorCommand(): Command {
           return;
         }
         if (json) {
-          logger.out(
-            formatMirrorSyncJsonOutput(
-              outcome.value,
-              (performance.now() - startTime) / 1000,
-              write,
-            ),
-          );
+          logger.out(formatMirrorSyncJsonOutput(outcome.value, (performance.now() - startTime) / 1000, write));
         }
         process.exitCode = exitCodeForMirrorSyncResult(outcome.value);
       },

@@ -12,11 +12,7 @@ export function RadioCardsPayment() {
   const [method, setMethod] = useState("card");
 
   return (
-    <RadioCards
-      className="grid w-full max-w-sm grid-cols-3 gap-2"
-      value={method}
-      onValueChange={setMethod}
-    >
+    <RadioCards className="grid w-full max-w-sm grid-cols-3 gap-2" value={method} onValueChange={setMethod}>
       {METHODS.map(({ value, label, icon: Icon }) => (
         <RadioCardsItem key={value} value={value}>
           <div className="flex flex-col items-center gap-1.5">

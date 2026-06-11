@@ -65,10 +65,7 @@ export const radioDoc: ComponentDoc = {
     ],
   },
   guidelines: {
-    do: [
-      "Use Radio Group for most cases; reach for Radio for bespoke layouts.",
-      "Always provide labels.",
-    ],
+    do: ["Use Radio Group for most cases; reach for Radio for bespoke layouts.", "Always provide labels."],
     dont: ["Don’t use radios for multi-select.", "Don’t forget the shared name attribute."],
   },
   related: ["radio-group", "radio-cards", "checkbox"],

@@ -17,13 +17,7 @@ type AccordionProps = ComponentProps<typeof AccordionPrimitive.Root>;
  * @since 0.3.16-canary.0
  */
 function Accordion({ className, ...props }: AccordionProps): JSX.Element {
-  return (
-    <AccordionPrimitive.Root
-      className={cn("flex w-full flex-col", className)}
-      data-slot="accordion"
-      {...props}
-    />
-  );
+  return <AccordionPrimitive.Root className={cn("flex w-full flex-col", className)} data-slot="accordion" {...props} />;
 }
 
 /* -----------------------------------------------------------------------------
@@ -40,11 +34,7 @@ type AccordionItemProps = ComponentProps<typeof AccordionPrimitive.Item>;
  */
 function AccordionItem({ className, ...props }: AccordionItemProps): JSX.Element {
   return (
-    <AccordionPrimitive.Item
-      className={cn("not-last:border-b", className)}
-      data-slot="accordion-item"
-      {...props}
-    />
+    <AccordionPrimitive.Item className={cn("not-last:border-b", className)} data-slot="accordion-item" {...props} />
   );
 }
 

@@ -57,9 +57,7 @@ export function OnThisPage({ items }: OnThisPageProps) {
 
   return (
     <nav aria-label="On this page" className="text-sm">
-      <p className="mb-3 text-xs font-semibold tracking-widest text-ui-muted uppercase">
-        On this page
-      </p>
+      <p className="mb-3 text-xs font-semibold tracking-widest text-ui-muted uppercase">On this page</p>
       <ul className="space-y-2 border-l border-ui-border">
         {items.map((item) => {
           const isActive = active === item.id;

@@ -9,8 +9,7 @@ import type { EmbeddedViewerPayload } from "#/types";
 
 Chart.register(...registerables, zoomPlugin);
 
-const payload = (window as Window & { __BENCH_PAYLOAD__?: EmbeddedViewerPayload })
-  .__BENCH_PAYLOAD__;
+const payload = (window as Window & { __BENCH_PAYLOAD__?: EmbeddedViewerPayload }).__BENCH_PAYLOAD__;
 
 hydrateRoot(
   document.getElementById("root")!,

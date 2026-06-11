@@ -3,21 +3,13 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { resolveDisplayName } from "@codefast/benchmark-harness/shared/config";
-import {
-  BENCH_PORT_ENV_KEY,
-  BENCH_RESULTS_DIR_NAME,
-} from "@codefast/benchmark-harness/shared/env-keys";
+import { BENCH_PORT_ENV_KEY, BENCH_RESULTS_DIR_NAME } from "@codefast/benchmark-harness/shared/env-keys";
 import { startBenchServer } from "@codefast/benchmark-viewer/server";
 
 import { CODEFAST_TV, CVA, SERVE_TITLE, TAILWIND_VARIANTS } from "#/harness/config";
 
 await startBenchServer({
-  benchResultsDir: join(
-    dirname(fileURLToPath(import.meta.url)),
-    "..",
-    "..",
-    BENCH_RESULTS_DIR_NAME,
-  ),
+  benchResultsDir: join(dirname(fileURLToPath(import.meta.url)), "..", "..", BENCH_RESULTS_DIR_NAME),
   preferredPort: Number(process.env[BENCH_PORT_ENV_KEY] ?? 3002),
   title: SERVE_TITLE,
   libraries: [

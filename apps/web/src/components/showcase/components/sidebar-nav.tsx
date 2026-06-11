@@ -9,17 +9,11 @@ import type { ComponentMeta } from "#/data/components";
  *  links out to the detail page for docs-only components. */
 function SidebarLink({ component, isActive }: { component: ComponentMeta; isActive: boolean }) {
   const className = `block truncate rounded-md px-2 py-1 text-xs no-underline transition-colors ${
-    isActive
-      ? "bg-ui-surface font-medium text-ui-fg"
-      : "text-ui-muted hover:bg-ui-surface hover:text-ui-fg"
+    isActive ? "bg-ui-surface font-medium text-ui-fg" : "text-ui-muted hover:bg-ui-surface hover:text-ui-fg"
   }`;
 
   return (
-    <a
-      href={`#${component.slug}`}
-      aria-current={isActive ? "location" : undefined}
-      className={className}
-    >
+    <a href={`#${component.slug}`} aria-current={isActive ? "location" : undefined} className={className}>
       {component.name}
     </a>
   );
@@ -68,11 +62,7 @@ export function SidebarNav({
     <aside className="hidden lg:block">
       <div className="sticky top-20 flex max-h-[calc(100vh-6rem)] flex-col gap-4">
         <ViewToggle value={mode} onChange={onModeChange} />
-        <nav
-          ref={navRef}
-          aria-label="Components"
-          className="-mr-2 min-h-0 flex-1 space-y-5 overflow-y-auto pr-2 pb-4"
-        >
+        <nav ref={navRef} aria-label="Components" className="-mr-2 min-h-0 flex-1 space-y-5 overflow-y-auto pr-2 pb-4">
           {groups.map((group) => {
             const isActive = activeSection === group.id;
 

@@ -90,9 +90,7 @@ export interface SubprocessPayload {
  * @since 0.3.16-canary.0
  */
 export function emitSubprocessPayload(payload: SubprocessPayload): void {
-  process.stdout.write(
-    `\n${BENCH_RESULT_JSON_START}\n${JSON.stringify(payload)}\n${BENCH_RESULT_JSON_END}\n`,
-  );
+  process.stdout.write(`\n${BENCH_RESULT_JSON_START}\n${JSON.stringify(payload)}\n${BENCH_RESULT_JSON_END}\n`);
 }
 
 function isSubprocessPayload(value: unknown): value is SubprocessPayload {

@@ -20,10 +20,7 @@ type NativeSelectProps = Omit<ComponentProps<"select">, "size"> & {
 function NativeSelect({ className, size = "default", ...props }: NativeSelectProps): JSX.Element {
   return (
     <div
-      className={cn(
-        "group/native-select relative w-fit has-[select:disabled]:opacity-50",
-        className,
-      )}
+      className={cn("group/native-select relative w-fit has-[select:disabled]:opacity-50", className)}
       data-size={size}
       data-slot="native-select-wrapper"
     >
@@ -56,11 +53,7 @@ type NativeSelectOptionProps = ComponentProps<"option">;
  */
 function NativeSelectOption({ className, ...props }: NativeSelectOptionProps): JSX.Element {
   return (
-    <option
-      className={cn("bg-[Canvas] text-[CanvasText]", className)}
-      data-slot="native-select-option"
-      {...props}
-    />
+    <option className={cn("bg-[Canvas] text-[CanvasText]", className)} data-slot="native-select-option" {...props} />
   );
 }
 

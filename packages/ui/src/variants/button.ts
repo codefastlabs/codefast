@@ -25,8 +25,7 @@ const buttonVariants = tv({
       icon: "size-9", // 36px
       "icon-xs":
         "size-6 rounded-[min(var(--radius-md),8px)] in-data-[slot=button-group]:rounded-md [&_svg:not([class*='size-'])]:size-3", // 24px
-      "icon-sm":
-        "size-8 rounded-[min(var(--radius-md),10px)] in-data-[slot=button-group]:rounded-md", // 32px
+      "icon-sm": "size-8 rounded-[min(var(--radius-md),10px)] in-data-[slot=button-group]:rounded-md", // 32px
       "icon-lg": "size-10", // 40px
     },
     variant: {

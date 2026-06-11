@@ -1,13 +1,5 @@
 import { Chart, type ChartDataset } from "chart.js";
-import {
-  type ComponentProps,
-  type RefObject,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { type ComponentProps, type RefObject, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { ChevronDownIcon } from "#/app/components/icons";
 import {
@@ -51,13 +43,7 @@ function ChartTh({ className, ...props }: ComponentProps<"th">) {
 
 function ChartTd({ className, ...props }: ComponentProps<"td">) {
   return (
-    <td
-      className={cn(
-        "border-b-bh-table-line border-b px-[0.65rem] py-[0.15rem] text-left",
-        className,
-      )}
-      {...props}
-    />
+    <td className={cn("border-b-bh-table-line border-b px-[0.65rem] py-[0.15rem] text-left", className)} {...props} />
   );
 }
 
@@ -133,17 +119,13 @@ export function ChartPanel({
   const initialCategoryViewRef = useRef<{ max: number; min: number } | null>(null);
   const syncToolbarRef = useRef<(() => void) | undefined>(undefined);
 
-  const [toolbarDisabled, setToolbarDisabled] =
-    useState<ChartToolbarDisabled>(ALL_TOOLBAR_DISABLED);
+  const [toolbarDisabled, setToolbarDisabled] = useState<ChartToolbarDisabled>(ALL_TOOLBAR_DISABLED);
 
   const primaryLib = useMemo(
     () => orderedLibraries.find((lib) => lib.isPrimary) ?? orderedLibraries[0],
     [orderedLibraries],
   );
-  const compareLibs = useMemo(
-    () => orderedLibraries.filter((lib) => !lib.isPrimary),
-    [orderedLibraries],
-  );
+  const compareLibs = useMemo(() => orderedLibraries.filter((lib) => !lib.isPrimary), [orderedLibraries]);
 
   const hasData = scenario !== null && runIndices.length > 0;
   const emptyReason = getEmptyReason(scenario, runIndices, runs);
@@ -248,9 +230,7 @@ export function ChartPanel({
         if (!primData || !cmpData) {
           return;
         }
-        const ratioData = runIndices.map((globalIx) =>
-          ratioFrom(primData.hz[globalIx], cmpData.hz[globalIx]),
-        );
+        const ratioData = runIndices.map((globalIx) => ratioFrom(primData.hz[globalIx], cmpData.hz[globalIx]));
         datasets.push({
           label: `${primaryLib.displayName} ÷ ${cmpLib.displayName}`,
           data: ratioData,
@@ -369,15 +349,12 @@ export function ChartPanel({
                 if (ctx.dataset.yAxisID === "y1") {
                   return `${datasetLabel}: ${Number(rawHz).toFixed(3)}×`;
                 }
-                const matchedLib = orderedLibraries.find((lib) =>
-                  datasetLabel.startsWith(lib.displayName),
-                );
+                const matchedLib = orderedLibraries.find((lib) => datasetLabel.startsWith(lib.displayName));
                 let extra = "";
                 if (matchedLib) {
                   const libData = scenario.libraries[matchedLib.key];
                   const globalIx = runIndices[ctx.dataIndex];
-                  const iqrFraction =
-                    globalIx !== undefined ? libData?.iqrFraction[globalIx] : null;
+                  const iqrFraction = globalIx !== undefined ? libData?.iqrFraction[globalIx] : null;
                   if (typeof iqrFraction === "number" && Number.isFinite(iqrFraction)) {
                     extra = ` · IQR ${(iqrFraction * 100).toFixed(1)}%${spreadTierLabel(iqrFraction)}`;
                   }
@@ -479,10 +456,7 @@ export function ChartPanel({
     return () => mql.removeEventListener("change", onChange);
   }, []);
 
-  function applyChartAction(
-    disabledKey: keyof ChartToolbarDisabled,
-    chartAction: (chart: Chart) => void,
-  ) {
+  function applyChartAction(disabledKey: keyof ChartToolbarDisabled, chartAction: (chart: Chart) => void) {
     const chart = chartRef.current;
     if (!chart || toolbarDisabled[disabledKey]) {
       return;
@@ -520,10 +494,7 @@ export function ChartPanel({
     >
       <div className="flex flex-wrap items-start justify-between gap-3 border-b border-white/6 pb-4">
         <div>
-          <h2
-            className="text-[0.9375rem] font-semibold tracking-[-0.01em] text-zinc-50"
-            id="chart-section-title"
-          >
+          <h2 className="text-[0.9375rem] font-semibold tracking-[-0.01em] text-zinc-50" id="chart-section-title">
             Throughput over filtered runs
           </h2>
           <p className="mt-1.5 text-[0.8125rem] leading-snug text-zinc-500">
@@ -576,8 +547,8 @@ export function ChartPanel({
       </div>
 
       <p className="text-[0.8125rem] leading-relaxed text-zinc-500">
-        Opens on newest portion of history; Reset zoom restores full range. <WheelHint /> Drag pans
-        on the chart · legend toggles series.
+        Opens on newest portion of history; Reset zoom restores full range. <WheelHint /> Drag pans on the chart ·
+        legend toggles series.
       </p>
 
       <section
@@ -629,10 +600,7 @@ export function ChartPanel({
       </section>
 
       {/* Display toggles — `group` enables group-open: chevron rotation */}
-      <details
-        className="group mt-1 border-t border-white/6 sm:mt-0 sm:border-t-0"
-        ref={displayDetailsRef}
-      >
+      <details className="group mt-1 border-t border-white/6 sm:mt-0 sm:border-t-0" ref={displayDetailsRef}>
         <summary className="focus-visible:outline-bh-blue flex cursor-pointer list-none items-center justify-between gap-3 rounded-xl py-2.5 pr-0.5 text-zinc-200 select-none marker:content-[''] focus-visible:outline focus-visible:outline-offset-2 max-sm:-mx-0.5 max-sm:px-1 max-sm:active:bg-white/4 sm:hidden [&::-webkit-details-marker]:hidden">
           <span className="text-bh-label text-[0.65rem] font-semibold tracking-[0.14em] uppercase">
             Display &amp; export
@@ -640,9 +608,7 @@ export function ChartPanel({
           <ChevronDownIcon className="size-4 shrink-0 text-zinc-500 transition-transform duration-200 ease-out group-open:rotate-180 sm:hidden" />
         </summary>
         <div className="flex flex-col gap-3 text-[0.9rem] text-zinc-300 max-sm:gap-0 max-sm:divide-y max-sm:divide-white/6 max-sm:overflow-hidden max-sm:rounded-xl max-sm:bg-black/22 max-sm:py-0 max-sm:ring-1 max-sm:ring-white/6 sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-5 sm:gap-y-2 sm:divide-y-0 sm:pt-4">
-          <span className="text-bh-label-muted hidden text-[0.62rem] tracking-[0.12em] sm:inline">
-            Display
-          </span>
+          <span className="text-bh-label-muted hidden text-[0.62rem] tracking-[0.12em] sm:inline">Display</span>
           <label className="inline-flex cursor-pointer items-center gap-2.5 rounded-lg py-0.5 hover:text-zinc-100 max-sm:min-h-11 max-sm:justify-between max-sm:gap-3 max-sm:border-0 max-sm:px-3 max-sm:py-2.5">
             <input
               aria-label="P25–P75 band"
@@ -697,8 +663,7 @@ export function ChartPanel({
           Tabular data for the current chart (accessibility)
         </summary>
         <p className="mt-2 text-xs leading-relaxed text-zinc-500">
-          Same points and libraries as the line chart above; newest run first. Useful for screen
-          readers and copy‑paste.
+          Same points and libraries as the line chart above; newest run first. Useful for screen readers and copy‑paste.
         </p>
         <div className="border-bh-border bg-bh-scrim-table mt-3 overflow-x-auto rounded-xl border [-webkit-overflow-scrolling:touch]">
           <table aria-label="Chart series data" className="w-full border-collapse text-[0.8rem]">
@@ -738,13 +703,9 @@ function WheelHint() {
   return (
     <span suppressHydrationWarning>
       {isMacLikePlatform() ? (
-        <kbd className="rounded border border-zinc-700 bg-zinc-800 px-1.5 py-px font-mono text-zinc-300">
-          ⌃ Control
-        </kbd>
+        <kbd className="rounded border border-zinc-700 bg-zinc-800 px-1.5 py-px font-mono text-zinc-300">⌃ Control</kbd>
       ) : (
-        <kbd className="rounded border border-zinc-700 bg-zinc-800 px-1.5 py-px font-mono text-zinc-300">
-          Ctrl
-        </kbd>
+        <kbd className="rounded border border-zinc-700 bg-zinc-800 px-1.5 py-px font-mono text-zinc-300">Ctrl</kbd>
       )}
       +wheel zooms ·
     </span>
@@ -801,14 +762,7 @@ interface ChartTableRowProps {
   compareLibs: Array<EmbeddedLibraryMeta>;
 }
 
-function ChartTableRow({
-  globalIx,
-  run,
-  scenario,
-  orderedLibraries,
-  primaryLib,
-  compareLibs,
-}: ChartTableRowProps) {
+function ChartTableRow({ globalIx, run, scenario, orderedLibraries, primaryLib, compareLibs }: ChartTableRowProps) {
   const localClock = formatLocal(run.timestampIso, run.folder);
 
   const libHzMap: Record<string, number | null> = {};

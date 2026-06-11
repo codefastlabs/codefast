@@ -60,11 +60,7 @@ export function spreadTierLabel(fraction: number | null | undefined): string {
  * @since 0.3.16-canary.1
  */
 export function escHtml(text: string): string {
-  return String(text)
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;");
+  return String(text).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 }
 
 /**

@@ -69,17 +69,11 @@ export class Inspector {
     return bindings.map((binding) => this._toSnapshot(binding));
   }
 
-  has(
-    token: Token<unknown> | Constructor,
-    hint?: ResolveOptions,
-    parentHas?: () => boolean,
-  ): boolean {
+  has(token: Token<unknown> | Constructor, hint?: ResolveOptions, parentHas?: () => boolean): boolean {
     const bindings = this._registry.getAll(token);
     if (bindings.length > 0) {
       if (hint !== undefined) {
-        if (
-          selectBinding(bindings, hint, this._makeHintContext(hint), tokenName(token)) !== undefined
-        ) {
+        if (selectBinding(bindings, hint, this._makeHintContext(hint), tokenName(token)) !== undefined) {
           return true;
         }
       } else {
@@ -95,9 +89,7 @@ export class Inspector {
       return false;
     }
     if (hint !== undefined) {
-      return (
-        selectBinding(bindings, hint, this._makeHintContext(hint), tokenName(token)) !== undefined
-      );
+      return selectBinding(bindings, hint, this._makeHintContext(hint), tokenName(token)) !== undefined;
     }
     return true;
   }

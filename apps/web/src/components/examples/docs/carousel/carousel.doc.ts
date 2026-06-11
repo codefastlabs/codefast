@@ -9,8 +9,7 @@ export const carouselDoc: ComponentDoc = {
     {
       id: "gallery",
       title: "With dots & counter",
-      description:
-        "Track the active slide via setApi — drive clickable dots and a live “X of N” counter.",
+      description: "Track the active slide via setApi — drive clickable dots and a live “X of N” counter.",
       Demo: CarouselGallery,
       code: docSource("carousel", "gallery"),
     },

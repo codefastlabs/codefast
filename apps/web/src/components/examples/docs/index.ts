@@ -35,9 +35,9 @@ function slugFromDocPath(path: string): string {
 
 export const COMPONENT_DOCS: Record<string, ComponentDoc> = Object.fromEntries(
   Object.entries(docModules).map(([path, module]) => {
-    const doc = Object.values(module).find(
-      (value) => value !== null && typeof value === "object",
-    ) as ComponentDoc | undefined;
+    const doc = Object.values(module).find((value) => value !== null && typeof value === "object") as
+      | ComponentDoc
+      | undefined;
 
     if (!doc) {
       throw new Error(`Doc file ${path} must export exactly one ComponentDoc.`);

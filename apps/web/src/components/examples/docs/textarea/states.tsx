@@ -10,13 +10,7 @@ export function TextareaStates() {
       </div>
       <div className="grid gap-1.5">
         <Label htmlFor="textarea-invalid">Invalid</Label>
-        <Textarea
-          id="textarea-invalid"
-          aria-invalid
-          defaultValue="Too short"
-          rows={2}
-          className="resize-none"
-        />
+        <Textarea id="textarea-invalid" aria-invalid defaultValue="Too short" rows={2} className="resize-none" />
         <p className="text-xs text-rose-500">Please enter at least 20 characters.</p>
       </div>
     </div>

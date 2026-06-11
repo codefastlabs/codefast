@@ -1,11 +1,5 @@
 import { Card, CardContent } from "@codefast/ui/card";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@codefast/ui/carousel";
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@codefast/ui/carousel";
 
 export function CarouselMultiple() {
   return (

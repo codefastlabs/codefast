@@ -63,14 +63,8 @@ export const tableDoc: ComponentDoc = {
     ],
   },
   guidelines: {
-    do: [
-      "Use for genuinely tabular data with shared columns.",
-      "Right-align numeric columns and use tabular figures.",
-    ],
-    dont: [
-      "Don’t use a table purely for layout.",
-      "Don’t drop the header row — it names the columns.",
-    ],
+    do: ["Use for genuinely tabular data with shared columns.", "Right-align numeric columns and use tabular figures."],
+    dont: ["Don’t use a table purely for layout.", "Don’t drop the header row — it names the columns."],
   },
   related: ["item", "card", "pagination"],
 };

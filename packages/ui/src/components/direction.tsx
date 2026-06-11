@@ -10,9 +10,7 @@ type DirectionProviderProps = ComponentProps<typeof Direction.DirectionProvider>
 };
 
 function DirectionProvider({ dir, direction, children }: DirectionProviderProps) {
-  return (
-    <Direction.DirectionProvider dir={direction ?? dir}>{children}</Direction.DirectionProvider>
-  );
+  return <Direction.DirectionProvider dir={direction ?? dir}>{children}</Direction.DirectionProvider>;
 }
 
 const useDirection = Direction.useDirection;

@@ -12,11 +12,7 @@ export function CheckboxCardsFeatures() {
 
   return (
     <div className="w-full max-w-xs space-y-3">
-      <CheckboxCards
-        className="grid gap-2"
-        value={selected}
-        onValueChange={(value) => setSelected(value ?? [])}
-      >
+      <CheckboxCards className="grid gap-2" value={selected} onValueChange={(value) => setSelected(value ?? [])}>
         {FEATURES.map(({ value, label, description }) => (
           <CheckboxCardsItem key={value} value={value}>
             <div className="flex flex-col gap-0.5 text-left">

@@ -9,8 +9,7 @@ export const spinnerDoc: ComponentDoc = {
     {
       id: "sizes",
       title: "Sizes",
-      description:
-        "Size and colour the spinner with className — it inherits the current text colour.",
+      description: "Size and colour the spinner with className — it inherits the current text colour.",
       Demo: SpinnerSizes,
       code: docSource("spinner", "sizes"),
     },
@@ -62,10 +61,7 @@ export const spinnerDoc: ComponentDoc = {
     ],
   },
   guidelines: {
-    do: [
-      "Use for short, indeterminate waits.",
-      "Pair with disabled controls while an action is in flight.",
-    ],
+    do: ["Use for short, indeterminate waits.", "Pair with disabled controls while an action is in flight."],
     dont: [
       "Don’t use a spinner for long, measurable tasks — use Progress.",
       "Don’t show a bare spinner with no context about what’s loading.",

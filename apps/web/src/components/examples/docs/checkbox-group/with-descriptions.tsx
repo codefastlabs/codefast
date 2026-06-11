@@ -12,11 +12,7 @@ export function CheckboxGroupWithDescriptions() {
   const [value, setValue] = useState<Array<string>>(["mentions"]);
 
   return (
-    <CheckboxGroup
-      className="w-full max-w-xs gap-4"
-      value={value}
-      onValueChange={(next) => setValue(next ?? [])}
-    >
+    <CheckboxGroup className="w-full max-w-xs gap-4" value={value} onValueChange={(next) => setValue(next ?? [])}>
       {NOTIFICATIONS.map((item) => (
         <div key={item.value} className="flex items-start gap-3">
           <CheckboxGroupItem id={`notify-${item.value}`} value={item.value} className="mt-0.5" />

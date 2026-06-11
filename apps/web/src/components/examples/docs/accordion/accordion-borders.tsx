@@ -1,9 +1,4 @@
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@codefast/ui/accordion";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@codefast/ui/accordion";
 
 const items = [
   {
@@ -28,18 +23,9 @@ const items = [
 
 export function AccordionBorders() {
   return (
-    <Accordion
-      type="single"
-      collapsible
-      defaultValue="billing"
-      className="max-w-lg rounded-lg border"
-    >
+    <Accordion type="single" collapsible defaultValue="billing" className="max-w-lg rounded-lg border">
       {items.map((item) => (
-        <AccordionItem
-          key={item.value}
-          value={item.value}
-          className="border-b px-4 last:border-b-0"
-        >
+        <AccordionItem key={item.value} value={item.value} className="border-b px-4 last:border-b-0">
           <AccordionTrigger>{item.trigger}</AccordionTrigger>
           <AccordionContent>{item.content}</AccordionContent>
         </AccordionItem>

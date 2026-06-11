@@ -50,8 +50,7 @@ export const progressDoc: ComponentDoc = {
         {
           name: "className",
           type: "string",
-          description:
-            "Style the indicator via **:data-[slot=progress-indicator] to change its colour.",
+          description: "Style the indicator via **:data-[slot=progress-indicator] to change its colour.",
         },
       ],
     },

@@ -8,9 +8,7 @@ export function GroupSection({ group, hl }: { group: ComponentGroup; hl: Highlig
     <section id={group.id} className="mb-16 scroll-mt-28">
       <div className="mb-6 flex flex-col gap-2 border-b border-ui-border pb-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h2 className="text-2xl leading-none font-bold tracking-tighter text-ui-fg">
-            {group.label}
-          </h2>
+          <h2 className="text-2xl leading-none font-bold tracking-tighter text-ui-fg">{group.label}</h2>
           {group.description ? (
             <p className="mt-1.5 max-w-xl text-sm leading-6 text-ui-muted">{group.description}</p>
           ) : null}
@@ -21,11 +19,7 @@ export function GroupSection({ group, hl }: { group: ComponentGroup; hl: Highlig
       </div>
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
         {group.items.map((component) => (
-          <ComponentCard
-            key={component.slug}
-            component={component}
-            highlighted={hl[component.slug] ?? ""}
-          />
+          <ComponentCard key={component.slug} component={component} highlighted={hl[component.slug] ?? ""} />
         ))}
       </div>
     </section>
