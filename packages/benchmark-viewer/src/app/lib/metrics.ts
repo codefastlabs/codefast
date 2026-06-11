@@ -11,7 +11,7 @@ export function medianNumeric(values: Array<number | null | undefined>): number 
     .filter(
       (value): value is number => typeof value === "number" && Number.isFinite(value) && value > 0,
     )
-    .sort((left, right) => left - right);
+    .toSorted((left, right) => left - right);
   if (sorted.length === 0) {
     return null;
   }

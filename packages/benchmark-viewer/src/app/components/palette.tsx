@@ -1,6 +1,7 @@
+import { tv } from "@codefast/tailwind-variants";
 import type { KeyboardEvent as ReactKeyboardEvent, RefObject } from "react";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { tv } from "@codefast/tailwind-variants";
+
 import { isMacLikePlatform } from "#/app/lib/format";
 import { cn } from "#/app/lib/utils";
 
@@ -152,7 +153,7 @@ export function CommandPalette({
 
   const activeOptionId =
     highlightedIndex >= 0 && filtered[highlightedIndex]
-      ? `command-palette-opt-${filtered[highlightedIndex]!.id}`
+      ? `command-palette-opt-${filtered[highlightedIndex].id}`
       : undefined;
 
   return (

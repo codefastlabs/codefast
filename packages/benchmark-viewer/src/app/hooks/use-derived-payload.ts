@@ -1,4 +1,5 @@
 import { useEffect, useMemo } from "react";
+
 import { type PaletteEntry, PALETTE } from "#/app/lib/colors";
 import { searchNorm } from "#/app/lib/format";
 import { type ViewState } from "#/app/lib/hash";
@@ -129,7 +130,7 @@ export function useDerivedPayload({
     if (!payload) {
       return [];
     }
-    return [...new Set(payload.runs.map((run) => run.envKey))].sort((left, right) =>
+    return [...new Set(payload.runs.map((run) => run.envKey))].toSorted((left, right) =>
       left.localeCompare(right),
     );
   }, [payload]);
@@ -151,7 +152,7 @@ export function useDerivedPayload({
     if (!payload) {
       return [];
     }
-    return [...new Set(payload.scenarios.map((scenario) => scenario.group))].sort((a, b) =>
+    return [...new Set(payload.scenarios.map((scenario) => scenario.group))].toSorted((a, b) =>
       a.localeCompare(b),
     );
   }, [payload]);

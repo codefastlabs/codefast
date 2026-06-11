@@ -1,3 +1,4 @@
+import { Chart, type ChartDataset } from "chart.js";
 import {
   type ComponentProps,
   type RefObject,
@@ -7,10 +8,8 @@ import {
   useRef,
   useState,
 } from "react";
-import { Chart, type ChartDataset } from "chart.js";
+
 import { ChevronDownIcon } from "#/app/components/icons";
-import type { EmbeddedLibraryMeta, EmbeddedRun, EmbeddedScenarioSeries } from "#/types";
-import { type PaletteEntry, PAN_PIXELS_X, RATIO_COLORS, ZOOM_STEP_X } from "#/app/lib/colors";
 import {
   ALL_TOOLBAR_DISABLED,
   categoryXScaleWindow,
@@ -18,10 +17,12 @@ import {
   computeChartToolbarDisabled,
   computeInitialCategoryWindow,
 } from "#/app/lib/chart-view";
+import { type PaletteEntry, PAN_PIXELS_X, RATIO_COLORS, ZOOM_STEP_X } from "#/app/lib/colors";
 import { formatLocal, isMacLikePlatform, spreadTierLabel } from "#/app/lib/format";
-import { cn } from "#/app/lib/utils";
 import { ratioFrom } from "#/app/lib/metrics";
 import { CHART_SKIP_TARGET_ID } from "#/app/lib/skip-chart";
+import { cn } from "#/app/lib/utils";
+import type { EmbeddedLibraryMeta, EmbeddedRun, EmbeddedScenarioSeries } from "#/types";
 
 function SegButton({ className, ...props }: ComponentProps<"button">) {
   return (
@@ -279,7 +280,7 @@ export function ChartPanel({
           color: "rgba(235, 235, 245, 0.42)",
         },
         grid: { color: "rgba(255, 255, 255, 0.055)", drawOnChartArea: true },
-        ...(xWindow ?? {}),
+        ...xWindow,
       },
       y: {
         type: useLogScale ? "logarithmic" : "linear",
@@ -390,7 +391,7 @@ export function ChartPanel({
               enabled: true,
               mode: "x",
               onPanComplete: ({ chart: panChart }) => {
-                chartRef.current = panChart as Chart;
+                chartRef.current = panChart;
                 queueMicrotask(() => syncToolbarRef.current?.());
               },
             },
@@ -400,7 +401,7 @@ export function ChartPanel({
               mode: "x",
               drag: { enabled: false },
               onZoomComplete: ({ chart: zoomChart }) => {
-                chartRef.current = zoomChart as Chart;
+                chartRef.current = zoomChart;
                 queueMicrotask(() => syncToolbarRef.current?.());
               },
             },
@@ -710,7 +711,7 @@ export function ChartPanel({
               {hasData &&
                 runIndices
                   .slice()
-                  .reverse()
+                  .toReversed()
                   .map((globalIx) => {
                     const run = runs[globalIx];
                     return run ? (
