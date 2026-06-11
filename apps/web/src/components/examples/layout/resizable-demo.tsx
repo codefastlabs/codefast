@@ -1,3 +1,4 @@
+import { cn } from "@codefast/ui/lib/utils";
 import { ResizableGroup, ResizablePanel, ResizableSeparator } from "@codefast/ui/resizable";
 import { FileIcon, FolderOpenIcon } from "lucide-react";
 
@@ -22,9 +23,10 @@ export function ResizableDemo() {
             {FILES.map(({ name, active }) => (
               <div
                 key={name}
-                className={`flex items-center gap-1.5 rounded px-2 py-1 text-xs ${
-                  active ? "bg-ui-card font-medium text-ui-fg" : "text-ui-muted"
-                }`}
+                className={cn(
+                  "flex items-center gap-1.5 rounded px-2 py-1 text-xs",
+                  active ? "bg-ui-card font-medium text-ui-fg" : "text-ui-muted",
+                )}
               >
                 <FileIcon className="size-3.5 shrink-0" />
                 {name}

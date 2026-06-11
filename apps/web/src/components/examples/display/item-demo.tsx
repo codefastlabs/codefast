@@ -11,6 +11,7 @@ import {
   ItemSeparator,
   ItemTitle,
 } from "@codefast/ui/item";
+import { cn } from "@codefast/ui/lib/utils";
 import { MoreHorizontalIcon } from "lucide-react";
 import { Fragment } from "react";
 
@@ -53,7 +54,7 @@ export function ItemDemo() {
           <Item>
             <ItemMedia>
               <Avatar>
-                <AvatarFallback className={`${color} text-white`}>{initials}</AvatarFallback>
+                <AvatarFallback className={cn("text-white", color)}>{initials}</AvatarFallback>
               </Avatar>
             </ItemMedia>
             <ItemContent>
