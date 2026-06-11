@@ -1,12 +1,10 @@
-import type { ButtonGroupVariants } from "#/variants/button-group";
+import { Slot } from "radix-ui";
 import type { ComponentProps, JSX } from "react";
 
-import { cn } from "#/lib/utils";
-
-import { buttonGroupVariants } from "#/variants/button-group";
-import { Slot } from "radix-ui";
-
 import { Separator } from "#/components/separator";
+import { cn } from "#/lib/utils";
+import type { ButtonGroupVariants } from "#/variants/button-group";
+import { buttonGroupVariants } from "#/variants/button-group";
 
 /* -----------------------------------------------------------------------------
  * Component: ButtonGroup

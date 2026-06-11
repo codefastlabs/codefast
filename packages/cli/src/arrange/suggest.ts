@@ -1,7 +1,7 @@
 import type { ArrangeSuggestGroupsRequest } from "#/arrange/cli-schema";
-import type { ArrangeSuggestGroupsOutput } from "#/arrange/domain/types";
-import { formatArray, formatCnCall } from "#/arrange/domain/source-text-formatters";
 import { suggestCnGroups, summarizeGroupBucketLabels } from "#/arrange/domain/grouping";
+import { formatArray, formatCnCall } from "#/arrange/domain/source-text-formatters";
+import type { ArrangeSuggestGroupsOutput } from "#/arrange/domain/types";
 
 /**
  * @since 0.3.16-canary.0

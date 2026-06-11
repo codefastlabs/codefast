@@ -1,13 +1,12 @@
 import type { UseEmblaCarouselType } from "embla-carousel-react";
-import type { ComponentProps, JSX, KeyboardEvent } from "react";
-
-import { cn } from "#/lib/utils";
-import { Context } from "radix-ui/internal";
 import useEmblaCarousel from "embla-carousel-react";
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
+import { Context } from "radix-ui/internal";
+import type { ComponentProps, JSX, KeyboardEvent } from "react";
 import { useCallback, useEffect, useState } from "react";
 
 import { Button } from "#/components/button";
+import { cn } from "#/lib/utils";
 
 /* -----------------------------------------------------------------------------
  * Context: Carousel

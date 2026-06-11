@@ -1,14 +1,13 @@
 import type { Label as LabelPrimitive } from "radix-ui";
-import type { ComponentProps, JSX, ReactNode } from "react";
-import type { ControllerProps, FieldError, FieldPath, FieldValues } from "react-hook-form";
-
-import { cn } from "#/lib/utils";
-import { Context } from "radix-ui/internal";
 import { Slot } from "radix-ui";
+import { Context } from "radix-ui/internal";
+import type { ComponentProps, JSX, ReactNode } from "react";
 import { useId } from "react";
+import type { ControllerProps, FieldError, FieldPath, FieldValues } from "react-hook-form";
 import { Controller, FormProvider, useFormContext, useFormState } from "react-hook-form";
 
 import { Label } from "#/components/label";
+import { cn } from "#/lib/utils";
 
 /* -----------------------------------------------------------------------------
  * Component: Form

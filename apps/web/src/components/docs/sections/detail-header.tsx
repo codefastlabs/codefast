@@ -1,6 +1,3 @@
-import type { ComponentMeta } from "#/data/components";
-import { Link } from "@tanstack/react-router";
-import { ChevronRightIcon, CodeIcon, PackageIcon } from "lucide-react";
 import { Badge } from "@codefast/ui/badge";
 import {
   Breadcrumb,
@@ -11,6 +8,10 @@ import {
   BreadcrumbSeparator,
 } from "@codefast/ui/breadcrumb";
 import { Button } from "@codefast/ui/button";
+import { Link } from "@tanstack/react-router";
+import { ChevronRightIcon, CodeIcon, PackageIcon } from "lucide-react";
+
+import type { ComponentMeta } from "#/data/components";
 import { CATEGORIES, componentPath } from "#/data/components";
 
 const GITHUB_SRC = "https://github.com/codefastlabs/codefast/tree/main/packages/ui/src/components";

@@ -1,7 +1,3 @@
-import { indentOfLineContaining } from "#/core/source-text-edit";
-import { MAX_OBJECT_DEPTH } from "#/arrange/domain/constants";
-import { escapeTsStringLiteralContent } from "#/arrange/domain/source-text-formatters";
-import { buildKnownCnTvBindings, isCnOrTvIdentifier } from "#/arrange/domain/ast/helpers";
 import {
   forEachDomainChild,
   isDomainArrayLiteralExpression,
@@ -19,6 +15,10 @@ import type {
   DomainObjectLiteralExpression,
   DomainSourceFile,
 } from "#/arrange/domain/ast/ast-node";
+import { buildKnownCnTvBindings, isCnOrTvIdentifier } from "#/arrange/domain/ast/helpers";
+import { MAX_OBJECT_DEPTH } from "#/arrange/domain/constants";
+import { escapeTsStringLiteralContent } from "#/arrange/domain/source-text-formatters";
+import { indentOfLineContaining } from "#/core/source-text-edit";
 
 /**
  * @since 0.3.16-canary.0

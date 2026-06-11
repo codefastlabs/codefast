@@ -1,4 +1,3 @@
-import { useState } from "react";
 import {
   Command,
   CommandEmpty,
@@ -10,6 +9,7 @@ import {
   CommandShortcut,
 } from "@codefast/ui/command";
 import { CalendarIcon, FileIcon, SearchIcon, SettingsIcon, UserIcon } from "lucide-react";
+import { useState } from "react";
 
 export function CommandPalette() {
   const [ran, setRan] = useState<string | null>(null);

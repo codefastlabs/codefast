@@ -1,11 +1,10 @@
-import type { ComponentProps, JSX } from "react";
-
 import { Checkbox as CheckboxPrimitive } from "radix-ui";
 import { Checkbox } from "radix-ui";
-import { Context } from "radix-ui/internal";
 import { Direction } from "radix-ui";
+import { Context } from "radix-ui/internal";
 import { RovingFocus } from "radix-ui/internal";
 import { useControllableState } from "radix-ui/internal";
+import type { ComponentProps, JSX } from "react";
 import { useCallback } from "react";
 
 /* -----------------------------------------------------------------------------

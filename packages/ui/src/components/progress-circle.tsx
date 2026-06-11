@@ -1,12 +1,10 @@
-import type { ProgressCircleVariants } from "#/variants/progress-circle";
 import type { ComponentProps, CSSProperties, JSX } from "react";
-
 import { useCallback, useMemo } from "react";
-
-import { progressCircleVariants } from "#/variants/progress-circle";
 
 import { useAnimatedValue } from "#/hooks/use-animated-value";
 import * as ProgressCirclePrimitive from "#/primitives/progress-circle";
+import type { ProgressCircleVariants } from "#/variants/progress-circle";
+import { progressCircleVariants } from "#/variants/progress-circle";
 
 /* -------------------------------------------------------------------------------------------------
  * Component: ProgressCircle

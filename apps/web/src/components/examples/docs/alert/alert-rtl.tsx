@@ -1,5 +1,6 @@
 import { Alert, AlertDescription, AlertTitle } from "@codefast/ui/alert";
 import { CheckCircle2Icon, InfoIcon } from "lucide-react";
+
 import { useTranslation, type Translations } from "#/components/docs/language-selector";
 
 const translations: Translations = {

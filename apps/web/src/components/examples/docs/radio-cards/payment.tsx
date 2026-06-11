@@ -1,6 +1,6 @@
-import { useState } from "react";
 import { RadioCards, RadioCardsItem } from "@codefast/ui/radio-cards";
 import { CreditCardIcon, LandmarkIcon, WalletIcon } from "lucide-react";
+import { useState } from "react";
 
 const METHODS = [
   { value: "card", label: "Card", icon: CreditCardIcon },

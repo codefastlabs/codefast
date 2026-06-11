@@ -1,29 +1,31 @@
 import process from "node:process";
+
 import { Command } from "commander";
-import { parseWithSchema } from "#/core/schema-parse";
-import { consumeCliAppError, runCliResultAsync } from "#/core/cli/result-handle";
-import { logger } from "#/core/logger";
-import { nodeFilesystem } from "#/core/filesystem/node";
+
+import { analyzeDirectory } from "#/arrange/analyze";
 import {
   arrangeAnalyzeDirectoryRequestSchema,
   arrangeSuggestGroupsRequestSchema,
   arrangeSyncRunRequestSchema,
 } from "#/arrange/cli-schema";
-import { prepareArrangeWorkspace } from "#/arrange/workspace";
-import { analyzeDirectory } from "#/arrange/analyze";
-import { runArrangeSync } from "#/arrange/sync";
-import { runArrangeSimplify } from "#/arrange/simplify-sync";
-import { suggestCnGroupsFromCli } from "#/arrange/suggest";
+import type { AnalyzeReport, ArrangeRunResult } from "#/arrange/domain/types";
+import type { ArrangeSuggestGroupsOutput } from "#/arrange/domain/types";
 import {
   printAnalyzeReport,
   printGroupFilePreviewFromWork,
   printSimplifyResult,
   printSyncResult,
 } from "#/arrange/output";
-import type { AnalyzeReport, ArrangeRunResult } from "#/arrange/domain/types";
-import type { ArrangeSuggestGroupsOutput } from "#/arrange/domain/types";
-import { CLI_EXIT_GENERAL_ERROR, CLI_EXIT_SUCCESS } from "#/core/exit-codes";
+import { runArrangeSimplify } from "#/arrange/simplify-sync";
+import { suggestCnGroupsFromCli } from "#/arrange/suggest";
+import { runArrangeSync } from "#/arrange/sync";
+import { prepareArrangeWorkspace } from "#/arrange/workspace";
 import { readOptionalPositionalArg } from "#/core/cli/positional";
+import { consumeCliAppError, runCliResultAsync } from "#/core/cli/result-handle";
+import { CLI_EXIT_GENERAL_ERROR, CLI_EXIT_SUCCESS } from "#/core/exit-codes";
+import { nodeFilesystem } from "#/core/filesystem/node";
+import { logger } from "#/core/logger";
+import { parseWithSchema } from "#/core/schema-parse";
 
 /**
  * @since 0.3.16-canary.0

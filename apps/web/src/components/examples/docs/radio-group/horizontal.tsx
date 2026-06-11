@@ -1,6 +1,6 @@
-import { useState } from "react";
 import { Label } from "@codefast/ui/label";
 import { RadioGroup, RadioGroupItem } from "@codefast/ui/radio-group";
+import { useState } from "react";
 
 const SIZES = ["S", "M", "L", "XL"];
 

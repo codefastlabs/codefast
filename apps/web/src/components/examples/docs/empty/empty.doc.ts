@@ -1,9 +1,8 @@
-import type { ComponentDoc } from "#/components/examples/docs/types";
-import { docSource, docAnatomy } from "#/components/examples/docs/source";
-import { EmptyState } from "#/components/examples/docs/empty/state";
-
-import { EmptySearch } from "#/components/examples/docs/empty/search";
 import { EmptyMinimal } from "#/components/examples/docs/empty/minimal";
+import { EmptySearch } from "#/components/examples/docs/empty/search";
+import { EmptyState } from "#/components/examples/docs/empty/state";
+import { docSource, docAnatomy } from "#/components/examples/docs/source";
+import type { ComponentDoc } from "#/components/examples/docs/types";
 
 export const emptyDoc: ComponentDoc = {
   examples: [

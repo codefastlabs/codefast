@@ -1,9 +1,9 @@
-import type { ComponentDoc } from "#/components/examples/docs/types";
-import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { AspectRatioDemo } from "#/components/examples/docs/aspect-ratio/aspect-ratio-demo";
 import { AspectRatioPortrait } from "#/components/examples/docs/aspect-ratio/aspect-ratio-portrait";
 import { AspectRatioRtl } from "#/components/examples/docs/aspect-ratio/aspect-ratio-rtl";
 import { AspectRatioSquare } from "#/components/examples/docs/aspect-ratio/aspect-ratio-square";
+import { docSource, docAnatomy } from "#/components/examples/docs/source";
+import type { ComponentDoc } from "#/components/examples/docs/types";
 
 export const aspectRatioDoc: ComponentDoc = {
   examples: [

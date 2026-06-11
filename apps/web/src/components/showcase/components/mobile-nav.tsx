@@ -1,7 +1,8 @@
 import type { ReactNode } from "react";
-import type { ComponentGroup } from "#/data/component-groups";
-import type { ViewMode } from "#/components/showcase/types";
+
 import { ViewToggle } from "#/components/showcase/components/view-toggle";
+import type { ViewMode } from "#/components/showcase/types";
+import type { ComponentGroup } from "#/data/component-groups";
 
 /** A pill link used in the mobile jump nav, styled by active state. */
 function NavChip({

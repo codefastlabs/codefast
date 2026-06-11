@@ -1,8 +1,8 @@
+import { Slider as SliderPrimitive } from "radix-ui";
 import type { ComponentProps, JSX } from "react";
+import { useMemo } from "react";
 
 import { cn } from "#/lib/utils";
-import { Slider as SliderPrimitive } from "radix-ui";
-import { useMemo } from "react";
 
 /* -----------------------------------------------------------------------------
  * Component: Slider

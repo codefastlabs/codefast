@@ -1,21 +1,22 @@
-import type { ComponentType } from "react";
-import type { ComponentDoc } from "#/components/examples/docs/types";
-import { Link, createFileRoute, notFound } from "@tanstack/react-router";
 import { Badge } from "@codefast/ui/badge";
 import { Button } from "@codefast/ui/button";
-import { highlightMany } from "#/lib/highlighter.ts";
+import { Link, createFileRoute, notFound } from "@tanstack/react-router";
+import type { ComponentType } from "react";
+
 import { OnThisPage, type TocItem } from "#/components/docs/on-this-page";
 import { AccessibilitySection } from "#/components/docs/sections/accessibility-section";
 import { AnatomySection } from "#/components/docs/sections/anatomy-section";
 import { ApiSection } from "#/components/docs/sections/api-section";
-import { ComponentDetailHeader } from "#/components/docs/sections/detail-header";
 import { ComponentPager } from "#/components/docs/sections/component-pager";
+import { ComponentDetailHeader } from "#/components/docs/sections/detail-header";
 import { ExamplesSection } from "#/components/docs/sections/examples-section";
 import { GuidelinesSection } from "#/components/docs/sections/guidelines-section";
 import { RelatedSection } from "#/components/docs/sections/related-section";
-import { COMPONENT_DOCS } from "#/components/examples/docs";
 import { DEMOS } from "#/components/examples/demos";
+import { COMPONENT_DOCS } from "#/components/examples/docs";
+import type { ComponentDoc } from "#/components/examples/docs/types";
 import { ALL_COMPONENTS, DEMO_COMPONENTS } from "#/data/components";
+import { highlightMany } from "#/lib/highlighter.ts";
 
 const ANATOMY_KEY = "__anatomy__";
 

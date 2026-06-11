@@ -1,9 +1,8 @@
-import type { ComponentDoc } from "#/components/examples/docs/types";
-import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { ProgressCircleAnimated } from "#/components/examples/docs/progress-circle/animated";
-import { ProgressCircleValues } from "#/components/examples/docs/progress-circle/values";
-
 import { ProgressCircleDashboard } from "#/components/examples/docs/progress-circle/dashboard";
+import { ProgressCircleValues } from "#/components/examples/docs/progress-circle/values";
+import { docSource, docAnatomy } from "#/components/examples/docs/source";
+import type { ComponentDoc } from "#/components/examples/docs/types";
 
 export const progressCircleDoc: ComponentDoc = {
   examples: [

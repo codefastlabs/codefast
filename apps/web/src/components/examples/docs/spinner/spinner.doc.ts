@@ -1,9 +1,8 @@
-import type { ComponentDoc } from "#/components/examples/docs/types";
 import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { SpinnerInButton } from "#/components/examples/docs/spinner/in-button";
-import { SpinnerSizes } from "#/components/examples/docs/spinner/sizes";
-
 import { SpinnerLabeled } from "#/components/examples/docs/spinner/labeled";
+import { SpinnerSizes } from "#/components/examples/docs/spinner/sizes";
+import type { ComponentDoc } from "#/components/examples/docs/types";
 
 export const spinnerDoc: ComponentDoc = {
   examples: [

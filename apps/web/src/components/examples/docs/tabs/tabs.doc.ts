@@ -1,9 +1,8 @@
-import type { ComponentDoc } from "#/components/examples/docs/types";
 import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { TabsDefault } from "#/components/examples/docs/tabs/default";
 import { TabsLine } from "#/components/examples/docs/tabs/line";
-
 import { TabsWithIcons } from "#/components/examples/docs/tabs/with-icons";
+import type { ComponentDoc } from "#/components/examples/docs/types";
 
 export const tabsDoc: ComponentDoc = {
   examples: [

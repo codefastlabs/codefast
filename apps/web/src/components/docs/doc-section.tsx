@@ -1,5 +1,5 @@
-import type { ReactNode } from "react";
 import { cn } from "@codefast/ui/lib/utils";
+import type { ReactNode } from "react";
 
 interface DocSectionProps {
   /** Anchor id — must match the matching entry in the On-this-page TOC. */

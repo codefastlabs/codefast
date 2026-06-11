@@ -1,6 +1,3 @@
-import { useState } from "react";
-import { Link } from "@tanstack/react-router";
-import { MenuIcon } from "lucide-react";
 import { Button } from "@codefast/ui/button";
 import {
   Sheet,
@@ -10,8 +7,12 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@codefast/ui/sheet";
-import { CommandPalette } from "#/components/command-palette";
+import { Link } from "@tanstack/react-router";
+import { MenuIcon } from "lucide-react";
+import { useState } from "react";
+
 import { AppearanceToggle } from "#/components/appearance-toggle.tsx";
+import { CommandPalette } from "#/components/command-palette";
 
 const NAV_LINKS = [
   { to: "/", label: "Home" },

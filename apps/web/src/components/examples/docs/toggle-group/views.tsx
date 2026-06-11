@@ -1,5 +1,5 @@
-import { useState } from "react";
 import { ToggleGroup, ToggleGroupItem } from "@codefast/ui/toggle-group";
+import { useState } from "react";
 
 const VIEWS = ["List", "Board", "Calendar"];
 

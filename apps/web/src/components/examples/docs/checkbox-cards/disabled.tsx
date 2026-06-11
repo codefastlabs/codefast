@@ -1,5 +1,5 @@
-import { useState } from "react";
 import { CheckboxCards, CheckboxCardsItem } from "@codefast/ui/checkbox-cards";
+import { useState } from "react";
 
 const PLANS = [
   { value: "free", label: "Free", description: "Up to 3 projects", disabled: false },

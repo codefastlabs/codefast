@@ -1,9 +1,8 @@
-import type { ComponentDoc } from "#/components/examples/docs/types";
-import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { CarouselGallery } from "#/components/examples/docs/carousel/gallery";
-import { CarouselVertical } from "#/components/examples/docs/carousel/vertical";
-
 import { CarouselMultiple } from "#/components/examples/docs/carousel/multiple";
+import { CarouselVertical } from "#/components/examples/docs/carousel/vertical";
+import { docSource, docAnatomy } from "#/components/examples/docs/source";
+import type { ComponentDoc } from "#/components/examples/docs/types";
 
 export const carouselDoc: ComponentDoc = {
   examples: [

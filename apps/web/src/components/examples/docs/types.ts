@@ -7,6 +7,7 @@
  * to the single card demo from `demos.tsx`.
  */
 import type { ComponentType } from "react";
+
 import type { KeyRow } from "#/components/docs/keyboard-table";
 import type { PropRow } from "#/components/docs/props-table";
 

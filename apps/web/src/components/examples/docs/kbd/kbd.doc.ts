@@ -1,9 +1,8 @@
-import type { ComponentDoc } from "#/components/examples/docs/types";
-import { docSource, docAnatomy } from "#/components/examples/docs/source";
+import { KbdInButton } from "#/components/examples/docs/kbd/in-button";
 import { KbdInline } from "#/components/examples/docs/kbd/inline";
 import { KbdShortcuts } from "#/components/examples/docs/kbd/shortcuts";
-
-import { KbdInButton } from "#/components/examples/docs/kbd/in-button";
+import { docSource, docAnatomy } from "#/components/examples/docs/source";
+import type { ComponentDoc } from "#/components/examples/docs/types";
 
 export const kbdDoc: ComponentDoc = {
   examples: [

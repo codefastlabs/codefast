@@ -1,16 +1,18 @@
 import process from "node:process";
+
 import { Command } from "commander";
-import { parseWithSchema } from "#/core/schema-parse";
-import { consumeCliAppError } from "#/core/cli/result-handle";
+
 import { globalCliCommanderOptionsSchema } from "#/core/cli/global-options";
 import { readOptionalPositionalArg } from "#/core/cli/positional";
-import { logger } from "#/core/logger";
+import { consumeCliAppError } from "#/core/cli/result-handle";
 import { nodeFilesystem } from "#/core/filesystem/node";
+import { logger } from "#/core/logger";
+import { parseWithSchema } from "#/core/schema-parse";
+import { exitCodeForMirrorSyncResult, formatMirrorSyncJsonOutput } from "#/mirror/cli-result";
+import { mirrorSyncRunRequestSchema } from "#/mirror/cli-schema";
+import { MirrorSyncProgressPresenter } from "#/mirror/output";
 import { prepareMirrorSync } from "#/mirror/prepare";
 import { runMirrorSync } from "#/mirror/sync";
-import { mirrorSyncRunRequestSchema } from "#/mirror/cli-schema";
-import { exitCodeForMirrorSyncResult, formatMirrorSyncJsonOutput } from "#/mirror/cli-result";
-import { MirrorSyncProgressPresenter } from "#/mirror/output";
 
 /**
  * @since 0.3.16-canary.0

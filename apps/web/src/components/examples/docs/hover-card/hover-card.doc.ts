@@ -1,9 +1,8 @@
-import type { ComponentDoc } from "#/components/examples/docs/types";
-import { docSource, docAnatomy } from "#/components/examples/docs/source";
-import { HoverCardProfile } from "#/components/examples/docs/hover-card/profile";
-
 import { HoverCardLinkPreview } from "#/components/examples/docs/hover-card/link-preview";
+import { HoverCardProfile } from "#/components/examples/docs/hover-card/profile";
 import { HoverCardStat } from "#/components/examples/docs/hover-card/stat";
+import { docSource, docAnatomy } from "#/components/examples/docs/source";
+import type { ComponentDoc } from "#/components/examples/docs/types";
 
 export const hoverCardDoc: ComponentDoc = {
   examples: [

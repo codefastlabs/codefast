@@ -1,9 +1,8 @@
-import type { VariantProps } from "#/lib/utils";
 import type { ComponentProps, JSX } from "react";
-
-import { cn } from "#/lib/utils";
 import { Drawer as DrawerPrimitive } from "vaul";
 
+import type { VariantProps } from "#/lib/utils";
+import { cn } from "#/lib/utils";
 import { buttonVariants } from "#/variants/button";
 
 /* -----------------------------------------------------------------------------

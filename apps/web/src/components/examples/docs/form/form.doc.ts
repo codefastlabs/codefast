@@ -1,9 +1,8 @@
-import type { ComponentDoc } from "#/components/examples/docs/types";
-import { docSource, docAnatomy } from "#/components/examples/docs/source";
-import { FormSignIn } from "#/components/examples/docs/form/sign-in";
-
 import { FormContact } from "#/components/examples/docs/form/contact";
 import { FormNewsletter } from "#/components/examples/docs/form/newsletter";
+import { FormSignIn } from "#/components/examples/docs/form/sign-in";
+import { docSource, docAnatomy } from "#/components/examples/docs/source";
+import type { ComponentDoc } from "#/components/examples/docs/types";
 
 export const formDoc: ComponentDoc = {
   examples: [

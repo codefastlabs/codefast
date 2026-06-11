@@ -1,7 +1,7 @@
+import { Switch as SwitchPrimitives } from "radix-ui";
 import type { ComponentProps, JSX } from "react";
 
 import { cn } from "#/lib/utils";
-import { Switch as SwitchPrimitives } from "radix-ui";
 
 /* -----------------------------------------------------------------------------
  * Component: Switch

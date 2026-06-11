@@ -1,9 +1,8 @@
-import type { ComponentDoc } from "#/components/examples/docs/types";
-import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { ContextMenuActions } from "#/components/examples/docs/context-menu/actions";
 import { ContextMenuEditor } from "#/components/examples/docs/context-menu/editor";
-
 import { ContextMenuSimple } from "#/components/examples/docs/context-menu/simple";
+import { docSource, docAnatomy } from "#/components/examples/docs/source";
+import type { ComponentDoc } from "#/components/examples/docs/types";
 
 export const contextMenuDoc: ComponentDoc = {
   examples: [

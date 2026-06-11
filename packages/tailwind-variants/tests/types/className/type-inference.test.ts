@@ -1,7 +1,6 @@
 import { expectTypeOf } from "expect-type";
 
 import type { VariantProps } from "#/index";
-
 import { createTV, tv } from "#/index";
 
 describe("Real-World Type Inference Tests", () => {

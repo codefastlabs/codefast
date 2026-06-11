@@ -1,9 +1,8 @@
-import type { ComponentDoc } from "#/components/examples/docs/types";
-import { docSource, docAnatomy } from "#/components/examples/docs/source";
-import { ScrollAreaList } from "#/components/examples/docs/scroll-area/list";
-
 import { ScrollAreaHorizontal } from "#/components/examples/docs/scroll-area/horizontal";
+import { ScrollAreaList } from "#/components/examples/docs/scroll-area/list";
 import { ScrollAreaProse } from "#/components/examples/docs/scroll-area/prose";
+import { docSource, docAnatomy } from "#/components/examples/docs/source";
+import type { ComponentDoc } from "#/components/examples/docs/types";
 
 export const scrollAreaDoc: ComponentDoc = {
   examples: [

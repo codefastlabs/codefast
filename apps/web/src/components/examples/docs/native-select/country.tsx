@@ -1,6 +1,6 @@
-import { useState } from "react";
 import { Label } from "@codefast/ui/label";
 import { NativeSelect, NativeSelectOptGroup, NativeSelectOption } from "@codefast/ui/native-select";
+import { useState } from "react";
 
 export function NativeSelectCountry() {
   const [country, setCountry] = useState("vn");

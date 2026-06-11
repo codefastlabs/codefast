@@ -1,9 +1,8 @@
-import type { ComponentDoc } from "#/components/examples/docs/types";
-import { docSource, docAnatomy } from "#/components/examples/docs/source";
+import { CardLogin } from "#/components/examples/docs/card/login";
 import { CardOverview } from "#/components/examples/docs/card/overview";
 import { CardSimple } from "#/components/examples/docs/card/simple";
-
-import { CardLogin } from "#/components/examples/docs/card/login";
+import { docSource, docAnatomy } from "#/components/examples/docs/source";
+import type { ComponentDoc } from "#/components/examples/docs/types";
 
 export const cardDoc: ComponentDoc = {
   examples: [

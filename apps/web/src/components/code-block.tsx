@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from "react";
 import { CheckIcon, CopyIcon } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 
 interface CodeBlockProps {
   /** Raw source, written to the clipboard on copy. */

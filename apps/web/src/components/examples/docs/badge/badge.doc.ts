@@ -1,8 +1,8 @@
-import type { ComponentDoc } from "#/components/examples/docs/types";
-import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { BadgeAsLink } from "#/components/examples/docs/badge/as-link";
 import { BadgeVariants } from "#/components/examples/docs/badge/variants";
 import { BadgeWithIcon } from "#/components/examples/docs/badge/with-icon";
+import { docSource, docAnatomy } from "#/components/examples/docs/source";
+import type { ComponentDoc } from "#/components/examples/docs/types";
 
 export const badgeDoc: ComponentDoc = {
   examples: [

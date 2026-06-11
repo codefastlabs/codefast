@@ -12,6 +12,7 @@ import {
 } from "@codefast/ui/alert-dialog";
 import { Button } from "@codefast/ui/button";
 import { BluetoothIcon } from "lucide-react";
+
 import { useTranslation, type Translations } from "#/components/docs/language-selector";
 
 const translations: Translations = {

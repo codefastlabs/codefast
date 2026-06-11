@@ -1,9 +1,9 @@
-import type { FilesystemPort } from "#/core/filesystem/port";
-import type { GroupFileResult } from "#/arrange/domain/types";
-import { applyEditsDescending } from "#/core/source-text-edit";
-import { parseDomainSourceFile } from "#/arrange/source-parse";
-import { dropCnImportIfUnused } from "#/arrange/domain/imports";
 import { collectSimplifyTargets } from "#/arrange/domain/ast/simplify-targets";
+import { dropCnImportIfUnused } from "#/arrange/domain/imports";
+import type { GroupFileResult } from "#/arrange/domain/types";
+import { parseDomainSourceFile } from "#/arrange/source-parse";
+import type { FilesystemPort } from "#/core/filesystem/port";
+import { applyEditsDescending } from "#/core/source-text-edit";
 
 /**
  * @since 0.3.16-canary.0

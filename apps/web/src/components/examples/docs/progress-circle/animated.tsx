@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
 import { Button } from "@codefast/ui/button";
 import { ProgressCircle } from "@codefast/ui/progress-circle";
+import { useEffect, useState } from "react";
 
 export function ProgressCircleAnimated() {
   const [value, setValue] = useState(0);

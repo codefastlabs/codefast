@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router";
+
 import { AppearanceToggle } from "#/components/appearance-toggle.tsx";
 
 export function Footer() {

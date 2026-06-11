@@ -1,5 +1,3 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { ALL_COMPONENTS } from "#/data/components";
 import { Avatar, AvatarFallback } from "@codefast/ui/avatar";
 import { Badge } from "@codefast/ui/badge";
 import { Button } from "@codefast/ui/button";
@@ -9,6 +7,9 @@ import { Progress } from "@codefast/ui/progress";
 import { Separator } from "@codefast/ui/separator";
 import { Switch } from "@codefast/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@codefast/ui/tabs";
+import { createFileRoute, Link } from "@tanstack/react-router";
+
+import { ALL_COMPONENTS } from "#/data/components";
 
 export const Route = createFileRoute("/")({
   head: () => ({

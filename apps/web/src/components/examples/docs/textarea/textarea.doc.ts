@@ -1,9 +1,8 @@
-import type { ComponentDoc } from "#/components/examples/docs/types";
 import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { TextareaCounter } from "#/components/examples/docs/textarea/counter";
-
-import { TextareaStates } from "#/components/examples/docs/textarea/states";
 import { TextareaRows } from "#/components/examples/docs/textarea/rows";
+import { TextareaStates } from "#/components/examples/docs/textarea/states";
+import type { ComponentDoc } from "#/components/examples/docs/types";
 
 export const textareaDoc: ComponentDoc = {
   examples: [

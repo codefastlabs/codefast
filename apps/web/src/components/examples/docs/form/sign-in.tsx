@@ -1,9 +1,9 @@
-import type { FormEvent } from "react";
-import { useState } from "react";
 import { Button } from "@codefast/ui/button";
 import { Field, FieldError, FieldLabel } from "@codefast/ui/field";
 import { Input } from "@codefast/ui/input";
 import { InputPassword } from "@codefast/ui/input-password";
+import type { FormEvent } from "react";
+import { useState } from "react";
 
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 

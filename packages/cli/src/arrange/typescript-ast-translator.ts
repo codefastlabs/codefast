@@ -4,6 +4,7 @@
  */
 
 import ts from "typescript";
+
 import { DomainBinaryOperator, DomainSyntaxKind } from "#/arrange/domain/ast/ast-node";
 import type {
   DomainArrayLiteralExpression,

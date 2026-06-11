@@ -1,5 +1,5 @@
-import { useState } from "react";
 import { InputSearch } from "@codefast/ui/input-search";
+import { useState } from "react";
 
 const FRUITS = ["Apple", "Apricot", "Banana", "Blueberry", "Cherry", "Grape", "Mango", "Orange"];
 

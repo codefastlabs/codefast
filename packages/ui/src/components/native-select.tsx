@@ -1,7 +1,7 @@
+import { ChevronDownIcon } from "lucide-react";
 import type { ComponentProps, JSX } from "react";
 
 import { cn } from "#/lib/utils";
-import { ChevronDownIcon } from "lucide-react";
 
 /* -----------------------------------------------------------------------------
  * Component: NativeSelect

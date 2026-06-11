@@ -1,9 +1,8 @@
-import type { ComponentDoc } from "#/components/examples/docs/types";
-import { docSource, docAnatomy } from "#/components/examples/docs/source";
-import { CollapsibleRepos } from "#/components/examples/docs/collapsible/repos";
-
 import { CollapsibleFaq } from "#/components/examples/docs/collapsible/faq";
+import { CollapsibleRepos } from "#/components/examples/docs/collapsible/repos";
 import { CollapsibleShowMore } from "#/components/examples/docs/collapsible/show-more";
+import { docSource, docAnatomy } from "#/components/examples/docs/source";
+import type { ComponentDoc } from "#/components/examples/docs/types";
 
 export const collapsibleDoc: ComponentDoc = {
   examples: [

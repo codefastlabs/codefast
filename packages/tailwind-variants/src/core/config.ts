@@ -15,7 +15,6 @@ import type {
   ExtendedVariantConfig,
   SlotSchema,
 } from "#/types/api";
-
 import { cx, hasExtendConfig, hasSlotsConfig, isSlotClassMap } from "#/utilities/utils";
 
 /**

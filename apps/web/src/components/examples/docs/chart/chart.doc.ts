@@ -1,9 +1,8 @@
-import type { ComponentDoc } from "#/components/examples/docs/types";
-import { docSource, docAnatomy } from "#/components/examples/docs/source";
-import { ChartBar } from "#/components/examples/docs/chart/bar";
-
-import { ChartLine } from "#/components/examples/docs/chart/line";
 import { ChartArea } from "#/components/examples/docs/chart/area";
+import { ChartBar } from "#/components/examples/docs/chart/bar";
+import { ChartLine } from "#/components/examples/docs/chart/line";
+import { docSource, docAnatomy } from "#/components/examples/docs/source";
+import type { ComponentDoc } from "#/components/examples/docs/types";
 
 export const chartDoc: ComponentDoc = {
   examples: [

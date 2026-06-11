@@ -1,9 +1,8 @@
-import type { ComponentDoc } from "#/components/examples/docs/types";
-import { docSource, docAnatomy } from "#/components/examples/docs/source";
-import { CheckboxGroupPermissions } from "#/components/examples/docs/checkbox-group/permissions";
-
 import { CheckboxGroupHorizontal } from "#/components/examples/docs/checkbox-group/horizontal";
+import { CheckboxGroupPermissions } from "#/components/examples/docs/checkbox-group/permissions";
 import { CheckboxGroupWithDescriptions } from "#/components/examples/docs/checkbox-group/with-descriptions";
+import { docSource, docAnatomy } from "#/components/examples/docs/source";
+import type { ComponentDoc } from "#/components/examples/docs/types";
 
 export const checkboxGroupDoc: ComponentDoc = {
   examples: [

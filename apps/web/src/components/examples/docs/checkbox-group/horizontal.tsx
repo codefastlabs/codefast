@@ -1,6 +1,6 @@
-import { useState } from "react";
 import { CheckboxGroup, CheckboxGroupItem } from "@codefast/ui/checkbox-group";
 import { Label } from "@codefast/ui/label";
+import { useState } from "react";
 
 const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri"];
 

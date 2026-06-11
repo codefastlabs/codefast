@@ -1,4 +1,5 @@
 import type { ComponentProps } from "react";
+
 import type { PaletteEntry } from "#/app/lib/colors";
 import { formatLocal } from "#/app/lib/format";
 import type { SnapshotRow } from "#/app/lib/metrics";

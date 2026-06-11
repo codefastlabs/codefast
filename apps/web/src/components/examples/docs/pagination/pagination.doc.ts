@@ -1,9 +1,8 @@
-import type { ComponentDoc } from "#/components/examples/docs/types";
-import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { PaginationControlled } from "#/components/examples/docs/pagination/controlled";
-
-import { PaginationSimple } from "#/components/examples/docs/pagination/simple";
 import { PaginationPrevNext } from "#/components/examples/docs/pagination/prev-next";
+import { PaginationSimple } from "#/components/examples/docs/pagination/simple";
+import { docSource, docAnatomy } from "#/components/examples/docs/source";
+import type { ComponentDoc } from "#/components/examples/docs/types";
 
 export const paginationDoc: ComponentDoc = {
   examples: [

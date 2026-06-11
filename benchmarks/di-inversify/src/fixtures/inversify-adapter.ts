@@ -9,6 +9,7 @@
 import "reflect-metadata";
 import type { Container as InversifyContainerType, ServiceIdentifier } from "inversify";
 import { Container } from "inversify";
+
 import {
   assertGraphIsWellFormed,
   type GraphDescriptor,

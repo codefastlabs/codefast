@@ -1,5 +1,5 @@
-import { Label } from "@codefast/ui/label";
 import { InputNumber } from "@codefast/ui/input-number";
+import { Label } from "@codefast/ui/label";
 
 export function InputNumberDemo() {
   return (

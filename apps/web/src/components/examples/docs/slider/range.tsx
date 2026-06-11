@@ -1,5 +1,5 @@
-import { useState } from "react";
 import { Slider } from "@codefast/ui/slider";
+import { useState } from "react";
 
 export function SliderRange() {
   const [range, setRange] = useState([200, 700]);

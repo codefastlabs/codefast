@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
 import { Button } from "@codefast/ui/button";
 import { Progress } from "@codefast/ui/progress";
+import { useEffect, useState } from "react";
 
 export function ProgressAnimated() {
   const [value, setValue] = useState(0);

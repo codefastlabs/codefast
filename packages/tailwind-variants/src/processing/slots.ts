@@ -15,7 +15,6 @@ import type {
   SlotResolverProps,
   SlotClassResolver,
 } from "#/types/api";
-
 import { cx, isSlotClassMap } from "#/utilities/utils";
 
 import { getCompoundClass, matchesCompoundDefinition } from "./compound";

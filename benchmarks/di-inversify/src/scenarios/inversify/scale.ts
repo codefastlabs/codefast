@@ -7,6 +7,7 @@
 import "reflect-metadata";
 import { Container } from "inversify";
 import type { ServiceIdentifier } from "inversify";
+
 import type { BenchScenario } from "#/scenarios/types";
 
 const SCALE_CHAIN_SIZE = 512;

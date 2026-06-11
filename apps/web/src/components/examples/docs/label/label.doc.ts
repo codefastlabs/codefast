@@ -1,9 +1,8 @@
-import type { ComponentDoc } from "#/components/examples/docs/types";
-import { docSource, docAnatomy } from "#/components/examples/docs/source";
-import { LabelWithControls } from "#/components/examples/docs/label/with-controls";
-
 import { LabelRequired } from "#/components/examples/docs/label/required";
 import { LabelSwitchRow } from "#/components/examples/docs/label/switch-row";
+import { LabelWithControls } from "#/components/examples/docs/label/with-controls";
+import { docSource, docAnatomy } from "#/components/examples/docs/source";
+import type { ComponentDoc } from "#/components/examples/docs/types";
 
 export const labelDoc: ComponentDoc = {
   examples: [

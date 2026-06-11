@@ -1,5 +1,6 @@
 import { expectTypeOf } from "expect-type";
 import { describe, expect, it } from "vitest";
+
 import { DEFAULT_BINDING_SLOT } from "#/binding";
 import { injectionSlotToResolveOptions, bindingSlotToResolveOptions } from "#/resolve-options";
 import type { ResolveOptions } from "#/types";

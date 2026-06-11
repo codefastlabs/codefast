@@ -1,6 +1,6 @@
-import { useState } from "react";
-import { RadioGroup, RadioGroupItem } from "@codefast/ui/radio-group";
 import { Label } from "@codefast/ui/label";
+import { RadioGroup, RadioGroupItem } from "@codefast/ui/radio-group";
+import { useState } from "react";
 
 const DENSITY_OPTIONS = ["compact", "comfortable", "spacious"] as const;
 type Density = (typeof DENSITY_OPTIONS)[number];

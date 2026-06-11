@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+
 import { buildHash, parseHash, type ViewState } from "#/app/lib/hash";
 import type { EmbeddedViewerPayload } from "#/types";
 

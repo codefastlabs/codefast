@@ -1,8 +1,8 @@
+import { CheckIcon, ChevronDownIcon, ChevronUpIcon } from "lucide-react";
+import { Select as SelectPrimitive } from "radix-ui";
 import type { ComponentProps, JSX } from "react";
 
 import { cn } from "#/lib/utils";
-import { Select as SelectPrimitive } from "radix-ui";
-import { CheckIcon, ChevronDownIcon, ChevronUpIcon } from "lucide-react";
 
 /* -----------------------------------------------------------------------------
  * Component: Select

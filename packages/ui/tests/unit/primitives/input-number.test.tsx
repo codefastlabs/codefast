@@ -1,9 +1,8 @@
-import type { ReactNode } from "react";
-import { useId } from "react";
-
 import { act, fireEvent, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { axe } from "jest-axe";
+import type { ReactNode } from "react";
+import { useId } from "react";
 
 import {
   InputNumber,

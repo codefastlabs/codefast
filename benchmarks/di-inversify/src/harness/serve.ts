@@ -1,12 +1,14 @@
 #!/usr/bin/env node
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+
+import { resolveDisplayName } from "@codefast/benchmark-harness/shared/config";
 import {
   BENCH_PORT_ENV_KEY,
   BENCH_RESULTS_DIR_NAME,
 } from "@codefast/benchmark-harness/shared/env-keys";
-import { resolveDisplayName } from "@codefast/benchmark-harness/shared/config";
 import { startBenchServer } from "@codefast/benchmark-viewer/server";
+
 import { CODEFAST_DI, INVERSIFY, SERVE_TITLE } from "#/harness/config";
 
 await startBenchServer({

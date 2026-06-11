@@ -1,10 +1,11 @@
 import { expectTypeOf } from "expect-type";
 import { describe, it } from "vitest";
+
 import { Container } from "#/container";
 import { inject, injectAll, normalizeToDescriptor, optional } from "#/decorators/inject";
+import type { InjectionDescriptor } from "#/decorators/inject";
 import { token } from "#/token";
 import type { DependencyKey, TokenValue } from "#/types";
-import type { InjectionDescriptor } from "#/decorators/inject";
 
 describe("compile-time API inference", () => {
   it("resolves instance type from constructor token", () => {

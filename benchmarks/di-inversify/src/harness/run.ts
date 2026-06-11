@@ -17,12 +17,9 @@
 import { spawnSync } from "node:child_process";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import {
-  BENCH_RESULTS_DIR_NAME,
-  BENCH_VERBOSE_ENV_KEY,
-  OBSERVATIONS_FILE_NAME,
-} from "@codefast/benchmark-harness/shared/env-keys";
-import { resolveDisplayName } from "@codefast/benchmark-harness/shared/config";
+
+import { resolveBenchParentExitCode } from "@codefast/benchmark-harness/parent/resolve-bench-parent-exit-code";
+import { runBenchSubprocess } from "@codefast/benchmark-harness/parent/run-bench-subprocess";
 import {
   buildLibraryReport,
   type LibraryReport,
@@ -31,10 +28,15 @@ import {
   renderTwoWayConsoleReport,
   renderTwoWayMarkdownReport,
 } from "@codefast/benchmark-harness/report/two-way";
-import { resolveBenchParentExitCode } from "@codefast/benchmark-harness/parent/resolve-bench-parent-exit-code";
-import { runBenchSubprocess } from "@codefast/benchmark-harness/parent/run-bench-subprocess";
-import type { SubprocessPayload } from "@codefast/benchmark-harness/shared/protocol";
 import { writeJsonlRun, writeMarkdownFile } from "@codefast/benchmark-harness/report/write";
+import { resolveDisplayName } from "@codefast/benchmark-harness/shared/config";
+import {
+  BENCH_RESULTS_DIR_NAME,
+  BENCH_VERBOSE_ENV_KEY,
+  OBSERVATIONS_FILE_NAME,
+} from "@codefast/benchmark-harness/shared/env-keys";
+import type { SubprocessPayload } from "@codefast/benchmark-harness/shared/protocol";
+
 import { CODEFAST_DI, INVERSIFY } from "#/harness/config";
 import { DI_INVERSIFY_CONSOLE, DI_INVERSIFY_MARKDOWN } from "#/harness/presentation";
 

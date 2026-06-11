@@ -1,12 +1,7 @@
-import type { SidebarMenuButtonVariants } from "#/variants/sidebar";
-import type { ComponentProps, CSSProperties, Dispatch, JSX, SetStateAction } from "react";
-
-import { cn } from "#/lib/utils";
-
-import { sidebarMenuButtonVariants } from "#/variants/sidebar";
-import { Context } from "radix-ui/internal";
-import { Slot } from "radix-ui";
 import { PanelLeftIcon } from "lucide-react";
+import { Slot } from "radix-ui";
+import { Context } from "radix-ui/internal";
+import type { ComponentProps, CSSProperties, Dispatch, JSX, SetStateAction } from "react";
 import { useCallback, useEffect, useState } from "react";
 
 import { Button } from "#/components/button";
@@ -16,6 +11,9 @@ import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "
 import { Skeleton } from "#/components/skeleton";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "#/components/tooltip";
 import { useIsMobile } from "#/hooks/use-is-mobile";
+import { cn } from "#/lib/utils";
+import type { SidebarMenuButtonVariants } from "#/variants/sidebar";
+import { sidebarMenuButtonVariants } from "#/variants/sidebar";
 
 const SIDEBAR_COOKIE_NAME = "sidebar_state";
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7;

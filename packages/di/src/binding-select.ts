@@ -1,6 +1,6 @@
 import type { Binding } from "#/binding";
-import type { BindingTag, ConstraintContext, ResolveOptions } from "#/types";
 import { AmbiguousBindingError } from "#/errors";
+import type { BindingTag, ConstraintContext, ResolveOptions } from "#/types";
 
 /**
  * Select a single candidate from a list of bindings using slot matching + predicates.

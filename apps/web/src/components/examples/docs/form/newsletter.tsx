@@ -1,10 +1,10 @@
-import type { FormEvent } from "react";
-import { useState } from "react";
 import { Button } from "@codefast/ui/button";
 import { Checkbox } from "@codefast/ui/checkbox";
 import { Field, FieldLabel } from "@codefast/ui/field";
 import { Input } from "@codefast/ui/input";
 import { Label } from "@codefast/ui/label";
+import type { FormEvent } from "react";
+import { useState } from "react";
 
 export function FormNewsletter() {
   const [agreed, setAgreed] = useState(false);

@@ -1,5 +1,5 @@
-import { formatLocal } from "#/app/lib/format";
 import { KpiCard, KpiCardLabel, KpiCardValue } from "#/app/components/kpi-card";
+import { formatLocal } from "#/app/lib/format";
 import type { EmbeddedRun } from "#/types";
 
 interface KpiGridProps {

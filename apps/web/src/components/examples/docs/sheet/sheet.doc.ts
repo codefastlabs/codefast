@@ -1,9 +1,8 @@
-import type { ComponentDoc } from "#/components/examples/docs/types";
-import { docSource, docAnatomy } from "#/components/examples/docs/source";
+import { SheetNavigation } from "#/components/examples/docs/sheet/navigation";
 import { SheetProfile } from "#/components/examples/docs/sheet/profile";
 import { SheetSides } from "#/components/examples/docs/sheet/sides";
-
-import { SheetNavigation } from "#/components/examples/docs/sheet/navigation";
+import { docSource, docAnatomy } from "#/components/examples/docs/source";
+import type { ComponentDoc } from "#/components/examples/docs/types";
 
 export const sheetDoc: ComponentDoc = {
   examples: [

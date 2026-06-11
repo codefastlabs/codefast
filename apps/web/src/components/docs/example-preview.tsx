@@ -1,7 +1,8 @@
-import type { ReactNode } from "react";
 import { DirectionProvider } from "@codefast/ui/direction";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@codefast/ui/tabs";
 import { cn } from "@codefast/ui/lib/utils";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@codefast/ui/tabs";
+import type { ReactNode } from "react";
+
 import { CodeBlock } from "#/components/code-block";
 import {
   LanguageProvider,

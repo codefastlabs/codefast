@@ -1,9 +1,8 @@
-import type { ComponentDoc } from "#/components/examples/docs/types";
-import { docSource, docAnatomy } from "#/components/examples/docs/source";
-import { NavigationMenuMega } from "#/components/examples/docs/navigation-menu/mega";
-
-import { NavigationMenuSimple } from "#/components/examples/docs/navigation-menu/simple";
 import { NavigationMenuDropdown } from "#/components/examples/docs/navigation-menu/dropdown";
+import { NavigationMenuMega } from "#/components/examples/docs/navigation-menu/mega";
+import { NavigationMenuSimple } from "#/components/examples/docs/navigation-menu/simple";
+import { docSource, docAnatomy } from "#/components/examples/docs/source";
+import type { ComponentDoc } from "#/components/examples/docs/types";
 
 export const navigationMenuDoc: ComponentDoc = {
   examples: [

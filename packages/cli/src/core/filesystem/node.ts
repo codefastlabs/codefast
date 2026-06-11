@@ -1,6 +1,7 @@
 import fsSync from "node:fs";
 import fsPromises from "node:fs/promises";
 import path from "node:path";
+
 import type { CliFileEncoding, DirectoryEntry, FilesystemPort } from "#/core/filesystem/port";
 
 /**

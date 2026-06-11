@@ -1,6 +1,6 @@
-import { useState } from "react";
 import { Button } from "@codefast/ui/button";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@codefast/ui/collapsible";
+import { useState } from "react";
 
 export function CollapsibleShowMore() {
   const [open, setOpen] = useState(false);

@@ -1,6 +1,7 @@
 import "reflect-metadata";
 import { Container } from "inversify";
 import type { ServiceIdentifier } from "inversify";
+
 import type { BenchScenario } from "#/scenarios/types";
 
 interface CircularNodeA {

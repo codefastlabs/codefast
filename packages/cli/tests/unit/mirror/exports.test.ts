@@ -1,9 +1,10 @@
 import { describe, expect, it } from "vitest";
+
+import { mirrorConfigSchema } from "#/core/config/schema";
+import type { CliFileEncoding, FilesystemPort } from "#/core/filesystem/port";
 import type { DistFilesystem } from "#/mirror/domain/dist-filesystem";
 import { createPathTransform, generateExports } from "#/mirror/domain/exports";
 import { writePackageJsonExportsAtomic } from "#/mirror/write-exports";
-import type { CliFileEncoding, FilesystemPort } from "#/core/filesystem/port";
-import { mirrorConfigSchema } from "#/core/config/schema";
 
 function createDistFilesystemStub(files: Array<string>): DistFilesystem {
   return {

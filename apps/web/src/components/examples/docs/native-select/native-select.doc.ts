@@ -1,9 +1,8 @@
-import type { ComponentDoc } from "#/components/examples/docs/types";
-import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { NativeSelectCountry } from "#/components/examples/docs/native-select/country";
-
-import { NativeSelectStates } from "#/components/examples/docs/native-select/states";
 import { NativeSelectSimple } from "#/components/examples/docs/native-select/simple";
+import { NativeSelectStates } from "#/components/examples/docs/native-select/states";
+import { docSource, docAnatomy } from "#/components/examples/docs/source";
+import type { ComponentDoc } from "#/components/examples/docs/types";
 
 export const nativeSelectDoc: ComponentDoc = {
   examples: [

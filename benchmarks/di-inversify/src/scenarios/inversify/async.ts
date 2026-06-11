@@ -1,6 +1,7 @@
 import "reflect-metadata";
 import { Container } from "inversify";
 import type { ServiceIdentifier } from "inversify";
+
 import type { AsyncBenchScenario } from "#/scenarios/types";
 
 const ASYNC_CHAIN_DEPTH = 8;

@@ -1,4 +1,5 @@
 import { CheckIcon, XIcon } from "lucide-react";
+
 import { DocSection } from "#/components/docs/doc-section";
 
 interface GuidelinesSectionProps {

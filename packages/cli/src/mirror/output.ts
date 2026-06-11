@@ -1,11 +1,11 @@
 import { logger } from "#/core/logger";
-import type { MirrorSyncProgressListener } from "#/mirror/sync-types";
 import type { GlobalStats, PackageStats } from "#/mirror/domain/types";
 import {
   MirrorSyncReporter,
   type CliLoggerLike,
   type MirrorProcessingModeInput,
 } from "#/mirror/sync-reporter";
+import type { MirrorSyncProgressListener } from "#/mirror/sync-types";
 
 const cliLogger: CliLoggerLike = logger;
 

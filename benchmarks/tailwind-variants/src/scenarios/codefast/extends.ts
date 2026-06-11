@@ -1,11 +1,11 @@
-import { codefastTvFn } from "#/lib/tv-shims";
-import { TV_MERGE_DISABLED, TV_MERGE_ENABLED } from "#/harness/bench-options";
-import type { BenchScenario } from "#/scenarios/types";
 import {
   extendsBaseVariants,
   extendsExtensionVariants,
   extendsTestProps,
 } from "#/fixtures/extends";
+import { TV_MERGE_DISABLED, TV_MERGE_ENABLED } from "#/harness/bench-options";
+import { codefastTvFn } from "#/lib/tv-shims";
+import type { BenchScenario } from "#/scenarios/types";
 
 const codefastBaseNoMerge = codefastTvFn(extendsBaseVariants, TV_MERGE_DISABLED);
 const codefastBaseWithMerge = codefastTvFn(extendsBaseVariants, TV_MERGE_ENABLED);

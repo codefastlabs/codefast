@@ -1,11 +1,11 @@
-import type { ComponentDoc } from "#/components/examples/docs/types";
-import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { AlertActionExample } from "#/components/examples/docs/alert/alert-action";
 import { AlertBasic } from "#/components/examples/docs/alert/alert-basic";
 import { AlertColors } from "#/components/examples/docs/alert/alert-colors";
 import { AlertDemo } from "#/components/examples/docs/alert/alert-demo";
 import { AlertDestructive } from "#/components/examples/docs/alert/alert-destructive";
 import { AlertRtl } from "#/components/examples/docs/alert/alert-rtl";
+import { docSource, docAnatomy } from "#/components/examples/docs/source";
+import type { ComponentDoc } from "#/components/examples/docs/types";
 
 export const alertDoc: ComponentDoc = {
   examples: [

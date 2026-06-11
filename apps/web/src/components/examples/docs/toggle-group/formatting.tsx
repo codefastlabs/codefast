@@ -1,6 +1,6 @@
-import { useState } from "react";
 import { ToggleGroup, ToggleGroupItem } from "@codefast/ui/toggle-group";
 import { BoldIcon, ItalicIcon, UnderlineIcon } from "lucide-react";
+import { useState } from "react";
 
 export function ToggleGroupFormatting() {
   const [marks, setMarks] = useState<Array<string>>(["bold"]);

@@ -1,7 +1,7 @@
+import { Progress as ProgressPrimitive } from "radix-ui";
 import type { ComponentProps, JSX } from "react";
 
 import { cn } from "#/lib/utils";
-import { Progress as ProgressPrimitive } from "radix-ui";
 
 /* -----------------------------------------------------------------------------
  * Component: Progress

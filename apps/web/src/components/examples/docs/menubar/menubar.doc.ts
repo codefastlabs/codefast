@@ -1,9 +1,8 @@
-import type { ComponentDoc } from "#/components/examples/docs/types";
-import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { MenubarAppMenu } from "#/components/examples/docs/menubar/app-menu";
-
 import { MenubarSelections } from "#/components/examples/docs/menubar/selections";
 import { MenubarSubmenu } from "#/components/examples/docs/menubar/submenu";
+import { docSource, docAnatomy } from "#/components/examples/docs/source";
+import type { ComponentDoc } from "#/components/examples/docs/types";
 
 export const menubarDoc: ComponentDoc = {
   examples: [

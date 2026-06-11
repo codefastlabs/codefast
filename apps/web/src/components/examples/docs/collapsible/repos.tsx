@@ -1,7 +1,7 @@
-import { useState } from "react";
 import { Button } from "@codefast/ui/button";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@codefast/ui/collapsible";
 import { ChevronsUpDownIcon } from "lucide-react";
+import { useState } from "react";
 
 export function CollapsibleRepos() {
   const [open, setOpen] = useState(false);

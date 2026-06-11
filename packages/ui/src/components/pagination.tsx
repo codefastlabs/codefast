@@ -1,9 +1,8 @@
-import type { VariantProps } from "#/lib/utils";
+import { ChevronLeftIcon, ChevronRightIcon, MoreHorizontalIcon } from "lucide-react";
 import type { ComponentProps, JSX } from "react";
 
+import type { VariantProps } from "#/lib/utils";
 import { cn } from "#/lib/utils";
-import { ChevronLeftIcon, ChevronRightIcon, MoreHorizontalIcon } from "lucide-react";
-
 import { buttonVariants } from "#/variants/button";
 
 /* -----------------------------------------------------------------------------

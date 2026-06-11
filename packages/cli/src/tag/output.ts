@@ -1,12 +1,12 @@
-import { logger } from "#/core/logger";
 import { CLI_EXIT_GENERAL_ERROR } from "#/core/exit-codes";
+import { logger } from "#/core/logger";
+import { exitCodeForTagSyncResult } from "#/tag/cli-result";
 import type {
   TagProgressListener,
   TagResolvedTarget,
   TagSyncResult,
   TagTargetExecutionResult,
 } from "#/tag/domain/types";
-import { exitCodeForTagSyncResult } from "#/tag/cli-result";
 
 type TagProgressEvent =
   | { type: "target-started"; target: TagResolvedTarget }

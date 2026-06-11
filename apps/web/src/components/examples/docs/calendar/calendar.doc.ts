@@ -1,9 +1,8 @@
-import type { ComponentDoc } from "#/components/examples/docs/types";
-import { docSource, docAnatomy } from "#/components/examples/docs/source";
+import { CalendarDisabled } from "#/components/examples/docs/calendar/disabled";
 import { CalendarRange } from "#/components/examples/docs/calendar/range";
 import { CalendarSingle } from "#/components/examples/docs/calendar/single";
-
-import { CalendarDisabled } from "#/components/examples/docs/calendar/disabled";
+import { docSource, docAnatomy } from "#/components/examples/docs/source";
+import type { ComponentDoc } from "#/components/examples/docs/types";
 
 export const calendarDoc: ComponentDoc = {
   examples: [

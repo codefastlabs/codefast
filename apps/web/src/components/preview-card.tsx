@@ -1,7 +1,8 @@
-import type { ReactNode } from "react";
-import { useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { ArrowUpRightIcon } from "lucide-react";
+import type { ReactNode } from "react";
+import { useState } from "react";
+
 import { CodeBlock } from "#/components/code-block";
 
 interface PreviewCardProps {

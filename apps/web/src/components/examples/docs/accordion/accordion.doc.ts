@@ -1,5 +1,3 @@
-import type { ComponentDoc } from "#/components/examples/docs/types";
-import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { AccordionBasic } from "#/components/examples/docs/accordion/accordion-basic";
 import { AccordionBorders } from "#/components/examples/docs/accordion/accordion-borders";
 import { AccordionCard } from "#/components/examples/docs/accordion/accordion-card";
@@ -7,6 +5,8 @@ import { AccordionDemo } from "#/components/examples/docs/accordion/accordion-de
 import { AccordionDisabled } from "#/components/examples/docs/accordion/accordion-disabled";
 import { AccordionMultiple } from "#/components/examples/docs/accordion/accordion-multiple";
 import { AccordionRtl } from "#/components/examples/docs/accordion/accordion-rtl";
+import { docSource, docAnatomy } from "#/components/examples/docs/source";
+import type { ComponentDoc } from "#/components/examples/docs/types";
 
 export const accordionDoc: ComponentDoc = {
   examples: [

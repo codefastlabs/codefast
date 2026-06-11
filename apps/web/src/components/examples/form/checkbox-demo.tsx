@@ -1,6 +1,6 @@
-import { useState } from "react";
 import { Checkbox } from "@codefast/ui/checkbox";
 import { Label } from "@codefast/ui/label";
+import { useState } from "react";
 
 export function CheckboxDemo() {
   const [checked, setChecked] = useState(false);

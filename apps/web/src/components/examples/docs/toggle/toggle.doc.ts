@@ -1,9 +1,8 @@
-import type { ComponentDoc } from "#/components/examples/docs/types";
 import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { TogglePin } from "#/components/examples/docs/toggle/pin";
-import { ToggleToolbar } from "#/components/examples/docs/toggle/toolbar";
-
 import { ToggleSizes } from "#/components/examples/docs/toggle/sizes";
+import { ToggleToolbar } from "#/components/examples/docs/toggle/toolbar";
+import type { ComponentDoc } from "#/components/examples/docs/types";
 
 export const toggleDoc: ComponentDoc = {
   examples: [

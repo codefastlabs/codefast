@@ -1,9 +1,8 @@
-import type { ComponentDoc } from "#/components/examples/docs/types";
-import { docSource, docAnatomy } from "#/components/examples/docs/source";
-import { ItemList } from "#/components/examples/docs/item/list";
-
 import { ItemCompact } from "#/components/examples/docs/item/compact";
+import { ItemList } from "#/components/examples/docs/item/list";
 import { ItemNotifications } from "#/components/examples/docs/item/notifications";
+import { docSource, docAnatomy } from "#/components/examples/docs/source";
+import type { ComponentDoc } from "#/components/examples/docs/types";
 
 export const itemDoc: ComponentDoc = {
   examples: [

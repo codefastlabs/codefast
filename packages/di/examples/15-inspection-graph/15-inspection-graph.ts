@@ -14,8 +14,8 @@
  */
 
 import { Container, inject, injectable, Module, token, tokenName } from "@codefast/di";
-import { toDotGraph } from "@codefast/di/graph-adapters/dot";
 import { toCytoscapeGraph } from "@codefast/di/graph-adapters/cytoscape";
+import { toDotGraph } from "@codefast/di/graph-adapters/dot";
 
 // ── Tokens ───────────────────────────────────────────────────────────────────
 

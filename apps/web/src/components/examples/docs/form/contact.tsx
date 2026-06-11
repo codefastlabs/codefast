@@ -1,9 +1,9 @@
-import type { FormEvent } from "react";
-import { useState } from "react";
 import { Button } from "@codefast/ui/button";
 import { Field, FieldDescription, FieldError, FieldLabel } from "@codefast/ui/field";
 import { Input } from "@codefast/ui/input";
 import { Textarea } from "@codefast/ui/textarea";
+import type { FormEvent } from "react";
+import { useState } from "react";
 
 export function FormContact() {
   const [message, setMessage] = useState("");

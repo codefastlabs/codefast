@@ -1,9 +1,8 @@
-import type { ComponentDoc } from "#/components/examples/docs/types";
-import { docSource, docAnatomy } from "#/components/examples/docs/source";
-import { ResizablePanels } from "#/components/examples/docs/resizable/panels";
-
 import { ResizableHorizontal } from "#/components/examples/docs/resizable/horizontal";
+import { ResizablePanels } from "#/components/examples/docs/resizable/panels";
 import { ResizableVertical } from "#/components/examples/docs/resizable/vertical";
+import { docSource, docAnatomy } from "#/components/examples/docs/source";
+import type { ComponentDoc } from "#/components/examples/docs/types";
 
 export const resizableDoc: ComponentDoc = {
   examples: [

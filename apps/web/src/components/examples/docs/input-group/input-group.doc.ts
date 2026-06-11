@@ -1,9 +1,8 @@
-import type { ComponentDoc } from "#/components/examples/docs/types";
-import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { InputGroupAddons } from "#/components/examples/docs/input-group/addons";
-
 import { InputGroupCopy } from "#/components/examples/docs/input-group/copy";
 import { InputGroupValidation } from "#/components/examples/docs/input-group/validation";
+import { docSource, docAnatomy } from "#/components/examples/docs/source";
+import type { ComponentDoc } from "#/components/examples/docs/types";
 
 export const inputGroupDoc: ComponentDoc = {
   examples: [

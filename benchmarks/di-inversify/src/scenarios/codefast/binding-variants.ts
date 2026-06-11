@@ -19,6 +19,7 @@
  *     as a singleton cache hit after the first resolve.
  */
 import { Container, injectable, token } from "@codefast/di";
+
 import { batched } from "#/harness/batched";
 import type { BenchScenario } from "#/scenarios/types";
 

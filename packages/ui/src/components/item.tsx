@@ -1,12 +1,10 @@
-import type { ItemMediaVariants, ItemVariants } from "#/variants/item";
+import { Slot } from "radix-ui";
 import type { ComponentProps, JSX } from "react";
 
-import { cn } from "#/lib/utils";
-
-import { itemMediaVariants, itemVariants } from "#/variants/item";
-import { Slot } from "radix-ui";
-
 import { Separator } from "#/components/separator";
+import { cn } from "#/lib/utils";
+import type { ItemMediaVariants, ItemVariants } from "#/variants/item";
+import { itemMediaVariants, itemVariants } from "#/variants/item";
 
 /* -----------------------------------------------------------------------------
  * Component: ItemGroup

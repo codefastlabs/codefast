@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Button } from "@codefast/ui/button";
 import { Input } from "@codefast/ui/input";
 import {
@@ -10,6 +9,7 @@ import {
   PopoverTrigger,
 } from "@codefast/ui/popover";
 import { CheckIcon, CopyIcon, Share2Icon } from "lucide-react";
+import { useState } from "react";
 
 const LINK = "https://codefast.dev/s/9f3a2c";
 

@@ -1,6 +1,6 @@
-import type { ApiGroup } from "#/components/examples/docs/types";
 import { DocSection } from "#/components/docs/doc-section";
 import { PropsTable } from "#/components/docs/props-table";
+import type { ApiGroup } from "#/components/examples/docs/types";
 
 interface ApiSectionProps {
   readonly groups: ReadonlyArray<ApiGroup>;

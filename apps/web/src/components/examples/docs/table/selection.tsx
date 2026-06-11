@@ -1,6 +1,6 @@
-import { useState } from "react";
 import { Checkbox } from "@codefast/ui/checkbox";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@codefast/ui/table";
+import { useState } from "react";
 
 const ROWS = [
   { id: "u1", name: "Ada Lovelace", role: "Owner" },

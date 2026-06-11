@@ -1,6 +1,6 @@
-import { useState } from "react";
 import { Label } from "@codefast/ui/label";
 import { Radio } from "@codefast/ui/radio";
+import { useState } from "react";
 
 export function RadioDisabled() {
   const [value, setValue] = useState("available");

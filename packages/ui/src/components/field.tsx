@@ -1,13 +1,11 @@
-import type { FieldVariants } from "#/variants/field";
 import type { ComponentProps, JSX, ReactNode } from "react";
-
-import { cn } from "#/lib/utils";
-
-import { fieldVariants } from "#/variants/field";
 import { useMemo } from "react";
 
 import { Label } from "#/components/label";
 import { Separator } from "#/components/separator";
+import { cn } from "#/lib/utils";
+import type { FieldVariants } from "#/variants/field";
+import { fieldVariants } from "#/variants/field";
 
 /* -----------------------------------------------------------------------------
  * Component: FieldSet

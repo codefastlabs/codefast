@@ -1,6 +1,6 @@
-import { Fragment } from "react";
 import { Kbd, KbdGroup } from "@codefast/ui/kbd";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@codefast/ui/table";
+import { Fragment } from "react";
 
 export interface KeyRow {
   /** One or more keys pressed together, e.g. ["Shift", "Tab"] or ["Space"]. */

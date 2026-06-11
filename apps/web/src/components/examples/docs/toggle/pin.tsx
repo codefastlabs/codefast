@@ -1,6 +1,6 @@
-import { useState } from "react";
 import { Toggle } from "@codefast/ui/toggle";
 import { PinIcon } from "lucide-react";
+import { useState } from "react";
 
 export function TogglePin() {
   const [pinned, setPinned] = useState(false);

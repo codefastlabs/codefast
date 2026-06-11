@@ -1,9 +1,8 @@
-import type { ComponentDoc } from "#/components/examples/docs/types";
-import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { SliderRange } from "#/components/examples/docs/slider/range";
-import { SliderVolume } from "#/components/examples/docs/slider/volume";
-
 import { SliderStepped } from "#/components/examples/docs/slider/stepped";
+import { SliderVolume } from "#/components/examples/docs/slider/volume";
+import { docSource, docAnatomy } from "#/components/examples/docs/source";
+import type { ComponentDoc } from "#/components/examples/docs/types";
 
 export const sliderDoc: ComponentDoc = {
   examples: [

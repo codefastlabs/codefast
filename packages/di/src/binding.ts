@@ -1,3 +1,5 @@
+import type { InjectionDescriptor } from "#/decorators/inject";
+import type { Token } from "#/token";
 import type {
   ActivationHandler,
   BindingIdentifier,
@@ -10,8 +12,6 @@ import type {
   TokenValue,
   ConstraintContext,
 } from "#/types";
-import type { Token } from "#/token";
-import type { InjectionDescriptor } from "#/decorators/inject";
 
 // ── BindingSlot ───────────────────────────────────────────────────────────────────
 

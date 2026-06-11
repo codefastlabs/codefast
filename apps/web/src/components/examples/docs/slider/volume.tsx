@@ -1,6 +1,6 @@
-import { useState } from "react";
 import { Slider } from "@codefast/ui/slider";
 import { Volume2Icon, VolumeXIcon } from "lucide-react";
+import { useState } from "react";
 
 export function SliderVolume() {
   const [value, setValue] = useState([60]);

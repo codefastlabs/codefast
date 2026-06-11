@@ -1,6 +1,6 @@
-import { useState } from "react";
 import { ToggleGroup, ToggleGroupItem } from "@codefast/ui/toggle-group";
 import { AlignCenterIcon, AlignJustifyIcon, AlignLeftIcon, AlignRightIcon } from "lucide-react";
+import { useState } from "react";
 
 export function ToggleGroupAlignment() {
   const [align, setAlign] = useState("left");

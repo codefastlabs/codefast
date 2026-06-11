@@ -1,8 +1,8 @@
-import type { CompoundPaginationSlots } from "#/fixtures/slot-types";
-import { tailwindVariantsTv } from "#/lib/tv-shims";
-import { TV_MERGE_DISABLED, TV_MERGE_ENABLED } from "#/harness/bench-options";
-import type { BenchScenario } from "#/scenarios/types";
 import { compoundSlotsTestProps, compoundSlotsVariants } from "#/fixtures/compound-slots";
+import type { CompoundPaginationSlots } from "#/fixtures/slot-types";
+import { TV_MERGE_DISABLED, TV_MERGE_ENABLED } from "#/harness/bench-options";
+import { tailwindVariantsTv } from "#/lib/tv-shims";
+import type { BenchScenario } from "#/scenarios/types";
 
 type CompoundProps = (typeof compoundSlotsTestProps)[number];
 type CompoundSlotsRenderer = (props: CompoundProps) => CompoundPaginationSlots;

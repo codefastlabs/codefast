@@ -1,10 +1,10 @@
-import type { ComponentDoc } from "#/components/examples/docs/types";
-import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { ButtonAsChild } from "#/components/examples/docs/button/as-child";
 import { ButtonIcons } from "#/components/examples/docs/button/icons";
 import { ButtonLoading } from "#/components/examples/docs/button/loading";
 import { ButtonSizes } from "#/components/examples/docs/button/sizes";
 import { ButtonVariants } from "#/components/examples/docs/button/variants";
+import { docSource, docAnatomy } from "#/components/examples/docs/source";
+import type { ComponentDoc } from "#/components/examples/docs/types";
 
 export const buttonDoc: ComponentDoc = {
   examples: [

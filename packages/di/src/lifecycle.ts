@@ -1,14 +1,14 @@
+import type { Binding } from "#/binding";
+import { AsyncActivationError, AsyncDeactivationError } from "#/errors";
+import type { MetadataReader } from "#/metadata/metadata-types";
+import type { Token } from "#/token";
+import { tokenName } from "#/token";
 import type {
   ActivationHandler,
   Constructor,
   DeactivationHandler,
   ResolutionContext,
 } from "#/types";
-import type { Token } from "#/token";
-import type { Binding } from "#/binding";
-import type { MetadataReader } from "#/metadata/metadata-types";
-import { AsyncActivationError, AsyncDeactivationError } from "#/errors";
-import { tokenName } from "#/token";
 
 /**
  * @since 0.3.16-canary.0

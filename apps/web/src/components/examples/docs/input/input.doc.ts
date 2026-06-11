@@ -1,8 +1,8 @@
-import type { ComponentDoc } from "#/components/examples/docs/types";
-import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { InputDefault } from "#/components/examples/docs/input/default";
 import { InputFile } from "#/components/examples/docs/input/file";
 import { InputStates } from "#/components/examples/docs/input/states";
+import { docSource, docAnatomy } from "#/components/examples/docs/source";
+import type { ComponentDoc } from "#/components/examples/docs/types";
 
 export const inputDoc: ComponentDoc = {
   examples: [

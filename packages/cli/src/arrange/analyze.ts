@@ -1,8 +1,3 @@
-import { AppError } from "#/core/errors";
-import { messageFrom } from "#/core/errors";
-import type { FilesystemPort } from "#/core/filesystem/port";
-import type { Result } from "#/core/result";
-import { err, ok } from "#/core/result";
 import {
   accumulateAnalyzeReportForSourceFile,
   createEmptyAnalyzeReport,
@@ -10,6 +5,11 @@ import {
 import type { AnalyzeReport } from "#/arrange/domain/types";
 import { scanArrangeTargets } from "#/arrange/scan-target";
 import { parseDomainSourceFile } from "#/arrange/source-parse";
+import { AppError } from "#/core/errors";
+import { messageFrom } from "#/core/errors";
+import type { FilesystemPort } from "#/core/filesystem/port";
+import type { Result } from "#/core/result";
+import { err, ok } from "#/core/result";
 
 /**
  * @since 0.3.16-canary.0

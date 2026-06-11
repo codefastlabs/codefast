@@ -1,5 +1,3 @@
-import type { FilesystemPort } from "#/core/filesystem/port";
-import type { ArrangeGroupFileOptions, GroupFileResult } from "#/arrange/domain/types";
 import {
   buildGroupFileUnwrapState,
   countPersistedGroupFileEdits,
@@ -11,7 +9,9 @@ import {
   tryBuildGroupFileWorkPlan,
 } from "#/arrange/domain/grouping-service";
 import { ensureCnImport } from "#/arrange/domain/imports";
+import type { ArrangeGroupFileOptions, GroupFileResult } from "#/arrange/domain/types";
 import { parseDomainSourceFile } from "#/arrange/source-parse";
+import type { FilesystemPort } from "#/core/filesystem/port";
 
 /**
  * @since 0.3.16-canary.0

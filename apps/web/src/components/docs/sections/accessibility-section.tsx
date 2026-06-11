@@ -1,6 +1,7 @@
-import type { KeyRow } from "#/components/docs/keyboard-table";
 import { CheckIcon } from "lucide-react";
+
 import { DocSection } from "#/components/docs/doc-section";
+import type { KeyRow } from "#/components/docs/keyboard-table";
 import { KeyboardTable } from "#/components/docs/keyboard-table";
 
 interface AccessibilitySectionProps {

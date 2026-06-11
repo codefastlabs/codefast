@@ -1,5 +1,5 @@
-import { useState } from "react";
 import { Slider } from "@codefast/ui/slider";
+import { useState } from "react";
 
 const MARKS = [0, 25, 50, 75, 100];
 

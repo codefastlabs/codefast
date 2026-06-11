@@ -1,4 +1,3 @@
-import { endAfterOptionalCommaFollowingInSource } from "#/core/source-text-edit";
 import {
   forEachDomainChild,
   isDomainIdentifier,
@@ -11,6 +10,7 @@ import type {
   DomainImportSpecifier,
   DomainSourceFile,
 } from "#/arrange/domain/ast/ast-node";
+import { endAfterOptionalCommaFollowingInSource } from "#/core/source-text-edit";
 
 function sourceFileImportsCn(sourceFile: DomainSourceFile): boolean {
   for (const statement of sourceFile.statements) {
