@@ -1,4 +1,3 @@
-import { useState } from "react";
 import {
   Menubar,
   MenubarCheckboxItem,
@@ -10,6 +9,7 @@ import {
   MenubarSeparator,
   MenubarTrigger,
 } from "@codefast/ui/menubar";
+import { useState } from "react";
 
 export function MenubarSelections() {
   const [statusBar, setStatusBar] = useState(true);
@@ -24,7 +24,7 @@ export function MenubarSelections() {
           <MenubarCheckboxItem
             checked={statusBar}
             onCheckedChange={(checked) => {
-              setStatusBar(checked === true);
+              setStatusBar(checked);
             }}
           >
             Status bar
@@ -32,7 +32,7 @@ export function MenubarSelections() {
           <MenubarCheckboxItem
             checked={showMinimap}
             onCheckedChange={(checked) => {
-              setShowMinimap(checked === true);
+              setShowMinimap(checked);
             }}
           >
             Minimap

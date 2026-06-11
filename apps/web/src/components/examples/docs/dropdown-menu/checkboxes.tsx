@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Button } from "@codefast/ui/button";
 import {
   DropdownMenu,
@@ -9,6 +8,7 @@ import {
   DropdownMenuTrigger,
 } from "@codefast/ui/dropdown-menu";
 import { SlidersHorizontalIcon } from "lucide-react";
+import { useState } from "react";
 
 const COLUMNS = [
   { id: "status", label: "Status" },
@@ -42,7 +42,7 @@ export function DropdownCheckboxes() {
               key={column.id}
               checked={visible[column.id] ?? false}
               onCheckedChange={(value) => {
-                setVisible((previous) => ({ ...previous, [column.id]: value === true }));
+                setVisible((previous) => ({ ...previous, [column.id]: value }));
               }}
             >
               {column.label}

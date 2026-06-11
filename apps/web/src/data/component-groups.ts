@@ -30,7 +30,7 @@ export const CATEGORY_GROUPS: ReadonlyArray<ComponentGroup> = CATEGORIES.map((ca
 
 /** Components grouped by leading letter, A–Z, each bucket A–Z sorted. */
 export const ALPHABET_GROUPS: ReadonlyArray<ComponentGroup> = (() => {
-  const sorted = [...ALL_COMPONENTS].sort((a, b) => a.name.localeCompare(b.name));
+  const sorted = [...ALL_COMPONENTS].toSorted((a, b) => a.name.localeCompare(b.name));
   const buckets = new Map<string, Array<ComponentMeta>>();
 
   for (const component of sorted) {
@@ -45,7 +45,7 @@ export const ALPHABET_GROUPS: ReadonlyArray<ComponentGroup> = (() => {
   }
 
   return [...buckets.entries()]
-    .sort(([a], [b]) => a.localeCompare(b))
+    .toSorted(([a], [b]) => a.localeCompare(b))
     .map(([letter, items]) => ({ id: `letter-${letter}`, label: letter, items }));
 })();
 

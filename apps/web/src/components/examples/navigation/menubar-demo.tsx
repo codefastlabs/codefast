@@ -1,5 +1,3 @@
-import { useState } from "react";
-
 import {
   Menubar,
   MenubarCheckboxItem,
@@ -16,6 +14,7 @@ import {
   MenubarSubTrigger,
   MenubarTrigger,
 } from "@codefast/ui/menubar";
+import { useState } from "react";
 
 export function MenubarDemo() {
   const [showToolbar, setShowToolbar] = useState(true);
@@ -76,7 +75,7 @@ export function MenubarDemo() {
           <MenubarCheckboxItem
             checked={showToolbar}
             onCheckedChange={(value) => {
-              setShowToolbar(value === true);
+              setShowToolbar(value);
             }}
           >
             Show toolbar
@@ -84,7 +83,7 @@ export function MenubarDemo() {
           <MenubarCheckboxItem
             checked={showGrid}
             onCheckedChange={(value) => {
-              setShowGrid(value === true);
+              setShowGrid(value);
             }}
           >
             Show grid

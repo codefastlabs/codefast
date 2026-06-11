@@ -1,5 +1,3 @@
-import { useState } from "react";
-
 import {
   ContextMenu,
   ContextMenuCheckboxItem,
@@ -20,6 +18,7 @@ import {
   Share2Icon,
   Trash2Icon,
 } from "lucide-react";
+import { useState } from "react";
 
 export function ContextMenuDemo() {
   const [favorite, setFavorite] = useState(true);
@@ -63,7 +62,7 @@ export function ContextMenuDemo() {
         <ContextMenuCheckboxItem
           checked={favorite}
           onCheckedChange={(value) => {
-            setFavorite(value === true);
+            setFavorite(value);
           }}
         >
           Add to favorites

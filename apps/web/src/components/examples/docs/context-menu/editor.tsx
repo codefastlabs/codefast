@@ -1,4 +1,3 @@
-import { useState } from "react";
 import {
   ContextMenu,
   ContextMenuCheckboxItem,
@@ -9,6 +8,7 @@ import {
   ContextMenuSeparator,
   ContextMenuTrigger,
 } from "@codefast/ui/context-menu";
+import { useState } from "react";
 
 export function ContextMenuEditor() {
   const [grid, setGrid] = useState(true);
@@ -23,16 +23,10 @@ export function ContextMenuEditor() {
         </ContextMenuTrigger>
         <ContextMenuContent className="w-48">
           <ContextMenuLabel>View</ContextMenuLabel>
-          <ContextMenuCheckboxItem
-            checked={grid}
-            onCheckedChange={(value) => setGrid(value === true)}
-          >
+          <ContextMenuCheckboxItem checked={grid} onCheckedChange={(value) => setGrid(value)}>
             Show grid
           </ContextMenuCheckboxItem>
-          <ContextMenuCheckboxItem
-            checked={ruler}
-            onCheckedChange={(value) => setRuler(value === true)}
-          >
+          <ContextMenuCheckboxItem checked={ruler} onCheckedChange={(value) => setRuler(value)}>
             Show ruler
           </ContextMenuCheckboxItem>
           <ContextMenuSeparator />
