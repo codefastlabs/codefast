@@ -1,12 +1,12 @@
-import type { FilesystemPort } from "#/core/filesystem/port";
 import { messageFrom } from "#/core/errors";
+import type { FilesystemPort } from "#/core/filesystem/port";
+import { PACKAGE_JSON_EXPORT } from "#/mirror/domain/constants";
 import { MirrorError, MirrorErrorCode } from "#/mirror/domain/errors";
 import type {
   ExportMapData,
   ExportOriginalPathBySpecifier,
   PackageJsonShape,
 } from "#/mirror/domain/types";
-import { PACKAGE_JSON_EXPORT } from "#/mirror/domain/constants";
 
 /**
  * Writes `exports` into `package.json` via a temp file + rename (atomic on same volume).
@@ -154,13 +154,14 @@ export async function writePackageJsonExportsAtomic(
 
   const sortedExportMap: Record<string, unknown> = {};
   const hasCatchAllWildcard = "./*" in mergedExportMap;
-  for (const exportSpecifier of Object.keys(mergedExportMap).sort((leftSpecifier, rightSpecifier) =>
-    compareExportSpecifiers(
-      leftSpecifier,
-      rightSpecifier,
-      originalPathBySpecifier,
-      hasCatchAllWildcard,
-    ),
+  for (const exportSpecifier of Object.keys(mergedExportMap).toSorted(
+    (leftSpecifier, rightSpecifier) =>
+      compareExportSpecifiers(
+        leftSpecifier,
+        rightSpecifier,
+        originalPathBySpecifier,
+        hasCatchAllWildcard,
+      ),
   )) {
     sortedExportMap[exportSpecifier] = mergedExportMap[exportSpecifier];
   }

@@ -5,7 +5,7 @@ import {
   MAX_GROUPS_HEADROOM,
   MIN_GROUP_TOKENS,
 } from "#/arrange/domain/constants";
-import type { Bucket } from "#/arrange/domain/types";
+import { stripVariants, tokenizeClassString } from "#/arrange/domain/tailwind-token";
 import {
   bucketsCompatible,
   bucketsMergeCompatible,
@@ -14,7 +14,7 @@ import {
   selectorKey,
   stateKey,
 } from "#/arrange/domain/token-classifier";
-import { stripVariants, tokenizeClassString } from "#/arrange/domain/tailwind-token";
+import type { Bucket } from "#/arrange/domain/types";
 
 /**
  * `cn()` grouping: bucket sequence is {@link BUCKET_ORDER} only; tokens are classified with
@@ -132,7 +132,7 @@ export function areCnTailwindPartitionsEquivalent(
         const classTokens = tokenizeClassString(chunk);
         return classTokens.length === 0
           ? ""
-          : [...classTokens].sort(compareClassTokensCanonically).join(" ");
+          : [...classTokens].toSorted(compareClassTokensCanonically).join(" ");
       })
       .filter((s) => s.length > 0)
       .sort(compareClassTokensCanonically);
@@ -373,7 +373,7 @@ function mergeEaseTimingIntoFollowingAnimatedState(groups: Array<string>): Array
           continue;
         }
         const classTokens = tokenizeClassString(chunkJ);
-        if (!classTokens.some((classToken) => /^animate/.test(stripVariants(classToken)))) {
+        if (!classTokens.some((classToken) => stripVariants(classToken).startsWith("animate"))) {
           continue;
         }
         target = j;
@@ -402,7 +402,7 @@ function chunkIsOnlyEaseTimingMotion(groupStr: string): boolean {
   }
   return classTokens.every(
     (classToken) =>
-      classifyToken(classToken) === "motion" && /^ease-/.test(stripVariants(classToken)),
+      classifyToken(classToken) === "motion" && stripVariants(classToken).startsWith("ease-"),
   );
 }
 
@@ -513,11 +513,11 @@ export function summarizeGroupBucketLabels(groups: Array<string>): Array<string>
   return groups.map((g) => {
     const uniq = new Set(tokenizeClassString(g).map(classifyToken));
     if (uniq.size !== 1) {
-      return `mixed:${[...uniq].sort(compareClassTokensCanonically).join("+")}`;
+      return `mixed:${[...uniq].toSorted(compareClassTokensCanonically).join("+")}`;
     }
     const onlyBucket = [...uniq][0];
     if (onlyBucket === undefined) {
-      return `mixed:${[...uniq].sort(compareClassTokensCanonically).join("+")}`;
+      return `mixed:${[...uniq].toSorted(compareClassTokensCanonically).join("+")}`;
     }
     return onlyBucket;
   });

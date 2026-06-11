@@ -1,10 +1,11 @@
 import * as nodePath from "node:path";
-import type { DistFilesystem } from "#/mirror/domain/dist-filesystem";
+
 import {
   PACKAGE_JSON_EXPORT,
   VALID_DTS_EXTENSIONS,
   VALID_JS_EXTENSIONS,
 } from "#/mirror/domain/constants";
+import type { DistFilesystem } from "#/mirror/domain/dist-filesystem";
 import type {
   DistModule,
   ExportEntry,
@@ -178,7 +179,7 @@ async function generateCssExports(
   if (cssConfig === true) {
     cssConfig = { enabled: true };
   }
-  if (!cssConfig || (cssConfig as Record<string, unknown>).enabled === false) {
+  if (!cssConfig || cssConfig.enabled === false) {
     return {};
   }
 
@@ -191,7 +192,7 @@ async function generateCssExports(
   }
 
   const cssExports: Record<string, string> = {
-    ...((cssConfig as Record<string, unknown>).customExports as Record<string, string>),
+    ...(cssConfig.customExports as Record<string, string>),
   };
   const cssFilesByDir = new Map<string, Array<string>>();
   const rootCssFiles: Array<string> = [];
@@ -217,7 +218,7 @@ async function generateCssExports(
   for (const [dirName, dirCssFiles] of cssFilesByDir.entries()) {
     if (
       (await fileSystemService.isDirectoryCssOnly(distDir, dirName)) &&
-      !(cssConfig as Record<string, unknown>).forceExportFiles
+      !cssConfig.forceExportFiles
     ) {
       const wildcardExport = `./${dirName}/*`;
       if (!(wildcardExport in cssExports)) {
@@ -333,7 +334,7 @@ export async function generateExports(
     originalPathBySpecifier[exportPath] = originalExportPath;
   }
 
-  let sortedSpecifiers = Object.keys(moduleExportsBySpecifier).sort(
+  let sortedSpecifiers = Object.keys(moduleExportsBySpecifier).toSorted(
     (leftSpecifier, rightSpecifier) =>
       compareExportSortKeys(
         getExportSortKey(leftSpecifier, pathTransform),
@@ -371,7 +372,7 @@ export async function generateExports(
 
   sortedSpecifiers = Object.keys(sortedExports)
     .filter((exportKey) => exportKey !== PACKAGE_JSON_EXPORT)
-    .sort((leftSpecifier, rightSpecifier) =>
+    .toSorted((leftSpecifier, rightSpecifier) =>
       compareExportSortKeys(
         getExportSortKey(leftSpecifier, pathTransform),
         getExportSortKey(rightSpecifier, pathTransform),

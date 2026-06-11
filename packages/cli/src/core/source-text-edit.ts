@@ -71,7 +71,7 @@ export function applyEditsDescending(
   sourceText: string,
   edits: ReadonlyArray<SourceTextEdit>,
 ): string {
-  const sorted = [...edits].sort((editA, editB) => editB.start - editA.start);
+  const sorted = [...edits].toSorted((editA, editB) => editB.start - editA.start);
   let out = sourceText;
   for (const edit of sorted) {
     out = out.slice(0, edit.start) + edit.replacement + out.slice(edit.end);

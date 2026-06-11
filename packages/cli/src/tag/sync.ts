@@ -1,4 +1,5 @@
 import path from "node:path";
+
 import type { CodefastAfterWriteHook, CodefastTagConfig } from "#/core/config/schema";
 import { AppError } from "#/core/errors";
 import { messageFrom } from "#/core/errors";
@@ -80,7 +81,7 @@ export async function runTagSync(
         ? await runTagOnAfterWriteHook(tagConfig?.onAfterWrite, modifiedFiles)
         : null;
     const versionsSet = extractDistinctVersions(targetExecutionResults);
-    const distinctVersions = [...versionsSet].sort((left, right) => left.localeCompare(right));
+    const distinctVersions = [...versionsSet].toSorted((left, right) => left.localeCompare(right));
 
     return ok({
       mode: input.write ? "applied" : "dry-run",
