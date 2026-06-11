@@ -22,7 +22,7 @@ import { DEMOS } from "#/components/examples/demos";
 import { loadComponentDoc } from "#/components/examples/docs";
 import type { ResolvedComponentDoc, ResolvedDocExample } from "#/components/examples/docs/types";
 import type { ComponentMeta } from "#/data/components";
-import { ALL_COMPONENTS, DEMO_NEIGHBORS } from "#/data/components";
+import { ALL_COMPONENTS, COMPONENT_BY_SLUG, DEMO_NEIGHBORS } from "#/data/components";
 
 interface ComponentDetail {
   readonly component: ComponentMeta;
@@ -52,6 +52,42 @@ async function loadDetail(component: ComponentMeta): Promise<ComponentDetail> {
   }
 
   return { component, examples: [] };
+}
+
+const detailCache = new Map<string, Promise<ComponentDetail>>();
+
+/** Memoised `loadDetail` so an intent preload and the lazy body share one fetch. */
+function fetchDetail(component: ComponentMeta): Promise<ComponentDetail> {
+  const cached = detailCache.get(component.slug);
+
+  if (cached) {
+    return cached;
+  }
+
+  const promise = loadDetail(component);
+
+  // A failed load (e.g. a network blip) must not poison the cache — drop it so
+  // the next render retries instead of replaying the rejection forever.
+  promise.catch(() => detailCache.delete(component.slug));
+  detailCache.set(component.slug, promise);
+
+  return promise;
+}
+
+/**
+ * Warms a slug's detail chunk ahead of navigation. The `$slug` route loader
+ * calls this, so the router's `defaultPreload: "intent"` turns every hover or
+ * focus on a detail link into a background fetch — by the time the visitor
+ * clicks, the body usually renders without its skeleton.
+ */
+export function preloadDetail(slug: string): void {
+  const component = COMPONENT_BY_SLUG.get(slug);
+
+  if (component) {
+    fetchDetail(component).catch(() => {
+      // Swallow: preloading is best-effort; rendering will retry and surface errors.
+    });
+  }
 }
 
 /** Builds the "On this page" entries from whichever sections are present. */
@@ -137,7 +173,7 @@ export const DETAIL_BODIES: ReadonlyMap<string, LazyExoticComponent<ComponentTyp
   ALL_COMPONENTS.map((component) => [
     component.slug,
     lazy(async () => {
-      const detail = await loadDetail(component);
+      const detail = await fetchDetail(component);
 
       return { default: () => <DetailBody detail={detail} /> };
     }),
