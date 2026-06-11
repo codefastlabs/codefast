@@ -6,9 +6,8 @@
  * foundation for CSS class processing throughout the package.
  */
 
-import type { ConfigExtension } from "tailwind-merge";
-
 import { clsx } from "clsx";
+import type { ConfigExtension } from "tailwind-merge";
 import { extendTailwindMerge, twMerge } from "tailwind-merge";
 
 import type {
@@ -205,7 +204,7 @@ export const hasExtendConfig = <T extends VariantSchema, S extends SlotSchema>(
     | SlotVariantConfig<T, S>
     | ExtendedVariantConfig<VariantSchema, T, SlotSchema, S>,
 ): configuration is ExtendedVariantConfig<VariantSchema, T, SlotSchema, S> & {
-  readonly extend: VariantResolver<VariantSchema, SlotSchema>;
+  readonly extend: VariantResolver<VariantSchema>;
 } => {
   return "extend" in configuration && configuration.extend !== undefined;
 };
