@@ -1,17 +1,16 @@
 import { DocSection } from "#/components/docs/doc-section";
 import { ExamplePreview } from "#/components/docs/example-preview";
-import type { DocExample } from "#/components/examples/docs/types";
+import type { ResolvedDocExample } from "#/components/examples/docs/types";
 
 interface ExamplesSectionProps {
-  readonly examples: ReadonlyArray<DocExample>;
-  /** Highlighted Shiki HTML keyed by example id. */
-  readonly highlighted: Record<string, string>;
+  /** Examples with their source already resolved to raw text + Shiki HTML. */
+  readonly examples: ReadonlyArray<ResolvedDocExample>;
   /** Show the generic hint line when the page has no rich doc. */
   readonly showHint: boolean;
 }
 
 /** The "Examples" section: a live preview + copy-ready source per example. */
-export function ExamplesSection({ examples, highlighted, showHint }: ExamplesSectionProps) {
+export function ExamplesSection({ examples, showHint }: ExamplesSectionProps) {
   return (
     <DocSection
       id="examples"
@@ -26,7 +25,7 @@ export function ExamplesSection({ examples, highlighted, showHint }: ExamplesSec
             title={example.title}
             description={example.description}
             code={example.code}
-            highlightedCode={highlighted[example.id] ?? ""}
+            highlightedCode={example.html}
             previewClassName={example.previewClassName}
             direction={example.direction}
           >

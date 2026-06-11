@@ -1,9 +1,8 @@
 import { ComponentCard } from "#/components/showcase/components/component-card";
-import type { HighlightedCodes } from "#/components/showcase/types";
 import type { ComponentGroup } from "#/data/component-groups";
 
 /** A titled band with a count badge and the responsive card grid. */
-export function GroupSection({ group, hl }: { group: ComponentGroup; hl: HighlightedCodes }) {
+export function GroupSection({ group }: { group: ComponentGroup }) {
   return (
     <section id={group.id} className="mb-16 scroll-mt-28">
       <div className="mb-6 flex flex-col gap-2 border-b border-ui-border pb-4 sm:flex-row sm:items-end sm:justify-between">
@@ -19,7 +18,7 @@ export function GroupSection({ group, hl }: { group: ComponentGroup; hl: Highlig
       </div>
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
         {group.items.map((component) => (
-          <ComponentCard key={component.slug} component={component} highlighted={hl[component.slug] ?? ""} />
+          <ComponentCard key={component.slug} component={component} />
         ))}
       </div>
     </section>

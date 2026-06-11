@@ -4,14 +4,15 @@ import { ArrowUpRightIcon } from "lucide-react";
 import type { ReactNode } from "react";
 import { useState } from "react";
 
-import { CodeBlock } from "#/components/code-block";
+import { LazyCodeBlock } from "#/components/lazy-code-block";
+import type { HighlightedSource } from "#/lib/highlight";
 
 interface PreviewCardProps {
   name: string;
   path: string;
   description: string;
-  code: string;
-  highlightedCode: string;
+  /** Loads the demo's source chunk — fetched only when the Code tab opens. */
+  loadSource: () => Promise<HighlightedSource>;
   children: ReactNode;
   wide?: boolean;
   id?: string;
@@ -19,17 +20,7 @@ interface PreviewCardProps {
   slug?: string;
 }
 
-export function PreviewCard({
-  name,
-  path,
-  description,
-  code,
-  highlightedCode,
-  children,
-  wide,
-  id,
-  slug,
-}: PreviewCardProps) {
+export function PreviewCard({ name, path, description, loadSource, children, wide, id, slug }: PreviewCardProps) {
   const [tab, setTab] = useState<"preview" | "code">("preview");
 
   return (
@@ -66,7 +57,7 @@ export function PreviewCard({
       {tab === "preview" ? (
         <div className="flex min-h-40 flex-1 items-center justify-center bg-ui-surface p-6">{children}</div>
       ) : (
-        <CodeBlock code={code} highlightedCode={highlightedCode} className="h-full min-h-40" />
+        <LazyCodeBlock load={loadSource} className="h-full min-h-40" />
       )}
 
       {/* Meta */}
