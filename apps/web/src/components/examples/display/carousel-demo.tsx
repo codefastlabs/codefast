@@ -1,5 +1,6 @@
 import { Card, CardContent } from "@codefast/ui/card";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@codefast/ui/carousel";
+import { cn } from "@codefast/ui/lib/utils";
 
 const STAYS = [
   {
@@ -32,7 +33,7 @@ export function CarouselDemo() {
           <CarouselItem key={title}>
             <Card className="gap-0 py-0">
               <CardContent className="p-0">
-                <div className={`flex h-32 items-end bg-gradient-to-br ${gradient} p-3`}>
+                <div className={cn("flex h-32 items-end bg-gradient-to-br p-3", gradient)}>
                   <span className="rounded-full bg-black/30 px-2 py-0.5 text-xs font-medium text-white backdrop-blur-sm">
                     {price} / night
                   </span>
