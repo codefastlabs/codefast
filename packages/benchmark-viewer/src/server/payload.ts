@@ -1,22 +1,24 @@
-import { readdir, readFile } from "node:fs/promises";
 import type { Dirent } from "node:fs";
+import { readdir, readFile } from "node:fs/promises";
 import { join } from "node:path";
-import type {
-  ScenarioTrialResult,
-  TrialPayload,
-} from "@codefast/benchmark-harness/shared/protocol";
-import type { JsonlBenchObservationRow } from "@codefast/benchmark-harness/report/jsonl";
-import {
-  jsonlBenchObservationRowToFingerprint,
-  jsonlBenchObservationRowToScenarioTrialResult,
-} from "@codefast/benchmark-harness/report/jsonl";
+
 import type {
   AggregatedScenarioResult,
   LibraryReport,
 } from "@codefast/benchmark-harness/report/aggregate";
 import { buildLibraryReport } from "@codefast/benchmark-harness/report/aggregate";
+import type { JsonlBenchObservationRow } from "@codefast/benchmark-harness/report/jsonl";
+import {
+  jsonlBenchObservationRowToFingerprint,
+  jsonlBenchObservationRowToScenarioTrialResult,
+} from "@codefast/benchmark-harness/report/jsonl";
 import { quantile, sortAscending } from "@codefast/benchmark-harness/report/quantiles";
 import { OBSERVATIONS_FILE_NAME } from "@codefast/benchmark-harness/shared/env-keys";
+import type {
+  ScenarioTrialResult,
+  TrialPayload,
+} from "@codefast/benchmark-harness/shared/protocol";
+
 import { DEFAULT_MAX_RUNS } from "#/constants";
 import type {
   BenchServerOptions,
@@ -74,7 +76,7 @@ export async function listRawRuns(
   benchResultsDir: string,
   maxRuns?: number,
 ): Promise<ListRawRunsResult> {
-  let entries: Array<Dirent<string>>;
+  let entries: Array<Dirent>;
   try {
     entries = await readdir(benchResultsDir, { withFileTypes: true });
   } catch (err) {
@@ -89,7 +91,7 @@ export async function listRawRuns(
   const dirNames = entries
     .filter((entry) => entry.isDirectory())
     .map((entry) => entry.name)
-    .sort((left, right) => left.localeCompare(right));
+    .toSorted((left, right) => left.localeCompare(right));
 
   const totalDirs = dirNames.length;
   const cap = maxRuns ?? DEFAULT_MAX_RUNS;
@@ -186,7 +188,7 @@ function buildLibraryRunData(
   }
 
   const trialPayloads: Array<TrialPayload> = [...byTrialIndex.entries()]
-    .sort((left, right) => left[0] - right[0])
+    .toSorted((left, right) => left[0] - right[0])
     .map(([trialIndex, scenarios]) => ({ trialIndex, scenarios }));
   const report = buildLibraryReport(fingerprint, trialPayloads, []);
 
@@ -351,7 +353,7 @@ export function buildEmbeddedPayload(
       }
     }
   }
-  const scenarioIds = [...scenarioGroup.keys()].sort((left, right) => {
+  const scenarioIds = [...scenarioGroup.keys()].toSorted((left, right) => {
     const groupCompare = (scenarioGroup.get(left) ?? "").localeCompare(
       scenarioGroup.get(right) ?? "",
     );

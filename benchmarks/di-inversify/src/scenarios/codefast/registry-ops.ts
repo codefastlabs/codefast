@@ -25,6 +25,7 @@
  *     the child.  Measures the scoped allocation + child lifecycle cost.
  */
 import { Container, token } from "@codefast/di";
+
 import { batched } from "#/harness/batched";
 import type { BenchScenario } from "#/scenarios/types";
 
@@ -80,7 +81,7 @@ function buildHasBoundCheckScenario(): BenchScenario {
     group: "introspection",
     what: "container.has(token) returning true — registry lookup hot path for optional-dep guards",
     batch: HAS_BOUND_BATCH,
-    sanity: () => container.has(hasBoundToken) === true,
+    sanity: () => container.has(hasBoundToken),
     build: () =>
       batched(HAS_BOUND_BATCH, () => {
         container.has(hasBoundToken);
@@ -106,8 +107,7 @@ function buildHasOwnUnboundCheckScenario(): BenchScenario {
     group: "introspection",
     what: "container.hasOwn(token) returning false — binding lives in parent, not own registry",
     batch: HAS_OWN_BATCH,
-    sanity: () =>
-      childContainer.hasOwn(hasOwnToken) === false && childContainer.has(hasOwnToken) === true,
+    sanity: () => !childContainer.hasOwn(hasOwnToken) && childContainer.has(hasOwnToken),
     build: () =>
       batched(HAS_OWN_BATCH, () => {
         childContainer.hasOwn(hasOwnToken);
