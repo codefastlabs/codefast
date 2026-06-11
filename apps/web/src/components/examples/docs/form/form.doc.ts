@@ -11,7 +11,7 @@ export const formDoc: ComponentDoc = {
       title: "Sign-in with validation",
       description: "A controlled form: submit invalid values to see inline errors, valid ones to succeed.",
       Demo: FormSignIn,
-      code: docSource("form", "sign-in"),
+      source: docSource("form", "sign-in"),
       previewClassName: "items-start",
     },
     {
@@ -19,7 +19,7 @@ export const formDoc: ComponentDoc = {
       title: "Contact form",
       description: "Field + Textarea with inline validation and a helper.",
       Demo: FormContact,
-      code: docSource("form", "contact"),
+      source: docSource("form", "contact"),
       previewClassName: "items-start",
     },
     {
@@ -27,7 +27,7 @@ export const formDoc: ComponentDoc = {
       title: "With consent",
       description: "Combine an input with a required consent checkbox.",
       Demo: FormNewsletter,
-      code: docSource("form", "newsletter"),
+      source: docSource("form", "newsletter"),
       previewClassName: "items-start",
     },
   ],

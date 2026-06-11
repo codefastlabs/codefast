@@ -11,7 +11,7 @@ export const radioGroupDoc: ComponentDoc = {
       title: "Controlled single-select",
       description: "Exactly one option is selected; the choice is echoed live below.",
       Demo: RadioGroupDensity,
-      code: docSource("radio-group", "density"),
+      source: docSource("radio-group", "density"),
       previewClassName: "items-start",
     },
     {
@@ -19,7 +19,7 @@ export const radioGroupDoc: ComponentDoc = {
       title: "Selectable cards",
       description: "Wrap each option in a Label card that highlights when checked.",
       Demo: RadioGroupPlans,
-      code: docSource("radio-group", "plans"),
+      source: docSource("radio-group", "plans"),
       previewClassName: "items-start",
     },
     {
@@ -27,7 +27,7 @@ export const radioGroupDoc: ComponentDoc = {
       title: "Horizontal",
       description: "Arrange options in a single row.",
       Demo: RadioGroupHorizontal,
-      code: docSource("radio-group", "horizontal"),
+      source: docSource("radio-group", "horizontal"),
     },
   ],
   anatomy: docAnatomy("radio-group"),

@@ -11,7 +11,7 @@ export const dialogDoc: ComponentDoc = {
       title: "Basic",
       description: "A focus-trapped modal with header, body, and footer actions.",
       Demo: DialogBasic,
-      code: docSource("dialog", "basic"),
+      source: docSource("dialog", "basic"),
       previewClassName: "min-h-40",
     },
     {
@@ -19,7 +19,7 @@ export const dialogDoc: ComponentDoc = {
       title: "Scrollable body",
       description: "Keep the header and footer fixed while the body scrolls.",
       Demo: DialogScroll,
-      code: docSource("dialog", "scroll"),
+      source: docSource("dialog", "scroll"),
       previewClassName: "min-h-40",
     },
     {
@@ -27,7 +27,7 @@ export const dialogDoc: ComponentDoc = {
       title: "Controlled open",
       description: "Drive the open state from your component.",
       Demo: DialogControlled,
-      code: docSource("dialog", "controlled"),
+      source: docSource("dialog", "controlled"),
     },
   ],
   anatomy: docAnatomy("dialog"),

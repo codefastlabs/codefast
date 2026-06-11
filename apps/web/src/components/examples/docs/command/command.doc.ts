@@ -11,7 +11,7 @@ export const commandDoc: ComponentDoc = {
       title: "Inline palette",
       description: "Type to fuzzy-filter; pick an item to run it. The choice shows below.",
       Demo: CommandPalette,
-      code: docSource("command", "palette"),
+      source: docSource("command", "palette"),
       previewClassName: "items-start",
     },
     {
@@ -19,7 +19,7 @@ export const commandDoc: ComponentDoc = {
       title: "Command dialog",
       description: "The same palette in a modal — the most common ⌘K pattern.",
       Demo: CommandDialogExample,
-      code: docSource("command", "dialog"),
+      source: docSource("command", "dialog"),
       previewClassName: "min-h-40",
     },
     {
@@ -27,7 +27,7 @@ export const commandDoc: ComponentDoc = {
       title: "Minimal palette",
       description: "A single filterable group with no shortcuts.",
       Demo: CommandSimple,
-      code: docSource("command", "simple"),
+      source: docSource("command", "simple"),
     },
   ],
   anatomy: docAnatomy("command"),

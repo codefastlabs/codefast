@@ -14,7 +14,7 @@ export const alertDoc: ComponentDoc = {
       title: "Demo",
       description: "Stack alerts to surface several status messages at once.",
       Demo: AlertDemo,
-      code: docSource("alert", "alert-demo"),
+      source: docSource("alert", "alert-demo"),
       previewClassName: "items-start",
     },
     {
@@ -22,7 +22,7 @@ export const alertDoc: ComponentDoc = {
       title: "Basic",
       description: "A basic alert with an icon, title and description.",
       Demo: AlertBasic,
-      code: docSource("alert", "alert-basic"),
+      source: docSource("alert", "alert-basic"),
       previewClassName: "items-start",
     },
     {
@@ -30,7 +30,7 @@ export const alertDoc: ComponentDoc = {
       title: "Destructive",
       description: "Use variant=destructive to create a destructive alert.",
       Demo: AlertDestructive,
-      code: docSource("alert", "alert-destructive"),
+      source: docSource("alert", "alert-destructive"),
       previewClassName: "items-start",
     },
     {
@@ -38,7 +38,7 @@ export const alertDoc: ComponentDoc = {
       title: "Action",
       description: "Use AlertAction to add a button or other action element to the alert.",
       Demo: AlertActionExample,
-      code: docSource("alert", "alert-action"),
+      source: docSource("alert", "alert-action"),
       previewClassName: "items-start",
     },
     {
@@ -46,7 +46,7 @@ export const alertDoc: ComponentDoc = {
       title: "Custom colors",
       description: "Customize the alert colors by adding utility classes to the Alert component.",
       Demo: AlertColors,
-      code: docSource("alert", "alert-colors"),
+      source: docSource("alert", "alert-colors"),
       previewClassName: "items-start",
     },
     {
@@ -54,7 +54,7 @@ export const alertDoc: ComponentDoc = {
       title: "RTL",
       description: "Right-to-left layout support for languages such as Arabic and Hebrew.",
       Demo: AlertRtl,
-      code: docSource("alert", "alert-rtl"),
+      source: docSource("alert", "alert-rtl"),
       previewClassName: "items-start",
       direction: "rtl",
     },

@@ -11,7 +11,7 @@ export const tableDoc: ComponentDoc = {
       title: "Data table",
       description: "A semantic table with header, footer, caption, and a status Badge per row.",
       Demo: TableInvoices,
-      code: docSource("table", "invoices"),
+      source: docSource("table", "invoices"),
       previewClassName: "items-start",
     },
     {
@@ -19,7 +19,7 @@ export const tableDoc: ComponentDoc = {
       title: "Simple table",
       description: "Header and rows only — no caption or footer.",
       Demo: TableSimple,
-      code: docSource("table", "simple"),
+      source: docSource("table", "simple"),
       previewClassName: "items-start",
     },
     {
@@ -27,7 +27,7 @@ export const tableDoc: ComponentDoc = {
       title: "Row selection",
       description: "A checkbox column with select-all and per-row state.",
       Demo: TableSelection,
-      code: docSource("table", "selection"),
+      source: docSource("table", "selection"),
       previewClassName: "items-start",
     },
   ],

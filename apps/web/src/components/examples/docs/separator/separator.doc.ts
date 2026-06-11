@@ -11,7 +11,7 @@ export const separatorDoc: ComponentDoc = {
       title: "Horizontal & vertical",
       description: "Divide stacked blocks horizontally, or inline items vertically.",
       Demo: SeparatorOrientations,
-      code: docSource("separator", "orientations"),
+      source: docSource("separator", "orientations"),
       previewClassName: "items-start",
     },
     {
@@ -19,7 +19,7 @@ export const separatorDoc: ComponentDoc = {
       title: "Grouped list",
       description: "Separate the sections of a settings or navigation list.",
       Demo: SeparatorListSections,
-      code: docSource("separator", "list-sections"),
+      source: docSource("separator", "list-sections"),
       previewClassName: "items-start",
     },
     {
@@ -27,7 +27,7 @@ export const separatorDoc: ComponentDoc = {
       title: "Vertical dividers",
       description: "Split inline stats with vertical rules of a fixed height.",
       Demo: SeparatorStats,
-      code: docSource("separator", "stats"),
+      source: docSource("separator", "stats"),
     },
   ],
   anatomy: docAnatomy("separator"),

@@ -11,7 +11,7 @@ export const nativeSelectDoc: ComponentDoc = {
       title: "Grouped options",
       description: "A controlled native <select> with option groups and a live readout.",
       Demo: NativeSelectCountry,
-      code: docSource("native-select", "country"),
+      source: docSource("native-select", "country"),
       previewClassName: "items-start",
     },
     {
@@ -19,7 +19,7 @@ export const nativeSelectDoc: ComponentDoc = {
       title: "Disabled & invalid",
       description: "Native disabled and aria-invalid states.",
       Demo: NativeSelectStates,
-      code: docSource("native-select", "states"),
+      source: docSource("native-select", "states"),
       previewClassName: "items-start",
     },
     {
@@ -27,7 +27,7 @@ export const nativeSelectDoc: ComponentDoc = {
       title: "Ungrouped options",
       description: "A flat list of options without opt-groups.",
       Demo: NativeSelectSimple,
-      code: docSource("native-select", "simple"),
+      source: docSource("native-select", "simple"),
       previewClassName: "items-start",
     },
   ],

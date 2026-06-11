@@ -11,7 +11,7 @@ export const cardDoc: ComponentDoc = {
       title: "Overview",
       description: "All slots together: header, action, content, and footer.",
       Demo: CardOverview,
-      code: docSource("card", "overview"),
+      source: docSource("card", "overview"),
       previewClassName: "items-start",
     },
     {
@@ -19,7 +19,7 @@ export const cardDoc: ComponentDoc = {
       title: "Header + content",
       description: "Every slot is optional — use only what you need.",
       Demo: CardSimple,
-      code: docSource("card", "simple"),
+      source: docSource("card", "simple"),
       previewClassName: "items-start",
     },
     {
@@ -27,7 +27,7 @@ export const cardDoc: ComponentDoc = {
       title: "Form card",
       description: "Compose inputs and actions inside the card slots.",
       Demo: CardLogin,
-      code: docSource("card", "login"),
+      source: docSource("card", "login"),
     },
   ],
   anatomy: docAnatomy("card"),

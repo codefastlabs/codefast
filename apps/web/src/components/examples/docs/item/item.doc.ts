@@ -11,7 +11,7 @@ export const itemDoc: ComponentDoc = {
       title: "List rows",
       description: "Compose media, title, description, and actions into a divided list.",
       Demo: ItemList,
-      code: docSource("item", "list"),
+      source: docSource("item", "list"),
       previewClassName: "items-start",
     },
     {
@@ -19,7 +19,7 @@ export const itemDoc: ComponentDoc = {
       title: "Single-line rows",
       description: "Drop the description for a dense file or option list.",
       Demo: ItemCompact,
-      code: docSource("item", "compact"),
+      source: docSource("item", "compact"),
       previewClassName: "items-start",
     },
     {
@@ -27,7 +27,7 @@ export const itemDoc: ComponentDoc = {
       title: "With trailing badge",
       description: "Surface unread state with a Badge in the actions slot.",
       Demo: ItemNotifications,
-      code: docSource("item", "notifications"),
+      source: docSource("item", "notifications"),
       previewClassName: "items-start",
     },
   ],

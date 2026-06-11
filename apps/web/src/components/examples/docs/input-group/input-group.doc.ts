@@ -11,7 +11,7 @@ export const inputGroupDoc: ComponentDoc = {
       title: "Leading & trailing addons",
       description: "Prefix text, a leading icon, or a trailing button — all share one focus ring.",
       Demo: InputGroupAddons,
-      code: docSource("input-group", "addons"),
+      source: docSource("input-group", "addons"),
       previewClassName: "items-start",
     },
     {
@@ -19,7 +19,7 @@ export const inputGroupDoc: ComponentDoc = {
       title: "Copy button",
       description: "Pair a read-only value with a trailing action button.",
       Demo: InputGroupCopy,
-      code: docSource("input-group", "copy"),
+      source: docSource("input-group", "copy"),
       previewClassName: "items-start",
     },
     {
@@ -27,7 +27,7 @@ export const inputGroupDoc: ComponentDoc = {
       title: "Status & prefix",
       description: "Show a validation icon, or a fixed prefix addon.",
       Demo: InputGroupValidation,
-      code: docSource("input-group", "validation"),
+      source: docSource("input-group", "validation"),
       previewClassName: "items-start",
     },
   ],

@@ -11,7 +11,7 @@ export const popoverDoc: ComponentDoc = {
       title: "Share link",
       description: "A working copy-to-clipboard panel — interactive, with a confirmation state.",
       Demo: PopoverShare,
-      code: docSource("popover", "share"),
+      source: docSource("popover", "share"),
       previewClassName: "min-h-40",
     },
     {
@@ -19,7 +19,7 @@ export const popoverDoc: ComponentDoc = {
       title: "Settings form",
       description: "A non-modal panel of inputs anchored to its trigger — ideal for quick edits.",
       Demo: PopoverDimensions,
-      code: docSource("popover", "dimensions"),
+      source: docSource("popover", "dimensions"),
       previewClassName: "min-h-40",
     },
     {
@@ -27,7 +27,7 @@ export const popoverDoc: ComponentDoc = {
       title: "Plain content",
       description: "A minimal popover for contextual information.",
       Demo: PopoverSimple,
-      code: docSource("popover", "simple"),
+      source: docSource("popover", "simple"),
     },
   ],
   anatomy: docAnatomy("popover"),

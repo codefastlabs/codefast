@@ -11,7 +11,7 @@ export const inputSearchDoc: ComponentDoc = {
       title: "Controlled with clear",
       description: "A leading icon, a one-click clear button, and a live query readout.",
       Demo: InputSearchControlled,
-      code: docSource("input-search", "controlled"),
+      source: docSource("input-search", "controlled"),
       previewClassName: "items-start",
     },
     {
@@ -19,7 +19,7 @@ export const inputSearchDoc: ComponentDoc = {
       title: "Live filtering",
       description: "Drive a results list from the controlled value.",
       Demo: InputSearchWithResults,
-      code: docSource("input-search", "with-results"),
+      source: docSource("input-search", "with-results"),
       previewClassName: "items-start",
     },
     {
@@ -27,7 +27,7 @@ export const inputSearchDoc: ComponentDoc = {
       title: "Disabled",
       description: "A non-interactive search field.",
       Demo: InputSearchDisabled,
-      code: docSource("input-search", "disabled"),
+      source: docSource("input-search", "disabled"),
     },
   ],
   anatomy: docAnatomy("input-search"),

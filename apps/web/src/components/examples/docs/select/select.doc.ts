@@ -11,7 +11,7 @@ export const selectDoc: ComponentDoc = {
       title: "Controlled with icons",
       description: "A real issue-status picker: controlled value, colour markers, and a live readout.",
       Demo: SelectStatus,
-      code: docSource("select", "status"),
+      source: docSource("select", "status"),
     },
     {
       id: "grouped",
@@ -19,14 +19,14 @@ export const selectDoc: ComponentDoc = {
       description:
         "Organise long lists with SelectGroup + SelectLabel, divide with SelectSeparator, and disable any item.",
       Demo: SelectGrouped,
-      code: docSource("select", "grouped"),
+      source: docSource("select", "grouped"),
     },
     {
       id: "controlled",
       title: "Controlled value",
       description: "Bind the value to state and read it back.",
       Demo: SelectControlled,
-      code: docSource("select", "controlled"),
+      source: docSource("select", "controlled"),
     },
   ],
   anatomy: docAnatomy("select"),
