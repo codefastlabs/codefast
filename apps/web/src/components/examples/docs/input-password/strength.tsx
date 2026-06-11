@@ -1,8 +1,8 @@
-import type { ChangeEvent } from "react";
-import { useState } from "react";
 import { InputPassword } from "@codefast/ui/input-password";
 import { Label } from "@codefast/ui/label";
 import { cn } from "@codefast/ui/lib/utils";
+import type { ChangeEvent } from "react";
+import { useState } from "react";
 
 const LEVELS = [
   { label: "Too weak", color: "bg-rose-500" },

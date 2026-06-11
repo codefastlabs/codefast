@@ -1,4 +1,5 @@
 import { Container, token } from "@codefast/di";
+
 import type { AsyncBenchScenario } from "#/scenarios/types";
 
 const ASYNC_CHAIN_DEPTH = 8;

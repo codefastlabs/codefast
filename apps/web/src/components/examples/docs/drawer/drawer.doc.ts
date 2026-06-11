@@ -1,9 +1,8 @@
-import type { ComponentDoc } from "#/components/examples/docs/types";
-import { docSource, docAnatomy } from "#/components/examples/docs/source";
-import { DrawerProfile } from "#/components/examples/docs/drawer/profile";
-
 import { DrawerCart } from "#/components/examples/docs/drawer/cart";
+import { DrawerProfile } from "#/components/examples/docs/drawer/profile";
 import { DrawerSide } from "#/components/examples/docs/drawer/side";
+import { docSource, docAnatomy } from "#/components/examples/docs/source";
+import type { ComponentDoc } from "#/components/examples/docs/types";
 
 export const drawerDoc: ComponentDoc = {
   examples: [

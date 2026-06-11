@@ -1,9 +1,8 @@
-import type { ComponentDoc } from "#/components/examples/docs/types";
-import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { AvatarFallbackExample } from "#/components/examples/docs/avatar/fallback";
 import { AvatarGroupExample } from "#/components/examples/docs/avatar/group";
-
 import { AvatarSizes } from "#/components/examples/docs/avatar/sizes";
+import { docSource, docAnatomy } from "#/components/examples/docs/source";
+import type { ComponentDoc } from "#/components/examples/docs/types";
 
 export const avatarDoc: ComponentDoc = {
   examples: [

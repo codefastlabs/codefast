@@ -1,3 +1,5 @@
+import type { Container } from "#/container";
+import type { Token } from "#/token";
 import type {
   BindingIdentifier,
   BindingKind,
@@ -8,8 +10,6 @@ import type {
   ResolutionContext,
   ResolveOptions,
 } from "#/types";
-import type { Token } from "#/token";
-import type { Container } from "#/container";
 
 // ── Active container ──────────────────────────────────────────────────────────
 

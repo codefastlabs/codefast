@@ -1,17 +1,18 @@
 import path from "node:path";
-import type { FilesystemPort } from "#/core/filesystem/port";
-import { messageFrom } from "#/core/errors";
+
 import type { MirrorConfig } from "#/core/config/schema";
-import { createPathTransform, generateExports } from "#/mirror/domain/exports";
-import { DIST_DIR, PACKAGE_JSON } from "#/mirror/domain/constants";
-import type { PackageJsonShape, PackageStats } from "#/mirror/domain/types";
-import { resolvePackageDisplayName } from "#/mirror/domain/package-display-name";
-import { writePackageJsonExportsAtomic } from "#/mirror/write-exports";
+import { messageFrom } from "#/core/errors";
+import type { FilesystemPort } from "#/core/filesystem/port";
 import { createMirrorDistFilesystem } from "#/mirror/dist-filesystem-impl";
+import { DIST_DIR, PACKAGE_JSON } from "#/mirror/domain/constants";
+import { createPathTransform, generateExports } from "#/mirror/domain/exports";
+import { resolvePackageDisplayName } from "#/mirror/domain/package-display-name";
+import type { PackageJsonShape, PackageStats } from "#/mirror/domain/types";
 import {
   buildSourcePathResolver,
   supplementExportsInPackageJson,
 } from "#/mirror/supplement-exports";
+import { writePackageJsonExportsAtomic } from "#/mirror/write-exports";
 
 /**
  * @since 0.3.16-canary.0

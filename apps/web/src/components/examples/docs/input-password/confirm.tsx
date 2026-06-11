@@ -1,6 +1,6 @@
-import { useState } from "react";
 import { InputPassword } from "@codefast/ui/input-password";
 import { Label } from "@codefast/ui/label";
+import { useState } from "react";
 
 export function InputPasswordConfirm() {
   const [password, setPassword] = useState("");

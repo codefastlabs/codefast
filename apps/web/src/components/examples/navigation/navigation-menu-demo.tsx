@@ -1,5 +1,3 @@
-import type { ComponentType } from "react";
-
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -16,6 +14,7 @@ import {
   SquareMousePointerIcon,
   TableIcon,
 } from "lucide-react";
+import type { ComponentType } from "react";
 
 const GUIDES = [
   { title: "Introduction", description: "Overview of the design system.", Icon: BookOpenIcon },

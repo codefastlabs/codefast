@@ -1,10 +1,11 @@
 import path from "node:path";
-import { logger } from "#/core/logger";
-import { LONG_STRING_TOKEN_THRESHOLD, MAX_REPORT_LINES } from "#/arrange/domain/constants";
-import type { AnalyzeReport, ArrangeRunResult, PlannedGroupEdit } from "#/arrange/domain/types";
-import type { GroupFileUnwrapPlan, GroupFileWorkPlan } from "#/arrange/domain/grouping-service";
-import { lineOf } from "#/arrange/domain/ast/helpers";
+
 import type { DomainCallExpression, DomainSourceFile } from "#/arrange/domain/ast/ast-node";
+import { lineOf } from "#/arrange/domain/ast/helpers";
+import { LONG_STRING_TOKEN_THRESHOLD, MAX_REPORT_LINES } from "#/arrange/domain/constants";
+import type { GroupFileUnwrapPlan, GroupFileWorkPlan } from "#/arrange/domain/grouping-service";
+import type { AnalyzeReport, ArrangeRunResult, PlannedGroupEdit } from "#/arrange/domain/types";
+import { logger } from "#/core/logger";
 
 /**
  * @since 0.3.16-canary.0

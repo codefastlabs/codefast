@@ -1,8 +1,7 @@
-import type { BadgeVariants } from "#/variants/badge";
+import { Slot } from "radix-ui";
 import type { ComponentProps, JSX } from "react";
 
-import { Slot } from "radix-ui";
-
+import type { BadgeVariants } from "#/variants/badge";
 import { badgeVariants } from "#/variants/badge";
 
 /* -----------------------------------------------------------------------------

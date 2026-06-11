@@ -1,6 +1,6 @@
-import type { DocExample } from "#/components/examples/docs/types";
 import { DocSection } from "#/components/docs/doc-section";
 import { ExamplePreview } from "#/components/docs/example-preview";
+import type { DocExample } from "#/components/examples/docs/types";
 
 interface ExamplesSectionProps {
   readonly examples: ReadonlyArray<DocExample>;

@@ -1,5 +1,5 @@
-import { token } from "#/token";
 import type { MetadataReader } from "#/metadata/metadata-types";
+import { token } from "#/token";
 import type { Token } from "#/token";
 
 /**

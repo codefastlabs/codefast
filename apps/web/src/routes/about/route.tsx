@@ -1,6 +1,7 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { Button } from "@codefast/ui/button";
 import { Badge } from "@codefast/ui/badge";
+import { Button } from "@codefast/ui/button";
+import { createFileRoute, Link } from "@tanstack/react-router";
+
 import { ALL_COMPONENTS } from "#/data/components";
 
 const COMPONENT_COUNT = ALL_COMPONENTS.length;

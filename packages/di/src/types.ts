@@ -1,5 +1,5 @@
-import type { Token } from "#/token";
 import type { Constructor } from "#/constructor-type";
+import type { Token } from "#/token";
 
 // Re-export for consumers that import from `#/types`
 export type { Constructor } from "#/constructor-type";

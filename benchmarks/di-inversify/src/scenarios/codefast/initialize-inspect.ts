@@ -20,6 +20,7 @@
  *     Faster than `inspect()` when only one token's metadata is needed.
  */
 import { Container, token } from "@codefast/di";
+
 import { batched } from "#/harness/batched";
 import type { AsyncBenchScenario, BenchScenario } from "#/scenarios/types";
 

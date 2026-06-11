@@ -1,9 +1,8 @@
-import type { ComponentDoc } from "#/components/examples/docs/types";
-import { docSource, docAnatomy } from "#/components/examples/docs/source";
+import { DropdownActions } from "#/components/examples/docs/dropdown-menu/actions";
 import { DropdownCheckboxes } from "#/components/examples/docs/dropdown-menu/checkboxes";
 import { DropdownRadio } from "#/components/examples/docs/dropdown-menu/radio";
-
-import { DropdownActions } from "#/components/examples/docs/dropdown-menu/actions";
+import { docSource, docAnatomy } from "#/components/examples/docs/source";
+import type { ComponentDoc } from "#/components/examples/docs/types";
 
 export const dropdownMenuDoc: ComponentDoc = {
   examples: [

@@ -1,6 +1,6 @@
-import type { BindingTag, ConstraintContext, Constructor } from "#/types";
 import type { Token } from "#/token";
 import { tokenName } from "#/token";
+import type { BindingTag, ConstraintContext, Constructor } from "#/types";
 
 function tokenNameOf(token: Token<unknown> | Constructor): string {
   return tokenName(token);

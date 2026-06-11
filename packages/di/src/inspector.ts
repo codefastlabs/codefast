@@ -1,4 +1,10 @@
 import type { Binding } from "#/binding";
+import { effectiveBindingScope } from "#/binding-scope";
+import { selectBinding } from "#/binding-select";
+import type { BindingRegistry } from "#/registry";
+import type { ScopeManager } from "#/scope";
+import type { Token } from "#/token";
+import { tokenName } from "#/token";
 import type {
   BindingIdentifier,
   BindingKind,
@@ -8,12 +14,6 @@ import type {
   Constructor,
   ResolveOptions,
 } from "#/types";
-import type { Token } from "#/token";
-import type { BindingRegistry } from "#/registry";
-import type { ScopeManager } from "#/scope";
-import { tokenName } from "#/token";
-import { selectBinding } from "#/binding-select";
-import { effectiveBindingScope } from "#/binding-scope";
 
 // ── Public types ──────────────────────────────────────────────────────────────
 

@@ -14,8 +14,8 @@ import type {
   DomainSourceFile,
   DomainTailwindClassLiteral,
 } from "#/arrange/domain/ast/ast-node";
-import type { CodefastConfig } from "#/core/config/schema";
 import type { GroupFileWorkPlan } from "#/arrange/domain/grouping-service";
+import type { CodefastConfig } from "#/core/config/schema";
 
 /**
  * @since 0.3.16-canary.0

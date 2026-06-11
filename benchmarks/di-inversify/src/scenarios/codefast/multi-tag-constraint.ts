@@ -17,6 +17,7 @@
  *     closure call, with no intermediate allocation.
  */
 import { Container, token, whenParentTaggedAll } from "@codefast/di";
+
 import { batched } from "#/harness/batched";
 import type { BenchScenario } from "#/scenarios/types";
 

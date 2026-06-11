@@ -1,5 +1,4 @@
 import type { VariantProps } from "#/index";
-
 /**
  * Verification of README code examples - ensures documented examples work correctly.
  */

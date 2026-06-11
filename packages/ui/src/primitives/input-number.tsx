@@ -1,3 +1,6 @@
+import { composeEventHandlers } from "radix-ui/internal";
+import { Context } from "radix-ui/internal";
+import { useControllableState } from "radix-ui/internal";
 import type {
   ComponentProps,
   FocusEventHandler,
@@ -8,10 +11,6 @@ import type {
   PointerEventHandler,
   RefObject,
 } from "react";
-
-import { composeEventHandlers } from "radix-ui/internal";
-import { Context } from "radix-ui/internal";
-import { useControllableState } from "radix-ui/internal";
 import { useCallback, useEffect, useMemo, useRef } from "react";
 
 import * as InputPrimitive from "#/primitives/input";

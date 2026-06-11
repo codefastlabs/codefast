@@ -1,9 +1,8 @@
-import type { ComponentDoc } from "#/components/examples/docs/types";
-import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { RadioCardsInterval } from "#/components/examples/docs/radio-cards/interval";
-import { RadioCardsPlans } from "#/components/examples/docs/radio-cards/plans";
-
 import { RadioCardsPayment } from "#/components/examples/docs/radio-cards/payment";
+import { RadioCardsPlans } from "#/components/examples/docs/radio-cards/plans";
+import { docSource, docAnatomy } from "#/components/examples/docs/source";
+import type { ComponentDoc } from "#/components/examples/docs/types";
 
 export const radioCardsDoc: ComponentDoc = {
   examples: [

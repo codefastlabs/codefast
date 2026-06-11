@@ -1,5 +1,3 @@
-import type { MouseEvent } from "react";
-import { useState } from "react";
 import {
   Pagination,
   PaginationContent,
@@ -9,6 +7,8 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@codefast/ui/pagination";
+import type { MouseEvent } from "react";
+import { useState } from "react";
 
 const TOTAL = 10;
 

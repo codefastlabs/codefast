@@ -1,5 +1,5 @@
-import { Label } from "@codefast/ui/label";
 import { InputPassword } from "@codefast/ui/input-password";
+import { Label } from "@codefast/ui/label";
 
 export function InputPasswordDemo() {
   return (

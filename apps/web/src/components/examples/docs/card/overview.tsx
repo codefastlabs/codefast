@@ -1,3 +1,4 @@
+import { Badge } from "@codefast/ui/badge";
 import { Button } from "@codefast/ui/button";
 import {
   Card,
@@ -8,7 +9,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@codefast/ui/card";
-import { Badge } from "@codefast/ui/badge";
 
 export function CardOverview() {
   return (

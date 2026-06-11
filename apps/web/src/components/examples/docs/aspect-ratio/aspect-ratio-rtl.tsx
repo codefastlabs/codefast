@@ -1,4 +1,5 @@
 import { AspectRatio } from "@codefast/ui/aspect-ratio";
+
 import { useTranslation, type Translations } from "#/components/docs/language-selector";
 
 const translations: Translations = {

@@ -1,6 +1,6 @@
-import { useState } from "react";
 import { Label } from "@codefast/ui/label";
 import { Switch } from "@codefast/ui/switch";
+import { useState } from "react";
 
 export function SwitchWithLabel() {
   const [on, setOn] = useState(true);

@@ -1,3 +1,5 @@
+import { useComposedRefs } from "radix-ui/internal";
+import { Context } from "radix-ui/internal";
 import type {
   ComponentProps,
   JSX,
@@ -6,9 +8,6 @@ import type {
   ReactNode,
   RefObject,
 } from "react";
-
-import { useComposedRefs } from "radix-ui/internal";
-import { Context } from "radix-ui/internal";
 import { useRef } from "react";
 
 /* -----------------------------------------------------------------------------

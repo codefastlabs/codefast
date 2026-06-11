@@ -1,5 +1,6 @@
 import { mkdirSync, writeFileSync } from "node:fs";
 import { dirname } from "node:path";
+
 import type { JsonlBenchObservationRow } from "#/report/jsonl";
 import type { Fingerprint, TrialPayload } from "#/shared/protocol";
 

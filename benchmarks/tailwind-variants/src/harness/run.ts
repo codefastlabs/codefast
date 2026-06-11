@@ -7,11 +7,9 @@
 import { spawnSync } from "node:child_process";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import {
-  BENCH_RESULTS_DIR_NAME,
-  BENCH_VERBOSE_ENV_KEY,
-  OBSERVATIONS_FILE_NAME,
-} from "@codefast/benchmark-harness/shared/env-keys";
+
+import { resolveBenchParentExitCode } from "@codefast/benchmark-harness/parent/resolve-bench-parent-exit-code";
+import { runBenchSubprocess } from "@codefast/benchmark-harness/parent/run-bench-subprocess";
 import {
   buildLibraryReport,
   type LibraryReport,
@@ -20,17 +18,21 @@ import {
   renderTwoWayConsoleReport,
   renderTwoWayMarkdownReport,
 } from "@codefast/benchmark-harness/report/two-way";
-import { resolveBenchParentExitCode } from "@codefast/benchmark-harness/parent/resolve-bench-parent-exit-code";
-import { runBenchSubprocess } from "@codefast/benchmark-harness/parent/run-bench-subprocess";
-import type { SubprocessPayload } from "@codefast/benchmark-harness/shared/protocol";
 import { writeJsonlRun, writeMarkdownFile } from "@codefast/benchmark-harness/report/write";
+import {
+  BENCH_RESULTS_DIR_NAME,
+  BENCH_VERBOSE_ENV_KEY,
+  OBSERVATIONS_FILE_NAME,
+} from "@codefast/benchmark-harness/shared/env-keys";
+import type { SubprocessPayload } from "@codefast/benchmark-harness/shared/protocol";
+
+import { CODEFAST_TV, CVA, TAILWIND_VARIANTS } from "#/harness/config";
 import {
   CODEFAST_VS_CVA_CONSOLE,
   CODEFAST_VS_CVA_MARKDOWN,
   CODEFAST_VS_TAILWIND_VARIANTS_CONSOLE,
   CODEFAST_VS_TAILWIND_VARIANTS_MARKDOWN,
 } from "#/harness/presentation";
-import { CODEFAST_TV, CVA, TAILWIND_VARIANTS } from "#/harness/config";
 
 const VERBOSE_MODE_ENABLED = process.env[BENCH_VERBOSE_ENV_KEY] === "1";
 

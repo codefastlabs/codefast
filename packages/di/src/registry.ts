@@ -1,7 +1,7 @@
 import type { Binding } from "#/binding";
-import type { BindingIdentifier, Constructor, DependencyKey } from "#/types";
-import type { Token } from "#/token";
 import { bindingSlotEquals, bindingSlotToString } from "#/binding";
+import type { Token } from "#/token";
+import type { BindingIdentifier, Constructor, DependencyKey } from "#/types";
 
 /**
  * @since 0.3.16-canary.0

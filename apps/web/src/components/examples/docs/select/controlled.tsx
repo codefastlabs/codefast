@@ -1,4 +1,3 @@
-import { useState } from "react";
 import {
   Select,
   SelectContent,
@@ -8,6 +7,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@codefast/ui/select";
+import { useState } from "react";
 
 const FRUITS = [
   { value: "apple", label: "Apple" },

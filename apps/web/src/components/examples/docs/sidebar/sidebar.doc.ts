@@ -1,9 +1,8 @@
-import type { ComponentDoc } from "#/components/examples/docs/types";
-import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { SidebarAppShell } from "#/components/examples/docs/sidebar/app-shell";
-
-import { SidebarSubmenu } from "#/components/examples/docs/sidebar/submenu";
 import { SidebarBadges } from "#/components/examples/docs/sidebar/badges";
+import { SidebarSubmenu } from "#/components/examples/docs/sidebar/submenu";
+import { docSource, docAnatomy } from "#/components/examples/docs/source";
+import type { ComponentDoc } from "#/components/examples/docs/types";
 
 export const sidebarDoc: ComponentDoc = {
   examples: [

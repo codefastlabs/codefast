@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
-import { createTagTestFilesystem } from "#/tests/unit/support/tag-test-filesystem";
+
 import { TagSinceWriter } from "#/tag/since-writer";
+import { createTagTestFilesystem } from "#/tests/unit/support/tag-test-filesystem";
 
 describe("TagSinceWriter", () => {
   it("does not emit a trailing space after * on blank JSDoc continuation lines", () => {

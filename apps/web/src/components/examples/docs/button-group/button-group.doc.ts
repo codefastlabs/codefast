@@ -1,9 +1,8 @@
-import type { ComponentDoc } from "#/components/examples/docs/types";
-import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { ButtonGroupGroups } from "#/components/examples/docs/button-group/groups";
-
 import { ButtonGroupIcons } from "#/components/examples/docs/button-group/icons";
 import { ButtonGroupSizes } from "#/components/examples/docs/button-group/sizes";
+import { docSource, docAnatomy } from "#/components/examples/docs/source";
+import type { ComponentDoc } from "#/components/examples/docs/types";
 
 export const buttonGroupDoc: ComponentDoc = {
   examples: [

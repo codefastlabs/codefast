@@ -1,9 +1,3 @@
-import type { Constructor } from "#/types";
-import type {
-  ConstructorMetadata,
-  LifecycleMetadata,
-  MetadataReader,
-} from "#/metadata/metadata-types";
 import type { InjectionDescriptor } from "#/decorators/inject";
 import {
   INJECT_ACCESSOR_KEY,
@@ -11,6 +5,12 @@ import {
   LIFECYCLE_KEY,
   METADATA_SYMBOL,
 } from "#/metadata/metadata-keys";
+import type {
+  ConstructorMetadata,
+  LifecycleMetadata,
+  MetadataReader,
+} from "#/metadata/metadata-types";
+import type { Constructor } from "#/types";
 
 /**
  * @since 0.3.16-canary.0

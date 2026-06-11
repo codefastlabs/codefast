@@ -1,9 +1,8 @@
-import type { ComponentDoc } from "#/components/examples/docs/types";
-import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { FieldLayouts } from "#/components/examples/docs/field/layouts";
 import { FieldValidation } from "#/components/examples/docs/field/validation";
-
 import { FieldWithSelect } from "#/components/examples/docs/field/with-select";
+import { docSource, docAnatomy } from "#/components/examples/docs/source";
+import type { ComponentDoc } from "#/components/examples/docs/types";
 
 export const fieldDoc: ComponentDoc = {
   examples: [

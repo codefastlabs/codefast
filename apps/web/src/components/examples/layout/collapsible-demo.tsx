@@ -1,7 +1,6 @@
-import { useState } from "react";
-
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@codefast/ui/collapsible";
 import { ChevronDownIcon } from "lucide-react";
+import { useState } from "react";
 
 const LINE_ITEMS = [
   { name: "Pro plan (annual)", price: "$144.00" },

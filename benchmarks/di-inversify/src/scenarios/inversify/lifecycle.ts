@@ -7,6 +7,7 @@
  */
 import "reflect-metadata";
 import { Container, inject, injectable, postConstruct, preDestroy } from "inversify";
+
 import { batched } from "#/harness/batched";
 import type { BenchScenario } from "#/scenarios/types";
 

@@ -1,16 +1,18 @@
 import process from "node:process";
+
 import { Command } from "commander";
-import { parseWithSchema } from "#/core/schema-parse";
-import { consumeCliAppError } from "#/core/cli/result-handle";
-import { logger } from "#/core/logger";
-import { nodeFilesystem } from "#/core/filesystem/node";
+
 import { readOptionalPositionalArg } from "#/core/cli/positional";
+import { consumeCliAppError } from "#/core/cli/result-handle";
+import { nodeFilesystem } from "#/core/filesystem/node";
+import { logger } from "#/core/logger";
+import { parseWithSchema } from "#/core/schema-parse";
+import { exitCodeForTagSyncResult } from "#/tag/cli-result";
+import { tagSyncRunRequestSchema } from "#/tag/cli-schema";
+import type { TagSyncResult } from "#/tag/domain/types";
+import { presentTagSyncResult, TagSyncProgressPresenter } from "#/tag/output";
 import { prepareTagSync } from "#/tag/prepare";
 import { runTagSync } from "#/tag/sync";
-import { tagSyncRunRequestSchema } from "#/tag/cli-schema";
-import { presentTagSyncResult, TagSyncProgressPresenter } from "#/tag/output";
-import type { TagSyncResult } from "#/tag/domain/types";
-import { exitCodeForTagSyncResult } from "#/tag/cli-result";
 
 /**
  * @since 0.3.16-canary.0

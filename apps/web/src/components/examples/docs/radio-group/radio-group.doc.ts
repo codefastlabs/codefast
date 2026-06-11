@@ -1,9 +1,8 @@
-import type { ComponentDoc } from "#/components/examples/docs/types";
-import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { RadioGroupDensity } from "#/components/examples/docs/radio-group/density";
-
-import { RadioGroupPlans } from "#/components/examples/docs/radio-group/plans";
 import { RadioGroupHorizontal } from "#/components/examples/docs/radio-group/horizontal";
+import { RadioGroupPlans } from "#/components/examples/docs/radio-group/plans";
+import { docSource, docAnatomy } from "#/components/examples/docs/source";
+import type { ComponentDoc } from "#/components/examples/docs/types";
 
 export const radioGroupDoc: ComponentDoc = {
   examples: [

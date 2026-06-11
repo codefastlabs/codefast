@@ -1,6 +1,5 @@
-import type { ComponentProps, ReactNode } from "react";
-
 import { Context } from "radix-ui/internal";
+import type { ComponentProps, ReactNode } from "react";
 import { useId, useMemo } from "react";
 
 /* -----------------------------------------------------------------------------

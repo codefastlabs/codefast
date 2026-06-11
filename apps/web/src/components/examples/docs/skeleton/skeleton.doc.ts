@@ -1,9 +1,8 @@
-import type { ComponentDoc } from "#/components/examples/docs/types";
-import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { SkeletonCard } from "#/components/examples/docs/skeleton/card";
 import { SkeletonList } from "#/components/examples/docs/skeleton/list";
-
 import { SkeletonText } from "#/components/examples/docs/skeleton/text";
+import { docSource, docAnatomy } from "#/components/examples/docs/source";
+import type { ComponentDoc } from "#/components/examples/docs/types";
 
 export const skeletonDoc: ComponentDoc = {
   examples: [

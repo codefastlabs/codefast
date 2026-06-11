@@ -1,9 +1,8 @@
-import type { ComponentDoc } from "#/components/examples/docs/types";
-import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { CommandDialogExample } from "#/components/examples/docs/command/dialog";
 import { CommandPalette } from "#/components/examples/docs/command/palette";
-
 import { CommandSimple } from "#/components/examples/docs/command/simple";
+import { docSource, docAnatomy } from "#/components/examples/docs/source";
+import type { ComponentDoc } from "#/components/examples/docs/types";
 
 export const commandDoc: ComponentDoc = {
   examples: [

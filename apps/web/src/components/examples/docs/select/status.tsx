@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { cn } from "@codefast/ui/lib/utils";
 import {
   Select,
@@ -9,6 +8,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@codefast/ui/select";
+import { useState } from "react";
 
 const STATUSES = [
   { value: "backlog", label: "Backlog", color: "bg-neutral-400" },

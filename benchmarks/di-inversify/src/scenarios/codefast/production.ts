@@ -28,6 +28,7 @@
  *     loop that real event-bus implementations pay on every published event.
  */
 import { Container, token } from "@codefast/di";
+
 import { batched } from "#/harness/batched";
 import type { BenchScenario } from "#/scenarios/types";
 

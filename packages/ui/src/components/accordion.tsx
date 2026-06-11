@@ -1,8 +1,8 @@
+import { ChevronDownIcon, ChevronUpIcon } from "lucide-react";
+import { Accordion as AccordionPrimitive } from "radix-ui";
 import type { ComponentProps, JSX } from "react";
 
 import { cn } from "#/lib/utils";
-import { Accordion as AccordionPrimitive } from "radix-ui";
-import { ChevronDownIcon, ChevronUpIcon } from "lucide-react";
 
 /* -----------------------------------------------------------------------------
  * Component: Accordion

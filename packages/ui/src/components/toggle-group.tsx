@@ -1,10 +1,9 @@
+import { ToggleGroup as ToggleGroupPrimitive } from "radix-ui";
 import { Context } from "radix-ui/internal";
 import type { ComponentProps, CSSProperties, JSX } from "react";
 
 import type { VariantProps } from "#/lib/utils";
 import { cn } from "#/lib/utils";
-import { ToggleGroup as ToggleGroupPrimitive } from "radix-ui";
-
 import { toggleVariants } from "#/variants/toggle";
 
 /* -----------------------------------------------------------------------------

@@ -1,8 +1,3 @@
-import { MAX_CLASS_EXPR_DEPTH } from "#/arrange/domain/constants";
-import type {
-  ForEachStringLiteralInClassExpressionOptions,
-  TailwindClassLiteral,
-} from "#/arrange/domain/types";
 import {
   DomainBinaryOperator,
   DomainSyntaxKind,
@@ -10,6 +5,11 @@ import {
   isDomainTailwindClassLiteral,
 } from "#/arrange/domain/ast/ast-node";
 import type { DomainAstNode } from "#/arrange/domain/ast/ast-node";
+import { MAX_CLASS_EXPR_DEPTH } from "#/arrange/domain/constants";
+import type {
+  ForEachStringLiteralInClassExpressionOptions,
+  TailwindClassLiteral,
+} from "#/arrange/domain/types";
 
 /**
  * @since 0.3.16-canary.0

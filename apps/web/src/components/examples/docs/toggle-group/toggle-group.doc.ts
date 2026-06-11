@@ -1,9 +1,8 @@
-import type { ComponentDoc } from "#/components/examples/docs/types";
 import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { ToggleGroupAlignment } from "#/components/examples/docs/toggle-group/alignment";
 import { ToggleGroupFormatting } from "#/components/examples/docs/toggle-group/formatting";
-
 import { ToggleGroupViews } from "#/components/examples/docs/toggle-group/views";
+import type { ComponentDoc } from "#/components/examples/docs/types";
 
 export const toggleGroupDoc: ComponentDoc = {
   examples: [

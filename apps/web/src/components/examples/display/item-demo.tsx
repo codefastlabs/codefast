@@ -1,5 +1,3 @@
-import { Fragment } from "react";
-
 import { Avatar, AvatarFallback } from "@codefast/ui/avatar";
 import { Badge } from "@codefast/ui/badge";
 import { Button } from "@codefast/ui/button";
@@ -14,6 +12,7 @@ import {
   ItemTitle,
 } from "@codefast/ui/item";
 import { MoreHorizontalIcon } from "lucide-react";
+import { Fragment } from "react";
 
 const MEMBERS = [
   {

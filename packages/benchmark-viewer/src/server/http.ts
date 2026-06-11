@@ -1,14 +1,16 @@
-import type { Server } from "node:http";
 import { createHash } from "node:crypto";
 import { existsSync, readFileSync, watch } from "node:fs";
+import type { Server } from "node:http";
 import { dirname, extname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+
+import { createAdaptorServer } from "@hono/node-server";
 import { Hono } from "hono";
 import { stream } from "hono/streaming";
-import { createAdaptorServer } from "@hono/node-server";
+
+import { DEFAULT_MAX_RUNS } from "#/constants";
 import { buildEmbeddedPayload, listRawRuns } from "#/server/payload";
 import { renderDocument } from "#/server/render";
-import { DEFAULT_MAX_RUNS } from "#/constants";
 import type { BenchServerOptions, EmbeddedViewerPayload } from "#/types";
 
 const appDir = join(dirname(fileURLToPath(import.meta.url)), "..", "app");

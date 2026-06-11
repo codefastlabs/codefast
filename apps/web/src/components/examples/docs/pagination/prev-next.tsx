@@ -1,4 +1,3 @@
-import { useState } from "react";
 import {
   Pagination,
   PaginationContent,
@@ -6,6 +5,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@codefast/ui/pagination";
+import { useState } from "react";
 
 const TOTAL = 5;
 

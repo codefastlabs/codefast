@@ -17,6 +17,7 @@
  *     Measures the tag-based slot lookup on the hot path.
  */
 import { Container, token } from "@codefast/di";
+
 import { batched } from "#/harness/batched";
 import type { BenchScenario } from "#/scenarios/types";
 

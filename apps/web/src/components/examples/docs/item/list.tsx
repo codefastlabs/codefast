@@ -1,4 +1,3 @@
-import { Fragment } from "react";
 import { Button } from "@codefast/ui/button";
 import {
   Item,
@@ -11,6 +10,7 @@ import {
   ItemTitle,
 } from "@codefast/ui/item";
 import { BellIcon, ChevronRightIcon, MailIcon, UserIcon } from "lucide-react";
+import { Fragment } from "react";
 
 const ROWS = [
   { id: 1, title: "Profile", description: "Update your personal information", Icon: UserIcon },

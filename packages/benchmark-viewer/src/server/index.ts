@@ -1,4 +1,5 @@
 import type { Server } from "node:http";
+
 import { createBenchServer } from "#/server/http";
 import { findAvailablePort } from "#/server/port";
 import type { BenchServerOptions } from "#/types";

@@ -1,6 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
-import { useNavigate } from "@tanstack/react-router";
-import { SearchIcon } from "lucide-react";
+import { Button } from "@codefast/ui/button";
 import {
   Command,
   CommandDialog,
@@ -10,9 +8,12 @@ import {
   CommandItem,
   CommandList,
 } from "@codefast/ui/command";
-import { ALL_COMPONENTS } from "#/data/components";
-import { Button } from "@codefast/ui/button";
 import { Kbd } from "@codefast/ui/kbd";
+import { useNavigate } from "@tanstack/react-router";
+import { SearchIcon } from "lucide-react";
+import { useCallback, useEffect, useState } from "react";
+
+import { ALL_COMPONENTS } from "#/data/components";
 
 const PAGES = [
   { to: "/", label: "Home" },

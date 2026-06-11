@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Button } from "@codefast/ui/button";
 import {
   DropdownMenu,
@@ -10,6 +9,7 @@ import {
   DropdownMenuTrigger,
 } from "@codefast/ui/dropdown-menu";
 import { ArrowDownWideNarrowIcon } from "lucide-react";
+import { useState } from "react";
 
 const SORTS = [
   { value: "recent", label: "Most recent" },

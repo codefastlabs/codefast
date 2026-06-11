@@ -1,9 +1,8 @@
-import type { ComponentDoc } from "#/components/examples/docs/types";
-import { docSource, docAnatomy } from "#/components/examples/docs/source";
-import { RadioSizes } from "#/components/examples/docs/radio/sizes";
-
-import { RadioHorizontal } from "#/components/examples/docs/radio/horizontal";
 import { RadioDisabled } from "#/components/examples/docs/radio/disabled";
+import { RadioHorizontal } from "#/components/examples/docs/radio/horizontal";
+import { RadioSizes } from "#/components/examples/docs/radio/sizes";
+import { docSource, docAnatomy } from "#/components/examples/docs/source";
+import type { ComponentDoc } from "#/components/examples/docs/types";
 
 export const radioDoc: ComponentDoc = {
   examples: [

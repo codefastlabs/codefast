@@ -1,6 +1,7 @@
 import { tv } from "@codefast/tailwind-variants";
-import type { MetaItem, MetricCardProps, MetricsResult } from "#/app/lib/metrics";
+
 import { fmtHz } from "#/app/lib/format";
+import type { MetaItem, MetricCardProps, MetricsResult } from "#/app/lib/metrics";
 import { cn } from "#/app/lib/utils";
 import type { EmbeddedScenarioSeries } from "#/types";
 

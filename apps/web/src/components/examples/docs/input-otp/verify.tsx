@@ -1,5 +1,5 @@
-import { useState } from "react";
 import { InputOTP, InputOTPGroup, InputOTPSeparator, InputOTPSlot } from "@codefast/ui/input-otp";
+import { useState } from "react";
 
 export function InputOTPVerify() {
   const [value, setValue] = useState("");

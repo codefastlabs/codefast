@@ -1,5 +1,5 @@
-import { useState } from "react";
 import { CheckboxCards, CheckboxCardsItem } from "@codefast/ui/checkbox-cards";
+import { useState } from "react";
 
 const FEATURES = [
   { value: "analytics", label: "Analytics", description: "Track usage and insights" },

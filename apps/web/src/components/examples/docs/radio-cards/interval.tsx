@@ -1,6 +1,6 @@
-import { useState } from "react";
 import { Badge } from "@codefast/ui/badge";
 import { RadioCards, RadioCardsItem } from "@codefast/ui/radio-cards";
+import { useState } from "react";
 
 export function RadioCardsInterval() {
   const [interval, setInterval] = useState("yearly");

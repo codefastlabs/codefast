@@ -1,9 +1,8 @@
-import type { ComponentDoc } from "#/components/examples/docs/types";
-import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { DialogBasic } from "#/components/examples/docs/dialog/basic";
-import { DialogScroll } from "#/components/examples/docs/dialog/scroll";
-
 import { DialogControlled } from "#/components/examples/docs/dialog/controlled";
+import { DialogScroll } from "#/components/examples/docs/dialog/scroll";
+import { docSource, docAnatomy } from "#/components/examples/docs/source";
+import type { ComponentDoc } from "#/components/examples/docs/types";
 
 export const dialogDoc: ComponentDoc = {
   examples: [

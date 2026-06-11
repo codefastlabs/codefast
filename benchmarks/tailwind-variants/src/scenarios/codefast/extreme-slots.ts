@@ -1,8 +1,8 @@
-import type { ExtremeDialogSlots } from "#/fixtures/slot-types";
-import { codefastTvFn } from "#/lib/tv-shims";
-import { TV_MERGE_DISABLED, TV_MERGE_ENABLED } from "#/harness/bench-options";
-import type { BenchScenario } from "#/scenarios/types";
 import { extremeSlotsTestProps, extremeSlotsVariants } from "#/fixtures/extreme";
+import type { ExtremeDialogSlots } from "#/fixtures/slot-types";
+import { TV_MERGE_DISABLED, TV_MERGE_ENABLED } from "#/harness/bench-options";
+import { codefastTvFn } from "#/lib/tv-shims";
+import type { BenchScenario } from "#/scenarios/types";
 
 type ExtremeSlotsProps = (typeof extremeSlotsTestProps)[number];
 type ExtremeSlotsRenderer = (props: ExtremeSlotsProps) => ExtremeDialogSlots;

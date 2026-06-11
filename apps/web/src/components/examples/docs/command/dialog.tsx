@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Button } from "@codefast/ui/button";
 import {
   Command,
@@ -11,6 +10,7 @@ import {
 } from "@codefast/ui/command";
 import { Kbd, KbdGroup } from "@codefast/ui/kbd";
 import { CompassIcon, LayoutGridIcon, SettingsIcon } from "lucide-react";
+import { useState } from "react";
 
 const PAGES = [
   { label: "Home", icon: CompassIcon },

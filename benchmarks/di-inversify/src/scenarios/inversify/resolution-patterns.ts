@@ -10,6 +10,7 @@
  */
 import "reflect-metadata";
 import { Container } from "inversify";
+
 import { batched } from "#/harness/batched";
 import type { BenchScenario } from "#/scenarios/types";
 

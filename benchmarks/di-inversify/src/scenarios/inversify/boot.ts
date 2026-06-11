@@ -6,6 +6,7 @@
  */
 import "reflect-metadata";
 import { Container, inject, injectable } from "inversify";
+
 import type { BenchScenario } from "#/scenarios/types";
 
 const bootConfigIdentifier = Symbol("bench-inv-boot-config");

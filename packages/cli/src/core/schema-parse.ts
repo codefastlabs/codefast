@@ -1,4 +1,5 @@
 import type { ZodType } from "zod";
+
 import { AppError } from "#/core/errors";
 import type { Result } from "#/core/result";
 import { err, ok } from "#/core/result";

@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+
 import { DEMOS } from "#/components/examples/demos";
 import { COMPONENT_DOCS } from "#/components/examples/docs";
 import { ALL_COMPONENTS, CATEGORIES, DEMO_COMPONENTS, componentPath } from "#/data/components";

@@ -1,9 +1,8 @@
-import type { ComponentDoc } from "#/components/examples/docs/types";
-import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { PopoverDimensions } from "#/components/examples/docs/popover/dimensions";
 import { PopoverShare } from "#/components/examples/docs/popover/share";
-
 import { PopoverSimple } from "#/components/examples/docs/popover/simple";
+import { docSource, docAnatomy } from "#/components/examples/docs/source";
+import type { ComponentDoc } from "#/components/examples/docs/types";
 
 export const popoverDoc: ComponentDoc = {
   examples: [

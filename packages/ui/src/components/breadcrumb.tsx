@@ -1,8 +1,8 @@
+import { ChevronRightIcon, MoreHorizontalIcon } from "lucide-react";
+import { Slot } from "radix-ui";
 import type { ComponentProps, JSX, ReactNode } from "react";
 
 import { cn } from "#/lib/utils";
-import { Slot } from "radix-ui";
-import { ChevronRightIcon, MoreHorizontalIcon } from "lucide-react";
 
 /* -----------------------------------------------------------------------------
  * Component: Breadcrumb

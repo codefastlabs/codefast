@@ -1,5 +1,4 @@
 import type { JSX, ReactNode } from "react";
-
 import {
   startTransition,
   useCallback,
@@ -12,16 +11,15 @@ import {
   useSyncExternalStore,
 } from "react";
 
-import type { ResolvedColorScheme, ColorScheme, ColorSchemeContextType } from "#/types";
-
 import {
   DEFAULT_RESOLVED_COLOR_SCHEME,
   DEFAULT_COLOR_SCHEME,
   MEDIA,
   SYNC_CHANNEL,
 } from "#/constants";
-import { colorSchemeSchema } from "#/types";
 import { ColorSchemeContext } from "#/core/context";
+import type { ResolvedColorScheme, ColorScheme, ColorSchemeContextType } from "#/types";
+import { colorSchemeSchema } from "#/types";
 import { applyColorScheme, suppressTransitions } from "#/utils/dom";
 import { getSystemColorScheme } from "#/utils/system";
 

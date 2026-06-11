@@ -1,9 +1,8 @@
-import type { ComponentDoc } from "#/components/examples/docs/types";
-import { docSource, docAnatomy } from "#/components/examples/docs/source";
-import { BreadcrumbPath } from "#/components/examples/docs/breadcrumb/path";
-
 import { BreadcrumbCollapsed } from "#/components/examples/docs/breadcrumb/collapsed";
 import { BreadcrumbCustomSeparator } from "#/components/examples/docs/breadcrumb/custom-separator";
+import { BreadcrumbPath } from "#/components/examples/docs/breadcrumb/path";
+import { docSource, docAnatomy } from "#/components/examples/docs/source";
+import type { ComponentDoc } from "#/components/examples/docs/types";
 
 export const breadcrumbDoc: ComponentDoc = {
   examples: [

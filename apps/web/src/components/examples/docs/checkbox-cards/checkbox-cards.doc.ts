@@ -1,9 +1,8 @@
-import type { ComponentDoc } from "#/components/examples/docs/types";
-import { docSource, docAnatomy } from "#/components/examples/docs/source";
-import { CheckboxCardsFeatures } from "#/components/examples/docs/checkbox-cards/features";
-
 import { CheckboxCardsColumns } from "#/components/examples/docs/checkbox-cards/columns";
 import { CheckboxCardsDisabled } from "#/components/examples/docs/checkbox-cards/disabled";
+import { CheckboxCardsFeatures } from "#/components/examples/docs/checkbox-cards/features";
+import { docSource, docAnatomy } from "#/components/examples/docs/source";
+import type { ComponentDoc } from "#/components/examples/docs/types";
 
 export const checkboxCardsDoc: ComponentDoc = {
   examples: [

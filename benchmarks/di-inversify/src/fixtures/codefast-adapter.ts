@@ -11,6 +11,7 @@
  */
 import type { Container as CodefastContainer, Token } from "@codefast/di";
 import { Container, token } from "@codefast/di";
+
 import {
   assertGraphIsWellFormed,
   type GraphDescriptor,

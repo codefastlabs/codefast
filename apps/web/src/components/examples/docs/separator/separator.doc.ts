@@ -1,9 +1,8 @@
-import type { ComponentDoc } from "#/components/examples/docs/types";
-import { docSource, docAnatomy } from "#/components/examples/docs/source";
-import { SeparatorOrientations } from "#/components/examples/docs/separator/orientations";
-
 import { SeparatorListSections } from "#/components/examples/docs/separator/list-sections";
+import { SeparatorOrientations } from "#/components/examples/docs/separator/orientations";
 import { SeparatorStats } from "#/components/examples/docs/separator/stats";
+import { docSource, docAnatomy } from "#/components/examples/docs/source";
+import type { ComponentDoc } from "#/components/examples/docs/types";
 
 export const separatorDoc: ComponentDoc = {
   examples: [

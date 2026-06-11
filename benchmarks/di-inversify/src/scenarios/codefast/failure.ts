@@ -1,4 +1,5 @@
 import { Container, token } from "@codefast/di";
+
 import type { BenchScenario } from "#/scenarios/types";
 
 interface CircularNodeA {

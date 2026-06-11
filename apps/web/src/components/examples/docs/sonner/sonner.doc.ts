@@ -1,9 +1,8 @@
-import type { ComponentDoc } from "#/components/examples/docs/types";
-import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { SonnerAction } from "#/components/examples/docs/sonner/action";
-import { SonnerTypes } from "#/components/examples/docs/sonner/types";
-
 import { SonnerLoading } from "#/components/examples/docs/sonner/loading";
+import { SonnerTypes } from "#/components/examples/docs/sonner/types";
+import { docSource, docAnatomy } from "#/components/examples/docs/source";
+import type { ComponentDoc } from "#/components/examples/docs/types";
 
 export const sonnerDoc: ComponentDoc = {
   examples: [

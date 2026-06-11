@@ -1,20 +1,21 @@
-import { useEffect } from "react";
-import { createFileRoute, useLocation } from "@tanstack/react-router";
 import { Badge } from "@codefast/ui/badge";
-import { highlightMany } from "#/lib/highlighter.ts";
+import { createFileRoute, useLocation } from "@tanstack/react-router";
+import { useEffect } from "react";
+
 import { DEMOS } from "#/components/examples/demos";
 import { GroupSection } from "#/components/showcase/components/group-section";
 import { MobileNav } from "#/components/showcase/components/mobile-nav";
 import { SidebarNav } from "#/components/showcase/components/sidebar-nav";
-import type { HighlightedCodes, ViewMode } from "#/components/showcase/types";
 import { useActiveSection } from "#/components/showcase/hooks/use-active-section";
-import { ALL_COMPONENTS } from "#/data/components";
+import type { HighlightedCodes, ViewMode } from "#/components/showcase/types";
 import {
   ALPHABET_GROUPS,
   CATEGORY_GROUPS,
   CATEGORY_NAV_IDS,
   LETTER_NAV_IDS,
 } from "#/data/component-groups";
+import { ALL_COMPONENTS } from "#/data/components";
+import { highlightMany } from "#/lib/highlighter.ts";
 
 /* -------------------------------------------------------------------------- */
 /* Route                                                                       */

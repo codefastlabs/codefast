@@ -1,9 +1,8 @@
-import type { ComponentDoc } from "#/components/examples/docs/types";
-import { docSource, docAnatomy } from "#/components/examples/docs/source";
+import { InputOTPDisabled } from "#/components/examples/docs/input-otp/disabled";
 import { InputOTPPattern } from "#/components/examples/docs/input-otp/pattern";
 import { InputOTPVerify } from "#/components/examples/docs/input-otp/verify";
-
-import { InputOTPDisabled } from "#/components/examples/docs/input-otp/disabled";
+import { docSource, docAnatomy } from "#/components/examples/docs/source";
+import type { ComponentDoc } from "#/components/examples/docs/types";
 
 export const inputOtpDoc: ComponentDoc = {
   examples: [

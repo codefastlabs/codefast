@@ -1,7 +1,7 @@
 import type { ComponentProps, JSX } from "react";
+import * as ResizablePrimitive from "react-resizable-panels";
 
 import { cn } from "#/lib/utils";
-import * as ResizablePrimitive from "react-resizable-panels";
 
 /* -----------------------------------------------------------------------------
  * Component: ResizableGroup

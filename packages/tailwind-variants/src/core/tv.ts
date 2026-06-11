@@ -6,6 +6,9 @@
  * for slots, compound variants, and configuration merging.
  */
 
+import { mergeVariantConfigs } from "#/core/config";
+import { resolveCompoundSlotClasses, resolveCompoundVariantClasses } from "#/processing/compound";
+import { createSlotResolvers } from "#/processing/slots";
 import type {
   ClassValue,
   CompoundVariant,
@@ -23,10 +26,6 @@ import type {
   VariantResolverResult,
   VariantResolver,
 } from "#/types/api";
-
-import { mergeVariantConfigs } from "#/core/config";
-import { resolveCompoundSlotClasses, resolveCompoundVariantClasses } from "#/processing/compound";
-import { createSlotResolvers } from "#/processing/slots";
 import {
   createTailwindMergeFn,
   cx,

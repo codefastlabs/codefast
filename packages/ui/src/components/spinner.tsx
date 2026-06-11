@@ -1,7 +1,7 @@
+import { VisuallyHidden } from "radix-ui";
 import type { ComponentProps, CSSProperties, ReactNode } from "react";
 
 import { cn } from "#/lib/utils";
-import { VisuallyHidden } from "radix-ui";
 
 /* -----------------------------------------------------------------------------
  * Component: Spinner

@@ -1,6 +1,6 @@
-import type { Constructor } from "#/types";
-import type { Token } from "#/token";
 import type { InjectionDescriptor } from "#/decorators/inject";
+import type { Token } from "#/token";
+import type { Constructor } from "#/types";
 
 /**
  * @since 0.3.16-canary.0

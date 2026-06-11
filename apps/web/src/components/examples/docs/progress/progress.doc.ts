@@ -1,9 +1,8 @@
-import type { ComponentDoc } from "#/components/examples/docs/types";
-import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { ProgressAnimated } from "#/components/examples/docs/progress/animated";
 import { ProgressColors } from "#/components/examples/docs/progress/colors";
-
 import { ProgressLabeled } from "#/components/examples/docs/progress/labeled";
+import { docSource, docAnatomy } from "#/components/examples/docs/source";
+import type { ComponentDoc } from "#/components/examples/docs/types";
 
 export const progressDoc: ComponentDoc = {
   examples: [

@@ -1,4 +1,3 @@
-import { Fragment } from "react";
 import { Badge } from "@codefast/ui/badge";
 import {
   Item,
@@ -10,6 +9,7 @@ import {
   ItemTitle,
 } from "@codefast/ui/item";
 import { GitPullRequestIcon, MessageSquareIcon, StarIcon } from "lucide-react";
+import { Fragment } from "react";
 
 const EVENTS = [
   {

@@ -6,6 +6,7 @@
  *     Shape: app container -> per-request child -> one nested child.
  */
 import { Container, token } from "@codefast/di";
+
 import { batched } from "#/harness/batched";
 import type { BenchScenario } from "#/scenarios/types";
 

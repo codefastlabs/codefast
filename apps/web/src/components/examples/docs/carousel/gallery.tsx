@@ -1,5 +1,3 @@
-import type { ComponentProps } from "react";
-import { useEffect, useState } from "react";
 import { Card, CardContent } from "@codefast/ui/card";
 import {
   Carousel,
@@ -9,6 +7,8 @@ import {
   CarouselPrevious,
 } from "@codefast/ui/carousel";
 import { cn } from "@codefast/ui/lib/utils";
+import type { ComponentProps } from "react";
+import { useEffect, useState } from "react";
 
 type CarouselApi = Parameters<NonNullable<ComponentProps<typeof Carousel>["setApi"]>>[0];
 

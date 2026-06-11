@@ -1,9 +1,8 @@
-import type { ComponentDoc } from "#/components/examples/docs/types";
-import { docSource, docAnatomy } from "#/components/examples/docs/source";
 import { InputNumberFormats } from "#/components/examples/docs/input-number/formats";
 import { InputNumberQuantity } from "#/components/examples/docs/input-number/quantity";
-
 import { InputNumberStates } from "#/components/examples/docs/input-number/states";
+import { docSource, docAnatomy } from "#/components/examples/docs/source";
+import type { ComponentDoc } from "#/components/examples/docs/types";
 
 export const inputNumberDoc: ComponentDoc = {
   examples: [

@@ -1,9 +1,8 @@
-import type { ComponentDoc } from "#/components/examples/docs/types";
-import { docSource, docAnatomy } from "#/components/examples/docs/source";
+import { SelectControlled } from "#/components/examples/docs/select/controlled";
 import { SelectGrouped } from "#/components/examples/docs/select/grouped";
 import { SelectStatus } from "#/components/examples/docs/select/status";
-
-import { SelectControlled } from "#/components/examples/docs/select/controlled";
+import { docSource, docAnatomy } from "#/components/examples/docs/source";
+import type { ComponentDoc } from "#/components/examples/docs/types";
 
 export const selectDoc: ComponentDoc = {
   examples: [

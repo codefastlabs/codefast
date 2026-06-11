@@ -1,8 +1,7 @@
-import { useState } from "react";
-
 import { Button } from "@codefast/ui/button";
 import { Field, FieldDescription, FieldLabel } from "@codefast/ui/field";
 import { Input } from "@codefast/ui/input";
+import { useState } from "react";
 
 export function FormDemo() {
   const [submitted, setSubmitted] = useState(false);

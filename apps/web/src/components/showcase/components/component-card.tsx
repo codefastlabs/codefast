@@ -1,8 +1,9 @@
 import { Link } from "@tanstack/react-router";
 import { ArrowUpRightIcon } from "lucide-react";
+
+import { DEMOS } from "#/components/examples/demos";
 import { LazyVisible } from "#/components/lazy-visible";
 import { PreviewCard } from "#/components/preview-card";
-import { DEMOS } from "#/components/examples/demos";
 import type { ComponentMeta } from "#/data/components";
 import { componentPath } from "#/data/components";
 

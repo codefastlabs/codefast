@@ -1,9 +1,9 @@
-import type { ReactElement } from "react";
 import type { ColorScheme } from "@codefast/theme";
 import { colorSchemeSchema, useColorScheme } from "@codefast/theme";
 import { ToggleGroup, ToggleGroupItem } from "@codefast/ui/toggle-group";
 import type { LucideIcon } from "lucide-react";
 import { MonitorIcon, MoonStarIcon, SunIcon } from "lucide-react";
+import type { ReactElement } from "react";
 
 type SchemeConfig = {
   readonly label: string;

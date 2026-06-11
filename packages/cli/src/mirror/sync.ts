@@ -1,24 +1,25 @@
 import path from "node:path";
+
+import type { MirrorConfig } from "#/core/config/schema";
 import { AppError } from "#/core/errors";
 import { messageFrom } from "#/core/errors";
 import type { FilesystemPort } from "#/core/filesystem/port";
 import type { Result } from "#/core/result";
 import { err, ok } from "#/core/result";
-import type { MirrorConfig } from "#/core/config/schema";
+import {
+  listWorkspacePackageDirectories,
+  type WorkspacePackageLayoutOutcome,
+} from "#/core/workspace/resolver";
+import { normalizePath } from "#/mirror/domain/path-normalizer";
 import type {
   FindWorkspacePackagesResult,
   GlobalStats,
   PackageStats,
   WorkspaceMultiDiscoverySource,
 } from "#/mirror/domain/types";
-import { normalizePath } from "#/mirror/domain/path-normalizer";
-import {
-  listWorkspacePackageDirectories,
-  type WorkspacePackageLayoutOutcome,
-} from "#/core/workspace/resolver";
 import { resolvePackageFilterUnderRoot } from "#/mirror/package-path";
-import { syncExportsForWorkspacePackage } from "#/mirror/sync-workspace-package";
 import type { MirrorSyncExecutionInput } from "#/mirror/sync-types";
+import { syncExportsForWorkspacePackage } from "#/mirror/sync-workspace-package";
 
 export type {
   MirrorSyncExecutionInput,

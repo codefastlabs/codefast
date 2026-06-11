@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Button } from "@codefast/ui/button";
 import {
   Dialog,
@@ -10,6 +9,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@codefast/ui/dialog";
+import { useState } from "react";
 
 export function DialogControlled() {
   const [open, setOpen] = useState(false);

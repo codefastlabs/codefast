@@ -1,4 +1,3 @@
-import { APPLY_MIN_TOKENS, MAX_OBJECT_DEPTH } from "#/arrange/domain/constants";
 import {
   isDomainArrayLiteralExpression,
   isDomainCallExpression,
@@ -20,13 +19,14 @@ import {
   forEachStringLiteralInClassExpression,
   isUnsafeLiteralForCnStyleApplySplit,
 } from "#/arrange/domain/ast/collectors-cn";
-import type { StringNode, TailwindClassLiteral } from "#/arrange/domain/types";
-import { tokenizeClassString } from "#/arrange/domain/tailwind-token";
 import {
   buildKnownCnTvBindings,
   isCnOrTvIdentifier,
   propertyAssignmentNameText,
 } from "#/arrange/domain/ast/helpers";
+import { APPLY_MIN_TOKENS, MAX_OBJECT_DEPTH } from "#/arrange/domain/constants";
+import { tokenizeClassString } from "#/arrange/domain/tailwind-token";
+import type { StringNode, TailwindClassLiteral } from "#/arrange/domain/types";
 
 type StringNodeVisitor = (
   classLiteral: TailwindClassLiteral,

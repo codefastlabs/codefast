@@ -1,10 +1,9 @@
 import { createServerFn } from "@tanstack/react-start";
 import { getCookie, getRequestHeader, setCookie } from "@tanstack/react-start/server";
 
+import { DEFAULT_RESOLVED_COLOR_SCHEME, DEFAULT_COLOR_SCHEME, STORAGE_KEY } from "#/constants";
 import type { ResolvedColorScheme, ColorScheme } from "#/types";
 import { colorSchemeSchema } from "#/types";
-
-import { DEFAULT_RESOLVED_COLOR_SCHEME, DEFAULT_COLOR_SCHEME, STORAGE_KEY } from "#/constants";
 
 /* -----------------------------------------------------------------------------
  * Request helpers (one round-trip when composed)

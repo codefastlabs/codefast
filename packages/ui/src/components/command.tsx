@@ -1,8 +1,6 @@
-import type { ComponentProps, JSX } from "react";
-
-import { cn } from "#/lib/utils";
 import { Command as CommandPrimitive } from "cmdk";
 import { CheckIcon, SearchIcon } from "lucide-react";
+import type { ComponentProps, JSX } from "react";
 
 import {
   Dialog,
@@ -12,6 +10,7 @@ import {
   DialogTitle,
 } from "#/components/dialog";
 import { InputGroup, InputGroupAddon } from "#/components/input-group";
+import { cn } from "#/lib/utils";
 
 /* -----------------------------------------------------------------------------
  * Component: Command

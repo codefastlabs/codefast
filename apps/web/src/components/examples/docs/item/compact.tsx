@@ -1,4 +1,3 @@
-import { Fragment } from "react";
 import {
   Item,
   ItemContent,
@@ -8,6 +7,7 @@ import {
   ItemTitle,
 } from "@codefast/ui/item";
 import { FileTextIcon, ImageIcon, SheetIcon } from "lucide-react";
+import { Fragment } from "react";
 
 const FILES = [
   { id: 1, name: "Brand guidelines.pdf", size: "2.4 MB", Icon: FileTextIcon },
