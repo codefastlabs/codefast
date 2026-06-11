@@ -326,7 +326,7 @@ envContainer.bind(NotificationServiceToken).to(NotificationServiceImpl).singleto
 console.log("\n=== Conditional (env-based) registry ===");
 console.log(
   "Env registry entries:",
-  envRegistry.entries().map((entry) => `${entry.target.name}`),
+  envRegistry.entries().map((entry) => entry.target.name),
 );
 
 const envNotifier = envContainer.resolve(NotificationServiceToken);

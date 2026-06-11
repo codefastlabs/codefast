@@ -1,16 +1,4 @@
 import type {
-  ActivationHandler,
-  BindingIdentifier,
-  BindingScope,
-  ConstraintContext,
-  Constructor,
-  DeactivationHandler,
-  DependencyKey,
-  ResolutionContext,
-  ResolveOptions,
-  TokenValue,
-} from "#/types";
-import type {
   AliasBindingBuilder,
   Binding,
   BindingBuilder,
@@ -23,13 +11,12 @@ import type {
   BindingSlot,
   TransientBindingBuilder,
 } from "#/binding";
-import type { Token } from "#/token";
-import type { AsyncModule, ModuleBuilder, SyncModule } from "#/module";
-import type { BindingSnapshot, ContainerSnapshot } from "#/inspector";
-import type { ContainerGraphJson, GraphOptions } from "#/dependency-graph";
-import type { MetadataReader } from "#/metadata/metadata-types";
+import { DEFAULT_BINDING_SLOT, generateBindingId } from "#/binding";
+import { effectiveBindingScope } from "#/binding-scope";
+import { normalizeToDescriptor } from "#/decorators/inject";
 import type { AutoRegisterRegistry } from "#/decorators/injectable";
-import type { AsyncModuleBuilder } from "#/module";
+import type { ContainerGraphJson, GraphOptions } from "#/dependency-graph";
+import { buildDependencyGraph } from "#/dependency-graph";
 import {
   AsyncModuleLoadError,
   CircularDependencyError,
@@ -39,20 +26,33 @@ import {
   ScopeViolationError,
   SyncDisposalNotSupportedError,
 } from "#/errors";
-import { DEFAULT_BINDING_SLOT, generateBindingId } from "#/binding";
-import { BindingRegistry } from "#/registry";
-import { ScopeManager } from "#/scope";
-import { LifecycleManager } from "#/lifecycle";
-import { DependencyResolver } from "#/resolver";
+import type { BindingSnapshot, ContainerSnapshot } from "#/inspector";
 import { Inspector } from "#/inspector";
-import { buildDependencyGraph } from "#/dependency-graph";
-import { defaultMetadataReader } from "#/metadata/symbol-metadata-reader";
+import { LifecycleManager } from "#/lifecycle";
 import { MetadataReaderToken } from "#/metadata/metadata-reader-token";
-import { tokenName } from "#/token";
-import { normalizeToDescriptor } from "#/decorators/inject";
+import type { MetadataReader } from "#/metadata/metadata-types";
+import { defaultMetadataReader } from "#/metadata/symbol-metadata-reader";
+import type { AsyncModule, ModuleBuilder, SyncModule } from "#/module";
+import type { AsyncModuleBuilder } from "#/module";
 import { isSyncModule } from "#/module";
-import { effectiveBindingScope } from "#/binding-scope";
+import { BindingRegistry } from "#/registry";
 import { injectionSlotToResolveOptions, bindingSlotToResolveOptions } from "#/resolve-options";
+import { DependencyResolver } from "#/resolver";
+import { ScopeManager } from "#/scope";
+import type { Token } from "#/token";
+import { tokenName } from "#/token";
+import type {
+  ActivationHandler,
+  BindingIdentifier,
+  BindingScope,
+  ConstraintContext,
+  Constructor,
+  DeactivationHandler,
+  DependencyKey,
+  ResolutionContext,
+  ResolveOptions,
+  TokenValue,
+} from "#/types";
 
 // ── Container interface ────────────────────────────────────────────────────────
 
@@ -315,10 +315,10 @@ class DefaultContainer implements Container {
   ): Array<Binding> {
     if (typeof tokenOrId === "string") {
       // It's a BindingIdentifier (string)
-      const binding = this._registry.getById(tokenOrId as BindingIdentifier);
+      const binding = this._registry.getById(tokenOrId);
       return binding !== undefined ? [binding] : [];
     }
-    return [...this._registry.getAll(tokenOrId as Token<unknown> | Constructor)];
+    return [...this._registry.getAll(tokenOrId)];
   }
 
   // ── Module ────────────────────────────────────────────────────────────────
@@ -391,7 +391,7 @@ class DefaultContainer implements Container {
     } else {
       const importPromises: Array<Promise<void>> = [];
       const builder = this._createAsyncModuleBuilder(moduleRef, importPromises);
-      await (module as AsyncModule)._setup(builder);
+      await module._setup(builder);
       // Await nested async imports triggered inside _setup
       if (importPromises.length > 0) {
         await Promise.all(importPromises);
@@ -485,7 +485,7 @@ class DefaultContainer implements Container {
     this._assertNotDisposed();
     const entries = registry.entries();
     for (const { target, scope } of entries) {
-      const builder = this._createBindToBuilder(target as Constructor);
+      const builder = this._createBindToBuilder(target);
       const bindingBuilder = builder.toSelf();
       if (scope === "singleton") {
         bindingBuilder.singleton();
@@ -765,7 +765,7 @@ class DefaultContainer implements Container {
         if (param.optional) {
           continue;
         }
-        const tokenRef = param.token as Token<unknown> | Constructor;
+        const tokenRef = param.token;
         if (param.multi) {
           const candidates = this._resolver.peekCandidateBindingsForValidate(tokenRef, paramHint);
           for (const cand of candidates) {
@@ -933,7 +933,7 @@ class BindingEntry<Value> implements BindToBuilder<Value> {
     }
     return new ConstraintBuilder<Value>(
       this._token,
-      { kind: "class", target: this._token as Constructor<Value>, scope: "transient" },
+      { kind: "class", target: this._token, scope: "transient" },
       this._commit,
     );
   }
@@ -1018,7 +1018,7 @@ class ConstraintBuilder<Value> extends SlotBuilder implements BindingBuilder<Val
       slot: this._slot,
       predicate: this._predicate,
     } as Binding<Value>;
-    this._committed = this._commit(binding as Binding<unknown>, previousId);
+    this._committed = this._commit(binding as Binding, previousId);
   }
 
   singleton(): SingletonBindingBuilder<Value> {
@@ -1096,7 +1096,7 @@ class ScopeBuilder<Value, Scope extends BindingScope>
       onActivation: this._onActivation,
       onDeactivation: this._onDeactivation,
     } as Binding<Value>;
-    this._committed = this._commit(binding as Binding<unknown>, previousId);
+    this._committed = this._commit(binding as Binding, previousId);
   }
 
   onActivation(fn: ActivationHandler<Value>): this {
@@ -1147,7 +1147,7 @@ class ConstantBuilder<Value>
       onActivation: this._onActivation,
       onDeactivation: this._onDeactivation,
     } as unknown as Binding<Value>;
-    this._committed = this._commit(binding as Binding<unknown>, previousId);
+    this._committed = this._commit(binding as Binding, previousId);
   }
 
   onActivation(fn: ActivationHandler<Value>): this {
@@ -1185,7 +1185,7 @@ class AliasBuilder<Value> extends SlotBuilder implements AliasBindingBuilder {
       predicate: this._predicate,
       target: this._target,
     } as unknown as Binding<Value>;
-    this._committed = this._commit(binding as Binding<unknown>, previousId);
+    this._committed = this._commit(binding as Binding, previousId);
   }
 }
 

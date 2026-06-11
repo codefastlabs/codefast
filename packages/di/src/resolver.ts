@@ -1,21 +1,10 @@
-import type { ConstructorInvocation } from "#/constructor-type";
-import type {
-  BindingIdentifier,
-  BindingScope,
-  BindingTag,
-  ConstraintContext,
-  Constructor,
-  ResolutionFrame,
-  ResolveOptions,
-} from "#/types";
-import type { Token } from "#/token";
 import type { Binding, BindingSlot } from "#/binding";
-import type { BindingRegistry } from "#/registry";
-import type { ScopeManager } from "#/scope";
-import type { LifecycleManager } from "#/lifecycle";
-import type { ConstructorMetadata, MetadataReader } from "#/metadata/metadata-types";
-import type { InjectionDescriptor } from "#/decorators/inject";
+import { selectAllBindings, selectBinding } from "#/binding-select";
+import type { ConstructorInvocation } from "#/constructor-type";
 import type { Container } from "#/container";
+import type { InjectionDescriptor } from "#/decorators/inject";
+import type { ResolverCallbacks } from "#/environment";
+import { buildResolutionFrame, DefaultResolutionContext, runWithContainer } from "#/environment";
 import {
   AsyncResolutionError,
   CircularDependencyError,
@@ -25,11 +14,22 @@ import {
   NoMatchingBindingError,
   TokenNotBoundError,
 } from "#/errors";
-import { tokenName } from "#/token";
-import type { ResolverCallbacks } from "#/environment";
-import { buildResolutionFrame, DefaultResolutionContext, runWithContainer } from "#/environment";
+import type { LifecycleManager } from "#/lifecycle";
+import type { ConstructorMetadata, MetadataReader } from "#/metadata/metadata-types";
+import type { BindingRegistry } from "#/registry";
 import { injectionSlotToResolveOptions } from "#/resolve-options";
-import { selectAllBindings, selectBinding } from "#/binding-select";
+import type { ScopeManager } from "#/scope";
+import type { Token } from "#/token";
+import { tokenName } from "#/token";
+import type {
+  BindingIdentifier,
+  BindingScope,
+  BindingTag,
+  ConstraintContext,
+  Constructor,
+  ResolutionFrame,
+  ResolveOptions,
+} from "#/types";
 
 type BindingWithScope = Binding & { scope: BindingScope };
 const RESOLUTION_SET_KEY: unique symbol = Symbol("di:resolution-set");
@@ -501,78 +501,32 @@ export class DependencyResolver {
       const param = meta.params[0]!;
       const paramHint = injectionSlotToResolveOptions(param);
       if (param.multi) {
-        return [
-          this.resolveAll(
-            param.token as Token<unknown> | Constructor,
-            paramHint,
-            resolutionPath,
-            resolutionStack,
-          ),
-        ];
+        return [this.resolveAll(param.token, paramHint, resolutionPath, resolutionStack)];
       }
       if (param.optional) {
-        return [
-          this.resolveOptional(
-            param.token as Token<unknown> | Constructor,
-            paramHint,
-            resolutionPath,
-            resolutionStack,
-          ),
-        ];
+        return [this.resolveOptional(param.token, paramHint, resolutionPath, resolutionStack)];
       }
       if (paramHint === undefined) {
-        return [
-          this.resolveFromContext(
-            param.token as Token<unknown> | Constructor,
-            resolutionPath,
-            resolutionStack,
-          ),
-        ];
+        return [this.resolveFromContext(param.token, resolutionPath, resolutionStack)];
       }
-      return [
-        this.resolve(
-          param.token as Token<unknown> | Constructor,
-          paramHint,
-          resolutionPath,
-          resolutionStack,
-        ),
-      ];
+      return [this.resolve(param.token, paramHint, resolutionPath, resolutionStack)];
     }
     const deps = new Array<unknown>(meta.params.length);
     for (let index = 0; index < meta.params.length; index += 1) {
       const param = meta.params[index]!;
       const paramHint = injectionSlotToResolveOptions(param);
       if (param.multi) {
-        deps[index] = this.resolveAll(
-          param.token as Token<unknown> | Constructor,
-          paramHint,
-          resolutionPath,
-          resolutionStack,
-        );
+        deps[index] = this.resolveAll(param.token, paramHint, resolutionPath, resolutionStack);
         continue;
       }
       if (param.optional) {
-        deps[index] = this.resolveOptional(
-          param.token as Token<unknown> | Constructor,
-          paramHint,
-          resolutionPath,
-          resolutionStack,
-        );
+        deps[index] = this.resolveOptional(param.token, paramHint, resolutionPath, resolutionStack);
         continue;
       }
       deps[index] =
         paramHint === undefined
-          ? this.resolveFromContext(
-              param.token as Token<unknown> | Constructor,
-              resolutionPath,
-              resolutionStack,
-            )
-          : this.resolve(
-              param.token as Token<unknown> | Constructor,
-              paramHint,
-              resolutionPath,
-              resolutionStack,
-            );
+          ? this.resolveFromContext(param.token, resolutionPath, resolutionStack)
+          : this.resolve(param.token, paramHint, resolutionPath, resolutionStack);
     }
     return deps;
   }
@@ -1016,41 +970,18 @@ export class DependencyResolver {
       const paramHint = injectionSlotToResolveOptions(param);
       if (param.multi) {
         return [
-          await this.resolveAllAsync(
-            param.token as Token<unknown> | Constructor,
-            paramHint,
-            resolutionPath,
-            resolutionStack,
-          ),
+          await this.resolveAllAsync(param.token, paramHint, resolutionPath, resolutionStack),
         ];
       }
       if (param.optional) {
         return [
-          await this.resolveOptionalAsync(
-            param.token as Token<unknown> | Constructor,
-            paramHint,
-            resolutionPath,
-            resolutionStack,
-          ),
+          await this.resolveOptionalAsync(param.token, paramHint, resolutionPath, resolutionStack),
         ];
       }
       if (paramHint === undefined) {
-        return [
-          await this.resolveAsyncFromContext(
-            param.token as Token<unknown> | Constructor,
-            resolutionPath,
-            resolutionStack,
-          ),
-        ];
+        return [await this.resolveAsyncFromContext(param.token, resolutionPath, resolutionStack)];
       }
-      return [
-        await this.resolveAsync(
-          param.token as Token<unknown> | Constructor,
-          paramHint,
-          resolutionPath,
-          resolutionStack,
-        ),
-      ];
+      return [await this.resolveAsync(param.token, paramHint, resolutionPath, resolutionStack)];
     }
     const pending = new Array<Promise<unknown>>(meta.params.length);
     const shouldCloneContext = meta.params.length > 1;
@@ -1059,14 +990,14 @@ export class DependencyResolver {
       const paramHint = injectionSlotToResolveOptions(param);
       if (param.multi) {
         pending[index] = this.resolveAllAsync(
-          param.token as Token<unknown> | Constructor,
+          param.token,
           paramHint,
           shouldCloneContext ? [...resolutionPath] : resolutionPath,
           shouldCloneContext ? [...resolutionStack] : resolutionStack,
         );
       } else if (param.optional) {
         pending[index] = this.resolveOptionalAsync(
-          param.token as Token<unknown> | Constructor,
+          param.token,
           paramHint,
           shouldCloneContext ? [...resolutionPath] : resolutionPath,
           shouldCloneContext ? [...resolutionStack] : resolutionStack,
@@ -1075,12 +1006,12 @@ export class DependencyResolver {
         pending[index] =
           paramHint === undefined
             ? this.resolveAsyncFromContext(
-                param.token as Token<unknown> | Constructor,
+                param.token,
                 shouldCloneContext ? [...resolutionPath] : resolutionPath,
                 shouldCloneContext ? [...resolutionStack] : resolutionStack,
               )
             : this.resolveAsync(
-                param.token as Token<unknown> | Constructor,
+                param.token,
                 paramHint,
                 shouldCloneContext ? [...resolutionPath] : resolutionPath,
                 shouldCloneContext ? [...resolutionStack] : resolutionStack,
@@ -1663,12 +1594,7 @@ export class DependencyResolver {
       return binding.value;
     }
     if (binding.kind === "alias") {
-      return this.resolve(
-        binding.target as Token<Value> | Constructor<Value>,
-        hint,
-        resolutionPath,
-        resolutionStack,
-      );
+      return this.resolve(binding.target, hint, resolutionPath, resolutionStack);
     }
     const scope = (binding as BindingWithScope).scope ?? "transient";
     if (scope === "singleton" && this._scope.hasSingleton(binding.id)) {
@@ -1701,12 +1627,7 @@ export class DependencyResolver {
     const isolatedPath = [...resolutionPath];
     const isolatedStack = [...resolutionStack];
     if (binding.kind === "alias") {
-      return this.resolveAsync(
-        binding.target as Token<Value> | Constructor<Value>,
-        hint,
-        isolatedPath,
-        isolatedStack,
-      );
+      return this.resolveAsync(binding.target, hint, isolatedPath, isolatedStack);
     }
     const scope = (binding as BindingWithScope).scope ?? "transient";
     if (scope === "singleton" && this._scope.hasSingleton(binding.id)) {

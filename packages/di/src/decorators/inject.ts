@@ -1,9 +1,9 @@
-import type { BindingTag, Constructor } from "#/types";
-import type { Token } from "#/token";
-import { INJECT_ACCESSOR_KEY } from "#/metadata/metadata-keys";
-import { InternalError, MissingContainerContextError } from "#/errors";
 import { getActiveContainer } from "#/environment";
+import { InternalError, MissingContainerContextError } from "#/errors";
+import { INJECT_ACCESSOR_KEY } from "#/metadata/metadata-keys";
 import { injectionSlotToResolveOptions } from "#/resolve-options";
+import type { Token } from "#/token";
+import type { BindingTag, Constructor } from "#/types";
 
 // ── InjectionDescriptor ───────────────────────────────────────────────────────
 
@@ -74,7 +74,7 @@ function materializeInjectionDescriptor(dependency: InjectionDescriptor): Inject
     return dependency;
   }
   const dualRole = dependency as InjectionDescriptor & ((...args: Array<unknown>) => unknown);
-  const base: Pick<InjectionDescriptor<unknown>, "token" | "optional" | "multi"> = {
+  const base: Pick<InjectionDescriptor, "token" | "optional" | "multi"> = {
     token: dualRole.token,
     optional: dualRole.optional,
     multi: dualRole.multi,
@@ -146,7 +146,7 @@ export function inject<const Value>(
     _target: ClassAccessorDecoratorTarget<unknown, Value>,
     context: ClassAccessorDecoratorContext<unknown, Value>,
   ): ClassAccessorDecoratorResult<unknown, Value> => {
-    if (context.static === true) {
+    if (context.static) {
       throw new InternalError(
         "@inject() on static accessors is not supported; only instance accessors participate in runWithContainer-based property injection.",
       );
