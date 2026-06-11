@@ -2,15 +2,13 @@ import { Badge } from "@codefast/ui/badge";
 import { createFileRoute, useLocation } from "@tanstack/react-router";
 import { useEffect } from "react";
 
-import { DEMOS } from "#/components/examples/demos";
 import { GroupSection } from "#/components/showcase/components/group-section";
 import { MobileNav } from "#/components/showcase/components/mobile-nav";
 import { SidebarNav } from "#/components/showcase/components/sidebar-nav";
 import { useActiveSection } from "#/components/showcase/hooks/use-active-section";
-import type { HighlightedCodes, ViewMode } from "#/components/showcase/types";
+import type { ViewMode } from "#/components/showcase/types";
 import { ALPHABET_GROUPS, CATEGORY_GROUPS, CATEGORY_NAV_IDS, LETTER_NAV_IDS } from "#/data/component-groups";
 import { ALL_COMPONENTS } from "#/data/components";
-import { highlightMany } from "#/lib/highlighter.ts";
 
 /* -------------------------------------------------------------------------- */
 /* Route                                                                       */
@@ -41,17 +39,6 @@ export const Route = createFileRoute("/components/")({
       },
     ],
   }),
-  // Highlight every demo's source at load time, keyed by slug.
-  loader: async (): Promise<HighlightedCodes> => {
-    const slugs = ALL_COMPONENTS.filter((c) => c.hasDemo).map((c) => c.slug);
-    const highlighted = await highlightMany(slugs.map((slug) => DEMOS[slug]?.code ?? ""));
-    const out: HighlightedCodes = {};
-    slugs.forEach((slug, i) => {
-      out[slug] = highlighted[i] ?? "";
-    });
-    return out;
-  },
-  staleTime: Infinity,
   component: ComponentsPage,
 });
 
@@ -60,7 +47,6 @@ export const Route = createFileRoute("/components/")({
 /* -------------------------------------------------------------------------- */
 
 function ComponentsPage() {
-  const hl = Route.useLoaderData();
   const navigate = Route.useNavigate();
   const search = Route.useSearch();
 
@@ -135,7 +121,7 @@ function ComponentsPage() {
 
         <div className="min-w-0">
           {groups.map((group) => (
-            <GroupSection key={group.id} group={group} hl={hl} />
+            <GroupSection key={group.id} group={group} />
           ))}
         </div>
       </div>
