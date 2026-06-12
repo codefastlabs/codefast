@@ -1,11 +1,11 @@
-import { AccordionBasic } from "#/components/examples/accordion.basic";
-import { AccordionBorders } from "#/components/examples/accordion.borders";
-import { AccordionCard } from "#/components/examples/accordion.card";
+import { AccordionBasic } from "#/components/examples/accordion.basic.example";
+import { AccordionBorders } from "#/components/examples/accordion.borders.example";
+import { AccordionCard } from "#/components/examples/accordion.card.example";
 import { AccordionDemo } from "#/components/examples/accordion.demo";
-import { AccordionDisabled } from "#/components/examples/accordion.disabled";
-import { AccordionMultiple } from "#/components/examples/accordion.multiple";
-import { AccordionRtl } from "#/components/examples/accordion.rtl";
-import { docSource, docAnatomy } from "#/components/examples/source";
+import { AccordionDisabled } from "#/components/examples/accordion.disabled.example";
+import { AccordionMultiple } from "#/components/examples/accordion.multiple.example";
+import { AccordionRtl } from "#/components/examples/accordion.rtl.example";
+import { docAnatomy, docDemo, docSource } from "#/components/examples/source";
 import type { ComponentDoc } from "#/components/examples/types";
 
 export const accordionDoc: ComponentDoc = {
@@ -15,7 +15,7 @@ export const accordionDoc: ComponentDoc = {
       title: "Demo",
       description: "A vertically stacked set of interactive headings that each reveal a section of content.",
       Demo: AccordionDemo,
-      source: docSource("accordion", "demo"),
+      source: docDemo("accordion"),
       previewClassName: "items-start",
     },
     {

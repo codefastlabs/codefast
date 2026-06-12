@@ -1,6 +1,6 @@
-import { FormContact } from "#/components/examples/form.contact";
-import { FormNewsletter } from "#/components/examples/form.newsletter";
-import { FormSignIn } from "#/components/examples/form.sign-in";
+import { FormContact } from "#/components/examples/form.contact.example";
+import { FormNewsletter } from "#/components/examples/form.newsletter.example";
+import { FormSignIn } from "#/components/examples/form.sign-in.example";
 import { docSource, docAnatomy } from "#/components/examples/source";
 import type { ComponentDoc } from "#/components/examples/types";
 

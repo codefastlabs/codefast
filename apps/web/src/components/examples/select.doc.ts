@@ -1,6 +1,6 @@
-import { SelectControlled } from "#/components/examples/select.controlled";
-import { SelectGrouped } from "#/components/examples/select.grouped";
-import { SelectStatus } from "#/components/examples/select.status";
+import { SelectControlled } from "#/components/examples/select.controlled.example";
+import { SelectGrouped } from "#/components/examples/select.grouped.example";
+import { SelectStatus } from "#/components/examples/select.status.example";
 import { docSource, docAnatomy } from "#/components/examples/source";
 import type { ComponentDoc } from "#/components/examples/types";
 

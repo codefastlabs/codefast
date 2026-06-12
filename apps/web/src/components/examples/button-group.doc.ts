@@ -1,6 +1,6 @@
-import { ButtonGroupGroups } from "#/components/examples/button-group.groups";
-import { ButtonGroupIcons } from "#/components/examples/button-group.icons";
-import { ButtonGroupSizes } from "#/components/examples/button-group.sizes";
+import { ButtonGroupGroups } from "#/components/examples/button-group.groups.example";
+import { ButtonGroupIcons } from "#/components/examples/button-group.icons.example";
+import { ButtonGroupSizes } from "#/components/examples/button-group.sizes.example";
 import { docSource, docAnatomy } from "#/components/examples/source";
 import type { ComponentDoc } from "#/components/examples/types";
 

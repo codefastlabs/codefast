@@ -1,6 +1,6 @@
-import { InputDefault } from "#/components/examples/input.default";
-import { InputFile } from "#/components/examples/input.file";
-import { InputStates } from "#/components/examples/input.states";
+import { InputDefault } from "#/components/examples/input.default.example";
+import { InputFile } from "#/components/examples/input.file.example";
+import { InputStates } from "#/components/examples/input.states.example";
 import { docSource, docAnatomy } from "#/components/examples/source";
 import type { ComponentDoc } from "#/components/examples/types";
 

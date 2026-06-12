@@ -1,6 +1,6 @@
-import { SidebarAppShell } from "#/components/examples/sidebar.app-shell";
-import { SidebarBadges } from "#/components/examples/sidebar.badges";
-import { SidebarSubmenu } from "#/components/examples/sidebar.submenu";
+import { SidebarAppShell } from "#/components/examples/sidebar.app-shell.example";
+import { SidebarBadges } from "#/components/examples/sidebar.badges.example";
+import { SidebarSubmenu } from "#/components/examples/sidebar.submenu.example";
 import { docSource, docAnatomy } from "#/components/examples/source";
 import type { ComponentDoc } from "#/components/examples/types";
 

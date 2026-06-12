@@ -1,6 +1,6 @@
-import { SheetNavigation } from "#/components/examples/sheet.navigation";
-import { SheetProfile } from "#/components/examples/sheet.profile";
-import { SheetSides } from "#/components/examples/sheet.sides";
+import { SheetNavigation } from "#/components/examples/sheet.navigation.example";
+import { SheetProfile } from "#/components/examples/sheet.profile.example";
+import { SheetSides } from "#/components/examples/sheet.sides.example";
 import { docSource, docAnatomy } from "#/components/examples/source";
 import type { ComponentDoc } from "#/components/examples/types";
 

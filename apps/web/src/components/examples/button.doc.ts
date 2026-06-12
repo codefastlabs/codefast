@@ -1,8 +1,8 @@
-import { ButtonAsChild } from "#/components/examples/button.as-child";
-import { ButtonIcons } from "#/components/examples/button.icons";
-import { ButtonLoading } from "#/components/examples/button.loading";
-import { ButtonSizes } from "#/components/examples/button.sizes";
-import { ButtonVariants } from "#/components/examples/button.variants";
+import { ButtonAsChild } from "#/components/examples/button.as-child.example";
+import { ButtonIcons } from "#/components/examples/button.icons.example";
+import { ButtonLoading } from "#/components/examples/button.loading.example";
+import { ButtonSizes } from "#/components/examples/button.sizes.example";
+import { ButtonVariants } from "#/components/examples/button.variants.example";
 import { docSource, docAnatomy } from "#/components/examples/source";
 import type { ComponentDoc } from "#/components/examples/types";
 

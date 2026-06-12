@@ -1,7 +1,7 @@
 import { docSource, docAnatomy } from "#/components/examples/source";
-import { TooltipSides } from "#/components/examples/tooltip.sides";
-import { TooltipToolbar } from "#/components/examples/tooltip.toolbar";
-import { TooltipWithShortcut } from "#/components/examples/tooltip.with-shortcut";
+import { TooltipSides } from "#/components/examples/tooltip.sides.example";
+import { TooltipToolbar } from "#/components/examples/tooltip.toolbar.example";
+import { TooltipWithShortcut } from "#/components/examples/tooltip.with-shortcut.example";
 import type { ComponentDoc } from "#/components/examples/types";
 
 export const tooltipDoc: ComponentDoc = {

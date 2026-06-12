@@ -1,6 +1,6 @@
-import { CheckboxCardsColumns } from "#/components/examples/checkbox-cards.columns";
-import { CheckboxCardsDisabled } from "#/components/examples/checkbox-cards.disabled";
-import { CheckboxCardsFeatures } from "#/components/examples/checkbox-cards.features";
+import { CheckboxCardsColumns } from "#/components/examples/checkbox-cards.columns.example";
+import { CheckboxCardsDisabled } from "#/components/examples/checkbox-cards.disabled.example";
+import { CheckboxCardsFeatures } from "#/components/examples/checkbox-cards.features.example";
 import { docSource, docAnatomy } from "#/components/examples/source";
 import type { ComponentDoc } from "#/components/examples/types";
 

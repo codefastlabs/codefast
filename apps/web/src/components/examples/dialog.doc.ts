@@ -1,6 +1,6 @@
-import { DialogBasic } from "#/components/examples/dialog.basic";
-import { DialogControlled } from "#/components/examples/dialog.controlled";
-import { DialogScroll } from "#/components/examples/dialog.scroll";
+import { DialogBasic } from "#/components/examples/dialog.basic.example";
+import { DialogControlled } from "#/components/examples/dialog.controlled.example";
+import { DialogScroll } from "#/components/examples/dialog.scroll.example";
 import { docSource, docAnatomy } from "#/components/examples/source";
 import type { ComponentDoc } from "#/components/examples/types";
 

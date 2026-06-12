@@ -1,6 +1,6 @@
-import { CollapsibleFaq } from "#/components/examples/collapsible.faq";
-import { CollapsibleRepos } from "#/components/examples/collapsible.repos";
-import { CollapsibleShowMore } from "#/components/examples/collapsible.show-more";
+import { CollapsibleFaq } from "#/components/examples/collapsible.faq.example";
+import { CollapsibleRepos } from "#/components/examples/collapsible.repos.example";
+import { CollapsibleShowMore } from "#/components/examples/collapsible.show-more.example";
 import { docSource, docAnatomy } from "#/components/examples/source";
 import type { ComponentDoc } from "#/components/examples/types";
 

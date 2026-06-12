@@ -1,6 +1,6 @@
-import { ItemCompact } from "#/components/examples/item.compact";
-import { ItemList } from "#/components/examples/item.list";
-import { ItemNotifications } from "#/components/examples/item.notifications";
+import { ItemCompact } from "#/components/examples/item.compact.example";
+import { ItemList } from "#/components/examples/item.list.example";
+import { ItemNotifications } from "#/components/examples/item.notifications.example";
 import { docSource, docAnatomy } from "#/components/examples/source";
 import type { ComponentDoc } from "#/components/examples/types";
 

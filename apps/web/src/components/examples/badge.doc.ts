@@ -1,6 +1,6 @@
-import { BadgeAsLink } from "#/components/examples/badge.as-link";
-import { BadgeVariants } from "#/components/examples/badge.variants";
-import { BadgeWithIcon } from "#/components/examples/badge.with-icon";
+import { BadgeAsLink } from "#/components/examples/badge.as-link.example";
+import { BadgeVariants } from "#/components/examples/badge.variants.example";
+import { BadgeWithIcon } from "#/components/examples/badge.with-icon.example";
 import { docSource, docAnatomy } from "#/components/examples/source";
 import type { ComponentDoc } from "#/components/examples/types";
 

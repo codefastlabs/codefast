@@ -1,6 +1,6 @@
-import { SkeletonCard } from "#/components/examples/skeleton.card";
-import { SkeletonList } from "#/components/examples/skeleton.list";
-import { SkeletonText } from "#/components/examples/skeleton.text";
+import { SkeletonCard } from "#/components/examples/skeleton.card.example";
+import { SkeletonList } from "#/components/examples/skeleton.list.example";
+import { SkeletonText } from "#/components/examples/skeleton.text.example";
 import { docSource, docAnatomy } from "#/components/examples/source";
 import type { ComponentDoc } from "#/components/examples/types";
 

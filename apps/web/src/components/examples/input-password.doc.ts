@@ -1,6 +1,6 @@
-import { InputPasswordConfirm } from "#/components/examples/input-password.confirm";
-import { InputPasswordFields } from "#/components/examples/input-password.fields";
-import { InputPasswordStrength } from "#/components/examples/input-password.strength";
+import { InputPasswordConfirm } from "#/components/examples/input-password.confirm.example";
+import { InputPasswordFields } from "#/components/examples/input-password.fields.example";
+import { InputPasswordStrength } from "#/components/examples/input-password.strength.example";
 import { docSource, docAnatomy } from "#/components/examples/source";
 import type { ComponentDoc } from "#/components/examples/types";
 

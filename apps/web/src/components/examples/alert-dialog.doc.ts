@@ -1,11 +1,11 @@
-import { AlertDialogBasic } from "#/components/examples/alert-dialog.basic";
+import { AlertDialogBasic } from "#/components/examples/alert-dialog.basic.example";
 import { AlertDialogDemo } from "#/components/examples/alert-dialog.demo";
-import { AlertDialogDestructive } from "#/components/examples/alert-dialog.destructive";
-import { AlertDialogWithMedia } from "#/components/examples/alert-dialog.media";
-import { AlertDialogRtl } from "#/components/examples/alert-dialog.rtl";
-import { AlertDialogSmall } from "#/components/examples/alert-dialog.small";
-import { AlertDialogSmallWithMedia } from "#/components/examples/alert-dialog.small-media";
-import { docSource, docAnatomy } from "#/components/examples/source";
+import { AlertDialogDestructive } from "#/components/examples/alert-dialog.destructive.example";
+import { AlertDialogWithMedia } from "#/components/examples/alert-dialog.media.example";
+import { AlertDialogRtl } from "#/components/examples/alert-dialog.rtl.example";
+import { AlertDialogSmallWithMedia } from "#/components/examples/alert-dialog.small-media.example";
+import { AlertDialogSmall } from "#/components/examples/alert-dialog.small.example";
+import { docAnatomy, docDemo, docSource } from "#/components/examples/source";
 import type { ComponentDoc } from "#/components/examples/types";
 
 export const alertDialogDoc: ComponentDoc = {
@@ -15,7 +15,7 @@ export const alertDialogDoc: ComponentDoc = {
       title: "Demo",
       description: "A blocking modal that forces an explicit Cancel or confirm decision.",
       Demo: AlertDialogDemo,
-      source: docSource("alert-dialog", "demo"),
+      source: docDemo("alert-dialog"),
       previewClassName: "min-h-40",
     },
     {

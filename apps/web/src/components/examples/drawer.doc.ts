@@ -1,6 +1,6 @@
-import { DrawerCart } from "#/components/examples/drawer.cart";
-import { DrawerProfile } from "#/components/examples/drawer.profile";
-import { DrawerSide } from "#/components/examples/drawer.side";
+import { DrawerCart } from "#/components/examples/drawer.cart.example";
+import { DrawerProfile } from "#/components/examples/drawer.profile.example";
+import { DrawerSide } from "#/components/examples/drawer.side.example";
 import { docSource, docAnatomy } from "#/components/examples/source";
 import type { ComponentDoc } from "#/components/examples/types";
 

@@ -1,6 +1,6 @@
-import { EmptyMinimal } from "#/components/examples/empty.minimal";
-import { EmptySearch } from "#/components/examples/empty.search";
-import { EmptyState } from "#/components/examples/empty.state";
+import { EmptyMinimal } from "#/components/examples/empty.minimal.example";
+import { EmptySearch } from "#/components/examples/empty.search.example";
+import { EmptyState } from "#/components/examples/empty.state.example";
 import { docSource, docAnatomy } from "#/components/examples/source";
 import type { ComponentDoc } from "#/components/examples/types";
 

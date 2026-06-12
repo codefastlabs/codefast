@@ -1,6 +1,6 @@
-import { DropdownActions } from "#/components/examples/dropdown-menu.actions";
-import { DropdownCheckboxes } from "#/components/examples/dropdown-menu.checkboxes";
-import { DropdownRadio } from "#/components/examples/dropdown-menu.radio";
+import { DropdownActions } from "#/components/examples/dropdown-menu.actions.example";
+import { DropdownCheckboxes } from "#/components/examples/dropdown-menu.checkboxes.example";
+import { DropdownRadio } from "#/components/examples/dropdown-menu.radio.example";
 import { docSource, docAnatomy } from "#/components/examples/source";
 import type { ComponentDoc } from "#/components/examples/types";
 

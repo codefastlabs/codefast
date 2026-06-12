@@ -1,6 +1,6 @@
-import { RadioGroupDensity } from "#/components/examples/radio-group.density";
-import { RadioGroupHorizontal } from "#/components/examples/radio-group.horizontal";
-import { RadioGroupPlans } from "#/components/examples/radio-group.plans";
+import { RadioGroupDensity } from "#/components/examples/radio-group.density.example";
+import { RadioGroupHorizontal } from "#/components/examples/radio-group.horizontal.example";
+import { RadioGroupPlans } from "#/components/examples/radio-group.plans.example";
 import { docSource, docAnatomy } from "#/components/examples/source";
 import type { ComponentDoc } from "#/components/examples/types";
 
