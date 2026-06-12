@@ -15,6 +15,7 @@
  */
 import "reflect-metadata";
 import { Container, ContainerModule } from "inversify";
+
 import type { BenchScenario } from "#/scenarios/types";
 
 // ─── shared identifiers ───────────────────────────────────────────────────────

@@ -5,7 +5,7 @@ import {
   MAX_GROUPS_HEADROOM,
   MIN_GROUP_TOKENS,
 } from "#/arrange/domain/constants";
-import type { Bucket } from "#/arrange/domain/types";
+import { stripVariants, tokenizeClassString } from "#/arrange/domain/tailwind-token";
 import {
   bucketsCompatible,
   bucketsMergeCompatible,
@@ -14,7 +14,7 @@ import {
   selectorKey,
   stateKey,
 } from "#/arrange/domain/token-classifier";
-import { stripVariants, tokenizeClassString } from "#/arrange/domain/tailwind-token";
+import type { Bucket } from "#/arrange/domain/types";
 
 /**
  * `cn()` grouping: bucket sequence is {@link BUCKET_ORDER} only; tokens are classified with
@@ -57,9 +57,7 @@ function compareClassTokensCanonically(left: string, right: string): number {
  * First source index where each `(bucket, variantGroupKey)` appears — drives stable clustering
  * in {@link suggestCnGroups} without reordering unrelated variant blocks by alphabet alone.
  */
-function buildFirstVariantKeySourceIndex(
-  classified: ReadonlyArray<ClassifiedTailwindToken>,
-): Map<string, number> {
+function buildFirstVariantKeySourceIndex(classified: ReadonlyArray<ClassifiedTailwindToken>): Map<string, number> {
   const firstVariantKeySourceIndex = new Map<string, number>();
   for (const item of classified) {
     if (!isVariantKeyedBucket(item.bucket)) {
@@ -130,9 +128,7 @@ export function areCnTailwindPartitionsEquivalent(
     chunks
       .map((chunk) => {
         const classTokens = tokenizeClassString(chunk);
-        return classTokens.length === 0
-          ? ""
-          : [...classTokens].sort(compareClassTokensCanonically).join(" ");
+        return classTokens.length === 0 ? "" : [...classTokens].toSorted(compareClassTokensCanonically).join(" ");
       })
       .filter((s) => s.length > 0)
       .sort(compareClassTokensCanonically);
@@ -214,11 +210,9 @@ function mergeSingletons(groups: Array<string>): Array<string> {
         const prevGroup = i > 0 ? result[i - 1] : undefined;
         const nextGroup = i < result.length - 1 ? result[i + 1] : undefined;
         const prevCompat =
-          prevGroup !== undefined &&
-          bucketsMergeCompatible(myBucket, dominantBucketOfGroup(prevGroup));
+          prevGroup !== undefined && bucketsMergeCompatible(myBucket, dominantBucketOfGroup(prevGroup));
         const nextCompat =
-          nextGroup !== undefined &&
-          bucketsMergeCompatible(myBucket, dominantBucketOfGroup(nextGroup));
+          nextGroup !== undefined && bucketsMergeCompatible(myBucket, dominantBucketOfGroup(nextGroup));
 
         let mergeDir: "forward" | "backward";
         if (nextCompat && !prevCompat) {
@@ -286,12 +280,7 @@ function capGroups(groups: Array<string>, maxGroups: number): Array<string> {
       const rightGroup = result[i + 1];
       const leftLen = lengths[i];
       const rightLen = lengths[i + 1];
-      if (
-        leftGroup === undefined ||
-        rightGroup === undefined ||
-        leftLen === undefined ||
-        rightLen === undefined
-      ) {
+      if (leftGroup === undefined || rightGroup === undefined || leftLen === undefined || rightLen === undefined) {
         throw new Error("invariant: capGroups adjacent pair missing");
       }
       const dominantLeft = dominantBucketOfGroup(leftGroup);
@@ -315,10 +304,7 @@ function capGroups(groups: Array<string>, maxGroups: number): Array<string> {
     }
     let best = firstCandidate;
     for (const candidate of mergePairCandidates) {
-      if (
-        candidate.penalty < best.penalty ||
-        (candidate.penalty === best.penalty && candidate.size < best.size)
-      ) {
+      if (candidate.penalty < best.penalty || (candidate.penalty === best.penalty && candidate.size < best.size)) {
         best = candidate;
       }
     }
@@ -373,7 +359,7 @@ function mergeEaseTimingIntoFollowingAnimatedState(groups: Array<string>): Array
           continue;
         }
         const classTokens = tokenizeClassString(chunkJ);
-        if (!classTokens.some((classToken) => /^animate/.test(stripVariants(classToken)))) {
+        if (!classTokens.some((classToken) => stripVariants(classToken).startsWith("animate"))) {
           continue;
         }
         target = j;
@@ -401,8 +387,7 @@ function chunkIsOnlyEaseTimingMotion(groupStr: string): boolean {
     return false;
   }
   return classTokens.every(
-    (classToken) =>
-      classifyToken(classToken) === "motion" && /^ease-/.test(stripVariants(classToken)),
+    (classToken) => classifyToken(classToken) === "motion" && stripVariants(classToken).startsWith("ease-"),
   );
 }
 
@@ -454,9 +439,7 @@ export function suggestCnGroups(classString: string): Array<string> {
   for (const { classToken, bucket: tokenBucket } of classified) {
     if (lastBucketInRun === null) {
       lastBucketInRun = tokenBucket;
-      currentStateKey = isVariantKeyedBucket(tokenBucket)
-        ? variantGroupKey(tokenBucket, classToken)
-        : null;
+      currentStateKey = isVariantKeyedBucket(tokenBucket) ? variantGroupKey(tokenBucket, classToken) : null;
       currentTokens.push(classToken);
       continue;
     }
@@ -475,9 +458,7 @@ export function suggestCnGroups(classString: string): Array<string> {
     if (!bucketsCompatible(tokenBucket, lastBucketInRun)) {
       flush();
       lastBucketInRun = tokenBucket;
-      currentStateKey = isVariantKeyedBucket(tokenBucket)
-        ? variantGroupKey(tokenBucket, classToken)
-        : null;
+      currentStateKey = isVariantKeyedBucket(tokenBucket) ? variantGroupKey(tokenBucket, classToken) : null;
       currentTokens.push(classToken);
       continue;
     }
@@ -513,11 +494,11 @@ export function summarizeGroupBucketLabels(groups: Array<string>): Array<string>
   return groups.map((g) => {
     const uniq = new Set(tokenizeClassString(g).map(classifyToken));
     if (uniq.size !== 1) {
-      return `mixed:${[...uniq].sort(compareClassTokensCanonically).join("+")}`;
+      return `mixed:${[...uniq].toSorted(compareClassTokensCanonically).join("+")}`;
     }
     const onlyBucket = [...uniq][0];
     if (onlyBucket === undefined) {
-      return `mixed:${[...uniq].sort(compareClassTokensCanonically).join("+")}`;
+      return `mixed:${[...uniq].toSorted(compareClassTokensCanonically).join("+")}`;
     }
     return onlyBucket;
   });

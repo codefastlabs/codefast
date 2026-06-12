@@ -1,4 +1,5 @@
 import ts from "typescript";
+
 import type { FilesystemPort } from "#/core/filesystem/port";
 import { applyEditsDescending, indentOfLineContaining } from "#/core/source-text-edit";
 import type { TagFileResult } from "#/tag/domain/types";
@@ -166,11 +167,7 @@ export class TagSinceWriter {
     return exported;
   }
 
-  private makeJSDocSinceLine(
-    existingComment: ts.JSDoc,
-    sourceText: string,
-    version: string,
-  ): TextEdit {
+  private makeJSDocSinceLine(existingComment: ts.JSDoc, sourceText: string, version: string): TextEdit {
     const commentText = sourceText.slice(existingComment.pos, existingComment.end);
     const baseIndent = indentOfLineContaining(sourceText, existingComment.pos);
     const rawBody = commentText.replace(/^\/\*\*\s?/, "").replace(/\s*\*\/$/, "");

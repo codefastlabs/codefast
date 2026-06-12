@@ -7,10 +7,7 @@ import type { ColorScheme } from "#/types";
 /* JSON.stringify does not escape </script>, so we replace the three characters that
  * can form a closing tag: < > /. Unicode escapes are valid JS and safe in HTML. */
 function toScriptSafe(value: unknown): string {
-  return JSON.stringify(value)
-    .replaceAll("<", "\\u003C")
-    .replaceAll(">", "\\u003E")
-    .replaceAll("/", "\\u002F");
+  return JSON.stringify(value).replaceAll("<", "\\u003C").replaceAll(">", "\\u003E").replaceAll("/", "\\u002F");
 }
 
 /* Derived once from schema + constants — inline script uses these to stay in sync */
@@ -81,11 +78,7 @@ export type AppearanceScriptProps = {
  *
  * @since 0.3.16-canary.0
  */
-export function AppearanceScript({
-  nonce,
-  storageKey,
-  colorScheme,
-}: AppearanceScriptProps): JSX.Element {
+export function AppearanceScript({ nonce, storageKey, colorScheme }: AppearanceScriptProps): JSX.Element {
   // S2: toScriptSafe = JSON.stringify + escape <>/  so </script> cannot break out of the tag.
   // F1: When storageKey is provided, the script reads localStorage before first paint so
   // client-only apps (no SSR cookie) get the right color scheme without FOUC.
@@ -93,11 +86,5 @@ export function AppearanceScript({
   const appearanceScript = `(function(){try{var sk=${toScriptSafe(storageKey ?? null)},fbt=${toScriptSafe(colorScheme)},s=sk&&localStorage.getItem(sk),theme=(${COLOR_SCHEME_VALID_CHECK})?s:fbt,resolvedTheme=theme;"automatic"===theme&&(resolvedTheme=window.matchMedia(${toScriptSafe(MEDIA)}).matches?"dark":"light"),document.documentElement.classList.remove(${COLOR_SCHEME_REMOVE_ARGS}),document.documentElement.classList.add(resolvedTheme),document.documentElement.style.colorScheme=resolvedTheme}catch(e){}})()`;
   const nonceProps = nonce === undefined ? {} : { nonce };
 
-  return (
-    <script
-      dangerouslySetInnerHTML={{ __html: appearanceScript }}
-      suppressHydrationWarning
-      {...nonceProps}
-    />
-  );
+  return <script dangerouslySetInnerHTML={{ __html: appearanceScript }} suppressHydrationWarning {...nonceProps} />;
 }

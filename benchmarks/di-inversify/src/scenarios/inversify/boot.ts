@@ -6,6 +6,7 @@
  */
 import "reflect-metadata";
 import { Container, inject, injectable } from "inversify";
+
 import type { BenchScenario } from "#/scenarios/types";
 
 const bootConfigIdentifier = Symbol("bench-inv-boot-config");
@@ -110,16 +111,10 @@ function buildBootContainerAndResolveRoot(): BootController {
   const container = new Container();
   container.bind<BootConfig>(bootConfigIdentifier).to(BootConfig).inSingletonScope();
   container.bind<BootLogger>(bootLoggerIdentifier).to(BootLogger).inSingletonScope();
-  container
-    .bind<BootDatabaseClient>(bootDatabaseClientIdentifier)
-    .to(BootDatabaseClient)
-    .inSingletonScope();
+  container.bind<BootDatabaseClient>(bootDatabaseClientIdentifier).to(BootDatabaseClient).inSingletonScope();
   container.bind<BootCacheClient>(bootCacheClientIdentifier).to(BootCacheClient).inSingletonScope();
   container.bind<BootRepository>(bootRepositoryIdentifier).to(BootRepository).inSingletonScope();
-  container
-    .bind<BootMetricsCollector>(bootMetricsCollectorIdentifier)
-    .to(BootMetricsCollector)
-    .inSingletonScope();
+  container.bind<BootMetricsCollector>(bootMetricsCollectorIdentifier).to(BootMetricsCollector).inSingletonScope();
   container.bind<BootService>(bootServiceIdentifier).to(BootService).inSingletonScope();
   container.bind<BootController>(bootControllerIdentifier).to(BootController).inSingletonScope();
   return container.get<BootController>(bootControllerIdentifier);

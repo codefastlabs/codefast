@@ -10,10 +10,7 @@ describe("createTV", () => {
 
   test("should override config", () => {
     const { tv } = createTV({ twMerge: false });
-    const h1 = tv(
-      { base: "text-3xl text-xl font-bold text-blue-200 text-blue-400" },
-      { twMerge: true },
-    );
+    const h1 = tv({ base: "text-3xl text-xl font-bold text-blue-200 text-blue-400" }, { twMerge: true });
 
     expect(h1()).toHaveClassName("font-bold text-blue-400 text-xl");
   });

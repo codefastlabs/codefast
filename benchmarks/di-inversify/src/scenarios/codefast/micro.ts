@@ -14,6 +14,7 @@
  * scenario would appear 1000× faster than the equivalent un-batched one.
  */
 import { Container, injectable, token } from "@codefast/di";
+
 import { batched } from "#/harness/batched";
 import type { BenchScenario } from "#/scenarios/types";
 
@@ -25,8 +26,7 @@ const NAMED_RESOLVE_BATCH = 500;
 class MicroLeafDependency {}
 
 const microLeafDependencyToken = token<MicroLeafDependency>("bench-cf-micro-leaf");
-const microServiceWithOneDependencyToken =
-  token<MicroServiceWithOneDependency>("bench-cf-micro-svc");
+const microServiceWithOneDependencyToken = token<MicroServiceWithOneDependency>("bench-cf-micro-svc");
 
 @injectable([microLeafDependencyToken])
 class MicroServiceWithOneDependency {
@@ -76,8 +76,7 @@ function buildSingletonClassOneDepScenario(): BenchScenario {
     what: "resolve a singleton class with one dependency (cache hit)",
     batch: CLASS_RESOLVE_BATCH,
     sanity: () =>
-      container.resolve(microServiceWithOneDependencyToken).leafDependency ===
-      initialResolution.leafDependency,
+      container.resolve(microServiceWithOneDependencyToken).leafDependency === initialResolution.leafDependency,
     build: () =>
       batched(CLASS_RESOLVE_BATCH, () => {
         container.resolve(microServiceWithOneDependencyToken);
@@ -104,10 +103,7 @@ function buildTransientClassOneDepScenario(): BenchScenario {
     sanity: () => {
       const firstResolution = container.resolve(microServiceWithOneDependencyToken);
       const secondResolution = container.resolve(microServiceWithOneDependencyToken);
-      return (
-        firstResolution !== secondResolution &&
-        firstResolution.leafDependency !== secondResolution.leafDependency
-      );
+      return firstResolution !== secondResolution && firstResolution.leafDependency !== secondResolution.leafDependency;
     },
     build: () =>
       batched(CLASS_RESOLVE_BATCH, () => {

@@ -1,30 +1,24 @@
 import path from "node:path";
+
+import type { MirrorConfig } from "#/core/config/schema";
 import { AppError } from "#/core/errors";
 import { messageFrom } from "#/core/errors";
 import type { FilesystemPort } from "#/core/filesystem/port";
 import type { Result } from "#/core/result";
 import { err, ok } from "#/core/result";
-import type { MirrorConfig } from "#/core/config/schema";
+import { listWorkspacePackageDirectories, type WorkspacePackageLayoutOutcome } from "#/core/workspace/resolver";
+import { normalizePath } from "#/mirror/domain/path-normalizer";
 import type {
   FindWorkspacePackagesResult,
   GlobalStats,
   PackageStats,
   WorkspaceMultiDiscoverySource,
 } from "#/mirror/domain/types";
-import { normalizePath } from "#/mirror/domain/path-normalizer";
-import {
-  listWorkspacePackageDirectories,
-  type WorkspacePackageLayoutOutcome,
-} from "#/core/workspace/resolver";
 import { resolvePackageFilterUnderRoot } from "#/mirror/package-path";
-import { syncExportsForWorkspacePackage } from "#/mirror/sync-workspace-package";
 import type { MirrorSyncExecutionInput } from "#/mirror/sync-types";
+import { syncExportsForWorkspacePackage } from "#/mirror/sync-workspace-package";
 
-export type {
-  MirrorSyncExecutionInput,
-  MirrorSyncProgressListener,
-  MirrorSyncRunRequest,
-} from "#/mirror/sync-types";
+export type { MirrorSyncExecutionInput, MirrorSyncProgressListener, MirrorSyncRunRequest } from "#/mirror/sync-types";
 
 /**
  * @since 0.3.16-canary.0
@@ -52,10 +46,7 @@ export async function runMirrorSync(
       listener?.onProcessingMode({ kind: "single" });
     } else {
       const layoutOutcome = await listWorkspacePackageDirectories(input.rootDir, fs, false);
-      const { relPaths, multiSource } = mirrorTargetsFromWorkspaceLayout(
-        input.rootDir,
-        layoutOutcome,
-      );
+      const { relPaths, multiSource } = mirrorTargetsFromWorkspaceLayout(input.rootDir, layoutOutcome);
       targetPackages = relPaths;
       listener?.onProcessingMode({ kind: "multi", source: multiSource });
     }
@@ -79,13 +70,7 @@ export async function runMirrorSync(
 
     let ordinal = 1;
     for (const pkgPath of targetPackages) {
-      const pkgStats = await syncExportsForWorkspacePackage(
-        fs,
-        input.rootDir,
-        pkgPath,
-        config,
-        write,
-      );
+      const pkgStats = await syncExportsForWorkspacePackage(fs, input.rootDir, pkgPath, config, write);
       stats.packageDetails.push(pkgStats);
       listener?.onPackageComplete(pkgStats, ordinal, targetPackages.length);
       ordinal++;

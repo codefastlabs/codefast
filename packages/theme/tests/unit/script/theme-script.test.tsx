@@ -144,9 +144,7 @@ describe("AppearanceScript", () => {
 
   describe("storageKey prop", () => {
     test("includes storageKey in script when provided", () => {
-      const { container } = render(
-        <AppearanceScript storageKey="my-color-scheme" colorScheme="automatic" />,
-      );
+      const { container } = render(<AppearanceScript storageKey="my-color-scheme" colorScheme="automatic" />);
 
       const script = container.querySelector("script");
 
@@ -154,9 +152,7 @@ describe("AppearanceScript", () => {
     });
 
     test("reads localStorage key in script content when storageKey is set", () => {
-      const { container } = render(
-        <AppearanceScript storageKey="app-color-scheme" colorScheme="light" />,
-      );
+      const { container } = render(<AppearanceScript storageKey="app-color-scheme" colorScheme="light" />);
 
       const script = container.querySelector("script");
 
@@ -174,9 +170,7 @@ describe("AppearanceScript", () => {
     });
 
     test("uses colorScheme prop as fallback (fbt) in script", () => {
-      const { container } = render(
-        <AppearanceScript storageKey="ui-color-scheme" colorScheme="light" />,
-      );
+      const { container } = render(<AppearanceScript storageKey="ui-color-scheme" colorScheme="light" />);
 
       const script = container.querySelector("script");
 

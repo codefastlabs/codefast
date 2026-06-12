@@ -8,6 +8,7 @@
  */
 import "reflect-metadata";
 import { Container } from "inversify";
+
 import { batched } from "#/harness/batched";
 import type { BenchScenario } from "#/scenarios/types";
 
@@ -67,8 +68,7 @@ function buildChildRequestLifecycleCreateResolveDisposeScenario(): BenchScenario
       }))
       .inTransientScope();
 
-    const resolvedPayload =
-      secondLevelChildContainer.get<ScopeResolvedPayload>(resolvedPayloadIdentifier);
+    const resolvedPayload = secondLevelChildContainer.get<ScopeResolvedPayload>(resolvedPayloadIdentifier);
 
     firstLevelChildContainer.unbindAll();
     secondLevelChildContainer.unbindAll();
@@ -96,8 +96,5 @@ function buildChildRequestLifecycleCreateResolveDisposeScenario(): BenchScenario
  * @since 0.3.16-canary.0
  */
 export function buildInversifyScopeScenarios(): ReadonlyArray<BenchScenario> {
-  return [
-    buildChildDepthTwoResolveScenario(),
-    buildChildRequestLifecycleCreateResolveDisposeScenario(),
-  ];
+  return [buildChildDepthTwoResolveScenario(), buildChildRequestLifecycleCreateResolveDisposeScenario()];
 }

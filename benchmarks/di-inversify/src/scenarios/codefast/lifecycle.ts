@@ -6,6 +6,7 @@
  * - `lifecycle-pre-destroy-unbind`: singleton unbind path with `@preDestroy`.
  */
 import { Container, injectable, postConstruct, preDestroy, token } from "@codefast/di";
+
 import { batched } from "#/harness/batched";
 import type { BenchScenario } from "#/scenarios/types";
 
@@ -44,9 +45,7 @@ class PreDestroyTrackedService {
 const postConstructSingletonServiceToken = token<PostConstructSingletonService>(
   "bench-cf-lifecycle-post-construct-service",
 );
-const preDestroyTrackedServiceToken = token<PreDestroyTrackedService>(
-  "bench-cf-lifecycle-pre-destroy-service",
-);
+const preDestroyTrackedServiceToken = token<PreDestroyTrackedService>("bench-cf-lifecycle-pre-destroy-service");
 
 function buildLifecyclePostConstructSingletonScenario(): BenchScenario {
   const container = Container.create();

@@ -1,0 +1,101 @@
+import { AlertActionExample } from "#/registry/alert/action.example";
+import { AlertBasic } from "#/registry/alert/basic.example";
+import { AlertColors } from "#/registry/alert/colors.example";
+import { AlertDemo } from "#/registry/alert/demo";
+import { AlertDestructive } from "#/registry/alert/destructive.example";
+import { AlertRtl } from "#/registry/alert/rtl.example";
+import { docAnatomy, docDemo, docSource } from "#/registry/source";
+import type { ComponentDoc } from "#/registry/types";
+
+export const alertDoc: ComponentDoc = {
+  examples: [
+    {
+      id: "alert-demo",
+      title: "Demo",
+      description: "Stack alerts to surface several status messages at once.",
+      Demo: AlertDemo,
+      source: docDemo("alert"),
+      previewClassName: "items-start",
+    },
+    {
+      id: "alert-basic",
+      title: "Basic",
+      description: "A basic alert with an icon, title and description.",
+      Demo: AlertBasic,
+      source: docSource("alert", "basic"),
+      previewClassName: "items-start",
+    },
+    {
+      id: "alert-destructive",
+      title: "Destructive",
+      description: "Use variant=destructive to create a destructive alert.",
+      Demo: AlertDestructive,
+      source: docSource("alert", "destructive"),
+      previewClassName: "items-start",
+    },
+    {
+      id: "alert-action",
+      title: "Action",
+      description: "Use AlertAction to add a button or other action element to the alert.",
+      Demo: AlertActionExample,
+      source: docSource("alert", "action"),
+      previewClassName: "items-start",
+    },
+    {
+      id: "alert-colors",
+      title: "Custom colors",
+      description: "Customize the alert colors by adding utility classes to the Alert component.",
+      Demo: AlertColors,
+      source: docSource("alert", "colors"),
+      previewClassName: "items-start",
+    },
+    {
+      id: "alert-rtl",
+      title: "RTL",
+      description: "Right-to-left layout support for languages such as Arabic and Hebrew.",
+      Demo: AlertRtl,
+      source: docSource("alert", "rtl"),
+      previewClassName: "items-start",
+      direction: "rtl",
+    },
+  ],
+  anatomy: docAnatomy("alert"),
+  api: [
+    {
+      name: "Alert",
+      props: [
+        {
+          name: "variant",
+          type: '"default" | "destructive"',
+          default: '"default"',
+          description: "Neutral information, or an error/danger banner.",
+        },
+      ],
+    },
+    {
+      name: "AlertTitle / AlertDescription / AlertAction",
+      props: [
+        {
+          name: "children",
+          type: "ReactNode",
+          description: "The headline, body text, and an optional trailing action (e.g. dismiss).",
+        },
+      ],
+    },
+  ],
+  accessibility: {
+    notes: [
+      "Use role=alert for messages that must be announced immediately; otherwise keep it static.",
+      "Convey severity in the text, not colour alone.",
+      "Keep the icon decorative — the meaning lives in the title and description.",
+    ],
+  },
+  guidelines: {
+    do: ["Use inline alerts for contextual, non-blocking messages.", "Pair destructive alerts with a clear next step."],
+    dont: [
+      "Don’t use an inline Alert for a decision that must block — use Alert Dialog.",
+      "Don’t stack many alerts; summarise instead.",
+    ],
+  },
+  related: ["alert-dialog", "sonner", "badge"],
+};

@@ -1,4 +1,5 @@
 import { useCallback, useState, useTransition } from "react";
+
 import { DEFAULT_MAX_RUNS } from "#/constants";
 import type { EmbeddedViewerPayload } from "#/types";
 
@@ -22,9 +23,7 @@ async function fetchPayload(limit: number): Promise<EmbeddedViewerPayload> {
 export function useBenchPayload({ initialPayload, onReloadError }: BenchPayloadOptions) {
   const [payload, setPayload] = useState<EmbeddedViewerPayload | null>(initialPayload ?? null);
   const [loadError, setLoadError] = useState<string | null>(null);
-  const [activeLimit, setActiveLimit] = useState(
-    initialPayload?.effectiveLimit ?? DEFAULT_MAX_RUNS,
-  );
+  const [activeLimit, setActiveLimit] = useState(initialPayload?.effectiveLimit ?? DEFAULT_MAX_RUNS);
 
   const [isReloading, startReload] = useTransition();
 

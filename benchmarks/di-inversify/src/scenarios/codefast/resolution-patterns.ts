@@ -17,6 +17,7 @@
  *     Measures the tag-based slot lookup on the hot path.
  */
 import { Container, token } from "@codefast/di";
+
 import { batched } from "#/harness/batched";
 import type { BenchScenario } from "#/scenarios/types";
 
@@ -111,9 +112,5 @@ function buildTaggedBindingResolveScenario(): BenchScenario {
  * @since 0.3.16-canary.0
  */
 export function buildCodefastResolutionPatternScenarios(): ReadonlyArray<BenchScenario> {
-  return [
-    buildResolveOptionalHitScenario(),
-    buildResolveOptionalMissScenario(),
-    buildTaggedBindingResolveScenario(),
-  ];
+  return [buildResolveOptionalHitScenario(), buildResolveOptionalMissScenario(), buildTaggedBindingResolveScenario()];
 }

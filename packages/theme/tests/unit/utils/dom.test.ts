@@ -1,5 +1,5 @@
-import { applyColorScheme, suppressTransitions } from "#/utils/dom";
 import { createMockMediaQueryList, mockMatchMedia } from "#/tests/support/mocks";
+import { applyColorScheme, suppressTransitions } from "#/utils/dom";
 
 describe("DOM Utilities", () => {
   describe("applyColorScheme", () => {
@@ -95,9 +95,7 @@ describe("DOM Utilities", () => {
       const enable = suppressTransitions();
 
       const styles = document.querySelectorAll("style");
-      const transitionSuppressingStyle = [...styles].find((s) =>
-        s.textContent.includes("transition:none"),
-      );
+      const transitionSuppressingStyle = [...styles].find((s) => s.textContent.includes("transition:none"));
 
       expect(transitionSuppressingStyle).toBeTruthy();
 
@@ -128,9 +126,7 @@ describe("DOM Utilities", () => {
       await new Promise<void>((resolve) => {
         setTimeout(() => {
           styles = document.querySelectorAll("style");
-          const transitionStyle = [...styles].find((s) =>
-            s.textContent.includes("transition:none"),
-          );
+          const transitionStyle = [...styles].find((s) => s.textContent.includes("transition:none"));
 
           expect(transitionStyle).toBeUndefined();
           resolve();
@@ -150,9 +146,7 @@ describe("DOM Utilities", () => {
     });
 
     test("should do nothing when prefers-reduced-motion is enabled", () => {
-      mockMatchMedia((query) =>
-        createMockMediaQueryList(query === "(prefers-reduced-motion: reduce)", query),
-      );
+      mockMatchMedia((query) => createMockMediaQueryList(query === "(prefers-reduced-motion: reduce)", query));
 
       const styleCountBefore = document.querySelectorAll("style").length;
 

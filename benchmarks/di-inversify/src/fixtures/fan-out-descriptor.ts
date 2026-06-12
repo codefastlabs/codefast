@@ -77,7 +77,4 @@ function buildFanOutTreeDescriptor(depth: number, breadth: number): GraphDescrip
 /**
  * @since 0.3.16-canary.0
  */
-export const FAN_OUT_TREE_DEPTH_3_BREADTH_4 = buildFanOutTreeDescriptor(
-  FAN_OUT_TREE_DEPTH,
-  FAN_OUT_TREE_BREADTH,
-);
+export const FAN_OUT_TREE_DEPTH_3_BREADTH_4 = buildFanOutTreeDescriptor(FAN_OUT_TREE_DEPTH, FAN_OUT_TREE_BREADTH);

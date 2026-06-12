@@ -1,9 +1,10 @@
 import { describe, expect, it } from "vitest";
+
+import { mirrorConfigSchema } from "#/core/config/schema";
+import type { CliFileEncoding, FilesystemPort } from "#/core/filesystem/port";
 import type { DistFilesystem } from "#/mirror/domain/dist-filesystem";
 import { createPathTransform, generateExports } from "#/mirror/domain/exports";
 import { writePackageJsonExportsAtomic } from "#/mirror/write-exports";
-import type { CliFileEncoding, FilesystemPort } from "#/core/filesystem/port";
-import { mirrorConfigSchema } from "#/core/config/schema";
 
 function createDistFilesystemStub(files: Array<string>): DistFilesystem {
   return {
@@ -21,9 +22,7 @@ function createPackageJsonFilesystemHarness(initialPackageJson: Record<string, u
   readPackageJson(): Record<string, unknown>;
 } {
   const packageJsonPath = "/virtual/package.json";
-  const virtualFiles = new Map<string, string>([
-    [packageJsonPath, JSON.stringify(initialPackageJson, null, 2) + "\n"],
-  ]);
+  const virtualFiles = new Map<string, string>([[packageJsonPath, JSON.stringify(initialPackageJson, null, 2) + "\n"]]);
 
   return {
     filesystem: {
@@ -143,11 +142,7 @@ describe("createPathTransform", () => {
 describe("mirror export generation", () => {
   it("generates import entries for JavaScript modules without declarations", async () => {
     const generatedExports = await generateExports(
-      createDistFilesystemStub([
-        "index.mjs",
-        "child/fingerprint.mjs",
-        "server/client/chunks/react-vendor-abc123.js",
-      ]),
+      createDistFilesystemStub(["index.mjs", "child/fingerprint.mjs", "server/client/chunks/react-vendor-abc123.js"]),
       "/virtual/dist",
       null,
       false,
@@ -164,9 +159,7 @@ describe("mirror export generation", () => {
       },
       "./package.json": "./package.json",
     });
-    expect(generatedExports.exports).not.toHaveProperty(
-      "./server/client/chunks/react-vendor-abc123",
-    );
+    expect(generatedExports.exports).not.toHaveProperty("./server/client/chunks/react-vendor-abc123");
   });
 
   it("adds types conditions when declaration files exist", async () => {
@@ -211,12 +204,7 @@ describe("mirror export generation", () => {
       tsxModules.has(modulePath) ? `./src/${modulePath}.tsx` : `./src/${modulePath}.ts`;
 
     const generatedExports = await generateExports(
-      createDistFilesystemStub([
-        "index.mjs",
-        "components/button.mjs",
-        "components/input.mjs",
-        "utils/cn.mjs",
-      ]),
+      createDistFilesystemStub(["index.mjs", "components/button.mjs", "components/input.mjs", "utils/cn.mjs"]),
       "/virtual/dist",
       null,
       false,

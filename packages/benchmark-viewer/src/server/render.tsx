@@ -1,5 +1,6 @@
 import { StrictMode } from "react";
 import { renderToReadableStream } from "react-dom/server";
+
 import { App } from "#/app/components/app";
 import type { EmbeddedViewerPayload } from "#/types";
 
@@ -47,11 +48,7 @@ export async function renderDocument(
 ): Promise<ReadableStream<Uint8Array>> {
   const reactStream = await renderToReadableStream(
     <StrictMode>
-      <Document
-        pageTitle={payload.title.trim()}
-        payloadJson={safeScriptJson(rawJson)}
-        payload={payload}
-      />
+      <Document pageTitle={payload.title.trim()} payloadJson={safeScriptJson(rawJson)} payload={payload} />
     </StrictMode>,
     {
       signal: requestSignal,

@@ -116,9 +116,7 @@ describe("Tailwind Variants (TV) - twMerge: false", () => {
 
     expect(button()).toBe("button");
     expect(button({ size: "sm" })).toBe("button button--sm");
-    expect(button({ size: "lg", variant: "secondary" })).toBe(
-      "button button--lg button--secondary",
-    );
+    expect(button({ size: "lg", variant: "secondary" })).toBe("button button--lg button--secondary");
   });
 
   test("should handle empty/falsy values correctly when twMerge is false", () => {

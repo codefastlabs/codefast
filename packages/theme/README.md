@@ -94,11 +94,7 @@ function App() {
 function Page() {
   const { theme, setTheme } = useTheme();
 
-  return (
-    <button onClick={() => setTheme(theme === "dark" ? "light" : "dark")}>
-      Current theme: {theme}
-    </button>
-  );
+  return <button onClick={() => setTheme(theme === "dark" ? "light" : "dark")}>Current theme: {theme}</button>;
 }
 ```
 
@@ -166,8 +162,7 @@ For apps without a server framework, persist the theme in `localStorage`:
 import { ThemeProvider } from "@codefast/theme";
 
 function App() {
-  const saved =
-    typeof window !== "undefined" ? (localStorage.getItem("theme") ?? "system") : "system";
+  const saved = typeof window !== "undefined" ? (localStorage.getItem("theme") ?? "system") : "system";
 
   return (
     <ThemeProvider

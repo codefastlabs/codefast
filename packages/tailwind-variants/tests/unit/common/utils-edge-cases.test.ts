@@ -53,9 +53,7 @@ describe("Tailwind Variants (TV) - Utils Edge Cases", () => {
     });
 
     test("should handle multiple arguments with clsx and twMerge", () => {
-      expect(cn("bg-red-500", { "bg-blue-500": true }, ["text-sm", "text-lg"])).toBe(
-        "bg-blue-500 text-lg",
-      );
+      expect(cn("bg-red-500", { "bg-blue-500": true }, ["text-sm", "text-lg"])).toBe("bg-blue-500 text-lg");
     });
   });
 

@@ -1,7 +1,7 @@
+import { Label as LabelPrimitive } from "radix-ui";
 import type { ComponentProps, JSX } from "react";
 
 import { cn } from "#/lib/utils";
-import { Label as LabelPrimitive } from "radix-ui";
 
 /* -----------------------------------------------------------------------------
  * Component: Label

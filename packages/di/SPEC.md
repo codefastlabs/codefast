@@ -188,14 +188,8 @@ interface ResolveOptions {
 ```ts
 interface ResolutionContext {
   resolve<Value>(token: Token<Value> | Constructor<Value>, hint?: ResolveOptions): Value;
-  resolveAsync<Value>(
-    token: Token<Value> | Constructor<Value>,
-    hint?: ResolveOptions,
-  ): Promise<Value>;
-  resolveOptional<Value>(
-    token: Token<Value> | Constructor<Value>,
-    hint?: ResolveOptions,
-  ): Value | undefined;
+  resolveAsync<Value>(token: Token<Value> | Constructor<Value>, hint?: ResolveOptions): Promise<Value>;
+  resolveOptional<Value>(token: Token<Value> | Constructor<Value>, hint?: ResolveOptions): Value | undefined;
   resolveOptionalAsync<Value>(
     token: Token<Value> | Constructor<Value>,
     hint?: ResolveOptions,
@@ -206,10 +200,7 @@ interface ResolutionContext {
    * Trả [] nếu không có binding nào match.
    */
   resolveAll<Value>(token: Token<Value> | Constructor<Value>, hint?: ResolveOptions): Value[];
-  resolveAllAsync<Value>(
-    token: Token<Value> | Constructor<Value>,
-    hint?: ResolveOptions,
-  ): Promise<Value[]>;
+  resolveAllAsync<Value>(token: Token<Value> | Constructor<Value>, hint?: ResolveOptions): Promise<Value[]>;
   /**
    * Dependency-graph context — dùng trong `when()` predicates.
    * Không cần cho resolve thông thường.
@@ -257,14 +248,7 @@ interface ResolutionFrame {
   };
 }
 
-type BindingKind =
-  | "class"
-  | "dynamic"
-  | "dynamic-async"
-  | "resolved"
-  | "resolved-async"
-  | "constant"
-  | "alias";
+type BindingKind = "class" | "dynamic" | "dynamic-async" | "resolved" | "resolved-async" | "constant" | "alias";
 ```
 
 **`resolutionStack` — thứ tự và quan hệ với `parent`/`ancestors` (normative):**
@@ -300,8 +284,7 @@ ancestors            = []
 Helper type để extract `Value` từ `Token<Value>` hoặc `Constructor<Value>`:
 
 ```ts
-type TokenValue<Type> =
-  Type extends Token<infer Value> ? Value : Type extends Constructor<infer Value> ? Value : never;
+type TokenValue<Type> = Type extends Token<infer Value> ? Value : Type extends Constructor<infer Value> ? Value : never;
 ```
 
 ---
@@ -623,9 +606,7 @@ container.bind(App).toResolved(
 );
 
 // toResolvedAsync — deps tường minh, factory async
-container
-  .bind(Cache)
-  .toResolvedAsync(async (config) => Cache.connect(config.redisUrl), [Config] as const);
+container.bind(Cache).toResolvedAsync(async (config) => Cache.connect(config.redisUrl), [Config] as const);
 ```
 
 Với `deps: [Logger, Config] as const`, TypeScript infer factory params là `[LoggerService, AppConfig]` — không cần annotate thủ công.
@@ -1005,10 +986,7 @@ Concurrent `resolveAsync(Token)` cho cùng singleton token **share cùng in-flig
 
 ```ts
 // Cả hai nhận cùng instance — factory chỉ chạy 1 lần
-const [a, b] = await Promise.all([
-  container.resolveAsync(Database),
-  container.resolveAsync(Database),
-]);
+const [a, b] = await Promise.all([container.resolveAsync(Database), container.resolveAsync(Database)]);
 // a === b: true
 ```
 
@@ -1395,34 +1373,19 @@ interface Container {
   loadAutoRegistered(registry: AutoRegisterRegistry): number;
 
   // --- Container-level lifecycle hooks ---
-  onActivation<Value>(
-    token: Token<Value> | Constructor<Value>,
-    handler: ActivationHandler<Value>,
-  ): void;
-  onDeactivation<Value>(
-    token: Token<Value> | Constructor<Value>,
-    handler: DeactivationHandler<Value>,
-  ): void;
+  onActivation<Value>(token: Token<Value> | Constructor<Value>, handler: ActivationHandler<Value>): void;
+  onDeactivation<Value>(token: Token<Value> | Constructor<Value>, handler: DeactivationHandler<Value>): void;
 
   // --- Resolution ---
   resolve<Value>(token: Token<Value> | Constructor<Value>, hint?: ResolveOptions): Value;
-  resolveAsync<Value>(
-    token: Token<Value> | Constructor<Value>,
-    hint?: ResolveOptions,
-  ): Promise<Value>;
-  resolveOptional<Value>(
-    token: Token<Value> | Constructor<Value>,
-    hint?: ResolveOptions,
-  ): Value | undefined;
+  resolveAsync<Value>(token: Token<Value> | Constructor<Value>, hint?: ResolveOptions): Promise<Value>;
+  resolveOptional<Value>(token: Token<Value> | Constructor<Value>, hint?: ResolveOptions): Value | undefined;
   resolveOptionalAsync<Value>(
     token: Token<Value> | Constructor<Value>,
     hint?: ResolveOptions,
   ): Promise<Value | undefined>;
   resolveAll<Value>(token: Token<Value> | Constructor<Value>, hint?: ResolveOptions): Value[];
-  resolveAllAsync<Value>(
-    token: Token<Value> | Constructor<Value>,
-    hint?: ResolveOptions,
-  ): Promise<Value[]>;
+  resolveAllAsync<Value>(token: Token<Value> | Constructor<Value>, hint?: ResolveOptions): Promise<Value[]>;
 
   // --- Child ---
   createChild(): Container;
@@ -1537,10 +1500,7 @@ class Runner {
 Type signatures:
 
 ```ts
-function inject<Value>(
-  token: Token<Value> | Constructor<Value>,
-  options?: InjectOptions,
-): InjectionDescriptor<Value>;
+function inject<Value>(token: Token<Value> | Constructor<Value>, options?: InjectOptions): InjectionDescriptor<Value>;
 
 function optional<Value>(
   token: Token<Value> | Constructor<Value>,
@@ -1580,10 +1540,7 @@ function isInjectionDescriptor(value: unknown): value is InjectionDescriptor;
  * - InjectionDescriptor → decorated inject: inject(), optional(), injectAll()
  *                          Dùng khi cần named/tagged/optional/multi inject
  */
-type InjectableDependency<Value = unknown> =
-  | Token<Value>
-  | Constructor<Value>
-  | InjectionDescriptor<Value>;
+type InjectableDependency<Value = unknown> = Token<Value> | Constructor<Value> | InjectionDescriptor<Value>;
 ```
 
 Tại metadata-read time, resolver normalize toàn bộ `InjectableDependency[]` thành `InjectionDescriptor[]` trước khi resolve. Rule normalize (normative):
@@ -2022,9 +1979,7 @@ function whenNoParentIs(token: Token<unknown> | Constructor): (ctx: ConstraintCo
  * `ctx.ancestors` là tất cả frame phía trên direct parent — không bao gồm parent.
  * Trả `false` khi không có ancestor.
  */
-function whenAnyAncestorIs(
-  token: Token<unknown> | Constructor,
-): (ctx: ConstraintContext) => boolean;
+function whenAnyAncestorIs(token: Token<unknown> | Constructor): (ctx: ConstraintContext) => boolean;
 
 /**
  * Match khi không có ancestor nào là token đã cho.
@@ -2763,12 +2718,7 @@ export { injectionSlotToResolveOptions, bindingSlotToResolveOptions } from "#/re
 export type { BindingSnapshot, ContainerSnapshot } from "#/inspector";
 
 // Graph types
-export type {
-  ContainerGraphJson,
-  GraphEdge,
-  GraphNode,
-  GraphOptions,
-} from "#/graph-adapters/types";
+export type { ContainerGraphJson, GraphEdge, GraphNode, GraphOptions } from "#/graph-adapters/types";
 
 // Module
 export { AsyncModule, isSyncModule, Module, SyncModule } from "#/module";

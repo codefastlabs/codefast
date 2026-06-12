@@ -56,9 +56,7 @@ export function jsonlBenchObservationRowToFingerprint(row: JsonlBenchObservation
 /**
  * @since 0.3.16-canary.0
  */
-export function jsonlBenchObservationRowToScenarioTrialResult(
-  row: JsonlBenchObservationRow,
-): ScenarioTrialResult {
+export function jsonlBenchObservationRowToScenarioTrialResult(row: JsonlBenchObservationRow): ScenarioTrialResult {
   return {
     id: row.scenarioId,
     group: row.group,

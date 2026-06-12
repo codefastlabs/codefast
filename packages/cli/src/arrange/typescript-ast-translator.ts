@@ -4,6 +4,7 @@
  */
 
 import ts from "typescript";
+
 import { DomainBinaryOperator, DomainSyntaxKind } from "#/arrange/domain/ast/ast-node";
 import type {
   DomainArrayLiteralExpression,
@@ -49,11 +50,7 @@ export class TypeScriptAstTranslator {
     return this.parseDomainSourceFile(filePath, sourceText);
   }
 
-  private translateUnknown(
-    n: ts.Node,
-    parent: DomainAstNode | null,
-    sf: ts.SourceFile,
-  ): DomainUnknownAstNode {
+  private translateUnknown(n: ts.Node, parent: DomainAstNode | null, sf: ts.SourceFile): DomainUnknownAstNode {
     const pos = n.getStart(sf);
     const end = n.getEnd();
     const self: WritableDomainAst<DomainUnknownAstNode> = {
@@ -77,11 +74,7 @@ export class TypeScriptAstTranslator {
     return DomainBinaryOperator.Other;
   }
 
-  private translateNode(
-    n: ts.Node,
-    parent: DomainAstNode | null,
-    sf: ts.SourceFile,
-  ): DomainAstNode {
+  private translateNode(n: ts.Node, parent: DomainAstNode | null, sf: ts.SourceFile): DomainAstNode {
     const pos = n.getStart(sf);
     const end = n.getEnd();
 
@@ -133,11 +126,7 @@ export class TypeScriptAstTranslator {
             sf,
           ) as DomainImportClause;
         }
-        self.moduleSpecifier = this.translateNode(
-          decl.moduleSpecifier,
-          self as DomainImportDeclaration,
-          sf,
-        );
+        self.moduleSpecifier = this.translateNode(decl.moduleSpecifier, self as DomainImportDeclaration, sf);
         return self as DomainImportDeclaration;
       }
       case ts.SyntaxKind.ImportClause: {
@@ -152,18 +141,12 @@ export class TypeScriptAstTranslator {
           namedBindings: undefined,
         };
         if (clause.name) {
-          self.name = this.translateNode(
-            clause.name,
-            self as DomainImportClause,
-            sf,
-          ) as DomainIdentifier;
+          self.name = this.translateNode(clause.name, self as DomainImportClause, sf) as DomainIdentifier;
         }
         if (clause.namedBindings) {
-          self.namedBindings = this.translateNode(
-            clause.namedBindings,
-            self as DomainImportClause,
-            sf,
-          ) as DomainNamedImports | DomainNamespaceImport;
+          self.namedBindings = this.translateNode(clause.namedBindings, self as DomainImportClause, sf) as
+            | DomainNamedImports
+            | DomainNamespaceImport;
         }
         return self as DomainImportClause;
       }
@@ -178,9 +161,7 @@ export class TypeScriptAstTranslator {
         };
         const elements: Array<DomainImportSpecifier> = [];
         for (const element of named.elements) {
-          elements.push(
-            this.translateNode(element, self as DomainNamedImports, sf) as DomainImportSpecifier,
-          );
+          elements.push(this.translateNode(element, self as DomainNamedImports, sf) as DomainImportSpecifier);
         }
         return { ...self, elements } as DomainNamedImports;
       }
@@ -193,11 +174,7 @@ export class TypeScriptAstTranslator {
           parent,
           name: undefined as unknown as DomainIdentifier,
         };
-        self.name = this.translateNode(
-          ns.name,
-          self as DomainNamespaceImport,
-          sf,
-        ) as DomainIdentifier;
+        self.name = this.translateNode(ns.name, self as DomainNamespaceImport, sf) as DomainIdentifier;
         return self as DomainNamespaceImport;
       }
       case ts.SyntaxKind.ImportSpecifier: {
@@ -217,11 +194,7 @@ export class TypeScriptAstTranslator {
             sf,
           ) as DomainIdentifier;
         }
-        self.name = this.translateNode(
-          spec.name,
-          self as DomainImportSpecifier,
-          sf,
-        ) as DomainIdentifier;
+        self.name = this.translateNode(spec.name, self as DomainImportSpecifier, sf) as DomainIdentifier;
         return self as DomainImportSpecifier;
       }
       case ts.SyntaxKind.CallExpression: {
@@ -235,9 +208,7 @@ export class TypeScriptAstTranslator {
           arguments: [],
         };
         self.expression = this.translateNode(call.expression, self as DomainCallExpression, sf);
-        self.arguments = call.arguments.map((arg) =>
-          this.translateNode(arg, self as DomainCallExpression, sf),
-        );
+        self.arguments = call.arguments.map((arg) => this.translateNode(arg, self as DomainCallExpression, sf));
         return self as DomainCallExpression;
       }
       case ts.SyntaxKind.PropertyAccessExpression: {
@@ -250,16 +221,8 @@ export class TypeScriptAstTranslator {
           expression: undefined as unknown as DomainAstNode,
           name: undefined as unknown as DomainIdentifier,
         };
-        self.expression = this.translateNode(
-          pa.expression,
-          self as DomainPropertyAccessExpression,
-          sf,
-        );
-        self.name = this.translateNode(
-          pa.name,
-          self as DomainPropertyAccessExpression,
-          sf,
-        ) as DomainIdentifier;
+        self.expression = this.translateNode(pa.expression, self as DomainPropertyAccessExpression, sf);
+        self.name = this.translateNode(pa.name, self as DomainPropertyAccessExpression, sf) as DomainIdentifier;
         return self as DomainPropertyAccessExpression;
       }
       case ts.SyntaxKind.ObjectLiteralExpression: {
@@ -288,11 +251,7 @@ export class TypeScriptAstTranslator {
           initializer: undefined as unknown as DomainAstNode,
         };
         self.name = this.translateNode(prop.name, self as DomainPropertyAssignment, sf);
-        self.initializer = this.translateNode(
-          prop.initializer,
-          self as DomainPropertyAssignment,
-          sf,
-        );
+        self.initializer = this.translateNode(prop.initializer, self as DomainPropertyAssignment, sf);
         return self as DomainPropertyAssignment;
       }
       case ts.SyntaxKind.ArrayLiteralExpression: {
@@ -331,11 +290,7 @@ export class TypeScriptAstTranslator {
           parent,
           expression: undefined as unknown as DomainAstNode,
         };
-        self.expression = this.translateNode(
-          pe.expression,
-          self as DomainParenthesizedExpression,
-          sf,
-        );
+        self.expression = this.translateNode(pe.expression, self as DomainParenthesizedExpression, sf);
         return self as DomainParenthesizedExpression;
       }
       case ts.SyntaxKind.AsExpression: {
@@ -454,9 +409,7 @@ export class TypeScriptAstTranslator {
 
   private translateTypeScriptSourceFile(tsSf: ts.SourceFile): DomainSourceFile {
     const text = tsSf.getFullText();
-    const statements = tsSf.statements.map((statement) =>
-      this.translateNode(statement, null, tsSf),
-    );
+    const statements = tsSf.statements.map((statement) => this.translateNode(statement, null, tsSf));
     return {
       fileName: tsSf.fileName,
       text,
@@ -466,13 +419,7 @@ export class TypeScriptAstTranslator {
 
   private parseDomainSourceFile(filePath: string, sourceText: string): DomainSourceFile {
     const scriptKind = filePath.endsWith(".tsx") ? ts.ScriptKind.TSX : ts.ScriptKind.TS;
-    const tsSf = ts.createSourceFile(
-      filePath,
-      sourceText,
-      ts.ScriptTarget.Latest,
-      true,
-      scriptKind,
-    );
+    const tsSf = ts.createSourceFile(filePath, sourceText, ts.ScriptTarget.Latest, true, scriptKind);
     return this.translateTypeScriptSourceFile(tsSf);
   }
 }

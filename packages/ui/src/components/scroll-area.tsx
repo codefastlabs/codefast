@@ -1,11 +1,10 @@
-import type { ScrollAreaScrollbarVariants } from "#/variants/scroll-area";
+import { ScrollArea as ScrollAreaPrimitive } from "radix-ui";
+import { Context } from "radix-ui/internal";
 import type { ComponentProps, JSX } from "react";
 
 import { cn } from "#/lib/utils";
-
+import type { ScrollAreaScrollbarVariants } from "#/variants/scroll-area";
 import { scrollAreaScrollbarVariants } from "#/variants/scroll-area";
-import { Context } from "radix-ui/internal";
-import { ScrollArea as ScrollAreaPrimitive } from "radix-ui";
 
 /* -----------------------------------------------------------------------------
  * Context: ScrollArea
@@ -29,29 +28,17 @@ const [ScrollAreaContextProvider, useScrollAreaContext] =
 /**
  * @since 0.3.16-canary.0
  */
-type ScrollAreaProps = ScopedProps<
-  ComponentProps<typeof ScrollAreaPrimitive.Root> & ScrollAreaContextValue
->;
+type ScrollAreaProps = ScopedProps<ComponentProps<typeof ScrollAreaPrimitive.Root> & ScrollAreaContextValue>;
 
 /**
  * @since 0.3.16-canary.0
  */
-function ScrollArea({
-  __scopeScrollArea,
-  children,
-  className,
-  size,
-  ...props
-}: ScrollAreaProps): JSX.Element {
+function ScrollArea({ __scopeScrollArea, children, className, size, ...props }: ScrollAreaProps): JSX.Element {
   return (
     <ScrollAreaContextProvider scope={__scopeScrollArea} size={size}>
-      <ScrollAreaPrimitive.Root
-        className={cn("relative", className)}
-        data-slot="scroll-area"
-        {...props}
-      >
+      <ScrollAreaPrimitive.Root className={cn("relative", className)} data-slot="scroll-area" {...props}>
         <ScrollAreaPrimitive.Viewport
-          className="size-full rounded-[inherit] ring-ring/50 outline-ring transition-[box-shadow] duration-150 ease-snappy focus-visible:ring-4 focus-visible:outline-1 motion-reduce:transition-none motion-reduce:duration-0"
+          className="size-full rounded-[inherit] transition-[color,box-shadow] outline-none focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-1"
           data-slot="scroll-area-viewport"
         >
           {children}
@@ -87,11 +74,15 @@ function ScrollAreaScrollbar({
   return (
     <ScrollAreaPrimitive.Scrollbar
       className={scrollAreaScrollbarVariants({ className, orientation, size })}
+      data-orientation={orientation}
       data-slot="scroll-area-scrollbar"
       orientation={orientation}
       {...props}
     >
-      <ScrollAreaPrimitive.ScrollAreaThumb className="relative flex-1 rounded-full bg-border" />
+      <ScrollAreaPrimitive.ScrollAreaThumb
+        className="relative flex-1 rounded-full bg-border"
+        data-slot="scroll-area-thumb"
+      />
     </ScrollAreaPrimitive.Scrollbar>
   );
 }

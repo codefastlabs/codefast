@@ -1,17 +1,16 @@
-import { defineConfig } from "vite";
+import { exec } from "node:child_process";
+
+import babel from "@rolldown/plugin-babel";
+import tailwindcss from "@tailwindcss/vite";
 import { devtools } from "@tanstack/devtools-vite";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
-import { nitro } from "nitro/vite";
 import viteReact, { reactCompilerPreset } from "@vitejs/plugin-react";
-import tailwindcss from "@tailwindcss/vite";
-import { exec } from "node:child_process";
-import babel from "@rolldown/plugin-babel";
+import { nitro } from "nitro/vite";
+import { defineConfig } from "vite";
 
-const openInWebStorm = async (
-  path: string,
-  lineNumber: string | undefined,
-  columnNumber?: string,
-) => {
+import { shikiPlugin } from "./vite-plugin-shiki";
+
+const openInWebStorm = async (path: string, lineNumber: string | undefined, columnNumber?: string) => {
   const safePath = path.replaceAll("$", String.raw`\$`);
   exec(`webstorm --line ${lineNumber ?? 1} --column ${columnNumber ?? 1} "${safePath}"`);
 };
@@ -26,6 +25,7 @@ export default defineConfig(({ command }) => {
       tsconfigPaths: true,
     },
     plugins: [
+      shikiPlugin(),
       devtools({
         editor: {
           name: "WebStorm",

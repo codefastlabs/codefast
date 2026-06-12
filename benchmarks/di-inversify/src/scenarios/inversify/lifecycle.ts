@@ -7,6 +7,7 @@
  */
 import "reflect-metadata";
 import { Container, inject, injectable, postConstruct, preDestroy } from "inversify";
+
 import { batched } from "#/harness/batched";
 import type { BenchScenario } from "#/scenarios/types";
 
@@ -49,9 +50,7 @@ class PreDestroyTrackedService {
   }
 }
 
-const postConstructSingletonServiceIdentifier = Symbol(
-  "bench-inv-lifecycle-post-construct-service",
-);
+const postConstructSingletonServiceIdentifier = Symbol("bench-inv-lifecycle-post-construct-service");
 const preDestroyTrackedServiceIdentifier = Symbol("bench-inv-lifecycle-pre-destroy-service");
 
 function buildLifecyclePostConstructSingletonScenario(): BenchScenario {
@@ -74,12 +73,8 @@ function buildLifecyclePostConstructSingletonScenario(): BenchScenario {
     what: "resolve singleton class with @postConstruct already warmed",
     batch: LIFECYCLE_POST_CONSTRUCT_BATCH,
     sanity: () => {
-      const firstResolution = container.get<PostConstructSingletonService>(
-        postConstructSingletonServiceIdentifier,
-      );
-      const secondResolution = container.get<PostConstructSingletonService>(
-        postConstructSingletonServiceIdentifier,
-      );
+      const firstResolution = container.get<PostConstructSingletonService>(postConstructSingletonServiceIdentifier);
+      const secondResolution = container.get<PostConstructSingletonService>(postConstructSingletonServiceIdentifier);
       return (
         firstResolution === secondResolution &&
         firstResolution.postConstructCallCount === 1 &&

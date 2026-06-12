@@ -1,8 +1,4 @@
-import {
-  COMPATIBLE_BUCKET_SETS,
-  RESPONSIVE_PREFIX,
-  STATE_PREFIXES,
-} from "#/arrange/domain/constants";
+import { COMPATIBLE_BUCKET_SETS, RESPONSIVE_PREFIX, STATE_PREFIXES } from "#/arrange/domain/constants";
 import { indexOfFirstVariantColon, stripVariants } from "#/arrange/domain/tailwind-token";
 import type { Bucket } from "#/arrange/domain/types";
 
@@ -35,11 +31,7 @@ function isCompoundOrMediaVariantPrefix(prefix: string): boolean {
   ) {
     return true;
   }
-  if (
-    /^(?:user-valid|user-invalid|contrast-more|contrast-less|forced-colors|inverted-colors)$/.test(
-      prefix,
-    )
-  ) {
+  if (/^(?:user-valid|user-invalid|contrast-more|contrast-less|forced-colors|inverted-colors)$/.test(prefix)) {
     return true;
   }
   if (/^(?:any-)?pointer-(?:fine|coarse|none)$/.test(prefix)) {
@@ -122,14 +114,14 @@ function isStateToken(token: string): boolean {
   if (/^data-(?!\[)/.test(prefix)) {
     return true;
   }
-  if (/^aria-/.test(prefix)) {
+  if (prefix.startsWith("aria-")) {
     return true;
   }
 
   if (/^(group|peer)-/.test(prefix)) {
     return true;
   }
-  if (/^not-/.test(prefix)) {
+  if (prefix.startsWith("not-")) {
     return true;
   }
 
@@ -152,30 +144,16 @@ function isStateToken(token: string): boolean {
  */
 export function compositeSecondaryOrder(bareUtility: string): number {
   const b = bareUtility;
-  if (
-    /^opacity(?:-|$)/.test(b) ||
-    /^mix-blend-/.test(b) ||
-    /^isolation(?:-|$)/.test(b) ||
-    b === "isolate"
-  ) {
+  if (/^opacity(?:-|$)/.test(b) || b.startsWith("mix-blend-") || /^isolation(?:-|$)/.test(b) || b === "isolate") {
     return 0;
   }
   if (b === "transform-3d" || /^perspective(?:-|$)/.test(b)) {
     return 10;
   }
-  if (
-    /^rotate-[xyz](?:-|$)/.test(b) ||
-    /^translate-z(?:-|$)/.test(b) ||
-    /^scale-z(?:-|$)/.test(b)
-  ) {
+  if (/^rotate-[xyz](?:-|$)/.test(b) || /^translate-z(?:-|$)/.test(b) || /^scale-z(?:-|$)/.test(b)) {
     return 20;
   }
-  if (
-    /^translate(?:-|$)/.test(b) ||
-    /^scale(?:-|$)/.test(b) ||
-    /^rotate(?:-|$)/.test(b) ||
-    /^skew(?:-|$)/.test(b)
-  ) {
+  if (/^translate(?:-|$)/.test(b) || /^scale(?:-|$)/.test(b) || /^rotate(?:-|$)/.test(b) || /^skew(?:-|$)/.test(b)) {
     return 30;
   }
   if (/^transform(?:-(?:gpu|cpu|none))?$/.test(b)) {
@@ -183,19 +161,19 @@ export function compositeSecondaryOrder(bareUtility: string): number {
   }
   if (
     /^blur(?:-|$)/.test(b) ||
-    /^backdrop-/.test(b) ||
+    b.startsWith("backdrop-") ||
     /^filter(?:-|$)/.test(b) ||
-    /^brightness-/.test(b) ||
-    /^contrast-/.test(b) ||
+    b.startsWith("brightness-") ||
+    b.startsWith("contrast-") ||
     /^grayscale(?:-|$)/.test(b) ||
-    /^hue-rotate-/.test(b) ||
+    b.startsWith("hue-rotate-") ||
     /^invert(?:-|$)/.test(b) ||
-    /^saturate-/.test(b) ||
+    b.startsWith("saturate-") ||
     /^sepia(?:-|$)/.test(b)
   ) {
     return 40;
   }
-  if (/^will-change/.test(b)) {
+  if (b.startsWith("will-change")) {
     return 50;
   }
   return 99;
@@ -220,7 +198,7 @@ function classifyBareUtility(bareUtility: string): Bucket {
   if (/^table(?:$|-)/.test(b)) {
     return "existence";
   }
-  if (/^contain-/.test(b)) {
+  if (b.startsWith("contain-")) {
     return "existence";
   }
   if (/^(?:group|peer)(?:\/[a-z][a-z0-9-]*)?$/.test(b)) {
@@ -244,16 +222,12 @@ function classifyBareUtility(bareUtility: string): Bucket {
   // --- Layout ---
   if (
     /^(?:flex|inline-flex|grid|inline-grid|subgrid|masonry)(?:$|-)/.test(b) ||
-    /^(?:items|justify|justify-items|justify-self|content|self|place|place-content|place-items|place-self)-/.test(
-      b,
-    ) ||
+    /^(?:items|justify|justify-items|justify-self|content|self|place|place-content|place-items|place-self)-/.test(b) ||
     /^-?(?:gap|space-[xy]|col-|row-|grid-|auto-cols|auto-rows|order-|order$)/.test(b) ||
     /^-?(?:auto-flow|grid-flow)-/.test(b) ||
     /^(?:columns-|break-after|break-before|break-inside)-/.test(b) ||
     /^(?:float|clear)-/.test(b) ||
-    /^(?:wrap-|flex-wrap|flex-nowrap|flex-row|flex-col|flex-auto|flex-initial|flex-none|flex-1|flex-\[)/.test(
-      b,
-    ) ||
+    /^(?:wrap-|flex-wrap|flex-nowrap|flex-row|flex-col|flex-auto|flex-initial|flex-none|flex-1|flex-\[)/.test(b) ||
     /^container$/.test(b)
   ) {
     return "layout";
@@ -278,7 +252,7 @@ function classifyBareUtility(bareUtility: string): Bucket {
   if (
     /^-?(?:rounded|border|ring|divide|inset-ring)(?:-|\/|$)/.test(b) ||
     /^(?:rounded|border|ring|divide|inset-ring)$/.test(b) ||
-    /^ring-offset-/.test(b)
+    b.startsWith("ring-offset-")
   ) {
     return "shape";
   }
@@ -314,7 +288,7 @@ function classifyBareUtility(bareUtility: string): Bucket {
     /^(?:antialiased|subpixel-antialiased|italic|not-italic|overline|line-through|underline|no-underline|uppercase|lowercase|capitalize|normal-case|truncate|text-wrap|text-balance|text-pretty)$/.test(
       b,
     ) ||
-    /^text-wrap-/.test(b) ||
+    b.startsWith("text-wrap-") ||
     /^tabular-nums$|^slashed-zero$|^lining-nums$|^oldstyle-nums$|^proportional-nums$/.test(b)
   ) {
     return "typography";
@@ -323,7 +297,7 @@ function classifyBareUtility(bareUtility: string): Bucket {
   // --- Composite & transforms (GPU / filter stack) ---
   if (
     /^opacity(?:-|$)/.test(b) ||
-    /^mix-blend-/.test(b) ||
+    b.startsWith("mix-blend-") ||
     /^isolation(?:-|$)/.test(b) ||
     b === "isolate" ||
     /^transform(?:-(?:gpu|cpu|none))?$/.test(b) ||
@@ -331,22 +305,22 @@ function classifyBareUtility(bareUtility: string): Bucket {
     /^perspective(?:-|$)/.test(b) ||
     b === "transform-3d" ||
     /^blur(?:-|$)/.test(b) ||
-    /^backdrop-/.test(b) ||
+    b.startsWith("backdrop-") ||
     /^filter(?:-|$)/.test(b) ||
-    /^brightness-/.test(b) ||
-    /^contrast-/.test(b) ||
+    b.startsWith("brightness-") ||
+    b.startsWith("contrast-") ||
     /^grayscale(?:-|$)/.test(b) ||
-    /^hue-rotate-/.test(b) ||
+    b.startsWith("hue-rotate-") ||
     /^invert(?:-|$)/.test(b) ||
-    /^saturate-/.test(b) ||
+    b.startsWith("saturate-") ||
     /^sepia(?:-|$)/.test(b) ||
-    /^will-change/.test(b)
+    b.startsWith("will-change")
   ) {
     return "composite";
   }
 
   // --- Motion ---
-  if (/^(?:transition|duration|ease|delay|animate)(?:-|$)/.test(b) || /^ease-/.test(b)) {
+  if (/^(?:transition|duration|ease|delay|animate)(?:-|$)/.test(b) || b.startsWith("ease-")) {
     return "motion";
   }
 
@@ -356,9 +330,9 @@ function classifyBareUtility(bareUtility: string): Bucket {
       b,
     ) ||
     /^(?:cursor|select|resize)$/.test(b) ||
-    /^scroll-behavior/.test(b) ||
-    /^scroll-snap/.test(b) ||
-    /^touch-action/.test(b) ||
+    b.startsWith("scroll-behavior") ||
+    b.startsWith("scroll-snap") ||
+    b.startsWith("touch-action") ||
     b === "inert"
   ) {
     return "behavior";
@@ -374,7 +348,7 @@ function classifyBareUtility(bareUtility: string): Bucket {
  * Pure arbitrary **properties** (`[--x]:`, `[color:red]`) have no `&` in the leading `[…]` segment.
  */
 function isArbitraryParentSelectorStateToken(token: string): boolean {
-  if (/^\[&/.test(token)) {
+  if (token.startsWith("[&")) {
     return true;
   }
   if (!token.startsWith("[")) {
@@ -504,10 +478,7 @@ const SELECTOR_KEY_SEP = "\u001f";
  * @since 0.3.16-canary.0
  */
 export function selectorKey(token: string): string {
-  return stateKey(token)
-    .split(SELECTOR_KEY_SEP)
-    .map(normalizeSelectorVariantLayer)
-    .join(SELECTOR_KEY_SEP);
+  return stateKey(token).split(SELECTOR_KEY_SEP).map(normalizeSelectorVariantLayer).join(SELECTOR_KEY_SEP);
 }
 
 function normalizeSelectorVariantLayer(layer: string): string {

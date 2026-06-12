@@ -3,7 +3,7 @@ import type { SVGProps } from "react";
 
 type IconProps = SVGProps<SVGSVGElement>;
 
-function Icon({ children, ...props }: IconProps) {
+function Icon({ ...props }: IconProps) {
   return (
     <svg
       aria-hidden="true"
@@ -15,9 +15,7 @@ function Icon({ children, ...props }: IconProps) {
       viewBox="0 0 24 24"
       xmlns="http://www.w3.org/2000/svg"
       {...props}
-    >
-      {children}
-    </svg>
+    />
   );
 }
 
@@ -32,13 +30,7 @@ export function AppLogoIcon(props: IconProps) {
   const g2 = `${uid}-g2`;
   const g3 = `${uid}-g3`;
   return (
-    <svg
-      aria-hidden="true"
-      fill="none"
-      viewBox="0 0 24 24"
-      xmlns="http://www.w3.org/2000/svg"
-      {...props}
-    >
+    <svg aria-hidden="true" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" {...props}>
       <defs>
         <linearGradient gradientUnits="userSpaceOnUse" id={g1} x1="17.5" x2="17.5" y1="22" y2="5">
           <stop offset="0" stopColor="#0055d4" />
