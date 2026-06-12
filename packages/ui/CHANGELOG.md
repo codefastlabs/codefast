@@ -1,5 +1,65 @@
 # @codefast/ui
 
+## 0.4.0-canary.4
+
+### Minor Changes
+
+- [#495](https://github.com/codefastlabs/codefast/pull/495) [`8fdbf99`](https://github.com/codefastlabs/codefast/commit/8fdbf99e9b889e6937aca721a3f439cc25b6ea4b) Thanks [@thevuong](https://github.com/thevuong)! - Add `--ease-exit` motion token and apply asymmetric enter/exit easing across overlay, popup, accordion, and sidebar components, syncing dialog overlay durations with content.
+
+- [#495](https://github.com/codefastlabs/codefast/pull/495) [`377224b`](https://github.com/codefastlabs/codefast/commit/377224bc337ca15ee4cfcfc1ddd9667bfce96b04) Thanks [@thevuong](https://github.com/thevuong)! - Add semantic motion duration tokens (`menu`, `popup`, `overlay`, `panel`, `expand`) and retune component timings for snappier feedback — menus 150/100ms, popovers 200/120ms, dialogs 220/150ms, sheets and drawers 320/220ms, accordion 200/150ms.
+
+### Patch Changes
+
+- [`6685ce3`](https://github.com/codefastlabs/codefast/commit/6685ce3db5042d0c1b90bda98d5d1517eeade1d2) Thanks [@thevuong](https://github.com/thevuong)! - refactor(ui): update source file patterns in preset.css
+
+- [#495](https://github.com/codefastlabs/codefast/pull/495) [`eecb986`](https://github.com/codefastlabs/codefast/commit/eecb9862353b93f76a03a75015a3b7c4e0ba948d) Thanks [@thevuong](https://github.com/thevuong)! - chore(deps): update catalog dependencies — radix-ui 1.5.0, react-hook-form 7.78.0, TanStack Router/Start patches, hono 4.12.25, oxfmt 0.54 / oxlint 1.69, knip 6.16, turbo 2.9.17-canary.7 — and bump pnpm to 11.5.2
+
+- [`451da65`](https://github.com/codefastlabs/codefast/commit/451da65cf5b55cf982b0cb72396d7e08cbeab4ec) Thanks [@thevuong](https://github.com/thevuong)! - refactor(ui): remove "use client" directive from multiple components
+
+- [`b4ac0df`](https://github.com/codefastlabs/codefast/commit/b4ac0df0ed6073915c5b3502af60bb65489bc1fc) Thanks [@thevuong](https://github.com/thevuong)! - refactor(ui): replace @radix-ui/react-context with radix-ui package
+
+- [`06ab079`](https://github.com/codefastlabs/codefast/commit/06ab079012d82e8bd37f47a9978a98c446b6b0c9) Thanks [@thevuong](https://github.com/thevuong)! - refactor(ui): adjust border radius in input group styles
+
+- [#495](https://github.com/codefastlabs/codefast/pull/495) [`48c6661`](https://github.com/codefastlabs/codefast/commit/48c66618f88d4fa93c769e9ede2776f5c8075aa2) Thanks [@thevuong](https://github.com/thevuong)! - fix(ui): align ContextMenuSubTrigger spacing with ContextMenuItem so submenu trigger icons sit correctly
+
+- [`c2e6f73`](https://github.com/codefastlabs/codefast/commit/c2e6f73d39912a9675f53233ce3464f76ad00b1b) Thanks [@thevuong](https://github.com/thevuong)! - refactor(ui): streamline component styling and className usage
+
+- [`801ac83`](https://github.com/codefastlabs/codefast/commit/801ac83659e00c84cf0d0dc4b1e2a632f7f26e20) Thanks [@thevuong](https://github.com/thevuong)! - refactor(ui): enhance InputGroup component structure and styling
+
+- [`dfcd7ef`](https://github.com/codefastlabs/codefast/commit/dfcd7ef01c224e5fa4f30b760daedda85b35dd55) Thanks [@thevuong](https://github.com/thevuong)! - feat(ui): enhance InputNumber component with new split variant and additional functionality
+
+- [#495](https://github.com/codefastlabs/codefast/pull/495) [`480292c`](https://github.com/codefastlabs/codefast/commit/480292c36615c682f58e88fdb3136781620b98c0) Thanks [@thevuong](https://github.com/thevuong)! - refactor(navigation-menu): pass the trigger `className` to `navigationMenuTriggerVariants` as a `ClassValue` array instead of pre-merging with `cn`, letting the variant resolver handle merging in one pass
+
+- [#495](https://github.com/codefastlabs/codefast/pull/495) [`391f4c7`](https://github.com/codefastlabs/codefast/commit/391f4c768a589eb47808ba8f1dcfe7c60ba2bfe5) Thanks [@thevuong](https://github.com/thevuong)! - Fix navigation menu viewport scale animation by replacing the invalid `origin-top-center` class with `origin-[top_center]`.
+
+- [`2425b93`](https://github.com/codefastlabs/codefast/commit/2425b9310ee6bf62c7b74a85516808f7159bf152) Thanks [@thevuong](https://github.com/thevuong)! - refactor(ui): update component styling for consistency and clarity
+
+- [#495](https://github.com/codefastlabs/codefast/pull/495) [`fa338d6`](https://github.com/codefastlabs/codefast/commit/fa338d61fbfafb94beaa4d05d93d01e2c005cc91) Thanks [@thevuong](https://github.com/thevuong)! - Normalize import statement order and package.json key order repo-wide via the new oxfmt `sortImports`/`sortPackageJson` settings — purely mechanical, no runtime behavior change.
+
+- [#495](https://github.com/codefastlabs/codefast/pull/495) [`68bc271`](https://github.com/codefastlabs/codefast/commit/68bc271a3f9864c68045ee495f510c19f3ac1c80) Thanks [@thevuong](https://github.com/thevuong)! - fix(ui): restore side-scoped slide animations on popover, hover-card, select, and tooltip
+
+  Reinstate ease-snappy easing with distinct open/close durations, scope slide-in
+  classes under data-open (and data-delayed-open for tooltip), and bring back
+  directional slide-out on close — matching the previously restored context menu,
+  dropdown menu, and menubar motion.
+
+- [`2247289`](https://github.com/codefastlabs/codefast/commit/2247289ccc8c983a5cf8dd4689d185eab6f6adb3) Thanks [@thevuong](https://github.com/thevuong)! - refactor(ui): enhance BreadcrumbSeparator component styling and props
+
+- [#495](https://github.com/codefastlabs/codefast/pull/495) [`b66cb9d`](https://github.com/codefastlabs/codefast/commit/b66cb9debecb933f84ab1b4c711a01430823b641) Thanks [@thevuong](https://github.com/thevuong)! - Scope overlay enter/exit timing with `animation-duration-*` utilities (no more implicit all-property transitions from `duration-*`), make the navigation menu viewport size transition explicit, and fix the input OTP caret blink speed so the intended 1s duration actually applies.
+
+- [`0636d46`](https://github.com/codefastlabs/codefast/commit/0636d46e54366a690fb8b9a85bb3adafe3e73fbc) Thanks [@thevuong](https://github.com/thevuong)! - refactor(ui): replace `react-day-picker` with `@daypicker/react`
+
+- [`ae3240a`](https://github.com/codefastlabs/codefast/commit/ae3240a4a8f026aa4f5d04fd270022139fc77433) Thanks [@thevuong](https://github.com/thevuong)! - feat(ui): export DirectionProvider to propagate reading direction
+
+- [`09c3782`](https://github.com/codefastlabs/codefast/commit/09c3782ad73a5d5d76e678d9d71ab22135cebd5a) Thanks [@thevuong](https://github.com/thevuong)! - refactor(ui): simplify DirectionProvider and useDirection
+
+- [#495](https://github.com/codefastlabs/codefast/pull/495) [`95b0ec4`](https://github.com/codefastlabs/codefast/commit/95b0ec41b5223ee48aeb6d82213f6b6d5c5cdd1e) Thanks [@thevuong](https://github.com/thevuong)! - Tune dialog, alert-dialog, drawer, and sheet overlay animations with asymmetric open/close durations and gentle easing.
+
+- [#495](https://github.com/codefastlabs/codefast/pull/495) [`c60a41f`](https://github.com/codefastlabs/codefast/commit/c60a41f28af1e51d29331c3716ec5023e41b617a) Thanks [@thevuong](https://github.com/thevuong)! - refactor(ui): drop redundant single-arg `cn(className)` in Breadcrumb, CalendarRoot, AlertDialogAction/Cancel, and SidebarTrigger — `className` already forwards through `...props`, so the extra destructure and wrapper added nothing
+
+- Updated dependencies [[`fa338d6`](https://github.com/codefastlabs/codefast/commit/fa338d61fbfafb94beaa4d05d93d01e2c005cc91), [`b097689`](https://github.com/codefastlabs/codefast/commit/b0976892cae3433670837aee0872262d38be0f45), [`7a4f8c3`](https://github.com/codefastlabs/codefast/commit/7a4f8c3b487526a319c6808d1164ba1c8168e9b6)]:
+  - @codefast/tailwind-variants@0.4.0-canary.4
+
 ## 0.3.16-canary.3
 
 ### Patch Changes
