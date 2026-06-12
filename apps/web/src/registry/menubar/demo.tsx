@@ -5,6 +5,7 @@ import {
   MenubarItem,
   MenubarLabel,
   MenubarMenu,
+  MenubarGroup,
   MenubarRadioGroup,
   MenubarRadioItem,
   MenubarSeparator,
@@ -89,12 +90,14 @@ export function MenubarDemo() {
             Show grid
           </MenubarCheckboxItem>
           <MenubarSeparator />
-          <MenubarLabel>Zoom</MenubarLabel>
-          <MenubarRadioGroup value={zoom} onValueChange={setZoom}>
-            <MenubarRadioItem value="50">50%</MenubarRadioItem>
-            <MenubarRadioItem value="100">100%</MenubarRadioItem>
-            <MenubarRadioItem value="150">150%</MenubarRadioItem>
-          </MenubarRadioGroup>
+          <MenubarGroup>
+            <MenubarLabel>Zoom</MenubarLabel>
+            <MenubarRadioGroup value={zoom} onValueChange={setZoom}>
+              <MenubarRadioItem value="50">50%</MenubarRadioItem>
+              <MenubarRadioItem value="100">100%</MenubarRadioItem>
+              <MenubarRadioItem value="150">150%</MenubarRadioItem>
+            </MenubarRadioGroup>
+          </MenubarGroup>
         </MenubarContent>
       </MenubarMenu>
     </Menubar>
