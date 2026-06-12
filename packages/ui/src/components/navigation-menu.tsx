@@ -158,8 +158,14 @@ function NavigationMenuLink({ className, ...props }: NavigationMenuLinkProps): J
  * Component: NavigationMenuViewport
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.4.0-canary.4
+ */
 type NavigationMenuViewportProps = ComponentProps<typeof NavigationMenuPrimitive.Viewport>;
 
+/**
+ * @since 0.4.0-canary.4
+ */
 function NavigationMenuViewport({ className, ...props }: NavigationMenuViewportProps): JSX.Element {
   return (
     <div className="absolute top-full left-0 isolate z-50 flex justify-center">
@@ -179,8 +185,14 @@ function NavigationMenuViewport({ className, ...props }: NavigationMenuViewportP
  * Component: NavigationMenuIndicator
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.4.0-canary.4
+ */
 type NavigationMenuIndicatorProps = ComponentProps<typeof NavigationMenuPrimitive.Indicator>;
 
+/**
+ * @since 0.4.0-canary.4
+ */
 function NavigationMenuIndicator({ className, ...props }: NavigationMenuIndicatorProps): JSX.Element {
   return (
     <NavigationMenuPrimitive.Indicator
