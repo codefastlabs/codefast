@@ -1,20 +1,14 @@
-import type { ExtremeDialogSlots } from "#/fixtures/slot-types";
-import { tailwindVariantsTv } from "#/lib/tv-shims";
-import { TV_MERGE_DISABLED, TV_MERGE_ENABLED } from "#/harness/bench-options";
-import type { BenchScenario } from "#/scenarios/types";
 import { extremeSlotsTestProps, extremeSlotsVariants } from "#/fixtures/extreme";
+import type { ExtremeDialogSlots } from "#/fixtures/slot-types";
+import { TV_MERGE_DISABLED, TV_MERGE_ENABLED } from "#/harness/bench-options";
+import { tailwindVariantsTv } from "#/lib/tv-shims";
+import type { BenchScenario } from "#/scenarios/types";
 
 type ExtremeSlotsProps = (typeof extremeSlotsTestProps)[number];
 type ExtremeSlotsRenderer = (props: ExtremeSlotsProps) => ExtremeDialogSlots;
 
-const npmNoMerge = tailwindVariantsTv(
-  extremeSlotsVariants,
-  TV_MERGE_DISABLED,
-) as ExtremeSlotsRenderer;
-const npmWithMerge = tailwindVariantsTv(
-  extremeSlotsVariants,
-  TV_MERGE_ENABLED,
-) as ExtremeSlotsRenderer;
+const npmNoMerge = tailwindVariantsTv(extremeSlotsVariants, TV_MERGE_DISABLED) as ExtremeSlotsRenderer;
+const npmWithMerge = tailwindVariantsTv(extremeSlotsVariants, TV_MERGE_ENABLED) as ExtremeSlotsRenderer;
 
 function invokeAllSlots(slots: ExtremeDialogSlots): void {
   slots.trigger();

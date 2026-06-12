@@ -1,34 +1,20 @@
-import type {
-  ActivationHandler,
-  Constructor,
-  DeactivationHandler,
-  ResolutionContext,
-} from "#/types";
-import type { Token } from "#/token";
 import type { Binding } from "#/binding";
-import type { MetadataReader } from "#/metadata/metadata-types";
 import { AsyncActivationError, AsyncDeactivationError } from "#/errors";
+import type { MetadataReader } from "#/metadata/metadata-types";
+import type { Token } from "#/token";
 import { tokenName } from "#/token";
+import type { ActivationHandler, Constructor, DeactivationHandler, ResolutionContext } from "#/types";
 
 /**
  * @since 0.3.16-canary.0
  */
 export class LifecycleManager {
   // Container-level activation/deactivation hooks per token
-  private readonly _activationHooks = new Map<
-    Token<unknown> | Constructor,
-    Array<ActivationHandler<unknown>>
-  >();
-  private readonly _deactivationHooks = new Map<
-    Token<unknown> | Constructor,
-    Array<DeactivationHandler<unknown>>
-  >();
+  private readonly _activationHooks = new Map<Token<unknown> | Constructor, Array<ActivationHandler<unknown>>>();
+  private readonly _deactivationHooks = new Map<Token<unknown> | Constructor, Array<DeactivationHandler<unknown>>>();
   private _activationVersion = 0;
 
-  registerActivation<const Value>(
-    token: Token<Value> | Constructor<Value>,
-    handler: ActivationHandler<Value>,
-  ): void {
+  registerActivation<const Value>(token: Token<Value> | Constructor<Value>, handler: ActivationHandler<Value>): void {
     this._activationVersion += 1;
     // ✓ TS6.0: Map.getOrInsert (ES2025)
     const list = this._activationHooks.getOrInsert(token as Token<unknown> | Constructor, []);
@@ -82,8 +68,7 @@ export class LifecycleManager {
     // 2. per-binding onActivation
     if (binding.kind !== "alias" && binding.onActivation !== undefined) {
       const activationResult = binding.onActivation(resolutionContext, activatedInstance);
-      activatedInstance =
-        activationResult instanceof Promise ? await activationResult : activationResult;
+      activatedInstance = activationResult instanceof Promise ? await activationResult : activationResult;
     }
 
     // 3. container-level onActivation
@@ -91,9 +76,7 @@ export class LifecycleManager {
     if (containerHooks !== undefined) {
       for (const hook of containerHooks) {
         const activationResult = hook(resolutionContext, activatedInstance);
-        activatedInstance = (
-          activationResult instanceof Promise ? await activationResult : activationResult
-        ) as Value;
+        activatedInstance = (activationResult instanceof Promise ? await activationResult : activationResult) as Value;
       }
     }
 
@@ -192,11 +175,7 @@ export class LifecycleManager {
     }
   }
 
-  runDeactivationSync<const Value>(
-    binding: Binding<Value>,
-    instance: Value,
-    metadataReader: MetadataReader,
-  ): void {
+  runDeactivationSync<const Value>(binding: Binding<Value>, instance: Value, metadataReader: MetadataReader): void {
     const tokenDisplayName = tokenName(binding.token);
     const tokenKey = binding.token as Token<unknown> | Constructor;
 

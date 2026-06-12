@@ -8,17 +8,13 @@ import type { EmbeddedLibraryMeta, EmbeddedScenarioSeries } from "#/types";
  */
 export function medianNumeric(values: Array<number | null | undefined>): number | null {
   const sorted = values
-    .filter(
-      (value): value is number => typeof value === "number" && Number.isFinite(value) && value > 0,
-    )
-    .sort((left, right) => left - right);
+    .filter((value): value is number => typeof value === "number" && Number.isFinite(value) && value > 0)
+    .toSorted((left, right) => left - right);
   if (sorted.length === 0) {
     return null;
   }
   const mid = Math.floor(sorted.length / 2);
-  return sorted.length % 2 === 1
-    ? (sorted[mid] ?? null)
-    : ((sorted[mid - 1] ?? 0) + (sorted[mid] ?? 0)) / 2;
+  return sorted.length % 2 === 1 ? (sorted[mid] ?? null) : ((sorted[mid - 1] ?? 0) + (sorted[mid] ?? 0)) / 2;
 }
 
 /**
@@ -28,27 +24,18 @@ export function ratioFrom(
   numeratorHz: number | null | undefined,
   denominatorHz: number | null | undefined,
 ): number | null {
-  return typeof numeratorHz === "number" &&
-    typeof denominatorHz === "number" &&
-    numeratorHz > 0 &&
-    denominatorHz > 0
+  return typeof numeratorHz === "number" && typeof denominatorHz === "number" && numeratorHz > 0 && denominatorHz > 0
     ? numeratorHz / denominatorHz
     : null;
 }
 
-function collectHzValues(
-  hz: ReadonlyArray<number | null>,
-  indices: ReadonlyArray<number>,
-): Array<number> {
+function collectHzValues(hz: ReadonlyArray<number | null>, indices: ReadonlyArray<number>): Array<number> {
   return indices
     .map((globalIx) => hz[globalIx])
     .filter((hzValue): hzValue is number => typeof hzValue === "number" && hzValue > 0);
 }
 
-function maxIqrFraction(
-  iqrFraction: ReadonlyArray<number | null>,
-  indices: ReadonlyArray<number>,
-): number {
+function maxIqrFraction(iqrFraction: ReadonlyArray<number | null>, indices: ReadonlyArray<number>): number {
   let max = 0;
   for (const globalIx of indices) {
     const iqrFractionAtRun = iqrFraction[globalIx];
@@ -148,9 +135,7 @@ export function buildMetrics({
 
     const hzAtOldest = runIndices[0] !== undefined ? (libData.hz[runIndices[0]] ?? null) : null;
     const hzAtNewest =
-      runIndices[runIndices.length - 1] !== undefined
-        ? (libData.hz[runIndices[runIndices.length - 1]!] ?? null)
-        : null;
+      runIndices[runIndices.length - 1] !== undefined ? (libData.hz[runIndices[runIndices.length - 1]!] ?? null) : null;
 
     let trend = "—";
     if (
@@ -214,8 +199,7 @@ export function buildMetrics({
       const meta: Array<MetaItem> = [
         {
           type: "text",
-          value:
-            "Median ÷ median for this filter; each side uses runs with hz/op for that library.",
+          value: "Median ÷ median for this filter; each side uses runs with hz/op for that library.",
         },
       ];
       if (showPaired && medianOfRunRatios !== null) {

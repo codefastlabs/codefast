@@ -1,8 +1,5 @@
 import type { VariantProps } from "#/lib/utils";
-
 import { tv } from "#/lib/utils";
-
-import { buttonVariants } from "#/variants/button";
 
 /* -----------------------------------------------------------------------------
  * Style: NavigationMenuTrigger
@@ -12,11 +9,7 @@ import { buttonVariants } from "#/variants/button";
  * @since 0.3.16-canary.0
  */
 const navigationMenuTriggerVariants = tv({
-  base: buttonVariants({
-    className:
-      "data-open:bg-secondary/50 data-open:text-secondary-foreground group/navigation-menu-trigger focus-visible:bg-secondary dark:hover:not-disabled:bg-secondary",
-    variant: "ghost",
-  }),
+  base: "group/navigation-menu-trigger inline-flex h-9 w-max items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-all outline-none hover:bg-muted focus:bg-muted focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-1 disabled:pointer-events-none disabled:opacity-50 data-popup-open:bg-muted/50 data-popup-open:hover:bg-muted data-open:bg-muted/50 data-open:hover:bg-muted data-open:focus:bg-muted",
 });
 
 /**

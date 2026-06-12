@@ -1,3 +1,14 @@
+import {
+  isDomainArrayLiteralExpression,
+  isDomainJsxAttribute,
+  isDomainPropertyAssignment,
+  isDomainTailwindClassLiteral,
+  forEachDomainChild,
+} from "#/arrange/domain/ast/ast-node";
+import type { DomainAstNode, DomainSourceFile } from "#/arrange/domain/ast/ast-node";
+import { isUnsafeLiteralForCnStyleApplySplit } from "#/arrange/domain/ast/collectors-cn";
+import { jsxClassNameStaticLiteral } from "#/arrange/domain/ast/collectors-jsx";
+import { collectGroupableStringNodes, slotClassString } from "#/arrange/domain/ast/collectors-tv";
 import { APPLY_MIN_TOKENS } from "#/arrange/domain/constants";
 import {
   areCnTailwindPartitionsEquivalent,
@@ -10,24 +21,13 @@ import {
   formatArrayElementsAsSiblingLines,
   formatJsxCnAttributeValue,
 } from "#/arrange/domain/source-text-formatters";
-import type { GroupTarget, PlannedGroupEdit, StringNode } from "#/arrange/domain/types";
 import { tokenizeClassString } from "#/arrange/domain/tailwind-token";
-import { isUnsafeLiteralForCnStyleApplySplit } from "#/arrange/domain/ast/collectors-cn";
-import { jsxClassNameStaticLiteral } from "#/arrange/domain/ast/collectors-jsx";
-import { collectGroupableStringNodes, slotClassString } from "#/arrange/domain/ast/collectors-tv";
+import type { GroupTarget, PlannedGroupEdit, StringNode } from "#/arrange/domain/types";
 import {
   endAfterOptionalCommaFollowingInSource,
   indentOfLineContaining,
   textPrefixFromLineStartToPosition,
 } from "#/core/source-text-edit";
-import {
-  isDomainArrayLiteralExpression,
-  isDomainJsxAttribute,
-  isDomainPropertyAssignment,
-  isDomainTailwindClassLiteral,
-  forEachDomainChild,
-} from "#/arrange/domain/ast/ast-node";
-import type { DomainAstNode, DomainSourceFile } from "#/arrange/domain/ast/ast-node";
 
 /**
  * @since 0.3.16-canary.0
@@ -64,10 +64,7 @@ function collectLongJsxClassNameTargets(sourceFile: DomainSourceFile): Array<Gro
 /**
  * @since 0.3.16-canary.0
  */
-export function collectGroupTargets(
-  sourceFile: DomainSourceFile,
-  filePath: string,
-): Array<GroupTarget> {
+export function collectGroupTargets(sourceFile: DomainSourceFile, filePath: string): Array<GroupTarget> {
   const cnPart = collectGroupableStringNodes(sourceFile).map((stringNode) => ({
     kind: "cnArg" as const,
     item: stringNode,
@@ -78,11 +75,7 @@ export function collectGroupTargets(
   return [...cnPart, ...collectLongJsxClassNameTargets(sourceFile)];
 }
 
-function formatCnCallReplacement(
-  stringNode: StringNode,
-  sourceText: string,
-  withClassName: boolean,
-): string {
+function formatCnCallReplacement(stringNode: StringNode, sourceText: string, withClassName: boolean): string {
   const call = stringNode.cnCall;
   if (call === undefined) {
     throw new Error("formatCnCallReplacement requires a cn() call on the string node");
@@ -92,8 +85,7 @@ function formatCnCallReplacement(
 
   const dynamicArgTexts: Array<string> = [];
   for (const arg of call.arguments) {
-    const isSimpleStatic =
-      isDomainTailwindClassLiteral(arg) && !isUnsafeLiteralForCnStyleApplySplit(arg);
+    const isSimpleStatic = isDomainTailwindClassLiteral(arg) && !isUnsafeLiteralForCnStyleApplySplit(arg);
     if (!isSimpleStatic) {
       dynamicArgTexts.push(sourceText.slice(arg.pos, arg.end));
     }
@@ -127,7 +119,7 @@ function formatCnCallReplacement(
   // Keep formatter behavior explicit: multiline cn() calls with multiple args use trailing comma.
   const commaAfterLastArg = allArgs.length > 1;
   const argLines = allArgs.map((argLine, lineIndex) =>
-    lineIndex < allArgs.length - 1 || commaAfterLastArg ? `${argLine},` : `${argLine}`,
+    lineIndex < allArgs.length - 1 || commaAfterLastArg ? `${argLine},` : argLine,
   );
   return `cn(\n${argLines.join("\n")}\n${baseIndent})`;
 }
@@ -179,16 +171,13 @@ export function planGroupEditForTarget(
     const anchorClassLiteral = target.item.primaryClassLiteral;
     const parentNode = anchorClassLiteral.parent;
     const parentArray =
-      target.item.nodes.length > 1 &&
-      parentNode !== null &&
-      isDomainArrayLiteralExpression(parentNode)
+      target.item.nodes.length > 1 && parentNode !== null && isDomainArrayLiteralExpression(parentNode)
         ? parentNode
         : null;
     // A bare string value of a property (e.g. `slot: "a b c"`) must be wrapped in
     // an array literal. Emitting sibling lines would prepend the property prefix
     // (`slot: `) to each continuation line, producing duplicate object keys.
-    const bareStringProperty =
-      !parentArray && parentNode !== null && isDomainPropertyAssignment(parentNode);
+    const bareStringProperty = !parentArray && parentNode !== null && isDomainPropertyAssignment(parentNode);
 
     if (parentArray || bareStringProperty) {
       const start = parentArray ? parentArray.pos : anchorClassLiteral.pos;

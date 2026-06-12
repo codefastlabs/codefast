@@ -308,18 +308,14 @@ export function isDomainStringLiteral(node: DomainAstNode): node is DomainString
   return node.kind === DomainSyntaxKind.StringLiteral;
 }
 
-function isDomainNoSubstitutionTemplateLiteral(
-  node: DomainAstNode,
-): node is DomainNoSubstitutionTemplateLiteral {
+function isDomainNoSubstitutionTemplateLiteral(node: DomainAstNode): node is DomainNoSubstitutionTemplateLiteral {
   return node.kind === DomainSyntaxKind.NoSubstitutionTemplateLiteral;
 }
 
 /**
  * @since 0.3.16-canary.0
  */
-export function isDomainTailwindClassLiteral(
-  node: DomainAstNode,
-): node is DomainTailwindClassLiteral {
+export function isDomainTailwindClassLiteral(node: DomainAstNode): node is DomainTailwindClassLiteral {
   return isDomainStringLiteral(node) || isDomainNoSubstitutionTemplateLiteral(node);
 }
 
@@ -354,9 +350,7 @@ export function isDomainCallExpression(node: DomainAstNode): node is DomainCallE
 /**
  * @since 0.3.16-canary.0
  */
-export function isDomainObjectLiteralExpression(
-  node: DomainAstNode,
-): node is DomainObjectLiteralExpression {
+export function isDomainObjectLiteralExpression(node: DomainAstNode): node is DomainObjectLiteralExpression {
   return node.kind === DomainSyntaxKind.ObjectLiteralExpression;
 }
 
@@ -370,9 +364,7 @@ export function isDomainPropertyAssignment(node: DomainAstNode): node is DomainP
 /**
  * @since 0.3.16-canary.0
  */
-export function isDomainArrayLiteralExpression(
-  node: DomainAstNode,
-): node is DomainArrayLiteralExpression {
+export function isDomainArrayLiteralExpression(node: DomainAstNode): node is DomainArrayLiteralExpression {
   return node.kind === DomainSyntaxKind.ArrayLiteralExpression;
 }
 
@@ -386,9 +378,7 @@ export function isDomainSpreadElement(node: DomainAstNode): node is DomainSpread
 /**
  * @since 0.3.16-canary.0
  */
-export function isDomainPropertyAccessExpression(
-  node: DomainAstNode,
-): node is DomainPropertyAccessExpression {
+export function isDomainPropertyAccessExpression(node: DomainAstNode): node is DomainPropertyAccessExpression {
   return node.kind === DomainSyntaxKind.PropertyAccessExpression;
 }
 
@@ -409,10 +399,7 @@ export function isDomainJsxExpression(node: DomainAstNode): node is DomainJsxExp
 /**
  * @since 0.3.16-canary.0
  */
-export function forEachDomainChild(
-  node: DomainAstNode,
-  visit: (child: DomainAstNode) => void,
-): void {
+export function forEachDomainChild(node: DomainAstNode, visit: (child: DomainAstNode) => void): void {
   switch (node.kind) {
     case DomainSyntaxKind.Unknown:
       for (const child of node.children) {

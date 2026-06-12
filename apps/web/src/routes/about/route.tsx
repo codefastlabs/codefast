@@ -1,9 +1,10 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { Button } from "@codefast/ui/button";
 import { Badge } from "@codefast/ui/badge";
-import { ALL_COMPONENTS } from "#/data/components";
+import { Button } from "@codefast/ui/button";
+import { createFileRoute, Link } from "@tanstack/react-router";
 
-const COMPONENT_COUNT = ALL_COMPONENTS.length;
+import { COMPONENTS } from "#/registry/components";
+
+const COMPONENT_COUNT = COMPONENTS.length;
 
 export const Route = createFileRoute("/about")({
   head: () => ({
@@ -11,8 +12,7 @@ export const Route = createFileRoute("/about")({
       { title: "Getting Started — codefast/ui" },
       {
         name: "description",
-        content:
-          "Install @codefast/ui, wire up the CSS, and start building. No config files required.",
+        content: "Install @codefast/ui, wire up the CSS, and start building. No config files required.",
       },
     ],
   }),
@@ -31,13 +31,12 @@ const STEPS = [
     title: "Import the CSS",
     description:
       "Add the design-system stylesheet to your global CSS. It ships neutral tokens, custom Tailwind variants, and animation utilities.",
-    code: `@import "tailwindcss";\n@import "@codefast/ui/css/neutral.css";\n@import "@codefast/ui/css/preset.css";`,
+    code: `@import "tailwindcss";\n@import "@codefast/ui/css/themes/neutral.css";\n@import "@codefast/ui/css/preset.css";`,
   },
   {
     step: "03",
     title: "Use a component",
-    description:
-      "Import any component by its named sub-path. No barrel imports, no tree-shaking surprises.",
+    description: "Import any component by its named sub-path. No barrel imports, no tree-shaking surprises.",
     code: `import { Button } from "@codefast/ui/button";\n\nexport function MyPage() {\n  return <Button variant="outline">Click me</Button>;\n}`,
   },
 ] as const;
@@ -61,16 +60,14 @@ function GettingStarted() {
           Up and running <span className="text-ui-brand">in minutes.</span>
         </h1>
         <p className="text-base leading-relaxed text-ui-muted">
-          @codefast/ui is a collection of copy-friendly React components. Install the package, wire
-          up the CSS, and start building — no config files required.
+          @codefast/ui is a collection of copy-friendly React components. Install the package, wire up the CSS, and
+          start building — no config files required.
         </p>
       </section>
 
       {/* Requirements */}
       <section className="mb-16">
-        <p className="mb-4 text-xs font-semibold tracking-widest text-ui-brand uppercase">
-          Requirements
-        </p>
+        <p className="mb-4 text-xs font-semibold tracking-widest text-ui-brand uppercase">Requirements</p>
         <div className="inline-grid grid-cols-2 gap-x-12 gap-y-5 rounded-2xl border border-ui-border bg-ui-surface p-6 sm:grid-cols-4">
           {REQUIREMENTS.map(({ label, value }) => (
             <div key={label}>
@@ -83,9 +80,7 @@ function GettingStarted() {
 
       {/* Steps */}
       <section className="mb-20">
-        <p className="mb-8 text-xs font-semibold tracking-widest text-ui-brand uppercase">
-          Installation
-        </p>
+        <p className="mb-8 text-xs font-semibold tracking-widest text-ui-brand uppercase">Installation</p>
 
         <ol className="flex flex-col gap-10">
           {STEPS.map(({ step, title, description, code }) => (
@@ -107,18 +102,16 @@ function GettingStarted() {
 
       {/* Component list */}
       <section className="rounded-2xl border border-ui-border bg-ui-surface p-8 sm:p-10">
-        <p className="mb-3 text-xs font-semibold tracking-widest text-ui-brand uppercase">
-          Library
-        </p>
+        <p className="mb-3 text-xs font-semibold tracking-widest text-ui-brand uppercase">Library</p>
         <h2 className="mb-3 text-3xl leading-none font-bold tracking-tighter text-ui-fg">
           {COMPONENT_COUNT}+ components available
         </h2>
         <p className="mb-8 text-ui-muted">
-          From primitives like Button and Badge to complex patterns like Command, Calendar, and
-          Sidebar — everything follows the same composable API.
+          From primitives like Button and Badge to complex patterns like Command, Calendar, and Sidebar — everything
+          follows the same composable API.
         </p>
         <div className="mb-8 flex flex-wrap gap-2">
-          {ALL_COMPONENTS.map(({ name }) => (
+          {COMPONENTS.map(({ name }) => (
             <Badge key={name} variant="secondary" className="font-normal">
               {name}
             </Badge>

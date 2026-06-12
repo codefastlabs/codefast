@@ -1,11 +1,10 @@
 @import "tailwindcss";
 @import "@fontsource-variable/inter";
-@import "@codefast/ui/css/sky.css";
+@import "@codefast/ui/css/themes/sky.css";
 @import "@codefast/ui/css/preset.css";
 
 @theme {
-  --font-sans:
-    "Inter Variable", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-sans: "Inter Variable", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
   --color-ui-bg: var(--ui-bg);
   --color-ui-surface: var(--ui-surface);
   --color-ui-card: var(--ui-card);

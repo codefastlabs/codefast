@@ -1,12 +1,11 @@
 import { createServer } from "node:http";
 import type { AddressInfo } from "node:net";
+
 import { afterEach, describe, expect, it } from "vitest";
 
 import { findAvailablePort } from "#/server/port";
 
-function bindLoopback(
-  port = 0,
-): Promise<{ server: ReturnType<typeof createServer>; port: number }> {
+function bindLoopback(port = 0): Promise<{ server: ReturnType<typeof createServer>; port: number }> {
   return new Promise((resolve, reject) => {
     const server = createServer();
     server.once("error", reject);

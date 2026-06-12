@@ -19,10 +19,7 @@ import { useState } from "react";
  *
  * @since 0.3.16-canary.0
  */
-export function useCopyToClipboard({
-  onCopy,
-  timeout = 2000,
-}: { onCopy?: () => void; timeout?: number } = {}): {
+export function useCopyToClipboard({ onCopy, timeout = 2000 }: { onCopy?: () => void; timeout?: number } = {}): {
   copyToClipboard: (value: string) => Promise<void>;
   isCopied: boolean;
 } {

@@ -1,4 +1,5 @@
 import process from "node:process";
+
 import { messageFrom } from "#/core/errors";
 import type {
   GlobalStats,
@@ -10,9 +11,7 @@ import type {
 /**
  * @since 0.3.16-canary.0
  */
-export type MirrorProcessingModeInput =
-  | { kind: "single" }
-  | { kind: "multi"; source: WorkspaceMultiDiscoverySource };
+export type MirrorProcessingModeInput = { kind: "single" } | { kind: "multi"; source: WorkspaceMultiDiscoverySource };
 
 /**
  * @since 0.3.16-canary.0
@@ -99,23 +98,14 @@ export class MirrorSyncReporter implements MirrorSyncReporterPort {
       return;
     }
     if (mode.source === "default-patterns") {
-      logger.out(
-        `${this.paint(
-          "Discovering workspace packages using default patterns (packages/*)…",
-          ANSI.dim,
-        )}\n`,
-      );
+      logger.out(`${this.paint("Discovering workspace packages using default patterns (packages/*)…", ANSI.dim)}\n`);
       return;
     }
     if (mode.source === "pnpm-workspace-yaml") {
-      logger.out(
-        `${this.paint("Discovering workspace packages from pnpm-workspace.yaml…", ANSI.dim)}\n`,
-      );
+      logger.out(`${this.paint("Discovering workspace packages from pnpm-workspace.yaml…", ANSI.dim)}\n`);
       return;
     }
-    logger.out(
-      `${this.paint("pnpm-workspace.yaml declares an empty workspace package list.", ANSI.dim)}\n`,
-    );
+    logger.out(`${this.paint("pnpm-workspace.yaml declares an empty workspace package list.", ANSI.dim)}\n`);
   }
 
   mirrorNoPackages(logger: CliLoggerLike): void {
@@ -144,16 +134,12 @@ export class MirrorSyncReporter implements MirrorSyncReporterPort {
     verbose: boolean,
   ): void {
     const progress = this.paint(`[${index}/${total}]`, ANSI.dim);
-    logger.out(
-      `${progress} ${this.paint("✓", ANSI.brightGreen)} ${this.paint(pkgStats.name, ANSI.bold)}`,
-    );
+    logger.out(`${progress} ${this.paint("✓", ANSI.brightGreen)} ${this.paint(pkgStats.name, ANSI.bold)}`);
 
     if (verbose) {
       logger.out(`  ${this.paint("├─", ANSI.dim)} Path: ${pkgStats.path}`);
       if (pkgStats.hasTransform) {
-        logger.out(
-          `  ${this.paint("├─", ANSI.dim)} ${this.paint("Custom path transformation", ANSI.cyan)}`,
-        );
+        logger.out(`  ${this.paint("├─", ANSI.dim)} ${this.paint("Custom path transformation", ANSI.cyan)}`);
       }
       if (pkgStats.cssConfigStatus) {
         const status = pkgStats.cssConfigStatus === "disabled" ? "CSS disabled" : "CSS configured";
@@ -182,9 +168,7 @@ export class MirrorSyncReporter implements MirrorSyncReporterPort {
   }
 
   logPrunedStaleExport(logger: CliLoggerLike, exportSpecifier: string): void {
-    logger.out(
-      `  ${this.paint("└─", ANSI.dim)} ${this.paint(`Pruned stale export: ${exportSpecifier}`, ANSI.gray)}`,
-    );
+    logger.out(`  ${this.paint("└─", ANSI.dim)} ${this.paint(`Pruned stale export: ${exportSpecifier}`, ANSI.gray)}`);
   }
 
   logPackageError(
@@ -198,15 +182,9 @@ export class MirrorSyncReporter implements MirrorSyncReporterPort {
     logger.out(
       `${this.paint(`[${index}/${total}]`, ANSI.dim)} ${this.paint("✗", ANSI.yellow)} ${this.paint(displayName, ANSI.bold)}`,
     );
-    logger.out(
-      `  ${this.paint("└─", ANSI.dim)} ${this.paint(`Error: ${messageFrom(errorValue)}`, ANSI.yellow)}\n`,
-    );
+    logger.out(`  ${this.paint("└─", ANSI.dim)} ${this.paint(`Error: ${messageFrom(errorValue)}`, ANSI.yellow)}\n`);
     if (verbose) {
-      logger.err(
-        errorValue instanceof Error && errorValue.stack
-          ? errorValue.stack
-          : messageFrom(errorValue),
-      );
+      logger.err(errorValue instanceof Error && errorValue.stack ? errorValue.stack : messageFrom(errorValue));
     }
   }
 
@@ -219,31 +197,19 @@ export class MirrorSyncReporter implements MirrorSyncReporterPort {
       `${this.paint("📊 Summary", ANSI.bold)} ${this.paint(`(completed in ${elapsedSeconds.toFixed(2)}s)`, ANSI.dim)}\n`,
     );
     logger.out(`  ${this.paint("Packages:", ANSI.bold)}`);
-    logger.out(
-      `  ${this.paint("├─", ANSI.dim)} Processed: ${this.paint(String(stats.packagesProcessed), ANSI.green)}`,
-    );
+    logger.out(`  ${this.paint("├─", ANSI.dim)} Processed: ${this.paint(String(stats.packagesProcessed), ANSI.green)}`);
     if (stats.packagesSkipped > 0) {
-      logger.out(
-        `  ${this.paint("├─", ANSI.dim)} Skipped: ${this.paint(String(stats.packagesSkipped), ANSI.gray)}`,
-      );
+      logger.out(`  ${this.paint("├─", ANSI.dim)} Skipped: ${this.paint(String(stats.packagesSkipped), ANSI.gray)}`);
     }
     if (stats.packagesErrored > 0) {
-      logger.out(
-        `  ${this.paint("├─", ANSI.dim)} Errors: ${this.paint(String(stats.packagesErrored), ANSI.yellow)}`,
-      );
+      logger.out(`  ${this.paint("├─", ANSI.dim)} Errors: ${this.paint(String(stats.packagesErrored), ANSI.yellow)}`);
     }
     logger.out(`  ${this.paint("└─", ANSI.dim)} Total found: ${stats.packagesFound}\n`);
 
     logger.out(`  ${this.paint("Exports:", ANSI.bold)}`);
-    logger.out(
-      `  ${this.paint("├─", ANSI.dim)} JS Modules: ${this.paint(String(stats.totalJsModules), ANSI.cyan)}`,
-    );
-    logger.out(
-      `  ${this.paint("├─", ANSI.dim)} CSS Files: ${this.paint(String(stats.totalCssExports), ANSI.magenta)}`,
-    );
-    logger.out(
-      `  ${this.paint("└─", ANSI.dim)} Total: ${this.paint(String(stats.totalExports), ANSI.brightCyan)}\n`,
-    );
+    logger.out(`  ${this.paint("├─", ANSI.dim)} JS Modules: ${this.paint(String(stats.totalJsModules), ANSI.cyan)}`);
+    logger.out(`  ${this.paint("├─", ANSI.dim)} CSS Files: ${this.paint(String(stats.totalCssExports), ANSI.magenta)}`);
+    logger.out(`  ${this.paint("└─", ANSI.dim)} Total: ${this.paint(String(stats.totalExports), ANSI.brightCyan)}\n`);
     logger.out(`${this.paint("═".repeat(60), ANSI.dim)}\n`);
   }
 

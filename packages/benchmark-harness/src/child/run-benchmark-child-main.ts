@@ -1,11 +1,13 @@
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+
 import type { BenchOptions } from "tinybench";
+
 import type { AnyBenchScenario } from "#/child/bench-scenario";
-import { collectFingerprint } from "#/child/fingerprint";
 import { createRunAllTrials } from "#/child/create-run-all-trials";
-import { emitSubprocessPayload } from "#/shared/protocol";
+import { collectFingerprint } from "#/child/fingerprint";
 import { runSanityChecks } from "#/child/run-sanity-checks";
+import { emitSubprocessPayload } from "#/shared/protocol";
 
 /**
  * @since 0.3.16-canary.0
@@ -27,9 +29,7 @@ export type RunBenchmarkChildMainParameters = Readonly<{
  *
  * @since 0.3.16-canary.0
  */
-export async function runBenchmarkChildMain(
-  parameters: RunBenchmarkChildMainParameters,
-): Promise<void> {
+export async function runBenchmarkChildMain(parameters: RunBenchmarkChildMainParameters): Promise<void> {
   const { libraryName, scenarioName, packageRoot, collectScenarios, benchDefaults } = parameters;
 
   console.error(`[bench] subprocess ${scenarioName} started`);

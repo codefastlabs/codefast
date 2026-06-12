@@ -1,6 +1,5 @@
-import type { ResolvedColorScheme, ColorScheme } from "#/types";
-
 import { DEFAULT_RESOLVED_COLOR_SCHEME, MEDIA } from "#/constants";
+import type { ResolvedColorScheme, ColorScheme } from "#/types";
 
 /* -----------------------------------------------------------------------------
  * System Color Scheme Detection

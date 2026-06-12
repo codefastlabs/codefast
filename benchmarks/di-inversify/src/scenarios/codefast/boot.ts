@@ -5,6 +5,7 @@
  * decorator-based class graph, and resolves the root once.
  */
 import { Container, injectable } from "@codefast/di";
+
 import type { BenchScenario } from "#/scenarios/types";
 
 @injectable()

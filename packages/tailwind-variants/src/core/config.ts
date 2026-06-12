@@ -15,7 +15,6 @@ import type {
   ExtendedVariantConfig,
   SlotSchema,
 } from "#/types/api";
-
 import { cx, hasExtendConfig, hasSlotsConfig, isSlotClassMap } from "#/utilities/utils";
 
 /**
@@ -105,10 +104,7 @@ export const mergeVariantConfigs = (
       // Merge variant groups or add new ones
       const existingVariantGroup = mergedVariantGroups[extensionKey];
       if (existingVariantGroup !== undefined) {
-        mergedVariantGroups[extensionKey] = mergeVariantClassGroup(
-          existingVariantGroup,
-          extensionVariantGroup,
-        );
+        mergedVariantGroups[extensionKey] = mergeVariantClassGroup(existingVariantGroup, extensionVariantGroup);
       } else {
         mergedVariantGroups[extensionKey] = extensionVariantGroup;
       }
@@ -116,12 +112,8 @@ export const mergeVariantConfigs = (
   }
 
   // Merge slot definitions from both configurations
-  const resolvedSlotDefinitions = hasSlotsConfig(resolvedBaseConfiguration)
-    ? resolvedBaseConfiguration.slots
-    : {};
-  const extensionSlotDefinitions = hasSlotsConfig(extensionConfiguration)
-    ? extensionConfiguration.slots
-    : {};
+  const resolvedSlotDefinitions = hasSlotsConfig(resolvedBaseConfiguration) ? resolvedBaseConfiguration.slots : {};
+  const extensionSlotDefinitions = hasSlotsConfig(extensionConfiguration) ? extensionConfiguration.slots : {};
   const mergedSlotDefinitions = { ...resolvedSlotDefinitions, ...extensionSlotDefinitions };
 
   // Determine if the result should have slot configuration
@@ -131,19 +123,14 @@ export const mergeVariantConfigs = (
   if (hasSlotConfigurationResult) {
     // Extract compound slot definitions from base configuration
     const baseCompoundSlotDefinitions: ReadonlyArray<CompoundSlot<VariantSchema, SlotSchema>> =
-      hasSlotsConfig(resolvedBaseConfiguration) &&
-      Array.isArray(resolvedBaseConfiguration.compoundSlots)
-        ? (resolvedBaseConfiguration.compoundSlots as ReadonlyArray<
-            CompoundSlot<VariantSchema, SlotSchema>
-          >)
+      hasSlotsConfig(resolvedBaseConfiguration) && Array.isArray(resolvedBaseConfiguration.compoundSlots)
+        ? (resolvedBaseConfiguration.compoundSlots as ReadonlyArray<CompoundSlot<VariantSchema, SlotSchema>>)
         : [];
 
     // Extract compound slot definitions from the extension configuration
     const extensionCompoundSlotDefinitions: ReadonlyArray<CompoundSlot<VariantSchema, SlotSchema>> =
       hasSlotsConfig(extensionConfiguration) && Array.isArray(extensionConfiguration.compoundSlots)
-        ? (extensionConfiguration.compoundSlots as ReadonlyArray<
-            CompoundSlot<VariantSchema, SlotSchema>
-          >)
+        ? (extensionConfiguration.compoundSlots as ReadonlyArray<CompoundSlot<VariantSchema, SlotSchema>>)
         : [];
 
     // Return slot-based configuration

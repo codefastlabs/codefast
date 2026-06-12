@@ -11,6 +11,7 @@
  */
 import "reflect-metadata";
 import { Container } from "inversify";
+
 import { batched } from "#/harness/batched";
 import type { BenchScenario } from "#/scenarios/types";
 
@@ -66,7 +67,7 @@ function buildIsBoundCheckScenario(): BenchScenario {
     group: "introspection",
     what: "container.isBound(id) returning true — registry lookup hot path for optional-dep guards",
     batch: HAS_BOUND_BATCH,
-    sanity: () => container.isBound(hasBoundId) === true,
+    sanity: () => container.isBound(hasBoundId),
     build: () =>
       batched(HAS_BOUND_BATCH, () => {
         container.isBound(hasBoundId);
@@ -92,9 +93,7 @@ function buildIsCurrentBoundCheckScenario(): BenchScenario {
     group: "introspection",
     what: "container.isCurrentBound(id) returning false — binding lives in parent, not own registry",
     batch: HAS_OWN_BATCH,
-    sanity: () =>
-      childContainer.isCurrentBound(hasOwnId) === false &&
-      childContainer.isBound(hasOwnId) === true,
+    sanity: () => !childContainer.isCurrentBound(hasOwnId) && childContainer.isBound(hasOwnId),
     build: () =>
       batched(HAS_OWN_BATCH, () => {
         childContainer.isCurrentBound(hasOwnId);

@@ -1,4 +1,5 @@
 import path from "node:path";
+
 import type { FilesystemPort } from "#/core/filesystem/port";
 
 const packageJsonFileName = "package.json";
@@ -26,10 +27,7 @@ export function resolveArrangeTargetPath(
   return fs.canonicalPathSync(resolvedDefaultTarget);
 }
 
-function findNearestPackageDirectory(
-  fs: FilesystemPort,
-  currentWorkingDirectory: string,
-): string | undefined {
+function findNearestPackageDirectory(fs: FilesystemPort, currentWorkingDirectory: string): string | undefined {
   let currentDir = path.resolve(currentWorkingDirectory);
   while (true) {
     const packageJsonPath = path.join(currentDir, packageJsonFileName);

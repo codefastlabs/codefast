@@ -203,14 +203,9 @@ container.bind(DbToken).toDynamicAsync(async (ctx) => {
 
 container
   .bind(UserServiceToken)
-  .toResolved((repository, config) => new UserService(repository, config), [
-    UserRepository,
-    AppConfigToken,
-  ] as const);
+  .toResolved((repository, config) => new UserService(repository, config), [UserRepository, AppConfigToken] as const);
 
-container
-  .bind(MetricsToken)
-  .toResolvedAsync(async (db) => new MetricsCollector(db), [DbToken] as const);
+container.bind(MetricsToken).toResolvedAsync(async (db) => new MetricsCollector(db), [DbToken] as const);
 
 container.bind(LegacyServiceToken).toAlias(NewServiceToken);
 ```
@@ -602,12 +597,7 @@ All errors extend `DiError` and expose a stable `code` property.
 | `TokenNotBoundError`            | `"TOKEN_NOT_BOUND"`             | Required token has no binding                                           |
 
 ```typescript
-import {
-  AmbiguousBindingError,
-  DiError,
-  ScopeViolationError,
-  TokenNotBoundError,
-} from "@codefast/di";
+import { AmbiguousBindingError, DiError, ScopeViolationError, TokenNotBoundError } from "@codefast/di";
 
 try {
   container.resolve(ServiceToken);
@@ -615,9 +605,7 @@ try {
   if (error instanceof TokenNotBoundError) {
     console.error(`Not registered: ${error.tokenName}`);
   } else if (error instanceof ScopeViolationError) {
-    console.error(
-      `Scope violation: ${error.details.consumerToken} → ${error.details.dependencyToken}`,
-    );
+    console.error(`Scope violation: ${error.details.consumerToken} → ${error.details.dependencyToken}`);
   } else if (error instanceof AmbiguousBindingError) {
     console.error(`Ambiguous: ${error.tokenName}`, error.candidateIds);
   } else if (error instanceof DiError) {

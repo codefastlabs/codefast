@@ -2,7 +2,9 @@ import { readFileSync } from "node:fs";
 import path from "node:path";
 import process from "node:process";
 import { fileURLToPath } from "node:url";
+
 import { Command } from "commander";
+
 import { createArrangeCommand } from "#/arrange/command";
 import { createMirrorCommand } from "#/mirror/command";
 import { createTagCommand } from "#/tag/command";

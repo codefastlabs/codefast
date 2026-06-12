@@ -21,8 +21,7 @@ export const slotsVariants = {
     content: "p-6 pt-0 space-y-4",
     description: "text-sm text-muted-foreground leading-relaxed",
     footer: "flex items-center justify-between p-6 pt-0 border-t border-border/50 bg-muted/20",
-    header:
-      "flex flex-col space-y-1.5 p-6 border-b border-border/50 bg-linear-to-r from-background to-muted/10",
+    header: "flex flex-col space-y-1.5 p-6 border-b border-border/50 bg-linear-to-r from-background to-muted/10",
     icon: "h-5 w-5 shrink-0",
     image: "w-full h-48 object-cover",
     title: "text-2xl font-semibold leading-none tracking-tight flex items-center gap-2",

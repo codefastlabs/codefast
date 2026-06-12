@@ -133,9 +133,7 @@ const NotificationServiceToken = token<NotificationService>("NotificationService
 // Analytics
 const AnalyticsServiceToken = token<AnalyticsService>("AnalyticsService"); // optional
 const AbTestServiceToken = token<AbTestService>("AbTestService"); // optional
-const CheckoutApplicationServiceToken = token<CheckoutApplicationService>(
-  "CheckoutApplicationService",
-);
+const CheckoutApplicationServiceToken = token<CheckoutApplicationService>("CheckoutApplicationService");
 
 // ============================================================================
 // ─── DOMAIN TYPES ───────────────────────────────────────────────────────────
@@ -397,7 +395,7 @@ class ConsoleLogger implements Logger {
       level,
       msg,
       ...this.bindings,
-      ...(meta ?? {}),
+      ...meta,
       ts: new Date().toISOString(),
     };
     console.log(JSON.stringify(line));
@@ -579,10 +577,7 @@ class MockRedis implements RedisClient {
   }
 
   async set(key: string, value: string, ttlSeconds?: number): Promise<void> {
-    this.store.set(
-      key,
-      ttlSeconds !== undefined ? { value, expiresAt: Date.now() + ttlSeconds * 1000 } : { value },
-    );
+    this.store.set(key, ttlSeconds !== undefined ? { value, expiresAt: Date.now() + ttlSeconds * 1000 } : { value });
   }
 
   async del(key: string): Promise<void> {
@@ -691,10 +686,7 @@ class ProductPostgresRepository implements ProductRepository {
   }
 
   async findById(id: string): Promise<Product | undefined> {
-    const rows = await this.db.query<Product>(
-      "SELECT * FROM products WHERE id = $1 AND active = true",
-      [id],
-    );
+    const rows = await this.db.query<Product>("SELECT * FROM products WHERE id = $1 AND active = true", [id]);
     return rows[0] ?? makeFakeProduct(id);
   }
 
@@ -704,18 +696,13 @@ class ProductPostgresRepository implements ProductRepository {
   }
 
   async findByCategory(categoryId: string, limit = 20): Promise<Array<Product>> {
-    await this.db.query("SELECT * FROM products WHERE category_id=$1 LIMIT $2", [
-      categoryId,
-      limit,
-    ]);
+    await this.db.query("SELECT * FROM products WHERE category_id=$1 LIMIT $2", [categoryId, limit]);
     return [makeFakeProduct("p1"), makeFakeProduct("p2")];
   }
 
   async search(query: string): Promise<Array<Product>> {
     this.log.info("db search", { query });
-    await this.db.query("SELECT * FROM products WHERE to_tsvector(name) @@ plainto_tsquery($1)", [
-      query,
-    ]);
+    await this.db.query("SELECT * FROM products WHERE to_tsvector(name) @@ plainto_tsquery($1)", [query]);
     return [makeFakeProduct("search-result-1"), makeFakeProduct("search-result-2")];
   }
 
@@ -728,15 +715,8 @@ class ProductPostgresRepository implements ProductRepository {
   }
 
   async listActive(limit = 50, offset = 0): Promise<Array<Product>> {
-    await this.db.query("SELECT * FROM products WHERE active=true LIMIT $1 OFFSET $2", [
-      limit,
-      offset,
-    ]);
-    return [
-      makeFakeProduct("featured-1"),
-      makeFakeProduct("featured-2"),
-      makeFakeProduct("featured-3"),
-    ];
+    await this.db.query("SELECT * FROM products WHERE active=true LIMIT $1 OFFSET $2", [limit, offset]);
+    return [makeFakeProduct("featured-1"), makeFakeProduct("featured-2"), makeFakeProduct("featured-3")];
   }
 }
 
@@ -813,19 +793,16 @@ class InventoryManager implements InventoryService {
 
   async reserve(productId: string, quantity: number): Promise<boolean> {
     this.log.info("reserving inventory", { productId, quantity });
-    await this.db.execute(
-      "UPDATE inventory SET reserved=reserved+$1 WHERE product_id=$2 AND quantity-reserved>=$1",
-      [quantity, productId],
-    );
+    await this.db.execute("UPDATE inventory SET reserved=reserved+$1 WHERE product_id=$2 AND quantity-reserved>=$1", [
+      quantity,
+      productId,
+    ]);
     await this.cache.del(`inv:${productId}`);
     return true;
   }
 
   async release(productId: string, quantity: number): Promise<void> {
-    await this.db.execute("UPDATE inventory SET reserved=reserved-$1 WHERE product_id=$2", [
-      quantity,
-      productId,
-    ]);
+    await this.db.execute("UPDATE inventory SET reserved=reserved-$1 WHERE product_id=$2", [quantity, productId]);
     await this.cache.del(`inv:${productId}`);
   }
 
@@ -894,10 +871,7 @@ class PricingManager implements PricingService {
     return result;
   }
 
-  async getBulkPrices(
-    productIds: Array<string>,
-    userId?: string,
-  ): Promise<Map<string, PriceResult>> {
+  async getBulkPrices(productIds: Array<string>, userId?: string): Promise<Map<string, PriceResult>> {
     const prices = new Map<string, PriceResult>();
     await Promise.all(
       productIds.map(async (productId) => {
@@ -909,10 +883,7 @@ class PricingManager implements PricingService {
 
   async applyCoupon(cart: Cart, couponCode: string): Promise<CouponResult> {
     this.log.info("applying coupon", { couponCode, cartId: cart.id });
-    await this.db.query(
-      "SELECT * FROM coupons WHERE code=$1 AND active=true AND expires_at>NOW()",
-      [couponCode],
-    );
+    await this.db.query("SELECT * FROM coupons WHERE code=$1 AND active=true AND expires_at>NOW()", [couponCode]);
 
     // Simulate: WELCOME20 = 20% off, SAVE10 = $10 off
     if (couponCode === "WELCOME20") {
@@ -1012,9 +983,7 @@ class ProductElasticsearchSearchService implements SearchService {
     if (results.length === 0) {
       return this.products.search(query);
     }
-    return Promise.all(
-      results.map((searchHit) => this.products.findById(searchHit.id).then((product) => product!)),
-    );
+    return Promise.all(results.map((searchHit) => this.products.findById(searchHit.id).then((product) => product!)));
   }
 
   async indexProduct(product: Product): Promise<void> {
@@ -1146,10 +1115,7 @@ class CartManager implements CartService {
 
   async addItem(cartId: string, productId: string, quantity: number): Promise<Cart> {
     this.log.info("adding item to cart", { cartId, productId, quantity });
-    const [cart, product] = await Promise.all([
-      this.cartRepo.findById(cartId),
-      this.productRepo.findById(productId),
-    ]);
+    const [cart, product] = await Promise.all([this.cartRepo.findById(cartId), this.productRepo.findById(productId)]);
     if (!cart) {
       throw new Error(`Cart ${cartId} not found`);
     }
@@ -1253,9 +1219,7 @@ class CartManager implements CartService {
       throw new Error("Cart is empty");
     }
     // Reserve inventory for all items
-    await Promise.all(
-      cart.items.map((item) => this.inventory.reserve(item.productId, item.quantity)),
-    );
+    await Promise.all(cart.items.map((item) => this.inventory.reserve(item.productId, item.quantity)));
     this.log.info("cart checked out, inventory reserved", { cartId, total: cart.total });
     return cart;
   }
@@ -1265,10 +1229,7 @@ class CartManager implements CartService {
   }
 
   private recalculate(cart: Cart): Cart {
-    const subtotal = cart.items.reduce(
-      (runningSubtotal, cartLine) => runningSubtotal + cartLine.totalPrice,
-      0,
-    );
+    const subtotal = cart.items.reduce((runningSubtotal, cartLine) => runningSubtotal + cartLine.totalPrice, 0);
     return { ...cart, subtotal, total: Math.max(0, subtotal - cart.discountAmount) };
   }
 }
@@ -1338,10 +1299,11 @@ class OrderPostgresRepository implements OrderRepository {
   }
 
   async updateStatus(id: string, status: OrderStatus, meta?: Partial<Order>): Promise<Order> {
-    await this.db.execute(
-      "UPDATE orders SET status=$1, tracking_number=$2, updated_at=NOW() WHERE id=$3",
-      [status, meta?.trackingNumber ?? null, id],
-    );
+    await this.db.execute("UPDATE orders SET status=$1, tracking_number=$2, updated_at=NOW() WHERE id=$3", [
+      status,
+      meta?.trackingNumber ?? null,
+      id,
+    ]);
     this.log.info("order status updated", { orderId: id, status });
     return { ...makeFakeOrder(id), status, ...meta } as Order;
   }
@@ -1362,10 +1324,7 @@ class FedExCarrier implements ShippingCarrier {
 
   async getQuote(address: ShippingAddress, items: Array<OrderItem>): Promise<ShippingQuote> {
     await delay(8);
-    const weight = items.reduce(
-      (totalQuantity, orderItem) => totalQuantity + orderItem.quantity,
-      0,
-    );
+    const weight = items.reduce((totalQuantity, orderItem) => totalQuantity + orderItem.quantity, 0);
     return {
       carrierId: this.carrierId,
       carrierName: this.carrierName,
@@ -1389,10 +1348,7 @@ class UpsCarrier implements ShippingCarrier {
 
   async getQuote(address: ShippingAddress, items: Array<OrderItem>): Promise<ShippingQuote> {
     await delay(8);
-    const weight = items.reduce(
-      (totalQuantity, orderItem) => totalQuantity + orderItem.quantity,
-      0,
-    );
+    const weight = items.reduce((totalQuantity, orderItem) => totalQuantity + orderItem.quantity, 0);
     return {
       carrierId: this.carrierId,
       carrierName: this.carrierName,
@@ -1433,10 +1389,7 @@ class DhlCarrier implements ShippingCarrier {
 
 interface FulfillmentService {
   fulfill(order: Order): Promise<Order>;
-  listShippingQuotes(
-    address: ShippingAddress,
-    items: Array<OrderItem>,
-  ): Promise<Array<ShippingQuote>>;
+  listShippingQuotes(address: ShippingAddress, items: Array<OrderItem>): Promise<Array<ShippingQuote>>;
   createShipment(orderId: string, carrierId: string, address: ShippingAddress): Promise<string>;
 }
 
@@ -1457,21 +1410,12 @@ class ShippingFulfillmentService implements FulfillmentService {
     return this.orderRepo.updateStatus(order.id, "processing");
   }
 
-  async listShippingQuotes(
-    address: ShippingAddress,
-    items: Array<OrderItem>,
-  ): Promise<Array<ShippingQuote>> {
-    const shippingQuotes = await Promise.all(
-      this.carriers.map((carrier) => carrier.getQuote(address, items)),
-    );
-    return shippingQuotes.sort((leftQuote, rightQuote) => leftQuote.cost - rightQuote.cost);
+  async listShippingQuotes(address: ShippingAddress, items: Array<OrderItem>): Promise<Array<ShippingQuote>> {
+    const shippingQuotes = await Promise.all(this.carriers.map((carrier) => carrier.getQuote(address, items)));
+    return shippingQuotes.toSorted((leftQuote, rightQuote) => leftQuote.cost - rightQuote.cost);
   }
 
-  async createShipment(
-    orderId: string,
-    carrierId: string,
-    address: ShippingAddress,
-  ): Promise<string> {
+  async createShipment(orderId: string, carrierId: string, address: ShippingAddress): Promise<string> {
     const selectedCarrier = this.carriers.find((carrier) => carrier.carrierId === carrierId);
     if (!selectedCarrier) {
       throw new Error(`Unknown carrier: ${carrierId}`);
@@ -1484,12 +1428,7 @@ class ShippingFulfillmentService implements FulfillmentService {
 }
 
 interface OrderService {
-  createFromCart(
-    cart: Cart,
-    userId: string,
-    address: ShippingAddress,
-    shippingCost: number,
-  ): Promise<Order>;
+  createFromCart(cart: Cart, userId: string, address: ShippingAddress, shippingCost: number): Promise<Order>;
   getOrder(id: string): Promise<Order | undefined>;
   getUserOrders(userId: string): Promise<Array<Order>>;
   cancelOrder(id: string): Promise<Order>;
@@ -1515,12 +1454,7 @@ class OrderManager implements OrderService {
     this.log = logger.child({ service: "OrderService" });
   }
 
-  async createFromCart(
-    cart: Cart,
-    userId: string,
-    address: ShippingAddress,
-    shippingCost: number,
-  ): Promise<Order> {
+  async createFromCart(cart: Cart, userId: string, address: ShippingAddress, shippingCost: number): Promise<Order> {
     const taxAmount = Math.round(cart.subtotal * 0.08); // 8% tax
     const order: Order = {
       id: this.idGenerator.generate("ord-"),
@@ -1568,12 +1502,7 @@ class OrderManager implements OrderService {
 interface PaymentGateway {
   gatewayId: string;
   displayName: string;
-  charge(
-    amount: number,
-    currency: string,
-    orderId: string,
-    meta?: Record<string, unknown>,
-  ): Promise<PaymentIntent>;
+  charge(amount: number, currency: string, orderId: string, meta?: Record<string, unknown>): Promise<PaymentIntent>;
   refund(paymentId: string, amount?: number): Promise<boolean>;
   supports(currency: string): boolean;
 }
@@ -1686,12 +1615,7 @@ interface PaymentService {
   listSupportedGateways(currency: string): Array<PaymentGateway>;
 }
 
-@injectable([
-  injectAll(PaymentGatewayToken),
-  inject(OrderRepoToken),
-  inject(EventBusToken),
-  inject(LoggerToken),
-])
+@injectable([injectAll(PaymentGatewayToken), inject(OrderRepoToken), inject(EventBusToken), inject(LoggerToken)])
 class PaymentProcessor implements PaymentService {
   private readonly log: Logger;
 
@@ -1750,9 +1674,7 @@ class PaymentProcessor implements PaymentService {
   }
 
   async refundPayment(paymentId: string, gatewayId: string, amount?: number): Promise<boolean> {
-    const selectedGateway = this.gateways.find(
-      (paymentGateway) => paymentGateway.gatewayId === gatewayId,
-    );
+    const selectedGateway = this.gateways.find((paymentGateway) => paymentGateway.gatewayId === gatewayId);
     if (!selectedGateway) {
       throw new Error(`Gateway ${gatewayId} not found`);
     }
@@ -1810,10 +1732,7 @@ class UserPostgresRepository implements UserRepository {
   }
 
   async updateLoyaltyPoints(userId: string, delta: number): Promise<number> {
-    await this.db.execute("UPDATE users SET loyalty_points=loyalty_points+$1 WHERE id=$2", [
-      delta,
-      userId,
-    ]);
+    await this.db.execute("UPDATE users SET loyalty_points=loyalty_points+$1 WHERE id=$2", [delta, userId]);
     await this.cache.del(`user:${userId}`);
     this.log.info("loyalty points updated", { userId, delta });
     return delta; // simplified: return new total
@@ -1838,23 +1757,13 @@ class AddressPostgresRepository implements AddressRepository {
   async save(address: Address): Promise<Address> {
     await this.db.execute(
       "INSERT INTO addresses(id,user_id,full_name,address_line1,city,country) VALUES($1,$2,$3,$4,$5,$6)",
-      [
-        address.id,
-        address.userId,
-        address.fullName,
-        address.addressLine1,
-        address.city,
-        address.country,
-      ],
+      [address.id, address.userId, address.fullName, address.addressLine1, address.city, address.country],
     );
     return address;
   }
 
   async setDefault(addressId: string, userId: string): Promise<void> {
-    await this.db.execute("UPDATE addresses SET is_default=(id=$1) WHERE user_id=$2", [
-      addressId,
-      userId,
-    ]);
+    await this.db.execute("UPDATE addresses SET is_default=(id=$1) WHERE user_id=$2", [addressId, userId]);
   }
 }
 
@@ -1904,10 +1813,7 @@ interface UserService {
   authenticate(email: string): Promise<User | undefined>;
   getUserProfile(userId: string): Promise<User | undefined>;
   listUserAddresses(userId: string): Promise<Array<Address>>;
-  addUserAddress(
-    userId: string,
-    addressInput: Omit<Address, "id" | "userId" | "isDefault">,
-  ): Promise<Address>;
+  addUserAddress(userId: string, addressInput: Omit<Address, "id" | "userId" | "isDefault">): Promise<Address>;
 }
 
 @injectable([
@@ -1963,10 +1869,7 @@ class UserAccountService implements UserService {
     return this.addresses.findByUserId(userId);
   }
 
-  async addUserAddress(
-    userId: string,
-    addressInput: Omit<Address, "id" | "userId" | "isDefault">,
-  ): Promise<Address> {
+  async addUserAddress(userId: string, addressInput: Omit<Address, "id" | "userId" | "isDefault">): Promise<Address> {
     const address: Address = {
       id: this.idGenerator.generate("addr-"),
       userId,
@@ -2106,11 +2009,7 @@ class NotificationDispatcher implements NotificationService {
     });
   }
 
-  async sendShippingUpdateNotification(
-    order: Order,
-    user: User,
-    trackingNumber: string,
-  ): Promise<void> {
+  async sendShippingUpdateNotification(order: Order, user: User, trackingNumber: string): Promise<void> {
     await this.send({
       userId: user.id,
       email: user.email,
@@ -2184,29 +2083,15 @@ class CheckoutOrchestrator implements CheckoutApplicationService {
       checkoutLog,
     );
     await this.notifyCustomerOrderShipped(order, customer, trackingNumber);
-    await this.trackCheckoutCompletedEvent(
-      order,
-      capturedPayment,
-      selectedShippingQuote,
-      reservedCart,
-    );
-    await this.clearCartAndLogCheckoutCompleted(
-      cartAfterDiscount,
-      order,
-      capturedPayment,
-      trackingNumber,
-      checkoutLog,
-    );
+    await this.trackCheckoutCompletedEvent(order, capturedPayment, selectedShippingQuote, reservedCart);
+    await this.clearCartAndLogCheckoutCompleted(cartAfterDiscount, order, capturedPayment, trackingNumber, checkoutLog);
   }
 
   private async assignCheckoutExperimentVariant(checkoutLog: Logger): Promise<void> {
     if (!this.abTestService) {
       return;
     }
-    const experimentVariant = await this.abTestService.getVariant(
-      this.session.userId,
-      "checkout_redesign_2024",
-    );
+    const experimentVariant = await this.abTestService.getVariant(this.session.userId, "checkout_redesign_2024");
     checkoutLog.info("a/b variant", { variant: experimentVariant.variant });
   }
 
@@ -2258,8 +2143,7 @@ class CheckoutOrchestrator implements CheckoutApplicationService {
     );
     checkoutLog.info("shipping quotes received", {
       carriers: shippingQuotes.map(
-        (quote) =>
-          `${quote.carrierName} $${(quote.cost / 100).toFixed(2)} (${quote.estimatedDays}d)`,
+        (quote) => `${quote.carrierName} $${(quote.cost / 100).toFixed(2)} (${quote.estimatedDays}d)`,
       ),
     });
     return { reservedCart, selectedShippingQuote: shippingQuotes[0]! };
@@ -2545,14 +2429,7 @@ const AnalyticsModule = Module.create("Analytics", (builder) => {
 // ---- Root app module --------------------------------------------------------
 
 const AppModule = Module.create("App", (builder) => {
-  builder.import(
-    CatalogModule,
-    CartModule,
-    OrderModule,
-    UserModule,
-    NotificationModule,
-    AnalyticsModule,
-  );
+  builder.import(CatalogModule, CartModule, OrderModule, UserModule, NotificationModule, AnalyticsModule);
   // Placeholder scoped session token — overridden per request in child container
   builder.bind(SessionToken).toConstantValue({
     userId: "bootstrap",
@@ -2574,11 +2451,7 @@ async function bootstrap() {
   console.log("╚══════════════════════════════════════════════════╝\n");
 
   // 1. Build root container from async infrastructure + all domain modules
-  const container = await Container.fromModulesAsync(
-    InfrastructureModule,
-    PaymentModule,
-    AppModule,
-  );
+  const container = await Container.fromModulesAsync(InfrastructureModule, PaymentModule, AppModule);
 
   // 2. Eagerly warm up all singletons (connects DB, Redis, etc.)
   console.log("\n[Bootstrap] Initialising all singletons...");
@@ -2594,26 +2467,20 @@ async function bootstrap() {
   const notificationService = container.resolve(NotificationServiceToken);
   const userService = container.resolve(UserServiceToken);
 
-  eventBus.subscribe<{ orderId: string; userId: string; total: number }>(
-    "order.created",
-    async ({ userId, total }) => {
-      // Award loyalty points on every order
-      await loyalty.awardPoints(userId, total);
-    },
-  );
+  eventBus.subscribe<{ orderId: string; userId: string; total: number }>("order.created", async ({ userId, total }) => {
+    // Award loyalty points on every order
+    await loyalty.awardPoints(userId, total);
+  });
 
-  eventBus.subscribe<{ orderId: string; userId: string }>(
-    "order.created",
-    async ({ orderId, userId }) => {
-      const [order, user] = await Promise.all([
-        container.resolve(OrderServiceToken).getOrder(orderId),
-        userService.getUserProfile(userId),
-      ]);
-      if (order && user) {
-        await notificationService.sendOrderConfirmationNotification(order, user);
-      }
-    },
-  );
+  eventBus.subscribe<{ orderId: string; userId: string }>("order.created", async ({ orderId, userId }) => {
+    const [order, user] = await Promise.all([
+      container.resolve(OrderServiceToken).getOrder(orderId),
+      userService.getUserProfile(userId),
+    ]);
+    if (order && user) {
+      await notificationService.sendOrderConfirmationNotification(order, user);
+    }
+  });
 
   console.log("[Bootstrap] 📡 Event handlers registered");
   console.log("[Bootstrap] 🚀 Platform ready to serve requests\n");
@@ -2690,11 +2557,7 @@ async function main(): Promise<void> {
   ];
 
   console.log("\n[Server] Processing 3 concurrent checkout requests...\n");
-  await Promise.all(
-    sessions.map((session) =>
-      handleCheckoutRequest(platform.container, session.requestId, session),
-    ),
-  );
+  await Promise.all(sessions.map((session) => handleCheckoutRequest(platform.container, session.requestId, session)));
 
   // ── Browse catalog ─────────────────────────────────────────────────────
 
@@ -2706,23 +2569,15 @@ async function main(): Promise<void> {
   // ── Dependency graph ──────────────────────────────────────────────────
   const dot = toDotGraph(platform.container.generateDependencyGraph());
   const lineCount = dot.split("\n").length;
-  console.log(
-    `\n[Graph] Dependency graph: ${lineCount} lines (paste at graphviz.org to visualize)`,
-  );
+  console.log(`\n[Graph] Dependency graph: ${lineCount} lines (paste at graphviz.org to visualize)`);
 
   // ── Container snapshot ────────────────────────────────────────────────
   const snapshot = platform.container.inspect();
   console.log(`[Inspect] Total bindings registered: ${snapshot.ownBindings.length}`);
 
-  const singletonBindings = snapshot.ownBindings.filter(
-    (binding) => binding.scope === "singleton",
-  ).length;
-  const transientBindings = snapshot.ownBindings.filter(
-    (binding) => binding.scope === "transient",
-  ).length;
-  const scopedBindings = snapshot.ownBindings.filter(
-    (binding) => binding.scope === "scoped",
-  ).length;
+  const singletonBindings = snapshot.ownBindings.filter((binding) => binding.scope === "singleton").length;
+  const transientBindings = snapshot.ownBindings.filter((binding) => binding.scope === "transient").length;
+  const scopedBindings = snapshot.ownBindings.filter((binding) => binding.scope === "scoped").length;
   console.log(
     `[Inspect] Singletons: ${singletonBindings}, Transients: ${transientBindings}, Scoped: ${scopedBindings}`,
   );

@@ -1,8 +1,8 @@
+import { ChevronRightIcon, MoreHorizontalIcon } from "lucide-react";
+import { Slot } from "radix-ui";
 import type { ComponentProps, JSX, ReactNode } from "react";
 
 import { cn } from "#/lib/utils";
-import { Slot } from "radix-ui";
-import { ChevronRightIcon, EllipsisIcon } from "lucide-react";
 
 /* -----------------------------------------------------------------------------
  * Component: Breadcrumb
@@ -38,7 +38,7 @@ function BreadcrumbList({ className, ...props }: BreadcrumbListProps): JSX.Eleme
   return (
     <ol
       className={cn(
-        "flex flex-wrap items-center gap-1.5 text-sm break-words text-muted-foreground sm:gap-2.5",
+        "flex flex-wrap items-center gap-1.5 text-sm wrap-break-word text-muted-foreground sm:gap-2.5",
         className,
       )}
       data-slot="breadcrumb-list"
@@ -60,13 +60,7 @@ type BreadcrumbItemProps = ComponentProps<"li">;
  * @since 0.3.16-canary.0
  */
 function BreadcrumbItem({ className, ...props }: BreadcrumbItemProps): JSX.Element {
-  return (
-    <li
-      className={cn("inline-flex items-center gap-1.5", className)}
-      data-slot="breadcrumb-item"
-      {...props}
-    />
-  );
+  return <li className={cn("inline-flex items-center gap-1.5", className)} data-slot="breadcrumb-item" {...props} />;
 }
 
 /* -----------------------------------------------------------------------------
@@ -88,10 +82,7 @@ function BreadcrumbLink({ asChild, className, ...props }: BreadcrumbLinkProps): 
 
   return (
     <Component
-      className={cn(
-        "transition-colors hover:text-foreground motion-reduce:transition-none",
-        className,
-      )}
+      className={cn("transition-colors hover:text-foreground", className)}
       data-slot="breadcrumb-link"
       {...props}
     />
@@ -117,6 +108,7 @@ function BreadcrumbPage({ className, ...props }: BreadcrumbPageProps): JSX.Eleme
       aria-disabled="true"
       className={cn("font-normal text-foreground", className)}
       data-slot="breadcrumb-page"
+      role="link"
       {...props}
     />
   );
@@ -134,20 +126,16 @@ type BreadcrumbSeparatorProps = ComponentProps<"li">;
 /**
  * @since 0.3.16-canary.0
  */
-function BreadcrumbSeparator({
-  children,
-  className,
-  ...props
-}: BreadcrumbSeparatorProps): JSX.Element {
+function BreadcrumbSeparator({ children, className, ...props }: BreadcrumbSeparatorProps): JSX.Element {
   return (
     <li
       aria-hidden="true"
+      className={cn("[&>svg]:size-3.5", className)}
       data-slot="breadcrumb-separator"
       role="presentation"
-      className={cn("[&>svg]:size-3.5", className)}
       {...props}
     >
-      {children ?? <ChevronRightIcon />}
+      {children ?? <ChevronRightIcon className="rtl:rotate-180" />}
     </li>
   );
 }
@@ -168,12 +156,12 @@ function BreadcrumbEllipsis({ className, ...props }: BreadcrumbEllipsisProps): J
   return (
     <span
       aria-hidden="true"
-      className={cn("flex size-4 items-center justify-center", className)}
+      className={cn("flex size-5 items-center justify-center [&>svg]:size-4", className)}
       data-slot="breadcrumb-ellipsis"
       role="presentation"
       {...props}
     >
-      <EllipsisIcon className="size-4" />
+      <MoreHorizontalIcon />
       <span className="sr-only">More</span>
     </span>
   );

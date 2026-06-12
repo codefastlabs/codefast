@@ -5,6 +5,7 @@ import {
   resolveBenchmarkPackageRootFromImportMetaUrl,
   runBenchmarkChildMain,
 } from "@codefast/benchmark-harness/child/run-benchmark-child-main";
+
 import { CVA } from "#/harness/config";
 import { collectAllClassVarianceAuthorityScenarios } from "#/scenarios/collect-class-variance-authority-scenarios";
 

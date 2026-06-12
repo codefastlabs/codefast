@@ -1,129 +1,85 @@
-import type { ReactNode } from "react";
-import { useEffect, useState } from "react";
-import { createFileRoute, useLocation } from "@tanstack/react-router";
 import { Badge } from "@codefast/ui/badge";
-import { highlightMany } from "#/lib/highlighter.ts";
-import { LazyVisible } from "#/components/lazy-visible";
-import { PreviewCard } from "#/components/preview-card";
-import { DEMOS } from "#/components/examples/demos";
-import type { CategoryId } from "#/data/components";
-import { ALL_COMPONENTS, CATEGORIES, componentPath, DEMO_COMPONENTS } from "#/data/components";
+import { createFileRoute, useLocation } from "@tanstack/react-router";
+import { useEffect } from "react";
+
+import { GroupSection } from "#/components/showcase/group-section";
+import { SHOWCASE_VIEWS } from "#/components/showcase/groups";
+import { MobileNav } from "#/components/showcase/mobile-nav";
+import { SidebarNav } from "#/components/showcase/sidebar-nav";
+import type { ViewMode } from "#/components/showcase/types";
+import { useActiveSection } from "#/components/showcase/use-active-section";
+import { COMPONENTS } from "#/registry/components";
 
 /* -------------------------------------------------------------------------- */
-/* Route — highlight every demo's source at load time, keyed by slug          */
+/* Route                                                                       */
 /* -------------------------------------------------------------------------- */
 
-type HighlightedCodes = Record<string, string>;
+interface ComponentsSearch {
+  /** Absent → fall back to the visitor's stored preference, else "category". */
+  readonly view?: ViewMode;
+}
+
+/** Parse `?view`, keeping only the two known values so links stay shareable. */
+function validateSearch(search: Record<string, unknown>): ComponentsSearch {
+  return search.view === "alphabetical" || search.view === "category" ? { view: search.view } : {};
+}
+
+/** localStorage key remembering a visitor's choice for bare `/components` visits. */
+const VIEW_STORAGE_KEY = "components:view-mode";
 
 export const Route = createFileRoute("/components/")({
+  validateSearch,
   head: () => ({
     meta: [
       { title: "Components — codefast/ui" },
       {
         name: "description",
         content:
-          "Browse the full @codefast/ui component library — live previews and copy-ready source for every component, grouped by category.",
+          "Browse the full @codefast/ui component library — live previews and copy-ready source for every component, by category or A–Z.",
       },
     ],
   }),
-  loader: async (): Promise<HighlightedCodes> => {
-    const slugs = DEMO_COMPONENTS.map((c) => c.slug);
-    const highlighted = await highlightMany(slugs.map((slug) => DEMOS[slug]?.code ?? ""));
-    const out: HighlightedCodes = {};
-    slugs.forEach((slug, i) => {
-      out[slug] = highlighted[i] ?? "";
-    });
-    return out;
-  },
-  staleTime: Infinity,
   component: ComponentsPage,
 });
-
-/* -------------------------------------------------------------------------- */
-/* Shared section component                                                    */
-/* -------------------------------------------------------------------------- */
-
-type SectionProps = {
-  readonly id: CategoryId;
-  readonly label: string;
-  readonly description: string;
-  readonly count: number;
-  readonly children: ReactNode;
-};
-
-function Section({ id, label, description, count, children }: SectionProps) {
-  return (
-    <section id={id} className="mb-20 scroll-mt-28">
-      <div className="mb-8 flex flex-col gap-3 border-b border-ui-border pb-6 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <h2 className="text-2xl leading-none font-bold tracking-tighter text-ui-fg">{label}</h2>
-          <p className="mt-1.5 max-w-xl text-sm leading-6 text-ui-muted">{description}</p>
-        </div>
-        <span className="w-fit shrink-0 rounded-full border border-ui-border bg-ui-surface px-2.5 py-1 text-xs font-semibold text-ui-muted tabular-nums">
-          {count} components
-        </span>
-      </div>
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">{children}</div>
-    </section>
-  );
-}
 
 /* -------------------------------------------------------------------------- */
 /* Page                                                                        */
 /* -------------------------------------------------------------------------- */
 
-const CATEGORY_IDS = CATEGORIES.map((c) => c.id);
+function ComponentsPage() {
+  const navigate = Route.useNavigate();
+  const search = Route.useSearch();
 
-/** Tracks which category section is currently in view for the quick-nav. */
-function useActiveSection(ids: ReadonlyArray<string>): string | null {
-  const [active, setActive] = useState<string | null>(null);
+  // The URL is the source of truth so a `?view=` link opens straight into that
+  // layout; absent the param we fall back to "category" and let the effect below
+  // upgrade to the visitor's stored preference.
+  const mode: ViewMode = search.view ?? "category";
+  const { groups, navIds } = SHOWCASE_VIEWS[mode];
 
+  const setMode = (next: ViewMode): void => {
+    localStorage.setItem(VIEW_STORAGE_KEY, next);
+    void navigate({ search: { view: next }, replace: true });
+  };
+
+  // First visit with no explicit `?view`: restore the stored preference (only
+  // when it differs from the default, to keep shared/default URLs clean).
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const visible = entries
-          .filter((entry) => entry.isIntersecting)
-          .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
-
-        if (visible[0]) {
-          setActive(visible[0].target.id);
-        }
-      },
-      { rootMargin: "-20% 0px -70% 0px" },
-    );
-
-    for (const id of ids) {
-      const element = document.getElementById(id);
-
-      if (element) {
-        observer.observe(element);
-      }
+    if (search.view !== undefined) {
+      return;
     }
 
-    return () => {
-      observer.disconnect();
-    };
-  }, [ids]);
+    if (localStorage.getItem(VIEW_STORAGE_KEY) === "alphabetical") {
+      void navigate({ search: { view: "alphabetical" }, replace: true });
+    }
+  }, [search.view, navigate]);
 
-  return active;
-}
-
-const CATEGORY_COUNTS = Object.fromEntries(
-  CATEGORIES.map(({ id }): [CategoryId, number] => [
-    id,
-    DEMO_COMPONENTS.filter((c) => c.category === id).length,
-  ]),
-) as Record<CategoryId, number>;
-
-function ComponentsPage() {
-  const hl = Route.useLoaderData();
-  const activeSection = useActiveSection(CATEGORY_IDS);
+  const activeSection = useActiveSection(navIds);
   const hash = useLocation({ select: (location) => location.hash });
 
   // Scroll to the targeted component/section after navigation. A single rAF
   // defers the scroll until after the post-navigation layout has committed, so
   // it lands on the right element and wins over scroll restoration; scroll-margin
-  // on the targets handles the sticky header + category-nav offset.
+  // on the targets handles the sticky header + nav offset.
   useEffect(() => {
     if (!hash) {
       return;
@@ -142,102 +98,32 @@ function ComponentsPage() {
   return (
     <main className="container mx-auto px-4 pt-16 pb-32">
       {/* ── Header ───────────────────────────────────────────────────── */}
-      <section className="mb-16 max-w-2xl animate-in duration-800 ease-out fill-mode-both fade-in slide-in-from-bottom-4">
+      <section className="mb-12 max-w-2xl animate-in duration-800 ease-out fill-mode-both fade-in slide-in-from-bottom-4">
         <Badge variant="outline" className="mb-5 border-ui-border text-ui-muted">
           Components
         </Badge>
         <h1 className="mb-5 text-5xl leading-none font-bold tracking-tighter text-ui-fg md:text-6xl">
-          {ALL_COMPONENTS.length}+ ready-to-use <span className="text-ui-brand">components.</span>
+          {COMPONENTS.length}+ ready-to-use <span className="text-ui-brand">components.</span>
         </h1>
         <p className="text-base leading-relaxed text-ui-muted">
-          Built on Radix UI primitives with Tailwind CSS v4. Each component ships as a named
-          sub-path import — no barrel files, no tree-shaking surprises, no config required.
+          Built on Radix UI primitives with Tailwind CSS v4. Each component ships as a named sub-path import — no barrel
+          files, no tree-shaking surprises, no config required.
         </p>
       </section>
 
-      {/* ── Full component map ───────────────────────────────────────── */}
-      <section className="mb-16 rounded-2xl border border-ui-border bg-ui-surface p-6 sm:p-8">
-        <p className="mb-5 text-sm font-semibold text-ui-fg">
-          All components
-          <span className="ml-2 font-normal text-ui-muted">
-            · {DEMO_COMPONENTS.length} components
-          </span>
-        </p>
-        <div className="flex flex-wrap gap-2">
-          {DEMO_COMPONENTS.map(({ name, slug }) => (
-            <a
-              key={slug}
-              href={`#${slug}`}
-              className="rounded-full border border-ui-border bg-ui-card px-3 py-1 text-xs font-medium text-ui-muted no-underline transition-colors hover:border-ui-brand hover:text-ui-fg"
-            >
-              {name}
-            </a>
+      {/* ── Mobile: compact jump nav (sidebar is hidden below lg) ─────── */}
+      <MobileNav groups={groups} activeSection={activeSection} mode={mode} onModeChange={setMode} />
+
+      {/* ── Two-column docs layout: sticky sidebar + card grid ────────── */}
+      <div className="lg:grid lg:grid-cols-[200px_minmax(0,1fr)] lg:gap-10 xl:grid-cols-[220px_minmax(0,1fr)]">
+        <SidebarNav groups={groups} activeSection={activeSection} mode={mode} onModeChange={setMode} />
+
+        <div className="min-w-0">
+          {groups.map((group) => (
+            <GroupSection key={group.id} group={group} />
           ))}
         </div>
-      </section>
-
-      {/* ── Category quick-nav ──────────────────────────────────────── */}
-      <nav
-        className="sticky top-12 z-30 -mx-4 mb-16 flex flex-wrap gap-2 bg-ui-bg/75 px-4 py-3 backdrop-blur-[20px]"
-        aria-label="Component categories"
-      >
-        {CATEGORIES.map(({ id, label }) => {
-          const isActive = activeSection === id;
-
-          return (
-            <a
-              key={id}
-              href={`#${id}`}
-              aria-current={isActive ? "location" : undefined}
-              className={`flex items-center gap-1.5 rounded-full border px-4 py-1.5 text-xs font-semibold no-underline transition-colors ${
-                isActive
-                  ? "border-ui-brand bg-ui-card text-ui-fg"
-                  : "border-ui-border bg-ui-surface text-ui-muted hover:border-ui-brand hover:text-ui-fg"
-              }`}
-            >
-              {label}
-              <span className="tabular-nums opacity-60">{CATEGORY_COUNTS[id]}</span>
-            </a>
-          );
-        })}
-      </nav>
-
-      {/* ── Sections — one per category, fully data-driven ───────────── */}
-      {CATEGORIES.map(({ id, label, description }) => {
-        const items = DEMO_COMPONENTS.filter((c) => c.category === id);
-
-        return (
-          <Section key={id} id={id} label={label} description={description} count={items.length}>
-            {items.map((c) => {
-              const demo = DEMOS[c.slug];
-
-              if (!demo) {
-                return null;
-              }
-
-              const { Demo } = demo;
-
-              return (
-                <PreviewCard
-                  key={c.slug}
-                  id={c.slug}
-                  slug={c.slug}
-                  name={c.name}
-                  path={componentPath(c.slug)}
-                  description={c.description}
-                  wide={c.wide ?? false}
-                  code={demo.code}
-                  highlightedCode={hl[c.slug] ?? ""}
-                >
-                  <LazyVisible>
-                    <Demo />
-                  </LazyVisible>
-                </PreviewCard>
-              );
-            })}
-          </Section>
-        );
-      })}
+      </div>
     </main>
   );
 }

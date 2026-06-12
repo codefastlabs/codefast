@@ -1,10 +1,9 @@
-import type { SeparatorVariants } from "#/variants/separator";
+import { Separator as SeparatorPrimitive } from "radix-ui";
 import type { ComponentProps, JSX } from "react";
 
 import { cn } from "#/lib/utils";
-
+import type { SeparatorVariants } from "#/variants/separator";
 import { separatorVariants } from "#/variants/separator";
-import { Separator as SeparatorPrimitive } from "radix-ui";
 
 /* -----------------------------------------------------------------------------
  * Component: Separator
@@ -19,13 +18,7 @@ interface SeparatorProps
 /**
  * @since 0.3.16-canary.0
  */
-function Separator({
-  align,
-  className,
-  decorative = true,
-  orientation,
-  ...props
-}: SeparatorProps): JSX.Element {
+function Separator({ align, className, decorative = true, orientation, ...props }: SeparatorProps): JSX.Element {
   return (
     <SeparatorPrimitive.Root
       className={separatorVariants({ align, className, orientation })}

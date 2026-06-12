@@ -9,6 +9,7 @@
 import "reflect-metadata";
 import type { Container as InversifyContainerType, ServiceIdentifier } from "inversify";
 import { Container } from "inversify";
+
 import {
   assertGraphIsWellFormed,
   type GraphDescriptor,
@@ -42,25 +43,21 @@ function bindOneNode(
   const dependencyIdentifiers = node.dependencies.map((dependencyId) => {
     const dependencyIdentifier = identifiersById.get(dependencyId);
     if (dependencyIdentifier === undefined) {
-      throw new Error(
-        `Inversify adapter: dependency identifier missing for "${node.id}" -> "${dependencyId}"`,
-      );
+      throw new Error(`Inversify adapter: dependency identifier missing for "${node.id}" -> "${dependencyId}"`);
     }
     return dependencyIdentifier;
   });
 
-  const binding = container
-    .bind<RealisticNode>(nodeIdentifier)
-    .toDynamicValue((resolutionContext): RealisticNode => {
-      const resolvedDependencies: Array<RealisticNode> = [];
-      for (const dependencyIdentifier of dependencyIdentifiers) {
-        resolvedDependencies.push(resolutionContext.get<RealisticNode>(dependencyIdentifier));
-      }
-      return {
-        __id: node.id,
-        resolvedDependencies,
-      };
-    });
+  const binding = container.bind<RealisticNode>(nodeIdentifier).toDynamicValue((resolutionContext): RealisticNode => {
+    const resolvedDependencies: Array<RealisticNode> = [];
+    for (const dependencyIdentifier of dependencyIdentifiers) {
+      resolvedDependencies.push(resolutionContext.get<RealisticNode>(dependencyIdentifier));
+    }
+    return {
+      __id: node.id,
+      resolvedDependencies,
+    };
+  });
 
   if (node.lifetime === "singleton") {
     binding.inSingletonScope();

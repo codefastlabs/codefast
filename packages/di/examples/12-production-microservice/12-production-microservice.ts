@@ -110,10 +110,7 @@ class PostgresDatabasePool implements DatabasePool {
     this.connectedAt = new Date();
   }
 
-  static async connect(
-    connectionString: string,
-    maxConnections: number,
-  ): Promise<PostgresDatabasePool> {
+  static async connect(connectionString: string, maxConnections: number): Promise<PostgresDatabasePool> {
     const pool = new PostgresDatabasePool(connectionString, maxConnections);
     await delay(30); // simulate connection handshake
     pool.connected = true;
@@ -188,10 +185,7 @@ class StubRedisClient implements RedisClient {
   }
 
   async set(key: string, value: string, exSeconds?: number): Promise<void> {
-    this.store.set(
-      key,
-      exSeconds !== undefined ? { value, expiresAt: Date.now() + exSeconds * 1000 } : { value },
-    );
+    this.store.set(key, exSeconds !== undefined ? { value, expiresAt: Date.now() + exSeconds * 1000 } : { value });
   }
 
   async del(key: string): Promise<void> {
@@ -380,11 +374,7 @@ class ServiceHealthRegistry implements HealthRegistry {
 // ============================================================================
 
 interface HttpServer {
-  addRoute(
-    method: string,
-    path: string,
-    handler: (req: MockRequest) => Promise<MockResponse>,
-  ): void;
+  addRoute(method: string, path: string, handler: (req: MockRequest) => Promise<MockResponse>): void;
   handle(method: string, path: string, body?: unknown): Promise<MockResponse>;
   start(): void;
   stop(): Promise<void>;
@@ -406,11 +396,7 @@ class MockHttpServer implements HttpServer {
   private readonly routes = new Map<string, (req: MockRequest) => Promise<MockResponse>>();
   private running = false;
 
-  addRoute(
-    method: string,
-    path: string,
-    handler: (req: MockRequest) => Promise<MockResponse>,
-  ): void {
+  addRoute(method: string, path: string, handler: (req: MockRequest) => Promise<MockResponse>): void {
     this.routes.set(`${method} ${path}`, handler);
   }
 
@@ -556,10 +542,11 @@ class JobManager implements JobService {
     const job = await this.repository.create("send_email", { to, subject, body });
     this.metrics.increment("jobs.enqueued", { type: "send_email" });
 
-    await this.databasePool.query(
-      "INSERT INTO job_audit (job_id, type, enqueued_at) VALUES ($1, $2, $3)",
-      [job.id, job.type, job.createdAt.toISOString()],
-    );
+    await this.databasePool.query("INSERT INTO job_audit (job_id, type, enqueued_at) VALUES ($1, $2, $3)", [
+      job.id,
+      job.type,
+      job.createdAt.toISOString(),
+    ]);
 
     console.log(`    [JobService] enqueued email job ${job.id} → ${to}`);
     return job;
@@ -722,11 +709,7 @@ const HttpModule = Module.createAsync("Http", async (builder) => {
         let job: Job;
         if (type === "send_email") {
           const emailPayload = payload as { to: string; subject: string; body: string };
-          job = await jobService.enqueueEmailJob(
-            emailPayload.to,
-            emailPayload.subject,
-            emailPayload.body,
-          );
+          job = await jobService.enqueueEmailJob(emailPayload.to, emailPayload.subject, emailPayload.body);
         } else {
           job = await jobService.enqueueReportJob(type, payload);
         }
@@ -806,9 +789,7 @@ async function bootstrap(): Promise<void> {
   console.log("  → GET /health");
   const healthResponse = await httpServer.handle("GET", "/health");
   const healthReport = healthResponse.body as HealthReport;
-  console.log(
-    `  ← ${healthResponse.status} status=${healthReport.status} uptime=${healthReport.uptimeSeconds}s`,
-  );
+  console.log(`  ← ${healthResponse.status} status=${healthReport.status} uptime=${healthReport.uptimeSeconds}s`);
   console.log(
     "     checks:",
     Object.entries(healthReport.checks)
@@ -827,9 +808,7 @@ async function bootstrap(): Promise<void> {
     },
   });
   const emailJobResult = emailJobResponse.body as { jobId: string; status: string };
-  console.log(
-    `  ← ${emailJobResponse.status} jobId=${emailJobResult.jobId} status=${emailJobResult.status}`,
-  );
+  console.log(`  ← ${emailJobResponse.status} jobId=${emailJobResult.jobId} status=${emailJobResult.status}`);
 
   // ── POST /jobs (generate report) ────────────────────────────────────────
   console.log("\n  → POST /jobs (generate_report)");
@@ -838,9 +817,7 @@ async function bootstrap(): Promise<void> {
     payload: { reportType: "revenue", params: { month: "2026-04", currency: "USD" } },
   });
   const reportJobResult = reportJobResponse.body as { jobId: string; status: string };
-  console.log(
-    `  ← ${reportJobResponse.status} jobId=${reportJobResult.jobId} status=${reportJobResult.status}`,
-  );
+  console.log(`  ← ${reportJobResponse.status} jobId=${reportJobResult.jobId} status=${reportJobResult.status}`);
 
   // Wait for worker to process jobs
   await delay(150);

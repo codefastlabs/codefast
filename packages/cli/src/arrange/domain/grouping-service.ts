@@ -3,19 +3,15 @@
  * Pure: only DomainSourceFile, source strings, and options — no I/O.
  */
 
-import type { GroupFileResult, PlannedGroupEdit } from "#/arrange/domain/types";
+import type { DomainCallExpression, DomainSourceFile } from "#/arrange/domain/ast/ast-node";
+import { listAllCnCallsInsideTvInSourceFile } from "#/arrange/domain/ast/collectors-tv";
 import {
   applyEditsDescending,
   buildKnownCnTvBindings,
   unwrapCnInsideTvCallReplacement,
 } from "#/arrange/domain/ast/helpers";
-import { listAllCnCallsInsideTvInSourceFile } from "#/arrange/domain/ast/collectors-tv";
-import {
-  collectGroupTargets,
-  planGroupEditForTarget,
-  targetReplaceStart,
-} from "#/arrange/domain/ast/targets";
-import type { DomainCallExpression, DomainSourceFile } from "#/arrange/domain/ast/ast-node";
+import { collectGroupTargets, planGroupEditForTarget, targetReplaceStart } from "#/arrange/domain/ast/targets";
+import type { GroupFileResult, PlannedGroupEdit } from "#/arrange/domain/types";
 
 /**
  * @since 0.3.16-canary.0
@@ -71,10 +67,7 @@ function toUnwrapPlans(
 /**
  * @since 0.3.16-canary.0
  */
-export function buildGroupFileUnwrapState(
-  domainSfInitial: DomainSourceFile,
-  sourceText: string,
-): GroupFileUnwrapState {
+export function buildGroupFileUnwrapState(domainSfInitial: DomainSourceFile, sourceText: string): GroupFileUnwrapState {
   const knownBindings = buildKnownCnTvBindings(domainSfInitial);
   const cnInTvCalls = listAllCnCallsInsideTvInSourceFile(domainSfInitial, knownBindings);
   const unwrapPlans = toUnwrapPlans(cnInTvCalls, sourceText);
@@ -84,8 +77,7 @@ export function buildGroupFileUnwrapState(
   const unwrapEdits = unwrapPlans.filter(
     (unwrapPlan) => sourceText.slice(unwrapPlan.start, unwrapPlan.end) !== unwrapPlan.replacement,
   );
-  const textAfterUnwrap =
-    unwrapEdits.length > 0 ? applyEditsDescending(sourceText, [...unwrapEdits]) : sourceText;
+  const textAfterUnwrap = unwrapEdits.length > 0 ? applyEditsDescending(sourceText, [...unwrapEdits]) : sourceText;
   const cnInTvNoReplacement = cnInTvCalls.length - unwrapPlans.length;
   return {
     cnInTvCalls,
@@ -113,9 +105,7 @@ export function tryBuildGroupFileWorkPlan(input: {
   const { filePath, sourceText, domainSfInitial, domainSfGrouped, withClassName, unwrap } = input;
 
   if (domainSfGrouped.text !== unwrap.textAfterUnwrap) {
-    throw new Error(
-      "Domain invariant: domainSfGrouped.text must match unwrap phase textAfterUnwrap",
-    );
+    throw new Error("Domain invariant: domainSfGrouped.text must match unwrap phase textAfterUnwrap");
   }
 
   const groupTargets = collectGroupTargets(domainSfGrouped, filePath);
@@ -124,7 +114,7 @@ export function tryBuildGroupFileWorkPlan(input: {
     return null;
   }
 
-  const sortedTargets = [...groupTargets].sort(
+  const sortedTargets = [...groupTargets].toSorted(
     (leftTarget, rightTarget) => targetReplaceStart(rightTarget) - targetReplaceStart(leftTarget),
   );
   const plannedGroupEdits: Array<PlannedGroupEdit> = [];
@@ -187,9 +177,7 @@ export function mergeGroupFileBodyText(work: GroupFileWorkPlan): string {
     jsxCn: plannedEdit.jsxCn,
   }));
 
-  return groupEdits.length > 0
-    ? applyEditsDescending(work.textAfterUnwrap, groupEdits)
-    : work.textAfterUnwrap;
+  return groupEdits.length > 0 ? applyEditsDescending(work.textAfterUnwrap, groupEdits) : work.textAfterUnwrap;
 }
 
 /**
