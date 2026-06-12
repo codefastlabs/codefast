@@ -9,7 +9,7 @@ import { Switch } from "@codefast/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@codefast/ui/tabs";
 import { createFileRoute, Link } from "@tanstack/react-router";
 
-import { COMPONENTS } from "#/components/examples/meta";
+import { COMPONENTS } from "#/registry/components";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -49,7 +49,7 @@ const FEATURES = [
   },
 ] as const;
 
-// Derived from COMPONENTS — single source of truth in src/components/examples/meta.ts
+// Derived from COMPONENTS — single source of truth in src/registry/components.ts
 const COMPONENT_NAMES = COMPONENTS.map((c) => c.name);
 const COMPONENT_COUNT = COMPONENTS.length;
 

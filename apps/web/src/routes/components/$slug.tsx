@@ -5,7 +5,7 @@ import { Suspense } from "react";
 
 import { DETAIL_BODY_BY_SLUG, preloadDetail } from "#/components/detail/detail-body";
 import { ComponentDetailHeader } from "#/components/detail/detail-header";
-import { COMPONENT_BY_SLUG } from "#/components/examples/meta";
+import { COMPONENT_BY_SLUG } from "#/registry/components";
 
 export const Route = createFileRoute("/components/$slug")({
   head: ({ params }: { params: { slug: string } }) => {

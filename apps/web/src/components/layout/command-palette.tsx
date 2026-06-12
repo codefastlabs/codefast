@@ -13,7 +13,7 @@ import { useNavigate } from "@tanstack/react-router";
 import { SearchIcon } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 
-import { COMPONENTS } from "#/components/examples/meta";
+import { COMPONENTS } from "#/registry/components";
 
 const PAGES = [
   { to: "/", label: "Home" },

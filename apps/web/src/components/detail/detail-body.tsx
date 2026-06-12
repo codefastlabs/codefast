@@ -18,11 +18,11 @@ import { ExamplesSection } from "#/components/detail/examples-section";
 import { GuidelinesSection } from "#/components/detail/guidelines-section";
 import { OnThisPage, type TocItem } from "#/components/detail/on-this-page";
 import { RelatedSection } from "#/components/detail/related-section";
-import { DEMO_BY_SLUG } from "#/components/examples/demos";
-import { loadDoc } from "#/components/examples/docs";
-import type { ComponentMeta } from "#/components/examples/meta";
-import { COMPONENTS, COMPONENT_BY_SLUG, NEIGHBORS_BY_SLUG } from "#/components/examples/meta";
-import type { ResolvedComponentDoc, ResolvedDocExample } from "#/components/examples/types";
+import type { ComponentMeta } from "#/registry/components";
+import { COMPONENTS, COMPONENT_BY_SLUG, NEIGHBORS_BY_SLUG } from "#/registry/components";
+import { DEMO_BY_SLUG } from "#/registry/demos";
+import { loadDoc } from "#/registry/docs";
+import type { ResolvedComponentDoc, ResolvedDocExample } from "#/registry/types";
 
 interface ComponentDetail {
   readonly component: ComponentMeta;

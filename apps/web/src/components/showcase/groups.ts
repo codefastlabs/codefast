@@ -8,12 +8,12 @@
  * match the hero's "62+".
  *
  * Pure data computed once at module load from the metadata registry in
- * `examples/meta.ts` — no UI concerns.
+ * `registry/components.ts` — no UI concerns.
  */
 
-import type { ComponentMeta } from "#/components/examples/meta";
-import { CATEGORIES, COMPONENTS } from "#/components/examples/meta";
 import type { ViewMode } from "#/components/showcase/types";
+import type { ComponentMeta } from "#/registry/components";
+import { CATEGORIES, COMPONENTS } from "#/registry/components";
 
 /** A navigable band of components: a category or an A–Z letter. */
 export interface ComponentGroup {

@@ -1,0 +1,8 @@
+import type { ComponentMetaInput } from "#/registry/components";
+
+export const meta: ComponentMetaInput = {
+  name: "Progress Circle",
+  category: "feedback",
+  order: 20,
+  description: "Circular progress indicator with optional value label and animation. Multiple sizes.",
+};
