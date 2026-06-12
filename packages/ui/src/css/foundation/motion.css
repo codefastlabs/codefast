@@ -8,6 +8,21 @@
   /* Exit curve — accelerate away; pair with data-closed:. */
   --ease-exit: cubic-bezier(0.4, 0, 1, 1);
 
+  /*
+   * Semantic durations — enter/exit pairs per surface role.
+   * Exit ≈ 60% of enter to offset the slow start of the accelerating exit curve.
+   */
+  --animation-duration-menu-in: 150ms; /* menus, tooltip — instant tools */
+  --animation-duration-menu-out: 100ms;
+  --animation-duration-popup-in: 200ms; /* popover, hover card — content surfaces */
+  --animation-duration-popup-out: 120ms;
+  --animation-duration-overlay-in: 220ms; /* dialog content + backdrop */
+  --animation-duration-overlay-out: 150ms;
+  --animation-duration-panel-in: 320ms; /* sheet, drawer — large sliding panels */
+  --animation-duration-panel-out: 220ms;
+  --animation-duration-expand-in: 200ms; /* accordion, inline disclosure */
+  --animation-duration-expand-out: 150ms;
+
   --animate-shimmer: shimmer 2.2s linear infinite;
 
   @keyframes shimmer {
