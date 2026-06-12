@@ -1,10 +1,10 @@
 import { cn } from "@codefast/ui/lib/utils";
 import { useEffect, useRef } from "react";
 
-import type { ComponentMeta } from "#/components/examples/meta";
 import type { ComponentGroup } from "#/components/showcase/groups";
 import type { ViewMode } from "#/components/showcase/types";
 import { ViewToggle } from "#/components/showcase/view-toggle";
+import type { ComponentMeta } from "#/registry/components";
 
 /** A single component entry in the sidebar; anchors to its on-page card, or
  *  links out to the detail page for docs-only components. */

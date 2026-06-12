@@ -2,11 +2,11 @@ import { Link } from "@tanstack/react-router";
 import { ArrowUpRightIcon } from "lucide-react";
 import { Suspense } from "react";
 
-import { DEMO_BY_SLUG } from "#/components/examples/demos";
-import type { ComponentMeta } from "#/components/examples/meta";
-import { componentPath } from "#/components/examples/meta";
 import { LazyVisible } from "#/components/showcase/lazy-visible";
 import { PreviewCard } from "#/components/showcase/preview-card";
+import type { ComponentMeta } from "#/registry/components";
+import { componentPath } from "#/registry/components";
+import { DEMO_BY_SLUG } from "#/registry/demos";
 
 /** A live-demo preview card, or a docs-only card for components without a demo. */
 export function ComponentCard({ component }: { component: ComponentMeta }) {

@@ -2,7 +2,7 @@ import { Badge } from "@codefast/ui/badge";
 import { Button } from "@codefast/ui/button";
 import { createFileRoute, Link } from "@tanstack/react-router";
 
-import { COMPONENTS } from "#/components/examples/meta";
+import { COMPONENTS } from "#/registry/components";
 
 const COMPONENT_COUNT = COMPONENTS.length;
 

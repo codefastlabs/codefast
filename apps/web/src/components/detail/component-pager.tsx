@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { ArrowLeftIcon, ArrowRightIcon } from "lucide-react";
 
-import type { ComponentMeta } from "#/components/examples/meta";
+import type { ComponentMeta } from "#/registry/components";
 
 interface ComponentPagerProps {
   readonly previous?: ComponentMeta | undefined;

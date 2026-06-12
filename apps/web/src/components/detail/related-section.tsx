@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 
 import { DocSection } from "#/components/detail/doc-section";
-import { COMPONENT_BY_SLUG } from "#/components/examples/meta";
+import { COMPONENT_BY_SLUG } from "#/registry/components";
 
 interface RelatedSectionProps {
   /** Third-party packages the component is built on. */

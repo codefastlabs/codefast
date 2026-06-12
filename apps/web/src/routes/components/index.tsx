@@ -2,13 +2,13 @@ import { Badge } from "@codefast/ui/badge";
 import { createFileRoute, useLocation } from "@tanstack/react-router";
 import { useEffect } from "react";
 
-import { COMPONENTS } from "#/components/examples/meta";
 import { GroupSection } from "#/components/showcase/group-section";
 import { SHOWCASE_VIEWS } from "#/components/showcase/groups";
 import { MobileNav } from "#/components/showcase/mobile-nav";
 import { SidebarNav } from "#/components/showcase/sidebar-nav";
 import type { ViewMode } from "#/components/showcase/types";
 import { useActiveSection } from "#/components/showcase/use-active-section";
+import { COMPONENTS } from "#/registry/components";
 
 /* -------------------------------------------------------------------------- */
 /* Route                                                                       */
