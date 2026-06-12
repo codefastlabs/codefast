@@ -1,6 +1,6 @@
-import { PaginationControlled } from "#/components/examples/pagination.controlled";
-import { PaginationPrevNext } from "#/components/examples/pagination.prev-next";
-import { PaginationSimple } from "#/components/examples/pagination.simple";
+import { PaginationControlled } from "#/components/examples/pagination.controlled.example";
+import { PaginationPrevNext } from "#/components/examples/pagination.prev-next.example";
+import { PaginationSimple } from "#/components/examples/pagination.simple.example";
 import { docSource, docAnatomy } from "#/components/examples/source";
 import type { ComponentDoc } from "#/components/examples/types";
 

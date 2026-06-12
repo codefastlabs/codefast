@@ -9,9 +9,14 @@
  */
 import type { SourceRef } from "#/components/examples/types";
 
-/** Ref to `examples/<slug>.<name>.tsx` — e.g. `docSource("button", "sizes")`, or `docSource(slug, "demo")` for the card demo. */
+/** Ref to `examples/<slug>.<name>.example.tsx` — e.g. `docSource("button", "sizes")`. */
 export function docSource(slug: string, name: string): SourceRef {
-  return `./${slug}.${name}.tsx`;
+  return `./${slug}.${name}.example.tsx`;
+}
+
+/** Ref to `examples/<slug>.demo.tsx`, for docs that show the card demo as an example. */
+export function docDemo(slug: string): SourceRef {
+  return `./${slug}.demo.tsx`;
 }
 
 /** Ref to the `examples/<slug>.anatomy.txt` composition skeleton. */

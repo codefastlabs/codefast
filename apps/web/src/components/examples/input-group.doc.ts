@@ -1,6 +1,6 @@
-import { InputGroupAddons } from "#/components/examples/input-group.addons";
-import { InputGroupCopy } from "#/components/examples/input-group.copy";
-import { InputGroupValidation } from "#/components/examples/input-group.validation";
+import { InputGroupAddons } from "#/components/examples/input-group.addons.example";
+import { InputGroupCopy } from "#/components/examples/input-group.copy.example";
+import { InputGroupValidation } from "#/components/examples/input-group.validation.example";
 import { docSource, docAnatomy } from "#/components/examples/source";
 import type { ComponentDoc } from "#/components/examples/types";
 

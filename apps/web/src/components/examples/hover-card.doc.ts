@@ -1,6 +1,6 @@
-import { HoverCardLinkPreview } from "#/components/examples/hover-card.link-preview";
-import { HoverCardProfile } from "#/components/examples/hover-card.profile";
-import { HoverCardStat } from "#/components/examples/hover-card.stat";
+import { HoverCardLinkPreview } from "#/components/examples/hover-card.link-preview.example";
+import { HoverCardProfile } from "#/components/examples/hover-card.profile.example";
+import { HoverCardStat } from "#/components/examples/hover-card.stat.example";
 import { docSource, docAnatomy } from "#/components/examples/source";
 import type { ComponentDoc } from "#/components/examples/types";
 

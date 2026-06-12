@@ -1,6 +1,6 @@
-import { KbdInButton } from "#/components/examples/kbd.in-button";
-import { KbdInline } from "#/components/examples/kbd.inline";
-import { KbdShortcuts } from "#/components/examples/kbd.shortcuts";
+import { KbdInButton } from "#/components/examples/kbd.in-button.example";
+import { KbdInline } from "#/components/examples/kbd.inline.example";
+import { KbdShortcuts } from "#/components/examples/kbd.shortcuts.example";
 import { docSource, docAnatomy } from "#/components/examples/source";
 import type { ComponentDoc } from "#/components/examples/types";
 

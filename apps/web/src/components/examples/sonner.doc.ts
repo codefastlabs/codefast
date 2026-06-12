@@ -1,6 +1,6 @@
-import { SonnerAction } from "#/components/examples/sonner.action";
-import { SonnerLoading } from "#/components/examples/sonner.loading";
-import { SonnerTypes } from "#/components/examples/sonner.types";
+import { SonnerAction } from "#/components/examples/sonner.action.example";
+import { SonnerLoading } from "#/components/examples/sonner.loading.example";
+import { SonnerTypes } from "#/components/examples/sonner.types.example";
 import { docSource, docAnatomy } from "#/components/examples/source";
 import type { ComponentDoc } from "#/components/examples/types";
 

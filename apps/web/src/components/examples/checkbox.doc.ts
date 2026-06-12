@@ -1,6 +1,6 @@
-import { CheckboxSelectAll } from "#/components/examples/checkbox.select-all";
-import { CheckboxStates } from "#/components/examples/checkbox.states";
-import { CheckboxWithDescription } from "#/components/examples/checkbox.with-description";
+import { CheckboxSelectAll } from "#/components/examples/checkbox.select-all.example";
+import { CheckboxStates } from "#/components/examples/checkbox.states.example";
+import { CheckboxWithDescription } from "#/components/examples/checkbox.with-description.example";
 import { docSource, docAnatomy } from "#/components/examples/source";
 import type { ComponentDoc } from "#/components/examples/types";
 

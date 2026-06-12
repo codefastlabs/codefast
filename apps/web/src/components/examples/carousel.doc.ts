@@ -1,6 +1,6 @@
-import { CarouselGallery } from "#/components/examples/carousel.gallery";
-import { CarouselMultiple } from "#/components/examples/carousel.multiple";
-import { CarouselVertical } from "#/components/examples/carousel.vertical";
+import { CarouselGallery } from "#/components/examples/carousel.gallery.example";
+import { CarouselMultiple } from "#/components/examples/carousel.multiple.example";
+import { CarouselVertical } from "#/components/examples/carousel.vertical.example";
 import { docSource, docAnatomy } from "#/components/examples/source";
 import type { ComponentDoc } from "#/components/examples/types";
 

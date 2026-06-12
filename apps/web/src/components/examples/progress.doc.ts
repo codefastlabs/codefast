@@ -1,6 +1,6 @@
-import { ProgressAnimated } from "#/components/examples/progress.animated";
-import { ProgressColors } from "#/components/examples/progress.colors";
-import { ProgressLabeled } from "#/components/examples/progress.labeled";
+import { ProgressAnimated } from "#/components/examples/progress.animated.example";
+import { ProgressColors } from "#/components/examples/progress.colors.example";
+import { ProgressLabeled } from "#/components/examples/progress.labeled.example";
 import { docSource, docAnatomy } from "#/components/examples/source";
 import type { ComponentDoc } from "#/components/examples/types";
 

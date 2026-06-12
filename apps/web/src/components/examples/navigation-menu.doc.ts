@@ -1,6 +1,6 @@
-import { NavigationMenuDropdown } from "#/components/examples/navigation-menu.dropdown";
-import { NavigationMenuMega } from "#/components/examples/navigation-menu.mega";
-import { NavigationMenuSimple } from "#/components/examples/navigation-menu.simple";
+import { NavigationMenuDropdown } from "#/components/examples/navigation-menu.dropdown.example";
+import { NavigationMenuMega } from "#/components/examples/navigation-menu.mega.example";
+import { NavigationMenuSimple } from "#/components/examples/navigation-menu.simple.example";
 import { docSource, docAnatomy } from "#/components/examples/source";
 import type { ComponentDoc } from "#/components/examples/types";
 

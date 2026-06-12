@@ -1,7 +1,7 @@
 import { docSource, docAnatomy } from "#/components/examples/source";
-import { SpinnerInButton } from "#/components/examples/spinner.in-button";
-import { SpinnerLabeled } from "#/components/examples/spinner.labeled";
-import { SpinnerSizes } from "#/components/examples/spinner.sizes";
+import { SpinnerInButton } from "#/components/examples/spinner.in-button.example";
+import { SpinnerLabeled } from "#/components/examples/spinner.labeled.example";
+import { SpinnerSizes } from "#/components/examples/spinner.sizes.example";
 import type { ComponentDoc } from "#/components/examples/types";
 
 export const spinnerDoc: ComponentDoc = {

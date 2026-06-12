@@ -1,6 +1,6 @@
-import { CardLogin } from "#/components/examples/card.login";
-import { CardOverview } from "#/components/examples/card.overview";
-import { CardSimple } from "#/components/examples/card.simple";
+import { CardLogin } from "#/components/examples/card.login.example";
+import { CardOverview } from "#/components/examples/card.overview.example";
+import { CardSimple } from "#/components/examples/card.simple.example";
 import { docSource, docAnatomy } from "#/components/examples/source";
 import type { ComponentDoc } from "#/components/examples/types";
 

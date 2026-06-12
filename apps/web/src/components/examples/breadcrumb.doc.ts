@@ -1,6 +1,6 @@
-import { BreadcrumbCollapsed } from "#/components/examples/breadcrumb.collapsed";
-import { BreadcrumbCustomSeparator } from "#/components/examples/breadcrumb.custom-separator";
-import { BreadcrumbPath } from "#/components/examples/breadcrumb.path";
+import { BreadcrumbCollapsed } from "#/components/examples/breadcrumb.collapsed.example";
+import { BreadcrumbCustomSeparator } from "#/components/examples/breadcrumb.custom-separator.example";
+import { BreadcrumbPath } from "#/components/examples/breadcrumb.path.example";
 import { docSource, docAnatomy } from "#/components/examples/source";
 import type { ComponentDoc } from "#/components/examples/types";
 

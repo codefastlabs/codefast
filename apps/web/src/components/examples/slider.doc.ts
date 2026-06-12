@@ -1,6 +1,6 @@
-import { SliderRange } from "#/components/examples/slider.range";
-import { SliderStepped } from "#/components/examples/slider.stepped";
-import { SliderVolume } from "#/components/examples/slider.volume";
+import { SliderRange } from "#/components/examples/slider.range.example";
+import { SliderStepped } from "#/components/examples/slider.stepped.example";
+import { SliderVolume } from "#/components/examples/slider.volume.example";
 import { docSource, docAnatomy } from "#/components/examples/source";
 import type { ComponentDoc } from "#/components/examples/types";
 

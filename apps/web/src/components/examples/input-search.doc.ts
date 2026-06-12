@@ -1,6 +1,6 @@
-import { InputSearchControlled } from "#/components/examples/input-search.controlled";
-import { InputSearchDisabled } from "#/components/examples/input-search.disabled";
-import { InputSearchWithResults } from "#/components/examples/input-search.with-results";
+import { InputSearchControlled } from "#/components/examples/input-search.controlled.example";
+import { InputSearchDisabled } from "#/components/examples/input-search.disabled.example";
+import { InputSearchWithResults } from "#/components/examples/input-search.with-results.example";
 import { docSource, docAnatomy } from "#/components/examples/source";
 import type { ComponentDoc } from "#/components/examples/types";
 

@@ -1,6 +1,6 @@
-import { ResizableHorizontal } from "#/components/examples/resizable.horizontal";
-import { ResizablePanels } from "#/components/examples/resizable.panels";
-import { ResizableVertical } from "#/components/examples/resizable.vertical";
+import { ResizableHorizontal } from "#/components/examples/resizable.horizontal.example";
+import { ResizablePanels } from "#/components/examples/resizable.panels.example";
+import { ResizableVertical } from "#/components/examples/resizable.vertical.example";
 import { docSource, docAnatomy } from "#/components/examples/source";
 import type { ComponentDoc } from "#/components/examples/types";
 

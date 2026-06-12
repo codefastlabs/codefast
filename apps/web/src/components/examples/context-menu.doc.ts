@@ -1,6 +1,6 @@
-import { ContextMenuActions } from "#/components/examples/context-menu.actions";
-import { ContextMenuEditor } from "#/components/examples/context-menu.editor";
-import { ContextMenuSimple } from "#/components/examples/context-menu.simple";
+import { ContextMenuActions } from "#/components/examples/context-menu.actions.example";
+import { ContextMenuEditor } from "#/components/examples/context-menu.editor.example";
+import { ContextMenuSimple } from "#/components/examples/context-menu.simple.example";
 import { docSource, docAnatomy } from "#/components/examples/source";
 import type { ComponentDoc } from "#/components/examples/types";
 

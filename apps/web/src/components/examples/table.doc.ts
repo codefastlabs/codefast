@@ -1,7 +1,7 @@
 import { docSource, docAnatomy } from "#/components/examples/source";
-import { TableInvoices } from "#/components/examples/table.invoices";
-import { TableSelection } from "#/components/examples/table.selection";
-import { TableSimple } from "#/components/examples/table.simple";
+import { TableInvoices } from "#/components/examples/table.invoices.example";
+import { TableSelection } from "#/components/examples/table.selection.example";
+import { TableSimple } from "#/components/examples/table.simple.example";
 import type { ComponentDoc } from "#/components/examples/types";
 
 export const tableDoc: ComponentDoc = {

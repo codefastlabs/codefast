@@ -1,6 +1,6 @@
-import { LabelRequired } from "#/components/examples/label.required";
-import { LabelSwitchRow } from "#/components/examples/label.switch-row";
-import { LabelWithControls } from "#/components/examples/label.with-controls";
+import { LabelRequired } from "#/components/examples/label.required.example";
+import { LabelSwitchRow } from "#/components/examples/label.switch-row.example";
+import { LabelWithControls } from "#/components/examples/label.with-controls.example";
 import { docSource, docAnatomy } from "#/components/examples/source";
 import type { ComponentDoc } from "#/components/examples/types";
 

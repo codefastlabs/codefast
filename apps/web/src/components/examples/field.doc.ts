@@ -1,6 +1,6 @@
-import { FieldLayouts } from "#/components/examples/field.layouts";
-import { FieldValidation } from "#/components/examples/field.validation";
-import { FieldWithSelect } from "#/components/examples/field.with-select";
+import { FieldLayouts } from "#/components/examples/field.layouts.example";
+import { FieldValidation } from "#/components/examples/field.validation.example";
+import { FieldWithSelect } from "#/components/examples/field.with-select.example";
 import { docSource, docAnatomy } from "#/components/examples/source";
 import type { ComponentDoc } from "#/components/examples/types";
 

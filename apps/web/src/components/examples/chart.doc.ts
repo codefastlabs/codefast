@@ -1,6 +1,6 @@
-import { ChartArea } from "#/components/examples/chart.area";
-import { ChartBar } from "#/components/examples/chart.bar";
-import { ChartLine } from "#/components/examples/chart.line";
+import { ChartArea } from "#/components/examples/chart.area.example";
+import { ChartBar } from "#/components/examples/chart.bar.example";
+import { ChartLine } from "#/components/examples/chart.line.example";
 import { docSource, docAnatomy } from "#/components/examples/source";
 import type { ComponentDoc } from "#/components/examples/types";
 

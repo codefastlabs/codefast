@@ -1,7 +1,7 @@
 import { docSource, docAnatomy } from "#/components/examples/source";
-import { TextareaCounter } from "#/components/examples/textarea.counter";
-import { TextareaRows } from "#/components/examples/textarea.rows";
-import { TextareaStates } from "#/components/examples/textarea.states";
+import { TextareaCounter } from "#/components/examples/textarea.counter.example";
+import { TextareaRows } from "#/components/examples/textarea.rows.example";
+import { TextareaStates } from "#/components/examples/textarea.states.example";
 import type { ComponentDoc } from "#/components/examples/types";
 
 export const textareaDoc: ComponentDoc = {

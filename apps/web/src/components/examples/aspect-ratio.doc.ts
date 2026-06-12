@@ -1,8 +1,8 @@
 import { AspectRatioDemo } from "#/components/examples/aspect-ratio.demo";
-import { AspectRatioPortrait } from "#/components/examples/aspect-ratio.portrait";
-import { AspectRatioRtl } from "#/components/examples/aspect-ratio.rtl";
-import { AspectRatioSquare } from "#/components/examples/aspect-ratio.square";
-import { docSource, docAnatomy } from "#/components/examples/source";
+import { AspectRatioPortrait } from "#/components/examples/aspect-ratio.portrait.example";
+import { AspectRatioRtl } from "#/components/examples/aspect-ratio.rtl.example";
+import { AspectRatioSquare } from "#/components/examples/aspect-ratio.square.example";
+import { docAnatomy, docDemo, docSource } from "#/components/examples/source";
 import type { ComponentDoc } from "#/components/examples/types";
 
 export const aspectRatioDoc: ComponentDoc = {
@@ -12,7 +12,7 @@ export const aspectRatioDoc: ComponentDoc = {
       title: "Demo",
       description: "Lock an image to a 16/9 box — it holds the shape at any width.",
       Demo: AspectRatioDemo,
-      source: docSource("aspect-ratio", "demo"),
+      source: docDemo("aspect-ratio"),
     },
     {
       id: "aspect-ratio-square",

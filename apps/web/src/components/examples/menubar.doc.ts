@@ -1,6 +1,6 @@
-import { MenubarAppMenu } from "#/components/examples/menubar.app-menu";
-import { MenubarSelections } from "#/components/examples/menubar.selections";
-import { MenubarSubmenu } from "#/components/examples/menubar.submenu";
+import { MenubarAppMenu } from "#/components/examples/menubar.app-menu.example";
+import { MenubarSelections } from "#/components/examples/menubar.selections.example";
+import { MenubarSubmenu } from "#/components/examples/menubar.submenu.example";
 import { docSource, docAnatomy } from "#/components/examples/source";
 import type { ComponentDoc } from "#/components/examples/types";
 

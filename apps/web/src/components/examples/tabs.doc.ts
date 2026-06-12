@@ -1,7 +1,7 @@
 import { docSource, docAnatomy } from "#/components/examples/source";
-import { TabsDefault } from "#/components/examples/tabs.default";
-import { TabsLine } from "#/components/examples/tabs.line";
-import { TabsWithIcons } from "#/components/examples/tabs.with-icons";
+import { TabsDefault } from "#/components/examples/tabs.default.example";
+import { TabsLine } from "#/components/examples/tabs.line.example";
+import { TabsWithIcons } from "#/components/examples/tabs.with-icons.example";
 import type { ComponentDoc } from "#/components/examples/types";
 
 export const tabsDoc: ComponentDoc = {

@@ -1,6 +1,6 @@
-import { ScrollAreaHorizontal } from "#/components/examples/scroll-area.horizontal";
-import { ScrollAreaList } from "#/components/examples/scroll-area.list";
-import { ScrollAreaProse } from "#/components/examples/scroll-area.prose";
+import { ScrollAreaHorizontal } from "#/components/examples/scroll-area.horizontal.example";
+import { ScrollAreaList } from "#/components/examples/scroll-area.list.example";
+import { ScrollAreaProse } from "#/components/examples/scroll-area.prose.example";
 import { docSource, docAnatomy } from "#/components/examples/source";
 import type { ComponentDoc } from "#/components/examples/types";
 

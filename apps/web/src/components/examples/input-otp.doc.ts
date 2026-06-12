@@ -1,6 +1,6 @@
-import { InputOTPDisabled } from "#/components/examples/input-otp.disabled";
-import { InputOTPPattern } from "#/components/examples/input-otp.pattern";
-import { InputOTPVerify } from "#/components/examples/input-otp.verify";
+import { InputOTPDisabled } from "#/components/examples/input-otp.disabled.example";
+import { InputOTPPattern } from "#/components/examples/input-otp.pattern.example";
+import { InputOTPVerify } from "#/components/examples/input-otp.verify.example";
 import { docSource, docAnatomy } from "#/components/examples/source";
 import type { ComponentDoc } from "#/components/examples/types";
 

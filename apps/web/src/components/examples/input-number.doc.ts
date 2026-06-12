@@ -1,6 +1,6 @@
-import { InputNumberFormats } from "#/components/examples/input-number.formats";
-import { InputNumberQuantity } from "#/components/examples/input-number.quantity";
-import { InputNumberStates } from "#/components/examples/input-number.states";
+import { InputNumberFormats } from "#/components/examples/input-number.formats.example";
+import { InputNumberQuantity } from "#/components/examples/input-number.quantity.example";
+import { InputNumberStates } from "#/components/examples/input-number.states.example";
 import { docSource, docAnatomy } from "#/components/examples/source";
 import type { ComponentDoc } from "#/components/examples/types";
 

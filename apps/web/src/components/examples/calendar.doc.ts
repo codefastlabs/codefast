@@ -1,6 +1,6 @@
-import { CalendarDisabled } from "#/components/examples/calendar.disabled";
-import { CalendarRange } from "#/components/examples/calendar.range";
-import { CalendarSingle } from "#/components/examples/calendar.single";
+import { CalendarDisabled } from "#/components/examples/calendar.disabled.example";
+import { CalendarRange } from "#/components/examples/calendar.range.example";
+import { CalendarSingle } from "#/components/examples/calendar.single.example";
 import { docSource, docAnatomy } from "#/components/examples/source";
 import type { ComponentDoc } from "#/components/examples/types";
 

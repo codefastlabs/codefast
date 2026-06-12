@@ -1,7 +1,7 @@
 import { docSource, docAnatomy } from "#/components/examples/source";
-import { SwitchDisabled } from "#/components/examples/switch.disabled";
-import { SwitchSizes } from "#/components/examples/switch.sizes";
-import { SwitchWithLabel } from "#/components/examples/switch.with-label";
+import { SwitchDisabled } from "#/components/examples/switch.disabled.example";
+import { SwitchSizes } from "#/components/examples/switch.sizes.example";
+import { SwitchWithLabel } from "#/components/examples/switch.with-label.example";
 import type { ComponentDoc } from "#/components/examples/types";
 
 export const switchDoc: ComponentDoc = {

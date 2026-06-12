@@ -1,6 +1,6 @@
-import { RadioCardsInterval } from "#/components/examples/radio-cards.interval";
-import { RadioCardsPayment } from "#/components/examples/radio-cards.payment";
-import { RadioCardsPlans } from "#/components/examples/radio-cards.plans";
+import { RadioCardsInterval } from "#/components/examples/radio-cards.interval.example";
+import { RadioCardsPayment } from "#/components/examples/radio-cards.payment.example";
+import { RadioCardsPlans } from "#/components/examples/radio-cards.plans.example";
 import { docSource, docAnatomy } from "#/components/examples/source";
 import type { ComponentDoc } from "#/components/examples/types";
 

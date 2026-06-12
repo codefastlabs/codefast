@@ -1,6 +1,6 @@
-import { CommandDialogExample } from "#/components/examples/command.dialog";
-import { CommandPalette } from "#/components/examples/command.palette";
-import { CommandSimple } from "#/components/examples/command.simple";
+import { CommandDialogExample } from "#/components/examples/command.dialog.example";
+import { CommandPalette } from "#/components/examples/command.palette.example";
+import { CommandSimple } from "#/components/examples/command.simple.example";
 import { docSource, docAnatomy } from "#/components/examples/source";
 import type { ComponentDoc } from "#/components/examples/types";
 

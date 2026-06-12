@@ -13,11 +13,13 @@
  *
  * FILE NAMING — everything for a component lives flat in `examples/`. Dots
  * separate the structural segments (slug, example name, role suffix); hyphens
- * only ever appear inside a segment, so kebab-case slugs stay unambiguous:
- *   `<slug>.doc.ts`        the doc (this registry's key source)
- *   `<slug>.demo.tsx`      the showcase card demo (see `demos.tsx`)
- *   `<slug>.<example>.tsx` one file per doc example
- *   `<slug>.anatomy.txt`   the composition skeleton
+ * only ever appear inside a segment, so kebab-case slugs stay unambiguous.
+ * Every file declares its role with a trailing suffix:
+ *   `<slug>.meta.ts`               metadata (see `meta.ts`)
+ *   `<slug>.doc.ts`                the doc (this registry's key source)
+ *   `<slug>.demo.tsx`              the showcase card demo (see `demos.tsx`)
+ *   `<slug>.<name>.example.tsx`    one file per doc example
+ *   `<slug>.anatomy.txt`           the composition skeleton
  *
  * TO ADD A COMPONENT: create its example files plus a `<slug>.doc.ts` exporting
  * a single `ComponentDoc` whose examples point at their files via
@@ -39,8 +41,10 @@ export type {
 /** Doc module loaders, keyed by path e.g. `./button.doc.ts`. */
 const docModules = import.meta.glob<Record<string, unknown>>("./*.doc.ts");
 
-/** Every example/anatomy file pre-highlighted at build time, keyed by SourceRef. */
-const sourceModules = import.meta.glob<HighlightedSource>(["./*.{tsx,txt}", "!./demos.tsx"], { query: "?shiki" });
+/** Every example/demo/anatomy file pre-highlighted at build time, keyed by SourceRef. */
+const sourceModules = import.meta.glob<HighlightedSource>("./*.{example.tsx,demo.tsx,anatomy.txt}", {
+  query: "?shiki",
+});
 
 /** `./button.doc.ts` → `button`. */
 function slugFromDocPath(path: string): string {

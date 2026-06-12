@@ -1,10 +1,10 @@
-import { AlertActionExample } from "#/components/examples/alert.action";
-import { AlertBasic } from "#/components/examples/alert.basic";
-import { AlertColors } from "#/components/examples/alert.colors";
+import { AlertActionExample } from "#/components/examples/alert.action.example";
+import { AlertBasic } from "#/components/examples/alert.basic.example";
+import { AlertColors } from "#/components/examples/alert.colors.example";
 import { AlertDemo } from "#/components/examples/alert.demo";
-import { AlertDestructive } from "#/components/examples/alert.destructive";
-import { AlertRtl } from "#/components/examples/alert.rtl";
-import { docSource, docAnatomy } from "#/components/examples/source";
+import { AlertDestructive } from "#/components/examples/alert.destructive.example";
+import { AlertRtl } from "#/components/examples/alert.rtl.example";
+import { docAnatomy, docDemo, docSource } from "#/components/examples/source";
 import type { ComponentDoc } from "#/components/examples/types";
 
 export const alertDoc: ComponentDoc = {
@@ -14,7 +14,7 @@ export const alertDoc: ComponentDoc = {
       title: "Demo",
       description: "Stack alerts to surface several status messages at once.",
       Demo: AlertDemo,
-      source: docSource("alert", "demo"),
+      source: docDemo("alert"),
       previewClassName: "items-start",
     },
     {

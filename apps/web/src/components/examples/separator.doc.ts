@@ -1,6 +1,6 @@
-import { SeparatorListSections } from "#/components/examples/separator.list-sections";
-import { SeparatorOrientations } from "#/components/examples/separator.orientations";
-import { SeparatorStats } from "#/components/examples/separator.stats";
+import { SeparatorListSections } from "#/components/examples/separator.list-sections.example";
+import { SeparatorOrientations } from "#/components/examples/separator.orientations.example";
+import { SeparatorStats } from "#/components/examples/separator.stats.example";
 import { docSource, docAnatomy } from "#/components/examples/source";
 import type { ComponentDoc } from "#/components/examples/types";
 

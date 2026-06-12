@@ -1,6 +1,6 @@
-import { PopoverDimensions } from "#/components/examples/popover.dimensions";
-import { PopoverShare } from "#/components/examples/popover.share";
-import { PopoverSimple } from "#/components/examples/popover.simple";
+import { PopoverDimensions } from "#/components/examples/popover.dimensions.example";
+import { PopoverShare } from "#/components/examples/popover.share.example";
+import { PopoverSimple } from "#/components/examples/popover.simple.example";
 import { docSource, docAnatomy } from "#/components/examples/source";
 import type { ComponentDoc } from "#/components/examples/types";
 

@@ -1,6 +1,6 @@
-import { AvatarFallbackExample } from "#/components/examples/avatar.fallback";
-import { AvatarGroupExample } from "#/components/examples/avatar.group";
-import { AvatarSizes } from "#/components/examples/avatar.sizes";
+import { AvatarFallbackExample } from "#/components/examples/avatar.fallback.example";
+import { AvatarGroupExample } from "#/components/examples/avatar.group.example";
+import { AvatarSizes } from "#/components/examples/avatar.sizes.example";
 import { docSource, docAnatomy } from "#/components/examples/source";
 import type { ComponentDoc } from "#/components/examples/types";
 
