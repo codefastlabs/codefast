@@ -9,7 +9,7 @@ import { tv } from "#/lib/utils";
  * @since 0.3.16-canary.0
  */
 const sheetContentVariants = tv({
-  base: "fixed z-50 flex flex-col gap-4 bg-popover bg-clip-padding text-sm text-popover-foreground shadow-lg transition ease-ui data-open:animate-in data-open:animation-duration-380 data-open:fade-in-0 data-closed:animate-out data-closed:ease-exit data-closed:animation-duration-280 data-closed:fade-out-0",
+  base: "fixed z-50 flex flex-col gap-4 bg-popover bg-clip-padding text-sm text-popover-foreground shadow-lg transition ease-ui data-open:animate-in data-open:animation-duration-panel-in data-open:fade-in-0 data-closed:animate-out data-closed:ease-exit data-closed:animation-duration-panel-out data-closed:fade-out-0",
   defaultVariants: {
     side: "right",
   },
