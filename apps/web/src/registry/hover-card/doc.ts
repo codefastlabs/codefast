@@ -1,32 +1,24 @@
-import { HoverCardLinkPreview } from "#/registry/hover-card/link-preview.example";
-import { HoverCardProfile } from "#/registry/hover-card/profile.example";
-import { HoverCardStat } from "#/registry/hover-card/stat.example";
+import { HoverCardRtl } from "#/registry/hover-card/rtl.example";
+import { HoverCardSides } from "#/registry/hover-card/sides.example";
 import { docSource, docAnatomy } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const hoverCardDoc: ComponentDoc = {
   examples: [
     {
-      id: "profile",
-      title: "Profile preview",
-      description: "Hover the trigger to reveal a rich preview after a short delay.",
-      Demo: HoverCardProfile,
-      source: docSource("hover-card", "profile"),
-      previewClassName: "min-h-40",
+      id: "hover-card-rtl",
+      title: "RTL",
+      description: "Right-to-left layout support for languages such as Arabic and Hebrew.",
+      Demo: HoverCardRtl,
+      source: docSource("hover-card", "rtl"),
+      direction: "rtl",
     },
     {
-      id: "link-preview",
-      title: "Inline link preview",
-      description: "Reveal context when hovering an inline link.",
-      Demo: HoverCardLinkPreview,
-      source: docSource("hover-card", "link-preview"),
-    },
-    {
-      id: "stat",
-      title: "Stat breakdown",
-      description: "Expand a summary number into its details on hover.",
-      Demo: HoverCardStat,
-      source: docSource("hover-card", "stat"),
+      id: "hover-card-sides",
+      title: "Sides",
+      description: "For sighted users to preview content available behind a link.",
+      Demo: HoverCardSides,
+      source: docSource("hover-card", "sides"),
     },
   ],
   anatomy: docAnatomy("hover-card"),

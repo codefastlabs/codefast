@@ -1,32 +1,42 @@
-import { DrawerCart } from "#/registry/drawer/cart.example";
-import { DrawerProfile } from "#/registry/drawer/profile.example";
-import { DrawerSide } from "#/registry/drawer/side.example";
+import { DrawerDialogDemo } from "#/registry/drawer/dialog.example";
+import { DrawerRtl } from "#/registry/drawer/rtl.example";
+import { DrawerScrollableContent } from "#/registry/drawer/scrollable-content.example";
+import { DrawerWithSides } from "#/registry/drawer/sides.example";
 import { docSource, docAnatomy } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const drawerDoc: ComponentDoc = {
   examples: [
     {
-      id: "profile",
-      title: "Edit form",
-      description: "A bottom sheet with drag-to-dismiss, holding a short form.",
-      Demo: DrawerProfile,
-      source: docSource("drawer", "profile"),
-      previewClassName: "min-h-40",
+      id: "drawer-dialog",
+      title: "Responsive Dialog",
+      description:
+        "You can combine the Dialog and Drawer components to create a responsive dialog. This renders a Dialog component on desktop and a Drawer on mobile.",
+      Demo: DrawerDialogDemo,
+      source: docSource("drawer", "dialog"),
     },
     {
-      id: "cart",
-      title: "Content drawer",
-      description: "Hold a list, summary, or any rich content above the footer.",
-      Demo: DrawerCart,
-      source: docSource("drawer", "cart"),
+      id: "drawer-rtl",
+      title: "RTL",
+      description: "Right-to-left layout support for languages such as Arabic and Hebrew.",
+      Demo: DrawerRtl,
+      source: docSource("drawer", "rtl"),
+      direction: "rtl",
     },
     {
-      id: "side",
-      title: "From the side",
-      description: "Use the direction prop to slide in from an edge.",
-      Demo: DrawerSide,
-      source: docSource("drawer", "side"),
+      id: "drawer-scrollable-content",
+      title: "Scrollable Content",
+      description: "Keep actions visible while the content scrolls.",
+      Demo: DrawerScrollableContent,
+      source: docSource("drawer", "scrollable-content"),
+    },
+    {
+      id: "drawer-sides",
+      title: "Sides",
+      description:
+        "Use the direction prop to set the side of the drawer. Available options are top, right, bottom, and left.",
+      Demo: DrawerWithSides,
+      source: docSource("drawer", "sides"),
     },
   ],
   anatomy: docAnatomy("drawer"),

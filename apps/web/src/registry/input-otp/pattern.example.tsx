@@ -1,17 +1,21 @@
-import { REGEXP_ONLY_DIGITS, InputOTP, InputOTPGroup, InputOTPSlot } from "@codefast/ui/input-otp";
+import { Field, FieldLabel } from "@codefast/ui/field";
+import { REGEXP_ONLY_DIGITS } from "@codefast/ui/input-otp";
+import { InputOTP, InputOTPGroup, InputOTPSlot } from "@codefast/ui/input-otp";
 
 export function InputOTPPattern() {
   return (
-    <div className="flex flex-col items-center gap-4">
-      <InputOTP maxLength={4} pattern={REGEXP_ONLY_DIGITS}>
+    <Field className="w-fit">
+      <FieldLabel htmlFor="digits-only">Digits Only</FieldLabel>
+      <InputOTP id="digits-only" maxLength={6} pattern={REGEXP_ONLY_DIGITS}>
         <InputOTPGroup>
           <InputOTPSlot index={0} />
           <InputOTPSlot index={1} />
           <InputOTPSlot index={2} />
           <InputOTPSlot index={3} />
+          <InputOTPSlot index={4} />
+          <InputOTPSlot index={5} />
         </InputOTPGroup>
       </InputOTP>
-      <p className="text-sm text-ui-muted">Digits only — letters are rejected as you type.</p>
-    </div>
+    </Field>
   );
 }
