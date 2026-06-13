@@ -563,7 +563,7 @@ export function ChartPanel({
             className="bg-bh-overlay-soft absolute inset-0 z-10 flex flex-col items-center justify-center gap-4 rounded-2xl p-6 text-center backdrop-blur-md"
             id="chart-empty-state"
           >
-            <p className="text-bh-meta max-w-[24rem] text-sm leading-normal">{emptyReason}</p>
+            <p className="text-bh-meta max-w-96 text-sm leading-normal">{emptyReason}</p>
             <div className="flex flex-wrap items-center justify-center gap-2">
               {envKey && (
                 <button

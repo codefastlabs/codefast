@@ -7,7 +7,7 @@ export function CarouselSize() {
       opts={{
         align: "start",
       }}
-      className="w-full max-w-[12rem] sm:max-w-xs md:max-w-sm"
+      className="w-full max-w-48 sm:max-w-xs md:max-w-sm"
     >
       <CarouselContent>
         {Array.from({ length: 5 }).map((_, index) => (

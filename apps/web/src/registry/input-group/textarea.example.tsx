@@ -11,11 +11,7 @@ export function InputGroupTextareaExample() {
   return (
     <div className="grid w-full max-w-md gap-4">
       <InputGroup>
-        <InputGroupTextarea
-          id="textarea-code-32"
-          placeholder="console.log('Hello, world!');"
-          className="min-h-[200px]"
-        />
+        <InputGroupTextarea id="textarea-code-32" placeholder="console.log('Hello, world!');" className="min-h-50" />
         <InputGroupAddon align="block-end" className="border-t">
           <InputGroupText>Line 1, Column 1</InputGroupText>
           <InputGroupButton size="sm" className="ms-auto" variant="default">

@@ -68,7 +68,7 @@ export function InputGroupTextareaExamples() {
       <Field>
         <FieldLabel htmlFor="textarea-comment-31">Addon (Buttons)</FieldLabel>
         <InputGroup>
-          <InputGroupTextarea id="textarea-comment-31" placeholder="Share your thoughts..." className="min-h-[120px]" />
+          <InputGroupTextarea id="textarea-comment-31" placeholder="Share your thoughts..." className="min-h-30" />
           <InputGroupAddon align="block-end">
             <InputGroupButton variant="ghost" className="ms-auto" size="sm">
               Cancel
@@ -85,7 +85,7 @@ export function InputGroupTextareaExamples() {
           <InputGroupTextarea
             id="textarea-code-32"
             placeholder="console.log('Hello, world!');"
-            className="min-h-[300px] py-3"
+            className="min-h-75 py-3"
           />
           <InputGroupAddon align="block-start" className="border-b">
             <InputGroupText className="font-mono font-medium">

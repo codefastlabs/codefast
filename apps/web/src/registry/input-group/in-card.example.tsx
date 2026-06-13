@@ -43,11 +43,7 @@ export function InputGroupInCard() {
           <Field>
             <FieldLabel htmlFor="feedback-textarea">Feedback & Comments</FieldLabel>
             <InputGroup>
-              <InputGroupTextarea
-                id="feedback-textarea"
-                placeholder="Share your thoughts..."
-                className="min-h-[100px]"
-              />
+              <InputGroupTextarea id="feedback-textarea" placeholder="Share your thoughts..." className="min-h-25" />
               <InputGroupAddon align="block-end">
                 <InputGroupText>0/500 characters</InputGroupText>
               </InputGroupAddon>

@@ -3,7 +3,7 @@ import { Switch } from "@codefast/ui/switch";
 
 export function SwitchSizes() {
   return (
-    <FieldGroup className="w-full max-w-[10rem]">
+    <FieldGroup className="w-full max-w-40">
       <Field orientation="horizontal">
         <Switch id="switch-size-sm" size="sm" />
         <FieldLabel htmlFor="switch-size-sm">Small</FieldLabel>
