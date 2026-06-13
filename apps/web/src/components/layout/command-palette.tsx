@@ -11,8 +11,13 @@ import {
 import { Kbd } from "@codefast/ui/kbd";
 import { useNavigate } from "@tanstack/react-router";
 import { SearchIcon } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useEffectEvent, useState, useSyncExternalStore } from "react";
 
+import {
+  getCommandPaletteAriaKeyshortcuts,
+  getCommandPaletteKeyboardAction,
+  getIsMacPlatform,
+} from "#/components/layout/command-palette-keyboard";
 import { COMPONENTS } from "#/registry/components";
 
 const PAGES = [
@@ -22,27 +27,42 @@ const PAGES = [
 ] as const;
 
 /**
- * Global ⌘K / Ctrl+K command palette. Renders its own trigger (a search field
- * on desktop, an icon button on mobile) plus the dialog, and reads the
- * lightweight component registry so it never pulls the heavy demo bundle.
+ * Global command palette: `/`, ⌘/ / Ctrl+/, and ⌘K / Ctrl+K. Renders its own
+ * trigger (a search field on desktop, an icon button on mobile) plus the dialog,
+ * and reads the lightweight component registry so it never pulls the heavy demo bundle.
  */
 export function CommandPalette() {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
+  const isMac = useSyncExternalStore(
+    () => () => {},
+    getIsMacPlatform,
+    () => false,
+  );
+  const ariaKeyshortcuts = getCommandPaletteAriaKeyshortcuts(isMac);
 
-  // ⌘K (mac) / Ctrl+K (others) toggles the palette from anywhere.
-  useEffect(() => {
-    function onKeyDown(event: KeyboardEvent): void {
-      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
-        event.preventDefault();
-        setOpen((value) => !value);
-      }
+  const onGlobalKeyDown = useEffectEvent((event: KeyboardEvent): void => {
+    const action = getCommandPaletteKeyboardAction(event, open);
+
+    if (!action) {
+      return;
     }
 
-    document.addEventListener("keydown", onKeyDown);
+    event.preventDefault();
+
+    if (action === "toggle") {
+      setOpen((value) => !value);
+      return;
+    }
+
+    setOpen(true);
+  });
+
+  useEffect(() => {
+    document.addEventListener("keydown", onGlobalKeyDown);
 
     return () => {
-      document.removeEventListener("keydown", onKeyDown);
+      document.removeEventListener("keydown", onGlobalKeyDown);
     };
   }, []);
 
@@ -75,12 +95,13 @@ export function CommandPalette() {
         onClick={() => {
           setOpen(true);
         }}
+        aria-keyshortcuts={ariaKeyshortcuts}
         aria-label="Search components"
         variant="secondary"
       >
         <SearchIcon className="size-4 shrink-0" />
         <span className="hidden flex-1 text-left text-sm lg:inline">Search components…</span>
-        <Kbd className="hidden lg:inline-flex">⌘K</Kbd>
+        <Kbd className="hidden lg:inline-flex">/</Kbd>
       </Button>
 
       <CommandDialog open={open} onOpenChange={setOpen}>
