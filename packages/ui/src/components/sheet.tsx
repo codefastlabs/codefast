@@ -79,7 +79,7 @@ function SheetContent({
         {showCloseButton ? (
           <SheetPrimitive.Close
             className={buttonVariants({
-              className: "absolute top-4 right-4",
+              className: "absolute top-4 end-4",
               size: "icon-sm",
               variant: "ghost",
             })}
