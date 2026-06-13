@@ -1,32 +1,32 @@
-import { ProgressAnimated } from "#/registry/progress/animated.example";
-import { ProgressColors } from "#/registry/progress/colors.example";
-import { ProgressLabeled } from "#/registry/progress/labeled.example";
+import { ProgressControlled } from "#/registry/progress/controlled.example";
+import { ProgressWithLabel } from "#/registry/progress/label.example";
+import { ProgressRtl } from "#/registry/progress/rtl.example";
 import { docSource, docAnatomy } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const progressDoc: ComponentDoc = {
   examples: [
     {
-      id: "animated",
-      title: "Animated",
-      description: "Press Start — the value climbs over time and the indicator animates smoothly.",
-      Demo: ProgressAnimated,
-      source: docSource("progress", "animated"),
+      id: "progress-controlled",
+      title: "Controlled",
+      description: "A progress bar that can be controlled by a slider.",
+      Demo: ProgressControlled,
+      source: docSource("progress", "controlled"),
     },
     {
-      id: "colors",
-      title: "Themed bars",
-      description: "Recolour the indicator slot per threshold to signal healthy → critical.",
-      Demo: ProgressColors,
-      source: docSource("progress", "colors"),
+      id: "progress-label",
+      title: "Label",
+      description: "Use a Field component to add a label to the progress bar.",
+      Demo: ProgressWithLabel,
+      source: docSource("progress", "label"),
     },
     {
-      id: "labeled",
-      title: "With labels",
-      description: "Pair each bar with a name and a percentage.",
-      Demo: ProgressLabeled,
-      source: docSource("progress", "labeled"),
-      previewClassName: "items-start",
+      id: "progress-rtl",
+      title: "RTL",
+      description: "Right-to-left layout support for languages such as Arabic and Hebrew.",
+      Demo: ProgressRtl,
+      source: docSource("progress", "rtl"),
+      direction: "rtl",
     },
   ],
   anatomy: docAnatomy("progress"),

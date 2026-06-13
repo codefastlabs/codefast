@@ -1,33 +1,40 @@
-import { SeparatorListSections } from "#/registry/separator/list-sections.example";
-import { SeparatorOrientations } from "#/registry/separator/orientations.example";
-import { SeparatorStats } from "#/registry/separator/stats.example";
+import { SeparatorList } from "#/registry/separator/list.example";
+import { SeparatorMenu } from "#/registry/separator/menu.example";
+import { SeparatorRtl } from "#/registry/separator/rtl.example";
+import { SeparatorVertical } from "#/registry/separator/vertical.example";
 import { docSource, docAnatomy } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const separatorDoc: ComponentDoc = {
   examples: [
     {
-      id: "orientations",
-      title: "Horizontal & vertical",
-      description: "Divide stacked blocks horizontally, or inline items vertically.",
-      Demo: SeparatorOrientations,
-      source: docSource("separator", "orientations"),
-      previewClassName: "items-start",
+      id: "separator-list",
+      title: "List",
+      description: "Horizontal separators between list items.",
+      Demo: SeparatorList,
+      source: docSource("separator", "list"),
     },
     {
-      id: "list-sections",
-      title: "Grouped list",
-      description: "Separate the sections of a settings or navigation list.",
-      Demo: SeparatorListSections,
-      source: docSource("separator", "list-sections"),
-      previewClassName: "items-start",
+      id: "separator-menu",
+      title: "Menu",
+      description: "Vertical separators between menu items with descriptions.",
+      Demo: SeparatorMenu,
+      source: docSource("separator", "menu"),
     },
     {
-      id: "stats",
-      title: "Vertical dividers",
-      description: "Split inline stats with vertical rules of a fixed height.",
-      Demo: SeparatorStats,
-      source: docSource("separator", "stats"),
+      id: "separator-rtl",
+      title: "RTL",
+      description: "Right-to-left layout support for languages such as Arabic and Hebrew.",
+      Demo: SeparatorRtl,
+      source: docSource("separator", "rtl"),
+      direction: "rtl",
+    },
+    {
+      id: "separator-vertical",
+      title: "Vertical",
+      description: "Use orientation='vertical' for a vertical separator.",
+      Demo: SeparatorVertical,
+      source: docSource("separator", "vertical"),
     },
   ],
   anatomy: docAnatomy("separator"),

@@ -1,7 +1,8 @@
 import { docSource, docAnatomy } from "#/registry/source";
+import { TooltipDisabled } from "#/registry/tooltip/disabled.example";
+import { TooltipKeyboard } from "#/registry/tooltip/keyboard.example";
+import { TooltipRtl } from "#/registry/tooltip/rtl.example";
 import { TooltipSides } from "#/registry/tooltip/sides.example";
-import { TooltipToolbar } from "#/registry/tooltip/toolbar.example";
-import { TooltipWithShortcut } from "#/registry/tooltip/with-shortcut.example";
 import type { ComponentDoc } from "#/registry/types";
 
 export const tooltipDoc: ComponentDoc = {
@@ -14,18 +15,27 @@ export const tooltipDoc: ComponentDoc = {
       source: docSource("tooltip", "sides"),
     },
     {
-      id: "with-shortcut",
-      title: "With shortcut",
-      description: "Tooltips can hold rich content, including Kbd shortcut hints.",
-      Demo: TooltipWithShortcut,
-      source: docSource("tooltip", "with-shortcut"),
+      id: "tooltip-disabled",
+      title: "Disabled Button",
+      description: "Show a tooltip on a disabled button by wrapping it with a span.",
+      Demo: TooltipDisabled,
+      source: docSource("tooltip", "disabled"),
     },
     {
-      id: "toolbar",
-      title: "Icon toolbar",
-      description: "One tooltip per icon button in a toolbar.",
-      Demo: TooltipToolbar,
-      source: docSource("tooltip", "toolbar"),
+      id: "tooltip-keyboard",
+      title: "With Keyboard Shortcut",
+      description:
+        "A popup that displays information related to an element when the element receives keyboard focus or the mouse hovers over it.",
+      Demo: TooltipKeyboard,
+      source: docSource("tooltip", "keyboard"),
+    },
+    {
+      id: "tooltip-rtl",
+      title: "RTL",
+      description: "Right-to-left layout support for languages such as Arabic and Hebrew.",
+      Demo: TooltipRtl,
+      source: docSource("tooltip", "rtl"),
+      direction: "rtl",
     },
   ],
   anatomy: docAnatomy("tooltip"),

@@ -1,32 +1,16 @@
-import { NavigationMenuDropdown } from "#/registry/navigation-menu/dropdown.example";
-import { NavigationMenuMega } from "#/registry/navigation-menu/mega.example";
-import { NavigationMenuSimple } from "#/registry/navigation-menu/simple.example";
+import { NavigationMenuRtl } from "#/registry/navigation-menu/rtl.example";
 import { docSource, docAnatomy } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const navigationMenuDoc: ComponentDoc = {
   examples: [
     {
-      id: "mega",
-      title: "Mega menu",
-      description: "Hover or focus a trigger to reveal an animated panel of links.",
-      Demo: NavigationMenuMega,
-      source: docSource("navigation-menu", "mega"),
-      previewClassName: "min-h-44 items-start",
-    },
-    {
-      id: "simple",
-      title: "Plain links",
-      description: "A flat menu with no dropdowns — just top-level links.",
-      Demo: NavigationMenuSimple,
-      source: docSource("navigation-menu", "simple"),
-    },
-    {
-      id: "dropdown",
-      title: "Single dropdown",
-      description: "One trigger opening a list of described links.",
-      Demo: NavigationMenuDropdown,
-      source: docSource("navigation-menu", "dropdown"),
+      id: "navigation-menu-rtl",
+      title: "RTL",
+      description: "Right-to-left layout support for languages such as Arabic and Hebrew.",
+      Demo: NavigationMenuRtl,
+      source: docSource("navigation-menu", "rtl"),
+      direction: "rtl",
     },
   ],
   anatomy: docAnatomy("navigation-menu"),

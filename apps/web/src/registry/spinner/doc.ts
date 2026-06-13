@@ -1,31 +1,66 @@
 import { docSource, docAnatomy } from "#/registry/source";
-import { SpinnerInButton } from "#/registry/spinner/in-button.example";
-import { SpinnerLabeled } from "#/registry/spinner/labeled.example";
-import { SpinnerSizes } from "#/registry/spinner/sizes.example";
+import { SpinnerBadge } from "#/registry/spinner/badge.example";
+import { SpinnerButton } from "#/registry/spinner/button.example";
+import { SpinnerCustom } from "#/registry/spinner/custom.example";
+import { SpinnerEmpty } from "#/registry/spinner/empty.example";
+import { SpinnerInputGroup } from "#/registry/spinner/input-group.example";
+import { SpinnerRtl } from "#/registry/spinner/rtl.example";
+import { SpinnerSize } from "#/registry/spinner/size.example";
 import type { ComponentDoc } from "#/registry/types";
 
 export const spinnerDoc: ComponentDoc = {
   examples: [
     {
-      id: "sizes",
-      title: "Sizes",
-      description: "Size and colour the spinner with className — it inherits the current text colour.",
-      Demo: SpinnerSizes,
-      source: docSource("spinner", "sizes"),
+      id: "spinner-badge",
+      title: "Badge",
+      description:
+        "Add a spinner to a badge to indicate a loading state. Place the <Spinner /> before the label with data-icon='inline-start' for a start position, or after the label with data-icon='inline-end' for an end position.",
+      Demo: SpinnerBadge,
+      source: docSource("spinner", "badge"),
     },
     {
-      id: "in-button",
-      title: "In a button & with a label",
-      description: "Drop it into a disabled button, or pass children as a screen-reader label.",
-      Demo: SpinnerInButton,
-      source: docSource("spinner", "in-button"),
+      id: "spinner-button",
+      title: "Button",
+      description:
+        "Add a spinner to a button to indicate a loading state. Place the <Spinner /> before the label with data-icon='inline-start' for a start position, or after the label with data-icon='inline-end' for an end position.",
+      Demo: SpinnerButton,
+      source: docSource("spinner", "button"),
     },
     {
-      id: "labeled",
-      title: "Loading block",
-      description: "A centered spinner with a status label.",
-      Demo: SpinnerLabeled,
-      source: docSource("spinner", "labeled"),
+      id: "spinner-custom",
+      title: "Customization",
+      description: "Replace the default spinner icon with any other icon.",
+      Demo: SpinnerCustom,
+      source: docSource("spinner", "custom"),
+    },
+    {
+      id: "spinner-empty",
+      title: "Empty",
+      description: "An indicator that can be used to show a loading state.",
+      Demo: SpinnerEmpty,
+      source: docSource("spinner", "empty"),
+    },
+    {
+      id: "spinner-input-group",
+      title: "Input Group",
+      description: "An indicator that can be used to show a loading state.",
+      Demo: SpinnerInputGroup,
+      source: docSource("spinner", "input-group"),
+    },
+    {
+      id: "spinner-rtl",
+      title: "RTL",
+      description: "Right-to-left layout support for languages such as Arabic and Hebrew.",
+      Demo: SpinnerRtl,
+      source: docSource("spinner", "rtl"),
+      direction: "rtl",
+    },
+    {
+      id: "spinner-size",
+      title: "Size",
+      description: "Use the size-* utility class to change the size of the spinner.",
+      Demo: SpinnerSize,
+      source: docSource("spinner", "size"),
     },
   ],
   anatomy: docAnatomy("spinner"),
