@@ -1,18 +1,17 @@
+import { InputOTPAlphanumeric } from "#/registry/input-otp/alphanumeric.example";
+import { InputOTPControlled } from "#/registry/input-otp/controlled.example";
 import { InputOTPDisabled } from "#/registry/input-otp/disabled.example";
+import { InputOTPForm } from "#/registry/input-otp/form.example";
+import { InputOTPFourDigits } from "#/registry/input-otp/four-digits.example";
+import { InputOTPInvalid } from "#/registry/input-otp/invalid.example";
 import { InputOTPPattern } from "#/registry/input-otp/pattern.example";
-import { InputOTPVerify } from "#/registry/input-otp/verify.example";
+import { InputOTPRtl } from "#/registry/input-otp/rtl.example";
+import { InputOTPWithSeparator } from "#/registry/input-otp/separator.example";
 import { docSource, docAnatomy } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const inputOtpDoc: ComponentDoc = {
   examples: [
-    {
-      id: "verify",
-      title: "Verify a code",
-      description: "Controlled value — the demo validates 123456 and reacts the moment all 6 land.",
-      Demo: InputOTPVerify,
-      source: docSource("input-otp", "verify"),
-    },
     {
       id: "pattern",
       title: "Digits only",
@@ -26,6 +25,56 @@ export const inputOtpDoc: ComponentDoc = {
       description: "A non-interactive code input.",
       Demo: InputOTPDisabled,
       source: docSource("input-otp", "disabled"),
+    },
+    {
+      id: "input-otp-alphanumeric",
+      title: "Alphanumeric",
+      description: "Use REGEXP_ONLY_DIGITS_AND_CHARS to accept both letters and numbers.",
+      Demo: InputOTPAlphanumeric,
+      source: docSource("input-otp", "alphanumeric"),
+    },
+    {
+      id: "input-otp-controlled",
+      title: "Controlled",
+      description: "Use the value and onChange props to control the input value.",
+      Demo: InputOTPControlled,
+      source: docSource("input-otp", "controlled"),
+    },
+    {
+      id: "input-otp-form",
+      title: "Form",
+      description: "Accessible one-time password component with copy-paste functionality.",
+      Demo: InputOTPForm,
+      source: docSource("input-otp", "form"),
+    },
+    {
+      id: "input-otp-four-digits",
+      title: "Four Digits",
+      description: "A common pattern for PIN codes. This uses the pattern={REGEXP_ONLY_DIGITS} prop.",
+      Demo: InputOTPFourDigits,
+      source: docSource("input-otp", "four-digits"),
+    },
+    {
+      id: "input-otp-invalid",
+      title: "Invalid",
+      description: "Use aria-invalid on the slots to show an error state.",
+      Demo: InputOTPInvalid,
+      source: docSource("input-otp", "invalid"),
+    },
+    {
+      id: "input-otp-rtl",
+      title: "RTL",
+      description: "Right-to-left layout support for languages such as Arabic and Hebrew.",
+      Demo: InputOTPRtl,
+      source: docSource("input-otp", "rtl"),
+      direction: "rtl",
+    },
+    {
+      id: "input-otp-separator",
+      title: "Separator",
+      description: "Use the <InputOTPSeparator /> component to add a separator between input groups.",
+      Demo: InputOTPWithSeparator,
+      source: docSource("input-otp", "separator"),
     },
   ],
   anatomy: docAnatomy("input-otp"),

@@ -1,33 +1,48 @@
-import { DialogBasic } from "#/registry/dialog/basic.example";
-import { DialogControlled } from "#/registry/dialog/controlled.example";
-import { DialogScroll } from "#/registry/dialog/scroll.example";
+import { DialogCloseButton } from "#/registry/dialog/close-button.example";
+import { DialogNoCloseButton } from "#/registry/dialog/no-close-button.example";
+import { DialogRtl } from "#/registry/dialog/rtl.example";
+import { DialogScrollableContent } from "#/registry/dialog/scrollable-content.example";
+import { DialogStickyFooter } from "#/registry/dialog/sticky-footer.example";
 import { docSource, docAnatomy } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const dialogDoc: ComponentDoc = {
   examples: [
     {
-      id: "basic",
-      title: "Basic",
-      description: "A focus-trapped modal with header, body, and footer actions.",
-      Demo: DialogBasic,
-      source: docSource("dialog", "basic"),
-      previewClassName: "min-h-40",
+      id: "dialog-close-button",
+      title: "Custom Close Button",
+      description: "Replace the default close control with your own button.",
+      Demo: DialogCloseButton,
+      source: docSource("dialog", "close-button"),
     },
     {
-      id: "scrollable",
-      title: "Scrollable body",
-      description: "Keep the header and footer fixed while the body scrolls.",
-      Demo: DialogScroll,
-      source: docSource("dialog", "scroll"),
-      previewClassName: "min-h-40",
+      id: "dialog-no-close-button",
+      title: "No Close Button",
+      description: "Use showCloseButton={false} to hide the close button.",
+      Demo: DialogNoCloseButton,
+      source: docSource("dialog", "no-close-button"),
     },
     {
-      id: "controlled",
-      title: "Controlled open",
-      description: "Drive the open state from your component.",
-      Demo: DialogControlled,
-      source: docSource("dialog", "controlled"),
+      id: "dialog-rtl",
+      title: "RTL",
+      description: "Right-to-left layout support for languages such as Arabic and Hebrew.",
+      Demo: DialogRtl,
+      source: docSource("dialog", "rtl"),
+      direction: "rtl",
+    },
+    {
+      id: "dialog-scrollable-content",
+      title: "Scrollable Content",
+      description: "Long content can scroll while the header stays in view.",
+      Demo: DialogScrollableContent,
+      source: docSource("dialog", "scrollable-content"),
+    },
+    {
+      id: "dialog-sticky-footer",
+      title: "Sticky Footer",
+      description: "Keep actions visible while the content scrolls.",
+      Demo: DialogStickyFooter,
+      source: docSource("dialog", "sticky-footer"),
     },
   ],
   anatomy: docAnatomy("dialog"),

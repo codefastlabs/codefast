@@ -1,34 +1,64 @@
-import { EmptyMinimal } from "#/registry/empty/minimal.example";
-import { EmptySearch } from "#/registry/empty/search.example";
-import { EmptyState } from "#/registry/empty/state.example";
+import { EmptyAvatarGroup } from "#/registry/empty/avatar-group.example";
+import { EmptyAvatar } from "#/registry/empty/avatar.example";
+import { EmptyMuted } from "#/registry/empty/background.example";
+import { EmptyInCard } from "#/registry/empty/card.example";
+import { EmptyInputGroup } from "#/registry/empty/input-group.example";
+import { EmptyOutline } from "#/registry/empty/outline.example";
+import { EmptyRtl } from "#/registry/empty/rtl.example";
 import { docSource, docAnatomy } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const emptyDoc: ComponentDoc = {
   examples: [
     {
-      id: "state",
-      title: "Empty state with action",
-      description: "Media, title, description, and a clear next step in one composed block.",
-      Demo: EmptyState,
-      source: docSource("empty", "state"),
-      previewClassName: "items-start",
+      id: "empty-avatar",
+      title: "Avatar",
+      description: "Use the EmptyMedia component to display an avatar in the empty state.",
+      Demo: EmptyAvatar,
+      source: docSource("empty", "avatar"),
     },
     {
-      id: "search",
-      title: "No search results",
-      description: "Swap the icon and action for a zero-results state.",
-      Demo: EmptySearch,
-      source: docSource("empty", "search"),
-      previewClassName: "items-start",
+      id: "empty-avatar-group",
+      title: "Avatar Group",
+      description: "Use the EmptyMedia component to display an avatar group in the empty state.",
+      Demo: EmptyAvatarGroup,
+      source: docSource("empty", "avatar-group"),
     },
     {
-      id: "minimal",
-      title: "Without media",
-      description: "Just a title and description — no icon or action.",
-      Demo: EmptyMinimal,
-      source: docSource("empty", "minimal"),
-      previewClassName: "items-start",
+      id: "empty-background",
+      title: "Background",
+      description: "Use the bg-* and bg-gradient-* utilities to add a background to the empty state.",
+      Demo: EmptyMuted,
+      source: docSource("empty", "background"),
+    },
+    {
+      id: "empty-card",
+      title: "Card",
+      description: "Wrap the Empty component in a Card to create an empty-state card.",
+      Demo: EmptyInCard,
+      source: docSource("empty", "card"),
+    },
+    {
+      id: "empty-input-group",
+      title: "InputGroup",
+      description: "You can add an InputGroup component to the EmptyContent component.",
+      Demo: EmptyInputGroup,
+      source: docSource("empty", "input-group"),
+    },
+    {
+      id: "empty-outline",
+      title: "Outline",
+      description: "Use the border utility class to create an outline empty state.",
+      Demo: EmptyOutline,
+      source: docSource("empty", "outline"),
+    },
+    {
+      id: "empty-rtl",
+      title: "RTL",
+      description: "Right-to-left layout support for languages such as Arabic and Hebrew.",
+      Demo: EmptyRtl,
+      source: docSource("empty", "rtl"),
+      direction: "rtl",
     },
   ],
   anatomy: docAnatomy("empty"),
