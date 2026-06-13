@@ -1,7 +1,8 @@
 import { Alert, AlertDescription, AlertTitle } from "@codefast/ui/alert";
 import { CheckCircle2Icon, InfoIcon } from "lucide-react";
 
-import { useTranslation, type Translations } from "#/components/detail/language-selector";
+import type { Translations } from "#/components/detail/language-selector";
+import { useTranslation } from "#/components/detail/language-selector";
 
 const translations: Translations = {
   en: {
@@ -34,20 +35,27 @@ const translations: Translations = {
 };
 
 const alerts = [
-  { icon: CheckCircle2Icon, titleKey: "paymentTitle", descriptionKey: "paymentDescription" },
-  { icon: InfoIcon, titleKey: "featureTitle", descriptionKey: "featureDescription" },
+  {
+    icon: CheckCircle2Icon,
+    titleKey: "paymentTitle" as const,
+    descriptionKey: "paymentDescription" as const,
+  },
+  {
+    icon: InfoIcon,
+    titleKey: "featureTitle" as const,
+    descriptionKey: "featureDescription" as const,
+  },
 ] as const;
 
 export function AlertRtl() {
-  const { t } = useTranslation(translations, "ar");
+  const { dir, t } = useTranslation(translations, "ar");
 
   return (
-    <div className="grid w-full max-w-md items-start gap-4">
-      {alerts.map((alert) => {
+    <div className="grid w-full max-w-md items-start gap-4" dir={dir}>
+      {alerts.map((alert, index) => {
         const Icon = alert.icon;
-
         return (
-          <Alert key={alert.titleKey}>
+          <Alert key={index}>
             <Icon />
             <AlertTitle>{t[alert.titleKey]}</AlertTitle>
             <AlertDescription>{t[alert.descriptionKey]}</AlertDescription>

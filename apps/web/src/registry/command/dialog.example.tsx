@@ -1,67 +1,77 @@
-import { Button } from "@codefast/ui/button";
 import {
-  Command,
   CommandDialog,
   CommandEmpty,
   CommandGroup,
   CommandInput,
   CommandItem,
   CommandList,
+  CommandSeparator,
+  CommandShortcut,
 } from "@codefast/ui/command";
-import { Kbd, KbdGroup } from "@codefast/ui/kbd";
-import { CompassIcon, LayoutGridIcon, SettingsIcon } from "lucide-react";
-import { useState } from "react";
+import { Calculator, Calendar, CreditCard, Settings, Smile, User } from "lucide-react";
+import * as React from "react";
 
-const PAGES = [
-  { label: "Home", icon: CompassIcon },
-  { label: "Components", icon: LayoutGridIcon },
-  { label: "Settings", icon: SettingsIcon },
-];
+export function CommandDialogDemo() {
+  const [open, setOpen] = React.useState(false);
 
-export function CommandDialogExample() {
-  const [open, setOpen] = useState(false);
-  const [page, setPage] = useState<string | null>(null);
+  React.useEffect(() => {
+    const down = (e: KeyboardEvent) => {
+      if (e.key === "j" && (e.metaKey || e.ctrlKey)) {
+        e.preventDefault();
+        setOpen((open) => !open);
+      }
+    };
+
+    document.addEventListener("keydown", down);
+    return () => document.removeEventListener("keydown", down);
+  }, []);
 
   return (
-    <div className="space-y-3 text-center">
-      <Button variant="outline" onClick={() => setOpen(true)}>
-        Open command palette
-        <KbdGroup className="ml-2">
-          <Kbd>⌘</Kbd>
-          <Kbd>K</Kbd>
-        </KbdGroup>
-      </Button>
-      <p className="text-xs text-ui-muted">
-        {page ? (
-          <>
-            Navigated to <span className="font-medium text-ui-fg">{page}</span>
-          </>
-        ) : (
-          "Open the palette and pick a page"
-        )}
+    <>
+      <p className="text-sm text-muted-foreground">
+        Press{" "}
+        <kbd className="pointer-events-none inline-flex h-5 items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground opacity-100 select-none">
+          <span className="text-xs">⌘</span>J
+        </kbd>
       </p>
       <CommandDialog open={open} onOpenChange={setOpen}>
-        <Command>
-          <CommandInput placeholder="Search pages…" />
-          <CommandList>
-            <CommandEmpty>No results found.</CommandEmpty>
-            <CommandGroup heading="Pages">
-              {PAGES.map(({ label, icon: Icon }) => (
-                <CommandItem
-                  key={label}
-                  onSelect={() => {
-                    setPage(label);
-                    setOpen(false);
-                  }}
-                >
-                  <Icon />
-                  <span>{label}</span>
-                </CommandItem>
-              ))}
-            </CommandGroup>
-          </CommandList>
-        </Command>
+        <CommandInput placeholder="Type a command or search..." />
+        <CommandList>
+          <CommandEmpty>No results found.</CommandEmpty>
+          <CommandGroup heading="Suggestions">
+            <CommandItem>
+              <Calendar />
+              <span>Calendar</span>
+            </CommandItem>
+            <CommandItem>
+              <Smile />
+              <span>Search Emoji</span>
+            </CommandItem>
+            <CommandItem>
+              <Calculator />
+              <span>Calculator</span>
+            </CommandItem>
+          </CommandGroup>
+          <CommandSeparator />
+          <CommandGroup heading="Settings">
+            <CommandItem>
+              <User />
+              <span>Profile</span>
+              <CommandShortcut>⌘P</CommandShortcut>
+            </CommandItem>
+            <CommandItem>
+              <CreditCard />
+              <span>Billing</span>
+              <CommandShortcut>⌘B</CommandShortcut>
+            </CommandItem>
+            <CommandItem>
+              <Settings />
+              <span>Settings</span>
+              <CommandShortcut>⌘S</CommandShortcut>
+            </CommandItem>
+          </CommandGroup>
+        </CommandList>
       </CommandDialog>
-    </div>
+    </>
   );
 }
