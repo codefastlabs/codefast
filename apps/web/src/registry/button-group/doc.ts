@@ -1,31 +1,97 @@
-import { ButtonGroupGroups } from "#/registry/button-group/groups.example";
-import { ButtonGroupIcons } from "#/registry/button-group/icons.example";
-import { ButtonGroupSizes } from "#/registry/button-group/sizes.example";
+import { ButtonGroupDropdown } from "#/registry/button-group/dropdown.example";
+import { ButtonGroupInputGroup } from "#/registry/button-group/input-group.example";
+import { ButtonGroupInput } from "#/registry/button-group/input.example";
+import { ButtonGroupNested } from "#/registry/button-group/nested.example";
+import { ButtonGroupOrientation } from "#/registry/button-group/orientation.example";
+import { ButtonGroupPopover } from "#/registry/button-group/popover.example";
+import { ButtonGroupRtl } from "#/registry/button-group/rtl.example";
+import { ButtonGroupSelect } from "#/registry/button-group/select.example";
+import { ButtonGroupSeparatorDemo } from "#/registry/button-group/separator.example";
+import { ButtonGroupSize } from "#/registry/button-group/size.example";
+import { ButtonGroupSplit } from "#/registry/button-group/split.example";
 import { docSource, docAnatomy } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const buttonGroupDoc: ComponentDoc = {
   examples: [
     {
-      id: "groups",
-      title: "Joined controls",
-      description: "Visually join buttons; add a separator or a text label, horizontal or vertical.",
-      Demo: ButtonGroupGroups,
-      source: docSource("button-group", "groups"),
+      id: "button-group-dropdown",
+      title: "Dropdown Menu",
+      description: "Create a split button group with a DropdownMenu component.",
+      Demo: ButtonGroupDropdown,
+      source: docSource("button-group", "dropdown"),
     },
     {
-      id: "icons",
-      title: "Icon toolbar",
-      description: "Group icon-only buttons into a seamless toolbar.",
-      Demo: ButtonGroupIcons,
-      source: docSource("button-group", "icons"),
+      id: "button-group-input",
+      title: "Input",
+      description: "Wrap an Input component with buttons.",
+      Demo: ButtonGroupInput,
+      source: docSource("button-group", "input"),
     },
     {
-      id: "sizes",
-      title: "Sizes",
-      description: "Match the group to its context with sm, default, or lg.",
-      Demo: ButtonGroupSizes,
-      source: docSource("button-group", "sizes"),
+      id: "button-group-input-group",
+      title: "Input Group",
+      description: "Wrap an InputGroup component to create complex input layouts.",
+      Demo: ButtonGroupInputGroup,
+      source: docSource("button-group", "input-group"),
+    },
+    {
+      id: "button-group-nested",
+      title: "Nested",
+      description: "Nest <ButtonGroup> components to create button groups with spacing.",
+      Demo: ButtonGroupNested,
+      source: docSource("button-group", "nested"),
+    },
+    {
+      id: "button-group-orientation",
+      title: "Orientation",
+      description: "Set the orientation prop to change the button group layout.",
+      Demo: ButtonGroupOrientation,
+      source: docSource("button-group", "orientation"),
+    },
+    {
+      id: "button-group-popover",
+      title: "Popover",
+      description: "Use with a Popover component.",
+      Demo: ButtonGroupPopover,
+      source: docSource("button-group", "popover"),
+    },
+    {
+      id: "button-group-rtl",
+      title: "RTL",
+      description: "Right-to-left layout support for languages such as Arabic and Hebrew.",
+      Demo: ButtonGroupRtl,
+      source: docSource("button-group", "rtl"),
+      direction: "rtl",
+    },
+    {
+      id: "button-group-select",
+      title: "Select",
+      description: "Pair with a Select component.",
+      Demo: ButtonGroupSelect,
+      source: docSource("button-group", "select"),
+    },
+    {
+      id: "button-group-separator",
+      title: "Separator",
+      description:
+        "Buttons with variant outline do not need a separator since they have a border. For other variants, a separator is recommended to improve the visual hierarchy.",
+      Demo: ButtonGroupSeparatorDemo,
+      source: docSource("button-group", "separator"),
+    },
+    {
+      id: "button-group-size",
+      title: "Size",
+      description: "Control the size of buttons using the size prop on individual buttons.",
+      Demo: ButtonGroupSize,
+      source: docSource("button-group", "size"),
+    },
+    {
+      id: "button-group-split",
+      title: "Split",
+      description: "Create a split button group by adding two buttons separated by a ButtonGroupSeparator.",
+      Demo: ButtonGroupSplit,
+      source: docSource("button-group", "split"),
     },
   ],
   anatomy: docAnatomy("button-group"),

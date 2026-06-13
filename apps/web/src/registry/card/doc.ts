@@ -1,33 +1,51 @@
-import { CardLogin } from "#/registry/card/login.example";
-import { CardOverview } from "#/registry/card/overview.example";
-import { CardSimple } from "#/registry/card/simple.example";
+import { CardEdgeToEdge } from "#/registry/card/edge-to-edge.example";
+import { CardImage } from "#/registry/card/image.example";
+import { CardRtl } from "#/registry/card/rtl.example";
+import { CardSmall } from "#/registry/card/small.example";
+import { CardSpacing } from "#/registry/card/spacing.example";
 import { docSource, docAnatomy } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const cardDoc: ComponentDoc = {
   examples: [
     {
-      id: "overview",
-      title: "Overview",
-      description: "All slots together: header, action, content, and footer.",
-      Demo: CardOverview,
-      source: docSource("card", "overview"),
-      previewClassName: "items-start",
+      id: "card-edge-to-edge",
+      title: "Spacing",
+      description:
+        "Use negative margins with -mx-(--card-spacing) to make content go edge to edge while keeping it aligned with the card inset. When the edge-to-edge content sits above a footer, use -mb-(--card-spacing) on CardContent to remove the section gap.",
+      Demo: CardEdgeToEdge,
+      source: docSource("card", "edge-to-edge"),
     },
     {
-      id: "simple",
-      title: "Header + content",
-      description: "Every slot is optional — use only what you need.",
-      Demo: CardSimple,
-      source: docSource("card", "simple"),
-      previewClassName: "items-start",
+      id: "card-image",
+      title: "Image",
+      description: "Add an image before the card header to create a card with an image.",
+      Demo: CardImage,
+      source: docSource("card", "image"),
     },
     {
-      id: "login",
-      title: "Form card",
-      description: "Compose inputs and actions inside the card slots.",
-      Demo: CardLogin,
-      source: docSource("card", "login"),
+      id: "card-rtl",
+      title: "RTL",
+      description: "Right-to-left layout support for languages such as Arabic and Hebrew.",
+      Demo: CardRtl,
+      source: docSource("card", "rtl"),
+      direction: "rtl",
+    },
+    {
+      id: "card-small",
+      title: "Size",
+      description:
+        "Use the size='sm' prop to set the size of the card to small. The small size variant uses smaller spacing.",
+      Demo: CardSmall,
+      source: docSource("card", "small"),
+    },
+    {
+      id: "card-spacing",
+      title: "Spacing",
+      description:
+        "In addition to the size prop, you can use the --card-spacing CSS variable to control the spacing between sections and the inset of card parts.",
+      Demo: CardSpacing,
+      source: docSource("card", "spacing"),
     },
   ],
   anatomy: docAnatomy("card"),

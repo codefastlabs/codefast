@@ -1,47 +1,114 @@
-import { ButtonAsChild } from "#/registry/button/as-child.example";
-import { ButtonIcons } from "#/registry/button/icons.example";
-import { ButtonLoading } from "#/registry/button/loading.example";
-import { ButtonSizes } from "#/registry/button/sizes.example";
-import { ButtonVariants } from "#/registry/button/variants.example";
+import { ButtonAsChild } from "#/registry/button/aschild.example";
+import { ButtonDefault } from "#/registry/button/default.example";
+import { ButtonDestructive } from "#/registry/button/destructive.example";
+import { ButtonGhost } from "#/registry/button/ghost.example";
+import { ButtonIcon } from "#/registry/button/icon.example";
+import { ButtonLink } from "#/registry/button/link.example";
+import { ButtonOutline } from "#/registry/button/outline.example";
+import { ButtonRounded } from "#/registry/button/rounded.example";
+import { ButtonRtl } from "#/registry/button/rtl.example";
+import { ButtonSecondary } from "#/registry/button/secondary.example";
+import { ButtonSize } from "#/registry/button/size.example";
+import { ButtonSpinner } from "#/registry/button/spinner.example";
+import { ButtonWithIcon } from "#/registry/button/with-icon.example";
 import { docSource, docAnatomy } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const buttonDoc: ComponentDoc = {
   examples: [
     {
-      id: "variants",
-      title: "Variants",
-      description: "Six visual styles cover primary actions, secondary actions, and links.",
-      Demo: ButtonVariants,
-      source: docSource("button", "variants"),
+      id: "button-default",
+      title: "Default",
+      description: "Displays a button or a component that looks like a button.",
+      Demo: ButtonDefault,
+      source: docSource("button", "default"),
     },
     {
-      id: "sizes",
-      title: "Sizes",
-      description: "Four text sizes plus square icon sizes for icon-only buttons.",
-      Demo: ButtonSizes,
-      source: docSource("button", "sizes"),
+      id: "button-destructive",
+      title: "Destructive",
+      description: "Displays a button or a component that looks like a button.",
+      Demo: ButtonDestructive,
+      source: docSource("button", "destructive"),
     },
     {
-      id: "with-icon",
-      title: "With icon",
-      description: "Place an icon before or after the label. Add data-icon to fine-tune the padding.",
-      Demo: ButtonIcons,
-      source: docSource("button", "icons"),
+      id: "button-ghost",
+      title: "Ghost",
+      description: "Displays a button or a component that looks like a button.",
+      Demo: ButtonGhost,
+      source: docSource("button", "ghost"),
     },
     {
-      id: "loading",
-      title: "Loading state",
-      description: "Compose with Spinner and disable the button while an action is in flight.",
-      Demo: ButtonLoading,
-      source: docSource("button", "loading"),
+      id: "button-icon",
+      title: "Icon",
+      description: "Displays a button or a component that looks like a button.",
+      Demo: ButtonIcon,
+      source: docSource("button", "icon"),
     },
     {
-      id: "as-child",
-      title: "asChild composition",
-      description: "Render the button styles on a different element — an anchor, a router Link — via Radix Slot.",
+      id: "button-link",
+      title: "Link",
+      description: "Displays a button or a component that looks like a button.",
+      Demo: ButtonLink,
+      source: docSource("button", "link"),
+    },
+    {
+      id: "button-outline",
+      title: "Outline",
+      description: "Displays a button or a component that looks like a button.",
+      Demo: ButtonOutline,
+      source: docSource("button", "outline"),
+    },
+    {
+      id: "button-rounded",
+      title: "Rounded",
+      description: "Use the rounded-full class to make the button rounded.",
+      Demo: ButtonRounded,
+      source: docSource("button", "rounded"),
+    },
+    {
+      id: "button-rtl",
+      title: "RTL",
+      description: "Right-to-left layout support for languages such as Arabic and Hebrew.",
+      Demo: ButtonRtl,
+      source: docSource("button", "rtl"),
+      direction: "rtl",
+    },
+    {
+      id: "button-secondary",
+      title: "Secondary",
+      description: "Displays a button or a component that looks like a button.",
+      Demo: ButtonSecondary,
+      source: docSource("button", "secondary"),
+    },
+    {
+      id: "button-size",
+      title: "Size",
+      description: "Use the size prop to change the size of the button.",
+      Demo: ButtonSize,
+      source: docSource("button", "size"),
+    },
+    {
+      id: "button-spinner",
+      title: "Spinner",
+      description:
+        "Render a <Spinner /> component inside the button to show a loading state. Remember to add the data-icon='inline-start' or data-icon='inline-end' attribute to the spinner for the correct spacing.",
+      Demo: ButtonSpinner,
+      source: docSource("button", "spinner"),
+    },
+    {
+      id: "button-with-icon",
+      title: "With Icon",
+      description:
+        "Remember to add the data-icon='inline-start' or data-icon='inline-end' attribute to the icon for the correct spacing.",
+      Demo: ButtonWithIcon,
+      source: docSource("button", "with-icon"),
+    },
+    {
+      id: "button-aschild",
+      title: "As Child",
+      description: "Use the asChild prop on Button to make another component look like a button.",
       Demo: ButtonAsChild,
-      source: docSource("button", "as-child"),
+      source: docSource("button", "aschild"),
     },
   ],
   anatomy: docAnatomy("button"),

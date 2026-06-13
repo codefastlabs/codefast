@@ -1,18 +1,19 @@
-import { CalendarDisabled } from "#/registry/calendar/disabled.example";
+import { CalendarBasic } from "#/registry/calendar/basic.example";
+import { CalendarBookedDates } from "#/registry/calendar/booked-dates.example";
+import { CalendarCaption } from "#/registry/calendar/caption.example";
+import { CalendarCustomDays } from "#/registry/calendar/custom-days.example";
+import { CalendarHijri } from "#/registry/calendar/hijri.example";
+import { CalendarMultiple } from "#/registry/calendar/multiple.example";
+import { CalendarWithPresets } from "#/registry/calendar/presets.example";
 import { CalendarRange } from "#/registry/calendar/range.example";
-import { CalendarSingle } from "#/registry/calendar/single.example";
+import { CalendarRtl } from "#/registry/calendar/rtl.example";
+import { CalendarWithTime } from "#/registry/calendar/time.example";
+import { CalendarWeekNumbers } from "#/registry/calendar/week-numbers.example";
 import { docSource, docAnatomy } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const calendarDoc: ComponentDoc = {
   examples: [
-    {
-      id: "single",
-      title: "Single date",
-      description: "Controlled selection with a live, formatted readout.",
-      Demo: CalendarSingle,
-      source: docSource("calendar", "single"),
-    },
     {
       id: "range",
       title: "Date range",
@@ -21,11 +22,76 @@ export const calendarDoc: ComponentDoc = {
       source: docSource("calendar", "range"),
     },
     {
-      id: "disabled",
-      title: "Disabled dates",
-      description: "Block days with a matcher — here, weekends.",
-      Demo: CalendarDisabled,
-      source: docSource("calendar", "disabled"),
+      id: "calendar-basic",
+      title: "Basic",
+      description: "A basic calendar component. We used className='rounded-lg border' to style the calendar.",
+      Demo: CalendarBasic,
+      source: docSource("calendar", "basic"),
+    },
+    {
+      id: "calendar-booked-dates",
+      title: "Booked dates",
+      description: "A calendar component that allows users to select a date or a range of dates.",
+      Demo: CalendarBookedDates,
+      source: docSource("calendar", "booked-dates"),
+    },
+    {
+      id: "calendar-caption",
+      title: "Month and Year Selector",
+      description: "Use captionLayout='dropdown' to show month and year dropdowns.",
+      Demo: CalendarCaption,
+      source: docSource("calendar", "caption"),
+    },
+    {
+      id: "calendar-custom-days",
+      title: "Custom Cell Size",
+      description: "A calendar component that allows users to select a date or a range of dates.",
+      Demo: CalendarCustomDays,
+      source: docSource("calendar", "custom-days"),
+    },
+    {
+      id: "calendar-multiple",
+      title: "Multiple",
+      description: "Use mode=multiple to allow selecting multiple dates.",
+      Demo: CalendarMultiple,
+      source: docSource("calendar", "multiple"),
+    },
+    {
+      id: "calendar-presets",
+      title: "Presets",
+      description: "A calendar component that allows users to select a date or a range of dates.",
+      Demo: CalendarWithPresets,
+      source: docSource("calendar", "presets"),
+    },
+    {
+      id: "calendar-rtl",
+      title: "RTL",
+      description: "Right-to-left layout support for languages such as Arabic and Hebrew.",
+      Demo: CalendarRtl,
+      source: docSource("calendar", "rtl"),
+      direction: "rtl",
+    },
+    {
+      id: "calendar-time",
+      title: "Date and Time Picker",
+      description: "A calendar component that allows users to select a date or a range of dates.",
+      Demo: CalendarWithTime,
+      source: docSource("calendar", "time"),
+    },
+    {
+      id: "calendar-week-numbers",
+      title: "Week Numbers",
+      description: "Use showWeekNumber to show week numbers.",
+      Demo: CalendarWeekNumbers,
+      source: docSource("calendar", "week-numbers"),
+    },
+    {
+      id: "calendar-hijri",
+      title: "Persian / Hijri / Jalali Calendar",
+      description: "A Persian (Jalali) calendar built with a date-fns-jalali DateLib and Eastern Arabic numerals.",
+      Demo: CalendarHijri,
+      source: docSource("calendar", "hijri"),
+      direction: "rtl",
     },
   ],
   anatomy: docAnatomy("calendar"),
