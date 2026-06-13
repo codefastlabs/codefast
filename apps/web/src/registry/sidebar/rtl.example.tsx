@@ -1,6 +1,5 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@codefast/ui/avatar";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@codefast/ui/collapsible";
-import { DirectionProvider } from "@codefast/ui/direction";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -54,7 +53,7 @@ import {
 import * as React from "react";
 
 import type { Translations } from "#/components/detail/language-selector";
-import { LanguageProvider, LanguageSelector, useTranslation } from "#/components/detail/language-selector";
+import { useTranslation } from "#/components/detail/language-selector";
 
 const translations: Translations = {
   en: {
@@ -171,27 +170,6 @@ const translations: Translations = {
 };
 
 export function SidebarRtl() {
-  return (
-    <LanguageProvider defaultLanguage="ar">
-      <AppSidebarWithProvider />
-    </LanguageProvider>
-  );
-}
-
-function AppSidebarWithProvider() {
-  const { language, setLanguage, dir } = useTranslation(translations, "ar");
-
-  return (
-    <DirectionProvider dir={dir}>
-      <div className="relative" dir={dir}>
-        <LanguageSelector value={language} onValueChange={setLanguage} className="absolute end-4 top-4 z-10" />
-        <AppSidebar />
-      </div>
-    </DirectionProvider>
-  );
-}
-
-function AppSidebar() {
   const { dir, t } = useTranslation(translations, "ar");
 
   const navMain = [
