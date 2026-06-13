@@ -144,7 +144,7 @@ function HeroCard() {
           </div>
           <Separator />
           <div className="flex items-center justify-between">
-            <div className="text-left">
+            <div className="text-start">
               <p className="text-xs font-medium text-ui-fg">Public profile</p>
               <p className="text-xs text-ui-muted">Show workspace in directory</p>
             </div>
@@ -312,7 +312,7 @@ function HomePage() {
           </p>
 
           <div className="mx-auto mb-8 w-fit rounded-xl border border-ui-inverse/15 bg-ui-inverse/10 px-7 py-3.5 font-mono text-sm text-ui-brand">
-            <span className="mr-2 opacity-40 select-none">$</span>
+            <span className="me-2 opacity-40 select-none">$</span>
             pnpm add @codefast/ui
           </div>
 

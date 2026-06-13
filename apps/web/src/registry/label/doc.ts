@@ -1,9 +1,27 @@
+import { LabelDemo } from "#/registry/label/demo";
+import { LabelInField } from "#/registry/label/field.example";
 import { LabelRtl } from "#/registry/label/rtl.example";
-import { docSource, docAnatomy } from "#/registry/source";
+import { docAnatomy, docDemo, docSource } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const labelDoc: ComponentDoc = {
   examples: [
+    {
+      id: "label-demo",
+      title: "Demo",
+      description: "Labels naming an input, a checkbox, and a disabled control.",
+      Demo: LabelDemo,
+      source: docDemo("label"),
+      previewClassName: "items-start",
+    },
+    {
+      id: "label-field",
+      title: "Label in Field",
+      description: "Inside a form, use FieldLabel from the Field component for built-in description and error wiring.",
+      Demo: LabelInField,
+      source: docSource("label", "field"),
+      previewClassName: "items-start",
+    },
     {
       id: "label-rtl",
       title: "RTL",

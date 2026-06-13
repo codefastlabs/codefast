@@ -1,6 +1,5 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@codefast/ui/avatar";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@codefast/ui/collapsible";
-import { DirectionProvider } from "@codefast/ui/direction";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -54,7 +53,7 @@ import {
 import * as React from "react";
 
 import type { Translations } from "#/components/detail/language-selector";
-import { LanguageProvider, LanguageSelector, useTranslation } from "#/components/detail/language-selector";
+import { useTranslation } from "#/components/detail/language-selector";
 
 const translations: Translations = {
   en: {
@@ -171,31 +170,6 @@ const translations: Translations = {
 };
 
 export function SidebarRtl() {
-  return (
-    <LanguageProvider defaultLanguage="ar">
-      <AppSidebarWithProvider />
-    </LanguageProvider>
-  );
-}
-
-function AppSidebarWithProvider() {
-  const { language, setLanguage, dir } = useTranslation(translations, "ar");
-
-  return (
-    <DirectionProvider dir={dir}>
-      <div className="relative" dir={dir}>
-        <LanguageSelector
-          value={language}
-          onValueChange={setLanguage}
-          className="absolute top-4 right-4 z-10 rtl:right-auto rtl:left-4"
-        />
-        <AppSidebar />
-      </div>
-    </DirectionProvider>
-  );
-}
-
-function AppSidebar() {
   const { dir, t } = useTranslation(translations, "ar");
 
   const navMain = [
@@ -257,7 +231,7 @@ function AppSidebar() {
   };
 
   return (
-    <SidebarProvider className="h-96 min-h-0 w-full overflow-hidden rounded-xl border [contain:layout]">
+    <SidebarProvider className="h-96 min-h-0 w-full overflow-hidden rounded-xl border [contain:layout] [&_[data-slot=sidebar-container]]:h-full">
       <SidebarContentInner dir={dir} t={t} navMain={navMain} projects={projects} user={user} />
     </SidebarProvider>
   );
@@ -430,7 +404,7 @@ function SidebarContentInner({
                 >
                   <DropdownMenuGroup>
                     <DropdownMenuLabel className="p-0 font-normal">
-                      <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
+                      <div className="flex items-center gap-2 px-1 py-1.5 text-start text-sm">
                         <Avatar>
                           <AvatarImage src={user.avatar} alt={user.name} />
                           <AvatarFallback className="rounded-lg">CN</AvatarFallback>
@@ -484,7 +458,7 @@ function SidebarContentInner({
           dir={dir}
         >
           <div className="flex items-center gap-2 px-4">
-            <SidebarTrigger className="-ml-1" />
+            <SidebarTrigger className="-ms-1" />
           </div>
         </header>
       </SidebarInset>

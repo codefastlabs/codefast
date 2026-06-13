@@ -100,7 +100,7 @@ export function CommandPalette() {
         variant="secondary"
       >
         <SearchIcon className="size-4 shrink-0" />
-        <span className="hidden flex-1 text-left text-sm lg:inline">Search components…</span>
+        <span className="hidden flex-1 text-start text-sm lg:inline">Search components…</span>
         <Kbd className="hidden lg:inline-flex">/</Kbd>
       </Button>
 
@@ -132,7 +132,7 @@ export function CommandPalette() {
                   }}
                 >
                   <span className="grow">{component.name}</span>
-                  <span className="ml-auto text-xs text-ui-muted capitalize" data-slot="command-shortcut">
+                  <span className="ms-auto text-xs text-ui-muted capitalize" data-slot="command-shortcut">
                     {component.category}
                   </span>
                 </CommandItem>

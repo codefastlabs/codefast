@@ -77,7 +77,7 @@ export function InputGroupWithTooltip() {
                 </PopoverHeader>
               </PopoverContent>
             </Popover>
-            <InputGroupAddon className="pl-1 text-muted-foreground">https://</InputGroupAddon>
+            <InputGroupAddon className="ps-1 text-muted-foreground">https://</InputGroupAddon>
             <InputGroupInput id="input-secure-19" />
             <InputGroupAddon align="inline-end">
               <InputGroupButton size="icon-xs" onClick={() => toast("Added to favorites")}>

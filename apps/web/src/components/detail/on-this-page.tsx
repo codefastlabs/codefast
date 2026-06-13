@@ -58,7 +58,7 @@ export function OnThisPage({ items }: OnThisPageProps) {
   return (
     <nav aria-label="On this page" className="text-sm">
       <p className="mb-3 text-xs font-semibold tracking-widest text-ui-muted uppercase">On this page</p>
-      <ul className="space-y-2 border-l border-ui-border">
+      <ul className="space-y-2 border-s border-ui-border">
         {items.map((item) => {
           const isActive = active === item.id;
 
@@ -68,8 +68,8 @@ export function OnThisPage({ items }: OnThisPageProps) {
                 href={`#${item.id}`}
                 aria-current={isActive ? "location" : undefined}
                 className={cn(
-                  "-ml-px block border-l py-0.5 no-underline transition-colors",
-                  item.depth === 2 ? "pl-6" : "pl-4",
+                  "-ms-px block border-s py-0.5 no-underline transition-colors",
+                  item.depth === 2 ? "ps-6" : "ps-4",
                   isActive
                     ? "border-ui-brand font-medium text-ui-fg"
                     : "border-transparent text-ui-muted hover:text-ui-fg",

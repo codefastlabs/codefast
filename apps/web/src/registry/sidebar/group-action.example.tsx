@@ -15,11 +15,11 @@ import { FrameIcon, MapIcon, PieChartIcon, PlusIcon } from "lucide-react";
 
 export function SidebarGroupActionExample() {
   return (
-    <SidebarProvider className="h-96 min-h-0 w-full overflow-hidden rounded-xl border [contain:layout]">
+    <SidebarProvider className="h-96 min-h-0 w-full overflow-hidden rounded-xl border [contain:layout] [&_[data-slot=sidebar-container]]:h-full">
       <Toaster
         position="bottom-left"
         toastOptions={{
-          className: "ml-[160px]",
+          className: "ms-[160px]",
         }}
       />
       <Sidebar>

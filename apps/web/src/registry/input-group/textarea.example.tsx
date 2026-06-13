@@ -18,7 +18,7 @@ export function InputGroupTextareaExample() {
         />
         <InputGroupAddon align="block-end" className="border-t">
           <InputGroupText>Line 1, Column 1</InputGroupText>
-          <InputGroupButton size="sm" className="ml-auto" variant="default">
+          <InputGroupButton size="sm" className="ms-auto" variant="default">
             Run <CornerDownLeftIcon />
           </InputGroupButton>
         </InputGroupAddon>
@@ -27,7 +27,7 @@ export function InputGroupTextareaExample() {
             <CodeIcon />
             script.js
           </InputGroupText>
-          <InputGroupButton className="ml-auto" size="icon-xs">
+          <InputGroupButton className="ms-auto" size="icon-xs">
             <RefreshCcwIcon />
           </InputGroupButton>
           <InputGroupButton variant="ghost" size="icon-xs">

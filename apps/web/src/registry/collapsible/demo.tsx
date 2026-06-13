@@ -13,7 +13,7 @@ export function CollapsibleDemo() {
 
   return (
     <Collapsible className="group w-full max-w-xs rounded-xl border" open={open} onOpenChange={setOpen}>
-      <CollapsibleTrigger className="flex w-full items-center justify-between gap-3 px-4 py-3 text-left">
+      <CollapsibleTrigger className="flex w-full items-center justify-between gap-3 px-4 py-3 text-start">
         <span className="text-sm font-medium text-ui-fg">Order summary</span>
         <span className="flex items-center gap-2 text-sm font-semibold text-ui-fg">
           $194.40

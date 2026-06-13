@@ -55,7 +55,7 @@ export function SidebarControlledExample() {
 
   return (
     <SidebarProvider
-      className="h-96 min-h-0 w-full overflow-hidden rounded-xl border [contain:layout]"
+      className="h-96 min-h-0 w-full overflow-hidden rounded-xl border [contain:layout] [&_[data-slot=sidebar-container]]:h-full"
       open={open}
       onOpenChange={setOpen}
     >

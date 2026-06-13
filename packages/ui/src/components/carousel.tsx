@@ -204,7 +204,7 @@ function CarouselContent({
       <div
         className={cn(
           "flex",
-          orientation === "horizontal" ? "-ml-4" : "-mt-4 h-full flex-col",
+          orientation === "horizontal" ? "-ms-4" : "-mt-4 h-full flex-col",
           classNames?.content,
           className,
         )}
@@ -234,7 +234,7 @@ function CarouselItem({ __scopeCarousel, className, ...props }: ScopedProps<Caro
   return (
     <div
       aria-roledescription="slide"
-      className={cn("min-w-0 shrink-0 grow-0 basis-full", orientation === "horizontal" ? "pl-4" : "pt-4", className)}
+      className={cn("min-w-0 shrink-0 grow-0 basis-full", orientation === "horizontal" ? "ps-4" : "pt-4", className)}
       data-slot="carousel-item"
       role="group"
       {...props}
@@ -271,8 +271,8 @@ function CarouselPrevious({
       className={cn(
         "absolute touch-manipulation rounded-full",
         orientation === "horizontal"
-          ? "top-1/2 -left-12 -translate-y-1/2 active:not-aria-[haspopup]:translate-y-[calc(-50%+1px)]"
-          : "-top-12 left-1/2 -translate-x-1/2 rotate-90",
+          ? "-start-12 top-1/2 -translate-y-1/2 active:not-aria-[haspopup]:translate-y-[calc(-50%+1px)]"
+          : "start-1/2 -top-12 -translate-x-1/2 rotate-90 rtl:translate-x-1/2",
         className,
       )}
       data-slot="carousel-previous"
@@ -317,8 +317,8 @@ function CarouselNext({
       className={cn(
         "absolute touch-manipulation rounded-full",
         orientation === "horizontal"
-          ? "top-1/2 -right-12 -translate-y-1/2 active:not-aria-[haspopup]:translate-y-[calc(-50%+1px)]"
-          : "-bottom-12 left-1/2 -translate-x-1/2 rotate-90",
+          ? "-end-12 top-1/2 -translate-y-1/2 active:not-aria-[haspopup]:translate-y-[calc(-50%+1px)]"
+          : "start-1/2 -bottom-12 -translate-x-1/2 rotate-90 rtl:translate-x-1/2",
         className,
       )}
       data-slot="carousel-next"
