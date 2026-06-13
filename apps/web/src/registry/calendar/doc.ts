@@ -91,7 +91,6 @@ export const calendarDoc: ComponentDoc = {
       description: "A Persian (Jalali) calendar built with a date-fns-jalali DateLib and Eastern Arabic numerals.",
       Demo: CalendarHijri,
       source: docSource("calendar", "hijri"),
-      direction: "rtl",
     },
   ],
   anatomy: docAnatomy("calendar"),
