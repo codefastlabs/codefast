@@ -31,7 +31,7 @@ export function ComponentPager({ previous, next }: ComponentPagerProps) {
         <Link
           to="/components/$slug"
           params={{ slug: next.slug }}
-          className="group flex flex-col items-end gap-1 rounded-xl border border-ui-border p-4 text-right no-underline transition-colors hover:border-ui-brand sm:col-start-2"
+          className="group flex flex-col items-end gap-1 rounded-xl border border-ui-border p-4 text-end no-underline transition-colors hover:border-ui-brand sm:col-start-2"
         >
           <span className="flex items-center gap-1.5 text-xs text-ui-muted">
             Next

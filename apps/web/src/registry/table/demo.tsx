@@ -25,7 +25,7 @@ export function TableDemo() {
           <TableHead>Invoice</TableHead>
           <TableHead>Status</TableHead>
           <TableHead>Method</TableHead>
-          <TableHead className="text-right">Amount</TableHead>
+          <TableHead className="text-end">Amount</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -34,14 +34,14 @@ export function TableDemo() {
             <TableCell className="font-medium">{inv.id}</TableCell>
             <TableCell>{inv.status}</TableCell>
             <TableCell>{inv.method}</TableCell>
-            <TableCell className="text-right">{inv.amount}</TableCell>
+            <TableCell className="text-end">{inv.amount}</TableCell>
           </TableRow>
         ))}
       </TableBody>
       <TableFooter>
         <TableRow>
           <TableCell colSpan={3}>Total</TableCell>
-          <TableCell className="text-right">$1,200.00</TableCell>
+          <TableCell className="text-end">$1,200.00</TableCell>
         </TableRow>
       </TableFooter>
     </Table>

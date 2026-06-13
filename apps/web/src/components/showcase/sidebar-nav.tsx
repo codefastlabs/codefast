@@ -64,7 +64,7 @@ export function SidebarNav({
     <aside className="hidden lg:block">
       <div className="sticky top-20 flex max-h-[calc(100vh-6rem)] flex-col gap-4">
         <ViewToggle value={mode} onChange={onModeChange} />
-        <nav ref={navRef} aria-label="Components" className="-mr-2 min-h-0 flex-1 space-y-5 overflow-y-auto pr-2 pb-4">
+        <nav ref={navRef} aria-label="Components" className="-me-2 min-h-0 flex-1 space-y-5 overflow-y-auto pe-2 pb-4">
           {groups.map((group) => {
             const isActive = activeSection === group.id;
 
@@ -81,7 +81,7 @@ export function SidebarNav({
                   {group.label}
                   <span className="tabular-nums opacity-60">{group.items.length}</span>
                 </a>
-                <div className="mt-1 space-y-0.5 border-l border-ui-border pl-2">
+                <div className="mt-1 space-y-0.5 border-s border-ui-border ps-2">
                   {group.items.map((component) => (
                     <SidebarLink
                       key={component.slug}

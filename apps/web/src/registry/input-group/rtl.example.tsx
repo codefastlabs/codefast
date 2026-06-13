@@ -93,7 +93,7 @@ export function InputGroupRtl() {
             <InputGroupTextarea id="rtl-textarea" placeholder={t.textareaPlaceholder} />
             <InputGroupAddon align="block-end">
               <InputGroupText>{t.characterCount}</InputGroupText>
-              <InputGroupButton variant="default" size="sm" className="ml-auto">
+              <InputGroupButton variant="default" size="sm" className="ms-auto">
                 {t.post}
               </InputGroupButton>
             </InputGroupAddon>

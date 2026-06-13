@@ -19,7 +19,7 @@ export function SidebarGroupActionExample() {
       <Toaster
         position="bottom-left"
         toastOptions={{
-          className: "ml-[160px]",
+          className: "ms-[160px]",
         }}
       />
       <Sidebar>

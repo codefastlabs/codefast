@@ -26,7 +26,7 @@ export function SidebarFooterExample() {
                 <DropdownMenuTrigger asChild>
                   <SidebarMenuButton className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground">
                     Username
-                    <ChevronUpIcon className="ml-auto" />
+                    <ChevronUpIcon className="ms-auto" />
                   </SidebarMenuButton>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent side="top" className="w-(--radix-popper-anchor-width)">

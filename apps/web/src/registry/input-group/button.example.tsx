@@ -39,7 +39,7 @@ export function InputGroupButtonExample() {
             <p>You should not enter any sensitive information on this site.</p>
           </PopoverContent>
         </Popover>
-        <InputGroupAddon className="pl-1.5 text-muted-foreground">https://</InputGroupAddon>
+        <InputGroupAddon className="ps-1.5 text-muted-foreground">https://</InputGroupAddon>
         <InputGroupInput id="input-secure-19" />
         <InputGroupAddon align="inline-end">
           <InputGroupButton onClick={() => setIsFavorite(!isFavorite)} size="icon-xs">

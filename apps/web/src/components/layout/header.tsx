@@ -71,7 +71,7 @@ export function Header() {
         </nav>
 
         {/* Right */}
-        <div className="ml-auto flex items-center gap-1.5">
+        <div className="ms-auto flex items-center gap-1.5">
           <CommandPalette />
           <div className="hidden md:block">
             <AppearanceToggle />
