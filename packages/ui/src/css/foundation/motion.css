@@ -23,6 +23,13 @@
   --animation-duration-expand-in: 200ms; /* accordion, inline disclosure */
   --animation-duration-expand-out: 150ms;
 
+  /*
+   * Control timings — form controls (switch, checkbox, radio). Symmetric, so
+   * no in/out split: the container/ring transition and the moving indicator.
+   */
+  --animation-duration-control: 200ms; /* container / ring: switch track, checkbox & radio box */
+  --animation-duration-control-indicator: 300ms; /* moving part: switch thumb, check, radio dot */
+
   --animate-shimmer: shimmer 2.2s linear infinite;
 
   @keyframes shimmer {
