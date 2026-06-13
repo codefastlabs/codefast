@@ -49,7 +49,7 @@ export function Header() {
   const [open, setOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-ui-border bg-ui-bg/75 backdrop-blur-[20px] backdrop-saturate-150">
+    <header className="sticky top-0 z-50 border-b border-ui-border bg-ui-bg/75 backdrop-blur-lg backdrop-saturate-150">
       <div className="container mx-auto flex h-12 items-center gap-8 px-4">
         <Logo />
 

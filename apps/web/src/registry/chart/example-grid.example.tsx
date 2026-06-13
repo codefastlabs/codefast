@@ -24,7 +24,7 @@ const chartConfig = {
 
 export function ChartBarDemoGrid() {
   return (
-    <ChartContainer config={chartConfig} className="min-h-[200px] w-full">
+    <ChartContainer config={chartConfig} className="min-h-50 w-full">
       <BarChart accessibilityLayer data={chartData}>
         <CartesianGrid vertical={false} />
         <Bar dataKey="desktop" fill="var(--color-desktop)" radius={4} />

@@ -164,7 +164,7 @@ export function CommandPalette({
     >
       <div
         aria-label="Close command palette"
-        className="bg-bh-overlay/75 absolute inset-0 m-0 cursor-default border-0 p-0 backdrop-blur-[0.35rem]"
+        className="bg-bh-overlay/75 absolute inset-0 m-0 cursor-default border-0 p-0 backdrop-blur-xs"
         onClick={onClose}
         onKeyDown={onClose}
         role="button"

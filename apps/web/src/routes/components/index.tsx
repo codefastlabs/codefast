@@ -3,10 +3,9 @@ import { createFileRoute, useLocation } from "@tanstack/react-router";
 import { useEffect } from "react";
 
 import { GroupSection } from "#/components/showcase/group-section";
-import { SHOWCASE_VIEWS } from "#/components/showcase/groups";
+import { ALPHABET_GROUPS, ALPHABET_NAV_IDS } from "#/components/showcase/groups";
 import { MobileNav } from "#/components/showcase/mobile-nav";
 import { SidebarNav } from "#/components/showcase/sidebar-nav";
-import type { ViewMode } from "#/components/showcase/types";
 import { useActiveSection } from "#/components/showcase/use-active-section";
 import { COMPONENTS } from "#/registry/components";
 
@@ -14,28 +13,14 @@ import { COMPONENTS } from "#/registry/components";
 /* Route                                                                       */
 /* -------------------------------------------------------------------------- */
 
-interface ComponentsSearch {
-  /** Absent → fall back to the visitor's stored preference, else "category". */
-  readonly view?: ViewMode;
-}
-
-/** Parse `?view`, keeping only the two known values so links stay shareable. */
-function validateSearch(search: Record<string, unknown>): ComponentsSearch {
-  return search.view === "alphabetical" || search.view === "category" ? { view: search.view } : {};
-}
-
-/** localStorage key remembering a visitor's choice for bare `/components` visits. */
-const VIEW_STORAGE_KEY = "components:view-mode";
-
 export const Route = createFileRoute("/components/")({
-  validateSearch,
   head: () => ({
     meta: [
       { title: "Components — codefast/ui" },
       {
         name: "description",
         content:
-          "Browse the full @codefast/ui component library — live previews and copy-ready source for every component, by category or A–Z.",
+          "Browse the full @codefast/ui component library, A–Z — live previews and copy-ready source for every component.",
       },
     ],
   }),
@@ -47,39 +32,13 @@ export const Route = createFileRoute("/components/")({
 /* -------------------------------------------------------------------------- */
 
 function ComponentsPage() {
-  const navigate = Route.useNavigate();
-  const search = Route.useSearch();
-
-  // The URL is the source of truth so a `?view=` link opens straight into that
-  // layout; absent the param we fall back to "category" and let the effect below
-  // upgrade to the visitor's stored preference.
-  const mode: ViewMode = search.view ?? "category";
-  const { groups, navIds } = SHOWCASE_VIEWS[mode];
-
-  const setMode = (next: ViewMode): void => {
-    localStorage.setItem(VIEW_STORAGE_KEY, next);
-    void navigate({ search: { view: next }, replace: true });
-  };
-
-  // First visit with no explicit `?view`: restore the stored preference (only
-  // when it differs from the default, to keep shared/default URLs clean).
-  useEffect(() => {
-    if (search.view !== undefined) {
-      return;
-    }
-
-    if (localStorage.getItem(VIEW_STORAGE_KEY) === "alphabetical") {
-      void navigate({ search: { view: "alphabetical" }, replace: true });
-    }
-  }, [search.view, navigate]);
-
-  const activeSection = useActiveSection(navIds);
+  const activeSection = useActiveSection(ALPHABET_NAV_IDS);
   const hash = useLocation({ select: (location) => location.hash });
 
-  // Scroll to the targeted component/section after navigation. A single rAF
-  // defers the scroll until after the post-navigation layout has committed, so
-  // it lands on the right element and wins over scroll restoration; scroll-margin
-  // on the targets handles the sticky header + nav offset.
+  // Scroll to the targeted letter band after a mobile jump. A single rAF defers
+  // the scroll until after layout has committed, so it lands on the right
+  // element and wins over scroll restoration; scroll-margin on the targets
+  // handles the sticky header + nav offset.
   useEffect(() => {
     if (!hash) {
       return;
@@ -112,14 +71,14 @@ function ComponentsPage() {
       </section>
 
       {/* ── Mobile: compact jump nav (sidebar is hidden below lg) ─────── */}
-      <MobileNav groups={groups} activeSection={activeSection} mode={mode} onModeChange={setMode} />
+      <MobileNav groups={ALPHABET_GROUPS} activeSection={activeSection} />
 
       {/* ── Two-column docs layout: sticky sidebar + card grid ────────── */}
       <div className="lg:grid lg:grid-cols-[200px_minmax(0,1fr)] lg:gap-10 xl:grid-cols-[220px_minmax(0,1fr)]">
-        <SidebarNav groups={groups} activeSection={activeSection} mode={mode} onModeChange={setMode} />
+        <SidebarNav groups={ALPHABET_GROUPS} />
 
         <div className="min-w-0">
-          {groups.map((group) => (
+          {ALPHABET_GROUPS.map((group) => (
             <GroupSection key={group.id} group={group} />
           ))}
         </div>

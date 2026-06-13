@@ -1,4 +1,16 @@
+/* -------------------------------------------------------------------------
+ * Violet theme
+ *
+ * Color tokens for the violet palette across the light (`:root`),
+ * `.dark`, and system-preference variants. Trailing comments note the source
+ * palette swatch for each value.
+ * ------------------------------------------------------------------------- */
+
 :root {
+  /* ----------------------------------------------------------------------
+   * Surfaces & semantic colors
+   * ---------------------------------------------------------------------- */
+
   --background: oklch(1 0 0); /* --color-zinc-50 */
   --foreground: oklch(0.141 0.005 285.823); /* --color-zinc-950 */
 
@@ -22,9 +34,17 @@
   --card: oklch(1 0 0); /* --color-zinc-50 */
   --card-foreground: oklch(0.141 0.005 285.823); /* --color-zinc-950 */
 
+  /* ----------------------------------------------------------------------
+   * Form & focus
+   * ---------------------------------------------------------------------- */
+
   --border: oklch(0.92 0.004 286.32); /* --color-zinc-200 */
   --input: oklch(0.92 0.004 286.32); /* --color-zinc-200 */
   --ring: oklch(0.702 0.183 293.541); /* --color-violet-400 */
+
+  /* ----------------------------------------------------------------------
+   * Sidebar
+   * ---------------------------------------------------------------------- */
 
   --sidebar: oklch(0.985 0 0); /* --color-zinc-50 */
   --sidebar-foreground: oklch(0.141 0.005 285.823); /* --color-zinc-950 */
@@ -35,6 +55,10 @@
   --sidebar-border: oklch(0.92 0.004 286.32); /* --color-zinc-200 */
   --sidebar-ring: oklch(0.702 0.183 293.541); /* --color-violet-400 */
 
+  /* ----------------------------------------------------------------------
+   * Charts
+   * ---------------------------------------------------------------------- */
+
   --chart-1: oklch(0.811 0.111 293.571); /* --color-violet-300 */
   --chart-2: oklch(0.606 0.25 292.717); /* --color-violet-500 */
   --chart-3: oklch(0.541 0.281 293.009); /* --color-violet-600 */
@@ -43,6 +67,8 @@
 }
 
 .dark {
+  /* Dark variant — overrides the light tokens above. */
+
   --background: oklch(0.141 0.005 285.823); /* --color-zinc-950 */
   --foreground: oklch(0.985 0 0); /* --color-zinc-50 */
 
@@ -85,8 +111,11 @@
   --chart-4: oklch(0.491 0.27 292.581); /* --color-violet-700 */
   --chart-5: oklch(0.432 0.232 292.759); /* --color-violet-800 */
 }
+
 @media (prefers-color-scheme: dark) {
   :root:not(.light) {
+    /* System-preference dark — applied when no explicit .light is set. */
+
     --background: oklch(0.141 0.005 285.823); /* --color-zinc-950 */
     --foreground: oklch(0.985 0 0); /* --color-zinc-50 */
 

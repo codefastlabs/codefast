@@ -1,4 +1,16 @@
+/* -------------------------------------------------------------------------
+ * Red theme
+ *
+ * Color tokens for the red palette across the light (`:root`),
+ * `.dark`, and system-preference variants. Trailing comments note the source
+ * palette swatch for each value.
+ * ------------------------------------------------------------------------- */
+
 :root {
+  /* ----------------------------------------------------------------------
+   * Surfaces & semantic colors
+   * ---------------------------------------------------------------------- */
+
   --background: oklch(1 0 0); /* --color-zinc-50 */
   --foreground: oklch(0.141 0.005 285.823); /* --color-zinc-950 */
 
@@ -22,9 +34,17 @@
   --card: oklch(1 0 0); /* --color-zinc-50 */
   --card-foreground: oklch(0.141 0.005 285.823); /* --color-zinc-950 */
 
+  /* ----------------------------------------------------------------------
+   * Form & focus
+   * ---------------------------------------------------------------------- */
+
   --border: oklch(0.92 0.004 286.32); /* --color-zinc-200 */
   --input: oklch(0.92 0.004 286.32); /* --color-zinc-200 */
   --ring: oklch(0.704 0.191 22.216); /* --color-red-400 */
+
+  /* ----------------------------------------------------------------------
+   * Sidebar
+   * ---------------------------------------------------------------------- */
 
   --sidebar: oklch(0.985 0 0); /* --color-zinc-50 */
   --sidebar-foreground: oklch(0.141 0.005 285.823); /* --color-zinc-950 */
@@ -35,6 +55,10 @@
   --sidebar-border: oklch(0.92 0.004 286.32); /* --color-zinc-200 */
   --sidebar-ring: oklch(0.704 0.191 22.216); /* --color-red-400 */
 
+  /* ----------------------------------------------------------------------
+   * Charts
+   * ---------------------------------------------------------------------- */
+
   --chart-1: oklch(0.808 0.114 19.571); /* --color-red-300 */
   --chart-2: oklch(0.637 0.237 25.331); /* --color-red-500 */
   --chart-3: oklch(0.577 0.245 27.325); /* --color-red-600 */
@@ -43,6 +67,8 @@
 }
 
 .dark {
+  /* Dark variant — overrides the light tokens above. */
+
   --background: oklch(0.141 0.005 285.823); /* --color-zinc-950 */
   --foreground: oklch(0.985 0 0); /* --color-zinc-50 */
 
@@ -85,8 +111,11 @@
   --chart-4: oklch(0.505 0.213 27.518); /* --color-red-700 */
   --chart-5: oklch(0.444 0.177 26.899); /* --color-red-800 */
 }
+
 @media (prefers-color-scheme: dark) {
   :root:not(.light) {
+    /* System-preference dark — applied when no explicit .light is set. */
+
     --background: oklch(0.141 0.005 285.823); /* --color-zinc-950 */
     --foreground: oklch(0.985 0 0); /* --color-zinc-50 */
 

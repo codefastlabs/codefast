@@ -563,7 +563,7 @@ export function ChartPanel({
             className="bg-bh-overlay-soft absolute inset-0 z-10 flex flex-col items-center justify-center gap-4 rounded-2xl p-6 text-center backdrop-blur-md"
             id="chart-empty-state"
           >
-            <p className="text-bh-meta max-w-[24rem] text-sm leading-normal">{emptyReason}</p>
+            <p className="text-bh-meta max-w-96 text-sm leading-normal">{emptyReason}</p>
             <div className="flex flex-wrap items-center justify-center gap-2">
               {envKey && (
                 <button
@@ -643,7 +643,7 @@ export function ChartPanel({
               : "Primary ratios"}
           </label>
           <button
-            className="border-bh-border bg-bh-fill-white-4 shadow-bh-btn-reload text-bh-ink hover:bg-bh-fill-white-7 hover:border-bh-border-strong hover:text-bh-ink-hover focus-visible:outline-bh-blue order-last w-full shrink-0 justify-center rounded-xl border px-4 py-2.5 font-[inherit] text-[0.8125rem] font-medium tracking-[-0.015em] backdrop-blur-[0.875rem] backdrop-saturate-160 [transition:background_0.18s_ease,border-color_0.18s_ease,color_0.18s_ease] focus-visible:outline focus-visible:outline-offset-[0.1875rem] max-sm:mt-0 max-sm:min-h-11 max-sm:rounded-none max-sm:border-0 max-sm:py-3 sm:order-0 sm:ms-auto sm:w-auto sm:py-2"
+            className="border-bh-border bg-bh-fill-white-4 shadow-bh-btn-reload text-bh-ink hover:bg-bh-fill-white-7 hover:border-bh-border-strong hover:text-bh-ink-hover focus-visible:outline-bh-blue order-last w-full shrink-0 justify-center rounded-xl border px-4 py-2.5 font-[inherit] text-[0.8125rem] font-medium tracking-[-0.015em] backdrop-blur-md backdrop-saturate-160 [transition:background_0.18s_ease,border-color_0.18s_ease,color_0.18s_ease] focus-visible:outline focus-visible:outline-offset-[0.1875rem] max-sm:mt-0 max-sm:min-h-11 max-sm:rounded-none max-sm:border-0 max-sm:py-3 sm:order-0 sm:ms-auto sm:w-auto sm:py-2"
             id="chart-download-png-btn"
             onClick={() => onDownloadPng(chartRef)}
             title="Capture current chart view as PNG"

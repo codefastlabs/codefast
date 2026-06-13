@@ -1,4 +1,16 @@
+/* -------------------------------------------------------------------------
+ * Fuchsia theme
+ *
+ * Color tokens for the fuchsia palette across the light (`:root`),
+ * `.dark`, and system-preference variants. Trailing comments note the source
+ * palette swatch for each value.
+ * ------------------------------------------------------------------------- */
+
 :root {
+  /* ----------------------------------------------------------------------
+   * Surfaces & semantic colors
+   * ---------------------------------------------------------------------- */
+
   --background: oklch(1 0 0); /* --color-zinc-50 */
   --foreground: oklch(0.141 0.005 285.823); /* --color-zinc-950 */
 
@@ -22,9 +34,17 @@
   --card: oklch(1 0 0); /* --color-zinc-50 */
   --card-foreground: oklch(0.141 0.005 285.823); /* --color-zinc-950 */
 
+  /* ----------------------------------------------------------------------
+   * Form & focus
+   * ---------------------------------------------------------------------- */
+
   --border: oklch(0.92 0.004 286.32); /* --color-zinc-200 */
   --input: oklch(0.92 0.004 286.32); /* --color-zinc-200 */
   --ring: oklch(0.75 0.21 322); /* --color-fuchsia-400 */
+
+  /* ----------------------------------------------------------------------
+   * Sidebar
+   * ---------------------------------------------------------------------- */
 
   --sidebar: oklch(0.985 0 0); /* --color-zinc-50 */
   --sidebar-foreground: oklch(0.141 0.005 285.823); /* --color-zinc-950 */
@@ -35,6 +55,10 @@
   --sidebar-border: oklch(0.92 0.004 286.32); /* --color-zinc-200 */
   --sidebar-ring: oklch(0.75 0.21 322); /* --color-fuchsia-400 */
 
+  /* ----------------------------------------------------------------------
+   * Charts
+   * ---------------------------------------------------------------------- */
+
   --chart-1: oklch(0.83 0.13 321); /* --color-fuchsia-300 */
   --chart-2: oklch(0.75 0.21 322); /* --color-fuchsia-400 */
   --chart-3: oklch(0.67 0.26 322); /* --color-fuchsia-500 */
@@ -43,6 +67,8 @@
 }
 
 .dark {
+  /* Dark variant — overrides the light tokens above. */
+
   --background: oklch(0.141 0.005 285.823); /* --color-zinc-950 */
   --foreground: oklch(0.985 0 0); /* --color-zinc-50 */
 
@@ -85,8 +111,11 @@
   --chart-4: oklch(0.59 0.26 323); /* --color-fuchsia-600 */
   --chart-5: oklch(0.52 0.23 324); /* --color-fuchsia-700 */
 }
+
 @media (prefers-color-scheme: dark) {
   :root:not(.light) {
+    /* System-preference dark — applied when no explicit .light is set. */
+
     --background: oklch(0.141 0.005 285.823); /* --color-zinc-950 */
     --foreground: oklch(0.985 0 0); /* --color-zinc-50 */
 

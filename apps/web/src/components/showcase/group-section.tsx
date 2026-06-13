@@ -5,13 +5,8 @@ import type { ComponentGroup } from "#/components/showcase/groups";
 export function GroupSection({ group }: { group: ComponentGroup }) {
   return (
     <section id={group.id} className="mb-16 scroll-mt-28">
-      <div className="mb-6 flex flex-col gap-2 border-b border-ui-border pb-4 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <h2 className="text-2xl leading-none font-bold tracking-tighter text-ui-fg">{group.label}</h2>
-          {group.description ? (
-            <p className="mt-1.5 max-w-xl text-sm leading-6 text-ui-muted">{group.description}</p>
-          ) : null}
-        </div>
+      <div className="mb-6 flex items-end justify-between gap-2 border-b border-ui-border bg-ui-bg/75 pt-3 pb-4 backdrop-blur-lg lg:sticky lg:top-12 lg:z-20">
+        <h2 className="text-2xl leading-none font-bold tracking-tighter text-ui-fg">{group.label}</h2>
         <span className="w-fit shrink-0 rounded-full border border-ui-border bg-ui-surface px-2.5 py-1 text-xs font-semibold text-ui-muted tabular-nums">
           {group.items.length} components
         </span>
