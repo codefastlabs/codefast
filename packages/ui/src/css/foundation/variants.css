@@ -1,13 +1,14 @@
-/*
- * Custom Tailwind variants for @codefast/ui.
+/* -------------------------------------------------------------------------
+ * Variants
+ *
+ * Custom Tailwind variants for @codefast/ui. Prefer these over verbose
+ * arbitrary variants (`data-[state=open]:`, `data-[side=left]:`).
  *
  * Shorthand usage (composes with group-, peer-, in-, has- modifiers):
  *   data-open:           → [data-state="open"] or [data-open]:not([data-open="false"])
  *   group-data-disabled: → ancestor .group with matching data-disabled
  *   in-data-side-left:   → ancestor with [data-side="left"]
- *
- * Prefer these over verbose arbitrary variants (data-[state=open]:, data-[side=left]:).
- */
+ * ------------------------------------------------------------------------- */
 
 /* -------------------------------------------------------------------------
  * Theme

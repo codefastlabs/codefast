@@ -2,8 +2,6 @@ import { cn } from "@codefast/ui/lib/utils";
 import type { ReactNode } from "react";
 
 import type { ComponentGroup } from "#/components/showcase/groups";
-import type { ViewMode } from "#/components/showcase/types";
-import { ViewToggle } from "#/components/showcase/view-toggle";
 
 /** A pill link used in the mobile jump nav, styled by active state. */
 function NavChip({ href, isActive, children }: { href: string; isActive: boolean; children: ReactNode }) {
@@ -23,21 +21,16 @@ function NavChip({ href, isActive, children }: { href: string; isActive: boolean
   );
 }
 
-/** Compact sticky controls shown above the grid on mobile (no sidebar there). */
+/** Compact sticky letter jump nav shown above the grid on mobile (no sidebar there). */
 export function MobileNav({
   groups,
   activeSection,
-  mode,
-  onModeChange,
 }: {
   groups: ReadonlyArray<ComponentGroup>;
   activeSection: string | null;
-  mode: ViewMode;
-  onModeChange: (mode: ViewMode) => void;
 }) {
   return (
-    <div className="sticky top-12 z-30 -mx-4 mb-10 flex flex-col gap-3 bg-ui-bg/75 px-4 py-3 backdrop-blur-[20px] lg:hidden">
-      <ViewToggle value={mode} onChange={onModeChange} className="self-start" />
+    <div className="sticky top-12 z-30 -mx-4 mb-10 flex flex-col gap-3 bg-ui-bg/75 px-4 py-3 backdrop-blur-lg lg:hidden">
       <nav className="flex flex-wrap gap-2" aria-label="Jump to">
         {groups.map((group) => (
           <NavChip key={group.id} href={`#${group.id}`} isActive={activeSection === group.id}>

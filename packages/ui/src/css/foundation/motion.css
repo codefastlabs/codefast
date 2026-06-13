@@ -1,27 +1,60 @@
-@theme {
-  /* Enter curves — decelerate into place. */
-  --ease-ui: cubic-bezier(0.32, 0.72, 0, 1); /* large surfaces: dialog, sheet */
-  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1); /* playful overshoot, opt-in */
-  --ease-snappy: cubic-bezier(0.23, 1, 0.32, 1); /* small popups: menu, tooltip */
-  --ease-gentle: cubic-bezier(0.4, 0, 0.2, 1); /* continuous layout shifts, fades */
+/* -------------------------------------------------------------------------
+ * Motion
+ *
+ * Easing curves, semantic durations, and keyframes for @codefast/ui. Tokens
+ * are exposed through Tailwind's @theme so they mint matching `ease-*`,
+ * `duration-*`, and `animate-*` utilities.
+ * ------------------------------------------------------------------------- */
 
-  /* Exit curve — accelerate away; pair with data-closed:. */
+@theme {
+  /* ----------------------------------------------------------------------
+   * Easing — enter curves (decelerate into place)
+   * ---------------------------------------------------------------------- */
+
+  --ease-ui: cubic-bezier(0.32, 0.72, 0, 1); /* Large surfaces: dialog, sheet */
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1); /* Playful overshoot (opt-in) */
+  --ease-snappy: cubic-bezier(0.23, 1, 0.32, 1); /* Small popups: menu, tooltip */
+  --ease-gentle: cubic-bezier(0.4, 0, 0.2, 1); /* Continuous layout shifts, fades */
+
+  /* ----------------------------------------------------------------------
+   * Easing — exit curve (accelerate away; pair with `data-closed:`)
+   * ---------------------------------------------------------------------- */
+
   --ease-exit: cubic-bezier(0.4, 0, 1, 1);
 
-  /*
-   * Semantic durations — enter/exit pairs per surface role.
-   * Exit ≈ 60% of enter to offset the slow start of the accelerating exit curve.
-   */
-  --animation-duration-menu-in: 150ms; /* menus, tooltip — instant tools */
+  /* ----------------------------------------------------------------------
+   * Durations — enter/exit pairs per surface role
+   *
+   * Exit ≈ 60% of enter to offset the slow start of the accelerating exit
+   * curve.
+   * ---------------------------------------------------------------------- */
+
+  --animation-duration-menu-in: 150ms; /* Menus, tooltip — instant tools */
   --animation-duration-menu-out: 100ms;
-  --animation-duration-popup-in: 200ms; /* popover, hover card — content surfaces */
+  --animation-duration-popup-in: 200ms; /* Popover, hover card — content surfaces */
   --animation-duration-popup-out: 120ms;
-  --animation-duration-overlay-in: 220ms; /* dialog content + backdrop */
+  --animation-duration-overlay-in: 220ms; /* Dialog content + backdrop */
   --animation-duration-overlay-out: 150ms;
-  --animation-duration-panel-in: 320ms; /* sheet, drawer — large sliding panels */
+  --animation-duration-panel-in: 320ms; /* Sheet, drawer — large sliding panels */
   --animation-duration-panel-out: 220ms;
-  --animation-duration-expand-in: 200ms; /* accordion, inline disclosure */
+  --animation-duration-expand-in: 200ms; /* Accordion, inline disclosure */
   --animation-duration-expand-out: 150ms;
+
+  /* ----------------------------------------------------------------------
+   * Durations — form controls (switch, checkbox, radio)
+   *
+   * Defined in the transition-duration namespace so they mint clean
+   * `duration-control*` utilities; `animate-in` also picks them up via its
+   * --tw-duration fallback, so a single utility drives both the state
+   * transition and the indicator keyframe.
+   * ---------------------------------------------------------------------- */
+
+  --transition-duration-control: 200ms; /* Container / ring: switch track, checkbox & radio box */
+  --transition-duration-control-indicator: 300ms; /* Moving part: switch thumb, check, radio dot */
+
+  /* ----------------------------------------------------------------------
+   * Keyframes
+   * ---------------------------------------------------------------------- */
 
   --animate-shimmer: shimmer 2.2s linear infinite;
 

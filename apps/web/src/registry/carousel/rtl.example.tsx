@@ -41,7 +41,7 @@ export function CarouselRtl() {
   return (
     <Carousel
       dir={dir}
-      className="w-full max-w-[12rem] sm:max-w-xs"
+      className="w-full max-w-48 sm:max-w-xs"
       opts={{
         direction: dir,
       }}
