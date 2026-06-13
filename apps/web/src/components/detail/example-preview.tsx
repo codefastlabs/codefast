@@ -114,7 +114,7 @@ function RtlPreviewSurface({
   const { dir, language } = useTranslation(directionTranslations, "ar");
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-ui-border">
+    <div className="rounded-2xl border border-ui-border">
       <div className="flex items-center border-b border-ui-border px-4 py-2">
         {context ? <LanguageSelector value={context.language} onValueChange={context.setLanguage} /> : null}
         <p className="ms-auto text-xs text-ui-muted">
