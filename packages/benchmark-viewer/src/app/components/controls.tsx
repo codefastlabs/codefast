@@ -13,7 +13,7 @@ function ReloadButton({ className, ...props }: ComponentProps<"button">) {
       type="button"
       {...props}
       className={cn(
-        "border-bh-border bh-hover-ready:border-bh-border-strong bg-bh-fill-white-4 bh-hover-ready:bg-bh-fill-white-7 shadow-bh-btn-reload text-bh-ink bh-hover-ready:text-bh-ink-hover bh-aria-busy:opacity-55 bh-aria-busy:cursor-wait focus-visible:outline-bh-blue inline-flex items-center justify-center gap-[0.4rem] rounded-full border px-[0.95rem] py-[0.38rem] font-[inherit] text-[0.8125rem] leading-tight font-medium tracking-[-0.015em] backdrop-blur-[0.875rem] backdrop-saturate-160 [transition:background_0.18s_ease,border-color_0.18s_ease,color_0.18s_ease] focus-visible:outline focus-visible:outline-offset-[0.1875rem] disabled:cursor-not-allowed disabled:opacity-40 motion-reduce:transition-none",
+        "border-bh-border bh-hover-ready:border-bh-border-strong bg-bh-fill-white-4 bh-hover-ready:bg-bh-fill-white-7 shadow-bh-btn-reload text-bh-ink bh-hover-ready:text-bh-ink-hover bh-aria-busy:opacity-55 bh-aria-busy:cursor-wait focus-visible:outline-bh-blue inline-flex items-center justify-center gap-[0.4rem] rounded-full border px-[0.95rem] py-[0.38rem] font-[inherit] text-[0.8125rem] leading-tight font-medium tracking-[-0.015em] backdrop-blur-md backdrop-saturate-160 [transition:background_0.18s_ease,border-color_0.18s_ease,color_0.18s_ease] focus-visible:outline focus-visible:outline-offset-[0.1875rem] disabled:cursor-not-allowed disabled:opacity-40 motion-reduce:transition-none",
         className,
       )}
     />
@@ -92,7 +92,7 @@ export function ChartControlPanel({
   return (
     <div
       aria-label="Chart data selection"
-      className="border-bh-border bg-bh-surface-sticky shadow-bh-sticky sticky top-[max(0.5rem,env(safe-area-inset-top,0px))] z-40 mt-6 mb-5 flex flex-col gap-3 rounded-[1.25rem] border px-3 py-3 backdrop-blur-[2.25rem] backdrop-saturate-200 max-sm:gap-2 max-sm:py-2.5 sm:top-3 sm:-mx-2 sm:mt-8 sm:mb-6 sm:gap-4 sm:px-5 sm:py-4"
+      className="border-bh-border bg-bh-surface-sticky shadow-bh-sticky sticky top-[max(0.5rem,env(safe-area-inset-top,0px))] z-40 mt-6 mb-5 flex flex-col gap-3 rounded-[1.25rem] border px-3 py-3 backdrop-blur-2xl backdrop-saturate-200 max-sm:gap-2 max-sm:py-2.5 sm:top-3 sm:-mx-2 sm:mt-8 sm:mb-6 sm:gap-4 sm:px-5 sm:py-4"
     >
       <div className="flex flex-wrap items-center justify-between gap-2 gap-y-2 sm:gap-y-1">
         <p className="text-bh-label mb-0 text-[0.65rem] font-semibold tracking-[0.14em] uppercase">Chart data</p>
