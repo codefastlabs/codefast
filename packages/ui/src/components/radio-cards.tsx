@@ -50,7 +50,7 @@ function RadioCardsItem({ children, className, ...props }: RadioCardsItemProps):
           className="flex size-4 items-center justify-center"
           data-slot="radio-card-indicator"
         >
-          <span className="absolute start-1/2 top-1/2 size-2 -translate-x-1/2 -translate-y-1/2 animate-in rounded-full bg-primary-foreground ease-spring animation-duration-menu-in zoom-in-50 rtl:translate-x-1/2" />
+          <span className="absolute start-1/2 top-1/2 size-2 -translate-x-1/2 -translate-y-1/2 animate-in rounded-full bg-primary-foreground ease-spring animation-duration-control-indicator zoom-in-50 rtl:translate-x-1/2" />
         </RadioGroupPrimitive.Indicator>
       </RadioGroupPrimitive.Item>
       {children}
