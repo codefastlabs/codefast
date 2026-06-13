@@ -165,7 +165,7 @@ function SelectContent({
         className={cn(
           "relative z-50 max-h-(--radix-select-content-available-height) min-w-36 origin-(--radix-select-content-transform-origin) overflow-x-hidden overflow-y-auto rounded-md bg-popover text-popover-foreground shadow-md ring-1 ring-foreground/10 ease-snappy data-[align-trigger=true]:animate-none data-open:animate-in data-open:animation-duration-menu-in data-open:fade-in-0 data-open:zoom-in-95 data-open:data-side-top:slide-in-from-bottom-2 data-open:data-side-right:slide-in-from-left-2 data-open:data-side-bottom:slide-in-from-top-2 data-open:data-side-left:slide-in-from-right-2 data-closed:animate-out data-closed:ease-exit data-closed:animation-duration-menu-out data-closed:fade-out-0 data-closed:zoom-out-95 data-closed:data-side-top:slide-out-to-bottom-2 data-closed:data-side-right:slide-out-to-left-2 data-closed:data-side-bottom:slide-out-to-top-2 data-closed:data-side-left:slide-out-to-right-2",
           position === "popper" &&
-            "data-side-top:-translate-y-1 data-side-right:translate-x-1 data-side-bottom:translate-y-1 data-side-left:-translate-x-1",
+            "data-side-top:-translate-y-1 data-side-right:translate-x-1 rtl:data-side-right:-translate-x-1 data-side-bottom:translate-y-1 data-side-left:-translate-x-1 rtl:data-side-left:translate-x-1",
           className,
         )}
         data-align-trigger={position === "item-aligned"}

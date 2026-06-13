@@ -272,7 +272,7 @@ function CarouselPrevious({
         "absolute touch-manipulation rounded-full",
         orientation === "horizontal"
           ? "-start-12 top-1/2 -translate-y-1/2 active:not-aria-[haspopup]:translate-y-[calc(-50%+1px)]"
-          : "start-1/2 -top-12 -translate-x-1/2 rotate-90",
+          : "start-1/2 -top-12 -translate-x-1/2 rotate-90 rtl:translate-x-1/2",
         className,
       )}
       data-slot="carousel-previous"
@@ -318,7 +318,7 @@ function CarouselNext({
         "absolute touch-manipulation rounded-full",
         orientation === "horizontal"
           ? "-end-12 top-1/2 -translate-y-1/2 active:not-aria-[haspopup]:translate-y-[calc(-50%+1px)]"
-          : "start-1/2 -bottom-12 -translate-x-1/2 rotate-90",
+          : "start-1/2 -bottom-12 -translate-x-1/2 rotate-90 rtl:translate-x-1/2",
         className,
       )}
       data-slot="carousel-next"
