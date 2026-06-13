@@ -1,33 +1,64 @@
-import { RadioGroupDensity } from "#/registry/radio-group/density.example";
-import { RadioGroupHorizontal } from "#/registry/radio-group/horizontal.example";
-import { RadioGroupPlans } from "#/registry/radio-group/plans.example";
+import { RadioGroupChoiceCard } from "#/registry/radio-group/choice-card.example";
+import { RadioGroupDescription } from "#/registry/radio-group/description.example";
+import { RadioGroupDisabled } from "#/registry/radio-group/disabled.example";
+import { RadioFields } from "#/registry/radio-group/fields.example";
+import { RadioGroupFieldset } from "#/registry/radio-group/fieldset.example";
+import { RadioGroupInvalid } from "#/registry/radio-group/invalid.example";
+import { RadioGroupRtl } from "#/registry/radio-group/rtl.example";
 import { docSource, docAnatomy } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const radioGroupDoc: ComponentDoc = {
   examples: [
     {
-      id: "density",
-      title: "Controlled single-select",
-      description: "Exactly one option is selected; the choice is echoed live below.",
-      Demo: RadioGroupDensity,
-      source: docSource("radio-group", "density"),
-      previewClassName: "items-start",
+      id: "radio-fields",
+      title: "With Fields",
+      description: "Compose radio items with Field primitives inside a FieldSet.",
+      Demo: RadioFields,
+      source: docSource("radio-group", "fields"),
     },
     {
-      id: "plans",
-      title: "Selectable cards",
-      description: "Wrap each option in a Label card that highlights when checked.",
-      Demo: RadioGroupPlans,
-      source: docSource("radio-group", "plans"),
-      previewClassName: "items-start",
+      id: "radio-group-choice-card",
+      title: "Choice Card",
+      description: "Use FieldLabel to wrap the entire Field for a clickable card-style selection.",
+      Demo: RadioGroupChoiceCard,
+      source: docSource("radio-group", "choice-card"),
     },
     {
-      id: "horizontal",
-      title: "Horizontal",
-      description: "Arrange options in a single row.",
-      Demo: RadioGroupHorizontal,
-      source: docSource("radio-group", "horizontal"),
+      id: "radio-group-description",
+      title: "Description",
+      description: "Radio group items with a description using the Field component.",
+      Demo: RadioGroupDescription,
+      source: docSource("radio-group", "description"),
+    },
+    {
+      id: "radio-group-disabled",
+      title: "Disabled",
+      description: "Use the disabled prop on RadioGroupItem to disable individual items.",
+      Demo: RadioGroupDisabled,
+      source: docSource("radio-group", "disabled"),
+    },
+    {
+      id: "radio-group-fieldset",
+      title: "Fieldset",
+      description: "Use FieldSet and FieldLegend to group radio items with a label and description.",
+      Demo: RadioGroupFieldset,
+      source: docSource("radio-group", "fieldset"),
+    },
+    {
+      id: "radio-group-invalid",
+      title: "Invalid",
+      description: "Use aria-invalid on RadioGroupItem and data-invalid on Field to show validation errors.",
+      Demo: RadioGroupInvalid,
+      source: docSource("radio-group", "invalid"),
+    },
+    {
+      id: "radio-group-rtl",
+      title: "RTL",
+      description: "Right-to-left layout support for languages such as Arabic and Hebrew.",
+      Demo: RadioGroupRtl,
+      source: docSource("radio-group", "rtl"),
+      direction: "rtl",
     },
   ],
   anatomy: docAnatomy("radio-group"),

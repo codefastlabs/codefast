@@ -1,34 +1,50 @@
 import { docSource, docAnatomy } from "#/registry/source";
-import { TextareaCounter } from "#/registry/textarea/counter.example";
-import { TextareaRows } from "#/registry/textarea/rows.example";
-import { TextareaStates } from "#/registry/textarea/states.example";
+import { TextareaButton } from "#/registry/textarea/button.example";
+import { TextareaDisabled } from "#/registry/textarea/disabled.example";
+import { TextareaField } from "#/registry/textarea/field.example";
+import { TextareaInvalid } from "#/registry/textarea/invalid.example";
+import { TextareaRtl } from "#/registry/textarea/rtl.example";
 import type { ComponentDoc } from "#/registry/types";
 
 export const textareaDoc: ComponentDoc = {
   examples: [
     {
-      id: "counter",
-      title: "With character counter",
-      description: "Controlled value plus maxLength drives a live remaining-characters count.",
-      Demo: TextareaCounter,
-      source: docSource("textarea", "counter"),
-      previewClassName: "items-start",
+      id: "textarea-button",
+      title: "Button",
+      description: "Pair with Button to create a textarea with a submit button.",
+      Demo: TextareaButton,
+      source: docSource("textarea", "button"),
     },
     {
-      id: "states",
-      title: "Disabled & invalid",
-      description: "Built-in disabled and aria-invalid styling.",
-      Demo: TextareaStates,
-      source: docSource("textarea", "states"),
-      previewClassName: "items-start",
+      id: "textarea-disabled",
+      title: "Disabled",
+      description:
+        "Use the disabled prop to disable the textarea. To style the disabled state, add the data-disabled attribute to the Field component.",
+      Demo: TextareaDisabled,
+      source: docSource("textarea", "disabled"),
     },
     {
-      id: "rows",
-      title: "Row heights",
-      description: "Set the initial height with the rows attribute.",
-      Demo: TextareaRows,
-      source: docSource("textarea", "rows"),
-      previewClassName: "items-start",
+      id: "textarea-field",
+      title: "Field",
+      description: "Use Field, FieldLabel, and FieldDescription to create a textarea with a label and description.",
+      Demo: TextareaField,
+      source: docSource("textarea", "field"),
+    },
+    {
+      id: "textarea-invalid",
+      title: "Invalid",
+      description:
+        "Use the aria-invalid prop to mark the textarea as invalid. To style the invalid state, add the data-invalid attribute to the Field component.",
+      Demo: TextareaInvalid,
+      source: docSource("textarea", "invalid"),
+    },
+    {
+      id: "textarea-rtl",
+      title: "RTL",
+      description: "Right-to-left layout support for languages such as Arabic and Hebrew.",
+      Demo: TextareaRtl,
+      source: docSource("textarea", "rtl"),
+      direction: "rtl",
     },
   ],
   anatomy: docAnatomy("textarea"),

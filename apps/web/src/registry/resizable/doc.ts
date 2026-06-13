@@ -1,5 +1,5 @@
-import { ResizableHorizontal } from "#/registry/resizable/horizontal.example";
-import { ResizablePanels } from "#/registry/resizable/panels.example";
+import { ResizableSeparatorDemo } from "#/registry/resizable/handle.example";
+import { ResizableRtl } from "#/registry/resizable/rtl.example";
 import { ResizableVertical } from "#/registry/resizable/vertical.example";
 import { docSource, docAnatomy } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
@@ -7,25 +7,26 @@ import type { ComponentDoc } from "#/registry/types";
 export const resizableDoc: ComponentDoc = {
   examples: [
     {
-      id: "panels",
-      title: "Nested panels",
-      description: "Drag the handles to resize — groups nest horizontally and vertically.",
-      Demo: ResizablePanels,
-      source: docSource("resizable", "panels"),
-    },
-    {
-      id: "horizontal",
-      title: "Two panels",
-      description: "The simplest case — drag the handle between two panels.",
-      Demo: ResizableHorizontal,
-      source: docSource("resizable", "horizontal"),
-    },
-    {
       id: "vertical",
       title: "Vertical split",
       description: "Stack panels and resize along the vertical axis.",
       Demo: ResizableVertical,
       source: docSource("resizable", "vertical"),
+    },
+    {
+      id: "resizable-handle",
+      title: "Handle",
+      description: "Use the withHandle prop on ResizableHandle to show a visible handle.",
+      Demo: ResizableSeparatorDemo,
+      source: docSource("resizable", "handle"),
+    },
+    {
+      id: "resizable-rtl",
+      title: "RTL",
+      description: "Right-to-left layout support for languages such as Arabic and Hebrew.",
+      Demo: ResizableRtl,
+      source: docSource("resizable", "rtl"),
+      direction: "rtl",
     },
   ],
   anatomy: docAnatomy("resizable"),

@@ -1,18 +1,14 @@
+import { SliderControlled } from "#/registry/slider/controlled.example";
+import { SliderDisabled } from "#/registry/slider/disabled.example";
+import { SliderMultiple } from "#/registry/slider/multiple.example";
 import { SliderRange } from "#/registry/slider/range.example";
-import { SliderStepped } from "#/registry/slider/stepped.example";
-import { SliderVolume } from "#/registry/slider/volume.example";
+import { SliderRtl } from "#/registry/slider/rtl.example";
+import { SliderVertical } from "#/registry/slider/vertical.example";
 import { docSource, docAnatomy } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const sliderDoc: ComponentDoc = {
   examples: [
-    {
-      id: "volume",
-      title: "Single value",
-      description: "A volume control: an icon that reacts to the value and a live percentage.",
-      Demo: SliderVolume,
-      source: docSource("slider", "volume"),
-    },
     {
       id: "range",
       title: "Range (two thumbs)",
@@ -21,11 +17,40 @@ export const sliderDoc: ComponentDoc = {
       source: docSource("slider", "range"),
     },
     {
-      id: "stepped",
-      title: "Stepped with marks",
-      description: "Snap to steps and label each stop.",
-      Demo: SliderStepped,
-      source: docSource("slider", "stepped"),
+      id: "slider-controlled",
+      title: "Controlled",
+      description: "An input where the user selects a value from within a given range.",
+      Demo: SliderControlled,
+      source: docSource("slider", "controlled"),
+    },
+    {
+      id: "slider-disabled",
+      title: "Disabled",
+      description: "Use the disabled prop to disable the slider.",
+      Demo: SliderDisabled,
+      source: docSource("slider", "disabled"),
+    },
+    {
+      id: "slider-multiple",
+      title: "Multiple Thumbs",
+      description: "Use an array with multiple values for multiple thumbs.",
+      Demo: SliderMultiple,
+      source: docSource("slider", "multiple"),
+    },
+    {
+      id: "slider-rtl",
+      title: "RTL",
+      description: "Right-to-left layout support for languages such as Arabic and Hebrew.",
+      Demo: SliderRtl,
+      source: docSource("slider", "rtl"),
+      direction: "rtl",
+    },
+    {
+      id: "slider-vertical",
+      title: "Vertical",
+      description: "Use orientation='vertical' for a vertical slider.",
+      Demo: SliderVertical,
+      source: docSource("slider", "vertical"),
     },
   ],
   anatomy: docAnatomy("slider"),

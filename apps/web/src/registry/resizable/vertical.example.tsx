@@ -1,17 +1,17 @@
-import { ResizableGroup, ResizablePanel, ResizableSeparator } from "@codefast/ui/resizable";
+import { ResizableSeparator, ResizablePanel, ResizableGroup } from "@codefast/ui/resizable";
 
 export function ResizableVertical() {
   return (
-    <ResizableGroup orientation="vertical" className="h-48 w-full max-w-md rounded-xl border">
-      <ResizablePanel defaultSize={55} minSize={20}>
-        <div className="flex h-full items-center justify-center p-4">
-          <span className="text-sm text-ui-muted">Editor</span>
+    <ResizableGroup orientation="vertical" className="min-h-[200px] max-w-sm rounded-lg border">
+      <ResizablePanel defaultSize="25%">
+        <div className="flex h-full items-center justify-center p-6">
+          <span className="font-semibold">Header</span>
         </div>
       </ResizablePanel>
       <ResizableSeparator />
-      <ResizablePanel defaultSize={45} minSize={20}>
-        <div className="flex h-full items-center justify-center p-4">
-          <span className="text-sm text-ui-muted">Terminal</span>
+      <ResizablePanel defaultSize="75%">
+        <div className="flex h-full items-center justify-center p-6">
+          <span className="font-semibold">Content</span>
         </div>
       </ResizablePanel>
     </ResizableGroup>

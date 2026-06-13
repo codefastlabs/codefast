@@ -1,33 +1,33 @@
-import { SheetNavigation } from "#/registry/sheet/navigation.example";
-import { SheetProfile } from "#/registry/sheet/profile.example";
-import { SheetSides } from "#/registry/sheet/sides.example";
+import { SheetNoCloseButton } from "#/registry/sheet/no-close-button.example";
+import { SheetRtl } from "#/registry/sheet/rtl.example";
+import { SheetSide } from "#/registry/sheet/side.example";
 import { docSource, docAnatomy } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const sheetDoc: ComponentDoc = {
   examples: [
     {
-      id: "sides",
-      title: "Any edge",
-      description: "Controlled open state plus a side prop — slide in from top, right, bottom, or left.",
-      Demo: SheetSides,
-      source: docSource("sheet", "sides"),
-      previewClassName: "min-h-40",
+      id: "sheet-no-close-button",
+      title: "No Close Button",
+      description: "Use showCloseButton={false} on SheetContent to hide the close button.",
+      Demo: SheetNoCloseButton,
+      source: docSource("sheet", "no-close-button"),
     },
     {
-      id: "form",
-      title: "Edit form",
-      description: "A trigger-driven sheet holding a short form with header, body, and footer actions.",
-      Demo: SheetProfile,
-      source: docSource("sheet", "profile"),
-      previewClassName: "min-h-40",
+      id: "sheet-rtl",
+      title: "RTL",
+      description: "Right-to-left layout support for languages such as Arabic and Hebrew.",
+      Demo: SheetRtl,
+      source: docSource("sheet", "rtl"),
+      direction: "rtl",
     },
     {
-      id: "navigation",
-      title: "Side navigation",
-      description: "A left-anchored sheet as a mobile nav menu.",
-      Demo: SheetNavigation,
-      source: docSource("sheet", "navigation"),
+      id: "sheet-side",
+      title: "Side",
+      description:
+        "Use the side prop on SheetContent to set the edge of the screen where the sheet appears. Values are top, right, bottom, or left.",
+      Demo: SheetSide,
+      source: docSource("sheet", "side"),
     },
   ],
   anatomy: docAnatomy("sheet"),

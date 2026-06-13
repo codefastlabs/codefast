@@ -1,18 +1,13 @@
 import { docSource, docAnatomy } from "#/registry/source";
-import { TabsDefault } from "#/registry/tabs/default.example";
+import { TabsDisabled } from "#/registry/tabs/disabled.example";
+import { TabsIcons } from "#/registry/tabs/icons.example";
 import { TabsLine } from "#/registry/tabs/line.example";
-import { TabsWithIcons } from "#/registry/tabs/with-icons.example";
+import { TabsRtl } from "#/registry/tabs/rtl.example";
+import { TabsVertical } from "#/registry/tabs/vertical.example";
 import type { ComponentDoc } from "#/registry/types";
 
 export const tabsDoc: ComponentDoc = {
   examples: [
-    {
-      id: "default",
-      title: "Default",
-      description: "The solid pill style, ideal for settings panels.",
-      Demo: TabsDefault,
-      source: docSource("tabs", "default"),
-    },
     {
       id: "line",
       title: "Line variant",
@@ -21,11 +16,33 @@ export const tabsDoc: ComponentDoc = {
       source: docSource("tabs", "line"),
     },
     {
-      id: "with-icons",
-      title: "With icons",
-      description: "Add an icon before each tab label.",
-      Demo: TabsWithIcons,
-      source: docSource("tabs", "with-icons"),
+      id: "tabs-disabled",
+      title: "Disabled",
+      description: "A set of layered sections of content—known as tab panels—that are displayed one at a time.",
+      Demo: TabsDisabled,
+      source: docSource("tabs", "disabled"),
+    },
+    {
+      id: "tabs-icons",
+      title: "Icons",
+      description: "A set of layered sections of content—known as tab panels—that are displayed one at a time.",
+      Demo: TabsIcons,
+      source: docSource("tabs", "icons"),
+    },
+    {
+      id: "tabs-rtl",
+      title: "RTL",
+      description: "Right-to-left layout support for languages such as Arabic and Hebrew.",
+      Demo: TabsRtl,
+      source: docSource("tabs", "rtl"),
+      direction: "rtl",
+    },
+    {
+      id: "tabs-vertical",
+      title: "Vertical",
+      description: "Use orientation='vertical' for vertical tabs.",
+      Demo: TabsVertical,
+      source: docSource("tabs", "vertical"),
     },
   ],
   anatomy: docAnatomy("tabs"),

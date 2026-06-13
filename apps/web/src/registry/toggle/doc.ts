@@ -1,31 +1,48 @@
 import { docSource, docAnatomy } from "#/registry/source";
-import { TogglePin } from "#/registry/toggle/pin.example";
+import { ToggleDisabled } from "#/registry/toggle/disabled.example";
+import { ToggleOutline } from "#/registry/toggle/outline.example";
+import { ToggleRtl } from "#/registry/toggle/rtl.example";
 import { ToggleSizes } from "#/registry/toggle/sizes.example";
-import { ToggleToolbar } from "#/registry/toggle/toolbar.example";
+import { ToggleText } from "#/registry/toggle/text.example";
 import type { ComponentDoc } from "#/registry/types";
 
 export const toggleDoc: ComponentDoc = {
   examples: [
-    {
-      id: "toolbar",
-      title: "Icon toggles",
-      description: "Independent on/off buttons — each keeps its own pressed state.",
-      Demo: ToggleToolbar,
-      source: docSource("toggle", "toolbar"),
-    },
-    {
-      id: "controlled",
-      title: "Controlled with label",
-      description: "Drive the pressed state yourself and swap the label to match.",
-      Demo: TogglePin,
-      source: docSource("toggle", "pin"),
-    },
     {
       id: "sizes",
       title: "Sizes",
       description: "sm, default, and lg toggles.",
       Demo: ToggleSizes,
       source: docSource("toggle", "sizes"),
+    },
+    {
+      id: "toggle-disabled",
+      title: "Disabled",
+      description: "A two-state button that can be either on or off.",
+      Demo: ToggleDisabled,
+      source: docSource("toggle", "disabled"),
+    },
+    {
+      id: "toggle-outline",
+      title: "Outline",
+      description: "Use variant='outline' for an outline style.",
+      Demo: ToggleOutline,
+      source: docSource("toggle", "outline"),
+    },
+    {
+      id: "toggle-rtl",
+      title: "RTL",
+      description: "Right-to-left layout support for languages such as Arabic and Hebrew.",
+      Demo: ToggleRtl,
+      source: docSource("toggle", "rtl"),
+      direction: "rtl",
+    },
+    {
+      id: "toggle-text",
+      title: "With Text",
+      description: "A two-state button that can be either on or off.",
+      Demo: ToggleText,
+      source: docSource("toggle", "text"),
     },
   ],
   anatomy: docAnatomy("toggle"),

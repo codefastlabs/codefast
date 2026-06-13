@@ -1,18 +1,11 @@
-import { PaginationControlled } from "#/registry/pagination/controlled.example";
-import { PaginationPrevNext } from "#/registry/pagination/prev-next.example";
+import { PaginationIconsOnly } from "#/registry/pagination/icons-only.example";
+import { PaginationRtl } from "#/registry/pagination/rtl.example";
 import { PaginationSimple } from "#/registry/pagination/simple.example";
 import { docSource, docAnatomy } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const paginationDoc: ComponentDoc = {
   examples: [
-    {
-      id: "controlled",
-      title: "Controlled with a window",
-      description: "Click pages or prev/next — the windowed list and disabled ends update from state.",
-      Demo: PaginationControlled,
-      source: docSource("pagination", "controlled"),
-    },
     {
       id: "simple",
       title: "Simple",
@@ -21,11 +14,20 @@ export const paginationDoc: ComponentDoc = {
       source: docSource("pagination", "simple"),
     },
     {
-      id: "prev-next",
-      title: "Previous / next only",
-      description: "A minimal pager with disabled edges and a counter.",
-      Demo: PaginationPrevNext,
-      source: docSource("pagination", "prev-next"),
+      id: "pagination-icons-only",
+      title: "Icons Only",
+      description:
+        "Use just the previous and next buttons without page numbers. This is useful for data tables with a rows per page selector.",
+      Demo: PaginationIconsOnly,
+      source: docSource("pagination", "icons-only"),
+    },
+    {
+      id: "pagination-rtl",
+      title: "RTL",
+      description: "Right-to-left layout support for languages such as Arabic and Hebrew.",
+      Demo: PaginationRtl,
+      source: docSource("pagination", "rtl"),
+      direction: "rtl",
     },
   ],
   anatomy: docAnatomy("pagination"),
