@@ -53,7 +53,7 @@ function CheckboxCardsItem({ checkboxClassName, children, className, ...props }:
         {...props}
       >
         <CheckboxGroupPrimitive.CheckboxGroupIndicator
-          className="grid place-content-center text-current transition-none [&>svg]:size-3.5"
+          className="grid animate-in place-content-center text-current ease-spring animation-duration-menu-in zoom-in-50 [&>svg]:size-3.5"
           data-slot="checkbox-card-indicator"
         >
           <CheckIcon />
