@@ -1,33 +1,58 @@
-import { CommandDialogExample } from "#/registry/command/dialog.example";
-import { CommandPalette } from "#/registry/command/palette.example";
-import { CommandSimple } from "#/registry/command/simple.example";
+import { CommandBasic } from "#/registry/command/basic.example";
+import { CommandDialogDemo } from "#/registry/command/dialog.example";
+import { CommandWithGroups } from "#/registry/command/groups.example";
+import { CommandRtl } from "#/registry/command/rtl.example";
+import { CommandManyItems } from "#/registry/command/scrollable.example";
+import { CommandWithShortcuts } from "#/registry/command/shortcuts.example";
 import { docSource, docAnatomy } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const commandDoc: ComponentDoc = {
   examples: [
     {
-      id: "inline",
-      title: "Inline palette",
-      description: "Type to fuzzy-filter; pick an item to run it. The choice shows below.",
-      Demo: CommandPalette,
-      source: docSource("command", "palette"),
-      previewClassName: "items-start",
-    },
-    {
       id: "dialog",
       title: "Command dialog",
       description: "The same palette in a modal — the most common ⌘K pattern.",
-      Demo: CommandDialogExample,
+      Demo: CommandDialogDemo,
       source: docSource("command", "dialog"),
       previewClassName: "min-h-40",
     },
     {
-      id: "simple",
-      title: "Minimal palette",
-      description: "A single filterable group with no shortcuts.",
-      Demo: CommandSimple,
-      source: docSource("command", "simple"),
+      id: "command-basic",
+      title: "Basic",
+      description: "A simple command menu in a dialog.",
+      Demo: CommandBasic,
+      source: docSource("command", "basic"),
+    },
+    {
+      id: "command-groups",
+      title: "Groups",
+      description: "A command menu with groups, icons and separators.",
+      Demo: CommandWithGroups,
+      source: docSource("command", "groups"),
+    },
+    {
+      id: "command-rtl",
+      title: "RTL",
+      description: "Right-to-left layout support for languages such as Arabic and Hebrew.",
+      Demo: CommandRtl,
+      source: docSource("command", "rtl"),
+      previewClassName: "items-start",
+      direction: "rtl",
+    },
+    {
+      id: "command-scrollable",
+      title: "Scrollable",
+      description: "Scrollable command menu with multiple items.",
+      Demo: CommandManyItems,
+      source: docSource("command", "scrollable"),
+    },
+    {
+      id: "command-shortcuts",
+      title: "Shortcuts",
+      description: "Command menu for search and quick actions.",
+      Demo: CommandWithShortcuts,
+      source: docSource("command", "shortcuts"),
     },
   ],
   anatomy: docAnatomy("command"),

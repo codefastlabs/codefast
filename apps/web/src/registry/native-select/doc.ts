@@ -1,34 +1,41 @@
-import { NativeSelectCountry } from "#/registry/native-select/country.example";
-import { NativeSelectSimple } from "#/registry/native-select/simple.example";
-import { NativeSelectStates } from "#/registry/native-select/states.example";
+import { NativeSelectDisabled } from "#/registry/native-select/disabled.example";
+import { NativeSelectGroups } from "#/registry/native-select/groups.example";
+import { NativeSelectInvalid } from "#/registry/native-select/invalid.example";
+import { NativeSelectRtl } from "#/registry/native-select/rtl.example";
 import { docSource, docAnatomy } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const nativeSelectDoc: ComponentDoc = {
   examples: [
     {
-      id: "country",
-      title: "Grouped options",
-      description: "A controlled native <select> with option groups and a live readout.",
-      Demo: NativeSelectCountry,
-      source: docSource("native-select", "country"),
-      previewClassName: "items-start",
+      id: "native-select-disabled",
+      title: "Disabled",
+      description: "Add the disabled prop to the NativeSelect component to disable the select.",
+      Demo: NativeSelectDisabled,
+      source: docSource("native-select", "disabled"),
     },
     {
-      id: "states",
-      title: "Disabled & invalid",
-      description: "Native disabled and aria-invalid states.",
-      Demo: NativeSelectStates,
-      source: docSource("native-select", "states"),
-      previewClassName: "items-start",
+      id: "native-select-groups",
+      title: "Groups",
+      description: "Use NativeSelectOptGroup to organize options into categories.",
+      Demo: NativeSelectGroups,
+      source: docSource("native-select", "groups"),
     },
     {
-      id: "simple",
-      title: "Ungrouped options",
-      description: "A flat list of options without opt-groups.",
-      Demo: NativeSelectSimple,
-      source: docSource("native-select", "simple"),
-      previewClassName: "items-start",
+      id: "native-select-invalid",
+      title: "Invalid",
+      description:
+        "Use aria-invalid to show validation errors and the data-invalid attribute to the Field component for styling.",
+      Demo: NativeSelectInvalid,
+      source: docSource("native-select", "invalid"),
+    },
+    {
+      id: "native-select-rtl",
+      title: "RTL",
+      description: "Right-to-left layout support for languages such as Arabic and Hebrew.",
+      Demo: NativeSelectRtl,
+      source: docSource("native-select", "rtl"),
+      direction: "rtl",
     },
   ],
   anatomy: docAnatomy("native-select"),

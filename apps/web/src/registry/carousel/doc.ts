@@ -1,31 +1,65 @@
-import { CarouselGallery } from "#/registry/carousel/gallery.example";
+import { CarouselDApiDemo } from "#/registry/carousel/api.example";
 import { CarouselMultiple } from "#/registry/carousel/multiple.example";
-import { CarouselVertical } from "#/registry/carousel/vertical.example";
+import { CarouselOrientation } from "#/registry/carousel/orientation.example";
+import { CarouselPlugin } from "#/registry/carousel/plugin.example";
+import { CarouselRtl } from "#/registry/carousel/rtl.example";
+import { CarouselSize } from "#/registry/carousel/size.example";
+import { CarouselSpacing } from "#/registry/carousel/spacing.example";
 import { docSource, docAnatomy } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const carouselDoc: ComponentDoc = {
   examples: [
     {
-      id: "gallery",
-      title: "With dots & counter",
-      description: "Track the active slide via setApi — drive clickable dots and a live “X of N” counter.",
-      Demo: CarouselGallery,
-      source: docSource("carousel", "gallery"),
-    },
-    {
-      id: "vertical",
-      title: "Vertical axis",
-      description: 'Set orientation="vertical" to stack slides and scroll up/down.',
-      Demo: CarouselVertical,
-      source: docSource("carousel", "vertical"),
-    },
-    {
       id: "multiple",
       title: "Multiple per view",
       description: "Show several items at once with basis utilities.",
       Demo: CarouselMultiple,
       source: docSource("carousel", "multiple"),
+    },
+    {
+      id: "carousel-api",
+      title: "API",
+      description: "Use a state and the setApi prop to get an instance of the carousel API.",
+      Demo: CarouselDApiDemo,
+      source: docSource("carousel", "api"),
+    },
+    {
+      id: "carousel-orientation",
+      title: "Orientation",
+      description: "Use the orientation prop to set the orientation of the carousel.",
+      Demo: CarouselOrientation,
+      source: docSource("carousel", "orientation"),
+    },
+    {
+      id: "carousel-plugin",
+      title: "Plugins",
+      description: "Add plugins such as Autoplay to the carousel using the plugins prop.",
+      Demo: CarouselPlugin,
+      source: docSource("carousel", "plugin"),
+    },
+    {
+      id: "carousel-rtl",
+      title: "RTL",
+      description: "Right-to-left layout support for languages such as Arabic and Hebrew.",
+      Demo: CarouselRtl,
+      source: docSource("carousel", "rtl"),
+      direction: "rtl",
+    },
+    {
+      id: "carousel-size",
+      title: "Sizes",
+      description: "To set the size of the items, you can use the basis utility class on the <CarouselItem />.",
+      Demo: CarouselSize,
+      source: docSource("carousel", "size"),
+    },
+    {
+      id: "carousel-spacing",
+      title: "Spacing",
+      description:
+        "To set the spacing between the items, we use a pl-[VALUE] utility on the <CarouselItem /> and a negative -ml-[VALUE] on the <CarouselContent />.",
+      Demo: CarouselSpacing,
+      source: docSource("carousel", "spacing"),
     },
   ],
   anatomy: docAnatomy("carousel"),

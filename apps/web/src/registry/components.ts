@@ -80,6 +80,14 @@ export interface ComponentMetaInput {
   readonly wide?: boolean;
   /** Lifecycle maturity. Absent means `stable`; a badge shows only when not stable. */
   readonly status?: ComponentStatus;
+  /**
+   * For composition recipes (e.g. Date Picker, Data Table) that have no single
+   * `@codefast/ui/<slug>` export. Lists the primitives the pattern composes (or
+   * a library dep); its presence flips the detail page and showcase card from an
+   * import path to a "composed from" note, and hides the source-file link. An
+   * empty array marks a plain-markup recipe (e.g. Typography).
+   */
+  readonly composition?: ReadonlyArray<string>;
 }
 
 /** Authored metadata plus the fields derived from the filesystem. */
@@ -149,4 +157,17 @@ export const NEIGHBORS_BY_SLUG: ReadonlyMap<string, ComponentNeighbors> = new Ma
 /** `@codefast/ui/<slug>` import path for a component. */
 export function componentPath(slug: string): string {
   return `@codefast/ui/${slug}`;
+}
+
+/**
+ * The label shown in the import-path chip. Real components show their
+ * `@codefast/ui/<slug>` path; composition recipes show the primitives they
+ * compose (or `Tailwind utility classes` for plain-markup recipes).
+ */
+export function componentImportLabel(component: Pick<ComponentMeta, "slug" | "composition">): string {
+  if (component.composition === undefined) {
+    return componentPath(component.slug);
+  }
+
+  return component.composition.length > 0 ? component.composition.join(" · ") : "Tailwind utility classes";
 }

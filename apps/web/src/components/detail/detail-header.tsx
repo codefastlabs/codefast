@@ -12,7 +12,7 @@ import { Link } from "@tanstack/react-router";
 import { ChevronRightIcon, CodeIcon, PackageIcon } from "lucide-react";
 
 import type { ComponentMeta } from "#/registry/components";
-import { CATEGORIES, componentPath } from "#/registry/components";
+import { CATEGORIES, componentImportLabel } from "#/registry/components";
 
 const GITHUB_SRC = "https://github.com/codefastlabs/codefast/tree/main/packages/ui/src/components";
 const NPM_URL = "https://www.npmjs.com/package/@codefast/ui";
@@ -34,9 +34,10 @@ const STATUS_BADGE: Record<"beta" | "deprecated", { label: string; className: st
 };
 
 export function ComponentDetailHeader({ component }: ComponentDetailHeaderProps) {
-  const { slug, name, category, description, status } = component;
+  const { slug, name, category, description, status, composition } = component;
   const categoryLabel = CATEGORIES.find((entry) => entry.id === category)?.label ?? category;
   const statusBadge = status && status !== "stable" ? STATUS_BADGE[status] : undefined;
+  const isComposition = composition !== undefined;
 
   return (
     <>
@@ -80,12 +81,14 @@ export function ComponentDetailHeader({ component }: ComponentDetailHeaderProps)
         <h1 className="mb-4 text-4xl leading-none font-bold tracking-tighter text-ui-fg md:text-5xl">{name}</h1>
         <p className="mb-6 text-base leading-relaxed text-ui-muted">{description}</p>
         <div className="flex flex-wrap gap-2">
-          <Button asChild size="sm" variant="outline">
-            <a href={`${GITHUB_SRC}/${slug}.tsx`} target="_blank" rel="noreferrer">
-              <CodeIcon data-icon="inline-start" />
-              Source
-            </a>
-          </Button>
+          {isComposition ? null : (
+            <Button asChild size="sm" variant="outline">
+              <a href={`${GITHUB_SRC}/${slug}.tsx`} target="_blank" rel="noreferrer">
+                <CodeIcon data-icon="inline-start" />
+                Source
+              </a>
+            </Button>
+          )}
           <Button asChild size="sm" variant="outline">
             <a href={NPM_URL} target="_blank" rel="noreferrer">
               <PackageIcon data-icon="inline-start" />
@@ -103,9 +106,11 @@ export function ComponentDetailHeader({ component }: ComponentDetailHeaderProps)
           </div>
         </div>
         <div>
-          <p className="mb-1.5 text-xs font-semibold tracking-widest text-ui-muted uppercase">Import path</p>
+          <p className="mb-1.5 text-xs font-semibold tracking-widest text-ui-muted uppercase">
+            {isComposition ? "Composed from" : "Import path"}
+          </p>
           <div className="truncate rounded-xl border border-ui-border bg-ui-surface px-4 py-2.5 font-mono text-sm text-ui-brand">
-            {componentPath(slug)}
+            {componentImportLabel(component)}
           </div>
         </div>
       </div>

@@ -1,34 +1,32 @@
 import { docSource, docAnatomy } from "#/registry/source";
-import { TableInvoices } from "#/registry/table/invoices.example";
-import { TableSelection } from "#/registry/table/selection.example";
-import { TableSimple } from "#/registry/table/simple.example";
+import { TableActions } from "#/registry/table/actions.example";
+import { TableFooterExample } from "#/registry/table/footer.example";
+import { TableRtl } from "#/registry/table/rtl.example";
 import type { ComponentDoc } from "#/registry/types";
 
 export const tableDoc: ComponentDoc = {
   examples: [
     {
-      id: "invoices",
-      title: "Data table",
-      description: "A semantic table with header, footer, caption, and a status Badge per row.",
-      Demo: TableInvoices,
-      source: docSource("table", "invoices"),
-      previewClassName: "items-start",
+      id: "table-actions",
+      title: "Actions",
+      description: "A table showing actions for each row using a <DropdownMenu /> component.",
+      Demo: TableActions,
+      source: docSource("table", "actions"),
     },
     {
-      id: "simple",
-      title: "Simple table",
-      description: "Header and rows only — no caption or footer.",
-      Demo: TableSimple,
-      source: docSource("table", "simple"),
-      previewClassName: "items-start",
+      id: "table-footer",
+      title: "Footer",
+      description: "Use the <TableFooter /> component to add a footer to the table.",
+      Demo: TableFooterExample,
+      source: docSource("table", "footer"),
     },
     {
-      id: "selection",
-      title: "Row selection",
-      description: "A checkbox column with select-all and per-row state.",
-      Demo: TableSelection,
-      source: docSource("table", "selection"),
-      previewClassName: "items-start",
+      id: "table-rtl",
+      title: "RTL",
+      description: "Right-to-left layout support for languages such as Arabic and Hebrew.",
+      Demo: TableRtl,
+      source: docSource("table", "rtl"),
+      direction: "rtl",
     },
   ],
   anatomy: docAnatomy("table"),

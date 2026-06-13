@@ -1,18 +1,14 @@
 import { docSource, docAnatomy } from "#/registry/source";
+import { SwitchChoiceCard } from "#/registry/switch/choice-card.example";
+import { SwitchDescription } from "#/registry/switch/description.example";
 import { SwitchDisabled } from "#/registry/switch/disabled.example";
+import { SwitchInvalid } from "#/registry/switch/invalid.example";
+import { SwitchRtl } from "#/registry/switch/rtl.example";
 import { SwitchSizes } from "#/registry/switch/sizes.example";
-import { SwitchWithLabel } from "#/registry/switch/with-label.example";
 import type { ComponentDoc } from "#/registry/types";
 
 export const switchDoc: ComponentDoc = {
   examples: [
-    {
-      id: "with-label",
-      title: "With label",
-      description: "Controlled via checked + onCheckedChange, paired with a Label.",
-      Demo: SwitchWithLabel,
-      source: docSource("switch", "with-label"),
-    },
     {
       id: "sizes",
       title: "Sizes",
@@ -26,6 +22,36 @@ export const switchDoc: ComponentDoc = {
       description: "Non-interactive in both the on and off positions.",
       Demo: SwitchDisabled,
       source: docSource("switch", "disabled"),
+    },
+    {
+      id: "switch-choice-card",
+      title: "Choice Card",
+      description: "Card-style selection where FieldLabel wraps the entire Field for a clickable card pattern.",
+      Demo: SwitchChoiceCard,
+      source: docSource("switch", "choice-card"),
+    },
+    {
+      id: "switch-description",
+      title: "Description",
+      description: "A control that allows the user to toggle between checked and not checked.",
+      Demo: SwitchDescription,
+      source: docSource("switch", "description"),
+    },
+    {
+      id: "switch-invalid",
+      title: "Invalid",
+      description:
+        "Add the aria-invalid prop to the Switch component to indicate an invalid state. Add the data-invalid prop to the Field component for styling.",
+      Demo: SwitchInvalid,
+      source: docSource("switch", "invalid"),
+    },
+    {
+      id: "switch-rtl",
+      title: "RTL",
+      description: "Right-to-left layout support for languages such as Arabic and Hebrew.",
+      Demo: SwitchRtl,
+      source: docSource("switch", "rtl"),
+      direction: "rtl",
     },
   ],
   anatomy: docAnatomy("switch"),

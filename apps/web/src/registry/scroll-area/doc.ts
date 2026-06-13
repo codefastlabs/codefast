@@ -1,31 +1,24 @@
-import { ScrollAreaHorizontal } from "#/registry/scroll-area/horizontal.example";
-import { ScrollAreaList } from "#/registry/scroll-area/list.example";
-import { ScrollAreaProse } from "#/registry/scroll-area/prose.example";
+import { ScrollAreaHorizontalDemo } from "#/registry/scroll-area/horizontal-demo.example";
+import { ScrollAreaRtl } from "#/registry/scroll-area/rtl.example";
 import { docSource, docAnatomy } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const scrollAreaDoc: ComponentDoc = {
   examples: [
     {
-      id: "list",
-      title: "Scrollable list",
-      description: "A fixed-height region with a custom, design-system scrollbar.",
-      Demo: ScrollAreaList,
-      source: docSource("scroll-area", "list"),
+      id: "scroll-area-horizontal-demo",
+      title: "Horizontal",
+      description: "Use ScrollBar with orientation='horizontal' for horizontal scrolling.",
+      Demo: ScrollAreaHorizontalDemo,
+      source: docSource("scroll-area", "horizontal-demo"),
     },
     {
-      id: "horizontal",
-      title: "Horizontal scroll",
-      description: "Scroll a wide row of cards along the x-axis.",
-      Demo: ScrollAreaHorizontal,
-      source: docSource("scroll-area", "horizontal"),
-    },
-    {
-      id: "prose",
-      title: "Long-form text",
-      description: "Contain lengthy terms or release notes in a fixed box.",
-      Demo: ScrollAreaProse,
-      source: docSource("scroll-area", "prose"),
+      id: "scroll-area-rtl",
+      title: "RTL",
+      description: "Right-to-left layout support for languages such as Arabic and Hebrew.",
+      Demo: ScrollAreaRtl,
+      source: docSource("scroll-area", "rtl"),
+      direction: "rtl",
     },
   ],
   anatomy: docAnatomy("scroll-area"),

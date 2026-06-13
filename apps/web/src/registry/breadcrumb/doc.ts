@@ -1,31 +1,58 @@
-import { BreadcrumbCollapsed } from "#/registry/breadcrumb/collapsed.example";
-import { BreadcrumbCustomSeparator } from "#/registry/breadcrumb/custom-separator.example";
-import { BreadcrumbPath } from "#/registry/breadcrumb/path.example";
+import { BreadcrumbBasic } from "#/registry/breadcrumb/basic.example";
+import { BreadcrumbDropdown } from "#/registry/breadcrumb/dropdown.example";
+import { BreadcrumbEllipsisDemo } from "#/registry/breadcrumb/ellipsis.example";
+import { BreadcrumbLinkDemo } from "#/registry/breadcrumb/link.example";
+import { BreadcrumbRtl } from "#/registry/breadcrumb/rtl.example";
+import { BreadcrumbSeparatorDemo } from "#/registry/breadcrumb/separator.example";
 import { docSource, docAnatomy } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const breadcrumbDoc: ComponentDoc = {
   examples: [
     {
-      id: "path",
-      title: "Location trail",
-      description: "A hierarchy of links ending in the current page, with custom separators.",
-      Demo: BreadcrumbPath,
-      source: docSource("breadcrumb", "path"),
+      id: "breadcrumb-basic",
+      title: "Basic",
+      description: "A basic breadcrumb with a home link and a components link.",
+      Demo: BreadcrumbBasic,
+      source: docSource("breadcrumb", "basic"),
     },
     {
-      id: "collapsed",
-      title: "Collapsed middle",
-      description: "Hide intermediate levels behind an ellipsis.",
-      Demo: BreadcrumbCollapsed,
-      source: docSource("breadcrumb", "collapsed"),
+      id: "breadcrumb-dropdown",
+      title: "Dropdown",
+      description: "You can compose <BreadcrumbItem /> with a <DropdownMenu /> to create a dropdown in the breadcrumb.",
+      Demo: BreadcrumbDropdown,
+      source: docSource("breadcrumb", "dropdown"),
     },
     {
-      id: "custom-separator",
+      id: "breadcrumb-ellipsis",
+      title: "Collapsed",
+      description:
+        "We provide a <BreadcrumbEllipsis /> component to show a collapsed state when the breadcrumb is too long.",
+      Demo: BreadcrumbEllipsisDemo,
+      source: docSource("breadcrumb", "ellipsis"),
+    },
+    {
+      id: "breadcrumb-link",
+      title: "Link component",
+      description:
+        "To use a custom link component from your routing library, you can use the asChild prop on <BreadcrumbLink />.",
+      Demo: BreadcrumbLinkDemo,
+      source: docSource("breadcrumb", "link"),
+    },
+    {
+      id: "breadcrumb-rtl",
+      title: "RTL",
+      description: "Right-to-left layout support for languages such as Arabic and Hebrew.",
+      Demo: BreadcrumbRtl,
+      source: docSource("breadcrumb", "rtl"),
+      direction: "rtl",
+    },
+    {
+      id: "breadcrumb-separator",
       title: "Custom separator",
-      description: "Swap the chevron for any node — here, a slash.",
-      Demo: BreadcrumbCustomSeparator,
-      source: docSource("breadcrumb", "custom-separator"),
+      description: "Use a custom component as children for <BreadcrumbSeparator /> to create a custom separator.",
+      Demo: BreadcrumbSeparatorDemo,
+      source: docSource("breadcrumb", "separator"),
     },
   ],
   anatomy: docAnatomy("breadcrumb"),

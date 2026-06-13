@@ -9,7 +9,7 @@ const translations: Translations = {
     values: {
       question1: "How do I reset my password?",
       answer1:
-        "Click on 'Forgot Password' on the login page, enter your email address, and we'll send you a link to reset your password. The link will expire in 24 hours.",
+        "Click on 'Forgot Password' on the login page, enter your email address, and we'll send you a link to reset your password. ",
       question2: "Can I change my subscription plan?",
       answer2:
         "Yes, you can upgrade or downgrade your plan at any time from your account settings. Changes will be reflected in your next billing cycle.",
@@ -47,9 +47,21 @@ const translations: Translations = {
 };
 
 const items = [
-  { value: "item-1", questionKey: "question1", answerKey: "answer1" },
-  { value: "item-2", questionKey: "question2", answerKey: "answer2" },
-  { value: "item-3", questionKey: "question3", answerKey: "answer3" },
+  {
+    value: "item-1",
+    questionKey: "question1" as const,
+    answerKey: "answer1" as const,
+  },
+  {
+    value: "item-2",
+    questionKey: "question2" as const,
+    answerKey: "answer2" as const,
+  },
+  {
+    value: "item-3",
+    questionKey: "question3" as const,
+    answerKey: "answer3" as const,
+  },
 ] as const;
 
 export function AccordionRtl() {

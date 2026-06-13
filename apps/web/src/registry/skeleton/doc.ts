@@ -1,5 +1,8 @@
+import { SkeletonAvatar } from "#/registry/skeleton/avatar.example";
 import { SkeletonCard } from "#/registry/skeleton/card.example";
-import { SkeletonList } from "#/registry/skeleton/list.example";
+import { SkeletonForm } from "#/registry/skeleton/form.example";
+import { SkeletonRtl } from "#/registry/skeleton/rtl.example";
+import { SkeletonTable } from "#/registry/skeleton/table.example";
 import { SkeletonText } from "#/registry/skeleton/text.example";
 import { docSource, docAnatomy } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
@@ -15,20 +18,41 @@ export const skeletonDoc: ComponentDoc = {
       previewClassName: "items-start",
     },
     {
-      id: "list",
-      title: "List rows",
-      description: "Repeat a simple row shape for lists and feeds.",
-      Demo: SkeletonList,
-      source: docSource("skeleton", "list"),
-      previewClassName: "items-start",
-    },
-    {
       id: "text",
       title: "Text lines",
       description: "Stand in for a paragraph while content loads.",
       Demo: SkeletonText,
       source: docSource("skeleton", "text"),
       previewClassName: "items-start",
+    },
+    {
+      id: "skeleton-avatar",
+      title: "Avatar",
+      description: "Use to show a placeholder while content is loading.",
+      Demo: SkeletonAvatar,
+      source: docSource("skeleton", "avatar"),
+    },
+    {
+      id: "skeleton-form",
+      title: "Form",
+      description: "Use to show a placeholder while content is loading.",
+      Demo: SkeletonForm,
+      source: docSource("skeleton", "form"),
+    },
+    {
+      id: "skeleton-rtl",
+      title: "RTL",
+      description: "Right-to-left layout support for languages such as Arabic and Hebrew.",
+      Demo: SkeletonRtl,
+      source: docSource("skeleton", "rtl"),
+      direction: "rtl",
+    },
+    {
+      id: "skeleton-table",
+      title: "Table",
+      description: "Use to show a placeholder while content is loading.",
+      Demo: SkeletonTable,
+      source: docSource("skeleton", "table"),
     },
   ],
   anatomy: docAnatomy("skeleton"),

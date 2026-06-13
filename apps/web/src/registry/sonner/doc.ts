@@ -1,5 +1,5 @@
-import { SonnerAction } from "#/registry/sonner/action.example";
-import { SonnerLoading } from "#/registry/sonner/loading.example";
+import { SonnerDescription } from "#/registry/sonner/description.example";
+import { SonnerPosition } from "#/registry/sonner/position.example";
 import { SonnerTypes } from "#/registry/sonner/types.example";
 import { docSource, docAnatomy } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
@@ -14,18 +14,18 @@ export const sonnerDoc: ComponentDoc = {
       source: docSource("sonner", "types"),
     },
     {
-      id: "action-promise",
-      title: "Action & promise",
-      description: "Attach an Undo action, or hand toast.promise a promise to auto-cycle loading → result.",
-      Demo: SonnerAction,
-      source: docSource("sonner", "action"),
+      id: "sonner-description",
+      title: "Description",
+      description: "An opinionated toast component for React.",
+      Demo: SonnerDescription,
+      source: docSource("sonner", "description"),
     },
     {
-      id: "loading",
-      title: "Loading → success",
-      description: "Start a loading toast and resolve it in place by id.",
-      Demo: SonnerLoading,
-      source: docSource("sonner", "loading"),
+      id: "sonner-position",
+      title: "Position",
+      description: "Use the position prop to change the position of the toast.",
+      Demo: SonnerPosition,
+      source: docSource("sonner", "position"),
     },
   ],
   anatomy: docAnatomy("sonner"),
