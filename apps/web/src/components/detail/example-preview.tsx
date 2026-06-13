@@ -117,7 +117,7 @@ function RtlPreviewSurface({
     <div className="overflow-hidden rounded-2xl border border-ui-border">
       <div className="flex items-center border-b border-ui-border px-4 py-2">
         {context ? <LanguageSelector value={context.language} onValueChange={context.setLanguage} /> : null}
-        <p className="ml-auto text-xs text-ui-muted">
+        <p className="ms-auto text-xs text-ui-muted">
           Translations are AI-generated for demonstration and may be imperfect.
         </p>
       </div>

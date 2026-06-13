@@ -66,7 +66,7 @@ export function Footer() {
 
         <div className="flex flex-col gap-1 border-t border-ui-border pt-6 text-xs text-ui-muted sm:flex-row sm:justify-between">
           <p>&copy; {year} Codefast Labs. Released under the MIT License.</p>
-          <p className="sm:text-right">Built with TanStack Start · Tailwind CSS v4 · React 19</p>
+          <p className="sm:text-end">Built with TanStack Start · Tailwind CSS v4 · React 19</p>
         </div>
       </div>
     </footer>

@@ -22,7 +22,7 @@ export function SidebarHeaderExample() {
                 <DropdownMenuTrigger asChild>
                   <SidebarMenuButton className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground">
                     Select Workspace
-                    <ChevronDownIcon className="ml-auto" />
+                    <ChevronDownIcon className="ms-auto" />
                   </SidebarMenuButton>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="w-(--radix-popper-anchor-width)">

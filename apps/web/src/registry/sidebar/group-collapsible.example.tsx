@@ -25,7 +25,7 @@ export function SidebarGroupCollapsibleExample() {
               >
                 <CollapsibleTrigger>
                   Help
-                  <ChevronDownIcon className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-180" />
+                  <ChevronDownIcon className="ms-auto transition-transform group-data-[state=open]/collapsible:rotate-180" />
                 </CollapsibleTrigger>
               </SidebarGroupLabel>
               <CollapsibleContent>

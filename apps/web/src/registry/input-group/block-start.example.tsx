@@ -33,7 +33,7 @@ export function InputGroupBlockStart() {
           <InputGroupAddon align="block-start">
             <FileCodeIcon className="text-muted-foreground" />
             <InputGroupText className="font-mono">script.js</InputGroupText>
-            <InputGroupButton size="icon-xs" className="ml-auto">
+            <InputGroupButton size="icon-xs" className="ms-auto">
               <CopyIcon />
               <span className="sr-only">Copy</span>
             </InputGroupButton>

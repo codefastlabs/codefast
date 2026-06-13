@@ -184,11 +184,7 @@ function AppSidebarWithProvider() {
   return (
     <DirectionProvider dir={dir}>
       <div className="relative" dir={dir}>
-        <LanguageSelector
-          value={language}
-          onValueChange={setLanguage}
-          className="absolute top-4 right-4 z-10 rtl:right-auto rtl:left-4"
-        />
+        <LanguageSelector value={language} onValueChange={setLanguage} className="absolute end-4 top-4 z-10" />
         <AppSidebar />
       </div>
     </DirectionProvider>
@@ -430,7 +426,7 @@ function SidebarContentInner({
                 >
                   <DropdownMenuGroup>
                     <DropdownMenuLabel className="p-0 font-normal">
-                      <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
+                      <div className="flex items-center gap-2 px-1 py-1.5 text-start text-sm">
                         <Avatar>
                           <AvatarImage src={user.avatar} alt={user.name} />
                           <AvatarFallback className="rounded-lg">CN</AvatarFallback>
@@ -484,7 +480,7 @@ function SidebarContentInner({
           dir={dir}
         >
           <div className="flex items-center gap-2 px-4">
-            <SidebarTrigger className="-ml-1" />
+            <SidebarTrigger className="-ms-1" />
           </div>
         </header>
       </SidebarInset>
