@@ -124,7 +124,7 @@ export const getSsrColorSchemeServerFn = createServerFn().handler(
  * @since 0.3.16-canary.0
  */
 export const setColorSchemeServerFn = createServerFn({ method: "POST" })
-  .inputValidator(colorSchemeSchema)
+  .validator(colorSchemeSchema)
   .handler(({ data }: { data: ColorScheme }): void => {
     setCookie(STORAGE_KEY, data, {
       httpOnly: true,
