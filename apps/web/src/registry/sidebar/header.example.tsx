@@ -13,7 +13,7 @@ import { ChevronDownIcon } from "lucide-react";
 
 export function SidebarHeaderExample() {
   return (
-    <SidebarProvider className="h-96 min-h-0 w-full overflow-hidden rounded-xl border [contain:layout]">
+    <SidebarProvider className="h-96 min-h-0 w-full overflow-hidden rounded-xl border [contain:layout] [&_[data-slot=sidebar-container]]:h-full">
       <Sidebar>
         <SidebarHeader>
           <SidebarMenu>
