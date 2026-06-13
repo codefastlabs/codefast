@@ -24,11 +24,13 @@
   --animation-duration-expand-out: 150ms;
 
   /*
-   * Control timings — form controls (switch, checkbox, radio). Symmetric, so
-   * no in/out split: the container/ring transition and the moving indicator.
+   * Control timings — form controls (switch, checkbox, radio). Defined in the
+   * transition-duration namespace so they mint clean `duration-control*`
+   * utilities; `animate-in` also picks them up via its --tw-duration fallback,
+   * so one utility drives both the state transition and the indicator keyframe.
    */
-  --animation-duration-control: 200ms; /* container / ring: switch track, checkbox & radio box */
-  --animation-duration-control-indicator: 300ms; /* moving part: switch thumb, check, radio dot */
+  --transition-duration-control: 200ms; /* container / ring: switch track, checkbox & radio box */
+  --transition-duration-control-indicator: 300ms; /* moving part: switch thumb, check, radio dot */
 
   --animate-shimmer: shimmer 2.2s linear infinite;
 
