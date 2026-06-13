@@ -10,7 +10,7 @@ export function SidebarNav({ groups }: { groups: ReadonlyArray<ComponentGroup> }
         <nav aria-label="Components" className="-me-2 min-h-0 flex-1 space-y-5 overflow-y-auto pe-2 pb-4">
           {groups.map((group) => (
             <div key={group.id}>
-              <p className="sticky top-0 z-10 flex items-center justify-between gap-2 bg-ui-bg/85 px-2 py-1 text-xs font-semibold tracking-wide text-ui-muted uppercase backdrop-blur-[20px]">
+              <p className="sticky top-0 z-10 flex items-center justify-between gap-2 bg-ui-bg/85 px-2 py-1 text-xs font-semibold tracking-wide text-ui-muted uppercase backdrop-blur-lg">
                 {group.label}
                 <span className="tabular-nums opacity-60">{group.items.length}</span>
               </p>
