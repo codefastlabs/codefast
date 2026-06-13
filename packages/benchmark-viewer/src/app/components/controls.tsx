@@ -42,7 +42,7 @@ function SegButton({ className, ...props }: ComponentProps<"button">) {
       type="button"
       {...props}
       className={cn(
-        "border-r-bh-border bg-bh-surface-seg text-bh-seg-ink hover:bg-bh-surface-seg-hover disabled:hover:bg-bh-table-seg-disabled m-0 box-border inline-flex min-h-0 items-center justify-center self-stretch rounded-none border-0 border-r px-2.5 py-[0.35rem] text-[0.8125rem] leading-5 font-medium last:border-r-0 focus:z-1 focus:outline-none focus-visible:z-1 focus-visible:shadow-[inset_0_0_0_0.125rem_var(--color-bh-blue)] disabled:cursor-not-allowed disabled:opacity-40 max-sm:flex-[1_1_0] max-sm:px-3",
+        "border-e-bh-border bg-bh-surface-seg text-bh-seg-ink hover:bg-bh-surface-seg-hover disabled:hover:bg-bh-table-seg-disabled m-0 box-border inline-flex min-h-0 items-center justify-center self-stretch rounded-none border-0 border-e px-2.5 py-[0.35rem] text-[0.8125rem] leading-5 font-medium last:border-e-0 focus:z-1 focus:outline-none focus-visible:z-1 focus-visible:shadow-[inset_0_0_0_0.125rem_var(--color-bh-blue)] disabled:cursor-not-allowed disabled:opacity-40 max-sm:flex-[1_1_0] max-sm:px-3",
         className,
       )}
     />
