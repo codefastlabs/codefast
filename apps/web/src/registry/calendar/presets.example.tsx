@@ -16,7 +16,7 @@ export function CalendarWithPresets() {
   );
 
   return (
-    <Card className="mx-auto w-fit max-w-[300px]" size="sm">
+    <Card className="mx-auto w-fit max-w-75" size="sm">
       <CardContent>
         <Calendar
           mode="single"

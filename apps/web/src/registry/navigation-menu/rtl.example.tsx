@@ -166,7 +166,7 @@ export function NavigationMenuRtl() {
         <NavigationMenuItem className="hidden md:flex">
           <NavigationMenuTrigger>{t.components}</NavigationMenuTrigger>
           <NavigationMenuContent dir={dir} data-lang={dir === "rtl" ? language : undefined}>
-            <ul className="grid w-[400px] gap-2 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
+            <ul className="grid w-100 gap-2 md:w-125 md:grid-cols-2 lg:w-150">
               {components.map((component) => (
                 <ListItem key={component.titleKey} title={t[component.titleKey]} href={component.href}>
                   {t[component.descriptionKey]}

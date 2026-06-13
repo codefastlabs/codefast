@@ -3,7 +3,7 @@ import * as React from "react";
 
 export function ChartTooltipDemo() {
   return (
-    <div className="grid aspect-video w-full max-w-md justify-center text-foreground md:grid-cols-2 [&>div]:relative [&>div]:flex [&>div]:h-[137px] [&>div]:w-[224px] [&>div]:items-center [&>div]:justify-center [&>div]:p-4">
+    <div className="grid aspect-video w-full max-w-md justify-center text-foreground md:grid-cols-2 [&>div]:relative [&>div]:flex [&>div]:h-[137px] [&>div]:w-56 [&>div]:items-center [&>div]:justify-center [&>div]:p-4">
       <div>
         <div className="absolute start-[-35px] top-[45px] z-10 text-sm font-medium">Label</div>
         <svg
@@ -32,18 +32,18 @@ export function ChartTooltipDemo() {
             { name: "Desktop", value: 186, fill: "var(--chart-1)" },
             { name: "Mobile", value: 80, fill: "var(--chart-2)" },
           ]}
-          className="w-[8rem]"
+          className="w-32"
         />
       </div>
       <div className="items-end">
-        <div className="absolute start-[122px] top-[0px] z-10 text-sm font-medium">Name</div>
+        <div className="absolute start-[122px] top-0 z-10 text-sm font-medium">Name</div>
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="35"
           height="42"
           fill="none"
           viewBox="0 0 122 148"
-          className="absolute start-[85px] top-[10px] z-10 -scale-x-100"
+          className="absolute start-[85px] top-2.5 z-10 -scale-x-100"
         >
           <g clipPath="url(#ab)">
             <path
@@ -65,25 +65,25 @@ export function ChartTooltipDemo() {
             { name: "Firefox", value: 1000, fill: "var(--chart-4)" },
           ]}
           indicator="dashed"
-          className="w-[8rem]"
+          className="w-32"
         />
       </div>
       <div className="hidden! md:flex!">
         <TooltipDemo
           label="Page Views"
           payload={[{ name: "Desktop", value: 12486, fill: "var(--chart-3)" }]}
-          className="w-[9rem]"
+          className="w-36"
           indicator="line"
         />
       </div>
       <div className="items-start! justify-start!">
-        <div className="absolute start-[50px] top-[60px] z-10 text-sm font-medium">Indicator</div>
+        <div className="absolute start-[50px] top-15 z-10 text-sm font-medium">Indicator</div>
         <TooltipDemo
           label="Browser"
           hideLabel
           payload={[{ name: "Chrome", value: 1286, fill: "var(--chart-1)" }]}
           indicator="dot"
-          className="w-[8rem]"
+          className="w-32"
         />
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -141,7 +141,7 @@ function TooltipDemo({
   return (
     <div
       className={cn(
-        "grid min-w-[8rem] items-start gap-1.5 rounded-lg border border-border/50 bg-background px-2.5 py-1.5 text-xs shadow-xl transition-all ease-in-out hover:-translate-y-0.5",
+        "grid min-w-32 items-start gap-1.5 rounded-lg border border-border/50 bg-background px-2.5 py-1.5 text-xs shadow-xl transition-all ease-in-out hover:-translate-y-0.5",
         className,
       )}
     >
@@ -161,7 +161,7 @@ function TooltipDemo({
               <>
                 {!hideIndicator && (
                   <div
-                    className={cn("shrink-0 rounded-[2px] border-(--color-border) bg-(--color-bg)", {
+                    className={cn("shrink-0 rounded-xs border-(--color-border) bg-(--color-bg)", {
                       "h-2.5 w-2.5": indicator === "dot",
                       "w-1": indicator === "line",
                       "w-0 border-[1.5px] border-dashed bg-transparent": indicator === "dashed",

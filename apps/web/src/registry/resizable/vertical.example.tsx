@@ -2,7 +2,7 @@ import { ResizableSeparator, ResizablePanel, ResizableGroup } from "@codefast/ui
 
 export function ResizableVertical() {
   return (
-    <ResizableGroup orientation="vertical" className="min-h-[200px] max-w-sm rounded-lg border">
+    <ResizableGroup orientation="vertical" className="min-h-50 max-w-sm rounded-lg border">
       <ResizablePanel defaultSize="25%">
         <div className="flex h-full items-center justify-center p-6">
           <span className="font-semibold">Header</span>

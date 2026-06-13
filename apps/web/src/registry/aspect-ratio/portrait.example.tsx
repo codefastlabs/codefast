@@ -3,7 +3,7 @@ import { Image } from "@unpic/react";
 
 export function AspectRatioPortrait() {
   return (
-    <div className="w-full max-w-[10rem]">
+    <div className="w-full max-w-40">
       <AspectRatio ratio={9 / 16} className="rounded-lg bg-muted">
         <Image
           src="https://avatar.vercel.sh/codefast"
