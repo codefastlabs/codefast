@@ -27,7 +27,7 @@ function Checkbox({ className, ...props }: CheckboxProps): JSX.Element {
       {...props}
     >
       <CheckboxPrimitive.Indicator
-        className="grid place-content-center text-current transition-none [&>svg]:size-3.5"
+        className="grid animate-in place-content-center text-current ease-spring animation-duration-menu-in zoom-in-50 [&>svg]:size-3.5"
         data-slot="checkbox-indicator"
       >
         <CheckIcon />
