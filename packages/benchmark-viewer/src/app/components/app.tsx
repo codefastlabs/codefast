@@ -250,7 +250,7 @@ export function App({ initialPayload }: { initialPayload?: EmbeddedViewerPayload
         aria-atomic="true"
         aria-live="polite"
         className={cn(
-          "border-bh-blue-ring bg-bh-surface-toast shadow-bh-toast text-bh-toast-ink bh-toast-visible:opacity-100 bh-toast-visible:translate-y-0 bh-toast-visible:scale-100 bh-toast-visible:pointer-events-auto pointer-events-none fixed right-[max(1rem,env(safe-area-inset-right,0px))] bottom-[max(1rem,env(safe-area-inset-bottom,0px))] z-200 max-w-[min(20rem,calc(100vw-2rem))] translate-y-2 scale-[0.98] rounded-[0.875rem] border px-[1.05rem] py-[0.7rem] text-[0.8125rem] font-medium opacity-0 backdrop-blur-[1.25rem] backdrop-saturate-180 [transition:opacity_0.22s_ease,transform_0.22s_cubic-bezier(0.2,0.8,0.2,1)] motion-reduce:transition-none",
+          "border-bh-blue-ring bg-bh-surface-toast shadow-bh-toast text-bh-toast-ink bh-toast-visible:opacity-100 bh-toast-visible:translate-y-0 bh-toast-visible:scale-100 bh-toast-visible:pointer-events-auto pointer-events-none fixed end-[max(1rem,env(safe-area-inset-right,0px))] bottom-[max(1rem,env(safe-area-inset-bottom,0px))] z-200 max-w-[min(20rem,calc(100vw-2rem))] translate-y-2 scale-[0.98] rounded-[0.875rem] border px-[1.05rem] py-[0.7rem] text-[0.8125rem] font-medium opacity-0 backdrop-blur-[1.25rem] backdrop-saturate-180 [transition:opacity_0.22s_ease,transform_0.22s_cubic-bezier(0.2,0.8,0.2,1)] motion-reduce:transition-none",
           { "is-visible": toastMsg },
         )}
         id="bh-toast"

@@ -10,7 +10,7 @@ function Th({ className, ...props }: ComponentProps<"th">) {
   return (
     <th
       className={cn(
-        "border-b-bh-table-line bg-bh-table-head text-bh-label z-3 border-b px-[0.65rem] py-[0.15rem] text-left text-[0.7rem] font-semibold tracking-wider whitespace-nowrap uppercase",
+        "border-b-bh-table-line bg-bh-table-head text-bh-label z-3 border-b px-[0.65rem] py-[0.15rem] text-start text-[0.7rem] font-semibold tracking-wider whitespace-nowrap uppercase",
         className,
       )}
       {...props}
@@ -20,7 +20,7 @@ function Th({ className, ...props }: ComponentProps<"th">) {
 
 function Td({ className, ...props }: ComponentProps<"td">) {
   return (
-    <td className={cn("border-b-bh-table-line border-b px-[0.65rem] py-[0.15rem] text-left", className)} {...props} />
+    <td className={cn("border-b-bh-table-line border-b px-[0.65rem] py-[0.15rem] text-start", className)} {...props} />
   );
 }
 
@@ -61,20 +61,20 @@ export function SnapshotSection({
           <thead>
             <tr>
               <Th
-                className="bg-bh-table-sticky sticky left-0 z-2 max-w-56 min-w-30 shadow-[0.0625rem_0_0_var(--color-bh-border-strong)]"
+                className="bg-bh-table-sticky sticky start-0 z-2 max-w-56 min-w-30 shadow-[0.0625rem_0_0_var(--color-bh-border-strong)]"
                 scope="col"
               >
                 Scenario
               </Th>
               <Th
-                className="bg-bh-table-sticky sticky left-30 z-2 min-w-20 shadow-[0.0625rem_0_0_var(--color-bh-border-strong)]"
+                className="bg-bh-table-sticky sticky start-30 z-2 min-w-20 shadow-[0.0625rem_0_0_var(--color-bh-border-strong)]"
                 scope="col"
               >
                 Group
               </Th>
               {orderedLibraries.map((lib) => (
                 <Th
-                  className="text-right tabular-nums"
+                  className="text-end tabular-nums"
                   key={lib.key}
                   scope="col"
                   style={{ color: paletteMap[lib.key]?.text }}
@@ -83,7 +83,7 @@ export function SnapshotSection({
                 </Th>
               ))}
               {compareLibs.map((cmp) => (
-                <Th className="text-bh-ratio-accent text-right tabular-nums" key={cmp.key} scope="col">
+                <Th className="text-bh-ratio-accent text-end tabular-nums" key={cmp.key} scope="col">
                   ÷ {cmp.displayName}
                 </Th>
               ))}
@@ -95,19 +95,19 @@ export function SnapshotSection({
                 className="hover:bg-bh-table-hover even:bg-bh-table-zebra even:hover:bg-bh-table-zebra-hover"
                 key={row.id}
               >
-                <Td className="bg-bh-table-sticky sticky left-0 z-2 max-w-56 min-w-30 shadow-[0.0625rem_0_0_var(--color-bh-border-strong)]">
+                <Td className="bg-bh-table-sticky sticky start-0 z-2 max-w-56 min-w-30 shadow-[0.0625rem_0_0_var(--color-bh-border-strong)]">
                   {row.id}
                 </Td>
-                <Td className="bg-bh-table-sticky sticky left-30 z-2 min-w-20 shadow-[0.0625rem_0_0_var(--color-bh-border-strong)]">
+                <Td className="bg-bh-table-sticky sticky start-30 z-2 min-w-20 shadow-[0.0625rem_0_0_var(--color-bh-border-strong)]">
                   {row.group}
                 </Td>
                 {row.hzCells.map((hzCell, cellIndex) => (
-                  <Td className="text-right tabular-nums" key={cellIndex}>
+                  <Td className="text-end tabular-nums" key={cellIndex}>
                     {hzCell}
                   </Td>
                 ))}
                 {row.ratioCells.map((ratioCell, cellIndex) => (
-                  <Td className="text-right tabular-nums" key={cellIndex}>
+                  <Td className="text-end tabular-nums" key={cellIndex}>
                     {ratioCell}
                   </Td>
                 ))}

@@ -57,7 +57,7 @@ export const carouselDoc: ComponentDoc = {
       id: "carousel-spacing",
       title: "Spacing",
       description:
-        "To set the spacing between the items, we use a pl-[VALUE] utility on the <CarouselItem /> and a negative -ml-[VALUE] on the <CarouselContent />.",
+        "To set the spacing between the items, we use a ps-[VALUE] utility on the <CarouselItem /> and a negative -ms-[VALUE] on the <CarouselContent />.",
       Demo: CarouselSpacing,
       source: docSource("carousel", "spacing"),
     },

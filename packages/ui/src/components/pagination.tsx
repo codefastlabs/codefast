@@ -107,7 +107,7 @@ function PaginationPrevious({ className, text = "Previous", ...props }: Paginati
   return (
     <PaginationLink
       aria-label="Go to previous page"
-      className={cn("pl-2!", className)}
+      className={cn("ps-2!", className)}
       data-slot="pagination-previous"
       size="default"
       {...props}
@@ -137,7 +137,7 @@ function PaginationNext({ className, text = "Next", ...props }: PaginationNextPr
   return (
     <PaginationLink
       aria-label="Go to next page"
-      className={cn("pr-2!", className)}
+      className={cn("pe-2!", className)}
       data-slot="pagination-next"
       size="default"
       {...props}

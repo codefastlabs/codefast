@@ -16,7 +16,7 @@ export function RadioCardsPlans() {
       <RadioCards className="grid gap-2" value={plan} onValueChange={setPlan}>
         {PLANS.map(({ value, label, price, description }) => (
           <RadioCardsItem key={value} value={value}>
-            <div className="flex flex-col gap-0.5 text-left">
+            <div className="flex flex-col gap-0.5 text-start">
               <span className="text-sm font-medium">
                 {label} — {price}
               </span>
