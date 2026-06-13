@@ -9,7 +9,8 @@ export type Direction = "ltr" | "rtl";
 
 /**
  * Per-language bundle: the reading direction plus the translated strings the
- * example renders. Mirrors shadcn's RTL example shape so demos port cleanly.
+ * example renders. Keyed by language so RTL demos can swap copy and direction
+ * together.
  */
 export type Translations<T extends Record<string, string> = Record<string, string>> = Record<
   Language,

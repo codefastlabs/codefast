@@ -1,5 +1,7 @@
-import { MenubarAppMenu } from "#/registry/menubar/app-menu.example";
-import { MenubarSelections } from "#/registry/menubar/selections.example";
+import { MenubarCheckbox } from "#/registry/menubar/checkbox.example";
+import { MenubarIcons } from "#/registry/menubar/icons.example";
+import { MenubarRadio } from "#/registry/menubar/radio.example";
+import { MenubarRtl } from "#/registry/menubar/rtl.example";
 import { MenubarSubmenu } from "#/registry/menubar/submenu.example";
 import { docSource, docAnatomy } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
@@ -7,26 +9,41 @@ import type { ComponentDoc } from "#/registry/types";
 export const menubarDoc: ComponentDoc = {
   examples: [
     {
-      id: "app-menu",
-      title: "Application menu",
-      description: "A desktop-style menu bar with File / Edit / View menus and shortcuts.",
-      Demo: MenubarAppMenu,
-      source: docSource("menubar", "app-menu"),
-      previewClassName: "items-start",
-    },
-    {
-      id: "selections",
-      title: "Checkbox & radio items",
-      description: "Toggle options and pick one from a radio group.",
-      Demo: MenubarSelections,
-      source: docSource("menubar", "selections"),
-    },
-    {
       id: "submenu",
       title: "Nested submenu",
       description: "Reveal a second level with a sub-trigger.",
       Demo: MenubarSubmenu,
       source: docSource("menubar", "submenu"),
+    },
+    {
+      id: "menubar-checkbox",
+      title: "Checkbox",
+      description: "Use MenubarCheckboxItem for toggleable options.",
+      Demo: MenubarCheckbox,
+      source: docSource("menubar", "checkbox"),
+    },
+    {
+      id: "menubar-icons",
+      title: "With Icons",
+      description:
+        "A visually persistent menu common in desktop applications that provides quick access to a consistent set of commands.",
+      Demo: MenubarIcons,
+      source: docSource("menubar", "icons"),
+    },
+    {
+      id: "menubar-radio",
+      title: "Radio",
+      description: "Use MenubarRadioGroup and MenubarRadioItem for single-select options.",
+      Demo: MenubarRadio,
+      source: docSource("menubar", "radio"),
+    },
+    {
+      id: "menubar-rtl",
+      title: "RTL",
+      description: "Right-to-left layout support for languages such as Arabic and Hebrew.",
+      Demo: MenubarRtl,
+      source: docSource("menubar", "rtl"),
+      direction: "rtl",
     },
   ],
   anatomy: docAnatomy("menubar"),

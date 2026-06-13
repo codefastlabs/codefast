@@ -5,7 +5,7 @@ import { Suspense } from "react";
 import { LazyVisible } from "#/components/showcase/lazy-visible";
 import { PreviewCard } from "#/components/showcase/preview-card";
 import type { ComponentMeta } from "#/registry/components";
-import { componentPath } from "#/registry/components";
+import { componentImportLabel } from "#/registry/components";
 import { DEMO_BY_SLUG } from "#/registry/demos";
 
 /** A live-demo preview card, or a docs-only card for components without a demo. */
@@ -45,7 +45,7 @@ export function ComponentCard({ component }: { component: ComponentMeta }) {
       id={component.slug}
       slug={component.slug}
       name={component.name}
-      path={componentPath(component.slug)}
+      path={componentImportLabel(component)}
       description={component.description}
       wide={component.wide ?? false}
       loadSource={demo.loadSource}

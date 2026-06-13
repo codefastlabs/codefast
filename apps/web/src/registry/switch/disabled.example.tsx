@@ -1,10 +1,11 @@
+import { Field, FieldLabel } from "@codefast/ui/field";
 import { Switch } from "@codefast/ui/switch";
 
 export function SwitchDisabled() {
   return (
-    <div className="flex items-center gap-4">
-      <Switch disabled />
-      <Switch disabled defaultChecked />
-    </div>
+    <Field orientation="horizontal" data-disabled className="w-fit">
+      <Switch id="switch-disabled-unchecked" disabled />
+      <FieldLabel htmlFor="switch-disabled-unchecked">Disabled</FieldLabel>
+    </Field>
   );
 }

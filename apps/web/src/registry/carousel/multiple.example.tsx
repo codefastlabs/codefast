@@ -3,20 +3,27 @@ import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious
 
 export function CarouselMultiple() {
   return (
-    <Carousel opts={{ align: "start" }} className="w-full max-w-xs">
-      <CarouselContent classNames={{ wrapper: "-m-2 p-2" }}>
-        {Array.from({ length: 8 }, (_, index) => (
-          <CarouselItem key={index} className="basis-1/3">
-            <Card>
-              <CardContent className="flex aspect-square items-center justify-center p-4">
-                <span className="text-xl font-semibold">{index + 1}</span>
-              </CardContent>
-            </Card>
+    <Carousel
+      className="mx-auto max-w-xs sm:max-w-sm"
+      opts={{
+        align: "start",
+      }}
+    >
+      <CarouselContent>
+        {Array.from({ length: 5 }).map((_, index) => (
+          <CarouselItem key={index} className="sm:basis-1/2 lg:basis-1/3">
+            <div className="p-1">
+              <Card>
+                <CardContent className="flex aspect-square items-center justify-center p-6">
+                  <span className="text-3xl font-semibold">{index + 1}</span>
+                </CardContent>
+              </Card>
+            </div>
           </CarouselItem>
         ))}
       </CarouselContent>
-      <CarouselPrevious />
-      <CarouselNext />
+      <CarouselPrevious className="hidden sm:inline-flex" />
+      <CarouselNext className="hidden sm:inline-flex" />
     </Carousel>
   );
 }

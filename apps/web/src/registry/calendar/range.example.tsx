@@ -1,5 +1,6 @@
 import { Calendar } from "@codefast/ui/calendar";
-import { useState } from "react";
+import { Card, CardContent } from "@codefast/ui/card";
+import * as React from "react";
 
 /** Structural match for @daypicker/react's DateRange (kept local to avoid a transitive import). */
 interface DateRange {
@@ -7,32 +8,32 @@ interface DateRange {
   to?: Date | undefined;
 }
 
-const FORMAT = { dateStyle: "medium" } as const;
+function addDays(date: Date, days: number): Date {
+  const next = new Date(date);
+  next.setDate(next.getDate() + days);
+  return next;
+}
+
+const initialFrom = new Date(new Date().getFullYear(), 0, 12);
 
 export function CalendarRange() {
-  const [range, setRange] = useState<DateRange | undefined>({
-    from: new Date(2026, 5, 9),
-    to: new Date(2026, 5, 15),
+  const [dateRange, setDateRange] = React.useState<DateRange | undefined>({
+    from: initialFrom,
+    to: addDays(initialFrom, 30),
   });
 
   return (
-    <div className="space-y-3">
-      <Calendar className="rounded-xl border" mode="range" numberOfMonths={2} selected={range} onSelect={setRange} />
-      <p className="text-center text-xs text-ui-muted">
-        {range?.from ? (
-          <>
-            <span className="font-medium text-ui-fg">{range.from.toLocaleDateString(undefined, FORMAT)}</span>
-            {range.to ? (
-              <>
-                {" – "}
-                <span className="font-medium text-ui-fg">{range.to.toLocaleDateString(undefined, FORMAT)}</span>
-              </>
-            ) : null}
-          </>
-        ) : (
-          "Pick a start and end date"
-        )}
-      </p>
-    </div>
+    <Card className="mx-auto w-fit p-0">
+      <CardContent className="p-0">
+        <Calendar
+          mode="range"
+          defaultMonth={dateRange?.from ?? initialFrom}
+          selected={dateRange}
+          onSelect={setDateRange}
+          numberOfMonths={2}
+          disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
+        />
+      </CardContent>
+    </Card>
   );
 }

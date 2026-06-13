@@ -1,6 +1,15 @@
-import { DropdownActions } from "#/registry/dropdown-menu/actions.example";
-import { DropdownCheckboxes } from "#/registry/dropdown-menu/checkboxes.example";
-import { DropdownRadio } from "#/registry/dropdown-menu/radio.example";
+import { DropdownMenuAvatar } from "#/registry/dropdown-menu/avatar.example";
+import { DropdownMenuBasic } from "#/registry/dropdown-menu/basic.example";
+import { DropdownMenuCheckboxesIcons } from "#/registry/dropdown-menu/checkboxes-icons.example";
+import { DropdownMenuCheckboxes } from "#/registry/dropdown-menu/checkboxes.example";
+import { DropdownMenuComplex } from "#/registry/dropdown-menu/complex.example";
+import { DropdownMenuDestructive } from "#/registry/dropdown-menu/destructive.example";
+import { DropdownMenuIcons } from "#/registry/dropdown-menu/icons.example";
+import { DropdownMenuRadioGroupDemo } from "#/registry/dropdown-menu/radio-group.example";
+import { DropdownMenuRadioIcons } from "#/registry/dropdown-menu/radio-icons.example";
+import { DropdownMenuRtl } from "#/registry/dropdown-menu/rtl.example";
+import { DropdownMenuShortcuts } from "#/registry/dropdown-menu/shortcuts.example";
+import { DropdownMenuSubmenu } from "#/registry/dropdown-menu/submenu.example";
 import { docSource, docAnatomy } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
@@ -10,24 +19,87 @@ export const dropdownMenuDoc: ComponentDoc = {
       id: "checkboxes",
       title: "Checkbox items",
       description: "A column-toggle menu — checkbox items drive state, with a live count below.",
-      Demo: DropdownCheckboxes,
+      Demo: DropdownMenuCheckboxes,
       source: docSource("dropdown-menu", "checkboxes"),
       previewClassName: "min-h-40",
     },
     {
-      id: "radio",
-      title: "Radio group",
-      description: "A single-choice sort menu backed by DropdownMenuRadioGroup.",
-      Demo: DropdownRadio,
-      source: docSource("dropdown-menu", "radio"),
-      previewClassName: "min-h-40",
+      id: "dropdown-menu-avatar",
+      title: "Avatar",
+      description: "An account switcher dropdown triggered by an avatar.",
+      Demo: DropdownMenuAvatar,
+      source: docSource("dropdown-menu", "avatar"),
     },
     {
-      id: "actions",
-      title: "Account menu",
-      description: "Items, shortcuts, and a destructive action.",
-      Demo: DropdownActions,
-      source: docSource("dropdown-menu", "actions"),
+      id: "dropdown-menu-basic",
+      title: "Basic",
+      description: "A basic dropdown menu with labels and separators.",
+      Demo: DropdownMenuBasic,
+      source: docSource("dropdown-menu", "basic"),
+    },
+    {
+      id: "dropdown-menu-checkboxes-icons",
+      title: "Checkboxes Icons",
+      description: "Add icons to checkbox items.",
+      Demo: DropdownMenuCheckboxesIcons,
+      source: docSource("dropdown-menu", "checkboxes-icons"),
+    },
+    {
+      id: "dropdown-menu-complex",
+      title: "Complex",
+      description: "A richer example combining groups, icons, and submenus.",
+      Demo: DropdownMenuComplex,
+      source: docSource("dropdown-menu", "complex"),
+    },
+    {
+      id: "dropdown-menu-destructive",
+      title: "Destructive",
+      description: "Use variant='destructive' for irreversible actions.",
+      Demo: DropdownMenuDestructive,
+      source: docSource("dropdown-menu", "destructive"),
+    },
+    {
+      id: "dropdown-menu-icons",
+      title: "Icons",
+      description: "Combine icons with labels for quick scanning.",
+      Demo: DropdownMenuIcons,
+      source: docSource("dropdown-menu", "icons"),
+    },
+    {
+      id: "dropdown-menu-radio-group",
+      title: "Radio Group",
+      description: "Use DropdownMenuRadioGroup for exclusive choices.",
+      Demo: DropdownMenuRadioGroupDemo,
+      source: docSource("dropdown-menu", "radio-group"),
+    },
+    {
+      id: "dropdown-menu-radio-icons",
+      title: "Radio Icons",
+      description: "Show radio options with icons.",
+      Demo: DropdownMenuRadioIcons,
+      source: docSource("dropdown-menu", "radio-icons"),
+    },
+    {
+      id: "dropdown-menu-rtl",
+      title: "RTL",
+      description: "Right-to-left layout support for languages such as Arabic and Hebrew.",
+      Demo: DropdownMenuRtl,
+      source: docSource("dropdown-menu", "rtl"),
+      direction: "rtl",
+    },
+    {
+      id: "dropdown-menu-shortcuts",
+      title: "Shortcuts",
+      description: "Add DropdownMenuShortcut to show keyboard hints.",
+      Demo: DropdownMenuShortcuts,
+      source: docSource("dropdown-menu", "shortcuts"),
+    },
+    {
+      id: "dropdown-menu-submenu",
+      title: "Submenu",
+      description: "Use DropdownMenuSub to nest secondary actions.",
+      Demo: DropdownMenuSubmenu,
+      source: docSource("dropdown-menu", "submenu"),
     },
   ],
   anatomy: docAnatomy("dropdown-menu"),

@@ -1,34 +1,89 @@
-import { ItemCompact } from "#/registry/item/compact.example";
-import { ItemList } from "#/registry/item/list.example";
-import { ItemNotifications } from "#/registry/item/notifications.example";
+import { ItemAvatar } from "#/registry/item/avatar.example";
+import { ItemDropdown } from "#/registry/item/dropdown.example";
+import { ItemGroupExample } from "#/registry/item/group.example";
+import { ItemHeaderDemo } from "#/registry/item/header.example";
+import { ItemIcon } from "#/registry/item/icon.example";
+import { ItemImage } from "#/registry/item/image.example";
+import { ItemLink } from "#/registry/item/link.example";
+import { ItemRtl } from "#/registry/item/rtl.example";
+import { ItemSizeDemo } from "#/registry/item/size.example";
+import { ItemVariant } from "#/registry/item/variant.example";
 import { docSource, docAnatomy } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const itemDoc: ComponentDoc = {
   examples: [
     {
-      id: "list",
-      title: "List rows",
-      description: "Compose media, title, description, and actions into a divided list.",
-      Demo: ItemList,
-      source: docSource("item", "list"),
-      previewClassName: "items-start",
+      id: "item-avatar",
+      title: "Avatar",
+      description: "You can use ItemMedia with variant='avatar' to display an avatar.",
+      Demo: ItemAvatar,
+      source: docSource("item", "avatar"),
     },
     {
-      id: "compact",
-      title: "Single-line rows",
-      description: "Drop the description for a dense file or option list.",
-      Demo: ItemCompact,
-      source: docSource("item", "compact"),
-      previewClassName: "items-start",
+      id: "item-dropdown",
+      title: "Dropdown",
+      description: "A versatile component for displaying content with media, title, description, and actions.",
+      Demo: ItemDropdown,
+      source: docSource("item", "dropdown"),
     },
     {
-      id: "notifications",
-      title: "With trailing badge",
-      description: "Surface unread state with a Badge in the actions slot.",
-      Demo: ItemNotifications,
-      source: docSource("item", "notifications"),
-      previewClassName: "items-start",
+      id: "item-group",
+      title: "Group",
+      description: "Use ItemGroup to group related items together.",
+      Demo: ItemGroupExample,
+      source: docSource("item", "group"),
+    },
+    {
+      id: "item-header",
+      title: "Header",
+      description: "Use ItemHeader to add a header above the item content.",
+      Demo: ItemHeaderDemo,
+      source: docSource("item", "header"),
+    },
+    {
+      id: "item-icon",
+      title: "Icon",
+      description: "Use ItemMedia with variant='icon' to display an icon.",
+      Demo: ItemIcon,
+      source: docSource("item", "icon"),
+    },
+    {
+      id: "item-image",
+      title: "Image",
+      description: "Use ItemMedia with variant='image' to display an image.",
+      Demo: ItemImage,
+      source: docSource("item", "image"),
+    },
+    {
+      id: "item-link",
+      title: "Link",
+      description:
+        "Use the asChild prop to render the item as a link. The hover and focus states will be applied to the anchor element.",
+      Demo: ItemLink,
+      source: docSource("item", "link"),
+    },
+    {
+      id: "item-rtl",
+      title: "RTL",
+      description: "Right-to-left layout support for languages such as Arabic and Hebrew.",
+      Demo: ItemRtl,
+      source: docSource("item", "rtl"),
+      direction: "rtl",
+    },
+    {
+      id: "item-size",
+      title: "Size",
+      description: "Use the size prop to change the size of the item.",
+      Demo: ItemSizeDemo,
+      source: docSource("item", "size"),
+    },
+    {
+      id: "item-variant",
+      title: "Variant",
+      description: "Use the variant prop to change the visual style of the item.",
+      Demo: ItemVariant,
+      source: docSource("item", "variant"),
     },
   ],
   anatomy: docAnatomy("item"),

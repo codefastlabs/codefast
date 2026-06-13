@@ -1,21 +1,19 @@
 import { Button } from "@codefast/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@codefast/ui/tooltip";
 
-const SIDES = ["top", "right", "bottom", "left"] as const;
-
 export function TooltipSides() {
   return (
     <TooltipProvider>
-      <div className="flex flex-wrap gap-3">
-        {SIDES.map((side) => (
+      <div className="flex flex-wrap gap-2">
+        {(["left", "top", "bottom", "right"] as const).map((side) => (
           <Tooltip key={side}>
             <TooltipTrigger asChild>
-              <Button variant="outline" size="sm" className="capitalize">
+              <Button variant="outline" className="w-fit capitalize">
                 {side}
               </Button>
             </TooltipTrigger>
             <TooltipContent side={side}>
-              <p>On the {side}</p>
+              <p>Add to library</p>
             </TooltipContent>
           </Tooltip>
         ))}

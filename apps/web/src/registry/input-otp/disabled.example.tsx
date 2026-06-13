@@ -1,17 +1,19 @@
-import { InputOTP, InputOTPGroup, InputOTPSlot } from "@codefast/ui/input-otp";
+import { InputOTP, InputOTPGroup, InputOTPSeparator, InputOTPSlot } from "@codefast/ui/input-otp";
 
 export function InputOTPDisabled() {
   return (
-    <div className="flex flex-col items-center gap-4">
-      <InputOTP maxLength={4} disabled>
-        <InputOTPGroup>
-          <InputOTPSlot index={0} />
-          <InputOTPSlot index={1} />
-          <InputOTPSlot index={2} />
-          <InputOTPSlot index={3} />
-        </InputOTPGroup>
-      </InputOTP>
-      <p className="text-sm text-ui-muted">Disabled while the code is being sent.</p>
-    </div>
+    <InputOTP id="disabled" maxLength={6} disabled value="123456">
+      <InputOTPGroup>
+        <InputOTPSlot index={0} />
+        <InputOTPSlot index={1} />
+        <InputOTPSlot index={2} />
+      </InputOTPGroup>
+      <InputOTPSeparator />
+      <InputOTPGroup>
+        <InputOTPSlot index={3} />
+        <InputOTPSlot index={4} />
+        <InputOTPSlot index={5} />
+      </InputOTPGroup>
+    </InputOTP>
   );
 }

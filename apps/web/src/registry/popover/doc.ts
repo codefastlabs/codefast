@@ -1,33 +1,40 @@
-import { PopoverDimensions } from "#/registry/popover/dimensions.example";
-import { PopoverShare } from "#/registry/popover/share.example";
-import { PopoverSimple } from "#/registry/popover/simple.example";
+import { PopoverAlignments } from "#/registry/popover/alignments.example";
+import { PopoverBasic } from "#/registry/popover/basic.example";
+import { PopoverForm } from "#/registry/popover/form.example";
+import { PopoverRtl } from "#/registry/popover/rtl.example";
 import { docSource, docAnatomy } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const popoverDoc: ComponentDoc = {
   examples: [
     {
-      id: "share",
-      title: "Share link",
-      description: "A working copy-to-clipboard panel — interactive, with a confirmation state.",
-      Demo: PopoverShare,
-      source: docSource("popover", "share"),
-      previewClassName: "min-h-40",
+      id: "popover-alignments",
+      title: "Align",
+      description: "Use the align prop on PopoverContent to control the horizontal alignment.",
+      Demo: PopoverAlignments,
+      source: docSource("popover", "alignments"),
     },
     {
-      id: "dimensions",
-      title: "Settings form",
-      description: "A non-modal panel of inputs anchored to its trigger — ideal for quick edits.",
-      Demo: PopoverDimensions,
-      source: docSource("popover", "dimensions"),
-      previewClassName: "min-h-40",
+      id: "popover-basic",
+      title: "Basic",
+      description: "A simple popover with a header, title, and description.",
+      Demo: PopoverBasic,
+      source: docSource("popover", "basic"),
     },
     {
-      id: "simple",
-      title: "Plain content",
-      description: "A minimal popover for contextual information.",
-      Demo: PopoverSimple,
-      source: docSource("popover", "simple"),
+      id: "popover-form",
+      title: "With Form",
+      description: "A popover with form fields inside.",
+      Demo: PopoverForm,
+      source: docSource("popover", "form"),
+    },
+    {
+      id: "popover-rtl",
+      title: "RTL",
+      description: "Right-to-left layout support for languages such as Arabic and Hebrew.",
+      Demo: PopoverRtl,
+      source: docSource("popover", "rtl"),
+      direction: "rtl",
     },
   ],
   anatomy: docAnatomy("popover"),

@@ -1,31 +1,64 @@
 import { docSource, docAnatomy } from "#/registry/source";
-import { ToggleGroupAlignment } from "#/registry/toggle-group/alignment.example";
-import { ToggleGroupFormatting } from "#/registry/toggle-group/formatting.example";
-import { ToggleGroupViews } from "#/registry/toggle-group/views.example";
+import { ToggleGroupDisabled } from "#/registry/toggle-group/disabled.example";
+import { ToggleGroupFontWeightSelector } from "#/registry/toggle-group/font-weight-selector.example";
+import { ToggleGroupOutline } from "#/registry/toggle-group/outline.example";
+import { ToggleGroupRtl } from "#/registry/toggle-group/rtl.example";
+import { ToggleGroupSizes } from "#/registry/toggle-group/sizes.example";
+import { ToggleGroupSpacing } from "#/registry/toggle-group/spacing.example";
+import { ToggleGroupVertical } from "#/registry/toggle-group/vertical.example";
 import type { ComponentDoc } from "#/registry/types";
 
 export const toggleGroupDoc: ComponentDoc = {
   examples: [
     {
-      id: "single",
-      title: "Single (alignment)",
-      description: 'type="single" keeps exactly one button pressed — an alignment toolbar.',
-      Demo: ToggleGroupAlignment,
-      source: docSource("toggle-group", "alignment"),
+      id: "toggle-group-disabled",
+      title: "Disabled",
+      description: "A set of two-state buttons that can be toggled on or off.",
+      Demo: ToggleGroupDisabled,
+      source: docSource("toggle-group", "disabled"),
     },
     {
-      id: "multiple",
-      title: "Multiple (text marks)",
-      description: 'type="multiple" lets several toggle at once — bold / italic / underline.',
-      Demo: ToggleGroupFormatting,
-      source: docSource("toggle-group", "formatting"),
+      id: "toggle-group-font-weight-selector",
+      title: "Custom",
+      description: "A custom toggle group example.",
+      Demo: ToggleGroupFontWeightSelector,
+      source: docSource("toggle-group", "font-weight-selector"),
     },
     {
-      id: "views",
-      title: "Text options",
-      description: "A single-select view switcher with labels.",
-      Demo: ToggleGroupViews,
-      source: docSource("toggle-group", "views"),
+      id: "toggle-group-outline",
+      title: "Outline",
+      description: "Use variant='outline' for an outline style.",
+      Demo: ToggleGroupOutline,
+      source: docSource("toggle-group", "outline"),
+    },
+    {
+      id: "toggle-group-rtl",
+      title: "RTL",
+      description: "Right-to-left layout support for languages such as Arabic and Hebrew.",
+      Demo: ToggleGroupRtl,
+      source: docSource("toggle-group", "rtl"),
+      direction: "rtl",
+    },
+    {
+      id: "toggle-group-sizes",
+      title: "Size",
+      description: "Use the size prop to change the size of the toggle group.",
+      Demo: ToggleGroupSizes,
+      source: docSource("toggle-group", "sizes"),
+    },
+    {
+      id: "toggle-group-spacing",
+      title: "Spacing",
+      description: "Use spacing to add spacing between toggle group items.",
+      Demo: ToggleGroupSpacing,
+      source: docSource("toggle-group", "spacing"),
+    },
+    {
+      id: "toggle-group-vertical",
+      title: "Vertical",
+      description: "Use orientation='vertical' for vertical toggle groups.",
+      Demo: ToggleGroupVertical,
+      source: docSource("toggle-group", "vertical"),
     },
   ],
   anatomy: docAnatomy("toggle-group"),

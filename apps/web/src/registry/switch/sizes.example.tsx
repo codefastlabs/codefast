@@ -1,10 +1,17 @@
+import { Field, FieldGroup, FieldLabel } from "@codefast/ui/field";
 import { Switch } from "@codefast/ui/switch";
 
 export function SwitchSizes() {
   return (
-    <div className="flex items-center gap-4">
-      <Switch size="sm" defaultChecked />
-      <Switch size="default" defaultChecked />
-    </div>
+    <FieldGroup className="w-full max-w-[10rem]">
+      <Field orientation="horizontal">
+        <Switch id="switch-size-sm" size="sm" />
+        <FieldLabel htmlFor="switch-size-sm">Small</FieldLabel>
+      </Field>
+      <Field orientation="horizontal">
+        <Switch id="switch-size-default" size="default" />
+        <FieldLabel htmlFor="switch-size-default">Default</FieldLabel>
+      </Field>
+    </FieldGroup>
   );
 }

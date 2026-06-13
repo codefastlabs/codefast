@@ -13,7 +13,8 @@ import {
 import { Button } from "@codefast/ui/button";
 import { BluetoothIcon } from "lucide-react";
 
-import { useTranslation, type Translations } from "#/components/detail/language-selector";
+import type { Translations } from "#/components/detail/language-selector";
+import { useTranslation } from "#/components/detail/language-selector";
 
 const translations: Translations = {
   en: {
@@ -65,16 +66,14 @@ const translations: Translations = {
 
 export function AlertDialogRtl() {
   const { dir, t, language } = useTranslation(translations, "ar");
-  const contentDir = dir;
-  const dataLang = dir === "rtl" ? language : undefined;
 
   return (
-    <div className="flex gap-4">
+    <div className="flex gap-4" dir={dir}>
       <AlertDialog>
         <AlertDialogTrigger asChild>
           <Button variant="outline">{t.showDialog}</Button>
         </AlertDialogTrigger>
-        <AlertDialogContent dir={contentDir} data-lang={dataLang}>
+        <AlertDialogContent dir={dir} data-lang={dir === "rtl" ? language : undefined}>
           <AlertDialogHeader>
             <AlertDialogTitle>{t.title}</AlertDialogTitle>
             <AlertDialogDescription>{t.description}</AlertDialogDescription>
@@ -89,7 +88,7 @@ export function AlertDialogRtl() {
         <AlertDialogTrigger asChild>
           <Button variant="outline">{t.showDialogSm}</Button>
         </AlertDialogTrigger>
-        <AlertDialogContent size="sm" dir={contentDir} data-lang={dataLang}>
+        <AlertDialogContent size="sm" dir={dir} data-lang={dir === "rtl" ? language : undefined}>
           <AlertDialogHeader>
             <AlertDialogMedia>
               <BluetoothIcon />

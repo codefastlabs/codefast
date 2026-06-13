@@ -1,33 +1,88 @@
-import { ContextMenuActions } from "#/registry/context-menu/actions.example";
-import { ContextMenuEditor } from "#/registry/context-menu/editor.example";
-import { ContextMenuSimple } from "#/registry/context-menu/simple.example";
+import { ContextMenuBasic } from "#/registry/context-menu/basic.example";
+import { ContextMenuCheckboxes } from "#/registry/context-menu/checkboxes.example";
+import { ContextMenuDestructive } from "#/registry/context-menu/destructive.example";
+import { ContextMenuGroups } from "#/registry/context-menu/groups.example";
+import { ContextMenuIcons } from "#/registry/context-menu/icons.example";
+import { ContextMenuRadio } from "#/registry/context-menu/radio.example";
+import { ContextMenuRtl } from "#/registry/context-menu/rtl.example";
+import { ContextMenuShortcuts } from "#/registry/context-menu/shortcuts.example";
+import { ContextMenuSides } from "#/registry/context-menu/sides.example";
+import { ContextMenuSubmenu } from "#/registry/context-menu/submenu.example";
 import { docSource, docAnatomy } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const contextMenuDoc: ComponentDoc = {
   examples: [
     {
-      id: "stateful",
-      title: "Checkbox & radio",
-      description: "Right-click the canvas — checkbox items and a radio group drive state, echoed below.",
-      Demo: ContextMenuEditor,
-      source: docSource("context-menu", "editor"),
-      previewClassName: "min-h-44",
+      id: "context-menu-basic",
+      title: "Basic",
+      description: "A simple context menu with a few actions.",
+      Demo: ContextMenuBasic,
+      source: docSource("context-menu", "basic"),
     },
     {
-      id: "submenu",
-      title: "Actions & submenu",
-      description: "A classic actions menu with shortcuts and a nested submenu.",
-      Demo: ContextMenuActions,
-      source: docSource("context-menu", "actions"),
-      previewClassName: "min-h-44",
+      id: "context-menu-checkboxes",
+      title: "Checkboxes",
+      description: "Use ContextMenuCheckboxItem for toggles.",
+      Demo: ContextMenuCheckboxes,
+      source: docSource("context-menu", "checkboxes"),
     },
     {
-      id: "simple",
-      title: "Basic actions",
-      description: "Cut, copy, paste — the everyday right-click menu.",
-      Demo: ContextMenuSimple,
-      source: docSource("context-menu", "simple"),
+      id: "context-menu-destructive",
+      title: "Destructive",
+      description: "Use variant='destructive' to style the menu item as destructive.",
+      Demo: ContextMenuDestructive,
+      source: docSource("context-menu", "destructive"),
+    },
+    {
+      id: "context-menu-groups",
+      title: "Groups",
+      description: "Group related actions and separate them with dividers.",
+      Demo: ContextMenuGroups,
+      source: docSource("context-menu", "groups"),
+    },
+    {
+      id: "context-menu-icons",
+      title: "Icons",
+      description: "Combine icons with labels for quick scanning.",
+      Demo: ContextMenuIcons,
+      source: docSource("context-menu", "icons"),
+    },
+    {
+      id: "context-menu-radio",
+      title: "Radio",
+      description: "Use ContextMenuRadioItem for exclusive choices.",
+      Demo: ContextMenuRadio,
+      source: docSource("context-menu", "radio"),
+    },
+    {
+      id: "context-menu-rtl",
+      title: "RTL",
+      description: "Right-to-left layout support for languages such as Arabic and Hebrew.",
+      Demo: ContextMenuRtl,
+      source: docSource("context-menu", "rtl"),
+      direction: "rtl",
+    },
+    {
+      id: "context-menu-shortcuts",
+      title: "Shortcuts",
+      description: "Add ContextMenuShortcut to show keyboard hints.",
+      Demo: ContextMenuShortcuts,
+      source: docSource("context-menu", "shortcuts"),
+    },
+    {
+      id: "context-menu-sides",
+      title: "Sides",
+      description: "Control submenu placement with side and align props.",
+      Demo: ContextMenuSides,
+      source: docSource("context-menu", "sides"),
+    },
+    {
+      id: "context-menu-submenu",
+      title: "Submenu",
+      description: "Use ContextMenuSub to nest secondary actions.",
+      Demo: ContextMenuSubmenu,
+      source: docSource("context-menu", "submenu"),
     },
   ],
   anatomy: docAnatomy("context-menu"),

@@ -23,7 +23,7 @@ const items = [
 
 export function AccordionMultiple() {
   return (
-    <Accordion type="multiple" defaultValue={["notifications"]} className="max-w-lg">
+    <Accordion type="multiple" className="max-w-lg" defaultValue={["notifications"]}>
       {items.map((item) => (
         <AccordionItem key={item.value} value={item.value}>
           <AccordionTrigger>{item.trigger}</AccordionTrigger>

@@ -1,18 +1,17 @@
-import { AvatarFallbackExample } from "#/registry/avatar/fallback.example";
+import { AvatarBadgeIconExample } from "#/registry/avatar/badge-icon.example";
+import { AvatarWithBadge } from "#/registry/avatar/badge.example";
+import { AvatarBasic } from "#/registry/avatar/basic.example";
+import { AvatarDropdown } from "#/registry/avatar/dropdown.example";
+import { AvatarGroupCountIconExample } from "#/registry/avatar/group-count-icon.example";
+import { AvatarGroupCountExample } from "#/registry/avatar/group-count.example";
 import { AvatarGroupExample } from "#/registry/avatar/group.example";
-import { AvatarSizes } from "#/registry/avatar/sizes.example";
+import { AvatarRtl } from "#/registry/avatar/rtl.example";
+import { AvatarSizeExample } from "#/registry/avatar/size.example";
 import { docSource, docAnatomy } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const avatarDoc: ComponentDoc = {
   examples: [
-    {
-      id: "image-fallback",
-      title: "Image, fallback & badge",
-      description: "Show a photo, fall back to initials when it fails, and add a status badge.",
-      Demo: AvatarFallbackExample,
-      source: docSource("avatar", "fallback"),
-    },
     {
       id: "group",
       title: "Stacked group",
@@ -21,11 +20,62 @@ export const avatarDoc: ComponentDoc = {
       source: docSource("avatar", "group"),
     },
     {
-      id: "sizes",
+      id: "avatar-badge",
+      title: "Badge",
+      description:
+        "Use the AvatarBadge component to add a badge to the avatar. The badge is positioned at the bottom right of the avatar.",
+      Demo: AvatarWithBadge,
+      source: docSource("avatar", "badge"),
+    },
+    {
+      id: "avatar-badge-icon",
+      title: "Badge with Icon",
+      description: "You can also use an icon inside <AvatarBadge>.",
+      Demo: AvatarBadgeIconExample,
+      source: docSource("avatar", "badge-icon"),
+    },
+    {
+      id: "avatar-basic",
+      title: "Basic",
+      description: "A basic avatar component with an image and a fallback.",
+      Demo: AvatarBasic,
+      source: docSource("avatar", "basic"),
+    },
+    {
+      id: "avatar-dropdown",
+      title: "Dropdown",
+      description: "You can use the Avatar component as a trigger for a dropdown menu.",
+      Demo: AvatarDropdown,
+      source: docSource("avatar", "dropdown"),
+    },
+    {
+      id: "avatar-group-count",
+      title: "Avatar Group Count",
+      description: "Use <AvatarGroupCount> to add a count to the group.",
+      Demo: AvatarGroupCountExample,
+      source: docSource("avatar", "group-count"),
+    },
+    {
+      id: "avatar-group-count-icon",
+      title: "Avatar Group with Icon",
+      description: "You can also use an icon inside <AvatarGroupCount>.",
+      Demo: AvatarGroupCountIconExample,
+      source: docSource("avatar", "group-count-icon"),
+    },
+    {
+      id: "avatar-rtl",
+      title: "RTL",
+      description: "Right-to-left layout support for languages such as Arabic and Hebrew.",
+      Demo: AvatarRtl,
+      source: docSource("avatar", "rtl"),
+      direction: "rtl",
+    },
+    {
+      id: "avatar-size",
       title: "Sizes",
-      description: "From xs to lg through the size prop.",
-      Demo: AvatarSizes,
-      source: docSource("avatar", "sizes"),
+      description: "Use the size prop to change the size of the avatar.",
+      Demo: AvatarSizeExample,
+      source: docSource("avatar", "size"),
     },
   ],
   anatomy: docAnatomy("avatar"),

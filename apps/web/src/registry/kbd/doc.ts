@@ -1,31 +1,49 @@
-import { KbdInButton } from "#/registry/kbd/in-button.example";
-import { KbdInline } from "#/registry/kbd/inline.example";
-import { KbdShortcuts } from "#/registry/kbd/shortcuts.example";
+import { KbdButton } from "#/registry/kbd/button.example";
+import { KbdGroupExample } from "#/registry/kbd/group.example";
+import { KbdInputGroup } from "#/registry/kbd/input-group.example";
+import { KbdRtl } from "#/registry/kbd/rtl.example";
+import { KbdTooltip } from "#/registry/kbd/tooltip.example";
 import { docSource, docAnatomy } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const kbdDoc: ComponentDoc = {
   examples: [
     {
-      id: "shortcuts",
-      title: "Key combinations",
-      description: "Compose multi-key shortcuts with KbdGroup; use a lone Kbd for single keys.",
-      Demo: KbdShortcuts,
-      source: docSource("kbd", "shortcuts"),
+      id: "kbd-button",
+      title: "Button",
+      description: "Use the Kbd component inside a Button component to display a keyboard key inside a button.",
+      Demo: KbdButton,
+      source: docSource("kbd", "button"),
     },
     {
-      id: "inline",
-      title: "Inline in text",
-      description: "Kbd flows inline, so you can reference shortcuts mid-sentence.",
-      Demo: KbdInline,
-      source: docSource("kbd", "inline"),
+      id: "kbd-group",
+      title: "Group",
+      description: "Use the KbdGroup component to group keyboard keys together.",
+      Demo: KbdGroupExample,
+      source: docSource("kbd", "group"),
     },
     {
-      id: "in-button",
-      title: "Inside controls",
-      description: "Pair a shortcut hint with the action it triggers.",
-      Demo: KbdInButton,
-      source: docSource("kbd", "in-button"),
+      id: "kbd-input-group",
+      title: "Input Group",
+      description:
+        "You can use the Kbd component inside a InputGroupAddon component to display a keyboard key inside an input group.",
+      Demo: KbdInputGroup,
+      source: docSource("kbd", "input-group"),
+    },
+    {
+      id: "kbd-rtl",
+      title: "RTL",
+      description: "Right-to-left layout support for languages such as Arabic and Hebrew.",
+      Demo: KbdRtl,
+      source: docSource("kbd", "rtl"),
+      direction: "rtl",
+    },
+    {
+      id: "kbd-tooltip",
+      title: "Tooltip",
+      description: "You can use the Kbd component inside a Tooltip component to display a tooltip with a keyboard key.",
+      Demo: KbdTooltip,
+      source: docSource("kbd", "tooltip"),
     },
   ],
   anatomy: docAnatomy("kbd"),

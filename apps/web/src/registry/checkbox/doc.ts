@@ -1,35 +1,57 @@
-import { CheckboxSelectAll } from "#/registry/checkbox/select-all.example";
-import { CheckboxStates } from "#/registry/checkbox/states.example";
-import { CheckboxWithDescription } from "#/registry/checkbox/with-description.example";
+import { CheckboxBasic } from "#/registry/checkbox/basic.example";
+import { CheckboxDescription } from "#/registry/checkbox/description.example";
+import { CheckboxDisabled } from "#/registry/checkbox/disabled.example";
+import { CheckboxInvalid } from "#/registry/checkbox/invalid.example";
+import { CheckboxRtl } from "#/registry/checkbox/rtl.example";
+import { CheckboxInTable } from "#/registry/checkbox/table.example";
 import { docSource, docAnatomy } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const checkboxDoc: ComponentDoc = {
   examples: [
     {
-      id: "select-all",
-      title: "Select-all (indeterminate)",
+      id: "checkbox-basic",
+      title: "Basic",
+      description: "Pair the checkbox with Field and FieldLabel for proper layout and labeling.",
+      Demo: CheckboxBasic,
+      source: docSource("checkbox", "basic"),
+    },
+    {
+      id: "checkbox-description",
+      title: "Description",
+      description: "Use FieldContent and FieldDescription for helper text.",
+      Demo: CheckboxDescription,
+      source: docSource("checkbox", "description"),
+    },
+    {
+      id: "checkbox-disabled",
+      title: "Disabled",
       description:
-        "The classic parent/child pattern: the parent reflects an indeterminate state when only some children are checked.",
-      Demo: CheckboxSelectAll,
-      source: docSource("checkbox", "select-all"),
-      previewClassName: "items-start",
+        "Use the disabled prop to prevent interaction and add the data-disabled attribute to the <Field> component for disabled styles.",
+      Demo: CheckboxDisabled,
+      source: docSource("checkbox", "disabled"),
     },
     {
-      id: "with-description",
-      title: "With description",
-      description: "Pair a checkbox with a label and helper text for consent and settings rows.",
-      Demo: CheckboxWithDescription,
-      source: docSource("checkbox", "with-description"),
-      previewClassName: "items-start",
+      id: "checkbox-invalid",
+      title: "Invalid State",
+      description: "Use aria-invalid to style the checkbox in an invalid state.",
+      Demo: CheckboxInvalid,
+      source: docSource("checkbox", "invalid"),
     },
     {
-      id: "states",
-      title: "States",
-      description: "Default, checked, and disabled combinations.",
-      Demo: CheckboxStates,
-      source: docSource("checkbox", "states"),
-      previewClassName: "items-start",
+      id: "checkbox-rtl",
+      title: "RTL",
+      description: "Right-to-left layout support for languages such as Arabic and Hebrew.",
+      Demo: CheckboxRtl,
+      source: docSource("checkbox", "rtl"),
+      direction: "rtl",
+    },
+    {
+      id: "checkbox-table",
+      title: "Table",
+      description: "A control that allows the user to toggle between checked and not checked.",
+      Demo: CheckboxInTable,
+      source: docSource("checkbox", "table"),
     },
   ],
   anatomy: docAnatomy("checkbox"),

@@ -1,34 +1,42 @@
-import { CollapsibleFaq } from "#/registry/collapsible/faq.example";
-import { CollapsibleRepos } from "#/registry/collapsible/repos.example";
-import { CollapsibleShowMore } from "#/registry/collapsible/show-more.example";
+import { CollapsibleBasic } from "#/registry/collapsible/basic.example";
+import { CollapsibleFileTree } from "#/registry/collapsible/file-tree.example";
+import { CollapsibleRtl } from "#/registry/collapsible/rtl.example";
+import { CollapsibleSettings } from "#/registry/collapsible/settings.example";
 import { docSource, docAnatomy } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const collapsibleDoc: ComponentDoc = {
   examples: [
     {
-      id: "repos",
-      title: "Show more / less",
-      description: "Controlled open state reveals extra rows with a smooth height animation.",
-      Demo: CollapsibleRepos,
-      source: docSource("collapsible", "repos"),
+      id: "collapsible-basic",
+      title: "Basic",
+      description: "An interactive component which expands/collapses a panel.",
+      Demo: CollapsibleBasic,
+      source: docSource("collapsible", "basic"),
       previewClassName: "items-start",
     },
     {
-      id: "faq",
-      title: "FAQ list",
-      description: "Independent collapsibles with a rotating open indicator.",
-      Demo: CollapsibleFaq,
-      source: docSource("collapsible", "faq"),
-      previewClassName: "items-start",
+      id: "collapsible-file-tree",
+      title: "File Tree",
+      description: "Use nested collapsibles to build a file tree.",
+      Demo: CollapsibleFileTree,
+      source: docSource("collapsible", "file-tree"),
     },
     {
-      id: "show-more",
-      title: "Inline show more",
-      description: "Reveal extra copy under a trigger styled as a link.",
-      Demo: CollapsibleShowMore,
-      source: docSource("collapsible", "show-more"),
+      id: "collapsible-rtl",
+      title: "RTL",
+      description: "Right-to-left layout support for languages such as Arabic and Hebrew.",
+      Demo: CollapsibleRtl,
+      source: docSource("collapsible", "rtl"),
       previewClassName: "items-start",
+      direction: "rtl",
+    },
+    {
+      id: "collapsible-settings",
+      title: "Settings Panel",
+      description: "Use a trigger button to reveal additional settings.",
+      Demo: CollapsibleSettings,
+      source: docSource("collapsible", "settings"),
     },
   ],
   anatomy: docAnatomy("collapsible"),

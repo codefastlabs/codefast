@@ -1,34 +1,16 @@
-import { LabelRequired } from "#/registry/label/required.example";
-import { LabelSwitchRow } from "#/registry/label/switch-row.example";
-import { LabelWithControls } from "#/registry/label/with-controls.example";
+import { LabelRtl } from "#/registry/label/rtl.example";
 import { docSource, docAnatomy } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const labelDoc: ComponentDoc = {
   examples: [
     {
-      id: "with-controls",
-      title: "With controls",
-      description: "Link a label to an input via htmlFor, or pair it beside a checkbox.",
-      Demo: LabelWithControls,
-      source: docSource("label", "with-controls"),
-      previewClassName: "items-start",
-    },
-    {
-      id: "required",
-      title: "Required field",
-      description: "Mark a required input and pair it with helper text.",
-      Demo: LabelRequired,
-      source: docSource("label", "required"),
-      previewClassName: "items-start",
-    },
-    {
-      id: "switch-row",
-      title: "Beside a switch",
-      description: "Associate a label with a switch in a settings row.",
-      Demo: LabelSwitchRow,
-      source: docSource("label", "switch-row"),
-      previewClassName: "items-start",
+      id: "label-rtl",
+      title: "RTL",
+      description: "Right-to-left layout support for languages such as Arabic and Hebrew.",
+      Demo: LabelRtl,
+      source: docSource("label", "rtl"),
+      direction: "rtl",
     },
   ],
   anatomy: docAnatomy("label"),

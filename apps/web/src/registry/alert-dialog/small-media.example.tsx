@@ -19,6 +19,7 @@ export function AlertDialogSmallWithMedia() {
       <AlertDialogTrigger asChild>
         <Button variant="outline">Show Dialog</Button>
       </AlertDialogTrigger>
+
       <AlertDialogContent size="sm">
         <AlertDialogHeader>
           <AlertDialogMedia>

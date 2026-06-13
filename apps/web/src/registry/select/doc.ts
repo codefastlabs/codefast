@@ -1,32 +1,57 @@
-import { SelectControlled } from "#/registry/select/controlled.example";
-import { SelectGrouped } from "#/registry/select/grouped.example";
-import { SelectStatus } from "#/registry/select/status.example";
+import { SelectAlignItem } from "#/registry/select/align-item.example";
+import { SelectDisabled } from "#/registry/select/disabled.example";
+import { SelectGroups } from "#/registry/select/groups.example";
+import { SelectInvalid } from "#/registry/select/invalid.example";
+import { SelectRtl } from "#/registry/select/rtl.example";
+import { SelectScrollable } from "#/registry/select/scrollable.example";
 import { docSource, docAnatomy } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const selectDoc: ComponentDoc = {
   examples: [
     {
-      id: "status",
-      title: "Controlled with icons",
-      description: "A real issue-status picker: controlled value, colour markers, and a live readout.",
-      Demo: SelectStatus,
-      source: docSource("select", "status"),
-    },
-    {
-      id: "grouped",
-      title: "Groups & disabled items",
+      id: "select-align-item",
+      title: "Align Item With Trigger",
       description:
-        "Organise long lists with SelectGroup + SelectLabel, divide with SelectSeparator, and disable any item.",
-      Demo: SelectGrouped,
-      source: docSource("select", "grouped"),
+        "Use the position prop on SelectContent to control alignment. When position='item-aligned' (default), the popup positions so the selected item appears over the trigger. When position='popper', the popup aligns to the trigger edge.",
+      Demo: SelectAlignItem,
+      source: docSource("select", "align-item"),
     },
     {
-      id: "controlled",
-      title: "Controlled value",
-      description: "Bind the value to state and read it back.",
-      Demo: SelectControlled,
-      source: docSource("select", "controlled"),
+      id: "select-disabled",
+      title: "Disabled",
+      description: "Displays a list of options for the user to pick from—triggered by a button.",
+      Demo: SelectDisabled,
+      source: docSource("select", "disabled"),
+    },
+    {
+      id: "select-groups",
+      title: "Groups",
+      description: "Use SelectGroup, SelectLabel, and SelectSeparator to organize items.",
+      Demo: SelectGroups,
+      source: docSource("select", "groups"),
+    },
+    {
+      id: "select-invalid",
+      title: "Invalid",
+      description: "<FieldLabel>Fruit</FieldLabel> <SelectTrigger aria-invalid> <SelectValue /> </SelectTrigger>",
+      Demo: SelectInvalid,
+      source: docSource("select", "invalid"),
+    },
+    {
+      id: "select-rtl",
+      title: "RTL",
+      description: "Right-to-left layout support for languages such as Arabic and Hebrew.",
+      Demo: SelectRtl,
+      source: docSource("select", "rtl"),
+      direction: "rtl",
+    },
+    {
+      id: "select-scrollable",
+      title: "Scrollable",
+      description: "A select with many items that scrolls.",
+      Demo: SelectScrollable,
+      source: docSource("select", "scrollable"),
     },
   ],
   anatomy: docAnatomy("select"),

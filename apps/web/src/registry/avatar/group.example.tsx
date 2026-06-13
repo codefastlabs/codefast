@@ -1,21 +1,20 @@
-import { Avatar, AvatarFallback, AvatarGroup, AvatarGroupCount } from "@codefast/ui/avatar";
-
-const PEOPLE = [
-  { initials: "VP", className: "" },
-  { initials: "JD", className: "bg-ui-brand text-white" },
-  { initials: "AS", className: "bg-violet-500 text-white" },
-  { initials: "SM", className: "bg-amber-500 text-white" },
-];
+import { Avatar, AvatarFallback, AvatarGroup, AvatarImage } from "@codefast/ui/avatar";
 
 export function AvatarGroupExample() {
   return (
-    <AvatarGroup>
-      {PEOPLE.map((person) => (
-        <Avatar key={person.initials}>
-          <AvatarFallback className={person.className}>{person.initials}</AvatarFallback>
-        </Avatar>
-      ))}
-      <AvatarGroupCount>+3</AvatarGroupCount>
+    <AvatarGroup className="grayscale">
+      <Avatar>
+        <AvatarImage src="https://github.com/codefastlabs.png" alt="@codefast" />
+        <AvatarFallback>CN</AvatarFallback>
+      </Avatar>
+      <Avatar>
+        <AvatarImage src="https://avatar.vercel.sh/leo" alt="@leo" />
+        <AvatarFallback>LR</AvatarFallback>
+      </Avatar>
+      <Avatar>
+        <AvatarImage src="https://avatar.vercel.sh/ava" alt="@ava" />
+        <AvatarFallback>ER</AvatarFallback>
+      </Avatar>
     </AvatarGroup>
   );
 }
