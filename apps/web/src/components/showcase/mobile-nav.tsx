@@ -30,7 +30,7 @@ export function MobileNav({
   activeSection: string | null;
 }) {
   return (
-    <div className="sticky top-12 z-30 -mx-4 mb-10 flex flex-col gap-3 bg-ui-bg/75 px-4 py-3 backdrop-blur-[20px] lg:hidden">
+    <div className="sticky top-12 z-30 -mx-4 mb-10 flex flex-col gap-3 bg-ui-bg/75 px-4 py-3 backdrop-blur-lg lg:hidden">
       <nav className="flex flex-wrap gap-2" aria-label="Jump to">
         {groups.map((group) => (
           <NavChip key={group.id} href={`#${group.id}`} isActive={activeSection === group.id}>
