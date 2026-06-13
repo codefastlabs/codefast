@@ -1,3 +1,10 @@
+/* -------------------------------------------------------------------------
+ * Source
+ *
+ * Third-party imports and the Tailwind content source scanned for class
+ * usage across the package.
+ * ------------------------------------------------------------------------- */
+
 @import "tw-animate-css";
 
 @source "../../**/*.{ts,tsx}";

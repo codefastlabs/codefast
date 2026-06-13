@@ -1,3 +1,11 @@
+/* -------------------------------------------------------------------------
+ * Foundation preset
+ *
+ * Aggregates the foundation layers in cascade order. Import this from an app
+ * after `tailwindcss` and a theme to pull in @codefast/ui's variants, tokens,
+ * motion, and base styles.
+ * ------------------------------------------------------------------------- */
+
 @import "./foundation/source.css";
 @import "./foundation/variants.css";
 @import "./foundation/tokens.css";

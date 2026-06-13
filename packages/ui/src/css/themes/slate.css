@@ -1,4 +1,16 @@
+/* -------------------------------------------------------------------------
+ * Slate theme
+ *
+ * Color tokens for the slate palette across the light (`:root`),
+ * `.dark`, and system-preference variants. Trailing comments note the source
+ * palette swatch for each value.
+ * ------------------------------------------------------------------------- */
+
 :root {
+  /* ----------------------------------------------------------------------
+   * Surfaces & semantic colors
+   * ---------------------------------------------------------------------- */
+
   --background: oklch(0.98 0 248); /* --color-slate-50 */
   --foreground: oklch(0.13 0.04 265); /* --color-slate-950 */
 
@@ -22,9 +34,17 @@
   --card: oklch(0.98 0 248); /* --color-slate-50 */
   --card-foreground: oklch(0.13 0.04 265); /* --color-slate-950 */
 
+  /* ----------------------------------------------------------------------
+   * Form & focus
+   * ---------------------------------------------------------------------- */
+
   --border: oklch(0.93 0.01 256); /* --color-slate-200 */
   --input: oklch(0.93 0.01 256); /* --color-slate-200 */
   --ring: oklch(0.71 0.04 257); /* --color-slate-400 */
+
+  /* ----------------------------------------------------------------------
+   * Sidebar
+   * ---------------------------------------------------------------------- */
 
   --sidebar: oklch(0.98 0 248); /* --color-slate-50 */
   --sidebar-foreground: oklch(0.13 0.04 265); /* --color-slate-950 */
@@ -35,6 +55,10 @@
   --sidebar-border: oklch(0.93 0.01 256); /* --color-slate-200 */
   --sidebar-ring: oklch(0.71 0.04 257); /* --color-slate-400 */
 
+  /* ----------------------------------------------------------------------
+   * Charts
+   * ---------------------------------------------------------------------- */
+
   --chart-1: oklch(0.646 0.222 41.116); /* --color-orange-600 */
   --chart-2: oklch(0.6 0.118 184.704); /* --color-teal-600 */
   --chart-3: oklch(0.398 0.07 227.392); /* --color-cyan-900 */
@@ -43,6 +67,8 @@
 }
 
 .dark {
+  /* Dark variant — overrides the light tokens above. */
+
   --background: oklch(0.13 0.04 265); /* --color-slate-950 */
   --foreground: oklch(0.98 0 248); /* --color-slate-50 */
 
@@ -85,8 +111,11 @@
   --chart-4: oklch(0.627 0.265 303.9); /* --color-purple-500 */
   --chart-5: oklch(0.645 0.246 16.439); /* --color-rose-500 */
 }
+
 @media (prefers-color-scheme: dark) {
   :root:not(.light) {
+    /* System-preference dark — applied when no explicit .light is set. */
+
     --background: oklch(0.13 0.04 265); /* --color-slate-950 */
     --foreground: oklch(0.98 0 248); /* --color-slate-50 */
 

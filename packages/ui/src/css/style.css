@@ -1,3 +1,11 @@
+/* -------------------------------------------------------------------------
+ * Entry stylesheet
+ *
+ * The default, batteries-included entry point: Tailwind core, the neutral
+ * theme, and the @codefast/ui foundation preset. Apps that want a different
+ * theme import `tailwindcss`, their chosen theme, and `./preset.css` directly.
+ * ------------------------------------------------------------------------- */
+
 @import "tailwindcss";
 @import "./themes/neutral.css";
 @import "./preset.css";
