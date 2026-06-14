@@ -74,6 +74,13 @@
   }
 }
 
+@custom-variant data-indeterminate {
+  &:where([data-state="indeterminate"]),
+  &:where([data-indeterminate]:not([data-indeterminate="false"])) {
+    @slot;
+  }
+}
+
 /* data-selected only matches explicit true, not bare data-selected. */
 @custom-variant data-selected {
   &:where([data-state="selected"]),
