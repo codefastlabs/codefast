@@ -21,7 +21,7 @@ function SegButton({ className, ...props }: ComponentProps<"button">) {
     <button
       {...props}
       className={cn(
-        "border-r-bh-border bg-bh-surface-seg text-bh-seg-ink hover:bg-bh-surface-seg-hover disabled:hover:bg-bh-table-seg-disabled m-0 rounded-none border-0 border-r px-3 py-[0.35rem] text-[0.8125rem] leading-5 font-medium last:border-r-0 focus:z-1 focus:outline-none focus-visible:z-1 focus-visible:shadow-[inset_0_0_0_0.125rem_var(--color-bh-blue)] disabled:cursor-not-allowed disabled:opacity-40",
+        "border-e-bh-border bg-bh-surface-seg text-bh-seg-ink hover:bg-bh-surface-seg-hover disabled:hover:bg-bh-table-seg-disabled m-0 rounded-none border-0 border-e px-3 py-[0.35rem] text-[0.8125rem] leading-5 font-medium last:border-e-0 focus:z-1 focus:outline-none focus-visible:z-1 focus-visible:shadow-[inset_0_0_0_0.125rem_var(--color-bh-blue)] disabled:cursor-not-allowed disabled:opacity-40",
         className,
       )}
       type="button"
@@ -33,7 +33,7 @@ function ChartTh({ className, ...props }: ComponentProps<"th">) {
   return (
     <th
       className={cn(
-        "border-b-bh-table-line bg-bh-table-head text-bh-label z-3 border-b px-[0.65rem] py-[0.15rem] text-left text-[0.7rem] font-semibold tracking-wider whitespace-nowrap uppercase",
+        "border-b-bh-table-line bg-bh-table-head text-bh-label z-3 border-b px-[0.65rem] py-[0.15rem] text-start text-[0.7rem] font-semibold tracking-wider whitespace-nowrap uppercase",
         className,
       )}
       {...props}
@@ -43,7 +43,7 @@ function ChartTh({ className, ...props }: ComponentProps<"th">) {
 
 function ChartTd({ className, ...props }: ComponentProps<"td">) {
   return (
-    <td className={cn("border-b-bh-table-line border-b px-[0.65rem] py-[0.15rem] text-left", className)} {...props} />
+    <td className={cn("border-b-bh-table-line border-b px-[0.65rem] py-[0.15rem] text-start", className)} {...props} />
   );
 }
 
@@ -563,7 +563,7 @@ export function ChartPanel({
             className="bg-bh-overlay-soft absolute inset-0 z-10 flex flex-col items-center justify-center gap-4 rounded-2xl p-6 text-center backdrop-blur-md"
             id="chart-empty-state"
           >
-            <p className="text-bh-meta max-w-[24rem] text-sm leading-normal">{emptyReason}</p>
+            <p className="text-bh-meta max-w-96 text-sm leading-normal">{emptyReason}</p>
             <div className="flex flex-wrap items-center justify-center gap-2">
               {envKey && (
                 <button
@@ -601,7 +601,7 @@ export function ChartPanel({
 
       {/* Display toggles — `group` enables group-open: chevron rotation */}
       <details className="group mt-1 border-t border-white/6 sm:mt-0 sm:border-t-0" ref={displayDetailsRef}>
-        <summary className="focus-visible:outline-bh-blue flex cursor-pointer list-none items-center justify-between gap-3 rounded-xl py-2.5 pr-0.5 text-zinc-200 select-none marker:content-[''] focus-visible:outline focus-visible:outline-offset-2 max-sm:-mx-0.5 max-sm:px-1 max-sm:active:bg-white/4 sm:hidden [&::-webkit-details-marker]:hidden">
+        <summary className="focus-visible:outline-bh-blue flex cursor-pointer list-none items-center justify-between gap-3 rounded-xl py-2.5 pe-0.5 text-zinc-200 select-none marker:content-[''] focus-visible:outline focus-visible:outline-offset-2 max-sm:-mx-0.5 max-sm:px-1 max-sm:active:bg-white/4 sm:hidden [&::-webkit-details-marker]:hidden">
           <span className="text-bh-label text-[0.65rem] font-semibold tracking-[0.14em] uppercase">
             Display &amp; export
           </span>
@@ -643,7 +643,7 @@ export function ChartPanel({
               : "Primary ratios"}
           </label>
           <button
-            className="border-bh-border bg-bh-fill-white-4 shadow-bh-btn-reload text-bh-ink hover:bg-bh-fill-white-7 hover:border-bh-border-strong hover:text-bh-ink-hover focus-visible:outline-bh-blue order-last w-full shrink-0 justify-center rounded-xl border px-4 py-2.5 font-[inherit] text-[0.8125rem] font-medium tracking-[-0.015em] backdrop-blur-[0.875rem] backdrop-saturate-160 [transition:background_0.18s_ease,border-color_0.18s_ease,color_0.18s_ease] focus-visible:outline focus-visible:outline-offset-[0.1875rem] max-sm:mt-0 max-sm:min-h-11 max-sm:rounded-none max-sm:border-0 max-sm:py-3 sm:order-0 sm:ml-auto sm:w-auto sm:py-2"
+            className="border-bh-border bg-bh-fill-white-4 shadow-bh-btn-reload text-bh-ink hover:bg-bh-fill-white-7 hover:border-bh-border-strong hover:text-bh-ink-hover focus-visible:outline-bh-blue order-last w-full shrink-0 justify-center rounded-xl border px-4 py-2.5 font-[inherit] text-[0.8125rem] font-medium tracking-[-0.015em] backdrop-blur-md backdrop-saturate-160 [transition:background_0.18s_ease,border-color_0.18s_ease,color_0.18s_ease] focus-visible:outline focus-visible:outline-offset-[0.1875rem] max-sm:mt-0 max-sm:min-h-11 max-sm:rounded-none max-sm:border-0 max-sm:py-3 sm:order-0 sm:ms-auto sm:w-auto sm:py-2"
             id="chart-download-png-btn"
             onClick={() => onDownloadPng(chartRef)}
             title="Capture current chart view as PNG"
@@ -740,12 +740,12 @@ function ChartTableHeader({ orderedLibraries, compareLibs }: ChartTableHeaderPro
       <ChartTh scope="col">Run (local)</ChartTh>
       <ChartTh scope="col">Folder</ChartTh>
       {orderedLibraries.map((lib) => (
-        <ChartTh className="text-right tabular-nums" key={lib.key} scope="col">
+        <ChartTh className="text-end tabular-nums" key={lib.key} scope="col">
           {lib.displayName} hz/op
         </ChartTh>
       ))}
       {compareLibs.map((cmp) => (
-        <ChartTh className="text-bh-ratio-accent text-right tabular-nums" key={cmp.key} scope="col">
+        <ChartTh className="text-bh-ratio-accent text-end tabular-nums" key={cmp.key} scope="col">
           ÷ {cmp.displayName}
         </ChartTh>
       ))}
@@ -780,7 +780,7 @@ function ChartTableRow({ globalIx, run, scenario, orderedLibraries, primaryLib, 
       {orderedLibraries.map((lib) => {
         const hz = libHzMap[lib.key];
         return (
-          <ChartTd className="text-right tabular-nums" key={lib.key}>
+          <ChartTd className="text-end tabular-nums" key={lib.key}>
             {hz !== null ? Number(hz).toLocaleString("en-US", { maximumFractionDigits: 0 }) : "—"}
           </ChartTd>
         );
@@ -788,7 +788,7 @@ function ChartTableRow({ globalIx, run, scenario, orderedLibraries, primaryLib, 
       {compareLibs.map((cmp) => {
         const ratio = ratioFrom(primaryHz, libHzMap[cmp.key] ?? null);
         return (
-          <ChartTd className="text-right tabular-nums" key={cmp.key}>
+          <ChartTd className="text-end tabular-nums" key={cmp.key}>
             {ratio !== null ? `${ratio.toFixed(3)}×` : "—"}
           </ChartTd>
         );

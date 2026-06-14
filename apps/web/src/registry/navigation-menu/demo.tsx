@@ -53,7 +53,7 @@ export function NavigationMenuDemo() {
         <NavigationMenuItem>
           <NavigationMenuTrigger>Getting started</NavigationMenuTrigger>
           <NavigationMenuContent>
-            <ul className="grid gap-2 p-4 md:w-[460px] md:grid-cols-[.9fr_1fr]">
+            <ul className="grid gap-2 p-4 md:w-115 md:grid-cols-[.9fr_1fr]">
               <li className="row-span-3">
                 <NavigationMenuLink asChild>
                   <a
@@ -78,7 +78,7 @@ export function NavigationMenuDemo() {
         <NavigationMenuItem>
           <NavigationMenuTrigger>Components</NavigationMenuTrigger>
           <NavigationMenuContent>
-            <ul className="grid gap-2 p-4 md:w-[480px] md:grid-cols-2">
+            <ul className="grid gap-2 p-4 md:w-120 md:grid-cols-2">
               {COMPONENTS.map((component) => (
                 <ListItem key={component.title} {...component} />
               ))}

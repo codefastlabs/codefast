@@ -10,7 +10,7 @@ const { mockGetCookie, mockGetRequestHeader, mockSetCookie } = vi.hoisted(() => 
 vi.mock("@tanstack/react-start", () => ({
   createServerFn: vi.fn().mockImplementation(() => ({
     handler: (fn: unknown) => fn,
-    inputValidator: () => ({
+    validator: () => ({
       handler: (fn: unknown) => fn,
     }),
   })),

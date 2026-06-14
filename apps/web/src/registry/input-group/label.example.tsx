@@ -21,7 +21,7 @@ export function InputGroupLabel() {
             </Label>
             <Tooltip>
               <TooltipTrigger asChild>
-                <InputGroupButton variant="ghost" aria-label="Help" className="ml-auto rounded-full" size="icon-xs">
+                <InputGroupButton variant="ghost" aria-label="Help" className="ms-auto rounded-full" size="icon-xs">
                   <InfoIcon />
                 </InputGroupButton>
               </TooltipTrigger>

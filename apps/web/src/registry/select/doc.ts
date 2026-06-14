@@ -34,7 +34,7 @@ export const selectDoc: ComponentDoc = {
     {
       id: "select-invalid",
       title: "Invalid",
-      description: "<FieldLabel>Fruit</FieldLabel> <SelectTrigger aria-invalid> <SelectValue /> </SelectTrigger>",
+      description: "Set data-invalid on the Field and aria-invalid on the SelectTrigger to show an error state.",
       Demo: SelectInvalid,
       source: docSource("select", "invalid"),
     },

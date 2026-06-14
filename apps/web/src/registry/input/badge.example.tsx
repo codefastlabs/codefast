@@ -7,7 +7,7 @@ export function InputBadge() {
     <Field>
       <FieldLabel htmlFor="input-badge">
         Webhook URL{" "}
-        <Badge variant="secondary" className="ml-auto">
+        <Badge variant="secondary" className="ms-auto">
           Beta
         </Badge>
       </FieldLabel>

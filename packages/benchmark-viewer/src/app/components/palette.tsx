@@ -11,7 +11,7 @@ interface PaletteAction {
 }
 
 const paletteItem = tv({
-  base: "focus-visible:outline-bh-blue mb-0.5 w-full cursor-pointer rounded-lg px-3 py-2.5 text-left text-sm text-zinc-200 hover:bg-white/6 focus-visible:outline focus-visible:outline-offset-2",
+  base: "focus-visible:outline-bh-blue mb-0.5 w-full cursor-pointer rounded-lg px-3 py-2.5 text-start text-sm text-zinc-200 hover:bg-white/6 focus-visible:outline focus-visible:outline-offset-2",
   variants: {
     active: {
       true: "bg-white/10 text-white",
@@ -164,7 +164,7 @@ export function CommandPalette({
     >
       <div
         aria-label="Close command palette"
-        className="bg-bh-overlay/75 absolute inset-0 m-0 cursor-default border-0 p-0 backdrop-blur-[0.35rem]"
+        className="bg-bh-overlay/75 absolute inset-0 m-0 cursor-default border-0 p-0 backdrop-blur-xs"
         onClick={onClose}
         onKeyDown={onClose}
         role="button"

@@ -47,7 +47,7 @@ export function InputGroupTextareaExamples() {
           <InputGroupTextarea id="prompt-31" />
           <InputGroupAddon align="block-start">
             <InputGroupText>Ask, Search or Chat...</InputGroupText>
-            <InfoIcon className="ml-auto text-muted-foreground" />
+            <InfoIcon className="ms-auto text-muted-foreground" />
           </InputGroupAddon>
         </InputGroup>
         <FieldDescription>This is a description of the input group.</FieldDescription>
@@ -58,7 +58,7 @@ export function InputGroupTextareaExamples() {
           <InputGroupTextarea id="textarea-header-footer-30" placeholder="Enter your text here..." />
           <InputGroupAddon align="block-end">
             <InputGroupText>0/280 characters</InputGroupText>
-            <InputGroupButton variant="default" size="icon-xs" className="ml-auto rounded-full">
+            <InputGroupButton variant="default" size="icon-xs" className="ms-auto rounded-full">
               <ArrowUpIcon />
               <span className="sr-only">Send</span>
             </InputGroupButton>
@@ -68,9 +68,9 @@ export function InputGroupTextareaExamples() {
       <Field>
         <FieldLabel htmlFor="textarea-comment-31">Addon (Buttons)</FieldLabel>
         <InputGroup>
-          <InputGroupTextarea id="textarea-comment-31" placeholder="Share your thoughts..." className="min-h-[120px]" />
+          <InputGroupTextarea id="textarea-comment-31" placeholder="Share your thoughts..." className="min-h-30" />
           <InputGroupAddon align="block-end">
-            <InputGroupButton variant="ghost" className="ml-auto" size="sm">
+            <InputGroupButton variant="ghost" className="ms-auto" size="sm">
               Cancel
             </InputGroupButton>
             <InputGroupButton variant="default" size="sm">
@@ -85,14 +85,14 @@ export function InputGroupTextareaExamples() {
           <InputGroupTextarea
             id="textarea-code-32"
             placeholder="console.log('Hello, world!');"
-            className="min-h-[300px] py-3"
+            className="min-h-75 py-3"
           />
           <InputGroupAddon align="block-start" className="border-b">
             <InputGroupText className="font-mono font-medium">
               <CodeIcon />
               script.js
             </InputGroupText>
-            <InputGroupButton size="icon-xs" className="ml-auto">
+            <InputGroupButton size="icon-xs" className="ms-auto">
               <RefreshCwIcon />
             </InputGroupButton>
             <InputGroupButton size="icon-xs" variant="ghost">
@@ -101,7 +101,7 @@ export function InputGroupTextareaExamples() {
           </InputGroupAddon>
           <InputGroupAddon align="block-end" className="border-t">
             <InputGroupText>Line 1, Column 1</InputGroupText>
-            <InputGroupText className="ml-auto">JavaScript</InputGroupText>
+            <InputGroupText className="ms-auto">JavaScript</InputGroupText>
           </InputGroupAddon>
         </InputGroup>
       </Field>

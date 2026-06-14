@@ -102,7 +102,7 @@ export const columns: Array<ColumnDef<Payment>> = [
   },
   {
     accessorKey: "amount",
-    header: () => <div className="text-right">Amount</div>,
+    header: () => <div className="text-end">Amount</div>,
     cell: ({ row }) => {
       const amount = Number.parseFloat(row.getValue("amount"));
 
@@ -112,7 +112,7 @@ export const columns: Array<ColumnDef<Payment>> = [
         currency: "USD",
       }).format(amount);
 
-      return <div className="text-right font-medium">{formatted}</div>;
+      return <div className="text-end font-medium">{formatted}</div>;
     },
   },
   {
@@ -183,7 +183,7 @@ export function DataTableDemo() {
         />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="ml-auto">
+            <Button variant="outline" className="ms-auto">
               Columns <ChevronDown />
             </Button>
           </DropdownMenuTrigger>

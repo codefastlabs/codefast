@@ -1,4 +1,16 @@
+/* -------------------------------------------------------------------------
+ * Base
+ *
+ * Global element defaults layered into Tailwind's `base` cascade: default
+ * border/outline colors, scrollbar styling, document background, and
+ * native input appearance resets.
+ * ------------------------------------------------------------------------- */
+
 @layer base {
+  /* ----------------------------------------------------------------------
+   * Default border & focus-ring colors for every element
+   * ---------------------------------------------------------------------- */
+
   *,
   ::after,
   ::before,
@@ -7,6 +19,10 @@
     border-color: var(--color-border);
     outline-color: --alpha(var(--color-ring) / 20%);
   }
+
+  /* ----------------------------------------------------------------------
+   * Scrollbars — WebKit (size + colors) and Firefox (thin + colors)
+   * ---------------------------------------------------------------------- */
 
   ::-webkit-scrollbar {
     @apply size-2;
@@ -25,11 +41,19 @@
     scrollbar-color: var(--color-border) transparent;
   }
 
+  /* ----------------------------------------------------------------------
+   * Document
+   * ---------------------------------------------------------------------- */
+
   html,
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
   }
+
+  /* ----------------------------------------------------------------------
+   * Inputs — strip native search & number-spinner affordances
+   * ---------------------------------------------------------------------- */
 
   input {
     &::-webkit-search-cancel-button,

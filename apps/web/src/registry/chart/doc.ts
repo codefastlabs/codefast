@@ -20,32 +20,28 @@ export const chartDoc: ComponentDoc = {
     {
       id: "chart-example-axis",
       title: "Add an Axis",
-      description:
-        "<BarChart accessibilityLayer data={chartData}> <CartesianGrid vertical={false} /> <XAxis dataKey='month' tickLine={false} tickMargin={10} axisLine={false} tickFormatter={(value) => value.slice(0, 3)} /> <Bar dataKey='desktop' fill='var(--color-desktop)' radius={4} /> <Bar dataKey='mobile' fill='var(--color-mobile)' radius={4} /> </BarChart>",
+      description: "Add an x-axis to the chart with the XAxis component.",
       Demo: ChartBarDemoAxis,
       source: docSource("chart", "example-axis"),
     },
     {
       id: "chart-example-grid",
       title: "Add a Grid",
-      description:
-        "<BarChart accessibilityLayer data={chartData}> <CartesianGrid vertical={false} /> <Bar dataKey='desktop' fill='var(--color-desktop)' radius={4} /> <Bar dataKey='mobile' fill='var(--color-mobile)' radius={4} /> </BarChart>",
+      description: "Add a background grid with the CartesianGrid component.",
       Demo: ChartBarDemoGrid,
       source: docSource("chart", "example-grid"),
     },
     {
       id: "chart-example-legend",
       title: "Add Legend",
-      description:
-        "<BarChart accessibilityLayer data={chartData}> <CartesianGrid vertical={false} /> <XAxis dataKey='month' tickLine={false} tickMargin={10} axisLine={false} tickFormatter={(value) => value.slice(0, 3)} /> <ChartTooltip content={<ChartTooltipContent />} /> <ChartLegend content={<ChartLegendContent />} /> <Bar dataKey='desktop' fill='var(--color-desktop)' radius={4} /> <Bar dataKey='mobile' fill='var(--color-mobile)' radius={4} /> </BarChart>",
+      description: "Add a legend with the ChartLegend and ChartLegendContent components.",
       Demo: ChartBarDemoLegend,
       source: docSource("chart", "example-legend"),
     },
     {
       id: "chart-example-tooltip",
       title: "Add Tooltip",
-      description:
-        "<BarChart accessibilityLayer data={chartData}> <CartesianGrid vertical={false} /> <XAxis dataKey='month' tickLine={false} tickMargin={10} axisLine={false} tickFormatter={(value) => value.slice(0, 3)} /> <ChartTooltip content={<ChartTooltipContent />} /> <Bar dataKey='desktop' fill='var(--color-desktop)' radius={4} /> <Bar dataKey='mobile' fill='var(--color-mobile)' radius={4} /> </BarChart>",
+      description: "Add a themed tooltip with the ChartTooltip and ChartTooltipContent components.",
       Demo: ChartBarDemoTooltip,
       source: docSource("chart", "example-tooltip"),
     },

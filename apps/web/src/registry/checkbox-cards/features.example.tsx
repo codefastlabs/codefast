@@ -15,7 +15,7 @@ export function CheckboxCardsFeatures() {
       <CheckboxCards className="grid gap-2" value={selected} onValueChange={(value) => setSelected(value ?? [])}>
         {FEATURES.map(({ value, label, description }) => (
           <CheckboxCardsItem key={value} value={value}>
-            <div className="flex flex-col gap-0.5 text-left">
+            <div className="flex flex-col gap-0.5 text-start">
               <span className="text-sm font-medium">{label}</span>
               <span className="text-xs text-ui-muted">{description}</span>
             </div>

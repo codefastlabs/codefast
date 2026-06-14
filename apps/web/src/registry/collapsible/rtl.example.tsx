@@ -50,7 +50,7 @@ export function CollapsibleRtl() {
   const [isOpen, setIsOpen] = React.useState(false);
 
   return (
-    <Collapsible open={isOpen} onOpenChange={setIsOpen} className="flex w-[350px] flex-col gap-2" dir={dir}>
+    <Collapsible open={isOpen} onOpenChange={setIsOpen} className="flex w-87.5 flex-col gap-2" dir={dir}>
       <div className="flex items-center justify-between gap-4 px-4">
         <h4 className="text-sm font-semibold">{t.orderNumber}</h4>
         <CollapsibleTrigger asChild>

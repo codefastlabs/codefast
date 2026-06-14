@@ -88,7 +88,7 @@ type CommandInputProps = ComponentProps<typeof CommandPrimitive.Input>;
 function CommandInput({ className, ...props }: CommandInputProps): JSX.Element {
   return (
     <div className="p-1 pb-0" data-slot="command-input-wrapper">
-      <InputGroup className="h-8! rounded-lg! border-input/30 bg-input/30 shadow-none! *:data-[slot=input-group-addon]:pl-2!">
+      <InputGroup className="h-8! rounded-lg! border-input/30 bg-input/30 shadow-none! *:data-[slot=input-group-addon]:ps-2!">
         <CommandPrimitive.Input
           className={cn("w-full text-sm outline-hidden disabled:cursor-not-allowed disabled:opacity-50", className)}
           data-slot="command-input"
@@ -216,7 +216,7 @@ function CommandItem({ children, className, ...props }: CommandItemProps): JSX.E
       {...props}
     >
       {children}
-      <CheckIcon className="ml-auto opacity-0 group-has-data-[slot=command-shortcut]/command-item:hidden group-data-checked/command-item:opacity-100" />
+      <CheckIcon className="ms-auto opacity-0 group-has-data-[slot=command-shortcut]/command-item:hidden group-data-checked/command-item:opacity-100" />
     </CommandPrimitive.Item>
   );
 }
@@ -259,7 +259,7 @@ function CommandShortcut({ className, ...props }: CommandShortcutProps): JSX.Ele
   return (
     <span
       className={cn(
-        "ml-auto text-xs tracking-widest text-muted-foreground group-data-selected/command-item:text-foreground",
+        "ms-auto text-xs tracking-widest text-muted-foreground group-data-selected/command-item:text-foreground",
         className,
       )}
       data-slot="command-shortcut"

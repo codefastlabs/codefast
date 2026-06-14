@@ -13,7 +13,7 @@ import { ChevronDownIcon } from "lucide-react";
 
 export function SidebarHeaderExample() {
   return (
-    <SidebarProvider className="h-96 min-h-0 w-full overflow-hidden rounded-xl border [contain:layout]">
+    <SidebarProvider className="h-96 min-h-0 w-full overflow-hidden rounded-xl border [contain:layout] [&_[data-slot=sidebar-container]]:h-full">
       <Sidebar>
         <SidebarHeader>
           <SidebarMenu>
@@ -22,7 +22,7 @@ export function SidebarHeaderExample() {
                 <DropdownMenuTrigger asChild>
                   <SidebarMenuButton className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground">
                     Select Workspace
-                    <ChevronDownIcon className="ml-auto" />
+                    <ChevronDownIcon className="ms-auto" />
                   </SidebarMenuButton>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="w-(--radix-popper-anchor-width)">
