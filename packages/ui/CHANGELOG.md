@@ -1,5 +1,57 @@
 # @codefast/ui
 
+## 0.4.0-canary.5
+
+### Minor Changes
+
+- [#503](https://github.com/codefastlabs/codefast/pull/503) [`4738966`](https://github.com/codefastlabs/codefast/commit/473896609b6e4c4713fb8b391e7e6088b31f1cab) Thanks [@thevuong](https://github.com/thevuong)! - feat(checkbox): render the indeterminate state across the checkbox family — fill the box and swap to a minus icon when `data-state="indeterminate"`, with a matching `data-indeterminate` variant
+
+### Patch Changes
+
+- [#502](https://github.com/codefastlabs/codefast/pull/502) [`5a61b82`](https://github.com/codefastlabs/codefast/commit/5a61b827ba2a99920dcbf10d2589dfa59c3aa682) Thanks [@thevuong](https://github.com/thevuong)! - feat(motion): add control duration tokens and apply them to form controls
+
+  Define two semantic timing tokens in the motion foundation and use them across Switch, Checkbox (+ Cards/Group) and Radio (+ Group/Cards):
+
+  - `--transition-duration-control: 200ms` — container/ring (switch track, checkbox & radio box)
+  - `--transition-duration-control-indicator: 300ms` — the moving part (switch thumb, check/dot, native radio dot)
+
+  They live in the `--transition-duration-*` namespace so they mint clean `duration-control` / `duration-control-indicator` utilities. Because `animate-in` falls back to `--tw-duration`, the same `duration-*` utility drives both the state transitions and the indicator keyframes — one token, one utility, no arbitrary `duration-(--…)` syntax.
+
+- [#502](https://github.com/codefastlabs/codefast/pull/502) [`4da0e77`](https://github.com/codefastlabs/codefast/commit/4da0e77e7a7a3fe83709cba44ac8c2013f57755b) Thanks [@thevuong](https://github.com/thevuong)! - style(controls): differentiate motion tokens by role across form controls
+
+  Apply the design system's motion curves consistently: containers/rings use `ease-snappy`, while the moving/appearing indicators use `ease-spring`.
+
+  - Switch thumb now eases with `ease-spring` (the positional slide); the track keeps `ease-snappy`.
+  - Checkbox, CheckboxCards and CheckboxGroup indicators spring-scale in (`animate-in zoom-in-50 ease-spring`) instead of appearing instantly.
+  - RadioGroup and RadioCards dots spring-scale in, centering preserved.
+
+- [#502](https://github.com/codefastlabs/codefast/pull/502) [`930a916`](https://github.com/codefastlabs/codefast/commit/930a91678b6d370a273dc21b88a3e4fe06710b63) Thanks [@thevuong](https://github.com/thevuong)! - style(switch, checkbox): apply the ease-snappy motion token to control transitions
+
+  Switch (track + thumb slide) and the Checkbox family previously used bare `transition-*` utilities, falling back to Tailwind's hardcoded default curve. They now use the design system's `--ease-snappy` token so the timing stays consistent with the rest of the motion system and follows future theme retunes.
+
+- [#501](https://github.com/codefastlabs/codefast/pull/501) [`5469e9d`](https://github.com/codefastlabs/codefast/commit/5469e9d9c8c998258f5b008655943a6404b48edf) Thanks [@thevuong](https://github.com/thevuong)! - Migrate physical CSS direction utilities to their logical (start/end) equivalents so components mirror correctly under RTL.
+
+- [#502](https://github.com/codefastlabs/codefast/pull/502) [`9813afd`](https://github.com/codefastlabs/codefast/commit/9813afdbe4f5049e720820a048c304a5165c5b0c) Thanks [@thevuong](https://github.com/thevuong)! - style(radio): spring the native radio dot, matching RadioGroup
+
+  The native `Radio` input drew its dot with a `::before` that doubled as the unchecked fill, so animating it made the dot shrink in — the opposite of the Radix-based RadioGroup/RadioCards dots, which scale up. Move the inner fill onto the input's own `bg-background`/`bg-input` so `::before` is purely the dot, then scale it `0 → 1` with `before:transition-transform before:ease-spring` on check. The dot now grows in with the same spring curve as the other radios; the static appearance is unchanged in light and dark.
+
+- [#501](https://github.com/codefastlabs/codefast/pull/501) [`f84c59f`](https://github.com/codefastlabs/codefast/commit/f84c59f176033344002abc473747314d8800233d) Thanks [@thevuong](https://github.com/thevuong)! - fix(ui): flip transforms and resize cursors under `dir="rtl"`
+
+  Logical properties (`start-*`) flip in RTL but the paired `translate-x`/`cursor`
+  utilities do not, leaving elements offset. Add `rtl:` overrides so Dialog and
+  AlertDialog stay centred, the Switch thumb slides the correct way, and the
+  Carousel buttons, Resizable handle, Select popper offset, Sidebar rail cursors,
+  and RadioCards indicator all mirror correctly.
+
+- [#502](https://github.com/codefastlabs/codefast/pull/502) [`3647cb2`](https://github.com/codefastlabs/codefast/commit/3647cb28a72616a26f9b0e943217790b2735a7fd) Thanks [@thevuong](https://github.com/thevuong)! - refactor(switch): align default size to the spacing grid
+
+  Replace the hand-computed `h-[18.4px]` track and `translate-x-[calc(100%-2px)]` thumb offsets with on-grid utilities (`h-4.5`, `translate-x-3.5`/`translate-x-2.5`). The checked thumb travel is unchanged (14px default, 10px small); the default track is 0.4px shorter (18.4px → 18px).
+
+- [#497](https://github.com/codefastlabs/codefast/pull/497) [`a9ead5c`](https://github.com/codefastlabs/codefast/commit/a9ead5c97d442093dbd0fab2a846325e6310160f) Thanks [@thevuong](https://github.com/thevuong)! - Replace directional `text-left` utilities with logical `text-start` in accordion, alert-dialog, drawer, field, item, table, alert, and sidebar so text alignment follows the document direction in RTL layouts.
+
+- Updated dependencies []:
+  - @codefast/tailwind-variants@0.4.0-canary.5
+
 ## 0.4.0-canary.4
 
 ### Minor Changes
