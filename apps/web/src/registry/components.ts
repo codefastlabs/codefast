@@ -9,10 +9,10 @@
  * so the whole registry bundles into one tiny chunk that any route (home hero,
  * /components showcase, ⌘K palette, detail pages) can import freely.
  *
- * Display order on /components is curated: components sort by category (the
- * `CATEGORIES` order below), then by their `order` field within the category.
- * `order` values are sparse (10, 20, 30, …) so a new component slots between
- * two others without renumbering; ties fall back to the display name.
+ * Display order on /components is alphabetical by name (see `groups.ts`), so the
+ * registry sorts the same way and the detail-page pager walks components A–Z.
+ * `category` no longer drives that order — it survives as a descriptive tag for
+ * the detail-page badge and the ⌘K palette (label + search keyword).
  *
  * TO ADD A COMPONENT: create `registry/<slug>/meta.ts` exporting a single
  * `ComponentMetaInput` — it appears everywhere automatically. Add a
@@ -25,6 +25,7 @@ import { DEMO_BY_SLUG } from "#/registry/demos";
 /* Categories                                                                  */
 /* -------------------------------------------------------------------------- */
 
+/** Descriptive taxonomy tag — surfaced as a badge / palette label, not a sort key. */
 export const CATEGORIES = [
   {
     id: "display",
@@ -72,9 +73,8 @@ export type ComponentStatus = "stable" | "beta" | "deprecated";
 export interface ComponentMetaInput {
   /** Display name, e.g. "Alert Dialog". */
   readonly name: string;
+  /** Descriptive taxonomy tag (badge + palette search) — does not affect ordering. */
   readonly category: CategoryId;
-  /** Curated position within the category on /components — sparse, leave gaps. */
-  readonly order: number;
   readonly description: string;
   /** Render the showcase card across two grid columns. */
   readonly wide?: boolean;
@@ -115,11 +115,7 @@ function slugFromMetaPath(path: string): string {
   return slug;
 }
 
-const CATEGORY_RANK: ReadonlyMap<CategoryId, number> = new Map(
-  CATEGORIES.map((category, index) => [category.id, index]),
-);
-
-/** Every component, in the exact order the /components grid renders. */
+/** Every component, sorted A–Z by name — the order the /components grid renders. */
 export const COMPONENTS: ReadonlyArray<ComponentMeta> = Object.entries(metaModules)
   .map(([path, module]) => {
     const slug = slugFromMetaPath(path);
@@ -130,11 +126,7 @@ export const COMPONENTS: ReadonlyArray<ComponentMeta> = Object.entries(metaModul
 
     return { ...module.meta, slug, hasDemo: DEMO_BY_SLUG.has(slug) };
   })
-  .toSorted((a, b) => {
-    const rank = (CATEGORY_RANK.get(a.category) ?? 0) - (CATEGORY_RANK.get(b.category) ?? 0);
-
-    return rank || a.order - b.order || a.name.localeCompare(b.name);
-  });
+  .toSorted((a, b) => a.name.localeCompare(b.name));
 
 /** O(1) slug lookup — routes resolve params against this instead of scanning. */
 export const COMPONENT_BY_SLUG: ReadonlyMap<string, ComponentMeta> = new Map(
