@@ -11,6 +11,7 @@
  */
 import type { Container as CodefastContainer, Token } from "@codefast/di";
 import { Container, token } from "@codefast/di";
+
 import {
   assertGraphIsWellFormed,
   type GraphDescriptor,
@@ -46,9 +47,7 @@ function bindOneNode(
   const dependencyTokens = node.dependencies.map((dependencyId) => {
     const dependencyToken = tokensById.get(dependencyId);
     if (dependencyToken === undefined) {
-      throw new Error(
-        `Codefast adapter: dependency token missing for "${node.id}" -> "${dependencyId}"`,
-      );
+      throw new Error(`Codefast adapter: dependency token missing for "${node.id}" -> "${dependencyId}"`);
     }
     return dependencyToken;
   });

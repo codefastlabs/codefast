@@ -59,10 +59,7 @@ export type MirrorPackageConfig = z.infer<typeof mirrorPackageConfigSchema>;
  *
  * @since 0.3.16-canary.0
  */
-export const mirrorConfigSchema = z.record(
-  z.string(),
-  z.union([z.literal(false), mirrorPackageConfigSchema]),
-);
+export const mirrorConfigSchema = z.record(z.string(), z.union([z.literal(false), mirrorPackageConfigSchema]));
 
 /**
  * @since 0.3.16-canary.0

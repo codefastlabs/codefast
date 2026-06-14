@@ -1,7 +1,8 @@
 import path from "node:path";
+
 import type { FilesystemPort } from "#/core/filesystem/port";
-import type { DistFilesystem } from "#/mirror/domain/dist-filesystem";
 import { isDirentList } from "#/mirror/domain/dirent-guard";
+import type { DistFilesystem } from "#/mirror/domain/dist-filesystem";
 import { normalizePath } from "#/mirror/domain/path-normalizer";
 
 /**

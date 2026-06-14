@@ -1,4 +1,3 @@
-import { endAfterOptionalCommaFollowingInSource } from "#/core/source-text-edit";
 import {
   forEachDomainChild,
   isDomainIdentifier,
@@ -6,11 +5,8 @@ import {
   isDomainNamedImports,
   isDomainStringLiteral,
 } from "#/arrange/domain/ast/ast-node";
-import type {
-  DomainAstNode,
-  DomainImportSpecifier,
-  DomainSourceFile,
-} from "#/arrange/domain/ast/ast-node";
+import type { DomainAstNode, DomainImportSpecifier, DomainSourceFile } from "#/arrange/domain/ast/ast-node";
+import { endAfterOptionalCommaFollowingInSource } from "#/core/source-text-edit";
 
 function sourceFileImportsCn(sourceFile: DomainSourceFile): boolean {
   for (const statement of sourceFile.statements) {
@@ -132,8 +128,7 @@ export function dropCnImportIfUnused(sourceFile: DomainSourceFile): string {
       // cn is the only named import — remove the entire import line (including trailing newline)
       const lineEnd = sourceText.indexOf("\n", stmt.end);
       return (
-        sourceText.slice(0, stmt.pos) +
-        (lineEnd !== -1 ? sourceText.slice(lineEnd + 1) : sourceText.slice(stmt.end))
+        sourceText.slice(0, stmt.pos) + (lineEnd !== -1 ? sourceText.slice(lineEnd + 1) : sourceText.slice(stmt.end))
       );
     }
 

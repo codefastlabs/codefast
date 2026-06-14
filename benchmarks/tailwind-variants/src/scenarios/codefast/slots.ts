@@ -1,8 +1,8 @@
 import type { ServicePreviewSlots } from "#/fixtures/slot-types";
-import { codefastTvFn } from "#/lib/tv-shims";
-import { TV_MERGE_DISABLED, TV_MERGE_ENABLED } from "#/harness/bench-options";
-import type { BenchScenario } from "#/scenarios/types";
 import { slotsTestProps, slotsVariants } from "#/fixtures/slots";
+import { TV_MERGE_DISABLED, TV_MERGE_ENABLED } from "#/harness/bench-options";
+import { codefastTvFn } from "#/lib/tv-shims";
+import type { BenchScenario } from "#/scenarios/types";
 
 type SlotsProps = (typeof slotsTestProps)[number];
 type SlotsRenderer = (props: SlotsProps) => ServicePreviewSlots;

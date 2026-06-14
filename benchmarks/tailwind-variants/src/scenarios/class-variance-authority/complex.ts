@@ -1,7 +1,8 @@
 import { twMerge } from "tailwind-merge";
+
+import { complexTestProps, complexVariants } from "#/fixtures/complex";
 import { cva } from "#/lib/tv-shims";
 import type { BenchScenario } from "#/scenarios/types";
-import { complexTestProps, complexVariants } from "#/fixtures/complex";
 
 const cvaInstance = cva(complexVariants.base, {
   compoundVariants: complexVariants.compoundVariants,

@@ -108,12 +108,7 @@ const InfrastructureModule = Module.createAsync("Infra", async (builder) => {
 Bootstrap with `Container.fromModulesAsync` instead of `Container.fromModules`:
 
 ```ts
-const container = await Container.fromModulesAsync(
-  InfrastructureModule,
-  DatabaseModule,
-  CacheModule,
-  AppModule,
-);
+const container = await Container.fromModulesAsync(InfrastructureModule, DatabaseModule, CacheModule, AppModule);
 ```
 
 ---
@@ -149,10 +144,7 @@ async function main(): Promise<void> {
 For async singletons, two concurrent `resolveAsync` calls share a single in-flight `Promise` — the factory runs exactly once:
 
 ```ts
-const [db1, db2] = await Promise.all([
-  container.resolveAsync(DatabaseToken),
-  container.resolveAsync(DatabaseToken),
-]);
+const [db1, db2] = await Promise.all([container.resolveAsync(DatabaseToken), container.resolveAsync(DatabaseToken)]);
 console.log(db1 === db2); // true — one instance, one connection
 ```
 

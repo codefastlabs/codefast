@@ -16,12 +16,8 @@ type TableProps = ComponentProps<"table">;
  */
 function Table({ className, ...props }: TableProps): JSX.Element {
   return (
-    <div className="relative w-full overflow-auto" data-slot="table-cotainer">
-      <table
-        className={cn("w-full caption-bottom text-sm", className)}
-        data-slot="table"
-        {...props}
-      />
+    <div className="relative w-full overflow-x-auto" data-slot="table-container">
+      <table className={cn("w-full caption-bottom text-sm", className)} data-slot="table" {...props} />
     </div>
   );
 }
@@ -39,13 +35,7 @@ type TableHeaderProps = ComponentProps<"thead">;
  * @since 0.3.16-canary.0
  */
 function TableHeader({ className, ...props }: TableHeaderProps): JSX.Element {
-  return (
-    <thead
-      className={cn("*:border-b *:has-aria-expanded:bg-transparent", className)}
-      data-slot="table-header"
-      {...props}
-    />
-  );
+  return <thead className={cn("[&_tr]:border-b", className)} data-slot="table-header" {...props} />;
 }
 
 /* -----------------------------------------------------------------------------
@@ -61,9 +51,7 @@ type TableBodyProps = ComponentProps<"tbody">;
  * @since 0.3.16-canary.0
  */
 function TableBody({ className, ...props }: TableBodyProps): JSX.Element {
-  return (
-    <tbody className={cn("*:last-child:border-0", className)} data-slot="table-body" {...props} />
-  );
+  return <tbody className={cn("[&_tr:last-child]:border-0", className)} data-slot="table-body" {...props} />;
 }
 
 /* -----------------------------------------------------------------------------
@@ -81,10 +69,7 @@ type TableFooterProps = ComponentProps<"tfoot">;
 function TableFooter({ className, ...props }: TableFooterProps): JSX.Element {
   return (
     <tfoot
-      className={cn(
-        "bg-muted/50 font-medium *:border-t *:border-b-0 *:has-aria-expanded:bg-transparent",
-        className,
-      )}
+      className={cn("border-t bg-muted/50 font-medium [&>tr]:last:border-b-0", className)}
       data-slot="table-footer"
       {...props}
     />
@@ -107,7 +92,7 @@ function TableRow({ className, ...props }: TableRowProps): JSX.Element {
   return (
     <tr
       className={cn(
-        "border-b transition-colors hover:bg-muted/50 has-aria-expanded:bg-muted/50 motion-reduce:transition-none data-selected:bg-muted",
+        "border-b transition-colors hover:bg-muted/50 has-aria-expanded:bg-muted/50 data-selected:bg-muted",
         className,
       )}
       data-slot="table-row"
@@ -131,7 +116,10 @@ type TableHeadProps = ComponentProps<"th">;
 function TableHead({ className, ...props }: TableHeadProps): JSX.Element {
   return (
     <th
-      className={cn("p-2 text-left align-middle font-medium", className)}
+      className={cn(
+        "h-10 px-2 text-start align-middle font-medium whitespace-nowrap text-foreground [&:has([role=checkbox])]:pe-0",
+        className,
+      )}
       data-slot="table-head"
       {...props}
     />
@@ -151,7 +139,13 @@ type TableCellProps = ComponentProps<"td">;
  * @since 0.3.16-canary.0
  */
 function TableCell({ className, ...props }: TableCellProps): JSX.Element {
-  return <td className={cn("p-2 align-middle", className)} data-slot="table-cell" {...props} />;
+  return (
+    <td
+      className={cn("p-2 align-middle whitespace-nowrap [&:has([role=checkbox])]:pe-0", className)}
+      data-slot="table-cell"
+      {...props}
+    />
+  );
 }
 
 /* -----------------------------------------------------------------------------
@@ -168,11 +162,7 @@ type TableCaptionProps = ComponentProps<"caption">;
  */
 function TableCaption({ className, ...props }: TableCaptionProps): JSX.Element {
   return (
-    <caption
-      className={cn("mt-4 text-sm text-muted-foreground", className)}
-      data-slot="table-caption"
-      {...props}
-    />
+    <caption className={cn("mt-4 text-sm text-muted-foreground", className)} data-slot="table-caption" {...props} />
   );
 }
 

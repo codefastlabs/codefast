@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+
 import type { CliFileEncoding, FilesystemPort } from "#/core/filesystem/port";
 import { supplementExportsInPackageJson } from "#/mirror/supplement-exports";
 
@@ -93,17 +94,9 @@ describe("supplementExportsInPackageJson", () => {
       exports: { ".": { types: "./dist/index.d.mts", import: "./dist/index.mjs" } },
     });
 
-    await supplementExportsInPackageJson(
-      harness.filesystem,
-      "/virtual/package.json",
-      "/virtual",
-      BASE_OPTIONS,
-    );
+    await supplementExportsInPackageJson(harness.filesystem, "/virtual/package.json", "/virtual", BASE_OPTIONS);
 
-    const rootEntry = (harness.readPackageJson().exports as Record<string, unknown>)["."] as Record<
-      string,
-      unknown
-    >;
+    const rootEntry = (harness.readPackageJson().exports as Record<string, unknown>)["."] as Record<string, unknown>;
     expect(Object.keys(rootEntry)[0]).toBe("source");
   });
 
@@ -142,10 +135,7 @@ describe("supplementExportsInPackageJson", () => {
       resolveSourcePath: (p) => `./src/${p}.tsx`,
     });
 
-    const rootEntry = (harness.readPackageJson().exports as Record<string, unknown>)["."] as Record<
-      string,
-      unknown
-    >;
+    const rootEntry = (harness.readPackageJson().exports as Record<string, unknown>)["."] as Record<string, unknown>;
     expect(rootEntry.source).toBe("./src/index.tsx");
   });
 
@@ -158,17 +148,9 @@ describe("supplementExportsInPackageJson", () => {
       ["/virtual/dist/index.d.mts"],
     );
 
-    await supplementExportsInPackageJson(
-      harness.filesystem,
-      "/virtual/package.json",
-      "/virtual",
-      BASE_OPTIONS,
-    );
+    await supplementExportsInPackageJson(harness.filesystem, "/virtual/package.json", "/virtual", BASE_OPTIONS);
 
-    const rootEntry = (harness.readPackageJson().exports as Record<string, unknown>)["."] as Record<
-      string,
-      unknown
-    >;
+    const rootEntry = (harness.readPackageJson().exports as Record<string, unknown>)["."] as Record<string, unknown>;
     expect(rootEntry.types).toBe("./dist/index.d.mts");
   });
 
@@ -181,12 +163,7 @@ describe("supplementExportsInPackageJson", () => {
       },
     });
 
-    await supplementExportsInPackageJson(
-      harness.filesystem,
-      "/virtual/package.json",
-      "/virtual",
-      BASE_OPTIONS,
-    );
+    await supplementExportsInPackageJson(harness.filesystem, "/virtual/package.json", "/virtual", BASE_OPTIONS);
 
     const exports = harness.readPackageJson().exports as Record<string, unknown>;
     expect(exports["./package.json"]).toBe("./package.json");

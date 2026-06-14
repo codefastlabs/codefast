@@ -1,7 +1,7 @@
+import { HoverCard as HoverCardPrimitive } from "radix-ui";
 import type { ComponentProps, JSX } from "react";
 
 import { cn } from "#/lib/utils";
-import { HoverCard as HoverCardPrimitive } from "radix-ui";
 
 /* -----------------------------------------------------------------------------
  * Component: HoverCard
@@ -54,11 +54,11 @@ function HoverCardContent({
   ...props
 }: HoverCardContentProps): JSX.Element {
   return (
-    <HoverCardPrimitive.Portal>
+    <HoverCardPrimitive.Portal data-slot="hover-card-portal">
       <HoverCardPrimitive.Content
         align={align}
         className={cn(
-          "z-50 min-w-32 origin-(--radix-hover-card-content-transform-origin) rounded-lg bg-popover p-4 text-popover-foreground shadow-md ring-1 ring-foreground/10 ease-snappy motion-reduce:animate-none motion-reduce:transition-none motion-reduce:duration-0 data-open:animate-in data-open:duration-200 data-open:fade-in-0 data-open:zoom-in-95 data-open:data-side-top:slide-in-from-bottom-2 data-open:data-side-right:slide-in-from-left-2 data-open:data-side-bottom:slide-in-from-top-2 data-open:data-side-left:slide-in-from-right-2 data-closed:animate-out data-closed:duration-150 data-closed:fade-out-0 data-closed:zoom-out-95 data-closed:data-side-top:slide-out-to-bottom-2 data-closed:data-side-right:slide-out-to-left-2 data-closed:data-side-bottom:slide-out-to-top-2 data-closed:data-side-left:slide-out-to-right-2",
+          "z-50 w-64 origin-(--radix-hover-card-content-transform-origin) rounded-lg bg-popover p-4 text-sm text-popover-foreground shadow-md ring-1 ring-foreground/10 outline-hidden ease-snappy data-open:animate-in data-open:animation-duration-popup-in data-open:fade-in-0 data-open:zoom-in-95 data-open:data-side-top:slide-in-from-bottom-2 data-open:data-side-right:slide-in-from-left-2 data-open:data-side-bottom:slide-in-from-top-2 data-open:data-side-left:slide-in-from-right-2 data-closed:animate-out data-closed:ease-exit data-closed:animation-duration-popup-out data-closed:fade-out-0 data-closed:zoom-out-95 data-closed:data-side-top:slide-out-to-bottom-2 data-closed:data-side-right:slide-out-to-left-2 data-closed:data-side-bottom:slide-out-to-top-2 data-closed:data-side-left:slide-out-to-right-2",
           className,
         )}
         data-slot="hover-card-content"
@@ -82,13 +82,7 @@ type HoverCardArrowProps = ComponentProps<typeof HoverCardPrimitive.Arrow>;
  * @since 0.3.16-canary.0
  */
 function HoverCardArrow({ className, ...props }: HoverCardArrowProps): JSX.Element {
-  return (
-    <HoverCardPrimitive.Arrow
-      className={cn("fill-popover", className)}
-      data-slot="hover-card-arrow"
-      {...props}
-    />
-  );
+  return <HoverCardPrimitive.Arrow className={cn("fill-popover", className)} data-slot="hover-card-arrow" {...props} />;
 }
 
 /* -----------------------------------------------------------------------------

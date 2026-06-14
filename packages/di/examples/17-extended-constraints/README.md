@@ -101,15 +101,9 @@ graph TB
 **Scenario:** `OrderService` gets a verbose logger; everything else gets a silent one.
 
 ```ts
-container
-  .bind(LoggerToken)
-  .toConstantValue(makeLogger("verbose"))
-  .when(whenParentIs(OrderServiceToken)); // only for OrderService
+container.bind(LoggerToken).toConstantValue(makeLogger("verbose")).when(whenParentIs(OrderServiceToken)); // only for OrderService
 
-container
-  .bind(LoggerToken)
-  .toConstantValue(makeLogger("silent"))
-  .when(whenNoParentIs(OrderServiceToken)); // everyone else
+container.bind(LoggerToken).toConstantValue(makeLogger("silent")).when(whenNoParentIs(OrderServiceToken)); // everyone else
 ```
 
 `whenParentIs` checks the **immediate** parent. Use it when a specific consumer should receive a different implementation.
@@ -125,15 +119,9 @@ PaymentOrchestrator → FraudChecker → RiskScorer → Logger
 ```
 
 ```ts
-container
-  .bind(LoggerToken)
-  .toConstantValue(makeLogger("audit"))
-  .when(whenAnyAncestorIs(PaymentOrchestratorToken));
+container.bind(LoggerToken).toConstantValue(makeLogger("audit")).when(whenAnyAncestorIs(PaymentOrchestratorToken));
 
-container
-  .bind(LoggerToken)
-  .toConstantValue(makeLogger("standard"))
-  .when(whenNoAncestorIs(PaymentOrchestratorToken));
+container.bind(LoggerToken).toConstantValue(makeLogger("standard")).when(whenNoAncestorIs(PaymentOrchestratorToken));
 ```
 
 Even though `RiskScorer`'s direct parent is `FraudChecker`, `whenAnyAncestorIs` scans the entire chain upward and finds `PaymentOrchestrator`.
@@ -145,15 +133,9 @@ Even though `RiskScorer`'s direct parent is `FraudChecker`, `whenAnyAncestorIs` 
 **Scenario:** `DataSource` has two named bindings ("primary", "replica"). The `Logger` injected into each adapts based on which named slot is being resolved.
 
 ```ts
-container
-  .bind(LoggerToken)
-  .toConstantValue(makeLogger("primary-logger"))
-  .when(whenParentNamed("primary"));
+container.bind(LoggerToken).toConstantValue(makeLogger("primary-logger")).when(whenParentNamed("primary"));
 
-container
-  .bind(LoggerToken)
-  .toConstantValue(makeLogger("replica-logger"))
-  .when(whenParentNamed("replica"));
+container.bind(LoggerToken).toConstantValue(makeLogger("replica-logger")).when(whenParentNamed("replica"));
 
 container.bind(DataSourceToken).to(DataSource).whenNamed("primary").singleton();
 container.bind(DataSourceToken).to(DataSource).whenNamed("replica").singleton();

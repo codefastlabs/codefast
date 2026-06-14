@@ -19,11 +19,7 @@ import { useEffect, useRef, useState } from "react";
  *
  * @since 0.3.16-canary.0
  */
-export function useAnimatedValue(
-  targetValue: null | number,
-  duration: number,
-  animate?: boolean,
-): number {
+export function useAnimatedValue(targetValue: null | number, duration: number, animate?: boolean): number {
   // Default to 0 when targetValue is null
   const actualTargetValue = targetValue ?? 0;
 

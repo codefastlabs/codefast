@@ -1,8 +1,7 @@
-import type { ButtonVariants } from "#/variants/button";
+import { Slot } from "radix-ui";
 import type { ComponentProps, JSX } from "react";
 
-import { Slot } from "radix-ui";
-
+import type { ButtonVariants } from "#/variants/button";
 import { buttonVariants } from "#/variants/button";
 
 /* -----------------------------------------------------------------------------
@@ -21,15 +20,7 @@ type ButtonProps = ComponentProps<"button"> &
 /**
  * @since 0.3.16-canary.0
  */
-function Button({
-  asChild = false,
-  children,
-  className,
-  size,
-  type = "button",
-  variant,
-  ...props
-}: ButtonProps): JSX.Element {
+function Button({ asChild = false, className, size, type = "button", variant, ...props }: ButtonProps): JSX.Element {
   const Comp = asChild ? Slot.Root : "button";
 
   if (asChild) {
@@ -40,9 +31,7 @@ function Button({
         data-slot="button"
         data-variant={variant}
         {...props}
-      >
-        {children}
-      </Comp>
+      />
     );
   }
 
@@ -54,9 +43,7 @@ function Button({
       data-variant={variant}
       type={type}
       {...props}
-    >
-      {children}
-    </button>
+    />
   );
 }
 

@@ -1,6 +1,7 @@
+import { tv } from "@codefast/tailwind-variants";
 import type { KeyboardEvent as ReactKeyboardEvent, RefObject } from "react";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { tv } from "@codefast/tailwind-variants";
+
 import { isMacLikePlatform } from "#/app/lib/format";
 import { cn } from "#/app/lib/utils";
 
@@ -10,7 +11,7 @@ interface PaletteAction {
 }
 
 const paletteItem = tv({
-  base: "focus-visible:outline-bh-blue mb-0.5 w-full cursor-pointer rounded-lg px-3 py-2.5 text-left text-sm text-zinc-200 hover:bg-white/6 focus-visible:outline focus-visible:outline-offset-2",
+  base: "focus-visible:outline-bh-blue mb-0.5 w-full cursor-pointer rounded-lg px-3 py-2.5 text-start text-sm text-zinc-200 hover:bg-white/6 focus-visible:outline focus-visible:outline-offset-2",
   variants: {
     active: {
       true: "bg-white/10 text-white",
@@ -31,9 +32,7 @@ function PaletteShortcutHint() {
   return (
     <>
       Esc closes ·{" "}
-      <kbd className="rounded border border-zinc-700 bg-zinc-800 px-1.5 py-px font-mono text-zinc-300">
-        {label}
-      </kbd>{" "}
+      <kbd className="rounded border border-zinc-700 bg-zinc-800 px-1.5 py-px font-mono text-zinc-300">{label}</kbd>{" "}
       toggles · ↑↓ navigate · Enter runs
     </>
   );
@@ -68,17 +67,12 @@ export function CommandPalette({
 
   const filtered = useMemo(
     () =>
-      query.trim()
-        ? actions.filter((action) => action.label.toLowerCase().includes(query.toLowerCase()))
-        : actions,
+      query.trim() ? actions.filter((action) => action.label.toLowerCase().includes(query.toLowerCase())) : actions,
     [actions, query],
   );
 
   /** When this string changes, the filtered result set changed — reset highlight (not on arrow-key-only updates). */
-  const filterEpoch = useMemo(
-    () => `${query}\0${filtered.map((action) => action.id).join("\0")}`,
-    [filtered, query],
-  );
+  const filterEpoch = useMemo(() => `${query}\0${filtered.map((action) => action.id).join("\0")}`, [filtered, query]);
 
   useEffect(() => {
     if (!isOpen) {
@@ -152,7 +146,7 @@ export function CommandPalette({
 
   const activeOptionId =
     highlightedIndex >= 0 && filtered[highlightedIndex]
-      ? `command-palette-opt-${filtered[highlightedIndex]!.id}`
+      ? `command-palette-opt-${filtered[highlightedIndex].id}`
       : undefined;
 
   return (
@@ -170,7 +164,7 @@ export function CommandPalette({
     >
       <div
         aria-label="Close command palette"
-        className="bg-bh-overlay/75 absolute inset-0 m-0 cursor-default border-0 p-0 backdrop-blur-[0.35rem]"
+        className="bg-bh-overlay/75 absolute inset-0 m-0 cursor-default border-0 p-0 backdrop-blur-xs"
         onClick={onClose}
         onKeyDown={onClose}
         role="button"

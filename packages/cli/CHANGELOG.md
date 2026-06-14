@@ -1,5 +1,15 @@
 # @codefast/cli
 
+## 0.4.0-canary.5
+
+## 0.4.0-canary.4
+
+### Patch Changes
+
+- [#495](https://github.com/codefastlabs/codefast/pull/495) [`5e28460`](https://github.com/codefastlabs/codefast/commit/5e284602f2e6930a7c0753c89867ee25abd7d6a6) Thanks [@thevuong](https://github.com/thevuong)! - Modernize internals: prefer `String.startsWith` over anchored regexes in the Tailwind token classifier, use immutable `toSorted` when ordering export specifiers and tag targets, and tighten workspace/mirror types without behavior changes.
+
+- [#495](https://github.com/codefastlabs/codefast/pull/495) [`fa338d6`](https://github.com/codefastlabs/codefast/commit/fa338d61fbfafb94beaa4d05d93d01e2c005cc91) Thanks [@thevuong](https://github.com/thevuong)! - Normalize import statement order and package.json key order repo-wide via the new oxfmt `sortImports`/`sortPackageJson` settings — purely mechanical, no runtime behavior change.
+
 ## 0.3.16-canary.3
 
 ### Patch Changes

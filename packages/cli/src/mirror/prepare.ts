@@ -1,11 +1,11 @@
+import type { GlobalCliOptions } from "#/core/cli/global-options";
+import { loadCodefastConfig } from "#/core/config";
 import { AppError } from "#/core/errors";
 import { messageFrom } from "#/core/errors";
-import { loadCodefastConfig } from "#/core/config";
 import type { FilesystemPort } from "#/core/filesystem/port";
 import type { Result } from "#/core/result";
 import { err, ok } from "#/core/result";
 import { findRepoRoot } from "#/core/workspace/resolver";
-import type { GlobalCliOptions } from "#/core/cli/global-options";
 import type { MirrorSyncCommandPrelude } from "#/mirror/domain/types";
 import { resolveMirrorPackageFromCliArg } from "#/mirror/package-path";
 

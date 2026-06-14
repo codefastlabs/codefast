@@ -6,6 +6,7 @@
  *     Shape: app container -> per-request child -> one nested child.
  */
 import { Container, token } from "@codefast/di";
+
 import { batched } from "#/harness/batched";
 import type { BenchScenario } from "#/scenarios/types";
 
@@ -93,8 +94,5 @@ function buildChildRequestLifecycleCreateResolveDisposeScenario(): BenchScenario
  * @since 0.3.16-canary.0
  */
 export function buildCodefastScopeScenarios(): ReadonlyArray<BenchScenario> {
-  return [
-    buildChildDepthTwoResolveScenario(),
-    buildChildRequestLifecycleCreateResolveDisposeScenario(),
-  ];
+  return [buildChildDepthTwoResolveScenario(), buildChildRequestLifecycleCreateResolveDisposeScenario()];
 }

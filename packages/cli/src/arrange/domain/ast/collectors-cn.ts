@@ -1,8 +1,3 @@
-import { MAX_CLASS_EXPR_DEPTH } from "#/arrange/domain/constants";
-import type {
-  ForEachStringLiteralInClassExpressionOptions,
-  TailwindClassLiteral,
-} from "#/arrange/domain/types";
 import {
   DomainBinaryOperator,
   DomainSyntaxKind,
@@ -10,6 +5,8 @@ import {
   isDomainTailwindClassLiteral,
 } from "#/arrange/domain/ast/ast-node";
 import type { DomainAstNode } from "#/arrange/domain/ast/ast-node";
+import { MAX_CLASS_EXPR_DEPTH } from "#/arrange/domain/constants";
+import type { ForEachStringLiteralInClassExpressionOptions, TailwindClassLiteral } from "#/arrange/domain/types";
 
 /**
  * @since 0.3.16-canary.0
@@ -34,10 +31,7 @@ export function forEachStringLiteralInClassExpression(
     return;
   }
 
-  if (
-    expr.kind === DomainSyntaxKind.AsExpression ||
-    expr.kind === DomainSyntaxKind.SatisfiesExpression
-  ) {
+  if (expr.kind === DomainSyntaxKind.AsExpression || expr.kind === DomainSyntaxKind.SatisfiesExpression) {
     forEachStringLiteralInClassExpression(expr.expression, sink, depth + 1, options);
     return;
   }
@@ -56,10 +50,7 @@ export function forEachStringLiteralInClassExpression(
     return;
   }
 
-  if (
-    expr.kind === DomainSyntaxKind.BinaryExpression &&
-    expr.operator === DomainBinaryOperator.Plus
-  ) {
+  if (expr.kind === DomainSyntaxKind.BinaryExpression && expr.operator === DomainBinaryOperator.Plus) {
     forEachStringLiteralInClassExpression(expr.left, sink, depth + 1, options);
     forEachStringLiteralInClassExpression(expr.right, sink, depth + 1, options);
     return;

@@ -19,6 +19,7 @@
  *     as a singleton cache hit after the first resolve.
  */
 import { Container, injectable, token } from "@codefast/di";
+
 import { batched } from "#/harness/batched";
 import type { BenchScenario } from "#/scenarios/types";
 
@@ -50,11 +51,7 @@ function buildToResolvedThreeDepsScenario(): BenchScenario {
 
   container
     .bind(resolvedServiceToken)
-    .toResolved((a, b, c): ResolvedService => ({ a, b, c }), [
-      depAToken,
-      depBToken,
-      depCToken,
-    ] as const)
+    .toResolved((a, b, c): ResolvedService => ({ a, b, c }), [depAToken, depBToken, depCToken] as const)
     .singleton();
 
   const prewarmed = container.resolve(resolvedServiceToken);
@@ -157,9 +154,5 @@ function buildToSelfSingletonScenario(): BenchScenario {
  * @since 0.3.16-canary.0
  */
 export function buildCodefastBindingVariantScenarios(): ReadonlyArray<BenchScenario> {
-  return [
-    buildToResolvedThreeDepsScenario(),
-    buildToAliasRedirectScenario(),
-    buildToSelfSingletonScenario(),
-  ];
+  return [buildToResolvedThreeDepsScenario(), buildToAliasRedirectScenario(), buildToSelfSingletonScenario()];
 }

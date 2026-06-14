@@ -10,7 +10,7 @@ const { mockGetCookie, mockGetRequestHeader, mockSetCookie } = vi.hoisted(() => 
 vi.mock("@tanstack/react-start", () => ({
   createServerFn: vi.fn().mockImplementation(() => ({
     handler: (fn: unknown) => fn,
-    inputValidator: () => ({
+    validator: () => ({
       handler: (fn: unknown) => fn,
     }),
   })),
@@ -85,9 +85,7 @@ describe("TanStack Start adapter — server functions", () => {
     });
 
     test("returns 'dark' from Sec-CH-Prefers-Color-Scheme: dark", () => {
-      mockGetRequestHeader.mockImplementation((name) =>
-        name === "Sec-CH-Prefers-Color-Scheme" ? "dark" : undefined,
-      );
+      mockGetRequestHeader.mockImplementation((name) => (name === "Sec-CH-Prefers-Color-Scheme" ? "dark" : undefined));
 
       const result = (getSsrColorSchemeServerFn as unknown as () => ResolvedColorScheme)();
 
@@ -95,9 +93,7 @@ describe("TanStack Start adapter — server functions", () => {
     });
 
     test("returns 'light' from Sec-CH-Prefers-Color-Scheme: light", () => {
-      mockGetRequestHeader.mockImplementation((name) =>
-        name === "Sec-CH-Prefers-Color-Scheme" ? "light" : undefined,
-      );
+      mockGetRequestHeader.mockImplementation((name) => (name === "Sec-CH-Prefers-Color-Scheme" ? "light" : undefined));
 
       const result = (getSsrColorSchemeServerFn as unknown as () => ResolvedColorScheme)();
 
@@ -105,9 +101,7 @@ describe("TanStack Start adapter — server functions", () => {
     });
 
     test("falls back to Prefers-Color-Scheme header when Sec-CH header is absent", () => {
-      mockGetRequestHeader.mockImplementation((name) =>
-        name === "Prefers-Color-Scheme" ? "light" : undefined,
-      );
+      mockGetRequestHeader.mockImplementation((name) => (name === "Prefers-Color-Scheme" ? "light" : undefined));
 
       const result = (getSsrColorSchemeServerFn as unknown as () => ResolvedColorScheme)();
 
@@ -126,9 +120,7 @@ describe("TanStack Start adapter — server functions", () => {
   describe("getRootColorSchemeServerFn", () => {
     test("returns combined colorScheme and ssrColorScheme", () => {
       mockGetCookie.mockReturnValue("light");
-      mockGetRequestHeader.mockImplementation((name) =>
-        name === "Sec-CH-Prefers-Color-Scheme" ? "dark" : undefined,
-      );
+      mockGetRequestHeader.mockImplementation((name) => (name === "Sec-CH-Prefers-Color-Scheme" ? "dark" : undefined));
 
       const result = (
         getRootColorSchemeServerFn as unknown as () => {
@@ -184,11 +176,7 @@ describe("TanStack Start adapter — server functions", () => {
         data: "automatic",
       });
 
-      expect(mockSetCookie).toHaveBeenCalledWith(
-        "ui-theme",
-        "automatic",
-        expect.objectContaining({ httpOnly: true }),
-      );
+      expect(mockSetCookie).toHaveBeenCalledWith("ui-theme", "automatic", expect.objectContaining({ httpOnly: true }));
     });
   });
 
@@ -196,11 +184,7 @@ describe("TanStack Start adapter — server functions", () => {
     test("delegates to setColorSchemeServerFn — calls setCookie with the given color scheme", async () => {
       await persistColorSchemeCookie("automatic");
 
-      expect(mockSetCookie).toHaveBeenCalledWith(
-        "ui-theme",
-        "automatic",
-        expect.objectContaining({ httpOnly: true }),
-      );
+      expect(mockSetCookie).toHaveBeenCalledWith("ui-theme", "automatic", expect.objectContaining({ httpOnly: true }));
     });
 
     test("delegates 'dark' color scheme correctly", async () => {

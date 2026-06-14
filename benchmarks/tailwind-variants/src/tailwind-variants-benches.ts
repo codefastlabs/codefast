@@ -5,6 +5,7 @@ import {
   resolveBenchmarkPackageRootFromImportMetaUrl,
   runBenchmarkChildMain,
 } from "@codefast/benchmark-harness/child/run-benchmark-child-main";
+
 import { TAILWIND_VARIANTS } from "#/harness/config";
 import { collectAllTailwindVariantsNpmScenarios } from "#/scenarios/collect-tailwind-variants-scenarios";
 
@@ -14,6 +15,4 @@ void runBenchmarkChildMain({
   packageRoot: resolveBenchmarkPackageRootFromImportMetaUrl(import.meta.url),
   collectScenarios: collectAllTailwindVariantsNpmScenarios,
   benchDefaults: BENCHMARK_SUITE_DEFAULT_BENCH_OPTIONS,
-}).catch((error: unknown) =>
-  exitBenchmarkChildProcessOnFailure(TAILWIND_VARIANTS.libraryName, error),
-);
+}).catch((error: unknown) => exitBenchmarkChildProcessOnFailure(TAILWIND_VARIANTS.libraryName, error));

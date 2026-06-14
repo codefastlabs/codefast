@@ -5,7 +5,7 @@
  */
 
 export function sortAscending(values: ReadonlyArray<number>): Array<number> {
-  return [...values].sort((left, right) => left - right);
+  return [...values].toSorted((left, right) => left - right);
 }
 
 /**

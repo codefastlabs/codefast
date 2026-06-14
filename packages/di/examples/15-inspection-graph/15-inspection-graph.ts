@@ -14,8 +14,8 @@
  */
 
 import { Container, inject, injectable, Module, token, tokenName } from "@codefast/di";
-import { toDotGraph } from "@codefast/di/graph-adapters/dot";
 import { toCytoscapeGraph } from "@codefast/di/graph-adapters/cytoscape";
+import { toDotGraph } from "@codefast/di/graph-adapters/dot";
 
 // ── Tokens ───────────────────────────────────────────────────────────────────
 
@@ -122,9 +122,7 @@ class SegmentAnalytics implements Analytics {
 
 const InfraModule = Module.create("Infra", (builder) => {
   builder.bind(LoggerToken).to(ConsoleLogger).singleton();
-  builder
-    .bind(ConfigToken)
-    .toConstantValue({ dbUrl: "postgres://localhost/app", env: "development" });
+  builder.bind(ConfigToken).toConstantValue({ dbUrl: "postgres://localhost/app", env: "development" });
   builder.bind(CacheToken).to(RedisCache).singleton();
   builder.bind(DatabaseToken).to(PostgresDatabase).singleton();
 });
@@ -162,9 +160,7 @@ for (const binding of snapshot.ownBindings) {
       : binding.slot.tags.length > 0
         ? ` tags=${JSON.stringify(binding.slot.tags)}`
         : "";
-  console.log(
-    `  ${binding.tokenName.padEnd(16)} kind=${binding.kind.padEnd(10)} scope=${binding.scope}${slotInfo}`,
-  );
+  console.log(`  ${binding.tokenName.padEnd(16)} kind=${binding.kind.padEnd(10)} scope=${binding.scope}${slotInfo}`);
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -257,13 +253,8 @@ for (const element of nodeElements.slice(0, 3)) {
 
 console.log("\n=== Startup audit ===");
 
-function auditContainer(
-  targetContainer: typeof container,
-  requiredTokens: Array<ReturnType<typeof token>>,
-): void {
-  const missingTokens = requiredTokens.filter(
-    (requiredToken) => !targetContainer.has(requiredToken),
-  );
+function auditContainer(targetContainer: typeof container, requiredTokens: Array<ReturnType<typeof token>>): void {
+  const missingTokens = requiredTokens.filter((requiredToken) => !targetContainer.has(requiredToken));
   if (missingTokens.length === 0) {
     console.log("All required tokens are bound ✓");
   } else {

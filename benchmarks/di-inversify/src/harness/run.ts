@@ -17,24 +17,20 @@
 import { spawnSync } from "node:child_process";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+
+import { resolveBenchParentExitCode } from "@codefast/benchmark-harness/parent/resolve-bench-parent-exit-code";
+import { runBenchSubprocess } from "@codefast/benchmark-harness/parent/run-bench-subprocess";
+import { buildLibraryReport, type LibraryReport } from "@codefast/benchmark-harness/report/aggregate";
+import { renderTwoWayConsoleReport, renderTwoWayMarkdownReport } from "@codefast/benchmark-harness/report/two-way";
+import { writeJsonlRun, writeMarkdownFile } from "@codefast/benchmark-harness/report/write";
+import { resolveDisplayName } from "@codefast/benchmark-harness/shared/config";
 import {
   BENCH_RESULTS_DIR_NAME,
   BENCH_VERBOSE_ENV_KEY,
   OBSERVATIONS_FILE_NAME,
 } from "@codefast/benchmark-harness/shared/env-keys";
-import { resolveDisplayName } from "@codefast/benchmark-harness/shared/config";
-import {
-  buildLibraryReport,
-  type LibraryReport,
-} from "@codefast/benchmark-harness/report/aggregate";
-import {
-  renderTwoWayConsoleReport,
-  renderTwoWayMarkdownReport,
-} from "@codefast/benchmark-harness/report/two-way";
-import { resolveBenchParentExitCode } from "@codefast/benchmark-harness/parent/resolve-bench-parent-exit-code";
-import { runBenchSubprocess } from "@codefast/benchmark-harness/parent/run-bench-subprocess";
 import type { SubprocessPayload } from "@codefast/benchmark-harness/shared/protocol";
-import { writeJsonlRun, writeMarkdownFile } from "@codefast/benchmark-harness/report/write";
+
 import { CODEFAST_DI, INVERSIFY } from "#/harness/config";
 import { DI_INVERSIFY_CONSOLE, DI_INVERSIFY_MARKDOWN } from "#/harness/presentation";
 
@@ -56,9 +52,7 @@ function rebuildCodefastDiPackage(): void {
     throw new Error(`Build failed for ${CODEFAST_DI.libraryName}, exit ${String(result.status)}`);
   }
   const elapsedSeconds = (performance.now() - startedAtMs) / 1000;
-  console.log(
-    `Finished rebuild of ${CODEFAST_DI.libraryName} (${elapsedSeconds.toFixed(1)}s wall).`,
-  );
+  console.log(`Finished rebuild of ${CODEFAST_DI.libraryName} (${elapsedSeconds.toFixed(1)}s wall).`);
 }
 
 /**
@@ -84,13 +78,9 @@ function buildOutputPaths(): {
 }
 
 async function main(): Promise<void> {
-  console.log(
-    "\n@codefast/benchmark-di-inversify — head-to-head bench, each library in its canonical decorator mode.",
-  );
+  console.log("\n@codefast/benchmark-di-inversify — head-to-head bench, each library in its canonical decorator mode.");
   console.log(`  ${CODEFAST_DI.libraryName}  : TC39 Stage 3 decorators + Symbol.metadata`);
-  console.log(
-    `  ${resolveDisplayName(INVERSIFY)} : legacy experimental decorators + reflect-metadata`,
-  );
+  console.log(`  ${resolveDisplayName(INVERSIFY)} : legacy experimental decorators + reflect-metadata`);
   console.log("Each library runs N trials; the table reports per-trial medians and IQR.\n");
   if (!VERBOSE_MODE_ENABLED) {
     console.log(
@@ -137,11 +127,7 @@ async function main(): Promise<void> {
     { fingerprint: inversifyPayload.fingerprint, trials: inversifyPayload.trials },
   ];
 
-  const markdown = renderTwoWayMarkdownReport(
-    codefastReport,
-    inversifyReport,
-    DI_INVERSIFY_MARKDOWN,
-  );
+  const markdown = renderTwoWayMarkdownReport(codefastReport, inversifyReport, DI_INVERSIFY_MARKDOWN);
 
   const outputPaths = buildOutputPaths();
   writeMarkdownFile(outputPaths.markdownPath, markdown);
@@ -152,9 +138,7 @@ async function main(): Promise<void> {
 
   console.log(`Markdown report: ${outputPaths.markdownPath}`);
   console.log(`JSONL observations: ${outputPaths.jsonlPath}`);
-  console.log(
-    `Also mirrored to: ${outputPaths.latestMarkdownPath}, ${outputPaths.latestJsonlPath}`,
-  );
+  console.log(`Also mirrored to: ${outputPaths.latestMarkdownPath}, ${outputPaths.latestJsonlPath}`);
 }
 
 main().catch((caught: unknown) => {

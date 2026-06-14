@@ -1,6 +1,6 @@
 import { loadConfigPayload } from "#/core/config/loader";
-import { reportSchemaWarnings } from "#/core/config/warnings";
 import type { CodefastConfig } from "#/core/config/schema";
+import { reportSchemaWarnings } from "#/core/config/warnings";
 import { AppError, messageFrom } from "#/core/errors";
 import type { FilesystemPort } from "#/core/filesystem/port";
 import type { Result } from "#/core/result";

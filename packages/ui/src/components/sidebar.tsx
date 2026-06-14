@@ -1,12 +1,7 @@
-import type { SidebarMenuButtonVariants } from "#/variants/sidebar";
-import type { ComponentProps, CSSProperties, Dispatch, JSX, SetStateAction } from "react";
-
-import { cn } from "#/lib/utils";
-
-import { sidebarMenuButtonVariants } from "#/variants/sidebar";
-import { Context } from "radix-ui/internal";
-import { Slot } from "radix-ui";
 import { PanelLeftIcon } from "lucide-react";
+import { Slot } from "radix-ui";
+import { Context } from "radix-ui/internal";
+import type { ComponentProps, CSSProperties, Dispatch, JSX, SetStateAction } from "react";
 import { useCallback, useEffect, useState } from "react";
 
 import { Button } from "#/components/button";
@@ -16,6 +11,9 @@ import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "
 import { Skeleton } from "#/components/skeleton";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "#/components/tooltip";
 import { useIsMobile } from "#/hooks/use-is-mobile";
+import { cn } from "#/lib/utils";
+import type { SidebarMenuButtonVariants } from "#/variants/sidebar";
+import { sidebarMenuButtonVariants } from "#/variants/sidebar";
 
 const SIDEBAR_COOKIE_NAME = "sidebar_state";
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7;
@@ -40,8 +38,7 @@ interface SidebarContextValue {
 
 const SIDEBAR_PROVIDER_NAME = "SidebarProvider";
 
-const [SidebarContextProvider, useSidebar] =
-  Context.createContext<SidebarContextValue>(SIDEBAR_PROVIDER_NAME);
+const [SidebarContextProvider, useSidebar] = Context.createContext<SidebarContextValue>(SIDEBAR_PROVIDER_NAME);
 
 /* -----------------------------------------------------------------------------
  * Component: SidebarProvider
@@ -132,10 +129,7 @@ function SidebarProvider({
     >
       <TooltipProvider delayDuration={0}>
         <div
-          className={cn(
-            "group/sidebar-wrapper flex min-h-svh w-full has-data-[variant=inset]:bg-sidebar",
-            className,
-          )}
+          className={cn("group/sidebar-wrapper flex min-h-svh w-full has-data-[variant=inset]:bg-sidebar", className)}
           data-slot="sidebar-wrapper"
           style={
             {
@@ -184,10 +178,7 @@ function Sidebar({
   if (collapsible === "none") {
     return (
       <div
-        className={cn(
-          "flex h-full w-(--sidebar-width) flex-col bg-sidebar text-sidebar-foreground",
-          className,
-        )}
+        className={cn("flex h-full w-(--sidebar-width) flex-col bg-sidebar text-sidebar-foreground", className)}
         data-slot="sidebar"
         {...props}
       >
@@ -233,7 +224,7 @@ function Sidebar({
       {/* This is what handles the sidebar gap on desktop */}
       <div
         className={cn(
-          "relative w-(--sidebar-width) bg-transparent transition-[width] duration-200 ease-linear group-data-[collapsible=offcanvas]:w-0 group-data-side-right:rotate-180 motion-reduce:transition-none motion-reduce:duration-0",
+          "relative w-(--sidebar-width) bg-transparent transition-[width] duration-200 ease-gentle group-data-[collapsible=offcanvas]:w-0 group-data-side-right:rotate-180",
           variant === "floating" || variant === "inset"
             ? "group-data-[collapsible=icon]:w-[calc(var(--sidebar-width-icon)+(--spacing(4)))]"
             : "group-data-[collapsible=icon]:w-(--sidebar-width-icon)",
@@ -242,20 +233,18 @@ function Sidebar({
       />
       <div
         className={cn(
-          "fixed inset-y-0 z-10 hidden h-svh w-(--sidebar-width) transition-[left,right,width] duration-200 ease-linear motion-reduce:transition-none motion-reduce:duration-0 md:flex",
-          side === "left"
-            ? "left-0 group-data-[collapsible=offcanvas]:left-[calc(var(--sidebar-width)*-1)]"
-            : "right-0 group-data-[collapsible=offcanvas]:right-[calc(var(--sidebar-width)*-1)]",
+          "fixed inset-y-0 z-10 hidden h-svh w-(--sidebar-width) transition-[left,right,width] duration-200 ease-gentle md:flex data-side-right:right-0 data-side-right:group-data-[collapsible=offcanvas]:right-[calc(var(--sidebar-width)*-1)] data-side-left:left-0 data-side-left:group-data-[collapsible=offcanvas]:left-[calc(var(--sidebar-width)*-1)]",
           variant === "floating" || variant === "inset"
             ? "p-2 group-data-[collapsible=icon]:w-[calc(var(--sidebar-width-icon)+(--spacing(4))+2px)]"
             : "group-data-[collapsible=icon]:w-(--sidebar-width-icon) group-data-side-right:border-l group-data-side-left:border-r",
           className,
         )}
+        data-side={side}
         data-slot="sidebar-container"
         {...props}
       >
         <div
-          className="flex h-full w-full flex-col bg-sidebar group-data-[variant=floating]:rounded-lg group-data-[variant=floating]:border group-data-[variant=floating]:border-sidebar-border group-data-[variant=floating]:shadow-sm"
+          className="flex size-full flex-col bg-sidebar group-data-[variant=floating]:rounded-lg group-data-[variant=floating]:shadow-sm group-data-[variant=floating]:ring-1 group-data-[variant=floating]:ring-sidebar-border"
           data-sidebar="sidebar"
           data-slot="sidebar-inner"
         >
@@ -280,15 +269,14 @@ type SidebarTriggerProps = ComponentProps<typeof Button>;
 /**
  * @since 0.3.16-canary.0
  */
-function SidebarTrigger({ className, onClick, ...props }: SidebarTriggerProps): JSX.Element {
+function SidebarTrigger({ onClick, ...props }: SidebarTriggerProps): JSX.Element {
   const { toggleSidebar } = useSidebar(SIDEBAR_TRIGGER_NAME);
 
   return (
     <Button
-      className={cn("size-7", className)}
       data-sidebar="trigger"
       data-slot="sidebar-trigger"
-      size="icon"
+      size="icon-sm"
       variant="ghost"
       onClick={(event) => {
         onClick?.(event);
@@ -296,7 +284,7 @@ function SidebarTrigger({ className, onClick, ...props }: SidebarTriggerProps): 
       }}
       {...props}
     >
-      <PanelLeftIcon />
+      <PanelLeftIcon className="rtl:rotate-180" />
       <span className="sr-only">Toggle Sidebar</span>
     </Button>
   );
@@ -322,7 +310,7 @@ function SidebarRail({ className, ...props }: SidebarRailProps): JSX.Element {
   return (
     <button
       className={cn(
-        "absolute inset-y-0 z-20 hidden w-4 -translate-x-1/2 transition-all ease-linear group-data-[collapsible=offcanvas]:translate-x-0 group-data-side-right:left-0 group-data-side-left:-right-4 after:absolute after:inset-y-0 after:left-1/2 after:w-0.5 group-data-[collapsible=offcanvas]:after:left-full hover:group-data-[collapsible=offcanvas]:bg-sidebar hover:after:bg-sidebar-border in-data-side-right:cursor-e-resize in-data-side-left:cursor-w-resize motion-reduce:transition-none sm:flex [[data-side=left][data-collapsible=offcanvas]_&]:-right-2 [[data-side=left][data-state=collapsed]_&]:cursor-e-resize [[data-side=right][data-collapsible=offcanvas]_&]:-left-2 [[data-side=right][data-state=collapsed]_&]:cursor-w-resize",
+        "absolute inset-y-0 z-20 hidden w-4 transition-all ease-gentle group-data-[collapsible=offcanvas]:translate-x-0 group-data-side-right:left-0 group-data-side-left:-right-4 after:absolute after:inset-y-0 after:inset-s-1/2 after:w-0.5 group-data-[collapsible=offcanvas]:after:left-full hover:group-data-[collapsible=offcanvas]:bg-sidebar hover:after:bg-sidebar-border in-data-side-right:cursor-e-resize in-data-side-left:cursor-w-resize sm:flex ltr:-translate-x-1/2 rtl:-translate-x-1/2 rtl:group-data-[collapsible=offcanvas]:-translate-x-0 rtl:in-data-side-right:cursor-w-resize rtl:in-data-side-left:cursor-e-resize [[data-side=left][data-collapsible=offcanvas]_&]:-right-2 [[data-side=left][data-state=collapsed]_&]:cursor-e-resize rtl:[[data-side=left][data-state=collapsed]_&]:cursor-w-resize [[data-side=right][data-collapsible=offcanvas]_&]:-left-2 [[data-side=right][data-state=collapsed]_&]:cursor-w-resize rtl:[[data-side=right][data-state=collapsed]_&]:cursor-e-resize",
         className,
       )}
       data-sidebar="rail"
@@ -351,7 +339,7 @@ function SidebarInset({ className, ...props }: SidebarInsetProps): JSX.Element {
   return (
     <main
       className={cn(
-        "relative flex w-full min-w-0 flex-1 flex-col bg-background md:peer-data-[variant=inset]:m-2 md:peer-data-[variant=inset]:ml-0 md:peer-data-[variant=inset]:rounded-xl md:peer-data-[variant=inset]:shadow-sm md:peer-data-[variant=inset]:peer-data-[state=collapsed]:ml-2",
+        "relative flex w-full flex-1 flex-col bg-background md:peer-data-[variant=inset]:m-2 md:peer-data-[variant=inset]:ms-0 md:peer-data-[variant=inset]:rounded-xl md:peer-data-[variant=inset]:shadow-sm md:peer-data-[variant=inset]:peer-data-collapsed:ms-2",
         className,
       )}
       data-slot="sidebar-inset"
@@ -468,7 +456,7 @@ function SidebarContent({ className, ...props }: SidebarContentProps): JSX.Eleme
   return (
     <div
       className={cn(
-        "flex min-h-0 flex-1 flex-col gap-2 overflow-auto group-data-[collapsible=icon]:overflow-hidden",
+        "flex min-h-0 flex-1 scrollbar-none flex-col gap-2 overflow-auto group-data-[collapsible=icon]:overflow-hidden",
         className,
       )}
       data-sidebar="content"
@@ -515,17 +503,13 @@ interface SidebarGroupLabelProps extends ComponentProps<"div"> {
 /**
  * @since 0.3.16-canary.0
  */
-function SidebarGroupLabel({
-  asChild = false,
-  className,
-  ...props
-}: SidebarGroupLabelProps): JSX.Element {
+function SidebarGroupLabel({ asChild = false, className, ...props }: SidebarGroupLabelProps): JSX.Element {
   const Component = asChild ? Slot.Root : "div";
 
   return (
     <Component
       className={cn(
-        "flex h-8 shrink-0 items-center truncate rounded-md px-2 text-xs font-medium text-sidebar-foreground/70 ring-sidebar-ring outline-hidden transition-[margin,opacity] duration-200 ease-linear group-data-[collapsible=icon]:-mt-8 group-data-[collapsible=icon]:opacity-0 focus-visible:ring-3 motion-reduce:transition-none motion-reduce:duration-0 [&>svg]:size-4 [&>svg]:shrink-0",
+        "flex h-8 shrink-0 items-center rounded-md px-2 text-xs font-medium text-sidebar-foreground/70 ring-sidebar-ring outline-hidden transition-[margin,opacity] duration-200 ease-gentle group-data-[collapsible=icon]:-mt-8 group-data-[collapsible=icon]:opacity-0 focus-visible:ring-2 [&>svg]:size-4 [&>svg]:shrink-0",
         className,
       )}
       data-sidebar="group-label"
@@ -549,17 +533,13 @@ interface SidebarGroupActionProps extends ComponentProps<"button"> {
 /**
  * @since 0.3.16-canary.0
  */
-function SidebarGroupAction({
-  asChild = false,
-  className,
-  ...props
-}: SidebarGroupActionProps): JSX.Element {
+function SidebarGroupAction({ asChild = false, className, ...props }: SidebarGroupActionProps): JSX.Element {
   const Component = asChild ? Slot.Root : "button";
 
   return (
     <Component
       className={cn(
-        "absolute top-3.5 right-3 flex aspect-square w-5 items-center justify-center rounded-md p-0 text-sidebar-foreground ring-sidebar-ring outline-hidden transition-transform group-data-[collapsible=icon]:hidden after:absolute after:-inset-2 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-3 motion-reduce:transition-none md:after:hidden [&>svg]:size-4 [&>svg]:shrink-0",
+        "absolute end-3 top-3.5 flex aspect-square w-5 items-center justify-center rounded-md p-0 text-sidebar-foreground ring-sidebar-ring outline-hidden transition-transform group-data-[collapsible=icon]:hidden after:absolute after:-inset-2 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2 md:after:hidden [&>svg]:size-4 [&>svg]:shrink-0",
         className,
       )}
       data-sidebar="group-action"
@@ -660,7 +640,7 @@ function SidebarMenuButton({
   asChild = false,
   className,
   isActive = false,
-  size = "md",
+  size = "default",
   tooltip,
   variant = "default",
   ...props
@@ -692,12 +672,7 @@ function SidebarMenuButton({
   return (
     <Tooltip>
       <TooltipTrigger asChild>{button}</TooltipTrigger>
-      <TooltipContent
-        align="center"
-        hidden={state !== "collapsed" || isMobile}
-        side="right"
-        {...tooltip}
-      />
+      <TooltipContent align="center" hidden={state !== "collapsed" || isMobile} side="right" {...tooltip} />
     </Tooltip>
   );
 }
@@ -728,9 +703,9 @@ function SidebarMenuAction({
   return (
     <Component
       className={cn(
-        "absolute top-1.5 right-1 flex aspect-square w-5 items-center justify-center rounded-md p-0 text-sidebar-foreground ring-sidebar-ring outline-hidden transition-transform group-data-[collapsible=icon]:hidden peer-hover/menu-button:text-sidebar-accent-foreground peer-data-[size=default]/menu-button:top-1.5 peer-data-[size=lg]/menu-button:top-2.5 peer-data-[size=sm]/menu-button:top-1 after:absolute after:-inset-2 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-3 motion-reduce:transition-none md:after:hidden [&>svg]:size-4 [&>svg]:shrink-0",
+        "absolute end-1 top-1.5 flex aspect-square w-5 items-center justify-center rounded-md p-0 text-sidebar-foreground ring-sidebar-ring outline-hidden transition-transform group-data-[collapsible=icon]:hidden peer-hover/menu-button:text-sidebar-accent-foreground peer-data-[size=default]/menu-button:top-1.5 peer-data-[size=lg]/menu-button:top-2.5 peer-data-[size=sm]/menu-button:top-1 after:absolute after:-inset-2 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2 md:after:hidden [&>svg]:size-4 [&>svg]:shrink-0",
         showOnHover &&
-          "group-focus-within/menu-item:opacity-100 group-hover/menu-item:opacity-100 peer-data-active/menu-button:text-sidebar-accent-foreground md:opacity-0 data-open:opacity-100",
+          "group-focus-within/menu-item:opacity-100 group-hover/menu-item:opacity-100 peer-data-active/menu-button:text-sidebar-accent-foreground aria-expanded:opacity-100 md:opacity-0",
         className,
       )}
       data-sidebar="menu-action"
@@ -756,7 +731,7 @@ function SidebarMenuBadge({ className, ...props }: SidebarMenuBadgeProps): JSX.E
   return (
     <div
       className={cn(
-        "pointer-events-none absolute right-1 flex h-5 min-w-5 items-center justify-center rounded-md px-1 text-xs font-medium text-sidebar-foreground tabular-nums select-none group-data-[collapsible=icon]:hidden peer-hover/menu-button:text-sidebar-accent-foreground peer-data-[size=default]/menu-button:top-1.5 peer-data-[size=lg]/menu-button:top-2.5 peer-data-[size=sm]/menu-button:top-1 peer-data-active/menu-button:text-sidebar-accent-foreground",
+        "pointer-events-none absolute end-1 flex h-5 min-w-5 items-center justify-center rounded-md px-1 text-xs font-medium text-sidebar-foreground tabular-nums select-none group-data-[collapsible=icon]:hidden peer-hover/menu-button:text-sidebar-accent-foreground peer-data-[size=default]/menu-button:top-1.5 peer-data-[size=lg]/menu-button:top-2.5 peer-data-[size=sm]/menu-button:top-1 peer-data-active/menu-button:text-sidebar-accent-foreground",
         className,
       )}
       data-sidebar="menu-badge"
@@ -780,11 +755,7 @@ interface SidebarMenuSkeletonProps extends ComponentProps<"div"> {
 /**
  * @since 0.3.16-canary.0
  */
-function SidebarMenuSkeleton({
-  className,
-  showIcon = false,
-  ...props
-}: SidebarMenuSkeletonProps): JSX.Element {
+function SidebarMenuSkeleton({ className, showIcon = false, ...props }: SidebarMenuSkeletonProps): JSX.Element {
   // Random width between 50 to 90% - use useState with lazy initializer to avoid calling Math.random during render
   const [width] = useState(() => `${String(Math.floor(Math.random() * 40) + 50)}%`);
 
@@ -795,9 +766,7 @@ function SidebarMenuSkeleton({
       data-slot="sidebar-menu-skeleton"
       {...props}
     >
-      {showIcon ? (
-        <Skeleton className="size-4 rounded-md" data-sidebar="menu-skeleton-icon" />
-      ) : null}
+      {showIcon ? <Skeleton className="size-4 rounded-md" data-sidebar="menu-skeleton-icon" /> : null}
       <Skeleton
         className="h-4 max-w-(--skeleton-width) flex-1"
         data-sidebar="menu-skeleton-text"
@@ -827,7 +796,7 @@ function SidebarMenuSub({ className, ...props }: SidebarMenuSubProps): JSX.Eleme
   return (
     <ul
       className={cn(
-        "mx-3.5 flex min-w-0 translate-x-px flex-col gap-1 border-l border-sidebar-border px-2.5 py-0.5 group-data-[collapsible=icon]:hidden",
+        "mx-3.5 flex min-w-0 translate-x-px flex-col gap-1 border-s border-sidebar-border px-2.5 py-0.5 group-data-[collapsible=icon]:hidden rtl:-translate-x-px",
         className,
       )}
       data-sidebar="menu-sub"
@@ -888,9 +857,7 @@ function SidebarMenuSubButton({
   return (
     <Component
       className={cn(
-        "flex h-7 min-w-0 -translate-x-px items-center gap-2 overflow-hidden rounded-md px-2 text-sidebar-foreground ring-sidebar-ring outline-hidden group-data-[collapsible=icon]:hidden hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-3 active:bg-sidebar-accent active:text-sidebar-accent-foreground disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-active:bg-sidebar-accent data-active:text-sidebar-accent-foreground [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0 [&>svg]:text-sidebar-accent-foreground",
-        size === "sm" && "text-xs",
-        size === "md" && "text-sm",
+        "flex h-7 min-w-0 -translate-x-px items-center gap-2 overflow-hidden rounded-md px-2 text-sidebar-foreground ring-sidebar-ring outline-hidden group-data-[collapsible=icon]:hidden hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2 active:bg-sidebar-accent active:text-sidebar-accent-foreground disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[size=md]:text-sm data-[size=sm]:text-xs rtl:translate-x-px data-active:bg-sidebar-accent data-active:text-sidebar-accent-foreground [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0 [&>svg]:text-sidebar-accent-foreground",
         className,
       )}
       data-active={isActive}

@@ -1,8 +1,4 @@
-import type {
-  GlobalStats,
-  PackageStats,
-  WorkspaceMultiDiscoverySource,
-} from "#/mirror/domain/types";
+import type { GlobalStats, PackageStats, WorkspaceMultiDiscoverySource } from "#/mirror/domain/types";
 
 /**
  * @since 0.3.16-canary.0
@@ -19,16 +15,10 @@ export type MirrorSyncRunRequest = {
  * @since 0.3.16-canary.0
  */
 export type MirrorSyncProgressListener = {
-  configure(options: {
-    readonly noColor: boolean;
-    readonly verbose: boolean;
-    readonly dryRun: boolean;
-  }): void;
+  configure(options: { readonly noColor: boolean; readonly verbose: boolean; readonly dryRun: boolean }): void;
   onBanner(): void;
   onProcessingMode(
-    mode:
-      | { readonly kind: "single" }
-      | { readonly kind: "multi"; readonly source: WorkspaceMultiDiscoverySource },
+    mode: { readonly kind: "single" } | { readonly kind: "multi"; readonly source: WorkspaceMultiDiscoverySource },
   ): void;
   onNoPackages(): void;
   onPackageComplete(pkgStats: PackageStats, ordinal: number, total: number): void;

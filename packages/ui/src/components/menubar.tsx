@@ -1,8 +1,8 @@
+import { CheckIcon, ChevronRightIcon } from "lucide-react";
+import { Menubar as MenubarPrimitive } from "radix-ui";
 import type { ComponentProps, JSX } from "react";
 
 import { cn } from "#/lib/utils";
-import { Menubar as MenubarPrimitive } from "radix-ui";
-import { CheckIcon, ChevronRightIcon, DotIcon } from "lucide-react";
 
 /* -----------------------------------------------------------------------------
  * Component: Menubar
@@ -19,7 +19,7 @@ type MenubarProps = ComponentProps<typeof MenubarPrimitive.Root>;
 function Menubar({ className, ...props }: MenubarProps): JSX.Element {
   return (
     <MenubarPrimitive.Root
-      className={cn("flex items-center space-x-1 rounded-md border bg-background p-1", className)}
+      className={cn("flex h-9 items-center gap-1 rounded-md border p-1 shadow-xs", className)}
       data-slot="menubar"
       {...props}
     />
@@ -106,7 +106,7 @@ function MenubarTrigger({ className, ...props }: MenubarTriggerProps): JSX.Eleme
   return (
     <MenubarPrimitive.Trigger
       className={cn(
-        "flex items-center gap-x-2 rounded-sm px-2 py-1.5 text-sm font-medium outline-hidden select-none hover:bg-muted focus:bg-accent focus:text-accent-foreground data-open:bg-accent data-open:text-accent-foreground",
+        "flex items-center rounded-sm px-2 py-1 text-sm font-medium outline-hidden select-none hover:bg-muted aria-expanded:bg-muted",
         className,
       )}
       data-slot="menubar-trigger"
@@ -129,16 +129,11 @@ interface MenubarSubTriggerProps extends ComponentProps<typeof MenubarPrimitive.
 /**
  * @since 0.3.16-canary.0
  */
-function MenubarSubTrigger({
-  children,
-  className,
-  inset,
-  ...props
-}: MenubarSubTriggerProps): JSX.Element {
+function MenubarSubTrigger({ children, className, inset, ...props }: MenubarSubTriggerProps): JSX.Element {
   return (
     <MenubarPrimitive.SubTrigger
       className={cn(
-        "flex cursor-default items-center gap-x-2 rounded-sm px-2 py-1.5 text-sm outline-hidden select-none focus:bg-accent focus:text-accent-foreground data-inset:pl-8 data-open:bg-accent data-open:text-accent-foreground",
+        "flex cursor-default items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-none select-none focus:bg-accent focus:text-accent-foreground data-inset:ps-8 data-open:bg-accent data-open:text-accent-foreground [&_svg:not([class*='size-'])]:size-4",
         className,
       )}
       data-inset={inset}
@@ -146,7 +141,7 @@ function MenubarSubTrigger({
       {...props}
     >
       {children}
-      <ChevronRightIcon className="ml-auto size-4" />
+      <ChevronRightIcon className="ms-auto size-4 rtl:rotate-180" />
     </MenubarPrimitive.SubTrigger>
   );
 }
@@ -165,10 +160,10 @@ type MenubarSubContentProps = ComponentProps<typeof MenubarPrimitive.SubContent>
  */
 function MenubarSubContent({ className, ...props }: MenubarSubContentProps): JSX.Element {
   return (
-    <MenubarPrimitive.Portal>
+    <MenubarPrimitive.Portal data-slot="menubar-portal">
       <MenubarPrimitive.SubContent
         className={cn(
-          "z-50 min-w-32 origin-(--radix-menubar-content-transform-origin) overflow-hidden rounded-md bg-popover p-1 text-popover-foreground shadow-md ring-1 ring-foreground/10 ease-snappy motion-reduce:animate-none motion-reduce:transition-none motion-reduce:duration-0 data-open:animate-in data-open:duration-200 data-open:fade-in-0 data-open:zoom-in-95 data-open:data-side-top:slide-in-from-bottom-2 data-open:data-side-right:slide-in-from-left-2 data-open:data-side-bottom:slide-in-from-top-2 data-open:data-side-left:slide-in-from-right-2 data-closed:animate-out data-closed:duration-150 data-closed:fade-out-0 data-closed:zoom-out-95 data-closed:data-side-top:slide-out-to-bottom-2 data-closed:data-side-right:slide-out-to-left-2 data-closed:data-side-bottom:slide-out-to-top-2 data-closed:data-side-left:slide-out-to-right-2",
+          "z-50 min-w-32 origin-(--radix-menubar-content-transform-origin) overflow-hidden rounded-md bg-popover p-1 text-popover-foreground shadow-lg ring-1 ring-foreground/10 ease-snappy data-open:animate-in data-open:animation-duration-menu-in data-open:fade-in-0 data-open:zoom-in-95 data-open:data-side-top:slide-in-from-bottom-2 data-open:data-side-right:slide-in-from-left-2 data-open:data-side-bottom:slide-in-from-top-2 data-open:data-side-left:slide-in-from-right-2 data-closed:animate-out data-closed:ease-exit data-closed:animation-duration-menu-out data-closed:fade-out-0 data-closed:zoom-out-95 data-closed:data-side-top:slide-out-to-bottom-2 data-closed:data-side-right:slide-out-to-left-2 data-closed:data-side-bottom:slide-out-to-top-2 data-closed:data-side-left:slide-out-to-right-2",
           className,
         )}
         data-slot="menubar-sub-content"
@@ -194,16 +189,16 @@ function MenubarContent({
   align = "start",
   alignOffset = -4,
   className,
-  sideOffset = 4,
+  sideOffset = 8,
   ...props
 }: MenubarContentProps): JSX.Element {
   return (
-    <MenubarPrimitive.Portal>
+    <MenubarPrimitive.Portal data-slot="menubar-portal">
       <MenubarPrimitive.Content
         align={align}
         alignOffset={alignOffset}
         className={cn(
-          "z-50 min-w-32 origin-(--radix-menubar-content-transform-origin) overflow-hidden rounded-md bg-popover p-1 text-popover-foreground shadow-md ring-1 ring-foreground/10 ease-snappy motion-reduce:animate-none motion-reduce:transition-none motion-reduce:duration-0 data-open:animate-in data-open:duration-200 data-open:fade-in-0 data-open:zoom-in-95 data-open:data-side-top:slide-in-from-bottom-2 data-open:data-side-right:slide-in-from-left-2 data-open:data-side-bottom:slide-in-from-top-2 data-open:data-side-left:slide-in-from-right-2",
+          "z-50 min-w-36 origin-(--radix-menubar-content-transform-origin) overflow-hidden rounded-md bg-popover p-1 text-popover-foreground shadow-md ring-1 ring-foreground/10 ease-snappy data-open:animate-in data-open:animation-duration-menu-in data-open:fade-in-0 data-open:zoom-in-95 data-open:data-side-top:slide-in-from-bottom-2 data-open:data-side-right:slide-in-from-left-2 data-open:data-side-bottom:slide-in-from-top-2 data-open:data-side-left:slide-in-from-right-2 data-closed:ease-exit",
           className,
         )}
         data-slot="menubar-content"
@@ -229,11 +224,11 @@ interface MenubarItemProps extends ComponentProps<typeof MenubarPrimitive.Item> 
 /**
  * @since 0.3.16-canary.0
  */
-function MenubarItem({ className, inset, variant, ...props }: MenubarItemProps): JSX.Element {
+function MenubarItem({ className, inset, variant = "default", ...props }: MenubarItemProps): JSX.Element {
   return (
     <MenubarPrimitive.Item
       className={cn(
-        "group/menubar-item relative flex cursor-default items-center gap-x-2 rounded-sm px-2 py-1.5 text-sm outline-hidden select-none focus:bg-accent focus:text-accent-foreground aria-disabled:opacity-50 data-inset:pl-8 data-[variant=destructive]:text-destructive data-[variant=destructive]:focus:bg-destructive/10 data-[variant=destructive]:focus:text-destructive dark:data-[variant=destructive]:focus:bg-destructive/20 [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 [&_svg:not([class*='text-'])]:text-muted-foreground data-[variant=destructive]:[&_svg:not([class*='text-'])]:text-destructive/80",
+        "group/menubar-item relative flex cursor-default items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-hidden select-none focus:bg-accent focus:text-accent-foreground not-data-[variant=destructive]:focus:**:text-accent-foreground data-inset:ps-8 data-[variant=destructive]:text-destructive data-[variant=destructive]:focus:bg-destructive/10 data-[variant=destructive]:focus:text-destructive dark:data-[variant=destructive]:focus:bg-destructive/20 data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 data-[variant=destructive]:*:[svg]:text-destructive!",
         className,
       )}
       data-inset={inset}
@@ -251,30 +246,28 @@ function MenubarItem({ className, inset, variant, ...props }: MenubarItemProps):
 /**
  * @since 0.3.16-canary.0
  */
-type MenubarCheckboxItemProps = ComponentProps<typeof MenubarPrimitive.CheckboxItem>;
+interface MenubarCheckboxItemProps extends ComponentProps<typeof MenubarPrimitive.CheckboxItem> {
+  inset?: boolean;
+}
 
 /**
  * @since 0.3.16-canary.0
  */
-function MenubarCheckboxItem({
-  checked,
-  children,
-  className,
-  ...props
-}: MenubarCheckboxItemProps): JSX.Element {
+function MenubarCheckboxItem({ checked, children, className, inset, ...props }: MenubarCheckboxItemProps): JSX.Element {
   return (
     <MenubarPrimitive.CheckboxItem
       checked={checked}
       className={cn(
-        "group/menubar-item relative flex cursor-default items-center gap-x-2 rounded-sm py-1.5 pr-2 pl-8 text-sm outline-hidden select-none focus:bg-accent focus:text-accent-foreground aria-disabled:opacity-50 [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+        "relative flex cursor-default items-center gap-2 rounded-md py-1.5 ps-8 pe-2 text-sm outline-hidden select-none focus:bg-accent focus:text-accent-foreground focus:**:text-accent-foreground data-inset:ps-8 data-disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:shrink-0",
         className,
       )}
+      data-inset={inset}
       data-slot="menubar-checkbox-item"
       {...props}
     >
-      <span className="absolute left-2 flex items-center justify-center">
+      <span className="pointer-events-none absolute start-2 flex size-4 items-center justify-center [&_svg:not([class*='size-'])]:size-4">
         <MenubarPrimitive.ItemIndicator>
-          <CheckIcon className="size-4" />
+          <CheckIcon />
         </MenubarPrimitive.ItemIndicator>
       </span>
       {children}
@@ -289,24 +282,27 @@ function MenubarCheckboxItem({
 /**
  * @since 0.3.16-canary.0
  */
-type MenubarRadioItemProps = ComponentProps<typeof MenubarPrimitive.RadioItem>;
+interface MenubarRadioItemProps extends ComponentProps<typeof MenubarPrimitive.RadioItem> {
+  inset?: boolean;
+}
 
 /**
  * @since 0.3.16-canary.0
  */
-function MenubarRadioItem({ children, className, ...props }: MenubarRadioItemProps): JSX.Element {
+function MenubarRadioItem({ children, className, inset, ...props }: MenubarRadioItemProps): JSX.Element {
   return (
     <MenubarPrimitive.RadioItem
       className={cn(
-        "group/menubar-item relative flex cursor-default items-center gap-x-2 rounded-sm py-1.5 pr-2 pl-8 text-sm outline-hidden select-none focus:bg-accent focus:text-accent-foreground aria-disabled:opacity-50 [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+        "relative flex cursor-default items-center gap-2 rounded-md py-1.5 ps-8 pe-2 text-sm outline-hidden select-none focus:bg-accent focus:text-accent-foreground focus:**:text-accent-foreground data-inset:ps-8 data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
         className,
       )}
+      data-inset={inset}
       data-slot="menubar-radio-item"
       {...props}
     >
-      <span className="absolute left-2 flex items-center justify-center">
+      <span className="pointer-events-none absolute start-2 flex size-4 items-center justify-center [&_svg:not([class*='size-'])]:size-4">
         <MenubarPrimitive.ItemIndicator>
-          <DotIcon className="size-4 fill-current" />
+          <CheckIcon />
         </MenubarPrimitive.ItemIndicator>
       </span>
       {children}
@@ -331,10 +327,7 @@ interface MenubarLabelProps extends ComponentProps<typeof MenubarPrimitive.Label
 function MenubarLabel({ className, inset, ...props }: MenubarLabelProps): JSX.Element {
   return (
     <MenubarPrimitive.Label
-      className={cn(
-        "flex items-center gap-x-2 px-2 py-1.5 text-sm font-semibold data-inset:pl-8",
-        className,
-      )}
+      className={cn("px-2 py-1.5 text-sm font-medium data-inset:ps-8", className)}
       data-inset={inset}
       data-slot="menubar-label"
       {...props}
@@ -357,7 +350,7 @@ type MenubarSeparatorProps = ComponentProps<typeof MenubarPrimitive.Separator>;
 function MenubarSeparator({ className, ...props }: MenubarSeparatorProps): JSX.Element {
   return (
     <MenubarPrimitive.Separator
-      className={cn("mx-2 my-1 h-px bg-border", className)}
+      className={cn("-mx-1 my-1 h-px bg-border", className)}
       data-slot="menubar-separator"
       {...props}
     />
@@ -380,7 +373,7 @@ function MenubarShortcut({ className, ...props }: MenubarShortcutProps): JSX.Ele
   return (
     <span
       className={cn(
-        "ml-auto text-xs tracking-widest text-muted-foreground group-data-[variant=destructive]/menubar-item:text-destructive/80",
+        "ms-auto text-xs tracking-widest text-muted-foreground group-focus/menubar-item:text-accent-foreground",
         className,
       )}
       data-slot="menubar-shortcut"
@@ -402,13 +395,7 @@ type MenubarArrowProps = ComponentProps<typeof MenubarPrimitive.Arrow>;
  * @since 0.3.16-canary.0
  */
 function MenubarArrow({ className, ...props }: MenubarArrowProps): JSX.Element {
-  return (
-    <MenubarPrimitive.Arrow
-      className={cn("fill-popover", className)}
-      data-slot="menubar-arrow"
-      {...props}
-    />
-  );
+  return <MenubarPrimitive.Arrow className={cn("fill-popover", className)} data-slot="menubar-arrow" {...props} />;
 }
 
 /* -----------------------------------------------------------------------------

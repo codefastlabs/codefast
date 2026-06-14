@@ -1,10 +1,7 @@
 import * as nodePath from "node:path";
+
+import { PACKAGE_JSON_EXPORT, VALID_DTS_EXTENSIONS, VALID_JS_EXTENSIONS } from "#/mirror/domain/constants";
 import type { DistFilesystem } from "#/mirror/domain/dist-filesystem";
-import {
-  PACKAGE_JSON_EXPORT,
-  VALID_DTS_EXTENSIONS,
-  VALID_JS_EXTENSIONS,
-} from "#/mirror/domain/constants";
 import type {
   DistModule,
   ExportEntry,
@@ -19,9 +16,7 @@ function groupDistFilesByModule(relativeDistFiles: Array<string>): Map<string, D
     let fileExt: string;
     let modulePath: string;
 
-    const declarationExt = Array.from(VALID_DTS_EXTENSIONS).find((candidate) =>
-      relativeDistFile.endsWith(candidate),
-    );
+    const declarationExt = Array.from(VALID_DTS_EXTENSIONS).find((candidate) => relativeDistFile.endsWith(candidate));
     if (declarationExt) {
       fileExt = declarationExt;
       modulePath = relativeDistFile.slice(0, -declarationExt.length);
@@ -124,9 +119,7 @@ function getExportSortGroup(
 /**
  * @since 0.3.16-canary.0
  */
-export function createPathTransform(
-  strip: string | undefined,
-): ((pathString: string) => string) | null {
+export function createPathTransform(strip: string | undefined): ((pathString: string) => string) | null {
   if (!strip) {
     return null;
   }
@@ -143,10 +136,7 @@ export function createPathTransform(
   };
 }
 
-function getExportSortKey(
-  exportPath: string,
-  pathTransform: ((pathString: string) => string) | null,
-): ExportSortKey {
+function getExportSortKey(exportPath: string, pathTransform: ((pathString: string) => string) | null): ExportSortKey {
   const [groupName, subpath, groupOrder, indexRank] = getExportSortGroup(exportPath, pathTransform);
   return [groupOrder, groupName, indexRank, subpath];
 }
@@ -178,20 +168,18 @@ async function generateCssExports(
   if (cssConfig === true) {
     cssConfig = { enabled: true };
   }
-  if (!cssConfig || (cssConfig as Record<string, unknown>).enabled === false) {
+  if (!cssConfig || cssConfig.enabled === false) {
     return {};
   }
 
   const relativeDistFiles = await fileSystemService.listRelativeFilesRecursively(distDir);
-  const cssFiles = relativeDistFiles.filter((relativeDistPath) =>
-    relativeDistPath.endsWith(".css"),
-  );
+  const cssFiles = relativeDistFiles.filter((relativeDistPath) => relativeDistPath.endsWith(".css"));
   if (!cssFiles.length) {
     return {};
   }
 
   const cssExports: Record<string, string> = {
-    ...((cssConfig as Record<string, unknown>).customExports as Record<string, string>),
+    ...(cssConfig.customExports as Record<string, string>),
   };
   const cssFilesByDir = new Map<string, Array<string>>();
   const rootCssFiles: Array<string> = [];
@@ -215,10 +203,7 @@ async function generateCssExports(
   }
 
   for (const [dirName, dirCssFiles] of cssFilesByDir.entries()) {
-    if (
-      (await fileSystemService.isDirectoryCssOnly(distDir, dirName)) &&
-      !(cssConfig as Record<string, unknown>).forceExportFiles
-    ) {
+    if ((await fileSystemService.isDirectoryCssOnly(distDir, dirName)) && !cssConfig.forceExportFiles) {
       const wildcardExport = `./${dirName}/*`;
       if (!(wildcardExport in cssExports)) {
         cssExports[wildcardExport] = `./dist/${dirName}/*`;
@@ -279,8 +264,7 @@ export async function generateExports(
 
   const distModulesByPath = groupDistFilesByModule(relativeDistFiles);
   const exportableModules = Array.from(distModulesByPath.values()).filter(
-    (moduleEntry) =>
-      (moduleEntry.files.js || moduleEntry.files.mjs) && !isBundlerChunkPath(moduleEntry.path),
+    (moduleEntry) => (moduleEntry.files.js || moduleEntry.files.mjs) && !isBundlerChunkPath(moduleEntry.path),
   );
 
   if (!exportableModules.length) {
@@ -333,23 +317,18 @@ export async function generateExports(
     originalPathBySpecifier[exportPath] = originalExportPath;
   }
 
-  let sortedSpecifiers = Object.keys(moduleExportsBySpecifier).sort(
-    (leftSpecifier, rightSpecifier) =>
-      compareExportSortKeys(
-        getExportSortKey(leftSpecifier, pathTransform),
-        getExportSortKey(rightSpecifier, pathTransform),
-      ),
+  let sortedSpecifiers = Object.keys(moduleExportsBySpecifier).toSorted((leftSpecifier, rightSpecifier) =>
+    compareExportSortKeys(
+      getExportSortKey(leftSpecifier, pathTransform),
+      getExportSortKey(rightSpecifier, pathTransform),
+    ),
   );
   const sortedExports: Record<string, ExportEntry | string> = {};
   for (const exportKey of sortedSpecifiers) {
     sortedExports[exportKey] = moduleExportsBySpecifier[exportKey] as ExportEntry;
   }
 
-  const cssExports = await generateCssExports(
-    fileSystemService,
-    distDir,
-    cssConfig ?? { enabled: true },
-  );
+  const cssExports = await generateCssExports(fileSystemService, distDir, cssConfig ?? { enabled: true });
 
   Object.assign(sortedExports, cssExports);
   for (const [specifier, mappedPath] of Object.entries(extraExports || {})) {
@@ -371,7 +350,7 @@ export async function generateExports(
 
   sortedSpecifiers = Object.keys(sortedExports)
     .filter((exportKey) => exportKey !== PACKAGE_JSON_EXPORT)
-    .sort((leftSpecifier, rightSpecifier) =>
+    .toSorted((leftSpecifier, rightSpecifier) =>
       compareExportSortKeys(
         getExportSortKey(leftSpecifier, pathTransform),
         getExportSortKey(rightSpecifier, pathTransform),

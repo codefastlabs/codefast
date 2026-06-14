@@ -1,6 +1,5 @@
-import type { ComponentProps, JSX, MouseEventHandler } from "react";
-
 import { EyeIcon, EyeOffIcon } from "lucide-react";
+import type { ComponentProps, JSX, MouseEventHandler } from "react";
 import { useCallback, useState } from "react";
 
 import { InputGroup, InputGroupButton, InputGroupInput } from "#/components/input-group";
@@ -17,12 +16,7 @@ type InputPasswordProps = Omit<ComponentProps<typeof InputGroupInput>, "type">;
 /**
  * @since 0.3.16-canary.0
  */
-function InputPassword({
-  className,
-  disabled,
-  readOnly,
-  ...props
-}: InputPasswordProps): JSX.Element {
+function InputPassword({ className, disabled, readOnly, ...props }: InputPasswordProps): JSX.Element {
   const [type, setType] = useState<"password" | "text">("password");
 
   const togglePasswordVisibility = useCallback<MouseEventHandler<HTMLButtonElement>>(() => {
@@ -30,18 +24,8 @@ function InputPassword({
   }, []);
 
   return (
-    <InputGroup
-      className={className}
-      data-disabled={disabled ? "true" : undefined}
-      data-slot="input-password"
-    >
-      <InputGroupInput
-        autoCapitalize="none"
-        disabled={disabled}
-        readOnly={readOnly}
-        type={type}
-        {...props}
-      />
+    <InputGroup className={className} data-disabled={disabled ? "true" : undefined} data-slot="input-password">
+      <InputGroupInput autoCapitalize="none" disabled={disabled} readOnly={readOnly} type={type} {...props} />
       <InputGroupButton
         aria-label={type === "password" ? "Show password" : "Hide password"}
         className="rounded-full"

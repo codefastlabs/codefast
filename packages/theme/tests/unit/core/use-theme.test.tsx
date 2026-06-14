@@ -1,12 +1,10 @@
+import { render, renderHook, screen } from "@testing-library/react";
 import type React from "react";
 import type { ReactNode } from "react";
 
-import { render, renderHook, screen } from "@testing-library/react";
-
-import type { ColorScheme, ColorSchemeContextType } from "#/types";
-
 import { ColorSchemeContext } from "#/core/context";
 import { useColorScheme } from "#/core/use-theme";
+import type { ColorScheme, ColorSchemeContextType } from "#/types";
 
 /**
  * Helper to create a wrapper component for renderHook

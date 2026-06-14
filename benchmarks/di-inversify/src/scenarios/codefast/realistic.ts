@@ -12,10 +12,7 @@
  *     + resolve root per iteration. Measures cold-start; catches regressions
  *     in registry mutation + first-resolve code paths.
  */
-import {
-  buildCodefastRealisticContainer,
-  sanityCheckCodefastRealisticResolve,
-} from "#/fixtures/codefast-adapter";
+import { buildCodefastRealisticContainer, sanityCheckCodefastRealisticResolve } from "#/fixtures/codefast-adapter";
 import { REALISTIC_GRAPH } from "#/fixtures/realistic-graph";
 import { batched } from "#/harness/batched";
 import type { BenchScenario } from "#/scenarios/types";

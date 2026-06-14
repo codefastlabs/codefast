@@ -1,5 +1,5 @@
-import { describe, expect, it } from "vitest";
 import { Container, token } from "@codefast/di";
+import { describe, expect, it } from "vitest";
 
 /**
  * SPEC §2.4 / §5.6: `bind()` returns `BindToBuilder` with only `to*` — constraints come after `to*()`.

@@ -1,11 +1,7 @@
 import { logger } from "#/core/logger";
-import type { MirrorSyncProgressListener } from "#/mirror/sync-types";
 import type { GlobalStats, PackageStats } from "#/mirror/domain/types";
-import {
-  MirrorSyncReporter,
-  type CliLoggerLike,
-  type MirrorProcessingModeInput,
-} from "#/mirror/sync-reporter";
+import { MirrorSyncReporter, type CliLoggerLike, type MirrorProcessingModeInput } from "#/mirror/sync-reporter";
+import type { MirrorSyncProgressListener } from "#/mirror/sync-types";
 
 const cliLogger: CliLoggerLike = logger;
 
@@ -17,11 +13,7 @@ export class MirrorSyncProgressPresenter implements MirrorSyncProgressListener {
   private verbose = false;
   private dryRun = false;
 
-  configure(options: {
-    readonly noColor: boolean;
-    readonly verbose: boolean;
-    readonly dryRun: boolean;
-  }): void {
+  configure(options: { readonly noColor: boolean; readonly verbose: boolean; readonly dryRun: boolean }): void {
     this.verbose = options.verbose;
     this.dryRun = options.dryRun;
     this.reporter.configureMirrorColors(options.noColor);
@@ -44,24 +36,11 @@ export class MirrorSyncProgressPresenter implements MirrorSyncProgressListener {
 
   onPackageComplete(pkgStats: PackageStats, ordinal: number, total: number): void {
     if (pkgStats.skipped) {
-      this.reporter.logSkippedWorkspacePackage(
-        cliLogger,
-        ordinal,
-        total,
-        pkgStats.name,
-        pkgStats.skipReason,
-      );
+      this.reporter.logSkippedWorkspacePackage(cliLogger, ordinal, total, pkgStats.name, pkgStats.skipReason);
       return;
     }
     if (pkgStats.error !== null) {
-      this.reporter.logPackageError(
-        cliLogger,
-        ordinal,
-        total,
-        pkgStats.name,
-        pkgStats.error,
-        this.verbose,
-      );
+      this.reporter.logPackageError(cliLogger, ordinal, total, pkgStats.name, pkgStats.error, this.verbose);
       return;
     }
     for (const exportSpecifier of pkgStats.prunedExportKeys) {

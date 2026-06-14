@@ -1,5 +1,5 @@
-import { formatLocal } from "#/app/lib/format";
 import { KpiCard, KpiCardLabel, KpiCardValue } from "#/app/components/kpi-card";
+import { formatLocal } from "#/app/lib/format";
 import type { EmbeddedRun } from "#/types";
 
 interface KpiGridProps {
@@ -42,8 +42,7 @@ export function KpiGrid({ runCount, scenarioCount, latestRun }: KpiGridProps) {
           {latestRun?.libraryVersions?.length
             ? latestRun.libraryVersions.map((libraryVersion) => (
                 <div className="mt-0.5 leading-[1.45]" key={libraryVersion.key}>
-                  <span className="text-bh-lib-key">{libraryVersion.key}</span>{" "}
-                  {libraryVersion.version}
+                  <span className="text-bh-lib-key">{libraryVersion.key}</span> {libraryVersion.version}
                   {libraryVersion.gcExposed && (
                     <span className="text-amber-400" title="--expose-gc active">
                       {" "}

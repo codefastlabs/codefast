@@ -1,3 +1,5 @@
+import type { InjectionDescriptor } from "#/decorators/inject";
+import type { Token } from "#/token";
 import type {
   ActivationHandler,
   BindingIdentifier,
@@ -10,8 +12,6 @@ import type {
   TokenValue,
   ConstraintContext,
 } from "#/types";
-import type { Token } from "#/token";
-import type { InjectionDescriptor } from "#/decorators/inject";
 
 // ── BindingSlot ───────────────────────────────────────────────────────────────────
 
@@ -34,11 +34,7 @@ export function bindingSlotEquals(left: BindingSlot, right: BindingSlot): boolea
     return false;
   }
   for (const [tagKey, tagValue] of left.tags) {
-    if (
-      !right.tags.some(
-        ([otherKey, otherValue]) => otherKey === tagKey && Object.is(otherValue, tagValue),
-      )
-    ) {
+    if (!right.tags.some(([otherKey, otherValue]) => otherKey === tagKey && Object.is(otherValue, tagValue))) {
       return false;
     }
   }

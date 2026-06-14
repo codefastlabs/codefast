@@ -1,10 +1,8 @@
+import { render, screen } from "@testing-library/react";
 import type React from "react";
 
-import { render, screen } from "@testing-library/react";
-
-import type { ColorScheme } from "#/types";
-
 import { ColorSchemeContext } from "#/core/context";
+import type { ColorScheme } from "#/types";
 
 describe("ColorSchemeContext", () => {
   test("should be a valid React context", () => {

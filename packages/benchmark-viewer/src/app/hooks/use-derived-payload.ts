@@ -1,19 +1,10 @@
 import { useEffect, useMemo } from "react";
+
 import { type PaletteEntry, PALETTE } from "#/app/lib/colors";
 import { searchNorm } from "#/app/lib/format";
 import { type ViewState } from "#/app/lib/hash";
-import {
-  buildMetrics,
-  buildSnapshotRow,
-  type MetricsResult,
-  type SnapshotRow,
-} from "#/app/lib/metrics";
-import type {
-  EmbeddedLibraryMeta,
-  EmbeddedRun,
-  EmbeddedScenarioSeries,
-  EmbeddedViewerPayload,
-} from "#/types";
+import { buildMetrics, buildSnapshotRow, type MetricsResult, type SnapshotRow } from "#/app/lib/metrics";
+import type { EmbeddedLibraryMeta, EmbeddedRun, EmbeddedScenarioSeries, EmbeddedViewerPayload } from "#/types";
 
 interface DerivedPayloadOptions {
   payload: EmbeddedViewerPayload | null;
@@ -46,11 +37,7 @@ export interface DerivedPayload {
 /**
  * @since 0.3.16-canary.3
  */
-export function useDerivedPayload({
-  payload,
-  view,
-  patchView,
-}: DerivedPayloadOptions): DerivedPayload {
+export function useDerivedPayload({ payload, view, patchView }: DerivedPayloadOptions): DerivedPayload {
   const { orderedLibraries, paletteMap } = useMemo<{
     orderedLibraries: Array<EmbeddedLibraryMeta>;
     paletteMap: Record<string, PaletteEntry>;
@@ -60,9 +47,7 @@ export function useDerivedPayload({
     }
     const primary = payload.libraries.find((lib) => lib.isPrimary) ?? payload.libraries[0];
     const compares = payload.libraries.filter((lib) => !lib.isPrimary);
-    const ordered: Array<EmbeddedLibraryMeta> = primary
-      ? [primary, ...compares]
-      : [...payload.libraries];
+    const ordered: Array<EmbeddedLibraryMeta> = primary ? [primary, ...compares] : [...payload.libraries];
     const paletteMap: Record<string, PaletteEntry> = {};
     ordered.forEach((lib, paletteIndex) => {
       paletteMap[lib.key] = PALETTE[paletteIndex % PALETTE.length]!;
@@ -129,9 +114,7 @@ export function useDerivedPayload({
     if (!payload) {
       return [];
     }
-    return [...new Set(payload.runs.map((run) => run.envKey))].sort((left, right) =>
-      left.localeCompare(right),
-    );
+    return [...new Set(payload.runs.map((run) => run.envKey))].toSorted((left, right) => left.localeCompare(right));
   }, [payload]);
 
   const envLabelMap = useMemo<Record<string, string>>(() => {
@@ -151,9 +134,7 @@ export function useDerivedPayload({
     if (!payload) {
       return [];
     }
-    return [...new Set(payload.scenarios.map((scenario) => scenario.group))].sort((a, b) =>
-      a.localeCompare(b),
-    );
+    return [...new Set(payload.scenarios.map((scenario) => scenario.group))].toSorted((a, b) => a.localeCompare(b));
   }, [payload]);
 
   const primaryLib = useMemo(
@@ -161,10 +142,7 @@ export function useDerivedPayload({
     [orderedLibraries],
   );
 
-  const compareLibs = useMemo(
-    () => orderedLibraries.filter((lib) => !lib.isPrimary),
-    [orderedLibraries],
-  );
+  const compareLibs = useMemo(() => orderedLibraries.filter((lib) => !lib.isPrimary), [orderedLibraries]);
 
   const scenarioIndex = visibleScenarios.findIndex((scenario) => scenario.id === view.scenarioId);
   const showMultiEnvBanner = uniqueEnvKeys.length > 1 && !view.envKey;

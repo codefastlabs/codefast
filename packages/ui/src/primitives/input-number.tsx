@@ -1,3 +1,6 @@
+import { composeEventHandlers } from "radix-ui/internal";
+import { Context } from "radix-ui/internal";
+import { useControllableState } from "radix-ui/internal";
 import type {
   ComponentProps,
   FocusEventHandler,
@@ -8,10 +11,6 @@ import type {
   PointerEventHandler,
   RefObject,
 } from "react";
-
-import { composeEventHandlers } from "radix-ui/internal";
-import { Context } from "radix-ui/internal";
-import { useControllableState } from "radix-ui/internal";
 import { useCallback, useEffect, useMemo, useRef } from "react";
 
 import * as InputPrimitive from "#/primitives/input";
@@ -36,10 +35,9 @@ type ScopedProps<P> = P & {
   __scopeInputNumber?: Context.Scope;
 };
 
-const [createInputNumberContext, createInputNumberScope] = Context.createContextScope(
-  NUMBER_INPUT_NAME,
-  [createInputScope],
-);
+const [createInputNumberContext, createInputNumberScope] = Context.createContextScope(NUMBER_INPUT_NAME, [
+  createInputScope,
+]);
 const useInputScope = createInputScope();
 
 /**
@@ -253,10 +251,7 @@ function InputNumber(numberInputProps: ScopedProps<InputNumberProps>): JSX.Eleme
   /**
    * Separators used for number formatting based on locale
    */
-  const { decimalSeparator, thousandSeparator } = useMemo(
-    () => getNumberFormatSeparators(locale),
-    [locale],
-  );
+  const { decimalSeparator, thousandSeparator } = useMemo(() => getNumberFormatSeparators(locale), [locale]);
 
   /**
    * Formats a number value into a string representation
@@ -295,11 +290,7 @@ function InputNumber(numberInputProps: ScopedProps<InputNumberProps>): JSX.Eleme
         return Number.NaN;
       }
 
-      const normalizedValue = normalizeInputValue(
-        cleanedValue,
-        thousandSeparator,
-        decimalSeparator,
-      );
+      const normalizedValue = normalizeInputValue(cleanedValue, thousandSeparator, decimalSeparator);
       let parsedValue = Number.parseFloat(normalizedValue);
 
       if (formatOptions.style === "percent") {
@@ -403,16 +394,7 @@ const NUMBER_INPUT_FIELD_NAME = "InputNumberField";
  */
 type InputNumberFieldProps = Omit<
   ComponentProps<typeof InputPrimitive.Field>,
-  | "defaultValue"
-  | "disabled"
-  | "id"
-  | "max"
-  | "min"
-  | "onChange"
-  | "prefix"
-  | "readOnly"
-  | "step"
-  | "value"
+  "defaultValue" | "disabled" | "id" | "max" | "min" | "onChange" | "prefix" | "readOnly" | "step" | "value"
 >;
 
 /**
@@ -595,10 +577,7 @@ function InputNumberField({
    */
   const combinedKeyDownHandler = useCallback<KeyboardEventHandler<HTMLInputElement>>(
     (event) => {
-      composeEventHandlers(
-        onKeyDown,
-        chain(handleKeyDownPrevent, handleKeyDown, handleKeyDownEnter),
-      )(event);
+      composeEventHandlers(onKeyDown, chain(handleKeyDownPrevent, handleKeyDown, handleKeyDownEnter))(event);
     },
     [onKeyDown, handleKeyDown, handleKeyDownEnter, handleKeyDownPrevent],
   );
@@ -712,17 +691,8 @@ function NumberStepperButton({
   ...props
 }: ScopedProps<NumberStepperButtonProps>): JSX.Element {
   // Destructures relevant context values for the button functionality.
-  const {
-    ariaDecrementLabel,
-    ariaIncrementLabel,
-    disabled,
-    id,
-    max,
-    min,
-    onDecrement,
-    onIncrement,
-    value,
-  } = useInputNumberContext(NUMBER_STEPPER_BUTTON_NAME, __scopeInputNumber);
+  const { ariaDecrementLabel, ariaIncrementLabel, disabled, id, max, min, onDecrement, onIncrement, value } =
+    useInputNumberContext(NUMBER_STEPPER_BUTTON_NAME, __scopeInputNumber);
 
   const isDisabled = useMemo(() => {
     const atMin = min !== undefined && value !== undefined && value <= min;
@@ -829,10 +799,7 @@ function NumberStepperButton({
 /**
  * @since 0.3.16-canary.0
  */
-type InputNumberIncrementButtonProps = Omit<
-  ComponentProps<typeof NumberStepperButton>,
-  "operation"
->;
+type InputNumberIncrementButtonProps = Omit<ComponentProps<typeof NumberStepperButton>, "operation">;
 
 /**
  * @since 0.3.16-canary.0
@@ -848,10 +815,7 @@ function InputNumberIncrementButton(props: InputNumberIncrementButtonProps): JSX
 /**
  * @since 0.3.16-canary.0
  */
-type InputNumberDecrementButtonProps = Omit<
-  ComponentProps<typeof NumberStepperButton>,
-  "operation"
->;
+type InputNumberDecrementButtonProps = Omit<ComponentProps<typeof NumberStepperButton>, "operation">;
 
 /**
  * @since 0.3.16-canary.0
@@ -870,9 +834,7 @@ function InputNumberDecrementButton(props: InputNumberDecrementButtonProps): JSX
  * @param callbacks - Array of callback functions that will be executed in order
  * @returns A single function that executes all callbacks
  */
-function chain<T extends Array<unknown>>(
-  ...callbacks: Array<(...args: T) => void>
-): (...args: T) => void {
+function chain<T extends Array<unknown>>(...callbacks: Array<(...args: T) => void>): (...args: T) => void {
   return (...args: T) => {
     for (const callback of callbacks) {
       callback(...args);
@@ -932,11 +894,7 @@ function getNumberFormatSeparators(locale?: string): NumberFormatSeparators {
  * @param decimalSeparator - The decimal separator to convert to standard dot notation
  * @returns Normalized string value ready for numeric conversion
  */
-function normalizeInputValue(
-  value: string,
-  thousandSeparator: string,
-  decimalSeparator: string,
-): string {
+function normalizeInputValue(value: string, thousandSeparator: string, decimalSeparator: string): string {
   return value
     .replaceAll(new RegExp(`\\${thousandSeparator}`, "g"), "")
     .replace(new RegExp(`\\${decimalSeparator}`), ".")
@@ -981,11 +939,7 @@ function isNumberKey(key: string): boolean {
  * @param max - The maximum allowed value (defaults to Infinity)
  * @returns The clamped value
  */
-function clamp(
-  value: number,
-  min = Number.NEGATIVE_INFINITY,
-  max = Number.POSITIVE_INFINITY,
-): number {
+function clamp(value: number, min = Number.NEGATIVE_INFINITY, max = Number.POSITIVE_INFINITY): number {
   return Math.min(Math.max(value, min), max);
 }
 

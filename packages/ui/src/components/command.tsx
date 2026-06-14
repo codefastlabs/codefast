@@ -1,11 +1,10 @@
+import { Command as CommandPrimitive } from "cmdk";
+import { CheckIcon, SearchIcon } from "lucide-react";
 import type { ComponentProps, JSX } from "react";
 
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "#/components/dialog";
+import { InputGroup, InputGroupAddon } from "#/components/input-group";
 import { cn } from "#/lib/utils";
-import { VisuallyHidden } from "radix-ui";
-import { Command as CommandPrimitive } from "cmdk";
-import { SearchIcon } from "lucide-react";
-
-import { Dialog, DialogContent, DialogDescription, DialogTitle } from "#/components/dialog";
 
 /* -----------------------------------------------------------------------------
  * Component: Command
@@ -23,7 +22,7 @@ function Command({ className, ...props }: CommandProps): JSX.Element {
   return (
     <CommandPrimitive
       className={cn(
-        "flex flex-col overflow-hidden rounded-[inherit] bg-popover text-popover-foreground outline-hidden",
+        "flex size-full flex-col overflow-hidden rounded-xl! bg-popover p-1 text-popover-foreground",
         className,
       )}
       data-slot="command"
@@ -39,24 +38,36 @@ function Command({ className, ...props }: CommandProps): JSX.Element {
 /**
  * @since 0.3.16-canary.0
  */
-type CommandDialogProps = ComponentProps<typeof Dialog>;
+interface CommandDialogProps extends ComponentProps<typeof Dialog> {
+  className?: string;
+  description?: string;
+  showCloseButton?: boolean;
+  title?: string;
+}
 
 /**
  * @since 0.3.16-canary.0
  */
-function CommandDialog({ children, ...props }: CommandDialogProps): JSX.Element {
+function CommandDialog({
+  children,
+  className,
+  description = "Search for a command to run...",
+  showCloseButton = false,
+  title = "Command Palette",
+  ...props
+}: CommandDialogProps): JSX.Element {
   return (
     <Dialog data-slot="command-dialog" {...props}>
-      <DialogContent className="rounded-t-xl sm:rounded-xl" data-slot="command-dialog-content">
-        <VisuallyHidden.Root>
-          <DialogTitle>Search command</DialogTitle>
-          <DialogDescription>
-            Use the search bar to find and select the desired command.
-          </DialogDescription>
-        </VisuallyHidden.Root>
-        <Command className="[&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0 **:[[cmdk-group-heading]]:px-2 **:[[cmdk-group-heading]]:font-medium **:[[cmdk-group-heading]]:text-muted-foreground **:[[cmdk-input]]:h-12">
-          {children}
-        </Command>
+      <DialogHeader className="sr-only">
+        <DialogTitle>{title}</DialogTitle>
+        <DialogDescription>{description}</DialogDescription>
+      </DialogHeader>
+      <DialogContent
+        className={cn("top-1/3 translate-y-0 overflow-hidden rounded-xl p-0", className)}
+        data-slot="command-dialog-content"
+        showCloseButton={showCloseButton}
+      >
+        {children}
       </DialogContent>
     </Dialog>
   );
@@ -76,20 +87,17 @@ type CommandInputProps = ComponentProps<typeof CommandPrimitive.Input>;
  */
 function CommandInput({ className, ...props }: CommandInputProps): JSX.Element {
   return (
-    <div
-      cmdk-input-wrapper=""
-      className="flex items-center gap-2 border-b px-3"
-      data-slot="command-input-wrapper"
-    >
-      <SearchIcon className="size-4 shrink-0 opacity-50" />
-      <CommandPrimitive.Input
-        className={cn(
-          "flex h-10 w-full text-base outline-hidden placeholder:text-muted-foreground disabled:opacity-50 md:text-sm",
-          className,
-        )}
-        data-slot="command-input"
-        {...props}
-      />
+    <div className="p-1 pb-0" data-slot="command-input-wrapper">
+      <InputGroup className="h-8! rounded-lg! border-input/30 bg-input/30 shadow-none! *:data-[slot=input-group-addon]:ps-2!">
+        <CommandPrimitive.Input
+          className={cn("w-full text-sm outline-hidden disabled:cursor-not-allowed disabled:opacity-50", className)}
+          data-slot="command-input"
+          {...props}
+        />
+        <InputGroupAddon>
+          <SearchIcon className="size-4 shrink-0 opacity-50" />
+        </InputGroupAddon>
+      </InputGroup>
     </div>
   );
 }
@@ -109,7 +117,7 @@ type CommandListProps = ComponentProps<typeof CommandPrimitive.List>;
 function CommandList({ className, ...props }: CommandListProps): JSX.Element {
   return (
     <CommandPrimitive.List
-      className={cn("max-h-75 overflow-x-hidden overflow-y-auto", className)}
+      className={cn("max-h-72 scroll-py-1 scrollbar-none overflow-x-hidden overflow-y-auto outline-none", className)}
       data-slot="command-list"
       {...props}
     />
@@ -178,7 +186,7 @@ type CommandSeparatorProps = ComponentProps<typeof CommandPrimitive.Separator>;
 function CommandSeparator({ className, ...props }: CommandSeparatorProps): JSX.Element {
   return (
     <CommandPrimitive.Separator
-      className={cn("-mx-1 h-px bg-border", className)}
+      className={cn("-mx-1 h-px w-auto bg-border", className)}
       data-slot="command-separator"
       {...props}
     />
@@ -197,16 +205,19 @@ type CommandItemProps = ComponentProps<typeof CommandPrimitive.Item>;
 /**
  * @since 0.3.16-canary.0
  */
-function CommandItem({ className, ...props }: CommandItemProps): JSX.Element {
+function CommandItem({ children, className, ...props }: CommandItemProps): JSX.Element {
   return (
     <CommandPrimitive.Item
       className={cn(
-        "group/command-item relative flex cursor-default items-center gap-x-2 rounded-sm px-2 py-1.5 text-sm outline-hidden select-none aria-disabled:opacity-50 aria-selected:bg-accent aria-selected:text-accent-foreground [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 [&_svg:not([class*='text-'])]:text-muted-foreground",
+        "group/command-item relative flex cursor-default items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-hidden select-none in-data-[slot=dialog-content]:rounded-lg! data-selected:bg-muted data-selected:text-foreground data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 data-selected:**:[svg]:text-foreground",
         className,
       )}
       data-slot="command-item"
       {...props}
-    />
+    >
+      {children}
+      <CheckIcon className="ms-auto opacity-0 group-has-data-[slot=command-shortcut]/command-item:hidden group-data-checked/command-item:opacity-100" />
+    </CommandPrimitive.Item>
   );
 }
 
@@ -247,7 +258,10 @@ type CommandShortcutProps = ComponentProps<"span">;
 function CommandShortcut({ className, ...props }: CommandShortcutProps): JSX.Element {
   return (
     <span
-      className={cn("ml-auto text-xs tracking-widest text-muted-foreground", className)}
+      className={cn(
+        "ms-auto text-xs tracking-widest text-muted-foreground group-data-selected/command-item:text-foreground",
+        className,
+      )}
       data-slot="command-shortcut"
       {...props}
     />

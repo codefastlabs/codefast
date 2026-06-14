@@ -1,12 +1,10 @@
-import type { ProgressCircleVariants } from "#/variants/progress-circle";
 import type { ComponentProps, CSSProperties, JSX } from "react";
-
 import { useCallback, useMemo } from "react";
-
-import { progressCircleVariants } from "#/variants/progress-circle";
 
 import { useAnimatedValue } from "#/hooks/use-animated-value";
 import * as ProgressCirclePrimitive from "#/primitives/progress-circle";
+import type { ProgressCircleVariants } from "#/variants/progress-circle";
+import { progressCircleVariants } from "#/variants/progress-circle";
 
 /* -------------------------------------------------------------------------------------------------
  * Component: ProgressCircle
@@ -16,9 +14,7 @@ import * as ProgressCirclePrimitive from "#/primitives/progress-circle";
  * @since 0.3.16-canary.0
  */
 interface ProgressCircleProps
-  extends
-    Omit<ComponentProps<typeof ProgressCirclePrimitive.Provider>, "children" | "size">,
-    ProgressCircleVariants {
+  extends Omit<ComponentProps<typeof ProgressCirclePrimitive.Provider>, "children" | "size">, ProgressCircleVariants {
   /**
    * Enables animation effect when value changes
    */
@@ -110,10 +106,7 @@ function ProgressCircle({
     [strokeWidth, thickness, actualSize],
   );
 
-  const slots = useMemo(
-    () => progressCircleVariants({ size, thickness, variant }),
-    [variant, size, thickness],
-  );
+  const slots = useMemo(() => progressCircleVariants({ size, thickness, variant }), [variant, size, thickness]);
 
   const shouldShowLabel = showValue || Boolean(customLabel);
 
@@ -126,19 +119,10 @@ function ProgressCircle({
   }, [customLabel, displayValue]);
 
   return (
-    <ProgressCirclePrimitive.Provider
-      size={actualSize}
-      strokeWidth={actualThickness}
-      value={value}
-      {...props}
-    >
-      <ProgressCirclePrimitive.Root
-        className={slots.root({ className: [className, classNames?.root] })}
-      >
+    <ProgressCirclePrimitive.Provider size={actualSize} strokeWidth={actualThickness} value={value} {...props}>
+      <ProgressCirclePrimitive.Root className={slots.root({ className: [className, classNames?.root] })}>
         <ProgressCirclePrimitive.SVG className={slots.svg({ className: classNames?.svg })}>
-          <ProgressCirclePrimitive.Track
-            className={slots.track({ className: classNames?.track })}
-          />
+          <ProgressCirclePrimitive.Track className={slots.track({ className: classNames?.track })} />
           <ProgressCirclePrimitive.Indicator
             className={slots.indicator({ className: classNames?.indicator })}
             style={

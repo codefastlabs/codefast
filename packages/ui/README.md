@@ -86,7 +86,7 @@ Import the palette and the preset **after** `tailwindcss` so Tailwind isn't dupl
 @import "tailwindcss";
 
 /* @codefast/ui tokens + preset */
-@import "@codefast/ui/css/slate.css";
+@import "@codefast/ui/css/themes/slate.css";
 @import "@codefast/ui/css/preset.css";
 ```
 
@@ -110,7 +110,7 @@ Make sure your bundler can process CSS `@import` (Vite and Next.js do this out o
 
 ### Theme palettes
 
-Replace `slate.css` with any of the palettes below:
+Replace `themes/slate.css` with any palette under `@codefast/ui/css/themes/`:
 
 ```
 amber · blue · cyan · emerald · fuchsia · gray · green · indigo · lime · neutral
@@ -134,7 +134,7 @@ Pair with [`@codefast/theme`](../theme/README.md) for SSR-safe theme management 
 Override CSS custom properties after the imports:
 
 ```css
-@import "@codefast/ui/css/slate.css";
+@import "@codefast/ui/css/themes/slate.css";
 @import "@codefast/ui/css/preset.css";
 
 :root {
@@ -298,7 +298,9 @@ Low-level building blocks, used internally by the styled components, exposed for
 | `@codefast/ui/primitives/checkbox-group`  | Controlled checkbox-group state machine.                 |
 | `@codefast/ui/primitives/progress-circle` | Math + a11y primitive for circular progress.             |
 | `@codefast/ui/lib/utils`                  | `cn()` — classname merge helper used by every component. |
-| `@codefast/ui/css/*`                      | Palette + preset CSS files (see [Styling](#styling)).    |
+| `@codefast/ui/css/themes/*`               | Theme palette CSS files (see [Styling](#styling)).       |
+| `@codefast/ui/css/preset.css`             | Tailwind preset: variants, `cf-*` utilities, base layer. |
+| `@codefast/ui/css/style.css`              | Bundled Tailwind + default palette + preset.             |
 
 ```tsx
 import { cn } from "@codefast/ui/lib/utils";
@@ -390,7 +392,16 @@ Adding a component:
 4. Add tests under `src/components/__tests__` (unit + `jest-axe` if interactive).
 5. Run `pnpm --filter @codefast/ui build` to verify `tsdown` picks up the new entry.
 
-CSS entry exports under `@codefast/ui/css/*` are sourced directly from `src/css/*`.
+CSS exports under `@codefast/ui/css/*` map to `src/css/`:
+
+```
+css/
+├── style.css          # Tailwind + themes/neutral + preset
+├── preset.css         # Aggregates foundation + utilities
+├── foundation/        # source, variants, tokens, motion, base
+├── utilities/         # shared + component utilities referenced in TSX
+└── themes/            # amber.css … zinc.css
+```
 
 ---
 

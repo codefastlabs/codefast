@@ -141,12 +141,8 @@ class CircularServiceB {
 }
 
 const circularContainer = Container.create();
-circularContainer
-  .bind(ServiceAToken)
-  .toDynamic((ctx) => new CircularServiceA(ctx.resolve(ServiceBToken)));
-circularContainer
-  .bind(ServiceBToken)
-  .toDynamic((ctx) => new CircularServiceB(ctx.resolve(ServiceAToken)));
+circularContainer.bind(ServiceAToken).toDynamic((ctx) => new CircularServiceA(ctx.resolve(ServiceBToken)));
+circularContainer.bind(ServiceBToken).toDynamic((ctx) => new CircularServiceB(ctx.resolve(ServiceAToken)));
 
 try {
   circularContainer.resolve(ServiceAToken);
@@ -184,9 +180,7 @@ try {
 }
 
 // Fix: add @injectable, or use toDynamic / toResolved instead
-missingMetadataContainer
-  .rebind(UnmarkedToken)
-  .toDynamic((ctx) => new UnmarkedService(ctx.resolve(LoggerToken)));
+missingMetadataContainer.rebind(UnmarkedToken).toDynamic((ctx) => new UnmarkedService(ctx.resolve(LoggerToken)));
 const repairedService = missingMetadataContainer.resolve(UnmarkedToken);
 console.log("  Fixed with toDynamic:", repairedService instanceof UnmarkedService);
 

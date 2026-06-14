@@ -1,5 +1,5 @@
-import type { CodefastConfig } from "#/core/config/schema";
 import type { GlobalCliOptions } from "#/core/cli/global-options";
+import type { CodefastConfig } from "#/core/config/schema";
 
 /**
  * @since 0.3.16-canary.0
@@ -112,10 +112,7 @@ export interface GlobalStats {
  *
  * @since 0.3.16-canary.0
  */
-export type WorkspaceMultiDiscoverySource =
-  | "default-patterns"
-  | "pnpm-workspace-yaml"
-  | "declared-empty";
+export type WorkspaceMultiDiscoverySource = "default-patterns" | "pnpm-workspace-yaml" | "declared-empty";
 
 /**
  * @since 0.3.16-canary.0

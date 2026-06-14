@@ -1,8 +1,7 @@
 import { use } from "react";
 
-import type { ColorSchemeContextType } from "#/types";
-
 import { ColorSchemeContext } from "#/core/context";
+import type { ColorSchemeContextType } from "#/types";
 
 /* -----------------------------------------------------------------------------
  * Hook

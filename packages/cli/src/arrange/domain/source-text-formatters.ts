@@ -44,10 +44,7 @@ function formatCnArguments(
 /**
  * @since 0.3.16-canary.0
  */
-export function formatCnCall(
-  groups: Array<string>,
-  options?: { trailingClassName?: boolean },
-): string {
+export function formatCnCall(groups: Array<string>, options?: { trailingClassName?: boolean }): string {
   const lines: Array<string> = ["cn("];
   const commaOnEachStringLine = groups.length > 1 || Boolean(options?.trailingClassName);
   for (let i = 0; i < groups.length; i++) {
@@ -88,10 +85,7 @@ export function formatArray(groups: Array<string>): string {
  *
  * @since 0.3.16-canary.0
  */
-export function formatArrayElementsAsSiblingLines(
-  groups: Array<string>,
-  continuationPrefix: string,
-): string {
+export function formatArrayElementsAsSiblingLines(groups: Array<string>, continuationPrefix: string): string {
   const segments: Array<string> = [];
   for (let i = 0; i < groups.length; i++) {
     const group = groups[i];
@@ -108,11 +102,7 @@ export function formatArrayElementsAsSiblingLines(
 /**
  * @since 0.3.16-canary.0
  */
-export function formatJsxCnAttributeValue(
-  groups: Array<string>,
-  source: string,
-  valueNodeStart: number,
-): string {
+export function formatJsxCnAttributeValue(groups: Array<string>, source: string, valueNodeStart: number): string {
   const baseIndent = indentOfLineContaining(source, valueNodeStart);
   const argIndent = `${baseIndent}  `;
   const cnArgumentsBlock = formatCnArguments(groups, {

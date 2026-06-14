@@ -100,9 +100,7 @@ describe("ProgressCircle", () => {
             <ProgressCircleTrack />
             <ProgressCircleIndicator />
           </ProgressCircleSVG>
-          <ProgressCircleValue>
-            {({ valueText }) => <div>Hoàn thành: {valueText}</div>}
-          </ProgressCircleValue>
+          <ProgressCircleValue>{({ valueText }) => <div>Hoàn thành: {valueText}</div>}</ProgressCircleValue>
         </ProgressCircle>
       </ProgressCircleProvider>,
     );

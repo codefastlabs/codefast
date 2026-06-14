@@ -1,6 +1,7 @@
 import "reflect-metadata";
 import { Container } from "inversify";
 import type { ServiceIdentifier } from "inversify";
+
 import type { AsyncBenchScenario } from "#/scenarios/types";
 
 const ASYNC_CHAIN_DEPTH = 8;
@@ -80,9 +81,7 @@ function buildDynamicAsyncChainDepthEightScenario(): AsyncBenchScenario {
       return async () => {
         const value = await container.getAsync<number>(leafIdentifier);
         if (value !== expectedLeafValue) {
-          throw new Error(
-            `Expected async chain leaf value ${String(expectedLeafValue)}, received ${String(value)}`,
-          );
+          throw new Error(`Expected async chain leaf value ${String(expectedLeafValue)}, received ${String(value)}`);
         }
       };
     },
@@ -117,9 +116,7 @@ function buildAsyncFanOutConcurrentScenario(
     batch: 1,
     sanity: async () => {
       const values = await Promise.all(
-        dependencyIdentifiers.map((dependencyIdentifier) =>
-          container.getAsync<number>(dependencyIdentifier),
-        ),
+        dependencyIdentifiers.map((dependencyIdentifier) => container.getAsync<number>(dependencyIdentifier)),
       );
       const total = values.reduce((runningTotal, value) => runningTotal + value, 0);
       return values.length === concurrency && total === expectedTotal;
@@ -127,9 +124,7 @@ function buildAsyncFanOutConcurrentScenario(
     build: () => {
       return async () => {
         const values = await Promise.all(
-          dependencyIdentifiers.map((dependencyIdentifier) =>
-            container.getAsync<number>(dependencyIdentifier),
-          ),
+          dependencyIdentifiers.map((dependencyIdentifier) => container.getAsync<number>(dependencyIdentifier)),
         );
         const total = values.reduce((runningTotal, value) => runningTotal + value, 0);
         if (values.length !== concurrency || total !== expectedTotal) {
@@ -149,8 +144,6 @@ export function buildInversifyAsyncScenarios(): ReadonlyArray<AsyncBenchScenario
   return [
     buildResolveAsyncSingleHopScenario(),
     buildDynamicAsyncChainDepthEightScenario(),
-    ...ASYNC_CONCURRENT_FANOUT_COUNTS.map((concurrency) =>
-      buildAsyncFanOutConcurrentScenario(concurrency),
-    ),
+    ...ASYNC_CONCURRENT_FANOUT_COUNTS.map((concurrency) => buildAsyncFanOutConcurrentScenario(concurrency)),
   ];
 }

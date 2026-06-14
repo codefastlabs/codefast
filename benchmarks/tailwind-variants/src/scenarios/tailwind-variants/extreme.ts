@@ -1,7 +1,7 @@
-import { tailwindVariantsTv } from "#/lib/tv-shims";
-import { TV_MERGE_DISABLED, TV_MERGE_ENABLED } from "#/harness/bench-options";
-import type { BenchScenario } from "#/scenarios/types";
 import { extremeTestProps, extremeVariants } from "#/fixtures/extreme";
+import { TV_MERGE_DISABLED, TV_MERGE_ENABLED } from "#/harness/bench-options";
+import { tailwindVariantsTv } from "#/lib/tv-shims";
+import type { BenchScenario } from "#/scenarios/types";
 
 const npmNoMerge = tailwindVariantsTv(extremeVariants, TV_MERGE_DISABLED);
 const npmWithMerge = tailwindVariantsTv(extremeVariants, TV_MERGE_ENABLED);

@@ -1,20 +1,14 @@
-import type { CompoundPaginationSlots } from "#/fixtures/slot-types";
-import { codefastTvFn } from "#/lib/tv-shims";
-import { TV_MERGE_DISABLED, TV_MERGE_ENABLED } from "#/harness/bench-options";
-import type { BenchScenario } from "#/scenarios/types";
 import { compoundSlotsTestProps, compoundSlotsVariants } from "#/fixtures/compound-slots";
+import type { CompoundPaginationSlots } from "#/fixtures/slot-types";
+import { TV_MERGE_DISABLED, TV_MERGE_ENABLED } from "#/harness/bench-options";
+import { codefastTvFn } from "#/lib/tv-shims";
+import type { BenchScenario } from "#/scenarios/types";
 
 type CompoundProps = (typeof compoundSlotsTestProps)[number];
 type CompoundSlotsRenderer = (props: CompoundProps) => CompoundPaginationSlots;
 
-const codefastNoMerge = codefastTvFn(
-  compoundSlotsVariants,
-  TV_MERGE_DISABLED,
-) as CompoundSlotsRenderer;
-const codefastWithMerge = codefastTvFn(
-  compoundSlotsVariants,
-  TV_MERGE_ENABLED,
-) as CompoundSlotsRenderer;
+const codefastNoMerge = codefastTvFn(compoundSlotsVariants, TV_MERGE_DISABLED) as CompoundSlotsRenderer;
+const codefastWithMerge = codefastTvFn(compoundSlotsVariants, TV_MERGE_ENABLED) as CompoundSlotsRenderer;
 
 function runCompoundSlotLoop(renderer: CompoundSlotsRenderer): void {
   for (const props of compoundSlotsTestProps) {

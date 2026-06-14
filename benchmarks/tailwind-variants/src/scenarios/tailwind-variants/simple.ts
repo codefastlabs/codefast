@@ -1,7 +1,7 @@
-import { tailwindVariantsTv } from "#/lib/tv-shims";
-import { TV_MERGE_DISABLED, TV_MERGE_ENABLED } from "#/harness/bench-options";
-import type { BenchScenario } from "#/scenarios/types";
 import { buttonVariants, simpleTestProps } from "#/fixtures/simple";
+import { TV_MERGE_DISABLED, TV_MERGE_ENABLED } from "#/harness/bench-options";
+import { tailwindVariantsTv } from "#/lib/tv-shims";
+import type { BenchScenario } from "#/scenarios/types";
 
 const npmNoMerge = tailwindVariantsTv(buttonVariants, TV_MERGE_DISABLED);
 const npmWithMerge = tailwindVariantsTv(buttonVariants, TV_MERGE_ENABLED);

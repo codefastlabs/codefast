@@ -1,15 +1,13 @@
 import "reflect-metadata";
-import { buildInversifyRealisticContainer } from "#/fixtures/inversify-adapter";
 import { FAN_OUT_TREE_DEPTH_3_BREADTH_4 } from "#/fixtures/fan-out-descriptor";
+import { buildInversifyRealisticContainer } from "#/fixtures/inversify-adapter";
 import { batched } from "#/harness/batched";
 import type { BenchScenario } from "#/scenarios/types";
 
 const FAN_OUT_TREE_BATCH = 20;
 
 function buildFanOutTreeDepthThreeBreadthFourScenario(): BenchScenario {
-  const { container, rootIdentifier } = buildInversifyRealisticContainer(
-    FAN_OUT_TREE_DEPTH_3_BREADTH_4,
-  );
+  const { container, rootIdentifier } = buildInversifyRealisticContainer(FAN_OUT_TREE_DEPTH_3_BREADTH_4);
   const firstResolution = container.get(rootIdentifier);
 
   return {

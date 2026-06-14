@@ -10,6 +10,7 @@
  */
 import "reflect-metadata";
 import { Container } from "inversify";
+
 import { batched } from "#/harness/batched";
 import type { BenchScenario } from "#/scenarios/types";
 
@@ -105,9 +106,5 @@ function buildTaggedBindingResolveScenario(): BenchScenario {
  * @since 0.3.16-canary.0
  */
 export function buildInversifyResolutionPatternScenarios(): ReadonlyArray<BenchScenario> {
-  return [
-    buildGetOptionalHitScenario(),
-    buildGetOptionalMissScenario(),
-    buildTaggedBindingResolveScenario(),
-  ];
+  return [buildGetOptionalHitScenario(), buildGetOptionalMissScenario(), buildTaggedBindingResolveScenario()];
 }

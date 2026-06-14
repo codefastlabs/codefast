@@ -1,25 +1,26 @@
 import type { RefObject } from "react";
+
 import type { ChartInstance } from "#/app/components/chart";
 import { ChartPanel } from "#/app/components/chart";
 import { ChartControlPanel } from "#/app/components/controls";
+import { FindPanel } from "#/app/components/finder";
 import { ClientPageOpenedClock, ClientSnapshotClock } from "#/app/components/footer";
 import { PageHeader } from "#/app/components/header";
 import { KpiGrid } from "#/app/components/kpi";
 import { MetricsPanel } from "#/app/components/metrics";
 import { CommandPalette } from "#/app/components/palette";
-import { FindPanel } from "#/app/components/finder";
 import { SkipToChartLink } from "#/app/components/skip-to-chart";
 import { SnapshotSection } from "#/app/components/snapshot";
 import { PALETTE_ACTIONS, useCommandPalette } from "#/app/hooks/use-command-palette";
-import { useDetailsPersist } from "#/app/hooks/use-details-persist";
 import { useDerivedPayload } from "#/app/hooks/use-derived-payload";
-import { useBenchPayload } from "#/app/hooks/use-payload";
+import { useDetailsPersist } from "#/app/hooks/use-details-persist";
 import { useHashSync } from "#/app/hooks/use-hash";
+import { useBenchPayload } from "#/app/hooks/use-payload";
 import { useToast } from "#/app/hooks/use-toast";
 import { useViewState } from "#/app/hooks/use-view";
 import { buildHash } from "#/app/lib/hash";
-import type { EmbeddedViewerPayload } from "#/types";
 import { cn } from "#/app/lib/utils";
+import type { EmbeddedViewerPayload } from "#/types";
 
 /**
  * @since 0.3.16-canary.1
@@ -149,11 +150,8 @@ export function App({ initialPayload }: { initialPayload?: EmbeddedViewerPayload
             className="mt-5 rounded-xl border border-amber-400/20 bg-amber-500/9 px-4 py-3 text-sm text-amber-100/95 shadow-sm shadow-amber-950/20 backdrop-blur-md backdrop-saturate-150"
             role="status"
           >
-            <strong className="font-semibold text-amber-200">
-              Multiple environments in history.
-            </strong>{" "}
-            Prefer an Environment filter before comparing regimes (CPU × Node fingerprints differ
-            across machines).
+            <strong className="font-semibold text-amber-200">Multiple environments in history.</strong> Prefer an
+            Environment filter before comparing regimes (CPU × Node fingerprints differ across machines).
           </div>
         )}
 
@@ -212,17 +210,9 @@ export function App({ initialPayload }: { initialPayload?: EmbeddedViewerPayload
           useLogScale={view.useLogScale}
         />
 
-        <MetricsPanel
-          currentScenario={currentScenario}
-          metricsData={metricsData}
-          runIndices={runIndices}
-        />
+        <MetricsPanel currentScenario={currentScenario} metricsData={metricsData} runIndices={runIndices} />
 
-        <KpiGrid
-          latestRun={latestRun}
-          runCount={payload.runs.length}
-          scenarioCount={payload.scenarios.length}
-        />
+        <KpiGrid latestRun={latestRun} runCount={payload.runs.length} scenarioCount={payload.scenarios.length} />
 
         <SnapshotSection
           compareLibs={compareLibs}
@@ -234,8 +224,8 @@ export function App({ initialPayload }: { initialPayload?: EmbeddedViewerPayload
         />
 
         <p className="mt-10 border-t border-white/6 pt-6 text-[0.8125rem] leading-relaxed text-zinc-500">
-          Reload data from Chart data or refresh the page for the latest snapshot ·{" "}
-          {payload.runs.length} runs · {payload.scenarios.length} scenarios.
+          Reload data from Chart data or refresh the page for the latest snapshot · {payload.runs.length} runs ·{" "}
+          {payload.scenarios.length} scenarios.
           {payload.generatedAtIso ? (
             <>
               {" "}
@@ -260,7 +250,7 @@ export function App({ initialPayload }: { initialPayload?: EmbeddedViewerPayload
         aria-atomic="true"
         aria-live="polite"
         className={cn(
-          "border-bh-blue-ring bg-bh-surface-toast shadow-bh-toast text-bh-toast-ink bh-toast-visible:opacity-100 bh-toast-visible:translate-y-0 bh-toast-visible:scale-100 bh-toast-visible:pointer-events-auto pointer-events-none fixed right-[max(1rem,env(safe-area-inset-right,0px))] bottom-[max(1rem,env(safe-area-inset-bottom,0px))] z-200 max-w-[min(20rem,calc(100vw-2rem))] translate-y-2 scale-[0.98] rounded-[0.875rem] border px-[1.05rem] py-[0.7rem] text-[0.8125rem] font-medium opacity-0 backdrop-blur-[1.25rem] backdrop-saturate-180 [transition:opacity_0.22s_ease,transform_0.22s_cubic-bezier(0.2,0.8,0.2,1)] motion-reduce:transition-none",
+          "border-bh-blue-ring bg-bh-surface-toast shadow-bh-toast text-bh-toast-ink bh-toast-visible:opacity-100 bh-toast-visible:translate-y-0 bh-toast-visible:scale-100 bh-toast-visible:pointer-events-auto pointer-events-none fixed end-[max(1rem,env(safe-area-inset-right,0px))] bottom-[max(1rem,env(safe-area-inset-bottom,0px))] z-200 max-w-[min(20rem,calc(100vw-2rem))] translate-y-2 scale-[0.98] rounded-[0.875rem] border px-[1.05rem] py-[0.7rem] text-[0.8125rem] font-medium opacity-0 backdrop-blur-lg backdrop-saturate-180 [transition:opacity_0.22s_ease,transform_0.22s_cubic-bezier(0.2,0.8,0.2,1)] motion-reduce:transition-none",
           { "is-visible": toastMsg },
         )}
         id="bh-toast"

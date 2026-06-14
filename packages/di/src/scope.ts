@@ -1,5 +1,5 @@
-import type { BindingIdentifier } from "#/types";
 import { MissingScopeContextError } from "#/errors";
+import type { BindingIdentifier } from "#/types";
 
 /**
  * @since 0.3.16-canary.0

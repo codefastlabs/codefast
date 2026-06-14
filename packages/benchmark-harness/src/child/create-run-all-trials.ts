@@ -1,5 +1,6 @@
 import type { BenchEvent, BenchOptions, TaskResult } from "tinybench";
 import { Bench } from "tinybench";
+
 import type { AnyBenchScenario } from "#/child/bench-scenario";
 import { isAsyncScenario } from "#/child/bench-scenario";
 import { BENCH_FAST_ENV_KEY, BENCH_FULL_ENV_KEY } from "#/shared/env-keys";
@@ -57,19 +58,13 @@ function createBeforeEachGcHook(): () => void {
   };
 }
 
-type TaskResultWithStatisticsState = Extract<
-  TaskResult,
-  { state: "completed" | "aborted-with-statistics" }
->;
+type TaskResultWithStatisticsState = Extract<TaskResult, { state: "completed" | "aborted-with-statistics" }>;
 
 function hasStatistics(result: TaskResult): result is TaskResultWithStatisticsState {
   return "throughput" in result && "latency" in result;
 }
 
-function createZeroedScenarioTrialResult(
-  scenario: AnyBenchScenario,
-  hzPerIteration: number = 0,
-): ScenarioTrialResult {
+function createZeroedScenarioTrialResult(scenario: AnyBenchScenario, hzPerIteration: number = 0): ScenarioTrialResult {
   const batch = scenario.batch ?? 1;
   return {
     id: scenario.id,
@@ -153,9 +148,7 @@ export function createRunAllTrials(parameters: CreateRunAllTrialsParameters): {
     const beforeEachGc = createBeforeEachGcHook();
     const bench = new Bench(benchOptions);
     const sanityFailureSet = new Set(sanityFailures);
-    const runnableScenarioCount = scenarios.filter(
-      (scenario) => !sanityFailureSet.has(scenario.id),
-    ).length;
+    const runnableScenarioCount = scenarios.filter((scenario) => !sanityFailureSet.has(scenario.id)).length;
     let completedScenarioCount = 0;
 
     const preBuiltClosuresByScenarioId = new Map<string, () => void | Promise<void>>();
@@ -197,9 +190,7 @@ export function createRunAllTrials(parameters: CreateRunAllTrialsParameters): {
     await bench.run();
 
     const trialScenarioResults: Array<ScenarioTrialResult> = [];
-    const scenarioById = new Map<string, AnyBenchScenario>(
-      scenarios.map((scenario) => [scenario.id, scenario]),
-    );
+    const scenarioById = new Map<string, AnyBenchScenario>(scenarios.map((scenario) => [scenario.id, scenario]));
     for (const task of bench.tasks) {
       const scenario = scenarioById.get(task.name);
       if (scenario === undefined) {
@@ -207,11 +198,8 @@ export function createRunAllTrials(parameters: CreateRunAllTrialsParameters): {
       }
       const result = task.result;
       if (result.state === "errored") {
-        const errorMessage =
-          result.error instanceof Error ? result.error.message : String(result.error);
-        console.error(
-          `[trial ${String(trialIndex)}] scenario ${scenario.id} errored: ${errorMessage}`,
-        );
+        const errorMessage = result.error instanceof Error ? result.error.message : String(result.error);
+        console.error(`[trial ${String(trialIndex)}] scenario ${scenario.id} errored: ${errorMessage}`);
         trialScenarioResults.push(createZeroedScenarioTrialResult(scenario));
         continue;
       }
@@ -257,9 +245,7 @@ export function createRunAllTrials(parameters: CreateRunAllTrialsParameters): {
       runFullGcIfExposed();
       const trial = await runOneTrial(trialIndex, trialCount, scenarios, sanityFailures);
       trials.push(trial);
-      console.error(
-        `[bench] trial ${String(trialIndex + 1)}/${String(trialCount)} all scenarios finished`,
-      );
+      console.error(`[bench] trial ${String(trialIndex + 1)}/${String(trialCount)} all scenarios finished`);
       if (trialIndex === trialCount - 1) {
         const scenarioElapsedMs = performance.now() - scenarioStartedAtMs;
         console.error(`[bench] all scenarios wall time: ${scenarioElapsedMs.toFixed(0)}ms`);

@@ -1,8 +1,7 @@
-import type { BadgeVariants } from "#/variants/badge";
+import { Slot } from "radix-ui";
 import type { ComponentProps, JSX } from "react";
 
-import { Slot } from "radix-ui";
-
+import type { BadgeVariants } from "#/variants/badge";
 import { badgeVariants } from "#/variants/badge";
 
 /* -----------------------------------------------------------------------------
@@ -19,16 +18,11 @@ interface BadgeProps extends ComponentProps<"span">, BadgeVariants {
 /**
  * @since 0.3.16-canary.0
  */
-function Badge({ asChild, className, variant, ...props }: BadgeProps): JSX.Element {
+function Badge({ asChild = false, className, variant = "default", ...props }: BadgeProps): JSX.Element {
   const Component = asChild ? Slot.Root : "span";
 
   return (
-    <Component
-      className={badgeVariants({ className, variant })}
-      data-slot="badge"
-      data-variant={variant}
-      {...props}
-    />
+    <Component className={badgeVariants({ className, variant })} data-slot="badge" data-variant={variant} {...props} />
   );
 }
 

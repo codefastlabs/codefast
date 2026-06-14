@@ -3,13 +3,6 @@
  * Pure orchestration of domain collectors and invariants — no I/O.
  */
 
-import { LONG_STRING_TOKEN_THRESHOLD } from "#/arrange/domain/constants";
-import type { AnalyzeReport } from "#/arrange/domain/types";
-import { tokenizeClassString } from "#/arrange/domain/tailwind-token";
-import { forEachStringLiteralInClassExpression } from "#/arrange/domain/ast/collectors-cn";
-import { jsxClassNameStaticLiteral } from "#/arrange/domain/ast/collectors-jsx";
-import { collectCnCallsInsideTv, traverseTvObject } from "#/arrange/domain/ast/collectors-tv";
-import { buildKnownCnTvBindings, isCnOrTvIdentifier, lineOf } from "#/arrange/domain/ast/helpers";
 import {
   isDomainCallExpression,
   isDomainJsxAttribute,
@@ -22,6 +15,13 @@ import type {
   DomainJsxAttribute,
   DomainSourceFile,
 } from "#/arrange/domain/ast/ast-node";
+import { forEachStringLiteralInClassExpression } from "#/arrange/domain/ast/collectors-cn";
+import { jsxClassNameStaticLiteral } from "#/arrange/domain/ast/collectors-jsx";
+import { collectCnCallsInsideTv, traverseTvObject } from "#/arrange/domain/ast/collectors-tv";
+import { buildKnownCnTvBindings, isCnOrTvIdentifier, lineOf } from "#/arrange/domain/ast/helpers";
+import { LONG_STRING_TOKEN_THRESHOLD } from "#/arrange/domain/constants";
+import { tokenizeClassString } from "#/arrange/domain/tailwind-token";
+import type { AnalyzeReport } from "#/arrange/domain/types";
 
 const PREVIEW_MAX_LENGTH = 72;
 
@@ -44,11 +44,7 @@ export function createEmptyAnalyzeReport(): AnalyzeReport {
   };
 }
 
-function analyzeCnCall(
-  domainSf: DomainSourceFile,
-  call: DomainCallExpression,
-  report: AnalyzeReport,
-): void {
+function analyzeCnCall(domainSf: DomainSourceFile, call: DomainCallExpression, report: AnalyzeReport): void {
   for (const arg of call.arguments) {
     forEachStringLiteralInClassExpression(arg, (lit) => {
       const text = lit.text;

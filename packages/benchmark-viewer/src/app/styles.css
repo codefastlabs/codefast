@@ -2,9 +2,7 @@
 
 /* ─── Design tokens ──────────────────────────────────────────────────────── */
 @theme {
-  --font-bh:
-    -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Segoe UI", system-ui,
-    sans-serif;
+  --font-bh: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Segoe UI", system-ui, sans-serif;
 
   --color-bh-blue: #0a84ff;
   --color-bh-blue-hover: #409cff;
@@ -62,15 +60,11 @@
   --color-bh-ok-border: rgba(52, 199, 89, 0.38);
   --color-bh-ok-bg: rgba(52, 199, 89, 0.11);
 
-  --shadow-bh-glass:
-    0 0 0 0.0625rem rgba(255, 255, 255, 0.04) inset, 0 0.75rem 2.5rem rgba(0, 0, 0, 0.35);
+  --shadow-bh-glass: 0 0 0 0.0625rem rgba(255, 255, 255, 0.04) inset, 0 0.75rem 2.5rem rgba(0, 0, 0, 0.35);
   --shadow-bh-glass-tight: 0 0.0625rem 0 rgba(255, 255, 255, 0.05) inset;
-  --shadow-bh-sticky:
-    0 0.0625rem 0 rgba(255, 255, 255, 0.06) inset, 0 0.75rem 2.5rem rgba(0, 0, 0, 0.42);
-  --shadow-bh-card:
-    0 0.0625rem 0 rgba(255, 255, 255, 0.05) inset, 0 0.5rem 1.75rem rgba(0, 0, 0, 0.28);
-  --shadow-bh-card-hover:
-    0 0.0625rem 0 rgba(255, 255, 255, 0.06) inset, 0 0.625rem 2rem rgba(0, 0, 0, 0.32);
+  --shadow-bh-sticky: 0 0.0625rem 0 rgba(255, 255, 255, 0.06) inset, 0 0.75rem 2.5rem rgba(0, 0, 0, 0.42);
+  --shadow-bh-card: 0 0.0625rem 0 rgba(255, 255, 255, 0.05) inset, 0 0.5rem 1.75rem rgba(0, 0, 0, 0.28);
+  --shadow-bh-card-hover: 0 0.0625rem 0 rgba(255, 255, 255, 0.06) inset, 0 0.625rem 2rem rgba(0, 0, 0, 0.32);
   --shadow-bh-btn-reload: 0 0.0625rem 0 rgba(255, 255, 255, 0.05) inset;
   --shadow-bh-toolbar: 0 0.0625rem 0 rgba(255, 255, 255, 0.05) inset;
   --shadow-bh-field-inset: 0 0.0625rem 0 rgba(255, 255, 255, 0.04) inset;

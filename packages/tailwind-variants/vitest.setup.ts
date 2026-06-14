@@ -20,9 +20,7 @@ expect.extend({
           `Received: ${this.utils.printReceived(parsedReceived)}`
         );
       },
-      pass:
-        this.equals(parsedExpected, parsedReceived) &&
-        parsedExpected.length === parsedReceived.length,
+      pass: this.equals(parsedExpected, parsedReceived) && parsedExpected.length === parsedReceived.length,
     };
   },
 });

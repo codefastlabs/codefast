@@ -1,9 +1,9 @@
-import { buildCodefastCompoundSlotsScenarios } from "#/scenarios/codefast/compound-slots";
 import { buildCodefastComplexScenarios } from "#/scenarios/codefast/complex";
+import { buildCodefastCompoundSlotsScenarios } from "#/scenarios/codefast/compound-slots";
 import { buildCodefastCreateTvScenarios } from "#/scenarios/codefast/create-tv";
+import { buildCodefastExtendsScenarios } from "#/scenarios/codefast/extends";
 import { buildCodefastExtremeScenarios } from "#/scenarios/codefast/extreme";
 import { buildCodefastExtremeSlotsScenarios } from "#/scenarios/codefast/extreme-slots";
-import { buildCodefastExtendsScenarios } from "#/scenarios/codefast/extends";
 import { buildCodefastSimpleScenarios } from "#/scenarios/codefast/simple";
 import { buildCodefastSlotsScenarios } from "#/scenarios/codefast/slots";
 import type { AnyScenario } from "#/scenarios/types";

@@ -1,5 +1,3 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { ALL_COMPONENTS } from "#/data/components";
 import { Avatar, AvatarFallback } from "@codefast/ui/avatar";
 import { Badge } from "@codefast/ui/badge";
 import { Button } from "@codefast/ui/button";
@@ -9,6 +7,9 @@ import { Progress } from "@codefast/ui/progress";
 import { Separator } from "@codefast/ui/separator";
 import { Switch } from "@codefast/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@codefast/ui/tabs";
+import { createFileRoute, Link } from "@tanstack/react-router";
+
+import { COMPONENTS } from "#/registry/components";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -48,9 +49,9 @@ const FEATURES = [
   },
 ] as const;
 
-// Derived from ALL_COMPONENTS — single source of truth in src/data/components.ts
-const COMPONENT_NAMES = ALL_COMPONENTS.map((c) => c.name);
-const COMPONENT_COUNT = ALL_COMPONENTS.length;
+// Derived from COMPONENTS — single source of truth in src/registry/components.ts
+const COMPONENT_NAMES = COMPONENTS.map((c) => c.name);
+const COMPONENT_COUNT = COMPONENTS.length;
 
 /* -------------------------------------------------------------------------- */
 /* Hero visual card                                                             */
@@ -143,7 +144,7 @@ function HeroCard() {
           </div>
           <Separator />
           <div className="flex items-center justify-between">
-            <div className="text-left">
+            <div className="text-start">
               <p className="text-xs font-medium text-ui-fg">Public profile</p>
               <p className="text-xs text-ui-muted">Show workspace in directory</p>
             </div>
@@ -207,15 +208,12 @@ function HomePage() {
           </h1>
 
           <p className="mx-auto max-w-md text-lg leading-relaxed text-ui-muted">
-            {COMPONENT_COUNT}+ accessible components built on Radix UI and Tailwind CSS v4. Copy the
-            source. Own the code.
+            {COMPONENT_COUNT}+ accessible components built on Radix UI and Tailwind CSS v4. Copy the source. Own the
+            code.
           </p>
 
           <div className="mt-8 flex items-center justify-center gap-7">
-            <Link
-              to="/components"
-              className="text-sm font-medium text-ui-brand no-underline hover:underline"
-            >
+            <Link to="/components" className="text-sm font-medium text-ui-brand no-underline hover:underline">
               Browse components ›
             </Link>
             <Link to="/about" className="text-sm text-ui-muted no-underline hover:text-ui-fg">
@@ -314,14 +312,11 @@ function HomePage() {
           </p>
 
           <div className="mx-auto mb-8 w-fit rounded-xl border border-ui-inverse/15 bg-ui-inverse/10 px-7 py-3.5 font-mono text-sm text-ui-brand">
-            <span className="mr-2 opacity-40 select-none">$</span>
+            <span className="me-2 opacity-40 select-none">$</span>
             pnpm add @codefast/ui
           </div>
 
-          <Link
-            to="/about"
-            className="text-sm font-medium text-ui-inverse/60 no-underline hover:text-ui-inverse"
-          >
+          <Link to="/about" className="text-sm font-medium text-ui-inverse/60 no-underline hover:text-ui-inverse">
             Read the docs ›
           </Link>
         </div>

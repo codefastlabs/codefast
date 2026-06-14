@@ -1,14 +1,11 @@
+import type { JsonlBenchObservationRow } from "@codefast/benchmark-harness/report/jsonl";
 import { describe, expect, it } from "vitest";
 
 import { buildEmbeddedPayload } from "#/server/payload";
-import type { JsonlBenchObservationRow } from "@codefast/benchmark-harness/report/jsonl";
-import type { BenchServerOptions } from "#/types";
 import type { RunLines } from "#/server/payload";
+import type { BenchServerOptions } from "#/types";
 
-function observationLine(
-  libraryName: string,
-  overrides: Partial<JsonlBenchObservationRow> = {},
-): string {
+function observationLine(libraryName: string, overrides: Partial<JsonlBenchObservationRow> = {}): string {
   const row: JsonlBenchObservationRow = {
     timestampIso: "2024-01-01T00:00:00.000Z",
     libraryName,

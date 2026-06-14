@@ -1,11 +1,10 @@
-import type { ComponentProps, JSX } from "react";
-
 import { Checkbox as CheckboxPrimitive } from "radix-ui";
 import { Checkbox } from "radix-ui";
-import { Context } from "radix-ui/internal";
 import { Direction } from "radix-ui";
+import { Context } from "radix-ui/internal";
 import { RovingFocus } from "radix-ui/internal";
 import { useControllableState } from "radix-ui/internal";
+import type { ComponentProps, JSX } from "react";
 import { useCallback } from "react";
 
 /* -----------------------------------------------------------------------------
@@ -24,10 +23,10 @@ type ScopedProps<P> = P & {
   __scopeCheckboxGroup?: Context.Scope;
 };
 
-const [createCheckboxGroupContext, createCheckboxGroupScope] = Context.createContextScope(
-  CHECKBOX_GROUP_NAME,
-  [RovingFocus.createRovingFocusGroupScope, Checkbox.createCheckboxScope],
-);
+const [createCheckboxGroupContext, createCheckboxGroupScope] = Context.createContextScope(CHECKBOX_GROUP_NAME, [
+  RovingFocus.createRovingFocusGroupScope,
+  Checkbox.createCheckboxScope,
+]);
 
 const useRovingFocusGroupScope = RovingFocus.createRovingFocusGroupScope();
 const useCheckboxScope = Checkbox.createCheckboxScope();
@@ -213,13 +212,7 @@ function CheckboxGroup({
       onItemCheck={handleItemCheck}
       onItemUncheck={handleItemUncheck}
     >
-      <RovingFocus.Root
-        asChild
-        {...rovingFocusGroupScope}
-        dir={direction}
-        loop={loop}
-        orientation={orientation}
-      >
+      <RovingFocus.Root asChild {...rovingFocusGroupScope} dir={direction} loop={loop} orientation={orientation}>
         <div data-disabled={disabled ? "" : undefined} dir={direction} role="group" {...props} />
       </RovingFocus.Root>
     </CheckboxGroupContextProvider>

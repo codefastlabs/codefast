@@ -1,6 +1,6 @@
 import { DEFAULT_RESOLVED_COLOR_SCHEME } from "#/constants";
-import { getSystemColorScheme, resolveColorScheme } from "#/utils/system";
 import { createMockMediaQueryList, mockMatchMedia } from "#/tests/support/mocks";
+import { getSystemColorScheme, resolveColorScheme } from "#/utils/system";
 
 describe("System Color Scheme Detection", () => {
   const originalMatchMedia = window.matchMedia;
@@ -15,9 +15,7 @@ describe("System Color Scheme Detection", () => {
 
   describe("getSystemColorScheme", () => {
     test('should return "dark" when system prefers dark mode', () => {
-      mockMatchMedia((query) =>
-        createMockMediaQueryList(query === "(prefers-color-scheme: dark)", query),
-      );
+      mockMatchMedia((query) => createMockMediaQueryList(query === "(prefers-color-scheme: dark)", query));
 
       expect(getSystemColorScheme()).toBe("dark");
     });
@@ -51,9 +49,7 @@ describe("System Color Scheme Detection", () => {
     });
 
     test('should resolve "automatic" to system preference (dark)', () => {
-      mockMatchMedia((query) =>
-        createMockMediaQueryList(query === "(prefers-color-scheme: dark)", query),
-      );
+      mockMatchMedia((query) => createMockMediaQueryList(query === "(prefers-color-scheme: dark)", query));
 
       expect(resolveColorScheme("automatic")).toBe("dark");
     });

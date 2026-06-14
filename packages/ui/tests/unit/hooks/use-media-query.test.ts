@@ -55,10 +55,7 @@ describe("useMediaQuery", () => {
 
     expect(result.current).toBe(true);
     expect(window.matchMedia).toHaveBeenCalledWith("(min-width: 600px)");
-    expect(mockMediaQueryList.addEventListener).toHaveBeenCalledWith(
-      "change",
-      expect.any(Function),
-    );
+    expect(mockMediaQueryList.addEventListener).toHaveBeenCalledWith("change", expect.any(Function));
   });
 
   test("should return false when media query does not match", () => {
@@ -96,10 +93,7 @@ describe("useMediaQuery", () => {
 
     const { unmount } = renderHook(() => useMediaQuery("(min-width: 600px)"));
 
-    expect(mockMediaQueryList.addEventListener).toHaveBeenCalledWith(
-      "change",
-      expect.any(Function),
-    );
+    expect(mockMediaQueryList.addEventListener).toHaveBeenCalledWith("change", expect.any(Function));
 
     unmount();
     expect(mockRemoveEventListener).toHaveBeenCalledWith("change", expect.any(Function));

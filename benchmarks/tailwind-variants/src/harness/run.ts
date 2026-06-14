@@ -7,30 +7,26 @@
 import { spawnSync } from "node:child_process";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+
+import { resolveBenchParentExitCode } from "@codefast/benchmark-harness/parent/resolve-bench-parent-exit-code";
+import { runBenchSubprocess } from "@codefast/benchmark-harness/parent/run-bench-subprocess";
+import { buildLibraryReport, type LibraryReport } from "@codefast/benchmark-harness/report/aggregate";
+import { renderTwoWayConsoleReport, renderTwoWayMarkdownReport } from "@codefast/benchmark-harness/report/two-way";
+import { writeJsonlRun, writeMarkdownFile } from "@codefast/benchmark-harness/report/write";
 import {
   BENCH_RESULTS_DIR_NAME,
   BENCH_VERBOSE_ENV_KEY,
   OBSERVATIONS_FILE_NAME,
 } from "@codefast/benchmark-harness/shared/env-keys";
-import {
-  buildLibraryReport,
-  type LibraryReport,
-} from "@codefast/benchmark-harness/report/aggregate";
-import {
-  renderTwoWayConsoleReport,
-  renderTwoWayMarkdownReport,
-} from "@codefast/benchmark-harness/report/two-way";
-import { resolveBenchParentExitCode } from "@codefast/benchmark-harness/parent/resolve-bench-parent-exit-code";
-import { runBenchSubprocess } from "@codefast/benchmark-harness/parent/run-bench-subprocess";
 import type { SubprocessPayload } from "@codefast/benchmark-harness/shared/protocol";
-import { writeJsonlRun, writeMarkdownFile } from "@codefast/benchmark-harness/report/write";
+
+import { CODEFAST_TV, CVA, TAILWIND_VARIANTS } from "#/harness/config";
 import {
   CODEFAST_VS_CVA_CONSOLE,
   CODEFAST_VS_CVA_MARKDOWN,
   CODEFAST_VS_TAILWIND_VARIANTS_CONSOLE,
   CODEFAST_VS_TAILWIND_VARIANTS_MARKDOWN,
 } from "#/harness/presentation";
-import { CODEFAST_TV, CVA, TAILWIND_VARIANTS } from "#/harness/config";
 
 const VERBOSE_MODE_ENABLED = process.env[BENCH_VERBOSE_ENV_KEY] === "1";
 
@@ -50,9 +46,7 @@ function rebuildCodefastTailwindVariantsPackage(): void {
     throw new Error(`Build failed for ${CODEFAST_TV.libraryName}, exit ${String(result.status)}`);
   }
   const elapsedSeconds = (performance.now() - startedAtMs) / 1000;
-  console.log(
-    `Finished rebuild of ${CODEFAST_TV.libraryName} (${elapsedSeconds.toFixed(1)}s wall).`,
-  );
+  console.log(`Finished rebuild of ${CODEFAST_TV.libraryName} (${elapsedSeconds.toFixed(1)}s wall).`);
 }
 
 function buildOutputPaths(): {
@@ -72,10 +66,7 @@ function buildOutputPaths(): {
   return {
     runDirectory,
     vsTailwindVariantsMarkdownPath: join(runDirectory, "report-vs-tailwind-variants.md"),
-    vsClassVarianceAuthorityMarkdownPath: join(
-      runDirectory,
-      "report-vs-class-variance-authority.md",
-    ),
+    vsClassVarianceAuthorityMarkdownPath: join(runDirectory, "report-vs-class-variance-authority.md"),
     combinedMarkdownPath: join(runDirectory, "report.md"),
     jsonlPath: join(runDirectory, OBSERVATIONS_FILE_NAME),
     latestVsTailwindVariantsMarkdownPath: join(benchResultsRoot, "latest-vs-tailwind-variants.md"),
@@ -142,15 +133,10 @@ async function main(): Promise<void> {
     classVarianceAuthorityPayload.sanityFailures,
   );
 
-  console.log(
-    `\n--- Pairwise: ${CODEFAST_TV.libraryName} vs ${TAILWIND_VARIANTS.libraryName} ---\n`,
-  );
-  renderTwoWayConsoleReport(
-    codefastReport,
-    tailwindVariantsReport,
-    CODEFAST_VS_TAILWIND_VARIANTS_CONSOLE,
-    { footerHintLine: "Markdown: report-vs-tailwind-variants.md in the run directory." },
-  );
+  console.log(`\n--- Pairwise: ${CODEFAST_TV.libraryName} vs ${TAILWIND_VARIANTS.libraryName} ---\n`);
+  renderTwoWayConsoleReport(codefastReport, tailwindVariantsReport, CODEFAST_VS_TAILWIND_VARIANTS_CONSOLE, {
+    footerHintLine: "Markdown: report-vs-tailwind-variants.md in the run directory.",
+  });
 
   console.log(`\n--- Pairwise: ${CODEFAST_TV.libraryName} vs ${CVA.libraryName} ---\n`);
   renderTwoWayConsoleReport(codefastReport, classVarianceAuthorityReport, CODEFAST_VS_CVA_CONSOLE, {

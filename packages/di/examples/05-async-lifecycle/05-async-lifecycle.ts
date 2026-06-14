@@ -162,10 +162,7 @@ async function main(): Promise<void> {
     container.resolveAsync(DatabaseToken),
   ]);
 
-  console.log(
-    "Same Database instance (parallel resolve):",
-    firstDatabaseResolve === secondDatabaseResolve,
-  ); // true
+  console.log("Same Database instance (parallel resolve):", firstDatabaseResolve === secondDatabaseResolve); // true
   console.log("Database connected:", firstDatabaseResolve.isConnected()); // true
 
   // container.dispose() fires all onDeactivation hooks in reverse order

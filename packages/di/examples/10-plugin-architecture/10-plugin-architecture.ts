@@ -272,12 +272,7 @@ interface DocumentService {
   downloadDocument(userId: string, filename: string): Promise<string>;
 }
 
-@injectable([
-  inject(StorageToken),
-  inject(AnalyticsToken),
-  inject(NotificationToken),
-  inject(AppLoggerToken),
-])
+@injectable([inject(StorageToken), inject(AnalyticsToken), inject(NotificationToken), inject(AppLoggerToken)])
 class DocumentOrchestrator implements DocumentService {
   constructor(
     private readonly storage: StorageProvider,
@@ -298,10 +293,7 @@ class DocumentOrchestrator implements DocumentService {
       bytes: content.length,
     });
 
-    await this.notifications.send(
-      "uploads",
-      `📄 ${userId} uploaded "${filename}" (${content.length} bytes)`,
-    );
+    await this.notifications.send("uploads", `📄 ${userId} uploaded "${filename}" (${content.length} bytes)`);
 
     return publicUrl;
   }
@@ -422,9 +414,7 @@ class Platform {
     }
   }
 
-  async runWithDocumentService<T>(
-    callback: (documentService: DocumentService) => Promise<T>,
-  ): Promise<T> {
+  async runWithDocumentService<T>(callback: (documentService: DocumentService) => Promise<T>): Promise<T> {
     const documentService = await this.container.resolveAsync(DocumentServiceToken);
     return callback(documentService);
   }

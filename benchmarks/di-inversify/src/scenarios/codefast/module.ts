@@ -16,6 +16,7 @@
  *     `fromModules` bootstrap cost including module dedup and binding commit.
  */
 import { Container, Module, token } from "@codefast/di";
+
 import type { BenchScenario } from "#/scenarios/types";
 
 // ─── shared tokens ────────────────────────────────────────────────────────────

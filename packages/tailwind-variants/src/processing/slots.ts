@@ -15,7 +15,6 @@ import type {
   SlotResolverProps,
   SlotClassResolver,
 } from "#/types/api";
-
 import { cx, isSlotClassMap } from "#/utilities/utils";
 
 import { getCompoundClass, matchesCompoundDefinition } from "./compound";
@@ -98,8 +97,7 @@ export const resolveSlotClasses = <T extends VariantSchema, S extends SlotSchema
   compoundVariantGroups: ReadonlyArray<SlotCompoundVariant<T, S>> | undefined,
   compoundSlotClasses: Array<ClassValue>,
 ): Array<ClassValue> => {
-  const estimatedSize =
-    variantKeys.length + compoundSlotClasses.length + (compoundVariantGroups?.length ?? 0) + 5;
+  const estimatedSize = variantKeys.length + compoundSlotClasses.length + (compoundVariantGroups?.length ?? 0) + 5;
   const resolvedClasses: Array<ClassValue> = new Array(estimatedSize);
   let classIndex = 0;
 
@@ -244,11 +242,8 @@ export const createSlotResolvers = <T extends VariantSchema, S extends SlotSchem
   };
   const baseCompoundSlotClasses = compoundSlotClasses.base ?? [];
 
-  slotFunctions.base = (
-    slotProps: SlotResolverProps<T> = {} as SlotResolverProps<T>,
-  ): string | undefined => {
-    const baseSlotClass =
-      mergedSlotDefinitions.base === undefined ? mergedBaseClasses : mergedSlotDefinitions.base;
+  slotFunctions.base = (slotProps: SlotResolverProps<T> = {} as SlotResolverProps<T>): string | undefined => {
+    const baseSlotClass = mergedSlotDefinitions.base === undefined ? mergedBaseClasses : mergedSlotDefinitions.base;
 
     const baseClasses = resolveSlotClasses(
       "base",

@@ -1,4 +1,5 @@
 import type { Server } from "node:http";
+
 import { createBenchServer } from "#/server/http";
 import { findAvailablePort } from "#/server/port";
 import type { BenchServerOptions } from "#/types";
@@ -31,10 +32,7 @@ export interface StartBenchServerOptions extends BenchServerOptions {
 /**
  * @since 0.3.16-canary.0
  */
-export async function startBenchServer({
-  preferredPort,
-  ...serverOptions
-}: StartBenchServerOptions): Promise<void> {
+export async function startBenchServer({ preferredPort, ...serverOptions }: StartBenchServerOptions): Promise<void> {
   const server = createBenchServer(serverOptions);
   let port = await findAvailablePort(preferredPort);
 
@@ -55,9 +53,7 @@ export async function startBenchServer({
   }
 
   if (!server.listening) {
-    throw new Error(
-      `Bench history server: failed to bind after ${String(MAX_LISTEN_ATTEMPTS)} attempts.`,
-    );
+    throw new Error(`Bench history server: failed to bind after ${String(MAX_LISTEN_ATTEMPTS)} attempts.`);
   }
 
   if (port !== preferredPort) {

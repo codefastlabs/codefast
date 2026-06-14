@@ -31,8 +31,7 @@ export function createMockMediaQueryList(matches: boolean, media: string): MockM
  * Default implementation returns light-mode (matches: false) for every query.
  */
 export function mockMatchMedia(
-  implementation: (query: string) => MockMediaQueryList = (query) =>
-    createMockMediaQueryList(false, query),
+  implementation: (query: string) => MockMediaQueryList = (query) => createMockMediaQueryList(false, query),
 ): void {
   Object.defineProperty(window, "matchMedia", {
     value: vi.fn().mockImplementation(implementation),

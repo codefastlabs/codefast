@@ -1,10 +1,12 @@
 import { globSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+
 import picomatch from "picomatch";
 import { parse as parseYaml } from "yaml";
-import type { FilesystemPort } from "#/core/filesystem/port";
+
 import { messageFrom } from "#/core/errors";
+import type { FilesystemPort } from "#/core/filesystem/port";
 import { logger } from "#/core/logger";
 
 /**
@@ -37,10 +39,7 @@ export function findRepoRoot(fromDirectory: string, fs: FilesystemPort): string 
 /**
  * @since 0.3.16-canary.0
  */
-export type WorkspacePackageLayoutSource =
-  | "pnpm-workspace-yaml"
-  | "default-patterns"
-  | "declared-empty";
+export type WorkspacePackageLayoutSource = "pnpm-workspace-yaml" | "default-patterns" | "declared-empty";
 
 /**
  * @since 0.3.16-canary.0
@@ -145,13 +144,17 @@ async function readWorkspaceYaml(
   try {
     raw = await fs.readFile(workspaceYamlPath, "utf8");
   } catch (caughtReadError: unknown) {
-    throw new Error(`Failed to read ${wf}: ${messageFrom(caughtReadError)}`);
+    throw new Error(`Failed to read ${wf}: ${messageFrom(caughtReadError)}`, {
+      cause: caughtReadError,
+    });
   }
   let doc: unknown;
   try {
     doc = parseYaml(raw) as unknown;
   } catch (caughtYamlParseError: unknown) {
-    throw new Error(`Failed to parse ${wf}: ${messageFrom(caughtYamlParseError)}`);
+    throw new Error(`Failed to parse ${wf}: ${messageFrom(caughtYamlParseError)}`, {
+      cause: caughtYamlParseError,
+    });
   }
   if (doc === null || doc === undefined) {
     throw new Error(`${wf} must define a mapping at the document root`);
@@ -217,7 +220,9 @@ export async function listWorkspacePackageDirectories(
         }
         continue;
       }
-      throw new Error(`Invalid workspace glob "${pattern}": ${messageFrom(caughtGlobError)}`);
+      throw new Error(`Invalid workspace glob "${pattern}": ${messageFrom(caughtGlobError)}`, {
+        cause: caughtGlobError,
+      });
     }
     for (const matchedPath of matches) {
       const posix = toPosix(matchedPath);

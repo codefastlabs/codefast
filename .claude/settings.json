@@ -1,4 +1,5 @@
 {
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
   "permissions": {
     "allow": [
       "Bash(pnpm run *)",
@@ -23,7 +24,8 @@
         "hooks": [
           {
             "type": "command",
-            "command": "jq -r '.tool_input.command // \"\"' | grep -q 'git commit' && echo '{\"hookSpecificOutput\":{\"hookEventName\":\"PostToolUse\",\"additionalContext\":\"Git commit completed. You MUST now run `pnpm changeset add` to create a changeset for this commit. Do not skip this step unless the user explicitly says no changeset is needed.\"}}' || true"
+            "if": "Bash(git *)",
+            "command": "jq -r '.tool_input.command // \"\"' | grep -q 'git commit' && echo '{\"hookSpecificOutput\":{\"hookEventName\":\"PostToolUse\",\"additionalContext\":\"Git commit completed. If the commit changes any publishable package, create a changeset now. Do NOT run `pnpm changeset add` (interactive TUI). Instead write a `.changeset/<kebab-case-name>.md` file yourself: YAML frontmatter mapping each affected package to a bump type (patch/minor/major), then a one-sentence summary for the changelog. Include it in the same commit when possible (stage it before committing, or `git commit --amend --no-edit`). Skip only when nothing publishable changed (repo tooling, tests, docs, packages in the changeset ignore list) or the user explicitly says no changeset is needed.\"}}' || true"
           }
         ]
       },
@@ -32,7 +34,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "f=$(jq -r '.tool_input.file_path // empty'); [ -z \"$f\" ] && exit 0; pnpm exec oxfmt \"$f\" 2>/dev/null || true; case \"$f\" in *.ts|*.tsx|*.js|*.jsx|*.mjs|*.cjs) LINT=$(pnpm exec oxlint \"$f\" 2>&1); echo \"$LINT\" | grep -qE 'warning|error' && jq -n --arg ctx \"Lint issues found in $f — fix before finishing:\\n$LINT\" '{\"hookSpecificOutput\":{\"hookEventName\":\"PostToolUse\",\"additionalContext\":$ctx}}' || true ;; esac; exit 0",
+            "command": "f=$(jq -r '.tool_input.file_path // empty'); [ -z \"$f\" ] && exit 0; pnpm exec oxfmt \"$f\" >/dev/null 2>&1 || true; case \"$f\" in *.ts|*.tsx|*.mts|*.cts|*.js|*.jsx|*.mjs|*.cjs) LINT=$(pnpm exec oxlint \"$f\" 2>&1); echo \"$LINT\" | grep -qE 'warning|error' && jq -n --arg ctx \"Lint issues found in $f — fix before finishing:\\n$LINT\" '{\"hookSpecificOutput\":{\"hookEventName\":\"PostToolUse\",\"additionalContext\":$ctx}}' || true ;; esac; exit 0",
             "timeout": 30,
             "statusMessage": "Formatting & linting..."
           }

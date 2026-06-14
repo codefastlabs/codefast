@@ -1,5 +1,117 @@
 # @codefast/ui
 
+## 0.4.0-canary.5
+
+### Minor Changes
+
+- [#503](https://github.com/codefastlabs/codefast/pull/503) [`4738966`](https://github.com/codefastlabs/codefast/commit/473896609b6e4c4713fb8b391e7e6088b31f1cab) Thanks [@thevuong](https://github.com/thevuong)! - feat(checkbox): render the indeterminate state across the checkbox family — fill the box and swap to a minus icon when `data-state="indeterminate"`, with a matching `data-indeterminate` variant
+
+### Patch Changes
+
+- [#502](https://github.com/codefastlabs/codefast/pull/502) [`5a61b82`](https://github.com/codefastlabs/codefast/commit/5a61b827ba2a99920dcbf10d2589dfa59c3aa682) Thanks [@thevuong](https://github.com/thevuong)! - feat(motion): add control duration tokens and apply them to form controls
+
+  Define two semantic timing tokens in the motion foundation and use them across Switch, Checkbox (+ Cards/Group) and Radio (+ Group/Cards):
+
+  - `--transition-duration-control: 200ms` — container/ring (switch track, checkbox & radio box)
+  - `--transition-duration-control-indicator: 300ms` — the moving part (switch thumb, check/dot, native radio dot)
+
+  They live in the `--transition-duration-*` namespace so they mint clean `duration-control` / `duration-control-indicator` utilities. Because `animate-in` falls back to `--tw-duration`, the same `duration-*` utility drives both the state transitions and the indicator keyframes — one token, one utility, no arbitrary `duration-(--…)` syntax.
+
+- [#502](https://github.com/codefastlabs/codefast/pull/502) [`4da0e77`](https://github.com/codefastlabs/codefast/commit/4da0e77e7a7a3fe83709cba44ac8c2013f57755b) Thanks [@thevuong](https://github.com/thevuong)! - style(controls): differentiate motion tokens by role across form controls
+
+  Apply the design system's motion curves consistently: containers/rings use `ease-snappy`, while the moving/appearing indicators use `ease-spring`.
+
+  - Switch thumb now eases with `ease-spring` (the positional slide); the track keeps `ease-snappy`.
+  - Checkbox, CheckboxCards and CheckboxGroup indicators spring-scale in (`animate-in zoom-in-50 ease-spring`) instead of appearing instantly.
+  - RadioGroup and RadioCards dots spring-scale in, centering preserved.
+
+- [#502](https://github.com/codefastlabs/codefast/pull/502) [`930a916`](https://github.com/codefastlabs/codefast/commit/930a91678b6d370a273dc21b88a3e4fe06710b63) Thanks [@thevuong](https://github.com/thevuong)! - style(switch, checkbox): apply the ease-snappy motion token to control transitions
+
+  Switch (track + thumb slide) and the Checkbox family previously used bare `transition-*` utilities, falling back to Tailwind's hardcoded default curve. They now use the design system's `--ease-snappy` token so the timing stays consistent with the rest of the motion system and follows future theme retunes.
+
+- [#501](https://github.com/codefastlabs/codefast/pull/501) [`5469e9d`](https://github.com/codefastlabs/codefast/commit/5469e9d9c8c998258f5b008655943a6404b48edf) Thanks [@thevuong](https://github.com/thevuong)! - Migrate physical CSS direction utilities to their logical (start/end) equivalents so components mirror correctly under RTL.
+
+- [#502](https://github.com/codefastlabs/codefast/pull/502) [`9813afd`](https://github.com/codefastlabs/codefast/commit/9813afdbe4f5049e720820a048c304a5165c5b0c) Thanks [@thevuong](https://github.com/thevuong)! - style(radio): spring the native radio dot, matching RadioGroup
+
+  The native `Radio` input drew its dot with a `::before` that doubled as the unchecked fill, so animating it made the dot shrink in — the opposite of the Radix-based RadioGroup/RadioCards dots, which scale up. Move the inner fill onto the input's own `bg-background`/`bg-input` so `::before` is purely the dot, then scale it `0 → 1` with `before:transition-transform before:ease-spring` on check. The dot now grows in with the same spring curve as the other radios; the static appearance is unchanged in light and dark.
+
+- [#501](https://github.com/codefastlabs/codefast/pull/501) [`f84c59f`](https://github.com/codefastlabs/codefast/commit/f84c59f176033344002abc473747314d8800233d) Thanks [@thevuong](https://github.com/thevuong)! - fix(ui): flip transforms and resize cursors under `dir="rtl"`
+
+  Logical properties (`start-*`) flip in RTL but the paired `translate-x`/`cursor`
+  utilities do not, leaving elements offset. Add `rtl:` overrides so Dialog and
+  AlertDialog stay centred, the Switch thumb slides the correct way, and the
+  Carousel buttons, Resizable handle, Select popper offset, Sidebar rail cursors,
+  and RadioCards indicator all mirror correctly.
+
+- [#502](https://github.com/codefastlabs/codefast/pull/502) [`3647cb2`](https://github.com/codefastlabs/codefast/commit/3647cb28a72616a26f9b0e943217790b2735a7fd) Thanks [@thevuong](https://github.com/thevuong)! - refactor(switch): align default size to the spacing grid
+
+  Replace the hand-computed `h-[18.4px]` track and `translate-x-[calc(100%-2px)]` thumb offsets with on-grid utilities (`h-4.5`, `translate-x-3.5`/`translate-x-2.5`). The checked thumb travel is unchanged (14px default, 10px small); the default track is 0.4px shorter (18.4px → 18px).
+
+- [#497](https://github.com/codefastlabs/codefast/pull/497) [`a9ead5c`](https://github.com/codefastlabs/codefast/commit/a9ead5c97d442093dbd0fab2a846325e6310160f) Thanks [@thevuong](https://github.com/thevuong)! - Replace directional `text-left` utilities with logical `text-start` in accordion, alert-dialog, drawer, field, item, table, alert, and sidebar so text alignment follows the document direction in RTL layouts.
+
+- Updated dependencies []:
+  - @codefast/tailwind-variants@0.4.0-canary.5
+
+## 0.4.0-canary.4
+
+### Minor Changes
+
+- [#495](https://github.com/codefastlabs/codefast/pull/495) [`8fdbf99`](https://github.com/codefastlabs/codefast/commit/8fdbf99e9b889e6937aca721a3f439cc25b6ea4b) Thanks [@thevuong](https://github.com/thevuong)! - Add `--ease-exit` motion token and apply asymmetric enter/exit easing across overlay, popup, accordion, and sidebar components, syncing dialog overlay durations with content.
+
+- [#495](https://github.com/codefastlabs/codefast/pull/495) [`377224b`](https://github.com/codefastlabs/codefast/commit/377224bc337ca15ee4cfcfc1ddd9667bfce96b04) Thanks [@thevuong](https://github.com/thevuong)! - Add semantic motion duration tokens (`menu`, `popup`, `overlay`, `panel`, `expand`) and retune component timings for snappier feedback — menus 150/100ms, popovers 200/120ms, dialogs 220/150ms, sheets and drawers 320/220ms, accordion 200/150ms.
+
+### Patch Changes
+
+- [`6685ce3`](https://github.com/codefastlabs/codefast/commit/6685ce3db5042d0c1b90bda98d5d1517eeade1d2) Thanks [@thevuong](https://github.com/thevuong)! - refactor(ui): update source file patterns in preset.css
+
+- [#495](https://github.com/codefastlabs/codefast/pull/495) [`eecb986`](https://github.com/codefastlabs/codefast/commit/eecb9862353b93f76a03a75015a3b7c4e0ba948d) Thanks [@thevuong](https://github.com/thevuong)! - chore(deps): update catalog dependencies — radix-ui 1.5.0, react-hook-form 7.78.0, TanStack Router/Start patches, hono 4.12.25, oxfmt 0.54 / oxlint 1.69, knip 6.16, turbo 2.9.17-canary.7 — and bump pnpm to 11.5.2
+
+- [`451da65`](https://github.com/codefastlabs/codefast/commit/451da65cf5b55cf982b0cb72396d7e08cbeab4ec) Thanks [@thevuong](https://github.com/thevuong)! - refactor(ui): remove "use client" directive from multiple components
+
+- [`b4ac0df`](https://github.com/codefastlabs/codefast/commit/b4ac0df0ed6073915c5b3502af60bb65489bc1fc) Thanks [@thevuong](https://github.com/thevuong)! - refactor(ui): replace @radix-ui/react-context with radix-ui package
+
+- [`06ab079`](https://github.com/codefastlabs/codefast/commit/06ab079012d82e8bd37f47a9978a98c446b6b0c9) Thanks [@thevuong](https://github.com/thevuong)! - refactor(ui): adjust border radius in input group styles
+
+- [#495](https://github.com/codefastlabs/codefast/pull/495) [`48c6661`](https://github.com/codefastlabs/codefast/commit/48c66618f88d4fa93c769e9ede2776f5c8075aa2) Thanks [@thevuong](https://github.com/thevuong)! - fix(ui): align ContextMenuSubTrigger spacing with ContextMenuItem so submenu trigger icons sit correctly
+
+- [`c2e6f73`](https://github.com/codefastlabs/codefast/commit/c2e6f73d39912a9675f53233ce3464f76ad00b1b) Thanks [@thevuong](https://github.com/thevuong)! - refactor(ui): streamline component styling and className usage
+
+- [`801ac83`](https://github.com/codefastlabs/codefast/commit/801ac83659e00c84cf0d0dc4b1e2a632f7f26e20) Thanks [@thevuong](https://github.com/thevuong)! - refactor(ui): enhance InputGroup component structure and styling
+
+- [`dfcd7ef`](https://github.com/codefastlabs/codefast/commit/dfcd7ef01c224e5fa4f30b760daedda85b35dd55) Thanks [@thevuong](https://github.com/thevuong)! - feat(ui): enhance InputNumber component with new split variant and additional functionality
+
+- [#495](https://github.com/codefastlabs/codefast/pull/495) [`480292c`](https://github.com/codefastlabs/codefast/commit/480292c36615c682f58e88fdb3136781620b98c0) Thanks [@thevuong](https://github.com/thevuong)! - refactor(navigation-menu): pass the trigger `className` to `navigationMenuTriggerVariants` as a `ClassValue` array instead of pre-merging with `cn`, letting the variant resolver handle merging in one pass
+
+- [#495](https://github.com/codefastlabs/codefast/pull/495) [`391f4c7`](https://github.com/codefastlabs/codefast/commit/391f4c768a589eb47808ba8f1dcfe7c60ba2bfe5) Thanks [@thevuong](https://github.com/thevuong)! - Fix navigation menu viewport scale animation by replacing the invalid `origin-top-center` class with `origin-[top_center]`.
+
+- [`2425b93`](https://github.com/codefastlabs/codefast/commit/2425b9310ee6bf62c7b74a85516808f7159bf152) Thanks [@thevuong](https://github.com/thevuong)! - refactor(ui): update component styling for consistency and clarity
+
+- [#495](https://github.com/codefastlabs/codefast/pull/495) [`fa338d6`](https://github.com/codefastlabs/codefast/commit/fa338d61fbfafb94beaa4d05d93d01e2c005cc91) Thanks [@thevuong](https://github.com/thevuong)! - Normalize import statement order and package.json key order repo-wide via the new oxfmt `sortImports`/`sortPackageJson` settings — purely mechanical, no runtime behavior change.
+
+- [#495](https://github.com/codefastlabs/codefast/pull/495) [`68bc271`](https://github.com/codefastlabs/codefast/commit/68bc271a3f9864c68045ee495f510c19f3ac1c80) Thanks [@thevuong](https://github.com/thevuong)! - fix(ui): restore side-scoped slide animations on popover, hover-card, select, and tooltip
+
+  Reinstate ease-snappy easing with distinct open/close durations, scope slide-in
+  classes under data-open (and data-delayed-open for tooltip), and bring back
+  directional slide-out on close — matching the previously restored context menu,
+  dropdown menu, and menubar motion.
+
+- [`2247289`](https://github.com/codefastlabs/codefast/commit/2247289ccc8c983a5cf8dd4689d185eab6f6adb3) Thanks [@thevuong](https://github.com/thevuong)! - refactor(ui): enhance BreadcrumbSeparator component styling and props
+
+- [#495](https://github.com/codefastlabs/codefast/pull/495) [`b66cb9d`](https://github.com/codefastlabs/codefast/commit/b66cb9debecb933f84ab1b4c711a01430823b641) Thanks [@thevuong](https://github.com/thevuong)! - Scope overlay enter/exit timing with `animation-duration-*` utilities (no more implicit all-property transitions from `duration-*`), make the navigation menu viewport size transition explicit, and fix the input OTP caret blink speed so the intended 1s duration actually applies.
+
+- [`0636d46`](https://github.com/codefastlabs/codefast/commit/0636d46e54366a690fb8b9a85bb3adafe3e73fbc) Thanks [@thevuong](https://github.com/thevuong)! - refactor(ui): replace `react-day-picker` with `@daypicker/react`
+
+- [`ae3240a`](https://github.com/codefastlabs/codefast/commit/ae3240a4a8f026aa4f5d04fd270022139fc77433) Thanks [@thevuong](https://github.com/thevuong)! - feat(ui): export DirectionProvider to propagate reading direction
+
+- [`09c3782`](https://github.com/codefastlabs/codefast/commit/09c3782ad73a5d5d76e678d9d71ab22135cebd5a) Thanks [@thevuong](https://github.com/thevuong)! - refactor(ui): simplify DirectionProvider and useDirection
+
+- [#495](https://github.com/codefastlabs/codefast/pull/495) [`95b0ec4`](https://github.com/codefastlabs/codefast/commit/95b0ec41b5223ee48aeb6d82213f6b6d5c5cdd1e) Thanks [@thevuong](https://github.com/thevuong)! - Tune dialog, alert-dialog, drawer, and sheet overlay animations with asymmetric open/close durations and gentle easing.
+
+- [#495](https://github.com/codefastlabs/codefast/pull/495) [`c60a41f`](https://github.com/codefastlabs/codefast/commit/c60a41f28af1e51d29331c3716ec5023e41b617a) Thanks [@thevuong](https://github.com/thevuong)! - refactor(ui): drop redundant single-arg `cn(className)` in Breadcrumb, CalendarRoot, AlertDialogAction/Cancel, and SidebarTrigger — `className` already forwards through `...props`, so the extra destructure and wrapper added nothing
+
+- Updated dependencies [[`fa338d6`](https://github.com/codefastlabs/codefast/commit/fa338d61fbfafb94beaa4d05d93d01e2c005cc91), [`b097689`](https://github.com/codefastlabs/codefast/commit/b0976892cae3433670837aee0872262d38be0f45), [`7a4f8c3`](https://github.com/codefastlabs/codefast/commit/7a4f8c3b487526a319c6808d1164ba1c8168e9b6)]:
+  - @codefast/tailwind-variants@0.4.0-canary.4
+
 ## 0.3.16-canary.3
 
 ### Patch Changes

@@ -1,5 +1,17 @@
 # @codefast/tailwind-variants
 
+## 0.4.0-canary.5
+
+## 0.4.0-canary.4
+
+### Patch Changes
+
+- [#495](https://github.com/codefastlabs/codefast/pull/495) [`fa338d6`](https://github.com/codefastlabs/codefast/commit/fa338d61fbfafb94beaa4d05d93d01e2c005cc91) Thanks [@thevuong](https://github.com/thevuong)! - Normalize import statement order and package.json key order repo-wide via the new oxfmt `sortImports`/`sortPackageJson` settings — purely mechanical, no runtime behavior change.
+
+- [#495](https://github.com/codefastlabs/codefast/pull/495) [`b097689`](https://github.com/codefastlabs/codefast/commit/b0976892cae3433670837aee0872262d38be0f45) Thanks [@thevuong](https://github.com/thevuong)! - Simplify the `extend` resolver type by dropping a redundant generic parameter — public behavior and inference are unchanged.
+
+- [#495](https://github.com/codefastlabs/codefast/pull/495) [`7a4f8c3`](https://github.com/codefastlabs/codefast/commit/7a4f8c3b487526a319c6808d1164ba1c8168e9b6) Thanks [@thevuong](https://github.com/thevuong)! - fix(types): default the variant schema to a keyless record when `tv` is called without `variants`, so `className`/`class` accept full `ClassValue` inputs (arrays, objects) instead of being narrowed by a string index signature
+
 ## 0.3.16-canary.3
 
 ### Patch Changes

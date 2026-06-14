@@ -106,12 +106,8 @@ export function buildTwoWayComparisonRows(
   leftLibraryReport: LibraryReport,
   rightLibraryReport: LibraryReport,
 ): Array<TwoWayScenarioComparisonRow> {
-  const leftByScenarioId = new Map(
-    leftLibraryReport.scenarios.map((scenario) => [scenario.id, scenario]),
-  );
-  const rightByScenarioId = new Map(
-    rightLibraryReport.scenarios.map((scenario) => [scenario.id, scenario]),
-  );
+  const leftByScenarioId = new Map(leftLibraryReport.scenarios.map((scenario) => [scenario.id, scenario]));
+  const rightByScenarioId = new Map(rightLibraryReport.scenarios.map((scenario) => [scenario.id, scenario]));
   const displayOrder = orderedScenarioIds(leftLibraryReport, rightLibraryReport);
 
   const rows: Array<TwoWayScenarioComparisonRow> = [];
@@ -141,9 +137,7 @@ export function buildTwoWayComparisonRows(
   return rows;
 }
 
-function buildMarkdownHeaderLines(
-  columnTitles: TwoWayMarkdownColumnTitles,
-): readonly [string, string] {
+function buildMarkdownHeaderLines(columnTitles: TwoWayMarkdownColumnTitles): readonly [string, string] {
   const headerCells = [
     "Scenario",
     "Group",
@@ -222,12 +216,8 @@ export function renderTwoWayMarkdownReport(
           "",
           "These scenarios failed their pre-bench sanity check and were skipped:",
           "",
-          ...leftReport.sanityFailures.map(
-            (id) => `- ${options.sanityBulletMarkdownLabels.left}: \`${id}\``,
-          ),
-          ...rightReport.sanityFailures.map(
-            (id) => `- ${options.sanityBulletMarkdownLabels.right}: \`${id}\``,
-          ),
+          ...leftReport.sanityFailures.map((id) => `- ${options.sanityBulletMarkdownLabels.left}: \`${id}\``),
+          ...rightReport.sanityFailures.map((id) => `- ${options.sanityBulletMarkdownLabels.right}: \`${id}\``),
         ].join("\n");
 
   const sections: Array<string> = [

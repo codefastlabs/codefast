@@ -1,7 +1,7 @@
 import type { Binding } from "#/binding";
-import type { BindingIdentifier, Constructor, DependencyKey } from "#/types";
-import type { Token } from "#/token";
 import { bindingSlotEquals, bindingSlotToString } from "#/binding";
+import type { Token } from "#/token";
+import type { BindingIdentifier, Constructor, DependencyKey } from "#/types";
 
 /**
  * @since 0.3.16-canary.0
@@ -27,9 +27,7 @@ export class BindingRegistry {
     // Only apply last-wins for slot-based bindings (not predicate-only)
     if (!this._isPurePredicateBinding(binding)) {
       const existingIndex = bindingsForToken.findIndex(
-        (candidate) =>
-          !this._isPurePredicateBinding(candidate) &&
-          bindingSlotEquals(candidate.slot, binding.slot),
+        (candidate) => !this._isPurePredicateBinding(candidate) && bindingSlotEquals(candidate.slot, binding.slot),
       );
       if (existingIndex !== -1) {
         const replacedBinding = bindingsForToken[existingIndex]!;
@@ -128,11 +126,7 @@ export class BindingRegistry {
     return this._simpleNamed.get(token as DependencyKey)?.get(name);
   }
 
-  getSimpleTagged(
-    token: Token<unknown> | Constructor,
-    tagKey: string,
-    tagValue: unknown,
-  ): Binding | undefined {
+  getSimpleTagged(token: Token<unknown> | Constructor, tagKey: string, tagValue: unknown): Binding | undefined {
     return this._simpleTagged
       .get(token as DependencyKey)
       ?.get(tagKey)
@@ -155,10 +149,7 @@ export class BindingRegistry {
       return;
     }
     const [tagKey, tagValue] = slot.tags[0]!;
-    const byTagKey = this._simpleTagged.getOrInsert(
-      tokenKey,
-      new Map<string, Map<unknown, Binding>>(),
-    );
+    const byTagKey = this._simpleTagged.getOrInsert(tokenKey, new Map<string, Map<unknown, Binding>>());
     const byTagValue = byTagKey.getOrInsert(tagKey, new Map<unknown, Binding>());
     byTagValue.set(tagValue, binding);
   }

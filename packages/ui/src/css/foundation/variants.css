@@ -1,0 +1,121 @@
+/* -------------------------------------------------------------------------
+ * Variants
+ *
+ * Custom Tailwind variants for @codefast/ui. Prefer these over verbose
+ * arbitrary variants (`data-[state=open]:`, `data-[side=left]:`).
+ *
+ * Shorthand usage (composes with group-, peer-, in-, has- modifiers):
+ *   data-open:           → [data-state="open"] or [data-open]:not([data-open="false"])
+ *   group-data-disabled: → ancestor .group with matching data-disabled
+ *   in-data-side-left:   → ancestor with [data-side="left"]
+ * ------------------------------------------------------------------------- */
+
+/* -------------------------------------------------------------------------
+ * Theme
+ * ------------------------------------------------------------------------- */
+
+@custom-variant dark {
+  &:where(.dark, .dark *) {
+    @slot;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    &:where(:not(.light, .light *)) {
+      @slot;
+    }
+  }
+}
+
+/* -------------------------------------------------------------------------
+ * Layout — orientation & placement (Radix Popper)
+ * ------------------------------------------------------------------------- */
+
+@custom-variant data-horizontal (&:where([data-orientation="horizontal"]));
+@custom-variant data-vertical (&:where([data-orientation="vertical"]));
+
+@custom-variant data-side-top (&:where([data-side="top"]));
+@custom-variant data-side-right (&:where([data-side="right"]));
+@custom-variant data-side-bottom (&:where([data-side="bottom"]));
+@custom-variant data-side-left (&:where([data-side="left"]));
+
+/* -------------------------------------------------------------------------
+ * State — boolean & Radix data-state
+ *
+ * Block variants match both Radix data-state="…" and boolean data-* attrs
+ * so components can use one shorthand regardless of attribute source.
+ * ------------------------------------------------------------------------- */
+
+/* Matches Radix data-state="open" and boolean data-open (not "false"). */
+@custom-variant data-open {
+  &:where([data-state="open"]),
+  &:where([data-open]:not([data-open="false"])) {
+    @slot;
+  }
+}
+
+@custom-variant data-closed {
+  &:where([data-state="closed"]),
+  &:where([data-closed]:not([data-closed="false"])) {
+    @slot;
+  }
+}
+
+@custom-variant data-checked {
+  &:where([data-state="checked"]),
+  &:where([data-checked]:not([data-checked="false"])) {
+    @slot;
+  }
+}
+
+@custom-variant data-unchecked {
+  &:where([data-state="unchecked"]),
+  &:where([data-unchecked]:not([data-unchecked="false"])) {
+    @slot;
+  }
+}
+
+@custom-variant data-indeterminate {
+  &:where([data-state="indeterminate"]),
+  &:where([data-indeterminate]:not([data-indeterminate="false"])) {
+    @slot;
+  }
+}
+
+/* data-selected only matches explicit true, not bare data-selected. */
+@custom-variant data-selected {
+  &:where([data-state="selected"]),
+  &:where([data-selected="true"]) {
+    @slot;
+  }
+}
+
+@custom-variant data-active {
+  &:where([data-state="active"]),
+  &:where([data-active]:not([data-active="false"])) {
+    @slot;
+  }
+}
+
+@custom-variant data-disabled {
+  &:where([data-disabled="true"]),
+  &:where([data-disabled]:not([data-disabled="false"])) {
+    @slot;
+  }
+}
+
+@custom-variant data-focused {
+  &:where([data-focused="true"]),
+  &:where([data-focused]:not([data-focused="false"])) {
+    @slot;
+  }
+}
+
+/* -------------------------------------------------------------------------
+ * State — Radix-only (no boolean data-* equivalent)
+ * ------------------------------------------------------------------------- */
+
+@custom-variant data-on (&:where([data-state="on"]));
+@custom-variant data-collapsed (&:where([data-state="collapsed"]));
+@custom-variant data-hidden (&:where([data-state="hidden"]));
+@custom-variant data-visible (&:where([data-state="visible"]));
+@custom-variant data-delayed-open (&:where([data-state="delayed-open"]));

@@ -6,6 +6,7 @@
  * @codefast/di’s default last-wins slot is bridged to N retained registrations).
  */
 import { Container } from "inversify";
+
 import {
   RESOLVE_ALL_NAMED_COUNTS,
   RESOLVE_ALL_STRATEGY_COUNTS,
@@ -35,9 +36,7 @@ function buildResolveAllStrategiesScenario(strategyCount: ResolveAllStrategyCoun
       return () => {
         const strategies = container.getAll<number>(strategyIdentifier);
         if (strategies.length !== strategyCount) {
-          throw new Error(
-            `Expected ${String(strategyCount)} strategies, received ${String(strategies.length)}`,
-          );
+          throw new Error(`Expected ${String(strategyCount)} strategies, received ${String(strategies.length)}`);
         }
       };
     },
@@ -66,9 +65,7 @@ function buildResolveAllNamedScenario(namedCount: ResolveAllNamedCount): BenchSc
       return () => {
         const strategies = container.getAll<number>(strategyIdentifier, { name: targetName });
         if (strategies.length !== 1 || strategies[0] !== 0) {
-          throw new Error(
-            `Expected one named strategy 0, received ${String(strategies.length)} strategies`,
-          );
+          throw new Error(`Expected one named strategy 0, received ${String(strategies.length)} strategies`);
         }
       };
     },
@@ -80,9 +77,7 @@ function buildResolveAllNamedScenario(namedCount: ResolveAllNamedCount): BenchSc
  */
 export function buildInversifyResolveAllStrategiesScenarios(): ReadonlyArray<BenchScenario> {
   return [
-    ...RESOLVE_ALL_STRATEGY_COUNTS.map((strategyCount) =>
-      buildResolveAllStrategiesScenario(strategyCount),
-    ),
+    ...RESOLVE_ALL_STRATEGY_COUNTS.map((strategyCount) => buildResolveAllStrategiesScenario(strategyCount)),
     ...RESOLVE_ALL_NAMED_COUNTS.map((namedCount) => buildResolveAllNamedScenario(namedCount)),
   ];
 }

@@ -1,6 +1,6 @@
 import type { Binding } from "#/binding";
-import type { BindingTag, ConstraintContext, ResolveOptions } from "#/types";
 import { AmbiguousBindingError } from "#/errors";
+import type { BindingTag, ConstraintContext, ResolveOptions } from "#/types";
 
 /**
  * Select a single candidate from a list of bindings using slot matching + predicates.
@@ -70,10 +70,7 @@ function filterBindings(
 
   const result: Array<Binding> = [];
   for (const binding of bindings) {
-    const slotMatched =
-      selectionMode === "all"
-        ? matchesSlotForResolveAll(binding, hint)
-        : matchesSlot(binding, hint);
+    const slotMatched = selectionMode === "all" ? matchesSlotForResolveAll(binding, hint) : matchesSlot(binding, hint);
     if (slotMatched && matchesPredicate(binding, ctx)) {
       result.push(binding);
     }
@@ -84,9 +81,7 @@ function filterBindings(
 function matchesSlotForResolveAll(binding: Binding, hint: ResolveOptions | undefined): boolean {
   const hasExplicitSlotFilter =
     hint !== undefined &&
-    (hint.name !== undefined ||
-      (hint.tags !== undefined && hint.tags.length > 0) ||
-      hint.tag !== undefined);
+    (hint.name !== undefined || (hint.tags !== undefined && hint.tags.length > 0) || hint.tag !== undefined);
   if (!hasExplicitSlotFilter) {
     return true;
   }
@@ -140,11 +135,7 @@ function matchHintTag(
   hintTags: ReadonlyArray<BindingTag> | undefined,
   singleHintTag: BindingTag | undefined,
 ): boolean {
-  if (
-    singleHintTag !== undefined &&
-    singleHintTag[0] === tagKey &&
-    Object.is(singleHintTag[1], tagValue)
-  ) {
+  if (singleHintTag !== undefined && singleHintTag[0] === tagKey && Object.is(singleHintTag[1], tagValue)) {
     return true;
   }
   if (hintTags === undefined || hintTags.length === 0) {

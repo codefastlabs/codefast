@@ -1,6 +1,7 @@
 import { tv } from "@codefast/tailwind-variants";
-import type { MetaItem, MetricCardProps, MetricsResult } from "#/app/lib/metrics";
+
 import { fmtHz } from "#/app/lib/format";
+import type { MetaItem, MetricCardProps, MetricsResult } from "#/app/lib/metrics";
 import { cn } from "#/app/lib/utils";
 import type { EmbeddedScenarioSeries } from "#/types";
 
@@ -36,9 +37,7 @@ function renderMetaItem(item: MetaItem) {
       return (
         <>
           Median of per-run ratios ·{" "}
-          <span className="text-bh-ink-strong font-mono tracking-[-0.02em] tabular-nums">
-            {item.value}×
-          </span>
+          <span className="text-bh-ink-strong font-mono tracking-[-0.02em] tabular-nums">{item.value}×</span>
         </>
       );
     case "iqr-table":
@@ -50,9 +49,7 @@ function renderMetaItem(item: MetaItem) {
               key={row.libName}
             >
               <span className="text-bh-label min-w-0">{row.libName}</span>
-              <span className="text-bh-ink-mid shrink-0 font-mono tracking-[-0.02em] tabular-nums">
-                {row.iqrLabel}
-              </span>
+              <span className="text-bh-ink-mid shrink-0 font-mono tracking-[-0.02em] tabular-nums">{row.iqrLabel}</span>
             </div>
           ))}
         </div>
@@ -80,17 +77,13 @@ export function MetricsPanel({ currentScenario, runIndices, metricsData }: Metri
           </span>
         )}
       </div>
-      {currentScenario?.what && (
-        <p className="mt-2 text-sm leading-relaxed text-zinc-400">{currentScenario.what}</p>
-      )}
+      {currentScenario?.what && <p className="mt-2 text-sm leading-relaxed text-zinc-400">{currentScenario.what}</p>}
       <div className="mt-5 grid grid-cols-[1fr] gap-3 sm:grid-cols-[repeat(auto-fill,minmax(10.5rem,1fr))]">
         {metricsData?.cards.map((card) => (
           <MetricCard key={card.label} {...card} />
         ))}
       </div>
-      {metricsData?.footnote && (
-        <p className="mt-3 text-xs leading-relaxed text-zinc-500">{metricsData.footnote}</p>
-      )}
+      {metricsData?.footnote && <p className="mt-3 text-xs leading-relaxed text-zinc-500">{metricsData.footnote}</p>}
     </section>
   );
 }
@@ -104,11 +97,7 @@ function MetricCard({ label, value, meta, accentColor, isRatio }: MetricCardProp
         { "[--color-bh-metric-accent:var(--color-bh-ratio-accent)]": isRatio },
       )}
       role="group"
-      style={
-        accentColor
-          ? ({ "--color-bh-metric-accent": accentColor } as React.CSSProperties)
-          : undefined
-      }
+      style={accentColor ? ({ "--color-bh-metric-accent": accentColor } as React.CSSProperties) : undefined}
     >
       <div className="text-bh-metric-accent mb-[0.4rem] text-[0.625rem] font-semibold tracking-[0.09em] uppercase">
         {label}

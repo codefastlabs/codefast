@@ -1,11 +1,11 @@
+import { Context } from "radix-ui/internal";
 import type { ComponentProps, ComponentType, CSSProperties, JSX, ReactNode } from "react";
-import type { NameType, Payload, ValueType } from "recharts/types/component/DefaultTooltipContent";
+import { useId, useMemo } from "react";
 import type { TooltipContentProps, TooltipProps } from "recharts";
+import * as RechartsPrimitive from "recharts";
+import type { NameType, Payload, ValueType } from "recharts/types/component/DefaultTooltipContent";
 
 import { cn } from "#/lib/utils";
-import { Context } from "radix-ui/internal";
-import { useId, useMemo } from "react";
-import * as RechartsPrimitive from "recharts";
 
 /* -----------------------------------------------------------------------------
  * Type Definitions and Utilities
@@ -21,6 +21,8 @@ type MakeOptional<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
 
 const THEMES = { dark: ".dark", light: "" } as const;
 
+const INITIAL_DIMENSION = { height: 200, width: 320 } as const;
+
 /**
  * @since 0.3.16-canary.0
  */
@@ -29,10 +31,7 @@ type ChartConfig = Record<
   {
     label?: ReactNode;
     icon?: ComponentType;
-  } & (
-    | { color?: never; theme: Record<keyof typeof THEMES, string> }
-    | { color?: string; theme?: never }
-  )
+  } & ({ color?: never; theme: Record<keyof typeof THEMES, string> } | { color?: string; theme?: never })
 >;
 
 /* -----------------------------------------------------------------------------
@@ -55,8 +54,7 @@ interface ChartContextValue {
 
 const [createChartContext, createChartScope] = Context.createContextScope(CHART_PROVIDER_NAME);
 
-const [ChartContextProvider, useChartContext] =
-  createChartContext<ChartContextValue>(CHART_PROVIDER_NAME);
+const [ChartContextProvider, useChartContext] = createChartContext<ChartContextValue>(CHART_PROVIDER_NAME);
 
 /* -----------------------------------------------------------------------------
  * Component: Chart
@@ -68,6 +66,10 @@ const [ChartContextProvider, useChartContext] =
 interface ChartContainerProps extends ComponentProps<"div"> {
   children: ComponentProps<typeof RechartsPrimitive.ResponsiveContainer>["children"];
   config: ChartConfig;
+  initialDimension?: {
+    height: number;
+    width: number;
+  };
 }
 
 /**
@@ -79,10 +81,11 @@ function ChartContainer({
   className,
   config,
   id,
+  initialDimension = INITIAL_DIMENSION,
   ...props
 }: ScopedProps<ChartContainerProps>): JSX.Element {
   const uniqueId = useId();
-  const chartId = `chart-${id ?? uniqueId}`;
+  const chartId = `chart-${id ?? uniqueId.replace(/:/g, "")}`;
 
   return (
     <ChartContextProvider config={config} scope={__scopeChart}>
@@ -96,7 +99,9 @@ function ChartContainer({
         {...props}
       >
         <ChartStyle config={config} id={chartId} />
-        <RechartsPrimitive.ResponsiveContainer>{children}</RechartsPrimitive.ResponsiveContainer>
+        <RechartsPrimitive.ResponsiveContainer initialDimension={initialDimension}>
+          {children}
+        </RechartsPrimitive.ResponsiveContainer>
       </div>
     </ChartContextProvider>
   );
@@ -118,9 +123,7 @@ interface ChartStyleProps {
  * @since 0.3.16-canary.0
  */
 function ChartStyle({ config, id }: ChartStyleProps): ReactNode {
-  const colorConfig = Object.entries(config).filter(
-    ([, itemConfig]) => itemConfig.theme ?? itemConfig.color,
-  );
+  const colorConfig = Object.entries(config).filter(([, itemConfig]) => itemConfig.theme ?? itemConfig.color);
 
   if (colorConfig.length === 0) {
     return null;
@@ -142,10 +145,7 @@ function ChartStyle({ config, id }: ChartStyleProps): ReactNode {
 /**
  * @since 0.3.16-canary.0
  */
-type ChartTooltipProps<TValue extends ValueType, TName extends NameType> = TooltipProps<
-  TValue,
-  TName
->;
+type ChartTooltipProps<TValue extends ValueType, TName extends NameType> = TooltipProps<TValue, TName>;
 
 /**
  * @since 0.3.16-canary.0
@@ -219,9 +219,7 @@ function ChartTooltipContent<TValue extends ValueType, TName extends NameType>({
         : itemConfig?.label;
 
     if (labelFormatter) {
-      return (
-        <div className={cn("font-medium", labelClassName)}>{labelFormatter(value, payload)}</div>
-      );
+      return <div className={cn("font-medium", labelClassName)}>{labelFormatter(value, payload)}</div>;
     }
 
     if (!value) {
@@ -240,7 +238,7 @@ function ChartTooltipContent<TValue extends ValueType, TName extends NameType>({
   return (
     <div
       className={cn(
-        "grid min-w-[8rem] items-start gap-1.5 rounded-lg border border-border/50 bg-background px-2.5 py-1.5 text-xs shadow-xl",
+        "grid min-w-32 items-start gap-1.5 rounded-lg border border-border/50 bg-background px-2.5 py-1.5 text-xs shadow-xl",
         className,
       )}
     >
@@ -251,9 +249,7 @@ function ChartTooltipContent<TValue extends ValueType, TName extends NameType>({
           const itemConfig = getPayloadConfigFromPayload(config, item, key);
           const indicatorColor =
             color ??
-            (isRecord(item.payload) &&
-            "fill" in item.payload &&
-            typeof item.payload.fill === "string"
+            (isRecord(item.payload) && "fill" in item.payload && typeof item.payload.fill === "string"
               ? item.payload.fill
               : undefined) ??
             item.color;
@@ -262,7 +258,7 @@ function ChartTooltipContent<TValue extends ValueType, TName extends NameType>({
             <div
               key={key}
               className={cn(
-                "flex w-full flex-wrap items-stretch gap-2 [&>svg]:size-2.5 [&>svg]:text-muted-foreground",
+                "flex w-full flex-wrap items-stretch gap-2 [&>svg]:h-2.5 [&>svg]:w-2.5 [&>svg]:text-muted-foreground",
                 indicator === "dot" && "items-center",
               )}
             >
@@ -275,15 +271,12 @@ function ChartTooltipContent<TValue extends ValueType, TName extends NameType>({
                   ) : (
                     !hideIndicator && (
                       <div
-                        className={cn(
-                          "shrink-0 rounded-xs border-(--color-border) bg-(--color-bg)",
-                          {
-                            "h-2.5 w-2.5": indicator === "dot",
-                            "my-0.5": nestLabel && indicator === "dashed",
-                            "border-1.5 w-0 border-dashed bg-transparent": indicator === "dashed",
-                            "w-1": indicator === "line",
-                          },
-                        )}
+                        className={cn("shrink-0 rounded-xs border-(--color-border) bg-(--color-bg)", {
+                          "h-2.5 w-2.5": indicator === "dot",
+                          "my-0.5": nestLabel && indicator === "dashed",
+                          "w-0 border-[1.5px] border-dashed bg-transparent": indicator === "dashed",
+                          "w-1": indicator === "line",
+                        })}
                         style={
                           {
                             "--color-bg": indicatorColor,
@@ -294,22 +287,15 @@ function ChartTooltipContent<TValue extends ValueType, TName extends NameType>({
                     )
                   )}
                   <div
-                    className={cn(
-                      "flex flex-1 justify-between leading-none",
-                      nestLabel ? "items-end" : "items-center",
-                    )}
+                    className={cn("flex flex-1 justify-between leading-none", nestLabel ? "items-end" : "items-center")}
                   >
                     <div className="grid gap-1.5">
                       {nestLabel ? tooltipLabel : null}
-                      <span className="text-muted-foreground">
-                        {itemConfig?.label ?? item.name}
-                      </span>
+                      <span className="text-muted-foreground">{itemConfig?.label ?? item.name}</span>
                     </div>
                     {item.value != null && (
                       <span className="font-mono font-medium text-foreground tabular-nums">
-                        {typeof item.value === "number"
-                          ? item.value.toLocaleString()
-                          : safeToString(item.value)}
+                        {typeof item.value === "number" ? item.value.toLocaleString() : safeToString(item.value)}
                       </span>
                     )}
                   </div>
@@ -370,13 +356,7 @@ function ChartLegendContent({
   }
 
   return (
-    <div
-      className={cn(
-        "flex items-center justify-center gap-4",
-        verticalAlign === "top" ? "pb-3" : "pt-3",
-        className,
-      )}
-    >
+    <div className={cn("flex items-center justify-center gap-4", verticalAlign === "top" ? "pb-3" : "pt-3", className)}>
       {payload.map((item) => {
         let key = "value";
 
@@ -391,13 +371,13 @@ function ChartLegendContent({
         return (
           <div
             key={nameKey ? safeToString(itemConfig?.color ?? "") : safeToString(item.value ?? "")}
-            className="flex items-center gap-1.5 [&>svg]:size-3 [&>svg]:text-muted-foreground"
+            className="flex items-center gap-1.5 [&>svg]:h-3 [&>svg]:w-3 [&>svg]:text-muted-foreground"
           >
             {itemConfig?.icon && !hideIcon ? (
               <itemConfig.icon />
             ) : (
               <div
-                className="size-2 shrink-0 rounded-md"
+                className="h-2 w-2 shrink-0 rounded-xs"
                 style={{
                   backgroundColor: item.color,
                 }}
@@ -499,11 +479,7 @@ function getPayloadConfigFromPayload(
 /**
  * Generates CSS custom property for a specific theme and config item
  */
-function generateCssVariable(
-  key: string,
-  itemConfig: ChartConfig[string],
-  theme: string,
-): null | string {
+function generateCssVariable(key: string, itemConfig: ChartConfig[string], theme: string): null | string {
   const color = itemConfig.theme?.[theme as keyof typeof itemConfig.theme] ?? itemConfig.color;
 
   return color ? `  --color-${key}: ${color};` : null;
@@ -529,10 +505,7 @@ function generateThemeStyles(
 /**
  * Generates complete CSS styles for all themes
  */
-function generateChartStyles(
-  id: string,
-  colorConfig: Array<[string, ChartConfig[string]]>,
-): string {
+function generateChartStyles(id: string, colorConfig: Array<[string, ChartConfig[string]]>): string {
   return Object.entries(THEMES)
     .map(([theme, prefix]) => generateThemeStyles(theme, prefix, id, colorConfig))
     .join("\n\n");

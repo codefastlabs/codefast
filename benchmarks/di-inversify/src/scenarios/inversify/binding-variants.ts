@@ -9,6 +9,7 @@
  */
 import "reflect-metadata";
 import { Container, injectable } from "inversify";
+
 import { batched } from "#/harness/batched";
 import type { BenchScenario } from "#/scenarios/types";
 
@@ -151,9 +152,5 @@ function buildToSelfSingletonScenario(): BenchScenario {
  * @since 0.3.16-canary.0
  */
 export function buildInversifyBindingVariantScenarios(): ReadonlyArray<BenchScenario> {
-  return [
-    buildToResolvedThreeDepsScenario(),
-    buildToServiceRedirectScenario(),
-    buildToSelfSingletonScenario(),
-  ];
+  return [buildToResolvedThreeDepsScenario(), buildToServiceRedirectScenario(), buildToSelfSingletonScenario()];
 }

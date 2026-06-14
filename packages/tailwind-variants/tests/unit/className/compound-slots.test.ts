@@ -61,14 +61,7 @@ describe("Tailwind Variants (TV) - Compound Slots", () => {
     });
     const { base, cursor, item, next, prev } = pagination();
 
-    expect(base()).toHaveClassName([
-      "flex",
-      "flex-wrap",
-      "relative",
-      "gap-1",
-      "max-w-fit",
-      "text-xs",
-    ]);
+    expect(base()).toHaveClassName(["flex", "flex-wrap", "relative", "gap-1", "max-w-fit", "text-xs"]);
     expect(item()).toHaveClassName([
       "px-2",
       "py-1",
@@ -142,14 +135,7 @@ describe("Tailwind Variants (TV) - Compound Slots", () => {
       size: "xs",
     });
 
-    expect(base()).toHaveClassName([
-      "flex",
-      "flex-wrap",
-      "relative",
-      "gap-1",
-      "max-w-fit",
-      "text-xs",
-    ]);
+    expect(base()).toHaveClassName(["flex", "flex-wrap", "relative", "gap-1", "max-w-fit", "text-xs"]);
     expect(item()).toHaveClassName([
       "px-2",
       "py-1",

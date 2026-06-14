@@ -31,9 +31,7 @@ export class TokenNotBoundError extends DiError {
   readonly tokenName: string;
 
   constructor(tokenName: string) {
-    super(
-      `No binding found for token '${tokenName}'. Did you forget container.bind(${tokenName})?`,
-    );
+    super(`No binding found for token '${tokenName}'. Did you forget container.bind(${tokenName})?`);
     this.tokenName = tokenName;
   }
 }

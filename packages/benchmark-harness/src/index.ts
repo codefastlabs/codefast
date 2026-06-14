@@ -12,12 +12,7 @@ export {
   OBSERVATIONS_FILE_NAME,
 } from "#/shared/env-keys";
 
-export type {
-  Fingerprint,
-  ScenarioTrialResult,
-  SubprocessPayload,
-  TrialPayload,
-} from "#/shared/protocol";
+export type { Fingerprint, ScenarioTrialResult, SubprocessPayload, TrialPayload } from "#/shared/protocol";
 export {
   BENCH_RESULT_JSON_END,
   BENCH_RESULT_JSON_START,
@@ -64,10 +59,7 @@ export {
 } from "#/report/format";
 
 export type { JsonlBenchObservationRow } from "#/report/jsonl";
-export {
-  jsonlBenchObservationRowToFingerprint,
-  jsonlBenchObservationRowToScenarioTrialResult,
-} from "#/report/jsonl";
+export { jsonlBenchObservationRowToFingerprint, jsonlBenchObservationRowToScenarioTrialResult } from "#/report/jsonl";
 
 export { quantile, sortAscending } from "#/report/quantiles";
 
@@ -78,10 +70,6 @@ export type {
   TwoWayMarkdownReportOptions,
   TwoWayScenarioComparisonRow,
 } from "#/report/two-way";
-export {
-  buildTwoWayComparisonRows,
-  renderTwoWayConsoleReport,
-  renderTwoWayMarkdownReport,
-} from "#/report/two-way";
+export { buildTwoWayComparisonRows, renderTwoWayConsoleReport, renderTwoWayMarkdownReport } from "#/report/two-way";
 
 export { writeJsonlRun, writeMarkdownFile } from "#/report/write";

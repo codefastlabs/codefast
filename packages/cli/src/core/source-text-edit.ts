@@ -10,10 +10,7 @@ type SourceTextEdit = Readonly<{
 
 function lineStartIndexContaining(source: string, pos: number): number {
   const searchPos = Math.max(0, Math.min(pos, source.length));
-  const prevLineBreak = Math.max(
-    source.lastIndexOf("\n", searchPos - 1),
-    source.lastIndexOf("\r", searchPos - 1),
-  );
+  const prevLineBreak = Math.max(source.lastIndexOf("\n", searchPos - 1), source.lastIndexOf("\r", searchPos - 1));
   return prevLineBreak === -1 ? 0 : prevLineBreak + 1;
 }
 
@@ -67,11 +64,8 @@ export function endAfterOptionalCommaFollowingInSource(source: string, tokenEnd:
 /**
  * @since 0.3.16-canary.0
  */
-export function applyEditsDescending(
-  sourceText: string,
-  edits: ReadonlyArray<SourceTextEdit>,
-): string {
-  const sorted = [...edits].sort((editA, editB) => editB.start - editA.start);
+export function applyEditsDescending(sourceText: string, edits: ReadonlyArray<SourceTextEdit>): string {
+  const sorted = [...edits].toSorted((editA, editB) => editB.start - editA.start);
   let out = sourceText;
   for (const edit of sorted) {
     out = out.slice(0, edit.start) + edit.replacement + out.slice(edit.end);

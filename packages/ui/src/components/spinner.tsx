@@ -1,7 +1,7 @@
+import { VisuallyHidden } from "radix-ui";
 import type { ComponentProps, CSSProperties, ReactNode } from "react";
 
 import { cn } from "#/lib/utils";
-import { VisuallyHidden } from "radix-ui";
 
 /* -----------------------------------------------------------------------------
  * Component: Spinner
@@ -25,10 +25,7 @@ function Spinner({ children, className, loading = true, ...props }: SpinnerProps
   }
 
   const spinner = (
-    <span
-      className={cn("relative flex size-4 items-center justify-center opacity-60", className)}
-      {...props}
-    >
+    <span className={cn("relative flex size-4 items-center justify-center opacity-60", className)} {...props}>
       {Array.from({ length: SPINNER_COUNT }, (_, index) => (
         <span
           key={index}

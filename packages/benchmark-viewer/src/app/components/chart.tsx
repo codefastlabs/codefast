@@ -1,16 +1,7 @@
-import {
-  type ComponentProps,
-  type RefObject,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
 import { Chart, type ChartDataset } from "chart.js";
+import { type ComponentProps, type RefObject, useCallback, useEffect, useMemo, useRef, useState } from "react";
+
 import { ChevronDownIcon } from "#/app/components/icons";
-import type { EmbeddedLibraryMeta, EmbeddedRun, EmbeddedScenarioSeries } from "#/types";
-import { type PaletteEntry, PAN_PIXELS_X, RATIO_COLORS, ZOOM_STEP_X } from "#/app/lib/colors";
 import {
   ALL_TOOLBAR_DISABLED,
   categoryXScaleWindow,
@@ -18,17 +9,19 @@ import {
   computeChartToolbarDisabled,
   computeInitialCategoryWindow,
 } from "#/app/lib/chart-view";
+import { type PaletteEntry, PAN_PIXELS_X, RATIO_COLORS, ZOOM_STEP_X } from "#/app/lib/colors";
 import { formatLocal, isMacLikePlatform, spreadTierLabel } from "#/app/lib/format";
-import { cn } from "#/app/lib/utils";
 import { ratioFrom } from "#/app/lib/metrics";
 import { CHART_SKIP_TARGET_ID } from "#/app/lib/skip-chart";
+import { cn } from "#/app/lib/utils";
+import type { EmbeddedLibraryMeta, EmbeddedRun, EmbeddedScenarioSeries } from "#/types";
 
 function SegButton({ className, ...props }: ComponentProps<"button">) {
   return (
     <button
       {...props}
       className={cn(
-        "border-r-bh-border bg-bh-surface-seg text-bh-seg-ink hover:bg-bh-surface-seg-hover disabled:hover:bg-bh-table-seg-disabled m-0 rounded-none border-0 border-r px-3 py-[0.35rem] text-[0.8125rem] leading-5 font-medium last:border-r-0 focus:z-1 focus:outline-none focus-visible:z-1 focus-visible:shadow-[inset_0_0_0_0.125rem_var(--color-bh-blue)] disabled:cursor-not-allowed disabled:opacity-40",
+        "border-e-bh-border bg-bh-surface-seg text-bh-seg-ink hover:bg-bh-surface-seg-hover disabled:hover:bg-bh-table-seg-disabled m-0 rounded-none border-0 border-e px-3 py-[0.35rem] text-[0.8125rem] leading-5 font-medium last:border-e-0 focus:z-1 focus:outline-none focus-visible:z-1 focus-visible:shadow-[inset_0_0_0_0.125rem_var(--color-bh-blue)] disabled:cursor-not-allowed disabled:opacity-40",
         className,
       )}
       type="button"
@@ -40,7 +33,7 @@ function ChartTh({ className, ...props }: ComponentProps<"th">) {
   return (
     <th
       className={cn(
-        "border-b-bh-table-line bg-bh-table-head text-bh-label z-3 border-b px-[0.65rem] py-[0.15rem] text-left text-[0.7rem] font-semibold tracking-wider whitespace-nowrap uppercase",
+        "border-b-bh-table-line bg-bh-table-head text-bh-label z-3 border-b px-[0.65rem] py-[0.15rem] text-start text-[0.7rem] font-semibold tracking-wider whitespace-nowrap uppercase",
         className,
       )}
       {...props}
@@ -50,13 +43,7 @@ function ChartTh({ className, ...props }: ComponentProps<"th">) {
 
 function ChartTd({ className, ...props }: ComponentProps<"td">) {
   return (
-    <td
-      className={cn(
-        "border-b-bh-table-line border-b px-[0.65rem] py-[0.15rem] text-left",
-        className,
-      )}
-      {...props}
-    />
+    <td className={cn("border-b-bh-table-line border-b px-[0.65rem] py-[0.15rem] text-start", className)} {...props} />
   );
 }
 
@@ -132,17 +119,13 @@ export function ChartPanel({
   const initialCategoryViewRef = useRef<{ max: number; min: number } | null>(null);
   const syncToolbarRef = useRef<(() => void) | undefined>(undefined);
 
-  const [toolbarDisabled, setToolbarDisabled] =
-    useState<ChartToolbarDisabled>(ALL_TOOLBAR_DISABLED);
+  const [toolbarDisabled, setToolbarDisabled] = useState<ChartToolbarDisabled>(ALL_TOOLBAR_DISABLED);
 
   const primaryLib = useMemo(
     () => orderedLibraries.find((lib) => lib.isPrimary) ?? orderedLibraries[0],
     [orderedLibraries],
   );
-  const compareLibs = useMemo(
-    () => orderedLibraries.filter((lib) => !lib.isPrimary),
-    [orderedLibraries],
-  );
+  const compareLibs = useMemo(() => orderedLibraries.filter((lib) => !lib.isPrimary), [orderedLibraries]);
 
   const hasData = scenario !== null && runIndices.length > 0;
   const emptyReason = getEmptyReason(scenario, runIndices, runs);
@@ -247,9 +230,7 @@ export function ChartPanel({
         if (!primData || !cmpData) {
           return;
         }
-        const ratioData = runIndices.map((globalIx) =>
-          ratioFrom(primData.hz[globalIx], cmpData.hz[globalIx]),
-        );
+        const ratioData = runIndices.map((globalIx) => ratioFrom(primData.hz[globalIx], cmpData.hz[globalIx]));
         datasets.push({
           label: `${primaryLib.displayName} ÷ ${cmpLib.displayName}`,
           data: ratioData,
@@ -279,7 +260,7 @@ export function ChartPanel({
           color: "rgba(235, 235, 245, 0.42)",
         },
         grid: { color: "rgba(255, 255, 255, 0.055)", drawOnChartArea: true },
-        ...(xWindow ?? {}),
+        ...xWindow,
       },
       y: {
         type: useLogScale ? "logarithmic" : "linear",
@@ -368,15 +349,12 @@ export function ChartPanel({
                 if (ctx.dataset.yAxisID === "y1") {
                   return `${datasetLabel}: ${Number(rawHz).toFixed(3)}×`;
                 }
-                const matchedLib = orderedLibraries.find((lib) =>
-                  datasetLabel.startsWith(lib.displayName),
-                );
+                const matchedLib = orderedLibraries.find((lib) => datasetLabel.startsWith(lib.displayName));
                 let extra = "";
                 if (matchedLib) {
                   const libData = scenario.libraries[matchedLib.key];
                   const globalIx = runIndices[ctx.dataIndex];
-                  const iqrFraction =
-                    globalIx !== undefined ? libData?.iqrFraction[globalIx] : null;
+                  const iqrFraction = globalIx !== undefined ? libData?.iqrFraction[globalIx] : null;
                   if (typeof iqrFraction === "number" && Number.isFinite(iqrFraction)) {
                     extra = ` · IQR ${(iqrFraction * 100).toFixed(1)}%${spreadTierLabel(iqrFraction)}`;
                   }
@@ -390,7 +368,7 @@ export function ChartPanel({
               enabled: true,
               mode: "x",
               onPanComplete: ({ chart: panChart }) => {
-                chartRef.current = panChart as Chart;
+                chartRef.current = panChart;
                 queueMicrotask(() => syncToolbarRef.current?.());
               },
             },
@@ -400,7 +378,7 @@ export function ChartPanel({
               mode: "x",
               drag: { enabled: false },
               onZoomComplete: ({ chart: zoomChart }) => {
-                chartRef.current = zoomChart as Chart;
+                chartRef.current = zoomChart;
                 queueMicrotask(() => syncToolbarRef.current?.());
               },
             },
@@ -478,10 +456,7 @@ export function ChartPanel({
     return () => mql.removeEventListener("change", onChange);
   }, []);
 
-  function applyChartAction(
-    disabledKey: keyof ChartToolbarDisabled,
-    chartAction: (chart: Chart) => void,
-  ) {
+  function applyChartAction(disabledKey: keyof ChartToolbarDisabled, chartAction: (chart: Chart) => void) {
     const chart = chartRef.current;
     if (!chart || toolbarDisabled[disabledKey]) {
       return;
@@ -519,10 +494,7 @@ export function ChartPanel({
     >
       <div className="flex flex-wrap items-start justify-between gap-3 border-b border-white/6 pb-4">
         <div>
-          <h2
-            className="text-[0.9375rem] font-semibold tracking-[-0.01em] text-zinc-50"
-            id="chart-section-title"
-          >
+          <h2 className="text-[0.9375rem] font-semibold tracking-[-0.01em] text-zinc-50" id="chart-section-title">
             Throughput over filtered runs
           </h2>
           <p className="mt-1.5 text-[0.8125rem] leading-snug text-zinc-500">
@@ -575,8 +547,8 @@ export function ChartPanel({
       </div>
 
       <p className="text-[0.8125rem] leading-relaxed text-zinc-500">
-        Opens on newest portion of history; Reset zoom restores full range. <WheelHint /> Drag pans
-        on the chart · legend toggles series.
+        Opens on newest portion of history; Reset zoom restores full range. <WheelHint /> Drag pans on the chart ·
+        legend toggles series.
       </p>
 
       <section
@@ -591,7 +563,7 @@ export function ChartPanel({
             className="bg-bh-overlay-soft absolute inset-0 z-10 flex flex-col items-center justify-center gap-4 rounded-2xl p-6 text-center backdrop-blur-md"
             id="chart-empty-state"
           >
-            <p className="text-bh-meta max-w-[24rem] text-sm leading-normal">{emptyReason}</p>
+            <p className="text-bh-meta max-w-96 text-sm leading-normal">{emptyReason}</p>
             <div className="flex flex-wrap items-center justify-center gap-2">
               {envKey && (
                 <button
@@ -628,20 +600,15 @@ export function ChartPanel({
       </section>
 
       {/* Display toggles — `group` enables group-open: chevron rotation */}
-      <details
-        className="group mt-1 border-t border-white/6 sm:mt-0 sm:border-t-0"
-        ref={displayDetailsRef}
-      >
-        <summary className="focus-visible:outline-bh-blue flex cursor-pointer list-none items-center justify-between gap-3 rounded-xl py-2.5 pr-0.5 text-zinc-200 select-none marker:content-[''] focus-visible:outline focus-visible:outline-offset-2 max-sm:-mx-0.5 max-sm:px-1 max-sm:active:bg-white/4 sm:hidden [&::-webkit-details-marker]:hidden">
+      <details className="group mt-1 border-t border-white/6 sm:mt-0 sm:border-t-0" ref={displayDetailsRef}>
+        <summary className="focus-visible:outline-bh-blue flex cursor-pointer list-none items-center justify-between gap-3 rounded-xl py-2.5 pe-0.5 text-zinc-200 select-none marker:content-[''] focus-visible:outline focus-visible:outline-offset-2 max-sm:-mx-0.5 max-sm:px-1 max-sm:active:bg-white/4 sm:hidden [&::-webkit-details-marker]:hidden">
           <span className="text-bh-label text-[0.65rem] font-semibold tracking-[0.14em] uppercase">
             Display &amp; export
           </span>
           <ChevronDownIcon className="size-4 shrink-0 text-zinc-500 transition-transform duration-200 ease-out group-open:rotate-180 sm:hidden" />
         </summary>
         <div className="flex flex-col gap-3 text-[0.9rem] text-zinc-300 max-sm:gap-0 max-sm:divide-y max-sm:divide-white/6 max-sm:overflow-hidden max-sm:rounded-xl max-sm:bg-black/22 max-sm:py-0 max-sm:ring-1 max-sm:ring-white/6 sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-5 sm:gap-y-2 sm:divide-y-0 sm:pt-4">
-          <span className="text-bh-label-muted hidden text-[0.62rem] tracking-[0.12em] sm:inline">
-            Display
-          </span>
+          <span className="text-bh-label-muted hidden text-[0.62rem] tracking-[0.12em] sm:inline">Display</span>
           <label className="inline-flex cursor-pointer items-center gap-2.5 rounded-lg py-0.5 hover:text-zinc-100 max-sm:min-h-11 max-sm:justify-between max-sm:gap-3 max-sm:border-0 max-sm:px-3 max-sm:py-2.5">
             <input
               aria-label="P25–P75 band"
@@ -676,7 +643,7 @@ export function ChartPanel({
               : "Primary ratios"}
           </label>
           <button
-            className="border-bh-border bg-bh-fill-white-4 shadow-bh-btn-reload text-bh-ink hover:bg-bh-fill-white-7 hover:border-bh-border-strong hover:text-bh-ink-hover focus-visible:outline-bh-blue order-last w-full shrink-0 justify-center rounded-xl border px-4 py-2.5 font-[inherit] text-[0.8125rem] font-medium tracking-[-0.015em] backdrop-blur-[0.875rem] backdrop-saturate-160 [transition:background_0.18s_ease,border-color_0.18s_ease,color_0.18s_ease] focus-visible:outline focus-visible:outline-offset-[0.1875rem] max-sm:mt-0 max-sm:min-h-11 max-sm:rounded-none max-sm:border-0 max-sm:py-3 sm:order-0 sm:ml-auto sm:w-auto sm:py-2"
+            className="border-bh-border bg-bh-fill-white-4 shadow-bh-btn-reload text-bh-ink hover:bg-bh-fill-white-7 hover:border-bh-border-strong hover:text-bh-ink-hover focus-visible:outline-bh-blue order-last w-full shrink-0 justify-center rounded-xl border px-4 py-2.5 font-[inherit] text-[0.8125rem] font-medium tracking-[-0.015em] backdrop-blur-md backdrop-saturate-160 [transition:background_0.18s_ease,border-color_0.18s_ease,color_0.18s_ease] focus-visible:outline focus-visible:outline-offset-[0.1875rem] max-sm:mt-0 max-sm:min-h-11 max-sm:rounded-none max-sm:border-0 max-sm:py-3 sm:order-0 sm:ms-auto sm:w-auto sm:py-2"
             id="chart-download-png-btn"
             onClick={() => onDownloadPng(chartRef)}
             title="Capture current chart view as PNG"
@@ -696,8 +663,7 @@ export function ChartPanel({
           Tabular data for the current chart (accessibility)
         </summary>
         <p className="mt-2 text-xs leading-relaxed text-zinc-500">
-          Same points and libraries as the line chart above; newest run first. Useful for screen
-          readers and copy‑paste.
+          Same points and libraries as the line chart above; newest run first. Useful for screen readers and copy‑paste.
         </p>
         <div className="border-bh-border bg-bh-scrim-table mt-3 overflow-x-auto rounded-xl border [-webkit-overflow-scrolling:touch]">
           <table aria-label="Chart series data" className="w-full border-collapse text-[0.8rem]">
@@ -710,7 +676,7 @@ export function ChartPanel({
               {hasData &&
                 runIndices
                   .slice()
-                  .reverse()
+                  .toReversed()
                   .map((globalIx) => {
                     const run = runs[globalIx];
                     return run ? (
@@ -737,13 +703,9 @@ function WheelHint() {
   return (
     <span suppressHydrationWarning>
       {isMacLikePlatform() ? (
-        <kbd className="rounded border border-zinc-700 bg-zinc-800 px-1.5 py-px font-mono text-zinc-300">
-          ⌃ Control
-        </kbd>
+        <kbd className="rounded border border-zinc-700 bg-zinc-800 px-1.5 py-px font-mono text-zinc-300">⌃ Control</kbd>
       ) : (
-        <kbd className="rounded border border-zinc-700 bg-zinc-800 px-1.5 py-px font-mono text-zinc-300">
-          Ctrl
-        </kbd>
+        <kbd className="rounded border border-zinc-700 bg-zinc-800 px-1.5 py-px font-mono text-zinc-300">Ctrl</kbd>
       )}
       +wheel zooms ·
     </span>
@@ -778,12 +740,12 @@ function ChartTableHeader({ orderedLibraries, compareLibs }: ChartTableHeaderPro
       <ChartTh scope="col">Run (local)</ChartTh>
       <ChartTh scope="col">Folder</ChartTh>
       {orderedLibraries.map((lib) => (
-        <ChartTh className="text-right tabular-nums" key={lib.key} scope="col">
+        <ChartTh className="text-end tabular-nums" key={lib.key} scope="col">
           {lib.displayName} hz/op
         </ChartTh>
       ))}
       {compareLibs.map((cmp) => (
-        <ChartTh className="text-bh-ratio-accent text-right tabular-nums" key={cmp.key} scope="col">
+        <ChartTh className="text-bh-ratio-accent text-end tabular-nums" key={cmp.key} scope="col">
           ÷ {cmp.displayName}
         </ChartTh>
       ))}
@@ -800,14 +762,7 @@ interface ChartTableRowProps {
   compareLibs: Array<EmbeddedLibraryMeta>;
 }
 
-function ChartTableRow({
-  globalIx,
-  run,
-  scenario,
-  orderedLibraries,
-  primaryLib,
-  compareLibs,
-}: ChartTableRowProps) {
+function ChartTableRow({ globalIx, run, scenario, orderedLibraries, primaryLib, compareLibs }: ChartTableRowProps) {
   const localClock = formatLocal(run.timestampIso, run.folder);
 
   const libHzMap: Record<string, number | null> = {};
@@ -825,7 +780,7 @@ function ChartTableRow({
       {orderedLibraries.map((lib) => {
         const hz = libHzMap[lib.key];
         return (
-          <ChartTd className="text-right tabular-nums" key={lib.key}>
+          <ChartTd className="text-end tabular-nums" key={lib.key}>
             {hz !== null ? Number(hz).toLocaleString("en-US", { maximumFractionDigits: 0 }) : "—"}
           </ChartTd>
         );
@@ -833,7 +788,7 @@ function ChartTableRow({
       {compareLibs.map((cmp) => {
         const ratio = ratioFrom(primaryHz, libHzMap[cmp.key] ?? null);
         return (
-          <ChartTd className="text-right tabular-nums" key={cmp.key}>
+          <ChartTd className="text-end tabular-nums" key={cmp.key}>
             {ratio !== null ? `${ratio.toFixed(3)}×` : "—"}
           </ChartTd>
         );

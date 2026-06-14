@@ -1,17 +1,16 @@
-import type { ReactNode } from "react";
-import { HeadContent, Link, Scripts, createRootRoute } from "@tanstack/react-router";
-import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
-import { TanStackDevtools } from "@tanstack/react-devtools";
+import { AppearanceProvider, AppearanceScript, resolveColorScheme } from "@codefast/theme";
+import { getRootColorSchemeServerFn, getColorSchemeServerFn, persistColorSchemeCookie } from "@codefast/theme/start";
 import { Badge } from "@codefast/ui/badge";
 import { Button } from "@codefast/ui/button";
-import { AppearanceProvider, AppearanceScript, resolveColorScheme } from "@codefast/theme";
-import {
-  getRootColorSchemeServerFn,
-  getColorSchemeServerFn,
-  persistColorSchemeCookie,
-} from "@codefast/theme/start";
-import { Footer } from "#/components/footer";
-import { Header } from "#/components/header";
+import { cn } from "@codefast/ui/lib/utils";
+import { TanStackDevtools } from "@tanstack/react-devtools";
+import { HeadContent, Link, Scripts, createRootRoute } from "@tanstack/react-router";
+import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
+import type { ReactNode } from "react";
+
+import { Footer } from "#/components/layout/footer";
+import { Header } from "#/components/layout/header";
+
 import appCss from "#/styles.css?url";
 
 const SITE_NAME = "codefast/ui";
@@ -108,7 +107,7 @@ function RootDocument({ children }: { children: ReactNode }) {
   return (
     <html
       lang="en"
-      className={`${resolvedColorScheme} min-h-full`}
+      className={cn(resolvedColorScheme, "min-h-full")}
       style={{ colorScheme: resolvedColorScheme }}
       suppressHydrationWarning
     >

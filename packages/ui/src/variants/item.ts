@@ -1,5 +1,4 @@
 import type { VariantProps } from "#/lib/utils";
-
 import { tv } from "#/lib/utils";
 
 /* -----------------------------------------------------------------------------
@@ -10,19 +9,20 @@ import { tv } from "#/lib/utils";
  * @since 0.3.16-canary.0
  */
 const itemVariants = tv({
-  base: "group/item flex flex-wrap items-center rounded-md border border-transparent text-sm outline-hidden transition-colors duration-100 focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 motion-reduce:transition-none motion-reduce:duration-0 [a]:transition-colors [a]:hover:bg-accent/50 [a]:motion-reduce:transition-none",
+  base: "group/item flex w-full flex-wrap items-center rounded-md border text-sm transition-colors duration-100 outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 [a]:transition-colors [a]:hover:bg-muted",
   defaultVariants: {
     size: "default",
     variant: "default",
   },
   variants: {
     size: {
-      default: "gap-4 p-4",
-      sm: "gap-2.5 px-4 py-3",
+      default: "gap-3.5 px-4 py-3.5",
+      sm: "gap-2.5 px-3 py-2.5",
+      xs: "gap-2 px-2.5 py-2 in-data-[slot=dropdown-menu-content]:p-0",
     },
     variant: {
-      default: "bg-transparent",
-      muted: "bg-muted/50",
+      default: "border-transparent",
+      muted: "border-transparent bg-muted/50",
       outline: "border-border",
     },
   },
@@ -36,15 +36,16 @@ const itemVariants = tv({
  * @since 0.3.16-canary.0
  */
 const itemMediaVariants = tv({
-  base: "flex shrink-0 items-center justify-center gap-2 group-has-[[data-slot=item-description]]/item:translate-y-0.5 group-has-[[data-slot=item-description]]/item:self-start [&_svg]:pointer-events-none",
+  base: "flex shrink-0 items-center justify-center gap-2 group-has-data-[slot=item-description]/item:translate-y-0.5 group-has-data-[slot=item-description]/item:self-start [&_svg]:pointer-events-none",
   defaultVariants: {
     variant: "default",
   },
   variants: {
     variant: {
       default: "bg-transparent",
-      icon: "size-8 shrink-0 rounded-md border bg-muted [&_svg:not([class*='size-'])]:size-4",
-      image: "size-10 shrink-0 overflow-hidden rounded-md [&_img]:size-full [&_img]:object-cover",
+      icon: "[&_svg:not([class*='size-'])]:size-4",
+      image:
+        "size-10 overflow-hidden rounded-sm group-data-[size=sm]/item:size-8 group-data-[size=xs]/item:size-6 [&_img]:size-full [&_img]:object-cover",
     },
   },
 });

@@ -5,6 +5,7 @@
  * of a 512-step transient dependency chain on every measured iteration.
  */
 import { Container, token } from "@codefast/di";
+
 import type { BenchScenario } from "#/scenarios/types";
 
 const SCALE_CHAIN_SIZE = 512;

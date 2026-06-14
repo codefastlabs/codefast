@@ -6,9 +6,8 @@
  * foundation for CSS class processing throughout the package.
  */
 
-import type { ConfigExtension } from "tailwind-merge";
-
 import { clsx } from "clsx";
+import type { ConfigExtension } from "tailwind-merge";
 import { extendTailwindMerge, twMerge } from "tailwind-merge";
 
 import type {
@@ -164,9 +163,7 @@ export const isSlotClassMap = (value: ClassValue): value is Record<string, Class
  *
  * @since 0.3.16-canary.0
  */
-export const hasBooleanVariantValues = <T extends Record<string, unknown>>(
-  variantGroup: T,
-): variantGroup is T => {
+export const hasBooleanVariantValues = <T extends Record<string, unknown>>(variantGroup: T): variantGroup is T => {
   return "true" in variantGroup || "false" in variantGroup;
 };
 
@@ -200,12 +197,9 @@ export const hasSlotsConfig = <T extends VariantSchema, S extends SlotSchema>(
  * @since 0.3.16-canary.0
  */
 export const hasExtendConfig = <T extends VariantSchema, S extends SlotSchema>(
-  configuration:
-    | VariantConfig<T>
-    | SlotVariantConfig<T, S>
-    | ExtendedVariantConfig<VariantSchema, T, SlotSchema, S>,
+  configuration: VariantConfig<T> | SlotVariantConfig<T, S> | ExtendedVariantConfig<VariantSchema, T, SlotSchema, S>,
 ): configuration is ExtendedVariantConfig<VariantSchema, T, SlotSchema, S> & {
-  readonly extend: VariantResolver<VariantSchema, SlotSchema>;
+  readonly extend: VariantResolver<VariantSchema>;
 } => {
   return "extend" in configuration && configuration.extend !== undefined;
 };

@@ -31,10 +31,9 @@ export type ArrangeSuggestGroupsRequest = {
 /**
  * @since 0.3.16-canary.0
  */
-export const arrangeAnalyzeDirectoryRequestSchema: z.ZodType<ArrangeAnalyzeDirectoryRequest> =
-  z.object({
-    analyzeRootPath: z.string().min(1, "analyzeRootPath is required"),
-  });
+export const arrangeAnalyzeDirectoryRequestSchema: z.ZodType<ArrangeAnalyzeDirectoryRequest> = z.object({
+  analyzeRootPath: z.string().min(1, "analyzeRootPath is required"),
+});
 
 /**
  * @since 0.3.16-canary.0

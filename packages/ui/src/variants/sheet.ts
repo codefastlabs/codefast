@@ -1,5 +1,4 @@
 import type { VariantProps } from "#/lib/utils";
-
 import { tv } from "#/lib/utils";
 
 /* -----------------------------------------------------------------------------
@@ -10,18 +9,17 @@ import { tv } from "#/lib/utils";
  * @since 0.3.16-canary.0
  */
 const sheetContentVariants = tv({
-  base: "fixed z-50 flex flex-col gap-4 overflow-auto bg-popover bg-clip-padding text-sm text-popover-foreground shadow-lg ease-ui motion-reduce:animate-none motion-reduce:transition-none motion-reduce:duration-0 data-open:animate-in data-open:animation-duration-500 data-closed:animate-out data-closed:animation-duration-500",
+  base: "fixed z-50 flex flex-col gap-4 bg-popover bg-clip-padding text-sm text-popover-foreground shadow-lg transition ease-ui data-open:animate-in data-open:animation-duration-panel-in data-open:fade-in-0 data-closed:animate-out data-closed:ease-exit data-closed:animation-duration-panel-out data-closed:fade-out-0",
   defaultVariants: {
     side: "right",
   },
   variants: {
     side: {
-      bottom:
-        "inset-x-0 bottom-0 max-h-[80dvh] rounded-t-2xl border-t pb-[env(safe-area-inset-bottom)] data-open:slide-in-from-bottom data-closed:slide-out-to-bottom",
-      left: "inset-y-0 left-0 h-full w-3/4 border-r sm:max-w-sm data-open:slide-in-from-left data-closed:slide-out-to-left",
+      bottom: "inset-x-0 bottom-0 h-auto border-t data-open:slide-in-from-bottom-10 data-closed:slide-out-to-bottom-10",
+      left: "inset-y-0 start-0 h-full w-3/4 border-e sm:max-w-sm data-open:slide-in-from-left-10 data-closed:slide-out-to-left-10",
       right:
-        "inset-y-0 right-0 h-full w-3/4 border-l sm:max-w-sm data-open:slide-in-from-right data-closed:slide-out-to-right",
-      top: "inset-x-0 top-0 max-h-[80vh] border-b data-open:slide-in-from-top data-closed:slide-out-to-top",
+        "inset-y-0 end-0 h-full w-3/4 border-s sm:max-w-sm data-open:slide-in-from-right-10 data-closed:slide-out-to-right-10",
+      top: "inset-x-0 top-0 h-auto border-b data-open:slide-in-from-top-10 data-closed:slide-out-to-top-10",
     },
   },
 });

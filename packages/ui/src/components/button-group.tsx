@@ -1,12 +1,10 @@
-import type { ButtonGroupVariants } from "#/variants/button-group";
+import { Slot } from "radix-ui";
 import type { ComponentProps, JSX } from "react";
 
-import { cn } from "#/lib/utils";
-
-import { buttonGroupVariants } from "#/variants/button-group";
-import { Slot } from "radix-ui";
-
 import { Separator } from "#/components/separator";
+import { cn } from "#/lib/utils";
+import type { ButtonGroupVariants } from "#/variants/button-group";
+import { buttonGroupVariants } from "#/variants/button-group";
 
 /* -----------------------------------------------------------------------------
  * Component: ButtonGroup
@@ -46,11 +44,7 @@ interface ButtonGroupTextProps extends ComponentProps<"div"> {
 /**
  * @since 0.3.16-canary.0
  */
-function ButtonGroupText({
-  asChild = false,
-  className,
-  ...props
-}: ButtonGroupTextProps): JSX.Element {
+function ButtonGroupText({ asChild = false, className, ...props }: ButtonGroupTextProps): JSX.Element {
   const Component = asChild ? Slot.Root : "div";
 
   return (

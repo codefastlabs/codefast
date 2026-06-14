@@ -9,21 +9,13 @@ interface FindPanelProps {
 /**
  * @since 0.3.16-canary.1
  */
-export function FindPanel({
-  search,
-  group,
-  uniqueGroups,
-  onSearchChange,
-  onGroupChange,
-}: FindPanelProps) {
+export function FindPanel({ search, group, uniqueGroups, onSearchChange, onGroupChange }: FindPanelProps) {
   return (
     <section
       aria-label="Find scenarios"
       className="border-bh-border bg-bh-surface mt-8 rounded-2xl border px-4 py-4 shadow-(--shadow-bh-glass-tight) backdrop-blur-xl backdrop-saturate-180 sm:mt-10 sm:px-6 sm:py-5"
     >
-      <h2 className="text-bh-label text-[0.65rem] font-semibold tracking-[0.14em] uppercase">
-        Find scenarios
-      </h2>
+      <h2 className="text-bh-label text-[0.65rem] font-semibold tracking-[0.14em] uppercase">Find scenarios</h2>
       <div className="mt-4 flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-end sm:gap-x-6 sm:gap-y-4">
         <label className="block w-full min-w-0 shrink-0 sm:w-auto sm:min-w-[min(100%,16rem)]">
           <span className="mb-1.5 block text-[0.8125rem] font-medium text-zinc-400">Search</span>

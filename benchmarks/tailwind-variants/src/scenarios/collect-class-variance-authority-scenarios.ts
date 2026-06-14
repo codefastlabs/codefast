@@ -6,8 +6,5 @@ import type { AnyScenario } from "#/scenarios/types";
  * @since 0.3.16-canary.0
  */
 export function collectAllClassVarianceAuthorityScenarios(): ReadonlyArray<AnyScenario> {
-  return [
-    ...buildClassVarianceAuthoritySimpleScenarios(),
-    ...buildClassVarianceAuthorityComplexScenarios(),
-  ];
+  return [...buildClassVarianceAuthoritySimpleScenarios(), ...buildClassVarianceAuthorityComplexScenarios()];
 }

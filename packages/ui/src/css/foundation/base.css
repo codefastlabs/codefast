@@ -1,0 +1,74 @@
+/* -------------------------------------------------------------------------
+ * Base
+ *
+ * Global element defaults layered into Tailwind's `base` cascade: default
+ * border/outline colors, scrollbar styling, document background, and
+ * native input appearance resets.
+ * ------------------------------------------------------------------------- */
+
+@layer base {
+  /* ----------------------------------------------------------------------
+   * Default border & focus-ring colors for every element
+   * ---------------------------------------------------------------------- */
+
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-border);
+    outline-color: --alpha(var(--color-ring) / 20%);
+  }
+
+  /* ----------------------------------------------------------------------
+   * Scrollbars — WebKit (size + colors) and Firefox (thin + colors)
+   * ---------------------------------------------------------------------- */
+
+  ::-webkit-scrollbar {
+    @apply size-2;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply rounded-full bg-border;
+  }
+
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-border) transparent;
+  }
+
+  /* ----------------------------------------------------------------------
+   * Document
+   * ---------------------------------------------------------------------- */
+
+  html,
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+  }
+
+  /* ----------------------------------------------------------------------
+   * Inputs — strip native search & number-spinner affordances
+   * ---------------------------------------------------------------------- */
+
+  input {
+    &::-webkit-search-cancel-button,
+    &::-webkit-search-decoration {
+      appearance: none;
+    }
+
+    &::-webkit-outer-spin-button,
+    &::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    &[type="number"] {
+      -moz-appearance: textfield;
+    }
+  }
+}

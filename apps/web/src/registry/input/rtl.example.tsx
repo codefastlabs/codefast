@@ -1,0 +1,44 @@
+import { Field, FieldDescription, FieldLabel } from "@codefast/ui/field";
+import { Input } from "@codefast/ui/input";
+
+import type { Translations } from "#/components/detail/language-selector";
+import { useTranslation } from "#/components/detail/language-selector";
+
+const translations: Translations = {
+  en: {
+    dir: "ltr",
+    values: {
+      apiKey: "API Key",
+      placeholder: "sk-...",
+      description: "Your API key is encrypted and stored securely.",
+    },
+  },
+  ar: {
+    dir: "rtl",
+    values: {
+      apiKey: "مفتاح API",
+      placeholder: "sk-...",
+      description: "مفتاح API الخاص بك مشفر ومخزن بأمان.",
+    },
+  },
+  he: {
+    dir: "rtl",
+    values: {
+      apiKey: "מפתח API",
+      placeholder: "sk-...",
+      description: "מפתח ה-API שלך מוצפן ונשמר בצורה מאובטחת.",
+    },
+  },
+};
+
+export function InputRtl() {
+  const { dir, t } = useTranslation(translations, "ar");
+
+  return (
+    <Field dir={dir}>
+      <FieldLabel htmlFor="input-rtl-api-key">{t.apiKey}</FieldLabel>
+      <Input id="input-rtl-api-key" type="password" placeholder={t.placeholder} dir={dir} />
+      <FieldDescription>{t.description}</FieldDescription>
+    </Field>
+  );
+}

@@ -1,4 +1,10 @@
 import type { Binding } from "#/binding";
+import { effectiveBindingScope } from "#/binding-scope";
+import { selectBinding } from "#/binding-select";
+import type { BindingRegistry } from "#/registry";
+import type { ScopeManager } from "#/scope";
+import type { Token } from "#/token";
+import { tokenName } from "#/token";
 import type {
   BindingIdentifier,
   BindingKind,
@@ -8,12 +14,6 @@ import type {
   Constructor,
   ResolveOptions,
 } from "#/types";
-import type { Token } from "#/token";
-import type { BindingRegistry } from "#/registry";
-import type { ScopeManager } from "#/scope";
-import { tokenName } from "#/token";
-import { selectBinding } from "#/binding-select";
-import { effectiveBindingScope } from "#/binding-scope";
 
 // ── Public types ──────────────────────────────────────────────────────────────
 
@@ -69,17 +69,11 @@ export class Inspector {
     return bindings.map((binding) => this._toSnapshot(binding));
   }
 
-  has(
-    token: Token<unknown> | Constructor,
-    hint?: ResolveOptions,
-    parentHas?: () => boolean,
-  ): boolean {
+  has(token: Token<unknown> | Constructor, hint?: ResolveOptions, parentHas?: () => boolean): boolean {
     const bindings = this._registry.getAll(token);
     if (bindings.length > 0) {
       if (hint !== undefined) {
-        if (
-          selectBinding(bindings, hint, this._makeHintContext(hint), tokenName(token)) !== undefined
-        ) {
+        if (selectBinding(bindings, hint, this._makeHintContext(hint), tokenName(token)) !== undefined) {
           return true;
         }
       } else {
@@ -95,9 +89,7 @@ export class Inspector {
       return false;
     }
     if (hint !== undefined) {
-      return (
-        selectBinding(bindings, hint, this._makeHintContext(hint), tokenName(token)) !== undefined
-      );
+      return selectBinding(bindings, hint, this._makeHintContext(hint), tokenName(token)) !== undefined;
     }
     return true;
   }

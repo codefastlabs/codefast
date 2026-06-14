@@ -1,6 +1,6 @@
 import type { BindToBuilder } from "#/binding";
-import type { Constructor } from "#/types";
 import type { Token } from "#/token";
+import type { Constructor } from "#/types";
 
 // ── Branded types (runtime symbols for branding) ─────────────────────────────
 
@@ -89,5 +89,5 @@ export const Module = {
  * @since 0.3.16-canary.0
  */
 export function isSyncModule(module: SyncModule | AsyncModule): module is SyncModule {
-  return (module as SyncModule)[SYNC_MODULE_BRAND] === true;
+  return (module as SyncModule)[SYNC_MODULE_BRAND];
 }

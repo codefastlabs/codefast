@@ -36,13 +36,7 @@ type KbdGroupProps = ComponentProps<"kbd">;
  * @since 0.3.16-canary.0
  */
 function KbdGroup({ className, ...props }: KbdGroupProps): JSX.Element {
-  return (
-    <kbd
-      className={cn("inline-flex items-center gap-1", className)}
-      data-slot="kbd-group"
-      {...props}
-    />
-  );
+  return <kbd className={cn("inline-flex items-center gap-1", className)} data-slot="kbd-group" {...props} />;
 }
 
 /* -----------------------------------------------------------------------------

@@ -1,12 +1,12 @@
-import { logger } from "#/core/logger";
 import { CLI_EXIT_GENERAL_ERROR } from "#/core/exit-codes";
+import { logger } from "#/core/logger";
+import { exitCodeForTagSyncResult } from "#/tag/cli-result";
 import type {
   TagProgressListener,
   TagResolvedTarget,
   TagSyncResult,
   TagTargetExecutionResult,
 } from "#/tag/domain/types";
-import { exitCodeForTagSyncResult } from "#/tag/cli-result";
 
 type TagProgressEvent =
   | { type: "target-started"; target: TagResolvedTarget }
@@ -21,9 +21,7 @@ export class TagSyncProgressPresenter implements TagProgressListener {
   }
 
   onTargetCompleted(target: TagResolvedTarget, result: TagTargetExecutionResult): void {
-    logger.out(
-      TagSyncProgressPresenter.formatProgress({ type: "target-completed", target, result }),
-    );
+    logger.out(TagSyncProgressPresenter.formatProgress({ type: "target-completed", target, result }));
   }
 
   private static formatProgress(event: TagProgressEvent): string {
@@ -51,9 +49,7 @@ const colors = {
 export function presentTagSyncResult(result: TagSyncResult, rootDir: string): number {
   logger.out(formatTargetTable(result.selectedTargets, rootDir));
   if (result.selectedTargets.length === 0) {
-    logger.err(
-      "No packages found in workspace. Check your pnpm-workspace.yaml or provide an explicit target path.",
-    );
+    logger.err("No packages found in workspace. Check your pnpm-workspace.yaml or provide an explicit target path.");
     return CLI_EXIT_GENERAL_ERROR;
   }
   const warningsAndErrorsSection = formatWarningsAndErrors(result);
@@ -82,24 +78,14 @@ function warningsAndErrorsFromResult(result: TagSyncResult): Array<string> {
 }
 
 function formatTargetTable(targets: Array<TagResolvedTarget>, rootDir: string): string {
-  const packageColumnWidth = Math.max(
-    "package".length,
-    ...targets.map((target) => (target.packageName ?? "-").length),
-  );
-  const pathColumnWidth = Math.max(
-    "path".length,
-    ...targets.map((target) => target.rootRelativeTargetPath.length),
-  );
+  const packageColumnWidth = Math.max("package".length, ...targets.map((target) => (target.packageName ?? "-").length));
+  const pathColumnWidth = Math.max("path".length, ...targets.map((target) => target.rootRelativeTargetPath.length));
   const lines: Array<string> = [];
   lines.push(`[tag] Root: ${rootDir}`);
   lines.push(`[tag] Resolved targets: ${targets.length}`);
   lines.push("[tag] Targets:");
-  lines.push(
-    `  ${"package".padEnd(packageColumnWidth)}   ${"path".padEnd(pathColumnWidth)}   source`,
-  );
-  lines.push(
-    `  ${"-".repeat(packageColumnWidth)}   ${"-".repeat(pathColumnWidth)}   ${"-".repeat("source".length)}`,
-  );
+  lines.push(`  ${"package".padEnd(packageColumnWidth)}   ${"path".padEnd(pathColumnWidth)}   source`);
+  lines.push(`  ${"-".repeat(packageColumnWidth)}   ${"-".repeat(pathColumnWidth)}   ${"-".repeat("source".length)}`);
   for (const target of targets) {
     lines.push(
       `  ${(target.packageName ?? "-").padEnd(packageColumnWidth)}   ${target.rootRelativeTargetPath.padEnd(pathColumnWidth)}   ${target.source}`,
@@ -128,8 +114,7 @@ function formatSummary(result: TagSyncResult): string {
       ? ` [${result.distinctVersions.join(", ")}]`
       : "";
   const hasError =
-    result.targetResults.some((targetResult) => targetResult.runError !== null) ||
-    result.hookError !== null;
+    result.targetResults.some((targetResult) => targetResult.runError !== null) || result.hookError !== null;
   const summaryColor = hasError ? colors.red : isDryRun ? colors.yellow : colors.green;
   const lines = [
     withColorizedLine(

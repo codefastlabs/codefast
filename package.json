@@ -30,8 +30,8 @@
     "format": "oxfmt",
     "format:check": "oxfmt --check",
     "knip": "knip",
-    "lint": "oxlint --deny-warnings apps packages benchmarks",
-    "lint:fix": "oxlint --fix --deny-warnings apps packages benchmarks",
+    "lint": "oxlint --deny-warnings .",
+    "lint:fix": "oxlint --fix --deny-warnings .",
     "prepare": "simple-git-hooks",
     "release": "changeset",
     "release:canary:enter": "changeset pre enter canary",
@@ -63,5 +63,5 @@
   "engines": {
     "node": ">=24.0.0"
   },
-  "packageManager": "pnpm@11.5.1"
+  "packageManager": "pnpm@11.5.2"
 }

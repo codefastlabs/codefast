@@ -1,11 +1,8 @@
 import { spawn } from "node:child_process";
 import { join } from "node:path";
+
 import { BENCH_FAST_ENV_KEY, BENCH_FULL_ENV_KEY } from "#/shared/env-keys";
-import {
-  BENCH_RESULT_JSON_END,
-  BENCH_RESULT_JSON_START,
-  extractSubprocessPayload,
-} from "#/shared/protocol";
+import { BENCH_RESULT_JSON_END, BENCH_RESULT_JSON_START, extractSubprocessPayload } from "#/shared/protocol";
 import type { SubprocessPayload } from "#/shared/protocol";
 
 const HEARTBEAT_SILENCE_MS = 10_000;
@@ -34,10 +31,8 @@ export function buildSubprocessEnvironment(): NodeJS.ProcessEnv {
   const existingNodeOptions = parentEnvironment["NODE_OPTIONS"] ?? "";
   const fastModeEnabled = parentEnvironment[BENCH_FAST_ENV_KEY] === "1";
   const fullModeEnabled = parentEnvironment[BENCH_FULL_ENV_KEY] === "1";
-  const requiredFlags =
-    fastModeEnabled || !fullModeEnabled ? ["--no-warnings"] : ["--expose-gc", "--no-warnings"];
-  const hasInspectFlag =
-    existingNodeOptions.includes("--inspect-brk") || existingNodeOptions.includes("--inspect");
+  const requiredFlags = fastModeEnabled || !fullModeEnabled ? ["--no-warnings"] : ["--expose-gc", "--no-warnings"];
+  const hasInspectFlag = existingNodeOptions.includes("--inspect-brk") || existingNodeOptions.includes("--inspect");
   if (hasInspectFlag) {
     console.warn(
       "[bench] Warning: NODE_OPTIONS contains debugger flags (--inspect/--inspect-brk); benchmark subprocesses may stall until timeout.",
@@ -97,9 +92,7 @@ export type RunBenchSubprocessParameters = Readonly<{
  *
  * @since 0.3.16-canary.0
  */
-export async function runBenchSubprocess(
-  parameters: RunBenchSubprocessParameters,
-): Promise<SubprocessPayload> {
+export async function runBenchSubprocess(parameters: RunBenchSubprocessParameters): Promise<SubprocessPayload> {
   const {
     packageRootDirectory,
     tsconfigFileName,
@@ -152,10 +145,7 @@ export async function runBenchSubprocess(
 
     const heartbeatTimer = setInterval(() => {
       const nowMs = performance.now();
-      if (
-        nowMs - lastOutputAtMs >= HEARTBEAT_SILENCE_MS &&
-        nowMs - lastHeartbeatAtMs >= HEARTBEAT_SILENCE_MS
-      ) {
+      if (nowMs - lastOutputAtMs >= HEARTBEAT_SILENCE_MS && nowMs - lastHeartbeatAtMs >= HEARTBEAT_SILENCE_MS) {
         const elapsedSeconds = (nowMs - startedAtMs) / 1000;
         console.log(`Still running ${scenarioName}... ${elapsedSeconds.toFixed(1)}s elapsed`);
         lastHeartbeatAtMs = nowMs;
@@ -237,9 +227,7 @@ export async function runBenchSubprocess(
     console.error(spawnResult.stderr);
     console.error("--- subprocess stdout (framing markers present but JSON invalid) ---");
     console.error(spawnResult.stdout);
-    throw new Error(
-      `${harnessLabel} subprocess returned framing markers but the enclosed JSON failed to parse.`,
-    );
+    throw new Error(`${harnessLabel} subprocess returned framing markers but the enclosed JSON failed to parse.`);
   }
 
   return payload;

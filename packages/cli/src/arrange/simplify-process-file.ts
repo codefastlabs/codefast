@@ -1,9 +1,9 @@
-import type { FilesystemPort } from "#/core/filesystem/port";
-import type { GroupFileResult } from "#/arrange/domain/types";
-import { applyEditsDescending } from "#/core/source-text-edit";
-import { parseDomainSourceFile } from "#/arrange/source-parse";
-import { dropCnImportIfUnused } from "#/arrange/domain/imports";
 import { collectSimplifyTargets } from "#/arrange/domain/ast/simplify-targets";
+import { dropCnImportIfUnused } from "#/arrange/domain/imports";
+import type { GroupFileResult } from "#/arrange/domain/types";
+import { parseDomainSourceFile } from "#/arrange/source-parse";
+import type { FilesystemPort } from "#/core/filesystem/port";
+import { applyEditsDescending } from "#/core/source-text-edit";
 
 /**
  * @since 0.3.16-canary.0
@@ -20,14 +20,11 @@ export function processArrangeSimplifyFile(
   const domainSf = parseDomainSourceFile(filePath, sourceText);
   const edits = collectSimplifyTargets(domainSf);
 
-  const meaningful = edits.filter(
-    (edit) => sourceText.slice(edit.start, edit.end) !== edit.replacement,
-  );
+  const meaningful = edits.filter((edit) => sourceText.slice(edit.start, edit.end) !== edit.replacement);
 
   // Apply class-simplification edits first, then prune any cn import that
   // became (or was already) unused.
-  const textAfterEdits =
-    meaningful.length > 0 ? applyEditsDescending(sourceText, meaningful) : sourceText;
+  const textAfterEdits = meaningful.length > 0 ? applyEditsDescending(sourceText, meaningful) : sourceText;
 
   const textAfterImportDrop = dropCnImportIfUnused(parseDomainSourceFile(filePath, textAfterEdits));
 

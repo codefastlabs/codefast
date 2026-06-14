@@ -6,6 +6,7 @@
  */
 import "reflect-metadata";
 import { Container, inject, injectable } from "inversify";
+
 import { batched } from "#/harness/batched";
 import type { BenchScenario } from "#/scenarios/types";
 
@@ -49,17 +50,12 @@ function buildConstantResolveScenario(): BenchScenario {
 
 function buildSingletonClassOneDepScenario(): BenchScenario {
   const container = new Container();
-  container
-    .bind<MicroLeafDependency>(microLeafDependencyIdentifier)
-    .to(MicroLeafDependency)
-    .inSingletonScope();
+  container.bind<MicroLeafDependency>(microLeafDependencyIdentifier).to(MicroLeafDependency).inSingletonScope();
   container
     .bind<MicroServiceWithOneDependency>(microServiceWithOneDependencyIdentifier)
     .to(MicroServiceWithOneDependency)
     .inSingletonScope();
-  const initialResolution = container.get<MicroServiceWithOneDependency>(
-    microServiceWithOneDependencyIdentifier,
-  );
+  const initialResolution = container.get<MicroServiceWithOneDependency>(microServiceWithOneDependencyIdentifier);
 
   return {
     id: "singleton-class-1-dep",
@@ -67,8 +63,8 @@ function buildSingletonClassOneDepScenario(): BenchScenario {
     what: "resolve a singleton class with one dependency (cache hit)",
     batch: CLASS_RESOLVE_BATCH,
     sanity: () =>
-      container.get<MicroServiceWithOneDependency>(microServiceWithOneDependencyIdentifier)
-        .leafDependency === initialResolution.leafDependency,
+      container.get<MicroServiceWithOneDependency>(microServiceWithOneDependencyIdentifier).leafDependency ===
+      initialResolution.leafDependency,
     build: () =>
       batched(CLASS_RESOLVE_BATCH, () => {
         container.get(microServiceWithOneDependencyIdentifier);
@@ -78,10 +74,7 @@ function buildSingletonClassOneDepScenario(): BenchScenario {
 
 function buildTransientClassOneDepScenario(): BenchScenario {
   const container = new Container();
-  container
-    .bind<MicroLeafDependency>(microLeafDependencyIdentifier)
-    .to(MicroLeafDependency)
-    .inTransientScope();
+  container.bind<MicroLeafDependency>(microLeafDependencyIdentifier).to(MicroLeafDependency).inTransientScope();
   container
     .bind<MicroServiceWithOneDependency>(microServiceWithOneDependencyIdentifier)
     .to(MicroServiceWithOneDependency)
@@ -94,16 +87,9 @@ function buildTransientClassOneDepScenario(): BenchScenario {
     what: "resolve a transient class with one transient dep (fresh each call)",
     batch: CLASS_RESOLVE_BATCH,
     sanity: () => {
-      const firstResolution = container.get<MicroServiceWithOneDependency>(
-        microServiceWithOneDependencyIdentifier,
-      );
-      const secondResolution = container.get<MicroServiceWithOneDependency>(
-        microServiceWithOneDependencyIdentifier,
-      );
-      return (
-        firstResolution !== secondResolution &&
-        firstResolution.leafDependency !== secondResolution.leafDependency
-      );
+      const firstResolution = container.get<MicroServiceWithOneDependency>(microServiceWithOneDependencyIdentifier);
+      const secondResolution = container.get<MicroServiceWithOneDependency>(microServiceWithOneDependencyIdentifier);
+      return firstResolution !== secondResolution && firstResolution.leafDependency !== secondResolution.leafDependency;
     },
     build: () =>
       batched(CLASS_RESOLVE_BATCH, () => {

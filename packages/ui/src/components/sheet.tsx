@@ -1,12 +1,12 @@
+import { XIcon } from "lucide-react";
+import { Dialog as SheetPrimitive } from "radix-ui";
+import type { ComponentProps, JSX } from "react";
+
+import { cn } from "#/lib/utils";
 import type { ButtonVariants } from "#/variants/button";
 import { buttonVariants } from "#/variants/button";
 import type { SheetContentVariants } from "#/variants/sheet";
 import { sheetContentVariants } from "#/variants/sheet";
-import type { ComponentProps, JSX } from "react";
-
-import { cn } from "#/lib/utils";
-import { Dialog as SheetPrimitive } from "radix-ui";
-import { XIcon } from "lucide-react";
 
 /* -----------------------------------------------------------------------------
  * Component: Sheet
@@ -20,12 +20,8 @@ type SheetProps = ComponentProps<typeof SheetPrimitive.Root>;
 /**
  * @since 0.3.16-canary.0
  */
-function Sheet({ children, ...props }: SheetProps): JSX.Element {
-  return (
-    <SheetPrimitive.Root data-slot="sheet" {...props}>
-      {children}
-    </SheetPrimitive.Root>
-  );
+function Sheet({ ...props }: SheetProps): JSX.Element {
+  return <SheetPrimitive.Root data-slot="sheet" {...props} />;
 }
 
 /* -----------------------------------------------------------------------------
@@ -45,55 +41,13 @@ function SheetTrigger({ ...props }: SheetTriggerProps): JSX.Element {
 }
 
 /* -----------------------------------------------------------------------------
- * Component: SheetPortal
- * -------------------------------------------------------------------------- */
-
-/**
- * @since 0.3.16-canary.0
- */
-type SheetPortalProps = ComponentProps<typeof SheetPrimitive.Portal>;
-
-/**
- * @since 0.3.16-canary.0
- */
-function SheetPortal({ ...props }: SheetPortalProps): JSX.Element {
-  return <SheetPrimitive.Portal data-slot="sheet-portal" {...props} />;
-}
-
-/* -----------------------------------------------------------------------------
- * Component: SheetOverlay
- * -------------------------------------------------------------------------- */
-
-/**
- * @since 0.3.16-canary.0
- */
-type SheetOverlayProps = ComponentProps<typeof SheetPrimitive.Overlay>;
-
-/**
- * @since 0.3.16-canary.0
- */
-function SheetOverlay({ className, ...props }: SheetOverlayProps): JSX.Element {
-  return (
-    <SheetPrimitive.Overlay
-      className={cn(
-        "fixed inset-0 z-50 bg-black/10 ease-gentle supports-backdrop-filter:backdrop-blur-xs motion-reduce:animate-none motion-reduce:transition-none motion-reduce:duration-0 data-open:animate-in data-open:animation-duration-380 data-open:fade-in-0 data-closed:animate-out data-closed:animation-duration-280 data-closed:fade-out-0",
-        className,
-      )}
-      data-slot="sheet-overlay"
-      {...props}
-    />
-  );
-}
-
-/* -----------------------------------------------------------------------------
  * Component: SheetContent
  * -------------------------------------------------------------------------- */
 
 /**
  * @since 0.3.16-canary.0
  */
-interface SheetContentProps
-  extends ComponentProps<typeof SheetPrimitive.Content>, SheetContentVariants {
+interface SheetContentProps extends ComponentProps<typeof SheetPrimitive.Content>, SheetContentVariants {
   showCloseButton?: boolean;
 }
 
@@ -108,8 +62,13 @@ function SheetContent({
   ...props
 }: SheetContentProps): JSX.Element {
   return (
-    <SheetPortal>
-      <SheetOverlay />
+    <SheetPrimitive.Portal data-slot="sheet-portal">
+      <SheetPrimitive.Overlay
+        className={
+          "fixed inset-0 z-50 bg-black/10 ease-gentle supports-backdrop-filter:backdrop-blur-xs data-open:animate-in data-open:animation-duration-panel-in data-open:fade-in-0 data-closed:animate-out data-closed:ease-exit data-closed:animation-duration-panel-out data-closed:fade-out-0"
+        }
+        data-slot="sheet-overlay"
+      />
       <SheetPrimitive.Content
         className={sheetContentVariants({ className, side })}
         data-side={side}
@@ -120,7 +79,7 @@ function SheetContent({
         {showCloseButton ? (
           <SheetPrimitive.Close
             className={buttonVariants({
-              className: "absolute top-4 right-4",
+              className: "absolute top-4 end-4",
               size: "icon-sm",
               variant: "ghost",
             })}
@@ -131,7 +90,7 @@ function SheetContent({
           </SheetPrimitive.Close>
         ) : null}
       </SheetPrimitive.Content>
-    </SheetPortal>
+    </SheetPrimitive.Portal>
   );
 }
 
@@ -148,13 +107,7 @@ type SheetHeaderProps = ComponentProps<"div">;
  * @since 0.3.16-canary.0
  */
 function SheetHeader({ className, ...props }: SheetHeaderProps): JSX.Element {
-  return (
-    <div
-      className={cn("flex shrink-0 flex-col gap-1.5 p-4", className)}
-      data-slot="sheet-header"
-      {...props}
-    />
-  );
+  return <div className={cn("flex shrink-0 flex-col gap-1.5 p-4", className)} data-slot="sheet-header" {...props} />;
 }
 
 /* -----------------------------------------------------------------------------
@@ -174,13 +127,7 @@ type SheetBodyProps = ComponentProps<"div">;
  * @since 0.3.16-canary.0
  */
 function SheetBody({ className, ...props }: SheetBodyProps): JSX.Element {
-  return (
-    <div
-      className={cn("min-h-0 flex-1 overflow-y-auto px-4", className)}
-      data-slot="sheet-body"
-      {...props}
-    />
-  );
+  return <div className={cn("min-h-0 flex-1 overflow-y-auto px-4", className)} data-slot="sheet-body" {...props} />;
 }
 
 /* -----------------------------------------------------------------------------
@@ -197,11 +144,7 @@ type SheetFooterProps = ComponentProps<"div">;
  */
 function SheetFooter({ className, ...props }: SheetFooterProps): JSX.Element {
   return (
-    <div
-      className={cn("mt-auto flex shrink-0 flex-col gap-2 p-4", className)}
-      data-slot="sheet-footer"
-      {...props}
-    />
+    <div className={cn("mt-auto flex shrink-0 flex-col gap-2 p-4", className)} data-slot="sheet-footer" {...props} />
   );
 }
 
@@ -220,7 +163,7 @@ type SheetTitleProps = ComponentProps<typeof SheetPrimitive.Title>;
 function SheetTitle({ className, ...props }: SheetTitleProps): JSX.Element {
   return (
     <SheetPrimitive.Title
-      className={cn("cn-font-heading font-medium text-foreground", className)}
+      className={cn("font-heading font-medium text-foreground", className)}
       data-slot="sheet-title"
       {...props}
     />
@@ -266,11 +209,7 @@ interface SheetCloseProps extends ComponentProps<typeof SheetPrimitive.Close> {
  */
 function SheetClose({ className, size, variant, ...props }: SheetCloseProps): JSX.Element {
   return (
-    <SheetPrimitive.Close
-      className={buttonVariants({ className, size, variant })}
-      data-slot="sheet-close"
-      {...props}
-    />
+    <SheetPrimitive.Close className={buttonVariants({ className, size, variant })} data-slot="sheet-close" {...props} />
   );
 }
 
@@ -286,8 +225,6 @@ export {
   SheetDescription,
   SheetFooter,
   SheetHeader,
-  SheetOverlay,
-  SheetPortal,
   SheetTitle,
   SheetTrigger,
 };
@@ -298,8 +235,6 @@ export type {
   SheetDescriptionProps,
   SheetFooterProps,
   SheetHeaderProps,
-  SheetOverlayProps,
-  SheetPortalProps,
   SheetProps,
   SheetTitleProps,
   SheetTriggerProps,

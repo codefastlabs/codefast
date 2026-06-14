@@ -23,10 +23,7 @@ export function KpiCard({ className, ...props }: ComponentProps<"div">) {
 export function KpiCardLabel({ className, ...props }: ComponentProps<"div">) {
   return (
     <div
-      className={cn(
-        "text-bh-label mb-[0.4rem] text-[0.625rem] font-semibold tracking-[0.09em] uppercase",
-        className,
-      )}
+      className={cn("text-bh-label mb-[0.4rem] text-[0.625rem] font-semibold tracking-[0.09em] uppercase", className)}
       {...props}
     />
   );

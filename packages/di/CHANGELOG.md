@@ -1,5 +1,15 @@
 # @codefast/di
 
+## 0.4.0-canary.5
+
+## 0.4.0-canary.4
+
+### Patch Changes
+
+- [#495](https://github.com/codefastlabs/codefast/pull/495) [`a66946d`](https://github.com/codefastlabs/codefast/commit/a66946d7b4f249927caea567232a9c05cd861020) Thanks [@thevuong](https://github.com/thevuong)! - Drop redundant type assertions in the container, resolver, decorators, and module wiring — behavior is unchanged; the types now flow without casts.
+
+- [#495](https://github.com/codefastlabs/codefast/pull/495) [`fa338d6`](https://github.com/codefastlabs/codefast/commit/fa338d61fbfafb94beaa4d05d93d01e2c005cc91) Thanks [@thevuong](https://github.com/thevuong)! - Normalize import statement order and package.json key order repo-wide via the new oxfmt `sortImports`/`sortPackageJson` settings — purely mechanical, no runtime behavior change.
+
 ## 0.3.16-canary.3
 
 ### Patch Changes

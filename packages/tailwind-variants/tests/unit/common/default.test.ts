@@ -10,10 +10,7 @@ describe("Tailwind Variants (TV) - Default (Common)", () => {
       variants: {
         color: {
           primary: {
-            item: [
-              "item--color--primary-1",
-              ["item--color--primary-2", ["item--color--primary-3"]],
-            ],
+            item: ["item--color--primary-1", ["item--color--primary-2", ["item--color--primary-3"]]],
           },
         },
       },
@@ -39,16 +36,8 @@ describe("Tailwind Variants (TV) - Default (Common)", () => {
       "item--color--primary-2",
       "item--color--primary-3",
     ]);
-    expect(popover({ isOpen: true })).toHaveClassName([
-      "isOpen--true-1",
-      "isOpen--true-2",
-      "isOpen--true-3",
-    ]);
-    expect(popover({ isOpen: false })).toHaveClassName([
-      "isOpen--false-1",
-      "isOpen--false-2",
-      "isOpen--false-3",
-    ]);
+    expect(popover({ isOpen: true })).toHaveClassName(["isOpen--true-1", "isOpen--true-2", "isOpen--true-3"]);
+    expect(popover({ isOpen: false })).toHaveClassName(["isOpen--false-1", "isOpen--false-2", "isOpen--false-3"]);
   });
 
   test("should work without variants", () => {

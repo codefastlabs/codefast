@@ -1,4 +1,5 @@
 import { useEffect, useEffectEvent, useRef, useState } from "react";
+
 import type { ViewState } from "#/app/lib/hash";
 import type { EmbeddedScenarioSeries } from "#/types";
 

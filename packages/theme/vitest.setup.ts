@@ -1,5 +1,4 @@
 import "@testing-library/jest-dom/vitest";
-
 import { createMockMediaQueryList } from "#/tests/support/mocks";
 
 Object.defineProperty(window, "matchMedia", {

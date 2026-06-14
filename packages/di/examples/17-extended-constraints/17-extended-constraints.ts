@@ -79,16 +79,10 @@ class BillingService {
 const parentIsContainer = Container.create();
 
 // Verbose logger only when the direct parent is OrderService.
-parentIsContainer
-  .bind(LoggerToken)
-  .toConstantValue(makeLogger("verbose"))
-  .when(whenParentIs(OrderServiceToken));
+parentIsContainer.bind(LoggerToken).toConstantValue(makeLogger("verbose")).when(whenParentIs(OrderServiceToken));
 
 // Silent logger when the direct parent is NOT OrderService.
-parentIsContainer
-  .bind(LoggerToken)
-  .toConstantValue(makeLogger("silent"))
-  .when(whenNoParentIs(OrderServiceToken));
+parentIsContainer.bind(LoggerToken).toConstantValue(makeLogger("silent")).when(whenNoParentIs(OrderServiceToken));
 
 parentIsContainer.bind(OrderServiceToken).to(OrderService).singleton();
 parentIsContainer.bind(BillingServiceToken).to(BillingService).singleton();
@@ -227,15 +221,9 @@ class QueryRunner {
 const namedContainer = Container.create();
 
 // Logger adapts based on which named DataSource is being built.
-namedContainer
-  .bind(LoggerToken)
-  .toConstantValue(makeLogger("primary-logger"))
-  .when(whenParentNamed("primary"));
+namedContainer.bind(LoggerToken).toConstantValue(makeLogger("primary-logger")).when(whenParentNamed("primary"));
 
-namedContainer
-  .bind(LoggerToken)
-  .toConstantValue(makeLogger("replica-logger"))
-  .when(whenParentNamed("replica"));
+namedContainer.bind(LoggerToken).toConstantValue(makeLogger("replica-logger")).when(whenParentNamed("replica"));
 
 // Fallback for contexts with no name (e.g. QueryRunner itself).
 namedContainer
@@ -326,11 +314,7 @@ taggedContainer
   .singleton();
 
 // Tag ProductCache with backend=memcached only.
-taggedContainer
-  .bind(ProductCacheToken)
-  .to(ProductCache)
-  .whenTagged("backend", "memcached")
-  .singleton();
+taggedContainer.bind(ProductCacheToken).to(ProductCache).whenTagged("backend", "memcached").singleton();
 
 taggedContainer.resolve(SessionStoreToken, {
   tags: [
@@ -425,11 +409,7 @@ tenantContainer
   .whenTagged("tier", "paid")
   .singleton();
 
-tenantContainer
-  .bind(AnalyticsDashboardToken)
-  .to(AnalyticsDashboard)
-  .whenTagged("tenant", "starter")
-  .singleton();
+tenantContainer.bind(AnalyticsDashboardToken).to(AnalyticsDashboard).whenTagged("tenant", "starter").singleton();
 
 console.log("Enterprise tenant:");
 tenantContainer

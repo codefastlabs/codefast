@@ -1,10 +1,9 @@
 import { createServerFn } from "@tanstack/react-start";
 import { getCookie, getRequestHeader, setCookie } from "@tanstack/react-start/server";
 
+import { DEFAULT_RESOLVED_COLOR_SCHEME, DEFAULT_COLOR_SCHEME, STORAGE_KEY } from "#/constants";
 import type { ResolvedColorScheme, ColorScheme } from "#/types";
 import { colorSchemeSchema } from "#/types";
-
-import { DEFAULT_RESOLVED_COLOR_SCHEME, DEFAULT_COLOR_SCHEME, STORAGE_KEY } from "#/constants";
 
 /* -----------------------------------------------------------------------------
  * Request helpers (one round-trip when composed)
@@ -22,8 +21,7 @@ function readColorSchemeFromCookie(): ColorScheme {
 }
 
 function readSsrColorSchemeFromHeaders(): ResolvedColorScheme {
-  const hint =
-    getRequestHeader("Sec-CH-Prefers-Color-Scheme") ?? getRequestHeader("Prefers-Color-Scheme");
+  const hint = getRequestHeader("Sec-CH-Prefers-Color-Scheme") ?? getRequestHeader("Prefers-Color-Scheme");
 
   if (hint === "dark") {
     return "dark";
@@ -91,9 +89,7 @@ export const getRootColorSchemeServerFn = createServerFn().handler(
  *
  * @since 0.3.16-canary.0
  */
-export const getColorSchemeServerFn = createServerFn().handler(
-  (): ColorScheme => readColorSchemeFromCookie(),
-);
+export const getColorSchemeServerFn = createServerFn().handler((): ColorScheme => readColorSchemeFromCookie());
 
 /**
  * Resolved OS color scheme for SSR / hydration, from Client Hints when the browser sends them.
@@ -128,7 +124,7 @@ export const getSsrColorSchemeServerFn = createServerFn().handler(
  * @since 0.3.16-canary.0
  */
 export const setColorSchemeServerFn = createServerFn({ method: "POST" })
-  .inputValidator(colorSchemeSchema)
+  .validator(colorSchemeSchema)
   .handler(({ data }: { data: ColorScheme }): void => {
     setCookie(STORAGE_KEY, data, {
       httpOnly: true,

@@ -1,5 +1,5 @@
-import type { Token } from "#/token";
 import type { Constructor } from "#/constructor-type";
+import type { Token } from "#/token";
 
 // Re-export for consumers that import from `#/types`
 export type { Constructor } from "#/constructor-type";
@@ -38,24 +38,14 @@ export type BindingIdentifier = string & { readonly [BINDING_ID_BRAND]: true };
 /**
  * @since 0.3.16-canary.0
  */
-export type BindingKind =
-  | "class"
-  | "dynamic"
-  | "dynamic-async"
-  | "resolved"
-  | "resolved-async"
-  | "constant"
-  | "alias";
+export type BindingKind = "class" | "dynamic" | "dynamic-async" | "resolved" | "resolved-async" | "constant" | "alias";
 
 // ── Handlers ─────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
  */
-export type ActivationHandler<Value> = (
-  ctx: ResolutionContext,
-  instance: Value,
-) => Value | Promise<Value>;
+export type ActivationHandler<Value> = (ctx: ResolutionContext, instance: Value) => Value | Promise<Value>;
 
 /**
  * @since 0.3.16-canary.0
@@ -113,26 +103,14 @@ export interface ConstraintContext {
  */
 export interface ResolutionContext {
   resolve<const Value>(token: Token<Value> | Constructor<Value>, hint?: ResolveOptions): Value;
-  resolveAsync<const Value>(
-    token: Token<Value> | Constructor<Value>,
-    hint?: ResolveOptions,
-  ): Promise<Value>;
-  resolveOptional<const Value>(
-    token: Token<Value> | Constructor<Value>,
-    hint?: ResolveOptions,
-  ): Value | undefined;
+  resolveAsync<const Value>(token: Token<Value> | Constructor<Value>, hint?: ResolveOptions): Promise<Value>;
+  resolveOptional<const Value>(token: Token<Value> | Constructor<Value>, hint?: ResolveOptions): Value | undefined;
   resolveOptionalAsync<const Value>(
     token: Token<Value> | Constructor<Value>,
     hint?: ResolveOptions,
   ): Promise<Value | undefined>;
-  resolveAll<const Value>(
-    token: Token<Value> | Constructor<Value>,
-    hint?: ResolveOptions,
-  ): Array<Value>;
-  resolveAllAsync<const Value>(
-    token: Token<Value> | Constructor<Value>,
-    hint?: ResolveOptions,
-  ): Promise<Array<Value>>;
+  resolveAll<const Value>(token: Token<Value> | Constructor<Value>, hint?: ResolveOptions): Array<Value>;
+  resolveAllAsync<const Value>(token: Token<Value> | Constructor<Value>, hint?: ResolveOptions): Promise<Array<Value>>;
   readonly graph: ConstraintContext;
 }
 

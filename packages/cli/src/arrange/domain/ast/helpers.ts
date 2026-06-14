@@ -1,5 +1,3 @@
-import { EMPTY_CN_TV_BINDINGS } from "#/arrange/domain/constants";
-import { applyEditsDescending, indentOfLineContaining } from "#/core/source-text-edit";
 import {
   isDomainIdentifier,
   isDomainImportDeclaration,
@@ -15,6 +13,8 @@ import type {
   DomainPropertyAssignment,
   DomainSourceFile,
 } from "#/arrange/domain/ast/ast-node";
+import { EMPTY_CN_TV_BINDINGS } from "#/arrange/domain/constants";
+import { applyEditsDescending, indentOfLineContaining } from "#/core/source-text-edit";
 
 /**
  * Known module specifiers that export `cn` / `tv`.
@@ -40,7 +40,7 @@ function moduleLooksLikeCnTvReexport(moduleSpecifier: string): boolean {
   if (/(?:^|[./])utils(?:\/|$)/.test(norm)) {
     return true;
   }
-  if (/\/utils\//.test(norm) || /\/utils$/.test(norm)) {
+  if (/\/utils\//.test(norm) || norm.endsWith("/utils")) {
     return true;
   }
   if (/(?:^|\/)cn\.tsx?$/.test(norm)) {
@@ -146,10 +146,7 @@ export { applyEditsDescending };
  *
  * @since 0.3.16-canary.0
  */
-export function unwrapCnInsideTvCallReplacement(
-  call: DomainCallExpression,
-  sourceText: string,
-): string | undefined {
+export function unwrapCnInsideTvCallReplacement(call: DomainCallExpression, sourceText: string): string | undefined {
   const args = call.arguments;
   if (args.length === 0) {
     return undefined;

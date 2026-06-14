@@ -1,22 +1,18 @@
-import { readdir, readFile } from "node:fs/promises";
 import type { Dirent } from "node:fs";
+import { readdir, readFile } from "node:fs/promises";
 import { join } from "node:path";
-import type {
-  ScenarioTrialResult,
-  TrialPayload,
-} from "@codefast/benchmark-harness/shared/protocol";
+
+import type { AggregatedScenarioResult, LibraryReport } from "@codefast/benchmark-harness/report/aggregate";
+import { buildLibraryReport } from "@codefast/benchmark-harness/report/aggregate";
 import type { JsonlBenchObservationRow } from "@codefast/benchmark-harness/report/jsonl";
 import {
   jsonlBenchObservationRowToFingerprint,
   jsonlBenchObservationRowToScenarioTrialResult,
 } from "@codefast/benchmark-harness/report/jsonl";
-import type {
-  AggregatedScenarioResult,
-  LibraryReport,
-} from "@codefast/benchmark-harness/report/aggregate";
-import { buildLibraryReport } from "@codefast/benchmark-harness/report/aggregate";
 import { quantile, sortAscending } from "@codefast/benchmark-harness/report/quantiles";
 import { OBSERVATIONS_FILE_NAME } from "@codefast/benchmark-harness/shared/env-keys";
+import type { ScenarioTrialResult, TrialPayload } from "@codefast/benchmark-harness/shared/protocol";
+
 import { DEFAULT_MAX_RUNS } from "#/constants";
 import type {
   BenchServerOptions,
@@ -49,10 +45,7 @@ export interface ListRawRunsResult {
   readonly warning: string | undefined;
 }
 
-async function readRunDirectory(
-  runDirPath: string,
-  folderName: string,
-): Promise<RunLines | undefined> {
+async function readRunDirectory(runDirPath: string, folderName: string): Promise<RunLines | undefined> {
   const jsonlPath = join(runDirPath, OBSERVATIONS_FILE_NAME);
   let content: string;
   try {
@@ -70,11 +63,8 @@ async function readRunDirectory(
 /**
  * @since 0.3.16-canary.0
  */
-export async function listRawRuns(
-  benchResultsDir: string,
-  maxRuns?: number,
-): Promise<ListRawRunsResult> {
-  let entries: Array<Dirent<string>>;
+export async function listRawRuns(benchResultsDir: string, maxRuns?: number): Promise<ListRawRunsResult> {
+  let entries: Array<Dirent>;
   try {
     entries = await readdir(benchResultsDir, { withFileTypes: true });
   } catch (err) {
@@ -89,16 +79,14 @@ export async function listRawRuns(
   const dirNames = entries
     .filter((entry) => entry.isDirectory())
     .map((entry) => entry.name)
-    .sort((left, right) => left.localeCompare(right));
+    .toSorted((left, right) => left.localeCompare(right));
 
   const totalDirs = dirNames.length;
   const cap = maxRuns ?? DEFAULT_MAX_RUNS;
   const hasMore = totalDirs > cap;
   const toRead = hasMore ? dirNames.slice(-cap) : dirNames;
 
-  const results = await Promise.all(
-    toRead.map((name) => readRunDirectory(join(benchResultsDir, name), name)),
-  );
+  const results = await Promise.all(toRead.map((name) => readRunDirectory(join(benchResultsDir, name), name)));
 
   const runs = results.filter((run): run is RunLines => run !== undefined);
   return { runs, hasMore, warning: undefined };
@@ -156,9 +144,7 @@ function buildLibraryRunData(
   observations: ReadonlyArray<JsonlBenchObservationRow>,
   libraryName: string,
 ): LibraryRunData | undefined {
-  const libraryObservations = observations.filter(
-    (observation) => observation.libraryName === libraryName,
-  );
+  const libraryObservations = observations.filter((observation) => observation.libraryName === libraryName);
   if (libraryObservations.length === 0) {
     return undefined;
   }
@@ -186,7 +172,7 @@ function buildLibraryRunData(
   }
 
   const trialPayloads: Array<TrialPayload> = [...byTrialIndex.entries()]
-    .sort((left, right) => left[0] - right[0])
+    .toSorted((left, right) => left[0] - right[0])
     .map(([trialIndex, scenarios]) => ({ trialIndex, scenarios }));
   const report = buildLibraryReport(fingerprint, trialPayloads, []);
 
@@ -243,25 +229,17 @@ function extractRunMeta(
     timestampIso: canonical.timestampIso,
     libraryVersions: libraryNames.flatMap((name) => {
       const obs = firstObsByLibrary.get(name);
-      return obs !== undefined
-        ? [{ key: name, version: obs.libraryVersion, gcExposed: obs.gcExposed }]
-        : [];
+      return obs !== undefined ? [{ key: name, version: obs.libraryVersion, gcExposed: obs.gcExposed }] : [];
     }),
   };
 }
 
-function hzLookup(
-  index: ReadonlyMap<string, AggregatedScenarioResult>,
-  scenarioId: string,
-): number | null {
+function hzLookup(index: ReadonlyMap<string, AggregatedScenarioResult>, scenarioId: string): number | null {
   const row = index.get(scenarioId);
   return row !== undefined && row.hzPerOpMedian > 0 ? row.hzPerOpMedian : null;
 }
 
-function hzIqrFractionLookup(
-  index: ReadonlyMap<string, AggregatedScenarioResult>,
-  scenarioId: string,
-): number | null {
+function hzIqrFractionLookup(index: ReadonlyMap<string, AggregatedScenarioResult>, scenarioId: string): number | null {
   const row = index.get(scenarioId);
   if (row === undefined || row.hzPerOpMedian <= 0) {
     return null;
@@ -301,9 +279,7 @@ export function buildEmbeddedPayload(
   for (const raw of rawRuns) {
     const { observations, skippedCount } = parseJsonlLines(raw.lines);
     if (skippedCount > 0) {
-      console.warn(
-        `[bench-payload] ${raw.folderName}: skipped ${skippedCount} malformed JSONL line(s)`,
-      );
+      console.warn(`[bench-payload] ${raw.folderName}: skipped ${skippedCount} malformed JSONL line(s)`);
     }
 
     const reports = new Map<string, LibraryReport>();
@@ -351,10 +327,8 @@ export function buildEmbeddedPayload(
       }
     }
   }
-  const scenarioIds = [...scenarioGroup.keys()].sort((left, right) => {
-    const groupCompare = (scenarioGroup.get(left) ?? "").localeCompare(
-      scenarioGroup.get(right) ?? "",
-    );
+  const scenarioIds = [...scenarioGroup.keys()].toSorted((left, right) => {
+    const groupCompare = (scenarioGroup.get(left) ?? "").localeCompare(scenarioGroup.get(right) ?? "");
     return groupCompare !== 0 ? groupCompare : left.localeCompare(right);
   });
 
@@ -379,9 +353,7 @@ export function buildEmbeddedPayload(
       for (const scenarioId of scenarioIds) {
         const accum = seriesAccum.get(scenarioId)!.get(libName)!;
         accum.hz.push(libIndex !== undefined ? hzLookup(libIndex, scenarioId) : null);
-        accum.iqrFraction.push(
-          libIndex !== undefined ? hzIqrFractionLookup(libIndex, scenarioId) : null,
-        );
+        accum.iqrFraction.push(libIndex !== undefined ? hzIqrFractionLookup(libIndex, scenarioId) : null);
         const spread = libSpreads?.get(scenarioId) ?? null;
         accum.p25.push(spread !== null && spread.p25Hz > 0 ? spread.p25Hz : null);
         accum.p75.push(spread !== null && spread.p75Hz > 0 ? spread.p75Hz : null);

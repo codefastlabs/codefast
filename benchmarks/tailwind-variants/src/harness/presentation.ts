@@ -2,6 +2,7 @@ import type {
   TwoWayConsoleColumnLabels,
   TwoWayMarkdownReportOptions,
 } from "@codefast/benchmark-harness/report/two-way";
+
 import { CODEFAST_TV, CVA, TAILWIND_VARIANTS } from "#/harness/config";
 
 /**

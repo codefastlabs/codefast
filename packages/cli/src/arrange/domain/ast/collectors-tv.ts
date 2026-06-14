@@ -1,4 +1,3 @@
-import { APPLY_MIN_TOKENS, MAX_OBJECT_DEPTH } from "#/arrange/domain/constants";
 import {
   isDomainArrayLiteralExpression,
   isDomainCallExpression,
@@ -20,13 +19,10 @@ import {
   forEachStringLiteralInClassExpression,
   isUnsafeLiteralForCnStyleApplySplit,
 } from "#/arrange/domain/ast/collectors-cn";
-import type { StringNode, TailwindClassLiteral } from "#/arrange/domain/types";
+import { buildKnownCnTvBindings, isCnOrTvIdentifier, propertyAssignmentNameText } from "#/arrange/domain/ast/helpers";
+import { APPLY_MIN_TOKENS, MAX_OBJECT_DEPTH } from "#/arrange/domain/constants";
 import { tokenizeClassString } from "#/arrange/domain/tailwind-token";
-import {
-  buildKnownCnTvBindings,
-  isCnOrTvIdentifier,
-  propertyAssignmentNameText,
-} from "#/arrange/domain/ast/helpers";
+import type { StringNode, TailwindClassLiteral } from "#/arrange/domain/types";
 
 type StringNodeVisitor = (
   classLiteral: TailwindClassLiteral,
@@ -107,10 +103,7 @@ export function traverseTvObject(
       }
     } else if (isDomainObjectLiteralExpression(init)) {
       traverseTvObject(sourceFile, init, visitor, depth + 1, knownBindings);
-    } else if (
-      isDomainCallExpression(init) &&
-      isCnOrTvIdentifier(init.expression, "cn", knownBindings)
-    ) {
+    } else if (isDomainCallExpression(init) && isCnOrTvIdentifier(init.expression, "cn", knownBindings)) {
       for (const arg of init.arguments) {
         forEachStringLiteralInClassExpression(arg, (lit) => {
           visitor(lit, sourceFile, init);
@@ -144,10 +137,7 @@ export function collectCnCallsInsideTv(
         if (isDomainSpreadElement(arrayElement)) {
           continue;
         }
-        if (
-          isDomainCallExpression(arrayElement) &&
-          isCnOrTvIdentifier(arrayElement.expression, "cn", knownBindings)
-        ) {
+        if (isDomainCallExpression(arrayElement) && isCnOrTvIdentifier(arrayElement.expression, "cn", knownBindings)) {
           calls.push(arrayElement);
         } else if (isDomainObjectLiteralExpression(arrayElement)) {
           for (const objectProperty of arrayElement.properties) {
@@ -159,10 +149,7 @@ export function collectCnCallsInsideTv(
               continue;
             }
             const innerInit = objectProperty.initializer;
-            if (
-              isDomainCallExpression(innerInit) &&
-              isCnOrTvIdentifier(innerInit.expression, "cn", knownBindings)
-            ) {
+            if (isDomainCallExpression(innerInit) && isCnOrTvIdentifier(innerInit.expression, "cn", knownBindings)) {
               calls.push(innerInit);
             }
           }
@@ -170,10 +157,7 @@ export function collectCnCallsInsideTv(
       }
     } else if (isDomainObjectLiteralExpression(init)) {
       calls.push(...collectCnCallsInsideTv(sourceFile, init, knownBindings, depth + 1));
-    } else if (
-      isDomainCallExpression(init) &&
-      isCnOrTvIdentifier(init.expression, "cn", knownBindings)
-    ) {
+    } else if (isDomainCallExpression(init) && isCnOrTvIdentifier(init.expression, "cn", knownBindings)) {
       calls.push(init);
     }
   }
@@ -189,10 +173,7 @@ export function listAllCnCallsInsideTvInSourceFile(
 ): Array<DomainCallExpression> {
   const calls: Array<DomainCallExpression> = [];
   const visitSubtree = (tsNode: DomainAstNode): void => {
-    if (
-      isDomainCallExpression(tsNode) &&
-      isCnOrTvIdentifier(tsNode.expression, "tv", knownBindings)
-    ) {
+    if (isDomainCallExpression(tsNode) && isCnOrTvIdentifier(tsNode.expression, "tv", knownBindings)) {
       const arg0 = tsNode.arguments[0];
       if (arg0 && isDomainObjectLiteralExpression(arg0)) {
         calls.push(...collectCnCallsInsideTv(sourceFile, arg0, knownBindings, 0));
@@ -255,8 +236,7 @@ function emitTvSlot(
   seenNodePos.add(firstPos);
 
   const totalTokens = lits.reduce(
-    (accumulatedTokenCount, literal) =>
-      accumulatedTokenCount + tokenizeClassString(literal.text).length,
+    (accumulatedTokenCount, literal) => accumulatedTokenCount + tokenizeClassString(literal.text).length,
     0,
   );
   if (totalTokens < APPLY_MIN_TOKENS) {
@@ -330,10 +310,7 @@ function collectTvSlots(
             } else if (isDomainArrayLiteralExpression(innerInit)) {
               const innerLits: Array<TailwindClassLiteral> = [];
               for (const nestedArrayElement of innerInit.elements) {
-                if (
-                  !isDomainSpreadElement(nestedArrayElement) &&
-                  isDomainTailwindClassLiteral(nestedArrayElement)
-                ) {
+                if (!isDomainSpreadElement(nestedArrayElement) && isDomainTailwindClassLiteral(nestedArrayElement)) {
                   innerLits.push(nestedArrayElement);
                 }
               }
@@ -365,10 +342,7 @@ function collectTvSlots(
       }
     } else if (isDomainObjectLiteralExpression(init)) {
       collectTvSlots(sourceFile, init, knownBindings, results, seenNodePos, depth + 1);
-    } else if (
-      isDomainCallExpression(init) &&
-      isCnOrTvIdentifier(init.expression, "cn", knownBindings)
-    ) {
+    } else if (isDomainCallExpression(init) && isCnOrTvIdentifier(init.expression, "cn", knownBindings)) {
       const cnLits: Array<TailwindClassLiteral> = [];
       for (const arg of init.arguments) {
         forEachStringLiteralInClassExpression(
@@ -408,8 +382,7 @@ export function collectGroupableStringNodes(sourceFile: DomainSourceFile): Array
         const staticLits = collectUnconditionalTailwindLiteralsFromCnArguments(tsNode.arguments);
 
         const totalTokens = staticLits.reduce(
-          (accumulatedTokenCount, literal) =>
-            accumulatedTokenCount + tokenizeClassString(literal.text).length,
+          (accumulatedTokenCount, literal) => accumulatedTokenCount + tokenizeClassString(literal.text).length,
           0,
         );
         if (staticLits.length > 0 && totalTokens >= APPLY_MIN_TOKENS) {

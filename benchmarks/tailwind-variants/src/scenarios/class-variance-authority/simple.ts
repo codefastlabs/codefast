@@ -1,7 +1,8 @@
 import { twMerge } from "tailwind-merge";
+
+import { buttonVariants, simpleTestProps } from "#/fixtures/simple";
 import { cva } from "#/lib/tv-shims";
 import type { BenchScenario } from "#/scenarios/types";
-import { buttonVariants, simpleTestProps } from "#/fixtures/simple";
 
 const cvaInstance = cva(buttonVariants.base, {
   defaultVariants: buttonVariants.defaultVariants,

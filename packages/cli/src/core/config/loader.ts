@@ -1,9 +1,11 @@
 import path from "node:path";
+
 import jiti from "jiti";
 import type { ZodError } from "zod";
-import type { FilesystemPort } from "#/core/filesystem/port";
+
 import { codefastConfigRootSchema } from "#/core/config/schema";
 import type { CodefastConfig } from "#/core/config/schema";
+import type { FilesystemPort } from "#/core/filesystem/port";
 
 /**
  * @since 0.3.16-canary.0
@@ -33,11 +35,7 @@ function parseLoadedConfig(raw: unknown, filePath: string): CodefastConfig {
   return parsed.data;
 }
 
-const configJsPriority = [
-  "codefast.config.mjs",
-  "codefast.config.js",
-  "codefast.config.cjs",
-] as const;
+const configJsPriority = ["codefast.config.mjs", "codefast.config.js", "codefast.config.cjs"] as const;
 const configJson = "codefast.config.json";
 
 const cachedLoads = new Map<string, Promise<LoadConfigPayload>>();
@@ -67,11 +65,7 @@ function listConfigCandidates(startDir: string, fs: FilesystemPort): Array<strin
   return candidates;
 }
 
-async function readConfigFromPath(
-  filePath: string,
-  jitiBaseDir: string,
-  fs: FilesystemPort,
-): Promise<CodefastConfig> {
+async function readConfigFromPath(filePath: string, jitiBaseDir: string, fs: FilesystemPort): Promise<CodefastConfig> {
   const ext = path.extname(filePath);
   if (ext === ".json") {
     const content = await fs.readFile(filePath, "utf8");
@@ -108,10 +102,7 @@ async function loadOnce(startDir: string, fs: FilesystemPort): Promise<LoadConfi
 /**
  * @since 0.3.16-canary.0
  */
-export function loadConfigPayload(
-  startDir: string,
-  fs: FilesystemPort,
-): Promise<LoadConfigPayload> {
+export function loadConfigPayload(startDir: string, fs: FilesystemPort): Promise<LoadConfigPayload> {
   const cacheKey = path.resolve(startDir);
   if (!cachedLoads.has(cacheKey)) {
     cachedLoads.set(cacheKey, loadOnce(cacheKey, fs));

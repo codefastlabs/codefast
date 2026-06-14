@@ -1,4 +1,5 @@
 import { Container, token } from "@codefast/di";
+
 import type { AsyncBenchScenario } from "#/scenarios/types";
 
 const ASYNC_CHAIN_DEPTH = 8;
@@ -78,9 +79,7 @@ function buildDynamicAsyncChainDepthEightScenario(): AsyncBenchScenario {
       return async () => {
         const value = await container.resolveAsync(leafToken);
         if (value !== expectedLeafValue) {
-          throw new Error(
-            `Expected async chain leaf value ${String(expectedLeafValue)}, received ${String(value)}`,
-          );
+          throw new Error(`Expected async chain leaf value ${String(expectedLeafValue)}, received ${String(value)}`);
         }
       };
     },
@@ -142,8 +141,6 @@ export function buildCodefastAsyncScenarios(): ReadonlyArray<AsyncBenchScenario>
   return [
     buildResolveAsyncSingleHopScenario(),
     buildDynamicAsyncChainDepthEightScenario(),
-    ...ASYNC_CONCURRENT_FANOUT_COUNTS.map((concurrency) =>
-      buildAsyncFanOutConcurrentScenario(concurrency),
-    ),
+    ...ASYNC_CONCURRENT_FANOUT_COUNTS.map((concurrency) => buildAsyncFanOutConcurrentScenario(concurrency)),
   ];
 }

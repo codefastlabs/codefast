@@ -271,11 +271,7 @@ Với telemetry: nếu cần wrap, dùng **decorator function**, không phải D
 
 ```typescript
 // Thay vì: onActivation(createOptionalCliPortTelemetryActivation(...))
-export function withTelemetry<T extends (...args: unknown[]) => unknown>(
-  name: string,
-  fn: T,
-  telemetry: Telemetry,
-): T {
+export function withTelemetry<T extends (...args: unknown[]) => unknown>(name: string, fn: T, telemetry: Telemetry): T {
   return ((...args) => {
     telemetry.trace(name);
     return fn(...args);
@@ -362,10 +358,7 @@ Giữ `Result<T, E>` và `AppError`. Thêm helper top-level:
 
 ```typescript
 // core/result.ts — thêm vào file hiện tại
-export function handleResult<T>(
-  result: Result<T, AppError>,
-  onSuccess: (value: T) => void,
-): boolean {
+export function handleResult<T>(result: Result<T, AppError>, onSuccess: (value: T) => void): boolean {
   if (!result.ok) {
     logger.err(formatAppError(result.error));
     process.exitCode = exitCodeFor(result.error);

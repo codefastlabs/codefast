@@ -1,8 +1,8 @@
-import type { BindingRegistry } from "#/registry";
-import type { MetadataReader } from "#/metadata/metadata-types";
-import type { BindingScope, Constructor } from "#/types";
-import { tokenName } from "#/token";
 import { effectiveBindingScope } from "#/binding-scope";
+import type { MetadataReader } from "#/metadata/metadata-types";
+import type { BindingRegistry } from "#/registry";
+import { tokenName } from "#/token";
+import type { BindingScope, Constructor } from "#/types";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 

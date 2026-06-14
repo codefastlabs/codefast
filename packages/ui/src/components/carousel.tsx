@@ -1,13 +1,12 @@
 import type { UseEmblaCarouselType } from "embla-carousel-react";
-import type { ComponentProps, JSX, KeyboardEvent } from "react";
-
-import { cn } from "#/lib/utils";
-import { Context } from "radix-ui/internal";
 import useEmblaCarousel from "embla-carousel-react";
-import { ArrowLeftIcon, ArrowRightIcon } from "lucide-react";
+import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
+import { Context } from "radix-ui/internal";
+import type { ComponentProps, JSX, KeyboardEvent } from "react";
 import { useCallback, useEffect, useState } from "react";
 
 import { Button } from "#/components/button";
+import { cn } from "#/lib/utils";
 
 /* -----------------------------------------------------------------------------
  * Context: Carousel
@@ -43,8 +42,7 @@ type CarouselContextValue = BaseCarouselProps & {
   scrollPrev: () => void;
 };
 
-const [CarouselContextProvider, useCarouselContext] =
-  createCarouselContext<CarouselContextValue>(CAROUSEL_NAME);
+const [CarouselContextProvider, useCarouselContext] = createCarouselContext<CarouselContextValue>(CAROUSEL_NAME);
 
 /* -----------------------------------------------------------------------------
  * Component: Carousel
@@ -147,8 +145,10 @@ function Carousel({
       scrollPrev={scrollPrevious}
     >
       <div
+        aria-roledescription="carousel"
         className={cn("relative", className)}
         data-slot="carousel"
+        role="region"
         onKeyDownCapture={handleKeyDown}
         {...props}
       >
@@ -200,15 +200,11 @@ function CarouselContent({
   const { carouselRef, orientation } = useCarouselContext(CAROUSEL_CONTENT_NAME, __scopeCarousel);
 
   return (
-    <div
-      ref={carouselRef}
-      className={cn("overflow-hidden", classNames?.wrapper)}
-      data-slot="carousel-content"
-    >
+    <div ref={carouselRef} className={cn("overflow-hidden", classNames?.wrapper)} data-slot="carousel-content">
       <div
         className={cn(
           "flex",
-          orientation === "horizontal" ? "-ml-4" : "-mt-4 flex-col",
+          orientation === "horizontal" ? "-ms-4" : "-mt-4 h-full flex-col",
           classNames?.content,
           className,
         )}
@@ -232,21 +228,13 @@ type CarouselItemProps = ComponentProps<"div">;
 /**
  * @since 0.3.16-canary.0
  */
-function CarouselItem({
-  __scopeCarousel,
-  className,
-  ...props
-}: ScopedProps<CarouselItemProps>): JSX.Element {
+function CarouselItem({ __scopeCarousel, className, ...props }: ScopedProps<CarouselItemProps>): JSX.Element {
   const { orientation } = useCarouselContext(CAROUSEL_ITEM_NAME, __scopeCarousel);
 
   return (
     <div
       aria-roledescription="slide"
-      className={cn(
-        "min-w-0 shrink-0 grow-0 basis-full",
-        orientation === "horizontal" ? "pl-4" : "pt-4",
-        className,
-      )}
+      className={cn("min-w-0 shrink-0 grow-0 basis-full", orientation === "horizontal" ? "ps-4" : "pt-4", className)}
       data-slot="carousel-item"
       role="group"
       {...props}
@@ -271,23 +259,20 @@ type CarouselPreviousProps = ComponentProps<typeof Button>;
 function CarouselPrevious({
   __scopeCarousel,
   className,
-  size = "icon",
+  size = "icon-sm",
   variant = "outline",
   ...props
 }: ScopedProps<CarouselPreviousProps>): JSX.Element {
-  const { canScrollPrev, orientation, scrollPrev } = useCarouselContext(
-    CAROUSEL_PREVIOUS_NAME,
-    __scopeCarousel,
-  );
+  const { canScrollPrev, orientation, scrollPrev } = useCarouselContext(CAROUSEL_PREVIOUS_NAME, __scopeCarousel);
 
   return (
     <Button
       aria-label="Previous slide"
       className={cn(
-        "absolute size-8 touch-manipulation rounded-full shadow-none",
+        "absolute touch-manipulation rounded-full",
         orientation === "horizontal"
-          ? "top-1/2 -left-12 -translate-y-1/2 active:not-aria-[haspopup]:translate-y-[calc(-50%+1px)]"
-          : "-top-12 left-1/2 -translate-x-1/2 rotate-90",
+          ? "-start-12 top-1/2 -translate-y-1/2 active:not-aria-[haspopup]:translate-y-[calc(-50%+1px)]"
+          : "start-1/2 -top-12 -translate-x-1/2 rotate-90 rtl:translate-x-1/2",
         className,
       )}
       data-slot="carousel-previous"
@@ -297,7 +282,7 @@ function CarouselPrevious({
       onClick={scrollPrev}
       {...props}
     >
-      <ArrowLeftIcon />
+      <ChevronLeftIcon className="rtl:rotate-180" />
       <span className="sr-only">Previous slide</span>
     </Button>
   );
@@ -320,23 +305,20 @@ type CarouselNextProps = ComponentProps<typeof Button>;
 function CarouselNext({
   __scopeCarousel,
   className,
-  size = "icon",
+  size = "icon-sm",
   variant = "outline",
   ...props
 }: ScopedProps<CarouselNextProps>): JSX.Element {
-  const { canScrollNext, orientation, scrollNext } = useCarouselContext(
-    CAROUSEL_NEXT_NAME,
-    __scopeCarousel,
-  );
+  const { canScrollNext, orientation, scrollNext } = useCarouselContext(CAROUSEL_NEXT_NAME, __scopeCarousel);
 
   return (
     <Button
       aria-label="Next slide"
       className={cn(
-        "absolute size-8 touch-manipulation rounded-full shadow-none",
+        "absolute touch-manipulation rounded-full",
         orientation === "horizontal"
-          ? "top-1/2 -right-12 -translate-y-1/2 active:not-aria-[haspopup]:translate-y-[calc(-50%+1px)]"
-          : "-bottom-12 left-1/2 -translate-x-1/2 rotate-90",
+          ? "-end-12 top-1/2 -translate-y-1/2 active:not-aria-[haspopup]:translate-y-[calc(-50%+1px)]"
+          : "start-1/2 -bottom-12 -translate-x-1/2 rotate-90 rtl:translate-x-1/2",
         className,
       )}
       data-slot="carousel-next"
@@ -346,7 +328,7 @@ function CarouselNext({
       onClick={scrollNext}
       {...props}
     >
-      <ArrowRightIcon />
+      <ChevronRightIcon className="rtl:rotate-180" />
       <span className="sr-only">Next slide</span>
     </Button>
   );
@@ -364,11 +346,4 @@ export type {
   CarouselPreviousProps,
   CarouselProps,
 };
-export {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-  createCarouselScope,
-};
+export { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious, createCarouselScope };

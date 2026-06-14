@@ -1,13 +1,11 @@
-import type { FieldVariants } from "#/variants/field";
 import type { ComponentProps, JSX, ReactNode } from "react";
-
-import { cn } from "#/lib/utils";
-
-import { fieldVariants } from "#/variants/field";
 import { useMemo } from "react";
 
 import { Label } from "#/components/label";
 import { Separator } from "#/components/separator";
+import { cn } from "#/lib/utils";
+import type { FieldVariants } from "#/variants/field";
+import { fieldVariants } from "#/variants/field";
 
 /* -----------------------------------------------------------------------------
  * Component: FieldSet
@@ -51,7 +49,7 @@ type FieldLegendProps = ComponentProps<"legend"> & {
 function FieldLegend({ className, variant = "legend", ...props }: FieldLegendProps): JSX.Element {
   return (
     <legend
-      className={cn("mb-3 text-base font-medium data-[variant=label]:text-sm", className)}
+      className={cn("mb-3 font-medium data-[variant=label]:text-sm data-[variant=legend]:text-base", className)}
       data-slot="field-legend"
       data-variant={variant}
       {...props}
@@ -75,7 +73,7 @@ function FieldGroup({ className, ...props }: FieldGroupProps): JSX.Element {
   return (
     <div
       className={cn(
-        "group/field-group @container/field-group flex w-full flex-col gap-7 data-[slot=checkbox-group]:gap-3 [&>[data-slot=field-group]]:gap-4",
+        "group/field-group @container/field-group flex w-full flex-col gap-7 data-[slot=checkbox-group]:gap-3 *:data-[slot=field-group]:gap-4",
         className,
       )}
       data-slot="field-group"
@@ -123,7 +121,7 @@ type FieldContentProps = ComponentProps<"div">;
 function FieldContent({ className, ...props }: FieldContentProps): JSX.Element {
   return (
     <div
-      className={cn("group/field-content flex flex-1 flex-col gap-1.5 leading-snug", className)}
+      className={cn("group/field-content flex flex-1 flex-col gap-1 leading-snug", className)}
       data-slot="field-content"
       {...props}
     />
@@ -146,7 +144,8 @@ function FieldLabel({ className, ...props }: FieldLabelProps): JSX.Element {
   return (
     <Label
       className={cn(
-        "group/field-label peer/field-label flex w-fit gap-2 leading-snug group-data-disabled/field:opacity-50 has-data-checked:border-primary has-data-checked:bg-primary/5 has-[>[data-slot=field]]:w-full has-[>[data-slot=field]]:flex-col has-[>[data-slot=field]]:rounded-md has-[>[data-slot=field]]:border dark:has-data-checked:bg-primary/10 [&>*]:data-[slot=field]:p-3",
+        "group/field-label peer/field-label flex w-fit gap-2 leading-snug group-data-disabled/field:opacity-50 has-data-checked:border-primary/30 has-data-checked:bg-primary/5 has-[>[data-slot=field]]:rounded-md has-[>[data-slot=field]]:border *:data-[slot=field]:p-3 dark:has-data-checked:border-primary/20 dark:has-data-checked:bg-primary/10",
+        "has-[>[data-slot=field]]:w-full has-[>[data-slot=field]]:flex-col",
         className,
       )}
       data-slot="field-label"
@@ -171,7 +170,7 @@ function FieldTitle({ className, ...props }: FieldTitleProps): JSX.Element {
   return (
     <div
       className={cn(
-        "flex w-fit items-center gap-2 text-sm leading-snug font-medium group-data-disabled/field:opacity-50",
+        "flex w-fit items-center gap-2 text-sm font-medium group-data-disabled/field:opacity-50",
         className,
       )}
       data-slot="field-label"
@@ -196,7 +195,9 @@ function FieldDescription({ className, ...props }: FieldDescriptionProps): JSX.E
   return (
     <p
       className={cn(
-        "text-sm leading-normal font-normal text-muted-foreground group-has-data-[orientation=horizontal]/field:text-balance last:mt-0 nth-last-2:-mt-1 [&>a]:underline [&>a]:underline-offset-4 [&>a:hover]:text-primary [[data-variant=legend]+&]:-mt-1.5",
+        "text-start text-sm leading-normal font-normal text-muted-foreground group-has-data-horizontal/field:text-balance [[data-variant=legend]+&]:-mt-1.5",
+        "last:mt-0 nth-last-2:-mt-1",
+        "[&>a]:underline [&>a]:underline-offset-4 [&>a:hover]:text-primary",
         className,
       )}
       data-slot="field-description"
@@ -224,10 +225,7 @@ function FieldSeparator({ children, className, ...props }: FieldSeparatorProps):
 
   return (
     <div
-      className={cn(
-        "relative -my-2 h-5 text-sm group-data-[variant=outline]/field-group:-mb-2",
-        className,
-      )}
+      className={cn("relative -my-2 h-5 text-sm group-data-[variant=outline]/field-group:-mb-2", className)}
       data-content={hasContent}
       data-slot="field-separator"
       {...props}
@@ -263,12 +261,7 @@ interface FieldErrorProps extends ComponentProps<"div"> {
 /**
  * @since 0.3.16-canary.0
  */
-function FieldError({
-  children,
-  className,
-  errors,
-  ...props
-}: FieldErrorProps): JSX.Element | null {
+function FieldError({ children, className, errors, ...props }: FieldErrorProps): JSX.Element | null {
   const fallbackContent = useMemo<null | ReactNode>(() => {
     if (!errors?.length) {
       return null;
@@ -281,10 +274,8 @@ function FieldError({
     }
 
     return (
-      <ul className="ml-4 flex list-disc flex-col gap-1">
-        {uniqueErrors.map((error) =>
-          error?.message ? <li key={error.message}>{error.message}</li> : null,
-        )}
+      <ul className="ms-4 flex list-disc flex-col gap-1">
+        {uniqueErrors.map((error) => (error?.message ? <li key={error.message}>{error.message}</li> : null))}
       </ul>
     );
   }, [errors]);

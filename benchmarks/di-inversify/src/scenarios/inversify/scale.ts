@@ -7,6 +7,7 @@
 import "reflect-metadata";
 import { Container } from "inversify";
 import type { ServiceIdentifier } from "inversify";
+
 import type { BenchScenario } from "#/scenarios/types";
 
 const SCALE_CHAIN_SIZE = 512;
@@ -23,9 +24,7 @@ function buildScaleDeepTransientChainScenario(): BenchScenario {
     const currentChainIdentifier = chainIdentifiers[chainIndex]!;
     container
       .bind<number>(currentChainIdentifier)
-      .toDynamicValue(
-        (resolutionContext) => resolutionContext.get<number>(previousChainIdentifier) + 1,
-      )
+      .toDynamicValue((resolutionContext) => resolutionContext.get<number>(previousChainIdentifier) + 1)
       .inTransientScope();
   }
 

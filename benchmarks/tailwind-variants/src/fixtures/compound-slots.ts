@@ -34,20 +34,17 @@ export const compoundSlotsVariants = {
       slots: ["item", "prev", "next", "cursor"],
     },
     {
-      className:
-        "bg-blue-500 text-white hover:bg-blue-600 active:bg-blue-700 focus:ring-blue-500/20",
+      className: "bg-blue-500 text-white hover:bg-blue-600 active:bg-blue-700 focus:ring-blue-500/20",
       color: "primary",
       slots: ["item", "prev", "next"],
     },
     {
-      className:
-        "bg-gray-500 text-white hover:bg-gray-600 active:bg-gray-700 focus:ring-gray-500/20",
+      className: "bg-gray-500 text-white hover:bg-gray-600 active:bg-gray-700 focus:ring-gray-500/20",
       color: "secondary",
       slots: ["item", "prev", "next"],
     },
     {
-      className:
-        "bg-green-500 text-white hover:bg-green-600 active:bg-green-700 focus:ring-green-500/20",
+      className: "bg-green-500 text-white hover:bg-green-600 active:bg-green-700 focus:ring-green-500/20",
       color: "success",
       slots: ["item", "prev", "next"],
     },
@@ -57,20 +54,17 @@ export const compoundSlotsVariants = {
       slots: ["item", "prev", "next"],
     },
     {
-      className:
-        "bg-yellow-500 text-white hover:bg-yellow-600 active:bg-yellow-700 focus:ring-yellow-500/20",
+      className: "bg-yellow-500 text-white hover:bg-yellow-600 active:bg-yellow-700 focus:ring-yellow-500/20",
       color: "warning",
       slots: ["item", "prev", "next"],
     },
     {
-      className:
-        "bg-purple-500 text-white hover:bg-purple-600 active:bg-purple-700 focus:ring-purple-500/20",
+      className: "bg-purple-500 text-white hover:bg-purple-600 active:bg-purple-700 focus:ring-purple-500/20",
       color: "info",
       slots: ["item", "prev", "next"],
     },
     {
-      className:
-        "bg-linear-to-r from-pink-500 to-violet-500 text-white hover:from-pink-600 hover:to-violet-600",
+      className: "bg-linear-to-r from-pink-500 to-violet-500 text-white hover:from-pink-600 hover:to-violet-600",
       color: "gradient",
       slots: ["item", "prev", "next"],
     },

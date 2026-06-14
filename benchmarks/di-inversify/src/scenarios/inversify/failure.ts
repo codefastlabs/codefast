@@ -1,6 +1,7 @@
 import "reflect-metadata";
 import { Container } from "inversify";
 import type { ServiceIdentifier } from "inversify";
+
 import type { BenchScenario } from "#/scenarios/types";
 
 interface CircularNodeA {
@@ -17,8 +18,7 @@ interface CircularNodeC {
 
 const MISCONFIGURED_MISSING_BINDING_WHAT = "resolve a missing binding and fail fast";
 const CIRCULAR_DEPENDENCY_THREE_WHAT = "resolve a 3-node circular dependency and fail fast";
-const AMBIGUOUS_MULTI_BINDING_WHAT =
-  "resolve a single service from ambiguous multi-bindings and fail fast";
+const AMBIGUOUS_MULTI_BINDING_WHAT = "resolve a single service from ambiguous multi-bindings and fail fast";
 
 function buildMisconfiguredMissingBindingScenario(): BenchScenario {
   const missingIdentifier = Symbol("bench-inv-failure-missing-binding");

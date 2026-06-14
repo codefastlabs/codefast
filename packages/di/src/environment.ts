@@ -1,3 +1,5 @@
+import type { Container } from "#/container";
+import type { Token } from "#/token";
 import type {
   BindingIdentifier,
   BindingKind,
@@ -8,8 +10,6 @@ import type {
   ResolutionContext,
   ResolveOptions,
 } from "#/types";
-import type { Token } from "#/token";
-import type { Container } from "#/container";
 
 // ── Active container ──────────────────────────────────────────────────────────
 
@@ -114,11 +114,7 @@ export class DefaultResolutionContext implements ResolutionContext {
 
   get graph(): ConstraintContext {
     if (this._graph === undefined) {
-      this._graph = new DefaultConstraintContext(
-        this._resolutionPath,
-        this._resolutionStack,
-        this._currentHint,
-      );
+      this._graph = new DefaultConstraintContext(this._resolutionPath, this._resolutionStack, this._currentHint);
     }
     return this._graph;
   }
@@ -143,24 +139,14 @@ export class DefaultResolutionContext implements ResolutionContext {
     return this._resolver.resolve(token, hint, this._resolutionPath, this._resolutionStack);
   }
 
-  resolveAsync<const Value>(
-    token: Token<Value> | Constructor<Value>,
-    hint?: ResolveOptions,
-  ): Promise<Value> {
+  resolveAsync<const Value>(token: Token<Value> | Constructor<Value>, hint?: ResolveOptions): Promise<Value> {
     if (hint === undefined) {
-      return this._resolver.resolveAsyncFromContext(
-        token,
-        this._resolutionPath,
-        this._resolutionStack,
-      );
+      return this._resolver.resolveAsyncFromContext(token, this._resolutionPath, this._resolutionStack);
     }
     return this._resolver.resolveAsync(token, hint, this._resolutionPath, this._resolutionStack);
   }
 
-  resolveOptional<const Value>(
-    token: Token<Value> | Constructor<Value>,
-    hint?: ResolveOptions,
-  ): Value | undefined {
+  resolveOptional<const Value>(token: Token<Value> | Constructor<Value>, hint?: ResolveOptions): Value | undefined {
     return this._resolver.resolveOptional(token, hint, this._resolutionPath, this._resolutionStack);
   }
 
@@ -168,25 +154,14 @@ export class DefaultResolutionContext implements ResolutionContext {
     token: Token<Value> | Constructor<Value>,
     hint?: ResolveOptions,
   ): Promise<Value | undefined> {
-    return this._resolver.resolveOptionalAsync(
-      token,
-      hint,
-      this._resolutionPath,
-      this._resolutionStack,
-    );
+    return this._resolver.resolveOptionalAsync(token, hint, this._resolutionPath, this._resolutionStack);
   }
 
-  resolveAll<const Value>(
-    token: Token<Value> | Constructor<Value>,
-    hint?: ResolveOptions,
-  ): Array<Value> {
+  resolveAll<const Value>(token: Token<Value> | Constructor<Value>, hint?: ResolveOptions): Array<Value> {
     return this._resolver.resolveAll(token, hint, this._resolutionPath, this._resolutionStack);
   }
 
-  resolveAllAsync<const Value>(
-    token: Token<Value> | Constructor<Value>,
-    hint?: ResolveOptions,
-  ): Promise<Array<Value>> {
+  resolveAllAsync<const Value>(token: Token<Value> | Constructor<Value>, hint?: ResolveOptions): Promise<Array<Value>> {
     return this._resolver.resolveAllAsync(token, hint, this._resolutionPath, this._resolutionStack);
   }
 }

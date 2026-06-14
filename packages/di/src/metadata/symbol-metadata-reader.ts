@@ -1,25 +1,13 @@
-import type { Constructor } from "#/types";
-import type {
-  ConstructorMetadata,
-  LifecycleMetadata,
-  MetadataReader,
-} from "#/metadata/metadata-types";
 import type { InjectionDescriptor } from "#/decorators/inject";
-import {
-  INJECT_ACCESSOR_KEY,
-  INJECTABLE_KEY,
-  LIFECYCLE_KEY,
-  METADATA_SYMBOL,
-} from "#/metadata/metadata-keys";
+import { INJECT_ACCESSOR_KEY, INJECTABLE_KEY, LIFECYCLE_KEY, METADATA_SYMBOL } from "#/metadata/metadata-keys";
+import type { ConstructorMetadata, LifecycleMetadata, MetadataReader } from "#/metadata/metadata-types";
+import type { Constructor } from "#/types";
 
 /**
  * @since 0.3.16-canary.0
  */
 export class SymbolMetadataReader implements MetadataReader {
-  private _getMetadataRecord(
-    target: Constructor,
-    key: string | symbol,
-  ): Record<string | symbol, unknown> | undefined {
+  private _getMetadataRecord(target: Constructor, key: string | symbol): Record<string | symbol, unknown> | undefined {
     const descriptor = Object.getOwnPropertyDescriptor(target, METADATA_SYMBOL);
     if (descriptor === undefined) {
       return undefined;

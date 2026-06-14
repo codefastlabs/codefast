@@ -1,11 +1,9 @@
-import type { VariantProps } from "#/lib/utils";
+import { XIcon } from "lucide-react";
+import { Dialog as DialogPrimitive } from "radix-ui";
 import type { ComponentProps, JSX } from "react";
 
+import { Button } from "#/components/button";
 import { cn } from "#/lib/utils";
-import { Dialog as DialogPrimitive } from "radix-ui";
-import { XIcon } from "lucide-react";
-
-import { buttonVariants } from "#/variants/button";
 
 /* -----------------------------------------------------------------------------
  * Component: Dialog
@@ -40,47 +38,6 @@ function DialogTrigger({ ...props }: DialogTriggerProps): JSX.Element {
 }
 
 /* -----------------------------------------------------------------------------
- * Component: DialogPortal
- * -------------------------------------------------------------------------- */
-
-/**
- * @since 0.3.16-canary.0
- */
-type DialogPortalProps = ComponentProps<typeof DialogPrimitive.Portal>;
-
-/**
- * @since 0.3.16-canary.0
- */
-function DialogPortal({ ...props }: DialogPortalProps): JSX.Element {
-  return <DialogPrimitive.Portal data-slot="dialog-portal" {...props} />;
-}
-
-/* -----------------------------------------------------------------------------
- * Component: DialogOverlay
- * -------------------------------------------------------------------------- */
-
-/**
- * @since 0.3.16-canary.0
- */
-type DialogOverlayProps = ComponentProps<typeof DialogPrimitive.Overlay>;
-
-/**
- * @since 0.3.16-canary.0
- */
-function DialogOverlay({ className, ...props }: DialogOverlayProps): JSX.Element {
-  return (
-    <DialogPrimitive.Overlay
-      className={cn(
-        "fixed inset-0 isolate z-50 bg-black/10 ease-gentle supports-backdrop-filter:backdrop-blur-xs motion-reduce:animate-none motion-reduce:transition-none motion-reduce:duration-0 data-open:animate-in data-open:duration-300 data-open:fade-in-0 data-closed:animate-out data-closed:duration-200 data-closed:fade-out-0",
-        className,
-      )}
-      data-slot="dialog-overlay"
-      {...props}
-    />
-  );
-}
-
-/* -----------------------------------------------------------------------------
  * Component: DialogContent
  * -------------------------------------------------------------------------- */
 
@@ -94,18 +51,18 @@ interface DialogContentProps extends ComponentProps<typeof DialogPrimitive.Conte
 /**
  * @since 0.3.16-canary.0
  */
-function DialogContent({
-  children,
-  className,
-  showCloseButton = true,
-  ...props
-}: DialogContentProps): JSX.Element {
+function DialogContent({ children, className, showCloseButton = true, ...props }: DialogContentProps): JSX.Element {
   return (
-    <DialogPortal>
-      <DialogOverlay />
+    <DialogPrimitive.Portal data-slot="dialog-portal">
+      <DialogPrimitive.Overlay
+        className={
+          "fixed inset-0 isolate z-50 bg-black/10 ease-gentle supports-backdrop-filter:backdrop-blur-xs data-open:animate-in data-open:animation-duration-overlay-in data-open:fade-in-0 data-closed:animate-out data-closed:ease-exit data-closed:animation-duration-overlay-out data-closed:fade-out-0"
+        }
+        data-slot="dialog-overlay"
+      />
       <DialogPrimitive.Content
         className={cn(
-          "fixed top-1/2 left-1/2 z-50 flex max-h-[calc(100dvh-2rem)] w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 flex-col gap-6 overflow-y-auto rounded-xl bg-popover p-6 text-sm text-popover-foreground ring-1 ring-foreground/10 ease-gentle outline-none motion-reduce:animate-none motion-reduce:transition-none motion-reduce:duration-0 sm:max-w-lg data-open:animate-in data-open:duration-300 data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:duration-200 data-closed:fade-out-0 data-closed:zoom-out-95",
+          "fixed start-1/2 top-1/2 z-50 flex max-h-[calc(100dvh-2rem)] w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 flex-col gap-6 overflow-y-auto rounded-xl bg-popover p-6 text-sm text-popover-foreground ring-1 ring-foreground/10 ease-ui outline-none sm:max-w-md rtl:translate-x-1/2 data-open:animate-in data-open:animation-duration-overlay-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:ease-exit data-closed:animation-duration-overlay-out data-closed:fade-out-0 data-closed:zoom-out-95",
           className,
         )}
         data-slot="dialog-content"
@@ -113,20 +70,15 @@ function DialogContent({
       >
         {children}
         {showCloseButton ? (
-          <DialogPrimitive.Close
-            className={buttonVariants({
-              className: "absolute top-4 right-4",
-              size: "icon-sm",
-              variant: "ghost",
-            })}
-            data-slot="dialog-close"
-          >
-            <XIcon />
-            <span className="sr-only">Close</span>
+          <DialogPrimitive.Close asChild data-slot="dialog-close">
+            <Button className="absolute end-4 top-4" size="icon-sm" variant="ghost">
+              <XIcon />
+              <span className="sr-only">Close</span>
+            </Button>
           </DialogPrimitive.Close>
         ) : null}
       </DialogPrimitive.Content>
-    </DialogPortal>
+    </DialogPrimitive.Portal>
   );
 }
 
@@ -143,13 +95,7 @@ type DialogHeaderProps = ComponentProps<"div">;
  * @since 0.3.16-canary.0
  */
 function DialogHeader({ className, ...props }: DialogHeaderProps): JSX.Element {
-  return (
-    <div
-      className={cn("flex shrink-0 flex-col gap-2 text-center sm:text-left", className)}
-      data-slot="dialog-header"
-      {...props}
-    />
-  );
+  return <div className={cn("flex shrink-0 flex-col gap-2", className)} data-slot="dialog-header" {...props} />;
 }
 
 /* -----------------------------------------------------------------------------
@@ -171,11 +117,7 @@ type DialogBodyProps = ComponentProps<"div">;
  */
 function DialogBody({ className, ...props }: DialogBodyProps): JSX.Element {
   return (
-    <div
-      className={cn("-mx-6 min-h-0 flex-1 overflow-y-auto px-6", className)}
-      data-slot="dialog-body"
-      {...props}
-    />
+    <div className={cn("-mx-6 min-h-0 flex-1 overflow-y-auto px-6", className)} data-slot="dialog-body" {...props} />
   );
 }
 
@@ -186,18 +128,27 @@ function DialogBody({ className, ...props }: DialogBodyProps): JSX.Element {
 /**
  * @since 0.3.16-canary.0
  */
-type DialogFooterProps = ComponentProps<"div">;
+interface DialogFooterProps extends ComponentProps<"div"> {
+  showCloseButton?: boolean;
+}
 
 /**
  * @since 0.3.16-canary.0
  */
-function DialogFooter({ className, ...props }: DialogFooterProps): JSX.Element {
+function DialogFooter({ children, className, showCloseButton = false, ...props }: DialogFooterProps): JSX.Element {
   return (
     <div
       className={cn("flex shrink-0 flex-col-reverse gap-2 sm:flex-row sm:justify-end", className)}
       data-slot="dialog-footer"
       {...props}
-    />
+    >
+      {children}
+      {showCloseButton ? (
+        <DialogPrimitive.Close asChild>
+          <Button variant="outline">Close</Button>
+        </DialogPrimitive.Close>
+      ) : null}
+    </div>
   );
 }
 
@@ -216,7 +167,7 @@ type DialogTitleProps = ComponentProps<typeof DialogPrimitive.Title>;
 function DialogTitle({ className, ...props }: DialogTitleProps): JSX.Element {
   return (
     <DialogPrimitive.Title
-      className={cn("cn-font-heading leading-none font-medium", className)}
+      className={cn("font-heading leading-none font-medium", className)}
       data-slot="dialog-title"
       {...props}
     />
@@ -255,22 +206,13 @@ function DialogDescription({ className, ...props }: DialogDescriptionProps): JSX
 /**
  * @since 0.3.16-canary.0
  */
-interface DialogCloseProps extends Omit<ComponentProps<typeof DialogPrimitive.Close>, "ref"> {
-  size?: VariantProps<typeof buttonVariants>["size"];
-  variant?: VariantProps<typeof buttonVariants>["variant"];
-}
+type DialogCloseProps = ComponentProps<typeof DialogPrimitive.Close>;
 
 /**
  * @since 0.3.16-canary.0
  */
-function DialogClose({ className, size, variant, ...props }: DialogCloseProps): JSX.Element {
-  return (
-    <DialogPrimitive.Close
-      className={buttonVariants({ className, size, variant })}
-      data-slot="dialog-close"
-      {...props}
-    />
-  );
+function DialogClose({ ...props }: DialogCloseProps): JSX.Element {
+  return <DialogPrimitive.Close data-slot="dialog-close" {...props} />;
 }
 
 /* -----------------------------------------------------------------------------
@@ -285,8 +227,6 @@ export {
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogOverlay,
-  DialogPortal,
   DialogTitle,
   DialogTrigger,
 };
@@ -297,8 +237,6 @@ export type {
   DialogDescriptionProps,
   DialogFooterProps,
   DialogHeaderProps,
-  DialogOverlayProps,
-  DialogPortalProps,
   DialogProps,
   DialogTitleProps,
   DialogTriggerProps,

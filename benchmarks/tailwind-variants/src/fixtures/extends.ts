@@ -77,8 +77,7 @@ export const extendsExtensionVariants = {
         "bg-primary text-primary-foreground hover:bg-primary/90 active:bg-primary/80 focus:bg-primary/90 focus:ring-primary/20",
       destructive:
         "bg-destructive text-destructive-foreground hover:bg-destructive/90 active:bg-destructive/80 focus:bg-destructive/90 focus:ring-destructive/20",
-      ghost:
-        "hover:bg-accent hover:text-accent-foreground active:bg-accent/80 focus:bg-accent focus:ring-accent/20",
+      ghost: "hover:bg-accent hover:text-accent-foreground active:bg-accent/80 focus:bg-accent focus:ring-accent/20",
       gradient:
         "bg-linear-to-r from-purple-500 to-pink-500 text-white hover:from-purple-600 hover:to-pink-600 active:from-purple-700 active:to-pink-700 focus:ring-purple-500/20",
       "gradient-blue":

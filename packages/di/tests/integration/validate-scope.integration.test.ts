@@ -1,8 +1,9 @@
 import { describe, expect, it } from "vitest";
+
 import { Container } from "#/container";
 import { injectable } from "#/decorators/injectable";
-import { Module } from "#/module";
 import { AsyncModuleLoadError, CircularDependencyError, ScopeViolationError } from "#/errors";
+import { Module } from "#/module";
 import { token } from "#/token";
 
 describe("container.validate() — transitive scope + alias chain (SPEC §6.9)", () => {
