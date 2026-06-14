@@ -327,7 +327,7 @@ interface MenubarLabelProps extends ComponentProps<typeof MenubarPrimitive.Label
 function MenubarLabel({ className, inset, ...props }: MenubarLabelProps): JSX.Element {
   return (
     <MenubarPrimitive.Label
-      className={cn("px-2 py-1.5 text-sm font-medium data-inset:ps-8", className)}
+      className={cn("px-2 py-1.5 text-xs font-medium text-muted-foreground data-inset:ps-8", className)}
       data-inset={inset}
       data-slot="menubar-label"
       {...props}
