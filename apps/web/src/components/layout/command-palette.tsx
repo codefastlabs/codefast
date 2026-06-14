@@ -75,15 +75,15 @@ export function CommandPalette() {
   );
 
   const goToComponent = useCallback(
-    (slug: string, hasDemo: boolean, category: string) => {
+    (slug: string, hasDemo: boolean, name: string) => {
       setOpen(false);
 
       if (hasDemo) {
         // Components with a demo have a dedicated detail page.
         void navigate({ to: "/components/$slug", params: { slug } });
       } else {
-        // Sidebar (no demo) jumps to its section on the overview.
-        void navigate({ to: "/components", hash: category });
+        // Sidebar (no demo) jumps to its A–Z letter band on the overview.
+        void navigate({ to: "/components", hash: `letter-${name.charAt(0).toUpperCase()}` });
       }
     },
     [navigate],
@@ -128,7 +128,7 @@ export function CommandPalette() {
                   key={component.slug}
                   value={`${component.name} ${component.category}`}
                   onSelect={() => {
-                    goToComponent(component.slug, component.hasDemo, component.category);
+                    goToComponent(component.slug, component.hasDemo, component.name);
                   }}
                 >
                   <span className="grow">{component.name}</span>

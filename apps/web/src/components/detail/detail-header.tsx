@@ -22,8 +22,8 @@ interface ComponentDetailHeaderProps {
 }
 
 /**
- * The detail-page masthead: category breadcrumb, title and description, source /
- * npm links, and the install + import-path panel.
+ * The detail-page masthead: breadcrumb, title and description, source / npm
+ * links, and the install + import-path panel.
  */
 const STATUS_BADGE: Record<"beta" | "deprecated", { label: string; className: string }> = {
   beta: { label: "Beta", className: "border-amber-500/40 text-amber-600 dark:text-amber-400" },
@@ -46,16 +46,6 @@ export function ComponentDetailHeader({ component }: ComponentDetailHeaderProps)
           <BreadcrumbItem>
             <BreadcrumbLink asChild>
               <Link to="/components">Components</Link>
-            </BreadcrumbLink>
-          </BreadcrumbItem>
-          <BreadcrumbSeparator>
-            <ChevronRightIcon />
-          </BreadcrumbSeparator>
-          <BreadcrumbItem>
-            <BreadcrumbLink asChild>
-              <Link to="/components" hash={category}>
-                {categoryLabel}
-              </Link>
             </BreadcrumbLink>
           </BreadcrumbItem>
           <BreadcrumbSeparator>
