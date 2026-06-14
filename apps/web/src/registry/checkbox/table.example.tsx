@@ -32,10 +32,12 @@ const tableData = [
 export function CheckboxInTable() {
   const [selectedRows, setSelectedRows] = React.useState<Set<string>>(new Set(["1"]));
 
-  const selectAll = selectedRows.size === tableData.length;
+  const allSelected = selectedRows.size === tableData.length;
+  const someSelected = selectedRows.size > 0 && !allSelected;
+  const selectAllState = someSelected ? "indeterminate" : allSelected;
 
-  const handleSelectAll = (checked: boolean) => {
-    if (checked) {
+  const handleSelectAll = (checked: boolean | "indeterminate") => {
+    if (checked === true) {
       setSelectedRows(new Set(tableData.map((row) => row.id)));
     } else {
       setSelectedRows(new Set());
@@ -58,9 +60,10 @@ export function CheckboxInTable() {
         <TableRow>
           <TableHead className="w-8">
             <Checkbox
+              aria-label="Select all rows"
               id="select-all-checkbox"
               name="select-all-checkbox"
-              checked={selectAll}
+              checked={selectAllState}
               onCheckedChange={handleSelectAll}
             />
           </TableHead>

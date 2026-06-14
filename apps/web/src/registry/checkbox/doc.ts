@@ -1,6 +1,7 @@
 import { CheckboxBasic } from "#/registry/checkbox/basic.example";
 import { CheckboxDescription } from "#/registry/checkbox/description.example";
 import { CheckboxDisabled } from "#/registry/checkbox/disabled.example";
+import { CheckboxIndeterminate } from "#/registry/checkbox/indeterminate.example";
 import { CheckboxInvalid } from "#/registry/checkbox/invalid.example";
 import { CheckboxRtl } from "#/registry/checkbox/rtl.example";
 import { CheckboxInTable } from "#/registry/checkbox/table.example";
@@ -30,6 +31,14 @@ export const checkboxDoc: ComponentDoc = {
         "Use the disabled prop to prevent interaction and add the data-disabled attribute to the <Field> component for disabled styles.",
       Demo: CheckboxDisabled,
       source: docSource("checkbox", "disabled"),
+    },
+    {
+      id: "checkbox-indeterminate",
+      title: "Indeterminate",
+      description:
+        'Pass checked="indeterminate" to a parent that controls a list when only some children are selected.',
+      Demo: CheckboxIndeterminate,
+      source: docSource("checkbox", "indeterminate"),
     },
     {
       id: "checkbox-invalid",
