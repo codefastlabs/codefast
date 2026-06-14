@@ -17,19 +17,15 @@ describe("metadata registry", () => {
     }
   });
 
+  it("sorts components A–Z by name", () => {
+    const names = COMPONENTS.map((component) => component.name);
+    const sorted = [...names].toSorted((a, b) => a.localeCompare(b));
+    expect(names).toEqual(sorted);
+  });
+
   it("assigns every component to a known category", () => {
     for (const { category } of COMPONENTS) {
       expect(CATEGORY_IDS.has(category)).toBe(true);
-    }
-  });
-
-  it("uses a unique order per category so the curated sort is total", () => {
-    const seen = new Map<string, string>();
-
-    for (const { category, order, slug } of COMPONENTS) {
-      const key = `${category}:${order}`;
-      expect(seen.get(key), `${slug} reuses order ${order} in ${category} (taken by ${seen.get(key)})`).toBeUndefined();
-      seen.set(key, slug);
     }
   });
 
