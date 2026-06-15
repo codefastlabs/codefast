@@ -1,12 +1,10 @@
 import { cn } from "@codefast/ui/lib/utils";
-import { Link } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 
 import { PreviewTabs } from "#/components/shared/preview-tabs";
 import { ComponentCardMeta, PREVIEW_PANE_CLASS } from "#/components/showcase/component-card-meta";
-import { ImportPathCopy } from "#/components/showcase/import-path-copy";
+import { ImportPathLabel } from "#/components/showcase/import-path-label";
 import { LazyCodeBlock } from "#/components/showcase/lazy-code-block";
-import { usePreloadDetail } from "#/hooks/use-preload-detail";
 import type { HighlightedSource } from "#/lib/highlight";
 import { SCROLL_MT_GALLERY } from "#/lib/layout";
 
@@ -24,21 +22,6 @@ interface PreviewCardProps {
 }
 
 export function PreviewCard({ name, path, description, loadSource, children, wide, id, slug }: PreviewCardProps) {
-  const preload = usePreloadDetail(slug);
-
-  const previewContent = slug ? (
-    <Link
-      to="/components/$slug"
-      params={{ slug }}
-      className={cn(PREVIEW_PANE_CLASS, "cursor-pointer no-underline")}
-      {...preload}
-    >
-      {children}
-    </Link>
-  ) : (
-    <div className={PREVIEW_PANE_CLASS}>{children}</div>
-  );
-
   return (
     <div
       id={id}
@@ -51,8 +34,8 @@ export function PreviewCard({ name, path, description, loadSource, children, wid
       <PreviewTabs
         variant="card"
         className="flex min-h-0 flex-1 flex-col"
-        trailing={<ImportPathCopy path={path} />}
-        preview={previewContent}
+        trailing={<ImportPathLabel path={path} />}
+        preview={<div className={PREVIEW_PANE_CLASS}>{children}</div>}
         code={<LazyCodeBlock load={loadSource} className="min-h-40" />}
       />
 
