@@ -44,10 +44,10 @@ export function shikiPlugin(): Plugin {
 
       const code = await readFile(path, "utf8");
       const highlighter = await getHighlighter();
-      const html = highlighter.codeToHtml(code, { lang: "tsx", theme: THEME_DARK });
+      const htmlDark = highlighter.codeToHtml(code, { lang: "tsx", theme: THEME_DARK });
       const htmlLight = highlighter.codeToHtml(code, { lang: "tsx", theme: THEME_LIGHT });
 
-      return `export const code = ${JSON.stringify(code)};\nexport const html = ${JSON.stringify(html)};\nexport const htmlLight = ${JSON.stringify(htmlLight)};\n`;
+      return `export const code = ${JSON.stringify(code)};\nexport const htmlDark = ${JSON.stringify(htmlDark)};\nexport const htmlLight = ${JSON.stringify(htmlLight)};\n`;
     },
   };
 }
