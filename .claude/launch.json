@@ -12,6 +12,12 @@
       "runtimeExecutable": "pnpm",
       "runtimeArgs": ["--filter", "@apps/web", "exec", "vite", "preview", "--port", "3001"],
       "port": 3001
+    },
+    {
+      "name": "web-verify",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["--filter", "@apps/web", "exec", "vite", "dev", "--port", "3100"],
+      "port": 3100
     }
   ]
 }
