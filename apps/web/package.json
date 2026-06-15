@@ -13,7 +13,6 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@codefast/tailwind-variants": "workspace:*",
     "@codefast/theme": "workspace:*",
     "@codefast/ui": "workspace:*",
     "@daypicker/react": "catalog:",
@@ -23,7 +22,6 @@
     "@tanstack/react-devtools": "catalog:",
     "@tanstack/react-router": "catalog:",
     "@tanstack/react-router-devtools": "catalog:",
-    "@tanstack/react-router-ssr-query": "catalog:",
     "@tanstack/react-start": "catalog:",
     "@tanstack/react-table": "catalog:",
     "@tanstack/router-plugin": "catalog:",
