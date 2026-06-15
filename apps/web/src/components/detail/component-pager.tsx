@@ -11,12 +11,12 @@ interface ComponentPagerProps {
 /** Previous / next navigation between adjacent components in the registry. */
 export function ComponentPager({ previous, next }: ComponentPagerProps) {
   return (
-    <nav className="grid gap-4 border-t border-ui-border pt-8 sm:grid-cols-2">
+    <nav className="grid gap-4 border-t border-ui-border/60 pt-8 sm:grid-cols-2">
       {previous ? (
         <Link
           to="/components/$slug"
           params={{ slug: previous.slug }}
-          className="group flex flex-col gap-1 rounded-xl border border-ui-border p-4 no-underline transition-colors hover:border-ui-brand"
+          className="group flex flex-col gap-1 rounded-xl border border-ui-border/60 p-4 no-underline transition-colors duration-200 hover:border-ui-brand"
         >
           <span className="flex items-center gap-1.5 text-xs text-ui-muted">
             <ArrowLeftIcon className="size-3.5" />
@@ -31,7 +31,7 @@ export function ComponentPager({ previous, next }: ComponentPagerProps) {
         <Link
           to="/components/$slug"
           params={{ slug: next.slug }}
-          className="group flex flex-col items-end gap-1 rounded-xl border border-ui-border p-4 text-end no-underline transition-colors hover:border-ui-brand sm:col-start-2"
+          className="group flex flex-col items-end gap-1 rounded-xl border border-ui-border/60 p-4 text-end no-underline transition-colors duration-200 hover:border-ui-brand sm:col-start-2"
         >
           <span className="flex items-center gap-1.5 text-xs text-ui-muted">
             Next
