@@ -15,7 +15,7 @@ interface KeyboardTableProps {
 /** Accessibility reference: keyboard interactions rendered with Kbd. */
 export function KeyboardTable({ rows }: KeyboardTableProps) {
   return (
-    <div className="overflow-x-auto rounded-2xl border border-ui-border">
+    <div className="overflow-x-auto rounded-2xl border border-ui-border/60">
       <Table className="w-full">
         <TableHeader>
           <TableRow>

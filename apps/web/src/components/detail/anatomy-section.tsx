@@ -4,18 +4,19 @@ import { CodeBlock } from "#/components/shared/code-block";
 interface AnatomySectionProps {
   readonly code: string;
   readonly highlightedCode: string;
+  readonly highlightedCodeLight: string;
 }
 
 /** The "Anatomy" section: the composition skeleton shown verbatim. */
-export function AnatomySection({ code, highlightedCode }: AnatomySectionProps) {
+export function AnatomySection({ code, highlightedCode, highlightedCodeLight }: AnatomySectionProps) {
   return (
     <DocSection
       id="anatomy"
       title="Anatomy"
       description="How the parts compose. Copy this skeleton and fill in the slots."
     >
-      <div className="overflow-hidden rounded-2xl border border-ui-border">
-        <CodeBlock code={code} highlightedCode={highlightedCode} />
+      <div className="overflow-hidden rounded-2xl border border-ui-border/60">
+        <CodeBlock code={code} highlightedCode={highlightedCode} highlightedCodeLight={highlightedCodeLight} />
       </div>
     </DocSection>
   );

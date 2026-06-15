@@ -1,6 +1,5 @@
 import { DirectionProvider } from "@codefast/ui/direction";
 import { cn } from "@codefast/ui/lib/utils";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@codefast/ui/tabs";
 import type { ReactNode } from "react";
 
 import {
@@ -11,6 +10,8 @@ import {
   type Translations,
 } from "#/components/detail/language-selector";
 import { CodeBlock } from "#/components/shared/code-block";
+import { PreviewTabs } from "#/components/shared/preview-tabs";
+import { SCROLL_MT_ANCHOR } from "#/lib/layout";
 
 interface ExamplePreviewProps {
   /** Anchor id for deep-linking and the On-this-page TOC. */
@@ -19,8 +20,10 @@ interface ExamplePreviewProps {
   readonly description?: string | undefined;
   /** Raw source, shown in the Code tab and copied to the clipboard. */
   readonly code: string;
-  /** Pre-highlighted Shiki HTML for `code`, produced in the route loader. */
+  /** Pre-highlighted Shiki HTML for `code` (dark), produced in the route loader. */
   readonly highlightedCode: string;
+  /** Pre-highlighted Shiki HTML for `code` (light). */
+  readonly highlightedCodeLight: string;
   /** Extra classes for the live preview surface — alignment, height, padding. */
   readonly previewClassName?: string | undefined;
   /** Reading direction; `"rtl"` adds a language switcher and flips the layout. */
@@ -33,8 +36,6 @@ interface ExamplePreviewProps {
  * A single documented example: a titled block with a Preview / Code tab pair.
  * Used for every example on a component detail page, including the single
  * fallback example synthesised for components without rich docs yet.
- *
- * Dogfoods `@codefast/ui` Tabs so the docs site demonstrates the library itself.
  */
 export function ExamplePreview({
   id,
@@ -42,12 +43,13 @@ export function ExamplePreview({
   description,
   code,
   highlightedCode,
+  highlightedCodeLight,
   previewClassName,
   direction = "ltr",
   children,
 }: ExamplePreviewProps) {
   return (
-    <div id={id} className="scroll-mt-24">
+    <div id={id} className={SCROLL_MT_ANCHOR}>
       <div className="mb-3">
         <a href={`#${id}`} className="group/ex flex w-fit items-center gap-2 no-underline">
           <h3 className="text-sm font-semibold text-ui-fg">{title}</h3>
@@ -58,35 +60,25 @@ export function ExamplePreview({
         {description ? <p className="mt-1 max-w-2xl text-sm leading-relaxed text-ui-muted">{description}</p> : null}
       </div>
 
-      <Tabs defaultValue="preview" className="w-full">
-        <TabsList>
-          <TabsTrigger value="preview">Preview</TabsTrigger>
-          <TabsTrigger value="code">Code</TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="preview" className="mt-3">
-          {direction === "rtl" ? (
+      <PreviewTabs
+        preview={
+          direction === "rtl" ? (
             <LanguageProvider defaultLanguage="ar">
               <RtlPreviewSurface previewClassName={previewClassName}>{children}</RtlPreviewSurface>
             </LanguageProvider>
           ) : (
             <div
               className={cn(
-                "flex min-h-56 flex-wrap items-center justify-center gap-3 rounded-2xl border border-ui-border bg-ui-surface p-10",
+                "flex min-h-56 flex-wrap items-center justify-center gap-3 bg-ui-surface p-10",
                 previewClassName,
               )}
             >
               {children}
             </div>
-          )}
-        </TabsContent>
-
-        <TabsContent value="code" className="mt-3">
-          <div className="overflow-hidden rounded-2xl border border-ui-border">
-            <CodeBlock code={code} highlightedCode={highlightedCode} />
-          </div>
-        </TabsContent>
-      </Tabs>
+          )
+        }
+        code={<CodeBlock code={code} highlightedCode={highlightedCode} highlightedCodeLight={highlightedCodeLight} />}
+      />
     </div>
   );
 }
@@ -100,8 +92,7 @@ const directionTranslations: Translations<Record<string, never>> = {
 
 /**
  * RTL preview chrome: a top toolbar with the language switcher, plus the demo
- * wrapped in a `DirectionProvider` so every Radix primitive inside flips. The
- * surface itself carries `dir` / `data-lang` so plain DOM and CSS flip too.
+ * wrapped in a `DirectionProvider` so every Radix primitive inside flips.
  */
 function RtlPreviewSurface({
   previewClassName,
@@ -114,8 +105,8 @@ function RtlPreviewSurface({
   const { dir, language } = useTranslation(directionTranslations, "ar");
 
   return (
-    <div className="rounded-2xl border border-ui-border">
-      <div className="flex items-center border-b border-ui-border px-4 py-2">
+    <div>
+      <div className="flex items-center border-b border-ui-border/60 px-4 py-2">
         {context ? <LanguageSelector value={context.language} onValueChange={context.setLanguage} /> : null}
         <p className="ms-auto text-xs text-ui-muted">
           Translations are AI-generated for demonstration and may be imperfect.
