@@ -12,9 +12,9 @@ interface LazyCodeBlockProps {
 }
 
 /**
- * Defers fetching a `?shiki` source chunk until the block actually renders —
- * gallery cards and detail pages only mount this inside their Code tab, so the
- * raw text + highlighted HTML never download for visitors who don't open it.
+ * Defers fetching a `?shiki` source chunk until the block mounts. Gallery cards
+ * mount this only after the Code tab is opened; detail pages mount it immediately
+ * for the always-visible code peek.
  */
 export function LazyCodeBlock({ load, className }: LazyCodeBlockProps) {
   const [source, setSource] = useState<HighlightedSource | null>(null);
@@ -34,8 +34,15 @@ export function LazyCodeBlock({ load, className }: LazyCodeBlockProps) {
   }, [load]);
 
   if (!source) {
-    return <div className={cn("animate-pulse bg-neutral-900", className)} />;
+    return <div className={cn("min-h-40 animate-pulse bg-ui-surface", className)} />;
   }
 
-  return <CodeBlock code={source.code} highlightedCode={source.html} className={className} />;
+  return (
+    <CodeBlock
+      code={source.code}
+      highlightedCode={source.html}
+      highlightedCodeLight={source.htmlLight}
+      className={className}
+    />
+  );
 }
