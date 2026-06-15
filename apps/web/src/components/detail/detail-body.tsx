@@ -15,7 +15,6 @@ import { AccessibilitySection } from "#/components/detail/accessibility-section"
 import { AnatomySection } from "#/components/detail/anatomy-section";
 import { ApiSection } from "#/components/detail/api-section";
 import { ComponentPager } from "#/components/detail/component-pager";
-import { DetailCtaSection } from "#/components/detail/detail-cta-section";
 import { DetailMobileToc } from "#/components/detail/detail-mobile-toc";
 import { ExamplesSection } from "#/components/detail/examples-section";
 import { GuidelinesSection } from "#/components/detail/guidelines-section";
@@ -136,7 +135,7 @@ function DetailBody({ detail }: { detail: ComponentDetail }) {
     <>
       <DetailMobileToc items={toc} />
 
-      <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_180px] lg:gap-12">
+      <div className="xl:grid xl:grid-cols-[minmax(0,1fr)_180px] xl:gap-12">
         <div className="min-w-0 space-y-16">
           {examples.length > 0 ? (
             <ExamplesSection examples={examples} showHint={!doc} />
@@ -167,11 +166,9 @@ function DetailBody({ detail }: { detail: ComponentDetail }) {
           {hasRelated ? <RelatedSection dependencies={doc?.dependencies} related={doc?.related} /> : null}
 
           <ComponentPager previous={neighbors?.previous} next={neighbors?.next} />
-
-          <DetailCtaSection />
         </div>
 
-        <aside className="hidden lg:block">
+        <aside className="hidden xl:block">
           <div
             className={cn(
               "sticky rounded-xl bg-ui-bg/75 p-3 backdrop-blur-lg backdrop-saturate-150",
