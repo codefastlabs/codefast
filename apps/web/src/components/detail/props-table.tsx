@@ -14,7 +14,7 @@ interface PropsTableProps {
 /** API reference table: Prop · Type · Default · Description. */
 export function PropsTable({ rows }: PropsTableProps) {
   return (
-    <div className="overflow-x-auto rounded-2xl border border-ui-border">
+    <div className="overflow-x-auto rounded-2xl border border-ui-border/60">
       <Table className="w-full">
         <TableHeader>
           <TableRow>

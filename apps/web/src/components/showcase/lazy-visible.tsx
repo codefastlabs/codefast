@@ -1,6 +1,8 @@
 import type { ReactNode } from "react";
 import { useEffect, useRef, useState } from "react";
 
+import { PreviewSkeleton } from "#/components/showcase/preview-skeleton";
+
 interface LazyVisibleProps {
   children: ReactNode;
   /** Reserved height for the placeholder before mount, to avoid layout shift. */
@@ -14,7 +16,7 @@ interface LazyVisibleProps {
  * (recharts, embla, @daypicker/react, …) otherwise all mount and run effects on
  * first paint of the gallery.
  *
- * SSR-safe: renders an empty placeholder on the server and on the first client
+ * SSR-safe: renders a skeleton placeholder on the server and on the first client
  * render (state starts false), so hydration matches; the IntersectionObserver
  * only swaps in the real children after mount.
  */
@@ -54,5 +56,9 @@ export function LazyVisible({ children, minHeight = 160, rootMargin = "300px" }:
     return <>{children}</>;
   }
 
-  return <div ref={ref} style={{ minHeight }} />;
+  return (
+    <div ref={ref} className="w-full">
+      <PreviewSkeleton minHeight={minHeight} />
+    </div>
+  );
 }

@@ -21,7 +21,7 @@ export function RelatedSection({ dependencies, related }: RelatedSectionProps) {
             {dependencies.map((dep) => (
               <span
                 key={dep}
-                className="rounded-full border border-ui-border bg-ui-surface px-3 py-1 font-mono text-xs text-ui-muted"
+                className="rounded-full border border-ui-border/60 bg-ui-surface px-3 py-1 font-mono text-xs text-ui-muted"
               >
                 {dep}
               </span>
@@ -45,7 +45,7 @@ export function RelatedSection({ dependencies, related }: RelatedSectionProps) {
                   key={relatedSlug}
                   to="/components/$slug"
                   params={{ slug: relatedSlug }}
-                  className="rounded-full border border-ui-border bg-ui-card px-3 py-1 text-xs font-medium text-ui-muted no-underline transition-colors hover:border-ui-brand hover:text-ui-fg"
+                  className="rounded-full border border-ui-border/60 bg-ui-card px-3 py-1 text-xs font-medium text-ui-muted no-underline transition-colors duration-200 hover:border-ui-brand hover:text-ui-fg"
                 >
                   {target.name}
                 </Link>

@@ -1,6 +1,5 @@
 import { AppearanceProvider, AppearanceScript, resolveColorScheme } from "@codefast/theme";
 import { getRootColorSchemeServerFn, getColorSchemeServerFn, persistColorSchemeCookie } from "@codefast/theme/start";
-import { Badge } from "@codefast/ui/badge";
 import { Button } from "@codefast/ui/button";
 import { cn } from "@codefast/ui/lib/utils";
 import { TanStackDevtools } from "@tanstack/react-devtools";
@@ -10,6 +9,7 @@ import type { ReactNode } from "react";
 
 import { Footer } from "#/components/layout/footer";
 import { Header } from "#/components/layout/header";
+import { NotFound } from "#/components/shared/not-found";
 
 import appCss from "#/styles.css?url";
 
@@ -49,54 +49,33 @@ export const Route = createRootRoute({
   shellComponent: RootDocument,
 });
 
-function CenteredMessage({
-  badge,
-  title,
-  description,
-  children,
-}: {
-  badge: string;
-  title: string;
-  description: string;
-  children?: ReactNode;
-}) {
-  return (
-    <main className="container mx-auto flex flex-col items-center px-4 pt-32 pb-32 text-center">
-      <Badge variant="outline" className="mb-5 border-ui-border text-ui-muted">
-        {badge}
-      </Badge>
-      <h1 className="mb-3 text-3xl font-bold tracking-tighter text-ui-fg">{title}</h1>
-      <p className="mb-8 max-w-md text-ui-muted">{description}</p>
-      {children}
-    </main>
-  );
-}
-
 function SiteNotFound() {
   return (
-    <CenteredMessage
+    <NotFound
       badge="404"
       title="Page not found"
       description="The page you’re looking for doesn’t exist or may have moved."
-    >
-      <Button asChild>
-        <Link to="/">Back to home</Link>
-      </Button>
-    </CenteredMessage>
+      action={
+        <Button asChild>
+          <Link to="/">Back to home</Link>
+        </Button>
+      }
+    />
   );
 }
 
 function SiteError({ error }: { error: Error }) {
   return (
-    <CenteredMessage
+    <NotFound
       badge="Error"
       title="Something went wrong"
       description={error.message || "An unexpected error occurred. Please try again."}
-    >
-      <Button asChild>
-        <Link to="/">Back to home</Link>
-      </Button>
-    </CenteredMessage>
+      action={
+        <Button asChild>
+          <Link to="/">Back to home</Link>
+        </Button>
+      }
+    />
   );
 }
 

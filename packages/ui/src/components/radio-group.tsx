@@ -16,7 +16,9 @@ type RadioGroupProps = ComponentProps<typeof RadioGroupPrimitive.Root>;
  * @since 0.3.16-canary.0
  */
 function RadioGroup({ className, ...props }: RadioGroupProps): JSX.Element {
-  return <RadioGroupPrimitive.Root className={cn("grid w-full gap-3", className)} data-slot="radio-group" {...props} />;
+  return (
+    <RadioGroupPrimitive.Root className={cn("flex flex-col gap-3", className)} data-slot="radio-group" {...props} />
+  );
 }
 
 /* -----------------------------------------------------------------------------

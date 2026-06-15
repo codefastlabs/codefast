@@ -16,7 +16,7 @@
 }
 
 :root {
-  --ui-bg: var(--color-neutral-50);
+  --ui-bg: var(--color-neutral-100);
   --ui-surface: var(--color-neutral-50);
   --ui-card: var(--color-white);
   --ui-border: var(--color-neutral-200);
@@ -35,4 +35,18 @@
   --ui-muted: var(--color-neutral-400);
   --ui-brand: var(--color-sky-400);
   --ui-inverse: var(--color-neutral-950);
+}
+
+@utility page-enter {
+  @apply animate-in duration-[800ms] ease-out fill-mode-both fade-in slide-in-from-bottom-4;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

@@ -25,7 +25,8 @@ export function ExamplesSection({ examples, showHint }: ExamplesSectionProps) {
             title={example.title}
             description={example.description}
             code={example.code}
-            highlightedCode={example.html}
+            highlightedCodeDark={example.htmlDark}
+            highlightedCodeLight={example.htmlLight}
             previewClassName={example.previewClassName}
             direction={example.direction}
           >

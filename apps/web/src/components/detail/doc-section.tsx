@@ -1,6 +1,8 @@
 import { cn } from "@codefast/ui/lib/utils";
 import type { ReactNode } from "react";
 
+import { SCROLL_MT_ANCHOR } from "#/lib/layout";
+
 interface DocSectionProps {
   /** Anchor id — must match the matching entry in the On-this-page TOC. */
   readonly id: string;
@@ -16,10 +18,14 @@ interface DocSectionProps {
  * copy the section URL, matching the per-component detail layout.
  */
 export function DocSection({ id, title, description, children, className }: DocSectionProps) {
+  const titleId = `${id}-title`;
+
   return (
-    <section id={id} className={cn("scroll-mt-24", className)}>
+    <section id={id} aria-labelledby={titleId} className={cn(SCROLL_MT_ANCHOR, className)}>
       <a href={`#${id}`} className="group/anchor mb-1 flex w-fit items-center gap-2 no-underline">
-        <h2 className="text-2xl font-bold tracking-tighter text-ui-fg">{title}</h2>
+        <h2 id={titleId} className="text-2xl font-bold tracking-tighter text-ui-fg">
+          {title}
+        </h2>
         <span aria-hidden className="text-ui-muted opacity-0 transition-opacity group-hover/anchor:opacity-100">
           #
         </span>
