@@ -75,7 +75,7 @@ describe("demo registry ↔ metadata", () => {
 
       const source = await entry.loadSource();
       expect(source.code.length, `${slug} code`).toBeGreaterThan(0);
-      expect(source.html, `${slug} html`).toContain("shiki");
+      expect(source.htmlDark, `${slug} htmlDark`).toContain("shiki");
       expect(source.htmlLight, `${slug} htmlLight`).toContain("shiki");
     }
   });
@@ -102,7 +102,7 @@ describe("doc registry ↔ metadata", () => {
       for (const example of doc?.examples ?? []) {
         expect(typeof example.Demo, `${slug}/${example.id} Demo`).toBe("function");
         expect(example.code.length, `${slug}/${example.id} code`).toBeGreaterThan(0);
-        expect(example.html, `${slug}/${example.id} html`).toContain("shiki");
+        expect(example.htmlDark, `${slug}/${example.id} htmlDark`).toContain("shiki");
         expect(example.htmlLight, `${slug}/${example.id} htmlLight`).toContain("shiki");
       }
     }
