@@ -4,7 +4,7 @@ import { ArrowUpRightIcon } from "lucide-react";
 import { usePreloadDetail } from "#/hooks/use-preload-detail";
 
 /** Centered preview pane shared by the live-demo and docs-only gallery cards. */
-export const PREVIEW_PANE_CLASS = "flex min-h-40 flex-1 items-start justify-center bg-ui-surface p-6";
+export const PREVIEW_PANE_CLASS = "flex min-h-40 flex-1 items-center justify-center bg-ui-surface p-6";
 
 interface ComponentCardMetaProps {
   readonly name: string;
