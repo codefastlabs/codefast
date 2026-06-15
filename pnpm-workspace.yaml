@@ -26,9 +26,9 @@ catalog:
   "@shikijs/rehype": ^4.2.0
   "@tabler/icons-react": ^3.44.0
   "@tailwindcss/cli": ^4.3.0
-  "@tailwindcss/postcss": ^4.3.0
+  "@tailwindcss/postcss": ^4.3.1
   "@tailwindcss/typography": ^0.5.20
-  "@tailwindcss/vite": ^4.3.0
+  "@tailwindcss/vite": ^4.3.1
   "@tanstack/devtools-vite": ^0.7.0
   "@tanstack/react-devtools": ^0.10.5
   "@tanstack/react-form": ^1.33.0
@@ -108,7 +108,7 @@ catalog:
   sonner: ^2.0.7
   tailwind-merge: ^3.6.0
   tailwind-variants: ^3.2.2
-  tailwindcss: ^4.3.0
+  tailwindcss: ^4.3.1
   tinybench: ^6.0.2
   tsdown: ^0.22.2
   tsx: ^4.22.4
