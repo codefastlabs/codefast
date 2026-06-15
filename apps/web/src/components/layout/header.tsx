@@ -49,7 +49,7 @@ export function Header() {
   const [open, setOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-ui-border bg-ui-bg/75 backdrop-blur-lg backdrop-saturate-150">
+    <header className="sticky top-0 z-50 border-b border-ui-border/60 bg-ui-bg/75 backdrop-blur-lg backdrop-saturate-150">
       <div className="container mx-auto flex h-12 items-center gap-8 px-4">
         <Logo />
 
@@ -81,7 +81,12 @@ export function Header() {
           {/* Mobile menu */}
           <Sheet open={open} onOpenChange={setOpen}>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="md:hidden" aria-label="Open navigation menu">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="min-h-11 min-w-11 md:hidden"
+                aria-label="Open navigation menu"
+              >
                 <MenuIcon className="size-5" />
               </Button>
             </SheetTrigger>
