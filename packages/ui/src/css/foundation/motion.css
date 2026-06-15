@@ -49,8 +49,8 @@
    * transition and the indicator keyframe.
    * ---------------------------------------------------------------------- */
 
-  --transition-duration-control: 200ms; /* Container / ring: switch track, checkbox & radio box */
-  --transition-duration-control-indicator: 300ms; /* Moving part: switch thumb, check, radio dot */
+  --transition-duration-control: 100ms; /* Container / ring: switch track, checkbox & radio box */
+  --transition-duration-control-indicator: 200ms; /* Moving part: switch thumb, check, radio dot */
 
   /* ----------------------------------------------------------------------
    * Keyframes
