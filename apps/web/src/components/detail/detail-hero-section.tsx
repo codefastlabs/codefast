@@ -11,20 +11,13 @@ import { Button } from "@codefast/ui/button";
 import { Link } from "@tanstack/react-router";
 import { ChevronRightIcon, CodeIcon, PackageIcon } from "lucide-react";
 
+import { DetailInstallPanel } from "#/components/detail/detail-install-panel";
 import type { ComponentMeta } from "#/registry/components";
-import { CATEGORIES, componentImportLabel } from "#/registry/components";
+import { CATEGORIES } from "#/registry/components";
 
 const GITHUB_SRC = "https://github.com/codefastlabs/codefast/tree/main/packages/ui/src/components";
 const NPM_URL = "https://www.npmjs.com/package/@codefast/ui";
 
-interface ComponentDetailHeaderProps {
-  readonly component: ComponentMeta;
-}
-
-/**
- * The detail-page masthead: breadcrumb, title and description, source / npm
- * links, and the install + import-path panel.
- */
 const STATUS_BADGE: Record<"beta" | "deprecated", { label: string; className: string }> = {
   beta: { label: "Beta", className: "border-amber-500/40 text-amber-600 dark:text-amber-400" },
   deprecated: {
@@ -33,15 +26,20 @@ const STATUS_BADGE: Record<"beta" | "deprecated", { label: string; className: st
   },
 };
 
-export function ComponentDetailHeader({ component }: ComponentDetailHeaderProps) {
+interface DetailHeroSectionProps {
+  readonly component: ComponentMeta;
+}
+
+/** Component detail header: breadcrumb, title, actions, and install panel. */
+export function DetailHeroSection({ component }: DetailHeroSectionProps) {
   const { slug, name, category, description, status, composition } = component;
   const categoryLabel = CATEGORIES.find((entry) => entry.id === category)?.label ?? category;
   const statusBadge = status && status !== "stable" ? STATUS_BADGE[status] : undefined;
   const isComposition = composition !== undefined;
 
   return (
-    <>
-      <Breadcrumb className="mb-8">
+    <div className="mb-10 border-b border-ui-border/60 pb-8">
+      <Breadcrumb className="mb-6">
         <BreadcrumbList>
           <BreadcrumbItem>
             <BreadcrumbLink asChild>
@@ -57,9 +55,9 @@ export function ComponentDetailHeader({ component }: ComponentDetailHeaderProps)
         </BreadcrumbList>
       </Breadcrumb>
 
-      <header className="mb-10 max-w-2xl">
+      <header className="mb-6 max-w-2xl">
         <div className="mb-4 flex flex-wrap items-center gap-2">
-          <Badge variant="outline" className="border-ui-border text-ui-muted capitalize">
+          <Badge variant="outline" className="border-ui-border/60 text-ui-muted capitalize">
             {categoryLabel}
           </Badge>
           {statusBadge ? (
@@ -68,7 +66,7 @@ export function ComponentDetailHeader({ component }: ComponentDetailHeaderProps)
             </Badge>
           ) : null}
         </div>
-        <h1 className="mb-4 text-4xl leading-none font-bold tracking-tighter text-ui-fg md:text-5xl">{name}</h1>
+        <h1 className="mb-4 text-3xl leading-none font-bold tracking-tighter text-ui-fg sm:text-4xl">{name}</h1>
         <p className="mb-6 text-base leading-relaxed text-ui-muted">{description}</p>
         <div className="flex flex-wrap gap-2">
           {isComposition ? null : (
@@ -88,22 +86,7 @@ export function ComponentDetailHeader({ component }: ComponentDetailHeaderProps)
         </div>
       </header>
 
-      <div className="mb-12 grid gap-3 sm:grid-cols-2">
-        <div>
-          <p className="mb-1.5 text-xs font-semibold tracking-widest text-ui-muted uppercase">Install</p>
-          <div className="rounded-xl border border-ui-border bg-ui-surface px-4 py-2.5 font-mono text-sm text-ui-fg">
-            pnpm add @codefast/ui
-          </div>
-        </div>
-        <div>
-          <p className="mb-1.5 text-xs font-semibold tracking-widest text-ui-muted uppercase">
-            {isComposition ? "Composed from" : "Import path"}
-          </p>
-          <div className="truncate rounded-xl border border-ui-border bg-ui-surface px-4 py-2.5 font-mono text-sm text-ui-brand">
-            {componentImportLabel(component)}
-          </div>
-        </div>
-      </div>
-    </>
+      <DetailInstallPanel component={component} />
+    </div>
   );
 }

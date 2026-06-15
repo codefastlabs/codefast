@@ -7,6 +7,8 @@
 export interface HighlightedSource {
   /** Raw source text, written to the clipboard on copy. */
   readonly code: string;
-  /** Pre-rendered Shiki HTML, injected verbatim. */
-  readonly html: string;
+  /** Pre-rendered Shiki HTML — dark theme (github-dark). */
+  readonly htmlDark: string;
+  /** Pre-rendered Shiki HTML — light theme (github-light). */
+  readonly htmlLight: string;
 }

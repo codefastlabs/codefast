@@ -7,6 +7,7 @@
  * awaits the chunk and ships complete HTML; on the client, navigating to
  * `/components/button` downloads button's chunk and nothing else.
  */
+import { cn } from "@codefast/ui/lib/utils";
 import type { ComponentType, LazyExoticComponent } from "react";
 import { lazy } from "react";
 
@@ -14,10 +15,12 @@ import { AccessibilitySection } from "#/components/detail/accessibility-section"
 import { AnatomySection } from "#/components/detail/anatomy-section";
 import { ApiSection } from "#/components/detail/api-section";
 import { ComponentPager } from "#/components/detail/component-pager";
+import { DetailMobileToc } from "#/components/detail/detail-mobile-toc";
 import { ExamplesSection } from "#/components/detail/examples-section";
 import { GuidelinesSection } from "#/components/detail/guidelines-section";
 import { OnThisPage, type TocItem } from "#/components/detail/on-this-page";
 import { RelatedSection } from "#/components/detail/related-section";
+import { STICKY_OFFSET_DETAIL_TOC } from "#/lib/layout";
 import type { ComponentMeta } from "#/registry/components";
 import { COMPONENTS, COMPONENT_BY_SLUG, NEIGHBORS_BY_SLUG } from "#/registry/components";
 import { DEMO_BY_SLUG } from "#/registry/demos";
@@ -129,39 +132,54 @@ function DetailBody({ detail }: { detail: ComponentDetail }) {
   const toc = buildToc(detail);
 
   return (
-    <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_180px] lg:gap-12">
-      <div className="min-w-0 space-y-16">
-        {examples.length > 0 ? (
-          <ExamplesSection examples={examples} showHint={!doc} />
-        ) : (
-          <div className="flex min-h-64 items-center justify-center rounded-2xl border border-ui-border bg-ui-surface p-10">
-            <p className="max-w-sm text-center text-sm text-ui-muted">
-              This component is best explored in your own app. See the source on GitHub for usage.
-            </p>
-          </div>
-        )}
+    <>
+      <DetailMobileToc items={toc} />
 
-        {doc?.anatomy ? <AnatomySection code={doc.anatomy.code} highlightedCode={doc.anatomy.html} /> : null}
+      <div className="xl:grid xl:grid-cols-[minmax(0,1fr)_180px] xl:gap-12">
+        <div className="min-w-0 space-y-16">
+          {examples.length > 0 ? (
+            <ExamplesSection examples={examples} showHint={!doc} />
+          ) : (
+            <div className="flex min-h-64 items-center justify-center rounded-2xl border border-ui-border/60 bg-ui-surface p-10">
+              <p className="max-w-sm text-center text-sm text-ui-muted">
+                This component is best explored in your own app. See the source on GitHub for usage.
+              </p>
+            </div>
+          )}
 
-        {doc?.api?.length ? <ApiSection groups={doc.api} /> : null}
+          {doc?.anatomy ? (
+            <AnatomySection
+              code={doc.anatomy.code}
+              highlightedCodeDark={doc.anatomy.htmlDark}
+              highlightedCodeLight={doc.anatomy.htmlLight}
+            />
+          ) : null}
 
-        {doc?.accessibility ? (
-          <AccessibilitySection keyboard={doc.accessibility.keyboard} notes={doc.accessibility.notes} />
-        ) : null}
+          {doc?.api?.length ? <ApiSection groups={doc.api} /> : null}
 
-        {doc?.guidelines ? <GuidelinesSection do={doc.guidelines.do} dont={doc.guidelines.dont} /> : null}
+          {doc?.accessibility ? (
+            <AccessibilitySection keyboard={doc.accessibility.keyboard} notes={doc.accessibility.notes} />
+          ) : null}
 
-        {hasRelated ? <RelatedSection dependencies={doc?.dependencies} related={doc?.related} /> : null}
+          {doc?.guidelines ? <GuidelinesSection do={doc.guidelines.do} dont={doc.guidelines.dont} /> : null}
 
-        <ComponentPager previous={neighbors?.previous} next={neighbors?.next} />
-      </div>
+          {hasRelated ? <RelatedSection dependencies={doc?.dependencies} related={doc?.related} /> : null}
 
-      <aside className="hidden lg:block">
-        <div className="sticky top-24">
-          <OnThisPage items={toc} />
+          <ComponentPager previous={neighbors?.previous} next={neighbors?.next} />
         </div>
-      </aside>
-    </div>
+
+        <aside className="hidden xl:block">
+          <div
+            className={cn(
+              "sticky rounded-xl bg-ui-bg/75 p-3 backdrop-blur-lg backdrop-saturate-150",
+              STICKY_OFFSET_DETAIL_TOC,
+            )}
+          >
+            <OnThisPage items={toc} />
+          </div>
+        </aside>
+      </div>
+    </>
   );
 }
 

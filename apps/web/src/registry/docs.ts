@@ -72,9 +72,9 @@ async function loadSource(ref: SourceRef): Promise<HighlightedSource> {
 }
 
 async function resolveExample(example: ComponentDoc["examples"][number]): Promise<ResolvedDocExample> {
-  const { code, html } = await loadSource(example.source);
+  const source = await loadSource(example.source);
 
-  return { ...example, code, html };
+  return { ...example, ...source };
 }
 
 /**

@@ -1,11 +1,12 @@
 import { cn } from "@codefast/ui/lib/utils";
-import { Link } from "@tanstack/react-router";
-import { ArrowUpRightIcon } from "lucide-react";
 import type { ReactNode } from "react";
-import { useState } from "react";
 
+import { PreviewTabs } from "#/components/shared/preview-tabs";
+import { ComponentCardMeta, PREVIEW_PANE_CLASS } from "#/components/showcase/component-card-meta";
+import { ImportPathLabel } from "#/components/showcase/import-path-label";
 import { LazyCodeBlock } from "#/components/showcase/lazy-code-block";
 import type { HighlightedSource } from "#/lib/highlight";
+import { SCROLL_MT_GALLERY } from "#/lib/layout";
 
 interface PreviewCardProps {
   name: string;
@@ -21,61 +22,24 @@ interface PreviewCardProps {
 }
 
 export function PreviewCard({ name, path, description, loadSource, children, wide, id, slug }: PreviewCardProps) {
-  const [tab, setTab] = useState<"preview" | "code">("preview");
-
   return (
     <div
       id={id}
       className={cn(
-        "flex scroll-mt-28 flex-col rounded-2xl border border-ui-border bg-ui-card",
+        "flex h-full flex-col rounded-2xl border border-ui-border/60 bg-ui-card transition-[box-shadow,border-color] duration-200 hover:border-ui-brand/30 hover:shadow-lg hover:shadow-black/5 dark:hover:shadow-black/20",
+        SCROLL_MT_GALLERY,
         wide && "sm:col-span-2",
       )}
     >
-      {/* Tab bar */}
-      <div className="flex min-w-0 items-center justify-between gap-2 border-b border-ui-border px-3">
-        <div className="flex shrink-0">
-          {(["preview", "code"] as const).map((t) => (
-            <button
-              key={t}
-              type="button"
-              onClick={() => setTab(t)}
-              className={cn(
-                "border-b-2 px-3 py-2.5 text-xs font-medium capitalize transition-colors",
-                tab === t ? "border-ui-fg text-ui-fg" : "border-transparent text-ui-muted hover:text-ui-fg",
-              )}
-            >
-              {t}
-            </button>
-          ))}
-        </div>
-        <code className="min-w-0 truncate rounded border border-ui-border bg-ui-surface px-1.5 py-0.5 font-mono text-xs text-ui-muted">
-          {path}
-        </code>
-      </div>
+      <PreviewTabs
+        variant="card"
+        className="flex min-h-0 flex-1 flex-col"
+        trailing={<ImportPathLabel path={path} />}
+        preview={<div className={PREVIEW_PANE_CLASS}>{children}</div>}
+        code={<LazyCodeBlock load={loadSource} className="min-h-40" />}
+      />
 
-      {/* Content */}
-      {tab === "preview" ? (
-        <div className="flex min-h-40 flex-1 items-center justify-center bg-ui-surface p-6">{children}</div>
-      ) : (
-        <LazyCodeBlock load={loadSource} className="h-full min-h-40" />
-      )}
-
-      {/* Meta */}
-      <div className="border-t border-ui-border px-4 py-3">
-        {slug ? (
-          <Link
-            to="/components/$slug"
-            params={{ slug }}
-            className="group inline-flex items-center gap-1 text-sm font-semibold text-ui-fg no-underline"
-          >
-            {name}
-            <ArrowUpRightIcon className="size-3.5 text-ui-muted transition-colors group-hover:text-ui-brand" />
-          </Link>
-        ) : (
-          <p className="text-sm font-semibold text-ui-fg">{name}</p>
-        )}
-        <p className="mt-0.5 text-xs leading-5 text-ui-muted">{description}</p>
-      </div>
+      <ComponentCardMeta name={name} description={description} slug={slug} />
     </div>
   );
 }

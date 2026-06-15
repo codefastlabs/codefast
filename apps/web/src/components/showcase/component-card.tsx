@@ -1,9 +1,11 @@
-import { Link } from "@tanstack/react-router";
-import { ArrowUpRightIcon } from "lucide-react";
+import { cn } from "@codefast/ui/lib/utils";
 import { Suspense } from "react";
 
+import { ComponentCardMeta, PREVIEW_PANE_CLASS } from "#/components/showcase/component-card-meta";
 import { LazyVisible } from "#/components/showcase/lazy-visible";
 import { PreviewCard } from "#/components/showcase/preview-card";
+import { PreviewSkeleton } from "#/components/showcase/preview-skeleton";
+import { SCROLL_MT_GALLERY } from "#/lib/layout";
 import type { ComponentMeta } from "#/registry/components";
 import { componentImportLabel } from "#/registry/components";
 import { DEMO_BY_SLUG } from "#/registry/demos";
@@ -16,24 +18,17 @@ export function ComponentCard({ component }: { component: ComponentMeta }) {
     return (
       <div
         id={component.slug}
-        className="flex scroll-mt-28 flex-col rounded-2xl border border-dashed border-ui-border bg-ui-card"
+        className={cn(
+          "flex h-full flex-col rounded-2xl border border-dashed border-ui-border/40 bg-ui-card transition-[box-shadow,border-color] duration-200 hover:border-ui-brand/30 hover:shadow-lg hover:shadow-black/5 dark:hover:shadow-black/20",
+          SCROLL_MT_GALLERY,
+        )}
       >
-        <div className="flex min-h-40 flex-1 items-center justify-center bg-ui-surface p-6">
-          <span className="rounded-full border border-ui-border bg-ui-card px-3 py-1 text-xs font-medium text-ui-muted">
+        <div className={PREVIEW_PANE_CLASS}>
+          <span className="rounded-full border border-ui-border/60 bg-ui-card px-3 py-1 text-xs font-medium text-ui-muted">
             No live preview
           </span>
         </div>
-        <div className="border-t border-ui-border px-4 py-3">
-          <Link
-            to="/components/$slug"
-            params={{ slug: component.slug }}
-            className="group inline-flex items-center gap-1 text-sm font-semibold text-ui-fg no-underline"
-          >
-            {component.name}
-            <ArrowUpRightIcon className="size-3.5 text-ui-muted transition-colors group-hover:text-ui-brand" />
-          </Link>
-          <p className="mt-0.5 text-xs leading-5 text-ui-muted">{component.description}</p>
-        </div>
+        <ComponentCardMeta name={component.name} description={component.description} slug={component.slug} />
       </div>
     );
   }
@@ -50,10 +45,8 @@ export function ComponentCard({ component }: { component: ComponentMeta }) {
       wide={component.wide ?? false}
       loadSource={demo.loadSource}
     >
-      {/* LazyVisible defers the mount until the card nears the viewport, which
-          is also what triggers the React.lazy chunk download. */}
       <LazyVisible>
-        <Suspense fallback={null}>
+        <Suspense fallback={<PreviewSkeleton />}>
           <Demo />
         </Suspense>
       </LazyVisible>
