@@ -6,7 +6,7 @@ import { createJavaScriptRegexEngine } from "shiki/engine/javascript";
 import type { Plugin } from "vite";
 
 const QUERY = "shiki";
-const THEME_DARK = "poimandres";
+const THEME_DARK = "github-dark";
 const THEME_LIGHT = "github-light";
 
 let highlighterPromise: Promise<HighlighterCore> | null = null;
@@ -15,7 +15,7 @@ function getHighlighter(): Promise<HighlighterCore> {
   highlighterPromise ??= createHighlighterCore({
     engine: createJavaScriptRegexEngine(),
     langs: [import("shiki/langs/tsx.mjs")],
-    themes: [import("shiki/themes/poimandres.mjs"), import("shiki/themes/github-light.mjs")],
+    themes: [import("shiki/themes/github-dark.mjs"), import("shiki/themes/github-light.mjs")],
   });
 
   return highlighterPromise;
