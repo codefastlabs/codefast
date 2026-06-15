@@ -21,7 +21,7 @@ interface ExamplePreviewProps {
   /** Raw source, shown in the Code tab and copied to the clipboard. */
   readonly code: string;
   /** Pre-highlighted Shiki HTML for `code` (dark), produced in the route loader. */
-  readonly highlightedCode: string;
+  readonly highlightedCodeDark: string;
   /** Pre-highlighted Shiki HTML for `code` (light). */
   readonly highlightedCodeLight: string;
   /** Extra classes for the live preview surface — alignment, height, padding. */
@@ -42,7 +42,7 @@ export function ExamplePreview({
   title,
   description,
   code,
-  highlightedCode,
+  highlightedCodeDark,
   highlightedCodeLight,
   previewClassName,
   direction = "ltr",
@@ -77,7 +77,13 @@ export function ExamplePreview({
             </div>
           )
         }
-        code={<CodeBlock code={code} highlightedCode={highlightedCode} highlightedCodeLight={highlightedCodeLight} />}
+        code={
+          <CodeBlock
+            code={code}
+            highlightedCodeDark={highlightedCodeDark}
+            highlightedCodeLight={highlightedCodeLight}
+          />
+        }
       />
     </div>
   );

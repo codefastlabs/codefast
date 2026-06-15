@@ -40,7 +40,7 @@ export function LazyCodeBlock({ load, className }: LazyCodeBlockProps) {
   return (
     <CodeBlock
       code={source.code}
-      highlightedCode={source.htmlDark}
+      highlightedCodeDark={source.htmlDark}
       highlightedCodeLight={source.htmlLight}
       className={className}
     />

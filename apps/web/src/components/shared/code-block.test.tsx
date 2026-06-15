@@ -9,13 +9,15 @@ afterEach(() => {
 
 describe("CodeBlock", () => {
   it("injects the pre-highlighted HTML", () => {
-    render(<CodeBlock code={`const a = 1;`} highlightedCode={`<pre class="shiki"><code>const a = 1;</code></pre>`} />);
+    render(
+      <CodeBlock code={`const a = 1;`} highlightedCodeDark={`<pre class="shiki"><code>const a = 1;</code></pre>`} />,
+    );
 
     expect(screen.getByText("const a = 1;")).toBeTruthy();
   });
 
   it("renders a copy control", () => {
-    render(<CodeBlock code="x" highlightedCode="<pre class='shiki'>x</pre>" />);
+    render(<CodeBlock code="x" highlightedCodeDark="<pre class='shiki'>x</pre>" />);
 
     expect(screen.getByRole("button", { name: /copy code/i })).toBeTruthy();
   });
