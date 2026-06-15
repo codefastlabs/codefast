@@ -6,7 +6,8 @@ import { createJavaScriptRegexEngine } from "shiki/engine/javascript";
 import type { Plugin } from "vite";
 
 const QUERY = "shiki";
-const THEME = "poimandres";
+const THEME_DARK = "poimandres";
+const THEME_LIGHT = "github-light";
 
 let highlighterPromise: Promise<HighlighterCore> | null = null;
 
@@ -14,7 +15,7 @@ function getHighlighter(): Promise<HighlighterCore> {
   highlighterPromise ??= createHighlighterCore({
     engine: createJavaScriptRegexEngine(),
     langs: [import("shiki/langs/tsx.mjs")],
-    themes: [import("shiki/themes/poimandres.mjs")],
+    themes: [import("shiki/themes/poimandres.mjs"), import("shiki/themes/github-light.mjs")],
   });
 
   return highlighterPromise;
@@ -43,9 +44,10 @@ export function shikiPlugin(): Plugin {
 
       const code = await readFile(path, "utf8");
       const highlighter = await getHighlighter();
-      const html = highlighter.codeToHtml(code, { lang: "tsx", theme: THEME });
+      const html = highlighter.codeToHtml(code, { lang: "tsx", theme: THEME_DARK });
+      const htmlLight = highlighter.codeToHtml(code, { lang: "tsx", theme: THEME_LIGHT });
 
-      return `export const code = ${JSON.stringify(code)};\nexport const html = ${JSON.stringify(html)};\n`;
+      return `export const code = ${JSON.stringify(code)};\nexport const html = ${JSON.stringify(html)};\nexport const htmlLight = ${JSON.stringify(htmlLight)};\n`;
     },
   };
 }
