@@ -6,7 +6,7 @@ interface CodeBlockProps {
   /** Raw source, written to the clipboard on copy. */
   code: string;
   /** Pre-highlighted Shiki HTML for dark mode. */
-  highlightedCode: string;
+  highlightedCodeDark: string;
   /** Pre-highlighted Shiki HTML for light mode. Falls back to dark-only when omitted. */
   highlightedCodeLight?: string | undefined;
   /** Extra classes for the scroll container (e.g. a min-height). */
@@ -20,7 +20,7 @@ const shikiSurfaceClassName =
  * Shiki-highlighted code surface with a copy button. Renders light and dark
  * highlighted HTML so syntax colors follow the site color scheme.
  */
-export function CodeBlock({ code, highlightedCode, highlightedCodeLight, className }: CodeBlockProps) {
+export function CodeBlock({ code, highlightedCodeDark, highlightedCodeLight, className }: CodeBlockProps) {
   const [copied, setCopied] = useState(false);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -57,13 +57,13 @@ export function CodeBlock({ code, highlightedCode, highlightedCodeLight, classNa
           />
           <div
             className={cn("hidden overflow-x-auto dark:block", shikiSurfaceClassName)}
-            dangerouslySetInnerHTML={{ __html: highlightedCode }}
+            dangerouslySetInnerHTML={{ __html: highlightedCodeDark }}
           />
         </>
       ) : (
         <div
           className={cn("overflow-x-auto", shikiSurfaceClassName)}
-          dangerouslySetInnerHTML={{ __html: highlightedCode }}
+          dangerouslySetInnerHTML={{ __html: highlightedCodeDark }}
         />
       )}
       <button

@@ -150,7 +150,7 @@ function DetailBody({ detail }: { detail: ComponentDetail }) {
           {doc?.anatomy ? (
             <AnatomySection
               code={doc.anatomy.code}
-              highlightedCode={doc.anatomy.htmlDark}
+              highlightedCodeDark={doc.anatomy.htmlDark}
               highlightedCodeLight={doc.anatomy.htmlLight}
             />
           ) : null}
