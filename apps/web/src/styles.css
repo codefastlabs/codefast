@@ -16,7 +16,7 @@
 }
 
 :root {
-  --ui-bg: var(--color-neutral-50);
+  --ui-bg: var(--color-neutral-100);
   --ui-surface: var(--color-neutral-50);
   --ui-card: var(--color-white);
   --ui-border: var(--color-neutral-200);
