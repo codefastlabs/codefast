@@ -1,11 +1,9 @@
 import { Badge } from "@codefast/ui/badge";
 import { Button } from "@codefast/ui/button";
-import { cn } from "@codefast/ui/lib/utils";
 import { Link } from "@tanstack/react-router";
 
 import { HeroCard } from "#/components/home/hero-card";
 import { COMPONENT_COUNT } from "#/components/home/home-data";
-import { ENTER_ANIMATION_CLASS, ENTER_ANIMATION_STAGGER_STYLE } from "#/lib/motion";
 
 export function HeroSection() {
   return (
@@ -20,7 +18,7 @@ export function HeroSection() {
 
       <div className="relative container mx-auto">
         <div className="grid items-center gap-16 lg:grid-cols-[minmax(0,1fr)_minmax(0,24rem)] lg:gap-20 xl:grid-cols-[minmax(0,1.1fr)_minmax(0,26rem)]">
-          <div className={cn("text-center lg:text-start", ENTER_ANIMATION_CLASS)}>
+          <div className="page-enter text-center lg:text-start">
             <Badge variant="outline" className="mb-6 border-ui-border/60 text-ui-muted">
               React 19 · Radix UI · Tailwind v4
             </Badge>
@@ -50,10 +48,7 @@ export function HeroSection() {
             </div>
           </div>
 
-          <div
-            className={cn("mx-auto w-full max-w-sm lg:mx-0 lg:max-w-none", ENTER_ANIMATION_CLASS)}
-            style={ENTER_ANIMATION_STAGGER_STYLE}
-          >
+          <div className="mx-auto w-full max-w-sm page-enter-delayed lg:mx-0 lg:max-w-none">
             <HeroCard />
           </div>
         </div>

@@ -41,6 +41,10 @@
   @apply animate-in duration-[800ms] ease-out fill-mode-both fade-in slide-in-from-bottom-4;
 }
 
+@utility page-enter-delayed {
+  @apply page-enter delay-[120ms];
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
