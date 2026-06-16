@@ -85,6 +85,7 @@ src/
     home/                   # Marketing page sections (hero, features, stats, CTA)
     about/                  # Getting Started page sections
     layout/                 # Header, Footer, CommandPalette, AppearanceToggle
+      nav-links.ts          # Shared PRIMARY_NAV / RESOURCE_LINKS / GITHUB_URL
     showcase/               # Gallery /components (hero, layout, cards, A–Z nav)
       gallery-hero-section.tsx
       gallery-layout.tsx
@@ -93,9 +94,10 @@ src/
       groups.ts
       group-section.tsx
       component-card.tsx
+      component-card-meta.tsx
       preview-card.tsx
       preview-skeleton.tsx
-      import-path-copy.tsx
+      import-path-label.tsx
       command-palette-hint.tsx
       lazy-visible.tsx
       lazy-code-block.tsx
@@ -114,12 +116,16 @@ src/
       on-this-page.tsx      # Desktop TOC (scroll-spy)
       doc-section.tsx
       examples-section.tsx
+      example-preview.tsx
       api-section.tsx
+      props-table.tsx
       accessibility-section.tsx
+      keyboard-table.tsx
       guidelines-section.tsx
       anatomy-section.tsx
       related-section.tsx
       component-pager.tsx
+      language-selector.tsx
     shared/                 # Cross-cutting: CodeBlock, NotFound, PageHeader, PreviewTabs, SectionHeader, CopySnippet
   hooks/
     use-hash-scroll.ts      # URL hash → scrollIntoView (gallery + detail anchors)
