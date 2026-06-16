@@ -135,7 +135,6 @@ src/
     highlight.ts            # HighlightedSource type
     install.ts              # Install command + CSS setup snippets
     layout.ts               # Scroll offset constants
-    motion.ts               # Page entrance animation constants
   registry/                 # Component catalog (65 slugs) — see Registry Conventions
   router.tsx                # createRouter() factory + Register type declaration
   styles.css                # Global Tailwind + site semantic tokens (--ui-*)
@@ -206,7 +205,7 @@ Do not add a separate theme library unless intentional.
 
 - Site semantic tokens: `bg-ui-bg`, `text-ui-fg`, `text-ui-muted`, `border-ui-border/60`, `text-ui-brand`
 - Theme CSS: `@codefast/ui/css/themes/sky.css` + `preset.css` in `styles.css`
-- Page entrance animation: `ENTER_ANIMATION_CLASS` from `lib/motion.ts` or `@utility page-enter` in `styles.css`
+- Page entrance animation: `@utility page-enter` (and `page-enter-delayed` for a staggered child) in `styles.css`
 - Scroll offsets: `STICKY_OFFSET_*`, `SCROLL_MT_GALLERY`, `SCROLL_MT_ANCHOR` from `lib/layout.ts`
 
 ## Environment Variables
