@@ -18,13 +18,9 @@ import {
   getCommandPaletteKeyboardAction,
   getIsMacPlatform,
 } from "#/components/layout/command-palette-keyboard";
+import type { PrimaryNavPath } from "#/components/layout/nav-links";
+import { PRIMARY_NAV } from "#/components/layout/nav-links";
 import { COMPONENTS } from "#/registry/components";
-
-const PAGES = [
-  { to: "/", label: "Home" },
-  { to: "/components", label: "Components" },
-  { to: "/about", label: "Getting Started" },
-] as const;
 
 /**
  * Global command palette: `/`, ⌘/ / Ctrl+/, and ⌘K / Ctrl+K. Renders its own
@@ -67,7 +63,7 @@ export function CommandPalette() {
   }, []);
 
   const goToPage = useCallback(
-    (to: (typeof PAGES)[number]["to"]) => {
+    (to: PrimaryNavPath) => {
       setOpen(false);
       void navigate({ to });
     },
@@ -110,7 +106,7 @@ export function CommandPalette() {
           <CommandList>
             <CommandEmpty>No results found.</CommandEmpty>
             <CommandGroup heading="Pages">
-              {PAGES.map((page) => (
+              {PRIMARY_NAV.map((page) => (
                 <CommandItem
                   key={page.to}
                   value={`page ${page.label}`}

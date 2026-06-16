@@ -6,12 +6,7 @@ import { useState } from "react";
 
 import { AppearanceToggle } from "#/components/layout/appearance-toggle";
 import { CommandPalette } from "#/components/layout/command-palette";
-
-const NAV_LINKS = [
-  { to: "/", label: "Home" },
-  { to: "/components", label: "Components" },
-  { to: "/about", label: "Getting Started" },
-] as const;
+import { GITHUB_URL, PRIMARY_NAV } from "#/components/layout/nav-links";
 
 function Logo() {
   return (
@@ -32,7 +27,7 @@ function Logo() {
 function GitHubLink({ className }: { className?: string }) {
   return (
     <a
-      href="https://github.com/codefastlabs/codefast"
+      href={GITHUB_URL}
       target="_blank"
       rel="noreferrer"
       aria-label="GitHub repository"
@@ -55,7 +50,7 @@ export function Header() {
 
         {/* Desktop nav */}
         <nav className="hidden items-center gap-0.5 md:flex" aria-label="Main navigation">
-          {NAV_LINKS.map(({ to, label }) => (
+          {PRIMARY_NAV.map(({ to, label }) => (
             <Link
               key={to}
               to={to}
@@ -98,7 +93,7 @@ export function Header() {
               </SheetHeader>
               <SheetBody className="pb-4">
                 <nav className="flex flex-col gap-1" aria-label="Mobile navigation">
-                  {NAV_LINKS.map(({ to, label }) => (
+                  {PRIMARY_NAV.map(({ to, label }) => (
                     <Link
                       key={to}
                       to={to}

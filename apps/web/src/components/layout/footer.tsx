@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 
 import { AppearanceToggle } from "#/components/layout/appearance-toggle";
+import { PRIMARY_NAV, RESOURCE_LINKS } from "#/components/layout/nav-links";
 
 export function Footer() {
   const year = new Date().getFullYear();
@@ -24,42 +25,25 @@ export function Footer() {
           <div className="flex gap-16 text-sm">
             <div className="flex flex-col gap-3">
               <p className="text-xs font-semibold tracking-widest text-ui-muted uppercase">Library</p>
-              <Link to="/" className="text-ui-muted no-underline hover:text-ui-fg">
-                Home
-              </Link>
-              <Link to="/components" className="text-ui-muted no-underline hover:text-ui-fg">
-                Components
-              </Link>
-              <Link to="/about" className="text-ui-muted no-underline hover:text-ui-fg">
-                Getting Started
-              </Link>
+              {PRIMARY_NAV.map(({ to, label }) => (
+                <Link key={to} to={to} className="text-ui-muted no-underline hover:text-ui-fg">
+                  {label}
+                </Link>
+              ))}
             </div>
             <div className="flex flex-col gap-3">
               <p className="text-xs font-semibold tracking-widest text-ui-muted uppercase">Resources</p>
-              <a
-                href="https://github.com/codefastlabs/codefast"
-                target="_blank"
-                rel="noreferrer"
-                className="text-ui-muted no-underline hover:text-ui-fg"
-              >
-                GitHub
-              </a>
-              <a
-                href="https://github.com/codefastlabs/codefast/issues"
-                target="_blank"
-                rel="noreferrer"
-                className="text-ui-muted no-underline hover:text-ui-fg"
-              >
-                Issues
-              </a>
-              <a
-                href="https://www.npmjs.com/package/@codefast/ui"
-                target="_blank"
-                rel="noreferrer"
-                className="text-ui-muted no-underline hover:text-ui-fg"
-              >
-                npm
-              </a>
+              {RESOURCE_LINKS.map(({ href, label }) => (
+                <a
+                  key={href}
+                  href={href}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-ui-muted no-underline hover:text-ui-fg"
+                >
+                  {label}
+                </a>
+              ))}
             </div>
           </div>
         </div>
