@@ -6,13 +6,12 @@ interface PageHeaderProps {
   readonly title: ReactNode;
   readonly description?: string;
   readonly className?: string;
-  readonly animate?: boolean;
 }
 
 /** Eyebrow → title → description pattern shared by docs and marketing pages. */
-export function PageHeader({ eyebrow, title, description, className, animate = true }: PageHeaderProps) {
+export function PageHeader({ eyebrow, title, description, className }: PageHeaderProps) {
   return (
-    <section className={cn("max-w-2xl", animate && "page-enter", className)}>
+    <section className={cn("max-w-2xl", className)}>
       {eyebrow ? <div className="mb-5">{eyebrow}</div> : null}
       <h1 className="mb-5 text-3xl leading-none font-bold tracking-tight text-ui-fg sm:text-4xl md:text-5xl md:tracking-tighter lg:text-6xl">
         {title}

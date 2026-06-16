@@ -12,6 +12,7 @@ export function AboutHeroSection() {
       />
       <div className="relative container mx-auto px-4 pt-16 pb-12">
         <PageHeader
+          className="page-enter"
           eyebrow={
             <Badge variant="outline" className="border-ui-border/60 text-ui-muted">
               Getting Started

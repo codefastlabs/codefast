@@ -53,7 +53,7 @@
 }
 
 @utility page-enter {
-  @apply animate-in duration-[800ms] ease-out fill-mode-both fade-in slide-in-from-bottom-4;
+  @apply animate-in duration-800 ease-out fill-mode-both fade-in slide-in-from-bottom-4;
 }
 
 @utility page-enter-delayed {
