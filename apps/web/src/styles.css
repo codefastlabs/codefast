@@ -13,6 +13,21 @@
   --color-ui-muted: var(--ui-muted);
   --color-ui-brand: var(--ui-brand);
   --color-ui-inverse: var(--ui-inverse);
+
+  /* Flash a brand ring on the gallery card the sidebar just scrolled to (the `:target`). */
+  --animate-gallery-highlight: gallery-highlight 1.6s ease-out;
+
+  @keyframes gallery-highlight {
+    0%,
+    20% {
+      border-color: var(--ui-brand);
+      box-shadow: 0 0 0 4px color-mix(in oklab, var(--ui-brand) 35%, transparent);
+    }
+    100% {
+      border-color: var(--ui-border);
+      box-shadow: 0 0 0 0 transparent;
+    }
+  }
 }
 
 :root {

@@ -19,7 +19,7 @@ export function ComponentCard({ component }: { component: ComponentMeta }) {
       <div
         id={component.slug}
         className={cn(
-          "flex h-full flex-col rounded-2xl border border-dashed border-ui-border/40 bg-ui-card transition-[box-shadow,border-color] duration-200 hover:border-ui-brand/30 hover:shadow-lg hover:shadow-black/5 dark:hover:shadow-black/20",
+          "flex h-full flex-col rounded-2xl border border-dashed border-ui-border/40 bg-ui-card transition-[box-shadow,border-color] duration-200 target:animate-gallery-highlight hover:border-ui-brand/30 hover:shadow-lg hover:shadow-black/5 dark:hover:shadow-black/20",
           SCROLL_MT_GALLERY,
         )}
       >

@@ -26,7 +26,7 @@ export function PreviewCard({ name, path, description, loadSource, children, wid
     <div
       id={id}
       className={cn(
-        "flex h-full flex-col rounded-2xl border border-ui-border/60 bg-ui-card transition-[box-shadow,border-color] duration-200 hover:border-ui-brand/30 hover:shadow-lg hover:shadow-black/5 dark:hover:shadow-black/20",
+        "flex h-full flex-col rounded-2xl border border-ui-border/60 bg-ui-card transition-[box-shadow,border-color] duration-200 target:animate-gallery-highlight hover:border-ui-brand/30 hover:shadow-lg hover:shadow-black/5 dark:hover:shadow-black/20",
         SCROLL_MT_GALLERY,
         wide && "sm:col-span-2",
       )}
