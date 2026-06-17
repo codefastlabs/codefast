@@ -1,5 +1,7 @@
 # @codefast/cli
 
+## 0.4.0-canary.6
+
 ## 0.4.0-canary.5
 
 ## 0.4.0-canary.4

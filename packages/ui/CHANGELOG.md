@@ -1,5 +1,18 @@
 # @codefast/ui
 
+## 0.4.0-canary.6
+
+### Patch Changes
+
+- [`8a1a2e7`](https://github.com/codefastlabs/codefast/commit/8a1a2e74d985ae36a00855938c8ed7ab8699ad48) Thanks [@thevuong](https://github.com/thevuong)! - refactor(motion): shorten control transition durations (container 200→100ms, indicator 300→200ms) for snappier switches, checkboxes, and radios
+
+- [`354c97e`](https://github.com/codefastlabs/codefast/commit/354c97ec3109bd7d59e1200171a78da17dbdc59c) Thanks [@thevuong](https://github.com/thevuong)! - fix(menubar): align `menubar-label` styling with the dropdown/context menu family — use `text-xs` and `text-muted-foreground` to match `dropdown-menu-label` and `context-menu-label`
+
+- [`e3ea150`](https://github.com/codefastlabs/codefast/commit/e3ea15046bc5a23d777719aa0f4ba46efda6d15d) Thanks [@thevuong](https://github.com/thevuong)! - fix(radio-group): lay the root out as a flex column instead of a grid so items stack predictably
+
+- Updated dependencies []:
+  - @codefast/tailwind-variants@0.4.0-canary.6
+
 ## 0.4.0-canary.5
 
 ### Minor Changes
