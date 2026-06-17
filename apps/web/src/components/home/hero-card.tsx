@@ -15,7 +15,7 @@ export function HeroCard() {
       <div className="flex items-center justify-between border-b border-ui-border/60 px-5 py-4">
         <div className="flex items-center gap-2.5">
           <Avatar className="size-7">
-            <AvatarFallback className="bg-ui-brand text-xs font-bold text-white">CF</AvatarFallback>
+            <AvatarFallback className="bg-primary text-xs font-bold text-primary-foreground">CF</AvatarFallback>
           </Avatar>
           <div>
             <p className="text-sm font-semibold text-ui-fg">Workspace settings</p>

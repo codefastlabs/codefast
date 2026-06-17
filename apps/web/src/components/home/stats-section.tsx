@@ -18,7 +18,7 @@ export function StatsSection() {
               >
                 {value}
               </p>
-              <p className="mt-1 text-sm text-ui-brand">{label}</p>
+              <p className="mt-1 text-sm text-ui-inverse/70">{label}</p>
             </div>
           ))}
         </div>

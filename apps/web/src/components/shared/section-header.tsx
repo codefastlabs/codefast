@@ -25,7 +25,7 @@ export function SectionHeader({
         <p
           className={cn(
             "mb-4 text-xs font-semibold tracking-widest uppercase",
-            inverted ? "text-ui-brand" : "text-ui-muted",
+            inverted ? "text-ui-inverse/70" : "text-ui-muted",
           )}
         >
           {eyebrow}
@@ -39,7 +39,7 @@ export function SectionHeader({
         {title}
       </h2>
       {description ? (
-        <p className={cn("mt-5 text-base leading-relaxed", inverted ? "text-ui-inverse/55" : "text-ui-muted")}>
+        <p className={cn("mt-5 text-base leading-relaxed", inverted ? "text-ui-inverse/70" : "text-ui-muted")}>
           {description}
         </p>
       ) : null}
