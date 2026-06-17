@@ -5,7 +5,6 @@ import { useEffect, useRef } from "react";
 
 import { CommandPaletteHint } from "#/components/showcase/command-palette-hint";
 import type { ComponentGroup } from "#/components/showcase/groups";
-import { usePreloadDetail } from "#/hooks/use-preload-detail";
 import { STICKY_OFFSET_BELOW_HEADER } from "#/lib/layout";
 
 function SidebarComponentLink({
@@ -20,8 +19,6 @@ function SidebarComponentLink({
   /** Gallery only — reveals a hover action that scrolls to the component's card in place. */
   showScrollTo?: boolean;
 }) {
-  const preload = usePreloadDetail(slug);
-
   return (
     <div className={cn("group/item flex items-center rounded-md", active ? "bg-ui-surface" : "hover:bg-ui-surface")}>
       <Link
@@ -33,7 +30,6 @@ function SidebarComponentLink({
           "min-w-0 flex-1 truncate rounded-md px-2 py-1 text-xs no-underline",
           active ? "font-medium text-ui-fg" : "text-ui-muted group-hover/item:text-ui-fg",
         )}
-        {...preload}
       >
         {name}
       </Link>
