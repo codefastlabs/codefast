@@ -28,6 +28,18 @@
       box-shadow: 0 0 0 0 transparent;
     }
   }
+
+  /* Indeterminate segment sweeping across the top during slow route transitions. */
+  --animate-route-progress: route-progress 1.1s ease-in-out infinite;
+
+  @keyframes route-progress {
+    0% {
+      transform: translateX(-100%);
+    }
+    100% {
+      transform: translateX(400%);
+    }
+  }
 }
 
 :root {
