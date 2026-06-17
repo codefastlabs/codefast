@@ -10,6 +10,9 @@ import type { ReactNode } from "react";
 import { Footer } from "#/components/layout/footer";
 import { Header } from "#/components/layout/header";
 import { NotFound } from "#/components/shared/not-found";
+import { RouteProgress } from "#/components/shared/route-progress";
+import { SiteNotFound } from "#/components/shared/site-not-found";
+import { SITE_OG_IMAGE } from "#/lib/seo";
 
 import appCss from "#/styles.css?url";
 
@@ -31,10 +34,15 @@ export const Route = createRootRoute({
       { property: "og:site_name", content: SITE_NAME },
       { property: "og:title", content: SITE_TITLE },
       { property: "og:description", content: SITE_DESCRIPTION },
+      { property: "og:image", content: SITE_OG_IMAGE },
+      { property: "og:image:width", content: "1200" },
+      { property: "og:image:height", content: "630" },
+      { property: "og:image:alt", content: SITE_TITLE },
       // Twitter
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: SITE_TITLE },
       { name: "twitter:description", content: SITE_DESCRIPTION },
+      { name: "twitter:image", content: SITE_OG_IMAGE },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
@@ -48,21 +56,6 @@ export const Route = createRootRoute({
   errorComponent: SiteError,
   shellComponent: RootDocument,
 });
-
-function SiteNotFound() {
-  return (
-    <NotFound
-      badge="404"
-      title="Page not found"
-      description="The page you’re looking for doesn’t exist or may have moved."
-      action={
-        <Button asChild>
-          <Link to="/">Back to home</Link>
-        </Button>
-      }
-    />
-  );
-}
 
 function SiteError({ error }: { error: Error }) {
   return (
@@ -101,9 +94,13 @@ function RootDocument({ children }: { children: ReactNode }) {
           persistColorScheme={persistColorSchemeCookie}
           syncFromServer={getColorSchemeServerFn}
         >
+          <RouteProgress />
           <Header />
           {children}
           <Footer />
+          {/* `@tanstack/devtools-vite` strips this whole block from production builds — keep it
+              rendered unconditionally; do not wrap it in an `import.meta.env.DEV` guard (the plugin's
+              code removal would leave invalid syntax behind and break the build). */}
           <TanStackDevtools
             config={{
               position: "bottom-right",

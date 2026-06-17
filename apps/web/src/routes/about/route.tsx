@@ -6,17 +6,24 @@ import { LibrarySection } from "#/components/about/library-section";
 import { NextStepsSection } from "#/components/about/next-steps-section";
 import { RequirementsSection } from "#/components/about/requirements-section";
 import { ThemeSection } from "#/components/about/theme-section";
+import { canonicalHead } from "#/lib/seo";
 
 export const Route = createFileRoute("/about")({
-  head: () => ({
-    meta: [
-      { title: "Getting Started — codefast/ui" },
-      {
-        name: "description",
-        content: "Install @codefast/ui, wire up the CSS, and start building. No config files required.",
-      },
-    ],
-  }),
+  head: () => {
+    const seo = canonicalHead("/about");
+
+    return {
+      meta: [
+        { title: "Getting Started — codefast/ui" },
+        {
+          name: "description",
+          content: "Install @codefast/ui, wire up the CSS, and start building. No config files required.",
+        },
+        ...seo.meta,
+      ],
+      links: seo.links,
+    };
+  },
   component: GettingStartedPage,
 });
 

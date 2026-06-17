@@ -36,7 +36,20 @@ export default defineConfig(({ command }) => {
         },
       }),
       tailwindcss(),
-      tanstackStart(),
+      tanstackStart({
+        // Prerender every route reachable by crawling `<Link>`s from "/" (the gallery and sidebar
+        // link to all component pages), shipping static HTML for SEO and CDN delivery. The built-in
+        // sitemap is generated from those crawled pages into `public/sitemap.xml`.
+        // `host` must match SITE_URL in `src/lib/seo.ts`.
+        prerender: {
+          enabled: true,
+          crawlLinks: true,
+        },
+        sitemap: {
+          enabled: true,
+          host: "https://codefastlabs.com",
+        },
+      }),
       nitro({
         preset: "vercel",
         exportConditions: isDev ? ["source", "module"] : ["module"],
