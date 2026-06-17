@@ -88,7 +88,7 @@ export function NavigationMenuDemo() {
 
         <NavigationMenuItem>
           <NavigationMenuLink asChild>
-            <a className="px-3 py-2 text-sm font-medium" href="/docs">
+            <a className="px-3 py-2 text-sm font-medium" href="/about">
               Docs
             </a>
           </NavigationMenuLink>

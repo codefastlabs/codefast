@@ -112,32 +112,32 @@ const components = [
   {
     titleKey: "alertDialog" as const,
     descriptionKey: "alertDialogDesc" as const,
-    href: "/docs/primitives/alert-dialog",
+    href: "/components/alert-dialog",
   },
   {
     titleKey: "hoverCard" as const,
     descriptionKey: "hoverCardDesc" as const,
-    href: "/docs/primitives/hover-card",
+    href: "/components/hover-card",
   },
   {
     titleKey: "progress" as const,
     descriptionKey: "progressDesc" as const,
-    href: "/docs/primitives/progress",
+    href: "/components/progress",
   },
   {
     titleKey: "scrollArea" as const,
     descriptionKey: "scrollAreaDesc" as const,
-    href: "/docs/primitives/scroll-area",
+    href: "/components/scroll-area",
   },
   {
     titleKey: "tabs" as const,
     descriptionKey: "tabsDesc" as const,
-    href: "/docs/primitives/tabs",
+    href: "/components/tabs",
   },
   {
     titleKey: "tooltip" as const,
     descriptionKey: "tooltipDesc" as const,
-    href: "/docs/primitives/tooltip",
+    href: "/components/tooltip",
   },
 ] as const;
 
@@ -151,13 +151,13 @@ export function NavigationMenuRtl() {
           <NavigationMenuTrigger>{t.gettingStarted}</NavigationMenuTrigger>
           <NavigationMenuContent dir={dir} data-lang={dir === "rtl" ? language : undefined}>
             <ul className="w-96">
-              <ListItem href="/docs" title={t.introduction}>
+              <ListItem href="/components" title={t.introduction}>
                 {t.introductionDesc}
               </ListItem>
-              <ListItem href="/docs/installation" title={t.installation}>
+              <ListItem href="/about" title={t.installation}>
                 {t.installationDesc}
               </ListItem>
-              <ListItem href="/docs/primitives/typography" title={t.typography}>
+              <ListItem href="/components/typography" title={t.typography}>
                 {t.typographyDesc}
               </ListItem>
             </ul>
@@ -181,7 +181,7 @@ export function NavigationMenuRtl() {
             className={navigationMenuTriggerVariants()}
             data-lang={dir === "rtl" ? language : undefined}
           >
-            <a href="/docs">{t.docs}</a>
+            <a href="/components">{t.docs}</a>
           </NavigationMenuLink>
         </NavigationMenuItem>
       </NavigationMenuList>
