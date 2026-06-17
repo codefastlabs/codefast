@@ -208,6 +208,15 @@ Do not add a separate theme library unless intentional.
 - Page entrance animation: `@utility page-enter` (and `page-enter-delayed` for a staggered child) in `styles.css`
 - Scroll offsets: `STICKY_OFFSET_*`, `SCROLL_MT_GALLERY`, `SCROLL_MT_ANCHOR` from `lib/layout.ts`
 
+## Naming & Branding
+
+The library name has two distinct forms — never mix them:
+
+- **Wordmark / display** — `codefast/ui` (no `@`). Use for the header logo, page `<title>`s, `SITE_NAME`/`SITE_TITLE`, section eyebrows, and any purely human-facing label. The `@` scope prefix reads as noise in a logo.
+- **Package identity** — `@codefast/ui` (with `@`). Use anywhere the name is meant to be typed or copied: install commands (`pnpm add @codefast/ui`), import paths (`@codefast/ui/<slug>`), npm links, and the logo's `aria-label` (so screen readers announce the exact package name).
+
+Rule of thumb: if the visitor would **copy or run** it, keep the `@`; if it's just a **label**, drop it. Demo fixtures (e.g. `hero-card`, `separator`) may use either form as sample content — those are not brand references.
+
 ## Environment Variables
 
 No environment variables are required for the default app. When adding them:
@@ -243,3 +252,5 @@ No adapter is configured yet — the app is in default Node SSR mode.
 - The CLI installed with npm; dependencies were re-installed with pnpm to align with the workspace.
 - `@tanstack/router-plugin` version is pinned directly in `package.json` (not in workspace catalog).
 - Composition recipes (`date-picker`, `data-table`, `typography`) have no single `@codefast/ui/<slug>` export — `meta.composition` drives alternate UI labels.
+- **Devtools are auto-stripped in production by `@tanstack/devtools-vite`** — render `<TanStackDevtools>` unconditionally in `__root.tsx`. Do NOT wrap it in `import.meta.env.DEV`; the plugin removes the inner JSX at build time and a guard leaves invalid syntax that breaks the build.
+- **SEO prerender + sitemap** (`vite.config.ts` → `tanstackStart({ prerender, sitemap })`): `crawlLinks` discovers pages by following internal `<a href="/…">` from `/`, so every internal link — including ones in registry demos — must point to a real route, or the prerender fails. Keep demo links real (no `/docs`-style placeholders). The sitemap host must stay in sync with `SITE_URL` in `src/lib/seo.ts`.
