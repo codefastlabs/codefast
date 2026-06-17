@@ -9,11 +9,17 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as LlmsDottxtRouteImport } from './routes/llms[.]txt'
 import { Route as AboutRouteRouteImport } from './routes/about/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ComponentsIndexRouteImport } from './routes/components/index'
 import { Route as ComponentsSlugRouteImport } from './routes/components/$slug'
 
+const LlmsDottxtRoute = LlmsDottxtRouteImport.update({
+  id: '/llms.txt',
+  path: '/llms.txt',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AboutRouteRoute = AboutRouteRouteImport.update({
   id: '/about',
   path: '/about',
@@ -38,12 +44,14 @@ const ComponentsSlugRoute = ComponentsSlugRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRouteRoute
+  '/llms.txt': typeof LlmsDottxtRoute
   '/components/$slug': typeof ComponentsSlugRoute
   '/components/': typeof ComponentsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRouteRoute
+  '/llms.txt': typeof LlmsDottxtRoute
   '/components/$slug': typeof ComponentsSlugRoute
   '/components': typeof ComponentsIndexRoute
 }
@@ -51,26 +59,41 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/about': typeof AboutRouteRoute
+  '/llms.txt': typeof LlmsDottxtRoute
   '/components/$slug': typeof ComponentsSlugRoute
   '/components/': typeof ComponentsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/about' | '/components/$slug' | '/components/'
+  fullPaths: '/' | '/about' | '/llms.txt' | '/components/$slug' | '/components/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/about' | '/components/$slug' | '/components'
-  id: '__root__' | '/' | '/about' | '/components/$slug' | '/components/'
+  to: '/' | '/about' | '/llms.txt' | '/components/$slug' | '/components'
+  id:
+    | '__root__'
+    | '/'
+    | '/about'
+    | '/llms.txt'
+    | '/components/$slug'
+    | '/components/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRouteRoute: typeof AboutRouteRoute
+  LlmsDottxtRoute: typeof LlmsDottxtRoute
   ComponentsSlugRoute: typeof ComponentsSlugRoute
   ComponentsIndexRoute: typeof ComponentsIndexRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/llms.txt': {
+      id: '/llms.txt'
+      path: '/llms.txt'
+      fullPath: '/llms.txt'
+      preLoaderRoute: typeof LlmsDottxtRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/about': {
       id: '/about'
       path: '/about'
@@ -105,6 +128,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRouteRoute: AboutRouteRoute,
+  LlmsDottxtRoute: LlmsDottxtRoute,
   ComponentsSlugRoute: ComponentsSlugRoute,
   ComponentsIndexRoute: ComponentsIndexRoute,
 }
