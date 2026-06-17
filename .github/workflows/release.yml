@@ -56,6 +56,11 @@ jobs:
       - name: Build packages
         run: npx turbo build --filter="./packages/**"
 
+      - name: Configure Git identity
+        run: |
+          git config user.name "Vuong Phan"
+          git config user.email "13298232+thevuong@users.noreply.github.com"
+
       - name: Version and publish
         uses: changesets/action@v1.8.0
         with:
@@ -63,6 +68,7 @@ jobs:
           publish: npx changeset publish
           commit: "chore: update versions for release"
           title: "chore: release new version"
+          setupGitUser: false
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN || secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
