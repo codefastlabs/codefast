@@ -42,8 +42,10 @@ export function HeroCard() {
 
         <TabsContent value="notifications" className="mt-0 space-y-4">
           <div className="space-y-1.5">
-            <Label className="text-xs text-ui-muted">Notify email</Label>
-            <Input type="email" defaultValue="you@company.com" />
+            <Label htmlFor="notify-email" className="text-xs text-ui-muted">
+              Notify email
+            </Label>
+            <Input id="notify-email" type="email" defaultValue="you@company.com" />
           </div>
 
           <Separator />
@@ -56,7 +58,7 @@ export function HeroCard() {
             ].map(({ label, defaultChecked }) => (
               <div key={label} className="flex items-center justify-between">
                 <Label className="text-xs">{label}</Label>
-                <Switch defaultChecked={defaultChecked} className="scale-90" />
+                <Switch defaultChecked={defaultChecked} aria-label={label} className="scale-90" />
               </div>
             ))}
           </div>
@@ -68,7 +70,7 @@ export function HeroCard() {
               <span>Storage</span>
               <span>6.8 GB / 10 GB</span>
             </div>
-            <Progress value={68} className="h-1" />
+            <Progress value={68} aria-label="Storage used" className="h-1" />
           </div>
 
           <div className="flex justify-end gap-2 pt-1">
@@ -81,12 +83,16 @@ export function HeroCard() {
 
         <TabsContent value="general" className="mt-0 space-y-4">
           <div className="space-y-1.5">
-            <Label className="text-xs text-ui-muted">Workspace name</Label>
-            <Input defaultValue="codefast/ui" />
+            <Label htmlFor="ws-name" className="text-xs text-ui-muted">
+              Workspace name
+            </Label>
+            <Input id="ws-name" defaultValue="codefast/ui" />
           </div>
           <div className="space-y-1.5">
-            <Label className="text-xs text-ui-muted">Display URL</Label>
-            <Input defaultValue="codefast.dev" />
+            <Label htmlFor="ws-url" className="text-xs text-ui-muted">
+              Display URL
+            </Label>
+            <Input id="ws-url" defaultValue="codefast.dev" />
           </div>
           <Separator />
           <div className="flex items-center justify-between">
@@ -94,7 +100,7 @@ export function HeroCard() {
               <p className="text-xs font-medium text-ui-fg">Public profile</p>
               <p className="text-xs text-ui-muted">Show workspace in directory</p>
             </div>
-            <Switch defaultChecked className="scale-90" />
+            <Switch defaultChecked aria-label="Public profile" className="scale-90" />
           </div>
           <div className="flex justify-end gap-2 pt-1">
             <Button variant="outline" size="sm">
@@ -121,7 +127,7 @@ export function HeroCard() {
               <span>Seats used</span>
               <span>4 / 10</span>
             </div>
-            <Progress value={40} className="h-1" />
+            <Progress value={40} aria-label="Seats used" className="h-1" />
           </div>
           <div className="flex justify-end">
             <Button variant="outline" size="sm">

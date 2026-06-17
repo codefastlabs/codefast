@@ -48,7 +48,8 @@
   --ui-card: var(--color-white);
   --ui-border: var(--color-neutral-200);
   --ui-fg: var(--color-neutral-900);
-  --ui-muted: var(--color-neutral-600);
+  /* neutral-700 (not -600) so muted body text clears WCAG AA 4.5:1 on --ui-bg. */
+  --ui-muted: var(--color-neutral-700);
   --ui-brand: var(--color-sky-600);
   --ui-inverse: var(--color-neutral-50);
 }
