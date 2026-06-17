@@ -1,8 +1,8 @@
 /* -------------------------------------------------------------------------
  * Violet theme
  *
- * Color tokens for the violet palette across the light (`:root`),
- * `.dark`, and system-preference variants. Trailing comments note the source
+ * Color tokens for the violet palette across the light (`:root`) and
+ * `.dark` variants. Trailing comments note the source
  * palette swatch for each value.
  * ------------------------------------------------------------------------- */
 
@@ -110,52 +110,4 @@
   --chart-3: oklch(0.541 0.281 293.009); /* --color-violet-600 */
   --chart-4: oklch(0.491 0.27 292.581); /* --color-violet-700 */
   --chart-5: oklch(0.432 0.232 292.759); /* --color-violet-800 */
-}
-
-@media (prefers-color-scheme: dark) {
-  :root:not(.light) {
-    /* System-preference dark — applied when no explicit .light is set. */
-
-    --background: oklch(0.141 0.005 285.823); /* --color-zinc-950 */
-    --foreground: oklch(0.985 0 0); /* --color-zinc-50 */
-
-    --primary: oklch(0.606 0.25 292.717); /* --color-violet-500 */
-    --primary-foreground: oklch(0.969 0.016 293.756); /* --color-violet-50 */
-
-    --secondary: oklch(0.274 0.006 286.033); /* --color-zinc-800 */
-    --secondary-foreground: oklch(0.985 0 0); /* --color-zinc-50 */
-
-    --destructive: oklch(0.704 0.191 22.216); /* --color-red-400 */
-
-    --muted: oklch(0.274 0.006 286.033); /* --color-zinc-800 */
-    --muted-foreground: oklch(0.705 0.015 286.067); /* --color-zinc-400 */
-
-    --accent: oklch(0.274 0.006 286.033); /* --color-zinc-800 */
-    --accent-foreground: oklch(0.985 0 0); /* --color-zinc-50 */
-
-    --popover: oklch(0.21 0.006 285.885); /* --color-zinc-900 */
-    --popover-foreground: oklch(0.985 0 0); /* --color-zinc-50 */
-
-    --card: oklch(0.21 0.006 285.885); /* --color-zinc-900 */
-    --card-foreground: oklch(0.985 0 0); /* --color-zinc-50 */
-
-    --border: oklch(1 0 0 / 10%); /* --color-white */
-    --input: oklch(1 0 0 / 15%); /* --color-white */
-    --ring: oklch(0.38 0.189 293.745); /* --color-violet-900 */
-
-    --sidebar: oklch(0.21 0.006 285.885); /* --color-zinc-900 */
-    --sidebar-foreground: oklch(0.985 0 0); /* --color-zinc-50 */
-    --sidebar-primary: oklch(0.606 0.25 292.717); /* --color-violet-500 */
-    --sidebar-primary-foreground: oklch(0.969 0.016 293.756); /* --color-violet-50 */
-    --sidebar-accent: oklch(0.274 0.006 286.033); /* --color-zinc-800 */
-    --sidebar-accent-foreground: oklch(0.985 0 0); /* --color-zinc-50 */
-    --sidebar-border: oklch(1 0 0 / 10%); /* --color-white */
-    --sidebar-ring: oklch(0.38 0.189 293.745); /* --color-violet-900 */
-
-    --chart-1: oklch(0.811 0.111 293.571); /* --color-violet-300 */
-    --chart-2: oklch(0.606 0.25 292.717); /* --color-violet-500 */
-    --chart-3: oklch(0.541 0.281 293.009); /* --color-violet-600 */
-    --chart-4: oklch(0.491 0.27 292.581); /* --color-violet-700 */
-    --chart-5: oklch(0.432 0.232 292.759); /* --color-violet-800 */
-  }
 }

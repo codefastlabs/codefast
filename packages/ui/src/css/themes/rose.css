@@ -1,8 +1,8 @@
 /* -------------------------------------------------------------------------
  * Rose theme
  *
- * Color tokens for the rose palette across the light (`:root`),
- * `.dark`, and system-preference variants. Trailing comments note the source
+ * Color tokens for the rose palette across the light (`:root`) and
+ * `.dark` variants. Trailing comments note the source
  * palette swatch for each value.
  * ------------------------------------------------------------------------- */
 
@@ -110,52 +110,4 @@
   --chart-3: oklch(0.586 0.253 17.585); /* --color-rose-600 */
   --chart-4: oklch(0.514 0.222 16.935); /* --color-rose-700 */
   --chart-5: oklch(0.455 0.188 13.697); /* --color-rose-800 */
-}
-
-@media (prefers-color-scheme: dark) {
-  :root:not(.light) {
-    /* System-preference dark — applied when no explicit .light is set. */
-
-    --background: oklch(0.141 0.005 285.823); /* --color-zinc-950 */
-    --foreground: oklch(0.985 0 0); /* --color-zinc-50 */
-
-    --primary: oklch(0.645 0.246 16.439); /* --color-rose-500 */
-    --primary-foreground: oklch(0.969 0.015 12.422); /* --color-rose-50 */
-
-    --secondary: oklch(0.274 0.006 286.033); /* --color-zinc-800 */
-    --secondary-foreground: oklch(0.985 0 0); /* --color-zinc-50 */
-
-    --destructive: oklch(0.704 0.191 22.216); /* --color-red-400 */
-
-    --muted: oklch(0.274 0.006 286.033); /* --color-zinc-800 */
-    --muted-foreground: oklch(0.705 0.015 286.067); /* --color-zinc-400 */
-
-    --accent: oklch(0.274 0.006 286.033); /* --color-zinc-800 */
-    --accent-foreground: oklch(0.985 0 0); /* --color-zinc-50 */
-
-    --popover: oklch(0.21 0.006 285.885); /* --color-zinc-900 */
-    --popover-foreground: oklch(0.985 0 0); /* --color-zinc-50 */
-
-    --card: oklch(0.21 0.006 285.885); /* --color-zinc-900 */
-    --card-foreground: oklch(0.985 0 0); /* --color-zinc-50 */
-
-    --border: oklch(1 0 0 / 10%); /* --color-white */
-    --input: oklch(1 0 0 / 15%); /* --color-white */
-    --ring: oklch(0.41 0.159 10.272); /* --color-rose-900 */
-
-    --sidebar: oklch(0.21 0.006 285.885); /* --color-zinc-900 */
-    --sidebar-foreground: oklch(0.985 0 0); /* --color-zinc-50 */
-    --sidebar-primary: oklch(0.645 0.246 16.439); /* --color-rose-500 */
-    --sidebar-primary-foreground: oklch(0.969 0.015 12.422); /* --color-rose-50 */
-    --sidebar-accent: oklch(0.274 0.006 286.033); /* --color-zinc-800 */
-    --sidebar-accent-foreground: oklch(0.985 0 0); /* --color-zinc-50 */
-    --sidebar-border: oklch(1 0 0 / 10%); /* --color-white */
-    --sidebar-ring: oklch(0.41 0.159 10.272); /* --color-rose-900 */
-
-    --chart-1: oklch(0.81 0.117 11.638); /* --color-rose-300 */
-    --chart-2: oklch(0.645 0.246 16.439); /* --color-rose-500 */
-    --chart-3: oklch(0.586 0.253 17.585); /* --color-rose-600 */
-    --chart-4: oklch(0.514 0.222 16.935); /* --color-rose-700 */
-    --chart-5: oklch(0.455 0.188 13.697); /* --color-rose-800 */
-  }
 }

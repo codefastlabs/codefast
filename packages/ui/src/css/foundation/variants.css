@@ -14,17 +14,10 @@
  * Theme
  * ------------------------------------------------------------------------- */
 
-@custom-variant dark {
-  &:where(.dark, .dark *) {
-    @slot;
-  }
-
-  @media (prefers-color-scheme: dark) {
-    &:where(:not(.light, .light *)) {
-      @slot;
-    }
-  }
-}
+/* Class-only — matches the token themes, which switch on `.dark` (no prefers-color-scheme arm).
+   `@codefast/theme` always resolves the scheme to an explicit `.dark`/`.light` class (SSR included),
+   so the OS media query is never the deciding factor and would only desync utilities from tokens. */
+@custom-variant dark (&:where(.dark, .dark *));
 
 /* -------------------------------------------------------------------------
  * Layout — orientation & placement (Radix Popper)

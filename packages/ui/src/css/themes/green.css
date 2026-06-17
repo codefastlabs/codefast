@@ -1,8 +1,8 @@
 /* -------------------------------------------------------------------------
  * Green theme
  *
- * Color tokens for the green palette across the light (`:root`),
- * `.dark`, and system-preference variants. Trailing comments note the source
+ * Color tokens for the green palette across the light (`:root`) and
+ * `.dark` variants. Trailing comments note the source
  * palette swatch for each value.
  * ------------------------------------------------------------------------- */
 
@@ -110,52 +110,4 @@
   --chart-3: oklch(0.627 0.194 149.214); /* --color-green-600 */
   --chart-4: oklch(0.527 0.154 150.069); /* --color-green-700 */
   --chart-5: oklch(0.448 0.119 151.328); /* --color-green-800 */
-}
-
-@media (prefers-color-scheme: dark) {
-  :root:not(.light) {
-    /* System-preference dark — applied when no explicit .light is set. */
-
-    --background: oklch(0.141 0.005 285.823); /* --color-zinc-950 */
-    --foreground: oklch(0.985 0 0); /* --color-zinc-50 */
-
-    --primary: oklch(0.648 0.2 131.684); /* --color-lime-600 */
-    --primary-foreground: oklch(0.986 0.031 120.757); /* --color-lime-50 */
-
-    --secondary: oklch(0.274 0.006 286.033); /* --color-zinc-800 */
-    --secondary-foreground: oklch(0.985 0 0); /* --color-zinc-50 */
-
-    --destructive: oklch(0.704 0.191 22.216); /* --color-red-400 */
-
-    --muted: oklch(0.274 0.006 286.033); /* --color-zinc-800 */
-    --muted-foreground: oklch(0.705 0.015 286.067); /* --color-zinc-400 */
-
-    --accent: oklch(0.274 0.006 286.033); /* --color-zinc-800 */
-    --accent-foreground: oklch(0.985 0 0); /* --color-zinc-50 */
-
-    --popover: oklch(0.21 0.006 285.885); /* --color-zinc-900 */
-    --popover-foreground: oklch(0.985 0 0); /* --color-zinc-50 */
-
-    --card: oklch(0.21 0.006 285.885); /* --color-zinc-900 */
-    --card-foreground: oklch(0.985 0 0); /* --color-zinc-50 */
-
-    --border: oklch(1 0 0 / 10%); /* --color-white */
-    --input: oklch(1 0 0 / 15%); /* --color-white */
-    --ring: oklch(0.405 0.101 131.063); /* --color-lime-900 */
-
-    --sidebar: oklch(0.21 0.006 285.885); /* --color-zinc-900 */
-    --sidebar-foreground: oklch(0.985 0 0); /* --color-zinc-50 */
-    --sidebar-primary: oklch(0.768 0.233 130.85); /* --color-lime-500 */
-    --sidebar-primary-foreground: oklch(0.986 0.031 120.757); /* --color-lime-50 */
-    --sidebar-accent: oklch(0.274 0.006 286.033); /* --color-zinc-800 */
-    --sidebar-accent-foreground: oklch(0.985 0 0); /* --color-zinc-50 */
-    --sidebar-border: oklch(1 0 0 / 10%); /* --color-white */
-    --sidebar-ring: oklch(0.405 0.101 131.063); /* --color-lime-900 */
-
-    --chart-1: oklch(0.871 0.15 154.449); /* --color-green-300 */
-    --chart-2: oklch(0.723 0.219 149.579); /* --color-green-500 */
-    --chart-3: oklch(0.627 0.194 149.214); /* --color-green-600 */
-    --chart-4: oklch(0.527 0.154 150.069); /* --color-green-700 */
-    --chart-5: oklch(0.448 0.119 151.328); /* --color-green-800 */
-  }
 }
