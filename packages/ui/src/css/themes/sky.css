@@ -14,7 +14,7 @@
   --background: oklch(1 0 0); /* --color-zinc-50 */
   --foreground: oklch(0.141 0.005 285.823); /* --color-zinc-950 */
 
-  --primary: oklch(0.45 0.12 242); /* --color-sky-800 — darkened so --primary-foreground clears WCAG AA */
+  --primary: oklch(0.59 0.14 242); /* --color-sky-600 */
   --primary-foreground: oklch(0.98 0.01 237); /* --color-sky-50 */
 
   --secondary: oklch(0.967 0.001 286.375); /* --color-zinc-100 */
@@ -48,7 +48,7 @@
 
   --sidebar: oklch(0.985 0 0); /* --color-zinc-50 */
   --sidebar-foreground: oklch(0.141 0.005 285.823); /* --color-zinc-950 */
-  --sidebar-primary: oklch(0.45 0.12 242); /* --color-sky-800 — darkened to match --primary (WCAG AA) */
+  --sidebar-primary: oklch(0.59 0.14 242); /* --color-sky-600 */
   --sidebar-primary-foreground: oklch(0.98 0.01 237); /* --color-sky-50 */
   --sidebar-accent: oklch(0.967 0.001 286.375); /* --color-zinc-100 */
   --sidebar-accent-foreground: oklch(0.21 0.006 285.885); /* --color-zinc-900 */
@@ -73,9 +73,7 @@
   --foreground: oklch(0.985 0 0); /* --color-zinc-50 */
 
   --primary: oklch(0.68 0.15 237); /* --color-sky-500 */
-  --primary-foreground: oklch(
-    0.21 0.006 285.885
-  ); /* --color-zinc-900 — dark text on the bright dark-mode primary (WCAG AA) */
+  --primary-foreground: oklch(0.98 0.01 237); /* --color-sky-50 */
 
   --secondary: oklch(0.274 0.006 286.033); /* --color-zinc-800 */
   --secondary-foreground: oklch(0.985 0 0); /* --color-zinc-50 */
@@ -101,9 +99,7 @@
   --sidebar: oklch(0.21 0.006 285.885); /* --color-zinc-900 */
   --sidebar-foreground: oklch(0.985 0 0); /* --color-zinc-50 */
   --sidebar-primary: oklch(0.68 0.15 237); /* --color-sky-500 */
-  --sidebar-primary-foreground: oklch(
-    0.21 0.006 285.885
-  ); /* --color-zinc-900 — dark text on bright dark-mode sidebar primary (WCAG AA) */
+  --sidebar-primary-foreground: oklch(0.98 0.01 237); /* --color-sky-50 */
   --sidebar-accent: oklch(0.274 0.006 286.033); /* --color-zinc-800 */
   --sidebar-accent-foreground: oklch(0.985 0 0); /* --color-zinc-50 */
   --sidebar-border: oklch(1 0 0 / 10%); /* --color-white */
