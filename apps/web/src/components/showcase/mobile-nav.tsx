@@ -4,7 +4,6 @@ import { useEffect, useRef } from "react";
 
 import { CommandPaletteHint } from "#/components/showcase/command-palette-hint";
 import type { ComponentGroup } from "#/components/showcase/groups";
-import { STICKY_OFFSET_HEADER } from "#/lib/layout";
 
 /** A pill link used in the mobile jump nav, styled by active state. */
 function NavChip({
@@ -56,12 +55,7 @@ export function MobileNav({
   }, [activeSection]);
 
   return (
-    <div
-      className={cn(
-        "sticky z-30 -mx-4 mb-10 flex flex-col gap-2 border-b border-ui-border/60 bg-ui-bg/75 px-4 py-3 backdrop-blur-lg backdrop-saturate-150 lg:hidden",
-        STICKY_OFFSET_HEADER,
-      )}
-    >
+    <div className="sticky top-header z-30 -mx-4 mb-10 flex flex-col gap-2 border-b border-ui-border/60 bg-ui-bg/75 px-4 py-3 backdrop-blur-lg backdrop-saturate-150 lg:hidden">
       <nav
         ref={navRef}
         className="flex [scrollbar-width:none] gap-2 overflow-x-auto [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"

@@ -11,7 +11,6 @@ import {
 } from "#/components/detail/language-selector";
 import { CodeBlock } from "#/components/shared/code-block";
 import { PreviewTabs } from "#/components/shared/preview-tabs";
-import { SCROLL_MT_ANCHOR } from "#/lib/layout";
 
 interface ExamplePreviewProps {
   /** Anchor id for deep-linking and the On-this-page TOC. */
@@ -49,7 +48,7 @@ export function ExamplePreview({
   children,
 }: ExamplePreviewProps) {
   return (
-    <div id={id} className={SCROLL_MT_ANCHOR}>
+    <div id={id} className="scroll-mt-anchor">
       <div className="mb-3">
         <a href={`#${id}`} className="group/ex flex w-fit items-center gap-2 no-underline">
           <h3 className="text-sm font-semibold text-ui-fg">{title}</h3>

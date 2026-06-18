@@ -5,7 +5,6 @@ import { useEffect, useRef } from "react";
 
 import { CommandPaletteHint } from "#/components/showcase/command-palette-hint";
 import type { ComponentGroup } from "#/components/showcase/groups";
-import { STICKY_OFFSET_BELOW_HEADER } from "#/lib/layout";
 
 function SidebarComponentLink({
   slug,
@@ -103,7 +102,7 @@ export function SidebarNav({ groups, activeSection = null, activeSlug }: Sidebar
 
   return (
     <aside className="hidden lg:block">
-      <div className={cn("sticky flex max-h-[calc(100vh-6rem)] flex-col gap-4", STICKY_OFFSET_BELOW_HEADER)}>
+      <div className="sticky top-below-header flex max-h-[calc(100vh-var(--spacing-below-header)-1rem)] flex-col gap-4">
         <nav ref={navRef} aria-label="Components" className="-me-2 min-h-0 flex-1 space-y-5 overflow-y-auto pe-2 pb-4">
           {groups.map((group) => {
             const isActive = activeGroupId === group.id;

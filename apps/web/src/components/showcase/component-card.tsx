@@ -1,11 +1,9 @@
-import { cn } from "@codefast/ui/lib/utils";
 import { Suspense } from "react";
 
 import { ComponentCardMeta, PREVIEW_PANE_CLASS } from "#/components/showcase/component-card-meta";
 import { LazyVisible } from "#/components/showcase/lazy-visible";
 import { PreviewCard } from "#/components/showcase/preview-card";
 import { PreviewSkeleton } from "#/components/showcase/preview-skeleton";
-import { SCROLL_MT_GALLERY } from "#/lib/layout";
 import type { ComponentMeta } from "#/registry/components";
 import { componentImportLabel } from "#/registry/components";
 import { DEMO_BY_SLUG } from "#/registry/demos";
@@ -18,10 +16,7 @@ export function ComponentCard({ component }: { component: ComponentMeta }) {
     return (
       <div
         id={component.slug}
-        className={cn(
-          "flex h-full flex-col rounded-2xl border border-dashed border-ui-border/40 bg-ui-card transition-[box-shadow,border-color] duration-200 target:animate-gallery-highlight hover:border-ui-brand/30 hover:shadow-lg hover:shadow-black/5 dark:hover:shadow-black/20",
-          SCROLL_MT_GALLERY,
-        )}
+        className="flex h-full scroll-mt-gallery flex-col rounded-2xl border border-dashed border-ui-border/40 bg-ui-card transition-[box-shadow,border-color] duration-200 target:animate-gallery-highlight hover:border-ui-brand/30 hover:shadow-lg hover:shadow-black/5 dark:hover:shadow-black/20"
       >
         <div className={PREVIEW_PANE_CLASS}>
           <span className="rounded-full border border-ui-border/60 bg-ui-card px-3 py-1 text-xs font-medium text-ui-muted">

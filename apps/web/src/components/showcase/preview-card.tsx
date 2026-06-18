@@ -6,7 +6,6 @@ import { ComponentCardMeta, PREVIEW_PANE_CLASS } from "#/components/showcase/com
 import { ImportPathLabel } from "#/components/showcase/import-path-label";
 import { LazyCodeBlock } from "#/components/showcase/lazy-code-block";
 import type { HighlightedSource } from "#/lib/highlight";
-import { SCROLL_MT_GALLERY } from "#/lib/layout";
 
 interface PreviewCardProps {
   name: string;
@@ -26,8 +25,7 @@ export function PreviewCard({ name, path, description, loadSource, children, wid
     <div
       id={id}
       className={cn(
-        "flex h-full flex-col rounded-2xl border border-ui-border/60 bg-ui-card transition-[box-shadow,border-color] duration-200 target:animate-gallery-highlight hover:border-ui-brand/30 hover:shadow-lg hover:shadow-black/5 dark:hover:shadow-black/20",
-        SCROLL_MT_GALLERY,
+        "flex h-full scroll-mt-gallery flex-col rounded-2xl border border-ui-border/60 bg-ui-card transition-[box-shadow,border-color] duration-200 target:animate-gallery-highlight hover:border-ui-brand/30 hover:shadow-lg hover:shadow-black/5 dark:hover:shadow-black/20",
         wide && "sm:col-span-2",
       )}
     >

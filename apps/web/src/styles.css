@@ -5,6 +5,17 @@
 
 @theme {
   --font-sans: "Inter Variable", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+
+  /* Layout offsets — single source of truth. --spacing-header is the site header
+     height (h-header on the header); every sticky offset and scroll-margin below
+     derives from it, so changing the header height cascades everywhere. Tailwind
+     generates real utilities from these (top-header, scroll-mt-gallery, …). */
+  --spacing-header: 3rem;
+  --spacing-below-header: calc(var(--spacing-header) + 2rem);
+  --spacing-toc: calc(var(--spacing-header) + 3rem);
+  --spacing-anchor: calc(var(--spacing-header) + 3rem);
+  --spacing-gallery: calc(var(--spacing-header) + 4rem);
+
   --color-ui-bg: var(--ui-bg);
   --color-ui-surface: var(--ui-surface);
   --color-ui-card: var(--ui-card);
@@ -70,15 +81,5 @@
 }
 
 @utility page-enter-delayed {
-  @apply page-enter delay-[120ms];
-}
-
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
+  @apply page-enter delay-120;
 }

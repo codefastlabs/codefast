@@ -7,7 +7,6 @@
  * awaits the chunk and ships complete HTML; on the client, navigating to
  * `/components/button` downloads button's chunk and nothing else.
  */
-import { cn } from "@codefast/ui/lib/utils";
 import type { ComponentType, LazyExoticComponent } from "react";
 import { lazy } from "react";
 
@@ -20,7 +19,6 @@ import { ExamplesSection } from "#/components/detail/examples-section";
 import { GuidelinesSection } from "#/components/detail/guidelines-section";
 import { OnThisPage, type TocItem } from "#/components/detail/on-this-page";
 import { RelatedSection } from "#/components/detail/related-section";
-import { STICKY_OFFSET_DETAIL_TOC } from "#/lib/layout";
 import type { ComponentMeta } from "#/registry/components";
 import { COMPONENTS, COMPONENT_BY_SLUG, NEIGHBORS_BY_SLUG } from "#/registry/components";
 import { DEMO_BY_SLUG } from "#/registry/demos";
@@ -169,12 +167,7 @@ function DetailBody({ detail }: { detail: ComponentDetail }) {
         </div>
 
         <aside className="hidden xl:block">
-          <div
-            className={cn(
-              "sticky rounded-xl bg-ui-bg/75 p-3 backdrop-blur-lg backdrop-saturate-150",
-              STICKY_OFFSET_DETAIL_TOC,
-            )}
-          >
+          <div className="sticky top-toc rounded-xl bg-ui-bg/75 p-3 backdrop-blur-lg backdrop-saturate-150">
             <OnThisPage items={toc} />
           </div>
         </aside>

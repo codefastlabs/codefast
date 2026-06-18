@@ -2,7 +2,6 @@ import { cn } from "@codefast/ui/lib/utils";
 
 import type { TocItem } from "#/components/detail/on-this-page";
 import { useActiveAnchor } from "#/hooks/use-active-anchor";
-import { STICKY_OFFSET_HEADER } from "#/lib/layout";
 
 interface DetailMobileTocProps {
   readonly items: ReadonlyArray<TocItem>;
@@ -19,12 +18,7 @@ export function DetailMobileToc({ items }: DetailMobileTocProps) {
   }
 
   return (
-    <div
-      className={cn(
-        "sticky z-30 -mx-4 mb-8 border-b border-ui-border/60 bg-ui-bg/75 px-4 py-3 backdrop-blur-lg backdrop-saturate-150 lg:hidden",
-        STICKY_OFFSET_HEADER,
-      )}
-    >
+    <div className="sticky top-header z-30 -mx-4 mb-8 border-b border-ui-border/60 bg-ui-bg/75 px-4 py-3 backdrop-blur-lg backdrop-saturate-150 lg:hidden">
       <nav
         className="flex [scrollbar-width:none] gap-2 overflow-x-auto [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
         aria-label="On this page"

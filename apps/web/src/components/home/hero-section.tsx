@@ -9,7 +9,7 @@ export function HeroSection() {
   return (
     <section
       aria-labelledby="home-hero-title"
-      className="relative flex min-h-[calc(100vh-3rem)] items-center overflow-hidden px-4 py-20 sm:py-24"
+      className="relative flex min-h-[calc(100vh-var(--spacing-header))] items-center overflow-hidden px-4 py-20 sm:py-24"
     >
       <div
         aria-hidden
