@@ -265,7 +265,7 @@ function MenubarCheckboxItem({ checked, children, className, inset, ...props }: 
       data-slot="menubar-checkbox-item"
       {...props}
     >
-      <span className="pointer-events-none absolute start-2 flex size-4 items-center justify-center [&_svg:not([class*='size-'])]:size-4">
+      <span className="pointer-events-none absolute inset-s-2 flex size-4 items-center justify-center [&_svg:not([class*='size-'])]:size-4">
         <MenubarPrimitive.ItemIndicator>
           <CheckIcon />
         </MenubarPrimitive.ItemIndicator>
@@ -300,7 +300,7 @@ function MenubarRadioItem({ children, className, inset, ...props }: MenubarRadio
       data-slot="menubar-radio-item"
       {...props}
     >
-      <span className="pointer-events-none absolute start-2 flex size-4 items-center justify-center [&_svg:not([class*='size-'])]:size-4">
+      <span className="pointer-events-none absolute inset-s-2 flex size-4 items-center justify-center [&_svg:not([class*='size-'])]:size-4">
         <MenubarPrimitive.ItemIndicator>
           <CheckIcon />
         </MenubarPrimitive.ItemIndicator>

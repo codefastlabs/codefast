@@ -21,7 +21,7 @@ export function CopySnippet({ code, label = "Copy code", className }: CopySnippe
         type="button"
         onClick={() => void copyToClipboard(code)}
         aria-label={isCopied ? "Copied" : label}
-        className="absolute end-3 top-3 flex items-center gap-1.5 rounded-lg border border-white/10 bg-white/10 px-2.5 py-1.5 text-xs font-medium text-white/70 transition-colors duration-200 hover:bg-white/20 hover:text-white"
+        className="absolute inset-e-3 top-3 flex items-center gap-1.5 rounded-lg border border-white/10 bg-white/10 px-2.5 py-1.5 text-xs font-medium text-white/70 transition-colors duration-200 hover:bg-white/20 hover:text-white"
       >
         {isCopied ? <CheckIcon className="size-3.5" /> : <CopyIcon className="size-3.5" />}
         {isCopied ? "Copied" : "Copy"}

@@ -117,7 +117,7 @@ function TableHead({ className, ...props }: TableHeadProps): JSX.Element {
   return (
     <th
       className={cn(
-        "h-10 px-2 text-start align-middle font-medium whitespace-nowrap text-foreground [&:has([role=checkbox])]:pe-0",
+        "h-10 px-2 text-start align-middle font-medium whitespace-nowrap text-foreground has-[[role=checkbox]]:pe-0",
         className,
       )}
       data-slot="table-head"
@@ -141,7 +141,7 @@ type TableCellProps = ComponentProps<"td">;
 function TableCell({ className, ...props }: TableCellProps): JSX.Element {
   return (
     <td
-      className={cn("p-2 align-middle whitespace-nowrap [&:has([role=checkbox])]:pe-0", className)}
+      className={cn("p-2 align-middle whitespace-nowrap has-[[role=checkbox]]:pe-0", className)}
       data-slot="table-cell"
       {...props}
     />

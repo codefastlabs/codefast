@@ -38,7 +38,7 @@ export function RouteProgress() {
   }
 
   return (
-    <div aria-hidden className="pointer-events-none fixed inset-x-0 top-0 z-[60] h-0.5 overflow-hidden">
+    <div aria-hidden className="pointer-events-none fixed inset-x-0 top-0 z-60 h-0.5 overflow-hidden">
       <div className="h-full w-1/4 animate-route-progress bg-ui-brand" />
     </div>
   );

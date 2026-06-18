@@ -47,7 +47,7 @@ function RadioGroupItem({ className, ...props }: RadioGroupItemProps): JSX.Eleme
         className="flex size-4 items-center justify-center"
         data-slot="radio-group-indicator"
       >
-        <span className="absolute start-1/2 top-1/2 size-2 -translate-x-1/2 -translate-y-1/2 animate-in rounded-full bg-primary-foreground duration-control-indicator ease-spring zoom-in-50 rtl:translate-x-1/2" />
+        <span className="absolute inset-s-1/2 top-1/2 size-2 -translate-x-1/2 -translate-y-1/2 animate-in rounded-full bg-primary-foreground duration-control-indicator ease-spring zoom-in-50 rtl:translate-x-1/2" />
       </RadioGroupPrimitive.Indicator>
     </RadioGroupPrimitive.Item>
   );

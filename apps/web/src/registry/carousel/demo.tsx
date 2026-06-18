@@ -47,11 +47,11 @@ export function CarouselDemo() {
           </CarouselItem>
         ))}
       </CarouselContent>
-      {/* Overlay the controls on the slides — the default -start-12/-end-12
+      {/* Overlay the controls on the slides — the default -inset-s-12/-inset-e-12
           placement needs 48px of free space on each side, which the showcase
           preview card doesn't have. */}
-      <CarouselPrevious className="start-2" />
-      <CarouselNext className="end-2" />
+      <CarouselPrevious className="inset-s-2" />
+      <CarouselNext className="inset-e-2" />
     </Carousel>
   );
 }

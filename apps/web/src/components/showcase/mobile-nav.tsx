@@ -58,7 +58,7 @@ export function MobileNav({
     <div className="sticky top-header z-30 -mx-4 mb-10 flex flex-col gap-2 border-b border-ui-border/60 bg-ui-bg/75 px-4 py-3 backdrop-blur-lg backdrop-saturate-150 lg:hidden">
       <nav
         ref={navRef}
-        className="flex [scrollbar-width:none] gap-2 overflow-x-auto [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+        className="flex scrollbar-none gap-2 overflow-x-auto [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
         aria-label="Jump to"
       >
         {groups.map((group) => (

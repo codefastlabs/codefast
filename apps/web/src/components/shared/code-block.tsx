@@ -71,7 +71,7 @@ export function CodeBlock({ code, highlightedCodeDark, highlightedCodeLight, cla
         onClick={() => void handleCopy()}
         aria-label="Copy code"
         className={cn(
-          "absolute end-3 top-3 flex items-center gap-1.5 rounded-lg border px-2.5 py-1.5 text-xs font-medium transition-colors duration-200",
+          "absolute inset-e-3 top-3 flex items-center gap-1.5 rounded-lg border px-2.5 py-1.5 text-xs font-medium transition-colors duration-200",
           "border-ui-border/60 bg-ui-card/90 text-ui-muted shadow-sm backdrop-blur-sm hover:bg-ui-surface hover:text-ui-fg",
           "dark:border-white/10 dark:bg-white/10 dark:text-white/70 dark:shadow-none dark:hover:bg-white/20 dark:hover:text-white",
         )}

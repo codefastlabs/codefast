@@ -16,9 +16,9 @@ const sheetContentVariants = tv({
   variants: {
     side: {
       bottom: "inset-x-0 bottom-0 h-auto border-t data-open:slide-in-from-bottom-10 data-closed:slide-out-to-bottom-10",
-      left: "inset-y-0 start-0 h-full w-3/4 border-e sm:max-w-sm data-open:slide-in-from-left-10 data-closed:slide-out-to-left-10",
+      left: "inset-y-0 inset-s-0 h-full w-3/4 border-e sm:max-w-sm data-open:slide-in-from-left-10 data-closed:slide-out-to-left-10",
       right:
-        "inset-y-0 end-0 h-full w-3/4 border-s sm:max-w-sm data-open:slide-in-from-right-10 data-closed:slide-out-to-right-10",
+        "inset-y-0 inset-e-0 h-full w-3/4 border-s sm:max-w-sm data-open:slide-in-from-right-10 data-closed:slide-out-to-right-10",
       top: "inset-x-0 top-0 h-auto border-b data-open:slide-in-from-top-10 data-closed:slide-out-to-top-10",
     },
   },

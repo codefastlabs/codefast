@@ -5,14 +5,14 @@ export function ChartTooltipDemo() {
   return (
     <div className="grid aspect-video w-full max-w-md justify-center text-foreground md:grid-cols-2 [&>div]:relative [&>div]:flex [&>div]:h-34.25 [&>div]:w-56 [&>div]:items-center [&>div]:justify-center [&>div]:p-4">
       <div>
-        <div className="absolute -start-8.75 top-11.25 z-10 text-sm font-medium">Label</div>
+        <div className="absolute -inset-s-8.75 top-11.25 z-10 text-sm font-medium">Label</div>
         <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 193 40"
           width="50"
           height="12"
           fill="none"
-          className="absolute start-1.25 top-12.5 z-10"
+          className="absolute inset-s-1.25 top-12.5 z-10"
         >
           <g clipPath="url(#a)">
             <path
@@ -36,14 +36,14 @@ export function ChartTooltipDemo() {
         />
       </div>
       <div className="items-end">
-        <div className="absolute start-30.5 top-0 z-10 text-sm font-medium">Name</div>
+        <div className="absolute inset-s-30.5 top-0 z-10 text-sm font-medium">Name</div>
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="35"
           height="42"
           fill="none"
           viewBox="0 0 122 148"
-          className="absolute start-21.25 top-2.5 z-10 -scale-x-100"
+          className="absolute inset-s-21.25 top-2.5 z-10 -scale-x-100"
         >
           <g clipPath="url(#ab)">
             <path
@@ -77,7 +77,7 @@ export function ChartTooltipDemo() {
         />
       </div>
       <div className="items-start! justify-start!">
-        <div className="absolute start-12.5 top-15 z-10 text-sm font-medium">Indicator</div>
+        <div className="absolute inset-s-12.5 top-15 z-10 text-sm font-medium">Indicator</div>
         <TooltipDemo
           label="Browser"
           hideLabel
@@ -91,7 +91,7 @@ export function ChartTooltipDemo() {
           height="34"
           fill="none"
           viewBox="0 0 75 175"
-          className="absolute start-7.5 top-9.5 z-10 rotate-[-40deg]"
+          className="absolute inset-s-7.5 top-9.5 z-10 rotate-[-40deg]"
         >
           <g clipPath="url(#abc)">
             <path
