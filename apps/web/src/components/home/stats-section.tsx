@@ -1,8 +1,8 @@
 import { Button } from "@codefast/ui/button";
 import { Link } from "@tanstack/react-router";
 
-import { COMPONENT_COUNT, STATS } from "#/components/home/home-data";
 import { SectionHeader } from "#/components/shared/section-header";
+import { COMPONENT_COUNT, STATS } from "#/data/home";
 import { COMPONENTS } from "#/registry/components";
 
 export function StatsSection() {

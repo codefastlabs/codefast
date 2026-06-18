@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 
 import { AppearanceToggle } from "#/components/layout/appearance-toggle";
-import { PRIMARY_NAV, RESOURCE_LINKS } from "#/components/layout/nav-links";
+import { PRIMARY_NAV, RESOURCE_LINKS } from "#/lib/nav-links";
 
 export function Footer() {
   const year = new Date().getFullYear();

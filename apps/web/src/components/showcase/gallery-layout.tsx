@@ -2,10 +2,10 @@ import { useLocation } from "@tanstack/react-router";
 
 import { GalleryCtaSection } from "#/components/showcase/gallery-cta-section";
 import { GroupSection } from "#/components/showcase/group-section";
-import { ALPHABET_GROUPS, ALPHABET_NAV_IDS } from "#/components/showcase/groups";
 import { MobileNav } from "#/components/showcase/mobile-nav";
 import { SidebarNav } from "#/components/showcase/sidebar-nav";
-import { useActiveSection } from "#/components/showcase/use-active-section";
+import { ALPHABET_GROUPS, ALPHABET_NAV_IDS } from "#/data/showcase";
+import { useActiveSection } from "#/hooks/use-active-section";
 import { useHashScroll } from "#/hooks/use-hash-scroll";
 
 export function GalleryLayout() {

@@ -17,9 +17,9 @@ import {
   getCommandPaletteAriaKeyshortcuts,
   getCommandPaletteKeyboardAction,
   getIsMacPlatform,
-} from "#/components/layout/command-palette-keyboard";
-import type { PrimaryNavPath } from "#/components/layout/nav-links";
-import { PRIMARY_NAV } from "#/components/layout/nav-links";
+} from "#/lib/command-palette-keyboard";
+import type { PrimaryNavPath } from "#/lib/nav-links";
+import { PRIMARY_NAV } from "#/lib/nav-links";
 import { COMPONENTS } from "#/registry/components";
 
 /**

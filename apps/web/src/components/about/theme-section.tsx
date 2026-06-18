@@ -1,8 +1,8 @@
 import { Badge } from "@codefast/ui/badge";
 
-import { FEATURED_THEMES, THEME_SNIPPET } from "#/components/about/about-data";
 import { CopySnippet } from "#/components/shared/copy-snippet";
 import { SectionHeader } from "#/components/shared/section-header";
+import { FEATURED_THEMES, THEME_SNIPPET } from "#/data/about";
 
 export function ThemeSection() {
   return (

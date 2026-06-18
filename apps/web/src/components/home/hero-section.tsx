@@ -3,7 +3,7 @@ import { Button } from "@codefast/ui/button";
 import { Link } from "@tanstack/react-router";
 
 import { HeroCard } from "#/components/home/hero-card";
-import { COMPONENT_COUNT } from "#/components/home/home-data";
+import { COMPONENT_COUNT } from "#/data/home";
 
 export function HeroSection() {
   return (

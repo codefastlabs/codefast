@@ -1,6 +1,6 @@
 import { useSyncExternalStore } from "react";
 
-import { getIsMacPlatform } from "#/components/layout/command-palette-keyboard";
+import { getIsMacPlatform } from "#/lib/command-palette-keyboard";
 
 interface CommandPaletteHintProps {
   readonly className?: string;

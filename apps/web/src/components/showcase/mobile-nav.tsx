@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 import { useEffect, useRef } from "react";
 
 import { CommandPaletteHint } from "#/components/showcase/command-palette-hint";
-import type { ComponentGroup } from "#/components/showcase/groups";
+import type { ComponentGroup } from "#/data/showcase";
 
 /** A pill link used in the mobile jump nav, styled by active state. */
 function NavChip({

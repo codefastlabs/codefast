@@ -1,5 +1,5 @@
-import { FEATURES } from "#/components/home/home-data";
 import { SectionHeader } from "#/components/shared/section-header";
+import { FEATURES } from "#/data/home";
 
 export function FeaturesSection() {
   return (

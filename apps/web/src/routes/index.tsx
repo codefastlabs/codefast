@@ -4,7 +4,7 @@ import { FeaturesSection } from "#/components/home/features-section";
 import { HeroSection } from "#/components/home/hero-section";
 import { InstallCta } from "#/components/home/install-cta";
 import { StatsSection } from "#/components/home/stats-section";
-import { GITHUB_URL } from "#/components/layout/nav-links";
+import { GITHUB_URL } from "#/lib/nav-links";
 import { SITE_URL, absoluteUrl, canonicalHead, jsonLdScript } from "#/lib/seo";
 
 const NPM_URL = "https://www.npmjs.com/package/@codefast/ui";

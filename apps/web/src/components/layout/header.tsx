@@ -6,7 +6,7 @@ import { useState } from "react";
 
 import { AppearanceToggle } from "#/components/layout/appearance-toggle";
 import { CommandPalette } from "#/components/layout/command-palette";
-import { GITHUB_URL, PRIMARY_NAV } from "#/components/layout/nav-links";
+import { GITHUB_URL, PRIMARY_NAV } from "#/lib/nav-links";
 
 function Logo() {
   return (

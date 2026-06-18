@@ -1,7 +1,7 @@
 import { Badge } from "@codefast/ui/badge";
 
-import { REQUIREMENTS } from "#/components/about/about-data";
 import { SectionHeader } from "#/components/shared/section-header";
+import { REQUIREMENTS } from "#/data/about";
 
 export function RequirementsSection() {
   return (

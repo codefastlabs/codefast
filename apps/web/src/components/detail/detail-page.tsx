@@ -6,8 +6,8 @@ import { DetailCtaSection } from "#/components/detail/detail-cta-section";
 import { DetailHeroSection } from "#/components/detail/detail-hero-section";
 import { ComponentDetailNotFound } from "#/components/detail/detail-not-found";
 import { DetailSkeleton } from "#/components/detail/detail-skeleton";
-import { ALPHABET_GROUPS } from "#/components/showcase/groups";
 import { SidebarNav } from "#/components/showcase/sidebar-nav";
+import { ALPHABET_GROUPS } from "#/data/showcase";
 import { useHashScroll } from "#/hooks/use-hash-scroll";
 import { COMPONENT_BY_SLUG } from "#/registry/components";
 

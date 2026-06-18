@@ -3,8 +3,7 @@ import { Button } from "@codefast/ui/button";
 import { Link } from "@tanstack/react-router";
 
 import { PageHeader } from "#/components/shared/page-header";
-import { ALPHABET_GROUPS } from "#/components/showcase/groups";
-import { GALLERY_STATS } from "#/components/showcase/showcase-data";
+import { ALPHABET_GROUPS, GALLERY_STATS } from "#/data/showcase";
 import { COMPONENTS } from "#/registry/components";
 
 const firstLetterGroupId = ALPHABET_GROUPS[0]?.id ?? "letter-A";

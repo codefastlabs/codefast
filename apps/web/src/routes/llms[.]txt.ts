@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-import { GITHUB_URL } from "#/components/layout/nav-links";
+import { GITHUB_URL } from "#/lib/nav-links";
 import { absoluteUrl } from "#/lib/seo";
 import { COMPONENTS } from "#/registry/components";
 

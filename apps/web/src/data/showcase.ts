@@ -12,6 +12,7 @@
 
 import type { ComponentMeta } from "#/registry/components";
 import { COMPONENTS } from "#/registry/components";
+import { DEMO_BY_SLUG } from "#/registry/demos";
 
 /** A navigable band of components sharing a leading letter. */
 export interface ComponentGroup {
@@ -43,3 +44,10 @@ export const ALPHABET_GROUPS: ReadonlyArray<ComponentGroup> = (() => {
 
 /** Scroll-spy target ids, one per letter band, in render order. */
 export const ALPHABET_NAV_IDS: ReadonlyArray<string> = ALPHABET_GROUPS.map((group) => group.id);
+
+/** Hero stats for the gallery — totals derived from the registry and grouping above. */
+export const GALLERY_STATS = [
+  { value: `${COMPONENTS.length}`, label: "components" },
+  { value: `${DEMO_BY_SLUG.size}`, label: "live previews" },
+  { value: `${ALPHABET_GROUPS.length}`, label: "A–Z groups" },
+] as const;
