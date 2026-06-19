@@ -1,4 +1,5 @@
 import { cn } from "@codefast/ui/lib/utils";
+import { Skeleton } from "@codefast/ui/skeleton";
 import { useEffect, useState } from "react";
 
 import { CodeBlock } from "#/components/shared/code-block";
@@ -34,7 +35,7 @@ export function LazyCodeBlock({ load, className }: LazyCodeBlockProps) {
   }, [load]);
 
   if (!source) {
-    return <div className={cn("min-h-40 animate-pulse bg-ui-surface", className)} />;
+    return <Skeleton className={cn("min-h-40 rounded-none", className)} />;
   }
 
   return (

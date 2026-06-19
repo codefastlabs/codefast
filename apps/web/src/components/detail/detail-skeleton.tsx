@@ -1,13 +1,15 @@
+import { Skeleton } from "@codefast/ui/skeleton";
+
 /** Layout-stable placeholder while a detail chunk streams in. */
 export function DetailSkeleton() {
   return (
     <div className="xl:grid xl:grid-cols-[minmax(0,1fr)_180px] xl:gap-12">
       <div className="min-w-0 space-y-16">
-        <div className="min-h-64 animate-pulse rounded-2xl border border-ui-border/60 bg-ui-surface" />
-        <div className="min-h-40 animate-pulse rounded-2xl border border-ui-border/60 bg-ui-surface" />
+        <Skeleton className="min-h-64 rounded-2xl border border-ui-border/60" />
+        <Skeleton className="min-h-40 rounded-2xl border border-ui-border/60" />
       </div>
       <aside className="hidden xl:block">
-        <div className="min-h-48 animate-pulse rounded-xl border border-ui-border/60 bg-ui-surface" />
+        <Skeleton className="min-h-48 rounded-xl border border-ui-border/60" />
       </aside>
     </div>
   );
