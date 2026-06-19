@@ -2,7 +2,7 @@ import { cn } from "@codefast/ui/lib/utils";
 import type { ReactNode } from "react";
 
 import { PreviewTabs } from "#/components/shared/preview-tabs";
-import { ComponentCardMeta, PREVIEW_PANE_CLASS } from "#/components/showcase/component-card-meta";
+import { ComponentCardMeta } from "#/components/showcase/component-card-meta";
 import { ImportPathLabel } from "#/components/showcase/import-path-label";
 import { LazyCodeBlock } from "#/components/showcase/lazy-code-block";
 import type { HighlightedSource } from "#/lib/highlight";
@@ -33,7 +33,7 @@ export function PreviewCard({ name, path, description, loadSource, children, wid
         variant="card"
         className="flex min-h-0 flex-1 flex-col"
         trailing={<ImportPathLabel path={path} />}
-        preview={<div className={PREVIEW_PANE_CLASS}>{children}</div>}
+        preview={<div className="flex min-h-40 flex-1 items-center justify-center bg-ui-surface p-6">{children}</div>}
         code={<LazyCodeBlock load={loadSource} className="min-h-40" />}
       />
 
