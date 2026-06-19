@@ -1,9 +1,10 @@
 import { cn } from "@codefast/ui/lib/utils";
 import type { ReactNode } from "react";
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 
 import { CommandPaletteHint } from "#/components/showcase/command-palette-hint";
 import type { ComponentGroup } from "#/data/showcase";
+import { useScrollChipIntoView } from "#/hooks/use-scroll-chip-into-view";
 
 /** A pill link used in the mobile jump nav, styled by active state. */
 function NavChip({
@@ -44,15 +45,7 @@ export function MobileNav({
 }) {
   const navRef = useRef<HTMLElement>(null);
 
-  useEffect(() => {
-    if (!activeSection || !navRef.current) {
-      return;
-    }
-
-    const activeChip = navRef.current.querySelector<HTMLElement>(`[data-chip-id="${activeSection}"]`);
-
-    activeChip?.scrollIntoView({ inline: "center", block: "nearest", behavior: "smooth" });
-  }, [activeSection]);
+  useScrollChipIntoView(navRef, activeSection);
 
   return (
     <div className="sticky top-header z-30 -mx-4 mb-10 flex flex-col gap-2 border-b border-ui-border/60 bg-ui-bg/75 px-4 py-3 backdrop-blur-lg backdrop-saturate-150 lg:hidden">
