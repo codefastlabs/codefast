@@ -1,10 +1,11 @@
 import { cn } from "@codefast/ui/lib/utils";
 import { Link } from "@tanstack/react-router";
 import { LocateFixedIcon } from "lucide-react";
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 
 import { CommandPaletteHint } from "#/components/showcase/command-palette-hint";
 import type { ComponentGroup } from "#/data/showcase";
+import { useScrollActiveIntoView } from "#/hooks/use-scroll-active-into-view";
 
 function SidebarComponentLink({
   slug,
@@ -46,6 +47,52 @@ function SidebarComponentLink({
   );
 }
 
+function SidebarGroupHeader({
+  group,
+  active,
+  jumpToBand,
+}: {
+  group: ComponentGroup;
+  active: boolean;
+  /** Gallery: render as an in-page jump link to the letter band. Detail: a static label. */
+  jumpToBand: boolean;
+}) {
+  const content = (
+    <>
+      {group.label}
+      <span className="tabular-nums opacity-60">{group.items.length}</span>
+    </>
+  );
+
+  if (jumpToBand) {
+    return (
+      <a
+        href={`#${group.id}`}
+        data-group-id={group.id}
+        aria-current={active ? "location" : undefined}
+        className={cn(
+          "sticky top-0 z-10 flex items-center justify-between gap-2 border-s bg-ui-bg/75 px-2 py-1 text-xs font-semibold tracking-wide uppercase no-underline backdrop-blur-lg backdrop-saturate-150 transition-colors duration-200 hover:text-ui-fg",
+          active ? "border-ui-brand text-ui-fg" : "border-transparent text-ui-muted",
+        )}
+      >
+        {content}
+      </a>
+    );
+  }
+
+  return (
+    <p
+      data-group-id={group.id}
+      className={cn(
+        "sticky top-0 z-10 flex items-center justify-between gap-2 border-s bg-ui-bg/75 px-2 py-1 text-xs font-semibold tracking-wide uppercase backdrop-blur-lg backdrop-saturate-150 transition-colors duration-200",
+        active ? "border-ui-brand text-ui-fg" : "border-transparent text-ui-muted",
+      )}
+    >
+      {content}
+    </p>
+  );
+}
+
 interface SidebarNavProps {
   readonly groups: ReadonlyArray<ComponentGroup>;
   /** Gallery: id of the letter band currently in view — highlighted and scrolled into view. */
@@ -67,38 +114,14 @@ export function SidebarNav({ groups, activeSection = null, activeSlug }: Sidebar
     ? (groups.find((group) => group.items.some((item) => item.slug === activeSlug))?.id ?? null)
     : activeSection;
 
-  useEffect(() => {
-    const nav = navRef.current;
+  // Detail: scroll the current component's link in; gallery: the active letter band's header.
+  const activeSelector = activeSlug
+    ? `[data-slug="${activeSlug}"]`
+    : activeGroupId
+      ? `[data-group-id="${activeGroupId}"]`
+      : null;
 
-    if (!nav) {
-      return;
-    }
-
-    const target = activeSlug
-      ? nav.querySelector<HTMLElement>(`[data-slug="${activeSlug}"]`)
-      : activeGroupId
-        ? nav.querySelector<HTMLElement>(`[data-group-id="${activeGroupId}"]`)
-        : null;
-
-    if (!target) {
-      return;
-    }
-
-    // Scroll only this nav's own overflow container into place — never the page.
-    // (scrollIntoView would also scroll the window, yanking a detail page on load.)
-    const navRect = nav.getBoundingClientRect();
-    const targetRect = target.getBoundingClientRect();
-    const delta =
-      targetRect.top < navRect.top
-        ? targetRect.top - navRect.top
-        : targetRect.bottom > navRect.bottom
-          ? targetRect.bottom - navRect.bottom
-          : 0;
-
-    if (delta !== 0) {
-      nav.scrollBy({ top: delta, behavior: "smooth" });
-    }
-  }, [activeSlug, activeGroupId]);
+  useScrollActiveIntoView(navRef, activeSelector);
 
   return (
     <aside className="hidden lg:block">
@@ -106,34 +129,11 @@ export function SidebarNav({ groups, activeSection = null, activeSlug }: Sidebar
         <nav ref={navRef} aria-label="Components" className="-me-2 min-h-0 flex-1 space-y-5 overflow-y-auto pe-2 pb-4">
           {groups.map((group) => {
             const isActive = activeGroupId === group.id;
-            const headerClassName = cn(
-              "sticky top-0 z-10 flex items-center justify-between gap-2 border-s bg-ui-bg/75 px-2 py-1 text-xs font-semibold tracking-wide uppercase backdrop-blur-lg backdrop-saturate-150 transition-colors duration-200",
-              isActive ? "border-ui-brand text-ui-fg" : "border-transparent text-ui-muted",
-            );
-            const headerContent = (
-              <>
-                {group.label}
-                <span className="tabular-nums opacity-60">{group.items.length}</span>
-              </>
-            );
 
             return (
               <div key={group.id}>
                 {/* Gallery: in-page jump to the letter band. Detail: a static label (no bands to jump to). */}
-                {activeSlug === undefined ? (
-                  <a
-                    href={`#${group.id}`}
-                    data-group-id={group.id}
-                    aria-current={isActive ? "location" : undefined}
-                    className={cn(headerClassName, "no-underline hover:text-ui-fg")}
-                  >
-                    {headerContent}
-                  </a>
-                ) : (
-                  <p data-group-id={group.id} className={headerClassName}>
-                    {headerContent}
-                  </p>
-                )}
+                <SidebarGroupHeader group={group} active={isActive} jumpToBand={activeSlug === undefined} />
                 <div className="mt-1 space-y-0.5 border-s border-ui-border/60 ps-2">
                   {group.items.map((component) => (
                     <SidebarComponentLink
