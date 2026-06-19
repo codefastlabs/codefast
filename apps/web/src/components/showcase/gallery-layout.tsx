@@ -21,7 +21,7 @@ export function GalleryLayout() {
       <div className="lg:grid lg:grid-cols-[200px_minmax(0,1fr)] lg:gap-10 xl:grid-cols-[220px_minmax(0,1fr)]">
         <SidebarNav groups={ALPHABET_GROUPS} activeSection={activeSection} />
 
-        <div className="min-w-0 page-enter">
+        <div className="min-w-0">
           {ALPHABET_GROUPS.map((group) => (
             <GroupSection key={group.id} group={group} />
           ))}

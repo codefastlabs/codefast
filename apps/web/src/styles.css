@@ -63,11 +63,3 @@
   --ui-brand: var(--color-sky-400);
   --ui-inverse: var(--color-neutral-950);
 }
-
-@utility page-enter {
-  @apply animate-in duration-800 ease-out fill-mode-both fade-in slide-in-from-bottom-4;
-}
-
-@utility page-enter-delayed {
-  @apply page-enter delay-120;
-}

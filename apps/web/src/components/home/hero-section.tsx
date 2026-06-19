@@ -18,7 +18,7 @@ export function HeroSection() {
 
       <div className="relative container mx-auto">
         <div className="grid items-center gap-16 lg:grid-cols-[minmax(0,1fr)_minmax(0,24rem)] lg:gap-20 xl:grid-cols-[minmax(0,1.1fr)_minmax(0,26rem)]">
-          <div className="page-enter text-center lg:text-start">
+          <div className="text-center lg:text-start">
             <Badge variant="outline" className="mb-6 border-ui-border/60 text-ui-muted">
               React 19 · Radix UI · Tailwind v4
             </Badge>
@@ -48,7 +48,7 @@ export function HeroSection() {
             </div>
           </div>
 
-          <div className="mx-auto w-full max-w-sm page-enter-delayed lg:mx-0 lg:max-w-none">
+          <div className="mx-auto w-full max-w-sm lg:mx-0 lg:max-w-none">
             <HeroCard />
           </div>
         </div>

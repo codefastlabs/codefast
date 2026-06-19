@@ -15,7 +15,7 @@ export function GalleryHeroSection() {
         aria-hidden
         className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_70%_50%_at_50%_-20%,color-mix(in_oklab,var(--color-sky-500)_8%,transparent),transparent)] dark:bg-[radial-gradient(ellipse_70%_50%_at_50%_-20%,color-mix(in_oklab,var(--color-sky-400)_6%,transparent),transparent)]"
       />
-      <div className="relative container mx-auto page-enter px-4 pt-16 pb-10">
+      <div className="relative container mx-auto px-4 pt-16 pb-10">
         <PageHeader
           eyebrow={
             <Badge variant="outline" className="border-ui-border/60 text-ui-muted">
