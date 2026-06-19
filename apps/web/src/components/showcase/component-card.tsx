@@ -43,8 +43,8 @@ export function ComponentCard({ component }: { component: ComponentMeta }) {
       description={component.description}
       wide={component.wide}
     >
-      <LazyVisible minHeight={112}>
-        <Suspense fallback={<PreviewSkeleton minHeight={112} className="w-full" />}>
+      <LazyVisible>
+        <Suspense fallback={<PreviewSkeleton className="w-full" />}>
           <Demo />
         </Suspense>
       </LazyVisible>

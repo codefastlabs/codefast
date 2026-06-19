@@ -8,7 +8,7 @@ interface PreviewSkeletonProps extends ComponentProps<typeof Skeleton> {
 }
 
 /** Placeholder shown before a gallery demo mounts — avoids an empty preview pane. */
-export function PreviewSkeleton({ minHeight = 160, className, style, ...props }: PreviewSkeletonProps) {
+export function PreviewSkeleton({ minHeight = 112, className, style, ...props }: PreviewSkeletonProps) {
   return (
     <Skeleton
       aria-hidden
