@@ -1,14 +1,13 @@
 import { cn } from "@codefast/ui/lib/utils";
-import type { ReactNode } from "react";
+import type { ComponentProps, ReactNode } from "react";
 
-interface SectionHeaderProps {
+type SectionHeaderProps = Omit<ComponentProps<"header">, "title"> & {
   readonly eyebrow?: string;
   readonly title: ReactNode;
   readonly description?: string;
   readonly inverted?: boolean;
-  readonly className?: string;
   readonly titleId?: string;
-}
+};
 
 /** Section heading pattern for marketing and docs pages. */
 export function SectionHeader({
@@ -18,9 +17,10 @@ export function SectionHeader({
   inverted = false,
   className,
   titleId,
+  ...props
 }: SectionHeaderProps) {
   return (
-    <header className={cn("max-w-2xl", className)}>
+    <header className={cn("max-w-2xl", className)} {...props}>
       {eyebrow ? (
         <p
           className={cn(

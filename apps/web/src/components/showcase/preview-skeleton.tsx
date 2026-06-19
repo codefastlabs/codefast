@@ -1,19 +1,20 @@
 import { cn } from "@codefast/ui/lib/utils";
 import { Skeleton } from "@codefast/ui/skeleton";
 import { BoxIcon } from "lucide-react";
+import type { ComponentProps } from "react";
 
-interface PreviewSkeletonProps {
+interface PreviewSkeletonProps extends ComponentProps<typeof Skeleton> {
   readonly minHeight?: number;
-  readonly className?: string;
 }
 
 /** Placeholder shown before a gallery demo mounts — avoids an empty preview pane. */
-export function PreviewSkeleton({ minHeight = 160, className }: PreviewSkeletonProps) {
+export function PreviewSkeleton({ minHeight = 160, className, style, ...props }: PreviewSkeletonProps) {
   return (
     <Skeleton
-      className={cn("flex items-center justify-center rounded-none", className)}
-      style={{ minHeight }}
       aria-hidden
+      {...props}
+      className={cn("flex items-center justify-center rounded-none", className)}
+      style={{ minHeight, ...style }}
     >
       <BoxIcon className="size-6 text-ui-muted/40" />
     </Skeleton>

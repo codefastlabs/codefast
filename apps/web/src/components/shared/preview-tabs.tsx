@@ -1,6 +1,6 @@
 import { cn } from "@codefast/ui/lib/utils";
 import { ChevronDownIcon, CodeIcon } from "lucide-react";
-import type { ReactNode } from "react";
+import type { ComponentProps, ReactNode } from "react";
 import { useId, useState } from "react";
 
 import { CopyButton } from "#/components/shared/copy-button";
@@ -8,14 +8,13 @@ import { CopyButton } from "#/components/shared/copy-button";
 /** Collapsed code peek — roughly four lines of `text-xs` Shiki output. */
 const CODE_PEEK_MAX_HEIGHT = "max-h-28";
 
-interface PreviewTabsProps {
+interface PreviewTabsProps extends ComponentProps<"div"> {
   readonly preview: ReactNode;
   readonly code: ReactNode;
   /** Raw source for the Copy button; omit to hide it. */
   readonly copyText?: string;
   /** When true, the code panel starts fully expanded. */
   readonly defaultCodeExpanded?: boolean;
-  readonly className?: string;
   readonly previewClassName?: string;
   readonly codeClassName?: string;
 }
@@ -37,12 +36,13 @@ export function PreviewTabs({
   className,
   previewClassName,
   codeClassName,
+  ...props
 }: PreviewTabsProps) {
   const [codeExpanded, setCodeExpanded] = useState(defaultCodeExpanded);
   const codePanelId = useId();
 
   return (
-    <div className={cn("overflow-hidden rounded-2xl border border-ui-border/60", className)}>
+    <div className={cn("overflow-hidden rounded-2xl border border-ui-border/60", className)} {...props}>
       <div className={previewClassName}>{preview}</div>
 
       <div className="border-t border-ui-border/60 bg-ui-surface">

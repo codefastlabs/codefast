@@ -1,13 +1,10 @@
+import type { ComponentProps } from "react";
 import { useSyncExternalStore } from "react";
 
 import { getIsMacPlatform } from "#/lib/command-palette-keyboard";
 
-interface CommandPaletteHintProps {
-  readonly className?: string;
-}
-
 /** Keyboard shortcut reminder for the global component search palette. */
-export function CommandPaletteHint({ className }: CommandPaletteHintProps) {
+export function CommandPaletteHint(props: ComponentProps<"p">) {
   const isMac = useSyncExternalStore(
     () => () => {},
     getIsMacPlatform,
@@ -15,7 +12,7 @@ export function CommandPaletteHint({ className }: CommandPaletteHintProps) {
   );
 
   return (
-    <p className={className}>
+    <p {...props}>
       Press{" "}
       <kbd className="rounded border border-ui-border/60 bg-ui-surface px-1.5 py-0.5 font-mono text-[10px]">
         {isMac ? "⌘" : "Ctrl+"}K

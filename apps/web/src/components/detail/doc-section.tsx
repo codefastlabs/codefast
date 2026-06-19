@@ -1,13 +1,12 @@
 import { cn } from "@codefast/ui/lib/utils";
-import type { ReactNode } from "react";
+import type { ComponentProps, ReactNode } from "react";
 
-interface DocSectionProps {
+interface DocSectionProps extends ComponentProps<"section"> {
   /** Anchor id — must match the matching entry in the On-this-page TOC. */
   readonly id: string;
   readonly title: string;
   readonly description?: string | undefined;
   readonly children: ReactNode;
-  readonly className?: string | undefined;
 }
 
 /**
@@ -15,11 +14,11 @@ interface DocSectionProps {
  * (scroll-margin clears the sticky header) and exposes a hover affordance to
  * copy the section URL, matching the per-component detail layout.
  */
-export function DocSection({ id, title, description, children, className }: DocSectionProps) {
+export function DocSection({ id, title, description, children, className, ...props }: DocSectionProps) {
   const titleId = `${id}-title`;
 
   return (
-    <section id={id} aria-labelledby={titleId} className={cn("scroll-mt-anchor", className)}>
+    <section id={id} aria-labelledby={titleId} className={cn("scroll-mt-anchor", className)} {...props}>
       <a href={`#${id}`} className="group/anchor mb-1 flex w-fit items-center gap-2 no-underline">
         <h2 id={titleId} className="text-2xl font-bold tracking-tighter text-ui-fg">
           {title}

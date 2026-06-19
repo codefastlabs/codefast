@@ -1,19 +1,21 @@
 import { Badge } from "@codefast/ui/badge";
 import { cn } from "@codefast/ui/lib/utils";
-import type { ReactNode } from "react";
+import type { ComponentProps, ReactNode } from "react";
 
-interface NotFoundProps {
+interface NotFoundProps extends ComponentProps<"main"> {
   readonly badge?: string;
   readonly title: string;
   readonly description: string;
   readonly action?: ReactNode;
-  readonly className?: string;
 }
 
 /** Centered 404 / missing-resource message reused across route and router boundaries. */
-export function NotFound({ badge, title, description, action, className }: NotFoundProps) {
+export function NotFound({ badge, title, description, action, className, ...props }: NotFoundProps) {
   return (
-    <main className={cn("container mx-auto flex flex-col items-center px-4 pt-32 pb-32 text-center", className)}>
+    <main
+      className={cn("container mx-auto flex flex-col items-center px-4 pt-32 pb-32 text-center", className)}
+      {...props}
+    >
       {badge ? (
         <Badge variant="outline" className="mb-5 border-ui-border text-ui-muted">
           {badge}
