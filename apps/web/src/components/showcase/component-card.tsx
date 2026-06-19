@@ -17,12 +17,18 @@ export function ComponentCard({ component }: { component: ComponentMeta }) {
         id={component.slug}
         className="flex h-full scroll-mt-gallery flex-col rounded-2xl border border-dashed border-ui-border/40 bg-ui-card transition-[box-shadow,border-color] duration-200 target:animate-gallery-highlight hover:border-ui-brand/30 hover:shadow-lg hover:shadow-black/5 dark:hover:shadow-black/20"
       >
-        <div className="flex min-h-40 flex-1 items-center justify-center bg-ui-surface p-6">
+        <div className="flex min-h-40 flex-1 items-center justify-center rounded-t-2xl bg-ui-surface p-6">
           <span className="rounded-full border border-ui-border/60 bg-ui-card px-3 py-1 text-xs font-medium text-ui-muted">
             No live preview
           </span>
         </div>
-        <ComponentCardMeta name={component.name} description={component.description} slug={component.slug} />
+
+        <ComponentCardMeta
+          name={component.name}
+          description={component.description}
+          slug={component.slug}
+          className="rounded-b-2xl border-t border-ui-border/60"
+        />
       </div>
     );
   }

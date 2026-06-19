@@ -1,7 +1,9 @@
+import { cn } from "@codefast/ui/lib/utils";
 import { Link } from "@tanstack/react-router";
 import { ArrowUpRightIcon } from "lucide-react";
+import type { ComponentProps } from "react";
 
-interface ComponentCardMetaProps {
+interface ComponentCardMetaProps extends ComponentProps<"div"> {
   readonly name: string;
   readonly description: string;
   /** When set, the title links to the component's detail page; the router warms its chunk on hover/focus. */
@@ -9,9 +11,9 @@ interface ComponentCardMetaProps {
 }
 
 /** Gallery card footer: the component name (links to detail when `slug` is set) and its description. */
-export function ComponentCardMeta({ name, description, slug }: ComponentCardMetaProps) {
+export function ComponentCardMeta({ name, description, slug, className, ...props }: ComponentCardMetaProps) {
   return (
-    <div className="rounded-b-2xl border-t border-ui-border/60 px-4 py-3">
+    <div className={cn("px-4 py-3", className)} {...props}>
       {slug ? (
         <Link
           to="/components/$slug"
@@ -24,7 +26,7 @@ export function ComponentCardMeta({ name, description, slug }: ComponentCardMeta
       ) : (
         <p className="text-sm font-semibold text-ui-fg">{name}</p>
       )}
-      <p className="mt-0.5 line-clamp-2 text-xs leading-5 text-ui-muted">{description}</p>
+      <p className="mt-0.5 line-clamp-2 min-h-10 text-xs leading-5 text-ui-muted">{description}</p>
     </div>
   );
 }
