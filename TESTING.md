@@ -1,8 +1,9 @@
 # Testing taxonomy
 
 This monorepo uses **four explicit test categories**. Every test file in
-`packages/*/tests/**` MUST live under exactly one category directory, otherwise
-it will not be discovered by Vitest. There is no implicit "leftover" bucket.
+`packages/*/tests/**` and `apps/*/tests/**` MUST live under exactly one category
+directory, otherwise it will not be discovered by Vitest. There is no implicit
+"leftover" bucket.
 
 ## Categories
 
@@ -54,8 +55,8 @@ CI/local verification.
 
 ## Per-package scripts
 
-Every package that ships a `vitest.config.ts` exposes the same script surface
-(empty categories pass via `passWithNoTests: true`):
+Every package **and app** that ships a `vitest.config.ts` exposes the same
+script surface (empty categories pass via `passWithNoTests: true`):
 
 ```sh
 pnpm --filter <pkg> test               # run every category
@@ -67,21 +68,23 @@ pnpm --filter <pkg> test:coverage      # all categories + V8 coverage
 pnpm --filter <pkg> test:watch         # interactive watch mode
 ```
 
-Aggregate (root) commands run the same task across all packages via Turbo:
+Aggregate (root) commands run the same task across all packages and apps via
+Turbo:
 
 ```sh
-pnpm test                  # all categories, all packages
-pnpm test:unit             # unit only, all packages
-pnpm test:integration      # integration only, all packages
-pnpm test:e2e              # e2e only, all packages
-pnpm test:type             # type-only tests, all packages
-pnpm test:coverage         # full coverage, all packages
+pnpm test                  # all categories, all packages + apps
+pnpm test:unit             # unit only, all packages + apps
+pnpm test:integration      # integration only, all packages + apps
+pnpm test:e2e              # e2e only, all packages + apps
+pnpm test:type             # type-only tests, all packages + apps
+pnpm test:coverage         # full coverage, all packages + apps
 ```
 
 ## Today's coverage (snapshot)
 
-| Package                       | unit | integration | e2e | type |
+| Package / app                 | unit | integration | e2e | type |
 | ----------------------------- | :--: | :---------: | :-: | :--: |
+| `@apps/web`                   | yes  |     yes     |  —  |  —   |
 | `@codefast/benchmark-harness` | yes  |      —      |  —  |  —   |
 | `@codefast/cli`               | yes  |      —      |  —  |  —   |
 | `@codefast/di`                | yes  |     yes     |  —  |  —   |
