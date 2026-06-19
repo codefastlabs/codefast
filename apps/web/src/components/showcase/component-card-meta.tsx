@@ -11,7 +11,7 @@ interface ComponentCardMetaProps {
 /** Gallery card footer: the component name (links to detail when `slug` is set) and its description. */
 export function ComponentCardMeta({ name, description, slug }: ComponentCardMetaProps) {
   return (
-    <div className="border-t border-ui-border/60 px-4 py-3">
+    <div className="rounded-b-2xl border-t border-ui-border/60 px-4 py-3">
       {slug ? (
         <Link
           to="/components/$slug"

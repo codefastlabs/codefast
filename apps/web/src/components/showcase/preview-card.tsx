@@ -1,26 +1,24 @@
 import { cn } from "@codefast/ui/lib/utils";
 import type { ReactNode } from "react";
 
-import { PreviewTabs } from "#/components/shared/preview-tabs";
 import { ComponentCardMeta } from "#/components/showcase/component-card-meta";
-import { ImportPathLabel } from "#/components/showcase/import-path-label";
-import { LazyCodeBlock } from "#/components/showcase/lazy-code-block";
-import type { HighlightedSource } from "#/lib/highlight";
 
 interface PreviewCardProps {
   name: string;
-  path: string;
   description: string;
-  /** Loads the demo's source chunk — fetched only when the Code tab opens. */
-  loadSource: () => Promise<HighlightedSource>;
   children: ReactNode;
-  wide?: boolean;
+  wide?: boolean | undefined;
   id?: string;
   /** When set, the card title links to /components/<slug>. */
   slug?: string;
 }
 
-export function PreviewCard({ name, path, description, loadSource, children, wide, id, slug }: PreviewCardProps) {
+/**
+ * Gallery card: a live demo preview plus its metadata. The full source lives on
+ * the component detail page (`/components/$slug`) — gallery cards stay a quick
+ * visual scan, so they neither ship a Code tab nor load any `?shiki` source.
+ */
+export function PreviewCard({ name, description, children, wide, id, slug }: PreviewCardProps) {
   return (
     <div
       id={id}
@@ -29,13 +27,7 @@ export function PreviewCard({ name, path, description, loadSource, children, wid
         wide && "sm:col-span-2",
       )}
     >
-      <PreviewTabs
-        variant="card"
-        className="flex min-h-0 flex-1 flex-col"
-        trailing={<ImportPathLabel path={path} />}
-        preview={<div className="flex min-h-40 flex-1 items-center justify-center bg-ui-surface p-6">{children}</div>}
-        code={<LazyCodeBlock load={loadSource} className="min-h-40" />}
-      />
+      <div className="flex min-h-40 flex-1 items-center justify-center rounded-t-2xl bg-ui-surface p-4">{children}</div>
 
       <ComponentCardMeta name={name} description={description} slug={slug} />
     </div>

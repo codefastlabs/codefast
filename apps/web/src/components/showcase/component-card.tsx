@@ -5,7 +5,6 @@ import { LazyVisible } from "#/components/showcase/lazy-visible";
 import { PreviewCard } from "#/components/showcase/preview-card";
 import { PreviewSkeleton } from "#/components/showcase/preview-skeleton";
 import type { ComponentMeta } from "#/registry/components";
-import { componentImportLabel } from "#/registry/components";
 import { DEMO_BY_SLUG } from "#/registry/demos";
 
 /** A live-demo preview card, or a docs-only card for components without a demo. */
@@ -35,10 +34,8 @@ export function ComponentCard({ component }: { component: ComponentMeta }) {
       id={component.slug}
       slug={component.slug}
       name={component.name}
-      path={componentImportLabel(component)}
       description={component.description}
-      wide={component.wide ?? false}
-      loadSource={demo.loadSource}
+      wide={component.wide}
     >
       <LazyVisible>
         <Suspense fallback={<PreviewSkeleton />}>
