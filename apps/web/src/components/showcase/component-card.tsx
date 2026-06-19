@@ -3,7 +3,7 @@ import { Suspense } from "react";
 import { ComponentCardMeta } from "#/components/showcase/component-card-meta";
 import { LazyVisible } from "#/components/showcase/lazy-visible";
 import { PreviewCard } from "#/components/showcase/preview-card";
-import { PreviewSkeleton } from "#/components/showcase/preview-skeleton";
+import { PreviewSkeleton } from "#/components/showcase/preview-skeleton.tsx";
 import type { ComponentMeta } from "#/registry/components";
 import { DEMO_BY_SLUG } from "#/registry/demos";
 
@@ -43,8 +43,8 @@ export function ComponentCard({ component }: { component: ComponentMeta }) {
       description={component.description}
       wide={component.wide}
     >
-      <LazyVisible>
-        <Suspense fallback={<PreviewSkeleton />}>
+      <LazyVisible minHeight={112}>
+        <Suspense fallback={<PreviewSkeleton minHeight={112} className="w-full" />}>
           <Demo />
         </Suspense>
       </LazyVisible>

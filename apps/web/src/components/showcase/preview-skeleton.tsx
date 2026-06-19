@@ -12,9 +12,9 @@ export function PreviewSkeleton({ minHeight = 160, className, style, ...props }:
   return (
     <Skeleton
       aria-hidden
-      {...props}
       className={cn("flex items-center justify-center rounded-none", className)}
       style={{ minHeight, ...style }}
+      {...props}
     >
       <BoxIcon className="size-6 text-ui-muted/40" />
     </Skeleton>

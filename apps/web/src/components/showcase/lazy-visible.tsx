@@ -31,9 +31,5 @@ export function LazyVisible({ children, minHeight = 160, rootMargin = "300px" }:
     return <>{children}</>;
   }
 
-  return (
-    <div ref={ref} className="w-full">
-      <PreviewSkeleton minHeight={minHeight} />
-    </div>
-  );
+  return <PreviewSkeleton minHeight={minHeight} ref={ref} className="w-full" />;
 }
