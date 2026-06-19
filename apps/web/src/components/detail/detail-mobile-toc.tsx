@@ -1,14 +1,15 @@
 import { cn } from "@codefast/ui/lib/utils";
+import type { ComponentProps } from "react";
 
 import type { TocItem } from "#/components/detail/on-this-page";
 import { useActiveAnchor } from "#/hooks/use-active-anchor";
 
-interface DetailMobileTocProps {
+interface DetailMobileTocProps extends ComponentProps<"div"> {
   readonly items: ReadonlyArray<TocItem>;
 }
 
 /** Horizontal section jump nav for detail pages on mobile and tablet. */
-export function DetailMobileToc({ items }: DetailMobileTocProps) {
+export function DetailMobileToc({ items, className, ...props }: DetailMobileTocProps) {
   const topLevelItems = items.filter((item) => item.depth !== 2);
   const ids = topLevelItems.map((item) => item.id);
   const active = useActiveAnchor(ids);
@@ -18,7 +19,7 @@ export function DetailMobileToc({ items }: DetailMobileTocProps) {
   }
 
   return (
-    <div className="sticky top-header z-30 -mx-4 mb-8 border-b border-ui-border/60 bg-ui-bg/75 px-4 py-3 backdrop-blur-lg backdrop-saturate-150 lg:hidden">
+    <div className={cn("bg-ui-bg/75 px-4 py-3 backdrop-blur-lg backdrop-saturate-150 lg:hidden", className)} {...props}>
       <nav
         className="flex scrollbar-none gap-2 overflow-x-auto [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
         aria-label="On this page"

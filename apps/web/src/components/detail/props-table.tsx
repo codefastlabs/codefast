@@ -1,4 +1,6 @@
+import { cn } from "@codefast/ui/lib/utils";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@codefast/ui/table";
+import type { ComponentProps } from "react";
 
 export interface PropRow {
   readonly name: string;
@@ -7,14 +9,14 @@ export interface PropRow {
   readonly description: string;
 }
 
-interface PropsTableProps {
+interface PropsTableProps extends ComponentProps<"div"> {
   readonly rows: ReadonlyArray<PropRow>;
 }
 
 /** API reference table: Prop · Type · Default · Description. */
-export function PropsTable({ rows }: PropsTableProps) {
+export function PropsTable({ rows, className, ...props }: PropsTableProps) {
   return (
-    <div className="overflow-x-auto rounded-2xl border border-ui-border/60">
+    <div className={cn("overflow-x-auto rounded-2xl border border-ui-border/60", className)} {...props}>
       <Table className="w-full">
         <TableHeader>
           <TableRow>

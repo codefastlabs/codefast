@@ -1,17 +1,19 @@
+import { cn } from "@codefast/ui/lib/utils";
 import { Link } from "@tanstack/react-router";
 import { ArrowLeftIcon, ArrowRightIcon } from "lucide-react";
+import type { ComponentProps } from "react";
 
 import type { ComponentMeta } from "#/registry/components";
 
-interface ComponentPagerProps {
+interface ComponentPagerProps extends ComponentProps<"nav"> {
   readonly previous?: ComponentMeta | undefined;
   readonly next?: ComponentMeta | undefined;
 }
 
 /** Previous / next navigation between adjacent components in the registry. */
-export function ComponentPager({ previous, next }: ComponentPagerProps) {
+export function ComponentPager({ previous, next, className, ...props }: ComponentPagerProps) {
   return (
-    <nav className="grid gap-4 border-t border-ui-border/60 pt-8 sm:grid-cols-2">
+    <nav className={cn("grid gap-4 sm:grid-cols-2", className)} {...props}>
       {previous ? (
         <Link
           to="/components/$slug"

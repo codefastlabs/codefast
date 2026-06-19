@@ -131,7 +131,7 @@ function DetailBody({ detail }: { detail: ComponentDetail }) {
 
   return (
     <>
-      <DetailMobileToc items={toc} />
+      <DetailMobileToc items={toc} className="sticky top-header z-30 -mx-4 mb-8 border-b border-ui-border/60" />
 
       <div className="xl:grid xl:grid-cols-[minmax(0,1fr)_180px] xl:gap-12">
         <div className="min-w-0 space-y-16">
@@ -163,7 +163,11 @@ function DetailBody({ detail }: { detail: ComponentDetail }) {
 
           {hasRelated ? <RelatedSection dependencies={doc?.dependencies} related={doc?.related} /> : null}
 
-          <ComponentPager previous={neighbors?.previous} next={neighbors?.next} />
+          <ComponentPager
+            previous={neighbors?.previous}
+            next={neighbors?.next}
+            className="border-t border-ui-border/60 pt-8"
+          />
         </div>
 
         <aside className="hidden xl:block">

@@ -1,5 +1,7 @@
 import { Kbd, KbdGroup } from "@codefast/ui/kbd";
+import { cn } from "@codefast/ui/lib/utils";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@codefast/ui/table";
+import type { ComponentProps } from "react";
 import { Fragment } from "react";
 
 export interface KeyRow {
@@ -8,14 +10,14 @@ export interface KeyRow {
   readonly description: string;
 }
 
-interface KeyboardTableProps {
+interface KeyboardTableProps extends ComponentProps<"div"> {
   readonly rows: ReadonlyArray<KeyRow>;
 }
 
 /** Accessibility reference: keyboard interactions rendered with Kbd. */
-export function KeyboardTable({ rows }: KeyboardTableProps) {
+export function KeyboardTable({ rows, className, ...props }: KeyboardTableProps) {
   return (
-    <div className="overflow-x-auto rounded-2xl border border-ui-border/60">
+    <div className={cn("overflow-x-auto rounded-2xl border border-ui-border/60", className)} {...props}>
       <Table className="w-full">
         <TableHeader>
           <TableRow>

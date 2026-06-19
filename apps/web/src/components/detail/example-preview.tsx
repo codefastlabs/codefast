@@ -1,6 +1,6 @@
 import { DirectionProvider } from "@codefast/ui/direction";
 import { cn } from "@codefast/ui/lib/utils";
-import type { ReactNode } from "react";
+import type { ComponentProps, ReactNode } from "react";
 
 import {
   LanguageProvider,
@@ -12,7 +12,7 @@ import {
 import { CodeBlock } from "#/components/shared/code-block";
 import { PreviewTabs } from "#/components/shared/preview-tabs";
 
-interface ExamplePreviewProps {
+interface ExamplePreviewProps extends ComponentProps<"div"> {
   /** Anchor id for deep-linking and the On-this-page TOC. */
   readonly id: string;
   readonly title: string;
@@ -46,9 +46,11 @@ export function ExamplePreview({
   previewClassName,
   direction = "ltr",
   children,
+  className,
+  ...props
 }: ExamplePreviewProps) {
   return (
-    <div id={id} className="scroll-mt-anchor">
+    <div id={id} className={cn("scroll-mt-anchor", className)} {...props}>
       <div className="mb-3">
         <a href={`#${id}`} className="group/ex flex w-fit items-center gap-2 no-underline">
           <h3 className="text-sm font-semibold text-ui-fg">{title}</h3>

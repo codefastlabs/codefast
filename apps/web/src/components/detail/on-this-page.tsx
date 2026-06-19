@@ -1,4 +1,5 @@
 import { cn } from "@codefast/ui/lib/utils";
+import type { ComponentProps } from "react";
 
 import { useActiveAnchor } from "#/hooks/use-active-anchor";
 
@@ -9,12 +10,12 @@ export interface TocItem {
   readonly depth?: 1 | 2;
 }
 
-interface OnThisPageProps {
+interface OnThisPageProps extends ComponentProps<"nav"> {
   readonly items: ReadonlyArray<TocItem>;
 }
 
 /** Sticky "On this page" navigation shown alongside a component detail page. */
-export function OnThisPage({ items }: OnThisPageProps) {
+export function OnThisPage({ items, className, ...props }: OnThisPageProps) {
   const ids = items.map((item) => item.id);
   const active = useActiveAnchor(ids);
 
@@ -23,7 +24,7 @@ export function OnThisPage({ items }: OnThisPageProps) {
   }
 
   return (
-    <nav aria-label="On this page" className="text-sm">
+    <nav aria-label="On this page" className={cn("text-sm", className)} {...props}>
       <p className="mb-3 text-xs font-semibold tracking-widest text-ui-muted uppercase">On this page</p>
       <ul className="space-y-2 border-s border-ui-border/60">
         {items.map((item) => {
