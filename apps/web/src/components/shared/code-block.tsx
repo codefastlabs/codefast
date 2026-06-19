@@ -13,8 +13,18 @@ interface CodeBlockProps {
   className?: string | undefined;
 }
 
-const shikiSurfaceClassName =
-  "[&_.shiki]:overflow-x-auto [&_.shiki]:p-5 [&_.shiki]:text-xs [&_.shiki]:leading-relaxed [&_.shiki]:tab-2!";
+/** A Shiki-highlighted HTML surface; `className` toggles light/dark visibility. */
+function ShikiSurface({ html, className }: { html: string; className?: string }) {
+  return (
+    <div
+      className={cn(
+        "overflow-x-auto [&_.shiki]:overflow-x-auto [&_.shiki]:p-5 [&_.shiki]:text-xs [&_.shiki]:leading-relaxed [&_.shiki]:tab-2!",
+        className,
+      )}
+      dangerouslySetInnerHTML={{ __html: html }}
+    />
+  );
+}
 
 /**
  * Shiki-highlighted code surface with a copy button. Renders light and dark
@@ -51,20 +61,11 @@ export function CodeBlock({ code, highlightedCodeDark, highlightedCodeLight, cla
     <div className={cn("relative", className)}>
       {highlightedCodeLight ? (
         <>
-          <div
-            className={cn("overflow-x-auto dark:hidden", shikiSurfaceClassName)}
-            dangerouslySetInnerHTML={{ __html: highlightedCodeLight }}
-          />
-          <div
-            className={cn("hidden overflow-x-auto dark:block", shikiSurfaceClassName)}
-            dangerouslySetInnerHTML={{ __html: highlightedCodeDark }}
-          />
+          <ShikiSurface html={highlightedCodeLight} className="dark:hidden" />
+          <ShikiSurface html={highlightedCodeDark} className="hidden dark:block" />
         </>
       ) : (
-        <div
-          className={cn("overflow-x-auto", shikiSurfaceClassName)}
-          dangerouslySetInnerHTML={{ __html: highlightedCodeDark }}
-        />
+        <ShikiSurface html={highlightedCodeDark} />
       )}
       <button
         type="button"
