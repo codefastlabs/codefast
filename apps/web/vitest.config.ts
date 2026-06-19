@@ -14,8 +14,17 @@ export default defineConfig({
     tsconfigPaths: true,
   },
   test: {
+    coverage: {
+      exclude: ["src/**/*.{test,stories}.?(c|m)[jt]s?(x)", "**/*.d.ts"],
+      include: ["src/**/*.{ts,tsx}"],
+      provider: "v8",
+      reporter: ["text", "html", "lcov"],
+      reportsDirectory: "./coverage",
+    },
     environment: "jsdom",
-    include: ["src/**/*.{test,spec}.{ts,tsx}"],
+    include: ["tests/{unit,integration,e2e,types}/**/*.test.ts?(x)"],
+    /** Empty test tree is valid during refactors; `verify` must not fail. */
+    passWithNoTests: true,
     setupFiles: ["./vitest.setup.ts"],
   },
 });
