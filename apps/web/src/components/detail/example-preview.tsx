@@ -60,6 +60,7 @@ export function ExamplePreview({
       </div>
 
       <PreviewTabs
+        copyText={code}
         preview={
           direction === "rtl" ? (
             <LanguageProvider defaultLanguage="ar">
@@ -76,13 +77,7 @@ export function ExamplePreview({
             </div>
           )
         }
-        code={
-          <CodeBlock
-            code={code}
-            highlightedCodeDark={highlightedCodeDark}
-            highlightedCodeLight={highlightedCodeLight}
-          />
-        }
+        code={<CodeBlock highlightedCodeDark={highlightedCodeDark} highlightedCodeLight={highlightedCodeLight} />}
       />
     </div>
   );

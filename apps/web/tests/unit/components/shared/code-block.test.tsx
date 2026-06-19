@@ -9,16 +9,20 @@ afterEach(() => {
 
 describe("CodeBlock", () => {
   it("injects the pre-highlighted HTML", () => {
-    render(
-      <CodeBlock code={`const a = 1;`} highlightedCodeDark={`<pre class="shiki"><code>const a = 1;</code></pre>`} />,
-    );
+    render(<CodeBlock highlightedCodeDark={`<pre class="shiki"><code>const a = 1;</code></pre>`} />);
 
     expect(screen.getByText("const a = 1;")).toBeTruthy();
   });
 
-  it("renders a copy control", () => {
-    render(<CodeBlock code="x" highlightedCodeDark="<pre class='shiki'>x</pre>" />);
+  it("renders both light and dark surfaces when both are provided", () => {
+    render(
+      <CodeBlock
+        highlightedCodeDark={`<pre class="shiki"><code>dark</code></pre>`}
+        highlightedCodeLight={`<pre class="shiki"><code>light</code></pre>`}
+      />,
+    );
 
-    expect(screen.getByRole("button", { name: /copy code/i })).toBeTruthy();
+    expect(screen.getByText("dark")).toBeTruthy();
+    expect(screen.getByText("light")).toBeTruthy();
   });
 });

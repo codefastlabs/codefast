@@ -1,5 +1,6 @@
 import { DocSection } from "#/components/detail/doc-section";
 import { CodeBlock } from "#/components/shared/code-block";
+import { CopyButton } from "#/components/shared/copy-button";
 
 interface AnatomySectionProps {
   readonly code: string;
@@ -15,8 +16,9 @@ export function AnatomySection({ code, highlightedCodeDark, highlightedCodeLight
       title="Anatomy"
       description="How the parts compose. Copy this skeleton and fill in the slots."
     >
-      <div className="overflow-hidden rounded-2xl border border-ui-border/60">
-        <CodeBlock code={code} highlightedCodeDark={highlightedCodeDark} highlightedCodeLight={highlightedCodeLight} />
+      <div className="relative overflow-hidden rounded-2xl border border-ui-border/60">
+        <CopyButton value={code} className="absolute inset-e-3 top-3 z-10" />
+        <CodeBlock highlightedCodeDark={highlightedCodeDark} highlightedCodeLight={highlightedCodeLight} />
       </div>
     </DocSection>
   );
