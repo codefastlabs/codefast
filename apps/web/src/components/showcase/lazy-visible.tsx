@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
-import { useEffect, useRef, useState } from "react";
 
 import { PreviewSkeleton } from "#/components/showcase/preview-skeleton";
+import { useInView } from "#/hooks/use-in-view";
 
 interface LazyVisibleProps {
   children: ReactNode;
@@ -21,38 +21,13 @@ interface LazyVisibleProps {
  * only swaps in the real children after mount.
  */
 export function LazyVisible({ children, minHeight = 160, rootMargin = "300px" }: LazyVisibleProps) {
-  const ref = useRef<HTMLDivElement>(null);
-  const [visible, setVisible] = useState(false);
-
-  useEffect(() => {
-    const element = ref.current;
-
-    if (!element) {
-      return;
-    }
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0]?.isIntersecting) {
-          setVisible(true);
-          observer.disconnect();
-        }
-      },
-      { rootMargin },
-    );
-
-    observer.observe(element);
-
-    return () => {
-      observer.disconnect();
-    };
-  }, [rootMargin]);
+  const { ref, inView } = useInView<HTMLDivElement>({ rootMargin });
 
   // Once visible, drop the placeholder wrapper entirely and render children
   // directly so they inherit the parent's layout (flex/grid sizing). The div is
   // only needed before mount, as a stable target for the observer to watch and
   // to reserve height against layout shift.
-  if (visible) {
+  if (inView) {
     return <>{children}</>;
   }
 
