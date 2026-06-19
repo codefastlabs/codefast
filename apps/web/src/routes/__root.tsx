@@ -10,7 +10,6 @@ import type { ReactNode } from "react";
 import { Footer } from "#/components/layout/footer";
 import { Header } from "#/components/layout/header";
 import { NotFound } from "#/components/shared/not-found";
-import { RouteProgress } from "#/components/shared/route-progress";
 import { SiteNotFound } from "#/components/shared/site-not-found";
 import { SITE_OG_IMAGE } from "#/lib/seo";
 
@@ -94,7 +93,6 @@ function RootDocument({ children }: { children: ReactNode }) {
           persistColorScheme={persistColorSchemeCookie}
           syncFromServer={getColorSchemeServerFn}
         >
-          <RouteProgress />
           <Header />
           {children}
           <Footer />
