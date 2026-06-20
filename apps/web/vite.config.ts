@@ -1,5 +1,3 @@
-import { exec } from "node:child_process";
-
 import babel from "@rolldown/plugin-babel";
 import tailwindcss from "@tailwindcss/vite";
 import { devtools } from "@tanstack/devtools-vite";
@@ -9,11 +7,6 @@ import { nitro } from "nitro/vite";
 import { defineConfig } from "vite";
 
 import { shikiPlugin } from "./vite-plugin-shiki";
-
-const openInWebStorm = async (path: string, lineNumber: string | undefined, columnNumber?: string) => {
-  const safePath = path.replaceAll("$", String.raw`\$`);
-  exec(`webstorm --line ${lineNumber ?? 1} --column ${columnNumber ?? 1} "${safePath}"`);
-};
 
 export default defineConfig(({ command }) => {
   const isDev = command === "serve";
@@ -28,13 +21,8 @@ export default defineConfig(({ command }) => {
       tsconfigPaths: true,
     },
     plugins: [
+      devtools(),
       shikiPlugin(),
-      devtools({
-        editor: {
-          name: "WebStorm",
-          open: openInWebStorm,
-        },
-      }),
       tailwindcss(),
       tanstackStart({
         // Prerender every route reachable by crawling `<Link>`s from "/" (the gallery and sidebar
