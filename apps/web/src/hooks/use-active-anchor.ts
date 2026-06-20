@@ -21,14 +21,30 @@ export function useActiveAnchor(ids: ReadonlyArray<string>, options?: UseActiveA
 
   useEffect(() => {
     const targetIds = idsKey.length > 0 ? idsKey.split("\n") : [];
+    // Each callback only reports the targets whose intersection *changed*, so keep
+    // the latest state for every target and decide from the full set.
+    const states = new Map<Element, boolean>();
     const observer = new IntersectionObserver(
       (entries) => {
-        const visible = entries
-          .filter((entry) => entry.isIntersecting)
-          .toSorted((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
+        for (const entry of entries) {
+          states.set(entry.target, entry.isIntersecting);
+        }
 
-        if (visible[0]) {
-          setActive(visible[0].target.id);
+        const visible = [...states.entries()]
+          .filter(([, isIntersecting]) => isIntersecting)
+          .map(([element]) => element);
+
+        // A section anchor (e.g. `#examples`) can wrap its own sub-anchors. When both
+        // a container and one of its children are in view, the child is the real
+        // location — drop any element that contains another visible one.
+        const specific = visible.filter(
+          (element) => !visible.some((other) => other !== element && element.contains(other)),
+        );
+
+        const topmost = specific.toSorted((a, b) => a.getBoundingClientRect().top - b.getBoundingClientRect().top)[0];
+
+        if (topmost) {
+          setActive(topmost.id);
         }
       },
       { rootMargin },
