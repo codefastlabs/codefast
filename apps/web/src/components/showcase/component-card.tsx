@@ -7,8 +7,15 @@ import { PreviewSkeleton } from "#/components/showcase/preview-skeleton.tsx";
 import type { ComponentMeta } from "#/registry/components";
 import { DEMO_BY_SLUG } from "#/registry/demos";
 
+// Branches between a bare `<div>` and `<PreviewCard>` and forwards no native
+// attributes, so the props are a plain named interface, not an extension of
+// `ComponentProps`.
+interface ComponentCardProps {
+  readonly component: ComponentMeta;
+}
+
 /** A live-demo preview card, or a docs-only card for components without a demo. */
-export function ComponentCard({ component }: { component: ComponentMeta }) {
+export function ComponentCard({ component }: ComponentCardProps) {
   const demo = DEMO_BY_SLUG.get(component.slug);
 
   if (!demo) {
