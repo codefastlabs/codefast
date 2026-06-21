@@ -5,7 +5,7 @@ import { LanguageProvider } from "#/components/detail/language-context";
 import { PreviewSurface } from "#/components/detail/preview-surface";
 import { RtlPreviewSurface } from "#/components/detail/rtl-preview-surface";
 import { CodeBlock } from "#/components/shared/code-block";
-import { PreviewTabs } from "#/components/shared/preview-tabs";
+import { ExampleChrome } from "#/components/shared/example-chrome";
 
 interface ExamplePreviewProps extends ComponentProps<"div"> {
   /** Anchor id for deep-linking and the On-this-page TOC. */
@@ -56,7 +56,7 @@ export function ExamplePreview({
         {description ? <p className="mt-1 max-w-2xl text-sm leading-relaxed text-ui-muted">{description}</p> : null}
       </div>
 
-      <PreviewTabs
+      <ExampleChrome
         copyText={code}
         preview={
           direction === "rtl" ? (

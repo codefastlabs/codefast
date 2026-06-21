@@ -9,7 +9,7 @@ import { CopyButton } from "#/components/shared/copy-button";
 /** Collapsed code peek — roughly four lines of `text-xs` Shiki output. */
 const CODE_PEEK_MAX_HEIGHT = "max-h-28";
 
-interface PreviewTabsProps extends ComponentProps<"div"> {
+interface ExampleChromeProps extends ComponentProps<"div"> {
   readonly preview: ReactNode;
   readonly code: ReactNode;
   /** Raw source for the Copy button; also drives the line count in the toolbar. */
@@ -31,7 +31,7 @@ interface PreviewTabsProps extends ComponentProps<"div"> {
  * docs yet. The gallery (`/components`) deliberately does NOT use this — its
  * cards show the live demo only, with no code surface.
  */
-export function PreviewTabs({
+export function ExampleChrome({
   preview,
   code,
   copyText,
@@ -40,7 +40,7 @@ export function PreviewTabs({
   previewClassName,
   codeClassName,
   ...props
-}: PreviewTabsProps) {
+}: ExampleChromeProps) {
   const [codeExpanded, setCodeExpanded] = useState(defaultCodeExpanded);
   const codePanelId = useId();
 

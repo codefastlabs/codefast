@@ -12,7 +12,7 @@ interface CodeBlockProps {
 /**
  * Renders Shiki-highlighted source as light/dark HTML surfaces. Purely
  * presentational: the copy affordance belongs to the surrounding container
- * (`PreviewTabs`, `AnatomySection`), which holds the raw source and the
+ * (`ExampleChrome`, `AnatomySection`), which holds the raw source and the
  * non-scrolling box an absolute `CopyButton` can stay pinned to.
  */
 export function CodeBlock({ highlightedCodeDark, highlightedCodeLight }: CodeBlockProps) {
