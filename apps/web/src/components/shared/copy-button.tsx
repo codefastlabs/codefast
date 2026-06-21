@@ -1,39 +1,78 @@
+import { Button } from "@codefast/ui/button";
 import { useCopyToClipboard } from "@codefast/ui/hooks/use-copy-to-clipboard";
-import { cn } from "@codefast/ui/lib/utils";
+import { cn, tv } from "@codefast/ui/lib/utils";
+import type { VariantProps } from "@codefast/ui/lib/utils";
 import { CheckIcon, CopyIcon } from "lucide-react";
 import type { ComponentProps } from "react";
 
-type CopyButtonProps = Omit<ComponentProps<"button">, "value"> & {
+/**
+ * Surface treatments for the copy chip. Colours come from the app's `ui-*`
+ * palette (not the shared `@codefast/ui` tokens), so we layer them over a
+ * `ghost` Button: the variant supplies structure, focus ring, and the icon
+ * sizing; these classes own the look.
+ */
+const copyButtonVariants = tv({
+  base: "rounded-lg text-xs font-medium",
+  defaultVariants: {
+    tone: "inline",
+  },
+  variants: {
+    tone: {
+      /** Inline on a light surface (copy fields, install CTA). */
+      inline: "border-ui-border/60 text-ui-muted hover:bg-ui-fg/6 hover:text-ui-fg",
+      /** Floating over a code surface — frosted card that reads on light or dark. */
+      overlay:
+        "border-ui-border/60 bg-ui-card/90 text-ui-muted shadow-sm backdrop-blur-sm hover:bg-ui-surface hover:text-ui-fg dark:border-white/10 dark:bg-white/10 dark:text-white/70 dark:shadow-none dark:hover:bg-white/20 dark:hover:text-white",
+      /** On an always-dark surface (Shiki snippet on neutral-900). */
+      dark: "border-white/10 bg-white/10 text-white/70 hover:bg-white/20 hover:text-white",
+    },
+  },
+});
+
+type CopyButtonVariants = VariantProps<typeof copyButtonVariants>;
+
+interface CopyButtonProps extends Omit<ComponentProps<typeof Button>, "children" | "value">, CopyButtonVariants {
   /** Raw text written to the clipboard. */
   readonly value: string;
-};
+  /** Idle text shown next to the icon. */
+  readonly idleLabel?: string;
+  /** Text shown during the transient "copied" state. */
+  readonly copiedLabel?: string;
+}
 
 /**
- * Floating Copy button for code surfaces. Stateless beyond the transient
- * "Copied!" feedback from `useCopyToClipboard`; the container owns positioning
- * (via forwarded `className`) so an `absolute` button can stay pinned over a
- * non-scrolling wrapper.
+ * Copy chip for code surfaces and inline values. Owns the transient "Copied"
+ * feedback from `useCopyToClipboard`; the caller picks a `tone` for the surface
+ * and forwards `className` for positioning (e.g. an `absolute` overlay button).
  */
-export function CopyButton({ value, className, ...props }: CopyButtonProps) {
+export function CopyButton({
+  value,
+  tone,
+  idleLabel = "Copy",
+  copiedLabel = "Copied",
+  "aria-label": ariaLabel,
+  variant = "ghost",
+  size = "sm",
+  className,
+  ...props
+}: CopyButtonProps) {
   const { copyToClipboard, isCopied } = useCopyToClipboard();
 
   return (
-    <button
-      type="button"
-      aria-label="Copy code"
-      // `{...props}` sits before `onClick` on purpose: the copy handler defines this
+    <Button
+      variant={variant}
+      size={size}
+      // While idle, defer to a caller-supplied descriptive label; the copied
+      // state always announces itself.
+      aria-label={isCopied ? copiedLabel : (ariaLabel ?? idleLabel)}
+      // `onClick` sits after `{...props}` on purpose: the copy handler defines this
       // component and must not be overridable by a forwarded `onClick`.
       {...props}
       onClick={() => void copyToClipboard(value)}
-      className={cn(
-        "flex items-center gap-1.5 rounded-lg border px-2.5 py-1.5 text-xs font-medium transition-colors duration-200",
-        "border-ui-border/60 bg-ui-card/90 text-ui-muted shadow-sm backdrop-blur-sm hover:bg-ui-surface hover:text-ui-fg",
-        "dark:border-white/10 dark:bg-white/10 dark:text-white/70 dark:shadow-none dark:hover:bg-white/20 dark:hover:text-white",
-        className,
-      )}
+      className={cn(copyButtonVariants(tone === undefined ? undefined : { tone }), className)}
     >
-      {isCopied ? <CheckIcon className="size-3" /> : <CopyIcon className="size-3" />}
-      {isCopied ? "Copied!" : "Copy"}
-    </button>
+      {isCopied ? <CheckIcon className="size-3.5" /> : <CopyIcon className="size-3.5" />}
+      {isCopied ? copiedLabel : idleLabel}
+    </Button>
   );
 }

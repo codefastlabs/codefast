@@ -1,14 +1,11 @@
 import { Button } from "@codefast/ui/button";
-import { useCopyToClipboard } from "@codefast/ui/hooks/use-copy-to-clipboard";
 import { Link } from "@tanstack/react-router";
-import { CheckIcon, CopyIcon } from "lucide-react";
 
+import { CopyButton } from "#/components/shared/copy-button";
 import { SectionHeader } from "#/components/shared/section-header";
 import { INSTALL_COMMAND } from "#/lib/install";
 
 export function InstallCta() {
-  const { copyToClipboard, isCopied } = useCopyToClipboard();
-
   return (
     <section aria-labelledby="home-install-title" className="border-t border-ui-border/60 bg-ui-surface py-24 sm:py-32">
       <div className="container mx-auto px-4">
@@ -27,15 +24,7 @@ export function InstallCta() {
                 <span className="me-2 text-ui-muted select-none">$</span>
                 {INSTALL_COMMAND}
               </code>
-              <button
-                type="button"
-                onClick={() => void copyToClipboard(INSTALL_COMMAND)}
-                aria-label={isCopied ? "Copied install command" : "Copy install command"}
-                className="flex shrink-0 items-center gap-1.5 rounded-lg border border-ui-border/60 px-2.5 py-1.5 text-xs font-medium text-ui-muted transition-colors duration-200 hover:bg-ui-surface hover:text-ui-fg"
-              >
-                {isCopied ? <CheckIcon className="size-3.5" /> : <CopyIcon className="size-3.5" />}
-                {isCopied ? "Copied" : "Copy"}
-              </button>
+              <CopyButton value={INSTALL_COMMAND} aria-label="Copy install command" className="shrink-0" />
             </div>
           </div>
 

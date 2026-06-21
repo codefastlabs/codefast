@@ -1,3 +1,4 @@
+import { Button } from "@codefast/ui/button";
 import { cn } from "@codefast/ui/lib/utils";
 import { ChevronDownIcon, CodeIcon, MaximizeIcon } from "lucide-react";
 import type { ComponentProps, ReactNode } from "react";
@@ -61,14 +62,15 @@ export function PreviewTabs({
           </span>
 
           <div className="ms-auto flex items-center gap-1">
-            {copyText ? <CopyButton value={copyText} /> : null}
-            <button
-              type="button"
+            {copyText ? <CopyButton value={copyText} tone="overlay" /> : null}
+            <Button
+              variant="ghost"
+              size="icon-sm"
               aria-expanded={codeExpanded}
               aria-controls={codePanelId}
               aria-label={codeExpanded ? "Collapse code" : "Expand code"}
               onClick={toggleCode}
-              className="flex size-7 items-center justify-center rounded-md text-ui-muted transition-colors duration-200 hover:text-ui-fg focus-visible:ring-2 focus-visible:ring-ui-brand focus-visible:outline-none"
+              className="text-ui-muted hover:text-ui-fg"
             >
               <ChevronDownIcon
                 aria-hidden
@@ -77,7 +79,7 @@ export function PreviewTabs({
                   codeExpanded && "rotate-180",
                 )}
               />
-            </button>
+            </Button>
           </div>
         </div>
 

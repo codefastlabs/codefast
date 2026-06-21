@@ -20,7 +20,7 @@ export function AnatomySection({ code, highlightedCodeDark, highlightedCodeLight
       {...props}
     >
       <div className="relative overflow-hidden rounded-2xl border border-ui-border/60">
-        <CopyButton value={code} className="absolute inset-e-3 top-3 z-10" />
+        <CopyButton value={code} tone="overlay" className="absolute inset-e-3 top-3 z-10" />
         <CodeBlock highlightedCodeDark={highlightedCodeDark} highlightedCodeLight={highlightedCodeLight} />
       </div>
     </DocSection>
