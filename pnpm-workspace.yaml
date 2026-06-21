@@ -8,6 +8,12 @@ allowBuilds:
   esbuild: true
   simple-git-hooks: true
 
+overrides:
+  # read-yaml-file@1 pulls js-yaml@3 (GHSA-h67p-54hq-rp68 DoS, no 3.x patch
+  # exists). v2 uses the API-compatible js-yaml@4. Only consumer is the
+  # transitive @manypkg/get-packages via @changesets/cli.
+  read-yaml-file@1: ^2.1.0
+
 catalog:
   "@babel/plugin-proposal-decorators": 8.0.1
   "@changesets/changelog-github": ^0.7.0
