@@ -1,54 +1,31 @@
 import { cn } from "@codefast/ui/lib/utils";
-import type { ReactNode } from "react";
+import type { ComponentProps } from "react";
 import { useRef } from "react";
 
 import { CommandPaletteHint } from "#/components/showcase/command-palette-hint";
+import { NavChip } from "#/components/showcase/nav-chip";
 import type { ComponentGroup } from "#/data/showcase";
 import { useScrollChipIntoView } from "#/hooks/use-scroll-chip-into-view";
 
-/** A pill link used in the mobile jump nav, styled by active state. */
-function NavChip({
-  href,
-  isActive,
-  chipId,
-  children,
-}: {
-  href: string;
-  isActive: boolean;
-  chipId: string;
-  children: ReactNode;
-}) {
-  return (
-    <a
-      data-chip-id={chipId}
-      href={href}
-      aria-current={isActive ? "location" : undefined}
-      className={cn(
-        "flex min-h-11 shrink-0 items-center justify-center gap-1.5 rounded-full border px-3.5 py-1.5 text-xs font-semibold whitespace-nowrap no-underline transition-colors duration-200",
-        isActive
-          ? "border-ui-brand bg-ui-card text-ui-fg"
-          : "border-ui-border/60 bg-ui-surface text-ui-muted hover:border-ui-brand hover:text-ui-fg",
-      )}
-    >
-      {children}
-    </a>
-  );
+interface MobileNavProps extends ComponentProps<"div"> {
+  readonly groups: ReadonlyArray<ComponentGroup>;
+  readonly activeSection: string | null;
 }
 
 /** Compact sticky letter jump nav shown above the grid on mobile (no sidebar there). */
-export function MobileNav({
-  groups,
-  activeSection,
-}: {
-  groups: ReadonlyArray<ComponentGroup>;
-  activeSection: string | null;
-}) {
+export function MobileNav({ groups, activeSection, className, ...props }: MobileNavProps) {
   const navRef = useRef<HTMLElement>(null);
 
   useScrollChipIntoView(navRef, activeSection);
 
   return (
-    <div className="sticky top-header z-30 -mx-4 mb-10 flex flex-col gap-2 border-b border-ui-border/60 bg-ui-bg/75 px-4 py-3 backdrop-blur-lg backdrop-saturate-150 lg:hidden">
+    <div
+      className={cn(
+        "sticky top-header z-30 -mx-4 mb-10 flex flex-col gap-2 border-b border-ui-border/60 bg-ui-bg/75 px-4 py-3 backdrop-blur-lg backdrop-saturate-150 lg:hidden",
+        className,
+      )}
+      {...props}
+    >
       <nav
         ref={navRef}
         className="flex scrollbar-none gap-2 overflow-x-auto [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"

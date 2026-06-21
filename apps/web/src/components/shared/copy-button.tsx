@@ -21,6 +21,8 @@ export function CopyButton({ value, className, ...props }: CopyButtonProps) {
     <button
       type="button"
       aria-label="Copy code"
+      // `{...props}` sits before `onClick` on purpose: the copy handler defines this
+      // component and must not be overridable by a forwarded `onClick`.
       {...props}
       onClick={() => void copyToClipboard(value)}
       className={cn(

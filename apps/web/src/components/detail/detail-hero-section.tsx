@@ -8,8 +8,10 @@ import {
   BreadcrumbSeparator,
 } from "@codefast/ui/breadcrumb";
 import { Button } from "@codefast/ui/button";
+import { cn } from "@codefast/ui/lib/utils";
 import { Link } from "@tanstack/react-router";
 import { ChevronRightIcon, CodeIcon, PackageIcon } from "lucide-react";
+import type { ComponentProps } from "react";
 
 import { DetailInstallPanel } from "#/components/detail/detail-install-panel";
 import type { ComponentMeta } from "#/registry/components";
@@ -26,19 +28,19 @@ const STATUS_BADGE: Record<"beta" | "deprecated", { label: string; className: st
   },
 };
 
-interface DetailHeroSectionProps {
+interface DetailHeroSectionProps extends ComponentProps<"div"> {
   readonly component: ComponentMeta;
 }
 
 /** Component detail header: breadcrumb, title, actions, and install panel. */
-export function DetailHeroSection({ component }: DetailHeroSectionProps) {
+export function DetailHeroSection({ component, className, ...props }: DetailHeroSectionProps) {
   const { slug, name, category, description, status, composition } = component;
   const categoryLabel = CATEGORIES.find((entry) => entry.id === category)?.label ?? category;
   const statusBadge = status && status !== "stable" ? STATUS_BADGE[status] : undefined;
   const isComposition = composition !== undefined;
 
   return (
-    <div className="mb-10 border-b border-ui-border/60 pb-8">
+    <div className={cn("mb-10 border-b border-ui-border/60 pb-8", className)} {...props}>
       <Breadcrumb className="mb-6">
         <BreadcrumbList>
           <BreadcrumbItem>

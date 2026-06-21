@@ -1,14 +1,10 @@
 import { cn } from "@codefast/ui/lib/utils";
 import type { ComponentProps } from "react";
 
+import { RailCurve } from "#/components/detail/rail-curve";
+import type { TocItem } from "#/components/detail/toc";
+import { TocLink } from "#/components/detail/toc-link";
 import { useActiveAnchor } from "#/hooks/use-active-anchor";
-
-export interface TocItem {
-  readonly id: string;
-  readonly label: string;
-  /** 1 = top-level section, 2 = nested (e.g. an individual example). */
-  readonly depth?: 1 | 2;
-}
 
 interface OnThisPageProps extends ComponentProps<"nav"> {
   readonly items: ReadonlyArray<TocItem>;
@@ -34,45 +30,6 @@ function groupByDepth(items: ReadonlyArray<TocItem>): ReadonlyArray<TocGroup> {
   }
 
   return groups;
-}
-
-/**
- * An S-curve that bridges the top-level rail (x≈0.5) and a nested rail (x≈12.5,
- * one `ms-3` deeper), so the guide line flows smoothly into a nested run and back
- * out. Rails are the 1px `border-s` on each link, and the curve stroke matches.
- */
-function RailCurve({ direction, isActive }: { readonly direction: "in" | "out"; readonly isActive: boolean }) {
-  const d = direction === "in" ? "M0.5 0 C0.5 7 12.5 5 12.5 12" : "M12.5 0 C12.5 7 0.5 5 0.5 12";
-
-  return (
-    <svg
-      aria-hidden
-      width="14"
-      height="12"
-      viewBox="0 0 14 12"
-      fill="none"
-      className={cn("block transition-colors duration-200", isActive ? "text-ui-brand" : "text-ui-border/60")}
-    >
-      <path d={d} stroke="currentColor" strokeWidth="1" strokeLinecap="round" />
-    </svg>
-  );
-}
-
-/** A rail link whose left border *is* the guide line — faint by default, brand when active. */
-function TocLink({ item, isActive }: { readonly item: TocItem; readonly isActive: boolean }) {
-  return (
-    <a
-      href={`#${item.id}`}
-      aria-current={isActive ? "location" : undefined}
-      className={cn(
-        "block border-s py-1.5 ps-4 no-underline transition-colors duration-200",
-        item.depth === 2 && "text-xs",
-        isActive ? "border-ui-brand font-medium text-ui-fg" : "border-ui-border/60 text-ui-muted hover:text-ui-fg",
-      )}
-    >
-      {item.label}
-    </a>
-  );
 }
 
 /** Sticky "On this page" navigation shown alongside a component detail page. */

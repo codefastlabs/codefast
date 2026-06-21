@@ -1,8 +1,10 @@
+import type { ComponentProps } from "react";
+
 import { DocSection } from "#/components/detail/doc-section";
 import { ExamplePreview } from "#/components/detail/example-preview";
 import type { ResolvedDocExample } from "#/registry/types";
 
-interface ExamplesSectionProps {
+interface ExamplesSectionProps extends Omit<ComponentProps<typeof DocSection>, "id" | "title" | "children"> {
   /** Examples with their source already resolved to raw text + Shiki HTML. */
   readonly examples: ReadonlyArray<ResolvedDocExample>;
   /** Show the generic hint line when the page has no rich doc. */
@@ -10,12 +12,13 @@ interface ExamplesSectionProps {
 }
 
 /** The "Examples" section: a live preview + copy-ready source per example. */
-export function ExamplesSection({ examples, showHint }: ExamplesSectionProps) {
+export function ExamplesSection({ examples, showHint, ...props }: ExamplesSectionProps) {
   return (
     <DocSection
       id="examples"
       title="Examples"
       description={showHint ? "Live preview and copy-ready source. Explore more variants in your own app." : undefined}
+      {...props}
     >
       <div className="space-y-10">
         {examples.map((example) => (

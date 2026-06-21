@@ -1,16 +1,22 @@
 import { CheckIcon, XIcon } from "lucide-react";
+import type { ComponentProps } from "react";
 
 import { DocSection } from "#/components/detail/doc-section";
 
-interface GuidelinesSectionProps {
+interface GuidelinesSectionProps extends Omit<ComponentProps<typeof DocSection>, "id" | "title" | "children"> {
   readonly do?: ReadonlyArray<string> | undefined;
   readonly dont?: ReadonlyArray<string> | undefined;
 }
 
 /** The "Guidelines" section: paired do / don't usage conventions. */
-export function GuidelinesSection({ do: dos, dont: donts }: GuidelinesSectionProps) {
+export function GuidelinesSection({ do: dos, dont: donts, ...props }: GuidelinesSectionProps) {
   return (
-    <DocSection id="guidelines" title="Guidelines" description="Conventions that keep usage consistent across an app.">
+    <DocSection
+      id="guidelines"
+      title="Guidelines"
+      description="Conventions that keep usage consistent across an app."
+      {...props}
+    >
       <div className="grid gap-4 sm:grid-cols-2">
         {dos?.length ? (
           <div className="rounded-2xl border border-ui-border/60 bg-ui-surface p-5">

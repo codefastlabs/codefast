@@ -1,9 +1,10 @@
 import { Link } from "@tanstack/react-router";
+import type { ComponentProps } from "react";
 
 import { DocSection } from "#/components/detail/doc-section";
 import { COMPONENT_BY_SLUG } from "#/registry/components";
 
-interface RelatedSectionProps {
+interface RelatedSectionProps extends Omit<ComponentProps<typeof DocSection>, "id" | "title" | "children"> {
   /** Third-party packages the component is built on. */
   readonly dependencies?: ReadonlyArray<string> | undefined;
   /** Slugs of related components, rendered as links. */
@@ -11,9 +12,9 @@ interface RelatedSectionProps {
 }
 
 /** The "Related" section: build-on dependencies plus related component links. */
-export function RelatedSection({ dependencies, related }: RelatedSectionProps) {
+export function RelatedSection({ dependencies, related, ...props }: RelatedSectionProps) {
   return (
-    <DocSection id="related" title="Related">
+    <DocSection id="related" title="Related" {...props}>
       {dependencies?.length ? (
         <div className="mb-6">
           <p className="mb-2 text-xs font-semibold tracking-widest text-ui-muted uppercase">Built on</p>

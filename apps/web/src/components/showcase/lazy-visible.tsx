@@ -4,6 +4,8 @@ import { cloneElement } from "react";
 import { PreviewSkeleton } from "#/components/showcase/preview-skeleton";
 import { useInView } from "#/hooks/use-in-view";
 
+// Renders its children fragment or a cloned placeholder, not a host element of
+// its own, so the props are a plain named interface (no `ComponentProps` extend).
 interface LazyVisibleProps {
   children: ReactNode;
   /**

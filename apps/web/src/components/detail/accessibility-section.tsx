@@ -1,21 +1,23 @@
 import { CheckIcon } from "lucide-react";
+import type { ComponentProps } from "react";
 
 import { DocSection } from "#/components/detail/doc-section";
 import type { KeyRow } from "#/components/detail/keyboard-table";
 import { KeyboardTable } from "#/components/detail/keyboard-table";
 
-interface AccessibilitySectionProps {
+interface AccessibilitySectionProps extends Omit<ComponentProps<typeof DocSection>, "id" | "title" | "children"> {
   readonly keyboard?: ReadonlyArray<KeyRow> | undefined;
   readonly notes?: ReadonlyArray<string> | undefined;
 }
 
 /** The "Accessibility" section: keyboard map plus screen-reader notes. */
-export function AccessibilitySection({ keyboard, notes }: AccessibilitySectionProps) {
+export function AccessibilitySection({ keyboard, notes, ...props }: AccessibilitySectionProps) {
   return (
     <DocSection
+      description="Built to be keyboard-navigable and screen-reader friendly out of the box."
       id="accessibility"
       title="Accessibility"
-      description="Built to be keyboard-navigable and screen-reader friendly out of the box."
+      {...props}
     >
       <div className="space-y-6">
         {keyboard?.length ? <KeyboardTable rows={keyboard} /> : null}

@@ -1,7 +1,7 @@
 import { cn } from "@codefast/ui/lib/utils";
 import type { ComponentProps } from "react";
 
-import type { TocItem } from "#/components/detail/on-this-page";
+import type { TocItem } from "#/components/detail/toc";
 import { useActiveAnchor } from "#/hooks/use-active-anchor";
 
 interface DetailMobileTocProps extends ComponentProps<"div"> {
