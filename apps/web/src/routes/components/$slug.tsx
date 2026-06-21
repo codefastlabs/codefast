@@ -1,8 +1,8 @@
 import { createFileRoute, notFound } from "@tanstack/react-router";
 
-import { preloadDetail } from "#/components/detail/detail-body";
-import { ComponentDetailNotFound } from "#/components/detail/detail-not-found";
-import { ComponentDetailPage } from "#/components/detail/detail-page";
+import { preloadDetail } from "#/components/detail/detail-bodies";
+import { DetailNotFound } from "#/components/detail/detail-not-found";
+import { DetailPage } from "#/components/detail/detail-page";
 import { SITE_OG_IMAGE, absoluteUrl, canonicalHead, jsonLdScript } from "#/lib/seo";
 import { COMPONENT_BY_SLUG } from "#/registry/components";
 
@@ -53,12 +53,12 @@ export const Route = createFileRoute("/components/$slug")({
 
     preloadDetail(params.slug);
   },
-  notFoundComponent: ComponentDetailNotFound,
+  notFoundComponent: DetailNotFound,
   component: ComponentDetailRoute,
 });
 
 function ComponentDetailRoute() {
   const { slug } = Route.useParams();
 
-  return <ComponentDetailPage slug={slug} />;
+  return <DetailPage slug={slug} />;
 }

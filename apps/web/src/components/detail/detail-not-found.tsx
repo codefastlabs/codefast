@@ -3,7 +3,7 @@ import { Link } from "@tanstack/react-router";
 
 import { NotFound } from "#/components/shared/not-found";
 
-export function ComponentDetailNotFound() {
+export function DetailNotFound() {
   return (
     <NotFound
       badge="404"

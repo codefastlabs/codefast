@@ -3,28 +3,28 @@ import { useLocation } from "@tanstack/react-router";
 import type { ComponentProps } from "react";
 import { Suspense } from "react";
 
-import { DETAIL_BODY_BY_SLUG } from "#/components/detail/detail-body";
+import { DETAIL_BODY_BY_SLUG } from "#/components/detail/detail-bodies";
 import { DetailCtaSection } from "#/components/detail/detail-cta-section";
 import { DetailHeroSection } from "#/components/detail/detail-hero-section";
-import { ComponentDetailNotFound } from "#/components/detail/detail-not-found";
+import { DetailNotFound } from "#/components/detail/detail-not-found";
 import { DetailSkeleton } from "#/components/detail/detail-skeleton";
 import { SidebarNav } from "#/components/showcase/sidebar-nav";
 import { ALPHABET_GROUPS } from "#/data/showcase";
 import { useHashScroll } from "#/hooks/use-hash-scroll";
 import { COMPONENT_BY_SLUG } from "#/registry/components";
 
-interface ComponentDetailPageProps extends ComponentProps<"main"> {
+interface DetailPageProps extends ComponentProps<"main"> {
   readonly slug: string;
 }
 
-export function ComponentDetailPage({ slug, className, ...props }: ComponentDetailPageProps) {
+export function DetailPage({ slug, className, ...props }: DetailPageProps) {
   const hash = useLocation({ select: (location) => location.hash });
   const component = COMPONENT_BY_SLUG.get(slug);
 
   useHashScroll(hash);
 
   if (!component) {
-    return <ComponentDetailNotFound />;
+    return <DetailNotFound />;
   }
 
   const Body = DETAIL_BODY_BY_SLUG.get(slug);
