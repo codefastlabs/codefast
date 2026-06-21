@@ -13,7 +13,7 @@ import { Route as LlmsDottxtRouteImport } from './routes/llms[.]txt'
 import { Route as AboutRouteRouteImport } from './routes/about/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ComponentsIndexRouteImport } from './routes/components/index'
-import { Route as ComponentsChar123slugChar125DottxtRouteImport } from './routes/components/{$slug}[.]txt'
+import { Route as ComponentsChar123slugChar125DotmdRouteImport } from './routes/components/{$slug}[.]md'
 import { Route as ComponentsSlugRouteImport } from './routes/components/$slug'
 
 const LlmsDottxtRoute = LlmsDottxtRouteImport.update({
@@ -36,10 +36,10 @@ const ComponentsIndexRoute = ComponentsIndexRouteImport.update({
   path: '/components/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ComponentsChar123slugChar125DottxtRoute =
-  ComponentsChar123slugChar125DottxtRouteImport.update({
-    id: '/components/{$slug}.txt',
-    path: '/components/{$slug}.txt',
+const ComponentsChar123slugChar125DotmdRoute =
+  ComponentsChar123slugChar125DotmdRouteImport.update({
+    id: '/components/{$slug}.md',
+    path: '/components/{$slug}.md',
     getParentRoute: () => rootRouteImport,
   } as any)
 const ComponentsSlugRoute = ComponentsSlugRouteImport.update({
@@ -53,7 +53,7 @@ export interface FileRoutesByFullPath {
   '/about': typeof AboutRouteRoute
   '/llms.txt': typeof LlmsDottxtRoute
   '/components/$slug': typeof ComponentsSlugRoute
-  '/components/{$slug}.txt': typeof ComponentsChar123slugChar125DottxtRoute
+  '/components/{$slug}.md': typeof ComponentsChar123slugChar125DotmdRoute
   '/components/': typeof ComponentsIndexRoute
 }
 export interface FileRoutesByTo {
@@ -61,7 +61,7 @@ export interface FileRoutesByTo {
   '/about': typeof AboutRouteRoute
   '/llms.txt': typeof LlmsDottxtRoute
   '/components/$slug': typeof ComponentsSlugRoute
-  '/components/{$slug}.txt': typeof ComponentsChar123slugChar125DottxtRoute
+  '/components/{$slug}.md': typeof ComponentsChar123slugChar125DotmdRoute
   '/components': typeof ComponentsIndexRoute
 }
 export interface FileRoutesById {
@@ -70,7 +70,7 @@ export interface FileRoutesById {
   '/about': typeof AboutRouteRoute
   '/llms.txt': typeof LlmsDottxtRoute
   '/components/$slug': typeof ComponentsSlugRoute
-  '/components/{$slug}.txt': typeof ComponentsChar123slugChar125DottxtRoute
+  '/components/{$slug}.md': typeof ComponentsChar123slugChar125DotmdRoute
   '/components/': typeof ComponentsIndexRoute
 }
 export interface FileRouteTypes {
@@ -80,7 +80,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/llms.txt'
     | '/components/$slug'
-    | '/components/{$slug}.txt'
+    | '/components/{$slug}.md'
     | '/components/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -88,7 +88,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/llms.txt'
     | '/components/$slug'
-    | '/components/{$slug}.txt'
+    | '/components/{$slug}.md'
     | '/components'
   id:
     | '__root__'
@@ -96,7 +96,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/llms.txt'
     | '/components/$slug'
-    | '/components/{$slug}.txt'
+    | '/components/{$slug}.md'
     | '/components/'
   fileRoutesById: FileRoutesById
 }
@@ -105,7 +105,7 @@ export interface RootRouteChildren {
   AboutRouteRoute: typeof AboutRouteRoute
   LlmsDottxtRoute: typeof LlmsDottxtRoute
   ComponentsSlugRoute: typeof ComponentsSlugRoute
-  ComponentsChar123slugChar125DottxtRoute: typeof ComponentsChar123slugChar125DottxtRoute
+  ComponentsChar123slugChar125DotmdRoute: typeof ComponentsChar123slugChar125DotmdRoute
   ComponentsIndexRoute: typeof ComponentsIndexRoute
 }
 
@@ -139,11 +139,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ComponentsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/components/{$slug}.txt': {
-      id: '/components/{$slug}.txt'
-      path: '/components/{$slug}.txt'
-      fullPath: '/components/{$slug}.txt'
-      preLoaderRoute: typeof ComponentsChar123slugChar125DottxtRouteImport
+    '/components/{$slug}.md': {
+      id: '/components/{$slug}.md'
+      path: '/components/{$slug}.md'
+      fullPath: '/components/{$slug}.md'
+      preLoaderRoute: typeof ComponentsChar123slugChar125DotmdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/components/$slug': {
@@ -161,8 +161,8 @@ const rootRouteChildren: RootRouteChildren = {
   AboutRouteRoute: AboutRouteRoute,
   LlmsDottxtRoute: LlmsDottxtRoute,
   ComponentsSlugRoute: ComponentsSlugRoute,
-  ComponentsChar123slugChar125DottxtRoute:
-    ComponentsChar123slugChar125DottxtRoute,
+  ComponentsChar123slugChar125DotmdRoute:
+    ComponentsChar123slugChar125DotmdRoute,
   ComponentsIndexRoute: ComponentsIndexRoute,
 }
 export const routeTree = rootRouteImport

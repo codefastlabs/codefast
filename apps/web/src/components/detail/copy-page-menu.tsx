@@ -52,7 +52,7 @@ export function CopyPageMenu({ component, className, ...props }: CopyPageMenuPro
   // Relative for "View as Markdown" so it opens the page on the current origin
   // (localhost in dev); absolute (production host) for the LLM hand-off, since a
   // model can't fetch localhost.
-  const markdownPath = `/components/${component.slug}.txt`;
+  const markdownPath = `/components/${component.slug}.md`;
   const markdownUrl = absoluteUrl(markdownPath);
   const prompt = `Read ${markdownUrl} so you can help me use the ${component.name} component from @codefast/ui.`;
   const chatGptUrl = `https://chatgpt.com/?q=${encodeURIComponent(prompt)}`;
