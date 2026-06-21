@@ -67,7 +67,13 @@ export function ExamplePreview({
             <PreviewSurface className={previewClassName}>{children}</PreviewSurface>
           )
         }
-        code={<CodeBlock highlightedCodeDark={highlightedCodeDark} highlightedCodeLight={highlightedCodeLight} />}
+        code={
+          <CodeBlock
+            highlightedCodeDark={highlightedCodeDark}
+            highlightedCodeLight={highlightedCodeLight}
+            showLineNumbers
+          />
+        }
       />
     </div>
   );

@@ -7,6 +7,8 @@ interface CodeBlockProps {
   highlightedCodeDark: string;
   /** Pre-highlighted Shiki HTML for light mode. Falls back to dark-only when omitted. */
   highlightedCodeLight?: string | undefined;
+  /** Render a line-number gutter on each surface. */
+  showLineNumbers?: boolean | undefined;
 }
 
 /**
@@ -15,15 +17,15 @@ interface CodeBlockProps {
  * (`ExampleChrome`, `AnatomySection`), which holds the raw source and the
  * non-scrolling box an absolute `CopyButton` can stay pinned to.
  */
-export function CodeBlock({ highlightedCodeDark, highlightedCodeLight }: CodeBlockProps) {
+export function CodeBlock({ highlightedCodeDark, highlightedCodeLight, showLineNumbers }: CodeBlockProps) {
   if (highlightedCodeLight) {
     return (
       <>
-        <ShikiSurface html={highlightedCodeLight} className="dark:hidden" />
-        <ShikiSurface html={highlightedCodeDark} className="hidden dark:block" />
+        <ShikiSurface className="dark:hidden" html={highlightedCodeLight} showLineNumbers={showLineNumbers} />
+        <ShikiSurface className="hidden dark:block" html={highlightedCodeDark} showLineNumbers={showLineNumbers} />
       </>
     );
   }
 
-  return <ShikiSurface html={highlightedCodeDark} />;
+  return <ShikiSurface html={highlightedCodeDark} showLineNumbers={showLineNumbers} />;
 }
