@@ -1,5 +1,5 @@
 import { cn } from "@codefast/ui/lib/utils";
-import { ChevronDownIcon, CodeIcon } from "lucide-react";
+import { ChevronDownIcon, CodeIcon, MaximizeIcon } from "lucide-react";
 import type { ComponentProps, ReactNode } from "react";
 import { useId, useState } from "react";
 
@@ -11,7 +11,7 @@ const CODE_PEEK_MAX_HEIGHT = "max-h-28";
 interface PreviewTabsProps extends ComponentProps<"div"> {
   readonly preview: ReactNode;
   readonly code: ReactNode;
-  /** Raw source for the Copy button; omit to hide it. */
+  /** Raw source for the Copy button; also drives the line count in the toolbar. */
   readonly copyText?: string;
   /** When true, the code panel starts fully expanded. */
   readonly defaultCodeExpanded?: boolean;
@@ -20,13 +20,15 @@ interface PreviewTabsProps extends ComponentProps<"div"> {
 }
 
 /**
- * Detail example chrome: the live preview is always visible, with the source
- * peeking below behind an expand/collapse toggle. Used for every example on a
- * component detail page (`/components/$slug`), including the single fallback
- * example synthesised for components without rich docs yet.
+ * Detail example chrome: the live preview sits on top, with the source peeking
+ * below behind an expand/collapse toggle. The collapsed peek is itself a button —
+ * clicking anywhere on the faded source expands it — and the toolbar carries the
+ * line count, Copy, and a collapse chevron.
  *
- * The gallery (`/components`) deliberately does NOT use this — its cards show
- * the live demo only, with no code surface.
+ * Used for every example on a component detail page (`/components/$slug`),
+ * including the single fallback example synthesised for components without rich
+ * docs yet. The gallery (`/components`) deliberately does NOT use this — its
+ * cards show the live demo only, with no code surface.
  */
 export function PreviewTabs({
   preview,
@@ -41,52 +43,79 @@ export function PreviewTabs({
   const [codeExpanded, setCodeExpanded] = useState(defaultCodeExpanded);
   const codePanelId = useId();
 
+  const lineCount = copyText ? copyText.trimEnd().split("\n").length : 0;
+
+  const toggleCode = () => {
+    setCodeExpanded((open) => !open);
+  };
+
   return (
     <div className={cn("overflow-hidden rounded-2xl border border-ui-border/60", className)} {...props}>
       <div className={previewClassName}>{preview}</div>
 
       <div className="border-t border-ui-border/60 bg-ui-surface">
-        <div className="flex items-center border-b border-ui-border/60 px-3 py-2">
-          <button
-            type="button"
-            aria-expanded={codeExpanded}
-            aria-controls={codePanelId}
-            onClick={() => {
-              setCodeExpanded((open) => !open);
-            }}
-            className="flex items-center gap-1.5 rounded-md text-xs font-medium text-ui-muted transition-colors duration-200 hover:text-ui-fg"
-          >
+        <div className="flex items-center gap-2 border-b border-ui-border/60 px-3 py-2">
+          <span className="flex items-center gap-1.5 text-xs font-medium text-ui-muted">
             <CodeIcon className="size-3.5" aria-hidden />
-            {codeExpanded ? "Hide code" : "Show code"}
-            <ChevronDownIcon
-              aria-hidden
-              className={cn("size-3.5 transition-transform duration-200", codeExpanded && "rotate-180")}
-            />
-          </button>
+            {lineCount > 0 ? `${String(lineCount)} lines` : "Code"}
+          </span>
+
+          <div className="ms-auto flex items-center gap-1">
+            {copyText ? <CopyButton value={copyText} /> : null}
+            <button
+              type="button"
+              aria-expanded={codeExpanded}
+              aria-controls={codePanelId}
+              aria-label={codeExpanded ? "Collapse code" : "Expand code"}
+              onClick={toggleCode}
+              className="flex size-7 items-center justify-center rounded-md text-ui-muted transition-colors duration-200 hover:text-ui-fg focus-visible:ring-2 focus-visible:ring-ui-brand focus-visible:outline-none"
+            >
+              <ChevronDownIcon
+                aria-hidden
+                className={cn(
+                  "size-4 transition-transform duration-200 motion-reduce:transition-none",
+                  codeExpanded && "rotate-180",
+                )}
+              />
+            </button>
+          </div>
         </div>
 
-        {/*
-         * Non-scrolling positioned wrapper: the inner div scrolls, so an
-         * absolute Copy button anchored here stays pinned to the top-right of
-         * the visible panel instead of scrolling away with the source.
-         */}
         <div className="relative">
-          {copyText ? <CopyButton value={copyText} className="absolute inset-e-3 top-3 z-10" /> : null}
           <div
             id={codePanelId}
             className={cn(
-              !codeExpanded && cn(CODE_PEEK_MAX_HEIGHT, "overflow-hidden"),
-              codeExpanded && "max-h-[min(70vh,40rem)] overflow-y-auto",
+              "transition-[max-height] duration-300 ease-out motion-reduce:transition-none",
+              codeExpanded ? "max-h-[min(70vh,40rem)] overflow-y-auto" : cn(CODE_PEEK_MAX_HEIGHT, "overflow-hidden"),
               codeClassName,
             )}
           >
             {code}
           </div>
+
+          {/*
+           * Collapsed: the whole peek is a button. The faded overlay sits above
+           * the source (which keeps showing through the transparent top), and a
+           * centered pill advertises the affordance.
+           */}
           {!codeExpanded ? (
-            <div
-              aria-hidden
-              className="pointer-events-none absolute inset-x-0 bottom-0 h-12 bg-linear-to-t from-ui-surface via-ui-surface/80 to-transparent"
-            />
+            <button
+              type="button"
+              aria-expanded={false}
+              aria-controls={codePanelId}
+              aria-label="Expand code"
+              onClick={toggleCode}
+              className="group/peek absolute inset-0 flex cursor-pointer items-end justify-center focus-visible:outline-none"
+            >
+              <span
+                aria-hidden
+                className="absolute inset-0 bg-linear-to-t from-ui-surface via-ui-surface/85 to-transparent"
+              />
+              <span className="relative mb-3 flex items-center gap-1.5 rounded-full border border-ui-border/60 bg-ui-card px-3 py-1 text-xs font-medium text-ui-fg shadow-sm transition-colors duration-200 group-hover/peek:bg-ui-surface group-focus-visible/peek:ring-2 group-focus-visible/peek:ring-ui-brand">
+                <MaximizeIcon className="size-3" aria-hidden />
+                Expand
+              </span>
+            </button>
           ) : null}
         </div>
       </div>

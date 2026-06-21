@@ -2,8 +2,8 @@ import type { ChartConfig } from "@codefast/ui/chart";
 import { ChartContainer, ChartLegend, ChartLegendContent, ChartTooltip, ChartTooltipContent } from "@codefast/ui/chart";
 import { Bar, BarChart, CartesianGrid, XAxis } from "recharts";
 
-import type { Translations } from "#/components/detail/language-selector";
-import { useTranslation } from "#/components/detail/language-selector";
+import type { Translations } from "#/components/detail/language";
+import { useTranslation } from "#/components/detail/language-context";
 
 const translations: Translations = {
   en: {

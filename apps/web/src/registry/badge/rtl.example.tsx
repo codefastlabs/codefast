@@ -1,8 +1,8 @@
 import { Badge } from "@codefast/ui/badge";
 import { BadgeCheck, BookmarkIcon } from "lucide-react";
 
-import type { Translations } from "#/components/detail/language-selector";
-import { useTranslation } from "#/components/detail/language-selector";
+import type { Translations } from "#/components/detail/language";
+import { useTranslation } from "#/components/detail/language-context";
 
 const translations: Translations = {
   en: {

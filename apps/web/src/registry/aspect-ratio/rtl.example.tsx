@@ -1,8 +1,8 @@
 import { AspectRatio } from "@codefast/ui/aspect-ratio";
 import { Image } from "@unpic/react";
 
-import type { Translations } from "#/components/detail/language-selector";
-import { useTranslation } from "#/components/detail/language-selector";
+import type { Translations } from "#/components/detail/language";
+import { useTranslation } from "#/components/detail/language-context";
 
 const translations: Translations = {
   en: {

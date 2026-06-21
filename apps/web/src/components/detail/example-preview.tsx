@@ -1,14 +1,9 @@
-import { DirectionProvider } from "@codefast/ui/direction";
 import { cn } from "@codefast/ui/lib/utils";
 import type { ComponentProps, ReactNode } from "react";
 
-import {
-  LanguageProvider,
-  LanguageSelector,
-  useLanguageContext,
-  useTranslation,
-  type Translations,
-} from "#/components/detail/language-selector";
+import { LanguageProvider } from "#/components/detail/language-context";
+import { PreviewSurface } from "#/components/detail/preview-surface";
+import { RtlPreviewSurface } from "#/components/detail/rtl-preview-surface";
 import { CodeBlock } from "#/components/shared/code-block";
 import { PreviewTabs } from "#/components/shared/preview-tabs";
 
@@ -69,63 +64,11 @@ export function ExamplePreview({
               <RtlPreviewSurface previewClassName={previewClassName}>{children}</RtlPreviewSurface>
             </LanguageProvider>
           ) : (
-            <div
-              className={cn(
-                "flex min-h-56 flex-wrap items-center justify-center gap-3 bg-ui-surface p-10",
-                previewClassName,
-              )}
-            >
-              {children}
-            </div>
+            <PreviewSurface className={previewClassName}>{children}</PreviewSurface>
           )
         }
         code={<CodeBlock highlightedCodeDark={highlightedCodeDark} highlightedCodeLight={highlightedCodeLight} />}
       />
-    </div>
-  );
-}
-
-/** Tracks the document direction for the active language. */
-const directionTranslations: Translations<Record<string, never>> = {
-  en: { dir: "ltr", values: {} },
-  ar: { dir: "rtl", values: {} },
-  he: { dir: "rtl", values: {} },
-};
-
-/**
- * RTL preview chrome: a top toolbar with the language switcher, plus the demo
- * wrapped in a `DirectionProvider` so every Radix primitive inside flips.
- */
-function RtlPreviewSurface({
-  previewClassName,
-  children,
-}: {
-  previewClassName?: string | undefined;
-  children: ReactNode;
-}): ReactNode {
-  const context = useLanguageContext();
-  const { dir, language } = useTranslation(directionTranslations, "ar");
-
-  return (
-    <div>
-      <div className="flex items-center border-b border-ui-border/60 px-4 py-2">
-        {context ? <LanguageSelector value={context.language} onValueChange={context.setLanguage} /> : null}
-        <p className="ms-auto text-xs text-ui-muted">
-          Translations are AI-generated for demonstration and may be imperfect.
-        </p>
-      </div>
-      <DirectionProvider dir={dir}>
-        <div
-          dir={dir}
-          data-lang={dir === "rtl" ? language : undefined}
-          className={cn(
-            "flex min-h-56 flex-wrap items-center justify-center gap-3 bg-ui-surface p-10",
-            previewClassName,
-          )}
-        >
-          {children}
-        </div>
-      </DirectionProvider>
     </div>
   );
 }

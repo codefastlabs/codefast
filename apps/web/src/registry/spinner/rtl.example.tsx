@@ -1,8 +1,8 @@
 import { Item, ItemContent, ItemMedia, ItemTitle } from "@codefast/ui/item";
 import { Spinner } from "@codefast/ui/spinner";
 
-import type { Translations } from "#/components/detail/language-selector";
-import { useTranslation } from "#/components/detail/language-selector";
+import type { Translations } from "#/components/detail/language";
+import { useTranslation } from "#/components/detail/language-context";
 
 const translations: Translations = {
   en: {

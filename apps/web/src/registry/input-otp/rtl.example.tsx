@@ -1,8 +1,8 @@
 import { Field, FieldLabel } from "@codefast/ui/field";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@codefast/ui/input-otp";
 
-import type { Translations } from "#/components/detail/language-selector";
-import { useTranslation } from "#/components/detail/language-selector";
+import type { Translations } from "#/components/detail/language";
+import { useTranslation } from "#/components/detail/language-context";
 
 const translations: Translations = {
   en: {
