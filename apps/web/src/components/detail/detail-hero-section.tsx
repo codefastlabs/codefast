@@ -14,6 +14,7 @@ import { ChevronRightIcon, CodeIcon, PackageIcon } from "lucide-react";
 import type { ComponentProps } from "react";
 
 import { DetailInstallPanel } from "#/components/detail/detail-install-panel";
+import { DetailPageToolbar } from "#/components/detail/detail-page-toolbar";
 import type { ComponentMeta } from "#/registry/components";
 import { CATEGORIES } from "#/registry/components";
 
@@ -41,21 +42,25 @@ export function DetailHeroSection({ component, className, ...props }: DetailHero
 
   return (
     <div className={cn("mb-10 border-b border-ui-border/60 pb-8", className)} {...props}>
-      <Breadcrumb className="mb-6">
-        <BreadcrumbList>
-          <BreadcrumbItem>
-            <BreadcrumbLink asChild>
-              <Link to="/components">Components</Link>
-            </BreadcrumbLink>
-          </BreadcrumbItem>
-          <BreadcrumbSeparator>
-            <ChevronRightIcon />
-          </BreadcrumbSeparator>
-          <BreadcrumbItem>
-            <BreadcrumbPage>{name}</BreadcrumbPage>
-          </BreadcrumbItem>
-        </BreadcrumbList>
-      </Breadcrumb>
+      <div className="mb-6 flex items-center justify-between gap-3">
+        <Breadcrumb>
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbLink asChild>
+                <Link to="/components">Components</Link>
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator>
+              <ChevronRightIcon />
+            </BreadcrumbSeparator>
+            <BreadcrumbItem>
+              <BreadcrumbPage>{name}</BreadcrumbPage>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
+
+        <DetailPageToolbar component={component} />
+      </div>
 
       <header className="mb-6 max-w-2xl">
         <div className="mb-4 flex flex-wrap items-center gap-2">
@@ -88,7 +93,7 @@ export function DetailHeroSection({ component, className, ...props }: DetailHero
         </div>
       </header>
 
-      <DetailInstallPanel component={component} />
+      <DetailInstallPanel />
     </div>
   );
 }

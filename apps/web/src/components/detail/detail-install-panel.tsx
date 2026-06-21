@@ -3,27 +3,14 @@ import type { ComponentProps } from "react";
 
 import { CopyField } from "#/components/detail/copy-field";
 import { INSTALL_COMMAND } from "#/lib/install";
-import type { ComponentMeta } from "#/registry/components";
-import { componentImportLabel } from "#/registry/components";
 
-interface DetailInstallPanelProps extends ComponentProps<"div"> {
-  readonly component: ComponentMeta;
-}
+type DetailInstallPanelProps = ComponentProps<"div">;
 
-/** Install command and import path panel with copy buttons. */
-export function DetailInstallPanel({ component, className, ...props }: DetailInstallPanelProps) {
-  const isComposition = component.composition !== undefined;
-  const importPath = componentImportLabel(component);
-
+/** Install command for the package, with a copy button. */
+export function DetailInstallPanel({ className, ...props }: DetailInstallPanelProps) {
   return (
-    <div className={cn("grid gap-3 sm:grid-cols-2", className)} {...props}>
+    <div className={cn("max-w-md", className)} {...props}>
       <CopyField label="Install" value={INSTALL_COMMAND} copyLabel="Copy install command" />
-      <CopyField
-        label={isComposition ? "Composed from" : "Import path"}
-        value={importPath}
-        valueClassName="text-ui-brand"
-        copyLabel="Copy import path"
-      />
     </div>
   );
 }
