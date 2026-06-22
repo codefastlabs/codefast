@@ -26,6 +26,7 @@ import type { HighlightedSource } from "#/lib/highlight";
  * `docSource(slug, name)` / `docAnatomy(slug)`. The doc is then picked up
  * automatically; no registration is needed.
  */
+import { rememberExampleComponent } from "#/registry/examples";
 import type { ComponentDoc, ResolvedComponentDoc, ResolvedDocExample, SourceRef } from "#/registry/types";
 
 export type {
@@ -73,8 +74,15 @@ async function loadSource(ref: SourceRef): Promise<HighlightedSource> {
 
 async function resolveExample(example: ComponentDoc["examples"][number]): Promise<ResolvedDocExample> {
   const source = await loadSource(example.source);
+  // Drop the live `Demo` — loader data is serialized across the SSR boundary and
+  // a component function would not survive it. Stash the component first so a
+  // client render can use it synchronously; otherwise the preview re-resolves it
+  // from `EXAMPLE_COMPONENT_BY_REF` via `source` (kept below).
+  const { Demo, ...serializable } = example;
 
-  return { ...example, ...source };
+  rememberExampleComponent(example.source, Demo);
+
+  return { ...serializable, ...source };
 }
 
 /**

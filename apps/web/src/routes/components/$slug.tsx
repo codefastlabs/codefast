@@ -1,6 +1,6 @@
 import { createFileRoute, notFound } from "@tanstack/react-router";
 
-import { preloadDetail } from "#/components/detail/detail-bodies";
+import { fetchDetail } from "#/components/detail/detail-bodies";
 import { DetailNotFound } from "#/components/detail/detail-not-found";
 import { DetailPage } from "#/components/detail/detail-page";
 import { SITE_OG_IMAGE, absoluteUrl, canonicalHead, jsonLdScript } from "#/lib/seo";
@@ -47,18 +47,22 @@ export const Route = createFileRoute("/components/$slug")({
     };
   },
   loader: ({ params }) => {
-    if (!COMPONENT_BY_SLUG.has(params.slug)) {
+    const component = COMPONENT_BY_SLUG.get(params.slug);
+
+    if (!component) {
       throw notFound();
     }
 
-    preloadDetail(params.slug);
+    // Await the (serializable) detail here so SSR ships a complete body and the
+    // client renders it synchronously — no React.lazy / Suspense skeleton.
+    return fetchDetail(component);
   },
   notFoundComponent: DetailNotFound,
   component: ComponentDetailRoute,
 });
 
 function ComponentDetailRoute() {
-  const { slug } = Route.useParams();
+  const detail = Route.useLoaderData();
 
-  return <DetailPage slug={slug} />;
+  return <DetailPage detail={detail} />;
 }

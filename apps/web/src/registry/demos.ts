@@ -22,8 +22,6 @@ import type { HighlightedSource } from "#/lib/highlight";
 export interface DemoEntry {
   /** Code-split demo — render inside `<Suspense>`; the chunk loads on first render. */
   readonly Demo: LazyExoticComponent<ComponentType>;
-  /** Awaits the demo component itself (detail-page fallback example). */
-  readonly load: () => Promise<ComponentType>;
   /** Awaits the demo's raw source + pre-highlighted HTML (Code tab). */
   readonly loadSource: () => Promise<HighlightedSource>;
 }
@@ -70,7 +68,6 @@ export const DEMO_BY_SLUG: ReadonlyMap<string, DemoEntry> = new Map(
       slugFromDemoPath(path),
       {
         Demo: lazy(async () => ({ default: await load() })),
-        load,
         loadSource,
       },
     ];

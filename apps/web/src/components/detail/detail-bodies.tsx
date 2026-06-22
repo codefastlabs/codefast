@@ -1,15 +1,15 @@
 /**
- * Per-slug, code-split body of the component detail page.
+ * Per-slug body of the component detail page.
  *
- * `DETAIL_BODY_BY_SLUG` maps every component slug to a `React.lazy` component that —
- * on first render — loads ONLY that component's doc chunk (examples, sources
- * pre-highlighted at build time) and renders the full page body. Streaming SSR
- * awaits the chunk and ships complete HTML; on the client, navigating to
- * `/components/button` downloads button's chunk and nothing else.
+ * The `$slug` route loader awaits `fetchDetail` and returns the (serializable)
+ * detail as loader data; the route renders `DetailBody` synchronously from it.
+ * Each component's doc chunk (examples, sources pre-highlighted at build time)
+ * stays code-split — `loadDoc` dynamic-imports only the slug being viewed — but
+ * the loader, not `React.lazy`, is now what gates rendering, so there is no
+ * full-page skeleton. The live preview components cannot cross the loader's
+ * serialization boundary, so the body resolves them client-side from
+ * `EXAMPLE_COMPONENT_BY_REF` (see `examples-section.tsx`).
  */
-import type { ComponentType, LazyExoticComponent } from "react";
-import { lazy } from "react";
-
 import { AccessibilitySection } from "#/components/detail/accessibility-section";
 import { AnatomySection } from "#/components/detail/anatomy-section";
 import { ApiSection } from "#/components/detail/api-section";
@@ -21,12 +21,13 @@ import { OnThisPage } from "#/components/detail/on-this-page";
 import { RelatedSection } from "#/components/detail/related-section";
 import type { TocItem } from "#/components/detail/toc";
 import type { ComponentMeta } from "#/registry/components";
-import { COMPONENTS, COMPONENT_BY_SLUG, NEIGHBORS_BY_SLUG } from "#/registry/components";
+import { NEIGHBORS_BY_SLUG } from "#/registry/components";
 import { DEMO_BY_SLUG } from "#/registry/demos";
 import { loadDoc } from "#/registry/docs";
+import { docDemo } from "#/registry/source";
 import type { ResolvedComponentDoc, ResolvedDocExample } from "#/registry/types";
 
-interface ComponentDetail {
+export interface ComponentDetail {
   readonly component: ComponentMeta;
   /** The rich doc, when one exists. */
   readonly doc?: ResolvedComponentDoc | undefined;
@@ -48,9 +49,9 @@ async function loadDetail(component: ComponentMeta): Promise<ComponentDetail> {
   const demo = DEMO_BY_SLUG.get(component.slug);
 
   if (demo) {
-    const [Demo, source] = await Promise.all([demo.load(), demo.loadSource()]);
+    const source = await demo.loadSource();
 
-    return { component, examples: [{ id: "example", title: "Example", Demo, ...source }] };
+    return { component, examples: [{ id: "example", title: "Example", source: docDemo(component.slug), ...source }] };
   }
 
   return { component, examples: [] };
@@ -58,8 +59,8 @@ async function loadDetail(component: ComponentMeta): Promise<ComponentDetail> {
 
 const detailCache = new Map<string, Promise<ComponentDetail>>();
 
-/** Memoised `loadDetail` so an intent preload and the lazy body share one fetch. */
-function fetchDetail(component: ComponentMeta): Promise<ComponentDetail> {
+/** Memoised `loadDetail` so an intent preload and the route loader share one fetch. */
+export function fetchDetail(component: ComponentMeta): Promise<ComponentDetail> {
   const cached = detailCache.get(component.slug);
 
   if (cached) {
@@ -74,22 +75,6 @@ function fetchDetail(component: ComponentMeta): Promise<ComponentDetail> {
   detailCache.set(component.slug, promise);
 
   return promise;
-}
-
-/**
- * Warms a slug's detail chunk ahead of navigation. The `$slug` route loader
- * calls this, so the router's `defaultPreload: "intent"` turns every hover or
- * focus on a detail link into a background fetch — by the time the visitor
- * clicks, the body usually renders without its skeleton.
- */
-export function preloadDetail(slug: string): void {
-  const component = COMPONENT_BY_SLUG.get(slug);
-
-  if (component) {
-    fetchDetail(component).catch(() => {
-      // Swallow: preloading is best-effort; rendering will retry and surface errors.
-    });
-  }
 }
 
 /** Builds the "On this page" entries from whichever sections are present. */
@@ -124,7 +109,11 @@ function buildToc({ doc, examples }: ComponentDetail): Array<TocItem> {
   return toc;
 }
 
-function DetailBody({ detail }: { detail: ComponentDetail }) {
+interface DetailBodyProps {
+  readonly detail: ComponentDetail;
+}
+
+export function DetailBody({ detail }: DetailBodyProps) {
   const { component, doc, examples } = detail;
   const neighbors = NEIGHBORS_BY_SLUG.get(component.slug);
   const hasRelated = (doc?.related?.length ?? 0) > 0 || (doc?.dependencies?.length ?? 0) > 0;
@@ -180,18 +169,3 @@ function DetailBody({ detail }: { detail: ComponentDetail }) {
     </>
   );
 }
-
-/**
- * One lazy body per component. Created once at module scope so `React.lazy`'s
- * internal cache survives re-renders and route remounts.
- */
-export const DETAIL_BODY_BY_SLUG: ReadonlyMap<string, LazyExoticComponent<ComponentType>> = new Map(
-  COMPONENTS.map((component) => [
-    component.slug,
-    lazy(async () => {
-      const detail = await fetchDetail(component);
-
-      return { default: () => <DetailBody detail={detail} /> };
-    }),
-  ]),
-);

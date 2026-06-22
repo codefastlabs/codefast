@@ -1,6 +1,8 @@
 import type { ComponentProps } from "react";
+import { Suspense } from "react";
 
 import { DocSection } from "#/components/detail/doc-section";
+import { ExampleLive } from "#/components/detail/example-live";
 import { ExamplePreview } from "#/components/detail/example-preview";
 import type { ResolvedDocExample } from "#/registry/types";
 
@@ -33,7 +35,10 @@ export function ExamplesSection({ examples, showHint, ...props }: ExamplesSectio
             previewClassName={example.previewClassName}
             direction={example.direction}
           >
-            <example.Demo />
+            {/* Synchronous after a client nav; the boundary only catches the SSR-hydration lazy path. */}
+            <Suspense fallback={null}>
+              <ExampleLive source={example.source} />
+            </Suspense>
           </ExamplePreview>
         ))}
       </div>

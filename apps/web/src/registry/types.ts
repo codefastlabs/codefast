@@ -69,8 +69,12 @@ export interface ComponentDoc {
 /* a doc chunk and swaps every SourceRef for its highlighted content.          */
 /* -------------------------------------------------------------------------- */
 
-/** A doc example with its source resolved to raw text + pre-highlighted HTML. */
-export interface ResolvedDocExample extends Omit<DocExample, "source">, HighlightedSource {}
+/**
+ * A doc example as the detail-page loader ships it: serializable, so the live
+ * `Demo` component is dropped (looked up client-side via `EXAMPLE_COMPONENT_BY_REF`
+ * keyed by `source`), and the `source` ref is resolved to raw text + Shiki HTML.
+ */
+export interface ResolvedDocExample extends Omit<DocExample, "Demo">, HighlightedSource {}
 
 /** A component doc with every source ref resolved. */
 export interface ResolvedComponentDoc extends Omit<ComponentDoc, "examples" | "anatomy"> {
