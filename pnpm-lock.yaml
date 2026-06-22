@@ -7,8 +7,8 @@ settings:
 catalogs:
   default:
     '@babel/plugin-proposal-decorators':
-      specifier: 8.0.1
-      version: 8.0.1
+      specifier: 8.0.2
+      version: 8.0.2
     '@changesets/changelog-github':
       specifier: ^0.7.0
       version: 0.7.0
@@ -658,7 +658,7 @@ importers:
     devDependencies:
       '@babel/plugin-proposal-decorators':
         specifier: 'catalog:'
-        version: 8.0.1(@babel/core@7.29.7)
+        version: 8.0.2(@babel/core@7.29.7)
       '@codefast/typescript-config':
         specifier: workspace:*
         version: link:../typescript-config
@@ -1045,8 +1045,8 @@ packages:
     engines: {node: ^22.18.0 || >=24.11.0}
     hasBin: true
 
-  '@babel/plugin-proposal-decorators@8.0.1':
-    resolution: {integrity: sha512-HHF7+th/gkHtQaJ00tZzzmwPgLKdL/oZ139T4G68OS+W/IUSZAi+bLH5UyMoezX6LPmCJ/o5VozypWgspLTTkw==}
+  '@babel/plugin-proposal-decorators@8.0.2':
+    resolution: {integrity: sha512-+C6O6KKXU7BBq1GNaIkFJxrALUVGRcr+WeWm4OcuRl3h+l/CmNfcTLMrT2Lm3uvGBimBH/8pEBRrXJFLoO67Gg==}
     engines: {node: ^22.18.0 || >=24.11.0}
     peerDependencies:
       '@babel/core': ^8.0.0
@@ -6220,7 +6220,7 @@ snapshots:
     dependencies:
       '@babel/types': 8.0.0
 
-  '@babel/plugin-proposal-decorators@8.0.1(@babel/core@7.29.7)':
+  '@babel/plugin-proposal-decorators@8.0.2(@babel/core@7.29.7)':
     dependencies:
       '@babel/core': 7.29.7
       '@babel/helper-create-class-features-plugin': 8.0.1(@babel/core@7.29.7)
