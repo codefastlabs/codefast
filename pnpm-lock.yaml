@@ -202,8 +202,8 @@ catalogs:
       specifier: ^19.2.7
       version: 19.2.7
     react-hook-form:
-      specifier: ^7.79.0
-      version: 7.79.0
+      specifier: ^7.80.0
+      version: 7.80.0
     react-resizable-panels:
       specifier: ^4.11.2
       version: 4.11.2
@@ -831,7 +831,7 @@ importers:
         version: 19.2.7(react@19.2.7)
       react-hook-form:
         specifier: 'catalog:'
-        version: 7.79.0(react@19.2.7)
+        version: 7.80.0(react@19.2.7)
       react-resizable-panels:
         specifier: 'catalog:'
         version: 4.11.2(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
@@ -5222,8 +5222,8 @@ packages:
     peerDependencies:
       react: ^19.2.7
 
-  react-hook-form@7.79.0:
-    resolution: {integrity: sha512-mhYp/MTmXvzYX6AJcJVko0rktoIhhmRnEouObj4wF5i/tCttgJvnp1+9wRkpITZjDTqpo4IOSJqu0dBlPlV/Lw==}
+  react-hook-form@7.80.0:
+    resolution: {integrity: sha512-4P+fk6oXsxY+6xSj7Euhc2sumQD8zQqCuVHoJwoyp9EchP+IUW9OESB7uHFJOKsIBQ4MQqYE84INJFqUCYNoOg==}
     engines: {node: '>=18.0.0'}
     peerDependencies:
       react: ^16.8.0 || ^17 || ^18 || ^19
@@ -10200,7 +10200,7 @@ snapshots:
       react: 19.2.7
       scheduler: 0.27.0
 
-  react-hook-form@7.79.0(react@19.2.7):
+  react-hook-form@7.80.0(react@19.2.7):
     dependencies:
       react: 19.2.7
 
