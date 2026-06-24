@@ -8,6 +8,19 @@ import preview from "../.storybook/preview";
  */
 const meta = preview.meta({
   component: ScrollArea,
+  subcomponents: { ScrollAreaScrollbar },
+  parameters: {
+    docs: {
+      description: {
+        component: [
+          "Augments native scrolling with a custom, cross-browser-consistent scrollbar.",
+          "",
+          "**Anatomy:** `ScrollArea > content`; horizontal and vertical `ScrollAreaScrollbar`s are rendered for you.",
+          "Constrain the `ScrollArea` with a fixed height/width so content overflows; pick a track `size` (`default` · `sm`).",
+        ].join("\n"),
+      },
+    },
+  },
   title: "Layout/ScrollArea",
 });
 

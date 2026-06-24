@@ -5,10 +5,12 @@ import { expect, screen } from "storybook/test";
 import {
   NavigationMenu,
   NavigationMenuContent,
+  NavigationMenuIndicator,
   NavigationMenuItem,
   NavigationMenuLink,
   NavigationMenuList,
   NavigationMenuTrigger,
+  NavigationMenuViewport,
 } from "#/components/navigation-menu";
 
 import preview from "../.storybook/preview";
@@ -80,6 +82,28 @@ function ListItem({
  * would force `args` onto every story — see Button for the prop-driven case).
  */
 const meta = preview.meta({
+  component: NavigationMenu,
+  subcomponents: {
+    NavigationMenuList,
+    NavigationMenuItem,
+    NavigationMenuTrigger,
+    NavigationMenuContent,
+    NavigationMenuLink,
+    NavigationMenuIndicator,
+    NavigationMenuViewport,
+  },
+  parameters: {
+    docs: {
+      description: {
+        component: [
+          "A collection of links and dropdown panels for navigating a site.",
+          "",
+          "**Anatomy:** `NavigationMenu > NavigationMenuList > NavigationMenuItem > (NavigationMenuTrigger + NavigationMenuContent | NavigationMenuLink)`, with `NavigationMenuIndicator` and `NavigationMenuViewport` for the active arrow and shared content surface.",
+          "Triggers reveal a `NavigationMenuContent` panel; plain entries use `NavigationMenuLink`.",
+        ].join("\n"),
+      },
+    },
+  },
   title: "Navigation/NavigationMenu",
 });
 

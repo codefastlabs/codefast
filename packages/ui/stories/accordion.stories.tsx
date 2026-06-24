@@ -4,12 +4,21 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "#/
 
 import preview from "../.storybook/preview";
 
-/**
- * Accordion's root requires a `type` prop, so binding `component` would force
- * `args` onto every story. Composition components are demoed via `render`
- * instead — keep `component` only for prop-driven single components (see Button).
- */
 const meta = preview.meta({
+  component: Accordion,
+  subcomponents: { AccordionItem, AccordionTrigger, AccordionContent },
+  parameters: {
+    docs: {
+      description: {
+        component: [
+          "A vertically stacked set of interactive headings that each reveal a section of content.",
+          "",
+          "**Anatomy:** `Accordion > AccordionItem > (AccordionTrigger + AccordionContent)`.",
+          'Set `type="single"` (one open at a time, add `collapsible`) or `type="multiple"`.',
+        ].join("\n"),
+      },
+    },
+  },
   title: "Display/Accordion",
 });
 

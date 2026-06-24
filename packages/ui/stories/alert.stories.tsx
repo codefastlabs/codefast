@@ -11,6 +11,19 @@ import preview from "../.storybook/preview";
  */
 const meta = preview.meta({
   component: Alert,
+  subcomponents: { AlertTitle, AlertDescription, AlertAction },
+  parameters: {
+    docs: {
+      description: {
+        component: [
+          "A callout that draws attention to a short, important message.",
+          "",
+          "**Anatomy:** `Alert > (icon + AlertTitle + AlertDescription + AlertAction)`.",
+          'Set `variant="destructive"` for error states; drop in a leading icon and the layout adjusts automatically.',
+        ].join("\n"),
+      },
+    },
+  },
   title: "Display/Alert",
 });
 

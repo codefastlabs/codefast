@@ -12,6 +12,19 @@ import preview from "../.storybook/preview";
  */
 const meta = preview.meta({
   component: Empty,
+  subcomponents: { EmptyHeader, EmptyMedia, EmptyTitle, EmptyDescription, EmptyContent },
+  parameters: {
+    docs: {
+      description: {
+        component: [
+          "A placeholder shown when there is no data, guiding the user toward a next action.",
+          "",
+          "**Anatomy:** `Empty > (EmptyHeader (EmptyMedia · EmptyTitle · EmptyDescription) + EmptyContent)`.",
+          "`EmptyMedia` takes a `variant` (`default` · `icon`) to frame an illustration or icon; put the call-to-action in `EmptyContent`.",
+        ].join("\n"),
+      },
+    },
+  },
   title: "Display/Empty",
 });
 

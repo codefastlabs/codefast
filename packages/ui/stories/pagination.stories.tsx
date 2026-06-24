@@ -17,6 +17,26 @@ import preview from "../.storybook/preview";
 
 const meta = preview.meta({
   component: Pagination,
+  subcomponents: {
+    PaginationContent,
+    PaginationItem,
+    PaginationLink,
+    PaginationPrevious,
+    PaginationNext,
+    PaginationEllipsis,
+  },
+  parameters: {
+    docs: {
+      description: {
+        component: [
+          "Navigation for splitting long lists of content across multiple pages.",
+          "",
+          "**Anatomy:** `Pagination > PaginationContent > PaginationItem > (PaginationLink | PaginationPrevious | PaginationNext | PaginationEllipsis)`.",
+          "Mark the current page with `isActive` on its `PaginationLink`.",
+        ].join("\n"),
+      },
+    },
+  },
   title: "Navigation/Pagination",
 });
 

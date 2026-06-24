@@ -5,11 +5,21 @@ import { ChartContainer, ChartLegend, ChartLegendContent, ChartTooltip, ChartToo
 
 import preview from "../.storybook/preview";
 
-/**
- * ChartContainer requires a `config` prop, so binding `component` would force
- * `args` onto every story. Demoed via `render` instead (see Accordion).
- */
 const meta = preview.meta({
+  component: ChartContainer,
+  subcomponents: { ChartTooltip, ChartTooltipContent, ChartLegend, ChartLegendContent },
+  parameters: {
+    docs: {
+      description: {
+        component: [
+          "A theming and layout wrapper around Recharts that wires a `config` into CSS variables and tooltips.",
+          "",
+          "**Anatomy:** `ChartContainer > (Recharts chart + ChartTooltip > ChartTooltipContent + ChartLegend > ChartLegendContent)`.",
+          "Pass a `ChartConfig` (label + color per series); the container injects per-series CSS vars consumed by the chart.",
+        ].join("\n"),
+      },
+    },
+  },
   title: "Display/Chart",
 });
 

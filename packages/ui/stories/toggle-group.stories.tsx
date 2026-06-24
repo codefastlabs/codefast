@@ -5,11 +5,21 @@ import { ToggleGroup, ToggleGroupItem } from "#/components/toggle-group";
 
 import preview from "../.storybook/preview";
 
-/**
- * ToggleGroup's root requires a `type` prop ("single"/"multiple"), so stories
- * are demoed via `render` (see Accordion).
- */
 const meta = preview.meta({
+  component: ToggleGroup,
+  subcomponents: { ToggleGroupItem },
+  parameters: {
+    docs: {
+      description: {
+        component: [
+          "A set of two-state buttons that can be toggled on or off, individually or exclusively.",
+          "",
+          "**Anatomy:** `ToggleGroup > ToggleGroupItem`.",
+          'Set `type="single"` (one active) or `type="multiple"` (many active); each item needs a `value`.',
+        ].join("\n"),
+      },
+    },
+  },
   title: "Form/ToggleGroup",
 });
 

@@ -10,8 +10,19 @@ const meta = preview.meta({
     size: { control: "radio", options: ["default", "sm"] },
   },
   component: NativeSelect,
+  subcomponents: { NativeSelectOptGroup, NativeSelectOption },
   parameters: {
     controls: { include: ["size", "disabled"] },
+    docs: {
+      description: {
+        component: [
+          "A native `<select>` styled to match the design system, including custom size variants.",
+          "",
+          "**Anatomy:** `NativeSelect > (NativeSelectOptGroup > NativeSelectOption)`.",
+          "Renders real `<select>`/`<optgroup>`/`<option>` elements — full form-control and mobile behaviour for free.",
+        ].join("\n"),
+      },
+    },
   },
   title: "Form/NativeSelect",
 });

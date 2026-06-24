@@ -4,6 +4,8 @@ import { definePreview } from "@storybook/react-vite";
 import "./tailwind.css";
 
 export default definePreview({
+  /** Generate an autodocs page for every component (examples + props + description). */
+  tags: ["autodocs"],
   parameters: {
     a11y: {
       /**

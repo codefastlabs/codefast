@@ -34,11 +34,21 @@ const METHODS = [
   { value: "bank", label: "Bank", icon: LandmarkIcon },
 ];
 
-/**
- * RadioCards is a single-select composition driven by `onValueChange`, so
- * stories are demoed via `render` (see Accordion).
- */
 const meta = preview.meta({
+  component: RadioCards,
+  subcomponents: { RadioCardsItem },
+  parameters: {
+    docs: {
+      description: {
+        component: [
+          "A single-select group rendered as large, clickable cards instead of plain radios.",
+          "",
+          "**Anatomy:** `RadioCards > RadioCardsItem`.",
+          "Drive it with `value`/`defaultValue` + `onValueChange`; each item is a selectable card surface.",
+        ].join("\n"),
+      },
+    },
+  },
   title: "Form/RadioCards",
 });
 

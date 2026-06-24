@@ -13,8 +13,19 @@ const meta = preview.meta({
     children: { control: "text" },
   },
   component: Kbd,
+  subcomponents: { KbdGroup },
   parameters: {
     controls: { include: ["children"] },
+    docs: {
+      description: {
+        component: [
+          "Displays a keyboard key or shortcut as inline text.",
+          "",
+          "**Anatomy:** `Kbd` for a single key, or `KbdGroup > Kbd…` to compose a multi-key shortcut.",
+          "Renders semantic `<kbd>` elements and adapts its styling inside tooltips.",
+        ].join("\n"),
+      },
+    },
   },
   title: "Display/Kbd",
 });

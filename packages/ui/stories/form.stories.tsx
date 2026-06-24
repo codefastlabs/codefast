@@ -70,6 +70,20 @@ function SignInForm(): JSX.Element {
 }
 
 const meta = preview.meta({
+  component: Form,
+  subcomponents: { FormField, FormItem, FormLabel, FormControl, FormDescription, FormMessage },
+  parameters: {
+    docs: {
+      description: {
+        component: [
+          "A set of `react-hook-form` bindings that wire accessible labels, descriptions, and validation messages to controls.",
+          "",
+          "**Anatomy:** `Form > FormField > FormItem > (FormLabel + FormControl + FormDescription + FormMessage)`.",
+          "`Form` provides the form context; `FormField` connects a single field, and the parts auto-link `id`/`aria-*` and surface errors.",
+        ].join("\n"),
+      },
+    },
+  },
   title: "Form/Form",
 });
 

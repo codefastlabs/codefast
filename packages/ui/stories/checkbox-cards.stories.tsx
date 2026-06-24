@@ -51,11 +51,21 @@ const PLANS = [
   },
 ];
 
-/**
- * CheckboxCards is a composition with a multi-select value array driven by
- * `onValueChange`, so stories are demoed via `render` (see Accordion).
- */
 const meta = preview.meta({
+  component: CheckboxCards,
+  subcomponents: { CheckboxCardsItem },
+  parameters: {
+    docs: {
+      description: {
+        component: [
+          "A multi-select group rendered as large, clickable cards instead of plain checkboxes.",
+          "",
+          "**Anatomy:** `CheckboxCards > CheckboxCardsItem`.",
+          "Drive it with `value`/`defaultValue` (an array) + `onValueChange`; each item is a selectable card surface.",
+        ].join("\n"),
+      },
+    },
+  },
   title: "Form/CheckboxCards",
 });
 

@@ -7,9 +7,21 @@ import preview from "../.storybook/preview";
 
 /**
  * Sonner pairs a single `<Toaster />` mount with the imperative `toast()`
- * function. Demoed via `render` (see Accordion) rather than a bound component.
+ * function, which the stories trigger via `render`.
  */
 const meta = preview.meta({
+  component: Toaster,
+  parameters: {
+    docs: {
+      description: {
+        component: [
+          "An opinionated toast notification region; mount one `<Toaster />` and fire toasts imperatively with `toast()`.",
+          "",
+          "Call `toast()` / `toast.success()` / `toast.error()` etc. from anywhere — no context or props threading required.",
+        ].join("\n"),
+      },
+    },
+  },
   title: "Feedback/Sonner",
 });
 

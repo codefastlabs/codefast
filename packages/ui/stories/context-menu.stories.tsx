@@ -4,10 +4,14 @@ import { expect, fireEvent, screen } from "storybook/test";
 
 import {
   ContextMenu,
+  ContextMenuArrow,
   ContextMenuCheckboxItem,
   ContextMenuContent,
+  ContextMenuGroup,
   ContextMenuItem,
   ContextMenuLabel,
+  ContextMenuRadioGroup,
+  ContextMenuRadioItem,
   ContextMenuSeparator,
   ContextMenuShortcut,
   ContextMenuSub,
@@ -18,7 +22,38 @@ import {
 
 import preview from "../.storybook/preview";
 
-const meta = preview.meta({ title: "Overlay/ContextMenu" });
+const meta = preview.meta({
+  component: ContextMenu,
+  subcomponents: {
+    ContextMenuTrigger,
+    ContextMenuContent,
+    ContextMenuLabel,
+    ContextMenuGroup,
+    ContextMenuItem,
+    ContextMenuCheckboxItem,
+    ContextMenuRadioGroup,
+    ContextMenuRadioItem,
+    ContextMenuSub,
+    ContextMenuSubTrigger,
+    ContextMenuSubContent,
+    ContextMenuSeparator,
+    ContextMenuShortcut,
+    ContextMenuArrow,
+  },
+  parameters: {
+    docs: {
+      description: {
+        component: [
+          "A menu summoned by right-clicking a target region, with the same items as a dropdown menu.",
+          "",
+          "**Anatomy:** `ContextMenu > ContextMenuTrigger + ContextMenuContent > (ContextMenuLabel · ContextMenuGroup · ContextMenuItem · ContextMenuCheckboxItem · ContextMenuRadioGroup > ContextMenuRadioItem · ContextMenuSub > (ContextMenuSubTrigger + ContextMenuSubContent) · ContextMenuSeparator)`.",
+          "`ContextMenuTrigger` wraps the area that responds to right-click; `ContextMenuShortcut` renders a trailing key hint.",
+        ].join("\n"),
+      },
+    },
+  },
+  title: "Overlay/ContextMenu",
+});
 
 function ContextMenuDemo() {
   const [favorite, setFavorite] = useState(true);

@@ -7,13 +7,21 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "#/components/tabs";
 
 import preview from "../.storybook/preview";
 
-/**
- * Tabs' root requires a `defaultValue` (or controlled `value`), so binding
- * `component` would force `args` onto every story. Composition components are
- * demoed via `render` instead — keep `component` only for prop-driven single
- * components (see Button).
- */
 const meta = preview.meta({
+  component: Tabs,
+  subcomponents: { TabsList, TabsTrigger, TabsContent },
+  parameters: {
+    docs: {
+      description: {
+        component: [
+          "A set of layered sections of content where only one panel is visible at a time.",
+          "",
+          "**Anatomy:** `Tabs > TabsList > TabsTrigger` + one `TabsContent` per tab.",
+          "Each `TabsTrigger` and `TabsContent` is paired by a matching `value`; set `defaultValue` (uncontrolled) or `value` (controlled) on `Tabs`.",
+        ].join("\n"),
+      },
+    },
+  },
   title: "Navigation/Tabs",
 });
 

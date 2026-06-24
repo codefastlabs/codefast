@@ -4,11 +4,21 @@ import { InputOTP, InputOTPGroup, InputOTPSeparator, InputOTPSlot, REGEXP_ONLY_D
 
 import preview from "../.storybook/preview";
 
-/**
- * InputOTP's root requires `maxLength`, so binding `component` would force `args`
- * onto every story — composition is demoed via `render` instead.
- */
 const meta = preview.meta({
+  component: InputOTP,
+  subcomponents: { InputOTPGroup, InputOTPSlot, InputOTPSeparator },
+  parameters: {
+    docs: {
+      description: {
+        component: [
+          "A segmented input for one-time passcodes and verification codes, one character per slot.",
+          "",
+          "**Anatomy:** `InputOTP > InputOTPGroup > InputOTPSlot` (with optional `InputOTPSeparator` between groups).",
+          "Set `maxLength` to the code length; restrict input with patterns like `REGEXP_ONLY_DIGITS`.",
+        ].join("\n"),
+      },
+    },
+  },
   title: "Form/InputOtp",
 });
 

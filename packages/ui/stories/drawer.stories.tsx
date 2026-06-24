@@ -17,6 +17,28 @@ import { Label } from "#/components/label";
 import preview from "../.storybook/preview";
 
 const meta = preview.meta({
+  component: Drawer,
+  subcomponents: {
+    DrawerTrigger,
+    DrawerContent,
+    DrawerHeader,
+    DrawerTitle,
+    DrawerDescription,
+    DrawerFooter,
+    DrawerClose,
+  },
+  parameters: {
+    docs: {
+      description: {
+        component: [
+          "A panel that slides in from an edge of the screen, built on Vaul with drag-to-dismiss.",
+          "",
+          "**Anatomy:** `Drawer > DrawerTrigger + DrawerContent > (DrawerHeader (DrawerTitle · DrawerDescription) + DrawerFooter (DrawerClose))`.",
+          "Set `direction` (`top`/`right`/`bottom`/`left`) on the root to choose the edge it slides from.",
+        ].join("\n"),
+      },
+    },
+  },
   title: "Overlay/Drawer",
 });
 

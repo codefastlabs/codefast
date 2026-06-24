@@ -5,6 +5,19 @@ import preview from "../.storybook/preview";
 
 const meta = preview.meta({
   component: Card,
+  subcomponents: { CardHeader, CardTitle, CardDescription, CardAction, CardContent, CardFooter },
+  parameters: {
+    docs: {
+      description: {
+        component: [
+          "A composable surface for grouping related content and actions.",
+          "",
+          "**Anatomy:** `Card > CardHeader (CardTitle · CardDescription · CardAction) + CardContent + CardFooter`.",
+          "All parts are thin styled `<div>`s — compose only the ones you need.",
+        ].join("\n"),
+      },
+    },
+  },
   title: "Layout/Card",
 });
 

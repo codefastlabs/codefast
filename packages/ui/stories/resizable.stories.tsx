@@ -5,13 +5,21 @@ import { cn } from "#/lib/utils";
 
 import preview from "../.storybook/preview";
 
-/**
- * ResizableGroup's root requires a `direction`/`orientation`-driven layout and
- * always composes panels + separators, so binding `component` would force
- * `args` onto every story. Composition components are demoed via `render`
- * instead — keep `component` only for prop-driven single components (see Button).
- */
 const meta = preview.meta({
+  component: ResizableGroup,
+  subcomponents: { ResizablePanel, ResizableSeparator },
+  parameters: {
+    docs: {
+      description: {
+        component: [
+          "A resizable layout of panels the user can drag to resize.",
+          "",
+          "**Anatomy:** `ResizableGroup > ResizablePanel + ResizableSeparator + ResizablePanel`.",
+          "Set the group `direction` to `horizontal` or `vertical`; place a `ResizableSeparator` between adjacent panels.",
+        ].join("\n"),
+      },
+    },
+  },
   title: "Layout/Resizable",
 });
 

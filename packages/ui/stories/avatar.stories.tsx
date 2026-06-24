@@ -8,6 +8,19 @@ import preview from "../.storybook/preview";
  */
 const meta = preview.meta({
   component: Avatar,
+  subcomponents: { AvatarImage, AvatarFallback, AvatarBadge, AvatarGroup, AvatarGroupCount },
+  parameters: {
+    docs: {
+      description: {
+        component: [
+          "An image element with a text fallback for representing a user or entity.",
+          "",
+          "**Anatomy:** `Avatar > (AvatarImage + AvatarFallback + AvatarBadge)`; stack many inside `AvatarGroup > … + AvatarGroupCount`.",
+          "The fallback shows while the image loads or if it fails; pick a size with the `size` prop (`sm` · `default` · `lg`).",
+        ].join("\n"),
+      },
+    },
+  },
   title: "Display/Avatar",
 });
 

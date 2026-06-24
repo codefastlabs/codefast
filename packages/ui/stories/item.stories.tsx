@@ -9,7 +9,9 @@ import {
   ItemActions,
   ItemContent,
   ItemDescription,
+  ItemFooter,
   ItemGroup,
+  ItemHeader,
   ItemMedia,
   ItemSeparator,
   ItemTitle,
@@ -24,6 +26,29 @@ import preview from "../.storybook/preview";
  */
 const meta = preview.meta({
   component: Item,
+  subcomponents: {
+    ItemGroup,
+    ItemMedia,
+    ItemContent,
+    ItemTitle,
+    ItemDescription,
+    ItemActions,
+    ItemHeader,
+    ItemFooter,
+    ItemSeparator,
+  },
+  parameters: {
+    docs: {
+      description: {
+        component: [
+          "A flexible row for presenting an entity with leading media, text, and trailing actions.",
+          "",
+          "**Anatomy:** `ItemGroup > Item > (ItemMedia + ItemContent (ItemTitle · ItemDescription) + ItemActions)`, separated by `ItemSeparator`.",
+          "`Item` accepts `variant` and `size`; use `ItemHeader`/`ItemFooter` for full-width rows above and below the main content.",
+        ].join("\n"),
+      },
+    },
+  },
   title: "Display/Item",
 });
 

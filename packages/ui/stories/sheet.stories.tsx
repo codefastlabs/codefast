@@ -17,7 +17,32 @@ import {
 
 import preview from "../.storybook/preview";
 
-const meta = preview.meta({ title: "Overlay/Sheet" });
+const meta = preview.meta({
+  component: Sheet,
+  subcomponents: {
+    SheetTrigger,
+    SheetContent,
+    SheetHeader,
+    SheetTitle,
+    SheetDescription,
+    SheetBody,
+    SheetFooter,
+    SheetClose,
+  },
+  parameters: {
+    docs: {
+      description: {
+        component: [
+          "A dialog that slides in from the side of the screen, typically for forms or secondary navigation.",
+          "",
+          "**Anatomy:** `Sheet > SheetTrigger + SheetContent > (SheetHeader (SheetTitle · SheetDescription) + SheetBody + SheetFooter (SheetClose))`.",
+          "Set `side` (`top`/`right`/`bottom`/`left`) on `SheetContent` to choose which edge it anchors to.",
+        ].join("\n"),
+      },
+    },
+  },
+  title: "Overlay/Sheet",
+});
 
 export const Default = meta.story({
   render: () => (

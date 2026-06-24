@@ -33,11 +33,21 @@ const NOTIFICATIONS = [
   },
 ];
 
-/**
- * CheckboxGroup shares a value array across items via `onValueChange`, so
- * stories are demoed via `render` (see Accordion).
- */
 const meta = preview.meta({
+  component: CheckboxGroup,
+  subcomponents: { CheckboxGroupItem },
+  parameters: {
+    docs: {
+      description: {
+        component: [
+          "A group of checkboxes that share a single array value, allowing multiple selections.",
+          "",
+          "**Anatomy:** `CheckboxGroup > CheckboxGroupItem`.",
+          "Drive it with `value`/`defaultValue` (an array) + `onValueChange`; pair each item with a `Label`.",
+        ].join("\n"),
+      },
+    },
+  },
   title: "Form/CheckboxGroup",
 });
 

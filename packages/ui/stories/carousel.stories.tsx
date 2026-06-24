@@ -7,6 +7,19 @@ import preview from "../.storybook/preview";
 
 const meta = preview.meta({
   component: Carousel,
+  subcomponents: { CarouselContent, CarouselItem, CarouselPrevious, CarouselNext },
+  parameters: {
+    docs: {
+      description: {
+        component: [
+          "A slideshow for cycling through a series of slides, powered by Embla Carousel.",
+          "",
+          "**Anatomy:** `Carousel > (CarouselContent > CarouselItem… + CarouselPrevious + CarouselNext)`.",
+          "Set `orientation` and pass Embla `opts`/`plugins` on the root; the previous/next buttons read scroll state from context and disable at the edges.",
+        ].join("\n"),
+      },
+    },
+  },
   title: "Display/Carousel",
 });
 

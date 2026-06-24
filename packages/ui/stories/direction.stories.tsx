@@ -5,10 +5,22 @@ import preview from "../.storybook/preview";
 
 /**
  * DirectionProvider sets the reading direction (LTR/RTL) for descendant
- * components via Radix. It has no visual output of its own, so it's demoed via
- * `render` wrapping sample content (see Accordion).
+ * components via Radix. It has no visual output of its own, so each story wraps
+ * sample content in `render`.
  */
 const meta = preview.meta({
+  component: DirectionProvider,
+  parameters: {
+    docs: {
+      description: {
+        component: [
+          "A context provider that sets the reading direction (LTR/RTL) for all descendant Radix components.",
+          "",
+          "Renders no DOM of its own; wrap a subtree and set `dir` so popovers, menus, and sliders mirror correctly.",
+        ].join("\n"),
+      },
+    },
+  },
   title: "Layout/Direction",
 });
 

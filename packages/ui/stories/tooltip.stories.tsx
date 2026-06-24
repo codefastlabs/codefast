@@ -7,7 +7,27 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "#/comp
 
 import preview from "../.storybook/preview";
 
-const meta = preview.meta({ title: "Overlay/Tooltip" });
+const meta = preview.meta({
+  component: Tooltip,
+  subcomponents: {
+    TooltipProvider,
+    TooltipTrigger,
+    TooltipContent,
+  },
+  parameters: {
+    docs: {
+      description: {
+        component: [
+          "A small floating label that describes an element on hover or focus.",
+          "",
+          "**Anatomy:** `TooltipProvider > Tooltip > (TooltipTrigger + TooltipContent)`.",
+          "Wrap your app (or group of tooltips) in a single `TooltipProvider` to share open/close timing.",
+        ].join("\n"),
+      },
+    },
+  },
+  title: "Overlay/Tooltip",
+});
 
 export const Default = meta.story({
   render: () => (

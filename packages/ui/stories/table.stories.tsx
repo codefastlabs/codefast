@@ -13,6 +13,19 @@ import preview from "../.storybook/preview";
 
 const meta = preview.meta({
   component: Table,
+  subcomponents: { TableHeader, TableBody, TableFooter, TableRow, TableHead, TableCell, TableCaption },
+  parameters: {
+    docs: {
+      description: {
+        component: [
+          "A styled, responsive wrapper around the native HTML table elements.",
+          "",
+          "**Anatomy:** `Table > (TableCaption + TableHeader (TableRow > TableHead) + TableBody (TableRow > TableCell) + TableFooter)`.",
+          "Each part maps to its semantic element (`<thead>`, `<tbody>`, `<tr>`, `<th>`, `<td>`…); `Table` adds a horizontally scrollable container.",
+        ].join("\n"),
+      },
+    },
+  },
   title: "Display/Table",
 });
 

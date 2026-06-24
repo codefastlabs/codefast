@@ -7,8 +7,8 @@ import { Calendar } from "#/components/calendar";
 import preview from "../.storybook/preview";
 
 /**
- * Calendar manages a selected date with `useState`, so it's demoed via `render`
- * with a small wrapper — keep `component` only for prop-driven single components.
+ * Calendar manages a selected date with `useState`, so each story is demoed via
+ * `render` with a small wrapper.
  */
 interface DateRange {
   from: Date | undefined;
@@ -64,6 +64,18 @@ function RangeCalendar(): JSX.Element {
 }
 
 const meta = preview.meta({
+  component: Calendar,
+  parameters: {
+    docs: {
+      description: {
+        component: [
+          "A date-picker grid built on React DayPicker, supporting single, multiple, and range selection.",
+          "",
+          "Controlled via `mode` plus `selected`/`onSelect`; stories wrap it in `useState` to demo selection.",
+        ].join("\n"),
+      },
+    },
+  },
   title: "Form/Calendar",
 });
 

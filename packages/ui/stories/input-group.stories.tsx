@@ -6,15 +6,26 @@ import {
   InputGroupButton,
   InputGroupInput,
   InputGroupText,
+  InputGroupTextarea,
 } from "#/components/input-group";
 
 import preview from "../.storybook/preview";
 
-/**
- * Input Group is a composition with no required root props, but its meaning lives
- * in the addon/input children — demoed via `render`, no `component` binding.
- */
 const meta = preview.meta({
+  component: InputGroup,
+  subcomponents: { InputGroupInput, InputGroupTextarea, InputGroupAddon, InputGroupButton, InputGroupText },
+  parameters: {
+    docs: {
+      description: {
+        component: [
+          "A container that fuses an input (or textarea) with leading/trailing addons, buttons, and text into one control.",
+          "",
+          "**Anatomy:** `InputGroup > (InputGroupAddon · InputGroupInput / InputGroupTextarea · InputGroupButton · InputGroupText)`.",
+          "Use `InputGroupAddon` with `align` to position icons/controls on either side of the field.",
+        ].join("\n"),
+      },
+    },
+  },
   title: "Form/InputGroup",
 });
 

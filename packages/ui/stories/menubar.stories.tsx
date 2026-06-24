@@ -3,6 +3,7 @@ import { expect, screen } from "storybook/test";
 
 import {
   Menubar,
+  MenubarArrow,
   MenubarCheckboxItem,
   MenubarContent,
   MenubarGroup,
@@ -21,7 +22,39 @@ import {
 
 import preview from "../.storybook/preview";
 
-const meta = preview.meta({ title: "Navigation/Menubar" });
+const meta = preview.meta({
+  component: Menubar,
+  subcomponents: {
+    MenubarMenu,
+    MenubarTrigger,
+    MenubarContent,
+    MenubarLabel,
+    MenubarGroup,
+    MenubarItem,
+    MenubarCheckboxItem,
+    MenubarRadioGroup,
+    MenubarRadioItem,
+    MenubarSub,
+    MenubarSubTrigger,
+    MenubarSubContent,
+    MenubarSeparator,
+    MenubarShortcut,
+    MenubarArrow,
+  },
+  parameters: {
+    docs: {
+      description: {
+        component: [
+          "A horizontal bar of top-level menus, like the menu bar of a desktop application.",
+          "",
+          "**Anatomy:** `Menubar > MenubarMenu > (MenubarTrigger + MenubarContent > (MenubarLabel · MenubarGroup · MenubarItem · MenubarCheckboxItem · MenubarRadioGroup > MenubarRadioItem · MenubarSub > (MenubarSubTrigger + MenubarSubContent) · MenubarSeparator))`.",
+          "Each top-level menu is one `MenubarMenu`; `MenubarShortcut` renders a trailing key hint inside an item.",
+        ].join("\n"),
+      },
+    },
+  },
+  title: "Navigation/Menubar",
+});
 
 function MenubarExample() {
   const [showToolbar, setShowToolbar] = useState(true);

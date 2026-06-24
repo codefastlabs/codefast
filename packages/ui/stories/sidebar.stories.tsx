@@ -45,32 +45,68 @@ import {
   SidebarContent,
   SidebarFooter,
   SidebarGroup,
+  SidebarGroupAction,
   SidebarGroupContent,
   SidebarGroupLabel,
   SidebarHeader,
+  SidebarInput,
   SidebarInset,
   SidebarMenu,
   SidebarMenuAction,
+  SidebarMenuBadge,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarMenuSkeleton,
   SidebarMenuSub,
   SidebarMenuSubButton,
   SidebarMenuSubItem,
   SidebarProvider,
   SidebarRail,
+  SidebarSeparator,
   SidebarTrigger,
   useSidebar,
 } from "#/components/sidebar";
 
 import preview from "../.storybook/preview";
 
-/**
- * Sidebar is a root composition that requires a `SidebarProvider` wrapper plus a
- * `Sidebar` + `SidebarInset` layout — there is no single prop-driven component to
- * bind. Binding `component` would force `args` onto every story, so the layout is
- * demoed via `render` instead (see Button for the prop-driven pattern).
- */
 const meta = preview.meta({
+  component: Sidebar,
+  subcomponents: {
+    SidebarProvider,
+    SidebarTrigger,
+    SidebarRail,
+    SidebarInset,
+    SidebarHeader,
+    SidebarContent,
+    SidebarFooter,
+    SidebarSeparator,
+    SidebarInput,
+    SidebarGroup,
+    SidebarGroupLabel,
+    SidebarGroupAction,
+    SidebarGroupContent,
+    SidebarMenu,
+    SidebarMenuItem,
+    SidebarMenuButton,
+    SidebarMenuAction,
+    SidebarMenuBadge,
+    SidebarMenuSkeleton,
+    SidebarMenuSub,
+    SidebarMenuSubItem,
+    SidebarMenuSubButton,
+  },
+  parameters: {
+    docs: {
+      description: {
+        component: [
+          "A composable, collapsible application sidebar with a provider that manages its state.",
+          "",
+          "**Anatomy:** `SidebarProvider > (Sidebar > SidebarHeader + SidebarContent > SidebarGroup > SidebarMenu > SidebarMenuItem > SidebarMenuButton + SidebarFooter) + SidebarInset`.",
+          "Wrap the app in `SidebarProvider`, toggle with `SidebarTrigger`, and place the main content inside `SidebarInset`.",
+        ].join("\n"),
+      },
+    },
+  },
   title: "Navigation/Sidebar",
 });
 

@@ -93,6 +93,19 @@ function RadiusSettings(): JSX.Element {
 
 const meta = preview.meta({
   component: Collapsible,
+  subcomponents: { CollapsibleTrigger, CollapsibleContent },
+  parameters: {
+    docs: {
+      description: {
+        component: [
+          "An interactive panel that expands and collapses a single section of content.",
+          "",
+          "**Anatomy:** `Collapsible > (CollapsibleTrigger + CollapsibleContent)`.",
+          "Control open state with `open`/`onOpenChange` or leave it uncontrolled with `defaultOpen`.",
+        ].join("\n"),
+      },
+    },
+  },
   title: "Layout/Collapsible",
 });
 

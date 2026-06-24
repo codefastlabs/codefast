@@ -4,6 +4,7 @@ import { expect, screen } from "storybook/test";
 import {
   AlertDialog,
   AlertDialogAction,
+  AlertDialogBody,
   AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
@@ -17,11 +18,32 @@ import { Button } from "#/components/button";
 
 import preview from "../.storybook/preview";
 
-/**
- * AlertDialog's root and parts are composition pieces without required props,
- * so they are demoed via `render` rather than bound to `component`.
- */
 const meta = preview.meta({
+  component: AlertDialog,
+  subcomponents: {
+    AlertDialogTrigger,
+    AlertDialogContent,
+    AlertDialogHeader,
+    AlertDialogMedia,
+    AlertDialogTitle,
+    AlertDialogDescription,
+    AlertDialogBody,
+    AlertDialogFooter,
+    AlertDialogCancel,
+    AlertDialogAction,
+  },
+  parameters: {
+    docs: {
+      description: {
+        component: [
+          "A modal that interrupts the user with an important confirmation and expects a deliberate response.",
+          "",
+          "**Anatomy:** `AlertDialog > AlertDialogTrigger + AlertDialogContent > (AlertDialogHeader (AlertDialogMedia · AlertDialogTitle · AlertDialogDescription) + AlertDialogFooter (AlertDialogCancel · AlertDialogAction))`.",
+          "Unlike `Dialog`, it traps focus and is only dismissed via `AlertDialogCancel`/`AlertDialogAction` — there is no outside-click close.",
+        ].join("\n"),
+      },
+    },
+  },
   title: "Overlay/AlertDialog",
 });
 

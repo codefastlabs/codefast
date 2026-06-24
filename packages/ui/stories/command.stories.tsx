@@ -12,11 +12,13 @@ import { expect } from "storybook/test";
 
 import {
   Command,
+  CommandDialog,
   CommandEmpty,
   CommandGroup,
   CommandInput,
   CommandItem,
   CommandList,
+  CommandLoading,
   CommandSeparator,
   CommandShortcut,
 } from "#/components/command";
@@ -25,6 +27,29 @@ import preview from "../.storybook/preview";
 
 const meta = preview.meta({
   component: Command,
+  subcomponents: {
+    CommandDialog,
+    CommandInput,
+    CommandList,
+    CommandEmpty,
+    CommandGroup,
+    CommandItem,
+    CommandSeparator,
+    CommandShortcut,
+    CommandLoading,
+  },
+  parameters: {
+    docs: {
+      description: {
+        component: [
+          "A fast, composable command palette with fuzzy filtering built on `cmdk`.",
+          "",
+          "**Anatomy:** `Command > CommandInput + CommandList > (CommandEmpty | CommandGroup > CommandItem | CommandSeparator | CommandLoading)`.",
+          "Wrap in `CommandDialog` for a modal palette; `CommandShortcut` renders trailing key hints inside an item.",
+        ].join("\n"),
+      },
+    },
+  },
   title: "Overlay/Command",
 });
 

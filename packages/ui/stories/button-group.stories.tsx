@@ -8,6 +8,19 @@ import preview from "../.storybook/preview";
 
 const meta = preview.meta({
   component: ButtonGroup,
+  subcomponents: { ButtonGroupSeparator, ButtonGroupText },
+  parameters: {
+    docs: {
+      description: {
+        component: [
+          "A container that visually joins related buttons (and other controls) into a single segmented unit.",
+          "",
+          "**Anatomy:** `ButtonGroup > (Button… · ButtonGroupSeparator · ButtonGroupText)`.",
+          "Place `Button`s directly inside; use `ButtonGroupSeparator` to divide segments and `ButtonGroupText` for inline labels.",
+        ].join("\n"),
+      },
+    },
+  },
   title: "Form/ButtonGroup",
 });
 

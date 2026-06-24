@@ -4,6 +4,7 @@ import { expect, screen } from "storybook/test";
 import { Button } from "#/components/button";
 import {
   DropdownMenu,
+  DropdownMenuArrow,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuGroup,
@@ -13,12 +14,44 @@ import {
   DropdownMenuRadioItem,
   DropdownMenuSeparator,
   DropdownMenuShortcut,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "#/components/dropdown-menu";
 
 import preview from "../.storybook/preview";
 
 const meta = preview.meta({
+  component: DropdownMenu,
+  subcomponents: {
+    DropdownMenuTrigger,
+    DropdownMenuContent,
+    DropdownMenuLabel,
+    DropdownMenuGroup,
+    DropdownMenuItem,
+    DropdownMenuCheckboxItem,
+    DropdownMenuRadioGroup,
+    DropdownMenuRadioItem,
+    DropdownMenuSub,
+    DropdownMenuSubTrigger,
+    DropdownMenuSubContent,
+    DropdownMenuSeparator,
+    DropdownMenuShortcut,
+    DropdownMenuArrow,
+  },
+  parameters: {
+    docs: {
+      description: {
+        component: [
+          "A menu of actions triggered by a button, with support for checkboxes, radios, and nested submenus.",
+          "",
+          "**Anatomy:** `DropdownMenu > DropdownMenuTrigger + DropdownMenuContent > (DropdownMenuLabel · DropdownMenuGroup · DropdownMenuItem · DropdownMenuCheckboxItem · DropdownMenuRadioGroup > DropdownMenuRadioItem · DropdownMenuSub > (DropdownMenuSubTrigger + DropdownMenuSubContent) · DropdownMenuSeparator)`.",
+          "`DropdownMenuShortcut` renders a trailing key hint inside an item.",
+        ].join("\n"),
+      },
+    },
+  },
   title: "Overlay/DropdownMenu",
 });
 

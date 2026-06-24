@@ -12,11 +12,21 @@ type Density = (typeof DENSITY_OPTIONS)[number];
 const DENSITY_SET = new Set<string>(DENSITY_OPTIONS);
 const isDensity = (value: string): value is Density => DENSITY_SET.has(value);
 
-/**
- * RadioGroup's root requires a controlled `value`/`defaultValue` to be useful,
- * so stories are demoed via `render` (see Accordion).
- */
 const meta = preview.meta({
+  component: RadioGroup,
+  subcomponents: { RadioGroupItem },
+  parameters: {
+    docs: {
+      description: {
+        component: [
+          "A set of mutually exclusive options where only one can be selected at a time.",
+          "",
+          "**Anatomy:** `RadioGroup > RadioGroupItem`.",
+          "Drive it with `value`/`defaultValue` + `onValueChange`; pair each item with a `Label`.",
+        ].join("\n"),
+      },
+    },
+  },
   title: "Form/RadioGroup",
 });
 

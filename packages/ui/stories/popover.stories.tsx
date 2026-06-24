@@ -14,7 +14,29 @@ import {
 
 import preview from "../.storybook/preview";
 
-const meta = preview.meta({ title: "Overlay/Popover" });
+const meta = preview.meta({
+  component: Popover,
+  subcomponents: {
+    PopoverTrigger,
+    PopoverContent,
+    PopoverHeader,
+    PopoverTitle,
+    PopoverDescription,
+  },
+  parameters: {
+    docs: {
+      description: {
+        component: [
+          "A non-modal floating panel anchored to a trigger, for rich content and quick edits.",
+          "",
+          "**Anatomy:** `Popover > PopoverTrigger + PopoverContent > (PopoverHeader (PopoverTitle · PopoverDescription) + content)`.",
+          "Tune placement with `side`/`align` on `PopoverContent`.",
+        ].join("\n"),
+      },
+    },
+  },
+  title: "Overlay/Popover",
+});
 
 export const Default = meta.story({
   render: () => (

@@ -6,6 +6,8 @@ import {
   SelectGroup,
   SelectItem,
   SelectLabel,
+  SelectScrollDownButton,
+  SelectScrollUpButton,
   SelectSeparator,
   SelectTrigger,
   SelectValue,
@@ -15,6 +17,29 @@ import preview from "../.storybook/preview";
 
 const meta = preview.meta({
   component: Select,
+  subcomponents: {
+    SelectTrigger,
+    SelectValue,
+    SelectContent,
+    SelectGroup,
+    SelectLabel,
+    SelectItem,
+    SelectSeparator,
+    SelectScrollUpButton,
+    SelectScrollDownButton,
+  },
+  parameters: {
+    docs: {
+      description: {
+        component: [
+          "A control that lets users pick a single value from a list shown in a popover.",
+          "",
+          "**Anatomy:** `Select > SelectTrigger (SelectValue) + SelectContent > SelectGroup > (SelectLabel + SelectItem + SelectSeparator)`.",
+          "Built on Radix Select — manages open/value state for you; pass `value`/`onValueChange` to control it.",
+        ].join("\n"),
+      },
+    },
+  },
   title: "Form/Select",
 });
 

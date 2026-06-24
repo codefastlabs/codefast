@@ -6,7 +6,26 @@ import { HoverCard, HoverCardContent, HoverCardTrigger } from "#/components/hove
 
 import preview from "../.storybook/preview";
 
-const meta = preview.meta({ title: "Overlay/HoverCard" });
+const meta = preview.meta({
+  component: HoverCard,
+  subcomponents: {
+    HoverCardTrigger,
+    HoverCardContent,
+  },
+  parameters: {
+    docs: {
+      description: {
+        component: [
+          "A floating card that reveals preview content when the user hovers (or focuses) the trigger.",
+          "",
+          "**Anatomy:** `HoverCard > HoverCardTrigger + HoverCardContent`.",
+          "Tune `openDelay`/`closeDelay` on the root and `side`/`align` on `HoverCardContent`.",
+        ].join("\n"),
+      },
+    },
+  },
+  title: "Overlay/HoverCard",
+});
 
 export const Default = meta.story({
   render: () => (

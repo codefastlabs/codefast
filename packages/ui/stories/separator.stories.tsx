@@ -1,4 +1,4 @@
-import { Separator } from "#/components/separator";
+import { Separator, SeparatorItem } from "#/components/separator";
 
 import preview from "../.storybook/preview";
 
@@ -10,8 +10,19 @@ const meta = preview.meta({
     orientation: { control: "radio", options: ["horizontal", "vertical"] },
   },
   component: Separator,
+  subcomponents: { SeparatorItem },
   parameters: {
     controls: { include: ["orientation", "align", "decorative"] },
+    docs: {
+      description: {
+        component: [
+          "A thin rule that visually or semantically divides content.",
+          "",
+          "**Anatomy:** `Separator` standalone, or `Separator + SeparatorItem` to float a label over the line.",
+          "Choose `orientation` (`horizontal` · `vertical`) and `align`; `decorative` defaults to `true` so it is hidden from assistive tech.",
+        ].join("\n"),
+      },
+    },
   },
   title: "Layout/Separator",
 });

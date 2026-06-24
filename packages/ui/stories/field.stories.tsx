@@ -2,6 +2,7 @@ import {
   Field,
   FieldContent,
   FieldDescription,
+  FieldError,
   FieldGroup,
   FieldLabel,
   FieldLegend,
@@ -16,11 +17,31 @@ import { Textarea } from "#/components/textarea";
 
 import preview from "../.storybook/preview";
 
-/**
- * Field is a layout/composition primitive — demoed via `render`. Its root props
- * are optional, but the meaningful demos all assemble several sub-components.
- */
 const meta = preview.meta({
+  component: Field,
+  subcomponents: {
+    FieldLabel,
+    FieldContent,
+    FieldDescription,
+    FieldError,
+    FieldTitle,
+    FieldGroup,
+    FieldSet,
+    FieldLegend,
+    FieldSeparator,
+  },
+  parameters: {
+    docs: {
+      description: {
+        component: [
+          "A layout primitive that arranges a control with its label, description, and validation message.",
+          "",
+          "**Anatomy:** `FieldSet > FieldLegend + FieldGroup > Field > (FieldLabel + FieldContent + FieldDescription + FieldError)`.",
+          "Use `FieldSet`/`FieldLegend` to group related fields and `FieldSeparator` to divide sections; all parts are styling-only.",
+        ].join("\n"),
+      },
+    },
+  },
   title: "Form/Field",
 });
 

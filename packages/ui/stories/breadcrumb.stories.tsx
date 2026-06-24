@@ -21,6 +21,26 @@ import preview from "../.storybook/preview";
 
 const meta = preview.meta({
   component: Breadcrumb,
+  subcomponents: {
+    BreadcrumbList,
+    BreadcrumbItem,
+    BreadcrumbLink,
+    BreadcrumbPage,
+    BreadcrumbSeparator,
+    BreadcrumbEllipsis,
+  },
+  parameters: {
+    docs: {
+      description: {
+        component: [
+          "Displays the path to the current resource as a hierarchy of links.",
+          "",
+          "**Anatomy:** `Breadcrumb > BreadcrumbList > BreadcrumbItem > (BreadcrumbLink | BreadcrumbPage)` separated by `BreadcrumbSeparator`, with `BreadcrumbEllipsis` for collapsed segments.",
+          "`BreadcrumbPage` marks the current page; collapse middle items behind `BreadcrumbEllipsis`.",
+        ].join("\n"),
+      },
+    },
+  },
   title: "Navigation/Breadcrumb",
 });
 

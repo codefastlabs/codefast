@@ -17,12 +17,30 @@ import { Label } from "#/components/label";
 
 import preview from "../.storybook/preview";
 
-/**
- * Dialog is a composition of primitives (Trigger, Content, Header, Body,
- * Footer, ...). Each story wires them together via `render` rather than a
- * single `component`, since usage is composition-driven.
- */
 const meta = preview.meta({
+  component: Dialog,
+  subcomponents: {
+    DialogTrigger,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogDescription,
+    DialogBody,
+    DialogFooter,
+    DialogClose,
+  },
+  parameters: {
+    docs: {
+      description: {
+        component: [
+          "A modal overlay that interrupts the page to focus the user on a single task.",
+          "",
+          "**Anatomy:** `Dialog > DialogTrigger + DialogContent > (DialogHeader (DialogTitle · DialogDescription) + DialogBody + DialogFooter (DialogClose))`.",
+          "Wrap the activator in `DialogTrigger asChild`; `DialogContent` renders in a portal with a backdrop and focus trap.",
+        ].join("\n"),
+      },
+    },
+  },
   title: "Overlay/Dialog",
 });
 
