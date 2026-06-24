@@ -57,10 +57,22 @@ function TemperatureSlider(): JSX.Element {
 }
 
 const meta = preview.meta({
+  args: { defaultValue: [50], disabled: false, max: 100, min: 0, orientation: "horizontal", step: 1 },
+  argTypes: {
+    asChild: { table: { disable: true } },
+    onValueChange: { table: { disable: true } },
+    onValueCommit: { table: { disable: true } },
+    value: { table: { disable: true } },
+  },
+  component: Slider,
   title: "Form/Slider",
 });
 
 export const Default = meta.story({
+  render: (args) => <Slider {...args} className="mx-auto w-full max-w-xs" />,
+});
+
+export const Composed = meta.story({
   render: () => <VolumeAndRangeSlider />,
 });
 

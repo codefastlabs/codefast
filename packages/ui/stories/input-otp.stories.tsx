@@ -4,9 +4,24 @@ import { InputOTP, InputOTPGroup, InputOTPSeparator, InputOTPSlot, REGEXP_ONLY_D
 
 import preview from "../.storybook/preview";
 
-const meta = preview.meta({
-  component: InputOTP,
-  subcomponents: { InputOTPGroup, InputOTPSlot, InputOTPSeparator },
+/**
+ * OTPInput's props are a union (`render` XOR `children`), so binding `component`
+ * makes `meta.story({ render })` resolve to `never`. Expose a flat custom args
+ * shape and apply `maxLength`/`disabled` explicitly; keep `InputOTP` documented
+ * via `subcomponents`.
+ */
+interface InputOtpArgs {
+  disabled: boolean;
+  maxLength: number;
+}
+
+const meta = preview.type<{ args: InputOtpArgs }>().meta({
+  args: { disabled: false, maxLength: 6 },
+  argTypes: {
+    disabled: { control: "boolean" },
+    maxLength: { control: "number" },
+  },
+  subcomponents: { InputOTP, InputOTPGroup, InputOTPSlot, InputOTPSeparator },
   parameters: {
     docs: {
       description: {
@@ -23,9 +38,9 @@ const meta = preview.meta({
 });
 
 export const Default = meta.story({
-  render: () => (
+  render: ({ disabled, maxLength }) => (
     <div className="flex flex-col items-center gap-4">
-      <InputOTP maxLength={6}>
+      <InputOTP disabled={disabled} maxLength={maxLength}>
         <InputOTPGroup>
           <InputOTPSlot index={0} />
           <InputOTPSlot index={1} />

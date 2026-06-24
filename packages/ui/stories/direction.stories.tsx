@@ -8,8 +8,21 @@ import preview from "../.storybook/preview";
  * components via Radix. It has no visual output of its own, so each story wraps
  * sample content in `render`.
  */
-const meta = preview.meta({
-  component: DirectionProvider,
+/**
+ * DirectionProvider is a Radix context provider with no DOM of its own, so
+ * Storybook can't infer its args from `component`. Expose a flat custom args
+ * shape and document the provider via `subcomponents`.
+ */
+interface DirectionArgs {
+  dir: "ltr" | "rtl";
+}
+
+const meta = preview.type<{ args: DirectionArgs }>().meta({
+  args: { dir: "ltr" },
+  argTypes: {
+    dir: { control: "radio", options: ["ltr", "rtl"] },
+  },
+  subcomponents: { DirectionProvider },
   parameters: {
     docs: {
       description: {
@@ -25,14 +38,14 @@ const meta = preview.meta({
 });
 
 export const Default = meta.story({
-  render: () => (
-    <DirectionProvider dir="ltr">
-      <div dir="ltr" className="flex w-full max-w-sm items-center gap-2 rounded-md border p-4">
+  render: ({ dir }) => (
+    <DirectionProvider dir={dir}>
+      <div dir={dir} className="flex w-full max-w-sm items-center gap-2 rounded-md border p-4">
         <Button size="sm">Save</Button>
         <Button size="sm" variant="outline">
           Cancel
         </Button>
-        <span className="ms-auto text-sm text-muted-foreground">LTR</span>
+        <span className="ms-auto text-sm text-muted-foreground">{dir.toUpperCase()}</span>
       </div>
     </DirectionProvider>
   ),

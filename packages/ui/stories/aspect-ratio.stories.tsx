@@ -4,19 +4,18 @@ import { AspectRatio } from "#/components/aspect-ratio";
 
 import preview from "../.storybook/preview";
 
-/**
- * AspectRatio's root requires a `ratio` prop, so it's demoed via `render`
- * rather than bound to `component` (Pattern B, see Accordion).
- */
 const meta = preview.meta({
+  args: { ratio: 16 / 9 },
+  argTypes: { ratio: { control: "number" } },
+  component: AspectRatio,
   title: "Display/AspectRatio",
 });
 
 export const Default = meta.story({
-  render: () => (
+  render: (args) => (
     <div className="w-full max-w-sm">
       <div className="overflow-hidden rounded-xl border">
-        <AspectRatio ratio={16 / 9}>
+        <AspectRatio {...args}>
           <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-primary/80 to-violet-500">
             <span className="flex size-12 items-center justify-center rounded-full bg-white/20 backdrop-blur-sm">
               <PlayIcon className="size-5 fill-white text-white" />
