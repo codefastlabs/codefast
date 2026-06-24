@@ -15,30 +15,16 @@ import {
 
 import preview from "../.storybook/preview";
 
-/**
- * Subcomponents (the `SelectTrigger`/`SelectContent`/… tabs) get a docs-only
- * props table — Storybook Controls bind to one component, so they can't be made
- * interactive. The official workaround is to FLATTEN a subcomponent prop worth
- * controlling into the story args and pass it down in `render`: here
- * `contentPosition` drives `SelectContent`'s `position`.
- */
-interface SelectArgs {
-  contentPosition: "item-aligned" | "popper";
-  dir: "ltr" | "rtl";
-  disabled: boolean;
-  required: boolean;
-}
-
-const meta = preview.type<{ args: SelectArgs }>().meta({
-  args: { contentPosition: "item-aligned", dir: "ltr", disabled: false, required: false },
+const meta = preview.meta({
+  args: { dir: "ltr", disabled: false, required: false },
   argTypes: {
-    contentPosition: { control: "radio", options: ["item-aligned", "popper"] },
-    dir: { control: "radio", options: ["ltr", "rtl"] },
-    disabled: { control: "boolean" },
-    required: { control: "boolean" },
+    onOpenChange: { table: { disable: true } },
+    onValueChange: { table: { disable: true } },
+    open: { table: { disable: true } },
+    value: { table: { disable: true } },
   },
+  component: Select,
   subcomponents: {
-    Select,
     SelectTrigger,
     SelectValue,
     SelectContent,
@@ -65,12 +51,12 @@ const meta = preview.type<{ args: SelectArgs }>().meta({
 });
 
 export const Default = meta.story({
-  render: ({ contentPosition, ...args }) => (
+  render: (args) => (
     <Select {...args}>
       <SelectTrigger className="w-44">
         <SelectValue placeholder="Choose framework" />
       </SelectTrigger>
-      <SelectContent position={contentPosition}>
+      <SelectContent>
         <SelectGroup>
           <SelectLabel>Framework</SelectLabel>
           <SelectItem value="react">React</SelectItem>
