@@ -26,6 +26,14 @@ import {
 import preview from "../.storybook/preview";
 
 const meta = preview.meta({
+  args: { loop: false, shouldFilter: true },
+  argTypes: {
+    asChild: { table: { disable: true } },
+    defaultValue: { table: { disable: true } },
+    filter: { table: { disable: true } },
+    onValueChange: { table: { disable: true } },
+    value: { table: { disable: true } },
+  },
   component: Command,
   subcomponents: {
     CommandDialog,
@@ -54,8 +62,8 @@ const meta = preview.meta({
 });
 
 export const Default = meta.story({
-  render: () => (
-    <Command className="w-full max-w-xs rounded-xl border shadow-md">
+  render: (args) => (
+    <Command {...args} className="w-full max-w-xs rounded-xl border shadow-md">
       <CommandInput placeholder="Type a command or search…" />
       <CommandList>
         <CommandEmpty>No results found.</CommandEmpty>

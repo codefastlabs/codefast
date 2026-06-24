@@ -10,6 +10,13 @@ import preview from "../.storybook/preview";
  * function, which the stories trigger via `render`.
  */
 const meta = preview.meta({
+  args: { closeButton: false, expand: false, position: "bottom-right", richColors: false },
+  argTypes: {
+    position: {
+      control: "select",
+      options: ["top-left", "top-center", "top-right", "bottom-left", "bottom-center", "bottom-right"],
+    },
+  },
   component: Toaster,
   parameters: {
     docs: {
@@ -26,9 +33,9 @@ const meta = preview.meta({
 });
 
 export const Default = meta.story({
-  render: () => (
+  render: (args) => (
     <div className="flex flex-wrap justify-center gap-2">
-      <Toaster />
+      <Toaster {...args} />
       <Button variant="outline" onClick={() => toast("Event has been created.")}>
         Show toast
       </Button>

@@ -4,6 +4,7 @@ import { Card, CardAction, CardContent, CardDescription, CardFooter, CardHeader,
 import preview from "../.storybook/preview";
 
 const meta = preview.meta({
+  args: { size: "default" },
   component: Card,
   subcomponents: { CardHeader, CardTitle, CardDescription, CardAction, CardContent, CardFooter },
   parameters: {
@@ -22,8 +23,8 @@ const meta = preview.meta({
 });
 
 export const Default = meta.story({
-  render: () => (
-    <Card className="w-full max-w-xs">
+  render: (args) => (
+    <Card {...args} className="w-full max-w-xs">
       <CardHeader>
         <CardTitle>Team plan</CardTitle>
         <CardDescription>Up to 20 seats, unlimited projects.</CardDescription>

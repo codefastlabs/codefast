@@ -7,6 +7,10 @@ import preview from "../.storybook/preview";
  * keeping `component` bound to the Root (Pattern C, see Card).
  */
 const meta = preview.meta({
+  args: { size: "default" },
+  argTypes: {
+    asChild: { table: { disable: true } },
+  },
   component: Avatar,
   subcomponents: { AvatarImage, AvatarFallback, AvatarBadge, AvatarGroup, AvatarGroupCount },
   parameters: {
@@ -25,8 +29,8 @@ const meta = preview.meta({
 });
 
 export const Default = meta.story({
-  render: () => (
-    <Avatar>
+  render: (args) => (
+    <Avatar {...args}>
       <AvatarImage src="https://github.com/codefastlabs.png" alt="@codefast" className="grayscale" />
       <AvatarFallback>CN</AvatarFallback>
     </Avatar>
