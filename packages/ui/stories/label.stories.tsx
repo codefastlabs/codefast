@@ -5,7 +5,13 @@ import preview from "../.storybook/preview";
 
 const meta = preview.meta({
   args: { children: "Email address" },
+  argTypes: {
+    children: { control: "text" },
+  },
   component: Label,
+  parameters: {
+    controls: { include: ["children"] },
+  },
   title: "Form/Label",
 });
 

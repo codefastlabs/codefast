@@ -5,8 +5,24 @@ import { Button } from "#/components/button";
 import preview from "../.storybook/preview";
 
 const meta = preview.meta({
-  args: { children: "Button" },
+  args: { children: "Button", size: "default", variant: "default" },
+  argTypes: {
+    asChild: { table: { disable: true } },
+    children: { control: "text" },
+    disabled: { control: "boolean" },
+    size: {
+      control: "select",
+      options: ["default", "xs", "sm", "lg", "icon", "icon-xs", "icon-sm", "icon-lg"],
+    },
+    variant: {
+      control: "radio",
+      options: ["default", "secondary", "destructive", "outline", "ghost", "link"],
+    },
+  },
   component: Button,
+  parameters: {
+    controls: { include: ["variant", "size", "children", "disabled"] },
+  },
   title: "Form/Button",
 });
 

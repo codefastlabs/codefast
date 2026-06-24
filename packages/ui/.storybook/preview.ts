@@ -17,6 +17,7 @@ export default definePreview({
         color: /(?:background|color)$/i,
         date: /Date$/i,
       },
+      sort: "requiredFirst",
     },
   },
 

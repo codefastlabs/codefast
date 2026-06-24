@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { expect } from "storybook/test";
 
 import { Label } from "#/components/label";
@@ -7,31 +6,26 @@ import { Switch } from "#/components/switch";
 import preview from "../.storybook/preview";
 
 const meta = preview.meta({
+  args: { defaultChecked: false, disabled: false, size: "default" },
+  argTypes: {
+    defaultChecked: { control: "boolean" },
+    disabled: { control: "boolean" },
+    size: { control: "radio", options: ["default", "sm"] },
+  },
   component: Switch,
+  parameters: {
+    controls: { include: ["size", "defaultChecked", "disabled"] },
+  },
   title: "Form/Switch",
 });
 
 export const Default = meta.story({
-  render: () => {
-    function Render() {
-      const [switched, setSwitched] = useState(true);
-
-      return (
-        <div className="space-y-4">
-          <div className="flex items-center gap-3">
-            <Switch id="sw1" checked={switched} onCheckedChange={setSwitched} />
-            <Label htmlFor="sw1">Notifications {switched ? "on" : "off"}</Label>
-          </div>
-          <div className="flex items-center gap-3">
-            <Switch id="sw2" defaultChecked />
-            <Label htmlFor="sw2">Marketing emails</Label>
-          </div>
-        </div>
-      );
-    }
-
-    return <Render />;
-  },
+  render: (args) => (
+    <div className="flex items-center gap-3">
+      <Switch id="switch-default" {...args} />
+      <Label htmlFor="switch-default">Notifications</Label>
+    </div>
+  ),
 });
 
 export const Small = meta.story({

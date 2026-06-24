@@ -1,4 +1,4 @@
-import { BoldIcon, ItalicIcon, UnderlineIcon } from "lucide-react";
+import { BoldIcon, ItalicIcon } from "lucide-react";
 import { expect } from "storybook/test";
 
 import { Toggle } from "#/components/toggle";
@@ -6,26 +6,29 @@ import { Toggle } from "#/components/toggle";
 import preview from "../.storybook/preview";
 
 const meta = preview.meta({
-  args: { "aria-label": "Italic", children: <ItalicIcon /> },
+  args: {
+    "aria-label": "Italic",
+    children: <ItalicIcon />,
+    defaultPressed: false,
+    disabled: false,
+    size: "default",
+    variant: "default",
+  },
+  argTypes: {
+    children: { table: { disable: true } },
+    defaultPressed: { control: "boolean" },
+    disabled: { control: "boolean" },
+    size: { control: "radio", options: ["default", "sm", "lg"] },
+    variant: { control: "radio", options: ["default", "outline"] },
+  },
   component: Toggle,
+  parameters: {
+    controls: { include: ["variant", "size", "defaultPressed", "disabled"] },
+  },
   title: "Form/Toggle",
 });
 
-export const Default = meta.story({
-  render: () => (
-    <div className="flex gap-1">
-      <Toggle aria-label="Bold" size="sm">
-        <BoldIcon />
-      </Toggle>
-      <Toggle aria-label="Italic" size="sm" defaultPressed>
-        <ItalicIcon />
-      </Toggle>
-      <Toggle aria-label="Underline" size="sm">
-        <UnderlineIcon />
-      </Toggle>
-    </div>
-  ),
-});
+export const Default = meta.story();
 
 export const WithText = meta.story({
   args: {

@@ -4,15 +4,23 @@ import { NativeSelect, NativeSelectOptGroup, NativeSelectOption } from "#/compon
 import preview from "../.storybook/preview";
 
 const meta = preview.meta({
+  args: { disabled: false, size: "default" },
+  argTypes: {
+    disabled: { control: "boolean" },
+    size: { control: "radio", options: ["default", "sm"] },
+  },
   component: NativeSelect,
+  parameters: {
+    controls: { include: ["size", "disabled"] },
+  },
   title: "Form/NativeSelect",
 });
 
 export const Default = meta.story({
-  render: () => (
+  render: (args) => (
     <div className="grid gap-1.5">
       <Label htmlFor="ns-country">Country</Label>
-      <NativeSelect id="ns-country">
+      <NativeSelect id="ns-country" {...args}>
         <NativeSelectOptGroup label="Asia">
           <NativeSelectOption value="vn">Vietnam</NativeSelectOption>
           <NativeSelectOption value="jp">Japan</NativeSelectOption>

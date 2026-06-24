@@ -4,11 +4,26 @@ import { Spinner } from "#/components/spinner";
 import preview from "../.storybook/preview";
 
 const meta = preview.meta({
+  args: { loading: true },
+  argTypes: {
+    loading: { control: "boolean" },
+  },
   component: Spinner,
+  parameters: {
+    controls: { include: ["loading"] },
+  },
   title: "Display/Spinner",
 });
 
 export const Default = meta.story({
+  render: (args) => (
+    <div className="flex w-full max-w-xs items-center justify-center">
+      <Spinner className="size-8" {...args} />
+    </div>
+  ),
+});
+
+export const InContext = meta.story({
   render: () => (
     <div className="flex w-full max-w-xs flex-col items-center gap-4">
       <Button disabled>

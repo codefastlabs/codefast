@@ -7,11 +7,28 @@ import { Textarea } from "#/components/textarea";
 import preview from "../.storybook/preview";
 
 const meta = preview.meta({
+  args: { disabled: false, placeholder: "Type your message here.", rows: 3 },
+  argTypes: {
+    disabled: { control: "boolean" },
+    placeholder: { control: "text" },
+    rows: { control: { type: "number", min: 1, max: 20, step: 1 } },
+  },
   component: Textarea,
+  parameters: {
+    controls: { include: ["placeholder", "rows", "disabled"] },
+  },
   title: "Form/Textarea",
 });
 
 export const Default = meta.story({
+  render: (args) => (
+    <div className="w-full max-w-xs">
+      <Textarea aria-label="Message" {...args} />
+    </div>
+  ),
+});
+
+export const Feedback = meta.story({
   render: () => (
     <div className="w-full max-w-xs space-y-2">
       <Label htmlFor="textarea-feedback">Your feedback</Label>

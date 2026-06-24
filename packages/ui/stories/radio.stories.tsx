@@ -6,9 +6,6 @@ import { Radio } from "#/components/radio";
 
 import preview from "../.storybook/preview";
 
-const SIZES = ["Small", "Medium", "Large"] as const;
-type Size = (typeof SIZES)[number];
-
 const VOTES = ["Yes", "No", "Maybe"];
 
 /**
@@ -16,37 +13,25 @@ const VOTES = ["Yes", "No", "Maybe"];
  * stories are demoed via `render` (see Accordion).
  */
 const meta = preview.meta({
+  args: { defaultChecked: false, disabled: false },
+  argTypes: {
+    defaultChecked: { control: "boolean" },
+    disabled: { control: "boolean" },
+  },
   component: Radio,
+  parameters: {
+    controls: { include: ["defaultChecked", "disabled"] },
+  },
   title: "Form/Radio",
 });
 
 export const Default = meta.story({
-  render: () => {
-    function Render() {
-      const [selected, setSelected] = useState<Size>("Medium");
-
-      return (
-        <div className="flex flex-col gap-3">
-          {SIZES.map((size) => (
-            <div key={size} className="flex items-center gap-2">
-              <Radio
-                checked={selected === size}
-                id={`radio-size-${size}`}
-                name="size"
-                value={size}
-                onValueChange={(value) => {
-                  setSelected(value as Size);
-                }}
-              />
-              <Label htmlFor={`radio-size-${size}`}>{size}</Label>
-            </div>
-          ))}
-        </div>
-      );
-    }
-
-    return <Render />;
-  },
+  render: (args) => (
+    <div className="flex items-center gap-2">
+      <Radio id="radio-default" name="radio-default" value="default" {...args} />
+      <Label htmlFor="radio-default">Medium</Label>
+    </div>
+  ),
 });
 
 export const Horizontal = meta.story({

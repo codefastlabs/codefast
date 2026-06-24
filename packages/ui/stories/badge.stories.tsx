@@ -5,8 +5,19 @@ import { Badge } from "#/components/badge";
 import preview from "../.storybook/preview";
 
 const meta = preview.meta({
-  args: { children: "Badge" },
+  args: { children: "Badge", variant: "default" },
+  argTypes: {
+    asChild: { table: { disable: true } },
+    children: { control: "text" },
+    variant: {
+      control: "radio",
+      options: ["default", "secondary", "destructive", "outline", "ghost", "link"],
+    },
+  },
   component: Badge,
+  parameters: {
+    controls: { include: ["variant", "children"] },
+  },
   title: "Display/Badge",
 });
 

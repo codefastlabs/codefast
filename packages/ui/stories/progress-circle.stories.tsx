@@ -3,8 +3,19 @@ import { ProgressCircle } from "#/components/progress-circle";
 import preview from "../.storybook/preview";
 
 const meta = preview.meta({
-  args: { showValue: true, value: 72 },
+  args: { showValue: true, size: "md", thickness: "regular", value: 72, variant: "default" },
+  argTypes: {
+    showValue: { control: "boolean" },
+    size: { control: "select", options: ["sm", "md", "lg", "xl", "2xl"] },
+    strokeWidth: { control: { type: "number", min: 1, max: 16, step: 1 } },
+    thickness: { control: "radio", options: ["thin", "regular", "thick"] },
+    value: { control: { type: "range", min: 0, max: 100, step: 1 } },
+    variant: { control: "radio", options: ["default", "destructive"] },
+  },
   component: ProgressCircle,
+  parameters: {
+    controls: { include: ["value", "size", "thickness", "variant", "showValue", "strokeWidth"] },
+  },
   title: "Feedback/ProgressCircle",
 });
 

@@ -3,11 +3,28 @@ import { Separator } from "#/components/separator";
 import preview from "../.storybook/preview";
 
 const meta = preview.meta({
+  args: { align: "center", decorative: true, orientation: "horizontal" },
+  argTypes: {
+    align: { control: "radio", options: ["start", "center", "end"] },
+    decorative: { control: "boolean" },
+    orientation: { control: "radio", options: ["horizontal", "vertical"] },
+  },
   component: Separator,
+  parameters: {
+    controls: { include: ["orientation", "align", "decorative"] },
+  },
   title: "Layout/Separator",
 });
 
 export const Default = meta.story({
+  render: (args) => (
+    <div className="flex h-24 w-full max-w-xs items-center justify-center">
+      <Separator {...args} />
+    </div>
+  ),
+});
+
+export const Showcase = meta.story({
   render: () => (
     <div className="w-full max-w-xs">
       <div className="space-y-1">

@@ -6,14 +6,22 @@ import { InputSearch } from "#/components/input-search";
 import preview from "../.storybook/preview";
 
 const meta = preview.meta({
+  args: { disabled: false, placeholder: "Search components…" },
+  argTypes: {
+    disabled: { control: "boolean" },
+    placeholder: { control: "text" },
+  },
   component: InputSearch,
+  parameters: {
+    controls: { include: ["placeholder", "disabled"] },
+  },
   title: "Form/InputSearch",
 });
 
 export const Default = meta.story({
-  render: () => (
+  render: (args) => (
     <div className="w-full max-w-xs">
-      <InputSearch placeholder="Search components…" />
+      <InputSearch {...args} />
     </div>
   ),
 });

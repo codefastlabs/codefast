@@ -6,21 +6,27 @@ import { Label } from "#/components/label";
 import preview from "../.storybook/preview";
 
 const meta = preview.meta({
+  args: { disabled: false, placeholder: "you@example.com", type: "email" },
+  argTypes: {
+    disabled: { control: "boolean" },
+    placeholder: { control: "text" },
+    type: {
+      control: "select",
+      options: ["text", "email", "password", "number", "search", "tel", "url"],
+    },
+  },
   component: Input,
+  parameters: {
+    controls: { include: ["type", "placeholder", "disabled"] },
+  },
   title: "Form/Input",
 });
 
 export const Default = meta.story({
-  render: () => (
-    <div className="w-full max-w-xs space-y-3">
-      <div className="grid gap-1.5">
-        <Label htmlFor="demo-email">Email address</Label>
-        <Input id="demo-email" type="email" placeholder="you@example.com" />
-      </div>
-      <div className="grid gap-1.5">
-        <Label htmlFor="demo-password">Password</Label>
-        <Input id="demo-password" type="password" placeholder="••••••••" />
-      </div>
+  render: (args) => (
+    <div className="grid w-full max-w-xs gap-1.5">
+      <Label htmlFor="input-default">Email address</Label>
+      <Input id="input-default" {...args} />
     </div>
   ),
 });

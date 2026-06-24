@@ -8,7 +8,14 @@ import preview from "../.storybook/preview";
  * keeping `component` bound to the Root (Pattern C, see Card).
  */
 const meta = preview.meta({
+  args: { children: "⌘" },
+  argTypes: {
+    children: { control: "text" },
+  },
   component: Kbd,
+  parameters: {
+    controls: { include: ["children"] },
+  },
   title: "Display/Kbd",
 });
 
@@ -18,7 +25,9 @@ const SHORTCUTS = [
   { action: "Toggle sidebar", keys: ["⌘", "B"] },
 ];
 
-export const Default = meta.story({
+export const Default = meta.story();
+
+export const Shortcuts = meta.story({
   render: () => (
     <div className="w-full max-w-xs space-y-2.5">
       {SHORTCUTS.map(({ action, keys }) => (
