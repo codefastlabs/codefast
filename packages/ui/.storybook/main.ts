@@ -18,7 +18,11 @@ export default defineMain({
     reactDocgenTypescriptOptions: {
       shouldExtractLiteralValuesFromEnum: true,
       shouldRemoveUndefinedFromOptional: true,
-      // Keep radix-ui / own props; drop the inherited HTML-attribute noise.
+      // Keep own + radix-ui props (so subcomponent tabs document the real API,
+      // e.g. SelectContent's `position`/`onEscapeKeyDown`); only drop the raw
+      // HTML-attribute noise inherited from @types/react. NOTE: subcomponent tabs
+      // are documentation only — Storybook Controls bind to the story's root, so
+      // those tables never get interactive controls (by design).
       propFilter: (prop) => {
         const file = prop.parent?.fileName ?? "";
 
