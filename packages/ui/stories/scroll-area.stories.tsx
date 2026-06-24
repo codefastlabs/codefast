@@ -1,27 +1,47 @@
-import type { Meta, StoryObj } from "@storybook/react-vite";
-
 import { ScrollArea, ScrollAreaScrollbar } from "#/components/scroll-area";
+
+import preview from "../.storybook/preview";
 
 /**
  * ScrollArea is a composition with optional root props. Demoed via `render`
  * while keeping `component` bound to the Root (Pattern C, see Card).
  */
-const meta = {
+const meta = preview.meta({
   component: ScrollArea,
   title: "Layout/ScrollArea",
-} satisfies Meta<typeof ScrollArea>;
-
-export default meta;
-
-type Story = StoryObj<typeof meta>;
+});
 
 const RELEASES = [
-  { version: "v2.5.0", date: "Jun 2", notes: "New Resizable component and dark-mode polish." },
-  { version: "v2.4.1", date: "May 24", notes: "Fixed focus ring contrast on outline buttons." },
-  { version: "v2.4.0", date: "May 18", notes: "Added Input OTP and Field validation helpers." },
-  { version: "v2.3.0", date: "May 9", notes: "Carousel now supports vertical orientation." },
-  { version: "v2.2.0", date: "Apr 30", notes: "Introduced Sonner toasts and Progress Circle." },
-  { version: "v2.1.0", date: "Apr 21", notes: "Reworked Sidebar with collapsible groups." },
+  {
+    version: "v2.5.0",
+    date: "Jun 2",
+    notes: "New Resizable component and dark-mode polish.",
+  },
+  {
+    version: "v2.4.1",
+    date: "May 24",
+    notes: "Fixed focus ring contrast on outline buttons.",
+  },
+  {
+    version: "v2.4.0",
+    date: "May 18",
+    notes: "Added Input OTP and Field validation helpers.",
+  },
+  {
+    version: "v2.3.0",
+    date: "May 9",
+    notes: "Carousel now supports vertical orientation.",
+  },
+  {
+    version: "v2.2.0",
+    date: "Apr 30",
+    notes: "Introduced Sonner toasts and Progress Circle.",
+  },
+  {
+    version: "v2.1.0",
+    date: "Apr 21",
+    notes: "Reworked Sidebar with collapsible groups.",
+  },
 ];
 
 const WORKS = [
@@ -39,7 +59,7 @@ const WORKS = [
   },
 ];
 
-export const Default: Story = {
+export const Default = meta.story({
   render: () => (
     <ScrollArea className="h-56 w-64 rounded-xl border border-border">
       <div className="p-4">
@@ -58,9 +78,9 @@ export const Default: Story = {
       </div>
     </ScrollArea>
   ),
-};
+});
 
-export const Horizontal: Story = {
+export const Horizontal = meta.story({
   render: () => (
     <ScrollArea className="w-96 rounded-md border whitespace-nowrap">
       <div className="flex w-max space-x-4 p-4">
@@ -84,4 +104,4 @@ export const Horizontal: Story = {
       <ScrollAreaScrollbar orientation="horizontal" />
     </ScrollArea>
   ),
-};
+});

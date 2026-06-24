@@ -1,22 +1,19 @@
-import type { Meta, StoryObj } from "@storybook/react-vite";
 import { AlignCenterIcon, AlignLeftIcon, AlignRightIcon, BoldIcon, ItalicIcon, UnderlineIcon } from "lucide-react";
-import { expect, userEvent, within } from "storybook/test";
+import { expect } from "storybook/test";
 
 import { ToggleGroup, ToggleGroupItem } from "#/components/toggle-group";
+
+import preview from "../.storybook/preview";
 
 /**
  * ToggleGroup's root requires a `type` prop ("single"/"multiple"), so stories
  * are demoed via `render` (see Accordion).
  */
-const meta = {
+const meta = preview.meta({
   title: "Form/ToggleGroup",
-} satisfies Meta;
+});
 
-export default meta;
-
-type Story = StoryObj;
-
-export const Default: Story = {
+export const Default = meta.story({
   render: () => (
     <div className="flex flex-col items-center gap-4">
       <ToggleGroup type="single" defaultValue="left">
@@ -43,9 +40,9 @@ export const Default: Story = {
       </ToggleGroup>
     </div>
   ),
-};
+});
 
-export const Outline: Story = {
+export const Outline = meta.story({
   render: () => (
     <ToggleGroup variant="outline" type="single" defaultValue="all">
       <ToggleGroupItem value="all" aria-label="Toggle all">
@@ -56,9 +53,9 @@ export const Outline: Story = {
       </ToggleGroupItem>
     </ToggleGroup>
   ),
-};
+});
 
-export const Vertical: Story = {
+export const Vertical = meta.story({
   render: () => (
     <ToggleGroup type="multiple" orientation="vertical" spacing={1} defaultValue={["bold", "italic"]}>
       <ToggleGroupItem value="bold" aria-label="Toggle bold">
@@ -72,9 +69,9 @@ export const Vertical: Story = {
       </ToggleGroupItem>
     </ToggleGroup>
   ),
-};
+});
 
-export const Sizes: Story = {
+export const Sizes = meta.story({
   render: () => (
     <div className="flex flex-col gap-4">
       <ToggleGroup type="single" size="sm" defaultValue="top" variant="outline">
@@ -95,10 +92,9 @@ export const Sizes: Story = {
       </ToggleGroup>
     </div>
   ),
-};
+});
 
-/** Interaction test — runs in a real browser via `vitest run --project=storybook`. */
-export const SelectsOnClick: Story = {
+export const SelectsOnClick = meta.story({
   render: () => (
     <ToggleGroup type="single">
       <ToggleGroupItem aria-label="Align left" value="left">
@@ -109,11 +105,12 @@ export const SelectsOnClick: Story = {
       </ToggleGroupItem>
     </ToggleGroup>
   ),
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const item = canvas.getByRole("radio", { name: "Align left" });
+});
 
-    await userEvent.click(item);
-    await expect(item).toHaveAttribute("aria-checked", "true");
-  },
-};
+/** Interaction test (CSF Next `.test()`) — runs in a real browser via `test:stories`. */
+SelectsOnClick.test("selects on click", async ({ canvas, userEvent }) => {
+  const item = canvas.getByRole("radio", { name: "Align left" });
+
+  await userEvent.click(item);
+  await expect(item).toHaveAttribute("aria-checked", "true");
+});

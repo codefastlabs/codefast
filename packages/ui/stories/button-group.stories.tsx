@@ -1,20 +1,17 @@
-import type { Meta, StoryObj } from "@storybook/react-vite";
 import { ChevronDownIcon, MinusIcon, PlusIcon } from "lucide-react";
 
 import { Button } from "#/components/button";
 import { ButtonGroup, ButtonGroupSeparator, ButtonGroupText } from "#/components/button-group";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "#/components/dropdown-menu";
 
-const meta = {
+import preview from "../.storybook/preview";
+
+const meta = preview.meta({
   component: ButtonGroup,
   title: "Form/ButtonGroup",
-} satisfies Meta<typeof ButtonGroup>;
+});
 
-export default meta;
-
-type Story = StoryObj<typeof meta>;
-
-export const Default: Story = {
+export const Default = meta.story({
   render: () => (
     <div className="flex flex-col items-center gap-4">
       {/* Split button: primary action + dropdown of related actions */}
@@ -45,9 +42,9 @@ export const Default: Story = {
       </ButtonGroup>
     </div>
   ),
-};
+});
 
-export const Orientation: Story = {
+export const Orientation = meta.story({
   render: () => (
     <ButtonGroup orientation="vertical" aria-label="Media controls" className="h-fit">
       <Button variant="outline" size="icon">
@@ -58,9 +55,9 @@ export const Orientation: Story = {
       </Button>
     </ButtonGroup>
   ),
-};
+});
 
-export const WithSeparator: Story = {
+export const WithSeparator = meta.story({
   render: () => (
     <ButtonGroup>
       <Button variant="secondary" size="sm">
@@ -72,9 +69,9 @@ export const WithSeparator: Story = {
       </Button>
     </ButtonGroup>
   ),
-};
+});
 
-export const Sizes: Story = {
+export const Sizes = meta.story({
   render: () => (
     <div className="flex flex-col items-start gap-8">
       <ButtonGroup>
@@ -115,4 +112,4 @@ export const Sizes: Story = {
       </ButtonGroup>
     </div>
   ),
-};
+});

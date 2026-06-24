@@ -1,4 +1,3 @@
-import type { Meta, StoryObj } from "@storybook/react-vite";
 import { MoreHorizontalIcon, ShieldAlertIcon, InboxIcon } from "lucide-react";
 import { Fragment } from "react";
 
@@ -17,18 +16,16 @@ import {
 } from "#/components/item";
 import { cn } from "#/lib/utils";
 
+import preview from "../.storybook/preview";
+
 /**
  * Item is a composition with optional root props. Demoed via `render` while
  * keeping `component` bound to the Root (Pattern C, see Card).
  */
-const meta = {
+const meta = preview.meta({
   component: Item,
   title: "Display/Item",
-} satisfies Meta<typeof Item>;
-
-export default meta;
-
-type Story = StoryObj<typeof meta>;
+});
 
 const MEMBERS = [
   {
@@ -60,7 +57,7 @@ const MEMBERS = [
   },
 ];
 
-export const Default: Story = {
+export const Default = meta.story({
   render: () => (
     <ItemGroup className="w-full max-w-md gap-0 rounded-xl border">
       {MEMBERS.map(({ id, name, email, role, initials, color, roleVariant }, idx) => (
@@ -87,9 +84,9 @@ export const Default: Story = {
       ))}
     </ItemGroup>
   ),
-};
+});
 
-export const Variants: Story = {
+export const Variants = meta.story({
   render: () => (
     <div className="flex w-full max-w-md flex-col gap-6">
       <Item>
@@ -121,9 +118,9 @@ export const Variants: Story = {
       </Item>
     </div>
   ),
-};
+});
 
-export const Sizes: Story = {
+export const Sizes = meta.story({
   render: () => (
     <div className="flex w-full max-w-md flex-col gap-6">
       <Item variant="outline">
@@ -155,9 +152,9 @@ export const Sizes: Story = {
       </Item>
     </div>
   ),
-};
+});
 
-export const WithIconAction: Story = {
+export const WithIconAction = meta.story({
   render: () => (
     <div className="flex w-full max-w-lg flex-col gap-6">
       <Item variant="outline">
@@ -176,4 +173,4 @@ export const WithIconAction: Story = {
       </Item>
     </div>
   ),
-};
+});

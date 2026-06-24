@@ -1,21 +1,18 @@
-import type { Meta, StoryObj } from "@storybook/react-vite";
-import { expect, userEvent, within } from "storybook/test";
+import { expect } from "storybook/test";
 
 import { InputOTP, InputOTPGroup, InputOTPSeparator, InputOTPSlot, REGEXP_ONLY_DIGITS } from "#/components/input-otp";
+
+import preview from "../.storybook/preview";
 
 /**
  * InputOTP's root requires `maxLength`, so binding `component` would force `args`
  * onto every story — composition is demoed via `render` instead.
  */
-const meta = {
+const meta = preview.meta({
   title: "Form/InputOtp",
-} satisfies Meta;
+});
 
-export default meta;
-
-type Story = StoryObj;
-
-export const Default: Story = {
+export const Default = meta.story({
   render: () => (
     <div className="flex flex-col items-center gap-4">
       <InputOTP maxLength={6}>
@@ -34,9 +31,9 @@ export const Default: Story = {
       <p className="text-sm text-muted-foreground">Enter the 6-digit code sent to your phone.</p>
     </div>
   ),
-};
+});
 
-export const FourDigits: Story = {
+export const FourDigits = meta.story({
   render: () => (
     <InputOTP maxLength={4} pattern={REGEXP_ONLY_DIGITS}>
       <InputOTPGroup>
@@ -47,9 +44,9 @@ export const FourDigits: Story = {
       </InputOTPGroup>
     </InputOTP>
   ),
-};
+});
 
-export const Disabled: Story = {
+export const Disabled = meta.story({
   render: () => (
     <InputOTP maxLength={6} disabled value="123456">
       <InputOTPGroup>
@@ -65,16 +62,16 @@ export const Disabled: Story = {
       </InputOTPGroup>
     </InputOTP>
   ),
-};
+});
 
-/** Interaction test — runs in a real browser via `vitest run --project=storybook`. */
-export const TypingDigits: Story = {
-  render: FourDigits.render,
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const input = canvas.getByRole("textbox");
+export const TypingDigits = meta.story({
+  render: FourDigits.input.render,
+});
 
-    await userEvent.type(input, "1234");
-    await expect(input).toHaveValue("1234");
-  },
-};
+/** Interaction test (CSF Next `.test()`) — runs in a real browser via `test:stories`. */
+TypingDigits.test("types digits", async ({ canvas, userEvent }) => {
+  const input = canvas.getByRole("textbox");
+
+  await userEvent.type(input, "1234");
+  await expect(input).toHaveValue("1234");
+});

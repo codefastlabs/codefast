@@ -1,24 +1,21 @@
-import type { Meta, StoryObj } from "@storybook/react-vite";
 import { CloudIcon, InboxIcon } from "lucide-react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "#/components/avatar";
 import { Button } from "#/components/button";
 import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "#/components/empty";
 
+import preview from "../.storybook/preview";
+
 /**
  * Empty is a composition with optional root props. Demoed via `render` while
  * keeping `component` bound to the Root (Pattern C, see Card).
  */
-const meta = {
+const meta = preview.meta({
   component: Empty,
   title: "Display/Empty",
-} satisfies Meta<typeof Empty>;
+});
 
-export default meta;
-
-type Story = StoryObj<typeof meta>;
-
-export const Default: Story = {
+export const Default = meta.story({
   render: () => (
     <Empty className="border">
       <EmptyHeader>
@@ -33,9 +30,9 @@ export const Default: Story = {
       </EmptyContent>
     </Empty>
   ),
-};
+});
 
-export const Outline: Story = {
+export const Outline = meta.story({
   render: () => (
     <Empty className="border border-dashed">
       <EmptyHeader>
@@ -52,9 +49,9 @@ export const Outline: Story = {
       </EmptyContent>
     </Empty>
   ),
-};
+});
 
-export const WithAvatar: Story = {
+export const WithAvatar = meta.story({
   render: () => (
     <Empty>
       <EmptyHeader>
@@ -74,4 +71,4 @@ export const WithAvatar: Story = {
       </EmptyContent>
     </Empty>
   ),
-};
+});

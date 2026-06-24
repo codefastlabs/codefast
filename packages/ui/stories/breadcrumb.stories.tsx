@@ -1,4 +1,3 @@
-import type { Meta, StoryObj } from "@storybook/react-vite";
 import { ChevronDownIcon, ChevronRightIcon, DotIcon } from "lucide-react";
 
 import {
@@ -18,16 +17,14 @@ import {
   DropdownMenuTrigger,
 } from "#/components/dropdown-menu";
 
-const meta = {
+import preview from "../.storybook/preview";
+
+const meta = preview.meta({
   component: Breadcrumb,
   title: "Navigation/Breadcrumb",
-} satisfies Meta<typeof Breadcrumb>;
+});
 
-export default meta;
-
-type Story = StoryObj<typeof meta>;
-
-export const Default: Story = {
+export const Default = meta.story({
   render: () => (
     <Breadcrumb>
       <BreadcrumbList>
@@ -55,9 +52,9 @@ export const Default: Story = {
       </BreadcrumbList>
     </Breadcrumb>
   ),
-};
+});
 
-export const Basic: Story = {
+export const Basic = meta.story({
   render: () => (
     <Breadcrumb>
       <BreadcrumbList>
@@ -75,9 +72,9 @@ export const Basic: Story = {
       </BreadcrumbList>
     </Breadcrumb>
   ),
-};
+});
 
-export const CustomSeparator: Story = {
+export const CustomSeparator = meta.story({
   render: () => (
     <Breadcrumb>
       <BreadcrumbList>
@@ -99,9 +96,9 @@ export const CustomSeparator: Story = {
       </BreadcrumbList>
     </Breadcrumb>
   ),
-};
+});
 
-export const WithDropdown: Story = {
+export const WithDropdown = meta.story({
   render: () => (
     <Breadcrumb>
       <BreadcrumbList>
@@ -137,4 +134,4 @@ export const WithDropdown: Story = {
       </BreadcrumbList>
     </Breadcrumb>
   ),
-};
+});

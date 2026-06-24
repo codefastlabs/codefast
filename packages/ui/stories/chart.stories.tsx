@@ -1,20 +1,17 @@
-import type { Meta, StoryObj } from "@storybook/react-vite";
 import { Bar, BarChart, CartesianGrid, XAxis } from "recharts";
 
 import type { ChartConfig } from "#/components/chart";
 import { ChartContainer, ChartLegend, ChartLegendContent, ChartTooltip, ChartTooltipContent } from "#/components/chart";
 
+import preview from "../.storybook/preview";
+
 /**
  * ChartContainer requires a `config` prop, so binding `component` would force
  * `args` onto every story. Demoed via `render` instead (see Accordion).
  */
-const meta = {
+const meta = preview.meta({
   title: "Display/Chart",
-} satisfies Meta;
-
-export default meta;
-
-type Story = StoryObj;
+});
 
 const chartData = [
   { month: "January", desktop: 186, mobile: 80 },
@@ -34,7 +31,7 @@ const multiConfig = {
   mobile: { label: "Mobile", color: "#60a5fa" },
 } satisfies ChartConfig;
 
-export const Default: Story = {
+export const Default = meta.story({
   render: () => (
     <div className="h-72 w-md">
       <ChartContainer className="min-h-50 w-full" config={singleConfig}>
@@ -53,9 +50,9 @@ export const Default: Story = {
       </ChartContainer>
     </div>
   ),
-};
+});
 
-export const Tooltip: Story = {
+export const Tooltip = meta.story({
   render: () => (
     <div className="h-72 w-md">
       <ChartContainer className="min-h-50 w-full" config={multiConfig}>
@@ -75,9 +72,9 @@ export const Tooltip: Story = {
       </ChartContainer>
     </div>
   ),
-};
+});
 
-export const Legend: Story = {
+export const Legend = meta.story({
   render: () => (
     <div className="h-72 w-md">
       <ChartContainer className="min-h-50 w-full" config={multiConfig}>
@@ -98,4 +95,4 @@ export const Legend: Story = {
       </ChartContainer>
     </div>
   ),
-};
+});

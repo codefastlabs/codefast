@@ -1,22 +1,19 @@
-import type { Meta, StoryObj } from "@storybook/react-vite";
-import { expect, screen, userEvent, within } from "storybook/test";
+import { expect, screen } from "storybook/test";
 
 import { Button } from "#/components/button";
 import { Toaster, toast } from "#/components/sonner";
+
+import preview from "../.storybook/preview";
 
 /**
  * Sonner pairs a single `<Toaster />` mount with the imperative `toast()`
  * function. Demoed via `render` (see Accordion) rather than a bound component.
  */
-const meta = {
+const meta = preview.meta({
   title: "Feedback/Sonner",
-} satisfies Meta;
+});
 
-export default meta;
-
-type Story = StoryObj;
-
-export const Default: Story = {
+export const Default = meta.story({
   render: () => (
     <div className="flex flex-wrap justify-center gap-2">
       <Toaster />
@@ -25,9 +22,9 @@ export const Default: Story = {
       </Button>
     </div>
   ),
-};
+});
 
-export const Types: Story = {
+export const Types = meta.story({
   render: () => (
     <div className="flex flex-wrap justify-center gap-2">
       <Toaster />
@@ -48,30 +45,34 @@ export const Types: Story = {
       </Button>
     </div>
   ),
-};
+});
 
-export const WithDescription: Story = {
+export const WithDescription = meta.story({
   render: () => (
     <div className="flex flex-wrap justify-center gap-2">
       <Toaster />
       <Button
         variant="outline"
-        onClick={() => toast.success("Profile updated.", { description: "Your changes have been saved." })}
+        onClick={() =>
+          toast.success("Profile updated.", {
+            description: "Your changes have been saved.",
+          })
+        }
       >
         Show toast
       </Button>
     </div>
   ),
-};
+});
+
+export const ShowsToastOnClick = meta.story({
+  render: Default.input.render,
+});
 
 /** Interaction test — toasts render to `document.body`, so assert via `screen`. */
-export const ShowsToastOnClick: Story = {
-  render: Default.render,
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const button = canvas.getByRole("button", { name: /show toast/i });
+ShowsToastOnClick.test("shows toast on click", async ({ canvas, userEvent }) => {
+  const button = canvas.getByRole("button", { name: /show toast/i });
 
-    await userEvent.click(button);
-    await expect(await screen.findByText("Event has been created.")).toBeInTheDocument();
-  },
-};
+  await userEvent.click(button);
+  await expect(await screen.findByText("Event has been created.")).toBeInTheDocument();
+});

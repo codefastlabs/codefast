@@ -1,6 +1,5 @@
-import type { Meta, StoryObj } from "@storybook/react-vite";
 import { useState } from "react";
-import { expect, userEvent, within } from "storybook/test";
+import { expect } from "storybook/test";
 
 import { Field, FieldLabel } from "#/components/field";
 import {
@@ -14,16 +13,14 @@ import {
 } from "#/components/pagination";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "#/components/select";
 
-const meta = {
+import preview from "../.storybook/preview";
+
+const meta = preview.meta({
   component: Pagination,
   title: "Navigation/Pagination",
-} satisfies Meta<typeof Pagination>;
+});
 
-export default meta;
-
-type Story = StoryObj<typeof meta>;
-
-export const Default: Story = {
+export const Default = meta.story({
   render: () => (
     <Pagination>
       <PaginationContent>
@@ -50,9 +47,9 @@ export const Default: Story = {
       </PaginationContent>
     </Pagination>
   ),
-};
+});
 
-export const Simple: Story = {
+export const Simple = meta.story({
   render: () => (
     <Pagination>
       <PaginationContent>
@@ -76,9 +73,9 @@ export const Simple: Story = {
       </PaginationContent>
     </Pagination>
   ),
-};
+});
 
-export const IconsOnly: Story = {
+export const IconsOnly = meta.story({
   render: () => (
     <div className="flex items-center justify-between gap-4">
       <Field orientation="horizontal" className="w-fit">
@@ -109,13 +106,13 @@ export const IconsOnly: Story = {
       </Pagination>
     </div>
   ),
-};
+});
 
 /**
  * Interaction test — runs in a real browser via `vitest run --project=storybook`.
  * Uses local state so clicking a page link actually moves `aria-current="page"`.
  */
-export const SelectsPageOnClick: Story = {
+export const SelectsPageOnClick = meta.story({
   render: function Render() {
     const [page, setPage] = useState(1);
 
@@ -140,14 +137,14 @@ export const SelectsPageOnClick: Story = {
       </Pagination>
     );
   },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
+});
 
-    await expect(canvas.getByRole("link", { name: "1" })).toHaveAttribute("aria-current", "page");
+/** Interaction test (CSF Next `.test()`) — runs in a real browser via `test:stories`. */
+SelectsPageOnClick.test("selects page on click", async ({ canvas, userEvent }) => {
+  await expect(canvas.getByRole("link", { name: "1" })).toHaveAttribute("aria-current", "page");
 
-    await userEvent.click(canvas.getByRole("link", { name: "3" }));
+  await userEvent.click(canvas.getByRole("link", { name: "3" }));
 
-    await expect(await canvas.findByRole("link", { current: "page" })).toHaveTextContent("3");
-    await expect(canvas.getByRole("link", { name: "1" })).not.toHaveAttribute("aria-current", "page");
-  },
-};
+  await expect(await canvas.findByRole("link", { current: "page" })).toHaveTextContent("3");
+  await expect(canvas.getByRole("link", { name: "1" })).not.toHaveAttribute("aria-current", "page");
+});

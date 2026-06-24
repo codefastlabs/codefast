@@ -1,8 +1,8 @@
-import type { Meta, StoryObj } from "@storybook/react-vite";
-
 import { Progress } from "#/components/progress";
 
-const meta = {
+import preview from "../.storybook/preview";
+
+const meta = preview.meta({
   args: { value: 68 },
   component: Progress,
   render: (args) => (
@@ -11,15 +11,11 @@ const meta = {
     </div>
   ),
   title: "Feedback/Progress",
-} satisfies Meta<typeof Progress>;
+});
 
-export default meta;
+export const Default = meta.story();
 
-type Story = StoryObj<typeof meta>;
-
-export const Default: Story = {};
-
-export const WithLabel: Story = {
+export const WithLabel = meta.story({
   render: () => (
     <div className="w-full max-w-xs">
       <div className="mb-1.5 flex justify-between text-xs text-muted-foreground">
@@ -29,12 +25,12 @@ export const WithLabel: Story = {
       <Progress value={68} />
     </div>
   ),
-};
+});
 
-export const Complete: Story = {
+export const Complete = meta.story({
   args: { value: 100 },
-};
+});
 
-export const Empty: Story = {
+export const Empty = meta.story({
   args: { value: 0 },
-};
+});

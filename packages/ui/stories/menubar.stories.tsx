@@ -1,6 +1,5 @@
-import type { Meta, StoryObj } from "@storybook/react-vite";
 import { useState } from "react";
-import { expect, screen, userEvent, within } from "storybook/test";
+import { expect, screen } from "storybook/test";
 
 import {
   Menubar,
@@ -20,11 +19,9 @@ import {
   MenubarTrigger,
 } from "#/components/menubar";
 
-const meta = { title: "Navigation/Menubar" } satisfies Meta;
+import preview from "../.storybook/preview";
 
-export default meta;
-
-type Story = StoryObj;
+const meta = preview.meta({ title: "Navigation/Menubar" });
 
 function MenubarExample() {
   const [showToolbar, setShowToolbar] = useState(true);
@@ -113,19 +110,19 @@ function MenubarExample() {
   );
 }
 
-export const Default: Story = {
+export const Default = meta.story({
   render: () => <MenubarExample />,
-};
+});
 
-/** Interaction test — runs in a real browser via `vitest run --project=storybook`. */
-export const OpensOnClick: Story = {
-  render: Default.render,
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const trigger = canvas.getByRole("menuitem", { name: "File" });
+export const OpensOnClick = meta.story({
+  render: Default.input.render,
+});
 
-    await userEvent.click(trigger);
+/** Interaction test (CSF Next `.test()`) — runs in a real browser via `test:stories`. */
+OpensOnClick.test("opens on click", async ({ canvas, userEvent }) => {
+  const trigger = canvas.getByRole("menuitem", { name: "File" });
 
-    await expect(await screen.findByRole("menuitem", { name: /new file/i })).toBeVisible();
-  },
-};
+  await userEvent.click(trigger);
+
+  await expect(await screen.findByRole("menuitem", { name: /new file/i })).toBeVisible();
+});

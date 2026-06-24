@@ -1,48 +1,45 @@
-import type { Meta, StoryObj } from "@storybook/react-vite";
-import { expect, userEvent, within } from "storybook/test";
+import { expect } from "storybook/test";
 
 import { Button } from "#/components/button";
 
-const meta = {
+import preview from "../.storybook/preview";
+
+const meta = preview.meta({
   args: { children: "Button" },
   component: Button,
   title: "Form/Button",
-} satisfies Meta<typeof Button>;
+});
 
-export default meta;
+export const Default = meta.story();
 
-type Story = StoryObj<typeof meta>;
-
-export const Default: Story = {};
-
-export const Secondary: Story = {
+export const Secondary = meta.story({
   args: { variant: "secondary" },
-};
+});
 
-export const Destructive: Story = {
+export const Destructive = meta.story({
   args: { variant: "destructive" },
-};
+});
 
-export const Outline: Story = {
+export const Outline = meta.story({
   args: { variant: "outline" },
-};
+});
 
-export const Ghost: Story = {
+export const Ghost = meta.story({
   args: { variant: "ghost" },
-};
+});
 
-export const Link: Story = {
+export const Link = meta.story({
   args: { variant: "link" },
-};
+});
 
-/** Interaction test — runs in a real browser via `vitest run --project=storybook`. */
-export const Clickable: Story = {
+export const Clickable = meta.story({
   args: { children: "Click me" },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const button = canvas.getByRole("button", { name: "Click me" });
+});
 
-    await userEvent.click(button);
-    await expect(button).toBeInTheDocument();
-  },
-};
+/** Interaction test (CSF Next `.test()`) — runs in a real browser via `test:stories`. */
+Clickable.test("can be clicked", async ({ canvas, userEvent }) => {
+  const button = canvas.getByRole("button", { name: "Click me" });
+
+  await userEvent.click(button);
+  await expect(button).toBeInTheDocument();
+});

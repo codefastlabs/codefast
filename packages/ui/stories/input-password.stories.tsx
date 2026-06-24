@@ -1,19 +1,16 @@
-import type { Meta, StoryObj } from "@storybook/react-vite";
 import { useState } from "react";
 
 import { InputPassword } from "#/components/input-password";
 import { Label } from "#/components/label";
 
-const meta = {
+import preview from "../.storybook/preview";
+
+const meta = preview.meta({
   component: InputPassword,
   title: "Form/InputPassword",
-} satisfies Meta<typeof InputPassword>;
+});
 
-export default meta;
-
-type Story = StoryObj<typeof meta>;
-
-export const Default: Story = {
+export const Default = meta.story({
   render: () => (
     <div className="w-full max-w-xs space-y-3">
       <div className="grid gap-1.5">
@@ -26,9 +23,9 @@ export const Default: Story = {
       </div>
     </div>
   ),
-};
+});
 
-export const Confirm: Story = {
+export const Confirm = meta.story({
   render: function ConfirmRender() {
     const [password, setPassword] = useState("");
     const [confirm, setConfirm] = useState("");
@@ -62,4 +59,4 @@ export const Confirm: Story = {
       </div>
     );
   },
-};
+});

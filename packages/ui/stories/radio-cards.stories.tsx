@@ -1,15 +1,31 @@
-import type { Meta, StoryObj } from "@storybook/react-vite";
 import { CreditCardIcon, LandmarkIcon, WalletIcon } from "lucide-react";
 import { useState } from "react";
-import { expect, userEvent, within } from "storybook/test";
+import { expect } from "storybook/test";
 
 import { Badge } from "#/components/badge";
 import { RadioCards, RadioCardsItem } from "#/components/radio-cards";
 
+import preview from "../.storybook/preview";
+
 const PLANS = [
-  { value: "free", label: "Free", price: "$0 / mo", description: "For personal projects" },
-  { value: "pro", label: "Pro", price: "$12 / mo", description: "For professional use" },
-  { value: "team", label: "Team", price: "$49 / mo", description: "For growing teams" },
+  {
+    value: "free",
+    label: "Free",
+    price: "$0 / mo",
+    description: "For personal projects",
+  },
+  {
+    value: "pro",
+    label: "Pro",
+    price: "$12 / mo",
+    description: "For professional use",
+  },
+  {
+    value: "team",
+    label: "Team",
+    price: "$49 / mo",
+    description: "For growing teams",
+  },
 ];
 
 const METHODS = [
@@ -22,15 +38,11 @@ const METHODS = [
  * RadioCards is a single-select composition driven by `onValueChange`, so
  * stories are demoed via `render` (see Accordion).
  */
-const meta = {
+const meta = preview.meta({
   title: "Form/RadioCards",
-} satisfies Meta;
+});
 
-export default meta;
-
-type Story = StoryObj;
-
-export const Default: Story = {
+export const Default = meta.story({
   render: () => {
     function Render() {
       const [plan, setPlan] = useState("pro");
@@ -53,9 +65,9 @@ export const Default: Story = {
 
     return <Render />;
   },
-};
+});
 
-export const Interval: Story = {
+export const Interval = meta.story({
   render: () => {
     function Render() {
       const [interval, setInterval] = useState("yearly");
@@ -83,9 +95,9 @@ export const Interval: Story = {
 
     return <Render />;
   },
-};
+});
 
-export const Payment: Story = {
+export const Payment = meta.story({
   render: () => {
     function Render() {
       const [method, setMethod] = useState("card");
@@ -106,10 +118,9 @@ export const Payment: Story = {
 
     return <Render />;
   },
-};
+});
 
-/** Interaction test — runs in a real browser via `vitest run --project=storybook`. */
-export const SelectsOnClick: Story = {
+export const SelectsOnClick = meta.story({
   render: () => (
     <RadioCards className="grid w-full max-w-xs gap-2">
       {PLANS.map(({ value, label }) => (
@@ -119,11 +130,12 @@ export const SelectsOnClick: Story = {
       ))}
     </RadioCards>
   ),
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const radio = canvas.getByRole("radio", { name: "Team" });
+});
 
-    await userEvent.click(radio);
-    await expect(radio).toBeChecked();
-  },
-};
+/** Interaction test (CSF Next `.test()`) — runs in a real browser via `test:stories`. */
+SelectsOnClick.test("selects on click", async ({ canvas, userEvent }) => {
+  const radio = canvas.getByRole("radio", { name: "Team" });
+
+  await userEvent.click(radio);
+  await expect(radio).toBeChecked();
+});

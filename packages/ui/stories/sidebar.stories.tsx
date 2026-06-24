@@ -1,4 +1,3 @@
-import type { Meta, StoryObj } from "@storybook/react-vite";
 import {
   AudioWaveform,
   BadgeCheck,
@@ -27,7 +26,7 @@ import {
 } from "lucide-react";
 import type { ElementType } from "react";
 import { useState } from "react";
-import { expect, userEvent, within } from "storybook/test";
+import { expect } from "storybook/test";
 
 import { Avatar, AvatarFallback, AvatarImage } from "#/components/avatar";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "#/components/collapsible";
@@ -63,19 +62,17 @@ import {
   useSidebar,
 } from "#/components/sidebar";
 
+import preview from "../.storybook/preview";
+
 /**
  * Sidebar is a root composition that requires a `SidebarProvider` wrapper plus a
  * `Sidebar` + `SidebarInset` layout — there is no single prop-driven component to
  * bind. Binding `component` would force `args` onto every story, so the layout is
  * demoed via `render` instead (see Button for the prop-driven pattern).
  */
-const meta = {
+const meta = preview.meta({
   title: "Navigation/Sidebar",
-} satisfies Meta;
-
-export default meta;
-
-type Story = StoryObj;
+});
 
 // Sample data for the full application sidebar demo.
 const data = {
@@ -437,7 +434,7 @@ function NavUser({
   );
 }
 
-export const Default: Story = {
+export const Default = meta.story({
   render: () => (
     <SidebarProvider className="h-96 min-h-0 w-full overflow-hidden rounded-xl border [contain:layout] [&_[data-slot=sidebar-container]]:h-full">
       <Sidebar collapsible="icon">
@@ -462,9 +459,9 @@ export const Default: Story = {
       </SidebarInset>
     </SidebarProvider>
   ),
-};
+});
 
-export const GroupAndMenu: Story = {
+export const GroupAndMenu = meta.story({
   render: () => (
     <SidebarProvider className="h-96 min-h-0 w-full overflow-hidden rounded-xl border [contain:layout] [&_[data-slot=sidebar-container]]:h-full">
       <Sidebar>
@@ -497,22 +494,22 @@ export const GroupAndMenu: Story = {
       </SidebarInset>
     </SidebarProvider>
   ),
-};
+});
 
-/** Interaction test — runs in a real browser via `vitest run --project=storybook`. */
-export const TogglesOnTriggerClick: Story = {
-  render: GroupAndMenu.render,
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const trigger = canvas.getByRole("button", { name: /toggle sidebar/i });
-    const sidebar = canvasElement.querySelector("[data-slot=sidebar]");
+export const TogglesOnTriggerClick = meta.story({
+  render: GroupAndMenu.input.render,
+});
 
-    await expect(sidebar).toHaveAttribute("data-state", "expanded");
+/** Interaction test (CSF Next `.test()`) — runs in a real browser via `test:stories`. */
+TogglesOnTriggerClick.test("toggles on trigger click", async ({ canvas, canvasElement, userEvent }) => {
+  const trigger = canvas.getByRole("button", { name: /toggle sidebar/i });
+  const sidebar = canvasElement.querySelector("[data-slot=sidebar]");
 
-    await userEvent.click(trigger);
-    await expect(sidebar).toHaveAttribute("data-state", "collapsed");
+  await expect(sidebar).toHaveAttribute("data-state", "expanded");
 
-    await userEvent.click(trigger);
-    await expect(sidebar).toHaveAttribute("data-state", "expanded");
-  },
-};
+  await userEvent.click(trigger);
+  await expect(sidebar).toHaveAttribute("data-state", "collapsed");
+
+  await userEvent.click(trigger);
+  await expect(sidebar).toHaveAttribute("data-state", "expanded");
+});

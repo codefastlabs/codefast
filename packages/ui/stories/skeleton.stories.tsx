@@ -1,18 +1,14 @@
-import type { Meta, StoryObj } from "@storybook/react-vite";
-
 import { Card, CardContent, CardHeader } from "#/components/card";
 import { Skeleton } from "#/components/skeleton";
 
-const meta = {
+import preview from "../.storybook/preview";
+
+const meta = preview.meta({
   component: Skeleton,
   title: "Feedback/Skeleton",
-} satisfies Meta<typeof Skeleton>;
+});
 
-export default meta;
-
-type Story = StoryObj<typeof meta>;
-
-export const Default: Story = {
+export const Default = meta.story({
   render: () => (
     <div className="grid w-full max-w-lg gap-4 sm:grid-cols-2">
       {[0, 1].map((i) => (
@@ -28,9 +24,9 @@ export const Default: Story = {
       ))}
     </div>
   ),
-};
+});
 
-export const Text: Story = {
+export const Text = meta.story({
   render: () => (
     <div className="flex w-full max-w-xs flex-col gap-2">
       <Skeleton className="h-4 w-full" />
@@ -38,9 +34,9 @@ export const Text: Story = {
       <Skeleton className="h-4 w-3/4" />
     </div>
   ),
-};
+});
 
-export const AvatarWithText: Story = {
+export const AvatarWithText = meta.story({
   render: () => (
     <div className="flex w-fit items-center gap-4">
       <Skeleton className="size-10 shrink-0 rounded-full" />
@@ -50,9 +46,9 @@ export const AvatarWithText: Story = {
       </div>
     </div>
   ),
-};
+});
 
-export const CardLayout: Story = {
+export const CardLayout = meta.story({
   render: () => (
     <Card className="w-full max-w-xs">
       <CardHeader>
@@ -64,4 +60,4 @@ export const CardLayout: Story = {
       </CardContent>
     </Card>
   ),
-};
+});

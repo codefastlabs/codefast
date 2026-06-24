@@ -1,20 +1,17 @@
-import type { Meta, StoryObj } from "@storybook/react-vite";
-import { expect, userEvent, within } from "storybook/test";
+import { expect } from "storybook/test";
 
 import { Button } from "#/components/button";
 import { Label } from "#/components/label";
 import { Textarea } from "#/components/textarea";
 
-const meta = {
+import preview from "../.storybook/preview";
+
+const meta = preview.meta({
   component: Textarea,
   title: "Form/Textarea",
-} satisfies Meta<typeof Textarea>;
+});
 
-export default meta;
-
-type Story = StoryObj<typeof meta>;
-
-export const Default: Story = {
+export const Default = meta.story({
   render: () => (
     <div className="w-full max-w-xs space-y-2">
       <Label htmlFor="textarea-feedback">Your feedback</Label>
@@ -30,34 +27,34 @@ export const Default: Story = {
       </div>
     </div>
   ),
-};
+});
 
-export const Disabled: Story = {
+export const Disabled = meta.story({
   render: () => (
     <div className="w-full max-w-xs space-y-2">
       <Label htmlFor="textarea-disabled">Message</Label>
       <Textarea id="textarea-disabled" placeholder="Type your message here." disabled />
     </div>
   ),
-};
+});
 
-export const Invalid: Story = {
+export const Invalid = meta.story({
   render: () => (
     <div className="w-full max-w-xs space-y-2">
       <Label htmlFor="textarea-invalid">Message</Label>
       <Textarea id="textarea-invalid" placeholder="Type your message here." aria-invalid />
     </div>
   ),
-};
+});
 
-/** Interaction test — runs in a real browser via `vitest run --project=storybook`. */
-export const Typing: Story = {
+export const Typing = meta.story({
   render: () => <Textarea aria-label="Message" placeholder="Type your message here." />,
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const textarea = canvas.getByRole("textbox", { name: "Message" });
+});
 
-    await userEvent.type(textarea, "Hello there");
-    await expect(textarea).toHaveValue("Hello there");
-  },
-};
+/** Interaction test (CSF Next `.test()`) — runs in a real browser via `test:stories`. */
+Typing.test("types a message", async ({ canvas, userEvent }) => {
+  const textarea = canvas.getByRole("textbox", { name: "Message" });
+
+  await userEvent.type(textarea, "Hello there");
+  await expect(textarea).toHaveValue("Hello there");
+});

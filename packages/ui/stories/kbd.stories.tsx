@@ -1,20 +1,16 @@
-import type { Meta, StoryObj } from "@storybook/react-vite";
-
 import { Button } from "#/components/button";
 import { Kbd, KbdGroup } from "#/components/kbd";
+
+import preview from "../.storybook/preview";
 
 /**
  * Kbd is a composition with optional root props. Demoed via `render` while
  * keeping `component` bound to the Root (Pattern C, see Card).
  */
-const meta = {
+const meta = preview.meta({
   component: Kbd,
   title: "Display/Kbd",
-} satisfies Meta<typeof Kbd>;
-
-export default meta;
-
-type Story = StoryObj<typeof meta>;
+});
 
 const SHORTCUTS = [
   { action: "Open command palette", keys: ["⌘", "K"] },
@@ -22,7 +18,7 @@ const SHORTCUTS = [
   { action: "Toggle sidebar", keys: ["⌘", "B"] },
 ];
 
-export const Default: Story = {
+export const Default = meta.story({
   render: () => (
     <div className="w-full max-w-xs space-y-2.5">
       {SHORTCUTS.map(({ action, keys }) => (
@@ -37,9 +33,9 @@ export const Default: Story = {
       ))}
     </div>
   ),
-};
+});
 
-export const Group: Story = {
+export const Group = meta.story({
   render: () => (
     <p className="text-sm text-muted-foreground">
       Use{" "}
@@ -50,9 +46,9 @@ export const Group: Story = {
       to open the command palette
     </p>
   ),
-};
+});
 
-export const InButton: Story = {
+export const InButton = meta.story({
   render: () => (
     <Button variant="outline">
       Accept{" "}
@@ -61,4 +57,4 @@ export const InButton: Story = {
       </Kbd>
     </Button>
   ),
-};
+});

@@ -1,14 +1,15 @@
-import type { Meta, StoryObj } from "@storybook/react-vite";
 import { ChevronDownIcon, MaximizeIcon, MinimizeIcon } from "lucide-react";
 import type { JSX } from "react";
 import { useState } from "react";
-import { expect, userEvent, within } from "storybook/test";
+import { expect } from "storybook/test";
 
 import { Button } from "#/components/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "#/components/card";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "#/components/collapsible";
 import { Field, FieldGroup, FieldLabel } from "#/components/field";
 import { Input } from "#/components/input";
+
+import preview from "../.storybook/preview";
 
 const LINE_ITEMS = [
   { name: "Pro plan (annual)", price: "$144.00" },
@@ -90,20 +91,16 @@ function RadiusSettings(): JSX.Element {
   );
 }
 
-const meta = {
+const meta = preview.meta({
   component: Collapsible,
   title: "Layout/Collapsible",
-} satisfies Meta<typeof Collapsible>;
+});
 
-export default meta;
-
-type Story = StoryObj<typeof meta>;
-
-export const Default: Story = {
+export const Default = meta.story({
   render: () => <OrderSummary />,
-};
+});
 
-export const Basic: Story = {
+export const Basic = meta.story({
   render: () => (
     <Card className="mx-auto w-full max-w-sm">
       <CardContent>
@@ -122,20 +119,20 @@ export const Basic: Story = {
       </CardContent>
     </Card>
   ),
-};
+});
 
-export const Settings: Story = {
+export const Settings = meta.story({
   render: () => <RadiusSettings />,
-};
+});
 
-/** Interaction test — runs in a real browser via `vitest run --project=storybook`. */
-export const ExpandsOnClick: Story = {
-  render: Basic.render,
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const trigger = canvas.getByRole("button", { name: /product details/i });
+export const ExpandsOnClick = meta.story({
+  render: Basic.input.render,
+});
 
-    await userEvent.click(trigger);
-    await expect(await canvas.findByText(/this panel can be expanded/i)).toBeVisible();
-  },
-};
+/** Interaction test (CSF Next `.test()`) — runs in a real browser via `test:stories`. */
+ExpandsOnClick.test("expands on click", async ({ canvas, userEvent }) => {
+  const trigger = canvas.getByRole("button", { name: /product details/i });
+
+  await userEvent.click(trigger);
+  await expect(await canvas.findByText(/this panel can be expanded/i)).toBeVisible();
+});

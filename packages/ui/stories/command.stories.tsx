@@ -1,4 +1,3 @@
-import type { Meta, StoryObj } from "@storybook/react-vite";
 import {
   CalculatorIcon,
   CalendarIcon,
@@ -9,7 +8,7 @@ import {
   SmileIcon,
   UserIcon,
 } from "lucide-react";
-import { expect, userEvent, within } from "storybook/test";
+import { expect } from "storybook/test";
 
 import {
   Command,
@@ -22,16 +21,14 @@ import {
   CommandShortcut,
 } from "#/components/command";
 
-const meta = {
+import preview from "../.storybook/preview";
+
+const meta = preview.meta({
   component: Command,
   title: "Overlay/Command",
-} satisfies Meta<typeof Command>;
+});
 
-export default meta;
-
-type Story = StoryObj<typeof meta>;
-
-export const Default: Story = {
+export const Default = meta.story({
   render: () => (
     <Command className="w-full max-w-xs rounded-xl border shadow-md">
       <CommandInput placeholder="Type a command or search…" />
@@ -68,9 +65,9 @@ export const Default: Story = {
       </CommandList>
     </Command>
   ),
-};
+});
 
-export const WithGroups: Story = {
+export const WithGroups = meta.story({
   render: () => (
     <Command className="w-full max-w-xs rounded-xl border shadow-md">
       <CommandInput placeholder="Type a command or search..." />
@@ -111,19 +108,19 @@ export const WithGroups: Story = {
       </CommandList>
     </Command>
   ),
-};
+});
 
-/** Interaction test — runs in a real browser via `vitest run --project=storybook`. */
-export const FiltersOnType: Story = {
-  render: Default.render,
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const input = canvas.getByPlaceholderText(/type a command or search/i);
+export const FiltersOnType = meta.story({
+  render: Default.input.render,
+});
 
-    await userEvent.type(input, "Calendar");
-    await expect(await canvas.findByText("Calendar")).toBeVisible();
-    // Non-matching items are removed from the DOM by cmdk's filtering.
-    await expect(canvas.queryByText("Profile")).not.toBeInTheDocument();
-    await expect(canvas.queryByText("Search")).not.toBeInTheDocument();
-  },
-};
+/** Interaction test (CSF Next `.test()`) — runs in a real browser via `test:stories`. */
+FiltersOnType.test("filters on type", async ({ canvas, userEvent }) => {
+  const input = canvas.getByPlaceholderText(/type a command or search/i);
+
+  await userEvent.type(input, "Calendar");
+  await expect(await canvas.findByText("Calendar")).toBeVisible();
+  // Non-matching items are removed from the DOM by cmdk's filtering.
+  await expect(canvas.queryByText("Profile")).not.toBeInTheDocument();
+  await expect(canvas.queryByText("Search")).not.toBeInTheDocument();
+});

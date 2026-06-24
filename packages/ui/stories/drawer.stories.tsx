@@ -1,5 +1,4 @@
-import type { Meta, StoryObj } from "@storybook/react-vite";
-import { expect, screen, userEvent, within } from "storybook/test";
+import { expect, screen } from "storybook/test";
 
 import { Button } from "#/components/button";
 import {
@@ -15,15 +14,13 @@ import {
 import { Input } from "#/components/input";
 import { Label } from "#/components/label";
 
-const meta = {
+import preview from "../.storybook/preview";
+
+const meta = preview.meta({
   title: "Overlay/Drawer",
-} satisfies Meta;
+});
 
-export default meta;
-
-type Story = StoryObj;
-
-export const Default: Story = {
+export const Default = meta.story({
   render: () => (
     <Drawer>
       <DrawerTrigger asChild>
@@ -53,11 +50,11 @@ export const Default: Story = {
       </DrawerContent>
     </Drawer>
   ),
-};
+});
 
 const DRAWER_SIDES = ["top", "right", "bottom", "left"] as const;
 
-export const Sides: Story = {
+export const Sides = meta.story({
   render: () => (
     <div className="flex flex-wrap gap-2">
       {DRAWER_SIDES.map((side) => (
@@ -92,9 +89,9 @@ export const Sides: Story = {
       ))}
     </div>
   ),
-};
+});
 
-export const ScrollableContent: Story = {
+export const ScrollableContent = meta.story({
   render: () => (
     <Drawer direction="right">
       <DrawerTrigger asChild>
@@ -123,16 +120,16 @@ export const ScrollableContent: Story = {
       </DrawerContent>
     </Drawer>
   ),
-};
+});
 
-/** Interaction test — runs in a real browser via `vitest run --project=storybook`. */
-export const OpensOnClick: Story = {
-  render: Default.render,
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const trigger = canvas.getByRole("button", { name: /open drawer/i });
-    await userEvent.click(trigger);
-    await expect(await screen.findByRole("dialog")).toBeVisible();
-    await expect(await screen.findByText(/make changes and save when done/i)).toBeVisible();
-  },
-};
+export const OpensOnClick = meta.story({
+  render: Default.input.render,
+});
+
+/** Interaction test (CSF Next `.test()`) — runs in a real browser via `test:stories`. */
+OpensOnClick.test("opens on click", async ({ canvas, userEvent }) => {
+  const trigger = canvas.getByRole("button", { name: /open drawer/i });
+  await userEvent.click(trigger);
+  await expect(await screen.findByRole("dialog")).toBeVisible();
+  await expect(await screen.findByText(/make changes and save when done/i)).toBeVisible();
+});

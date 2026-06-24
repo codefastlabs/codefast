@@ -1,5 +1,4 @@
-import type { Meta, StoryObj } from "@storybook/react-vite";
-import { expect, screen, userEvent, within } from "storybook/test";
+import { expect, screen } from "storybook/test";
 
 import { Button } from "#/components/button";
 import { Input } from "#/components/input";
@@ -16,13 +15,11 @@ import {
   SheetTrigger,
 } from "#/components/sheet";
 
-const meta = { title: "Overlay/Sheet" } satisfies Meta;
+import preview from "../.storybook/preview";
 
-export default meta;
+const meta = preview.meta({ title: "Overlay/Sheet" });
 
-type Story = StoryObj;
-
-export const Default: Story = {
+export const Default = meta.story({
   render: () => (
     <Sheet>
       <SheetTrigger asChild>
@@ -52,11 +49,11 @@ export const Default: Story = {
       </SheetContent>
     </Sheet>
   ),
-};
+});
 
 const SHEET_SIDES = ["top", "right", "bottom", "left"] as const;
 
-export const Side: Story = {
+export const Side = meta.story({
   render: () => (
     <div className="flex flex-wrap gap-2">
       {SHEET_SIDES.map((side) => (
@@ -93,9 +90,9 @@ export const Side: Story = {
       ))}
     </div>
   ),
-};
+});
 
-export const NoCloseButton: Story = {
+export const NoCloseButton = meta.story({
   render: () => (
     <Sheet>
       <SheetTrigger asChild>
@@ -111,18 +108,18 @@ export const NoCloseButton: Story = {
       </SheetContent>
     </Sheet>
   ),
-};
+});
 
-/** Interaction test — runs in a real browser via `vitest run --project=storybook`. */
-export const OpensOnClick: Story = {
-  render: Default.render,
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const trigger = canvas.getByRole("button", { name: /open sheet/i });
+export const OpensOnClick = meta.story({
+  render: Default.input.render,
+});
 
-    await userEvent.click(trigger);
+/** Interaction test (CSF Next `.test()`) — runs in a real browser via `test:stories`. */
+OpensOnClick.test("opens on click", async ({ canvas, userEvent }) => {
+  const trigger = canvas.getByRole("button", { name: /open sheet/i });
 
-    await expect(await screen.findByText("Edit profile")).toBeInTheDocument();
-    await expect(await screen.findByText(/update your profile details/i)).toBeInTheDocument();
-  },
-};
+  await userEvent.click(trigger);
+
+  await expect(await screen.findByText("Edit profile")).toBeInTheDocument();
+  await expect(await screen.findByText(/update your profile details/i)).toBeInTheDocument();
+});

@@ -1,13 +1,26 @@
-import type { Meta, StoryObj } from "@storybook/react-vite";
 import { useState } from "react";
-import { expect, userEvent, within } from "storybook/test";
+import { expect } from "storybook/test";
 
 import { CheckboxCards, CheckboxCardsItem } from "#/components/checkbox-cards";
 
+import preview from "../.storybook/preview";
+
 const FEATURES = [
-  { value: "analytics", label: "Analytics", description: "Track usage and insights" },
-  { value: "notifications", label: "Notifications", description: "Email and push alerts" },
-  { value: "api", label: "API Access", description: "Integrate with external tools" },
+  {
+    value: "analytics",
+    label: "Analytics",
+    description: "Track usage and insights",
+  },
+  {
+    value: "notifications",
+    label: "Notifications",
+    description: "Email and push alerts",
+  },
+  {
+    value: "api",
+    label: "API Access",
+    description: "Integrate with external tools",
+  },
 ];
 
 const ADDONS = [
@@ -18,24 +31,35 @@ const ADDONS = [
 ];
 
 const PLANS = [
-  { value: "free", label: "Free", description: "Up to 3 projects", disabled: false },
-  { value: "pro", label: "Pro", description: "Unlimited projects", disabled: false },
-  { value: "enterprise", label: "Enterprise", description: "Contact sales", disabled: true },
+  {
+    value: "free",
+    label: "Free",
+    description: "Up to 3 projects",
+    disabled: false,
+  },
+  {
+    value: "pro",
+    label: "Pro",
+    description: "Unlimited projects",
+    disabled: false,
+  },
+  {
+    value: "enterprise",
+    label: "Enterprise",
+    description: "Contact sales",
+    disabled: true,
+  },
 ];
 
 /**
  * CheckboxCards is a composition with a multi-select value array driven by
  * `onValueChange`, so stories are demoed via `render` (see Accordion).
  */
-const meta = {
+const meta = preview.meta({
   title: "Form/CheckboxCards",
-} satisfies Meta;
+});
 
-export default meta;
-
-type Story = StoryObj;
-
-export const Default: Story = {
+export const Default = meta.story({
   render: () => {
     function Render() {
       const [selected, setSelected] = useState<Array<string>>(["analytics"]);
@@ -62,9 +86,9 @@ export const Default: Story = {
 
     return <Render />;
   },
-};
+});
 
-export const Columns: Story = {
+export const Columns = meta.story({
   render: () => {
     function Render() {
       const [selected, setSelected] = useState<Array<string>>(["ci", "storage"]);
@@ -86,9 +110,9 @@ export const Columns: Story = {
 
     return <Render />;
   },
-};
+});
 
-export const Disabled: Story = {
+export const Disabled = meta.story({
   render: () => {
     function Render() {
       const [selected, setSelected] = useState<Array<string>>(["pro"]);
@@ -113,10 +137,9 @@ export const Disabled: Story = {
 
     return <Render />;
   },
-};
+});
 
-/** Interaction test — runs in a real browser via `vitest run --project=storybook`. */
-export const SelectsOnClick: Story = {
+export const SelectsOnClick = meta.story({
   render: () => (
     <CheckboxCards className="grid w-full max-w-xs gap-2">
       {FEATURES.map(({ value, label }) => (
@@ -126,11 +149,12 @@ export const SelectsOnClick: Story = {
       ))}
     </CheckboxCards>
   ),
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const checkbox = canvas.getByRole("checkbox", { name: /analytics/i });
+});
 
-    await userEvent.click(checkbox);
-    await expect(checkbox).toBeChecked();
-  },
-};
+/** Interaction test (CSF Next `.test()`) — runs in a real browser via `test:stories`. */
+SelectsOnClick.test("selects on click", async ({ canvas, userEvent }) => {
+  const checkbox = canvas.getByRole("checkbox", { name: /analytics/i });
+
+  await userEvent.click(checkbox);
+  await expect(checkbox).toBeChecked();
+});

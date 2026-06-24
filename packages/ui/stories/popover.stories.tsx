@@ -1,5 +1,4 @@
-import type { Meta, StoryObj } from "@storybook/react-vite";
-import { expect, screen, userEvent, within } from "storybook/test";
+import { expect, screen } from "storybook/test";
 
 import { Button } from "#/components/button";
 import { Input } from "#/components/input";
@@ -13,13 +12,11 @@ import {
   PopoverTrigger,
 } from "#/components/popover";
 
-const meta = { title: "Overlay/Popover" } satisfies Meta;
+import preview from "../.storybook/preview";
 
-export default meta;
+const meta = preview.meta({ title: "Overlay/Popover" });
 
-type Story = StoryObj;
-
-export const Default: Story = {
+export const Default = meta.story({
   render: () => (
     <Popover>
       <PopoverTrigger asChild>
@@ -45,9 +42,9 @@ export const Default: Story = {
       </PopoverContent>
     </Popover>
   ),
-};
+});
 
-export const Alignments: Story = {
+export const Alignments = meta.story({
   render: () => (
     <div className="flex gap-6">
       <Popover>
@@ -82,18 +79,18 @@ export const Alignments: Story = {
       </Popover>
     </div>
   ),
-};
+});
 
-/** Interaction test — runs in a real browser via `vitest run --project=storybook`. */
-export const OpensOnClick: Story = {
-  render: Default.render,
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const trigger = canvas.getByRole("button", { name: /open popover/i });
+export const OpensOnClick = meta.story({
+  render: Default.input.render,
+});
 
-    await userEvent.click(trigger);
+/** Interaction test (CSF Next `.test()`) — runs in a real browser via `test:stories`. */
+OpensOnClick.test("opens on click", async ({ canvas, userEvent }) => {
+  const trigger = canvas.getByRole("button", { name: /open popover/i });
 
-    await expect(await screen.findByText(/set the dimensions for the layer/i)).toBeInTheDocument();
-    await expect(await screen.findByText("Dimensions")).toBeInTheDocument();
-  },
-};
+  await userEvent.click(trigger);
+
+  await expect(await screen.findByText(/set the dimensions for the layer/i)).toBeInTheDocument();
+  await expect(await screen.findByText("Dimensions")).toBeInTheDocument();
+});

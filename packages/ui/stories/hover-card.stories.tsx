@@ -1,15 +1,14 @@
-import type { Meta, StoryObj } from "@storybook/react-vite";
 import { CalendarIcon } from "lucide-react";
-import { expect, screen, userEvent, within } from "storybook/test";
+import { expect, screen } from "storybook/test";
 
 import { Button } from "#/components/button";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "#/components/hover-card";
 
-const meta = { title: "Overlay/HoverCard" } satisfies Meta;
-export default meta;
-type Story = StoryObj;
+import preview from "../.storybook/preview";
 
-export const Default: Story = {
+const meta = preview.meta({ title: "Overlay/HoverCard" });
+
+export const Default = meta.story({
   render: () => (
     <HoverCard>
       <HoverCardTrigger asChild>
@@ -39,9 +38,9 @@ export const Default: Story = {
       </HoverCardContent>
     </HoverCard>
   ),
-};
+});
 
-export const Sides: Story = {
+export const Sides = meta.story({
   render: () => (
     <div className="flex flex-wrap justify-center gap-2">
       {(["left", "top", "bottom", "right"] as const).map((side) => (
@@ -61,20 +60,20 @@ export const Sides: Story = {
       ))}
     </div>
   ),
-};
+});
 
-/** Interaction test — runs in a real browser via `vitest run --project=storybook`. */
-export const OpensOnHover: Story = {
-  render: Default.render,
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const trigger = canvas.getByRole("button", { name: "@codefast" });
+export const OpensOnHover = meta.story({
+  render: Default.input.render,
+});
 
-    // Radix HoverCard has a 700ms open delay + entrance animation; hover plus
-    // focus (which also opens it) keeps this stable, and we assert presence
-    // (not visibility) with a generous timeout to ride out the animation.
-    await userEvent.hover(trigger);
-    trigger.focus();
-    await expect(await screen.findByText("Codefast Labs", {}, { timeout: 3000 })).toBeInTheDocument();
-  },
-};
+/** Interaction test (CSF Next `.test()`) — runs in a real browser via `test:stories`. */
+OpensOnHover.test("opens on hover", async ({ canvas, userEvent }) => {
+  const trigger = canvas.getByRole("button", { name: "@codefast" });
+
+  // Radix HoverCard has a 700ms open delay + entrance animation; hover plus
+  // focus (which also opens it) keeps this stable, and we assert presence
+  // (not visibility) with a generous timeout to ride out the animation.
+  await userEvent.hover(trigger);
+  trigger.focus();
+  await expect(await screen.findByText("Codefast Labs", {}, { timeout: 3000 })).toBeInTheDocument();
+});

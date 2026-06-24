@@ -1,5 +1,4 @@
-import type { Meta, StoryObj } from "@storybook/react-vite";
-import { expect, screen, userEvent, within } from "storybook/test";
+import { expect, screen } from "storybook/test";
 
 import { Button } from "#/components/button";
 import {
@@ -16,20 +15,18 @@ import {
 import { Input } from "#/components/input";
 import { Label } from "#/components/label";
 
+import preview from "../.storybook/preview";
+
 /**
  * Dialog is a composition of primitives (Trigger, Content, Header, Body,
  * Footer, ...). Each story wires them together via `render` rather than a
  * single `component`, since usage is composition-driven.
  */
-const meta = {
+const meta = preview.meta({
   title: "Overlay/Dialog",
-} satisfies Meta;
+});
 
-export default meta;
-
-type Story = StoryObj;
-
-export const Default: Story = {
+export const Default = meta.story({
   render: () => (
     <Dialog>
       <DialogTrigger asChild>
@@ -63,9 +60,9 @@ export const Default: Story = {
       </DialogContent>
     </Dialog>
   ),
-};
+});
 
-export const NoCloseButton: Story = {
+export const NoCloseButton = meta.story({
   render: () => (
     <Dialog>
       <DialogTrigger asChild>
@@ -79,9 +76,9 @@ export const NoCloseButton: Story = {
       </DialogContent>
     </Dialog>
   ),
-};
+});
 
-export const ScrollableContent: Story = {
+export const ScrollableContent = meta.story({
   render: () => (
     <Dialog>
       <DialogTrigger asChild>
@@ -106,18 +103,18 @@ export const ScrollableContent: Story = {
       </DialogContent>
     </Dialog>
   ),
-};
+});
 
-/** Interaction test — runs in a real browser via `vitest run --project=storybook`. */
-export const OpensOnClick: Story = {
-  render: Default.render,
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const trigger = canvas.getByRole("button", { name: /open dialog/i });
+export const OpensOnClick = meta.story({
+  render: Default.input.render,
+});
 
-    await userEvent.click(trigger);
+/** Interaction test (CSF Next `.test()`) — runs in a real browser via `test:stories`. */
+OpensOnClick.test("opens on click", async ({ canvas, userEvent }) => {
+  const trigger = canvas.getByRole("button", { name: /open dialog/i });
 
-    await expect(await screen.findByText(/edit profile/i)).toBeInTheDocument();
-    await expect(await screen.findByText(/make changes here/i)).toBeInTheDocument();
-  },
-};
+  await userEvent.click(trigger);
+
+  await expect(await screen.findByText(/edit profile/i)).toBeInTheDocument();
+  await expect(await screen.findByText(/make changes here/i)).toBeInTheDocument();
+});

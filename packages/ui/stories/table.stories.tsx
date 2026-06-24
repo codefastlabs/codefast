@@ -1,5 +1,3 @@
-import type { Meta, StoryObj } from "@storybook/react-vite";
-
 import {
   Table,
   TableBody,
@@ -11,23 +9,26 @@ import {
   TableRow,
 } from "#/components/table";
 
-const meta = {
+import preview from "../.storybook/preview";
+
+const meta = preview.meta({
   component: Table,
   title: "Display/Table",
-} satisfies Meta<typeof Table>;
-
-export default meta;
-
-type Story = StoryObj<typeof meta>;
+});
 
 const invoices = [
   { id: "INV001", status: "Paid", method: "Credit Card", amount: "$250.00" },
   { id: "INV002", status: "Pending", method: "PayPal", amount: "$150.00" },
-  { id: "INV003", status: "Unpaid", method: "Bank Transfer", amount: "$350.00" },
+  {
+    id: "INV003",
+    status: "Unpaid",
+    method: "Bank Transfer",
+    amount: "$350.00",
+  },
   { id: "INV004", status: "Paid", method: "Credit Card", amount: "$450.00" },
 ];
 
-export const Default: Story = {
+export const Default = meta.story({
   render: () => (
     <Table className="w-full max-w-lg">
       <TableCaption>A list of recent invoices.</TableCaption>
@@ -51,9 +52,9 @@ export const Default: Story = {
       </TableBody>
     </Table>
   ),
-};
+});
 
-export const WithFooter: Story = {
+export const WithFooter = meta.story({
   render: () => (
     <Table className="w-full max-w-lg">
       <TableCaption>A list of your recent invoices.</TableCaption>
@@ -83,4 +84,4 @@ export const WithFooter: Story = {
       </TableFooter>
     </Table>
   ),
-};
+});

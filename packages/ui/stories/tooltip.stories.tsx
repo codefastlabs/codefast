@@ -1,18 +1,15 @@
-import type { Meta, StoryObj } from "@storybook/react-vite";
 import { InfoIcon, SaveIcon, TerminalIcon } from "lucide-react";
-import { expect, screen, userEvent, within } from "storybook/test";
+import { expect, screen } from "storybook/test";
 
 import { Button } from "#/components/button";
 import { Kbd, KbdGroup } from "#/components/kbd";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "#/components/tooltip";
 
-const meta = { title: "Overlay/Tooltip" } satisfies Meta;
+import preview from "../.storybook/preview";
 
-export default meta;
+const meta = preview.meta({ title: "Overlay/Tooltip" });
 
-type Story = StoryObj;
-
-export const Default: Story = {
+export const Default = meta.story({
   render: () => (
     <TooltipProvider>
       <div className="flex gap-3">
@@ -45,9 +42,9 @@ export const Default: Story = {
       </div>
     </TooltipProvider>
   ),
-};
+});
 
-export const Sides: Story = {
+export const Sides = meta.story({
   render: () => (
     <TooltipProvider>
       <div className="flex flex-wrap gap-2">
@@ -66,9 +63,9 @@ export const Sides: Story = {
       </div>
     </TooltipProvider>
   ),
-};
+});
 
-export const Keyboard: Story = {
+export const Keyboard = meta.story({
   render: () => (
     <TooltipProvider>
       <Tooltip>
@@ -83,21 +80,21 @@ export const Keyboard: Story = {
       </Tooltip>
     </TooltipProvider>
   ),
-};
+});
 
-/** Interaction test — runs in a real browser via `vitest run --project=storybook`. */
-export const ShowsOnHover: Story = {
-  render: Default.render,
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const trigger = canvas.getByRole("button", { name: /info/i });
+export const ShowsOnHover = meta.story({
+  render: Default.input.render,
+});
 
-    // Focusing also opens a Radix tooltip and is more robust than hover in headless runs.
-    await userEvent.hover(trigger);
-    trigger.focus();
+/** Interaction test (CSF Next `.test()`) — runs in a real browser via `test:stories`. */
+ShowsOnHover.test("shows on hover", async ({ canvas, userEvent }) => {
+  const trigger = canvas.getByRole("button", { name: /info/i });
 
-    const matches = await screen.findAllByText(/more information/i);
+  // Focusing also opens a Radix tooltip and is more robust than hover in headless runs.
+  await userEvent.hover(trigger);
+  trigger.focus();
 
-    await expect(matches.length).toBeGreaterThan(0);
-  },
-};
+  const matches = await screen.findAllByText(/more information/i);
+
+  await expect(matches.length).toBeGreaterThan(0);
+});

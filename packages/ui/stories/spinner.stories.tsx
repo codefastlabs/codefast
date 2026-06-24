@@ -1,18 +1,14 @@
-import type { Meta, StoryObj } from "@storybook/react-vite";
-
 import { Button } from "#/components/button";
 import { Spinner } from "#/components/spinner";
 
-const meta = {
+import preview from "../.storybook/preview";
+
+const meta = preview.meta({
   component: Spinner,
   title: "Display/Spinner",
-} satisfies Meta<typeof Spinner>;
+});
 
-export default meta;
-
-type Story = StoryObj<typeof meta>;
-
-export const Default: Story = {
+export const Default = meta.story({
   render: () => (
     <div className="flex w-full max-w-xs flex-col items-center gap-4">
       <Button disabled>
@@ -25,9 +21,9 @@ export const Default: Story = {
       </div>
     </div>
   ),
-};
+});
 
-export const Sizes: Story = {
+export const Sizes = meta.story({
   render: () => (
     <div className="flex items-center gap-6">
       <Spinner className="size-3" />
@@ -36,9 +32,9 @@ export const Sizes: Story = {
       <Spinner className="size-8" />
     </div>
   ),
-};
+});
 
-export const InButton: Story = {
+export const InButton = meta.story({
   render: () => (
     <div className="flex flex-col items-center gap-4">
       <Button disabled size="sm">
@@ -55,4 +51,4 @@ export const InButton: Story = {
       </Button>
     </div>
   ),
-};
+});

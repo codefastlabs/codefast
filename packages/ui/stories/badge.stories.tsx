@@ -1,21 +1,18 @@
-import type { Meta, StoryObj } from "@storybook/react-vite";
 import { ArrowUpRightIcon, BadgeCheck, BookmarkIcon } from "lucide-react";
 
 import { Badge } from "#/components/badge";
 
-const meta = {
+import preview from "../.storybook/preview";
+
+const meta = preview.meta({
   args: { children: "Badge" },
   component: Badge,
   title: "Display/Badge",
-} satisfies Meta<typeof Badge>;
+});
 
-export default meta;
+export const Default = meta.story();
 
-type Story = StoryObj<typeof meta>;
-
-export const Default: Story = {};
-
-export const Variants: Story = {
+export const Variants = meta.story({
   render: () => (
     <div className="flex flex-wrap gap-2">
       <Badge>Default</Badge>
@@ -25,9 +22,9 @@ export const Variants: Story = {
       <Badge variant="ghost">Ghost</Badge>
     </div>
   ),
-};
+});
 
-export const WithIcon: Story = {
+export const WithIcon = meta.story({
   render: () => (
     <div className="flex flex-wrap gap-2">
       <Badge variant="secondary">
@@ -40,9 +37,9 @@ export const WithIcon: Story = {
       </Badge>
     </div>
   ),
-};
+});
 
-export const CustomColors: Story = {
+export const CustomColors = meta.story({
   render: () => (
     <div className="flex flex-wrap gap-2">
       <Badge className="bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-300">Blue</Badge>
@@ -52,9 +49,9 @@ export const CustomColors: Story = {
       <Badge className="bg-red-50 text-red-700 dark:bg-red-950 dark:text-red-300">Red</Badge>
     </div>
   ),
-};
+});
 
-export const AsLink: Story = {
+export const AsLink = meta.story({
   render: () => (
     <Badge asChild>
       <a href="#link">
@@ -62,4 +59,4 @@ export const AsLink: Story = {
       </a>
     </Badge>
   ),
-};
+});

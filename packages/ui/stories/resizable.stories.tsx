@@ -1,8 +1,9 @@
-import type { Meta, StoryObj } from "@storybook/react-vite";
 import { FileIcon, FolderOpenIcon } from "lucide-react";
 
 import { ResizableGroup, ResizablePanel, ResizableSeparator } from "#/components/resizable";
 import { cn } from "#/lib/utils";
+
+import preview from "../.storybook/preview";
 
 /**
  * ResizableGroup's root requires a `direction`/`orientation`-driven layout and
@@ -10,13 +11,9 @@ import { cn } from "#/lib/utils";
  * `args` onto every story. Composition components are demoed via `render`
  * instead — keep `component` only for prop-driven single components (see Button).
  */
-const meta = {
+const meta = preview.meta({
   title: "Layout/Resizable",
-} satisfies Meta;
-
-export default meta;
-
-type Story = StoryObj;
+});
 
 const FILES = [
   { name: "app.tsx", active: true },
@@ -25,7 +22,7 @@ const FILES = [
   { name: "utils.ts", active: false },
 ];
 
-export const Default: Story = {
+export const Default = meta.story({
   render: () => (
     <div className="h-80 w-full max-w-2xl">
       <ResizableGroup className="overflow-hidden rounded-xl border">
@@ -78,9 +75,9 @@ export const Default: Story = {
       </ResizableGroup>
     </div>
   ),
-};
+});
 
-export const Vertical: Story = {
+export const Vertical = meta.story({
   render: () => (
     <ResizableGroup orientation="vertical" className="min-h-50 max-w-sm rounded-lg border">
       <ResizablePanel defaultSize="25%">
@@ -96,9 +93,9 @@ export const Vertical: Story = {
       </ResizablePanel>
     </ResizableGroup>
   ),
-};
+});
 
-export const WithHandle: Story = {
+export const WithHandle = meta.story({
   render: () => (
     <ResizableGroup orientation="horizontal" className="min-h-50 max-w-md rounded-lg border md:min-w-112.5">
       <ResizablePanel defaultSize="25%">
@@ -114,4 +111,4 @@ export const WithHandle: Story = {
       </ResizablePanel>
     </ResizableGroup>
   ),
-};
+});

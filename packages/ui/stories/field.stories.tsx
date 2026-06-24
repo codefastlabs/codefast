@@ -1,5 +1,3 @@
-import type { Meta, StoryObj } from "@storybook/react-vite";
-
 import {
   Field,
   FieldContent,
@@ -16,19 +14,17 @@ import { RadioGroup, RadioGroupItem } from "#/components/radio-group";
 import { Switch } from "#/components/switch";
 import { Textarea } from "#/components/textarea";
 
+import preview from "../.storybook/preview";
+
 /**
  * Field is a layout/composition primitive — demoed via `render`. Its root props
  * are optional, but the meaningful demos all assemble several sub-components.
  */
-const meta = {
+const meta = preview.meta({
   title: "Form/Field",
-} satisfies Meta;
+});
 
-export default meta;
-
-type Story = StoryObj;
-
-export const Default: Story = {
+export const Default = meta.story({
   render: () => (
     <FieldGroup className="w-full max-w-md gap-6">
       <Field>
@@ -64,9 +60,9 @@ export const Default: Story = {
       </FieldSet>
     </FieldGroup>
   ),
-};
+});
 
-export const InputGroup: Story = {
+export const InputGroup = meta.story({
   render: () => (
     <FieldSet className="w-full max-w-xs">
       <FieldGroup>
@@ -83,9 +79,9 @@ export const InputGroup: Story = {
       </FieldGroup>
     </FieldSet>
   ),
-};
+});
 
-export const ChoiceCard: Story = {
+export const ChoiceCard = meta.story({
   render: () => (
     <FieldGroup className="w-full max-w-xs">
       <FieldSet>
@@ -114,4 +110,4 @@ export const ChoiceCard: Story = {
       </FieldSet>
     </FieldGroup>
   ),
-};
+});

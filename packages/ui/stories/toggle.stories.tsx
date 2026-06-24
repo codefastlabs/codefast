@@ -1,20 +1,17 @@
-import type { Meta, StoryObj } from "@storybook/react-vite";
 import { BoldIcon, ItalicIcon, UnderlineIcon } from "lucide-react";
-import { expect, userEvent, within } from "storybook/test";
+import { expect } from "storybook/test";
 
 import { Toggle } from "#/components/toggle";
 
-const meta = {
+import preview from "../.storybook/preview";
+
+const meta = preview.meta({
   args: { "aria-label": "Italic", children: <ItalicIcon /> },
   component: Toggle,
   title: "Form/Toggle",
-} satisfies Meta<typeof Toggle>;
+});
 
-export default meta;
-
-type Story = StoryObj<typeof meta>;
-
-export const Default: Story = {
+export const Default = meta.story({
   render: () => (
     <div className="flex gap-1">
       <Toggle aria-label="Bold" size="sm">
@@ -28,9 +25,9 @@ export const Default: Story = {
       </Toggle>
     </div>
   ),
-};
+});
 
-export const WithText: Story = {
+export const WithText = meta.story({
   args: {
     "aria-label": "Toggle italic",
     children: (
@@ -40,9 +37,9 @@ export const WithText: Story = {
       </>
     ),
   },
-};
+});
 
-export const Outline: Story = {
+export const Outline = meta.story({
   args: {
     "aria-label": "Toggle italic",
     variant: "outline",
@@ -53,24 +50,28 @@ export const Outline: Story = {
       </>
     ),
   },
-};
+});
 
-export const Large: Story = {
+export const Large = meta.story({
   args: { "aria-label": "Toggle large", size: "lg", children: "Large" },
-};
+});
 
-export const Disabled: Story = {
-  args: { "aria-label": "Toggle disabled", disabled: true, children: "Disabled" },
-};
-
-/** Interaction test — runs in a real browser via `vitest run --project=storybook`. */
-export const PressesOnClick: Story = {
-  args: { "aria-label": "Toggle bold", children: <BoldIcon /> },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const toggle = canvas.getByRole("button", { name: "Toggle bold" });
-
-    await userEvent.click(toggle);
-    await expect(toggle).toHaveAttribute("aria-pressed", "true");
+export const Disabled = meta.story({
+  args: {
+    "aria-label": "Toggle disabled",
+    disabled: true,
+    children: "Disabled",
   },
-};
+});
+
+export const PressesOnClick = meta.story({
+  args: { "aria-label": "Toggle bold", children: <BoldIcon /> },
+});
+
+/** Interaction test (CSF Next `.test()`) — runs in a real browser via `test:stories`. */
+PressesOnClick.test("presses on click", async ({ canvas, userEvent }) => {
+  const toggle = canvas.getByRole("button", { name: "Toggle bold" });
+
+  await userEvent.click(toggle);
+  await expect(toggle).toHaveAttribute("aria-pressed", "true");
+});

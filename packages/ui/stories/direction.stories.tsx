@@ -1,22 +1,18 @@
-import type { Meta, StoryObj } from "@storybook/react-vite";
-
 import { Button } from "#/components/button";
 import { DirectionProvider } from "#/components/direction";
+
+import preview from "../.storybook/preview";
 
 /**
  * DirectionProvider sets the reading direction (LTR/RTL) for descendant
  * components via Radix. It has no visual output of its own, so it's demoed via
  * `render` wrapping sample content (see Accordion).
  */
-const meta = {
+const meta = preview.meta({
   title: "Layout/Direction",
-} satisfies Meta;
+});
 
-export default meta;
-
-type Story = StoryObj;
-
-export const Default: Story = {
+export const Default = meta.story({
   render: () => (
     <DirectionProvider dir="ltr">
       <div dir="ltr" className="flex w-full max-w-sm items-center gap-2 rounded-md border p-4">
@@ -28,9 +24,9 @@ export const Default: Story = {
       </div>
     </DirectionProvider>
   ),
-};
+});
 
-export const RightToLeft: Story = {
+export const RightToLeft = meta.story({
   render: () => (
     <DirectionProvider dir="rtl">
       <div dir="rtl" className="flex w-full max-w-sm items-center gap-2 rounded-md border p-4">
@@ -42,4 +38,4 @@ export const RightToLeft: Story = {
       </div>
     </DirectionProvider>
   ),
-};
+});

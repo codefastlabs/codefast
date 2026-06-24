@@ -1,9 +1,10 @@
-import type { Meta, StoryObj } from "@storybook/react-vite";
 import type { JSX } from "react";
 import { useState } from "react";
-import { expect, userEvent, waitFor, within } from "storybook/test";
+import { expect, waitFor, within } from "storybook/test";
 
 import { Calendar } from "#/components/calendar";
+
+import preview from "../.storybook/preview";
 
 /**
  * Calendar manages a selected date with `useState`, so it's demoed via `render`
@@ -62,46 +63,42 @@ function RangeCalendar(): JSX.Element {
   );
 }
 
-const meta = {
+const meta = preview.meta({
   title: "Form/Calendar",
-} satisfies Meta;
+});
 
-export default meta;
-
-type Story = StoryObj;
-
-export const Default: Story = {
+export const Default = meta.story({
   render: () => <SingleCalendar />,
-};
+});
 
-export const Multiple: Story = {
+export const Multiple = meta.story({
   render: () => <MultipleCalendar />,
-};
+});
 
-export const Range: Story = {
+export const Range = meta.story({
   render: () => <RangeCalendar />,
-};
+});
 
-/** Interaction test — runs in a real browser via `vitest run --project=storybook`. */
-export const SelectsADay: Story = {
+export const SelectsADay = meta.story({
   render: () => <SingleCalendar />,
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    // Days render as gridcells whose accessible name is the day number; the clickable
-    // element is the <button> inside, which gets data-selected-single when selected.
-    const cell = canvas.getAllByRole("gridcell").find((gridcell) => gridcell.textContent?.trim() === "15");
+});
 
-    await expect(cell).toBeDefined();
+/** Interaction test (CSF Next `.test()`) — runs in a real browser via `test:stories`. */
+SelectsADay.test("selects a day", async ({ canvas, userEvent }) => {
+  // Days render as gridcells whose accessible name is the day number; the clickable
+  // element is the <button> inside, which gets data-selected-single when selected.
+  const cell = canvas.getAllByRole("gridcell").find((gridcell) => gridcell.textContent?.trim() === "15");
 
-    const dayButton = within(cell as HTMLElement).getByRole("button");
+  await expect(cell).toBeDefined();
 
-    await userEvent.click(dayButton);
+  const dayButton = within(cell as HTMLElement).getByRole("button");
 
-    // react-day-picker swaps the inner <button> on selection, so assert on the
-    // stable <td> gridcell, which gains aria-selected / data-selected when picked.
-    await waitFor(async () => {
-      await expect(cell as HTMLElement).toHaveAttribute("aria-selected", "true");
-    });
-    await expect(cell as HTMLElement).toHaveAttribute("data-selected", "true");
-  },
-};
+  await userEvent.click(dayButton);
+
+  // react-day-picker swaps the inner <button> on selection, so assert on the
+  // stable <td> gridcell, which gains aria-selected / data-selected when picked.
+  await waitFor(async () => {
+    await expect(cell as HTMLElement).toHaveAttribute("aria-selected", "true");
+  });
+  await expect(cell as HTMLElement).toHaveAttribute("data-selected", "true");
+});

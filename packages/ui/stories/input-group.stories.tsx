@@ -1,5 +1,3 @@
-import type { Meta } from "@storybook/react-vite";
-import type { StoryObj } from "@storybook/react-vite";
 import { SearchIcon } from "lucide-react";
 
 import {
@@ -10,19 +8,17 @@ import {
   InputGroupText,
 } from "#/components/input-group";
 
+import preview from "../.storybook/preview";
+
 /**
  * Input Group is a composition with no required root props, but its meaning lives
  * in the addon/input children — demoed via `render`, no `component` binding.
  */
-const meta = {
+const meta = preview.meta({
   title: "Form/InputGroup",
-} satisfies Meta;
+});
 
-export default meta;
-
-type Story = StoryObj;
-
-export const Default: Story = {
+export const Default = meta.story({
   render: () => (
     <div className="w-full max-w-sm space-y-3">
       <InputGroup>
@@ -47,9 +43,9 @@ export const Default: Story = {
       </InputGroup>
     </div>
   ),
-};
+});
 
-export const WithIcon: Story = {
+export const WithIcon = meta.story({
   render: () => (
     <InputGroup className="w-full max-w-sm">
       <InputGroupAddon align="inline-start">
@@ -58,9 +54,9 @@ export const WithIcon: Story = {
       <InputGroupInput placeholder="Search components…" />
     </InputGroup>
   ),
-};
+});
 
-export const WithButton: Story = {
+export const WithButton = meta.story({
   render: () => (
     <InputGroup className="w-full max-w-sm">
       <InputGroupInput placeholder="Amount" type="number" />
@@ -69,4 +65,4 @@ export const WithButton: Story = {
       </InputGroupAddon>
     </InputGroup>
   ),
-};
+});

@@ -1,9 +1,10 @@
-import type { Meta, StoryObj } from "@storybook/react-vite";
 import { useState } from "react";
-import { expect, userEvent, within } from "storybook/test";
+import { expect } from "storybook/test";
 
 import { CheckboxGroup, CheckboxGroupItem } from "#/components/checkbox-group";
 import { Label } from "#/components/label";
+
+import preview from "../.storybook/preview";
 
 const PERMISSIONS = [
   { value: "read", label: "Read" },
@@ -15,24 +16,32 @@ const PERMISSIONS = [
 const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri"];
 
 const NOTIFICATIONS = [
-  { value: "comments", label: "Comments", hint: "When someone replies to your thread." },
-  { value: "mentions", label: "Mentions", hint: "When you're @-mentioned anywhere." },
-  { value: "digest", label: "Weekly digest", hint: "A Monday summary of activity." },
+  {
+    value: "comments",
+    label: "Comments",
+    hint: "When someone replies to your thread.",
+  },
+  {
+    value: "mentions",
+    label: "Mentions",
+    hint: "When you're @-mentioned anywhere.",
+  },
+  {
+    value: "digest",
+    label: "Weekly digest",
+    hint: "A Monday summary of activity.",
+  },
 ];
 
 /**
  * CheckboxGroup shares a value array across items via `onValueChange`, so
  * stories are demoed via `render` (see Accordion).
  */
-const meta = {
+const meta = preview.meta({
   title: "Form/CheckboxGroup",
-} satisfies Meta;
+});
 
-export default meta;
-
-type Story = StoryObj;
-
-export const Default: Story = {
+export const Default = meta.story({
   render: () => {
     function Render() {
       const [selected, setSelected] = useState<Array<string>>(["read", "write"]);
@@ -59,9 +68,9 @@ export const Default: Story = {
 
     return <Render />;
   },
-};
+});
 
-export const Horizontal: Story = {
+export const Horizontal = meta.story({
   render: () => {
     function Render() {
       const [days, setDays] = useState<Array<string>>(["Mon", "Wed", "Fri"]);
@@ -80,9 +89,9 @@ export const Horizontal: Story = {
 
     return <Render />;
   },
-};
+});
 
-export const WithDescriptions: Story = {
+export const WithDescriptions = meta.story({
   render: () => {
     function Render() {
       const [value, setValue] = useState<Array<string>>(["mentions"]);
@@ -104,10 +113,9 @@ export const WithDescriptions: Story = {
 
     return <Render />;
   },
-};
+});
 
-/** Interaction test — runs in a real browser via `vitest run --project=storybook`. */
-export const SelectsOnClick: Story = {
+export const SelectsOnClick = meta.story({
   render: () => (
     <CheckboxGroup className="gap-3">
       {PERMISSIONS.filter(({ disabled }) => !disabled).map(({ value, label }) => (
@@ -118,13 +126,14 @@ export const SelectsOnClick: Story = {
       ))}
     </CheckboxGroup>
   ),
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const [checkbox] = canvas.getAllByRole("checkbox");
+});
 
-    await expect(checkbox).toBeDefined();
-    await expect(checkbox as HTMLElement).not.toBeChecked();
-    await userEvent.click(checkbox as HTMLElement);
-    await expect(checkbox as HTMLElement).toBeChecked();
-  },
-};
+/** Interaction test (CSF Next `.test()`) — runs in a real browser via `test:stories`. */
+SelectsOnClick.test("selects on click", async ({ canvas, userEvent }) => {
+  const [checkbox] = canvas.getAllByRole("checkbox");
+
+  await expect(checkbox).toBeDefined();
+  await expect(checkbox as HTMLElement).not.toBeChecked();
+  await userEvent.click(checkbox as HTMLElement);
+  await expect(checkbox as HTMLElement).toBeChecked();
+});

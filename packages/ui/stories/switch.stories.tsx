@@ -1,20 +1,17 @@
-import type { Meta, StoryObj } from "@storybook/react-vite";
 import { useState } from "react";
-import { expect, userEvent, within } from "storybook/test";
+import { expect } from "storybook/test";
 
 import { Label } from "#/components/label";
 import { Switch } from "#/components/switch";
 
-const meta = {
+import preview from "../.storybook/preview";
+
+const meta = preview.meta({
   component: Switch,
   title: "Form/Switch",
-} satisfies Meta<typeof Switch>;
+});
 
-export default meta;
-
-type Story = StoryObj<typeof meta>;
-
-export const Default: Story = {
+export const Default = meta.story({
   render: () => {
     function Render() {
       const [switched, setSwitched] = useState(true);
@@ -35,37 +32,37 @@ export const Default: Story = {
 
     return <Render />;
   },
-};
+});
 
-export const Small: Story = {
+export const Small = meta.story({
   args: { size: "sm" },
-};
+});
 
-export const Checked: Story = {
+export const Checked = meta.story({
   args: { defaultChecked: true },
-};
+});
 
-export const Disabled: Story = {
+export const Disabled = meta.story({
   args: { disabled: true },
-};
+});
 
-export const Invalid: Story = {
+export const Invalid = meta.story({
   args: { "aria-invalid": true },
-};
+});
 
-/** Interaction test — runs in a real browser via `vitest run --project=storybook`. */
-export const TogglesOnClick: Story = {
+export const TogglesOnClick = meta.story({
   render: () => (
     <div className="flex items-center gap-3">
       <Switch id="switch-test" />
       <Label htmlFor="switch-test">Notifications</Label>
     </div>
   ),
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const control = canvas.getByRole("switch");
+});
 
-    await userEvent.click(control);
-    await expect(control).toBeChecked();
-  },
-};
+/** Interaction test (CSF Next `.test()`) — runs in a real browser via `test:stories`. */
+TogglesOnClick.test("toggles on click", async ({ canvas, userEvent }) => {
+  const control = canvas.getByRole("switch");
+
+  await userEvent.click(control);
+  await expect(control).toBeChecked();
+});

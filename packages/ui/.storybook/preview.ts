@@ -1,8 +1,9 @@
-import type { Preview } from "@storybook/react-vite";
+import addonA11y from "@storybook/addon-a11y";
+import { definePreview } from "@storybook/react-vite";
 
 import "./tailwind.css";
 
-const preview: Preview = {
+export default definePreview({
   parameters: {
     a11y: {
       /**
@@ -18,6 +19,6 @@ const preview: Preview = {
       },
     },
   },
-};
 
-export default preview;
+  addons: [addonA11y()],
+});

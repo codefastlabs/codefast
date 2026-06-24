@@ -1,20 +1,16 @@
-import type { Meta, StoryObj } from "@storybook/react-vite";
-
 import { ProgressCircle } from "#/components/progress-circle";
 
-const meta = {
+import preview from "../.storybook/preview";
+
+const meta = preview.meta({
   args: { showValue: true, value: 72 },
   component: ProgressCircle,
   title: "Feedback/ProgressCircle",
-} satisfies Meta<typeof ProgressCircle>;
+});
 
-export default meta;
+export const Default = meta.story();
 
-type Story = StoryObj<typeof meta>;
-
-export const Default: Story = {};
-
-export const Values: Story = {
+export const Values = meta.story({
   render: () => (
     <div className="flex flex-wrap items-center justify-center gap-6">
       <ProgressCircle value={25} />
@@ -23,7 +19,7 @@ export const Values: Story = {
       <ProgressCircle value={100} showValue />
     </div>
   ),
-};
+});
 
 const metrics = [
   { label: "CPU", value: 38 },
@@ -31,7 +27,7 @@ const metrics = [
   { label: "Disk", value: 82 },
 ];
 
-export const Dashboard: Story = {
+export const Dashboard = meta.story({
   render: () => (
     <div className="flex flex-wrap items-center justify-center gap-6">
       {metrics.map(({ label, value }) => (
@@ -42,4 +38,4 @@ export const Dashboard: Story = {
       ))}
     </div>
   ),
-};
+});

@@ -1,10 +1,11 @@
-import type { Meta, StoryObj } from "@storybook/react-vite";
-import { expect, userEvent, within } from "storybook/test";
+import { expect } from "storybook/test";
 
 import { Button } from "#/components/button";
 import { Input } from "#/components/input";
 import { Label } from "#/components/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "#/components/tabs";
+
+import preview from "../.storybook/preview";
 
 /**
  * Tabs' root requires a `defaultValue` (or controlled `value`), so binding
@@ -12,15 +13,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "#/components/tabs";
  * demoed via `render` instead — keep `component` only for prop-driven single
  * components (see Button).
  */
-const meta = {
+const meta = preview.meta({
   title: "Navigation/Tabs",
-} satisfies Meta;
+});
 
-export default meta;
-
-type Story = StoryObj;
-
-export const Default: Story = {
+export const Default = meta.story({
   render: () => (
     <Tabs defaultValue="account" className="w-full max-w-sm">
       <TabsList>
@@ -53,9 +50,9 @@ export const Default: Story = {
       </TabsContent>
     </Tabs>
   ),
-};
+});
 
-export const Vertical: Story = {
+export const Vertical = meta.story({
   render: () => (
     <Tabs defaultValue="account" orientation="vertical">
       <TabsList>
@@ -65,9 +62,9 @@ export const Vertical: Story = {
       </TabsList>
     </Tabs>
   ),
-};
+});
 
-export const Line: Story = {
+export const Line = meta.story({
   render: () => (
     <Tabs defaultValue="overview">
       <TabsList variant="line">
@@ -77,16 +74,16 @@ export const Line: Story = {
       </TabsList>
     </Tabs>
   ),
-};
+});
 
-/** Interaction test — runs in a real browser via `vitest run --project=storybook`. */
-export const SwitchesOnClick: Story = {
-  render: Default.render,
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const trigger = canvas.getByRole("tab", { name: /password/i });
+export const SwitchesOnClick = meta.story({
+  render: Default.input.render,
+});
 
-    await userEvent.click(trigger);
-    await expect(await canvas.findByLabelText(/current password/i)).toBeVisible();
-  },
-};
+/** Interaction test (CSF Next `.test()`) — runs in a real browser via `test:stories`. */
+SwitchesOnClick.test("switches on click", async ({ canvas, userEvent }) => {
+  const trigger = canvas.getByRole("tab", { name: /password/i });
+
+  await userEvent.click(trigger);
+  await expect(await canvas.findByLabelText(/current password/i)).toBeVisible();
+});

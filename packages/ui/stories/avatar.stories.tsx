@@ -1,30 +1,26 @@
-import type { Meta, StoryObj } from "@storybook/react-vite";
-
 import { Avatar, AvatarBadge, AvatarFallback, AvatarGroup, AvatarGroupCount, AvatarImage } from "#/components/avatar";
+
+import preview from "../.storybook/preview";
 
 /**
  * Avatar is a composition with optional root props. Demoed via `render` while
  * keeping `component` bound to the Root (Pattern C, see Card).
  */
-const meta = {
+const meta = preview.meta({
   component: Avatar,
   title: "Display/Avatar",
-} satisfies Meta<typeof Avatar>;
+});
 
-export default meta;
-
-type Story = StoryObj<typeof meta>;
-
-export const Default: Story = {
+export const Default = meta.story({
   render: () => (
     <Avatar>
       <AvatarImage src="https://github.com/codefastlabs.png" alt="@codefast" className="grayscale" />
       <AvatarFallback>CN</AvatarFallback>
     </Avatar>
   ),
-};
+});
 
-export const Sizes: Story = {
+export const Sizes = meta.story({
   render: () => (
     <div className="flex flex-wrap items-center gap-2 grayscale">
       <Avatar size="sm">
@@ -41,9 +37,9 @@ export const Sizes: Story = {
       </Avatar>
     </div>
   ),
-};
+});
 
-export const WithBadge: Story = {
+export const WithBadge = meta.story({
   render: () => (
     <Avatar>
       <AvatarImage src="https://github.com/codefastlabs.png" alt="@codefast" />
@@ -51,9 +47,9 @@ export const WithBadge: Story = {
       <AvatarBadge className="bg-green-600 dark:bg-green-800" />
     </Avatar>
   ),
-};
+});
 
-export const Group: Story = {
+export const Group = meta.story({
   render: () => (
     <AvatarGroup className="grayscale">
       <Avatar>
@@ -71,4 +67,4 @@ export const Group: Story = {
       <AvatarGroupCount>+3</AvatarGroupCount>
     </AvatarGroup>
   ),
-};
+});

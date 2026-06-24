@@ -1,18 +1,14 @@
-import type { Meta, StoryObj } from "@storybook/react-vite";
-
 import { Button } from "#/components/button";
 import { Card, CardAction, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "#/components/card";
 
-const meta = {
+import preview from "../.storybook/preview";
+
+const meta = preview.meta({
   component: Card,
   title: "Layout/Card",
-} satisfies Meta<typeof Card>;
+});
 
-export default meta;
-
-type Story = StoryObj<typeof meta>;
-
-export const Default: Story = {
+export const Default = meta.story({
   render: () => (
     <Card className="w-full max-w-xs">
       <CardHeader>
@@ -21,7 +17,8 @@ export const Default: Story = {
       </CardHeader>
       <CardContent>
         <p className="text-2xl font-bold">
-          $49<span className="text-sm font-normal text-muted-foreground">/mo</span>
+          $49
+          <span className="text-sm font-normal text-muted-foreground">/mo</span>
         </p>
       </CardContent>
       <CardFooter>
@@ -31,9 +28,9 @@ export const Default: Story = {
       </CardFooter>
     </Card>
   ),
-};
+});
 
-export const WithAction: Story = {
+export const WithAction = meta.story({
   render: () => (
     <Card className="w-full max-w-sm">
       <CardHeader>
@@ -48,4 +45,4 @@ export const WithAction: Story = {
       <CardContent>You have 3 unread messages.</CardContent>
     </Card>
   ),
-};
+});

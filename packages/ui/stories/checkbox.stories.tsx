@@ -1,20 +1,17 @@
-import type { Meta, StoryObj } from "@storybook/react-vite";
 import { useState } from "react";
-import { expect, userEvent, within } from "storybook/test";
+import { expect } from "storybook/test";
 
 import { Checkbox } from "#/components/checkbox";
 import { Label } from "#/components/label";
 
-const meta = {
+import preview from "../.storybook/preview";
+
+const meta = preview.meta({
   component: Checkbox,
   title: "Form/Checkbox",
-} satisfies Meta<typeof Checkbox>;
+});
 
-export default meta;
-
-type Story = StoryObj<typeof meta>;
-
-export const Default: Story = {
+export const Default = meta.story({
   render: () => {
     function Render() {
       const [checked, setChecked] = useState(false);
@@ -39,37 +36,37 @@ export const Default: Story = {
 
     return <Render />;
   },
-};
+});
 
-export const Checked: Story = {
+export const Checked = meta.story({
   args: { defaultChecked: true },
-};
+});
 
-export const Indeterminate: Story = {
+export const Indeterminate = meta.story({
   args: { checked: "indeterminate" },
-};
+});
 
-export const Disabled: Story = {
+export const Disabled = meta.story({
   args: { disabled: true },
-};
+});
 
-export const Invalid: Story = {
+export const Invalid = meta.story({
   args: { "aria-invalid": true },
-};
+});
 
-/** Interaction test — runs in a real browser via `vitest run --project=storybook`. */
-export const TogglesOnClick: Story = {
+export const TogglesOnClick = meta.story({
   render: () => (
     <div className="flex items-center gap-2">
       <Checkbox id="check-test" />
       <Label htmlFor="check-test">Accept terms</Label>
     </div>
   ),
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const checkbox = canvas.getByRole("checkbox");
+});
 
-    await userEvent.click(checkbox);
-    await expect(checkbox).toBeChecked();
-  },
-};
+/** Interaction test (CSF Next `.test()`) — runs in a real browser via `test:stories`. */
+TogglesOnClick.test("toggles on click", async ({ canvas, userEvent }) => {
+  const checkbox = canvas.getByRole("checkbox");
+
+  await userEvent.click(checkbox);
+  await expect(checkbox).toBeChecked();
+});

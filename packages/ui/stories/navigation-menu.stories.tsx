@@ -1,7 +1,6 @@
-import type { Meta, StoryObj } from "@storybook/react-vite";
 import { BookOpenIcon, LayoutGridIcon, PaletteIcon, RocketIcon, SquareMousePointerIcon, TableIcon } from "lucide-react";
 import type { ComponentType } from "react";
-import { expect, screen, userEvent, within } from "storybook/test";
+import { expect, screen } from "storybook/test";
 
 import {
   NavigationMenu,
@@ -12,17 +11,43 @@ import {
   NavigationMenuTrigger,
 } from "#/components/navigation-menu";
 
+import preview from "../.storybook/preview";
+
 const GUIDES = [
-  { title: "Introduction", description: "Overview of the design system.", Icon: BookOpenIcon },
-  { title: "Installation", description: "Add components in one command.", Icon: RocketIcon },
-  { title: "Theming", description: "Customise tokens and dark mode.", Icon: PaletteIcon },
+  {
+    title: "Introduction",
+    description: "Overview of the design system.",
+    Icon: BookOpenIcon,
+  },
+  {
+    title: "Installation",
+    description: "Add components in one command.",
+    Icon: RocketIcon,
+  },
+  {
+    title: "Theming",
+    description: "Customise tokens and dark mode.",
+    Icon: PaletteIcon,
+  },
 ];
 
 const COMPONENTS = [
-  { title: "Button", description: "Triggers an action or event.", Icon: SquareMousePointerIcon },
-  { title: "Dialog", description: "A modal overlay window.", Icon: LayoutGridIcon },
+  {
+    title: "Button",
+    description: "Triggers an action or event.",
+    Icon: SquareMousePointerIcon,
+  },
+  {
+    title: "Dialog",
+    description: "A modal overlay window.",
+    Icon: LayoutGridIcon,
+  },
   { title: "Table", description: "Display tabular data.", Icon: TableIcon },
-  { title: "Layout", description: "Cards, grids, and panels.", Icon: LayoutGridIcon },
+  {
+    title: "Layout",
+    description: "Cards, grids, and panels.",
+    Icon: LayoutGridIcon,
+  },
 ];
 
 function ListItem({
@@ -54,15 +79,11 @@ function ListItem({
  * parts, so it's demoed via `render` rather than binding `component` (which
  * would force `args` onto every story — see Button for the prop-driven case).
  */
-const meta = {
+const meta = preview.meta({
   title: "Navigation/NavigationMenu",
-} satisfies Meta;
+});
 
-export default meta;
-
-type Story = StoryObj;
-
-export const Default: Story = {
+export const Default = meta.story({
   render: () => (
     <NavigationMenu>
       <NavigationMenuList>
@@ -112,10 +133,10 @@ export const Default: Story = {
       </NavigationMenuList>
     </NavigationMenu>
   ),
-};
+});
 
 /** `viewport={false}` renders each content panel inline under its own item instead of a shared viewport. */
-export const WithoutViewport: Story = {
+export const WithoutViewport = meta.story({
   render: () => (
     <NavigationMenu viewport={false}>
       <NavigationMenuList>
@@ -157,19 +178,19 @@ export const WithoutViewport: Story = {
       </NavigationMenuList>
     </NavigationMenu>
   ),
-};
+});
 
-/** Interaction test — runs in a real browser via `vitest run --project=storybook`. */
-export const OpensOnTriggerClick: Story = {
-  render: Default.render,
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const trigger = canvas.getByRole("button", { name: /getting started/i });
+export const OpensOnTriggerClick = meta.story({
+  render: Default.input.render,
+});
 
-    await userEvent.click(trigger);
+/** Interaction test (CSF Next `.test()`) — runs in a real browser via `test:stories`. */
+OpensOnTriggerClick.test("opens on trigger click", async ({ canvas, userEvent }) => {
+  const trigger = canvas.getByRole("button", { name: /getting started/i });
 
-    // Content may be portalled into the viewport outside `canvasElement`, so
-    // fall back to the document-wide `screen` query.
-    await expect(await screen.findByText(/Accessible React components/i)).toBeVisible();
-  },
-};
+  await userEvent.click(trigger);
+
+  // Content may be portalled into the viewport outside `canvasElement`, so
+  // fall back to the document-wide `screen` query.
+  await expect(await screen.findByText(/Accessible React components/i)).toBeVisible();
+});

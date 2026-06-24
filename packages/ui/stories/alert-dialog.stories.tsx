@@ -1,6 +1,5 @@
-import type { Meta, StoryObj } from "@storybook/react-vite";
 import { TriangleAlertIcon, Trash2Icon } from "lucide-react";
-import { expect, screen, userEvent, within } from "storybook/test";
+import { expect, screen } from "storybook/test";
 
 import {
   AlertDialog,
@@ -16,19 +15,17 @@ import {
 } from "#/components/alert-dialog";
 import { Button } from "#/components/button";
 
+import preview from "../.storybook/preview";
+
 /**
  * AlertDialog's root and parts are composition pieces without required props,
  * so they are demoed via `render` rather than bound to `component`.
  */
-const meta = {
+const meta = preview.meta({
   title: "Overlay/AlertDialog",
-} satisfies Meta;
+});
 
-export default meta;
-
-type Story = StoryObj;
-
-export const Default: Story = {
+export const Default = meta.story({
   render: () => (
     <AlertDialog>
       <AlertDialogTrigger asChild>
@@ -53,9 +50,9 @@ export const Default: Story = {
       </AlertDialogContent>
     </AlertDialog>
   ),
-};
+});
 
-export const Destructive: Story = {
+export const Destructive = meta.story({
   render: () => (
     <AlertDialog>
       <AlertDialogTrigger asChild>
@@ -79,17 +76,17 @@ export const Destructive: Story = {
       </AlertDialogContent>
     </AlertDialog>
   ),
-};
+});
 
-/** Interaction test — runs in a real browser via `vitest run --project=storybook`. */
-export const OpensOnClick: Story = {
-  render: Default.render,
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const trigger = canvas.getByRole("button", { name: /delete account/i });
+export const OpensOnClick = meta.story({
+  render: Default.input.render,
+});
 
-    await userEvent.click(trigger);
-    await expect(await screen.findByText(/are you absolutely sure/i)).toBeInTheDocument();
-    await expect(await screen.findByText(/this action cannot be undone/i)).toBeInTheDocument();
-  },
-};
+/** Interaction test (CSF Next `.test()`) — runs in a real browser via `test:stories`. */
+OpensOnClick.test("opens on click", async ({ canvas, userEvent }) => {
+  const trigger = canvas.getByRole("button", { name: /delete account/i });
+
+  await userEvent.click(trigger);
+  await expect(await screen.findByText(/are you absolutely sure/i)).toBeInTheDocument();
+  await expect(await screen.findByText(/this action cannot be undone/i)).toBeInTheDocument();
+});

@@ -1,23 +1,20 @@
-import type { Meta, StoryObj } from "@storybook/react-vite";
 import { AlertCircleIcon, AlertTriangleIcon, CheckCircle2Icon, InfoIcon, XIcon } from "lucide-react";
 
 import { Alert, AlertAction, AlertDescription, AlertTitle } from "#/components/alert";
 import { Button } from "#/components/button";
 
+import preview from "../.storybook/preview";
+
 /**
  * Alert is a composition with optional root props. Demoed via `render` while
  * keeping `component` bound to the Root (Pattern C, see Card).
  */
-const meta = {
+const meta = preview.meta({
   component: Alert,
   title: "Display/Alert",
-} satisfies Meta<typeof Alert>;
+});
 
-export default meta;
-
-type Story = StoryObj<typeof meta>;
-
-export const Default: Story = {
+export const Default = meta.story({
   render: () => (
     <div className="w-full max-w-sm space-y-3">
       <Alert>
@@ -37,9 +34,9 @@ export const Default: Story = {
       </Alert>
     </div>
   ),
-};
+});
 
-export const Basic: Story = {
+export const Basic = meta.story({
   render: () => (
     <Alert className="max-w-md">
       <CheckCircle2Icon />
@@ -49,9 +46,9 @@ export const Basic: Story = {
       </AlertDescription>
     </Alert>
   ),
-};
+});
 
-export const Destructive: Story = {
+export const Destructive = meta.story({
   render: () => (
     <Alert variant="destructive" className="max-w-md">
       <AlertCircleIcon />
@@ -61,9 +58,9 @@ export const Destructive: Story = {
       </AlertDescription>
     </Alert>
   ),
-};
+});
 
-export const WithAction: Story = {
+export const WithAction = meta.story({
   render: () => (
     <Alert className="max-w-md">
       <AlertTitle>Dark mode is now available</AlertTitle>
@@ -75,4 +72,4 @@ export const WithAction: Story = {
       </AlertAction>
     </Alert>
   ),
-};
+});

@@ -1,11 +1,12 @@
-import type { Meta, StoryObj } from "@storybook/react-vite";
 import type { JSX } from "react";
 import { useForm } from "react-hook-form";
-import { expect, userEvent, within } from "storybook/test";
+import { expect } from "storybook/test";
 
 import { Button } from "#/components/button";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "#/components/form";
 import { Input } from "#/components/input";
+
+import preview from "../.storybook/preview";
 
 /**
  * Form composes react-hook-form with `Form`/`FormField`/`FormItem` and friends.
@@ -68,26 +69,22 @@ function SignInForm(): JSX.Element {
   );
 }
 
-const meta = {
+const meta = preview.meta({
   title: "Form/Form",
-} satisfies Meta;
+});
 
-export default meta;
-
-type Story = StoryObj;
-
-export const Default: Story = {
+export const Default = meta.story({
   render: () => <SignInForm />,
-};
+});
 
-/** Interaction test — runs in a real browser via `vitest run --project=storybook`. */
-export const ValidatesRequired: Story = {
+export const ValidatesRequired = meta.story({
   render: () => <SignInForm />,
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const submit = canvas.getByRole("button", { name: /sign in/i });
+});
 
-    await userEvent.click(submit);
-    await expect(await canvas.findByText(/username is required/i)).toBeVisible();
-  },
-};
+/** Interaction test (CSF Next `.test()`) — runs in a real browser via `test:stories`. */
+ValidatesRequired.test("validates required", async ({ canvas, userEvent }) => {
+  const submit = canvas.getByRole("button", { name: /sign in/i });
+
+  await userEvent.click(submit);
+  await expect(await canvas.findByText(/username is required/i)).toBeVisible();
+});

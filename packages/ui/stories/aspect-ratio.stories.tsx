@@ -1,21 +1,18 @@
-import type { Meta, StoryObj } from "@storybook/react-vite";
 import { PlayIcon } from "lucide-react";
 
 import { AspectRatio } from "#/components/aspect-ratio";
+
+import preview from "../.storybook/preview";
 
 /**
  * AspectRatio's root requires a `ratio` prop, so it's demoed via `render`
  * rather than bound to `component` (Pattern B, see Accordion).
  */
-const meta = {
+const meta = preview.meta({
   title: "Display/AspectRatio",
-} satisfies Meta;
+});
 
-export default meta;
-
-type Story = StoryObj;
-
-export const Default: Story = {
+export const Default = meta.story({
   render: () => (
     <div className="w-full max-w-sm">
       <div className="overflow-hidden rounded-xl border">
@@ -30,9 +27,9 @@ export const Default: Story = {
       <p className="mt-2 text-xs text-muted-foreground">Product walkthrough · 16:9</p>
     </div>
   ),
-};
+});
 
-export const Square: Story = {
+export const Square = meta.story({
   render: () => (
     <div className="w-full max-w-48">
       <AspectRatio ratio={1 / 1} className="rounded-lg bg-muted">
@@ -44,9 +41,9 @@ export const Square: Story = {
       </AspectRatio>
     </div>
   ),
-};
+});
 
-export const Portrait: Story = {
+export const Portrait = meta.story({
   render: () => (
     <div className="w-full max-w-40">
       <AspectRatio ratio={9 / 16} className="rounded-lg bg-muted">
@@ -58,4 +55,4 @@ export const Portrait: Story = {
       </AspectRatio>
     </div>
   ),
-};
+});

@@ -1,9 +1,10 @@
-import type { Meta, StoryObj } from "@storybook/react-vite";
 import { useState } from "react";
-import { expect, userEvent, within } from "storybook/test";
+import { expect } from "storybook/test";
 
 import { Label } from "#/components/label";
 import { Radio } from "#/components/radio";
+
+import preview from "../.storybook/preview";
 
 const SIZES = ["Small", "Medium", "Large"] as const;
 type Size = (typeof SIZES)[number];
@@ -14,16 +15,12 @@ const VOTES = ["Yes", "No", "Maybe"];
  * Radio is a native input grouped by `name` and driven by `onValueChange`, so
  * stories are demoed via `render` (see Accordion).
  */
-const meta = {
+const meta = preview.meta({
   component: Radio,
   title: "Form/Radio",
-} satisfies Meta<typeof Radio>;
+});
 
-export default meta;
-
-type Story = StoryObj<typeof meta>;
-
-export const Default: Story = {
+export const Default = meta.story({
   render: () => {
     function Render() {
       const [selected, setSelected] = useState<Size>("Medium");
@@ -50,9 +47,9 @@ export const Default: Story = {
 
     return <Render />;
   },
-};
+});
 
-export const Horizontal: Story = {
+export const Horizontal = meta.story({
   render: () => {
     function Render() {
       const [value, setValue] = useState("Yes");
@@ -77,9 +74,9 @@ export const Horizontal: Story = {
 
     return <Render />;
   },
-};
+});
 
-export const Disabled: Story = {
+export const Disabled = meta.story({
   render: () => {
     function Render() {
       const [value, setValue] = useState("available");
@@ -106,10 +103,9 @@ export const Disabled: Story = {
 
     return <Render />;
   },
-};
+});
 
-/** Interaction test — runs in a real browser via `vitest run --project=storybook`. */
-export const ChecksOnClick: Story = {
+export const ChecksOnClick = meta.story({
   render: () => (
     <div className="flex flex-col gap-3">
       {VOTES.map((option) => (
@@ -120,11 +116,12 @@ export const ChecksOnClick: Story = {
       ))}
     </div>
   ),
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const radio = canvas.getByRole("radio", { name: "Yes" });
+});
 
-    await userEvent.click(radio);
-    await expect(radio).toBeChecked();
-  },
-};
+/** Interaction test (CSF Next `.test()`) — runs in a real browser via `test:stories`. */
+ChecksOnClick.test("checks on click", async ({ canvas, userEvent }) => {
+  const radio = canvas.getByRole("radio", { name: "Yes" });
+
+  await userEvent.click(radio);
+  await expect(radio).toBeChecked();
+});

@@ -1,6 +1,5 @@
-import type { Meta, StoryObj } from "@storybook/react-vite";
 import { useState } from "react";
-import { expect, screen, userEvent, within } from "storybook/test";
+import { expect, screen } from "storybook/test";
 
 import { Button } from "#/components/button";
 import {
@@ -17,15 +16,13 @@ import {
   DropdownMenuTrigger,
 } from "#/components/dropdown-menu";
 
-const meta = {
+import preview from "../.storybook/preview";
+
+const meta = preview.meta({
   title: "Overlay/DropdownMenu",
-} satisfies Meta;
+});
 
-export default meta;
-
-type Story = StoryObj;
-
-export const Default: Story = {
+export const Default = meta.story({
   render: () => (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -48,9 +45,9 @@ export const Default: Story = {
       </DropdownMenuContent>
     </DropdownMenu>
   ),
-};
+});
 
-export const Checkboxes: Story = {
+export const Checkboxes = meta.story({
   render: () => {
     function CheckboxesExample() {
       const [showStatusBar, setShowStatusBar] = useState(true);
@@ -82,9 +79,9 @@ export const Checkboxes: Story = {
 
     return <CheckboxesExample />;
   },
-};
+});
 
-export const RadioGroup: Story = {
+export const RadioGroup = meta.story({
   render: () => {
     function RadioGroupExample() {
       const [position, setPosition] = useState("bottom");
@@ -110,18 +107,18 @@ export const RadioGroup: Story = {
 
     return <RadioGroupExample />;
   },
-};
+});
 
-/** Interaction test — runs in a real browser via `vitest run --project=storybook`. */
-export const OpensOnClick: Story = {
-  render: Default.render,
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const trigger = canvas.getByRole("button", { name: /open menu/i });
+export const OpensOnClick = meta.story({
+  render: Default.input.render,
+});
 
-    await userEvent.click(trigger);
+/** Interaction test (CSF Next `.test()`) — runs in a real browser via `test:stories`. */
+OpensOnClick.test("opens on click", async ({ canvas, userEvent }) => {
+  const trigger = canvas.getByRole("button", { name: /open menu/i });
 
-    await expect(await screen.findByText(/my account/i)).toBeInTheDocument();
-    await expect(await screen.findByText(/billing/i)).toBeInTheDocument();
-  },
-};
+  await userEvent.click(trigger);
+
+  await expect(await screen.findByText(/my account/i)).toBeInTheDocument();
+  await expect(await screen.findByText(/billing/i)).toBeInTheDocument();
+});

@@ -1,5 +1,4 @@
-import type { Meta, StoryObj } from "@storybook/react-vite";
-import { expect, screen, userEvent, within } from "storybook/test";
+import { expect, screen } from "storybook/test";
 
 import {
   Select,
@@ -12,16 +11,14 @@ import {
   SelectValue,
 } from "#/components/select";
 
-const meta = {
+import preview from "../.storybook/preview";
+
+const meta = preview.meta({
   component: Select,
   title: "Form/Select",
-} satisfies Meta<typeof Select>;
+});
 
-export default meta;
-
-type Story = StoryObj<typeof meta>;
-
-export const Default: Story = {
+export const Default = meta.story({
   render: () => (
     <Select>
       <SelectTrigger className="w-44">
@@ -38,9 +35,9 @@ export const Default: Story = {
       </SelectContent>
     </Select>
   ),
-};
+});
 
-export const Groups: Story = {
+export const Groups = meta.story({
   render: () => (
     <Select>
       <SelectTrigger className="w-full max-w-48">
@@ -63,9 +60,9 @@ export const Groups: Story = {
       </SelectContent>
     </Select>
   ),
-};
+});
 
-export const Disabled: Story = {
+export const Disabled = meta.story({
   render: () => (
     <Select disabled>
       <SelectTrigger className="w-full max-w-48">
@@ -80,20 +77,20 @@ export const Disabled: Story = {
       </SelectContent>
     </Select>
   ),
-};
+});
 
-/** Interaction test — content is portalled, so options are queried via `screen`. */
-export const SelectsOption: Story = {
-  render: Default.render,
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const trigger = canvas.getByRole("combobox");
+export const SelectsOption = meta.story({
+  render: Default.input.render,
+});
 
-    await userEvent.click(trigger);
+/** Interaction test (CSF Next `.test()`) — content is portalled, so options are queried via `screen`. */
+SelectsOption.test("selects option", async ({ canvas, userEvent }) => {
+  const trigger = canvas.getByRole("combobox");
 
-    const option = await screen.findByRole("option", { name: "Svelte" });
+  await userEvent.click(trigger);
 
-    await userEvent.click(option);
-    await expect(trigger).toHaveTextContent("Svelte");
-  },
-};
+  const option = await screen.findByRole("option", { name: "Svelte" });
+
+  await userEvent.click(option);
+  await expect(trigger).toHaveTextContent("Svelte");
+});

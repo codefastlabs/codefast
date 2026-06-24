@@ -1,17 +1,13 @@
-import type { Meta, StoryObj } from "@storybook/react-vite";
-
 import { Separator } from "#/components/separator";
 
-const meta = {
+import preview from "../.storybook/preview";
+
+const meta = preview.meta({
   component: Separator,
   title: "Layout/Separator",
-} satisfies Meta<typeof Separator>;
+});
 
-export default meta;
-
-type Story = StoryObj<typeof meta>;
-
-export const Default: Story = {
+export const Default = meta.story({
   render: () => (
     <div className="w-full max-w-xs">
       <div className="space-y-1">
@@ -28,9 +24,9 @@ export const Default: Story = {
       </div>
     </div>
   ),
-};
+});
 
-export const Vertical: Story = {
+export const Vertical = meta.story({
   render: () => (
     <div className="flex h-5 items-center gap-4 text-sm">
       <div>Blog</div>
@@ -40,9 +36,9 @@ export const Vertical: Story = {
       <div>Source</div>
     </div>
   ),
-};
+});
 
-export const List: Story = {
+export const List = meta.story({
   render: () => (
     <div className="flex w-full max-w-sm flex-col gap-2 text-sm">
       <dl className="flex items-center justify-between">
@@ -61,4 +57,4 @@ export const List: Story = {
       </dl>
     </div>
   ),
-};
+});

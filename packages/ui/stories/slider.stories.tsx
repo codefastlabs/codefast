@@ -1,11 +1,12 @@
-import type { Meta, StoryObj } from "@storybook/react-vite";
 import { Volume2Icon } from "lucide-react";
 import type { JSX } from "react";
 import { useState } from "react";
-import { expect, userEvent, within } from "storybook/test";
+import { expect } from "storybook/test";
 
 import { Label } from "#/components/label";
 import { Slider } from "#/components/slider";
+
+import preview from "../.storybook/preview";
 
 /**
  * Slider's root takes `defaultValue`/`value`, so the interesting demos are
@@ -55,48 +56,44 @@ function TemperatureSlider(): JSX.Element {
   );
 }
 
-const meta = {
+const meta = preview.meta({
   title: "Form/Slider",
-} satisfies Meta;
+});
 
-export default meta;
-
-type Story = StoryObj;
-
-export const Default: Story = {
+export const Default = meta.story({
   render: () => <VolumeAndRangeSlider />,
-};
+});
 
-export const Controlled: Story = {
+export const Controlled = meta.story({
   render: () => <TemperatureSlider />,
-};
+});
 
-export const Multiple: Story = {
+export const Multiple = meta.story({
   render: () => <Slider defaultValue={[10, 20, 70]} max={100} step={10} className="mx-auto w-full max-w-xs" />,
-};
+});
 
-export const Disabled: Story = {
+export const Disabled = meta.story({
   render: () => <Slider defaultValue={[50]} max={100} step={1} disabled className="mx-auto w-full max-w-xs" />,
-};
+});
 
-export const Vertical: Story = {
+export const Vertical = meta.story({
   render: () => (
     <div className="mx-auto flex w-full max-w-xs items-center justify-center gap-6">
       <Slider defaultValue={[50]} max={100} step={1} orientation="vertical" className="h-40" />
       <Slider defaultValue={[25]} max={100} step={1} orientation="vertical" className="h-40" />
     </div>
   ),
-};
+});
 
-/** Interaction test — runs in a real browser via `vitest run --project=storybook`. */
-export const ArrowKeyChangesValue: Story = {
+export const ArrowKeyChangesValue = meta.story({
   render: () => <Slider defaultValue={[50]} max={100} step={1} className="mx-auto w-full max-w-xs" />,
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const thumb = canvas.getByRole("slider");
+});
 
-    thumb.focus();
-    await userEvent.keyboard("{ArrowRight}");
-    await expect(thumb).toHaveAttribute("aria-valuenow", "51");
-  },
-};
+/** Interaction test (CSF Next `.test()`) — runs in a real browser via `test:stories`. */
+ArrowKeyChangesValue.test("arrow key changes value", async ({ canvas, userEvent }) => {
+  const thumb = canvas.getByRole("slider");
+
+  thumb.focus();
+  await userEvent.keyboard("{ArrowRight}");
+  await expect(thumb).toHaveAttribute("aria-valuenow", "51");
+});

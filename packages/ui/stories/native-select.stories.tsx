@@ -1,18 +1,14 @@
-import type { Meta, StoryObj } from "@storybook/react-vite";
-
 import { Label } from "#/components/label";
 import { NativeSelect, NativeSelectOptGroup, NativeSelectOption } from "#/components/native-select";
 
-const meta = {
+import preview from "../.storybook/preview";
+
+const meta = preview.meta({
   component: NativeSelect,
   title: "Form/NativeSelect",
-} satisfies Meta<typeof NativeSelect>;
+});
 
-export default meta;
-
-type Story = StoryObj<typeof meta>;
-
-export const Default: Story = {
+export const Default = meta.story({
   render: () => (
     <div className="grid gap-1.5">
       <Label htmlFor="ns-country">Country</Label>
@@ -29,9 +25,9 @@ export const Default: Story = {
       </NativeSelect>
     </div>
   ),
-};
+});
 
-export const Disabled: Story = {
+export const Disabled = meta.story({
   render: () => (
     <NativeSelect disabled>
       <NativeSelectOption value="">Disabled</NativeSelectOption>
@@ -40,9 +36,9 @@ export const Disabled: Story = {
       <NativeSelectOption value="blueberry">Blueberry</NativeSelectOption>
     </NativeSelect>
   ),
-};
+});
 
-export const Invalid: Story = {
+export const Invalid = meta.story({
   render: () => (
     <NativeSelect aria-invalid="true">
       <NativeSelectOption value="">Error state</NativeSelectOption>
@@ -51,4 +47,4 @@ export const Invalid: Story = {
       <NativeSelectOption value="blueberry">Blueberry</NativeSelectOption>
     </NativeSelect>
   ),
-};
+});

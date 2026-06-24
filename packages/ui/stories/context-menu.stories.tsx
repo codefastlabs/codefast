@@ -1,7 +1,6 @@
-import type { Meta, StoryObj } from "@storybook/react-vite";
 import { CopyIcon, DownloadIcon, FolderIcon, PencilIcon, Share2Icon, Trash2Icon } from "lucide-react";
 import { useState } from "react";
-import { expect, fireEvent, screen, within } from "storybook/test";
+import { expect, fireEvent, screen } from "storybook/test";
 
 import {
   ContextMenu,
@@ -17,11 +16,9 @@ import {
   ContextMenuTrigger,
 } from "#/components/context-menu";
 
-const meta = { title: "Overlay/ContextMenu" } satisfies Meta;
+import preview from "../.storybook/preview";
 
-export default meta;
-
-type Story = StoryObj;
+const meta = preview.meta({ title: "Overlay/ContextMenu" });
 
 function ContextMenuDemo() {
   const [favorite, setFavorite] = useState(true);
@@ -85,11 +82,11 @@ function ContextMenuDemo() {
   );
 }
 
-export const Default: Story = {
+export const Default = meta.story({
   render: () => <ContextMenuDemo />,
-};
+});
 
-export const Basic: Story = {
+export const Basic = meta.story({
   render: () => (
     <ContextMenu>
       <ContextMenuTrigger className="flex h-32 w-64 items-center justify-center rounded-md border border-dashed text-sm text-muted-foreground select-none">
@@ -104,18 +101,18 @@ export const Basic: Story = {
       </ContextMenuContent>
     </ContextMenu>
   ),
-};
+});
 
-/** Interaction test — runs in a real browser via `vitest run --project=storybook`. */
-export const OpensOnRightClick: Story = {
-  render: Default.render,
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const trigger = canvas.getByText(/right-click to edit/i);
+export const OpensOnRightClick = meta.story({
+  render: Default.input.render,
+});
 
-    await fireEvent.contextMenu(trigger);
+/** Interaction test (CSF Next `.test()`) — runs in a real browser via `test:stories`. */
+OpensOnRightClick.test("opens on right click", async ({ canvas }) => {
+  const trigger = canvas.getByText(/right-click to edit/i);
 
-    await expect(await screen.findByText(/rename/i)).toBeInTheDocument();
-    await expect(await screen.findByText(/duplicate/i)).toBeInTheDocument();
-  },
-};
+  await fireEvent.contextMenu(trigger);
+
+  await expect(await screen.findByText(/rename/i)).toBeInTheDocument();
+  await expect(await screen.findByText(/duplicate/i)).toBeInTheDocument();
+});

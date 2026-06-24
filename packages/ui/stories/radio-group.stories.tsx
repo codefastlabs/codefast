@@ -1,9 +1,10 @@
-import type { Meta, StoryObj } from "@storybook/react-vite";
 import { useState } from "react";
-import { expect, userEvent, within } from "storybook/test";
+import { expect } from "storybook/test";
 
 import { Label } from "#/components/label";
 import { RadioGroup, RadioGroupItem } from "#/components/radio-group";
+
+import preview from "../.storybook/preview";
 
 const DENSITY_OPTIONS = ["compact", "comfortable", "spacious"] as const;
 type Density = (typeof DENSITY_OPTIONS)[number];
@@ -15,15 +16,11 @@ const isDensity = (value: string): value is Density => DENSITY_SET.has(value);
  * RadioGroup's root requires a controlled `value`/`defaultValue` to be useful,
  * so stories are demoed via `render` (see Accordion).
  */
-const meta = {
+const meta = preview.meta({
   title: "Form/RadioGroup",
-} satisfies Meta;
+});
 
-export default meta;
-
-type Story = StoryObj;
-
-export const Default: Story = {
+export const Default = meta.story({
   render: () => {
     function Render() {
       const [radio, setRadio] = useState<Density>("comfortable");
@@ -52,9 +49,9 @@ export const Default: Story = {
 
     return <Render />;
   },
-};
+});
 
-export const Disabled: Story = {
+export const Disabled = meta.story({
   render: () => (
     <RadioGroup defaultValue="option2" className="w-fit">
       <div className="flex items-center gap-2 opacity-50">
@@ -77,9 +74,9 @@ export const Disabled: Story = {
       </div>
     </RadioGroup>
   ),
-};
+});
 
-export const Invalid: Story = {
+export const Invalid = meta.story({
   render: () => (
     <RadioGroup defaultValue="email" className="w-fit">
       <div className="flex items-center gap-2">
@@ -102,10 +99,9 @@ export const Invalid: Story = {
       </div>
     </RadioGroup>
   ),
-};
+});
 
-/** Interaction test — runs in a real browser via `vitest run --project=storybook`. */
-export const ChecksOnClick: Story = {
+export const ChecksOnClick = meta.story({
   render: () => (
     <RadioGroup defaultValue="comfortable" className="gap-3">
       {DENSITY_OPTIONS.map((value) => (
@@ -118,11 +114,12 @@ export const ChecksOnClick: Story = {
       ))}
     </RadioGroup>
   ),
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const radio = canvas.getByRole("radio", { name: "compact" });
+});
 
-    await userEvent.click(radio);
-    await expect(radio).toBeChecked();
-  },
-};
+/** Interaction test (CSF Next `.test()`) — runs in a real browser via `test:stories`. */
+ChecksOnClick.test("checks on click", async ({ canvas, userEvent }) => {
+  const radio = canvas.getByRole("radio", { name: "compact" });
+
+  await userEvent.click(radio);
+  await expect(radio).toBeChecked();
+});

@@ -1,35 +1,32 @@
-import type { Meta, StoryObj } from "@storybook/react-vite";
 import { useState } from "react";
-import { expect, userEvent, within } from "storybook/test";
+import { expect } from "storybook/test";
 
 import { InputSearch } from "#/components/input-search";
 
-const meta = {
+import preview from "../.storybook/preview";
+
+const meta = preview.meta({
   component: InputSearch,
   title: "Form/InputSearch",
-} satisfies Meta<typeof InputSearch>;
+});
 
-export default meta;
-
-type Story = StoryObj<typeof meta>;
-
-export const Default: Story = {
+export const Default = meta.story({
   render: () => (
     <div className="w-full max-w-xs">
       <InputSearch placeholder="Search components…" />
     </div>
   ),
-};
+});
 
-export const Disabled: Story = {
+export const Disabled = meta.story({
   render: () => (
     <div className="w-full max-w-xs">
       <InputSearch disabled defaultValue="Indexing…" placeholder="Search" />
     </div>
   ),
-};
+});
 
-export const WithResults: Story = {
+export const WithResults = meta.story({
   render: function WithResultsRender() {
     const fruits = ["Apple", "Apricot", "Banana", "Blueberry", "Cherry", "Grape", "Mango", "Orange"];
     const [query, setQuery] = useState("");
@@ -59,20 +56,20 @@ export const WithResults: Story = {
       </div>
     );
   },
-};
+});
 
-/** Interaction test — runs in a real browser via `vitest run --project=storybook`. */
-export const Typing: Story = {
+export const Typing = meta.story({
   render: () => (
     <div className="w-full max-w-xs">
       <InputSearch aria-label="Search" placeholder="Search components…" />
     </div>
   ),
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const input = canvas.getByRole("searchbox", { name: "Search" });
+});
 
-    await userEvent.type(input, "button");
-    await expect(input).toHaveValue("button");
-  },
-};
+/** Interaction test (CSF Next `.test()`) — runs in a real browser via `test:stories`. */
+Typing.test("types a query", async ({ canvas, userEvent }) => {
+  const input = canvas.getByRole("searchbox", { name: "Search" });
+
+  await userEvent.type(input, "button");
+  await expect(input).toHaveValue("button");
+});

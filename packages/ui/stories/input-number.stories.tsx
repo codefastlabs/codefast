@@ -1,18 +1,14 @@
-import type { Meta, StoryObj } from "@storybook/react-vite";
-
 import { InputNumber } from "#/components/input-number";
 import { Label } from "#/components/label";
 
-const meta = {
+import preview from "../.storybook/preview";
+
+const meta = preview.meta({
   component: InputNumber,
   title: "Form/InputNumber",
-} satisfies Meta<typeof InputNumber>;
+});
 
-export default meta;
-
-type Story = StoryObj<typeof meta>;
-
-export const Default: Story = {
+export const Default = meta.story({
   render: () => (
     <div className="grid w-full max-w-xs gap-4">
       <div className="grid gap-1.5">
@@ -35,9 +31,9 @@ export const Default: Story = {
       </div>
     </div>
   ),
-};
+});
 
-export const Formats: Story = {
+export const Formats = meta.story({
   render: () => (
     <div className="grid w-full max-w-xs gap-4">
       <div className="grid gap-1.5">
@@ -56,9 +52,9 @@ export const Formats: Story = {
       </div>
     </div>
   ),
-};
+});
 
-export const States: Story = {
+export const States = meta.story({
   render: () => (
     <div className="grid w-full max-w-xs gap-4">
       <div className="grid gap-1.5">
@@ -71,4 +67,4 @@ export const States: Story = {
       </div>
     </div>
   ),
-};
+});

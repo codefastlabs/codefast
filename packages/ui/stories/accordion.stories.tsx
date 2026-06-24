@@ -1,22 +1,19 @@
-import type { Meta, StoryObj } from "@storybook/react-vite";
-import { expect, userEvent, within } from "storybook/test";
+import { expect } from "storybook/test";
 
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "#/components/accordion";
+
+import preview from "../.storybook/preview";
 
 /**
  * Accordion's root requires a `type` prop, so binding `component` would force
  * `args` onto every story. Composition components are demoed via `render`
  * instead — keep `component` only for prop-driven single components (see Button).
  */
-const meta = {
+const meta = preview.meta({
   title: "Display/Accordion",
-} satisfies Meta;
+});
 
-export default meta;
-
-type Story = StoryObj;
-
-export const Default: Story = {
+export const Default = meta.story({
   render: () => (
     <Accordion type="single" collapsible className="w-full max-w-sm">
       <AccordionItem value="q1">
@@ -33,9 +30,9 @@ export const Default: Story = {
       </AccordionItem>
     </Accordion>
   ),
-};
+});
 
-export const Multiple: Story = {
+export const Multiple = meta.story({
   render: () => (
     <Accordion type="multiple" className="w-full max-w-sm">
       <AccordionItem value="a">
@@ -48,16 +45,16 @@ export const Multiple: Story = {
       </AccordionItem>
     </Accordion>
   ),
-};
+});
 
-/** Interaction test — runs in a real browser via `vitest run --project=storybook`. */
-export const ExpandsOnClick: Story = {
-  render: Default.render,
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const trigger = canvas.getByRole("button", { name: /is it accessible/i });
+export const ExpandsOnClick = meta.story({
+  render: Default.input.render,
+});
 
-    await userEvent.click(trigger);
-    await expect(await canvas.findByText(/WAI-ARIA design pattern/i)).toBeVisible();
-  },
-};
+/** Interaction test (CSF Next `.test()`) — runs in a real browser via `test:stories`. */
+ExpandsOnClick.test("expands on click", async ({ canvas, userEvent }) => {
+  const trigger = canvas.getByRole("button", { name: /is it accessible/i });
+
+  await userEvent.click(trigger);
+  await expect(await canvas.findByText(/WAI-ARIA design pattern/i)).toBeVisible();
+});

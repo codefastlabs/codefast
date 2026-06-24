@@ -1,30 +1,26 @@
-import type { Meta, StoryObj } from "@storybook/react-vite";
-
 import { Input } from "#/components/input";
 import { Label } from "#/components/label";
 
-const meta = {
+import preview from "../.storybook/preview";
+
+const meta = preview.meta({
   args: { children: "Email address" },
   component: Label,
   title: "Form/Label",
-} satisfies Meta<typeof Label>;
+});
 
-export default meta;
+export const Default = meta.story();
 
-type Story = StoryObj<typeof meta>;
-
-export const Default: Story = {};
-
-export const WithInput: Story = {
+export const WithInput = meta.story({
   render: () => (
     <div className="grid w-full max-w-xs gap-1.5">
       <Label htmlFor="lbl-email">Email address</Label>
       <Input id="lbl-email" placeholder="you@example.com" type="email" />
     </div>
   ),
-};
+});
 
-export const Required: Story = {
+export const Required = meta.story({
   render: () => (
     <div className="grid w-full max-w-xs gap-1.5">
       <Label htmlFor="lbl-required">
@@ -33,4 +29,4 @@ export const Required: Story = {
       <Input id="lbl-required" placeholder="Jane Doe" required />
     </div>
   ),
-};
+});
