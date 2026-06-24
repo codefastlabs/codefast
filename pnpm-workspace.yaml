@@ -30,6 +30,10 @@ catalog:
   "@hookform/resolvers": ^5.4.0
   "@rolldown/plugin-babel": ^0.2.3
   "@shikijs/rehype": ^4.2.0
+  "@storybook/addon-a11y": ^10.4.6
+  "@storybook/addon-docs": ^10.4.6
+  "@storybook/addon-vitest": ^10.4.6
+  "@storybook/react-vite": ^10.4.6
   "@tabler/icons-react": ^3.44.0
   "@tailwindcss/cli": ^4.3.1
   "@tailwindcss/postcss": ^4.3.1
@@ -61,6 +65,8 @@ catalog:
   "@typescript/native-preview": 7.0.0-dev.20260621.1
   "@unpic/react": ^1.0.2
   "@vitejs/plugin-react": ^6.0.2
+  "@vitest/browser": ^4.1.9
+  "@vitest/browser-playwright": ^4.1.9
   "@vitest/coverage-v8": ^4.1.9
   babel-plugin-react-compiler: ^1.0.0
   chart.js: ^4.5.1
@@ -92,6 +98,7 @@ catalog:
   oxlint: ^1.70.0
   oxlint-tsgolint: ^0.23.0
   picomatch: ^4.0.4
+  playwright: ^1.61.1
   postcss: ^8.5.15
   postcss-import: ^16.1.1
   radix-ui: ^1.6.0
@@ -112,6 +119,7 @@ catalog:
   shiki: ^4.2.0
   simple-git-hooks: ^2.13.1
   sonner: ^2.0.7
+  storybook: ^10.4.6
   tailwind-merge: ^3.6.0
   tailwind-variants: ^3.2.2
   tailwindcss: ^4.3.1
@@ -130,3 +138,7 @@ catalog:
   zod: ^4.4.3
 
 catalogMode: strict
+
+minimumReleaseAgeExclude:
+  - playwright-core@1.61.1
+  - playwright@1.61.1
