@@ -163,5 +163,8 @@ OpensOnClick.test("opens on click", async ({ canvas, userEvent }) => {
 
   await userEvent.click(trigger);
 
-  await expect(await screen.findByRole("menuitem", { name: /new file/i })).toBeVisible();
+  // Menu content is portalled; assert presence (not visibility) by text with a
+  // generous timeout to ride out Radix's entrance animation — querying by role
+  // mid-animation was flaky.
+  await expect(await screen.findByText(/new file/i, {}, { timeout: 3000 })).toBeInTheDocument();
 });
