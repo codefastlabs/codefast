@@ -1,5 +1,13 @@
 # @codefast/typescript-config
 
+## 0.4.0
+
+### Patch Changes
+
+- [`f79b333`](https://github.com/codefastlabs/codefast/commit/f79b333d0599c19028f29b9889afcbfb99db91a1) Thanks [@thevuong](https://github.com/thevuong)! - feat(dev): enable source condition for zero-rebuild HMR in apps/docs
+
+- [`69aec9a`](https://github.com/codefastlabs/codefast/commit/69aec9aa7837c2af1c210934f3e27ac4edd57e94) Thanks [@thevuong](https://github.com/thevuong)! - Ship LICENSE in the published tarball, declare a TypeScript peer dependency, and enable `forceConsistentCasingInFileNames` in the base preset.
+
 ## 0.4.0-canary.6
 
 ## 0.4.0-canary.5

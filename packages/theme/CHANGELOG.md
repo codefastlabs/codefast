@@ -1,5 +1,51 @@
 # @codefast/theme
 
+## 0.4.0
+
+### Patch Changes
+
+- [`2397801`](https://github.com/codefastlabs/codefast/commit/239780172d7a71c3426382ec66309ec7f39bd883) Thanks [@thevuong](https://github.com/thevuong)! - chore: align package config globs
+
+- [`17c6445`](https://github.com/codefastlabs/codefast/commit/17c6445017ed3ffcc3a04db128362329669124e3) Thanks [@thevuong](https://github.com/thevuong)! - Security, correctness, and performance improvements to `ThemeProvider` and `ThemeScript`.
+
+  **Security**
+
+  - Validate `BroadcastChannel` messages with `themeSchema.safeParse` before applying — prevents injection from browser extensions or other same-origin scripts
+  - Use `JSON.stringify` in `ThemeScript` inline script to safely serialise the theme value
+
+  **Correctness**
+
+  - `ThemeProvider` now re-syncs internal state when the `theme` prop changes after mount (e.g. router re-runs the root loader), making the server the authoritative source of truth
+  - Fixed `disableTransitionOnChange` timing: animation cleanup now fires after `applyTheme` commits to the DOM instead of prematurely in the async persist `finally` block
+  - Added last-write-wins guard (`intentRef`) so rapid `setTheme` calls only commit the most recent intent
+
+  **Performance**
+
+  - `setTheme` callback is now stable across theme commits (reads `committedThemeRef` instead of capturing `theme` in deps) — prevents unnecessary re-renders in consumers
+  - `BroadcastChannel` is reused from a shared ref instead of opening a new channel on every `setTheme` call
+  - Removed obsolete `-moz-`, `-o-`, `-ms-` vendor prefixes from the `disableAnimation` CSS injection
+
+  **Features**
+
+  - `ThemeScript` accepts a new `storageKey` prop: when set, the inline script reads `localStorage` before first paint for FOUC-free client-only apps
+  - Runtime Zod validation of the `theme` prop in `ThemeProvider` guards against invalid values bypassing TypeScript
+
+  **Docs / Tests**
+
+  - Fixed README: `THEME_STORAGE_KEY` import example now correctly points to `@codefast/theme/constants`
+  - Added integration tests for the TanStack Start adapter server functions
+  - New test coverage for all security and correctness fixes above
+
+- [`f79b333`](https://github.com/codefastlabs/codefast/commit/f79b333d0599c19028f29b9889afcbfb99db91a1) Thanks [@thevuong](https://github.com/thevuong)! - feat(dev): enable source condition for zero-rebuild HMR in apps/docs
+
+- [`5c82b5e`](https://github.com/codefastlabs/codefast/commit/5c82b5ea742701ac7836ffa8bb4bf4135e069d1d) Thanks [@thevuong](https://github.com/thevuong)! - Use minimum `>=` ranges in peerDependencies instead of `^` caret ranges.
+
+- [`ebdf9e3`](https://github.com/codefastlabs/codefast/commit/ebdf9e396d3c3a826f05f278c93d391a0ae5ca45) Thanks [@thevuong](https://github.com/thevuong)! - feat(web): refactor theme management to color scheme system
+
+- [`6c3ac44`](https://github.com/codefastlabs/codefast/commit/6c3ac44b7ddb9e5bcf3fbe0757e00ef86f27b513) Thanks [@thevuong](https://github.com/thevuong)! - Normalize import statement order and package.json key order repo-wide via the new oxfmt `sortImports`/`sortPackageJson` settings — purely mechanical, no runtime behavior change.
+
+- [`b2cad2e`](https://github.com/codefastlabs/codefast/commit/b2cad2e180977106accbc978131a32d50ef91f9f) Thanks [@thevuong](https://github.com/thevuong)! - fix(theme): migrate `setColorSchemeServerFn` to TanStack Start `.validator` API
+
 ## 0.4.0-canary.6
 
 ## 0.4.0-canary.5

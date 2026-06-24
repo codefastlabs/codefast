@@ -1,5 +1,23 @@
 # @codefast/tailwind-variants
 
+## 0.4.0
+
+### Patch Changes
+
+- [`2397801`](https://github.com/codefastlabs/codefast/commit/239780172d7a71c3426382ec66309ec7f39bd883) Thanks [@thevuong](https://github.com/thevuong)! - chore: align package config globs
+
+- [`6350584`](https://github.com/codefastlabs/codefast/commit/635058490b7c08a07771897403107b3ae86fca19) Thanks [@thevuong](https://github.com/thevuong)! - refactor(tailwind-variants): clarify variant API names
+
+- [`f79b333`](https://github.com/codefastlabs/codefast/commit/f79b333d0599c19028f29b9889afcbfb99db91a1) Thanks [@thevuong](https://github.com/thevuong)! - feat(dev): enable source condition for zero-rebuild HMR in apps/docs
+
+- [`8432414`](https://github.com/codefastlabs/codefast/commit/8432414b941a61f67800c378da73c8f45913913f) Thanks [@thevuong](https://github.com/thevuong)! - refactor(tailwind-variants): streamline variant resolution
+
+- [`6c3ac44`](https://github.com/codefastlabs/codefast/commit/6c3ac44b7ddb9e5bcf3fbe0757e00ef86f27b513) Thanks [@thevuong](https://github.com/thevuong)! - Normalize import statement order and package.json key order repo-wide via the new oxfmt `sortImports`/`sortPackageJson` settings — purely mechanical, no runtime behavior change.
+
+- [`d07b567`](https://github.com/codefastlabs/codefast/commit/d07b5671661e0fbef03fbbf42c1d603a65d796e5) Thanks [@thevuong](https://github.com/thevuong)! - Simplify the `extend` resolver type by dropping a redundant generic parameter — public behavior and inference are unchanged.
+
+- [`649cf5a`](https://github.com/codefastlabs/codefast/commit/649cf5a63b654dd6517ff472a1c2a0e35db86fdf) Thanks [@thevuong](https://github.com/thevuong)! - fix(types): default the variant schema to a keyless record when `tv` is called without `variants`, so `className`/`class` accept full `ClassValue` inputs (arrays, objects) instead of being narrowed by a string index signature
+
 ## 0.4.0-canary.6
 
 ## 0.4.0-canary.5
