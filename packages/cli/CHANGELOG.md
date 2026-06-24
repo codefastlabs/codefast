@@ -1,5 +1,25 @@
 # @codefast/cli
 
+## 0.4.0
+
+### Patch Changes
+
+- [`ecc22c6`](https://github.com/codefastlabs/codefast/commit/ecc22c68d36a50843eac2f3a9e34539778e1f6f0) Thanks [@thevuong](https://github.com/thevuong)! - fix(tag): prevent trailing spaces on blank JSDoc continuation lines
+
+- [`2397801`](https://github.com/codefastlabs/codefast/commit/239780172d7a71c3426382ec66309ec7f39bd883) Thanks [@thevuong](https://github.com/thevuong)! - chore: align package config globs
+
+- [`c6fdc41`](https://github.com/codefastlabs/codefast/commit/c6fdc417faff5f563a5e630edb404f0e1ff5bfab) Thanks [@thevuong](https://github.com/thevuong)! - Modernize internals: prefer `String.startsWith` over anchored regexes in the Tailwind token classifier, use immutable `toSorted` when ordering export specifiers and tag targets, and tighten workspace/mirror types without behavior changes.
+
+- [`1945360`](https://github.com/codefastlabs/codefast/commit/1945360748a6ac71d29447cf468f1631970cb7ef) Thanks [@thevuong](https://github.com/thevuong)! - refactor(cli): reorganize imports for better modularity and clarity
+
+- [`e0e4aae`](https://github.com/codefastlabs/codefast/commit/e0e4aaee087057668cd1e2ef4cacc83bc4eb833f) Thanks [@thevuong](https://github.com/thevuong)! - fix: support Node 26 mirror export verification
+
+- [`f79b333`](https://github.com/codefastlabs/codefast/commit/f79b333d0599c19028f29b9889afcbfb99db91a1) Thanks [@thevuong](https://github.com/thevuong)! - feat(dev): enable source condition for zero-rebuild HMR in apps/docs
+
+- [`6c3ac44`](https://github.com/codefastlabs/codefast/commit/6c3ac44b7ddb9e5bcf3fbe0757e00ef86f27b513) Thanks [@thevuong](https://github.com/thevuong)! - Normalize import statement order and package.json key order repo-wide via the new oxfmt `sortImports`/`sortPackageJson` settings — purely mechanical, no runtime behavior change.
+
+- [`5c069f5`](https://github.com/codefastlabs/codefast/commit/5c069f5fcef26cb9ec4e9585bb0612a76f2d3210) Thanks [@thevuong](https://github.com/thevuong)! - refactor(cli): clarify mirror export naming
+
 ## 0.4.0-canary.6
 
 ## 0.4.0-canary.5

@@ -1,5 +1,19 @@
 # @codefast/benchmark-viewer
 
+## 0.4.0
+
+### Patch Changes
+
+- [`f680df9`](https://github.com/codefastlabs/codefast/commit/f680df903510b91c35f1c342d79e50c0672a4c19) Thanks [@thevuong](https://github.com/thevuong)! - Prefer immutable array methods (`toSorted`, `toReversed`) and drop redundant casts in the report quantiles, payload builder, and viewer components.
+
+- [`dd9e844`](https://github.com/codefastlabs/codefast/commit/dd9e844608142792f0f6519d552eb2bcbe6c4bc3) Thanks [@thevuong](https://github.com/thevuong)! - Migrate HTTP server from raw node:http to Hono for routing, streaming, and ETag handling.
+
+- [`f79b333`](https://github.com/codefastlabs/codefast/commit/f79b333d0599c19028f29b9889afcbfb99db91a1) Thanks [@thevuong](https://github.com/thevuong)! - feat(dev): enable source condition for zero-rebuild HMR in apps/docs
+
+- Updated dependencies [[`f680df9`](https://github.com/codefastlabs/codefast/commit/f680df903510b91c35f1c342d79e50c0672a4c19), [`2397801`](https://github.com/codefastlabs/codefast/commit/239780172d7a71c3426382ec66309ec7f39bd883), [`6350584`](https://github.com/codefastlabs/codefast/commit/635058490b7c08a07771897403107b3ae86fca19), [`f79b333`](https://github.com/codefastlabs/codefast/commit/f79b333d0599c19028f29b9889afcbfb99db91a1), [`8432414`](https://github.com/codefastlabs/codefast/commit/8432414b941a61f67800c378da73c8f45913913f), [`6c3ac44`](https://github.com/codefastlabs/codefast/commit/6c3ac44b7ddb9e5bcf3fbe0757e00ef86f27b513), [`f26e846`](https://github.com/codefastlabs/codefast/commit/f26e8460e982171bfde13a7bd3fab4543e933df4), [`d07b567`](https://github.com/codefastlabs/codefast/commit/d07b5671661e0fbef03fbbf42c1d603a65d796e5), [`649cf5a`](https://github.com/codefastlabs/codefast/commit/649cf5a63b654dd6517ff472a1c2a0e35db86fdf)]:
+  - @codefast/benchmark-harness@0.4.0
+  - @codefast/tailwind-variants@0.4.0
+
 ## 0.4.0-canary.6
 
 ### Patch Changes
