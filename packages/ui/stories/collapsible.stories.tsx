@@ -1,0 +1,141 @@
+import type { Meta, StoryObj } from "@storybook/react-vite";
+import { ChevronDownIcon, MaximizeIcon, MinimizeIcon } from "lucide-react";
+import type { JSX } from "react";
+import { useState } from "react";
+import { expect, userEvent, within } from "storybook/test";
+
+import { Button } from "#/components/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "#/components/card";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "#/components/collapsible";
+import { Field, FieldGroup, FieldLabel } from "#/components/field";
+import { Input } from "#/components/input";
+
+const LINE_ITEMS = [
+  { name: "Pro plan (annual)", price: "$144.00" },
+  { name: "Extra seats × 3", price: "$36.00" },
+  { name: "Tax", price: "$14.40" },
+];
+
+function OrderSummary(): JSX.Element {
+  const [open, setOpen] = useState(true);
+
+  return (
+    <Collapsible className="group w-full max-w-xs rounded-xl border" open={open} onOpenChange={setOpen}>
+      <CollapsibleTrigger className="flex w-full items-center justify-between gap-3 px-4 py-3 text-start">
+        <span className="text-sm font-medium text-foreground">Order summary</span>
+        <span className="flex items-center gap-2 text-sm font-semibold text-foreground">
+          $194.40
+          <ChevronDownIcon className="size-4 text-muted-foreground transition-transform group-data-[state=open]:rotate-180" />
+        </span>
+      </CollapsibleTrigger>
+      <CollapsibleContent className="space-y-2 border-t px-4 py-3">
+        {LINE_ITEMS.map(({ name, price }) => (
+          <div key={name} className="flex items-center justify-between text-sm">
+            <span className="text-muted-foreground">{name}</span>
+            <span className="text-foreground">{price}</span>
+          </div>
+        ))}
+      </CollapsibleContent>
+    </Collapsible>
+  );
+}
+
+function RadiusSettings(): JSX.Element {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <Card className="mx-auto w-full max-w-xs" size="sm">
+      <CardHeader>
+        <CardTitle>Radius</CardTitle>
+        <CardDescription>Set the corner radius of the element.</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <Collapsible open={isOpen} onOpenChange={setIsOpen} className="flex items-start gap-2">
+          <FieldGroup className="grid w-full grid-cols-2 gap-2">
+            <Field>
+              <FieldLabel htmlFor="radius-x" className="sr-only">
+                Radius X
+              </FieldLabel>
+              <Input id="radius" placeholder="0" defaultValue={0} />
+            </Field>
+            <Field>
+              <FieldLabel htmlFor="radius-y" className="sr-only">
+                Radius Y
+              </FieldLabel>
+              <Input id="radius" placeholder="0" defaultValue={0} />
+            </Field>
+            <CollapsibleContent className="col-span-full grid grid-cols-subgrid gap-2">
+              <Field>
+                <FieldLabel htmlFor="radius-x" className="sr-only">
+                  Radius X
+                </FieldLabel>
+                <Input id="radius" placeholder="0" defaultValue={0} />
+              </Field>
+              <Field>
+                <FieldLabel htmlFor="radius-y" className="sr-only">
+                  Radius Y
+                </FieldLabel>
+                <Input id="radius" placeholder="0" defaultValue={0} />
+              </Field>
+            </CollapsibleContent>
+          </FieldGroup>
+          <CollapsibleTrigger asChild>
+            <Button variant="outline" size="icon">
+              {isOpen ? <MinimizeIcon /> : <MaximizeIcon />}
+            </Button>
+          </CollapsibleTrigger>
+        </Collapsible>
+      </CardContent>
+    </Card>
+  );
+}
+
+const meta = {
+  component: Collapsible,
+  title: "Layout/Collapsible",
+} satisfies Meta<typeof Collapsible>;
+
+export default meta;
+
+type Story = StoryObj<typeof meta>;
+
+export const Default: Story = {
+  render: () => <OrderSummary />,
+};
+
+export const Basic: Story = {
+  render: () => (
+    <Card className="mx-auto w-full max-w-sm">
+      <CardContent>
+        <Collapsible className="rounded-md data-[state=open]:bg-muted">
+          <CollapsibleTrigger asChild>
+            <Button variant="ghost" className="group w-full">
+              Product details
+              <ChevronDownIcon className="ms-auto group-data-[state=open]:rotate-180" />
+            </Button>
+          </CollapsibleTrigger>
+          <CollapsibleContent className="flex flex-col items-start gap-2 p-2.5 pt-0 text-sm">
+            <div>This panel can be expanded or collapsed to reveal additional content.</div>
+            <Button size="xs">Learn More</Button>
+          </CollapsibleContent>
+        </Collapsible>
+      </CardContent>
+    </Card>
+  ),
+};
+
+export const Settings: Story = {
+  render: () => <RadiusSettings />,
+};
+
+/** Interaction test — runs in a real browser via `vitest run --project=storybook`. */
+export const ExpandsOnClick: Story = {
+  render: Basic.render,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const trigger = canvas.getByRole("button", { name: /product details/i });
+
+    await userEvent.click(trigger);
+    await expect(await canvas.findByText(/this panel can be expanded/i)).toBeVisible();
+  },
+};

@@ -1,0 +1,101 @@
+import type { Meta, StoryObj } from "@storybook/react-vite";
+import { Bar, BarChart, CartesianGrid, XAxis } from "recharts";
+
+import type { ChartConfig } from "#/components/chart";
+import { ChartContainer, ChartLegend, ChartLegendContent, ChartTooltip, ChartTooltipContent } from "#/components/chart";
+
+/**
+ * ChartContainer requires a `config` prop, so binding `component` would force
+ * `args` onto every story. Demoed via `render` instead (see Accordion).
+ */
+const meta = {
+  title: "Display/Chart",
+} satisfies Meta;
+
+export default meta;
+
+type Story = StoryObj;
+
+const chartData = [
+  { month: "January", desktop: 186, mobile: 80 },
+  { month: "February", desktop: 305, mobile: 200 },
+  { month: "March", desktop: 237, mobile: 120 },
+  { month: "April", desktop: 73, mobile: 190 },
+  { month: "May", desktop: 209, mobile: 130 },
+  { month: "June", desktop: 214, mobile: 140 },
+];
+
+const singleConfig = {
+  desktop: { label: "Desktop", color: "#2563eb" },
+} satisfies ChartConfig;
+
+const multiConfig = {
+  desktop: { label: "Desktop", color: "#2563eb" },
+  mobile: { label: "Mobile", color: "#60a5fa" },
+} satisfies ChartConfig;
+
+export const Default: Story = {
+  render: () => (
+    <div className="h-72 w-md">
+      <ChartContainer className="min-h-50 w-full" config={singleConfig}>
+        <BarChart accessibilityLayer data={chartData}>
+          <CartesianGrid vertical={false} />
+          <XAxis
+            axisLine={false}
+            dataKey="month"
+            tickFormatter={(value) => value.slice(0, 3)}
+            tickLine={false}
+            tickMargin={8}
+          />
+          <ChartTooltip content={<ChartTooltipContent />} />
+          <Bar dataKey="desktop" fill="var(--color-desktop)" radius={4} />
+        </BarChart>
+      </ChartContainer>
+    </div>
+  ),
+};
+
+export const Tooltip: Story = {
+  render: () => (
+    <div className="h-72 w-md">
+      <ChartContainer className="min-h-50 w-full" config={multiConfig}>
+        <BarChart accessibilityLayer data={chartData}>
+          <CartesianGrid vertical={false} />
+          <XAxis
+            axisLine={false}
+            dataKey="month"
+            tickFormatter={(value) => value.slice(0, 3)}
+            tickLine={false}
+            tickMargin={10}
+          />
+          <ChartTooltip content={<ChartTooltipContent />} />
+          <Bar dataKey="desktop" fill="var(--color-desktop)" radius={4} />
+          <Bar dataKey="mobile" fill="var(--color-mobile)" radius={4} />
+        </BarChart>
+      </ChartContainer>
+    </div>
+  ),
+};
+
+export const Legend: Story = {
+  render: () => (
+    <div className="h-72 w-md">
+      <ChartContainer className="min-h-50 w-full" config={multiConfig}>
+        <BarChart accessibilityLayer data={chartData}>
+          <CartesianGrid vertical={false} />
+          <XAxis
+            axisLine={false}
+            dataKey="month"
+            tickFormatter={(value) => value.slice(0, 3)}
+            tickLine={false}
+            tickMargin={10}
+          />
+          <ChartTooltip content={<ChartTooltipContent />} />
+          <ChartLegend content={<ChartLegendContent />} />
+          <Bar dataKey="desktop" fill="var(--color-desktop)" radius={4} />
+          <Bar dataKey="mobile" fill="var(--color-mobile)" radius={4} />
+        </BarChart>
+      </ChartContainer>
+    </div>
+  ),
+};
