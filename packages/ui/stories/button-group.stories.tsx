@@ -7,6 +7,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import preview from "../.storybook/preview";
 
 const meta = preview.meta({
+  args: { orientation: "horizontal" },
   component: ButtonGroup,
   subcomponents: { ButtonGroupSeparator, ButtonGroupText },
   parameters: {
@@ -25,35 +26,26 @@ const meta = preview.meta({
 });
 
 export const Default = meta.story({
-  render: () => (
-    <div className="flex flex-col items-center gap-4">
-      {/* Split button: primary action + dropdown of related actions */}
-      <ButtonGroup>
-        <Button>
-          <PlusIcon />
-          New issue
-        </Button>
-        <ButtonGroupSeparator />
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button aria-label="More create options" size="icon">
-              <ChevronDownIcon />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuItem>New from template</DropdownMenuItem>
-            <DropdownMenuItem>Import issues</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </ButtonGroup>
-
-      {/* Labeled segmented control */}
-      <ButtonGroup>
-        <ButtonGroupText>Sort</ButtonGroupText>
-        <Button variant="outline">Newest</Button>
-        <Button variant="outline">Oldest</Button>
-      </ButtonGroup>
-    </div>
+  render: (args) => (
+    /* Split button: primary action + dropdown of related actions */
+    <ButtonGroup {...args}>
+      <Button>
+        <PlusIcon />
+        New issue
+      </Button>
+      <ButtonGroupSeparator />
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button aria-label="More create options" size="icon">
+            <ChevronDownIcon />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          <DropdownMenuItem>New from template</DropdownMenuItem>
+          <DropdownMenuItem>Import issues</DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </ButtonGroup>
   ),
 });
 

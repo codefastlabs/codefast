@@ -1,5 +1,4 @@
 import { MoreHorizontalIcon, ShieldAlertIcon, InboxIcon } from "lucide-react";
-import { Fragment } from "react";
 
 import { Avatar, AvatarFallback } from "#/components/avatar";
 import { Badge } from "#/components/badge";
@@ -16,7 +15,6 @@ import {
   ItemSeparator,
   ItemTitle,
 } from "#/components/item";
-import { cn } from "#/lib/utils";
 
 import preview from "../.storybook/preview";
 
@@ -25,6 +23,10 @@ import preview from "../.storybook/preview";
  * keeping `component` bound to the Root (Pattern C, see Card).
  */
 const meta = preview.meta({
+  args: { size: "default", variant: "default" },
+  argTypes: {
+    asChild: { table: { disable: true } },
+  },
   component: Item,
   subcomponents: {
     ItemGroup,
@@ -52,62 +54,25 @@ const meta = preview.meta({
   title: "Display/Item",
 });
 
-const MEMBERS = [
-  {
-    id: 1,
-    name: "Vuong Phan",
-    email: "mr.thevuong@gmail.com",
-    role: "Owner",
-    initials: "VP",
-    color: "bg-primary",
-    roleVariant: "default" as const,
-  },
-  {
-    id: 2,
-    name: "Sarah Müller",
-    email: "sarah@acme.io",
-    role: "Admin",
-    initials: "SM",
-    color: "bg-violet-500",
-    roleVariant: "secondary" as const,
-  },
-  {
-    id: 3,
-    name: "James Doe",
-    email: "james@acme.io",
-    role: "Member",
-    initials: "JD",
-    color: "bg-emerald-500",
-    roleVariant: "outline" as const,
-  },
-];
-
 export const Default = meta.story({
-  render: () => (
-    <ItemGroup className="w-full max-w-md gap-0 rounded-xl border">
-      {MEMBERS.map(({ id, name, email, role, initials, color, roleVariant }, idx) => (
-        <Fragment key={id}>
-          {idx > 0 && <ItemSeparator className="my-0" />}
-          <Item>
-            <ItemMedia>
-              <Avatar>
-                <AvatarFallback className={cn("text-white", color)}>{initials}</AvatarFallback>
-              </Avatar>
-            </ItemMedia>
-            <ItemContent>
-              <ItemTitle>{name}</ItemTitle>
-              <ItemDescription>{email}</ItemDescription>
-            </ItemContent>
-            <ItemActions>
-              <Badge variant={roleVariant}>{role}</Badge>
-              <Button aria-label={`Options for ${name}`} size="icon-sm" variant="ghost">
-                <MoreHorizontalIcon />
-              </Button>
-            </ItemActions>
-          </Item>
-        </Fragment>
-      ))}
-    </ItemGroup>
+  render: (args) => (
+    <Item {...args} className="w-full max-w-md">
+      <ItemMedia>
+        <Avatar>
+          <AvatarFallback className="bg-primary text-white">VP</AvatarFallback>
+        </Avatar>
+      </ItemMedia>
+      <ItemContent>
+        <ItemTitle>Vuong Phan</ItemTitle>
+        <ItemDescription>mr.thevuong@gmail.com</ItemDescription>
+      </ItemContent>
+      <ItemActions>
+        <Badge variant="default">Owner</Badge>
+        <Button aria-label="Options for Vuong Phan" size="icon-sm" variant="ghost">
+          <MoreHorizontalIcon />
+        </Button>
+      </ItemActions>
+    </Item>
   ),
 });
 

@@ -1,15 +1,12 @@
-import { AlertCircleIcon, AlertTriangleIcon, CheckCircle2Icon, InfoIcon, XIcon } from "lucide-react";
+import { AlertCircleIcon, CheckCircle2Icon, InfoIcon, XIcon } from "lucide-react";
 
 import { Alert, AlertAction, AlertDescription, AlertTitle } from "#/components/alert";
 import { Button } from "#/components/button";
 
 import preview from "../.storybook/preview";
 
-/**
- * Alert is a composition with optional root props. Demoed via `render` while
- * keeping `component` bound to the Root (Pattern C, see Card).
- */
 const meta = preview.meta({
+  args: { variant: "default" },
   component: Alert,
   subcomponents: { AlertTitle, AlertDescription, AlertAction },
   parameters: {
@@ -28,24 +25,17 @@ const meta = preview.meta({
 });
 
 export const Default = meta.story({
-  render: () => (
-    <div className="w-full max-w-sm space-y-3">
-      <Alert>
-        <InfoIcon />
-        <AlertTitle>Heads up</AlertTitle>
-        <AlertDescription>You can add components using the CLI.</AlertDescription>
-        <AlertAction>
-          <Button aria-label="Dismiss" size="icon-xs" variant="ghost">
-            <XIcon />
-          </Button>
-        </AlertAction>
-      </Alert>
-      <Alert variant="destructive">
-        <AlertTriangleIcon />
-        <AlertTitle>Session expired</AlertTitle>
-        <AlertDescription>Please log in again.</AlertDescription>
-      </Alert>
-    </div>
+  render: (args) => (
+    <Alert {...args} className="w-full max-w-sm">
+      <InfoIcon />
+      <AlertTitle>Heads up</AlertTitle>
+      <AlertDescription>You can add components using the CLI.</AlertDescription>
+      <AlertAction>
+        <Button aria-label="Dismiss" size="icon-xs" variant="ghost">
+          <XIcon />
+        </Button>
+      </AlertAction>
+    </Alert>
   ),
 });
 

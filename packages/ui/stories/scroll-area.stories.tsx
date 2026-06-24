@@ -7,6 +7,7 @@ import preview from "../.storybook/preview";
  * while keeping `component` bound to the Root (Pattern C, see Card).
  */
 const meta = preview.meta({
+  args: { size: "md" },
   component: ScrollArea,
   subcomponents: { ScrollAreaScrollbar },
   parameters: {
@@ -73,8 +74,8 @@ const WORKS = [
 ];
 
 export const Default = meta.story({
-  render: () => (
-    <ScrollArea className="h-56 w-64 rounded-xl border border-border">
+  render: (args) => (
+    <ScrollArea {...args} className="h-56 w-64 rounded-xl border border-border">
       <div className="p-4">
         <h4 className="mb-3 text-sm font-semibold text-foreground">Changelog</h4>
         <ol className="space-y-3">
