@@ -24,16 +24,30 @@ function addDays(date: Date, days: number): Date {
 
 const FIXED_MONTH = new Date(2025, 0, 1);
 
-function SingleCalendar(): JSX.Element {
+/**
+ * Calendar's props are a union over `mode`, so binding `component` would make
+ * args resolve to `never`. We expose a flat custom args shape for the mode-agnostic
+ * props and keep `mode="single"` fixed in the wrapper.
+ */
+interface CalendarArgs {
+  disabled: boolean;
+  numberOfMonths: number;
+  showOutsideDays: boolean;
+}
+
+function SingleCalendar({ disabled, numberOfMonths, showOutsideDays }: CalendarArgs): JSX.Element {
   const [date, setDate] = useState<Date | undefined>();
 
   return (
     <Calendar
       className="rounded-xl border"
-      mode="single"
       defaultMonth={FIXED_MONTH}
-      selected={date}
+      disabled={disabled}
+      mode="single"
+      numberOfMonths={numberOfMonths}
       onSelect={setDate}
+      selected={date}
+      showOutsideDays={showOutsideDays}
     />
   );
 }
@@ -63,8 +77,14 @@ function RangeCalendar(): JSX.Element {
   );
 }
 
-const meta = preview.meta({
-  component: Calendar,
+const meta = preview.type<{ args: CalendarArgs }>().meta({
+  args: { disabled: false, numberOfMonths: 1, showOutsideDays: true },
+  argTypes: {
+    disabled: { control: "boolean" },
+    numberOfMonths: { control: "number" },
+    showOutsideDays: { control: "boolean" },
+  },
+  subcomponents: { Calendar },
   parameters: {
     docs: {
       description: {
@@ -80,7 +100,7 @@ const meta = preview.meta({
 });
 
 export const Default = meta.story({
-  render: () => <SingleCalendar />,
+  render: (args) => <SingleCalendar {...args} />,
 });
 
 export const Multiple = meta.story({
@@ -92,7 +112,7 @@ export const Range = meta.story({
 });
 
 export const SelectsADay = meta.story({
-  render: () => <SingleCalendar />,
+  render: Default.input.render,
 });
 
 /** Interaction test (CSF Next `.test()`) — runs in a real browser via `test:stories`. */
