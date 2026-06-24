@@ -33,6 +33,11 @@ jobs:
       - name: Validate Code Quality and Type Safety
         run: npx turbo run lint format:check check-types --filter="./packages/**"
 
+      # @codefast/ui runs its Storybook stories as browser tests (Playwright Chromium);
+      # the browser binary isn't in the repo, so install it before the coverage run.
+      - name: Install Playwright Browser
+        run: pnpm --filter @codefast/ui exec playwright install --with-deps chromium
+
       - name: Execute Automated Tests with Coverage
         run: npx turbo run test:coverage --filter="./packages/**"
 
