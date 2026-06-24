@@ -52,6 +52,11 @@ const PLANS = [
 ];
 
 const meta = preview.meta({
+  args: { defaultValue: [], disabled: false, loop: true, orientation: "vertical" },
+  argTypes: {
+    onValueChange: { table: { disable: true } },
+    value: { table: { disable: true } },
+  },
   component: CheckboxCards,
   subcomponents: { CheckboxCardsItem },
   parameters: {
@@ -70,32 +75,18 @@ const meta = preview.meta({
 });
 
 export const Default = meta.story({
-  render: () => {
-    function Render() {
-      const [selected, setSelected] = useState<Array<string>>(["analytics"]);
-
-      return (
-        <CheckboxCards
-          className="grid w-full max-w-xs gap-2"
-          value={selected}
-          onValueChange={(value) => {
-            setSelected(value ?? []);
-          }}
-        >
-          {FEATURES.map(({ value, label, description }) => (
-            <CheckboxCardsItem key={value} value={value}>
-              <div className="flex flex-col gap-0.5">
-                <span className="text-sm font-medium">{label}</span>
-                <span className="text-xs text-muted-foreground">{description}</span>
-              </div>
-            </CheckboxCardsItem>
-          ))}
-        </CheckboxCards>
-      );
-    }
-
-    return <Render />;
-  },
+  render: (args) => (
+    <CheckboxCards {...args} className="grid w-full max-w-xs gap-2">
+      {FEATURES.map(({ value, label, description }) => (
+        <CheckboxCardsItem key={value} value={value}>
+          <div className="flex flex-col gap-0.5">
+            <span className="text-sm font-medium">{label}</span>
+            <span className="text-xs text-muted-foreground">{description}</span>
+          </div>
+        </CheckboxCardsItem>
+      ))}
+    </CheckboxCards>
+  ),
 });
 
 export const Columns = meta.story({

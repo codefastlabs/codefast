@@ -82,6 +82,14 @@ function ListItem({
  * would force `args` onto every story — see Button for the prop-driven case).
  */
 const meta = preview.meta({
+  args: { delayDuration: 200, dir: "ltr", orientation: "horizontal", skipDelayDuration: 300 },
+  argTypes: {
+    asChild: { table: { disable: true } },
+    defaultValue: { table: { disable: true } },
+    onValueChange: { table: { disable: true } },
+    value: { table: { disable: true } },
+    viewport: { table: { disable: true } },
+  },
   component: NavigationMenu,
   subcomponents: {
     NavigationMenuList,
@@ -108,8 +116,8 @@ const meta = preview.meta({
 });
 
 export const Default = meta.story({
-  render: () => (
-    <NavigationMenu>
+  render: (args) => (
+    <NavigationMenu {...args}>
       <NavigationMenuList>
         <NavigationMenuItem>
           <NavigationMenuTrigger>Getting started</NavigationMenuTrigger>

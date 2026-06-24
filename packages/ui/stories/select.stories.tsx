@@ -16,6 +16,13 @@ import {
 import preview from "../.storybook/preview";
 
 const meta = preview.meta({
+  args: { dir: "ltr", disabled: false, required: false },
+  argTypes: {
+    onOpenChange: { table: { disable: true } },
+    onValueChange: { table: { disable: true } },
+    open: { table: { disable: true } },
+    value: { table: { disable: true } },
+  },
   component: Select,
   subcomponents: {
     SelectTrigger,
@@ -44,8 +51,8 @@ const meta = preview.meta({
 });
 
 export const Default = meta.story({
-  render: () => (
-    <Select>
+  render: (args) => (
+    <Select {...args}>
       <SelectTrigger className="w-44">
         <SelectValue placeholder="Choose framework" />
       </SelectTrigger>

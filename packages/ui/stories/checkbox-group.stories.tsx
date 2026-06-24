@@ -34,6 +34,11 @@ const NOTIFICATIONS = [
 ];
 
 const meta = preview.meta({
+  args: { defaultValue: [], disabled: false, loop: true, orientation: "vertical" },
+  argTypes: {
+    onValueChange: { table: { disable: true } },
+    value: { table: { disable: true } },
+  },
   component: CheckboxGroup,
   subcomponents: { CheckboxGroupItem },
   parameters: {
@@ -52,32 +57,18 @@ const meta = preview.meta({
 });
 
 export const Default = meta.story({
-  render: () => {
-    function Render() {
-      const [selected, setSelected] = useState<Array<string>>(["read", "write"]);
-
-      return (
-        <CheckboxGroup
-          className="gap-3"
-          value={selected}
-          onValueChange={(value) => {
-            setSelected(value ?? []);
-          }}
-        >
-          {PERMISSIONS.map(({ value, label, disabled }) => (
-            <div key={value} className="flex items-center gap-2">
-              <CheckboxGroupItem {...(disabled ? { disabled } : {})} id={`perm-${value}`} value={value} />
-              <Label className={disabled ? "opacity-50" : ""} htmlFor={`perm-${value}`}>
-                {label}
-              </Label>
-            </div>
-          ))}
-        </CheckboxGroup>
-      );
-    }
-
-    return <Render />;
-  },
+  render: (args) => (
+    <CheckboxGroup {...args} className="gap-3">
+      {PERMISSIONS.map(({ value, label, disabled }) => (
+        <div key={value} className="flex items-center gap-2">
+          <CheckboxGroupItem {...(disabled ? { disabled } : {})} id={`perm-${value}`} value={value} />
+          <Label className={disabled ? "opacity-50" : ""} htmlFor={`perm-${value}`}>
+            {label}
+          </Label>
+        </div>
+      ))}
+    </CheckboxGroup>
+  ),
 });
 
 export const Horizontal = meta.story({

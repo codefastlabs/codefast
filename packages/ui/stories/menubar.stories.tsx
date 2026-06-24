@@ -1,3 +1,4 @@
+import type { ComponentProps } from "react";
 import { useState } from "react";
 import { expect, screen } from "storybook/test";
 
@@ -23,6 +24,11 @@ import {
 import preview from "../.storybook/preview";
 
 const meta = preview.meta({
+  args: { loop: false },
+  argTypes: {
+    onValueChange: { table: { disable: true } },
+    value: { table: { disable: true } },
+  },
   component: Menubar,
   subcomponents: {
     MenubarMenu,
@@ -56,13 +62,13 @@ const meta = preview.meta({
   title: "Navigation/Menubar",
 });
 
-function MenubarExample() {
+function MenubarExample(props: ComponentProps<typeof Menubar>) {
   const [showToolbar, setShowToolbar] = useState(true);
   const [showGrid, setShowGrid] = useState(false);
   const [zoom, setZoom] = useState("100");
 
   return (
-    <Menubar>
+    <Menubar {...props}>
       <MenubarMenu>
         <MenubarTrigger>File</MenubarTrigger>
         <MenubarContent>
@@ -144,7 +150,7 @@ function MenubarExample() {
 }
 
 export const Default = meta.story({
-  render: () => <MenubarExample />,
+  render: (args) => <MenubarExample {...args} />,
 });
 
 export const OpensOnClick = meta.story({

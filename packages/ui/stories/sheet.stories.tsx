@@ -18,6 +18,11 @@ import {
 import preview from "../.storybook/preview";
 
 const meta = preview.meta({
+  args: { defaultOpen: false, modal: true },
+  argTypes: {
+    onOpenChange: { table: { disable: true } },
+    open: { table: { disable: true } },
+  },
   component: Sheet,
   subcomponents: {
     SheetTrigger,
@@ -45,8 +50,8 @@ const meta = preview.meta({
 });
 
 export const Default = meta.story({
-  render: () => (
-    <Sheet>
+  render: (args) => (
+    <Sheet {...args}>
       <SheetTrigger asChild>
         <Button variant="outline">Open sheet</Button>
       </SheetTrigger>

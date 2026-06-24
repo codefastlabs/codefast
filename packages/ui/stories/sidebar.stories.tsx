@@ -70,6 +70,7 @@ import {
 import preview from "../.storybook/preview";
 
 const meta = preview.meta({
+  args: { collapsible: "icon", side: "left", variant: "sidebar" },
   component: Sidebar,
   subcomponents: {
     SidebarProvider,
@@ -471,9 +472,9 @@ function NavUser({
 }
 
 export const Default = meta.story({
-  render: () => (
+  render: (args) => (
     <SidebarProvider className="h-96 min-h-0 w-full overflow-hidden rounded-xl border [contain:layout] [&_[data-slot=sidebar-container]]:h-full">
-      <Sidebar collapsible="icon">
+      <Sidebar {...args}>
         <SidebarHeader>
           <TeamSwitcher teams={data.teams} />
         </SidebarHeader>

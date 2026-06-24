@@ -15,6 +15,11 @@ import {
 import preview from "../.storybook/preview";
 
 const meta = preview.meta({
+  args: { defaultOpen: false, modal: false },
+  argTypes: {
+    onOpenChange: { table: { disable: true } },
+    open: { table: { disable: true } },
+  },
   component: Popover,
   subcomponents: {
     PopoverTrigger,
@@ -39,8 +44,8 @@ const meta = preview.meta({
 });
 
 export const Default = meta.story({
-  render: () => (
-    <Popover>
+  render: (args) => (
+    <Popover {...args}>
       <PopoverTrigger asChild>
         <Button variant="outline">Open popover</Button>
       </PopoverTrigger>

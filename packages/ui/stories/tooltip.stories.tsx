@@ -8,6 +8,11 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "#/comp
 import preview from "../.storybook/preview";
 
 const meta = preview.meta({
+  args: { defaultOpen: false, disableHoverableContent: false },
+  argTypes: {
+    onOpenChange: { table: { disable: true } },
+    open: { table: { disable: true } },
+  },
   component: Tooltip,
   subcomponents: {
     TooltipProvider,
@@ -30,10 +35,10 @@ const meta = preview.meta({
 });
 
 export const Default = meta.story({
-  render: () => (
+  render: (args) => (
     <TooltipProvider>
       <div className="flex gap-3">
-        <Tooltip>
+        <Tooltip {...args}>
           <TooltipTrigger asChild>
             <Button variant="outline" size="sm">
               <TerminalIcon />
@@ -48,7 +53,7 @@ export const Default = meta.story({
             </KbdGroup>
           </TooltipContent>
         </Tooltip>
-        <Tooltip>
+        <Tooltip {...args}>
           <TooltipTrigger asChild>
             <Button variant="outline" size="sm">
               <InfoIcon />

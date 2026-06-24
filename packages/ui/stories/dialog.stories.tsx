@@ -18,6 +18,11 @@ import { Label } from "#/components/label";
 import preview from "../.storybook/preview";
 
 const meta = preview.meta({
+  args: { defaultOpen: false, modal: true },
+  argTypes: {
+    onOpenChange: { table: { disable: true } },
+    open: { table: { disable: true } },
+  },
   component: Dialog,
   subcomponents: {
     DialogTrigger,
@@ -45,8 +50,8 @@ const meta = preview.meta({
 });
 
 export const Default = meta.story({
-  render: () => (
-    <Dialog>
+  render: (args) => (
+    <Dialog {...args}>
       <DialogTrigger asChild>
         <Button variant="outline">Open dialog</Button>
       </DialogTrigger>

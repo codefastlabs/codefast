@@ -6,6 +6,12 @@ import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious
 import preview from "../.storybook/preview";
 
 const meta = preview.meta({
+  args: { orientation: "horizontal" },
+  argTypes: {
+    opts: { table: { disable: true } },
+    plugins: { table: { disable: true } },
+    setApi: { table: { disable: true } },
+  },
   component: Carousel,
   subcomponents: { CarouselContent, CarouselItem, CarouselPrevious, CarouselNext },
   parameters: {
@@ -24,8 +30,8 @@ const meta = preview.meta({
 });
 
 export const Default = meta.story({
-  render: () => (
-    <Carousel className="mx-auto w-full max-w-xs">
+  render: (args) => (
+    <Carousel {...args} className="mx-auto w-full max-w-xs">
       <CarouselContent>
         {Array.from({ length: 5 }).map((_, index) => (
           <CarouselItem key={index}>

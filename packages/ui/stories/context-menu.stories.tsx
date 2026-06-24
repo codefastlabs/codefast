@@ -1,4 +1,5 @@
 import { CopyIcon, DownloadIcon, FolderIcon, PencilIcon, Share2Icon, Trash2Icon } from "lucide-react";
+import type { ComponentProps } from "react";
 import { useState } from "react";
 import { expect, fireEvent, screen } from "storybook/test";
 
@@ -23,6 +24,10 @@ import {
 import preview from "../.storybook/preview";
 
 const meta = preview.meta({
+  args: { modal: true },
+  argTypes: {
+    onOpenChange: { table: { disable: true } },
+  },
   component: ContextMenu,
   subcomponents: {
     ContextMenuTrigger,
@@ -55,11 +60,11 @@ const meta = preview.meta({
   title: "Overlay/ContextMenu",
 });
 
-function ContextMenuDemo() {
+function ContextMenuDemo(props: ComponentProps<typeof ContextMenu>) {
   const [favorite, setFavorite] = useState(true);
 
   return (
-    <ContextMenu>
+    <ContextMenu {...props}>
       <ContextMenuTrigger className="flex w-56 flex-col gap-3 rounded-xl border bg-card p-3 select-none">
         <div className="aspect-video rounded-lg bg-gradient-to-br from-sky-400 to-violet-500" />
         <div className="flex flex-col gap-0.5">
@@ -118,7 +123,7 @@ function ContextMenuDemo() {
 }
 
 export const Default = meta.story({
-  render: () => <ContextMenuDemo />,
+  render: (args) => <ContextMenuDemo {...args} />,
 });
 
 export const Basic = meta.story({

@@ -7,6 +7,11 @@ import { HoverCard, HoverCardContent, HoverCardTrigger } from "#/components/hove
 import preview from "../.storybook/preview";
 
 const meta = preview.meta({
+  args: { closeDelay: 300, defaultOpen: false, openDelay: 700 },
+  argTypes: {
+    onOpenChange: { table: { disable: true } },
+    open: { table: { disable: true } },
+  },
   component: HoverCard,
   subcomponents: {
     HoverCardTrigger,
@@ -28,8 +33,8 @@ const meta = preview.meta({
 });
 
 export const Default = meta.story({
-  render: () => (
-    <HoverCard>
+  render: (args) => (
+    <HoverCard {...args}>
       <HoverCardTrigger asChild>
         <button
           className="cursor-pointer text-sm font-medium underline underline-offset-4 hover:text-primary"

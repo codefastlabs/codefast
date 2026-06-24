@@ -6,6 +6,7 @@ import { cn } from "#/lib/utils";
 import preview from "../.storybook/preview";
 
 const meta = preview.meta({
+  args: { orientation: "horizontal" },
   component: ResizableGroup,
   subcomponents: { ResizablePanel, ResizableSeparator },
   parameters: {
@@ -31,9 +32,9 @@ const FILES = [
 ];
 
 export const Default = meta.story({
-  render: () => (
+  render: (args) => (
     <div className="h-80 w-full max-w-2xl">
-      <ResizableGroup className="overflow-hidden rounded-xl border">
+      <ResizableGroup {...args} className="overflow-hidden rounded-xl border">
         {/* Explorer */}
         <ResizablePanel defaultSize={28} minSize={18}>
           <div className="flex h-full flex-col gap-0.5 bg-muted p-3">

@@ -19,6 +19,11 @@ import { Button } from "#/components/button";
 import preview from "../.storybook/preview";
 
 const meta = preview.meta({
+  args: { defaultOpen: false },
+  argTypes: {
+    onOpenChange: { table: { disable: true } },
+    open: { table: { disable: true } },
+  },
   component: AlertDialog,
   subcomponents: {
     AlertDialogTrigger,
@@ -48,8 +53,8 @@ const meta = preview.meta({
 });
 
 export const Default = meta.story({
-  render: () => (
-    <AlertDialog>
+  render: (args) => (
+    <AlertDialog {...args}>
       <AlertDialogTrigger asChild>
         <Button variant="destructive" size="sm">
           Delete account

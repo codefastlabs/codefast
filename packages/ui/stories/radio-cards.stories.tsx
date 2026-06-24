@@ -35,6 +35,12 @@ const METHODS = [
 ];
 
 const meta = preview.meta({
+  args: { defaultValue: "free", disabled: false, loop: true, orientation: "vertical" },
+  argTypes: {
+    asChild: { table: { disable: true } },
+    onValueChange: { table: { disable: true } },
+    value: { table: { disable: true } },
+  },
   component: RadioCards,
   subcomponents: { RadioCardsItem },
   parameters: {
@@ -53,28 +59,20 @@ const meta = preview.meta({
 });
 
 export const Default = meta.story({
-  render: () => {
-    function Render() {
-      const [plan, setPlan] = useState("pro");
-
-      return (
-        <RadioCards className="grid w-full max-w-xs gap-2" value={plan} onValueChange={setPlan}>
-          {PLANS.map(({ value, label, price, description }) => (
-            <RadioCardsItem key={value} value={value}>
-              <div className="flex flex-col gap-0.5">
-                <span className="text-sm font-medium">
-                  {label} — {price}
-                </span>
-                <span className="text-xs text-muted-foreground">{description}</span>
-              </div>
-            </RadioCardsItem>
-          ))}
-        </RadioCards>
-      );
-    }
-
-    return <Render />;
-  },
+  render: (args) => (
+    <RadioCards {...args} className="grid w-full max-w-xs gap-2">
+      {PLANS.map(({ value, label, price, description }) => (
+        <RadioCardsItem key={value} value={value}>
+          <div className="flex flex-col gap-0.5">
+            <span className="text-sm font-medium">
+              {label} — {price}
+            </span>
+            <span className="text-xs text-muted-foreground">{description}</span>
+          </div>
+        </RadioCardsItem>
+      ))}
+    </RadioCards>
+  ),
 });
 
 export const Interval = meta.story({

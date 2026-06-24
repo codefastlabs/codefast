@@ -1,5 +1,5 @@
 import { ChevronDownIcon, MaximizeIcon, MinimizeIcon } from "lucide-react";
-import type { JSX } from "react";
+import type { ComponentProps, JSX } from "react";
 import { useState } from "react";
 import { expect } from "storybook/test";
 
@@ -17,11 +17,11 @@ const LINE_ITEMS = [
   { name: "Tax", price: "$14.40" },
 ];
 
-function OrderSummary(): JSX.Element {
+function OrderSummary(props: ComponentProps<typeof Collapsible>): JSX.Element {
   const [open, setOpen] = useState(true);
 
   return (
-    <Collapsible className="group w-full max-w-xs rounded-xl border" open={open} onOpenChange={setOpen}>
+    <Collapsible className="group w-full max-w-xs rounded-xl border" open={open} onOpenChange={setOpen} {...props}>
       <CollapsibleTrigger className="flex w-full items-center justify-between gap-3 px-4 py-3 text-start">
         <span className="text-sm font-medium text-foreground">Order summary</span>
         <span className="flex items-center gap-2 text-sm font-semibold text-foreground">
@@ -92,6 +92,12 @@ function RadiusSettings(): JSX.Element {
 }
 
 const meta = preview.meta({
+  args: { defaultOpen: false, disabled: false },
+  argTypes: {
+    asChild: { table: { disable: true } },
+    onOpenChange: { table: { disable: true } },
+    open: { table: { disable: true } },
+  },
   component: Collapsible,
   subcomponents: { CollapsibleTrigger, CollapsibleContent },
   parameters: {
@@ -110,7 +116,7 @@ const meta = preview.meta({
 });
 
 export const Default = meta.story({
-  render: () => <OrderSummary />,
+  render: (args) => <OrderSummary {...args} />,
 });
 
 export const Basic = meta.story({

@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { expect } from "storybook/test";
 
 import { Label } from "#/components/label";
@@ -7,12 +6,14 @@ import { RadioGroup, RadioGroupItem } from "#/components/radio-group";
 import preview from "../.storybook/preview";
 
 const DENSITY_OPTIONS = ["compact", "comfortable", "spacious"] as const;
-type Density = (typeof DENSITY_OPTIONS)[number];
-
-const DENSITY_SET = new Set<string>(DENSITY_OPTIONS);
-const isDensity = (value: string): value is Density => DENSITY_SET.has(value);
 
 const meta = preview.meta({
+  args: { defaultValue: "comfortable", disabled: false, loop: true, orientation: "vertical" },
+  argTypes: {
+    asChild: { table: { disable: true } },
+    onValueChange: { table: { disable: true } },
+    value: { table: { disable: true } },
+  },
   component: RadioGroup,
   subcomponents: { RadioGroupItem },
   parameters: {
@@ -31,34 +32,18 @@ const meta = preview.meta({
 });
 
 export const Default = meta.story({
-  render: () => {
-    function Render() {
-      const [radio, setRadio] = useState<Density>("comfortable");
-
-      return (
-        <RadioGroup
-          value={radio}
-          onValueChange={(value) => {
-            if (isDensity(value)) {
-              setRadio(value);
-            }
-          }}
-          className="gap-3"
-        >
-          {DENSITY_OPTIONS.map((value) => (
-            <div key={value} className="flex items-center gap-2">
-              <RadioGroupItem value={value} id={`radio-${value}`} />
-              <Label htmlFor={`radio-${value}`} className="capitalize">
-                {value}
-              </Label>
-            </div>
-          ))}
-        </RadioGroup>
-      );
-    }
-
-    return <Render />;
-  },
+  render: (args) => (
+    <RadioGroup {...args} className="gap-3">
+      {DENSITY_OPTIONS.map((value) => (
+        <div key={value} className="flex items-center gap-2">
+          <RadioGroupItem value={value} id={`radio-${value}`} />
+          <Label htmlFor={`radio-${value}`} className="capitalize">
+            {value}
+          </Label>
+        </div>
+      ))}
+    </RadioGroup>
+  ),
 });
 
 export const Disabled = meta.story({

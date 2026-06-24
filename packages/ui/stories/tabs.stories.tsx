@@ -8,6 +8,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "#/components/tabs";
 import preview from "../.storybook/preview";
 
 const meta = preview.meta({
+  args: { defaultValue: "account", orientation: "horizontal" },
+  argTypes: {
+    asChild: { table: { disable: true } },
+    onValueChange: { table: { disable: true } },
+    value: { table: { disable: true } },
+  },
   component: Tabs,
   subcomponents: { TabsList, TabsTrigger, TabsContent },
   parameters: {
@@ -26,8 +32,8 @@ const meta = preview.meta({
 });
 
 export const Default = meta.story({
-  render: () => (
-    <Tabs defaultValue="account" className="w-full max-w-sm">
+  render: (args) => (
+    <Tabs {...args} className="w-full max-w-sm">
       <TabsList>
         <TabsTrigger value="account">Account</TabsTrigger>
         <TabsTrigger value="password">Password</TabsTrigger>

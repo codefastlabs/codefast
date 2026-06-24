@@ -23,6 +23,11 @@ import {
 import preview from "../.storybook/preview";
 
 const meta = preview.meta({
+  args: { defaultOpen: false, modal: true },
+  argTypes: {
+    onOpenChange: { table: { disable: true } },
+    open: { table: { disable: true } },
+  },
   component: DropdownMenu,
   subcomponents: {
     DropdownMenuTrigger,
@@ -56,8 +61,8 @@ const meta = preview.meta({
 });
 
 export const Default = meta.story({
-  render: () => (
-    <DropdownMenu>
+  render: (args) => (
+    <DropdownMenu {...args}>
       <DropdownMenuTrigger asChild>
         <Button variant="outline">Open menu</Button>
       </DropdownMenuTrigger>

@@ -17,6 +17,11 @@ import { Label } from "#/components/label";
 import preview from "../.storybook/preview";
 
 const meta = preview.meta({
+  args: { direction: "bottom", modal: true, shouldScaleBackground: true },
+  argTypes: {
+    onOpenChange: { table: { disable: true } },
+    open: { table: { disable: true } },
+  },
   component: Drawer,
   subcomponents: {
     DrawerTrigger,
@@ -43,8 +48,8 @@ const meta = preview.meta({
 });
 
 export const Default = meta.story({
-  render: () => (
-    <Drawer>
+  render: (args) => (
+    <Drawer {...args}>
       <DrawerTrigger asChild>
         <Button variant="outline">Open drawer</Button>
       </DrawerTrigger>
