@@ -1,0 +1,13 @@
+/* -------------------------------------------------------------------------
+ * Storybook preview stylesheet
+ *
+ * Pulls in the batteries-included @codefast/ui entry (Tailwind core + neutral
+ * theme + foundation preset), then registers `stories/` as an extra Tailwind
+ * content source. The package's own `@source` only scans `src/`, so without
+ * this line any utility used solely inside a story (e.g. layout wrappers) would
+ * not be generated.
+ * ------------------------------------------------------------------------- */
+
+@import "../src/css/style.css";
+
+@source "../stories/**/*.{ts,tsx}";
