@@ -5,9 +5,29 @@ import { ToggleGroup, ToggleGroupItem } from "#/components/toggle-group";
 
 import preview from "../.storybook/preview";
 
-const meta = preview.meta({
-  component: ToggleGroup,
-  subcomponents: { ToggleGroupItem },
+/**
+ * ToggleGroup's root prop type is a discriminated union (`type: "single" | "multiple"`),
+ * which CSF Next can't drive via `{...args}`. We expose a flat custom args shape and
+ * narrow on `type` in the render so the Controls panel gets type/variant/size/etc.
+ */
+interface ToggleGroupArgs {
+  disabled: boolean;
+  orientation: "horizontal" | "vertical";
+  size: "default" | "lg" | "sm";
+  type: "multiple" | "single";
+  variant: "default" | "outline";
+}
+
+const meta = preview.type<{ args: ToggleGroupArgs }>().meta({
+  args: { disabled: false, orientation: "horizontal", size: "default", type: "single", variant: "default" },
+  argTypes: {
+    disabled: { control: "boolean" },
+    orientation: { control: "radio", options: ["horizontal", "vertical"] },
+    size: { control: "radio", options: ["default", "sm", "lg"] },
+    type: { control: "radio", options: ["single", "multiple"] },
+    variant: { control: "radio", options: ["default", "outline"] },
+  },
+  subcomponents: { ToggleGroup, ToggleGroupItem },
   parameters: {
     docs: {
       description: {
@@ -24,9 +44,9 @@ const meta = preview.meta({
 });
 
 export const Default = meta.story({
-  render: () => (
-    <div className="flex flex-col items-center gap-4">
-      <ToggleGroup type="single" defaultValue="left">
+  render: ({ disabled, orientation, size, type, variant }) => {
+    const items = (
+      <>
         <ToggleGroupItem aria-label="Align left" value="left">
           <AlignLeftIcon />
         </ToggleGroupItem>
@@ -36,20 +56,26 @@ export const Default = meta.story({
         <ToggleGroupItem aria-label="Align right" value="right">
           <AlignRightIcon />
         </ToggleGroupItem>
+      </>
+    );
+
+    return type === "multiple" ? (
+      <ToggleGroup disabled={disabled} orientation={orientation} size={size} type="multiple" variant={variant}>
+        {items}
       </ToggleGroup>
-      <ToggleGroup type="multiple">
-        <ToggleGroupItem aria-label="Bold" value="bold">
-          <BoldIcon />
-        </ToggleGroupItem>
-        <ToggleGroupItem aria-label="Italic" value="italic">
-          <ItalicIcon />
-        </ToggleGroupItem>
-        <ToggleGroupItem aria-label="Underline" value="underline">
-          <UnderlineIcon />
-        </ToggleGroupItem>
+    ) : (
+      <ToggleGroup
+        defaultValue="left"
+        disabled={disabled}
+        orientation={orientation}
+        size={size}
+        type="single"
+        variant={variant}
+      >
+        {items}
       </ToggleGroup>
-    </div>
-  ),
+    );
+  },
 });
 
 export const Outline = meta.story({
