@@ -1,61 +1,47 @@
+import { expect } from "storybook/test";
+
 import { ScrollArea, ScrollAreaScrollbar } from "#/components/scroll-area";
 
 import preview from "../.storybook/preview";
 
 /**
- * ScrollArea is a composition with optional root props. Demoed via `render`
- * while keeping `component` bound to the Root (Pattern C, see Card).
+ * ScrollArea — a composite whose root is a normal component (`ScrollAreaPrimitive.Root`
+ * plus a custom `size` prop). The Root renders its own vertical + horizontal
+ * `ScrollAreaScrollbar`s internally, so most usages just constrain the box and drop
+ * content inside. The `size` enum drives scrollbar track thickness. Content here is
+ * authored for Storybook and is NOT synced with the apps/web registry.
  */
 const meta = preview.meta({
   args: { size: "md" },
+  argTypes: {
+    asChild: { table: { disable: true } },
+    size: { control: "select", options: ["none", "sm", "md", "lg"] },
+  },
   component: ScrollArea,
-  subcomponents: { ScrollAreaScrollbar },
   parameters: {
+    controls: { include: ["size"] },
     docs: {
       description: {
         component: [
           "Augments native scrolling with a custom, cross-browser-consistent scrollbar.",
           "",
-          "**Anatomy:** `ScrollArea > content`; horizontal and vertical `ScrollAreaScrollbar`s are rendered for you.",
-          "Constrain the `ScrollArea` with a fixed height/width so content overflows; pick a track `size` (`default` · `sm`).",
+          "**Anatomy:** `ScrollArea > content`; vertical and horizontal `ScrollAreaScrollbar`s are rendered for you.",
+          "Constrain the `ScrollArea` with a fixed height/width so content overflows; pick a track `size` (`none` · `sm` · `md` · `lg`).",
         ].join("\n"),
       },
     },
   },
+  subcomponents: { ScrollAreaScrollbar },
   title: "Layout/ScrollArea",
 });
 
 const RELEASES = [
-  {
-    version: "v2.5.0",
-    date: "Jun 2",
-    notes: "New Resizable component and dark-mode polish.",
-  },
-  {
-    version: "v2.4.1",
-    date: "May 24",
-    notes: "Fixed focus ring contrast on outline buttons.",
-  },
-  {
-    version: "v2.4.0",
-    date: "May 18",
-    notes: "Added Input OTP and Field validation helpers.",
-  },
-  {
-    version: "v2.3.0",
-    date: "May 9",
-    notes: "Carousel now supports vertical orientation.",
-  },
-  {
-    version: "v2.2.0",
-    date: "Apr 30",
-    notes: "Introduced Sonner toasts and Progress Circle.",
-  },
-  {
-    version: "v2.1.0",
-    date: "Apr 21",
-    notes: "Reworked Sidebar with collapsible groups.",
-  },
+  { version: "v2.5.0", date: "Jun 2", notes: "New Resizable component and dark-mode polish." },
+  { version: "v2.4.1", date: "May 24", notes: "Fixed focus ring contrast on outline buttons." },
+  { version: "v2.4.0", date: "May 18", notes: "Added Input OTP and Field validation helpers." },
+  { version: "v2.3.0", date: "May 9", notes: "Carousel now supports vertical orientation." },
+  { version: "v2.2.0", date: "Apr 30", notes: "Introduced Sonner toasts and Progress Circle." },
+  { version: "v2.1.0", date: "Apr 21", notes: "Reworked Sidebar with collapsible groups." },
 ];
 
 const WORKS = [
@@ -94,9 +80,19 @@ export const Default = meta.story({
   ),
 });
 
+/** Same composition as Default — only the `size` arg differs, so it reuses Default's render. */
+export const SmallScrollbar = meta.story({
+  args: { size: "sm" },
+  render: Default.input.render,
+});
+
+/**
+ * A genuinely different composition: horizontal overflow with an explicit
+ * horizontal `ScrollAreaScrollbar`.
+ */
 export const Horizontal = meta.story({
-  render: () => (
-    <ScrollArea className="w-96 rounded-md border whitespace-nowrap">
+  render: (args) => (
+    <ScrollArea {...args} className="w-96 rounded-md border border-border whitespace-nowrap">
       <div className="flex w-max space-x-4 p-4">
         {WORKS.map((artwork) => (
           <figure key={artwork.artist} className="shrink-0">
@@ -118,4 +114,12 @@ export const Horizontal = meta.story({
       <ScrollAreaScrollbar orientation="horizontal" />
     </ScrollArea>
   ),
+});
+
+Default.test("renders a scrollable viewport whose content overflows", async ({ canvas }) => {
+  const viewport = canvas.getByText("Changelog").closest("[data-slot='scroll-area-viewport']");
+
+  await expect(viewport).not.toBeNull();
+  // Content (6 releases) overflows the fixed 14rem height → viewport is scrollable.
+  await expect((viewport as HTMLElement).scrollHeight).toBeGreaterThan((viewport as HTMLElement).clientHeight);
 });

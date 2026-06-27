@@ -1,6 +1,6 @@
 import { CreditCardIcon, LandmarkIcon, WalletIcon } from "lucide-react";
 import { useState } from "react";
-import { expect } from "storybook/test";
+import { expect, fn } from "storybook/test";
 
 import { Badge } from "#/components/badge";
 import { RadioCards, RadioCardsItem } from "#/components/radio-cards";
@@ -8,24 +8,9 @@ import { RadioCards, RadioCardsItem } from "#/components/radio-cards";
 import preview from "../.storybook/preview";
 
 const PLANS = [
-  {
-    value: "free",
-    label: "Free",
-    price: "$0 / mo",
-    description: "For personal projects",
-  },
-  {
-    value: "pro",
-    label: "Pro",
-    price: "$12 / mo",
-    description: "For professional use",
-  },
-  {
-    value: "team",
-    label: "Team",
-    price: "$49 / mo",
-    description: "For growing teams",
-  },
+  { value: "free", label: "Free", price: "$0 / mo", description: "For personal projects" },
+  { value: "pro", label: "Pro", price: "$12 / mo", description: "For professional use" },
+  { value: "team", label: "Team", price: "$49 / mo", description: "For growing teams" },
 ];
 
 const METHODS = [
@@ -34,16 +19,27 @@ const METHODS = [
   { value: "bank", label: "Bank", icon: LandmarkIcon },
 ];
 
+/**
+ * RadioCards — a prop-driven COMPOSITE single-select group built on Radix RadioGroup,
+ * rendered as large clickable card surfaces instead of bare radios. The root owns the
+ * interesting props (orientation, loop, disabled, value/defaultValue); each card is a
+ * `RadioCardsItem`. Content here is authored for Storybook against the component's own
+ * public API — it is NOT synced with or copied from the apps/web registry.
+ */
 const meta = preview.meta({
   args: { defaultValue: "free", disabled: false, loop: true, orientation: "vertical" },
   argTypes: {
     asChild: { table: { disable: true } },
+    defaultValue: { control: "text" },
+    disabled: { control: "boolean" },
+    loop: { control: "boolean" },
     onValueChange: { table: { disable: true } },
+    orientation: { control: "radio", options: ["horizontal", "vertical"] },
     value: { table: { disable: true } },
   },
   component: RadioCards,
-  subcomponents: { RadioCardsItem },
   parameters: {
+    controls: { include: ["defaultValue", "disabled", "loop", "orientation"] },
     docs: {
       description: {
         component: [
@@ -55,6 +51,7 @@ const meta = preview.meta({
       },
     },
   },
+  subcomponents: { RadioCardsItem },
   title: "Form/RadioCards",
 });
 
@@ -75,6 +72,9 @@ export const Default = meta.story({
   ),
 });
 
+export const Disabled = meta.story({ args: { disabled: true }, render: Default.input.render });
+
+/** A genuinely different composition: a two-column controlled grid for a billing interval. */
 export const Interval = meta.story({
   render: () => {
     function Render() {
@@ -105,6 +105,7 @@ export const Interval = meta.story({
   },
 });
 
+/** A genuinely different composition: a compact three-column icon grid for a payment method. */
 export const Payment = meta.story({
   render: () => {
     function Render() {
@@ -129,21 +130,16 @@ export const Payment = meta.story({
 });
 
 export const SelectsOnClick = meta.story({
-  render: () => (
-    <RadioCards className="grid w-full max-w-xs gap-2">
-      {PLANS.map(({ value, label }) => (
-        <RadioCardsItem key={value} value={value}>
-          <span className="text-sm font-medium">{label}</span>
-        </RadioCardsItem>
-      ))}
-    </RadioCards>
-  ),
+  args: { defaultValue: undefined, onValueChange: fn() },
+  render: Default.input.render,
 });
 
 /** Interaction test (CSF Next `.test()`) — runs in a real browser via `test:stories`. */
-SelectsOnClick.test("selects on click", async ({ canvas, userEvent }) => {
-  const radio = canvas.getByRole("radio", { name: "Team" });
+SelectsOnClick.test("checks the clicked card and fires onValueChange", async ({ args, canvas, userEvent }) => {
+  const team = canvas.getByRole("radio", { name: /Team/ });
 
-  await userEvent.click(radio);
-  await expect(radio).toBeChecked();
+  await expect(team).not.toBeChecked();
+  await userEvent.click(team);
+  await expect(team).toBeChecked();
+  await expect(args.onValueChange).toHaveBeenCalledWith("team");
 });

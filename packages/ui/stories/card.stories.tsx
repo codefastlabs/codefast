@@ -3,15 +3,25 @@ import { Card, CardAction, CardContent, CardDescription, CardFooter, CardHeader,
 
 import preview from "../.storybook/preview";
 
+/**
+ * Card — a COMPOSITE layout surface. The root `<Card>` is a styled `<div>` whose
+ * only configurable prop is `size` (`"default" | "sm"`, driving the inner spacing
+ * token); all other parts are thin styled `<div>`s composed as children. Content
+ * here is authored for Storybook against the component's own public API and is NOT
+ * synced with the apps/web registry.
+ */
 const meta = preview.meta({
   args: { size: "default" },
+  argTypes: {
+    size: { control: "radio", options: ["default", "sm"] },
+  },
   component: Card,
-  subcomponents: { CardHeader, CardTitle, CardDescription, CardAction, CardContent, CardFooter },
   parameters: {
+    controls: { include: ["size"] },
     docs: {
       description: {
         component: [
-          "A composable surface for grouping related content and actions.",
+          "A composable surface for grouping related content and actions. The root accepts a `size` prop that tightens the internal spacing.",
           "",
           "**Anatomy:** `Card > CardHeader (CardTitle · CardDescription · CardAction) + CardContent + CardFooter`.",
           "All parts are thin styled `<div>`s — compose only the ones you need.",
@@ -19,6 +29,7 @@ const meta = preview.meta({
       },
     },
   },
+  subcomponents: { CardHeader, CardTitle, CardDescription, CardAction, CardContent, CardFooter },
   title: "Layout/Card",
 });
 
@@ -44,9 +55,16 @@ export const Default = meta.story({
   ),
 });
 
+/** Same composition, compact spacing — only `args` differ; the render is reused. */
+export const Small = meta.story({
+  args: { size: "sm" },
+  render: Default.input.render,
+});
+
+/** A different composition that exercises the `CardAction` slot in the header. */
 export const WithAction = meta.story({
-  render: () => (
-    <Card className="w-full max-w-sm">
+  render: (args) => (
+    <Card {...args} className="w-full max-w-sm">
       <CardHeader>
         <CardTitle>Notifications</CardTitle>
         <CardDescription>Manage how you receive updates.</CardDescription>

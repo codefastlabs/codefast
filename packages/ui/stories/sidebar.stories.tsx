@@ -69,8 +69,23 @@ import {
 
 import preview from "../.storybook/preview";
 
+/**
+ * Sidebar — a COMPOSITE application shell. The `Sidebar` root owns plain enum
+ * props (`variant`, `side`, `collapsible`) so it binds `component` directly and
+ * `{...args}` drives the rendered root; state stories differ only by `args` and
+ * reuse `Default.input.render`. The many parts are documented via `subcomponents`.
+ * All story content (teams, nav, user) is authored here for Storybook — it is
+ * NOT synced with the apps/web registry.
+ */
 const meta = preview.meta({
   args: { collapsible: "icon", side: "left", variant: "sidebar" },
+  argTypes: {
+    children: { table: { disable: true } },
+    className: { table: { disable: true } },
+    collapsible: { control: "radio", options: ["offcanvas", "icon", "none"] },
+    side: { control: "radio", options: ["left", "right"] },
+    variant: { control: "radio", options: ["sidebar", "floating", "inset"] },
+  },
   component: Sidebar,
   subcomponents: {
     SidebarProvider,
@@ -97,6 +112,7 @@ const meta = preview.meta({
     SidebarMenuSubButton,
   },
   parameters: {
+    controls: { include: ["variant", "side", "collapsible"] },
     docs: {
       description: {
         component: [
@@ -496,6 +512,21 @@ export const Default = meta.story({
       </SidebarInset>
     </SidebarProvider>
   ),
+});
+
+export const Floating = meta.story({
+  args: { variant: "floating" },
+  render: Default.input.render,
+});
+
+export const RightSide = meta.story({
+  args: { side: "right" },
+  render: Default.input.render,
+});
+
+export const OffcanvasCollapsible = meta.story({
+  args: { collapsible: "offcanvas" },
+  render: Default.input.render,
 });
 
 export const GroupAndMenu = meta.story({

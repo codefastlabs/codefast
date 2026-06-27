@@ -7,27 +7,36 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "#/components/tabs";
 
 import preview from "../.storybook/preview";
 
+/**
+ * Tabs — a COMPOSITE whose root (`Tabs`) is a normal element-like component: it owns
+ * `orientation`, plus uncontrolled `defaultValue` / controlled `value`. The visual
+ * `variant` ("default" | "line") lives on the `TabsList` subcomponent, not the root.
+ * Content here is authored against the component's own public API for Storybook, NOT
+ * synced with or copied from the apps/web registry.
+ */
 const meta = preview.meta({
   args: { defaultValue: "account", orientation: "horizontal" },
   argTypes: {
     asChild: { table: { disable: true } },
     onValueChange: { table: { disable: true } },
+    orientation: { control: "radio", options: ["horizontal", "vertical"] },
     value: { table: { disable: true } },
   },
   component: Tabs,
-  subcomponents: { TabsList, TabsTrigger, TabsContent },
   parameters: {
+    controls: { include: ["orientation", "defaultValue"] },
     docs: {
       description: {
         component: [
           "A set of layered sections of content where only one panel is visible at a time.",
           "",
           "**Anatomy:** `Tabs > TabsList > TabsTrigger` + one `TabsContent` per tab.",
-          "Each `TabsTrigger` and `TabsContent` is paired by a matching `value`; set `defaultValue` (uncontrolled) or `value` (controlled) on `Tabs`.",
+          "Each `TabsTrigger` and `TabsContent` is paired by a matching `value`; set `defaultValue` (uncontrolled) or `value` (controlled) on `Tabs`. The `variant` prop on `TabsList` switches between the filled (`default`) and underlined (`line`) styles.",
         ].join("\n"),
       },
     },
   },
+  subcomponents: { TabsContent, TabsList, TabsTrigger },
   title: "Navigation/Tabs",
 });
 
@@ -66,38 +75,52 @@ export const Default = meta.story({
   ),
 });
 
+/** Same composition, only `orientation` differs — reuses the base render. */
 export const Vertical = meta.story({
-  render: () => (
-    <Tabs defaultValue="account" orientation="vertical">
-      <TabsList>
-        <TabsTrigger value="account">Account</TabsTrigger>
-        <TabsTrigger value="password">Password</TabsTrigger>
-        <TabsTrigger value="notifications">Notifications</TabsTrigger>
-      </TabsList>
-    </Tabs>
-  ),
+  args: { orientation: "vertical" },
+  render: Default.input.render,
 });
 
+/**
+ * Distinct composition: the underlined `line` variant lives on `TabsList`, so this
+ * story has its own render rather than reusing the base default-variant layout.
+ */
 export const Line = meta.story({
-  render: () => (
-    <Tabs defaultValue="overview">
+  args: { defaultValue: "overview" },
+  render: (args) => (
+    <Tabs {...args} className="w-full max-w-md">
       <TabsList variant="line">
         <TabsTrigger value="overview">Overview</TabsTrigger>
         <TabsTrigger value="analytics">Analytics</TabsTrigger>
         <TabsTrigger value="reports">Reports</TabsTrigger>
       </TabsList>
+
+      <TabsContent value="overview" className="mt-4">
+        Snapshot of your key metrics for the current period.
+      </TabsContent>
+      <TabsContent value="analytics" className="mt-4">
+        Traffic and engagement broken down by source.
+      </TabsContent>
+      <TabsContent value="reports" className="mt-4">
+        Scheduled exports and downloadable summaries.
+      </TabsContent>
     </Tabs>
   ),
 });
 
-export const SwitchesOnClick = meta.story({
-  render: Default.input.render,
-});
+export const SwitchesOnClick = meta.story({ render: Default.input.render });
 
 /** Interaction test (CSF Next `.test()`) — runs in a real browser via `test:stories`. */
-SwitchesOnClick.test("switches on click", async ({ canvas, userEvent }) => {
-  const trigger = canvas.getByRole("tab", { name: /password/i });
+SwitchesOnClick.test("activating a tab reveals its panel and flips selection", async ({ canvas, userEvent }) => {
+  const accountTab = canvas.getByRole("tab", { name: /account/i });
+  const passwordTab = canvas.getByRole("tab", { name: /password/i });
 
-  await userEvent.click(trigger);
+  await expect(accountTab).toHaveAttribute("aria-selected", "true");
+  await expect(passwordTab).toHaveAttribute("aria-selected", "false");
+
+  await userEvent.click(passwordTab);
+
+  await expect(passwordTab).toHaveAttribute("aria-selected", "true");
+  await expect(accountTab).toHaveAttribute("aria-selected", "false");
   await expect(await canvas.findByLabelText(/current password/i)).toBeVisible();
 });

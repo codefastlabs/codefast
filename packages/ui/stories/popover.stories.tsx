@@ -14,20 +14,24 @@ import {
 
 import preview from "../.storybook/preview";
 
+/**
+ * Popover — a COMPOSITE overlay whose root (`Popover`) is a Radix context
+ * provider with no DOM of its own; the open/close state lives on the root while
+ * the floating panel is portalled out via `PopoverContent`. The root's useful
+ * controls are the `defaultOpen` and `modal` booleans (controlled `open` /
+ * `onOpenChange` are hidden as noise). All content here is authored for
+ * Storybook against the component's own public API, NOT synced with the
+ * apps/web registry.
+ */
 const meta = preview.meta({
   args: { defaultOpen: false, modal: false },
   argTypes: {
+    defaultOpen: { control: "boolean" },
+    modal: { control: "boolean" },
     onOpenChange: { table: { disable: true } },
     open: { table: { disable: true } },
   },
   component: Popover,
-  subcomponents: {
-    PopoverTrigger,
-    PopoverContent,
-    PopoverHeader,
-    PopoverTitle,
-    PopoverDescription,
-  },
   parameters: {
     docs: {
       description: {
@@ -39,6 +43,13 @@ const meta = preview.meta({
         ].join("\n"),
       },
     },
+  },
+  subcomponents: {
+    PopoverContent,
+    PopoverDescription,
+    PopoverHeader,
+    PopoverTitle,
+    PopoverTrigger,
   },
   title: "Overlay/Popover",
 });
@@ -71,6 +82,16 @@ export const Default = meta.story({
   ),
 });
 
+/** Same composition, opened on mount via the `defaultOpen` root prop. */
+export const OpenByDefault = meta.story({
+  args: { defaultOpen: true },
+  render: Default.input.render,
+});
+
+/**
+ * A genuinely different composition: three triggers demonstrating how `align`
+ * on `PopoverContent` positions the floating panel relative to its anchor.
+ */
 export const Alignments = meta.story({
   render: () => (
     <div className="flex gap-6">
@@ -113,11 +134,15 @@ export const OpensOnClick = meta.story({
 });
 
 /** Interaction test (CSF Next `.test()`) — runs in a real browser via `test:stories`. */
-OpensOnClick.test("opens on click", async ({ canvas, userEvent }) => {
+OpensOnClick.test("opens the portalled panel and flips aria-expanded", async ({ canvas, userEvent }) => {
   const trigger = canvas.getByRole("button", { name: /open popover/i });
+
+  await expect(trigger).toHaveAttribute("aria-expanded", "false");
 
   await userEvent.click(trigger);
 
-  await expect(await screen.findByText(/set the dimensions for the layer/i)).toBeInTheDocument();
+  // Portalled content lives outside the canvas — query via screen.
   await expect(await screen.findByText("Dimensions")).toBeInTheDocument();
+  await expect(await screen.findByText(/set the dimensions for the layer/i)).toBeInTheDocument();
+  await expect(trigger).toHaveAttribute("aria-expanded", "true");
 });

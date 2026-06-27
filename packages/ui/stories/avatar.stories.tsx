@@ -3,17 +3,20 @@ import { Avatar, AvatarBadge, AvatarFallback, AvatarGroup, AvatarGroupCount, Ava
 import preview from "../.storybook/preview";
 
 /**
- * Avatar is a composition with optional root props. Demoed via `render` while
- * keeping `component` bound to the Root (Pattern C, see Card).
+ * Avatar — a COMPOSITE whose root (`Avatar`) is a normal element with a single
+ * enum prop (`size`). The root is bound as `component` so `{...args}` drives the
+ * `size` control; state stories reuse the base render and differ only by `args`.
+ * Content is authored for Storybook, NOT synced with the apps/web registry.
  */
 const meta = preview.meta({
   args: { size: "default" },
   argTypes: {
     asChild: { table: { disable: true } },
+    size: { control: "radio", options: ["sm", "default", "lg"] },
   },
   component: Avatar,
-  subcomponents: { AvatarImage, AvatarFallback, AvatarBadge, AvatarGroup, AvatarGroupCount },
   parameters: {
+    controls: { include: ["size"] },
     docs: {
       description: {
         component: [
@@ -25,60 +28,64 @@ const meta = preview.meta({
       },
     },
   },
+  subcomponents: { AvatarBadge, AvatarFallback, AvatarGroup, AvatarGroupCount, AvatarImage },
   title: "Display/Avatar",
 });
 
 export const Default = meta.story({
   render: (args) => (
     <Avatar {...args}>
-      <AvatarImage src="https://github.com/codefastlabs.png" alt="@codefast" className="grayscale" />
+      <AvatarImage alt="@codefast" className="grayscale" src="https://github.com/codefastlabs.png" />
       <AvatarFallback>CN</AvatarFallback>
     </Avatar>
   ),
 });
 
-export const Sizes = meta.story({
-  render: () => (
-    <div className="flex flex-wrap items-center gap-2 grayscale">
-      <Avatar size="sm">
-        <AvatarImage src="https://github.com/codefastlabs.png" alt="@codefast" />
-        <AvatarFallback>CN</AvatarFallback>
-      </Avatar>
-      <Avatar>
-        <AvatarImage src="https://github.com/codefastlabs.png" alt="@codefast" />
-        <AvatarFallback>CN</AvatarFallback>
-      </Avatar>
-      <Avatar size="lg">
-        <AvatarImage src="https://github.com/codefastlabs.png" alt="@codefast" />
-        <AvatarFallback>CN</AvatarFallback>
-      </Avatar>
-    </div>
+export const Small = meta.story({
+  args: { size: "sm" },
+  render: Default.input.render,
+});
+
+export const Large = meta.story({
+  args: { size: "lg" },
+  render: Default.input.render,
+});
+
+/** A different composition: the fallback only, used when no image source resolves. */
+export const FallbackOnly = meta.story({
+  render: (args) => (
+    <Avatar {...args}>
+      <AvatarFallback>CN</AvatarFallback>
+    </Avatar>
   ),
 });
 
+/** A different composition: a status indicator overlaid on the avatar. */
 export const WithBadge = meta.story({
-  render: () => (
-    <Avatar>
-      <AvatarImage src="https://github.com/codefastlabs.png" alt="@codefast" />
+  render: (args) => (
+    <Avatar {...args}>
+      <AvatarImage alt="@codefast" className="grayscale" src="https://github.com/codefastlabs.png" />
       <AvatarFallback>CN</AvatarFallback>
       <AvatarBadge className="bg-green-600 dark:bg-green-800" />
     </Avatar>
   ),
 });
 
+/** A different composition: many avatars stacked with an overflow count. */
 export const Group = meta.story({
+  parameters: { controls: { disable: true } },
   render: () => (
     <AvatarGroup className="grayscale">
       <Avatar>
-        <AvatarImage src="https://github.com/codefastlabs.png" alt="@codefast" />
+        <AvatarImage alt="@codefast" src="https://github.com/codefastlabs.png" />
         <AvatarFallback>CN</AvatarFallback>
       </Avatar>
       <Avatar>
-        <AvatarImage src="https://avatar.vercel.sh/leo" alt="@leo" />
+        <AvatarImage alt="@leo" src="https://avatar.vercel.sh/leo" />
         <AvatarFallback>LR</AvatarFallback>
       </Avatar>
       <Avatar>
-        <AvatarImage src="https://avatar.vercel.sh/ava" alt="@ava" />
+        <AvatarImage alt="@ava" src="https://avatar.vercel.sh/ava" />
         <AvatarFallback>ER</AvatarFallback>
       </Avatar>
       <AvatarGroupCount>+3</AvatarGroupCount>

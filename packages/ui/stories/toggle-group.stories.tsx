@@ -1,4 +1,4 @@
-import { AlignCenterIcon, AlignLeftIcon, AlignRightIcon, BoldIcon, ItalicIcon, UnderlineIcon } from "lucide-react";
+import { AlignCenterIcon, AlignLeftIcon, AlignRightIcon } from "lucide-react";
 import { expect } from "storybook/test";
 
 import { ToggleGroup, ToggleGroupItem } from "#/components/toggle-group";
@@ -6,9 +6,11 @@ import { ToggleGroup, ToggleGroupItem } from "#/components/toggle-group";
 import preview from "../.storybook/preview";
 
 /**
- * ToggleGroup's root prop type is a discriminated union (`type: "single" | "multiple"`),
- * which CSF Next can't drive via `{...args}`. We expose a flat custom args shape and
- * narrow on `type` in the render so the Controls panel gets type/variant/size/etc.
+ * ToggleGroup is a COMPOSITE whose root prop type is a discriminated union
+ * (`type: "single" | "multiple"`), which CSF Next can't drive via `{...args}`.
+ * We expose a flat custom args shape and narrow on `type` in the render so the
+ * Controls panel gets type/variant/size/etc. Content is authored for Storybook,
+ * NOT synced with the apps/web registry.
  */
 interface ToggleGroupArgs {
   disabled: boolean;
@@ -27,7 +29,6 @@ const meta = preview.type<{ args: ToggleGroupArgs }>().meta({
     type: { control: "radio", options: ["single", "multiple"] },
     variant: { control: "radio", options: ["default", "outline"] },
   },
-  subcomponents: { ToggleGroup, ToggleGroupItem },
   parameters: {
     docs: {
       description: {
@@ -40,6 +41,7 @@ const meta = preview.type<{ args: ToggleGroupArgs }>().meta({
       },
     },
   },
+  subcomponents: { ToggleGroup, ToggleGroupItem },
   title: "Form/ToggleGroup",
 });
 
@@ -78,75 +80,35 @@ export const Default = meta.story({
   },
 });
 
-export const Outline = meta.story({
-  render: () => (
-    <ToggleGroup variant="outline" type="single" defaultValue="all">
-      <ToggleGroupItem value="all" aria-label="Toggle all">
-        All
-      </ToggleGroupItem>
-      <ToggleGroupItem value="missed" aria-label="Toggle missed">
-        Missed
-      </ToggleGroupItem>
-    </ToggleGroup>
-  ),
-});
+/** Many items can be active at once. Reuses the base render, only `args` differ. */
+export const Multiple = meta.story({ args: { type: "multiple" }, render: Default.input.render });
 
+/** Bordered buttons. Reuses the base render, only `args` differ. */
+export const Outline = meta.story({ args: { variant: "outline" }, render: Default.input.render });
+
+/** Stacked vertically. Reuses the base render, only `args` differ. */
 export const Vertical = meta.story({
-  render: () => (
-    <ToggleGroup type="multiple" orientation="vertical" spacing={1} defaultValue={["bold", "italic"]}>
-      <ToggleGroupItem value="bold" aria-label="Toggle bold">
-        <BoldIcon />
-      </ToggleGroupItem>
-      <ToggleGroupItem value="italic" aria-label="Toggle italic">
-        <ItalicIcon />
-      </ToggleGroupItem>
-      <ToggleGroupItem value="underline" aria-label="Toggle underline">
-        <UnderlineIcon />
-      </ToggleGroupItem>
-    </ToggleGroup>
-  ),
+  args: { orientation: "vertical", type: "multiple" },
+  render: Default.input.render,
 });
 
-export const Sizes = meta.story({
-  render: () => (
-    <div className="flex flex-col gap-4">
-      <ToggleGroup type="single" size="sm" defaultValue="top" variant="outline">
-        <ToggleGroupItem value="top" aria-label="Toggle top">
-          Top
-        </ToggleGroupItem>
-        <ToggleGroupItem value="bottom" aria-label="Toggle bottom">
-          Bottom
-        </ToggleGroupItem>
-      </ToggleGroup>
-      <ToggleGroup type="single" defaultValue="top" variant="outline">
-        <ToggleGroupItem value="top" aria-label="Toggle top">
-          Top
-        </ToggleGroupItem>
-        <ToggleGroupItem value="bottom" aria-label="Toggle bottom">
-          Bottom
-        </ToggleGroupItem>
-      </ToggleGroup>
-    </div>
-  ),
-});
+/** Smaller hit targets. Reuses the base render, only `args` differ. */
+export const Small = meta.story({ args: { size: "sm", variant: "outline" }, render: Default.input.render });
 
-export const SelectsOnClick = meta.story({
-  render: () => (
-    <ToggleGroup type="single">
-      <ToggleGroupItem aria-label="Align left" value="left">
-        <AlignLeftIcon />
-      </ToggleGroupItem>
-      <ToggleGroupItem aria-label="Align center" value="center">
-        <AlignCenterIcon />
-      </ToggleGroupItem>
-    </ToggleGroup>
-  ),
-});
+/** Whole group disabled. Reuses the base render, only `args` differ. */
+export const Disabled = meta.story({ args: { disabled: true }, render: Default.input.render });
+
+export const SelectsOnClick = meta.story({ render: Default.input.render });
 
 /** Interaction test (CSF Next `.test()`) — runs in a real browser via `test:stories`. */
-SelectsOnClick.test("selects on click", async ({ canvas, userEvent }) => {
-  const item = canvas.getByRole("radio", { name: "Align left" });
+SelectsOnClick.test("single mode moves the active item on click", async ({ canvas, userEvent }) => {
+  const left = canvas.getByRole("radio", { name: "Align left" });
+  const center = canvas.getByRole("radio", { name: "Align center" });
 
-  await userEvent.click(item);
-  await expect(item).toHaveAttribute("aria-checked", "true");
+  // Default render seeds `defaultValue="left"`.
+  await expect(left).toHaveAttribute("aria-checked", "true");
+
+  await userEvent.click(center);
+  await expect(center).toHaveAttribute("aria-checked", "true");
+  await expect(left).toHaveAttribute("aria-checked", "false");
 });

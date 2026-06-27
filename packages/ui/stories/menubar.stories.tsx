@@ -1,4 +1,4 @@
-import type { ComponentProps } from "react";
+import type { ComponentProps, JSX } from "react";
 import { useState } from "react";
 import { expect, screen } from "storybook/test";
 
@@ -23,31 +23,25 @@ import {
 
 import preview from "../.storybook/preview";
 
+/**
+ * Menubar — a COMPOSITE desktop-style menu bar. The root (`Menubar`) is a normal
+ * component whose props (`loop`, `dir`) drive keyboard/RTL behavior, so `component`
+ * is bound and `{...args}` flows into the root. All content below is authored for
+ * Storybook to exercise the full surface (items, shortcuts, submenu, checkbox,
+ * radio) — it is NOT synced with the apps/web registry.
+ */
 const meta = preview.meta({
-  args: { loop: false },
+  args: { dir: "ltr", loop: false },
   argTypes: {
+    defaultValue: { table: { disable: true } },
+    dir: { control: "radio", options: ["ltr", "rtl"] },
+    loop: { control: "boolean" },
     onValueChange: { table: { disable: true } },
     value: { table: { disable: true } },
   },
   component: Menubar,
-  subcomponents: {
-    MenubarMenu,
-    MenubarTrigger,
-    MenubarContent,
-    MenubarLabel,
-    MenubarGroup,
-    MenubarItem,
-    MenubarCheckboxItem,
-    MenubarRadioGroup,
-    MenubarRadioItem,
-    MenubarSub,
-    MenubarSubTrigger,
-    MenubarSubContent,
-    MenubarSeparator,
-    MenubarShortcut,
-    MenubarArrow,
-  },
   parameters: {
+    controls: { include: ["loop", "dir"] },
     docs: {
       description: {
         component: [
@@ -59,10 +53,27 @@ const meta = preview.meta({
       },
     },
   },
+  subcomponents: {
+    MenubarArrow,
+    MenubarCheckboxItem,
+    MenubarContent,
+    MenubarGroup,
+    MenubarItem,
+    MenubarLabel,
+    MenubarMenu,
+    MenubarRadioGroup,
+    MenubarRadioItem,
+    MenubarSeparator,
+    MenubarShortcut,
+    MenubarSub,
+    MenubarSubContent,
+    MenubarSubTrigger,
+    MenubarTrigger,
+  },
   title: "Navigation/Menubar",
 });
 
-function MenubarExample(props: ComponentProps<typeof Menubar>) {
+function MenubarExample(props: ComponentProps<typeof Menubar>): JSX.Element {
   const [showToolbar, setShowToolbar] = useState(true);
   const [showGrid, setShowGrid] = useState(false);
   const [zoom, setZoom] = useState("100");
@@ -158,13 +169,17 @@ export const OpensOnClick = meta.story({
 });
 
 /** Interaction test (CSF Next `.test()`) — runs in a real browser via `test:stories`. */
-OpensOnClick.test("opens on click", async ({ canvas, userEvent }) => {
+OpensOnClick.test("opens the File menu on click", async ({ canvas, userEvent }) => {
   const trigger = canvas.getByRole("menuitem", { name: "File" });
+
+  await expect(trigger).toHaveAttribute("aria-expanded", "false");
 
   await userEvent.click(trigger);
 
-  // Menu content is portalled; assert presence (not visibility) by text with a
-  // generous timeout to ride out Radix's entrance animation — querying by role
-  // mid-animation was flaky.
+  // Content is portalled; assert presence (not visibility) by text with a
+  // generous timeout to ride out Radix's entrance animation.
   await expect(await screen.findByText(/new file/i, {}, { timeout: 3000 })).toBeInTheDocument();
+
+  // Contract: opening the menu flips the trigger's aria-expanded.
+  await expect(trigger).toHaveAttribute("aria-expanded", "true");
 });

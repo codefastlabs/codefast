@@ -1,18 +1,28 @@
+import { expect, fn } from "storybook/test";
+
 import { Label } from "#/components/label";
 import { NativeSelect, NativeSelectOptGroup, NativeSelectOption } from "#/components/native-select";
 
 import preview from "../.storybook/preview";
 
+/**
+ * NativeSelect — a prop-driven leaf wrapping a real `<select>`. The root owns the
+ * interesting props (`size`, `disabled`, plus native `<select>` attributes like
+ * `aria-invalid`), so `{...args}` drives every state and the option/optgroup children
+ * stay constant. Content is authored for Storybook against the component's own public
+ * API, independent of the apps/web registry.
+ */
 const meta = preview.meta({
   args: { disabled: false, size: "default" },
   argTypes: {
+    "aria-invalid": { control: "boolean" },
     disabled: { control: "boolean" },
+    onChange: { table: { disable: true } },
     size: { control: "radio", options: ["default", "sm"] },
   },
   component: NativeSelect,
-  subcomponents: { NativeSelectOptGroup, NativeSelectOption },
   parameters: {
-    controls: { include: ["size", "disabled"] },
+    controls: { include: ["size", "disabled", "aria-invalid"] },
     docs: {
       description: {
         component: [
@@ -24,6 +34,7 @@ const meta = preview.meta({
       },
     },
   },
+  subcomponents: { NativeSelectOptGroup, NativeSelectOption },
   title: "Form/NativeSelect",
 });
 
@@ -46,24 +57,19 @@ export const Default = meta.story({
   ),
 });
 
-export const Disabled = meta.story({
-  render: () => (
-    <NativeSelect disabled>
-      <NativeSelectOption value="">Disabled</NativeSelectOption>
-      <NativeSelectOption value="apple">Apple</NativeSelectOption>
-      <NativeSelectOption value="banana">Banana</NativeSelectOption>
-      <NativeSelectOption value="blueberry">Blueberry</NativeSelectOption>
-    </NativeSelect>
-  ),
-});
+export const Small = meta.story({ args: { size: "sm" }, render: Default.input.render });
 
-export const Invalid = meta.story({
-  render: () => (
-    <NativeSelect aria-invalid="true">
-      <NativeSelectOption value="">Error state</NativeSelectOption>
-      <NativeSelectOption value="apple">Apple</NativeSelectOption>
-      <NativeSelectOption value="banana">Banana</NativeSelectOption>
-      <NativeSelectOption value="blueberry">Blueberry</NativeSelectOption>
-    </NativeSelect>
-  ),
+export const Disabled = meta.story({ args: { disabled: true }, render: Default.input.render });
+
+export const Invalid = meta.story({ args: { "aria-invalid": true }, render: Default.input.render });
+
+export const SelectsOption = meta.story({ args: { onChange: fn() }, render: Default.input.render });
+
+SelectsOption.test("emits change and updates value when an option is picked", async ({ args, canvas, userEvent }) => {
+  const select = canvas.getByLabelText("Country");
+
+  await userEvent.selectOptions(select, "jp");
+
+  await expect(select).toHaveValue("jp");
+  await expect(args.onChange).toHaveBeenCalled();
 });

@@ -7,18 +7,23 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "#/comp
 
 import preview from "../.storybook/preview";
 
+/**
+ * Tooltip — a COMPOSITE overlay built from Radix primitives. The interesting props
+ * live on the root `Tooltip` (open timing / default open state); the floating label
+ * is portalled by `TooltipContent`. Controls bind to the root and drive `{...args}`;
+ * the portalled content is documented via `subcomponents`. Content here is authored
+ * for Storybook, NOT synced with the apps/web registry.
+ */
 const meta = preview.meta({
-  args: { defaultOpen: false, disableHoverableContent: false },
+  args: { defaultOpen: false, delayDuration: 0, disableHoverableContent: false },
   argTypes: {
+    defaultOpen: { control: "boolean" },
+    delayDuration: { control: { max: 1000, min: 0, step: 50, type: "number" } },
+    disableHoverableContent: { control: "boolean" },
     onOpenChange: { table: { disable: true } },
     open: { table: { disable: true } },
   },
   component: Tooltip,
-  subcomponents: {
-    TooltipProvider,
-    TooltipTrigger,
-    TooltipContent,
-  },
   parameters: {
     docs: {
       description: {
@@ -30,6 +35,11 @@ const meta = preview.meta({
         ].join("\n"),
       },
     },
+  },
+  subcomponents: {
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
   },
   title: "Overlay/Tooltip",
 });
@@ -69,6 +79,13 @@ export const Default = meta.story({
   ),
 });
 
+/** Open by default — same composition, driven purely by the `defaultOpen` arg. */
+export const Open = meta.story({
+  args: { defaultOpen: true },
+  render: Default.input.render,
+});
+
+/** A genuinely different composition: one trigger per placement to show `side` on the content. */
 export const Sides = meta.story({
   render: () => (
     <TooltipProvider>
@@ -90,6 +107,7 @@ export const Sides = meta.story({
   ),
 });
 
+/** A genuinely different composition: an icon trigger with a keyboard hint in the label. */
 export const Keyboard = meta.story({
   render: () => (
     <TooltipProvider>
@@ -111,15 +129,21 @@ export const ShowsOnHover = meta.story({
   render: Default.input.render,
 });
 
-/** Interaction test (CSF Next `.test()`) — runs in a real browser via `test:stories`. */
-ShowsOnHover.test("shows on hover", async ({ canvas, userEvent }) => {
+/**
+ * Interaction test (CSF Next `.test()`) — hovering the trigger opens the
+ * portalled label. Radix renders the label TWICE (the visible copy plus an
+ * accessibility copy), so query with `findAllByText` via `screen` (portalled
+ * content lives outside the canvas).
+ */
+ShowsOnHover.test("opens the portalled label on hover", async ({ canvas, userEvent }) => {
   const trigger = canvas.getByRole("button", { name: /info/i });
 
-  // Focusing also opens a Radix tooltip and is more robust than hover in headless runs.
+  await expect(trigger).toHaveAttribute("data-state", "closed");
+
   await userEvent.hover(trigger);
-  trigger.focus();
 
-  const matches = await screen.findAllByText(/more information/i);
+  const labels = await screen.findAllByText(/more information/i);
 
-  await expect(matches.length).toBeGreaterThan(0);
+  await expect(labels.length).toBeGreaterThan(0);
+  await expect(trigger).toHaveAttribute("data-state", expect.stringMatching(/open/));
 });

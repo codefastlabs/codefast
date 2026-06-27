@@ -1,4 +1,5 @@
-import { ChevronDownIcon, ChevronRightIcon, DotIcon } from "lucide-react";
+import { ChevronDownIcon, SlashIcon } from "lucide-react";
+import { expect, screen } from "storybook/test";
 
 import {
   Breadcrumb,
@@ -19,15 +20,23 @@ import {
 
 import preview from "../.storybook/preview";
 
-const meta = preview.meta({
-  component: Breadcrumb,
-  subcomponents: {
-    BreadcrumbList,
-    BreadcrumbItem,
-    BreadcrumbLink,
-    BreadcrumbPage,
-    BreadcrumbSeparator,
-    BreadcrumbEllipsis,
+/**
+ * Breadcrumb — a LAYOUT-ONLY composite. The root `<nav>` carries no enum/boolean/number
+ * props of its own, so it has no Controls; the visible variation lives in the parts you
+ * compose (separator glyph, collapsed ellipsis, current page). Content here is authored
+ * for Storybook against the component's own API, NOT synced with the apps/web registry.
+ *
+ * A flat `separator` arg drives whether the base composition renders the default chevron or
+ * a custom slash, so its states reuse one render instead of duplicating the markup.
+ */
+interface BreadcrumbArgs {
+  separator: "chevron" | "slash";
+}
+
+const meta = preview.type<{ args: BreadcrumbArgs }>().meta({
+  args: { separator: "chevron" },
+  argTypes: {
+    separator: { control: "radio", options: ["chevron", "slash"] },
   },
   parameters: {
     docs: {
@@ -36,36 +45,70 @@ const meta = preview.meta({
           "Displays the path to the current resource as a hierarchy of links.",
           "",
           "**Anatomy:** `Breadcrumb > BreadcrumbList > BreadcrumbItem > (BreadcrumbLink | BreadcrumbPage)` separated by `BreadcrumbSeparator`, with `BreadcrumbEllipsis` for collapsed segments.",
-          "`BreadcrumbPage` marks the current page; collapse middle items behind `BreadcrumbEllipsis`.",
+          "`BreadcrumbPage` marks the current page (it is non-interactive); collapse middle items behind `BreadcrumbEllipsis`.",
         ].join("\n"),
       },
     },
+  },
+  subcomponents: {
+    Breadcrumb,
+    BreadcrumbEllipsis,
+    BreadcrumbItem,
+    BreadcrumbLink,
+    BreadcrumbList,
+    BreadcrumbPage,
+    BreadcrumbSeparator,
   },
   title: "Navigation/Breadcrumb",
 });
 
 export const Default = meta.story({
+  render: ({ separator }) => {
+    const sep = separator === "slash" ? <SlashIcon /> : undefined;
+
+    return (
+      <Breadcrumb>
+        <BreadcrumbList>
+          <BreadcrumbItem>
+            <BreadcrumbLink href="#">Home</BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator>{sep}</BreadcrumbSeparator>
+          <BreadcrumbItem>
+            <BreadcrumbLink href="#">Components</BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator>{sep}</BreadcrumbSeparator>
+          <BreadcrumbItem>
+            <BreadcrumbPage>Breadcrumb</BreadcrumbPage>
+          </BreadcrumbItem>
+        </BreadcrumbList>
+      </Breadcrumb>
+    );
+  },
+});
+
+/** Swap the default chevron for a custom slash glyph — same composition, different `separator` arg. */
+export const CustomSeparator = meta.story({
+  args: { separator: "slash" },
+  render: Default.input.render,
+});
+
+/** Collapse middle segments behind `BreadcrumbEllipsis` for deep hierarchies. */
+export const Collapsed = meta.story({
   render: () => (
     <Breadcrumb>
       <BreadcrumbList>
         <BreadcrumbItem>
           <BreadcrumbLink href="#">Dashboard</BreadcrumbLink>
         </BreadcrumbItem>
-        <BreadcrumbSeparator>
-          <ChevronRightIcon />
-        </BreadcrumbSeparator>
+        <BreadcrumbSeparator />
         <BreadcrumbItem>
           <BreadcrumbEllipsis />
         </BreadcrumbItem>
-        <BreadcrumbSeparator>
-          <ChevronRightIcon />
-        </BreadcrumbSeparator>
+        <BreadcrumbSeparator />
         <BreadcrumbItem>
           <BreadcrumbLink href="#">Acme Website</BreadcrumbLink>
         </BreadcrumbItem>
-        <BreadcrumbSeparator>
-          <ChevronRightIcon />
-        </BreadcrumbSeparator>
+        <BreadcrumbSeparator />
         <BreadcrumbItem>
           <BreadcrumbPage>Settings</BreadcrumbPage>
         </BreadcrumbItem>
@@ -74,50 +117,7 @@ export const Default = meta.story({
   ),
 });
 
-export const Basic = meta.story({
-  render: () => (
-    <Breadcrumb>
-      <BreadcrumbList>
-        <BreadcrumbItem>
-          <BreadcrumbLink href="#">Home</BreadcrumbLink>
-        </BreadcrumbItem>
-        <BreadcrumbSeparator />
-        <BreadcrumbItem>
-          <BreadcrumbLink href="#">Components</BreadcrumbLink>
-        </BreadcrumbItem>
-        <BreadcrumbSeparator />
-        <BreadcrumbItem>
-          <BreadcrumbPage>Breadcrumb</BreadcrumbPage>
-        </BreadcrumbItem>
-      </BreadcrumbList>
-    </Breadcrumb>
-  ),
-});
-
-export const CustomSeparator = meta.story({
-  render: () => (
-    <Breadcrumb>
-      <BreadcrumbList>
-        <BreadcrumbItem>
-          <BreadcrumbLink href="#">Home</BreadcrumbLink>
-        </BreadcrumbItem>
-        <BreadcrumbSeparator>
-          <DotIcon />
-        </BreadcrumbSeparator>
-        <BreadcrumbItem>
-          <BreadcrumbLink href="#">Components</BreadcrumbLink>
-        </BreadcrumbItem>
-        <BreadcrumbSeparator>
-          <DotIcon />
-        </BreadcrumbSeparator>
-        <BreadcrumbItem>
-          <BreadcrumbPage>Breadcrumb</BreadcrumbPage>
-        </BreadcrumbItem>
-      </BreadcrumbList>
-    </Breadcrumb>
-  ),
-});
-
+/** Replace a collapsed segment with a dropdown menu of sibling routes. */
 export const WithDropdown = meta.story({
   render: () => (
     <Breadcrumb>
@@ -125,16 +125,12 @@ export const WithDropdown = meta.story({
         <BreadcrumbItem>
           <BreadcrumbLink href="#">Home</BreadcrumbLink>
         </BreadcrumbItem>
-        <BreadcrumbSeparator>
-          <DotIcon />
-        </BreadcrumbSeparator>
+        <BreadcrumbSeparator />
         <BreadcrumbItem>
           <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <button className="flex items-center gap-1">
-                Components
-                <ChevronDownIcon className="size-3.5" />
-              </button>
+            <DropdownMenuTrigger className="flex items-center gap-1">
+              Components
+              <ChevronDownIcon className="size-3.5" />
             </DropdownMenuTrigger>
             <DropdownMenuContent align="start">
               <DropdownMenuGroup>
@@ -145,13 +141,19 @@ export const WithDropdown = meta.story({
             </DropdownMenuContent>
           </DropdownMenu>
         </BreadcrumbItem>
-        <BreadcrumbSeparator>
-          <DotIcon />
-        </BreadcrumbSeparator>
+        <BreadcrumbSeparator />
         <BreadcrumbItem>
           <BreadcrumbPage>Breadcrumb</BreadcrumbPage>
         </BreadcrumbItem>
       </BreadcrumbList>
     </Breadcrumb>
   ),
+});
+
+WithDropdown.test("opens the sibling-route menu from a breadcrumb item", async ({ canvas, userEvent }) => {
+  await userEvent.click(canvas.getByRole("button", { name: /Components/ }));
+
+  // DropdownMenuContent is portalled — query the document, not the canvas.
+  await expect(await screen.findByText("Documentation")).toBeInTheDocument();
+  await expect(screen.getByText("Themes")).toBeInTheDocument();
 });

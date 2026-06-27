@@ -23,29 +23,23 @@ import {
 
 import preview from "../.storybook/preview";
 
+/**
+ * ContextMenu — a COMPOSITE overlay summoned by right-clicking a target region; the root
+ * (`ContextMenu`) is a Radix provider whose only authorable prop here is `modal`. Content is
+ * driven by `{...args}` through a small stateful demo wrapper (the checkbox item is controlled).
+ * All content is authored for Storybook, NOT synced with the apps/web registry.
+ */
 const meta = preview.meta({
   args: { modal: true },
   argTypes: {
+    dir: { table: { disable: true } },
+    modal: { control: "boolean" },
     onOpenChange: { table: { disable: true } },
+    open: { table: { disable: true } },
   },
   component: ContextMenu,
-  subcomponents: {
-    ContextMenuTrigger,
-    ContextMenuContent,
-    ContextMenuLabel,
-    ContextMenuGroup,
-    ContextMenuItem,
-    ContextMenuCheckboxItem,
-    ContextMenuRadioGroup,
-    ContextMenuRadioItem,
-    ContextMenuSub,
-    ContextMenuSubTrigger,
-    ContextMenuSubContent,
-    ContextMenuSeparator,
-    ContextMenuShortcut,
-    ContextMenuArrow,
-  },
   parameters: {
+    controls: { include: ["modal"] },
     docs: {
       description: {
         component: [
@@ -57,10 +51,26 @@ const meta = preview.meta({
       },
     },
   },
+  subcomponents: {
+    ContextMenuArrow,
+    ContextMenuCheckboxItem,
+    ContextMenuContent,
+    ContextMenuGroup,
+    ContextMenuItem,
+    ContextMenuLabel,
+    ContextMenuRadioGroup,
+    ContextMenuRadioItem,
+    ContextMenuSeparator,
+    ContextMenuShortcut,
+    ContextMenuSub,
+    ContextMenuSubContent,
+    ContextMenuSubTrigger,
+    ContextMenuTrigger,
+  },
   title: "Overlay/ContextMenu",
 });
 
-function ContextMenuDemo(props: ComponentProps<typeof ContextMenu>) {
+function ContextMenuDemo(props: ComponentProps<typeof ContextMenu>): React.JSX.Element {
   const [favorite, setFavorite] = useState(true);
 
   return (
@@ -126,29 +136,24 @@ export const Default = meta.story({
   render: (args) => <ContextMenuDemo {...args} />,
 });
 
-export const Basic = meta.story({
-  render: () => (
-    <ContextMenu>
-      <ContextMenuTrigger className="flex h-32 w-64 items-center justify-center rounded-md border border-dashed text-sm text-muted-foreground select-none">
-        Right click here
-      </ContextMenuTrigger>
-      <ContextMenuContent className="w-44">
-        <ContextMenuLabel>Actions</ContextMenuLabel>
-        <ContextMenuSeparator />
-        <ContextMenuItem>Back</ContextMenuItem>
-        <ContextMenuItem>Forward</ContextMenuItem>
-        <ContextMenuItem>Reload</ContextMenuItem>
-      </ContextMenuContent>
-    </ContextMenu>
-  ),
+/** Non-modal: surrounding page stays interactive while the menu is open. Reuses the base render. */
+export const NonModal = meta.story({
+  args: { modal: false },
+  render: Default.input.render,
 });
 
 export const OpensOnRightClick = meta.story({
   render: Default.input.render,
 });
 
-/** Interaction test (CSF Next `.test()`) — runs in a real browser via `test:stories`. */
-OpensOnRightClick.test("opens on right click", async ({ canvas }) => {
+/**
+ * Interaction test (CSF Next `.test()`) — runs in a real browser via `test:stories`.
+ * Asserts the open contract: the menu is closed until a `contextmenu` event fires on the trigger,
+ * then the portalled items appear.
+ */
+OpensOnRightClick.test("opens portalled items on right click", async ({ canvas }) => {
+  await expect(screen.queryByText(/rename/i)).not.toBeInTheDocument();
+
   const trigger = canvas.getByText(/right-click to edit/i);
 
   await fireEvent.contextMenu(trigger);
