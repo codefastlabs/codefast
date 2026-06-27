@@ -19,6 +19,7 @@ const meta = preview.meta({
   args: { defaultValue: [50], disabled: false, max: 100, min: 0, orientation: "horizontal", step: 1 },
   argTypes: {
     asChild: { table: { disable: true } },
+    defaultValue: { control: "object" },
     disabled: { control: "boolean" },
     max: { control: "number" },
     min: { control: "number" },

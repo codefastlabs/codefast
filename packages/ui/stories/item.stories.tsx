@@ -140,10 +140,8 @@ export const Group = meta.story({
   ),
 });
 
-const onReview = fn();
-
 export const ActionFires = meta.story({
-  args: { variant: "outline" },
+  args: { onClick: fn(), variant: "outline" },
   render: (args) => (
     <Item {...args} className="w-full max-w-md">
       <ItemMedia variant="icon">
@@ -154,7 +152,7 @@ export const ActionFires = meta.story({
         <ItemDescription>New login detected from unknown device.</ItemDescription>
       </ItemContent>
       <ItemActions>
-        <Button onClick={onReview} size="sm" variant="outline">
+        <Button size="sm" variant="outline">
           Review
         </Button>
       </ItemActions>
@@ -162,9 +160,10 @@ export const ActionFires = meta.story({
   ),
 });
 
-ActionFires.test("invokes the trailing action when clicked", async ({ canvas, userEvent }) => {
-  onReview.mockClear();
+// The trailing action's click bubbles to the row, so the spy on the Item root's
+// onClick proves the action is wired through — driven entirely by args.
+ActionFires.test("invokes the row handler when the action is clicked", async ({ args, canvas, userEvent }) => {
   await userEvent.click(canvas.getByRole("button", { name: "Review" }));
 
-  await expect(onReview).toHaveBeenCalledTimes(1);
+  await expect(args.onClick).toHaveBeenCalledTimes(1);
 });

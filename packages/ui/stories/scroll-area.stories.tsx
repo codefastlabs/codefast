@@ -44,20 +44,7 @@ const RELEASES = [
   { version: "v2.1.0", date: "Apr 21", notes: "Reworked Sidebar with collapsible groups." },
 ];
 
-const WORKS = [
-  {
-    artist: "Ornella Binni",
-    art: "https://images.unsplash.com/photo-1465869185982-5a1a7522cbcb?auto=format&fit=crop&w=300&q=80",
-  },
-  {
-    artist: "Tom Byrom",
-    art: "https://images.unsplash.com/photo-1548516173-3cabfa4607e9?auto=format&fit=crop&w=300&q=80",
-  },
-  {
-    artist: "Vladimir Malyavko",
-    art: "https://images.unsplash.com/photo-1494337480532-3725c85fd2ab?auto=format&fit=crop&w=300&q=80",
-  },
-];
+const WORKS = ["Ornella Binni", "Tom Byrom", "Vladimir Malyavko"];
 
 export const Default = meta.story({
   render: (args) => (
@@ -94,19 +81,16 @@ export const Horizontal = meta.story({
   render: (args) => (
     <ScrollArea {...args} className="w-96 rounded-md border border-border whitespace-nowrap">
       <div className="flex w-max space-x-4 p-4">
-        {WORKS.map((artwork) => (
-          <figure key={artwork.artist} className="shrink-0">
-            <div className="overflow-hidden rounded-md">
-              <img
-                src={artwork.art}
-                alt={artwork.artist}
-                className="aspect-[3/4] h-fit w-fit object-cover"
-                width={300}
-                height={400}
-              />
+        {WORKS.map((artist) => (
+          <figure key={artist} className="shrink-0">
+            <div className="flex h-48 w-36 items-center justify-center rounded-md bg-[linear-gradient(135deg,var(--muted),var(--accent))] text-2xl font-semibold text-muted-foreground">
+              {artist
+                .split(" ")
+                .map((part) => part[0])
+                .join("")}
             </div>
             <figcaption className="pt-2 text-xs text-muted-foreground">
-              Photo by <span className="font-semibold text-foreground">{artwork.artist}</span>
+              Photo by <span className="font-semibold text-foreground">{artist}</span>
             </figcaption>
           </figure>
         ))}

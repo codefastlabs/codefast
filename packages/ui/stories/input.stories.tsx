@@ -16,6 +16,7 @@ const meta = preview.meta({
   argTypes: {
     "aria-invalid": { control: "boolean" },
     disabled: { control: "boolean" },
+    onChange: { table: { disable: true } },
     placeholder: { control: "text" },
     type: {
       control: "select",
