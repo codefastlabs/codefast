@@ -49,14 +49,5 @@ export default defineConfig(({ command }) => {
       viteReact(),
       babel({ presets: [reactCompilerPreset()] }),
     ],
-    build: {
-      rolldownOptions: {
-        output: {
-          codeSplitting: {
-            groups: [{ name: "recharts", test: /[/\\]recharts[/\\]/ }],
-          },
-        },
-      },
-    },
   };
 });
