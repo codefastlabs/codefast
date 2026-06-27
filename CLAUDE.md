@@ -1,63 +1,82 @@
-# Codefast Monorepo
+# CLAUDE.md
 
-Đây là monorepo dùng **pnpm workspaces** + **Turborepo**. Package manager: `pnpm`. Node ≥ 24.
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## Code Quality — BẮT BUỘC
+## Overview
 
-**Sau khi viết hoặc sửa bất kỳ file nào**, Claude phải tự chạy kiểm tra chất lượng **ở mức repo** theo bảng dưới. Không bao giờ kết thúc task mà bỏ qua bước này.
+CodeFast is a **pnpm workspaces + Turborepo** monorepo (Node ≥ 24, pnpm 11.8.0) publishing the `@codefast/*` packages. The flagship is `@codefast/ui`, a Radix-based, Tailwind CSS 4 component library. `apps/web` is a TanStack Start showcase site that consumes the packages.
 
-### Quy trình chuẩn
+## Toolchain (non-standard — read before assuming)
 
-> Hook PostToolUse trong `.claude/settings.json` đã **tự động chạy oxfmt + oxlint trên từng file** ngay sau khi Claude ghi/sửa qua tool Write/Edit. Không cần chạy lại format/lint thủ công cho từng file đó.
->
-> **Ngoại lệ**: file được tạo/sửa qua **Bash** (codegen, script, `codefast arrange`, …) không đi qua hook — sau các thao tác đó phải chạy `pnpm run format` (và `pnpm run lint:fix` nếu là file TS/JS).
+- **Lint/format is Oxc, not ESLint/Prettier.** `oxlint` (with type-aware rules via `oxlint-tsgolint`) and `oxfmt`. `oxlint` runs with `--deny-warnings`.
+- **Type checking uses `tsgo --noEmit`** (TypeScript Native / `@typescript/native-preview`), not `tsc`.
+- **Bundling is `tsdown`** (Rolldown-based), configured per package via `tsdown.config.ts`.
+- **`exactOptionalPropertyTypes` is enabled** — an optional prop that may receive an explicit value must be typed `?: T | undefined`.
 
-1. **Type check** (không auto-fix, đọc output và sửa tay):
+## Commands
 
-   ```bash
-   pnpm run check-types
-   ```
-
-2. Khi refactor lớn hoặc nghi ngờ trạng thái toàn repo:
-   ```bash
-   pnpm run check:fix   # lint:fix + format toàn repo
-   pnpm run check       # lint + format:check + check-types (không fix)
-   ```
-
-### Khi nào chạy gì
-
-| Tình huống                  | Lệnh                                         |
-| --------------------------- | -------------------------------------------- |
-| Sửa 1–2 file nhỏ            | `pnpm run check-types`                       |
-| Sửa logic lớn / refactor    | `pnpm run check:fix && pnpm run check-types` |
-| Trước khi kết thúc mọi task | `pnpm run check`                             |
-| Có lỗi build                | `pnpm run build:packages`                    |
-
-### Quy tắc bổ sung
-
-- **Import**: Tách `import type` riêng — không merge vào value imports.
-- **Tests**: Nếu sửa file có test đi kèm, chạy `pnpm run test:unit`.
-- **Nếu `check-types` có lỗi**: Đọc output, sửa code, chạy lại — không bỏ qua.
-- **KHÔNG tạo biến chỉ để chứa class Tailwind** (vd `const FOO = "flex gap-3 …"`) — đó là antipattern: mất IntelliSense/auto-sort, khó đọc inline. Viết class thẳng trong `className`. Khi cùng một bộ class lặp lại ở nhiều nơi → **tách thành component dùng lại** (đúng khuyến cáo Tailwind), KHÔNG gom vào biến string và cũng KHÔNG copy lặp. Hiệu ứng cần CSS (gradient/background-size/mask…) viết bằng Tailwind arbitrary values (`bg-[radial-gradient(…)]`, `bg-size-[16px_16px]`) thay vì object `style`. Class động/có điều kiện dùng `cn()` tại chỗ.
-- **Mỗi component một file** (trong `apps/web/src/components/**`): khi cần tách component (gồm cả sub-component/helper dùng lại), tạo **file mới** ở thư mục hợp lý (`detail/`, `shared/`, `layout/`, `showcase/`…) với tên kebab-case, rồi `export` và import vào — KHÔNG khai báo nhiều component trong cùng một file. Ngoại lệ chấp nhận đồng cư: bộ icon gom 1 file, và file `*.example.tsx` / `demo.tsx` trong `registry/` (sub-component chỉ phục vụ demo đó). Một file = một khái niệm: types/context/hook/UI tách đúng nhà, không gom theo tên component.
-- **Props không inline**: KHÔNG annotate props bằng object literal tại tham số (`function X({ a }: { a: string })`). Khai báo `interface XxxProps extends ComponentProps<"element">` riêng (theo host element component render), rồi spread `{...props}` xuống element đó để forward native attributes; class gộp qua `cn(base, className)`. **`{...props}` đặt CUỐI danh sách attr** (sau các attr tường minh, theo convention shadcn) — attr nào set cứng & không cho override thì `Omit` khỏi type (vd wrapper hardcode `id`/`title` → `extends Omit<ComponentProps<"section">, "children" | "id" | "title">`) để spread cuối vẫn an toàn. Ngoại lệ: handler/attr quyết định hành vi cốt lõi mà component phải sở hữu (vd `onClick` copy của `CopyButton`) đặt **sau** `{...props}` để caller không ghi đè được — kèm comment giải thích. Lưu ý `exactOptionalPropertyTypes` đang bật → prop optional nhận giá trị truyền tường minh phải khai `?: T | undefined`. Khi component **forward tới một component khác** (không phải host element DOM) thì extend `ComponentProps<typeof ThatComponent>` (theo đúng contract component đó), `Omit` các prop **required** mà wrapper tự cung cấp — vd `*-section` render `<DocSection>` (vốn required `id`/`title`/`children`) → `extends Omit<ComponentProps<typeof DocSection>, "id" | "title" | "children">`. (Lưu ý 2 việc độc lập: **vị trí `{...props}`** quyết định runtime override; **`Omit`** quyết định type contract — đổi vị trí spread KHÔNG thay được việc phải Omit prop required, nếu không caller bị buộc truyền chúng. Prop optional wrapper set sẵn (vd `description`) có thể không Omit nếu muốn caller override được.) Ngoại lệ: component không có prop tùy biến → dùng thẳng `ComponentProps<"element">` (đừng tạo interface extend rỗng); component render Context.Provider → `extends Omit<ComponentProps<typeof X.Provider>, "value">`; component rẽ nhánh nhiều element (vd `<a>`/`<p>`) → named interface không extend DOM.
-
-## Scripts thường dùng
+Build packages before running apps, type-checking, or type-aware lint — `@codefast/ui` consumes other packages' built `dist/` and Oxlint's type-aware rules need them.
 
 ```bash
-pnpm run dev          # Chạy dev server (tất cả apps)
-pnpm run build        # Build toàn bộ
-pnpm run build:packages  # Build chỉ packages (thường cần sau khi sửa packages/)
-pnpm run test         # Chạy toàn bộ tests
-pnpm run test:unit    # Chỉ unit tests
-pnpm run verify       # Tổng hợp: build packages + lint:fix + format + check-types + test:coverage
-pnpm run clean        # Xóa build cache
+pnpm build:packages   # build only packages/* (run after editing any package src)
+pnpm dev              # build packages, then start all apps + packages in watch mode
+pnpm check-types      # tsgo type check across the repo (no auto-fix — fix by hand)
+pnpm check            # lint + format:check + check-types (static gate, no fixes)
+pnpm check:fix        # lint --fix + format write
+pnpm verify           # full gate: build:packages + lint:fix + format + check-types + test:coverage
 ```
 
-## Cấu trúc
+After editing files via **Bash** (codegen, scripts, the `codefast` CLI), run `pnpm format` and `pnpm lint:fix` manually — there is no PostToolUse formatting hook in this repo.
 
+### Tests
+
+Run a single package's tests with `--filter`, scoped by category:
+
+```bash
+pnpm --filter @codefast/ui test:unit          # one package, one category
+pnpm --filter @codefast/ui test:watch         # interactive watch
+pnpm test:unit                                # all packages, unit only (Turbo)
 ```
-apps/        # Applications (web, ...)
-packages/    # Shared packages (@codefast/*)
-benchmarks/  # Performance benchmarks
-```
+
+A single test file / name (within a package): `pnpm --filter @codefast/ui exec vitest run tests/unit/path/to.test.ts -t "name"`.
+
+## Test taxonomy (enforced — see TESTING.md)
+
+Every test file lives under exactly one category directory; otherwise Vitest will not discover it. There is no implicit bucket.
+
+- `tests/unit/**` — isolated, mocks allowed (most tests)
+- `tests/integration/**` — multiple modules in-process, in-memory/temp I/O only
+- `tests/e2e/**` — subprocesses, built CLI binary, real network
+- `tests/types/**` — static `expectTypeOf` tests
+
+Rules: **no tests under `src/**`**; no test files directly under `tests/`(must be in a category subdir); mirror the`src/` path inside the category (`src/utils/dom.ts`→`tests/unit/utils/dom.test.ts`). Helpers/fixtures go under `tests/<category>/support/**`or`.../fixtures/**`and must not match`_.test._`.
+
+## Imports & aliases
+
+- Internal imports use **Node subpath imports** declared in each package's `package.json#imports` — e.g. `#/components/button` for src, `#/tests/...` for test helpers. Do **not** add `compilerOptions.paths` for internal aliases (reserve TS path mapping for external-compat needs only).
+- Keep `import type` separate — never merge type imports into value imports.
+
+## Packages
+
+| Path                         | Role                                                                                                  |
+| ---------------------------- | ----------------------------------------------------------------------------------------------------- |
+| `packages/ui`                | `@codefast/ui` — Radix + Tailwind component library; per-component subpath exports (`./button`, etc.) |
+| `packages/tailwind-variants` | Type-safe variant styling API (faster `tailwind-variants` replacement); used by `ui`                  |
+| `packages/theme`             | Theme management using React 19 features (optimistic updates, cross-tab sync)                         |
+| `packages/di`                | Lightweight dependency-injection primitives                                                           |
+| `packages/cli`               | `codefast` CLI — subcommands `arrange`, `mirror`, `tag` (run via `pnpm run codefast <cmd>`)           |
+| `packages/typescript-config` | Shared tsconfig presets                                                                               |
+| `packages/benchmark-*`       | Performance benchmark harness/viewer (`pnpm bench`)                                                   |
+| `apps/web`                   | TanStack Start showcase; component registry + showcase routes                                         |
+
+## UI/component conventions (apps/web and packages/ui)
+
+These are project rules the linters do not fully enforce:
+
+- **No Tailwind-classes-in-a-variable** (`const FOO = "flex gap-3"`) — it loses IntelliSense/auto-sort. Write classes inline in `className`. When a class set repeats, extract a **reusable component**, not a string constant. Conditional classes use `cn()` inline. CSS effects (gradient/mask/background-size) use Tailwind arbitrary values (`bg-[radial-gradient(...)]`), not `style` objects.
+- **One component per file** under `apps/web/src/components/**`. Extract sub-components/helpers into their own kebab-case file and import. Accepted co-location exceptions: icon sets, and `*.example.tsx` / `demo.tsx` under `registry/`.
+- **No inline prop types.** Declare `interface XxxProps extends ComponentProps<"element">` (matching the host element rendered), spread `{...props}` **last** on that element, and merge classes via `cn(base, className)`. `Omit` any attr the wrapper hard-sets. When forwarding to another component (not a DOM element), extend `ComponentProps<typeof ThatComponent>` and `Omit` the required props the wrapper supplies. Exception: a handler the component must own (e.g. a `CopyButton`'s `onClick`) goes _after_ `{...props}` with a comment.
+
+## Releases
+
+Versioning is via **Changesets**. The repo is currently in **canary pre-release mode** (`.changeset/pre.json`, `mode: "pre"`). Use the `release` skill for the full publish workflow; `release:canary:exit` leaves pre mode. Commits follow **Conventional Commits** (enforced by commitlint).
