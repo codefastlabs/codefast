@@ -1,5 +1,5 @@
-import { TriangleAlertIcon, Trash2Icon } from "lucide-react";
-import { expect, screen } from "storybook/test";
+import { TriangleAlertIcon } from "lucide-react";
+import { expect, screen, waitFor } from "storybook/test";
 
 import {
   AlertDialog,
@@ -18,25 +18,22 @@ import { Button } from "#/components/button";
 
 import preview from "../.storybook/preview";
 
+/**
+ * AlertDialog — a COMPOSITE modal that interrupts the user with a deliberate
+ * confirmation. The root (`AlertDialog`) is a context provider with no DOM of
+ * its own; its only root-level controls are the `open`/`defaultOpen` state, so
+ * the interesting variants (e.g. `size`) live on the `AlertDialogContent`
+ * subcomponent. Content here is authored against the component's own public
+ * API for Storybook — NOT synced with the apps/web registry.
+ */
 const meta = preview.meta({
   args: { defaultOpen: false },
   argTypes: {
+    defaultOpen: { control: "boolean" },
     onOpenChange: { table: { disable: true } },
     open: { table: { disable: true } },
   },
   component: AlertDialog,
-  subcomponents: {
-    AlertDialogTrigger,
-    AlertDialogContent,
-    AlertDialogHeader,
-    AlertDialogMedia,
-    AlertDialogTitle,
-    AlertDialogDescription,
-    AlertDialogBody,
-    AlertDialogFooter,
-    AlertDialogCancel,
-    AlertDialogAction,
-  },
   parameters: {
     docs: {
       description: {
@@ -44,10 +41,22 @@ const meta = preview.meta({
           "A modal that interrupts the user with an important confirmation and expects a deliberate response.",
           "",
           "**Anatomy:** `AlertDialog > AlertDialogTrigger + AlertDialogContent > (AlertDialogHeader (AlertDialogMedia · AlertDialogTitle · AlertDialogDescription) + AlertDialogFooter (AlertDialogCancel · AlertDialogAction))`.",
-          "Unlike `Dialog`, it traps focus and is only dismissed via `AlertDialogCancel`/`AlertDialogAction` — there is no outside-click close.",
+          'Unlike `Dialog`, it traps focus and is only dismissed via `AlertDialogCancel`/`AlertDialogAction` — there is no outside-click close. `AlertDialogContent` accepts `size="default" | "sm"`.',
         ].join("\n"),
       },
     },
+  },
+  subcomponents: {
+    AlertDialogAction,
+    AlertDialogBody,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogMedia,
+    AlertDialogTitle,
+    AlertDialogTrigger,
   },
   title: "Overlay/AlertDialog",
 });
@@ -56,7 +65,7 @@ export const Default = meta.story({
   render: (args) => (
     <AlertDialog {...args}>
       <AlertDialogTrigger asChild>
-        <Button variant="destructive" size="sm">
+        <Button size="sm" variant="destructive">
           Delete account
         </Button>
       </AlertDialogTrigger>
@@ -79,41 +88,28 @@ export const Default = meta.story({
   ),
 });
 
-export const Destructive = meta.story({
-  render: () => (
-    <AlertDialog>
-      <AlertDialogTrigger asChild>
-        <Button variant="destructive">Delete Chat</Button>
-      </AlertDialogTrigger>
-      <AlertDialogContent size="sm">
-        <AlertDialogHeader>
-          <AlertDialogMedia className="bg-destructive/10 text-destructive dark:bg-destructive/20 dark:text-destructive">
-            <Trash2Icon />
-          </AlertDialogMedia>
-          <AlertDialogTitle>Delete chat?</AlertDialogTitle>
-          <AlertDialogDescription>
-            This will permanently delete this chat conversation. View <a href="/">Settings</a> delete any memories saved
-            during this chat.
-          </AlertDialogDescription>
-        </AlertDialogHeader>
-        <AlertDialogFooter>
-          <AlertDialogCancel variant="outline">Cancel</AlertDialogCancel>
-          <AlertDialogAction variant="destructive">Delete</AlertDialogAction>
-        </AlertDialogFooter>
-      </AlertDialogContent>
-    </AlertDialog>
-  ),
+/** Same composition, opened by default to inspect the layout without interacting. */
+export const Open = meta.story({
+  args: { defaultOpen: true },
+  render: Default.input.render,
 });
 
 export const OpensOnClick = meta.story({
   render: Default.input.render,
 });
 
-/** Interaction test (CSF Next `.test()`) — runs in a real browser via `test:stories`. */
-OpensOnClick.test("opens on click", async ({ canvas, userEvent }) => {
-  const trigger = canvas.getByRole("button", { name: /delete account/i });
+/**
+ * Interaction test (CSF Next `.test()`) — runs in a real browser via `test:stories`.
+ * Asserts the open/close contract, not mere presence: the portalled content
+ * appears on trigger click and is removed after pressing Cancel.
+ */
+OpensOnClick.test("opens on trigger and closes on cancel", async ({ canvas, userEvent }) => {
+  await userEvent.click(canvas.getByRole("button", { name: /delete account/i }));
 
-  await userEvent.click(trigger);
+  await expect(await screen.findByRole("alertdialog")).toBeInTheDocument();
   await expect(await screen.findByText(/are you absolutely sure/i)).toBeInTheDocument();
-  await expect(await screen.findByText(/this action cannot be undone/i)).toBeInTheDocument();
+
+  await userEvent.click(await screen.findByRole("button", { name: /cancel/i }));
+
+  await waitFor(() => expect(screen.queryByRole("alertdialog")).not.toBeInTheDocument());
 });

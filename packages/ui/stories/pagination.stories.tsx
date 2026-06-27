@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { expect } from "storybook/test";
 
-import { Field, FieldLabel } from "#/components/field";
 import {
   Pagination,
   PaginationContent,
@@ -11,20 +10,20 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "#/components/pagination";
-import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "#/components/select";
 
 import preview from "../.storybook/preview";
 
+/**
+ * Pagination — a layout-only COMPOSITE. The root `<nav>` (`Pagination`) only forwards
+ * native attributes, so it has NO Controls of its own; the interesting prop lives on the
+ * subcomponent `PaginationLink` (`isActive`). Content is authored for Storybook and is NOT
+ * synced with the apps/web registry.
+ *
+ * **Anatomy:** `Pagination > PaginationContent > PaginationItem > (PaginationLink | PaginationPrevious | PaginationNext | PaginationEllipsis)`.
+ * Mark the current page with `isActive` on its `PaginationLink`.
+ */
 const meta = preview.meta({
   component: Pagination,
-  subcomponents: {
-    PaginationContent,
-    PaginationItem,
-    PaginationLink,
-    PaginationPrevious,
-    PaginationNext,
-    PaginationEllipsis,
-  },
   parameters: {
     docs: {
       description: {
@@ -36,6 +35,14 @@ const meta = preview.meta({
         ].join("\n"),
       },
     },
+  },
+  subcomponents: {
+    PaginationContent,
+    PaginationEllipsis,
+    PaginationItem,
+    PaginationLink,
+    PaginationNext,
+    PaginationPrevious,
   },
   title: "Navigation/Pagination",
 });
@@ -69,68 +76,25 @@ export const Default = meta.story({
   ),
 });
 
-export const Simple = meta.story({
+/** A compact prev/next-only composition for tight toolbars — a genuinely different layout. */
+export const PreviousNextOnly = meta.story({
   render: () => (
-    <Pagination>
+    <Pagination className="mx-0 w-auto">
       <PaginationContent>
         <PaginationItem>
-          <PaginationLink href="#">1</PaginationLink>
+          <PaginationPrevious href="#" />
         </PaginationItem>
         <PaginationItem>
-          <PaginationLink href="#" isActive>
-            2
-          </PaginationLink>
-        </PaginationItem>
-        <PaginationItem>
-          <PaginationLink href="#">3</PaginationLink>
-        </PaginationItem>
-        <PaginationItem>
-          <PaginationLink href="#">4</PaginationLink>
-        </PaginationItem>
-        <PaginationItem>
-          <PaginationLink href="#">5</PaginationLink>
+          <PaginationNext href="#" />
         </PaginationItem>
       </PaginationContent>
     </Pagination>
   ),
 });
 
-export const IconsOnly = meta.story({
-  render: () => (
-    <div className="flex items-center justify-between gap-4">
-      <Field orientation="horizontal" className="w-fit">
-        <FieldLabel htmlFor="select-rows-per-page">Rows per page</FieldLabel>
-        <Select defaultValue="25">
-          <SelectTrigger className="w-20" id="select-rows-per-page">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent align="start">
-            <SelectGroup>
-              <SelectItem value="10">10</SelectItem>
-              <SelectItem value="25">25</SelectItem>
-              <SelectItem value="50">50</SelectItem>
-              <SelectItem value="100">100</SelectItem>
-            </SelectGroup>
-          </SelectContent>
-        </Select>
-      </Field>
-      <Pagination className="mx-0 w-auto">
-        <PaginationContent>
-          <PaginationItem>
-            <PaginationPrevious href="#" />
-          </PaginationItem>
-          <PaginationItem>
-            <PaginationNext href="#" />
-          </PaginationItem>
-        </PaginationContent>
-      </Pagination>
-    </div>
-  ),
-});
-
 /**
- * Interaction test — runs in a real browser via `vitest run --project=storybook`.
- * Uses local state so clicking a page link actually moves `aria-current="page"`.
+ * Stateful composition: clicking a page link moves `aria-current="page"` via local state.
+ * A genuinely different composition (controlled active page), so it has its own render.
  */
 export const SelectsPageOnClick = meta.story({
   render: function Render() {
@@ -159,8 +123,7 @@ export const SelectsPageOnClick = meta.story({
   },
 });
 
-/** Interaction test (CSF Next `.test()`) — runs in a real browser via `test:stories`. */
-SelectsPageOnClick.test("selects page on click", async ({ canvas, userEvent }) => {
+SelectsPageOnClick.test("moves aria-current to the clicked page", async ({ canvas, userEvent }) => {
   await expect(canvas.getByRole("link", { name: "1" })).toHaveAttribute("aria-current", "page");
 
   await userEvent.click(canvas.getByRole("link", { name: "3" }));

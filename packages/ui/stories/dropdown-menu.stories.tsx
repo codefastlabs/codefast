@@ -22,30 +22,25 @@ import {
 
 import preview from "../.storybook/preview";
 
+/**
+ * DropdownMenu — a COMPOSITE overlay. The root (`DropdownMenu`) is a Radix Root that owns the
+ * open-state contract (`defaultOpen`, `modal`, `dir`) and drives the portalled `DropdownMenuContent`.
+ * Controls bind to the root; child parts only render inside it, so they are documented via
+ * `subcomponents`. All content here is authored against the component's own public API for
+ * Storybook — it is NOT synced with or copied from the apps/web registry.
+ */
 const meta = preview.meta({
-  args: { defaultOpen: false, modal: true },
+  args: { defaultOpen: false, dir: "ltr", modal: true },
   argTypes: {
+    defaultOpen: { control: "boolean" },
+    dir: { control: "radio", options: ["ltr", "rtl"] },
+    modal: { control: "boolean" },
     onOpenChange: { table: { disable: true } },
     open: { table: { disable: true } },
   },
   component: DropdownMenu,
-  subcomponents: {
-    DropdownMenuTrigger,
-    DropdownMenuContent,
-    DropdownMenuLabel,
-    DropdownMenuGroup,
-    DropdownMenuItem,
-    DropdownMenuCheckboxItem,
-    DropdownMenuRadioGroup,
-    DropdownMenuRadioItem,
-    DropdownMenuSub,
-    DropdownMenuSubTrigger,
-    DropdownMenuSubContent,
-    DropdownMenuSeparator,
-    DropdownMenuShortcut,
-    DropdownMenuArrow,
-  },
   parameters: {
+    controls: { include: ["defaultOpen", "modal", "dir"] },
     docs: {
       description: {
         component: [
@@ -56,6 +51,22 @@ const meta = preview.meta({
         ].join("\n"),
       },
     },
+  },
+  subcomponents: {
+    DropdownMenuArrow,
+    DropdownMenuCheckboxItem,
+    DropdownMenuContent,
+    DropdownMenuGroup,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuRadioGroup,
+    DropdownMenuRadioItem,
+    DropdownMenuSeparator,
+    DropdownMenuShortcut,
+    DropdownMenuSub,
+    DropdownMenuSubContent,
+    DropdownMenuSubTrigger,
+    DropdownMenuTrigger,
   },
   title: "Overlay/DropdownMenu",
 });
@@ -77,7 +88,7 @@ export const Default = meta.story({
         </DropdownMenuItem>
         <DropdownMenuItem>Billing</DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem className="text-destructive">
+        <DropdownMenuItem variant="destructive">
           Log out<DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
         </DropdownMenuItem>
       </DropdownMenuContent>
@@ -85,15 +96,28 @@ export const Default = meta.story({
   ),
 });
 
+/**
+ * Opens with the menu already expanded — same composition as `Default`, differs only by `args`,
+ * so it reuses `Default.input.render`.
+ */
+export const Open = meta.story({
+  args: { defaultOpen: true },
+  render: Default.input.render,
+});
+
+/**
+ * A genuinely different composition: stateful checkbox items. Keeps its own render but still
+ * forwards `args` to the root so the open/modal/dir controls stay live.
+ */
 export const Checkboxes = meta.story({
-  render: () => {
-    function CheckboxesExample() {
+  render: (args) => {
+    function CheckboxesExample(): React.JSX.Element {
       const [showStatusBar, setShowStatusBar] = useState(true);
       const [showActivityBar, setShowActivityBar] = useState(false);
       const [showPanel, setShowPanel] = useState(false);
 
       return (
-        <DropdownMenu>
+        <DropdownMenu {...args}>
           <DropdownMenuTrigger asChild>
             <Button variant="outline">Open</Button>
           </DropdownMenuTrigger>
@@ -103,7 +127,7 @@ export const Checkboxes = meta.story({
               <DropdownMenuCheckboxItem checked={showStatusBar} onCheckedChange={setShowStatusBar}>
                 Status Bar
               </DropdownMenuCheckboxItem>
-              <DropdownMenuCheckboxItem checked={showActivityBar} onCheckedChange={setShowActivityBar} disabled>
+              <DropdownMenuCheckboxItem checked={showActivityBar} disabled onCheckedChange={setShowActivityBar}>
                 Activity Bar
               </DropdownMenuCheckboxItem>
               <DropdownMenuCheckboxItem checked={showPanel} onCheckedChange={setShowPanel}>
@@ -119,13 +143,16 @@ export const Checkboxes = meta.story({
   },
 });
 
+/**
+ * A genuinely different composition: a single-select radio group. Own render, args forwarded.
+ */
 export const RadioGroup = meta.story({
-  render: () => {
-    function RadioGroupExample() {
+  render: (args) => {
+    function RadioGroupExample(): React.JSX.Element {
       const [position, setPosition] = useState("bottom");
 
       return (
-        <DropdownMenu>
+        <DropdownMenu {...args}>
           <DropdownMenuTrigger asChild>
             <Button variant="outline">Open</Button>
           </DropdownMenuTrigger>
@@ -151,12 +178,18 @@ export const OpensOnClick = meta.story({
   render: Default.input.render,
 });
 
-/** Interaction test (CSF Next `.test()`) — runs in a real browser via `test:stories`. */
-OpensOnClick.test("opens on click", async ({ canvas, userEvent }) => {
+/**
+ * Interaction test (CSF Next `.test()`) — runs in a real browser via `test:stories`. Asserts the
+ * open-state contract: the trigger reports collapsed, then expanded, and portalled items appear.
+ */
+OpensOnClick.test("expands the menu and reveals items on click", async ({ canvas, userEvent }) => {
   const trigger = canvas.getByRole("button", { name: /open menu/i });
+
+  await expect(trigger).toHaveAttribute("aria-expanded", "false");
 
   await userEvent.click(trigger);
 
+  await expect(trigger).toHaveAttribute("aria-expanded", "true");
   await expect(await screen.findByText(/my account/i)).toBeInTheDocument();
   await expect(await screen.findByText(/billing/i)).toBeInTheDocument();
 });

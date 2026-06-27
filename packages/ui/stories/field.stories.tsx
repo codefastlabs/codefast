@@ -1,3 +1,5 @@
+import { expect } from "storybook/test";
+
 import {
   Field,
   FieldContent,
@@ -16,21 +18,25 @@ import { Switch } from "#/components/switch";
 
 import preview from "../.storybook/preview";
 
+/**
+ * Field — a styling-only LAYOUT COMPOSITE. The root `Field` is a `<div>` whose
+ * only meaningful prop is the `orientation` variant; everything else is forwarded
+ * native div attributes. Each piece (`FieldLabel`, `FieldContent`, `FieldDescription`,
+ * `FieldError`, `FieldSet`, `FieldGroup`, …) is presentational. Content here is
+ * authored for Storybook against the component's own public API, NOT synced with
+ * the apps/web registry.
+ */
 const meta = preview.meta({
   args: { orientation: "vertical" },
-  component: Field,
-  subcomponents: {
-    FieldLabel,
-    FieldContent,
-    FieldDescription,
-    FieldError,
-    FieldTitle,
-    FieldGroup,
-    FieldSet,
-    FieldLegend,
-    FieldSeparator,
+  argTypes: {
+    orientation: {
+      control: "radio",
+      options: ["vertical", "horizontal", "responsive"],
+    },
   },
+  component: Field,
   parameters: {
+    controls: { include: ["orientation"] },
     docs: {
       description: {
         component: [
@@ -41,6 +47,17 @@ const meta = preview.meta({
         ].join("\n"),
       },
     },
+  },
+  subcomponents: {
+    FieldContent,
+    FieldDescription,
+    FieldError,
+    FieldGroup,
+    FieldLabel,
+    FieldLegend,
+    FieldSeparator,
+    FieldSet,
+    FieldTitle,
   },
   title: "Form/Field",
 });
@@ -55,6 +72,11 @@ export const Default = meta.story({
       <Switch id="field-product" defaultChecked />
     </Field>
   ),
+});
+
+export const Horizontal = meta.story({
+  args: { orientation: "horizontal" },
+  render: Default.input.render,
 });
 
 export const InputGroup = meta.story({
@@ -73,6 +95,16 @@ export const InputGroup = meta.story({
         </Field>
       </FieldGroup>
     </FieldSet>
+  ),
+});
+
+export const WithError = meta.story({
+  render: () => (
+    <Field className="w-full max-w-xs" data-invalid="true">
+      <FieldLabel htmlFor="email">Email</FieldLabel>
+      <Input aria-invalid id="email" type="email" placeholder="you@example.com" />
+      <FieldError errors={[{ message: "Enter a valid email address." }]} />
+    </Field>
   ),
 });
 
@@ -105,4 +137,11 @@ export const ChoiceCard = meta.story({
       </FieldSet>
     </FieldGroup>
   ),
+});
+
+InputGroup.test("types into the field's labelled control", async ({ canvas, userEvent }) => {
+  const username = canvas.getByLabelText("Username");
+
+  await userEvent.type(username, "leo");
+  await expect(username).toHaveValue("leo");
 });

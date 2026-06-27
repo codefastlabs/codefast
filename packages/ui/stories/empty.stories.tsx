@@ -1,4 +1,5 @@
-import { CloudIcon, InboxIcon } from "lucide-react";
+import { InboxIcon } from "lucide-react";
+import { expect } from "storybook/test";
 
 import { Avatar, AvatarFallback, AvatarImage } from "#/components/avatar";
 import { Button } from "#/components/button";
@@ -7,12 +8,23 @@ import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTi
 import preview from "../.storybook/preview";
 
 /**
- * Empty is a composition with optional root props. Demoed via `render` while
- * keeping `component` bound to the Root (Pattern C, see Card).
+ * Empty — a layout-only COMPOSITE. The root (`Empty`) is a plain `<div>` with no
+ * enum/boolean/number props of its own, so it has no Controls; the only variant
+ * (`default` · `icon`) lives on the `EmptyMedia` subcomponent and is surfaced as a
+ * flat `mediaVariant` arg here. Content is authored for Storybook, NOT synced with
+ * the apps/web registry.
  */
-const meta = preview.meta({
-  component: Empty,
-  subcomponents: { EmptyHeader, EmptyMedia, EmptyTitle, EmptyDescription, EmptyContent },
+interface EmptyArgs {
+  mediaVariant: "default" | "icon";
+}
+
+const meta = preview.type<{ args: EmptyArgs }>().meta({
+  args: {
+    mediaVariant: "icon",
+  },
+  argTypes: {
+    mediaVariant: { control: "radio", options: ["default", "icon"] },
+  },
   parameters: {
     docs: {
       description: {
@@ -25,15 +37,16 @@ const meta = preview.meta({
       },
     },
   },
+  subcomponents: { Empty, EmptyHeader, EmptyMedia, EmptyTitle, EmptyDescription, EmptyContent },
   title: "Display/Empty",
 });
 
 export const Default = meta.story({
-  render: () => (
+  render: ({ mediaVariant }) => (
     <Empty className="border">
       <EmptyHeader>
-        <EmptyMedia>
-          <InboxIcon className="size-10 text-muted-foreground" />
+        <EmptyMedia variant={mediaVariant}>
+          <InboxIcon className={mediaVariant === "default" ? "size-10 text-muted-foreground" : undefined} />
         </EmptyMedia>
         <EmptyTitle>No messages yet</EmptyTitle>
         <EmptyDescription>When you receive messages, they will appear here.</EmptyDescription>
@@ -45,25 +58,15 @@ export const Default = meta.story({
   ),
 });
 
-export const Outline = meta.story({
-  render: () => (
-    <Empty className="border border-dashed">
-      <EmptyHeader>
-        <EmptyMedia variant="icon">
-          <CloudIcon />
-        </EmptyMedia>
-        <EmptyTitle>Cloud Storage Empty</EmptyTitle>
-        <EmptyDescription>Upload files to your cloud storage to access them anywhere.</EmptyDescription>
-      </EmptyHeader>
-      <EmptyContent>
-        <Button variant="outline" size="sm">
-          Upload Files
-        </Button>
-      </EmptyContent>
-    </Empty>
-  ),
+export const PlainMedia = meta.story({
+  args: { mediaVariant: "default" },
+  render: Default.input.render,
 });
 
+/**
+ * A genuinely different composition: an avatar fills the media slot instead of an
+ * icon, so this story has its own render rather than reusing the base.
+ */
 export const WithAvatar = meta.story({
   render: () => (
     <Empty>
@@ -84,4 +87,21 @@ export const WithAvatar = meta.story({
       </EmptyContent>
     </Empty>
   ),
+});
+
+Default.test("media slot reflects the icon variant contract", async ({ canvas }) => {
+  await expect(canvas.getByText("No messages yet")).toBeInTheDocument();
+  const media = canvas
+    .getByText("No messages yet")
+    .closest("[data-slot='empty-header']")
+    ?.querySelector("[data-slot='empty-icon']");
+  await expect(media).toHaveAttribute("data-variant", "icon");
+});
+
+PlainMedia.test("media slot reflects the default variant contract", async ({ canvas }) => {
+  const media = canvas
+    .getByText("No messages yet")
+    .closest("[data-slot='empty-header']")
+    ?.querySelector("[data-slot='empty-icon']");
+  await expect(media).toHaveAttribute("data-variant", "default");
 });

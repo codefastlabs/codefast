@@ -3,7 +3,6 @@ import {
   CalendarIcon,
   CreditCardIcon,
   FileIcon,
-  SearchIcon,
   SettingsIcon,
   SmileIcon,
   UserIcon,
@@ -25,28 +24,26 @@ import {
 
 import preview from "../.storybook/preview";
 
+/**
+ * Command — a COMPOSITE command palette built on `cmdk`. The `Command` root is a
+ * normal component whose own props (`loop`, `shouldFilter`) drive fuzzy filtering
+ * and keyboard navigation; the palette content is composed from the sub-parts.
+ * Content here is authored for Storybook, NOT synced with the apps/web registry.
+ */
 const meta = preview.meta({
   args: { loop: false, shouldFilter: true },
   argTypes: {
     asChild: { table: { disable: true } },
     defaultValue: { table: { disable: true } },
     filter: { table: { disable: true } },
+    loop: { control: "boolean" },
     onValueChange: { table: { disable: true } },
+    shouldFilter: { control: "boolean" },
     value: { table: { disable: true } },
   },
   component: Command,
-  subcomponents: {
-    CommandDialog,
-    CommandInput,
-    CommandList,
-    CommandEmpty,
-    CommandGroup,
-    CommandItem,
-    CommandSeparator,
-    CommandShortcut,
-    CommandLoading,
-  },
   parameters: {
+    controls: { include: ["loop", "shouldFilter"] },
     docs: {
       description: {
         component: [
@@ -58,6 +55,17 @@ const meta = preview.meta({
       },
     },
   },
+  subcomponents: {
+    CommandDialog,
+    CommandEmpty,
+    CommandGroup,
+    CommandInput,
+    CommandItem,
+    CommandList,
+    CommandLoading,
+    CommandSeparator,
+    CommandShortcut,
+  },
   title: "Overlay/Command",
 });
 
@@ -65,45 +73,6 @@ export const Default = meta.story({
   render: (args) => (
     <Command {...args} className="w-full max-w-xs rounded-xl border shadow-md">
       <CommandInput placeholder="Type a command or search…" />
-      <CommandList>
-        <CommandEmpty>No results found.</CommandEmpty>
-        <CommandGroup heading="Suggestions">
-          <CommandItem>
-            <CalendarIcon />
-            <span>Calendar</span>
-          </CommandItem>
-          <CommandItem>
-            <SearchIcon />
-            <span>Search</span>
-          </CommandItem>
-        </CommandGroup>
-        <CommandSeparator />
-        <CommandGroup heading="Settings">
-          <CommandItem>
-            <UserIcon />
-            <span>Profile</span>
-            <CommandShortcut>⌘P</CommandShortcut>
-          </CommandItem>
-          <CommandItem>
-            <FileIcon />
-            <span>Files</span>
-            <CommandShortcut>⌘F</CommandShortcut>
-          </CommandItem>
-          <CommandItem>
-            <SettingsIcon />
-            <span>Settings</span>
-            <CommandShortcut>⌘S</CommandShortcut>
-          </CommandItem>
-        </CommandGroup>
-      </CommandList>
-    </Command>
-  ),
-});
-
-export const WithGroups = meta.story({
-  render: () => (
-    <Command className="w-full max-w-xs rounded-xl border shadow-md">
-      <CommandInput placeholder="Type a command or search..." />
       <CommandList>
         <CommandEmpty>No results found.</CommandEmpty>
         <CommandGroup heading="Suggestions">
@@ -133,6 +102,11 @@ export const WithGroups = meta.story({
             <CommandShortcut>⌘B</CommandShortcut>
           </CommandItem>
           <CommandItem>
+            <FileIcon />
+            <span>Files</span>
+            <CommandShortcut>⌘F</CommandShortcut>
+          </CommandItem>
+          <CommandItem>
             <SettingsIcon />
             <span>Settings</span>
             <CommandShortcut>⌘S</CommandShortcut>
@@ -143,17 +117,27 @@ export const WithGroups = meta.story({
   ),
 });
 
+/** Disabling `shouldFilter` keeps every item visible regardless of the query. */
+export const Unfiltered = meta.story({
+  args: { shouldFilter: false },
+  render: Default.input.render,
+});
+
 export const FiltersOnType = meta.story({
   render: Default.input.render,
 });
 
 /** Interaction test (CSF Next `.test()`) — runs in a real browser via `test:stories`. */
-FiltersOnType.test("filters on type", async ({ canvas, userEvent }) => {
+FiltersOnType.test("removes non-matching items as you type", async ({ canvas, userEvent }) => {
   const input = canvas.getByPlaceholderText(/type a command or search/i);
 
+  // Sanity: a non-matching item is present before filtering.
+  await expect(canvas.getByText("Profile")).toBeInTheDocument();
+
   await userEvent.type(input, "Calendar");
+
+  // The matching item survives; cmdk removes non-matching items from the DOM.
   await expect(await canvas.findByText("Calendar")).toBeVisible();
-  // Non-matching items are removed from the DOM by cmdk's filtering.
   await expect(canvas.queryByText("Profile")).not.toBeInTheDocument();
-  await expect(canvas.queryByText("Search")).not.toBeInTheDocument();
+  await expect(canvas.queryByText("Billing")).not.toBeInTheDocument();
 });

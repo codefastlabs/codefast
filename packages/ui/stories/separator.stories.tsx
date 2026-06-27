@@ -2,6 +2,13 @@ import { Separator, SeparatorItem } from "#/components/separator";
 
 import preview from "../.storybook/preview";
 
+/**
+ * Separator — a prop-driven leaf. The root owns every interesting prop
+ * (`orientation`, `align`, `decorative`), so `{...args}` drives it directly and
+ * variant stories differ only by `args`, reusing the base render. The optional
+ * `SeparatorItem` floats a label over the line. Content is authored for
+ * Storybook, independent of the apps/web registry.
+ */
 const meta = preview.meta({
   args: { align: "center", decorative: true, orientation: "horizontal" },
   argTypes: {
@@ -10,7 +17,6 @@ const meta = preview.meta({
     orientation: { control: "radio", options: ["horizontal", "vertical"] },
   },
   component: Separator,
-  subcomponents: { SeparatorItem },
   parameters: {
     controls: { include: ["orientation", "align", "decorative"] },
     docs: {
@@ -24,6 +30,7 @@ const meta = preview.meta({
       },
     },
   },
+  subcomponents: { SeparatorItem },
   title: "Layout/Separator",
 });
 
@@ -33,6 +40,16 @@ export const Default = meta.story({
       <Separator {...args} />
     </div>
   ),
+});
+
+export const Vertical = meta.story({
+  args: { orientation: "vertical" },
+  render: Default.input.render,
+});
+
+export const Semantic = meta.story({
+  args: { decorative: false },
+  render: Default.input.render,
 });
 
 export const Showcase = meta.story({
@@ -45,23 +62,21 @@ export const Showcase = meta.story({
       <Separator className="my-4" />
       <div className="flex items-center gap-4 text-xs text-muted-foreground">
         <span>Blog</span>
-        <Separator orientation="vertical" className="h-3" />
+        <Separator className="h-3" orientation="vertical" />
         <span>Docs</span>
-        <Separator orientation="vertical" className="h-3" />
+        <Separator className="h-3" orientation="vertical" />
         <span>Source</span>
       </div>
     </div>
   ),
 });
 
-export const Vertical = meta.story({
+export const WithLabel = meta.story({
   render: () => (
-    <div className="flex h-5 items-center gap-4 text-sm">
-      <div>Blog</div>
-      <Separator orientation="vertical" />
-      <div>Docs</div>
-      <Separator orientation="vertical" />
-      <div>Source</div>
+    <div className="w-full max-w-xs">
+      <Separator>
+        <SeparatorItem>or continue with</SeparatorItem>
+      </Separator>
     </div>
   ),
 });

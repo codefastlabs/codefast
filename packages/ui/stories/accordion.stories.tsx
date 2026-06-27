@@ -5,10 +5,13 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "#/
 import preview from "../.storybook/preview";
 
 /**
- * Accordion's root prop type is a discriminated union (`type: "single" | "multiple"`),
- * which CSF Next can't drive directly via `{...args}`. We expose a flat custom args
- * shape (CSF Next `preview.type`) and narrow on `type` in the render, so the Controls
- * panel still gets `type`/`collapsible`/`orientation`/`disabled`.
+ * Accordion — a COMPOSITE whose root prop type is a discriminated union
+ * (`type: "single" | "multiple"`), which CSF Next can't drive directly through
+ * `{...args}`. We expose a FLAT custom args shape (`preview.type`) and narrow on
+ * `type` inside the render, so the Controls panel still gets
+ * `type`/`collapsible`/`orientation`/`disabled`; the real parts live in
+ * `subcomponents` so their prop tables still document in autodocs. Story content
+ * is authored here for Storybook — it is NOT synced with the apps/web registry.
  */
 interface AccordionArgs {
   collapsible: boolean;
@@ -25,7 +28,6 @@ const meta = preview.type<{ args: AccordionArgs }>().meta({
     orientation: { control: "radio", options: ["horizontal", "vertical"] },
     type: { control: "radio", options: ["single", "multiple"] },
   },
-  subcomponents: { Accordion, AccordionItem, AccordionTrigger, AccordionContent },
   parameters: {
     docs: {
       description: {
@@ -38,6 +40,7 @@ const meta = preview.type<{ args: AccordionArgs }>().meta({
       },
     },
   },
+  subcomponents: { Accordion, AccordionContent, AccordionItem, AccordionTrigger },
   title: "Display/Accordion",
 });
 
@@ -80,29 +83,36 @@ export const Default = meta.story({
   },
 });
 
+/** `type="multiple"` — any number of sections can stay open at once. */
 export const Multiple = meta.story({
-  render: () => (
-    <Accordion className="w-full max-w-sm" type="multiple">
-      <AccordionItem value="a">
-        <AccordionTrigger>First section</AccordionTrigger>
-        <AccordionContent>Multiple items can stay open at once.</AccordionContent>
-      </AccordionItem>
-      <AccordionItem value="b">
-        <AccordionTrigger>Second section</AccordionTrigger>
-        <AccordionContent>Open this without collapsing the first.</AccordionContent>
-      </AccordionItem>
-    </Accordion>
-  ),
+  args: { type: "multiple" },
+  render: Default.input.render,
+});
+
+/** Every item is non-interactive while `disabled` is set on the root. */
+export const Disabled = meta.story({
+  args: { disabled: true },
+  render: Default.input.render,
 });
 
 export const ExpandsOnClick = meta.story({
   render: Default.input.render,
 });
 
-/** Interaction test (CSF Next `.test()`) — runs in a real browser via `test:stories`. */
-ExpandsOnClick.test("expands on click", async ({ canvas, userEvent }) => {
-  const trigger = canvas.getByRole("button", { name: /is it accessible/i });
+/**
+ * Interaction test (CSF Next `.test()`) — runs in a real browser via
+ * `test:stories`. Covers the single-mode contract: clicking a trigger reveals
+ * its panel, and opening another collapses the first (one open at a time).
+ */
+ExpandsOnClick.test("single mode keeps one section open at a time", async ({ canvas, userEvent }) => {
+  const first = canvas.getByRole("button", { name: /is it accessible/i });
+  const second = canvas.getByRole("button", { name: /customise styles/i });
 
-  await userEvent.click(trigger);
+  await userEvent.click(first);
   await expect(await canvas.findByText(/WAI-ARIA design pattern/i)).toBeVisible();
+  await expect(first).toHaveAttribute("aria-expanded", "true");
+
+  await userEvent.click(second);
+  await expect(await canvas.findByText(/own the source/i)).toBeVisible();
+  await expect(first).toHaveAttribute("aria-expanded", "false");
 });

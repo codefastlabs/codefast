@@ -1,5 +1,4 @@
-import { useState } from "react";
-import { expect } from "storybook/test";
+import { expect, fn } from "storybook/test";
 
 import { CheckboxGroup, CheckboxGroupItem } from "#/components/checkbox-group";
 import { Label } from "#/components/label";
@@ -13,39 +12,43 @@ const PERMISSIONS = [
   { value: "admin", label: "Admin", disabled: true },
 ];
 
-const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri"];
-
 const NOTIFICATIONS = [
-  {
-    value: "comments",
-    label: "Comments",
-    hint: "When someone replies to your thread.",
-  },
-  {
-    value: "mentions",
-    label: "Mentions",
-    hint: "When you're @-mentioned anywhere.",
-  },
-  {
-    value: "digest",
-    label: "Weekly digest",
-    hint: "A Monday summary of activity.",
-  },
+  { value: "comments", label: "Comments", hint: "When someone replies to your thread." },
+  { value: "mentions", label: "Mentions", hint: "When you're @-mentioned anywhere." },
+  { value: "digest", label: "Weekly digest", hint: "A Monday summary of activity." },
 ];
 
+/**
+ * CheckboxGroup — a COMPOSITE whose root (`CheckboxGroup`) is a normal element-backed
+ * component owning the group's array value plus roving-focus props (`orientation`, `loop`,
+ * `dir`, `disabled`, `required`). The root drives behavior via `{...args}`, so states differ
+ * only by `args` and reuse the base render. Content is authored for Storybook, NOT synced
+ * with the apps/web registry.
+ */
 const meta = preview.meta({
-  args: { defaultValue: [], disabled: false, loop: true, orientation: "vertical" },
+  args: {
+    defaultValue: ["read"],
+    disabled: false,
+    loop: true,
+    orientation: "vertical",
+    required: false,
+  },
   argTypes: {
+    disabled: { control: "boolean" },
+    loop: { control: "boolean" },
     onValueChange: { table: { disable: true } },
+    orientation: { control: "radio", options: ["horizontal", "vertical"] },
+    required: { control: "boolean" },
     value: { table: { disable: true } },
   },
   component: CheckboxGroup,
-  subcomponents: { CheckboxGroupItem },
   parameters: {
+    controls: { include: ["orientation", "loop", "disabled", "required", "defaultValue"] },
     docs: {
       description: {
         component: [
           "A group of checkboxes that share a single array value, allowing multiple selections.",
+          "Roving focus moves between items with arrow keys; `loop` wraps at the boundaries.",
           "",
           "**Anatomy:** `CheckboxGroup > CheckboxGroupItem`.",
           "Drive it with `value`/`defaultValue` (an array) + `onValueChange`; pair each item with a `Label`.",
@@ -53,12 +56,13 @@ const meta = preview.meta({
       },
     },
   },
+  subcomponents: { CheckboxGroupItem },
   title: "Form/CheckboxGroup",
 });
 
 export const Default = meta.story({
   render: (args) => (
-    <CheckboxGroup {...args} className="gap-3">
+    <CheckboxGroup {...args} className={args.orientation === "horizontal" ? "flex flex-wrap gap-4" : "gap-3"}>
       {PERMISSIONS.map(({ value, label, disabled }) => (
         <div key={value} className="flex items-center gap-2">
           <CheckboxGroupItem {...(disabled ? { disabled } : {})} id={`perm-${value}`} value={value} />
@@ -72,69 +76,52 @@ export const Default = meta.story({
 });
 
 export const Horizontal = meta.story({
-  render: () => {
-    function Render() {
-      const [days, setDays] = useState<Array<string>>(["Mon", "Wed", "Fri"]);
-
-      return (
-        <CheckboxGroup className="flex flex-wrap gap-4" value={days} onValueChange={(value) => setDays(value ?? [])}>
-          {DAYS.map((day) => (
-            <div key={day} className="flex items-center gap-2">
-              <CheckboxGroupItem id={`day-${day}`} value={day} />
-              <Label htmlFor={`day-${day}`}>{day}</Label>
-            </div>
-          ))}
-        </CheckboxGroup>
-      );
-    }
-
-    return <Render />;
-  },
+  args: { orientation: "horizontal" },
+  render: Default.input.render,
 });
 
+export const Disabled = meta.story({
+  args: { disabled: true },
+  render: Default.input.render,
+});
+
+/**
+ * A genuinely different composition: each item pairs a label with a hint line. Still driven by
+ * the same root `args`.
+ */
 export const WithDescriptions = meta.story({
-  render: () => {
-    function Render() {
-      const [value, setValue] = useState<Array<string>>(["mentions"]);
-
-      return (
-        <CheckboxGroup className="w-full max-w-xs gap-4" value={value} onValueChange={(next) => setValue(next ?? [])}>
-          {NOTIFICATIONS.map((item) => (
-            <div key={item.value} className="flex items-start gap-3">
-              <CheckboxGroupItem id={`notify-${item.value}`} value={item.value} className="mt-0.5" />
-              <div className="grid gap-0.5">
-                <Label htmlFor={`notify-${item.value}`}>{item.label}</Label>
-                <p className="text-xs text-muted-foreground">{item.hint}</p>
-              </div>
-            </div>
-          ))}
-        </CheckboxGroup>
-      );
-    }
-
-    return <Render />;
-  },
-});
-
-export const SelectsOnClick = meta.story({
-  render: () => (
-    <CheckboxGroup className="gap-3">
-      {PERMISSIONS.filter(({ disabled }) => !disabled).map(({ value, label }) => (
-        <div key={value} className="flex items-center gap-2">
-          <CheckboxGroupItem id={`select-${value}`} value={value} />
-          <Label htmlFor={`select-${value}`}>{label}</Label>
+  args: { defaultValue: ["mentions"] },
+  render: (args) => (
+    <CheckboxGroup {...args} className="w-full max-w-xs gap-4">
+      {NOTIFICATIONS.map((item) => (
+        <div key={item.value} className="flex items-start gap-3">
+          <CheckboxGroupItem id={`notify-${item.value}`} value={item.value} className="mt-0.5" />
+          <div className="grid gap-0.5">
+            <Label htmlFor={`notify-${item.value}`}>{item.label}</Label>
+            <p className="text-xs text-muted-foreground">{item.hint}</p>
+          </div>
         </div>
       ))}
     </CheckboxGroup>
   ),
 });
 
-/** Interaction test (CSF Next `.test()`) — runs in a real browser via `test:stories`. */
-SelectsOnClick.test("selects on click", async ({ canvas, userEvent }) => {
-  const [checkbox] = canvas.getAllByRole("checkbox");
+export const SelectsOnClick = meta.story({
+  args: { defaultValue: [], onValueChange: fn() },
+  render: Default.input.render,
+});
 
-  await expect(checkbox).toBeDefined();
-  await expect(checkbox as HTMLElement).not.toBeChecked();
-  await userEvent.click(checkbox as HTMLElement);
-  await expect(checkbox as HTMLElement).toBeChecked();
+/** Interaction test (CSF Next `.test()`) — runs in a real browser via `test:stories`. */
+SelectsOnClick.test("toggling an item updates the group value", async ({ args, canvas, userEvent }) => {
+  const read = canvas.getByRole("checkbox", { name: "read" });
+
+  await expect(read).not.toBeChecked();
+
+  await userEvent.click(read);
+  await expect(read).toBeChecked();
+  await expect(args.onValueChange).toHaveBeenCalledWith(["read"]);
+
+  await userEvent.click(read);
+  await expect(read).not.toBeChecked();
+  await expect(args.onValueChange).toHaveBeenLastCalledWith([]);
 });

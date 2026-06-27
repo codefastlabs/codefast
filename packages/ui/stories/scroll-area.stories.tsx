@@ -1,77 +1,50 @@
+import { expect } from "storybook/test";
+
 import { ScrollArea, ScrollAreaScrollbar } from "#/components/scroll-area";
 
 import preview from "../.storybook/preview";
 
 /**
- * ScrollArea is a composition with optional root props. Demoed via `render`
- * while keeping `component` bound to the Root (Pattern C, see Card).
+ * ScrollArea — a composite whose root is a normal component (`ScrollAreaPrimitive.Root`
+ * plus a custom `size` prop). The Root renders its own vertical + horizontal
+ * `ScrollAreaScrollbar`s internally, so most usages just constrain the box and drop
+ * content inside. The `size` enum drives scrollbar track thickness. Content here is
+ * authored for Storybook and is NOT synced with the apps/web registry.
  */
 const meta = preview.meta({
   args: { size: "md" },
+  argTypes: {
+    asChild: { table: { disable: true } },
+    size: { control: "select", options: ["none", "sm", "md", "lg"] },
+  },
   component: ScrollArea,
-  subcomponents: { ScrollAreaScrollbar },
   parameters: {
+    controls: { include: ["size"] },
     docs: {
       description: {
         component: [
           "Augments native scrolling with a custom, cross-browser-consistent scrollbar.",
           "",
-          "**Anatomy:** `ScrollArea > content`; horizontal and vertical `ScrollAreaScrollbar`s are rendered for you.",
-          "Constrain the `ScrollArea` with a fixed height/width so content overflows; pick a track `size` (`default` · `sm`).",
+          "**Anatomy:** `ScrollArea > content`; vertical and horizontal `ScrollAreaScrollbar`s are rendered for you.",
+          "Constrain the `ScrollArea` with a fixed height/width so content overflows; pick a track `size` (`none` · `sm` · `md` · `lg`).",
         ].join("\n"),
       },
     },
   },
+  subcomponents: { ScrollAreaScrollbar },
   title: "Layout/ScrollArea",
 });
 
 const RELEASES = [
-  {
-    version: "v2.5.0",
-    date: "Jun 2",
-    notes: "New Resizable component and dark-mode polish.",
-  },
-  {
-    version: "v2.4.1",
-    date: "May 24",
-    notes: "Fixed focus ring contrast on outline buttons.",
-  },
-  {
-    version: "v2.4.0",
-    date: "May 18",
-    notes: "Added Input OTP and Field validation helpers.",
-  },
-  {
-    version: "v2.3.0",
-    date: "May 9",
-    notes: "Carousel now supports vertical orientation.",
-  },
-  {
-    version: "v2.2.0",
-    date: "Apr 30",
-    notes: "Introduced Sonner toasts and Progress Circle.",
-  },
-  {
-    version: "v2.1.0",
-    date: "Apr 21",
-    notes: "Reworked Sidebar with collapsible groups.",
-  },
+  { version: "v2.5.0", date: "Jun 2", notes: "New Resizable component and dark-mode polish." },
+  { version: "v2.4.1", date: "May 24", notes: "Fixed focus ring contrast on outline buttons." },
+  { version: "v2.4.0", date: "May 18", notes: "Added Input OTP and Field validation helpers." },
+  { version: "v2.3.0", date: "May 9", notes: "Carousel now supports vertical orientation." },
+  { version: "v2.2.0", date: "Apr 30", notes: "Introduced Sonner toasts and Progress Circle." },
+  { version: "v2.1.0", date: "Apr 21", notes: "Reworked Sidebar with collapsible groups." },
 ];
 
-const WORKS = [
-  {
-    artist: "Ornella Binni",
-    art: "https://images.unsplash.com/photo-1465869185982-5a1a7522cbcb?auto=format&fit=crop&w=300&q=80",
-  },
-  {
-    artist: "Tom Byrom",
-    art: "https://images.unsplash.com/photo-1548516173-3cabfa4607e9?auto=format&fit=crop&w=300&q=80",
-  },
-  {
-    artist: "Vladimir Malyavko",
-    art: "https://images.unsplash.com/photo-1494337480532-3725c85fd2ab?auto=format&fit=crop&w=300&q=80",
-  },
-];
+const WORKS = ["Ornella Binni", "Tom Byrom", "Vladimir Malyavko"];
 
 export const Default = meta.story({
   render: (args) => (
@@ -94,23 +67,30 @@ export const Default = meta.story({
   ),
 });
 
+/** Same composition as Default — only the `size` arg differs, so it reuses Default's render. */
+export const SmallScrollbar = meta.story({
+  args: { size: "sm" },
+  render: Default.input.render,
+});
+
+/**
+ * A genuinely different composition: horizontal overflow with an explicit
+ * horizontal `ScrollAreaScrollbar`.
+ */
 export const Horizontal = meta.story({
-  render: () => (
-    <ScrollArea className="w-96 rounded-md border whitespace-nowrap">
+  render: (args) => (
+    <ScrollArea {...args} className="w-96 rounded-md border border-border whitespace-nowrap">
       <div className="flex w-max space-x-4 p-4">
-        {WORKS.map((artwork) => (
-          <figure key={artwork.artist} className="shrink-0">
-            <div className="overflow-hidden rounded-md">
-              <img
-                src={artwork.art}
-                alt={artwork.artist}
-                className="aspect-[3/4] h-fit w-fit object-cover"
-                width={300}
-                height={400}
-              />
+        {WORKS.map((artist) => (
+          <figure key={artist} className="shrink-0">
+            <div className="flex h-48 w-36 items-center justify-center rounded-md bg-[linear-gradient(135deg,var(--muted),var(--accent))] text-2xl font-semibold text-muted-foreground">
+              {artist
+                .split(" ")
+                .map((part) => part[0])
+                .join("")}
             </div>
             <figcaption className="pt-2 text-xs text-muted-foreground">
-              Photo by <span className="font-semibold text-foreground">{artwork.artist}</span>
+              Photo by <span className="font-semibold text-foreground">{artist}</span>
             </figcaption>
           </figure>
         ))}
@@ -118,4 +98,12 @@ export const Horizontal = meta.story({
       <ScrollAreaScrollbar orientation="horizontal" />
     </ScrollArea>
   ),
+});
+
+Default.test("renders a scrollable viewport whose content overflows", async ({ canvas }) => {
+  const viewport = canvas.getByText("Changelog").closest("[data-slot='scroll-area-viewport']");
+
+  await expect(viewport).not.toBeNull();
+  // Content (6 releases) overflows the fixed 14rem height → viewport is scrollable.
+  await expect((viewport as HTMLElement).scrollHeight).toBeGreaterThan((viewport as HTMLElement).clientHeight);
 });

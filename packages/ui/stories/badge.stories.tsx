@@ -4,6 +4,11 @@ import { Badge } from "#/components/badge";
 
 import preview from "../.storybook/preview";
 
+/**
+ * Badge — a prop-driven display leaf. The root `<span>` owns the only interesting prop
+ * (`variant`); everything else is plain content. Content here is authored against Badge's
+ * own public API for Storybook, NOT synced with or copied from the apps/web registry.
+ */
 const meta = preview.meta({
   args: { children: "Badge", variant: "default" },
   argTypes: {
@@ -17,23 +22,27 @@ const meta = preview.meta({
   component: Badge,
   parameters: {
     controls: { include: ["variant", "children"] },
+    docs: {
+      description: {
+        component:
+          "A small label for status, counts, or categorization. Ships six visual variants and renders inline; pass `asChild` to project the badge styling onto another element (e.g. a link).",
+      },
+    },
   },
   title: "Display/Badge",
 });
 
 export const Default = meta.story();
 
-export const Variants = meta.story({
-  render: () => (
-    <div className="flex flex-wrap gap-2">
-      <Badge>Default</Badge>
-      <Badge variant="secondary">Secondary</Badge>
-      <Badge variant="destructive">Destructive</Badge>
-      <Badge variant="outline">Outline</Badge>
-      <Badge variant="ghost">Ghost</Badge>
-    </div>
-  ),
-});
+export const Secondary = meta.story({ args: { variant: "secondary" } });
+
+export const Destructive = meta.story({ args: { variant: "destructive" } });
+
+export const Outline = meta.story({ args: { variant: "outline" } });
+
+export const Ghost = meta.story({ args: { variant: "ghost" } });
+
+export const Link = meta.story({ args: { variant: "link" } });
 
 export const WithIcon = meta.story({
   render: () => (
@@ -46,18 +55,6 @@ export const WithIcon = meta.story({
         Bookmark
         <BookmarkIcon data-icon="inline-end" />
       </Badge>
-    </div>
-  ),
-});
-
-export const CustomColors = meta.story({
-  render: () => (
-    <div className="flex flex-wrap gap-2">
-      <Badge className="bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-300">Blue</Badge>
-      <Badge className="bg-green-50 text-green-700 dark:bg-green-950 dark:text-green-300">Green</Badge>
-      <Badge className="bg-sky-50 text-sky-700 dark:bg-sky-950 dark:text-sky-300">Sky</Badge>
-      <Badge className="bg-purple-50 text-purple-700 dark:bg-purple-950 dark:text-purple-300">Purple</Badge>
-      <Badge className="bg-red-50 text-red-700 dark:bg-red-950 dark:text-red-300">Red</Badge>
     </div>
   ),
 });

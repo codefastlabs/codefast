@@ -1,4 +1,4 @@
-import { expect, screen } from "storybook/test";
+import { expect, fn, screen } from "storybook/test";
 
 import { Button } from "#/components/button";
 import {
@@ -17,24 +17,24 @@ import { Label } from "#/components/label";
 
 import preview from "../.storybook/preview";
 
+/**
+ * Dialog — a COMPOSITE modal overlay built on Radix `Dialog.Root`. The root is a
+ * stateful controller (open/defaultOpen/modal/onOpenChange); the visible UI lives
+ * in portalled subcomponents (Content, Header, Body, Footer, …). Args drive the
+ * ROOT controller; the composition is reused across states via `Default.input.render`.
+ * Content here is authored for Storybook and is NOT synced with the apps/web registry.
+ */
 const meta = preview.meta({
   args: { defaultOpen: false, modal: true },
   argTypes: {
+    defaultOpen: { control: "boolean" },
+    modal: { control: "boolean" },
     onOpenChange: { table: { disable: true } },
     open: { table: { disable: true } },
   },
   component: Dialog,
-  subcomponents: {
-    DialogTrigger,
-    DialogContent,
-    DialogHeader,
-    DialogTitle,
-    DialogDescription,
-    DialogBody,
-    DialogFooter,
-    DialogClose,
-  },
   parameters: {
+    controls: { include: ["defaultOpen", "modal"] },
     docs: {
       description: {
         component: [
@@ -45,6 +45,16 @@ const meta = preview.meta({
         ].join("\n"),
       },
     },
+  },
+  subcomponents: {
+    DialogBody,
+    DialogClose,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
   },
   title: "Overlay/Dialog",
 });
@@ -85,59 +95,63 @@ export const Default = meta.story({
   ),
 });
 
+/** A distinct composition: `DialogContent showCloseButton={false}` hides the top-right close affordance. */
 export const NoCloseButton = meta.story({
-  render: () => (
-    <Dialog>
+  render: (args) => (
+    <Dialog {...args}>
       <DialogTrigger asChild>
-        <Button variant="outline">No Close Button</Button>
+        <Button variant="outline">No close button</Button>
       </DialogTrigger>
       <DialogContent showCloseButton={false}>
         <DialogHeader>
-          <DialogTitle>No Close Button</DialogTitle>
-          <DialogDescription>This dialog doesn&apos;t have a close button in the top-right corner.</DialogDescription>
+          <DialogTitle>No close button</DialogTitle>
+          <DialogDescription>This dialog has no close button in the top-right corner.</DialogDescription>
         </DialogHeader>
       </DialogContent>
     </Dialog>
   ),
 });
 
+/** A distinct composition: tall content scrolls inside the dialog while the chrome stays pinned. */
 export const ScrollableContent = meta.story({
-  render: () => (
-    <Dialog>
+  render: (args) => (
+    <Dialog {...args}>
       <DialogTrigger asChild>
-        <Button variant="outline">Scrollable Content</Button>
+        <Button variant="outline">Scrollable content</Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Scrollable Content</DialogTitle>
-          <DialogDescription>This is a dialog with scrollable content.</DialogDescription>
+          <DialogTitle>Scrollable content</DialogTitle>
+          <DialogDescription>The body scrolls; the header stays pinned.</DialogDescription>
         </DialogHeader>
-        <div className="no-scrollbar -mx-4 max-h-[50vh] overflow-y-auto px-4">
+        <DialogBody className="grid gap-4">
           {Array.from({ length: 10 }).map((_, index) => (
-            <p key={index} className="mb-4 leading-normal">
+            <p key={index} className="leading-normal">
               Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et
               dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex
               ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-              fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt
-              mollit anim id est laborum.
+              fugiat nulla pariatur.
             </p>
           ))}
-        </div>
+        </DialogBody>
       </DialogContent>
     </Dialog>
   ),
 });
 
 export const OpensOnClick = meta.story({
+  args: { onOpenChange: fn() },
   render: Default.input.render,
 });
 
 /** Interaction test (CSF Next `.test()`) — runs in a real browser via `test:stories`. */
-OpensOnClick.test("opens on click", async ({ canvas, userEvent }) => {
+OpensOnClick.test("opens on click and fires onOpenChange", async ({ args, canvas, userEvent }) => {
   const trigger = canvas.getByRole("button", { name: /open dialog/i });
 
   await userEvent.click(trigger);
 
+  // Portalled content lives outside the canvas — query the document via screen.
   await expect(await screen.findByText(/edit profile/i)).toBeInTheDocument();
   await expect(await screen.findByText(/make changes here/i)).toBeInTheDocument();
+  await expect(args.onOpenChange).toHaveBeenCalledWith(true);
 });

@@ -4,19 +4,38 @@ import { AspectRatio } from "#/components/aspect-ratio";
 
 import preview from "../.storybook/preview";
 
+/**
+ * AspectRatio — a LAYOUT-ONLY wrapper that constrains its content to a desired
+ * width/height ratio. Its only meaningful root prop is `ratio` (a number), so it
+ * has a single number Control and no enum/boolean knobs. Content here is authored
+ * for Storybook and is NOT synced with the apps/web registry.
+ */
 const meta = preview.meta({
-  args: { ratio: 16 / 9 },
+  args: { ratio: 1 / 1 },
   argTypes: { ratio: { control: "number" } },
   component: AspectRatio,
+  parameters: {
+    docs: {
+      description: {
+        component:
+          "Constrains content (image, video, embed) to a fixed `ratio` regardless of width.\n\n**Anatomy:** `AspectRatio` wraps a single child that fills the reserved box.",
+      },
+    },
+  },
   title: "Display/AspectRatio",
 });
 
+/**
+ * Featured composition: a 16:9 video placeholder with a caption — a distinct
+ * composition from the image stories below, so it owns its own render.
+ */
 export const Default = meta.story({
+  args: { ratio: 16 / 9 },
   render: (args) => (
     <div className="w-full max-w-sm">
-      <div className="overflow-hidden rounded-xl border">
+      <div className="overflow-hidden rounded-xl border border-border">
         <AspectRatio {...args}>
-          <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-primary/80 to-violet-500">
+          <div className="flex size-full items-center justify-center bg-primary/80">
             <span className="flex size-12 items-center justify-center rounded-full bg-white/20 backdrop-blur-sm">
               <PlayIcon className="size-5 fill-white text-white" />
             </span>
@@ -28,10 +47,14 @@ export const Default = meta.story({
   ),
 });
 
+/**
+ * Image composition driven by `ratio`. Square and Portrait below differ ONLY by
+ * args and reuse this single render.
+ */
 export const Square = meta.story({
-  render: () => (
+  render: (args) => (
     <div className="w-full max-w-48">
-      <AspectRatio ratio={1 / 1} className="rounded-lg bg-muted">
+      <AspectRatio {...args} className="rounded-lg bg-muted">
         <img
           src="https://avatar.vercel.sh/codefast"
           alt="Codefast avatar"
@@ -43,15 +66,6 @@ export const Square = meta.story({
 });
 
 export const Portrait = meta.story({
-  render: () => (
-    <div className="w-full max-w-40">
-      <AspectRatio ratio={9 / 16} className="rounded-lg bg-muted">
-        <img
-          src="https://avatar.vercel.sh/codefast"
-          alt="Codefast avatar"
-          className="size-full rounded-lg object-cover grayscale dark:brightness-20"
-        />
-      </AspectRatio>
-    </div>
-  ),
+  args: { ratio: 9 / 16 },
+  render: Square.input.render,
 });

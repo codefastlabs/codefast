@@ -1,13 +1,7 @@
-import { ChevronDownIcon, MaximizeIcon, MinimizeIcon } from "lucide-react";
-import type { ComponentProps, JSX } from "react";
-import { useState } from "react";
+import { ChevronDownIcon } from "lucide-react";
 import { expect } from "storybook/test";
 
-import { Button } from "#/components/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "#/components/card";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "#/components/collapsible";
-import { Field, FieldGroup, FieldLabel } from "#/components/field";
-import { Input } from "#/components/input";
 
 import preview from "../.storybook/preview";
 
@@ -17,11 +11,45 @@ const LINE_ITEMS = [
   { name: "Tax", price: "$14.40" },
 ];
 
-function OrderSummary(props: ComponentProps<typeof Collapsible>): JSX.Element {
-  const [open, setOpen] = useState(true);
+/**
+ * Collapsible — a COMPOSITE built on Radix `Collapsible.Root`. The root is a normal
+ * component whose own props (`defaultOpen`, `disabled`, controlled `open`/`onOpenChange`)
+ * drive the open state, so `{...args}` binds straight to it. The trigger toggles a single
+ * region of content shown/hidden via `CollapsibleContent`.
+ *
+ * Content is authored for Storybook against the component's own public API — it is NOT
+ * synced with or copied from the apps/web registry.
+ */
+const meta = preview.meta({
+  args: { defaultOpen: false, disabled: false },
+  argTypes: {
+    asChild: { table: { disable: true } },
+    defaultOpen: { control: "boolean" },
+    disabled: { control: "boolean" },
+    onOpenChange: { table: { disable: true } },
+    open: { table: { disable: true } },
+  },
+  component: Collapsible,
+  parameters: {
+    controls: { include: ["defaultOpen", "disabled"] },
+    docs: {
+      description: {
+        component: [
+          "An interactive panel that expands and collapses a single section of content.",
+          "",
+          "**Anatomy:** `Collapsible > (CollapsibleTrigger + CollapsibleContent)`.",
+          "Leave it uncontrolled with `defaultOpen`, or own the state with `open`/`onOpenChange`.",
+        ].join("\n"),
+      },
+    },
+  },
+  subcomponents: { CollapsibleContent, CollapsibleTrigger },
+  title: "Layout/Collapsible",
+});
 
-  return (
-    <Collapsible className="group w-full max-w-xs rounded-xl border" open={open} onOpenChange={setOpen} {...props}>
+export const Default = meta.story({
+  render: (args) => (
+    <Collapsible className="group w-full max-w-xs rounded-xl border" {...args}>
       <CollapsibleTrigger className="flex w-full items-center justify-between gap-3 px-4 py-3 text-start">
         <span className="text-sm font-medium text-foreground">Order summary</span>
         <span className="flex items-center gap-2 text-sm font-semibold text-foreground">
@@ -38,120 +66,33 @@ function OrderSummary(props: ComponentProps<typeof Collapsible>): JSX.Element {
         ))}
       </CollapsibleContent>
     </Collapsible>
-  );
-}
-
-function RadiusSettings(): JSX.Element {
-  const [isOpen, setIsOpen] = useState(false);
-
-  return (
-    <Card className="mx-auto w-full max-w-xs" size="sm">
-      <CardHeader>
-        <CardTitle>Radius</CardTitle>
-        <CardDescription>Set the corner radius of the element.</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <Collapsible open={isOpen} onOpenChange={setIsOpen} className="flex items-start gap-2">
-          <FieldGroup className="grid w-full grid-cols-2 gap-2">
-            <Field>
-              <FieldLabel htmlFor="radius-x" className="sr-only">
-                Radius X
-              </FieldLabel>
-              <Input id="radius" placeholder="0" defaultValue={0} />
-            </Field>
-            <Field>
-              <FieldLabel htmlFor="radius-y" className="sr-only">
-                Radius Y
-              </FieldLabel>
-              <Input id="radius" placeholder="0" defaultValue={0} />
-            </Field>
-            <CollapsibleContent className="col-span-full grid grid-cols-subgrid gap-2">
-              <Field>
-                <FieldLabel htmlFor="radius-x" className="sr-only">
-                  Radius X
-                </FieldLabel>
-                <Input id="radius" placeholder="0" defaultValue={0} />
-              </Field>
-              <Field>
-                <FieldLabel htmlFor="radius-y" className="sr-only">
-                  Radius Y
-                </FieldLabel>
-                <Input id="radius" placeholder="0" defaultValue={0} />
-              </Field>
-            </CollapsibleContent>
-          </FieldGroup>
-          <CollapsibleTrigger asChild>
-            <Button variant="outline" size="icon">
-              {isOpen ? <MinimizeIcon /> : <MaximizeIcon />}
-            </Button>
-          </CollapsibleTrigger>
-        </Collapsible>
-      </CardContent>
-    </Card>
-  );
-}
-
-const meta = preview.meta({
-  args: { defaultOpen: false, disabled: false },
-  argTypes: {
-    asChild: { table: { disable: true } },
-    onOpenChange: { table: { disable: true } },
-    open: { table: { disable: true } },
-  },
-  component: Collapsible,
-  subcomponents: { CollapsibleTrigger, CollapsibleContent },
-  parameters: {
-    docs: {
-      description: {
-        component: [
-          "An interactive panel that expands and collapses a single section of content.",
-          "",
-          "**Anatomy:** `Collapsible > (CollapsibleTrigger + CollapsibleContent)`.",
-          "Control open state with `open`/`onOpenChange` or leave it uncontrolled with `defaultOpen`.",
-        ].join("\n"),
-      },
-    },
-  },
-  title: "Layout/Collapsible",
-});
-
-export const Default = meta.story({
-  render: (args) => <OrderSummary {...args} />,
-});
-
-export const Basic = meta.story({
-  render: () => (
-    <Card className="mx-auto w-full max-w-sm">
-      <CardContent>
-        <Collapsible className="rounded-md data-[state=open]:bg-muted">
-          <CollapsibleTrigger asChild>
-            <Button variant="ghost" className="group w-full">
-              Product details
-              <ChevronDownIcon className="ms-auto group-data-[state=open]:rotate-180" />
-            </Button>
-          </CollapsibleTrigger>
-          <CollapsibleContent className="flex flex-col items-start gap-2 p-2.5 pt-0 text-sm">
-            <div>This panel can be expanded or collapsed to reveal additional content.</div>
-            <Button size="xs">Learn More</Button>
-          </CollapsibleContent>
-        </Collapsible>
-      </CardContent>
-    </Card>
   ),
 });
 
-export const Settings = meta.story({
-  render: () => <RadiusSettings />,
+export const Open = meta.story({
+  args: { defaultOpen: true },
+  render: Default.input.render,
+});
+
+export const Disabled = meta.story({
+  args: { defaultOpen: true, disabled: true },
+  render: Default.input.render,
 });
 
 export const ExpandsOnClick = meta.story({
-  render: Basic.input.render,
+  render: Default.input.render,
 });
 
 /** Interaction test (CSF Next `.test()`) — runs in a real browser via `test:stories`. */
-ExpandsOnClick.test("expands on click", async ({ canvas, userEvent }) => {
-  const trigger = canvas.getByRole("button", { name: /product details/i });
+ExpandsOnClick.test("trigger toggles the content region open and closed", async ({ canvas, userEvent }) => {
+  const trigger = canvas.getByRole("button", { name: /order summary/i });
+
+  await expect(trigger).toHaveAttribute("aria-expanded", "false");
 
   await userEvent.click(trigger);
-  await expect(await canvas.findByText(/this panel can be expanded/i)).toBeVisible();
+  await expect(trigger).toHaveAttribute("aria-expanded", "true");
+  await expect(await canvas.findByText("Pro plan (annual)")).toBeVisible();
+
+  await userEvent.click(trigger);
+  await expect(trigger).toHaveAttribute("aria-expanded", "false");
 });

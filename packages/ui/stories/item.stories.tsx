@@ -1,4 +1,5 @@
-import { MoreHorizontalIcon, ShieldAlertIcon, InboxIcon } from "lucide-react";
+import { MoreHorizontalIcon, ShieldAlertIcon } from "lucide-react";
+import { expect, fn } from "storybook/test";
 
 import { Avatar, AvatarFallback } from "#/components/avatar";
 import { Badge } from "#/components/badge";
@@ -19,27 +20,21 @@ import {
 import preview from "../.storybook/preview";
 
 /**
- * Item is a composition with optional root props. Demoed via `render` while
- * keeping `component` bound to the Root (Pattern C, see Card).
+ * Item is a COMPOSITE row whose Root is a plain `<div>` carrying two enum props
+ * (`variant`, `size`). The Root is bound as `component` so `{...args}` drives the
+ * Controls; sub-states reuse the base `render` and differ only by `args`. Content
+ * is authored for Storybook, NOT synced with the apps/web registry.
  */
 const meta = preview.meta({
   args: { size: "default", variant: "default" },
   argTypes: {
     asChild: { table: { disable: true } },
+    size: { control: "radio", options: ["default", "sm", "xs"] },
+    variant: { control: "radio", options: ["default", "muted", "outline"] },
   },
   component: Item,
-  subcomponents: {
-    ItemGroup,
-    ItemMedia,
-    ItemContent,
-    ItemTitle,
-    ItemDescription,
-    ItemActions,
-    ItemHeader,
-    ItemFooter,
-    ItemSeparator,
-  },
   parameters: {
+    controls: { include: ["variant", "size"] },
     docs: {
       description: {
         component: [
@@ -50,6 +45,17 @@ const meta = preview.meta({
         ].join("\n"),
       },
     },
+  },
+  subcomponents: {
+    ItemActions,
+    ItemContent,
+    ItemDescription,
+    ItemFooter,
+    ItemGroup,
+    ItemHeader,
+    ItemMedia,
+    ItemSeparator,
+    ItemTitle,
   },
   title: "Display/Item",
 });
@@ -76,77 +82,30 @@ export const Default = meta.story({
   ),
 });
 
-export const Variants = meta.story({
-  render: () => (
-    <div className="flex w-full max-w-md flex-col gap-6">
-      <Item>
-        <ItemMedia variant="icon">
-          <InboxIcon />
-        </ItemMedia>
-        <ItemContent>
-          <ItemTitle>Default Variant</ItemTitle>
-          <ItemDescription>Transparent background with no border.</ItemDescription>
-        </ItemContent>
-      </Item>
-      <Item variant="outline">
-        <ItemMedia variant="icon">
-          <InboxIcon />
-        </ItemMedia>
-        <ItemContent>
-          <ItemTitle>Outline Variant</ItemTitle>
-          <ItemDescription>Outlined style with a visible border.</ItemDescription>
-        </ItemContent>
-      </Item>
-      <Item variant="muted">
-        <ItemMedia variant="icon">
-          <InboxIcon />
-        </ItemMedia>
-        <ItemContent>
-          <ItemTitle>Muted Variant</ItemTitle>
-          <ItemDescription>Muted background for secondary content.</ItemDescription>
-        </ItemContent>
-      </Item>
-    </div>
-  ),
+export const Outline = meta.story({
+  args: { variant: "outline" },
+  render: Default.input.render,
 });
 
-export const Sizes = meta.story({
-  render: () => (
-    <div className="flex w-full max-w-md flex-col gap-6">
-      <Item variant="outline">
-        <ItemMedia variant="icon">
-          <InboxIcon />
-        </ItemMedia>
-        <ItemContent>
-          <ItemTitle>Default Size</ItemTitle>
-          <ItemDescription>The standard size for most use cases.</ItemDescription>
-        </ItemContent>
-      </Item>
-      <Item variant="outline" size="sm">
-        <ItemMedia variant="icon">
-          <InboxIcon />
-        </ItemMedia>
-        <ItemContent>
-          <ItemTitle>Small Size</ItemTitle>
-          <ItemDescription>A compact size for dense layouts.</ItemDescription>
-        </ItemContent>
-      </Item>
-      <Item variant="outline" size="xs">
-        <ItemMedia variant="icon">
-          <InboxIcon />
-        </ItemMedia>
-        <ItemContent>
-          <ItemTitle>Extra Small Size</ItemTitle>
-          <ItemDescription>The most compact size available.</ItemDescription>
-        </ItemContent>
-      </Item>
-    </div>
-  ),
+export const Muted = meta.story({
+  args: { variant: "muted" },
+  render: Default.input.render,
 });
 
-export const WithIconAction = meta.story({
+export const Small = meta.story({
+  args: { size: "sm", variant: "outline" },
+  render: Default.input.render,
+});
+
+export const ExtraSmall = meta.story({
+  args: { size: "xs", variant: "outline" },
+  render: Default.input.render,
+});
+
+/** A genuinely different composition: a grouped list with a trailing text action. */
+export const Group = meta.story({
   render: () => (
-    <div className="flex w-full max-w-lg flex-col gap-6">
+    <ItemGroup className="w-full max-w-lg">
       <Item variant="outline">
         <ItemMedia variant="icon">
           <ShieldAlertIcon />
@@ -161,6 +120,50 @@ export const WithIconAction = meta.story({
           </Button>
         </ItemActions>
       </Item>
-    </div>
+      <ItemSeparator />
+      <Item variant="outline">
+        <ItemMedia>
+          <Avatar>
+            <AvatarFallback>JD</AvatarFallback>
+          </Avatar>
+        </ItemMedia>
+        <ItemContent>
+          <ItemTitle>Jane Doe</ItemTitle>
+          <ItemDescription>jane@example.com</ItemDescription>
+        </ItemContent>
+        <ItemActions>
+          <Badge variant="secondary">Member</Badge>
+        </ItemActions>
+      </Item>
+      <ItemFooter className="px-1 text-xs text-muted-foreground">2 members</ItemFooter>
+    </ItemGroup>
   ),
+});
+
+export const ActionFires = meta.story({
+  args: { onClick: fn(), variant: "outline" },
+  render: (args) => (
+    <Item {...args} className="w-full max-w-md">
+      <ItemMedia variant="icon">
+        <ShieldAlertIcon />
+      </ItemMedia>
+      <ItemContent>
+        <ItemTitle>Security Alert</ItemTitle>
+        <ItemDescription>New login detected from unknown device.</ItemDescription>
+      </ItemContent>
+      <ItemActions>
+        <Button size="sm" variant="outline">
+          Review
+        </Button>
+      </ItemActions>
+    </Item>
+  ),
+});
+
+// The trailing action's click bubbles to the row, so the spy on the Item root's
+// onClick proves the action is wired through — driven entirely by args.
+ActionFires.test("invokes the row handler when the action is clicked", async ({ args, canvas, userEvent }) => {
+  await userEvent.click(canvas.getByRole("button", { name: "Review" }));
+
+  await expect(args.onClick).toHaveBeenCalledTimes(1);
 });

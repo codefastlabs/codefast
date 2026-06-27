@@ -7,8 +7,11 @@ import { Calendar } from "#/components/calendar";
 import preview from "../.storybook/preview";
 
 /**
- * Calendar manages a selected date with `useState`, so each story is demoed via
- * `render` with a small wrapper.
+ * Calendar — a COMPOSITE wrapper over React DayPicker whose root prop type is a
+ * discriminated union over `mode` ("single" | "multiple" | "range"). Selection is
+ * controlled, so each story owns a small `useState` wrapper to demo it. Content here
+ * is authored for Storybook against the component's own public API, NOT synced with
+ * the apps/web registry.
  */
 interface DateRange {
   from: Date | undefined;
@@ -92,6 +95,8 @@ const meta = preview.type<{ args: CalendarArgs }>().meta({
           "A date-picker grid built on React DayPicker, supporting single, multiple, and range selection.",
           "",
           "Controlled via `mode` plus `selected`/`onSelect`; stories wrap it in `useState` to demo selection.",
+          "",
+          "**Anatomy:** `Calendar` renders a `DayPicker` whose internals (`Chevron`, `DayButton`, `Root`, `WeekNumber`) are themed via custom components.",
         ].join("\n"),
       },
     },

@@ -1,4 +1,4 @@
-import { expect, screen } from "storybook/test";
+import { expect, fn, screen, waitFor } from "storybook/test";
 
 import { Button } from "#/components/button";
 import {
@@ -16,21 +16,28 @@ import { Label } from "#/components/label";
 
 import preview from "../.storybook/preview";
 
-const meta = preview.meta({
+/**
+ * Drawer — a COMPOSITE overlay built on Vaul whose root (`Drawer`) is a context provider
+ * with no DOM of its own and whose props form a controlled/uncontrolled union, so binding
+ * `component` + a typed `render` would collapse args to `never`. We use the flat-args
+ * workaround: a flat `DrawerArgs` interface drives explicit Controls, while the real parts
+ * stay in `subcomponents` for docgen. Content is authored for Storybook, NOT synced with
+ * the apps/web registry.
+ */
+interface DrawerArgs {
+  direction: "bottom" | "left" | "right" | "top";
+  modal: boolean;
+  onOpenChange?: ((open: boolean) => void) | undefined;
+  shouldScaleBackground: boolean;
+}
+
+const meta = preview.type<{ args: DrawerArgs }>().meta({
   args: { direction: "bottom", modal: true, shouldScaleBackground: true },
   argTypes: {
+    direction: { control: "radio", options: ["top", "right", "bottom", "left"] },
+    modal: { control: "boolean" },
     onOpenChange: { table: { disable: true } },
-    open: { table: { disable: true } },
-  },
-  component: Drawer,
-  subcomponents: {
-    DrawerTrigger,
-    DrawerContent,
-    DrawerHeader,
-    DrawerTitle,
-    DrawerDescription,
-    DrawerFooter,
-    DrawerClose,
+    shouldScaleBackground: { control: "boolean" },
   },
   parameters: {
     docs: {
@@ -44,12 +51,26 @@ const meta = preview.meta({
       },
     },
   },
+  subcomponents: {
+    DrawerClose,
+    DrawerContent,
+    DrawerDescription,
+    DrawerFooter,
+    DrawerHeader,
+    DrawerTitle,
+    DrawerTrigger,
+  },
   title: "Overlay/Drawer",
 });
 
 export const Default = meta.story({
-  render: (args) => (
-    <Drawer {...args}>
+  render: ({ direction, modal, onOpenChange, shouldScaleBackground }) => (
+    <Drawer
+      direction={direction}
+      modal={modal}
+      onOpenChange={onOpenChange}
+      shouldScaleBackground={shouldScaleBackground}
+    >
       <DrawerTrigger asChild>
         <Button variant="outline">Open drawer</Button>
       </DrawerTrigger>
@@ -79,12 +100,17 @@ export const Default = meta.story({
   ),
 });
 
-const DRAWER_SIDES = ["top", "right", "bottom", "left"] as const;
+/** Same composition as `Default`, only the edge it enters from changes (driven by `args`). */
+export const FromRight = meta.story({
+  args: { direction: "right" },
+  render: Default.input.render,
+});
 
+/** A distinct composition: one trigger per edge, demonstrating every `direction` at once. */
 export const Sides = meta.story({
   render: () => (
     <div className="flex flex-wrap gap-2">
-      {DRAWER_SIDES.map((side) => (
+      {(["top", "right", "bottom", "left"] as const).map((side) => (
         <Drawer key={side} direction={side}>
           <DrawerTrigger asChild>
             <Button variant="outline" className="capitalize">
@@ -118,45 +144,21 @@ export const Sides = meta.story({
   ),
 });
 
-export const ScrollableContent = meta.story({
-  render: () => (
-    <Drawer direction="right">
-      <DrawerTrigger asChild>
-        <Button variant="outline">Scrollable Content</Button>
-      </DrawerTrigger>
-      <DrawerContent>
-        <DrawerHeader>
-          <DrawerTitle>Move Goal</DrawerTitle>
-          <DrawerDescription>Set your daily activity goal.</DrawerDescription>
-        </DrawerHeader>
-        <div className="no-scrollbar overflow-y-auto px-4">
-          {Array.from({ length: 10 }).map((_, index) => (
-            <p key={index} className="mb-4 leading-normal">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et
-              dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex
-              ea commodo consequat.
-            </p>
-          ))}
-        </div>
-        <DrawerFooter>
-          <Button>Submit</Button>
-          <DrawerClose asChild>
-            <Button variant="outline">Cancel</Button>
-          </DrawerClose>
-        </DrawerFooter>
-      </DrawerContent>
-    </Drawer>
-  ),
-});
-
 export const OpensOnClick = meta.story({
+  args: { onOpenChange: fn() },
   render: Default.input.render,
 });
 
 /** Interaction test (CSF Next `.test()`) — runs in a real browser via `test:stories`. */
-OpensOnClick.test("opens on click", async ({ canvas, userEvent }) => {
-  const trigger = canvas.getByRole("button", { name: /open drawer/i });
-  await userEvent.click(trigger);
-  await expect(await screen.findByRole("dialog")).toBeVisible();
-  await expect(await screen.findByText(/make changes and save when done/i)).toBeVisible();
+OpensOnClick.test("opens on click and reports open state", async ({ args, canvas, userEvent }) => {
+  await userEvent.click(canvas.getByRole("button", { name: /open drawer/i }));
+
+  // Portalled content: query the document, not the canvas, and assert presence to ride out Vaul's animation.
+  await expect(await screen.findByRole("dialog")).toBeInTheDocument();
+  await expect(await screen.findByText(/make changes and save when done/i)).toBeInTheDocument();
+  await expect(args.onOpenChange).toHaveBeenCalledWith(true);
+
+  // Closing via the footer Close button drives the open state back to false.
+  await userEvent.click(await screen.findByRole("button", { name: /cancel/i }));
+  await waitFor(() => expect(args.onOpenChange).toHaveBeenCalledWith(false));
 });

@@ -6,11 +6,22 @@ import { HoverCard, HoverCardContent, HoverCardTrigger } from "#/components/hove
 
 import preview from "../.storybook/preview";
 
+/**
+ * HoverCard — a COMPOSITE overlay whose root (`HoverCard`) owns plain timing/state
+ * props (`openDelay`, `closeDelay`, `defaultOpen`), so it binds cleanly as `component`
+ * and is driven by `{...args}`. The trigger + floating content are authored for
+ * Storybook here, NOT synced with the apps/web registry.
+ *
+ * **Anatomy:** `HoverCard > HoverCardTrigger + HoverCardContent`.
+ */
 const meta = preview.meta({
   args: { closeDelay: 300, defaultOpen: false, openDelay: 700 },
   argTypes: {
+    closeDelay: { control: { max: 2000, min: 0, step: 100, type: "number" } },
+    defaultOpen: { control: "boolean" },
     onOpenChange: { table: { disable: true } },
     open: { table: { disable: true } },
+    openDelay: { control: { max: 2000, min: 0, step: 100, type: "number" } },
   },
   component: HoverCard,
   subcomponents: {

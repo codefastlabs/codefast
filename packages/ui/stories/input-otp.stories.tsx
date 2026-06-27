@@ -5,10 +5,12 @@ import { InputOTP, InputOTPGroup, InputOTPSeparator, InputOTPSlot, REGEXP_ONLY_D
 import preview from "../.storybook/preview";
 
 /**
- * OTPInput's props are a union (`render` XOR `children`), so binding `component`
- * makes `meta.story({ render })` resolve to `never`. Expose a flat custom args
- * shape and apply `maxLength`/`disabled` explicitly; keep `InputOTP` documented
- * via `subcomponents`.
+ * InputOtp — a COMPOSITE whose root (`OTPInput`) prop type is a `render` XOR
+ * `children` union, so binding `component` + `render: (args) => ...` makes args
+ * resolve to `never`. Use the FLAT-ARGS workaround: a custom `InputOtpArgs`
+ * shape drives `maxLength`/`disabled`, and the real parts stay documented via
+ * `subcomponents`. Content is authored for Storybook, NOT synced with the
+ * apps/web registry.
  */
 interface InputOtpArgs {
   disabled: boolean;
@@ -21,7 +23,6 @@ const meta = preview.type<{ args: InputOtpArgs }>().meta({
     disabled: { control: "boolean" },
     maxLength: { control: "number" },
   },
-  subcomponents: { InputOTP, InputOTPGroup, InputOTPSlot, InputOTPSeparator },
   parameters: {
     docs: {
       description: {
@@ -34,6 +35,7 @@ const meta = preview.type<{ args: InputOtpArgs }>().meta({
       },
     },
   },
+  subcomponents: { InputOTP, InputOTPGroup, InputOTPSeparator, InputOTPSlot },
   title: "Form/InputOtp",
 });
 
@@ -58,45 +60,42 @@ export const Default = meta.story({
   ),
 });
 
-export const FourDigits = meta.story({
-  render: () => (
-    <InputOTP maxLength={4} pattern={REGEXP_ONLY_DIGITS}>
-      <InputOTPGroup>
-        <InputOTPSlot index={0} />
-        <InputOTPSlot index={1} />
-        <InputOTPSlot index={2} />
-        <InputOTPSlot index={3} />
-      </InputOTPGroup>
-    </InputOTP>
-  ),
+// States of the same composition — differ ONLY by args, reusing Default's render.
+export const Disabled = meta.story({
+  args: { disabled: true },
+  render: Default.input.render,
 });
 
-export const Disabled = meta.story({
-  render: () => (
-    <InputOTP maxLength={6} disabled value="123456">
+// A genuinely different composition: a single 4-slot group restricted to digits.
+export const FourDigits = meta.story({
+  args: { maxLength: 4 },
+  render: ({ disabled, maxLength }) => (
+    <InputOTP disabled={disabled} maxLength={maxLength} pattern={REGEXP_ONLY_DIGITS}>
       <InputOTPGroup>
         <InputOTPSlot index={0} />
         <InputOTPSlot index={1} />
         <InputOTPSlot index={2} />
-      </InputOTPGroup>
-      <InputOTPSeparator />
-      <InputOTPGroup>
         <InputOTPSlot index={3} />
-        <InputOTPSlot index={4} />
-        <InputOTPSlot index={5} />
       </InputOTPGroup>
     </InputOTP>
   ),
 });
 
 export const TypingDigits = meta.story({
+  args: { maxLength: 4 },
   render: FourDigits.input.render,
 });
 
 /** Interaction test (CSF Next `.test()`) — runs in a real browser via `test:stories`. */
-TypingDigits.test("types digits", async ({ canvas, userEvent }) => {
+TypingDigits.test("typed digits land in each slot and the field value updates", async ({ canvas, userEvent }) => {
   const input = canvas.getByRole("textbox");
 
   await userEvent.type(input, "1234");
+
+  // Contract: the hidden input holds the full code, and each slot renders its char.
   await expect(input).toHaveValue("1234");
+
+  for (const char of ["1", "2", "3", "4"]) {
+    await expect(canvas.getByText(char)).toBeInTheDocument();
+  }
 });

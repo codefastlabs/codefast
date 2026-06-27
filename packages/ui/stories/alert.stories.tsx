@@ -1,15 +1,24 @@
-import { AlertCircleIcon, CheckCircle2Icon, InfoIcon, XIcon } from "lucide-react";
+import { CheckCircle2Icon, InfoIcon, XIcon } from "lucide-react";
+import { expect, fn } from "storybook/test";
 
 import { Alert, AlertAction, AlertDescription, AlertTitle } from "#/components/alert";
 import { Button } from "#/components/button";
 
 import preview from "../.storybook/preview";
 
+/**
+ * Alert — a prop-driven COMPOSITE. The `Alert` root owns the only interesting prop
+ * (`variant`), while title/description/action are composed slots. Content here is
+ * authored against the component's own public API, independent of the apps/web registry.
+ */
 const meta = preview.meta({
   args: { variant: "default" },
+  argTypes: {
+    variant: { control: "radio", options: ["default", "destructive"] },
+  },
   component: Alert,
-  subcomponents: { AlertTitle, AlertDescription, AlertAction },
   parameters: {
+    controls: { include: ["variant"] },
     docs: {
       description: {
         component: [
@@ -21,6 +30,7 @@ const meta = preview.meta({
       },
     },
   },
+  subcomponents: { AlertAction, AlertDescription, AlertTitle },
   title: "Display/Alert",
 });
 
@@ -39,9 +49,16 @@ export const Default = meta.story({
   ),
 });
 
+/** Error state — only the `variant` arg changes; the composition is reused. */
+export const Destructive = meta.story({
+  args: { variant: "destructive" },
+  render: Default.input.render,
+});
+
+/** A genuinely different composition: no trailing action, success messaging. */
 export const Basic = meta.story({
-  render: () => (
-    <Alert className="max-w-md">
+  render: (args) => (
+    <Alert {...args} className="w-full max-w-sm">
       <CheckCircle2Icon />
       <AlertTitle>Account updated successfully</AlertTitle>
       <AlertDescription>
@@ -51,28 +68,29 @@ export const Basic = meta.story({
   ),
 });
 
-export const Destructive = meta.story({
-  render: () => (
-    <Alert variant="destructive" className="max-w-md">
-      <AlertCircleIcon />
-      <AlertTitle>Payment failed</AlertTitle>
-      <AlertDescription>
-        Your payment could not be processed. Please check your payment method and try again.
-      </AlertDescription>
-    </Alert>
-  ),
-});
+const onDismiss = fn();
 
-export const WithAction = meta.story({
-  render: () => (
-    <Alert className="max-w-md">
-      <AlertTitle>Dark mode is now available</AlertTitle>
-      <AlertDescription>Enable it under your profile settings to get started.</AlertDescription>
+export const Dismissible = meta.story({
+  render: (args) => (
+    <Alert {...args} className="w-full max-w-sm">
+      <InfoIcon />
+      <AlertTitle>Heads up</AlertTitle>
+      <AlertDescription>You can add components using the CLI.</AlertDescription>
       <AlertAction>
-        <Button size="xs" variant="default">
-          Enable
+        <Button aria-label="Dismiss" onClick={onDismiss} size="icon-xs" variant="ghost">
+          <XIcon />
         </Button>
       </AlertAction>
     </Alert>
   ),
+});
+
+Dismissible.test("invokes the dismiss handler when the action button is pressed", async ({ canvas, userEvent }) => {
+  onDismiss.mockClear();
+
+  const dismiss = canvas.getByRole("button", { name: "Dismiss" });
+
+  await userEvent.click(dismiss);
+
+  await expect(onDismiss).toHaveBeenCalledTimes(1);
 });

@@ -4,8 +4,11 @@ import { Kbd, KbdGroup } from "#/components/kbd";
 import preview from "../.storybook/preview";
 
 /**
- * Kbd is a composition with optional root props. Demoed via `render` while
- * keeping `component` bound to the Root (Pattern C, see Card).
+ * Kbd — a pure-display, layout-only leaf. Both `Kbd` and `KbdGroup` render a
+ * semantic `<kbd>` and accept only native `ComponentProps<"kbd">` (no enum /
+ * boolean / number variant of their own), so the only meaningful Control is the
+ * key text via `children`. Content here is authored for Storybook against the
+ * component's own public API — it is NOT synced with the apps/web registry.
  */
 const meta = preview.meta({
   args: { children: "⌘" },
@@ -13,20 +16,20 @@ const meta = preview.meta({
     children: { control: "text" },
   },
   component: Kbd,
-  subcomponents: { KbdGroup },
   parameters: {
     controls: { include: ["children"] },
     docs: {
       description: {
         component: [
-          "Displays a keyboard key or shortcut as inline text.",
+          "Displays a keyboard key or shortcut as inline text via a semantic `<kbd>` element.",
           "",
           "**Anatomy:** `Kbd` for a single key, or `KbdGroup > Kbd…` to compose a multi-key shortcut.",
-          "Renders semantic `<kbd>` elements and adapts its styling inside tooltips.",
+          "Styling adapts automatically inside tooltips.",
         ].join("\n"),
       },
     },
   },
+  subcomponents: { KbdGroup },
   title: "Display/Kbd",
 });
 
@@ -36,8 +39,10 @@ const SHORTCUTS = [
   { action: "Toggle sidebar", keys: ["⌘", "B"] },
 ];
 
+/** A single key — driven entirely by the `children` Control. */
 export const Default = meta.story();
 
+/** Several shortcuts, each composed from `KbdGroup` wrapping individual `Kbd` keys. */
 export const Shortcuts = meta.story({
   render: () => (
     <div className="w-full max-w-xs space-y-2.5">
@@ -55,6 +60,7 @@ export const Shortcuts = meta.story({
   ),
 });
 
+/** Inline shortcut hint inside running prose. */
 export const Group = meta.story({
   render: () => (
     <p className="text-sm text-muted-foreground">
@@ -68,11 +74,12 @@ export const Group = meta.story({
   ),
 });
 
+/** A key embedded inside a button, demonstrating the tooltip/surface-aware styling. */
 export const InButton = meta.story({
   render: () => (
     <Button variant="outline">
       Accept{" "}
-      <Kbd data-icon="inline-end" className="translate-x-0.5">
+      <Kbd className="translate-x-0.5" data-icon="inline-end">
         ⏎
       </Kbd>
     </Button>

@@ -9,9 +9,11 @@ import { Input } from "#/components/input";
 import preview from "../.storybook/preview";
 
 /**
- * Form composes react-hook-form with `Form`/`FormField`/`FormItem` and friends.
- * The root needs a `useForm` instance, so it's demoed via `render` with a small
- * client component — keep `component` only for prop-driven single components.
+ * Form is a COMPOSITE: `Form` is a thin alias over react-hook-form's `FormProvider`,
+ * a context provider with no DOM of its own — so it correctly exposes no Controls and
+ * is demoed via `render` with a small client component that owns a `useForm` instance.
+ * Content here is authored for Storybook against the component's own API, NOT synced
+ * with the apps/web registry.
  */
 interface SignInValues {
   email: string;
@@ -92,13 +94,17 @@ export const Default = meta.story({
 });
 
 export const ValidatesRequired = meta.story({
-  render: () => <SignInForm />,
+  render: Default.input.render,
 });
 
 /** Interaction test (CSF Next `.test()`) — runs in a real browser via `test:stories`. */
-ValidatesRequired.test("validates required", async ({ canvas, userEvent }) => {
-  const submit = canvas.getByRole("button", { name: /sign in/i });
+ValidatesRequired.test("surfaces required errors and marks the control invalid", async ({ canvas, userEvent }) => {
+  const username = canvas.getByLabelText(/username/i);
 
-  await userEvent.click(submit);
+  await expect(username).toHaveAttribute("aria-invalid", "false");
+
+  await userEvent.click(canvas.getByRole("button", { name: /sign in/i }));
+
   await expect(await canvas.findByText(/username is required/i)).toBeVisible();
+  await expect(username).toHaveAttribute("aria-invalid", "true");
 });
