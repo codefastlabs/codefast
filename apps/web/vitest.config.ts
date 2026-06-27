@@ -1,7 +1,7 @@
 import viteReact from "@vitejs/plugin-react";
 import { defineConfig } from "vitest/config";
 
-import { shikiPlugin } from "./vite-plugin-shiki";
+import { shikiPlugin } from "./vite.shiki";
 
 // Standalone test config — Vitest picks this over `vite.config.ts`. The app's
 // dev/build plugins (TanStack Start, Nitro, devtools) spin up an SSR server

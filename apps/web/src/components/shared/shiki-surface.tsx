@@ -16,7 +16,7 @@ export function ShikiSurface({ html, className, showLineNumbers, ...props }: Shi
         // The gutter is a `position: sticky` counter so the numbers stay pinned
         // on the left while code scrolls horizontally underneath. Its background
         // must match the Shiki theme background so scrolled code can't bleed
-        // through — kept in sync with THEME_LIGHT/THEME_DARK in vite-plugin-shiki.ts
+        // through — kept in sync with THEME_LIGHT/THEME_DARK in vite.shiki.ts
         // (github-light #fff / github-dark #24292e). `[&_.shiki]:ps-0` drops the
         // pre's left padding so the sticky number reaches the true left edge.
         showLineNumbers &&

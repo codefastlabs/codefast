@@ -1,6 +1,6 @@
 /**
  * Shape of a `?shiki` module — a source file pre-highlighted at build time by
- * the Vite plugin in `vite-plugin-shiki.ts`. Replaces the old runtime Shiki
+ * the Vite plugin in `vite.shiki.ts`. Replaces the old runtime Shiki
  * highlighter: consumers import these static strings instead of highlighting
  * per request.
  */

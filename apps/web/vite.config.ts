@@ -6,7 +6,7 @@ import viteReact, { reactCompilerPreset } from "@vitejs/plugin-react";
 import { nitro } from "nitro/vite";
 import { defineConfig } from "vite";
 
-import { shikiPlugin } from "./vite-plugin-shiki";
+import { shikiPlugin } from "./vite.shiki";
 
 export default defineConfig(({ command }) => {
   const isDev = command === "serve";
