@@ -21,7 +21,21 @@ export default defineConfig(({ command }) => {
       tsconfigPaths: true,
     },
     plugins: [
-      devtools(),
+      devtools({
+        // Click an element in the TanStack Devtools overlay (Shift+Option+Command+click) to open
+        // its source in WebStorm. Without this `editor` block the plugin falls back to its default
+        // (VS Code), so WebStorm never opens. Requires the `webstorm` CLI launcher on PATH.
+        editor: {
+          name: "WebStorm",
+          open: async (path, lineNumber, columnNumber) => {
+            const { exec } = await import("node:child_process");
+
+            exec(
+              `webstorm --line ${lineNumber || 1} --column ${columnNumber || 1} "${path.replaceAll("$", String.raw`\$`)}"`,
+            );
+          },
+        },
+      }),
       shikiPlugin(),
       tailwindcss(),
       tanstackStart({
