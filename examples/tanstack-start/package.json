@@ -1,5 +1,5 @@
 {
-  "name": "@apps/start-demo",
+  "name": "@examples/tanstack-start",
   "private": true,
   "type": "module",
   "imports": {
@@ -12,10 +12,10 @@
     "check-types": "tsgo --noEmit"
   },
   "dependencies": {
-    "@codefast/di": "^0.4.0",
-    "@codefast/tailwind-variants": "^0.4.0",
-    "@codefast/theme": "^0.4.0",
-    "@codefast/ui": "^0.4.0",
+    "@codefast/di": "catalog:",
+    "@codefast/tailwind-variants": "catalog:",
+    "@codefast/theme": "catalog:",
+    "@codefast/ui": "catalog:",
     "@tanstack/react-router": "catalog:",
     "@tanstack/react-start": "catalog:",
     "lucide-react": "catalog:",
@@ -26,7 +26,7 @@
   },
   "devDependencies": {
     "@babel/plugin-proposal-decorators": "catalog:",
-    "@codefast/typescript-config": "^0.4.0",
+    "@codefast/typescript-config": "catalog:",
     "@rolldown/plugin-babel": "catalog:",
     "@tailwindcss/vite": "catalog:",
     "@tanstack/router-plugin": "catalog:",
@@ -35,13 +35,8 @@
     "@types/react-dom": "catalog:",
     "@typescript/native-preview": "catalog:",
     "@vitejs/plugin-react": "catalog:",
+    "babel-plugin-react-compiler": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:"
-  },
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "esbuild",
-      "lightningcss"
-    ]
   }
 }

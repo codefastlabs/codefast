@@ -7,7 +7,7 @@ description: Quy trình release packages @codefast/* — tạo changeset, canary
 
 ## Nguyên tắc chung
 
-- Mọi package `@codefast/*` nằm trong nhóm `fixed` (`.changeset/config.json`) — **version cùng nhau**. `@apps/web` nằm trong `ignore`, không bao giờ cần changeset.
+- Mọi package `@codefast/*` nằm trong nhóm `fixed` (`.changeset/config.json`) — **version cùng nhau**. `@apps/ui` nằm trong `ignore`, không bao giờ cần changeset.
 - **Không chạy `pnpm changeset add`** (TUI tương tác). Tự viết file `.changeset/<kebab-case>.md`:
 
   ```md

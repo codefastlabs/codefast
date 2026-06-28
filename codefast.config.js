@@ -14,7 +14,8 @@ const config = {
     "@codefast/tailwind-variants": {
       preserve: true,
     },
-    "@apps/web": false,
+    "@apps/ui": false,
+    "@examples/tanstack-start": false,
     "@codefast/cli": false,
     "@codefast/benchmark-tailwind-variants": false,
     "@codefast/typescript-config": false,
@@ -28,7 +29,7 @@ const config = {
 
   tag: {
     // Glob patterns (picomatch) — skip every private app under the @apps scope.
-    skipPackages: ["@apps/*"],
+    skipPackages: ["@apps/*", "@examples/*"],
   },
 };
 
