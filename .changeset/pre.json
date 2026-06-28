@@ -13,5 +13,8 @@
     "@codefast/typescript-config": "0.4.0",
     "@codefast/ui": "0.4.0"
   },
-  "changesets": []
+  "changesets": [
+    "cli-skippackages-glob",
+    "theme-vite-plugin"
+  ]
 }
