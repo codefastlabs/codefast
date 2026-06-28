@@ -27,15 +27,20 @@ To make pnpm actually fetch these from the registry instead of linking the local
 `vite.config.ts` deliberately omits the dev-only `source` resolve condition that `apps/web`
 uses, so what runs here is the packages' built `dist/`, not their `src/`.
 
+It also adds `@rolldown/plugin-babel` with `@babel/plugin-proposal-decorators`: `@codefast/di` uses
+TC39 Stage 3 decorators (`@injectable`, `@postConstruct`). Vite 8 bundles with Rolldown (oxc), whose
+built-in decorator transform only covers _legacy_ (`experimentalDecorators`) decorators — not the
+standard ones — so Babel lowers them.
+
 ## What it demos
 
-| Route        | Package                       | Shows                                                            |
-| ------------ | ----------------------------- | ---------------------------------------------------------------- |
-| `/`          | overview                      | Which packages are installed and from where                      |
-| `/ui`        | `@codefast/ui`                | Buttons, badges, card, form field, switch, tabs                  |
-| `/ui` header | `@codefast/theme`             | SSR-safe light/dark/system toggle via server functions + cookie  |
-| `/variants`  | `@codefast/tailwind-variants` | A `Callout` component built from one typed `tv()` config         |
-| `/di`        | `@codefast/di`                | A server-side composition root resolved inside a server function |
+| Route        | Package                       | Shows                                                                                                                                                                                                                                                      |
+| ------------ | ----------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `/`          | overview                      | Which packages are installed and from where                                                                                                                                                                                                                |
+| `/ui`        | `@codefast/ui`                | Buttons, badges, card, form field, switch, tabs                                                                                                                                                                                                            |
+| `/ui` header | `@codefast/theme`             | SSR-safe light/dark/system toggle via server functions + cookie                                                                                                                                                                                            |
+| `/variants`  | `@codefast/tailwind-variants` | A `Callout` component built from one typed `tv()` config                                                                                                                                                                                                   |
+| `/di`        | `@codefast/di`                | Interactive task board: `@injectable` + modules wire the graph; each action is a server function that resolves a `scoped` service from a per-request child container, with singleton repository/log, `rebind`, `validate()`, and the live dependency graph |
 
 ## Develop
 
