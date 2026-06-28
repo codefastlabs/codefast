@@ -167,7 +167,12 @@ function resolveTargetSelection(fs: FilesystemPort, candidate: TagTargetCandidat
   };
 }
 
-function filterSkippedCandidates(
+/**
+ * Partition tag target candidates into those to tag and those to skip, matching
+ * each candidate's package name against `skipPackages` as glob patterns.
+ * Candidates without a package name (e.g. an explicit-target path) are never skipped.
+ */
+export function filterSkippedCandidates(
   targetCandidates: Array<TagTargetCandidate>,
   skipPackages: ReadonlyArray<string> | undefined,
 ): { includedCandidates: Array<TagTargetCandidate>; skippedPackages: Array<string> } {
