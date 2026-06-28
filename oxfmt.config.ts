@@ -44,5 +44,6 @@ export default defineConfig({
     "**/.content-collections/**",
     "**/*.tsbuildinfo",
     "apps/web/src/routeTree.gen.ts",
+    "apps/start-demo/src/routeTree.gen.ts",
   ],
 });
