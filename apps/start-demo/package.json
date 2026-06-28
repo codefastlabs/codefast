@@ -25,7 +25,10 @@
     "tw-animate-css": "catalog:"
   },
   "devDependencies": {
+    "@babel/core": "^7.29.0",
+    "@babel/plugin-proposal-decorators": "^7.25.0",
     "@codefast/typescript-config": "0.4.0",
+    "@rolldown/plugin-babel": "catalog:",
     "@tailwindcss/vite": "catalog:",
     "@tanstack/router-plugin": "catalog:",
     "@types/node": "catalog:",
