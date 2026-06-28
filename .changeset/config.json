@@ -12,5 +12,5 @@
   "linked": [],
   "access": "public",
   "updateInternalDependencies": "patch",
-  "ignore": ["@apps/start-demo", "@apps/web"]
+  "ignore": ["@apps/*"]
 }

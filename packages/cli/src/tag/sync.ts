@@ -4,6 +4,7 @@ import type { CodefastAfterWriteHook, CodefastTagConfig } from "#/core/config/sc
 import { AppError } from "#/core/errors";
 import { messageFrom } from "#/core/errors";
 import type { FilesystemPort } from "#/core/filesystem/port";
+import { createAnyGlobMatcher } from "#/core/glob";
 import type { Result } from "#/core/result";
 import { err, ok } from "#/core/result";
 import type {
@@ -166,7 +167,12 @@ function resolveTargetSelection(fs: FilesystemPort, candidate: TagTargetCandidat
   };
 }
 
-function filterSkippedCandidates(
+/**
+ * Partition tag target candidates into those to tag and those to skip, matching
+ * each candidate's package name against `skipPackages` as glob patterns.
+ * Candidates without a package name (e.g. an explicit-target path) are never skipped.
+ */
+export function filterSkippedCandidates(
   targetCandidates: Array<TagTargetCandidate>,
   skipPackages: ReadonlyArray<string> | undefined,
 ): { includedCandidates: Array<TagTargetCandidate>; skippedPackages: Array<string> } {
@@ -177,12 +183,12 @@ function filterSkippedCandidates(
     };
   }
 
-  const skipPackageSet = new Set(skipPackages);
+  const isSkipped = createAnyGlobMatcher(skipPackages);
   const includedCandidates: Array<TagTargetCandidate> = [];
   const skippedPackages: Array<string> = [];
   for (const candidate of targetCandidates) {
     const packageName = candidate.packageName;
-    if (packageName && skipPackageSet.has(packageName)) {
+    if (packageName && isSkipped(packageName)) {
       skippedPackages.push(packageName);
       continue;
     }
