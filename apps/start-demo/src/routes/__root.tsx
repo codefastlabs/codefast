@@ -1,7 +1,8 @@
 import { AppearanceProvider, AppearanceScript, resolveColorScheme } from "@codefast/theme";
 import { getColorSchemeServerFn, getRootColorSchemeServerFn, persistColorSchemeCookie } from "@codefast/theme/start";
+import { Button } from "@codefast/ui/button";
 import { cn } from "@codefast/ui/lib/utils";
-import { HeadContent, Scripts, createRootRoute } from "@tanstack/react-router";
+import { HeadContent, Link, Scripts, createRootRoute } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 
 import { SiteHeader } from "#/components/site-header";
@@ -25,6 +26,7 @@ export const Route = createRootRoute({
   // `getRootColorSchemeServerFn` reads the httpOnly cookie on the server so the first paint
   // already has the right color scheme — no flash. It comes from `@codefast/theme/start`.
   loader: () => getRootColorSchemeServerFn(),
+  notFoundComponent: NotFound,
   shellComponent: RootDocument,
 });
 
@@ -56,5 +58,20 @@ function RootDocument({ children }: { children: ReactNode }) {
         <Scripts />
       </body>
     </html>
+  );
+}
+
+function NotFound() {
+  return (
+    <div className="space-y-4 py-16 text-center">
+      <p className="text-sm font-medium text-muted-foreground">404</p>
+      <h1 className="text-2xl font-bold tracking-tight">Page not found</h1>
+      <p className="mx-auto max-w-md text-sm text-muted-foreground">
+        No route matches that URL. Pick a section from the header, or head back to the overview.
+      </p>
+      <Button asChild variant="outline">
+        <Link to="/">Back to overview</Link>
+      </Button>
+    </div>
   );
 }
