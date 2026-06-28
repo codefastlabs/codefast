@@ -27,7 +27,8 @@ const config = {
   },
 
   tag: {
-    skipPackages: ["@apps/web"],
+    // Glob patterns (picomatch) — skip every private app under the @apps scope.
+    skipPackages: ["@apps/*"],
   },
 };
 

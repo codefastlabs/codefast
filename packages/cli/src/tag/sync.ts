@@ -4,6 +4,7 @@ import type { CodefastAfterWriteHook, CodefastTagConfig } from "#/core/config/sc
 import { AppError } from "#/core/errors";
 import { messageFrom } from "#/core/errors";
 import type { FilesystemPort } from "#/core/filesystem/port";
+import { createAnyGlobMatcher } from "#/core/glob";
 import type { Result } from "#/core/result";
 import { err, ok } from "#/core/result";
 import type {
@@ -177,12 +178,12 @@ function filterSkippedCandidates(
     };
   }
 
-  const skipPackageSet = new Set(skipPackages);
+  const isSkipped = createAnyGlobMatcher(skipPackages);
   const includedCandidates: Array<TagTargetCandidate> = [];
   const skippedPackages: Array<string> = [];
   for (const candidate of targetCandidates) {
     const packageName = candidate.packageName;
-    if (packageName && skipPackageSet.has(packageName)) {
+    if (packageName && isSkipped(packageName)) {
       skippedPackages.push(packageName);
       continue;
     }

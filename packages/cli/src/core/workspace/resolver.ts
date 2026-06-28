@@ -2,11 +2,11 @@ import { globSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-import picomatch from "picomatch";
 import { parse as parseYaml } from "yaml";
 
 import { messageFrom } from "#/core/errors";
 import type { FilesystemPort } from "#/core/filesystem/port";
+import { createAnyGlobMatcher } from "#/core/glob";
 import { logger } from "#/core/logger";
 
 /**
@@ -238,11 +238,9 @@ export async function listWorkspacePackageDirectories(
     }
   }
 
-  const excludeMatchers = exclude.map((pat) => picomatch(pat, { dot: true }));
+  const isExcluded = createAnyGlobMatcher(exclude, { dot: true });
 
-  const filteredRelative = [...foundRelativePosixPackageRoots].filter(
-    (rel) => !excludeMatchers.some((isMatch) => isMatch(rel)),
-  );
+  const filteredRelative = [...foundRelativePosixPackageRoots].filter((rel) => !isExcluded(rel));
   filteredRelative.sort((a, b) => a.localeCompare(b));
 
   const packageDirectoryPathsAbsolute = filteredRelative.map((rel) =>
