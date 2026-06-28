@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Overview
 
-CodeFast is a **pnpm workspaces + Turborepo** monorepo (Node ≥ 24, pnpm 11.8.0) publishing the `@codefast/*` packages. The flagship is `@codefast/ui`, a Radix-based, Tailwind CSS 4 component library. `apps/web` is a TanStack Start showcase site that consumes the packages.
+CodeFast is a **pnpm workspaces + Turborepo** monorepo (Node ≥ 24, pnpm 11.8.0) publishing the `@codefast/*` packages. The flagship is `@codefast/ui`, a Radix-based, Tailwind CSS 4 component library. `apps/ui` is a TanStack Start showcase site that consumes the packages.
 
 ## Toolchain (non-standard — read before assuming)
 
@@ -58,23 +58,24 @@ Rules: **no tests under `src/**`**; no test files directly under `tests/`(must b
 
 ## Packages
 
-| Path                         | Role                                                                                                  |
-| ---------------------------- | ----------------------------------------------------------------------------------------------------- |
-| `packages/ui`                | `@codefast/ui` — Radix + Tailwind component library; per-component subpath exports (`./button`, etc.) |
-| `packages/tailwind-variants` | Type-safe variant styling API (faster `tailwind-variants` replacement); used by `ui`                  |
-| `packages/theme`             | Theme management using React 19 features (optimistic updates, cross-tab sync)                         |
-| `packages/di`                | Lightweight dependency-injection primitives                                                           |
-| `packages/cli`               | `codefast` CLI — subcommands `arrange`, `mirror`, `tag` (run via `pnpm run codefast <cmd>`)           |
-| `packages/typescript-config` | Shared tsconfig presets                                                                               |
-| `packages/benchmark-*`       | Performance benchmark harness/viewer (`pnpm bench`)                                                   |
-| `apps/web`                   | TanStack Start showcase; component registry + showcase routes                                         |
+| Path                         | Role                                                                                                   |
+| ---------------------------- | ------------------------------------------------------------------------------------------------------ |
+| `packages/ui`                | `@codefast/ui` — Radix + Tailwind component library; per-component subpath exports (`./button`, etc.)  |
+| `packages/tailwind-variants` | Type-safe variant styling API (faster `tailwind-variants` replacement); used by `ui`                   |
+| `packages/theme`             | Theme management using React 19 features (optimistic updates, cross-tab sync)                          |
+| `packages/di`                | Lightweight dependency-injection primitives                                                            |
+| `packages/cli`               | `codefast` CLI — subcommands `arrange`, `mirror`, `tag` (run via `pnpm run codefast <cmd>`)            |
+| `packages/typescript-config` | Shared tsconfig presets                                                                                |
+| `packages/benchmark-*`       | Performance benchmark harness/viewer (`pnpm bench`)                                                    |
+| `apps/ui`                    | Docs/showcase site for `@codefast/ui` (TanStack Start); consumes `packages/*` via `workspace:*`        |
+| `examples/tanstack-start`    | Consumer smoke-test: installs the **published** `@codefast/*` from npm (via catalog) on TanStack Start |
 
-## UI/component conventions (apps/web and packages/ui)
+## UI/component conventions (apps/ui and packages/ui)
 
 These are project rules the linters do not fully enforce:
 
 - **No Tailwind-classes-in-a-variable** (`const FOO = "flex gap-3"`) — it loses IntelliSense/auto-sort. Write classes inline in `className`. When a class set repeats, extract a **reusable component**, not a string constant. Conditional classes use `cn()` inline. CSS effects (gradient/mask/background-size) use Tailwind arbitrary values (`bg-[radial-gradient(...)]`), not `style` objects.
-- **One component per file** under `apps/web/src/components/**`. Extract sub-components/helpers into their own kebab-case file and import. Accepted co-location exceptions: icon sets, and `*.example.tsx` / `demo.tsx` under `registry/`.
+- **One component per file** under `apps/ui/src/components/**`. Extract sub-components/helpers into their own kebab-case file and import. Accepted co-location exceptions: icon sets, and `*.example.tsx` / `demo.tsx` under `registry/`.
 - **No inline prop types.** Declare `interface XxxProps extends ComponentProps<"element">` (matching the host element rendered), spread `{...props}` **last** on that element, and merge classes via `cn(base, className)`. `Omit` any attr the wrapper hard-sets. When forwarding to another component (not a DOM element), extend `ComponentProps<typeof ThatComponent>` and `Omit` the required props the wrapper supplies. Exception: a handler the component must own (e.g. a `CopyButton`'s `onClick`) goes _after_ `{...props}` with a comment.
 
 ## Releases

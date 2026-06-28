@@ -10,7 +10,7 @@ export default defineConfig({
   // ---------------------------------------------------------------------------
   // Built-in plugins relevant to this monorepo: TypeScript libraries (di,
   // tailwind-variants, cli), React 19 UI packages (ui, theme, benchmark-viewer),
-  // a TanStack Start app (web), and vitest test suites.
+  // TanStack Start apps (apps/ui docs site, examples/* consumers), and vitest test suites.
   plugins: ["import", "jsx-a11y", "node", "oxc", "promise", "react", "typescript", "unicorn", "vitest"],
   // Correctness only (oxlint's recommended default scope) — broader categories
   // (suspicious, pedantic) are too noisy for this codebase under denyWarnings.
@@ -74,7 +74,7 @@ export default defineConfig({
       // no semantic-equivalent HTML tag in these contexts — e.g. role="progressbar"
       // on <svg>, role="group" on layout divs, role="status" live regions.
       files: [
-        "apps/web/src/**/*.{ts,tsx}",
+        "apps/ui/src/**/*.{ts,tsx}",
         "packages/benchmark-viewer/src/**/*.{ts,tsx}",
         "packages/ui/src/**/*.{ts,tsx}",
       ],
@@ -135,6 +135,7 @@ export default defineConfig({
     "**/.tanstack/**",
     "**/.content-collections/**",
     "**/*.tsbuildinfo",
-    "apps/web/src/routeTree.gen.ts",
+    "apps/ui/src/routeTree.gen.ts",
+    "examples/tanstack-start/src/routeTree.gen.ts",
   ],
 });

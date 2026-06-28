@@ -6,6 +6,6 @@ coverage:
         threshold: 0%
 
 ignore:
-  - "apps/web/**"
+  - "apps/ui/**"
   - ".changeset/**"
   - ".cursor/**"

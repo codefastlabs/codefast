@@ -84,7 +84,7 @@ pnpm test:coverage         # full coverage, all packages + apps
 
 | Package / app                 | unit | integration | e2e | type |
 | ----------------------------- | :--: | :---------: | :-: | :--: |
-| `@apps/web`                   | yes  |     yes     |  —  |  —   |
+| `@apps/ui`                    | yes  |     yes     |  —  |  —   |
 | `@codefast/benchmark-harness` | yes  |      —      |  —  |  —   |
 | `@codefast/cli`               | yes  |      —      |  —  |  —   |
 | `@codefast/di`                | yes  |     yes     |  —  |  —   |

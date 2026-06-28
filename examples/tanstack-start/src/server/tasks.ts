@@ -203,7 +203,7 @@ function getRootContainer(): Container {
     // Seed a little starting data through the resolved repository.
     const repository = container.resolve(TaskRepositoryToken);
 
-    repository.add("Read the start-demo README");
+    repository.add("Read the tanstack-start README");
     repository.add("Toggle the color scheme in the header");
 
     rootContainer = container;

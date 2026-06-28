@@ -4,14 +4,14 @@
     {
       "name": "web",
       "runtimeExecutable": "pnpm",
-      "runtimeArgs": ["--filter", "@apps/web", "exec", "vite", "dev"],
+      "runtimeArgs": ["--filter", "@apps/ui", "exec", "vite", "dev"],
       "port": 3000,
       "autoPort": true
     },
     {
-      "name": "start-demo",
+      "name": "tanstack-start",
       "runtimeExecutable": "pnpm",
-      "runtimeArgs": ["--filter", "@apps/start-demo", "exec", "vite", "dev", "--port", "3001"],
+      "runtimeArgs": ["--filter", "@examples/tanstack-start", "exec", "vite", "dev", "--port", "3001"],
       "port": 3001,
       "autoPort": true
     },

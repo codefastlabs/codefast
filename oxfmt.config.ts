@@ -24,7 +24,7 @@ export default defineConfig({
   // each class string; render-pipeline grouping across strings is handled by
   // `codefast arrange` — the two are complementary.
   sortTailwindcss: {
-    stylesheet: "apps/web/src/styles.css",
+    stylesheet: "apps/ui/src/styles.css",
     functions: ["cn", "cva", "tv"],
   },
 
@@ -43,7 +43,7 @@ export default defineConfig({
     "**/.tanstack/**",
     "**/.content-collections/**",
     "**/*.tsbuildinfo",
-    "apps/web/src/routeTree.gen.ts",
-    "apps/start-demo/src/routeTree.gen.ts",
+    "apps/ui/src/routeTree.gen.ts",
+    "examples/tanstack-start/src/routeTree.gen.ts",
   ],
 });

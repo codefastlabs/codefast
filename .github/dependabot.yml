@@ -22,7 +22,7 @@ updates:
         update-types: ["version-update:semver-major"]
       - dependency-name: "react-dom"
         update-types: ["version-update:semver-major"]
-      # Zod is shared via catalog across apps/web, packages/cli, packages/theme; bump majors deliberately.
+      # Zod is shared via catalog across apps/ui, packages/cli, packages/theme; bump majors deliberately.
       - dependency-name: "zod"
         update-types: ["version-update:semver-major"]
     groups:

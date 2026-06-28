@@ -5,7 +5,7 @@
       "entry": ["package.json", "codefast.config.js"],
       "ignoreDependencies": ["jsdom"]
     },
-    "apps/web": {
+    "apps/ui": {
       "entry": ["src/router.tsx"]
     },
     "packages/cli": {

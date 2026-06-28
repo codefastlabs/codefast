@@ -1,5 +1,5 @@
 {
-  "name": "@apps/web",
+  "name": "@apps/ui",
   "private": true,
   "type": "module",
   "imports": {
@@ -60,11 +60,5 @@
     "typescript": "catalog:",
     "vite": "catalog:",
     "vitest": "catalog:"
-  },
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "esbuild",
-      "lightningcss"
-    ]
   }
 }

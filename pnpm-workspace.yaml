@@ -1,5 +1,6 @@
 packages:
   - apps/*
+  - examples/*
   - packages/**
   - benchmarks/*
 
@@ -18,6 +19,14 @@ catalog:
   "@babel/plugin-proposal-decorators": 8.0.2
   "@changesets/changelog-github": ^0.7.0
   "@changesets/cli": ^2.31.0
+  # Published @codefast/* versions consumed by examples/* (which install from npm,
+  # not workspace: links). Changesets ignores catalog entries, so these are not
+  # auto-bumped on release — bump them by hand when an example should track a newer release.
+  "@codefast/di": ^0.4.0
+  "@codefast/tailwind-variants": ^0.4.0
+  "@codefast/theme": ^0.4.0
+  "@codefast/typescript-config": ^0.4.0
+  "@codefast/ui": ^0.4.0
   "@commitlint/cli": ^21.1.0
   "@commitlint/config-conventional": ^21.1.0
   "@content-collections/core": ^0.15.2
@@ -137,8 +146,7 @@ catalog:
   yaml: ^2.9.0
   zod: ^4.4.3
 
-# `manual` (not `strict`): apps/start-demo pins the published @codefast/* versions from
-# npm instead of catalog/workspace refs, so the catalog must not be enforced repo-wide.
+# `manual` (not `strict`): the catalog is a convenience, not enforced repo-wide.
 catalogMode: manual
 
 minimumReleaseAgeExclude:
