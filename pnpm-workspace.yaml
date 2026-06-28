@@ -137,7 +137,9 @@ catalog:
   yaml: ^2.9.0
   zod: ^4.4.3
 
-catalogMode: strict
+# `manual` (not `strict`): apps/start-demo pins the published @codefast/* versions from
+# npm instead of catalog/workspace refs, so the catalog must not be enforced repo-wide.
+catalogMode: manual
 
 minimumReleaseAgeExclude:
   - playwright-core@1.61.1
