@@ -12,10 +12,10 @@
     "check-types": "tsgo --noEmit"
   },
   "dependencies": {
-    "@codefast/di": "0.4.0",
-    "@codefast/tailwind-variants": "0.4.0",
-    "@codefast/theme": "0.4.0",
-    "@codefast/ui": "0.4.0",
+    "@codefast/di": "^0.4.0",
+    "@codefast/tailwind-variants": "^0.4.0",
+    "@codefast/theme": "^0.4.0",
+    "@codefast/ui": "^0.4.0",
     "@tanstack/react-router": "catalog:",
     "@tanstack/react-start": "catalog:",
     "lucide-react": "catalog:",
@@ -25,9 +25,8 @@
     "tw-animate-css": "catalog:"
   },
   "devDependencies": {
-    "@babel/core": "^7.29.0",
-    "@babel/plugin-proposal-decorators": "^7.25.0",
-    "@codefast/typescript-config": "0.4.0",
+    "@babel/plugin-proposal-decorators": "catalog:",
+    "@codefast/typescript-config": "^0.4.0",
     "@rolldown/plugin-babel": "catalog:",
     "@tailwindcss/vite": "catalog:",
     "@tanstack/router-plugin": "catalog:",
