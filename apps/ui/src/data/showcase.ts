@@ -1,13 +1,7 @@
 /**
- * A–Z showcase data for the /components route.
- *
- * Every component is sorted A–Z and bucketed by its leading letter. The content
- * grid and the sidebar nav iterate the SAME buckets so the letter headings,
- * counts, and scroll-spy targets line up exactly. Every component appears
- * (including the docs-only Sidebar), so the totals match the hero's count.
- *
- * Pure data computed once at module load from the metadata registry in
- * `registry/components.ts` — no UI concerns.
+ * A–Z showcase data for /components. The content grid and the sidebar nav iterate
+ * the SAME buckets so headings, counts, and scroll-spy targets line up exactly.
+ * Pure data computed once from `registry/components.ts`.
  */
 
 import type { ComponentMeta } from "#/registry/components";

@@ -21,15 +21,9 @@ interface ExampleChromeProps extends ComponentProps<"div"> {
 }
 
 /**
- * Detail example chrome: the live preview sits on top, with the source peeking
- * below behind an expand/collapse toggle. The collapsed peek is itself a button —
- * clicking anywhere on the faded source expands it — and the toolbar carries the
- * line count, Copy, and a collapse chevron.
- *
- * Used for every example on a component detail page (`/components/$slug`),
- * including the single fallback example synthesised for components without rich
- * docs yet. The gallery (`/components`) deliberately does NOT use this — its
- * cards show the live demo only, with no code surface.
+ * Detail example chrome: live preview on top, source peeking below behind an
+ * expand/collapse toggle (the collapsed peek is itself the expand button). The
+ * gallery deliberately does NOT use this — its cards show the live demo only.
  */
 export function ExampleChrome({
   preview,
