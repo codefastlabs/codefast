@@ -7,14 +7,10 @@ interface ExampleLiveProps {
 }
 
 /**
- * Renders an example's live preview component, resolved by its `source` ref.
- *
- * After a client navigation the route loader ran in the browser and captured the
- * component (`getLoadedExampleComponent`), so it renders synchronously — no
- * `React.lazy` pending cycle, hence no one-frame fallback flash. On the initial
- * SSR load the loader ran on the server, so the client cache is cold at
- * hydration; the `React.lazy` handle then lets React hydrate the
- * server-rendered preview in place without a flash (wrap in `<Suspense>`).
+ * Renders an example's live preview by `source` ref. After a client nav the
+ * component was captured during the loader (`getLoadedExampleComponent`) → renders
+ * synchronously, no fallback flash. At SSR hydration the cache is cold, so the
+ * `React.lazy` handle hydrates the server-rendered preview in place (wrap in `<Suspense>`).
  */
 export function ExampleLive({ source }: ExampleLiveProps) {
   const Loaded = getLoadedExampleComponent(source);

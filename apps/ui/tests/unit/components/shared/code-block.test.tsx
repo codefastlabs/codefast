@@ -9,20 +9,14 @@ afterEach(() => {
 
 describe("CodeBlock", () => {
   it("injects the pre-highlighted HTML", () => {
-    render(<CodeBlock highlightedCodeDark={`<pre class="shiki"><code>const a = 1;</code></pre>`} />);
+    render(<CodeBlock highlightedCode={`<pre class="shiki"><code>const a = 1;</code></pre>`} />);
 
     expect(screen.getByText("const a = 1;")).toBeTruthy();
   });
 
-  it("renders both light and dark surfaces when both are provided", () => {
-    render(
-      <CodeBlock
-        highlightedCodeDark={`<pre class="shiki"><code>dark</code></pre>`}
-        highlightedCodeLight={`<pre class="shiki"><code>light</code></pre>`}
-      />,
-    );
+  it("renders a single dual-theme surface (no light/dark duplication)", () => {
+    const { container } = render(<CodeBlock highlightedCode={`<pre class="shiki"><code>const a = 1;</code></pre>`} />);
 
-    expect(screen.getByText("dark")).toBeTruthy();
-    expect(screen.getByText("light")).toBeTruthy();
+    expect(container.querySelectorAll(".shiki")).toHaveLength(1);
   });
 });

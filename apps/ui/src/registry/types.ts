@@ -13,10 +13,9 @@ import type { PropRow } from "#/components/detail/props-table";
 import type { HighlightedSource } from "#/lib/highlight";
 
 /**
- * Glob key of a source file under `registry/` (e.g. `./button/variants.example.tsx`),
- * as built by `docSource`/`docAnatomy`. The registry resolves it to the raw text +
- * pre-highlighted HTML (`?shiki`) when the doc's chunk loads — authored docs
- * never embed source content.
+ * Key of a registry source file (e.g. `./button/variants.example.tsx`), built by
+ * `docSource`/`docAnatomy`. Resolved to raw text + highlighted HTML via
+ * `getHighlightedSource`, so docs never embed source content.
  */
 export type SourceRef = string;
 

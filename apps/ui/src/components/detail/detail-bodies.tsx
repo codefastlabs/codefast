@@ -1,14 +1,9 @@
 /**
- * Per-slug body of the component detail page.
- *
- * The `$slug` route loader awaits `fetchDetail` and returns the (serializable)
- * detail as loader data; the route renders `DetailBody` synchronously from it.
- * Each component's doc chunk (examples, sources pre-highlighted at build time)
- * stays code-split — `loadDoc` dynamic-imports only the slug being viewed — but
- * the loader, not `React.lazy`, is now what gates rendering, so there is no
- * full-page skeleton. The live preview components cannot cross the loader's
- * serialization boundary, so the body resolves them client-side from
- * `EXAMPLE_COMPONENT_BY_REF` (see `examples-section.tsx`).
+ * Per-slug body of the detail page. The route loader awaits `fetchDetail` and
+ * ships the serializable detail as loader data, so the body renders synchronously
+ * (the loader, not `React.lazy`, gates render — no full-page skeleton). Live
+ * preview components can't cross the serialization boundary, so they're resolved
+ * client-side from `EXAMPLE_COMPONENT_BY_REF`.
  */
 import { AccessibilitySection } from "#/components/detail/accessibility-section";
 import { AnatomySection } from "#/components/detail/anatomy-section";
@@ -135,13 +130,7 @@ export function DetailBody({ detail }: DetailBodyProps) {
             </div>
           )}
 
-          {doc?.anatomy ? (
-            <AnatomySection
-              code={doc.anatomy.code}
-              highlightedCodeDark={doc.anatomy.htmlDark}
-              highlightedCodeLight={doc.anatomy.htmlLight}
-            />
-          ) : null}
+          {doc?.anatomy ? <AnatomySection code={doc.anatomy.code} highlightedCode={doc.anatomy.html} /> : null}
 
           {doc?.api?.length ? <ApiSection groups={doc.api} /> : null}
 

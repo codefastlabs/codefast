@@ -1,23 +1,13 @@
 /**
- * Eager component-metadata registry, keyed by the component slug.
+ * Eager component-metadata registry, keyed by slug. Auto-discovered from each
+ * `registry/<slug>/meta.ts`; `hasDemo` reflects whether `<slug>/demo.tsx` exists.
+ * Eager (unlike the demo/doc registries) because meta is pure data with no runtime
+ * imports, so the whole registry bundles into one tiny chunk any route can import
+ * freely. Sorted A–Z by name to match the grid and the detail pager; `category` is
+ * only a badge/palette tag, not a sort key.
  *
- * AUTO-DISCOVERED — every `registry/<slug>/meta.ts` contributes one component;
- * there is no hand-maintained list. The slug comes from the folder name and
- * `hasDemo` from whether `<slug>/demo.tsx` exists (the `demos.ts` glob), so
- * neither is authored by hand. Unlike the demo/doc registries this one is
- * EAGER: each meta file is a few lines of pure data with no runtime imports,
- * so the whole registry bundles into one tiny chunk that any route (home hero,
- * /components showcase, ⌘K palette, detail pages) can import freely.
- *
- * Display order on /components is alphabetical by name (see `groups.ts`), so the
- * registry sorts the same way and the detail-page pager walks components A–Z.
- * `category` no longer drives that order — it survives as a descriptive tag for
- * the detail-page badge and the ⌘K palette (label + search keyword).
- *
- * TO ADD A COMPONENT: create `registry/<slug>/meta.ts` exporting a single
- * `ComponentMetaInput` — it appears everywhere automatically. Add a
- * `<slug>/demo.tsx` for the showcase card and a `<slug>/doc.ts` for the rich
- * detail page (see `demos.ts` and `docs.ts`).
+ * To add a component: create `registry/<slug>/meta.ts` exporting one
+ * `ComponentMetaInput` (+ optional `demo.tsx` / `doc.ts`).
  */
 import { DEMO_BY_SLUG } from "#/registry/demos";
 

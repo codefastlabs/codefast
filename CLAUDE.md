@@ -56,6 +56,17 @@ Rules: **no tests under `src/**`**; no test files directly under `tests/`(must b
 - Internal imports use **Node subpath imports** declared in each package's `package.json#imports` — e.g. `#/components/button` for src, `#/tests/...` for test helpers. Do **not** add `compilerOptions.paths` for internal aliases (reserve TS path mapping for external-compat needs only).
 - Keep `import type` separate — never merge type imports into value imports.
 
+## Comments (TSDoc, not JSDoc)
+
+This is a **TypeScript** project, so doc comments are **TSDoc** — never JSDoc type syntax. The bar: **explain _why_, never restate _what_; let the types carry the types.**
+
+- **Never put types in comments.** No `@param {string} x` / `@returns {T}` — TS already declares them, and a duplicated type just goes stale. Prefer omitting `@param`/`@returns` entirely. Add `@param name - …` (TSDoc style: a hyphen, **no** `{type}`) or `@typeParam T - …` only to document a non-obvious _meaning_ — units, an invariant, ownership — not the type.
+- **`//` comments explain the _why_** — a non-obvious decision, constraint, trade-off, or gotcha (e.g. `// scoped to the client env — the nitro build sets its own codeSplitting`). If a competent reader could infer it from the code or the types, **delete it**. Match the surrounding comment density; don't narrate obvious lines.
+- **A doc comment on an exported symbol** leads with a one-line summary of intent/purpose (what it's _for_, not how it works). Internal helpers get a comment only when non-obvious.
+- **TSDoc block tags only when they add what the type can't:** `@remarks` (detail past the summary), `@example`, `@deprecated <reason + replacement>`, `@see`, `@throws`, `@defaultValue`.
+- **`@since <version>` is generated** by `codefast tag` at release — never hand-write it.
+- No commented-out code left behind; a `TODO`/`FIXME` must state why or link an issue.
+
 ## Packages
 
 | Path                         | Role                                                                                                   |

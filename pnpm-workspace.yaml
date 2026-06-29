@@ -60,6 +60,8 @@ catalog:
   "@tanstack/react-start": ^1.168.26
   "@tanstack/react-table": ^8.21.3
   "@tanstack/router-plugin": ^1.168.18
+  # Experimental — powers build-time Shiki highlighting (peer-deps react-start ^1.168.25).
+  "@tanstack/start-static-server-functions": ^1.167.17
   "@testing-library/dom": ^10.4.1
   "@testing-library/jest-dom": ^6.9.1
   "@testing-library/react": ^16.3.2
@@ -141,7 +143,7 @@ catalog:
   unified: ^11.0.5
   unist-util-visit: ^5.1.0
   vaul: ^1.1.2
-  vite: ~8.0.16
+  vite: ^8.1.0
   vitest: ^4.1.9
   yaml: ^2.9.0
   zod: ^4.4.3
