@@ -63,3 +63,18 @@
   --ui-brand: var(--color-sky-400);
   --ui-inverse: var(--color-neutral-950);
 }
+
+/* Shiki dual-theme code surfaces (ShikiSurface / CodeBlock). highlightSource()
+   emits one tree highlighted with github-light by default; every token also
+   carries a --shiki-dark variable. Under .dark we swap to those — one HTML tree,
+   theming done entirely in CSS. !important beats Shiki's inline light color.
+   See registry/highlight-source.impl.ts; the gutter bg in shiki-surface.tsx is
+   kept in sync with these theme backgrounds (#fff / #24292e). */
+.dark .shiki {
+  background-color: var(--shiki-dark-bg) !important;
+}
+
+.dark .shiki,
+.dark .shiki span {
+  color: var(--shiki-dark) !important;
+}

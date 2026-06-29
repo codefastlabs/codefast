@@ -30,8 +30,7 @@ export function ExamplesSection({ examples, showHint, ...props }: ExamplesSectio
             title={example.title}
             description={example.description}
             code={example.code}
-            highlightedCodeDark={example.htmlDark}
-            highlightedCodeLight={example.htmlLight}
+            highlightedCode={example.html}
             previewClassName={example.previewClassName}
             direction={example.direction}
           >

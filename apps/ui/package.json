@@ -31,6 +31,7 @@
     "@tanstack/react-start": "catalog:",
     "@tanstack/react-table": "catalog:",
     "@tanstack/router-plugin": "catalog:",
+    "@tanstack/start-static-server-functions": "catalog:",
     "@unpic/react": "catalog:",
     "chrono-node": "catalog:",
     "date-fns-jalali": "catalog:",

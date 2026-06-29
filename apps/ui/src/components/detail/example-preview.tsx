@@ -14,10 +14,8 @@ interface ExamplePreviewProps extends ComponentProps<"div"> {
   readonly description?: string | undefined;
   /** Raw source, shown in the Code tab and copied to the clipboard. */
   readonly code: string;
-  /** Pre-highlighted Shiki HTML for `code` (dark), produced in the route loader. */
-  readonly highlightedCodeDark: string;
-  /** Pre-highlighted Shiki HTML for `code` (light). */
-  readonly highlightedCodeLight: string;
+  /** Pre-highlighted dual-theme Shiki HTML for `code`, produced in the route loader. */
+  readonly highlightedCode: string;
   /** Extra classes for the live preview surface — alignment, height, padding. */
   readonly previewClassName?: string | undefined;
   /** Reading direction; `"rtl"` adds a language switcher and flips the layout. */
@@ -36,8 +34,7 @@ export function ExamplePreview({
   title,
   description,
   code,
-  highlightedCodeDark,
-  highlightedCodeLight,
+  highlightedCode,
   previewClassName,
   direction = "ltr",
   children,
@@ -67,13 +64,7 @@ export function ExamplePreview({
             <PreviewSurface className={previewClassName}>{children}</PreviewSurface>
           )
         }
-        code={
-          <CodeBlock
-            highlightedCodeDark={highlightedCodeDark}
-            highlightedCodeLight={highlightedCodeLight}
-            showLineNumbers
-          />
-        }
+        code={<CodeBlock highlightedCode={highlightedCode} showLineNumbers />}
       />
     </div>
   );

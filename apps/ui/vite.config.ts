@@ -6,12 +6,36 @@ import viteReact, { reactCompilerPreset } from "@vitejs/plugin-react";
 import { nitro } from "nitro/vite";
 import { defineConfig } from "vite";
 
-import { shikiPlugin } from "./vite.shiki";
-
 export default defineConfig(({ command }) => {
   const isDev = command === "serve";
 
   return {
+    // One chunk per component: each example is a lazy import, so without grouping
+    // the client emits hundreds of tiny chunks. Client env only (nitro sets its
+    // own); demo.tsx stays separate so gallery cards don't pull a component's docs.
+    environments: {
+      client: {
+        build: {
+          rolldownOptions: {
+            output: {
+              codeSplitting: {
+                groups: [
+                  {
+                    name: (id: string) => {
+                      const match = /[/\\]src[/\\]registry[/\\]([^/\\]+)[/\\](?:doc\.ts|[^/\\]+\.example\.tsx)$/.exec(
+                        id,
+                      );
+
+                      return match ? `registry-${match[1]}` : undefined;
+                    },
+                  },
+                ],
+              },
+            },
+          },
+        },
+      },
+    },
     resolve: {
       // `source` (dev only) resolves @codefast/* packages to their `src` entry points for HMR; `module` keeps dual
       // CJS/ESM third-party deps on their ESM build in both dev and prod (avoids the tslib `__extends` SSR interop
@@ -36,7 +60,6 @@ export default defineConfig(({ command }) => {
           },
         },
       }),
-      shikiPlugin(),
       tailwindcss(),
       tanstackStart({
         // Prerender every route reachable by crawling `<Link>`s from "/" (the gallery and sidebar
