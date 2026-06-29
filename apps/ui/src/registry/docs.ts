@@ -1,32 +1,12 @@
 import type { HighlightedSource } from "#/lib/highlight";
 /**
- * Lazy rich-documentation registry for the per-component detail page
- * (`/components/$slug`), keyed by the component `slug` from `components.ts`.
- *
- * AUTO-DISCOVERED — every `registry/<slug>/doc.ts` is registered by its folder
- * name; there is no hand-maintained list. Nothing here is eager: a doc (and
- * the example components + sources it pulls in) is its own chunk, loaded by
- * `loadDoc(slug)` only when that component's detail page renders.
- * Importing this module costs ~nothing, so any route may use it.
- *
- * Components without a doc fall back to the single card demo from `demos.ts`,
- * so every detail page still renders.
- *
- * FILE LAYOUT — everything a component owns lives in its own `registry/<slug>/`
- * folder; the slug is the folder name, so kebab-case slugs stay unambiguous.
- * Files inside a folder declare their role by name:
- *   `<slug>/meta.ts`               metadata (see `components.ts`)
- *   `<slug>/doc.ts`                the doc (this registry's key source)
- *   `<slug>/demo.tsx`              the showcase card demo (see `demos.ts`)
- *   `<slug>/<name>.example.tsx`    one file per doc example
- *   `<slug>/anatomy.txt`           the composition skeleton
- *
- * TO ADD A COMPONENT: create its example files plus a `<slug>/doc.ts` exporting
- * a single `ComponentDoc` whose examples point at their files via
- * `docSource(slug, name)` / `docAnatomy(slug)`. The doc is then picked up
- * automatically; no registration is needed.
+ * Lazy rich-doc registry for the detail page (`/components/$slug`), keyed by slug.
+ * Auto-discovered from `registry/<slug>/doc.ts`; lazy, so importing this is ~free.
+ * Components without a doc fall back to the card demo from `demos.ts`. To add one:
+ * export a `ComponentDoc` from `doc.ts` pointing at files via `docSource`/`docAnatomy`.
  */
 import { rememberExampleComponent } from "#/registry/examples";
+import { getHighlightedSource } from "#/registry/highlight-source";
 import type { ComponentDoc, ResolvedComponentDoc, ResolvedDocExample, SourceRef } from "#/registry/types";
 
 export type {
@@ -40,11 +20,6 @@ export type {
 
 /** Doc module loaders, keyed by path e.g. `./button/doc.ts`. */
 const docModules = import.meta.glob<Record<string, unknown>>("./*/doc.ts");
-
-/** Every example/demo/anatomy file pre-highlighted at build time, keyed by SourceRef. */
-const sourceModules = import.meta.glob<HighlightedSource>(["./*/*.example.tsx", "./*/demo.tsx", "./*/anatomy.txt"], {
-  query: "?shiki",
-});
 
 /** `./button/doc.ts` → `button` — the slug is the component's folder name. */
 function slugFromDocPath(path: string): string {
@@ -63,13 +38,7 @@ const docLoadersBySlug = new Map(Object.entries(docModules).map(([path, load]) =
 export const DOC_SLUGS: ReadonlySet<string> = new Set(docLoadersBySlug.keys());
 
 async function loadSource(ref: SourceRef): Promise<HighlightedSource> {
-  const load = sourceModules[ref];
-
-  if (!load) {
-    throw new Error(`No source file for ref "${ref}" under registry/.`);
-  }
-
-  return load();
+  return getHighlightedSource({ data: ref });
 }
 
 async function resolveExample(example: ComponentDoc["examples"][number]): Promise<ResolvedDocExample> {

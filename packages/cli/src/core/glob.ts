@@ -2,6 +2,8 @@ import picomatch from "picomatch";
 
 /**
  * A predicate over a string — returns `true` when the value matches.
+ *
+ * @since 0.5.0-canary.0
  */
 export type StringMatcher = (value: string) => boolean;
 
@@ -13,6 +15,8 @@ export type StringMatcher = (value: string) => boolean;
  * Shared by every "match a name/path against a configured pattern list" use
  * (workspace excludes, `tag.skipPackages`, …) so the compile-then-`some` logic
  * lives in one place.
+ *
+ * @since 0.5.0-canary.0
  */
 export function createAnyGlobMatcher(
   patterns: ReadonlyArray<string> | undefined,

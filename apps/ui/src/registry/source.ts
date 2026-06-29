@@ -1,11 +1,7 @@
 /**
- * Source refs for detail-page doc examples.
- *
- * These build the glob KEY of a file under `registry/<slug>/` — they do not
- * read content. The registry (`docs.ts`) resolves a ref to its raw text +
- * build-time Shiki HTML (`?shiki`) when the doc's lazy chunk loads, so authored
- * `doc.ts` modules stay free of embedded source strings and each component's
- * sources ship only with that component's chunk.
+ * Builders for a `SourceRef` — the key of a file under `registry/<slug>/`. They
+ * don't read content; `docs.ts` resolves a ref to raw text + highlighted HTML via
+ * `getHighlightedSource`, so `doc.ts` modules stay free of embedded source.
  */
 import type { SourceRef } from "#/registry/types";
 

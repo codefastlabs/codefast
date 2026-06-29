@@ -2,13 +2,9 @@ import type { RefObject } from "react";
 import { useEffect } from "react";
 
 /**
- * Scrolls the element matching `selector` into view within `containerRef`'s own
- * overflow container — never the page. Re-runs whenever `selector` changes (e.g.
- * the active component or letter band), and no-ops when it is null or the target
- * is already fully visible.
- *
- * Plain `scrollIntoView` would also scroll the window, yanking a detail page on
- * load; this nudges only the container's own scroll offset instead.
+ * Scrolls `selector` into view within `containerRef`'s own overflow container,
+ * never the page — plain `scrollIntoView` also scrolls the window, yanking a
+ * detail page on load. No-ops when the target is null or already visible.
  */
 export function useScrollActiveIntoView(containerRef: RefObject<HTMLElement | null>, selector: string | null): void {
   useEffect(() => {

@@ -1,5 +1,7 @@
 # @codefast/di
 
+## 0.5.0-canary.0
+
 ## 0.4.0
 
 ### Patch Changes

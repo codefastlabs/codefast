@@ -1,15 +1,9 @@
 /**
- * Client-side registry of the live example/demo components, keyed by the same
- * `SourceRef` the docs registry uses (`./<slug>/<name>.example.tsx`,
- * `./<slug>/demo.tsx`).
- *
- * The detail route loads a component's doc DATA in its route loader and ships it
- * as serialized loader data — but a `React.lazy` component cannot survive that
- * serialization boundary, so the live preview component is looked up here by ref
- * instead of travelling through loader data. Each ref maps to a `React.lazy`
- * handle; because every `doc.ts` statically imports its example files, the
- * underlying modules already ride in that component's doc chunk, so the lazy
- * usually resolves without a visible fallback once the loader's chunk has loaded.
+ * Live example/demo components keyed by `SourceRef`. The detail route ships doc
+ * data as serialized loader data, which a `React.lazy` component can't cross — so
+ * previews are looked up here by ref instead. Since `doc.ts` statically imports
+ * its examples, they already ride in the doc chunk, so the lazy usually resolves
+ * without a fallback flash.
  */
 import type { ComponentType, LazyExoticComponent } from "react";
 import { lazy } from "react";
@@ -39,12 +33,10 @@ export const EXAMPLE_COMPONENT_BY_REF: ReadonlyMap<SourceRef, LazyExoticComponen
 );
 
 /**
- * Live components captured while `loadDoc` resolves a doc (it holds the real
- * `Demo` before stripping it for serialization). Lets the detail page render a
- * preview synchronously after a client navigation — the loader ran in the
- * browser, so the component is already in hand and `React.lazy`'s pending cycle
- * (a one-frame fallback flash) is skipped. Empty at SSR-hydration time (the
- * loader ran on the server), where `EXAMPLE_COMPONENT_BY_REF` takes over.
+ * Live components captured during `loadDoc`, before serialization strips them.
+ * Lets a client-nav render the preview synchronously (component already in hand,
+ * skipping React.lazy's one-frame fallback). Empty at SSR hydration, where
+ * `EXAMPLE_COMPONENT_BY_REF` takes over.
  */
 const loadedByRef = new Map<SourceRef, ComponentType>();
 

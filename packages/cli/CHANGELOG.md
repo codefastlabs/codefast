@@ -1,5 +1,11 @@
 # @codefast/cli
 
+## 0.5.0-canary.0
+
+### Patch Changes
+
+- [#529](https://github.com/codefastlabs/codefast/pull/529) [`ca90f1c`](https://github.com/codefastlabs/codefast/commit/ca90f1c86dbc8626b6fad9cde38f277abd9fd0c0) Thanks [@thevuong](https://github.com/thevuong)! - `codefast tag` now matches `tag.skipPackages` entries as glob patterns (picomatch), so a single `@apps/*` entry skips every private app instead of listing each by name. This fixes the release `Publish packages` step failing on `@apps/start-demo` (a private, version-less app the command tried to tag). The compile-patterns-then-match-any logic is now shared via a single `createAnyGlobMatcher` helper, also used by workspace-package discovery.
+
 ## 0.4.0
 
 ### Patch Changes

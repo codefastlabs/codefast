@@ -5,17 +5,12 @@ import { COMPONENT_BY_SLUG } from "#/registry/components";
 import { loadDoc } from "#/registry/docs";
 
 /**
- * Serves the Markdown twin of a component detail page at `/components/<slug>.md`
- * — the canonical, LLM-friendly artifact behind the detail page's "Copy page"
- * menu ("View as Markdown", "Open in Claude / ChatGPT"). The `{$slug}.md` suffix
- * pattern (braces, not a bare `$slug`) keeps the param named `slug` while the
- * `.md` lives in the same segment. Built from the same `buildComponentMarkdown`
- * the client uses, so the two never drift; the rich `doc` chunk is resolved
- * server-side just like SSR.
+ * Serves the Markdown twin of a detail page at `/components/<slug>.md` — the
+ * LLM-friendly artifact behind the "Copy page" menu. Built from the same
+ * `buildComponentMarkdown` as the client, so the two never drift.
  *
- * NOTE: this dispatches in production (verified against a real Nitro build). The
- * Vite/Nitro dev server has a bug where ANY `.md` route 404s locally (even a
- * trivial static one), so "View as Markdown" only resolves in production.
+ * NOTE: only dispatches in production — the Vite/Nitro dev server 404s any `.md`
+ * route, so "View as Markdown" doesn't resolve locally.
  */
 export const Route = createFileRoute("/components/{$slug}.md")({
   server: {

@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 
 import { COMPONENTS } from "#/registry/components";
 import { DEMO_BY_SLUG } from "#/registry/demos";
@@ -6,14 +6,25 @@ import { DOC_SLUGS, loadDoc } from "#/registry/docs";
 import { EXAMPLE_COMPONENT_BY_REF } from "#/registry/examples";
 import { docDemo } from "#/registry/source";
 
+// `getHighlightedSource` is a server function; its RPC transport can't run in
+// the test runner. Server-side (and at build) `staticFunctionMiddleware` is
+// transparent and just runs the handler in-process, so delegate straight to the
+// impl here — the same highlighting code path the server executes, minus the
+// transport. This keeps `loadDoc`/`loadSource` exercising the real pipeline.
+vi.mock("#/registry/highlight-source", async () => {
+  const { highlightSource } = await import("#/registry/highlight-source.impl");
+
+  return { getHighlightedSource: ({ data }: { data: string }) => highlightSource(data) };
+});
+
 /**
  * These tests walk the whole demo/doc registry and exercise the real load
  * pipeline — `import.meta.glob` discovery, dynamic `import()` of every doc
  * module (and the example components it statically pulls in), Shiki highlighting
- * (`?shiki`), and that every example's `source` ref resolves to a registered
- * live component in `EXAMPLE_COMPONENT_BY_REF`. That wires many modules together
- * with real I/O, so they live in `tests/integration/**` (each takes seconds),
- * not alongside the synchronous metadata unit tests.
+ * (via `highlight-source.impl`), and that every example's `source` ref resolves
+ * to a registered live component in `EXAMPLE_COMPONENT_BY_REF`. That wires many
+ * modules together with real I/O, so they live in `tests/integration/**` (each
+ * takes seconds), not alongside the synchronous metadata unit tests.
  */
 describe("demo registry ↔ metadata", () => {
   it("gives every demo a renderable component and a highlighted source", async () => {
@@ -22,8 +33,7 @@ describe("demo registry ↔ metadata", () => {
 
       const source = await entry.loadSource();
       expect(source.code.length, `${slug} code`).toBeGreaterThan(0);
-      expect(source.htmlDark, `${slug} htmlDark`).toContain("shiki");
-      expect(source.htmlLight, `${slug} htmlLight`).toContain("shiki");
+      expect(source.html, `${slug} html`).toContain("shiki");
     }
     // Highlights every demo source via Shiki — real I/O, slow on a cold transform.
   }, 30_000);
@@ -44,8 +54,7 @@ describe("doc registry ↔ metadata", () => {
       for (const example of doc?.examples ?? []) {
         expect(EXAMPLE_COMPONENT_BY_REF.has(example.source), `${slug}/${example.id} Demo registered`).toBe(true);
         expect(example.code.length, `${slug}/${example.id} code`).toBeGreaterThan(0);
-        expect(example.htmlDark, `${slug}/${example.id} htmlDark`).toContain("shiki");
-        expect(example.htmlLight, `${slug}/${example.id} htmlLight`).toContain("shiki");
+        expect(example.html, `${slug}/${example.id} html`).toContain("shiki");
       }
     }
     // Loads + highlights every example of every doc — real I/O, slow on a cold transform.

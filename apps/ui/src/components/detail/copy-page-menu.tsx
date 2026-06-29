@@ -23,11 +23,10 @@ interface CopyPageMenuProps extends Omit<ComponentProps<typeof ButtonGroup>, "ch
 }
 
 /**
- * "Copy page" split button: the main action copies the detail page as Markdown
- * (for pasting into an LLM); the chevron opens variants — view the raw Markdown
- * or hand the page off to ChatGPT / Claude. The Markdown header is built
- * synchronously from metadata and enriched once the component's `doc` chunk
- * loads, so the button never has an empty payload.
+ * "Copy page" split button: copies the detail page as Markdown for an LLM; the
+ * chevron opens variants (raw Markdown, open in ChatGPT/Claude). The payload is
+ * built synchronously from metadata, then enriched once the `doc` chunk loads —
+ * so the button is never empty.
  */
 export function CopyPageMenu({ component, className, ...props }: CopyPageMenuProps) {
   const [markdown, setMarkdown] = useState(() => buildComponentMarkdown(component));

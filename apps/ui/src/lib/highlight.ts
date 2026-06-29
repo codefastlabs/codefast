@@ -1,14 +1,11 @@
 /**
- * Shape of a `?shiki` module — a source file pre-highlighted at build time by
- * the Vite plugin in `vite.shiki.ts`. Replaces the old runtime Shiki
- * highlighter: consumers import these static strings instead of highlighting
+ * A registry source resolved to raw text + pre-rendered Shiki HTML by
+ * `getHighlightedSource`. Shipped as loader data — highlighted once at build, not
  * per request.
  */
 export interface HighlightedSource {
-  /** Raw source text, written to the clipboard on copy. */
+  /** Raw source — copied to the clipboard. */
   readonly code: string;
-  /** Pre-rendered Shiki HTML — dark theme (github-dark). */
-  readonly htmlDark: string;
-  /** Pre-rendered Shiki HTML — light theme (github-light). */
-  readonly htmlLight: string;
+  /** Dual-theme highlighted HTML (light inline + `--shiki-dark` var, themed by CSS). */
+  readonly html: string;
 }

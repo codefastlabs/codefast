@@ -171,6 +171,8 @@ function resolveTargetSelection(fs: FilesystemPort, candidate: TagTargetCandidat
  * Partition tag target candidates into those to tag and those to skip, matching
  * each candidate's package name against `skipPackages` as glob patterns.
  * Candidates without a package name (e.g. an explicit-target path) are never skipped.
+ *
+ * @since 0.5.0-canary.0
  */
 export function filterSkippedCandidates(
   targetCandidates: Array<TagTargetCandidate>,

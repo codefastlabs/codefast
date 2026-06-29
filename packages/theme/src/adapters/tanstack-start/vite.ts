@@ -30,6 +30,8 @@ const PACKAGE_NAME = "@codefast/theme";
 /**
  * Create the Vite plugin that lets a TanStack Start app consume `@codefast/theme`'s server
  * functions from npm without manual `ssr.noExternal` / `optimizeDeps.exclude` configuration.
+ *
+ * @since 0.5.0-canary.0
  */
 export function codefastTheme(): Plugin {
   return {
