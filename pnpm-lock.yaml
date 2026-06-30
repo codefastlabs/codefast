@@ -16,20 +16,20 @@ catalogs:
       specifier: ^2.31.0
       version: 2.31.0
     '@codefast/di':
-      specifier: ^0.4.0
-      version: 0.4.0
+      specifier: 0.5.0-canary.0
+      version: 0.5.0-canary.0
     '@codefast/tailwind-variants':
-      specifier: ^0.4.0
-      version: 0.4.0
+      specifier: 0.5.0-canary.0
+      version: 0.5.0-canary.0
     '@codefast/theme':
-      specifier: ^0.4.0
-      version: 0.4.0
+      specifier: 0.5.0-canary.0
+      version: 0.5.0-canary.0
     '@codefast/typescript-config':
-      specifier: ^0.4.0
-      version: 0.4.0
+      specifier: 0.5.0-canary.0
+      version: 0.5.0-canary.0
     '@codefast/ui':
-      specifier: ^0.4.0
-      version: 0.4.0
+      specifier: 0.5.0-canary.0
+      version: 0.5.0-canary.0
     '@commitlint/cli':
       specifier: ^21.1.0
       version: 21.1.0
@@ -553,16 +553,16 @@ importers:
     dependencies:
       '@codefast/di':
         specifier: 'catalog:'
-        version: 0.4.0
+        version: 0.5.0-canary.0
       '@codefast/tailwind-variants':
         specifier: 'catalog:'
-        version: 0.4.0
+        version: 0.5.0-canary.0
       '@codefast/theme':
         specifier: 'catalog:'
-        version: 0.4.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        version: 0.5.0-canary.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(vite@8.1.0(@types/node@26.0.1)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.22.4)(yaml@2.9.0))
       '@codefast/ui':
         specifier: 'catalog:'
-        version: 0.4.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react-is@19.2.7)(react@19.2.7)
+        version: 0.5.0-canary.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react-is@19.2.7)(react@19.2.7)
       '@tanstack/react-router':
         specifier: 'catalog:'
         version: 1.170.16(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
@@ -590,7 +590,7 @@ importers:
         version: 8.0.2(@babel/core@7.29.7)
       '@codefast/typescript-config':
         specifier: 'catalog:'
-        version: 0.4.0(typescript@6.0.3)
+        version: 0.5.0-canary.0(typescript@6.0.3)
       '@rolldown/plugin-babel':
         specifier: 'catalog:'
         version: 0.2.3(@babel/core@7.29.7)(@babel/runtime@7.29.7)(rolldown@1.1.2)(vite@8.1.0(@types/node@26.0.1)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.22.4)(yaml@2.9.0))
@@ -1305,36 +1305,39 @@ packages:
   '@changesets/write@0.4.0':
     resolution: {integrity: sha512-CdTLvIOPiCNuH71pyDu3rA+Q0n65cmAbXnwWH84rKGiFumFzkmHNT8KHTMEchcxN+Kl8I54xGUhJ7l3E7X396Q==}
 
-  '@codefast/di@0.4.0':
-    resolution: {integrity: sha512-fdJ5NfyiNl33C2foyKKLjLiSzsmfsomOxulMA0mRbAKLurfeXR6e9A31RzqkOr7EdJax3efKioezWRsIbiH85w==}
+  '@codefast/di@0.5.0-canary.0':
+    resolution: {integrity: sha512-eJB2NVgf/6jjEamre1wKfNj4CtAZSJFTJvd4ZVSeSx3kHeDz/xwDuKFrVeZz7fIXjV30MV8q+bH1yioj4IpW3g==}
     engines: {node: '>=24.0.0'}
 
-  '@codefast/tailwind-variants@0.4.0':
-    resolution: {integrity: sha512-057dw5ke2k0C8HmyCeLqI33YXmCcHT1HuzXjfwGaz+pUSn0yqHxhzqALgo8R4TvDKUGQSTZoBI+IWBMH+5/W9g==}
+  '@codefast/tailwind-variants@0.5.0-canary.0':
+    resolution: {integrity: sha512-VX5zTtSjP0OyUzWCcrUaAcNCcKbZQUKQKNCdPnuSJkMOk1Z7xp25R5Y2EqGPNgI6eJMFf8R7wGJp8hTsUEoClw==}
     engines: {node: '>=24.0.0'}
 
-  '@codefast/theme@0.4.0':
-    resolution: {integrity: sha512-mt8UU/zF2GrNN0bipCEUufM93zD4g+iPr7ngKW/PeGxHbCPkeiLaBKR4GgW7pVPwOgMFctxKG+kxDw0p6hvdOQ==}
+  '@codefast/theme@0.5.0-canary.0':
+    resolution: {integrity: sha512-1YFoNCtxeY16tIn62dTq3yctZCExz+E2uen/nu0Aj/R+NLFyuP/KKvJ790eAJR7xvqmTC0t020gk8wdX8UsRrQ==}
     engines: {node: '>=24.0.0'}
     peerDependencies:
       '@types/react': '>=19.0.0'
       '@types/react-dom': '>=19.0.0'
       react: '>=19.0.0'
       react-dom: '>=19.0.0'
+      vite: '>=6.0.0'
     peerDependenciesMeta:
       '@types/react':
         optional: true
       '@types/react-dom':
         optional: true
+      vite:
+        optional: true
 
-  '@codefast/typescript-config@0.4.0':
-    resolution: {integrity: sha512-kwbSPzmVc/Ift9dd4q/Ou9EDxk2Hwd1XBMJy3V0hQe6FghDZ0vedwD6YeyIBekyPYXk9mdHeUGgB01Mjb1p9ww==}
+  '@codefast/typescript-config@0.5.0-canary.0':
+    resolution: {integrity: sha512-xDSrJQuEVDgUYnOpwdaeG7y+9ObazO7QnQzdXPIPTiyTgacHpiVfDBNllsQgAWTNuCqZXxUkFLS/gBa3JxNa/g==}
     engines: {node: '>=24.0.0'}
     peerDependencies:
       typescript: '>=5.0.0'
 
-  '@codefast/ui@0.4.0':
-    resolution: {integrity: sha512-/mjBp8Ev+TFMtealo429Gxozg52AXsSkzOVFGLX7tzCzSi/WZK8CkA7OpYcPkUdUBXoKYgatFWH2WiSVic7jqw==}
+  '@codefast/ui@0.5.0-canary.0':
+    resolution: {integrity: sha512-ElReVhGXlGBWw1qAo/2zDmxYETbLKkj7d/ARciThVKfpMvCLYa1QS0aIFWs/GH4Odc6DF+OhSh5FjcF6h5bvKQ==}
     engines: {node: '>=24.0.0'}
     peerDependencies:
       '@types/react': '>=19.0.0'
@@ -7073,14 +7076,14 @@ snapshots:
       human-id: 4.2.0
       prettier: 2.8.8
 
-  '@codefast/di@0.4.0': {}
+  '@codefast/di@0.5.0-canary.0': {}
 
-  '@codefast/tailwind-variants@0.4.0':
+  '@codefast/tailwind-variants@0.5.0-canary.0':
     dependencies:
       clsx: 2.1.1
       tailwind-merge: 3.6.0
 
-  '@codefast/theme@0.4.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
+  '@codefast/theme@0.5.0-canary.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(vite@8.1.0(@types/node@26.0.1)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.22.4)(yaml@2.9.0))':
     dependencies:
       react: 19.2.7
       react-dom: 19.2.7(react@19.2.7)
@@ -7088,14 +7091,15 @@ snapshots:
     optionalDependencies:
       '@types/react': 19.2.17
       '@types/react-dom': 19.2.3(@types/react@19.2.17)
+      vite: 8.1.0(@types/node@26.0.1)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.22.4)(yaml@2.9.0)
 
-  '@codefast/typescript-config@0.4.0(typescript@6.0.3)':
+  '@codefast/typescript-config@0.5.0-canary.0(typescript@6.0.3)':
     dependencies:
       typescript: 6.0.3
 
-  '@codefast/ui@0.4.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react-is@19.2.7)(react@19.2.7)':
+  '@codefast/ui@0.5.0-canary.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react-is@19.2.7)(react@19.2.7)':
     dependencies:
-      '@codefast/tailwind-variants': 0.4.0
+      '@codefast/tailwind-variants': 0.5.0-canary.0
       '@daypicker/react': 10.0.1(@types/react@19.2.17)(react@19.2.7)
       cmdk: 1.1.1(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       embla-carousel-react: 8.6.0(react@19.2.7)
