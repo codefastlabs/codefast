@@ -51,6 +51,12 @@ export const Route = createRootRoute({
     ],
   }),
   loader: () => getRootColorSchemeServerFn(),
+  // Color scheme is request-time-only data; after hydration `AppearanceProvider` owns it client-side.
+  // Cache the loader for the whole session so `defaultPreload: "intent"` doesn't re-run this server fn
+  // on every nav-link hover. A finite stale time can't help on prerendered pages: their match hydrates
+  // with the build-time `updatedAt`, which is already older than any finite window — so it must be Infinity.
+  staleTime: Number.POSITIVE_INFINITY,
+  preloadStaleTime: Number.POSITIVE_INFINITY,
   notFoundComponent: SiteNotFound,
   errorComponent: SiteError,
   shellComponent: RootDocument,
