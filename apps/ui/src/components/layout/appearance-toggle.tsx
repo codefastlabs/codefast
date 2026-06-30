@@ -1,6 +1,13 @@
 import type { ColorScheme } from "@codefast/theme";
-import { colorSchemeSchema, useColorScheme } from "@codefast/theme";
-import { ToggleGroup, ToggleGroupItem } from "@codefast/ui/toggle-group";
+import { colorSchemes, colorSchemeSchema, useColorScheme } from "@codefast/theme";
+import { Button } from "@codefast/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuTrigger,
+} from "@codefast/ui/dropdown-menu";
 import type { LucideIcon } from "lucide-react";
 import { MonitorIcon, MoonStarIcon, SunIcon } from "lucide-react";
 import type { ReactElement } from "react";
@@ -11,21 +18,16 @@ type SchemeConfig = {
 };
 
 const SCHEME_CONFIG = {
-  automatic: { label: "System theme", Icon: MonitorIcon },
-  light: { label: "Light theme", Icon: SunIcon },
-  dark: { label: "Dark theme", Icon: MoonStarIcon },
+  light: { label: "Light", Icon: SunIcon },
+  dark: { label: "Dark", Icon: MoonStarIcon },
+  automatic: { label: "System", Icon: MonitorIcon },
 } as const satisfies Record<ColorScheme, SchemeConfig>;
-
-const SCHEME_KEYS = getRecordKeys(SCHEME_CONFIG);
-
-function getRecordKeys<KeyName extends string>(record: Readonly<Record<KeyName, unknown>>): ReadonlyArray<KeyName> {
-  return Object.keys(record) as Array<KeyName>;
-}
 
 function isColorScheme(value: string): value is ColorScheme {
   return colorSchemeSchema.safeParse(value).success;
 }
 
+/** Compact appearance switcher: one icon button reflecting the current scheme, with a radio menu to pick. */
 export function AppearanceToggle(): ReactElement {
   const { colorScheme, setColorScheme } = useColorScheme();
 
@@ -36,29 +38,30 @@ export function AppearanceToggle(): ReactElement {
   }
 
   return (
-    <ToggleGroup
-      type="single"
-      value={colorScheme}
-      onValueChange={handleValueChange}
-      aria-label="Appearance"
-      spacing={0}
-      className="bg-ui-surface"
-    >
-      {SCHEME_KEYS.map((value) => {
-        const { label, Icon } = SCHEME_CONFIG[value];
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="ghost" size="icon" aria-label="Appearance" className="text-ui-muted hover:text-ui-fg">
+          {/* The trigger icon is chosen by CSS from `html[data-appearance]` (set by AppearanceScript before
+              first paint), not React state — so it is correct on the first frame with no hydration flash. */}
+          <SunIcon className="hidden size-4 [html[data-appearance=light]_&]:block" strokeWidth={1.75} />
+          <MoonStarIcon className="hidden size-4 [html[data-appearance=dark]_&]:block" strokeWidth={1.75} />
+          <MonitorIcon className="hidden size-4 [html[data-appearance=automatic]_&]:block" strokeWidth={1.75} />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-36">
+        <DropdownMenuRadioGroup value={colorScheme} onValueChange={handleValueChange}>
+          {colorSchemes.map((value) => {
+            const { label: itemLabel, Icon: ItemIcon } = SCHEME_CONFIG[value];
 
-        return (
-          <ToggleGroupItem
-            key={value}
-            value={value}
-            aria-label={label}
-            title={label}
-            className="text-ui-muted data-[state=on]:text-ui-fg"
-          >
-            <Icon className="size-4" strokeWidth={1.75} />
-          </ToggleGroupItem>
-        );
-      })}
-    </ToggleGroup>
+            return (
+              <DropdownMenuRadioItem key={value} value={value}>
+                <ItemIcon strokeWidth={1.75} />
+                {itemLabel}
+              </DropdownMenuRadioItem>
+            );
+          })}
+        </DropdownMenuRadioGroup>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }
