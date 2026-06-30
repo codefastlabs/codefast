@@ -9,6 +9,19 @@ import { useColorScheme } from "#/core/use-theme";
 import { createMockMediaQueryList, mockMatchMedia } from "#/tests/support/mocks";
 import type { ColorScheme } from "#/types";
 
+// Dispatch a storage-like event. Builds it via Event + defineProperties rather than the
+// `new StorageEvent(type, init)` overload, which static analysis flags as superfluous args.
+function dispatchStorageEvent(key: null | string, newValue: null | string): void {
+  const event = new Event("storage");
+
+  Object.defineProperties(event, {
+    key: { value: key },
+    newValue: { value: newValue },
+  });
+
+  window.dispatchEvent(event);
+}
+
 describe("AppearanceProvider", () => {
   const originalMatchMedia = window.matchMedia;
 
@@ -896,7 +909,7 @@ describe("AppearanceProvider", () => {
       expect(screen.getByTestId("colorScheme-label")).toHaveTextContent("light");
 
       await act(async () => {
-        window.dispatchEvent(new StorageEvent("storage", { key: "ui-theme", newValue: "dark" }));
+        dispatchStorageEvent("ui-theme", "dark");
       });
 
       await waitFor(() => {
@@ -918,8 +931,8 @@ describe("AppearanceProvider", () => {
       );
 
       await act(async () => {
-        window.dispatchEvent(new StorageEvent("storage", { key: "other-key", newValue: "dark" }));
-        window.dispatchEvent(new StorageEvent("storage", { key: "ui-theme", newValue: "not-a-scheme" }));
+        dispatchStorageEvent("other-key", "dark");
+        dispatchStorageEvent("ui-theme", "not-a-scheme");
       });
 
       expect(screen.getByTestId("colorScheme-label")).toHaveTextContent("light");
