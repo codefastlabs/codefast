@@ -1,3 +1,5 @@
+// Side-effect import: install the Map.prototype.getOrInsert polyfill before @codefast/di loads.
+import "#/server/map-get-or-insert";
 import { Container, Module, injectable, postConstruct, token } from "@codefast/di";
 import { toDotGraph } from "@codefast/di/graph-adapters/dot";
 import { createServerFn } from "@tanstack/react-start";
