@@ -1,5 +1,9 @@
-import { AppearanceProvider, AppearanceScript, resolveColorScheme } from "@codefast/theme";
-import { getRootColorSchemeServerFn, getColorSchemeServerFn, persistColorSchemeCookie } from "@codefast/theme/start";
+import {
+  AppearanceProvider,
+  AppearanceScript,
+  DEFAULT_COLOR_SCHEME,
+  DEFAULT_RESOLVED_COLOR_SCHEME,
+} from "@codefast/theme";
 import { Button } from "@codefast/ui/button";
 import { cn } from "@codefast/ui/lib/utils";
 import { TanStackDevtools } from "@tanstack/react-devtools";
@@ -19,6 +23,11 @@ const SITE_NAME = "codefast/ui";
 const SITE_TITLE = "codefast/ui — Beautiful, accessible React components";
 const SITE_DESCRIPTION =
   "60+ accessible React components built on Radix UI primitives and Tailwind CSS v4. Copy the source, own the code — strict TypeScript, dark mode, and zero config.";
+
+// Color scheme lives entirely client-side: AppearanceScript reads this localStorage key before first
+// paint (no flash) and AppearanceProvider restores + persists it. No server fn, no loader — so
+// `defaultPreload: "intent"` has nothing to re-fetch on nav-link hover.
+const COLOR_SCHEME_STORAGE_KEY = "ui-theme";
 
 export const Route = createRootRoute({
   head: () => ({
@@ -50,13 +59,6 @@ export const Route = createRootRoute({
       { rel: "manifest", href: "/manifest.json" },
     ],
   }),
-  loader: () => getRootColorSchemeServerFn(),
-  // Color scheme is request-time-only data; after hydration `AppearanceProvider` owns it client-side.
-  // Cache the loader for the whole session so `defaultPreload: "intent"` doesn't re-run this server fn
-  // on every nav-link hover. A finite stale time can't help on prerendered pages: their match hydrates
-  // with the build-time `updatedAt`, which is already older than any finite window — so it must be Infinity.
-  staleTime: Number.POSITIVE_INFINITY,
-  preloadStaleTime: Number.POSITIVE_INFINITY,
   notFoundComponent: SiteNotFound,
   errorComponent: SiteError,
   shellComponent: RootDocument,
@@ -78,27 +80,22 @@ function SiteError({ error }: { error: Error }) {
 }
 
 function RootDocument({ children }: { children: ReactNode }) {
-  const { colorScheme, ssrColorScheme } = Route.useLoaderData();
-  const resolvedColorScheme = resolveColorScheme(colorScheme, ssrColorScheme);
-
+  // Prerendered HTML can't know the preference at build time; the script overwrites this class before
+  // paint and `suppressHydrationWarning` lets the mismatch through.
   return (
     <html
       lang="en"
-      className={cn(resolvedColorScheme, "min-h-full")}
-      style={{ colorScheme: resolvedColorScheme }}
+      className={cn(DEFAULT_RESOLVED_COLOR_SCHEME, "min-h-full")}
+      style={{ colorScheme: DEFAULT_RESOLVED_COLOR_SCHEME }}
+      data-appearance={DEFAULT_COLOR_SCHEME}
       suppressHydrationWarning
     >
       <head>
-        <AppearanceScript colorScheme={colorScheme} />
+        <AppearanceScript colorScheme={DEFAULT_COLOR_SCHEME} storageKey={COLOR_SCHEME_STORAGE_KEY} />
         <HeadContent />
       </head>
       <body className="min-h-full overflow-x-hidden bg-ui-bg font-sans wrap-anywhere text-ui-fg antialiased selection:bg-ui-fg/15">
-        <AppearanceProvider
-          colorScheme={colorScheme}
-          ssrColorScheme={ssrColorScheme}
-          persistColorScheme={persistColorSchemeCookie}
-          syncFromServer={getColorSchemeServerFn}
-        >
+        <AppearanceProvider colorScheme={DEFAULT_COLOR_SCHEME} storageKey={COLOR_SCHEME_STORAGE_KEY}>
           <Header />
           {children}
           <Footer />

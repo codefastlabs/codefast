@@ -177,34 +177,28 @@ Vary: Sec-CH-Prefers-Color-Scheme, Cookie
 
 ### Client-only React (localStorage)
 
-For apps without a server framework, persist the preference in `localStorage`:
+For apps without a server framework — or **statically prerendered / CDN-served** apps where the server can't inject the preference at request time — drive the whole thing from `localStorage`. Pass `storageKey` to both `<AppearanceScript>` and `<AppearanceProvider>`:
 
 ```tsx
-import { AppearanceProvider } from "@codefast/theme";
-import type { ColorScheme } from "@codefast/theme";
+import { AppearanceProvider, AppearanceScript } from "@codefast/theme";
 
 const STORAGE_KEY = "color-scheme";
 
-function App() {
-  const initial =
-    typeof window === "undefined"
-      ? "automatic"
-      : ((localStorage.getItem(STORAGE_KEY) as ColorScheme | null) ?? "automatic");
+// In the document head — reads localStorage before first paint:
+// <AppearanceScript colorScheme="automatic" storageKey={STORAGE_KEY} />
 
+function App() {
   return (
-    <AppearanceProvider
-      colorScheme={initial}
-      persistColorScheme={async (value) => {
-        localStorage.setItem(STORAGE_KEY, value);
-      }}
-    >
+    <AppearanceProvider colorScheme="automatic" storageKey={STORAGE_KEY}>
       <YourApp />
     </AppearanceProvider>
   );
 }
 ```
 
-Pair it with `<AppearanceScript colorScheme="automatic" storageKey="color-scheme" />` in the document head so the right appearance is applied before first paint (no FOUC).
+With `storageKey`, the provider reads the preference from `localStorage` in its initial client render (so the first paint already matches it — no flash, no post-mount settle), auto-persists changes there (no hand-rolled `persistColorScheme`), and syncs across tabs via the `storage` event. The inline `<AppearanceScript>` applies the stored value to `<html>` **before first paint**, so there is no flash even on prerendered HTML — the real preference never has to round-trip a server after paint. Use the **same key** in both places.
+
+> SSR has no `localStorage`, so the server renders the `colorScheme` prop. For a returning visitor whose stored preference differs, components that render preference-dependent markup hydrate-reconcile once; gate them behind a mounted flag if you need to avoid that.
 
 ### Color scheme toggle
 
@@ -246,6 +240,15 @@ export function ColorSchemeSelect() {
 
 The script removes any prior `light` / `dark` / `automatic` class on `<html>`, so it is safe to pre-render the markup with `suppressHydrationWarning`.
 
+It also writes the **preference** (`light` / `dark` / `automatic`, before resolving `automatic`) to a `data-appearance` attribute on `<html>` — and `<AppearanceProvider>` keeps it in sync. Preference-aware UI can then render purely from CSS (e.g. a 3-state toggle that shows a distinct "system" icon), correct on the first frame with no hydration flash:
+
+```css
+/* show the matching trigger icon based on the stored preference */
+html[data-appearance="automatic"] .icon-system {
+  display: block;
+}
+```
+
 > **CSP note.** Pass a `nonce` to `<AppearanceScript nonce={...} />` when your policy requires it for inline scripts. The same nonce can also be passed to `<AppearanceProvider nonce={...} />` for the temporary inline `<style>` used by `disableTransition`.
 
 ---
@@ -271,16 +274,17 @@ Root provider that wires together color scheme state, OS subscription, optimisti
 </AppearanceProvider>
 ```
 
-| Prop                 | Type                                                          | Default | Description                                                                                                                     |
-| -------------------- | ------------------------------------------------------------- | ------- | ------------------------------------------------------------------------------------------------------------------------------- |
-| `colorScheme`        | `ColorScheme`                                                 | —       | Initial preference (`"light"` / `"dark"` / `"automatic"`). Required.                                                            |
-| `ssrColorScheme`     | `ResolvedColorScheme`                                         | —       | `"light"` or `"dark"` from the SSR request (e.g. Client Hints). Used as the server snapshot when preference is `automatic`.     |
-| `persistColorScheme` | `(value: ColorScheme) => Promise<void>`                       | —       | Runs whenever the user changes the color scheme. Rejects → optimistic update reverts automatically.                             |
-| `onPersistError`     | `(error: unknown, attemptedColorScheme: ColorScheme) => void` | —       | Optional hook called when `persistColorScheme` rejects; use for custom logging/telemetry/UI feedback.                           |
-| `syncFromServer`     | `() => Promise<ColorScheme>`                                  | —       | Called once after mount to reconcile with the canonical source (e.g. cookie). Useful for stale HTML / duplicate-tab.            |
-| `disableTransition`  | `boolean`                                                     | `false` | Temporarily injects a style rule that disables CSS transitions while the color scheme swaps. Respects `prefers-reduced-motion`. |
-| `nonce`              | `string`                                                      | —       | CSP nonce attached to the inline `<style>` element when `disableTransition` is enabled.                                         |
-| `children`           | `ReactNode`                                                   | —       | Application content.                                                                                                            |
+| Prop                 | Type                                                          | Default | Description                                                                                                                                                                                |
+| -------------------- | ------------------------------------------------------------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `colorScheme`        | `ColorScheme`                                                 | —       | Initial preference (`"light"` / `"dark"` / `"automatic"`). Required.                                                                                                                       |
+| `ssrColorScheme`     | `ResolvedColorScheme`                                         | —       | `"light"` or `"dark"` from the SSR request (e.g. Client Hints). Used as the server snapshot when preference is `automatic`.                                                                |
+| `persistColorScheme` | `(value: ColorScheme) => Promise<void>`                       | —       | Runs whenever the user changes the color scheme. Rejects → optimistic update reverts automatically.                                                                                        |
+| `onPersistError`     | `(error: unknown, attemptedColorScheme: ColorScheme) => void` | —       | Optional hook called when `persistColorScheme` rejects; use for custom logging/telemetry/UI feedback.                                                                                      |
+| `syncFromServer`     | `() => Promise<ColorScheme>`                                  | —       | Called once after mount to reconcile with the canonical source (e.g. cookie). Useful for stale HTML / duplicate-tab.                                                                       |
+| `storageKey`         | `string`                                                      | —       | Client-only path: restore from `localStorage` after mount, auto-persist there, and sync across tabs via the `storage` event. Pair with `<AppearanceScript storageKey>` using the same key. |
+| `disableTransition`  | `boolean`                                                     | `false` | Temporarily injects a style rule that disables CSS transitions while the color scheme swaps. Respects `prefers-reduced-motion`.                                                            |
+| `nonce`              | `string`                                                      | —       | CSP nonce attached to the inline `<style>` element when `disableTransition` is enabled.                                                                                                    |
+| `children`           | `ReactNode`                                                   | —       | Application content.                                                                                                                                                                       |
 
 `<AppearanceProvider>` internally:
 

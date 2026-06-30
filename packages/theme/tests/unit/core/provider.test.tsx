@@ -9,6 +9,19 @@ import { useColorScheme } from "#/core/use-theme";
 import { createMockMediaQueryList, mockMatchMedia } from "#/tests/support/mocks";
 import type { ColorScheme } from "#/types";
 
+// Dispatch a storage-like event. Builds it via Event + defineProperties rather than the
+// `new StorageEvent(type, init)` overload, which static analysis flags as superfluous args.
+function dispatchStorageEvent(key: null | string, newValue: null | string): void {
+  const event = new Event("storage");
+
+  Object.defineProperties(event, {
+    key: { value: key },
+    newValue: { value: newValue },
+  });
+
+  window.dispatchEvent(event);
+}
+
 describe("AppearanceProvider", () => {
   const originalMatchMedia = window.matchMedia;
 
@@ -183,6 +196,20 @@ describe("AppearanceProvider", () => {
       await waitFor(() => {
         expect(document.documentElement.style.colorScheme).toBe("light");
       });
+    });
+
+    test("should mirror the preference (not the resolved value) to data-appearance", async () => {
+      render(
+        <AppearanceProvider colorScheme="automatic">
+          <div>Content</div>
+        </AppearanceProvider>,
+      );
+
+      // matchMedia mock resolves automatic → light, but data-appearance must keep the *preference*.
+      await waitFor(() => {
+        expect(document.documentElement.dataset.appearance).toBe("automatic");
+      });
+      expect(document.documentElement.classList.contains("light")).toBe(true);
     });
   });
 
@@ -747,6 +774,165 @@ describe("AppearanceProvider", () => {
 
       await waitFor(() => {
         expect(onPersistError).toHaveBeenCalledWith(persistError, "dark");
+      });
+
+      expect(screen.getByTestId("colorScheme-label")).toHaveTextContent("light");
+    });
+  });
+
+  describe("storageKey (client-only localStorage)", () => {
+    beforeEach(() => {
+      window.localStorage.clear();
+    });
+
+    afterEach(() => {
+      window.localStorage.clear();
+    });
+
+    test("restores the persisted preference from the initial render", () => {
+      window.localStorage.setItem("ui-theme", "dark");
+
+      const TestConsumer = (): React.ReactElement => {
+        const { colorScheme } = useColorScheme();
+
+        return <span data-testid="colorScheme-label">{colorScheme}</span>;
+      };
+
+      render(
+        <AppearanceProvider colorScheme="automatic" storageKey="ui-theme">
+          <TestConsumer />
+        </AppearanceProvider>,
+      );
+
+      // No waitFor: the initializer reads localStorage synchronously, so the very first render is "dark".
+      expect(screen.getByTestId("colorScheme-label")).toHaveTextContent("dark");
+    });
+
+    test("auto-persists changes to localStorage when no persistColorScheme is given", async () => {
+      const user = userEvent.setup();
+
+      const TestConsumer = (): React.ReactElement => {
+        const { setColorScheme } = useColorScheme();
+
+        return (
+          <button
+            data-testid="toggle"
+            type="button"
+            onClick={() => {
+              void setColorScheme("dark");
+            }}
+          >
+            Toggle
+          </button>
+        );
+      };
+
+      render(
+        <AppearanceProvider colorScheme="light" storageKey="ui-theme">
+          <TestConsumer />
+        </AppearanceProvider>,
+      );
+
+      await user.click(screen.getByTestId("toggle"));
+
+      await waitFor(() => {
+        expect(window.localStorage.getItem("ui-theme")).toBe("dark");
+      });
+    });
+
+    test("explicit persistColorScheme wins over the localStorage auto-persist", async () => {
+      const user = userEvent.setup();
+      const persistColorScheme = vi.fn(async (_value: ColorScheme) => {});
+
+      const TestConsumer = (): React.ReactElement => {
+        const { setColorScheme } = useColorScheme();
+
+        return (
+          <button
+            data-testid="toggle"
+            type="button"
+            onClick={() => {
+              void setColorScheme("dark");
+            }}
+          >
+            Toggle
+          </button>
+        );
+      };
+
+      render(
+        <AppearanceProvider colorScheme="light" persistColorScheme={persistColorScheme} storageKey="ui-theme">
+          <TestConsumer />
+        </AppearanceProvider>,
+      );
+
+      await user.click(screen.getByTestId("toggle"));
+
+      await waitFor(() => {
+        expect(persistColorScheme).toHaveBeenCalledWith("dark");
+      });
+
+      expect(window.localStorage.getItem("ui-theme")).toBeNull();
+    });
+
+    test("applies the stored preference from the initializer, never flashing through the prop", async () => {
+      window.localStorage.setItem("ui-theme", "dark");
+
+      // matchMedia=light + prop="light": neither resolves to dark, so a "dark" class can only come from the
+      // initializer reading localStorage — proving the first (and only) applyColorScheme used the stored value.
+      render(
+        <AppearanceProvider colorScheme="light" storageKey="ui-theme">
+          <div>Content</div>
+        </AppearanceProvider>,
+      );
+
+      await waitFor(() => {
+        expect(document.documentElement.classList.contains("dark")).toBe(true);
+      });
+
+      expect(document.documentElement.classList.contains("light")).toBe(false);
+    });
+
+    test("syncs across tabs via the storage event", async () => {
+      const TestConsumer = (): React.ReactElement => {
+        const { colorScheme } = useColorScheme();
+
+        return <span data-testid="colorScheme-label">{colorScheme}</span>;
+      };
+
+      render(
+        <AppearanceProvider colorScheme="light" storageKey="ui-theme">
+          <TestConsumer />
+        </AppearanceProvider>,
+      );
+
+      expect(screen.getByTestId("colorScheme-label")).toHaveTextContent("light");
+
+      await act(async () => {
+        dispatchStorageEvent("ui-theme", "dark");
+      });
+
+      await waitFor(() => {
+        expect(screen.getByTestId("colorScheme-label")).toHaveTextContent("dark");
+      });
+    });
+
+    test("ignores storage events for other keys or invalid values", async () => {
+      const TestConsumer = (): React.ReactElement => {
+        const { colorScheme } = useColorScheme();
+
+        return <span data-testid="colorScheme-label">{colorScheme}</span>;
+      };
+
+      render(
+        <AppearanceProvider colorScheme="light" storageKey="ui-theme">
+          <TestConsumer />
+        </AppearanceProvider>,
+      );
+
+      await act(async () => {
+        dispatchStorageEvent("other-key", "dark");
+        dispatchStorageEvent("ui-theme", "not-a-scheme");
       });
 
       expect(screen.getByTestId("colorScheme-label")).toHaveTextContent("light");

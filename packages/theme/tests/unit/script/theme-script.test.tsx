@@ -123,6 +123,15 @@ describe("AppearanceScript", () => {
       expect(script?.innerHTML).toContain("colorScheme");
     });
 
+    test("should write the preference to data-appearance for preference-aware CSS", () => {
+      const { container } = render(<AppearanceScript colorScheme="dark" />);
+
+      const script = container.querySelector("script");
+
+      // `theme` holds the preference (pre-resolution), so the dataset reflects automatic/light/dark.
+      expect(script?.innerHTML).toContain("dataset.appearance=theme");
+    });
+
     test("should be wrapped in IIFE", () => {
       const { container } = render(<AppearanceScript colorScheme="dark" />);
 
