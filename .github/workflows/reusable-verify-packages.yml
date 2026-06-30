@@ -42,7 +42,7 @@ jobs:
         run: npx turbo run test:coverage --filter="./packages/**"
 
       - name: Publish Coverage Results to Codecov
-        uses: codecov/codecov-action@v6
+        uses: codecov/codecov-action@v7
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           slug: ${{ github.repository }}
