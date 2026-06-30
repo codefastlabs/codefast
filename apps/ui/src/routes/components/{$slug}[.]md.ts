@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 
+import { CONTENT_CACHE_CONTROL } from "#/lib/cache";
 import { buildComponentMarkdown } from "#/lib/component-markdown";
 import { COMPONENT_BY_SLUG } from "#/registry/components";
 import { loadDoc } from "#/registry/docs";
@@ -27,6 +28,7 @@ export const Route = createFileRoute("/components/{$slug}.md")({
         return new Response(buildComponentMarkdown(component, doc), {
           headers: {
             "Content-Type": "text/plain; charset=utf-8",
+            "Cache-Control": CONTENT_CACHE_CONTROL,
           },
         });
       },

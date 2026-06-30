@@ -6,6 +6,8 @@ import viteReact, { reactCompilerPreset } from "@vitejs/plugin-react";
 import { nitro } from "nitro/vite";
 import { defineConfig } from "vite";
 
+import { CONTENT_CACHE_CONTROL } from "./src/lib/cache";
+
 export default defineConfig(({ command }) => {
   const isDev = command === "serve";
 
@@ -77,6 +79,25 @@ export default defineConfig(({ command }) => {
       }),
       nitro({
         preset: "vercel",
+        // Prerendered HTML is served by Vercel's filesystem layer, which bypasses the
+        // server function — so a route's `headers()` never runs for it. routeRules is
+        // the only hook the Vercel adapter writes into the deployment's header config,
+        // so CDN cache headers for static output must live here. (`**` is the rou3
+        // wildcard for nested paths; the preset emits it as a Vercel regex.) The
+        // `.md`/`llms.txt` twins set their own Cache-Control in their handler.
+        //
+        // `/__tsr/staticServerFnCache/**` is the build-time output of static server
+        // functions (the prerendered Shiki highlights). Vercel serves it with
+        // `max-age=0, must-revalidate` by default; these files are keyed by function
+        // id + params (not content), so they can't be `immutable`, but they share the
+        // pages' freshness model — the client fetches them on navigation.
+        routeRules: {
+          "/": { headers: { "cache-control": CONTENT_CACHE_CONTROL } },
+          "/about": { headers: { "cache-control": CONTENT_CACHE_CONTROL } },
+          "/components": { headers: { "cache-control": CONTENT_CACHE_CONTROL } },
+          "/components/**": { headers: { "cache-control": CONTENT_CACHE_CONTROL } },
+          "/__tsr/staticServerFnCache/**": { headers: { "cache-control": CONTENT_CACHE_CONTROL } },
+        },
         exportConditions: isDev ? ["source", "module"] : ["module"],
         // react@19 and use-sync-external-store are CJS-only, so the inlined shim keeps a runtime `require("react")`
         // that no export condition can turn into a static import. Trace react/react-dom so they end up in the

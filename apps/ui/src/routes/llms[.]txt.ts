@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 
+import { CONTENT_CACHE_CONTROL } from "#/lib/cache";
 import { GITHUB_URL } from "#/lib/nav-links";
 import { absoluteUrl } from "#/lib/seo";
 import { COMPONENTS } from "#/registry/components";
@@ -48,6 +49,7 @@ export const Route = createFileRoute("/llms.txt")({
         return new Response(buildLlmsTxt(), {
           headers: {
             "Content-Type": "text/plain; charset=utf-8",
+            "Cache-Control": CONTENT_CACHE_CONTROL,
           },
         });
       },
