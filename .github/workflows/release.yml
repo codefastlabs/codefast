@@ -62,7 +62,7 @@ jobs:
           git config user.email "13298232+thevuong@users.noreply.github.com"
 
       - name: Version and publish
-        uses: changesets/action@v1.8.0
+        uses: changesets/action@v1.9.0
         with:
           version: pnpm run version-packages
           publish: npx changeset publish
