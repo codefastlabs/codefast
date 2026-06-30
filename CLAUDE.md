@@ -58,10 +58,11 @@ Rules: **no tests under `src/**`**; no test files directly under `tests/`(must b
 
 ## Comments (TSDoc, not JSDoc)
 
-This is a **TypeScript** project, so doc comments are **TSDoc** — never JSDoc type syntax. The bar: **explain _why_, never restate _what_; let the types carry the types.**
+This is a **TypeScript** project, so doc comments are **TSDoc** — never JSDoc type syntax. The bar: **keep comments concise — one short, plain-English line per point; state the _why_/purpose, never restate _what_, and let the types carry the types.**
 
+- **Concise above all.** Prefer a single short line stating a block's purpose over a multi-line rationale essay. Don't pile up trade-offs, alternatives-considered, or tool internals in code comments — keep it brief, or move that detail to the PR/commit. One line saying _why this is here_ beats five that re-explain the code.
 - **Never put types in comments.** No `@param {string} x` / `@returns {T}` — TS already declares them, and a duplicated type just goes stale. Prefer omitting `@param`/`@returns` entirely. Add `@param name - …` (TSDoc style: a hyphen, **no** `{type}`) or `@typeParam T - …` only to document a non-obvious _meaning_ — units, an invariant, ownership — not the type.
-- **`//` comments explain the _why_** — a non-obvious decision, constraint, trade-off, or gotcha (e.g. `// scoped to the client env — the nitro build sets its own codeSplitting`). If a competent reader could infer it from the code or the types, **delete it**. Match the surrounding comment density; don't narrate obvious lines.
+- **`//` comments state the _why_/purpose in one line** — a non-obvious decision, constraint, or gotcha (e.g. `// scoped to the client env — the nitro build sets its own codeSplitting`). If a competent reader could infer it from the code or the types, **delete it**; never narrate obvious lines.
 - **A doc comment on an exported symbol** leads with a one-line summary of intent/purpose (what it's _for_, not how it works). Internal helpers get a comment only when non-obvious.
 - **TSDoc block tags only when they add what the type can't:** `@remarks` (detail past the summary), `@example`, `@deprecated <reason + replacement>`, `@see`, `@throws`, `@defaultValue`.
 - **`@since <version>` is generated** by `codefast tag` at release — never hand-write it.
