@@ -67,6 +67,8 @@ export type AppearanceScriptProps = {
  * 2. Removes prior `light` / `dark` / `automatic` classes on `<html>` (SSR may
  *    have applied the wrong resolved class for `automatic`, e.g. default `dark`)
  * 3. Adds the resolved color scheme class and sets `color-scheme` for native controls
+ * 4. Writes the *preference* to `data-appearance` so preference-aware UI (e.g. a 3-state toggle)
+ *    can render the right state from CSS on first paint, without a hydration flash
  *
  * @example
  * ```tsx
@@ -83,7 +85,7 @@ export function AppearanceScript({ nonce, storageKey, colorScheme }: AppearanceS
   // F1: When storageKey is provided, the script reads localStorage before first paint so
   // client-only apps (no SSR cookie) get the right color scheme without FOUC.
   // sk=null short-circuits to s=null so color scheme falls back to fbt — backward-compatible.
-  const appearanceScript = `(function(){try{var sk=${toScriptSafe(storageKey ?? null)},fbt=${toScriptSafe(colorScheme)},s=sk&&localStorage.getItem(sk),theme=(${COLOR_SCHEME_VALID_CHECK})?s:fbt,resolvedTheme=theme;"automatic"===theme&&(resolvedTheme=window.matchMedia(${toScriptSafe(MEDIA)}).matches?"dark":"light"),document.documentElement.classList.remove(${COLOR_SCHEME_REMOVE_ARGS}),document.documentElement.classList.add(resolvedTheme),document.documentElement.style.colorScheme=resolvedTheme}catch(e){}})()`;
+  const appearanceScript = `(function(){try{var sk=${toScriptSafe(storageKey ?? null)},fbt=${toScriptSafe(colorScheme)},s=sk&&localStorage.getItem(sk),theme=(${COLOR_SCHEME_VALID_CHECK})?s:fbt,resolvedTheme=theme;"automatic"===theme&&(resolvedTheme=window.matchMedia(${toScriptSafe(MEDIA)}).matches?"dark":"light"),document.documentElement.classList.remove(${COLOR_SCHEME_REMOVE_ARGS}),document.documentElement.classList.add(resolvedTheme),document.documentElement.style.colorScheme=resolvedTheme,document.documentElement.dataset.appearance=theme}catch(e){}})()`;
   const nonceProps = nonce === undefined ? {} : { nonce };
 
   return <script dangerouslySetInnerHTML={{ __html: appearanceScript }} suppressHydrationWarning {...nonceProps} />;
