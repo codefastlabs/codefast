@@ -2,6 +2,12 @@
   "version": "0.0.1",
   "configurations": [
     {
+      "name": "preview",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["--filter", "@apps/ui", "exec", "vite", "preview"],
+      "port": 3000
+    },
+    {
       "name": "web",
       "runtimeExecutable": "pnpm",
       "runtimeArgs": ["--filter", "@apps/ui", "exec", "vite", "dev"],
