@@ -1,5 +1,13 @@
 # @codefast/benchmark-viewer
 
+## 0.5.0-canary.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @codefast/benchmark-harness@0.5.0-canary.1
+  - @codefast/tailwind-variants@0.5.0-canary.1
+
 ## 0.5.0-canary.0
 
 ### Patch Changes

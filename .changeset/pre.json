@@ -15,6 +15,7 @@
   },
   "changesets": [
     "cli-skippackages-glob",
+    "theme-provider-storage-key",
     "theme-vite-plugin"
   ]
 }
