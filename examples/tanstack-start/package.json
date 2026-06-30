@@ -36,6 +36,7 @@
     "@typescript/native-preview": "catalog:",
     "@vitejs/plugin-react": "catalog:",
     "babel-plugin-react-compiler": "catalog:",
+    "nitro": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:"
   }

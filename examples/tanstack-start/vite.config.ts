@@ -3,6 +3,7 @@ import babel from "@rolldown/plugin-babel";
 import tailwindcss from "@tailwindcss/vite";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import viteReact, { reactCompilerPreset } from "@vitejs/plugin-react";
+import { nitro } from "nitro/vite";
 import { defineConfig } from "vite";
 
 // This app is a smoke test for the PUBLISHED `@codefast/*` packages: it deliberately
@@ -19,6 +20,15 @@ export default defineConfig({
     codefastTheme(),
     tailwindcss(),
     tanstackStart(),
+    // Build for Vercel via Nitro's `vercel` preset (emits the Build Output API `.vercel/output`).
+    // Unlike apps/ui, no `source` exportCondition: this app consumes @codefast/* from their published
+    // `dist`, so it must resolve via the always-on `import` condition, not the in-repo `src`.
+    //
+    // NOTE: react@19 keeps a runtime `require("react")` shim that node-file-trace can miss. If the
+    // deployed function throws "Cannot find module 'react'", add `traceDeps: ["react", "react-dom"]`.
+    nitro({
+      preset: "vercel",
+    }),
     viteReact(),
     // Babel does two things the Rolldown/oxc pipeline doesn't:
     //  1. Lowers `@codefast/di`'s TC39 Stage 3 decorators (`@injectable`, `@postConstruct`) — oxc only
