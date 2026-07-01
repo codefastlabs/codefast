@@ -4,7 +4,7 @@ import {
   DEFAULT_COLOR_SCHEME,
   DEFAULT_RESOLVED_COLOR_SCHEME,
 } from "@codefast/theme";
-import { STORAGE_KEY as COLOR_SCHEME_STORAGE_KEY } from "@codefast/theme/constants";
+import { STORAGE_KEY } from "@codefast/theme/constants";
 import { Button } from "@codefast/ui/button";
 import { cn } from "@codefast/ui/lib/utils";
 import { TanStackDevtools } from "@tanstack/react-devtools";
@@ -89,11 +89,11 @@ function RootDocument({ children }: { children: ReactNode }) {
       <head>
         {/* Client-only via storageKey: no server fn or loader, so `defaultPreload: "intent"` has
             nothing to re-fetch on nav-link hover. */}
-        <AppearanceScript colorScheme={DEFAULT_COLOR_SCHEME} storageKey={COLOR_SCHEME_STORAGE_KEY} />
+        <AppearanceScript colorScheme={DEFAULT_COLOR_SCHEME} storageKey={STORAGE_KEY} />
         <HeadContent />
       </head>
       <body className="min-h-full overflow-x-hidden bg-ui-bg font-sans wrap-anywhere text-ui-fg antialiased selection:bg-ui-fg/15">
-        <AppearanceProvider colorScheme={DEFAULT_COLOR_SCHEME} storageKey={COLOR_SCHEME_STORAGE_KEY}>
+        <AppearanceProvider colorScheme={DEFAULT_COLOR_SCHEME} storageKey={STORAGE_KEY}>
           <Header />
           {children}
           <Footer />
