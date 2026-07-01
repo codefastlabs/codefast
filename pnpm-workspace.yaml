@@ -16,17 +16,18 @@ overrides:
   read-yaml-file@1: ^2.1.0
 
 catalog:
+  "@babel/core": ^8.0.1
   "@babel/plugin-proposal-decorators": 8.0.2
   "@changesets/changelog-github": ^0.7.0
   "@changesets/cli": ^2.31.0
   # Published @codefast/* versions consumed by examples/* (which install from npm,
   # not workspace: links). Changesets ignores catalog entries, so these are not
   # auto-bumped on release — bump them by hand when an example should track a newer release.
-  "@codefast/di": 0.5.0-canary.0
-  "@codefast/tailwind-variants": 0.5.0-canary.0
-  "@codefast/theme": 0.5.0-canary.0
-  "@codefast/typescript-config": 0.5.0-canary.0
-  "@codefast/ui": 0.5.0-canary.0
+  "@codefast/di": ^0.5.0-canary.1
+  "@codefast/tailwind-variants": ^0.5.0-canary.1
+  "@codefast/theme": ^0.5.0-canary.1
+  "@codefast/typescript-config": ^0.5.0-canary.1
+  "@codefast/ui": ^0.5.0-canary.1
   "@commitlint/cli": ^21.1.0
   "@commitlint/config-conventional": ^21.1.0
   "@content-collections/core": ^0.15.2
@@ -151,6 +152,7 @@ catalog:
 # `manual` (not `strict`): the catalog is a convenience, not enforced repo-wide.
 catalogMode: manual
 
-minimumReleaseAgeExclude:
-  - playwright-core@1.61.1
-  - playwright@1.61.1
+# 1h maturation window instead of pnpm's 24h default — short enough that our own
+# canary releases and pinned deps (e.g. playwright) age past it without needing
+# minimumReleaseAgeExclude entries.
+minimumReleaseAge: 60

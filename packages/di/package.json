@@ -209,6 +209,7 @@
     "test:watch": "vitest"
   },
   "devDependencies": {
+    "@babel/core": "catalog:",
     "@babel/plugin-proposal-decorators": "catalog:",
     "@codefast/typescript-config": "workspace:*",
     "@rolldown/plugin-babel": "catalog:",
