@@ -25,10 +25,6 @@ const SITE_TITLE = "codefast/ui — Beautiful, accessible React components";
 const SITE_DESCRIPTION =
   "60+ accessible React components built on Radix UI primitives and Tailwind CSS v4. Copy the source, own the code — strict TypeScript, dark mode, and zero config.";
 
-// Color scheme lives entirely client-side: AppearanceScript reads this localStorage key before first
-// paint (no flash) and AppearanceProvider restores + persists it. No server fn, no loader — so
-// `defaultPreload: "intent"` has nothing to re-fetch on nav-link hover.
-
 export const Route = createRootRoute({
   head: () => ({
     meta: [
@@ -91,6 +87,8 @@ function RootDocument({ children }: { children: ReactNode }) {
       suppressHydrationWarning
     >
       <head>
+        {/* Client-only via storageKey: no server fn or loader, so `defaultPreload: "intent"` has
+            nothing to re-fetch on nav-link hover. */}
         <AppearanceScript colorScheme={DEFAULT_COLOR_SCHEME} storageKey={COLOR_SCHEME_STORAGE_KEY} />
         <HeadContent />
       </head>
