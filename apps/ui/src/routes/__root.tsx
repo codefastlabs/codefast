@@ -4,6 +4,7 @@ import {
   DEFAULT_COLOR_SCHEME,
   DEFAULT_RESOLVED_COLOR_SCHEME,
 } from "@codefast/theme";
+import { STORAGE_KEY as COLOR_SCHEME_STORAGE_KEY } from "@codefast/theme/constants";
 import { Button } from "@codefast/ui/button";
 import { cn } from "@codefast/ui/lib/utils";
 import { TanStackDevtools } from "@tanstack/react-devtools";
@@ -27,7 +28,6 @@ const SITE_DESCRIPTION =
 // Color scheme lives entirely client-side: AppearanceScript reads this localStorage key before first
 // paint (no flash) and AppearanceProvider restores + persists it. No server fn, no loader — so
 // `defaultPreload: "intent"` has nothing to re-fetch on nav-link hover.
-const COLOR_SCHEME_STORAGE_KEY = "ui-theme";
 
 export const Route = createRootRoute({
   head: () => ({
