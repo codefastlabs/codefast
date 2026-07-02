@@ -1,29 +1,25 @@
-import type { ResolvedColorScheme, ColorScheme } from "#/types";
+import type { Appearance, ColorScheme } from "#/appearance";
 
 /* -----------------------------------------------------------------------------
  * Public Constants
  * -------------------------------------------------------------------------- */
 
 /**
- * Default color scheme when no user preference exists.
+ * Default appearance preference when no stored value exists.
  *
  * Set to 'automatic' to respect OS preference by default.
- *
- * @since 0.3.16-canary.0
  */
-export const DEFAULT_COLOR_SCHEME: ColorScheme = "automatic";
+export const DEFAULT_APPEARANCE: Appearance = "automatic";
 
 /**
- * Fallback color scheme for SSR when system preference cannot be detected.
+ * Fallback color scheme for SSR when the OS preference cannot be detected.
  *
  * Used during server-side rendering since `window.matchMedia()` is unavailable.
- *
- * @since 0.3.16-canary.0
  */
-export const DEFAULT_RESOLVED_COLOR_SCHEME: ResolvedColorScheme = "dark";
+export const DEFAULT_COLOR_SCHEME: ColorScheme = "dark";
 
 /**
- * Default `localStorage` key for the color scheme preference, shared by
+ * Default `localStorage` key for the appearance preference, shared by
  * `AppearanceScript` and `AppearanceProvider`.
  *
  * Re-exported only from `@codefast/theme/constants` so custom integrations can match it exactly.
@@ -45,7 +41,7 @@ export const STORAGE_KEY = "ui-theme";
 export const MEDIA = "(prefers-color-scheme: dark)";
 
 /**
- * BroadcastChannel name for cross-tab color scheme synchronization.
+ * BroadcastChannel name for cross-tab appearance synchronization.
  * @internal
  *
  * @since 0.3.16-canary.0

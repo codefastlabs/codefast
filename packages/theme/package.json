@@ -1,7 +1,7 @@
 {
   "name": "@codefast/theme",
   "version": "0.5.0-canary.1",
-  "description": "Client-side theme management with React 19 features - optimistic updates, cross-tab sync, and FOUC-free SSR",
+  "description": "Appearance management for React 19 with HIG-inspired vocabulary - optimistic updates, cross-tab sync, and FOUC-free SSR",
   "keywords": [
     "dark-mode",
     "light-mode",
@@ -56,45 +56,45 @@
       "types": "./dist/index.d.mts",
       "import": "./dist/index.mjs"
     },
+    "./appearance": {
+      "source": "./src/appearance.ts",
+      "types": "./dist/appearance.d.mts",
+      "import": "./dist/appearance.mjs"
+    },
+    "./appearance-context": {
+      "source": "./src/appearance-context.ts",
+      "types": "./dist/appearance-context.d.mts",
+      "import": "./dist/appearance-context.mjs"
+    },
+    "./appearance-provider": {
+      "source": "./src/appearance-provider.tsx",
+      "types": "./dist/appearance-provider.d.mts",
+      "import": "./dist/appearance-provider.mjs"
+    },
+    "./appearance-script": {
+      "source": "./src/appearance-script.tsx",
+      "types": "./dist/appearance-script.d.mts",
+      "import": "./dist/appearance-script.mjs"
+    },
+    "./color-scheme": {
+      "source": "./src/color-scheme.ts",
+      "types": "./dist/color-scheme.d.mts",
+      "import": "./dist/color-scheme.mjs"
+    },
     "./constants": {
       "source": "./src/constants.ts",
       "types": "./dist/constants.d.mts",
       "import": "./dist/constants.mjs"
     },
-    "./core/context": {
-      "source": "./src/core/context.tsx",
-      "types": "./dist/core/context.d.mts",
-      "import": "./dist/core/context.mjs"
+    "./dom": {
+      "source": "./src/dom.ts",
+      "types": "./dist/dom.d.mts",
+      "import": "./dist/dom.mjs"
     },
-    "./core/provider": {
-      "source": "./src/core/provider.tsx",
-      "types": "./dist/core/provider.d.mts",
-      "import": "./dist/core/provider.mjs"
-    },
-    "./core/use-theme": {
-      "source": "./src/core/use-theme.ts",
-      "types": "./dist/core/use-theme.d.mts",
-      "import": "./dist/core/use-theme.mjs"
-    },
-    "./script/theme-script": {
-      "source": "./src/script/theme-script.tsx",
-      "types": "./dist/script/theme-script.d.mts",
-      "import": "./dist/script/theme-script.mjs"
-    },
-    "./types": {
-      "source": "./src/types.ts",
-      "types": "./dist/types.d.mts",
-      "import": "./dist/types.mjs"
-    },
-    "./utils/dom": {
-      "source": "./src/utils/dom.ts",
-      "types": "./dist/utils/dom.d.mts",
-      "import": "./dist/utils/dom.mjs"
-    },
-    "./utils/system": {
-      "source": "./src/utils/system.ts",
-      "types": "./dist/utils/system.d.mts",
-      "import": "./dist/utils/system.mjs"
+    "./use-appearance": {
+      "source": "./src/use-appearance.ts",
+      "types": "./dist/use-appearance.d.mts",
+      "import": "./dist/use-appearance.mjs"
     },
     "./package.json": "./package.json"
   },

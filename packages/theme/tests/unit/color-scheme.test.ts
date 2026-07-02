@@ -1,6 +1,6 @@
-import { DEFAULT_RESOLVED_COLOR_SCHEME } from "#/constants";
+import { getSystemColorScheme, resolveColorScheme } from "#/color-scheme";
+import { DEFAULT_COLOR_SCHEME } from "#/constants";
 import { createMockMediaQueryList, mockMatchMedia } from "#/tests/support/mocks";
-import { getSystemColorScheme, resolveColorScheme } from "#/utils/system";
 
 describe("System Color Scheme Detection", () => {
   const originalMatchMedia = window.matchMedia;
@@ -26,10 +26,10 @@ describe("System Color Scheme Detection", () => {
       expect(getSystemColorScheme()).toBe("light");
     });
 
-    test("should have DEFAULT_RESOLVED_COLOR_SCHEME as fallback for SSR", () => {
-      // In SSR (no window), getSystemColorScheme returns DEFAULT_RESOLVED_COLOR_SCHEME
+    test("should have DEFAULT_COLOR_SCHEME as fallback for SSR", () => {
+      // In SSR (no window), getSystemColorScheme returns DEFAULT_COLOR_SCHEME
       // We can't easily test this in jsdom, so we verify the constant is correct
-      expect(DEFAULT_RESOLVED_COLOR_SCHEME).toBe("dark");
+      expect(DEFAULT_COLOR_SCHEME).toBe("dark");
     });
   });
 

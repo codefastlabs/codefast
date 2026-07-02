@@ -1,10 +1,4 @@
-import {
-  AppearanceProvider,
-  AppearanceScript,
-  DEFAULT_COLOR_SCHEME,
-  DEFAULT_RESOLVED_COLOR_SCHEME,
-} from "@codefast/theme";
-import { STORAGE_KEY } from "@codefast/theme/constants";
+import { AppearanceProvider, AppearanceScript, DEFAULT_APPEARANCE, DEFAULT_COLOR_SCHEME } from "@codefast/theme";
 import { Button } from "@codefast/ui/button";
 import { cn } from "@codefast/ui/lib/utils";
 import { TanStackDevtools } from "@tanstack/react-devtools";
@@ -81,19 +75,19 @@ function RootDocument({ children }: { children: ReactNode }) {
   return (
     <html
       lang="en"
-      className={cn(DEFAULT_RESOLVED_COLOR_SCHEME, "min-h-full")}
-      style={{ colorScheme: DEFAULT_RESOLVED_COLOR_SCHEME }}
-      data-appearance={DEFAULT_COLOR_SCHEME}
+      className={cn(DEFAULT_COLOR_SCHEME, "min-h-full")}
+      style={{ colorScheme: DEFAULT_COLOR_SCHEME }}
+      data-appearance={DEFAULT_APPEARANCE}
       suppressHydrationWarning
     >
       <head>
-        {/* Client-only via storageKey: no server fn or loader, so `defaultPreload: "intent"` has
-            nothing to re-fetch on nav-link hover. */}
-        <AppearanceScript colorScheme={DEFAULT_COLOR_SCHEME} storageKey={STORAGE_KEY} />
+        {/* Client-only via localStorage (default STORAGE_KEY): no server fn or loader, so
+            `defaultPreload: "intent"` has nothing to re-fetch on nav-link hover. */}
+        <AppearanceScript />
         <HeadContent />
       </head>
       <body className="min-h-full overflow-x-hidden bg-ui-bg font-sans wrap-anywhere text-ui-fg antialiased selection:bg-ui-fg/15">
-        <AppearanceProvider colorScheme={DEFAULT_COLOR_SCHEME} storageKey={STORAGE_KEY}>
+        <AppearanceProvider>
           <Header />
           {children}
           <Footer />

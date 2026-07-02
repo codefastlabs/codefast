@@ -1,27 +1,27 @@
-import type { ColorScheme } from "@codefast/theme";
-import { useColorScheme } from "@codefast/theme";
+import type { Appearance } from "@codefast/theme";
+import { useAppearance } from "@codefast/theme";
 import { Button } from "@codefast/ui/button";
 import { MonitorIcon, MoonStarIcon, SunIcon } from "lucide-react";
 import type { ReactElement } from "react";
 
-const SEQUENCE: ReadonlyArray<ColorScheme> = ["light", "dark", "automatic"];
-const LABELS = { light: "Light", dark: "Dark", automatic: "System" } as const satisfies Record<ColorScheme, string>;
+const SEQUENCE: ReadonlyArray<Appearance> = ["light", "dark", "automatic"];
+const LABELS = { light: "Light", dark: "Dark", automatic: "System" } as const satisfies Record<Appearance, string>;
 
 /** Compact appearance switcher: one icon button that cycles light → dark → system on click. */
 export function AppearanceToggle(): ReactElement {
-  const { colorScheme, isPending, setColorScheme } = useColorScheme();
-  const next = SEQUENCE[(SEQUENCE.indexOf(colorScheme) + 1) % SEQUENCE.length] ?? "light";
+  const { appearance, isPending, setAppearance } = useAppearance();
+  const next = SEQUENCE[(SEQUENCE.indexOf(appearance) + 1) % SEQUENCE.length] ?? "light";
 
   return (
     <Button
-      aria-label={`Appearance: ${LABELS[colorScheme]}. Switch to ${LABELS[next]}.`}
+      aria-label={`Appearance: ${LABELS[appearance]}. Switch to ${LABELS[next]}.`}
       className="text-ui-muted hover:text-ui-fg"
       disabled={isPending}
       size="icon"
-      title={LABELS[colorScheme]}
+      title={LABELS[appearance]}
       variant="ghost"
       onClick={() => {
-        void setColorScheme(next);
+        void setAppearance(next);
       }}
     >
       {/* The icon is chosen by CSS from `html[data-appearance]` (set by AppearanceScript before first

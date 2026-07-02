@@ -1,5 +1,5 @@
+import { applyColorScheme, suppressTransitions } from "#/dom";
 import { createMockMediaQueryList, mockMatchMedia } from "#/tests/support/mocks";
-import { applyColorScheme, suppressTransitions } from "#/utils/dom";
 
 describe("DOM Utilities", () => {
   describe("applyColorScheme", () => {
