@@ -3,7 +3,7 @@ import userEvent from "@testing-library/user-event";
 import type React from "react";
 import { renderToString } from "react-dom/server";
 
-import { SYNC_CHANNEL } from "#/constants";
+import { DEFAULT_RESOLVED_COLOR_SCHEME, STORAGE_KEY, SYNC_CHANNEL } from "#/constants";
 import { AppearanceProvider } from "#/core/provider";
 import { useColorScheme } from "#/core/use-theme";
 import { createMockMediaQueryList, mockMatchMedia } from "#/tests/support/mocks";
@@ -29,6 +29,9 @@ describe("AppearanceProvider", () => {
     // Reset document state
     document.documentElement.className = "";
     document.documentElement.style.colorScheme = "";
+
+    // storageKey defaults to STORAGE_KEY, so stale entries would leak into unrelated tests
+    window.localStorage.clear();
 
     // Default matchMedia mock (light mode)
     mockMatchMedia();
@@ -282,108 +285,8 @@ describe("AppearanceProvider", () => {
     });
   });
 
-  describe("syncFromServer", () => {
-    test("reconciles state when server returns a different color scheme after mount", async () => {
-      const sync = vi.fn().mockResolvedValue("dark" as ColorScheme);
-
-      const TestConsumer = (): React.ReactElement => {
-        const { colorScheme } = useColorScheme();
-
-        return <span data-testid="colorScheme-label">{colorScheme}</span>;
-      };
-
-      render(
-        <AppearanceProvider syncFromServer={sync} colorScheme="light">
-          <TestConsumer />
-        </AppearanceProvider>,
-      );
-
-      expect(screen.getByTestId("colorScheme-label")).toHaveTextContent("light");
-
-      await waitFor(() => {
-        expect(screen.getByTestId("colorScheme-label")).toHaveTextContent("dark");
-      });
-
-      expect(sync).toHaveBeenCalledTimes(1);
-    });
-
-    test("keeps initial color scheme when syncFromServer rejects", async () => {
-      const sync = vi.fn().mockRejectedValue(new Error("network"));
-
-      const TestConsumer = (): React.ReactElement => {
-        const { colorScheme } = useColorScheme();
-
-        return <span data-testid="colorScheme-label">{colorScheme}</span>;
-      };
-
-      render(
-        <AppearanceProvider syncFromServer={sync} colorScheme="light">
-          <TestConsumer />
-        </AppearanceProvider>,
-      );
-
-      await waitFor(() => {
-        expect(sync).toHaveBeenCalled();
-      });
-
-      expect(screen.getByTestId("colorScheme-label")).toHaveTextContent("light");
-    });
-
-    test("does not change preference when server returns the same color scheme", async () => {
-      const sync = vi.fn().mockResolvedValue("light" as ColorScheme);
-
-      const TestConsumer = (): React.ReactElement => {
-        const { colorScheme } = useColorScheme();
-
-        return <span data-testid="colorScheme-label">{colorScheme}</span>;
-      };
-
-      render(
-        <AppearanceProvider syncFromServer={sync} colorScheme="light">
-          <TestConsumer />
-        </AppearanceProvider>,
-      );
-
-      await waitFor(() => {
-        expect(sync).toHaveBeenCalled();
-      });
-
-      expect(screen.getByTestId("colorScheme-label")).toHaveTextContent("light");
-    });
-
-    test("ignores server result after unmount", async () => {
-      let resolveSync: ((value: ColorScheme) => void) | undefined;
-      const sync = vi.fn(
-        () =>
-          new Promise<ColorScheme>((resolve) => {
-            resolveSync = resolve;
-          }),
-      );
-
-      const { unmount } = render(
-        <AppearanceProvider syncFromServer={sync} colorScheme="light">
-          <span data-testid="x">x</span>
-        </AppearanceProvider>,
-      );
-
-      await waitFor(() => {
-        expect(sync).toHaveBeenCalled();
-      });
-
-      unmount();
-
-      await act(async () => {
-        if (resolveSync === undefined) {
-          throw new Error("expected syncFromServer to have started");
-        }
-        resolveSync("dark");
-        await Promise.resolve();
-      });
-    });
-  });
-
-  describe("ssrColorScheme", () => {
-    test("uses ssrColorScheme as resolved system preference during SSR", () => {
+  describe("SSR", () => {
+    test('resolves "automatic" to DEFAULT_RESOLVED_COLOR_SCHEME during SSR', () => {
       const TestConsumer = (): React.ReactElement => {
         const { resolvedColorScheme } = useColorScheme();
 
@@ -391,40 +294,30 @@ describe("AppearanceProvider", () => {
       };
 
       const html = renderToString(
-        <AppearanceProvider ssrColorScheme="light" colorScheme="automatic">
+        <AppearanceProvider colorScheme="automatic">
           <TestConsumer />
         </AppearanceProvider>,
       );
 
-      expect(html).toContain("light");
+      expect(html).toContain(DEFAULT_RESOLVED_COLOR_SCHEME);
     });
   });
 
-  describe("colorScheme prop sync after mount", () => {
-    test("re-syncs state when colorScheme prop changes (e.g. loader re-runs)", async () => {
+  describe("colorScheme prop", () => {
+    test("defaults to DEFAULT_COLOR_SCHEME when omitted", () => {
       const TestConsumer = (): React.ReactElement => {
         const { colorScheme } = useColorScheme();
 
         return <span data-testid="colorScheme-label">{colorScheme}</span>;
       };
 
-      const { rerender } = render(
-        <AppearanceProvider colorScheme="light">
+      render(
+        <AppearanceProvider>
           <TestConsumer />
         </AppearanceProvider>,
       );
 
-      expect(screen.getByTestId("colorScheme-label")).toHaveTextContent("light");
-
-      rerender(
-        <AppearanceProvider colorScheme="dark">
-          <TestConsumer />
-        </AppearanceProvider>,
-      );
-
-      await waitFor(() => {
-        expect(screen.getByTestId("colorScheme-label")).toHaveTextContent("dark");
-      });
+      expect(screen.getByTestId("colorScheme-label")).toHaveTextContent("automatic");
     });
 
     test("ignores invalid colorScheme prop and falls back to DEFAULT_COLOR_SCHEME", () => {
@@ -806,6 +699,38 @@ describe("AppearanceProvider", () => {
 
       // No waitFor: the initializer reads localStorage synchronously, so the very first render is "dark".
       expect(screen.getByTestId("colorScheme-label")).toHaveTextContent("dark");
+    });
+
+    test("defaults storageKey to STORAGE_KEY when omitted", async () => {
+      const user = userEvent.setup();
+
+      const TestConsumer = (): React.ReactElement => {
+        const { setColorScheme } = useColorScheme();
+
+        return (
+          <button
+            data-testid="toggle"
+            type="button"
+            onClick={() => {
+              void setColorScheme("dark");
+            }}
+          >
+            Toggle
+          </button>
+        );
+      };
+
+      render(
+        <AppearanceProvider colorScheme="light">
+          <TestConsumer />
+        </AppearanceProvider>,
+      );
+
+      await user.click(screen.getByTestId("toggle"));
+
+      await waitFor(() => {
+        expect(window.localStorage.getItem(STORAGE_KEY)).toBe("dark");
+      });
     });
 
     test("auto-persists changes to localStorage when no persistColorScheme is given", async () => {

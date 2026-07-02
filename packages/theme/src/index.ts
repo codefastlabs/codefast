@@ -1,10 +1,10 @@
 /**
  * \@codefast/theme
  *
- * React 19 color scheme management: SSR-friendly `automatic` resolution, cross-tab sync, optimistic updates.
+ * React 19 color scheme management: client-only `localStorage` persistence, SSR-safe
+ * `automatic` resolution, cross-tab sync, optimistic updates.
  *
  * - **Root** (this module): `AppearanceProvider`, `useColorScheme`, `AppearanceScript`, `resolveColorScheme`, types, defaults.
- * - **`@codefast/theme/start`**: TanStack Start server functions + `persistColorSchemeCookie`.
  * - **`@codefast/theme/utils`**: `getSystemColorScheme`, `applyColorScheme`, `suppressTransitions`.
  * - **`@codefast/theme/core`**: `ColorSchemeContext` for rare custom wiring.
  */

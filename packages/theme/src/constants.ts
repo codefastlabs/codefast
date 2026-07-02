@@ -23,11 +23,10 @@ export const DEFAULT_COLOR_SCHEME: ColorScheme = "automatic";
 export const DEFAULT_RESOLVED_COLOR_SCHEME: ResolvedColorScheme = "dark";
 
 /**
- * Storage key for the color scheme preference — the httpOnly cookie name for the
- * `@codefast/theme/start` adapter, and the recommended `localStorage` key for the
- * client-only `storageKey` path (`AppearanceScript`/`AppearanceProvider`).
+ * Default `localStorage` key for the color scheme preference, shared by
+ * `AppearanceScript` and `AppearanceProvider`.
  *
- * Re-exported only from `@codefast/theme/constants` so custom middleware / consumers can match it exactly.
+ * Re-exported only from `@codefast/theme/constants` so custom integrations can match it exactly.
  *
  * @since 0.3.16-canary.0
  */

@@ -11,7 +11,7 @@ import {
   useSyncExternalStore,
 } from "react";
 
-import { DEFAULT_RESOLVED_COLOR_SCHEME, DEFAULT_COLOR_SCHEME, MEDIA, SYNC_CHANNEL } from "#/constants";
+import { DEFAULT_RESOLVED_COLOR_SCHEME, DEFAULT_COLOR_SCHEME, MEDIA, STORAGE_KEY, SYNC_CHANNEL } from "#/constants";
 import { ColorSchemeContext } from "#/core/context";
 import type { ResolvedColorScheme, ColorScheme, ColorSchemeContextType } from "#/types";
 import { colorSchemeSchema } from "#/types";
@@ -39,6 +39,11 @@ function subscribeToSystemColorScheme(callback: () => void): () => void {
   return () => {
     mediaQuery.removeEventListener("change", callback);
   };
+}
+
+/** SSR has no `matchMedia`; render the default until the first client snapshot takes over. */
+function getServerSnapshot(): ResolvedColorScheme {
+  return DEFAULT_RESOLVED_COLOR_SCHEME;
 }
 
 /**
@@ -94,10 +99,7 @@ export type AppearanceProviderProps = {
    */
   readonly nonce?: string;
   /**
-   * Async function to persist color scheme changes to server/storage.
-   *
-   * For TanStack Start: use `persistColorSchemeCookie` from `@codefast/theme/start`
-   * For Next.js: implement a server action
+   * Custom async persistence for color scheme changes; replaces the `localStorage` auto-persist.
    */
   readonly persistColorScheme?: (value: ColorScheme) => Promise<void>;
   /**
@@ -105,37 +107,18 @@ export type AppearanceProviderProps = {
    */
   readonly onPersistError?: (error: unknown, attemptedColorScheme: ColorScheme) => void;
   /**
-   * Initial color scheme preference from the server (cookie, loader, etc.).
-   *
-   * After mount, `AppearanceProvider` re-syncs whenever this prop changes — for example, when
-   * the router re-runs the root loader after navigation. The server value is authoritative:
-   * a new prop value will override any local optimistic state.
+   * Fallback preference when storage has no valid entry — also what SSR renders.
+   * Defaults to {@link DEFAULT_COLOR_SCHEME}.
    */
-  readonly colorScheme: ColorScheme;
+  readonly colorScheme?: ColorScheme;
   /**
-   * OS light/dark guess from the SSR request (e.g. `Sec-CH-Prefers-Color-Scheme`).
+   * `localStorage` key the preference is restored from and persisted under.
+   * Defaults to {@link STORAGE_KEY}; pair with `<AppearanceScript>` using the **same key**.
    *
-   * When the stored preference is `automatic`, {@link useSyncExternalStore} uses this for
-   * `getServerSnapshot` so the first client snapshot matches `matchMedia` and avoids a
-   * dark → light flip after hydration.
-   */
-  readonly ssrColorScheme?: ResolvedColorScheme;
-  /**
-   * After mount, re-read the canonical color scheme from the server (e.g. httpOnly cookie).
-   *
-   * Fixes **stale HTML / disk cache** on "Duplicate tab" or back-forward cache where the
-   * document was saved with an old `AppearanceScript` / loader value while the cookie was already updated
-   * in another tab. Use a stable reference (e.g. `getColorSchemeServerFn` from `@codefast/theme/start`).
-   */
-  readonly syncFromServer?: () => Promise<ColorScheme>;
-  /**
-   * Persist + restore the preference in `localStorage` under this key — the client-only path
-   * (no server framework, no cookie, no loader).
-   *
-   * When set, the provider reads the stored value in its initial client render (so the first paint
-   * already matches the preference — no flash, no post-mount settle), auto-persists changes to
-   * `localStorage` (unless {@link persistColorScheme} is also given, which then wins), and syncs across
-   * tabs via the `storage` event. Pair with `<AppearanceScript storageKey={…} />` using the **same key**.
+   * The provider reads the stored value in its initial client render (so the first paint already
+   * matches the preference — no flash, no post-mount settle), auto-persists changes to
+   * `localStorage` (unless {@link persistColorScheme} is also given, which then wins), and syncs
+   * across tabs via the `storage` event.
    *
    * @remarks SSR has no `localStorage`, so the server renders the {@link AppearanceProviderProps.colorScheme}
    * prop. For a returning visitor whose stored preference differs, components that render
@@ -156,30 +139,10 @@ export type AppearanceProviderProps = {
  * - `useSyncExternalStore` - SSR-safe subscription to OS color scheme preference
  * - `useEffectEvent` - Stable callback for cross-tab sync without effect re-runs
  *
- * @param props - Component props
- * @param props.children - React tree to provide context for
- * @param props.colorScheme - Initial preference from the server (cookie, loader, etc.)
- * @param props.ssrColorScheme - Best-effort `light` or `dark` from the SSR request
- * (e.g. `Sec-CH-Prefers-Color-Scheme`). When preference is `automatic`, this value is used as
- * `useSyncExternalStore`'s server snapshot so the first client snapshot matches `matchMedia`
- * and avoids a post-hydration flip. Omit if unavailable; falls back to {@link DEFAULT_RESOLVED_COLOR_SCHEME}.
- * @param props.syncFromServer - Optional one-shot RPC after mount to align with the cookie when SSR/HTML was stale.
- * @param props.storageKey - Optional localStorage key for the client-only path: restore in the initial render, auto-persist, cross-tab sync.
- * @param props.persistColorScheme - Optional async handler to persist preference (cookie, server action, …)
- * @param props.onPersistError - Optional callback for persistence failures
- * @param props.disableTransition - Temporarily suppress CSS transitions on color scheme change
- * @param props.nonce - CSP nonce for inline transition-blocking styles when `disableTransition` is set
- * @returns Provider element wrapping `children`
- *
  * @example
  * ```tsx
- * // In your root layout
- * <AppearanceProvider
- *   colorScheme={colorScheme}
- *   persistColorScheme={(value) => setColorSchemeServerFn({ data: value })}
- * >
- *   {children}
- * </AppearanceProvider>
+ * // In your root layout — pair with <AppearanceScript /> using the same storage key
+ * <AppearanceProvider>{children}</AppearanceProvider>
  * ```
  *
  * @since 0.3.16-canary.0
@@ -190,30 +153,20 @@ export function AppearanceProvider({
   nonce,
   onPersistError,
   persistColorScheme,
-  ssrColorScheme,
-  storageKey,
-  syncFromServer,
-  colorScheme: initialColorScheme,
+  storageKey = STORAGE_KEY,
+  colorScheme: initialColorScheme = DEFAULT_COLOR_SCHEME,
 }: AppearanceProviderProps): JSX.Element {
   // F2: Runtime guard against invalid values bypassing TypeScript (e.g. raw API strings)
   const safeInitialColorScheme = colorSchemeSchema.safeParse(initialColorScheme).success
     ? initialColorScheme
     : DEFAULT_COLOR_SCHEME;
 
-  // Actual persisted color scheme. Storage path: read localStorage in the initializer so the first client
-  // render already matches what AppearanceScript applied pre-paint (no flash, no post-mount settle). SSR has
+  // Actual persisted color scheme. Read localStorage in the initializer so the first client render
+  // already matches what AppearanceScript applied pre-paint (no flash, no post-mount settle). SSR has
   // no localStorage, so the server renders the prop.
-  const [colorScheme, setColorSchemeState] = useState<ColorScheme>(() => {
-    if (storageKey !== undefined) {
-      const stored = readColorSchemeFromStorage(storageKey);
-
-      if (stored !== null) {
-        return stored;
-      }
-    }
-
-    return safeInitialColorScheme;
-  });
+  const [colorScheme, setColorSchemeState] = useState<ColorScheme>(
+    () => readColorSchemeFromStorage(storageKey) ?? safeInitialColorScheme,
+  );
 
   // Optimistic color scheme - immediately reflects user's intent while async operation runs
   // Automatically reverts to `colorScheme` if the transition fails
@@ -236,14 +189,10 @@ export function AppearanceProvider({
   // C3: Last-write-wins intent — prevents stale async commits from overriding newer setColorScheme calls
   const intentRef = useRef<ColorScheme | null>(null);
 
-  // Effective persistence: an explicit persistColorScheme wins; otherwise storageKey auto-persists to localStorage.
-  const persist = useMemo<((value: ColorScheme) => Promise<void>) | undefined>(() => {
+  // Effective persistence: an explicit persistColorScheme wins; otherwise auto-persist to localStorage.
+  const persist = useMemo<(value: ColorScheme) => Promise<void>>(() => {
     if (persistColorScheme) {
       return persistColorScheme;
-    }
-
-    if (storageKey === undefined) {
-      return undefined;
     }
 
     return async (value: ColorScheme): Promise<void> => {
@@ -254,56 +203,6 @@ export function AppearanceProvider({
       }
     };
   }, [persistColorScheme, storageKey]);
-
-  // C1: Re-sync state when the server (loader) provides a new color scheme value after mount.
-  // Storage path owns the preference client-side; the prop is only a static default — don't clobber it.
-  useEffect(() => {
-    if (storageKey !== undefined) {
-      return;
-    }
-
-    startTransition(() => {
-      setColorSchemeState((prev) => (prev === safeInitialColorScheme ? prev : safeInitialColorScheme));
-    });
-  }, [safeInitialColorScheme, storageKey]);
-
-  const syncFromServerRef = useRef(syncFromServer);
-
-  syncFromServerRef.current = syncFromServer;
-
-  useEffect(() => {
-    const sync = syncFromServerRef.current;
-
-    if (!sync) {
-      return;
-    }
-
-    let cancelled = false;
-
-    void (async () => {
-      try {
-        const serverColorScheme = await sync();
-
-        if (cancelled) {
-          return;
-        }
-
-        startTransition(() => {
-          setColorSchemeState((prev) => (prev === serverColorScheme ? prev : serverColorScheme));
-        });
-      } catch {
-        /* keep SSR / loader state */
-      }
-    })();
-
-    return (): void => {
-      cancelled = true;
-    };
-  }, []);
-
-  const getServerSnapshot = useCallback((): ResolvedColorScheme => {
-    return ssrColorScheme ?? DEFAULT_RESOLVED_COLOR_SCHEME;
-  }, [ssrColorScheme]);
 
   // Subscribe to OS preference changes (SSR-safe via useSyncExternalStore)
   const systemColorScheme = useSyncExternalStore(subscribeToSystemColorScheme, getSystemColorScheme, getServerSnapshot);
@@ -347,7 +246,7 @@ export function AppearanceProvider({
     });
   });
 
-  // Storage path cross-tab sync: the `storage` event fires in OTHER tabs when this key changes.
+  // Cross-tab sync fallback: the `storage` event fires in OTHER tabs when this key changes.
   const handleStorageEvent = useEffectEvent((event: StorageEvent) => {
     if (event.key !== storageKey) {
       return;
@@ -383,16 +282,12 @@ export function AppearanceProvider({
   }, []);
 
   useEffect(() => {
-    if (storageKey === undefined) {
-      return;
-    }
-
     globalThis.window.addEventListener("storage", handleStorageEvent);
 
     return (): void => {
       globalThis.window.removeEventListener("storage", handleStorageEvent);
     };
-  }, [storageKey]);
+  }, []);
 
   const setColorScheme = useCallback(
     async (value: ColorScheme): Promise<void> => {
@@ -416,10 +311,8 @@ export function AppearanceProvider({
         setOptimisticColorScheme(value);
 
         try {
-          // Persist to server/storage
-          if (persist) {
-            await persist(value);
-          }
+          // Persist to storage
+          await persist(value);
 
           // Only commit if no newer setColorScheme call has since taken over
           if (intentRef.current === value) {

@@ -3,6 +3,7 @@ import { act } from "react";
 import { hydrateRoot } from "react-dom/client";
 import { renderToString } from "react-dom/server";
 
+import { DEFAULT_COLOR_SCHEME, STORAGE_KEY } from "#/constants";
 import { AppearanceScript } from "#/script/theme-script";
 
 describe("AppearanceScript", () => {
@@ -169,13 +170,12 @@ describe("AppearanceScript", () => {
       expect(script?.innerHTML).toContain('"app-color-scheme"');
     });
 
-    test("uses null for sk when storageKey is omitted (backward-compatible path)", () => {
+    test("defaults sk to STORAGE_KEY when storageKey is omitted", () => {
       const { container } = render(<AppearanceScript colorScheme="dark" />);
 
       const script = container.querySelector("script");
 
-      // sk=null means localStorage branch is skipped; fbt (fallback color scheme) is used directly
-      expect(script?.innerHTML).toContain("sk=null");
+      expect(script?.innerHTML).toContain(`sk="${STORAGE_KEY}"`);
     });
 
     test("uses colorScheme prop as fallback (fbt) in script", () => {
@@ -187,12 +187,12 @@ describe("AppearanceScript", () => {
       expect(script?.innerHTML).toContain('fbt="light"');
     });
 
-    test("falls back to colorScheme prop when storageKey is omitted", () => {
-      const { container } = render(<AppearanceScript colorScheme="dark" />);
+    test("defaults fbt to DEFAULT_COLOR_SCHEME when colorScheme is omitted", () => {
+      const { container } = render(<AppearanceScript />);
 
       const script = container.querySelector("script");
 
-      expect(script?.innerHTML).toContain('fbt="dark"');
+      expect(script?.innerHTML).toContain(`fbt="${DEFAULT_COLOR_SCHEME}"`);
     });
   });
 
