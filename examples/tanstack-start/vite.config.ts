@@ -1,4 +1,3 @@
-import { codefastTheme } from "@codefast/theme/vite";
 import babel from "@rolldown/plugin-babel";
 import tailwindcss from "@tailwindcss/vite";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
@@ -9,8 +8,6 @@ import { defineConfig } from "vite";
 // Smoke test for the published @codefast/* packages: consumes their npm dist/, like a real consumer.
 export default defineConfig({
   plugins: [
-    // Wire @codefast/theme's server functions into the build.
-    codefastTheme(),
     tailwindcss(),
     tanstackStart(),
     // Build for Vercel (Nitro Build Output API → .vercel/output).
