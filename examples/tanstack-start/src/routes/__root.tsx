@@ -39,7 +39,9 @@ function RootDocument({ children }: { children: ReactNode }) {
     <html
       lang="en"
       className={cn(DEFAULT_RESOLVED_COLOR_SCHEME, "min-h-full")}
-      style={{ colorScheme: DEFAULT_RESOLVED_COLOR_SCHEME }}
+      // "light dark": the pre-paint blank frame follows the OS instead of flashing dark on reload;
+      // the inline script overwrites this with the resolved value before paint.
+      style={{ colorScheme: "light dark" }}
       data-appearance={DEFAULT_COLOR_SCHEME}
       suppressHydrationWarning
     >

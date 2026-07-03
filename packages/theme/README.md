@@ -134,7 +134,9 @@ function RootShell({ children }: { children: React.ReactNode }) {
     <html
       className={DEFAULT_COLOR_SCHEME}
       lang="en"
-      style={{ colorScheme: DEFAULT_COLOR_SCHEME }}
+      // "light dark": the pre-paint blank frame follows the OS instead of flashing a hardcoded
+      // color on reload; AppearanceScript overwrites this with the resolved value before paint.
+      style={{ colorScheme: "light dark" }}
       data-appearance={DEFAULT_APPEARANCE}
       suppressHydrationWarning
     >
