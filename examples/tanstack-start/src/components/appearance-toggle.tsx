@@ -5,7 +5,7 @@ import { Monitor, Moon, Sun } from "lucide-react";
 import type { ComponentProps, ReactElement } from "react";
 import { useEffect, useState } from "react";
 
-type ThemeToggleProps = Omit<ComponentProps<typeof Button>, "children" | "onClick" | "size" | "variant">;
+type AppearanceToggleProps = Omit<ComponentProps<typeof Button>, "children" | "onClick" | "size" | "variant">;
 
 const SEQUENCE: ReadonlyArray<ColorScheme> = ["light", "dark", "automatic"];
 const LABELS = { light: "Light", dark: "Dark", automatic: "System" } as const;
@@ -16,7 +16,7 @@ const LABELS = { light: "Light", dark: "Dark", automatic: "System" } as const;
  * The visible icon is driven by CSS from `html[data-appearance]` — set by the inline script
  * before first paint — so the first frame always shows the stored appearance.
  */
-export function ThemeToggle(props: ThemeToggleProps): ReactElement {
+export function AppearanceToggle(props: AppearanceToggleProps): ReactElement {
   const { colorScheme, isPending, setColorScheme } = useColorScheme();
   const next = SEQUENCE[(SEQUENCE.indexOf(colorScheme) + 1) % SEQUENCE.length] ?? "light";
 
@@ -41,7 +41,7 @@ export function ThemeToggle(props: ThemeToggleProps): ReactElement {
       title={LABELS[shown]}
       variant="outline"
       {...props}
-      /* ThemeToggle owns the click: cycles the appearance Light → Dark → Auto via @codefast/theme. */
+      /* AppearanceToggle owns the click: cycles the appearance Light → Dark → Auto via @codefast/theme. */
       onClick={() => {
         void setColorScheme(next);
       }}
