@@ -8,13 +8,20 @@ import { useEffect, useState } from "react";
 const SEQUENCE: ReadonlyArray<Appearance> = ["light", "dark", "automatic"];
 const LABELS = { light: "Light", dark: "Dark", automatic: "System" } as const satisfies Record<Appearance, string>;
 
-/** Compact appearance switcher: one icon button that cycles light → dark → system on click. */
+/**
+ * Compact appearance switcher: one icon button that cycles Light → Dark → Auto.
+ *
+ * The visible icon is driven by CSS from `html[data-appearance]` — set by `AppearanceScript`
+ * before first paint — so the first frame always shows the stored appearance.
+ */
 export function AppearanceToggle(): ReactElement {
   const { appearance, isPending, setAppearance } = useAppearance();
   const next = SEQUENCE[(SEQUENCE.indexOf(appearance) + 1) % SEQUENCE.length] ?? "light";
 
-  // Labels must render the SSR fallback until mount: hydration never patches mismatched
-  // attributes, so an attribute derived from the localStorage-restored state would stay stale.
+  /**
+   * Labels render the SSR fallback until mount: hydration never patches mismatched attributes,
+   * so an attribute derived from the localStorage-restored appearance would stay stale.
+   */
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {

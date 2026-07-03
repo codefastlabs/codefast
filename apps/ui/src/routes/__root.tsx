@@ -69,22 +69,25 @@ function SiteError({ error }: { error: Error }) {
   );
 }
 
+/**
+ * Document shell. Prerendered HTML can't know the stored appearance at build time, so it renders
+ * the defaults; `AppearanceScript` applies the resolved color scheme before first paint and
+ * `suppressHydrationWarning` absorbs the mismatch.
+ */
 function RootDocument({ children }: { children: ReactNode }) {
-  // Prerendered HTML can't know the preference at build time; the script overwrites this class before
-  // paint and `suppressHydrationWarning` lets the mismatch through.
   return (
     <html
       lang="en"
       className={cn(DEFAULT_COLOR_SCHEME, "min-h-full")}
-      // "light dark": the pre-paint blank frame follows the OS instead of flashing dark on reload;
-      // AppearanceScript overwrites this with the resolved value before paint.
+      /* "light dark": the pre-paint frame follows the OS color scheme instead of flashing dark
+         on reload; AppearanceScript sets the resolved value before paint. */
       style={{ colorScheme: "light dark" }}
       data-appearance={DEFAULT_APPEARANCE}
       suppressHydrationWarning
     >
       <head>
-        {/* Client-only via localStorage (default STORAGE_KEY): no server fn or loader, so
-            `defaultPreload: "intent"` has nothing to re-fetch on nav-link hover. */}
+        {/* Client-only appearance via localStorage (default STORAGE_KEY): no server fn or loader,
+            so `defaultPreload: "intent"` has nothing to re-fetch on nav-link hover. */}
         <AppearanceScript />
         <HeadContent />
       </head>
