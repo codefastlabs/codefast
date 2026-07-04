@@ -19,7 +19,7 @@ export function EmptyDemo() {
         <Button variant="outline">Import Project</Button>
       </EmptyContent>
       <Button asChild className="text-ui-muted" size="sm" variant="link">
-        <a href="/docs">
+        <a href="/">
           Learn More <ArrowUpRightIcon />
         </a>
       </Button>
