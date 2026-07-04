@@ -11,7 +11,7 @@ import { ButtonSecondary } from "#/registry/button/secondary.example";
 import { ButtonSize } from "#/registry/button/size.example";
 import { ButtonSpinner } from "#/registry/button/spinner.example";
 import { ButtonWithIcon } from "#/registry/button/with-icon.example";
-import { docSource, docAnatomy } from "#/registry/source";
+import { docSource } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const buttonDoc: ComponentDoc = {
@@ -111,7 +111,7 @@ export const buttonDoc: ComponentDoc = {
       source: docSource("button", "aschild"),
     },
   ],
-  anatomy: docAnatomy("button"),
+  anatomy: [{ name: "Button" }],
   api: [
     {
       name: "Button",

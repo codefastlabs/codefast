@@ -1,7 +1,7 @@
 import { CheckboxCardsColumns } from "#/registry/checkbox-cards/columns.example";
 import { CheckboxCardsDisabled } from "#/registry/checkbox-cards/disabled.example";
 import { CheckboxCardsFeatures } from "#/registry/checkbox-cards/features.example";
-import { docSource, docAnatomy } from "#/registry/source";
+import { docSource } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const checkboxCardsDoc: ComponentDoc = {
@@ -30,7 +30,7 @@ export const checkboxCardsDoc: ComponentDoc = {
       previewClassName: "items-start",
     },
   ],
-  anatomy: docAnatomy("checkbox-cards"),
+  anatomy: [{ name: "CheckboxCards", children: [{ name: "CheckboxCardsItem" }] }],
   api: [
     {
       name: "CheckboxCards",

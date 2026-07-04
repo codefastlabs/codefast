@@ -1,17 +1,26 @@
 import { AvatarBadgeIconExample } from "#/registry/avatar/badge-icon.example";
 import { AvatarWithBadge } from "#/registry/avatar/badge.example";
 import { AvatarBasic } from "#/registry/avatar/basic.example";
+import { AvatarDemo } from "#/registry/avatar/demo.example";
 import { AvatarDropdown } from "#/registry/avatar/dropdown.example";
 import { AvatarGroupCountIconExample } from "#/registry/avatar/group-count-icon.example";
 import { AvatarGroupCountExample } from "#/registry/avatar/group-count.example";
 import { AvatarGroupExample } from "#/registry/avatar/group.example";
 import { AvatarRtl } from "#/registry/avatar/rtl.example";
 import { AvatarSizeExample } from "#/registry/avatar/size.example";
-import { docSource, docAnatomy } from "#/registry/source";
+import { docSource } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const avatarDoc: ComponentDoc = {
   examples: [
+    {
+      id: "avatar-demo",
+      title: "Overview",
+      description: "A single, a badged, and a stacked group avatar side by side.",
+      Demo: AvatarDemo,
+      source: docSource("avatar", "demo"),
+      previewClassName: "block",
+    },
     {
       id: "group",
       title: "Stacked group",
@@ -78,7 +87,7 @@ export const avatarDoc: ComponentDoc = {
       source: docSource("avatar", "size"),
     },
   ],
-  anatomy: docAnatomy("avatar"),
+  anatomy: [{ name: "Avatar", children: [{ name: "AvatarImage" }, { name: "AvatarFallback" }] }],
   api: [
     {
       name: "Avatar",

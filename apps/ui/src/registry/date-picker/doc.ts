@@ -6,7 +6,7 @@ import { DatePickerNaturalLanguage } from "#/registry/date-picker/natural-langua
 import { DatePickerRange } from "#/registry/date-picker/range.example";
 import { DatePickerRtl } from "#/registry/date-picker/rtl.example";
 import { DatePickerTime } from "#/registry/date-picker/time.example";
-import { docAnatomy, docDemo, docSource } from "#/registry/source";
+import { docDemo, docSource } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const datePickerDoc: ComponentDoc = {
@@ -69,7 +69,15 @@ export const datePickerDoc: ComponentDoc = {
       direction: "rtl",
     },
   ],
-  anatomy: docAnatomy("date-picker"),
+  anatomy: [
+    {
+      name: "Popover",
+      children: [
+        { name: "PopoverTrigger", children: [{ name: "Button" }] },
+        { name: "PopoverContent", children: [{ name: "Calendar" }] },
+      ],
+    },
+  ],
   guidelines: {
     do: [
       "Compose the picker from Popover + Calendar so it inherits their focus and keyboard behaviour.",

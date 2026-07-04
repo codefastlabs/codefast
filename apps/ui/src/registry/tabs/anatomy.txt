@@ -1,8 +1,0 @@
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@codefast/ui/tabs";
-
-<Tabs defaultValue="a">
-  <TabsList>
-    <TabsTrigger value="a">A</TabsTrigger>
-  </TabsList>
-  <TabsContent value="a">…</TabsContent>
-</Tabs>

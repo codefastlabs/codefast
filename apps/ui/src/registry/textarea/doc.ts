@@ -1,4 +1,4 @@
-import { docSource, docAnatomy } from "#/registry/source";
+import { docSource } from "#/registry/source";
 import { TextareaButton } from "#/registry/textarea/button.example";
 import { TextareaDisabled } from "#/registry/textarea/disabled.example";
 import { TextareaField } from "#/registry/textarea/field.example";
@@ -47,7 +47,7 @@ export const textareaDoc: ComponentDoc = {
       direction: "rtl",
     },
   ],
-  anatomy: docAnatomy("textarea"),
+  anatomy: [{ name: "Textarea" }],
   api: [
     {
       name: "Textarea",

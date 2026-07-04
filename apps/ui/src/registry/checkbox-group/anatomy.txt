@@ -1,6 +1,0 @@
-import { CheckboxGroup, CheckboxGroupItem } from "@codefast/ui/checkbox-group";
-
-<CheckboxGroup value={list} onValueChange={setList}>
-  <CheckboxGroupItem value="read" id="read" />
-  <Label htmlFor="read">Read</Label>
-</CheckboxGroup>

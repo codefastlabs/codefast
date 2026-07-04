@@ -2,7 +2,7 @@ import { PanelLeftIcon } from "lucide-react";
 import { Slot } from "radix-ui";
 import { Context } from "radix-ui/internal";
 import type { ComponentProps, CSSProperties, Dispatch, JSX, SetStateAction } from "react";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useId, useState } from "react";
 
 import { Button } from "#/components/button";
 import { Input } from "#/components/input";
@@ -310,7 +310,7 @@ function SidebarRail({ className, ...props }: SidebarRailProps): JSX.Element {
   return (
     <button
       className={cn(
-        "absolute inset-y-0 z-20 hidden w-4 transition-all ease-gentle group-data-[collapsible=offcanvas]:translate-x-0 group-data-side-right:left-0 group-data-side-left:-right-4 after:absolute after:inset-y-0 after:inset-s-1/2 after:w-0.5 group-data-[collapsible=offcanvas]:after:left-full hover:group-data-[collapsible=offcanvas]:bg-sidebar hover:after:bg-sidebar-border in-data-side-right:cursor-e-resize in-data-side-left:cursor-w-resize sm:flex ltr:-translate-x-1/2 rtl:-translate-x-1/2 rtl:group-data-[collapsible=offcanvas]:translate-x-0 rtl:in-data-side-right:cursor-w-resize rtl:in-data-side-left:cursor-e-resize [[data-side=left][data-collapsible=offcanvas]_&]:-right-2 [[data-side=left][data-state=collapsed]_&]:cursor-e-resize rtl:[[data-side=left][data-state=collapsed]_&]:cursor-w-resize [[data-side=right][data-collapsible=offcanvas]_&]:-left-2 [[data-side=right][data-state=collapsed]_&]:cursor-w-resize rtl:[[data-side=right][data-state=collapsed]_&]:cursor-e-resize",
+        "absolute inset-y-0 z-20 hidden w-4 transition-all ease-gentle group-data-[collapsible=offcanvas]:translate-x-0 group-data-side-right:left-0 group-data-side-left:-right-4 after:absolute after:inset-y-0 after:inset-s-1/2 after:w-0.5 group-data-[collapsible=offcanvas]:after:start-full hover:group-data-[collapsible=offcanvas]:bg-sidebar hover:after:bg-sidebar-border in-data-side-right:cursor-e-resize in-data-side-left:cursor-w-resize sm:flex ltr:-translate-x-1/2 rtl:-translate-x-1/2 rtl:group-data-[collapsible=offcanvas]:translate-x-0 rtl:in-data-side-right:cursor-w-resize rtl:in-data-side-left:cursor-e-resize [[data-side=left][data-collapsible=offcanvas]_&]:-right-2 [[data-side=left][data-state=collapsed]_&]:cursor-e-resize rtl:[[data-side=left][data-state=collapsed]_&]:cursor-w-resize [[data-side=right][data-collapsible=offcanvas]_&]:-left-2 [[data-side=right][data-state=collapsed]_&]:cursor-w-resize rtl:[[data-side=right][data-state=collapsed]_&]:cursor-e-resize",
         className,
       )}
       data-sidebar="rail"
@@ -756,8 +756,15 @@ interface SidebarMenuSkeletonProps extends ComponentProps<"div"> {
  * @since 0.3.16-canary.0
  */
 function SidebarMenuSkeleton({ className, showIcon = false, ...props }: SidebarMenuSkeletonProps): JSX.Element {
-  // Random width between 50 to 90% - use useState with lazy initializer to avoid calling Math.random during render
-  const [width] = useState(() => `${String(Math.floor(Math.random() * 40) + 50)}%`);
+  // Varied width in 50–90%, derived from a stable useId so it matches across SSR and client (no hydration mismatch).
+  const id = useId();
+  let sum = 0;
+
+  for (const char of id) {
+    sum += char.codePointAt(0) ?? 0;
+  }
+
+  const width = `${String((sum % 41) + 50)}%`;
 
   return (
     <div

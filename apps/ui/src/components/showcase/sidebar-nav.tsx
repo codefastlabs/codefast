@@ -57,6 +57,7 @@ export function SidebarNav({ groups, activeSection = null, activeSlug, className
                       name={component.name}
                       active={component.slug === activeSlug}
                       showScrollTo={activeSlug === undefined}
+                      isNew={component.isNew}
                     />
                   ))}
                 </div>

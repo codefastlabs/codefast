@@ -10,8 +10,9 @@ import { SidebarMenuBadgeExample } from "#/registry/sidebar/menu-badge.example";
 import { SidebarMenuCollapsibleExample } from "#/registry/sidebar/menu-collapsible.example";
 import { SidebarMenuSubExample } from "#/registry/sidebar/menu-sub.example";
 import { SidebarMenuExample } from "#/registry/sidebar/menu.example";
+import { SidebarRsc } from "#/registry/sidebar/rsc.example";
 import { SidebarRtl } from "#/registry/sidebar/rtl.example";
-import { docSource, docAnatomy, docDemo } from "#/registry/source";
+import { docSource, docDemo } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const sidebarDoc: ComponentDoc = {
@@ -113,6 +114,14 @@ export const sidebarDoc: ComponentDoc = {
       previewClassName: "items-stretch",
     },
     {
+      id: "sidebar-rsc",
+      title: "React Server Component",
+      description: "Stream menu items with a Suspense-style skeleton fallback using SidebarMenuSkeleton.",
+      Demo: SidebarRsc,
+      source: docSource("sidebar", "rsc"),
+      previewClassName: "items-stretch",
+    },
+    {
       id: "sidebar-rtl",
       title: "RTL",
       description: "Right-to-left layout support for languages such as Arabic and Hebrew.",
@@ -122,7 +131,33 @@ export const sidebarDoc: ComponentDoc = {
       direction: "rtl",
     },
   ],
-  anatomy: docAnatomy("sidebar"),
+  anatomy: [
+    {
+      name: "SidebarProvider",
+      children: [
+        {
+          name: "Sidebar",
+          children: [
+            {
+              name: "SidebarContent",
+              children: [
+                {
+                  name: "SidebarGroup",
+                  children: [
+                    {
+                      name: "SidebarMenu",
+                      children: [{ name: "SidebarMenuItem", children: [{ name: "SidebarMenuButton" }] }],
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+        { name: "SidebarTrigger" },
+      ],
+    },
+  ],
   api: [
     {
       name: "SidebarProvider",

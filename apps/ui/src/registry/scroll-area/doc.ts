@@ -1,6 +1,6 @@
 import { ScrollAreaHorizontalDemo } from "#/registry/scroll-area/horizontal-demo.example";
 import { ScrollAreaRtl } from "#/registry/scroll-area/rtl.example";
-import { docSource, docAnatomy } from "#/registry/source";
+import { docSource } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const scrollAreaDoc: ComponentDoc = {
@@ -21,7 +21,7 @@ export const scrollAreaDoc: ComponentDoc = {
       direction: "rtl",
     },
   ],
-  anatomy: docAnatomy("scroll-area"),
+  anatomy: [{ name: "ScrollArea" }],
   api: [
     {
       name: "ScrollArea",

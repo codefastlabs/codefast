@@ -122,7 +122,7 @@ function AvatarGroup({ className, ...props }: AvatarGroupProps): JSX.Element {
   return (
     <div
       className={cn(
-        "group/avatar-group flex -space-x-2 *:data-[slot=avatar]:ring-2 *:data-[slot=avatar]:ring-background",
+        "group/avatar-group flex -space-x-2 *:data-[slot=avatar]:ring-2 *:data-[slot=avatar]:ring-background rtl:space-x-reverse",
         className,
       )}
       data-slot="avatar-group"

@@ -1,37 +1,102 @@
 import { Button } from "@codefast/ui/button";
-import { ButtonGroup, ButtonGroupSeparator, ButtonGroupText } from "@codefast/ui/button-group";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@codefast/ui/dropdown-menu";
-import { ChevronDownIcon, PlusIcon } from "lucide-react";
+import { ButtonGroup } from "@codefast/ui/button-group";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuSeparator,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
+  DropdownMenuTrigger,
+} from "@codefast/ui/dropdown-menu";
+import {
+  ArchiveIcon,
+  ArrowLeftIcon,
+  CalendarPlusIcon,
+  ClockIcon,
+  ListFilterIcon,
+  MailCheckIcon,
+  MoreHorizontalIcon,
+  TagIcon,
+  Trash2Icon,
+} from "lucide-react";
+import { useState } from "react";
 
 export function ButtonGroupDemo() {
+  const [label, setLabel] = useState("personal");
+
   return (
-    <div className="flex flex-col items-center gap-4">
-      {/* Split button: primary action + dropdown of related actions */}
-      <ButtonGroup>
-        <Button>
-          <PlusIcon />
-          New issue
+    <ButtonGroup>
+      <ButtonGroup className="hidden sm:flex">
+        <Button aria-label="Go Back" size="icon" variant="outline">
+          <ArrowLeftIcon />
         </Button>
-        <ButtonGroupSeparator />
+      </ButtonGroup>
+      <ButtonGroup>
+        <Button variant="outline">Archive</Button>
+        <Button variant="outline">Report</Button>
+      </ButtonGroup>
+      <ButtonGroup>
+        <Button variant="outline">Snooze</Button>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button aria-label="More create options" size="icon">
-              <ChevronDownIcon />
+            <Button aria-label="More Options" size="icon" variant="outline">
+              <MoreHorizontalIcon />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuItem>New from template</DropdownMenuItem>
-            <DropdownMenuItem>Import issues</DropdownMenuItem>
+          <DropdownMenuContent align="end" className="w-40">
+            <DropdownMenuGroup>
+              <DropdownMenuItem>
+                <MailCheckIcon />
+                Mark as Read
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <ArchiveIcon />
+                Archive
+              </DropdownMenuItem>
+            </DropdownMenuGroup>
+            <DropdownMenuSeparator />
+            <DropdownMenuGroup>
+              <DropdownMenuItem>
+                <ClockIcon />
+                Snooze
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <CalendarPlusIcon />
+                Add to Calendar
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <ListFilterIcon />
+                Add to List
+              </DropdownMenuItem>
+              <DropdownMenuSub>
+                <DropdownMenuSubTrigger>
+                  <TagIcon />
+                  Label As...
+                </DropdownMenuSubTrigger>
+                <DropdownMenuSubContent>
+                  <DropdownMenuRadioGroup value={label} onValueChange={setLabel}>
+                    <DropdownMenuRadioItem value="personal">Personal</DropdownMenuRadioItem>
+                    <DropdownMenuRadioItem value="work">Work</DropdownMenuRadioItem>
+                    <DropdownMenuRadioItem value="other">Other</DropdownMenuRadioItem>
+                  </DropdownMenuRadioGroup>
+                </DropdownMenuSubContent>
+              </DropdownMenuSub>
+            </DropdownMenuGroup>
+            <DropdownMenuSeparator />
+            <DropdownMenuGroup>
+              <DropdownMenuItem variant="destructive">
+                <Trash2Icon />
+                Trash
+              </DropdownMenuItem>
+            </DropdownMenuGroup>
           </DropdownMenuContent>
         </DropdownMenu>
       </ButtonGroup>
-
-      {/* Labeled segmented control */}
-      <ButtonGroup>
-        <ButtonGroupText>Sort</ButtonGroupText>
-        <Button variant="outline">Newest</Button>
-        <Button variant="outline">Oldest</Button>
-      </ButtonGroup>
-    </div>
+    </ButtonGroup>
   );
 }

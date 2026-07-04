@@ -74,7 +74,7 @@ export function SheetRtl() {
           </Field>
           <Field>
             <FieldLabel htmlFor="sheet-rtl-username">{t.username}</FieldLabel>
-            <Input id="sheet-rtl-username" defaultValue="vuongphan" />
+            <Input id="sheet-rtl-username" defaultValue="peduarte" />
           </Field>
         </FieldGroup>
         <SheetFooter>

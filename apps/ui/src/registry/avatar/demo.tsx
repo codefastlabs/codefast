@@ -1,34 +1,48 @@
-import { Avatar, AvatarBadge, AvatarFallback, AvatarGroup, AvatarGroupCount } from "@codefast/ui/avatar";
+import { Avatar, AvatarBadge, AvatarFallback, AvatarGroup, AvatarGroupCount, AvatarImage } from "@codefast/ui/avatar";
 
 export function AvatarDemo() {
   return (
-    <div className="flex w-full max-w-xs flex-col gap-5">
-      <div className="flex items-center justify-between">
-        <span className="text-sm font-medium text-ui-fg">Collaborators</span>
-        <AvatarGroup>
-          <Avatar>
-            <AvatarFallback>VP</AvatarFallback>
-          </Avatar>
-          <Avatar>
-            <AvatarFallback className="bg-ui-brand text-white">JD</AvatarFallback>
-          </Avatar>
-          <Avatar>
-            <AvatarFallback className="bg-violet-500 text-white">AS</AvatarFallback>
-          </Avatar>
-          <AvatarGroupCount>+3</AvatarGroupCount>
-        </AvatarGroup>
-      </div>
-
-      <div className="flex items-center gap-3">
-        <Avatar size="lg">
+    <div className="flex flex-row flex-wrap items-center gap-6 md:gap-12">
+      <Avatar>
+        <AvatarImage
+          alt="@vuong"
+          className="grayscale"
+          src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=128&h=128&fit=crop&q=80"
+        />
+        <AvatarFallback>VP</AvatarFallback>
+      </Avatar>
+      <Avatar>
+        <AvatarImage
+          alt="@evan"
+          src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=128&h=128&fit=crop&q=80"
+        />
+        <AvatarFallback>ER</AvatarFallback>
+        <AvatarBadge className="bg-green-600 dark:bg-green-800" />
+      </Avatar>
+      <AvatarGroup className="grayscale">
+        <Avatar>
+          <AvatarImage
+            alt="@vuong"
+            src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=128&h=128&fit=crop&q=80"
+          />
           <AvatarFallback>VP</AvatarFallback>
-          <AvatarBadge className="bg-emerald-500" />
         </Avatar>
-        <div className="flex flex-col">
-          <span className="text-sm font-medium text-ui-fg">Vuong Phan</span>
-          <span className="text-xs text-ui-muted">Online now</span>
-        </div>
-      </div>
+        <Avatar>
+          <AvatarImage
+            alt="@max"
+            src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=128&h=128&fit=crop&q=80"
+          />
+          <AvatarFallback>LR</AvatarFallback>
+        </Avatar>
+        <Avatar>
+          <AvatarImage
+            alt="@evan"
+            src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=128&h=128&fit=crop&q=80"
+          />
+          <AvatarFallback>ER</AvatarFallback>
+        </Avatar>
+        <AvatarGroupCount>+3</AvatarGroupCount>
+      </AvatarGroup>
     </div>
   );
 }

@@ -1,6 +1,7 @@
 import { AppearanceProvider, AppearanceScript, DEFAULT_APPEARANCE, DEFAULT_COLOR_SCHEME } from "@codefast/theme";
 import { Button } from "@codefast/ui/button";
 import { cn } from "@codefast/ui/lib/utils";
+import { TooltipProvider } from "@codefast/ui/tooltip";
 import { TanStackDevtools } from "@tanstack/react-devtools";
 import { HeadContent, Link, Scripts, createRootRoute } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
@@ -93,9 +94,11 @@ function RootDocument({ children }: { children: ReactNode }) {
       </head>
       <body className="min-h-full overflow-x-hidden bg-ui-bg font-sans wrap-anywhere text-ui-fg antialiased selection:bg-ui-fg/15">
         <AppearanceProvider>
-          <Header />
-          {children}
-          <Footer />
+          <TooltipProvider>
+            <Header />
+            {children}
+            <Footer />
+          </TooltipProvider>
           {/* `@tanstack/devtools-vite` strips this whole block from production builds — keep it
               rendered unconditionally; do not wrap it in an `import.meta.env.DEV` guard (the plugin's
               code removal would leave invalid syntax behind and break the build). */}

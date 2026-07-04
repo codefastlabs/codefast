@@ -4,13 +4,13 @@ import { SkeletonForm } from "#/registry/skeleton/form.example";
 import { SkeletonRtl } from "#/registry/skeleton/rtl.example";
 import { SkeletonTable } from "#/registry/skeleton/table.example";
 import { SkeletonText } from "#/registry/skeleton/text.example";
-import { docSource, docAnatomy } from "#/registry/source";
+import { docSource } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const skeletonDoc: ComponentDoc = {
   examples: [
     {
-      id: "card",
+      id: "skeleton-card",
       title: "Card placeholder",
       description: "Mirror the real layout so content doesn’t jump when it loads.",
       Demo: SkeletonCard,
@@ -18,7 +18,7 @@ export const skeletonDoc: ComponentDoc = {
       previewClassName: "items-start",
     },
     {
-      id: "text",
+      id: "skeleton-text",
       title: "Text lines",
       description: "Stand in for a paragraph while content loads.",
       Demo: SkeletonText,
@@ -55,7 +55,7 @@ export const skeletonDoc: ComponentDoc = {
       source: docSource("skeleton", "table"),
     },
   ],
-  anatomy: docAnatomy("skeleton"),
+  anatomy: [{ name: "Skeleton" }],
   api: [
     {
       name: "Skeleton",

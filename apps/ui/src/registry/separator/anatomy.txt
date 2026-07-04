@@ -1,4 +1,0 @@
-import { Separator } from "@codefast/ui/separator";
-
-<Separator />                       // horizontal
-<Separator orientation="vertical" /> // vertical

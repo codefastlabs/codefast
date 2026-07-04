@@ -3,12 +3,16 @@ import { Link } from "@tanstack/react-router";
 import { LocateFixedIcon } from "lucide-react";
 import type { ComponentProps } from "react";
 
+import { NewBadge } from "#/components/showcase/new-badge";
+
 interface SidebarComponentLinkProps extends ComponentProps<"div"> {
   readonly slug: string;
   readonly name: string;
   readonly active?: boolean;
   /** Gallery only — reveals a hover action that scrolls to the component's card in place. */
   readonly showScrollTo?: boolean;
+  /** Flags a recently added component with a "New" badge. */
+  readonly isNew?: boolean | undefined;
 }
 
 /** A single component entry in the sidebar nav, with an optional scroll-to action. */
@@ -17,6 +21,7 @@ export function SidebarComponentLink({
   name,
   active,
   showScrollTo,
+  isNew,
   className,
   ...props
 }: SidebarComponentLinkProps) {
@@ -41,6 +46,7 @@ export function SidebarComponentLink({
       >
         {name}
       </Link>
+      {isNew ? <NewBadge className="me-1" /> : null}
       {showScrollTo ? (
         <a
           href={`#${slug}`}

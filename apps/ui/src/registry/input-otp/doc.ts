@@ -7,7 +7,7 @@ import { InputOTPInvalid } from "#/registry/input-otp/invalid.example";
 import { InputOTPPattern } from "#/registry/input-otp/pattern.example";
 import { InputOTPRtl } from "#/registry/input-otp/rtl.example";
 import { InputOTPWithSeparator } from "#/registry/input-otp/separator.example";
-import { docSource, docAnatomy } from "#/registry/source";
+import { docSource } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const inputOtpDoc: ComponentDoc = {
@@ -77,7 +77,7 @@ export const inputOtpDoc: ComponentDoc = {
       source: docSource("input-otp", "separator"),
     },
   ],
-  anatomy: docAnatomy("input-otp"),
+  anatomy: [{ name: "InputOTP", children: [{ name: "InputOTPGroup", children: [{ name: "InputOTPSlot" }] }] }],
   api: [
     {
       name: "InputOTP",

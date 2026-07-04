@@ -1,7 +1,7 @@
 import { RadioDisabled } from "#/registry/radio/disabled.example";
 import { RadioHorizontal } from "#/registry/radio/horizontal.example";
 import { RadioSizes } from "#/registry/radio/sizes.example";
-import { docSource, docAnatomy } from "#/registry/source";
+import { docSource } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const radioDoc: ComponentDoc = {
@@ -29,7 +29,7 @@ export const radioDoc: ComponentDoc = {
       source: docSource("radio", "disabled"),
     },
   ],
-  anatomy: docAnatomy("radio"),
+  anatomy: [{ name: "Radio" }],
   api: [
     {
       name: "Radio",

@@ -1,3 +1,0 @@
-import { ProgressCircle } from "@codefast/ui/progress-circle";
-
-<ProgressCircle value={75} showValue />

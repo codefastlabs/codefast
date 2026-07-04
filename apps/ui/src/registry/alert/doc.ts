@@ -4,7 +4,7 @@ import { AlertColors } from "#/registry/alert/colors.example";
 import { AlertDemo } from "#/registry/alert/demo";
 import { AlertDestructive } from "#/registry/alert/destructive.example";
 import { AlertRtl } from "#/registry/alert/rtl.example";
-import { docAnatomy, docDemo, docSource } from "#/registry/source";
+import { docDemo, docSource } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const alertDoc: ComponentDoc = {
@@ -59,7 +59,9 @@ export const alertDoc: ComponentDoc = {
       direction: "rtl",
     },
   ],
-  anatomy: docAnatomy("alert"),
+  anatomy: [
+    { name: "Alert", children: [{ name: "AlertTitle" }, { name: "AlertDescription" }, { name: "AlertAction" }] },
+  ],
   api: [
     {
       name: "Alert",

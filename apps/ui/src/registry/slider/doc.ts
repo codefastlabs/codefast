@@ -4,7 +4,7 @@ import { SliderMultiple } from "#/registry/slider/multiple.example";
 import { SliderRange } from "#/registry/slider/range.example";
 import { SliderRtl } from "#/registry/slider/rtl.example";
 import { SliderVertical } from "#/registry/slider/vertical.example";
-import { docSource, docAnatomy } from "#/registry/source";
+import { docSource } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const sliderDoc: ComponentDoc = {
@@ -53,7 +53,7 @@ export const sliderDoc: ComponentDoc = {
       source: docSource("slider", "vertical"),
     },
   ],
-  anatomy: docAnatomy("slider"),
+  anatomy: [{ name: "Slider" }, { name: "Slider" }],
   api: [
     {
       name: "Slider",

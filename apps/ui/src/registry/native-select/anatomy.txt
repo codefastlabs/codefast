@@ -1,7 +1,0 @@
-import {
-  NativeSelect, NativeSelectOptGroup, NativeSelectOption,
-} from "@codefast/ui/native-select";
-
-<NativeSelect value={v} onChange={(e) => setV(e.target.value)}>
-  <NativeSelectOption value="a">A</NativeSelectOption>
-</NativeSelect>

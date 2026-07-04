@@ -1,3 +1,4 @@
+import { anatomyToText } from "#/lib/anatomy";
 import { INSTALL_COMMAND } from "#/lib/install";
 import { absoluteUrl } from "#/lib/seo";
 import type { ComponentMeta } from "#/registry/components";
@@ -53,8 +54,8 @@ export function buildComponentMarkdown(component: ComponentMeta, doc?: ResolvedC
     sections.push("## Examples", examples.join("\n\n"));
   }
 
-  if (doc?.anatomy) {
-    sections.push("## Anatomy", `\`\`\`tsx\n${doc.anatomy.code}\n\`\`\``);
+  if (doc?.anatomy?.length) {
+    sections.push("## Anatomy", `\`\`\`\n${anatomyToText(doc.anatomy)}\n\`\`\``);
   }
 
   if (doc?.api?.length) {

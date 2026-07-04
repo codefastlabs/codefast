@@ -61,7 +61,7 @@ const data = {
   user: {
     name: "codefast",
     email: "m@example.com",
-    avatar: "https://github.com/codefastlabs.png",
+    avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=128&h=128&fit=crop&q=80",
   },
   teams: [
     {

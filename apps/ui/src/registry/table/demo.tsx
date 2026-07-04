@@ -10,38 +10,41 @@ import {
 } from "@codefast/ui/table";
 
 const invoices = [
-  { id: "INV001", status: "Paid", method: "Credit Card", amount: "$250.00" },
-  { id: "INV002", status: "Pending", method: "PayPal", amount: "$150.00" },
-  { id: "INV003", status: "Unpaid", method: "Bank Transfer", amount: "$350.00" },
-  { id: "INV004", status: "Paid", method: "Credit Card", amount: "$450.00" },
+  { invoice: "INV001", paymentStatus: "Paid", totalAmount: "$250.00", paymentMethod: "Credit Card" },
+  { invoice: "INV002", paymentStatus: "Pending", totalAmount: "$150.00", paymentMethod: "PayPal" },
+  { invoice: "INV003", paymentStatus: "Unpaid", totalAmount: "$350.00", paymentMethod: "Bank Transfer" },
+  { invoice: "INV004", paymentStatus: "Paid", totalAmount: "$450.00", paymentMethod: "Credit Card" },
+  { invoice: "INV005", paymentStatus: "Paid", totalAmount: "$550.00", paymentMethod: "PayPal" },
+  { invoice: "INV006", paymentStatus: "Pending", totalAmount: "$200.00", paymentMethod: "Bank Transfer" },
+  { invoice: "INV007", paymentStatus: "Unpaid", totalAmount: "$300.00", paymentMethod: "Credit Card" },
 ];
 
 export function TableDemo() {
   return (
     <Table className="w-full">
-      <TableCaption>A list of recent invoices.</TableCaption>
+      <TableCaption>A list of your recent invoices.</TableCaption>
       <TableHeader>
         <TableRow>
-          <TableHead>Invoice</TableHead>
+          <TableHead className="w-[100px]">Invoice</TableHead>
           <TableHead>Status</TableHead>
           <TableHead>Method</TableHead>
           <TableHead className="text-end">Amount</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
-        {invoices.map((inv) => (
-          <TableRow key={inv.id}>
-            <TableCell className="font-medium">{inv.id}</TableCell>
-            <TableCell>{inv.status}</TableCell>
-            <TableCell>{inv.method}</TableCell>
-            <TableCell className="text-end">{inv.amount}</TableCell>
+        {invoices.map((invoice) => (
+          <TableRow key={invoice.invoice}>
+            <TableCell className="font-medium">{invoice.invoice}</TableCell>
+            <TableCell>{invoice.paymentStatus}</TableCell>
+            <TableCell>{invoice.paymentMethod}</TableCell>
+            <TableCell className="text-end">{invoice.totalAmount}</TableCell>
           </TableRow>
         ))}
       </TableBody>
       <TableFooter>
         <TableRow>
           <TableCell colSpan={3}>Total</TableCell>
-          <TableCell className="text-end">$1,200.00</TableCell>
+          <TableCell className="text-end">$2,500.00</TableCell>
         </TableRow>
       </TableFooter>
     </Table>

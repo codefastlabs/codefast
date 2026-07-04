@@ -9,17 +9,18 @@ import { CalendarRange } from "#/registry/calendar/range.example";
 import { CalendarRtl } from "#/registry/calendar/rtl.example";
 import { CalendarWithTime } from "#/registry/calendar/time.example";
 import { CalendarWeekNumbers } from "#/registry/calendar/week-numbers.example";
-import { docSource, docAnatomy } from "#/registry/source";
+import { docSource } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const calendarDoc: ComponentDoc = {
   examples: [
     {
-      id: "range",
+      id: "calendar-range",
       title: "Date range",
       description: 'mode="range" over two months, with the picked span shown below.',
       Demo: CalendarRange,
       source: docSource("calendar", "range"),
+      previewClassName: "block",
     },
     {
       id: "calendar-basic",
@@ -93,7 +94,7 @@ export const calendarDoc: ComponentDoc = {
       source: docSource("calendar", "hijri"),
     },
   ],
-  anatomy: docAnatomy("calendar"),
+  anatomy: [{ name: "Calendar" }],
   api: [
     {
       name: "Calendar",

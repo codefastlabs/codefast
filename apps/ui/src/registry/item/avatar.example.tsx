@@ -9,7 +9,7 @@ export function ItemAvatar() {
       <Item variant="outline">
         <ItemMedia>
           <Avatar className="size-10">
-            <AvatarImage src="https://avatar.vercel.sh/ava" />
+            <AvatarImage src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=128&h=128&fit=crop&q=80" />
             <AvatarFallback>AS</AvatarFallback>
           </Avatar>
         </ItemMedia>
@@ -31,11 +31,17 @@ export function ItemAvatar() {
               <AvatarFallback>CF</AvatarFallback>
             </Avatar>
             <Avatar className="hidden sm:flex">
-              <AvatarImage src="https://avatar.vercel.sh/leo" alt="@leo" />
+              <AvatarImage
+                src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=128&h=128&fit=crop&q=80"
+                alt="@leo"
+              />
               <AvatarFallback>LP</AvatarFallback>
             </Avatar>
             <Avatar>
-              <AvatarImage src="https://avatar.vercel.sh/ava" alt="@ava" />
+              <AvatarImage
+                src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=128&h=128&fit=crop&q=80"
+                alt="@ava"
+              />
               <AvatarFallback>AS</AvatarFallback>
             </Avatar>
           </div>

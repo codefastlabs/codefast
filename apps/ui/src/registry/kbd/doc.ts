@@ -1,13 +1,21 @@
 import { KbdButton } from "#/registry/kbd/button.example";
+import { KbdDemo } from "#/registry/kbd/demo";
 import { KbdGroupExample } from "#/registry/kbd/group.example";
 import { KbdInputGroup } from "#/registry/kbd/input-group.example";
 import { KbdRtl } from "#/registry/kbd/rtl.example";
 import { KbdTooltip } from "#/registry/kbd/tooltip.example";
-import { docSource, docAnatomy } from "#/registry/source";
+import { docDemo, docSource } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const kbdDoc: ComponentDoc = {
   examples: [
+    {
+      id: "kbd-demo",
+      title: "Demo",
+      description: "Compose modifier keys with KbdGroup to display keyboard shortcuts.",
+      Demo: KbdDemo,
+      source: docDemo("kbd"),
+    },
     {
       id: "kbd-button",
       title: "Button",
@@ -46,7 +54,7 @@ export const kbdDoc: ComponentDoc = {
       source: docSource("kbd", "tooltip"),
     },
   ],
-  anatomy: docAnatomy("kbd"),
+  anatomy: [{ name: "KbdGroup", children: [{ name: "Kbd" }, { name: "Kbd" }] }],
   api: [
     {
       name: "Kbd",

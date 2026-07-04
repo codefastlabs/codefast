@@ -6,39 +6,52 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
 } from "@codefast/ui/navigation-menu";
-import { BookOpenIcon, LayoutGridIcon, PaletteIcon, RocketIcon, SquareMousePointerIcon, TableIcon } from "lucide-react";
-import type { ComponentType } from "react";
+import { navigationMenuTriggerVariants } from "@codefast/ui/variants/navigation-menu";
+import type { ComponentPropsWithoutRef } from "react";
 
-const GUIDES = [
-  { title: "Introduction", description: "Overview of the design system.", Icon: BookOpenIcon },
-  { title: "Installation", description: "Add components in one command.", Icon: RocketIcon },
-  { title: "Theming", description: "Customise tokens and dark mode.", Icon: PaletteIcon },
+const components: Array<{ title: string; href: string; description: string }> = [
+  {
+    title: "Alert Dialog",
+    href: "/",
+    description: "A modal dialog that interrupts the user with important content and expects a response.",
+  },
+  {
+    title: "Hover Card",
+    href: "/",
+    description: "For sighted users to preview content available behind a link.",
+  },
+  {
+    title: "Progress",
+    href: "/",
+    description:
+      "Displays an indicator showing the completion progress of a task, typically displayed as a progress bar.",
+  },
+  {
+    title: "Scroll-area",
+    href: "/",
+    description: "Visually or semantically separates content.",
+  },
+  {
+    title: "Tabs",
+    href: "/",
+    description: "A set of layered sections of content—known as tab panels—that are displayed one at a time.",
+  },
+  {
+    title: "Tooltip",
+    href: "/",
+    description:
+      "A popup that displays information related to an element when the element receives keyboard focus or the mouse hovers over it.",
+  },
 ];
 
-const COMPONENTS = [
-  { title: "Button", description: "Triggers an action or event.", Icon: SquareMousePointerIcon },
-  { title: "Dialog", description: "A modal overlay window.", Icon: LayoutGridIcon },
-  { title: "Table", description: "Display tabular data.", Icon: TableIcon },
-  { title: "Layout", description: "Cards, grids, and panels.", Icon: LayoutGridIcon },
-];
-
-function ListItem({
-  title,
-  description,
-  Icon,
-}: {
-  title: string;
-  description: string;
-  Icon: ComponentType<{ className?: string }>;
-}) {
+function ListItem({ title, children, href, ...props }: ComponentPropsWithoutRef<"li"> & { href: string }) {
   return (
-    <li>
+    <li {...props}>
       <NavigationMenuLink asChild>
-        <a className="flex gap-3 rounded-md p-3 hover:bg-ui-surface" href="/components">
-          <Icon className="size-5 shrink-0 text-ui-brand" />
-          <div className="space-y-0.5">
-            <div className="text-sm font-medium text-ui-fg">{title}</div>
-            <p className="text-xs leading-snug text-ui-muted">{description}</p>
+        <a aria-label={title} href={href}>
+          <div className="flex flex-col gap-1 text-sm">
+            <div className="leading-none font-medium">{title}</div>
+            <div className="line-clamp-2 text-ui-muted">{children}</div>
           </div>
         </a>
       </NavigationMenuLink>
@@ -53,44 +66,34 @@ export function NavigationMenuDemo() {
         <NavigationMenuItem>
           <NavigationMenuTrigger>Getting started</NavigationMenuTrigger>
           <NavigationMenuContent>
-            <ul className="grid gap-2 p-4 md:w-115 md:grid-cols-[.9fr_1fr]">
-              <li className="row-span-3">
-                <NavigationMenuLink asChild>
-                  <a
-                    className="flex h-full flex-col justify-end rounded-md bg-gradient-to-br from-ui-brand/80 to-violet-500 p-4 text-white no-underline"
-                    href="/"
-                  >
-                    <RocketIcon className="size-6" />
-                    <div className="mt-3 text-sm font-semibold">codefast/ui</div>
-                    <p className="text-xs leading-snug text-white/80">
-                      Accessible React components on Radix UI and Tailwind CSS v4.
-                    </p>
-                  </a>
-                </NavigationMenuLink>
-              </li>
-              {GUIDES.map((guide) => (
-                <ListItem key={guide.title} {...guide} />
-              ))}
+            <ul className="w-96">
+              <ListItem href="/" title="Introduction">
+                Re-usable components built with Tailwind CSS.
+              </ListItem>
+              <ListItem href="/" title="Installation">
+                How to install dependencies and structure your app.
+              </ListItem>
+              <ListItem href="/" title="Typography">
+                Styles for headings, paragraphs, lists...etc
+              </ListItem>
             </ul>
           </NavigationMenuContent>
         </NavigationMenuItem>
-
-        <NavigationMenuItem>
+        <NavigationMenuItem className="hidden md:flex">
           <NavigationMenuTrigger>Components</NavigationMenuTrigger>
           <NavigationMenuContent>
-            <ul className="grid gap-2 p-4 md:w-120 md:grid-cols-2">
-              {COMPONENTS.map((component) => (
-                <ListItem key={component.title} {...component} />
+            <ul className="grid w-100 gap-2 md:w-125 md:grid-cols-2 lg:w-150">
+              {components.map((component) => (
+                <ListItem key={component.title} href={component.href} title={component.title}>
+                  {component.description}
+                </ListItem>
               ))}
             </ul>
           </NavigationMenuContent>
         </NavigationMenuItem>
-
         <NavigationMenuItem>
-          <NavigationMenuLink asChild>
-            <a className="px-3 py-2 text-sm font-medium" href="/about">
-              Docs
-            </a>
+          <NavigationMenuLink asChild className={navigationMenuTriggerVariants()}>
+            <a href="/">Docs</a>
           </NavigationMenuLink>
         </NavigationMenuItem>
       </NavigationMenuList>

@@ -1,6 +1,0 @@
-import { InputSearch } from "@codefast/ui/input-search";
-
-<InputSearch
-  value={query}
-  onChange={(value) => setQuery(value ?? "")}
-/>

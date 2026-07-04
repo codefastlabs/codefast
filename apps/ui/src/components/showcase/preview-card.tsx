@@ -10,6 +10,8 @@ interface PreviewCardProps extends ComponentProps<"div"> {
   wide?: boolean | undefined;
   /** When set, the card title links to /components/<slug>. */
   slug?: string;
+  /** Flags a recently added component with a "New" badge. */
+  isNew?: boolean | undefined;
 }
 
 /**
@@ -17,7 +19,7 @@ interface PreviewCardProps extends ComponentProps<"div"> {
  * the component detail page (`/components/$slug`) — gallery cards stay a quick
  * visual scan, so they neither ship a Code tab nor load any highlighted source.
  */
-export function PreviewCard({ name, description, children, wide, slug, className, ...props }: PreviewCardProps) {
+export function PreviewCard({ name, description, children, wide, slug, isNew, className, ...props }: PreviewCardProps) {
   return (
     <div
       className={cn(
@@ -33,6 +35,7 @@ export function PreviewCard({ name, description, children, wide, slug, className
         name={name}
         description={description}
         slug={slug}
+        isNew={isNew}
         className="rounded-b-2xl border-t border-ui-border/60"
       />
     </div>

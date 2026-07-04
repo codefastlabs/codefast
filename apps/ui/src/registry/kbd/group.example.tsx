@@ -3,7 +3,7 @@ import { Kbd, KbdGroup } from "@codefast/ui/kbd";
 export function KbdGroupExample() {
   return (
     <div className="flex flex-col items-center gap-4">
-      <p className="text-sm text-muted-foreground">
+      <p className="text-sm text-ui-muted">
         Use{" "}
         <KbdGroup>
           <Kbd>Ctrl + B</Kbd>

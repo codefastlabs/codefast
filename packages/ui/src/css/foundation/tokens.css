@@ -15,9 +15,12 @@
    * Typography
    * ---------------------------------------------------------------------- */
 
-  --font-sans: var(--font-sans);
-  --font-heading: var(--font-heading);
-  --font-mono: var(--font-mono);
+  /* Bridge the app-owned raw vars into the font-* utilities; fall back to sane
+     stacks so a consumer that forgets one degrades gracefully instead of
+     silently inheriting the sans font. */
+  --font-sans: var(--font-sans, ui-sans-serif, system-ui, sans-serif);
+  --font-heading: var(--font-heading, var(--font-sans, ui-sans-serif, system-ui, sans-serif));
+  --font-mono: var(--font-mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace);
 
   /* ----------------------------------------------------------------------
    * Surfaces & semantic colors
@@ -76,21 +79,6 @@
   --color-chart-3: var(--chart-3);
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
-
-  /* ----------------------------------------------------------------------
-   * Code & selection
-   * ---------------------------------------------------------------------- */
-
-  --color-surface: var(--surface);
-  --color-surface-foreground: var(--surface-foreground);
-
-  --color-code: var(--code);
-  --color-code-foreground: var(--code-foreground);
-  --color-code-highlight: var(--code-highlight);
-  --color-code-number: var(--code-number);
-
-  --color-selection: var(--selection);
-  --color-selection-foreground: var(--selection-foreground);
 
   /* ----------------------------------------------------------------------
    * Radius scale — derived from --radius (6 = base unit)

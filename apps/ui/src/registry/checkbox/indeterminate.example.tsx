@@ -2,21 +2,21 @@ import { Checkbox } from "@codefast/ui/checkbox";
 import { Field, FieldGroup, FieldLabel } from "@codefast/ui/field";
 import { useState } from "react";
 
-const items = [
-  { id: "recents", label: "Recents" },
-  { id: "home", label: "Home" },
-  { id: "applications", label: "Applications" },
+const permissions = [
+  { id: "read", label: "Read", hint: "View content and settings" },
+  { id: "write", label: "Write", hint: "Create and edit content" },
+  { id: "manage", label: "Manage", hint: "Invite members and change roles" },
 ];
 
 export function CheckboxIndeterminate() {
-  const [checkedIds, setCheckedIds] = useState<Set<string>>(new Set(["home"]));
+  const [checkedIds, setCheckedIds] = useState<Set<string>>(new Set(["read"]));
 
-  const allChecked = checkedIds.size === items.length;
+  const allChecked = checkedIds.size === permissions.length;
   const someChecked = checkedIds.size > 0 && !allChecked;
   const parentState = someChecked ? "indeterminate" : allChecked;
 
   const handleParentChange = (checked: boolean | "indeterminate") => {
-    setCheckedIds(checked === true ? new Set(items.map((item) => item.id)) : new Set());
+    setCheckedIds(checked === true ? new Set(permissions.map((permission) => permission.id)) : new Set());
   };
 
   const handleChildChange = (id: string, checked: boolean | "indeterminate") => {
@@ -34,30 +34,35 @@ export function CheckboxIndeterminate() {
   };
 
   return (
-    <FieldGroup className="mx-auto w-56">
-      <Field orientation="horizontal">
-        <Checkbox
-          aria-label="Select all"
-          id="parent-checkbox"
-          checked={parentState}
-          onCheckedChange={handleParentChange}
-        />
-        <FieldLabel htmlFor="parent-checkbox">Select all</FieldLabel>
-      </Field>
-      <FieldGroup className="ms-6 gap-3">
-        {items.map((item) => (
-          <Field key={item.id} orientation="horizontal">
-            <Checkbox
-              id={`child-${item.id}`}
-              checked={checkedIds.has(item.id)}
-              onCheckedChange={(checked) => {
-                handleChildChange(item.id, checked);
-              }}
-            />
-            <FieldLabel htmlFor={`child-${item.id}`}>{item.label}</FieldLabel>
-          </Field>
-        ))}
+    <div className="mx-auto w-full max-w-xs rounded-xl border p-4">
+      <FieldGroup>
+        <Field orientation="horizontal">
+          <Checkbox
+            aria-label="Grant all permissions"
+            checked={parentState}
+            id="permissions-all"
+            onCheckedChange={handleParentChange}
+          />
+          <FieldLabel htmlFor="permissions-all">All permissions</FieldLabel>
+        </Field>
+        <FieldGroup className="ms-6 gap-4">
+          {permissions.map((permission) => (
+            <Field key={permission.id} orientation="horizontal">
+              <Checkbox
+                checked={checkedIds.has(permission.id)}
+                id={`permission-${permission.id}`}
+                onCheckedChange={(checked) => {
+                  handleChildChange(permission.id, checked);
+                }}
+              />
+              <FieldLabel htmlFor={`permission-${permission.id}`} className="font-normal">
+                {permission.label}
+                <span className="block text-xs font-normal text-ui-muted">{permission.hint}</span>
+              </FieldLabel>
+            </Field>
+          ))}
+        </FieldGroup>
       </FieldGroup>
-    </FieldGroup>
+    </div>
   );
 }

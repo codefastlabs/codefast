@@ -1,11 +1,12 @@
 import { CheckboxBasic } from "#/registry/checkbox/basic.example";
 import { CheckboxDescription } from "#/registry/checkbox/description.example";
 import { CheckboxDisabled } from "#/registry/checkbox/disabled.example";
+import { CheckboxGroup } from "#/registry/checkbox/group.example";
 import { CheckboxIndeterminate } from "#/registry/checkbox/indeterminate.example";
 import { CheckboxInvalid } from "#/registry/checkbox/invalid.example";
 import { CheckboxRtl } from "#/registry/checkbox/rtl.example";
 import { CheckboxInTable } from "#/registry/checkbox/table.example";
-import { docSource, docAnatomy } from "#/registry/source";
+import { docSource } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const checkboxDoc: ComponentDoc = {
@@ -31,6 +32,13 @@ export const checkboxDoc: ComponentDoc = {
         "Use the disabled prop to prevent interaction and add the data-disabled attribute to the <Field> component for disabled styles.",
       Demo: CheckboxDisabled,
       source: docSource("checkbox", "disabled"),
+    },
+    {
+      id: "checkbox-group",
+      title: "Group",
+      description: "Group related checkboxes inside a FieldSet with a FieldLegend and shared description.",
+      Demo: CheckboxGroup,
+      source: docSource("checkbox", "group"),
     },
     {
       id: "checkbox-indeterminate",
@@ -63,7 +71,7 @@ export const checkboxDoc: ComponentDoc = {
       source: docSource("checkbox", "table"),
     },
   ],
-  anatomy: docAnatomy("checkbox"),
+  anatomy: [{ name: "Checkbox" }],
   api: [
     {
       name: "Checkbox",

@@ -1,4 +1,4 @@
-import { docSource, docAnatomy } from "#/registry/source";
+import { docSource } from "#/registry/source";
 import { TableActions } from "#/registry/table/actions.example";
 import { TableFooterExample } from "#/registry/table/footer.example";
 import { TableRtl } from "#/registry/table/rtl.example";
@@ -12,6 +12,7 @@ export const tableDoc: ComponentDoc = {
       description: "A table showing actions for each row using a <DropdownMenu /> component.",
       Demo: TableActions,
       source: docSource("table", "actions"),
+      previewClassName: "block",
     },
     {
       id: "table-footer",
@@ -19,6 +20,7 @@ export const tableDoc: ComponentDoc = {
       description: "Use the <TableFooter /> component to add a footer to the table.",
       Demo: TableFooterExample,
       source: docSource("table", "footer"),
+      previewClassName: "block",
     },
     {
       id: "table-rtl",
@@ -27,9 +29,20 @@ export const tableDoc: ComponentDoc = {
       Demo: TableRtl,
       source: docSource("table", "rtl"),
       direction: "rtl",
+      previewClassName: "block",
     },
   ],
-  anatomy: docAnatomy("table"),
+  anatomy: [
+    {
+      name: "Table",
+      children: [
+        { name: "TableCaption" },
+        { name: "TableHeader", children: [{ name: "TableRow", children: [{ name: "TableHead" }] }] },
+        { name: "TableBody", children: [{ name: "TableRow", children: [{ name: "TableCell" }] }] },
+        { name: "TableFooter", children: [{ name: "TableRow", children: [{ name: "TableCell" }] }] },
+      ],
+    },
+  ],
   api: [
     {
       name: "Table parts",

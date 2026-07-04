@@ -4,13 +4,13 @@ import { CommandWithGroups } from "#/registry/command/groups.example";
 import { CommandRtl } from "#/registry/command/rtl.example";
 import { CommandManyItems } from "#/registry/command/scrollable.example";
 import { CommandWithShortcuts } from "#/registry/command/shortcuts.example";
-import { docSource, docAnatomy } from "#/registry/source";
+import { docSource } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const commandDoc: ComponentDoc = {
   examples: [
     {
-      id: "dialog",
+      id: "command-dialog",
       title: "Command dialog",
       description: "The same palette in a modal — the most common ⌘K pattern.",
       Demo: CommandDialogDemo,
@@ -46,6 +46,7 @@ export const commandDoc: ComponentDoc = {
       description: "Scrollable command menu with multiple items.",
       Demo: CommandManyItems,
       source: docSource("command", "scrollable"),
+      previewClassName: "block",
     },
     {
       id: "command-shortcuts",
@@ -55,7 +56,18 @@ export const commandDoc: ComponentDoc = {
       source: docSource("command", "shortcuts"),
     },
   ],
-  anatomy: docAnatomy("command"),
+  anatomy: [
+    {
+      name: "Command",
+      children: [
+        { name: "CommandInput" },
+        {
+          name: "CommandList",
+          children: [{ name: "CommandEmpty" }, { name: "CommandGroup", children: [{ name: "CommandItem" }] }],
+        },
+      ],
+    },
+  ],
   api: [
     {
       name: "Command",

@@ -1,6 +1,0 @@
-import { RadioCards, RadioCardsItem } from "@codefast/ui/radio-cards";
-
-<RadioCards value={v} onValueChange={setV}>
-  <RadioCardsItem value="a">…</RadioCardsItem>
-  <RadioCardsItem value="b">…</RadioCardsItem>
-</RadioCards>

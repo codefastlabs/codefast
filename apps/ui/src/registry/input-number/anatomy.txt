@@ -1,3 +1,0 @@
-import { InputNumber } from "@codefast/ui/input-number";
-
-<InputNumber defaultValue={1} min={0} max={99} step={1} />

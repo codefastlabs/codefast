@@ -21,7 +21,7 @@ import { InputGroupWithAddons } from "#/registry/input-group/with-addons.example
 import { InputGroupWithButtons } from "#/registry/input-group/with-buttons.example";
 import { InputGroupWithKbd } from "#/registry/input-group/with-kbd.example";
 import { InputGroupWithTooltip } from "#/registry/input-group/with-tooltip.example";
-import { docSource, docAnatomy } from "#/registry/source";
+import { docSource } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const inputGroupDoc: ComponentDoc = {
@@ -189,7 +189,7 @@ export const inputGroupDoc: ComponentDoc = {
       source: docSource("input-group", "with-tooltip"),
     },
   ],
-  anatomy: docAnatomy("input-group"),
+  anatomy: [{ name: "InputGroup", children: [{ name: "InputGroupAddon" }, { name: "InputGroupInput" }] }],
   api: [
     {
       name: "InputGroup / InputGroupInput",

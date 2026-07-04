@@ -14,7 +14,7 @@ import type { HighlightedSource } from "#/lib/highlight";
 
 /**
  * Key of a registry source file (e.g. `./button/variants.example.tsx`), built by
- * `docSource`/`docAnatomy`. Resolved to raw text + highlighted HTML via
+ * `docSource`. Resolved to raw text + highlighted HTML via
  * `getHighlightedSource`, so docs never embed source content.
  */
 export type SourceRef = string;
@@ -44,10 +44,17 @@ export interface ApiGroup {
   readonly props: ReadonlyArray<PropRow>;
 }
 
+/** A node in the Anatomy tree — a part and the parts nested directly inside it. */
+export interface AnatomyNode {
+  /** The part's component name, e.g. "AlertDialogContent". */
+  readonly name: string;
+  readonly children?: ReadonlyArray<AnatomyNode>;
+}
+
 export interface ComponentDoc {
   readonly examples: ReadonlyArray<DocExample>;
-  /** Ref to the composition skeleton (`docAnatomy(slug)`), shown verbatim in Anatomy. */
-  readonly anatomy?: SourceRef;
+  /** Composition tree of the component's parts, rendered in the Anatomy section. */
+  readonly anatomy?: ReadonlyArray<AnatomyNode>;
   readonly api?: ReadonlyArray<ApiGroup>;
   readonly accessibility?: {
     readonly keyboard?: ReadonlyArray<KeyRow>;
@@ -75,8 +82,10 @@ export interface ComponentDoc {
  */
 export interface ResolvedDocExample extends Omit<DocExample, "Demo">, HighlightedSource {}
 
-/** A component doc with every source ref resolved. */
-export interface ResolvedComponentDoc extends Omit<ComponentDoc, "examples" | "anatomy"> {
+/**
+ * A component doc with every source ref resolved. `anatomy` is plain data, so it
+ * survives the loader boundary unchanged.
+ */
+export interface ResolvedComponentDoc extends Omit<ComponentDoc, "examples"> {
   readonly examples: ReadonlyArray<ResolvedDocExample>;
-  readonly anatomy?: HighlightedSource | undefined;
 }

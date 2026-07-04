@@ -13,6 +13,7 @@ import { useNavigate } from "@tanstack/react-router";
 import { SearchIcon } from "lucide-react";
 import { useCallback, useEffect, useEffectEvent, useState, useSyncExternalStore } from "react";
 
+import { NewBadge } from "#/components/showcase/new-badge";
 import {
   getCommandPaletteAriaKeyshortcuts,
   getCommandPaletteKeyboardAction,
@@ -128,7 +129,8 @@ export function CommandPalette() {
                   }}
                 >
                   <span className="grow">{component.name}</span>
-                  <span className="ms-auto text-xs text-ui-muted capitalize" data-slot="command-shortcut">
+                  {component.isNew ? <NewBadge /> : null}
+                  <span className="text-xs text-ui-muted capitalize" data-slot="command-shortcut">
                     {component.category}
                   </span>
                 </CommandItem>

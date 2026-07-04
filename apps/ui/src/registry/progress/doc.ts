@@ -1,7 +1,7 @@
 import { ProgressControlled } from "#/registry/progress/controlled.example";
 import { ProgressWithLabel } from "#/registry/progress/label.example";
 import { ProgressRtl } from "#/registry/progress/rtl.example";
-import { docSource, docAnatomy } from "#/registry/source";
+import { docSource } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const progressDoc: ComponentDoc = {
@@ -29,7 +29,7 @@ export const progressDoc: ComponentDoc = {
       direction: "rtl",
     },
   ],
-  anatomy: docAnatomy("progress"),
+  anatomy: [{ name: "Progress" }, { name: "Progress" }],
   api: [
     {
       name: "Progress",

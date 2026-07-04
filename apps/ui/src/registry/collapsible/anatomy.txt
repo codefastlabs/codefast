@@ -1,8 +1,0 @@
-import {
-  Collapsible, CollapsibleTrigger, CollapsibleContent,
-} from "@codefast/ui/collapsible";
-
-<Collapsible open={open} onOpenChange={setOpen}>
-  <CollapsibleTrigger asChild>…</CollapsibleTrigger>
-  <CollapsibleContent>…</CollapsibleContent>
-</Collapsible>

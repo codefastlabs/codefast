@@ -1,24 +1,34 @@
 import { Checkbox } from "@codefast/ui/checkbox";
+import { Field, FieldContent, FieldDescription, FieldGroup, FieldLabel, FieldTitle } from "@codefast/ui/field";
 import { Label } from "@codefast/ui/label";
-import { useState } from "react";
 
 export function CheckboxDemo() {
-  const [checked, setChecked] = useState(false);
-
   return (
-    <div className="flex flex-col gap-3">
-      <div className="flex items-center gap-2">
-        <Checkbox id="c1" checked={checked} onCheckedChange={(v) => setChecked(!!v)} />
-        <Label htmlFor="c1">Accept terms and conditions</Label>
-      </div>
-      <div className="flex items-center gap-2">
-        <Checkbox id="c2" defaultChecked />
-        <Label htmlFor="c2">Subscribe to newsletter</Label>
-      </div>
-      <div className="flex items-center gap-2 opacity-50">
-        <Checkbox id="c3" disabled />
-        <Label htmlFor="c3">Disabled option</Label>
-      </div>
-    </div>
+    <FieldGroup className="max-w-sm">
+      <Field orientation="horizontal">
+        <Checkbox id="terms-checkbox" name="terms-checkbox" />
+        <Label htmlFor="terms-checkbox">Accept terms and conditions</Label>
+      </Field>
+      <Field orientation="horizontal">
+        <Checkbox defaultChecked id="terms-checkbox-2" name="terms-checkbox-2" />
+        <FieldContent>
+          <FieldLabel htmlFor="terms-checkbox-2">Accept terms and conditions</FieldLabel>
+          <FieldDescription>By clicking this checkbox, you agree to the terms.</FieldDescription>
+        </FieldContent>
+      </Field>
+      <Field data-disabled orientation="horizontal">
+        <Checkbox disabled id="toggle-checkbox" name="toggle-checkbox" />
+        <FieldLabel htmlFor="toggle-checkbox">Enable notifications</FieldLabel>
+      </Field>
+      <FieldLabel>
+        <Field orientation="horizontal">
+          <Checkbox id="toggle-checkbox-2" name="toggle-checkbox-2" />
+          <FieldContent>
+            <FieldTitle>Enable notifications</FieldTitle>
+            <FieldDescription>You can enable or disable notifications at any time.</FieldDescription>
+          </FieldContent>
+        </Field>
+      </FieldLabel>
+    </FieldGroup>
   );
 }

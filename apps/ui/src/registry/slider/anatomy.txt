@@ -1,7 +1,0 @@
-import { Slider } from "@codefast/ui/slider";
-
-// single
-<Slider value={[60]} onValueChange={setValue} max={100} />
-
-// range — two thumbs
-<Slider value={[200, 700]} onValueChange={setRange} max={1000} />

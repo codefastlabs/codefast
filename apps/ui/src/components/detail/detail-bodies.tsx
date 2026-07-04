@@ -85,7 +85,7 @@ function buildToc({ doc, examples }: ComponentDetail): Array<TocItem> {
       }
     }
   }
-  if (doc?.anatomy) {
+  if (doc?.anatomy?.length) {
     toc.push({ id: "anatomy", label: "Anatomy", depth: 1 });
   }
   if (doc?.api?.length) {
@@ -130,7 +130,7 @@ export function DetailBody({ detail }: DetailBodyProps) {
             </div>
           )}
 
-          {doc?.anatomy ? <AnatomySection code={doc.anatomy.code} highlightedCode={doc.anatomy.html} /> : null}
+          {doc?.anatomy?.length ? <AnatomySection nodes={doc.anatomy} /> : null}
 
           {doc?.api?.length ? <ApiSection groups={doc.api} /> : null}
 

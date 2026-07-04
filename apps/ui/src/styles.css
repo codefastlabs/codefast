@@ -4,7 +4,11 @@
 @import "@codefast/ui/css/preset.css";
 
 @theme {
+  /* @codefast/ui bridges these into the font-* utilities via `--font-*: var(--font-*)`,
+     but ships no values — the consuming app owns typography, so all three live here. */
   --font-sans: "Inter Variable", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-heading: var(--font-sans);
+  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
 
   /* Layout offsets — single source of truth. --spacing-header is the site header
      height (h-header on the header); every sticky offset and scroll-margin below

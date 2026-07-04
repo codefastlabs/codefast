@@ -1,7 +1,7 @@
 import { SheetNoCloseButton } from "#/registry/sheet/no-close-button.example";
 import { SheetRtl } from "#/registry/sheet/rtl.example";
 import { SheetSide } from "#/registry/sheet/side.example";
-import { docSource, docAnatomy } from "#/registry/source";
+import { docSource } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const sheetDoc: ComponentDoc = {
@@ -30,7 +30,22 @@ export const sheetDoc: ComponentDoc = {
       source: docSource("sheet", "side"),
     },
   ],
-  anatomy: docAnatomy("sheet"),
+  anatomy: [
+    {
+      name: "Sheet",
+      children: [
+        { name: "SheetTrigger" },
+        {
+          name: "SheetContent",
+          children: [
+            { name: "SheetHeader", children: [{ name: "SheetTitle" }, { name: "SheetDescription" }] },
+            { name: "SheetBody" },
+            { name: "SheetFooter", children: [{ name: "SheetClose" }] },
+          ],
+        },
+      ],
+    },
+  ],
   api: [
     {
       name: "Sheet",

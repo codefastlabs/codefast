@@ -18,12 +18,12 @@ const people = [
   },
   {
     username: "leo",
-    avatar: "https://avatar.vercel.sh/leo",
+    avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=128&h=128&fit=crop&q=80",
     email: "leo@codefastlabs.com",
   },
   {
     username: "ava",
-    avatar: "https://avatar.vercel.sh/ava",
+    avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=128&h=128&fit=crop&q=80",
     email: "ava@codefastlabs.com",
   },
 ];

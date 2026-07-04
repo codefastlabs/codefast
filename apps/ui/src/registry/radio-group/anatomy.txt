@@ -1,6 +1,0 @@
-import { RadioGroup, RadioGroupItem } from "@codefast/ui/radio-group";
-
-<RadioGroup value={v} onValueChange={setV}>
-  <RadioGroupItem value="a" id="a" />
-  <Label htmlFor="a">A</Label>
-</RadioGroup>

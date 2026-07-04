@@ -1,22 +1,22 @@
 import { SonnerDescription } from "#/registry/sonner/description.example";
 import { SonnerPosition } from "#/registry/sonner/position.example";
 import { SonnerTypes } from "#/registry/sonner/types.example";
-import { docSource, docAnatomy } from "#/registry/source";
+import { docSource } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const sonnerDoc: ComponentDoc = {
   examples: [
     {
-      id: "types",
+      id: "sonner-types",
       title: "Toast types",
-      description: "Click to fire a real toast — default, success, error, and warning.",
+      description: "Click to fire a real toast — default, success, info, warning, error, and promise.",
       Demo: SonnerTypes,
       source: docSource("sonner", "types"),
     },
     {
       id: "sonner-description",
       title: "Description",
-      description: "An opinionated toast component for React.",
+      description: "Add a secondary line under the title with the description option.",
       Demo: SonnerDescription,
       source: docSource("sonner", "description"),
     },
@@ -28,7 +28,7 @@ export const sonnerDoc: ComponentDoc = {
       source: docSource("sonner", "position"),
     },
   ],
-  anatomy: docAnatomy("sonner"),
+  anatomy: [{ name: "Toaster" }],
   api: [
     {
       name: "toast()",

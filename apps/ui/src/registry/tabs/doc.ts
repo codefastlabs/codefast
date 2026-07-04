@@ -1,4 +1,5 @@
-import { docSource, docAnatomy } from "#/registry/source";
+import { docDemo, docSource } from "#/registry/source";
+import { TabsDemo } from "#/registry/tabs/demo";
 import { TabsDisabled } from "#/registry/tabs/disabled.example";
 import { TabsIcons } from "#/registry/tabs/icons.example";
 import { TabsLine } from "#/registry/tabs/line.example";
@@ -8,6 +9,13 @@ import type { ComponentDoc } from "#/registry/types";
 
 export const tabsDoc: ComponentDoc = {
   examples: [
+    {
+      id: "tabs-demo",
+      title: "Demo",
+      description: "A set of layered sections of content—known as tab panels—that are displayed one at a time.",
+      Demo: TabsDemo,
+      source: docDemo("tabs"),
+    },
     {
       id: "line",
       title: "Line variant",
@@ -45,7 +53,9 @@ export const tabsDoc: ComponentDoc = {
       source: docSource("tabs", "vertical"),
     },
   ],
-  anatomy: docAnatomy("tabs"),
+  anatomy: [
+    { name: "Tabs", children: [{ name: "TabsList", children: [{ name: "TabsTrigger" }] }, { name: "TabsContent" }] },
+  ],
   api: [
     {
       name: "Tabs",

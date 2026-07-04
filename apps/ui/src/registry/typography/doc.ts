@@ -1,4 +1,4 @@
-import { docAnatomy, docDemo, docSource } from "#/registry/source";
+import { docDemo, docSource } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 import { TypographyBlockquote } from "#/registry/typography/blockquote.example";
 import { TypographyDemo } from "#/registry/typography/demo";
@@ -140,7 +140,6 @@ export const typographyDoc: ComponentDoc = {
       direction: "rtl",
     },
   ],
-  anatomy: docAnatomy("typography"),
   guidelines: {
     do: [
       "Use semantic elements (h1–h4, p, ul, blockquote) so the document outline stays meaningful.",

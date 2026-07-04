@@ -1,7 +1,7 @@
 import { InputPasswordConfirm } from "#/registry/input-password/confirm.example";
 import { InputPasswordFields } from "#/registry/input-password/fields.example";
 import { InputPasswordStrength } from "#/registry/input-password/strength.example";
-import { docSource, docAnatomy } from "#/registry/source";
+import { docSource } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const inputPasswordDoc: ComponentDoc = {
@@ -31,7 +31,7 @@ export const inputPasswordDoc: ComponentDoc = {
       previewClassName: "items-start",
     },
   ],
-  anatomy: docAnatomy("input-password"),
+  anatomy: [{ name: "InputPassword" }],
   api: [
     {
       name: "InputPassword",

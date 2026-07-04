@@ -1,5 +1,0 @@
-import { ScrollArea } from "@codefast/ui/scroll-area";
-
-<ScrollArea className="h-44 w-48">
-  …long content…
-</ScrollArea>

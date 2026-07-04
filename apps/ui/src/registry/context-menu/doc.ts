@@ -8,7 +8,7 @@ import { ContextMenuRtl } from "#/registry/context-menu/rtl.example";
 import { ContextMenuShortcuts } from "#/registry/context-menu/shortcuts.example";
 import { ContextMenuSides } from "#/registry/context-menu/sides.example";
 import { ContextMenuSubmenu } from "#/registry/context-menu/submenu.example";
-import { docSource, docAnatomy } from "#/registry/source";
+import { docSource } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const contextMenuDoc: ComponentDoc = {
@@ -76,6 +76,7 @@ export const contextMenuDoc: ComponentDoc = {
       description: "Control submenu placement with side and align props.",
       Demo: ContextMenuSides,
       source: docSource("context-menu", "sides"),
+      previewClassName: "block",
     },
     {
       id: "context-menu-submenu",
@@ -85,7 +86,15 @@ export const contextMenuDoc: ComponentDoc = {
       source: docSource("context-menu", "submenu"),
     },
   ],
-  anatomy: docAnatomy("context-menu"),
+  anatomy: [
+    {
+      name: "ContextMenu",
+      children: [
+        { name: "ContextMenuTrigger" },
+        { name: "ContextMenuContent", children: [{ name: "ContextMenuItem" }] },
+      ],
+    },
+  ],
   api: [
     {
       name: "ContextMenuTrigger",

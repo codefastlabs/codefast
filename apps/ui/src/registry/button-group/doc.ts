@@ -9,7 +9,7 @@ import { ButtonGroupSelect } from "#/registry/button-group/select.example";
 import { ButtonGroupSeparatorDemo } from "#/registry/button-group/separator.example";
 import { ButtonGroupSize } from "#/registry/button-group/size.example";
 import { ButtonGroupSplit } from "#/registry/button-group/split.example";
-import { docSource, docAnatomy } from "#/registry/source";
+import { docSource } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const buttonGroupDoc: ComponentDoc = {
@@ -94,7 +94,7 @@ export const buttonGroupDoc: ComponentDoc = {
       source: docSource("button-group", "split"),
     },
   ],
-  anatomy: docAnatomy("button-group"),
+  anatomy: [{ name: "ButtonGroup" }],
   api: [
     {
       name: "ButtonGroup",

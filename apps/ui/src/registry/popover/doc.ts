@@ -2,7 +2,7 @@ import { PopoverAlignments } from "#/registry/popover/alignments.example";
 import { PopoverBasic } from "#/registry/popover/basic.example";
 import { PopoverForm } from "#/registry/popover/form.example";
 import { PopoverRtl } from "#/registry/popover/rtl.example";
-import { docSource, docAnatomy } from "#/registry/source";
+import { docSource } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const popoverDoc: ComponentDoc = {
@@ -37,7 +37,15 @@ export const popoverDoc: ComponentDoc = {
       direction: "rtl",
     },
   ],
-  anatomy: docAnatomy("popover"),
+  anatomy: [
+    {
+      name: "Popover",
+      children: [
+        { name: "PopoverTrigger" },
+        { name: "PopoverContent", children: [{ name: "PopoverHeader", children: [{ name: "PopoverTitle" }] }] },
+      ],
+    },
+  ],
   api: [
     {
       name: "Popover",

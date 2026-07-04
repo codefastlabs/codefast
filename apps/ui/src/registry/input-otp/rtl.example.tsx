@@ -1,5 +1,6 @@
 import { Field, FieldLabel } from "@codefast/ui/field";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@codefast/ui/input-otp";
+import { useState } from "react";
 
 import type { Translations } from "#/components/detail/language";
 import { useTranslation } from "#/components/detail/language-context";
@@ -27,11 +28,12 @@ const translations: Translations = {
 
 export function InputOTPRtl() {
   const { dir, t } = useTranslation(translations, "ar");
+  const [value, setValue] = useState("123456");
 
   return (
     <Field className="mx-auto max-w-xs">
       <FieldLabel htmlFor="input-otp-rtl">{t.verificationCode}</FieldLabel>
-      <InputOTP maxLength={6} defaultValue="123456" dir={dir} id="input-otp-rtl">
+      <InputOTP dir={dir} id="input-otp-rtl" maxLength={6} onChange={setValue} value={value}>
         <InputOTPGroup>
           <InputOTPSlot index={0} />
           <InputOTPSlot index={1} />

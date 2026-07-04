@@ -1,35 +1,14 @@
-import {
-  InputGroup,
-  InputGroupAddon,
-  InputGroupButton,
-  InputGroupInput,
-  InputGroupText,
-} from "@codefast/ui/input-group";
+import { InputGroup, InputGroupAddon, InputGroupInput } from "@codefast/ui/input-group";
 import { SearchIcon } from "lucide-react";
 
 export function InputGroupDemo() {
   return (
-    <div className="w-full max-w-sm space-y-3">
-      <InputGroup>
-        <InputGroupAddon>
-          <InputGroupText>https://</InputGroupText>
-        </InputGroupAddon>
-        <InputGroupInput placeholder="example.com" />
-      </InputGroup>
-
-      <InputGroup>
-        <InputGroupAddon align="inline-start">
-          <SearchIcon />
-        </InputGroupAddon>
-        <InputGroupInput placeholder="Search…" />
-      </InputGroup>
-
-      <InputGroup>
-        <InputGroupInput placeholder="Amount" type="number" />
-        <InputGroupAddon align={"inline-end"}>
-          <InputGroupButton variant="outline">USD</InputGroupButton>
-        </InputGroupAddon>
-      </InputGroup>
-    </div>
+    <InputGroup className="w-full max-w-xs">
+      <InputGroupInput placeholder="Search..." />
+      <InputGroupAddon>
+        <SearchIcon />
+      </InputGroupAddon>
+      <InputGroupAddon align="inline-end">12 results</InputGroupAddon>
+    </InputGroup>
   );
 }

@@ -3,7 +3,7 @@ import type { HighlightedSource } from "#/lib/highlight";
  * Lazy rich-doc registry for the detail page (`/components/$slug`), keyed by slug.
  * Auto-discovered from `registry/<slug>/doc.ts`; lazy, so importing this is ~free.
  * Components without a doc fall back to the card demo from `demos.ts`. To add one:
- * export a `ComponentDoc` from `doc.ts` pointing at files via `docSource`/`docAnatomy`.
+ * export a `ComponentDoc` from `doc.ts` pointing at example files via `docSource`.
  */
 import { rememberExampleComponent } from "#/registry/examples";
 import { getHighlightedSource } from "#/registry/highlight-source";
@@ -74,10 +74,8 @@ export async function loadDoc(slug: string): Promise<ResolvedComponentDoc | unde
     throw new Error(`Doc module for "${slug}" must export exactly one ComponentDoc.`);
   }
 
-  const [examples, anatomy] = await Promise.all([
-    Promise.all(doc.examples.map(resolveExample)),
-    doc.anatomy === undefined ? undefined : loadSource(doc.anatomy),
-  ]);
+  const examples = await Promise.all(doc.examples.map(resolveExample));
 
-  return { ...doc, examples, anatomy };
+  // `anatomy` is plain tree data — it rides through `...doc` unchanged.
+  return { ...doc, examples };
 }

@@ -2,18 +2,26 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@c
 
 export function AccordionDemo() {
   return (
-    <Accordion type="single" collapsible className="w-full max-w-sm">
-      <AccordionItem value="q1">
-        <AccordionTrigger>Is it accessible?</AccordionTrigger>
-        <AccordionContent>Yes. It follows the WAI-ARIA design pattern with full keyboard navigation.</AccordionContent>
+    <Accordion type="single" collapsible defaultValue="shipping" className="w-full max-w-lg">
+      <AccordionItem value="shipping">
+        <AccordionTrigger>What are your shipping options?</AccordionTrigger>
+        <AccordionContent>
+          We offer standard (5-7 days), express (2-3 days), and overnight shipping. Free shipping on international
+          orders.
+        </AccordionContent>
       </AccordionItem>
-      <AccordionItem value="q2">
-        <AccordionTrigger>Can I customise styles?</AccordionTrigger>
-        <AccordionContent>Yes. Every component exposes a className prop and you own the source.</AccordionContent>
+      <AccordionItem value="returns">
+        <AccordionTrigger>What is your return policy?</AccordionTrigger>
+        <AccordionContent>
+          Returns accepted within 30 days. Items must be unused and in original packaging. Refunds processed within 5-7
+          business days.
+        </AccordionContent>
       </AccordionItem>
-      <AccordionItem value="q3">
-        <AccordionTrigger>Does it work with SSR?</AccordionTrigger>
-        <AccordionContent>Yes. All components render server-side with no hydration issues.</AccordionContent>
+      <AccordionItem value="support">
+        <AccordionTrigger>How can I contact customer support?</AccordionTrigger>
+        <AccordionContent>
+          Reach us via email, live chat, or phone. We respond within 24 hours during business days.
+        </AccordionContent>
       </AccordionItem>
     </Accordion>
   );

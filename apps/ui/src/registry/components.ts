@@ -59,6 +59,13 @@ export type CategoryId = (typeof CATEGORIES)[number]["id"];
 /** Lifecycle maturity, surfaced as a badge on the detail page. */
 export type ComponentStatus = "stable" | "beta" | "deprecated";
 
+/**
+ * Release line whose components still count as "new". A component is flagged
+ * when its `meta.since` equals this. Bump it each release and the previous
+ * batch's "New" badges clear themselves — no per-meta cleanup.
+ */
+export const NEW_SINCE = "0.5";
+
 /** The authored fields of an `examples/<slug>.meta.ts` file. */
 export interface ComponentMetaInput {
   /** Display name, e.g. "Alert Dialog". */
@@ -70,6 +77,11 @@ export interface ComponentMetaInput {
   readonly wide?: boolean;
   /** Lifecycle maturity. Absent means `stable`; a badge shows only when not stable. */
   readonly status?: ComponentStatus;
+  /**
+   * Release line the component first shipped in, e.g. "0.5". Flags a "New" badge
+   * while it matches {@link NEW_SINCE}; leave unset for existing components.
+   */
+  readonly since?: string;
   /**
    * For composition recipes (e.g. Date Picker, Data Table) that have no single
    * `@codefast/ui/<slug>` export. Lists the primitives the pattern composes (or
@@ -86,6 +98,8 @@ export interface ComponentMeta extends ComponentMetaInput {
   readonly slug: string;
   /** Whether `<slug>.demo.tsx` exists — a live card renders on /components. */
   readonly hasDemo: boolean;
+  /** Derived from `since === NEW_SINCE` — drives the "New" badge in the nav, gallery, and palette. */
+  readonly isNew: boolean;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -114,7 +128,7 @@ export const COMPONENTS: ReadonlyArray<ComponentMeta> = Object.entries(metaModul
       throw new Error(`Meta file for "${slug}" must export a single \`meta\` object.`);
     }
 
-    return { ...module.meta, slug, hasDemo: DEMO_BY_SLUG.has(slug) };
+    return { ...module.meta, slug, hasDemo: DEMO_BY_SLUG.has(slug), isNew: module.meta.since === NEW_SINCE };
   })
   .toSorted((a, b) => a.name.localeCompare(b.name));
 

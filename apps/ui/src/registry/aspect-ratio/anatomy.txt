@@ -1,5 +1,0 @@
-import { AspectRatio } from "@codefast/ui/aspect-ratio";
-
-<AspectRatio ratio={16 / 9}>
-  <img src="…" alt="…" className="h-full w-full object-cover" />
-</AspectRatio>

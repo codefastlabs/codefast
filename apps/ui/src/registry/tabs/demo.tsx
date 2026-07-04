@@ -1,38 +1,58 @@
-import { Button } from "@codefast/ui/button";
-import { Input } from "@codefast/ui/input";
-import { Label } from "@codefast/ui/label";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@codefast/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@codefast/ui/tabs";
 
 export function TabsDemo() {
   return (
-    <Tabs defaultValue="account" className="w-full max-w-sm">
+    <Tabs defaultValue="overview" className="w-full max-w-sm">
       <TabsList>
-        <TabsTrigger value="account">Account</TabsTrigger>
-        <TabsTrigger value="password">Password</TabsTrigger>
+        <TabsTrigger value="overview">Overview</TabsTrigger>
+        <TabsTrigger value="analytics">Analytics</TabsTrigger>
+        <TabsTrigger value="reports">Reports</TabsTrigger>
+        <TabsTrigger value="settings">Settings</TabsTrigger>
       </TabsList>
-
-      <TabsContent value="account" className="mt-4 space-y-3">
-        <div className="grid gap-1.5">
-          <Label htmlFor="tabs-name">Name</Label>
-          <Input id="tabs-name" defaultValue="Vuong Phan" />
-        </div>
-        <div className="grid gap-1.5">
-          <Label htmlFor="tabs-username">Username</Label>
-          <Input id="tabs-username" defaultValue="@vuongphan" />
-        </div>
-        <Button size="sm">Save changes</Button>
+      <TabsContent value="overview">
+        <Card>
+          <CardHeader>
+            <CardTitle>Overview</CardTitle>
+            <CardDescription>
+              View your key metrics and recent project activity. Track progress across all your active projects.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="text-sm text-ui-muted">You have 12 active projects and 3 pending tasks.</CardContent>
+        </Card>
       </TabsContent>
-
-      <TabsContent value="password" className="mt-4 space-y-3">
-        <div className="grid gap-1.5">
-          <Label htmlFor="tabs-current">Current password</Label>
-          <Input id="tabs-current" type="password" placeholder="••••••••" />
-        </div>
-        <div className="grid gap-1.5">
-          <Label htmlFor="tabs-new">New password</Label>
-          <Input id="tabs-new" type="password" placeholder="Min. 8 characters" />
-        </div>
-        <Button size="sm">Update password</Button>
+      <TabsContent value="analytics">
+        <Card>
+          <CardHeader>
+            <CardTitle>Analytics</CardTitle>
+            <CardDescription>
+              Track performance and user engagement metrics. Monitor trends and identify growth opportunities.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="text-sm text-ui-muted">Page views are up 25% compared to last month.</CardContent>
+        </Card>
+      </TabsContent>
+      <TabsContent value="reports">
+        <Card>
+          <CardHeader>
+            <CardTitle>Reports</CardTitle>
+            <CardDescription>
+              Generate and download your detailed reports. Export data in multiple formats for analysis.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="text-sm text-ui-muted">You have 5 reports ready and available to export.</CardContent>
+        </Card>
+      </TabsContent>
+      <TabsContent value="settings">
+        <Card>
+          <CardHeader>
+            <CardTitle>Settings</CardTitle>
+            <CardDescription>
+              Manage your account preferences and options. Customize your experience to fit your needs.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="text-sm text-ui-muted">Configure notifications, security, and themes.</CardContent>
+        </Card>
       </TabsContent>
     </Tabs>
   );

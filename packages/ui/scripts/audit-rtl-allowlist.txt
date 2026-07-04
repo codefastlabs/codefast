@@ -1,0 +1,7 @@
+# Class vật lý có chủ đích — mỗi dòng là một token, hoặc `đường-dẫn:token`.
+# Sheet: slide nằm trong bucket variant side (left/right) của tv() — side là
+# cạnh vật lý nên slide vật lý là đúng; detector không thấy ngữ cảnh tv().
+src/variants/sheet.ts:data-open:slide-in-from-left-10
+src/variants/sheet.ts:data-closed:slide-out-to-left-10
+src/variants/sheet.ts:data-open:slide-in-from-right-10
+src/variants/sheet.ts:data-closed:slide-out-to-right-10

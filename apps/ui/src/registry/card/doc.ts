@@ -3,7 +3,7 @@ import { CardImage } from "#/registry/card/image.example";
 import { CardRtl } from "#/registry/card/rtl.example";
 import { CardSmall } from "#/registry/card/small.example";
 import { CardSpacing } from "#/registry/card/spacing.example";
-import { docSource, docAnatomy } from "#/registry/source";
+import { docSource } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const cardDoc: ComponentDoc = {
@@ -48,7 +48,16 @@ export const cardDoc: ComponentDoc = {
       source: docSource("card", "spacing"),
     },
   ],
-  anatomy: docAnatomy("card"),
+  anatomy: [
+    {
+      name: "Card",
+      children: [
+        { name: "CardHeader", children: [{ name: "CardTitle" }, { name: "CardDescription" }, { name: "CardAction" }] },
+        { name: "CardContent" },
+        { name: "CardFooter" },
+      ],
+    },
+  ],
   api: [
     {
       name: "Card",

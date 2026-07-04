@@ -1,7 +1,7 @@
 import { InputSearchControlled } from "#/registry/input-search/controlled.example";
 import { InputSearchDisabled } from "#/registry/input-search/disabled.example";
 import { InputSearchWithResults } from "#/registry/input-search/with-results.example";
-import { docSource, docAnatomy } from "#/registry/source";
+import { docSource } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const inputSearchDoc: ComponentDoc = {
@@ -30,7 +30,7 @@ export const inputSearchDoc: ComponentDoc = {
       source: docSource("input-search", "disabled"),
     },
   ],
-  anatomy: docAnatomy("input-search"),
+  anatomy: [{ name: "InputSearch" }],
   api: [
     {
       name: "InputSearch",

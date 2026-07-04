@@ -14,8 +14,3 @@ export function docSource(slug: string, name: string): SourceRef {
 export function docDemo(slug: string): SourceRef {
   return `./${slug}/demo.tsx`;
 }
-
-/** Ref to the `registry/<slug>/anatomy.txt` composition skeleton. */
-export function docAnatomy(slug: string): SourceRef {
-  return `./${slug}/anatomy.txt`;
-}

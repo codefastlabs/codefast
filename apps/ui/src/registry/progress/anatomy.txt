@@ -1,9 +1,0 @@
-import { Progress } from "@codefast/ui/progress";
-
-<Progress value={68} />
-
-// recolour the indicator
-<Progress
-  value={92}
-  className="**:data-[slot=progress-indicator]:bg-rose-500"
-/>
