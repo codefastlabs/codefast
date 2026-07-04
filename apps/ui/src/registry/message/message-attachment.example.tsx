@@ -22,10 +22,10 @@ export function MessageAttachment() {
               <Image
                 alt="Workspace"
                 className="aspect-video w-full rounded-md object-cover"
-                height={360}
-                layout="constrained"
+                layout="fixed"
                 src="https://images.unsplash.com/photo-1497366754035-f200968a6e72?w=900&auto=format&fit=crop&q=80"
-                width={640}
+                aspectRatio={1}
+                height={78}
               />
             </AttachmentMedia>
           </Attachment>
