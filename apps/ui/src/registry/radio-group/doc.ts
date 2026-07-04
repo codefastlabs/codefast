@@ -1,7 +1,6 @@
 import { RadioGroupChoiceCard } from "#/registry/radio-group/choice-card.example";
 import { RadioGroupDescription } from "#/registry/radio-group/description.example";
 import { RadioGroupDisabled } from "#/registry/radio-group/disabled.example";
-import { RadioFields } from "#/registry/radio-group/fields.example";
 import { RadioGroupFieldset } from "#/registry/radio-group/fieldset.example";
 import { RadioGroupInvalid } from "#/registry/radio-group/invalid.example";
 import { RadioGroupRtl } from "#/registry/radio-group/rtl.example";
@@ -10,13 +9,6 @@ import type { ComponentDoc } from "#/registry/types";
 
 export const radioGroupDoc: ComponentDoc = {
   examples: [
-    {
-      id: "radio-fields",
-      title: "With Fields",
-      description: "Compose radio items with Field primitives inside a FieldSet.",
-      Demo: RadioFields,
-      source: docSource("radio-group", "fields"),
-    },
     {
       id: "radio-group-choice-card",
       title: "Choice Card",

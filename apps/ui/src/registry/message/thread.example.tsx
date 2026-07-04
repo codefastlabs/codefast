@@ -1,5 +1,5 @@
 import { Avatar, AvatarFallback } from "@codefast/ui/avatar";
-import { Bubble, BubbleContent } from "@codefast/ui/bubble";
+import { Bubble, BubbleContent, BubbleReactions } from "@codefast/ui/bubble";
 import {
   Message,
   MessageAvatar,
@@ -19,18 +19,34 @@ export function MessageThread() {
           </Avatar>
         </MessageAvatar>
         <MessageContent>
-          <MessageHeader>Ada</MessageHeader>
+          <MessageHeader>Ada Lovelace</MessageHeader>
           <Bubble variant="muted">
-            <BubbleContent>Morning! Ready for the demo?</BubbleContent>
+            <BubbleContent>Morning! The new registry docs are live — want to review before we ship?</BubbleContent>
           </Bubble>
         </MessageContent>
       </Message>
       <Message align="end">
         <MessageContent>
           <Bubble align="end">
-            <BubbleContent>Yep — joining now.</BubbleContent>
+            <BubbleContent>Yes! Joining now.</BubbleContent>
+            <BubbleReactions aria-label="Reaction: thumbs up" role="img">
+              👍
+            </BubbleReactions>
           </Bubble>
-          <MessageFooter>Delivered</MessageFooter>
+          <MessageFooter>9:41 AM · Read</MessageFooter>
+        </MessageContent>
+      </Message>
+      <Message>
+        <MessageAvatar>
+          <Avatar size="sm">
+            <AvatarFallback>AD</AvatarFallback>
+          </Avatar>
+        </MessageAvatar>
+        <MessageContent>
+          <Bubble variant="muted">
+            <BubbleContent>Great — starting with the chat components.</BubbleContent>
+          </Bubble>
+          <MessageFooter>9:42 AM</MessageFooter>
         </MessageContent>
       </Message>
     </MessageGroup>

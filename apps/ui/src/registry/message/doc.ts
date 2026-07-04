@@ -1,5 +1,4 @@
 import { MessageActions } from "#/registry/message/actions.example";
-import { MessageAlignment } from "#/registry/message/alignment.example";
 import { MessageAvatarDemo } from "#/registry/message/avatar.example";
 import { MessageGroupDemo } from "#/registry/message/group.example";
 import { MessageHeaderFooter } from "#/registry/message/header-footer.example";
@@ -18,13 +17,6 @@ export const messageDoc: ComponentDoc = {
         "Compose MessageGroup with alternating Message rows. The avatar, header, and footer are optional per row.",
       Demo: MessageThread,
       source: docSource("message", "thread"),
-    },
-    {
-      id: "message-alignment",
-      title: "Alignment",
-      description: "align='end' mirrors the whole row (avatar side and content) for the current author.",
-      Demo: MessageAlignment,
-      source: docSource("message", "alignment"),
     },
     {
       id: "message-avatar",

@@ -2,7 +2,6 @@ import { BubbleAlignment } from "#/registry/bubble/alignment.example";
 import { BubbleCollapsible } from "#/registry/bubble/collapsible.example";
 import { BubbleDemo } from "#/registry/bubble/demo.example";
 import { BubbleGroupDemo } from "#/registry/bubble/group-demo.example";
-import { BubbleInteractive } from "#/registry/bubble/interactive.example";
 import { BubbleLinkButton } from "#/registry/bubble/link-button.example";
 import { BubbleMarkdown } from "#/registry/bubble/markdown.example";
 import { BubblePopover } from "#/registry/bubble/popover.example";
@@ -54,14 +53,6 @@ export const bubbleDoc: ComponentDoc = {
       Demo: BubbleReactionsDemo,
       source: docSource("bubble", "reactions"),
       previewClassName: "block",
-    },
-    {
-      id: "bubble-interactive",
-      title: "Interactive",
-      description:
-        "Render BubbleContent as a button or link with asChild to make a bubble actionable; hover styling adapts per variant.",
-      Demo: BubbleInteractive,
-      source: docSource("bubble", "interactive"),
     },
     {
       id: "bubble-link-button",
