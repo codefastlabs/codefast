@@ -33,7 +33,7 @@ export function DetailMobileToc({ items, className, ...props }: DetailMobileTocP
               href={`#${item.id}`}
               aria-current={isActive ? "location" : undefined}
               className={cn(
-                "flex min-h-11 shrink-0 items-center justify-center rounded-full border px-3.5 py-1.5 text-xs font-semibold whitespace-nowrap no-underline transition-colors duration-200",
+                "flex min-h-9 shrink-0 items-center justify-center rounded-full border px-3.5 py-1.5 text-xs font-semibold whitespace-nowrap no-underline transition-colors duration-200",
                 isActive
                   ? "border-ui-brand bg-ui-card text-ui-fg"
                   : "border-ui-border/60 bg-ui-surface text-ui-muted hover:border-ui-brand hover:text-ui-fg",
