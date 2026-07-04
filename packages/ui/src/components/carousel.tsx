@@ -6,6 +6,7 @@ import type { ComponentProps, JSX, KeyboardEvent } from "react";
 import { useCallback, useEffect, useState } from "react";
 
 import { Button } from "#/components/button";
+import { useDirection } from "#/components/direction";
 import { cn } from "#/lib/utils";
 
 /* -----------------------------------------------------------------------------
@@ -66,8 +67,12 @@ function Carousel({
   setApi,
   ...props
 }: ScopedProps<CarouselProps>): JSX.Element {
+  const direction = useDirection();
+
   const [carouselRef, api] = useEmblaCarousel(
     {
+      // Mirror Embla's drag/snap physics under RTL; explicit opts.direction wins.
+      direction,
       ...opts,
       axis: orientation === "vertical" ? "y" : "x",
     },
@@ -96,15 +101,19 @@ function Carousel({
 
   const handleKeyDown = useCallback(
     (event: KeyboardEvent<HTMLDivElement>) => {
-      if (event.key === "ArrowLeft") {
+      // Arrow keys follow reading direction: in RTL the left key advances.
+      const previousKey = direction === "rtl" ? "ArrowRight" : "ArrowLeft";
+      const nextKey = direction === "rtl" ? "ArrowLeft" : "ArrowRight";
+
+      if (event.key === previousKey) {
         event.preventDefault();
         scrollPrevious();
-      } else if (event.key === "ArrowRight") {
+      } else if (event.key === nextKey) {
         event.preventDefault();
         scrollNext();
       }
     },
-    [scrollPrevious, scrollNext],
+    [direction, scrollPrevious, scrollNext],
   );
 
   useEffect(() => {

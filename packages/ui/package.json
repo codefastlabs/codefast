@@ -522,6 +522,7 @@
     "access": "public"
   },
   "scripts": {
+    "audit:rtl": "node scripts/audit-rtl.mjs",
     "build": "tsdown",
     "build-storybook": "storybook build",
     "check-types": "tsgo --noEmit",
