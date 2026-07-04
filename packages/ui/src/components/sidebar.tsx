@@ -2,7 +2,7 @@ import { PanelLeftIcon } from "lucide-react";
 import { Slot } from "radix-ui";
 import { Context } from "radix-ui/internal";
 import type { ComponentProps, CSSProperties, Dispatch, JSX, SetStateAction } from "react";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useId, useState } from "react";
 
 import { Button } from "#/components/button";
 import { Input } from "#/components/input";
@@ -756,8 +756,15 @@ interface SidebarMenuSkeletonProps extends ComponentProps<"div"> {
  * @since 0.3.16-canary.0
  */
 function SidebarMenuSkeleton({ className, showIcon = false, ...props }: SidebarMenuSkeletonProps): JSX.Element {
-  // Random width between 50 to 90% - use useState with lazy initializer to avoid calling Math.random during render
-  const [width] = useState(() => `${String(Math.floor(Math.random() * 40) + 50)}%`);
+  // Varied width in 50–90%, derived from a stable useId so it matches across SSR and client (no hydration mismatch).
+  const id = useId();
+  let sum = 0;
+
+  for (const char of id) {
+    sum += char.codePointAt(0) ?? 0;
+  }
+
+  const width = `${String((sum % 41) + 50)}%`;
 
   return (
     <div
