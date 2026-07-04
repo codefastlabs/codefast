@@ -1,4 +1,4 @@
-import { Avatar, AvatarFallback } from "@codefast/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@codefast/ui/avatar";
 import { Bubble, BubbleContent, BubbleGroup } from "@codefast/ui/bubble";
 import { Message, MessageAvatar, MessageContent } from "@codefast/ui/message";
 
@@ -8,6 +8,7 @@ export function MessageAvatarDemo() {
       <Message>
         <MessageAvatar>
           <Avatar>
+            <AvatarImage alt="@rocky" src="https://avatar.vercel.sh/rocky" />
             <AvatarFallback>R</AvatarFallback>
           </Avatar>
         </MessageAvatar>
@@ -20,7 +21,8 @@ export function MessageAvatarDemo() {
       <Message align="end">
         <MessageAvatar>
           <Avatar>
-            <AvatarFallback>R</AvatarFallback>
+            <AvatarImage alt="@grace" src="https://avatar.vercel.sh/grace" />
+            <AvatarFallback>G</AvatarFallback>
           </Avatar>
         </MessageAvatar>
         <MessageContent>
@@ -32,6 +34,7 @@ export function MessageAvatarDemo() {
       <Message>
         <MessageAvatar>
           <Avatar>
+            <AvatarImage alt="@rocky" src="https://avatar.vercel.sh/rocky" />
             <AvatarFallback>R</AvatarFallback>
           </Avatar>
         </MessageAvatar>

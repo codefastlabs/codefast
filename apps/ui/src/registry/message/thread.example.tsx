@@ -1,4 +1,4 @@
-import { Avatar, AvatarFallback } from "@codefast/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@codefast/ui/avatar";
 import { Bubble, BubbleContent, BubbleReactions } from "@codefast/ui/bubble";
 import {
   Message,
@@ -15,6 +15,7 @@ export function MessageThread() {
       <Message>
         <MessageAvatar>
           <Avatar size="sm">
+            <AvatarImage alt="@ada" src="https://avatar.vercel.sh/ada" />
             <AvatarFallback>AD</AvatarFallback>
           </Avatar>
         </MessageAvatar>
@@ -39,6 +40,7 @@ export function MessageThread() {
       <Message>
         <MessageAvatar>
           <Avatar size="sm">
+            <AvatarImage alt="@ada" src="https://avatar.vercel.sh/ada" />
             <AvatarFallback>AD</AvatarFallback>
           </Avatar>
         </MessageAvatar>

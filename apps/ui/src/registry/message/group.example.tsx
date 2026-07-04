@@ -1,4 +1,4 @@
-import { Avatar, AvatarFallback } from "@codefast/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@codefast/ui/avatar";
 import { Bubble, BubbleContent } from "@codefast/ui/bubble";
 import { Message, MessageAvatar, MessageContent, MessageGroup } from "@codefast/ui/message";
 
@@ -17,6 +17,7 @@ export function MessageGroupDemo() {
         <Message>
           <MessageAvatar>
             <Avatar>
+              <AvatarImage alt="@rocky" src="https://avatar.vercel.sh/rocky" />
               <AvatarFallback>CN</AvatarFallback>
             </Avatar>
           </MessageAvatar>

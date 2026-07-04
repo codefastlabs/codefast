@@ -1,4 +1,4 @@
-import { Avatar, AvatarBadge, AvatarFallback, AvatarGroup, AvatarGroupCount } from "@codefast/ui/avatar";
+import { Avatar, AvatarBadge, AvatarFallback, AvatarGroup, AvatarGroupCount, AvatarImage } from "@codefast/ui/avatar";
 
 export function AvatarDemo() {
   return (
@@ -7,6 +7,7 @@ export function AvatarDemo() {
         <span className="text-sm font-medium text-ui-fg">Collaborators</span>
         <AvatarGroup>
           <Avatar>
+            <AvatarImage alt="@vuong" src="https://avatar.vercel.sh/vuong" />
             <AvatarFallback>VP</AvatarFallback>
           </Avatar>
           <Avatar>
@@ -21,6 +22,7 @@ export function AvatarDemo() {
 
       <div className="flex items-center gap-3">
         <Avatar size="lg">
+          <AvatarImage alt="@vuong" src="https://avatar.vercel.sh/vuong" />
           <AvatarFallback>VP</AvatarFallback>
           <AvatarBadge className="bg-emerald-500" />
         </Avatar>
