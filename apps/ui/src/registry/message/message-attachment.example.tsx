@@ -21,11 +21,9 @@ export function MessageAttachment() {
             <AttachmentMedia variant="image">
               <Image
                 alt="Workspace"
-                className="aspect-video w-full rounded-md object-cover"
-                layout="fixed"
-                src="https://images.unsplash.com/photo-1497366754035-f200968a6e72?w=900&auto=format&fit=crop&q=80"
-                aspectRatio={1}
-                height={78}
+                className="size-full object-cover"
+                layout="fullWidth"
+                src="https://images.unsplash.com/photo-1497366754035-f200968a6e72?w=600&auto=format&fit=crop&q=80"
               />
             </AttachmentMedia>
           </Attachment>
