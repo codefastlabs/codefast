@@ -1,4 +1,5 @@
 import { AttachmentGroupExample } from "#/registry/attachment/group.example";
+import { AttachmentImage } from "#/registry/attachment/image.example";
 import { AttachmentOrientation } from "#/registry/attachment/orientation.example";
 import { AttachmentSizes } from "#/registry/attachment/sizes.example";
 import { AttachmentStates } from "#/registry/attachment/states.example";
@@ -35,9 +36,18 @@ export const attachmentDoc: ComponentDoc = {
       id: "attachment-group",
       title: "Group",
       description:
-        "AttachmentGroup lays out a horizontally scrollable, snap-aligned row with a direction-aware edge fade.",
+        "AttachmentGroup lays out a horizontally scrollable, snap-aligned row with a direction-aware edge fade. Mix icon and image media in the same row.",
       Demo: AttachmentGroupExample,
       source: docSource("attachment", "group"),
+      previewClassName: "block",
+    },
+    {
+      id: "attachment-image",
+      title: "Image",
+      description:
+        "A gallery of vertical image tiles inside AttachmentGroup, each wrapping a full-card AttachmentTrigger to open the media.",
+      Demo: AttachmentImage,
+      source: docSource("attachment", "image"),
       previewClassName: "block",
     },
     {

@@ -16,24 +16,20 @@ export function MessageAttachment() {
     <div className="flex w-full max-w-sm flex-col gap-6">
       <Message align="end">
         <MessageContent>
-          <Attachment>
-            <AttachmentMedia>
-              <FileTextIcon />
+          <Attachment orientation="vertical">
+            <AttachmentMedia variant="image">
+              <div aria-label="Workspace" className="aspect-video w-full rounded-md bg-ui-surface" role="img" />
             </AttachmentMedia>
-            <AttachmentContent>
-              <AttachmentTitle>brief.pdf</AttachmentTitle>
-              <AttachmentDescription>PDF · 180 KB</AttachmentDescription>
-            </AttachmentContent>
           </Attachment>
-          <Bubble align="end">
-            <BubbleContent>Can you add this to the cover page?</BubbleContent>
+          <Bubble>
+            <BubbleContent>Here’s the image. Can you add it to the PDF? Use it for the cover page.</BubbleContent>
           </Bubble>
         </MessageContent>
       </Message>
       <Message>
         <MessageContent>
           <Bubble variant="muted">
-            <BubbleContent>Done — here’s the updated deck.</BubbleContent>
+            <BubbleContent>Done. Here’s the PDF with the image added as the cover page.</BubbleContent>
           </Bubble>
           <Attachment>
             <AttachmentMedia>
@@ -44,11 +40,18 @@ export function MessageAttachment() {
               <AttachmentDescription>PDF · 2.4 MB</AttachmentDescription>
             </AttachmentContent>
             <AttachmentActions>
-              <AttachmentAction aria-label="Download" size="icon-sm" title="Download" variant="secondary">
+              <AttachmentAction aria-label="Download" size="icon-sm" title="Download" type="button" variant="secondary">
                 <DownloadIcon />
               </AttachmentAction>
             </AttachmentActions>
           </Attachment>
+        </MessageContent>
+      </Message>
+      <Message align="end">
+        <MessageContent>
+          <Bubble>
+            <BubbleContent>Thanks. Looks good.</BubbleContent>
+          </Bubble>
         </MessageContent>
       </Message>
     </div>

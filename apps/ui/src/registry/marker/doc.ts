@@ -1,4 +1,9 @@
+import { MarkerBorder } from "#/registry/marker/border.example";
+import { MarkerDemo } from "#/registry/marker/demo.example";
 import { MarkerIconExample } from "#/registry/marker/icon.example";
+import { MarkerLinkButton } from "#/registry/marker/link-button.example";
+import { MarkerSeparator } from "#/registry/marker/separator.example";
+import { MarkerShimmer } from "#/registry/marker/shimmer.example";
 import { MarkerStatus } from "#/registry/marker/status.example";
 import { MarkerVariants } from "#/registry/marker/variants.example";
 import { docAnatomy, docSource } from "#/registry/source";
@@ -7,12 +12,33 @@ import type { ComponentDoc } from "#/registry/types";
 export const markerDoc: ComponentDoc = {
   examples: [
     {
+      id: "marker-demo",
+      title: "Overview",
+      description: "A feed of markers — an icon note, a live status line, a separator, and another note.",
+      Demo: MarkerDemo,
+      source: docSource("marker", "demo"),
+    },
+    {
       id: "marker-variants",
       title: "Variants",
       description:
         "default is a plain label; separator centers it between two rules; border draws a bottom line for a section break.",
       Demo: MarkerVariants,
       source: docSource("marker", "variants"),
+    },
+    {
+      id: "marker-separator",
+      title: "Separator",
+      description: "Center a short label between two rules to divide a transcript by day or phase.",
+      Demo: MarkerSeparator,
+      source: docSource("marker", "separator"),
+    },
+    {
+      id: "marker-border",
+      title: "Border",
+      description: "A bottom-bordered row per marker for a denser list of section breaks.",
+      Demo: MarkerBorder,
+      source: docSource("marker", "border"),
     },
     {
       id: "marker-icon",
@@ -27,6 +53,20 @@ export const markerDoc: ComponentDoc = {
       description: "Pair a Spinner with role='status' for a live progress line inside a transcript.",
       Demo: MarkerStatus,
       source: docSource("marker", "status"),
+    },
+    {
+      id: "marker-shimmer",
+      title: "Shimmer",
+      description: "Apply the shimmer utility to MarkerContent for an animated thinking line.",
+      Demo: MarkerShimmer,
+      source: docSource("marker", "shimmer"),
+    },
+    {
+      id: "marker-link-button",
+      title: "Link and button",
+      description: "Use asChild to render the marker as an anchor or a button while keeping the layout.",
+      Demo: MarkerLinkButton,
+      source: docSource("marker", "link-button"),
     },
   ],
   anatomy: docAnatomy("marker"),

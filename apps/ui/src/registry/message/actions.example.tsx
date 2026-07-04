@@ -27,10 +27,10 @@ export function MessageActions() {
       <Message align="end">
         <MessageContent>
           <Bubble align="end">
-            <BubbleContent>Okay, drop me a link. Taking a look…</BubbleContent>
+            <BubbleContent>Okay drop me a link. Taking a look…</BubbleContent>
           </Bubble>
           <MessageFooter className="gap-2">
-            <span className="text-destructive">Failed to send</span>
+            <span className="font-normal text-destructive">Failed to send</span>
             <Button aria-label="Retry" size="icon-xs" title="Retry" variant="ghost">
               <RefreshCcwIcon />
             </Button>

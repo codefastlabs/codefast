@@ -21,7 +21,7 @@ import { CopyIcon, FileSearchIcon, XIcon } from "lucide-react";
 export function AttachmentTriggerExample() {
   return (
     <Dialog>
-      <Attachment className="w-full max-w-xs">
+      <Attachment className="w-full max-w-sm">
         <AttachmentMedia>
           <FileSearchIcon />
         </AttachmentMedia>
@@ -45,7 +45,8 @@ export function AttachmentTriggerExample() {
         <DialogHeader>
           <DialogTitle>research-summary.pdf</DialogTitle>
           <DialogDescription>
-            The trigger fills the card and opens the dialog, while the actions above it stay independently clickable.
+            The attachment trigger fills the card and opens the dialog, while the actions stay independently clickable
+            above it.
           </DialogDescription>
         </DialogHeader>
       </DialogContent>

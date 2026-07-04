@@ -3,18 +3,18 @@ import { Spinner } from "@codefast/ui/spinner";
 
 export function MarkerStatus() {
   return (
-    <div className="flex w-full max-w-sm flex-col gap-6">
+    <div className="flex w-full max-w-sm flex-col gap-8">
       <Marker role="status">
         <MarkerIcon>
           <Spinner />
         </MarkerIcon>
-        <MarkerContent>Compacting conversation…</MarkerContent>
+        <MarkerContent>Compacting conversation</MarkerContent>
       </Marker>
       <Marker role="status" variant="separator">
         <MarkerIcon>
           <Spinner />
         </MarkerIcon>
-        <MarkerContent>Running tests…</MarkerContent>
+        <MarkerContent>Running tests</MarkerContent>
       </Marker>
     </div>
   );

@@ -1,14 +1,26 @@
 import { Marker, MarkerContent, MarkerIcon } from "@codefast/ui/marker";
-import { CalendarIcon } from "lucide-react";
+import { BookOpenCheckIcon, GitBranchIcon, SearchIcon } from "lucide-react";
 
 export function MarkerIconExample() {
   return (
-    <div className="w-full max-w-sm">
+    <div className="flex w-full max-w-sm flex-col gap-12">
       <Marker>
         <MarkerIcon>
-          <CalendarIcon />
+          <GitBranchIcon />
         </MarkerIcon>
-        <MarkerContent>December 12</MarkerContent>
+        <MarkerContent>Switched to a new branch</MarkerContent>
+      </Marker>
+      <Marker variant="separator">
+        <MarkerIcon>
+          <SearchIcon />
+        </MarkerIcon>
+        <MarkerContent>Explored 4 files</MarkerContent>
+      </Marker>
+      <Marker className="flex-col">
+        <MarkerIcon>
+          <BookOpenCheckIcon />
+        </MarkerIcon>
+        <MarkerContent>Syncing completed</MarkerContent>
       </Marker>
     </div>
   );

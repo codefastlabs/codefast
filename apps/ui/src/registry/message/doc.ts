@@ -1,5 +1,9 @@
 import { MessageActions } from "#/registry/message/actions.example";
 import { MessageAlignment } from "#/registry/message/alignment.example";
+import { MessageAvatarDemo } from "#/registry/message/avatar.example";
+import { MessageGroupDemo } from "#/registry/message/group.example";
+import { MessageHeaderFooter } from "#/registry/message/header-footer.example";
+import { MessageMarkdown } from "#/registry/message/markdown.example";
 import { MessageAttachment } from "#/registry/message/message-attachment.example";
 import { MessageThread } from "#/registry/message/thread.example";
 import { docAnatomy, docSource } from "#/registry/source";
@@ -23,6 +27,27 @@ export const messageDoc: ComponentDoc = {
       source: docSource("message", "alignment"),
     },
     {
+      id: "message-avatar",
+      title: "Avatar",
+      description: "Attach an author avatar with MessageAvatar; consecutive same-author rows can drop it.",
+      Demo: MessageAvatarDemo,
+      source: docSource("message", "avatar"),
+    },
+    {
+      id: "message-group",
+      title: "Group",
+      description: "MessageGroup stacks related rows; an empty MessageAvatar keeps content aligned without a picture.",
+      Demo: MessageGroupDemo,
+      source: docSource("message", "group"),
+    },
+    {
+      id: "message-header-footer",
+      title: "Header and footer",
+      description: "Put the author name in MessageHeader and delivery status in MessageFooter as real text.",
+      Demo: MessageHeaderFooter,
+      source: docSource("message", "header-footer"),
+    },
+    {
       id: "message-actions",
       title: "Actions",
       description: "Put per-message controls (copy, react, retry) in MessageFooter; it aligns with the row.",
@@ -35,6 +60,13 @@ export const messageDoc: ComponentDoc = {
       description: "Compose Attachment inside MessageContent to send and receive files alongside bubbles.",
       Demo: MessageAttachment,
       source: docSource("message", "message-attachment"),
+    },
+    {
+      id: "message-markdown",
+      title: "Markdown",
+      description: "Render assistant text in a ghost bubble as plain paragraphs; keep user messages as plain text.",
+      Demo: MessageMarkdown,
+      source: docSource("message", "markdown"),
     },
   ],
   anatomy: docAnatomy("message"),

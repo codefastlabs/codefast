@@ -1,11 +1,27 @@
+import { BubbleAlignment } from "#/registry/bubble/alignment.example";
+import { BubbleCollapsible } from "#/registry/bubble/collapsible.example";
+import { BubbleDemo } from "#/registry/bubble/demo.example";
+import { BubbleGroupDemo } from "#/registry/bubble/group-demo.example";
 import { BubbleInteractive } from "#/registry/bubble/interactive.example";
-import { BubbleReactionsExample } from "#/registry/bubble/reactions.example";
+import { BubbleLinkButton } from "#/registry/bubble/link-button.example";
+import { BubbleMarkdown } from "#/registry/bubble/markdown.example";
+import { BubblePopover } from "#/registry/bubble/popover.example";
+import { BubbleReactionsDemo } from "#/registry/bubble/reactions.example";
+import { BubbleTooltip } from "#/registry/bubble/tooltip.example";
 import { BubbleVariants } from "#/registry/bubble/variants.example";
 import { docAnatomy, docSource } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const bubbleDoc: ComponentDoc = {
   examples: [
+    {
+      id: "bubble-demo",
+      title: "Demo",
+      description: "A full thread — grouped bubbles, alternating sides, and reaction pills reading top to bottom.",
+      Demo: BubbleDemo,
+      source: docSource("bubble", "demo"),
+      previewClassName: "block",
+    },
     {
       id: "bubble-variants",
       title: "Variants",
@@ -15,12 +31,29 @@ export const bubbleDoc: ComponentDoc = {
       source: docSource("bubble", "variants"),
     },
     {
+      id: "bubble-alignment",
+      title: "Alignment",
+      description: "align defaults to start; switch to end for the current user's own messages.",
+      Demo: BubbleAlignment,
+      source: docSource("bubble", "alignment"),
+    },
+    {
+      id: "bubble-group-demo",
+      title: "Group",
+      description:
+        "BubbleGroup stacks consecutive bubbles from one author with tight spacing so the thread scans cleanly.",
+      Demo: BubbleGroupDemo,
+      source: docSource("bubble", "group-demo"),
+      previewClassName: "block",
+    },
+    {
       id: "bubble-reactions",
       title: "Reactions",
       description:
         "BubbleReactions overlaps a reaction pill on a bubble corner. Use side (top/bottom) and align (start/end) to place it.",
-      Demo: BubbleReactionsExample,
+      Demo: BubbleReactionsDemo,
       source: docSource("bubble", "reactions"),
+      previewClassName: "block",
     },
     {
       id: "bubble-interactive",
@@ -29,6 +62,42 @@ export const bubbleDoc: ComponentDoc = {
         "Render BubbleContent as a button or link with asChild to make a bubble actionable; hover styling adapts per variant.",
       Demo: BubbleInteractive,
       source: docSource("bubble", "interactive"),
+    },
+    {
+      id: "bubble-link-button",
+      title: "Link buttons",
+      description: "Quick-reply bubbles: BubbleContent asChild wraps a real button so the whole bubble is one control.",
+      Demo: BubbleLinkButton,
+      source: docSource("bubble", "link-button"),
+    },
+    {
+      id: "bubble-collapsible",
+      title: "Collapsible",
+      description: "Fold a long message behind a Show more toggle by nesting a Collapsible inside BubbleContent.",
+      Demo: BubbleCollapsible,
+      source: docSource("bubble", "collapsible"),
+    },
+    {
+      id: "bubble-markdown",
+      title: "Rich text",
+      description:
+        "Bubbles hold arbitrary markup — render assistant replies as paragraphs, ideal for the ghost variant.",
+      Demo: BubbleMarkdown,
+      source: docSource("bubble", "markdown"),
+    },
+    {
+      id: "bubble-popover",
+      title: "Popover",
+      description: "Anchor a Popover in the reaction slot to surface details like an error trace on demand.",
+      Demo: BubblePopover,
+      source: docSource("bubble", "popover"),
+    },
+    {
+      id: "bubble-tooltip",
+      title: "Tooltip",
+      description: "Put a read receipt in the reaction slot and reveal its timestamp with a Tooltip.",
+      Demo: BubbleTooltip,
+      source: docSource("bubble", "tooltip"),
     },
   ],
   anatomy: docAnatomy("bubble"),

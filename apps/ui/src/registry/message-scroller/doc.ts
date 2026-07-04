@@ -1,6 +1,15 @@
+import { MessageScrollerAnchoring } from "#/registry/message-scroller/anchoring.example";
+import { MessageScrollerAnimation } from "#/registry/message-scroller/animation.example";
 import { MessageScrollerCommands } from "#/registry/message-scroller/commands.example";
-import { MessageScrollerDemo } from "#/registry/message-scroller/demo";
+import { MessageScrollerDemo as MessageScrollerCardDemo } from "#/registry/message-scroller/demo";
+import { MessageScrollerDemo } from "#/registry/message-scroller/demo.example";
+import { MessageScrollerGroupChat } from "#/registry/message-scroller/group-chat.example";
+import { MessageScrollerLoadHistory } from "#/registry/message-scroller/load-history.example";
+import { MessageScrollerOpeningPosition } from "#/registry/message-scroller/opening-position.example";
+import { MessageScrollerPreviousContext } from "#/registry/message-scroller/previous-context.example";
 import { MessageScrollerScrollable } from "#/registry/message-scroller/scrollable.example";
+import { MessageScrollerStreaming } from "#/registry/message-scroller/streaming.example";
+import { MessageScrollerVisibility } from "#/registry/message-scroller/visibility.example";
 import { docAnatomy, docDemo, docSource } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
@@ -11,8 +20,80 @@ export const messageScrollerDoc: ComponentDoc = {
       title: "Chat feed",
       description:
         "MessageScrollerProvider owns the behavior; autoScroll follows new content at the bottom, defaultScrollPosition='end' opens at the latest turn, and MessageScrollerButton appears only while there is overflow toward its edge.",
-      Demo: MessageScrollerDemo,
+      Demo: MessageScrollerCardDemo,
       source: docDemo("message-scroller"),
+      previewClassName: "block",
+    },
+    {
+      id: "message-scroller-demo",
+      title: "Chat surface",
+      description:
+        "A full chat card: reveal each scripted turn to watch autoScroll follow the latest reply while anchored user turns settle near the reading line.",
+      Demo: MessageScrollerDemo,
+      source: docSource("message-scroller", "demo"),
+      previewClassName: "block",
+    },
+    {
+      id: "message-scroller-streaming",
+      title: "Streaming messages",
+      description:
+        "autoScroll pins the viewport to the live edge as replies arrive, and MessageScrollerButton offers a way back once the reader scrolls up.",
+      Demo: MessageScrollerStreaming,
+      source: docSource("message-scroller", "streaming"),
+      previewClassName: "block",
+    },
+    {
+      id: "message-scroller-anchoring",
+      title: "Anchoring turns",
+      description:
+        "scrollAnchor marks which role settles near the top edge — toggle between user and assistant to compare where each new turn lands.",
+      Demo: MessageScrollerAnchoring,
+      source: docSource("message-scroller", "anchoring"),
+      previewClassName: "block",
+    },
+    {
+      id: "message-scroller-previous-context",
+      title: "Keeping context visible",
+      description:
+        "scrollPreviousItemPeek leaves a slice of the previous reply above a newly anchored turn — adjust the peek and send to see it change.",
+      Demo: MessageScrollerPreviousContext,
+      source: docSource("message-scroller", "previous-context"),
+      previewClassName: "block",
+    },
+    {
+      id: "message-scroller-opening-position",
+      title: "Opening position",
+      description:
+        "defaultScrollPosition decides where a saved transcript opens — start, end, or the last anchored turn.",
+      Demo: MessageScrollerOpeningPosition,
+      source: docSource("message-scroller", "opening-position"),
+      previewClassName: "block",
+    },
+    {
+      id: "message-scroller-load-history",
+      title: "Load history",
+      description:
+        "preserveScrollOnPrepend keeps the first visible row stable when earlier messages are prepended, so loading history never yanks the reader.",
+      Demo: MessageScrollerLoadHistory,
+      source: docSource("message-scroller", "load-history"),
+      previewClassName: "block",
+    },
+    {
+      id: "message-scroller-group-chat",
+      title: "Group chat",
+      description:
+        "Mix Message rows and Marker events in one transcript; a marker with scrollAnchor becomes the next turn boundary when a participant joins.",
+      Demo: MessageScrollerGroupChat,
+      source: docSource("message-scroller", "group-chat"),
+      previewClassName: "block",
+    },
+    {
+      id: "message-scroller-animation",
+      title: "Animation",
+      description:
+        "Animate the entrance of user turns with transform and opacity presets while keeping the measured row predictable for anchoring.",
+      Demo: MessageScrollerAnimation,
+      source: docSource("message-scroller", "animation"),
       previewClassName: "block",
     },
     {
@@ -31,6 +112,15 @@ export const messageScrollerDoc: ComponentDoc = {
         "useMessageScroller() exposes scrollToMessage/scrollToEnd/scrollToStart — here a 'Jump to' menu drives the transcript from outside.",
       Demo: MessageScrollerCommands,
       source: docSource("message-scroller", "commands"),
+      previewClassName: "block",
+    },
+    {
+      id: "message-scroller-visibility",
+      title: "Visibility outline",
+      description:
+        "useMessageScrollerVisibility surfaces the current anchored turn — this outline highlights and jumps to it as the reader scrolls.",
+      Demo: MessageScrollerVisibility,
+      source: docSource("message-scroller", "visibility"),
       previewClassName: "block",
     },
   ],
