@@ -1,6 +1,7 @@
 import { InputBadge } from "#/registry/input/badge.example";
 import { InputBasic } from "#/registry/input/basic.example";
 import { InputButtonGroup } from "#/registry/input/button-group.example";
+import { InputDemo } from "#/registry/input/demo.example";
 import { InputDisabled } from "#/registry/input/disabled.example";
 import { InputField } from "#/registry/input/field.example";
 import { InputFieldgroup } from "#/registry/input/fieldgroup.example";
@@ -46,6 +47,13 @@ export const inputDoc: ComponentDoc = {
         "To add buttons to an input, use the ButtonGroup component. See the Button Group component for more examples.",
       Demo: InputButtonGroup,
       source: docSource("input", "button-group"),
+    },
+    {
+      id: "input-demo",
+      title: "Demo",
+      description: "A labelled API-key field with a description, styled with Field.",
+      Demo: InputDemo,
+      source: docSource("input", "demo"),
     },
     {
       id: "input-disabled",

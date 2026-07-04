@@ -12,6 +12,7 @@ export const tableDoc: ComponentDoc = {
       description: "A table showing actions for each row using a <DropdownMenu /> component.",
       Demo: TableActions,
       source: docSource("table", "actions"),
+      previewClassName: "block",
     },
     {
       id: "table-footer",
@@ -19,6 +20,7 @@ export const tableDoc: ComponentDoc = {
       description: "Use the <TableFooter /> component to add a footer to the table.",
       Demo: TableFooterExample,
       source: docSource("table", "footer"),
+      previewClassName: "block",
     },
     {
       id: "table-rtl",
@@ -27,6 +29,7 @@ export const tableDoc: ComponentDoc = {
       Demo: TableRtl,
       source: docSource("table", "rtl"),
       direction: "rtl",
+      previewClassName: "block",
     },
   ],
   anatomy: docAnatomy("table"),
