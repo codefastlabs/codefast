@@ -84,7 +84,7 @@ export function ChartDemo() {
                 }}
               >
                 <span className="text-xs text-ui-muted">{chartConfig[chart].label}</span>
-                <span className="text-lg leading-none font-bold sm:text-3xl">
+                <span className="text-lg leading-none font-bold whitespace-nowrap tabular-nums sm:text-3xl">
                   {total[key as keyof typeof total].toLocaleString()}
                 </span>
               </button>
