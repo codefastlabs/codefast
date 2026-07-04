@@ -110,7 +110,7 @@ function Page() {
 }
 ```
 
-`appearance` accepts `"light"`, `"dark"`, or `"automatic"`. `colorScheme` from `useAppearance()` always narrows to `"light" | "dark"`. The preference is persisted in `localStorage` under `STORAGE_KEY` (`"ui-theme"`) by default; pass a custom `storageKey` to both `<AppearanceScript>` and `<AppearanceProvider>` to change it.
+`appearance` accepts `"light"`, `"dark"`, or `"automatic"`. `colorScheme` from `useAppearance()` always narrows to `"light" | "dark"`. The preference is persisted in `localStorage` under `STORAGE_KEY` (`"ui-appearance"`) by default; pass a custom `storageKey` to both `<AppearanceScript>` and `<AppearanceProvider>` to change it.
 
 ---
 
@@ -222,22 +222,22 @@ Root provider that wires together appearance state, `localStorage` persistence, 
 </AppearanceProvider>
 ```
 
-| Prop                | Type                                                        | Default       | Description                                                                                                                                     |
-| ------------------- | ----------------------------------------------------------- | ------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
-| `appearance`        | `Appearance`                                                | `"automatic"` | Fallback preference when storage has no valid entry; also what SSR renders.                                                                     |
-| `storageKey`        | `string`                                                    | `"ui-theme"`  | `localStorage` key to restore from, auto-persist under, and sync across tabs via the `storage` event. Use the same key as `<AppearanceScript>`. |
-| `persistAppearance` | `(value: Appearance) => Promise<void>`                      | —             | Custom persistence; replaces the `localStorage` auto-persist. Rejects → optimistic update reverts automatically.                                |
-| `onPersistError`    | `(error: unknown, attemptedAppearance: Appearance) => void` | —             | Optional hook called when `persistAppearance` rejects; use for custom logging/telemetry/UI feedback.                                            |
-| `disableTransition` | `boolean`                                                   | `false`       | Temporarily injects a style rule that disables CSS transitions while the color scheme swaps. Respects `prefers-reduced-motion`.                 |
-| `nonce`             | `string`                                                    | —             | CSP nonce attached to the inline `<style>` element when `disableTransition` is enabled.                                                         |
-| `children`          | `ReactNode`                                                 | —             | Application content.                                                                                                                            |
+| Prop                | Type                                                        | Default           | Description                                                                                                                                     |
+| ------------------- | ----------------------------------------------------------- | ----------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| `appearance`        | `Appearance`                                                | `"automatic"`     | Fallback preference when storage has no valid entry; also what SSR renders.                                                                     |
+| `storageKey`        | `string`                                                    | `"ui-appearance"` | `localStorage` key to restore from, auto-persist under, and sync across tabs via the `storage` event. Use the same key as `<AppearanceScript>`. |
+| `persistAppearance` | `(value: Appearance) => Promise<void>`                      | —                 | Custom persistence; replaces the `localStorage` auto-persist. Rejects → optimistic update reverts automatically.                                |
+| `onPersistError`    | `(error: unknown, attemptedAppearance: Appearance) => void` | —                 | Optional hook called when `persistAppearance` rejects; use for custom logging/telemetry/UI feedback.                                            |
+| `disableTransition` | `boolean`                                                   | `false`           | Temporarily injects a style rule that disables CSS transitions while the color scheme swaps. Respects `prefers-reduced-motion`.                 |
+| `nonce`             | `string`                                                    | —                 | CSP nonce attached to the inline `<style>` element when `disableTransition` is enabled.                                                         |
+| `children`          | `ReactNode`                                                 | —                 | Application content.                                                                                                                            |
 
 `<AppearanceProvider>` internally:
 
 1. Restores the persisted preference from `localStorage` in its initial client render, and tracks an optimistic value for immediate feedback.
 2. Subscribes to `(prefers-color-scheme: dark)` through `useSyncExternalStore` (server snapshot: `DEFAULT_COLOR_SCHEME`).
 3. Applies the resolved class + `color-scheme` to `<html>` whenever it changes.
-4. Broadcasts the new value over `BroadcastChannel("color-scheme-sync")` so other tabs stay in sync.
+4. Broadcasts the new value over `BroadcastChannel("appearance-sync")` so other tabs stay in sync.
 
 ### `useAppearance()`
 
@@ -262,11 +262,11 @@ Inline script for the document head that prevents FOUC.
 <AppearanceScript nonce={cspNonce} />
 ```
 
-| Prop         | Type         | Default       | Description                                                                                         |
-| ------------ | ------------ | ------------- | --------------------------------------------------------------------------------------------------- |
-| `appearance` | `Appearance` | `"automatic"` | Fallback when the storage entry is absent or unrecognised. `"automatic"` resolves via `matchMedia`. |
-| `storageKey` | `string`     | `"ui-theme"`  | `localStorage` key the script reads before first paint. Use the same key as `<AppearanceProvider>`. |
-| `nonce`      | `string`     | —             | Optional CSP nonce attached to the inline `<script>`.                                               |
+| Prop         | Type         | Default           | Description                                                                                         |
+| ------------ | ------------ | ----------------- | --------------------------------------------------------------------------------------------------- |
+| `appearance` | `Appearance` | `"automatic"`     | Fallback when the storage entry is absent or unrecognised. `"automatic"` resolves via `matchMedia`. |
+| `storageKey` | `string`     | `"ui-appearance"` | `localStorage` key the script reads before first paint. Use the same key as `<AppearanceProvider>`. |
+| `nonce`      | `string`     | —                 | Optional CSP nonce attached to the inline `<script>`.                                               |
 
 The component emits a `<script>` with `dangerouslySetInnerHTML` and forwards `nonce` when provided.
 
@@ -302,7 +302,7 @@ import {
 } from "@codefast/theme";
 
 // STORAGE_KEY lives in the /constants subpath (intentionally not re-exported from root)
-import { STORAGE_KEY } from "@codefast/theme/constants"; // "ui-theme"
+import { STORAGE_KEY } from "@codefast/theme/constants"; // "ui-appearance"
 ```
 
 ---

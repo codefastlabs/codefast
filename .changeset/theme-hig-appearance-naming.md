@@ -12,4 +12,6 @@ Rename the public API to follow Apple's Human Interface Guidelines vocabulary: *
 - Constants: `DEFAULT_COLOR_SCHEME` → `DEFAULT_APPEARANCE` (`"automatic"`); `DEFAULT_RESOLVED_COLOR_SCHEME` → `DEFAULT_COLOR_SCHEME` (`"dark"`). ⚠️ `DEFAULT_COLOR_SCHEME` still exists but now means the resolved fallback — the prop renames make stale usage a compile error.
 - Subpaths: `./types` → `./appearance`; `./core/provider` → `./appearance-provider`; `./core/use-theme` → `./use-appearance`; `./core/context` → `./appearance-context`; `./script/theme-script` → `./appearance-script`; `./utils/system` → `./color-scheme`; `./utils/dom` → `./dom`.
 
-Unchanged: `AppearanceProvider` / `AppearanceScript` component names, the `data-appearance` attribute, the `"ui-theme"` storage key (existing visitors keep their saved preference), `resolveColorScheme()` / `getSystemColorScheme()` / `applyColorScheme()` / `suppressTransitions()`, and `STORAGE_KEY` in `/constants`.
+- Persisted values: the default `STORAGE_KEY` is now `"ui-appearance"` (was `"ui-theme"`) — returning visitors fall back to `"automatic"` once. The internal `BroadcastChannel` is now `"appearance-sync"` (was `"color-scheme-sync"`).
+
+Unchanged: `AppearanceProvider` / `AppearanceScript` component names, the `data-appearance` attribute, `resolveColorScheme()` / `getSystemColorScheme()` / `applyColorScheme()` / `suppressTransitions()`.

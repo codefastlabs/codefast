@@ -26,7 +26,7 @@ export const DEFAULT_COLOR_SCHEME: ColorScheme = "dark";
  *
  * @since 0.3.16-canary.0
  */
-export const STORAGE_KEY = "ui-theme";
+export const STORAGE_KEY = "ui-appearance";
 
 /* -----------------------------------------------------------------------------
  * Internal Constants
@@ -46,4 +46,4 @@ export const MEDIA = "(prefers-color-scheme: dark)";
  *
  * @since 0.3.16-canary.0
  */
-export const SYNC_CHANNEL = "color-scheme-sync";
+export const SYNC_CHANNEL = "appearance-sync";

@@ -683,7 +683,7 @@ describe("AppearanceProvider", () => {
     });
 
     test("restores the persisted preference from the initial render", () => {
-      window.localStorage.setItem("ui-theme", "dark");
+      window.localStorage.setItem("ui-appearance", "dark");
 
       const TestConsumer = (): React.ReactElement => {
         const { appearance } = useAppearance();
@@ -692,7 +692,7 @@ describe("AppearanceProvider", () => {
       };
 
       render(
-        <AppearanceProvider appearance="automatic" storageKey="ui-theme">
+        <AppearanceProvider appearance="automatic" storageKey="ui-appearance">
           <TestConsumer />
         </AppearanceProvider>,
       );
@@ -753,7 +753,7 @@ describe("AppearanceProvider", () => {
       };
 
       render(
-        <AppearanceProvider appearance="light" storageKey="ui-theme">
+        <AppearanceProvider appearance="light" storageKey="ui-appearance">
           <TestConsumer />
         </AppearanceProvider>,
       );
@@ -761,7 +761,7 @@ describe("AppearanceProvider", () => {
       await user.click(screen.getByTestId("toggle"));
 
       await waitFor(() => {
-        expect(window.localStorage.getItem("ui-theme")).toBe("dark");
+        expect(window.localStorage.getItem("ui-appearance")).toBe("dark");
       });
     });
 
@@ -786,7 +786,7 @@ describe("AppearanceProvider", () => {
       };
 
       render(
-        <AppearanceProvider appearance="light" persistAppearance={persistAppearance} storageKey="ui-theme">
+        <AppearanceProvider appearance="light" persistAppearance={persistAppearance} storageKey="ui-appearance">
           <TestConsumer />
         </AppearanceProvider>,
       );
@@ -797,16 +797,16 @@ describe("AppearanceProvider", () => {
         expect(persistAppearance).toHaveBeenCalledWith("dark");
       });
 
-      expect(window.localStorage.getItem("ui-theme")).toBeNull();
+      expect(window.localStorage.getItem("ui-appearance")).toBeNull();
     });
 
     test("applies the stored preference from the initializer, never flashing through the prop", async () => {
-      window.localStorage.setItem("ui-theme", "dark");
+      window.localStorage.setItem("ui-appearance", "dark");
 
       // matchMedia=light + prop="light": neither resolves to dark, so a "dark" class can only come from the
       // initializer reading localStorage — proving the first (and only) applyAppearance used the stored value.
       render(
-        <AppearanceProvider appearance="light" storageKey="ui-theme">
+        <AppearanceProvider appearance="light" storageKey="ui-appearance">
           <div>Content</div>
         </AppearanceProvider>,
       );
@@ -826,7 +826,7 @@ describe("AppearanceProvider", () => {
       };
 
       render(
-        <AppearanceProvider appearance="light" storageKey="ui-theme">
+        <AppearanceProvider appearance="light" storageKey="ui-appearance">
           <TestConsumer />
         </AppearanceProvider>,
       );
@@ -834,7 +834,7 @@ describe("AppearanceProvider", () => {
       expect(screen.getByTestId("appearance-label")).toHaveTextContent("light");
 
       await act(async () => {
-        dispatchStorageEvent("ui-theme", "dark");
+        dispatchStorageEvent("ui-appearance", "dark");
       });
 
       await waitFor(() => {
@@ -850,14 +850,14 @@ describe("AppearanceProvider", () => {
       };
 
       render(
-        <AppearanceProvider appearance="light" storageKey="ui-theme">
+        <AppearanceProvider appearance="light" storageKey="ui-appearance">
           <TestConsumer />
         </AppearanceProvider>,
       );
 
       await act(async () => {
         dispatchStorageEvent("other-key", "dark");
-        dispatchStorageEvent("ui-theme", "not-a-scheme");
+        dispatchStorageEvent("ui-appearance", "not-a-scheme");
       });
 
       expect(screen.getByTestId("appearance-label")).toHaveTextContent("light");
