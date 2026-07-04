@@ -15,9 +15,12 @@
    * Typography
    * ---------------------------------------------------------------------- */
 
-  --font-sans: var(--font-sans);
-  --font-heading: var(--font-heading);
-  --font-mono: var(--font-mono);
+  /* Bridge the app-owned raw vars into the font-* utilities; fall back to sane
+     stacks so a consumer that forgets one degrades gracefully instead of
+     silently inheriting the sans font. */
+  --font-sans: var(--font-sans, ui-sans-serif, system-ui, sans-serif);
+  --font-heading: var(--font-heading, var(--font-sans, ui-sans-serif, system-ui, sans-serif));
+  --font-mono: var(--font-mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace);
 
   /* ----------------------------------------------------------------------
    * Surfaces & semantic colors
