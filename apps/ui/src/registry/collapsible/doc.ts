@@ -1,4 +1,5 @@
 import { CollapsibleBasic } from "#/registry/collapsible/basic.example";
+import { CollapsibleDemo } from "#/registry/collapsible/demo.example";
 import { CollapsibleFileTree } from "#/registry/collapsible/file-tree.example";
 import { CollapsibleRtl } from "#/registry/collapsible/rtl.example";
 import { CollapsibleSettings } from "#/registry/collapsible/settings.example";
@@ -13,6 +14,14 @@ export const collapsibleDoc: ComponentDoc = {
       description: "An interactive component which expands/collapses a panel.",
       Demo: CollapsibleBasic,
       source: docSource("collapsible", "basic"),
+      previewClassName: "items-start",
+    },
+    {
+      id: "collapsible-demo",
+      title: "Demo",
+      description: "A collapsible order card revealing shipping and item details.",
+      Demo: CollapsibleDemo,
+      source: docSource("collapsible", "demo"),
       previewClassName: "items-start",
     },
     {
