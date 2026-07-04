@@ -8,6 +8,7 @@ import {
   AttachmentMedia,
   AttachmentTitle,
 } from "@codefast/ui/attachment";
+import { Image } from "@unpic/react";
 import type { LucideIcon } from "lucide-react";
 import { FileCodeIcon, FileTextIcon, TableIcon, XIcon } from "lucide-react";
 
@@ -15,12 +16,16 @@ interface Item {
   name: string;
   meta: string;
   icon?: LucideIcon | undefined;
-  image?: boolean | undefined;
+  src?: string | undefined;
 }
 
 const items: Array<Item> = [
   { name: "briefing-notes.pdf", meta: "PDF · 1.4 MB", icon: FileTextIcon },
-  { name: "workspace.png", meta: "PNG · 820 KB", image: true },
+  {
+    name: "workspace.png",
+    meta: "PNG · 820 KB",
+    src: "https://images.unsplash.com/photo-1497366754035-f200968a6e72?w=900&auto=format&fit=crop&q=80",
+  },
   { name: "customers.csv", meta: "CSV · 18 KB", icon: TableIcon },
   { name: "renderer.tsx", meta: "TSX · 12 KB", icon: FileCodeIcon },
 ];
@@ -33,9 +38,9 @@ export function AttachmentGroupExample() {
 
         return (
           <Attachment key={item.name} className="w-64">
-            {item.image ? (
+            {item.src ? (
               <AttachmentMedia variant="image">
-                <div aria-label={item.name} className="size-full bg-ui-surface" role="img" />
+                <Image alt={item.name} className="size-full object-cover" layout="fullWidth" src={item.src} />
               </AttachmentMedia>
             ) : Icon ? (
               <AttachmentMedia>

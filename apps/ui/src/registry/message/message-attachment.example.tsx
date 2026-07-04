@@ -9,6 +9,7 @@ import {
 } from "@codefast/ui/attachment";
 import { Bubble, BubbleContent } from "@codefast/ui/bubble";
 import { Message, MessageContent } from "@codefast/ui/message";
+import { Image } from "@unpic/react";
 import { DownloadIcon, FileTextIcon } from "lucide-react";
 
 export function MessageAttachment() {
@@ -18,7 +19,14 @@ export function MessageAttachment() {
         <MessageContent>
           <Attachment orientation="vertical">
             <AttachmentMedia variant="image">
-              <div aria-label="Workspace" className="aspect-video w-full rounded-md bg-ui-surface" role="img" />
+              <Image
+                alt="Workspace"
+                className="aspect-video w-full rounded-md object-cover"
+                height={360}
+                layout="constrained"
+                src="https://images.unsplash.com/photo-1497366754035-f200968a6e72?w=900&auto=format&fit=crop&q=80"
+                width={640}
+              />
             </AttachmentMedia>
           </Attachment>
           <Bubble>
