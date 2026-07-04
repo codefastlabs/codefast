@@ -4,6 +4,7 @@ import { Link } from "@tanstack/react-router";
 import { MenuIcon } from "lucide-react";
 import { useState } from "react";
 
+import { AppearanceSelector } from "#/components/layout/appearance-selector";
 import { AppearanceToggle } from "#/components/layout/appearance-toggle";
 import { CommandPalette } from "#/components/layout/command-palette";
 import { GitHubLink } from "#/components/layout/github-link";
@@ -77,7 +78,7 @@ export function Header() {
                 <div className="mt-6 flex flex-col gap-3 border-t border-ui-border pt-6">
                   <p className="px-3 text-xs font-semibold tracking-widest text-ui-muted uppercase">Appearance</p>
                   <div className="px-3">
-                    <AppearanceToggle />
+                    <AppearanceSelector />
                   </div>
                 </div>
               </SheetBody>
