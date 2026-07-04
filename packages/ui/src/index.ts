@@ -35,6 +35,28 @@ export type {
 } from "#/components/alert-dialog";
 export { AspectRatio } from "#/components/aspect-ratio";
 export type { AspectRatioProps } from "#/components/aspect-ratio";
+export {
+  Attachment,
+  AttachmentAction,
+  AttachmentActions,
+  AttachmentContent,
+  AttachmentDescription,
+  AttachmentGroup,
+  AttachmentMedia,
+  AttachmentTitle,
+  AttachmentTrigger,
+} from "#/components/attachment";
+export type {
+  AttachmentActionProps,
+  AttachmentActionsProps,
+  AttachmentContentProps,
+  AttachmentDescriptionProps,
+  AttachmentGroupProps,
+  AttachmentMediaProps,
+  AttachmentProps,
+  AttachmentTitleProps,
+  AttachmentTriggerProps,
+} from "#/components/attachment";
 export { Avatar, AvatarBadge, AvatarFallback, AvatarGroup, AvatarGroupCount, AvatarImage } from "#/components/avatar";
 export type {
   AvatarBadgeProps,
@@ -68,6 +90,8 @@ export type {
 } from "#/components/breadcrumb";
 export { Button } from "#/components/button";
 export type { ButtonProps } from "#/components/button";
+export { Bubble, BubbleContent, BubbleGroup, BubbleReactions } from "#/components/bubble";
+export type { BubbleContentProps, BubbleGroupProps, BubbleProps, BubbleReactionsProps } from "#/components/bubble";
 export { Calendar, CalendarDayButton } from "#/components/calendar";
 export { Card, CardAction, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "#/components/card";
 export type {
@@ -383,6 +407,8 @@ export type {
 } from "#/components/item";
 export { Label } from "#/components/label";
 export type { LabelProps } from "#/components/label";
+export { Marker, MarkerContent, MarkerIcon } from "#/components/marker";
+export type { MarkerContentProps, MarkerIconProps, MarkerProps } from "#/components/marker";
 export {
   Menubar,
   MenubarArrow,
@@ -419,6 +445,22 @@ export type {
   MenubarSubTriggerProps,
   MenubarTriggerProps,
 } from "#/components/menubar";
+export {
+  Message,
+  MessageAvatar,
+  MessageContent,
+  MessageFooter,
+  MessageGroup,
+  MessageHeader,
+} from "#/components/message";
+export type {
+  MessageAvatarProps,
+  MessageContentProps,
+  MessageFooterProps,
+  MessageGroupProps,
+  MessageHeaderProps,
+  MessageProps,
+} from "#/components/message";
 export {
   NavigationMenu,
   NavigationMenuContent,
@@ -647,8 +689,12 @@ export { ELLIPSIS, usePagination } from "#/hooks/use-pagination";
 export type { UsePaginationProps } from "#/hooks/use-pagination";
 export { alertVariants } from "#/variants/alert";
 export type { AlertVariants } from "#/variants/alert";
+export { attachmentMediaVariants, attachmentVariants } from "#/variants/attachment";
+export type { AttachmentMediaVariants, AttachmentVariants } from "#/variants/attachment";
 export { badgeVariants } from "#/variants/badge";
 export type { BadgeVariants } from "#/variants/badge";
+export { bubbleReactionsVariants, bubbleVariants } from "#/variants/bubble";
+export type { BubbleReactionsVariants, BubbleVariants } from "#/variants/bubble";
 export { buttonGroupVariants } from "#/variants/button-group";
 export type { ButtonGroupVariants } from "#/variants/button-group";
 export { buttonVariants } from "#/variants/button";
@@ -661,6 +707,8 @@ export { inputGroupAddonVariants, inputGroupButtonVariants, inputGroupVariants }
 export type { InputGroupAddonVariants, InputGroupButtonVariants, InputGroupVariants } from "#/variants/input-group";
 export { itemMediaVariants, itemVariants } from "#/variants/item";
 export type { ItemMediaVariants, ItemVariants } from "#/variants/item";
+export { markerVariants } from "#/variants/marker";
+export type { MarkerVariants } from "#/variants/marker";
 export { navigationMenuTriggerVariants } from "#/variants/navigation-menu";
 export type { NavigationMenuTriggerVariants } from "#/variants/navigation-menu";
 export { progressCircleVariants } from "#/variants/progress-circle";

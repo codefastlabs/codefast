@@ -80,6 +80,11 @@
       "types": "./dist/components/aspect-ratio.d.mts",
       "import": "./dist/components/aspect-ratio.mjs"
     },
+    "./attachment": {
+      "source": "./src/components/attachment.tsx",
+      "types": "./dist/components/attachment.d.mts",
+      "import": "./dist/components/attachment.mjs"
+    },
     "./avatar": {
       "source": "./src/components/avatar.tsx",
       "types": "./dist/components/avatar.d.mts",
@@ -104,6 +109,11 @@
       "source": "./src/components/button-group.tsx",
       "types": "./dist/components/button-group.d.mts",
       "import": "./dist/components/button-group.mjs"
+    },
+    "./bubble": {
+      "source": "./src/components/bubble.tsx",
+      "types": "./dist/components/bubble.d.mts",
+      "import": "./dist/components/bubble.mjs"
     },
     "./calendar": {
       "source": "./src/components/calendar.tsx",
@@ -240,10 +250,20 @@
       "types": "./dist/components/label.d.mts",
       "import": "./dist/components/label.mjs"
     },
+    "./marker": {
+      "source": "./src/components/marker.tsx",
+      "types": "./dist/components/marker.d.mts",
+      "import": "./dist/components/marker.mjs"
+    },
     "./menubar": {
       "source": "./src/components/menubar.tsx",
       "types": "./dist/components/menubar.d.mts",
       "import": "./dist/components/menubar.mjs"
+    },
+    "./message": {
+      "source": "./src/components/message.tsx",
+      "types": "./dist/components/message.d.mts",
+      "import": "./dist/components/message.mjs"
     },
     "./native-select": {
       "source": "./src/components/native-select.tsx",
@@ -435,10 +455,20 @@
       "types": "./dist/variants/alert.d.mts",
       "import": "./dist/variants/alert.mjs"
     },
+    "./variants/attachment": {
+      "source": "./src/variants/attachment.ts",
+      "types": "./dist/variants/attachment.d.mts",
+      "import": "./dist/variants/attachment.mjs"
+    },
     "./variants/badge": {
       "source": "./src/variants/badge.ts",
       "types": "./dist/variants/badge.d.mts",
       "import": "./dist/variants/badge.mjs"
+    },
+    "./variants/bubble": {
+      "source": "./src/variants/bubble.ts",
+      "types": "./dist/variants/bubble.d.mts",
+      "import": "./dist/variants/bubble.mjs"
     },
     "./variants/button": {
       "source": "./src/variants/button.ts",
@@ -474,6 +504,11 @@
       "source": "./src/variants/item.ts",
       "types": "./dist/variants/item.d.mts",
       "import": "./dist/variants/item.mjs"
+    },
+    "./variants/marker": {
+      "source": "./src/variants/marker.ts",
+      "types": "./dist/variants/marker.d.mts",
+      "import": "./dist/variants/marker.mjs"
     },
     "./variants/navigation-menu": {
       "source": "./src/variants/navigation-menu.ts",
