@@ -11,16 +11,17 @@ import {
 export function SelectDemo() {
   return (
     <Select>
-      <SelectTrigger className="w-44">
-        <SelectValue placeholder="Choose framework" />
+      <SelectTrigger className="w-full max-w-48">
+        <SelectValue placeholder="Select a fruit" />
       </SelectTrigger>
       <SelectContent>
         <SelectGroup>
-          <SelectLabel>Framework</SelectLabel>
-          <SelectItem value="react">React</SelectItem>
-          <SelectItem value="vue">Vue</SelectItem>
-          <SelectItem value="svelte">Svelte</SelectItem>
-          <SelectItem value="solid">Solid</SelectItem>
+          <SelectLabel>Fruits</SelectLabel>
+          <SelectItem value="apple">Apple</SelectItem>
+          <SelectItem value="banana">Banana</SelectItem>
+          <SelectItem value="blueberry">Blueberry</SelectItem>
+          <SelectItem value="grapes">Grapes</SelectItem>
+          <SelectItem value="pineapple">Pineapple</SelectItem>
         </SelectGroup>
       </SelectContent>
     </Select>

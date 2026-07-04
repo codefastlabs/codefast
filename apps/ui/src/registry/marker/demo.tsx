@@ -1,10 +1,30 @@
-import { Marker, MarkerContent } from "@codefast/ui/marker";
+import { Marker, MarkerContent, MarkerIcon } from "@codefast/ui/marker";
+import { Spinner } from "@codefast/ui/spinner";
+import { GitBranchIcon, SearchIcon } from "lucide-react";
 
 export function MarkerDemo() {
   return (
-    <div className="w-full max-w-sm">
+    <div className="flex w-full max-w-sm flex-col gap-8">
+      <Marker>
+        <MarkerIcon>
+          <GitBranchIcon />
+        </MarkerIcon>
+        <MarkerContent>Switched to a new branch</MarkerContent>
+      </Marker>
+      <Marker role="status">
+        <MarkerIcon>
+          <Spinner />
+        </MarkerIcon>
+        <MarkerContent className="shimmer">Thinking...</MarkerContent>
+      </Marker>
       <Marker variant="separator">
-        <MarkerContent>Today</MarkerContent>
+        <MarkerContent>Conversation compacted</MarkerContent>
+      </Marker>
+      <Marker>
+        <MarkerIcon>
+          <SearchIcon />
+        </MarkerIcon>
+        <MarkerContent>Explored 4 files</MarkerContent>
       </Marker>
     </div>
   );

@@ -1,21 +1,13 @@
-import { Label } from "@codefast/ui/label";
-import { NativeSelect, NativeSelectOptGroup, NativeSelectOption } from "@codefast/ui/native-select";
+import { NativeSelect, NativeSelectOption } from "@codefast/ui/native-select";
 
 export function NativeSelectDemo() {
   return (
-    <div className="grid gap-1.5">
-      <Label htmlFor="ns-country">Country</Label>
-      <NativeSelect id="ns-country">
-        <NativeSelectOptGroup label="Asia">
-          <NativeSelectOption value="vn">Vietnam</NativeSelectOption>
-          <NativeSelectOption value="jp">Japan</NativeSelectOption>
-          <NativeSelectOption value="kr">South Korea</NativeSelectOption>
-        </NativeSelectOptGroup>
-        <NativeSelectOptGroup label="Europe">
-          <NativeSelectOption value="de">Germany</NativeSelectOption>
-          <NativeSelectOption value="fr">France</NativeSelectOption>
-        </NativeSelectOptGroup>
-      </NativeSelect>
-    </div>
+    <NativeSelect className="w-full max-w-xs">
+      <NativeSelectOption value="">Select status</NativeSelectOption>
+      <NativeSelectOption value="todo">Todo</NativeSelectOption>
+      <NativeSelectOption value="in-progress">In Progress</NativeSelectOption>
+      <NativeSelectOption value="done">Done</NativeSelectOption>
+      <NativeSelectOption value="cancelled">Cancelled</NativeSelectOption>
+    </NativeSelect>
   );
 }

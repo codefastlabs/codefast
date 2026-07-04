@@ -1,30 +1,20 @@
 import { ScrollArea } from "@codefast/ui/scroll-area";
+import { Separator } from "@codefast/ui/separator";
+import { Fragment } from "react";
 
-const RELEASES = [
-  { version: "v2.5.0", date: "Jun 2", notes: "New Resizable component and dark-mode polish." },
-  { version: "v2.4.1", date: "May 24", notes: "Fixed focus ring contrast on outline buttons." },
-  { version: "v2.4.0", date: "May 18", notes: "Added Input OTP and Field validation helpers." },
-  { version: "v2.3.0", date: "May 9", notes: "Carousel now supports vertical orientation." },
-  { version: "v2.2.0", date: "Apr 30", notes: "Introduced Sonner toasts and Progress Circle." },
-  { version: "v2.1.0", date: "Apr 21", notes: "Reworked Sidebar with collapsible groups." },
-];
+const tags = Array.from({ length: 50 }).map((_, i, a) => `v1.2.0-beta.${a.length - i}`);
 
 export function ScrollAreaDemo() {
   return (
-    <ScrollArea className="h-56 w-64 rounded-xl border border-ui-border">
+    <ScrollArea className="h-72 w-48 rounded-md border border-ui-border">
       <div className="p-4">
-        <h4 className="mb-3 text-sm font-semibold text-ui-fg">Changelog</h4>
-        <ol className="space-y-3">
-          {RELEASES.map(({ version, date, notes }) => (
-            <li key={version} className="space-y-0.5">
-              <div className="flex items-center justify-between gap-2">
-                <span className="font-mono text-xs font-medium text-ui-fg">{version}</span>
-                <span className="text-xs text-ui-muted">{date}</span>
-              </div>
-              <p className="text-xs leading-relaxed text-ui-muted">{notes}</p>
-            </li>
-          ))}
-        </ol>
+        <h4 className="mb-4 text-sm leading-none font-medium text-ui-fg">Tags</h4>
+        {tags.map((tag) => (
+          <Fragment key={tag}>
+            <div className="text-sm text-ui-fg">{tag}</div>
+            <Separator className="my-2" />
+          </Fragment>
+        ))}
       </div>
     </ScrollArea>
   );
