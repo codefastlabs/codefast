@@ -83,6 +83,9 @@ function readAppearanceFromStorage(storageKey: string): Appearance | null {
  * Props
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.5.0-canary.2
+ */
 export type AppearanceProviderProps = {
   readonly children: ReactNode;
   /**
@@ -141,6 +144,8 @@ export type AppearanceProviderProps = {
  * // In your root layout — pair with <AppearanceScript /> using the same storage key
  * <AppearanceProvider>{children}</AppearanceProvider>
  * ```
+ *
+ * @since 0.5.0-canary.2
  */
 export function AppearanceProvider({
   children,

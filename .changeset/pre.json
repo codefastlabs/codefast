@@ -13,5 +13,11 @@
     "@codefast/typescript-config": "0.4.0",
     "@codefast/ui": "0.4.0"
   },
-  "changesets": ["cli-skippackages-glob", "theme-provider-storage-key", "theme-vite-plugin"]
+  "changesets": [
+    "cli-skippackages-glob",
+    "theme-hig-appearance-naming",
+    "theme-provider-storage-key",
+    "theme-remove-server-side",
+    "theme-vite-plugin"
+  ]
 }

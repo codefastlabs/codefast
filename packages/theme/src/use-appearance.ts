@@ -32,6 +32,8 @@ import { AppearanceContext } from "#/appearance-context";
  *   );
  * }
  * ```
+ *
+ * @since 0.5.0-canary.2
  */
 export function useAppearance(): AppearanceContextType {
   const value = use(AppearanceContext);
