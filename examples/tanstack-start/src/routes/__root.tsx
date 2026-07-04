@@ -1,5 +1,10 @@
-import { AppearanceProvider, AppearanceScript, resolveColorScheme } from "@codefast/theme";
-import { getColorSchemeServerFn, getRootColorSchemeServerFn, persistColorSchemeCookie } from "@codefast/theme/start";
+import {
+  AppearanceProvider,
+  AppearanceScript,
+  DEFAULT_COLOR_SCHEME,
+  DEFAULT_RESOLVED_COLOR_SCHEME,
+} from "@codefast/theme";
+import { STORAGE_KEY } from "@codefast/theme/constants";
 import { Button } from "@codefast/ui/button";
 import { cn } from "@codefast/ui/lib/utils";
 import { HeadContent, Link, Scripts, createRootRoute } from "@tanstack/react-router";
@@ -23,35 +28,28 @@ export const Route = createRootRoute({
     ],
     links: [{ rel: "stylesheet", href: appCss }],
   }),
-  // `getRootColorSchemeServerFn` reads the httpOnly cookie on the server so the first paint
-  // already has the right color scheme — no flash. It comes from `@codefast/theme/start`.
-  loader: () => getRootColorSchemeServerFn(),
   notFoundComponent: NotFound,
   shellComponent: RootDocument,
 });
 
 function RootDocument({ children }: { children: ReactNode }) {
-  const { colorScheme, ssrColorScheme } = Route.useLoaderData();
-  const resolvedColorScheme = resolveColorScheme(colorScheme, ssrColorScheme);
-
+  // Server-rendered HTML can't know the preference at request time; the script overwrites this
+  // class before paint and `suppressHydrationWarning` lets the mismatch through.
   return (
     <html
       lang="en"
-      className={cn(resolvedColorScheme, "min-h-full")}
-      style={{ colorScheme: resolvedColorScheme }}
+      className={cn(DEFAULT_RESOLVED_COLOR_SCHEME, "min-h-full")}
+      style={{ colorScheme: DEFAULT_RESOLVED_COLOR_SCHEME }}
+      data-appearance={DEFAULT_COLOR_SCHEME}
       suppressHydrationWarning
     >
       <head>
-        <AppearanceScript colorScheme={colorScheme} />
+        {/* Client-only via storageKey: the preference lives in localStorage — no server fn, no loader. */}
+        <AppearanceScript colorScheme={DEFAULT_COLOR_SCHEME} storageKey={STORAGE_KEY} />
         <HeadContent />
       </head>
       <body className="min-h-svh bg-background text-foreground antialiased">
-        <AppearanceProvider
-          colorScheme={colorScheme}
-          ssrColorScheme={ssrColorScheme}
-          persistColorScheme={persistColorSchemeCookie}
-          syncFromServer={getColorSchemeServerFn}
-        >
+        <AppearanceProvider colorScheme={DEFAULT_COLOR_SCHEME} storageKey={STORAGE_KEY}>
           <SiteHeader />
           <main className="mx-auto w-full max-w-5xl px-4 py-10 sm:px-6">{children}</main>
         </AppearanceProvider>

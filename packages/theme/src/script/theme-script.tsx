@@ -1,6 +1,6 @@
 import type { JSX } from "react";
 
-import { MEDIA } from "#/constants";
+import { DEFAULT_COLOR_SCHEME, MEDIA, STORAGE_KEY } from "#/constants";
 import { colorSchemes } from "#/types";
 import type { ColorScheme } from "#/types";
 
@@ -23,28 +23,18 @@ const COLOR_SCHEME_VALID_CHECK = colorSchemes.map((s) => `s===${toScriptSafe(s)}
  */
 export type AppearanceScriptProps = {
   /**
-   * Initial color scheme from server (e.g., from cookie via loader).
-   *
-   * When `storageKey` is provided, this acts as a fallback if the storage entry is absent
-   * or contains an unrecognised value.
+   * Fallback preference when the storage entry is absent or unrecognised.
+   * Defaults to {@link DEFAULT_COLOR_SCHEME}.
    */
-  readonly colorScheme: ColorScheme;
+  readonly colorScheme?: ColorScheme;
   /**
    * CSP nonce applied to the inline script element.
    */
   readonly nonce?: string;
   /**
-   * When provided, the inline script reads `localStorage.getItem(storageKey)` before
-   * first paint and uses that value if it is a recognised color scheme (`"light"`, `"dark"`,
-   * or `"automatic"`). Falls back to `colorScheme` when the key is absent or invalid.
-   *
-   * Use this for client-only React apps that persist the color scheme in `localStorage` instead
-   * of an HTTP cookie to prevent FOUC.
-   *
-   * @example
-   * ```tsx
-   * <AppearanceScript colorScheme="automatic" storageKey="my-app-color-scheme" />
-   * ```
+   * `localStorage` key the script reads before first paint — a recognised value (`"light"`,
+   * `"dark"`, or `"automatic"`) wins over `colorScheme`.
+   * Defaults to {@link STORAGE_KEY}; pair with `<AppearanceProvider>` using the **same key**.
    */
   readonly storageKey?: string;
 };
@@ -63,29 +53,33 @@ export type AppearanceScriptProps = {
  *
  * **How it works:**
  * This script runs synchronously in the `<head>` before first paint:
- * 1. Resolves 'automatic' to 'light' or 'dark' using `matchMedia()`
- * 2. Removes prior `light` / `dark` / `automatic` classes on `<html>` (SSR may
+ * 1. Reads the stored preference from `localStorage`, falling back to `colorScheme`
+ * 2. Resolves 'automatic' to 'light' or 'dark' using `matchMedia()`
+ * 3. Removes prior `light` / `dark` / `automatic` classes on `<html>` (SSR may
  *    have applied the wrong resolved class for `automatic`, e.g. default `dark`)
- * 3. Adds the resolved color scheme class and sets `color-scheme` for native controls
- * 4. Writes the *preference* to `data-appearance` so preference-aware UI (e.g. a 3-state toggle)
+ * 4. Adds the resolved color scheme class and sets `color-scheme` for native controls
+ * 5. Writes the *preference* to `data-appearance` so preference-aware UI (e.g. a 3-state toggle)
  *    can render the right state from CSS on first paint, without a hydration flash
  *
  * @example
  * ```tsx
  * // In __root.tsx (TanStack Start)
  * <head>
- *   <AppearanceScript colorScheme={colorScheme} />
+ *   <AppearanceScript />
  * </head>
  * ```
  *
  * @since 0.3.16-canary.0
  */
-export function AppearanceScript({ nonce, storageKey, colorScheme }: AppearanceScriptProps): JSX.Element {
+export function AppearanceScript({
+  nonce,
+  storageKey = STORAGE_KEY,
+  colorScheme = DEFAULT_COLOR_SCHEME,
+}: AppearanceScriptProps): JSX.Element {
   // S2: toScriptSafe = JSON.stringify + escape <>/  so </script> cannot break out of the tag.
-  // F1: When storageKey is provided, the script reads localStorage before first paint so
-  // client-only apps (no SSR cookie) get the right color scheme without FOUC.
-  // sk=null short-circuits to s=null so color scheme falls back to fbt — backward-compatible.
-  const appearanceScript = `(function(){try{var sk=${toScriptSafe(storageKey ?? null)},fbt=${toScriptSafe(colorScheme)},s=sk&&localStorage.getItem(sk),theme=(${COLOR_SCHEME_VALID_CHECK})?s:fbt,resolvedTheme=theme;"automatic"===theme&&(resolvedTheme=window.matchMedia(${toScriptSafe(MEDIA)}).matches?"dark":"light"),document.documentElement.classList.remove(${COLOR_SCHEME_REMOVE_ARGS}),document.documentElement.classList.add(resolvedTheme),document.documentElement.style.colorScheme=resolvedTheme,document.documentElement.dataset.appearance=theme}catch(e){}})()`;
+  // F1: The script reads localStorage before first paint so the stored preference applies
+  // without FOUC; an absent or invalid entry falls back to fbt.
+  const appearanceScript = `(function(){try{var sk=${toScriptSafe(storageKey)},fbt=${toScriptSafe(colorScheme)},s=localStorage.getItem(sk),theme=(${COLOR_SCHEME_VALID_CHECK})?s:fbt,resolvedTheme=theme;"automatic"===theme&&(resolvedTheme=window.matchMedia(${toScriptSafe(MEDIA)}).matches?"dark":"light"),document.documentElement.classList.remove(${COLOR_SCHEME_REMOVE_ARGS}),document.documentElement.classList.add(resolvedTheme),document.documentElement.style.colorScheme=resolvedTheme,document.documentElement.dataset.appearance=theme}catch(e){}})()`;
   const nonceProps = nonce === undefined ? {} : { nonce };
 
   return <script dangerouslySetInnerHTML={{ __html: appearanceScript }} suppressHydrationWarning {...nonceProps} />;

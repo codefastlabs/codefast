@@ -28,28 +28,14 @@ export function getSystemColorScheme(): ResolvedColorScheme {
  *
  * - 'light' → 'light'
  * - 'dark' → 'dark'
- * - 'automatic' → on the client, result of {@link getSystemColorScheme}; on the server,
- *   `ssrColorScheme` when provided, otherwise {@link DEFAULT_RESOLVED_COLOR_SCHEME}
- *
- * @param colorScheme - User's color scheme preference (`light`, `dark`, or `automatic`)
- * @param ssrColorScheme - When `colorScheme` is `automatic` and this runs during SSR (no `window`),
- *   uses this as the resolved appearance—typically from Client Hints
- *   (`Sec-CH-Prefers-Color-Scheme`) so `<html class>` matches the real OS preference.
- *   Ignored for non-`automatic` schemes and on the client (where {@link getSystemColorScheme} wins).
- * @returns The resolved color scheme to apply (`light` or `dark`)
+ * - 'automatic' → on the client, result of {@link getSystemColorScheme};
+ *   on the server, {@link DEFAULT_RESOLVED_COLOR_SCHEME}
  *
  * @since 0.3.16-canary.0
  */
-export function resolveColorScheme(
-  colorScheme: ColorScheme,
-  ssrColorScheme?: ResolvedColorScheme,
-): ResolvedColorScheme {
+export function resolveColorScheme(colorScheme: ColorScheme): ResolvedColorScheme {
   if (colorScheme !== "automatic") {
     return colorScheme;
-  }
-
-  if (typeof globalThis.window === "undefined") {
-    return ssrColorScheme ?? DEFAULT_RESOLVED_COLOR_SCHEME;
   }
 
   return getSystemColorScheme();
