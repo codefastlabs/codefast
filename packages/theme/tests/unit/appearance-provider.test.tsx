@@ -3,11 +3,11 @@ import userEvent from "@testing-library/user-event";
 import type React from "react";
 import { renderToString } from "react-dom/server";
 
-import { DEFAULT_RESOLVED_COLOR_SCHEME, STORAGE_KEY, SYNC_CHANNEL } from "#/constants";
-import { AppearanceProvider } from "#/core/provider";
-import { useColorScheme } from "#/core/use-theme";
+import type { Appearance } from "#/appearance";
+import { AppearanceProvider } from "#/appearance-provider";
+import { DEFAULT_COLOR_SCHEME, STORAGE_KEY, SYNC_CHANNEL } from "#/constants";
 import { createMockMediaQueryList, mockMatchMedia } from "#/tests/support/mocks";
-import type { ColorScheme } from "#/types";
+import { useAppearance } from "#/use-appearance";
 
 // Dispatch a storage-like event. Builds it via Event + defineProperties rather than the
 // `new StorageEvent(type, init)` overload, which static analysis flags as superfluous args.
@@ -47,7 +47,7 @@ describe("AppearanceProvider", () => {
   describe("rendering", () => {
     test("should render children", () => {
       render(
-        <AppearanceProvider colorScheme="light">
+        <AppearanceProvider appearance="light">
           <div data-testid="child">Child Content</div>
         </AppearanceProvider>,
       );
@@ -57,7 +57,7 @@ describe("AppearanceProvider", () => {
 
     test("should render multiple children", () => {
       render(
-        <AppearanceProvider colorScheme="dark">
+        <AppearanceProvider appearance="dark">
           <div data-testid="child1">Child 1</div>
           <div data-testid="child2">Child 2</div>
         </AppearanceProvider>,
@@ -71,29 +71,29 @@ describe("AppearanceProvider", () => {
   describe("color scheme context", () => {
     test("should provide initial color scheme via context", () => {
       const TestConsumer = (): React.ReactElement => {
-        const { colorScheme } = useColorScheme();
+        const { appearance } = useAppearance();
 
-        return <span data-testid="colorScheme">{colorScheme}</span>;
+        return <span data-testid="appearance">{appearance}</span>;
       };
 
       render(
-        <AppearanceProvider colorScheme="dark">
+        <AppearanceProvider appearance="dark">
           <TestConsumer />
         </AppearanceProvider>,
       );
 
-      expect(screen.getByTestId("colorScheme")).toHaveTextContent("dark");
+      expect(screen.getByTestId("appearance")).toHaveTextContent("dark");
     });
 
     test("should provide resolved color scheme for explicit schemes", () => {
       const TestConsumer = (): React.ReactElement => {
-        const { resolvedColorScheme } = useColorScheme();
+        const { colorScheme } = useAppearance();
 
-        return <span data-testid="resolved">{resolvedColorScheme}</span>;
+        return <span data-testid="resolved">{colorScheme}</span>;
       };
 
       render(
-        <AppearanceProvider colorScheme="light">
+        <AppearanceProvider appearance="light">
           <TestConsumer />
         </AppearanceProvider>,
       );
@@ -105,23 +105,23 @@ describe("AppearanceProvider", () => {
       mockMatchMedia(() => createMockMediaQueryList(false, ""));
 
       const TestConsumer = (): React.ReactElement => {
-        const { resolvedColorScheme, colorScheme } = useColorScheme();
+        const { colorScheme, appearance } = useAppearance();
 
         return (
           <>
-            <span data-testid="colorScheme">{colorScheme}</span>
-            <span data-testid="resolved">{resolvedColorScheme}</span>
+            <span data-testid="appearance">{appearance}</span>
+            <span data-testid="resolved">{colorScheme}</span>
           </>
         );
       };
 
       render(
-        <AppearanceProvider colorScheme="automatic">
+        <AppearanceProvider appearance="automatic">
           <TestConsumer />
         </AppearanceProvider>,
       );
 
-      expect(screen.getByTestId("colorScheme")).toHaveTextContent("automatic");
+      expect(screen.getByTestId("appearance")).toHaveTextContent("automatic");
       expect(screen.getByTestId("resolved")).toHaveTextContent("light");
     });
 
@@ -129,13 +129,13 @@ describe("AppearanceProvider", () => {
       mockMatchMedia((query) => createMockMediaQueryList(query === "(prefers-color-scheme: dark)", query));
 
       const TestConsumer = (): React.ReactElement => {
-        const { resolvedColorScheme } = useColorScheme();
+        const { colorScheme } = useAppearance();
 
-        return <span data-testid="resolved">{resolvedColorScheme}</span>;
+        return <span data-testid="resolved">{colorScheme}</span>;
       };
 
       render(
-        <AppearanceProvider colorScheme="automatic">
+        <AppearanceProvider appearance="automatic">
           <TestConsumer />
         </AppearanceProvider>,
       );
@@ -145,13 +145,13 @@ describe("AppearanceProvider", () => {
 
     test("should provide isPending as false initially", () => {
       const TestConsumer = (): React.ReactElement => {
-        const { isPending } = useColorScheme();
+        const { isPending } = useAppearance();
 
         return <span data-testid="pending">{String(isPending)}</span>;
       };
 
       render(
-        <AppearanceProvider colorScheme="dark">
+        <AppearanceProvider appearance="dark">
           <TestConsumer />
         </AppearanceProvider>,
       );
@@ -159,27 +159,27 @@ describe("AppearanceProvider", () => {
       expect(screen.getByTestId("pending")).toHaveTextContent("false");
     });
 
-    test("should provide setColorScheme function", () => {
+    test("should provide setAppearance function", () => {
       const TestConsumer = (): React.ReactElement => {
-        const { setColorScheme } = useColorScheme();
+        const { setAppearance } = useAppearance();
 
-        return <span data-testid="hasSetColorScheme">{typeof setColorScheme}</span>;
+        return <span data-testid="hasSetAppearance">{typeof setAppearance}</span>;
       };
 
       render(
-        <AppearanceProvider colorScheme="dark">
+        <AppearanceProvider appearance="dark">
           <TestConsumer />
         </AppearanceProvider>,
       );
 
-      expect(screen.getByTestId("hasSetColorScheme")).toHaveTextContent("function");
+      expect(screen.getByTestId("hasSetAppearance")).toHaveTextContent("function");
     });
   });
 
   describe("DOM updates", () => {
     test("should apply color scheme class to html element on mount", async () => {
       render(
-        <AppearanceProvider colorScheme="dark">
+        <AppearanceProvider appearance="dark">
           <div>Content</div>
         </AppearanceProvider>,
       );
@@ -189,9 +189,9 @@ describe("AppearanceProvider", () => {
       });
     });
 
-    test("should set colorScheme style on html element", async () => {
+    test("should set appearance style on html element", async () => {
       render(
-        <AppearanceProvider colorScheme="light">
+        <AppearanceProvider appearance="light">
           <div>Content</div>
         </AppearanceProvider>,
       );
@@ -203,7 +203,7 @@ describe("AppearanceProvider", () => {
 
     test("should mirror the preference (not the resolved value) to data-appearance", async () => {
       render(
-        <AppearanceProvider colorScheme="automatic">
+        <AppearanceProvider appearance="automatic">
           <div>Content</div>
         </AppearanceProvider>,
       );
@@ -216,19 +216,19 @@ describe("AppearanceProvider", () => {
     });
   });
 
-  describe("setColorScheme", () => {
-    test("should call persistColorScheme when provided", async () => {
+  describe("setAppearance", () => {
+    test("should call persistAppearance when provided", async () => {
       const user = userEvent.setup();
-      const mockPersistColorScheme = vi.fn(async (_colorScheme: ColorScheme) => {});
+      const mockPersistAppearance = vi.fn(async (_appearance: Appearance) => {});
 
       const TestConsumer = (): React.ReactElement => {
-        const { setColorScheme } = useColorScheme();
+        const { setAppearance } = useAppearance();
 
         return (
           <button
             data-testid="toggle"
             onClick={() => {
-              void setColorScheme("dark");
+              void setAppearance("dark");
             }}
           >
             Toggle
@@ -237,7 +237,7 @@ describe("AppearanceProvider", () => {
       };
 
       render(
-        <AppearanceProvider persistColorScheme={mockPersistColorScheme} colorScheme="light">
+        <AppearanceProvider persistAppearance={mockPersistAppearance} appearance="light">
           <TestConsumer />
         </AppearanceProvider>,
       );
@@ -245,22 +245,22 @@ describe("AppearanceProvider", () => {
       await user.click(screen.getByTestId("toggle"));
 
       await waitFor(() => {
-        expect(mockPersistColorScheme).toHaveBeenCalledWith("dark");
+        expect(mockPersistAppearance).toHaveBeenCalledWith("dark");
       });
     });
 
-    test("should not call persistColorScheme when setting same color scheme", async () => {
+    test("should not call persistAppearance when setting same color scheme", async () => {
       const user = userEvent.setup();
-      const mockPersistColorScheme = vi.fn(async (_colorScheme: ColorScheme) => {});
+      const mockPersistAppearance = vi.fn(async (_appearance: Appearance) => {});
 
       const TestConsumer = (): React.ReactElement => {
-        const { setColorScheme, colorScheme } = useColorScheme();
+        const { setAppearance, appearance } = useAppearance();
 
         return (
           <button
             data-testid="toggle"
             onClick={() => {
-              void setColorScheme(colorScheme);
+              void setAppearance(appearance);
             }}
           >
             Toggle
@@ -269,46 +269,46 @@ describe("AppearanceProvider", () => {
       };
 
       render(
-        <AppearanceProvider persistColorScheme={mockPersistColorScheme} colorScheme="dark">
+        <AppearanceProvider persistAppearance={mockPersistAppearance} appearance="dark">
           <TestConsumer />
         </AppearanceProvider>,
       );
 
       await user.click(screen.getByTestId("toggle"));
 
-      // Wait a bit and verify persistColorScheme was not called
+      // Wait a bit and verify persistAppearance was not called
       await act(async () => {
         await new Promise((resolve) => setTimeout(resolve, 100));
       });
 
-      expect(mockPersistColorScheme).not.toHaveBeenCalled();
+      expect(mockPersistAppearance).not.toHaveBeenCalled();
     });
   });
 
   describe("SSR", () => {
-    test('resolves "automatic" to DEFAULT_RESOLVED_COLOR_SCHEME during SSR', () => {
+    test('resolves "automatic" to DEFAULT_COLOR_SCHEME during SSR', () => {
       const TestConsumer = (): React.ReactElement => {
-        const { resolvedColorScheme } = useColorScheme();
+        const { colorScheme } = useAppearance();
 
-        return <span data-testid="resolved">{resolvedColorScheme}</span>;
+        return <span data-testid="resolved">{colorScheme}</span>;
       };
 
       const html = renderToString(
-        <AppearanceProvider colorScheme="automatic">
+        <AppearanceProvider appearance="automatic">
           <TestConsumer />
         </AppearanceProvider>,
       );
 
-      expect(html).toContain(DEFAULT_RESOLVED_COLOR_SCHEME);
+      expect(html).toContain(DEFAULT_COLOR_SCHEME);
     });
   });
 
-  describe("colorScheme prop", () => {
-    test("defaults to DEFAULT_COLOR_SCHEME when omitted", () => {
+  describe("appearance prop", () => {
+    test("defaults to DEFAULT_APPEARANCE when omitted", () => {
       const TestConsumer = (): React.ReactElement => {
-        const { colorScheme } = useColorScheme();
+        const { appearance } = useAppearance();
 
-        return <span data-testid="colorScheme-label">{colorScheme}</span>;
+        return <span data-testid="appearance-label">{appearance}</span>;
       };
 
       render(
@@ -317,34 +317,34 @@ describe("AppearanceProvider", () => {
         </AppearanceProvider>,
       );
 
-      expect(screen.getByTestId("colorScheme-label")).toHaveTextContent("automatic");
+      expect(screen.getByTestId("appearance-label")).toHaveTextContent("automatic");
     });
 
-    test("ignores invalid colorScheme prop and falls back to DEFAULT_COLOR_SCHEME", () => {
+    test("ignores invalid appearance prop and falls back to DEFAULT_APPEARANCE", () => {
       const TestConsumer = (): React.ReactElement => {
-        const { colorScheme } = useColorScheme();
+        const { appearance } = useAppearance();
 
-        return <span data-testid="colorScheme-label">{colorScheme}</span>;
+        return <span data-testid="appearance-label">{appearance}</span>;
       };
 
       render(
         // @ts-expect-error test-only invalid value
-        <AppearanceProvider colorScheme="invalid-value">
+        <AppearanceProvider appearance="invalid-value">
           <TestConsumer />
         </AppearanceProvider>,
       );
 
-      expect(screen.getByTestId("colorScheme-label")).toHaveTextContent("automatic");
+      expect(screen.getByTestId("appearance-label")).toHaveTextContent("automatic");
     });
   });
 
-  describe("rapid setColorScheme (last-write-wins)", () => {
+  describe("rapid setAppearance (last-write-wins)", () => {
     test("only the last color scheme value is committed when called in rapid succession", async () => {
       const user = userEvent.setup();
 
       // Slow persist to simulate concurrent in-flight calls
       let resolveFirst: (() => void) | undefined;
-      const persistColorScheme = vi
+      const persistAppearance = vi
         .fn()
         .mockImplementationOnce(
           () =>
@@ -355,16 +355,16 @@ describe("AppearanceProvider", () => {
         .mockResolvedValue(undefined);
 
       const TestConsumer = (): React.ReactElement => {
-        const { setColorScheme, colorScheme } = useColorScheme();
+        const { setAppearance, appearance } = useAppearance();
 
         return (
           <>
-            <span data-testid="colorScheme-label">{colorScheme}</span>
+            <span data-testid="appearance-label">{appearance}</span>
             <button
               data-testid="go-dark"
               type="button"
               onClick={() => {
-                void setColorScheme("dark");
+                void setAppearance("dark");
               }}
             >
               Dark
@@ -373,7 +373,7 @@ describe("AppearanceProvider", () => {
               data-testid="go-automatic"
               type="button"
               onClick={() => {
-                void setColorScheme("automatic");
+                void setAppearance("automatic");
               }}
             >
               Automatic
@@ -383,7 +383,7 @@ describe("AppearanceProvider", () => {
       };
 
       render(
-        <AppearanceProvider persistColorScheme={persistColorScheme} colorScheme="light">
+        <AppearanceProvider persistAppearance={persistAppearance} appearance="light">
           <TestConsumer />
         </AppearanceProvider>,
       );
@@ -401,11 +401,11 @@ describe("AppearanceProvider", () => {
       });
 
       await waitFor(() => {
-        expect(persistColorScheme).toHaveBeenCalledTimes(2);
+        expect(persistAppearance).toHaveBeenCalledTimes(2);
       });
 
       // Final committed state should be the last intent ("automatic"), not "dark"
-      expect(screen.getByTestId("colorScheme-label")).toHaveTextContent("automatic");
+      expect(screen.getByTestId("appearance-label")).toHaveTextContent("automatic");
     });
   });
 
@@ -467,18 +467,18 @@ describe("AppearanceProvider", () => {
 
     test("updates color scheme when another tab posts a different preference", async () => {
       const TestConsumer = (): React.ReactElement => {
-        const { colorScheme } = useColorScheme();
+        const { appearance } = useAppearance();
 
-        return <span data-testid="colorScheme-label">{colorScheme}</span>;
+        return <span data-testid="appearance-label">{appearance}</span>;
       };
 
       render(
-        <AppearanceProvider colorScheme="light">
+        <AppearanceProvider appearance="light">
           <TestConsumer />
         </AppearanceProvider>,
       );
 
-      expect(screen.getByTestId("colorScheme-label")).toHaveTextContent("light");
+      expect(screen.getByTestId("appearance-label")).toHaveTextContent("light");
 
       const channel = new BroadcastChannel(SYNC_CHANNEL);
 
@@ -487,7 +487,7 @@ describe("AppearanceProvider", () => {
       });
 
       await waitFor(() => {
-        expect(screen.getByTestId("colorScheme-label")).toHaveTextContent("dark");
+        expect(screen.getByTestId("appearance-label")).toHaveTextContent("dark");
       });
 
       channel.close();
@@ -495,13 +495,13 @@ describe("AppearanceProvider", () => {
 
     test("ignores BroadcastChannel message with invalid color scheme value", async () => {
       const TestConsumer = (): React.ReactElement => {
-        const { colorScheme } = useColorScheme();
+        const { appearance } = useAppearance();
 
-        return <span data-testid="colorScheme-label">{colorScheme}</span>;
+        return <span data-testid="appearance-label">{appearance}</span>;
       };
 
       render(
-        <AppearanceProvider colorScheme="light">
+        <AppearanceProvider appearance="light">
           <TestConsumer />
         </AppearanceProvider>,
       );
@@ -514,20 +514,20 @@ describe("AppearanceProvider", () => {
       });
 
       // State should remain unchanged
-      expect(screen.getByTestId("colorScheme-label")).toHaveTextContent("light");
+      expect(screen.getByTestId("appearance-label")).toHaveTextContent("light");
 
       channel.close();
     });
 
     test("ignores BroadcastChannel message when preference matches current", async () => {
       const TestConsumer = (): React.ReactElement => {
-        const { colorScheme } = useColorScheme();
+        const { appearance } = useAppearance();
 
-        return <span data-testid="colorScheme-label">{colorScheme}</span>;
+        return <span data-testid="appearance-label">{appearance}</span>;
       };
 
       render(
-        <AppearanceProvider colorScheme="light">
+        <AppearanceProvider appearance="light">
           <TestConsumer />
         </AppearanceProvider>,
       );
@@ -538,7 +538,7 @@ describe("AppearanceProvider", () => {
         channel.postMessage("light");
       });
 
-      expect(screen.getByTestId("colorScheme-label")).toHaveTextContent("light");
+      expect(screen.getByTestId("appearance-label")).toHaveTextContent("light");
 
       channel.close();
     });
@@ -558,7 +558,7 @@ describe("AppearanceProvider", () => {
 
       expect(() => {
         render(
-          <AppearanceProvider colorScheme="light">
+          <AppearanceProvider appearance="light">
             <div data-testid="content">content</div>
           </AppearanceProvider>,
         );
@@ -576,7 +576,7 @@ describe("AppearanceProvider", () => {
 
       expect(() => {
         render(
-          <AppearanceProvider colorScheme="dark">
+          <AppearanceProvider appearance="dark">
             <div data-testid="content">content</div>
           </AppearanceProvider>,
         );
@@ -586,25 +586,25 @@ describe("AppearanceProvider", () => {
     });
   });
 
-  describe("setColorScheme errors", () => {
-    test("logs and keeps prior color scheme when persistColorScheme rejects", async () => {
+  describe("setAppearance errors", () => {
+    test("logs and keeps prior color scheme when persistAppearance rejects", async () => {
       const user = userEvent.setup();
-      const persistColorScheme = vi.fn(async (_colorScheme: ColorScheme) => {
+      const persistAppearance = vi.fn(async (_appearance: Appearance) => {
         throw new Error("persist failed");
       });
       const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
       const TestConsumer = (): React.ReactElement => {
-        const { setColorScheme, colorScheme } = useColorScheme();
+        const { setAppearance, appearance } = useAppearance();
 
         return (
           <>
-            <span data-testid="colorScheme-label">{colorScheme}</span>
+            <span data-testid="appearance-label">{appearance}</span>
             <button
               data-testid="go-dark"
               type="button"
               onClick={() => {
-                void setColorScheme("dark");
+                void setAppearance("dark");
               }}
             >
               Dark
@@ -614,7 +614,7 @@ describe("AppearanceProvider", () => {
       };
 
       render(
-        <AppearanceProvider persistColorScheme={persistColorScheme} colorScheme="light">
+        <AppearanceProvider persistAppearance={persistAppearance} appearance="light">
           <TestConsumer />
         </AppearanceProvider>,
       );
@@ -625,7 +625,7 @@ describe("AppearanceProvider", () => {
         expect(consoleSpy).toHaveBeenCalled();
       });
 
-      expect(screen.getByTestId("colorScheme-label")).toHaveTextContent("light");
+      expect(screen.getByTestId("appearance-label")).toHaveTextContent("light");
 
       consoleSpy.mockRestore();
     });
@@ -633,22 +633,22 @@ describe("AppearanceProvider", () => {
     test("calls onPersistError with error and attempted color scheme", async () => {
       const user = userEvent.setup();
       const persistError = new Error("persist failed");
-      const persistColorScheme = vi.fn(async (_colorScheme: ColorScheme) => {
+      const persistAppearance = vi.fn(async (_appearance: Appearance) => {
         throw persistError;
       });
       const onPersistError = vi.fn();
 
       const TestConsumer = (): React.ReactElement => {
-        const { setColorScheme, colorScheme } = useColorScheme();
+        const { setAppearance, appearance } = useAppearance();
 
         return (
           <>
-            <span data-testid="colorScheme-label">{colorScheme}</span>
+            <span data-testid="appearance-label">{appearance}</span>
             <button
               data-testid="go-dark"
               type="button"
               onClick={() => {
-                void setColorScheme("dark");
+                void setAppearance("dark");
               }}
             >
               Dark
@@ -658,7 +658,7 @@ describe("AppearanceProvider", () => {
       };
 
       render(
-        <AppearanceProvider onPersistError={onPersistError} persistColorScheme={persistColorScheme} colorScheme="light">
+        <AppearanceProvider onPersistError={onPersistError} persistAppearance={persistAppearance} appearance="light">
           <TestConsumer />
         </AppearanceProvider>,
       );
@@ -669,7 +669,7 @@ describe("AppearanceProvider", () => {
         expect(onPersistError).toHaveBeenCalledWith(persistError, "dark");
       });
 
-      expect(screen.getByTestId("colorScheme-label")).toHaveTextContent("light");
+      expect(screen.getByTestId("appearance-label")).toHaveTextContent("light");
     });
   });
 
@@ -683,36 +683,36 @@ describe("AppearanceProvider", () => {
     });
 
     test("restores the persisted preference from the initial render", () => {
-      window.localStorage.setItem("ui-theme", "dark");
+      window.localStorage.setItem("ui-appearance", "dark");
 
       const TestConsumer = (): React.ReactElement => {
-        const { colorScheme } = useColorScheme();
+        const { appearance } = useAppearance();
 
-        return <span data-testid="colorScheme-label">{colorScheme}</span>;
+        return <span data-testid="appearance-label">{appearance}</span>;
       };
 
       render(
-        <AppearanceProvider colorScheme="automatic" storageKey="ui-theme">
+        <AppearanceProvider appearance="automatic" storageKey="ui-appearance">
           <TestConsumer />
         </AppearanceProvider>,
       );
 
       // No waitFor: the initializer reads localStorage synchronously, so the very first render is "dark".
-      expect(screen.getByTestId("colorScheme-label")).toHaveTextContent("dark");
+      expect(screen.getByTestId("appearance-label")).toHaveTextContent("dark");
     });
 
     test("defaults storageKey to STORAGE_KEY when omitted", async () => {
       const user = userEvent.setup();
 
       const TestConsumer = (): React.ReactElement => {
-        const { setColorScheme } = useColorScheme();
+        const { setAppearance } = useAppearance();
 
         return (
           <button
             data-testid="toggle"
             type="button"
             onClick={() => {
-              void setColorScheme("dark");
+              void setAppearance("dark");
             }}
           >
             Toggle
@@ -721,7 +721,7 @@ describe("AppearanceProvider", () => {
       };
 
       render(
-        <AppearanceProvider colorScheme="light">
+        <AppearanceProvider appearance="light">
           <TestConsumer />
         </AppearanceProvider>,
       );
@@ -733,18 +733,18 @@ describe("AppearanceProvider", () => {
       });
     });
 
-    test("auto-persists changes to localStorage when no persistColorScheme is given", async () => {
+    test("auto-persists changes to localStorage when no persistAppearance is given", async () => {
       const user = userEvent.setup();
 
       const TestConsumer = (): React.ReactElement => {
-        const { setColorScheme } = useColorScheme();
+        const { setAppearance } = useAppearance();
 
         return (
           <button
             data-testid="toggle"
             type="button"
             onClick={() => {
-              void setColorScheme("dark");
+              void setAppearance("dark");
             }}
           >
             Toggle
@@ -753,7 +753,7 @@ describe("AppearanceProvider", () => {
       };
 
       render(
-        <AppearanceProvider colorScheme="light" storageKey="ui-theme">
+        <AppearanceProvider appearance="light" storageKey="ui-appearance">
           <TestConsumer />
         </AppearanceProvider>,
       );
@@ -761,23 +761,23 @@ describe("AppearanceProvider", () => {
       await user.click(screen.getByTestId("toggle"));
 
       await waitFor(() => {
-        expect(window.localStorage.getItem("ui-theme")).toBe("dark");
+        expect(window.localStorage.getItem("ui-appearance")).toBe("dark");
       });
     });
 
-    test("explicit persistColorScheme wins over the localStorage auto-persist", async () => {
+    test("explicit persistAppearance wins over the localStorage auto-persist", async () => {
       const user = userEvent.setup();
-      const persistColorScheme = vi.fn(async (_value: ColorScheme) => {});
+      const persistAppearance = vi.fn(async (_value: Appearance) => {});
 
       const TestConsumer = (): React.ReactElement => {
-        const { setColorScheme } = useColorScheme();
+        const { setAppearance } = useAppearance();
 
         return (
           <button
             data-testid="toggle"
             type="button"
             onClick={() => {
-              void setColorScheme("dark");
+              void setAppearance("dark");
             }}
           >
             Toggle
@@ -786,7 +786,7 @@ describe("AppearanceProvider", () => {
       };
 
       render(
-        <AppearanceProvider colorScheme="light" persistColorScheme={persistColorScheme} storageKey="ui-theme">
+        <AppearanceProvider appearance="light" persistAppearance={persistAppearance} storageKey="ui-appearance">
           <TestConsumer />
         </AppearanceProvider>,
       );
@@ -794,19 +794,19 @@ describe("AppearanceProvider", () => {
       await user.click(screen.getByTestId("toggle"));
 
       await waitFor(() => {
-        expect(persistColorScheme).toHaveBeenCalledWith("dark");
+        expect(persistAppearance).toHaveBeenCalledWith("dark");
       });
 
-      expect(window.localStorage.getItem("ui-theme")).toBeNull();
+      expect(window.localStorage.getItem("ui-appearance")).toBeNull();
     });
 
     test("applies the stored preference from the initializer, never flashing through the prop", async () => {
-      window.localStorage.setItem("ui-theme", "dark");
+      window.localStorage.setItem("ui-appearance", "dark");
 
       // matchMedia=light + prop="light": neither resolves to dark, so a "dark" class can only come from the
-      // initializer reading localStorage — proving the first (and only) applyColorScheme used the stored value.
+      // initializer reading localStorage — proving the first (and only) applyAppearance used the stored value.
       render(
-        <AppearanceProvider colorScheme="light" storageKey="ui-theme">
+        <AppearanceProvider appearance="light" storageKey="ui-appearance">
           <div>Content</div>
         </AppearanceProvider>,
       );
@@ -820,47 +820,47 @@ describe("AppearanceProvider", () => {
 
     test("syncs across tabs via the storage event", async () => {
       const TestConsumer = (): React.ReactElement => {
-        const { colorScheme } = useColorScheme();
+        const { appearance } = useAppearance();
 
-        return <span data-testid="colorScheme-label">{colorScheme}</span>;
+        return <span data-testid="appearance-label">{appearance}</span>;
       };
 
       render(
-        <AppearanceProvider colorScheme="light" storageKey="ui-theme">
+        <AppearanceProvider appearance="light" storageKey="ui-appearance">
           <TestConsumer />
         </AppearanceProvider>,
       );
 
-      expect(screen.getByTestId("colorScheme-label")).toHaveTextContent("light");
+      expect(screen.getByTestId("appearance-label")).toHaveTextContent("light");
 
       await act(async () => {
-        dispatchStorageEvent("ui-theme", "dark");
+        dispatchStorageEvent("ui-appearance", "dark");
       });
 
       await waitFor(() => {
-        expect(screen.getByTestId("colorScheme-label")).toHaveTextContent("dark");
+        expect(screen.getByTestId("appearance-label")).toHaveTextContent("dark");
       });
     });
 
     test("ignores storage events for other keys or invalid values", async () => {
       const TestConsumer = (): React.ReactElement => {
-        const { colorScheme } = useColorScheme();
+        const { appearance } = useAppearance();
 
-        return <span data-testid="colorScheme-label">{colorScheme}</span>;
+        return <span data-testid="appearance-label">{appearance}</span>;
       };
 
       render(
-        <AppearanceProvider colorScheme="light" storageKey="ui-theme">
+        <AppearanceProvider appearance="light" storageKey="ui-appearance">
           <TestConsumer />
         </AppearanceProvider>,
       );
 
       await act(async () => {
         dispatchStorageEvent("other-key", "dark");
-        dispatchStorageEvent("ui-theme", "not-a-scheme");
+        dispatchStorageEvent("ui-appearance", "not-a-scheme");
       });
 
-      expect(screen.getByTestId("colorScheme-label")).toHaveTextContent("light");
+      expect(screen.getByTestId("appearance-label")).toHaveTextContent("light");
     });
   });
 });

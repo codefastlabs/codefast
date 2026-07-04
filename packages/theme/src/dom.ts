@@ -1,36 +1,34 @@
-import type { ResolvedColorScheme } from "#/types";
+import type { ColorScheme } from "#/appearance";
 
 /* -----------------------------------------------------------------------------
  * DOM Utilities
  * -------------------------------------------------------------------------- */
 
 /**
- * Apply color scheme to the DOM by updating `<html>` element.
+ * Apply a color scheme to the DOM by updating the `<html>` element.
  *
  * Updates both:
  * - CSS class (for Tailwind's `dark:` variants)
  * - `color-scheme` style (for native form controls and scrollbars)
  *
- * @param resolved - The resolved color scheme to apply ('light' or 'dark')
- *
  * @since 0.3.16-canary.0
  */
-export function applyColorScheme(resolved: ResolvedColorScheme): void {
+export function applyColorScheme(colorScheme: ColorScheme): void {
   const root = window.document.documentElement;
 
   root.classList.remove("light", "dark", "automatic");
-  root.classList.add(resolved);
-  root.style.colorScheme = resolved;
+  root.classList.add(colorScheme);
+  root.style.colorScheme = colorScheme;
 }
 
 /**
- * Temporarily suppress all CSS transitions during color scheme changes.
+ * Temporarily suppress all CSS transitions during appearance changes.
  *
  * Prevents jarring color animations when switching between light/dark appearances.
  * Respects user's `prefers-reduced-motion` preference (does nothing if enabled).
  *
  * @param nonce - Optional CSP nonce for the injected style element
- * @returns Cleanup function to re-enable transitions. Call after color scheme is applied.
+ * @returns Cleanup function to re-enable transitions. Call after the color scheme is applied.
  *
  * @example
  * ```tsx
@@ -64,7 +62,7 @@ export function suppressTransitions(nonce?: string): () => void {
     css.setAttribute("nonce", nonce);
   }
 
-  // P3: Only the unprefixed property is needed — all modern browsers support it
+  // Only the unprefixed property is needed — all modern browsers support it
   css.append(document.createTextNode(`*,*::before,*::after{transition:none!important}`));
 
   document.head.append(css);

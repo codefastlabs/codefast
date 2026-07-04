@@ -1,10 +1,4 @@
-import {
-  AppearanceProvider,
-  AppearanceScript,
-  DEFAULT_COLOR_SCHEME,
-  DEFAULT_RESOLVED_COLOR_SCHEME,
-} from "@codefast/theme";
-import { STORAGE_KEY } from "@codefast/theme/constants";
+import { AppearanceProvider, AppearanceScript, DEFAULT_APPEARANCE, DEFAULT_COLOR_SCHEME } from "@codefast/theme";
 import { Button } from "@codefast/ui/button";
 import { cn } from "@codefast/ui/lib/utils";
 import { TanStackDevtools } from "@tanstack/react-devtools";
@@ -75,25 +69,30 @@ function SiteError({ error }: { error: Error }) {
   );
 }
 
+/**
+ * Document shell. Prerendered HTML can't know the stored appearance at build time, so it renders
+ * the defaults; `AppearanceScript` applies the resolved color scheme before first paint and
+ * `suppressHydrationWarning` absorbs the mismatch.
+ */
 function RootDocument({ children }: { children: ReactNode }) {
-  // Prerendered HTML can't know the preference at build time; the script overwrites this class before
-  // paint and `suppressHydrationWarning` lets the mismatch through.
   return (
     <html
       lang="en"
-      className={cn(DEFAULT_RESOLVED_COLOR_SCHEME, "min-h-full")}
-      style={{ colorScheme: DEFAULT_RESOLVED_COLOR_SCHEME }}
-      data-appearance={DEFAULT_COLOR_SCHEME}
+      className={cn(DEFAULT_COLOR_SCHEME, "min-h-full")}
+      /* "light dark": the pre-paint frame follows the OS color scheme instead of flashing dark
+         on reload; AppearanceScript sets the resolved value before paint. */
+      style={{ colorScheme: "light dark" }}
+      data-appearance={DEFAULT_APPEARANCE}
       suppressHydrationWarning
     >
       <head>
-        {/* Client-only via storageKey: no server fn or loader, so `defaultPreload: "intent"` has
-            nothing to re-fetch on nav-link hover. */}
-        <AppearanceScript colorScheme={DEFAULT_COLOR_SCHEME} storageKey={STORAGE_KEY} />
+        {/* Client-only appearance via localStorage (default STORAGE_KEY): no server fn or loader,
+            so `defaultPreload: "intent"` has nothing to re-fetch on nav-link hover. */}
+        <AppearanceScript />
         <HeadContent />
       </head>
       <body className="min-h-full overflow-x-hidden bg-ui-bg font-sans wrap-anywhere text-ui-fg antialiased selection:bg-ui-fg/15">
-        <AppearanceProvider colorScheme={DEFAULT_COLOR_SCHEME} storageKey={STORAGE_KEY}>
+        <AppearanceProvider>
           <Header />
           {children}
           <Footer />

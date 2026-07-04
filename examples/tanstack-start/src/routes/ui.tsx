@@ -20,8 +20,8 @@ function UiPage() {
         <h1 className="text-2xl font-bold tracking-tight">@codefast/ui</h1>
         <p className="max-w-2xl text-sm text-muted-foreground">
           Components imported from the published package via per-component subpaths such as{" "}
-          <code className="font-mono">@codefast/ui/button</code>. Use the theme toggle in the header — every surface
-          here is driven by <code className="font-mono">@codefast/theme</code>.
+          <code className="font-mono">@codefast/ui/button</code>. Use the appearance toggle in the header — every
+          surface here is driven by <code className="font-mono">@codefast/theme</code>.
         </p>
       </header>
 

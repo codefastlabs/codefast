@@ -1,29 +1,32 @@
 /**
  * \@codefast/theme
  *
- * React 19 color scheme management: client-only `localStorage` persistence, SSR-safe
- * `automatic` resolution, cross-tab sync, optimistic updates.
+ * React 19 appearance management, with vocabulary following Apple's Human Interface
+ * Guidelines: **appearance** is the user's preference (light / dark / automatic),
+ * **color scheme** is the resolved light-or-dark value actually applied. Client-only
+ * `localStorage` persistence, SSR-safe `automatic` resolution, cross-tab sync,
+ * optimistic updates.
  *
- * - **Root** (this module): `AppearanceProvider`, `useColorScheme`, `AppearanceScript`, `resolveColorScheme`, types, defaults.
- * - **`@codefast/theme/utils`**: `getSystemColorScheme`, `applyColorScheme`, `suppressTransitions`.
- * - **`@codefast/theme/core`**: `ColorSchemeContext` for rare custom wiring.
+ * - **Root** (this module): `AppearanceProvider`, `useAppearance`, `AppearanceScript`, `resolveColorScheme`, types, defaults.
+ * - **`@codefast/theme/color-scheme` / `@codefast/theme/dom`**: `getSystemColorScheme`, `applyColorScheme`, `suppressTransitions`.
+ * - **`@codefast/theme/appearance-context`**: `AppearanceContext` for rare custom wiring.
  */
 
 // Types & Schema
-export type { ResolvedColorScheme, ColorScheme, ColorSchemeContextType } from "#/types";
-export { colorSchemes, colorSchemeSchema } from "#/types";
+export type { Appearance, AppearanceContextType, ColorScheme } from "#/appearance";
+export { appearances, appearanceSchema } from "#/appearance";
 
 // Constants
-export { DEFAULT_RESOLVED_COLOR_SCHEME, DEFAULT_COLOR_SCHEME } from "#/constants";
+export { DEFAULT_APPEARANCE, DEFAULT_COLOR_SCHEME } from "#/constants";
 
-// Core (Provider, Hook — use `@codefast/theme/core` for `ColorSchemeContext`)
-export { AppearanceProvider } from "#/core/provider";
-export type { AppearanceProviderProps } from "#/core/provider";
-export { useColorScheme } from "#/core/use-theme";
+// Provider & Hook (use `@codefast/theme/appearance-context` for `AppearanceContext`)
+export { AppearanceProvider } from "#/appearance-provider";
+export type { AppearanceProviderProps } from "#/appearance-provider";
+export { useAppearance } from "#/use-appearance";
 
 // Script (FOUC prevention)
-export { AppearanceScript } from "#/script/theme-script";
-export type { AppearanceScriptProps } from "#/script/theme-script";
+export { AppearanceScript } from "#/appearance-script";
+export type { AppearanceScriptProps } from "#/appearance-script";
 
-// Utilities: DOM + `getSystemColorScheme` live under `@codefast/theme/utils`
-export { resolveColorScheme } from "#/utils/system";
+// Resolution: `getSystemColorScheme` lives under `@codefast/theme/color-scheme`
+export { resolveColorScheme } from "#/color-scheme";

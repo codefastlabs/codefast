@@ -32,19 +32,24 @@ export const Route = createRootRoute({
   shellComponent: RootDocument,
 });
 
+/**
+ * Document shell. Server-rendered HTML can't know the stored appearance at request time, so it
+ * renders the defaults; the inline script applies the resolved color scheme before first paint
+ * and `suppressHydrationWarning` absorbs the mismatch.
+ */
 function RootDocument({ children }: { children: ReactNode }) {
-  // Server-rendered HTML can't know the preference at request time; the script overwrites this
-  // class before paint and `suppressHydrationWarning` lets the mismatch through.
   return (
     <html
       lang="en"
       className={cn(DEFAULT_RESOLVED_COLOR_SCHEME, "min-h-full")}
-      style={{ colorScheme: DEFAULT_RESOLVED_COLOR_SCHEME }}
+      /* "light dark": the pre-paint frame follows the OS color scheme instead of flashing dark
+         on reload; the inline script sets the resolved value before paint. */
+      style={{ colorScheme: "light dark" }}
       data-appearance={DEFAULT_COLOR_SCHEME}
       suppressHydrationWarning
     >
       <head>
-        {/* Client-only via storageKey: the preference lives in localStorage — no server fn, no loader. */}
+        {/* Client-only appearance: the preference lives in localStorage — no server fn, no loader. */}
         <AppearanceScript colorScheme={DEFAULT_COLOR_SCHEME} storageKey={STORAGE_KEY} />
         <HeadContent />
       </head>

@@ -2,7 +2,7 @@ import { cn } from "@codefast/ui/lib/utils";
 import { Link } from "@tanstack/react-router";
 import type { ComponentProps, ReactElement } from "react";
 
-import { ThemeToggle } from "#/components/theme-toggle";
+import { AppearanceToggle } from "#/components/appearance-toggle";
 
 type SiteHeaderProps = ComponentProps<"header">;
 
@@ -35,7 +35,7 @@ export function SiteHeader({ className, ...props }: SiteHeaderProps): ReactEleme
               {item.label}
             </Link>
           ))}
-          <ThemeToggle className="ml-2" />
+          <AppearanceToggle className="ml-2" />
         </nav>
       </div>
     </header>
