@@ -265,6 +265,11 @@
       "types": "./dist/components/message.d.mts",
       "import": "./dist/components/message.mjs"
     },
+    "./message-scroller": {
+      "source": "./src/components/message-scroller.tsx",
+      "types": "./dist/components/message-scroller.d.mts",
+      "import": "./dist/components/message-scroller.mjs"
+    },
     "./native-select": {
       "source": "./src/components/native-select.tsx",
       "types": "./dist/components/native-select.d.mts",
@@ -444,6 +449,11 @@
       "source": "./src/primitives/input-number.tsx",
       "types": "./dist/primitives/input-number.d.mts",
       "import": "./dist/primitives/input-number.mjs"
+    },
+    "./primitives/message-scroller": {
+      "source": "./src/primitives/message-scroller.tsx",
+      "types": "./dist/primitives/message-scroller.d.mts",
+      "import": "./dist/primitives/message-scroller.mjs"
     },
     "./primitives/progress-circle": {
       "source": "./src/primitives/progress-circle.tsx",

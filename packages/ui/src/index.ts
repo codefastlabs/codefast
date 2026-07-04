@@ -462,6 +462,30 @@ export type {
   MessageProps,
 } from "#/components/message";
 export {
+  MessageScroller,
+  MessageScrollerButton,
+  MessageScrollerContent,
+  MessageScrollerItem,
+  MessageScrollerProvider,
+  MessageScrollerViewport,
+  useMessageScroller,
+  useMessageScrollerScrollable,
+  useMessageScrollerVisibility,
+} from "#/components/message-scroller";
+export type {
+  MessageScrollerButtonProps,
+  MessageScrollerContentProps,
+  MessageScrollerDefaultScrollPosition,
+  MessageScrollerItemProps,
+  MessageScrollerProps,
+  MessageScrollerProviderProps,
+  MessageScrollerScrollable,
+  MessageScrollerScrollAlign,
+  MessageScrollerScrollOptions,
+  MessageScrollerViewportProps,
+  MessageScrollerVisibilityState,
+} from "#/components/message-scroller";
+export {
   NavigationMenu,
   NavigationMenuContent,
   NavigationMenuIndicator,
