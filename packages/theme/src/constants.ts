@@ -12,9 +12,9 @@ import type { Appearance, ColorScheme } from "#/appearance";
 export const DEFAULT_APPEARANCE: Appearance = "automatic";
 
 /**
- * Fallback color scheme for SSR when the OS preference cannot be detected.
+ * Fallback color scheme when the system color scheme cannot be detected.
  *
- * Used during server-side rendering since `window.matchMedia()` is unavailable.
+ * Applies wherever `window.matchMedia()` is unavailable, e.g. during server render.
  */
 export const DEFAULT_COLOR_SCHEME: ColorScheme = "dark";
 
