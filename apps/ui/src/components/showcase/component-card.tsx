@@ -34,6 +34,7 @@ export function ComponentCard({ component }: ComponentCardProps) {
           name={component.name}
           description={component.description}
           slug={component.slug}
+          isNew={component.isNew}
           className="rounded-b-2xl border-t border-ui-border/60"
         />
       </div>
@@ -49,6 +50,7 @@ export function ComponentCard({ component }: ComponentCardProps) {
       name={component.name}
       description={component.description}
       wide={component.wide}
+      isNew={component.isNew}
     >
       <LazyVisible>
         <Suspense fallback={<PreviewSkeleton className="w-full" />}>
