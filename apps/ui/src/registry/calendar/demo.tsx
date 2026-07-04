@@ -4,5 +4,7 @@ import { useState } from "react";
 export function CalendarDemo() {
   const [date, setDate] = useState<Date | undefined>(new Date());
 
-  return <Calendar className="rounded-xl border" mode="single" selected={date} onSelect={setDate} />;
+  return (
+    <Calendar captionLayout="dropdown" className="rounded-lg border" mode="single" selected={date} onSelect={setDate} />
+  );
 }

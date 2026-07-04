@@ -1,24 +1,22 @@
-import { Alert, AlertAction, AlertDescription, AlertTitle } from "@codefast/ui/alert";
-import { Button } from "@codefast/ui/button";
-import { AlertTriangleIcon, InfoIcon, XIcon } from "lucide-react";
+import { Alert, AlertDescription, AlertTitle } from "@codefast/ui/alert";
+import { CheckCircle2Icon, InfoIcon } from "lucide-react";
 
 export function AlertDemo() {
   return (
-    <div className="w-full max-w-sm space-y-3">
+    <div className="grid w-full max-w-md items-start gap-4">
+      <Alert>
+        <CheckCircle2Icon />
+        <AlertTitle>Payment successful</AlertTitle>
+        <AlertDescription>
+          Your payment of $29.99 has been processed. A receipt has been sent to your email address.
+        </AlertDescription>
+      </Alert>
       <Alert>
         <InfoIcon />
-        <AlertTitle>Heads up</AlertTitle>
-        <AlertDescription>You can add components using the CLI.</AlertDescription>
-        <AlertAction>
-          <Button aria-label="Dismiss" size="icon-xs" variant="ghost">
-            <XIcon />
-          </Button>
-        </AlertAction>
-      </Alert>
-      <Alert variant="destructive">
-        <AlertTriangleIcon />
-        <AlertTitle>Session expired</AlertTitle>
-        <AlertDescription>Please log in again.</AlertDescription>
+        <AlertTitle>New feature available</AlertTitle>
+        <AlertDescription>
+          We&apos;ve added dark mode support. You can enable it in your account settings.
+        </AlertDescription>
       </Alert>
     </div>
   );
