@@ -10,7 +10,7 @@ import type { ComponentDoc } from "#/registry/types";
 export const skeletonDoc: ComponentDoc = {
   examples: [
     {
-      id: "card",
+      id: "skeleton-card",
       title: "Card placeholder",
       description: "Mirror the real layout so content doesn’t jump when it loads.",
       Demo: SkeletonCard,
@@ -18,7 +18,7 @@ export const skeletonDoc: ComponentDoc = {
       previewClassName: "items-start",
     },
     {
-      id: "text",
+      id: "skeleton-text",
       title: "Text lines",
       description: "Stand in for a paragraph while content loads.",
       Demo: SkeletonText,

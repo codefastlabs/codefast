@@ -76,6 +76,7 @@ export const contextMenuDoc: ComponentDoc = {
       description: "Control submenu placement with side and align props.",
       Demo: ContextMenuSides,
       source: docSource("context-menu", "sides"),
+      previewClassName: "block",
     },
     {
       id: "context-menu-submenu",
