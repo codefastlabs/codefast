@@ -18,6 +18,11 @@
     "theme-hig-appearance-naming",
     "theme-provider-storage-key",
     "theme-remove-server-side",
-    "theme-vite-plugin"
+    "theme-vite-plugin",
+    "ui-card-footer-empty-radius",
+    "ui-chat-components",
+    "ui-message-scroller",
+    "ui-rtl-hardening",
+    "ui-sidebar-skeleton-ssr"
   ]
 }

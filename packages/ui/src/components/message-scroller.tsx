@@ -21,9 +21,14 @@ import {
 
 /**
  * Owns scroll behavior for a transcript. Renders no DOM; wrap the frame.
+ *
+ * @since 0.5.0-canary.3
  */
 type MessageScrollerProviderProps = ComponentProps<typeof MessageScrollerProviderPrimitive>;
 
+/**
+ * @since 0.5.0-canary.3
+ */
 function MessageScrollerProvider(props: MessageScrollerProviderProps): JSX.Element {
   return <MessageScrollerProviderPrimitive {...props} />;
 }
@@ -34,9 +39,14 @@ function MessageScrollerProvider(props: MessageScrollerProviderProps): JSX.Eleme
 
 /**
  * Frame for a chat transcript scroller; must sit inside a provider.
+ *
+ * @since 0.5.0-canary.3
  */
 type MessageScrollerProps = ComponentProps<typeof MessageScrollerPrimitive>;
 
+/**
+ * @since 0.5.0-canary.3
+ */
 function MessageScroller({ className, ...props }: MessageScrollerProps): JSX.Element {
   return (
     <MessageScrollerPrimitive
@@ -53,9 +63,14 @@ function MessageScroller({ className, ...props }: MessageScrollerProps): JSX.Ele
 
 /**
  * Scrollable viewport; fades its bottom edge and hides the bar while autoscrolling.
+ *
+ * @since 0.5.0-canary.3
  */
 type MessageScrollerViewportProps = ComponentProps<typeof MessageScrollerViewportPrimitive>;
 
+/**
+ * @since 0.5.0-canary.3
+ */
 function MessageScrollerViewport({ className, ...props }: MessageScrollerViewportProps): JSX.Element {
   return (
     <MessageScrollerViewportPrimitive
@@ -75,9 +90,14 @@ function MessageScrollerViewport({ className, ...props }: MessageScrollerViewpor
 
 /**
  * Column holding the transcript rows.
+ *
+ * @since 0.5.0-canary.3
  */
 type MessageScrollerContentProps = ComponentProps<typeof MessageScrollerContentPrimitive>;
 
+/**
+ * @since 0.5.0-canary.3
+ */
 function MessageScrollerContent({ className, ...props }: MessageScrollerContentProps): JSX.Element {
   return (
     <MessageScrollerContentPrimitive
@@ -94,9 +114,14 @@ function MessageScrollerContent({ className, ...props }: MessageScrollerContentP
 
 /**
  * One transcript row; opts into content-visibility for long feeds.
+ *
+ * @since 0.5.0-canary.3
  */
 type MessageScrollerItemProps = ComponentProps<typeof MessageScrollerItemPrimitive>;
 
+/**
+ * @since 0.5.0-canary.3
+ */
 function MessageScrollerItem({ className, scrollAnchor = false, ...props }: MessageScrollerItemProps): JSX.Element {
   return (
     <MessageScrollerItemPrimitive
@@ -114,10 +139,15 @@ function MessageScrollerItem({ className, scrollAnchor = false, ...props }: Mess
 
 /**
  * Scroll-to-edge control; hides itself when there is no overflow that way.
+ *
+ * @since 0.5.0-canary.3
  */
 type MessageScrollerButtonProps = ComponentProps<typeof MessageScrollerButtonPrimitive> &
   Pick<ComponentProps<typeof Button>, "size" | "variant">;
 
+/**
+ * @since 0.5.0-canary.3
+ */
 function MessageScrollerButton({
   children,
   className,

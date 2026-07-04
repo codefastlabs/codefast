@@ -16,6 +16,9 @@ import type { MessageScrollerScrollOptions } from "#/lib/message-scroller/types"
 // Imperative scroll primitives, split from the controller so the move mechanics
 // live apart from the policy that decides when to run them. Each command resolves
 // a target scrollTop and returns false when the viewport is not mounted yet.
+/**
+ * @since 0.5.0-canary.3
+ */
 function useMessageScrollerCommands({
   refs,
   commitScrollState,

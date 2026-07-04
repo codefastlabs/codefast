@@ -52,6 +52,9 @@ function useElementRef(elementRef: RefObject<HTMLDivElement | null>, onMount: ()
 // Orchestrator hook. Decides when to scroll and delegates the moves to
 // useMessageScrollerCommands; state and visibility commits are coalesced on a
 // requestAnimationFrame and torn down on cleanup for StrictMode safety.
+/**
+ * @since 0.5.0-canary.3
+ */
 function useMessageScrollerController({
   autoScroll = false,
   defaultScrollPosition = "end",

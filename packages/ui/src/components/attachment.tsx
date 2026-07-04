@@ -12,11 +12,16 @@ import { attachmentMediaVariants, attachmentVariants } from "#/variants/attachme
 
 /**
  * File/media attachment card. `state` drives the upload lifecycle styling.
+ *
+ * @since 0.5.0-canary.3
  */
 interface AttachmentProps extends ComponentProps<"div">, AttachmentVariants {
   state?: "idle" | "uploading" | "processing" | "error" | "done";
 }
 
+/**
+ * @since 0.5.0-canary.3
+ */
 function Attachment({
   className,
   orientation = "horizontal",
@@ -42,9 +47,14 @@ function Attachment({
 
 /**
  * Thumbnail slot — an icon tile or a cover image.
+ *
+ * @since 0.5.0-canary.3
  */
 interface AttachmentMediaProps extends ComponentProps<"div">, AttachmentMediaVariants {}
 
+/**
+ * @since 0.5.0-canary.3
+ */
 function AttachmentMedia({ className, variant = "icon", ...props }: AttachmentMediaProps): JSX.Element {
   return (
     <div
@@ -62,9 +72,14 @@ function AttachmentMedia({ className, variant = "icon", ...props }: AttachmentMe
 
 /**
  * Text column holding the title and description.
+ *
+ * @since 0.5.0-canary.3
  */
 type AttachmentContentProps = ComponentProps<"div">;
 
+/**
+ * @since 0.5.0-canary.3
+ */
 function AttachmentContent({ className, ...props }: AttachmentContentProps): JSX.Element {
   return (
     <div
@@ -84,9 +99,14 @@ function AttachmentContent({ className, ...props }: AttachmentContentProps): JSX
 
 /**
  * File name; shimmers while uploading or processing.
+ *
+ * @since 0.5.0-canary.3
  */
 type AttachmentTitleProps = ComponentProps<"span">;
 
+/**
+ * @since 0.5.0-canary.3
+ */
 function AttachmentTitle({ className, ...props }: AttachmentTitleProps): JSX.Element {
   return (
     <span
@@ -106,9 +126,14 @@ function AttachmentTitle({ className, ...props }: AttachmentTitleProps): JSX.Ele
 
 /**
  * Secondary line (size, type); turns destructive on error.
+ *
+ * @since 0.5.0-canary.3
  */
 type AttachmentDescriptionProps = ComponentProps<"span">;
 
+/**
+ * @since 0.5.0-canary.3
+ */
 function AttachmentDescription({ className, ...props }: AttachmentDescriptionProps): JSX.Element {
   return (
     <span
@@ -128,9 +153,14 @@ function AttachmentDescription({ className, ...props }: AttachmentDescriptionPro
 
 /**
  * Action cluster; floats to the top corner in the vertical orientation.
+ *
+ * @since 0.5.0-canary.3
  */
 type AttachmentActionsProps = ComponentProps<"div">;
 
+/**
+ * @since 0.5.0-canary.3
+ */
 function AttachmentActions({ className, ...props }: AttachmentActionsProps): JSX.Element {
   return (
     <div
@@ -150,9 +180,14 @@ function AttachmentActions({ className, ...props }: AttachmentActionsProps): JSX
 
 /**
  * A single action button; defaults to a ghost icon button.
+ *
+ * @since 0.5.0-canary.3
  */
 interface AttachmentActionProps extends ComponentProps<typeof Button> {}
 
+/**
+ * @since 0.5.0-canary.3
+ */
 function AttachmentAction({ className, size = "icon-xs", variant, ...props }: AttachmentActionProps): JSX.Element {
   return (
     <Button
@@ -171,11 +206,16 @@ function AttachmentAction({ className, size = "icon-xs", variant, ...props }: At
 
 /**
  * Full-card overlay trigger for opening/previewing the attachment.
+ *
+ * @since 0.5.0-canary.3
  */
 interface AttachmentTriggerProps extends ComponentProps<"button"> {
   asChild?: boolean;
 }
 
+/**
+ * @since 0.5.0-canary.3
+ */
 function AttachmentTrigger({ asChild = false, className, type, ...props }: AttachmentTriggerProps): JSX.Element {
   const Component = asChild ? Slot.Root : "button";
 
@@ -195,9 +235,14 @@ function AttachmentTrigger({ asChild = false, className, type, ...props }: Attac
 
 /**
  * Horizontally scrollable row of attachments with snap and edge fade.
+ *
+ * @since 0.5.0-canary.3
  */
 type AttachmentGroupProps = ComponentProps<"div">;
 
+/**
+ * @since 0.5.0-canary.3
+ */
 function AttachmentGroup({ className, ...props }: AttachmentGroupProps): JSX.Element {
   return (
     <div

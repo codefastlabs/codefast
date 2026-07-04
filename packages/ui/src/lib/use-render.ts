@@ -27,6 +27,9 @@ type StateAttributesMapping<TState extends RenderState> = Partial<{
   [K in keyof TState]: (value: TState[K]) => Record<string, string | undefined> | null | undefined;
 }>;
 
+/**
+ * @since 0.5.0-canary.3
+ */
 type UseRenderComponentProps<
   TElement extends ElementType,
   TState extends RenderState = RenderState,
@@ -58,6 +61,9 @@ function composeEventHandlers(theirs: EventHandler, ours: EventHandler) {
   };
 }
 
+/**
+ * @since 0.5.0-canary.3
+ */
 function composeRefs<T>(...refs: Array<Ref<T> | undefined>): RefCallback<T> | undefined {
   const validRefs = refs.filter(Boolean);
 
@@ -76,6 +82,9 @@ function composeRefs<T>(...refs: Array<Ref<T> | undefined>): RefCallback<T> | un
   };
 }
 
+/**
+ * @since 0.5.0-canary.3
+ */
 function mergeProps<TElement extends ElementType>(
   ...sources: Array<ComponentPropsWithRef<TElement> | Record<string, unknown> | undefined>
 ): ComponentPropsWithRef<TElement> {
@@ -152,6 +161,8 @@ function getStateAttributes<TState extends RenderState>(
 /**
  * Resolve a component's `render` prop: a default element, a render function, or
  * a cloned element, merging computed state attributes and props/refs/handlers.
+ *
+ * @since 0.5.0-canary.3
  */
 function useRender<TElement extends ElementType, TState extends RenderState = RenderState>({
   defaultTagName,

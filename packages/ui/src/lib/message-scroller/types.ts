@@ -5,24 +5,42 @@ import type { UseRenderComponentProps } from "#/lib/use-render";
 
 // Default scrollEdgeThreshold. Sub-pixel tolerance so edge detection does not
 // flicker across engines that round scrollTop differently.
+/**
+ * @since 0.5.0-canary.3
+ */
 const DEFAULT_SCROLL_EDGE_THRESHOLD = 8;
 
 // Default scrollPreviousItemPeek. Pixels of the previous item kept visible above
 // a newly anchored row.
+/**
+ * @since 0.5.0-canary.3
+ */
 const DEFAULT_SCROLL_PREVIOUS_ITEM_PEEK = 64;
 
 // Default scrollMargin for scrollToMessage and programmatic targets.
+/**
+ * @since 0.5.0-canary.3
+ */
 const DEFAULT_SCROLL_MARGIN = 0;
 
 // Two fractional scrollTop values within this range are treated as equal, to
 // absorb zoom and HiDPI rounding drift.
+/**
+ * @since 0.5.0-canary.3
+ */
 const SCROLL_POSITION_EPSILON = 0.5;
 
 // How long (ms) data-autoscrolling stays set during a programmatic smooth scroll
 // before clearing.
+/**
+ * @since 0.5.0-canary.3
+ */
 const AUTOSCROLLING_CLEAR_DELAY = 180;
 
 // Viewport keys that count as deliberate scroll intent and release follow-bottom.
+/**
+ * @since 0.5.0-canary.3
+ */
 const USER_SCROLL_KEYS = new Set([
   "ArrowDown",
   "ArrowUp",
@@ -35,6 +53,9 @@ const USER_SCROLL_KEYS = new Set([
 
 // Internal scroll mode. Derived from intent and commands; decides how the
 // viewport reacts to content and resize.
+/**
+ * @since 0.5.0-canary.3
+ */
 type MessageScrollerMode =
   | "following-bottom" // autoScroll on, pinned to the latest message.
   | "free-scrolling" // reader scrolled away; position left alone (prepends still preserved).
@@ -42,15 +63,27 @@ type MessageScrollerMode =
   | "settling-jump"; // a programmatic jump is animating; intent detection suppressed until it settles.
 
 // Where a saved transcript opens on the first non-empty render.
+/**
+ * @since 0.5.0-canary.3
+ */
 type MessageScrollerDefaultScrollPosition = "start" | "end" | "last-anchor";
 
 // Which transcript edge MessageScrollerButton scrolls toward.
+/**
+ * @since 0.5.0-canary.3
+ */
 type MessageScrollerButtonDirection = "start" | "end";
 
 // Viewport alignment for scrollToMessage and programmatic jumps.
+/**
+ * @since 0.5.0-canary.3
+ */
 type MessageScrollerScrollAlign = "start" | "center" | "end" | "nearest";
 
 // Options for scrollToMessage, scrollToEnd, and scrollToStart.
+/**
+ * @since 0.5.0-canary.3
+ */
 type MessageScrollerScrollOptions = {
   // Viewport edge or center to align the target to.
   align?: MessageScrollerScrollAlign;
@@ -62,6 +95,9 @@ type MessageScrollerScrollOptions = {
 
 // Scroll snapshot from useMessageScrollerScrollable: which edges the viewport can
 // still scroll toward.
+/**
+ * @since 0.5.0-canary.3
+ */
 type MessageScrollerScrollable = {
   // The viewport can scroll toward the start (content is hidden above).
   start: boolean;
@@ -70,6 +106,9 @@ type MessageScrollerScrollable = {
 };
 
 // Visibility snapshot from useMessageScrollerVisibility.
+/**
+ * @since 0.5.0-canary.3
+ */
 type MessageScrollerVisibilityState = {
   // The anchored turn the reader is in, or null. Stays set after the anchor
   // scrolls above the viewport.
@@ -80,6 +119,9 @@ type MessageScrollerVisibilityState = {
 
 // Headless provider for a chat transcript scroller. Owns scroll behavior and
 // state; renders no DOM.
+/**
+ * @since 0.5.0-canary.3
+ */
 type MessageScrollerProviderProps = {
   children?: ReactNode;
   // Follow new content at the bottom while the viewport is already at the end.
@@ -96,21 +138,33 @@ type MessageScrollerProviderProps = {
 
 // Frame container for a chat transcript scroller. Must render inside a
 // MessageScrollerProvider.
+/**
+ * @since 0.5.0-canary.3
+ */
 type MessageScrollerProps = ComponentProps<"div">;
 
 // Scrollable viewport. Owns native scroll events and prepend preservation.
+/**
+ * @since 0.5.0-canary.3
+ */
 type MessageScrollerViewportProps = ComponentProps<"div"> & {
   // Keep the first visible messageId row stable on prepend. Defaults to true.
   preserveScrollOnPrepend?: boolean;
 };
 
 // Transcript row container. Every direct child should be a MessageScrollerItem.
+/**
+ * @since 0.5.0-canary.3
+ */
 type MessageScrollerContentProps = ComponentProps<"div"> & {
   // Class name for the internal tail spacer used when anchoring turns near the top.
   spacerClassName?: string;
 };
 
 // One transcript row: a message, marker, typing row, separator, or load-more row.
+/**
+ * @since 0.5.0-canary.3
+ */
 type MessageScrollerItemProps = ComponentProps<"div"> & {
   // Stable row id for scrollToMessage, visibility, and prepend preservation.
   messageId?: string;
@@ -119,6 +173,9 @@ type MessageScrollerItemProps = ComponentProps<"div"> & {
 };
 
 // State passed to MessageScrollerButton's render prop.
+/**
+ * @since 0.5.0-canary.3
+ */
 type MessageScrollerButtonRenderState = {
   // Whether overflow exists toward this button's direction.
   active: boolean;
@@ -126,6 +183,9 @@ type MessageScrollerButtonRenderState = {
 };
 
 // Scroll control for the start or end of the transcript.
+/**
+ * @since 0.5.0-canary.3
+ */
 type MessageScrollerButtonProps = UseRenderComponentProps<"button", MessageScrollerButtonRenderState> & {
   // Native scroll behavior when clicked. Defaults to "smooth".
   behavior?: ScrollBehavior;
@@ -135,6 +195,9 @@ type MessageScrollerButtonProps = UseRenderComponentProps<"button", MessageScrol
 
 // Minimal external store backing useMessageScrollerScrollable, consumed via
 // useSyncExternalStore.
+/**
+ * @since 0.5.0-canary.3
+ */
 type MessageScrollerStore<T> = {
   getSnapshot: () => T;
   setSnapshot: (nextSnapshot: T) => void;
@@ -143,6 +206,9 @@ type MessageScrollerStore<T> = {
 
 // External store backing useMessageScrollerVisibility. Adds reference-counting so
 // tracking stays lazy.
+/**
+ * @since 0.5.0-canary.3
+ */
 type MessageScrollerVisibilityStore = {
   getSnapshot: () => MessageScrollerVisibilityState;
   hasListeners: () => boolean;
@@ -152,6 +218,9 @@ type MessageScrollerVisibilityStore = {
 
 // Registers (or, with removedElement, unregisters) a MessageScrollerItem node by
 // messageId.
+/**
+ * @since 0.5.0-canary.3
+ */
 type MessageScrollerRegisterMessage = (
   messageId: string,
   element: HTMLElement | null,
@@ -159,6 +228,9 @@ type MessageScrollerRegisterMessage = (
 ) => void;
 
 // Internal context wiring the parts together. Not part of the public API.
+/**
+ * @since 0.5.0-canary.3
+ */
 type MessageScrollerContextValue = {
   handleContentChange: () => void;
   handleResize: () => void;
@@ -181,15 +253,24 @@ type MessageScrollerContextValue = {
 
 // Initial MessageScrollerScrollable before measurement. Stable reference for the
 // server and first-render snapshot.
+/**
+ * @since 0.5.0-canary.3
+ */
 const EMPTY_MESSAGE_SCROLLER_SCROLLABLE: MessageScrollerScrollable = {
   start: false,
   end: false,
 };
 
 // Shared empty array so empty visibility snapshots stay referentially stable.
+/**
+ * @since 0.5.0-canary.3
+ */
 const EMPTY_VISIBLE_MESSAGE_IDS: Array<string> = [];
 
 // Initial MessageScrollerVisibilityState. Nothing tracked, no current anchor.
+/**
+ * @since 0.5.0-canary.3
+ */
 const EMPTY_MESSAGE_SCROLLER_VISIBILITY_STATE: MessageScrollerVisibilityState = {
   currentAnchorId: null,
   visibleMessageIds: EMPTY_VISIBLE_MESSAGE_IDS,

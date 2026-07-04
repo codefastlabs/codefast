@@ -19,6 +19,9 @@ import type {
 // Shared mutable ref bag for one MessageScroller, closed over by both the
 // controller and the commands so writes are visible across them without prop
 // threading. stateStore and visibilityStore fan out via useSyncExternalStore.
+/**
+ * @since 0.5.0-canary.3
+ */
 type MessageScrollerRefs = {
   autoScrollRef: RefObject<boolean>;
   autoscrollingRef: RefObject<boolean>;
@@ -59,6 +62,9 @@ type MessageScrollerRefs = {
 
 // Builds the per-instance ref bag: the two external stores constructed once, and
 // the latest prop values mirrored onto refs each render so callbacks stay stable.
+/**
+ * @since 0.5.0-canary.3
+ */
 function useMessageScrollerRefs({
   autoScroll,
   scrollEdgeThreshold,
