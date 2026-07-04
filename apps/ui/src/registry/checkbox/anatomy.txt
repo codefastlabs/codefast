@@ -1,5 +1,0 @@
-import { Checkbox } from "@codefast/ui/checkbox";
-import { Label } from "@codefast/ui/label";
-
-<Checkbox id="c" />
-<Label htmlFor="c">Label</Label>

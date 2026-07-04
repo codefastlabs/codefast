@@ -1,4 +1,4 @@
-import { docAnatomy, docDemo, docSource } from "#/registry/source";
+import { docDemo, docSource } from "#/registry/source";
 import { TabsDemo } from "#/registry/tabs/demo";
 import { TabsDisabled } from "#/registry/tabs/disabled.example";
 import { TabsIcons } from "#/registry/tabs/icons.example";
@@ -53,7 +53,9 @@ export const tabsDoc: ComponentDoc = {
       source: docSource("tabs", "vertical"),
     },
   ],
-  anatomy: docAnatomy("tabs"),
+  anatomy: [
+    { name: "Tabs", children: [{ name: "TabsList", children: [{ name: "TabsTrigger" }] }, { name: "TabsContent" }] },
+  ],
   api: [
     {
       name: "Tabs",

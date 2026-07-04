@@ -4,7 +4,7 @@ import { KbdGroupExample } from "#/registry/kbd/group.example";
 import { KbdInputGroup } from "#/registry/kbd/input-group.example";
 import { KbdRtl } from "#/registry/kbd/rtl.example";
 import { KbdTooltip } from "#/registry/kbd/tooltip.example";
-import { docAnatomy, docDemo, docSource } from "#/registry/source";
+import { docDemo, docSource } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const kbdDoc: ComponentDoc = {
@@ -54,7 +54,7 @@ export const kbdDoc: ComponentDoc = {
       source: docSource("kbd", "tooltip"),
     },
   ],
-  anatomy: docAnatomy("kbd"),
+  anatomy: [{ name: "KbdGroup", children: [{ name: "Kbd" }, { name: "Kbd" }] }],
   api: [
     {
       name: "Kbd",

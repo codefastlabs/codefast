@@ -2,7 +2,7 @@ import { ResizableDemo } from "#/registry/resizable/demo";
 import { ResizableSeparatorDemo } from "#/registry/resizable/handle.example";
 import { ResizableRtl } from "#/registry/resizable/rtl.example";
 import { ResizableVertical } from "#/registry/resizable/vertical.example";
-import { docAnatomy, docDemo, docSource } from "#/registry/source";
+import { docDemo, docSource } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const resizableDoc: ComponentDoc = {
@@ -39,7 +39,12 @@ export const resizableDoc: ComponentDoc = {
       direction: "rtl",
     },
   ],
-  anatomy: docAnatomy("resizable"),
+  anatomy: [
+    {
+      name: "ResizableGroup",
+      children: [{ name: "ResizablePanel" }, { name: "ResizableSeparator" }, { name: "ResizablePanel" }],
+    },
+  ],
   api: [
     {
       name: "ResizableGroup",

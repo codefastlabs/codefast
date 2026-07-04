@@ -1,5 +1,0 @@
-import { Button } from "@codefast/ui/button";
-
-<Button variant="default" size="default">
-  Label
-</Button>

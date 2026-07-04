@@ -1,7 +1,7 @@
 import { SonnerDescription } from "#/registry/sonner/description.example";
 import { SonnerPosition } from "#/registry/sonner/position.example";
 import { SonnerTypes } from "#/registry/sonner/types.example";
-import { docSource, docAnatomy } from "#/registry/source";
+import { docSource } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const sonnerDoc: ComponentDoc = {
@@ -28,7 +28,7 @@ export const sonnerDoc: ComponentDoc = {
       source: docSource("sonner", "position"),
     },
   ],
-  anatomy: docAnatomy("sonner"),
+  anatomy: [{ name: "Toaster" }],
   api: [
     {
       name: "toast()",

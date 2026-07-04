@@ -1,7 +1,7 @@
 import { LabelDemo } from "#/registry/label/demo";
 import { LabelInField } from "#/registry/label/field.example";
 import { LabelRtl } from "#/registry/label/rtl.example";
-import { docAnatomy, docDemo, docSource } from "#/registry/source";
+import { docDemo, docSource } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const labelDoc: ComponentDoc = {
@@ -31,7 +31,7 @@ export const labelDoc: ComponentDoc = {
       direction: "rtl",
     },
   ],
-  anatomy: docAnatomy("label"),
+  anatomy: [{ name: "Label" }],
   api: [
     {
       name: "Label",

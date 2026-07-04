@@ -1,7 +1,7 @@
 import { CheckboxGroupHorizontal } from "#/registry/checkbox-group/horizontal.example";
 import { CheckboxGroupPermissions } from "#/registry/checkbox-group/permissions.example";
 import { CheckboxGroupWithDescriptions } from "#/registry/checkbox-group/with-descriptions.example";
-import { docSource, docAnatomy } from "#/registry/source";
+import { docSource } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const checkboxGroupDoc: ComponentDoc = {
@@ -30,7 +30,7 @@ export const checkboxGroupDoc: ComponentDoc = {
       previewClassName: "items-start",
     },
   ],
-  anatomy: docAnatomy("checkbox-group"),
+  anatomy: [{ name: "CheckboxGroup", children: [{ name: "CheckboxGroupItem" }] }],
   api: [
     {
       name: "CheckboxGroup",

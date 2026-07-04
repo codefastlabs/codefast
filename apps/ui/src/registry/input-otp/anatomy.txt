@@ -1,9 +1,0 @@
-import {
-  InputOTP, InputOTPGroup, InputOTPSlot, InputOTPSeparator,
-} from "@codefast/ui/input-otp";
-
-<InputOTP maxLength={6} value={v} onChange={setV}>
-  <InputOTPGroup>
-    <InputOTPSlot index={0} />
-  </InputOTPGroup>
-</InputOTP>

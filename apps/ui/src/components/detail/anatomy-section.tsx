@@ -1,26 +1,31 @@
 import type { ComponentProps } from "react";
 
 import { DocSection } from "#/components/detail/doc-section";
-import { CodeBlock } from "#/components/shared/code-block";
-import { CopyButton } from "#/components/shared/copy-button";
+import { anatomyToRows } from "#/lib/anatomy";
+import type { AnatomyNode } from "#/registry/types";
 
 interface AnatomySectionProps extends Omit<ComponentProps<typeof DocSection>, "id" | "title" | "children"> {
-  readonly code: string;
-  readonly highlightedCode: string;
+  readonly nodes: ReadonlyArray<AnatomyNode>;
 }
 
-/** The "Anatomy" section: the composition skeleton shown verbatim. */
-export function AnatomySection({ code, highlightedCode, ...props }: AnatomySectionProps) {
+/** The "Anatomy" section: the component's parts drawn as a nesting tree. */
+export function AnatomySection({ nodes, ...props }: AnatomySectionProps) {
+  const rows = anatomyToRows(nodes);
+
   return (
     <DocSection
       id="anatomy"
       title="Anatomy"
-      description="How the parts compose. Copy this skeleton and fill in the slots."
+      description="How the parts nest — every slot the component exposes, in composition order."
       {...props}
     >
-      <div className="relative overflow-hidden rounded-2xl border border-ui-border/60">
-        <CopyButton value={code} tone="overlay" className="absolute inset-e-3 top-3 z-10" />
-        <CodeBlock highlightedCode={highlightedCode} />
+      <div className="overflow-x-auto rounded-2xl border border-ui-border/60 bg-ui-surface p-5 font-mono text-sm leading-relaxed">
+        {rows.map((row) => (
+          <div key={row.prefix + row.name} className="whitespace-pre">
+            <span className="text-ui-muted/60">{row.prefix}</span>
+            <span className="text-ui-fg">{row.name}</span>
+          </div>
+        ))}
       </div>
     </DocSection>
   );

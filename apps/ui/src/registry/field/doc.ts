@@ -10,7 +10,7 @@ import { FieldSelect } from "#/registry/field/select.example";
 import { FieldSlider } from "#/registry/field/slider.example";
 import { FieldSwitch } from "#/registry/field/switch.example";
 import { FieldTextarea } from "#/registry/field/textarea.example";
-import { docSource, docAnatomy } from "#/registry/source";
+import { docSource } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const fieldDoc: ComponentDoc = {
@@ -102,7 +102,9 @@ export const fieldDoc: ComponentDoc = {
       source: docSource("field", "textarea"),
     },
   ],
-  anatomy: docAnatomy("field"),
+  anatomy: [
+    { name: "Field", children: [{ name: "FieldLabel" }, { name: "FieldDescription" }, { name: "FieldError" }] },
+  ],
   api: [
     {
       name: "Field",

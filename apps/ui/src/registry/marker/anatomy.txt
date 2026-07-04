@@ -1,6 +1,0 @@
-import { Marker, MarkerIcon, MarkerContent } from "@codefast/ui/marker";
-
-<Marker variant="…">
-  <MarkerIcon>…</MarkerIcon>
-  <MarkerContent>…</MarkerContent>
-</Marker>

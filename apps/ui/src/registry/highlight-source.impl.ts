@@ -2,8 +2,7 @@
  * Server-only highlighter behind `getHighlightedSource` (imported only inside its
  * handler) so Shiki and the raw sources never reach a client chunk. Sources are
  * eager `?raw` imports so they ride in the server bundle: the `/components/<slug>.md`
- * route highlights at runtime, not only at build-time prerender. `.txt` anatomy
- * skeletons are highlighted as tsx.
+ * route highlights at runtime, not only at build-time prerender.
  */
 import type { HighlighterCore } from "shiki/core";
 import { createHighlighterCore } from "shiki/core";
@@ -13,7 +12,7 @@ import type { HighlightedSource } from "#/lib/highlight";
 import type { SourceRef } from "#/registry/types";
 
 /** Raw text of every highlightable registry file, keyed by `SourceRef`. */
-const rawSources = import.meta.glob<string>(["./*/*.example.tsx", "./*/demo.tsx", "./*/anatomy.txt"], {
+const rawSources = import.meta.glob<string>(["./*/*.example.tsx", "./*/demo.tsx"], {
   query: "?raw",
   import: "default",
   eager: true,

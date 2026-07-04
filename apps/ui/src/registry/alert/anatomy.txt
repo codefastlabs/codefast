@@ -1,7 +1,0 @@
-import { Alert, AlertTitle, AlertDescription } from "@codefast/ui/alert";
-
-<Alert variant="destructive">
-  <TriangleAlertIcon />
-  <AlertTitle>…</AlertTitle>
-  <AlertDescription>…</AlertDescription>
-</Alert>

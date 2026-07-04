@@ -1,7 +1,7 @@
 import { PaginationIconsOnly } from "#/registry/pagination/icons-only.example";
 import { PaginationRtl } from "#/registry/pagination/rtl.example";
 import { PaginationSimple } from "#/registry/pagination/simple.example";
-import { docSource, docAnatomy } from "#/registry/source";
+import { docSource } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const paginationDoc: ComponentDoc = {
@@ -30,7 +30,22 @@ export const paginationDoc: ComponentDoc = {
       direction: "rtl",
     },
   ],
-  anatomy: docAnatomy("pagination"),
+  anatomy: [
+    {
+      name: "Pagination",
+      children: [
+        {
+          name: "PaginationContent",
+          children: [
+            { name: "PaginationItem", children: [{ name: "PaginationPrevious" }] },
+            { name: "PaginationItem", children: [{ name: "PaginationLink" }] },
+            { name: "PaginationItem", children: [{ name: "PaginationEllipsis" }] },
+            { name: "PaginationItem", children: [{ name: "PaginationNext" }] },
+          ],
+        },
+      ],
+    },
+  ],
   api: [
     {
       name: "Pagination parts",

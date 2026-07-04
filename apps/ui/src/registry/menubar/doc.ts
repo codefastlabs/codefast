@@ -3,7 +3,7 @@ import { MenubarIcons } from "#/registry/menubar/icons.example";
 import { MenubarRadio } from "#/registry/menubar/radio.example";
 import { MenubarRtl } from "#/registry/menubar/rtl.example";
 import { MenubarSubmenu } from "#/registry/menubar/submenu.example";
-import { docSource, docAnatomy } from "#/registry/source";
+import { docSource } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const menubarDoc: ComponentDoc = {
@@ -46,7 +46,20 @@ export const menubarDoc: ComponentDoc = {
       direction: "rtl",
     },
   ],
-  anatomy: docAnatomy("menubar"),
+  anatomy: [
+    {
+      name: "Menubar",
+      children: [
+        {
+          name: "MenubarMenu",
+          children: [
+            { name: "MenubarTrigger" },
+            { name: "MenubarContent", children: [{ name: "MenubarItem", children: [{ name: "MenubarShortcut" }] }] },
+          ],
+        },
+      ],
+    },
+  ],
   api: [
     {
       name: "Menubar / MenubarMenu",

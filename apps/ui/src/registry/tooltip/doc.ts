@@ -1,4 +1,4 @@
-import { docSource, docAnatomy } from "#/registry/source";
+import { docSource } from "#/registry/source";
 import { TooltipDisabled } from "#/registry/tooltip/disabled.example";
 import { TooltipKeyboard } from "#/registry/tooltip/keyboard.example";
 import { TooltipRtl } from "#/registry/tooltip/rtl.example";
@@ -38,7 +38,12 @@ export const tooltipDoc: ComponentDoc = {
       direction: "rtl",
     },
   ],
-  anatomy: docAnatomy("tooltip"),
+  anatomy: [
+    {
+      name: "TooltipProvider",
+      children: [{ name: "Tooltip", children: [{ name: "TooltipTrigger" }, { name: "TooltipContent" }] }],
+    },
+  ],
   api: [
     {
       name: "TooltipProvider",

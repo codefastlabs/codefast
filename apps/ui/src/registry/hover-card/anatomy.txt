@@ -1,8 +1,0 @@
-import {
-  HoverCard, HoverCardTrigger, HoverCardContent,
-} from "@codefast/ui/hover-card";
-
-<HoverCard>
-  <HoverCardTrigger asChild>…</HoverCardTrigger>
-  <HoverCardContent>…</HoverCardContent>
-</HoverCard>

@@ -1,5 +1,0 @@
-import { ToggleGroup, ToggleGroupItem } from "@codefast/ui/toggle-group";
-
-<ToggleGroup type="single" value={v} onValueChange={setV}>
-  <ToggleGroupItem value="a" aria-label="A">…</ToggleGroupItem>
-</ToggleGroup>

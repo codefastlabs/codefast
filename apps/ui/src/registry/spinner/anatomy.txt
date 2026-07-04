@@ -1,6 +1,0 @@
-import { Spinner } from "@codefast/ui/spinner";
-
-<Spinner className="size-5" />
-
-// with an accessible label
-<Spinner>Loading…</Spinner>

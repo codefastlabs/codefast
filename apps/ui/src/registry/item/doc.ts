@@ -8,7 +8,7 @@ import { ItemLink } from "#/registry/item/link.example";
 import { ItemRtl } from "#/registry/item/rtl.example";
 import { ItemSizeDemo } from "#/registry/item/size.example";
 import { ItemVariant } from "#/registry/item/variant.example";
-import { docSource, docAnatomy } from "#/registry/source";
+import { docSource } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const itemDoc: ComponentDoc = {
@@ -86,7 +86,21 @@ export const itemDoc: ComponentDoc = {
       source: docSource("item", "variant"),
     },
   ],
-  anatomy: docAnatomy("item"),
+  anatomy: [
+    {
+      name: "ItemGroup",
+      children: [
+        {
+          name: "Item",
+          children: [
+            { name: "ItemMedia" },
+            { name: "ItemContent", children: [{ name: "ItemTitle" }, { name: "ItemDescription" }] },
+            { name: "ItemActions" },
+          ],
+        },
+      ],
+    },
+  ],
   api: [
     {
       name: "Item / ItemGroup",

@@ -4,7 +4,7 @@ import { AttachmentOrientation } from "#/registry/attachment/orientation.example
 import { AttachmentSizes } from "#/registry/attachment/sizes.example";
 import { AttachmentStates } from "#/registry/attachment/states.example";
 import { AttachmentTriggerExample } from "#/registry/attachment/trigger.example";
-import { docAnatomy, docSource } from "#/registry/source";
+import { docSource } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const attachmentDoc: ComponentDoc = {
@@ -59,7 +59,22 @@ export const attachmentDoc: ComponentDoc = {
       source: docSource("attachment", "trigger"),
     },
   ],
-  anatomy: docAnatomy("attachment"),
+  anatomy: [
+    {
+      name: "AttachmentGroup",
+      children: [
+        {
+          name: "Attachment",
+          children: [
+            { name: "AttachmentMedia" },
+            { name: "AttachmentContent", children: [{ name: "AttachmentTitle" }, { name: "AttachmentDescription" }] },
+            { name: "AttachmentActions", children: [{ name: "AttachmentAction" }] },
+            { name: "AttachmentTrigger" },
+          ],
+        },
+      ],
+    },
+  ],
   api: [
     {
       name: "Attachment",

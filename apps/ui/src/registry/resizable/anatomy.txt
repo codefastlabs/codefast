@@ -1,7 +1,0 @@
-import { ResizableGroup, ResizablePanel, ResizableSeparator } from "@codefast/ui/resizable";
-
-<ResizableGroup>
-  <ResizablePanel defaultSize={30} minSize={20}>…</ResizablePanel>
-  <ResizableSeparator />
-  <ResizablePanel defaultSize={70}>…</ResizablePanel>
-</ResizableGroup>

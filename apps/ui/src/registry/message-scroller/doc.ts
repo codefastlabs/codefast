@@ -10,7 +10,7 @@ import { MessageScrollerPreviousContext } from "#/registry/message-scroller/prev
 import { MessageScrollerScrollable } from "#/registry/message-scroller/scrollable.example";
 import { MessageScrollerStreaming } from "#/registry/message-scroller/streaming.example";
 import { MessageScrollerVisibility } from "#/registry/message-scroller/visibility.example";
-import { docAnatomy, docDemo, docSource } from "#/registry/source";
+import { docDemo, docSource } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const messageScrollerDoc: ComponentDoc = {
@@ -124,7 +124,23 @@ export const messageScrollerDoc: ComponentDoc = {
       previewClassName: "block",
     },
   ],
-  anatomy: docAnatomy("message-scroller"),
+  anatomy: [
+    {
+      name: "MessageScrollerProvider",
+      children: [
+        {
+          name: "MessageScroller",
+          children: [
+            {
+              name: "MessageScrollerViewport",
+              children: [{ name: "MessageScrollerContent", children: [{ name: "MessageScrollerItem" }] }],
+            },
+            { name: "MessageScrollerButton" },
+          ],
+        },
+      ],
+    },
+  ],
   api: [
     {
       name: "MessageScrollerProvider",

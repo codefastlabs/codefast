@@ -5,7 +5,7 @@ import { AccordionDemo } from "#/registry/accordion/demo";
 import { AccordionDisabled } from "#/registry/accordion/disabled.example";
 import { AccordionMultiple } from "#/registry/accordion/multiple.example";
 import { AccordionRtl } from "#/registry/accordion/rtl.example";
-import { docAnatomy, docDemo, docSource } from "#/registry/source";
+import { docDemo, docSource } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const accordionDoc: ComponentDoc = {
@@ -68,7 +68,12 @@ export const accordionDoc: ComponentDoc = {
       direction: "rtl",
     },
   ],
-  anatomy: docAnatomy("accordion"),
+  anatomy: [
+    {
+      name: "Accordion",
+      children: [{ name: "AccordionItem", children: [{ name: "AccordionTrigger" }, { name: "AccordionContent" }] }],
+    },
+  ],
   api: [
     {
       name: "Accordion",

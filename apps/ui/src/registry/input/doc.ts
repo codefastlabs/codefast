@@ -13,7 +13,7 @@ import { InputInputGroup } from "#/registry/input/input-group.example";
 import { InputInvalid } from "#/registry/input/invalid.example";
 import { InputRequired } from "#/registry/input/required.example";
 import { InputRtl } from "#/registry/input/rtl.example";
-import { docSource, docAnatomy } from "#/registry/source";
+import { docSource } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const inputDoc: ComponentDoc = {
@@ -131,7 +131,7 @@ export const inputDoc: ComponentDoc = {
       direction: "rtl",
     },
   ],
-  anatomy: docAnatomy("input"),
+  anatomy: [{ name: "Input" }],
   api: [
     {
       name: "Input",

@@ -1,6 +1,6 @@
 import { NavigationMenuDemo } from "#/registry/navigation-menu/demo";
 import { NavigationMenuRtl } from "#/registry/navigation-menu/rtl.example";
-import { docAnatomy, docDemo, docSource } from "#/registry/source";
+import { docDemo, docSource } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const navigationMenuDoc: ComponentDoc = {
@@ -21,7 +21,22 @@ export const navigationMenuDoc: ComponentDoc = {
       direction: "rtl",
     },
   ],
-  anatomy: docAnatomy("navigation-menu"),
+  anatomy: [
+    {
+      name: "NavigationMenu",
+      children: [
+        {
+          name: "NavigationMenuList",
+          children: [
+            {
+              name: "NavigationMenuItem",
+              children: [{ name: "NavigationMenuTrigger" }, { name: "NavigationMenuContent" }],
+            },
+          ],
+        },
+      ],
+    },
+  ],
   api: [
     {
       name: "NavigationMenu",

@@ -1,6 +1,0 @@
-import { Avatar, AvatarImage, AvatarFallback } from "@codefast/ui/avatar";
-
-<Avatar>
-  <AvatarImage src="…" alt="…" />
-  <AvatarFallback>AB</AvatarFallback>
-</Avatar>

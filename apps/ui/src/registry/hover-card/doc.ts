@@ -1,7 +1,7 @@
 import { HoverCardDemo } from "#/registry/hover-card/demo.example";
 import { HoverCardRtl } from "#/registry/hover-card/rtl.example";
 import { HoverCardSides } from "#/registry/hover-card/sides.example";
-import { docSource, docAnatomy } from "#/registry/source";
+import { docSource } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const hoverCardDoc: ComponentDoc = {
@@ -29,7 +29,7 @@ export const hoverCardDoc: ComponentDoc = {
       source: docSource("hover-card", "sides"),
     },
   ],
-  anatomy: docAnatomy("hover-card"),
+  anatomy: [{ name: "HoverCard", children: [{ name: "HoverCardTrigger" }, { name: "HoverCardContent" }] }],
   api: [
     {
       name: "HoverCard",

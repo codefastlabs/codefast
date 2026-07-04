@@ -5,7 +5,7 @@ import { AlertDialogWithMedia } from "#/registry/alert-dialog/media.example";
 import { AlertDialogRtl } from "#/registry/alert-dialog/rtl.example";
 import { AlertDialogSmallWithMedia } from "#/registry/alert-dialog/small-media.example";
 import { AlertDialogSmall } from "#/registry/alert-dialog/small.example";
-import { docAnatomy, docDemo, docSource } from "#/registry/source";
+import { docDemo, docSource } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const alertDialogDoc: ComponentDoc = {
@@ -68,7 +68,29 @@ export const alertDialogDoc: ComponentDoc = {
       direction: "rtl",
     },
   ],
-  anatomy: docAnatomy("alert-dialog"),
+  anatomy: [
+    {
+      name: "AlertDialog",
+      children: [
+        { name: "AlertDialogTrigger" },
+        {
+          name: "AlertDialogContent",
+          children: [
+            {
+              name: "AlertDialogHeader",
+              children: [
+                { name: "AlertDialogMedia" },
+                { name: "AlertDialogTitle" },
+                { name: "AlertDialogDescription" },
+              ],
+            },
+            { name: "AlertDialogBody" },
+            { name: "AlertDialogFooter", children: [{ name: "AlertDialogCancel" }, { name: "AlertDialogAction" }] },
+          ],
+        },
+      ],
+    },
+  ],
   api: [
     {
       name: "AlertDialog",

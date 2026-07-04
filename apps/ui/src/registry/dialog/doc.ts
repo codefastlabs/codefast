@@ -3,7 +3,7 @@ import { DialogNoCloseButton } from "#/registry/dialog/no-close-button.example";
 import { DialogRtl } from "#/registry/dialog/rtl.example";
 import { DialogScrollableContent } from "#/registry/dialog/scrollable-content.example";
 import { DialogStickyFooter } from "#/registry/dialog/sticky-footer.example";
-import { docSource, docAnatomy } from "#/registry/source";
+import { docSource } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const dialogDoc: ComponentDoc = {
@@ -45,7 +45,22 @@ export const dialogDoc: ComponentDoc = {
       source: docSource("dialog", "sticky-footer"),
     },
   ],
-  anatomy: docAnatomy("dialog"),
+  anatomy: [
+    {
+      name: "Dialog",
+      children: [
+        { name: "DialogTrigger" },
+        {
+          name: "DialogContent",
+          children: [
+            { name: "DialogHeader", children: [{ name: "DialogTitle" }, { name: "DialogDescription" }] },
+            { name: "DialogBody" },
+            { name: "DialogFooter", children: [{ name: "DialogClose" }] },
+          ],
+        },
+      ],
+    },
+  ],
   api: [
     {
       name: "Dialog",

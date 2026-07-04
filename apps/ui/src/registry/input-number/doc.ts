@@ -1,7 +1,7 @@
 import { InputNumberFormats } from "#/registry/input-number/formats.example";
 import { InputNumberQuantity } from "#/registry/input-number/quantity.example";
 import { InputNumberStates } from "#/registry/input-number/states.example";
-import { docSource, docAnatomy } from "#/registry/source";
+import { docSource } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const inputNumberDoc: ComponentDoc = {
@@ -31,7 +31,7 @@ export const inputNumberDoc: ComponentDoc = {
       previewClassName: "items-start",
     },
   ],
-  anatomy: docAnatomy("input-number"),
+  anatomy: [{ name: "InputNumber" }],
   api: [
     {
       name: "InputNumber",

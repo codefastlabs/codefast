@@ -1,4 +1,4 @@
-import { docSource, docAnatomy } from "#/registry/source";
+import { docSource } from "#/registry/source";
 import { SpinnerBadge } from "#/registry/spinner/badge.example";
 import { SpinnerButton } from "#/registry/spinner/button.example";
 import { SpinnerCustom } from "#/registry/spinner/custom.example";
@@ -63,7 +63,7 @@ export const spinnerDoc: ComponentDoc = {
       source: docSource("spinner", "size"),
     },
   ],
-  anatomy: docAnatomy("spinner"),
+  anatomy: [{ name: "Spinner" }, { name: "Spinner" }],
   api: [
     {
       name: "Spinner",

@@ -8,7 +8,7 @@ import { BubblePopover } from "#/registry/bubble/popover.example";
 import { BubbleReactionsDemo } from "#/registry/bubble/reactions.example";
 import { BubbleTooltip } from "#/registry/bubble/tooltip.example";
 import { BubbleVariants } from "#/registry/bubble/variants.example";
-import { docAnatomy, docSource } from "#/registry/source";
+import { docSource } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const bubbleDoc: ComponentDoc = {
@@ -91,7 +91,12 @@ export const bubbleDoc: ComponentDoc = {
       source: docSource("bubble", "tooltip"),
     },
   ],
-  anatomy: docAnatomy("bubble"),
+  anatomy: [
+    {
+      name: "BubbleGroup",
+      children: [{ name: "Bubble", children: [{ name: "BubbleContent" }, { name: "BubbleReactions" }] }],
+    },
+  ],
   api: [
     {
       name: "Bubble",

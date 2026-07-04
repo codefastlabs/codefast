@@ -4,7 +4,7 @@ import { RadioGroupDisabled } from "#/registry/radio-group/disabled.example";
 import { RadioGroupFieldset } from "#/registry/radio-group/fieldset.example";
 import { RadioGroupInvalid } from "#/registry/radio-group/invalid.example";
 import { RadioGroupRtl } from "#/registry/radio-group/rtl.example";
-import { docSource, docAnatomy } from "#/registry/source";
+import { docSource } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const radioGroupDoc: ComponentDoc = {
@@ -53,7 +53,7 @@ export const radioGroupDoc: ComponentDoc = {
       direction: "rtl",
     },
   ],
-  anatomy: docAnatomy("radio-group"),
+  anatomy: [{ name: "RadioGroup", children: [{ name: "RadioGroupItem" }] }],
   api: [
     {
       name: "RadioGroup",

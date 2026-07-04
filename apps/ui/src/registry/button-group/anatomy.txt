@@ -1,6 +1,0 @@
-import { ButtonGroup } from "@codefast/ui/button-group";
-
-<ButtonGroup orientation="horizontal">
-  <Button variant="outline">A</Button>
-  <Button variant="outline">B</Button>
-</ButtonGroup>

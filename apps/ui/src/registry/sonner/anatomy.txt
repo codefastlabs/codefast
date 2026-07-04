@@ -1,7 +1,0 @@
-import { Toaster, toast } from "@codefast/ui/sonner";
-
-// once, near the root of your app
-<Toaster />
-
-// anywhere
-toast.success("Saved!");

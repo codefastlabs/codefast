@@ -5,7 +5,7 @@ import { ChartBarDemoTooltip } from "#/registry/chart/example-tooltip.example";
 import { ChartExample } from "#/registry/chart/example.example";
 import { ChartRtl } from "#/registry/chart/rtl.example";
 import { ChartTooltipDemo } from "#/registry/chart/tooltip.example";
-import { docSource, docAnatomy } from "#/registry/source";
+import { docSource } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const chartDoc: ComponentDoc = {
@@ -62,7 +62,7 @@ export const chartDoc: ComponentDoc = {
       source: docSource("chart", "tooltip"),
     },
   ],
-  anatomy: docAnatomy("chart"),
+  anatomy: [{ name: "ChartContainer", children: [{ name: "ChartTooltip" }] }],
   api: [
     {
       name: "ChartContainer",

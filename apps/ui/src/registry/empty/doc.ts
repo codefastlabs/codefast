@@ -5,7 +5,7 @@ import { EmptyInCard } from "#/registry/empty/card.example";
 import { EmptyInputGroup } from "#/registry/empty/input-group.example";
 import { EmptyOutline } from "#/registry/empty/outline.example";
 import { EmptyRtl } from "#/registry/empty/rtl.example";
-import { docSource, docAnatomy } from "#/registry/source";
+import { docSource } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const emptyDoc: ComponentDoc = {
@@ -61,7 +61,18 @@ export const emptyDoc: ComponentDoc = {
       direction: "rtl",
     },
   ],
-  anatomy: docAnatomy("empty"),
+  anatomy: [
+    {
+      name: "Empty",
+      children: [
+        {
+          name: "EmptyHeader",
+          children: [{ name: "EmptyMedia" }, { name: "EmptyTitle" }, { name: "EmptyDescription" }],
+        },
+        { name: "EmptyContent" },
+      ],
+    },
+  ],
   api: [
     {
       name: "Empty",

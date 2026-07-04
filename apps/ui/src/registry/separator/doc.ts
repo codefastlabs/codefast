@@ -2,7 +2,7 @@ import { SeparatorList } from "#/registry/separator/list.example";
 import { SeparatorMenu } from "#/registry/separator/menu.example";
 import { SeparatorRtl } from "#/registry/separator/rtl.example";
 import { SeparatorVertical } from "#/registry/separator/vertical.example";
-import { docSource, docAnatomy } from "#/registry/source";
+import { docSource } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const separatorDoc: ComponentDoc = {
@@ -37,7 +37,7 @@ export const separatorDoc: ComponentDoc = {
       source: docSource("separator", "vertical"),
     },
   ],
-  anatomy: docAnatomy("separator"),
+  anatomy: [{ name: "Separator" }, { name: "Separator" }],
   api: [
     {
       name: "Separator",

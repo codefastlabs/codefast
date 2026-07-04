@@ -4,7 +4,7 @@ import { BadgeAsLink } from "#/registry/badge/link.example";
 import { BadgeRtl } from "#/registry/badge/rtl.example";
 import { BadgeWithSpinner } from "#/registry/badge/spinner.example";
 import { BadgeVariants } from "#/registry/badge/variants.example";
-import { docSource, docAnatomy } from "#/registry/source";
+import { docSource } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const badgeDoc: ComponentDoc = {
@@ -56,7 +56,7 @@ export const badgeDoc: ComponentDoc = {
       source: docSource("badge", "link"),
     },
   ],
-  anatomy: docAnatomy("badge"),
+  anatomy: [{ name: "Badge" }],
   api: [
     {
       name: "Badge",

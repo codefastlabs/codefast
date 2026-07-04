@@ -2,7 +2,7 @@ import { AspectRatioDemo } from "#/registry/aspect-ratio/demo";
 import { AspectRatioPortrait } from "#/registry/aspect-ratio/portrait.example";
 import { AspectRatioRtl } from "#/registry/aspect-ratio/rtl.example";
 import { AspectRatioSquare } from "#/registry/aspect-ratio/square.example";
-import { docAnatomy, docDemo, docSource } from "#/registry/source";
+import { docDemo, docSource } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const aspectRatioDoc: ComponentDoc = {
@@ -37,7 +37,7 @@ export const aspectRatioDoc: ComponentDoc = {
       direction: "rtl",
     },
   ],
-  anatomy: docAnatomy("aspect-ratio"),
+  anatomy: [{ name: "AspectRatio" }],
   api: [
     {
       name: "AspectRatio",

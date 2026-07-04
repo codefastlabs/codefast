@@ -6,7 +6,7 @@ import { CheckboxIndeterminate } from "#/registry/checkbox/indeterminate.example
 import { CheckboxInvalid } from "#/registry/checkbox/invalid.example";
 import { CheckboxRtl } from "#/registry/checkbox/rtl.example";
 import { CheckboxInTable } from "#/registry/checkbox/table.example";
-import { docSource, docAnatomy } from "#/registry/source";
+import { docSource } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const checkboxDoc: ComponentDoc = {
@@ -71,7 +71,7 @@ export const checkboxDoc: ComponentDoc = {
       source: docSource("checkbox", "table"),
     },
   ],
-  anatomy: docAnatomy("checkbox"),
+  anatomy: [{ name: "Checkbox" }],
   api: [
     {
       name: "Checkbox",

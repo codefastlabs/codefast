@@ -1,4 +1,4 @@
-import { docSource, docAnatomy } from "#/registry/source";
+import { docSource } from "#/registry/source";
 import { SwitchChoiceCard } from "#/registry/switch/choice-card.example";
 import { SwitchDescription } from "#/registry/switch/description.example";
 import { SwitchDisabled } from "#/registry/switch/disabled.example";
@@ -54,7 +54,7 @@ export const switchDoc: ComponentDoc = {
       direction: "rtl",
     },
   ],
-  anatomy: docAnatomy("switch"),
+  anatomy: [{ name: "Switch" }],
   api: [
     {
       name: "Switch",

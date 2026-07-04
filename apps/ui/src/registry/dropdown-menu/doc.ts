@@ -10,7 +10,7 @@ import { DropdownMenuRadioIcons } from "#/registry/dropdown-menu/radio-icons.exa
 import { DropdownMenuRtl } from "#/registry/dropdown-menu/rtl.example";
 import { DropdownMenuShortcuts } from "#/registry/dropdown-menu/shortcuts.example";
 import { DropdownMenuSubmenu } from "#/registry/dropdown-menu/submenu.example";
-import { docSource, docAnatomy } from "#/registry/source";
+import { docSource } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const dropdownMenuDoc: ComponentDoc = {
@@ -102,7 +102,15 @@ export const dropdownMenuDoc: ComponentDoc = {
       source: docSource("dropdown-menu", "submenu"),
     },
   ],
-  anatomy: docAnatomy("dropdown-menu"),
+  anatomy: [
+    {
+      name: "DropdownMenu",
+      children: [
+        { name: "DropdownMenuTrigger" },
+        { name: "DropdownMenuContent", children: [{ name: "DropdownMenuItem" }] },
+      ],
+    },
+  ],
   api: [
     {
       name: "DropdownMenuCheckboxItem",

@@ -5,7 +5,7 @@ import { MessageHeaderFooter } from "#/registry/message/header-footer.example";
 import { MessageMarkdown } from "#/registry/message/markdown.example";
 import { MessageAttachment } from "#/registry/message/message-attachment.example";
 import { MessageThread } from "#/registry/message/thread.example";
-import { docAnatomy, docSource } from "#/registry/source";
+import { docSource } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const messageDoc: ComponentDoc = {
@@ -61,7 +61,20 @@ export const messageDoc: ComponentDoc = {
       source: docSource("message", "markdown"),
     },
   ],
-  anatomy: docAnatomy("message"),
+  anatomy: [
+    {
+      name: "MessageGroup",
+      children: [
+        {
+          name: "Message",
+          children: [
+            { name: "MessageAvatar" },
+            { name: "MessageContent", children: [{ name: "MessageHeader" }, { name: "MessageFooter" }] },
+          ],
+        },
+      ],
+    },
+  ],
   api: [
     {
       name: "Message",

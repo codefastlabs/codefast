@@ -1,8 +1,0 @@
-import { Bubble, BubbleGroup, BubbleContent, BubbleReactions } from "@codefast/ui/bubble";
-
-<BubbleGroup>
-  <Bubble variant="…" align="…">
-    <BubbleContent>…</BubbleContent>
-    <BubbleReactions side="…" align="…">…</BubbleReactions>
-  </Bubble>
-</BubbleGroup>

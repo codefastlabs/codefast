@@ -1,7 +1,7 @@
 import { FormContact } from "#/registry/form/contact.example";
 import { FormNewsletter } from "#/registry/form/newsletter.example";
 import { FormSignIn } from "#/registry/form/sign-in.example";
-import { docSource, docAnatomy } from "#/registry/source";
+import { docSource } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const formDoc: ComponentDoc = {
@@ -31,7 +31,10 @@ export const formDoc: ComponentDoc = {
       previewClassName: "items-start",
     },
   ],
-  anatomy: docAnatomy("form"),
+  anatomy: [
+    { name: "Field", children: [{ name: "FieldLabel" }, { name: "Input" }, { name: "FieldError" }] },
+    { name: "Button" },
+  ],
   api: [
     {
       name: "Form (react-hook-form)",

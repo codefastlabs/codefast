@@ -1,7 +1,7 @@
 import { ProgressCircleAnimated } from "#/registry/progress-circle/animated.example";
 import { ProgressCircleDashboard } from "#/registry/progress-circle/dashboard.example";
 import { ProgressCircleValues } from "#/registry/progress-circle/values.example";
-import { docSource, docAnatomy } from "#/registry/source";
+import { docSource } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const progressCircleDoc: ComponentDoc = {
@@ -28,7 +28,7 @@ export const progressCircleDoc: ComponentDoc = {
       source: docSource("progress-circle", "dashboard"),
     },
   ],
-  anatomy: docAnatomy("progress-circle"),
+  anatomy: [{ name: "ProgressCircle" }],
   api: [
     {
       name: "ProgressCircle",

@@ -8,7 +8,7 @@ import { AvatarGroupCountExample } from "#/registry/avatar/group-count.example";
 import { AvatarGroupExample } from "#/registry/avatar/group.example";
 import { AvatarRtl } from "#/registry/avatar/rtl.example";
 import { AvatarSizeExample } from "#/registry/avatar/size.example";
-import { docSource, docAnatomy } from "#/registry/source";
+import { docSource } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const avatarDoc: ComponentDoc = {
@@ -87,7 +87,7 @@ export const avatarDoc: ComponentDoc = {
       source: docSource("avatar", "size"),
     },
   ],
-  anatomy: docAnatomy("avatar"),
+  anatomy: [{ name: "Avatar", children: [{ name: "AvatarImage" }, { name: "AvatarFallback" }] }],
   api: [
     {
       name: "Avatar",

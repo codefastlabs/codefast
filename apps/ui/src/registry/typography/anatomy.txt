@@ -1,5 +1,0 @@
-<h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight text-balance">…</h1>
-<p className="leading-7 [&:not(:first-child)]:mt-6">…</p>
-<blockquote className="mt-6 border-l-2 pl-6 italic">…</blockquote>
-<ul className="my-6 ml-6 list-disc [&>li]:mt-2">…</ul>
-<code className="rounded bg-muted px-[0.3rem] py-[0.2rem] font-mono text-sm font-semibold">…</code>

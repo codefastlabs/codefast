@@ -1,5 +1,0 @@
-import { Input } from "@codefast/ui/input";
-import { Label } from "@codefast/ui/label";
-
-<Label htmlFor="email">Email</Label>
-<Input id="email" type="email" />

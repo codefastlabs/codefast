@@ -4,7 +4,7 @@ import { BreadcrumbEllipsisDemo } from "#/registry/breadcrumb/ellipsis.example";
 import { BreadcrumbLinkDemo } from "#/registry/breadcrumb/link.example";
 import { BreadcrumbRtl } from "#/registry/breadcrumb/rtl.example";
 import { BreadcrumbSeparatorDemo } from "#/registry/breadcrumb/separator.example";
-import { docSource, docAnatomy } from "#/registry/source";
+import { docSource } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const breadcrumbDoc: ComponentDoc = {
@@ -55,7 +55,21 @@ export const breadcrumbDoc: ComponentDoc = {
       source: docSource("breadcrumb", "separator"),
     },
   ],
-  anatomy: docAnatomy("breadcrumb"),
+  anatomy: [
+    {
+      name: "Breadcrumb",
+      children: [
+        {
+          name: "BreadcrumbList",
+          children: [
+            { name: "BreadcrumbItem", children: [{ name: "BreadcrumbLink" }] },
+            { name: "BreadcrumbSeparator" },
+            { name: "BreadcrumbItem", children: [{ name: "BreadcrumbPage" }] },
+          ],
+        },
+      ],
+    },
+  ],
   api: [
     {
       name: "Breadcrumb parts",

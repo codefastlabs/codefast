@@ -6,7 +6,7 @@ import { MarkerSeparator } from "#/registry/marker/separator.example";
 import { MarkerShimmer } from "#/registry/marker/shimmer.example";
 import { MarkerStatus } from "#/registry/marker/status.example";
 import { MarkerVariants } from "#/registry/marker/variants.example";
-import { docAnatomy, docSource } from "#/registry/source";
+import { docSource } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const markerDoc: ComponentDoc = {
@@ -69,7 +69,7 @@ export const markerDoc: ComponentDoc = {
       source: docSource("marker", "link-button"),
     },
   ],
-  anatomy: docAnatomy("marker"),
+  anatomy: [{ name: "Marker", children: [{ name: "MarkerIcon" }, { name: "MarkerContent" }] }],
   api: [
     {
       name: "Marker",

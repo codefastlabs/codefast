@@ -4,7 +4,7 @@ import { CommandWithGroups } from "#/registry/command/groups.example";
 import { CommandRtl } from "#/registry/command/rtl.example";
 import { CommandManyItems } from "#/registry/command/scrollable.example";
 import { CommandWithShortcuts } from "#/registry/command/shortcuts.example";
-import { docSource, docAnatomy } from "#/registry/source";
+import { docSource } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const commandDoc: ComponentDoc = {
@@ -56,7 +56,18 @@ export const commandDoc: ComponentDoc = {
       source: docSource("command", "shortcuts"),
     },
   ],
-  anatomy: docAnatomy("command"),
+  anatomy: [
+    {
+      name: "Command",
+      children: [
+        { name: "CommandInput" },
+        {
+          name: "CommandList",
+          children: [{ name: "CommandEmpty" }, { name: "CommandGroup", children: [{ name: "CommandItem" }] }],
+        },
+      ],
+    },
+  ],
   api: [
     {
       name: "Command",

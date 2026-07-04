@@ -1,4 +1,4 @@
-import { docSource, docAnatomy } from "#/registry/source";
+import { docSource } from "#/registry/source";
 import { ToggleGroupDisabled } from "#/registry/toggle-group/disabled.example";
 import { ToggleGroupFontWeightSelector } from "#/registry/toggle-group/font-weight-selector.example";
 import { ToggleGroupOutline } from "#/registry/toggle-group/outline.example";
@@ -61,7 +61,7 @@ export const toggleGroupDoc: ComponentDoc = {
       source: docSource("toggle-group", "vertical"),
     },
   ],
-  anatomy: docAnatomy("toggle-group"),
+  anatomy: [{ name: "ToggleGroup", children: [{ name: "ToggleGroupItem" }] }],
   api: [
     {
       name: "ToggleGroup",

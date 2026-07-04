@@ -5,7 +5,7 @@ import { CarouselPlugin } from "#/registry/carousel/plugin.example";
 import { CarouselRtl } from "#/registry/carousel/rtl.example";
 import { CarouselSize } from "#/registry/carousel/size.example";
 import { CarouselSpacing } from "#/registry/carousel/spacing.example";
-import { docSource, docAnatomy } from "#/registry/source";
+import { docSource } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const carouselDoc: ComponentDoc = {
@@ -62,7 +62,16 @@ export const carouselDoc: ComponentDoc = {
       source: docSource("carousel", "spacing"),
     },
   ],
-  anatomy: docAnatomy("carousel"),
+  anatomy: [
+    {
+      name: "Carousel",
+      children: [
+        { name: "CarouselContent", children: [{ name: "CarouselItem" }] },
+        { name: "CarouselPrevious" },
+        { name: "CarouselNext" },
+      ],
+    },
+  ],
   api: [
     {
       name: "Carousel",

@@ -1,8 +1,0 @@
-import { Radio } from "@codefast/ui/radio";
-
-<Radio
-  name="size"
-  value="md"
-  checked={selected === "md"}
-  onValueChange={setSelected}
-/>

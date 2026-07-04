@@ -1,4 +1,4 @@
-import { docSource, docAnatomy } from "#/registry/source";
+import { docSource } from "#/registry/source";
 import { ToggleDisabled } from "#/registry/toggle/disabled.example";
 import { ToggleOutline } from "#/registry/toggle/outline.example";
 import { ToggleRtl } from "#/registry/toggle/rtl.example";
@@ -45,7 +45,7 @@ export const toggleDoc: ComponentDoc = {
       source: docSource("toggle", "text"),
     },
   ],
-  anatomy: docAnatomy("toggle"),
+  anatomy: [{ name: "Toggle" }],
   api: [
     {
       name: "Toggle",

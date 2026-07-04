@@ -2,7 +2,7 @@ import { NativeSelectDisabled } from "#/registry/native-select/disabled.example"
 import { NativeSelectGroups } from "#/registry/native-select/groups.example";
 import { NativeSelectInvalid } from "#/registry/native-select/invalid.example";
 import { NativeSelectRtl } from "#/registry/native-select/rtl.example";
-import { docSource, docAnatomy } from "#/registry/source";
+import { docSource } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const nativeSelectDoc: ComponentDoc = {
@@ -38,7 +38,7 @@ export const nativeSelectDoc: ComponentDoc = {
       direction: "rtl",
     },
   ],
-  anatomy: docAnatomy("native-select"),
+  anatomy: [{ name: "NativeSelect", children: [{ name: "NativeSelectOption" }] }],
   api: [
     {
       name: "NativeSelect",

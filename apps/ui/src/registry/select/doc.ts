@@ -4,7 +4,7 @@ import { SelectGroups } from "#/registry/select/groups.example";
 import { SelectInvalid } from "#/registry/select/invalid.example";
 import { SelectRtl } from "#/registry/select/rtl.example";
 import { SelectScrollable } from "#/registry/select/scrollable.example";
-import { docSource, docAnatomy } from "#/registry/source";
+import { docSource } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const selectDoc: ComponentDoc = {
@@ -54,7 +54,18 @@ export const selectDoc: ComponentDoc = {
       source: docSource("select", "scrollable"),
     },
   ],
-  anatomy: docAnatomy("select"),
+  anatomy: [
+    {
+      name: "Select",
+      children: [
+        { name: "SelectTrigger", children: [{ name: "SelectValue" }] },
+        {
+          name: "SelectContent",
+          children: [{ name: "SelectGroup", children: [{ name: "SelectLabel" }, { name: "SelectItem" }] }],
+        },
+      ],
+    },
+  ],
   api: [
     {
       name: "Select",

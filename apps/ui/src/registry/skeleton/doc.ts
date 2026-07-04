@@ -4,7 +4,7 @@ import { SkeletonForm } from "#/registry/skeleton/form.example";
 import { SkeletonRtl } from "#/registry/skeleton/rtl.example";
 import { SkeletonTable } from "#/registry/skeleton/table.example";
 import { SkeletonText } from "#/registry/skeleton/text.example";
-import { docSource, docAnatomy } from "#/registry/source";
+import { docSource } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const skeletonDoc: ComponentDoc = {
@@ -55,7 +55,7 @@ export const skeletonDoc: ComponentDoc = {
       source: docSource("skeleton", "table"),
     },
   ],
-  anatomy: docAnatomy("skeleton"),
+  anatomy: [{ name: "Skeleton" }],
   api: [
     {
       name: "Skeleton",

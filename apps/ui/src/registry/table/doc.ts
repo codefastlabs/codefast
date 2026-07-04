@@ -1,4 +1,4 @@
-import { docSource, docAnatomy } from "#/registry/source";
+import { docSource } from "#/registry/source";
 import { TableActions } from "#/registry/table/actions.example";
 import { TableFooterExample } from "#/registry/table/footer.example";
 import { TableRtl } from "#/registry/table/rtl.example";
@@ -32,7 +32,17 @@ export const tableDoc: ComponentDoc = {
       previewClassName: "block",
     },
   ],
-  anatomy: docAnatomy("table"),
+  anatomy: [
+    {
+      name: "Table",
+      children: [
+        { name: "TableCaption" },
+        { name: "TableHeader", children: [{ name: "TableRow", children: [{ name: "TableHead" }] }] },
+        { name: "TableBody", children: [{ name: "TableRow", children: [{ name: "TableCell" }] }] },
+        { name: "TableFooter", children: [{ name: "TableRow", children: [{ name: "TableCell" }] }] },
+      ],
+    },
+  ],
   api: [
     {
       name: "Table parts",
