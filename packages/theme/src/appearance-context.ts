@@ -16,5 +16,7 @@ type AppearanceContextValue = null | AppearanceContextType;
  *
  * @see {@link AppearanceProvider} - Provider component
  * @see {@link useAppearance} - Consumer hook
+ *
+ * @since 0.5.0-canary.2
  */
 export const AppearanceContext = createContext<AppearanceContextValue>(null);

@@ -18,6 +18,9 @@ const APPEARANCE_VALID_CHECK = appearances.map((s) => `s===${toScriptSafe(s)}`).
  * Props
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.5.0-canary.2
+ */
 export type AppearanceScriptProps = {
   /**
    * Fallback preference when the storage entry is absent or unrecognised.
@@ -65,6 +68,8 @@ export type AppearanceScriptProps = {
  *   <AppearanceScript />
  * </head>
  * ```
+ *
+ * @since 0.5.0-canary.2
  */
 export function AppearanceScript({
   nonce,

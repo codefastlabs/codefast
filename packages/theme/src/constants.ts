@@ -8,6 +8,8 @@ import type { Appearance, ColorScheme } from "#/appearance";
  * Default appearance preference when no stored value exists.
  *
  * Set to 'automatic' to respect OS preference by default.
+ *
+ * @since 0.5.0-canary.2
  */
 export const DEFAULT_APPEARANCE: Appearance = "automatic";
 
@@ -15,6 +17,8 @@ export const DEFAULT_APPEARANCE: Appearance = "automatic";
  * Fallback color scheme when the system color scheme cannot be detected.
  *
  * Applies wherever `window.matchMedia()` is unavailable, e.g. during server render.
+ *
+ * @since 0.5.0-canary.2
  */
 export const DEFAULT_COLOR_SCHEME: ColorScheme = "dark";
 

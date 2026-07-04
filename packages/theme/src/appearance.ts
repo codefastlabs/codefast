@@ -14,6 +14,8 @@ import { z } from "zod";
  *
  * Acts as the single source of truth for all appearance-related types.
  * Valid values: 'light', 'dark', 'automatic'.
+ *
+ * @since 0.5.0-canary.2
  */
 export const appearanceSchema = z.enum(["light", "dark", "automatic"]);
 
@@ -23,6 +25,8 @@ export const appearanceSchema = z.enum(["light", "dark", "automatic"]);
  * - `'light'` - Force light appearance
  * - `'dark'` - Force dark appearance
  * - `'automatic'` - Follow OS preference
+ *
+ * @since 0.5.0-canary.2
  */
 export type Appearance = z.infer<typeof appearanceSchema>;
 
@@ -30,6 +34,8 @@ export type Appearance = z.infer<typeof appearanceSchema>;
  * Color scheme actually applied to the UI after resolving 'automatic'.
  *
  * When the appearance is 'automatic', this reflects the OS preference (light/dark).
+ *
+ * @since 0.5.0-canary.2
  */
 export type ColorScheme = Exclude<Appearance, "automatic">;
 
@@ -37,6 +43,8 @@ export type ColorScheme = Exclude<Appearance, "automatic">;
  * Array of all available appearance options: `['light', 'dark', 'automatic']`.
  *
  * Useful for rendering appearance selectors in UI components.
+ *
+ * @since 0.5.0-canary.2
  */
 export const appearances = appearanceSchema.options;
 
@@ -47,6 +55,8 @@ export const appearances = appearanceSchema.options;
  * - `colorScheme` - Color scheme actually applied (automatic resolved to light/dark)
  * - `setAppearance` - Async function to update the preference (triggers optimistic update)
  * - `isPending` - True while an appearance change is being persisted
+ *
+ * @since 0.5.0-canary.2
  */
 export type AppearanceContextType = {
   readonly isPending: boolean;
