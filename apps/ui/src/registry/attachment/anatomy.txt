@@ -1,0 +1,19 @@
+import {
+  AttachmentGroup, Attachment, AttachmentMedia, AttachmentContent,
+  AttachmentTitle, AttachmentDescription, AttachmentActions,
+  AttachmentAction, AttachmentTrigger,
+} from "@codefast/ui/attachment";
+
+<AttachmentGroup>
+  <Attachment state="…" size="…" orientation="…">
+    <AttachmentMedia variant="…">…</AttachmentMedia>
+    <AttachmentContent>
+      <AttachmentTitle>…</AttachmentTitle>
+      <AttachmentDescription>…</AttachmentDescription>
+    </AttachmentContent>
+    <AttachmentActions>
+      <AttachmentAction>…</AttachmentAction>
+    </AttachmentActions>
+    <AttachmentTrigger />
+  </Attachment>
+</AttachmentGroup>
