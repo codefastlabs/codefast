@@ -1,18 +1,11 @@
 import { Toggle } from "@codefast/ui/toggle";
-import { BoldIcon, ItalicIcon, UnderlineIcon } from "lucide-react";
+import { BookmarkIcon } from "lucide-react";
 
 export function ToggleDemo() {
   return (
-    <div className="flex gap-1">
-      <Toggle aria-label="Bold" size="sm">
-        <BoldIcon />
-      </Toggle>
-      <Toggle aria-label="Italic" size="sm" defaultPressed>
-        <ItalicIcon />
-      </Toggle>
-      <Toggle aria-label="Underline" size="sm">
-        <UnderlineIcon />
-      </Toggle>
-    </div>
+    <Toggle aria-label="Toggle bookmark" size="sm" variant="outline">
+      <BookmarkIcon className="group-data-[state=on]/toggle:fill-ui-fg" />
+      Bookmark
+    </Toggle>
   );
 }

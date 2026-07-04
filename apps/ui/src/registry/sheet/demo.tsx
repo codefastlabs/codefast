@@ -17,28 +17,26 @@ export function SheetDemo() {
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <Button variant="outline">Open sheet</Button>
+        <Button variant="outline">Open</Button>
       </SheetTrigger>
       <SheetContent>
         <SheetHeader>
           <SheetTitle>Edit profile</SheetTitle>
-          <SheetDescription>Update your profile details and save changes.</SheetDescription>
+          <SheetDescription>Make changes to your profile here. Click save when you&apos;re done.</SheetDescription>
         </SheetHeader>
-        <SheetBody className="flex flex-col gap-3">
-          <div className="grid gap-1.5">
-            <Label htmlFor="sheet-name">Name</Label>
-            <Input id="sheet-name" defaultValue="Vuong Phan" />
+        <SheetBody className="grid flex-1 auto-rows-min gap-6">
+          <div className="grid gap-3">
+            <Label htmlFor="sheet-demo-name">Name</Label>
+            <Input defaultValue="Pedro Duarte" id="sheet-demo-name" />
           </div>
-          <div className="grid gap-1.5">
-            <Label htmlFor="sheet-email">Email</Label>
-            <Input id="sheet-email" defaultValue="mr.thevuong@gmail.com" type="email" />
+          <div className="grid gap-3">
+            <Label htmlFor="sheet-demo-username">Username</Label>
+            <Input defaultValue="@peduarte" id="sheet-demo-username" />
           </div>
         </SheetBody>
         <SheetFooter>
-          <SheetClose size="sm" variant="outline">
-            Cancel
-          </SheetClose>
-          <SheetClose size="sm">Save changes</SheetClose>
+          <Button type="submit">Save changes</Button>
+          <SheetClose variant="outline">Close</SheetClose>
         </SheetFooter>
       </SheetContent>
     </Sheet>
