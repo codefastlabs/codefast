@@ -1,3 +1,4 @@
+import { MessageScrollerCommands } from "#/registry/message-scroller/commands.example";
 import { MessageScrollerDemo } from "#/registry/message-scroller/demo";
 import { MessageScrollerScrollable } from "#/registry/message-scroller/scrollable.example";
 import { docAnatomy, docDemo, docSource } from "#/registry/source";
@@ -21,6 +22,15 @@ export const messageScrollerDoc: ComponentDoc = {
         "useMessageScrollerScrollable reports which edges the viewport can still scroll toward — drive custom affordances from it.",
       Demo: MessageScrollerScrollable,
       source: docSource("message-scroller", "scrollable"),
+      previewClassName: "block",
+    },
+    {
+      id: "message-scroller-commands",
+      title: "Imperative commands",
+      description:
+        "useMessageScroller() exposes scrollToMessage/scrollToEnd/scrollToStart — here a 'Jump to' menu drives the transcript from outside.",
+      Demo: MessageScrollerCommands,
+      source: docSource("message-scroller", "commands"),
       previewClassName: "block",
     },
   ],

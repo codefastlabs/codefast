@@ -1,4 +1,6 @@
+import { MessageActions } from "#/registry/message/actions.example";
 import { MessageAlignment } from "#/registry/message/alignment.example";
+import { MessageAttachment } from "#/registry/message/message-attachment.example";
 import { MessageThread } from "#/registry/message/thread.example";
 import { docAnatomy, docSource } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
@@ -19,6 +21,20 @@ export const messageDoc: ComponentDoc = {
       description: "align='end' mirrors the whole row (avatar side and content) for the current author.",
       Demo: MessageAlignment,
       source: docSource("message", "alignment"),
+    },
+    {
+      id: "message-actions",
+      title: "Actions",
+      description: "Put per-message controls (copy, react, retry) in MessageFooter; it aligns with the row.",
+      Demo: MessageActions,
+      source: docSource("message", "actions"),
+    },
+    {
+      id: "message-attachment",
+      title: "With attachments",
+      description: "Compose Attachment inside MessageContent to send and receive files alongside bubbles.",
+      Demo: MessageAttachment,
+      source: docSource("message", "message-attachment"),
     },
   ],
   anatomy: docAnatomy("message"),

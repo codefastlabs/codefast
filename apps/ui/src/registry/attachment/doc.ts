@@ -2,6 +2,7 @@ import { AttachmentGroupExample } from "#/registry/attachment/group.example";
 import { AttachmentOrientation } from "#/registry/attachment/orientation.example";
 import { AttachmentSizes } from "#/registry/attachment/sizes.example";
 import { AttachmentStates } from "#/registry/attachment/states.example";
+import { AttachmentTriggerExample } from "#/registry/attachment/trigger.example";
 import { docAnatomy, docSource } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
@@ -38,6 +39,14 @@ export const attachmentDoc: ComponentDoc = {
       Demo: AttachmentGroupExample,
       source: docSource("attachment", "group"),
       previewClassName: "block",
+    },
+    {
+      id: "attachment-trigger",
+      title: "Trigger",
+      description:
+        "AttachmentTrigger fills the card as a single click target (open/preview) while AttachmentActions stay clickable above it.",
+      Demo: AttachmentTriggerExample,
+      source: docSource("attachment", "trigger"),
     },
   ],
   anatomy: docAnatomy("attachment"),

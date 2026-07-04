@@ -1,4 +1,5 @@
 import { MarkerIconExample } from "#/registry/marker/icon.example";
+import { MarkerStatus } from "#/registry/marker/status.example";
 import { MarkerVariants } from "#/registry/marker/variants.example";
 import { docAnatomy, docSource } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
@@ -19,6 +20,13 @@ export const markerDoc: ComponentDoc = {
       description: "Add a decorative MarkerIcon before the content; it is aria-hidden by default.",
       Demo: MarkerIconExample,
       source: docSource("marker", "icon"),
+    },
+    {
+      id: "marker-status",
+      title: "Status",
+      description: "Pair a Spinner with role='status' for a live progress line inside a transcript.",
+      Demo: MarkerStatus,
+      source: docSource("marker", "status"),
     },
   ],
   anatomy: docAnatomy("marker"),
