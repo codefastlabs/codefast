@@ -7,7 +7,10 @@ export function AvatarDemo() {
         <span className="text-sm font-medium text-ui-fg">Collaborators</span>
         <AvatarGroup>
           <Avatar>
-            <AvatarImage alt="@vuong" src="https://avatar.vercel.sh/vuong" />
+            <AvatarImage
+              alt="@vuong"
+              src="https://images.unsplash.com/photo-1568602471122-7832951cc4c5?w=128&h=128&fit=crop&q=80"
+            />
             <AvatarFallback>VP</AvatarFallback>
           </Avatar>
           <Avatar>
@@ -22,7 +25,10 @@ export function AvatarDemo() {
 
       <div className="flex items-center gap-3">
         <Avatar size="lg">
-          <AvatarImage alt="@vuong" src="https://avatar.vercel.sh/vuong" />
+          <AvatarImage
+            alt="@vuong"
+            src="https://images.unsplash.com/photo-1568602471122-7832951cc4c5?w=128&h=128&fit=crop&q=80"
+          />
           <AvatarFallback>VP</AvatarFallback>
           <AvatarBadge className="bg-emerald-500" />
         </Avatar>

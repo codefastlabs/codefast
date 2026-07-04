@@ -7,7 +7,10 @@ export function MessageDemo() {
     <Message className="w-full max-w-sm">
       <MessageAvatar>
         <Avatar size="sm">
-          <AvatarImage alt="@ada" src="https://avatar.vercel.sh/ada" />
+          <AvatarImage
+            alt="@ada"
+            src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=128&h=128&fit=crop&q=80"
+          />
           <AvatarFallback>AD</AvatarFallback>
         </Avatar>
       </MessageAvatar>

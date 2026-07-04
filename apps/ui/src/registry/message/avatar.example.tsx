@@ -8,7 +8,10 @@ export function MessageAvatarDemo() {
       <Message>
         <MessageAvatar>
           <Avatar>
-            <AvatarImage alt="@rocky" src="https://avatar.vercel.sh/rocky" />
+            <AvatarImage
+              alt="@rocky"
+              src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=128&h=128&fit=crop&q=80"
+            />
             <AvatarFallback>R</AvatarFallback>
           </Avatar>
         </MessageAvatar>
@@ -21,7 +24,10 @@ export function MessageAvatarDemo() {
       <Message align="end">
         <MessageAvatar>
           <Avatar>
-            <AvatarImage alt="@grace" src="https://avatar.vercel.sh/grace" />
+            <AvatarImage
+              alt="@grace"
+              src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=128&h=128&fit=crop&q=80"
+            />
             <AvatarFallback>G</AvatarFallback>
           </Avatar>
         </MessageAvatar>
@@ -34,7 +40,10 @@ export function MessageAvatarDemo() {
       <Message>
         <MessageAvatar>
           <Avatar>
-            <AvatarImage alt="@rocky" src="https://avatar.vercel.sh/rocky" />
+            <AvatarImage
+              alt="@rocky"
+              src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=128&h=128&fit=crop&q=80"
+            />
             <AvatarFallback>R</AvatarFallback>
           </Avatar>
         </MessageAvatar>
