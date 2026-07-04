@@ -6,24 +6,38 @@ export interface AnatomyRow {
   readonly name: string;
 }
 
-/** Flattens the anatomy tree into display rows, each carrying its ASCII branch prefix. */
-export function anatomyToRows(
+/** Appends a subtree's rows with `tree`-style connectors; `ancestorsAreLast` excludes the root. */
+function collectBranches(
   nodes: ReadonlyArray<AnatomyNode>,
-  ancestorsAreLast: ReadonlyArray<boolean> = [],
-): Array<AnatomyRow> {
-  const rows: Array<AnatomyRow> = [];
-
+  ancestorsAreLast: ReadonlyArray<boolean>,
+  rows: Array<AnatomyRow>,
+): void {
   nodes.forEach((node, index) => {
     const isLast = index === nodes.length - 1;
     const indent = ancestorsAreLast.map((last) => (last ? "    " : "│   ")).join("");
-    const connector = ancestorsAreLast.length === 0 ? "" : isLast ? "└── " : "├── ";
 
-    rows.push({ prefix: indent + connector, name: node.name });
+    rows.push({ prefix: indent + (isLast ? "└── " : "├── "), name: node.name });
 
     if (node.children?.length) {
-      rows.push(...anatomyToRows(node.children, [...ancestorsAreLast, isLast]));
+      collectBranches(node.children, [...ancestorsAreLast, isLast], rows);
     }
   });
+}
+
+/**
+ * Flattens the anatomy tree into display rows. Top-level parts are column-0
+ * labels; only their descendants carry `tree`-style branch prefixes.
+ */
+export function anatomyToRows(nodes: ReadonlyArray<AnatomyNode>): Array<AnatomyRow> {
+  const rows: Array<AnatomyRow> = [];
+
+  for (const node of nodes) {
+    rows.push({ prefix: "", name: node.name });
+
+    if (node.children?.length) {
+      collectBranches(node.children, [], rows);
+    }
+  }
 
   return rows;
 }
