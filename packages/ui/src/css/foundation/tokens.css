@@ -81,21 +81,6 @@
   --color-chart-5: var(--chart-5);
 
   /* ----------------------------------------------------------------------
-   * Code & selection
-   * ---------------------------------------------------------------------- */
-
-  --color-surface: var(--surface);
-  --color-surface-foreground: var(--surface-foreground);
-
-  --color-code: var(--code);
-  --color-code-foreground: var(--code-foreground);
-  --color-code-highlight: var(--code-highlight);
-  --color-code-number: var(--code-number);
-
-  --color-selection: var(--selection);
-  --color-selection-foreground: var(--selection-foreground);
-
-  /* ----------------------------------------------------------------------
    * Radius scale — derived from --radius (6 = base unit)
    * ---------------------------------------------------------------------- */
 
