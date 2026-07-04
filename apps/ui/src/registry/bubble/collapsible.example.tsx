@@ -1,5 +1,3 @@
-"use client";
-
 import { Bubble, BubbleContent } from "@codefast/ui/bubble";
 import { Button } from "@codefast/ui/button";
 import { Collapsible, CollapsibleTrigger } from "@codefast/ui/collapsible";

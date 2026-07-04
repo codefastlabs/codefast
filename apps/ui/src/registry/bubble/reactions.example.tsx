@@ -1,5 +1,3 @@
-"use client";
-
 import { Bubble, BubbleContent, BubbleReactions } from "@codefast/ui/bubble";
 import { Button } from "@codefast/ui/button";
 import { toast } from "@codefast/ui/sonner";

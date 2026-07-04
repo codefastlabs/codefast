@@ -1,5 +1,3 @@
-"use client";
-
 import { Bubble, BubbleContent, BubbleGroup } from "@codefast/ui/bubble";
 import { toast } from "@codefast/ui/sonner";
 

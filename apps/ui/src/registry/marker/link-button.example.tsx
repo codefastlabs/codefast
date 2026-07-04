@@ -1,5 +1,3 @@
-"use client";
-
 import { Marker, MarkerContent, MarkerIcon } from "@codefast/ui/marker";
 import { toast } from "@codefast/ui/sonner";
 import { GitBranchIcon, RotateCcwIcon } from "lucide-react";
