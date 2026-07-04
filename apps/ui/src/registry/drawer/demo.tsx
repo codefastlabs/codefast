@@ -9,36 +9,89 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@codefast/ui/drawer";
-import { Input } from "@codefast/ui/input";
-import { Label } from "@codefast/ui/label";
+import { Minus, Plus } from "lucide-react";
+import type { CSSProperties } from "react";
+import { useState } from "react";
+import { Bar, BarChart, ResponsiveContainer } from "recharts";
+
+const data = [
+  { goal: 400 },
+  { goal: 300 },
+  { goal: 200 },
+  { goal: 300 },
+  { goal: 200 },
+  { goal: 278 },
+  { goal: 189 },
+  { goal: 239 },
+  { goal: 300 },
+  { goal: 200 },
+  { goal: 278 },
+  { goal: 189 },
+  { goal: 349 },
+];
 
 export function DrawerDemo() {
+  const [goal, setGoal] = useState(350);
+
+  function onClick(adjustment: number) {
+    setGoal(Math.max(200, Math.min(400, goal + adjustment)));
+  }
+
   return (
     <Drawer>
       <DrawerTrigger asChild>
-        <Button variant="outline">Open drawer</Button>
+        <Button variant="outline">Open Drawer</Button>
       </DrawerTrigger>
       <DrawerContent>
-        <DrawerHeader>
-          <DrawerTitle>Edit profile</DrawerTitle>
-          <DrawerDescription>Make changes and save when done.</DrawerDescription>
-        </DrawerHeader>
-        <div className="grid gap-3 overflow-auto px-4">
-          <div className="grid gap-1.5">
-            <Label htmlFor="drawer-name">Name</Label>
-            <Input id="drawer-name" defaultValue="Vuong Phan" />
+        <div className="mx-auto w-full max-w-sm">
+          <DrawerHeader>
+            <DrawerTitle>Move Goal</DrawerTitle>
+            <DrawerDescription>Set your daily activity goal.</DrawerDescription>
+          </DrawerHeader>
+          <div className="p-4 pb-0">
+            <div className="flex items-center justify-center space-x-2">
+              <Button
+                className="size-8 shrink-0 rounded-full"
+                disabled={goal <= 200}
+                size="icon"
+                variant="outline"
+                onClick={() => {
+                  onClick(-10);
+                }}
+              >
+                <Minus />
+                <span className="sr-only">Decrease</span>
+              </Button>
+              <div className="flex-1 text-center">
+                <div className="text-7xl font-bold tracking-tighter">{goal}</div>
+                <div className="text-[0.70rem] text-ui-muted uppercase">Calories/day</div>
+              </div>
+              <Button
+                className="size-8 shrink-0 rounded-full"
+                disabled={goal >= 400}
+                size="icon"
+                variant="outline"
+                onClick={() => {
+                  onClick(10);
+                }}
+              >
+                <Plus />
+                <span className="sr-only">Increase</span>
+              </Button>
+            </div>
+            <div className="mt-3 h-[120px]">
+              <ResponsiveContainer height="100%" width="100%">
+                <BarChart data={data}>
+                  <Bar dataKey="goal" style={{ fill: "var(--chart-1)" } as CSSProperties} />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
           </div>
-          <div className="grid gap-1.5">
-            <Label htmlFor="drawer-username">Username</Label>
-            <Input id="drawer-username" defaultValue="@vuongphan" />
-          </div>
+          <DrawerFooter>
+            <Button>Submit</Button>
+            <DrawerClose variant="outline">Cancel</DrawerClose>
+          </DrawerFooter>
         </div>
-        <DrawerFooter>
-          <DrawerClose size="sm" variant="outline">
-            Cancel
-          </DrawerClose>
-          <DrawerClose size="sm">Save changes</DrawerClose>
-        </DrawerFooter>
       </DrawerContent>
     </Drawer>
   );

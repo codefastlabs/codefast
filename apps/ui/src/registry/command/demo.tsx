@@ -8,12 +8,12 @@ import {
   CommandSeparator,
   CommandShortcut,
 } from "@codefast/ui/command";
-import { CalendarIcon, FileIcon, SearchIcon, SettingsIcon, UserIcon } from "lucide-react";
+import { CalculatorIcon, CalendarIcon, CreditCardIcon, SettingsIcon, SmileIcon, UserIcon } from "lucide-react";
 
 export function CommandDemo() {
   return (
-    <Command className="w-full max-w-xs rounded-xl border shadow-md">
-      <CommandInput placeholder="Type a command or search…" />
+    <Command className="w-full max-w-sm rounded-lg border">
+      <CommandInput placeholder="Type a command or search..." />
       <CommandList>
         <CommandEmpty>No results found.</CommandEmpty>
         <CommandGroup heading="Suggestions">
@@ -22,8 +22,12 @@ export function CommandDemo() {
             <span>Calendar</span>
           </CommandItem>
           <CommandItem>
-            <SearchIcon />
-            <span>Search</span>
+            <SmileIcon />
+            <span>Search Emoji</span>
+          </CommandItem>
+          <CommandItem disabled>
+            <CalculatorIcon />
+            <span>Calculator</span>
           </CommandItem>
         </CommandGroup>
         <CommandSeparator />
@@ -34,9 +38,9 @@ export function CommandDemo() {
             <CommandShortcut>⌘P</CommandShortcut>
           </CommandItem>
           <CommandItem>
-            <FileIcon />
-            <span>Files</span>
-            <CommandShortcut>⌘F</CommandShortcut>
+            <CreditCardIcon />
+            <span>Billing</span>
+            <CommandShortcut>⌘B</CommandShortcut>
           </CommandItem>
           <CommandItem>
             <SettingsIcon />
