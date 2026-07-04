@@ -10,6 +10,7 @@ import { SidebarMenuBadgeExample } from "#/registry/sidebar/menu-badge.example";
 import { SidebarMenuCollapsibleExample } from "#/registry/sidebar/menu-collapsible.example";
 import { SidebarMenuSubExample } from "#/registry/sidebar/menu-sub.example";
 import { SidebarMenuExample } from "#/registry/sidebar/menu.example";
+import { SidebarRsc } from "#/registry/sidebar/rsc.example";
 import { SidebarRtl } from "#/registry/sidebar/rtl.example";
 import { docSource, docAnatomy, docDemo } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
@@ -110,6 +111,14 @@ export const sidebarDoc: ComponentDoc = {
       description: "Render a nested submenu inside a menu with SidebarMenuSub.",
       Demo: SidebarMenuSubExample,
       source: docSource("sidebar", "menu-sub"),
+      previewClassName: "items-stretch",
+    },
+    {
+      id: "sidebar-rsc",
+      title: "React Server Component",
+      description: "Stream menu items with a Suspense-style skeleton fallback using SidebarMenuSkeleton.",
+      Demo: SidebarRsc,
+      source: docSource("sidebar", "rsc"),
       previewClassName: "items-stretch",
     },
     {

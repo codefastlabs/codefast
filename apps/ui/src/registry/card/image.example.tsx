@@ -6,10 +6,10 @@ export function CardImage() {
   return (
     <Card className="relative mx-auto w-full max-w-sm pt-0">
       <div className="absolute inset-0 z-30 aspect-video bg-black/35" />
-      <img
-        src="https://avatar.vercel.sh/codefast"
-        alt="Event cover"
-        className="relative z-20 aspect-video w-full object-cover brightness-60 grayscale dark:brightness-40"
+      <div
+        aria-label="Event cover"
+        className="relative z-20 aspect-video w-full bg-ui-surface object-cover brightness-60 grayscale dark:brightness-40"
+        role="img"
       />
       <CardHeader>
         <CardAction>

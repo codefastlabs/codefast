@@ -1,3 +1,4 @@
+import { HoverCardDemo } from "#/registry/hover-card/demo.example";
 import { HoverCardRtl } from "#/registry/hover-card/rtl.example";
 import { HoverCardSides } from "#/registry/hover-card/sides.example";
 import { docSource, docAnatomy } from "#/registry/source";
@@ -5,6 +6,13 @@ import type { ComponentDoc } from "#/registry/types";
 
 export const hoverCardDoc: ComponentDoc = {
   examples: [
+    {
+      id: "hover-card-demo",
+      title: "Demo",
+      description: "A link preview card that opens on hover or focus.",
+      Demo: HoverCardDemo,
+      source: docSource("hover-card", "demo"),
+    },
     {
       id: "hover-card-rtl",
       title: "RTL",
