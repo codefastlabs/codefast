@@ -1,3 +1,4 @@
+import { DrawerDemo } from "#/registry/drawer/demo.example";
 import { DrawerDialogDemo } from "#/registry/drawer/dialog.example";
 import { DrawerRtl } from "#/registry/drawer/rtl.example";
 import { DrawerScrollableContent } from "#/registry/drawer/scrollable-content.example";
@@ -7,6 +8,13 @@ import type { ComponentDoc } from "#/registry/types";
 
 export const drawerDoc: ComponentDoc = {
   examples: [
+    {
+      id: "drawer-demo",
+      title: "Goal Adjuster",
+      description: "A bottom drawer that steps a numeric goal up and down, with a chart summary.",
+      Demo: DrawerDemo,
+      source: docSource("drawer", "demo"),
+    },
     {
       id: "drawer-dialog",
       title: "Responsive Dialog",

@@ -15,11 +15,12 @@ import type { ComponentDoc } from "#/registry/types";
 export const calendarDoc: ComponentDoc = {
   examples: [
     {
-      id: "range",
+      id: "calendar-range",
       title: "Date range",
       description: 'mode="range" over two months, with the picked span shown below.',
       Demo: CalendarRange,
       source: docSource("calendar", "range"),
+      previewClassName: "block",
     },
     {
       id: "calendar-basic",

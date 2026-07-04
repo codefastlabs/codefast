@@ -1,5 +1,4 @@
 import { Item, ItemContent, ItemDescription, ItemGroup, ItemMedia, ItemTitle } from "@codefast/ui/item";
-import { Image } from "@unpic/react";
 
 const music = [
   {
@@ -30,13 +29,7 @@ export function ItemImage() {
           <Item key={song.title} variant="outline" asChild role="listitem">
             <a href="/">
               <ItemMedia variant="image">
-                <Image
-                  src={`https://avatar.vercel.sh/${song.title}`}
-                  alt={song.title}
-                  width={32}
-                  height={32}
-                  className="object-cover grayscale"
-                />
+                <div aria-label={song.title} className="size-full bg-ui-surface grayscale" role="img" />
               </ItemMedia>
               <ItemContent>
                 <ItemTitle className="line-clamp-1">

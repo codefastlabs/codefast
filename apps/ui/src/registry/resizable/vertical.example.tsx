@@ -1,4 +1,4 @@
-import { ResizableSeparator, ResizablePanel, ResizableGroup } from "@codefast/ui/resizable";
+import { ResizableGroup, ResizablePanel, ResizableSeparator } from "@codefast/ui/resizable";
 
 export function ResizableVertical() {
   return (
