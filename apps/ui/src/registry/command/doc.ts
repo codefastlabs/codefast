@@ -10,7 +10,7 @@ import type { ComponentDoc } from "#/registry/types";
 export const commandDoc: ComponentDoc = {
   examples: [
     {
-      id: "dialog",
+      id: "command-dialog",
       title: "Command dialog",
       description: "The same palette in a modal — the most common ⌘K pattern.",
       Demo: CommandDialogDemo,
@@ -46,6 +46,7 @@ export const commandDoc: ComponentDoc = {
       description: "Scrollable command menu with multiple items.",
       Demo: CommandManyItems,
       source: docSource("command", "scrollable"),
+      previewClassName: "block",
     },
     {
       id: "command-shortcuts",

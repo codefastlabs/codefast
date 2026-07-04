@@ -7,16 +7,16 @@ import type { ComponentDoc } from "#/registry/types";
 export const sonnerDoc: ComponentDoc = {
   examples: [
     {
-      id: "types",
+      id: "sonner-types",
       title: "Toast types",
-      description: "Click to fire a real toast — default, success, error, and warning.",
+      description: "Click to fire a real toast — default, success, info, warning, error, and promise.",
       Demo: SonnerTypes,
       source: docSource("sonner", "types"),
     },
     {
       id: "sonner-description",
       title: "Description",
-      description: "An opinionated toast component for React.",
+      description: "Add a secondary line under the title with the description option.",
       Demo: SonnerDescription,
       source: docSource("sonner", "description"),
     },
