@@ -7,7 +7,7 @@ export const Route = createFileRoute("/")({
   component: OverviewPage,
 });
 
-const VERSION = "0.5.0-canary.0";
+const VERSION = "0.5.0-canary.2";
 
 function OverviewPage() {
   return (

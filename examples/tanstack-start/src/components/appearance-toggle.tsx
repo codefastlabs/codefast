@@ -1,5 +1,5 @@
-import { DEFAULT_COLOR_SCHEME, useColorScheme } from "@codefast/theme";
-import type { ColorScheme } from "@codefast/theme";
+import { DEFAULT_APPEARANCE, useAppearance } from "@codefast/theme";
+import type { Appearance } from "@codefast/theme";
 import { Button } from "@codefast/ui/button";
 import { Monitor, Moon, Sun } from "lucide-react";
 import type { ComponentProps, ReactElement } from "react";
@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 
 type AppearanceToggleProps = Omit<ComponentProps<typeof Button>, "children" | "onClick" | "size" | "variant">;
 
-const SEQUENCE: ReadonlyArray<ColorScheme> = ["light", "dark", "automatic"];
+const SEQUENCE: ReadonlyArray<Appearance> = ["light", "dark", "automatic"];
 const LABELS = { light: "Light", dark: "Dark", automatic: "System" } as const;
 
 /**
@@ -17,8 +17,8 @@ const LABELS = { light: "Light", dark: "Dark", automatic: "System" } as const;
  * before first paint — so the first frame always shows the stored appearance.
  */
 export function AppearanceToggle(props: AppearanceToggleProps): ReactElement {
-  const { colorScheme, isPending, setColorScheme } = useColorScheme();
-  const next = SEQUENCE[(SEQUENCE.indexOf(colorScheme) + 1) % SEQUENCE.length] ?? "light";
+  const { appearance, isPending, setAppearance } = useAppearance();
+  const next = SEQUENCE[(SEQUENCE.indexOf(appearance) + 1) % SEQUENCE.length] ?? "light";
 
   /**
    * Labels render the SSR fallback until mount: hydration never patches mismatched attributes,
@@ -30,12 +30,12 @@ export function AppearanceToggle(props: AppearanceToggleProps): ReactElement {
     setMounted(true);
   }, []);
 
-  const shown = mounted ? colorScheme : DEFAULT_COLOR_SCHEME;
+  const shown = mounted ? appearance : DEFAULT_APPEARANCE;
   const shownNext = mounted ? next : "light";
 
   return (
     <Button
-      aria-label={`Color scheme: ${LABELS[shown]}. Switch to ${LABELS[shownNext]}.`}
+      aria-label={`Appearance: ${LABELS[shown]}. Switch to ${LABELS[shownNext]}.`}
       disabled={isPending}
       size="icon"
       title={LABELS[shown]}
@@ -43,7 +43,7 @@ export function AppearanceToggle(props: AppearanceToggleProps): ReactElement {
       {...props}
       /* AppearanceToggle owns the click: cycles the appearance Light → Dark → Auto via @codefast/theme. */
       onClick={() => {
-        void setColorScheme(next);
+        void setAppearance(next);
       }}
     >
       {/* One icon per appearance, shown by CSS from `html[data-appearance]` — a state-picked icon

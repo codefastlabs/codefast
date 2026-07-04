@@ -1,9 +1,4 @@
-import {
-  AppearanceProvider,
-  AppearanceScript,
-  DEFAULT_COLOR_SCHEME,
-  DEFAULT_RESOLVED_COLOR_SCHEME,
-} from "@codefast/theme";
+import { AppearanceProvider, AppearanceScript, DEFAULT_APPEARANCE, DEFAULT_COLOR_SCHEME } from "@codefast/theme";
 import { STORAGE_KEY } from "@codefast/theme/constants";
 import { Button } from "@codefast/ui/button";
 import { cn } from "@codefast/ui/lib/utils";
@@ -41,20 +36,20 @@ function RootDocument({ children }: { children: ReactNode }) {
   return (
     <html
       lang="en"
-      className={cn(DEFAULT_RESOLVED_COLOR_SCHEME, "min-h-full")}
+      className={cn(DEFAULT_COLOR_SCHEME, "min-h-full")}
       /* "light dark": the pre-paint frame follows the OS color scheme instead of flashing dark
          on reload; the inline script sets the resolved value before paint. */
       style={{ colorScheme: "light dark" }}
-      data-appearance={DEFAULT_COLOR_SCHEME}
+      data-appearance={DEFAULT_APPEARANCE}
       suppressHydrationWarning
     >
       <head>
         {/* Client-only appearance: the preference lives in localStorage — no server fn, no loader. */}
-        <AppearanceScript colorScheme={DEFAULT_COLOR_SCHEME} storageKey={STORAGE_KEY} />
+        <AppearanceScript appearance={DEFAULT_APPEARANCE} storageKey={STORAGE_KEY} />
         <HeadContent />
       </head>
       <body className="min-h-svh bg-background text-foreground antialiased">
-        <AppearanceProvider colorScheme={DEFAULT_COLOR_SCHEME} storageKey={STORAGE_KEY}>
+        <AppearanceProvider appearance={DEFAULT_APPEARANCE} storageKey={STORAGE_KEY}>
           <SiteHeader />
           <main className="mx-auto w-full max-w-5xl px-4 py-10 sm:px-6">{children}</main>
         </AppearanceProvider>

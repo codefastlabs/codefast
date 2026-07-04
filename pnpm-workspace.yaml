@@ -23,11 +23,11 @@ catalog:
   # Published @codefast/* versions consumed by examples/* (which install from npm,
   # not workspace: links). Changesets ignores catalog entries, so these are not
   # auto-bumped on release — bump them by hand when an example should track a newer release.
-  "@codefast/di": 0.5.0-canary.1
-  "@codefast/tailwind-variants": 0.5.0-canary.1
-  "@codefast/theme": 0.5.0-canary.1
-  "@codefast/typescript-config": 0.5.0-canary.1
-  "@codefast/ui": 0.5.0-canary.1
+  "@codefast/di": 0.5.0-canary.2
+  "@codefast/tailwind-variants": 0.5.0-canary.2
+  "@codefast/theme": 0.5.0-canary.2
+  "@codefast/typescript-config": 0.5.0-canary.2
+  "@codefast/ui": 0.5.0-canary.2
   "@commitlint/cli": ^21.2.0
   "@commitlint/config-conventional": ^21.2.0
   "@content-collections/core": ^0.15.2
