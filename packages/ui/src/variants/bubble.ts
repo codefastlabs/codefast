@@ -8,6 +8,8 @@ import { tv } from "#/lib/utils";
 /**
  * Chat bubble surface. Variants paint the nested `bubble-content`, so the color
  * follows the message author regardless of alignment.
+ *
+ * @since 0.5.0-canary.3
  */
 const bubbleVariants = tv({
   base: "group/bubble relative flex w-fit max-w-[80%] min-w-0 flex-col gap-1 group-data-[align=end]/message:self-end data-[align=end]:self-end data-[variant=ghost]:max-w-full",
@@ -34,6 +36,9 @@ const bubbleVariants = tv({
   },
 });
 
+/**
+ * @since 0.5.0-canary.3
+ */
 type BubbleVariants = VariantProps<typeof bubbleVariants>;
 
 /* -----------------------------------------------------------------------------
@@ -42,6 +47,8 @@ type BubbleVariants = VariantProps<typeof bubbleVariants>;
 
 /**
  * Reaction pill anchored to a bubble corner.
+ *
+ * @since 0.5.0-canary.3
  */
 const bubbleReactionsVariants = tv({
   base: "absolute z-10 flex w-fit shrink-0 items-center justify-center gap-1 rounded-full bg-muted px-1.5 py-0.5 text-sm ring-3 ring-card has-[button]:p-0",
@@ -61,6 +68,9 @@ const bubbleReactionsVariants = tv({
   },
 });
 
+/**
+ * @since 0.5.0-canary.3
+ */
 type BubbleReactionsVariants = VariantProps<typeof bubbleReactionsVariants>;
 
 /* -----------------------------------------------------------------------------

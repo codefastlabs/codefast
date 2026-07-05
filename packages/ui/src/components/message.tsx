@@ -8,9 +8,14 @@ import { cn } from "#/lib/utils";
 
 /**
  * Vertical stack of related messages.
+ *
+ * @since 0.5.0-canary.3
  */
 type MessageGroupProps = ComponentProps<"div">;
 
+/**
+ * @since 0.5.0-canary.3
+ */
 function MessageGroup({ className, ...props }: MessageGroupProps): JSX.Element {
   return <div className={cn("flex min-w-0 flex-col gap-2", className)} data-slot="message-group" {...props} />;
 }
@@ -21,11 +26,16 @@ function MessageGroup({ className, ...props }: MessageGroupProps): JSX.Element {
 
 /**
  * A single message row. `align="end"` mirrors the row for the current author.
+ *
+ * @since 0.5.0-canary.3
  */
 interface MessageProps extends ComponentProps<"div"> {
   align?: "start" | "end";
 }
 
+/**
+ * @since 0.5.0-canary.3
+ */
 function Message({ align = "start", className, ...props }: MessageProps): JSX.Element {
   return (
     <div
@@ -46,9 +56,14 @@ function Message({ align = "start", className, ...props }: MessageProps): JSX.El
 
 /**
  * Author avatar; lifts above the footer when a message footer is present.
+ *
+ * @since 0.5.0-canary.3
  */
 type MessageAvatarProps = ComponentProps<"div">;
 
+/**
+ * @since 0.5.0-canary.3
+ */
 function MessageAvatar({ className, ...props }: MessageAvatarProps): JSX.Element {
   return (
     <div
@@ -68,9 +83,14 @@ function MessageAvatar({ className, ...props }: MessageAvatarProps): JSX.Element
 
 /**
  * Column holding the message bubbles and metadata.
+ *
+ * @since 0.5.0-canary.3
  */
 type MessageContentProps = ComponentProps<"div">;
 
+/**
+ * @since 0.5.0-canary.3
+ */
 function MessageContent({ className, ...props }: MessageContentProps): JSX.Element {
   return (
     <div
@@ -90,9 +110,14 @@ function MessageContent({ className, ...props }: MessageContentProps): JSX.Eleme
 
 /**
  * Metadata above the bubbles (author, timestamp).
+ *
+ * @since 0.5.0-canary.3
  */
 type MessageHeaderProps = ComponentProps<"div">;
 
+/**
+ * @since 0.5.0-canary.3
+ */
 function MessageHeader({ className, ...props }: MessageHeaderProps): JSX.Element {
   return (
     <div
@@ -112,9 +137,14 @@ function MessageHeader({ className, ...props }: MessageHeaderProps): JSX.Element
 
 /**
  * Metadata below the bubbles (status, reactions); aligns with the row.
+ *
+ * @since 0.5.0-canary.3
  */
 type MessageFooterProps = ComponentProps<"div">;
 
+/**
+ * @since 0.5.0-canary.3
+ */
 function MessageFooter({ className, ...props }: MessageFooterProps): JSX.Element {
   return (
     <div

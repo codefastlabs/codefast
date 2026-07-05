@@ -7,6 +7,8 @@ import { tv } from "#/lib/utils";
 
 /**
  * Inline chat divider — plain label, centered separator rule, or bottom border.
+ *
+ * @since 0.5.0-canary.3
  */
 const markerVariants = tv({
   base: "group/marker relative flex min-h-4 w-full items-center gap-2 text-start text-sm text-muted-foreground [&_svg:not([class*='size-'])]:size-4 [a]:underline [a]:underline-offset-3 [a]:hover:text-foreground",
@@ -23,6 +25,9 @@ const markerVariants = tv({
   },
 });
 
+/**
+ * @since 0.5.0-canary.3
+ */
 type MarkerVariants = VariantProps<typeof markerVariants>;
 
 /* -----------------------------------------------------------------------------

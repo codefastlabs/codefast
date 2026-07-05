@@ -49,6 +49,9 @@ function useMessageScrollerItemContext() {
   return context;
 }
 
+/**
+ * @since 0.5.0-canary.3
+ */
 function useMessageScroller() {
   const { scrollToEnd, scrollToMessage, scrollToStart } = useMessageScrollerContext();
 
@@ -62,12 +65,18 @@ function useMessageScroller() {
   );
 }
 
+/**
+ * @since 0.5.0-canary.3
+ */
 function useMessageScrollerScrollable() {
   const { stateStore } = useMessageScrollerContext();
 
   return useSyncExternalStore(stateStore.subscribe, stateStore.getSnapshot, stateStore.getSnapshot);
 }
 
+/**
+ * @since 0.5.0-canary.3
+ */
 function useMessageScrollerVisibility() {
   const { observeVisibility, unobserveVisibility, visibilityStore } = useMessageScrollerContext();
   const subscribe = useCallback(
@@ -78,6 +87,9 @@ function useMessageScrollerVisibility() {
   return useSyncExternalStore(subscribe, visibilityStore.getSnapshot, visibilityStore.getSnapshot);
 }
 
+/**
+ * @since 0.5.0-canary.3
+ */
 function MessageScrollerProvider({
   autoScroll = false,
   children,
@@ -101,6 +113,9 @@ function MessageScrollerProvider({
   );
 }
 
+/**
+ * @since 0.5.0-canary.3
+ */
 function MessageScroller({ children, ...props }: MessageScrollerProps) {
   const { setRootElement } = useMessageScrollerContext();
 
@@ -111,6 +126,9 @@ function MessageScroller({ children, ...props }: MessageScrollerProps) {
   );
 }
 
+/**
+ * @since 0.5.0-canary.3
+ */
 function MessageScrollerViewport({
   "aria-label": ariaLabel,
   children,
@@ -199,6 +217,9 @@ function MessageScrollerViewport({
   );
 }
 
+/**
+ * @since 0.5.0-canary.3
+ */
 function MessageScrollerContent({
   "aria-relevant": ariaRelevant,
   children,
@@ -269,6 +290,9 @@ function MessageScrollerContent({
   );
 }
 
+/**
+ * @since 0.5.0-canary.3
+ */
 function MessageScrollerItem({ messageId, ref, scrollAnchor = false, ...props }: MessageScrollerItemProps) {
   const registerMessage = useMessageScrollerItemContext();
   const elementRef = useRef<HTMLDivElement | null>(null);
@@ -293,6 +317,9 @@ function MessageScrollerItem({ messageId, ref, scrollAnchor = false, ...props }:
   );
 }
 
+/**
+ * @since 0.5.0-canary.3
+ */
 function MessageScrollerButton({
   behavior = "smooth",
   children,

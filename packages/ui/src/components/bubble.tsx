@@ -11,9 +11,14 @@ import { bubbleReactionsVariants, bubbleVariants } from "#/variants/bubble";
 
 /**
  * Vertical stack of consecutive bubbles from one author.
+ *
+ * @since 0.5.0-canary.3
  */
 type BubbleGroupProps = ComponentProps<"div">;
 
+/**
+ * @since 0.5.0-canary.3
+ */
 function BubbleGroup({ className, ...props }: BubbleGroupProps): JSX.Element {
   return <div className={cn("flex min-w-0 flex-col gap-2", className)} data-slot="bubble-group" {...props} />;
 }
@@ -24,11 +29,16 @@ function BubbleGroup({ className, ...props }: BubbleGroupProps): JSX.Element {
 
 /**
  * Chat bubble wrapper. `variant` colors the content; `align` sets the side.
+ *
+ * @since 0.5.0-canary.3
  */
 interface BubbleProps extends ComponentProps<"div">, BubbleVariants {
   align?: "start" | "end";
 }
 
+/**
+ * @since 0.5.0-canary.3
+ */
 function Bubble({ align = "start", className, variant = "default", ...props }: BubbleProps): JSX.Element {
   return (
     <div
@@ -47,11 +57,16 @@ function Bubble({ align = "start", className, variant = "default", ...props }: B
 
 /**
  * The bubble's colored surface; render as a button/link with `asChild`.
+ *
+ * @since 0.5.0-canary.3
  */
 interface BubbleContentProps extends ComponentProps<"div"> {
   asChild?: boolean;
 }
 
+/**
+ * @since 0.5.0-canary.3
+ */
 function BubbleContent({ asChild = false, className, ...props }: BubbleContentProps): JSX.Element {
   const Component = asChild ? Slot.Root : "div";
 
@@ -73,9 +88,14 @@ function BubbleContent({ asChild = false, className, ...props }: BubbleContentPr
 
 /**
  * Reaction pill overlapping a bubble corner.
+ *
+ * @since 0.5.0-canary.3
  */
 interface BubbleReactionsProps extends ComponentProps<"div">, BubbleReactionsVariants {}
 
+/**
+ * @since 0.5.0-canary.3
+ */
 function BubbleReactions({ align = "end", className, side = "bottom", ...props }: BubbleReactionsProps): JSX.Element {
   return (
     <div

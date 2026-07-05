@@ -45,18 +45,30 @@ function createExternalStore<T>(initialSnapshot: T, isEqual: (a: T, b: T) => boo
   };
 }
 
+/**
+ * @since 0.5.0-canary.3
+ */
 function createMessageScrollerStore<T>(initialSnapshot: T, isEqual: (a: T, b: T) => boolean): MessageScrollerStore<T> {
   return createExternalStore(initialSnapshot, isEqual);
 }
 
+/**
+ * @since 0.5.0-canary.3
+ */
 function createMessageScrollerVisibilityStore(): MessageScrollerVisibilityStore {
   return createExternalStore(EMPTY_MESSAGE_SCROLLER_VISIBILITY_STATE, areVisibilityStatesEqual);
 }
 
+/**
+ * @since 0.5.0-canary.3
+ */
 function areScrollStatesEqual(current: MessageScrollerScrollable, next: MessageScrollerScrollable) {
   return current.start === next.start && current.end === next.end;
 }
 
+/**
+ * @since 0.5.0-canary.3
+ */
 function areVisibilityStatesEqual(current: MessageScrollerVisibilityState, next: MessageScrollerVisibilityState) {
   if (current.currentAnchorId !== next.currentAnchorId) {
     return false;

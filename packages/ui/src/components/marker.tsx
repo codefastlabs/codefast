@@ -11,11 +11,16 @@ import { markerVariants } from "#/variants/marker";
 
 /**
  * Inline divider for a message feed — a date, unread line, or section label.
+ *
+ * @since 0.5.0-canary.3
  */
 interface MarkerProps extends ComponentProps<"div">, MarkerVariants {
   asChild?: boolean;
 }
 
+/**
+ * @since 0.5.0-canary.3
+ */
 function Marker({ asChild = false, className, variant = "default", ...props }: MarkerProps): JSX.Element {
   const Component = asChild ? Slot.Root : "div";
 
@@ -35,9 +40,14 @@ function Marker({ asChild = false, className, variant = "default", ...props }: M
 
 /**
  * Decorative leading icon for a marker.
+ *
+ * @since 0.5.0-canary.3
  */
 type MarkerIconProps = ComponentProps<"span">;
 
+/**
+ * @since 0.5.0-canary.3
+ */
 function MarkerIcon({ className, ...props }: MarkerIconProps): JSX.Element {
   return (
     <span
@@ -55,9 +65,14 @@ function MarkerIcon({ className, ...props }: MarkerIconProps): JSX.Element {
 
 /**
  * Marker label; centers between the rules in the `separator` variant.
+ *
+ * @since 0.5.0-canary.3
  */
 type MarkerContentProps = ComponentProps<"span">;
 
+/**
+ * @since 0.5.0-canary.3
+ */
 function MarkerContent({ className, ...props }: MarkerContentProps): JSX.Element {
   return (
     <span

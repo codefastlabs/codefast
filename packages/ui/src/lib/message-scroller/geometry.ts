@@ -6,6 +6,9 @@ import {
 } from "./types";
 import type { MessageScrollerScrollable, MessageScrollerScrollAlign, MessageScrollerVisibilityState } from "./types";
 
+/**
+ * @since 0.5.0-canary.3
+ */
 function getMessageScrollerScrollable({
   content,
   scrollEdgeThreshold,
@@ -29,6 +32,9 @@ function getMessageScrollerScrollable({
   };
 }
 
+/**
+ * @since 0.5.0-canary.3
+ */
 function getMessageScrollerVisibilityState({
   content,
   scrollMargin,
@@ -100,12 +106,18 @@ function getMessageScrollerVisibilityState({
   };
 }
 
+/**
+ * @since 0.5.0-canary.3
+ */
 function getMessageScrollerItems(content: HTMLElement, spacer: HTMLElement | null) {
   return Array.from(content.children).filter(
     (child): child is HTMLElement => child instanceof HTMLElement && child !== spacer,
   );
 }
 
+/**
+ * @since 0.5.0-canary.3
+ */
 function getNewScrollAnchor(items: Array<HTMLElement>, previousItemCount: number) {
   for (let index = previousItemCount; index < items.length; index++) {
     const item = items[index];
@@ -118,6 +130,9 @@ function getNewScrollAnchor(items: Array<HTMLElement>, previousItemCount: number
   return null;
 }
 
+/**
+ * @since 0.5.0-canary.3
+ */
 function getUnanchoredScrollAnchor(items: Array<HTMLElement>, handledAnchors: { has(element: HTMLElement): boolean }) {
   for (const item of items) {
     if (item.dataset.scrollAnchor === "true" && !handledAnchors.has(item)) {
@@ -128,6 +143,9 @@ function getUnanchoredScrollAnchor(items: Array<HTMLElement>, handledAnchors: { 
   return null;
 }
 
+/**
+ * @since 0.5.0-canary.3
+ */
 function hasMultipleNewScrollAnchors(items: Array<HTMLElement>, previousItemCount: number) {
   let count = 0;
 
@@ -148,6 +166,9 @@ function hasMultipleNewScrollAnchors(items: Array<HTMLElement>, previousItemCoun
   return false;
 }
 
+/**
+ * @since 0.5.0-canary.3
+ */
 function getLastScrollAnchor(items: Array<HTMLElement>) {
   for (let index = items.length - 1; index >= 0; index--) {
     const item = items[index];
@@ -160,6 +181,9 @@ function getLastScrollAnchor(items: Array<HTMLElement>) {
   return null;
 }
 
+/**
+ * @since 0.5.0-canary.3
+ */
 function getFirstVisibleMessageItem({
   content,
   spacer,
@@ -186,6 +210,9 @@ function getFirstVisibleMessageItem({
   return null;
 }
 
+/**
+ * @since 0.5.0-canary.3
+ */
 function getElementScrollTop({
   align,
   element,
@@ -232,6 +259,9 @@ function getElementScrollTop({
   return elementTop - contentPadding.start - scrollMargin;
 }
 
+/**
+ * @since 0.5.0-canary.3
+ */
 function getElementTop(element: HTMLElement, viewport: HTMLElement) {
   const elementRect = element.getBoundingClientRect();
   const viewportRect = viewport.getBoundingClientRect();
@@ -239,10 +269,16 @@ function getElementTop(element: HTMLElement, viewport: HTMLElement) {
   return elementRect.top - viewportRect.top + viewport.scrollTop;
 }
 
+/**
+ * @since 0.5.0-canary.3
+ */
 function getElementViewportTop(element: HTMLElement, viewport: HTMLElement) {
   return element.getBoundingClientRect().top - viewport.getBoundingClientRect().top;
 }
 
+/**
+ * @since 0.5.0-canary.3
+ */
 function getTailSpacerHeight({
   content,
   scrollTop,
@@ -259,6 +295,9 @@ function getTailSpacerHeight({
   return scrollTop + viewport.clientHeight - contentBottom;
 }
 
+/**
+ * @since 0.5.0-canary.3
+ */
 function getContentBottom({
   content,
   spacer,
@@ -283,6 +322,9 @@ function getContentBottom({
   return contentBottom;
 }
 
+/**
+ * @since 0.5.0-canary.3
+ */
 function getMaxScrollTop(viewport: HTMLElement) {
   return Math.max(0, viewport.scrollHeight - viewport.clientHeight);
 }
@@ -296,6 +338,9 @@ function getBlockPadding(element: HTMLElement) {
   };
 }
 
+/**
+ * @since 0.5.0-canary.3
+ */
 function getContentBlockPadding(spacer: HTMLElement | null) {
   const content = spacer?.parentElement;
 
@@ -309,6 +354,9 @@ function getContentBlockPadding(spacer: HTMLElement | null) {
   return getBlockPadding(content);
 }
 
+/**
+ * @since 0.5.0-canary.3
+ */
 function getFlexGap(element: HTMLElement | null) {
   if (!element) {
     return 0;
