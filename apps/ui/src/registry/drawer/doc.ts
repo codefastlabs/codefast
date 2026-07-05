@@ -1,6 +1,5 @@
-import { docDemo, docSource, docUsage } from "#/registry/_core/source";
+import { docSource, docUsage } from "#/registry/_core/source";
 import type { ComponentDoc } from "#/registry/_core/types";
-import { DrawerDemo } from "#/registry/drawer/demo";
 import { DrawerDialogDemo } from "#/registry/drawer/dialog.example";
 import { DrawerRtl } from "#/registry/drawer/rtl.example";
 import { DrawerScrollableContent } from "#/registry/drawer/scrollable-content.example";
@@ -9,13 +8,6 @@ import { DrawerWithSides } from "#/registry/drawer/sides.example";
 export const drawerDoc: ComponentDoc = {
   usage: docUsage("drawer"),
   examples: [
-    {
-      id: "drawer-demo",
-      title: "Goal Adjuster",
-      description: "A bottom drawer that steps a numeric goal up and down, with a chart summary.",
-      Demo: DrawerDemo,
-      source: docDemo("drawer"),
-    },
     {
       id: "drawer-dialog",
       title: "Responsive Dialog",

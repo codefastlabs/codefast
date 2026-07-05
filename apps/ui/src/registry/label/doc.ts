@@ -1,19 +1,10 @@
-import { docDemo, docSource } from "#/registry/_core/source";
+import { docSource } from "#/registry/_core/source";
 import type { ComponentDoc } from "#/registry/_core/types";
-import { LabelDemo } from "#/registry/label/demo";
 import { LabelInField } from "#/registry/label/field.example";
 import { LabelRtl } from "#/registry/label/rtl.example";
 
 export const labelDoc: ComponentDoc = {
   examples: [
-    {
-      id: "label-demo",
-      title: "Demo",
-      description: "Labels naming an input, a checkbox, and a disabled control.",
-      Demo: LabelDemo,
-      source: docDemo("label"),
-      previewClassName: "items-start",
-    },
     {
       id: "label-field",
       title: "Label in Field",

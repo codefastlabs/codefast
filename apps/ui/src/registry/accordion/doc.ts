@@ -1,23 +1,14 @@
-import { docDemo, docSource } from "#/registry/_core/source";
+import { docSource } from "#/registry/_core/source";
 import type { ComponentDoc } from "#/registry/_core/types";
 import { AccordionBasic } from "#/registry/accordion/basic.example";
 import { AccordionBorders } from "#/registry/accordion/borders.example";
 import { AccordionCard } from "#/registry/accordion/card.example";
-import { AccordionDemo } from "#/registry/accordion/demo";
 import { AccordionDisabled } from "#/registry/accordion/disabled.example";
 import { AccordionMultiple } from "#/registry/accordion/multiple.example";
 import { AccordionRtl } from "#/registry/accordion/rtl.example";
 
 export const accordionDoc: ComponentDoc = {
   examples: [
-    {
-      id: "accordion-demo",
-      title: "Demo",
-      description: "A vertically stacked set of interactive headings that each reveal a section of content.",
-      Demo: AccordionDemo,
-      source: docDemo("accordion"),
-      previewClassName: "items-start",
-    },
     {
       id: "accordion-basic",
       title: "Basic",

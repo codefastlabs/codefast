@@ -1,7 +1,6 @@
-import { docDemo, docSource } from "#/registry/_core/source";
+import { docSource } from "#/registry/_core/source";
 import type { ComponentDoc } from "#/registry/_core/types";
 import { DatePickerBasic } from "#/registry/date-picker/basic.example";
-import { DatePickerDemo } from "#/registry/date-picker/demo";
 import { DatePickerDob } from "#/registry/date-picker/dob.example";
 import { DatePickerInput } from "#/registry/date-picker/input.example";
 import { DatePickerNaturalLanguage } from "#/registry/date-picker/natural-language.example";
@@ -11,13 +10,6 @@ import { DatePickerTime } from "#/registry/date-picker/time.example";
 
 export const datePickerDoc: ComponentDoc = {
   examples: [
-    {
-      id: "date-picker-demo",
-      title: "Demo",
-      description: "A button that opens a calendar in a popover and shows the picked date.",
-      Demo: DatePickerDemo,
-      source: docDemo("date-picker"),
-    },
     {
       id: "date-picker-basic",
       title: "Basic",

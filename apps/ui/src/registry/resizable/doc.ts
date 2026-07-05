@@ -1,6 +1,5 @@
-import { docDemo, docSource, docUsage } from "#/registry/_core/source";
+import { docSource, docUsage } from "#/registry/_core/source";
 import type { ComponentDoc } from "#/registry/_core/types";
-import { ResizableDemo } from "#/registry/resizable/demo";
 import { ResizableSeparatorDemo } from "#/registry/resizable/handle.example";
 import { ResizableRtl } from "#/registry/resizable/rtl.example";
 import { ResizableVertical } from "#/registry/resizable/vertical.example";
@@ -8,14 +7,6 @@ import { ResizableVertical } from "#/registry/resizable/vertical.example";
 export const resizableDoc: ComponentDoc = {
   usage: docUsage("resizable"),
   examples: [
-    {
-      id: "resizable-demo",
-      title: "Demo",
-      description: "Nested horizontal and vertical panels resized from a single group.",
-      Demo: ResizableDemo,
-      source: docDemo("resizable"),
-      previewClassName: "block",
-    },
     {
       id: "resizable-vertical",
       title: "Vertical split",

@@ -1,17 +1,9 @@
-import { docDemo, docSource } from "#/registry/_core/source";
+import { docSource } from "#/registry/_core/source";
 import type { ComponentDoc } from "#/registry/_core/types";
-import { NavigationMenuDemo } from "#/registry/navigation-menu/demo";
 import { NavigationMenuRtl } from "#/registry/navigation-menu/rtl.example";
 
 export const navigationMenuDoc: ComponentDoc = {
   examples: [
-    {
-      id: "navigation-menu-demo",
-      title: "Demo",
-      description: "A horizontal menu bar with dropdown panels of links.",
-      Demo: NavigationMenuDemo,
-      source: docDemo("navigation-menu"),
-    },
     {
       id: "navigation-menu-rtl",
       title: "RTL",

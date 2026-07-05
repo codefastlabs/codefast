@@ -1,7 +1,6 @@
-import { docDemo, docSource } from "#/registry/_core/source";
+import { docSource } from "#/registry/_core/source";
 import type { ComponentDoc } from "#/registry/_core/types";
 import { AlertDialogBasic } from "#/registry/alert-dialog/basic.example";
-import { AlertDialogDemo } from "#/registry/alert-dialog/demo";
 import { AlertDialogDestructive } from "#/registry/alert-dialog/destructive.example";
 import { AlertDialogWithMedia } from "#/registry/alert-dialog/media.example";
 import { AlertDialogRtl } from "#/registry/alert-dialog/rtl.example";
@@ -10,14 +9,6 @@ import { AlertDialogSmall } from "#/registry/alert-dialog/small.example";
 
 export const alertDialogDoc: ComponentDoc = {
   examples: [
-    {
-      id: "alert-dialog-demo",
-      title: "Demo",
-      description: "A blocking modal that forces an explicit Cancel or confirm decision.",
-      Demo: AlertDialogDemo,
-      source: docDemo("alert-dialog"),
-      previewClassName: "min-h-40",
-    },
     {
       id: "alert-dialog-basic",
       title: "Basic",

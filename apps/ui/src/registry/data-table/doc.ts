@@ -1,18 +1,9 @@
-import { docDemo, docSource } from "#/registry/_core/source";
+import { docSource } from "#/registry/_core/source";
 import type { ComponentDoc } from "#/registry/_core/types";
-import { DataTableDemo } from "#/registry/data-table/demo";
 import { DataTableRtl } from "#/registry/data-table/rtl.example";
 
 export const dataTableDoc: ComponentDoc = {
   examples: [
-    {
-      id: "data-table-demo",
-      title: "Demo",
-      description: "A payments table with sorting, column filtering, column visibility, row selection, and pagination.",
-      Demo: DataTableDemo,
-      source: docDemo("data-table"),
-      previewClassName: "items-start",
-    },
     {
       id: "data-table-rtl",
       title: "RTL",

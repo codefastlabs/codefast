@@ -1,19 +1,11 @@
-import { docDemo, docSource } from "#/registry/_core/source";
+import { docSource } from "#/registry/_core/source";
 import type { ComponentDoc } from "#/registry/_core/types";
-import { AspectRatioDemo } from "#/registry/aspect-ratio/demo";
 import { AspectRatioPortrait } from "#/registry/aspect-ratio/portrait.example";
 import { AspectRatioRtl } from "#/registry/aspect-ratio/rtl.example";
 import { AspectRatioSquare } from "#/registry/aspect-ratio/square.example";
 
 export const aspectRatioDoc: ComponentDoc = {
   examples: [
-    {
-      id: "aspect-ratio-demo",
-      title: "Demo",
-      description: "Lock an image to a 16/9 box — it holds the shape at any width.",
-      Demo: AspectRatioDemo,
-      source: docDemo("aspect-ratio"),
-    },
     {
       id: "aspect-ratio-square",
       title: "Square",

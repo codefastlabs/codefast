@@ -1,22 +1,13 @@
-import { docDemo, docSource } from "#/registry/_core/source";
+import { docSource } from "#/registry/_core/source";
 import type { ComponentDoc } from "#/registry/_core/types";
 import { AlertActionExample } from "#/registry/alert/action.example";
 import { AlertBasic } from "#/registry/alert/basic.example";
 import { AlertColors } from "#/registry/alert/colors.example";
-import { AlertDemo } from "#/registry/alert/demo";
 import { AlertDestructive } from "#/registry/alert/destructive.example";
 import { AlertRtl } from "#/registry/alert/rtl.example";
 
 export const alertDoc: ComponentDoc = {
   examples: [
-    {
-      id: "alert-demo",
-      title: "Demo",
-      description: "Stack alerts to surface several status messages at once.",
-      Demo: AlertDemo,
-      source: docDemo("alert"),
-      previewClassName: "items-start",
-    },
     {
       id: "alert-basic",
       title: "Basic",

@@ -1,7 +1,6 @@
-import { docDemo, docSource } from "#/registry/_core/source";
+import { docSource } from "#/registry/_core/source";
 import type { ComponentDoc } from "#/registry/_core/types";
 import { TypographyBlockquote } from "#/registry/typography/blockquote.example";
-import { TypographyDemo } from "#/registry/typography/demo";
 import { TypographyH1 } from "#/registry/typography/h1.example";
 import { TypographyH2 } from "#/registry/typography/h2.example";
 import { TypographyH3 } from "#/registry/typography/h3.example";
@@ -18,14 +17,6 @@ import { TypographyTable } from "#/registry/typography/table.example";
 
 export const typographyDoc: ComponentDoc = {
   examples: [
-    {
-      id: "typography-demo",
-      title: "Demo",
-      description: "Headings, paragraphs, links, blockquotes, and lists composed into a prose layout.",
-      Demo: TypographyDemo,
-      source: docDemo("typography"),
-      previewClassName: "items-start",
-    },
     {
       id: "typography-h1",
       title: "h1",

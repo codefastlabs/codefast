@@ -1,7 +1,6 @@
-import { docSource, docDemo } from "#/registry/_core/source";
+import { docSource } from "#/registry/_core/source";
 import type { ComponentDoc } from "#/registry/_core/types";
 import { SidebarControlledExample } from "#/registry/sidebar/controlled.example";
-import { AppSidebar } from "#/registry/sidebar/demo";
 import { SidebarFooterExample } from "#/registry/sidebar/footer.example";
 import { SidebarGroupActionExample } from "#/registry/sidebar/group-action.example";
 import { SidebarGroupCollapsibleExample } from "#/registry/sidebar/group-collapsible.example";
@@ -23,14 +22,6 @@ export const sidebarDoc: ComponentDoc = {
       description: "Control the sidebar open state with the SidebarProvider open and onOpenChange props.",
       Demo: SidebarControlledExample,
       source: docSource("sidebar", "controlled"),
-      previewClassName: "items-stretch",
-    },
-    {
-      id: "sidebar-demo",
-      title: "Demo",
-      description: "A composable, themeable and customizable sidebar component.",
-      Demo: AppSidebar,
-      source: docDemo("sidebar"),
       previewClassName: "items-stretch",
     },
     {

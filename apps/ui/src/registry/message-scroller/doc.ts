@@ -1,10 +1,8 @@
-import { docDemo, docSource, docUsage } from "#/registry/_core/source";
+import { docSource, docUsage } from "#/registry/_core/source";
 import type { ComponentDoc } from "#/registry/_core/types";
 import { MessageScrollerAnchoring } from "#/registry/message-scroller/anchoring.example";
 import { MessageScrollerAnimation } from "#/registry/message-scroller/animation.example";
 import { MessageScrollerCommands } from "#/registry/message-scroller/commands.example";
-import { MessageScrollerDemo as MessageScrollerCardDemo } from "#/registry/message-scroller/demo";
-import { MessageScrollerDemo } from "#/registry/message-scroller/demo.example";
 import { MessageScrollerGroupChat } from "#/registry/message-scroller/group-chat.example";
 import { MessageScrollerLoadHistory } from "#/registry/message-scroller/load-history.example";
 import { MessageScrollerOpeningPosition } from "#/registry/message-scroller/opening-position.example";
@@ -16,24 +14,6 @@ import { MessageScrollerVisibility } from "#/registry/message-scroller/visibilit
 export const messageScrollerDoc: ComponentDoc = {
   usage: docUsage("message-scroller"),
   examples: [
-    {
-      id: "message-scroller-feed",
-      title: "Chat feed",
-      description:
-        "MessageScrollerProvider owns the behavior; autoScroll follows new content at the bottom, defaultScrollPosition='end' opens at the latest turn, and MessageScrollerButton appears only while there is overflow toward its edge.",
-      Demo: MessageScrollerCardDemo,
-      source: docDemo("message-scroller"),
-      previewClassName: "block",
-    },
-    {
-      id: "message-scroller-demo",
-      title: "Chat surface",
-      description:
-        "A full chat card: reveal each scripted turn to watch autoScroll follow the latest reply while anchored user turns settle near the reading line.",
-      Demo: MessageScrollerDemo,
-      source: docSource("message-scroller", "demo"),
-      previewClassName: "block",
-    },
     {
       id: "message-scroller-streaming",
       title: "Streaming messages",

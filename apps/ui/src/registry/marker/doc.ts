@@ -1,7 +1,6 @@
-import { docDemo, docSource, docUsage } from "#/registry/_core/source";
+import { docSource, docUsage } from "#/registry/_core/source";
 import type { ComponentDoc } from "#/registry/_core/types";
 import { MarkerBorder } from "#/registry/marker/border.example";
-import { MarkerDemo } from "#/registry/marker/demo";
 import { MarkerIconExample } from "#/registry/marker/icon.example";
 import { MarkerLinkButton } from "#/registry/marker/link-button.example";
 import { MarkerSeparator } from "#/registry/marker/separator.example";
@@ -12,13 +11,6 @@ import { MarkerVariants } from "#/registry/marker/variants.example";
 export const markerDoc: ComponentDoc = {
   usage: docUsage("marker"),
   examples: [
-    {
-      id: "marker-demo",
-      title: "Overview",
-      description: "A feed of markers — an icon note, a live status line, a separator, and another note.",
-      Demo: MarkerDemo,
-      source: docDemo("marker"),
-    },
     {
       id: "marker-variants",
       title: "Variants",

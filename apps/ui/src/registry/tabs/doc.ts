@@ -1,6 +1,5 @@
-import { docDemo, docSource, docUsage } from "#/registry/_core/source";
+import { docSource, docUsage } from "#/registry/_core/source";
 import type { ComponentDoc } from "#/registry/_core/types";
-import { TabsDemo } from "#/registry/tabs/demo";
 import { TabsDisabled } from "#/registry/tabs/disabled.example";
 import { TabsIcons } from "#/registry/tabs/icons.example";
 import { TabsLine } from "#/registry/tabs/line.example";
@@ -10,13 +9,6 @@ import { TabsVertical } from "#/registry/tabs/vertical.example";
 export const tabsDoc: ComponentDoc = {
   usage: docUsage("tabs"),
   examples: [
-    {
-      id: "tabs-demo",
-      title: "Demo",
-      description: "A set of layered sections of content—known as tab panels—that are displayed one at a time.",
-      Demo: TabsDemo,
-      source: docDemo("tabs"),
-    },
     {
       id: "line",
       title: "Line variant",
