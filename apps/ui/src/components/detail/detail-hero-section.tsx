@@ -40,7 +40,7 @@ export function DetailHeroSection({ component, className, ...props }: DetailHero
 
   return (
     <div className={cn("mb-10 border-b border-ui-border/60 pb-8", className)} {...props}>
-      <div className="mb-6 flex items-center justify-between gap-3">
+      <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem>
@@ -57,7 +57,7 @@ export function DetailHeroSection({ component, className, ...props }: DetailHero
           </BreadcrumbList>
         </Breadcrumb>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           {isComposition ? null : (
             <Button asChild size="sm" variant="outline">
               <a href={`${GITHUB_SRC}/${slug}.tsx`} target="_blank" rel="noreferrer">
