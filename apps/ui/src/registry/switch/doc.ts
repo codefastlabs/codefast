@@ -1,4 +1,4 @@
-import { docSource } from "#/registry/source";
+import { docSource, docUsage } from "#/registry/source";
 import { SwitchChoiceCard } from "#/registry/switch/choice-card.example";
 import { SwitchDescription } from "#/registry/switch/description.example";
 import { SwitchDisabled } from "#/registry/switch/disabled.example";
@@ -8,6 +8,7 @@ import { SwitchSizes } from "#/registry/switch/sizes.example";
 import type { ComponentDoc } from "#/registry/types";
 
 export const switchDoc: ComponentDoc = {
+  usage: docUsage("switch"),
   examples: [
     {
       id: "sizes",
@@ -55,6 +56,11 @@ export const switchDoc: ComponentDoc = {
     },
   ],
   anatomy: [{ name: "Switch" }],
+  features: [
+    "Two sizes (default, sm) with a matching thumb size.",
+    'RTL-aware out of the box — the thumb translates the correct direction under dir="rtl" with no extra config.',
+    'Built on Radix Switch; exposes role="switch" with a live aria-checked.',
+  ],
   api: [
     {
       name: "Switch",

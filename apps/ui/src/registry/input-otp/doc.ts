@@ -78,6 +78,12 @@ export const inputOtpDoc: ComponentDoc = {
     },
   ],
   anatomy: [{ name: "InputOTP", children: [{ name: "InputOTPGroup", children: [{ name: "InputOTPSlot" }] }] }],
+  features: [
+    "Renders a single hidden <input> under the hood — pasting a full code fills every slot at once, no per-slot paste handling needed.",
+    "Ships REGEXP_ONLY_DIGITS, REGEXP_ONLY_CHARS, and REGEXP_ONLY_DIGITS_AND_CHARS (re-exported from input-otp) for the pattern prop.",
+    "onComplete fires once every slot is filled, separate from the per-keystroke onChange.",
+    "InputOTPSeparator drops a visual divider between groups (e.g. 3 + 3 for a 6-digit code) without affecting the value.",
+  ],
   api: [
     {
       name: "InputOTP",

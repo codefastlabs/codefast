@@ -21,10 +21,11 @@ import { InputGroupWithAddons } from "#/registry/input-group/with-addons.example
 import { InputGroupWithButtons } from "#/registry/input-group/with-buttons.example";
 import { InputGroupWithKbd } from "#/registry/input-group/with-kbd.example";
 import { InputGroupWithTooltip } from "#/registry/input-group/with-tooltip.example";
-import { docSource } from "#/registry/source";
+import { docSource, docUsage } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const inputGroupDoc: ComponentDoc = {
+  usage: docUsage("input-group"),
   examples: [
     {
       id: "input-group-basic",
@@ -190,6 +191,11 @@ export const inputGroupDoc: ComponentDoc = {
     },
   ],
   anatomy: [{ name: "InputGroup", children: [{ name: "InputGroupAddon" }, { name: "InputGroupInput" }] }],
+  features: [
+    "Clicking anywhere in an InputGroupAddon (not on a button) focuses the sibling input/textarea automatically — no manual onClick wiring needed.",
+    "Four addon positions — inline-start (default), inline-end, block-start, block-end — for icons, prefixes, or a toolbar row above/below the field.",
+    "Works with InputGroupInput or InputGroupTextarea as the control, and composes with InputGroupButton, InputGroupText, Kbd, and Tooltip as addon content.",
+  ],
   api: [
     {
       name: "InputGroup / InputGroupInput",

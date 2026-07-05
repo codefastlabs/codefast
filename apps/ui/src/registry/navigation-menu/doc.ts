@@ -37,6 +37,10 @@ export const navigationMenuDoc: ComponentDoc = {
       ],
     },
   ],
+  features: [
+    "viewport (default true) makes every item share one animated panel that resizes to fit the open content; set viewport={false} to render each NavigationMenuContent inline instead.",
+    "NavigationMenuIndicator draws a small arrow that tracks the active trigger.",
+  ],
   api: [
     {
       name: "NavigationMenu",
@@ -46,6 +50,13 @@ export const navigationMenuDoc: ComponentDoc = {
           name: "children",
           type: "ReactNode",
           description: "A NavigationMenuList of items, each a trigger + content or a plain link.",
+        },
+        {
+          name: "viewport",
+          type: "boolean",
+          default: "true",
+          description:
+            "Share one animated viewport across items instead of each NavigationMenuContent positioning itself.",
         },
       ],
     },

@@ -1,10 +1,11 @@
 import { SonnerDescription } from "#/registry/sonner/description.example";
 import { SonnerPosition } from "#/registry/sonner/position.example";
 import { SonnerTypes } from "#/registry/sonner/types.example";
-import { docSource } from "#/registry/source";
+import { docSource, docUsage } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const sonnerDoc: ComponentDoc = {
+  usage: docUsage("sonner"),
   examples: [
     {
       id: "sonner-types",
@@ -27,6 +28,11 @@ export const sonnerDoc: ComponentDoc = {
       Demo: SonnerPosition,
       source: docSource("sonner", "position"),
     },
+  ],
+  features: [
+    "Custom icons per severity (success/error/warning/info/loading) match the rest of the design system instead of Sonner's defaults.",
+    "Automatically follows the app's next-themes theme (light/dark/system) — no manual theme prop needed.",
+    "toast.promise(promise, { loading, success, error }) chains all three states from a single call, auto-updating as the promise settles.",
   ],
   anatomy: [{ name: "Toaster" }],
   api: [

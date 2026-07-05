@@ -99,7 +99,7 @@ export const accordionDoc: ComponentDoc = {
   ],
   accessibility: {
     keyboard: [
-      { keys: ["Tab"], description: "Moves focus to the next trigger." },
+      { keys: ["Tab"], description: "Moves focus to the next focusable element." },
       { keys: ["Enter"], description: "Toggles the focused panel." },
       { keys: ["Space"], description: "Toggles the focused panel." },
       { keys: ["Arrow", "Down"], description: "Moves focus to the next trigger." },

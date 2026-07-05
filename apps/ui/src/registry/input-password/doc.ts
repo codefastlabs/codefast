@@ -1,10 +1,11 @@
 import { InputPasswordConfirm } from "#/registry/input-password/confirm.example";
 import { InputPasswordFields } from "#/registry/input-password/fields.example";
 import { InputPasswordStrength } from "#/registry/input-password/strength.example";
-import { docSource } from "#/registry/source";
+import { docSource, docUsage } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const inputPasswordDoc: ComponentDoc = {
+  usage: docUsage("input-password"),
   examples: [
     {
       id: "fields",
@@ -32,6 +33,11 @@ export const inputPasswordDoc: ComponentDoc = {
     },
   ],
   anatomy: [{ name: "InputPassword" }],
+  features: [
+    "Built-in show/hide toggle — internally an InputGroupInput plus an InputGroupButton, no extra markup needed.",
+    'The toggle’s aria-label swaps between "Show password" and "Hide password" as it’s clicked; it does not set aria-pressed.',
+    "Forwards every native input prop except type, which the component manages internally.",
+  ],
   api: [
     {
       name: "InputPassword",
@@ -53,7 +59,7 @@ export const inputPasswordDoc: ComponentDoc = {
   ],
   accessibility: {
     notes: [
-      "The reveal button is labelled and toggles aria-pressed for assistive tech.",
+      'The reveal button relabels itself ("Show password" / "Hide password") as it toggles — that changing label, not aria-pressed, is what gets announced.',
       "Set autoComplete (current-password / new-password) to help password managers.",
       "Associate a Label via htmlFor / id.",
     ],

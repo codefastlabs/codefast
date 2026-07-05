@@ -6,10 +6,11 @@ import { CheckboxIndeterminate } from "#/registry/checkbox/indeterminate.example
 import { CheckboxInvalid } from "#/registry/checkbox/invalid.example";
 import { CheckboxRtl } from "#/registry/checkbox/rtl.example";
 import { CheckboxInTable } from "#/registry/checkbox/table.example";
-import { docSource } from "#/registry/source";
+import { docSource, docUsage } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const checkboxDoc: ComponentDoc = {
+  usage: docUsage("checkbox"),
   examples: [
     {
       id: "checkbox-basic",
@@ -72,6 +73,11 @@ export const checkboxDoc: ComponentDoc = {
     },
   ],
   anatomy: [{ name: "Checkbox" }],
+  features: [
+    'Three visual states — unchecked, checked, and indeterminate (checked="indeterminate") — for "select all"/partially-selected-list patterns.',
+    'Built on Radix Checkbox; the indeterminate state exposes aria-checked="mixed" automatically.',
+    "Reacts to a wrapping Field's disabled/invalid state via group-has-disabled:opacity-50 and aria-invalid: styling.",
+  ],
   api: [
     {
       name: "Checkbox",

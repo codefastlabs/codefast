@@ -1,10 +1,11 @@
 import { RadioDisabled } from "#/registry/radio/disabled.example";
 import { RadioHorizontal } from "#/registry/radio/horizontal.example";
 import { RadioSizes } from "#/registry/radio/sizes.example";
-import { docSource } from "#/registry/source";
+import { docSource, docUsage } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const radioDoc: ComponentDoc = {
+  usage: docUsage("radio"),
   examples: [
     {
       id: "sizes",
@@ -30,6 +31,11 @@ export const radioDoc: ComponentDoc = {
     },
   ],
   anatomy: [{ name: "Radio" }],
+  features: [
+    'Plain native <input type="radio"> — radios sharing the same name form one exclusive group with zero JS.',
+    "A convenience onValueChange(value) callback fires alongside the native onChange.",
+    "For a managed, keyboard-navigable single-selection widget, use Radio Group instead.",
+  ],
   api: [
     {
       name: "Radio",

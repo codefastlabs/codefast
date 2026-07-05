@@ -3,10 +3,11 @@ import { DrawerDialogDemo } from "#/registry/drawer/dialog.example";
 import { DrawerRtl } from "#/registry/drawer/rtl.example";
 import { DrawerScrollableContent } from "#/registry/drawer/scrollable-content.example";
 import { DrawerWithSides } from "#/registry/drawer/sides.example";
-import { docSource } from "#/registry/source";
+import { docSource, docUsage } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const drawerDoc: ComponentDoc = {
+  usage: docUsage("drawer"),
   examples: [
     {
       id: "drawer-demo",
@@ -61,6 +62,12 @@ export const drawerDoc: ComponentDoc = {
         },
       ],
     },
+  ],
+  features: [
+    "Built on Vaul — supports drag-to-dismiss gestures on touch, not just a click-to-close button.",
+    "shouldScaleBackground (default true) shrinks and scales the page behind the drawer as it opens, like an iOS-style bottom sheet.",
+    "Slides from any of four directions via the direction prop (top/right/bottom/left) — not just the default bottom.",
+    "Pairs naturally with Dialog for a responsive pattern: Dialog on desktop, Drawer on mobile, switched by a media query.",
   ],
   api: [
     {

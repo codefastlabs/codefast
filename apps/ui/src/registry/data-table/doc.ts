@@ -32,6 +32,10 @@ export const dataTableDoc: ComponentDoc = {
       ],
     },
   ],
+  features: [
+    "A composition recipe, not a shipped component — built entirely from @tanstack/react-table state hooks plus the plain Table primitives.",
+    "The Demo wires sorting, column filtering, column visibility, row selection, and pagination together — each concern is independent and can be adopted separately.",
+  ],
   guidelines: {
     do: [
       "Drive state (sorting, filters, visibility, selection) through TanStack Table and render with the Table primitives.",

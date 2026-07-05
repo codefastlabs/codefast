@@ -158,6 +158,10 @@ export const sidebarDoc: ComponentDoc = {
       ],
     },
   ],
+  features: [
+    "Persists the open/collapsed state in a sidebar_state cookie (7-day max-age), so a full page reload keeps the sidebar as the user left it.",
+    "Automatically switches to a Sheet-based drawer on mobile via useIsMobile() — no separate mobile layout to build.",
+  ],
   api: [
     {
       name: "SidebarProvider",
@@ -194,6 +198,7 @@ export const sidebarDoc: ComponentDoc = {
   ],
   accessibility: {
     keyboard: [
+      { keys: ["⌘/Ctrl", "B"], description: "Toggles the sidebar from anywhere in the app." },
       { keys: ["Tab"], description: "Moves through the menu buttons." },
       { keys: ["Enter"], description: "Activates the focused item." },
     ],

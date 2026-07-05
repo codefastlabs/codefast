@@ -1,10 +1,11 @@
-import { docSource } from "#/registry/source";
+import { docSource, docUsage } from "#/registry/source";
 import { TableActions } from "#/registry/table/actions.example";
 import { TableFooterExample } from "#/registry/table/footer.example";
 import { TableRtl } from "#/registry/table/rtl.example";
 import type { ComponentDoc } from "#/registry/types";
 
 export const tableDoc: ComponentDoc = {
+  usage: docUsage("table"),
   examples: [
     {
       id: "table-actions",
@@ -42,6 +43,11 @@ export const tableDoc: ComponentDoc = {
         { name: "TableFooter", children: [{ name: "TableRow", children: [{ name: "TableCell" }] }] },
       ],
     },
+  ],
+  features: [
+    "Wraps itself in a horizontally-scrollable container automatically — no separate overflow wrapper needed for wide tables.",
+    "TableRow highlights itself on data-selected or aria-expanded with no extra classes required.",
+    "Thin styled wrappers over real <table>/<thead>/<tbody>/<tfoot> elements — full native semantics and copy/paste behaviour.",
   ],
   api: [
     {

@@ -32,6 +32,10 @@ export const labelDoc: ComponentDoc = {
     },
   ],
   anatomy: [{ name: "Label" }],
+  features: [
+    "Forwards htmlFor — clicking the label focuses or activates the control it names.",
+    "Dims and (on aria-invalid) recolors automatically via peer-*/group-data-disabled: selectors — but only when the paired control comes before it in the DOM, e.g. <Checkbox /><Label>, not <Label><Input /></Label>.",
+  ],
   api: [
     {
       name: "Label",
@@ -49,7 +53,7 @@ export const labelDoc: ComponentDoc = {
     notes: [
       "Match htmlFor to the control’s id so clicking the label activates it.",
       "Every interactive control should have a Label, even if visually hidden.",
-      "Disabled controls don’t style their label automatically — dim it yourself.",
+      "Automatic disabled/invalid dimming needs the control before the label in markup — reorder or dim it yourself otherwise.",
     ],
   },
   guidelines: {

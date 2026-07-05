@@ -1,9 +1,10 @@
 import { ScrollAreaHorizontalDemo } from "#/registry/scroll-area/horizontal-demo.example";
 import { ScrollAreaRtl } from "#/registry/scroll-area/rtl.example";
-import { docSource } from "#/registry/source";
+import { docSource, docUsage } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const scrollAreaDoc: ComponentDoc = {
+  usage: docUsage("scroll-area"),
   examples: [
     {
       id: "scroll-area-horizontal-demo",
@@ -22,6 +23,11 @@ export const scrollAreaDoc: ComponentDoc = {
     },
   ],
   anatomy: [{ name: "ScrollArea" }],
+  features: [
+    "Replaces the native scrollbar visually only — real scroll and keyboard behaviour stay intact underneath.",
+    'Add a second ScrollAreaScrollbar orientation="horizontal" alongside the default vertical one for two-axis scrolling.',
+    "size (from context) controls scrollbar thickness for both orientations at once.",
+  ],
   api: [
     {
       name: "ScrollArea",

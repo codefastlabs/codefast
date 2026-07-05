@@ -1,4 +1,4 @@
-import { docSource } from "#/registry/source";
+import { docSource, docUsage } from "#/registry/source";
 import { SpinnerBadge } from "#/registry/spinner/badge.example";
 import { SpinnerButton } from "#/registry/spinner/button.example";
 import { SpinnerCustom } from "#/registry/spinner/custom.example";
@@ -9,6 +9,7 @@ import { SpinnerSize } from "#/registry/spinner/size.example";
 import type { ComponentDoc } from "#/registry/types";
 
 export const spinnerDoc: ComponentDoc = {
+  usage: docUsage("spinner"),
   examples: [
     {
       id: "spinner-badge",
@@ -63,7 +64,12 @@ export const spinnerDoc: ComponentDoc = {
       source: docSource("spinner", "size"),
     },
   ],
-  anatomy: [{ name: "Spinner" }, { name: "Spinner" }],
+  anatomy: [{ name: "Spinner" }],
+  features: [
+    "With children and loading=true, it hides them invisibly (keeping their layout size) and overlays the spinner on top — a VisuallyHidden copy keeps the label announced to screen readers.",
+    "loading={false} renders the children directly in place of the spinner, so a single component can toggle between the two states.",
+    "Respects prefers-reduced-motion — the animation pauses automatically.",
+  ],
   api: [
     {
       name: "Spinner",

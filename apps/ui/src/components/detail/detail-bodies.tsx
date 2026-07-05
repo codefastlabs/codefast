@@ -11,10 +11,12 @@ import { ApiSection } from "#/components/detail/api-section";
 import { ComponentPager } from "#/components/detail/component-pager";
 import { DetailMobileToc } from "#/components/detail/detail-mobile-toc";
 import { ExamplesSection } from "#/components/detail/examples-section";
+import { FeaturesSection } from "#/components/detail/features-section";
 import { GuidelinesSection } from "#/components/detail/guidelines-section";
 import { OnThisPage } from "#/components/detail/on-this-page";
 import { RelatedSection } from "#/components/detail/related-section";
 import type { TocItem } from "#/components/detail/toc";
+import { UsageSection } from "#/components/detail/usage-section";
 import type { ComponentMeta } from "#/registry/components";
 import { NEIGHBORS_BY_SLUG } from "#/registry/components";
 import { DEMO_BY_SLUG } from "#/registry/demos";
@@ -85,8 +87,14 @@ function buildToc({ doc, examples }: ComponentDetail): Array<TocItem> {
       }
     }
   }
+  if (doc?.usage) {
+    toc.push({ id: "usage", label: "Usage", depth: 1 });
+  }
   if (doc?.anatomy?.length) {
     toc.push({ id: "anatomy", label: "Anatomy", depth: 1 });
+  }
+  if (doc?.features?.length) {
+    toc.push({ id: "features", label: "Features", depth: 1 });
   }
   if (doc?.api?.length) {
     toc.push({ id: "api", label: "API reference", depth: 1 });
@@ -130,7 +138,11 @@ export function DetailBody({ detail }: DetailBodyProps) {
             </div>
           )}
 
+          {doc?.usage ? <UsageSection code={doc.usage.code} highlightedCode={doc.usage.html} /> : null}
+
           {doc?.anatomy?.length ? <AnatomySection nodes={doc.anatomy} /> : null}
+
+          {doc?.features?.length ? <FeaturesSection items={doc.features} /> : null}
 
           {doc?.api?.length ? <ApiSection groups={doc.api} /> : null}
 

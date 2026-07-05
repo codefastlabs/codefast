@@ -132,6 +132,11 @@ export const inputDoc: ComponentDoc = {
     },
   ],
   anatomy: [{ name: "Input" }],
+  features: [
+    'Forwards every native <input> prop and type (text, email, password, number, …), with type="file" getting dedicated styling.',
+    "Built-in invalid (aria-invalid) and disabled states, styled without extra classes.",
+    "Composes with Field/FieldGroup for a labelled field, InputGroup for icons or buttons inside the field, and ButtonGroup for adjacent action buttons.",
+  ],
   api: [
     {
       name: "Input",

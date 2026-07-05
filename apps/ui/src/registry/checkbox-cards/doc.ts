@@ -1,10 +1,11 @@
 import { CheckboxCardsColumns } from "#/registry/checkbox-cards/columns.example";
 import { CheckboxCardsDisabled } from "#/registry/checkbox-cards/disabled.example";
 import { CheckboxCardsFeatures } from "#/registry/checkbox-cards/features.example";
-import { docSource } from "#/registry/source";
+import { docSource, docUsage } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const checkboxCardsDoc: ComponentDoc = {
+  usage: docUsage("checkbox-cards"),
   examples: [
     {
       id: "features",
@@ -31,6 +32,10 @@ export const checkboxCardsDoc: ComponentDoc = {
     },
   ],
   anatomy: [{ name: "CheckboxCards", children: [{ name: "CheckboxCardsItem" }] }],
+  features: [
+    "Each CheckboxCardsItem already renders its own Label wrapping the checkbox and its children — the whole card is clickable, no separate <Label htmlFor> needed.",
+    "Built on the same multi-select headless primitive as Checkbox Group, styled as selectable cards sharing one value array.",
+  ],
   api: [
     {
       name: "CheckboxCards",

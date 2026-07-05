@@ -3,10 +3,11 @@ import { CardImage } from "#/registry/card/image.example";
 import { CardRtl } from "#/registry/card/rtl.example";
 import { CardSmall } from "#/registry/card/small.example";
 import { CardSpacing } from "#/registry/card/spacing.example";
-import { docSource } from "#/registry/source";
+import { docSource, docUsage } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const cardDoc: ComponentDoc = {
+  usage: docUsage("card"),
   examples: [
     {
       id: "card-edge-to-edge",
@@ -57,6 +58,11 @@ export const cardDoc: ComponentDoc = {
         { name: "CardFooter" },
       ],
     },
+  ],
+  features: [
+    "Two sizes (default, sm) via the --card-spacing CSS variable, adjustable per-instance without a new size value.",
+    "CardHeader switches to a 2-column grid automatically when a CardAction is present, and reserves a second row when a CardDescription follows the title.",
+    "A leading or trailing <img> direct child gets its corners rounded to match the card automatically.",
   ],
   api: [
     {

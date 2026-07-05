@@ -38,6 +38,10 @@ export function buildComponentMarkdown(component: ComponentMeta, doc?: ResolvedC
     isComposition ? componentImportLabel(component) : `\`${componentImportLabel(component)}\``,
   );
 
+  if (doc?.usage) {
+    sections.push("## Usage", `\`\`\`tsx\n${doc.usage.code}\n\`\`\``);
+  }
+
   if (doc?.examples.length) {
     const examples = doc.examples.map((example) => {
       const parts = [`### ${example.title}`];
@@ -56,6 +60,10 @@ export function buildComponentMarkdown(component: ComponentMeta, doc?: ResolvedC
 
   if (doc?.anatomy?.length) {
     sections.push("## Anatomy", `\`\`\`\n${anatomyToText(doc.anatomy)}\n\`\`\``);
+  }
+
+  if (doc?.features?.length) {
+    sections.push("## Features", doc.features.map((feature) => `- ${feature}`).join("\n"));
   }
 
   if (doc?.api?.length) {
@@ -97,7 +105,11 @@ export function buildComponentMarkdown(component: ComponentMeta, doc?: ResolvedC
     }
 
     if (doc.accessibility.notes?.length) {
-      parts.push(doc.accessibility.notes.map((note) => `- ${note}`).join("\n"));
+      parts.push(
+        doc.accessibility.notes
+          .map((note) => (typeof note === "string" ? `- ${note}` : `- **${note.title}:** ${note.description}`))
+          .join("\n"),
+      );
     }
 
     sections.push(parts.join("\n\n"));

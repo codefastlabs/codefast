@@ -4,10 +4,11 @@ import { RadioGroupDisabled } from "#/registry/radio-group/disabled.example";
 import { RadioGroupFieldset } from "#/registry/radio-group/fieldset.example";
 import { RadioGroupInvalid } from "#/registry/radio-group/invalid.example";
 import { RadioGroupRtl } from "#/registry/radio-group/rtl.example";
-import { docSource } from "#/registry/source";
+import { docSource, docUsage } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const radioGroupDoc: ComponentDoc = {
+  usage: docUsage("radio-group"),
   examples: [
     {
       id: "radio-group-choice-card",
@@ -54,6 +55,10 @@ export const radioGroupDoc: ComponentDoc = {
     },
   ],
   anatomy: [{ name: "RadioGroup", children: [{ name: "RadioGroupItem" }] }],
+  features: [
+    "Roving-tabindex ARIA radiogroup — Tab enters the group once, then Arrow keys move focus and select together.",
+    "Composes with Field/FieldLabel/FieldDescription and FieldSet/FieldLegend for labelled items and a grouped legend, or a FieldLabel wrapping the whole Field for a clickable choice-card.",
+  ],
   api: [
     {
       name: "RadioGroup",

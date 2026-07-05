@@ -1,4 +1,4 @@
-import { docSource } from "#/registry/source";
+import { docSource, docUsage } from "#/registry/source";
 import { TextareaButton } from "#/registry/textarea/button.example";
 import { TextareaDisabled } from "#/registry/textarea/disabled.example";
 import { TextareaField } from "#/registry/textarea/field.example";
@@ -7,6 +7,7 @@ import { TextareaRtl } from "#/registry/textarea/rtl.example";
 import type { ComponentDoc } from "#/registry/types";
 
 export const textareaDoc: ComponentDoc = {
+  usage: docUsage("textarea"),
   examples: [
     {
       id: "textarea-button",
@@ -48,6 +49,11 @@ export const textareaDoc: ComponentDoc = {
     },
   ],
   anatomy: [{ name: "Textarea" }],
+  features: [
+    "Auto-grows to fit its content via the native field-sizing: content CSS property — no resize-observer JS needed.",
+    "Forwards every native <textarea> prop (rows, maxLength, controlled value/onChange).",
+    "Composes with Field/FieldLabel/FieldDescription for a labelled field, and with Button for a submit-style composer.",
+  ],
   api: [
     {
       name: "Textarea",

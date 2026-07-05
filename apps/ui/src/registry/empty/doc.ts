@@ -73,6 +73,10 @@ export const emptyDoc: ComponentDoc = {
       ],
     },
   ],
+  features: [
+    "border-dashed is already baked into Empty's default styling — add a border (width) utility yourself to actually render the dashed outline.",
+    "Composes with Card (wrap Empty in a Card) or an InputGroup inside EmptyContent for empty-search patterns.",
+  ],
   api: [
     {
       name: "Empty",

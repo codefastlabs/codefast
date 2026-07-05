@@ -62,6 +62,11 @@ export const chartDoc: ComponentDoc = {
       source: docSource("chart", "tooltip"),
     },
   ],
+  features: [
+    "ChartConfig maps each data series to a label and either a flat color or a light/dark theme pair, exposed as --color-<key> CSS variables Recharts components reference directly.",
+    "ChartTooltipContent/ChartLegendContent are drop-in replacements for Recharts' own tooltip and legend that read colors and labels from that same config.",
+    "Works with any Recharts chart type (Bar/Line/Area/Pie…) — ChartContainer only supplies the responsive wrapper and theme variables.",
+  ],
   anatomy: [{ name: "ChartContainer", children: [{ name: "ChartTooltip" }] }],
   api: [
     {

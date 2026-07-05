@@ -78,6 +78,10 @@ export const datePickerDoc: ComponentDoc = {
       ],
     },
   ],
+  features: [
+    "Composes Popover + Calendar — inherits their focus-trap and keyboard behaviour for free, nothing reimplemented.",
+    'The demonstrated recipes cover a single date, a start/end range (mode="range"), a typed date kept in sync with the calendar, and natural-language parsing ("in 2 days") via chrono-node.',
+  ],
   guidelines: {
     do: [
       "Compose the picker from Popover + Calendar so it inherits their focus and keyboard behaviour.",

@@ -68,6 +68,11 @@ export const commandDoc: ComponentDoc = {
       ],
     },
   ],
+  features: [
+    "Built on cmdk — filters items by the input as you type; set shouldFilter={false} to filter server-side instead.",
+    "CommandDialog wraps the palette in a Dialog with a screen-reader-only title/description by default, ready for the classic ⌘K pattern.",
+    "CommandInput renders inside an InputGroup with a search icon addon — the same primitive Input Group and Input Search use.",
+  ],
   api: [
     {
       name: "Command",

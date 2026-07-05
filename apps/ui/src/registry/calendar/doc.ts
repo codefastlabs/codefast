@@ -95,6 +95,12 @@ export const calendarDoc: ComponentDoc = {
     },
   ],
   anatomy: [{ name: "Calendar" }],
+  features: [
+    "Wraps @daypicker/react — every DayPicker prop is forwarded, including a custom locale/DateLib for non-Gregorian calendars.",
+    "Three selection modes — single, range, multiple — change the shape of selected/onSelect to match.",
+    'RTL-aware out of the box: chevrons and range-selection styling flip automatically under dir="rtl".',
+    'captionLayout="dropdown" swaps the plain month/year caption for month/year dropdowns; numberOfMonths renders several months side by side.',
+  ],
   api: [
     {
       name: "Calendar",

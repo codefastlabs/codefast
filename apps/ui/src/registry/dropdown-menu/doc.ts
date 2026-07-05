@@ -111,6 +111,12 @@ export const dropdownMenuDoc: ComponentDoc = {
       ],
     },
   ],
+  features: [
+    'variant="destructive" on DropdownMenuItem tints the text/icon and the focus background for irreversible actions.',
+    "inset on Item/SubTrigger/Label aligns text with icon-led sibling items that don't have their own icon.",
+    "DropdownMenuSub/SubTrigger/SubContent nest a secondary menu; DropdownMenuShortcut right-aligns a keyboard-hint string.",
+    "DropdownMenuCheckboxItem and DropdownMenuRadioGroup/RadioItem add toggleable or exclusive-choice items inside the menu.",
+  ],
   api: [
     {
       name: "DropdownMenuCheckboxItem",

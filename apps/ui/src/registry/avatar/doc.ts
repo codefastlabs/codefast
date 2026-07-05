@@ -88,6 +88,11 @@ export const avatarDoc: ComponentDoc = {
     },
   ],
   anatomy: [{ name: "Avatar", children: [{ name: "AvatarImage" }, { name: "AvatarFallback" }] }],
+  features: [
+    "Three sizes (sm, default, lg); AvatarFallback and AvatarBadge scale to match automatically.",
+    "AvatarBadge overlays a status dot or icon at the bottom corner, sized to the avatar via the group data attribute.",
+    "AvatarGroup overlaps avatars with a negative margin; AvatarGroupCount caps the overflow with a +N indicator, both RTL-aware.",
+  ],
   api: [
     {
       name: "Avatar",

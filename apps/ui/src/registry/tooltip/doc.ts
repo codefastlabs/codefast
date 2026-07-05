@@ -1,4 +1,4 @@
-import { docSource } from "#/registry/source";
+import { docSource, docUsage } from "#/registry/source";
 import { TooltipDisabled } from "#/registry/tooltip/disabled.example";
 import { TooltipKeyboard } from "#/registry/tooltip/keyboard.example";
 import { TooltipRtl } from "#/registry/tooltip/rtl.example";
@@ -6,6 +6,7 @@ import { TooltipSides } from "#/registry/tooltip/sides.example";
 import type { ComponentDoc } from "#/registry/types";
 
 export const tooltipDoc: ComponentDoc = {
+  usage: docUsage("tooltip"),
   examples: [
     {
       id: "sides",
@@ -44,6 +45,10 @@ export const tooltipDoc: ComponentDoc = {
       children: [{ name: "Tooltip", children: [{ name: "TooltipTrigger" }, { name: "TooltipContent" }] }],
     },
   ],
+  features: [
+    "TooltipContent always renders its own arrow — no separate TooltipArrow needs to be added, unlike Popover or DropdownMenu.",
+    "Drop a Kbd inside TooltipContent to show a keyboard shortcut; it gets its own spacing and isolation styling automatically.",
+  ],
   api: [
     {
       name: "TooltipProvider",
@@ -52,8 +57,9 @@ export const tooltipDoc: ComponentDoc = {
         {
           name: "delayDuration",
           type: "number",
-          default: "700",
-          description: "Milliseconds to hover before the tooltip opens.",
+          default: "0",
+          description:
+            "Milliseconds to hover before the tooltip opens — codefast overrides Radix's 700ms default to open instantly.",
         },
         {
           name: "skipDelayDuration",

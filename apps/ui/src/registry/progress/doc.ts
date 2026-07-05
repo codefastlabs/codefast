@@ -1,10 +1,11 @@
 import { ProgressControlled } from "#/registry/progress/controlled.example";
 import { ProgressWithLabel } from "#/registry/progress/label.example";
 import { ProgressRtl } from "#/registry/progress/rtl.example";
-import { docSource } from "#/registry/source";
+import { docSource, docUsage } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const progressDoc: ComponentDoc = {
+  usage: docUsage("progress"),
   examples: [
     {
       id: "progress-controlled",
@@ -29,7 +30,12 @@ export const progressDoc: ComponentDoc = {
       direction: "rtl",
     },
   ],
-  anatomy: [{ name: "Progress" }, { name: "Progress" }],
+  anatomy: [{ name: "Progress" }],
+  features: [
+    'max (default 100) changes the denominator value is measured against — pass a non-100 max for domains like "3 of 5 steps."',
+    "Style the fill colour or gradient via **:data-[slot=progress-indicator] instead of overriding the root's background.",
+    'Built on Radix Progress — exposes role="progressbar" with aria-valuenow/valuemin/valuemax for free.',
+  ],
   api: [
     {
       name: "Progress",

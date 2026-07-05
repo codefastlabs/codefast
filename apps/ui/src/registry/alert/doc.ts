@@ -62,6 +62,11 @@ export const alertDoc: ComponentDoc = {
   anatomy: [
     { name: "Alert", children: [{ name: "AlertTitle" }, { name: "AlertDescription" }, { name: "AlertAction" }] },
   ],
+  features: [
+    'Renders with role="alert" — screen readers announce it as soon as it mounts, with no extra wiring.',
+    "The layout shifts to a two-column grid automatically once a leading <svg> icon is present as a direct child.",
+    "AlertAction is absolutely positioned in the top-right corner for a dismiss button or similar trailing control.",
+  ],
   api: [
     {
       name: "Alert",

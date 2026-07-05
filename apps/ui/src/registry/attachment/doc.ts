@@ -4,10 +4,11 @@ import { AttachmentOrientation } from "#/registry/attachment/orientation.example
 import { AttachmentSizes } from "#/registry/attachment/sizes.example";
 import { AttachmentStates } from "#/registry/attachment/states.example";
 import { AttachmentTriggerExample } from "#/registry/attachment/trigger.example";
-import { docSource } from "#/registry/source";
+import { docSource, docUsage } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const attachmentDoc: ComponentDoc = {
+  usage: docUsage("attachment"),
   examples: [
     {
       id: "attachment-states",
@@ -75,6 +76,13 @@ export const attachmentDoc: ComponentDoc = {
       ],
     },
   ],
+  features: [
+    "Icon and image media through AttachmentMedia.",
+    "Upload states — idle, uploading, processing, error, done — with a built-in shimmer while in progress.",
+    "Three sizes and horizontal or vertical orientation.",
+    "A full-card AttachmentTrigger that stays independently clickable alongside AttachmentActions.",
+    "Scrollable, snapping AttachmentGroup with a direction-aware edge fade.",
+  ],
   api: [
     {
       name: "Attachment",
@@ -135,9 +143,22 @@ export const attachmentDoc: ComponentDoc = {
   ],
   accessibility: {
     notes: [
-      "Give every AttachmentAction an aria-label — it renders as an icon-only button.",
-      "Convey state with text (e.g. an AttachmentDescription) as well as color; error is not signaled by color alone.",
-      "AttachmentGroup is a horizontal scroller; its content stays reachable by keyboard and mirrors in RTL.",
+      {
+        title: "Label icon-only actions",
+        description: "AttachmentAction is usually icon-only — give each one an aria-label naming its target.",
+      },
+      {
+        title: "Label the trigger",
+        description: "AttachmentTrigger covers the card with no text of its own — give it an aria-label too.",
+      },
+      {
+        title: "Keyboard scrolling",
+        description: "AttachmentGroup scrolls horizontally; interactive attachments stay reachable by tabbing.",
+      },
+      {
+        title: "Meaning beyond color",
+        description: "Keep the failure reason in an AttachmentDescription — error isn't signaled by color alone.",
+      },
     ],
   },
   guidelines: {
@@ -147,5 +168,6 @@ export const attachmentDoc: ComponentDoc = {
     ],
     dont: ["Don’t leave action buttons unlabeled.", "Don’t use the image variant without an actual image child."],
   },
+  dependencies: ["Radix UI Slot"],
   related: ["item", "message", "spinner"],
 };
