@@ -3,10 +3,16 @@ import { createFileRoute, notFound } from "@tanstack/react-router";
 import { fetchDetail } from "#/components/detail/detail-bodies";
 import { DetailNotFound } from "#/components/detail/detail-not-found";
 import { DetailPage } from "#/components/detail/detail-page";
+import { CONTENT_CACHE_CONTROL } from "#/lib/cache";
 import { SITE_OG_IMAGE, absoluteUrl, canonicalHead, jsonLdScript } from "#/lib/seo";
 import { COMPONENT_BY_SLUG } from "#/registry/components";
 
 export const Route = createFileRoute("/components/$slug")({
+  /**
+   * Declares this route's caching policy for dev and any non-prerendered render. Has no
+   * effect once prerendered for Vercel, where `routeRules` in `vite.config.ts` applies instead.
+   */
+  headers: () => ({ "Cache-Control": CONTENT_CACHE_CONTROL }),
   head: ({ params }: { params: { slug: string } }) => {
     const component = COMPONENT_BY_SLUG.get(params.slug);
     const url = absoluteUrl(`/components/${params.slug}`);

@@ -4,12 +4,18 @@ import { FeaturesSection } from "#/components/home/features-section";
 import { HeroSection } from "#/components/home/hero-section";
 import { InstallCta } from "#/components/home/install-cta";
 import { StatsSection } from "#/components/home/stats-section";
+import { CONTENT_CACHE_CONTROL } from "#/lib/cache";
 import { GITHUB_URL } from "#/lib/nav-links";
 import { SITE_URL, absoluteUrl, canonicalHead, jsonLdScript } from "#/lib/seo";
 
 const NPM_URL = "https://www.npmjs.com/package/@codefast/ui";
 
 export const Route = createFileRoute("/")({
+  /**
+   * Declares this route's caching policy for dev and any non-prerendered render. Has no
+   * effect once prerendered for Vercel, where `routeRules` in `vite.config.ts` applies instead.
+   */
+  headers: () => ({ "Cache-Control": CONTENT_CACHE_CONTROL }),
   head: () => {
     const seo = canonicalHead("/");
 

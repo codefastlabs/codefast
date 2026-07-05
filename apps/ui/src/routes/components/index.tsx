@@ -2,9 +2,15 @@ import { createFileRoute } from "@tanstack/react-router";
 
 import { GalleryHeroSection } from "#/components/showcase/gallery-hero-section";
 import { GalleryLayout } from "#/components/showcase/gallery-layout";
+import { CONTENT_CACHE_CONTROL } from "#/lib/cache";
 import { canonicalHead } from "#/lib/seo";
 
 export const Route = createFileRoute("/components/")({
+  /**
+   * Declares this route's caching policy for dev and any non-prerendered render. Has no
+   * effect once prerendered for Vercel, where `routeRules` in `vite.config.ts` applies instead.
+   */
+  headers: () => ({ "Cache-Control": CONTENT_CACHE_CONTROL }),
   head: () => {
     const seo = canonicalHead("/components");
 

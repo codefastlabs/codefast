@@ -6,9 +6,15 @@ import { LibrarySection } from "#/components/about/library-section";
 import { NextStepsSection } from "#/components/about/next-steps-section";
 import { RequirementsSection } from "#/components/about/requirements-section";
 import { ThemeSection } from "#/components/about/theme-section";
+import { CONTENT_CACHE_CONTROL } from "#/lib/cache";
 import { canonicalHead } from "#/lib/seo";
 
 export const Route = createFileRoute("/about")({
+  /**
+   * Declares this route's caching policy for dev and any non-prerendered render. Has no
+   * effect once prerendered for Vercel, where `routeRules` in `vite.config.ts` applies instead.
+   */
+  headers: () => ({ "Cache-Control": CONTENT_CACHE_CONTROL }),
   head: () => {
     const seo = canonicalHead("/about");
 
