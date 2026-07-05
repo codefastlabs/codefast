@@ -1,8 +1,8 @@
 /**
  * Server-only highlighter behind `getHighlightedSources` (imported only inside its
- * handler) so Shiki and the raw sources never reach a client chunk. Sources are
- * eager `?raw` imports so they ride in the server bundle: the `/components/<slug>.md`
- * route highlights at runtime, not only at build-time prerender.
+ * handler) so Shiki and the raw sources never reach a client chunk. Sources are lazy
+ * `?raw` imports — only the refs a call actually needs are loaded, instead of every
+ * registry file's raw text riding in the server bundle upfront.
  */
 import type { HighlighterCore } from "shiki/core";
 import { createHighlighterCore } from "shiki/core";
@@ -11,11 +11,10 @@ import { createJavaScriptRegexEngine } from "shiki/engine/javascript";
 import type { HighlightedSource } from "#/lib/highlight";
 import type { SourceRef } from "#/registry/_core/types";
 
-/** Raw text of every highlightable registry file, keyed by `SourceRef`. */
+/** Raw-text loaders for every highlightable registry file, keyed by `SourceRef`. */
 const rawSources = import.meta.glob<string>(["../*/*.example.tsx", "../*/demo.tsx", "../*/usage.tsx"], {
   query: "?raw",
   import: "default",
-  eager: true,
 });
 
 let highlighterPromise: Promise<HighlighterCore> | null = null;
@@ -35,13 +34,14 @@ function getHighlighter(): Promise<HighlighterCore> {
  * color inline (legible even without theme CSS) plus a `--shiki-dark` var that
  * `styles.css` swaps under `.dark` — half the bytes of a tree per theme.
  */
-function highlight(ref: SourceRef, highlighter: HighlighterCore): HighlightedSource {
-  const code = rawSources[ref];
+async function highlight(ref: SourceRef, highlighter: HighlighterCore): Promise<HighlightedSource> {
+  const loadCode = rawSources[ref];
 
-  if (code === undefined) {
+  if (!loadCode) {
     throw new Error(`No source file for ref "${ref}" under registry/.`);
   }
 
+  const code = await loadCode();
   const html = highlighter.codeToHtml(code, {
     lang: "tsx",
     themes: { light: "github-light", dark: "github-dark" },
@@ -57,6 +57,9 @@ function highlight(ref: SourceRef, highlighter: HighlighterCore): HighlightedSou
  */
 export async function highlightSources(refs: ReadonlyArray<SourceRef>): Promise<Record<SourceRef, HighlightedSource>> {
   const highlighter = await getHighlighter();
+  const entries = await Promise.all(
+    refs.map(async (ref): Promise<[SourceRef, HighlightedSource]> => [ref, await highlight(ref, highlighter)]),
+  );
 
-  return Object.fromEntries(refs.map((ref) => [ref, highlight(ref, highlighter)]));
+  return Object.fromEntries(entries);
 }
