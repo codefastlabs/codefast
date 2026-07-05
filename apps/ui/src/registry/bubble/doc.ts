@@ -1,8 +1,8 @@
-import { docSource, docUsage } from "#/registry/_core/source";
+import { docDemo, docSource, docUsage } from "#/registry/_core/source";
 import type { ComponentDoc } from "#/registry/_core/types";
 import { BubbleAlignment } from "#/registry/bubble/alignment.example";
 import { BubbleCollapsible } from "#/registry/bubble/collapsible.example";
-import { BubbleDemo } from "#/registry/bubble/demo.example";
+import { BubbleDemo } from "#/registry/bubble/demo";
 import { BubbleGroupDemo } from "#/registry/bubble/group-demo.example";
 import { BubbleLinkButton } from "#/registry/bubble/link-button.example";
 import { BubbleMarkdown } from "#/registry/bubble/markdown.example";
@@ -19,7 +19,7 @@ export const bubbleDoc: ComponentDoc = {
       title: "Demo",
       description: "A full thread — grouped bubbles, alternating sides, and reaction pills reading top to bottom.",
       Demo: BubbleDemo,
-      source: docSource("bubble", "demo"),
+      source: docDemo("bubble"),
       previewClassName: "block",
     },
     {
