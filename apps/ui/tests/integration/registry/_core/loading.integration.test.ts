@@ -6,15 +6,15 @@ import { DOC_SLUGS, loadDoc } from "#/registry/_core/docs";
 import { EXAMPLE_COMPONENT_BY_REF } from "#/registry/_core/examples";
 import { docDemo } from "#/registry/_core/source";
 
-// `getHighlightedSource` is a server function; its RPC transport can't run in
+// `getHighlightedSources` is a server function; its RPC transport can't run in
 // the test runner. Server-side (and at build) `staticFunctionMiddleware` is
 // transparent and just runs the handler in-process, so delegate straight to the
 // impl here — the same highlighting code path the server executes, minus the
 // transport. This keeps `loadDoc`/`loadSource` exercising the real pipeline.
 vi.mock("#/registry/_core/highlight-source", async () => {
-  const { highlightSource } = await import("#/registry/_core/highlight-source.impl");
+  const { highlightSources } = await import("#/registry/_core/highlight-source.impl");
 
-  return { getHighlightedSource: ({ data }: { data: string }) => highlightSource(data) };
+  return { getHighlightedSources: ({ data }: { data: ReadonlyArray<string> }) => highlightSources(data) };
 });
 
 /**

@@ -1,5 +1,5 @@
 /**
- * Server-only highlighter behind `getHighlightedSource` (imported only inside its
+ * Server-only highlighter behind `getHighlightedSources` (imported only inside its
  * handler) so Shiki and the raw sources never reach a client chunk. Sources are
  * eager `?raw` imports so they ride in the server bundle: the `/components/<slug>.md`
  * route highlights at runtime, not only at build-time prerender.
@@ -35,14 +35,13 @@ function getHighlighter(): Promise<HighlighterCore> {
  * color inline (legible even without theme CSS) plus a `--shiki-dark` var that
  * `styles.css` swaps under `.dark` — half the bytes of a tree per theme.
  */
-export async function highlightSource(ref: SourceRef): Promise<HighlightedSource> {
+function highlight(ref: SourceRef, highlighter: HighlighterCore): HighlightedSource {
   const code = rawSources[ref];
 
   if (code === undefined) {
     throw new Error(`No source file for ref "${ref}" under registry/.`);
   }
 
-  const highlighter = await getHighlighter();
   const html = highlighter.codeToHtml(code, {
     lang: "tsx",
     themes: { light: "github-light", dark: "github-dark" },
@@ -50,4 +49,14 @@ export async function highlightSource(ref: SourceRef): Promise<HighlightedSource
   });
 
   return { code, html };
+}
+
+/**
+ * Highlights every ref in one pass, sharing a single highlighter instance —
+ * one server-fn round trip per doc instead of one per example.
+ */
+export async function highlightSources(refs: ReadonlyArray<SourceRef>): Promise<Record<SourceRef, HighlightedSource>> {
+  const highlighter = await getHighlighter();
+
+  return Object.fromEntries(refs.map((ref) => [ref, highlight(ref, highlighter)]));
 }

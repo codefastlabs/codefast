@@ -1,7 +1,7 @@
 /**
  * Builders for a `SourceRef` — the key of a file under `registry/<slug>/`. They
  * don't read content; `docs.ts` resolves a ref to raw text + highlighted HTML via
- * `getHighlightedSource`, so `doc.ts` modules stay free of embedded source.
+ * `getHighlightedSources`, so `doc.ts` modules stay free of embedded source.
  */
 import type { SourceRef } from "#/registry/_core/types";
 

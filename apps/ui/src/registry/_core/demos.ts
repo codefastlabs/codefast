@@ -11,7 +11,7 @@ import type { ComponentType, LazyExoticComponent } from "react";
 import { lazy } from "react";
 
 import type { HighlightedSource } from "#/lib/highlight";
-import { getHighlightedSource } from "#/registry/_core/highlight-source";
+import { getHighlightedSources } from "#/registry/_core/highlight-source";
 
 export interface DemoEntry {
   /** Code-split demo — render inside `<Suspense>`; the chunk loads on first render. */
@@ -54,7 +54,16 @@ export const DEMO_BY_SLUG: ReadonlyMap<string, DemoEntry> = new Map(
       slugFromDemoPath(path),
       {
         Demo: lazy(async () => ({ default: await load() })),
-        loadSource: () => getHighlightedSource({ data: path }),
+        loadSource: async () => {
+          const sources = await getHighlightedSources({ data: [path] });
+          const source = sources[path];
+
+          if (!source) {
+            throw new Error(`Missing highlighted source for ref "${path}".`);
+          }
+
+          return source;
+        },
       },
     ];
   }),

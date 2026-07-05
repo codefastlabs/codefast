@@ -6,7 +6,7 @@ import type { HighlightedSource } from "#/lib/highlight";
  * export a `ComponentDoc` from `doc.ts` pointing at example files via `docSource`.
  */
 import { rememberExampleComponent } from "#/registry/_core/examples";
-import { getHighlightedSource } from "#/registry/_core/highlight-source";
+import { getHighlightedSources } from "#/registry/_core/highlight-source";
 import type { ComponentDoc, ResolvedComponentDoc, ResolvedDocExample, SourceRef } from "#/registry/_core/types";
 
 export type {
@@ -37,12 +37,21 @@ const docLoadersBySlug = new Map(Object.entries(docModules).map(([path, load]) =
 /** Slugs that ship a rich doc — known synchronously from the glob keys. */
 export const DOC_SLUGS: ReadonlySet<string> = new Set(docLoadersBySlug.keys());
 
-async function loadSource(ref: SourceRef): Promise<HighlightedSource> {
-  return getHighlightedSource({ data: ref });
+/** Looks up a batch-resolved source, throwing if the batch didn't include `ref`. */
+function requireSource(sources: Record<SourceRef, HighlightedSource>, ref: SourceRef): HighlightedSource {
+  const source = sources[ref];
+
+  if (!source) {
+    throw new Error(`Missing highlighted source for ref "${ref}".`);
+  }
+
+  return source;
 }
 
-async function resolveExample(example: ComponentDoc["examples"][number]): Promise<ResolvedDocExample> {
-  const source = await loadSource(example.source);
+function resolveExample(
+  example: ComponentDoc["examples"][number],
+  sources: Record<SourceRef, HighlightedSource>,
+): ResolvedDocExample {
   // Drop the live `Demo` — loader data is serialized across the SSR boundary and
   // a component function would not survive it. Stash the component first so a
   // client render can use it synchronously; otherwise the preview re-resolves it
@@ -51,7 +60,7 @@ async function resolveExample(example: ComponentDoc["examples"][number]): Promis
 
   rememberExampleComponent(example.source, Demo);
 
-  return { ...serializable, ...source };
+  return { ...serializable, ...requireSource(sources, example.source) };
 }
 
 /**
@@ -74,10 +83,12 @@ export async function loadDoc(slug: string): Promise<ResolvedComponentDoc | unde
     throw new Error(`Doc module for "${slug}" must export exactly one ComponentDoc.`);
   }
 
-  const [examples, usage] = await Promise.all([
-    Promise.all(doc.examples.map(resolveExample)),
-    doc.usage ? loadSource(doc.usage) : undefined,
-  ]);
+  // One round trip for every ref this doc needs, instead of one per example.
+  const refs = [...doc.examples.map((example) => example.source), ...(doc.usage ? [doc.usage] : [])];
+  const sources = await getHighlightedSources({ data: [...new Set(refs)] });
+
+  const examples = doc.examples.map((example) => resolveExample(example, sources));
+  const usage = doc.usage ? requireSource(sources, doc.usage) : undefined;
 
   // `anatomy` is plain tree data — it rides through `...doc` unchanged.
   return { ...doc, examples, usage };

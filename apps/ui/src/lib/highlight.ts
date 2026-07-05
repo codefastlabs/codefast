@@ -1,6 +1,6 @@
 /**
  * A registry source resolved to raw text + pre-rendered Shiki HTML by
- * `getHighlightedSource`. Shipped as loader data — highlighted once at build, not
+ * `getHighlightedSources`. Shipped as loader data — highlighted once at build, not
  * per request.
  */
 export interface HighlightedSource {

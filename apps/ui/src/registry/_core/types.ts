@@ -13,9 +13,9 @@ import type { PropRow } from "#/components/detail/props-table";
 import type { HighlightedSource } from "#/lib/highlight";
 
 /**
- * Key of a registry source file (e.g. `./button/variants.example.tsx`), built by
+ * Key of a registry source file (e.g. `../button/variants.example.tsx`), built by
  * `docSource`. Resolved to raw text + highlighted HTML via
- * `getHighlightedSource`, so docs never embed source content.
+ * `getHighlightedSources`, so docs never embed source content.
  */
 export type SourceRef = string;
 
