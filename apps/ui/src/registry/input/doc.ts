@@ -1,9 +1,9 @@
-import { docSource } from "#/registry/_core/source";
+import { docDemo, docSource } from "#/registry/_core/source";
 import type { ComponentDoc } from "#/registry/_core/types";
 import { InputBadge } from "#/registry/input/badge.example";
 import { InputBasic } from "#/registry/input/basic.example";
 import { InputButtonGroup } from "#/registry/input/button-group.example";
-import { InputDemo } from "#/registry/input/demo.example";
+import { InputDemo } from "#/registry/input/demo";
 import { InputDisabled } from "#/registry/input/disabled.example";
 import { InputField } from "#/registry/input/field.example";
 import { InputFieldgroup } from "#/registry/input/fieldgroup.example";
@@ -53,7 +53,7 @@ export const inputDoc: ComponentDoc = {
       title: "Demo",
       description: "A labelled API-key field with a description, styled with Field.",
       Demo: InputDemo,
-      source: docSource("input", "demo"),
+      source: docDemo("input"),
     },
     {
       id: "input-disabled",

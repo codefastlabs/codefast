@@ -1,7 +1,7 @@
-import { docSource, docUsage } from "#/registry/_core/source";
+import { docDemo, docSource, docUsage } from "#/registry/_core/source";
 import type { ComponentDoc } from "#/registry/_core/types";
 import { CollapsibleBasic } from "#/registry/collapsible/basic.example";
-import { CollapsibleDemo } from "#/registry/collapsible/demo.example";
+import { CollapsibleDemo } from "#/registry/collapsible/demo";
 import { CollapsibleFileTree } from "#/registry/collapsible/file-tree.example";
 import { CollapsibleRtl } from "#/registry/collapsible/rtl.example";
 import { CollapsibleSettings } from "#/registry/collapsible/settings.example";
@@ -22,7 +22,7 @@ export const collapsibleDoc: ComponentDoc = {
       title: "Demo",
       description: "A collapsible order card revealing shipping and item details.",
       Demo: CollapsibleDemo,
-      source: docSource("collapsible", "demo"),
+      source: docDemo("collapsible"),
       previewClassName: "items-start",
     },
     {
