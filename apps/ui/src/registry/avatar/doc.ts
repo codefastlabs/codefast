@@ -19,7 +19,6 @@ export const avatarDoc: ComponentDoc = {
       description: "A single, a badged, and a stacked group avatar side by side.",
       Demo: AvatarDemo,
       source: docSource("avatar", "demo"),
-      previewClassName: "block",
     },
     {
       id: "group",
