@@ -86,12 +86,37 @@ export const chartDoc: ComponentDoc = {
       ],
     },
     {
-      name: "ChartTooltip / ChartTooltipContent",
+      name: "ChartTooltip",
+      description: "Recharts' own Tooltip, re-exported as-is.",
       props: [
         {
           name: "content",
           type: "ReactNode",
           description: "Pass <ChartTooltipContent /> for themed, config-aware tooltips.",
+        },
+      ],
+    },
+    {
+      name: "ChartTooltipContent",
+      description: "Themed tooltip content that reads colours and labels from config.",
+      props: [
+        {
+          name: "hideLabel",
+          type: "boolean",
+          default: "false",
+          description: "Hides the tooltip's label row.",
+        },
+        {
+          name: "hideIndicator",
+          type: "boolean",
+          default: "false",
+          description: "Hides the colour indicator next to each series.",
+        },
+        {
+          name: "indicator",
+          type: '"dot" | "line" | "dashed"',
+          default: '"dot"',
+          description: "The shape of the colour indicator.",
         },
       ],
     },

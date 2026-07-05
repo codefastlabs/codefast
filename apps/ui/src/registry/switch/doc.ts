@@ -67,15 +67,20 @@ export const switchDoc: ComponentDoc = {
       description: "A toggle built on Radix Switch.",
       props: [
         {
-          name: "checked / onCheckedChange",
-          type: "boolean / (checked: boolean) => void",
-          description: "Controlled state and its change handler.",
+          name: "checked",
+          type: "boolean",
+          description: "The controlled checked state.",
         },
         {
           name: "defaultChecked",
           type: "boolean",
           default: "false",
-          description: "Initial state when uncontrolled.",
+          description: "The checked state when initially rendered (uncontrolled).",
+        },
+        {
+          name: "onCheckedChange",
+          type: "(checked: boolean) => void",
+          description: "Called when the checked state changes.",
         },
         {
           name: "size",

@@ -81,9 +81,19 @@ export const accordionDoc: ComponentDoc = {
           description: "For type=single, allow closing the open item. Ignored for multiple.",
         },
         {
-          name: "value / defaultValue",
+          name: "value",
           type: "string | string[]",
-          description: "Controlled / uncontrolled open item(s).",
+          description: "The controlled open item(s).",
+        },
+        {
+          name: "defaultValue",
+          type: "string | string[]",
+          description: "The open item(s) when initially rendered (uncontrolled).",
+        },
+        {
+          name: "onValueChange",
+          type: "(value: string | string[]) => void",
+          description: "Called when the open item(s) change.",
         },
       ],
     },

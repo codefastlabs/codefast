@@ -51,9 +51,14 @@ export const nativeSelectDoc: ComponentDoc = {
       description: "A styled native <select>. Forwards all native select props.",
       props: [
         {
-          name: "value / onChange",
-          type: "string / (event) => void",
-          description: "Standard controlled select props.",
+          name: "value",
+          type: "string",
+          description: "The controlled value.",
+        },
+        {
+          name: "onChange",
+          type: "React.ChangeEventHandler<HTMLSelectElement>",
+          description: "Called when the selected value changes.",
         },
         {
           name: "disabled",
@@ -64,12 +69,22 @@ export const nativeSelectDoc: ComponentDoc = {
       ],
     },
     {
-      name: "NativeSelectOptGroup / NativeSelectOption",
+      name: "NativeSelectOptGroup",
       props: [
         {
-          name: "label / value",
+          name: "label",
           type: "string",
-          description: "Group heading, and each option’s submitted value.",
+          description: "The group heading text.",
+        },
+      ],
+    },
+    {
+      name: "NativeSelectOption",
+      props: [
+        {
+          name: "value",
+          type: "string",
+          description: "The option’s submitted value.",
         },
       ],
     },

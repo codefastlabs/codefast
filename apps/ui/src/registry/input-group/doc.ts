@@ -198,13 +198,25 @@ export const inputGroupDoc: ComponentDoc = {
   ],
   api: [
     {
-      name: "InputGroup / InputGroupInput",
+      name: "InputGroup",
       description: "A wrapper that frames the input with addons.",
       props: [
         {
           name: "children",
           type: "ReactNode",
-          description: "An InputGroupInput plus one or more InputGroupAddon.",
+          description: "An InputGroupInput (or InputGroupTextarea) plus one or more InputGroupAddon.",
+        },
+      ],
+    },
+    {
+      name: "InputGroupInput",
+      description: "The text input control, styled borderless to sit flush inside the group. Forwards all Input props.",
+      props: [
+        {
+          name: "type",
+          type: "string",
+          default: '"text"',
+          description: "Native input type, e.g. text, email, or number.",
         },
       ],
     },
@@ -219,12 +231,36 @@ export const inputGroupDoc: ComponentDoc = {
       ],
     },
     {
-      name: "InputGroupText / InputGroupButton",
+      name: "InputGroupText",
+      description: "A static, non-interactive label inside an addon, e.g. a unit or protocol prefix.",
       props: [
         {
           name: "children",
           type: "ReactNode",
-          description: "A static label (e.g. https://) or an interactive button.",
+          description: "The label text or icon.",
+        },
+      ],
+    },
+    {
+      name: "InputGroupButton",
+      description: "An interactive button inside an addon.",
+      props: [
+        {
+          name: "size",
+          type: '"xs" | "sm" | "icon-xs" | "icon-sm"',
+          default: '"xs"',
+          description: "Compact sizes scaled to fit inside an addon.",
+        },
+        {
+          name: "variant",
+          type: "ButtonProps['variant']",
+          default: '"ghost"',
+          description: "Any Button variant; defaults to ghost to stay visually quiet inside the group.",
+        },
+        {
+          name: "children",
+          type: "ReactNode",
+          description: "The button's label or icon.",
         },
       ],
     },

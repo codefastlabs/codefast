@@ -97,23 +97,38 @@ export const avatarDoc: ComponentDoc = {
       ],
     },
     {
-      name: "AvatarImage / AvatarFallback",
-      description: "The image and the initials shown until (or unless) the image loads.",
+      name: "AvatarImage",
+      description: "AvatarFallback renders in its place when the image is missing or fails to load.",
       props: [
         {
-          name: "src / alt",
+          name: "src",
           type: "string",
-          description: "On AvatarImage. AvatarFallback renders when the image is missing.",
+          description: "The image URL.",
+        },
+        {
+          name: "alt",
+          type: "string",
+          description: "Alternative text for the image.",
         },
       ],
     },
     {
-      name: "AvatarGroup / AvatarGroupCount",
+      name: "AvatarGroup",
       props: [
         {
           name: "children",
           type: "ReactNode",
-          description: "Wrap avatars to overlap them; AvatarGroupCount shows the remainder.",
+          description: "Wrap Avatar elements to overlap them with a negative margin.",
+        },
+      ],
+    },
+    {
+      name: "AvatarGroupCount",
+      props: [
+        {
+          name: "children",
+          type: "ReactNode",
+          description: "The +N indicator showing how many avatars are hidden from the group.",
         },
       ],
     },

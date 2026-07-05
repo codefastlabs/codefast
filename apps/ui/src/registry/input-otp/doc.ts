@@ -95,9 +95,14 @@ export const inputOtpDoc: ComponentDoc = {
           description: "Total number of slots (required).",
         },
         {
-          name: "value / onChange",
-          type: "string / (value: string) => void",
-          description: "Controlled value — the concatenated characters.",
+          name: "value",
+          type: "string",
+          description: "The controlled value — the concatenated characters.",
+        },
+        {
+          name: "onChange",
+          type: "(value: string) => void",
+          description: "Called with the concatenated characters when the value changes.",
         },
         {
           name: "onComplete",
@@ -112,12 +117,24 @@ export const inputOtpDoc: ComponentDoc = {
       ],
     },
     {
-      name: "InputOTPSlot / InputOTPSeparator",
+      name: "InputOTPSlot",
+      description: "A single character cell; reads its char/caret/active state from OTPInputContext by index.",
       props: [
         {
           name: "index",
           type: "number",
-          description: "On a slot: its position. Wrap groups with InputOTPGroup.",
+          description: "The slot's position among all slots (required).",
+        },
+      ],
+    },
+    {
+      name: "InputOTPSeparator",
+      description: "A decorative divider between InputOTPGroups (e.g. 3 + 3 for a 6-digit code).",
+      props: [
+        {
+          name: "className",
+          type: "string",
+          description: "No dedicated props — renders a fixed dash icon; accepts standard div attributes.",
         },
       ],
     },

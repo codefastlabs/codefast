@@ -52,15 +52,20 @@ export const collapsibleDoc: ComponentDoc = {
       description: "A single togglable region.",
       props: [
         {
-          name: "open / onOpenChange",
-          type: "boolean / (open: boolean) => void",
-          description: "Controlled open state and its handler.",
+          name: "open",
+          type: "boolean",
+          description: "The controlled open state.",
         },
         {
           name: "defaultOpen",
           type: "boolean",
           default: "false",
-          description: "Initial state when uncontrolled.",
+          description: "The open state when initially rendered (uncontrolled).",
+        },
+        {
+          name: "onOpenChange",
+          type: "(open: boolean) => void",
+          description: "Called when the open state changes.",
         },
         {
           name: "disabled",

@@ -42,14 +42,19 @@ export const checkboxCardsDoc: ComponentDoc = {
       description: "A multi-selection group of cards sharing one value array.",
       props: [
         {
-          name: "value / onValueChange",
-          type: "string[] / (value: string[]) => void",
-          description: "Controlled list of selected card values.",
+          name: "value",
+          type: "string[]",
+          description: "The controlled list of selected card values.",
         },
         {
           name: "defaultValue",
           type: "string[]",
-          description: "Initial selection when uncontrolled.",
+          description: "The selected card values when initially rendered (uncontrolled).",
+        },
+        {
+          name: "onValueChange",
+          type: "(value: string[]) => void",
+          description: "Called when the selected card values change.",
         },
       ],
     },

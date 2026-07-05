@@ -60,14 +60,19 @@ export const tabsDoc: ComponentDoc = {
       description: "Root. Controls which panel is active.",
       props: [
         {
-          name: "defaultValue",
+          name: "value",
           type: "string",
-          description: "The tab selected on mount (uncontrolled).",
+          description: "The controlled active tab.",
         },
         {
-          name: "value / onValueChange",
-          type: "string / (value: string) => void",
-          description: "Control the active tab from your own state.",
+          name: "defaultValue",
+          type: "string",
+          description: "The active tab when initially rendered (uncontrolled).",
+        },
+        {
+          name: "onValueChange",
+          type: "(value: string) => void",
+          description: "Called when the active tab changes.",
         },
         {
           name: "activationMode",

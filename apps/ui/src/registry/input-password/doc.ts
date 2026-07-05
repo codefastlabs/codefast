@@ -44,9 +44,14 @@ export const inputPasswordDoc: ComponentDoc = {
       description: "Extends Input with a reveal toggle. Forwards all native input props.",
       props: [
         {
-          name: "value / onChange",
-          type: "string / (event) => void",
-          description: "Standard controlled input props.",
+          name: "value",
+          type: "string",
+          description: "The controlled value.",
+        },
+        {
+          name: "onChange",
+          type: "React.ChangeEventHandler<HTMLInputElement>",
+          description: "Called when the value changes.",
         },
         {
           name: "disabled",

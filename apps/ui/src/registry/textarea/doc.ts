@@ -70,9 +70,14 @@ export const textareaDoc: ComponentDoc = {
           description: "Hard cap on the number of characters.",
         },
         {
-          name: "value / onChange",
-          type: "string / (event) => void",
-          description: "Standard controlled textarea props.",
+          name: "value",
+          type: "string",
+          description: "The controlled value.",
+        },
+        {
+          name: "onChange",
+          type: "React.ChangeEventHandler<HTMLTextAreaElement>",
+          description: "Called when the value changes.",
         },
       ],
     },

@@ -109,9 +109,27 @@ export const itemDoc: ComponentDoc = {
   ],
   api: [
     {
-      name: "Item / ItemGroup",
-      description: "A row layout and the container that stacks rows.",
+      name: "Item",
+      description: "A single row; can render as a real interactive element via asChild.",
       props: [
+        {
+          name: "variant",
+          type: '"default" | "muted" | "outline"',
+          default: '"default"',
+          description: "Visual style of the row.",
+        },
+        {
+          name: "size",
+          type: '"default" | "sm" | "xs"',
+          default: '"default"',
+          description: "Row density.",
+        },
+        {
+          name: "asChild",
+          type: "boolean",
+          default: "false",
+          description: "Render as its child (e.g. an anchor) instead of a div.",
+        },
         {
           name: "children",
           type: "ReactNode",
@@ -120,12 +138,74 @@ export const itemDoc: ComponentDoc = {
       ],
     },
     {
-      name: "ItemMedia / ItemContent / ItemTitle / ItemDescription / ItemActions",
+      name: "ItemGroup",
+      description: "Layout container that stacks Item rows with role='list'.",
       props: [
         {
           name: "children",
           type: "ReactNode",
-          description: "Leading media, the title + description block, and trailing actions.",
+          description: "One or more Item rows.",
+        },
+      ],
+    },
+    {
+      name: "ItemMedia",
+      description: "Leading visual slot — an icon, image, or a real Avatar.",
+      props: [
+        {
+          name: "variant",
+          type: '"default" | "icon" | "image"',
+          default: '"default"',
+          description: "Sizes and scales the media to match icon or image content.",
+        },
+        {
+          name: "children",
+          type: "ReactNode",
+          description: "An icon, image, or Avatar element.",
+        },
+      ],
+    },
+    {
+      name: "ItemContent",
+      description: "Flexible column holding the title and description.",
+      props: [
+        {
+          name: "children",
+          type: "ReactNode",
+          description: "ItemTitle and ItemDescription.",
+        },
+      ],
+    },
+    {
+      name: "ItemTitle",
+      description: "The row's primary label.",
+      props: [
+        {
+          name: "children",
+          type: "ReactNode",
+          description: "Title text, truncated to a single line.",
+        },
+      ],
+    },
+    {
+      name: "ItemDescription",
+      description: "Secondary text below the title.",
+      props: [
+        {
+          name: "children",
+          type: "ReactNode",
+          description: "Supporting text, clamped to two lines.",
+        },
+      ],
+    },
+    {
+      name: "ItemActions",
+      description: "Trailing slot for controls such as buttons or a dropdown trigger.",
+      props: [
+        {
+          name: "children",
+          type: "ReactNode",
+          description: "One or more action elements.",
         },
       ],
     },

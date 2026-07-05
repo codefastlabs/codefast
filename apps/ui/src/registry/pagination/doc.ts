@@ -53,25 +53,44 @@ export const paginationDoc: ComponentDoc = {
   ],
   api: [
     {
-      name: "Pagination parts",
-      description: "Compose your own paginator; wire links to your router or state.",
+      name: "PaginationLink",
+      description: "A page link. Compose your own paginator; wire it to your router or state.",
       props: [
         {
-          name: "PaginationLink",
-          type: "{ isActive?: boolean } & anchor props",
-          description: "A page link. Set isActive on the current page.",
-        },
-        {
-          name: "PaginationPrevious / PaginationNext",
-          type: "anchor props",
-          description: "Prev/next controls — disable at the bounds via class + aria-disabled.",
-        },
-        {
-          name: "PaginationEllipsis",
-          type: "—",
-          description: "A non-interactive gap marker for skipped pages.",
+          name: "isActive",
+          type: "boolean",
+          description: "Marks the current page — swaps to the outline Button variant.",
         },
       ],
+    },
+    {
+      name: "PaginationPrevious",
+      description: "The previous-page control — disable at the lower bound via class + aria-disabled.",
+      props: [
+        {
+          name: "text",
+          type: "string",
+          default: '"Previous"',
+          description: "The label shown above the sm breakpoint.",
+        },
+      ],
+    },
+    {
+      name: "PaginationNext",
+      description: "The next-page control — disable at the upper bound via class + aria-disabled.",
+      props: [
+        {
+          name: "text",
+          type: "string",
+          default: '"Next"',
+          description: "The label shown above the sm breakpoint.",
+        },
+      ],
+    },
+    {
+      name: "PaginationEllipsis",
+      description: "A non-interactive gap marker for skipped pages. Renders a fixed MoreHorizontal icon.",
+      props: [{ name: "className", type: "string", description: "Compose additional classes onto the span." }],
     },
   ],
   accessibility: {

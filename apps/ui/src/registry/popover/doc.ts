@@ -57,15 +57,20 @@ export const popoverDoc: ComponentDoc = {
       description: "Root. Manages open state. Non-modal by default.",
       props: [
         {
-          name: "open / onOpenChange",
-          type: "boolean / (open: boolean) => void",
-          description: "Control visibility from your own state.",
+          name: "open",
+          type: "boolean",
+          description: "The controlled open state.",
         },
         {
           name: "defaultOpen",
           type: "boolean",
           default: "false",
-          description: "Open on mount when uncontrolled.",
+          description: "The open state when initially rendered (uncontrolled).",
+        },
+        {
+          name: "onOpenChange",
+          type: "(open: boolean) => void",
+          description: "Called when the open state changes.",
         },
         {
           name: "modal",
@@ -79,10 +84,16 @@ export const popoverDoc: ComponentDoc = {
       name: "PopoverContent",
       props: [
         {
-          name: "side / align",
-          type: '"top"|"right"|"bottom"|"left" / "start"|"center"|"end"',
-          default: '"bottom" / "center"',
-          description: "Placement relative to the trigger.",
+          name: "side",
+          type: '"top" | "right" | "bottom" | "left"',
+          default: '"bottom"',
+          description: "The preferred edge of the trigger to render against.",
+        },
+        {
+          name: "align",
+          type: '"start" | "center" | "end"',
+          default: '"center"',
+          description: "The preferred alignment against the trigger.",
         },
         {
           name: "sideOffset",

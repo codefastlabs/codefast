@@ -41,14 +41,19 @@ export const radioCardsDoc: ComponentDoc = {
       description: "Single-select group. Lay out children with grid/flex classes.",
       props: [
         {
-          name: "value / onValueChange",
-          type: "string / (value: string) => void",
-          description: "Controlled selection and its handler.",
+          name: "value",
+          type: "string",
+          description: "The controlled selected value.",
         },
         {
           name: "defaultValue",
           type: "string",
-          description: "Initial selection when uncontrolled.",
+          description: "The selected value when initially rendered (uncontrolled).",
+        },
+        {
+          name: "onValueChange",
+          type: "(value: string) => void",
+          description: "Called when the selected value changes.",
         },
         {
           name: "disabled",

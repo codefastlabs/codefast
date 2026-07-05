@@ -42,9 +42,14 @@ export const radioDoc: ComponentDoc = {
       description: "A single native radio input. Use Radio Group for managed groups.",
       props: [
         {
-          name: "checked / onValueChange",
-          type: "boolean / (value: string) => void",
-          description: "Controlled selected state; onValueChange fires with this radio’s value.",
+          name: "checked",
+          type: "boolean",
+          description: "The controlled selected state (native input prop).",
+        },
+        {
+          name: "onValueChange",
+          type: "(value: string) => void",
+          description: "Called with this radio’s value when it becomes checked.",
         },
         {
           name: "name",

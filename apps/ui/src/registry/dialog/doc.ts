@@ -74,15 +74,20 @@ export const dialogDoc: ComponentDoc = {
       description: "Root. Manages open state.",
       props: [
         {
-          name: "open / onOpenChange",
-          type: "boolean / (open: boolean) => void",
-          description: "Control visibility from your own state.",
+          name: "open",
+          type: "boolean",
+          description: "The controlled open state.",
         },
         {
           name: "defaultOpen",
           type: "boolean",
           default: "false",
-          description: "Open on mount when uncontrolled.",
+          description: "The open state when initially rendered (uncontrolled).",
+        },
+        {
+          name: "onOpenChange",
+          type: "(open: boolean) => void",
+          description: "Called when the open state changes.",
         },
         {
           name: "modal",

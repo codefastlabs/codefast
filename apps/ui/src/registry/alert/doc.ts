@@ -71,12 +71,33 @@ export const alertDoc: ComponentDoc = {
       ],
     },
     {
-      name: "AlertTitle / AlertDescription / AlertAction",
+      name: "AlertTitle",
       props: [
         {
           name: "children",
           type: "ReactNode",
-          description: "The headline, body text, and an optional trailing action (e.g. dismiss).",
+          description: "The headline text.",
+        },
+      ],
+    },
+    {
+      name: "AlertDescription",
+      props: [
+        {
+          name: "children",
+          type: "ReactNode",
+          description: "The body text.",
+        },
+      ],
+    },
+    {
+      name: "AlertAction",
+      description: "Absolutely positioned in the top-right corner for a dismiss button or similar trailing control.",
+      props: [
+        {
+          name: "children",
+          type: "ReactNode",
+          description: "An action element, e.g. a dismiss button.",
         },
       ],
     },

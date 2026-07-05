@@ -50,9 +50,16 @@ export const hoverCardDoc: ComponentDoc = {
       name: "HoverCardContent",
       props: [
         {
-          name: "side / align",
-          type: '"top"|"right"|"bottom"|"left" / "start"|"center"|"end"',
-          description: "Placement relative to the trigger.",
+          name: "side",
+          type: '"top" | "right" | "bottom" | "left"',
+          default: '"bottom"',
+          description: "The preferred edge of the trigger to render against.",
+        },
+        {
+          name: "align",
+          type: '"start" | "center" | "end"',
+          default: '"center"',
+          description: "The preferred alignment against the trigger.",
         },
       ],
     },

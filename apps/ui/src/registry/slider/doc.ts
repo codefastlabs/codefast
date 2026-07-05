@@ -66,20 +66,31 @@ export const sliderDoc: ComponentDoc = {
       description: "Built on Radix Slider. The number of thumbs follows the length of value.",
       props: [
         {
-          name: "value / onValueChange",
-          type: "number[] / (value: number[]) => void",
-          description: "Controlled thumb positions. Two entries render a range.",
+          name: "value",
+          type: "number[]",
+          description: "The controlled thumb positions. Two entries render a range.",
         },
         {
           name: "defaultValue",
           type: "number[]",
-          description: "Initial positions when uncontrolled.",
+          description: "The thumb positions when initially rendered (uncontrolled).",
         },
         {
-          name: "min / max",
+          name: "onValueChange",
+          type: "(value: number[]) => void",
+          description: "Called when any thumb position changes.",
+        },
+        {
+          name: "min",
           type: "number",
-          default: "0 / 100",
-          description: "Bounds of the track.",
+          default: "0",
+          description: "The lower bound of the track.",
+        },
+        {
+          name: "max",
+          type: "number",
+          default: "100",
+          description: "The upper bound of the track.",
         },
         {
           name: "step",

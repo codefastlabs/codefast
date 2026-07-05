@@ -115,12 +115,31 @@ export const buttonGroupDoc: ComponentDoc = {
       ],
     },
     {
-      name: "ButtonGroupText / ButtonGroupSeparator",
+      name: "ButtonGroupText",
+      description: "A non-interactive, non-button label inside the group.",
       props: [
+        {
+          name: "asChild",
+          type: "boolean",
+          default: "false",
+          description: "Merge props onto the immediate child instead of rendering a div.",
+        },
         {
           name: "children",
           type: "ReactNode",
-          description: "A non-button label, or a divider between segments.",
+          description: "The label content.",
+        },
+      ],
+    },
+    {
+      name: "ButtonGroupSeparator",
+      description: "A visual divider between segments, for buttons that lack their own border.",
+      props: [
+        {
+          name: "orientation",
+          type: '"horizontal" | "vertical"',
+          default: '"vertical"',
+          description: "Match the separator's axis to the group's orientation.",
         },
       ],
     },

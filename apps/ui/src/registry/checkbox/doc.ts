@@ -84,15 +84,20 @@ export const checkboxDoc: ComponentDoc = {
       description: "Built on Radix Checkbox.",
       props: [
         {
-          name: "checked / onCheckedChange",
-          type: 'boolean | "indeterminate" / (checked) => void',
-          description: 'Controlled state. Pass "indeterminate" for a mixed parent.',
+          name: "checked",
+          type: 'boolean | "indeterminate"',
+          description: 'The controlled checked state. Pass "indeterminate" for a mixed parent.',
         },
         {
           name: "defaultChecked",
-          type: "boolean",
+          type: 'boolean | "indeterminate"',
           default: "false",
-          description: "Initial state when uncontrolled.",
+          description: "The checked state when initially rendered (uncontrolled).",
+        },
+        {
+          name: "onCheckedChange",
+          type: '(checked: boolean | "indeterminate") => void',
+          description: "Called when the checked state changes.",
         },
         {
           name: "disabled",

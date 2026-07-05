@@ -123,20 +123,41 @@ export const dropdownMenuDoc: ComponentDoc = {
       description: "A menu item with a checkmark you control.",
       props: [
         {
-          name: "checked / onCheckedChange",
-          type: "boolean / (checked: boolean) => void",
-          description: "Controlled checked state and its handler.",
+          name: "checked",
+          type: 'boolean | "indeterminate"',
+          description: "The controlled checked state.",
+        },
+        {
+          name: "onCheckedChange",
+          type: "(checked: boolean) => void",
+          description: "Called when the checked state changes.",
         },
       ],
     },
     {
-      name: "DropdownMenuRadioGroup / RadioItem",
+      name: "DropdownMenuRadioGroup",
       description: "Single-choice section inside the menu.",
       props: [
         {
-          name: "value / onValueChange",
-          type: "string / (value: string) => void",
-          description: "On the group: the chosen RadioItem value.",
+          name: "value",
+          type: "string",
+          description: "The controlled chosen RadioItem value.",
+        },
+        {
+          name: "onValueChange",
+          type: "(value: string) => void",
+          description: "Called when the chosen RadioItem value changes.",
+        },
+      ],
+    },
+    {
+      name: "DropdownMenuRadioItem",
+      description: "One choice within a DropdownMenuRadioGroup.",
+      props: [
+        {
+          name: "value",
+          type: "string",
+          description: "This item's value, matched against the group's controlled value (required).",
         },
       ],
     },
@@ -144,10 +165,16 @@ export const dropdownMenuDoc: ComponentDoc = {
       name: "DropdownMenuContent",
       props: [
         {
-          name: "align / side",
-          type: '"start"|"center"|"end" / "top"|"bottom"…',
-          default: '"center" / "bottom"',
-          description: "Placement relative to the trigger.",
+          name: "side",
+          type: '"top" | "right" | "bottom" | "left"',
+          default: '"bottom"',
+          description: "The preferred edge of the trigger to render against.",
+        },
+        {
+          name: "align",
+          type: '"start" | "center" | "end"',
+          default: '"center"',
+          description: "The preferred alignment against the trigger.",
         },
       ],
     },

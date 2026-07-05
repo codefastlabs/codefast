@@ -100,13 +100,35 @@ export const messageDoc: ComponentDoc = {
       props: [{ name: "children", type: "ReactNode", description: "Bubbles, MessageHeader, MessageFooter." }],
     },
     {
-      name: "MessageAvatar / MessageHeader / MessageFooter",
-      description: "Optional author avatar and metadata rows.",
+      name: "MessageAvatar",
+      description: "Optional author avatar; lifts above MessageFooter when a footer is present.",
       props: [
         {
           name: "children",
           type: "ReactNode",
-          description: "Avatar element, or header/footer text such as name, time, and status.",
+          description: "An Avatar element.",
+        },
+      ],
+    },
+    {
+      name: "MessageHeader",
+      description: "Metadata row above the bubbles, e.g. author name and timestamp.",
+      props: [
+        {
+          name: "children",
+          type: "ReactNode",
+          description: "Header text such as name and time.",
+        },
+      ],
+    },
+    {
+      name: "MessageFooter",
+      description: "Metadata row below the bubbles, e.g. delivery status and actions; aligns with the row.",
+      props: [
+        {
+          name: "children",
+          type: "ReactNode",
+          description: "Footer text or controls such as status and reaction buttons.",
         },
       ],
     },

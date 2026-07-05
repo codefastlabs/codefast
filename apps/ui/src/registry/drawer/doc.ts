@@ -67,9 +67,20 @@ export const drawerDoc: ComponentDoc = {
       description: "Root. A bottom sheet built on Vaul with gesture support.",
       props: [
         {
-          name: "open / onOpenChange",
-          type: "boolean / (open: boolean) => void",
-          description: "Control visibility from your own state.",
+          name: "open",
+          type: "boolean",
+          description: "The controlled open state.",
+        },
+        {
+          name: "defaultOpen",
+          type: "boolean",
+          default: "false",
+          description: "The open state when initially rendered (uncontrolled).",
+        },
+        {
+          name: "onOpenChange",
+          type: "(open: boolean) => void",
+          description: "Called when the open state changes.",
         },
         {
           name: "shouldScaleBackground",
@@ -80,12 +91,24 @@ export const drawerDoc: ComponentDoc = {
       ],
     },
     {
-      name: "DrawerContent / DrawerClose",
+      name: "DrawerContent",
+      description: "The sliding panel itself.",
       props: [
         {
           name: "children",
           type: "ReactNode",
-          description: "The panel content; DrawerClose dismisses the drawer.",
+          description: "The panel content.",
+        },
+      ],
+    },
+    {
+      name: "DrawerClose",
+      description: "A button that dismisses the drawer.",
+      props: [
+        {
+          name: "children",
+          type: "ReactNode",
+          description: "The close button's content.",
         },
       ],
     },

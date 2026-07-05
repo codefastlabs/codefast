@@ -80,9 +80,19 @@ export const toggleGroupDoc: ComponentDoc = {
           description: "Single makes value a string; multiple makes it a string[].",
         },
         {
-          name: "value / onValueChange",
-          type: "string | string[] / (value) => void",
-          description: "Controlled pressed item(s). In single mode value can be empty.",
+          name: "value",
+          type: "string | string[]",
+          description: "The controlled pressed item(s). In single mode value can be empty.",
+        },
+        {
+          name: "defaultValue",
+          type: "string | string[]",
+          description: "The pressed item(s) when initially rendered (uncontrolled).",
+        },
+        {
+          name: "onValueChange",
+          type: "(value: string | string[]) => void",
+          description: "Called when the pressed item(s) change.",
         },
         {
           name: "variant",

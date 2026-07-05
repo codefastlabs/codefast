@@ -165,9 +165,14 @@ export const sidebarDoc: ComponentDoc = {
           description: "Whether the sidebar starts expanded.",
         },
         {
-          name: "open / onOpenChange",
-          type: "boolean / (open: boolean) => void",
-          description: "Control the collapsed state yourself.",
+          name: "open",
+          type: "boolean",
+          description: "The controlled open (expanded) state.",
+        },
+        {
+          name: "onOpenChange",
+          type: "(open: boolean) => void",
+          description: "Called when the open state changes.",
         },
       ],
     },

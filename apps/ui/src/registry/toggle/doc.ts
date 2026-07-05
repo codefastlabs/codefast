@@ -58,15 +58,20 @@ export const toggleDoc: ComponentDoc = {
       description: "A two-state pressable button.",
       props: [
         {
-          name: "pressed / onPressedChange",
-          type: "boolean / (pressed: boolean) => void",
-          description: "Controlled state and its handler.",
+          name: "pressed",
+          type: "boolean",
+          description: "The controlled pressed state.",
         },
         {
           name: "defaultPressed",
           type: "boolean",
           default: "false",
-          description: "Initial state when uncontrolled.",
+          description: "The pressed state when initially rendered (uncontrolled).",
+        },
+        {
+          name: "onPressedChange",
+          type: "(pressed: boolean) => void",
+          description: "Called when the pressed state changes.",
         },
         {
           name: "variant",

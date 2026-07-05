@@ -126,24 +126,80 @@ export const fieldDoc: ComponentDoc = {
       ],
     },
     {
-      name: "FieldLabel / FieldDescription / FieldError",
-      description: "The text parts. Render FieldError conditionally when the field is invalid.",
+      name: "FieldLabel",
+      description: "Accessible label for the field's control.",
       props: [
         {
           name: "htmlFor",
           type: "string",
-          description: "On FieldLabel, points at the control id for an accessible name.",
+          description: "Points at the control id for an accessible name.",
         },
       ],
     },
     {
-      name: "FieldSet / FieldLegend / FieldGroup",
-      description: "Group several related fields under a legend.",
+      name: "FieldDescription",
+      description: "Supporting help text under the label.",
       props: [
         {
           name: "children",
           type: "ReactNode",
-          description: "FieldLegend titles the set; FieldGroup spaces fields evenly.",
+          description: "The supporting copy.",
+        },
+      ],
+    },
+    {
+      name: "FieldError",
+      description: "Validation message, rendered conditionally when the field is invalid.",
+      props: [
+        {
+          name: "errors",
+          type: "Array<{ message?: string } | undefined>",
+          description:
+            "Validation errors straight from a form library — deduped and rendered as one line, or a bullet list when there’s more than one.",
+        },
+        {
+          name: "children",
+          type: "ReactNode",
+          description: "Custom error content — takes priority over errors when provided.",
+        },
+      ],
+    },
+    {
+      name: "FieldSet",
+      description: "Groups several related fields, like a native fieldset.",
+      props: [
+        {
+          name: "children",
+          type: "ReactNode",
+          description: "FieldLegend plus the grouped Field or FieldGroup elements.",
+        },
+      ],
+    },
+    {
+      name: "FieldLegend",
+      description: "Titles a FieldSet.",
+      props: [
+        {
+          name: "variant",
+          type: '"legend" | "label"',
+          default: '"legend"',
+          description: 'Size the legend like a section title, or "label" for a smaller, label-sized heading.',
+        },
+        {
+          name: "children",
+          type: "ReactNode",
+          description: "The legend text.",
+        },
+      ],
+    },
+    {
+      name: "FieldGroup",
+      description: "Spaces a set of Field elements evenly.",
+      props: [
+        {
+          name: "children",
+          type: "ReactNode",
+          description: "The Field (or nested FieldGroup) elements to space out.",
         },
       ],
     },

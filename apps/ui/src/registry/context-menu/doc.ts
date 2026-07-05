@@ -114,17 +114,34 @@ export const contextMenuDoc: ComponentDoc = {
       ],
     },
     {
-      name: "ContextMenuCheckboxItem / RadioGroup",
+      name: "ContextMenuCheckboxItem",
+      description: "A menu item with a checkmark you control.",
       props: [
         {
-          name: "checked / onCheckedChange",
-          type: "boolean / (checked: boolean) => void",
-          description: "On a checkbox item: its toggled state.",
+          name: "checked",
+          type: 'boolean | "indeterminate"',
+          description: "Its controlled toggled state.",
         },
         {
-          name: "value / onValueChange",
-          type: "string / (value: string) => void",
-          description: "On a radio group: the selected RadioItem value.",
+          name: "onCheckedChange",
+          type: "(checked: boolean) => void",
+          description: "Called when its toggled state changes.",
+        },
+      ],
+    },
+    {
+      name: "ContextMenuRadioGroup",
+      description: "Single-choice section inside the menu.",
+      props: [
+        {
+          name: "value",
+          type: "string",
+          description: "The controlled selected RadioItem value.",
+        },
+        {
+          name: "onValueChange",
+          type: "(value: string) => void",
+          description: "Called when the selected RadioItem value changes.",
         },
       ],
     },

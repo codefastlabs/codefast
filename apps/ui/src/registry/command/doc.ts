@@ -79,9 +79,19 @@ export const commandDoc: ComponentDoc = {
       description: "Built on cmdk. Filters items by the input as you type.",
       props: [
         {
-          name: "value / onValueChange",
-          type: "string / (value: string) => void",
-          description: "Control the highlighted item.",
+          name: "value",
+          type: "string",
+          description: "The controlled highlighted item.",
+        },
+        {
+          name: "defaultValue",
+          type: "string",
+          description: "The highlighted item when initially rendered (uncontrolled).",
+        },
+        {
+          name: "onValueChange",
+          type: "(value: string) => void",
+          description: "Called when the highlighted item changes.",
         },
         {
           name: "shouldFilter",
@@ -112,9 +122,19 @@ export const commandDoc: ComponentDoc = {
       description: "Command inside a Dialog.",
       props: [
         {
-          name: "open / onOpenChange",
-          type: "boolean / (open: boolean) => void",
-          description: "Control the modal palette’s visibility.",
+          name: "open",
+          type: "boolean",
+          description: "The controlled visibility of the modal palette.",
+        },
+        {
+          name: "defaultOpen",
+          type: "boolean",
+          description: "The visibility when initially rendered (uncontrolled).",
+        },
+        {
+          name: "onOpenChange",
+          type: "(open: boolean) => void",
+          description: "Called when the modal palette’s visibility changes.",
         },
       ],
     },

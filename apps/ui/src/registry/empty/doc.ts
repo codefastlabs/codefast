@@ -90,12 +90,52 @@ export const emptyDoc: ComponentDoc = {
       ],
     },
     {
-      name: "EmptyMedia / EmptyTitle / EmptyDescription / EmptyContent",
+      name: "EmptyMedia",
+      description: "Icon or illustration slot above the title.",
+      props: [
+        {
+          name: "variant",
+          type: '"default" | "icon"',
+          default: '"default"',
+          description: 'Render as plain media, or "icon" to frame it in a rounded, muted background.',
+        },
+        {
+          name: "children",
+          type: "ReactNode",
+          description: "The icon or illustration itself.",
+        },
+      ],
+    },
+    {
+      name: "EmptyTitle",
+      description: "Headline for the empty state.",
       props: [
         {
           name: "children",
           type: "ReactNode",
-          description: "The icon/illustration, headline, supporting text, and action slot.",
+          description: "The headline text.",
+        },
+      ],
+    },
+    {
+      name: "EmptyDescription",
+      description: "Supporting text under the title.",
+      props: [
+        {
+          name: "children",
+          type: "ReactNode",
+          description: "The supporting copy.",
+        },
+      ],
+    },
+    {
+      name: "EmptyContent",
+      description: "Action slot below the header.",
+      props: [
+        {
+          name: "children",
+          type: "ReactNode",
+          description: "Buttons, links, or other calls to action.",
         },
       ],
     },

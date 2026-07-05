@@ -136,9 +136,29 @@ export const attachmentDoc: ComponentDoc = {
       ],
     },
     {
-      name: "AttachmentContent / AttachmentTitle / AttachmentDescription / AttachmentActions / AttachmentGroup",
-      description: "Text column, name, secondary line, action cluster, and the scrollable row wrapper.",
-      props: [{ name: "children", type: "ReactNode", description: "Slot content." }],
+      name: "AttachmentContent",
+      description: "The text column wrapping the title and description.",
+      props: [{ name: "children", type: "ReactNode", description: "AttachmentTitle and AttachmentDescription." }],
+    },
+    {
+      name: "AttachmentTitle",
+      description: "The attachment's file name or label.",
+      props: [{ name: "children", type: "ReactNode", description: "The name or label text." }],
+    },
+    {
+      name: "AttachmentDescription",
+      description: "The secondary line under the title.",
+      props: [{ name: "children", type: "ReactNode", description: "File size, status text, or similar." }],
+    },
+    {
+      name: "AttachmentActions",
+      description: "The action button cluster.",
+      props: [{ name: "children", type: "ReactNode", description: "One or more AttachmentAction buttons." }],
+    },
+    {
+      name: "AttachmentGroup",
+      description: "A horizontally scrollable, snap-aligned row wrapping multiple Attachment cards.",
+      props: [{ name: "children", type: "ReactNode", description: "The Attachment cards in the row." }],
     },
   ],
   accessibility: {

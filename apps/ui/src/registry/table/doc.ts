@@ -51,24 +51,39 @@ export const tableDoc: ComponentDoc = {
   ],
   api: [
     {
-      name: "Table parts",
-      description: "Thin styled wrappers over real HTML table elements.",
+      name: "TableHeader",
+      description: "Maps to <thead>.",
+      props: [{ name: "children", type: "ReactNode", description: "TableRow elements for the header." }],
+    },
+    {
+      name: "TableBody",
+      description: "Maps to <tbody>.",
+      props: [{ name: "children", type: "ReactNode", description: "TableRow elements for the body." }],
+    },
+    {
+      name: "TableFooter",
+      description: "Maps to <tfoot>.",
+      props: [{ name: "children", type: "ReactNode", description: "TableRow elements for the footer." }],
+    },
+    {
+      name: "TableRow",
+      description: "Maps to <tr>. Highlights itself on data-selected or aria-expanded.",
+      props: [{ name: "children", type: "ReactNode", description: "TableHead or TableCell elements." }],
+    },
+    {
+      name: "TableHead",
+      description: "A header cell — maps to <th>.",
+      props: [{ name: "children", type: "ReactNode", description: "The column heading content." }],
+    },
+    {
+      name: "TableCell",
+      description: "A body cell — maps to <td>.",
+      props: [{ name: "children", type: "ReactNode", description: "The cell content." }],
+    },
+    {
+      name: "TableCaption",
       props: [
-        {
-          name: "TableHeader / TableBody / TableFooter",
-          type: "ReactNode",
-          description: "Map to <thead>, <tbody>, <tfoot>.",
-        },
-        {
-          name: "TableRow / TableHead / TableCell",
-          type: "ReactNode",
-          description: "Rows, header cells (<th>), and body cells (<td>).",
-        },
-        {
-          name: "TableCaption",
-          type: "ReactNode",
-          description: "A caption describing the table for assistive tech.",
-        },
+        { name: "children", type: "ReactNode", description: "A caption describing the table for assistive tech." },
       ],
     },
   ],

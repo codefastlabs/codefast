@@ -68,9 +68,29 @@ export const menubarDoc: ComponentDoc = {
   ],
   api: [
     {
-      name: "Menubar / MenubarMenu",
-      description: "The horizontal bar and each top-level menu.",
+      name: "Menubar",
+      description: "The horizontal bar that hosts roving focus across its top-level menus.",
       props: [
+        {
+          name: "value",
+          type: "string",
+          description: "Controlled value of the currently open menu.",
+        },
+        {
+          name: "defaultValue",
+          type: "string",
+          description: "Uncontrolled initial value of the open menu.",
+        },
+        {
+          name: "onValueChange",
+          type: "(value: string) => void",
+          description: "Called when the open menu changes.",
+        },
+        {
+          name: "loop",
+          type: "boolean",
+          description: "Whether arrow-key navigation loops from the last menu back to the first.",
+        },
         {
           name: "children",
           type: "ReactNode",
@@ -79,12 +99,52 @@ export const menubarDoc: ComponentDoc = {
       ],
     },
     {
-      name: "MenubarItem / MenubarShortcut",
+      name: "MenubarMenu",
+      description: "One top-level menu — pairs a MenubarTrigger with its MenubarContent.",
+      props: [
+        {
+          name: "value",
+          type: "string",
+          description: "Identifies this menu; required when Menubar's value/onValueChange are controlled.",
+        },
+        {
+          name: "children",
+          type: "ReactNode",
+          description: "A MenubarTrigger and its MenubarContent.",
+        },
+      ],
+    },
+    {
+      name: "MenubarItem",
+      description: "A single command row inside MenubarContent.",
+      props: [
+        {
+          name: "inset",
+          type: "boolean",
+          default: "false",
+          description: "Adds start padding to align with items that have an icon or indicator.",
+        },
+        {
+          name: "variant",
+          type: '"default" | "destructive"',
+          default: '"default"',
+          description: "Use destructive for irreversible actions.",
+        },
+        {
+          name: "children",
+          type: "ReactNode",
+          description: "Label text, optionally followed by a MenubarShortcut.",
+        },
+      ],
+    },
+    {
+      name: "MenubarShortcut",
+      description: "Right-aligned key-hint text within a MenubarItem.",
       props: [
         {
           name: "children",
           type: "ReactNode",
-          description: "A command row; MenubarShortcut shows its key hint. Also supports checkbox/radio items.",
+          description: "The shortcut label, e.g. '⌘S'.",
         },
       ],
     },

@@ -77,13 +77,35 @@ export const cardDoc: ComponentDoc = {
       ],
     },
     {
-      name: "CardHeader / CardFooter / CardContent",
-      description: "Layout slots.",
+      name: "CardHeader",
+      description: "Hosts CardTitle, CardDescription, and an optional CardAction.",
       props: [
         {
           name: "children",
           type: "ReactNode",
-          description: "CardHeader hosts CardTitle, CardDescription, and an optional CardAction.",
+          description: "CardTitle, CardDescription, and an optional CardAction.",
+        },
+      ],
+    },
+    {
+      name: "CardFooter",
+      description: "The bottom bar, set off from CardContent by a border and muted background.",
+      props: [
+        {
+          name: "children",
+          type: "ReactNode",
+          description: "Footer actions or supplementary content.",
+        },
+      ],
+    },
+    {
+      name: "CardContent",
+      description: "The main body of the card.",
+      props: [
+        {
+          name: "children",
+          type: "ReactNode",
+          description: "The card's primary content.",
         },
       ],
     },

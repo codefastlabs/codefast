@@ -59,19 +59,33 @@ export const resizableDoc: ComponentDoc = {
       name: "ResizablePanel",
       props: [
         {
-          name: "defaultSize / minSize / maxSize",
+          name: "defaultSize",
           type: "number (percent)",
-          description: "Initial and bounded size of the panel.",
+          description: "The panel's initial size.",
+        },
+        {
+          name: "minSize",
+          type: "number (percent)",
+          default: "0",
+          description: "The panel's minimum size.",
+        },
+        {
+          name: "maxSize",
+          type: "number (percent)",
+          default: "100",
+          description: "The panel's maximum size.",
         },
       ],
     },
     {
       name: "ResizableSeparator",
+      description: "The draggable handle placed between two panels.",
       props: [
         {
-          name: "—",
-          type: "—",
-          description: "The draggable handle placed between two panels.",
+          name: "withHandle",
+          type: "boolean",
+          default: "false",
+          description: "Shows a small visible grip in the middle of the drag handle.",
         },
       ],
     },

@@ -42,9 +42,14 @@ export const inputSearchDoc: ComponentDoc = {
       description: "A search field with a leading icon and a clear (×) button.",
       props: [
         {
-          name: "value / onChange",
-          type: "string / (value?: string) => void",
-          description: "Controlled query. onChange also fires with an empty value on clear.",
+          name: "value",
+          type: "string",
+          description: "The controlled query.",
+        },
+        {
+          name: "onChange",
+          type: "(value?: string) => void",
+          description: "Called when the query changes — also fires with an empty value on clear.",
         },
         {
           name: "defaultValue",

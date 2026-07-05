@@ -94,19 +94,42 @@ export const alertDialogDoc: ComponentDoc = {
       description: "Root. A modal that traps focus and requires an explicit choice.",
       props: [
         {
-          name: "open / onOpenChange",
-          type: "boolean / (open: boolean) => void",
-          description: "Control visibility from your own state.",
+          name: "open",
+          type: "boolean",
+          description: "The controlled open state.",
+        },
+        {
+          name: "defaultOpen",
+          type: "boolean",
+          default: "false",
+          description: "The open state when initially rendered (uncontrolled).",
+        },
+        {
+          name: "onOpenChange",
+          type: "(open: boolean) => void",
+          description: "Called when the open state changes.",
         },
       ],
     },
     {
-      name: "AlertDialogAction / AlertDialogCancel",
+      name: "AlertDialogAction",
+      description: "Confirms the action. Renders as a styled Button (variant defaults to default).",
       props: [
         {
           name: "onClick",
           type: "(event) => void",
-          description: "Action confirms; Cancel dismisses. Both close the dialog.",
+          description: "Confirms and closes the dialog.",
+        },
+      ],
+    },
+    {
+      name: "AlertDialogCancel",
+      description: "Dismisses without confirming. Renders as a styled Button (variant defaults to outline).",
+      props: [
+        {
+          name: "onClick",
+          type: "(event) => void",
+          description: "Cancels and closes the dialog.",
         },
       ],
     },

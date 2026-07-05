@@ -79,14 +79,19 @@ export const selectDoc: ComponentDoc = {
       description: "Root. Owns the selected value.",
       props: [
         {
-          name: "value / onValueChange",
-          type: "string / (value: string) => void",
-          description: "Controlled selection and its handler.",
+          name: "value",
+          type: "string",
+          description: "The controlled selected value.",
         },
         {
           name: "defaultValue",
           type: "string",
-          description: "Initial value when uncontrolled.",
+          description: "The selected value when initially rendered (uncontrolled).",
+        },
+        {
+          name: "onValueChange",
+          type: "(value: string) => void",
+          description: "Called when the selected value changes.",
         },
         {
           name: "disabled",
@@ -97,11 +102,22 @@ export const selectDoc: ComponentDoc = {
       ],
     },
     {
-      name: "SelectGroup / SelectLabel",
-      description: "Wrap related options so screen readers announce the group, not just visual spacing.",
+      name: "SelectGroup",
+      description: "Wraps related options so screen readers announce the group, not just visual spacing.",
       props: [
         {
-          name: "SelectLabel children",
+          name: "children",
+          type: "ReactNode",
+          description: "A SelectLabel followed by the group's SelectItems.",
+        },
+      ],
+    },
+    {
+      name: "SelectLabel",
+      description: "Heading text for a SelectGroup.",
+      props: [
+        {
+          name: "children",
           type: "ReactNode",
           description: "Heading text for the group (required inside SelectGroup for accessibility).",
         },

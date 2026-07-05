@@ -45,14 +45,30 @@ export const inputNumberDoc: ComponentDoc = {
       description: "A numeric field with steppers, bounds, and locale-aware formatting.",
       props: [
         {
-          name: "value / onChange",
-          type: "number / (value: number) => void",
-          description: "Controlled value and its handler. Or use defaultValue uncontrolled.",
+          name: "value",
+          type: "number",
+          description: "The controlled numeric value. Or use defaultValue uncontrolled.",
         },
         {
-          name: "min / max / step",
+          name: "onChange",
+          type: "(value?: number) => void",
+          description: "Called with the parsed number when the value changes.",
+        },
+        {
+          name: "min",
           type: "number",
-          description: "Bounds and increment. Values are clamped to the range.",
+          description: "The lower bound. Values are clamped to the range.",
+        },
+        {
+          name: "max",
+          type: "number",
+          description: "The upper bound. Values are clamped to the range.",
+        },
+        {
+          name: "step",
+          type: "number",
+          default: "1",
+          description: "The increment applied by the steppers.",
         },
         {
           name: "formatOptions",

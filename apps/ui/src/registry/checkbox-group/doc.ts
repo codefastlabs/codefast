@@ -43,14 +43,19 @@ export const checkboxGroupDoc: ComponentDoc = {
       description: "A multi-selection group sharing one value array.",
       props: [
         {
-          name: "value / onValueChange",
-          type: "string[] / (value: string[]) => void",
-          description: "Controlled list of checked values.",
+          name: "value",
+          type: "string[]",
+          description: "The controlled list of checked values.",
         },
         {
           name: "defaultValue",
           type: "string[]",
-          description: "Initial checked values when uncontrolled.",
+          description: "The checked values when initially rendered (uncontrolled).",
+        },
+        {
+          name: "onValueChange",
+          type: "(value: string[]) => void",
+          description: "Called when the checked values change.",
         },
         {
           name: "disabled",
