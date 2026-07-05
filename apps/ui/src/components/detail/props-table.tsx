@@ -26,7 +26,7 @@ export function PropsTable({ rows, className, ...props }: PropsTableProps) {
         <div key={row.name} className="space-y-2 px-5 py-4">
           <dt className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
             <code className="font-mono text-sm font-semibold text-ui-fg">{row.name}</code>
-            <code className="shrink-0 rounded-md border border-ui-border/60 bg-ui-surface px-2 py-0.5 font-mono text-xs break-normal text-ui-muted">
+            <code className="max-w-full rounded-md border border-ui-border/60 bg-ui-surface px-2 py-0.5 font-mono text-xs break-words text-ui-muted">
               {row.type}
             </code>
           </dt>
