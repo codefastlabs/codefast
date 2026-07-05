@@ -33,7 +33,7 @@ export function AspectRatioRtl() {
       <AspectRatio ratio={16 / 9} className="overflow-hidden rounded-lg">
         <Image
           alt={t.caption}
-          className="size-full object-cover grayscale dark:brightness-20"
+          className="size-full object-cover grayscale"
           height={360}
           layout="constrained"
           src="https://images.unsplash.com/photo-1494337480532-3725c85fd2ab?auto=format&fit=crop&w=640&q=80"
