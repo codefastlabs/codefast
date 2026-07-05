@@ -6,10 +6,11 @@ import { MarkerSeparator } from "#/registry/marker/separator.example";
 import { MarkerShimmer } from "#/registry/marker/shimmer.example";
 import { MarkerStatus } from "#/registry/marker/status.example";
 import { MarkerVariants } from "#/registry/marker/variants.example";
-import { docSource } from "#/registry/source";
+import { docSource, docUsage } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const markerDoc: ComponentDoc = {
+  usage: docUsage("marker"),
   examples: [
     {
       id: "marker-demo",
@@ -68,6 +69,11 @@ export const markerDoc: ComponentDoc = {
       Demo: MarkerLinkButton,
       source: docSource("marker", "link-button"),
     },
+  ],
+  features: [
+    "Three variants — default (plain label), separator (centered between two rules), border (bottom-bordered section break).",
+    "asChild renders the marker as a real heading, link, or button while keeping its layout, for a semantic section break or a clickable jump-to-date marker.",
+    'Pairs with a Spinner (role="status") for a live "thinking" line in a transcript.',
   ],
   anatomy: [{ name: "Marker", children: [{ name: "MarkerIcon" }, { name: "MarkerContent" }] }],
   api: [

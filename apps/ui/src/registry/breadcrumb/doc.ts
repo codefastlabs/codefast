@@ -70,6 +70,11 @@ export const breadcrumbDoc: ComponentDoc = {
       ],
     },
   ],
+  features: [
+    'BreadcrumbEllipsis collapses a long trail into a "…" marker — pair with a DropdownMenu to make the hidden crumbs reachable.',
+    "BreadcrumbLink's asChild renders your router's Link component while keeping breadcrumb semantics and hover styling.",
+    "BreadcrumbSeparator accepts any children to override the default chevron.",
+  ],
   api: [
     {
       name: "Breadcrumb parts",

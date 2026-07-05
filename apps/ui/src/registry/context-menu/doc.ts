@@ -95,6 +95,12 @@ export const contextMenuDoc: ComponentDoc = {
       ],
     },
   ],
+  features: [
+    "Opens via the context-menu key or long-press too, not just right-click.",
+    'variant="destructive" tints text/icon and the focus background for irreversible actions; inset aligns text with icon-led siblings.',
+    "ContextMenuSub/SubTrigger/SubContent nest a secondary menu; side/align on ContextMenuSubContent control submenu placement.",
+    "ContextMenuCheckboxItem and ContextMenuRadioGroup/RadioItem add toggleable or exclusive-choice items.",
+  ],
   api: [
     {
       name: "ContextMenuTrigger",

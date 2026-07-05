@@ -68,6 +68,30 @@ describe("doc registry ↔ metadata", () => {
     }
   }, 30_000);
 
+  // Guards a copy-paste bug found in Slider/Spinner/Separator/Progress: a single-part
+  // component's anatomy pasted as two identical root siblings (e.g. `[{name:"X"},{name:"X"}]`),
+  // rendering the same line twice. Only checks top-level roots — a parent legitimately
+  // repeating a child name (e.g. KbdGroup's two "Kbd" children) is untouched.
+  it("has no duplicate top-level anatomy roots", async () => {
+    const duplicates: Array<string> = [];
+
+    for (const slug of DOC_SLUGS) {
+      const doc = await loadDoc(slug);
+      const names = doc?.anatomy?.map((node) => node.name) ?? [];
+      const seen = new Set<string>();
+
+      for (const name of names) {
+        if (seen.has(name)) {
+          duplicates.push(`${slug}: "${name}"`);
+        }
+
+        seen.add(name);
+      }
+    }
+
+    expect(duplicates).toEqual([]);
+  }, 30_000);
+
   it("only cross-links to components that exist", async () => {
     const slugs = new Set(COMPONENTS.map((c) => c.slug));
     const broken: Array<string> = [];

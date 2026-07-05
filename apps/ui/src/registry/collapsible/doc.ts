@@ -3,10 +3,11 @@ import { CollapsibleDemo } from "#/registry/collapsible/demo.example";
 import { CollapsibleFileTree } from "#/registry/collapsible/file-tree.example";
 import { CollapsibleRtl } from "#/registry/collapsible/rtl.example";
 import { CollapsibleSettings } from "#/registry/collapsible/settings.example";
-import { docSource } from "#/registry/source";
+import { docSource, docUsage } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const collapsibleDoc: ComponentDoc = {
+  usage: docUsage("collapsible"),
   examples: [
     {
       id: "collapsible-basic",
@@ -49,6 +50,11 @@ export const collapsibleDoc: ComponentDoc = {
     },
   ],
   anatomy: [{ name: "Collapsible", children: [{ name: "CollapsibleTrigger" }, { name: "CollapsibleContent" }] }],
+  features: [
+    "open/onOpenChange for controlled state, or defaultOpen uncontrolled — the same pattern as Accordion and Dialog.",
+    "CollapsibleTrigger exposes aria-expanded automatically; pair with asChild to make any element (a Button, a row) the trigger.",
+    "For several independent, mutually-exclusive sections, reach for Accordion instead — Collapsible is a single region.",
+  ],
   api: [
     {
       name: "Collapsible",

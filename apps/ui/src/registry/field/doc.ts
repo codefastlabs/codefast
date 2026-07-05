@@ -10,10 +10,11 @@ import { FieldSelect } from "#/registry/field/select.example";
 import { FieldSlider } from "#/registry/field/slider.example";
 import { FieldSwitch } from "#/registry/field/switch.example";
 import { FieldTextarea } from "#/registry/field/textarea.example";
-import { docSource } from "#/registry/source";
+import { docSource, docUsage } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const fieldDoc: ComponentDoc = {
+  usage: docUsage("field"),
   examples: [
     {
       id: "field-checkbox",
@@ -105,6 +106,12 @@ export const fieldDoc: ComponentDoc = {
   anatomy: [
     { name: "Field", children: [{ name: "FieldLabel" }, { name: "FieldDescription" }, { name: "FieldError" }] },
   ],
+  features: [
+    "FieldError dedupes repeated error messages and renders a single line or a bullet list automatically — pass an array of { message } straight from a validation library.",
+    "Wrapping an entire Field inside FieldLabel turns it into a clickable choice-card — no extra markup needed, the has-data-checked: styling kicks in on its own.",
+    'FieldSeparator draws a divider with an optional centered label, e.g. "OR".',
+    'orientation="horizontal" lays the control beside the label instead of underneath.',
+  ],
   api: [
     {
       name: "Field",
@@ -145,6 +152,7 @@ export const fieldDoc: ComponentDoc = {
     notes: [
       "FieldLabel forwards htmlFor — always link it to the control’s id.",
       "Set aria-invalid on the control and render FieldError so the error is announced.",
+      'FieldError sets role="alert", so screen readers announce it as soon as it mounts — no extra wiring needed.',
       "Use FieldSet + FieldLegend for groups of checkboxes or radios.",
     ],
   },

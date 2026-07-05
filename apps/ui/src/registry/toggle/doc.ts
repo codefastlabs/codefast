@@ -1,4 +1,4 @@
-import { docSource } from "#/registry/source";
+import { docSource, docUsage } from "#/registry/source";
 import { ToggleDisabled } from "#/registry/toggle/disabled.example";
 import { ToggleOutline } from "#/registry/toggle/outline.example";
 import { ToggleRtl } from "#/registry/toggle/rtl.example";
@@ -7,6 +7,7 @@ import { ToggleText } from "#/registry/toggle/text.example";
 import type { ComponentDoc } from "#/registry/types";
 
 export const toggleDoc: ComponentDoc = {
+  usage: docUsage("toggle"),
   examples: [
     {
       id: "sizes",
@@ -46,6 +47,11 @@ export const toggleDoc: ComponentDoc = {
     },
   ],
   anatomy: [{ name: "Toggle" }],
+  features: [
+    "Two variants (default, outline) and three sizes (sm, default, lg).",
+    "Exposes aria-pressed, reflecting pressed/defaultPressed, so assistive tech announces on/off state, not just the visual style.",
+    "Group several toggles into one exclusive or multi-select cluster with Toggle Group.",
+  ],
   api: [
     {
       name: "Toggle",

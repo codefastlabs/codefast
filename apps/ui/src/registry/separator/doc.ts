@@ -2,10 +2,11 @@ import { SeparatorList } from "#/registry/separator/list.example";
 import { SeparatorMenu } from "#/registry/separator/menu.example";
 import { SeparatorRtl } from "#/registry/separator/rtl.example";
 import { SeparatorVertical } from "#/registry/separator/vertical.example";
-import { docSource } from "#/registry/source";
+import { docSource, docUsage } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const separatorDoc: ComponentDoc = {
+  usage: docUsage("separator"),
   examples: [
     {
       id: "separator-list",
@@ -37,7 +38,11 @@ export const separatorDoc: ComponentDoc = {
       source: docSource("separator", "vertical"),
     },
   ],
-  anatomy: [{ name: "Separator" }, { name: "Separator" }],
+  anatomy: [{ name: "Separator" }],
+  features: [
+    "decorative defaults to true (hidden from assistive tech) — set it to false when the divider carries real document structure that should be announced.",
+    'align positions a SeparatorItem (e.g. an "OR" label) centered on the rule.',
+  ],
   api: [
     {
       name: "Separator",
@@ -52,7 +57,7 @@ export const separatorDoc: ComponentDoc = {
         {
           name: "decorative",
           type: "boolean",
-          default: "false",
+          default: "true",
           description: "When true, it’s hidden from assistive tech (purely visual).",
         },
       ],
@@ -60,8 +65,7 @@ export const separatorDoc: ComponentDoc = {
   ],
   accessibility: {
     notes: [
-      "Renders with role=separator so structure is announced.",
-      "Set decorative when the line is purely visual and adds no meaning.",
+      "Decorative by default — no role, hidden from assistive tech. Set decorative={false} to expose role=separator when the divider carries real structure.",
       "Give vertical separators an explicit height (e.g. h-3).",
     ],
   },

@@ -91,6 +91,12 @@ export const alertDialogDoc: ComponentDoc = {
       ],
     },
   ],
+  features: [
+    "AlertDialogAction/AlertDialogCancel already render a styled Button internally (default/outline variants) — no need to nest your own Button.",
+    "AlertDialogMedia adds a leading icon slot in the header for visual emphasis.",
+    'size="sm" centers a compact dialog and switches the footer to a 2-column button grid instead of stacked/inline buttons.',
+    "AlertDialogBody is a codefast addition over upstream Radix — long content scrolls on its own while Header/Footer stay pinned, same as DialogBody.",
+  ],
   api: [
     {
       name: "AlertDialog",

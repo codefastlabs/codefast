@@ -5,10 +5,11 @@ import { CarouselPlugin } from "#/registry/carousel/plugin.example";
 import { CarouselRtl } from "#/registry/carousel/rtl.example";
 import { CarouselSize } from "#/registry/carousel/size.example";
 import { CarouselSpacing } from "#/registry/carousel/spacing.example";
-import { docSource } from "#/registry/source";
+import { docSource, docUsage } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const carouselDoc: ComponentDoc = {
+  usage: docUsage("carousel"),
   examples: [
     {
       id: "multiple",
@@ -71,6 +72,11 @@ export const carouselDoc: ComponentDoc = {
         { name: "CarouselNext" },
       ],
     },
+  ],
+  features: [
+    "Built on Embla; setApi exposes the live Embla instance to read the current index or call scrollTo() imperatively.",
+    "Arrow-key navigation follows reading direction — in RTL, Left advances instead of Right.",
+    "CarouselPrevious/CarouselNext disable themselves automatically at the ends of an unlooped carousel.",
   ],
   api: [
     {

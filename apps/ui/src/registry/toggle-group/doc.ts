@@ -1,4 +1,4 @@
-import { docSource } from "#/registry/source";
+import { docSource, docUsage } from "#/registry/source";
 import { ToggleGroupDisabled } from "#/registry/toggle-group/disabled.example";
 import { ToggleGroupFontWeightSelector } from "#/registry/toggle-group/font-weight-selector.example";
 import { ToggleGroupOutline } from "#/registry/toggle-group/outline.example";
@@ -9,6 +9,7 @@ import { ToggleGroupVertical } from "#/registry/toggle-group/vertical.example";
 import type { ComponentDoc } from "#/registry/types";
 
 export const toggleGroupDoc: ComponentDoc = {
+  usage: docUsage("toggle-group"),
   examples: [
     {
       id: "toggle-group-disabled",
@@ -62,6 +63,12 @@ export const toggleGroupDoc: ComponentDoc = {
     },
   ],
   anatomy: [{ name: "ToggleGroup", children: [{ name: "ToggleGroupItem" }] }],
+  features: [
+    'type="single" behaves like a radio group (string value); type="multiple" toggles independently (string[] value).',
+    "size/variant set on the group cascade to every item automatically — no need to repeat them per item.",
+    "spacing={0} merges items into one segmented control with shared borders; spacing > 0 keeps them as separate pill buttons.",
+    'orientation="vertical" stacks items in a column instead of a row.',
+  ],
   api: [
     {
       name: "ToggleGroup",

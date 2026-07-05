@@ -30,6 +30,11 @@ export const hoverCardDoc: ComponentDoc = {
     },
   ],
   anatomy: [{ name: "HoverCard", children: [{ name: "HoverCardTrigger" }, { name: "HoverCardContent" }] }],
+  features: [
+    "Opens on hover and on keyboard focus of the trigger — not hover-only.",
+    "openDelay/closeDelay (default 700ms/300ms) tune how long to hover before opening or closing.",
+    "side/align on HoverCardContent control placement, the same positioning primitives as Popover and Tooltip.",
+  ],
   api: [
     {
       name: "HoverCard",

@@ -1,10 +1,11 @@
 import { InputSearchControlled } from "#/registry/input-search/controlled.example";
 import { InputSearchDisabled } from "#/registry/input-search/disabled.example";
 import { InputSearchWithResults } from "#/registry/input-search/with-results.example";
-import { docSource } from "#/registry/source";
+import { docSource, docUsage } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const inputSearchDoc: ComponentDoc = {
+  usage: docUsage("input-search"),
   examples: [
     {
       id: "controlled",
@@ -31,6 +32,10 @@ export const inputSearchDoc: ComponentDoc = {
     },
   ],
   anatomy: [{ name: "InputSearch" }],
+  features: [
+    "Works controlled or fully uncontrolled — useControllableState means defaultValue alone (no value/onChange) still manages state internally.",
+    'The clear (×) button only renders once there’s a value, and clicking it calls onChange("") — the same path as clearing manually.',
+  ],
   api: [
     {
       name: "InputSearch",
@@ -55,7 +60,13 @@ export const inputSearchDoc: ComponentDoc = {
     },
   ],
   accessibility: {
-    keyboard: [{ keys: ["Esc"], description: "Clears the field when it has focus." }],
+    keyboard: [
+      {
+        keys: ["Esc"],
+        description:
+          "Clears the field in browsers that support it natively for type=search (e.g. WebKit) — not implemented in JS.",
+      },
+    ],
     notes: [
       "Renders type=search with an accessible clear button.",
       "Give it a label (visible or aria-label) describing what is searched.",

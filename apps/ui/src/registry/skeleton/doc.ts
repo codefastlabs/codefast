@@ -4,10 +4,11 @@ import { SkeletonForm } from "#/registry/skeleton/form.example";
 import { SkeletonRtl } from "#/registry/skeleton/rtl.example";
 import { SkeletonTable } from "#/registry/skeleton/table.example";
 import { SkeletonText } from "#/registry/skeleton/text.example";
-import { docSource } from "#/registry/source";
+import { docSource, docUsage } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const skeletonDoc: ComponentDoc = {
+  usage: docUsage("skeleton"),
   examples: [
     {
       id: "skeleton-card",
@@ -56,6 +57,10 @@ export const skeletonDoc: ComponentDoc = {
     },
   ],
   anatomy: [{ name: "Skeleton" }],
+  features: [
+    "A single shimmering div — shape it entirely with className (width, height, rounded-full for a circle); no built-in shape presets.",
+    "The shimmer is a moving gradient sweep, not a plain pulse, via the shared animate-shimmer utility.",
+  ],
   api: [
     {
       name: "Skeleton",

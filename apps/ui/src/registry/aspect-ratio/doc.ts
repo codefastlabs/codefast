@@ -38,6 +38,10 @@ export const aspectRatioDoc: ComponentDoc = {
     },
   ],
   anatomy: [{ name: "AspectRatio" }],
+  features: [
+    "A single ratio prop (width ÷ height) constrains the child — no manual padding-hack CSS needed.",
+    "Reserves space before the child loads, preventing layout shift for images, video, and embeds.",
+  ],
   api: [
     {
       name: "AspectRatio",

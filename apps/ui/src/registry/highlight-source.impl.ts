@@ -12,7 +12,7 @@ import type { HighlightedSource } from "#/lib/highlight";
 import type { SourceRef } from "#/registry/types";
 
 /** Raw text of every highlightable registry file, keyed by `SourceRef`. */
-const rawSources = import.meta.glob<string>(["./*/*.example.tsx", "./*/demo.tsx"], {
+const rawSources = import.meta.glob<string>(["./*/*.example.tsx", "./*/demo.tsx", "./*/usage.tsx"], {
   query: "?raw",
   import: "default",
   eager: true,

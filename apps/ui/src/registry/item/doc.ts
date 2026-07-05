@@ -8,15 +8,16 @@ import { ItemLink } from "#/registry/item/link.example";
 import { ItemRtl } from "#/registry/item/rtl.example";
 import { ItemSizeDemo } from "#/registry/item/size.example";
 import { ItemVariant } from "#/registry/item/variant.example";
-import { docSource } from "#/registry/source";
+import { docSource, docUsage } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const itemDoc: ComponentDoc = {
+  usage: docUsage("item"),
   examples: [
     {
       id: "item-avatar",
       title: "Avatar",
-      description: "You can use ItemMedia with variant='avatar' to display an avatar.",
+      description: "Put a real Avatar (or a stack of them) inside ItemMedia — there's no dedicated avatar variant.",
       Demo: ItemAvatar,
       source: docSource("item", "avatar"),
     },
@@ -100,6 +101,11 @@ export const itemDoc: ComponentDoc = {
         },
       ],
     },
+  ],
+  features: [
+    "Three visual variants (default, muted, outline) and three sizes (default, sm, xs).",
+    "ItemMedia has icon and image variants with matching size scaling — wrap a real Avatar inside for an avatar row instead of a dedicated variant.",
+    "asChild renders the whole Item as its child (e.g. a link) so hover/focus states apply to the real interactive element.",
   ],
   api: [
     {

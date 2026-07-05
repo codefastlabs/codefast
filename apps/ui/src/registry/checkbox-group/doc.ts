@@ -1,10 +1,11 @@
 import { CheckboxGroupHorizontal } from "#/registry/checkbox-group/horizontal.example";
 import { CheckboxGroupPermissions } from "#/registry/checkbox-group/permissions.example";
 import { CheckboxGroupWithDescriptions } from "#/registry/checkbox-group/with-descriptions.example";
-import { docSource } from "#/registry/source";
+import { docSource, docUsage } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const checkboxGroupDoc: ComponentDoc = {
+  usage: docUsage("checkbox-group"),
   examples: [
     {
       id: "permissions",
@@ -31,6 +32,11 @@ export const checkboxGroupDoc: ComponentDoc = {
     },
   ],
   anatomy: [{ name: "CheckboxGroup", children: [{ name: "CheckboxGroupItem" }] }],
+  features: [
+    "Not built on Radix — a hand-rolled headless primitive, since Radix has no multi-select checkbox-group primitive.",
+    "Shares one value: string[] across every item — checking/unchecking updates array membership, not per-item state.",
+    "Individual items can be disabled while the rest of the group stays interactive.",
+  ],
   api: [
     {
       name: "CheckboxGroup",

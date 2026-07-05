@@ -5,10 +5,11 @@ import { MessageHeaderFooter } from "#/registry/message/header-footer.example";
 import { MessageMarkdown } from "#/registry/message/markdown.example";
 import { MessageAttachment } from "#/registry/message/message-attachment.example";
 import { MessageThread } from "#/registry/message/thread.example";
-import { docSource } from "#/registry/source";
+import { docSource, docUsage } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const messageDoc: ComponentDoc = {
+  usage: docUsage("message"),
   examples: [
     {
       id: "message-thread",
@@ -74,6 +75,11 @@ export const messageDoc: ComponentDoc = {
         },
       ],
     },
+  ],
+  features: [
+    'align="end" reverses the row (avatar/content order) for the current user\'s own messages — no manual flex-direction needed.',
+    "MessageAvatar lifts above MessageFooter automatically when a footer is present, so it doesn't collide with delivery-status text.",
+    "Designed to sit inside MessageScroller for long, keyboard- and screen-reader-navigable transcripts.",
   ],
   api: [
     {

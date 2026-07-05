@@ -1,10 +1,11 @@
 import { FormContact } from "#/registry/form/contact.example";
 import { FormNewsletter } from "#/registry/form/newsletter.example";
 import { FormSignIn } from "#/registry/form/sign-in.example";
-import { docSource } from "#/registry/source";
+import { docSource, docUsage } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const formDoc: ComponentDoc = {
+  usage: docUsage("form"),
   examples: [
     {
       id: "sign-in",
@@ -32,14 +33,36 @@ export const formDoc: ComponentDoc = {
     },
   ],
   anatomy: [
-    { name: "Field", children: [{ name: "FieldLabel" }, { name: "Input" }, { name: "FieldError" }] },
-    { name: "Button" },
+    {
+      name: "Form",
+      children: [
+        {
+          name: "FormField",
+          children: [
+            {
+              name: "FormItem",
+              children: [
+                { name: "FormLabel" },
+                { name: "FormControl" },
+                { name: "FormDescription" },
+                { name: "FormMessage" },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+  ],
+  features: [
+    "FormField connects a react-hook-form Controller to a name/control pair and wires the label/description/message ids through context.",
+    "FormControl (a Slot) sets aria-invalid and aria-describedby on whatever control it wraps, pointing at the description and message ids automatically.",
+    "FormMessage renders the current react-hook-form field error, or falls back to its children when the field is valid.",
   ],
   api: [
     {
       name: "Form (react-hook-form)",
       description:
-        "The Form parts bind react-hook-form to accessible Field markup. Pair Form / FormField with useForm; the example here uses plain state + Field to stay dependency-free.",
+        "The Form parts bind react-hook-form to accessible markup — see Usage above for the full FormField/FormControl/FormMessage wiring with useForm. The examples below intentionally stay dependency-free (plain state + Field) to show the same pattern without requiring react-hook-form.",
       props: [
         {
           name: "FormField",

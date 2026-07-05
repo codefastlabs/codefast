@@ -8,10 +8,11 @@ import { BubblePopover } from "#/registry/bubble/popover.example";
 import { BubbleReactionsDemo } from "#/registry/bubble/reactions.example";
 import { BubbleTooltip } from "#/registry/bubble/tooltip.example";
 import { BubbleVariants } from "#/registry/bubble/variants.example";
-import { docSource } from "#/registry/source";
+import { docSource, docUsage } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const bubbleDoc: ComponentDoc = {
+  usage: docUsage("bubble"),
   examples: [
     {
       id: "bubble-demo",
@@ -96,6 +97,11 @@ export const bubbleDoc: ComponentDoc = {
       name: "BubbleGroup",
       children: [{ name: "Bubble", children: [{ name: "BubbleContent" }, { name: "BubbleReactions" }] }],
     },
+  ],
+  features: [
+    "Seven color variants that always paint the nested BubbleContent, independent of align.",
+    "BubbleContent's asChild turns the whole bubble into a real button or link, e.g. a quick-reply chip.",
+    "BubbleReactions overlaps a pill on a configurable corner (side/align) of the bubble.",
   ],
   api: [
     {

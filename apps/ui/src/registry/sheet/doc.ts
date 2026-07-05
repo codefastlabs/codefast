@@ -1,10 +1,11 @@
 import { SheetNoCloseButton } from "#/registry/sheet/no-close-button.example";
 import { SheetRtl } from "#/registry/sheet/rtl.example";
 import { SheetSide } from "#/registry/sheet/side.example";
-import { docSource } from "#/registry/source";
+import { docSource, docUsage } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const sheetDoc: ComponentDoc = {
+  usage: docUsage("sheet"),
   examples: [
     {
       id: "sheet-no-close-button",
@@ -45,6 +46,11 @@ export const sheetDoc: ComponentDoc = {
         },
       ],
     },
+  ],
+  features: [
+    "SheetBody is a codefast addition over upstream Radix — long content scrolls on its own while Header/Footer stay pinned, same as DialogBody.",
+    'Four slide-in edges via side ("top" | "right" | "bottom" | "left", default "right").',
+    "Built on Dialog under the hood — inherits its focus trap and inert-background behaviour.",
   ],
   api: [
     {

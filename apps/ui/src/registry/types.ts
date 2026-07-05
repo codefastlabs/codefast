@@ -51,14 +51,24 @@ export interface AnatomyNode {
   readonly children?: ReadonlyArray<AnatomyNode>;
 }
 
+/** A titled accessibility note — renders as a labelled subsection instead of a plain bullet. */
+export interface AccessibilityNote {
+  readonly title: string;
+  readonly description: string;
+}
+
 export interface ComponentDoc {
   readonly examples: ReadonlyArray<DocExample>;
+  /** Ref to a minimal "import + compose" snippet, shown before Examples — use `docUsage(slug)`. */
+  readonly usage?: SourceRef;
   /** Composition tree of the component's parts, rendered in the Anatomy section. */
   readonly anatomy?: ReadonlyArray<AnatomyNode>;
+  /** Short bullet list of capabilities, shown ahead of the API reference. */
+  readonly features?: ReadonlyArray<string>;
   readonly api?: ReadonlyArray<ApiGroup>;
   readonly accessibility?: {
     readonly keyboard?: ReadonlyArray<KeyRow>;
-    readonly notes?: ReadonlyArray<string>;
+    readonly notes?: ReadonlyArray<string | AccessibilityNote>;
   };
   readonly guidelines?: {
     readonly do?: ReadonlyArray<string>;
@@ -86,6 +96,7 @@ export interface ResolvedDocExample extends Omit<DocExample, "Demo">, Highlighte
  * A component doc with every source ref resolved. `anatomy` is plain data, so it
  * survives the loader boundary unchanged.
  */
-export interface ResolvedComponentDoc extends Omit<ComponentDoc, "examples"> {
+export interface ResolvedComponentDoc extends Omit<ComponentDoc, "examples" | "usage"> {
   readonly examples: ReadonlyArray<ResolvedDocExample>;
+  readonly usage?: HighlightedSource | undefined;
 }

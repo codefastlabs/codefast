@@ -4,10 +4,11 @@ import { BadgeAsLink } from "#/registry/badge/link.example";
 import { BadgeRtl } from "#/registry/badge/rtl.example";
 import { BadgeWithSpinner } from "#/registry/badge/spinner.example";
 import { BadgeVariants } from "#/registry/badge/variants.example";
-import { docSource } from "#/registry/source";
+import { docSource, docUsage } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const badgeDoc: ComponentDoc = {
+  usage: docUsage("badge"),
   examples: [
     {
       id: "variants",
@@ -57,6 +58,11 @@ export const badgeDoc: ComponentDoc = {
     },
   ],
   anatomy: [{ name: "Badge" }],
+  features: [
+    "Six variants — default, secondary, outline, destructive, ghost, link.",
+    "asChild renders the child element (e.g. a link) instead of a <span>.",
+    'A child marked data-icon="inline-start" or "inline-end" (an icon or a Spinner) gets matching spacing automatically, same convention as Button.',
+  ],
   api: [
     {
       name: "Badge",

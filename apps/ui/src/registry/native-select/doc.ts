@@ -2,10 +2,11 @@ import { NativeSelectDisabled } from "#/registry/native-select/disabled.example"
 import { NativeSelectGroups } from "#/registry/native-select/groups.example";
 import { NativeSelectInvalid } from "#/registry/native-select/invalid.example";
 import { NativeSelectRtl } from "#/registry/native-select/rtl.example";
-import { docSource } from "#/registry/source";
+import { docSource, docUsage } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const nativeSelectDoc: ComponentDoc = {
+  usage: docUsage("native-select"),
   examples: [
     {
       id: "native-select-disabled",
@@ -39,6 +40,11 @@ export const nativeSelectDoc: ComponentDoc = {
     },
   ],
   anatomy: [{ name: "NativeSelect", children: [{ name: "NativeSelectOption" }] }],
+  features: [
+    "A real native <select> — zero JS, full OS-native keyboard and screen-reader support, and the mobile picker UI.",
+    "Two sizes (default, sm).",
+    "NativeSelectOption/NativeSelectOptGroup use the Canvas/CanvasText CSS system colors, so options render correctly inside the browser's native dropdown popup in both light and dark mode.",
+  ],
   api: [
     {
       name: "NativeSelect",

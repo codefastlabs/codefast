@@ -1,10 +1,11 @@
 import { RadioCardsInterval } from "#/registry/radio-cards/interval.example";
 import { RadioCardsPayment } from "#/registry/radio-cards/payment.example";
 import { RadioCardsPlans } from "#/registry/radio-cards/plans.example";
-import { docSource } from "#/registry/source";
+import { docSource, docUsage } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const radioCardsDoc: ComponentDoc = {
+  usage: docUsage("radio-cards"),
   examples: [
     {
       id: "plans",
@@ -30,6 +31,10 @@ export const radioCardsDoc: ComponentDoc = {
     },
   ],
   anatomy: [{ name: "RadioCards", children: [{ name: "RadioCardsItem" }, { name: "RadioCardsItem" }] }],
+  features: [
+    "Each RadioCardsItem already renders its own Label wrapping the radio and its children — the whole card is clickable, no separate <Label htmlFor> needed.",
+    "Built on the same roving-tabindex radiogroup as Radio Group, styled as selectable cards instead of dot-and-label rows.",
+  ],
   api: [
     {
       name: "RadioCards",

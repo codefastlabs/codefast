@@ -46,6 +46,11 @@ export const paginationDoc: ComponentDoc = {
       ],
     },
   ],
+  features: [
+    "Every part is a plain <a>/<li>/<nav> — wire onClick/href to your router or state yourself; there's no built-in page-state management.",
+    "PaginationLink's isActive swaps between outline (current page) and ghost (other pages) Button variants automatically.",
+    "PaginationPrevious/PaginationNext hide their text label below the sm breakpoint, leaving just the chevron icon.",
+  ],
   api: [
     {
       name: "Pagination parts",

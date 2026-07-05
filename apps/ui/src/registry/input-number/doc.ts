@@ -1,10 +1,11 @@
 import { InputNumberFormats } from "#/registry/input-number/formats.example";
 import { InputNumberQuantity } from "#/registry/input-number/quantity.example";
 import { InputNumberStates } from "#/registry/input-number/states.example";
-import { docSource } from "#/registry/source";
+import { docSource, docUsage } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const inputNumberDoc: ComponentDoc = {
+  usage: docUsage("input-number"),
   examples: [
     {
       id: "quantity",
@@ -32,6 +33,12 @@ export const inputNumberDoc: ComponentDoc = {
     },
   ],
   anatomy: [{ name: "InputNumber" }],
+  features: [
+    'Two variants — "stepper" (chevrons stacked on one side, default) and "split" (− and + buttons flanking the field).',
+    "formatOptions (Intl.NumberFormatOptions) formats the displayed value, e.g. currency or percent, while the underlying value stays a plain number.",
+    "min/max/step clamp both typed and stepper-driven changes to a valid range.",
+    "Built-in loading/spinner support, e.g. while a computed value is being fetched.",
+  ],
   api: [
     {
       name: "InputNumber",

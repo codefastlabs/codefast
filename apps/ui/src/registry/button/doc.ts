@@ -112,6 +112,12 @@ export const buttonDoc: ComponentDoc = {
     },
   ],
   anatomy: [{ name: "Button" }],
+  features: [
+    "Six variants (default, secondary, outline, ghost, destructive, link) and eight sizes, including icon-only sizes.",
+    "asChild renders the child element in place of a <button> — turn a link or custom trigger into a styled button.",
+    'A child marked data-icon="inline-start" or "inline-end" (an icon or a Spinner) automatically tightens its padding.',
+    "Styles itself as active via aria-expanded when used as a menu or popover trigger.",
+  ],
   api: [
     {
       name: "Button",

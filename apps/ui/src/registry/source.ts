@@ -14,3 +14,8 @@ export function docSource(slug: string, name: string): SourceRef {
 export function docDemo(slug: string): SourceRef {
   return `./${slug}/demo.tsx`;
 }
+
+/** Ref to `registry/<slug>/usage.tsx` — a minimal, un-styled composition snippet. */
+export function docUsage(slug: string): SourceRef {
+  return `./${slug}/usage.tsx`;
+}

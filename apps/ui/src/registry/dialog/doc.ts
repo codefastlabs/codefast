@@ -3,10 +3,11 @@ import { DialogNoCloseButton } from "#/registry/dialog/no-close-button.example";
 import { DialogRtl } from "#/registry/dialog/rtl.example";
 import { DialogScrollableContent } from "#/registry/dialog/scrollable-content.example";
 import { DialogStickyFooter } from "#/registry/dialog/sticky-footer.example";
-import { docSource } from "#/registry/source";
+import { docSource, docUsage } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const dialogDoc: ComponentDoc = {
+  usage: docUsage("dialog"),
   examples: [
     {
       id: "dialog-close-button",
@@ -60,6 +61,12 @@ export const dialogDoc: ComponentDoc = {
         },
       ],
     },
+  ],
+  features: [
+    "DialogBody is a codefast addition over upstream Radix — long content scrolls on its own while DialogHeader/DialogFooter stay pinned, instead of the whole panel scrolling.",
+    'DialogFooter\'s showCloseButton renders a ready-made "Close" button — no need to wire DialogClose asChild yourself.',
+    "DialogContent's showCloseButton (default true) toggles the built-in corner × button.",
+    "modal={false} lets content outside the dialog stay interactive instead of becoming inert.",
   ],
   api: [
     {

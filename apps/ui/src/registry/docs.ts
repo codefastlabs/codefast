@@ -74,8 +74,11 @@ export async function loadDoc(slug: string): Promise<ResolvedComponentDoc | unde
     throw new Error(`Doc module for "${slug}" must export exactly one ComponentDoc.`);
   }
 
-  const examples = await Promise.all(doc.examples.map(resolveExample));
+  const [examples, usage] = await Promise.all([
+    Promise.all(doc.examples.map(resolveExample)),
+    doc.usage ? loadSource(doc.usage) : undefined,
+  ]);
 
   // `anatomy` is plain tree data — it rides through `...doc` unchanged.
-  return { ...doc, examples };
+  return { ...doc, examples, usage };
 }

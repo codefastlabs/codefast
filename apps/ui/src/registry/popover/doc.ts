@@ -46,6 +46,11 @@ export const popoverDoc: ComponentDoc = {
       ],
     },
   ],
+  features: [
+    "Non-modal by default — the rest of the page stays interactive while it's open; set modal to trap focus like a Dialog.",
+    "PopoverAnchor lets the panel point at a different element than the one that opens it.",
+    "side/align/sideOffset on PopoverContent control placement and the gap from the trigger.",
+  ],
   api: [
     {
       name: "Popover",

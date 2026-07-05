@@ -2,10 +2,11 @@ import { ResizableDemo } from "#/registry/resizable/demo";
 import { ResizableSeparatorDemo } from "#/registry/resizable/handle.example";
 import { ResizableRtl } from "#/registry/resizable/rtl.example";
 import { ResizableVertical } from "#/registry/resizable/vertical.example";
-import { docDemo, docSource } from "#/registry/source";
+import { docDemo, docSource, docUsage } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const resizableDoc: ComponentDoc = {
+  usage: docUsage("resizable"),
   examples: [
     {
       id: "resizable-demo",
@@ -44,6 +45,11 @@ export const resizableDoc: ComponentDoc = {
       name: "ResizableGroup",
       children: [{ name: "ResizablePanel" }, { name: "ResizableSeparator" }, { name: "ResizablePanel" }],
     },
+  ],
+  features: [
+    "Built on react-resizable-panels — defaultSize/minSize/maxSize are percentages of the group, not pixels.",
+    "withHandle on ResizableSeparator adds a small visible grip in the middle of the drag handle.",
+    "Nest a ResizableGroup inside a ResizablePanel to combine horizontal and vertical splits in one layout.",
   ],
   api: [
     {

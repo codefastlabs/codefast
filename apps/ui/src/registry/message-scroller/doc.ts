@@ -10,10 +10,11 @@ import { MessageScrollerPreviousContext } from "#/registry/message-scroller/prev
 import { MessageScrollerScrollable } from "#/registry/message-scroller/scrollable.example";
 import { MessageScrollerStreaming } from "#/registry/message-scroller/streaming.example";
 import { MessageScrollerVisibility } from "#/registry/message-scroller/visibility.example";
-import { docDemo, docSource } from "#/registry/source";
+import { docDemo, docSource, docUsage } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const messageScrollerDoc: ComponentDoc = {
+  usage: docUsage("message-scroller"),
   examples: [
     {
       id: "message-scroller-feed",
@@ -140,6 +141,12 @@ export const messageScrollerDoc: ComponentDoc = {
         },
       ],
     },
+  ],
+  features: [
+    "autoScroll follows new content at the bottom only while the reader is already there — any deliberate scroll or wheel input releases follow-bottom so they're never yanked back down.",
+    'scrollAnchor on a MessageScrollerItem marks a turn boundary that streaming or appended content anchors against, and that defaultScrollPosition="last-anchor" restores to.',
+    "preserveScrollOnPrepend (default true) keeps the first visible row stable when older history is prepended above it.",
+    "Exposes imperative commands (useMessageScroller()) and live state hooks (useMessageScrollerScrollable, useMessageScrollerVisibility) for building custom jump-to or outline UIs.",
   ],
   api: [
     {

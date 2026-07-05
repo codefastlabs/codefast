@@ -1,4 +1,4 @@
-import { docDemo, docSource } from "#/registry/source";
+import { docDemo, docSource, docUsage } from "#/registry/source";
 import { TabsDemo } from "#/registry/tabs/demo";
 import { TabsDisabled } from "#/registry/tabs/disabled.example";
 import { TabsIcons } from "#/registry/tabs/icons.example";
@@ -8,6 +8,7 @@ import { TabsVertical } from "#/registry/tabs/vertical.example";
 import type { ComponentDoc } from "#/registry/types";
 
 export const tabsDoc: ComponentDoc = {
+  usage: docUsage("tabs"),
   examples: [
     {
       id: "tabs-demo",
@@ -55,6 +56,11 @@ export const tabsDoc: ComponentDoc = {
   ],
   anatomy: [
     { name: "Tabs", children: [{ name: "TabsList", children: [{ name: "TabsTrigger" }] }, { name: "TabsContent" }] },
+  ],
+  features: [
+    "Two TabsList variants — default (solid pill) and line (underline) — set independently of the Tabs root.",
+    'orientation="vertical" stacks the list and switches keyboard nav to Up/Down.',
+    'activationMode="manual" requires Enter/Space to activate a focused tab instead of switching on arrow-key focus alone.',
   ],
   api: [
     {

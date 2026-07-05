@@ -1,10 +1,11 @@
 import { ProgressCircleAnimated } from "#/registry/progress-circle/animated.example";
 import { ProgressCircleDashboard } from "#/registry/progress-circle/dashboard.example";
 import { ProgressCircleValues } from "#/registry/progress-circle/values.example";
-import { docSource } from "#/registry/source";
+import { docSource, docUsage } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const progressCircleDoc: ComponentDoc = {
+  usage: docUsage("progress-circle"),
   examples: [
     {
       id: "animated",
@@ -29,6 +30,12 @@ export const progressCircleDoc: ComponentDoc = {
     },
   ],
   anatomy: [{ name: "ProgressCircle" }],
+  features: [
+    "Five preset sizes (sm/md/lg/xl/2xl, 32–128px) or an exact sizeInPixels override; stroke width scales with size unless set explicitly via strokeWidth.",
+    "Three thickness presets (thin/regular/thick) computed as a percentage of the circle's diameter, not a fixed pixel value.",
+    "Animates value changes over animationDuration (default 1000ms); disable with animate={false} for an instant jump.",
+    'customLabel({ value }) replaces the default "N%" center text with your own render.',
+  ],
   api: [
     {
       name: "ProgressCircle",

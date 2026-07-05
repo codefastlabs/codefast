@@ -10,16 +10,14 @@ import {
 import { Button } from "@codefast/ui/button";
 import { cn } from "@codefast/ui/lib/utils";
 import { Link } from "@tanstack/react-router";
-import { ChevronRightIcon, CodeIcon, PackageIcon } from "lucide-react";
+import { ChevronRightIcon, CodeIcon } from "lucide-react";
 import type { ComponentProps } from "react";
 
-import { DetailInstallPanel } from "#/components/detail/detail-install-panel";
 import { DetailPageToolbar } from "#/components/detail/detail-page-toolbar";
 import type { ComponentMeta } from "#/registry/components";
 import { CATEGORIES } from "#/registry/components";
 
 const GITHUB_SRC = "https://github.com/codefastlabs/codefast/tree/main/packages/ui/src/components";
-const NPM_URL = "https://www.npmjs.com/package/@codefast/ui";
 
 const STATUS_BADGE: Record<"beta" | "deprecated", { label: string; className: string }> = {
   beta: { label: "Beta", className: "border-amber-500/40 text-amber-600 dark:text-amber-400" },
@@ -33,7 +31,7 @@ interface DetailHeroSectionProps extends ComponentProps<"div"> {
   readonly component: ComponentMeta;
 }
 
-/** Component detail header: breadcrumb, title, actions, and install panel. */
+/** Component detail header: breadcrumb, page actions, and title. */
 export function DetailHeroSection({ component, className, ...props }: DetailHeroSectionProps) {
   const { slug, name, category, description, status, composition } = component;
   const categoryLabel = CATEGORIES.find((entry) => entry.id === category)?.label ?? category;
@@ -59,10 +57,20 @@ export function DetailHeroSection({ component, className, ...props }: DetailHero
           </BreadcrumbList>
         </Breadcrumb>
 
-        <DetailPageToolbar component={component} />
+        <div className="flex items-center gap-2">
+          {isComposition ? null : (
+            <Button asChild size="sm" variant="outline">
+              <a href={`${GITHUB_SRC}/${slug}.tsx`} target="_blank" rel="noreferrer">
+                <CodeIcon data-icon="inline-start" />
+                Source
+              </a>
+            </Button>
+          )}
+          <DetailPageToolbar component={component} />
+        </div>
       </div>
 
-      <header className="mb-6 max-w-2xl">
+      <header className="max-w-2xl">
         <div className="mb-4 flex flex-wrap items-center gap-2">
           <Badge variant="outline" className="border-ui-border/60 text-ui-muted capitalize">
             {categoryLabel}
@@ -74,26 +82,8 @@ export function DetailHeroSection({ component, className, ...props }: DetailHero
           ) : null}
         </div>
         <h1 className="mb-4 text-3xl leading-none font-bold tracking-tighter text-ui-fg sm:text-4xl">{name}</h1>
-        <p className="mb-6 text-base leading-relaxed text-ui-muted">{description}</p>
-        <div className="flex flex-wrap gap-2">
-          {isComposition ? null : (
-            <Button asChild size="sm" variant="outline">
-              <a href={`${GITHUB_SRC}/${slug}.tsx`} target="_blank" rel="noreferrer">
-                <CodeIcon data-icon="inline-start" />
-                Source
-              </a>
-            </Button>
-          )}
-          <Button asChild size="sm" variant="outline">
-            <a href={NPM_URL} target="_blank" rel="noreferrer">
-              <PackageIcon data-icon="inline-start" />
-              npm
-            </a>
-          </Button>
-        </div>
+        <p className="text-base leading-relaxed text-ui-muted">{description}</p>
       </header>
-
-      <DetailInstallPanel />
     </div>
   );
 }

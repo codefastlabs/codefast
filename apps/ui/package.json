@@ -40,6 +40,7 @@
     "nitro": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
+    "react-hook-form": "catalog:",
     "recharts": "catalog:",
     "shiki": "catalog:",
     "tailwindcss": "catalog:",

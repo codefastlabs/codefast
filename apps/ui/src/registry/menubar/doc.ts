@@ -3,10 +3,11 @@ import { MenubarIcons } from "#/registry/menubar/icons.example";
 import { MenubarRadio } from "#/registry/menubar/radio.example";
 import { MenubarRtl } from "#/registry/menubar/rtl.example";
 import { MenubarSubmenu } from "#/registry/menubar/submenu.example";
-import { docSource } from "#/registry/source";
+import { docSource, docUsage } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const menubarDoc: ComponentDoc = {
+  usage: docUsage("menubar"),
   examples: [
     {
       id: "submenu",
@@ -59,6 +60,11 @@ export const menubarDoc: ComponentDoc = {
         },
       ],
     },
+  ],
+  features: [
+    "Multiple MenubarMenu siblings share roving focus — Left/Right arrow moves between top-level menus, Down opens the focused one.",
+    "Supports the same item types as Dropdown Menu and Context Menu — checkbox items, a radio group, submenus, and destructive variants.",
+    "Best suited to desktop; on mobile or touch, prefer a Dropdown Menu or Sheet instead.",
   ],
   api: [
     {

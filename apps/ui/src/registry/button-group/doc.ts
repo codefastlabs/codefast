@@ -9,10 +9,11 @@ import { ButtonGroupSelect } from "#/registry/button-group/select.example";
 import { ButtonGroupSeparatorDemo } from "#/registry/button-group/separator.example";
 import { ButtonGroupSize } from "#/registry/button-group/size.example";
 import { ButtonGroupSplit } from "#/registry/button-group/split.example";
-import { docSource } from "#/registry/source";
+import { docSource, docUsage } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const buttonGroupDoc: ComponentDoc = {
+  usage: docUsage("button-group"),
   examples: [
     {
       id: "button-group-dropdown",
@@ -95,6 +96,11 @@ export const buttonGroupDoc: ComponentDoc = {
     },
   ],
   anatomy: [{ name: "ButtonGroup" }],
+  features: [
+    'Plain role="group" wrapper — drop in ordinary Button (or Select/Input/InputGroup) children with no special prop needed on them.',
+    'orientation="vertical" stacks the segment into a column instead of a row.',
+    "Nest a ButtonGroup inside another to add a visual gap between two joined clusters.",
+  ],
   api: [
     {
       name: "ButtonGroup",

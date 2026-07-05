@@ -4,10 +4,11 @@ import { KbdGroupExample } from "#/registry/kbd/group.example";
 import { KbdInputGroup } from "#/registry/kbd/input-group.example";
 import { KbdRtl } from "#/registry/kbd/rtl.example";
 import { KbdTooltip } from "#/registry/kbd/tooltip.example";
-import { docDemo, docSource } from "#/registry/source";
+import { docDemo, docSource, docUsage } from "#/registry/source";
 import type { ComponentDoc } from "#/registry/types";
 
 export const kbdDoc: ComponentDoc = {
+  usage: docUsage("kbd"),
   examples: [
     {
       id: "kbd-demo",
@@ -55,6 +56,10 @@ export const kbdDoc: ComponentDoc = {
     },
   ],
   anatomy: [{ name: "KbdGroup", children: [{ name: "Kbd" }, { name: "Kbd" }] }],
+  features: [
+    "Automatically re-themes when placed inside a TooltipContent (dims to match the dark tooltip surface) or an InputGroupAddon — no manual colour override needed.",
+    'KbdGroup lays out several Kbd elements (or a Kbd next to plain text like "+") for multi-key combos.',
+  ],
   api: [
     {
       name: "Kbd",
