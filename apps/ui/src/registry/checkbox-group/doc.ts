@@ -1,8 +1,8 @@
+import { docSource, docUsage } from "#/registry/_core/source";
+import type { ComponentDoc } from "#/registry/_core/types";
 import { CheckboxGroupHorizontal } from "#/registry/checkbox-group/horizontal.example";
 import { CheckboxGroupPermissions } from "#/registry/checkbox-group/permissions.example";
 import { CheckboxGroupWithDescriptions } from "#/registry/checkbox-group/with-descriptions.example";
-import { docSource, docUsage } from "#/registry/source";
-import type { ComponentDoc } from "#/registry/types";
 
 export const checkboxGroupDoc: ComponentDoc = {
   usage: docUsage("checkbox-group"),

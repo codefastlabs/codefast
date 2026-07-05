@@ -1,4 +1,5 @@
-import { docSource, docUsage } from "#/registry/source";
+import { docSource, docUsage } from "#/registry/_core/source";
+import type { ComponentDoc } from "#/registry/_core/types";
 import { ToggleGroupDisabled } from "#/registry/toggle-group/disabled.example";
 import { ToggleGroupFontWeightSelector } from "#/registry/toggle-group/font-weight-selector.example";
 import { ToggleGroupOutline } from "#/registry/toggle-group/outline.example";
@@ -6,7 +7,6 @@ import { ToggleGroupRtl } from "#/registry/toggle-group/rtl.example";
 import { ToggleGroupSizes } from "#/registry/toggle-group/sizes.example";
 import { ToggleGroupSpacing } from "#/registry/toggle-group/spacing.example";
 import { ToggleGroupVertical } from "#/registry/toggle-group/vertical.example";
-import type { ComponentDoc } from "#/registry/types";
 
 export const toggleGroupDoc: ComponentDoc = {
   usage: docUsage("toggle-group"),

@@ -4,7 +4,7 @@ import { Suspense } from "react";
 import { DocSection } from "#/components/detail/doc-section";
 import { ExampleLive } from "#/components/detail/example-live";
 import { ExamplePreview } from "#/components/detail/example-preview";
-import type { ResolvedDocExample } from "#/registry/types";
+import type { ResolvedDocExample } from "#/registry/_core/types";
 
 interface ExamplesSectionProps extends Omit<ComponentProps<typeof DocSection>, "id" | "title" | "children"> {
   /** Examples with their source already resolved to raw text + Shiki HTML. */

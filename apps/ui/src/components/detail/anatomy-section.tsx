@@ -2,7 +2,7 @@ import type { ComponentProps } from "react";
 
 import { DocSection } from "#/components/detail/doc-section";
 import { anatomyToRows } from "#/lib/anatomy";
-import type { AnatomyNode } from "#/registry/types";
+import type { AnatomyNode } from "#/registry/_core/types";
 
 interface AnatomySectionProps extends Omit<ComponentProps<typeof DocSection>, "id" | "title" | "children"> {
   readonly nodes: ReadonlyArray<AnatomyNode>;

@@ -1,8 +1,8 @@
+import { docSource, docUsage } from "#/registry/_core/source";
+import type { ComponentDoc } from "#/registry/_core/types";
 import { SonnerDescription } from "#/registry/sonner/description.example";
 import { SonnerPosition } from "#/registry/sonner/position.example";
 import { SonnerTypes } from "#/registry/sonner/types.example";
-import { docSource, docUsage } from "#/registry/source";
-import type { ComponentDoc } from "#/registry/types";
 
 export const sonnerDoc: ComponentDoc = {
   usage: docUsage("sonner"),

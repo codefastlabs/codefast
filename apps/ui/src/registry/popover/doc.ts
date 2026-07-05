@@ -1,9 +1,9 @@
+import { docSource } from "#/registry/_core/source";
+import type { ComponentDoc } from "#/registry/_core/types";
 import { PopoverAlignments } from "#/registry/popover/alignments.example";
 import { PopoverBasic } from "#/registry/popover/basic.example";
 import { PopoverForm } from "#/registry/popover/form.example";
 import { PopoverRtl } from "#/registry/popover/rtl.example";
-import { docSource } from "#/registry/source";
-import type { ComponentDoc } from "#/registry/types";
 
 export const popoverDoc: ComponentDoc = {
   examples: [

@@ -1,8 +1,8 @@
+import { docSource, docUsage } from "#/registry/_core/source";
+import type { ComponentDoc } from "#/registry/_core/types";
 import { InputPasswordConfirm } from "#/registry/input-password/confirm.example";
 import { InputPasswordFields } from "#/registry/input-password/fields.example";
 import { InputPasswordStrength } from "#/registry/input-password/strength.example";
-import { docSource, docUsage } from "#/registry/source";
-import type { ComponentDoc } from "#/registry/types";
 
 export const inputPasswordDoc: ComponentDoc = {
   usage: docUsage("input-password"),

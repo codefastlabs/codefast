@@ -8,7 +8,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { staticFunctionMiddleware } from "@tanstack/start-static-server-functions";
 
 import type { HighlightedSource } from "#/lib/highlight";
-import type { SourceRef } from "#/registry/types";
+import type { SourceRef } from "#/registry/_core/types";
 
 /** Resolves a registry source ref to its raw text + pre-highlighted HTML. */
 export const getHighlightedSource = createServerFn({ method: "GET" })
@@ -16,7 +16,7 @@ export const getHighlightedSource = createServerFn({ method: "GET" })
   // must be the final middleware
   .middleware([staticFunctionMiddleware])
   .handler(async ({ data: ref }): Promise<HighlightedSource> => {
-    const { highlightSource } = await import("#/registry/highlight-source.impl");
+    const { highlightSource } = await import("#/registry/_core/highlight-source.impl");
 
     return highlightSource(ref);
   });

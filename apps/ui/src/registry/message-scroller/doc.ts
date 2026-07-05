@@ -1,3 +1,5 @@
+import { docDemo, docSource, docUsage } from "#/registry/_core/source";
+import type { ComponentDoc } from "#/registry/_core/types";
 import { MessageScrollerAnchoring } from "#/registry/message-scroller/anchoring.example";
 import { MessageScrollerAnimation } from "#/registry/message-scroller/animation.example";
 import { MessageScrollerCommands } from "#/registry/message-scroller/commands.example";
@@ -10,8 +12,6 @@ import { MessageScrollerPreviousContext } from "#/registry/message-scroller/prev
 import { MessageScrollerScrollable } from "#/registry/message-scroller/scrollable.example";
 import { MessageScrollerStreaming } from "#/registry/message-scroller/streaming.example";
 import { MessageScrollerVisibility } from "#/registry/message-scroller/visibility.example";
-import { docDemo, docSource, docUsage } from "#/registry/source";
-import type { ComponentDoc } from "#/registry/types";
 
 export const messageScrollerDoc: ComponentDoc = {
   usage: docUsage("message-scroller"),

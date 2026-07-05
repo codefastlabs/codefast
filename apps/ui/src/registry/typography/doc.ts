@@ -1,5 +1,5 @@
-import { docDemo, docSource } from "#/registry/source";
-import type { ComponentDoc } from "#/registry/types";
+import { docDemo, docSource } from "#/registry/_core/source";
+import type { ComponentDoc } from "#/registry/_core/types";
 import { TypographyBlockquote } from "#/registry/typography/blockquote.example";
 import { TypographyDemo } from "#/registry/typography/demo";
 import { TypographyH1 } from "#/registry/typography/h1.example";

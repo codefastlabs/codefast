@@ -1,9 +1,9 @@
-import { docSource, docUsage } from "#/registry/source";
+import { docSource, docUsage } from "#/registry/_core/source";
+import type { ComponentDoc } from "#/registry/_core/types";
 import { TooltipDisabled } from "#/registry/tooltip/disabled.example";
 import { TooltipKeyboard } from "#/registry/tooltip/keyboard.example";
 import { TooltipRtl } from "#/registry/tooltip/rtl.example";
 import { TooltipSides } from "#/registry/tooltip/sides.example";
-import type { ComponentDoc } from "#/registry/types";
 
 export const tooltipDoc: ComponentDoc = {
   usage: docUsage("tooltip"),

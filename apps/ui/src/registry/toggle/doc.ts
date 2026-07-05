@@ -1,10 +1,10 @@
-import { docSource, docUsage } from "#/registry/source";
+import { docSource, docUsage } from "#/registry/_core/source";
+import type { ComponentDoc } from "#/registry/_core/types";
 import { ToggleDisabled } from "#/registry/toggle/disabled.example";
 import { ToggleOutline } from "#/registry/toggle/outline.example";
 import { ToggleRtl } from "#/registry/toggle/rtl.example";
 import { ToggleSizes } from "#/registry/toggle/sizes.example";
 import { ToggleText } from "#/registry/toggle/text.example";
-import type { ComponentDoc } from "#/registry/types";
 
 export const toggleDoc: ComponentDoc = {
   usage: docUsage("toggle"),

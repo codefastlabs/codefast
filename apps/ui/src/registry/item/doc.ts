@@ -1,3 +1,5 @@
+import { docSource, docUsage } from "#/registry/_core/source";
+import type { ComponentDoc } from "#/registry/_core/types";
 import { ItemAvatar } from "#/registry/item/avatar.example";
 import { ItemDropdown } from "#/registry/item/dropdown.example";
 import { ItemGroupExample } from "#/registry/item/group.example";
@@ -8,8 +10,6 @@ import { ItemLink } from "#/registry/item/link.example";
 import { ItemRtl } from "#/registry/item/rtl.example";
 import { ItemSizeDemo } from "#/registry/item/size.example";
 import { ItemVariant } from "#/registry/item/variant.example";
-import { docSource, docUsage } from "#/registry/source";
-import type { ComponentDoc } from "#/registry/types";
 
 export const itemDoc: ComponentDoc = {
   usage: docUsage("item"),

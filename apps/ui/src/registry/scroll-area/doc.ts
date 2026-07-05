@@ -1,7 +1,7 @@
+import { docSource, docUsage } from "#/registry/_core/source";
+import type { ComponentDoc } from "#/registry/_core/types";
 import { ScrollAreaHorizontalDemo } from "#/registry/scroll-area/horizontal-demo.example";
 import { ScrollAreaRtl } from "#/registry/scroll-area/rtl.example";
-import { docSource, docUsage } from "#/registry/source";
-import type { ComponentDoc } from "#/registry/types";
 
 export const scrollAreaDoc: ComponentDoc = {
   usage: docUsage("scroll-area"),

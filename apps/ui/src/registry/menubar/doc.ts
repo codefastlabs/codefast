@@ -1,10 +1,10 @@
+import { docSource, docUsage } from "#/registry/_core/source";
+import type { ComponentDoc } from "#/registry/_core/types";
 import { MenubarCheckbox } from "#/registry/menubar/checkbox.example";
 import { MenubarIcons } from "#/registry/menubar/icons.example";
 import { MenubarRadio } from "#/registry/menubar/radio.example";
 import { MenubarRtl } from "#/registry/menubar/rtl.example";
 import { MenubarSubmenu } from "#/registry/menubar/submenu.example";
-import { docSource, docUsage } from "#/registry/source";
-import type { ComponentDoc } from "#/registry/types";
 
 export const menubarDoc: ComponentDoc = {
   usage: docUsage("menubar"),

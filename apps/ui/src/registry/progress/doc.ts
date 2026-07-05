@@ -1,8 +1,8 @@
+import { docSource, docUsage } from "#/registry/_core/source";
+import type { ComponentDoc } from "#/registry/_core/types";
 import { ProgressControlled } from "#/registry/progress/controlled.example";
 import { ProgressWithLabel } from "#/registry/progress/label.example";
 import { ProgressRtl } from "#/registry/progress/rtl.example";
-import { docSource, docUsage } from "#/registry/source";
-import type { ComponentDoc } from "#/registry/types";
 
 export const progressDoc: ComponentDoc = {
   usage: docUsage("progress"),

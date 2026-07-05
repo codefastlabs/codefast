@@ -1,8 +1,14 @@
 import { describe, expect, it } from "vitest";
 
-import { CATEGORIES, COMPONENT_BY_SLUG, COMPONENTS, NEIGHBORS_BY_SLUG, componentPath } from "#/registry/components";
-import { DEMO_BY_SLUG } from "#/registry/demos";
-import { DOC_SLUGS } from "#/registry/docs";
+import {
+  CATEGORIES,
+  COMPONENT_BY_SLUG,
+  COMPONENTS,
+  NEIGHBORS_BY_SLUG,
+  componentPath,
+} from "#/registry/_core/components";
+import { DEMO_BY_SLUG } from "#/registry/_core/demos";
+import { DOC_SLUGS } from "#/registry/_core/docs";
 
 const CATEGORY_IDS = new Set(CATEGORIES.map((c) => c.id));
 

@@ -1,3 +1,5 @@
+import { docSource, docUsage } from "#/registry/_core/source";
+import type { ComponentDoc } from "#/registry/_core/types";
 import { InputGroupBasic } from "#/registry/input-group/basic.example";
 import { InputGroupBlockEnd } from "#/registry/input-group/block-end.example";
 import { InputGroupBlockStart } from "#/registry/input-group/block-start.example";
@@ -21,8 +23,6 @@ import { InputGroupWithAddons } from "#/registry/input-group/with-addons.example
 import { InputGroupWithButtons } from "#/registry/input-group/with-buttons.example";
 import { InputGroupWithKbd } from "#/registry/input-group/with-kbd.example";
 import { InputGroupWithTooltip } from "#/registry/input-group/with-tooltip.example";
-import { docSource, docUsage } from "#/registry/source";
-import type { ComponentDoc } from "#/registry/types";
 
 export const inputGroupDoc: ComponentDoc = {
   usage: docUsage("input-group"),

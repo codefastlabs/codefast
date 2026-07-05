@@ -1,8 +1,8 @@
+import { docSource, docUsage } from "#/registry/_core/source";
+import type { ComponentDoc } from "#/registry/_core/types";
 import { FormContact } from "#/registry/form/contact.example";
 import { FormNewsletter } from "#/registry/form/newsletter.example";
 import { FormSignIn } from "#/registry/form/sign-in.example";
-import { docSource, docUsage } from "#/registry/source";
-import type { ComponentDoc } from "#/registry/types";
 
 export const formDoc: ComponentDoc = {
   usage: docUsage("form"),

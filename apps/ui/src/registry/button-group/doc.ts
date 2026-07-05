@@ -1,3 +1,5 @@
+import { docSource, docUsage } from "#/registry/_core/source";
+import type { ComponentDoc } from "#/registry/_core/types";
 import { ButtonGroupDropdown } from "#/registry/button-group/dropdown.example";
 import { ButtonGroupInputGroup } from "#/registry/button-group/input-group.example";
 import { ButtonGroupInput } from "#/registry/button-group/input.example";
@@ -9,8 +11,6 @@ import { ButtonGroupSelect } from "#/registry/button-group/select.example";
 import { ButtonGroupSeparatorDemo } from "#/registry/button-group/separator.example";
 import { ButtonGroupSize } from "#/registry/button-group/size.example";
 import { ButtonGroupSplit } from "#/registry/button-group/split.example";
-import { docSource, docUsage } from "#/registry/source";
-import type { ComponentDoc } from "#/registry/types";
 
 export const buttonGroupDoc: ComponentDoc = {
   usage: docUsage("button-group"),

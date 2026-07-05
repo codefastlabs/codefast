@@ -2,7 +2,7 @@ import type { ComponentProps } from "react";
 
 import { DocSection } from "#/components/detail/doc-section";
 import { PropsTable } from "#/components/detail/props-table";
-import type { ApiGroup } from "#/registry/types";
+import type { ApiGroup } from "#/registry/_core/types";
 
 interface ApiSectionProps extends Omit<ComponentProps<typeof DocSection>, "id" | "title" | "children"> {
   readonly groups: ReadonlyArray<ApiGroup>;

@@ -1,3 +1,5 @@
+import { docSource } from "#/registry/_core/source";
+import type { ComponentDoc } from "#/registry/_core/types";
 import { ContextMenuBasic } from "#/registry/context-menu/basic.example";
 import { ContextMenuCheckboxes } from "#/registry/context-menu/checkboxes.example";
 import { ContextMenuDestructive } from "#/registry/context-menu/destructive.example";
@@ -8,8 +10,6 @@ import { ContextMenuRtl } from "#/registry/context-menu/rtl.example";
 import { ContextMenuShortcuts } from "#/registry/context-menu/shortcuts.example";
 import { ContextMenuSides } from "#/registry/context-menu/sides.example";
 import { ContextMenuSubmenu } from "#/registry/context-menu/submenu.example";
-import { docSource } from "#/registry/source";
-import type { ComponentDoc } from "#/registry/types";
 
 export const contextMenuDoc: ComponentDoc = {
   examples: [

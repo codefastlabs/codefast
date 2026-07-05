@@ -4,7 +4,7 @@ import { Link } from "@tanstack/react-router";
 
 import { PageHeader } from "#/components/shared/page-header";
 import { ALPHABET_GROUPS, GALLERY_STATS } from "#/data/showcase";
-import { COMPONENTS } from "#/registry/components";
+import { COMPONENTS } from "#/registry/_core/components";
 
 const firstLetterGroupId = ALPHABET_GROUPS[0]?.id ?? "letter-A";
 

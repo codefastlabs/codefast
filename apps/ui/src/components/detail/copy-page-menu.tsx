@@ -15,8 +15,8 @@ import { useEffect, useState } from "react";
 
 import { buildComponentMarkdown } from "#/lib/component-markdown";
 import { absoluteUrl } from "#/lib/seo";
-import type { ComponentMeta } from "#/registry/components";
-import { loadDoc } from "#/registry/docs";
+import type { ComponentMeta } from "#/registry/_core/components";
+import { loadDoc } from "#/registry/_core/docs";
 
 interface CopyPageMenuProps extends Omit<ComponentProps<typeof ButtonGroup>, "children"> {
   readonly component: ComponentMeta;

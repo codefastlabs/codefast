@@ -1,4 +1,4 @@
-import type { ComponentMetaInput } from "#/registry/components";
+import type { ComponentMetaInput } from "#/registry/_core/components";
 
 export const meta: ComponentMetaInput = {
   name: "Resizable",

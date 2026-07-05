@@ -1,7 +1,7 @@
+import { docDemo, docSource } from "#/registry/_core/source";
+import type { ComponentDoc } from "#/registry/_core/types";
 import { DataTableDemo } from "#/registry/data-table/demo";
 import { DataTableRtl } from "#/registry/data-table/rtl.example";
-import { docDemo, docSource } from "#/registry/source";
-import type { ComponentDoc } from "#/registry/types";
 
 export const dataTableDoc: ComponentDoc = {
   examples: [

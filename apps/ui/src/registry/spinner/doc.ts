@@ -1,4 +1,5 @@
-import { docSource, docUsage } from "#/registry/source";
+import { docSource, docUsage } from "#/registry/_core/source";
+import type { ComponentDoc } from "#/registry/_core/types";
 import { SpinnerBadge } from "#/registry/spinner/badge.example";
 import { SpinnerButton } from "#/registry/spinner/button.example";
 import { SpinnerCustom } from "#/registry/spinner/custom.example";
@@ -6,7 +7,6 @@ import { SpinnerEmpty } from "#/registry/spinner/empty.example";
 import { SpinnerInputGroup } from "#/registry/spinner/input-group.example";
 import { SpinnerRtl } from "#/registry/spinner/rtl.example";
 import { SpinnerSize } from "#/registry/spinner/size.example";
-import type { ComponentDoc } from "#/registry/types";
 
 export const spinnerDoc: ComponentDoc = {
   usage: docUsage("spinner"),

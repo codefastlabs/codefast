@@ -1,8 +1,8 @@
+import { docSource, docUsage } from "#/registry/_core/source";
+import type { ComponentDoc } from "#/registry/_core/types";
 import { SheetNoCloseButton } from "#/registry/sheet/no-close-button.example";
 import { SheetRtl } from "#/registry/sheet/rtl.example";
 import { SheetSide } from "#/registry/sheet/side.example";
-import { docSource, docUsage } from "#/registry/source";
-import type { ComponentDoc } from "#/registry/types";
 
 export const sheetDoc: ComponentDoc = {
   usage: docUsage("sheet"),

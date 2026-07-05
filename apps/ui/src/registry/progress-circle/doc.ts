@@ -1,8 +1,8 @@
+import { docSource, docUsage } from "#/registry/_core/source";
+import type { ComponentDoc } from "#/registry/_core/types";
 import { ProgressCircleAnimated } from "#/registry/progress-circle/animated.example";
 import { ProgressCircleDashboard } from "#/registry/progress-circle/dashboard.example";
 import { ProgressCircleValues } from "#/registry/progress-circle/values.example";
-import { docSource, docUsage } from "#/registry/source";
-import type { ComponentDoc } from "#/registry/types";
 
 export const progressCircleDoc: ComponentDoc = {
   usage: docUsage("progress-circle"),

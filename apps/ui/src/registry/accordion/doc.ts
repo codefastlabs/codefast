@@ -1,3 +1,5 @@
+import { docDemo, docSource } from "#/registry/_core/source";
+import type { ComponentDoc } from "#/registry/_core/types";
 import { AccordionBasic } from "#/registry/accordion/basic.example";
 import { AccordionBorders } from "#/registry/accordion/borders.example";
 import { AccordionCard } from "#/registry/accordion/card.example";
@@ -5,8 +7,6 @@ import { AccordionDemo } from "#/registry/accordion/demo";
 import { AccordionDisabled } from "#/registry/accordion/disabled.example";
 import { AccordionMultiple } from "#/registry/accordion/multiple.example";
 import { AccordionRtl } from "#/registry/accordion/rtl.example";
-import { docDemo, docSource } from "#/registry/source";
-import type { ComponentDoc } from "#/registry/types";
 
 export const accordionDoc: ComponentDoc = {
   examples: [

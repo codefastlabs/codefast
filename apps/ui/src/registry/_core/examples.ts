@@ -8,10 +8,10 @@
 import type { ComponentType, LazyExoticComponent } from "react";
 import { lazy } from "react";
 
-import type { SourceRef } from "#/registry/types";
+import type { SourceRef } from "#/registry/_core/types";
 
 /** Live example/demo module loaders, keyed by path e.g. `./button/default.example.tsx`. */
-const exampleModules = import.meta.glob<Record<string, unknown>>(["./*/*.example.tsx", "./*/demo.tsx"]);
+const exampleModules = import.meta.glob<Record<string, unknown>>(["../*/*.example.tsx", "../*/demo.tsx"]);
 
 /** The single component export of an example/demo module. */
 function componentFrom(module: Record<string, unknown>, path: string): ComponentType {

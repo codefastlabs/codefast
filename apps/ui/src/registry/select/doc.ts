@@ -1,11 +1,11 @@
+import { docSource, docUsage } from "#/registry/_core/source";
+import type { ComponentDoc } from "#/registry/_core/types";
 import { SelectAlignItem } from "#/registry/select/align-item.example";
 import { SelectDisabled } from "#/registry/select/disabled.example";
 import { SelectGroups } from "#/registry/select/groups.example";
 import { SelectInvalid } from "#/registry/select/invalid.example";
 import { SelectRtl } from "#/registry/select/rtl.example";
 import { SelectScrollable } from "#/registry/select/scrollable.example";
-import { docSource, docUsage } from "#/registry/source";
-import type { ComponentDoc } from "#/registry/types";
 
 export const selectDoc: ComponentDoc = {
   usage: docUsage("select"),

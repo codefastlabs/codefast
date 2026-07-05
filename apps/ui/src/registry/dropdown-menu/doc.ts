@@ -1,3 +1,5 @@
+import { docSource } from "#/registry/_core/source";
+import type { ComponentDoc } from "#/registry/_core/types";
 import { DropdownMenuAvatar } from "#/registry/dropdown-menu/avatar.example";
 import { DropdownMenuBasic } from "#/registry/dropdown-menu/basic.example";
 import { DropdownMenuCheckboxesIcons } from "#/registry/dropdown-menu/checkboxes-icons.example";
@@ -10,8 +12,6 @@ import { DropdownMenuRadioIcons } from "#/registry/dropdown-menu/radio-icons.exa
 import { DropdownMenuRtl } from "#/registry/dropdown-menu/rtl.example";
 import { DropdownMenuShortcuts } from "#/registry/dropdown-menu/shortcuts.example";
 import { DropdownMenuSubmenu } from "#/registry/dropdown-menu/submenu.example";
-import { docSource } from "#/registry/source";
-import type { ComponentDoc } from "#/registry/types";
 
 export const dropdownMenuDoc: ComponentDoc = {
   examples: [

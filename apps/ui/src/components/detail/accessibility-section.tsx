@@ -4,7 +4,7 @@ import type { ComponentProps } from "react";
 import { DocSection } from "#/components/detail/doc-section";
 import type { KeyRow } from "#/components/detail/keyboard-table";
 import { KeyboardTable } from "#/components/detail/keyboard-table";
-import type { AccessibilityNote } from "#/registry/types";
+import type { AccessibilityNote } from "#/registry/_core/types";
 
 interface AccessibilitySectionProps extends Omit<ComponentProps<typeof DocSection>, "id" | "title" | "children"> {
   readonly keyboard?: ReadonlyArray<KeyRow> | undefined;

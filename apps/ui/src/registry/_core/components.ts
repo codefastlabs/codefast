@@ -9,7 +9,7 @@
  * To add a component: create `registry/<slug>/meta.ts` exporting one
  * `ComponentMetaInput` (+ optional `demo.tsx` / `doc.ts`).
  */
-import { DEMO_BY_SLUG } from "#/registry/demos";
+import { DEMO_BY_SLUG } from "#/registry/_core/demos";
 
 /* -------------------------------------------------------------------------- */
 /* Categories                                                                  */
@@ -106,7 +106,7 @@ export interface ComponentMeta extends ComponentMetaInput {
 /* Registry                                                                    */
 /* -------------------------------------------------------------------------- */
 
-const metaModules = import.meta.glob<{ meta: ComponentMetaInput }>("./*/meta.ts", { eager: true });
+const metaModules = import.meta.glob<{ meta: ComponentMetaInput }>("../*/meta.ts", { eager: true });
 
 /** `./button/meta.ts` → `button` — the slug is the component's folder name. */
 function slugFromMetaPath(path: string): string {

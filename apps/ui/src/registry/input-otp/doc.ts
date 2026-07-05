@@ -1,3 +1,5 @@
+import { docSource } from "#/registry/_core/source";
+import type { ComponentDoc } from "#/registry/_core/types";
 import { InputOTPAlphanumeric } from "#/registry/input-otp/alphanumeric.example";
 import { InputOTPControlled } from "#/registry/input-otp/controlled.example";
 import { InputOTPDisabled } from "#/registry/input-otp/disabled.example";
@@ -7,8 +9,6 @@ import { InputOTPInvalid } from "#/registry/input-otp/invalid.example";
 import { InputOTPPattern } from "#/registry/input-otp/pattern.example";
 import { InputOTPRtl } from "#/registry/input-otp/rtl.example";
 import { InputOTPWithSeparator } from "#/registry/input-otp/separator.example";
-import { docSource } from "#/registry/source";
-import type { ComponentDoc } from "#/registry/types";
 
 export const inputOtpDoc: ComponentDoc = {
   examples: [

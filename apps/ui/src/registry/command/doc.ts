@@ -1,11 +1,11 @@
+import { docSource } from "#/registry/_core/source";
+import type { ComponentDoc } from "#/registry/_core/types";
 import { CommandBasic } from "#/registry/command/basic.example";
 import { CommandDialogDemo } from "#/registry/command/dialog.example";
 import { CommandWithGroups } from "#/registry/command/groups.example";
 import { CommandRtl } from "#/registry/command/rtl.example";
 import { CommandManyItems } from "#/registry/command/scrollable.example";
 import { CommandWithShortcuts } from "#/registry/command/shortcuts.example";
-import { docSource } from "#/registry/source";
-import type { ComponentDoc } from "#/registry/types";
 
 export const commandDoc: ComponentDoc = {
   examples: [

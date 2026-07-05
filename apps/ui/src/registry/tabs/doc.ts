@@ -1,11 +1,11 @@
-import { docDemo, docSource, docUsage } from "#/registry/source";
+import { docDemo, docSource, docUsage } from "#/registry/_core/source";
+import type { ComponentDoc } from "#/registry/_core/types";
 import { TabsDemo } from "#/registry/tabs/demo";
 import { TabsDisabled } from "#/registry/tabs/disabled.example";
 import { TabsIcons } from "#/registry/tabs/icons.example";
 import { TabsLine } from "#/registry/tabs/line.example";
 import { TabsRtl } from "#/registry/tabs/rtl.example";
 import { TabsVertical } from "#/registry/tabs/vertical.example";
-import type { ComponentDoc } from "#/registry/types";
 
 export const tabsDoc: ComponentDoc = {
   usage: docUsage("tabs"),

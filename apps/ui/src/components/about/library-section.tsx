@@ -3,7 +3,7 @@ import { Link } from "@tanstack/react-router";
 
 import { SectionHeader } from "#/components/shared/section-header";
 import { COMPONENT_COUNT } from "#/data/about";
-import { COMPONENTS } from "#/registry/components";
+import { COMPONENTS } from "#/registry/_core/components";
 
 export function LibrarySection() {
   return (

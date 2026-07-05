@@ -5,8 +5,8 @@ import { ArrowLeftIcon, ArrowRightIcon } from "lucide-react";
 import type { ComponentProps } from "react";
 
 import { CopyPageMenu } from "#/components/detail/copy-page-menu";
-import type { ComponentMeta } from "#/registry/components";
-import { NEIGHBORS_BY_SLUG } from "#/registry/components";
+import type { ComponentMeta } from "#/registry/_core/components";
+import { NEIGHBORS_BY_SLUG } from "#/registry/_core/components";
 
 interface DetailPageToolbarProps extends Omit<ComponentProps<"div">, "children"> {
   readonly component: ComponentMeta;

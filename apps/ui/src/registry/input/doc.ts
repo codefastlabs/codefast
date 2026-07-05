@@ -1,3 +1,5 @@
+import { docSource } from "#/registry/_core/source";
+import type { ComponentDoc } from "#/registry/_core/types";
 import { InputBadge } from "#/registry/input/badge.example";
 import { InputBasic } from "#/registry/input/basic.example";
 import { InputButtonGroup } from "#/registry/input/button-group.example";
@@ -13,8 +15,6 @@ import { InputInputGroup } from "#/registry/input/input-group.example";
 import { InputInvalid } from "#/registry/input/invalid.example";
 import { InputRequired } from "#/registry/input/required.example";
 import { InputRtl } from "#/registry/input/rtl.example";
-import { docSource } from "#/registry/source";
-import type { ComponentDoc } from "#/registry/types";
 
 export const inputDoc: ComponentDoc = {
   examples: [

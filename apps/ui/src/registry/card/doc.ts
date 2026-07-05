@@ -1,10 +1,10 @@
+import { docSource, docUsage } from "#/registry/_core/source";
+import type { ComponentDoc } from "#/registry/_core/types";
 import { CardEdgeToEdge } from "#/registry/card/edge-to-edge.example";
 import { CardImage } from "#/registry/card/image.example";
 import { CardRtl } from "#/registry/card/rtl.example";
 import { CardSmall } from "#/registry/card/small.example";
 import { CardSpacing } from "#/registry/card/spacing.example";
-import { docSource, docUsage } from "#/registry/source";
-import type { ComponentDoc } from "#/registry/types";
 
 export const cardDoc: ComponentDoc = {
   usage: docUsage("card"),

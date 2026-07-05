@@ -1,5 +1,5 @@
 import { BUTTON_EXAMPLE, CSS_SETUP, INSTALL_COMMAND } from "#/lib/install";
-import { COMPONENTS } from "#/registry/components";
+import { COMPONENTS } from "#/registry/_core/components";
 
 export const COMPONENT_COUNT = COMPONENTS.length;
 

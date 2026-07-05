@@ -1,9 +1,9 @@
+import { docDemo, docSource, docUsage } from "#/registry/_core/source";
+import type { ComponentDoc } from "#/registry/_core/types";
 import { ResizableDemo } from "#/registry/resizable/demo";
 import { ResizableSeparatorDemo } from "#/registry/resizable/handle.example";
 import { ResizableRtl } from "#/registry/resizable/rtl.example";
 import { ResizableVertical } from "#/registry/resizable/vertical.example";
-import { docDemo, docSource, docUsage } from "#/registry/source";
-import type { ComponentDoc } from "#/registry/types";
 
 export const resizableDoc: ComponentDoc = {
   usage: docUsage("resizable"),

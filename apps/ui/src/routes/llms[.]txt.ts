@@ -3,7 +3,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { CONTENT_CACHE_CONTROL, CONTENT_CDN_CACHE_CONTROL } from "#/lib/cache";
 import { GITHUB_URL } from "#/lib/nav-links";
 import { absoluteUrl } from "#/lib/seo";
-import { COMPONENTS } from "#/registry/components";
+import { COMPONENTS } from "#/registry/_core/components";
 
 const NPM_URL = "https://www.npmjs.com/package/@codefast/ui";
 

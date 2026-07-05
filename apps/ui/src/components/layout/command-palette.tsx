@@ -21,7 +21,7 @@ import {
 } from "#/lib/command-palette-keyboard";
 import type { PrimaryNavPath } from "#/lib/nav-links";
 import { PRIMARY_NAV } from "#/lib/nav-links";
-import { COMPONENTS } from "#/registry/components";
+import { COMPONENTS } from "#/registry/_core/components";
 
 /**
  * Global command palette: `/`, ⌘/ / Ctrl+/, and ⌘K / Ctrl+K. Renders its own

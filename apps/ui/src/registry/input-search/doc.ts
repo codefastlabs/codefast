@@ -1,8 +1,8 @@
+import { docSource, docUsage } from "#/registry/_core/source";
+import type { ComponentDoc } from "#/registry/_core/types";
 import { InputSearchControlled } from "#/registry/input-search/controlled.example";
 import { InputSearchDisabled } from "#/registry/input-search/disabled.example";
 import { InputSearchWithResults } from "#/registry/input-search/with-results.example";
-import { docSource, docUsage } from "#/registry/source";
-import type { ComponentDoc } from "#/registry/types";
 
 export const inputSearchDoc: ComponentDoc = {
   usage: docUsage("input-search"),

@@ -1,3 +1,5 @@
+import { docSource, docDemo } from "#/registry/_core/source";
+import type { ComponentDoc } from "#/registry/_core/types";
 import { SidebarControlledExample } from "#/registry/sidebar/controlled.example";
 import { AppSidebar } from "#/registry/sidebar/demo";
 import { SidebarFooterExample } from "#/registry/sidebar/footer.example";
@@ -12,8 +14,6 @@ import { SidebarMenuSubExample } from "#/registry/sidebar/menu-sub.example";
 import { SidebarMenuExample } from "#/registry/sidebar/menu.example";
 import { SidebarRsc } from "#/registry/sidebar/rsc.example";
 import { SidebarRtl } from "#/registry/sidebar/rtl.example";
-import { docSource, docDemo } from "#/registry/source";
-import type { ComponentDoc } from "#/registry/types";
 
 export const sidebarDoc: ComponentDoc = {
   examples: [

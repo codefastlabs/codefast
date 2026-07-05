@@ -4,9 +4,9 @@
  * Pure data computed once from `registry/components.ts`.
  */
 
-import type { ComponentMeta } from "#/registry/components";
-import { COMPONENTS } from "#/registry/components";
-import { DEMO_BY_SLUG } from "#/registry/demos";
+import type { ComponentMeta } from "#/registry/_core/components";
+import { COMPONENTS } from "#/registry/_core/components";
+import { DEMO_BY_SLUG } from "#/registry/_core/demos";
 
 /** A navigable band of components sharing a leading letter. */
 export interface ComponentGroup {

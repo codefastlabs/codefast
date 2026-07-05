@@ -17,12 +17,12 @@ import { OnThisPage } from "#/components/detail/on-this-page";
 import { RelatedSection } from "#/components/detail/related-section";
 import type { TocItem } from "#/components/detail/toc";
 import { UsageSection } from "#/components/detail/usage-section";
-import type { ComponentMeta } from "#/registry/components";
-import { NEIGHBORS_BY_SLUG } from "#/registry/components";
-import { DEMO_BY_SLUG } from "#/registry/demos";
-import { loadDoc } from "#/registry/docs";
-import { docDemo } from "#/registry/source";
-import type { ResolvedComponentDoc, ResolvedDocExample } from "#/registry/types";
+import type { ComponentMeta } from "#/registry/_core/components";
+import { NEIGHBORS_BY_SLUG } from "#/registry/_core/components";
+import { DEMO_BY_SLUG } from "#/registry/_core/demos";
+import { loadDoc } from "#/registry/_core/docs";
+import { docDemo } from "#/registry/_core/source";
+import type { ResolvedComponentDoc, ResolvedDocExample } from "#/registry/_core/types";
 
 export interface ComponentDetail {
   readonly component: ComponentMeta;

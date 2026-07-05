@@ -1,8 +1,8 @@
+import { docSource, docUsage } from "#/registry/_core/source";
+import type { ComponentDoc } from "#/registry/_core/types";
 import { RadioDisabled } from "#/registry/radio/disabled.example";
 import { RadioHorizontal } from "#/registry/radio/horizontal.example";
 import { RadioSizes } from "#/registry/radio/sizes.example";
-import { docSource, docUsage } from "#/registry/source";
-import type { ComponentDoc } from "#/registry/types";
 
 export const radioDoc: ComponentDoc = {
   usage: docUsage("radio"),

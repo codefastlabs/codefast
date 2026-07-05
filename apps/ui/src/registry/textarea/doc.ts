@@ -1,10 +1,10 @@
-import { docSource, docUsage } from "#/registry/source";
+import { docSource, docUsage } from "#/registry/_core/source";
+import type { ComponentDoc } from "#/registry/_core/types";
 import { TextareaButton } from "#/registry/textarea/button.example";
 import { TextareaDisabled } from "#/registry/textarea/disabled.example";
 import { TextareaField } from "#/registry/textarea/field.example";
 import { TextareaInvalid } from "#/registry/textarea/invalid.example";
 import { TextareaRtl } from "#/registry/textarea/rtl.example";
-import type { ComponentDoc } from "#/registry/types";
 
 export const textareaDoc: ComponentDoc = {
   usage: docUsage("textarea"),

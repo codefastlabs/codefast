@@ -11,7 +11,7 @@ import type { ComponentType, LazyExoticComponent } from "react";
 import { lazy } from "react";
 
 import type { HighlightedSource } from "#/lib/highlight";
-import { getHighlightedSource } from "#/registry/highlight-source";
+import { getHighlightedSource } from "#/registry/_core/highlight-source";
 
 export interface DemoEntry {
   /** Code-split demo — render inside `<Suspense>`; the chunk loads on first render. */
@@ -21,7 +21,7 @@ export interface DemoEntry {
 }
 
 /** Live demo module loaders, keyed by path e.g. `./button/demo.tsx`. */
-const demoModules = import.meta.glob<Record<string, unknown>>("./*/demo.tsx");
+const demoModules = import.meta.glob<Record<string, unknown>>("../*/demo.tsx");
 
 /** `./button/demo.tsx` → `button` — the slug is the component's folder name. */
 function slugFromDemoPath(path: string): string {

@@ -1,3 +1,5 @@
+import { docSource } from "#/registry/_core/source";
+import type { ComponentDoc } from "#/registry/_core/types";
 import { ChartBarDemoAxis } from "#/registry/chart/example-axis.example";
 import { ChartBarDemoGrid } from "#/registry/chart/example-grid.example";
 import { ChartBarDemoLegend } from "#/registry/chart/example-legend.example";
@@ -5,8 +7,6 @@ import { ChartBarDemoTooltip } from "#/registry/chart/example-tooltip.example";
 import { ChartExample } from "#/registry/chart/example.example";
 import { ChartRtl } from "#/registry/chart/rtl.example";
 import { ChartTooltipDemo } from "#/registry/chart/tooltip.example";
-import { docSource } from "#/registry/source";
-import type { ComponentDoc } from "#/registry/types";
 
 export const chartDoc: ComponentDoc = {
   examples: [

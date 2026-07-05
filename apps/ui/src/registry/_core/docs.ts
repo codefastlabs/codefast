@@ -5,9 +5,9 @@ import type { HighlightedSource } from "#/lib/highlight";
  * Components without a doc fall back to the card demo from `demos.ts`. To add one:
  * export a `ComponentDoc` from `doc.ts` pointing at example files via `docSource`.
  */
-import { rememberExampleComponent } from "#/registry/examples";
-import { getHighlightedSource } from "#/registry/highlight-source";
-import type { ComponentDoc, ResolvedComponentDoc, ResolvedDocExample, SourceRef } from "#/registry/types";
+import { rememberExampleComponent } from "#/registry/_core/examples";
+import { getHighlightedSource } from "#/registry/_core/highlight-source";
+import type { ComponentDoc, ResolvedComponentDoc, ResolvedDocExample, SourceRef } from "#/registry/_core/types";
 
 export type {
   ApiGroup,
@@ -16,10 +16,10 @@ export type {
   ResolvedComponentDoc,
   ResolvedDocExample,
   SourceRef,
-} from "#/registry/types";
+} from "#/registry/_core/types";
 
 /** Doc module loaders, keyed by path e.g. `./button/doc.ts`. */
-const docModules = import.meta.glob<Record<string, unknown>>("./*/doc.ts");
+const docModules = import.meta.glob<Record<string, unknown>>("../*/doc.ts");
 
 /** `./button/doc.ts` → `button` — the slug is the component's folder name. */
 function slugFromDocPath(path: string): string {

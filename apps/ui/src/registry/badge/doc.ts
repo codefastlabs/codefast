@@ -1,11 +1,11 @@
+import { docSource, docUsage } from "#/registry/_core/source";
+import type { ComponentDoc } from "#/registry/_core/types";
 import { BadgeCustomColors } from "#/registry/badge/colors.example";
 import { BadgeWithIconLeft } from "#/registry/badge/icon.example";
 import { BadgeAsLink } from "#/registry/badge/link.example";
 import { BadgeRtl } from "#/registry/badge/rtl.example";
 import { BadgeWithSpinner } from "#/registry/badge/spinner.example";
 import { BadgeVariants } from "#/registry/badge/variants.example";
-import { docSource, docUsage } from "#/registry/source";
-import type { ComponentDoc } from "#/registry/types";
 
 export const badgeDoc: ComponentDoc = {
   usage: docUsage("badge"),

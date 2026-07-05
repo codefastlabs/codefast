@@ -1,11 +1,11 @@
+import { docSource } from "#/registry/_core/source";
+import type { ComponentDoc } from "#/registry/_core/types";
 import { BreadcrumbBasic } from "#/registry/breadcrumb/basic.example";
 import { BreadcrumbDropdown } from "#/registry/breadcrumb/dropdown.example";
 import { BreadcrumbEllipsisDemo } from "#/registry/breadcrumb/ellipsis.example";
 import { BreadcrumbLinkDemo } from "#/registry/breadcrumb/link.example";
 import { BreadcrumbRtl } from "#/registry/breadcrumb/rtl.example";
 import { BreadcrumbSeparatorDemo } from "#/registry/breadcrumb/separator.example";
-import { docSource } from "#/registry/source";
-import type { ComponentDoc } from "#/registry/types";
 
 export const breadcrumbDoc: ComponentDoc = {
   examples: [

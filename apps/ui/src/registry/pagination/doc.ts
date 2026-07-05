@@ -1,8 +1,8 @@
+import { docSource } from "#/registry/_core/source";
+import type { ComponentDoc } from "#/registry/_core/types";
 import { PaginationIconsOnly } from "#/registry/pagination/icons-only.example";
 import { PaginationRtl } from "#/registry/pagination/rtl.example";
 import { PaginationSimple } from "#/registry/pagination/simple.example";
-import { docSource } from "#/registry/source";
-import type { ComponentDoc } from "#/registry/types";
 
 export const paginationDoc: ComponentDoc = {
   examples: [

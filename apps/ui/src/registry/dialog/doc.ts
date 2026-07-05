@@ -1,10 +1,10 @@
+import { docSource, docUsage } from "#/registry/_core/source";
+import type { ComponentDoc } from "#/registry/_core/types";
 import { DialogCloseButton } from "#/registry/dialog/close-button.example";
 import { DialogNoCloseButton } from "#/registry/dialog/no-close-button.example";
 import { DialogRtl } from "#/registry/dialog/rtl.example";
 import { DialogScrollableContent } from "#/registry/dialog/scrollable-content.example";
 import { DialogStickyFooter } from "#/registry/dialog/sticky-footer.example";
-import { docSource, docUsage } from "#/registry/source";
-import type { ComponentDoc } from "#/registry/types";
 
 export const dialogDoc: ComponentDoc = {
   usage: docUsage("dialog"),

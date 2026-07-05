@@ -5,7 +5,7 @@ import { DetailNotFound } from "#/components/detail/detail-not-found";
 import { DetailPage } from "#/components/detail/detail-page";
 import { CONTENT_CACHE_CONTROL } from "#/lib/cache";
 import { SITE_OG_IMAGE, absoluteUrl, canonicalHead, jsonLdScript } from "#/lib/seo";
-import { COMPONENT_BY_SLUG } from "#/registry/components";
+import { COMPONENT_BY_SLUG } from "#/registry/_core/components";
 
 export const Route = createFileRoute("/components/$slug")({
   /**

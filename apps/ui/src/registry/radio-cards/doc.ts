@@ -1,8 +1,8 @@
+import { docSource, docUsage } from "#/registry/_core/source";
+import type { ComponentDoc } from "#/registry/_core/types";
 import { RadioCardsInterval } from "#/registry/radio-cards/interval.example";
 import { RadioCardsPayment } from "#/registry/radio-cards/payment.example";
 import { RadioCardsPlans } from "#/registry/radio-cards/plans.example";
-import { docSource, docUsage } from "#/registry/source";
-import type { ComponentDoc } from "#/registry/types";
 
 export const radioCardsDoc: ComponentDoc = {
   usage: docUsage("radio-cards"),

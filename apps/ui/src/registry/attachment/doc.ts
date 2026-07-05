@@ -1,11 +1,11 @@
+import { docSource, docUsage } from "#/registry/_core/source";
+import type { ComponentDoc } from "#/registry/_core/types";
 import { AttachmentGroupExample } from "#/registry/attachment/group.example";
 import { AttachmentImage } from "#/registry/attachment/image.example";
 import { AttachmentOrientation } from "#/registry/attachment/orientation.example";
 import { AttachmentSizes } from "#/registry/attachment/sizes.example";
 import { AttachmentStates } from "#/registry/attachment/states.example";
 import { AttachmentTriggerExample } from "#/registry/attachment/trigger.example";
-import { docSource, docUsage } from "#/registry/source";
-import type { ComponentDoc } from "#/registry/types";
 
 export const attachmentDoc: ComponentDoc = {
   usage: docUsage("attachment"),

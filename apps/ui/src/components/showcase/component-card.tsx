@@ -4,8 +4,8 @@ import { ComponentCardMeta } from "#/components/showcase/component-card-meta";
 import { LazyVisible } from "#/components/showcase/lazy-visible";
 import { PreviewCard } from "#/components/showcase/preview-card";
 import { PreviewSkeleton } from "#/components/showcase/preview-skeleton.tsx";
-import type { ComponentMeta } from "#/registry/components";
-import { DEMO_BY_SLUG } from "#/registry/demos";
+import type { ComponentMeta } from "#/registry/_core/components";
+import { DEMO_BY_SLUG } from "#/registry/_core/demos";
 
 // Branches between a bare `<div>` and `<PreviewCard>` and forwards no native
 // attributes, so the props are a plain named interface, not an extension of

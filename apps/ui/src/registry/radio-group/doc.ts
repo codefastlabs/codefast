@@ -1,11 +1,11 @@
+import { docSource, docUsage } from "#/registry/_core/source";
+import type { ComponentDoc } from "#/registry/_core/types";
 import { RadioGroupChoiceCard } from "#/registry/radio-group/choice-card.example";
 import { RadioGroupDescription } from "#/registry/radio-group/description.example";
 import { RadioGroupDisabled } from "#/registry/radio-group/disabled.example";
 import { RadioGroupFieldset } from "#/registry/radio-group/fieldset.example";
 import { RadioGroupInvalid } from "#/registry/radio-group/invalid.example";
 import { RadioGroupRtl } from "#/registry/radio-group/rtl.example";
-import { docSource, docUsage } from "#/registry/source";
-import type { ComponentDoc } from "#/registry/types";
 
 export const radioGroupDoc: ComponentDoc = {
   usage: docUsage("radio-group"),

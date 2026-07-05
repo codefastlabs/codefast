@@ -1,9 +1,9 @@
+import { docSource, docUsage } from "#/registry/_core/source";
+import type { ComponentDoc } from "#/registry/_core/types";
 import { NativeSelectDisabled } from "#/registry/native-select/disabled.example";
 import { NativeSelectGroups } from "#/registry/native-select/groups.example";
 import { NativeSelectInvalid } from "#/registry/native-select/invalid.example";
 import { NativeSelectRtl } from "#/registry/native-select/rtl.example";
-import { docSource, docUsage } from "#/registry/source";
-import type { ComponentDoc } from "#/registry/types";
 
 export const nativeSelectDoc: ComponentDoc = {
   usage: docUsage("native-select"),

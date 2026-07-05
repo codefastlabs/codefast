@@ -1,3 +1,5 @@
+import { docSource, docUsage } from "#/registry/_core/source";
+import type { ComponentDoc } from "#/registry/_core/types";
 import { FieldCheckbox } from "#/registry/field/checkbox.example";
 import { FieldChoiceCard } from "#/registry/field/choice-card.example";
 import { FieldFieldset } from "#/registry/field/fieldset.example";
@@ -10,8 +12,6 @@ import { FieldSelect } from "#/registry/field/select.example";
 import { FieldSlider } from "#/registry/field/slider.example";
 import { FieldSwitch } from "#/registry/field/switch.example";
 import { FieldTextarea } from "#/registry/field/textarea.example";
-import { docSource, docUsage } from "#/registry/source";
-import type { ComponentDoc } from "#/registry/types";
 
 export const fieldDoc: ComponentDoc = {
   usage: docUsage("field"),

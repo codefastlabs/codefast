@@ -1,9 +1,9 @@
+import { docSource, docUsage } from "#/registry/_core/source";
+import type { ComponentDoc } from "#/registry/_core/types";
 import { SeparatorList } from "#/registry/separator/list.example";
 import { SeparatorMenu } from "#/registry/separator/menu.example";
 import { SeparatorRtl } from "#/registry/separator/rtl.example";
 import { SeparatorVertical } from "#/registry/separator/vertical.example";
-import { docSource, docUsage } from "#/registry/source";
-import type { ComponentDoc } from "#/registry/types";
 
 export const separatorDoc: ComponentDoc = {
   usage: docUsage("separator"),

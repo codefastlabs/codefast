@@ -1,4 +1,4 @@
-import type { AnatomyNode } from "#/registry/types";
+import type { AnatomyNode } from "#/registry/_core/types";
 
 export interface AnatomyRow {
   /** Branch connectors and indentation preceding the name (e.g. `"│   ├── "`). */

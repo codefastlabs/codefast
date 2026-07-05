@@ -1,4 +1,4 @@
-import { COMPONENTS } from "#/registry/components";
+import { COMPONENTS } from "#/registry/_core/components";
 
 export const FEATURES = [
   {

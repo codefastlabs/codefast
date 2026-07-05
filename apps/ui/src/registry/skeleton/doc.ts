@@ -1,11 +1,11 @@
+import { docSource, docUsage } from "#/registry/_core/source";
+import type { ComponentDoc } from "#/registry/_core/types";
 import { SkeletonAvatar } from "#/registry/skeleton/avatar.example";
 import { SkeletonCard } from "#/registry/skeleton/card.example";
 import { SkeletonForm } from "#/registry/skeleton/form.example";
 import { SkeletonRtl } from "#/registry/skeleton/rtl.example";
 import { SkeletonTable } from "#/registry/skeleton/table.example";
 import { SkeletonText } from "#/registry/skeleton/text.example";
-import { docSource, docUsage } from "#/registry/source";
-import type { ComponentDoc } from "#/registry/types";
 
 export const skeletonDoc: ComponentDoc = {
   usage: docUsage("skeleton"),
