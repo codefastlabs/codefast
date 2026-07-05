@@ -20,8 +20,8 @@ export function AnatomySection({ nodes, ...props }: AnatomySectionProps) {
       {...props}
     >
       <div className="overflow-x-auto rounded-2xl border border-ui-border/60 bg-ui-surface p-5 font-mono text-sm leading-relaxed">
-        {rows.map((row) => (
-          <div key={row.prefix + row.name} className="whitespace-pre">
+        {rows.map((row, index) => (
+          <div key={index} className="whitespace-pre">
             <span className="text-ui-muted/60">{row.prefix}</span>
             <span className="text-ui-fg">{row.name}</span>
           </div>
