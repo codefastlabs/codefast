@@ -7,6 +7,7 @@ import { HeadContent, Link, Scripts, createRootRoute } from "@tanstack/react-rou
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import type { ReactNode } from "react";
 
+import { Analytics } from "#/components/layout/analytics";
 import { Footer } from "#/components/layout/footer";
 import { Header } from "#/components/layout/header";
 import { NotFound } from "#/components/shared/not-found";
@@ -114,6 +115,7 @@ function RootDocument({ children }: { children: ReactNode }) {
             ]}
           />
         </AppearanceProvider>
+        <Analytics />
         <Scripts />
       </body>
     </html>

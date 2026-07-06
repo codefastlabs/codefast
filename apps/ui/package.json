@@ -20,6 +20,7 @@
   },
   "dependencies": {
     "@codefast/theme": "workspace:*",
+    "@codefast/tracking": "workspace:*",
     "@codefast/ui": "workspace:*",
     "@daypicker/react": "catalog:",
     "@fontsource-variable/inter": "catalog:",
@@ -33,6 +34,7 @@
     "@tanstack/router-plugin": "catalog:",
     "@tanstack/start-static-server-functions": "catalog:",
     "@unpic/react": "catalog:",
+    "@vercel/analytics": "catalog:",
     "chrono-node": "catalog:",
     "date-fns-jalali": "catalog:",
     "embla-carousel-autoplay": "catalog:",

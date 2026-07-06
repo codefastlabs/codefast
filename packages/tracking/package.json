@@ -136,6 +136,11 @@
       "types": "./dist/destinations/http-destination.d.mts",
       "import": "./dist/destinations/http-destination.mjs"
     },
+    "./destinations/vercel-analytics": {
+      "source": "./src/destinations/vercel-analytics.ts",
+      "types": "./dist/destinations/vercel-analytics.d.mts",
+      "import": "./dist/destinations/vercel-analytics.mjs"
+    },
     "./react": {
       "source": "./src/react/index.ts",
       "types": "./dist/react/index.d.mts",
@@ -196,6 +201,7 @@
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
     "@typescript/native-preview": "catalog:",
+    "@vercel/analytics": "catalog:",
     "@vitejs/plugin-react": "catalog:",
     "@vitest/coverage-v8": "catalog:",
     "expect-type": "catalog:",
@@ -209,6 +215,7 @@
   "peerDependencies": {
     "@types/react": ">=19.0.0",
     "@types/react-dom": ">=19.0.0",
+    "@vercel/analytics": ">=1.0.0",
     "react": ">=19.0.0",
     "react-dom": ">=19.0.0"
   },
@@ -217,6 +224,9 @@
       "optional": true
     },
     "@types/react-dom": {
+      "optional": true
+    },
+    "@vercel/analytics": {
       "optional": true
     },
     "react": {

@@ -27,21 +27,35 @@ describe("attachRouterPageTracking", () => {
   it("calls tracker.page with the resolved pathname and href on navigation", () => {
     const router = createFakeRouter();
     const page = vi.fn();
+    const flush = vi.fn();
 
-    attachRouterPageTracking({ page }, router);
+    attachRouterPageTracking({ flush, page }, router);
     router.emit({ toLocation: { href: "/pricing?ref=x", pathname: "/pricing" } });
 
     expect(page).toHaveBeenCalledWith("/pricing", { href: "/pricing?ref=x" });
   });
 
+  it("flushes right after tracking the page view", () => {
+    const router = createFakeRouter();
+    const page = vi.fn();
+    const flush = vi.fn();
+
+    attachRouterPageTracking({ flush, page }, router);
+    router.emit({ toLocation: { href: "/pricing", pathname: "/pricing" } });
+
+    expect(flush).toHaveBeenCalledTimes(1);
+  });
+
   it("stops tracking once the returned unsubscribe function runs", () => {
     const router = createFakeRouter();
     const page = vi.fn();
-    const unsubscribe = attachRouterPageTracking({ page }, router);
+    const flush = vi.fn();
+    const unsubscribe = attachRouterPageTracking({ flush, page }, router);
 
     unsubscribe();
     router.emit({ toLocation: { href: "/a", pathname: "/a" } });
 
     expect(page).not.toHaveBeenCalled();
+    expect(flush).not.toHaveBeenCalled();
   });
 });

@@ -92,7 +92,7 @@ function createClientTracker<Catalog extends EventCatalog>(catalog: Catalog) {
 - Unload flush uses `ClientTracker.flushWithBeacon()` (`navigator.sendBeacon`, wired to `pagehide`/`visibilitychange` by `attachClientLifecycle`) — fire-and-forget, re-queues the batch if the browser rejects it (payload too large, etc.).
 - Offline queue (`EventQueue`): persisted via a pluggable `EventQueueStorage`; ships with `createLocalStorageQueueStorage`. Capped (default 500 events, drop-oldest on overflow). IndexedDB fallback for larger payloads is not built.
 - Retry: exponential backoff, default 3 attempts, per failed batch; still-failing batches stay queued for the next flush cycle. `EventQueue.clear()` drops everything without sending — used on consent revoke.
-- `attachRouterPageTracking` drives `tracker.page()` off `router.subscribe("onResolved", ...)`, duck-typed against TanStack Router's `Router["subscribe"]` so this package has no hard dependency on it.
+- `attachRouterPageTracking` drives `tracker.page()` off `router.subscribe("onResolved", ...)`, duck-typed against TanStack Router's `Router["subscribe"]` so this package has no hard dependency on it — and flushes right after, since page views are low-frequency enough that immediate delivery beats waiting on the batch interval.
 
 ### 5.2 Server
 
@@ -103,7 +103,7 @@ function createClientTracker<Catalog extends EventCatalog>(catalog: Catalog) {
 
 - `Destination` is an adapter interface (`send(event)`, `flush()`) — core and client/server trackers depend only on this interface, never on a specific provider SDK.
 - Multiple destinations can be registered; a `track()` call fans out to all registered destinations.
-- Phase 1 destinations: PostHog, GA4 (both optional/pluggable, not hardcoded into `core`).
+- Phase 1 destinations: `createVercelAnalyticsDestination` (`@vercel/analytics/react`, optional peer) — implemented, used by `apps/ui`. PostHog and GA4 are not built yet.
 
 ### 6.1 EU data residency
 
