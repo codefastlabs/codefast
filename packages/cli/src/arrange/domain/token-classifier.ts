@@ -472,7 +472,7 @@ const SELECTOR_KEY_SEP = "\u001f";
 
 /**
  * Variant key for {@link Bucket} `"selector"` tokens in {@link suggestCnGroups}.
- * Reuses {@link stateKey} layer splitting, then normalizes common shadcn/Radix SVG patterns so
+ * Reuses {@link stateKey} layer splitting, then normalizes common Radix SVG patterns so
  * `[&_svg]:…` and `[&_svg:not([class*='size-'])]:…` stay in one chunk.
  *
  * @since 0.3.16-canary.0
