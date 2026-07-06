@@ -19,7 +19,12 @@ export function GalleryCtaSection() {
         className="mx-auto mb-8 text-center"
       />
 
-      <CopySnippet code={INSTALL_COMMAND} className="mx-auto mb-8 max-w-md text-start" />
+      <CopySnippet
+        code={INSTALL_COMMAND}
+        analyticsKind="install-command"
+        analyticsName="gallery-footer"
+        className="mx-auto mb-8 max-w-md text-start"
+      />
 
       <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
         <Button asChild size="lg">

@@ -32,7 +32,7 @@ const KNOWN_CN_TV_MODULES = new Set([
 ]);
 
 /**
- * True for typical shadcn-style re-exports: `./utils`, `@/lib/utils`, `…/utils/…`,
+ * True for typical utils re-exports: `./utils`, `@/lib/utils`, `…/utils/…`,
  * or a dedicated `cn.ts` / `cn.tsx` module.
  */
 function moduleLooksLikeCnTvReexport(moduleSpecifier: string): boolean {

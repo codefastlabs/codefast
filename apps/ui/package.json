@@ -20,6 +20,7 @@
   },
   "dependencies": {
     "@codefast/theme": "workspace:*",
+    "@codefast/tracking": "workspace:*",
     "@codefast/ui": "workspace:*",
     "@daypicker/react": "catalog:",
     "@fontsource-variable/inter": "catalog:",
@@ -33,6 +34,7 @@
     "@tanstack/router-plugin": "catalog:",
     "@tanstack/start-static-server-functions": "catalog:",
     "@unpic/react": "catalog:",
+    "@vercel/analytics": "catalog:",
     "chrono-node": "catalog:",
     "date-fns-jalali": "catalog:",
     "embla-carousel-autoplay": "catalog:",
@@ -44,7 +46,8 @@
     "recharts": "catalog:",
     "shiki": "catalog:",
     "tailwindcss": "catalog:",
-    "tw-animate-css": "catalog:"
+    "tw-animate-css": "catalog:",
+    "zod": "catalog:"
   },
   "devDependencies": {
     "@codefast/typescript-config": "workspace:*",
@@ -53,6 +56,7 @@
     "@testing-library/dom": "catalog:",
     "@testing-library/jest-dom": "catalog:",
     "@testing-library/react": "catalog:",
+    "@testing-library/user-event": "catalog:",
     "@types/node": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",

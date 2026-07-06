@@ -1,0 +1,242 @@
+{
+  "name": "@codefast/tracking",
+  "version": "0.0.0",
+  "description": "Fullstack, type-safe event tracking for TanStack Start — isomorphic client/server trackers over a per-app Zod event catalog",
+  "keywords": [
+    "analytics",
+    "codefast",
+    "consent",
+    "tanstack-start",
+    "tracking",
+    "typescript",
+    "zod"
+  ],
+  "homepage": "https://github.com/codefastlabs/codefast/tree/main/packages/tracking#readme",
+  "bugs": {
+    "url": "https://github.com/codefastlabs/codefast/issues"
+  },
+  "license": "MIT",
+  "author": "Vuong Phan <mr.thevuong@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/codefastlabs/codefast.git",
+    "directory": "packages/tracking"
+  },
+  "files": [
+    "dist",
+    "src",
+    "CHANGELOG.md",
+    "README.md",
+    "LICENSE"
+  ],
+  "type": "module",
+  "sideEffects": false,
+  "main": "./dist/index.mjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.mts",
+  "imports": {
+    "#/tests/*": [
+      "./tests/*",
+      "./tests/*.ts",
+      "./tests/*.tsx",
+      "./tests/*/index.ts",
+      "./tests/*/index.tsx"
+    ],
+    "#/*": [
+      "./src/*",
+      "./src/*.ts",
+      "./src/*.tsx",
+      "./src/*/index.ts",
+      "./src/*/index.tsx"
+    ]
+  },
+  "exports": {
+    ".": {
+      "source": "./src/index.ts",
+      "types": "./dist/index.d.mts",
+      "import": "./dist/index.mjs"
+    },
+    "./client": {
+      "source": "./src/client/index.ts",
+      "types": "./dist/client/index.d.mts",
+      "import": "./dist/client/index.mjs"
+    },
+    "./client/consent-storage": {
+      "source": "./src/client/consent-storage.ts",
+      "types": "./dist/client/consent-storage.d.mts",
+      "import": "./dist/client/consent-storage.mjs"
+    },
+    "./client/create-client-tracker": {
+      "source": "./src/client/create-client-tracker.ts",
+      "types": "./dist/client/create-client-tracker.d.mts",
+      "import": "./dist/client/create-client-tracker.mjs"
+    },
+    "./client/gpc": {
+      "source": "./src/client/gpc.ts",
+      "types": "./dist/client/gpc.d.mts",
+      "import": "./dist/client/gpc.mjs"
+    },
+    "./client/lifecycle": {
+      "source": "./src/client/lifecycle.ts",
+      "types": "./dist/client/lifecycle.d.mts",
+      "import": "./dist/client/lifecycle.mjs"
+    },
+    "./client/local-storage": {
+      "source": "./src/client/local-storage.ts",
+      "types": "./dist/client/local-storage.d.mts",
+      "import": "./dist/client/local-storage.mjs"
+    },
+    "./client/queue": {
+      "source": "./src/client/queue.ts",
+      "types": "./dist/client/queue.d.mts",
+      "import": "./dist/client/queue.mjs"
+    },
+    "./client/router": {
+      "source": "./src/client/router.ts",
+      "types": "./dist/client/router.d.mts",
+      "import": "./dist/client/router.mjs"
+    },
+    "./core": {
+      "source": "./src/core/index.ts",
+      "types": "./dist/core/index.d.mts",
+      "import": "./dist/core/index.mjs"
+    },
+    "./core/consent": {
+      "source": "./src/core/consent.ts",
+      "types": "./dist/core/consent.d.mts",
+      "import": "./dist/core/consent.mjs"
+    },
+    "./core/destination": {
+      "source": "./src/core/destination.ts",
+      "types": "./dist/core/destination.d.mts",
+      "import": "./dist/core/destination.mjs"
+    },
+    "./core/event-catalog": {
+      "source": "./src/core/event-catalog.ts",
+      "types": "./dist/core/event-catalog.d.mts",
+      "import": "./dist/core/event-catalog.mjs"
+    },
+    "./core/event-id": {
+      "source": "./src/core/event-id.ts",
+      "types": "./dist/core/event-id.d.mts",
+      "import": "./dist/core/event-id.mjs"
+    },
+    "./core/tracked-event": {
+      "source": "./src/core/tracked-event.ts",
+      "types": "./dist/core/tracked-event.d.mts",
+      "import": "./dist/core/tracked-event.mjs"
+    },
+    "./destinations": {
+      "source": "./src/destinations/index.ts",
+      "types": "./dist/destinations/index.d.mts",
+      "import": "./dist/destinations/index.mjs"
+    },
+    "./destinations/http-destination": {
+      "source": "./src/destinations/http-destination.ts",
+      "types": "./dist/destinations/http-destination.d.mts",
+      "import": "./dist/destinations/http-destination.mjs"
+    },
+    "./destinations/vercel-analytics": {
+      "source": "./src/destinations/vercel-analytics.ts",
+      "types": "./dist/destinations/vercel-analytics.d.mts",
+      "import": "./dist/destinations/vercel-analytics.mjs"
+    },
+    "./react": {
+      "source": "./src/react/index.ts",
+      "types": "./dist/react/index.d.mts",
+      "import": "./dist/react/index.mjs"
+    },
+    "./react/consent-banner": {
+      "source": "./src/react/consent-banner.tsx",
+      "types": "./dist/react/consent-banner.d.mts",
+      "import": "./dist/react/consent-banner.mjs"
+    },
+    "./react/use-consent": {
+      "source": "./src/react/use-consent.ts",
+      "types": "./dist/react/use-consent.d.mts",
+      "import": "./dist/react/use-consent.mjs"
+    },
+    "./server": {
+      "source": "./src/server/index.ts",
+      "types": "./dist/server/index.d.mts",
+      "import": "./dist/server/index.mjs"
+    },
+    "./server/create-server-tracker": {
+      "source": "./src/server/create-server-tracker.ts",
+      "types": "./dist/server/create-server-tracker.d.mts",
+      "import": "./dist/server/create-server-tracker.mjs"
+    },
+    "./server/region": {
+      "source": "./src/server/region.ts",
+      "types": "./dist/server/region.d.mts",
+      "import": "./dist/server/region.mjs"
+    },
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsdown",
+    "check-types": "tsgo --noEmit",
+    "clean": "rm -rf dist",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "test:e2e": "vitest run tests/e2e",
+    "test:integration": "vitest run tests/integration",
+    "test:type": "vitest run tests/types",
+    "test:unit": "vitest run tests/unit",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@codefast/typescript-config": "workspace:*",
+    "@testing-library/dom": "catalog:",
+    "@testing-library/jest-dom": "catalog:",
+    "@testing-library/react": "catalog:",
+    "@testing-library/user-event": "catalog:",
+    "@types/node": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "@typescript/native-preview": "catalog:",
+    "@vercel/analytics": "catalog:",
+    "@vitejs/plugin-react": "catalog:",
+    "@vitest/coverage-v8": "catalog:",
+    "expect-type": "catalog:",
+    "jsdom": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "tsdown": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  },
+  "peerDependencies": {
+    "@types/react": ">=19.0.0",
+    "@types/react-dom": ">=19.0.0",
+    "@vercel/analytics": ">=1.0.0",
+    "react": ">=19.0.0",
+    "react-dom": ">=19.0.0"
+  },
+  "peerDependenciesMeta": {
+    "@types/react": {
+      "optional": true
+    },
+    "@types/react-dom": {
+      "optional": true
+    },
+    "@vercel/analytics": {
+      "optional": true
+    },
+    "react": {
+      "optional": true
+    },
+    "react-dom": {
+      "optional": true
+    }
+  },
+  "engines": {
+    "node": ">=24.0.0"
+  }
+}

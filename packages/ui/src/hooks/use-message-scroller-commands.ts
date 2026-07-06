@@ -1,4 +1,3 @@
-// Vendored from shadcn-ui/ui packages/react/src/message-scroller/use-message-scroller-commands.ts
 // Callbacks read from stable refs; omitting them from deps is intentional and keeps identities stable.
 /* oxlint-disable react-hooks/exhaustive-deps */
 import { useCallback } from "react";

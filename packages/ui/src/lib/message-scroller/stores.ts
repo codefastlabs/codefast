@@ -1,4 +1,3 @@
-// Vendored from shadcn-ui/ui packages/react/src/message-scroller/stores.ts
 import { EMPTY_MESSAGE_SCROLLER_VISIBILITY_STATE } from "./types";
 import type {
   MessageScrollerScrollable,

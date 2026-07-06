@@ -14,6 +14,8 @@ interface ExampleChromeProps extends ComponentProps<"div"> {
   readonly code: ReactNode;
   /** Raw source for the Copy button; also drives the line count in the toolbar. */
   readonly copyText?: string;
+  /** Identifier tracked as `copy_code`'s `name` when `copyText` is copied — never the code itself. */
+  readonly analyticsName?: string | undefined;
   /** When true, the code panel starts fully expanded. */
   readonly defaultCodeExpanded?: boolean;
   readonly previewClassName?: string;
@@ -29,6 +31,7 @@ export function ExampleChrome({
   preview,
   code,
   copyText,
+  analyticsName,
   defaultCodeExpanded = false,
   className,
   previewClassName,
@@ -56,7 +59,9 @@ export function ExampleChrome({
           </span>
 
           <div className="ms-auto flex items-center gap-1">
-            {copyText ? <CopyButton value={copyText} tone="overlay" /> : null}
+            {copyText ? (
+              <CopyButton value={copyText} tone="overlay" analyticsKind="usage-example" analyticsName={analyticsName} />
+            ) : null}
             <Button
               variant="ghost"
               size="icon-sm"

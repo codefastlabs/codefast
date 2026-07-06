@@ -138,7 +138,9 @@ export function DetailBody({ detail }: DetailBodyProps) {
             </div>
           )}
 
-          {doc?.usage ? <UsageSection code={doc.usage.code} highlightedCode={doc.usage.html} /> : null}
+          {doc?.usage ? (
+            <UsageSection code={doc.usage.code} highlightedCode={doc.usage.html} analyticsName={component.slug} />
+          ) : null}
 
           {doc?.anatomy?.length ? <AnatomySection nodes={doc.anatomy} /> : null}
 

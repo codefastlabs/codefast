@@ -11,7 +11,7 @@ import {
 import { Kbd } from "@codefast/ui/kbd";
 import { useNavigate } from "@tanstack/react-router";
 import { SearchIcon } from "lucide-react";
-import { useCallback, useEffect, useEffectEvent, useState, useSyncExternalStore } from "react";
+import { useCallback, useEffect, useEffectEvent, useRef, useState, useSyncExternalStore } from "react";
 
 import { NewBadge } from "#/components/showcase/new-badge";
 import {
@@ -21,7 +21,11 @@ import {
 } from "#/lib/command-palette-keyboard";
 import type { PrimaryNavPath } from "#/lib/nav-links";
 import { PRIMARY_NAV } from "#/lib/nav-links";
+import { getTracker } from "#/lib/tracking";
 import { COMPONENTS } from "#/registry/_core/components";
+
+/** Debounce before tracking a search query — avoids firing `search_query` per keystroke. */
+const SEARCH_TRACK_DEBOUNCE_MS = 500;
 
 /**
  * Global command palette: `/`, ⌘/ / Ctrl+/, and ⌘K / Ctrl+K. Renders its own
@@ -38,6 +42,42 @@ export function CommandPalette() {
   );
   const ariaKeyshortcuts = getCommandPaletteAriaKeyshortcuts(isMac);
 
+  const [search, setSearch] = useState("");
+  const searchTrackTimeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  const lastTrackedQueryRef = useRef("");
+
+  const handleSearchChange = useCallback((value: string) => {
+    setSearch(value);
+
+    if (searchTrackTimeoutRef.current) {
+      clearTimeout(searchTrackTimeoutRef.current);
+    }
+
+    // Debounced, and only re-tracked once the (trimmed) query actually changes —
+    // otherwise every keystroke of a paused typist would fire its own event.
+    searchTrackTimeoutRef.current = setTimeout(() => {
+      const trimmed = value.trim();
+
+      if (trimmed && trimmed !== lastTrackedQueryRef.current) {
+        lastTrackedQueryRef.current = trimmed;
+        getTracker().track("search_query", { query: trimmed, queryLength: trimmed.length });
+      }
+    }, SEARCH_TRACK_DEBOUNCE_MS);
+  }, []);
+
+  const handleOpenChange = useCallback((next: boolean) => {
+    setOpen(next);
+
+    if (!next) {
+      setSearch("");
+      lastTrackedQueryRef.current = "";
+
+      if (searchTrackTimeoutRef.current) {
+        clearTimeout(searchTrackTimeoutRef.current);
+      }
+    }
+  }, []);
+
   const onGlobalKeyDown = useEffectEvent((event: KeyboardEvent): void => {
     const action = getCommandPaletteKeyboardAction(event, open);
 
@@ -48,11 +88,11 @@ export function CommandPalette() {
     event.preventDefault();
 
     if (action === "toggle") {
-      setOpen((value) => !value);
+      handleOpenChange(!open);
       return;
     }
 
-    setOpen(true);
+    handleOpenChange(true);
   });
 
   useEffect(() => {
@@ -65,15 +105,15 @@ export function CommandPalette() {
 
   const goToPage = useCallback(
     (to: PrimaryNavPath) => {
-      setOpen(false);
+      handleOpenChange(false);
       void navigate({ to });
     },
-    [navigate],
+    [handleOpenChange, navigate],
   );
 
   const goToComponent = useCallback(
     (slug: string, hasDemo: boolean, name: string) => {
-      setOpen(false);
+      handleOpenChange(false);
 
       if (hasDemo) {
         // Components with a demo have a dedicated detail page.
@@ -83,14 +123,14 @@ export function CommandPalette() {
         void navigate({ to: "/components", hash: `letter-${name.charAt(0).toUpperCase()}` });
       }
     },
-    [navigate],
+    [handleOpenChange, navigate],
   );
 
   return (
     <>
       <Button
         onClick={() => {
-          setOpen(true);
+          handleOpenChange(true);
         }}
         aria-keyshortcuts={ariaKeyshortcuts}
         aria-label="Search components"
@@ -101,9 +141,9 @@ export function CommandPalette() {
         <Kbd className="hidden lg:inline-flex">/</Kbd>
       </Button>
 
-      <CommandDialog open={open} onOpenChange={setOpen}>
+      <CommandDialog open={open} onOpenChange={handleOpenChange}>
         <Command>
-          <CommandInput placeholder="Search components and pages…" />
+          <CommandInput placeholder="Search components and pages…" value={search} onValueChange={handleSearchChange} />
           <CommandList>
             <CommandEmpty>No results found.</CommandEmpty>
             <CommandGroup heading="Pages">

@@ -16,6 +16,7 @@ export const INSTALL_STEPS = [
     title: "Install the package",
     description: "Add @codefast/ui to your project. Peer dependencies (React 19, Tailwind v4) must already be present.",
     code: INSTALL_COMMAND,
+    analyticsKind: "install-command",
   },
   {
     step: "02",
@@ -23,12 +24,14 @@ export const INSTALL_STEPS = [
     description:
       "Add the design-system stylesheet to your global CSS. Pick a theme palette, then load the preset for Tailwind variants and motion utilities.",
     code: CSS_SETUP,
+    analyticsKind: "setup-snippet",
   },
   {
     step: "03",
     title: "Use a component",
     description: "Import any component by its named sub-path. No barrel imports, no tree-shaking surprises.",
     code: BUTTON_EXAMPLE,
+    analyticsKind: "usage-example",
   },
 ] as const;
 

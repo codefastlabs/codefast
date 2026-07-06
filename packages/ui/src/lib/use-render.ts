@@ -1,5 +1,4 @@
-// Vendored from shadcn-ui/ui packages/react/src/use-render. A poor man's
-// version of Base UI's useRender (https://base-ui.com/react/utils/use-render):
+// A poor man's version of Base UI's useRender (https://base-ui.com/react/utils/use-render):
 // renders a default tag, a render function, or a cloned render element, merging
 // props/refs/handlers. Backs the message-scroller primitives' `render` prop.
 import type {

@@ -1,4 +1,3 @@
-// Vendored from shadcn-ui/ui packages/react/src/message-scroller/use-message-scroller-refs.ts
 import { useRef } from "react";
 import type { RefObject } from "react";
 

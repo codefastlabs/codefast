@@ -26,7 +26,12 @@ export function ThemeSection() {
         </Badge>
       </div>
 
-      <CopySnippet code={THEME_SNIPPET("sky")} label="Copy theme CSS setup" />
+      <CopySnippet
+        code={THEME_SNIPPET("sky")}
+        label="Copy theme CSS setup"
+        analyticsKind="setup-snippet"
+        analyticsName="theme-sky"
+      />
 
       <p className="mt-6 max-w-2xl text-sm leading-relaxed text-ui-muted">
         For SSR apps, add{" "}

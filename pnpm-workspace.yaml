@@ -76,6 +76,7 @@ catalog:
   "@types/react-dom": ^19.2.3
   "@typescript/native-preview": 7.0.0-dev.20260704.1
   "@unpic/react": ^1.0.2
+  "@vercel/analytics": ^2.0.1
   "@vitejs/plugin-react": ^6.0.3
   "@vitest/browser": ^4.1.9
   "@vitest/browser-playwright": ^4.1.9

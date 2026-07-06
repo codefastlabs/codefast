@@ -4,18 +4,18 @@
 
 ### Minor Changes
 
-- [#552](https://github.com/codefastlabs/codefast/pull/552) [`78bf5a4`](https://github.com/codefastlabs/codefast/commit/78bf5a494de8276f5eeb262bc5dc45c882bb63f7) Thanks [@thevuong](https://github.com/thevuong)! - Refine two surfaces after comparing with shadcn radix-nova:
+- [#552](https://github.com/codefastlabs/codefast/pull/552) [`78bf5a4`](https://github.com/codefastlabs/codefast/commit/78bf5a494de8276f5eeb262bc5dc45c882bb63f7) Thanks [@thevuong](https://github.com/thevuong)! - Refine two surfaces for a more consistent container language:
 
   - `CardFooter` is now a distinct tinted tray by default (`border-t bg-muted/50` with full `--card-spacing` padding). `Card` drops its bottom padding when a footer is present (`has-data-[slot=card-footer]:pb-0`) so the tint reaches the card's bottom edge. Footers that previously relied on the transparent, opt-in-border behavior will now render with a background and top border.
   - `Empty` uses `rounded-xl` instead of `rounded-lg`, matching `Card`'s corner radius for a consistent container language.
 
-- [#552](https://github.com/codefastlabs/codefast/pull/552) [`e7839f2`](https://github.com/codefastlabs/codefast/commit/e7839f2d49da7b3af805aafcb6863a32e18e9563) Thanks [@thevuong](https://github.com/thevuong)! - Add chat surface components adapted from shadcn radix-nova: `Attachment` (file/media card with upload states, three sizes, and horizontal/vertical orientations), `Bubble` (message bubble with seven variants, alignment, and reaction pills), `Message` (avatar + content row with start/end alignment), and `Marker` (inline feed divider). Each ships per-component and `./variants/*` subpath exports, stories, and unit tests.
+- [#552](https://github.com/codefastlabs/codefast/pull/552) [`e7839f2`](https://github.com/codefastlabs/codefast/commit/e7839f2d49da7b3af805aafcb6863a32e18e9563) Thanks [@thevuong](https://github.com/thevuong)! - Add chat surface components: `Attachment` (file/media card with upload states, three sizes, and horizontal/vertical orientations), `Bubble` (message bubble with seven variants, alignment, and reaction pills), `Message` (avatar + content row with start/end alignment), and `Marker` (inline feed divider). Each ships per-component and `./variants/*` subpath exports, stories, and unit tests.
 
   Also adds `scroll-fade-*` (scroll-aware, RTL-mirrored edge fades) and `shimmer` (text loading shimmer) utilities to the foundation preset, used by these components and available on any scroller.
 
 - [#552](https://github.com/codefastlabs/codefast/pull/552) [`5e74e3e`](https://github.com/codefastlabs/codefast/commit/5e74e3e426a10d26f86a053a15acf971dc0115dc) Thanks [@thevuong](https://github.com/thevuong)! - Add `MessageScroller`, a headless-driven scroll manager for chat transcripts: follow-the-bottom autoscroll, scroll preservation on prepend, anchored streaming turns, `defaultScrollPosition`, and a self-hiding scroll-to-edge button. Ships the styled component (`@codefast/ui/message-scroller`), the headless primitive (`@codefast/ui/primitives/message-scroller`), and the `useMessageScroller`, `useMessageScrollerScrollable`, and `useMessageScrollerVisibility` hooks.
 
-  The scroll engine (geometry, stores, and controller hooks) is vendored from shadcn's `@shadcn/react/message-scroller` into `@codefast/ui` internals and adapted to codefast conventions, so it carries no extra runtime dependency. Adds an internal `useRender` utility that backs the primitives' `render` prop.
+  The scroll engine (geometry, stores, and controller hooks) is vendored from an external message-scroller implementation into `@codefast/ui` internals and adapted to codefast conventions, so it carries no extra runtime dependency. Adds an internal `useRender` utility that backs the primitives' `render` prop.
 
 - [#552](https://github.com/codefastlabs/codefast/pull/552) [`feb5639`](https://github.com/codefastlabs/codefast/commit/feb5639ea4443b8c1c90e638e3f9d12e6a32b14e) Thanks [@thevuong](https://github.com/thevuong)! - Complete RTL hardening across the component library, closing the last physical-direction gaps and making the carousel direction-aware.
 

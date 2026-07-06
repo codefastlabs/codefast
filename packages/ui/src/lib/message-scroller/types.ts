@@ -1,4 +1,3 @@
-// Vendored from shadcn-ui/ui packages/react/src/message-scroller/types.ts
 import type { ComponentProps, ReactNode, RefObject } from "react";
 
 import type { UseRenderComponentProps } from "#/lib/use-render";
