@@ -2,7 +2,7 @@
 /**
  * RTL audit for packages/ui — read-only detector, not a codemod.
  *
- * Ports the mapping table from shadcn's transform-rtl.ts into violation
+ * Ports a physical-to-logical class mapping table into violation
  * detectors: scans string literals in src for physical-direction Tailwind
  * classes and reports the logical (or `rtl:`-paired) replacement. Exits
  * non-zero when violations remain so it can gate CI.

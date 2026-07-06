@@ -1,4 +1,3 @@
-// Vendored from shadcn-ui/ui packages/react/src/message-scroller/geometry.ts
 import {
   EMPTY_MESSAGE_SCROLLER_SCROLLABLE,
   EMPTY_MESSAGE_SCROLLER_VISIBILITY_STATE,

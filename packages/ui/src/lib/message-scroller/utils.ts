@@ -1,4 +1,3 @@
-// Vendored from shadcn-ui/ui packages/react/src/message-scroller/utils.ts
 import { useRef } from "react";
 
 /**

@@ -9,8 +9,8 @@
  * feature is unsupported. `shimmer` clips a moving highlight to text for
  * loading states. Both mirror in RTL.
  *
- * Vendored from shadcn-ui/ui packages/shadcn/src/tailwind.css (scroll-fade,
- * shimmer). Keep faithful so upstream fixes re-apply mechanically.
+ * Vendored from an external Tailwind preset (scroll-fade, shimmer). Keep
+ * faithful so upstream fixes re-apply mechanically.
  * ------------------------------------------------------------------------- */
 
 /* scroll-fade */

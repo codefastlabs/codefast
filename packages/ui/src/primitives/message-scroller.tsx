@@ -1,4 +1,3 @@
-// Vendored from shadcn-ui/ui packages/react/src/message-scroller/components.tsx
 import {
   createContext,
   useCallback,

@@ -1,6 +1,5 @@
 // @vitest-environment jsdom
 
-// Vendored from shadcn-ui/ui packages/react/src/message-scroller/geometry.test.ts
 import {
   getContentBottom,
   getElementScrollTop,
