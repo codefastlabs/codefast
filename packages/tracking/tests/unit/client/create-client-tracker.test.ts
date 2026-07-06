@@ -1,0 +1,146 @@
+import { describe, expect, it, vi } from "vitest";
+import { z } from "zod";
+
+import { createClientTracker } from "#/client/create-client-tracker";
+import { defineEventCatalog } from "#/core/event-catalog";
+import { createMemoryQueueStorage, createRecordingDestination } from "#/tests/unit/client/support/fakes";
+
+const catalog = defineEventCatalog({
+  button_clicked: { owner: "client", schema: z.object({ id: z.string() }) },
+  order_completed: { owner: "server", schema: z.object({ orderId: z.string() }) },
+});
+
+describe("createClientTracker", () => {
+  it("validates props against the catalog schema before enqueueing", () => {
+    const destination = createRecordingDestination();
+    const tracker = createClientTracker({
+      anonymousId: "anon-1",
+      catalog,
+      destinations: [destination],
+      storage: createMemoryQueueStorage(),
+    });
+
+    expect(() => tracker.track("button_clicked", { id: 42 } as never)).toThrow(/invalid_type|expected string/i);
+  });
+
+  it("flushes a valid client-owned event to every destination", async () => {
+    const destination = createRecordingDestination();
+    const tracker = createClientTracker({
+      anonymousId: "anon-1",
+      catalog,
+      destinations: [destination],
+      storage: createMemoryQueueStorage(),
+    });
+
+    tracker.track("button_clicked", { id: "cta" });
+    await tracker.flush();
+
+    expect(destination.received).toHaveLength(1);
+    expect(destination.received[0]?.props).toEqual({ id: "cta" });
+  });
+
+  it("rejects a server-owned event at runtime even if the type filter is bypassed", () => {
+    const destination = createRecordingDestination();
+    const tracker = createClientTracker({
+      anonymousId: "anon-1",
+      catalog,
+      destinations: [destination],
+      storage: createMemoryQueueStorage(),
+    });
+
+    expect(() => tracker.track("order_completed" as never, { orderId: "o1" } as never)).toThrow(
+      /Unknown client-owned event/,
+    );
+  });
+
+  it("stamps the current user onto events after identify", async () => {
+    const destination = createRecordingDestination();
+    const tracker = createClientTracker({
+      anonymousId: "anon-1",
+      catalog,
+      destinations: [destination],
+      storage: createMemoryQueueStorage(),
+    });
+
+    tracker.identify("user-1", { plan: "pro" });
+    tracker.track("button_clicked", { id: "cta" });
+    await tracker.flush();
+
+    expect(destination.received.map((event) => event.userId)).toEqual(["user-1", "user-1"]);
+  });
+
+  it("enqueues a $page_viewed event carrying the given name and props", async () => {
+    const destination = createRecordingDestination();
+    const tracker = createClientTracker({
+      anonymousId: "anon-1",
+      catalog,
+      destinations: [destination],
+      storage: createMemoryQueueStorage(),
+    });
+
+    tracker.page("/pricing", { referrer: "/home" });
+    await tracker.flush();
+
+    expect(destination.received).toMatchObject([
+      { name: "$page_viewed", props: { name: "/pricing", referrer: "/home" } },
+    ]);
+  });
+
+  it("clear() drops pending events without sending them", async () => {
+    const destination = createRecordingDestination();
+    const tracker = createClientTracker({
+      anonymousId: "anon-1",
+      catalog,
+      destinations: [destination],
+      storage: createMemoryQueueStorage(),
+    });
+
+    tracker.track("button_clicked", { id: "cta" });
+    tracker.clear();
+    await tracker.flush();
+
+    expect(destination.received).toHaveLength(0);
+  });
+
+  it("flushWithBeacon sends the pending queue via navigator.sendBeacon", () => {
+    const sendBeacon = vi.fn().mockReturnValue(true);
+    vi.stubGlobal("navigator", { sendBeacon });
+
+    const tracker = createClientTracker({
+      anonymousId: "anon-1",
+      catalog,
+      destinations: [],
+      storage: createMemoryQueueStorage(),
+    });
+
+    tracker.track("button_clicked", { id: "cta" });
+    tracker.flushWithBeacon("/api/events");
+
+    expect(sendBeacon).toHaveBeenCalledTimes(1);
+    const [endpoint, body] = sendBeacon.mock.calls[0] as [string, string];
+
+    expect(endpoint).toBe("/api/events");
+    expect(JSON.parse(body)).toMatchObject([{ name: "button_clicked" }]);
+
+    vi.unstubAllGlobals();
+  });
+
+  it("re-queues events when sendBeacon fails to accept the payload", async () => {
+    vi.stubGlobal("navigator", { sendBeacon: vi.fn().mockReturnValue(false) });
+
+    const destination = createRecordingDestination();
+    const tracker = createClientTracker({
+      anonymousId: "anon-1",
+      catalog,
+      destinations: [destination],
+      storage: createMemoryQueueStorage(),
+    });
+
+    tracker.track("button_clicked", { id: "cta" });
+    tracker.flushWithBeacon("/api/events");
+    vi.unstubAllGlobals();
+
+    await tracker.flush();
+    expect(destination.received).toHaveLength(1);
+  });
+});
