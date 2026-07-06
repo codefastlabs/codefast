@@ -1,32 +1,20 @@
-import {
-  attachClientLifecycle,
-  attachRouterPageTracking,
-  createClientTracker,
-  createLocalStorageQueueStorage,
-} from "@codefast/tracking/client";
-import { createVercelAnalyticsDestination } from "@codefast/tracking/destinations";
+import { attachClientLifecycle, attachRouterPageTracking } from "@codefast/tracking/client";
 import { useRouter } from "@tanstack/react-router";
 import { Analytics as VercelAnalytics } from "@vercel/analytics/react";
 import { useEffect } from "react";
 
-import { catalog, getOrCreateAnonymousId } from "#/lib/tracking";
+import { getTracker } from "#/lib/tracking";
 
 /**
- * Mounted once in the root document. Wires `@codefast/tracking`'s client tracker —
- * page views via the router hook, Vercel Analytics as the first destination — and
- * renders Vercel's own script/pageview component.
+ * Mounted once in the root document. Wires the shared tracker (`getTracker()`, also
+ * used by `CopyButton`/`CommandPalette`) to page views via the router hook and the
+ * periodic/unload flush, and renders Vercel's own script/pageview component.
  */
 export function Analytics() {
   const router = useRouter();
 
   useEffect(() => {
-    const tracker = createClientTracker({
-      anonymousId: getOrCreateAnonymousId(),
-      catalog,
-      destinations: [createVercelAnalyticsDestination()],
-      storage: createLocalStorageQueueStorage("codefast-ui-tracking-queue"),
-    });
-
+    const tracker = getTracker();
     const detachRouter = attachRouterPageTracking(tracker, router);
     const detachLifecycle = attachClientLifecycle(tracker);
 

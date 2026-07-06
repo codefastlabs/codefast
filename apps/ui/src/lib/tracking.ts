@@ -1,10 +1,29 @@
 import { defineEventCatalog } from "@codefast/tracking";
+import type { ClientTracker } from "@codefast/tracking/client";
+import { createClientTracker, createLocalStorageQueueStorage } from "@codefast/tracking/client";
+import { createVercelAnalyticsDestination } from "@codefast/tracking/destinations";
+import { z } from "zod";
 
 /**
- * Empty for now — page views go through `tracker.page()` regardless of the catalog.
- * Add real events here as features need them (e.g. a copy-button click).
+ * `copy_code`/`search_query` track *what* was copied or searched, never the raw
+ * code content or the full clipboard value — only identifiers/metadata.
  */
-export const catalog = defineEventCatalog({});
+export const catalog = defineEventCatalog({
+  copy_code: {
+    owner: "client",
+    schema: z.object({
+      kind: z.enum(["install-command", "setup-snippet", "usage-example"]),
+      name: z.string(),
+    }),
+  },
+  search_query: {
+    owner: "client",
+    schema: z.object({
+      query: z.string(),
+      queryLength: z.number(),
+    }),
+  },
+});
 
 const ANONYMOUS_ID_COOKIE = "codefast-ui-anon-id";
 const ONE_YEAR_IN_SECONDS = 60 * 60 * 24 * 365;
@@ -28,4 +47,22 @@ export function getOrCreateAnonymousId(): string {
   document.cookie = `${ANONYMOUS_ID_COOKIE}=${id}; path=/; max-age=${ONE_YEAR_IN_SECONDS}; samesite=lax`;
 
   return id;
+}
+
+let tracker: ClientTracker<typeof catalog> | undefined;
+
+/**
+ * Lazily creates the single shared client tracker. Safe to call from any client-only
+ * code path (event handlers never run during SSR) without waiting on `<Analytics />`'s
+ * own effect to run first.
+ */
+export function getTracker(): ClientTracker<typeof catalog> {
+  tracker ??= createClientTracker({
+    anonymousId: getOrCreateAnonymousId(),
+    catalog,
+    destinations: [createVercelAnalyticsDestination()],
+    storage: createLocalStorageQueueStorage("codefast-ui-tracking-queue"),
+  });
+
+  return tracker;
 }

@@ -10,10 +10,12 @@ interface UsageSectionProps extends Omit<ComponentProps<typeof DocSection>, "id"
   readonly code: string;
   /** Pre-highlighted dual-theme Shiki HTML for `code`. */
   readonly highlightedCode: string;
+  /** Component slug — tracked as `copy_code`'s `name` when the usage snippet is copied. */
+  readonly analyticsName: string;
 }
 
 /** The "Usage" section: the minimal import + composition, ahead of the styled Examples. */
-export function UsageSection({ code, highlightedCode, ...props }: UsageSectionProps) {
+export function UsageSection({ code, highlightedCode, analyticsName, ...props }: UsageSectionProps) {
   const lineCount = code.trimEnd().split("\n").length;
 
   return (
@@ -30,7 +32,7 @@ export function UsageSection({ code, highlightedCode, ...props }: UsageSectionPr
             {`${String(lineCount)} lines`}
           </span>
           <div className="ms-auto flex items-center gap-1">
-            <CopyButton value={code} tone="overlay" />
+            <CopyButton value={code} tone="overlay" analyticsKind="usage-example" analyticsName={analyticsName} />
           </div>
         </div>
         <CodeBlock highlightedCode={highlightedCode} showLineNumbers />

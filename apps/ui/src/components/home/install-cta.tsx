@@ -24,7 +24,13 @@ export function InstallCta() {
                 <span className="me-2 text-ui-muted select-none">$</span>
                 {INSTALL_COMMAND}
               </code>
-              <CopyButton value={INSTALL_COMMAND} aria-label="Copy install command" className="shrink-0" />
+              <CopyButton
+                value={INSTALL_COMMAND}
+                aria-label="Copy install command"
+                analyticsKind="install-command"
+                analyticsName="home-hero"
+                className="shrink-0"
+              />
             </div>
           </div>
 

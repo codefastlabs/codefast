@@ -5,6 +5,11 @@ import type { VariantProps } from "@codefast/ui/lib/utils";
 import { CheckIcon, CopyIcon } from "lucide-react";
 import type { ComponentProps } from "react";
 
+import { getTracker } from "#/lib/tracking";
+
+/** `copy_code`'s `kind` values — what's being copied, never the copied text itself. */
+export type CopyAnalyticsKind = "install-command" | "setup-snippet" | "usage-example";
+
 /**
  * Surface treatments for the copy chip. Colours come from the app's `ui-*`
  * palette (not the shared `@codefast/ui` tokens), so we layer them over a
@@ -38,6 +43,10 @@ interface CopyButtonProps extends Omit<ComponentProps<typeof Button>, "children"
   readonly idleLabel?: string;
   /** Text shown during the transient "copied" state. */
   readonly copiedLabel?: string;
+  /** When set together with `analyticsName`, tracks `copy_code` on a successful copy. */
+  readonly analyticsKind?: CopyAnalyticsKind | undefined;
+  /** Identifier for what was copied (e.g. a component slug) — never the copied text. */
+  readonly analyticsName?: string | undefined;
 }
 
 /**
@@ -50,13 +59,21 @@ export function CopyButton({
   tone,
   idleLabel = "Copy",
   copiedLabel = "Copied",
+  analyticsKind,
+  analyticsName,
   "aria-label": ariaLabel,
   variant = "ghost",
   size = "sm",
   className,
   ...props
 }: CopyButtonProps) {
-  const { copyToClipboard, isCopied } = useCopyToClipboard();
+  const { copyToClipboard, isCopied } = useCopyToClipboard({
+    onCopy: () => {
+      if (analyticsKind !== undefined && analyticsName !== undefined) {
+        getTracker().track("copy_code", { kind: analyticsKind, name: analyticsName });
+      }
+    },
+  });
 
   return (
     <Button

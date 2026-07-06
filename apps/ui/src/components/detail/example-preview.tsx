@@ -55,6 +55,7 @@ export function ExamplePreview({
 
       <ExampleChrome
         copyText={code}
+        analyticsName={id}
         preview={
           direction === "rtl" ? (
             <LanguageProvider defaultLanguage="ar">
