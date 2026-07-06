@@ -100,6 +100,11 @@
       "types": "./dist/components/breadcrumb.d.mts",
       "import": "./dist/components/breadcrumb.mjs"
     },
+    "./bubble": {
+      "source": "./src/components/bubble.tsx",
+      "types": "./dist/components/bubble.d.mts",
+      "import": "./dist/components/bubble.mjs"
+    },
     "./button": {
       "source": "./src/components/button.tsx",
       "types": "./dist/components/button.d.mts",
@@ -109,11 +114,6 @@
       "source": "./src/components/button-group.tsx",
       "types": "./dist/components/button-group.d.mts",
       "import": "./dist/components/button-group.mjs"
-    },
-    "./bubble": {
-      "source": "./src/components/bubble.tsx",
-      "types": "./dist/components/bubble.d.mts",
-      "import": "./dist/components/bubble.mjs"
     },
     "./calendar": {
       "source": "./src/components/calendar.tsx",
@@ -420,6 +420,21 @@
       "types": "./dist/hooks/use-media-query.d.mts",
       "import": "./dist/hooks/use-media-query.mjs"
     },
+    "./hooks/use-message-scroller-commands": {
+      "source": "./src/hooks/use-message-scroller-commands.ts",
+      "types": "./dist/hooks/use-message-scroller-commands.d.mts",
+      "import": "./dist/hooks/use-message-scroller-commands.mjs"
+    },
+    "./hooks/use-message-scroller-controller": {
+      "source": "./src/hooks/use-message-scroller-controller.ts",
+      "types": "./dist/hooks/use-message-scroller-controller.d.mts",
+      "import": "./dist/hooks/use-message-scroller-controller.mjs"
+    },
+    "./hooks/use-message-scroller-refs": {
+      "source": "./src/hooks/use-message-scroller-refs.ts",
+      "types": "./dist/hooks/use-message-scroller-refs.d.mts",
+      "import": "./dist/hooks/use-message-scroller-refs.mjs"
+    },
     "./hooks/use-mutation-observer": {
       "source": "./src/hooks/use-mutation-observer.ts",
       "types": "./dist/hooks/use-mutation-observer.d.mts",
@@ -429,6 +444,31 @@
       "source": "./src/hooks/use-pagination.ts",
       "types": "./dist/hooks/use-pagination.d.mts",
       "import": "./dist/hooks/use-pagination.mjs"
+    },
+    "./lib/message-scroller/geometry": {
+      "source": "./src/lib/message-scroller/geometry.ts",
+      "types": "./dist/lib/message-scroller/geometry.d.mts",
+      "import": "./dist/lib/message-scroller/geometry.mjs"
+    },
+    "./lib/message-scroller/stores": {
+      "source": "./src/lib/message-scroller/stores.ts",
+      "types": "./dist/lib/message-scroller/stores.d.mts",
+      "import": "./dist/lib/message-scroller/stores.mjs"
+    },
+    "./lib/message-scroller/types": {
+      "source": "./src/lib/message-scroller/types.ts",
+      "types": "./dist/lib/message-scroller/types.d.mts",
+      "import": "./dist/lib/message-scroller/types.mjs"
+    },
+    "./lib/message-scroller/utils": {
+      "source": "./src/lib/message-scroller/utils.ts",
+      "types": "./dist/lib/message-scroller/utils.d.mts",
+      "import": "./dist/lib/message-scroller/utils.mjs"
+    },
+    "./lib/use-render": {
+      "source": "./src/lib/use-render.ts",
+      "types": "./dist/lib/use-render.d.mts",
+      "import": "./dist/lib/use-render.mjs"
     },
     "./lib/utils": {
       "source": "./src/lib/utils.ts",
