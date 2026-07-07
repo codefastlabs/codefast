@@ -13,6 +13,7 @@
     },
     "build": {
       "dependsOn": ["^build"],
+      "env": ["VITE_GA4_MEASUREMENT_ID"],
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
       "outputs": ["dist/**", ".output/**", ".vercel/output/**"],
       "outputLogs": "new-only"
