@@ -1,5 +1,7 @@
 # @codefast/theme
 
+## 0.5.0-canary.5
+
 ## 0.5.0-canary.4
 
 ### Minor Changes

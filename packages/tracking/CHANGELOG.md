@@ -1,5 +1,11 @@
 # @codefast/tracking
 
+## 0.5.0-canary.5
+
+### Minor Changes
+
+- [`08f10fb`](https://github.com/codefastlabs/codefast/commit/08f10fb6f4f16e175557fac1adeb5b480dc691db) Thanks [@thevuong](https://github.com/thevuong)! - Rebuild `ConsentBanner` as composable compound parts (`ConsentBannerTitle`/`Description`/`Actions`/`Accept`/`Reject`/`Customize`/`Preferences`/`Category`/`Save`) — the root owns visibility (`needsPrompt`, overridable via `open` for a "Cookie settings" reopen) and the preferences-layer state, action parts wire their own clicks and compose the consumer's `onClick`, so any markup including a design system's button styles slots in via `className`. The monolithic `message`/`acceptLabel`/`categories` props are gone. An optional plain-CSS default theme ships at `@codefast/tracking/css/consent.css` — data-slot selectors, `--consent-*` custom properties with `light-dark()` fallbacks, zero Tailwind dependency.
+
 ## 0.5.0-canary.4
 
 ### Minor Changes
