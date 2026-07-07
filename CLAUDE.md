@@ -68,6 +68,18 @@ This is a **TypeScript** project, so doc comments are **TSDoc** — never JSDoc 
 - **`@since <version>` is generated** by `codefast tag` at release — never hand-write it.
 - No commented-out code left behind; a `TODO`/`FIXME` must state why or link an issue.
 
+## API naming (Swift API Design Guidelines, adapted to TS)
+
+Audit every public API you add or touch (exported function/type/prop/option/config key) against these — clarity at the point of use beats brevity, and every word must convey information:
+
+- **Name by role, never lie.** A name must state what the thing actually does (`options` for a hard selection criterion, never `hint`; a render function is `renderX`, never `customLabel`). No filler suffixes — `Type` on a type alias says nothing (`AppearanceContextValue`, not `AppearanceContextType`).
+- **Properties/types are nouns** (`delivery: "immediate"`, not `deliver`); **side-effecting functions are imperative verbs** (`track`, `flush`); handlers are `onX`.
+- **Booleans read as assertions** (`animated`, `isScrollAnchor`, `isTrackingAllowed`), or as conventional option-bag instructions (`trackPageViews`, `includeAds`) when they configure behavior.
+- **Hooks take `XxxOptions` and return `XxxResult`** — `Props` is for components only.
+- **Compensate weak types with units/role in the name**: `sizeInPixels`, `retryDelayMs`.
+- **Precedent beats the rulebook.** Names locked by JS/React/Radix/upstream contracts (`opts` on Carousel, `tv`/`twMerge`, Recharts' `initialDimension`, `create*` factories, `use*` hooks) stay verbatim — renaming a passthrough breaks the compatibility that makes it valuable.
+- When renaming for these rules, watch for **shadowing**: a mass rename that collides with an existing local (`const options = options === undefined …`) is a TDZ bug the type checker and tests must catch before commit.
+
 ## Packages
 
 | Path                         | Role                                                                                                   |
