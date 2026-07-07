@@ -21,7 +21,7 @@ describe("createGoogleAnalyticsDestination", () => {
   });
 
   it("delivers immediately — gtag.js owns its own batching and unload transport", () => {
-    expect(createGoogleAnalyticsDestination().deliver).toBe("immediate");
+    expect(createGoogleAnalyticsDestination().delivery).toBe("immediate");
   });
 
   it("forwards the event name and allowed-type props to gtag('event', ...)", () => {

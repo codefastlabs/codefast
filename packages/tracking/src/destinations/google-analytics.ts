@@ -123,14 +123,14 @@ export interface GoogleAnalyticsDestinationOptions {
  * GA4's vocabulary — `$identify` sets `user_id`, `$group` becomes the recommended
  * `join_group` event, `$page_viewed` maps to `page_view` (opt-in, see `trackPageViews`).
  * Requires the gtag.js snippet plus `gtag('config', measurementId)` mounted once by the
- * app. Marked `deliver: "immediate"` — gtag.js has its own batching and unload delivery,
+ * app. Marked `delivery: "immediate"` — gtag.js has its own batching and unload delivery,
  * so queueing in front of it only delays events and replays stale ones next session.
  */
 export function createGoogleAnalyticsDestination(options: GoogleAnalyticsDestinationOptions = {}): Destination {
   const name = options.name ?? "google-analytics";
 
   return {
-    deliver: "immediate",
+    delivery: "immediate",
     name,
     send(event) {
       if (typeof window === "undefined" || typeof window.gtag !== "function") {

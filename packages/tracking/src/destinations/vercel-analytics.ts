@@ -24,12 +24,12 @@ function toVercelAnalyticsProps(props: Record<string, unknown>): Record<string, 
 
 /**
  * `track()` only pushes onto Vercel's own in-page queue (`window.va`/`window.vaq`), which
- * handles batching and unload delivery itself — hence `deliver: "immediate"`. Requires
+ * handles batching and unload delivery itself — hence `delivery: "immediate"`. Requires
  * `<Analytics />` from `@vercel/analytics/react` to be mounted once in the app.
  */
 export function createVercelAnalyticsDestination(name = "vercel-analytics"): Destination {
   return {
-    deliver: "immediate",
+    delivery: "immediate",
     name,
     send(event) {
       track(event.name, toVercelAnalyticsProps(event.props));

@@ -12,7 +12,7 @@ export interface Destination {
    *
    * @defaultValue "queued"
    */
-  deliver?: "immediate" | "queued";
+  delivery?: "immediate" | "queued";
   name: string;
   send: (event: TrackedEvent) => Promise<void> | void;
 }

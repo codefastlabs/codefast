@@ -89,7 +89,7 @@ function createClientTracker<Catalog extends EventCatalog>(catalog: Catalog) {
 
 ### 5.1 Client — implemented
 
-- **Two delivery paths**: destinations marked `deliver: "immediate"` (gtag.js, Vercel — SDKs with their own batching/unload transport) receive each event synchronously at track time and never go through the queue; queueing in front of them only delayed events and replayed stale ones next session with wrong timing. Everything else is `"queued"` (default) and gets the batching/retry/persistence below.
+- **Two delivery paths**: destinations marked `delivery: "immediate"` (gtag.js, Vercel — SDKs with their own batching/unload transport) receive each event synchronously at track time and never go through the queue; queueing in front of them only delayed events and replayed stale ones next session with wrong timing. Everything else is `"queued"` (default) and gets the batching/retry/persistence below.
 - Batching: flush on whichever comes first — interval (`attachClientLifecycle`, default 10s), batch size (`EventQueue`, default 20, self-triggered on `enqueue`), or page unload.
 - Unload flush uses `ClientTracker.flushWithBeacon()` (`navigator.sendBeacon`, wired to `pagehide`/`visibilitychange` by `attachClientLifecycle`) — fire-and-forget, re-queues the batch if the browser rejects it (payload too large, etc.).
 - Offline queue (`EventQueue`): persisted via a pluggable `EventQueueStorage`; ships with `createLocalStorageQueueStorage`. Capped (default 500 events, drop-oldest on overflow). IndexedDB fallback for larger payloads is not built.

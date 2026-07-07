@@ -35,8 +35,8 @@ export function createClientTracker<Catalog extends EventCatalog>(
 ): ClientTracker<Catalog> {
   // SDK-backed destinations own their batching/unload delivery — routing them through
   // the queue would only delay events and replay stale ones next session.
-  const immediateDestinations = options.destinations.filter((destination) => destination.deliver === "immediate");
-  const queuedDestinations = options.destinations.filter((destination) => destination.deliver !== "immediate");
+  const immediateDestinations = options.destinations.filter((destination) => destination.delivery === "immediate");
+  const queuedDestinations = options.destinations.filter((destination) => destination.delivery !== "immediate");
   const queue = new EventQueue({
     destinations: queuedDestinations,
     maxQueueSize: options.maxQueueSize,
