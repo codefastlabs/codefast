@@ -1,6 +1,6 @@
 import { use } from "react";
 
-import type { AppearanceContextType } from "#/appearance";
+import type { AppearanceContextValue } from "#/appearance";
 import { AppearanceContext } from "#/appearance-context";
 
 /* -----------------------------------------------------------------------------
@@ -35,7 +35,7 @@ import { AppearanceContext } from "#/appearance-context";
  *
  * @since 0.5.0-canary.2
  */
-export function useAppearance(): AppearanceContextType {
+export function useAppearance(): AppearanceContextValue {
   const value = use(AppearanceContext);
 
   if (!value) {

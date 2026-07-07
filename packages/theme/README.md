@@ -314,7 +314,7 @@ The root `@codefast/theme` entry re-exports the common surface. Granular subpath
 | Subpath                               | Contents                                                                                         |
 | ------------------------------------- | ------------------------------------------------------------------------------------------------ |
 | `@codefast/theme`                     | `AppearanceProvider`, `useAppearance`, `AppearanceScript`, `resolveColorScheme`, types, defaults |
-| `@codefast/theme/appearance`          | `Appearance`, `ColorScheme`, `AppearanceContextType`, `appearances`, `appearanceSchema`          |
+| `@codefast/theme/appearance`          | `Appearance`, `ColorScheme`, `AppearanceContextValue`, `appearances`, `appearanceSchema`         |
 | `@codefast/theme/appearance-provider` | `AppearanceProvider`                                                                             |
 | `@codefast/theme/appearance-script`   | `AppearanceScript`                                                                               |
 | `@codefast/theme/appearance-context`  | Raw `AppearanceContext` for custom providers                                                     |

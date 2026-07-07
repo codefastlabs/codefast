@@ -2,14 +2,14 @@ import { render, renderHook, screen } from "@testing-library/react";
 import type React from "react";
 import type { ReactNode } from "react";
 
-import type { Appearance, AppearanceContextType } from "#/appearance";
+import type { Appearance, AppearanceContextValue } from "#/appearance";
 import { AppearanceContext } from "#/appearance-context";
 import { useAppearance } from "#/use-appearance";
 
 /**
  * Helper to create a wrapper component for renderHook
  */
-const createWrapper = (value: AppearanceContextType) => {
+const createWrapper = (value: AppearanceContextValue) => {
   return function AppearanceContextWrapper({ children }: { children: ReactNode }) {
     return <AppearanceContext value={value}>{children}</AppearanceContext>;
   };
@@ -33,7 +33,7 @@ describe("useAppearance Hook", () => {
 
   describe("with AppearanceProvider", () => {
     test("should return appearance from context", () => {
-      const mockValue: AppearanceContextType = {
+      const mockValue: AppearanceContextValue = {
         isPending: false,
         colorScheme: "dark",
         setAppearance: vi.fn(async (_value: Appearance) => {}),
@@ -48,7 +48,7 @@ describe("useAppearance Hook", () => {
     });
 
     test("should return colorScheme from context", () => {
-      const mockValue: AppearanceContextType = {
+      const mockValue: AppearanceContextValue = {
         isPending: false,
         colorScheme: "light",
         setAppearance: vi.fn(async (_value: Appearance) => {}),
@@ -63,7 +63,7 @@ describe("useAppearance Hook", () => {
     });
 
     test("should return isPending from context", () => {
-      const mockValue: AppearanceContextType = {
+      const mockValue: AppearanceContextValue = {
         isPending: true,
         colorScheme: "dark",
         setAppearance: vi.fn(async (_value: Appearance) => {}),
@@ -79,7 +79,7 @@ describe("useAppearance Hook", () => {
 
     test("should return setAppearance function from context", () => {
       const mockSetAppearance = vi.fn(async (_value: Appearance) => {});
-      const mockValue: AppearanceContextType = {
+      const mockValue: AppearanceContextValue = {
         isPending: false,
         colorScheme: "dark",
         setAppearance: mockSetAppearance,
@@ -94,7 +94,7 @@ describe("useAppearance Hook", () => {
     });
 
     test("should work in a component", () => {
-      const mockValue: AppearanceContextType = {
+      const mockValue: AppearanceContextValue = {
         isPending: false,
         colorScheme: "dark",
         setAppearance: vi.fn(async (_value: Appearance) => {}),

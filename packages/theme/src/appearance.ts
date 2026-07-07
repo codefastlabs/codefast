@@ -58,7 +58,7 @@ export const appearances = appearanceSchema.options;
  *
  * @since 0.5.0-canary.2
  */
-export type AppearanceContextType = {
+export type AppearanceContextValue = {
   readonly isPending: boolean;
   readonly colorScheme: ColorScheme;
   readonly setAppearance: (value: Appearance) => Promise<void>;

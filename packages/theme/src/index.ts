@@ -13,7 +13,7 @@
  */
 
 // Types & Schema
-export type { Appearance, AppearanceContextType, ColorScheme } from "#/appearance";
+export type { Appearance, AppearanceContextValue, ColorScheme } from "#/appearance";
 export { appearances, appearanceSchema } from "#/appearance";
 
 // Constants

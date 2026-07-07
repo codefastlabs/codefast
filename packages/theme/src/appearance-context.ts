@@ -1,12 +1,10 @@
 import { createContext } from "react";
 
-import type { AppearanceContextType } from "#/appearance";
+import type { AppearanceContextValue } from "#/appearance";
 
 /* -----------------------------------------------------------------------------
  * Context
  * -------------------------------------------------------------------------- */
-
-type AppearanceContextValue = null | AppearanceContextType;
 
 /**
  * React context for appearance state management.
@@ -19,4 +17,4 @@ type AppearanceContextValue = null | AppearanceContextType;
  *
  * @since 0.5.0-canary.2
  */
-export const AppearanceContext = createContext<AppearanceContextValue>(null);
+export const AppearanceContext = createContext<null | AppearanceContextValue>(null);

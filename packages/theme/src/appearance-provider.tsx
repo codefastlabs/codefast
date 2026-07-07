@@ -11,7 +11,7 @@ import {
   useSyncExternalStore,
 } from "react";
 
-import type { Appearance, AppearanceContextType, ColorScheme } from "#/appearance";
+import type { Appearance, AppearanceContextValue, ColorScheme } from "#/appearance";
 import { appearanceSchema } from "#/appearance";
 import { AppearanceContext } from "#/appearance-context";
 import { getSystemColorScheme } from "#/color-scheme";
@@ -349,7 +349,7 @@ export function AppearanceProvider({
   );
 
   // Expose the optimistic appearance so consumers see immediate updates
-  const value = useMemo<AppearanceContextType>(
+  const value = useMemo<AppearanceContextValue>(
     () => ({
       isPending,
       colorScheme,
