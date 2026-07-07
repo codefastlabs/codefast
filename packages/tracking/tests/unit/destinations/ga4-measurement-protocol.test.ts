@@ -41,7 +41,7 @@ describe("createGa4MeasurementProtocolDestination", () => {
     expect(init.method).toBe("POST");
     expect(JSON.parse(init.body as string)).toEqual({
       client_id: "anon-1",
-      events: [{ name: "order_completed", params: { total: 42, currency: "USD", engagement_time_msec: 1 } }],
+      events: [{ name: "order_completed", params: { total: 42, currency: "USD", engagement_time_msec: 100 } }],
       timestamp_micros: 1_700_000_000_000_000,
     });
   });

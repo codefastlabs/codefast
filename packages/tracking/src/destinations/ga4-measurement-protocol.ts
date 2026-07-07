@@ -127,8 +127,9 @@ export function createGa4MeasurementProtocolDestination(
         params.session_id = options.sessionId;
       }
 
-      // Without an engagement time GA4 won't count the user as active in realtime.
-      params.engagement_time_msec ??= 1;
+      // Without an engagement time GA4 won't count the user as active in realtime;
+      // 100ms is the fallback Google's own MP examples use when elapsed time is unknown.
+      params.engagement_time_msec ??= 100;
 
       const response = await fetch(endpoint, {
         body: JSON.stringify({
