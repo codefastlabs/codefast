@@ -70,12 +70,17 @@ attachClientLifecycle(tracker, { beaconEndpoint: "/api/events", flushIntervalMs:
 
 Resolve the region/mode server-side (`resolveRegion` + `resolveConsentMode` from
 `@codefast/tracking/server` and `@codefast/tracking`) and pass `mode` down to the client.
-`ConsentBanner`/`ConsentToggle` are headless — no `@codefast/ui` dependency, style them
-with your own `className`.
+`ConsentBanner`/`ConsentToggle` are headless — no `@codefast/ui` dependency. Style the
+root via `className` and the inner parts via their `data-slot` attributes
+(`consent-message`, `consent-actions`, `consent-action`), e.g. Tailwind's
+`**:data-[slot=consent-action]:rounded-md`.
 
 ```tsx
 import { createLocalStorageConsentStorage } from "@codefast/tracking/client";
 import { ConsentBanner, ConsentToggle, useConsent } from "@codefast/tracking/react";
+
+// Module scope — useConsent subscribes to the storage, so it must be a stable reference.
+const consentStorage = createLocalStorageConsentStorage("tracking-consent");
 
 function ConsentGate({ mode }: { mode: "opt-in" | "opt-out" }) {
   const consent = useConsent({
@@ -84,9 +89,13 @@ function ConsentGate({ mode }: { mode: "opt-in" | "opt-out" }) {
       if (decision === "denied") tracker.clear(); // stop tracking + drop the pending queue
     },
     policyVersion: "2026-01",
-    storage: createLocalStorageConsentStorage("tracking-consent"),
+    storage: consentStorage,
   });
 
   return mode === "opt-in" ? <ConsentBanner consent={consent} /> : <ConsentToggle consent={consent} />;
 }
 ```
+
+The stored decision is the single source of truth (`useSyncExternalStore` under the
+hood): hydration-safe on prerendered pages, and a decision made in one tab dismisses the
+banner in every other tab via the `storage` event.
