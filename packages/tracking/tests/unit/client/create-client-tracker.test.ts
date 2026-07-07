@@ -101,6 +101,56 @@ describe("createClientTracker", () => {
     expect(destination.received).toMatchObject([{ name: "$group", props: { groupId: "acme", plan: "enterprise" } }]);
   });
 
+  it("delivers to immediate destinations at track time, without waiting for a flush", () => {
+    const immediate = { ...createRecordingDestination("immediate"), deliver: "immediate" as const };
+    const tracker = createClientTracker({
+      anonymousId: "anon-1",
+      catalog,
+      destinations: [immediate],
+      storage: createMemoryQueueStorage(),
+    });
+
+    tracker.track("button_clicked", { id: "cta" });
+
+    expect(immediate.received).toHaveLength(1);
+  });
+
+  it("never re-delivers to an immediate destination on flush", async () => {
+    const immediate = { ...createRecordingDestination("immediate"), deliver: "immediate" as const };
+    const queued = createRecordingDestination("queued");
+    const tracker = createClientTracker({
+      anonymousId: "anon-1",
+      catalog,
+      destinations: [immediate, queued],
+      storage: createMemoryQueueStorage(),
+    });
+
+    tracker.track("button_clicked", { id: "cta" });
+    await tracker.flush();
+    await tracker.flush();
+
+    expect(immediate.received).toHaveLength(1);
+    expect(queued.received).toHaveLength(1);
+  });
+
+  it("keeps tracking working when an immediate destination throws synchronously", () => {
+    const throwing = {
+      deliver: "immediate" as const,
+      name: "broken",
+      send: () => {
+        throw new Error("boom");
+      },
+    };
+    const tracker = createClientTracker({
+      anonymousId: "anon-1",
+      catalog,
+      destinations: [throwing],
+      storage: createMemoryQueueStorage(),
+    });
+
+    expect(() => tracker.track("button_clicked", { id: "cta" })).not.toThrow();
+  });
+
   it("clear() drops pending events without sending them", async () => {
     const destination = createRecordingDestination();
     const tracker = createClientTracker({

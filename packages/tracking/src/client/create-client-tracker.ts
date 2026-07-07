@@ -33,8 +33,12 @@ export interface ClientTracker<Catalog extends EventCatalog> {
 export function createClientTracker<Catalog extends EventCatalog>(
   options: ClientTrackerOptions<Catalog>,
 ): ClientTracker<Catalog> {
+  // SDK-backed destinations own their batching/unload delivery — routing them through
+  // the queue would only delay events and replay stale ones next session.
+  const immediateDestinations = options.destinations.filter((destination) => destination.deliver === "immediate");
+  const queuedDestinations = options.destinations.filter((destination) => destination.deliver !== "immediate");
   const queue = new EventQueue({
-    destinations: options.destinations,
+    destinations: queuedDestinations,
     maxQueueSize: options.maxQueueSize,
     maxRetries: options.maxRetries,
     storage: options.storage,
@@ -52,6 +56,18 @@ export function createClientTracker<Catalog extends EventCatalog>(
       ...(userId === undefined ? {} : { userId }),
     };
 
+    for (const destination of immediateDestinations) {
+      try {
+        void Promise.resolve(destination.send(envelope)).catch(() => {
+          /* an immediate destination owns its transport — no retry path here */
+        });
+      } catch {
+        /* a sync throw must never break the tracked interaction */
+      }
+    }
+
+    // Still enqueued unconditionally — the queue also feeds `flushWithBeacon`, which
+    // ships raw envelopes to a custom endpoint independently of any destination.
     queue.enqueue(envelope);
   }
 
