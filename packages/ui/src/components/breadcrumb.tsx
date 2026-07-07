@@ -1,6 +1,6 @@
 import { ChevronRightIcon, MoreHorizontalIcon } from "lucide-react";
 import { Slot } from "radix-ui";
-import type { ComponentProps, JSX, ReactNode } from "react";
+import type { ComponentProps, JSX } from "react";
 
 import { cn } from "#/lib/utils";
 
@@ -11,9 +11,7 @@ import { cn } from "#/lib/utils";
 /**
  * @since 0.3.16-canary.0
  */
-interface BreadcrumbProps extends ComponentProps<"nav"> {
-  separator?: ReactNode;
-}
+type BreadcrumbProps = ComponentProps<"nav">;
 
 /**
  * @since 0.3.16-canary.0
