@@ -10,11 +10,11 @@ import type { BindingTag, ConstraintContext, ResolveOptions } from "#/types";
  */
 export function selectBinding(
   bindings: ReadonlyArray<Binding>,
-  hint: ResolveOptions | undefined,
+  options: ResolveOptions | undefined,
   ctx: ConstraintContext,
   tokenDisplayName: string,
 ): Binding | undefined {
-  const candidates = filterBindings(bindings, hint, ctx);
+  const candidates = filterBindings(bindings, options, ctx);
   if (candidates.length === 0) {
     return undefined;
   }
@@ -31,46 +31,47 @@ export function selectBinding(
 }
 
 /**
- * Select all candidates matching hint + predicates.
+ * Select all candidates matching options + predicates.
  *
  * @since 0.3.16-canary.0
  */
 export function selectAllBindings(
   bindings: ReadonlyArray<Binding>,
-  hint: ResolveOptions | undefined,
+  options: ResolveOptions | undefined,
   ctx: ConstraintContext,
 ): Array<Binding> {
-  return filterBindings(bindings, hint, ctx, "all");
+  return filterBindings(bindings, options, ctx, "all");
 }
 
 function filterBindings(
   bindings: ReadonlyArray<Binding>,
-  hint: ResolveOptions | undefined,
+  options: ResolveOptions | undefined,
   ctx: ConstraintContext,
   selectionMode: "single" | "all" = "single",
 ): Array<Binding> {
-  if (hint === undefined) {
-    const resultWithoutHint: Array<Binding> = [];
+  if (options === undefined) {
+    const resultWithoutOptions: Array<Binding> = [];
     if (selectionMode === "all") {
       for (const binding of bindings) {
         if (matchesPredicate(binding, ctx)) {
-          resultWithoutHint.push(binding);
+          resultWithoutOptions.push(binding);
         }
       }
     } else {
       for (const binding of bindings) {
         const slot = binding.slot;
         if (slot.name === undefined && slot.tags.length === 0 && matchesPredicate(binding, ctx)) {
-          resultWithoutHint.push(binding);
+          resultWithoutOptions.push(binding);
         }
       }
     }
-    return resultWithoutHint;
+    return resultWithoutOptions;
   }
 
   const result: Array<Binding> = [];
   for (const binding of bindings) {
-    const slotMatched = selectionMode === "all" ? matchesSlotForResolveAll(binding, hint) : matchesSlot(binding, hint);
+    const slotMatched =
+      selectionMode === "all" ? matchesSlotForResolveAll(binding, options) : matchesSlot(binding, options);
     if (slotMatched && matchesPredicate(binding, ctx)) {
       result.push(binding);
     }
@@ -78,49 +79,51 @@ function filterBindings(
   return result;
 }
 
-function matchesSlotForResolveAll(binding: Binding, hint: ResolveOptions | undefined): boolean {
+function matchesSlotForResolveAll(binding: Binding, options: ResolveOptions | undefined): boolean {
   const hasExplicitSlotFilter =
-    hint !== undefined &&
-    (hint.name !== undefined || (hint.tags !== undefined && hint.tags.length > 0) || hint.tag !== undefined);
+    options !== undefined &&
+    (options.name !== undefined ||
+      (options.tags !== undefined && options.tags.length > 0) ||
+      options.tag !== undefined);
   if (!hasExplicitSlotFilter) {
     return true;
   }
-  return matchesSlot(binding, hint);
+  return matchesSlot(binding, options);
 }
 
-function matchesSlot(binding: Binding, hint: ResolveOptions | undefined): boolean {
+function matchesSlot(binding: Binding, options: ResolveOptions | undefined): boolean {
   const slot = binding.slot;
-  const hintName = hint?.name;
-  const hintTags = hint?.tags;
-  const singleHintTag = hint?.tag;
-  const hasHintTags = (hintTags?.length ?? 0) > 0 || singleHintTag !== undefined;
+  const requestedName = options?.name;
+  const requestedTags = options?.tags;
+  const singleRequestedTag = options?.tag;
+  const hasRequestedTags = (requestedTags?.length ?? 0) > 0 || singleRequestedTag !== undefined;
 
   // Match by name
   if (slot.name !== undefined) {
-    if (hintName === undefined) {
+    if (requestedName === undefined) {
       return false;
     }
-    if (slot.name !== hintName) {
+    if (slot.name !== requestedName) {
       return false;
     }
-  } else if (hintName !== undefined) {
-    // Binding has no name but hint requests a specific name — no match
+  } else if (requestedName !== undefined) {
+    // Binding has no name but options requests a specific name — no match
     return false;
   }
 
-  // Match by tags — binding's tags must all be present in hint
+  // Match by tags — binding's tags must all be present in options
   if (slot.tags.length > 0) {
-    if (!hasHintTags) {
+    if (!hasRequestedTags) {
       return false;
     }
     for (const [tagKey, tagValue] of slot.tags) {
-      if (!matchHintTag(tagKey, tagValue, hintTags, singleHintTag)) {
+      if (!matchesRequestedTag(tagKey, tagValue, requestedTags, singleRequestedTag)) {
         return false;
       }
     }
-  } else if (hasHintTags) {
-    // Binding has no tags but hint requires tags — no match for tagged slots
-    // But: default slot (no tags, no name) can match when hint has tags if there are no tag-slotted bindings
+  } else if (hasRequestedTags) {
+    // Binding has no tags but options requires tags — no match for tagged slots
+    // But: default slot (no tags, no name) can match when options has tags if there are no tag-slotted bindings
     // Actually per spec: resolveAll with tags only returns bindings that have those tags
     // and resolve with tags requires exact match
     return false;
@@ -129,21 +132,25 @@ function matchesSlot(binding: Binding, hint: ResolveOptions | undefined): boolea
   return true;
 }
 
-function matchHintTag(
+function matchesRequestedTag(
   tagKey: string,
   tagValue: unknown,
-  hintTags: ReadonlyArray<BindingTag> | undefined,
-  singleHintTag: BindingTag | undefined,
+  requestedTags: ReadonlyArray<BindingTag> | undefined,
+  singleRequestedTag: BindingTag | undefined,
 ): boolean {
-  if (singleHintTag !== undefined && singleHintTag[0] === tagKey && Object.is(singleHintTag[1], tagValue)) {
+  if (
+    singleRequestedTag !== undefined &&
+    singleRequestedTag[0] === tagKey &&
+    Object.is(singleRequestedTag[1], tagValue)
+  ) {
     return true;
   }
-  if (hintTags === undefined || hintTags.length === 0) {
+  if (requestedTags === undefined || requestedTags.length === 0) {
     return false;
   }
-  for (let index = 0; index < hintTags.length; index += 1) {
-    const hintTag = hintTags[index]!;
-    if (hintTag[0] === tagKey && Object.is(hintTag[1], tagValue)) {
+  for (let index = 0; index < requestedTags.length; index += 1) {
+    const requestedTag = requestedTags[index]!;
+    if (requestedTag[0] === tagKey && Object.is(requestedTag[1], tagValue)) {
       return true;
     }
   }

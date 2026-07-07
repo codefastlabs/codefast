@@ -42,15 +42,15 @@ export class TokenNotBoundError extends DiError {
 export class NoMatchingBindingError extends DiError {
   readonly code = "NO_MATCHING_BINDING";
   readonly tokenName: string;
-  readonly hint: ResolveOptions;
+  readonly options: ResolveOptions;
   readonly availableSlots: Array<string>;
 
-  constructor(tokenName: string, hint: ResolveOptions, availableSlots: Array<string>) {
-    const hintStr = JSON.stringify(hint);
+  constructor(tokenName: string, options: ResolveOptions, availableSlots: Array<string>) {
+    const optionsString = JSON.stringify(options);
     const slotsStr = availableSlots.join(", ");
-    super(`No binding for '${tokenName}' matching ${hintStr}. Available slots: [${slotsStr}].`);
+    super(`No binding for '${tokenName}' matching ${optionsString}. Available slots: [${slotsStr}].`);
     this.tokenName = tokenName;
-    this.hint = hint;
+    this.options = options;
     this.availableSlots = availableSlots;
   }
 }

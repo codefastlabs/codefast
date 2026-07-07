@@ -159,14 +159,16 @@ export function inject<const Value>(
       if (container === undefined) {
         throw new MissingContainerContextError(String(context.name));
       }
-      const hint =
+      const resolveOptions =
         options === undefined
           ? undefined
           : injectionSlotToResolveOptions({
               ...(options.name !== undefined ? { name: options.name } : {}),
               ...(options.tags !== undefined ? { tags: options.tags } : {}),
             });
-      const value = descriptor.optional ? container.resolveOptional(token, hint) : container.resolve(token, hint);
+      const value = descriptor.optional
+        ? container.resolveOptional(token, resolveOptions)
+        : container.resolve(token, resolveOptions);
       context.access.set(this, value as Value);
     });
 

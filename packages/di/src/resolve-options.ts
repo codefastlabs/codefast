@@ -33,7 +33,7 @@ export function injectionSlotToResolveOptions(injectionSlot: {
 }
 
 /**
- * Hint from a binding {@link BindingSlot} (tags may be empty; omits when nothing to match).
+ * Resolve options derived from a binding {@link BindingSlot} (tags may be empty; omits when nothing to match).
  *
  * @since 0.3.16-canary.0
  */

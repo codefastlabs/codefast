@@ -48,7 +48,7 @@ describe("Container public API inference", () => {
     expect(container.resolve(OutputToken)).toBe("ok");
   });
 
-  it("resolve with name hint stays typed as token value", () => {
+  it("resolve with name options stays typed as token value", () => {
     const StringToken = token<string>("s");
     const container = Container.create();
     container.bind(StringToken).toConstantValue("primary").whenNamed("primary");

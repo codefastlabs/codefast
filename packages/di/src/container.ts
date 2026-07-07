@@ -78,15 +78,18 @@ export interface Container {
   onActivation<const Value>(token: Token<Value> | Constructor<Value>, handler: ActivationHandler<Value>): void;
   onDeactivation<const Value>(token: Token<Value> | Constructor<Value>, handler: DeactivationHandler<Value>): void;
 
-  resolve<const Value>(token: Token<Value> | Constructor<Value>, hint?: ResolveOptions): Value;
-  resolveAsync<const Value>(token: Token<Value> | Constructor<Value>, hint?: ResolveOptions): Promise<Value>;
-  resolveOptional<const Value>(token: Token<Value> | Constructor<Value>, hint?: ResolveOptions): Value | undefined;
+  resolve<const Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Value;
+  resolveAsync<const Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Promise<Value>;
+  resolveOptional<const Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Value | undefined;
   resolveOptionalAsync<const Value>(
     token: Token<Value> | Constructor<Value>,
-    hint?: ResolveOptions,
+    options?: ResolveOptions,
   ): Promise<Value | undefined>;
-  resolveAll<const Value>(token: Token<Value> | Constructor<Value>, hint?: ResolveOptions): Array<Value>;
-  resolveAllAsync<const Value>(token: Token<Value> | Constructor<Value>, hint?: ResolveOptions): Promise<Array<Value>>;
+  resolveAll<const Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Array<Value>;
+  resolveAllAsync<const Value>(
+    token: Token<Value> | Constructor<Value>,
+    options?: ResolveOptions,
+  ): Promise<Array<Value>>;
 
   createChild(): Container;
 
@@ -97,8 +100,8 @@ export interface Container {
   initializeAsync(): Promise<void>;
   validate(): void;
 
-  has(token: Token<unknown> | Constructor, hint?: ResolveOptions): boolean;
-  hasOwn(token: Token<unknown> | Constructor, hint?: ResolveOptions): boolean;
+  has(token: Token<unknown> | Constructor, options?: ResolveOptions): boolean;
+  hasOwn(token: Token<unknown> | Constructor, options?: ResolveOptions): boolean;
   lookupBindings<const Value>(token: Token<Value> | Constructor<Value>): ReadonlyArray<BindingSnapshot>;
   inspect(): ContainerSnapshot;
   generateDependencyGraph(options?: GraphOptions): ContainerGraphJson;
@@ -480,43 +483,46 @@ class DefaultContainer implements Container {
 
   // ── Resolution ────────────────────────────────────────────────────────────
 
-  resolve<const Value>(token: Token<Value> | Constructor<Value>, hint?: ResolveOptions): Value {
+  resolve<const Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Value {
     this._assertNotDisposed();
-    if (hint === undefined) {
+    if (options === undefined) {
       return this._resolver.resolveFromContext(token, [], []);
     }
-    return this._resolver.resolve(token, hint, [], []);
+    return this._resolver.resolve(token, options, [], []);
   }
 
-  resolveAsync<const Value>(token: Token<Value> | Constructor<Value>, hint?: ResolveOptions): Promise<Value> {
+  resolveAsync<const Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Promise<Value> {
     this._assertNotDisposed();
-    if (hint === undefined) {
+    if (options === undefined) {
       return this._resolver.resolveAsyncFromContext(token, [], []);
     }
-    return this._resolver.resolveAsync(token, hint, [], []);
+    return this._resolver.resolveAsync(token, options, [], []);
   }
 
-  resolveOptional<const Value>(token: Token<Value> | Constructor<Value>, hint?: ResolveOptions): Value | undefined {
+  resolveOptional<const Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Value | undefined {
     this._assertNotDisposed();
-    return this._resolver.resolveOptional(token, hint, [], []);
+    return this._resolver.resolveOptional(token, options, [], []);
   }
 
   resolveOptionalAsync<const Value>(
     token: Token<Value> | Constructor<Value>,
-    hint?: ResolveOptions,
+    options?: ResolveOptions,
   ): Promise<Value | undefined> {
     this._assertNotDisposed();
-    return this._resolver.resolveOptionalAsync(token, hint, [], []);
+    return this._resolver.resolveOptionalAsync(token, options, [], []);
   }
 
-  resolveAll<const Value>(token: Token<Value> | Constructor<Value>, hint?: ResolveOptions): Array<Value> {
+  resolveAll<const Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Array<Value> {
     this._assertNotDisposed();
-    return this._resolver.resolveAll(token, hint, [], []);
+    return this._resolver.resolveAll(token, options, [], []);
   }
 
-  resolveAllAsync<const Value>(token: Token<Value> | Constructor<Value>, hint?: ResolveOptions): Promise<Array<Value>> {
+  resolveAllAsync<const Value>(
+    token: Token<Value> | Constructor<Value>,
+    options?: ResolveOptions,
+  ): Promise<Array<Value>> {
     this._assertNotDisposed();
-    return this._resolver.resolveAllAsync(token, hint, [], []);
+    return this._resolver.resolveAllAsync(token, options, [], []);
   }
 
   // ── Child ─────────────────────────────────────────────────────────────────
@@ -572,8 +578,8 @@ class DefaultContainer implements Container {
         if (binding.kind === "constant" && binding.onActivation === undefined) {
           continue;
         }
-        const slotHint = bindingSlotToResolveOptions(binding.slot);
-        await this.resolveAsync(binding.token as Token<unknown>, slotHint);
+        const slotOptions = bindingSlotToResolveOptions(binding.slot);
+        await this.resolveAsync(binding.token as Token<unknown>, slotOptions);
       }
     }
   }
@@ -658,7 +664,7 @@ class DefaultContainer implements Container {
     }
   }
 
-  private _followAliasChainToTerminal(binding: Binding, hint: ResolveOptions | undefined): Binding | undefined {
+  private _followAliasChainToTerminal(binding: Binding, options: ResolveOptions | undefined): Binding | undefined {
     const cyclePath: Array<string> = [];
     const seenAliasIds = new Set<BindingIdentifier>();
     let current: Binding | undefined = binding;
@@ -670,7 +676,7 @@ class DefaultContainer implements Container {
       seenAliasIds.add(current.id);
       cyclePath.push(tokenName(current.token as Token<unknown>));
       const nextToken = current.target as Token<unknown> | Constructor;
-      const next = this._resolver.peekBindingForValidate(nextToken, hint);
+      const next = this._resolver.peekBindingForValidate(nextToken, options);
       if (next === undefined) {
         return undefined;
       }
@@ -698,27 +704,27 @@ class DefaultContainer implements Container {
         return edges;
       }
       for (const param of meta.params) {
-        const paramHint = injectionSlotToResolveOptions(param);
+        const paramOptions = injectionSlotToResolveOptions(param);
         if (param.optional) {
           continue;
         }
         const tokenRef = param.token;
         if (param.multi) {
-          const candidates = this._resolver.peekCandidateBindingsForValidate(tokenRef, paramHint);
+          const candidates = this._resolver.peekCandidateBindingsForValidate(tokenRef, paramOptions);
           for (const cand of candidates) {
-            const term = this._followAliasChainToTerminal(cand, paramHint);
+            const term = this._followAliasChainToTerminal(cand, paramOptions);
             pushTerminal(term, term !== undefined ? tokenName(term.token as Token<unknown>) : "");
           }
           continue;
         }
         const found =
-          paramHint === undefined
+          paramOptions === undefined
             ? this._resolver.peekBindingForValidate(tokenRef, undefined)
-            : this._resolver.peekBindingForValidate(tokenRef, paramHint);
+            : this._resolver.peekBindingForValidate(tokenRef, paramOptions);
         if (found === undefined) {
           continue;
         }
-        const term = this._followAliasChainToTerminal(found.binding, paramHint);
+        const term = this._followAliasChainToTerminal(found.binding, paramOptions);
         pushTerminal(term, term !== undefined ? tokenName(term.token as Token<unknown>) : "");
       }
       return edges;
@@ -726,27 +732,27 @@ class DefaultContainer implements Container {
 
     if (binding.kind === "resolved" || binding.kind === "resolved-async") {
       for (const dep of binding.deps) {
-        const depHint = injectionSlotToResolveOptions(dep);
+        const depOptions = injectionSlotToResolveOptions(dep);
         if (dep.optional) {
           continue;
         }
         const tokenRef = dep.token as Token<unknown> | Constructor;
         if (dep.multi) {
-          const candidates = this._resolver.peekCandidateBindingsForValidate(tokenRef, depHint);
+          const candidates = this._resolver.peekCandidateBindingsForValidate(tokenRef, depOptions);
           for (const cand of candidates) {
-            const term = this._followAliasChainToTerminal(cand, depHint);
+            const term = this._followAliasChainToTerminal(cand, depOptions);
             pushTerminal(term, term !== undefined ? tokenName(term.token as Token<unknown>) : "");
           }
           continue;
         }
         const found =
-          depHint === undefined
+          depOptions === undefined
             ? this._resolver.peekBindingForValidate(tokenRef, undefined)
-            : this._resolver.peekBindingForValidate(tokenRef, depHint);
+            : this._resolver.peekBindingForValidate(tokenRef, depOptions);
         if (found === undefined) {
           continue;
         }
-        const term = this._followAliasChainToTerminal(found.binding, depHint);
+        const term = this._followAliasChainToTerminal(found.binding, depOptions);
         pushTerminal(term, term !== undefined ? tokenName(term.token as Token<unknown>) : "");
       }
     }
@@ -756,14 +762,14 @@ class DefaultContainer implements Container {
 
   // ── Introspection ─────────────────────────────────────────────────────────
 
-  has(token: Token<unknown> | Constructor, hint?: ResolveOptions): boolean {
+  has(token: Token<unknown> | Constructor, options?: ResolveOptions): boolean {
     this._assertNotDisposed();
-    return this._inspector.has(token, hint, () => this._parent?.has(token, hint) ?? false);
+    return this._inspector.has(token, options, () => this._parent?.has(token, options) ?? false);
   }
 
-  hasOwn(token: Token<unknown> | Constructor, hint?: ResolveOptions): boolean {
+  hasOwn(token: Token<unknown> | Constructor, options?: ResolveOptions): boolean {
     this._assertNotDisposed();
-    return this._inspector.hasOwn(token, hint);
+    return this._inspector.hasOwn(token, options);
   }
 
   lookupBindings<const Value>(token: Token<Value> | Constructor<Value>): ReadonlyArray<BindingSnapshot> {

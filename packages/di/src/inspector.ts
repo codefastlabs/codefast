@@ -69,11 +69,11 @@ export class Inspector {
     return bindings.map((binding) => this._toSnapshot(binding));
   }
 
-  has(token: Token<unknown> | Constructor, hint?: ResolveOptions, parentHas?: () => boolean): boolean {
+  has(token: Token<unknown> | Constructor, options?: ResolveOptions, parentHas?: () => boolean): boolean {
     const bindings = this._registry.getAll(token);
     if (bindings.length > 0) {
-      if (hint !== undefined) {
-        if (selectBinding(bindings, hint, this._makeHintContext(hint), tokenName(token)) !== undefined) {
+      if (options !== undefined) {
+        if (selectBinding(bindings, options, this._makeConstraintContext(options), tokenName(token)) !== undefined) {
           return true;
         }
       } else {
@@ -83,24 +83,24 @@ export class Inspector {
     return parentHas?.() ?? false;
   }
 
-  hasOwn(token: Token<unknown> | Constructor, hint?: ResolveOptions): boolean {
+  hasOwn(token: Token<unknown> | Constructor, options?: ResolveOptions): boolean {
     const bindings = this._registry.getAll(token);
     if (bindings.length === 0) {
       return false;
     }
-    if (hint !== undefined) {
-      return selectBinding(bindings, hint, this._makeHintContext(hint), tokenName(token)) !== undefined;
+    if (options !== undefined) {
+      return selectBinding(bindings, options, this._makeConstraintContext(options), tokenName(token)) !== undefined;
     }
     return true;
   }
 
-  private _makeHintContext(hint: ResolveOptions): ConstraintContext {
+  private _makeConstraintContext(options: ResolveOptions): ConstraintContext {
     return {
       resolutionPath: [],
       resolutionStack: [],
       parent: undefined,
       ancestors: [],
-      currentResolveHint: hint,
+      currentResolveOptions: options,
     };
   }
 

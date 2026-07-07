@@ -42,7 +42,7 @@ const ROOT_CONSTRAINT_CONTEXT = {
   resolutionStack: EMPTY_FRAME_LIST,
   parent: undefined,
   ancestors: EMPTY_FRAME_LIST,
-  currentResolveHint: undefined,
+  currentResolveOptions: undefined,
 };
 
 /**
@@ -128,26 +128,34 @@ export class DependencyResolver {
 
   private _findBinding(
     token: Token<unknown> | Constructor,
-    hint: ResolveOptions | undefined,
+    options: ResolveOptions | undefined,
     resolutionPath: Array<string>,
     resolutionStack: Array<ResolutionFrame>,
   ): { binding: Binding; owner: DependencyResolver } | undefined {
-    if (hint === undefined) {
+    if (options === undefined) {
       const fastDefaultBinding = this._registry.getFastDefault(token);
       if (fastDefaultBinding !== undefined) {
         return { binding: fastDefaultBinding, owner: this };
       }
     }
 
-    if (hint?.name !== undefined && hint.tag === undefined && (hint.tags?.length ?? 0) === 0) {
-      const namedBinding = this._registry.getSimpleNamed(token, hint.name);
-      if (namedBinding !== undefined && this._matchesBindingFast(namedBinding, hint, resolutionPath, resolutionStack)) {
+    if (options?.name !== undefined && options.tag === undefined && (options.tags?.length ?? 0) === 0) {
+      const namedBinding = this._registry.getSimpleNamed(token, options.name);
+      if (
+        namedBinding !== undefined &&
+        this._matchesBindingFast(namedBinding, options, resolutionPath, resolutionStack)
+      ) {
         return { binding: namedBinding, owner: this };
       }
     }
 
-    if (hint !== undefined && hint.name === undefined && hint.tag === undefined && (hint.tags?.length ?? 0) === 1) {
-      const [tagKey, tagValue] = hint.tags![0]!;
+    if (
+      options !== undefined &&
+      options.name === undefined &&
+      options.tag === undefined &&
+      (options.tags?.length ?? 0) === 1
+    ) {
+      const [tagKey, tagValue] = options.tags![0]!;
       const tagged = this._registry.getSimpleTagged(token, tagKey, tagValue);
       if (tagged !== undefined) {
         return { binding: tagged, owner: this };
@@ -159,21 +167,21 @@ export class DependencyResolver {
       if (bindings.length === 1) {
         const onlyBinding = bindings[0]!;
         const isDefaultSlot = onlyBinding.slot.name === undefined && onlyBinding.slot.tags.length === 0;
-        if (hint === undefined && isDefaultSlot && onlyBinding.predicate === undefined) {
+        if (options === undefined && isDefaultSlot && onlyBinding.predicate === undefined) {
           return { binding: onlyBinding, owner: this };
         }
-        if (this._matchesBindingFast(onlyBinding, hint, resolutionPath, resolutionStack)) {
+        if (this._matchesBindingFast(onlyBinding, options, resolutionPath, resolutionStack)) {
           return { binding: onlyBinding, owner: this };
         }
       }
-      const ctx = this._makeConstraintContext(resolutionPath, resolutionStack, hint);
-      const binding = selectBinding(bindings, hint, ctx, this._getTokenName(token));
+      const ctx = this._makeConstraintContext(resolutionPath, resolutionStack, options);
+      const binding = selectBinding(bindings, options, ctx, this._getTokenName(token));
       if (binding !== undefined) {
         return { binding, owner: this };
       }
     }
     if (this._parent !== undefined) {
-      return this._parent._findBinding(token, hint, resolutionPath, resolutionStack);
+      return this._parent._findBinding(token, options, resolutionPath, resolutionStack);
     }
     return undefined;
   }
@@ -183,9 +191,9 @@ export class DependencyResolver {
    */
   peekBindingForValidate(
     token: Token<unknown> | Constructor,
-    hint: ResolveOptions | undefined,
+    options: ResolveOptions | undefined,
   ): { binding: Binding; owner: DependencyResolver } | undefined {
-    return this._findBinding(token, hint, [], []);
+    return this._findBinding(token, options, [], []);
   }
 
   /**
@@ -193,17 +201,17 @@ export class DependencyResolver {
    */
   peekCandidateBindingsForValidate(
     token: Token<unknown> | Constructor,
-    hint: ResolveOptions | undefined,
+    options: ResolveOptions | undefined,
   ): Array<Binding> {
-    if (hint?.name !== undefined && hint.tag === undefined && (hint.tags?.length ?? 0) === 0) {
-      return this._getSimpleNamedBindingsFromChain(token, hint.name);
+    if (options?.name !== undefined && options.tag === undefined && (options.tags?.length ?? 0) === 0) {
+      return this._getSimpleNamedBindingsFromChain(token, options.name);
     }
     const allBindings = this._getAllBindingsFromChain(token);
     if (allBindings.length === 0) {
       return [];
     }
-    const ctx = this._makeConstraintContext([], [], hint);
-    return selectAllBindings(allBindings, hint, ctx);
+    const ctx = this._makeConstraintContext([], [], options);
+    return selectAllBindings(allBindings, options, ctx);
   }
 
   // ── Sync resolve ───────────────────────────────────────────────────────────
@@ -254,16 +262,16 @@ export class DependencyResolver {
 
   resolve<const Value>(
     token: Token<Value> | Constructor<Value>,
-    hint: ResolveOptions | undefined,
+    options: ResolveOptions | undefined,
     resolutionPath: Array<string>,
     resolutionStack: Array<ResolutionFrame>,
   ): Value {
-    const found = this._findBinding(token, hint, resolutionPath, resolutionStack);
+    const found = this._findBinding(token, options, resolutionPath, resolutionStack);
 
     if (found === undefined) {
       const ownBindings = this._registry.getAll(token);
       if (ownBindings.length > 0) {
-        throw new NoMatchingBindingError(this._getTokenName(token), hint ?? {}, this._getAvailableSlots(token));
+        throw new NoMatchingBindingError(this._getTokenName(token), options ?? {}, this._getAvailableSlots(token));
       }
       throw new TokenNotBoundError(this._getTokenName(token));
     }
@@ -272,23 +280,28 @@ export class DependencyResolver {
 
     // Follow alias
     if (binding.kind === "alias") {
-      return this.resolve(binding.target as Token<Value> | Constructor<Value>, hint, resolutionPath, resolutionStack);
+      return this.resolve(
+        binding.target as Token<Value> | Constructor<Value>,
+        options,
+        resolutionPath,
+        resolutionStack,
+      );
     }
 
     const scope = (binding as BindingWithScope).scope ?? "transient";
 
     // Singleton from a parent resolver: delegate so the parent caches it correctly
     if (scope === "singleton" && owner !== this) {
-      return owner._resolveBinding(binding as Binding<Value>, hint, resolutionPath, resolutionStack);
+      return owner._resolveBinding(binding as Binding<Value>, options, resolutionPath, resolutionStack);
     }
 
     // Scoped/transient (or own singleton): resolve with this resolver's container/scope
-    return this._resolveBinding(binding as Binding<Value>, hint, resolutionPath, resolutionStack);
+    return this._resolveBinding(binding as Binding<Value>, options, resolutionPath, resolutionStack);
   }
 
   private _resolveBinding<const Value>(
     binding: Binding<Value>,
-    hint: ResolveOptions | undefined,
+    options: ResolveOptions | undefined,
     resolutionPath: Array<string>,
     resolutionStack: Array<ResolutionFrame>,
   ): Value {
@@ -339,7 +352,7 @@ export class DependencyResolver {
     resolutionStack.push(frame);
     const needsActivation = this._needsActivation(binding);
     if (!needsActivation && scope === "transient" && binding.kind === "dynamic") {
-      const resolutionCtx = this._acquireSyncResolutionContext(resolutionPath, resolutionStack, hint);
+      const resolutionCtx = this._acquireSyncResolutionContext(resolutionPath, resolutionStack, options);
       try {
         const dynamicResult = binding.factory(resolutionCtx);
         if (dynamicResult instanceof Promise) {
@@ -360,7 +373,7 @@ export class DependencyResolver {
     try {
       const needsResolutionContext = needsActivation || this._requiresResolutionContext(binding);
       const resolutionCtx = needsResolutionContext
-        ? this._acquireSyncResolutionContext(resolutionPath, resolutionStack, hint)
+        ? this._acquireSyncResolutionContext(resolutionPath, resolutionStack, options)
         : undefined;
 
       const instance = this._instantiateSync(binding, resolutionCtx, resolutionPath, resolutionStack);
@@ -454,34 +467,34 @@ export class DependencyResolver {
     }
     if (meta.params.length === 1) {
       const param = meta.params[0]!;
-      const paramHint = injectionSlotToResolveOptions(param);
+      const paramOptions = injectionSlotToResolveOptions(param);
       if (param.multi) {
-        return [this.resolveAll(param.token, paramHint, resolutionPath, resolutionStack)];
+        return [this.resolveAll(param.token, paramOptions, resolutionPath, resolutionStack)];
       }
       if (param.optional) {
-        return [this.resolveOptional(param.token, paramHint, resolutionPath, resolutionStack)];
+        return [this.resolveOptional(param.token, paramOptions, resolutionPath, resolutionStack)];
       }
-      if (paramHint === undefined) {
+      if (paramOptions === undefined) {
         return [this.resolveFromContext(param.token, resolutionPath, resolutionStack)];
       }
-      return [this.resolve(param.token, paramHint, resolutionPath, resolutionStack)];
+      return [this.resolve(param.token, paramOptions, resolutionPath, resolutionStack)];
     }
     const deps = new Array<unknown>(meta.params.length);
     for (let index = 0; index < meta.params.length; index += 1) {
       const param = meta.params[index]!;
-      const paramHint = injectionSlotToResolveOptions(param);
+      const paramOptions = injectionSlotToResolveOptions(param);
       if (param.multi) {
-        deps[index] = this.resolveAll(param.token, paramHint, resolutionPath, resolutionStack);
+        deps[index] = this.resolveAll(param.token, paramOptions, resolutionPath, resolutionStack);
         continue;
       }
       if (param.optional) {
-        deps[index] = this.resolveOptional(param.token, paramHint, resolutionPath, resolutionStack);
+        deps[index] = this.resolveOptional(param.token, paramOptions, resolutionPath, resolutionStack);
         continue;
       }
       deps[index] =
-        paramHint === undefined
+        paramOptions === undefined
           ? this.resolveFromContext(param.token, resolutionPath, resolutionStack)
-          : this.resolve(param.token, paramHint, resolutionPath, resolutionStack);
+          : this.resolve(param.token, paramOptions, resolutionPath, resolutionStack);
     }
     return deps;
   }
@@ -494,11 +507,11 @@ export class DependencyResolver {
     const resolved = new Array<unknown>(deps.length);
     for (let index = 0; index < deps.length; index += 1) {
       const dep = deps[index]!;
-      const depHint = injectionSlotToResolveOptions(dep);
+      const depOptions = injectionSlotToResolveOptions(dep);
       if (dep.multi) {
         resolved[index] = this.resolveAll(
           dep.token as Token<unknown> | Constructor,
-          depHint,
+          depOptions,
           resolutionPath,
           resolutionStack,
         );
@@ -507,40 +520,40 @@ export class DependencyResolver {
       if (dep.optional) {
         resolved[index] = this.resolveOptional(
           dep.token as Token<unknown> | Constructor,
-          depHint,
+          depOptions,
           resolutionPath,
           resolutionStack,
         );
         continue;
       }
       resolved[index] =
-        depHint === undefined
+        depOptions === undefined
           ? this.resolveFromContext(dep.token as Token<unknown> | Constructor, resolutionPath, resolutionStack)
-          : this.resolve(dep.token as Token<unknown> | Constructor, depHint, resolutionPath, resolutionStack);
+          : this.resolve(dep.token as Token<unknown> | Constructor, depOptions, resolutionPath, resolutionStack);
     }
     return resolved;
   }
 
   resolveOptional<const Value>(
     token: Token<Value> | Constructor<Value>,
-    hint: ResolveOptions | undefined,
+    options: ResolveOptions | undefined,
     resolutionPath: Array<string>,
     resolutionStack: Array<ResolutionFrame>,
   ): Value | undefined {
-    if (this._findBinding(token, hint, resolutionPath, resolutionStack) === undefined) {
+    if (this._findBinding(token, options, resolutionPath, resolutionStack) === undefined) {
       return undefined;
     }
-    return this.resolve(token, hint, resolutionPath, resolutionStack);
+    return this.resolve(token, options, resolutionPath, resolutionStack);
   }
 
   resolveAll<const Value>(
     token: Token<Value> | Constructor<Value>,
-    hint: ResolveOptions | undefined,
+    options: ResolveOptions | undefined,
     resolutionPath: Array<string>,
     resolutionStack: Array<ResolutionFrame>,
   ): Array<Value> {
-    if (hint?.name !== undefined && hint.tag === undefined && (hint.tags?.length ?? 0) === 0) {
-      const namedCandidates = this._getSimpleNamedBindingsFromChain(token, hint.name);
+    if (options?.name !== undefined && options.tag === undefined && (options.tags?.length ?? 0) === 0) {
+      const namedCandidates = this._getSimpleNamedBindingsFromChain(token, options.name);
       if (namedCandidates.length === 0) {
         return [];
       }
@@ -548,7 +561,7 @@ export class DependencyResolver {
       for (let index = 0; index < namedCandidates.length; index += 1) {
         resolved[index] = this._resolveCandidateSync(
           namedCandidates[index] as Binding<Value>,
-          hint,
+          options,
           resolutionPath,
           resolutionStack,
         );
@@ -561,14 +574,14 @@ export class DependencyResolver {
       return [];
     }
 
-    const ctx = this._makeConstraintContext(resolutionPath, resolutionStack, hint);
-    const candidates = selectAllBindings(allBindings, hint, ctx);
+    const ctx = this._makeConstraintContext(resolutionPath, resolutionStack, options);
+    const candidates = selectAllBindings(allBindings, options, ctx);
 
     const resolved = new Array<Value>(candidates.length);
     for (let index = 0; index < candidates.length; index += 1) {
       resolved[index] = this._resolveCandidateSync(
         candidates[index] as Binding<Value>,
-        hint,
+        options,
         resolutionPath,
         resolutionStack,
       );
@@ -624,16 +637,16 @@ export class DependencyResolver {
 
   async resolveAsync<const Value>(
     token: Token<Value> | Constructor<Value>,
-    hint: ResolveOptions | undefined,
+    options: ResolveOptions | undefined,
     resolutionPath: Array<string>,
     resolutionStack: Array<ResolutionFrame>,
   ): Promise<Value> {
-    const found = this._findBinding(token, hint, resolutionPath, resolutionStack);
+    const found = this._findBinding(token, options, resolutionPath, resolutionStack);
 
     if (found === undefined) {
       const ownBindings = this._registry.getAll(token);
       if (ownBindings.length > 0) {
-        throw new NoMatchingBindingError(this._getTokenName(token), hint ?? {}, this._getAvailableSlots(token));
+        throw new NoMatchingBindingError(this._getTokenName(token), options ?? {}, this._getAvailableSlots(token));
       }
       throw new TokenNotBoundError(this._getTokenName(token));
     }
@@ -643,7 +656,7 @@ export class DependencyResolver {
     if (binding.kind === "alias") {
       return this.resolveAsync(
         binding.target as Token<Value> | Constructor<Value>,
-        hint,
+        options,
         resolutionPath,
         resolutionStack,
       );
@@ -652,15 +665,15 @@ export class DependencyResolver {
     const scope = (binding as BindingWithScope).scope ?? "transient";
 
     if (scope === "singleton" && owner !== this) {
-      return owner._resolveBindingAsync(binding as Binding<Value>, hint, resolutionPath, resolutionStack);
+      return owner._resolveBindingAsync(binding as Binding<Value>, options, resolutionPath, resolutionStack);
     }
 
-    return this._resolveBindingAsync(binding as Binding<Value>, hint, resolutionPath, resolutionStack);
+    return this._resolveBindingAsync(binding as Binding<Value>, options, resolutionPath, resolutionStack);
   }
 
   private async _resolveBindingAsync<const Value>(
     binding: Binding<Value>,
-    hint: ResolveOptions | undefined,
+    options: ResolveOptions | undefined,
     resolutionPath: Array<string>,
     resolutionStack: Array<ResolutionFrame>,
   ): Promise<Value> {
@@ -718,7 +731,7 @@ export class DependencyResolver {
         this as unknown as ResolverCallbacks,
         resolutionPath,
         resolutionStack,
-        hint,
+        options,
       );
       try {
         if (binding.kind === "dynamic-async") {
@@ -735,7 +748,7 @@ export class DependencyResolver {
 
     const needsResolutionContext = needsActivation || this._requiresResolutionContext(binding);
     const resolutionCtx = needsResolutionContext
-      ? new DefaultResolutionContext(this as unknown as ResolverCallbacks, resolutionPath, resolutionStack, hint)
+      ? new DefaultResolutionContext(this as unknown as ResolverCallbacks, resolutionPath, resolutionStack, options)
       : undefined;
 
     try {
@@ -856,40 +869,40 @@ export class DependencyResolver {
     }
     if (meta.params.length === 1) {
       const param = meta.params[0]!;
-      const paramHint = injectionSlotToResolveOptions(param);
+      const paramOptions = injectionSlotToResolveOptions(param);
       if (param.multi) {
-        return [await this.resolveAllAsync(param.token, paramHint, resolutionPath, resolutionStack)];
+        return [await this.resolveAllAsync(param.token, paramOptions, resolutionPath, resolutionStack)];
       }
       if (param.optional) {
-        return [await this.resolveOptionalAsync(param.token, paramHint, resolutionPath, resolutionStack)];
+        return [await this.resolveOptionalAsync(param.token, paramOptions, resolutionPath, resolutionStack)];
       }
-      if (paramHint === undefined) {
+      if (paramOptions === undefined) {
         return [await this.resolveAsyncFromContext(param.token, resolutionPath, resolutionStack)];
       }
-      return [await this.resolveAsync(param.token, paramHint, resolutionPath, resolutionStack)];
+      return [await this.resolveAsync(param.token, paramOptions, resolutionPath, resolutionStack)];
     }
     const pending = new Array<Promise<unknown>>(meta.params.length);
     const shouldCloneContext = meta.params.length > 1;
     for (let index = 0; index < meta.params.length; index += 1) {
       const param = meta.params[index]!;
-      const paramHint = injectionSlotToResolveOptions(param);
+      const paramOptions = injectionSlotToResolveOptions(param);
       if (param.multi) {
         pending[index] = this.resolveAllAsync(
           param.token,
-          paramHint,
+          paramOptions,
           shouldCloneContext ? [...resolutionPath] : resolutionPath,
           shouldCloneContext ? [...resolutionStack] : resolutionStack,
         );
       } else if (param.optional) {
         pending[index] = this.resolveOptionalAsync(
           param.token,
-          paramHint,
+          paramOptions,
           shouldCloneContext ? [...resolutionPath] : resolutionPath,
           shouldCloneContext ? [...resolutionStack] : resolutionStack,
         );
       } else {
         pending[index] =
-          paramHint === undefined
+          paramOptions === undefined
             ? this.resolveAsyncFromContext(
                 param.token,
                 shouldCloneContext ? [...resolutionPath] : resolutionPath,
@@ -897,7 +910,7 @@ export class DependencyResolver {
               )
             : this.resolveAsync(
                 param.token,
-                paramHint,
+                paramOptions,
                 shouldCloneContext ? [...resolutionPath] : resolutionPath,
                 shouldCloneContext ? [...resolutionStack] : resolutionStack,
               );
@@ -915,24 +928,24 @@ export class DependencyResolver {
     const shouldCloneContext = deps.length > 1;
     for (let index = 0; index < deps.length; index += 1) {
       const dep = deps[index]!;
-      const depHint = injectionSlotToResolveOptions(dep);
+      const depOptions = injectionSlotToResolveOptions(dep);
       if (dep.multi) {
         pending[index] = this.resolveAllAsync(
           dep.token as Token<unknown> | Constructor,
-          depHint,
+          depOptions,
           shouldCloneContext ? [...resolutionPath] : resolutionPath,
           shouldCloneContext ? [...resolutionStack] : resolutionStack,
         );
       } else if (dep.optional) {
         pending[index] = this.resolveOptionalAsync(
           dep.token as Token<unknown> | Constructor,
-          depHint,
+          depOptions,
           shouldCloneContext ? [...resolutionPath] : resolutionPath,
           shouldCloneContext ? [...resolutionStack] : resolutionStack,
         );
       } else {
         pending[index] =
-          depHint === undefined
+          depOptions === undefined
             ? this.resolveAsyncFromContext(
                 dep.token as Token<unknown> | Constructor,
                 shouldCloneContext ? [...resolutionPath] : resolutionPath,
@@ -940,7 +953,7 @@ export class DependencyResolver {
               )
             : this.resolveAsync(
                 dep.token as Token<unknown> | Constructor,
-                depHint,
+                depOptions,
                 shouldCloneContext ? [...resolutionPath] : resolutionPath,
                 shouldCloneContext ? [...resolutionStack] : resolutionStack,
               );
@@ -951,24 +964,24 @@ export class DependencyResolver {
 
   async resolveOptionalAsync<const Value>(
     token: Token<Value> | Constructor<Value>,
-    hint: ResolveOptions | undefined,
+    options: ResolveOptions | undefined,
     resolutionPath: Array<string>,
     resolutionStack: Array<ResolutionFrame>,
   ): Promise<Value | undefined> {
-    if (this._findBinding(token, hint, resolutionPath, resolutionStack) === undefined) {
+    if (this._findBinding(token, options, resolutionPath, resolutionStack) === undefined) {
       return undefined;
     }
-    return this.resolveAsync(token, hint, resolutionPath, resolutionStack);
+    return this.resolveAsync(token, options, resolutionPath, resolutionStack);
   }
 
   async resolveAllAsync<const Value>(
     token: Token<Value> | Constructor<Value>,
-    hint: ResolveOptions | undefined,
+    options: ResolveOptions | undefined,
     resolutionPath: Array<string>,
     resolutionStack: Array<ResolutionFrame>,
   ): Promise<Array<Value>> {
-    if (hint?.name !== undefined && hint.tag === undefined && (hint.tags?.length ?? 0) === 0) {
-      const namedCandidates = this._getSimpleNamedBindingsFromChain(token, hint.name);
+    if (options?.name !== undefined && options.tag === undefined && (options.tags?.length ?? 0) === 0) {
+      const namedCandidates = this._getSimpleNamedBindingsFromChain(token, options.name);
       if (namedCandidates.length === 0) {
         return [];
       }
@@ -976,7 +989,7 @@ export class DependencyResolver {
       for (let index = 0; index < namedCandidates.length; index += 1) {
         pending[index] = this._resolveCandidateAsync(
           namedCandidates[index] as Binding<Value>,
-          hint,
+          options,
           resolutionPath,
           resolutionStack,
         );
@@ -989,14 +1002,14 @@ export class DependencyResolver {
       return [];
     }
 
-    const ctx = this._makeConstraintContext(resolutionPath, resolutionStack, hint);
-    const candidates = selectAllBindings(allBindings, hint, ctx);
+    const ctx = this._makeConstraintContext(resolutionPath, resolutionStack, options);
+    const candidates = selectAllBindings(allBindings, options, ctx);
 
     const pending = new Array<Promise<Value>>(candidates.length);
     for (let index = 0; index < candidates.length; index += 1) {
       pending[index] = this._resolveCandidateAsync(
         candidates[index] as Binding<Value>,
-        hint,
+        options,
         resolutionPath,
         resolutionStack,
       );
@@ -1050,9 +1063,9 @@ export class DependencyResolver {
   private _makeConstraintContext(
     resolutionPath: Array<string>,
     resolutionStack: Array<ResolutionFrame>,
-    hint: ResolveOptions | undefined,
+    options: ResolveOptions | undefined,
   ): ConstraintContext {
-    if (hint === undefined && resolutionPath.length === 0 && resolutionStack.length === 0) {
+    if (options === undefined && resolutionPath.length === 0 && resolutionStack.length === 0) {
       return ROOT_CONSTRAINT_CONTEXT;
     }
     const parent = resolutionStack.at(-1);
@@ -1062,50 +1075,50 @@ export class DependencyResolver {
       resolutionStack,
       parent,
       ancestors,
-      currentResolveHint: hint,
+      currentResolveOptions: options,
     };
   }
 
   private _matchesBindingFast(
     binding: Binding,
-    hint: ResolveOptions | undefined,
+    options: ResolveOptions | undefined,
     resolutionPath: Array<string>,
     resolutionStack: Array<ResolutionFrame>,
   ): boolean {
-    if (!this._matchesSlotFast(binding.slot, hint)) {
+    if (!this._matchesSlotFast(binding.slot, options)) {
       return false;
     }
     if (binding.predicate === undefined) {
       return true;
     }
-    const ctx = this._makeConstraintContext(resolutionPath, resolutionStack, hint);
+    const ctx = this._makeConstraintContext(resolutionPath, resolutionStack, options);
     return binding.predicate(ctx);
   }
 
-  private _matchesSlotFast(slot: BindingSlot, hint: ResolveOptions | undefined): boolean {
-    const hintName = hint?.name;
-    const hintTags = hint?.tags;
-    const singleHintTag = hint?.tag;
-    const hasHintTags = (hintTags?.length ?? 0) > 0 || singleHintTag !== undefined;
+  private _matchesSlotFast(slot: BindingSlot, options: ResolveOptions | undefined): boolean {
+    const requestedName = options?.name;
+    const requestedTags = options?.tags;
+    const singleRequestedTag = options?.tag;
+    const hasRequestedTags = (requestedTags?.length ?? 0) > 0 || singleRequestedTag !== undefined;
 
     if (slot.name !== undefined) {
-      if (hintName === undefined || slot.name !== hintName) {
+      if (requestedName === undefined || slot.name !== requestedName) {
         return false;
       }
-    } else if (hintName !== undefined) {
+    } else if (requestedName !== undefined) {
       return false;
     }
 
     if (slot.tags.length > 0) {
-      if (!hasHintTags) {
+      if (!hasRequestedTags) {
         return false;
       }
       for (const [tagKey, tagValue] of slot.tags) {
-        if (!this._matchesHintTag(tagKey, tagValue, hintTags, singleHintTag)) {
+        if (!this._matchesRequestedTag(tagKey, tagValue, requestedTags, singleRequestedTag)) {
           return false;
         }
       }
-    } else if (hasHintTags) {
+    } else if (hasRequestedTags) {
       return false;
     }
 
@@ -1140,21 +1153,25 @@ export class DependencyResolver {
     return runWithContainer(this._container, () => new invokable(...deps));
   }
 
-  private _matchesHintTag(
+  private _matchesRequestedTag(
     tagKey: string,
     tagValue: unknown,
-    hintTags: ReadonlyArray<BindingTag> | undefined,
-    singleHintTag: BindingTag | undefined,
+    requestedTags: ReadonlyArray<BindingTag> | undefined,
+    singleRequestedTag: BindingTag | undefined,
   ): boolean {
-    if (singleHintTag !== undefined && singleHintTag[0] === tagKey && Object.is(singleHintTag[1], tagValue)) {
+    if (
+      singleRequestedTag !== undefined &&
+      singleRequestedTag[0] === tagKey &&
+      Object.is(singleRequestedTag[1], tagValue)
+    ) {
       return true;
     }
-    if (hintTags === undefined || hintTags.length === 0) {
+    if (requestedTags === undefined || requestedTags.length === 0) {
       return false;
     }
-    for (let index = 0; index < hintTags.length; index += 1) {
-      const hintTag = hintTags[index]!;
-      if (hintTag[0] === tagKey && Object.is(hintTag[1], tagValue)) {
+    for (let index = 0; index < requestedTags.length; index += 1) {
+      const requestedTag = requestedTags[index]!;
+      if (requestedTag[0] === tagKey && Object.is(requestedTag[1], tagValue)) {
         return true;
       }
     }
@@ -1445,7 +1462,7 @@ export class DependencyResolver {
 
   private _resolveCandidateSync<const Value>(
     binding: Binding<Value>,
-    hint: ResolveOptions | undefined,
+    options: ResolveOptions | undefined,
     resolutionPath: Array<string>,
     resolutionStack: Array<ResolutionFrame>,
   ): Value {
@@ -1457,7 +1474,7 @@ export class DependencyResolver {
       return binding.value;
     }
     if (binding.kind === "alias") {
-      return this.resolve(binding.target, hint, resolutionPath, resolutionStack);
+      return this.resolve(binding.target, options, resolutionPath, resolutionStack);
     }
     const scope = (binding as BindingWithScope).scope ?? "transient";
     if (scope === "singleton" && this._scope.hasSingleton(binding.id)) {
@@ -1471,12 +1488,12 @@ export class DependencyResolver {
         return this._scope.getScoped<Value>(binding.id);
       }
     }
-    return this._resolveBinding(binding, hint, resolutionPath, resolutionStack);
+    return this._resolveBinding(binding, options, resolutionPath, resolutionStack);
   }
 
   private _resolveCandidateAsync<const Value>(
     binding: Binding<Value>,
-    hint: ResolveOptions | undefined,
+    options: ResolveOptions | undefined,
     resolutionPath: Array<string>,
     resolutionStack: Array<ResolutionFrame>,
   ): Promise<Value> {
@@ -1490,7 +1507,7 @@ export class DependencyResolver {
     const isolatedPath = [...resolutionPath];
     const isolatedStack = [...resolutionStack];
     if (binding.kind === "alias") {
-      return this.resolveAsync(binding.target, hint, isolatedPath, isolatedStack);
+      return this.resolveAsync(binding.target, options, isolatedPath, isolatedStack);
     }
     const scope = (binding as BindingWithScope).scope ?? "transient";
     if (scope === "singleton" && this._scope.hasSingleton(binding.id)) {
@@ -1504,7 +1521,7 @@ export class DependencyResolver {
         return Promise.resolve(this._scope.getScoped<Value>(binding.id));
       }
     }
-    return this._resolveBindingAsync(binding, hint, isolatedPath, isolatedStack);
+    return this._resolveBindingAsync(binding, options, isolatedPath, isolatedStack);
   }
 
   private _getResolutionFrame<const Value>(binding: Binding<Value>): ResolutionFrame {
@@ -1589,19 +1606,19 @@ export class DependencyResolver {
   private _acquireSyncResolutionContext(
     resolutionPath: Array<string>,
     resolutionStack: Array<ResolutionFrame>,
-    hint: ResolveOptions | undefined,
+    options: ResolveOptions | undefined,
   ): DefaultResolutionContext {
     const depth = resolutionStack.length;
     const existing = this._syncResolutionContextPool[depth];
     if (existing !== undefined) {
-      existing.reset(this as unknown as ResolverCallbacks, resolutionPath, resolutionStack, hint);
+      existing.reset(this as unknown as ResolverCallbacks, resolutionPath, resolutionStack, options);
       return existing;
     }
     const created = new DefaultResolutionContext(
       this as unknown as ResolverCallbacks,
       resolutionPath,
       resolutionStack,
-      hint,
+      options,
     );
     this._syncResolutionContextPool[depth] = created;
     return created;

@@ -5,7 +5,7 @@ import type { Token } from "#/token";
 export type { Constructor } from "#/constructor-type";
 
 /**
- * A single [tag, value] pair used in slot constraints and resolve hints.
+ * A single [tag, value] pair used in slot constraints and resolve options.
  *
  * @since 0.3.16-canary.0
  */
@@ -93,7 +93,7 @@ export interface ConstraintContext {
   readonly resolutionStack: ReadonlyArray<ResolutionFrame>;
   readonly parent: ResolutionFrame | undefined;
   readonly ancestors: ReadonlyArray<ResolutionFrame>;
-  readonly currentResolveHint: ResolveOptions | undefined;
+  readonly currentResolveOptions: ResolveOptions | undefined;
 }
 
 // ── ResolutionContext ─────────────────────────────────────────────────────────
@@ -102,15 +102,18 @@ export interface ConstraintContext {
  * @since 0.3.16-canary.0
  */
 export interface ResolutionContext {
-  resolve<const Value>(token: Token<Value> | Constructor<Value>, hint?: ResolveOptions): Value;
-  resolveAsync<const Value>(token: Token<Value> | Constructor<Value>, hint?: ResolveOptions): Promise<Value>;
-  resolveOptional<const Value>(token: Token<Value> | Constructor<Value>, hint?: ResolveOptions): Value | undefined;
+  resolve<const Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Value;
+  resolveAsync<const Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Promise<Value>;
+  resolveOptional<const Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Value | undefined;
   resolveOptionalAsync<const Value>(
     token: Token<Value> | Constructor<Value>,
-    hint?: ResolveOptions,
+    options?: ResolveOptions,
   ): Promise<Value | undefined>;
-  resolveAll<const Value>(token: Token<Value> | Constructor<Value>, hint?: ResolveOptions): Array<Value>;
-  resolveAllAsync<const Value>(token: Token<Value> | Constructor<Value>, hint?: ResolveOptions): Promise<Array<Value>>;
+  resolveAll<const Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Array<Value>;
+  resolveAllAsync<const Value>(
+    token: Token<Value> | Constructor<Value>,
+    options?: ResolveOptions,
+  ): Promise<Array<Value>>;
   readonly graph: ConstraintContext;
 }
 

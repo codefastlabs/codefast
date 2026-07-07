@@ -239,7 +239,7 @@ container.bind(LoggerToken).toConstantValue(consoleLogger).whenNamed("console");
 container.resolve(LoggerToken, { name: "file" });
 ```
 
-**Tagged** — the hint is a tuple `[tag, value]`:
+**Tagged** — the tag option is a tuple `[tag, value]`:
 
 ```typescript
 container.bind(StorageToken).to(S3Storage).whenTagged("provider", "s3");
@@ -250,7 +250,7 @@ container.resolve(StorageToken, { tag: ["provider", "s3"] });
 
 **Default slot**
 
-`.whenDefault()` is a documentation-only marker — it is a no-op at runtime. A binding without any constraint already participates in resolution when no `name` / `tag` hint is provided. Use it to signal intent when mixing constrained and unconstrained bindings for the same token.
+`.whenDefault()` is a documentation-only marker — it is a no-op at runtime. A binding without any constraint already participates in resolution when no `name` / `tag` option is provided. Use it to signal intent when mixing constrained and unconstrained bindings for the same token.
 
 **Predicate** — inspect the full resolution graph:
 
@@ -590,7 +590,7 @@ All errors extend `DiError` and expose a stable `code` property.
 | `MissingContainerContextError`  | `"MISSING_CONTAINER_CONTEXT"`   | `@inject` accessor resolved without an active container                 |
 | `MissingMetadataError`          | `"MISSING_METADATA"`            | Class resolution missing `@injectable()` metadata                       |
 | `MissingScopeContextError`      | `"MISSING_SCOPE_CONTEXT"`       | `scoped` binding resolved without a child container context             |
-| `NoMatchingBindingError`        | `"NO_MATCHING_BINDING"`         | Hint matches no registered binding                                      |
+| `NoMatchingBindingError`        | `"NO_MATCHING_BINDING"`         | Resolve options match no registered binding                             |
 | `RebindUnboundTokenError`       | `"REBIND_UNBOUND_TOKEN"`        | `rebind` targets a token with no binding owned by this container        |
 | `ScopeViolationError`           | `"SCOPE_VIOLATION"`             | Captive dependency found by `validate()` (`details` describes the path) |
 | `SyncDisposalNotSupportedError` | `"SYNC_DISPOSAL_NOT_SUPPORTED"` | Sync `using` / `[Symbol.dispose]` on the container                      |
