@@ -77,6 +77,9 @@ export function ConsentGate() {
       return (
         <ConsentBannerCard
           consent={consent}
+          // this branch already decided the banner shows — without `open`, the root would
+          // re-gate on needsPrompt and refuse to reopen after a stored decision
+          open
           onDecision={() => {
             setIsSettingsOpen(false);
           }}

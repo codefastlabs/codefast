@@ -108,6 +108,21 @@ describe("ConsentGate", () => {
     expect(screen.getByRole("button", { name: "Cookie settings" })).toBeTruthy();
   });
 
+  it("saves a granular choice through the Customize layer", async () => {
+    resolveInitialConsent.mockReturnValue({ defaultConsent: DENIED, mode: "opt-in", region: "eu" });
+
+    const user = userEvent.setup();
+
+    render(<ConsentGate />);
+    await user.click(screen.getByRole("button", { name: "Customize" }));
+
+    await user.click(screen.getByRole("checkbox", { name: /analytics/i }));
+    await user.click(screen.getByRole("button", { name: "Save preferences" }));
+
+    expect(updateGoogleConsent).toHaveBeenCalledWith(ANALYTICS_ONLY);
+    expect(JSON.parse(window.localStorage.getItem("codefast-ui-consent") ?? "{}").decision).toEqual(ANALYTICS_ONLY);
+  });
+
   it("links the privacy policy from the banner", () => {
     resolveInitialConsent.mockReturnValue({ defaultConsent: DENIED, mode: "opt-in", region: "eu" });
 
