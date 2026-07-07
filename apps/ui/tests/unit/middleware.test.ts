@@ -21,10 +21,18 @@ function readCookieValue(response: Response): CookiePayload {
 }
 
 // `resolveRegion` duplicates `@codefast/tracking`'s region mapping (see middleware.ts's
-// module comment for why) — these two suites are the guard that keeps them in sync.
+// module comment for why) — these suites are the guard that keeps them in sync. Each
+// sweeps all 676 codes in one test and asserts an empty disagreement list, so a failure
+// prints every diverging code with both sides' values at once.
 describe("middleware's resolveRegion vs @codefast/tracking's resolveRegionFromCountryCode", () => {
-  it.each(ALL_TWO_LETTER_CODES)("agrees for %s", (code) => {
-    expect(resolveRegion(code)).toBe(resolveRegionFromCountryCode(code));
+  it("agrees for every two-letter country code", () => {
+    const disagreements = ALL_TWO_LETTER_CODES.map((code) => ({
+      code,
+      middleware: resolveRegion(code),
+      tracking: resolveRegionFromCountryCode(code),
+    })).filter(({ middleware: fromMiddleware, tracking }) => fromMiddleware !== tracking);
+
+    expect(disagreements).toEqual([]);
   });
 
   it("agrees when the country code is missing", () => {
@@ -33,11 +41,15 @@ describe("middleware's resolveRegion vs @codefast/tracking's resolveRegionFromCo
 });
 
 describe("middleware's opt-in/opt-out split vs @codefast/tracking's resolveConsentMode", () => {
-  it.each(ALL_TWO_LETTER_CODES)("agrees for %s", (code) => {
-    const region = resolveRegion(code);
-    const isOptIn = region === "eu" || region === "vn";
+  it("agrees for every two-letter country code", () => {
+    const disagreements = ALL_TWO_LETTER_CODES.map((code) => {
+      const region = resolveRegion(code);
+      const isOptIn = region === "eu" || region === "vn";
 
-    expect(isOptIn ? "opt-in" : "opt-out").toBe(resolveConsentMode(region));
+      return { code, middleware: isOptIn ? "opt-in" : "opt-out", tracking: resolveConsentMode(region) };
+    }).filter(({ middleware: fromMiddleware, tracking }) => fromMiddleware !== tracking);
+
+    expect(disagreements).toEqual([]);
   });
 });
 
