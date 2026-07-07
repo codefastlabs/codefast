@@ -103,7 +103,8 @@ function createClientTracker<Catalog extends EventCatalog>(catalog: Catalog) {
 
 - `Destination` is an adapter interface (`send(event)`, `flush()`) — core and client/server trackers depend only on this interface, never on a specific provider SDK.
 - Multiple destinations can be registered; a `track()` call fans out to all registered destinations.
-- Phase 1 destinations: `createVercelAnalyticsDestination` (`@vercel/analytics/react`, optional peer) — implemented, used by `apps/ui`. PostHog and GA4 are not built yet.
+- Phase 1 destinations: `createVercelAnalyticsDestination` (`@vercel/analytics/react`, optional peer) — implemented, used by `apps/ui`. `createGoogleAnalyticsDestination` and `createGoogleAdsConversionDestination` (client, share one `window.gtag` — no peer dependency, require the gtag.js snippet mounted by the app) and `createGa4MeasurementProtocolDestination` (server, plain `fetch`, no peer dependency) — implemented. None of the three is wired into `apps/ui` yet. PostHog is not built yet.
+- `createGoogleAdsConversionDestination` fires a Google Ads conversion (`gtag('event', 'conversion', {send_to, ...})`) only for catalog event names present in its `conversions` map — every other event is a no-op, so it can be registered alongside destinations that see every event.
 
 ### 6.1 EU data residency
 
@@ -122,6 +123,7 @@ Consent model differs by region — this is not optional/simplifiable to one glo
 - **Region detection**: `resolveRegion` (server, reads `x-vercel-ip-country` by default) + `resolveConsentMode` (core) — resolved server-side before the client tracker initializes, so the correct consent mode is known on first paint.
 - **Consent UI — implemented, headless, in `@codefast/tracking/react`** (not `@codefast/ui` — this package must not require installing the UI/design-system package): `useConsent` (state + `ConsentStorage` persistence, defaults to `createLocalStorageConsentStorage`) drives `ConsentBanner` (blocking opt-in prompt) and `ConsentToggle` (always-visible opt-out control, honors `hasGlobalPrivacyControlSignal`). No styling is baked in — both accept `className`.
 - **Revoke**: wire `useConsent`'s `onDecision` callback to `tracker.clear()` — revoking consent stops tracking immediately and drops the pending offline queue. Not automatic, since `core`/`client` intentionally don't know about consent (separation of concerns).
+- **Google Consent Mode v2 — implemented**: `setGoogleConsentDefault(granted)` (`destinations/google-analytics`) maps this package's single granted/denied decision to all four Consent Mode categories (`ad_storage`, `ad_user_data`, `ad_personalization`, `analytics_storage`) and must be called as early as possible — ideally before the gtag.js script tag loads — with `shouldTrackByDefault(mode, hasGpc)` as the input, so GA4/Ads never fire a hit before the region-resolved default is known. `updateGoogleConsent(granted)` is wired the same way as `tracker.clear()`: from `useConsent`'s `onDecision` callback, so an already-loaded GA4/Ads tag picks up a consent change without a reload. Required for EU traffic — Google enforces Consent Mode v2 signals for EEA visitors since March 2024.
 - **Data subject rights**: deletion requests are forwarded to each active destination's deletion API (PostHog/GA4 support this) — no self-hosted store to purge in Phase 1.
 
 > Not legal advice — the above is the technical shape inferred from GDPR/CCPA/NĐ 13/2023; confirm specifics with legal counsel before shipping to EU/US/VN traffic.
