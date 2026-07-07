@@ -55,4 +55,12 @@ describe("useConsent", () => {
     expect(result.current.isTrackingAllowed).toBe(false);
     expect(onDecision).toHaveBeenCalledWith("denied");
   });
+
+  it("reflects a previously stored decision once mounted", () => {
+    const storage = createMemoryConsentStorage({ decision: "granted", policyVersion: "v1", timestamp: 0 });
+    const { result } = renderHook(() => useConsent({ mode: "opt-in", policyVersion: "v1", storage }));
+
+    expect(result.current.isTrackingAllowed).toBe(true);
+    expect(result.current.needsPrompt).toBe(false);
+  });
 });
