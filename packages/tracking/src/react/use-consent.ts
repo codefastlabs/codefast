@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
 
 import type { ConsentDecision, ConsentMode, ConsentStorage } from "#/core/consent";
 import { shouldTrackByDefault } from "#/core/consent";
@@ -8,6 +8,7 @@ export interface UseConsentOptions {
   mode: ConsentMode;
   onDecision?: (decision: ConsentDecision) => void;
   policyVersion: string;
+  /** Must be a stable reference (module-level or memoized) — a new object per render resubscribes every render. */
   storage: ConsentStorage;
 }
 
@@ -20,28 +21,31 @@ export interface UseConsentResult {
 }
 
 /**
- * Bridges `resolveConsentMode`/`shouldTrackByDefault` (core, region-aware) to React state,
- * persisting the visitor's decision via the given `ConsentStorage`.
+ * Bridges `resolveConsentMode`/`shouldTrackByDefault` (core, region-aware) to React via
+ * `useSyncExternalStore`: the stored record is the single source of truth, hydration is
+ * safe by construction (the server snapshot is always "no decision yet", matching what
+ * prerendered HTML could know), and a decision made in another tab syncs through the
+ * storage subscription.
  */
 export function useConsent(options: UseConsentOptions): UseConsentResult {
-  const [decision, setDecision] = useState<ConsentDecision | undefined>();
+  const { storage } = options;
 
-  // Read the stored decision after mount, not during the initial render: a prerendered page
-  // can't see the visitor's localStorage, so an eager read here would return "granted" on the
-  // client while the server always rendered "no decision yet" — a hydration mismatch that
-  // leaves the banner's markup un-hydrated and stuck on screen for returning visitors.
-  useEffect(() => {
-    setDecision(options.storage.load()?.decision);
-  }, [options.storage]);
+  const decision = useSyncExternalStore(
+    storage.subscribe,
+    (): ConsentDecision | undefined => {
+      const record = storage.load();
 
-  const decide = useCallback(
-    (next: ConsentDecision): void => {
-      options.storage.save({ decision: next, policyVersion: options.policyVersion, timestamp: Date.now() });
-      setDecision(next);
-      options.onDecision?.(next);
+      // A decision recorded under an older policy version no longer counts.
+      return record?.policyVersion === options.policyVersion ? record.decision : undefined;
     },
-    [options],
+    () => undefined,
   );
+
+  function decide(next: ConsentDecision): void {
+    // No local state — the save notifies the subscription, which re-renders with the new snapshot.
+    storage.save({ decision: next, policyVersion: options.policyVersion, timestamp: Date.now() });
+    options.onDecision?.(next);
+  }
 
   const isTrackingAllowed =
     decision === undefined

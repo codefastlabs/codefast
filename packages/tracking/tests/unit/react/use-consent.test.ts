@@ -56,11 +56,33 @@ describe("useConsent", () => {
     expect(onDecision).toHaveBeenCalledWith("denied");
   });
 
-  it("reflects a previously stored decision once mounted", () => {
+  it("reflects a previously stored decision", () => {
     const storage = createMemoryConsentStorage({ decision: "granted", policyVersion: "v1", timestamp: 0 });
     const { result } = renderHook(() => useConsent({ mode: "opt-in", policyVersion: "v1", storage }));
 
     expect(result.current.isTrackingAllowed).toBe(true);
     expect(result.current.needsPrompt).toBe(false);
+  });
+
+  it("ignores a decision recorded under an older policy version and re-prompts", () => {
+    const storage = createMemoryConsentStorage({ decision: "granted", policyVersion: "v1", timestamp: 0 });
+    const { result } = renderHook(() => useConsent({ mode: "opt-in", policyVersion: "v2", storage }));
+
+    expect(result.current.isTrackingAllowed).toBe(false);
+    expect(result.current.needsPrompt).toBe(true);
+  });
+
+  it("picks up a decision written outside the hook, e.g. from another tab", () => {
+    const storage = createMemoryConsentStorage();
+    const { result } = renderHook(() => useConsent({ mode: "opt-in", policyVersion: "v1", storage }));
+
+    expect(result.current.needsPrompt).toBe(true);
+
+    act(() => {
+      storage.save({ decision: "granted", policyVersion: "v1", timestamp: 0 });
+    });
+
+    expect(result.current.needsPrompt).toBe(false);
+    expect(result.current.isTrackingAllowed).toBe(true);
   });
 });

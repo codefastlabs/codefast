@@ -48,11 +48,16 @@ export interface ConsentRecord {
 }
 
 /**
- * Persistence backend for the visitor's consent decision — mirrors `EventQueueStorage`
- * so a non-browser environment can swap in its own implementation.
+ * Persistence backend for the visitor's consent decision — swap in your own
+ * implementation for non-browser environments or a different persistence layer.
  */
 export interface ConsentStorage {
   clear: () => void;
   load: () => ConsentRecord | undefined;
   save: (record: ConsentRecord) => void;
+  /**
+   * Notify on any change to the stored record, including writes from other tabs — this
+   * is what drives `useConsent`'s external-store subscription. Returns an unsubscribe.
+   */
+  subscribe: (listener: () => void) => () => void;
 }
