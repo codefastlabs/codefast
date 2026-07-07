@@ -10,6 +10,7 @@ describe("useConsent", () => {
       useConsent({ mode: "opt-in", policyVersion: "v1", storage: createMemoryConsentStorage() }),
     );
 
+    expect(result.current.decision).toBeUndefined();
     expect(result.current.isTrackingAllowed).toBe(false);
     expect(result.current.needsPrompt).toBe(true);
   });
@@ -60,6 +61,7 @@ describe("useConsent", () => {
     const storage = createMemoryConsentStorage({ decision: "granted", policyVersion: "v1", timestamp: 0 });
     const { result } = renderHook(() => useConsent({ mode: "opt-in", policyVersion: "v1", storage }));
 
+    expect(result.current.decision).toBe("granted");
     expect(result.current.isTrackingAllowed).toBe(true);
     expect(result.current.needsPrompt).toBe(false);
   });
@@ -68,7 +70,20 @@ describe("useConsent", () => {
     const storage = createMemoryConsentStorage({ decision: "granted", policyVersion: "v1", timestamp: 0 });
     const { result } = renderHook(() => useConsent({ mode: "opt-in", policyVersion: "v2", storage }));
 
+    expect(result.current.decision).toBeUndefined();
     expect(result.current.isTrackingAllowed).toBe(false);
+    expect(result.current.needsPrompt).toBe(true);
+  });
+
+  it("treats a tampered decision value as no decision and re-prompts", () => {
+    const storage = createMemoryConsentStorage({
+      decision: "maybe" as never,
+      policyVersion: "v1",
+      timestamp: 0,
+    });
+    const { result } = renderHook(() => useConsent({ mode: "opt-in", policyVersion: "v1", storage }));
+
+    expect(result.current.decision).toBeUndefined();
     expect(result.current.needsPrompt).toBe(true);
   });
 

@@ -7,6 +7,7 @@ import type { UseConsentResult } from "#/react/use-consent";
 
 function buildConsent(overrides: Partial<UseConsentResult> = {}): UseConsentResult {
   return {
+    decision: undefined,
     deny: vi.fn(),
     grant: vi.fn(),
     isTrackingAllowed: false,

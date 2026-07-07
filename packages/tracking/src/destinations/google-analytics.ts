@@ -76,9 +76,9 @@ export function setGoogleConsentDefault(granted: boolean, options: GoogleConsent
 }
 
 /**
- * Google Consent Mode v2's "update" signal — call from `useConsent`'s `onDecision`
- * callback whenever the visitor grants or revokes consent, so already-loaded GA4/Ads tags
- * pick up the change without a page reload.
+ * Google Consent Mode v2's "update" signal — call whenever the visitor's effective
+ * consent changes (a banner decision, or one synced from another tab), so already-loaded
+ * GA4/Ads tags pick up the change without a page reload.
  */
 export function updateGoogleConsent(granted: boolean, options: GoogleConsentOptions = {}): void {
   ensureGtag()?.("consent", "update", toGoogleConsentParams(granted, options));

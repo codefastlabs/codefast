@@ -5,6 +5,11 @@ import type { ConsentRecord, ConsentStorage } from "#/core/consent";
  * `window` (SSR) degrades to an in-memory record — the visitor's decision still applies
  * for the session instead of re-prompting in a loop. `subscribe` fires for same-tab
  * writes and, via the `storage` event, for decisions made in other tabs.
+ *
+ * @remarks
+ * The record persists as plain `JSON.stringify(ConsentRecord)` — a stable contract, so
+ * pre-hydration inline scripts (e.g. a Consent Mode default bootstrap) can read the
+ * decision synchronously before any tag fires.
  */
 export function createLocalStorageConsentStorage(storageKey: string): ConsentStorage {
   const listeners = new Set<() => void>();

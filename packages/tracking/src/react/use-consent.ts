@@ -13,6 +13,8 @@ export interface UseConsentOptions {
 }
 
 export interface UseConsentResult {
+  /** The stored decision under the current policy version — `undefined` until the visitor makes one. */
+  decision: ConsentDecision | undefined;
   deny: () => void;
   grant: () => void;
   isTrackingAllowed: boolean;
@@ -35,8 +37,12 @@ export function useConsent(options: UseConsentOptions): UseConsentResult {
     (): ConsentDecision | undefined => {
       const record = storage.load();
 
-      // A decision recorded under an older policy version no longer counts.
-      return record?.policyVersion === options.policyVersion ? record.decision : undefined;
+      // Only a well-formed decision under the current policy version counts — the store
+      // is tamperable plain JSON, and a garbage value must re-prompt, not silently deny.
+      return record?.policyVersion === options.policyVersion &&
+        (record.decision === "granted" || record.decision === "denied")
+        ? record.decision
+        : undefined;
     },
     () => undefined,
   );
@@ -53,6 +59,7 @@ export function useConsent(options: UseConsentOptions): UseConsentResult {
       : decision === "granted";
 
   return {
+    decision,
     deny: () => {
       decide("denied");
     },
