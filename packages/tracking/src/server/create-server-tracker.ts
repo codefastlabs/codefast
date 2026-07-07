@@ -5,11 +5,17 @@ import type { EventCatalog, EventsOf } from "#/core/event-catalog";
 import { generateEventId } from "#/core/event-id";
 import type { TrackedEvent } from "#/core/tracked-event";
 
+/**
+ * @since 0.5.0-canary.4
+ */
 export interface ServerTrackContext {
   anonymousId: string;
   userId?: string | undefined;
 }
 
+/**
+ * @since 0.5.0-canary.4
+ */
 export interface ServerTrackerOptions<Catalog extends EventCatalog> {
   catalog: Catalog;
   destinations: Array<Destination>;
@@ -19,6 +25,9 @@ export interface ServerTrackerOptions<Catalog extends EventCatalog> {
   retryDelayMs?: number;
 }
 
+/**
+ * @since 0.5.0-canary.4
+ */
 export interface ServerTracker<Catalog extends EventCatalog> {
   /** Explicit anonymous → known-user merge, for when `identify` timing can't do it. */
   alias: (previousId: string, userId: string, context: ServerTrackContext) => Promise<void>;
@@ -63,6 +72,8 @@ async function sendWithRetry(
 /**
  * No dead-letter queue yet (self-host storage is Phase 2) — a destination that keeps
  * failing after retries is only logged via `onDestinationError`, never re-queued.
+ *
+ * @since 0.5.0-canary.4
  */
 export function createServerTracker<Catalog extends EventCatalog>(
   options: ServerTrackerOptions<Catalog>,

@@ -1,5 +1,24 @@
 # @codefast/ui
 
+## 0.5.0-canary.4
+
+### Minor Changes
+
+- [`ca47aff`](https://github.com/codefastlabs/codefast/commit/ca47aff20ebb5ac9e4c3db759da31102ff9d5f84) Thanks [@thevuong](https://github.com/thevuong)! - Rename four APIs whose names misstated their role (Swift API Design Guidelines pass).
+
+  **Breaking:**
+
+  - `ProgressCircle`: `animate` → `animated` (a boolean should read as an assertion, not a bare verb) and `customLabel` → `renderLabel` (the prop holds a render function, not a label value; "custom" was filler). `useAnimatedValue`'s third parameter follows suit.
+  - `MessageScrollerItem`: `scrollAnchor` → `isScrollAnchor` (assertion form, matching the existing `isActive` convention). The emitted `data-scroll-anchor` attribute is unchanged.
+  - `UsePaginationProps` → `UsePaginationOptions` — a hook takes options, not component props.
+
+### Patch Changes
+
+- [`3e1050b`](https://github.com/codefastlabs/codefast/commit/3e1050b4e51e8eefd5fce9a979e78acce09a0683) Thanks [@thevuong](https://github.com/thevuong)! - Remove the dead `separator` prop from the `Breadcrumb` root — it was never consumed (a vestige of the old upstream shape) and only leaked onto the `<nav>` element as an invalid DOM attribute. Custom separators keep working the supported way: pass children to `<BreadcrumbSeparator>`.
+
+- Updated dependencies []:
+  - @codefast/tailwind-variants@0.5.0-canary.4
+
 ## 0.5.0-canary.3
 
 ### Minor Changes

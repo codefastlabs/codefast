@@ -1,5 +1,8 @@
 import type { Destination } from "#/core/destination";
 
+/**
+ * @since 0.5.0-canary.4
+ */
 export interface HttpDestinationOptions {
   endpoint: string;
   headers?: Record<string, string>;
@@ -9,6 +12,8 @@ export interface HttpDestinationOptions {
 /**
  * Generic fetch-based `Destination` — the building block for a real provider adapter
  * (PostHog, GA4, ...); those ship their own payload shape and aren't implemented here.
+ *
+ * @since 0.5.0-canary.4
  */
 export function createHttpDestination(options: HttpDestinationOptions): Destination {
   return {

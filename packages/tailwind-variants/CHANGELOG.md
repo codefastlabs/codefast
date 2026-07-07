@@ -1,5 +1,7 @@
 # @codefast/tailwind-variants
 
+## 0.5.0-canary.4
+
 ## 0.5.0-canary.3
 
 ## 0.5.0-canary.2

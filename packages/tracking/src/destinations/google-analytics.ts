@@ -69,6 +69,9 @@ function ensureGtag(): GtagFunction | undefined {
   return window.gtag;
 }
 
+/**
+ * @since 0.5.0-canary.4
+ */
 export interface GoogleConsentDefaultOptions {
   /** Restrict the default to these ISO 3166-2 codes (gtag's `region` param); omit for a global default. */
   region?: ReadonlyArray<string>;
@@ -80,6 +83,8 @@ export interface GoogleConsentDefaultOptions {
  * Google Consent Mode v2's "default" signal — call before the gtag.js script tag loads
  * (this defines the queueing stub itself, so no snippet has to run first) with the
  * region-resolved default, so GA4/Ads never fire a hit ahead of it.
+ *
+ * @since 0.5.0-canary.4
  */
 export function setGoogleConsentDefault(decision: ConsentDecision, options: GoogleConsentDefaultOptions = {}): void {
   const params = toGoogleConsentParams(decision);
@@ -99,6 +104,8 @@ export function setGoogleConsentDefault(decision: ConsentDecision, options: Goog
  * Google Consent Mode v2's "update" signal — call whenever the visitor's effective
  * consent changes (a banner decision, or one synced from another tab), so already-loaded
  * GA4/Ads tags pick up the change without a page reload.
+ *
+ * @since 0.5.0-canary.4
  */
 export function updateGoogleConsent(decision: ConsentDecision): void {
   ensureGtag()?.("consent", "update", toGoogleConsentParams(decision));
@@ -108,6 +115,8 @@ export function updateGoogleConsent(decision: ConsentDecision): void {
  * Consent Mode's `ads_data_redaction` flag — with `ad_storage` denied, gtag further
  * redacts ad click identifiers (gclid/dclid) from its cookieless pings. Set alongside
  * the consent default.
+ *
+ * @since 0.5.0-canary.4
  */
 export function setGoogleAdsDataRedaction(enabled: boolean): void {
   ensureGtag()?.("set", "ads_data_redaction", enabled);
@@ -116,6 +125,8 @@ export function setGoogleAdsDataRedaction(enabled: boolean): void {
 /**
  * Consent Mode's `url_passthrough` flag — carries ad click info through page URLs while
  * storage is denied, preserving conversion attribution without cookies.
+ *
+ * @since 0.5.0-canary.4
  */
 export function setGoogleUrlPassthrough(enabled: boolean): void {
   ensureGtag()?.("set", "url_passthrough", enabled);
@@ -143,6 +154,9 @@ function toGtagParams(props: Record<string, unknown>): Record<string, GtagProper
 // or otherwise invalid name would be dropped at processing without any signal to the dev.
 const GA4_EVENT_NAME_PATTERN = /^[A-Za-z][\w]{0,39}$/;
 
+/**
+ * @since 0.5.0-canary.4
+ */
 export interface GoogleAnalyticsDestinationOptions {
   name?: string;
   /**
@@ -162,6 +176,8 @@ export interface GoogleAnalyticsDestinationOptions {
  * Requires the gtag.js snippet plus `gtag('config', measurementId)` mounted once by the
  * app. Marked `delivery: "immediate"` — gtag.js has its own batching and unload delivery,
  * so queueing in front of it only delays events and replays stale ones next session.
+ *
+ * @since 0.5.0-canary.4
  */
 export function createGoogleAnalyticsDestination(options: GoogleAnalyticsDestinationOptions = {}): Destination {
   const name = options.name ?? "google-analytics";

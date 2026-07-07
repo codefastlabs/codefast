@@ -5,13 +5,20 @@ import type { ConsentCategory, ConsentDecision } from "#/core/consent";
 import { CONSENT_CATEGORIES } from "#/core/consent";
 import type { UseConsentResult } from "#/react/use-consent";
 
-/** One row of the preferences layer — the visitor-facing wording for a consent category. */
+/**
+ * One row of the preferences layer — the visitor-facing wording for a consent category.
+ *
+ * @since 0.5.0-canary.4
+ */
 export interface ConsentCategoryOption {
   category: ConsentCategory;
   description?: string;
   label: string;
 }
 
+/**
+ * @since 0.5.0-canary.4
+ */
 export interface ConsentBannerProps extends Omit<ComponentProps<"section">, "children"> {
   acceptLabel?: string;
   /** Enables the per-category preferences layer; omit to keep the two-button banner. */
@@ -34,6 +41,8 @@ export interface ConsentBannerProps extends Omit<ComponentProps<"section">, "chi
  * page, so the dialog semantics would over-promise. No styling is baked in — target the
  * root via `className` and the parts via their `data-slot` attributes (`consent-message`,
  * `consent-actions`, `consent-action`, `consent-preferences`, `consent-category`).
+ *
+ * @since 0.5.0-canary.4
  */
 export function ConsentBanner({
   acceptLabel = "Accept",
@@ -116,6 +125,9 @@ export function ConsentBanner({
   );
 }
 
+/**
+ * @since 0.5.0-canary.4
+ */
 export interface ConsentToggleProps extends Omit<ComponentProps<"button">, "children" | "onClick" | "type"> {
   allowLabel?: string;
   consent: UseConsentResult;
@@ -126,6 +138,8 @@ export interface ConsentToggleProps extends Omit<ComponentProps<"button">, "chil
  * Always-visible control for opt-out regions — CCPA/CPRA requires a persistent
  * "Do Not Sell or Share My Personal Information" mechanism, not just a one-time prompt.
  * Flips between denying everything and re-granting the app's requested categories.
+ *
+ * @since 0.5.0-canary.4
  */
 export function ConsentToggle({
   allowLabel = "Allow tracking",

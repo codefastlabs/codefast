@@ -6,6 +6,9 @@ import type { EventCatalog, EventsOf } from "#/core/event-catalog";
 import { generateEventId } from "#/core/event-id";
 import type { TrackedEvent } from "#/core/tracked-event";
 
+/**
+ * @since 0.5.0-canary.4
+ */
 export interface ClientTrackerOptions<Catalog extends EventCatalog> {
   anonymousId: string;
   catalog: Catalog;
@@ -15,6 +18,9 @@ export interface ClientTrackerOptions<Catalog extends EventCatalog> {
   storage: EventQueueStorage;
 }
 
+/**
+ * @since 0.5.0-canary.4
+ */
 export interface ClientTracker<Catalog extends EventCatalog> {
   /** Drops every pending event without sending it — call this when consent is revoked. */
   clear: () => void;
@@ -30,6 +36,9 @@ export interface ClientTracker<Catalog extends EventCatalog> {
   ) => void;
 }
 
+/**
+ * @since 0.5.0-canary.4
+ */
 export function createClientTracker<Catalog extends EventCatalog>(
   options: ClientTrackerOptions<Catalog>,
 ): ClientTracker<Catalog> {

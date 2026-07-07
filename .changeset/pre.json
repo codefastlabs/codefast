@@ -11,17 +11,29 @@
     "@codefast/tailwind-variants": "0.4.0",
     "@codefast/theme": "0.4.0",
     "@codefast/typescript-config": "0.4.0",
-    "@codefast/ui": "0.4.0"
+    "@codefast/ui": "0.4.0",
+    "@codefast/tracking": "0.0.0"
   },
   "changesets": [
     "cli-skippackages-glob",
+    "di-rename-hint-to-options",
+    "theme-context-value-type-name",
     "theme-hig-appearance-naming",
     "theme-provider-storage-key",
     "theme-remove-server-side",
     "theme-vite-plugin",
+    "tracking-consent-external-store",
+    "tracking-expose-consent-decision",
+    "tracking-ga4-gtag-semantics",
+    "tracking-ga4-mp-correlation",
+    "tracking-immediate-delivery",
+    "tracking-mp-engagement-time-default",
+    "tracking-per-category-consent",
+    "ui-breadcrumb-dead-separator-prop",
     "ui-card-footer-empty-radius",
     "ui-chat-components",
     "ui-message-scroller",
+    "ui-name-by-role-renames",
     "ui-rtl-hardening",
     "ui-sidebar-skeleton-ssr"
   ]

@@ -34,6 +34,8 @@ const EU_COUNTRY_CODES = new Set([
  * Missing/unrecognized codes fall back to "other", which `resolveConsentMode` treats
  * as opt-out — the least restrictive default, safe only because opt-in regions (EU/VN)
  * are matched explicitly above it.
+ *
+ * @since 0.5.0-canary.4
  */
 export function resolveRegionFromCountryCode(countryCode: string | undefined): ConsentRegion {
   if (!countryCode) {
@@ -60,6 +62,8 @@ export function resolveRegionFromCountryCode(countryCode: string | undefined): C
 /**
  * Reads the hosting platform's geo header (e.g. Vercel's `x-vercel-ip-country`) — pass
  * the incoming request's `Headers` from server-function/middleware context.
+ *
+ * @since 0.5.0-canary.4
  */
 export function resolveRegion(headers: Headers, headerName = "x-vercel-ip-country"): ConsentRegion {
   return resolveRegionFromCountryCode(headers.get(headerName) ?? undefined);

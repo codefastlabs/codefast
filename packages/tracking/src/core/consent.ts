@@ -1,11 +1,19 @@
+/**
+ * @since 0.5.0-canary.4
+ */
 export type ConsentRegion = "eu" | "other" | "us" | "vn";
 
+/**
+ * @since 0.5.0-canary.4
+ */
 export type ConsentMode = "opt-in" | "opt-out";
 
 /**
  * GDPR (EU) and Nghị định 13/2023 (VN) require explicit opt-in before any non-essential
  * tracking; CCPA/CPRA (US) defaults to opt-out instead. There is no single global default
  * that satisfies both, so the mode is resolved per region.
+ *
+ * @since 0.5.0-canary.4
  */
 export function resolveConsentMode(region: ConsentRegion): ConsentMode {
   switch (region) {
@@ -25,23 +33,38 @@ export function resolveConsentMode(region: ConsentRegion): ConsentMode {
  * Consent purposes, mirroring Google Consent Mode v2's split: `analytics` gates
  * measurement (`analytics_storage`), `ads` gates advertising storage and data sharing
  * (`ad_storage`/`ad_user_data`/`ad_personalization`).
+ *
+ * @since 0.5.0-canary.4
  */
 export type ConsentCategory = "ads" | "analytics";
 
+/**
+ * @since 0.5.0-canary.4
+ */
 export const CONSENT_CATEGORIES: ReadonlyArray<ConsentCategory> = ["ads", "analytics"];
 
 /**
  * Per-category consent — GDPR consent must be granular per purpose, so a single
  * granted/denied flag can't represent it. `true` means the visitor granted that purpose.
+ *
+ * @since 0.5.0-canary.4
  */
 export type ConsentDecision = Record<ConsentCategory, boolean>;
 
-/** A decision granting exactly the given categories and denying every other one. */
+/**
+ * A decision granting exactly the given categories and denying every other one.
+ *
+ * @since 0.5.0-canary.4
+ */
 export function createConsentDecision(grantedCategories: ReadonlyArray<ConsentCategory>): ConsentDecision {
   return { ads: grantedCategories.includes("ads"), analytics: grantedCategories.includes("analytics") };
 }
 
-/** Guards stored JSON — the record is tamperable, so every category must be an explicit boolean. */
+/**
+ * Guards stored JSON — the record is tamperable, so every category must be an explicit boolean.
+ *
+ * @since 0.5.0-canary.4
+ */
 export function isConsentDecision(value: unknown): value is ConsentDecision {
   return (
     typeof value === "object" &&
@@ -57,6 +80,8 @@ export function isConsentDecision(value: unknown): value is ConsentDecision {
  * @remarks
  * A Global Privacy Control signal is a "do not sell or share" opt-out (CCPA/CPRA), so it
  * forces `ads` denied — it does not withdraw first-party analytics measurement.
+ *
+ * @since 0.5.0-canary.4
  */
 export function resolveDefaultConsent(
   mode: ConsentMode,
@@ -80,6 +105,8 @@ export function resolveDefaultConsent(
  * NĐ 13/2023 and GDPR both expect a record of *when* and *under what policy* consent
  * was given, not just per-category flags — `policyVersion` lets a later policy change
  * invalidate stale consent.
+ *
+ * @since 0.5.0-canary.4
  */
 export interface ConsentRecord {
   decision: ConsentDecision;
@@ -90,6 +117,8 @@ export interface ConsentRecord {
 /**
  * Persistence backend for the visitor's consent decision — swap in your own
  * implementation for non-browser environments or a different persistence layer.
+ *
+ * @since 0.5.0-canary.4
  */
 export interface ConsentStorage {
   clear: () => void;

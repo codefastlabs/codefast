@@ -3,6 +3,9 @@ import { useRef, useSyncExternalStore } from "react";
 import type { ConsentCategory, ConsentDecision, ConsentMode, ConsentStorage } from "#/core/consent";
 import { CONSENT_CATEGORIES, createConsentDecision, isConsentDecision, resolveDefaultConsent } from "#/core/consent";
 
+/**
+ * @since 0.5.0-canary.4
+ */
 export interface UseConsentOptions {
   /**
    * Categories the app's prompt actually asks about — `grantAll` grants exactly these,
@@ -18,6 +21,9 @@ export interface UseConsentOptions {
   storage: ConsentStorage;
 }
 
+/**
+ * @since 0.5.0-canary.4
+ */
 export interface UseConsentResult {
   /** The stored decision under the current policy version — `undefined` until the visitor makes one. */
   decision: ConsentDecision | undefined;
@@ -41,6 +47,8 @@ const DEFAULT_CATEGORIES: ReadonlyArray<ConsentCategory> = ["analytics"];
  * safe by construction (the server snapshot is always "no decision yet", matching what
  * prerendered HTML could know), and a decision made in another tab syncs through the
  * storage subscription.
+ *
+ * @since 0.5.0-canary.4
  */
 export function useConsent(options: UseConsentOptions): UseConsentResult {
   const { storage } = options;

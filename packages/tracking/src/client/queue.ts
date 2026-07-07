@@ -4,12 +4,17 @@ import type { TrackedEvent } from "#/core/tracked-event";
 /**
  * Persistence backend for the offline queue — a thin wrapper so tests and non-browser
  * environments can swap in an in-memory implementation instead of real `localStorage`.
+ *
+ * @since 0.5.0-canary.4
  */
 export interface EventQueueStorage {
   load: () => Array<TrackedEvent>;
   save: (events: Array<TrackedEvent>) => void;
 }
 
+/**
+ * @since 0.5.0-canary.4
+ */
 export interface EventQueueOptions {
   destinations: Array<Destination>;
   flushBatchSize?: number | undefined;
@@ -26,6 +31,8 @@ interface QueuedEvent {
 /**
  * Client-side batching/offline queue: persists across reloads, caps its size
  * (drop-oldest), and retries a failed batch up to `maxRetries` times.
+ *
+ * @since 0.5.0-canary.4
  */
 export class EventQueue {
   private readonly destinations: Array<Destination>;
