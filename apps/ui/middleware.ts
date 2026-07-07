@@ -2,7 +2,7 @@ import { geolocation, next } from "@vercel/functions";
 
 // Relative, not `#/lib/...` — the `#/*` alias is a tsconfig path Vercel's independent
 // middleware bundler isn't guaranteed to honor; a relative import always resolves.
-import { INITIAL_CONSENT_COOKIE_NAME } from "./src/lib/initial-consent-cookie";
+import { INITIAL_CONSENT_COOKIE_NAME } from "./src/lib/initial-consent-cookie.js";
 
 /**
  * Vercel Routing Middleware — personalizes the statically prerendered pages' consent
