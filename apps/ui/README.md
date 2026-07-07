@@ -222,12 +222,15 @@ what every visitor gets unless corrected.
 `middleware.ts` (Vercel Routing Middleware, root of this app) covers the actual
 per-visitor correction: it runs on every real request _before_ the CDN cache — including
 ones that end up served from the static cache — reads the visitor's real geo + `Sec-GPC`,
-and sets a `cf-initial-consent` cookie. The bootstrap script in `google-tag.tsx` prefers
-that cookie over the baked-in fallback whenever it's present, so the real visitor's
-region-correct default applies without a second network round trip. `middleware.ts`
-intentionally does not import `@codefast/tracking` — Vercel compiles it independently of
-this app's Vite/Nitro build, and duplicating the small EU-country/consent-mode mapping
-was the safer choice over an unverified cross-package resolution assumption.
+and sets a `codefast-ui-initial-consent` cookie (name shared from `#/lib/initial-consent-cookie`).
+The bootstrap script in `google-tag.tsx` prefers that cookie over the baked-in fallback
+whenever it's present, so the real visitor's region-correct default applies without a
+second network round trip. `middleware.ts` intentionally does not import
+`@codefast/tracking` — Vercel compiles it independently of this app's Vite/Nitro build,
+and duplicating the small EU-country/consent-mode mapping was the safer choice over an
+unverified cross-package resolution assumption. `tests/unit/middleware.test.ts` guards
+that duplication by checking every 2-letter country code against `@codefast/tracking`'s
+own resolution.
 
 # Demo files
 

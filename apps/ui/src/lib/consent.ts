@@ -23,28 +23,12 @@ declare global {
 const STRICTEST_DEFAULT: InitialConsent = { defaultGranted: false, mode: "opt-in", region: "other" };
 
 /**
- * Region (`x-vercel-ip-country`) + GPC (`Sec-GPC` request header) resolved once per
- * document request — read directly here rather than via a root route `loader`/
- * `beforeLoad`: TanStack Start's `shellComponent` (where `<GoogleTag />`/`<ConsentGate />`
- * are mounted) renders before the root match's data functions resolve, so loader/context
- * data is never available to them (confirmed empirically — root's `loaderData`/`context`
- * stayed empty on first render, only appearing after `router.invalidate()`). Server-side
- * `getRequestHeader` works via ambient request context instead, so it's available
- * synchronously from any component's render body during SSR, with no such ordering issue.
- *
- * This app prerenders every route (static HTML, generated once at build time), so this
- * server branch mostly runs with no real visitor at all — Nitro's prerender crawler hits
- * `localhost`, which never carries `x-vercel-ip-country`. A missing header is therefore
- * treated as "no reliable signal", not silently resolved to `resolveRegionFromCountryCode`'s
- * "other" fallback (opt-out ⇒ granted) — that would bake a wrong "granted" default into
- * static HTML served to every future visitor, including real EU/VN ones. `middleware.ts`
- * covers the real per-visitor personalization for prerendered pages instead (it runs
- * per real request even for a cached static response); this value is only the last-resort
- * fallback for when that cookie is missing.
- *
- * On the client there's no request to read — `<GoogleTag />` embeds the resolved value
- * (cookie-corrected, see `middleware.ts`) into `window.__INITIAL_CONSENT__` via an inline
- * script that runs before `<ConsentGate />` hydrates, so both sides agree.
+ * Read directly here (not a root-route `loader`) — `shellComponent` renders before the
+ * root match's data functions resolve, so loader data never reaches `<GoogleTag />`.
+ * This app prerenders every route, so a missing header (the common case — Nitro's
+ * prerender crawler hits `localhost`) means "no real visitor", not region "other";
+ * `middleware.ts` covers per-visitor personalization for the resulting static HTML, and
+ * this is only its last-resort fallback.
  */
 export const resolveInitialConsent = createIsomorphicFn()
   .server((): InitialConsent => {
