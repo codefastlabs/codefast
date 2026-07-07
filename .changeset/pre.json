@@ -22,6 +22,7 @@
     "theme-provider-storage-key",
     "theme-remove-server-side",
     "theme-vite-plugin",
+    "tracking-composable-consent-banner",
     "tracking-consent-external-store",
     "tracking-expose-consent-decision",
     "tracking-ga4-gtag-semantics",

@@ -77,8 +77,14 @@ export function ConsentBanner({ children, consent, open, ...props }: ConsentBann
   );
 }
 
+/**
+ * @since 0.5.0-canary.5
+ */
 export interface ConsentBannerTitleProps extends ComponentProps<"h2"> {}
 
+/**
+ * @since 0.5.0-canary.5
+ */
 export function ConsentBannerTitle({ children, ...props }: ConsentBannerTitleProps): ReactNode {
   return (
     <h2 data-slot="consent-title" {...props}>
@@ -87,22 +93,42 @@ export function ConsentBannerTitle({ children, ...props }: ConsentBannerTitlePro
   );
 }
 
+/**
+ * @since 0.5.0-canary.5
+ */
 export interface ConsentBannerDescriptionProps extends ComponentProps<"p"> {}
 
-/** Hosts the message and the privacy-policy link informed consent requires. */
+/**
+ * Hosts the message and the privacy-policy link informed consent requires.
+ *
+ * @since 0.5.0-canary.5
+ */
 export function ConsentBannerDescription(props: ConsentBannerDescriptionProps): ReactNode {
   return <p data-slot="consent-description" {...props} />;
 }
 
+/**
+ * @since 0.5.0-canary.5
+ */
 export interface ConsentBannerActionsProps extends ComponentProps<"div"> {}
 
+/**
+ * @since 0.5.0-canary.5
+ */
 export function ConsentBannerActions(props: ConsentBannerActionsProps): ReactNode {
   return <div data-slot="consent-actions" {...props} />;
 }
 
+/**
+ * @since 0.5.0-canary.5
+ */
 export interface ConsentBannerAcceptProps extends Omit<ComponentProps<"button">, "type"> {}
 
-/** Grants the categories the app requested (`useConsent`'s `categories`) — never more. */
+/**
+ * Grants the categories the app requested (`useConsent`'s `categories`) — never more.
+ *
+ * @since 0.5.0-canary.5
+ */
 export function ConsentBannerAccept({ onClick, ...props }: ConsentBannerAcceptProps): ReactNode {
   const { consent, setPending } = useConsentBannerContext("ConsentBannerAccept");
 
@@ -122,8 +148,14 @@ export function ConsentBannerAccept({ onClick, ...props }: ConsentBannerAcceptPr
   );
 }
 
+/**
+ * @since 0.5.0-canary.5
+ */
 export interface ConsentBannerRejectProps extends Omit<ComponentProps<"button">, "type"> {}
 
+/**
+ * @since 0.5.0-canary.5
+ */
 export function ConsentBannerReject({ onClick, ...props }: ConsentBannerRejectProps): ReactNode {
   const { consent, setPending } = useConsentBannerContext("ConsentBannerReject");
 
@@ -143,12 +175,17 @@ export function ConsentBannerReject({ onClick, ...props }: ConsentBannerRejectPr
   );
 }
 
+/**
+ * @since 0.5.0-canary.5
+ */
 export interface ConsentBannerCustomizeProps extends Omit<ComponentProps<"button">, "type"> {}
 
 /**
  * Opens the per-category preferences layer, starting from the current effective state so
  * nothing arrives pre-ticked in an opt-in region (pre-ticked consent is invalid under
  * GDPR). Hidden while the layer is open — `ConsentBannerSave` takes over.
+ *
+ * @since 0.5.0-canary.5
  */
 export function ConsentBannerCustomize({ onClick, ...props }: ConsentBannerCustomizeProps): ReactNode {
   const { consent, pending, setPending } = useConsentBannerContext("ConsentBannerCustomize");
@@ -172,9 +209,16 @@ export function ConsentBannerCustomize({ onClick, ...props }: ConsentBannerCusto
   );
 }
 
+/**
+ * @since 0.5.0-canary.5
+ */
 export interface ConsentBannerPreferencesProps extends ComponentProps<"div"> {}
 
-/** Container for the per-category rows — renders only while the preferences layer is open. */
+/**
+ * Container for the per-category rows — renders only while the preferences layer is open.
+ *
+ * @since 0.5.0-canary.5
+ */
 export function ConsentBannerPreferences(props: ConsentBannerPreferencesProps): ReactNode {
   const { pending } = useConsentBannerContext("ConsentBannerPreferences");
 
@@ -185,11 +229,18 @@ export function ConsentBannerPreferences(props: ConsentBannerPreferencesProps): 
   return <div data-slot="consent-preferences" {...props} />;
 }
 
+/**
+ * @since 0.5.0-canary.5
+ */
 export interface ConsentBannerCategoryProps extends ComponentProps<"label"> {
   category: ConsentCategory;
 }
 
-/** One checkbox row of the preferences layer — `children` is the visitor-facing wording. */
+/**
+ * One checkbox row of the preferences layer — `children` is the visitor-facing wording.
+ *
+ * @since 0.5.0-canary.5
+ */
 export function ConsentBannerCategory({ category, children, ...props }: ConsentBannerCategoryProps): ReactNode {
   const { pending, setPending } = useConsentBannerContext("ConsentBannerCategory");
 
@@ -212,9 +263,16 @@ export function ConsentBannerCategory({ category, children, ...props }: ConsentB
   );
 }
 
+/**
+ * @since 0.5.0-canary.5
+ */
 export interface ConsentBannerSaveProps extends Omit<ComponentProps<"button">, "type"> {}
 
-/** Persists the pending per-category selection — renders only while the preferences layer is open. */
+/**
+ * Persists the pending per-category selection — renders only while the preferences layer is open.
+ *
+ * @since 0.5.0-canary.5
+ */
 export function ConsentBannerSave({ onClick, ...props }: ConsentBannerSaveProps): ReactNode {
   const { consent, pending, setPending } = useConsentBannerContext("ConsentBannerSave");
 
