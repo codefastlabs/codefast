@@ -1,7 +1,12 @@
 import { defineEventCatalog } from "@codefast/tracking";
 import type { ClientTracker } from "@codefast/tracking/client";
 import { createClientTracker, createLocalStorageQueueStorage } from "@codefast/tracking/client";
-import { createVercelAnalyticsDestination } from "@codefast/tracking/destinations";
+import type { Destination } from "@codefast/tracking/core/destination";
+import {
+  createGoogleAdsConversionDestination,
+  createGoogleAnalyticsDestination,
+  createVercelAnalyticsDestination,
+} from "@codefast/tracking/destinations";
 import { z } from "zod";
 
 /**
@@ -49,6 +54,29 @@ export function getOrCreateAnonymousId(): string {
   return id;
 }
 
+/**
+ * GA4/Ads destinations only make sense once `<GoogleTag />` has mounted the gtag.js
+ * snippet for the configured measurement ID — omit the env var and both stay absent,
+ * so a preview/dev deploy with no real Google account never emits gtag calls.
+ */
+function googleDestinations(): Array<Destination> {
+  const destinations: Array<Destination> = [];
+
+  if (import.meta.env.VITE_GA4_MEASUREMENT_ID) {
+    destinations.push(createGoogleAnalyticsDestination());
+  }
+
+  if (import.meta.env.VITE_GOOGLE_ADS_SEND_TO) {
+    destinations.push(
+      createGoogleAdsConversionDestination({
+        conversions: { copy_code: { sendTo: import.meta.env.VITE_GOOGLE_ADS_SEND_TO } },
+      }),
+    );
+  }
+
+  return destinations;
+}
+
 let tracker: ClientTracker<typeof catalog> | undefined;
 
 /**
@@ -60,7 +88,7 @@ export function getTracker(): ClientTracker<typeof catalog> {
   tracker ??= createClientTracker({
     anonymousId: getOrCreateAnonymousId(),
     catalog,
-    destinations: [createVercelAnalyticsDestination()],
+    destinations: [createVercelAnalyticsDestination(), ...googleDestinations()],
     storage: createLocalStorageQueueStorage("codefast-ui-tracking-queue"),
   });
 

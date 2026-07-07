@@ -180,6 +180,22 @@ function PeopleComponent() {
 
 Loaders simplify your data fetching logic dramatically. Check out more information in the [Loader documentation](https://tanstack.com/router/latest/docs/framework/react/guide/data-loading#loader-parameters).
 
+# Analytics
+
+GA4 and the Google Ads conversion destination (`src/lib/tracking.ts`, `src/components/layout/google-tag.tsx`) are gated behind two env vars — set them in `.env.local` (gitignored) to enable them; leave them unset and both stay fully inert (no script loads, no gtag calls):
+
+```
+VITE_GA4_MEASUREMENT_ID=G-XXXXXXXXXX
+VITE_GOOGLE_ADS_SEND_TO=AW-XXXXXXXXX/AbCdEfGhIjK
+```
+
+- `VITE_GA4_MEASUREMENT_ID` — GA4 property → Admin → Data Streams → Web stream → "Measurement ID".
+- `VITE_GOOGLE_ADS_SEND_TO` — Google Ads → Tools & Settings → Conversions → the conversion action's "Use Google tag" setup, `AW-<conversion ID>/<conversion label>` combined.
+
+`VITE_GOOGLE_ADS_SEND_TO` currently maps to the `copy_code` event only (see `googleDestinations()` in `tracking.ts`).
+
+Consent Mode v2 defaults to fully denied in `google-tag.tsx` — this app has no region detection or consent banner wired yet (`@codefast/tracking` ships both, unused here). Wire `useConsent`/`ConsentBanner` before relying on these for EU/VN traffic.
+
 # Demo files
 
 Files prefixed with `demo` can be safely deleted. They are there to provide a starting point for you to play around with the features you've installed.

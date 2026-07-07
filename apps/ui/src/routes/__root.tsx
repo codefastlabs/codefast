@@ -9,6 +9,7 @@ import type { ReactNode } from "react";
 
 import { Analytics } from "#/components/layout/analytics";
 import { Footer } from "#/components/layout/footer";
+import { GoogleTag } from "#/components/layout/google-tag";
 import { Header } from "#/components/layout/header";
 import { NotFound } from "#/components/shared/not-found";
 import { SiteNotFound } from "#/components/shared/site-not-found";
@@ -91,6 +92,7 @@ function RootDocument({ children }: { children: ReactNode }) {
         {/* Client-only appearance via localStorage (default STORAGE_KEY): no server fn or loader,
             so `defaultPreload: "intent"` has nothing to re-fetch on nav-link hover. */}
         <AppearanceScript />
+        <GoogleTag />
         <HeadContent />
       </head>
       <body className="min-h-full overflow-x-hidden bg-ui-bg font-sans wrap-anywhere text-ui-fg antialiased selection:bg-ui-fg/15">
