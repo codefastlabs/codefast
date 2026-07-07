@@ -7,6 +7,12 @@ import { getRequestHeader } from "@tanstack/react-start/server";
 /** Bump when the privacy policy changes — invalidates any previously stored decision. */
 export const CONSENT_POLICY_VERSION = "1";
 
+/**
+ * `localStorage` key holding the visitor's `ConsentRecord` — written by `<ConsentGate />`
+ * and read pre-hydration by `<GoogleTag />`'s inline bootstrap, so both must share it.
+ */
+export const CONSENT_STORAGE_KEY = "codefast-ui-consent";
+
 export interface InitialConsent {
   defaultGranted: boolean;
   mode: ConsentMode;

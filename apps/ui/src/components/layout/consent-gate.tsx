@@ -1,12 +1,12 @@
 import { createLocalStorageConsentStorage, hasGlobalPrivacyControlSignal } from "@codefast/tracking/client";
 import { updateGoogleConsent } from "@codefast/tracking/destinations";
 import { ConsentBanner, ConsentToggle, useConsent } from "@codefast/tracking/react";
-import { useSyncExternalStore } from "react";
+import { useEffect, useSyncExternalStore } from "react";
 
-import { CONSENT_POLICY_VERSION, resolveInitialConsent } from "#/lib/consent";
+import { CONSENT_POLICY_VERSION, CONSENT_STORAGE_KEY, resolveInitialConsent } from "#/lib/consent";
 import { getTracker } from "#/lib/tracking";
 
-const consentStorage = createLocalStorageConsentStorage("codefast-ui-consent");
+const consentStorage = createLocalStorageConsentStorage(CONSENT_STORAGE_KEY);
 
 const emptySubscribe = (): (() => void) => () => {};
 
@@ -41,12 +41,20 @@ export function ConsentGate() {
       if (decision === "denied") {
         getTracker().clear();
       }
-
-      updateGoogleConsent(decision === "granted");
     },
     policyVersion: CONSENT_POLICY_VERSION,
     storage: consentStorage,
   });
+
+  // Owns the gtag "consent update" signal — an effect (not onDecision) so decisions made
+  // in another tab sync too. No stored decision → no update: `<GoogleTag />`'s inline
+  // default already applies, and hydration's first render (server snapshot = undecided)
+  // would otherwise emit a transient wrong update.
+  useEffect(() => {
+    if (consent.decision !== undefined) {
+      updateGoogleConsent(consent.decision === "granted");
+    }
+  }, [consent.decision]);
 
   const hasHydrated = useHasHydrated();
 
