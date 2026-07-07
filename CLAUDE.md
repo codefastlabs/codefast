@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Overview
 
-CodeFast is a **pnpm workspaces + Turborepo** monorepo (Node ≥ 24, pnpm 11.8.0) publishing the `@codefast/*` packages. The flagship is `@codefast/ui`, a Radix-based, Tailwind CSS 4 component library. `apps/ui` is a TanStack Start showcase site that consumes the packages.
+CodeFast is a **pnpm workspaces + Turborepo** monorepo (Node ≥ 24, pnpm 11; `@codefast/di` alone requires Node ≥ 26 for native `Map.prototype.getOrInsert`) publishing the `@codefast/*` packages. The flagship is `@codefast/ui`, a Radix-based, Tailwind CSS 4 component library. `apps/ui` is a TanStack Start showcase site that consumes the packages.
 
 ## Toolchain (non-standard — read before assuming)
 
@@ -19,7 +19,7 @@ Build packages before running apps, type-checking, or type-aware lint — `@code
 
 ```bash
 pnpm build:packages   # build only packages/* (run after editing any package src)
-pnpm dev              # build packages, then start all apps + packages in watch mode
+pnpm dev              # start all apps + packages in watch mode (no upfront build — run build:packages once on a fresh clone)
 pnpm check-types      # tsgo type check across the repo (no auto-fix — fix by hand)
 pnpm check            # lint + format:check + check-types (static gate, no fixes)
 pnpm check:fix        # lint --fix + format write
@@ -49,7 +49,7 @@ Every test file lives under exactly one category directory; otherwise Vitest wil
 - `tests/e2e/**` — subprocesses, built CLI binary, real network
 - `tests/types/**` — static `expectTypeOf` tests
 
-Rules: **no tests under `src/**`**; no test files directly under `tests/`(must be in a category subdir); mirror the`src/` path inside the category (`src/utils/dom.ts`→`tests/unit/utils/dom.test.ts`). Helpers/fixtures go under `tests/<category>/support/**`or`.../fixtures/**`and must not match`_.test._`.
+Rules: **no tests under** `src/**`; no test files directly under `tests/` (must be in a category subdir); mirror the `src/` path inside the category (`src/utils/dom.ts` → `tests/unit/utils/dom.test.ts`). Helpers/fixtures go under `tests/<category>/support/**` or `.../fixtures/**` and must not match `*.test.*`.
 
 ## Imports & aliases
 
@@ -87,10 +87,12 @@ Audit every public API you add or touch (exported function/type/prop/option/conf
 | `packages/ui`                | `@codefast/ui` — Radix + Tailwind component library; per-component subpath exports (`./button`, etc.)  |
 | `packages/tailwind-variants` | Type-safe variant styling API (faster `tailwind-variants` replacement); used by `ui`                   |
 | `packages/theme`             | Theme management using React 19 features (optimistic updates, cross-tab sync)                          |
-| `packages/di`                | Lightweight dependency-injection primitives                                                            |
+| `packages/di`                | Lightweight dependency-injection primitives (requires Node ≥ 26)                                       |
+| `packages/tracking`          | Fullstack, type-safe event tracking for TanStack Start — isomorphic trackers over a Zod event catalog  |
 | `packages/cli`               | `codefast` CLI — subcommands `arrange`, `mirror`, `tag` (run via `pnpm run codefast <cmd>`)            |
 | `packages/typescript-config` | Shared tsconfig presets                                                                                |
 | `packages/benchmark-*`       | Performance benchmark harness/viewer (`pnpm bench`)                                                    |
+| `benchmarks/*`               | Benchmark suites comparing `@codefast/*` against upstream (`di-inversify`, `tailwind-variants`)        |
 | `apps/ui`                    | Docs/showcase site for `@codefast/ui` (TanStack Start); consumes `packages/*` via `workspace:*`        |
 | `examples/tanstack-start`    | Consumer smoke-test: installs the **published** `@codefast/*` from npm (via catalog) on TanStack Start |
 
