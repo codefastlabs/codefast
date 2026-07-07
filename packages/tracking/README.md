@@ -66,17 +66,23 @@ attachRouterPageTracking(tracker, router); // router: your app's TanStack Router
 attachClientLifecycle(tracker, { beaconEndpoint: "/api/events", flushIntervalMs: 10_000 });
 ```
 
-## Consent (region-based)
+## Consent (region-based, per-category)
+
+Consent is granular per purpose, mirroring Google Consent Mode v2's split: a
+`ConsentDecision` is `{ ads: boolean, analytics: boolean }`, never a single yes/no —
+GDPR requires purpose-level consent, and the ads signals (`ad_storage`/`ad_user_data`/
+`ad_personalization`) must be able to differ from `analytics_storage`.
 
 Resolve the region/mode server-side (`resolveRegion` + `resolveConsentMode` from
 `@codefast/tracking/server` and `@codefast/tracking`) and pass `mode` down to the client.
 `ConsentBanner`/`ConsentToggle` are headless — no `@codefast/ui` dependency. Style the
 root via `className` and the inner parts via their `data-slot` attributes
-(`consent-message`, `consent-actions`, `consent-action`), e.g. Tailwind's
-`**:data-[slot=consent-action]:rounded-md`.
+(`consent-message`, `consent-actions`, `consent-action`, `consent-preferences`,
+`consent-category`), e.g. Tailwind's `**:data-[slot=consent-action]:rounded-md`.
 
 ```tsx
 import { createLocalStorageConsentStorage } from "@codefast/tracking/client";
+import { updateGoogleConsent } from "@codefast/tracking/destinations";
 import { ConsentBanner, ConsentToggle, useConsent } from "@codefast/tracking/react";
 
 // Module scope — useConsent subscribes to the storage, so it must be a stable reference.
@@ -84,18 +90,39 @@ const consentStorage = createLocalStorageConsentStorage("tracking-consent");
 
 function ConsentGate({ mode }: { mode: "opt-in" | "opt-out" }) {
   const consent = useConsent({
+    categories: ["analytics"], // the purposes your prompt asks about — Accept grants exactly these
     mode,
     onDecision: (decision) => {
-      if (decision === "denied") tracker.clear(); // stop tracking + drop the pending queue
+      updateGoogleConsent(decision); // per-category Consent Mode v2 update
+      if (!decision.analytics) tracker.clear(); // stop tracking + drop the pending queue
     },
     policyVersion: "2026-01",
     storage: consentStorage,
   });
 
-  return mode === "opt-in" ? <ConsentBanner consent={consent} /> : <ConsentToggle consent={consent} />;
+  return mode === "opt-in" ? (
+    <ConsentBanner
+      // optional second layer: per-category checkboxes ("Customize" → "Save preferences")
+      categories={[{ category: "analytics", label: "Analytics" }]}
+      consent={consent}
+      message={
+        <>
+          We use cookies to understand how you use this site. <a href="/privacy">Privacy policy</a>
+        </>
+      }
+    />
+  ) : (
+    <ConsentToggle consent={consent} />
+  );
 }
 ```
 
 The stored decision is the single source of truth (`useSyncExternalStore` under the
 hood): hydration-safe on prerendered pages, and a decision made in one tab dismisses the
 banner in every other tab via the `storage` event.
+
+For Consent Mode v2, `setGoogleConsentDefault(decision, { waitForUpdateMs, region })`
+issues the pre-tag default (it defines the gtag queueing stub itself), and
+`setGoogleAdsDataRedaction`/`setGoogleUrlPassthrough` cover the denied-ads flags. A GPC
+signal is honored as a do-not-sell-or-share opt-out: it forces `ads` denied without
+withdrawing first-party `analytics`.
