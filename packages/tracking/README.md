@@ -75,15 +75,37 @@ GDPR requires purpose-level consent, and the ads signals (`ad_storage`/`ad_user_
 
 Resolve the region/mode server-side (`resolveRegion` + `resolveConsentMode` from
 `@codefast/tracking/server` and `@codefast/tracking`) and pass `mode` down to the client.
-`ConsentBanner`/`ConsentToggle` are headless — no `@codefast/ui` dependency. Style the
-root via `className` and the inner parts via their `data-slot` attributes
-(`consent-message`, `consent-actions`, `consent-action`, `consent-preferences`,
-`consent-category`), e.g. Tailwind's `**:data-[slot=consent-action]:rounded-md`.
+The banner ships as composable, headless parts — no `@codefast/ui` dependency, any
+markup (including a design system's button styles via `className`) slots in. For a
+default look without writing CSS, import the optional plain-CSS theme:
+
+```css
+@import "@codefast/tracking/css/consent.css";
+```
+
+Or style the parts yourself via `className`/`data-slot` attributes (`consent-banner`,
+`consent-title`, `consent-description`, `consent-actions`, `consent-action`,
+`consent-preferences`, `consent-category`, `consent-toggle`), e.g. Tailwind's
+`**:data-[slot=consent-action]:rounded-md`. `data-state` on the root flips between
+`prompt` and `preferences`.
 
 ```tsx
 import { createLocalStorageConsentStorage } from "@codefast/tracking/client";
 import { updateGoogleConsent } from "@codefast/tracking/destinations";
-import { ConsentBanner, ConsentToggle, useConsent } from "@codefast/tracking/react";
+import {
+  ConsentBanner,
+  ConsentBannerAccept,
+  ConsentBannerActions,
+  ConsentBannerCategory,
+  ConsentBannerCustomize,
+  ConsentBannerDescription,
+  ConsentBannerPreferences,
+  ConsentBannerReject,
+  ConsentBannerSave,
+  ConsentBannerTitle,
+  ConsentToggle,
+  useConsent,
+} from "@codefast/tracking/react";
 
 // Module scope — useConsent subscribes to the storage, so it must be a stable reference.
 const consentStorage = createLocalStorageConsentStorage("tracking-consent");
@@ -101,21 +123,31 @@ function ConsentGate({ mode }: { mode: "opt-in" | "opt-out" }) {
   });
 
   return mode === "opt-in" ? (
-    <ConsentBanner
-      // optional second layer: per-category checkboxes ("Customize" → "Save preferences")
-      categories={[{ category: "analytics", label: "Analytics" }]}
-      consent={consent}
-      message={
-        <>
-          We use cookies to understand how you use this site. <a href="/privacy">Privacy policy</a>
-        </>
-      }
-    />
+    <ConsentBanner consent={consent}>
+      <ConsentBannerTitle>Cookies &amp; analytics</ConsentBannerTitle>
+      <ConsentBannerDescription>
+        We use cookies to understand how you use this site. <a href="/privacy">Privacy policy</a>
+      </ConsentBannerDescription>
+      {/* optional second layer: per-category checkboxes ("Customize" → "Save preferences") */}
+      <ConsentBannerPreferences>
+        <ConsentBannerCategory category="analytics">Analytics</ConsentBannerCategory>
+        <ConsentBannerSave>Save preferences</ConsentBannerSave>
+      </ConsentBannerPreferences>
+      <ConsentBannerActions>
+        <ConsentBannerAccept>Accept</ConsentBannerAccept>
+        <ConsentBannerReject>Reject</ConsentBannerReject>
+        <ConsentBannerCustomize>Customize</ConsentBannerCustomize>
+      </ConsentBannerActions>
+    </ConsentBanner>
   ) : (
     <ConsentToggle consent={consent} />
   );
 }
 ```
+
+The root gates itself on `consent.needsPrompt`; pass `open` to override — e.g. reopening
+the banner as a "Cookie settings" panel after a decision (GDPR expects withdrawing
+consent to be as easy as giving it).
 
 The stored decision is the single source of truth (`useSyncExternalStore` under the
 hood): hydration-safe on prerendered pages, and a decision made in one tab dismisses the
