@@ -22,6 +22,16 @@ describe("ConsentBanner", () => {
     expect(container).toBeEmptyDOMElement();
   });
 
+  it("renders as a labeled region with data-slot styling hooks on every part", () => {
+    render(<ConsentBanner className="banner" consent={buildConsent()} />);
+
+    const region = screen.getByRole("region", { name: "Cookie consent" });
+
+    expect(region).toHaveClass("banner");
+    expect(region.querySelector('[data-slot="consent-message"]')).toBeInTheDocument();
+    expect(region.querySelectorAll('[data-slot="consent-action"]')).toHaveLength(2);
+  });
+
   it("calls grant/deny from the accept/reject buttons", async () => {
     const user = userEvent.setup();
     const consent = buildConsent();
