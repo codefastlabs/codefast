@@ -75,10 +75,13 @@ export default function middleware(request: Request): Response {
   const { country } = geolocation(request);
   const region = resolveRegion(country);
   const isOptIn = region === "eu" || region === "vn";
-  const hasGpcSignal = request.headers.get("sec-gpc") === "1";
-  const defaultGranted = isOptIn ? false : !hasGpcSignal;
 
-  const value = encodeURIComponent(JSON.stringify({ defaultGranted, mode: isOptIn ? "opt-in" : "opt-out", region }));
+  // Mirrors resolveDefaultConsent(mode, ["analytics"], gpc): this site never requests
+  // the ads purpose, and a GPC signal is a do-not-sell-or-share (ads) opt-out — it does
+  // not withdraw first-party analytics, so it has no effect on this payload.
+  const defaultConsent = { ads: false, analytics: !isOptIn };
+
+  const value = encodeURIComponent(JSON.stringify({ defaultConsent, mode: isOptIn ? "opt-in" : "opt-out", region }));
 
   return next({
     headers: { "set-cookie": `${INITIAL_CONSENT_COOKIE_NAME}=${value}; Path=/; Max-Age=86400; SameSite=Lax` },

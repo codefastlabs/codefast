@@ -7,11 +7,17 @@ import middleware, { resolveRegion } from "../../middleware";
 const ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 const ALL_TWO_LETTER_CODES = ALPHABET.split("").flatMap((a) => ALPHABET.split("").map((b) => `${a}${b}`));
 
-function readCookieValue(response: Response): { defaultGranted: boolean; mode: string; region: string } {
+interface CookiePayload {
+  defaultConsent: { ads: boolean; analytics: boolean };
+  mode: string;
+  region: string;
+}
+
+function readCookieValue(response: Response): CookiePayload {
   const setCookie = response.headers.get("set-cookie") ?? "";
   const value = setCookie.split(";")[0]?.split("=")[1] ?? "";
 
-  return JSON.parse(decodeURIComponent(value)) as { defaultGranted: boolean; mode: string; region: string };
+  return JSON.parse(decodeURIComponent(value)) as CookiePayload;
 }
 
 // `resolveRegion` duplicates `@codefast/tracking`'s region mapping (see middleware.ts's
@@ -50,22 +56,34 @@ describe("middleware", () => {
     return new Request("https://codefastlabs.com/", { headers });
   }
 
-  it("sets a denied/opt-in cookie for an EU visitor", () => {
+  it("sets an all-denied/opt-in cookie for an EU visitor", () => {
     const response = middleware(requestFrom("DE"));
 
-    expect(readCookieValue(response)).toEqual({ defaultGranted: false, mode: "opt-in", region: "eu" });
+    expect(readCookieValue(response)).toEqual({
+      defaultConsent: { ads: false, analytics: false },
+      mode: "opt-in",
+      region: "eu",
+    });
   });
 
-  it("sets a granted/opt-out cookie for a US visitor", () => {
+  it("sets an analytics-granted/opt-out cookie for a US visitor — ads is never requested", () => {
     const response = middleware(requestFrom("US"));
 
-    expect(readCookieValue(response)).toEqual({ defaultGranted: true, mode: "opt-out", region: "us" });
+    expect(readCookieValue(response)).toEqual({
+      defaultConsent: { ads: false, analytics: true },
+      mode: "opt-out",
+      region: "us",
+    });
   });
 
-  it("honors a GPC signal for an opt-out region by denying anyway", () => {
+  it("keeps analytics granted under a GPC signal — do-not-sell-or-share only covers ads", () => {
     const response = middleware(requestFrom("US", "1"));
 
-    expect(readCookieValue(response)).toEqual({ defaultGranted: false, mode: "opt-out", region: "us" });
+    expect(readCookieValue(response)).toEqual({
+      defaultConsent: { ads: false, analytics: true },
+      mode: "opt-out",
+      region: "us",
+    });
   });
 
   it("passes the request through instead of short-circuiting it", () => {

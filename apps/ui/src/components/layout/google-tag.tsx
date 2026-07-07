@@ -25,8 +25,8 @@ export function buildInitialConsentBootstrapScript(fallback: InitialConsent): st
  * Consent Mode v2 default + gtag.js config. The visitor's stored decision must win over
  * the region default *here*, before `gtag("config")` fires the initial page_view — a
  * post-hydration `consent update` would be too late to stop (or unlock) that first hit.
- * The `ad_*` categories stay denied unconditionally — this site runs no ads, and the
- * analytics-only banner never asks the visitor about ads data sharing.
+ * The ads signals follow the per-category decision generically, but this site never
+ * requests the `ads` purpose, so they stay denied in practice.
  */
 export function buildGtagBootstrapScript(gaMeasurementId: string): string {
   // The record read here is `@codefast/tracking`'s ConsentRecord, stored as plain JSON
@@ -34,19 +34,20 @@ export function buildGtagBootstrapScript(gaMeasurementId: string): string {
   return `
     window.dataLayer = window.dataLayer || [];
     function gtag(){window.dataLayer.push(arguments);}
-    var storedDecision = null;
+    var storedConsent = null;
     try {
       var record = JSON.parse(window.localStorage.getItem(${JSON.stringify(CONSENT_STORAGE_KEY)}));
-      if (record && record.policyVersion === ${JSON.stringify(CONSENT_POLICY_VERSION)} && (record.decision === "granted" || record.decision === "denied")) {
-        storedDecision = record.decision;
+      if (record && record.policyVersion === ${JSON.stringify(CONSENT_POLICY_VERSION)} && record.decision
+          && typeof record.decision.ads === "boolean" && typeof record.decision.analytics === "boolean") {
+        storedConsent = record.decision;
       }
     } catch (e) {}
-    var analyticsGranted = storedDecision ? storedDecision === "granted" : window.__INITIAL_CONSENT__.defaultGranted;
+    var consent = storedConsent || window.__INITIAL_CONSENT__.defaultConsent;
     gtag("consent", "default", {
-      ad_personalization: "denied",
-      ad_storage: "denied",
-      ad_user_data: "denied",
-      analytics_storage: analyticsGranted ? "granted" : "denied",
+      ad_personalization: consent.ads ? "granted" : "denied",
+      ad_storage: consent.ads ? "granted" : "denied",
+      ad_user_data: consent.ads ? "granted" : "denied",
+      analytics_storage: consent.analytics ? "granted" : "denied",
     });
     gtag("js", new Date());
     gtag("config", "${gaMeasurementId}");

@@ -14,22 +14,34 @@ describe("resolveInitialConsent", () => {
   it("falls back to the strictest default when there's no country header (build-time prerender)", () => {
     getRequestHeader.mockReturnValue(undefined);
 
-    expect(resolveInitialConsent()).toEqual({ defaultGranted: false, mode: "opt-in", region: "other" });
+    expect(resolveInitialConsent()).toEqual({
+      defaultConsent: { ads: false, analytics: false },
+      mode: "opt-in",
+      region: "other",
+    });
   });
 
-  it("resolves EU to opt-in/denied", () => {
+  it("resolves EU to opt-in with everything denied", () => {
     getRequestHeader.mockImplementation((name: string) => (name === "x-vercel-ip-country" ? "DE" : undefined));
 
-    expect(resolveInitialConsent()).toEqual({ defaultGranted: false, mode: "opt-in", region: "eu" });
+    expect(resolveInitialConsent()).toEqual({
+      defaultConsent: { ads: false, analytics: false },
+      mode: "opt-in",
+      region: "eu",
+    });
   });
 
-  it("resolves US to opt-out/granted", () => {
+  it("resolves US to opt-out with analytics granted — ads is never requested here", () => {
     getRequestHeader.mockImplementation((name: string) => (name === "x-vercel-ip-country" ? "US" : undefined));
 
-    expect(resolveInitialConsent()).toEqual({ defaultGranted: true, mode: "opt-out", region: "us" });
+    expect(resolveInitialConsent()).toEqual({
+      defaultConsent: { ads: false, analytics: true },
+      mode: "opt-out",
+      region: "us",
+    });
   });
 
-  it("honors a GPC signal for an opt-out region by denying anyway", () => {
+  it("leaves analytics granted under a GPC signal — do-not-sell-or-share only covers ads", () => {
     getRequestHeader.mockImplementation((name: string) => {
       if (name === "x-vercel-ip-country") {
         return "US";
@@ -42,6 +54,10 @@ describe("resolveInitialConsent", () => {
       return undefined;
     });
 
-    expect(resolveInitialConsent()).toEqual({ defaultGranted: false, mode: "opt-out", region: "us" });
+    expect(resolveInitialConsent()).toEqual({
+      defaultConsent: { ads: false, analytics: true },
+      mode: "opt-out",
+      region: "us",
+    });
   });
 });

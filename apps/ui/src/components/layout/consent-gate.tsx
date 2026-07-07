@@ -3,7 +3,12 @@ import { updateGoogleConsent } from "@codefast/tracking/destinations";
 import { ConsentBanner, ConsentToggle, useConsent } from "@codefast/tracking/react";
 import { useEffect, useSyncExternalStore } from "react";
 
-import { CONSENT_POLICY_VERSION, CONSENT_STORAGE_KEY, resolveInitialConsent } from "#/lib/consent";
+import {
+  CONSENT_POLICY_VERSION,
+  CONSENT_STORAGE_KEY,
+  REQUESTED_CONSENT_CATEGORIES,
+  resolveInitialConsent,
+} from "#/lib/consent";
 import { getTracker } from "#/lib/tracking";
 
 const consentStorage = createLocalStorageConsentStorage(CONSENT_STORAGE_KEY);
@@ -35,10 +40,11 @@ export function ConsentGate() {
   const { mode } = resolveInitialConsent();
 
   const consent = useConsent({
+    categories: REQUESTED_CONSENT_CATEGORIES,
     hasGlobalPrivacyControlSignal: hasGlobalPrivacyControlSignal(),
     mode,
     onDecision(decision) {
-      if (decision === "denied") {
+      if (!decision.analytics) {
         getTracker().clear();
       }
     },
@@ -52,7 +58,7 @@ export function ConsentGate() {
   // would otherwise emit a transient wrong update.
   useEffect(() => {
     if (consent.decision !== undefined) {
-      updateGoogleConsent(consent.decision === "granted");
+      updateGoogleConsent(consent.decision);
     }
   }, [consent.decision]);
 

@@ -1,5 +1,5 @@
-import type { ConsentMode, ConsentRegion } from "@codefast/tracking/core";
-import { resolveConsentMode, shouldTrackByDefault } from "@codefast/tracking/core";
+import type { ConsentCategory, ConsentDecision, ConsentMode, ConsentRegion } from "@codefast/tracking/core";
+import { createConsentDecision, resolveConsentMode, resolveDefaultConsent } from "@codefast/tracking/core";
 import { resolveRegionFromCountryCode } from "@codefast/tracking/server";
 import { createIsomorphicFn } from "@tanstack/react-start";
 import { getRequestHeader } from "@tanstack/react-start/server";
@@ -13,8 +13,11 @@ export const CONSENT_POLICY_VERSION = "1";
  */
 export const CONSENT_STORAGE_KEY = "codefast-ui-consent";
 
+/** The only purpose this site tracks for — it runs no ads, so `ads` is never requested. */
+export const REQUESTED_CONSENT_CATEGORIES: ReadonlyArray<ConsentCategory> = ["analytics"];
+
 export interface InitialConsent {
-  defaultGranted: boolean;
+  defaultConsent: ConsentDecision;
   mode: ConsentMode;
   region: ConsentRegion;
 }
@@ -26,7 +29,11 @@ declare global {
 }
 
 /** The safest state when there's no real visitor to resolve a region for. */
-const STRICTEST_DEFAULT: InitialConsent = { defaultGranted: false, mode: "opt-in", region: "other" };
+const STRICTEST_DEFAULT: InitialConsent = {
+  defaultConsent: createConsentDecision([]),
+  mode: "opt-in",
+  region: "other",
+};
 
 /**
  * Read directly here (not a root-route `loader`) — `shellComponent` renders before the
@@ -48,6 +55,10 @@ export const resolveInitialConsent = createIsomorphicFn()
     const mode = resolveConsentMode(region);
     const hasGpcSignal = getRequestHeader("sec-gpc") === "1";
 
-    return { defaultGranted: shouldTrackByDefault(mode, hasGpcSignal), mode, region };
+    return {
+      defaultConsent: resolveDefaultConsent(mode, REQUESTED_CONSENT_CATEGORIES, hasGpcSignal),
+      mode,
+      region,
+    };
   })
   .client((): InitialConsent => globalThis.window.__INITIAL_CONSENT__ ?? STRICTEST_DEFAULT);

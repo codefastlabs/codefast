@@ -12,7 +12,11 @@ function runScript(script: string): void {
   new Function(script)();
 }
 
-const FALLBACK: InitialConsent = { defaultGranted: false, mode: "opt-in", region: "other" };
+const FALLBACK: InitialConsent = {
+  defaultConsent: { ads: false, analytics: false },
+  mode: "opt-in",
+  region: "other",
+};
 
 describe("buildInitialConsentBootstrapScript", () => {
   afterEach(() => {
@@ -27,7 +31,11 @@ describe("buildInitialConsentBootstrapScript", () => {
   });
 
   it("prefers the middleware cookie over the fallback when present", () => {
-    const fromCookie: InitialConsent = { defaultGranted: true, mode: "opt-out", region: "us" };
+    const fromCookie: InitialConsent = {
+      defaultConsent: { ads: false, analytics: true },
+      mode: "opt-out",
+      region: "us",
+    };
 
     document.cookie = `${INITIAL_CONSENT_COOKIE_NAME}=${encodeURIComponent(JSON.stringify(fromCookie))}; path=/`;
     runScript(buildInitialConsentBootstrapScript(FALLBACK));
@@ -57,7 +65,7 @@ describe("buildGtagBootstrapScript", () => {
   }
 
   it("grants analytics_storage only — ad_* stays denied on an ads-free site — and configures the measurement ID", () => {
-    window.__INITIAL_CONSENT__ = { defaultGranted: true, mode: "opt-out", region: "us" };
+    window.__INITIAL_CONSENT__ = { defaultConsent: { ads: false, analytics: true }, mode: "opt-out", region: "us" };
     runScript(buildGtagBootstrapScript("G-TEST123"));
 
     const calls = (window.dataLayer ?? []) as Array<ArrayLike<unknown>>;
@@ -77,7 +85,7 @@ describe("buildGtagBootstrapScript", () => {
   });
 
   it("defaults everything to denied when window.__INITIAL_CONSENT__ says so", () => {
-    window.__INITIAL_CONSENT__ = { defaultGranted: false, mode: "opt-in", region: "eu" };
+    window.__INITIAL_CONSENT__ = { defaultConsent: { ads: false, analytics: false }, mode: "opt-in", region: "eu" };
     runScript(buildGtagBootstrapScript("G-TEST123"));
 
     expect(consentDefaultParams().analytics_storage).toBe("denied");
@@ -85,21 +93,30 @@ describe("buildGtagBootstrapScript", () => {
   });
 
   it("prefers a stored grant over a denied region default (returning opt-in visitor)", () => {
-    window.__INITIAL_CONSENT__ = { defaultGranted: false, mode: "opt-in", region: "eu" };
+    window.__INITIAL_CONSENT__ = { defaultConsent: { ads: false, analytics: false }, mode: "opt-in", region: "eu" };
     window.localStorage.setItem(
       CONSENT_STORAGE_KEY,
-      JSON.stringify({ decision: "granted", policyVersion: CONSENT_POLICY_VERSION, timestamp: 0 }),
+      JSON.stringify({
+        decision: { ads: false, analytics: true },
+        policyVersion: CONSENT_POLICY_VERSION,
+        timestamp: 0,
+      }),
     );
     runScript(buildGtagBootstrapScript("G-TEST123"));
 
     expect(consentDefaultParams().analytics_storage).toBe("granted");
+    expect(consentDefaultParams().ad_storage).toBe("denied");
   });
 
   it("prefers a stored denial over a granted region default (opted-out visitor)", () => {
-    window.__INITIAL_CONSENT__ = { defaultGranted: true, mode: "opt-out", region: "us" };
+    window.__INITIAL_CONSENT__ = { defaultConsent: { ads: false, analytics: true }, mode: "opt-out", region: "us" };
     window.localStorage.setItem(
       CONSENT_STORAGE_KEY,
-      JSON.stringify({ decision: "denied", policyVersion: CONSENT_POLICY_VERSION, timestamp: 0 }),
+      JSON.stringify({
+        decision: { ads: false, analytics: false },
+        policyVersion: CONSENT_POLICY_VERSION,
+        timestamp: 0,
+      }),
     );
     runScript(buildGtagBootstrapScript("G-TEST123"));
 
@@ -107,10 +124,21 @@ describe("buildGtagBootstrapScript", () => {
   });
 
   it("ignores a decision recorded under an older policy version", () => {
-    window.__INITIAL_CONSENT__ = { defaultGranted: false, mode: "opt-in", region: "eu" };
+    window.__INITIAL_CONSENT__ = { defaultConsent: { ads: false, analytics: false }, mode: "opt-in", region: "eu" };
     window.localStorage.setItem(
       CONSENT_STORAGE_KEY,
-      JSON.stringify({ decision: "granted", policyVersion: "0", timestamp: 0 }),
+      JSON.stringify({ decision: { ads: false, analytics: true }, policyVersion: "0", timestamp: 0 }),
+    );
+    runScript(buildGtagBootstrapScript("G-TEST123"));
+
+    expect(consentDefaultParams().analytics_storage).toBe("denied");
+  });
+
+  it("ignores a legacy granted/denied string record and falls back to the region default", () => {
+    window.__INITIAL_CONSENT__ = { defaultConsent: { ads: false, analytics: false }, mode: "opt-in", region: "eu" };
+    window.localStorage.setItem(
+      CONSENT_STORAGE_KEY,
+      JSON.stringify({ decision: "granted", policyVersion: CONSENT_POLICY_VERSION, timestamp: 0 }),
     );
     runScript(buildGtagBootstrapScript("G-TEST123"));
 
@@ -118,7 +146,7 @@ describe("buildGtagBootstrapScript", () => {
   });
 
   it("falls back to the region default when the stored record is corrupt", () => {
-    window.__INITIAL_CONSENT__ = { defaultGranted: true, mode: "opt-out", region: "us" };
+    window.__INITIAL_CONSENT__ = { defaultConsent: { ads: false, analytics: true }, mode: "opt-out", region: "us" };
     window.localStorage.setItem(CONSENT_STORAGE_KEY, "not-json");
     runScript(buildGtagBootstrapScript("G-TEST123"));
 

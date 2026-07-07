@@ -13,6 +13,7 @@ const { clear, resolveInitialConsent, updateGoogleConsent } = vi.hoisted(() => (
 vi.mock("#/lib/consent", () => ({
   CONSENT_POLICY_VERSION: "1",
   CONSENT_STORAGE_KEY: "codefast-ui-consent",
+  REQUESTED_CONSENT_CATEGORIES: ["analytics"],
   resolveInitialConsent,
 }));
 vi.mock("#/lib/tracking", () => ({ getTracker: () => ({ clear }) }));
@@ -28,9 +29,12 @@ afterEach(() => {
   cleanup();
 });
 
+const DENIED = { ads: false, analytics: false };
+const ANALYTICS_ONLY = { ads: false, analytics: true };
+
 describe("ConsentGate", () => {
   it("renders a blocking accept/reject banner for opt-in regions", () => {
-    resolveInitialConsent.mockReturnValue({ defaultGranted: false, mode: "opt-in", region: "eu" });
+    resolveInitialConsent.mockReturnValue({ defaultConsent: DENIED, mode: "opt-in", region: "eu" });
 
     render(<ConsentGate />);
 
@@ -39,7 +43,7 @@ describe("ConsentGate", () => {
   });
 
   it("renders an always-visible Do Not Sell toggle for opt-out regions", () => {
-    resolveInitialConsent.mockReturnValue({ defaultGranted: true, mode: "opt-out", region: "us" });
+    resolveInitialConsent.mockReturnValue({ defaultConsent: ANALYTICS_ONLY, mode: "opt-out", region: "us" });
 
     render(<ConsentGate />);
 
@@ -47,7 +51,7 @@ describe("ConsentGate", () => {
   });
 
   it("clears the tracker's queue and revokes gtag consent on Reject", async () => {
-    resolveInitialConsent.mockReturnValue({ defaultGranted: false, mode: "opt-in", region: "eu" });
+    resolveInitialConsent.mockReturnValue({ defaultConsent: DENIED, mode: "opt-in", region: "eu" });
 
     const user = userEvent.setup();
 
@@ -55,11 +59,11 @@ describe("ConsentGate", () => {
     await user.click(screen.getByRole("button", { name: "Reject" }));
 
     expect(clear).toHaveBeenCalledOnce();
-    expect(updateGoogleConsent).toHaveBeenCalledWith(false);
+    expect(updateGoogleConsent).toHaveBeenCalledWith(DENIED);
   });
 
-  it("updates gtag consent without clearing the tracker on Accept", async () => {
-    resolveInitialConsent.mockReturnValue({ defaultGranted: false, mode: "opt-in", region: "eu" });
+  it("updates gtag consent without clearing the tracker on Accept — analytics only, never ads", async () => {
+    resolveInitialConsent.mockReturnValue({ defaultConsent: DENIED, mode: "opt-in", region: "eu" });
 
     const user = userEvent.setup();
 
@@ -67,23 +71,23 @@ describe("ConsentGate", () => {
     await user.click(screen.getByRole("button", { name: "Accept" }));
 
     expect(clear).not.toHaveBeenCalled();
-    expect(updateGoogleConsent).toHaveBeenCalledWith(true);
+    expect(updateGoogleConsent).toHaveBeenCalledWith(ANALYTICS_ONLY);
   });
 
   it("replays a stored grant to gtag on mount, without waiting for a new decision", () => {
-    resolveInitialConsent.mockReturnValue({ defaultGranted: false, mode: "opt-in", region: "eu" });
+    resolveInitialConsent.mockReturnValue({ defaultConsent: DENIED, mode: "opt-in", region: "eu" });
     window.localStorage.setItem(
       "codefast-ui-consent",
-      JSON.stringify({ decision: "granted", policyVersion: "1", timestamp: 0 }),
+      JSON.stringify({ decision: ANALYTICS_ONLY, policyVersion: "1", timestamp: 0 }),
     );
 
     render(<ConsentGate />);
 
-    expect(updateGoogleConsent).toHaveBeenCalledWith(true);
+    expect(updateGoogleConsent).toHaveBeenCalledWith(ANALYTICS_ONLY);
   });
 
   it("syncs a denial made in another tab to gtag", () => {
-    resolveInitialConsent.mockReturnValue({ defaultGranted: true, mode: "opt-out", region: "us" });
+    resolveInitialConsent.mockReturnValue({ defaultConsent: ANALYTICS_ONLY, mode: "opt-out", region: "us" });
 
     render(<ConsentGate />);
     updateGoogleConsent.mockClear();
@@ -91,11 +95,11 @@ describe("ConsentGate", () => {
     act(() => {
       window.localStorage.setItem(
         "codefast-ui-consent",
-        JSON.stringify({ decision: "denied", policyVersion: "1", timestamp: 0 }),
+        JSON.stringify({ decision: DENIED, policyVersion: "1", timestamp: 0 }),
       );
       window.dispatchEvent(new StorageEvent("storage", { key: "codefast-ui-consent" }));
     });
 
-    expect(updateGoogleConsent).toHaveBeenCalledWith(false);
+    expect(updateGoogleConsent).toHaveBeenCalledWith(DENIED);
   });
 });
