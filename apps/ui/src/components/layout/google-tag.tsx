@@ -21,17 +21,20 @@ export function buildInitialConsentBootstrapScript(fallback: InitialConsent): st
   `;
 }
 
-/** Consent Mode v2 default + gtag.js config, reading the bootstrap's resolved value. */
+/**
+ * Consent Mode v2 default + gtag.js config, reading the bootstrap's resolved value.
+ * The `ad_*` categories stay denied unconditionally — this site runs no ads, and the
+ * analytics-only banner never asks the visitor about ads data sharing.
+ */
 export function buildGtagBootstrapScript(gaMeasurementId: string): string {
   return `
     window.dataLayer = window.dataLayer || [];
     function gtag(){window.dataLayer.push(arguments);}
-    var state = window.__INITIAL_CONSENT__.defaultGranted ? "granted" : "denied";
     gtag("consent", "default", {
-      ad_personalization: state,
-      ad_storage: state,
-      ad_user_data: state,
-      analytics_storage: state,
+      ad_personalization: "denied",
+      ad_storage: "denied",
+      ad_user_data: "denied",
+      analytics_storage: window.__INITIAL_CONSENT__.defaultGranted ? "granted" : "denied",
     });
     gtag("js", new Date());
     gtag("config", "${gaMeasurementId}");
