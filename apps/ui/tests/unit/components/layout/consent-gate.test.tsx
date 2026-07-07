@@ -86,6 +86,36 @@ describe("ConsentGate", () => {
     expect(updateGoogleConsent).toHaveBeenCalledWith(ANALYTICS_ONLY);
   });
 
+  it("keeps a persistent Cookie settings control after an opt-in decision and reopens the banner", async () => {
+    resolveInitialConsent.mockReturnValue({ defaultConsent: DENIED, mode: "opt-in", region: "eu" });
+    window.localStorage.setItem(
+      "codefast-ui-consent",
+      JSON.stringify({ decision: ANALYTICS_ONLY, policyVersion: "1", timestamp: 0 }),
+    );
+
+    const user = userEvent.setup();
+
+    render(<ConsentGate />);
+
+    // Withdrawal must stay as easy as consent — no banner, but a way back in.
+    expect(screen.queryByRole("button", { name: "Accept" })).toBeNull();
+
+    await user.click(screen.getByRole("button", { name: "Cookie settings" }));
+    await user.click(screen.getByRole("button", { name: "Reject" }));
+
+    expect(clear).toHaveBeenCalledOnce();
+    expect(updateGoogleConsent).toHaveBeenLastCalledWith(DENIED);
+    expect(screen.getByRole("button", { name: "Cookie settings" })).toBeTruthy();
+  });
+
+  it("links the privacy policy from the banner", () => {
+    resolveInitialConsent.mockReturnValue({ defaultConsent: DENIED, mode: "opt-in", region: "eu" });
+
+    render(<ConsentGate />);
+
+    expect(screen.getByRole("link", { name: "Privacy policy" })).toHaveAttribute("href", "/privacy");
+  });
+
   it("syncs a denial made in another tab to gtag", () => {
     resolveInitialConsent.mockReturnValue({ defaultConsent: ANALYTICS_ONLY, mode: "opt-out", region: "us" });
 
