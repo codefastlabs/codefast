@@ -33,8 +33,8 @@ export const progressCircleDoc: ComponentDoc = {
   features: [
     "Five preset sizes (sm/md/lg/xl/2xl, 32–128px) or an exact sizeInPixels override; stroke width scales with size unless set explicitly via strokeWidth.",
     "Three thickness presets (thin/regular/thick) computed as a percentage of the circle's diameter, not a fixed pixel value.",
-    "Animates value changes over animationDuration (default 1000ms); disable with animate={false} for an instant jump.",
-    'customLabel({ value }) replaces the default "N%" center text with your own render.',
+    "Animates value changes over animationDuration (default 1000ms); disable with animated={false} for an instant jump.",
+    'renderLabel({ value }) replaces the default "N%" center text with your own render.',
   ],
   api: [
     {
@@ -59,7 +59,7 @@ export const progressCircleDoc: ComponentDoc = {
           description: "Diameter in pixels (overrides the size variant).",
         },
         {
-          name: "customLabel",
+          name: "renderLabel",
           type: "({ value }) => JSX.Element",
           description: "Render your own centre label instead of the number.",
         },

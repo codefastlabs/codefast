@@ -3,7 +3,7 @@ import { useMemo } from "react";
 /**
  * @since 0.3.16-canary.0
  */
-export interface UsePaginationProps {
+export interface UsePaginationOptions {
   /**
    * Current active page number.
    */
@@ -50,7 +50,7 @@ const createRange = (start: number, end: number): Array<number> => {
  * collapsed ranges. The shape adapts to the total pages and the requested
  * sibling window around the current page.
  *
- * @param props - Pagination options. See {@link UsePaginationProps}.
+ * @param props - Pagination options. See {@link UsePaginationOptions}.
  * @returns Array of page numbers and `ELLIPSIS` representing the pagination model.
  *
  * @example
@@ -70,7 +70,7 @@ export function usePagination({
   resultsPerPage,
   siblingPagesCount = 1,
   totalResults,
-}: UsePaginationProps): Array<number | string> {
+}: UsePaginationOptions): Array<number | string> {
   return useMemo<Array<number | string>>(() => {
     // Total pages derived from results and page size
     const totalPages = Math.ceil(totalResults / Math.floor(resultsPerPage));

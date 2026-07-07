@@ -122,7 +122,7 @@ export function MessageScrollerLoadHistory() {
                       </MessageScrollerItem>
                     );
                   })}
-                  <MessageScrollerItem scrollAnchor={false}>
+                  <MessageScrollerItem isScrollAnchor={false}>
                     <Marker variant="separator">
                       <MarkerContent>End of Conversation</MarkerContent>
                     </Marker>

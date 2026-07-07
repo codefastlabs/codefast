@@ -57,7 +57,7 @@ const TRANSCRIPT: Array<Turn> = [
   {
     id: "demo-reload-a",
     role: "assistant",
-    text: "MessageScrollerItem fixes that with turn anchoring. Set scrollAnchor on the turn that should settle near the top instead of blindly snapping to the document bottom.\n\nIt also leaves a small peek of the previous exchange visible above the anchor, so context isn't lost.",
+    text: "MessageScrollerItem fixes that with turn anchoring. Set isScrollAnchor on the turn that should settle near the top instead of blindly snapping to the document bottom.\n\nIt also leaves a small peek of the previous exchange visible above the anchor, so context isn't lost.",
   },
   {
     id: "demo-scrolled-up",
@@ -135,7 +135,7 @@ export function MessageScrollerDemo() {
                       const isUser = message.role === "user";
 
                       return (
-                        <MessageScrollerItem key={message.id} messageId={message.id} scrollAnchor={isUser}>
+                        <MessageScrollerItem key={message.id} messageId={message.id} isScrollAnchor={isUser}>
                           <Message align={isUser ? "end" : "start"}>
                             <MessageContent>
                               <Bubble align={isUser ? "end" : "start"} variant={isUser ? "muted" : "ghost"}>

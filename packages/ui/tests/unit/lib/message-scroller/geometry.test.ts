@@ -89,7 +89,7 @@ function createFixture(options: {
   contentPaddingEnd?: number;
   items: Array<{
     messageId?: string;
-    scrollAnchor?: boolean;
+    isScrollAnchor?: boolean;
     top: number;
     height: number;
   }>;
@@ -127,7 +127,7 @@ function createFixture(options: {
       element.dataset.messageId = item.messageId;
     }
 
-    element.dataset.scrollAnchor = item.scrollAnchor ? "true" : "false";
+    element.dataset.scrollAnchor = item.isScrollAnchor ? "true" : "false";
     // Item rects are in client coordinates: viewport-relative top shifted by the
     // viewport's own top so getElementTop adds back scrollTop correctly.
     setRect(element, { top: viewportTop + item.top, height: item.height });

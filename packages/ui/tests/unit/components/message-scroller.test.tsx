@@ -67,7 +67,7 @@ describe("message-scroller", () => {
     const { container } = renderScroller(
       <>
         <MessageScrollerItem>First</MessageScrollerItem>
-        <MessageScrollerItem scrollAnchor>Second</MessageScrollerItem>
+        <MessageScrollerItem isScrollAnchor>Second</MessageScrollerItem>
       </>,
     );
 

@@ -20,7 +20,7 @@ type GroupChatItem =
       id: string;
       type: "event";
       text: string;
-      scrollAnchor?: boolean | undefined;
+      isScrollAnchor?: boolean | undefined;
     }
   | {
       id: string;
@@ -28,7 +28,7 @@ type GroupChatItem =
       sender: string;
       role: "assistant" | "participant";
       text: string;
-      scrollAnchor?: boolean | undefined;
+      isScrollAnchor?: boolean | undefined;
     };
 
 const CURRENT_USER = "Grace";
@@ -54,7 +54,7 @@ const INITIAL_ITEMS: Array<GroupChatItem> = [
     sender: "Grace",
     role: "participant",
     text: "ping @rocky",
-    scrollAnchor: true,
+    isScrollAnchor: true,
   },
 ];
 
@@ -62,7 +62,7 @@ const ROCKY_MARKER: GroupChatItem = {
   id: "group-4",
   type: "event",
   text: "Rocky has joined the chat",
-  scrollAnchor: true,
+  isScrollAnchor: true,
 };
 
 const ROCKY_MESSAGE: GroupChatItem = {
@@ -78,7 +78,7 @@ function GroupChatMessage({ item }: { item: Extract<GroupChatItem, { type: "mess
   const variant = isCurrentUser ? "muted" : item.role === "assistant" ? "ghost" : "tinted";
 
   return (
-    <MessageScrollerItem messageId={item.id} scrollAnchor={item.scrollAnchor ?? false}>
+    <MessageScrollerItem messageId={item.id} isScrollAnchor={item.isScrollAnchor ?? false}>
       <Message align={isCurrentUser ? "end" : "start"}>
         <MessageContent>
           {!isCurrentUser && <MessageHeader>{item.sender}</MessageHeader>}
@@ -93,13 +93,13 @@ function GroupChatMessage({ item }: { item: Extract<GroupChatItem, { type: "mess
 
 function GroupChatMarker({
   item,
-  scrollAnchor = false,
+  isScrollAnchor = false,
 }: {
   item: Extract<GroupChatItem, { type: "event" }>;
-  scrollAnchor?: boolean | undefined;
+  isScrollAnchor?: boolean | undefined;
 }) {
   return (
-    <MessageScrollerItem scrollAnchor={scrollAnchor}>
+    <MessageScrollerItem isScrollAnchor={isScrollAnchor}>
       <Marker variant="separator">
         <MarkerContent>{item.text}</MarkerContent>
       </Marker>
@@ -159,7 +159,7 @@ export function MessageScrollerGroupChat() {
                     item.type === "message" ? (
                       <GroupChatMessage key={item.id} item={item} />
                     ) : (
-                      <GroupChatMarker key={item.id} item={item} scrollAnchor={item.scrollAnchor} />
+                      <GroupChatMarker key={item.id} item={item} isScrollAnchor={item.isScrollAnchor} />
                     ),
                   )}
                 </MessageScrollerContent>
@@ -188,7 +188,7 @@ export function MessageScrollerGroupChat() {
         </CardFooter>
       </Card>
       <div className="mx-auto max-w-sm px-0.5 text-center text-xs text-balance text-ui-muted">
-        When a user joins, a marker is created. scrollAnchor on the marker marks it as the next turn.
+        When a user joins, a marker is created. isScrollAnchor on the marker marks it as the next turn.
       </div>
     </div>
   );

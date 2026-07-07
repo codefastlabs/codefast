@@ -8,7 +8,7 @@ import { useEffect, useRef, useState } from "react";
  *
  * @param targetValue - Target number to animate toward; null resolves to 0.
  * @param duration - Animation duration in milliseconds.
- * @param animate - When false, bypasses animation and sets the value directly.
+ * @param animated - When false, bypasses animation and sets the value directly.
  * @returns The current (rounded) animated value.
  *
  * @example
@@ -19,7 +19,7 @@ import { useEffect, useRef, useState } from "react";
  *
  * @since 0.3.16-canary.0
  */
-export function useAnimatedValue(targetValue: null | number, duration: number, animate?: boolean): number {
+export function useAnimatedValue(targetValue: null | number, duration: number, animated?: boolean): number {
   // Default to 0 when targetValue is null
   const actualTargetValue = targetValue ?? 0;
 
@@ -34,7 +34,7 @@ export function useAnimatedValue(targetValue: null | number, duration: number, a
   }, [animatedValue]);
 
   useEffect(() => {
-    if (!animate) {
+    if (!animated) {
       setAnimatedValue(actualTargetValue);
 
       return;
@@ -85,7 +85,7 @@ export function useAnimatedValue(targetValue: null | number, duration: number, a
     return (): void => {
       cancelAnimationFrame(animationFrame);
     };
-  }, [actualTargetValue, duration, animate]);
+  }, [actualTargetValue, duration, animated]);
 
   return Math.round(animatedValue);
 }

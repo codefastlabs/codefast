@@ -83,7 +83,7 @@ function OpeningPositionScroller({ position, positionKey }: { position: Position
             const isUser = message.role === "user";
 
             return (
-              <MessageScrollerItem key={message.id} messageId={message.id} scrollAnchor={isUser}>
+              <MessageScrollerItem key={message.id} messageId={message.id} isScrollAnchor={isUser}>
                 <Message align={isUser ? "end" : "start"}>
                   <MessageContent>
                     <Bubble align={isUser ? "end" : "start"} variant={isUser ? "muted" : "ghost"}>

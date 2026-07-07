@@ -61,7 +61,7 @@ export const Default = meta.story({
               {TURNS.map((turn, index) => (
                 <MessageScrollerItem
                   key={turn.text}
-                  scrollAnchor={turn.align === "start"}
+                  isScrollAnchor={turn.align === "start"}
                   messageId={`m${index.toString()}`}
                 >
                   <Message align={turn.align}>

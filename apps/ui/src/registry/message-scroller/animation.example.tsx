@@ -130,7 +130,7 @@ export function MessageScrollerAnimation() {
                       const isUser = message.role === "user";
 
                       return (
-                        <MessageScrollerItem key={message.id} messageId={message.id} scrollAnchor={isUser}>
+                        <MessageScrollerItem key={message.id} messageId={message.id} isScrollAnchor={isUser}>
                           <Message
                             align={isUser ? "end" : "start"}
                             className={cn(isUser && getAnimationClassName(presetId))}

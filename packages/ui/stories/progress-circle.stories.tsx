@@ -11,10 +11,10 @@ import preview from "../.storybook/preview";
 const meta = preview.meta({
   args: { showValue: true, size: "md", thickness: "regular", value: 72, variant: "default" },
   argTypes: {
-    animate: { table: { disable: true } },
+    animated: { table: { disable: true } },
     animationDuration: { table: { disable: true } },
     classNames: { table: { disable: true } },
-    customLabel: { table: { disable: true } },
+    renderLabel: { table: { disable: true } },
     showValue: { control: "boolean" },
     size: { control: "select", options: ["sm", "md", "lg", "xl", "2xl"] },
     sizeInPixels: { table: { disable: true } },

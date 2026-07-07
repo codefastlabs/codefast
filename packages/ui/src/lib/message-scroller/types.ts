@@ -168,7 +168,7 @@ type MessageScrollerItemProps = ComponentProps<"div"> & {
   // Stable row id for scrollToMessage, visibility, and prepend preservation.
   messageId?: string;
   // Marks a turn boundary that newly appended anchors and last-anchor restore use.
-  scrollAnchor?: boolean;
+  isScrollAnchor?: boolean;
 };
 
 // State passed to MessageScrollerButton's render prop.

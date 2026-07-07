@@ -106,7 +106,7 @@ export function MessageScrollerAnchoring() {
                         <MessageScrollerItem
                           key={message.id}
                           messageId={message.id}
-                          scrollAnchor={message.role === anchorRole}
+                          isScrollAnchor={message.role === anchorRole}
                         >
                           <Message align={isUser ? "end" : "start"}>
                             <MessageContent>

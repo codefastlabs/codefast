@@ -292,7 +292,7 @@ function MessageScrollerContent({
 /**
  * @since 0.5.0-canary.3
  */
-function MessageScrollerItem({ messageId, ref, scrollAnchor = false, ...props }: MessageScrollerItemProps) {
+function MessageScrollerItem({ messageId, ref, isScrollAnchor = false, ...props }: MessageScrollerItemProps) {
   const registerMessage = useMessageScrollerItemContext();
   const elementRef = useRef<HTMLDivElement | null>(null);
 
@@ -312,7 +312,12 @@ function MessageScrollerItem({ messageId, ref, scrollAnchor = false, ...props }:
   );
 
   return (
-    <div ref={setItemRef} data-message-id={messageId} data-scroll-anchor={scrollAnchor ? "true" : "false"} {...props} />
+    <div
+      ref={setItemRef}
+      data-message-id={messageId}
+      data-scroll-anchor={isScrollAnchor ? "true" : "false"}
+      {...props}
+    />
   );
 }
 

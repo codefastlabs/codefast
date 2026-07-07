@@ -27,7 +27,7 @@ export const messageScrollerDoc: ComponentDoc = {
       id: "message-scroller-anchoring",
       title: "Anchoring turns",
       description:
-        "scrollAnchor marks which role settles near the top edge — toggle between user and assistant to compare where each new turn lands.",
+        "isScrollAnchor marks which role settles near the top edge — toggle between user and assistant to compare where each new turn lands.",
       Demo: MessageScrollerAnchoring,
       source: docSource("message-scroller", "anchoring"),
       previewClassName: "block",
@@ -63,7 +63,7 @@ export const messageScrollerDoc: ComponentDoc = {
       id: "message-scroller-group-chat",
       title: "Group chat",
       description:
-        "Mix Message rows and Marker events in one transcript; a marker with scrollAnchor becomes the next turn boundary when a participant joins.",
+        "Mix Message rows and Marker events in one transcript; a marker with isScrollAnchor becomes the next turn boundary when a participant joins.",
       Demo: MessageScrollerGroupChat,
       source: docSource("message-scroller", "group-chat"),
       previewClassName: "block",
@@ -124,7 +124,7 @@ export const messageScrollerDoc: ComponentDoc = {
   ],
   features: [
     "autoScroll follows new content at the bottom only while the reader is already there — any deliberate scroll or wheel input releases follow-bottom so they're never yanked back down.",
-    'scrollAnchor on a MessageScrollerItem marks a turn boundary that streaming or appended content anchors against, and that defaultScrollPosition="last-anchor" restores to.',
+    'isScrollAnchor on a MessageScrollerItem marks a turn boundary that streaming or appended content anchors against, and that defaultScrollPosition="last-anchor" restores to.',
     "preserveScrollOnPrepend (default true) keeps the first visible row stable when older history is prepended above it.",
     "Exposes imperative commands (useMessageScroller()) and live state hooks (useMessageScrollerScrollable, useMessageScrollerVisibility) for building custom jump-to or outline UIs.",
   ],
@@ -185,7 +185,7 @@ export const messageScrollerDoc: ComponentDoc = {
           description: "Stable id for scrollToMessage, visibility, and prepend preservation.",
         },
         {
-          name: "scrollAnchor",
+          name: "isScrollAnchor",
           type: "boolean",
           default: "false",
           description: "Marks a turn boundary that appended anchors and last-anchor restore use.",
@@ -249,7 +249,7 @@ export const messageScrollerDoc: ComponentDoc = {
   },
   guidelines: {
     do: [
-      "Mark each turn boundary with scrollAnchor so streaming replies anchor at the reading line.",
+      "Mark each turn boundary with isScrollAnchor so streaming replies anchor at the reading line.",
       "Compose the feed from Message and Bubble for consistent chat styling.",
     ],
     dont: [

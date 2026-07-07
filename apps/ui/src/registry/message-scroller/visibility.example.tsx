@@ -131,7 +131,7 @@ export function MessageScrollerVisibility() {
                       const isUser = turn.role === "user";
 
                       return (
-                        <MessageScrollerItem key={turn.id} messageId={turn.id} scrollAnchor={isUser}>
+                        <MessageScrollerItem key={turn.id} messageId={turn.id} isScrollAnchor={isUser}>
                           <Message align={isUser ? "end" : "start"}>
                             <MessageContent>
                               <Bubble align={isUser ? "end" : "start"} variant={isUser ? "muted" : "ghost"}>

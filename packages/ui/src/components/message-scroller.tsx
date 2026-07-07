@@ -122,12 +122,12 @@ type MessageScrollerItemProps = ComponentProps<typeof MessageScrollerItemPrimiti
 /**
  * @since 0.5.0-canary.3
  */
-function MessageScrollerItem({ className, scrollAnchor = false, ...props }: MessageScrollerItemProps): JSX.Element {
+function MessageScrollerItem({ className, isScrollAnchor = false, ...props }: MessageScrollerItemProps): JSX.Element {
   return (
     <MessageScrollerItemPrimitive
       className={cn("min-w-0 shrink-0 [contain-intrinsic-size:auto_10rem] [content-visibility:auto]", className)}
       data-slot="message-scroller-item"
-      scrollAnchor={scrollAnchor}
+      isScrollAnchor={isScrollAnchor}
       {...props}
     />
   );

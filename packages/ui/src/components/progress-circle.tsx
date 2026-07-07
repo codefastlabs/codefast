@@ -18,7 +18,7 @@ interface ProgressCircleProps
   /**
    * Enables animation effect when value changes
    */
-  animate?: boolean;
+  animated?: boolean;
 
   /**
    * Duration of the animation in milliseconds
@@ -65,7 +65,7 @@ interface ProgressCircleProps
    * @param value - Current value of the component
    * @returns React element to display in the center of the circle
    */
-  customLabel?: ({ value }: { value: number }) => JSX.Element;
+  renderLabel?: ({ value }: { value: number }) => JSX.Element;
 
   /**
    * Display the numeric value in the center of the circle
@@ -83,11 +83,11 @@ interface ProgressCircleProps
  * @since 0.3.16-canary.0
  */
 function ProgressCircle({
-  animate = true,
+  animated = true,
   animationDuration = 1000,
   className,
   classNames,
-  customLabel,
+  renderLabel,
   showValue = false,
   size,
   sizeInPixels,
@@ -97,7 +97,7 @@ function ProgressCircle({
   variant = "default",
   ...props
 }: ProgressCircleProps): JSX.Element {
-  const displayValue = useAnimatedValue(value, animationDuration, animate);
+  const displayValue = useAnimatedValue(value, animationDuration, animated);
 
   const actualSize = useMemo(() => sizeInPixels ?? getActualSize(size), [sizeInPixels, size]);
 
@@ -108,15 +108,15 @@ function ProgressCircle({
 
   const slots = useMemo(() => progressCircleVariants({ size, thickness, variant }), [variant, size, thickness]);
 
-  const shouldShowLabel = showValue || Boolean(customLabel);
+  const shouldShowLabel = showValue || Boolean(renderLabel);
 
-  const renderLabel = useCallback(() => {
-    if (customLabel) {
-      return customLabel({ value: displayValue });
+  const labelContent = useCallback(() => {
+    if (renderLabel) {
+      return renderLabel({ value: displayValue });
     }
 
     return `${displayValue.toString()}%`;
-  }, [customLabel, displayValue]);
+  }, [renderLabel, displayValue]);
 
   return (
     <ProgressCirclePrimitive.Provider size={actualSize} strokeWidth={actualThickness} value={value} {...props}>
@@ -135,7 +135,7 @@ function ProgressCircle({
         </ProgressCirclePrimitive.SVG>
         {shouldShowLabel ? (
           <ProgressCirclePrimitive.Value className={slots.label({ className: classNames?.label })}>
-            {renderLabel()}
+            {labelContent()}
           </ProgressCirclePrimitive.Value>
         ) : null}
       </ProgressCirclePrimitive.Root>

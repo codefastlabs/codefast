@@ -710,7 +710,7 @@ export { useIsMobile } from "#/hooks/use-is-mobile";
 export { useMediaQuery } from "#/hooks/use-media-query";
 export { useMutationObserver } from "#/hooks/use-mutation-observer";
 export { ELLIPSIS, usePagination } from "#/hooks/use-pagination";
-export type { UsePaginationProps } from "#/hooks/use-pagination";
+export type { UsePaginationOptions } from "#/hooks/use-pagination";
 export { alertVariants } from "#/variants/alert";
 export type { AlertVariants } from "#/variants/alert";
 export { attachmentMediaVariants, attachmentVariants } from "#/variants/attachment";
