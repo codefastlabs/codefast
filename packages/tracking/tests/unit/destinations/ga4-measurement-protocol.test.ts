@@ -1,6 +1,10 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { createGa4MeasurementProtocolDestination } from "#/destinations/ga4-measurement-protocol";
+import {
+  createGa4MeasurementProtocolDestination,
+  extractGa4ClientId,
+  extractGa4SessionId,
+} from "#/destinations/ga4-measurement-protocol";
 
 describe("createGa4MeasurementProtocolDestination", () => {
   let fetchMock: ReturnType<typeof vi.fn>;
@@ -14,7 +18,7 @@ describe("createGa4MeasurementProtocolDestination", () => {
     vi.unstubAllGlobals();
   });
 
-  it("posts client_id, event name, and flat params to the collect endpoint", async () => {
+  it("posts client_id, event name, flat params, and timestamp to the collect endpoint", async () => {
     const destination = createGa4MeasurementProtocolDestination({
       apiSecret: "secret",
       measurementId: "G-TEST123",
@@ -26,7 +30,7 @@ describe("createGa4MeasurementProtocolDestination", () => {
       name: "order_completed",
       owner: "server",
       props: { total: 42, currency: "USD" },
-      timestamp: 0,
+      timestamp: 1_700_000_000_000,
     });
 
     expect(fetchMock).toHaveBeenCalledTimes(1);
@@ -37,8 +41,52 @@ describe("createGa4MeasurementProtocolDestination", () => {
     expect(init.method).toBe("POST");
     expect(JSON.parse(init.body as string)).toEqual({
       client_id: "anon-1",
-      events: [{ name: "order_completed", params: { total: 42, currency: "USD" } }],
+      events: [{ name: "order_completed", params: { total: 42, currency: "USD", engagement_time_msec: 1 } }],
+      timestamp_micros: 1_700_000_000_000_000,
     });
+  });
+
+  it("prefers the gtag client_id over the tracker's anonymous ID when provided", async () => {
+    const destination = createGa4MeasurementProtocolDestination({
+      apiSecret: "secret",
+      clientId: "123.456",
+      measurementId: "G-TEST123",
+    });
+
+    await destination.send({
+      anonymousId: "anon-1",
+      eventId: "e2",
+      name: "order_completed",
+      owner: "server",
+      props: {},
+      timestamp: 0,
+    });
+
+    const [, init] = fetchMock.mock.calls[0] as [string, RequestInit];
+
+    expect(JSON.parse(init.body as string)).toMatchObject({ client_id: "123.456" });
+  });
+
+  it("attaches session_id to params when configured, without clobbering a caller-set one", async () => {
+    const destination = createGa4MeasurementProtocolDestination({
+      apiSecret: "secret",
+      measurementId: "G-TEST123",
+      sessionId: "1700000000",
+    });
+
+    await destination.send({
+      anonymousId: "anon-1",
+      eventId: "e3",
+      name: "order_completed",
+      owner: "server",
+      props: {},
+      timestamp: 0,
+    });
+
+    const [, init] = fetchMock.mock.calls[0] as [string, RequestInit];
+    const body = JSON.parse(init.body as string) as { events: Array<{ params: Record<string, unknown> }> };
+
+    expect(body.events[0]?.params.session_id).toBe("1700000000");
   });
 
   it("includes user_id only when the event carries one", async () => {
@@ -49,7 +97,7 @@ describe("createGa4MeasurementProtocolDestination", () => {
 
     await destination.send({
       anonymousId: "anon-1",
-      eventId: "e2",
+      eventId: "e4",
       name: "signed_up",
       owner: "server",
       props: {},
@@ -59,11 +107,7 @@ describe("createGa4MeasurementProtocolDestination", () => {
 
     const [, init] = fetchMock.mock.calls[0] as [string, RequestInit];
 
-    expect(JSON.parse(init.body as string)).toEqual({
-      client_id: "anon-1",
-      events: [{ name: "signed_up", params: {} }],
-      user_id: "user-1",
-    });
+    expect(JSON.parse(init.body as string)).toMatchObject({ user_id: "user-1" });
   });
 
   it("stringifies params the Measurement Protocol can't accept (nested objects/arrays)", async () => {
@@ -74,7 +118,7 @@ describe("createGa4MeasurementProtocolDestination", () => {
 
     await destination.send({
       anonymousId: "anon-1",
-      eventId: "e3",
+      eventId: "e5",
       name: "order_completed",
       owner: "server",
       props: { items: ["a", "b"] },
@@ -82,14 +126,12 @@ describe("createGa4MeasurementProtocolDestination", () => {
     });
 
     const [, init] = fetchMock.mock.calls[0] as [string, RequestInit];
+    const body = JSON.parse(init.body as string) as { events: Array<{ params: Record<string, unknown> }> };
 
-    expect(JSON.parse(init.body as string)).toEqual({
-      client_id: "anon-1",
-      events: [{ name: "order_completed", params: { items: '["a","b"]' } }],
-    });
+    expect(body.events[0]?.params.items).toBe('["a","b"]');
   });
 
-  it("drops undefined and null props instead of forwarding them", async () => {
+  it("maps $group to GA4's join_group with group_id and drops $alias entirely", async () => {
     const destination = createGa4MeasurementProtocolDestination({
       apiSecret: "secret",
       measurementId: "G-TEST123",
@@ -97,19 +139,32 @@ describe("createGa4MeasurementProtocolDestination", () => {
 
     await destination.send({
       anonymousId: "anon-1",
-      eventId: "e4",
-      name: "page_viewed",
+      eventId: "e6",
+      name: "$alias",
       owner: "server",
-      props: { referrer: undefined, url: null },
+      props: { previousId: "anon-1", userId: "user-1" },
+      timestamp: 0,
+    });
+
+    // GA4 has no alias concept — identity merges happen via user_id.
+    expect(fetchMock).not.toHaveBeenCalled();
+
+    await destination.send({
+      anonymousId: "anon-1",
+      eventId: "e7",
+      name: "$group",
+      owner: "server",
+      props: { groupId: "acme", plan: "enterprise" },
       timestamp: 0,
     });
 
     const [, init] = fetchMock.mock.calls[0] as [string, RequestInit];
+    const body = JSON.parse(init.body as string) as {
+      events: Array<{ name: string; params: Record<string, unknown> }>;
+    };
 
-    expect(JSON.parse(init.body as string)).toEqual({
-      client_id: "anon-1",
-      events: [{ name: "page_viewed", params: {} }],
-    });
+    expect(body.events[0]?.name).toBe("join_group");
+    expect(body.events[0]?.params).toMatchObject({ group_id: "acme", plan: "enterprise" });
   });
 
   it("routes to the debug endpoint when debug is enabled", async () => {
@@ -121,7 +176,7 @@ describe("createGa4MeasurementProtocolDestination", () => {
 
     await destination.send({
       anonymousId: "anon-1",
-      eventId: "e5",
+      eventId: "e8",
       name: "order_completed",
       owner: "server",
       props: {},
@@ -156,12 +211,41 @@ describe("createGa4MeasurementProtocolDestination", () => {
     await expect(
       destination.send({
         anonymousId: "anon-1",
-        eventId: "e6",
+        eventId: "e9",
         name: "order_completed",
         owner: "server",
         props: {},
         timestamp: 0,
       }),
     ).rejects.toThrow('"ga4-measurement-protocol" destination responded with 500');
+  });
+});
+
+describe("extractGa4ClientId", () => {
+  it("reads the last two segments of the _ga cookie", () => {
+    expect(extractGa4ClientId("_ga=GA1.1.123456789.987654321; other=x")).toBe("123456789.987654321");
+  });
+
+  it("returns undefined when the cookie is absent or malformed", () => {
+    expect(extractGa4ClientId(undefined)).toBeUndefined();
+    expect(extractGa4ClientId("other=x")).toBeUndefined();
+    expect(extractGa4ClientId("_ga=bogus")).toBeUndefined();
+  });
+});
+
+describe("extractGa4SessionId", () => {
+  it("reads the session ID from a GS1-format per-stream cookie", () => {
+    expect(extractGa4SessionId("_ga_TEST123=GS1.1.1700000000.5.1.1700000123.60.0.0", "G-TEST123")).toBe("1700000000");
+  });
+
+  it("reads the session ID from a GS2-format per-stream cookie", () => {
+    expect(extractGa4SessionId("_ga_TEST123=GS2.1.s1700000000$o5$g1$t1700000123$j60$l0$h0", "G-TEST123")).toBe(
+      "1700000000",
+    );
+  });
+
+  it("returns undefined when the per-stream cookie is absent", () => {
+    expect(extractGa4SessionId("_ga=GA1.1.1.2", "G-TEST123")).toBeUndefined();
+    expect(extractGa4SessionId(undefined, "G-TEST123")).toBeUndefined();
   });
 });

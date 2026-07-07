@@ -20,19 +20,86 @@ function toMeasurementProtocolParams(props: Record<string, unknown>): Record<str
   return result;
 }
 
+function readCookie(cookieHeader: string | undefined, cookieName: string): string | undefined {
+  if (!cookieHeader) {
+    return undefined;
+  }
+
+  for (const part of cookieHeader.split(";")) {
+    const separatorIndex = part.indexOf("=");
+
+    if (separatorIndex !== -1 && part.slice(0, separatorIndex).trim() === cookieName) {
+      return part.slice(separatorIndex + 1).trim();
+    }
+  }
+
+  return undefined;
+}
+
+/**
+ * Reads gtag.js's own client ID from a request Cookie header — `_ga=GA1.1.123.456` →
+ * `123.456`. This (not an app-generated anonymous ID) is the value GA4 joins hits on, so
+ * pass it as `clientId` to make server events land on the same user as the visitor's
+ * client-side hits.
+ */
+export function extractGa4ClientId(cookieHeader: string | undefined): string | undefined {
+  const value = readCookie(cookieHeader, "_ga");
+
+  if (!value) {
+    return undefined;
+  }
+
+  // Format: GA1.<domain-depth>.<random>.<timestamp> — the client ID is the last two segments.
+  const segments = value.split(".");
+
+  return segments.length >= 4 ? segments.slice(-2).join(".") : undefined;
+}
+
+/**
+ * Reads the current GA4 session ID from the per-stream `_ga_<suffix>` cookie
+ * (`G-ABC123` → `_ga_ABC123`) — handles both the dot-delimited `GS1` and the
+ * `$`-delimited `GS2` value formats.
+ */
+export function extractGa4SessionId(cookieHeader: string | undefined, measurementId: string): string | undefined {
+  const value = readCookie(cookieHeader, `_ga_${measurementId.replace(/^G-/, "")}`);
+
+  if (!value) {
+    return undefined;
+  }
+
+  // GS1.1.<session_id>.<count>... vs GS2.1.s<session_id>$o<count>... — the session ID is
+  // the first number after the version prefix either way.
+  const match = /^GS\d+\.\d+\.s?(\d+)/.exec(value);
+
+  return match?.[1];
+}
+
 export interface Ga4MeasurementProtocolDestinationOptions {
   apiSecret: string;
+  /**
+   * gtag.js's client ID for this visitor (see `extractGa4ClientId`). Without it the
+   * event falls back to the tracker's anonymous ID, which GA4 treats as a *different
+   * user* than the visitor's client-side hits — pass it whenever the request carries a
+   * `_ga` cookie.
+   */
+  clientId?: string | undefined;
   /** Routes to GA4's `/debug/mp/collect` validation endpoint — hits are validated but never recorded. */
   debug?: boolean;
   measurementId: string;
   name?: string;
+  /**
+   * Current GA4 session for this visitor (see `extractGa4SessionId`). Without a
+   * `session_id`, GA4 accepts the event but leaves it out of session-scoped and realtime
+   * reporting.
+   */
+  sessionId?: string | undefined;
 }
 
 /**
  * Server-side GA4 via the Measurement Protocol — for server-owned events (checkout,
- * signup) that must land in GA4 without depending on client-side gtag.js. `client_id` is
- * GA4's join key across Measurement Protocol and gtag.js hits, so callers must pass the
- * same anonymous ID the client tracker persists (SPEC.md §3), not a fresh ID per request.
+ * signup) that must land in GA4 without depending on client-side gtag.js. MP is designed
+ * to *augment* gtag.js data, so correlation hinges on echoing gtag's own identifiers:
+ * `clientId` from the `_ga` cookie and `sessionId` from the `_ga_<stream>` cookie.
  */
 export function createGa4MeasurementProtocolDestination(
   options: Ga4MeasurementProtocolDestinationOptions,
@@ -46,10 +113,29 @@ export function createGa4MeasurementProtocolDestination(
   return {
     name,
     async send(event) {
+      // GA4 has no alias concept — identity merge happens via user_id on later events.
+      if (event.name === "$alias") {
+        return;
+      }
+
+      // join_group is GA4's recommended-event equivalent of a group association.
+      const eventName = event.name === "$group" ? "join_group" : event.name;
+      const props = event.name === "$group" ? renameGroupIdProp(event.props) : event.props;
+      const params = toMeasurementProtocolParams(props);
+
+      if (options.sessionId !== undefined && params.session_id === undefined) {
+        params.session_id = options.sessionId;
+      }
+
+      // Without an engagement time GA4 won't count the user as active in realtime.
+      params.engagement_time_msec ??= 1;
+
       const response = await fetch(endpoint, {
         body: JSON.stringify({
-          client_id: event.anonymousId,
-          events: [{ name: event.name, params: toMeasurementProtocolParams(event.props) }],
+          client_id: options.clientId ?? event.anonymousId,
+          events: [{ name: eventName, params }],
+          // MP stamps receipt time otherwise — retried events would drift.
+          timestamp_micros: event.timestamp * 1000,
           ...(event.userId === undefined ? {} : { user_id: event.userId }),
         }),
         headers: { "content-type": "application/json" },
@@ -61,4 +147,10 @@ export function createGa4MeasurementProtocolDestination(
       }
     },
   };
+}
+
+function renameGroupIdProp(props: Record<string, unknown>): Record<string, unknown> {
+  const { groupId, ...traits } = props;
+
+  return { group_id: groupId, ...traits };
 }
