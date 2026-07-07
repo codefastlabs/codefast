@@ -182,17 +182,15 @@ Loaders simplify your data fetching logic dramatically. Check out more informati
 
 # Analytics
 
-GA4 and the Google Ads conversion destination (`src/lib/tracking.ts`, `src/components/layout/google-tag.tsx`) are gated behind two env vars — set them in `.env.local` (gitignored) to enable them; leave them unset and both stay fully inert (no script loads, no gtag calls):
+GA4 (`src/lib/tracking.ts`, `src/components/layout/google-tag.tsx`) is gated behind an env var — set it in `.env.local` (gitignored) to enable it; leave it unset and it stays fully inert (no script loads, no gtag calls):
 
 ```
 VITE_GA4_MEASUREMENT_ID=G-XXXXXXXXXX
-VITE_GOOGLE_ADS_SEND_TO=AW-XXXXXXXXX/AbCdEfGhIjK
 ```
 
 - `VITE_GA4_MEASUREMENT_ID` — GA4 property → Admin → Data Streams → Web stream → "Measurement ID".
-- `VITE_GOOGLE_ADS_SEND_TO` — Google Ads → Tools & Settings → Conversions → the conversion action's "Use Google tag" setup, `AW-<conversion ID>/<conversion label>` combined.
 
-`VITE_GOOGLE_ADS_SEND_TO` currently maps to the `copy_code` event only (see `googleDestinations()` in `tracking.ts`).
+Google Ads conversion tracking was built (`createGoogleAdsConversionDestination` in `@codefast/tracking`) and then deliberately not adopted for this app — removed rather than left wired but unused.
 
 ## Consent
 
