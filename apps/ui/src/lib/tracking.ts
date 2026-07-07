@@ -1,7 +1,6 @@
 import { defineEventCatalog } from "@codefast/tracking";
 import type { ClientTracker } from "@codefast/tracking/client";
 import { createClientTracker, createLocalStorageQueueStorage } from "@codefast/tracking/client";
-import type { Destination } from "@codefast/tracking/core/destination";
 import { createGoogleAnalyticsDestination, createVercelAnalyticsDestination } from "@codefast/tracking/destinations";
 import { z } from "zod";
 
@@ -50,15 +49,6 @@ export function getOrCreateAnonymousId(): string {
   return id;
 }
 
-/**
- * GA4 only makes sense once `<GoogleTag />` has mounted the gtag.js snippet for the
- * configured measurement ID — omit the env var and this stays absent, so a preview/dev
- * deploy with no real Google account never emits gtag calls.
- */
-function googleDestinations(): Array<Destination> {
-  return import.meta.env.VITE_GA4_MEASUREMENT_ID ? [createGoogleAnalyticsDestination()] : [];
-}
-
 let tracker: ClientTracker<typeof catalog> | undefined;
 
 /**
@@ -70,7 +60,9 @@ export function getTracker(): ClientTracker<typeof catalog> {
   tracker ??= createClientTracker({
     anonymousId: getOrCreateAnonymousId(),
     catalog,
-    destinations: [createVercelAnalyticsDestination(), ...googleDestinations()],
+    // `createGoogleAnalyticsDestination`'s `send()` already no-ops until `<GoogleTag />`
+    // mounts gtag.js, so no env-var check is needed here too.
+    destinations: [createVercelAnalyticsDestination(), createGoogleAnalyticsDestination()],
     storage: createLocalStorageQueueStorage("codefast-ui-tracking-queue"),
   });
 
