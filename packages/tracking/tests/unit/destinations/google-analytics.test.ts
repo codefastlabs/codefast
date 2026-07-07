@@ -13,11 +13,15 @@ describe("createGoogleAnalyticsDestination", () => {
 
   beforeEach(() => {
     gtag = vi.fn<GtagFunction>();
-    window.gtag = gtag;
+    window.gtag = gtag as never;
   });
 
   afterEach(() => {
     delete window.gtag;
+  });
+
+  it("delivers immediately — gtag.js owns its own batching and unload transport", () => {
+    expect(createGoogleAnalyticsDestination().deliver).toBe("immediate");
   });
 
   it("forwards the event name and allowed-type props to gtag('event', ...)", () => {
@@ -65,6 +69,87 @@ describe("createGoogleAnalyticsDestination", () => {
     expect(gtag).toHaveBeenCalledWith("event", "page_viewed", {});
   });
 
+  it("drops $page_viewed by default — gtag config + Enhanced Measurement already report page views", () => {
+    const destination = createGoogleAnalyticsDestination();
+
+    void destination.send({
+      anonymousId: "anon-1",
+      eventId: "e4",
+      name: "$page_viewed",
+      owner: "client",
+      props: { href: "https://example.com/pricing", name: "/pricing" },
+      timestamp: 0,
+    });
+
+    expect(gtag).not.toHaveBeenCalled();
+  });
+
+  it("maps $page_viewed to page_view (extras only) when trackPageViews is enabled", () => {
+    const destination = createGoogleAnalyticsDestination({ trackPageViews: true });
+
+    void destination.send({
+      anonymousId: "anon-1",
+      eventId: "e5",
+      name: "$page_viewed",
+      owner: "client",
+      props: { href: "https://example.com/pricing", name: "/pricing", referrer: "/home" },
+      timestamp: 0,
+    });
+
+    // gtag.js attaches page_location/page_title from the live document itself.
+    expect(gtag).toHaveBeenCalledWith("event", "page_view", { referrer: "/home" });
+  });
+
+  it("maps $identify to gtag('set', { user_id }) instead of an event", () => {
+    const destination = createGoogleAnalyticsDestination();
+
+    void destination.send({
+      anonymousId: "anon-1",
+      eventId: "e6",
+      name: "$identify",
+      owner: "client",
+      props: { plan: "pro" },
+      timestamp: 0,
+      userId: "user-1",
+    });
+
+    expect(gtag).toHaveBeenCalledWith("set", { user_id: "user-1" });
+    expect(gtag).not.toHaveBeenCalledWith("event", expect.anything(), expect.anything());
+  });
+
+  it("maps $group to GA4's recommended join_group event with group_id", () => {
+    const destination = createGoogleAnalyticsDestination();
+
+    void destination.send({
+      anonymousId: "anon-1",
+      eventId: "e7",
+      name: "$group",
+      owner: "client",
+      props: { groupId: "acme", plan: "enterprise" },
+      timestamp: 0,
+    });
+
+    expect(gtag).toHaveBeenCalledWith("event", "join_group", { group_id: "acme", plan: "enterprise" });
+  });
+
+  it("warns and drops event names GA4 would reject instead of sending them to nowhere", () => {
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => undefined);
+    const destination = createGoogleAnalyticsDestination();
+
+    void destination.send({
+      anonymousId: "anon-1",
+      eventId: "e8",
+      name: "$custom_thing",
+      owner: "client",
+      props: {},
+      timestamp: 0,
+    });
+
+    expect(gtag).not.toHaveBeenCalled();
+    expect(warn).toHaveBeenCalledOnce();
+    warn.mockRestore();
+  });
+
   it("uses the given destination name", () => {
     expect(createGoogleAnalyticsDestination({ name: "ga4" }).name).toBe("ga4");
   });
@@ -81,7 +166,7 @@ describe("createGoogleAnalyticsDestination", () => {
     expect(() => {
       void destination.send({
         anonymousId: "anon-1",
-        eventId: "e4",
+        eventId: "e9",
         name: "button_clicked",
         owner: "client",
         props: {},
@@ -98,15 +183,27 @@ describe("setGoogleConsentDefault", () => {
 
   beforeEach(() => {
     gtag = vi.fn<GtagFunction>();
-    window.gtag = gtag;
+    window.gtag = gtag as never;
   });
 
   afterEach(() => {
     delete window.gtag;
+    delete window.dataLayer;
   });
 
-  it("maps granted to all four Consent Mode v2 categories", () => {
+  it("grants analytics_storage only — the ad_* categories stay denied without includeAds", () => {
     setGoogleConsentDefault(true);
+
+    expect(gtag).toHaveBeenCalledWith("consent", "default", {
+      ad_personalization: "denied",
+      ad_storage: "denied",
+      ad_user_data: "denied",
+      analytics_storage: "granted",
+    });
+  });
+
+  it("grants all four categories when includeAds is set", () => {
+    setGoogleConsentDefault(true, { includeAds: true });
 
     expect(gtag).toHaveBeenCalledWith("consent", "default", {
       ad_personalization: "granted",
@@ -116,7 +213,7 @@ describe("setGoogleConsentDefault", () => {
     });
   });
 
-  it("maps denied to all four Consent Mode v2 categories", () => {
+  it("maps denied to all four categories", () => {
     setGoogleConsentDefault(false);
 
     expect(gtag).toHaveBeenCalledWith("consent", "default", {
@@ -127,14 +224,22 @@ describe("setGoogleConsentDefault", () => {
     });
   });
 
-  it("does nothing when window.gtag is not available", () => {
+  it("defines the gtag.js queueing stub itself so the default can precede the tag", () => {
     delete window.gtag;
 
-    expect(() => {
-      setGoogleConsentDefault(true);
-    }).not.toThrow();
+    setGoogleConsentDefault(true);
 
-    expect(gtag).not.toHaveBeenCalled();
+    expect(typeof window.gtag).toBe("function");
+    expect(window.dataLayer).toHaveLength(1);
+
+    // gtag.js expects the live Arguments object, replayed in order once the tag boots.
+    const queued = Array.from((window.dataLayer as Array<ArrayLike<unknown>>)[0]!);
+
+    expect(queued).toEqual([
+      "consent",
+      "default",
+      { ad_personalization: "denied", ad_storage: "denied", ad_user_data: "denied", analytics_storage: "granted" },
+    ]);
   });
 });
 
@@ -143,20 +248,21 @@ describe("updateGoogleConsent", () => {
 
   beforeEach(() => {
     gtag = vi.fn<GtagFunction>();
-    window.gtag = gtag;
+    window.gtag = gtag as never;
   });
 
   afterEach(() => {
     delete window.gtag;
+    delete window.dataLayer;
   });
 
-  it("pushes a consent update with granted state", () => {
+  it("pushes an analytics-only consent update on grant", () => {
     updateGoogleConsent(true);
 
     expect(gtag).toHaveBeenCalledWith("consent", "update", {
-      ad_personalization: "granted",
-      ad_storage: "granted",
-      ad_user_data: "granted",
+      ad_personalization: "denied",
+      ad_storage: "denied",
+      ad_user_data: "denied",
       analytics_storage: "granted",
     });
   });
@@ -172,13 +278,11 @@ describe("updateGoogleConsent", () => {
     });
   });
 
-  it("does nothing when window.gtag is not available", () => {
+  it("queues through the stub when gtag.js has not loaded yet", () => {
     delete window.gtag;
 
-    expect(() => {
-      updateGoogleConsent(true);
-    }).not.toThrow();
+    updateGoogleConsent(true);
 
-    expect(gtag).not.toHaveBeenCalled();
+    expect(window.dataLayer).toHaveLength(1);
   });
 });
