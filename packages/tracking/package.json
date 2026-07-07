@@ -131,6 +131,16 @@
       "types": "./dist/destinations/index.d.mts",
       "import": "./dist/destinations/index.mjs"
     },
+    "./destinations/ga4-measurement-protocol": {
+      "source": "./src/destinations/ga4-measurement-protocol.ts",
+      "types": "./dist/destinations/ga4-measurement-protocol.d.mts",
+      "import": "./dist/destinations/ga4-measurement-protocol.mjs"
+    },
+    "./destinations/google-analytics": {
+      "source": "./src/destinations/google-analytics.ts",
+      "types": "./dist/destinations/google-analytics.d.mts",
+      "import": "./dist/destinations/google-analytics.mjs"
+    },
     "./destinations/http-destination": {
       "source": "./src/destinations/http-destination.ts",
       "types": "./dist/destinations/http-destination.d.mts",

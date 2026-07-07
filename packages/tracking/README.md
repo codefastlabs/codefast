@@ -10,8 +10,10 @@ multi-destination fan-out, region-based consent).
 ## Status
 
 Early scaffold. `core`, `client`, `server`, and `react` (headless consent) implement the
-shapes described in the spec. Vendor-specific destinations (PostHog, GA4) are not built
-yet — use `createHttpDestination` or implement the `Destination` interface directly.
+shapes described in the spec. `createVercelAnalyticsDestination`,
+`createGoogleAnalyticsDestination`, and `createGa4MeasurementProtocolDestination` are
+implemented; PostHog is not built yet — use `createHttpDestination` or implement the
+`Destination` interface directly.
 
 ## Quick start
 

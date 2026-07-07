@@ -1,7 +1,7 @@
 import { defineEventCatalog } from "@codefast/tracking";
 import type { ClientTracker } from "@codefast/tracking/client";
 import { createClientTracker, createLocalStorageQueueStorage } from "@codefast/tracking/client";
-import { createVercelAnalyticsDestination } from "@codefast/tracking/destinations";
+import { createGoogleAnalyticsDestination, createVercelAnalyticsDestination } from "@codefast/tracking/destinations";
 import { z } from "zod";
 
 /**
@@ -60,7 +60,9 @@ export function getTracker(): ClientTracker<typeof catalog> {
   tracker ??= createClientTracker({
     anonymousId: getOrCreateAnonymousId(),
     catalog,
-    destinations: [createVercelAnalyticsDestination()],
+    // `createGoogleAnalyticsDestination`'s `send()` already no-ops until `<GoogleTag />`
+    // mounts gtag.js, so no env-var check is needed here too.
+    destinations: [createVercelAnalyticsDestination(), createGoogleAnalyticsDestination()],
     storage: createLocalStorageQueueStorage("codefast-ui-tracking-queue"),
   });
 

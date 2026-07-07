@@ -35,6 +35,7 @@
     "@tanstack/start-static-server-functions": "catalog:",
     "@unpic/react": "catalog:",
     "@vercel/analytics": "catalog:",
+    "@vercel/functions": "catalog:",
     "chrono-node": "catalog:",
     "date-fns-jalali": "catalog:",
     "embla-carousel-autoplay": "catalog:",

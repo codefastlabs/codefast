@@ -21,6 +21,7 @@ export interface ClientTracker<Catalog extends EventCatalog> {
   flush: () => Promise<void>;
   /** Synchronous, best-effort flush via `navigator.sendBeacon` — for page unload only. */
   flushWithBeacon: (endpoint: string) => void;
+  group: (groupId: string, traits?: Record<string, unknown>) => void;
   identify: (userId: string, traits?: Record<string, unknown>) => void;
   page: (name?: string, props?: Record<string, unknown>) => void;
   track: <Name extends keyof EventsOf<Catalog, "client">>(
@@ -73,6 +74,9 @@ export function createClientTracker<Catalog extends EventCatalog>(
           queue.enqueue(event);
         }
       }
+    },
+    group(groupId, traits = {}) {
+      enqueue("$group", { groupId, ...traits });
     },
     identify(id, traits = {}) {
       userId = id;

@@ -2,19 +2,24 @@ import type { EventQueueStorage } from "#/client/queue";
 import type { TrackedEvent } from "#/core/tracked-event";
 
 /**
- * `localStorage`-backed queue storage — corrupt/missing state is treated as empty
- * rather than thrown, since a lost offline queue is preferable to a crashing app.
+ * `localStorage`-backed queue storage — corrupt/missing state, a private-mode/quota
+ * error, or no `window` (SSR) are all treated as empty rather than thrown, since a lost
+ * offline queue is preferable to a crashing app.
  */
 export function createLocalStorageQueueStorage(storageKey: string): EventQueueStorage {
   return {
     load(): Array<TrackedEvent> {
-      const raw = localStorage.getItem(storageKey);
-
-      if (!raw) {
+      if (typeof globalThis.window === "undefined") {
         return [];
       }
 
       try {
+        const raw = globalThis.window.localStorage.getItem(storageKey);
+
+        if (!raw) {
+          return [];
+        }
+
         const parsed: unknown = JSON.parse(raw);
 
         return Array.isArray(parsed) ? (parsed as Array<TrackedEvent>) : [];
@@ -23,7 +28,15 @@ export function createLocalStorageQueueStorage(storageKey: string): EventQueueSt
       }
     },
     save(events: Array<TrackedEvent>): void {
-      localStorage.setItem(storageKey, JSON.stringify(events));
+      if (typeof globalThis.window === "undefined") {
+        return;
+      }
+
+      try {
+        globalThis.window.localStorage.setItem(storageKey, JSON.stringify(events));
+      } catch {
+        /* storage blocked (private mode / quota) */
+      }
     },
   };
 }
