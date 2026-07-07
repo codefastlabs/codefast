@@ -11,9 +11,9 @@ multi-destination fan-out, region-based consent).
 
 Early scaffold. `core`, `client`, `server`, and `react` (headless consent) implement the
 shapes described in the spec. `createVercelAnalyticsDestination`,
-`createGoogleAnalyticsDestination`, `createGoogleAdsConversionDestination`, and
-`createGa4MeasurementProtocolDestination` are implemented; PostHog is not built yet — use
-`createHttpDestination` or implement the `Destination` interface directly.
+`createGoogleAnalyticsDestination`, and `createGa4MeasurementProtocolDestination` are
+implemented; PostHog is not built yet — use `createHttpDestination` or implement the
+`Destination` interface directly.
 
 ## Quick start
 

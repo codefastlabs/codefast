@@ -1,13 +1,6 @@
 export type { Ga4MeasurementProtocolDestinationOptions } from "#/destinations/ga4-measurement-protocol";
 export { createGa4MeasurementProtocolDestination } from "#/destinations/ga4-measurement-protocol";
 
-export type {
-  GoogleAdsConversionDestinationOptions,
-  GoogleAdsConversionMapping,
-  GoogleAdsConversionParams,
-} from "#/destinations/google-ads-conversion";
-export { createGoogleAdsConversionDestination } from "#/destinations/google-ads-conversion";
-
 export type { GoogleAnalyticsDestinationOptions } from "#/destinations/google-analytics";
 export {
   createGoogleAnalyticsDestination,

@@ -103,8 +103,7 @@ function createClientTracker<Catalog extends EventCatalog>(catalog: Catalog) {
 
 - `Destination` is an adapter interface (`send(event)`, `flush()`) — core and client/server trackers depend only on this interface, never on a specific provider SDK.
 - Multiple destinations can be registered; a `track()` call fans out to all registered destinations.
-- Phase 1 destinations: `createVercelAnalyticsDestination` (`@vercel/analytics/react`, optional peer) — implemented, used by `apps/ui`. `createGoogleAnalyticsDestination` and `createGoogleAdsConversionDestination` (client, share one `window.gtag` — no peer dependency, require the gtag.js snippet mounted by the app) and `createGa4MeasurementProtocolDestination` (server, plain `fetch`, no peer dependency) — implemented. None of the three is wired into `apps/ui` yet. PostHog is not built yet.
-- `createGoogleAdsConversionDestination` fires a Google Ads conversion (`gtag('event', 'conversion', {send_to, ...})`) only for catalog event names present in its `conversions` map — every other event is a no-op, so it can be registered alongside destinations that see every event.
+- Phase 1 destinations: `createVercelAnalyticsDestination` (`@vercel/analytics/react`, optional peer) — implemented, used by `apps/ui`. `createGoogleAnalyticsDestination` (client, `window.gtag`, no peer dependency — requires the gtag.js snippet mounted by the app) — implemented, wired into `apps/ui`. `createGa4MeasurementProtocolDestination` (server, plain `fetch`, no peer dependency) — implemented, not wired into `apps/ui` yet (no server-owned events in its catalog). PostHog is not built yet. Google Ads conversion tracking was built and then deliberately not adopted — removed, not a gap to fill.
 
 ### 6.1 EU data residency
 

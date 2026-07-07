@@ -136,11 +136,6 @@
       "types": "./dist/destinations/ga4-measurement-protocol.d.mts",
       "import": "./dist/destinations/ga4-measurement-protocol.mjs"
     },
-    "./destinations/google-ads-conversion": {
-      "source": "./src/destinations/google-ads-conversion.ts",
-      "types": "./dist/destinations/google-ads-conversion.d.mts",
-      "import": "./dist/destinations/google-ads-conversion.mjs"
-    },
     "./destinations/google-analytics": {
       "source": "./src/destinations/google-analytics.ts",
       "types": "./dist/destinations/google-analytics.d.mts",
