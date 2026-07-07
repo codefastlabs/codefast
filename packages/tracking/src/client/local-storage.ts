@@ -5,6 +5,8 @@ import type { TrackedEvent } from "#/core/tracked-event";
  * `localStorage`-backed queue storage — corrupt/missing state, a private-mode/quota
  * error, or no `window` (SSR) are all treated as empty rather than thrown, since a lost
  * offline queue is preferable to a crashing app.
+ *
+ * @since 0.5.0-canary.4
  */
 export function createLocalStorageQueueStorage(storageKey: string): EventQueueStorage {
   return {

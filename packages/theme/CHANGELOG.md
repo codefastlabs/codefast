@@ -1,5 +1,11 @@
 # @codefast/theme
 
+## 0.5.0-canary.4
+
+### Minor Changes
+
+- [`c634b17`](https://github.com/codefastlabs/codefast/commit/c634b17e6a8d742cbc54e4074408eea51fb55d40) Thanks [@thevuong](https://github.com/thevuong)! - Rename `AppearanceContextType` to `AppearanceContextValue` — the "Type" suffix carried no information (every exported type is a type), while "Value" states the role: the payload provided through `AppearanceContext` and returned by `useAppearance`.
+
 ## 0.5.0-canary.3
 
 ## 0.5.0-canary.2

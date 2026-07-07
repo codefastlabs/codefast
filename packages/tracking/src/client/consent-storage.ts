@@ -10,6 +10,8 @@ import type { ConsentRecord, ConsentStorage } from "#/core/consent";
  * The record persists as plain `JSON.stringify(ConsentRecord)` — a stable contract, so
  * pre-hydration inline scripts (e.g. a Consent Mode default bootstrap) can read the
  * decision synchronously before any tag fires.
+ *
+ * @since 0.5.0-canary.4
  */
 export function createLocalStorageConsentStorage(storageKey: string): ConsentStorage {
   const listeners = new Set<() => void>();

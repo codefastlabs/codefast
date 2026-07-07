@@ -11,6 +11,8 @@ interface ResolvedNavigation {
 /**
  * Structurally matches `Router["subscribe"]` from `@tanstack/router-core` for the
  * `"onResolved"` event — duck-typed so this package doesn't depend on TanStack Router.
+ *
+ * @since 0.5.0-canary.4
  */
 export interface RouterLike {
   subscribe: (eventType: "onResolved", fn: (event: ResolvedNavigation) => void) => () => void;
@@ -21,6 +23,8 @@ export interface RouterLike {
  * `popstate` only fires for browser back/forward. Page views are low-frequency, so this
  * flushes right away instead of waiting on the batch queue's interval/size threshold —
  * a slow navigation shouldn't leave a pageview stranded if the tab closes right after.
+ *
+ * @since 0.5.0-canary.4
  */
 export function attachRouterPageTracking<Catalog extends EventCatalog>(
   tracker: Pick<ClientTracker<Catalog>, "flush" | "page">,

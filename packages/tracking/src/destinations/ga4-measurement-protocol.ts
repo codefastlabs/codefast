@@ -41,6 +41,8 @@ function readCookie(cookieHeader: string | undefined, cookieName: string): strin
  * `123.456`. This (not an app-generated anonymous ID) is the value GA4 joins hits on, so
  * pass it as `clientId` to make server events land on the same user as the visitor's
  * client-side hits.
+ *
+ * @since 0.5.0-canary.4
  */
 export function extractGa4ClientId(cookieHeader: string | undefined): string | undefined {
   const value = readCookie(cookieHeader, "_ga");
@@ -59,6 +61,8 @@ export function extractGa4ClientId(cookieHeader: string | undefined): string | u
  * Reads the current GA4 session ID from the per-stream `_ga_<suffix>` cookie
  * (`G-ABC123` → `_ga_ABC123`) — handles both the dot-delimited `GS1` and the
  * `$`-delimited `GS2` value formats.
+ *
+ * @since 0.5.0-canary.4
  */
 export function extractGa4SessionId(cookieHeader: string | undefined, measurementId: string): string | undefined {
   const value = readCookie(cookieHeader, `_ga_${measurementId.replace(/^G-/, "")}`);
@@ -74,6 +78,9 @@ export function extractGa4SessionId(cookieHeader: string | undefined, measuremen
   return match?.[1];
 }
 
+/**
+ * @since 0.5.0-canary.4
+ */
 export interface Ga4MeasurementProtocolDestinationOptions {
   apiSecret: string;
   /**
@@ -100,6 +107,8 @@ export interface Ga4MeasurementProtocolDestinationOptions {
  * signup) that must land in GA4 without depending on client-side gtag.js. MP is designed
  * to *augment* gtag.js data, so correlation hinges on echoing gtag's own identifiers:
  * `clientId` from the `_ga` cookie and `sessionId` from the `_ga_<stream>` cookie.
+ *
+ * @since 0.5.0-canary.4
  */
 export function createGa4MeasurementProtocolDestination(
   options: Ga4MeasurementProtocolDestinationOptions,

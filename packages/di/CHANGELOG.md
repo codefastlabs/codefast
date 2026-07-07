@@ -1,5 +1,11 @@
 # @codefast/di
 
+## 0.5.0-canary.4
+
+### Minor Changes
+
+- [`4f7a188`](https://github.com/codefastlabs/codefast/commit/4f7a188a5f4a281882606f11ed660aecb9844753) Thanks [@thevuong](https://github.com/thevuong)! - Rename the `hint` resolve parameter to `options` throughout — "hint" implied optional guidance the container may ignore, but the value is a hard selection criterion (`resolve` throws `NoMatchingBindingError` when nothing matches), so the name misstated its role. Positional call sites are unaffected; the one breaking surface is `NoMatchingBindingError.hint`, now `NoMatchingBindingError.options`.
+
 ## 0.5.0-canary.3
 
 ## 0.5.0-canary.2

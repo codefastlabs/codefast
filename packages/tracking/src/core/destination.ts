@@ -3,6 +3,8 @@ import type { TrackedEvent } from "#/core/tracked-event";
 /**
  * Fan-out target for tracked events (PostHog, GA4, a self-hosted store, ...).
  * Trackers depend only on this interface, never on a specific provider SDK.
+ *
+ * @since 0.5.0-canary.4
  */
 export interface Destination {
   /**
