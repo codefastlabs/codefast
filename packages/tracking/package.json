@@ -181,6 +181,7 @@
       "types": "./dist/server/region.d.mts",
       "import": "./dist/server/region.mjs"
     },
+    "./css/*": "./src/css/*",
     "./package.json": "./package.json"
   },
   "publishConfig": {

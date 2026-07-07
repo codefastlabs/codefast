@@ -1,0 +1,119 @@
+/* -------------------------------------------------------------------------
+ * Optional consent UI theme
+ *
+ * Plain CSS over the components' data-slot attributes — no Tailwind, no
+ * design-system dependency. Import it for a sensible default look:
+ *
+ *   @import "@codefast/tracking/css/consent.css";
+ *
+ * Every color routes through a `--consent-*` custom property with a
+ * `light-dark()` fallback, so a host app can retheme by defining those
+ * properties (or skip this file entirely and style the slots itself).
+ * ------------------------------------------------------------------------- */
+
+[data-slot="consent-banner"] {
+  position: fixed;
+  inset-inline: 1rem;
+  bottom: 1rem;
+  z-index: 50;
+  margin-inline: auto;
+  max-width: 24rem;
+  padding: 1.25rem;
+  border: 1px solid var(--consent-border, light-dark(rgb(0 0 0 / 12%), rgb(255 255 255 / 14%)));
+  border-radius: 1rem;
+  background: var(--consent-surface, light-dark(#fff, #1c1c1e));
+  color: var(--consent-fg, light-dark(#1c1c1e, #f2f2f7));
+  box-shadow: 0 12px 32px rgb(0 0 0 / 18%);
+  font-size: 0.875rem;
+  line-height: 1.5;
+  animation: consent-banner-in 220ms ease-out;
+}
+
+@media (min-width: 640px) {
+  [data-slot="consent-banner"] {
+    inset-inline: auto 1rem;
+  }
+}
+
+@keyframes consent-banner-in {
+  from {
+    opacity: 0;
+    transform: translateY(1rem);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-slot="consent-banner"] {
+    animation: none;
+  }
+}
+
+[data-slot="consent-title"] {
+  margin: 0 0 0.375rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+[data-slot="consent-description"] {
+  margin: 0 0 1rem;
+  color: var(--consent-muted, light-dark(rgb(28 28 30 / 65%), rgb(242 242 247 / 65%)));
+}
+
+[data-slot="consent-description"] a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+[data-slot="consent-preferences"] {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+[data-slot="consent-category"] {
+  display: flex;
+  gap: 0.5rem;
+  align-items: baseline;
+}
+
+[data-slot="consent-actions"] {
+  display: flex;
+  gap: 0.5rem;
+}
+
+[data-slot="consent-action"] {
+  flex: 1;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--consent-border, light-dark(rgb(0 0 0 / 12%), rgb(255 255 255 / 14%)));
+  border-radius: 0.5rem;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+/* The affirmative actions carry the accent; Reject stays equally prominent, just outlined. */
+[data-slot="consent-action"][data-action="accept"],
+[data-slot="consent-action"][data-action="save"] {
+  border-color: transparent;
+  background: var(--consent-accent, light-dark(#1c1c1e, #f2f2f7));
+  color: var(--consent-accent-fg, light-dark(#fff, #1c1c1e));
+}
+
+[data-slot="consent-toggle"] {
+  position: fixed;
+  inset-inline-start: 1rem;
+  bottom: 1rem;
+  z-index: 50;
+  padding: 0.375rem 0.75rem;
+  border: 1px solid var(--consent-border, light-dark(rgb(0 0 0 / 12%), rgb(255 255 255 / 14%)));
+  border-radius: 9999px;
+  background: var(--consent-surface, light-dark(#fff, #1c1c1e));
+  color: var(--consent-muted, light-dark(rgb(28 28 30 / 65%), rgb(242 242 247 / 65%)));
+  font: inherit;
+  font-size: 0.75rem;
+  cursor: pointer;
+}
