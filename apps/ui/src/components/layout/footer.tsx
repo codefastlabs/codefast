@@ -49,7 +49,12 @@ export function Footer() {
         </div>
 
         <div className="flex flex-col gap-1 border-t border-ui-border pt-6 text-xs text-ui-muted sm:flex-row sm:justify-between">
-          <p>&copy; {year} Codefast Labs. Released under the MIT License.</p>
+          <p>
+            &copy; {year} Codefast Labs. Released under the MIT License. &middot;{" "}
+            <Link to="/privacy" className="text-ui-muted no-underline hover:text-ui-fg">
+              Privacy
+            </Link>
+          </p>
           <p className="sm:text-end">Built with TanStack Start · Tailwind CSS v4 · React 19</p>
         </div>
       </div>

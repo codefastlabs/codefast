@@ -58,4 +58,11 @@ export const CONTENT_CDN_CACHE_CONTROL = "public, s-maxage=86400, stale-while-re
  * Excludes `robots.txt` and `sitemap.xml` (the latter never lives in `public/`), so a crawler
  * always sees the current version of either.
  */
-export const CACHED_ROUTE_PATTERNS = ["/", "/about", "/components", "/components/**", "/__tsr/staticServerFnCache/**"];
+export const CACHED_ROUTE_PATTERNS = [
+  "/",
+  "/about",
+  "/components",
+  "/components/**",
+  "/privacy",
+  "/__tsr/staticServerFnCache/**",
+];

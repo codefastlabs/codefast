@@ -68,7 +68,7 @@ export function resolveRegion(countryCode: string | undefined): "eu" | "other" |
 }
 
 export const config = {
-  matcher: ["/", "/about", "/components/:path*"],
+  matcher: ["/", "/about", "/privacy", "/components/:path*"],
 };
 
 export default function middleware(request: Request): Response {

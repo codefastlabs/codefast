@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as LlmsDottxtRouteImport } from './routes/llms[.]txt'
 import { Route as AboutRouteRouteImport } from './routes/about/route'
 import { Route as IndexRouteImport } from './routes/index'
@@ -16,6 +17,11 @@ import { Route as ComponentsIndexRouteImport } from './routes/components/index'
 import { Route as ComponentsChar123slugChar125DotmdRouteImport } from './routes/components/{$slug}[.]md'
 import { Route as ComponentsSlugRouteImport } from './routes/components/$slug'
 
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LlmsDottxtRoute = LlmsDottxtRouteImport.update({
   id: '/llms.txt',
   path: '/llms.txt',
@@ -52,6 +58,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRouteRoute
   '/llms.txt': typeof LlmsDottxtRoute
+  '/privacy': typeof PrivacyRoute
   '/components/$slug': typeof ComponentsSlugRoute
   '/components/{$slug}.md': typeof ComponentsChar123slugChar125DotmdRoute
   '/components/': typeof ComponentsIndexRoute
@@ -60,6 +67,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRouteRoute
   '/llms.txt': typeof LlmsDottxtRoute
+  '/privacy': typeof PrivacyRoute
   '/components/$slug': typeof ComponentsSlugRoute
   '/components/{$slug}.md': typeof ComponentsChar123slugChar125DotmdRoute
   '/components': typeof ComponentsIndexRoute
@@ -69,6 +77,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/about': typeof AboutRouteRoute
   '/llms.txt': typeof LlmsDottxtRoute
+  '/privacy': typeof PrivacyRoute
   '/components/$slug': typeof ComponentsSlugRoute
   '/components/{$slug}.md': typeof ComponentsChar123slugChar125DotmdRoute
   '/components/': typeof ComponentsIndexRoute
@@ -79,6 +88,7 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/llms.txt'
+    | '/privacy'
     | '/components/$slug'
     | '/components/{$slug}.md'
     | '/components/'
@@ -87,6 +97,7 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/llms.txt'
+    | '/privacy'
     | '/components/$slug'
     | '/components/{$slug}.md'
     | '/components'
@@ -95,6 +106,7 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/llms.txt'
+    | '/privacy'
     | '/components/$slug'
     | '/components/{$slug}.md'
     | '/components/'
@@ -104,6 +116,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRouteRoute: typeof AboutRouteRoute
   LlmsDottxtRoute: typeof LlmsDottxtRoute
+  PrivacyRoute: typeof PrivacyRoute
   ComponentsSlugRoute: typeof ComponentsSlugRoute
   ComponentsChar123slugChar125DotmdRoute: typeof ComponentsChar123slugChar125DotmdRoute
   ComponentsIndexRoute: typeof ComponentsIndexRoute
@@ -111,6 +124,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/llms.txt': {
       id: '/llms.txt'
       path: '/llms.txt'
@@ -160,6 +180,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRouteRoute: AboutRouteRoute,
   LlmsDottxtRoute: LlmsDottxtRoute,
+  PrivacyRoute: PrivacyRoute,
   ComponentsSlugRoute: ComponentsSlugRoute,
   ComponentsChar123slugChar125DotmdRoute:
     ComponentsChar123slugChar125DotmdRoute,

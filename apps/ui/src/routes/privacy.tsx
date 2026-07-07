@@ -1,0 +1,124 @@
+import { createFileRoute } from "@tanstack/react-router";
+
+import { CONTENT_CACHE_CONTROL } from "#/lib/cache";
+import { canonicalHead } from "#/lib/seo";
+
+export const Route = createFileRoute("/privacy")({
+  /**
+   * Declares this route's caching policy for dev and any non-prerendered render. Has no
+   * effect once prerendered for Vercel, where `routeRules` in `vite.config.ts` applies instead.
+   */
+  headers: () => ({ "Cache-Control": CONTENT_CACHE_CONTROL }),
+  head: () => {
+    const seo = canonicalHead("/privacy");
+
+    return {
+      meta: [
+        { title: "Privacy — codefast/ui" },
+        {
+          name: "description",
+          content: "What this site tracks, the consent model per region, and how to change your choice.",
+        },
+        ...seo.meta,
+      ],
+      links: seo.links,
+    };
+  },
+  component: PrivacyPage,
+});
+
+function PrivacyPage() {
+  return (
+    <main className="container mx-auto max-w-3xl px-4 py-16 pb-32">
+      <h1 className="mb-2 text-3xl font-semibold text-ui-fg">Privacy policy</h1>
+      <p className="mb-12 text-sm text-ui-muted">
+        This site is a documentation and showcase site for <code>@codefast/ui</code>. It runs no ads, sells no data, and
+        collects nothing beyond the analytics described below.
+      </p>
+
+      <section aria-labelledby="privacy-collect" className="mb-10">
+        <h2 className="mb-3 text-xl font-semibold text-ui-fg" id="privacy-collect">
+          What we collect
+        </h2>
+        <ul className="flex list-disc flex-col gap-2 ps-5 text-sm leading-6 text-ui-muted">
+          <li>
+            <strong className="font-medium text-ui-fg">Google Analytics 4</strong> — page views and a few interaction
+            events (copying an install command, searching the docs). Events carry identifiers and metadata only, never
+            the copied content or free-form text. GA4 runs only with your analytics consent.
+          </li>
+          <li>
+            <strong className="font-medium text-ui-fg">Vercel Analytics</strong> — cookieless, aggregated page-view
+            counts and web vitals.
+          </li>
+        </ul>
+      </section>
+
+      <section aria-labelledby="privacy-consent" className="mb-10">
+        <h2 className="mb-3 text-xl font-semibold text-ui-fg" id="privacy-consent">
+          Consent by region
+        </h2>
+        <ul className="flex list-disc flex-col gap-2 ps-5 text-sm leading-6 text-ui-muted">
+          <li>
+            <strong className="font-medium text-ui-fg">EU &amp; Vietnam (opt-in)</strong> — nothing non-essential runs
+            until you accept the consent banner. After deciding, the &ldquo;Cookie settings&rdquo; button in the corner
+            reopens the choice at any time.
+          </li>
+          <li>
+            <strong className="font-medium text-ui-fg">US &amp; elsewhere (opt-out)</strong> — analytics runs by
+            default; the persistent &ldquo;Do Not Sell or Share My Personal Information&rdquo; control turns it off. A{" "}
+            <a
+              className="text-ui-fg underline underline-offset-4 hover:text-ui-brand"
+              href="https://globalprivacycontrol.org"
+              rel="noreferrer"
+              target="_blank"
+            >
+              Global Privacy Control
+            </a>{" "}
+            signal is honored as a do-not-sell-or-share opt-out. This site never requests ads consent, so the ads
+            signals stay denied everywhere.
+          </li>
+        </ul>
+      </section>
+
+      <section aria-labelledby="privacy-storage" className="mb-10">
+        <h2 className="mb-3 text-xl font-semibold text-ui-fg" id="privacy-storage">
+          What we store in your browser
+        </h2>
+        <ul className="flex list-disc flex-col gap-2 ps-5 text-sm leading-6 text-ui-muted">
+          <li>
+            <code>codefast-ui-consent</code> (localStorage) — your consent choice, the policy version it was given
+            under, and when.
+          </li>
+          <li>
+            <code>codefast-ui-anon-id</code> (cookie, 1 year) — a random identifier used to correlate analytics events;
+            it maps to no account or personal profile.
+          </li>
+          <li>
+            <code>codefast-ui-initial-consent</code> (cookie, 24 hours) — the consent default resolved for your region.
+          </li>
+          <li>
+            Google&rsquo;s <code>_ga</code> cookies — set only after analytics consent is granted.
+          </li>
+        </ul>
+      </section>
+
+      <section aria-labelledby="privacy-contact">
+        <h2 className="mb-3 text-xl font-semibold text-ui-fg" id="privacy-contact">
+          Questions
+        </h2>
+        <p className="text-sm leading-6 text-ui-muted">
+          Open an issue on{" "}
+          <a
+            className="text-ui-fg underline underline-offset-4 hover:text-ui-brand"
+            href="https://github.com/codefastlabs/codefast/issues"
+            rel="noreferrer"
+            target="_blank"
+          >
+            GitHub
+          </a>{" "}
+          for anything privacy-related, including deletion requests for your anonymous identifier.
+        </p>
+      </section>
+    </main>
+  );
+}
