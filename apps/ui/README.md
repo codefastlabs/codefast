@@ -194,7 +194,23 @@ VITE_GOOGLE_ADS_SEND_TO=AW-XXXXXXXXX/AbCdEfGhIjK
 
 `VITE_GOOGLE_ADS_SEND_TO` currently maps to the `copy_code` event only (see `googleDestinations()` in `tracking.ts`).
 
-Consent Mode v2 defaults to fully denied in `google-tag.tsx` — this app has no region detection or consent banner wired yet (`@codefast/tracking` ships both, unused here). Wire `useConsent`/`ConsentBanner` before relying on these for EU/VN traffic.
+## Consent
+
+Region (`x-vercel-ip-country`) and GPC (`Sec-GPC`) are resolved per-request in
+`src/lib/consent.ts` (`resolveInitialConsent`) and drive both:
+
+- The SSR'd Consent Mode v2 default in `google-tag.tsx` (denied for EU/VN opt-in regions,
+  granted for US/other unless the visitor sends a GPC signal).
+- The consent UI in `consent-gate.tsx` — a blocking accept/reject banner for opt-in
+  regions, an always-visible "Do Not Sell or Share My Personal Information" toggle for
+  opt-out regions. Both come from `@codefast/tracking/react` (`ConsentBanner`/
+  `ConsentToggle`), styled here via `className`.
+
+`resolveInitialConsent()` is called directly inside these components rather than via a
+root-route `loader` — TanStack Start's `shellComponent` (where both are mounted) renders
+before the root match's `loader`/`beforeLoad` resolve, so loader data never reaches them.
+The server-resolved value is embedded into `window.__INITIAL_CONSENT__` (an inline script
+in `google-tag.tsx`) so the client reads the same value instead of a second guess.
 
 # Demo files
 

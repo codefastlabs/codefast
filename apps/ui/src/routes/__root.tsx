@@ -8,6 +8,7 @@ import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import type { ReactNode } from "react";
 
 import { Analytics } from "#/components/layout/analytics";
+import { ConsentGate } from "#/components/layout/consent-gate";
 import { Footer } from "#/components/layout/footer";
 import { GoogleTag } from "#/components/layout/google-tag";
 import { Header } from "#/components/layout/header";
@@ -118,6 +119,7 @@ function RootDocument({ children }: { children: ReactNode }) {
           />
         </AppearanceProvider>
         <Analytics />
+        <ConsentGate />
         <Scripts />
       </body>
     </html>
