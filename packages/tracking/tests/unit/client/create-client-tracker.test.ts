@@ -86,6 +86,21 @@ describe("createClientTracker", () => {
     ]);
   });
 
+  it("enqueues a $group event carrying the groupId and traits", async () => {
+    const destination = createRecordingDestination();
+    const tracker = createClientTracker({
+      anonymousId: "anon-1",
+      catalog,
+      destinations: [destination],
+      storage: createMemoryQueueStorage(),
+    });
+
+    tracker.group("acme", { plan: "enterprise" });
+    await tracker.flush();
+
+    expect(destination.received).toMatchObject([{ name: "$group", props: { groupId: "acme", plan: "enterprise" } }]);
+  });
+
   it("clear() drops pending events without sending them", async () => {
     const destination = createRecordingDestination();
     const tracker = createClientTracker({

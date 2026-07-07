@@ -20,6 +20,9 @@ export interface ServerTrackerOptions<Catalog extends EventCatalog> {
 }
 
 export interface ServerTracker<Catalog extends EventCatalog> {
+  /** Explicit anonymous → known-user merge, for when `identify` timing can't do it. */
+  alias: (previousId: string, userId: string, context: ServerTrackContext) => Promise<void>;
+  group: (groupId: string, traits: Record<string, unknown> | undefined, context: ServerTrackContext) => Promise<void>;
   track: <Name extends keyof EventsOf<Catalog, "server">>(
     name: Name,
     props: z.infer<EventsOf<Catalog, "server">[Name]["schema"]>,
@@ -73,7 +76,31 @@ export function createServerTracker<Catalog extends EventCatalog>(
       console.error(`[tracking] destination "${destination.name}" failed for event "${event.name}"`, error);
     });
 
+  async function sendEvent(name: string, props: Record<string, unknown>, context: ServerTrackContext): Promise<void> {
+    const event: TrackedEvent = {
+      anonymousId: context.anonymousId,
+      eventId: createId(),
+      name,
+      owner: "server",
+      props,
+      timestamp: Date.now(),
+      ...(context.userId === undefined ? {} : { userId: context.userId }),
+    };
+
+    await Promise.all(
+      options.destinations.map(async (destination) =>
+        sendWithRetry(destination, event, maxRetries, retryDelayMs, onError),
+      ),
+    );
+  }
+
   return {
+    async alias(previousId, userId, context) {
+      await sendEvent("$alias", { previousId, userId }, context);
+    },
+    async group(groupId, traits, context) {
+      await sendEvent("$group", { groupId, ...traits }, context);
+    },
     async track(name, props, context) {
       // noUncheckedIndexedAccess types this as possibly undefined; the owner check also
       // guards callers who bypass the EventsOf filter with an `as` cast.
@@ -84,22 +111,7 @@ export function createServerTracker<Catalog extends EventCatalog>(
       }
 
       definition.schema.parse(props);
-
-      const event: TrackedEvent = {
-        anonymousId: context.anonymousId,
-        eventId: createId(),
-        name: name as string,
-        owner: "server",
-        props: props as Record<string, unknown>,
-        timestamp: Date.now(),
-        ...(context.userId === undefined ? {} : { userId: context.userId }),
-      };
-
-      await Promise.all(
-        options.destinations.map(async (destination) =>
-          sendWithRetry(destination, event, maxRetries, retryDelayMs, onError),
-        ),
-      );
+      await sendEvent(name as string, props as Record<string, unknown>, context);
     },
   };
 }

@@ -30,6 +30,28 @@ describe("createServerTracker", () => {
     ).rejects.toThrow(/Unknown server-owned event/);
   });
 
+  it("sends a $group event carrying the groupId and traits", async () => {
+    const destination = createFailingDestination("posthog", 0);
+    const tracker = createServerTracker({ catalog, destinations: [destination] });
+
+    await tracker.group("acme", { plan: "enterprise" }, { anonymousId: "anon-1", userId: "user-1" });
+
+    expect(destination.received).toMatchObject([
+      { name: "$group", owner: "server", props: { groupId: "acme", plan: "enterprise" } },
+    ]);
+  });
+
+  it("sends a $alias event merging the previous anonymous id into the user id", async () => {
+    const destination = createFailingDestination("posthog", 0);
+    const tracker = createServerTracker({ catalog, destinations: [destination] });
+
+    await tracker.alias("anon-1", "user-1", { anonymousId: "anon-1" });
+
+    expect(destination.received).toMatchObject([
+      { name: "$alias", owner: "server", props: { previousId: "anon-1", userId: "user-1" } },
+    ]);
+  });
+
   it("retries a failing destination up to maxRetries before giving up", async () => {
     const destination = createFailingDestination("flaky", 2);
     const onDestinationError = vi.fn();
