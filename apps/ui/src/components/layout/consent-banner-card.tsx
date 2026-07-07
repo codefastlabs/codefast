@@ -30,7 +30,7 @@ export function ConsentBannerCard({ className, onDecision, ...props }: ConsentBa
   return (
     <ConsentBanner
       className={cn(
-        "fixed inset-x-4 bottom-4 z-50 mx-auto max-w-sm animate-in rounded-2xl border border-ui-border/60 bg-ui-card p-5 shadow-xl shadow-black/10 ease-gentle animation-duration-overlay-in fade-in-0 slide-in-from-bottom-4 sm:inset-x-auto sm:end-4 dark:shadow-black/30",
+        "fixed inset-x-4 bottom-4 z-50 mx-auto max-w-sm animate-in rounded-2xl border border-ui-border/60 bg-ui-card p-5 shadow-xl shadow-black/10 ease-gentle animation-duration-overlay-in fade-in-0 slide-in-from-bottom-4 sm:inset-x-auto sm:inset-e-4 dark:shadow-black/30",
         className,
       )}
       {...props}

@@ -89,7 +89,7 @@ export function ConsentGate() {
 
     return (
       <Button
-        className="fixed start-4 bottom-4 z-50 rounded-full text-xs text-ui-muted shadow-sm hover:text-ui-fg"
+        className="fixed inset-s-4 bottom-4 z-50 rounded-full text-xs text-ui-muted shadow-sm hover:text-ui-fg"
         size="xs"
         variant="outline"
         onClick={() => {
