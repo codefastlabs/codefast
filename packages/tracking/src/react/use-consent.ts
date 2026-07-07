@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import type { ConsentDecision, ConsentMode, ConsentStorage } from "#/core/consent";
 import { shouldTrackByDefault } from "#/core/consent";
@@ -24,7 +24,15 @@ export interface UseConsentResult {
  * persisting the visitor's decision via the given `ConsentStorage`.
  */
 export function useConsent(options: UseConsentOptions): UseConsentResult {
-  const [decision, setDecision] = useState<ConsentDecision | undefined>(() => options.storage.load()?.decision);
+  const [decision, setDecision] = useState<ConsentDecision | undefined>();
+
+  // Read the stored decision after mount, not during the initial render: a prerendered page
+  // can't see the visitor's localStorage, so an eager read here would return "granted" on the
+  // client while the server always rendered "no decision yet" — a hydration mismatch that
+  // leaves the banner's markup un-hydrated and stuck on screen for returning visitors.
+  useEffect(() => {
+    setDecision(options.storage.load()?.decision);
+  }, [options.storage]);
 
   const decide = useCallback(
     (next: ConsentDecision): void => {

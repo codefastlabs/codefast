@@ -1,6 +1,7 @@
 import { createLocalStorageConsentStorage, hasGlobalPrivacyControlSignal } from "@codefast/tracking/client";
 import { updateGoogleConsent } from "@codefast/tracking/destinations";
 import { ConsentBanner, ConsentToggle, useConsent } from "@codefast/tracking/react";
+import { useEffect, useState } from "react";
 
 import { CONSENT_POLICY_VERSION, resolveInitialConsent } from "#/lib/consent";
 import { getTracker } from "#/lib/tracking";
@@ -30,6 +31,20 @@ export function ConsentGate() {
     policyVersion: CONSENT_POLICY_VERSION,
     storage: consentStorage,
   });
+
+  // This app prerenders every route (see `vite.config.ts`), so the static HTML never sees a
+  // real visitor — `mode` here can differ from what the build baked in once the per-visitor
+  // `middleware.ts` cookie resolves on the client. Rendering before mount would hydrate
+  // against markup the server could never have produced for this visitor.
+  const [hasMounted, setHasMounted] = useState(false);
+
+  useEffect(() => {
+    setHasMounted(true);
+  }, []);
+
+  if (!hasMounted) {
+    return null;
+  }
 
   if (mode === "opt-in") {
     return (
