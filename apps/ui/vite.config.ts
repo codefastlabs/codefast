@@ -9,7 +9,9 @@ import viteReact, { reactCompilerPreset } from "@vitejs/plugin-react";
 import { nitro } from "nitro/vite";
 import { defineConfig } from "vite";
 
-import { CACHED_ROUTE_PATTERNS, CONTENT_CACHE_CONTROL } from "./src/lib/cache";
+// The `.ts` extension is required: Vite externalizes this import out of the bundled config,
+// so raw Node resolves it via package.json#imports — no extension probing, type-stripped.
+import { CACHED_ROUTE_PATTERNS, CONTENT_CACHE_CONTROL } from "#/lib/cache.ts";
 
 /**
  * The `public/` files excluded from `publicCacheRoutePatterns`, kept fresh on every crawl

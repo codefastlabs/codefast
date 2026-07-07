@@ -2,6 +2,8 @@ import { resolveConsentMode } from "@codefast/tracking/core";
 import { resolveRegionFromCountryCode } from "@codefast/tracking/server";
 import { describe, expect, it } from "vitest";
 
+import { INITIAL_CONSENT_COOKIE_NAME } from "#/lib/initial-consent-cookie";
+
 import middleware, { resolveRegion } from "../../middleware";
 
 const ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -102,5 +104,13 @@ describe("middleware", () => {
     const response = middleware(requestFrom("US"));
 
     expect(response.headers.get("x-middleware-next")).toBe("1");
+  });
+
+  // middleware.ts duplicates the cookie-name literal instead of importing from src/
+  // (Vercel compiles it independently of the app build) — this is the sync guard.
+  it("writes the exact cookie google-tag.tsx's bootstrap reads", () => {
+    const response = middleware(requestFrom("US"));
+
+    expect(response.headers.get("set-cookie")).toMatch(new RegExp(`^${INITIAL_CONSENT_COOKIE_NAME}=`));
   });
 });

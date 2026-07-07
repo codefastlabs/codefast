@@ -1,19 +1,18 @@
 import { geolocation, next } from "@vercel/functions";
 
-// Relative, not `#/lib/...` — the `#/*` alias is a tsconfig path Vercel's independent
-// middleware bundler isn't guaranteed to honor; a relative import always resolves.
-import { INITIAL_CONSENT_COOKIE_NAME } from "./src/lib/initial-consent-cookie.js";
-
 /**
  * Vercel Routing Middleware — personalizes the statically prerendered pages' consent
  * default per real visitor by setting a cookie `google-tag.tsx` prefers over its
  * build-time fallback (see `resolveInitialConsent` in `src/lib/consent.ts`).
  *
  * Self-contained on purpose: Vercel compiles this independently of the app's Vite/Nitro
- * build, so it duplicates `packages/tracking`'s EU-country/consent-mode mapping rather
- * than risk an unverified cross-package build assumption. Kept in sync by
- * `tests/unit/middleware.test.ts`.
+ * build, so it duplicates `packages/tracking`'s EU-country/consent-mode mapping and the
+ * cookie-name literal rather than risk an unverified cross-boundary import resolution.
+ * Kept in sync by `tests/unit/middleware.test.ts`.
  */
+
+// Duplicates `src/lib/initial-consent-cookie.ts` — middleware.test.ts guards the sync.
+const INITIAL_CONSENT_COOKIE_NAME = "codefast-ui-initial-consent";
 
 export const EU_COUNTRY_CODES = new Set([
   "AT",
