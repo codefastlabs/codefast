@@ -22,23 +22,63 @@ export function resolveConsentMode(region: ConsentRegion): ConsentMode {
 }
 
 /**
- * Under CCPA/CPRA, a Global Privacy Control signal must be honored as an opt-out even
- * though the region default is opt-out. Under opt-in regions, tracking never starts
- * until consent is explicitly granted, GPC signal or not.
+ * Consent purposes, mirroring Google Consent Mode v2's split: `analytics` gates
+ * measurement (`analytics_storage`), `ads` gates advertising storage and data sharing
+ * (`ad_storage`/`ad_user_data`/`ad_personalization`).
  */
-export function shouldTrackByDefault(mode: ConsentMode, hasGlobalPrivacyControlSignal: boolean): boolean {
-  if (mode === "opt-in") {
-    return false;
-  }
+export type ConsentCategory = "ads" | "analytics";
 
-  return !hasGlobalPrivacyControlSignal;
+export const CONSENT_CATEGORIES: ReadonlyArray<ConsentCategory> = ["ads", "analytics"];
+
+/**
+ * Per-category consent — GDPR consent must be granular per purpose, so a single
+ * granted/denied flag can't represent it. `true` means the visitor granted that purpose.
+ */
+export type ConsentDecision = Record<ConsentCategory, boolean>;
+
+/** A decision granting exactly the given categories and denying every other one. */
+export function createConsentDecision(grantedCategories: ReadonlyArray<ConsentCategory>): ConsentDecision {
+  return { ads: grantedCategories.includes("ads"), analytics: grantedCategories.includes("analytics") };
 }
 
-export type ConsentDecision = "denied" | "granted";
+/** Guards stored JSON — the record is tamperable, so every category must be an explicit boolean. */
+export function isConsentDecision(value: unknown): value is ConsentDecision {
+  return (
+    typeof value === "object" &&
+    value !== null &&
+    CONSENT_CATEGORIES.every((category) => typeof (value as Record<string, unknown>)[category] === "boolean")
+  );
+}
+
+/**
+ * The effective consent before the visitor decides: opt-in regions start all-denied,
+ * opt-out regions grant the categories the app asks for.
+ *
+ * @remarks
+ * A Global Privacy Control signal is a "do not sell or share" opt-out (CCPA/CPRA), so it
+ * forces `ads` denied — it does not withdraw first-party analytics measurement.
+ */
+export function resolveDefaultConsent(
+  mode: ConsentMode,
+  requestedCategories: ReadonlyArray<ConsentCategory>,
+  hasGlobalPrivacyControlSignal: boolean,
+): ConsentDecision {
+  if (mode === "opt-in") {
+    return createConsentDecision([]);
+  }
+
+  const decision = createConsentDecision(requestedCategories);
+
+  if (hasGlobalPrivacyControlSignal) {
+    decision.ads = false;
+  }
+
+  return decision;
+}
 
 /**
  * NĐ 13/2023 and GDPR both expect a record of *when* and *under what policy* consent
- * was given, not just a yes/no flag — `policyVersion` lets a later policy change
+ * was given, not just per-category flags — `policyVersion` lets a later policy change
  * invalidate stale consent.
  */
 export interface ConsentRecord {

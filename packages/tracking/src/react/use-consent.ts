@@ -1,9 +1,15 @@
-import { useSyncExternalStore } from "react";
+import { useRef, useSyncExternalStore } from "react";
 
-import type { ConsentDecision, ConsentMode, ConsentStorage } from "#/core/consent";
-import { shouldTrackByDefault } from "#/core/consent";
+import type { ConsentCategory, ConsentDecision, ConsentMode, ConsentStorage } from "#/core/consent";
+import { CONSENT_CATEGORIES, createConsentDecision, isConsentDecision, resolveDefaultConsent } from "#/core/consent";
 
 export interface UseConsentOptions {
+  /**
+   * Categories the app's prompt actually asks about — `grantAll` grants exactly these,
+   * so an analytics-only banner can never grant ads consent it never asked for.
+   * Defaults to `["analytics"]`.
+   */
+  categories?: ReadonlyArray<ConsentCategory>;
   hasGlobalPrivacyControlSignal?: boolean;
   mode: ConsentMode;
   onDecision?: (decision: ConsentDecision) => void;
@@ -15,15 +21,22 @@ export interface UseConsentOptions {
 export interface UseConsentResult {
   /** The stored decision under the current policy version — `undefined` until the visitor makes one. */
   decision: ConsentDecision | undefined;
-  deny: () => void;
-  grant: () => void;
+  denyAll: () => void;
+  /** What tags must obey right now — the stored decision, or the region default before one exists. */
+  effectiveConsent: ConsentDecision;
+  grantAll: () => void;
+  /** Effective `analytics` consent — gates this package's own tracker pipeline. */
   isTrackingAllowed: boolean;
   /** True only for opt-in regions with no stored decision yet — drives whether to render the banner. */
   needsPrompt: boolean;
+  /** Persist a granular per-category choice, e.g. from a preferences panel. */
+  save: (decision: ConsentDecision) => void;
 }
 
+const DEFAULT_CATEGORIES: ReadonlyArray<ConsentCategory> = ["analytics"];
+
 /**
- * Bridges `resolveConsentMode`/`shouldTrackByDefault` (core, region-aware) to React via
+ * Bridges `resolveConsentMode`/`resolveDefaultConsent` (core, region-aware) to React via
  * `useSyncExternalStore`: the stored record is the single source of truth, hydration is
  * safe by construction (the server snapshot is always "no decision yet", matching what
  * prerendered HTML could know), and a decision made in another tab syncs through the
@@ -31,6 +44,11 @@ export interface UseConsentResult {
  */
 export function useConsent(options: UseConsentOptions): UseConsentResult {
   const { storage } = options;
+  const categories = options.categories ?? DEFAULT_CATEGORIES;
+
+  // useSyncExternalStore needs a referentially stable snapshot, but JSON-backed storages
+  // parse a fresh record per load — so the last valid decision is cached by value.
+  const cachedDecision = useRef<ConsentDecision | undefined>(undefined);
 
   const decision = useSyncExternalStore(
     storage.subscribe,
@@ -39,34 +57,47 @@ export function useConsent(options: UseConsentOptions): UseConsentResult {
 
       // Only a well-formed decision under the current policy version counts — the store
       // is tamperable plain JSON, and a garbage value must re-prompt, not silently deny.
-      return record?.policyVersion === options.policyVersion &&
-        (record.decision === "granted" || record.decision === "denied")
-        ? record.decision
-        : undefined;
+      if (record?.policyVersion !== options.policyVersion || !isConsentDecision(record.decision)) {
+        cachedDecision.current = undefined;
+
+        return undefined;
+      }
+
+      const stored = record.decision;
+      const cached = cachedDecision.current;
+
+      if (cached !== undefined && CONSENT_CATEGORIES.every((category) => cached[category] === stored[category])) {
+        return cached;
+      }
+
+      // A normalized copy, so tampered extra keys never leak past the hook.
+      cachedDecision.current = createConsentDecision(CONSENT_CATEGORIES.filter((category) => stored[category]));
+
+      return cachedDecision.current;
     },
     () => undefined,
   );
 
-  function decide(next: ConsentDecision): void {
+  function save(next: ConsentDecision): void {
     // No local state — the save notifies the subscription, which re-renders with the new snapshot.
     storage.save({ decision: next, policyVersion: options.policyVersion, timestamp: Date.now() });
     options.onDecision?.(next);
   }
 
-  const isTrackingAllowed =
-    decision === undefined
-      ? shouldTrackByDefault(options.mode, options.hasGlobalPrivacyControlSignal ?? false)
-      : decision === "granted";
+  const effectiveConsent =
+    decision ?? resolveDefaultConsent(options.mode, categories, options.hasGlobalPrivacyControlSignal ?? false);
 
   return {
     decision,
-    deny: () => {
-      decide("denied");
+    denyAll: () => {
+      save(createConsentDecision([]));
     },
-    grant: () => {
-      decide("granted");
+    effectiveConsent,
+    grantAll: () => {
+      save(createConsentDecision(categories));
     },
-    isTrackingAllowed,
+    isTrackingAllowed: effectiveConsent.analytics,
     needsPrompt: options.mode === "opt-in" && decision === undefined,
+    save,
   };
 }

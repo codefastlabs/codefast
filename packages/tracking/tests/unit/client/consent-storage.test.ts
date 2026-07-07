@@ -5,7 +5,7 @@ import { createLocalStorageConsentStorage } from "#/client/consent-storage";
 describe("createLocalStorageConsentStorage", () => {
   it("round-trips a consent record", () => {
     const storage = createLocalStorageConsentStorage("tracking-consent");
-    const record = { decision: "granted" as const, policyVersion: "2026-01", timestamp: 1000 };
+    const record = { decision: { ads: false, analytics: true }, policyVersion: "2026-01", timestamp: 1000 };
 
     storage.save(record);
     expect(storage.load()).toEqual(record);
@@ -26,14 +26,14 @@ describe("createLocalStorageConsentStorage", () => {
     const listener = vi.fn();
     const unsubscribe = storage.subscribe(listener);
 
-    storage.save({ decision: "granted", policyVersion: "2026-01", timestamp: 1000 });
+    storage.save({ decision: { ads: false, analytics: true }, policyVersion: "2026-01", timestamp: 1000 });
     expect(listener).toHaveBeenCalledTimes(1);
 
     storage.clear();
     expect(listener).toHaveBeenCalledTimes(2);
 
     unsubscribe();
-    storage.save({ decision: "denied", policyVersion: "2026-01", timestamp: 2000 });
+    storage.save({ decision: { ads: false, analytics: false }, policyVersion: "2026-01", timestamp: 2000 });
     expect(listener).toHaveBeenCalledTimes(2);
   });
 
@@ -53,7 +53,7 @@ describe("createLocalStorageConsentStorage", () => {
 
   it("falls back to an in-memory record for the session when localStorage is blocked", () => {
     const storage = createLocalStorageConsentStorage("tracking-consent-blocked");
-    const record = { decision: "granted" as const, policyVersion: "2026-01", timestamp: 1000 };
+    const record = { decision: { ads: false, analytics: true }, policyVersion: "2026-01", timestamp: 1000 };
     const setItem = vi.spyOn(Storage.prototype, "setItem").mockImplementation(() => {
       throw new Error("quota");
     });
@@ -79,7 +79,7 @@ describe("createLocalStorageConsentStorage", () => {
       const storage = createLocalStorageConsentStorage("tracking-consent-ssr");
 
       expect(() => {
-        storage.save({ decision: "granted", policyVersion: "2026-01", timestamp: 1000 });
+        storage.save({ decision: { ads: false, analytics: true }, policyVersion: "2026-01", timestamp: 1000 });
       }).not.toThrow();
       expect(storage.load()).toBeUndefined();
       expect(() => {

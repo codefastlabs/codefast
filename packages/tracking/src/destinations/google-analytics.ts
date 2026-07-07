@@ -1,3 +1,4 @@
+import type { ConsentDecision } from "#/core/consent";
 import type { Destination } from "#/core/destination";
 
 type GtagPropertyValue = boolean | number | string;
@@ -9,6 +10,8 @@ interface GoogleConsentParams {
   ad_storage: GoogleConsentState;
   ad_user_data: GoogleConsentState;
   analytics_storage: GoogleConsentState;
+  region?: ReadonlyArray<string>;
+  wait_for_update?: number;
 }
 
 /**
@@ -20,6 +23,7 @@ type GtagFunction = {
   (command: "consent", action: "default" | "update", params: GoogleConsentParams): void;
   (command: "event", eventName: string, params?: Record<string, GtagPropertyValue>): void;
   (command: "set", params: Record<string, GtagPropertyValue>): void;
+  (command: "set", key: string, value: boolean): void;
 };
 
 declare global {
@@ -29,21 +33,20 @@ declare global {
   }
 }
 
-export interface GoogleConsentOptions {
-  /**
-   * Also grant the `ad_*` Consent Mode categories on a granted decision. Off by default:
-   * an analytics-only banner never asked the visitor about ads data sharing, so granting
-   * `ad_user_data`/`ad_personalization` from it would exceed the consent actually given.
-   * Enable only for apps that run Google Ads and say so in their prompt.
-   */
-  includeAds?: boolean;
-}
+/**
+ * The visitor's per-category decision maps onto Consent Mode v2's signals: `analytics`
+ * drives `analytics_storage`; `ads` drives all three ads signals together — a banner
+ * that got ads consent got it for storage, sharing, and personalization alike.
+ */
+function toGoogleConsentParams(decision: ConsentDecision): GoogleConsentParams {
+  const ads: GoogleConsentState = decision.ads ? "granted" : "denied";
 
-function toGoogleConsentParams(granted: boolean, options: GoogleConsentOptions): GoogleConsentParams {
-  const analytics: GoogleConsentState = granted ? "granted" : "denied";
-  const ads: GoogleConsentState = granted && options.includeAds === true ? "granted" : "denied";
-
-  return { ad_personalization: ads, ad_storage: ads, ad_user_data: ads, analytics_storage: analytics };
+  return {
+    ad_personalization: ads,
+    ad_storage: ads,
+    ad_user_data: ads,
+    analytics_storage: decision.analytics ? "granted" : "denied",
+  };
 }
 
 /**
@@ -66,13 +69,30 @@ function ensureGtag(): GtagFunction | undefined {
   return window.gtag;
 }
 
+export interface GoogleConsentDefaultOptions {
+  /** Restrict the default to these ISO 3166-2 codes (gtag's `region` param); omit for a global default. */
+  region?: ReadonlyArray<string>;
+  /** Consent Mode's `wait_for_update` — how long tags hold hits so a stored decision can arrive as an update first. */
+  waitForUpdateMs?: number;
+}
+
 /**
  * Google Consent Mode v2's "default" signal — call before the gtag.js script tag loads
  * (this defines the queueing stub itself, so no snippet has to run first) with the
  * region-resolved default, so GA4/Ads never fire a hit ahead of it.
  */
-export function setGoogleConsentDefault(granted: boolean, options: GoogleConsentOptions = {}): void {
-  ensureGtag()?.("consent", "default", toGoogleConsentParams(granted, options));
+export function setGoogleConsentDefault(decision: ConsentDecision, options: GoogleConsentDefaultOptions = {}): void {
+  const params = toGoogleConsentParams(decision);
+
+  if (options.region !== undefined) {
+    params.region = options.region;
+  }
+
+  if (options.waitForUpdateMs !== undefined) {
+    params.wait_for_update = options.waitForUpdateMs;
+  }
+
+  ensureGtag()?.("consent", "default", params);
 }
 
 /**
@@ -80,8 +100,25 @@ export function setGoogleConsentDefault(granted: boolean, options: GoogleConsent
  * consent changes (a banner decision, or one synced from another tab), so already-loaded
  * GA4/Ads tags pick up the change without a page reload.
  */
-export function updateGoogleConsent(granted: boolean, options: GoogleConsentOptions = {}): void {
-  ensureGtag()?.("consent", "update", toGoogleConsentParams(granted, options));
+export function updateGoogleConsent(decision: ConsentDecision): void {
+  ensureGtag()?.("consent", "update", toGoogleConsentParams(decision));
+}
+
+/**
+ * Consent Mode's `ads_data_redaction` flag — with `ad_storage` denied, gtag further
+ * redacts ad click identifiers (gclid/dclid) from its cookieless pings. Set alongside
+ * the consent default.
+ */
+export function setGoogleAdsDataRedaction(enabled: boolean): void {
+  ensureGtag()?.("set", "ads_data_redaction", enabled);
+}
+
+/**
+ * Consent Mode's `url_passthrough` flag — carries ad click info through page URLs while
+ * storage is denied, preserving conversion attribution without cookies.
+ */
+export function setGoogleUrlPassthrough(enabled: boolean): void {
+  ensureGtag()?.("set", "url_passthrough", enabled);
 }
 
 /**

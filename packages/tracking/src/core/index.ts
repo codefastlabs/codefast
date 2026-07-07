@@ -1,5 +1,18 @@
-export type { ConsentDecision, ConsentMode, ConsentRecord, ConsentRegion, ConsentStorage } from "#/core/consent";
-export { resolveConsentMode, shouldTrackByDefault } from "#/core/consent";
+export type {
+  ConsentCategory,
+  ConsentDecision,
+  ConsentMode,
+  ConsentRecord,
+  ConsentRegion,
+  ConsentStorage,
+} from "#/core/consent";
+export {
+  CONSENT_CATEGORIES,
+  createConsentDecision,
+  isConsentDecision,
+  resolveConsentMode,
+  resolveDefaultConsent,
+} from "#/core/consent";
 
 export type { Destination } from "#/core/destination";
 

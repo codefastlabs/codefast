@@ -2,7 +2,9 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import {
   createGoogleAnalyticsDestination,
+  setGoogleAdsDataRedaction,
   setGoogleConsentDefault,
+  setGoogleUrlPassthrough,
   updateGoogleConsent,
 } from "#/destinations/google-analytics";
 
@@ -191,8 +193,8 @@ describe("setGoogleConsentDefault", () => {
     delete window.dataLayer;
   });
 
-  it("grants analytics_storage only — the ad_* categories stay denied without includeAds", () => {
-    setGoogleConsentDefault(true);
+  it("maps an analytics-only grant to analytics_storage — the ad_* signals stay denied", () => {
+    setGoogleConsentDefault({ ads: false, analytics: true });
 
     expect(gtag).toHaveBeenCalledWith("consent", "default", {
       ad_personalization: "denied",
@@ -202,8 +204,8 @@ describe("setGoogleConsentDefault", () => {
     });
   });
 
-  it("grants all four categories when includeAds is set", () => {
-    setGoogleConsentDefault(true, { includeAds: true });
+  it("maps an ads grant to all three ad_* signals together", () => {
+    setGoogleConsentDefault({ ads: true, analytics: true });
 
     expect(gtag).toHaveBeenCalledWith("consent", "default", {
       ad_personalization: "granted",
@@ -213,8 +215,8 @@ describe("setGoogleConsentDefault", () => {
     });
   });
 
-  it("maps denied to all four categories", () => {
-    setGoogleConsentDefault(false);
+  it("maps an all-denied decision to all four signals denied", () => {
+    setGoogleConsentDefault({ ads: false, analytics: false });
 
     expect(gtag).toHaveBeenCalledWith("consent", "default", {
       ad_personalization: "denied",
@@ -224,10 +226,23 @@ describe("setGoogleConsentDefault", () => {
     });
   });
 
+  it("forwards wait_for_update and region so tags can hold hits for a stored decision", () => {
+    setGoogleConsentDefault({ ads: false, analytics: false }, { region: ["ES", "VN"], waitForUpdateMs: 500 });
+
+    expect(gtag).toHaveBeenCalledWith("consent", "default", {
+      ad_personalization: "denied",
+      ad_storage: "denied",
+      ad_user_data: "denied",
+      analytics_storage: "denied",
+      region: ["ES", "VN"],
+      wait_for_update: 500,
+    });
+  });
+
   it("defines the gtag.js queueing stub itself so the default can precede the tag", () => {
     delete window.gtag;
 
-    setGoogleConsentDefault(true);
+    setGoogleConsentDefault({ ads: false, analytics: true });
 
     expect(typeof window.gtag).toBe("function");
     expect(window.dataLayer).toHaveLength(1);
@@ -256,8 +271,8 @@ describe("updateGoogleConsent", () => {
     delete window.dataLayer;
   });
 
-  it("pushes an analytics-only consent update on grant", () => {
-    updateGoogleConsent(true);
+  it("pushes the per-category decision as a consent update", () => {
+    updateGoogleConsent({ ads: false, analytics: true });
 
     expect(gtag).toHaveBeenCalledWith("consent", "update", {
       ad_personalization: "denied",
@@ -267,8 +282,8 @@ describe("updateGoogleConsent", () => {
     });
   });
 
-  it("pushes a consent update with denied state", () => {
-    updateGoogleConsent(false);
+  it("pushes an all-denied consent update", () => {
+    updateGoogleConsent({ ads: false, analytics: false });
 
     expect(gtag).toHaveBeenCalledWith("consent", "update", {
       ad_personalization: "denied",
@@ -281,8 +296,34 @@ describe("updateGoogleConsent", () => {
   it("queues through the stub when gtag.js has not loaded yet", () => {
     delete window.gtag;
 
-    updateGoogleConsent(true);
+    updateGoogleConsent({ ads: false, analytics: true });
 
     expect(window.dataLayer).toHaveLength(1);
+  });
+});
+
+describe("Consent Mode privacy flags", () => {
+  let gtag: ReturnType<typeof vi.fn<GtagFunction>>;
+
+  beforeEach(() => {
+    gtag = vi.fn<GtagFunction>();
+    window.gtag = gtag as never;
+  });
+
+  afterEach(() => {
+    delete window.gtag;
+    delete window.dataLayer;
+  });
+
+  it("sets ads_data_redaction through gtag('set', ...)", () => {
+    setGoogleAdsDataRedaction(true);
+
+    expect(gtag).toHaveBeenCalledWith("set", "ads_data_redaction", true);
+  });
+
+  it("sets url_passthrough through gtag('set', ...)", () => {
+    setGoogleUrlPassthrough(true);
+
+    expect(gtag).toHaveBeenCalledWith("set", "url_passthrough", true);
   });
 });
