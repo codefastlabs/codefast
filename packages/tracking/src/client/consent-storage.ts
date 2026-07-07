@@ -1,30 +1,47 @@
 import type { ConsentRecord, ConsentStorage } from "#/core/consent";
 
 /**
- * `localStorage`-backed consent storage — corrupt/missing state is treated as "no
- * decision yet" rather than thrown, so a storage glitch degrades to re-prompting for
- * consent instead of crashing the app.
+ * `localStorage`-backed consent storage — corrupt/missing state, a private-mode/quota
+ * error, or no `window` (SSR — `useConsent` reads this synchronously during render, so
+ * this runs on the server too) are all treated as "no decision yet" rather than thrown,
+ * so a storage glitch degrades to re-prompting for consent instead of crashing the app.
  */
 export function createLocalStorageConsentStorage(storageKey: string): ConsentStorage {
   return {
     clear(): void {
-      localStorage.removeItem(storageKey);
+      if (typeof globalThis.window === "undefined") {
+        return;
+      }
+
+      try {
+        globalThis.window.localStorage.removeItem(storageKey);
+      } catch {
+        /* storage blocked (private mode / quota) */
+      }
     },
     load(): ConsentRecord | undefined {
-      const raw = localStorage.getItem(storageKey);
-
-      if (!raw) {
+      if (typeof globalThis.window === "undefined") {
         return undefined;
       }
 
       try {
-        return JSON.parse(raw) as ConsentRecord;
+        const raw = globalThis.window.localStorage.getItem(storageKey);
+
+        return raw ? (JSON.parse(raw) as ConsentRecord) : undefined;
       } catch {
         return undefined;
       }
     },
     save(record: ConsentRecord): void {
-      localStorage.setItem(storageKey, JSON.stringify(record));
+      if (typeof globalThis.window === "undefined") {
+        return;
+      }
+
+      try {
+        globalThis.window.localStorage.setItem(storageKey, JSON.stringify(record));
+      } catch {
+        /* storage blocked (private mode / quota) */
+      }
     },
   };
 }
