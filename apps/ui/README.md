@@ -210,6 +210,25 @@ before the root match's `loader`/`beforeLoad` resolve, so loader data never reac
 The server-resolved value is embedded into `window.__INITIAL_CONSENT__` (an inline script
 in `google-tag.tsx`) so the client reads the same value instead of a second guess.
 
+### This app is statically prerendered — that value alone is not enough
+
+Every route is prerendered at build time (`pnpm --filter @apps/ui build`, `[prerender]`
+in the output; Vercel then serves the result with `cache-control: public, s-maxage=…`).
+There is no real visitor at build time, so `resolveInitialConsent()`'s server branch
+resolves to the strictest possible default (`denied`, `opt-in`, region `other`) whenever
+`x-vercel-ip-country` is absent — that's what gets baked into the static HTML, and it's
+what every visitor gets unless corrected.
+
+`middleware.ts` (Vercel Routing Middleware, root of this app) covers the actual
+per-visitor correction: it runs on every real request _before_ the CDN cache — including
+ones that end up served from the static cache — reads the visitor's real geo + `Sec-GPC`,
+and sets a `cf-initial-consent` cookie. The bootstrap script in `google-tag.tsx` prefers
+that cookie over the baked-in fallback whenever it's present, so the real visitor's
+region-correct default applies without a second network round trip. `middleware.ts`
+intentionally does not import `@codefast/tracking` — Vercel compiles it independently of
+this app's Vite/Nitro build, and duplicating the small EU-country/consent-mode mapping
+was the safer choice over an unverified cross-package resolution assumption.
+
 # Demo files
 
 Files prefixed with `demo` can be safely deleted. They are there to provide a starting point for you to play around with the features you've installed.
