@@ -1,6 +1,7 @@
 import type { ConsentMode, ConsentRegion } from "@codefast/tracking/core";
 import { resolveConsentMode, shouldTrackByDefault } from "@codefast/tracking/core";
 import { resolveRegionFromCountryCode } from "@codefast/tracking/server";
+import { createIsomorphicFn } from "@tanstack/react-start";
 import { getRequestHeader } from "@tanstack/react-start/server";
 
 /** Bump when the privacy policy changes — invalidates any previously stored decision. */
@@ -33,14 +34,15 @@ declare global {
  * `<ConsentGate />` hydrates, so both sides agree without a second, possibly different
  * guess.
  */
-export function resolveInitialConsent(): InitialConsent {
-  if (typeof globalThis.window === "undefined") {
+export const resolveInitialConsent = createIsomorphicFn()
+  .server((): InitialConsent => {
     const region = resolveRegionFromCountryCode(getRequestHeader("x-vercel-ip-country"));
     const mode = resolveConsentMode(region);
     const hasGpcSignal = getRequestHeader("sec-gpc") === "1";
 
     return { defaultGranted: shouldTrackByDefault(mode, hasGpcSignal), mode, region };
-  }
-
-  return globalThis.window.__INITIAL_CONSENT__ ?? { defaultGranted: false, mode: "opt-in", region: "other" };
-}
+  })
+  .client(
+    (): InitialConsent =>
+      globalThis.window.__INITIAL_CONSENT__ ?? { defaultGranted: false, mode: "opt-in", region: "other" },
+  );
