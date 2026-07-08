@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 
 import { AppearanceToggle } from "#/components/layout/appearance-toggle";
+import { ConsentGate } from "#/components/layout/consent-gate";
 import { PRIMARY_NAV, RESOURCE_LINKS } from "#/lib/nav-links";
 
 export function Footer() {
@@ -49,12 +50,14 @@ export function Footer() {
         </div>
 
         <div className="flex flex-col gap-1 border-t border-ui-border pt-6 text-xs text-ui-muted sm:flex-row sm:justify-between">
-          <p>
-            &copy; {year} Codefast Labs. Released under the MIT License. &middot;{" "}
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+            <p>&copy; {year} Codefast Labs. Released under the MIT License.</p>
             <Link to="/privacy" className="text-ui-muted no-underline hover:text-ui-fg">
               Privacy
             </Link>
-          </p>
+            {/* the region-aware consent control — a footer link, per CCPA's conspicuous-link convention */}
+            <ConsentGate />
+          </div>
           <p className="sm:text-end">Built with TanStack Start · Tailwind CSS v4 · React 19</p>
         </div>
       </div>

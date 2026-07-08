@@ -60,12 +60,12 @@ function PrivacyPage() {
         <ul className="flex list-disc flex-col gap-2 ps-5 text-sm leading-6 text-ui-muted">
           <li>
             <strong className="font-medium text-ui-fg">EU &amp; Vietnam (opt-in)</strong> — nothing non-essential runs
-            until you accept the consent banner. After deciding, the &ldquo;Cookie settings&rdquo; button in the corner
+            until you accept the consent banner. After deciding, the &ldquo;Cookie settings&rdquo; link in the footer
             reopens the choice at any time.
           </li>
           <li>
             <strong className="font-medium text-ui-fg">US &amp; elsewhere (opt-out)</strong> — analytics runs by
-            default; the persistent &ldquo;Do Not Sell or Share My Personal Information&rdquo; control turns it off. A{" "}
+            default; the &ldquo;Do Not Sell or Share My Personal Information&rdquo; link in the footer turns it off. A{" "}
             <a
               className="text-ui-fg underline underline-offset-4 hover:text-ui-brand"
               href="https://globalprivacycontrol.org"
