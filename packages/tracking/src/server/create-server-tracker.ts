@@ -2,7 +2,7 @@ import type { z } from "zod";
 
 import type { Destination } from "#/core/destination";
 import type { EventCatalog, EventsOf } from "#/core/event-catalog";
-import { generateEventId } from "#/core/event-id";
+import { deriveEventId, generateEventId } from "#/core/event-id";
 import type { TrackedEvent, TrackedEventBase } from "#/core/tracked-event";
 
 /** The per-kind payload of an envelope — the tracker fills in the shared base fields. */
@@ -13,6 +13,13 @@ type EnvelopeSeed<Event = TrackedEvent> = Event extends TrackedEvent ? Omit<Even
  */
 export interface ServerTrackContext {
   anonymousId: string;
+  /**
+   * A stable identifier for the inbound request, unchanged across retries — when set,
+   * `eventId` is derived from it via {@link deriveEventId} instead of drawn at random, so
+   * a retried request re-sends the same `eventId` and a destination that dedupes on it
+   * treats the retry as a no-op. Omit to always mint a fresh, random `eventId`.
+   */
+  requestId?: string | undefined;
   userId?: string | undefined;
 }
 
@@ -93,11 +100,16 @@ export function createServerTracker<Catalog extends EventCatalog>(
     });
 
   async function sendEvent(seed: EnvelopeSeed, context: ServerTrackContext): Promise<void> {
+    // Deriving from the seed (not just requestId) keeps distinct event kinds in the same
+    // request from colliding, while an identical call on retry reproduces the same id.
+    const eventId =
+      context.requestId === undefined ? createId() : deriveEventId(context.requestId, JSON.stringify(seed));
+
     // The seed/base split is total by construction — the assertion only rejoins the union.
     const event = {
       ...seed,
       anonymousId: context.anonymousId,
-      eventId: createId(),
+      eventId,
       owner: "server",
       timestamp: Date.now(),
       ...(context.userId === undefined ? {} : { userId: context.userId }),

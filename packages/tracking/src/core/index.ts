@@ -19,7 +19,7 @@ export type { Destination } from "#/core/destination";
 export type { EventCatalog, EventDefinition, EventsOf } from "#/core/event-catalog";
 export { defineEventCatalog } from "#/core/event-catalog";
 
-export { generateEventId } from "#/core/event-id";
+export { deriveEventId, generateEventId } from "#/core/event-id";
 
 export type {
   AliasEvent,
