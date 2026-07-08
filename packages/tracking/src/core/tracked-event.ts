@@ -1,14 +1,48 @@
-/**
- * Envelope every tracker (client/server) builds before handing an event to a destination.
- *
- * @since 0.5.0-canary.4
- */
-export interface TrackedEvent {
+/** Fields shared by every envelope the trackers build. */
+export interface TrackedEventBase {
   anonymousId: string;
   eventId: string;
-  name: string;
   owner: "client" | "server";
-  props: Record<string, unknown>;
   timestamp: number;
   userId?: string | undefined;
 }
+
+/** A catalog-defined custom event — the only kind that carries an app-chosen name. */
+export interface TrackEvent extends TrackedEventBase {
+  name: string;
+  props: Record<string, unknown>;
+  type: "track";
+}
+
+export interface PageViewEvent extends TrackedEventBase {
+  /** Page name or path as given to `page()`. */
+  name?: string | undefined;
+  props: Record<string, unknown>;
+  type: "page";
+}
+
+export interface IdentifyEvent extends TrackedEventBase {
+  traits: Record<string, unknown>;
+  type: "identify";
+}
+
+export interface GroupEvent extends TrackedEventBase {
+  groupId: string;
+  traits: Record<string, unknown>;
+  type: "group";
+}
+
+/** Explicit anonymous → known-user merge; `userId` on the base carries the new identity. */
+export interface AliasEvent extends TrackedEventBase {
+  previousId: string;
+  type: "alias";
+}
+
+/**
+ * Envelope every tracker (client/server) hands to destinations, discriminated on `type`
+ * (Segment-style) — destinations translate each kind into their own vocabulary instead
+ * of pattern-matching magic event names, and ignore kinds they have no equivalent for.
+ *
+ * @since 0.5.0-canary.4
+ */
+export type TrackedEvent = AliasEvent | GroupEvent | IdentifyEvent | PageViewEvent | TrackEvent;

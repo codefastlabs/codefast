@@ -31,6 +31,7 @@ describe("createGa4MeasurementProtocolDestination", () => {
       owner: "server",
       props: { total: 42, currency: "USD" },
       timestamp: 1_700_000_000_000,
+      type: "track",
     });
 
     expect(fetchMock).toHaveBeenCalledTimes(1);
@@ -60,6 +61,7 @@ describe("createGa4MeasurementProtocolDestination", () => {
       owner: "server",
       props: {},
       timestamp: 0,
+      type: "track",
     });
 
     const [, init] = fetchMock.mock.calls[0] as [string, RequestInit];
@@ -81,6 +83,7 @@ describe("createGa4MeasurementProtocolDestination", () => {
       owner: "server",
       props: {},
       timestamp: 0,
+      type: "track",
     });
 
     const [, init] = fetchMock.mock.calls[0] as [string, RequestInit];
@@ -102,6 +105,7 @@ describe("createGa4MeasurementProtocolDestination", () => {
       owner: "server",
       props: {},
       timestamp: 0,
+      type: "track",
       userId: "user-1",
     });
 
@@ -123,6 +127,7 @@ describe("createGa4MeasurementProtocolDestination", () => {
       owner: "server",
       props: { items: ["a", "b"] },
       timestamp: 0,
+      type: "track",
     });
 
     const [, init] = fetchMock.mock.calls[0] as [string, RequestInit];
@@ -131,7 +136,7 @@ describe("createGa4MeasurementProtocolDestination", () => {
     expect(body.events[0]?.params.items).toBe('["a","b"]');
   });
 
-  it("maps $group to GA4's join_group with group_id and drops $alias entirely", async () => {
+  it("maps group to GA4's join_group with group_id and drops alias entirely", async () => {
     const destination = createGa4MeasurementProtocolDestination({
       apiSecret: "secret",
       measurementId: "G-TEST123",
@@ -140,10 +145,11 @@ describe("createGa4MeasurementProtocolDestination", () => {
     await destination.send({
       anonymousId: "anon-1",
       eventId: "e6",
-      name: "$alias",
       owner: "server",
-      props: { previousId: "anon-1", userId: "user-1" },
+      previousId: "anon-0",
       timestamp: 0,
+      type: "alias",
+      userId: "user-1",
     });
 
     // GA4 has no alias concept — identity merges happen via user_id.
@@ -152,10 +158,11 @@ describe("createGa4MeasurementProtocolDestination", () => {
     await destination.send({
       anonymousId: "anon-1",
       eventId: "e7",
-      name: "$group",
+      groupId: "acme",
       owner: "server",
-      props: { groupId: "acme", plan: "enterprise" },
       timestamp: 0,
+      traits: { plan: "enterprise" },
+      type: "group",
     });
 
     const [, init] = fetchMock.mock.calls[0] as [string, RequestInit];
@@ -181,6 +188,7 @@ describe("createGa4MeasurementProtocolDestination", () => {
       owner: "server",
       props: {},
       timestamp: 0,
+      type: "track",
     });
 
     const [url] = fetchMock.mock.calls[0] as [string, RequestInit];
@@ -216,6 +224,7 @@ describe("createGa4MeasurementProtocolDestination", () => {
         owner: "server",
         props: {},
         timestamp: 0,
+        type: "track",
       }),
     ).rejects.toThrow('"ga4-measurement-protocol" destination responded with 500');
   });

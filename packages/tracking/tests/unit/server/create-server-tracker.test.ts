@@ -30,25 +30,25 @@ describe("createServerTracker", () => {
     ).rejects.toThrow(/Unknown server-owned event/);
   });
 
-  it("sends a $group event carrying the groupId and traits", async () => {
+  it("sends a group envelope carrying the groupId and traits", async () => {
     const destination = createFailingDestination("posthog", 0);
     const tracker = createServerTracker({ catalog, destinations: [destination] });
 
     await tracker.group("acme", { plan: "enterprise" }, { anonymousId: "anon-1", userId: "user-1" });
 
     expect(destination.received).toMatchObject([
-      { name: "$group", owner: "server", props: { groupId: "acme", plan: "enterprise" } },
+      { groupId: "acme", owner: "server", traits: { plan: "enterprise" }, type: "group" },
     ]);
   });
 
-  it("sends a $alias event merging the previous anonymous id into the user id", async () => {
+  it("sends an alias envelope merging the previous anonymous id into the user id", async () => {
     const destination = createFailingDestination("posthog", 0);
     const tracker = createServerTracker({ catalog, destinations: [destination] });
 
     await tracker.alias("anon-1", "user-1", { anonymousId: "anon-1" });
 
     expect(destination.received).toMatchObject([
-      { name: "$alias", owner: "server", props: { previousId: "anon-1", userId: "user-1" } },
+      { owner: "server", previousId: "anon-1", type: "alias", userId: "user-1" },
     ]);
   });
 

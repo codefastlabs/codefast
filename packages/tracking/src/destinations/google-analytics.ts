@@ -152,8 +152,8 @@ function toGtagParams(props: Record<string, unknown>): Record<string, GtagProper
   return result;
 }
 
-// GA4 rejects event names that don't start with a letter or exceed 40 chars — a `$`-prefixed
-// or otherwise invalid name would be dropped at processing without any signal to the dev.
+// GA4 rejects event names that don't start with a letter or exceed 40 chars — an invalid
+// catalog name would be dropped at processing without any signal to the dev.
 const GA4_EVENT_NAME_PATTERN = /^[A-Za-z][\w]{0,39}$/;
 
 /**
@@ -172,12 +172,13 @@ export interface GoogleAnalyticsDestinationOptions {
 }
 
 /**
- * Forwards events to `window.gtag`, translating this package's `$`-prefixed built-ins to
- * GA4's vocabulary — `$identify` sets `user_id`, `$group` becomes the recommended
- * `join_group` event, `$page_viewed` maps to `page_view` (opt-in, see `trackPageViews`).
- * Requires the gtag.js snippet plus `gtag('config', measurementId)` mounted once by the
- * app. Marked `delivery: "immediate"` — gtag.js has its own batching and unload delivery,
- * so queueing in front of it only delays events and replays stale ones next session.
+ * Forwards events to `window.gtag`, translating each envelope kind to GA4's vocabulary —
+ * `identify` sets `user_id`, `group` becomes the recommended `join_group` event, `page`
+ * maps to `page_view` (opt-in, see `trackPageViews`), and `alias` is ignored (GA4 merges
+ * identity via `user_id` on later hits). Requires the gtag.js snippet plus
+ * `gtag('config', measurementId)` mounted once by the app. Marked
+ * `delivery: "immediate"` — gtag.js has its own batching and unload delivery, so
+ * queueing in front of it only delays events and replays stale ones next session.
  *
  * @since 0.5.0-canary.4
  */
@@ -192,44 +193,50 @@ export function createGoogleAnalyticsDestination(options: GoogleAnalyticsDestina
         return;
       }
 
-      if (event.name === "$identify") {
-        // GA4 has no identify event — user_id is set once and rides along on later hits.
-        if (event.userId !== undefined) {
-          window.gtag("set", { user_id: event.userId });
+      switch (event.type) {
+        case "alias": {
+          return;
         }
 
-        return;
-      }
+        case "group": {
+          window.gtag("event", "join_group", toGtagParams({ group_id: event.groupId, ...event.traits }));
 
-      if (event.name === "$page_viewed") {
-        if (options.trackPageViews === true) {
-          // gtag.js attaches page_location/page_title from the live document itself, so
-          // only the caller's extra props are forwarded.
-          const { href: _href, name: _name, ...extras } = event.props;
-
-          window.gtag("event", "page_view", toGtagParams(extras));
+          return;
         }
 
-        return;
+        case "identify": {
+          // GA4 has no identify event — user_id is set once and rides along on later hits.
+          if (event.userId !== undefined) {
+            window.gtag("set", { user_id: event.userId });
+          }
+
+          return;
+        }
+
+        case "page": {
+          if (options.trackPageViews === true) {
+            // gtag.js attaches page_location/page_title from the live document itself, so
+            // only the caller's extra props are forwarded.
+            const { href: _href, ...extras } = event.props;
+
+            window.gtag("event", "page_view", toGtagParams(extras));
+          }
+
+          return;
+        }
+
+        case "track": {
+          if (!GA4_EVENT_NAME_PATTERN.test(event.name)) {
+            console.warn(
+              `[tracking] "${name}" dropped event "${event.name}" — GA4 event names must start with a letter and contain only letters, digits, or underscores (max 40 chars)`,
+            );
+
+            return;
+          }
+
+          window.gtag("event", event.name, toGtagParams(event.props));
+        }
       }
-
-      if (event.name === "$group") {
-        const { groupId, ...traits } = event.props;
-
-        window.gtag("event", "join_group", toGtagParams({ group_id: groupId, ...traits }));
-
-        return;
-      }
-
-      if (!GA4_EVENT_NAME_PATTERN.test(event.name)) {
-        console.warn(
-          `[tracking] "${name}" dropped event "${event.name}" — GA4 event names must start with a letter and contain only letters, digits, or underscores (max 40 chars)`,
-        );
-
-        return;
-      }
-
-      window.gtag("event", event.name, toGtagParams(event.props));
     },
   };
 }

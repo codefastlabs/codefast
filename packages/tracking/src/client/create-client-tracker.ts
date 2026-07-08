@@ -4,7 +4,10 @@ import { EventQueue, type EventQueueStorage } from "#/client/queue";
 import type { Destination } from "#/core/destination";
 import type { EventCatalog, EventsOf } from "#/core/event-catalog";
 import { generateEventId } from "#/core/event-id";
-import type { TrackedEvent } from "#/core/tracked-event";
+import type { TrackedEvent, TrackedEventBase } from "#/core/tracked-event";
+
+/** The per-kind payload of an envelope — the tracker fills in the shared base fields. */
+type EnvelopeSeed<Event = TrackedEvent> = Event extends TrackedEvent ? Omit<Event, keyof TrackedEventBase> : never;
 
 /**
  * @since 0.5.0-canary.4
@@ -14,7 +17,11 @@ export interface ClientTrackerOptions<Catalog extends EventCatalog> {
   anonymousId: string | (() => string);
   catalog: Catalog;
   destinations: Array<Destination>;
-  /** Consulted before every event — return `false` to drop it entirely (nothing sent, nothing queued). Omit to always track. */
+  /**
+   * Consulted before every event — while it returns `false`, nothing is queued and only
+   * `consent: "exempt"` destinations still receive `track`/`page` events, stripped of
+   * identifiers. Omit to always track.
+   */
   isTrackingAllowed?: (() => boolean) | undefined;
   maxQueueSize?: number;
   maxRetries?: number;
@@ -50,6 +57,8 @@ export function createClientTracker<Catalog extends EventCatalog>(
   // the queue would only delay events and replay stale ones next session.
   const immediateDestinations = options.destinations.filter((destination) => destination.delivery === "immediate");
   const queuedDestinations = options.destinations.filter((destination) => destination.delivery !== "immediate");
+  // The exempt lane is immediate-only: queueing would persist gated events for later replay.
+  const exemptDestinations = immediateDestinations.filter((destination) => destination.consent === "exempt");
   const queue = new EventQueue({
     destinations: queuedDestinations,
     maxQueueSize: options.maxQueueSize,
@@ -63,23 +72,37 @@ export function createClientTracker<Catalog extends EventCatalog>(
   });
   let userId: string | undefined;
 
-  function enqueue(name: string, props: Record<string, unknown>): void {
+  function enqueue(seed: EnvelopeSeed): void {
     // The gate runs per event (not at creation) so a consent change mid-session applies immediately.
-    if (options.isTrackingAllowed?.() === false) {
+    const isAllowed = options.isTrackingAllowed?.() !== false;
+    // Identity-centric kinds are meaningless without identifiers — the exempt lane only
+    // carries behavioral counts.
+    const isExemptEligible = seed.type === "track" || seed.type === "page";
+
+    if (!isAllowed && (exemptDestinations.length === 0 || !isExemptEligible)) {
       return;
     }
 
-    const envelope: TrackedEvent = {
-      anonymousId: typeof options.anonymousId === "function" ? options.anonymousId() : options.anonymousId,
-      eventId: generateEventId(),
-      name,
-      owner: "client",
-      props,
-      timestamp: Date.now(),
-      ...(userId === undefined ? {} : { userId }),
-    };
+    // Gated events ship identifier-free: no anonymousId is resolved (so none is ever
+    // minted as a side effect) and no userId rides along — the exempt lane only carries
+    // what a cookieless sink may see.
+    const identity: Pick<TrackedEventBase, "anonymousId" | "userId"> = isAllowed
+      ? {
+          anonymousId: typeof options.anonymousId === "function" ? options.anonymousId() : options.anonymousId,
+          ...(userId === undefined ? {} : { userId }),
+        }
+      : { anonymousId: "" };
 
-    for (const destination of immediateDestinations) {
+    // The seed/base split is total by construction — the assertion only rejoins the union.
+    const envelope = {
+      ...seed,
+      ...identity,
+      eventId: generateEventId(),
+      owner: "client",
+      timestamp: Date.now(),
+    } as TrackedEvent;
+
+    for (const destination of isAllowed ? immediateDestinations : exemptDestinations) {
       try {
         void Promise.resolve(destination.send(envelope)).catch(() => {
           /* an immediate destination owns its transport — no retry path here */
@@ -89,9 +112,11 @@ export function createClientTracker<Catalog extends EventCatalog>(
       }
     }
 
-    // Still enqueued unconditionally — the queue also feeds `flushWithBeacon`, which
-    // ships raw envelopes to a custom endpoint independently of any destination.
-    queue.enqueue(envelope);
+    if (isAllowed) {
+      // The queue also feeds `flushWithBeacon`, which ships raw envelopes to a custom
+      // endpoint independently of any destination.
+      queue.enqueue(envelope);
+    }
   }
 
   return {
@@ -115,14 +140,14 @@ export function createClientTracker<Catalog extends EventCatalog>(
       }
     },
     group(groupId, traits = {}) {
-      enqueue("$group", { groupId, ...traits });
+      enqueue({ groupId, traits, type: "group" });
     },
     identify(id, traits = {}) {
       userId = id;
-      enqueue("$identify", traits);
+      enqueue({ traits, type: "identify" });
     },
     page(name, props = {}) {
-      enqueue("$page_viewed", name === undefined ? props : { name, ...props });
+      enqueue({ name, props, type: "page" });
     },
     track(name, props) {
       // noUncheckedIndexedAccess types this as possibly undefined; the owner check also
@@ -134,7 +159,7 @@ export function createClientTracker<Catalog extends EventCatalog>(
       }
 
       definition.schema.parse(props);
-      enqueue(name as string, props as Record<string, unknown>);
+      enqueue({ name: name as string, props: props as Record<string, unknown>, type: "track" });
     },
   };
 }

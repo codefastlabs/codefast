@@ -35,8 +35,7 @@ describe("createClientTracker", () => {
     tracker.track("button_clicked", { id: "cta" });
     await tracker.flush();
 
-    expect(destination.received).toHaveLength(1);
-    expect(destination.received[0]?.props).toEqual({ id: "cta" });
+    expect(destination.received).toMatchObject([{ name: "button_clicked", props: { id: "cta" }, type: "track" }]);
   });
 
   it("rejects a server-owned event at runtime even if the type filter is bypassed", () => {
@@ -69,7 +68,7 @@ describe("createClientTracker", () => {
     expect(destination.received.map((event) => event.userId)).toEqual(["user-1", "user-1"]);
   });
 
-  it("enqueues a $page_viewed event carrying the given name and props", async () => {
+  it("enqueues a page envelope carrying the given name and props", async () => {
     const destination = createRecordingDestination();
     const tracker = createClientTracker({
       anonymousId: "anon-1",
@@ -81,12 +80,10 @@ describe("createClientTracker", () => {
     tracker.page("/pricing", { referrer: "/home" });
     await tracker.flush();
 
-    expect(destination.received).toMatchObject([
-      { name: "$page_viewed", props: { name: "/pricing", referrer: "/home" } },
-    ]);
+    expect(destination.received).toMatchObject([{ name: "/pricing", props: { referrer: "/home" }, type: "page" }]);
   });
 
-  it("enqueues a $group event carrying the groupId and traits", async () => {
+  it("enqueues a group envelope carrying the groupId and traits", async () => {
     const destination = createRecordingDestination();
     const tracker = createClientTracker({
       anonymousId: "anon-1",
@@ -98,7 +95,7 @@ describe("createClientTracker", () => {
     tracker.group("acme", { plan: "enterprise" });
     await tracker.flush();
 
-    expect(destination.received).toMatchObject([{ name: "$group", props: { groupId: "acme", plan: "enterprise" } }]);
+    expect(destination.received).toMatchObject([{ groupId: "acme", traits: { plan: "enterprise" }, type: "group" }]);
   });
 
   it("delivers to immediate destinations at track time, without waiting for a flush", () => {
@@ -228,7 +225,7 @@ describe("createClientTracker", () => {
     tracker.track("button_clicked", { id: "after" });
     await tracker.flush();
 
-    expect(destination.received.map((event) => event.props["id"])).toEqual(["after"]);
+    expect(destination.received).toMatchObject([{ props: { id: "after" } }]);
   });
 
   it("never invokes an anonymousId resolver for a gated event — no id side effect before consent", async () => {
@@ -253,6 +250,71 @@ describe("createClientTracker", () => {
 
     expect(resolveAnonymousId).toHaveBeenCalledOnce();
     expect(destination.received.map((event) => event.anonymousId)).toEqual(["anon-lazy"]);
+  });
+
+  it("keeps consent-exempt immediate destinations fed while gated — identifier-free, unqueued, counts only", async () => {
+    const exempt = {
+      ...createRecordingDestination("exempt"),
+      consent: "exempt" as const,
+      delivery: "immediate" as const,
+    };
+    const required = { ...createRecordingDestination("required"), delivery: "immediate" as const };
+    const queued = createRecordingDestination("queued");
+    const resolveAnonymousId = vi.fn(() => "anon-lazy");
+    const storage = createMemoryQueueStorage();
+    const tracker = createClientTracker({
+      anonymousId: resolveAnonymousId,
+      catalog,
+      destinations: [exempt, queued, required],
+      isTrackingAllowed: () => false,
+      storage,
+    });
+
+    tracker.identify("user-1");
+    tracker.track("button_clicked", { id: "cta" });
+    tracker.page("/pricing");
+    await tracker.flush();
+
+    expect(required.received).toHaveLength(0);
+    expect(queued.received).toHaveLength(0);
+    expect(storage.load()).toHaveLength(0);
+    expect(resolveAnonymousId).not.toHaveBeenCalled();
+    // only the behavioral kinds flow, and they carry no identity — not even the identify's userId
+    expect(exempt.received.map((event) => event.type)).toEqual(["track", "page"]);
+    expect(exempt.received.every((event) => event.anonymousId === "" && event.userId === undefined)).toBe(true);
+  });
+
+  it("restores full identified delivery to exempt destinations once tracking is allowed", () => {
+    const exempt = {
+      ...createRecordingDestination("exempt"),
+      consent: "exempt" as const,
+      delivery: "immediate" as const,
+    };
+    const tracker = createClientTracker({
+      anonymousId: "anon-1",
+      catalog,
+      destinations: [exempt],
+      isTrackingAllowed: () => true,
+    });
+
+    tracker.track("button_clicked", { id: "cta" });
+
+    expect(exempt.received).toMatchObject([{ anonymousId: "anon-1", type: "track" }]);
+  });
+
+  it("never routes gated events to an exempt queued destination — the exempt lane is immediate-only", async () => {
+    const exemptQueued = { ...createRecordingDestination("exempt-queued"), consent: "exempt" as const };
+    const tracker = createClientTracker({
+      anonymousId: "anon-1",
+      catalog,
+      destinations: [exemptQueued],
+      isTrackingAllowed: () => false,
+    });
+
+    tracker.track("button_clicked", { id: "cta" });
+    await tracker.flush();
+
+    expect(exemptQueued.received).toHaveLength(0);
   });
 
   it("works without a storage — the queue stays in memory only", async () => {

@@ -8,6 +8,16 @@ import type { TrackedEvent } from "#/core/tracked-event";
  */
 export interface Destination {
   /**
+   * "exempt" keeps this destination receiving `track`/`page` events while the client
+   * tracker's consent gate is closed — only for cookieless, identifier-free sinks: gated
+   * envelopes carry no `anonymousId`/`userId`, identity kinds never flow, and nothing is
+   * queued or persisted, so the exempt lane only applies to `delivery: "immediate"`
+   * destinations.
+   *
+   * @defaultValue "required"
+   */
+  consent?: "exempt" | "required";
+  /**
    * "immediate" for SDK-backed destinations that own their transport (gtag.js, Vercel's
    * in-page queue) — the client tracker calls `send` at track time and never queues,
    * persists, or retries for them.

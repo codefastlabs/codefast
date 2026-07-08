@@ -10,6 +10,7 @@ const event: TrackedEvent = {
   owner: "client",
   props: {},
   timestamp: 0,
+  type: "track",
 };
 
 describe("createLocalStorageQueueStorage", () => {

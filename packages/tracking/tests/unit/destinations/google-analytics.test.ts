@@ -36,6 +36,7 @@ describe("createGoogleAnalyticsDestination", () => {
       owner: "client",
       props: { count: 3, id: "cta", primary: true },
       timestamp: 0,
+      type: "track",
     });
 
     expect(gtag).toHaveBeenCalledWith("event", "button_clicked", { count: 3, id: "cta", primary: true });
@@ -51,6 +52,7 @@ describe("createGoogleAnalyticsDestination", () => {
       owner: "client",
       props: { items: ["a", "b"] },
       timestamp: 0,
+      type: "track",
     });
 
     expect(gtag).toHaveBeenCalledWith("event", "order_completed", { items: '["a","b"]' });
@@ -66,52 +68,55 @@ describe("createGoogleAnalyticsDestination", () => {
       owner: "client",
       props: { referrer: undefined, url: null },
       timestamp: 0,
+      type: "track",
     });
 
     expect(gtag).toHaveBeenCalledWith("event", "page_viewed", {});
   });
 
-  it("drops $page_viewed by default — gtag config + Enhanced Measurement already report page views", () => {
+  it("drops page envelopes by default — gtag config + Enhanced Measurement already report page views", () => {
     const destination = createGoogleAnalyticsDestination();
 
     void destination.send({
       anonymousId: "anon-1",
       eventId: "e4",
-      name: "$page_viewed",
+      name: "/pricing",
       owner: "client",
-      props: { href: "https://example.com/pricing", name: "/pricing" },
+      props: { href: "https://example.com/pricing" },
       timestamp: 0,
+      type: "page",
     });
 
     expect(gtag).not.toHaveBeenCalled();
   });
 
-  it("maps $page_viewed to page_view (extras only) when trackPageViews is enabled", () => {
+  it("maps page envelopes to page_view (extras only) when trackPageViews is enabled", () => {
     const destination = createGoogleAnalyticsDestination({ trackPageViews: true });
 
     void destination.send({
       anonymousId: "anon-1",
       eventId: "e5",
-      name: "$page_viewed",
+      name: "/pricing",
       owner: "client",
-      props: { href: "https://example.com/pricing", name: "/pricing", referrer: "/home" },
+      props: { href: "https://example.com/pricing", referrer: "/home" },
       timestamp: 0,
+      type: "page",
     });
 
     // gtag.js attaches page_location/page_title from the live document itself.
     expect(gtag).toHaveBeenCalledWith("event", "page_view", { referrer: "/home" });
   });
 
-  it("maps $identify to gtag('set', { user_id }) instead of an event", () => {
+  it("maps identify to gtag('set', { user_id }) instead of an event", () => {
     const destination = createGoogleAnalyticsDestination();
 
     void destination.send({
       anonymousId: "anon-1",
       eventId: "e6",
-      name: "$identify",
       owner: "client",
-      props: { plan: "pro" },
       timestamp: 0,
+      traits: { plan: "pro" },
+      type: "identify",
       userId: "user-1",
     });
 
@@ -119,19 +124,36 @@ describe("createGoogleAnalyticsDestination", () => {
     expect(gtag).not.toHaveBeenCalledWith("event", expect.anything(), expect.anything());
   });
 
-  it("maps $group to GA4's recommended join_group event with group_id", () => {
+  it("maps group to GA4's recommended join_group event with group_id", () => {
     const destination = createGoogleAnalyticsDestination();
 
     void destination.send({
       anonymousId: "anon-1",
       eventId: "e7",
-      name: "$group",
+      groupId: "acme",
       owner: "client",
-      props: { groupId: "acme", plan: "enterprise" },
       timestamp: 0,
+      traits: { plan: "enterprise" },
+      type: "group",
     });
 
     expect(gtag).toHaveBeenCalledWith("event", "join_group", { group_id: "acme", plan: "enterprise" });
+  });
+
+  it("drops alias — GA4 merges identity via user_id on later hits", () => {
+    const destination = createGoogleAnalyticsDestination();
+
+    void destination.send({
+      anonymousId: "anon-1",
+      eventId: "e10",
+      owner: "client",
+      previousId: "anon-0",
+      timestamp: 0,
+      type: "alias",
+      userId: "user-1",
+    });
+
+    expect(gtag).not.toHaveBeenCalled();
   });
 
   it("warns and drops event names GA4 would reject instead of sending them to nowhere", () => {
@@ -141,10 +163,11 @@ describe("createGoogleAnalyticsDestination", () => {
     void destination.send({
       anonymousId: "anon-1",
       eventId: "e8",
-      name: "$custom_thing",
+      name: "invalid-name",
       owner: "client",
       props: {},
       timestamp: 0,
+      type: "track",
     });
 
     expect(gtag).not.toHaveBeenCalled();
@@ -173,6 +196,7 @@ describe("createGoogleAnalyticsDestination", () => {
         owner: "client",
         props: {},
         timestamp: 0,
+        type: "track",
       });
     }).not.toThrow();
 

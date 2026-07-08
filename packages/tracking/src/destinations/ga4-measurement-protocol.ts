@@ -1,4 +1,5 @@
 import type { Destination } from "#/core/destination";
+import type { TrackedEvent } from "#/core/tracked-event";
 
 type MeasurementProtocolParamValue = boolean | number | string;
 
@@ -122,15 +123,14 @@ export function createGa4MeasurementProtocolDestination(
   return {
     name,
     async send(event) {
-      // GA4 has no alias concept — identity merge happens via user_id on later events.
-      if (event.name === "$alias") {
+      const translated = toMeasurementProtocolEvent(event);
+
+      // No GA4 equivalent (alias merges via user_id; identify only carries identity).
+      if (translated === undefined) {
         return;
       }
 
-      // join_group is GA4's recommended-event equivalent of a group association.
-      const eventName = event.name === "$group" ? "join_group" : event.name;
-      const props = event.name === "$group" ? renameGroupIdProp(event.props) : event.props;
-      const params = toMeasurementProtocolParams(props);
+      const { name: eventName, params } = translated;
 
       if (options.sessionId !== undefined && params.session_id === undefined) {
         params.session_id = options.sessionId;
@@ -159,8 +159,27 @@ export function createGa4MeasurementProtocolDestination(
   };
 }
 
-function renameGroupIdProp(props: Record<string, unknown>): Record<string, unknown> {
-  const { groupId, ...traits } = props;
+/** Maps each envelope kind onto GA4's event vocabulary; `undefined` means "no equivalent, skip". */
+function toMeasurementProtocolEvent(
+  event: TrackedEvent,
+): { name: string; params: Record<string, MeasurementProtocolParamValue> } | undefined {
+  switch (event.type) {
+    case "alias":
+    case "identify": {
+      return undefined;
+    }
 
-  return { group_id: groupId, ...traits };
+    case "group": {
+      // join_group is GA4's recommended-event equivalent of a group association.
+      return { name: "join_group", params: toMeasurementProtocolParams({ group_id: event.groupId, ...event.traits }) };
+    }
+
+    case "page": {
+      return { name: "page_view", params: toMeasurementProtocolParams(event.props) };
+    }
+
+    case "track": {
+      return { name: event.name, params: toMeasurementProtocolParams(event.props) };
+    }
+  }
 }

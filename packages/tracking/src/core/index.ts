@@ -21,4 +21,12 @@ export { defineEventCatalog } from "#/core/event-catalog";
 
 export { generateEventId } from "#/core/event-id";
 
-export type { TrackedEvent } from "#/core/tracked-event";
+export type {
+  AliasEvent,
+  GroupEvent,
+  IdentifyEvent,
+  PageViewEvent,
+  TrackEvent,
+  TrackedEvent,
+  TrackedEventBase,
+} from "#/core/tracked-event";
