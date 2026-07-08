@@ -60,6 +60,62 @@ describe("createVercelAnalyticsDestination", () => {
   it("uses the given destination name", async () => {
     const { createVercelAnalyticsDestination } = await import("#/destinations/vercel-analytics");
 
-    expect(createVercelAnalyticsDestination("va").name).toBe("va");
+    expect(createVercelAnalyticsDestination({ name: "va" }).name).toBe("va");
+  });
+
+  it("drops $page_viewed by default — the mounted <Analytics /> component already tracks page views", async () => {
+    const { createVercelAnalyticsDestination } = await import("#/destinations/vercel-analytics");
+    const destination = createVercelAnalyticsDestination();
+
+    void destination.send({
+      anonymousId: "anon-1",
+      eventId: "e4",
+      name: "$page_viewed",
+      owner: "client",
+      props: { href: "https://x.test/pricing", name: "/pricing" },
+      timestamp: 0,
+    });
+
+    expect(track).not.toHaveBeenCalled();
+  });
+
+  it("forwards $page_viewed as page_view with only the caller's extras when trackPageViews is on", async () => {
+    const { createVercelAnalyticsDestination } = await import("#/destinations/vercel-analytics");
+    const destination = createVercelAnalyticsDestination({ trackPageViews: true });
+
+    void destination.send({
+      anonymousId: "anon-1",
+      eventId: "e5",
+      name: "$page_viewed",
+      owner: "client",
+      props: { href: "https://x.test/pricing", name: "/pricing", referrer: "/home" },
+      timestamp: 0,
+    });
+
+    expect(track).toHaveBeenCalledWith("page_view", { referrer: "/home" });
+  });
+
+  it("drops $identify and $group — Vercel Analytics has no identity API to translate them to", async () => {
+    const { createVercelAnalyticsDestination } = await import("#/destinations/vercel-analytics");
+    const destination = createVercelAnalyticsDestination();
+
+    void destination.send({
+      anonymousId: "anon-1",
+      eventId: "e6",
+      name: "$identify",
+      owner: "client",
+      props: { plan: "pro" },
+      timestamp: 0,
+    });
+    void destination.send({
+      anonymousId: "anon-1",
+      eventId: "e7",
+      name: "$group",
+      owner: "client",
+      props: { groupId: "acme" },
+      timestamp: 0,
+    });
+
+    expect(track).not.toHaveBeenCalled();
   });
 });
