@@ -24,8 +24,8 @@ import type { ColumnDef, ColumnFiltersState, SortingState, VisibilityState } fro
 import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react";
 import * as React from "react";
 
-import type { Translations } from "#/components/detail/language";
-import { useTranslation } from "#/components/detail/language-context";
+import type { Translations } from "#/features/components-catalog/components/detail/language";
+import { useTranslation } from "#/features/components-catalog/components/detail/language-context";
 
 type DataTableValues = {
   filterEmails: string;

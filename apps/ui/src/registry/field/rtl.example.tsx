@@ -13,8 +13,8 @@ import { Input } from "@codefast/ui/input";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@codefast/ui/select";
 import { Textarea } from "@codefast/ui/textarea";
 
-import type { Translations } from "#/components/detail/language";
-import { useTranslation } from "#/components/detail/language-context";
+import type { Translations } from "#/features/components-catalog/components/detail/language";
+import { useTranslation } from "#/features/components-catalog/components/detail/language-context";
 
 const months = [
   { label: "MM", value: null },

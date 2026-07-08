@@ -2,7 +2,7 @@ import { resolveConsentMode } from "@codefast/tracking/core";
 import { resolveRegionFromCountryCode } from "@codefast/tracking/server";
 import { describe, expect, it } from "vitest";
 
-import { INITIAL_CONSENT_COOKIE_NAME } from "#/lib/initial-consent-cookie";
+import { INITIAL_CONSENT_COOKIE_NAME } from "#/features/tracking/lib/initial-consent-cookie";
 
 import middleware, { resolveRegion } from "../../middleware";
 

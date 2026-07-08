@@ -16,8 +16,8 @@ import {
 import { Link } from "@tanstack/react-router";
 import { ChevronDownIcon, DotIcon } from "lucide-react";
 
-import type { Translations } from "#/components/detail/language";
-import { useTranslation } from "#/components/detail/language-context";
+import type { Translations } from "#/features/components-catalog/components/detail/language";
+import { useTranslation } from "#/features/components-catalog/components/detail/language-context";
 
 const translations: Translations = {
   en: {

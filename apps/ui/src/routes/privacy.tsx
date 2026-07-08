@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-import { PrivacyChoices } from "#/components/privacy/privacy-choices";
+import { PrivacyChoices } from "#/features/privacy/components/privacy-choices";
 import { CONTENT_CACHE_CONTROL } from "#/lib/cache";
 import { canonicalHead } from "#/lib/seo";
 

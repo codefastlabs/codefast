@@ -1,8 +1,8 @@
 import { Field, FieldLabel } from "@codefast/ui/field";
 import { Progress } from "@codefast/ui/progress";
 
-import type { Translations } from "#/components/detail/language";
-import { useTranslation } from "#/components/detail/language-context";
+import type { Translations } from "#/features/components-catalog/components/detail/language";
+import { useTranslation } from "#/features/components-catalog/components/detail/language-context";
 
 const translations: Translations = {
   en: {

@@ -7,12 +7,12 @@ import { HeadContent, Link, Scripts, createRootRoute } from "@tanstack/react-rou
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import type { ReactNode } from "react";
 
-import { Analytics } from "#/components/layout/analytics";
 import { Footer } from "#/components/layout/footer";
-import { GoogleTag } from "#/components/layout/google-tag";
 import { Header } from "#/components/layout/header";
 import { NotFound } from "#/components/shared/not-found";
 import { SiteNotFound } from "#/components/shared/site-not-found";
+import { Analytics } from "#/features/tracking/components/analytics";
+import { GoogleTag } from "#/features/tracking/components/google-tag";
 import { SITE_OG_IMAGE } from "#/lib/seo";
 
 import appCss from "#/styles.css?url";

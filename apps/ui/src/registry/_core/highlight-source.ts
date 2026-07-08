@@ -8,7 +8,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { staticFunctionMiddleware } from "@tanstack/start-static-server-functions";
 
-import type { HighlightedSource } from "#/lib/highlight";
+import type { HighlightedSource } from "#/registry/_core/highlight";
 import type { SourceRef } from "#/registry/_core/types";
 
 /** Resolves registry source refs to their raw text + pre-highlighted HTML. */

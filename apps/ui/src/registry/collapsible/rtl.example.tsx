@@ -3,8 +3,8 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@codefast/u
 import { ChevronsUpDown } from "lucide-react";
 import * as React from "react";
 
-import type { Translations } from "#/components/detail/language";
-import { useTranslation } from "#/components/detail/language-context";
+import type { Translations } from "#/features/components-catalog/components/detail/language";
+import { useTranslation } from "#/features/components-catalog/components/detail/language-context";
 
 const translations: Translations = {
   en: {

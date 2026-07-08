@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-import { GalleryHeroSection } from "#/components/showcase/gallery-hero-section";
-import { GalleryLayout } from "#/components/showcase/gallery-layout";
+import { GalleryHeroSection } from "#/features/components-catalog/components/gallery/gallery-hero-section";
+import { GalleryLayout } from "#/features/components-catalog/components/gallery/gallery-layout";
 import { CONTENT_CACHE_CONTROL } from "#/lib/cache";
 import { canonicalHead } from "#/lib/seo";
 

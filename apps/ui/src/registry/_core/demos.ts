@@ -10,7 +10,7 @@
 import type { ComponentType, LazyExoticComponent } from "react";
 import { lazy } from "react";
 
-import type { HighlightedSource } from "#/lib/highlight";
+import type { HighlightedSource } from "#/registry/_core/highlight";
 import { getHighlightedSources } from "#/registry/_core/highlight-source";
 
 export interface DemoEntry {

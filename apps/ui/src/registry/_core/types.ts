@@ -8,9 +8,9 @@
  */
 import type { ComponentType } from "react";
 
-import type { KeyRow } from "#/components/detail/keyboard-table";
-import type { PropRow } from "#/components/detail/props-table";
-import type { HighlightedSource } from "#/lib/highlight";
+import type { KeyRow } from "#/features/components-catalog/components/detail/keyboard-table";
+import type { PropRow } from "#/features/components-catalog/components/detail/props-table";
+import type { HighlightedSource } from "#/registry/_core/highlight";
 
 /**
  * Key of a registry source file (e.g. `../button/variants.example.tsx`), built by

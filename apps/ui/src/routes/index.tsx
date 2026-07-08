@@ -1,9 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-import { FeaturesSection } from "#/components/home/features-section";
-import { HeroSection } from "#/components/home/hero-section";
-import { InstallCta } from "#/components/home/install-cta";
-import { StatsSection } from "#/components/home/stats-section";
+import { FeaturesSection } from "#/features/home/components/features-section";
+import { HeroSection } from "#/features/home/components/hero-section";
+import { InstallCta } from "#/features/home/components/install-cta";
+import { StatsSection } from "#/features/home/components/stats-section";
 import { CONTENT_CACHE_CONTROL } from "#/lib/cache";
 import { GITHUB_URL } from "#/lib/nav-links";
 import { SITE_URL, absoluteUrl, canonicalHead, jsonLdScript } from "#/lib/seo";

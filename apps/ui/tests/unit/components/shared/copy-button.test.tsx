@@ -6,7 +6,7 @@ import { CopyButton } from "#/components/shared/copy-button";
 
 const { track } = vi.hoisted(() => ({ track: vi.fn() }));
 
-vi.mock("#/lib/tracking", () => ({ getTracker: () => ({ track }) }));
+vi.mock("#/features/tracking/lib/tracking", () => ({ getTracker: () => ({ track }) }));
 
 beforeEach(() => {
   track.mockClear();

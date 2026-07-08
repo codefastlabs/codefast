@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 
 import { AppearanceToggle } from "#/components/layout/appearance-toggle";
-import { ConsentGate } from "#/components/layout/consent-gate";
+import { ConsentGate } from "#/features/tracking/components/consent-gate";
 import { PRIMARY_NAV, RESOURCE_LINKS } from "#/lib/nav-links";
 
 export function Footer() {
