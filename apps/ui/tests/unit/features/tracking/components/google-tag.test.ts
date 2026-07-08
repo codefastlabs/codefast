@@ -6,8 +6,11 @@ import {
   buildInitialConsentBootstrapScript,
 } from "#/features/tracking/components/google-tag";
 import type { InitialConsent } from "#/features/tracking/lib/consent";
-import { CONSENT_POLICY_VERSION, CONSENT_STORAGE_KEY } from "#/features/tracking/lib/consent";
-import { INITIAL_CONSENT_COOKIE_NAME } from "#/features/tracking/lib/initial-consent-cookie";
+import {
+  CONSENT_POLICY_VERSION,
+  CONSENT_STORAGE_KEY,
+  INITIAL_CONSENT_COOKIE_NAME,
+} from "#/features/tracking/lib/consent";
 
 /** Executes the exact source string `<GoogleTag />` inlines into the page, as the browser would. */
 function runScript(script: string): void {

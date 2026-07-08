@@ -4,7 +4,7 @@ import { createClientTracker, createCookieAnonymousId } from "@codefast/tracking
 import { createGoogleAnalyticsDestination, createVercelAnalyticsDestination } from "@codefast/tracking/destinations";
 import { z } from "zod";
 
-import { isTrackingAllowed } from "#/features/tracking/lib/consent-state";
+import { isTrackingAllowed } from "#/features/tracking/lib/consent";
 
 /**
  * `copy_code`/`search_query` track *what* was copied or searched, never the raw

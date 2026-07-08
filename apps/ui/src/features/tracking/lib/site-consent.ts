@@ -5,10 +5,10 @@ import { useConsent } from "@codefast/tracking/react";
 
 import {
   CONSENT_POLICY_VERSION,
+  consentStorage,
   REQUESTED_CONSENT_CATEGORIES,
   resolveInitialConsent,
 } from "#/features/tracking/lib/consent";
-import { consentStorage } from "#/features/tracking/lib/consent-state";
 import { clearAnonymousId, clearGoogleAnalyticsCookies, getTracker } from "#/features/tracking/lib/tracking";
 
 export interface UseSiteConsentResult {

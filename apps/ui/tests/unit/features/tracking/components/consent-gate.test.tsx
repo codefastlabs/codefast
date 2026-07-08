@@ -14,10 +14,8 @@ const { clear, clearAnonymousId, clearGoogleAnalyticsCookies, resolveInitialCons
   }),
 );
 
-vi.mock("#/features/tracking/lib/consent", () => ({
-  CONSENT_POLICY_VERSION: "1",
-  CONSENT_STORAGE_KEY: "codefast-ui-consent",
-  REQUESTED_CONSENT_CATEGORIES: ["analytics"],
+vi.mock(import("#/features/tracking/lib/consent"), async (importOriginal) => ({
+  ...(await importOriginal()),
   resolveInitialConsent,
 }));
 vi.mock("#/features/tracking/lib/tracking", () => ({

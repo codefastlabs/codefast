@@ -1,5 +1,11 @@
+import { createLocalStorageConsentStorage, hasGlobalPrivacyControlSignal } from "@codefast/tracking/client";
 import type { ConsentCategory, ConsentDecision, ConsentMode, ConsentRegion } from "@codefast/tracking/core";
-import { createConsentDecision, resolveConsentMode, resolveDefaultConsent } from "@codefast/tracking/core";
+import {
+  createConsentDecision,
+  resolveConsentMode,
+  resolveDefaultConsent,
+  resolveEffectiveConsent,
+} from "@codefast/tracking/core";
 import { resolveRegionFromCountryCode } from "@codefast/tracking/server";
 import { createIsomorphicFn } from "@tanstack/react-start";
 import { getRequestHeader } from "@tanstack/react-start/server";
@@ -12,6 +18,13 @@ export const CONSENT_POLICY_VERSION = "1";
  * and read pre-hydration by `<GoogleTag />`'s inline bootstrap, so both must share it.
  */
 export const CONSENT_STORAGE_KEY = "codefast-ui-consent";
+
+/**
+ * Read by `google-tag.tsx`'s bootstrap. The writer, `middleware.ts`, duplicates this
+ * literal (Vercel compiles it independently of the app build, so it imports nothing
+ * from `src/`) — `middleware.test.ts` guards the sync.
+ */
+export const INITIAL_CONSENT_COOKIE_NAME = "codefast-ui-initial-consent";
 
 /** The only purpose this site tracks for — it runs no ads, so `ads` is never requested. */
 export const REQUESTED_CONSENT_CATEGORIES: ReadonlyArray<ConsentCategory> = ["analytics"];
@@ -62,3 +75,22 @@ export const resolveInitialConsent = createIsomorphicFn()
     };
   })
   .client((): InitialConsent => globalThis.window.__INITIAL_CONSENT__ ?? STRICTEST_DEFAULT);
+
+// Module scope — every consumer must share one storage so decisions sync across surfaces.
+export const consentStorage = createLocalStorageConsentStorage(CONSENT_STORAGE_KEY);
+
+/**
+ * Non-React mirror of `useConsent`'s effective-consent rule — gates the tracker pipeline
+ * outside components.
+ */
+export function isTrackingAllowed(): boolean {
+  const effectiveConsent = resolveEffectiveConsent(
+    consentStorage,
+    CONSENT_POLICY_VERSION,
+    REQUESTED_CONSENT_CATEGORIES,
+    resolveInitialConsent().mode,
+    hasGlobalPrivacyControlSignal(),
+  );
+
+  return effectiveConsent.analytics;
+}

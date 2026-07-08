@@ -1,4 +1,3 @@
-import type * as TrackingClient from "@codefast/tracking/client";
 import { cleanup, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
@@ -21,10 +20,8 @@ const {
   useHasHydrated: vi.fn(() => true),
 }));
 
-vi.mock("#/features/tracking/lib/consent", () => ({
-  CONSENT_POLICY_VERSION: "1",
-  CONSENT_STORAGE_KEY: "codefast-ui-consent",
-  REQUESTED_CONSENT_CATEGORIES: ["analytics"],
+vi.mock(import("#/features/tracking/lib/consent"), async (importOriginal) => ({
+  ...(await importOriginal()),
   resolveInitialConsent,
 }));
 vi.mock("#/features/tracking/lib/tracking", () => ({
@@ -32,8 +29,8 @@ vi.mock("#/features/tracking/lib/tracking", () => ({
   clearGoogleAnalyticsCookies,
   getTracker: () => ({ clear }),
 }));
-vi.mock("@codefast/tracking/client", async (importOriginal) => ({
-  ...(await importOriginal<typeof TrackingClient>()),
+vi.mock(import("@codefast/tracking/client"), async (importOriginal) => ({
+  ...(await importOriginal()),
   hasGlobalPrivacyControlSignal,
 }));
 vi.mock("#/features/tracking/hooks/use-has-hydrated", () => ({ useHasHydrated }));

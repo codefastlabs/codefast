@@ -1,9 +1,13 @@
 import { buildGtagConsentBootstrapScript } from "@codefast/tracking/destinations";
 
 import type { InitialConsent } from "#/features/tracking/lib/consent";
-import { CONSENT_POLICY_VERSION, CONSENT_STORAGE_KEY, resolveInitialConsent } from "#/features/tracking/lib/consent";
+import {
+  CONSENT_POLICY_VERSION,
+  CONSENT_STORAGE_KEY,
+  INITIAL_CONSENT_COOKIE_NAME,
+  resolveInitialConsent,
+} from "#/features/tracking/lib/consent";
 import { GA_MEASUREMENT_ID } from "#/features/tracking/lib/google-tag-loader";
-import { INITIAL_CONSENT_COOKIE_NAME } from "#/features/tracking/lib/initial-consent-cookie";
 
 /** Prefers `middleware.ts`'s per-visitor cookie over the static build's fallback. */
 export function buildInitialConsentBootstrapScript(fallback: InitialConsent): string {
