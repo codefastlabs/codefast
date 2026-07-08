@@ -20,8 +20,10 @@ interface GoogleConsentParams {
  * property is a TS error, not a merge.
  */
 type GtagFunction = {
+  (command: "config", targetId: string, params?: Record<string, GtagPropertyValue>): void;
   (command: "consent", action: "default" | "update", params: GoogleConsentParams): void;
   (command: "event", eventName: string, params?: Record<string, GtagPropertyValue>): void;
+  (command: "js", startDate: Date): void;
   (command: "set", params: Record<string, GtagPropertyValue>): void;
   (command: "set", key: string, value: boolean): void;
 };
