@@ -3,7 +3,7 @@ import { describe, expect, it, vi } from "vitest";
 
 import type { ConsentRecord, ConsentStorage } from "#/core/consent";
 import { useConsent } from "#/react/use-consent";
-import { createMemoryConsentStorage } from "#/tests/unit/react/support/memory-consent-storage";
+import { createMemoryConsentStorage } from "#/tests/unit/core/support/memory-consent-storage";
 
 describe("useConsent", () => {
   it("blocks tracking and needs a prompt under opt-in with no stored decision", () => {

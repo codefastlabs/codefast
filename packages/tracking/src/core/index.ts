@@ -10,8 +10,10 @@ export {
   CONSENT_CATEGORIES,
   createConsentDecision,
   isConsentDecision,
+  readStoredDecision,
   resolveConsentMode,
   resolveDefaultConsent,
+  resolveEffectiveConsent,
 } from "#/core/consent";
 
 export type { Destination } from "#/core/destination";

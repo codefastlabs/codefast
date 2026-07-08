@@ -5,8 +5,13 @@ export {
   extractGa4SessionId,
 } from "#/destinations/ga4-measurement-protocol";
 
-export type { GoogleAnalyticsDestinationOptions, GoogleConsentDefaultOptions } from "#/destinations/google-analytics";
+export type {
+  GoogleAnalyticsDestinationOptions,
+  GoogleConsentDefaultOptions,
+  GtagConsentBootstrapOptions,
+} from "#/destinations/google-analytics";
 export {
+  buildGtagConsentBootstrapScript,
   createGoogleAnalyticsDestination,
   setGoogleAdsDataRedaction,
   setGoogleConsentDefault,

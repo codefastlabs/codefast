@@ -66,6 +66,11 @@
       "types": "./dist/client/consent-storage.d.mts",
       "import": "./dist/client/consent-storage.mjs"
     },
+    "./client/cookie-anonymous-id": {
+      "source": "./src/client/cookie-anonymous-id.ts",
+      "types": "./dist/client/cookie-anonymous-id.d.mts",
+      "import": "./dist/client/cookie-anonymous-id.mjs"
+    },
     "./client/create-client-tracker": {
       "source": "./src/client/create-client-tracker.ts",
       "types": "./dist/client/create-client-tracker.d.mts",

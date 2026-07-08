@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import {
+  buildGtagConsentBootstrapScript,
   createGoogleAnalyticsDestination,
   setGoogleAdsDataRedaction,
   setGoogleConsentDefault,
@@ -349,5 +350,128 @@ describe("Consent Mode privacy flags", () => {
     setGoogleUrlPassthrough(true);
 
     expect(gtag).toHaveBeenCalledWith("set", "url_passthrough", true);
+  });
+});
+
+describe("buildGtagConsentBootstrapScript", () => {
+  /** Executes the exact source string a consumer would inline into the page. */
+  function runScript(script: string): void {
+    // oxlint-disable-next-line no-implied-eval -- verifying the literal script text is valid, running JS, not eval'ing untrusted input
+    new Function(script)();
+  }
+
+  function consentDefaultParams(): Record<string, unknown> {
+    const calls = (window.dataLayer ?? []) as Array<ArrayLike<unknown>>;
+
+    return calls[0]?.[2] as Record<string, unknown>;
+  }
+
+  function gtagScriptElement(): HTMLScriptElement | null {
+    return document.querySelector('script[src^="https://www.googletagmanager.com/gtag/js"]');
+  }
+
+  afterEach(() => {
+    delete window.dataLayer;
+    delete window.gtag;
+    window.localStorage.clear();
+
+    for (const script of document.querySelectorAll('script[src^="https://www.googletagmanager.com/gtag/js"]')) {
+      script.remove();
+    }
+  });
+
+  it("throws when neither defaultConsent nor defaultConsentExpression is given", () => {
+    expect(() =>
+      buildGtagConsentBootstrapScript({ consentStorageKey: "k", gaMeasurementId: "G-1", policyVersion: "1" }),
+    ).toThrow(/requires defaultConsent or defaultConsentExpression/);
+  });
+
+  it("applies the literal defaultConsent and loads gtag.js once analytics is granted", () => {
+    const script = buildGtagConsentBootstrapScript({
+      consentStorageKey: "k",
+      defaultConsent: { ads: false, analytics: true },
+      gaMeasurementId: "G-TEST123",
+      policyVersion: "1",
+    });
+
+    runScript(script);
+
+    expect(consentDefaultParams()).toEqual({
+      ad_personalization: "denied",
+      ad_storage: "denied",
+      ad_user_data: "denied",
+      analytics_storage: "granted",
+    });
+    expect(gtagScriptElement()?.src).toBe("https://www.googletagmanager.com/gtag/js?id=G-TEST123");
+  });
+
+  it("never fetches gtag.js while the default denies analytics", () => {
+    const script = buildGtagConsentBootstrapScript({
+      consentStorageKey: "k",
+      defaultConsent: { ads: false, analytics: false },
+      gaMeasurementId: "G-TEST123",
+      policyVersion: "1",
+    });
+
+    runScript(script);
+
+    expect(consentDefaultParams().analytics_storage).toBe("denied");
+    expect(window.dataLayer).toHaveLength(1);
+    expect(gtagScriptElement()).toBeNull();
+  });
+
+  it("prefers a stored decision over defaultConsent", () => {
+    window.localStorage.setItem(
+      "k",
+      JSON.stringify({ decision: { ads: false, analytics: true }, policyVersion: "1", timestamp: 0 }),
+    );
+
+    const script = buildGtagConsentBootstrapScript({
+      consentStorageKey: "k",
+      defaultConsent: { ads: false, analytics: false },
+      gaMeasurementId: "G-TEST123",
+      policyVersion: "1",
+    });
+
+    runScript(script);
+
+    expect(consentDefaultParams().analytics_storage).toBe("granted");
+    expect(gtagScriptElement()).not.toBeNull();
+  });
+
+  it("ignores a stored decision recorded under a superseded policy version", () => {
+    window.localStorage.setItem(
+      "k",
+      JSON.stringify({ decision: { ads: false, analytics: true }, policyVersion: "0", timestamp: 0 }),
+    );
+
+    const script = buildGtagConsentBootstrapScript({
+      consentStorageKey: "k",
+      defaultConsent: { ads: false, analytics: false },
+      gaMeasurementId: "G-TEST123",
+      policyVersion: "1",
+    });
+
+    runScript(script);
+
+    expect(consentDefaultParams().analytics_storage).toBe("denied");
+  });
+
+  it("evaluates defaultConsentExpression, taking precedence over defaultConsent", () => {
+    (window as unknown as { __fallback__: unknown }).__fallback__ = { ads: false, analytics: true };
+
+    const script = buildGtagConsentBootstrapScript({
+      consentStorageKey: "k",
+      defaultConsent: { ads: false, analytics: false },
+      defaultConsentExpression: "window.__fallback__",
+      gaMeasurementId: "G-TEST123",
+      policyVersion: "1",
+    });
+
+    runScript(script);
+
+    expect(consentDefaultParams().analytics_storage).toBe("granted");
+
+    Reflect.deleteProperty(window, "__fallback__");
   });
 });

@@ -3,6 +3,9 @@ export { createClientTracker } from "#/client/create-client-tracker";
 
 export { createLocalStorageConsentStorage } from "#/client/consent-storage";
 
+export type { CookieAnonymousId, CookieAnonymousIdOptions } from "#/client/cookie-anonymous-id";
+export { createCookieAnonymousId } from "#/client/cookie-anonymous-id";
+
 export { hasGlobalPrivacyControlSignal } from "#/client/gpc";
 
 export type { ClientLifecycleOptions } from "#/client/lifecycle";

@@ -130,3 +130,43 @@ export interface ConsentStorage {
    */
   subscribe: (listener: () => void) => () => void;
 }
+
+/**
+ * The stored decision if one exists under the current `policyVersion`, normalized to drop
+ * any tampered extra keys — `undefined` if there is none yet, the record is malformed, or
+ * it was recorded under a superseded policy version.
+ *
+ * @since 0.5.0-canary.4
+ */
+export function readStoredDecision(storage: ConsentStorage, policyVersion: string): ConsentDecision | undefined {
+  const record = storage.load();
+
+  if (record?.policyVersion !== policyVersion || !isConsentDecision(record.decision)) {
+    return undefined;
+  }
+
+  const stored = record.decision;
+
+  return createConsentDecision(CONSENT_CATEGORIES.filter((category) => stored[category]));
+}
+
+/**
+ * The consent a tracker should honor right now: the stored decision if one exists, else
+ * the region default — the same rule `useConsent` applies to its `effectiveConsent`, so a
+ * non-React gate (e.g. a tracker's `isTrackingAllowed` option) doesn't have to reimplement
+ * "read storage, validate the policy version, fall back to `resolveDefaultConsent`" itself.
+ *
+ * @since 0.5.0-canary.4
+ */
+export function resolveEffectiveConsent(
+  storage: ConsentStorage,
+  policyVersion: string,
+  requestedCategories: ReadonlyArray<ConsentCategory>,
+  mode: ConsentMode,
+  hasGlobalPrivacyControlSignal: boolean,
+): ConsentDecision {
+  return (
+    readStoredDecision(storage, policyVersion) ??
+    resolveDefaultConsent(mode, requestedCategories, hasGlobalPrivacyControlSignal)
+  );
+}

@@ -1,7 +1,7 @@
 import { useRef, useSyncExternalStore } from "react";
 
 import type { ConsentCategory, ConsentDecision, ConsentMode, ConsentStorage } from "#/core/consent";
-import { CONSENT_CATEGORIES, createConsentDecision, isConsentDecision, resolveDefaultConsent } from "#/core/consent";
+import { CONSENT_CATEGORIES, createConsentDecision, readStoredDecision, resolveDefaultConsent } from "#/core/consent";
 
 /**
  * @since 0.5.0-canary.4
@@ -61,25 +61,23 @@ export function useConsent(options: UseConsentOptions): UseConsentResult {
   const decision = useSyncExternalStore(
     storage.subscribe,
     (): ConsentDecision | undefined => {
-      const record = storage.load();
-
       // Only a well-formed decision under the current policy version counts — the store
       // is tamperable plain JSON, and a garbage value must re-prompt, not silently deny.
-      if (record?.policyVersion !== options.policyVersion || !isConsentDecision(record.decision)) {
+      const stored = readStoredDecision(storage, options.policyVersion);
+
+      if (stored === undefined) {
         cachedDecision.current = undefined;
 
         return undefined;
       }
 
-      const stored = record.decision;
       const cached = cachedDecision.current;
 
       if (cached !== undefined && CONSENT_CATEGORIES.every((category) => cached[category] === stored[category])) {
         return cached;
       }
 
-      // A normalized copy, so tampered extra keys never leak past the hook.
-      cachedDecision.current = createConsentDecision(CONSENT_CATEGORIES.filter((category) => stored[category]));
+      cachedDecision.current = stored;
 
       return cachedDecision.current;
     },

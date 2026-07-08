@@ -1,4 +1,5 @@
 import type { ConsentDecision } from "#/core/consent";
+import { CONSENT_CATEGORIES } from "#/core/consent";
 import type { Destination } from "#/core/destination";
 
 type GtagPropertyValue = boolean | number | string;
@@ -111,6 +112,82 @@ export function setGoogleConsentDefault(decision: ConsentDecision, options: Goog
  */
 export function updateGoogleConsent(decision: ConsentDecision): void {
   ensureGtag()?.("consent", "update", toGoogleConsentParams(decision));
+}
+
+/**
+ * @since 0.6.0-canary.0
+ */
+export interface GtagConsentBootstrapOptions {
+  /** localStorage key holding the package's `ConsentRecord` — must match `useConsent`'s `storage`. */
+  consentStorageKey: string;
+  /**
+   * Consent to apply when nothing valid is stored yet. Embedded as a literal — for a
+   * value only known via an earlier inline script (e.g. a middleware-set cookie read on a
+   * statically prerendered page), use `defaultConsentExpression` instead.
+   */
+  defaultConsent?: ConsentDecision;
+  /**
+   * A raw JS expression evaluating to the fallback `ConsentDecision`, e.g.
+   * `"window.__INITIAL_CONSENT__.defaultConsent"`. Takes precedence over `defaultConsent`
+   * when both are set; one of the two is required.
+   */
+  defaultConsentExpression?: string;
+  /** Google Analytics 4 Measurement ID (e.g. `"G-XXXXXXX"`). */
+  gaMeasurementId: string;
+  /** Must match `useConsent`'s `policyVersion` — a decision under any other version is ignored. */
+  policyVersion: string;
+}
+
+/**
+ * Builds the literal JS source for a `<script dangerouslySetInnerHTML>` mounted in
+ * `<head>`, before hydration: applies Consent Mode v2's default signal from the visitor's
+ * stored decision (falling back to `defaultConsent`/`defaultConsentExpression` when none is
+ * stored yet), then, in basic Consent Mode, loads gtag.js only once analytics is granted —
+ * a denied visitor's browser never pings Google. A runtime grant (banner Accept, a settings
+ * toggle) needs `updateGoogleConsent` plus loading gtag.js separately; this only covers the
+ * page-load state.
+ *
+ * @since 0.6.0-canary.0
+ */
+export function buildGtagConsentBootstrapScript(options: GtagConsentBootstrapOptions): string {
+  const { consentStorageKey, defaultConsent, defaultConsentExpression, gaMeasurementId, policyVersion } = options;
+
+  if (defaultConsentExpression === undefined && defaultConsent === undefined) {
+    throw new Error("[tracking] buildGtagConsentBootstrapScript requires defaultConsent or defaultConsentExpression");
+  }
+
+  const fallbackExpression = defaultConsentExpression ?? JSON.stringify(defaultConsent);
+  const decisionShapeCheck = CONSENT_CATEGORIES.map(
+    (category) => `typeof record.decision[${JSON.stringify(category)}] === "boolean"`,
+  ).join(" && ");
+  const gtagScriptUrl = `https://www.googletagmanager.com/gtag/js?id=${gaMeasurementId}`;
+
+  return `
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){window.dataLayer.push(arguments);}
+    var storedConsent = null;
+    try {
+      var record = JSON.parse(window.localStorage.getItem(${JSON.stringify(consentStorageKey)}));
+      if (record && record.policyVersion === ${JSON.stringify(policyVersion)} && record.decision && ${decisionShapeCheck}) {
+        storedConsent = record.decision;
+      }
+    } catch (e) {}
+    var consent = storedConsent || (${fallbackExpression});
+    gtag("consent", "default", {
+      ad_personalization: consent.ads ? "granted" : "denied",
+      ad_storage: consent.ads ? "granted" : "denied",
+      ad_user_data: consent.ads ? "granted" : "denied",
+      analytics_storage: consent.analytics ? "granted" : "denied",
+    });
+    if (consent.analytics) {
+      gtag("js", new Date());
+      gtag("config", ${JSON.stringify(gaMeasurementId)});
+      var gtagScript = document.createElement("script");
+      gtagScript.async = true;
+      gtagScript.src = ${JSON.stringify(gtagScriptUrl)};
+      document.head.appendChild(gtagScript);
+    }
+  `;
 }
 
 /**
