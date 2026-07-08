@@ -5,17 +5,18 @@ import { useEffect, useState } from "react";
 
 import { ConsentBannerCard } from "#/components/layout/consent-banner-card";
 import { PrivacyChoicesIcon } from "#/components/layout/privacy-choices-icon";
+import { loadGoogleTagScript } from "#/lib/google-tag-loader";
 import { useSiteConsent } from "#/lib/site-consent";
 import { useHasHydrated } from "#/lib/use-has-hydrated";
 
 /**
  * Region-aware consent UI, rendered inside the footer: an opt-in banner plus a "Cookie
  * settings" reopen link for EU/VN (GDPR expects withdrawing consent to be as easy as
- * giving it), and the "Do Not Sell or Share" link with the standard privacy-options icon
- * for US/other — footer placement is the accepted pattern for CCPA's conspicuous-link
- * requirement, without a floating widget nagging visitors who already decided. `mode`
- * comes from `resolveInitialConsent()` so it matches the server-resolved default
- * `<GoogleTag />` already applied — never a second, possibly different guess.
+ * giving it), and a persistent analytics opt-out toggle with the privacy-options icon
+ * for US/other — this site sells or shares no personal data, so the control is named by
+ * what it actually does instead of CCPA's "Do Not Sell" wording. `mode` comes from
+ * `resolveInitialConsent()` so it matches the server-resolved default `<GoogleTag />`
+ * already applied — never a second, possibly different guess.
  */
 export function ConsentGate() {
   const { consent, mode } = useSiteConsent();
@@ -29,7 +30,14 @@ export function ConsentGate() {
     if (consent.decision !== undefined) {
       updateGoogleConsent(consent.decision);
     }
-  }, [consent.decision]);
+
+    // Basic consent mode: gtag.js is fetched only while analytics is effectively allowed —
+    // a runtime grant loads it here, after the update above is queued; page-load grants
+    // load inside `<GoogleTag />`'s bootstrap instead.
+    if (consent.effectiveConsent.analytics) {
+      loadGoogleTagScript();
+    }
+  }, [consent.decision, consent.effectiveConsent.analytics]);
 
   const hasHydrated = useHasHydrated();
 
@@ -68,7 +76,12 @@ export function ConsentGate() {
   return (
     <span className="inline-flex items-center gap-1.5">
       <PrivacyChoicesIcon aria-hidden className="h-3.5 w-auto" />
-      <ConsentToggle consent={consent} className="cursor-pointer text-ui-muted transition-colors hover:text-ui-fg" />
+      <ConsentToggle
+        allowLabel="Turn on analytics"
+        consent={consent}
+        denyLabel="Turn off analytics"
+        className="cursor-pointer text-ui-muted transition-colors hover:text-ui-fg"
+      />
     </span>
   );
 }

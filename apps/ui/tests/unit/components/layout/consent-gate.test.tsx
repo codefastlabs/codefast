@@ -4,11 +4,15 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { ConsentGate } from "#/components/layout/consent-gate";
 
-const { clear, resolveInitialConsent, updateGoogleConsent } = vi.hoisted(() => ({
-  clear: vi.fn(),
-  resolveInitialConsent: vi.fn(),
-  updateGoogleConsent: vi.fn(),
-}));
+const { clear, clearAnonymousId, clearGoogleAnalyticsCookies, resolveInitialConsent, updateGoogleConsent } = vi.hoisted(
+  () => ({
+    clear: vi.fn(),
+    clearAnonymousId: vi.fn(),
+    clearGoogleAnalyticsCookies: vi.fn(),
+    resolveInitialConsent: vi.fn(),
+    updateGoogleConsent: vi.fn(),
+  }),
+);
 
 vi.mock("#/lib/consent", () => ({
   CONSENT_POLICY_VERSION: "1",
@@ -16,11 +20,12 @@ vi.mock("#/lib/consent", () => ({
   REQUESTED_CONSENT_CATEGORIES: ["analytics"],
   resolveInitialConsent,
 }));
-vi.mock("#/lib/tracking", () => ({ getTracker: () => ({ clear }) }));
+vi.mock("#/lib/tracking", () => ({ clearAnonymousId, clearGoogleAnalyticsCookies, getTracker: () => ({ clear }) }));
 vi.mock("@codefast/tracking/destinations", () => ({ updateGoogleConsent }));
 
 beforeEach(() => {
   clear.mockClear();
+  clearAnonymousId.mockClear();
   updateGoogleConsent.mockClear();
   window.localStorage.removeItem("codefast-ui-consent");
 });
@@ -42,15 +47,15 @@ describe("ConsentGate", () => {
     expect(screen.getByRole("button", { name: "Reject" })).toBeTruthy();
   });
 
-  it("renders an always-visible Do Not Sell toggle for opt-out regions", () => {
+  it("renders an always-visible analytics opt-out toggle for opt-out regions", () => {
     resolveInitialConsent.mockReturnValue({ defaultConsent: ANALYTICS_ONLY, mode: "opt-out", region: "us" });
 
     render(<ConsentGate />);
 
-    expect(screen.getByRole("button", { name: /do not sell/i })).toBeTruthy();
+    expect(screen.getByRole("button", { name: "Turn off analytics" })).toBeTruthy();
   });
 
-  it("clears the tracker's queue and revokes gtag consent on Reject", async () => {
+  it("clears the tracker's queue, removes the anonymous id, and revokes gtag consent on Reject", async () => {
     resolveInitialConsent.mockReturnValue({ defaultConsent: DENIED, mode: "opt-in", region: "eu" });
 
     const user = userEvent.setup();
@@ -59,6 +64,8 @@ describe("ConsentGate", () => {
     await user.click(screen.getByRole("button", { name: "Reject" }));
 
     expect(clear).toHaveBeenCalledOnce();
+    expect(clearAnonymousId).toHaveBeenCalledOnce();
+    expect(clearGoogleAnalyticsCookies).toHaveBeenCalledOnce();
     expect(updateGoogleConsent).toHaveBeenCalledWith(DENIED);
   });
 

@@ -66,7 +66,8 @@ function PrivacyPage() {
           </li>
           <li>
             <strong className="font-medium text-ui-fg">US &amp; elsewhere (opt-out)</strong> — analytics runs by
-            default; the &ldquo;Do Not Sell or Share My Personal Information&rdquo; link in the footer turns it off. A{" "}
+            default; the &ldquo;Turn off analytics&rdquo; link in the footer or the switch below turns it off. This site
+            never sells or shares personal information and runs no ads, so a{" "}
             <a
               className="text-ui-fg underline underline-offset-4 hover:text-ui-brand"
               href="https://globalprivacycontrol.org"
@@ -75,8 +76,8 @@ function PrivacyPage() {
             >
               Global Privacy Control
             </a>{" "}
-            signal is honored as a do-not-sell-or-share opt-out. This site never requests ads consent, so the ads
-            signals stay denied everywhere.
+            signal has nothing here to opt you out of — its status still shows under &ldquo;Your privacy choices&rdquo;
+            below, and the ads consent signals stay denied everywhere.
           </li>
         </ul>
       </section>
@@ -92,13 +93,15 @@ function PrivacyPage() {
           </li>
           <li>
             <code>codefast-ui-anon-id</code> (cookie, 1 year) — a random identifier used to correlate analytics events;
-            it maps to no account or personal profile.
+            created only once analytics is permitted, removed when you opt out, and mapped to no account or personal
+            profile.
           </li>
           <li>
             <code>codefast-ui-initial-consent</code> (cookie, 24 hours) — the consent default resolved for your region.
           </li>
           <li>
-            Google&rsquo;s <code>_ga</code> cookies — set only after analytics consent is granted.
+            Google&rsquo;s <code>_ga</code> cookies — set only after analytics consent is granted, removed when you
+            withdraw it.
           </li>
         </ul>
       </section>

@@ -5,10 +5,20 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { PrivacyChoices } from "#/components/privacy/privacy-choices";
 
-const { clear, hasGlobalPrivacyControlSignal, resolveInitialConsent } = vi.hoisted(() => ({
+const {
+  clear,
+  clearAnonymousId,
+  clearGoogleAnalyticsCookies,
+  hasGlobalPrivacyControlSignal,
+  resolveInitialConsent,
+  useHasHydrated,
+} = vi.hoisted(() => ({
   clear: vi.fn(),
+  clearAnonymousId: vi.fn(),
+  clearGoogleAnalyticsCookies: vi.fn(),
   hasGlobalPrivacyControlSignal: vi.fn(() => false),
   resolveInitialConsent: vi.fn(),
+  useHasHydrated: vi.fn(() => true),
 }));
 
 vi.mock("#/lib/consent", () => ({
@@ -17,15 +27,18 @@ vi.mock("#/lib/consent", () => ({
   REQUESTED_CONSENT_CATEGORIES: ["analytics"],
   resolveInitialConsent,
 }));
-vi.mock("#/lib/tracking", () => ({ getTracker: () => ({ clear }) }));
+vi.mock("#/lib/tracking", () => ({ clearAnonymousId, clearGoogleAnalyticsCookies, getTracker: () => ({ clear }) }));
 vi.mock("@codefast/tracking/client", async (importOriginal) => ({
   ...(await importOriginal<typeof TrackingClient>()),
   hasGlobalPrivacyControlSignal,
 }));
+vi.mock("#/lib/use-has-hydrated", () => ({ useHasHydrated }));
 
 beforeEach(() => {
   clear.mockClear();
+  clearAnonymousId.mockClear();
   hasGlobalPrivacyControlSignal.mockReturnValue(false);
+  useHasHydrated.mockReturnValue(true);
   window.localStorage.removeItem("codefast-ui-consent");
 });
 
@@ -53,6 +66,7 @@ describe("PrivacyChoices", () => {
 
     expect(analyticsSwitch).not.toBeChecked();
     expect(clear).toHaveBeenCalledOnce();
+    expect(clearAnonymousId).toHaveBeenCalledOnce();
     expect(JSON.parse(window.localStorage.getItem("codefast-ui-consent") ?? "{}").decision).toEqual({
       ads: false,
       analytics: false,
@@ -104,5 +118,26 @@ describe("PrivacyChoices", () => {
     render(<PrivacyChoices />);
 
     expect(screen.getByText(/signal detected/i)).toBeInTheDocument();
+  });
+
+  it("prerenders statically before hydration — disabled switch, generic GPC copy, no live claims", () => {
+    useHasHydrated.mockReturnValue(false);
+    hasGlobalPrivacyControlSignal.mockReturnValue(true);
+    resolveInitialConsent.mockReturnValue({
+      defaultConsent: { ads: false, analytics: true },
+      mode: "opt-out",
+      region: "us",
+    });
+
+    render(<PrivacyChoices />);
+
+    const analyticsSwitch = screen.getByRole("switch", { name: "Allow analytics" });
+
+    expect(analyticsSwitch).toBeDisabled();
+    expect(analyticsSwitch).not.toBeChecked();
+    // browser-only state must not leak into static HTML, even when the signal is present
+    expect(screen.queryByText(/signal detected/i)).toBeNull();
+    expect(screen.getByText(/a browser setting that asks sites/i)).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "globalprivacycontrol.org" })).toBeInTheDocument();
   });
 });
