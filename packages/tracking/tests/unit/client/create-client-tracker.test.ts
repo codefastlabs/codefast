@@ -190,6 +190,85 @@ describe("createClientTracker", () => {
     vi.unstubAllGlobals();
   });
 
+  it("drops every event while isTrackingAllowed returns false — nothing sent, nothing queued", async () => {
+    const immediate = { ...createRecordingDestination("immediate"), delivery: "immediate" as const };
+    const queued = createRecordingDestination("queued");
+    const storage = createMemoryQueueStorage();
+    const tracker = createClientTracker({
+      anonymousId: "anon-1",
+      catalog,
+      destinations: [immediate, queued],
+      isTrackingAllowed: () => false,
+      storage,
+    });
+
+    tracker.track("button_clicked", { id: "cta" });
+    tracker.page("/pricing");
+    tracker.group("acme");
+    await tracker.flush();
+
+    expect(immediate.received).toHaveLength(0);
+    expect(queued.received).toHaveLength(0);
+    expect(storage.load()).toHaveLength(0);
+  });
+
+  it("re-evaluates the consent gate per event, so a mid-session grant applies immediately", async () => {
+    let allowed = false;
+    const destination = createRecordingDestination();
+    const tracker = createClientTracker({
+      anonymousId: "anon-1",
+      catalog,
+      destinations: [destination],
+      isTrackingAllowed: () => allowed,
+      storage: createMemoryQueueStorage(),
+    });
+
+    tracker.track("button_clicked", { id: "before" });
+    allowed = true;
+    tracker.track("button_clicked", { id: "after" });
+    await tracker.flush();
+
+    expect(destination.received.map((event) => event.props["id"])).toEqual(["after"]);
+  });
+
+  it("never invokes an anonymousId resolver for a gated event — no id side effect before consent", async () => {
+    const resolveAnonymousId = vi.fn(() => "anon-lazy");
+    let allowed = false;
+    const destination = createRecordingDestination();
+    const tracker = createClientTracker({
+      anonymousId: resolveAnonymousId,
+      catalog,
+      destinations: [destination],
+      isTrackingAllowed: () => allowed,
+      storage: createMemoryQueueStorage(),
+    });
+
+    tracker.track("button_clicked", { id: "blocked" });
+
+    expect(resolveAnonymousId).not.toHaveBeenCalled();
+
+    allowed = true;
+    tracker.track("button_clicked", { id: "sent" });
+    await tracker.flush();
+
+    expect(resolveAnonymousId).toHaveBeenCalledOnce();
+    expect(destination.received.map((event) => event.anonymousId)).toEqual(["anon-lazy"]);
+  });
+
+  it("works without a storage — the queue stays in memory only", async () => {
+    const destination = createRecordingDestination();
+    const tracker = createClientTracker({
+      anonymousId: "anon-1",
+      catalog,
+      destinations: [destination],
+    });
+
+    tracker.track("button_clicked", { id: "cta" });
+    await tracker.flush();
+
+    expect(destination.received).toHaveLength(1);
+  });
+
   it("re-queues events when sendBeacon fails to accept the payload", async () => {
     vi.stubGlobal("navigator", { sendBeacon: vi.fn().mockReturnValue(false) });
 

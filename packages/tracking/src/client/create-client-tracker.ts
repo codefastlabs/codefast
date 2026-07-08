@@ -10,12 +10,16 @@ import type { TrackedEvent } from "#/core/tracked-event";
  * @since 0.5.0-canary.4
  */
 export interface ClientTrackerOptions<Catalog extends EventCatalog> {
-  anonymousId: string;
+  /** A stable visitor id, or a resolver invoked per event — use a resolver to defer creating the id (e.g. a cookie) until an event is actually allowed to send. */
+  anonymousId: string | (() => string);
   catalog: Catalog;
   destinations: Array<Destination>;
+  /** Consulted before every event — return `false` to drop it entirely (nothing sent, nothing queued). Omit to always track. */
+  isTrackingAllowed?: (() => boolean) | undefined;
   maxQueueSize?: number;
   maxRetries?: number;
-  storage: EventQueueStorage;
+  /** Cross-reload persistence for the offline queue — omit to keep the queue in memory only. */
+  storage?: EventQueueStorage | undefined;
 }
 
 /**
@@ -50,13 +54,23 @@ export function createClientTracker<Catalog extends EventCatalog>(
     destinations: queuedDestinations,
     maxQueueSize: options.maxQueueSize,
     maxRetries: options.maxRetries,
-    storage: options.storage,
+    storage: options.storage ?? {
+      load: () => [],
+      save: () => {
+        /* in-memory queue — nothing to persist */
+      },
+    },
   });
   let userId: string | undefined;
 
   function enqueue(name: string, props: Record<string, unknown>): void {
+    // The gate runs per event (not at creation) so a consent change mid-session applies immediately.
+    if (options.isTrackingAllowed?.() === false) {
+      return;
+    }
+
     const envelope: TrackedEvent = {
-      anonymousId: options.anonymousId,
+      anonymousId: typeof options.anonymousId === "function" ? options.anonymousId() : options.anonymousId,
       eventId: generateEventId(),
       name,
       owner: "client",
