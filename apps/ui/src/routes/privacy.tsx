@@ -48,8 +48,9 @@ function PrivacyPage() {
             the copied content or free-form text. GA4 runs only with your analytics consent.
           </li>
           <li>
-            <strong className="font-medium text-ui-fg">Vercel Analytics</strong> — cookieless, aggregated page-view
-            counts and web vitals.
+            <strong className="font-medium text-ui-fg">Vercel Analytics</strong> — cookieless, aggregated page-view and
+            interaction counts plus web vitals; it receives no identifier and runs independently of the consent choice
+            below.
           </li>
         </ul>
       </section>

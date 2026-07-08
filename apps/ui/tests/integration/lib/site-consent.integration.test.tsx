@@ -8,9 +8,11 @@ import { getTracker } from "#/lib/tracking";
 
 /**
  * End-to-end consent matrix over the real wiring: real `useSiteConsent`/`consent-state`,
- * the real tracker with its consent gate and lazy anonymous-id cookie, and the real GA
- * destination writing to `window.dataLayer`. Only the two external boundaries are faked:
- * Vercel's SDK (`track` spy) and the region header (`getRequestHeader`).
+ * the real tracker with its consent gate, lazy anonymous-id cookie, and consent-exempt
+ * Vercel lane (cookieless counts keep flowing while GA and identifiers are gated), and
+ * the real GA destination writing to `window.dataLayer`. Only the two external
+ * boundaries are faked: Vercel's SDK (`track` spy) and the region header
+ * (`getRequestHeader`).
  */
 
 const { getRequestHeader, vercelTrack } = vi.hoisted(() => ({
@@ -65,7 +67,7 @@ afterEach(() => {
 });
 
 describe("consent × tracking matrix", () => {
-  it("opt-in, undecided: shows the banner and drops events — no destination call, no anonymous-id cookie", () => {
+  it("opt-in, undecided: shows the banner, blocks GA and identifiers — only cookieless Vercel keeps counting", () => {
     setRegion("DE");
 
     render(<ConsentGate />);
@@ -74,7 +76,9 @@ describe("consent × tracking matrix", () => {
 
     getTracker().track("copy_code", COPY_EVENT);
 
-    expect(vercelTrack).not.toHaveBeenCalled();
+    // the consent-exempt lane: Vercel gets the bare interaction count, nothing else moves
+    expect(vercelTrack).toHaveBeenCalledWith("copy_code", COPY_EVENT);
+    expect(gtagCalls()).not.toContainEqual(["event", "copy_code", COPY_EVENT]);
     expect(readAnonymousIdCookie()).toBeUndefined();
   });
 
@@ -94,7 +98,7 @@ describe("consent × tracking matrix", () => {
     expect(readAnonymousIdCookie()).toBeTruthy();
   });
 
-  it("opt-in → Reject: revokes gtag consent, keeps events blocked, and never creates the cookie", async () => {
+  it("opt-in → Reject: revokes gtag consent, keeps GA and identifiers blocked, and never creates the cookie", async () => {
     setRegion("DE");
 
     const user = userEvent.setup();
@@ -104,10 +108,11 @@ describe("consent × tracking matrix", () => {
 
     getTracker().track("copy_code", COPY_EVENT);
 
-    expect(vercelTrack).not.toHaveBeenCalled();
     expect(gtagCalls()).toContainEqual(["consent", "update", DENIED_PARAMS]);
     expect(gtagCalls()).not.toContainEqual(["event", "copy_code", COPY_EVENT]);
     expect(readAnonymousIdCookie()).toBeUndefined();
+    // the cookieless exempt lane is unaffected by the refusal
+    expect(vercelTrack).toHaveBeenCalledWith("copy_code", COPY_EVENT);
   });
 
   it("withdrawing on the privacy page stops tracking everywhere and removes the anonymous id", async () => {
@@ -135,7 +140,8 @@ describe("consent × tracking matrix", () => {
 
     getTracker().track("copy_code", COPY_EVENT);
 
-    expect(vercelTrack).not.toHaveBeenCalled();
+    // Vercel's cookieless count survives the withdrawal; GA and every identifier do not.
+    expect(vercelTrack).toHaveBeenCalledOnce();
     expect(readAnonymousIdCookie()).toBeUndefined();
     expect(document.cookie).not.toContain("_ga=");
     // ConsentGate owns the gtag update — the privacy-page decision synced through the shared storage.
@@ -156,7 +162,7 @@ describe("consent × tracking matrix", () => {
     expect(readAnonymousIdCookie()).toBeTruthy();
   });
 
-  it("opt-out: Turn off analytics stops tracking and removes the id; Turn on analytics re-enables both", async () => {
+  it("opt-out: Turn off analytics stops GA and identifiers; Turn on analytics restores them", async () => {
     setRegion("US");
 
     const user = userEvent.setup();
@@ -166,15 +172,18 @@ describe("consent × tracking matrix", () => {
 
     getTracker().track("copy_code", COPY_EVENT);
 
-    expect(vercelTrack).not.toHaveBeenCalled();
+    // gtag exists after the denial update, so a leaked GA event would be visible here
+    expect(gtagCalls()).not.toContainEqual(["event", "copy_code", COPY_EVENT]);
     expect(readAnonymousIdCookie()).toBeUndefined();
+    expect(vercelTrack).toHaveBeenCalledTimes(1);
 
     await user.click(screen.getByRole("button", { name: "Turn on analytics" }));
 
     getTracker().track("copy_code", COPY_EVENT);
 
-    expect(vercelTrack).toHaveBeenCalledOnce();
+    expect(gtagCalls()).toContainEqual(["event", "copy_code", COPY_EVENT]);
     expect(readAnonymousIdCookie()).toBeTruthy();
+    expect(vercelTrack).toHaveBeenCalledTimes(2);
   });
 
   it("opt-out with GPC: analytics measurement stays allowed — GPC is honored as an ads opt-out only", () => {
@@ -192,7 +201,7 @@ describe("consent × tracking matrix", () => {
     }
   });
 
-  it("a grant stored under an older policy version re-prompts and blocks tracking again", () => {
+  it("a grant stored under an older policy version re-prompts and blocks GA and identifiers again", () => {
     setRegion("DE");
     window.localStorage.setItem(
       "codefast-ui-consent",
@@ -205,7 +214,8 @@ describe("consent × tracking matrix", () => {
 
     getTracker().track("copy_code", COPY_EVENT);
 
-    expect(vercelTrack).not.toHaveBeenCalled();
+    expect(gtagCalls()).not.toContainEqual(["event", "copy_code", COPY_EVENT]);
+    expect(readAnonymousIdCookie()).toBeUndefined();
   });
 
   it("page views never reach Vercel as custom events — the native <Analytics /> component owns them", () => {

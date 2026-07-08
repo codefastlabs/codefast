@@ -86,9 +86,11 @@ export function getTracker(): ClientTracker<typeof catalog> {
     // a resolver, not a value — the cookie must not exist until an event is actually allowed to send
     anonymousId: getOrCreateAnonymousId,
     catalog,
+    // Vercel is cookieless and receives no identifier, so it keeps counting interactions
+    // while consent gates GA — the same footing as its own native page views.
     // `createGoogleAnalyticsDestination`'s `send()` already no-ops until `<GoogleTag />`
     // mounts gtag.js, so no env-var check is needed here too.
-    destinations: [createVercelAnalyticsDestination(), createGoogleAnalyticsDestination()],
+    destinations: [createVercelAnalyticsDestination({ consent: "exempt" }), createGoogleAnalyticsDestination()],
     isTrackingAllowed,
     // no storage: with immediate-only destinations a persisted queue would never drain anywhere
   });
