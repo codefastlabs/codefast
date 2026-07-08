@@ -34,7 +34,7 @@ export interface ConsentBannerProps extends ComponentProps<"section"> {
 }
 
 /**
- * Non-blocking opt-in prompt for GDPR/NĐ 13 regions, as composable parts — the root owns
+ * Non-blocking opt-in prompt for GDPR/PDPL (VN) regions, as composable parts — the root owns
  * the visibility gating and the preferences-layer state; the `Accept`/`Reject`/`Customize`/
  * `Save` parts wire their own clicks to the consent hook, so any markup (including a
  * design system's button styles via `className`) slots in. Renders nothing once a decision

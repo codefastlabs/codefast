@@ -9,7 +9,7 @@ export type ConsentRegion = "eu" | "other" | "us" | "vn";
 export type ConsentMode = "opt-in" | "opt-out";
 
 /**
- * GDPR (EU) and Nghị định 13/2023 (VN) require explicit opt-in before any non-essential
+ * GDPR (EU) and the PDPL — Luật 91/2025/QH15 (VN) — require explicit opt-in before any non-essential
  * tracking; CCPA/CPRA (US) defaults to opt-out instead. There is no single global default
  * that satisfies both, so the mode is resolved per region.
  *
@@ -102,7 +102,7 @@ export function resolveDefaultConsent(
 }
 
 /**
- * NĐ 13/2023 and GDPR both expect a record of *when* and *under what policy* consent
+ * Vietnam's PDPL and GDPR both expect a record of *when* and *under what policy* consent
  * was given, not just per-category flags — `policyVersion` lets a later policy change
  * invalidate stale consent.
  *
