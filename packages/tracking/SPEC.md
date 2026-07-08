@@ -80,7 +80,8 @@ function createClientTracker<Catalog extends EventCatalog>(catalog: Catalog) {
 
 ## 4. Event IDs (dedup / idempotency)
 
-- Both client and server default to `generateEventId()` (`crypto.randomUUID()`) at enqueue/send time — random, not derived from the request. `ServerTrackerOptions.generateEventId` is an override hook: pass a request-derived generator there to make retries of the same request idempotent; out of the box they are not.
+- Client-owned events: always `generateEventId()` (`crypto.randomUUID()`) at enqueue time — random.
+- Server-owned events: random `generateEventId()` by default; pass `requestId` on `ServerTrackContext` to switch to `deriveEventId(requestId, JSON.stringify(seed))` instead — a deterministic (non-cryptographic FNV-1a) hash of the request id and the event's own content, so retrying the same request with the same call re-sends the same `eventId` (a destination that dedupes on it treats the retry as a no-op) while distinct event kinds in the same request still get distinct ids. Two calls with an identical `requestId` and identical content collide by design.
 - Every event carries `eventId` in its envelope; destinations that support idempotency keys receive it.
 
 ## 5. Transport
@@ -171,3 +172,4 @@ packages/tracking/
 - Sampling / rate limiting once volume requires it.
 - Dead-letter handling for server-side destination failures.
 - Geo-detection fallback when the region header is absent (default to strictest — opt-in).
+- Candidate future destination: PostHog (EU-hosted, self-serve product analytics — see §6.1). No other provider is planned; a destination without a purpose-built implementation here can use `createHttpDestination` in the meantime (see README).
