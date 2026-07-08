@@ -29,7 +29,7 @@ function useConsentBannerContext(part: string): ConsentBannerContextValue {
  */
 export interface ConsentBannerProps extends ComponentProps<"section"> {
   consent: UseConsentResult;
-  /** Overrides the default `needsPrompt` gating — e.g. to reopen the banner as a settings panel. */
+  /** Overrides the default `isPromptNeeded` gating — e.g. to reopen the banner as a settings panel. */
   open?: boolean | undefined;
 }
 
@@ -38,7 +38,7 @@ export interface ConsentBannerProps extends ComponentProps<"section"> {
  * the visibility gating and the preferences-layer state; the `Accept`/`Reject`/`Customize`/
  * `Save` parts wire their own clicks to the consent hook, so any markup (including a
  * design system's button styles via `className`) slots in. Renders nothing once a decision
- * exists or the region defaults to opt-out (`consent.needsPrompt`), unless `open` says
+ * exists or the region defaults to opt-out (`consent.isPromptNeeded`), unless `open` says
  * otherwise. Rendered as a labeled region, not a `<dialog>`: an open non-modal dialog
  * neither traps focus nor blocks the page, so the dialog semantics would over-promise.
  * Unstyled by default — style via `className`/`data-slot` selectors, or import the
@@ -50,7 +50,7 @@ export interface ConsentBannerProps extends ComponentProps<"section"> {
 export function ConsentBanner({ children, consent, open, ...props }: ConsentBannerProps): ReactNode {
   const [pending, setPending] = useState<ConsentDecision | undefined>(undefined);
 
-  const isVisible = open ?? consent.needsPrompt;
+  const isVisible = open ?? consent.isPromptNeeded;
 
   // Closing must reset the layer — a reopened banner starts at the prompt, not mid-preferences.
   useEffect(() => {

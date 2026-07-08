@@ -14,7 +14,7 @@ describe("useConsent", () => {
     expect(result.current.decision).toBeUndefined();
     expect(result.current.effectiveConsent).toEqual({ ads: false, analytics: false });
     expect(result.current.isTrackingAllowed).toBe(false);
-    expect(result.current.needsPrompt).toBe(true);
+    expect(result.current.isPromptNeeded).toBe(true);
   });
 
   it("grants the requested categories by default under opt-out — never the unrequested ones", () => {
@@ -25,7 +25,7 @@ describe("useConsent", () => {
     // categories defaults to ["analytics"], so ads stays denied.
     expect(result.current.effectiveConsent).toEqual({ ads: false, analytics: true });
     expect(result.current.isTrackingAllowed).toBe(true);
-    expect(result.current.needsPrompt).toBe(false);
+    expect(result.current.isPromptNeeded).toBe(false);
   });
 
   it("honors GPC as an ads opt-out without withdrawing analytics", () => {
@@ -55,7 +55,7 @@ describe("useConsent", () => {
     });
 
     expect(result.current.isTrackingAllowed).toBe(true);
-    expect(result.current.needsPrompt).toBe(false);
+    expect(result.current.isPromptNeeded).toBe(false);
     expect(onDecision).toHaveBeenCalledWith({ ads: false, analytics: true });
     expect(storage.load()?.decision).toEqual({ ads: false, analytics: true });
 
@@ -79,7 +79,7 @@ describe("useConsent", () => {
 
     expect(storage.load()?.decision).toEqual({ ads: false, analytics: true });
     expect(result.current.effectiveConsent).toEqual({ ads: false, analytics: true });
-    expect(result.current.needsPrompt).toBe(false);
+    expect(result.current.isPromptNeeded).toBe(false);
   });
 
   it("reflects a previously stored decision", () => {
@@ -92,7 +92,7 @@ describe("useConsent", () => {
 
     expect(result.current.decision).toEqual({ ads: false, analytics: true });
     expect(result.current.isTrackingAllowed).toBe(true);
-    expect(result.current.needsPrompt).toBe(false);
+    expect(result.current.isPromptNeeded).toBe(false);
   });
 
   it("ignores a decision recorded under an older policy version and re-prompts", () => {
@@ -105,7 +105,7 @@ describe("useConsent", () => {
 
     expect(result.current.decision).toBeUndefined();
     expect(result.current.isTrackingAllowed).toBe(false);
-    expect(result.current.needsPrompt).toBe(true);
+    expect(result.current.isPromptNeeded).toBe(true);
   });
 
   it("treats a tampered or legacy string decision as no decision and re-prompts", () => {
@@ -117,20 +117,20 @@ describe("useConsent", () => {
     const { result } = renderHook(() => useConsent({ mode: "opt-in", policyVersion: "v1", storage }));
 
     expect(result.current.decision).toBeUndefined();
-    expect(result.current.needsPrompt).toBe(true);
+    expect(result.current.isPromptNeeded).toBe(true);
   });
 
   it("picks up a decision written outside the hook, e.g. from another tab", () => {
     const storage = createMemoryConsentStorage();
     const { result } = renderHook(() => useConsent({ mode: "opt-in", policyVersion: "v1", storage }));
 
-    expect(result.current.needsPrompt).toBe(true);
+    expect(result.current.isPromptNeeded).toBe(true);
 
     act(() => {
       storage.save({ decision: { ads: false, analytics: true }, policyVersion: "v1", timestamp: 0 });
     });
 
-    expect(result.current.needsPrompt).toBe(false);
+    expect(result.current.isPromptNeeded).toBe(false);
     expect(result.current.isTrackingAllowed).toBe(true);
   });
 

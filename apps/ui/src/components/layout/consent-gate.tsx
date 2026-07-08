@@ -48,11 +48,11 @@ export function ConsentGate() {
   if (mode === "opt-in") {
     return (
       <>
-        {consent.needsPrompt || isSettingsOpen ? (
+        {consent.isPromptNeeded || isSettingsOpen ? (
           <ConsentBannerCard
             consent={consent}
             // this branch already decided the banner shows — without `open`, the root would
-            // re-gate on needsPrompt and refuse to reopen after a stored decision
+            // re-gate on isPromptNeeded and refuse to reopen after a stored decision
             open
             onDecision={() => {
               setIsSettingsOpen(false);

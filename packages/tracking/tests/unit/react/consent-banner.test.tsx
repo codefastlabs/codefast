@@ -24,7 +24,7 @@ function buildConsent(overrides: Partial<UseConsentResult> = {}): UseConsentResu
     effectiveConsent: { ads: false, analytics: false },
     grantAll: vi.fn(),
     isTrackingAllowed: false,
-    needsPrompt: true,
+    isPromptNeeded: true,
     save: vi.fn(),
     ...overrides,
   };
@@ -53,13 +53,13 @@ function renderBanner(consent: UseConsentResult, open?: boolean) {
 
 describe("ConsentBanner", () => {
   it("renders nothing when the consent hook says no prompt is needed", () => {
-    const { container } = renderBanner(buildConsent({ needsPrompt: false }));
+    const { container } = renderBanner(buildConsent({ isPromptNeeded: false }));
 
     expect(container).toBeEmptyDOMElement();
   });
 
-  it("renders despite needsPrompt=false when open overrides — the settings-panel case", () => {
-    renderBanner(buildConsent({ needsPrompt: false }), true);
+  it("renders despite isPromptNeeded=false when open overrides — the settings-panel case", () => {
+    renderBanner(buildConsent({ isPromptNeeded: false }), true);
 
     expect(screen.getByRole("region", { name: "Cookie consent" })).toBeInTheDocument();
   });

@@ -31,10 +31,10 @@ export interface UseConsentResult {
   /** What tags must obey right now — the stored decision, or the region default before one exists. */
   effectiveConsent: ConsentDecision;
   grantAll: () => void;
+  /** True only for opt-in regions with no stored decision yet — drives whether to render the banner. */
+  isPromptNeeded: boolean;
   /** Effective `analytics` consent — gates this package's own tracker pipeline. */
   isTrackingAllowed: boolean;
-  /** True only for opt-in regions with no stored decision yet — drives whether to render the banner. */
-  needsPrompt: boolean;
   /** Persist a granular per-category choice, e.g. from a preferences panel. */
   save: (decision: ConsentDecision) => void;
 }
@@ -104,8 +104,8 @@ export function useConsent(options: UseConsentOptions): UseConsentResult {
     grantAll: () => {
       save(createConsentDecision(categories));
     },
+    isPromptNeeded: options.mode === "opt-in" && decision === undefined,
     isTrackingAllowed: effectiveConsent.analytics,
-    needsPrompt: options.mode === "opt-in" && decision === undefined,
     save,
   };
 }
