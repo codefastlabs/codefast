@@ -56,6 +56,10 @@ describe("buildGtagBootstrapScript", () => {
     delete window.__INITIAL_CONSENT__;
     delete window.dataLayer;
     window.localStorage.removeItem(CONSENT_STORAGE_KEY);
+
+    for (const script of document.querySelectorAll('script[src^="https://www.googletagmanager.com/gtag/js"]')) {
+      script.remove();
+    }
   });
 
   function consentDefaultParams(): Record<string, string> {
@@ -64,7 +68,11 @@ describe("buildGtagBootstrapScript", () => {
     return calls[0]?.[2] as Record<string, string>;
   }
 
-  it("grants analytics_storage only — ad_* stays denied on an ads-free site — and configures the measurement ID", () => {
+  function gtagScriptElement(): HTMLScriptElement | null {
+    return document.querySelector('script[src^="https://www.googletagmanager.com/gtag/js"]');
+  }
+
+  it("grants analytics_storage only — ad_* stays denied on an ads-free site — and loads + configures the tag", () => {
     window.__INITIAL_CONSENT__ = { defaultConsent: { ads: false, analytics: true }, mode: "opt-out", region: "us" };
     runScript(buildGtagBootstrapScript("G-TEST123"));
 
@@ -82,14 +90,18 @@ describe("buildGtagBootstrapScript", () => {
     ]);
     expect(calls[1]?.[0]).toBe("js");
     expect(Array.from(calls[2] ?? [])).toEqual(["config", "G-TEST123"]);
+    expect(gtagScriptElement()?.src).toBe("https://www.googletagmanager.com/gtag/js?id=G-TEST123");
   });
 
-  it("defaults everything to denied when window.__INITIAL_CONSENT__ says so", () => {
+  it("basic consent mode: never fetches gtag.js nor configures the tag while consent is denied", () => {
     window.__INITIAL_CONSENT__ = { defaultConsent: { ads: false, analytics: false }, mode: "opt-in", region: "eu" };
     runScript(buildGtagBootstrapScript("G-TEST123"));
 
     expect(consentDefaultParams().analytics_storage).toBe("denied");
     expect(consentDefaultParams().ad_storage).toBe("denied");
+    // only the consent default is queued — no js/config, and no network fetch at all
+    expect(window.dataLayer).toHaveLength(1);
+    expect(gtagScriptElement()).toBeNull();
   });
 
   it("prefers a stored grant over a denied region default (returning opt-in visitor)", () => {
@@ -106,6 +118,7 @@ describe("buildGtagBootstrapScript", () => {
 
     expect(consentDefaultParams().analytics_storage).toBe("granted");
     expect(consentDefaultParams().ad_storage).toBe("denied");
+    expect(gtagScriptElement()).not.toBeNull();
   });
 
   it("prefers a stored denial over a granted region default (opted-out visitor)", () => {
@@ -121,6 +134,7 @@ describe("buildGtagBootstrapScript", () => {
     runScript(buildGtagBootstrapScript("G-TEST123"));
 
     expect(consentDefaultParams().analytics_storage).toBe("denied");
+    expect(gtagScriptElement()).toBeNull();
   });
 
   it("ignores a decision recorded under an older policy version", () => {

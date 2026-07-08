@@ -1,8 +1,7 @@
 import type { InitialConsent } from "#/lib/consent";
 import { CONSENT_POLICY_VERSION, CONSENT_STORAGE_KEY, resolveInitialConsent } from "#/lib/consent";
+import { GA_MEASUREMENT_ID } from "#/lib/google-tag-loader";
 import { INITIAL_CONSENT_COOKIE_NAME } from "#/lib/initial-consent-cookie";
-
-const measurementId = import.meta.env.VITE_GA4_MEASUREMENT_ID;
 
 /** Prefers `middleware.ts`'s per-visitor cookie over the static build's fallback. */
 export function buildInitialConsentBootstrapScript(fallback: InitialConsent): string {
@@ -22,11 +21,12 @@ export function buildInitialConsentBootstrapScript(fallback: InitialConsent): st
 }
 
 /**
- * Consent Mode v2 default + gtag.js config. The visitor's stored decision must win over
- * the region default *here*, before `gtag("config")` fires the initial page_view — a
- * post-hydration `consent update` would be too late to stop (or unlock) that first hit.
- * The ads signals follow the per-category decision generically, but this site never
- * requests the `ads` purpose, so they stay denied in practice.
+ * Consent Mode v2 default + gtag.js config, in *basic* mode: the visitor's stored
+ * decision must win over the region default *here*, and gtag.js itself is only fetched
+ * when the effective consent grants analytics — a denied visitor's browser never pings
+ * Google at all. A runtime grant loads the tag via `loadGoogleTagScript()` instead. The
+ * ads signals follow the per-category decision generically, but this site never requests
+ * the `ads` purpose, so they stay denied in practice.
  */
 export function buildGtagBootstrapScript(gaMeasurementId: string): string {
   // The record read here is `@codefast/tracking`'s ConsentRecord, stored as plain JSON
@@ -49,14 +49,21 @@ export function buildGtagBootstrapScript(gaMeasurementId: string): string {
       ad_user_data: consent.ads ? "granted" : "denied",
       analytics_storage: consent.analytics ? "granted" : "denied",
     });
-    gtag("js", new Date());
-    gtag("config", "${gaMeasurementId}");
+    if (consent.analytics) {
+      gtag("js", new Date());
+      gtag("config", "${gaMeasurementId}");
+      var gtagScript = document.createElement("script");
+      gtagScript.async = true;
+      gtagScript.src = "https://www.googletagmanager.com/gtag/js?id=${gaMeasurementId}";
+      document.head.appendChild(gtagScript);
+    }
   `;
 }
 
 /**
  * Bootstraps `window.__INITIAL_CONSENT__` unconditionally (so `<ConsentGate />` always
- * has a value) and, when `measurementId` is configured, gtag.js for GA4.
+ * has a value) and, when `GA_MEASUREMENT_ID` is configured, the Consent Mode default —
+ * the bootstrap itself decides whether gtag.js may load (see `buildGtagBootstrapScript`).
  */
 export function GoogleTag() {
   const initialConsent = resolveInitialConsent();
@@ -67,14 +74,11 @@ export function GoogleTag() {
         dangerouslySetInnerHTML={{ __html: buildInitialConsentBootstrapScript(initialConsent) }}
         suppressHydrationWarning
       />
-      {measurementId ? (
-        <>
-          <script async src={`https://www.googletagmanager.com/gtag/js?id=${measurementId}`} />
-          <script
-            dangerouslySetInnerHTML={{ __html: buildGtagBootstrapScript(measurementId) }}
-            suppressHydrationWarning
-          />
-        </>
+      {GA_MEASUREMENT_ID ? (
+        <script
+          dangerouslySetInnerHTML={{ __html: buildGtagBootstrapScript(GA_MEASUREMENT_ID) }}
+          suppressHydrationWarning
+        />
       ) : null}
     </>
   );
