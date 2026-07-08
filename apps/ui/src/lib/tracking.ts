@@ -1,8 +1,10 @@
 import { defineEventCatalog } from "@codefast/tracking";
 import type { ClientTracker } from "@codefast/tracking/client";
-import { createClientTracker, createLocalStorageQueueStorage } from "@codefast/tracking/client";
+import { createClientTracker } from "@codefast/tracking/client";
 import { createGoogleAnalyticsDestination, createVercelAnalyticsDestination } from "@codefast/tracking/destinations";
 import { z } from "zod";
+
+import { isTrackingAllowed } from "#/lib/consent-state";
 
 /**
  * `copy_code`/`search_query` track *what* was copied or searched, never the raw
@@ -49,6 +51,29 @@ export function getOrCreateAnonymousId(): string {
   return id;
 }
 
+/** Expires the anonymous-id cookie — called when the visitor withdraws analytics consent. */
+export function clearAnonymousId(): void {
+  document.cookie = `${ANONYMOUS_ID_COOKIE}=; path=/; max-age=0; samesite=lax`;
+}
+
+/**
+ * Expires Google's `_ga`/`_ga_*` cookies — Consent Mode stops using them once denied
+ * but never removes them, and a withdrawal must not leave identifier cookies behind.
+ */
+export function clearGoogleAnalyticsCookies(): void {
+  const { hostname } = globalThis.location;
+
+  for (const cookie of document.cookie.split("; ")) {
+    const name = cookie.split("=")[0];
+
+    if (name !== undefined && (name === "_ga" || name.startsWith("_ga_"))) {
+      // GA sets its cookies on the broadest domain it can reach — expire both variants.
+      document.cookie = `${name}=; path=/; max-age=0`;
+      document.cookie = `${name}=; path=/; max-age=0; domain=.${hostname}`;
+    }
+  }
+}
+
 let tracker: ClientTracker<typeof catalog> | undefined;
 
 /**
@@ -58,12 +83,14 @@ let tracker: ClientTracker<typeof catalog> | undefined;
  */
 export function getTracker(): ClientTracker<typeof catalog> {
   tracker ??= createClientTracker({
-    anonymousId: getOrCreateAnonymousId(),
+    // a resolver, not a value — the cookie must not exist until an event is actually allowed to send
+    anonymousId: getOrCreateAnonymousId,
     catalog,
     // `createGoogleAnalyticsDestination`'s `send()` already no-ops until `<GoogleTag />`
     // mounts gtag.js, so no env-var check is needed here too.
     destinations: [createVercelAnalyticsDestination(), createGoogleAnalyticsDestination()],
-    storage: createLocalStorageQueueStorage("codefast-ui-tracking-queue"),
+    isTrackingAllowed,
+    // no storage: with immediate-only destinations a persisted queue would never drain anywhere
   });
 
   return tracker;

@@ -1,18 +1,11 @@
-import { createLocalStorageConsentStorage, hasGlobalPrivacyControlSignal } from "@codefast/tracking/client";
+import { hasGlobalPrivacyControlSignal } from "@codefast/tracking/client";
 import type { ConsentMode } from "@codefast/tracking/core";
 import type { UseConsentResult } from "@codefast/tracking/react";
 import { useConsent } from "@codefast/tracking/react";
 
-import {
-  CONSENT_POLICY_VERSION,
-  CONSENT_STORAGE_KEY,
-  REQUESTED_CONSENT_CATEGORIES,
-  resolveInitialConsent,
-} from "#/lib/consent";
-import { getTracker } from "#/lib/tracking";
-
-// Module scope — every consumer must share one storage so decisions sync across surfaces.
-const consentStorage = createLocalStorageConsentStorage(CONSENT_STORAGE_KEY);
+import { CONSENT_POLICY_VERSION, REQUESTED_CONSENT_CATEGORIES, resolveInitialConsent } from "#/lib/consent";
+import { consentStorage } from "#/lib/consent-state";
+import { clearAnonymousId, clearGoogleAnalyticsCookies, getTracker } from "#/lib/tracking";
 
 export interface UseSiteConsentResult {
   consent: UseConsentResult;
@@ -36,6 +29,8 @@ export function useSiteConsent(): UseSiteConsentResult {
     onDecision(decision) {
       if (!decision.analytics) {
         getTracker().clear();
+        clearAnonymousId();
+        clearGoogleAnalyticsCookies();
       }
     },
     policyVersion: CONSENT_POLICY_VERSION,
