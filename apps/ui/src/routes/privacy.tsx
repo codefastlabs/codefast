@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 
+import { PrivacyChoices } from "#/components/privacy/privacy-choices";
 import { CONTENT_CACHE_CONTROL } from "#/lib/cache";
 import { canonicalHead } from "#/lib/seo";
 
@@ -100,6 +101,13 @@ function PrivacyPage() {
             Google&rsquo;s <code>_ga</code> cookies — set only after analytics consent is granted.
           </li>
         </ul>
+      </section>
+
+      <section aria-labelledby="privacy-choices" className="mb-10">
+        <h2 className="mb-3 text-xl font-semibold text-ui-fg" id="privacy-choices">
+          Your privacy choices
+        </h2>
+        <PrivacyChoices />
       </section>
 
       <section aria-labelledby="privacy-contact">
