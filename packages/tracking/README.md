@@ -11,9 +11,9 @@ multi-destination fan-out, region-based consent).
 
 Early scaffold. `core`, `client`, `server`, and `react` (headless consent) implement the
 shapes described in the spec. `createVercelAnalyticsDestination`,
-`createGoogleAnalyticsDestination`, and `createGa4MeasurementProtocolDestination` are
-implemented; PostHog is not built yet — use `createHttpDestination` or implement the
-`Destination` interface directly.
+`createGoogleAnalyticsDestination`, `createGoogleTagManagerDestination`, and
+`createGa4MeasurementProtocolDestination` are implemented; PostHog is not built yet — use
+`createHttpDestination` or implement the `Destination` interface directly.
 
 ## Quick start
 
@@ -167,3 +167,34 @@ issues the pre-tag default (it defines the gtag queueing stub itself), and
 `setGoogleAdsDataRedaction`/`setGoogleUrlPassthrough` cover the denied-ads flags. A GPC
 signal is honored as a do-not-sell-or-share opt-out: it forces `ads` denied without
 withdrawing first-party `analytics`.
+
+## Google tag / GTM loaders
+
+Prefer the pre-hydration bootstrap (not a post-hydration mount) so Consent Mode's default
+lands before any Google hit:
+
+```tsx
+import { loadGtagScript } from "@codefast/tracking/destinations";
+import { GtagConsentBootstrap } from "@codefast/tracking/react";
+
+// In <head> / shell — same nonce on this host script and on loadGtagScript for CSP.
+<GtagConsentBootstrap
+  consentStorageKey="tracking-consent"
+  dataLayerName="dataLayer" // optional; custom names also set gtag.js's `l` param
+  debugMode={import.meta.env.DEV} // optional — gtag('config', id, { debug_mode: true })
+  defaultConsentExpression="window.__INITIAL_CONSENT__.defaultConsent"
+  gaMeasurementId="G-XXXXXXX"
+  nonce={cspNonce} // optional — stamped on the injected gtag.js tag too
+  policyVersion="2026-01"
+/>;
+
+// After a runtime grant (banner Accept):
+loadGtagScript({ gaMeasurementId: "G-XXXXXXX", nonce: cspNonce });
+```
+
+GTM variant: `buildGtmConsentBootstrapScript` / `loadGtmScript` /
+`createGoogleTagManagerDestination`. If GTM already loads GA4, do **not** also register
+`createGoogleAnalyticsDestination` or events will double-fire.
+
+SPA page views: leave `trackPageViews` off (default) and rely on GA4 Enhanced Measurement
+/ GTM history tags — enabling both double-counts.
