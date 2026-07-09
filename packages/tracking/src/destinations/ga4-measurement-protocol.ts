@@ -1,25 +1,9 @@
 import type { Destination } from "#/core/destination";
 import type { TrackedEvent } from "#/core/tracked-event";
+import type { FlatPropertyValue } from "#/destinations/shared";
+import { flattenEventProps, toJoinGroupPayload } from "#/destinations/shared";
 
-type MeasurementProtocolParamValue = boolean | number | string;
-
-/**
- * Measurement Protocol event params must be flat string/number/boolean — stringify
- * anything else instead of letting GA4 silently drop it.
- */
-function toMeasurementProtocolParams(props: Record<string, unknown>): Record<string, MeasurementProtocolParamValue> {
-  const result: Record<string, MeasurementProtocolParamValue> = {};
-
-  for (const [key, value] of Object.entries(props)) {
-    if (typeof value === "string" || typeof value === "number" || typeof value === "boolean") {
-      result[key] = value;
-    } else if (value !== undefined && value !== null) {
-      result[key] = JSON.stringify(value);
-    }
-  }
-
-  return result;
-}
+type MeasurementProtocolParamValue = FlatPropertyValue;
 
 function readCookie(cookieHeader: string | undefined, cookieName: string): string | undefined {
   if (!cookieHeader) {
@@ -170,16 +154,15 @@ function toMeasurementProtocolEvent(
     }
 
     case "group": {
-      // join_group is GA4's recommended-event equivalent of a group association.
-      return { name: "join_group", params: toMeasurementProtocolParams({ group_id: event.groupId, ...event.traits }) };
+      return { name: "join_group", params: flattenEventProps(toJoinGroupPayload(event)) };
     }
 
     case "page": {
-      return { name: "page_view", params: toMeasurementProtocolParams(event.props) };
+      return { name: "page_view", params: flattenEventProps(event.props) };
     }
 
     case "track": {
-      return { name: event.name, params: toMeasurementProtocolParams(event.props) };
+      return { name: event.name, params: flattenEventProps(event.props) };
     }
   }
 }

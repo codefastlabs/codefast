@@ -9,10 +9,14 @@ export type {
   GoogleAnalyticsDestinationOptions,
   GoogleConsentDefaultOptions,
   GtagConsentBootstrapOptions,
+  GtagFunction,
+  LoadGtagScriptOptions,
 } from "#/destinations/google-analytics";
 export {
   buildGtagConsentBootstrapScript,
   createGoogleAnalyticsDestination,
+  ensureGtag,
+  loadGtagScript,
   setGoogleAdsDataRedaction,
   setGoogleConsentDefault,
   setGoogleUrlPassthrough,

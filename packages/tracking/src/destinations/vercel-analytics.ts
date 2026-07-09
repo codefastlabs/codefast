@@ -1,26 +1,7 @@
 import { track } from "@vercel/analytics/react";
 
 import type { Destination } from "#/core/destination";
-
-type VercelAnalyticsPropertyValue = boolean | number | string | null;
-
-/**
- * Vercel's `track()` rejects nested objects/arrays outright — flatten anything else
- * to a string instead of silently dropping it.
- */
-function toVercelAnalyticsProps(props: Record<string, unknown>): Record<string, VercelAnalyticsPropertyValue> {
-  const result: Record<string, VercelAnalyticsPropertyValue> = {};
-
-  for (const [key, value] of Object.entries(props)) {
-    if (value === null || typeof value === "string" || typeof value === "number" || typeof value === "boolean") {
-      result[key] = value;
-    } else if (value !== undefined) {
-      result[key] = JSON.stringify(value);
-    }
-  }
-
-  return result;
-}
+import { flattenEventProps, omitHref } from "#/destinations/shared";
 
 export interface VercelAnalyticsDestinationOptions {
   /**
@@ -63,17 +44,15 @@ export function createVercelAnalyticsDestination(options: VercelAnalyticsDestina
 
         case "page": {
           if (options.trackPageViews === true) {
-            // Vercel attaches the page context itself — forward only the caller's extras.
-            const { href: _href, ...extras } = event.props;
-
-            track("page_view", toVercelAnalyticsProps(extras));
+            // Vercel attaches the page context itself.
+            track("page_view", flattenEventProps(omitHref(event.props), { allowNull: true }));
           }
 
           return;
         }
 
         case "track": {
-          track(event.name, toVercelAnalyticsProps(event.props));
+          track(event.name, flattenEventProps(event.props, { allowNull: true }));
         }
       }
     },
