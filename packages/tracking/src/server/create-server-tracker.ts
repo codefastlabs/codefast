@@ -100,10 +100,12 @@ export function createServerTracker<Catalog extends EventCatalog>(
     });
 
   async function sendEvent(seed: EnvelopeSeed, context: ServerTrackContext): Promise<void> {
-    // Deriving from the seed (not just requestId) keeps distinct event kinds in the same
-    // request from colliding, while an identical call on retry reproduces the same id.
+    // Deriving from the seed plus userId (not just requestId) keeps distinct event kinds —
+    // and distinct merge targets, e.g. two `alias` calls for the same previousId — in the
+    // same request from colliding, while an identical call on retry reproduces the same id.
+    const discriminant = context.userId === undefined ? seed : { ...seed, userId: context.userId };
     const eventId =
-      context.requestId === undefined ? createId() : deriveEventId(context.requestId, JSON.stringify(seed));
+      context.requestId === undefined ? createId() : deriveEventId(context.requestId, JSON.stringify(discriminant));
 
     // The seed/base split is total by construction — the assertion only rejoins the union.
     const event = {
