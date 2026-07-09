@@ -1,6 +1,7 @@
 import type { Destination } from "#/core/destination";
 import type { TrackedEvent } from "#/core/tracked-event";
 import { assertNever } from "#/core/tracked-event";
+import { warnUnlessGa4EventName } from "#/destinations/google-consent";
 import type { FlatPropertyValue } from "#/destinations/shared";
 import { flattenEventProps, toJoinGroupPayload } from "#/destinations/shared";
 
@@ -77,9 +78,9 @@ export interface Ga4MeasurementProtocolDestinationOptions {
    */
   clientId?: string | undefined;
   /** Routes to GA4's `/debug/mp/collect` validation endpoint — hits are validated but never recorded. */
-  debug?: boolean;
+  debug?: boolean | undefined;
   measurementId: string;
-  name?: string;
+  name?: string | undefined;
   /**
    * Current GA4 session for this visitor (see `extractGa4SessionId`). Without a
    * `session_id`, GA4 accepts the event but leaves it out of session-scoped and realtime
@@ -116,6 +117,12 @@ export function createGa4MeasurementProtocolDestination(
       }
 
       const { name: eventName, params } = translated;
+
+      // Catalog track names still have to satisfy GA4's rules — MP accepts the HTTP
+      // request either way, but invalid names are dropped at processing with no signal.
+      if (event.type === "track" && !warnUnlessGa4EventName(name, eventName)) {
+        return;
+      }
 
       if (options.sessionId !== undefined && params.session_id === undefined) {
         params.session_id = options.sessionId;

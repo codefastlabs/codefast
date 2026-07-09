@@ -1,24 +1,21 @@
 import type { ConsentDecision } from "#/core/consent";
-import { CONSENT_CATEGORIES } from "#/core/consent";
 import type { Destination } from "#/core/destination";
 import { assertNever } from "#/core/tracked-event";
+import type { GoogleConsentParams } from "#/destinations/google-consent";
+import {
+  consentDecisionShapeCheckExpression,
+  consentSignalAssignmentsExpression,
+  dataLayerOf,
+  toGoogleConsentParams,
+  warnUnlessGa4EventName,
+} from "#/destinations/google-consent";
 import type { FlatPropertyValue } from "#/destinations/shared";
 import { flattenEventProps, omitHref, toJoinGroupPayload } from "#/destinations/shared";
 
 const GTAG_SCRIPT_BASE_URL = "https://www.googletagmanager.com/gtag/js";
+const DEFAULT_DATA_LAYER_NAME = "dataLayer";
 
 type GtagPropertyValue = FlatPropertyValue;
-
-type GoogleConsentState = "denied" | "granted";
-
-interface GoogleConsentParams {
-  ad_personalization: GoogleConsentState;
-  ad_storage: GoogleConsentState;
-  ad_user_data: GoogleConsentState;
-  analytics_storage: GoogleConsentState;
-  region?: ReadonlyArray<string>;
-  wait_for_update?: number;
-}
 
 /**
  * All signatures share one `gtag` global, so they must live in a single overloaded type —
@@ -41,56 +38,64 @@ declare global {
   }
 }
 
-/**
- * Which per-category decision each Consent Mode v2 signal follows: `analytics` drives
- * `analytics_storage`; `ads` drives all three ads signals together — a banner that got
- * ads consent got it for storage, sharing, and personalization alike. The single source
- * for both `toGoogleConsentParams` (runtime) and `buildGtagConsentBootstrapScript`
- * (pre-hydration, generated JS text) — add a signal here and both pick it up.
- */
-const GOOGLE_CONSENT_SIGNAL_CATEGORIES = {
-  ad_personalization: "ads",
-  ad_storage: "ads",
-  ad_user_data: "ads",
-  analytics_storage: "analytics",
-} as const satisfies Record<
-  "ad_personalization" | "ad_storage" | "ad_user_data" | "analytics_storage",
-  keyof ConsentDecision
->;
+function gtagScriptSrc(gaMeasurementId: string, dataLayerName: string): string {
+  const url = new URL(GTAG_SCRIPT_BASE_URL);
 
-function toGoogleConsentParams(decision: ConsentDecision): GoogleConsentParams {
-  const params = {} as GoogleConsentParams;
+  url.searchParams.set("id", gaMeasurementId);
 
-  for (const [signal, category] of Object.entries(GOOGLE_CONSENT_SIGNAL_CATEGORIES)) {
-    params[signal as keyof typeof GOOGLE_CONSENT_SIGNAL_CATEGORIES] = decision[category] ? "granted" : "denied";
+  if (dataLayerName !== DEFAULT_DATA_LAYER_NAME) {
+    // gtag.js's `l` param names the queue array — must match the stub that pushes into it.
+    url.searchParams.set("l", dataLayerName);
   }
 
-  return params;
+  return url.toString();
+}
+
+export interface EnsureGtagOptions {
+  /**
+   * Name of the queue array on `window`. Defaults to `"dataLayer"`. Must match across
+   * `ensureGtag` / `loadGtagScript` / `buildGtagConsentBootstrapScript` for one page.
+   */
+  dataLayerName?: string | undefined;
 }
 
 /**
  * Ensures the standard gtag.js queueing stub exists so consent commands can be issued
  * before the tag itself loads — gtag.js replays the queue in order once it boots.
  */
-export function ensureGtag(): GtagFunction | undefined {
+export function ensureGtag(options: EnsureGtagOptions = {}): GtagFunction | undefined {
   if (typeof window === "undefined") {
     return undefined;
   }
 
-  window.dataLayer ??= [];
+  const dataLayerName = options.dataLayerName ?? DEFAULT_DATA_LAYER_NAME;
 
-  // gtag.js requires the live Arguments object on the dataLayer — pushing an array is
-  // treated as a GTM message, not a gtag command.
+  dataLayerOf(dataLayerName);
+
+  // First stub wins — recreating would orphan commands already queued on another layer.
+  // Callers must pass the same dataLayerName for every helper on the page.
   window.gtag ??= function gtag() {
-    window.dataLayer?.push(arguments);
+    dataLayerOf(dataLayerName)?.push(arguments);
   } as GtagFunction;
 
   return window.gtag;
 }
 
 export interface LoadGtagScriptOptions {
+  /**
+   * Name of the queue array on `window`. Defaults to `"dataLayer"` — must match the
+   * bootstrap / `ensureGtag` call that already applied Consent Mode.
+   */
+  dataLayerName?: string | undefined;
+  /** Forwarded as `gtag('config', id, { debug_mode: true })` for GA4 DebugView. */
+  debugMode?: boolean | undefined;
   /** Google Analytics 4 Measurement ID (e.g. `"G-XXXXXXX"`). */
   gaMeasurementId: string;
+  /**
+   * CSP nonce applied to the injected gtag.js `<script>` element. The app must also put
+   * the same nonce on any inline bootstrap `<script>` that runs `buildGtagConsentBootstrapScript`.
+   */
+  nonce?: string | undefined;
 }
 
 /**
@@ -106,19 +111,30 @@ export function loadGtagScript(options: LoadGtagScriptOptions): void {
     return;
   }
 
-  const gtag = ensureGtag();
+  const dataLayerName = options.dataLayerName ?? DEFAULT_DATA_LAYER_NAME;
+  const gtag = ensureGtag({ dataLayerName });
 
   if (!gtag) {
     return;
   }
 
   gtag("js", new Date());
-  gtag("config", options.gaMeasurementId);
+
+  if (options.debugMode === true) {
+    gtag("config", options.gaMeasurementId, { debug_mode: true });
+  } else {
+    gtag("config", options.gaMeasurementId);
+  }
 
   const script = document.createElement("script");
 
   script.async = true;
-  script.src = `${GTAG_SCRIPT_BASE_URL}?id=${options.gaMeasurementId}`;
+  script.src = gtagScriptSrc(options.gaMeasurementId, dataLayerName);
+
+  if (options.nonce !== undefined) {
+    script.nonce = options.nonce;
+  }
+
   document.head.append(script);
 }
 
@@ -127,9 +143,9 @@ export function loadGtagScript(options: LoadGtagScriptOptions): void {
  */
 export interface GoogleConsentDefaultOptions {
   /** Restrict the default to these ISO 3166-2 codes (gtag's `region` param); omit for a global default. */
-  region?: ReadonlyArray<string>;
+  region?: ReadonlyArray<string> | undefined;
   /** Consent Mode's `wait_for_update` — how long tags hold hits so a stored decision can arrive as an update first. */
-  waitForUpdateMs?: number;
+  waitForUpdateMs?: number | undefined;
 }
 
 /**
@@ -168,19 +184,32 @@ export interface GtagConsentBootstrapOptions {
   /** localStorage key holding the package's `ConsentRecord` — must match `useConsent`'s `storage`. */
   consentStorageKey: string;
   /**
+   * Name of the queue array on `window`. Defaults to `"dataLayer"`. Must match
+   * `loadGtagScript` / `ensureGtag` if those run later on the same page.
+   */
+  dataLayerName?: string | undefined;
+  /**
    * Consent to apply when nothing valid is stored yet. Embedded as a literal — for a
    * value only known via an earlier inline script (e.g. a middleware-set cookie read on a
    * statically prerendered page), use `defaultConsentExpression` instead.
    */
-  defaultConsent?: ConsentDecision;
+  defaultConsent?: ConsentDecision | undefined;
   /**
    * A raw JS expression evaluating to the fallback `ConsentDecision`, e.g.
    * `"window.__INITIAL_CONSENT__.defaultConsent"`. Takes precedence over `defaultConsent`
    * when both are set; one of the two is required.
    */
-  defaultConsentExpression?: string;
+  defaultConsentExpression?: string | undefined;
+  /** Forwarded as `gtag('config', id, { debug_mode: true })` when analytics is granted. */
+  debugMode?: boolean | undefined;
   /** Google Analytics 4 Measurement ID (e.g. `"G-XXXXXXX"`). */
   gaMeasurementId: string;
+  /**
+   * CSP nonce written onto the *injected* gtag.js `<script>` element inside the generated
+   * source. The host `<script dangerouslySetInnerHTML={…}>` that embeds this string must
+   * receive the same nonce from the app (this helper only returns JS text, not a React node).
+   */
+  nonce?: string | undefined;
   /** Must match `useConsent`'s `policyVersion` — a decision under any other version is ignored. */
   policyVersion: string;
 }
@@ -195,26 +224,33 @@ export interface GtagConsentBootstrapOptions {
  * page-load state.
  */
 export function buildGtagConsentBootstrapScript(options: GtagConsentBootstrapOptions): string {
-  const { consentStorageKey, defaultConsent, defaultConsentExpression, gaMeasurementId, policyVersion } = options;
+  const {
+    consentStorageKey,
+    dataLayerName = DEFAULT_DATA_LAYER_NAME,
+    defaultConsent,
+    defaultConsentExpression,
+    debugMode,
+    gaMeasurementId,
+    nonce,
+    policyVersion,
+  } = options;
 
   if (defaultConsentExpression === undefined && defaultConsent === undefined) {
     throw new Error("[tracking] buildGtagConsentBootstrapScript requires defaultConsent or defaultConsentExpression");
   }
 
   const fallbackExpression = defaultConsentExpression ?? JSON.stringify(defaultConsent);
-  const decisionShapeCheck = CONSENT_CATEGORIES.map(
-    (category) => `typeof record.decision[${JSON.stringify(category)}] === "boolean"`,
-  ).join(" && ");
-  const gtagScriptUrl = `${GTAG_SCRIPT_BASE_URL}?id=${gaMeasurementId}`;
-  // Generated from the same table `toGoogleConsentParams` uses, so a signal added there
-  // can't drift out of sync with this pre-hydration bootstrap.
-  const consentSignalAssignments = Object.entries(GOOGLE_CONSENT_SIGNAL_CATEGORIES)
-    .map(([signal, category]) => `${signal}: consent.${category} ? "granted" : "denied"`)
-    .join(",\n      ");
+  const decisionShapeCheck = consentDecisionShapeCheckExpression();
+  const gtagScriptUrl = gtagScriptSrc(gaMeasurementId, dataLayerName);
+  const dataLayerAccess = `window[${JSON.stringify(dataLayerName)}]`;
+  const configArgs =
+    debugMode === true ? `${JSON.stringify(gaMeasurementId)}, { debug_mode: true }` : JSON.stringify(gaMeasurementId);
+  const nonceAssignment = nonce === undefined ? "" : `gtagScript.nonce = ${JSON.stringify(nonce)};`;
+  const consentSignalAssignments = consentSignalAssignmentsExpression();
 
   return `
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){window.dataLayer.push(arguments);}
+    ${dataLayerAccess} = ${dataLayerAccess} || [];
+    function gtag(){${dataLayerAccess}.push(arguments);}
     var storedConsent = null;
     try {
       var record = JSON.parse(window.localStorage.getItem(${JSON.stringify(consentStorageKey)}));
@@ -228,10 +264,11 @@ export function buildGtagConsentBootstrapScript(options: GtagConsentBootstrapOpt
     });
     if (consent.analytics) {
       gtag("js", new Date());
-      gtag("config", ${JSON.stringify(gaMeasurementId)});
+      gtag("config", ${configArgs});
       var gtagScript = document.createElement("script");
       gtagScript.async = true;
       gtagScript.src = ${JSON.stringify(gtagScriptUrl)};
+      ${nonceAssignment}
       document.head.appendChild(gtagScript);
     }
   `;
@@ -258,15 +295,11 @@ export function setGoogleUrlPassthrough(enabled: boolean): void {
   ensureGtag()?.("set", "url_passthrough", enabled);
 }
 
-// GA4 rejects event names that don't start with a letter or exceed 40 chars — an invalid
-// catalog name would be dropped at processing without any signal to the dev.
-const GA4_EVENT_NAME_PATTERN = /^[A-Za-z][\w]{0,39}$/;
-
 /**
  * @since 0.5.0-canary.4
  */
 export interface GoogleAnalyticsDestinationOptions {
-  name?: string;
+  name?: string | undefined;
   /**
    * Forward `page` envelopes as GA4's `page_view`. Off by default: `gtag('config', ...)`
    * sends the initial page_view and GA4's Enhanced Measurement (on by default in admin)
@@ -274,7 +307,7 @@ export interface GoogleAnalyticsDestinationOptions {
    * setting `send_page_view: false` on config and disabling Enhanced Measurement's
    * history-based page views.
    */
-  trackPageViews?: boolean;
+  trackPageViews?: boolean | undefined;
 }
 
 /**
@@ -331,11 +364,7 @@ export function createGoogleAnalyticsDestination(options: GoogleAnalyticsDestina
         }
 
         case "track": {
-          if (!GA4_EVENT_NAME_PATTERN.test(event.name)) {
-            console.warn(
-              `[tracking] "${name}" dropped event "${event.name}" — GA4 event names must start with a letter and contain only letters, digits, or underscores (max 40 chars)`,
-            );
-
+          if (!warnUnlessGa4EventName(name, event.name)) {
             return;
           }
 

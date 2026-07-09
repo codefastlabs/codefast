@@ -27,3 +27,6 @@ export {
 
 export type { UseConsentOptions, UseConsentResult } from "#/react/use-consent";
 export { useConsent } from "#/react/use-consent";
+
+export type { GtagConsentBootstrapProps } from "#/react/gtag-consent-bootstrap";
+export { GtagConsentBootstrap } from "#/react/gtag-consent-bootstrap";

@@ -1,0 +1,47 @@
+import type { ComponentProps, ReactNode } from "react";
+
+import type { GtagConsentBootstrapOptions } from "#/destinations/google-analytics";
+import { buildGtagConsentBootstrapScript } from "#/destinations/google-analytics";
+
+export interface GtagConsentBootstrapProps
+  extends
+    Omit<ComponentProps<"script">, "children" | "dangerouslySetInnerHTML" | "nonce" | "src" | "type">,
+    GtagConsentBootstrapOptions {}
+
+/**
+ * Framework-agnostic inline `<script>` that runs `buildGtagConsentBootstrapScript` before
+ * hydration. Pass the same `nonce` here and in `loadGtagScript` for CSP; this component
+ * only sets the attribute on the host script — the generated source also stamps it onto
+ * the injected gtag.js tag when `nonce` is provided.
+ */
+export function GtagConsentBootstrap({
+  consentStorageKey,
+  dataLayerName,
+  defaultConsent,
+  defaultConsentExpression,
+  debugMode,
+  gaMeasurementId,
+  nonce,
+  policyVersion,
+  ...props
+}: GtagConsentBootstrapProps): ReactNode {
+  const bootstrapOptions: GtagConsentBootstrapOptions = {
+    consentStorageKey,
+    gaMeasurementId,
+    policyVersion,
+    ...(dataLayerName === undefined ? {} : { dataLayerName }),
+    ...(defaultConsent === undefined ? {} : { defaultConsent }),
+    ...(defaultConsentExpression === undefined ? {} : { defaultConsentExpression }),
+    ...(debugMode === undefined ? {} : { debugMode }),
+    ...(nonce === undefined ? {} : { nonce }),
+  };
+
+  return (
+    <script
+      {...props}
+      dangerouslySetInnerHTML={{ __html: buildGtagConsentBootstrapScript(bootstrapOptions) }}
+      {...(nonce === undefined ? {} : { nonce })}
+      suppressHydrationWarning
+    />
+  );
+}

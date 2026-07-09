@@ -47,6 +47,28 @@ describe("createGa4MeasurementProtocolDestination", () => {
     });
   });
 
+  it("warns and skips the fetch when a track name would be rejected by GA4", async () => {
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => undefined);
+    const destination = createGa4MeasurementProtocolDestination({
+      apiSecret: "secret",
+      measurementId: "G-TEST123",
+    });
+
+    await destination.send({
+      anonymousId: "anon-1",
+      eventId: "e1",
+      name: "invalid-name",
+      owner: "server",
+      props: {},
+      timestamp: 0,
+      type: "track",
+    });
+
+    expect(fetchMock).not.toHaveBeenCalled();
+    expect(warn).toHaveBeenCalledOnce();
+    warn.mockRestore();
+  });
+
   it("prefers the gtag client_id over the tracker's anonymous ID when provided", async () => {
     const destination = createGa4MeasurementProtocolDestination({
       apiSecret: "secret",

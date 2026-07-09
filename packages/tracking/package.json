@@ -146,6 +146,11 @@
       "types": "./dist/destinations/google-analytics.d.mts",
       "import": "./dist/destinations/google-analytics.mjs"
     },
+    "./destinations/google-tag-manager": {
+      "source": "./src/destinations/google-tag-manager.ts",
+      "types": "./dist/destinations/google-tag-manager.d.mts",
+      "import": "./dist/destinations/google-tag-manager.mjs"
+    },
     "./destinations/http-destination": {
       "source": "./src/destinations/http-destination.ts",
       "types": "./dist/destinations/http-destination.d.mts",
@@ -165,6 +170,11 @@
       "source": "./src/react/consent-banner.tsx",
       "types": "./dist/react/consent-banner.d.mts",
       "import": "./dist/react/consent-banner.mjs"
+    },
+    "./react/gtag-consent-bootstrap": {
+      "source": "./src/react/gtag-consent-bootstrap.tsx",
+      "types": "./dist/react/gtag-consent-bootstrap.d.mts",
+      "import": "./dist/react/gtag-consent-bootstrap.mjs"
     },
     "./react/use-consent": {
       "source": "./src/react/use-consent.ts",

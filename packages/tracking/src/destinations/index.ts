@@ -6,6 +6,7 @@ export {
 } from "#/destinations/ga4-measurement-protocol";
 
 export type {
+  EnsureGtagOptions,
   GoogleAnalyticsDestinationOptions,
   GoogleConsentDefaultOptions,
   GtagConsentBootstrapOptions,
@@ -22,6 +23,17 @@ export {
   setGoogleUrlPassthrough,
   updateGoogleConsent,
 } from "#/destinations/google-analytics";
+
+export type {
+  GoogleTagManagerDestinationOptions,
+  GtmConsentBootstrapOptions,
+  LoadGtmScriptOptions,
+} from "#/destinations/google-tag-manager";
+export {
+  buildGtmConsentBootstrapScript,
+  createGoogleTagManagerDestination,
+  loadGtmScript,
+} from "#/destinations/google-tag-manager";
 
 export type { HttpDestinationOptions } from "#/destinations/http-destination";
 export { createHttpDestination } from "#/destinations/http-destination";

@@ -3,6 +3,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   buildGtagConsentBootstrapScript,
   createGoogleAnalyticsDestination,
+  ensureGtag,
+  loadGtagScript,
   setGoogleAdsDataRedaction,
   setGoogleConsentDefault,
   setGoogleUrlPassthrough,
@@ -473,5 +475,116 @@ describe("buildGtagConsentBootstrapScript", () => {
     expect(consentDefaultParams().analytics_storage).toBe("granted");
 
     Reflect.deleteProperty(window, "__fallback__");
+  });
+
+  it("queues onto a custom dataLayerName and passes l= to gtag.js", () => {
+    const script = buildGtagConsentBootstrapScript({
+      consentStorageKey: "k",
+      dataLayerName: "appDataLayer",
+      defaultConsent: { ads: false, analytics: true },
+      gaMeasurementId: "G-TEST123",
+      policyVersion: "1",
+    });
+
+    runScript(script);
+
+    const customLayer = (window as unknown as { appDataLayer: Array<ArrayLike<unknown>> }).appDataLayer;
+
+    expect(customLayer).toHaveLength(3);
+    expect(Array.from(customLayer[0]!)).toEqual([
+      "consent",
+      "default",
+      {
+        ad_personalization: "denied",
+        ad_storage: "denied",
+        ad_user_data: "denied",
+        analytics_storage: "granted",
+      },
+    ]);
+    expect(gtagScriptElement()?.src).toContain("l=appDataLayer");
+
+    Reflect.deleteProperty(window, "appDataLayer");
+  });
+
+  it("sets nonce on the injected gtag.js script when provided", () => {
+    const script = buildGtagConsentBootstrapScript({
+      consentStorageKey: "k",
+      defaultConsent: { ads: false, analytics: true },
+      gaMeasurementId: "G-TEST123",
+      nonce: "csp-nonce-1",
+      policyVersion: "1",
+    });
+
+    runScript(script);
+
+    expect(gtagScriptElement()?.nonce).toBe("csp-nonce-1");
+  });
+
+  it("passes debug_mode on config when debugMode is true", () => {
+    const script = buildGtagConsentBootstrapScript({
+      consentStorageKey: "k",
+      debugMode: true,
+      defaultConsent: { ads: false, analytics: true },
+      gaMeasurementId: "G-TEST123",
+      policyVersion: "1",
+    });
+
+    runScript(script);
+
+    const calls = (window.dataLayer ?? []) as Array<ArrayLike<unknown>>;
+    const configCall = Array.from(calls[2]!);
+
+    expect(configCall).toEqual(["config", "G-TEST123", { debug_mode: true }]);
+  });
+});
+
+describe("ensureGtag / loadGtagScript", () => {
+  afterEach(() => {
+    delete window.dataLayer;
+    delete window.gtag;
+    Reflect.deleteProperty(window, "appDataLayer");
+
+    for (const script of document.querySelectorAll('script[src^="https://www.googletagmanager.com/gtag/js"]')) {
+      script.remove();
+    }
+  });
+
+  it("ensureGtag creates the named dataLayer and a gtag stub that pushes onto it", () => {
+    const gtag = ensureGtag({ dataLayerName: "appDataLayer" });
+
+    expect(gtag).toBeTypeOf("function");
+    gtag?.("js", new Date());
+
+    const layer = (window as unknown as { appDataLayer: Array<ArrayLike<unknown>> }).appDataLayer;
+
+    expect(layer).toHaveLength(1);
+    expect(Array.from(layer[0]!)[0]).toBe("js");
+  });
+
+  it("loadGtagScript queues config, injects gtag.js with nonce, and enables debug_mode", () => {
+    loadGtagScript({
+      dataLayerName: "appDataLayer",
+      debugMode: true,
+      gaMeasurementId: "G-TEST123",
+      nonce: "csp-nonce-2",
+    });
+
+    const layer = (window as unknown as { appDataLayer: Array<ArrayLike<unknown>> }).appDataLayer;
+    const configCall = Array.from(layer[1]!);
+    const script = document.querySelector(
+      'script[src^="https://www.googletagmanager.com/gtag/js"]',
+    ) as HTMLScriptElement | null;
+
+    expect(configCall).toEqual(["config", "G-TEST123", { debug_mode: true }]);
+    expect(script?.src).toContain("id=G-TEST123");
+    expect(script?.src).toContain("l=appDataLayer");
+    expect(script?.nonce).toBe("csp-nonce-2");
+  });
+
+  it("loadGtagScript is idempotent — a second call does not append another script", () => {
+    loadGtagScript({ gaMeasurementId: "G-TEST123" });
+    loadGtagScript({ gaMeasurementId: "G-TEST123" });
+
+    expect(document.querySelectorAll('script[src^="https://www.googletagmanager.com/gtag/js"]')).toHaveLength(1);
   });
 });
