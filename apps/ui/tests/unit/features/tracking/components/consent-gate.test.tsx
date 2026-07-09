@@ -23,7 +23,10 @@ vi.mock("#/features/tracking/lib/tracking", () => ({
   clearGoogleAnalyticsCookies,
   getTracker: () => ({ clear }),
 }));
-vi.mock("@codefast/tracking/destinations", () => ({ updateGoogleConsent }));
+vi.mock(import("@codefast/tracking/destinations"), async (importOriginal) => ({
+  ...(await importOriginal()),
+  updateGoogleConsent,
+}));
 
 beforeEach(() => {
   clear.mockClear();
