@@ -143,7 +143,12 @@ export function createClientTracker<Catalog extends EventCatalog>(
       enqueue({ groupId, traits, type: "group" });
     },
     identify(id, traits = {}) {
-      userId = id;
+      // Mirrors enqueue()'s own gate — a denied identify must never leave its userId in the
+      // closure for a later allowed event to pick up.
+      if (options.isTrackingAllowed?.() !== false) {
+        userId = id;
+      }
+
       enqueue({ traits, type: "identify" });
     },
     page(name, props = {}) {
