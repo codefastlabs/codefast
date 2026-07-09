@@ -11,20 +11,40 @@ export interface CookieAnonymousId {
   /** Expires the cookie — call when the visitor withdraws tracking consent. */
   clear: () => void;
   /** The existing id, or a freshly minted and persisted one. */
-  resolve: () => string;
+  getOrCreate: () => string;
+}
+
+function readCookie(cookieName: string): string | undefined {
+  for (const part of document.cookie.split(";")) {
+    const separatorIndex = part.indexOf("=");
+
+    if (separatorIndex !== -1 && part.slice(0, separatorIndex).trim() === cookieName) {
+      return part.slice(separatorIndex + 1).trim();
+    }
+  }
+
+  return undefined;
+}
+
+function writeCookie(cookieName: string, value: string, maxAgeSeconds: number): void {
+  // Secure on HTTPS so the id isn't sent over plain HTTP; SameSite=Lax is enough for a
+  // first-party anonymous id that must stay readable from document.cookie (no HttpOnly).
+  const secure = globalThis.location.protocol === "https:" ? "; secure" : "";
+
+  document.cookie = `${cookieName}=${value}; path=/; max-age=${String(maxAgeSeconds)}; samesite=lax${secure}`;
 }
 
 /**
  * A `document.cookie`-backed anonymous id — not `localStorage`-only, so a server-owned
  * event can read the same id from the request and correlate to this visitor. Pass
- * `resolve` (not the result of calling it) as `ClientTrackerOptions.anonymousId`: it's a
- * resolver invoked lazily, so the cookie is minted only once an event is actually allowed
- * to send, never as an import-time side effect.
+ * `getOrCreate` (not the result of calling it) as `ClientTrackerOptions.anonymousId`:
+ * it's invoked lazily, so the cookie is minted only once an event is actually allowed to
+ * send, never as an import-time side effect.
  */
 export function createCookieAnonymousId(options: CookieAnonymousIdOptions): CookieAnonymousId {
   const { cookieName, maxAgeSeconds = ONE_YEAR_IN_SECONDS } = options;
-  // Cached after the first resolve() so a resolver invoked once per tracked event doesn't
-  // re-parse the whole cookie header every time — cleared alongside the cookie itself.
+  // Cached after the first getOrCreate() so a callback invoked once per tracked event
+  // doesn't re-parse the whole cookie header every time — cleared alongside the cookie.
   let cachedId: string | undefined;
 
   return {
@@ -35,9 +55,9 @@ export function createCookieAnonymousId(options: CookieAnonymousIdOptions): Cook
         return;
       }
 
-      document.cookie = `${cookieName}=; path=/; max-age=0; samesite=lax`;
+      writeCookie(cookieName, "", 0);
     },
-    resolve(): string {
+    getOrCreate(): string {
       if (cachedId !== undefined) {
         return cachedId;
       }
@@ -46,10 +66,7 @@ export function createCookieAnonymousId(options: CookieAnonymousIdOptions): Cook
         return crypto.randomUUID();
       }
 
-      const existing = document.cookie
-        .split("; ")
-        .find((row) => row.startsWith(`${cookieName}=`))
-        ?.split("=")[1];
+      const existing = readCookie(cookieName);
 
       if (existing) {
         cachedId = existing;
@@ -59,7 +76,7 @@ export function createCookieAnonymousId(options: CookieAnonymousIdOptions): Cook
 
       const id = crypto.randomUUID();
 
-      document.cookie = `${cookieName}=${id}; path=/; max-age=${maxAgeSeconds}; samesite=lax`;
+      writeCookie(cookieName, id, maxAgeSeconds);
       cachedId = id;
 
       return id;

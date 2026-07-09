@@ -32,7 +32,7 @@ export const catalog = defineEventCatalog({
 const anonymousId = createCookieAnonymousId({ cookieName: "codefast-ui-anon-id" });
 
 export function getOrCreateAnonymousId(): string {
-  return anonymousId.resolve();
+  return anonymousId.getOrCreate();
 }
 
 /** Expires the anonymous-id cookie — called when the visitor withdraws analytics consent. */
@@ -67,7 +67,7 @@ let tracker: ClientTracker<typeof catalog> | undefined;
  */
 export function getTracker(): ClientTracker<typeof catalog> {
   tracker ??= createClientTracker({
-    // a resolver, not a value — the cookie must not exist until an event is actually allowed to send
+    // a getOrCreate callback, not a value — the cookie must not exist until an event is actually allowed to send
     anonymousId: getOrCreateAnonymousId,
     catalog,
     // Vercel is cookieless and receives no identifier, so it keeps counting interactions

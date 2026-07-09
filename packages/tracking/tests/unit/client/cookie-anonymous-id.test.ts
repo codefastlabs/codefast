@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { createCookieAnonymousId } from "#/client/cookie-anonymous-id";
 
@@ -6,23 +6,25 @@ const COOKIE_NAME = "test-anon-id";
 
 afterEach(() => {
   document.cookie = `${COOKIE_NAME}=; path=/; max-age=0`;
+  document.cookie = `${COOKIE_NAME}-extra=; path=/; max-age=0`;
+  vi.restoreAllMocks();
 });
 
 describe("createCookieAnonymousId", () => {
-  it("mints and persists a new id on first resolve", () => {
+  it("mints and persists a new id on first getOrCreate", () => {
     const anonymousId = createCookieAnonymousId({ cookieName: COOKIE_NAME });
 
-    const id = anonymousId.resolve();
+    const id = anonymousId.getOrCreate();
 
     expect(id).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i);
     expect(document.cookie).toContain(`${COOKIE_NAME}=${id}`);
   });
 
-  it("returns the same id on every subsequent resolve", () => {
+  it("returns the same id on every subsequent getOrCreate", () => {
     const anonymousId = createCookieAnonymousId({ cookieName: COOKIE_NAME });
 
-    const first = anonymousId.resolve();
-    const second = anonymousId.resolve();
+    const first = anonymousId.getOrCreate();
+    const second = anonymousId.getOrCreate();
 
     expect(first).toBe(second);
   });
@@ -30,13 +32,13 @@ describe("createCookieAnonymousId", () => {
   it("mints a fresh id after clear", () => {
     const anonymousId = createCookieAnonymousId({ cookieName: COOKIE_NAME });
 
-    const first = anonymousId.resolve();
+    const first = anonymousId.getOrCreate();
 
     anonymousId.clear();
 
     expect(document.cookie).not.toContain(COOKIE_NAME);
 
-    const second = anonymousId.resolve();
+    const second = anonymousId.getOrCreate();
 
     expect(second).not.toBe(first);
   });
@@ -45,6 +47,30 @@ describe("createCookieAnonymousId", () => {
     const first = createCookieAnonymousId({ cookieName: COOKIE_NAME });
     const second = createCookieAnonymousId({ cookieName: COOKIE_NAME });
 
-    expect(second.resolve()).toBe(first.resolve());
+    expect(second.getOrCreate()).toBe(first.getOrCreate());
+  });
+
+  it("matches the cookie name exactly — a longer prefix sibling is ignored", () => {
+    document.cookie = `${COOKIE_NAME}-extra=sibling-id; path=/; max-age=3600; samesite=lax`;
+
+    const anonymousId = createCookieAnonymousId({ cookieName: COOKIE_NAME });
+    const id = anonymousId.getOrCreate();
+
+    expect(id).not.toBe("sibling-id");
+    expect(document.cookie).toContain(`${COOKIE_NAME}=${id}`);
+  });
+
+  it("sets the Secure attribute when the page is served over HTTPS", () => {
+    const cookieSetter = vi.fn();
+
+    vi.stubGlobal("location", { protocol: "https:" });
+    vi.spyOn(document, "cookie", "set").mockImplementation(cookieSetter);
+    vi.spyOn(document, "cookie", "get").mockReturnValue("");
+
+    createCookieAnonymousId({ cookieName: COOKIE_NAME }).getOrCreate();
+
+    expect(cookieSetter).toHaveBeenCalledWith(expect.stringMatching(/; secure$/i));
+
+    vi.unstubAllGlobals();
   });
 });
