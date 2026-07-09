@@ -33,6 +33,21 @@ describe("createLocalStorageQueueStorage", () => {
     expect(storage.load()).toEqual([]);
   });
 
+  it("drops pre-migration/malformed records, keeping only valid envelopes", () => {
+    const storage = createLocalStorageQueueStorage("tracking-queue-malformed");
+
+    localStorage.setItem(
+      "tracking-queue-malformed",
+      JSON.stringify([
+        event,
+        { name: "button_clicked", props: {} }, // pre-migration shape, no `type`
+        null,
+        "not an object",
+      ]),
+    );
+    expect(storage.load()).toEqual([event]);
+  });
+
   describe("without a window (SSR)", () => {
     afterEach(() => {
       vi.unstubAllGlobals();

@@ -1,5 +1,6 @@
 import type { EventQueueStorage } from "#/client/queue";
 import type { TrackedEvent } from "#/core/tracked-event";
+import { isTrackedEvent } from "#/core/tracked-event";
 
 /**
  * `localStorage`-backed queue storage — corrupt/missing state, a private-mode/quota
@@ -24,7 +25,9 @@ export function createLocalStorageQueueStorage(storageKey: string): EventQueueSt
 
         const parsed: unknown = JSON.parse(raw);
 
-        return Array.isArray(parsed) ? (parsed as Array<TrackedEvent>) : [];
+        // Drops pre-migration/malformed records here, at the source, so every reader
+        // (queue flush, `createHttpDestination`, `flushWithBeacon`) sees only valid envelopes.
+        return Array.isArray(parsed) ? parsed.filter(isTrackedEvent) : [];
       } catch {
         return [];
       }

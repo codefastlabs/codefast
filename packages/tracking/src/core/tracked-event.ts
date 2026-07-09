@@ -46,3 +46,22 @@ export interface AliasEvent extends TrackedEventBase {
  * @since 0.5.0-canary.4
  */
 export type TrackedEvent = AliasEvent | GroupEvent | IdentifyEvent | PageViewEvent | TrackEvent;
+
+const TRACKED_EVENT_TYPES = new Set(["alias", "group", "identify", "page", "track"]);
+
+/** Guards records read back from untrusted storage (e.g. a pre-migration offline queue). */
+export function isTrackedEvent(value: unknown): value is TrackedEvent {
+  if (typeof value !== "object" || value === null) {
+    return false;
+  }
+
+  const record = value as Record<string, unknown>;
+
+  return (
+    typeof record.anonymousId === "string" &&
+    typeof record.eventId === "string" &&
+    typeof record.timestamp === "number" &&
+    typeof record.type === "string" &&
+    TRACKED_EVENT_TYPES.has(record.type)
+  );
+}
