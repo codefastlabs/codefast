@@ -51,7 +51,11 @@ export interface ClientTrackerOptions<Catalog extends EventCatalog> {
  * @since 0.5.0-canary.4
  */
 export interface ClientTracker<Catalog extends EventCatalog> {
-  /** Drops every pending event without sending it — call this when consent is revoked. */
+  /**
+   * Drops every pending event and forgets the in-memory `userId` from `identify` — call
+   * when consent is revoked. Does not clear a cookie-backed anonymous id; call that
+   * helper's `clear()` separately when the visitor withdraws tracking consent.
+   */
   clear: () => void;
   flush: () => Promise<void>;
   /** Synchronous, best-effort flush via `navigator.sendBeacon` — for page unload only. */
@@ -130,6 +134,9 @@ export function createClientTracker<Catalog extends EventCatalog>(
 
   return {
     clear: () => {
+      // Revoke must drop identity too — otherwise a later grant would stamp the pre-revoke
+      // userId onto new events without a fresh identify().
+      userId = undefined;
       queue.clear();
     },
     flush: () => queue.flush(),

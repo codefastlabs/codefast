@@ -164,6 +164,33 @@ describe("createClientTracker", () => {
     expect(destination.received).toHaveLength(0);
   });
 
+  it("clear() forgets the in-memory userId so a later grant does not reattach it", async () => {
+    let allowed = true;
+    const destination = createRecordingDestination();
+    const tracker = createClientTracker({
+      anonymousId: () => "anon-1",
+      catalog,
+      destinations: [destination],
+      isTrackingAllowed: () => allowed,
+      storage: createMemoryQueueStorage(),
+    });
+
+    tracker.identify("user-1");
+    await tracker.flush();
+
+    allowed = false;
+    tracker.clear();
+    allowed = true;
+    tracker.track("button_clicked", { id: "cta" });
+    await tracker.flush();
+
+    expect(destination.received).toMatchObject([
+      { type: "identify", userId: "user-1" },
+      { props: { id: "cta" }, type: "track" },
+    ]);
+    expect(destination.received[1]).not.toHaveProperty("userId");
+  });
+
   it("flushWithBeacon sends the pending queue via navigator.sendBeacon", () => {
     const sendBeacon = vi.fn().mockReturnValue(true);
     vi.stubGlobal("navigator", { sendBeacon });
@@ -228,7 +255,7 @@ describe("createClientTracker", () => {
     expect(destination.received).toMatchObject([{ props: { id: "after" } }]);
   });
 
-  it("never invokes an anonymousId resolver for a gated event — no id side effect before consent", async () => {
+  it("never invokes an anonymousId callback for a gated event — no id side effect before consent", async () => {
     const resolveAnonymousId = vi.fn(() => "anon-lazy");
     let allowed = false;
     const destination = createRecordingDestination();
