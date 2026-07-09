@@ -26,5 +26,6 @@ export interface Destination {
    */
   delivery?: "immediate" | "queued";
   name: string;
-  send: (event: TrackedEvent) => Promise<void> | void;
+  /** Must always return a `Promise` — mark `send` `async` even if the body has no `await`. */
+  send: (event: TrackedEvent) => Promise<void>;
 }

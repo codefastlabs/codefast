@@ -1,6 +1,7 @@
 import type { ConsentDecision } from "#/core/consent";
 import { CONSENT_CATEGORIES } from "#/core/consent";
 import type { Destination } from "#/core/destination";
+import { assertNever } from "#/core/tracked-event";
 import type { FlatPropertyValue } from "#/destinations/shared";
 import { flattenEventProps, omitHref, toJoinGroupPayload } from "#/destinations/shared";
 
@@ -293,7 +294,9 @@ export function createGoogleAnalyticsDestination(options: GoogleAnalyticsDestina
   return {
     delivery: "immediate",
     name,
-    send(event) {
+    // Synchronous today, but declared async so a throw here rejects the returned Promise
+    // instead of escaping as a synchronous throw — matches Destination.send's contract.
+    async send(event) {
       if (typeof window === "undefined" || typeof window.gtag !== "function") {
         return;
       }
@@ -337,6 +340,12 @@ export function createGoogleAnalyticsDestination(options: GoogleAnalyticsDestina
           }
 
           window.gtag("event", event.name, flattenEventProps(event.props));
+
+          return;
+        }
+
+        default: {
+          assertNever(event);
         }
       }
     },

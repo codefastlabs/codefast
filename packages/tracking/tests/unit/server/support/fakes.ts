@@ -8,7 +8,7 @@ export function createFailingDestination(
   return {
     name,
     received: [],
-    send(event) {
+    async send(event) {
       if (this.received.length < failuresBeforeSuccess) {
         this.received.push(event);
 

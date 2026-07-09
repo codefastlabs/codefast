@@ -32,4 +32,4 @@ export type {
   TrackedEvent,
   TrackedEventBase,
 } from "#/core/tracked-event";
-export { isTrackedEvent } from "#/core/tracked-event";
+export { assertNever, isTrackedEvent } from "#/core/tracked-event";

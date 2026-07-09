@@ -65,3 +65,12 @@ export function isTrackedEvent(value: unknown): value is TrackedEvent {
     TRACKED_EVENT_TYPES.has(record.type)
   );
 }
+
+/**
+ * Exhaustiveness guard for a `switch` over {@link TrackedEvent} — put this in the
+ * `default` case. Adding a new `TrackedEvent` variant without updating every switch then
+ * fails to compile here instead of silently falling through at runtime.
+ */
+export function assertNever(value: never): never {
+  throw new Error(`Unhandled TrackedEvent variant: ${JSON.stringify(value)}`);
+}

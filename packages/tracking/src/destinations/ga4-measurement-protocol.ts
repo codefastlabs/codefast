@@ -1,5 +1,6 @@
 import type { Destination } from "#/core/destination";
 import type { TrackedEvent } from "#/core/tracked-event";
+import { assertNever } from "#/core/tracked-event";
 import type { FlatPropertyValue } from "#/destinations/shared";
 import { flattenEventProps, toJoinGroupPayload } from "#/destinations/shared";
 
@@ -163,6 +164,10 @@ function toMeasurementProtocolEvent(
 
     case "track": {
       return { name: event.name, params: flattenEventProps(event.props) };
+    }
+
+    default: {
+      assertNever(event);
     }
   }
 }

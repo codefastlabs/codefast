@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const { track } = vi.hoisted(() => ({ track: vi.fn() }));
 
-vi.mock("@vercel/analytics/react", () => ({ track }));
+vi.mock("@vercel/analytics", () => ({ track }));
 
 describe("createVercelAnalyticsDestination", () => {
   beforeEach(() => {
