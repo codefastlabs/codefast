@@ -3,17 +3,18 @@ import { geolocation, next } from "@vercel/functions";
 /**
  * Vercel Routing Middleware — personalizes the statically prerendered pages' consent
  * default per real visitor by setting a cookie `google-tag.tsx` prefers over its
- * build-time fallback (see `resolveInitialConsent` in `src/lib/consent.ts`).
+ * build-time fallback (see `resolveInitialConsent` in `src/features/tracking/lib/consent.ts`).
  *
  * Self-contained on purpose: Vercel compiles this independently of the app's Vite/Nitro
- * build, so it duplicates `packages/tracking`'s EU-country/consent-mode mapping and the
- * cookie-name literal rather than risk an unverified cross-boundary import resolution.
- * Kept in sync by `tests/unit/middleware.test.ts`.
+ * build, so it duplicates `@codefast/tracking`'s EU-country / opt-in-equivalent / consent
+ * mapping and the cookie-name literal rather than risk an unverified cross-boundary import.
+ * Kept in sync by `tests/unit/middleware.test.ts` against `buildInitialConsent`.
  */
 
-// Duplicates `src/lib/initial-consent-cookie.ts` — middleware.test.ts guards the sync.
+// Duplicates `src/features/tracking/lib/consent.ts` — middleware.test.ts guards the sync.
 const INITIAL_CONSENT_COOKIE_NAME = "codefast-ui-initial-consent";
 
+/** Mirrors `@codefast/tracking/server`'s `EU_COUNTRY_CODES`. */
 export const EU_COUNTRY_CODES = new Set([
   "AT",
   "BE",
@@ -44,6 +45,9 @@ export const EU_COUNTRY_CODES = new Set([
   "SE",
 ]);
 
+/** Mirrors `@codefast/tracking/server`'s `OPT_IN_EQUIVALENT_COUNTRY_CODES` (UK + EEA/EFTA). */
+export const OPT_IN_EQUIVALENT_COUNTRY_CODES = new Set(["GB", "IS", "LI", "NO"]);
+
 export function resolveRegion(countryCode: string | undefined): "eu" | "other" | "us" | "vn" {
   if (!countryCode) {
     return "other";
@@ -51,7 +55,7 @@ export function resolveRegion(countryCode: string | undefined): "eu" | "other" |
 
   const normalized = countryCode.toUpperCase();
 
-  if (EU_COUNTRY_CODES.has(normalized)) {
+  if (EU_COUNTRY_CODES.has(normalized) || OPT_IN_EQUIVALENT_COUNTRY_CODES.has(normalized)) {
     return "eu";
   }
 

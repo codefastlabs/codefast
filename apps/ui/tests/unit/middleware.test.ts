@@ -1,10 +1,10 @@
 import { resolveConsentMode } from "@codefast/tracking/core";
-import { resolveRegionFromCountryCode } from "@codefast/tracking/server";
+import { buildInitialConsent, resolveRegionFromCountryCode } from "@codefast/tracking/server";
 import { describe, expect, it } from "vitest";
 
-import { INITIAL_CONSENT_COOKIE_NAME } from "#/features/tracking/lib/consent";
+import { INITIAL_CONSENT_COOKIE_NAME, REQUESTED_CONSENT_CATEGORIES } from "#/features/tracking/lib/consent";
 
-import middleware, { resolveRegion } from "../../middleware";
+import middleware, { OPT_IN_EQUIVALENT_COUNTRY_CODES, resolveRegion } from "../../middleware";
 
 const ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 const ALL_TWO_LETTER_CODES = ALPHABET.split("").flatMap((a) => ALPHABET.split("").map((b) => `${a}${b}`));
@@ -40,6 +40,10 @@ describe("middleware's resolveRegion vs @codefast/tracking's resolveRegionFromCo
   it("agrees when the country code is missing", () => {
     expect(resolveRegion(undefined)).toBe(resolveRegionFromCountryCode(undefined));
   });
+
+  it("includes the UK/EEA opt-in equivalents the package exports", () => {
+    expect([...OPT_IN_EQUIVALENT_COUNTRY_CODES].toSorted()).toEqual(["GB", "IS", "LI", "NO"]);
+  });
 });
 
 describe("middleware's opt-in/opt-out split vs @codefast/tracking's resolveConsentMode", () => {
@@ -50,6 +54,26 @@ describe("middleware's opt-in/opt-out split vs @codefast/tracking's resolveConse
 
       return { code, middleware: isOptIn ? "opt-in" : "opt-out", tracking: resolveConsentMode(region) };
     }).filter(({ middleware: fromMiddleware, tracking }) => fromMiddleware !== tracking);
+
+    expect(disagreements).toEqual([]);
+  });
+});
+
+describe("middleware cookie payload vs buildInitialConsent", () => {
+  it("matches the package helper for every two-letter country code", () => {
+    const disagreements = ALL_TWO_LETTER_CODES.map((code) => {
+      const response = middleware(
+        new Request("https://codefastlabs.com/", { headers: { "x-vercel-ip-country": code } }),
+      );
+
+      return {
+        code,
+        middleware: readCookieValue(response),
+        tracking: buildInitialConsent({ categories: REQUESTED_CONSENT_CATEGORIES, countryCode: code }),
+      };
+    }).filter(
+      ({ middleware: fromMiddleware, tracking }) => JSON.stringify(fromMiddleware) !== JSON.stringify(tracking),
+    );
 
     expect(disagreements).toEqual([]);
   });
@@ -78,6 +102,12 @@ describe("middleware", () => {
       mode: "opt-in",
       region: "eu",
     });
+  });
+
+  it("sets an all-denied/opt-in cookie for a UK visitor", () => {
+    const response = middleware(requestFrom("GB"));
+
+    expect(readCookieValue(response)).toEqual(buildInitialConsent({ categories: ["analytics"], countryCode: "GB" }));
   });
 
   it("sets an analytics-granted/opt-out cookie for a US visitor — ads is never requested", () => {
