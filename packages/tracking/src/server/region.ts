@@ -1,5 +1,6 @@
 import type { ConsentRegion } from "#/core/consent";
 
+/** EU member states — GDPR opt-in via `resolveConsentMode("eu")`. */
 const EU_COUNTRY_CODES = new Set([
   "AT",
   "BE",
@@ -31,9 +32,15 @@ const EU_COUNTRY_CODES = new Set([
 ]);
 
 /**
+ * UK GDPR (post-Brexit) and EEA/EFTA states that apply GDPR-equivalent rules — mapped to
+ * the same `"eu"` consent region so they get opt-in, not the `"other"` opt-out default.
+ */
+const OPT_IN_EQUIVALENT_COUNTRY_CODES = new Set(["GB", "IS", "LI", "NO"]);
+
+/**
  * Missing/unrecognized codes fall back to "other", which `resolveConsentMode` treats
- * as opt-out — the least restrictive default, safe only because opt-in regions (EU/VN)
- * are matched explicitly above it.
+ * as opt-out — the least restrictive default, safe only because opt-in regions (EU/VN
+ * plus UK/EEA/EFTA above) are matched explicitly.
  *
  * @since 0.5.0-canary.4
  */
@@ -44,7 +51,7 @@ export function resolveRegionFromCountryCode(countryCode: string | undefined): C
 
   const normalized = countryCode.toUpperCase();
 
-  if (EU_COUNTRY_CODES.has(normalized)) {
+  if (EU_COUNTRY_CODES.has(normalized) || OPT_IN_EQUIVALENT_COUNTRY_CODES.has(normalized)) {
     return "eu";
   }
 

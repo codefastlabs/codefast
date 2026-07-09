@@ -6,6 +6,10 @@ describe("resolveRegionFromCountryCode", () => {
   it.each([
     ["DE", "eu"],
     ["fr", "eu"],
+    ["GB", "eu"],
+    ["IS", "eu"],
+    ["LI", "eu"],
+    ["NO", "eu"],
     ["VN", "vn"],
     ["US", "us"],
     ["JP", "other"],
