@@ -10,11 +10,29 @@ import type { TrackedEvent, TrackedEventBase } from "#/core/tracked-event";
 type EnvelopeSeed<Event = TrackedEvent> = Event extends TrackedEvent ? Omit<Event, keyof TrackedEventBase> : never;
 
 /**
+ * `Destination.send` is typed to always return a `Promise`, but that's unenforceable at
+ * runtime for a third-party/plain-JS destination — one that ignores the contract and
+ * throws synchronously (or returns a non-`Promise`) must still never break the tracked
+ * interaction. `Promise.resolve(...)` normalizes a non-`Promise` return; the outer
+ * try/catch is the only thing that can catch a throw that happens before `send` ever
+ * gets to return anything.
+ */
+function sendToDestination(destination: Destination, event: TrackedEvent): void {
+  try {
+    void Promise.resolve(destination.send(event)).catch(() => {
+      /* an immediate destination owns its transport — no retry path here */
+    });
+  } catch {
+    /* a sync throw must never break the tracked interaction */
+  }
+}
+
+/**
  * @since 0.5.0-canary.4
  */
 export interface ClientTrackerOptions<Catalog extends EventCatalog> {
-  /** A stable visitor id, or a resolver invoked per event — use a resolver to defer creating the id (e.g. a cookie) until an event is actually allowed to send. */
-  anonymousId: string | (() => string);
+  /** Invoked per allowed event — defer creating the id (e.g. minting a cookie) until an event is actually allowed to send, never as an import-time side effect. */
+  anonymousId: () => string;
   catalog: Catalog;
   destinations: Array<Destination>;
   /**
@@ -87,10 +105,7 @@ export function createClientTracker<Catalog extends EventCatalog>(
     // minted as a side effect) and no userId rides along — the exempt lane only carries
     // what a cookieless sink may see.
     const identity: Pick<TrackedEventBase, "anonymousId" | "userId"> = isAllowed
-      ? {
-          anonymousId: typeof options.anonymousId === "function" ? options.anonymousId() : options.anonymousId,
-          ...(userId === undefined ? {} : { userId }),
-        }
+      ? { anonymousId: options.anonymousId(), ...(userId === undefined ? {} : { userId }) }
       : { anonymousId: "" };
 
     // The seed/base split is total by construction — the assertion only rejoins the union.
@@ -103,13 +118,7 @@ export function createClientTracker<Catalog extends EventCatalog>(
     } as TrackedEvent;
 
     for (const destination of isAllowed ? immediateDestinations : exemptDestinations) {
-      try {
-        void Promise.resolve(destination.send(envelope)).catch(() => {
-          /* an immediate destination owns its transport — no retry path here */
-        });
-      } catch {
-        /* a sync throw must never break the tracked interaction */
-      }
+      sendToDestination(destination, envelope);
     }
 
     if (isAllowed) {

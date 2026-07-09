@@ -14,7 +14,7 @@ describe("createClientTracker", () => {
   it("validates props against the catalog schema before enqueueing", () => {
     const destination = createRecordingDestination();
     const tracker = createClientTracker({
-      anonymousId: "anon-1",
+      anonymousId: () => "anon-1",
       catalog,
       destinations: [destination],
       storage: createMemoryQueueStorage(),
@@ -26,7 +26,7 @@ describe("createClientTracker", () => {
   it("flushes a valid client-owned event to every destination", async () => {
     const destination = createRecordingDestination();
     const tracker = createClientTracker({
-      anonymousId: "anon-1",
+      anonymousId: () => "anon-1",
       catalog,
       destinations: [destination],
       storage: createMemoryQueueStorage(),
@@ -41,7 +41,7 @@ describe("createClientTracker", () => {
   it("rejects a server-owned event at runtime even if the type filter is bypassed", () => {
     const destination = createRecordingDestination();
     const tracker = createClientTracker({
-      anonymousId: "anon-1",
+      anonymousId: () => "anon-1",
       catalog,
       destinations: [destination],
       storage: createMemoryQueueStorage(),
@@ -55,7 +55,7 @@ describe("createClientTracker", () => {
   it("stamps the current user onto events after identify", async () => {
     const destination = createRecordingDestination();
     const tracker = createClientTracker({
-      anonymousId: "anon-1",
+      anonymousId: () => "anon-1",
       catalog,
       destinations: [destination],
       storage: createMemoryQueueStorage(),
@@ -71,7 +71,7 @@ describe("createClientTracker", () => {
   it("enqueues a page envelope carrying the given name and props", async () => {
     const destination = createRecordingDestination();
     const tracker = createClientTracker({
-      anonymousId: "anon-1",
+      anonymousId: () => "anon-1",
       catalog,
       destinations: [destination],
       storage: createMemoryQueueStorage(),
@@ -86,7 +86,7 @@ describe("createClientTracker", () => {
   it("enqueues a group envelope carrying the groupId and traits", async () => {
     const destination = createRecordingDestination();
     const tracker = createClientTracker({
-      anonymousId: "anon-1",
+      anonymousId: () => "anon-1",
       catalog,
       destinations: [destination],
       storage: createMemoryQueueStorage(),
@@ -101,7 +101,7 @@ describe("createClientTracker", () => {
   it("delivers to immediate destinations at track time, without waiting for a flush", () => {
     const immediate = { ...createRecordingDestination("immediate"), delivery: "immediate" as const };
     const tracker = createClientTracker({
-      anonymousId: "anon-1",
+      anonymousId: () => "anon-1",
       catalog,
       destinations: [immediate],
       storage: createMemoryQueueStorage(),
@@ -116,7 +116,7 @@ describe("createClientTracker", () => {
     const immediate = { ...createRecordingDestination("immediate"), delivery: "immediate" as const };
     const queued = createRecordingDestination("queued");
     const tracker = createClientTracker({
-      anonymousId: "anon-1",
+      anonymousId: () => "anon-1",
       catalog,
       destinations: [immediate, queued],
       storage: createMemoryQueueStorage(),
@@ -139,7 +139,7 @@ describe("createClientTracker", () => {
       },
     };
     const tracker = createClientTracker({
-      anonymousId: "anon-1",
+      anonymousId: () => "anon-1",
       catalog,
       destinations: [throwing],
       storage: createMemoryQueueStorage(),
@@ -151,7 +151,7 @@ describe("createClientTracker", () => {
   it("clear() drops pending events without sending them", async () => {
     const destination = createRecordingDestination();
     const tracker = createClientTracker({
-      anonymousId: "anon-1",
+      anonymousId: () => "anon-1",
       catalog,
       destinations: [destination],
       storage: createMemoryQueueStorage(),
@@ -169,7 +169,7 @@ describe("createClientTracker", () => {
     vi.stubGlobal("navigator", { sendBeacon });
 
     const tracker = createClientTracker({
-      anonymousId: "anon-1",
+      anonymousId: () => "anon-1",
       catalog,
       destinations: [],
       storage: createMemoryQueueStorage(),
@@ -192,7 +192,7 @@ describe("createClientTracker", () => {
     const queued = createRecordingDestination("queued");
     const storage = createMemoryQueueStorage();
     const tracker = createClientTracker({
-      anonymousId: "anon-1",
+      anonymousId: () => "anon-1",
       catalog,
       destinations: [immediate, queued],
       isTrackingAllowed: () => false,
@@ -213,7 +213,7 @@ describe("createClientTracker", () => {
     let allowed = false;
     const destination = createRecordingDestination();
     const tracker = createClientTracker({
-      anonymousId: "anon-1",
+      anonymousId: () => "anon-1",
       catalog,
       destinations: [destination],
       isTrackingAllowed: () => allowed,
@@ -291,7 +291,7 @@ describe("createClientTracker", () => {
       delivery: "immediate" as const,
     };
     const tracker = createClientTracker({
-      anonymousId: "anon-1",
+      anonymousId: () => "anon-1",
       catalog,
       destinations: [exempt],
       isTrackingAllowed: () => true,
@@ -305,7 +305,7 @@ describe("createClientTracker", () => {
   it("never routes gated events to an exempt queued destination — the exempt lane is immediate-only", async () => {
     const exemptQueued = { ...createRecordingDestination("exempt-queued"), consent: "exempt" as const };
     const tracker = createClientTracker({
-      anonymousId: "anon-1",
+      anonymousId: () => "anon-1",
       catalog,
       destinations: [exemptQueued],
       isTrackingAllowed: () => false,
@@ -320,7 +320,7 @@ describe("createClientTracker", () => {
   it("works without a storage — the queue stays in memory only", async () => {
     const destination = createRecordingDestination();
     const tracker = createClientTracker({
-      anonymousId: "anon-1",
+      anonymousId: () => "anon-1",
       catalog,
       destinations: [destination],
     });
@@ -336,7 +336,7 @@ describe("createClientTracker", () => {
 
     const destination = createRecordingDestination();
     const tracker = createClientTracker({
-      anonymousId: "anon-1",
+      anonymousId: () => "anon-1",
       catalog,
       destinations: [destination],
       storage: createMemoryQueueStorage(),

@@ -19,7 +19,11 @@ implemented; PostHog is not built yet — use `createHttpDestination` or impleme
 
 ```ts
 import { defineEventCatalog } from "@codefast/tracking";
-import { createClientTracker, createLocalStorageQueueStorage } from "@codefast/tracking/client";
+import {
+  createClientTracker,
+  createCookieAnonymousId,
+  createLocalStorageQueueStorage,
+} from "@codefast/tracking/client";
 import { createHttpDestination } from "@codefast/tracking/destinations";
 import { z } from "zod";
 
@@ -28,8 +32,12 @@ export const catalog = defineEventCatalog({
   order_completed: { owner: "server", schema: z.object({ orderId: z.string(), amount: z.number() }) },
 });
 
+const anonymousId = createCookieAnonymousId({ cookieName: "app-anonymous-id" });
+
 const tracker = createClientTracker({
-  anonymousId: crypto.randomUUID(),
+  // A resolver, not a plain string — invoked only once an event is actually allowed to
+  // send, so the id is never minted as an import-time side effect.
+  anonymousId: anonymousId.resolve,
   catalog,
   destinations: [createHttpDestination({ name: "internal", endpoint: "/api/events" })],
   storage: createLocalStorageQueueStorage("tracking-queue"),
