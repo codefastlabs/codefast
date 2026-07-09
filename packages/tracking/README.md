@@ -168,13 +168,17 @@ issues the pre-tag default (it defines the gtag queueing stub itself), and
 signal is honored as a do-not-sell-or-share opt-out: it forces `ads` denied without
 withdrawing first-party `analytics`.
 
-## Google tag / GTM loaders
+## Google tag / GTM loaders (advanced Consent Mode)
 
 Prefer the pre-hydration bootstrap (not a post-hydration mount) so Consent Mode's default
-lands before any Google hit:
+lands before any Google hit. Bootstraps use **advanced** Consent Mode: set the v2
+`default` from the stored decision (or region fallback), then **always** load gtag.js /
+gtm.js — even when storage is denied — so cookieless pings and consent modeling can run.
+This does **not** weaken the package's first-party consent gate (`isTrackingAllowed`,
+identifier minting, non-exempt destinations); only Google's tag script loading changes.
 
 ```tsx
-import { loadGtagScript } from "@codefast/tracking/destinations";
+import { loadGtagScript, updateGoogleConsent } from "@codefast/tracking/destinations";
 import { GtagConsentBootstrap } from "@codefast/tracking/react";
 
 // In <head> / shell — same nonce on this host script and on loadGtagScript for CSP.
@@ -188,7 +192,9 @@ import { GtagConsentBootstrap } from "@codefast/tracking/react";
   policyVersion="2026-01"
 />;
 
-// After a runtime grant (banner Accept):
+// After a runtime decision change (banner Accept / Reject):
+updateGoogleConsent(decision);
+// Optional safety net if the bootstrap did not run:
 loadGtagScript({ gaMeasurementId: "G-XXXXXXX", nonce: cspNonce });
 ```
 
