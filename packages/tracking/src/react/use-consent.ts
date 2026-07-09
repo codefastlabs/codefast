@@ -12,10 +12,10 @@ export interface UseConsentOptions {
    * so an analytics-only banner can never grant ads consent it never asked for.
    * Defaults to `["analytics"]`.
    */
-  categories?: ReadonlyArray<ConsentCategory>;
-  hasGlobalPrivacyControlSignal?: boolean;
+  categories?: ReadonlyArray<ConsentCategory> | undefined;
+  hasGlobalPrivacyControlSignal?: boolean | undefined;
   mode: ConsentMode;
-  onDecision?: (decision: ConsentDecision) => void;
+  onDecision?: ((decision: ConsentDecision) => void) | undefined;
   policyVersion: string;
   /** Must be a stable reference (module-level or memoized) — a new object per render resubscribes every render. */
   storage: ConsentStorage;

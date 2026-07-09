@@ -4,7 +4,7 @@ export interface CookieAnonymousIdOptions {
   /** Cookie name — must not collide with another cookie on the domain. */
   cookieName: string;
   /** How long the id survives a return visit. Defaults to one year. */
-  maxAgeSeconds?: number;
+  maxAgeSeconds?: number | undefined;
 }
 
 export interface CookieAnonymousId {

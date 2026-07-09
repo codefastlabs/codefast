@@ -41,8 +41,8 @@ export interface ClientTrackerOptions<Catalog extends EventCatalog> {
    * identifiers. Omit to always track.
    */
   isTrackingAllowed?: (() => boolean) | undefined;
-  maxQueueSize?: number;
-  maxRetries?: number;
+  maxQueueSize?: number | undefined;
+  maxRetries?: number | undefined;
   /** Cross-reload persistence for the offline queue — omit to keep the queue in memory only. */
   storage?: EventQueueStorage | undefined;
 }

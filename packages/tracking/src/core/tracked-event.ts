@@ -40,8 +40,8 @@ export interface AliasEvent extends TrackedEventBase {
 
 /**
  * Envelope every tracker (client/server) hands to destinations, discriminated on `type`
- * (Segment-style) — destinations translate each kind into their own vocabulary instead
- * of pattern-matching magic event names, and ignore kinds they have no equivalent for.
+ * (Segment-style) — destinations `switch` on the kind and translate into their own
+ * vocabulary, ignoring kinds they have no equivalent for.
  *
  * @since 0.5.0-canary.4
  */

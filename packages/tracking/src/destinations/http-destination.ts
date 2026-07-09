@@ -5,7 +5,7 @@ import type { Destination } from "#/core/destination";
  */
 export interface HttpDestinationOptions {
   endpoint: string;
-  headers?: Record<string, string>;
+  headers?: Record<string, string> | undefined;
   name: string;
 }
 

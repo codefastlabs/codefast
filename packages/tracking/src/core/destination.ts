@@ -16,7 +16,7 @@ export interface Destination {
    *
    * @defaultValue "required"
    */
-  consent?: "exempt" | "required";
+  consent?: "exempt" | "required" | undefined;
   /**
    * "immediate" for SDK-backed destinations that own their transport (gtag.js, Vercel's
    * in-page queue) — the client tracker calls `send` at track time and never queues,
@@ -24,7 +24,7 @@ export interface Destination {
    *
    * @defaultValue "queued"
    */
-  delivery?: "immediate" | "queued";
+  delivery?: "immediate" | "queued" | undefined;
   name: string;
   /** Must always return a `Promise` — mark `send` `async` even if the body has no `await`. */
   send: (event: TrackedEvent) => Promise<void>;

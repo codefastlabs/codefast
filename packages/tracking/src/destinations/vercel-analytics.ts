@@ -11,14 +11,14 @@ export interface VercelAnalyticsDestinationOptions {
    * tracker's consent gate is closed. Defaults to `"required"` so pre-consent delivery
    * stays an explicit opt-in.
    */
-  consent?: "exempt" | "required";
-  name?: string;
+  consent?: "exempt" | "required" | undefined;
+  name?: string | undefined;
   /**
    * Forward `page` envelopes as a `page_view` custom event. Off by default: the mounted
    * `<Analytics />` component already tracks page views natively, so forwarding here
    * would double-count them (and burn the custom-events quota).
    */
-  trackPageViews?: boolean;
+  trackPageViews?: boolean | undefined;
 }
 
 /**

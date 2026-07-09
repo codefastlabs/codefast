@@ -4,7 +4,7 @@ export type FlatPropertyValue = boolean | number | string;
 
 interface FlattenEventPropsOptions {
   /** Vercel Analytics accepts `null` directly; GA4 (gtag.js/Measurement Protocol) does not. */
-  allowNull?: boolean;
+  allowNull?: boolean | undefined;
 }
 
 /**

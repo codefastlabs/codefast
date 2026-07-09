@@ -30,9 +30,9 @@ export interface ServerTrackerOptions<Catalog extends EventCatalog> {
   catalog: Catalog;
   destinations: Array<Destination>;
   generateEventId?: () => string;
-  maxRetries?: number;
-  onDestinationError?: (error: unknown, destination: Destination, event: TrackedEvent) => void;
-  retryDelayMs?: number;
+  maxRetries?: number | undefined;
+  onDestinationError?: ((error: unknown, destination: Destination, event: TrackedEvent) => void) | undefined;
+  retryDelayMs?: number | undefined;
 }
 
 /**

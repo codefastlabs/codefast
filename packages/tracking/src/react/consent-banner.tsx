@@ -303,20 +303,20 @@ export interface ConsentToggleProps extends Omit<ComponentProps<"button">, "chil
    * Label shown while the scoped categories are denied — clicking grants them. Defaults
    * to "Allow tracking".
    */
-  allowLabel?: string;
+  allowLabel?: string | undefined;
   consent: UseConsentResult;
   /**
    * Label shown while any scoped category is granted — clicking denies them. Defaults to
    * CCPA/CPRA "Do Not Sell or Share My Personal Information".
    */
-  denyLabel?: string;
+  denyLabel?: string | undefined;
   /**
    * Purposes this control flips. Defaults to `["ads"]` — CCPA/CPRA "Do Not Sell or Share"
    * mirrors GPC (ads denied, first-party analytics left alone). Pass `["analytics"]` (or
    * both) for a broader opt-out. Distinct from `useConsent`'s `categories` (what the
    * prompt asks about / `grantAll` grants).
    */
-  toggledCategories?: ReadonlyArray<ConsentCategory>;
+  toggledCategories?: ReadonlyArray<ConsentCategory> | undefined;
 }
 
 /**

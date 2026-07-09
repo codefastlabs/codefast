@@ -6,8 +6,8 @@ import type { EventCatalog } from "#/core/event-catalog";
  */
 export interface ClientLifecycleOptions {
   /** `sendBeacon` target used on unload — omit to skip the unload flush entirely. */
-  beaconEndpoint?: string;
-  flushIntervalMs?: number;
+  beaconEndpoint?: string | undefined;
+  flushIntervalMs?: number | undefined;
 }
 
 /**
