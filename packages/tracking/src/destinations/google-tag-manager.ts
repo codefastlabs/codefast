@@ -61,9 +61,10 @@ export interface LoadGtmScriptOptions {
 }
 
 /**
- * Loads gtm.js on demand after a runtime consent grant — idempotent. Queues the standard
- * `gtm.js` start event before appending the script. Page-load grants are covered by
- * `buildGtmConsentBootstrapScript` instead.
+ * Loads gtm.js on demand — idempotent. Queues the standard `gtm.js` start event before
+ * appending the script. Prefer `buildGtmConsentBootstrapScript` for page load (advanced
+ * Consent Mode always injects the container after the default); use this when the
+ * bootstrap did not run, or as an idempotent safety net after a runtime grant.
  */
 export function loadGtmScript(options: LoadGtmScriptOptions): void {
   if (typeof document === "undefined") {
@@ -231,10 +232,10 @@ export interface GtmConsentBootstrapOptions {
 }
 
 /**
- * Pre-hydration Consent Mode v2 default + conditional GTM load — same basic-mode rule as
- * `buildGtagConsentBootstrapScript`: gtm.js is fetched only once analytics is granted.
- * Uses a temporary `gtag` stub to issue the consent default (GTM's recommended pattern)
- * before appending the container script.
+ * Pre-hydration Consent Mode v2 default + always-on GTM load — advanced Consent Mode,
+ * matching `buildGtagConsentBootstrapScript`: consent default first, then gtm.js even
+ * when storage is denied (cookieless pings / modeling). Uses a temporary `gtag` stub to
+ * issue the consent default (GTM's recommended pattern) before appending the container.
  */
 export function buildGtmConsentBootstrapScript(options: GtmConsentBootstrapOptions): string {
   const {
@@ -261,6 +262,7 @@ export function buildGtmConsentBootstrapScript(options: GtmConsentBootstrapOptio
   const nonceAssignment = nonce === undefined ? "" : `gtmScript.nonce = ${JSON.stringify(nonce)};`;
   const consentSignalAssignments = consentSignalAssignmentsExpression();
 
+  // Advanced Consent Mode: consent default first, then always load the container.
   return `
     ${dataLayerAccess} = ${dataLayerAccess} || [];
     function gtag(){${dataLayerAccess}.push(arguments);}
@@ -275,13 +277,11 @@ export function buildGtmConsentBootstrapScript(options: GtmConsentBootstrapOptio
     gtag("consent", "default", {
       ${consentSignalAssignments}
     });
-    if (consent.analytics) {
-      ${dataLayerAccess}.push({ "gtm.start": new Date().getTime(), event: "gtm.js" });
-      var gtmScript = document.createElement("script");
-      gtmScript.async = true;
-      gtmScript.src = ${JSON.stringify(scriptUrl)};
-      ${nonceAssignment}
-      document.head.appendChild(gtmScript);
-    }
+    ${dataLayerAccess}.push({ "gtm.start": new Date().getTime(), event: "gtm.js" });
+    var gtmScript = document.createElement("script");
+    gtmScript.async = true;
+    gtmScript.src = ${JSON.stringify(scriptUrl)};
+    ${nonceAssignment}
+    document.head.appendChild(gtmScript);
   `;
 }

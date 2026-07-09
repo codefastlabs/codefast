@@ -388,7 +388,7 @@ describe("buildGtagConsentBootstrapScript", () => {
     ).toThrow(/requires defaultConsent or defaultConsentExpression/);
   });
 
-  it("applies the literal defaultConsent and loads gtag.js once analytics is granted", () => {
+  it("applies the literal defaultConsent and always loads gtag.js (advanced Consent Mode)", () => {
     const script = buildGtagConsentBootstrapScript({
       consentStorageKey: "k",
       defaultConsent: { ads: false, analytics: true },
@@ -407,7 +407,7 @@ describe("buildGtagConsentBootstrapScript", () => {
     expect(gtagScriptElement()?.src).toBe("https://www.googletagmanager.com/gtag/js?id=G-TEST123");
   });
 
-  it("never fetches gtag.js while the default denies analytics", () => {
+  it("still loads gtag.js when the default denies analytics (advanced Consent Mode)", () => {
     const script = buildGtagConsentBootstrapScript({
       consentStorageKey: "k",
       defaultConsent: { ads: false, analytics: false },
@@ -418,8 +418,9 @@ describe("buildGtagConsentBootstrapScript", () => {
     runScript(script);
 
     expect(consentDefaultParams().analytics_storage).toBe("denied");
-    expect(window.dataLayer).toHaveLength(1);
-    expect(gtagScriptElement()).toBeNull();
+    // consent default + js + config — tag loads for cookieless pings / modeling
+    expect(window.dataLayer).toHaveLength(3);
+    expect(gtagScriptElement()?.src).toBe("https://www.googletagmanager.com/gtag/js?id=G-TEST123");
   });
 
   it("prefers a stored decision over defaultConsent", () => {

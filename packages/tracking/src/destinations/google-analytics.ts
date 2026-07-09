@@ -102,9 +102,9 @@ export interface LoadGtagScriptOptions {
  * Loads gtag.js on demand — idempotent (a second call is a no-op) and reuses any
  * existing `dataLayer`/`gtag` stub instead of clobbering it. Queues `js`/`config` before
  * appending the script tag, so gtag.js replays them under the caller's already-applied
- * consent state once it boots. Call after consent is granted, at page load
- * (`buildGtagConsentBootstrapScript` covers that path) or at runtime (a banner accept, a
- * settings toggle).
+ * consent state once it boots. Prefer `buildGtagConsentBootstrapScript` for page load
+ * (advanced Consent Mode always injects the tag after the default); use this when the
+ * bootstrap did not run, or as an idempotent safety net after a runtime grant.
  */
 export function loadGtagScript(options: LoadGtagScriptOptions): void {
   if (typeof document === "undefined" || document.querySelector(`script[src^="${GTAG_SCRIPT_BASE_URL}"]`) !== null) {
@@ -200,7 +200,7 @@ export interface GtagConsentBootstrapOptions {
    * when both are set; one of the two is required.
    */
   defaultConsentExpression?: string | undefined;
-  /** Forwarded as `gtag('config', id, { debug_mode: true })` when analytics is granted. */
+  /** Forwarded as `gtag('config', id, { debug_mode: true })` after the consent default. */
   debugMode?: boolean | undefined;
   /** Google Analytics 4 Measurement ID (e.g. `"G-XXXXXXX"`). */
   gaMeasurementId: string;
@@ -218,10 +218,10 @@ export interface GtagConsentBootstrapOptions {
  * Builds the literal JS source for a `<script dangerouslySetInnerHTML>` mounted in
  * `<head>`, before hydration: applies Consent Mode v2's default signal from the visitor's
  * stored decision (falling back to `defaultConsent`/`defaultConsentExpression` when none is
- * stored yet), then, in basic Consent Mode, loads gtag.js only once analytics is granted —
- * a denied visitor's browser never pings Google. A runtime grant (banner Accept, a settings
- * toggle) needs `updateGoogleConsent` plus loading gtag.js separately; this only covers the
- * page-load state.
+ * stored yet), then always loads gtag.js (advanced Consent Mode) so cookieless pings /
+ * modeling can run even when storage is denied. A runtime decision change needs
+ * `updateGoogleConsent` so the already-loaded tag picks up the grant/deny — this only
+ * covers the page-load default + script injection.
  */
 export function buildGtagConsentBootstrapScript(options: GtagConsentBootstrapOptions): string {
   const {
@@ -248,6 +248,7 @@ export function buildGtagConsentBootstrapScript(options: GtagConsentBootstrapOpt
   const nonceAssignment = nonce === undefined ? "" : `gtagScript.nonce = ${JSON.stringify(nonce)};`;
   const consentSignalAssignments = consentSignalAssignmentsExpression();
 
+  // Advanced Consent Mode: consent default first, then always load the tag (even when denied).
   return `
     ${dataLayerAccess} = ${dataLayerAccess} || [];
     function gtag(){${dataLayerAccess}.push(arguments);}
@@ -262,15 +263,13 @@ export function buildGtagConsentBootstrapScript(options: GtagConsentBootstrapOpt
     gtag("consent", "default", {
       ${consentSignalAssignments}
     });
-    if (consent.analytics) {
-      gtag("js", new Date());
-      gtag("config", ${configArgs});
-      var gtagScript = document.createElement("script");
-      gtagScript.async = true;
-      gtagScript.src = ${JSON.stringify(gtagScriptUrl)};
-      ${nonceAssignment}
-      document.head.appendChild(gtagScript);
-    }
+    gtag("js", new Date());
+    gtag("config", ${configArgs});
+    var gtagScript = document.createElement("script");
+    gtagScript.async = true;
+    gtagScript.src = ${JSON.stringify(gtagScriptUrl)};
+    ${nonceAssignment}
+    document.head.appendChild(gtagScript);
   `;
 }
 

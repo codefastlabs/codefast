@@ -43,8 +43,8 @@ export function buildGtagBootstrapScript(gaMeasurementId: string): string {
 
 /**
  * Bootstraps `window.__INITIAL_CONSENT__` unconditionally (so `<ConsentGate />` always
- * has a value) and, when `GA_MEASUREMENT_ID` is configured, the Consent Mode default via
- * `<GtagConsentBootstrap />` — the bootstrap itself decides whether gtag.js may load.
+ * has a value) and, when `GA_MEASUREMENT_ID` is configured, advanced Consent Mode via
+ * `<GtagConsentBootstrap />` — consent default first, then always load gtag.js.
  */
 export function GoogleTag() {
   const initialConsent = resolveInitialConsent();

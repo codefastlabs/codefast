@@ -31,9 +31,9 @@ export function ConsentGate() {
       updateGoogleConsent(consent.decision);
     }
 
-    // Basic consent mode: gtag.js is fetched only while analytics is effectively allowed —
-    // a runtime grant loads it here, after the update above is queued; page-load grants
-    // load inside `<GoogleTag />`'s bootstrap instead.
+    // Advanced Consent Mode: `<GoogleTag />` already loads gtag.js after the default.
+    // `loadGoogleTagScript` is idempotent — kept so a runtime grant still works if the
+    // bootstrap did not run (e.g. missing measurement id on first paint, then configured).
     if (consent.effectiveConsent.analytics) {
       loadGoogleTagScript();
     }

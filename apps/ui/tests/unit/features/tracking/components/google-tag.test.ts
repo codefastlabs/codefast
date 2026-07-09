@@ -99,15 +99,15 @@ describe("buildGtagBootstrapScript", () => {
     expect(gtagScriptElement()?.src).toBe("https://www.googletagmanager.com/gtag/js?id=G-TEST123");
   });
 
-  it("basic consent mode: never fetches gtag.js nor configures the tag while consent is denied", () => {
+  it("advanced consent mode: still loads and configures gtag.js while consent is denied", () => {
     window.__INITIAL_CONSENT__ = { defaultConsent: { ads: false, analytics: false }, mode: "opt-in", region: "eu" };
     runScript(buildGtagBootstrapScript("G-TEST123"));
 
     expect(consentDefaultParams().analytics_storage).toBe("denied");
     expect(consentDefaultParams().ad_storage).toBe("denied");
-    // only the consent default is queued — no js/config, and no network fetch at all
-    expect(window.dataLayer).toHaveLength(1);
-    expect(gtagScriptElement()).toBeNull();
+    // consent default + js + config — tag loads for cookieless pings / modeling
+    expect(window.dataLayer).toHaveLength(3);
+    expect(gtagScriptElement()?.src).toBe("https://www.googletagmanager.com/gtag/js?id=G-TEST123");
   });
 
   it("prefers a stored grant over a denied region default (returning opt-in visitor)", () => {
@@ -140,7 +140,8 @@ describe("buildGtagBootstrapScript", () => {
     runScript(buildGtagBootstrapScript("G-TEST123"));
 
     expect(consentDefaultParams().analytics_storage).toBe("denied");
-    expect(gtagScriptElement()).toBeNull();
+    // advanced mode still injects the tag; Consent Mode keeps storage denied
+    expect(gtagScriptElement()).not.toBeNull();
   });
 
   it("ignores a decision recorded under an older policy version", () => {

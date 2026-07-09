@@ -136,7 +136,7 @@ describe("buildGtmConsentBootstrapScript", () => {
     ).toThrow(/requires defaultConsent or defaultConsentExpression/);
   });
 
-  it("applies consent default and loads gtm.js once analytics is granted", () => {
+  it("applies consent default and always loads gtm.js (advanced Consent Mode)", () => {
     const script = buildGtmConsentBootstrapScript({
       consentStorageKey: "k",
       defaultConsent: { ads: false, analytics: true },
@@ -150,7 +150,7 @@ describe("buildGtmConsentBootstrapScript", () => {
     expect(window.dataLayer?.some((entry) => (entry as { event?: string }).event === "gtm.js")).toBe(true);
   });
 
-  it("never fetches gtm.js while analytics is denied", () => {
+  it("still loads gtm.js when analytics is denied (advanced Consent Mode)", () => {
     const script = buildGtmConsentBootstrapScript({
       consentStorageKey: "k",
       defaultConsent: { ads: false, analytics: false },
@@ -160,7 +160,8 @@ describe("buildGtmConsentBootstrapScript", () => {
 
     runScript(script);
 
-    expect(gtmScriptElement()).toBeNull();
+    expect(gtmScriptElement()?.src).toContain("id=GTM-TEST");
+    expect(window.dataLayer?.some((entry) => (entry as { event?: string }).event === "gtm.js")).toBe(true);
   });
 
   it("forwards auth/preview and nonce onto the injected script URL/element", () => {
