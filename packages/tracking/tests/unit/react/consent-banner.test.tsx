@@ -136,25 +136,48 @@ describe("ConsentBanner", () => {
 });
 
 describe("ConsentToggle", () => {
-  it("shows the deny label and calls denyAll() while any category is effectively granted", async () => {
+  it("denies ads only by default — mirrors GPC, leaves analytics alone", async () => {
     const user = userEvent.setup();
-    const consent = buildConsent({ effectiveConsent: { ads: false, analytics: true }, isTrackingAllowed: true });
+    const consent = buildConsent({
+      effectiveConsent: { ads: true, analytics: true },
+      isTrackingAllowed: true,
+    });
 
     render(<ConsentToggle consent={consent} />);
 
-    const button = screen.getByRole("button", { name: /do not sell/i });
-
-    await user.click(button);
-    expect(consent.denyAll).toHaveBeenCalledOnce();
+    await user.click(screen.getByRole("button", { name: /do not sell/i }));
+    expect(consent.save).toHaveBeenCalledWith({ ads: false, analytics: true });
+    expect(consent.denyAll).not.toHaveBeenCalled();
   });
 
-  it("shows the allow label and calls grantAll() when everything is denied", async () => {
+  it("re-grants only the scoped categories when everything in scope is denied", async () => {
     const user = userEvent.setup();
-    const consent = buildConsent({ effectiveConsent: { ads: false, analytics: false } });
+    const consent = buildConsent({ effectiveConsent: { ads: false, analytics: true } });
 
     render(<ConsentToggle consent={consent} />);
 
     await user.click(screen.getByRole("button", { name: "Allow tracking" }));
-    expect(consent.grantAll).toHaveBeenCalledOnce();
+    expect(consent.save).toHaveBeenCalledWith({ ads: true, analytics: true });
+    expect(consent.grantAll).not.toHaveBeenCalled();
+  });
+
+  it("can flip analytics alone when categories is overridden", async () => {
+    const user = userEvent.setup();
+    const consent = buildConsent({
+      effectiveConsent: { ads: false, analytics: true },
+      isTrackingAllowed: true,
+    });
+
+    render(
+      <ConsentToggle
+        allowLabel="Turn on analytics"
+        consent={consent}
+        denyLabel="Turn off analytics"
+        toggledCategories={["analytics"]}
+      />,
+    );
+
+    await user.click(screen.getByRole("button", { name: "Turn off analytics" }));
+    expect(consent.save).toHaveBeenCalledWith({ ads: false, analytics: false });
   });
 });

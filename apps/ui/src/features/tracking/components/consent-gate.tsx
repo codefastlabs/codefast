@@ -80,6 +80,7 @@ export function ConsentGate() {
         allowLabel="Turn on analytics"
         consent={consent}
         denyLabel="Turn off analytics"
+        toggledCategories={["analytics"]}
         className="cursor-pointer text-ui-muted transition-colors hover:text-ui-fg"
       />
     </span>
