@@ -35,9 +35,9 @@ export const catalog = defineEventCatalog({
 const anonymousId = createCookieAnonymousId({ cookieName: "app-anonymous-id" });
 
 const tracker = createClientTracker({
-  // A resolver, not a plain string — invoked only once an event is actually allowed to
-  // send, so the id is never minted as an import-time side effect.
-  anonymousId: anonymousId.resolve,
+  // A getOrCreate callback, not a plain string — invoked only once an event is actually
+  // allowed to send, so the id is never minted as an import-time side effect.
+  anonymousId: anonymousId.getOrCreate,
   catalog,
   destinations: [createHttpDestination({ name: "internal", endpoint: "/api/events" })],
   storage: createLocalStorageQueueStorage("tracking-queue"),
@@ -124,7 +124,8 @@ function ConsentGate({ mode }: { mode: "opt-in" | "opt-out" }) {
     mode,
     onDecision: (decision) => {
       updateGoogleConsent(decision); // per-category Consent Mode v2 update
-      if (!decision.analytics) tracker.clear(); // stop tracking + drop the pending queue
+      if (!decision.analytics) tracker.clear(); // stop tracking, drop the queue, forget userId
+      // also call anonymousId.clear() when using createCookieAnonymousId
     },
     policyVersion: "2026-01",
     storage: consentStorage,
@@ -148,7 +149,7 @@ function ConsentGate({ mode }: { mode: "opt-in" | "opt-out" }) {
       </ConsentBannerActions>
     </ConsentBanner>
   ) : (
-    <ConsentToggle consent={consent} />
+    <ConsentToggle consent={consent} toggledCategories={["analytics"]} />
   );
 }
 ```
