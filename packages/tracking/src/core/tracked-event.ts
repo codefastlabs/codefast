@@ -47,7 +47,19 @@ export interface AliasEvent extends TrackedEventBase {
  */
 export type TrackedEvent = AliasEvent | GroupEvent | IdentifyEvent | PageViewEvent | TrackEvent;
 
-const TRACKED_EVENT_TYPES = new Set(["alias", "group", "identify", "page", "track"]);
+function isTrackedEventBase(record: Record<string, unknown>): boolean {
+  return (
+    typeof record.anonymousId === "string" &&
+    typeof record.eventId === "string" &&
+    typeof record.timestamp === "number" &&
+    (record.userId === undefined || typeof record.userId === "string") &&
+    (record.owner === undefined || record.owner === "client" || record.owner === "server")
+  );
+}
+
+function isPlainPropsRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
 
 /** Guards records read back from untrusted storage (e.g. a pre-migration offline queue). */
 export function isTrackedEvent(value: unknown): value is TrackedEvent {
@@ -57,13 +69,35 @@ export function isTrackedEvent(value: unknown): value is TrackedEvent {
 
   const record = value as Record<string, unknown>;
 
-  return (
-    typeof record.anonymousId === "string" &&
-    typeof record.eventId === "string" &&
-    typeof record.timestamp === "number" &&
-    typeof record.type === "string" &&
-    TRACKED_EVENT_TYPES.has(record.type)
-  );
+  if (!isTrackedEventBase(record)) {
+    return false;
+  }
+
+  switch (record.type) {
+    case "alias": {
+      return typeof record.previousId === "string";
+    }
+
+    case "group": {
+      return typeof record.groupId === "string" && isPlainPropsRecord(record.traits);
+    }
+
+    case "identify": {
+      return isPlainPropsRecord(record.traits);
+    }
+
+    case "page": {
+      return (record.name === undefined || typeof record.name === "string") && isPlainPropsRecord(record.props);
+    }
+
+    case "track": {
+      return typeof record.name === "string" && isPlainPropsRecord(record.props);
+    }
+
+    default: {
+      return false;
+    }
+  }
 }
 
 /**

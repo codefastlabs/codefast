@@ -41,6 +41,8 @@ describe("createLocalStorageQueueStorage", () => {
       JSON.stringify([
         event,
         { name: "button_clicked", props: {} }, // pre-migration shape, no `type`
+        // type presents but missing kind-specific fields
+        { anonymousId: "anon-1", eventId: "e2", timestamp: 0, type: "track" },
         null,
         "not an object",
       ]),
