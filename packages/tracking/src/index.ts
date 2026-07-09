@@ -10,4 +10,36 @@
  * - **`@codefast/tracking/server`**: `createServerTracker`, region detection for consent.
  * - **`@codefast/tracking/destinations`**: `createHttpDestination` and the `Destination` building block.
  */
-export * from "#/core";
+export type {
+  AliasEvent,
+  ConsentCategory,
+  ConsentDecision,
+  ConsentMode,
+  ConsentRecord,
+  ConsentRegion,
+  ConsentStorage,
+  Destination,
+  EventCatalog,
+  EventDefinition,
+  EventsOf,
+  GroupEvent,
+  IdentifyEvent,
+  PageViewEvent,
+  TrackEvent,
+  TrackedEvent,
+  TrackedEventBase,
+} from "#/core";
+export {
+  assertNever,
+  CONSENT_CATEGORIES,
+  createConsentDecision,
+  defineEventCatalog,
+  deriveEventId,
+  generateEventId,
+  isConsentDecision,
+  isTrackedEvent,
+  readStoredDecision,
+  resolveConsentMode,
+  resolveDefaultConsent,
+  resolveEffectiveConsent,
+} from "#/core";
