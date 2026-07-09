@@ -15,6 +15,7 @@ export type {
 } from "#/destinations/google-analytics";
 export {
   buildGtagConsentBootstrapScript,
+  clearGoogleAnalyticsCookies,
   createGoogleAnalyticsDestination,
   ensureGtag,
   loadGtagScript,
@@ -23,6 +24,9 @@ export {
   setGoogleUrlPassthrough,
   updateGoogleConsent,
 } from "#/destinations/google-analytics";
+
+export type { BuildInitialConsentBootstrapScriptOptions } from "#/destinations/initial-consent-bootstrap";
+export { buildInitialConsentBootstrapScript } from "#/destinations/initial-consent-bootstrap";
 
 export type {
   GoogleTagManagerDestinationOptions,

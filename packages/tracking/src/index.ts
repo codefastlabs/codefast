@@ -24,6 +24,7 @@ export type {
   EventsOf,
   GroupEvent,
   IdentifyEvent,
+  InitialConsent,
   PageViewEvent,
   TrackEvent,
   TrackedEvent,

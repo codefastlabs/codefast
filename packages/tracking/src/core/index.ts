@@ -5,6 +5,7 @@ export type {
   ConsentRecord,
   ConsentRegion,
   ConsentStorage,
+  InitialConsent,
 } from "#/core/consent";
 export {
   CONSENT_CATEGORIES,

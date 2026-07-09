@@ -2,6 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import {
   buildGtagConsentBootstrapScript,
+  clearGoogleAnalyticsCookies,
   createGoogleAnalyticsDestination,
   ensureGtag,
   loadGtagScript,
@@ -536,6 +537,27 @@ describe("buildGtagConsentBootstrapScript", () => {
     const configCall = Array.from(calls[2]!);
 
     expect(configCall).toEqual(["config", "G-TEST123", { debug_mode: true }]);
+  });
+});
+
+describe("clearGoogleAnalyticsCookies", () => {
+  afterEach(() => {
+    for (const name of ["_ga", "_ga_TEST123", "other"]) {
+      document.cookie = `${name}=; path=/; max-age=0`;
+      document.cookie = `${name}=; path=/; max-age=0; domain=.${globalThis.location.hostname}`;
+    }
+  });
+
+  it("expires _ga and _ga_* cookies and leaves unrelated cookies alone", () => {
+    document.cookie = "_ga=GA1.1.1; path=/";
+    document.cookie = "_ga_TEST123=GS1.1.1; path=/";
+    document.cookie = "other=keep; path=/";
+
+    clearGoogleAnalyticsCookies();
+
+    expect(document.cookie.includes("_ga=")).toBe(false);
+    expect(document.cookie.includes("_ga_TEST123=")).toBe(false);
+    expect(document.cookie.includes("other=keep")).toBe(true);
   });
 });
 

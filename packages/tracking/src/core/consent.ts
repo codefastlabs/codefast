@@ -102,6 +102,16 @@ export function resolveDefaultConsent(
 }
 
 /**
+ * Region-resolved consent defaults for first paint — embed into the document (e.g. via a
+ * middleware cookie + inline bootstrap) so the client never re-guesses the mode.
+ */
+export interface InitialConsent {
+  defaultConsent: ConsentDecision;
+  mode: ConsentMode;
+  region: ConsentRegion;
+}
+
+/**
  * Vietnam's PDPL and GDPR both expect a record of *when* and *under what policy* consent
  * was given, not just per-category flags — `policyVersion` lets a later policy change
  * invalidate stale consent.

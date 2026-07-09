@@ -66,6 +66,11 @@
       "types": "./dist/client/consent-storage.d.mts",
       "import": "./dist/client/consent-storage.mjs"
     },
+    "./client/consent-withdrawal": {
+      "source": "./src/client/consent-withdrawal.ts",
+      "types": "./dist/client/consent-withdrawal.d.mts",
+      "import": "./dist/client/consent-withdrawal.mjs"
+    },
     "./client/cookie-anonymous-id": {
       "source": "./src/client/cookie-anonymous-id.ts",
       "types": "./dist/client/cookie-anonymous-id.d.mts",
@@ -80,6 +85,11 @@
       "source": "./src/client/gpc.ts",
       "types": "./dist/client/gpc.d.mts",
       "import": "./dist/client/gpc.mjs"
+    },
+    "./client/is-tracking-allowed": {
+      "source": "./src/client/is-tracking-allowed.ts",
+      "types": "./dist/client/is-tracking-allowed.d.mts",
+      "import": "./dist/client/is-tracking-allowed.mjs"
     },
     "./client/lifecycle": {
       "source": "./src/client/lifecycle.ts",
@@ -146,6 +156,11 @@
       "types": "./dist/destinations/google-analytics.d.mts",
       "import": "./dist/destinations/google-analytics.mjs"
     },
+    "./destinations/google-consent": {
+      "source": "./src/destinations/google-consent.ts",
+      "types": "./dist/destinations/google-consent.d.mts",
+      "import": "./dist/destinations/google-consent.mjs"
+    },
     "./destinations/google-tag-manager": {
       "source": "./src/destinations/google-tag-manager.ts",
       "types": "./dist/destinations/google-tag-manager.d.mts",
@@ -155,6 +170,16 @@
       "source": "./src/destinations/http-destination.ts",
       "types": "./dist/destinations/http-destination.d.mts",
       "import": "./dist/destinations/http-destination.mjs"
+    },
+    "./destinations/initial-consent-bootstrap": {
+      "source": "./src/destinations/initial-consent-bootstrap.ts",
+      "types": "./dist/destinations/initial-consent-bootstrap.d.mts",
+      "import": "./dist/destinations/initial-consent-bootstrap.mjs"
+    },
+    "./destinations/shared": {
+      "source": "./src/destinations/shared.ts",
+      "types": "./dist/destinations/shared.d.mts",
+      "import": "./dist/destinations/shared.mjs"
     },
     "./destinations/vercel-analytics": {
       "source": "./src/destinations/vercel-analytics.ts",
@@ -181,6 +206,11 @@
       "types": "./dist/react/use-consent.d.mts",
       "import": "./dist/react/use-consent.mjs"
     },
+    "./react/use-google-consent-sync": {
+      "source": "./src/react/use-google-consent-sync.ts",
+      "types": "./dist/react/use-google-consent-sync.d.mts",
+      "import": "./dist/react/use-google-consent-sync.mjs"
+    },
     "./server": {
       "source": "./src/server/index.ts",
       "types": "./dist/server/index.d.mts",
@@ -190,6 +220,11 @@
       "source": "./src/server/create-server-tracker.ts",
       "types": "./dist/server/create-server-tracker.d.mts",
       "import": "./dist/server/create-server-tracker.mjs"
+    },
+    "./server/initial-consent": {
+      "source": "./src/server/initial-consent.ts",
+      "types": "./dist/server/initial-consent.d.mts",
+      "import": "./dist/server/initial-consent.mjs"
     },
     "./server/region": {
       "source": "./src/server/region.ts",
