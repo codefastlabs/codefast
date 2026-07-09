@@ -98,8 +98,13 @@ Or style the parts yourself via `className`/`data-slot` attributes (`consent-ban
 `prompt` and `preferences`.
 
 ```tsx
-import { createLocalStorageConsentStorage } from "@codefast/tracking/client";
-import { updateGoogleConsent } from "@codefast/tracking/destinations";
+import {
+  createConsentWithdrawalHandler,
+  createIsTrackingAllowed,
+  createLocalStorageConsentStorage,
+  hasGlobalPrivacyControlSignal,
+} from "@codefast/tracking/client";
+import { clearGoogleAnalyticsCookies, loadGtagScript } from "@codefast/tracking/destinations";
 import {
   ConsentBanner,
   ConsentBannerAccept,
@@ -113,22 +118,41 @@ import {
   ConsentBannerTitle,
   ConsentToggle,
   useConsent,
+  useGoogleConsentSync,
 } from "@codefast/tracking/react";
 
 // Module scope — useConsent subscribes to the storage, so it must be a stable reference.
 const consentStorage = createLocalStorageConsentStorage("tracking-consent");
+const categories = ["analytics"] as const;
+const policyVersion = "2026-01";
+
+// getMode re-reads each call — typically from window.__INITIAL_CONSENT__ after the bootstrap.
+const isTrackingAllowed = createIsTrackingAllowed({
+  categories,
+  getMode: () => window.__INITIAL_CONSENT__?.mode ?? "opt-in",
+  hasGlobalPrivacyControlSignal,
+  policyVersion,
+  storage: consentStorage,
+});
+
+const onDecision = createConsentWithdrawalHandler({
+  clearAnonymousId: anonymousId.clear,
+  clearGoogleAnalyticsCookies,
+  clearTracker: () => tracker.clear(),
+});
 
 function ConsentGate({ mode }: { mode: "opt-in" | "opt-out" }) {
   const consent = useConsent({
-    categories: ["analytics"], // the purposes your prompt asks about — Accept grants exactly these
+    categories, // Accept grants exactly these — never unrequested purposes
     mode,
-    onDecision: (decision) => {
-      updateGoogleConsent(decision); // per-category Consent Mode v2 update
-      if (!decision.analytics) tracker.clear(); // stop tracking, drop the queue, forget userId
-      // also call anonymousId.clear() when using createCookieAnonymousId
-    },
-    policyVersion: "2026-01",
+    onDecision,
+    policyVersion,
     storage: consentStorage,
+  });
+
+  // Mount once on a page-wide surface so privacy-page / cross-tab decisions sync to gtag.
+  useGoogleConsentSync(consent, {
+    loadGtagScript: () => loadGtagScript({ gaMeasurementId: "G-XXXXXXX" }),
   });
 
   return mode === "opt-in" ? (
@@ -168,6 +192,28 @@ issues the pre-tag default (it defines the gtag queueing stub itself), and
 signal is honored as a do-not-sell-or-share opt-out: it forces `ads` denied without
 withdrawing first-party `analytics`.
 
+## TanStack Start wiring
+
+`apps/ui` (`src/features/tracking/`) is the reference consumer. The package helpers below
+cover the glue every Start app otherwise reimplements:
+
+1. **`buildInitialConsent({ countryCode, categories, hasGlobalPrivacyControlSignal? })`**
+   (`@codefast/tracking/server`) — region → mode → default decision for SSR shells and
+   edge-middleware cookie payloads. Export `EU_COUNTRY_CODES` /
+   `OPT_IN_EQUIVALENT_COUNTRY_CODES` when middleware must duplicate the map (Vercel
+   Routing Middleware cannot import this package).
+2. **`buildInitialConsentBootstrapScript({ cookieName, fallback })`**
+   (`@codefast/tracking/destinations`) — pre-hydration script that prefers the middleware
+   cookie over a baked fallback into `window.__INITIAL_CONSENT__`.
+3. **`createIsTrackingAllowed` / `createConsentWithdrawalHandler`**
+   (`@codefast/tracking/client`) — tracker gate + revoke clears (`tracker.clear`,
+   anonymous-id cookie, `_ga*` via `clearGoogleAnalyticsCookies`).
+4. **`useGoogleConsentSync`** (`@codefast/tracking/react`) — Consent Mode `update` +
+   optional idempotent gtag load, including cross-tab / privacy-page decisions.
+
+TanStack Start's `shellComponent` renders before root loaders resolve — read geo headers
+inside the SSR'd shell (or via `createIsomorphicFn`), not from root `loaderData`.
+
 ## Google tag / GTM loaders (advanced Consent Mode)
 
 Prefer the pre-hydration bootstrap (not a post-hydration mount) so Consent Mode's default
@@ -178,8 +224,21 @@ This does **not** weaken the package's first-party consent gate (`isTrackingAllo
 identifier minting, non-exempt destinations); only Google's tag script loading changes.
 
 ```tsx
-import { loadGtagScript, updateGoogleConsent } from "@codefast/tracking/destinations";
+import {
+  buildInitialConsentBootstrapScript,
+  loadGtagScript,
+} from "@codefast/tracking/destinations";
 import { GtagConsentBootstrap } from "@codefast/tracking/react";
+
+// Prefer middleware cookie over the SSR/prerender fallback.
+<script
+  dangerouslySetInnerHTML={{
+    __html: buildInitialConsentBootstrapScript({
+      cookieName: "app-initial-consent",
+      fallback: initialConsent,
+    }),
+  }}
+/>
 
 // In <head> / shell — same nonce on this host script and on loadGtagScript for CSP.
 <GtagConsentBootstrap
@@ -191,11 +250,6 @@ import { GtagConsentBootstrap } from "@codefast/tracking/react";
   nonce={cspNonce} // optional — stamped on the injected gtag.js tag too
   policyVersion="2026-01"
 />;
-
-// After a runtime decision change (banner Accept / Reject):
-updateGoogleConsent(decision);
-// Optional safety net if the bootstrap did not run:
-loadGtagScript({ gaMeasurementId: "G-XXXXXXX", nonce: cspNonce });
 ```
 
 GTM variant: `buildGtmConsentBootstrapScript` / `loadGtmScript` /

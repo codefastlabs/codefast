@@ -182,7 +182,10 @@ Loaders simplify your data fetching logic dramatically. Check out more informati
 
 # Analytics
 
-GA4 (`src/lib/tracking.ts`, `src/components/layout/google-tag.tsx`) is gated behind an env var — set it in `.env.local` (gitignored) to enable it; leave it unset and it stays fully inert (no script loads, no gtag calls):
+GA4 (`src/features/tracking/lib/tracking.ts`,
+`src/features/tracking/components/google-tag.tsx`) is gated behind an env var — set it in
+`.env.local` (gitignored) to enable it; leave it unset and it stays fully inert (no
+script loads, no gtag calls):
 
 ```
 VITE_GA4_MEASUREMENT_ID=G-XXXXXXXXXX
@@ -195,20 +198,23 @@ Google Ads conversion tracking was built (`createGoogleAdsConversionDestination`
 ## Consent
 
 Region (`x-vercel-ip-country`) and GPC (`Sec-GPC`) are resolved per-request in
-`src/lib/consent.ts` (`resolveInitialConsent`) and drive both:
+`src/features/tracking/lib/consent.ts` (`resolveInitialConsent` →
+`buildInitialConsent` from `@codefast/tracking/server`) and drive both:
 
-- The SSR'd Consent Mode v2 default in `google-tag.tsx` (denied for EU/VN opt-in regions,
-  granted for US/other unless the visitor sends a GPC signal).
-- The consent UI in `consent-gate.tsx` — a blocking accept/reject banner for opt-in
-  regions, an always-visible "Do Not Sell or Share My Personal Information" toggle for
-  opt-out regions. Both come from `@codefast/tracking/react` (`ConsentBanner`/
-  `ConsentToggle`), styled here via `className`.
+- The SSR'd Consent Mode v2 default in `src/features/tracking/components/google-tag.tsx`
+  (denied for EU/VN opt-in regions, analytics granted for US/other — GPC is ads-only).
+- The consent UI in `src/features/tracking/components/consent-gate.tsx` — a blocking
+  accept/reject banner for opt-in regions, an always-visible "Turn on/off analytics"
+  toggle for opt-out regions (this site sells or shares no personal data, so the control
+  is named by what it does). Both come from `@codefast/tracking/react`, styled here via
+  `className`.
 
 `resolveInitialConsent()` is called directly inside these components rather than via a
 root-route `loader` — TanStack Start's `shellComponent` (where both are mounted) renders
 before the root match's `loader`/`beforeLoad` resolve, so loader data never reaches them.
-The server-resolved value is embedded into `window.__INITIAL_CONSENT__` (an inline script
-in `google-tag.tsx`) so the client reads the same value instead of a second guess.
+The server-resolved value is embedded into `window.__INITIAL_CONSENT__` via
+`buildInitialConsentBootstrapScript` so the client reads the same value instead of a
+second guess.
 
 ### This app is statically prerendered — that value alone is not enough
 
@@ -222,15 +228,15 @@ what every visitor gets unless corrected.
 `middleware.ts` (Vercel Routing Middleware, root of this app) covers the actual
 per-visitor correction: it runs on every real request _before_ the CDN cache — including
 ones that end up served from the static cache — reads the visitor's real geo + `Sec-GPC`,
-and sets a `codefast-ui-initial-consent` cookie (name shared from `#/lib/initial-consent-cookie`).
-The bootstrap script in `google-tag.tsx` prefers that cookie over the baked-in fallback
-whenever it's present, so the real visitor's region-correct default applies without a
-second network round trip. `middleware.ts` intentionally does not import
-`@codefast/tracking` — Vercel compiles it independently of this app's Vite/Nitro build,
-and duplicating the small EU-country/consent-mode mapping was the safer choice over an
-unverified cross-package resolution assumption. `tests/unit/middleware.test.ts` guards
-that duplication by checking every 2-letter country code against `@codefast/tracking`'s
-own resolution.
+and sets a `codefast-ui-initial-consent` cookie (name shared with
+`#/features/tracking/lib/consent`). The bootstrap script in `google-tag.tsx` prefers that
+cookie over the baked-in fallback whenever it's present, so the real visitor's
+region-correct default applies without a second network round trip. `middleware.ts`
+intentionally does not import `@codefast/tracking` — Vercel compiles it independently of
+this app's Vite/Nitro build, and duplicating the EU / UK-EEA country sets was the safer
+choice over an unverified cross-package resolution assumption.
+`tests/unit/middleware.test.ts` guards that duplication against `buildInitialConsent`
+for every 2-letter country code.
 
 # Demo files
 
