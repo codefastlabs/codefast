@@ -145,7 +145,7 @@ function ConsentGate({ mode }: { mode: "opt-in" | "opt-out" }) {
 }
 ```
 
-The root gates itself on `consent.needsPrompt`; pass `open` to override — e.g. reopening
+The root gates itself on `consent.isPromptNeeded`; pass `open` to override — e.g. reopening
 the banner as a "Cookie settings" panel after a decision (GDPR expects withdrawing
 consent to be as easy as giving it).
 
