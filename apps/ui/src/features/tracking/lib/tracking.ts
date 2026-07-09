@@ -40,24 +40,6 @@ export function clearAnonymousId(): void {
   anonymousId.clear();
 }
 
-/**
- * Expires Google's `_ga`/`_ga_*` cookies — Consent Mode stops using them once denied
- * but never removes them, and a withdrawal must not leave identifier cookies behind.
- */
-export function clearGoogleAnalyticsCookies(): void {
-  const { hostname } = globalThis.location;
-
-  for (const cookie of document.cookie.split("; ")) {
-    const name = cookie.split("=")[0];
-
-    if (name !== undefined && (name === "_ga" || name.startsWith("_ga_"))) {
-      // GA sets its cookies on the broadest domain it can reach — expire both variants.
-      document.cookie = `${name}=; path=/; max-age=0`;
-      document.cookie = `${name}=; path=/; max-age=0; domain=.${hostname}`;
-    }
-  }
-}
-
 let tracker: ClientTracker<typeof catalog> | undefined;
 
 /**

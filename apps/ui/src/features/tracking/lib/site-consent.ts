@@ -1,5 +1,6 @@
-import { hasGlobalPrivacyControlSignal } from "@codefast/tracking/client";
+import { createConsentWithdrawalHandler, hasGlobalPrivacyControlSignal } from "@codefast/tracking/client";
 import type { ConsentMode } from "@codefast/tracking/core";
+import { clearGoogleAnalyticsCookies } from "@codefast/tracking/destinations";
 import type { UseConsentResult } from "@codefast/tracking/react";
 import { useConsent } from "@codefast/tracking/react";
 
@@ -9,12 +10,20 @@ import {
   REQUESTED_CONSENT_CATEGORIES,
   resolveInitialConsent,
 } from "#/features/tracking/lib/consent";
-import { clearAnonymousId, clearGoogleAnalyticsCookies, getTracker } from "#/features/tracking/lib/tracking";
+import { clearAnonymousId, getTracker } from "#/features/tracking/lib/tracking";
 
 export interface UseSiteConsentResult {
   consent: UseConsentResult;
   mode: ConsentMode;
 }
+
+const onConsentDecision = createConsentWithdrawalHandler({
+  clearAnonymousId,
+  clearGoogleAnalyticsCookies,
+  clearTracker: () => {
+    getTracker().clear();
+  },
+});
 
 /**
  * This site's one consent wiring, shared by the footer `<ConsentGate />` and the privacy
@@ -30,13 +39,7 @@ export function useSiteConsent(): UseSiteConsentResult {
     categories: REQUESTED_CONSENT_CATEGORIES,
     hasGlobalPrivacyControlSignal: hasGlobalPrivacyControlSignal(),
     mode,
-    onDecision(decision) {
-      if (!decision.analytics) {
-        getTracker().clear();
-        clearAnonymousId();
-        clearGoogleAnalyticsCookies();
-      }
-    },
+    onDecision: onConsentDecision,
     policyVersion: CONSENT_POLICY_VERSION,
     storage: consentStorage,
   });

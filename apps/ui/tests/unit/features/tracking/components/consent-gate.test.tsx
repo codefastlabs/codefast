@@ -20,17 +20,25 @@ vi.mock(import("#/features/tracking/lib/consent"), async (importOriginal) => ({
 }));
 vi.mock("#/features/tracking/lib/tracking", () => ({
   clearAnonymousId,
-  clearGoogleAnalyticsCookies,
   getTracker: () => ({ clear }),
 }));
+// Withdrawal clears via the destinations barrel; gtag sync imports google-analytics
+// directly inside `@codefast/tracking/react` — mock both so the same spies apply.
 vi.mock(import("@codefast/tracking/destinations"), async (importOriginal) => ({
   ...(await importOriginal()),
+  clearGoogleAnalyticsCookies,
+  updateGoogleConsent,
+}));
+vi.mock(import("@codefast/tracking/destinations/google-analytics"), async (importOriginal) => ({
+  ...(await importOriginal()),
+  clearGoogleAnalyticsCookies,
   updateGoogleConsent,
 }));
 
 beforeEach(() => {
   clear.mockClear();
   clearAnonymousId.mockClear();
+  clearGoogleAnalyticsCookies.mockClear();
   updateGoogleConsent.mockClear();
   window.localStorage.removeItem("codefast-ui-consent");
 });

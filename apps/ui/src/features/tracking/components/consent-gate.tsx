@@ -1,7 +1,6 @@
-import { updateGoogleConsent } from "@codefast/tracking/destinations";
-import { ConsentToggle } from "@codefast/tracking/react";
+import { ConsentToggle, useGoogleConsentSync } from "@codefast/tracking/react";
 import { CookieIcon } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import { ConsentBannerCard } from "#/features/tracking/components/consent-banner-card";
 import { PrivacyChoicesIcon } from "#/features/tracking/components/privacy-choices-icon";
@@ -26,18 +25,7 @@ export function ConsentGate() {
   // in another tab or on the privacy page sync too. No stored decision → no update:
   // `<GoogleTag />`'s inline default already applies, and hydration's first render
   // (server snapshot = undecided) would otherwise emit a transient wrong update.
-  useEffect(() => {
-    if (consent.decision !== undefined) {
-      updateGoogleConsent(consent.decision);
-    }
-
-    // Advanced Consent Mode: `<GoogleTag />` already loads gtag.js after the default.
-    // `loadGoogleTagScript` is idempotent — kept so a runtime grant still works if the
-    // bootstrap did not run (e.g. missing measurement id on first paint, then configured).
-    if (consent.effectiveConsent.analytics) {
-      loadGoogleTagScript();
-    }
-  }, [consent.decision, consent.effectiveConsent.analytics]);
+  useGoogleConsentSync(consent, { loadGtagScript: loadGoogleTagScript });
 
   const hasHydrated = useHasHydrated();
 

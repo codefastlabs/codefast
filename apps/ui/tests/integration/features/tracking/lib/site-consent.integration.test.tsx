@@ -21,6 +21,8 @@ const { getRequestHeader, vercelTrack } = vi.hoisted(() => ({
 }));
 
 vi.mock("@tanstack/react-start/server", () => ({ getRequestHeader }));
+// Destination imports `track` from `@vercel/analytics` (not `/react`) — mock the base package.
+vi.mock("@vercel/analytics", () => ({ track: vercelTrack }));
 vi.mock("@vercel/analytics/react", () => ({ Analytics: () => null, track: vercelTrack }));
 
 const ANON_COOKIE = "codefast-ui-anon-id";

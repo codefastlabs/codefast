@@ -26,18 +26,22 @@ vi.mock(import("#/features/tracking/lib/consent"), async (importOriginal) => ({
 }));
 vi.mock("#/features/tracking/lib/tracking", () => ({
   clearAnonymousId,
-  clearGoogleAnalyticsCookies,
   getTracker: () => ({ clear }),
 }));
 vi.mock(import("@codefast/tracking/client"), async (importOriginal) => ({
   ...(await importOriginal()),
   hasGlobalPrivacyControlSignal,
 }));
+vi.mock(import("@codefast/tracking/destinations"), async (importOriginal) => ({
+  ...(await importOriginal()),
+  clearGoogleAnalyticsCookies,
+}));
 vi.mock("#/features/tracking/hooks/use-has-hydrated", () => ({ useHasHydrated }));
 
 beforeEach(() => {
   clear.mockClear();
   clearAnonymousId.mockClear();
+  clearGoogleAnalyticsCookies.mockClear();
   hasGlobalPrivacyControlSignal.mockReturnValue(false);
   useHasHydrated.mockReturnValue(true);
   window.localStorage.removeItem("codefast-ui-consent");

@@ -3,7 +3,7 @@ import { afterEach, describe, expect, it } from "vitest";
 
 import {
   buildGtagBootstrapScript,
-  buildInitialConsentBootstrapScript,
+  buildSiteInitialConsentBootstrapScript,
 } from "#/features/tracking/components/google-tag";
 import type { InitialConsent } from "#/features/tracking/lib/consent";
 import {
@@ -24,14 +24,14 @@ const FALLBACK: InitialConsent = {
   region: "other",
 };
 
-describe("buildInitialConsentBootstrapScript", () => {
+describe("buildSiteInitialConsentBootstrapScript", () => {
   afterEach(() => {
     document.cookie = `${INITIAL_CONSENT_COOKIE_NAME}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/`;
     delete window.__INITIAL_CONSENT__;
   });
 
   it("uses the fallback when middleware.ts hasn't set a cookie", () => {
-    runScript(buildInitialConsentBootstrapScript(FALLBACK));
+    runScript(buildSiteInitialConsentBootstrapScript(FALLBACK));
 
     expect(window.__INITIAL_CONSENT__).toEqual(FALLBACK);
   });
@@ -44,14 +44,14 @@ describe("buildInitialConsentBootstrapScript", () => {
     };
 
     document.cookie = `${INITIAL_CONSENT_COOKIE_NAME}=${encodeURIComponent(JSON.stringify(fromCookie))}; path=/`;
-    runScript(buildInitialConsentBootstrapScript(FALLBACK));
+    runScript(buildSiteInitialConsentBootstrapScript(FALLBACK));
 
     expect(window.__INITIAL_CONSENT__).toEqual(fromCookie);
   });
 
   it("falls back to the baked value when the cookie is corrupt", () => {
     document.cookie = `${INITIAL_CONSENT_COOKIE_NAME}=not-json; path=/`;
-    runScript(buildInitialConsentBootstrapScript(FALLBACK));
+    runScript(buildSiteInitialConsentBootstrapScript(FALLBACK));
 
     expect(window.__INITIAL_CONSENT__).toEqual(FALLBACK);
   });

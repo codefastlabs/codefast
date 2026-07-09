@@ -1,12 +1,11 @@
-import { createLocalStorageConsentStorage, hasGlobalPrivacyControlSignal } from "@codefast/tracking/client";
-import type { ConsentCategory, ConsentDecision, ConsentMode, ConsentRegion } from "@codefast/tracking/core";
 import {
-  createConsentDecision,
-  resolveConsentMode,
-  resolveDefaultConsent,
-  resolveEffectiveConsent,
-} from "@codefast/tracking/core";
-import { resolveRegionFromCountryCode } from "@codefast/tracking/server";
+  createIsTrackingAllowed,
+  createLocalStorageConsentStorage,
+  hasGlobalPrivacyControlSignal,
+} from "@codefast/tracking/client";
+import type { ConsentCategory, InitialConsent } from "@codefast/tracking/core";
+import { createConsentDecision } from "@codefast/tracking/core";
+import { buildInitialConsent } from "@codefast/tracking/server";
 import { createIsomorphicFn } from "@tanstack/react-start";
 import { getRequestHeader } from "@tanstack/react-start/server";
 
@@ -29,11 +28,7 @@ export const INITIAL_CONSENT_COOKIE_NAME = "codefast-ui-initial-consent";
 /** The only purpose this site tracks for — it runs no ads, so `ads` is never requested. */
 export const REQUESTED_CONSENT_CATEGORIES: ReadonlyArray<ConsentCategory> = ["analytics"];
 
-export interface InitialConsent {
-  defaultConsent: ConsentDecision;
-  mode: ConsentMode;
-  region: ConsentRegion;
-}
+export type { InitialConsent };
 
 declare global {
   interface Window {
@@ -64,33 +59,22 @@ export const resolveInitialConsent = createIsomorphicFn()
       return STRICTEST_DEFAULT;
     }
 
-    const region = resolveRegionFromCountryCode(countryHeader);
-    const mode = resolveConsentMode(region);
-    const hasGpcSignal = getRequestHeader("sec-gpc") === "1";
-
-    return {
-      defaultConsent: resolveDefaultConsent(mode, REQUESTED_CONSENT_CATEGORIES, hasGpcSignal),
-      mode,
-      region,
-    };
+    return buildInitialConsent({
+      categories: REQUESTED_CONSENT_CATEGORIES,
+      countryCode: countryHeader,
+      hasGlobalPrivacyControlSignal: getRequestHeader("sec-gpc") === "1",
+    });
   })
   .client((): InitialConsent => globalThis.window.__INITIAL_CONSENT__ ?? STRICTEST_DEFAULT);
 
 // Module scope — every consumer must share one storage so decisions sync across surfaces.
 export const consentStorage = createLocalStorageConsentStorage(CONSENT_STORAGE_KEY);
 
-/**
- * Non-React mirror of `useConsent`'s effective-consent rule — gates the tracker pipeline
- * outside components.
- */
-export function isTrackingAllowed(): boolean {
-  const effectiveConsent = resolveEffectiveConsent(
-    consentStorage,
-    CONSENT_POLICY_VERSION,
-    REQUESTED_CONSENT_CATEGORIES,
-    resolveInitialConsent().mode,
-    hasGlobalPrivacyControlSignal(),
-  );
-
-  return effectiveConsent.analytics;
-}
+/** Non-React gate for `createClientTracker({ isTrackingAllowed })`. */
+export const isTrackingAllowed = createIsTrackingAllowed({
+  categories: REQUESTED_CONSENT_CATEGORIES,
+  getMode: () => resolveInitialConsent().mode,
+  hasGlobalPrivacyControlSignal,
+  policyVersion: CONSENT_POLICY_VERSION,
+  storage: consentStorage,
+});

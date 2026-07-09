@@ -1,4 +1,4 @@
-import { buildGtagConsentBootstrapScript } from "@codefast/tracking/destinations";
+import { buildGtagConsentBootstrapScript, buildInitialConsentBootstrapScript } from "@codefast/tracking/destinations";
 import { GtagConsentBootstrap } from "@codefast/tracking/react";
 
 import type { InitialConsent } from "#/features/tracking/lib/consent";
@@ -11,20 +11,11 @@ import {
 import { GA_MEASUREMENT_ID } from "#/features/tracking/lib/google-tag-loader";
 
 /** Prefers `middleware.ts`'s per-visitor cookie over the static build's fallback. */
-export function buildInitialConsentBootstrapScript(fallback: InitialConsent): string {
-  return `
-    (function () {
-      var fallback = ${JSON.stringify(fallback)};
-      var match = document.cookie.match(/(?:^|; )${INITIAL_CONSENT_COOKIE_NAME}=([^;]*)/);
-      var resolved = fallback;
-      if (match) {
-        try {
-          resolved = JSON.parse(decodeURIComponent(match[1]));
-        } catch (e) {}
-      }
-      window.__INITIAL_CONSENT__ = resolved;
-    })();
-  `;
+export function buildSiteInitialConsentBootstrapScript(fallback: InitialConsent): string {
+  return buildInitialConsentBootstrapScript({
+    cookieName: INITIAL_CONSENT_COOKIE_NAME,
+    fallback,
+  });
 }
 
 /**
@@ -52,7 +43,7 @@ export function GoogleTag() {
   return (
     <>
       <script
-        dangerouslySetInnerHTML={{ __html: buildInitialConsentBootstrapScript(initialConsent) }}
+        dangerouslySetInnerHTML={{ __html: buildSiteInitialConsentBootstrapScript(initialConsent) }}
         suppressHydrationWarning
       />
       {GA_MEASUREMENT_ID ? (
