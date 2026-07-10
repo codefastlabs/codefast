@@ -3,9 +3,10 @@ import type { Destination } from "#/core/destination";
 import { assertNever } from "#/core/tracked-event";
 import type { GoogleConsentParams } from "#/destinations/google-consent";
 import {
-  consentDecisionShapeCheckExpression,
-  consentSignalAssignmentsExpression,
+  DEFAULT_DATA_LAYER_NAME,
   dataLayerOf,
+  googleConsentBootstrapPreamble,
+  resolveFallbackConsentExpression,
   toGoogleConsentParams,
   warnUnlessGa4EventName,
 } from "#/destinations/google-consent";
@@ -13,7 +14,6 @@ import type { FlatPropertyValue } from "#/destinations/shared";
 import { flattenEventProps, omitHref, toJoinGroupPayload } from "#/destinations/shared";
 
 const GTAG_SCRIPT_BASE_URL = "https://www.googletagmanager.com/gtag/js";
-const DEFAULT_DATA_LAYER_NAME = "dataLayer";
 
 type GtagPropertyValue = FlatPropertyValue;
 
@@ -258,34 +258,23 @@ export function buildGtagConsentBootstrapScript(options: GtagConsentBootstrapOpt
     policyVersion,
   } = options;
 
-  if (defaultConsentExpression === undefined && defaultConsent === undefined) {
-    throw new Error("[tracking] buildGtagConsentBootstrapScript requires defaultConsent or defaultConsentExpression");
-  }
-
-  const fallbackExpression = defaultConsentExpression ?? JSON.stringify(defaultConsent);
-  const decisionShapeCheck = consentDecisionShapeCheckExpression();
   const gtagScriptUrl = gtagScriptSrc(gaMeasurementId, dataLayerName);
-  const dataLayerAccess = `window[${JSON.stringify(dataLayerName)}]`;
   const configArgs =
     debugMode === true ? `${JSON.stringify(gaMeasurementId)}, { debug_mode: true }` : JSON.stringify(gaMeasurementId);
   const nonceAssignment = nonce === undefined ? "" : `gtagScript.nonce = ${JSON.stringify(nonce)};`;
-  const consentSignalAssignments = consentSignalAssignmentsExpression();
+  const preamble = googleConsentBootstrapPreamble({
+    consentStorageKey,
+    dataLayerName,
+    fallbackConsentExpression: resolveFallbackConsentExpression(
+      "buildGtagConsentBootstrapScript",
+      defaultConsent,
+      defaultConsentExpression,
+    ),
+    policyVersion,
+  });
 
   // Advanced Consent Mode: consent default first, then always load the tag (even when denied).
-  return `
-    ${dataLayerAccess} = ${dataLayerAccess} || [];
-    function gtag(){${dataLayerAccess}.push(arguments);}
-    var storedConsent = null;
-    try {
-      var record = JSON.parse(window.localStorage.getItem(${JSON.stringify(consentStorageKey)}));
-      if (record && record.policyVersion === ${JSON.stringify(policyVersion)} && record.decision && ${decisionShapeCheck}) {
-        storedConsent = record.decision;
-      }
-    } catch (e) {}
-    var consent = storedConsent || (${fallbackExpression});
-    gtag("consent", "default", {
-      ${consentSignalAssignments}
-    });
+  return `${preamble}
     gtag("js", new Date());
     gtag("config", ${configArgs});
     var gtagScript = document.createElement("script");

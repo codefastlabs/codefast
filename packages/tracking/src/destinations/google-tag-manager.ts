@@ -2,14 +2,14 @@ import type { ConsentDecision } from "#/core/consent";
 import type { Destination } from "#/core/destination";
 import { assertNever } from "#/core/tracked-event";
 import {
-  consentDecisionShapeCheckExpression,
-  consentSignalAssignmentsExpression,
+  DEFAULT_DATA_LAYER_NAME,
   dataLayerOf,
+  googleConsentBootstrapPreamble,
+  resolveFallbackConsentExpression,
   warnUnlessGa4EventName,
 } from "#/destinations/google-consent";
 import { flattenEventProps, omitHref, toJoinGroupPayload } from "#/destinations/shared";
 
-const DEFAULT_DATA_LAYER_NAME = "dataLayer";
 const DEFAULT_GTM_SCRIPT_URL = "https://www.googletagmanager.com/gtm.js";
 
 function gtmScriptSrc(options: {
@@ -251,32 +251,22 @@ export function buildGtmConsentBootstrapScript(options: GtmConsentBootstrapOptio
     preview,
   } = options;
 
-  if (defaultConsentExpression === undefined && defaultConsent === undefined) {
-    throw new Error("[tracking] buildGtmConsentBootstrapScript requires defaultConsent or defaultConsentExpression");
-  }
-
-  const fallbackExpression = defaultConsentExpression ?? JSON.stringify(defaultConsent);
-  const decisionShapeCheck = consentDecisionShapeCheckExpression();
   const scriptUrl = gtmScriptSrc({ auth, dataLayerName, gtmId, gtmScriptUrl, preview });
   const dataLayerAccess = `window[${JSON.stringify(dataLayerName)}]`;
   const nonceAssignment = nonce === undefined ? "" : `gtmScript.nonce = ${JSON.stringify(nonce)};`;
-  const consentSignalAssignments = consentSignalAssignmentsExpression();
+  const preamble = googleConsentBootstrapPreamble({
+    consentStorageKey,
+    dataLayerName,
+    fallbackConsentExpression: resolveFallbackConsentExpression(
+      "buildGtmConsentBootstrapScript",
+      defaultConsent,
+      defaultConsentExpression,
+    ),
+    policyVersion,
+  });
 
   // Advanced Consent Mode: consent default first, then always load the container.
-  return `
-    ${dataLayerAccess} = ${dataLayerAccess} || [];
-    function gtag(){${dataLayerAccess}.push(arguments);}
-    var storedConsent = null;
-    try {
-      var record = JSON.parse(window.localStorage.getItem(${JSON.stringify(consentStorageKey)}));
-      if (record && record.policyVersion === ${JSON.stringify(policyVersion)} && record.decision && ${decisionShapeCheck}) {
-        storedConsent = record.decision;
-      }
-    } catch (e) {}
-    var consent = storedConsent || (${fallbackExpression});
-    gtag("consent", "default", {
-      ${consentSignalAssignments}
-    });
+  return `${preamble}
     ${dataLayerAccess}.push({ "gtm.start": new Date().getTime(), event: "gtm.js" });
     var gtmScript = document.createElement("script");
     gtmScript.async = true;

@@ -1,6 +1,9 @@
 import type { ConsentCategory, ConsentDecision } from "#/core/consent";
 import { CONSENT_CATEGORIES } from "#/core/consent";
 
+/** gtag.js/gtm.js's default queue-array name — shared so the gtag and GTM helpers cannot disagree. */
+export const DEFAULT_DATA_LAYER_NAME = "dataLayer";
+
 type GoogleConsentState = "denied" | "granted";
 
 /**
@@ -45,20 +48,70 @@ export function toGoogleConsentParams(decision: ConsentDecision): GoogleConsentP
 }
 
 /** JS fragment that validates a stored `ConsentRecord.decision` shape inside a bootstrap. */
-export function consentDecisionShapeCheckExpression(recordExpression = "record.decision"): string {
-  return CONSENT_CATEGORIES.map(
-    (category) => `typeof ${recordExpression}[${JSON.stringify(category)}] === "boolean"`,
-  ).join(" && ");
+function consentDecisionShapeCheckExpression(): string {
+  return CONSENT_CATEGORIES.map((category) => `typeof record.decision[${JSON.stringify(category)}] === "boolean"`).join(
+    " && ",
+  );
 }
 
 /**
  * JS object-literal fragment for `gtag("consent", "default", { … })` — generated from
  * {@link GOOGLE_CONSENT_SIGNAL_CATEGORIES} so runtime and bootstrap stay aligned.
  */
-export function consentSignalAssignmentsExpression(consentExpression = "consent"): string {
+function consentSignalAssignmentsExpression(): string {
   return (Object.entries(GOOGLE_CONSENT_SIGNAL_CATEGORIES) as Array<[GoogleConsentSignal, ConsentCategory]>)
-    .map(([signal, category]) => `${signal}: ${consentExpression}.${category} ? "granted" : "denied"`)
+    .map(([signal, category]) => `${signal}: consent.${category} ? "granted" : "denied"`)
     .join(",\n      ");
+}
+
+/**
+ * The fallback-`ConsentDecision` JS expression from whichever of the two bootstrap
+ * options is set — throws when neither is, naming the calling builder.
+ */
+export function resolveFallbackConsentExpression(
+  builderName: string,
+  defaultConsent: ConsentDecision | undefined,
+  defaultConsentExpression: string | undefined,
+): string {
+  if (defaultConsentExpression === undefined && defaultConsent === undefined) {
+    throw new Error(`[tracking] ${builderName} requires defaultConsent or defaultConsentExpression`);
+  }
+
+  return defaultConsentExpression ?? JSON.stringify(defaultConsent);
+}
+
+export interface GoogleConsentBootstrapPreambleOptions {
+  /** localStorage key holding the package's `ConsentRecord`. */
+  consentStorageKey: string;
+  dataLayerName: string;
+  /** Raw JS expression evaluating to the fallback `ConsentDecision` — see {@link resolveFallbackConsentExpression}. */
+  fallbackConsentExpression: string;
+  policyVersion: string;
+}
+
+/**
+ * Shared head of the gtag and GTM consent bootstraps: dataLayer init, `gtag()` stub,
+ * stored-decision read (policy-version + shape checked), and the Consent Mode v2
+ * "default" signal. The builders append only their tag-specific tail, so the consent
+ * logic cannot drift between them.
+ */
+export function googleConsentBootstrapPreamble(options: GoogleConsentBootstrapPreambleOptions): string {
+  const dataLayerAccess = `window[${JSON.stringify(options.dataLayerName)}]`;
+
+  return `
+    ${dataLayerAccess} = ${dataLayerAccess} || [];
+    function gtag(){${dataLayerAccess}.push(arguments);}
+    var storedConsent = null;
+    try {
+      var record = JSON.parse(window.localStorage.getItem(${JSON.stringify(options.consentStorageKey)}));
+      if (record && record.policyVersion === ${JSON.stringify(options.policyVersion)} && record.decision && ${consentDecisionShapeCheckExpression()}) {
+        storedConsent = record.decision;
+      }
+    } catch (e) {}
+    var consent = storedConsent || (${options.fallbackConsentExpression});
+    gtag("consent", "default", {
+      ${consentSignalAssignmentsExpression()}
+    });`;
 }
 
 /** Reads or creates a named `window[dataLayerName]` queue array. */
