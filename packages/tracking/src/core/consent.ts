@@ -104,6 +104,11 @@ export function resolveDefaultConsent(
 /**
  * Region-resolved consent defaults — typically from `buildInitialConsent` on a
  * per-request server lane, then handed to the client so it never re-guesses the mode.
+ *
+ * @remarks
+ * Drive UI and gates from `mode` (recompute `effectiveConsent` with live navigator GPC).
+ * `defaultConsent` is the server snapshot — useful when you need request-time `sec-gpc`
+ * as-is; analytics-only apps can ignore it because GPC only forces `ads` denied.
  */
 export interface InitialConsent {
   defaultConsent: ConsentDecision;
