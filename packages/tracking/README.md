@@ -158,10 +158,11 @@ const consentStorage = createLocalStorageConsentStorage("tracking-consent");
 const categories = ["analytics"] as const;
 const policyVersion = "2026-01";
 
-// getMode re-reads each call — typically from window.__INITIAL_CONSENT__ after the bootstrap.
+// Prefer a re-readable snapshot from your server-fn lane (apps/ui `visitor-consent.ts`).
+// Fail closed to opt-in until that resolve lands.
 const isTrackingAllowed = createIsTrackingAllowed({
   categories,
-  getMode: () => window.__INITIAL_CONSENT__?.mode ?? "opt-in",
+  getMode: () => "opt-in",
   hasGlobalPrivacyControlSignal,
   policyVersion,
   storage: consentStorage,
@@ -226,25 +227,30 @@ withdrawing first-party `analytics`.
 
 ## TanStack Start wiring
 
-`apps/ui` (`src/features/tracking/`) is the reference consumer. The package helpers below
-cover the glue every Start app otherwise reimplements:
+`apps/ui` (`src/features/tracking/`) is the reference consumer. On CDN-cached / prerendered
+pages the HTML cannot be personalized per visitor, so the shipped lane is a **server
+function** that resolves region after hydration:
 
 1. **`buildInitialConsent({ countryCode, categories, hasGlobalPrivacyControlSignal? })`**
-   (`@codefast/tracking/server`) — region → mode → default decision for SSR shells and
-   edge-middleware cookie payloads. Export `EU_COUNTRY_CODES` /
-   `OPT_IN_EQUIVALENT_COUNTRY_CODES` when middleware must duplicate the map (Vercel
-   Routing Middleware cannot import this package).
-2. **`buildInitialConsentBootstrapScript({ cookieName, fallback })`**
-   (`@codefast/tracking/destinations`) — pre-hydration script that prefers the middleware
-   cookie over a baked fallback into `window.__INITIAL_CONSENT__`.
+   (`@codefast/tracking/server`) — region → mode → default decision. Call it from a
+   `createServerFn` handler that reads the geo header (see `apps/ui`
+   `resolve-visitor-consent.ts` / `initial-consent-from-request.ts`). Export
+   `EU_COUNTRY_CODES` / `OPT_IN_EQUIVALENT_COUNTRY_CODES` when a restricted edge runtime
+   must duplicate the map.
+2. **Client snapshot** — after hydration, call the server function once per session
+   (`private, no-store`; cache in `sessionStorage`), feed a `useSyncExternalStore` store,
+   and pass `getMode: () => snapshot.initialConsent.mode` into `createIsTrackingAllowed`
+   (see `apps/ui` `visitor-consent.ts`). Until it resolves, fail closed to the strictest
+   opt-in default.
 3. **`createIsTrackingAllowed` / `createConsentWithdrawalHandler`**
    (`@codefast/tracking/client`) — tracker gate + revoke clears (`tracker.clear`,
    anonymous-id cookie, `_ga*` via `clearGoogleAnalyticsCookies`).
 4. **`useGoogleConsentSync`** (`@codefast/tracking/react`) — Consent Mode `update` +
    optional idempotent gtag load, including cross-tab / privacy-page decisions.
 
-TanStack Start's `shellComponent` renders before root loaders resolve — read geo headers
-inside the SSR'd shell (or via `createIsomorphicFn`), not from root `loaderData`.
+TanStack Start's `shellComponent` renders before root loaders resolve — bake the
+strictest Consent Mode default into the prerendered shell; do not read geo from root
+`loaderData` on a cached route.
 
 ## Google tag / GTM loaders (advanced Consent Mode)
 
@@ -256,28 +262,17 @@ This does **not** weaken the package's first-party consent gate (`isTrackingAllo
 identifier minting, non-exempt destinations); only Google's tag script loading changes.
 
 ```tsx
-import {
-  buildInitialConsentBootstrapScript,
-  loadGtagScript,
-} from "@codefast/tracking/destinations";
+import { loadGtagScript } from "@codefast/tracking/destinations";
 import { GtagConsentBootstrap } from "@codefast/tracking/react";
 
-// Prefer middleware cookie over the SSR/prerender fallback.
-<script
-  dangerouslySetInnerHTML={{
-    __html: buildInitialConsentBootstrapScript({
-      cookieName: "app-initial-consent",
-      fallback: initialConsent,
-    }),
-  }}
-/>
-
-// In <head> / shell — same nonce on this host script and on loadGtagScript for CSP.
+// In <head> / shell — bake the strictest default on cached HTML; the server-fn lane
+// corrects the consent UI + gtag update after hydration (see apps/ui).
+// Same nonce on this host script and on loadGtagScript for CSP.
 <GtagConsentBootstrap
   consentStorageKey="tracking-consent"
   dataLayerName="dataLayer" // optional; custom names also set gtag.js's `l` param
   debugMode={import.meta.env.DEV} // optional — gtag('config', id, { debug_mode: true })
-  defaultConsentExpression="window.__INITIAL_CONSENT__.defaultConsent"
+  defaultConsent={{ ads: false, analytics: false }}
   gaMeasurementId="G-XXXXXXX"
   nonce={cspNonce} // optional — stamped on the injected gtag.js tag too
   policyVersion="2026-01"
