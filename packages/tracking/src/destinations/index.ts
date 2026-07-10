@@ -39,8 +39,8 @@ export {
   loadGtmScript,
 } from "#/destinations/google-tag-manager";
 
-export type { HttpDestinationOptions } from "#/destinations/http-destination";
-export { createHttpDestination } from "#/destinations/http-destination";
+export type { HttpDestinationOptions } from "#/destinations/http";
+export { createHttpDestination } from "#/destinations/http";
 
 export type { VercelAnalyticsDestinationOptions } from "#/destinations/vercel-analytics";
 export { createVercelAnalyticsDestination } from "#/destinations/vercel-analytics";

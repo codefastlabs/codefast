@@ -176,10 +176,10 @@
       "types": "./dist/destinations/google-tag-manager.d.mts",
       "import": "./dist/destinations/google-tag-manager.mjs"
     },
-    "./destinations/http-destination": {
-      "source": "./src/destinations/http-destination.ts",
-      "types": "./dist/destinations/http-destination.d.mts",
-      "import": "./dist/destinations/http-destination.mjs"
+    "./destinations/http": {
+      "source": "./src/destinations/http.ts",
+      "types": "./dist/destinations/http.d.mts",
+      "import": "./dist/destinations/http.mjs"
     },
     "./destinations/initial-consent-bootstrap": {
       "source": "./src/destinations/initial-consent-bootstrap.ts",
