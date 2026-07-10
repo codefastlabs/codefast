@@ -14,8 +14,8 @@ import { geolocation, next } from "@vercel/functions";
 // Duplicates `src/features/tracking/lib/consent.ts` — middleware.test.ts guards the sync.
 const INITIAL_CONSENT_COOKIE_NAME = "codefast-ui-initial-consent";
 
-/** Mirrors `@codefast/tracking/server`'s `EU_COUNTRY_CODES`. */
-export const EU_COUNTRY_CODES = new Set([
+/** Mirrors `@codefast/tracking/server`'s `EU_COUNTRY_CODES` — covered by the sweep test via `resolveRegion`. */
+const EU_COUNTRY_CODES = new Set([
   "AT",
   "BE",
   "BG",

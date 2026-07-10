@@ -42,10 +42,6 @@ const anonymousId = createServerPersistedAnonymousId({
   persist: (id) => persistAnonymousIdCookie({ data: { id } }),
 });
 
-export function getOrCreateAnonymousId(): string {
-  return anonymousId.getOrCreate();
-}
-
 /** Expires the anonymous-id cookie — called when the visitor withdraws analytics consent. */
 export function clearAnonymousId(): void {
   anonymousId.clear();
@@ -61,7 +57,7 @@ let tracker: ClientTracker<typeof catalog> | undefined;
 export function getTracker(): ClientTracker<typeof catalog> {
   tracker ??= createClientTracker({
     // a getOrCreate callback, not a value — the cookie must not exist until an event is actually allowed to send
-    anonymousId: getOrCreateAnonymousId,
+    anonymousId: anonymousId.getOrCreate,
     catalog,
     // Vercel is cookieless and receives no identifier, so it keeps counting interactions
     // while consent gates GA — the same footing as its own native page views.
