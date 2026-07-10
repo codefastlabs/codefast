@@ -1,57 +1,40 @@
-import { buildGtagConsentBootstrapScript, buildInitialConsentBootstrapScript } from "@codefast/tracking/destinations";
+import { buildGtagConsentBootstrapScript } from "@codefast/tracking/destinations";
 
-import type { InitialConsent } from "#/features/tracking/lib/consent";
 import {
   CONSENT_POLICY_VERSION,
   CONSENT_STORAGE_KEY,
-  INITIAL_CONSENT_COOKIE_NAME,
-  resolveInitialConsent,
+  STRICTEST_INITIAL_CONSENT,
 } from "#/features/tracking/lib/consent";
 import { GA_MEASUREMENT_ID } from "#/features/tracking/lib/google-tag-loader";
 
-/** Prefers `middleware.ts`'s per-visitor cookie over the static build's fallback. */
-export function buildSiteInitialConsentBootstrapScript(fallback: InitialConsent): string {
-  return buildInitialConsentBootstrapScript({
-    cookieName: INITIAL_CONSENT_COOKIE_NAME,
-    fallback,
-  });
-}
-
 /**
- * This site's gtag Consent Mode bootstrap — reads `window.__INITIAL_CONSENT__.defaultConsent`
- * (set by the script above) rather than a literal, since middleware personalizes it per
- * visitor while the CDN-cached (ISR) HTML stays shared across visitors.
+ * This site's gtag Consent Mode bootstrap — a stored decision wins; otherwise the baked
+ * strictest default applies (the served HTML is shared across visitors, so it can carry
+ * nothing region-specific). An undecided opt-out visitor's granted regional default is
+ * pushed later by `<ConsentGate />` once the server-function lane resolves the region.
  */
 export function buildGtagBootstrapScript(gaMeasurementId: string): string {
   return buildGtagConsentBootstrapScript({
     consentStorageKey: CONSENT_STORAGE_KEY,
-    defaultConsentExpression: "window.__INITIAL_CONSENT__.defaultConsent",
+    defaultConsent: STRICTEST_INITIAL_CONSENT.defaultConsent,
     gaMeasurementId,
     policyVersion: CONSENT_POLICY_VERSION,
   });
 }
 
 /**
- * Bootstraps `window.__INITIAL_CONSENT__` unconditionally (so `<ConsentGate />` always
- * has a value) and, when `GA_MEASUREMENT_ID` is configured, advanced Consent Mode —
- * consent default first, then always load gtag.js. Both scripts render from the
- * builders above, so the unit tests exercise the exact source this component inlines.
+ * Advanced Consent Mode bootstrap: consent default first, then always load gtag.js.
+ * Renders from the builder above, so the unit tests exercise the exact inlined source.
  */
 export function GoogleTag() {
-  const initialConsent = resolveInitialConsent();
+  if (!GA_MEASUREMENT_ID) {
+    return null;
+  }
 
   return (
-    <>
-      <script
-        dangerouslySetInnerHTML={{ __html: buildSiteInitialConsentBootstrapScript(initialConsent) }}
-        suppressHydrationWarning
-      />
-      {GA_MEASUREMENT_ID ? (
-        <script
-          dangerouslySetInnerHTML={{ __html: buildGtagBootstrapScript(GA_MEASUREMENT_ID) }}
-          suppressHydrationWarning
-        />
-      ) : null}
-    </>
+    <script
+      dangerouslySetInnerHTML={{ __html: buildGtagBootstrapScript(GA_MEASUREMENT_ID) }}
+      suppressHydrationWarning
+    />
   );
 }

@@ -95,7 +95,8 @@ function PrivacyPage() {
             profile.
           </li>
           <li>
-            <code>codefast-ui-initial-consent</code> (cookie, 24 hours) — the consent default resolved for your region.
+            <code>codefast-ui-region</code> (sessionStorage, cleared when the tab closes) — the consent default resolved
+            for your region, so it is looked up once per session instead of on every page.
           </li>
           <li>
             Google&rsquo;s <code>_ga</code> cookies — set only after analytics consent is granted, removed when you

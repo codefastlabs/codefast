@@ -9,7 +9,7 @@ import {
   clearAnonymousIdCookie,
   persistAnonymousIdCookie,
 } from "#/features/tracking/lib/anonymous-id";
-import { isTrackingAllowed } from "#/features/tracking/lib/consent";
+import { isTrackingAllowed } from "#/features/tracking/lib/visitor-consent";
 
 /**
  * `copy_code`/`search_query` track *what* was copied or searched, never the raw

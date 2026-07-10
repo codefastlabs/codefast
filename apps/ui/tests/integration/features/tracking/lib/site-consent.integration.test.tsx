@@ -7,36 +7,23 @@ import { PrivacyChoices } from "#/features/privacy/components/privacy-choices";
 import { ConsentGate } from "#/features/tracking/components/consent-gate";
 import { REQUESTED_CONSENT_CATEGORIES } from "#/features/tracking/lib/consent";
 import { getTracker } from "#/features/tracking/lib/tracking";
+import { resetVisitorConsentForTests } from "#/features/tracking/lib/visitor-consent";
 
 /**
  * End-to-end consent matrix over the real wiring: real `useSiteConsent`/`consent-state`,
  * the real tracker with its consent gate, lazy anonymous-id cookie, and consent-exempt
  * Vercel lane (cookieless counts keep flowing while GA and identifiers are gated), and
  * the real GA destination writing to `window.dataLayer`. Only the two external
- * boundaries are faked: Vercel's SDK (`track` spy) and the middleware-personalized
- * `window.__INITIAL_CONSENT__` value the pre-hydration bootstrap would have set.
+ * boundaries are faked: Vercel's SDK (`track` spy) and the `resolveVisitorConsent`
+ * server-function network hop that answers with the visitor's region default.
  */
 
-const { vercelTrack } = vi.hoisted(() => ({
+const { resolveVisitorConsent, vercelTrack } = vi.hoisted(() => ({
+  resolveVisitorConsent: vi.fn(),
   vercelTrack: vi.fn(),
 }));
 
-// jsdom is the browser — resolve isomorphic fns to their client branch, as a real page would.
-vi.mock(import("@tanstack/react-start"), async (importOriginal) => {
-  function createIsomorphicFn(): unknown {
-    const chain = {
-      client: (fn: object) => Object.assign(fn, chain),
-      server: () => chain,
-    };
-
-    return chain;
-  }
-
-  return {
-    ...(await importOriginal()),
-    createIsomorphicFn: createIsomorphicFn as never,
-  };
-});
+vi.mock("#/features/tracking/lib/resolve-visitor-consent", () => ({ resolveVisitorConsent }));
 // Destination imports `track` from `@vercel/analytics` (not `/react`) — mock the base package.
 vi.mock("@vercel/analytics", () => ({ track: vercelTrack }));
 vi.mock("@vercel/analytics/react", () => ({ Analytics: () => null, track: vercelTrack }));
@@ -51,12 +38,14 @@ const GRANTED_PARAMS = {
 };
 const DENIED_PARAMS = { ...GRANTED_PARAMS, analytics_storage: "denied" };
 
-/** Fakes the value `middleware.ts` + the bootstrap script produce for this visitor's region. */
+/** Fakes the server lane's answer for this visitor's region — the real resolver logic, minus the network. */
 function setRegion(country: string): void {
-  window.__INITIAL_CONSENT__ = buildInitialConsent({
-    categories: REQUESTED_CONSENT_CATEGORIES,
-    countryCode: country,
-  });
+  resolveVisitorConsent.mockResolvedValue(
+    buildInitialConsent({
+      categories: REQUESTED_CONSENT_CATEGORIES,
+      countryCode: country,
+    }),
+  );
 }
 
 function readAnonymousIdCookie(): string | undefined {
@@ -71,10 +60,10 @@ function gtagCalls(): Array<Array<unknown>> {
 }
 
 beforeEach(() => {
+  resetVisitorConsentForTests();
   vercelTrack.mockClear();
   window.localStorage.clear();
   document.cookie = `${ANON_COOKIE}=; path=/; max-age=0`;
-  delete window.__INITIAL_CONSENT__;
   delete window.dataLayer;
   delete window.gtag;
 });
@@ -84,12 +73,12 @@ afterEach(() => {
 });
 
 describe("consent × tracking matrix", () => {
-  it("opt-in, undecided: shows the banner, blocks GA and identifiers — only cookieless Vercel keeps counting", () => {
+  it("opt-in, undecided: shows the banner, blocks GA and identifiers — only cookieless Vercel keeps counting", async () => {
     setRegion("DE");
 
     render(<ConsentGate />);
 
-    expect(screen.getByRole("button", { name: "Accept" })).toBeTruthy();
+    expect(await screen.findByRole("button", { name: "Accept" })).toBeTruthy();
 
     getTracker().track("copy_code", COPY_EVENT);
 
@@ -105,7 +94,7 @@ describe("consent × tracking matrix", () => {
     const user = userEvent.setup();
 
     render(<ConsentGate />);
-    await user.click(screen.getByRole("button", { name: "Accept" }));
+    await user.click(await screen.findByRole("button", { name: "Accept" }));
 
     getTracker().track("copy_code", COPY_EVENT);
 
@@ -121,7 +110,7 @@ describe("consent × tracking matrix", () => {
     const user = userEvent.setup();
 
     render(<ConsentGate />);
-    await user.click(screen.getByRole("button", { name: "Reject" }));
+    await user.click(await screen.findByRole("button", { name: "Reject" }));
 
     getTracker().track("copy_code", COPY_EVENT);
 
@@ -143,7 +132,7 @@ describe("consent × tracking matrix", () => {
         <PrivacyChoices />
       </>,
     );
-    await user.click(screen.getByRole("button", { name: "Accept" }));
+    await user.click(await screen.findByRole("button", { name: "Accept" }));
 
     getTracker().track("copy_code", COPY_EVENT);
 
@@ -165,13 +154,13 @@ describe("consent × tracking matrix", () => {
     expect(gtagCalls()).toEqual([["consent", "update", DENIED_PARAMS]]);
   });
 
-  it("opt-out (US), undecided: no banner, tracking runs by default", () => {
+  it("opt-out (US), undecided: no banner, tracking runs by default", async () => {
     setRegion("US");
 
     render(<ConsentGate />);
 
+    expect(await screen.findByRole("button", { name: "Turn off analytics" })).toBeTruthy();
     expect(screen.queryByRole("button", { name: "Accept" })).toBeNull();
-    expect(screen.getByRole("button", { name: "Turn off analytics" })).toBeTruthy();
 
     getTracker().track("copy_code", COPY_EVENT);
 
@@ -185,7 +174,7 @@ describe("consent × tracking matrix", () => {
     const user = userEvent.setup();
 
     render(<ConsentGate />);
-    await user.click(screen.getByRole("button", { name: "Turn off analytics" }));
+    await user.click(await screen.findByRole("button", { name: "Turn off analytics" }));
 
     getTracker().track("copy_code", COPY_EVENT);
 
@@ -203,12 +192,13 @@ describe("consent × tracking matrix", () => {
     expect(vercelTrack).toHaveBeenCalledTimes(2);
   });
 
-  it("opt-out with GPC: analytics measurement stays allowed — GPC is honored as an ads opt-out only", () => {
+  it("opt-out with GPC: analytics measurement stays allowed — GPC is honored as an ads opt-out only", async () => {
     setRegion("US");
     Object.defineProperty(navigator, "globalPrivacyControl", { configurable: true, value: true });
 
     try {
       render(<ConsentGate />);
+      expect(await screen.findByRole("button", { name: "Turn off analytics" })).toBeTruthy();
 
       getTracker().track("copy_code", COPY_EVENT);
 
@@ -218,7 +208,7 @@ describe("consent × tracking matrix", () => {
     }
   });
 
-  it("a grant stored under an older policy version re-prompts and blocks GA and identifiers again", () => {
+  it("a grant stored under an older policy version re-prompts and blocks GA and identifiers again", async () => {
     setRegion("DE");
     window.localStorage.setItem(
       "codefast-ui-consent",
@@ -227,7 +217,7 @@ describe("consent × tracking matrix", () => {
 
     render(<ConsentGate />);
 
-    expect(screen.getByRole("button", { name: "Accept" })).toBeTruthy();
+    expect(await screen.findByRole("button", { name: "Accept" })).toBeTruthy();
 
     getTracker().track("copy_code", COPY_EVENT);
 

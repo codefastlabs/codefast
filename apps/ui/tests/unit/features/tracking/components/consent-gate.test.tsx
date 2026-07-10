@@ -3,21 +3,29 @@ import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { ConsentGate } from "#/features/tracking/components/consent-gate";
+import type { InitialConsent } from "#/features/tracking/lib/consent";
 
-const { clear, clearAnonymousId, clearGoogleAnalyticsCookies, resolveInitialConsent, updateGoogleConsent } = vi.hoisted(
+const { clear, clearAnonymousId, clearGoogleAnalyticsCookies, useVisitorConsent, updateGoogleConsent } = vi.hoisted(
   () => ({
     clear: vi.fn(),
     clearAnonymousId: vi.fn(),
     clearGoogleAnalyticsCookies: vi.fn(),
-    resolveInitialConsent: vi.fn(),
+    useVisitorConsent: vi.fn(),
     updateGoogleConsent: vi.fn(),
   }),
 );
 
-vi.mock(import("#/features/tracking/lib/consent"), async (importOriginal) => ({
+vi.mock(import("#/features/tracking/lib/visitor-consent"), async (importOriginal) => ({
   ...(await importOriginal()),
-  resolveInitialConsent,
+  ensureVisitorConsentResolved: () => {},
+  useVisitorConsent,
 }));
+
+/** Fakes the store as already resolved to this visitor's region default. */
+function setRegion(initialConsent: InitialConsent): void {
+  useVisitorConsent.mockReturnValue({ initialConsent, isResolved: true });
+}
+
 vi.mock("#/features/tracking/lib/tracking", () => ({
   clearAnonymousId,
   getTracker: () => ({ clear }),
@@ -52,7 +60,7 @@ const ANALYTICS_ONLY = { ads: false, analytics: true };
 
 describe("ConsentGate", () => {
   it("renders a blocking accept/reject banner for opt-in regions", () => {
-    resolveInitialConsent.mockReturnValue({ defaultConsent: DENIED, mode: "opt-in", region: "eu" });
+    setRegion({ defaultConsent: DENIED, mode: "opt-in", region: "eu" });
 
     render(<ConsentGate />);
 
@@ -61,7 +69,7 @@ describe("ConsentGate", () => {
   });
 
   it("renders an always-visible analytics opt-out toggle for opt-out regions", () => {
-    resolveInitialConsent.mockReturnValue({ defaultConsent: ANALYTICS_ONLY, mode: "opt-out", region: "us" });
+    setRegion({ defaultConsent: ANALYTICS_ONLY, mode: "opt-out", region: "us" });
 
     render(<ConsentGate />);
 
@@ -69,7 +77,7 @@ describe("ConsentGate", () => {
   });
 
   it("clears the tracker's queue, removes the anonymous id, and revokes gtag consent on Reject", async () => {
-    resolveInitialConsent.mockReturnValue({ defaultConsent: DENIED, mode: "opt-in", region: "eu" });
+    setRegion({ defaultConsent: DENIED, mode: "opt-in", region: "eu" });
 
     const user = userEvent.setup();
 
@@ -83,7 +91,7 @@ describe("ConsentGate", () => {
   });
 
   it("updates gtag consent without clearing the tracker on Accept — analytics only, never ads", async () => {
-    resolveInitialConsent.mockReturnValue({ defaultConsent: DENIED, mode: "opt-in", region: "eu" });
+    setRegion({ defaultConsent: DENIED, mode: "opt-in", region: "eu" });
 
     const user = userEvent.setup();
 
@@ -95,7 +103,7 @@ describe("ConsentGate", () => {
   });
 
   it("replays a stored grant to gtag on mount, without waiting for a new decision", () => {
-    resolveInitialConsent.mockReturnValue({ defaultConsent: DENIED, mode: "opt-in", region: "eu" });
+    setRegion({ defaultConsent: DENIED, mode: "opt-in", region: "eu" });
     window.localStorage.setItem(
       "codefast-ui-consent",
       JSON.stringify({ decision: ANALYTICS_ONLY, policyVersion: "1", timestamp: 0 }),
@@ -107,7 +115,7 @@ describe("ConsentGate", () => {
   });
 
   it("keeps a persistent Cookie settings control after an opt-in decision and reopens the banner", async () => {
-    resolveInitialConsent.mockReturnValue({ defaultConsent: DENIED, mode: "opt-in", region: "eu" });
+    setRegion({ defaultConsent: DENIED, mode: "opt-in", region: "eu" });
     window.localStorage.setItem(
       "codefast-ui-consent",
       JSON.stringify({ decision: ANALYTICS_ONLY, policyVersion: "1", timestamp: 0 }),
@@ -129,7 +137,7 @@ describe("ConsentGate", () => {
   });
 
   it("saves a granular choice through the Customize layer", async () => {
-    resolveInitialConsent.mockReturnValue({ defaultConsent: DENIED, mode: "opt-in", region: "eu" });
+    setRegion({ defaultConsent: DENIED, mode: "opt-in", region: "eu" });
 
     const user = userEvent.setup();
 
@@ -144,7 +152,7 @@ describe("ConsentGate", () => {
   });
 
   it("links the privacy policy from the banner", () => {
-    resolveInitialConsent.mockReturnValue({ defaultConsent: DENIED, mode: "opt-in", region: "eu" });
+    setRegion({ defaultConsent: DENIED, mode: "opt-in", region: "eu" });
 
     render(<ConsentGate />);
 
@@ -152,7 +160,7 @@ describe("ConsentGate", () => {
   });
 
   it("syncs a denial made in another tab to gtag", () => {
-    resolveInitialConsent.mockReturnValue({ defaultConsent: ANALYTICS_ONLY, mode: "opt-out", region: "us" });
+    setRegion({ defaultConsent: ANALYTICS_ONLY, mode: "opt-out", region: "us" });
 
     render(<ConsentGate />);
     updateGoogleConsent.mockClear();

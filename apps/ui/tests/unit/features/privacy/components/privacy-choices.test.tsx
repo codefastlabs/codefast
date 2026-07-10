@@ -3,27 +3,35 @@ import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { PrivacyChoices } from "#/features/privacy/components/privacy-choices";
+import type { InitialConsent } from "#/features/tracking/lib/consent";
 
 const {
   clear,
   clearAnonymousId,
   clearGoogleAnalyticsCookies,
   hasGlobalPrivacyControlSignal,
-  resolveInitialConsent,
+  useVisitorConsent,
   useHasHydrated,
 } = vi.hoisted(() => ({
   clear: vi.fn(),
   clearAnonymousId: vi.fn(),
   clearGoogleAnalyticsCookies: vi.fn(),
   hasGlobalPrivacyControlSignal: vi.fn(() => false),
-  resolveInitialConsent: vi.fn(),
+  useVisitorConsent: vi.fn(),
   useHasHydrated: vi.fn(() => true),
 }));
 
-vi.mock(import("#/features/tracking/lib/consent"), async (importOriginal) => ({
+vi.mock(import("#/features/tracking/lib/visitor-consent"), async (importOriginal) => ({
   ...(await importOriginal()),
-  resolveInitialConsent,
+  ensureVisitorConsentResolved: () => {},
+  useVisitorConsent,
 }));
+
+/** Fakes the store as already resolved to this visitor's region default. */
+function setRegion(initialConsent: InitialConsent): void {
+  useVisitorConsent.mockReturnValue({ initialConsent, isResolved: true });
+}
+
 vi.mock("#/features/tracking/lib/tracking", () => ({
   clearAnonymousId,
   getTracker: () => ({ clear }),
@@ -53,7 +61,7 @@ afterEach(() => {
 
 describe("PrivacyChoices", () => {
   it("reflects the effective consent in the switch and persists a denial", async () => {
-    resolveInitialConsent.mockReturnValue({
+    setRegion({
       defaultConsent: { ads: false, analytics: true },
       mode: "opt-out",
       region: "us",
@@ -79,7 +87,7 @@ describe("PrivacyChoices", () => {
   });
 
   it("persists a grant when switched on in an opt-in region", async () => {
-    resolveInitialConsent.mockReturnValue({
+    setRegion({
       defaultConsent: { ads: false, analytics: false },
       mode: "opt-in",
       region: "eu",
@@ -97,7 +105,7 @@ describe("PrivacyChoices", () => {
   });
 
   it("shows GPC as a read-only detection status, with enabling instructions when absent", () => {
-    resolveInitialConsent.mockReturnValue({
+    setRegion({
       defaultConsent: { ads: false, analytics: true },
       mode: "opt-out",
       region: "us",
@@ -114,7 +122,7 @@ describe("PrivacyChoices", () => {
 
   it("reports a detected GPC signal", () => {
     hasGlobalPrivacyControlSignal.mockReturnValue(true);
-    resolveInitialConsent.mockReturnValue({
+    setRegion({
       defaultConsent: { ads: false, analytics: true },
       mode: "opt-out",
       region: "us",
@@ -128,7 +136,7 @@ describe("PrivacyChoices", () => {
   it("prerenders statically before hydration — disabled switch, generic GPC copy, no live claims", () => {
     useHasHydrated.mockReturnValue(false);
     hasGlobalPrivacyControlSignal.mockReturnValue(true);
-    resolveInitialConsent.mockReturnValue({
+    setRegion({
       defaultConsent: { ads: false, analytics: true },
       mode: "opt-out",
       region: "us",

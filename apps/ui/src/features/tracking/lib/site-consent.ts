@@ -3,17 +3,16 @@ import type { ConsentMode } from "@codefast/tracking/core";
 import { clearGoogleAnalyticsCookies } from "@codefast/tracking/destinations";
 import type { UseConsentResult } from "@codefast/tracking/react";
 import { useConsent } from "@codefast/tracking/react";
+import { useEffect } from "react";
 
-import {
-  CONSENT_POLICY_VERSION,
-  consentStorage,
-  REQUESTED_CONSENT_CATEGORIES,
-  resolveInitialConsent,
-} from "#/features/tracking/lib/consent";
+import { CONSENT_POLICY_VERSION, consentStorage, REQUESTED_CONSENT_CATEGORIES } from "#/features/tracking/lib/consent";
 import { clearAnonymousId, getTracker } from "#/features/tracking/lib/tracking";
+import { ensureVisitorConsentResolved, useVisitorConsent } from "#/features/tracking/lib/visitor-consent";
 
 export interface UseSiteConsentResult {
   consent: UseConsentResult;
+  /** False until the visitor's region default resolves — gate region-dependent UI on it. */
+  isResolved: boolean;
   mode: ConsentMode;
 }
 
@@ -33,16 +32,21 @@ const onConsentDecision = createConsentWithdrawalHandler({
  * a duplicate update.
  */
 export function useSiteConsent(): UseSiteConsentResult {
-  const { mode } = resolveInitialConsent();
+  const { initialConsent, isResolved } = useVisitorConsent();
+
+  // Post-hydration, once per page load — SSR keeps the baked strictest default.
+  useEffect(() => {
+    ensureVisitorConsentResolved();
+  }, []);
 
   const consent = useConsent({
     categories: REQUESTED_CONSENT_CATEGORIES,
     hasGlobalPrivacyControlSignal: hasGlobalPrivacyControlSignal(),
-    mode,
+    mode: initialConsent.mode,
     onDecision: onConsentDecision,
     policyVersion: CONSENT_POLICY_VERSION,
     storage: consentStorage,
   });
 
-  return { consent, mode };
+  return { consent, isResolved, mode: initialConsent.mode };
 }
