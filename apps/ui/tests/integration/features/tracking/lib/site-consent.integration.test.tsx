@@ -1,11 +1,11 @@
 import { buildInitialConsent } from "@codefast/tracking/server";
-import { cleanup, render, screen } from "@testing-library/react";
+import { cleanup, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { PrivacyChoices } from "#/features/privacy/components/privacy-choices";
 import { ConsentGate } from "#/features/tracking/components/consent-gate";
-import { REQUESTED_CONSENT_CATEGORIES } from "#/features/tracking/lib/consent";
+import { CONSENT_POLICY_VERSION, REQUESTED_CONSENT_CATEGORIES } from "#/features/tracking/lib/consent";
 import { getTracker } from "#/features/tracking/lib/tracking";
 import { resetVisitorConsentForTests } from "#/features/tracking/lib/visitor-consent";
 
@@ -190,6 +190,45 @@ describe("consent × tracking matrix", () => {
     expect(gtagCalls()).toContainEqual(["event", "copy_code", COPY_EVENT]);
     expect(readAnonymousIdCookie()).toBeTruthy();
     expect(vercelTrack).toHaveBeenCalledTimes(2);
+  });
+
+  it("cross-tab denial clears identity; re-grant mints a fresh anon id", async () => {
+    setRegion("DE");
+
+    const user = userEvent.setup();
+
+    render(<ConsentGate />);
+    await user.click(await screen.findByRole("button", { name: "Accept" }));
+
+    getTracker().track("copy_code", COPY_EVENT);
+
+    const firstId = readAnonymousIdCookie();
+
+    expect(firstId).toBeTruthy();
+
+    // Another tab wrote a denial — storage event updates this tab without a local save/onDecision.
+    const denialRecord = JSON.stringify({
+      decision: { ads: false, analytics: false },
+      policyVersion: CONSENT_POLICY_VERSION,
+      timestamp: Date.now(),
+    });
+
+    window.localStorage.setItem("codefast-ui-consent", denialRecord);
+    window.dispatchEvent(new StorageEvent("storage", { key: "codefast-ui-consent", newValue: denialRecord }));
+
+    await waitFor(() => {
+      expect(readAnonymousIdCookie()).toBeUndefined();
+    });
+
+    await user.click(screen.getByRole("button", { name: "Cookie settings" }));
+    await user.click(screen.getByRole("button", { name: "Accept" }));
+
+    getTracker().track("copy_code", COPY_EVENT);
+
+    const secondId = readAnonymousIdCookie();
+
+    expect(secondId).toBeTruthy();
+    expect(secondId).not.toBe(firstId);
   });
 
   it("opt-out with GPC: analytics measurement stays allowed — GPC is honored as an ads opt-out only", async () => {

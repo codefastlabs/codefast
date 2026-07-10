@@ -94,7 +94,7 @@ describe("useVisitorConsent / ensureVisitorConsentResolved", () => {
     });
   });
 
-  it("fails closed: a failed resolution finalizes the strictest default so the consent UI still renders", async () => {
+  it("fails closed: a failed resolution publishes the strictest default so the consent UI still renders", async () => {
     resolveVisitorConsent.mockRejectedValue(new Error("offline"));
 
     const { result } = renderHook(() => useVisitorConsent());
@@ -104,6 +104,62 @@ describe("useVisitorConsent / ensureVisitorConsentResolved", () => {
     await waitFor(() => {
       expect(result.current).toEqual({ initialConsent: STRICTEST_INITIAL_CONSENT, isResolved: true });
     });
+  });
+
+  it("retries after a failed resolution and publishes the server answer", async () => {
+    resolveVisitorConsent.mockRejectedValueOnce(new Error("offline")).mockResolvedValueOnce(US_CONSENT);
+
+    const { result } = renderHook(() => useVisitorConsent());
+
+    ensureVisitorConsentResolved();
+
+    await waitFor(() => {
+      expect(result.current).toEqual({ initialConsent: STRICTEST_INITIAL_CONSENT, isResolved: true });
+    });
+
+    ensureVisitorConsentResolved();
+
+    await waitFor(() => {
+      expect(result.current).toEqual({ initialConsent: US_CONSENT, isResolved: true });
+    });
+    expect(resolveVisitorConsent).toHaveBeenCalledTimes(2);
+    expect(JSON.parse(window.sessionStorage.getItem(INITIAL_CONSENT_SESSION_KEY) ?? "")).toEqual(US_CONSENT);
+  });
+
+  it("retries a failed resolution when the tab becomes visible again", async () => {
+    resolveVisitorConsent.mockRejectedValueOnce(new Error("offline")).mockResolvedValueOnce(US_CONSENT);
+
+    const { result } = renderHook(() => useVisitorConsent());
+
+    ensureVisitorConsentResolved();
+
+    await waitFor(() => {
+      expect(result.current.isResolved).toBe(true);
+    });
+    expect(resolveVisitorConsent).toHaveBeenCalledOnce();
+
+    Object.defineProperty(document, "visibilityState", { configurable: true, value: "visible" });
+    document.dispatchEvent(new Event("visibilitychange"));
+
+    await waitFor(() => {
+      expect(result.current).toEqual({ initialConsent: US_CONSENT, isResolved: true });
+    });
+    expect(resolveVisitorConsent).toHaveBeenCalledTimes(2);
+  });
+
+  it("does not retry after a successful resolution", async () => {
+    resolveVisitorConsent.mockResolvedValue(US_CONSENT);
+
+    ensureVisitorConsentResolved();
+
+    await waitFor(() => {
+      expect(resolveVisitorConsent).toHaveBeenCalledOnce();
+    });
+
+    ensureVisitorConsentResolved();
+    document.dispatchEvent(new Event("visibilitychange"));
+
+    expect(resolveVisitorConsent).toHaveBeenCalledOnce();
   });
 });
 

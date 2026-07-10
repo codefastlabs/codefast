@@ -16,7 +16,7 @@ export interface UseSiteConsentResult {
   mode: ConsentMode;
 }
 
-const onConsentDecision = createConsentWithdrawalHandler({
+const onConsentWithdrawal = createConsentWithdrawalHandler({
   clearAnonymousId,
   clearGoogleAnalyticsCookies,
   clearTracker: () => {
@@ -43,10 +43,18 @@ export function useSiteConsent(): UseSiteConsentResult {
     categories: REQUESTED_CONSENT_CATEGORIES,
     hasGlobalPrivacyControlSignal: hasGlobalPrivacyControlSignal(),
     mode: initialConsent.mode,
-    onDecision: onConsentDecision,
     policyVersion: CONSENT_POLICY_VERSION,
     storage: consentStorage,
   });
+
+  // Effect (not `useConsent({ onDecision })`) so a denial written in another tab — which
+  // only arrives via the storage subscription — clears anon-id / GA cookies / tracker
+  // state the same way a local save does. Grants are a no-op inside the handler.
+  useEffect(() => {
+    if (consent.decision !== undefined) {
+      onConsentWithdrawal(consent.decision);
+    }
+  }, [consent.decision]);
 
   return { consent, isResolved, mode: initialConsent.mode };
 }

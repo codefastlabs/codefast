@@ -19,7 +19,11 @@ export const INITIAL_CONSENT_SESSION_KEY = "codefast-ui-initial-consent";
 export interface VisitorConsentSnapshot {
   /** The region-correct default once resolved; the strictest default until then. */
   initialConsent: InitialConsent;
-  /** True once the server lane answered (or failed — the strictest default then stands). */
+  /**
+   * True once a usable default is published — either a successful server answer or a
+   * fail-closed fallback. A failed fetch still sets this so consent UI can render, but
+   * does not lock the session: a later `ensureVisitorConsentResolved` may retry.
+   */
   isResolved: boolean;
 }
 
@@ -27,13 +31,60 @@ const listeners = new Set<() => void>();
 
 let snapshot: VisitorConsentSnapshot = { initialConsent: STRICTEST_INITIAL_CONSENT, isResolved: false };
 let isFetchInFlight = false;
+/** Sticky only after a successful resolve (or session-cache hit) — failures stay retryable. */
+let hasResolvedSuccessfully = false;
+let isRetryListening = false;
 
-function publish(initialConsent: InitialConsent): void {
-  snapshot = { initialConsent, isResolved: true };
-
+function notify(): void {
   for (const listener of listeners) {
     listener();
   }
+}
+
+function publishResolved(initialConsent: InitialConsent): void {
+  hasResolvedSuccessfully = true;
+  snapshot = { initialConsent, isResolved: true };
+  stopResolveRetry();
+  notify();
+}
+
+/** Fail-closed UI without permanently locking the SPA session against a later retry. */
+function publishFailClosed(): void {
+  snapshot = { initialConsent: STRICTEST_INITIAL_CONSENT, isResolved: true };
+  notify();
+}
+
+function stopResolveRetry(): void {
+  if (!isRetryListening || typeof window === "undefined") {
+    return;
+  }
+
+  isRetryListening = false;
+  document.removeEventListener("visibilitychange", onResolveRetryResume);
+  window.removeEventListener("pageshow", onResolveRetryResume);
+}
+
+function onResolveRetryResume(): void {
+  if (hasResolvedSuccessfully) {
+    stopResolveRetry();
+
+    return;
+  }
+
+  if (document.visibilityState === "visible") {
+    ensureVisitorConsentResolved();
+  }
+}
+
+/** After a failed fetch, retry when the tab becomes visible again (coalesced by in-flight). */
+function scheduleResolveRetry(): void {
+  if (isRetryListening || typeof window === "undefined") {
+    return;
+  }
+
+  isRetryListening = true;
+  document.addEventListener("visibilitychange", onResolveRetryResume);
+  window.addEventListener("pageshow", onResolveRetryResume);
 }
 
 function isInitialConsent(value: unknown): value is InitialConsent {
@@ -66,19 +117,19 @@ function readSessionCache(): InitialConsent | undefined {
 }
 
 /**
- * Kicks off the one-per-page-load region resolution over the server-function lane.
- * A failure (offline, host without a geo header) publishes the strictest default as
- * final — fail-closed, and the consent UI still renders.
+ * Kicks off region resolution over the server-function lane (at most one in-flight
+ * request). A failure publishes the strictest default so consent UI still renders, but
+ * stays retryable on the next call / tab-visible resume — not locked for the SPA lifetime.
  */
 export function ensureVisitorConsentResolved(): void {
-  if (snapshot.isResolved || isFetchInFlight || typeof window === "undefined") {
+  if (hasResolvedSuccessfully || isFetchInFlight || typeof window === "undefined") {
     return;
   }
 
   const cached = readSessionCache();
 
   if (cached) {
-    publish(cached);
+    publishResolved(cached);
 
     return;
   }
@@ -93,10 +144,11 @@ export function ensureVisitorConsentResolved(): void {
         // private mode / quota — resolve again next page load
       }
 
-      publish(resolved);
+      publishResolved(resolved);
     })
     .catch(() => {
-      publish(STRICTEST_INITIAL_CONSENT);
+      publishFailClosed();
+      scheduleResolveRetry();
     })
     .finally(() => {
       isFetchInFlight = false;
@@ -126,8 +178,10 @@ export function useVisitorConsent(): VisitorConsentSnapshot {
  * Test seam — clears the resolved state and session cache so each test resolves fresh.
  */
 export function resetVisitorConsentForTests(): void {
+  stopResolveRetry();
   snapshot = { initialConsent: STRICTEST_INITIAL_CONSENT, isResolved: false };
   isFetchInFlight = false;
+  hasResolvedSuccessfully = false;
 
   if (typeof window !== "undefined") {
     window.sessionStorage.removeItem(INITIAL_CONSENT_SESSION_KEY);
