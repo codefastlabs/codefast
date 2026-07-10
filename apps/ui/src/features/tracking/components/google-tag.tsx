@@ -1,5 +1,4 @@
 import { buildGtagConsentBootstrapScript, buildInitialConsentBootstrapScript } from "@codefast/tracking/destinations";
-import { GtagConsentBootstrap } from "@codefast/tracking/react";
 
 import type { InitialConsent } from "#/features/tracking/lib/consent";
 import {
@@ -34,8 +33,9 @@ export function buildGtagBootstrapScript(gaMeasurementId: string): string {
 
 /**
  * Bootstraps `window.__INITIAL_CONSENT__` unconditionally (so `<ConsentGate />` always
- * has a value) and, when `GA_MEASUREMENT_ID` is configured, advanced Consent Mode via
- * `<GtagConsentBootstrap />` — consent default first, then always load gtag.js.
+ * has a value) and, when `GA_MEASUREMENT_ID` is configured, advanced Consent Mode —
+ * consent default first, then always load gtag.js. Both scripts render from the
+ * builders above, so the unit tests exercise the exact source this component inlines.
  */
 export function GoogleTag() {
   const initialConsent = resolveInitialConsent();
@@ -47,11 +47,9 @@ export function GoogleTag() {
         suppressHydrationWarning
       />
       {GA_MEASUREMENT_ID ? (
-        <GtagConsentBootstrap
-          consentStorageKey={CONSENT_STORAGE_KEY}
-          defaultConsentExpression="window.__INITIAL_CONSENT__.defaultConsent"
-          gaMeasurementId={GA_MEASUREMENT_ID}
-          policyVersion={CONSENT_POLICY_VERSION}
+        <script
+          dangerouslySetInnerHTML={{ __html: buildGtagBootstrapScript(GA_MEASUREMENT_ID) }}
+          suppressHydrationWarning
         />
       ) : null}
     </>
