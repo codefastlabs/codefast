@@ -218,9 +218,11 @@ second guess.
 
 ### This app's pages are CDN-cached (ISR) — that value alone is not enough
 
-Every page is server-rendered on demand and cached by the CDN under each route's
-`headers()` policy (`Cache-Control` + `CDN-Cache-Control`, see `src/lib/cache.ts` —
-TanStack Start's ISR pattern). A cached render is shared across visitors, so
+The entry pages (`/`, `/about`, `/components`, `/privacy`) are prerendered at build time;
+every `/components/$slug` page is server-rendered on demand and cached by the CDN under
+its route's `headers()` policy (`Cache-Control` + `CDN-Cache-Control`, see
+`src/lib/cache.ts` — TanStack Start's hybrid ISR pattern). Either way the served HTML is
+shared across visitors, so
 `resolveInitialConsent()`'s server branch deliberately bakes the strictest possible
 default (`denied`, `opt-in`, region `other`) instead of reading per-request geo — a
 request-derived value would leak the first visitor's region to everyone served from
