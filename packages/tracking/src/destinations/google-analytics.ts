@@ -165,6 +165,8 @@ export function clearGoogleAnalyticsCookies(): void {
  * @since 0.5.0-canary.4
  */
 export interface GoogleConsentDefaultOptions {
+  /** Name of the queue array on `window`. Defaults to `"dataLayer"` — must match the page's other gtag helpers. */
+  dataLayerName?: string | undefined;
   /** Restrict the default to these ISO 3166-2 codes (gtag's `region` param); omit for a global default. */
   region?: ReadonlyArray<string> | undefined;
   /** Consent Mode's `wait_for_update` — how long tags hold hits so a stored decision can arrive as an update first. */
@@ -189,7 +191,7 @@ export function setGoogleConsentDefault(decision: ConsentDecision, options: Goog
     params.wait_for_update = options.waitForUpdateMs;
   }
 
-  ensureGtag()?.("consent", "default", params);
+  ensureGtag({ dataLayerName: options.dataLayerName })?.("consent", "default", params);
 }
 
 /**
@@ -199,8 +201,8 @@ export function setGoogleConsentDefault(decision: ConsentDecision, options: Goog
  *
  * @since 0.5.0-canary.4
  */
-export function updateGoogleConsent(decision: ConsentDecision): void {
-  ensureGtag()?.("consent", "update", toGoogleConsentParams(decision));
+export function updateGoogleConsent(decision: ConsentDecision, options: EnsureGtagOptions = {}): void {
+  ensureGtag(options)?.("consent", "update", toGoogleConsentParams(decision));
 }
 
 export interface GtagConsentBootstrapOptions {
@@ -292,8 +294,8 @@ export function buildGtagConsentBootstrapScript(options: GtagConsentBootstrapOpt
  *
  * @since 0.5.0-canary.4
  */
-export function setGoogleAdsDataRedaction(enabled: boolean): void {
-  ensureGtag()?.("set", "ads_data_redaction", enabled);
+export function setGoogleAdsDataRedaction(enabled: boolean, options: EnsureGtagOptions = {}): void {
+  ensureGtag(options)?.("set", "ads_data_redaction", enabled);
 }
 
 /**
@@ -302,8 +304,8 @@ export function setGoogleAdsDataRedaction(enabled: boolean): void {
  *
  * @since 0.5.0-canary.4
  */
-export function setGoogleUrlPassthrough(enabled: boolean): void {
-  ensureGtag()?.("set", "url_passthrough", enabled);
+export function setGoogleUrlPassthrough(enabled: boolean, options: EnsureGtagOptions = {}): void {
+  ensureGtag(options)?.("set", "url_passthrough", enabled);
 }
 
 /**
