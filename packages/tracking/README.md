@@ -95,7 +95,7 @@ const anonymousId = createServerPersistedAnonymousId({
 
 `attachRouterPageTracking` is duck-typed against `Router["subscribe"]`, so it takes a real
 `@tanstack/react-router` instance without this package depending on it. `attachClientLifecycle`
-wires the periodic flush and the `sendBeacon` unload flush — `EventQueue` itself already
+wires the periodic flush and the `sendBeacon` unload flush — the offline queue already
 auto-flushes once a batch hits its size threshold.
 
 ```ts
@@ -161,7 +161,7 @@ const policyVersion = "2026-01";
 // Prefer a re-readable snapshot from your server-fn lane (apps/ui `visitor-consent.ts`).
 // Fail closed to opt-in until that resolve lands.
 const isAnalyticsAllowed = createIsAnalyticsAllowed({
-  getHasGlobalPrivacyControlSignal: hasGlobalPrivacyControlSignal,
+  hasGlobalPrivacyControlSignal,
   getMode: () => "opt-in",
   policyVersion,
   requestedCategories,
