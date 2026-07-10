@@ -143,4 +143,10 @@ describe("middleware", () => {
 
     expect(response.headers.get("set-cookie")).toMatch(new RegExp(`^${INITIAL_CONSENT_COOKIE_NAME}=`));
   });
+
+  it("marks the cookie Secure so it never rides a plain-HTTP request", () => {
+    const response = middleware(requestFrom("US"));
+
+    expect(response.headers.get("set-cookie")).toMatch(/; Secure$/);
+  });
 });

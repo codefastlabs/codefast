@@ -87,6 +87,6 @@ export default function middleware(request: Request): Response {
   const value = encodeURIComponent(JSON.stringify({ defaultConsent, mode: isOptIn ? "opt-in" : "opt-out", region }));
 
   return next({
-    headers: { "set-cookie": `${INITIAL_CONSENT_COOKIE_NAME}=${value}; Path=/; Max-Age=86400; SameSite=Lax` },
+    headers: { "set-cookie": `${INITIAL_CONSENT_COOKIE_NAME}=${value}; Path=/; Max-Age=86400; SameSite=Lax; Secure` },
   });
 }
