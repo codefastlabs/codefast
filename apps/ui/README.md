@@ -197,49 +197,40 @@ Google Ads conversion tracking was built (`createGoogleAdsConversionDestination`
 
 ## Consent
 
-Region (`x-vercel-ip-country`) and GPC (`Sec-GPC`) are resolved per-request in
-`src/features/tracking/lib/consent.ts` (`resolveInitialConsent` →
+Region (`x-vercel-ip-country`) and GPC (`Sec-GPC`) are resolved per visitor by a server
+function (`src/features/tracking/lib/resolve-visitor-consent.ts` →
 `buildInitialConsent` from `@codefast/tracking/server`) and drive both:
 
-- The SSR'd Consent Mode v2 default in `src/features/tracking/components/google-tag.tsx`
-  (denied for EU/VN opt-in regions, analytics granted for US/other — GPC is ads-only).
+- The Consent Mode v2 state in `src/features/tracking/components/google-tag.tsx` /
+  `consent-gate.tsx` (denied for EU/VN opt-in regions, analytics granted for US/other —
+  GPC is ads-only).
 - The consent UI in `src/features/tracking/components/consent-gate.tsx` — a blocking
   accept/reject banner for opt-in regions, an always-visible "Turn on/off analytics"
   toggle for opt-out regions (this site sells or shares no personal data, so the control
   is named by what it does). Both come from `@codefast/tracking/react`, styled here via
   `className`.
 
-`resolveInitialConsent()` is called directly inside these components rather than via a
-root-route `loader` — TanStack Start's `shellComponent` (where both are mounted) renders
-before the root match's `loader`/`beforeLoad` resolve, so loader data never reaches them.
-The server-resolved value is embedded into `window.__INITIAL_CONSENT__` via
-`buildInitialConsentBootstrapScript` so the client reads the same value instead of a
-second guess.
-
-### This app's pages are CDN-cached (ISR) — that value alone is not enough
+### This app's pages are CDN-cached (ISR) — the HTML can't be personalized
 
 The entry pages (`/`, `/about`, `/components`, `/privacy`) are prerendered at build time;
 every `/components/$slug` page is server-rendered on demand and cached by the CDN under
 its route's `headers()` policy (`Cache-Control` + `CDN-Cache-Control`, see
 `src/lib/cache.ts` — TanStack Start's hybrid ISR pattern). Either way the served HTML is
-shared across visitors, so
-`resolveInitialConsent()`'s server branch deliberately bakes the strictest possible
-default (`denied`, `opt-in`, region `other`) instead of reading per-request geo — a
-request-derived value would leak the first visitor's region to everyone served from
-that cache entry.
+shared across visitors, so the inline gtag bootstrap in `google-tag.tsx` bakes the
+strictest possible default (`denied`, `opt-in`, region `other`) — a request-derived
+value would leak the first visitor's region to everyone served from that cache entry.
 
-`middleware.ts` (Vercel Routing Middleware, root of this app) covers the actual
-per-visitor correction: it runs on every real request _before_ the CDN cache — including
-ones served from cache — reads the visitor's real geo, and sets a
-`codefast-ui-initial-consent` cookie (name shared with
-`#/features/tracking/lib/consent`). The bootstrap script in `google-tag.tsx` prefers that
-cookie over the baked-in fallback whenever it's present, so the real visitor's
-region-correct default applies without a second network round trip. `middleware.ts`
-intentionally does not import `@codefast/tracking` — Vercel compiles it independently of
-this app's Vite/Nitro build, and duplicating the EU / UK-EEA country sets was the safer
-choice over an unverified cross-package resolution assumption.
-`tests/unit/middleware.test.ts` guards that duplication against `buildInitialConsent`
-for every 2-letter country code.
+The per-visitor correction runs on the one lane a shared cache can't poison: after
+hydration, `visitor-consent.ts` calls the `resolveVisitorConsent` server function once
+per session (`private, no-store`; cached in `sessionStorage` as `codefast-ui-region`),
+and `<ConsentGate />` renders the region-correct UI and pushes the granted regional
+default to gtag for undecided opt-out visitors. The resolver reads the geo header on the
+server, reuses `buildInitialConsent` directly — no duplicated country sets — and fails
+closed to the strictest default when the header is absent (a host without geo), when the
+request fails, or before it resolves. There is no edge middleware, no consent cookie,
+and no `window.__INITIAL_CONSENT__`; the trade is one round trip before the consent UI
+appears (and before an undecided US visitor's first hits upgrade from cookieless pings
+to full measurement).
 
 # Demo files
 
