@@ -13,6 +13,15 @@ CodeFast is a **pnpm workspaces + Turborepo** monorepo (Node ≥ 24, pnpm 11; `@
 - **Bundling is `tsdown`** (Rolldown-based), configured per package via `tsdown.config.ts`.
 - **`exactOptionalPropertyTypes` is enabled** — an optional prop that may receive an explicit value must be typed `?: T | undefined`.
 
+## Fast-moving dependencies (verify, don't recall)
+
+`react`, `@tanstack/react-start`/`@tanstack/react-router`, `zod`, and `typescript` are this repo's backbone and are kept pinned at or near latest (see `pnpm-workspace.yaml` catalog) — an LLM's trained knowledge of their APIs can be stale, especially for TanStack Start, which is still pre-1.0 and changes fast. Before asserting an API is current/deprecated/missing, or that a pattern is outdated, verify against the actually-installed version instead of relying on trained knowledge:
+
+- Read the pinned version from `pnpm-workspace.yaml`, not from memory.
+- `npm view <pkg> version` to check the pin against the latest published release.
+- Read the real `.d.ts`/source under `node_modules/.pnpm/<pkg>@<version>/...` to confirm an API's current shape.
+- Search changelogs/migration guides only when the installed source doesn't clarify _why_ a pattern exists, not just _whether_ an API exists.
+
 ## Commands
 
 Build packages before running apps, type-checking, or type-aware lint — `@codefast/ui` consumes other packages' built `dist/` and Oxlint's type-aware rules need them.

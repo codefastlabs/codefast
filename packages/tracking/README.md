@@ -11,15 +11,19 @@ multi-destination fan-out, region-based consent).
 
 Early scaffold. `core`, `client`, `server`, and `react` (headless consent) implement the
 shapes described in the spec. `createVercelAnalyticsDestination`,
-`createGoogleAnalyticsDestination`, and `createGa4MeasurementProtocolDestination` are
-implemented; PostHog is not built yet — use `createHttpDestination` or implement the
-`Destination` interface directly.
+`createGoogleAnalyticsDestination`, `createGoogleTagManagerDestination`, and
+`createGa4MeasurementProtocolDestination` are implemented; PostHog is not built yet — use
+`createHttpDestination` or implement the `Destination` interface directly.
 
 ## Quick start
 
 ```ts
 import { defineEventCatalog } from "@codefast/tracking";
-import { createClientTracker, createLocalStorageQueueStorage } from "@codefast/tracking/client";
+import {
+  createClientTracker,
+  createCookieAnonymousId,
+  createLocalStorageQueueStorage,
+} from "@codefast/tracking/client";
 import { createHttpDestination } from "@codefast/tracking/destinations";
 import { z } from "zod";
 
@@ -28,8 +32,12 @@ export const catalog = defineEventCatalog({
   order_completed: { owner: "server", schema: z.object({ orderId: z.string(), amount: z.number() }) },
 });
 
+const anonymousId = createCookieAnonymousId({ cookieName: "app-anonymous-id" });
+
 const tracker = createClientTracker({
-  anonymousId: crypto.randomUUID(),
+  // A getOrCreate callback, not a plain string — invoked only once an event is actually
+  // allowed to send, so the id is never minted as an import-time side effect.
+  anonymousId: anonymousId.getOrCreate,
   catalog,
   destinations: [createHttpDestination({ name: "internal", endpoint: "/api/events" })],
   storage: createLocalStorageQueueStorage("tracking-queue"),
@@ -50,6 +58,37 @@ const serverTracker = createServerTracker({
 });
 
 await serverTracker.track("order_completed", { orderId: "o1", amount: 10 }, { anonymousId, userId });
+```
+
+## Durable anonymous id ("client mints, server persists")
+
+Safari ITP caps `document.cookie`-written cookies at 7 days, so a purely client-written
+anonymous id silently churns weekly there. `createServerPersistedAnonymousId` keeps the
+consent-first client-side minting and delegates the durable write to your server, which
+re-issues the cookie via `Set-Cookie` (and rolls its expiry forward on every visit). The
+server helpers are framework-agnostic strings — wire them to a TanStack Start server
+function, a Next.js Route Handler, or anything that can set a response header. They throw
+on any non-UUID id, so the public persist endpoint can never echo attacker input into a
+header. The server persists and prolongs; it never mints — an unconditional server-set id
+would predate consent.
+
+```ts
+// server function / route handler
+import { buildAnonymousIdSetCookie, buildClearAnonymousIdSetCookie } from "@codefast/tracking/server";
+
+// TanStack Start: setResponseHeader("set-cookie", buildAnonymousIdSetCookie({ cookieName, id }))
+// Next.js:       new Response(null, { status: 204, headers: { "set-cookie": buildAnonymousIdSetCookie({ cookieName, id }) } })
+```
+
+```ts
+// client — drop-in for createCookieAnonymousId
+import { createServerPersistedAnonymousId } from "@codefast/tracking/client";
+
+const anonymousId = createServerPersistedAnonymousId({
+  cookieName: "app-anonymous-id",
+  persist: (id) => persistAnonymousIdCookie({ data: { id } }), // your server round-trip
+  clearOnServer: () => clearAnonymousIdCookie(), // consent-withdrawal half
+});
 ```
 
 ## Router page views + unload flush
@@ -85,13 +124,19 @@ default look without writing CSS, import the optional plain-CSS theme:
 
 Or style the parts yourself via `className`/`data-slot` attributes (`consent-banner`,
 `consent-title`, `consent-description`, `consent-actions`, `consent-action`,
-`consent-preferences`, `consent-category`, `consent-toggle`), e.g. Tailwind's
+`consent-preferences`, `consent-category`, `consent-category-checkbox`,
+`consent-toggle`), e.g. Tailwind's
 `**:data-[slot=consent-action]:rounded-md`. `data-state` on the root flips between
 `prompt` and `preferences`.
 
 ```tsx
-import { createLocalStorageConsentStorage } from "@codefast/tracking/client";
-import { updateGoogleConsent } from "@codefast/tracking/destinations";
+import {
+  createConsentWithdrawalHandler,
+  createIsTrackingAllowed,
+  createLocalStorageConsentStorage,
+  hasGlobalPrivacyControlSignal,
+} from "@codefast/tracking/client";
+import { clearGoogleAnalyticsCookies, loadGtagScript } from "@codefast/tracking/destinations";
 import {
   ConsentBanner,
   ConsentBannerAccept,
@@ -105,21 +150,41 @@ import {
   ConsentBannerTitle,
   ConsentToggle,
   useConsent,
+  useGoogleConsentSync,
 } from "@codefast/tracking/react";
 
 // Module scope — useConsent subscribes to the storage, so it must be a stable reference.
 const consentStorage = createLocalStorageConsentStorage("tracking-consent");
+const categories = ["analytics"] as const;
+const policyVersion = "2026-01";
+
+// getMode re-reads each call — typically from window.__INITIAL_CONSENT__ after the bootstrap.
+const isTrackingAllowed = createIsTrackingAllowed({
+  categories,
+  getMode: () => window.__INITIAL_CONSENT__?.mode ?? "opt-in",
+  hasGlobalPrivacyControlSignal,
+  policyVersion,
+  storage: consentStorage,
+});
+
+const onDecision = createConsentWithdrawalHandler({
+  clearAnonymousId: anonymousId.clear,
+  clearGoogleAnalyticsCookies,
+  clearTracker: () => tracker.clear(),
+});
 
 function ConsentGate({ mode }: { mode: "opt-in" | "opt-out" }) {
   const consent = useConsent({
-    categories: ["analytics"], // the purposes your prompt asks about — Accept grants exactly these
+    categories, // Accept grants exactly these — never unrequested purposes
     mode,
-    onDecision: (decision) => {
-      updateGoogleConsent(decision); // per-category Consent Mode v2 update
-      if (!decision.analytics) tracker.clear(); // stop tracking + drop the pending queue
-    },
-    policyVersion: "2026-01",
+    onDecision,
+    policyVersion,
     storage: consentStorage,
+  });
+
+  // Mount once on a page-wide surface so privacy-page / cross-tab decisions sync to gtag.
+  useGoogleConsentSync(consent, {
+    loadGtagScript: () => loadGtagScript({ gaMeasurementId: "G-XXXXXXX" }),
   });
 
   return mode === "opt-in" ? (
@@ -140,12 +205,12 @@ function ConsentGate({ mode }: { mode: "opt-in" | "opt-out" }) {
       </ConsentBannerActions>
     </ConsentBanner>
   ) : (
-    <ConsentToggle consent={consent} />
+    <ConsentToggle consent={consent} toggledCategories={["analytics"]} />
   );
 }
 ```
 
-The root gates itself on `consent.needsPrompt`; pass `open` to override — e.g. reopening
+The root gates itself on `consent.isPromptNeeded`; pass `open` to override — e.g. reopening
 the banner as a "Cookie settings" panel after a decision (GDPR expects withdrawing
 consent to be as easy as giving it).
 
@@ -158,3 +223,70 @@ issues the pre-tag default (it defines the gtag queueing stub itself), and
 `setGoogleAdsDataRedaction`/`setGoogleUrlPassthrough` cover the denied-ads flags. A GPC
 signal is honored as a do-not-sell-or-share opt-out: it forces `ads` denied without
 withdrawing first-party `analytics`.
+
+## TanStack Start wiring
+
+`apps/ui` (`src/features/tracking/`) is the reference consumer. The package helpers below
+cover the glue every Start app otherwise reimplements:
+
+1. **`buildInitialConsent({ countryCode, categories, hasGlobalPrivacyControlSignal? })`**
+   (`@codefast/tracking/server`) — region → mode → default decision for SSR shells and
+   edge-middleware cookie payloads. Export `EU_COUNTRY_CODES` /
+   `OPT_IN_EQUIVALENT_COUNTRY_CODES` when middleware must duplicate the map (Vercel
+   Routing Middleware cannot import this package).
+2. **`buildInitialConsentBootstrapScript({ cookieName, fallback })`**
+   (`@codefast/tracking/destinations`) — pre-hydration script that prefers the middleware
+   cookie over a baked fallback into `window.__INITIAL_CONSENT__`.
+3. **`createIsTrackingAllowed` / `createConsentWithdrawalHandler`**
+   (`@codefast/tracking/client`) — tracker gate + revoke clears (`tracker.clear`,
+   anonymous-id cookie, `_ga*` via `clearGoogleAnalyticsCookies`).
+4. **`useGoogleConsentSync`** (`@codefast/tracking/react`) — Consent Mode `update` +
+   optional idempotent gtag load, including cross-tab / privacy-page decisions.
+
+TanStack Start's `shellComponent` renders before root loaders resolve — read geo headers
+inside the SSR'd shell (or via `createIsomorphicFn`), not from root `loaderData`.
+
+## Google tag / GTM loaders (advanced Consent Mode)
+
+Prefer the pre-hydration bootstrap (not a post-hydration mount) so Consent Mode's default
+lands before any Google hit. Bootstraps use **advanced** Consent Mode: set the v2
+`default` from the stored decision (or region fallback), then **always** load gtag.js /
+gtm.js — even when storage is denied — so cookieless pings and consent modeling can run.
+This does **not** weaken the package's first-party consent gate (`isTrackingAllowed`,
+identifier minting, non-exempt destinations); only Google's tag script loading changes.
+
+```tsx
+import {
+  buildInitialConsentBootstrapScript,
+  loadGtagScript,
+} from "@codefast/tracking/destinations";
+import { GtagConsentBootstrap } from "@codefast/tracking/react";
+
+// Prefer middleware cookie over the SSR/prerender fallback.
+<script
+  dangerouslySetInnerHTML={{
+    __html: buildInitialConsentBootstrapScript({
+      cookieName: "app-initial-consent",
+      fallback: initialConsent,
+    }),
+  }}
+/>
+
+// In <head> / shell — same nonce on this host script and on loadGtagScript for CSP.
+<GtagConsentBootstrap
+  consentStorageKey="tracking-consent"
+  dataLayerName="dataLayer" // optional; custom names also set gtag.js's `l` param
+  debugMode={import.meta.env.DEV} // optional — gtag('config', id, { debug_mode: true })
+  defaultConsentExpression="window.__INITIAL_CONSENT__.defaultConsent"
+  gaMeasurementId="G-XXXXXXX"
+  nonce={cspNonce} // optional — stamped on the injected gtag.js tag too
+  policyVersion="2026-01"
+/>;
+```
+
+GTM variant: `buildGtmConsentBootstrapScript` / `loadGtmScript` /
+`createGoogleTagManagerDestination`. If GTM already loads GA4, do **not** also register
+`createGoogleAnalyticsDestination` or events will double-fire.
+
+SPA page views: leave `trackPageViews` off (default) and rely on GA4 Enhanced Measurement
+/ GTM history tags — enabling both double-counts.

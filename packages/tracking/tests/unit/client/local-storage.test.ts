@@ -10,6 +10,7 @@ const event: TrackedEvent = {
   owner: "client",
   props: {},
   timestamp: 0,
+  type: "track",
 };
 
 describe("createLocalStorageQueueStorage", () => {
@@ -30,6 +31,23 @@ describe("createLocalStorageQueueStorage", () => {
 
     localStorage.setItem("tracking-queue-corrupt", JSON.stringify({ not: "an array" }));
     expect(storage.load()).toEqual([]);
+  });
+
+  it("drops pre-migration/malformed records, keeping only valid envelopes", () => {
+    const storage = createLocalStorageQueueStorage("tracking-queue-malformed");
+
+    localStorage.setItem(
+      "tracking-queue-malformed",
+      JSON.stringify([
+        event,
+        { name: "button_clicked", props: {} }, // pre-migration shape, no `type`
+        // type presents but missing kind-specific fields
+        { anonymousId: "anon-1", eventId: "e2", timestamp: 0, type: "track" },
+        null,
+        "not an object",
+      ]),
+    );
+    expect(storage.load()).toEqual([event]);
   });
 
   describe("without a window (SSR)", () => {

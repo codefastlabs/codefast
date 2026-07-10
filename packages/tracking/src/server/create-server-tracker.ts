@@ -2,14 +2,24 @@ import type { z } from "zod";
 
 import type { Destination } from "#/core/destination";
 import type { EventCatalog, EventsOf } from "#/core/event-catalog";
-import { generateEventId } from "#/core/event-id";
-import type { TrackedEvent } from "#/core/tracked-event";
+import { deriveEventId, generateEventId } from "#/core/event-id";
+import type { TrackedEvent, TrackedEventBase } from "#/core/tracked-event";
+
+/** The per-kind payload of an envelope — the tracker fills in the shared base fields. */
+type EnvelopeSeed<Event = TrackedEvent> = Event extends TrackedEvent ? Omit<Event, keyof TrackedEventBase> : never;
 
 /**
  * @since 0.5.0-canary.4
  */
 export interface ServerTrackContext {
   anonymousId: string;
+  /**
+   * A stable identifier for the inbound request, unchanged across retries — when set,
+   * `eventId` is derived from it via {@link deriveEventId} instead of drawn at random, so
+   * a retried request re-sends the same `eventId` and a destination that dedupes on it
+   * treats the retry as a no-op. Omit to always mint a fresh, random `eventId`.
+   */
+  requestId?: string | undefined;
   userId?: string | undefined;
 }
 
@@ -20,9 +30,9 @@ export interface ServerTrackerOptions<Catalog extends EventCatalog> {
   catalog: Catalog;
   destinations: Array<Destination>;
   generateEventId?: () => string;
-  maxRetries?: number;
-  onDestinationError?: (error: unknown, destination: Destination, event: TrackedEvent) => void;
-  retryDelayMs?: number;
+  maxRetries?: number | undefined;
+  onDestinationError?: ((error: unknown, destination: Destination, event: TrackedEvent) => void) | undefined;
+  retryDelayMs?: number | undefined;
 }
 
 /**
@@ -84,19 +94,28 @@ export function createServerTracker<Catalog extends EventCatalog>(
   const onError =
     options.onDestinationError ??
     ((error: unknown, destination: Destination, event: TrackedEvent): void => {
-      console.error(`[tracking] destination "${destination.name}" failed for event "${event.name}"`, error);
+      const label = event.type === "track" ? event.name : event.type;
+
+      console.error(`[tracking] destination "${destination.name}" failed for event "${label}"`, error);
     });
 
-  async function sendEvent(name: string, props: Record<string, unknown>, context: ServerTrackContext): Promise<void> {
-    const event: TrackedEvent = {
+  async function sendEvent(seed: EnvelopeSeed, context: ServerTrackContext): Promise<void> {
+    // Deriving from the seed plus userId (not just requestId) keeps distinct event kinds —
+    // and distinct merge targets, e.g. two `alias` calls for the same previousId — in the
+    // same request from colliding, while an identical call on retry reproduces the same id.
+    const discriminant = context.userId === undefined ? seed : { ...seed, userId: context.userId };
+    const eventId =
+      context.requestId === undefined ? createId() : deriveEventId(context.requestId, JSON.stringify(discriminant));
+
+    // The seed/base split is total by construction — the assertion only rejoins the union.
+    const event = {
+      ...seed,
       anonymousId: context.anonymousId,
-      eventId: createId(),
-      name,
+      eventId,
       owner: "server",
-      props,
       timestamp: Date.now(),
       ...(context.userId === undefined ? {} : { userId: context.userId }),
-    };
+    } as TrackedEvent;
 
     await Promise.all(
       options.destinations.map(async (destination) =>
@@ -107,10 +126,11 @@ export function createServerTracker<Catalog extends EventCatalog>(
 
   return {
     async alias(previousId, userId, context) {
-      await sendEvent("$alias", { previousId, userId }, context);
+      // The alias's userId is the merge target — it wins over whatever the context carries.
+      await sendEvent({ previousId, type: "alias" }, { ...context, userId });
     },
     async group(groupId, traits, context) {
-      await sendEvent("$group", { groupId, ...traits }, context);
+      await sendEvent({ groupId, traits: traits ?? {}, type: "group" }, context);
     },
     async track(name, props, context) {
       // noUncheckedIndexedAccess types this as possibly undefined; the owner check also
@@ -122,7 +142,7 @@ export function createServerTracker<Catalog extends EventCatalog>(
       }
 
       definition.schema.parse(props);
-      await sendEvent(name as string, props as Record<string, unknown>, context);
+      await sendEvent({ name: name as string, props: props as Record<string, unknown>, type: "track" }, context);
     },
   };
 }

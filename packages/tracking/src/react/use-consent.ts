@@ -1,7 +1,7 @@
-import { useRef, useSyncExternalStore } from "react";
+import { useCallback, useMemo, useRef, useSyncExternalStore } from "react";
 
 import type { ConsentCategory, ConsentDecision, ConsentMode, ConsentStorage } from "#/core/consent";
-import { CONSENT_CATEGORIES, createConsentDecision, isConsentDecision, resolveDefaultConsent } from "#/core/consent";
+import { CONSENT_CATEGORIES, createConsentDecision, readStoredDecision, resolveDefaultConsent } from "#/core/consent";
 
 /**
  * @since 0.5.0-canary.4
@@ -12,10 +12,10 @@ export interface UseConsentOptions {
    * so an analytics-only banner can never grant ads consent it never asked for.
    * Defaults to `["analytics"]`.
    */
-  categories?: ReadonlyArray<ConsentCategory>;
-  hasGlobalPrivacyControlSignal?: boolean;
+  categories?: ReadonlyArray<ConsentCategory> | undefined;
+  hasGlobalPrivacyControlSignal?: boolean | undefined;
   mode: ConsentMode;
-  onDecision?: (decision: ConsentDecision) => void;
+  onDecision?: ((decision: ConsentDecision) => void) | undefined;
   policyVersion: string;
   /** Must be a stable reference (module-level or memoized) — a new object per render resubscribes every render. */
   storage: ConsentStorage;
@@ -31,10 +31,10 @@ export interface UseConsentResult {
   /** What tags must obey right now — the stored decision, or the region default before one exists. */
   effectiveConsent: ConsentDecision;
   grantAll: () => void;
+  /** True only for opt-in regions with no stored decision yet — drives whether to render the banner. */
+  isPromptNeeded: boolean;
   /** Effective `analytics` consent — gates this package's own tracker pipeline. */
   isTrackingAllowed: boolean;
-  /** True only for opt-in regions with no stored decision yet — drives whether to render the banner. */
-  needsPrompt: boolean;
   /** Persist a granular per-category choice, e.g. from a preferences panel. */
   save: (decision: ConsentDecision) => void;
 }
@@ -51,8 +51,9 @@ const DEFAULT_CATEGORIES: ReadonlyArray<ConsentCategory> = ["analytics"];
  * @since 0.5.0-canary.4
  */
 export function useConsent(options: UseConsentOptions): UseConsentResult {
-  const { storage } = options;
+  const { mode, onDecision, policyVersion, storage } = options;
   const categories = options.categories ?? DEFAULT_CATEGORIES;
+  const hasGlobalPrivacyControlSignal = options.hasGlobalPrivacyControlSignal ?? false;
 
   // useSyncExternalStore needs a referentially stable snapshot, but JSON-backed storages
   // parse a fresh record per load — so the last valid decision is cached by value.
@@ -61,51 +62,61 @@ export function useConsent(options: UseConsentOptions): UseConsentResult {
   const decision = useSyncExternalStore(
     storage.subscribe,
     (): ConsentDecision | undefined => {
-      const record = storage.load();
-
       // Only a well-formed decision under the current policy version counts — the store
       // is tamperable plain JSON, and a garbage value must re-prompt, not silently deny.
-      if (record?.policyVersion !== options.policyVersion || !isConsentDecision(record.decision)) {
+      const stored = readStoredDecision(storage, policyVersion);
+
+      if (stored === undefined) {
         cachedDecision.current = undefined;
 
         return undefined;
       }
 
-      const stored = record.decision;
       const cached = cachedDecision.current;
 
       if (cached !== undefined && CONSENT_CATEGORIES.every((category) => cached[category] === stored[category])) {
         return cached;
       }
 
-      // A normalized copy, so tampered extra keys never leak past the hook.
-      cachedDecision.current = createConsentDecision(CONSENT_CATEGORIES.filter((category) => stored[category]));
+      cachedDecision.current = stored;
 
       return cachedDecision.current;
     },
     () => undefined,
   );
 
-  function save(next: ConsentDecision): void {
-    // No local state — the save notifies the subscription, which re-renders with the new snapshot.
-    storage.save({ decision: next, policyVersion: options.policyVersion, timestamp: Date.now() });
-    options.onDecision?.(next);
-  }
-
-  const effectiveConsent =
-    decision ?? resolveDefaultConsent(options.mode, categories, options.hasGlobalPrivacyControlSignal ?? false);
-
-  return {
-    decision,
-    denyAll: () => {
-      save(createConsentDecision([]));
+  // Kept stable across renders (when their own inputs don't change) so a consumer that
+  // passes this hook's result down as a prop/effect-dep doesn't get a fresh identity —
+  // and therefore an unnecessary re-render/effect-rerun — every render.
+  const save = useCallback(
+    (next: ConsentDecision): void => {
+      // No local state — the save notifies the subscription, which re-renders with the new snapshot.
+      storage.save({ decision: next, policyVersion, timestamp: Date.now() });
+      onDecision?.(next);
     },
-    effectiveConsent,
-    grantAll: () => {
-      save(createConsentDecision(categories));
-    },
-    isTrackingAllowed: effectiveConsent.analytics,
-    needsPrompt: options.mode === "opt-in" && decision === undefined,
-    save,
-  };
+    [onDecision, policyVersion, storage],
+  );
+
+  const denyAll = useCallback(() => {
+    save(createConsentDecision([]));
+  }, [save]);
+
+  const grantAll = useCallback(() => {
+    save(createConsentDecision(categories));
+  }, [categories, save]);
+
+  const effectiveConsent = decision ?? resolveDefaultConsent(mode, categories, hasGlobalPrivacyControlSignal);
+
+  return useMemo(
+    () => ({
+      decision,
+      denyAll,
+      effectiveConsent,
+      grantAll,
+      isPromptNeeded: mode === "opt-in" && decision === undefined,
+      isTrackingAllowed: effectiveConsent.analytics,
+      save,
+    }),
+    [decision, denyAll, effectiveConsent, grantAll, mode, save],
+  );
 }

@@ -16,6 +16,7 @@ function buildEvent(name: string): TrackedEvent {
     owner: "client",
     props: {},
     timestamp: 0,
+    type: "track",
   };
 }
 
@@ -30,7 +31,7 @@ describe("EventQueue", () => {
 
     await queue.flush();
 
-    expect(destination.received.map((event) => event.name)).toEqual(["page_viewed"]);
+    expect(destination.received.map((event) => event.eventId)).toEqual(["page_viewed"]);
     expect(queue.size).toBe(0);
     expect(storage.load()).toHaveLength(0);
   });
@@ -43,7 +44,7 @@ describe("EventQueue", () => {
     queue.enqueue(buildEvent("b"));
     queue.enqueue(buildEvent("c"));
 
-    expect(storage.load().map((event) => event.name)).toEqual(["b", "c"]);
+    expect(storage.load().map((event) => event.eventId)).toEqual(["b", "c"]);
   });
 
   it("re-queues a failed event up to maxRetries, then drops it", async () => {

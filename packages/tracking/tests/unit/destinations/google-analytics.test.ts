@@ -1,7 +1,11 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import {
+  buildGtagConsentBootstrapScript,
+  clearGoogleAnalyticsCookies,
   createGoogleAnalyticsDestination,
+  ensureGtag,
+  loadGtagScript,
   setGoogleAdsDataRedaction,
   setGoogleConsentDefault,
   setGoogleUrlPassthrough,
@@ -36,6 +40,7 @@ describe("createGoogleAnalyticsDestination", () => {
       owner: "client",
       props: { count: 3, id: "cta", primary: true },
       timestamp: 0,
+      type: "track",
     });
 
     expect(gtag).toHaveBeenCalledWith("event", "button_clicked", { count: 3, id: "cta", primary: true });
@@ -51,6 +56,7 @@ describe("createGoogleAnalyticsDestination", () => {
       owner: "client",
       props: { items: ["a", "b"] },
       timestamp: 0,
+      type: "track",
     });
 
     expect(gtag).toHaveBeenCalledWith("event", "order_completed", { items: '["a","b"]' });
@@ -66,52 +72,55 @@ describe("createGoogleAnalyticsDestination", () => {
       owner: "client",
       props: { referrer: undefined, url: null },
       timestamp: 0,
+      type: "track",
     });
 
     expect(gtag).toHaveBeenCalledWith("event", "page_viewed", {});
   });
 
-  it("drops $page_viewed by default — gtag config + Enhanced Measurement already report page views", () => {
+  it("drops page envelopes by default — gtag config + Enhanced Measurement already report page views", () => {
     const destination = createGoogleAnalyticsDestination();
 
     void destination.send({
       anonymousId: "anon-1",
       eventId: "e4",
-      name: "$page_viewed",
+      name: "/pricing",
       owner: "client",
-      props: { href: "https://example.com/pricing", name: "/pricing" },
+      props: { href: "https://example.com/pricing" },
       timestamp: 0,
+      type: "page",
     });
 
     expect(gtag).not.toHaveBeenCalled();
   });
 
-  it("maps $page_viewed to page_view (extras only) when trackPageViews is enabled", () => {
+  it("maps page envelopes to page_view (extras only) when trackPageViews is enabled", () => {
     const destination = createGoogleAnalyticsDestination({ trackPageViews: true });
 
     void destination.send({
       anonymousId: "anon-1",
       eventId: "e5",
-      name: "$page_viewed",
+      name: "/pricing",
       owner: "client",
-      props: { href: "https://example.com/pricing", name: "/pricing", referrer: "/home" },
+      props: { href: "https://example.com/pricing", referrer: "/home" },
       timestamp: 0,
+      type: "page",
     });
 
     // gtag.js attaches page_location/page_title from the live document itself.
     expect(gtag).toHaveBeenCalledWith("event", "page_view", { referrer: "/home" });
   });
 
-  it("maps $identify to gtag('set', { user_id }) instead of an event", () => {
+  it("maps identify to gtag('set', { user_id }) instead of an event", () => {
     const destination = createGoogleAnalyticsDestination();
 
     void destination.send({
       anonymousId: "anon-1",
       eventId: "e6",
-      name: "$identify",
       owner: "client",
-      props: { plan: "pro" },
       timestamp: 0,
+      traits: { plan: "pro" },
+      type: "identify",
       userId: "user-1",
     });
 
@@ -119,19 +128,36 @@ describe("createGoogleAnalyticsDestination", () => {
     expect(gtag).not.toHaveBeenCalledWith("event", expect.anything(), expect.anything());
   });
 
-  it("maps $group to GA4's recommended join_group event with group_id", () => {
+  it("maps group to GA4's recommended join_group event with group_id", () => {
     const destination = createGoogleAnalyticsDestination();
 
     void destination.send({
       anonymousId: "anon-1",
       eventId: "e7",
-      name: "$group",
+      groupId: "acme",
       owner: "client",
-      props: { groupId: "acme", plan: "enterprise" },
       timestamp: 0,
+      traits: { plan: "enterprise" },
+      type: "group",
     });
 
     expect(gtag).toHaveBeenCalledWith("event", "join_group", { group_id: "acme", plan: "enterprise" });
+  });
+
+  it("drops alias — GA4 merges identity via user_id on later hits", () => {
+    const destination = createGoogleAnalyticsDestination();
+
+    void destination.send({
+      anonymousId: "anon-1",
+      eventId: "e10",
+      owner: "client",
+      previousId: "anon-0",
+      timestamp: 0,
+      type: "alias",
+      userId: "user-1",
+    });
+
+    expect(gtag).not.toHaveBeenCalled();
   });
 
   it("warns and drops event names GA4 would reject instead of sending them to nowhere", () => {
@@ -141,10 +167,11 @@ describe("createGoogleAnalyticsDestination", () => {
     void destination.send({
       anonymousId: "anon-1",
       eventId: "e8",
-      name: "$custom_thing",
+      name: "invalid-name",
       owner: "client",
       props: {},
       timestamp: 0,
+      type: "track",
     });
 
     expect(gtag).not.toHaveBeenCalled();
@@ -173,6 +200,7 @@ describe("createGoogleAnalyticsDestination", () => {
         owner: "client",
         props: {},
         timestamp: 0,
+        type: "track",
       });
     }).not.toThrow();
 
@@ -325,5 +353,261 @@ describe("Consent Mode privacy flags", () => {
     setGoogleUrlPassthrough(true);
 
     expect(gtag).toHaveBeenCalledWith("set", "url_passthrough", true);
+  });
+});
+
+describe("buildGtagConsentBootstrapScript", () => {
+  /** Executes the exact source string a consumer would inline into the page. */
+  function runScript(script: string): void {
+    // oxlint-disable-next-line no-implied-eval -- verifying the literal script text is valid, running JS, not eval'ing untrusted input
+    new Function(script)();
+  }
+
+  function consentDefaultParams(): Record<string, unknown> {
+    const calls = (window.dataLayer ?? []) as Array<ArrayLike<unknown>>;
+
+    return calls[0]?.[2] as Record<string, unknown>;
+  }
+
+  function gtagScriptElement(): HTMLScriptElement | null {
+    return document.querySelector('script[src^="https://www.googletagmanager.com/gtag/js"]');
+  }
+
+  afterEach(() => {
+    delete window.dataLayer;
+    delete window.gtag;
+    window.localStorage.clear();
+
+    for (const script of document.querySelectorAll('script[src^="https://www.googletagmanager.com/gtag/js"]')) {
+      script.remove();
+    }
+  });
+
+  it("throws when neither defaultConsent nor defaultConsentExpression is given", () => {
+    expect(() =>
+      buildGtagConsentBootstrapScript({ consentStorageKey: "k", gaMeasurementId: "G-1", policyVersion: "1" }),
+    ).toThrow(/requires defaultConsent or defaultConsentExpression/);
+  });
+
+  it("applies the literal defaultConsent and always loads gtag.js (advanced Consent Mode)", () => {
+    const script = buildGtagConsentBootstrapScript({
+      consentStorageKey: "k",
+      defaultConsent: { ads: false, analytics: true },
+      gaMeasurementId: "G-TEST123",
+      policyVersion: "1",
+    });
+
+    runScript(script);
+
+    expect(consentDefaultParams()).toEqual({
+      ad_personalization: "denied",
+      ad_storage: "denied",
+      ad_user_data: "denied",
+      analytics_storage: "granted",
+    });
+    expect(gtagScriptElement()?.src).toBe("https://www.googletagmanager.com/gtag/js?id=G-TEST123");
+  });
+
+  it("still loads gtag.js when the default denies analytics (advanced Consent Mode)", () => {
+    const script = buildGtagConsentBootstrapScript({
+      consentStorageKey: "k",
+      defaultConsent: { ads: false, analytics: false },
+      gaMeasurementId: "G-TEST123",
+      policyVersion: "1",
+    });
+
+    runScript(script);
+
+    expect(consentDefaultParams().analytics_storage).toBe("denied");
+    // consent default + js + config — tag loads for cookieless pings / modeling
+    expect(window.dataLayer).toHaveLength(3);
+    expect(gtagScriptElement()?.src).toBe("https://www.googletagmanager.com/gtag/js?id=G-TEST123");
+  });
+
+  it("prefers a stored decision over defaultConsent", () => {
+    window.localStorage.setItem(
+      "k",
+      JSON.stringify({ decision: { ads: false, analytics: true }, policyVersion: "1", timestamp: 0 }),
+    );
+
+    const script = buildGtagConsentBootstrapScript({
+      consentStorageKey: "k",
+      defaultConsent: { ads: false, analytics: false },
+      gaMeasurementId: "G-TEST123",
+      policyVersion: "1",
+    });
+
+    runScript(script);
+
+    expect(consentDefaultParams().analytics_storage).toBe("granted");
+    expect(gtagScriptElement()).not.toBeNull();
+  });
+
+  it("ignores a stored decision recorded under a superseded policy version", () => {
+    window.localStorage.setItem(
+      "k",
+      JSON.stringify({ decision: { ads: false, analytics: true }, policyVersion: "0", timestamp: 0 }),
+    );
+
+    const script = buildGtagConsentBootstrapScript({
+      consentStorageKey: "k",
+      defaultConsent: { ads: false, analytics: false },
+      gaMeasurementId: "G-TEST123",
+      policyVersion: "1",
+    });
+
+    runScript(script);
+
+    expect(consentDefaultParams().analytics_storage).toBe("denied");
+  });
+
+  it("evaluates defaultConsentExpression, taking precedence over defaultConsent", () => {
+    (window as unknown as { __fallback__: unknown }).__fallback__ = { ads: false, analytics: true };
+
+    const script = buildGtagConsentBootstrapScript({
+      consentStorageKey: "k",
+      defaultConsent: { ads: false, analytics: false },
+      defaultConsentExpression: "window.__fallback__",
+      gaMeasurementId: "G-TEST123",
+      policyVersion: "1",
+    });
+
+    runScript(script);
+
+    expect(consentDefaultParams().analytics_storage).toBe("granted");
+
+    Reflect.deleteProperty(window, "__fallback__");
+  });
+
+  it("queues onto a custom dataLayerName and passes l= to gtag.js", () => {
+    const script = buildGtagConsentBootstrapScript({
+      consentStorageKey: "k",
+      dataLayerName: "appDataLayer",
+      defaultConsent: { ads: false, analytics: true },
+      gaMeasurementId: "G-TEST123",
+      policyVersion: "1",
+    });
+
+    runScript(script);
+
+    const customLayer = (window as unknown as { appDataLayer: Array<ArrayLike<unknown>> }).appDataLayer;
+
+    expect(customLayer).toHaveLength(3);
+    expect(Array.from(customLayer[0]!)).toEqual([
+      "consent",
+      "default",
+      {
+        ad_personalization: "denied",
+        ad_storage: "denied",
+        ad_user_data: "denied",
+        analytics_storage: "granted",
+      },
+    ]);
+    expect(gtagScriptElement()?.src).toContain("l=appDataLayer");
+
+    Reflect.deleteProperty(window, "appDataLayer");
+  });
+
+  it("sets nonce on the injected gtag.js script when provided", () => {
+    const script = buildGtagConsentBootstrapScript({
+      consentStorageKey: "k",
+      defaultConsent: { ads: false, analytics: true },
+      gaMeasurementId: "G-TEST123",
+      nonce: "csp-nonce-1",
+      policyVersion: "1",
+    });
+
+    runScript(script);
+
+    expect(gtagScriptElement()?.nonce).toBe("csp-nonce-1");
+  });
+
+  it("passes debug_mode on config when debugMode is true", () => {
+    const script = buildGtagConsentBootstrapScript({
+      consentStorageKey: "k",
+      debugMode: true,
+      defaultConsent: { ads: false, analytics: true },
+      gaMeasurementId: "G-TEST123",
+      policyVersion: "1",
+    });
+
+    runScript(script);
+
+    const calls = (window.dataLayer ?? []) as Array<ArrayLike<unknown>>;
+    const configCall = Array.from(calls[2]!);
+
+    expect(configCall).toEqual(["config", "G-TEST123", { debug_mode: true }]);
+  });
+});
+
+describe("clearGoogleAnalyticsCookies", () => {
+  afterEach(() => {
+    for (const name of ["_ga", "_ga_TEST123", "other"]) {
+      document.cookie = `${name}=; path=/; max-age=0`;
+      document.cookie = `${name}=; path=/; max-age=0; domain=.${globalThis.location.hostname}`;
+    }
+  });
+
+  it("expires _ga and _ga_* cookies and leaves unrelated cookies alone", () => {
+    document.cookie = "_ga=GA1.1.1; path=/";
+    document.cookie = "_ga_TEST123=GS1.1.1; path=/";
+    document.cookie = "other=keep; path=/";
+
+    clearGoogleAnalyticsCookies();
+
+    expect(document.cookie.includes("_ga=")).toBe(false);
+    expect(document.cookie.includes("_ga_TEST123=")).toBe(false);
+    expect(document.cookie.includes("other=keep")).toBe(true);
+  });
+});
+
+describe("ensureGtag / loadGtagScript", () => {
+  afterEach(() => {
+    delete window.dataLayer;
+    delete window.gtag;
+    Reflect.deleteProperty(window, "appDataLayer");
+
+    for (const script of document.querySelectorAll('script[src^="https://www.googletagmanager.com/gtag/js"]')) {
+      script.remove();
+    }
+  });
+
+  it("ensureGtag creates the named dataLayer and a gtag stub that pushes onto it", () => {
+    const gtag = ensureGtag({ dataLayerName: "appDataLayer" });
+
+    expect(gtag).toBeTypeOf("function");
+    gtag?.("js", new Date());
+
+    const layer = (window as unknown as { appDataLayer: Array<ArrayLike<unknown>> }).appDataLayer;
+
+    expect(layer).toHaveLength(1);
+    expect(Array.from(layer[0]!)[0]).toBe("js");
+  });
+
+  it("loadGtagScript queues config, injects gtag.js with nonce, and enables debug_mode", () => {
+    loadGtagScript({
+      dataLayerName: "appDataLayer",
+      debugMode: true,
+      gaMeasurementId: "G-TEST123",
+      nonce: "csp-nonce-2",
+    });
+
+    const layer = (window as unknown as { appDataLayer: Array<ArrayLike<unknown>> }).appDataLayer;
+    const configCall = Array.from(layer[1]!);
+    const script = document.querySelector(
+      'script[src^="https://www.googletagmanager.com/gtag/js"]',
+    ) as HTMLScriptElement | null;
+
+    expect(configCall).toEqual(["config", "G-TEST123", { debug_mode: true }]);
+    expect(script?.src).toContain("id=G-TEST123");
+    expect(script?.src).toContain("l=appDataLayer");
+    expect(script?.nonce).toBe("csp-nonce-2");
+  });
+
+  it("loadGtagScript is idempotent — a second call does not append another script", () => {
+    loadGtagScript({ gaMeasurementId: "G-TEST123" });
+    loadGtagScript({ gaMeasurementId: "G-TEST123" });
+
+    expect(document.querySelectorAll('script[src^="https://www.googletagmanager.com/gtag/js"]')).toHaveLength(1);
   });
 });

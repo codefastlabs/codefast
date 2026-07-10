@@ -1,4 +1,5 @@
-import { readdirSync } from "node:fs";
+import { existsSync, readdirSync } from "node:fs";
+import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 import babel from "@rolldown/plugin-babel";
@@ -11,7 +12,7 @@ import { defineConfig } from "vite";
 
 // The `.ts` extension is required: Vite externalizes this import out of the bundled config,
 // so raw Node resolves it via package.json#imports — no extension probing, type-stripped.
-import { CACHED_ROUTE_PATTERNS, CONTENT_CACHE_CONTROL } from "#/lib/cache.ts";
+import { CONTENT_CACHE_CONTROL } from "#/lib/cache.ts";
 
 /**
  * The `public/` files excluded from `publicCacheRoutePatterns`, kept fresh on every crawl
@@ -30,6 +31,30 @@ function publicCacheRoutePatterns(): Array<string> {
   return readdirSync(fileURLToPath(new URL("./public", import.meta.url)), { withFileTypes: true })
     .filter((entry) => entry.isFile() && !PUBLIC_UNCACHED_FILES.has(entry.name))
     .map((entry) => `/${entry.name}`);
+}
+
+/**
+ * The static entry pages, as `autoStaticPathsDiscovery` will find them (every component
+ * route without path params). Listed here only as the `routeRules` header targets: a
+ * prerendered file bypasses the route's `headers()`, so its `Cache-Control` must come
+ * from Vercel's static routing config instead. Prerendering itself needs no list — the
+ * discovery merges these into `pages` automatically.
+ */
+const ENTRY_PAGE_PATHS = ["/", "/about", "/components", "/privacy"];
+
+/**
+ * The ISR `/components/<slug>` pages — one per `registry/<slug>/meta.ts`, mirroring
+ * `_core/components.ts`'s auto-discovery, since `autoStaticPathsDiscovery` skips
+ * param routes and link-crawling is off. Each entry opts out of prerendering (a page
+ * defaults to `enabled: true` — a static file would shadow the ISR server function on
+ * Vercel) and feeds the sitemap, alongside the auto-discovered static pages.
+ */
+function componentSlugPages(): Array<{ path: string; prerender: { enabled: boolean } }> {
+  const registryDir = fileURLToPath(new URL("./src/registry", import.meta.url));
+
+  return readdirSync(registryDir, { withFileTypes: true })
+    .filter((entry) => entry.isDirectory() && existsSync(path.join(registryDir, entry.name, "meta.ts")))
+    .map((entry) => ({ path: `/components/${entry.name}`, prerender: { enabled: false } }));
 }
 
 export default defineConfig(({ command }) => {
@@ -98,15 +123,22 @@ export default defineConfig(({ command }) => {
       tailwindcss(),
       tanstackStart({
         /**
-         * Prerenders every route reachable by crawling `<Link>`s from `/` — the gallery and
-         * sidebar link to every component page — shipping static HTML for SEO and CDN delivery.
-         * The built-in sitemap is generated from those same crawled pages into
-         * `public/sitemap.xml`. `host` must match `SITE_URL` in `src/lib/seo.ts`.
+         * Hybrid ISR (TanStack Start style): `autoStaticPathsDiscovery` prerenders the
+         * static entry pages for an instant, function-free first load; every
+         * `/components/$slug` page is server-rendered on demand and CDN-cached via its
+         * `headers()` (`Cache-Control` + `CDN-Cache-Control`, see `src/lib/cache.ts`). The
+         * split is per route because the two are mutually exclusive per route on Vercel —
+         * a prerendered file is served by `handle: filesystem` before the server function
+         * is ever reached. `crawlLinks` must stay off (it defaults on): crawling an entry
+         * page would discover and prerender every slug page, silently turning ISR back
+         * into full static. The sitemap is built from the discovered pages plus the
+         * declared slug pages. `host` must match `SITE_URL` in `src/lib/seo.ts`.
          */
         prerender: {
           enabled: true,
-          crawlLinks: true,
+          crawlLinks: false,
         },
+        pages: componentSlugPages(),
         sitemap: {
           enabled: true,
           host: "https://codefastlabs.com",
@@ -115,22 +147,14 @@ export default defineConfig(({ command }) => {
       nitro({
         preset: "vercel",
         /**
-         * Sets `Cache-Control` for every prerendered page and cacheable `public/` file.
-         *
-         * Vercel's filesystem layer serves prerendered HTML directly, bypassing the server
-         * function that a route's `headers()` would run in — so `routeRules` is the only hook
-         * the Vercel adapter writes into the deployment's header config, making it the sole
-         * path to a static file's deployed headers. (`**` is the rou3 wildcard for nested
-         * paths; the preset emits it as a Vercel regex.) The `.md`/`llms.txt` twins set their
-         * own `Cache-Control` in their handler instead, since they're never prerendered.
-         *
-         * `/__tsr/staticServerFnCache/**` covers the build-time output of static server
-         * functions — the prerendered Shiki highlights. Vercel defaults it to
-         * `max-age=0, must-revalidate`; keyed by function id and params rather than content,
-         * it can't be `immutable`, so it shares the pages' freshness policy instead.
+         * Sets `Cache-Control` for every static file: the prerendered entry pages and the
+         * cacheable `public/` files. Static files bypass the server, so `routeRules` (baked
+         * into Vercel's static routing config) is the only path to their deployed headers.
+         * The ISR slug pages are not here — they are live renders, and the route's
+         * `headers()` is their canonical policy.
          */
         routeRules: Object.fromEntries(
-          [...CACHED_ROUTE_PATTERNS, ...publicCacheRoutePatterns()].map((pattern) => [
+          [...ENTRY_PAGE_PATHS, ...publicCacheRoutePatterns()].map((pattern) => [
             pattern,
             { headers: { "cache-control": CONTENT_CACHE_CONTROL } },
           ]),

@@ -9,7 +9,7 @@ export type ConsentRegion = "eu" | "other" | "us" | "vn";
 export type ConsentMode = "opt-in" | "opt-out";
 
 /**
- * GDPR (EU) and Nghị định 13/2023 (VN) require explicit opt-in before any non-essential
+ * GDPR (EU) and the PDPL — Luật 91/2025/QH15 (VN) — require explicit opt-in before any non-essential
  * tracking; CCPA/CPRA (US) defaults to opt-out instead. There is no single global default
  * that satisfies both, so the mode is resolved per region.
  *
@@ -102,7 +102,17 @@ export function resolveDefaultConsent(
 }
 
 /**
- * NĐ 13/2023 and GDPR both expect a record of *when* and *under what policy* consent
+ * Region-resolved consent defaults for first paint — embed into the document (e.g. via a
+ * middleware cookie + inline bootstrap) so the client never re-guesses the mode.
+ */
+export interface InitialConsent {
+  defaultConsent: ConsentDecision;
+  mode: ConsentMode;
+  region: ConsentRegion;
+}
+
+/**
+ * Vietnam's PDPL and GDPR both expect a record of *when* and *under what policy* consent
  * was given, not just per-category flags — `policyVersion` lets a later policy change
  * invalidate stale consent.
  *
@@ -129,4 +139,40 @@ export interface ConsentStorage {
    * is what drives `useConsent`'s external-store subscription. Returns an unsubscribe.
    */
   subscribe: (listener: () => void) => () => void;
+}
+
+/**
+ * The stored decision if one exists under the current `policyVersion`, normalized to drop
+ * any tampered extra keys — `undefined` if there is none yet, the record is malformed, or
+ * it was recorded under a superseded policy version.
+ */
+export function readStoredDecision(storage: ConsentStorage, policyVersion: string): ConsentDecision | undefined {
+  const record = storage.load();
+
+  if (record?.policyVersion !== policyVersion || !isConsentDecision(record.decision)) {
+    return undefined;
+  }
+
+  const stored = record.decision;
+
+  return createConsentDecision(CONSENT_CATEGORIES.filter((category) => stored[category]));
+}
+
+/**
+ * The consent a tracker should honor right now: the stored decision if one exists, else
+ * the region default — the same rule `useConsent` applies to its `effectiveConsent`, so a
+ * non-React gate (e.g. a tracker's `isTrackingAllowed` option) doesn't have to reimplement
+ * "read storage, validate the policy version, fall back to `resolveDefaultConsent`" itself.
+ */
+export function resolveEffectiveConsent(
+  storage: ConsentStorage,
+  policyVersion: string,
+  requestedCategories: ReadonlyArray<ConsentCategory>,
+  mode: ConsentMode,
+  hasGlobalPrivacyControlSignal: boolean,
+): ConsentDecision {
+  return (
+    readStoredDecision(storage, policyVersion) ??
+    resolveDefaultConsent(mode, requestedCategories, hasGlobalPrivacyControlSignal)
+  );
 }

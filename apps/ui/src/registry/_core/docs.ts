@@ -1,4 +1,3 @@
-import type { HighlightedSource } from "#/lib/highlight";
 /**
  * Lazy rich-doc registry for the detail page (`/components/$slug`), keyed by slug.
  * Auto-discovered from `registry/<slug>/doc.ts`; lazy, so importing this is ~free.
@@ -6,6 +5,7 @@ import type { HighlightedSource } from "#/lib/highlight";
  * export a `ComponentDoc` from `doc.ts` pointing at example files via `docSource`.
  */
 import { rememberExampleComponent } from "#/registry/_core/examples";
+import type { HighlightedSource } from "#/registry/_core/highlight";
 import { getHighlightedSources } from "#/registry/_core/highlight-source";
 import type { ComponentDoc, ResolvedComponentDoc, ResolvedDocExample, SourceRef } from "#/registry/_core/types";
 

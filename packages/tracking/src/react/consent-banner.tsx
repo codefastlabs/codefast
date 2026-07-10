@@ -2,7 +2,6 @@ import type { ComponentProps, Dispatch, ReactNode, SetStateAction } from "react"
 import { createContext, useContext, useEffect, useState } from "react";
 
 import type { ConsentCategory, ConsentDecision } from "#/core/consent";
-import { CONSENT_CATEGORIES } from "#/core/consent";
 import type { UseConsentResult } from "#/react/use-consent";
 
 interface ConsentBannerContextValue {
@@ -29,16 +28,16 @@ function useConsentBannerContext(part: string): ConsentBannerContextValue {
  */
 export interface ConsentBannerProps extends ComponentProps<"section"> {
   consent: UseConsentResult;
-  /** Overrides the default `needsPrompt` gating — e.g. to reopen the banner as a settings panel. */
+  /** Overrides the default `isPromptNeeded` gating — e.g. to reopen the banner as a settings panel. */
   open?: boolean | undefined;
 }
 
 /**
- * Non-blocking opt-in prompt for GDPR/NĐ 13 regions, as composable parts — the root owns
+ * Non-blocking opt-in prompt for GDPR/PDPL (VN) regions, as composable parts — the root owns
  * the visibility gating and the preferences-layer state; the `Accept`/`Reject`/`Customize`/
  * `Save` parts wire their own clicks to the consent hook, so any markup (including a
  * design system's button styles via `className`) slots in. Renders nothing once a decision
- * exists or the region defaults to opt-out (`consent.needsPrompt`), unless `open` says
+ * exists or the region defaults to opt-out (`consent.isPromptNeeded`), unless `open` says
  * otherwise. Rendered as a labeled region, not a `<dialog>`: an open non-modal dialog
  * neither traps focus nor blocks the page, so the dialog semantics would over-promise.
  * Unstyled by default — style via `className`/`data-slot` selectors, or import the
@@ -50,7 +49,7 @@ export interface ConsentBannerProps extends ComponentProps<"section"> {
 export function ConsentBanner({ children, consent, open, ...props }: ConsentBannerProps): ReactNode {
   const [pending, setPending] = useState<ConsentDecision | undefined>(undefined);
 
-  const isVisible = open ?? consent.needsPrompt;
+  const isVisible = open ?? consent.isPromptNeeded;
 
   // Closing must reset the layer — a reopened banner starts at the prompt, not mid-preferences.
   useEffect(() => {
@@ -300,15 +299,31 @@ export function ConsentBannerSave({ onClick, ...props }: ConsentBannerSaveProps)
  * @since 0.5.0-canary.4
  */
 export interface ConsentToggleProps extends Omit<ComponentProps<"button">, "children" | "onClick" | "type"> {
-  allowLabel?: string;
+  /**
+   * Label shown while the scoped categories are denied — clicking grants them. Defaults
+   * to "Allow tracking".
+   */
+  allowLabel?: string | undefined;
   consent: UseConsentResult;
-  denyLabel?: string;
+  /**
+   * Label shown while any scoped category is granted — clicking denies them. Defaults to
+   * CCPA/CPRA "Do Not Sell or Share My Personal Information".
+   */
+  denyLabel?: string | undefined;
+  /**
+   * Purposes this control flips. Defaults to `["ads"]` — CCPA/CPRA "Do Not Sell or Share"
+   * mirrors GPC (ads denied, first-party analytics left alone). Pass `["analytics"]` (or
+   * both) for a broader opt-out. Distinct from `useConsent`'s `categories` (what the
+   * prompt asks about / `grantAll` grants).
+   */
+  toggledCategories?: ReadonlyArray<ConsentCategory> | undefined;
 }
 
 /**
  * Always-visible control for opt-out regions — CCPA/CPRA requires a persistent
  * "Do Not Sell or Share My Personal Information" mechanism, not just a one-time prompt.
- * Flips between denying everything and re-granting the app's requested categories.
+ * By default it only flips `ads` (same scope as a GPC signal); pass `toggledCategories`
+ * to include analytics or both.
  *
  * @since 0.5.0-canary.4
  */
@@ -316,19 +331,28 @@ export function ConsentToggle({
   allowLabel = "Allow tracking",
   consent,
   denyLabel = "Do Not Sell or Share My Personal Information",
+  toggledCategories = ["ads"],
   ...props
 }: ConsentToggleProps): ReactNode {
-  const anyAllowed = CONSENT_CATEGORIES.some((category) => consent.effectiveConsent[category]);
+  const isAnyCategoryGranted = toggledCategories.some((category) => consent.effectiveConsent[category]);
 
   return (
     <button
       data-slot="consent-toggle"
       {...props}
-      // the toggle owns its click — flipping the stored decision is its whole purpose
-      onClick={anyAllowed ? consent.denyAll : consent.grantAll}
+      // the toggle owns its click — flipping the scoped categories is its whole purpose
+      onClick={() => {
+        const next = { ...consent.effectiveConsent };
+
+        for (const category of toggledCategories) {
+          next[category] = !isAnyCategoryGranted;
+        }
+
+        consent.save(next);
+      }}
       type="button"
     >
-      {anyAllowed ? denyLabel : allowLabel}
+      {isAnyCategoryGranted ? denyLabel : allowLabel}
     </button>
   );
 }

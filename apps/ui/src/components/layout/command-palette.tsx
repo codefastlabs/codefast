@@ -13,7 +13,8 @@ import { useNavigate } from "@tanstack/react-router";
 import { SearchIcon } from "lucide-react";
 import { useCallback, useEffect, useEffectEvent, useRef, useState, useSyncExternalStore } from "react";
 
-import { NewBadge } from "#/components/showcase/new-badge";
+import { NewBadge } from "#/components/shared/new-badge";
+import { getTracker } from "#/features/tracking/lib/tracking";
 import {
   getCommandPaletteAriaKeyshortcuts,
   getCommandPaletteKeyboardAction,
@@ -21,7 +22,6 @@ import {
 } from "#/lib/command-palette-keyboard";
 import type { PrimaryNavPath } from "#/lib/nav-links";
 import { PRIMARY_NAV } from "#/lib/nav-links";
-import { getTracker } from "#/lib/tracking";
 import { COMPONENTS } from "#/registry/_core/components";
 
 /** Debounce before tracking a search query — avoids firing `search_query` per keystroke. */

@@ -1,18 +1,18 @@
 import { createFileRoute, notFound } from "@tanstack/react-router";
 
-import { fetchDetail } from "#/components/detail/detail-bodies";
-import { DetailNotFound } from "#/components/detail/detail-not-found";
-import { DetailPage } from "#/components/detail/detail-page";
-import { CONTENT_CACHE_CONTROL } from "#/lib/cache";
+import { fetchDetail } from "#/features/components-catalog/components/detail/detail-bodies";
+import { DetailNotFound } from "#/features/components-catalog/components/detail/detail-not-found";
+import { DetailPage } from "#/features/components-catalog/components/detail/detail-page";
+import { CONTENT_CACHE_HEADERS } from "#/lib/cache";
 import { SITE_OG_IMAGE, absoluteUrl, canonicalHead, jsonLdScript } from "#/lib/seo";
 import { COMPONENT_BY_SLUG } from "#/registry/_core/components";
 
 export const Route = createFileRoute("/components/$slug")({
-  /**
-   * Declares this route's caching policy for dev and any non-prerendered render. Has no
-   * effect once prerendered for Vercel, where `routeRules` in `vite.config.ts` applies instead.
-   */
-  headers: () => ({ "Cache-Control": CONTENT_CACHE_CONTROL }),
+  // ISR: this is a live render the CDN caches — both headers required (see lib/cache.ts).
+  headers: () => ({ ...CONTENT_CACHE_HEADERS }),
+  // The client tier of the ISR stack: detail data changes only on redeploy, so revisits
+  // and intent-preloads within the hour reuse the router cache instead of re-running the loader.
+  staleTime: 60 * 60_000,
   head: ({ params }: { params: { slug: string } }) => {
     const component = COMPONENT_BY_SLUG.get(params.slug);
     const url = absoluteUrl(`/components/${params.slug}`);

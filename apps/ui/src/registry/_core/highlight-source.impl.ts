@@ -8,7 +8,7 @@ import type { HighlighterCore } from "shiki/core";
 import { createHighlighterCore } from "shiki/core";
 import { createJavaScriptRegexEngine } from "shiki/engine/javascript";
 
-import type { HighlightedSource } from "#/lib/highlight";
+import type { HighlightedSource } from "#/registry/_core/highlight";
 import type { SourceRef } from "#/registry/_core/types";
 
 /** Raw-text loaders for every highlightable registry file, keyed by `SourceRef`. */

@@ -8,7 +8,7 @@ export function createRecordingDestination(name = "fake"): Destination & { recei
   return {
     name,
     received,
-    send(event) {
+    async send(event) {
       received.push(event);
     },
   };
@@ -21,7 +21,7 @@ export function createFailingDestination(
   return {
     attempts: 0,
     name,
-    send() {
+    async send() {
       this.attempts += 1;
 
       if (this.attempts <= failuresBeforeSuccess) {

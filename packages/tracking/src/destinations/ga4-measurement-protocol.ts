@@ -1,40 +1,12 @@
+import { readCookieValue } from "#/core/cookie";
 import type { Destination } from "#/core/destination";
+import type { TrackedEvent } from "#/core/tracked-event";
+import { assertNever } from "#/core/tracked-event";
+import { warnUnlessGa4EventName } from "#/destinations/google-consent";
+import type { FlatPropertyValue } from "#/destinations/shared";
+import { flattenEventProps, toJoinGroupPayload } from "#/destinations/shared";
 
-type MeasurementProtocolParamValue = boolean | number | string;
-
-/**
- * Measurement Protocol event params must be flat string/number/boolean — stringify
- * anything else instead of letting GA4 silently drop it.
- */
-function toMeasurementProtocolParams(props: Record<string, unknown>): Record<string, MeasurementProtocolParamValue> {
-  const result: Record<string, MeasurementProtocolParamValue> = {};
-
-  for (const [key, value] of Object.entries(props)) {
-    if (typeof value === "string" || typeof value === "number" || typeof value === "boolean") {
-      result[key] = value;
-    } else if (value !== undefined && value !== null) {
-      result[key] = JSON.stringify(value);
-    }
-  }
-
-  return result;
-}
-
-function readCookie(cookieHeader: string | undefined, cookieName: string): string | undefined {
-  if (!cookieHeader) {
-    return undefined;
-  }
-
-  for (const part of cookieHeader.split(";")) {
-    const separatorIndex = part.indexOf("=");
-
-    if (separatorIndex !== -1 && part.slice(0, separatorIndex).trim() === cookieName) {
-      return part.slice(separatorIndex + 1).trim();
-    }
-  }
-
-  return undefined;
-}
+type MeasurementProtocolParamValue = FlatPropertyValue;
 
 /**
  * Reads gtag.js's own client ID from a request Cookie header — `_ga=GA1.1.123.456` →
@@ -45,7 +17,7 @@ function readCookie(cookieHeader: string | undefined, cookieName: string): strin
  * @since 0.5.0-canary.4
  */
 export function extractGa4ClientId(cookieHeader: string | undefined): string | undefined {
-  const value = readCookie(cookieHeader, "_ga");
+  const value = readCookieValue(cookieHeader, "_ga");
 
   if (!value) {
     return undefined;
@@ -65,7 +37,7 @@ export function extractGa4ClientId(cookieHeader: string | undefined): string | u
  * @since 0.5.0-canary.4
  */
 export function extractGa4SessionId(cookieHeader: string | undefined, measurementId: string): string | undefined {
-  const value = readCookie(cookieHeader, `_ga_${measurementId.replace(/^G-/, "")}`);
+  const value = readCookieValue(cookieHeader, `_ga_${measurementId.replace(/^G-/, "")}`);
 
   if (!value) {
     return undefined;
@@ -91,9 +63,9 @@ export interface Ga4MeasurementProtocolDestinationOptions {
    */
   clientId?: string | undefined;
   /** Routes to GA4's `/debug/mp/collect` validation endpoint — hits are validated but never recorded. */
-  debug?: boolean;
+  debug?: boolean | undefined;
   measurementId: string;
-  name?: string;
+  name?: string | undefined;
   /**
    * Current GA4 session for this visitor (see `extractGa4SessionId`). Without a
    * `session_id`, GA4 accepts the event but leaves it out of session-scoped and realtime
@@ -122,15 +94,20 @@ export function createGa4MeasurementProtocolDestination(
   return {
     name,
     async send(event) {
-      // GA4 has no alias concept — identity merge happens via user_id on later events.
-      if (event.name === "$alias") {
+      const translated = toMeasurementProtocolEvent(event);
+
+      // No GA4 equivalent (alias merges via user_id; identify only carries identity).
+      if (translated === undefined) {
         return;
       }
 
-      // join_group is GA4's recommended-event equivalent of a group association.
-      const eventName = event.name === "$group" ? "join_group" : event.name;
-      const props = event.name === "$group" ? renameGroupIdProp(event.props) : event.props;
-      const params = toMeasurementProtocolParams(props);
+      const { name: eventName, params } = translated;
+
+      // Catalog track names still have to satisfy GA4's rules — MP accepts the HTTP
+      // request either way, but invalid names are dropped at processing with no signal.
+      if (event.type === "track" && !warnUnlessGa4EventName(name, eventName)) {
+        return;
+      }
 
       if (options.sessionId !== undefined && params.session_id === undefined) {
         params.session_id = options.sessionId;
@@ -159,8 +136,30 @@ export function createGa4MeasurementProtocolDestination(
   };
 }
 
-function renameGroupIdProp(props: Record<string, unknown>): Record<string, unknown> {
-  const { groupId, ...traits } = props;
+/** Maps each envelope kind onto GA4's event vocabulary; `undefined` means "no equivalent, skip". */
+function toMeasurementProtocolEvent(
+  event: TrackedEvent,
+): { name: string; params: Record<string, MeasurementProtocolParamValue> } | undefined {
+  switch (event.type) {
+    case "alias":
+    case "identify": {
+      return undefined;
+    }
 
-  return { group_id: groupId, ...traits };
+    case "group": {
+      return { name: "join_group", params: flattenEventProps(toJoinGroupPayload(event)) };
+    }
+
+    case "page": {
+      return { name: "page_view", params: flattenEventProps(event.props) };
+    }
+
+    case "track": {
+      return { name: event.name, params: flattenEventProps(event.props) };
+    }
+
+    default: {
+      assertNever(event);
+    }
+  }
 }

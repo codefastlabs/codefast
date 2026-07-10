@@ -66,6 +66,16 @@
       "types": "./dist/client/consent-storage.d.mts",
       "import": "./dist/client/consent-storage.mjs"
     },
+    "./client/consent-withdrawal": {
+      "source": "./src/client/consent-withdrawal.ts",
+      "types": "./dist/client/consent-withdrawal.d.mts",
+      "import": "./dist/client/consent-withdrawal.mjs"
+    },
+    "./client/cookie-anonymous-id": {
+      "source": "./src/client/cookie-anonymous-id.ts",
+      "types": "./dist/client/cookie-anonymous-id.d.mts",
+      "import": "./dist/client/cookie-anonymous-id.mjs"
+    },
     "./client/create-client-tracker": {
       "source": "./src/client/create-client-tracker.ts",
       "types": "./dist/client/create-client-tracker.d.mts",
@@ -75,6 +85,11 @@
       "source": "./src/client/gpc.ts",
       "types": "./dist/client/gpc.d.mts",
       "import": "./dist/client/gpc.mjs"
+    },
+    "./client/is-tracking-allowed": {
+      "source": "./src/client/is-tracking-allowed.ts",
+      "types": "./dist/client/is-tracking-allowed.d.mts",
+      "import": "./dist/client/is-tracking-allowed.mjs"
     },
     "./client/lifecycle": {
       "source": "./src/client/lifecycle.ts",
@@ -96,6 +111,11 @@
       "types": "./dist/client/router.d.mts",
       "import": "./dist/client/router.mjs"
     },
+    "./client/server-persisted-anonymous-id": {
+      "source": "./src/client/server-persisted-anonymous-id.ts",
+      "types": "./dist/client/server-persisted-anonymous-id.d.mts",
+      "import": "./dist/client/server-persisted-anonymous-id.mjs"
+    },
     "./core": {
       "source": "./src/core/index.ts",
       "types": "./dist/core/index.d.mts",
@@ -105,6 +125,11 @@
       "source": "./src/core/consent.ts",
       "types": "./dist/core/consent.d.mts",
       "import": "./dist/core/consent.mjs"
+    },
+    "./core/cookie": {
+      "source": "./src/core/cookie.ts",
+      "types": "./dist/core/cookie.d.mts",
+      "import": "./dist/core/cookie.mjs"
     },
     "./core/destination": {
       "source": "./src/core/destination.ts",
@@ -141,10 +166,30 @@
       "types": "./dist/destinations/google-analytics.d.mts",
       "import": "./dist/destinations/google-analytics.mjs"
     },
-    "./destinations/http-destination": {
-      "source": "./src/destinations/http-destination.ts",
-      "types": "./dist/destinations/http-destination.d.mts",
-      "import": "./dist/destinations/http-destination.mjs"
+    "./destinations/google-consent": {
+      "source": "./src/destinations/google-consent.ts",
+      "types": "./dist/destinations/google-consent.d.mts",
+      "import": "./dist/destinations/google-consent.mjs"
+    },
+    "./destinations/google-tag-manager": {
+      "source": "./src/destinations/google-tag-manager.ts",
+      "types": "./dist/destinations/google-tag-manager.d.mts",
+      "import": "./dist/destinations/google-tag-manager.mjs"
+    },
+    "./destinations/http": {
+      "source": "./src/destinations/http.ts",
+      "types": "./dist/destinations/http.d.mts",
+      "import": "./dist/destinations/http.mjs"
+    },
+    "./destinations/initial-consent-bootstrap": {
+      "source": "./src/destinations/initial-consent-bootstrap.ts",
+      "types": "./dist/destinations/initial-consent-bootstrap.d.mts",
+      "import": "./dist/destinations/initial-consent-bootstrap.mjs"
+    },
+    "./destinations/shared": {
+      "source": "./src/destinations/shared.ts",
+      "types": "./dist/destinations/shared.d.mts",
+      "import": "./dist/destinations/shared.mjs"
     },
     "./destinations/vercel-analytics": {
       "source": "./src/destinations/vercel-analytics.ts",
@@ -161,20 +206,40 @@
       "types": "./dist/react/consent-banner.d.mts",
       "import": "./dist/react/consent-banner.mjs"
     },
+    "./react/gtag-consent-bootstrap": {
+      "source": "./src/react/gtag-consent-bootstrap.tsx",
+      "types": "./dist/react/gtag-consent-bootstrap.d.mts",
+      "import": "./dist/react/gtag-consent-bootstrap.mjs"
+    },
     "./react/use-consent": {
       "source": "./src/react/use-consent.ts",
       "types": "./dist/react/use-consent.d.mts",
       "import": "./dist/react/use-consent.mjs"
+    },
+    "./react/use-google-consent-sync": {
+      "source": "./src/react/use-google-consent-sync.ts",
+      "types": "./dist/react/use-google-consent-sync.d.mts",
+      "import": "./dist/react/use-google-consent-sync.mjs"
     },
     "./server": {
       "source": "./src/server/index.ts",
       "types": "./dist/server/index.d.mts",
       "import": "./dist/server/index.mjs"
     },
+    "./server/anonymous-id-cookie": {
+      "source": "./src/server/anonymous-id-cookie.ts",
+      "types": "./dist/server/anonymous-id-cookie.d.mts",
+      "import": "./dist/server/anonymous-id-cookie.mjs"
+    },
     "./server/create-server-tracker": {
       "source": "./src/server/create-server-tracker.ts",
       "types": "./dist/server/create-server-tracker.d.mts",
       "import": "./dist/server/create-server-tracker.mjs"
+    },
+    "./server/initial-consent": {
+      "source": "./src/server/initial-consent.ts",
+      "types": "./dist/server/initial-consent.d.mts",
+      "import": "./dist/server/initial-consent.mjs"
     },
     "./server/region": {
       "source": "./src/server/region.ts",

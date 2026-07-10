@@ -2,8 +2,8 @@ import { ScrollArea } from "@codefast/ui/scroll-area";
 import { Separator } from "@codefast/ui/separator";
 import * as React from "react";
 
-import type { Translations } from "#/components/detail/language";
-import { useTranslation } from "#/components/detail/language-context";
+import type { Translations } from "#/features/components-catalog/components/detail/language";
+import { useTranslation } from "#/features/components-catalog/components/detail/language-context";
 
 const tags = Array.from({ length: 50 }).map((_, i, a) => `v1.2.0-beta.${a.length - i}`);
 

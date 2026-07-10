@@ -8,6 +8,39 @@
  * - **Root** (this module): isomorphic catalog types, `Destination`, consent helpers — safe to import from both client and server code.
  * - **`@codefast/tracking/client`**: `createClientTracker` — batching, offline queue, retry.
  * - **`@codefast/tracking/server`**: `createServerTracker`, region detection for consent.
- * - **`@codefast/tracking/destinations`**: `createHttpDestination` and the `Destination` building block.
+ * - **`@codefast/tracking/destinations`**: provider destinations (gtag, GTM, GA4 Measurement Protocol, Vercel, HTTP), script loaders, and the Consent Mode bootstrap builders.
  */
-export * from "#/core";
+export type {
+  AliasEvent,
+  ConsentCategory,
+  ConsentDecision,
+  ConsentMode,
+  ConsentRecord,
+  ConsentRegion,
+  ConsentStorage,
+  Destination,
+  EventCatalog,
+  EventDefinition,
+  EventsOf,
+  GroupEvent,
+  IdentifyEvent,
+  InitialConsent,
+  PageViewEvent,
+  TrackEvent,
+  TrackedEvent,
+  TrackedEventBase,
+} from "#/core";
+export {
+  assertNever,
+  CONSENT_CATEGORIES,
+  createConsentDecision,
+  defineEventCatalog,
+  deriveEventId,
+  generateEventId,
+  isConsentDecision,
+  isTrackedEvent,
+  readStoredDecision,
+  resolveConsentMode,
+  resolveDefaultConsent,
+  resolveEffectiveConsent,
+} from "#/core";

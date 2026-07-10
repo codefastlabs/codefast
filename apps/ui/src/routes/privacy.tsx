@@ -1,15 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-import { PrivacyChoices } from "#/components/privacy/privacy-choices";
-import { CONTENT_CACHE_CONTROL } from "#/lib/cache";
+import { PrivacyChoices } from "#/features/privacy/components/privacy-choices";
+import { CONTENT_CACHE_HEADERS } from "#/lib/cache";
 import { canonicalHead } from "#/lib/seo";
 
 export const Route = createFileRoute("/privacy")({
-  /**
-   * Declares this route's caching policy for dev and any non-prerendered render. Has no
-   * effect once prerendered for Vercel, where `routeRules` in `vite.config.ts` applies instead.
-   */
-  headers: () => ({ "Cache-Control": CONTENT_CACHE_CONTROL }),
+  // Effective in dev and any live render; once prerendered, `routeRules` in vite.config.ts applies instead.
+  headers: () => ({ ...CONTENT_CACHE_HEADERS }),
   head: () => {
     const seo = canonicalHead("/privacy");
 
@@ -48,8 +45,9 @@ function PrivacyPage() {
             the copied content or free-form text. GA4 runs only with your analytics consent.
           </li>
           <li>
-            <strong className="font-medium text-ui-fg">Vercel Analytics</strong> — cookieless, aggregated page-view
-            counts and web vitals.
+            <strong className="font-medium text-ui-fg">Vercel Analytics</strong> — cookieless, aggregated page-view and
+            interaction counts plus web vitals; it receives no identifier and runs independently of the consent choice
+            below.
           </li>
         </ul>
       </section>
@@ -66,7 +64,8 @@ function PrivacyPage() {
           </li>
           <li>
             <strong className="font-medium text-ui-fg">US &amp; elsewhere (opt-out)</strong> — analytics runs by
-            default; the &ldquo;Do Not Sell or Share My Personal Information&rdquo; link in the footer turns it off. A{" "}
+            default; the &ldquo;Turn off analytics&rdquo; link in the footer or the switch below turns it off. This site
+            never sells or shares personal information and runs no ads, so a{" "}
             <a
               className="text-ui-fg underline underline-offset-4 hover:text-ui-brand"
               href="https://globalprivacycontrol.org"
@@ -75,8 +74,8 @@ function PrivacyPage() {
             >
               Global Privacy Control
             </a>{" "}
-            signal is honored as a do-not-sell-or-share opt-out. This site never requests ads consent, so the ads
-            signals stay denied everywhere.
+            signal has nothing here to opt you out of — its status still shows under &ldquo;Your privacy choices&rdquo;
+            below, and the ads consent signals stay denied everywhere.
           </li>
         </ul>
       </section>
@@ -92,13 +91,16 @@ function PrivacyPage() {
           </li>
           <li>
             <code>codefast-ui-anon-id</code> (cookie, 1 year) — a random identifier used to correlate analytics events;
-            it maps to no account or personal profile.
+            created only once analytics is permitted, removed when you opt out, and mapped to no account or personal
+            profile.
           </li>
           <li>
-            <code>codefast-ui-initial-consent</code> (cookie, 24 hours) — the consent default resolved for your region.
+            <code>codefast-ui-region</code> (sessionStorage, cleared when the tab closes) — the consent default resolved
+            for your region, so it is looked up once per session instead of on every page.
           </li>
           <li>
-            Google&rsquo;s <code>_ga</code> cookies — set only after analytics consent is granted.
+            Google&rsquo;s <code>_ga</code> cookies — set only after analytics consent is granted, removed when you
+            withdraw it.
           </li>
         </ul>
       </section>
