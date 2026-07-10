@@ -1,9 +1,14 @@
 import { defineEventCatalog } from "@codefast/tracking";
 import type { ClientTracker } from "@codefast/tracking/client";
-import { createClientTracker, createCookieAnonymousId } from "@codefast/tracking/client";
+import { createClientTracker, createServerPersistedAnonymousId } from "@codefast/tracking/client";
 import { createGoogleAnalyticsDestination, createVercelAnalyticsDestination } from "@codefast/tracking/destinations";
 import { z } from "zod";
 
+import {
+  ANONYMOUS_ID_COOKIE_NAME,
+  clearAnonymousIdCookie,
+  persistAnonymousIdCookie,
+} from "#/features/tracking/lib/anonymous-id";
 import { isTrackingAllowed } from "#/features/tracking/lib/consent";
 
 /**
@@ -28,8 +33,14 @@ export const catalog = defineEventCatalog({
 });
 
 // A cookie (not `localStorage`-only) so a future server-owned event can read the same
-// ID and correlate to this visitor.
-const anonymousId = createCookieAnonymousId({ cookieName: "codefast-ui-anon-id" });
+// ID and correlate to this visitor. The client still mints it (lazily, post-consent);
+// the server functions re-issue it via `Set-Cookie` so it outlives Safari ITP's 7-day
+// cap on script-written cookies.
+const anonymousId = createServerPersistedAnonymousId({
+  clearOnServer: () => clearAnonymousIdCookie(),
+  cookieName: ANONYMOUS_ID_COOKIE_NAME,
+  persist: (id) => persistAnonymousIdCookie({ data: { id } }),
+});
 
 export function getOrCreateAnonymousId(): string {
   return anonymousId.getOrCreate();
