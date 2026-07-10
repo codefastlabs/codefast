@@ -105,7 +105,8 @@ export function useConsent(options: UseConsentOptions): UseConsentResult {
     saveDecision(createConsentDecision(requestedCategories));
   }, [requestedCategories, saveDecision]);
 
-  const effectiveConsent = decision ?? resolveDefaultConsent(mode, requestedCategories, hasGlobalPrivacyControlSignal);
+  const effectiveConsent =
+    decision ?? resolveDefaultConsent({ hasGlobalPrivacyControlSignal, mode, requestedCategories });
 
   return useMemo(
     () => ({

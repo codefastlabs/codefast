@@ -9,7 +9,7 @@ describe("createVercelAnalyticsDestination", () => {
     track.mockClear();
   });
 
-  it("forwards the event name and allowed-type props to Vercel's track()", async () => {
+  it("forwards the event name and allowed-type properties to Vercel's track()", async () => {
     const { createVercelAnalyticsDestination } = await import("#/destinations/vercel-analytics");
     const destination = createVercelAnalyticsDestination();
 
@@ -18,7 +18,7 @@ describe("createVercelAnalyticsDestination", () => {
       eventId: "e1",
       name: "button_clicked",
       owner: "client",
-      props: { count: 3, id: "cta", primary: true, url: null },
+      properties: { count: 3, id: "cta", primary: true, url: null },
       timestamp: 0,
       type: "track",
     });
@@ -26,7 +26,7 @@ describe("createVercelAnalyticsDestination", () => {
     expect(track).toHaveBeenCalledWith("button_clicked", { count: 3, id: "cta", primary: true, url: null });
   });
 
-  it("stringifies props that Vercel's track() can't accept (nested objects/arrays)", async () => {
+  it("stringifies properties that Vercel's track() can't accept (nested objects/arrays)", async () => {
     const { createVercelAnalyticsDestination } = await import("#/destinations/vercel-analytics");
     const destination = createVercelAnalyticsDestination();
 
@@ -35,7 +35,7 @@ describe("createVercelAnalyticsDestination", () => {
       eventId: "e2",
       name: "order_completed",
       owner: "client",
-      props: { items: ["a", "b"] },
+      properties: { items: ["a", "b"] },
       timestamp: 0,
       type: "track",
     });
@@ -43,7 +43,7 @@ describe("createVercelAnalyticsDestination", () => {
     expect(track).toHaveBeenCalledWith("order_completed", { items: '["a","b"]' });
   });
 
-  it("drops undefined props instead of forwarding them", async () => {
+  it("drops undefined properties instead of forwarding them", async () => {
     const { createVercelAnalyticsDestination } = await import("#/destinations/vercel-analytics");
     const destination = createVercelAnalyticsDestination();
 
@@ -52,7 +52,7 @@ describe("createVercelAnalyticsDestination", () => {
       eventId: "e3",
       name: "page_viewed",
       owner: "client",
-      props: { referrer: undefined },
+      properties: { referrer: undefined },
       timestamp: 0,
       type: "track",
     });
@@ -75,7 +75,7 @@ describe("createVercelAnalyticsDestination", () => {
       eventId: "e4",
       name: "/pricing",
       owner: "client",
-      props: { href: "https://x.test/pricing" },
+      properties: { href: "https://x.test/pricing" },
       timestamp: 0,
       type: "page",
     });
@@ -92,7 +92,7 @@ describe("createVercelAnalyticsDestination", () => {
       eventId: "e5",
       name: "/pricing",
       owner: "client",
-      props: { href: "https://x.test/pricing", referrer: "/home" },
+      properties: { href: "https://x.test/pricing", referrer: "/home" },
       timestamp: 0,
       type: "page",
     });

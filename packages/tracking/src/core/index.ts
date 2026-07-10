@@ -6,6 +6,8 @@ export type {
   ConsentRegion,
   ConsentStorage,
   InitialConsent,
+  ResolveDefaultConsentOptions,
+  ResolveEffectiveConsentOptions,
 } from "#/core/consent";
 export {
   CONSENT_CATEGORIES,
@@ -37,4 +39,4 @@ export type {
   TrackedEventBase,
   TrackedEventSeed,
 } from "#/core/tracked-event";
-export { assertNever, buildTrackedEvent, isTrackedEvent } from "#/core/tracked-event";
+export { buildTrackedEvent, isTrackedEvent } from "#/core/tracked-event";

@@ -26,13 +26,14 @@ export type {
   IdentifyEvent,
   InitialConsent,
   PageViewEvent,
+  ResolveDefaultConsentOptions,
+  ResolveEffectiveConsentOptions,
   TrackEvent,
   TrackedEvent,
   TrackedEventBase,
   TrackedEventSeed,
 } from "#/core";
 export {
-  assertNever,
   buildTrackedEvent,
   CONSENT_CATEGORIES,
   createConsentDecision,
@@ -42,6 +43,7 @@ export {
   isConsentDecision,
   isConsentRecord,
   isTrackedEvent,
+  readCookieValue,
   readStoredDecision,
   resolveConsentMode,
   resolveDefaultConsent,

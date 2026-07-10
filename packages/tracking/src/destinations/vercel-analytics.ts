@@ -50,14 +50,14 @@ export function createVercelAnalyticsDestination(options: VercelAnalyticsDestina
         case "page": {
           if (options.trackPageViews === true) {
             // Vercel attaches the page context itself.
-            track("page_view", flattenEventProps(omitHref(event.props), { allowNull: true }));
+            track("page_view", flattenEventProps(omitHref(event.properties), { allowNull: true }));
           }
 
           return;
         }
 
         case "track": {
-          track(event.name, flattenEventProps(event.props, { allowNull: true }));
+          track(event.name, flattenEventProps(event.properties, { allowNull: true }));
 
           return;
         }

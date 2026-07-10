@@ -32,6 +32,9 @@ interface QueuedEvent {
  * Client-side batching/offline queue: persists across reloads, caps its size
  * (drop-oldest), and retries a failed batch up to `maxRetries` times.
  *
+ * Package-private — owned by `createClientTracker`. Custom persistence uses
+ * {@link EventQueueStorage} via `ClientTrackerOptions.storage`.
+ *
  * @since 0.5.0-canary.4
  */
 export class EventQueue {

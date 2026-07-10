@@ -10,14 +10,14 @@ export interface TrackedEventBase {
 /** A catalog-defined custom event — the only kind that carries an app-chosen name. */
 export interface TrackEvent extends TrackedEventBase {
   name: string;
-  props: Record<string, unknown>;
+  properties: Record<string, unknown>;
   type: "track";
 }
 
 export interface PageViewEvent extends TrackedEventBase {
   /** Page name or path as given to `page()`. */
   name?: string | undefined;
-  props: Record<string, unknown>;
+  properties: Record<string, unknown>;
   type: "page";
 }
 
@@ -129,11 +129,11 @@ export function isTrackedEvent(value: unknown): value is TrackedEvent {
     }
 
     case "page": {
-      return (record.name === undefined || typeof record.name === "string") && isPlainObject(record.props);
+      return (record.name === undefined || typeof record.name === "string") && isPlainObject(record.properties);
     }
 
     case "track": {
-      return typeof record.name === "string" && isPlainObject(record.props);
+      return typeof record.name === "string" && isPlainObject(record.properties);
     }
 
     default: {

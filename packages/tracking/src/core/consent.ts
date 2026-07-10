@@ -84,6 +84,16 @@ export function isConsentRecord(value: unknown): value is ConsentRecord {
 }
 
 /**
+ * @since 0.5.0-canary.4
+ */
+export interface ResolveDefaultConsentOptions {
+  /** A "do not sell or share" opt-out — forces `ads` denied under opt-out regions. */
+  hasGlobalPrivacyControlSignal: boolean;
+  mode: ConsentMode;
+  requestedCategories: ReadonlyArray<ConsentCategory>;
+}
+
+/**
  * The effective consent before the visitor decides: opt-in regions start all-denied,
  * opt-out regions grant the categories the app asks for.
  *
@@ -93,11 +103,9 @@ export function isConsentRecord(value: unknown): value is ConsentRecord {
  *
  * @since 0.5.0-canary.4
  */
-export function resolveDefaultConsent(
-  mode: ConsentMode,
-  requestedCategories: ReadonlyArray<ConsentCategory>,
-  hasGlobalPrivacyControlSignal: boolean,
-): ConsentDecision {
+export function resolveDefaultConsent(options: ResolveDefaultConsentOptions): ConsentDecision {
+  const { hasGlobalPrivacyControlSignal, mode, requestedCategories } = options;
+
   if (mode === "opt-in") {
     return createConsentDecision([]);
   }
@@ -173,21 +181,26 @@ export function readStoredDecision(storage: ConsentStorage, policyVersion: strin
   return createConsentDecision(CONSENT_CATEGORIES.filter((category) => stored[category]));
 }
 
+export interface ResolveEffectiveConsentOptions {
+  /** A "do not sell or share" opt-out — forces `ads` denied under opt-out regions. */
+  hasGlobalPrivacyControlSignal: boolean;
+  mode: ConsentMode;
+  policyVersion: string;
+  requestedCategories: ReadonlyArray<ConsentCategory>;
+  storage: ConsentStorage;
+}
+
 /**
  * The consent a tracker should honor right now: the stored decision if one exists, else
  * the region default — the same rule `useConsent` applies to its `effectiveConsent`, so a
  * non-React gate (e.g. a tracker's `isAnalyticsAllowed` option) doesn't have to reimplement
  * "read storage, validate the policy version, fall back to `resolveDefaultConsent`" itself.
  */
-export function resolveEffectiveConsent(
-  storage: ConsentStorage,
-  policyVersion: string,
-  requestedCategories: ReadonlyArray<ConsentCategory>,
-  mode: ConsentMode,
-  hasGlobalPrivacyControlSignal: boolean,
-): ConsentDecision {
+export function resolveEffectiveConsent(options: ResolveEffectiveConsentOptions): ConsentDecision {
+  const { hasGlobalPrivacyControlSignal, mode, policyVersion, requestedCategories, storage } = options;
+
   return (
     readStoredDecision(storage, policyVersion) ??
-    resolveDefaultConsent(mode, requestedCategories, hasGlobalPrivacyControlSignal)
+    resolveDefaultConsent({ hasGlobalPrivacyControlSignal, mode, requestedCategories })
   );
 }

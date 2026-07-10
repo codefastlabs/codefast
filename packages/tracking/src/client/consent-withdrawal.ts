@@ -1,6 +1,6 @@
 import type { ConsentDecision } from "#/core/consent";
 
-export interface CreateConsentWithdrawalHandlerOptions {
+export interface ConsentWithdrawalHandlerOptions {
   /** Forget the cookie-backed visitor id when analytics is denied. */
   clearAnonymousId?: (() => void) | undefined;
   /** Expire Google's `_ga` / `_ga_*` cookies when analytics is denied. */
@@ -14,7 +14,7 @@ export interface CreateConsentWithdrawalHandlerOptions {
  * visitor denies (or withdraws) analytics. Grant paths are a no-op.
  */
 export function createConsentWithdrawalHandler(
-  options: CreateConsentWithdrawalHandlerOptions,
+  options: ConsentWithdrawalHandlerOptions,
 ): (decision: ConsentDecision) => void {
   const { clearAnonymousId, clearGoogleAnalyticsCookies, clearTracker } = options;
 

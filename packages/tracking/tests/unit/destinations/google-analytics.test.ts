@@ -30,7 +30,7 @@ describe("createGoogleAnalyticsDestination", () => {
     expect(createGoogleAnalyticsDestination().delivery).toBe("immediate");
   });
 
-  it("forwards the event name and allowed-type props to gtag('event', ...)", () => {
+  it("forwards the event name and allowed-type properties to gtag('event', ...)", () => {
     const destination = createGoogleAnalyticsDestination();
 
     void destination.send({
@@ -38,7 +38,7 @@ describe("createGoogleAnalyticsDestination", () => {
       eventId: "e1",
       name: "button_clicked",
       owner: "client",
-      props: { count: 3, id: "cta", primary: true },
+      properties: { count: 3, id: "cta", primary: true },
       timestamp: 0,
       type: "track",
     });
@@ -46,7 +46,7 @@ describe("createGoogleAnalyticsDestination", () => {
     expect(gtag).toHaveBeenCalledWith("event", "button_clicked", { count: 3, id: "cta", primary: true });
   });
 
-  it("stringifies props gtag.js can't accept (nested objects/arrays)", () => {
+  it("stringifies properties gtag.js can't accept (nested objects/arrays)", () => {
     const destination = createGoogleAnalyticsDestination();
 
     void destination.send({
@@ -54,7 +54,7 @@ describe("createGoogleAnalyticsDestination", () => {
       eventId: "e2",
       name: "order_completed",
       owner: "client",
-      props: { items: ["a", "b"] },
+      properties: { items: ["a", "b"] },
       timestamp: 0,
       type: "track",
     });
@@ -62,7 +62,7 @@ describe("createGoogleAnalyticsDestination", () => {
     expect(gtag).toHaveBeenCalledWith("event", "order_completed", { items: '["a","b"]' });
   });
 
-  it("drops undefined and null props instead of forwarding them", () => {
+  it("drops undefined and null properties instead of forwarding them", () => {
     const destination = createGoogleAnalyticsDestination();
 
     void destination.send({
@@ -70,7 +70,7 @@ describe("createGoogleAnalyticsDestination", () => {
       eventId: "e3",
       name: "page_viewed",
       owner: "client",
-      props: { referrer: undefined, url: null },
+      properties: { referrer: undefined, url: null },
       timestamp: 0,
       type: "track",
     });
@@ -86,7 +86,7 @@ describe("createGoogleAnalyticsDestination", () => {
       eventId: "e4",
       name: "/pricing",
       owner: "client",
-      props: { href: "https://example.com/pricing" },
+      properties: { href: "https://example.com/pricing" },
       timestamp: 0,
       type: "page",
     });
@@ -102,7 +102,7 @@ describe("createGoogleAnalyticsDestination", () => {
       eventId: "e5",
       name: "/pricing",
       owner: "client",
-      props: { href: "https://example.com/pricing", referrer: "/home" },
+      properties: { href: "https://example.com/pricing", referrer: "/home" },
       timestamp: 0,
       type: "page",
     });
@@ -169,7 +169,7 @@ describe("createGoogleAnalyticsDestination", () => {
       eventId: "e8",
       name: "invalid-name",
       owner: "client",
-      props: {},
+      properties: {},
       timestamp: 0,
       type: "track",
     });
@@ -198,7 +198,7 @@ describe("createGoogleAnalyticsDestination", () => {
         eventId: "e9",
         name: "button_clicked",
         owner: "client",
-        props: {},
+        properties: {},
         timestamp: 0,
         type: "track",
       });

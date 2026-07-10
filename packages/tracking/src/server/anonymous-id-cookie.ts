@@ -35,7 +35,7 @@ export function readAnonymousIdCookie(cookieHeader: string | null | undefined, c
   return value !== undefined && isValidAnonymousId(value) ? value : undefined;
 }
 
-export interface BuildAnonymousIdSetCookieOptions {
+export interface AnonymousIdSetCookieOptions {
   /** Cookie name — must match what the client tracker reads. */
   cookieName: string;
   /** The client-minted id to persist — throws unless it is exactly UUID-shaped. */
@@ -58,7 +58,7 @@ export interface BuildAnonymousIdSetCookieOptions {
  *
  * @throws Error when `id` is not UUID-shaped or `cookieName` is not a valid token.
  */
-export function buildAnonymousIdSetCookie(options: BuildAnonymousIdSetCookieOptions): string {
+export function buildAnonymousIdSetCookie(options: AnonymousIdSetCookieOptions): string {
   const { cookieName, id, maxAgeSeconds = ONE_YEAR_IN_SECONDS } = options;
 
   assertCookieName(cookieName);

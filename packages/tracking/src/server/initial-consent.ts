@@ -4,7 +4,7 @@ import { resolveRegionFromCountryCode } from "#/server/region";
 
 export type { InitialConsent };
 
-export interface BuildInitialConsentOptions {
+export interface InitialConsentOptions {
   /** ISO 3166-1 alpha-2 from the geo header; missing → the strictest opt-in default. */
   countryCode: string | undefined;
   /** Honored as an ads-only opt-out on the default decision. */
@@ -23,7 +23,7 @@ export interface BuildInitialConsentOptions {
  * default instead of `"other"`'s opt-out. Conflating the two would grant analytics by
  * default to every visitor, EU included, on a geo-less host.
  */
-export function buildInitialConsent(options: BuildInitialConsentOptions): InitialConsent {
+export function buildInitialConsent(options: InitialConsentOptions): InitialConsent {
   if (!options.countryCode) {
     return { defaultConsent: createConsentDecision([]), mode: "opt-in", region: "other" };
   }
@@ -32,11 +32,11 @@ export function buildInitialConsent(options: BuildInitialConsentOptions): Initia
   const mode = resolveConsentMode(region);
 
   return {
-    defaultConsent: resolveDefaultConsent(
+    defaultConsent: resolveDefaultConsent({
+      hasGlobalPrivacyControlSignal: options.hasGlobalPrivacyControlSignal ?? false,
       mode,
-      options.requestedCategories,
-      options.hasGlobalPrivacyControlSignal ?? false,
-    ),
+      requestedCategories: options.requestedCategories,
+    }),
     mode,
     region,
   };

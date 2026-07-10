@@ -1,4 +1,4 @@
-export type { BuildAnonymousIdSetCookieOptions } from "#/server/anonymous-id-cookie";
+export type { AnonymousIdSetCookieOptions } from "#/server/anonymous-id-cookie";
 export {
   buildAnonymousIdSetCookie,
   buildClearAnonymousIdSetCookie,
@@ -9,7 +9,7 @@ export {
 export type { ServerTrackContext, ServerTracker, ServerTrackerOptions } from "#/server/create-server-tracker";
 export { createServerTracker } from "#/server/create-server-tracker";
 
-export type { BuildInitialConsentOptions, InitialConsent } from "#/server/initial-consent";
+export type { InitialConsent, InitialConsentOptions } from "#/server/initial-consent";
 export { buildInitialConsent } from "#/server/initial-consent";
 
 export {

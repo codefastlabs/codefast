@@ -11,7 +11,7 @@ const catalog = defineEventCatalog({
 });
 
 describe("createClientTracker", () => {
-  it("validates props against the catalog schema before enqueueing", () => {
+  it("validates properties against the catalog schema before enqueueing", () => {
     const destination = createRecordingDestination();
     const tracker = createClientTracker({
       anonymousId: () => "anon-1",
@@ -35,7 +35,7 @@ describe("createClientTracker", () => {
     tracker.track("button_clicked", { id: "cta" });
     await tracker.flush();
 
-    expect(destination.received).toMatchObject([{ name: "button_clicked", props: { id: "cta" }, type: "track" }]);
+    expect(destination.received).toMatchObject([{ name: "button_clicked", properties: { id: "cta" }, type: "track" }]);
   });
 
   it("rejects a server-owned event at runtime even if the type filter is bypassed", () => {
@@ -68,7 +68,7 @@ describe("createClientTracker", () => {
     expect(destination.received.map((event) => event.userId)).toEqual(["user-1", "user-1"]);
   });
 
-  it("enqueues a page envelope carrying the given name and props", async () => {
+  it("enqueues a page envelope carrying the given name and properties", async () => {
     const destination = createRecordingDestination();
     const tracker = createClientTracker({
       anonymousId: () => "anon-1",
@@ -80,7 +80,7 @@ describe("createClientTracker", () => {
     tracker.page("/pricing", { referrer: "/home" });
     await tracker.flush();
 
-    expect(destination.received).toMatchObject([{ name: "/pricing", props: { referrer: "/home" }, type: "page" }]);
+    expect(destination.received).toMatchObject([{ name: "/pricing", properties: { referrer: "/home" }, type: "page" }]);
   });
 
   it("enqueues a group envelope carrying the groupId and traits", async () => {
@@ -186,7 +186,7 @@ describe("createClientTracker", () => {
 
     expect(destination.received).toMatchObject([
       { type: "identify", userId: "user-1" },
-      { props: { id: "cta" }, type: "track" },
+      { properties: { id: "cta" }, type: "track" },
     ]);
     expect(destination.received[1]).not.toHaveProperty("userId");
   });
@@ -252,7 +252,7 @@ describe("createClientTracker", () => {
     tracker.track("button_clicked", { id: "after" });
     await tracker.flush();
 
-    expect(destination.received).toMatchObject([{ props: { id: "after" } }]);
+    expect(destination.received).toMatchObject([{ properties: { id: "after" } }]);
   });
 
   it("never invokes an anonymousId callback for a gated event — no id side effect before consent", async () => {

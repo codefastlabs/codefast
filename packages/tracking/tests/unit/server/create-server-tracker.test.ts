@@ -39,7 +39,7 @@ describe("createServerTracker", () => {
     const context = { anonymousId: "anon-1", requestId: "req-1" };
 
     await tracker.track("order_completed", { orderId: "o1" }, context);
-    await tracker.group("acme", { plan: "enterprise" }, context);
+    await tracker.group("acme", context, { plan: "enterprise" });
 
     expect(destination.received[0]?.eventId).not.toBe(destination.received[1]?.eventId);
   });
@@ -67,7 +67,7 @@ describe("createServerTracker", () => {
     const destination = createFailingDestination("posthog", 0);
     const tracker = createServerTracker({ catalog, destinations: [destination] });
 
-    await tracker.group("acme", { plan: "enterprise" }, { anonymousId: "anon-1", userId: "user-1" });
+    await tracker.group("acme", { anonymousId: "anon-1", userId: "user-1" }, { plan: "enterprise" });
 
     expect(destination.received).toMatchObject([
       { groupId: "acme", owner: "server", traits: { plan: "enterprise" }, type: "group" },

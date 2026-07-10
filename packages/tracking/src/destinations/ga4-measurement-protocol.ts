@@ -63,7 +63,7 @@ export interface Ga4MeasurementProtocolDestinationOptions {
    */
   clientId?: string | undefined;
   /** Routes to GA4's `/debug/mp/collect` validation endpoint — hits are validated but never recorded. */
-  debug?: boolean | undefined;
+  debugMode?: boolean | undefined;
   measurementId: string;
   name?: string | undefined;
   /**
@@ -86,7 +86,7 @@ export function createGa4MeasurementProtocolDestination(
   options: Ga4MeasurementProtocolDestinationOptions,
 ): Destination {
   const name = options.name ?? "ga4-measurement-protocol";
-  const host = options.debug
+  const host = options.debugMode
     ? "https://www.google-analytics.com/debug/mp/collect"
     : "https://www.google-analytics.com/mp/collect";
   const endpoint = `${host}?measurement_id=${encodeURIComponent(options.measurementId)}&api_secret=${encodeURIComponent(options.apiSecret)}`;
@@ -151,11 +151,11 @@ function toMeasurementProtocolEvent(
     }
 
     case "page": {
-      return { name: "page_view", params: flattenEventProps(event.props) };
+      return { name: "page_view", params: flattenEventProps(event.properties) };
     }
 
     case "track": {
-      return { name: event.name, params: flattenEventProps(event.props) };
+      return { name: event.name, params: flattenEventProps(event.properties) };
     }
 
     default: {

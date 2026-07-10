@@ -11,7 +11,7 @@ describe("createGoogleTagManagerDestination", () => {
     expect(createGoogleTagManagerDestination().delivery).toBe("immediate");
   });
 
-  it("pushes track envelopes as { event, …props } onto the dataLayer", () => {
+  it("pushes track envelopes as { event, …properties } onto the dataLayer", () => {
     const dataLayer: Array<unknown> = [];
 
     (window as unknown as { dataLayer: Array<unknown> }).dataLayer = dataLayer;
@@ -23,7 +23,7 @@ describe("createGoogleTagManagerDestination", () => {
       eventId: "e1",
       name: "button_clicked",
       owner: "client",
-      props: { id: "cta" },
+      properties: { id: "cta" },
       timestamp: 0,
       type: "track",
     });
@@ -43,7 +43,7 @@ describe("createGoogleTagManagerDestination", () => {
       eventId: "e1",
       name: "button_clicked",
       owner: "client",
-      props: {},
+      properties: {},
       timestamp: 0,
       type: "track",
     });
@@ -62,7 +62,7 @@ describe("createGoogleTagManagerDestination", () => {
       eventId: "e1",
       name: "/pricing",
       owner: "client",
-      props: {},
+      properties: {},
       timestamp: 0,
       type: "page",
     });
@@ -99,7 +99,7 @@ describe("createGoogleTagManagerDestination", () => {
       eventId: "e1",
       name: "invalid-name",
       owner: "client",
-      props: {},
+      properties: {},
       timestamp: 0,
       type: "track",
     });

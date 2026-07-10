@@ -39,10 +39,11 @@ export interface ServerTrackerOptions<Catalog extends EventCatalog> {
 export interface ServerTracker<Catalog extends EventCatalog> {
   /** Explicit anonymous → known-user merge, for when `identify` timing can't do it. */
   alias: (previousId: string, userId: string, context: ServerTrackContext) => Promise<void>;
-  group: (groupId: string, traits: Record<string, unknown> | undefined, context: ServerTrackContext) => Promise<void>;
+  // Context is mandatory identity so it reads well right after groupId, and traits stays optional.
+  group: (groupId: string, context: ServerTrackContext, traits?: Record<string, unknown>) => Promise<void>;
   track: <Name extends keyof EventsOf<Catalog, "server">>(
     name: Name,
-    props: z.infer<EventsOf<Catalog, "server">[Name]["schema"]>,
+    properties: z.infer<EventsOf<Catalog, "server">[Name]["schema"]>,
     context: ServerTrackContext,
   ) => Promise<void>;
 }
@@ -125,10 +126,10 @@ export function createServerTracker<Catalog extends EventCatalog>(
       // The alias's userId is the merge target — it wins over whatever the context carries.
       await sendEvent({ previousId, type: "alias" }, { ...context, userId });
     },
-    async group(groupId, traits, context) {
+    async group(groupId, context, traits) {
       await sendEvent({ groupId, traits: traits ?? {}, type: "group" }, context);
     },
-    async track(name, props, context) {
+    async track(name, properties, context) {
       // noUncheckedIndexedAccess types this as possibly undefined; the owner check also
       // guards callers who bypass the EventsOf filter with an `as` cast.
       const definition = options.catalog[name];
@@ -137,9 +138,12 @@ export function createServerTracker<Catalog extends EventCatalog>(
         throw new Error(`Unknown server-owned event: ${String(name)}`);
       }
 
-      definition.schema.parse(props);
-      // Catalog keys are strings; zod-inferred props are opaque to the open envelope record.
-      await sendEvent({ name: String(name), props: props as Record<string, unknown>, type: "track" }, context);
+      definition.schema.parse(properties);
+      // Catalog keys are strings; zod-inferred properties are opaque to the open envelope record.
+      await sendEvent(
+        { name: String(name), properties: properties as Record<string, unknown>, type: "track" },
+        context,
+      );
     },
   };
 }

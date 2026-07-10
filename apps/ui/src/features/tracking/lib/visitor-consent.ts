@@ -203,7 +203,7 @@ export function resetVisitorConsentForTests(): void {
 
 /** Non-React gate for `createClientTracker({ isAnalyticsAllowed })`. */
 export const isAnalyticsAllowed = createIsAnalyticsAllowed({
-  getHasGlobalPrivacyControlSignal: hasGlobalPrivacyControlSignal,
+  hasGlobalPrivacyControlSignal,
   getMode: () => snapshot.initialConsent.mode,
   policyVersion: CONSENT_POLICY_VERSION,
   requestedCategories: REQUESTED_CONSENT_CATEGORIES,

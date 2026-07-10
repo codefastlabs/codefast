@@ -3,7 +3,7 @@ export { createClientTracker } from "#/client/create-client-tracker";
 
 export { createLocalStorageConsentStorage } from "#/client/consent-storage";
 
-export type { CreateConsentWithdrawalHandlerOptions } from "#/client/consent-withdrawal";
+export type { ConsentWithdrawalHandlerOptions } from "#/client/consent-withdrawal";
 export { createConsentWithdrawalHandler } from "#/client/consent-withdrawal";
 
 export type { CookieAnonymousId, CookieAnonymousIdOptions } from "#/client/cookie-anonymous-id";
@@ -11,7 +11,7 @@ export { createCookieAnonymousId } from "#/client/cookie-anonymous-id";
 
 export { hasGlobalPrivacyControlSignal } from "#/client/gpc";
 
-export type { CreateIsAnalyticsAllowedOptions } from "#/client/is-analytics-allowed";
+export type { IsAnalyticsAllowedOptions } from "#/client/is-analytics-allowed";
 export { createIsAnalyticsAllowed } from "#/client/is-analytics-allowed";
 
 export type { ClientLifecycleOptions } from "#/client/lifecycle";
@@ -19,8 +19,7 @@ export { attachClientLifecycle } from "#/client/lifecycle";
 
 export { createLocalStorageQueueStorage } from "#/client/local-storage";
 
-export type { EventQueueOptions, EventQueueStorage } from "#/client/queue";
-export { EventQueue } from "#/client/queue";
+export type { EventQueueStorage } from "#/client/queue";
 
 export type { RouterLike } from "#/client/router";
 export { attachRouterPageTracking } from "#/client/router";

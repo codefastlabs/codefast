@@ -14,7 +14,7 @@ function buildEvent(name: string): TrackedEvent {
     eventId: name,
     name,
     owner: "client",
-    props: {},
+    properties: {},
     timestamp: 0,
     type: "track",
   };

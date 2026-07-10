@@ -62,17 +62,47 @@ describe("isConsentRecord", () => {
 
 describe("resolveDefaultConsent", () => {
   it("denies everything under opt-in, regardless of GPC or requested categories", () => {
-    expect(resolveDefaultConsent("opt-in", ["ads", "analytics"], false)).toEqual({ ads: false, analytics: false });
-    expect(resolveDefaultConsent("opt-in", ["ads", "analytics"], true)).toEqual({ ads: false, analytics: false });
+    expect(
+      resolveDefaultConsent({
+        hasGlobalPrivacyControlSignal: false,
+        mode: "opt-in",
+        requestedCategories: ["ads", "analytics"],
+      }),
+    ).toEqual({ ads: false, analytics: false });
+    expect(
+      resolveDefaultConsent({
+        hasGlobalPrivacyControlSignal: true,
+        mode: "opt-in",
+        requestedCategories: ["ads", "analytics"],
+      }),
+    ).toEqual({ ads: false, analytics: false });
   });
 
   it("grants only the requested categories under opt-out", () => {
-    expect(resolveDefaultConsent("opt-out", ["analytics"], false)).toEqual({ ads: false, analytics: true });
-    expect(resolveDefaultConsent("opt-out", ["ads", "analytics"], false)).toEqual({ ads: true, analytics: true });
+    expect(
+      resolveDefaultConsent({
+        hasGlobalPrivacyControlSignal: false,
+        mode: "opt-out",
+        requestedCategories: ["analytics"],
+      }),
+    ).toEqual({ ads: false, analytics: true });
+    expect(
+      resolveDefaultConsent({
+        hasGlobalPrivacyControlSignal: false,
+        mode: "opt-out",
+        requestedCategories: ["ads", "analytics"],
+      }),
+    ).toEqual({ ads: true, analytics: true });
   });
 
   it("honors GPC as an ads opt-out — do-not-sell-or-share does not withdraw analytics", () => {
-    expect(resolveDefaultConsent("opt-out", ["ads", "analytics"], true)).toEqual({ ads: false, analytics: true });
+    expect(
+      resolveDefaultConsent({
+        hasGlobalPrivacyControlSignal: true,
+        mode: "opt-out",
+        requestedCategories: ["ads", "analytics"],
+      }),
+    ).toEqual({ ads: false, analytics: true });
   });
 });
 
@@ -126,14 +156,24 @@ describe("resolveEffectiveConsent", () => {
   it("falls back to the region default when nothing is stored", () => {
     const storage = createMemoryConsentStorage();
 
-    expect(resolveEffectiveConsent(storage, "1", ["analytics"], "opt-in", false)).toEqual({
-      ads: false,
-      analytics: false,
-    });
-    expect(resolveEffectiveConsent(storage, "1", ["analytics"], "opt-out", false)).toEqual({
-      ads: false,
-      analytics: true,
-    });
+    expect(
+      resolveEffectiveConsent({
+        hasGlobalPrivacyControlSignal: false,
+        mode: "opt-in",
+        policyVersion: "1",
+        requestedCategories: ["analytics"],
+        storage,
+      }),
+    ).toEqual({ ads: false, analytics: false });
+    expect(
+      resolveEffectiveConsent({
+        hasGlobalPrivacyControlSignal: false,
+        mode: "opt-out",
+        policyVersion: "1",
+        requestedCategories: ["analytics"],
+        storage,
+      }),
+    ).toEqual({ ads: false, analytics: true });
   });
 
   it("prefers the stored decision over the region default", () => {
@@ -143,10 +183,15 @@ describe("resolveEffectiveConsent", () => {
       timestamp: 0,
     });
 
-    expect(resolveEffectiveConsent(storage, "1", ["analytics"], "opt-out", false)).toEqual({
-      ads: false,
-      analytics: false,
-    });
+    expect(
+      resolveEffectiveConsent({
+        hasGlobalPrivacyControlSignal: false,
+        mode: "opt-out",
+        policyVersion: "1",
+        requestedCategories: ["analytics"],
+        storage,
+      }),
+    ).toEqual({ ads: false, analytics: false });
   });
 
   it("re-applies the region default when the stored decision's policy version is superseded", () => {
@@ -156,9 +201,14 @@ describe("resolveEffectiveConsent", () => {
       timestamp: 0,
     });
 
-    expect(resolveEffectiveConsent(storage, "1", ["analytics"], "opt-in", false)).toEqual({
-      ads: false,
-      analytics: false,
-    });
+    expect(
+      resolveEffectiveConsent({
+        hasGlobalPrivacyControlSignal: false,
+        mode: "opt-in",
+        policyVersion: "1",
+        requestedCategories: ["analytics"],
+        storage,
+      }),
+    ).toEqual({ ads: false, analytics: false });
   });
 });
