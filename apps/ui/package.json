@@ -32,7 +32,6 @@
     "@tanstack/react-start": "catalog:",
     "@tanstack/react-table": "catalog:",
     "@tanstack/router-plugin": "catalog:",
-    "@tanstack/start-static-server-functions": "catalog:",
     "@unpic/react": "catalog:",
     "@vercel/analytics": "catalog:",
     "chrono-node": "catalog:",

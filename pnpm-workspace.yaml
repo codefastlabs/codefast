@@ -62,7 +62,6 @@ catalog:
   "@tanstack/react-table": ^8.21.3
   "@tanstack/router-plugin": ^1.168.19
   # Experimental — powers build-time Shiki highlighting (peer-deps react-start ^1.168.25).
-  "@tanstack/start-static-server-functions": ^1.167.18
   "@testing-library/dom": ^10.4.1
   "@testing-library/jest-dom": ^6.9.1
   "@testing-library/react": ^16.3.2

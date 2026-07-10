@@ -1,4 +1,5 @@
-import { readdirSync } from "node:fs";
+import { existsSync, readdirSync } from "node:fs";
+import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 import babel from "@rolldown/plugin-babel";
@@ -11,7 +12,7 @@ import { defineConfig } from "vite";
 
 // The `.ts` extension is required: Vite externalizes this import out of the bundled config,
 // so raw Node resolves it via package.json#imports — no extension probing, type-stripped.
-import { CACHED_ROUTE_PATTERNS, CONTENT_CACHE_CONTROL } from "#/lib/cache.ts";
+import { CONTENT_CACHE_CONTROL } from "#/lib/cache.ts";
 
 /**
  * The `public/` files excluded from `publicCacheRoutePatterns`, kept fresh on every crawl
@@ -30,6 +31,20 @@ function publicCacheRoutePatterns(): Array<string> {
   return readdirSync(fileURLToPath(new URL("./public", import.meta.url)), { withFileTypes: true })
     .filter((entry) => entry.isFile() && !PUBLIC_UNCACHED_FILES.has(entry.name))
     .map((entry) => `/${entry.name}`);
+}
+
+/**
+ * Every page path on the site, for the build-time sitemap. With prerendering off there is
+ * no crawl to discover them, so this mirrors the registry's own auto-discovery: one
+ * `/components/<slug>` per `registry/<slug>/meta.ts`, same rule `_core/components.ts` uses.
+ */
+function sitemapPages(): Array<{ path: string }> {
+  const registryDir = fileURLToPath(new URL("./src/registry", import.meta.url));
+  const componentPaths = readdirSync(registryDir, { withFileTypes: true })
+    .filter((entry) => entry.isDirectory() && existsSync(path.join(registryDir, entry.name, "meta.ts")))
+    .map((entry) => `/components/${entry.name}`);
+
+  return ["/", "/about", "/components", "/privacy", ...componentPaths].map((pagePath) => ({ path: pagePath }));
 }
 
 export default defineConfig(({ command }) => {
@@ -98,15 +113,18 @@ export default defineConfig(({ command }) => {
       tailwindcss(),
       tanstackStart({
         /**
-         * Prerenders every route reachable by crawling `<Link>`s from `/` — the gallery and
-         * sidebar link to every component page — shipping static HTML for SEO and CDN delivery.
-         * The built-in sitemap is generated from those same crawled pages into
-         * `public/sitemap.xml`. `host` must match `SITE_URL` in `src/lib/seo.ts`.
+         * ISR (TanStack Start style): no prerendering — every page is server-rendered on
+         * demand and CDN-cached via each route's `headers()` (`Cache-Control` +
+         * `CDN-Cache-Control`, see `src/lib/cache.ts`). A prerendered file would shadow the
+         * server function on Vercel (`handle: filesystem` runs before the function route),
+         * so ISR and prerender are mutually exclusive per route. `pages` feeds the sitemap
+         * the paths the crawl used to discover. `host` must match `SITE_URL` in
+         * `src/lib/seo.ts`.
          */
         prerender: {
-          enabled: true,
-          crawlLinks: true,
+          enabled: false,
         },
+        pages: sitemapPages(),
         sitemap: {
           enabled: true,
           host: "https://codefastlabs.com",
@@ -115,22 +133,13 @@ export default defineConfig(({ command }) => {
       nitro({
         preset: "vercel",
         /**
-         * Sets `Cache-Control` for every prerendered page and cacheable `public/` file.
-         *
-         * Vercel's filesystem layer serves prerendered HTML directly, bypassing the server
-         * function that a route's `headers()` would run in — so `routeRules` is the only hook
-         * the Vercel adapter writes into the deployment's header config, making it the sole
-         * path to a static file's deployed headers. (`**` is the rou3 wildcard for nested
-         * paths; the preset emits it as a Vercel regex.) The `.md`/`llms.txt` twins set their
-         * own `Cache-Control` in their handler instead, since they're never prerendered.
-         *
-         * `/__tsr/staticServerFnCache/**` covers the build-time output of static server
-         * functions — the prerendered Shiki highlights. Vercel defaults it to
-         * `max-age=0, must-revalidate`; keyed by function id and params rather than content,
-         * it can't be `immutable`, so it shares the pages' freshness policy instead.
+         * Sets `Cache-Control` for the cacheable `public/` files — static files bypass the
+         * server, so `routeRules` (baked into Vercel's static routing config) is the only
+         * path to their deployed headers. Pages are no longer here: with prerendering off
+         * they are live renders, and each route's `headers()` is the canonical policy.
          */
         routeRules: Object.fromEntries(
-          [...CACHED_ROUTE_PATTERNS, ...publicCacheRoutePatterns()].map((pattern) => [
+          publicCacheRoutePatterns().map((pattern) => [
             pattern,
             { headers: { "cache-control": CONTENT_CACHE_CONTROL } },
           ]),
