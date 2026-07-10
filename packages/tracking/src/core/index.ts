@@ -17,6 +17,8 @@ export {
   resolveEffectiveConsent,
 } from "#/core/consent";
 
+export { readCookieValue } from "#/core/cookie";
+
 export type { Destination } from "#/core/destination";
 
 export type { EventCatalog, EventDefinition, EventsOf } from "#/core/event-catalog";

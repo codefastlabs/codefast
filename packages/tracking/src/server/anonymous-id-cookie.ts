@@ -1,3 +1,5 @@
+import { readCookieValue } from "#/core/cookie";
+
 const ONE_YEAR_IN_SECONDS = 60 * 60 * 24 * 365;
 
 // The only shape the client ever mints (crypto.randomUUID) — anything else is rejected.
@@ -28,21 +30,9 @@ export function isValidAnonymousId(value: string): boolean {
 export function readAnonymousIdCookie(cookieHeader: string | null | undefined, cookieName: string): string | undefined {
   assertCookieName(cookieName);
 
-  if (!cookieHeader) {
-    return undefined;
-  }
+  const value = readCookieValue(cookieHeader, cookieName);
 
-  for (const part of cookieHeader.split(";")) {
-    const separatorIndex = part.indexOf("=");
-
-    if (separatorIndex !== -1 && part.slice(0, separatorIndex).trim() === cookieName) {
-      const value = part.slice(separatorIndex + 1).trim();
-
-      return isValidAnonymousId(value) ? value : undefined;
-    }
-  }
-
-  return undefined;
+  return value !== undefined && isValidAnonymousId(value) ? value : undefined;
 }
 
 export interface BuildAnonymousIdSetCookieOptions {

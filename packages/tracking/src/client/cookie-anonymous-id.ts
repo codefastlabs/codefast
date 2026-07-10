@@ -1,3 +1,5 @@
+import { readCookieValue } from "#/core/cookie";
+
 const ONE_YEAR_IN_SECONDS = 60 * 60 * 24 * 365;
 
 export interface CookieAnonymousIdOptions {
@@ -12,18 +14,6 @@ export interface CookieAnonymousId {
   clear: () => void;
   /** The existing id, or a freshly minted and persisted one. */
   getOrCreate: () => string;
-}
-
-function readCookie(cookieName: string): string | undefined {
-  for (const part of document.cookie.split(";")) {
-    const separatorIndex = part.indexOf("=");
-
-    if (separatorIndex !== -1 && part.slice(0, separatorIndex).trim() === cookieName) {
-      return part.slice(separatorIndex + 1).trim();
-    }
-  }
-
-  return undefined;
 }
 
 function writeCookie(cookieName: string, value: string, maxAgeSeconds: number): void {
@@ -66,7 +56,7 @@ export function createCookieAnonymousId(options: CookieAnonymousIdOptions): Cook
         return crypto.randomUUID();
       }
 
-      const existing = readCookie(cookieName);
+      const existing = readCookieValue(document.cookie, cookieName);
 
       if (existing) {
         cachedId = existing;

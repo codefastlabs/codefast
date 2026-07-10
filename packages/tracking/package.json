@@ -126,6 +126,11 @@
       "types": "./dist/core/consent.d.mts",
       "import": "./dist/core/consent.mjs"
     },
+    "./core/cookie": {
+      "source": "./src/core/cookie.ts",
+      "types": "./dist/core/cookie.d.mts",
+      "import": "./dist/core/cookie.mjs"
+    },
     "./core/destination": {
       "source": "./src/core/destination.ts",
       "types": "./dist/core/destination.d.mts",

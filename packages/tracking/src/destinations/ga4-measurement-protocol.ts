@@ -1,3 +1,4 @@
+import { readCookieValue } from "#/core/cookie";
 import type { Destination } from "#/core/destination";
 import type { TrackedEvent } from "#/core/tracked-event";
 import { assertNever } from "#/core/tracked-event";
@@ -6,22 +7,6 @@ import type { FlatPropertyValue } from "#/destinations/shared";
 import { flattenEventProps, toJoinGroupPayload } from "#/destinations/shared";
 
 type MeasurementProtocolParamValue = FlatPropertyValue;
-
-function readCookie(cookieHeader: string | undefined, cookieName: string): string | undefined {
-  if (!cookieHeader) {
-    return undefined;
-  }
-
-  for (const part of cookieHeader.split(";")) {
-    const separatorIndex = part.indexOf("=");
-
-    if (separatorIndex !== -1 && part.slice(0, separatorIndex).trim() === cookieName) {
-      return part.slice(separatorIndex + 1).trim();
-    }
-  }
-
-  return undefined;
-}
 
 /**
  * Reads gtag.js's own client ID from a request Cookie header — `_ga=GA1.1.123.456` →
@@ -32,7 +17,7 @@ function readCookie(cookieHeader: string | undefined, cookieName: string): strin
  * @since 0.5.0-canary.4
  */
 export function extractGa4ClientId(cookieHeader: string | undefined): string | undefined {
-  const value = readCookie(cookieHeader, "_ga");
+  const value = readCookieValue(cookieHeader, "_ga");
 
   if (!value) {
     return undefined;
@@ -52,7 +37,7 @@ export function extractGa4ClientId(cookieHeader: string | undefined): string | u
  * @since 0.5.0-canary.4
  */
 export function extractGa4SessionId(cookieHeader: string | undefined, measurementId: string): string | undefined {
-  const value = readCookie(cookieHeader, `_ga_${measurementId.replace(/^G-/, "")}`);
+  const value = readCookieValue(cookieHeader, `_ga_${measurementId.replace(/^G-/, "")}`);
 
   if (!value) {
     return undefined;
