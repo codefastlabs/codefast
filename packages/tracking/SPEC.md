@@ -160,6 +160,7 @@ packages/tracking/
 `tests/integration/` and `tests/e2e/` don't exist yet — `package.json`'s `test:integration`/`test:e2e` scripts point at paths with no files. Intended coverage once built: `msw` contract tests per real destination (integration), and a consent-gating flow — no network call fires before consent is granted or a valid GPC/opt-out state resolves (e2e).
 
 - Subpath exports: one per top-level module (`.`, `./client`, `./server`, `./destinations`, `./react`) **and** one per file within each (e.g. `./client/queue`, `./core/consent`, `./destinations/google-analytics`, `./react/use-consent`), plus `./css/*` — see `package.json#exports` for the full list.
+- `destinations/` file naming: a destination file is named after the `X` in its `create<X>Destination` factory (`google-analytics.ts` ↔ `createGoogleAnalyticsDestination`, `http.ts` ↔ `createHttpDestination` — no redundant `-destination` suffix; the directory already says it). Provider-specific helper files carry the provider prefix (`google-consent.ts`); cross-provider files are named by role (`shared.ts`, `initial-consent-bootstrap.ts`). Official product names beat prefix uniformity (`ga4-measurement-protocol.ts`, not `google-analytics-4-…`). Since every file is a public subpath, renaming one is a breaking change.
 - Internal imports via `#/*` (`package.json#imports`), no `compilerOptions.paths`.
 - `react` is an optional peer (`react`/`react-dom` marked optional in `peerDependenciesMeta`) — importing `core`/`client`/`server` never requires React or `@codefast/ui` to be installed.
 
