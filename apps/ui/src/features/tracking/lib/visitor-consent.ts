@@ -14,7 +14,7 @@ import { resolveVisitorConsent } from "#/features/tracking/lib/resolve-visitor-c
  * Session cache for the resolved region default, so only the first page load of a
  * session pays the server-function round trip — disclosed on the privacy page.
  */
-export const VISITOR_CONSENT_SESSION_KEY = "codefast-ui-region";
+export const INITIAL_CONSENT_SESSION_KEY = "codefast-ui-initial-consent";
 
 export interface VisitorConsentSnapshot {
   /** The region-correct default once resolved; the strictest default until then. */
@@ -56,7 +56,7 @@ function isInitialConsent(value: unknown): value is InitialConsent {
 
 function readSessionCache(): InitialConsent | undefined {
   try {
-    const raw = window.sessionStorage.getItem(VISITOR_CONSENT_SESSION_KEY);
+    const raw = window.sessionStorage.getItem(INITIAL_CONSENT_SESSION_KEY);
     const parsed: unknown = raw === null ? undefined : JSON.parse(raw);
 
     return isInitialConsent(parsed) ? parsed : undefined;
@@ -88,7 +88,7 @@ export function ensureVisitorConsentResolved(): void {
   resolveVisitorConsent()
     .then((resolved) => {
       try {
-        window.sessionStorage.setItem(VISITOR_CONSENT_SESSION_KEY, JSON.stringify(resolved));
+        window.sessionStorage.setItem(INITIAL_CONSENT_SESSION_KEY, JSON.stringify(resolved));
       } catch {
         // private mode / quota — resolve again next page load
       }
@@ -130,7 +130,7 @@ export function resetVisitorConsentForTests(): void {
   isFetchInFlight = false;
 
   if (typeof window !== "undefined") {
-    window.sessionStorage.removeItem(VISITOR_CONSENT_SESSION_KEY);
+    window.sessionStorage.removeItem(INITIAL_CONSENT_SESSION_KEY);
   }
 }
 

@@ -7,7 +7,7 @@ import {
   isTrackingAllowed,
   resetVisitorConsentForTests,
   useVisitorConsent,
-  VISITOR_CONSENT_SESSION_KEY,
+  INITIAL_CONSENT_SESSION_KEY,
 } from "#/features/tracking/lib/visitor-consent";
 
 const { hasGlobalPrivacyControlSignal, resolveVisitorConsent } = vi.hoisted(() => ({
@@ -63,12 +63,12 @@ describe("useVisitorConsent / ensureVisitorConsentResolved", () => {
     await waitFor(() => {
       expect(result.current).toEqual({ initialConsent: US_CONSENT, isResolved: true });
     });
-    expect(JSON.parse(window.sessionStorage.getItem(VISITOR_CONSENT_SESSION_KEY) ?? "")).toEqual(US_CONSENT);
+    expect(JSON.parse(window.sessionStorage.getItem(INITIAL_CONSENT_SESSION_KEY) ?? "")).toEqual(US_CONSENT);
     expect(resolveVisitorConsent).toHaveBeenCalledOnce();
   });
 
   it("reuses the session cache without a second server round trip", async () => {
-    window.sessionStorage.setItem(VISITOR_CONSENT_SESSION_KEY, JSON.stringify(US_CONSENT));
+    window.sessionStorage.setItem(INITIAL_CONSENT_SESSION_KEY, JSON.stringify(US_CONSENT));
 
     const { result } = renderHook(() => useVisitorConsent());
 
@@ -82,7 +82,7 @@ describe("useVisitorConsent / ensureVisitorConsentResolved", () => {
   });
 
   it("ignores a tampered session cache and resolves over the server lane", async () => {
-    window.sessionStorage.setItem(VISITOR_CONSENT_SESSION_KEY, JSON.stringify({ mode: "opt-out" }));
+    window.sessionStorage.setItem(INITIAL_CONSENT_SESSION_KEY, JSON.stringify({ mode: "opt-out" }));
     resolveVisitorConsent.mockResolvedValue(US_CONSENT);
 
     const { result } = renderHook(() => useVisitorConsent());
