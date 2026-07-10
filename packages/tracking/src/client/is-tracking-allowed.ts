@@ -4,7 +4,7 @@ import { resolveEffectiveConsent } from "#/core/consent";
 export interface CreateIsTrackingAllowedOptions {
   /** Categories the app's prompt asks about — must match `useConsent`'s `categories`. */
   categories: ReadonlyArray<ConsentCategory>;
-  /** Current consent mode — re-read each call so a hydrated `__INITIAL_CONSENT__` wins. */
+  /** Current consent mode — re-read each call so a post-hydration region resolve can win. */
   getMode: () => ConsentMode;
   /**
    * Re-read each call. Pass `hasGlobalPrivacyControlSignal` from `@codefast/tracking/client`

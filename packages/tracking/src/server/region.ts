@@ -35,8 +35,8 @@ export const EU_COUNTRY_CODES: ReadonlySet<string> = new Set([
  * UK GDPR (post-Brexit) and EEA/EFTA states that apply GDPR-equivalent rules — mapped to
  * the same `"eu"` consent region so they get opt-in, not the `"other"` opt-out default.
  *
- * Edge middleware that cannot import this package should duplicate these codes and keep a
- * sync test against this export.
+ * Restricted edge runtimes that cannot import this package should duplicate these codes
+ * and keep a sync test against this export.
  */
 export const OPT_IN_EQUIVALENT_COUNTRY_CODES: ReadonlySet<string> = new Set(["GB", "IS", "LI", "NO"]);
 

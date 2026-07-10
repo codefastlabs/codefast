@@ -181,11 +181,6 @@
       "types": "./dist/destinations/http.d.mts",
       "import": "./dist/destinations/http.mjs"
     },
-    "./destinations/initial-consent-bootstrap": {
-      "source": "./src/destinations/initial-consent-bootstrap.ts",
-      "types": "./dist/destinations/initial-consent-bootstrap.d.mts",
-      "import": "./dist/destinations/initial-consent-bootstrap.mjs"
-    },
     "./destinations/shared": {
       "source": "./src/destinations/shared.ts",
       "types": "./dist/destinations/shared.d.mts",

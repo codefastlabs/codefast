@@ -102,8 +102,8 @@ export function resolveDefaultConsent(
 }
 
 /**
- * Region-resolved consent defaults for first paint — embed into the document (e.g. via a
- * middleware cookie + inline bootstrap) so the client never re-guesses the mode.
+ * Region-resolved consent defaults — typically from `buildInitialConsent` on a
+ * per-request server lane, then handed to the client so it never re-guesses the mode.
  */
 export interface InitialConsent {
   defaultConsent: ConsentDecision;

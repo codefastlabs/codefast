@@ -215,14 +215,12 @@ export interface GtagConsentBootstrapOptions {
   dataLayerName?: string | undefined;
   /**
    * Consent to apply when nothing valid is stored yet. Embedded as a literal — for a
-   * value only known via an earlier inline script (e.g. a middleware-set cookie read on a
-   * statically prerendered page), use `defaultConsentExpression` instead.
+   * value only known via an earlier inline script, use `defaultConsentExpression` instead.
    */
   defaultConsent?: ConsentDecision | undefined;
   /**
-   * A raw JS expression evaluating to the fallback `ConsentDecision`, e.g.
-   * `"window.__INITIAL_CONSENT__.defaultConsent"`. Takes precedence over `defaultConsent`
-   * when both are set; one of the two is required.
+   * A raw JS expression evaluating to the fallback `ConsentDecision`. Takes precedence
+   * over `defaultConsent` when both are set; one of the two is required.
    */
   defaultConsentExpression?: string | undefined;
   /** Forwarded as `gtag('config', id, { debug_mode: true })` after the consent default. */
