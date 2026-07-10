@@ -216,19 +216,20 @@ The server-resolved value is embedded into `window.__INITIAL_CONSENT__` via
 `buildInitialConsentBootstrapScript` so the client reads the same value instead of a
 second guess.
 
-### This app is statically prerendered — that value alone is not enough
+### This app's pages are CDN-cached (ISR) — that value alone is not enough
 
-Every route is prerendered at build time (`pnpm --filter @apps/ui build`, `[prerender]`
-in the output; Vercel then serves the result with `cache-control: public, s-maxage=…`).
-There is no real visitor at build time, so `resolveInitialConsent()`'s server branch
-resolves to the strictest possible default (`denied`, `opt-in`, region `other`) whenever
-`x-vercel-ip-country` is absent — that's what gets baked into the static HTML, and it's
-what every visitor gets unless corrected.
+Every page is server-rendered on demand and cached by the CDN under each route's
+`headers()` policy (`Cache-Control` + `CDN-Cache-Control`, see `src/lib/cache.ts` —
+TanStack Start's ISR pattern). A cached render is shared across visitors, so
+`resolveInitialConsent()`'s server branch deliberately bakes the strictest possible
+default (`denied`, `opt-in`, region `other`) instead of reading per-request geo — a
+request-derived value would leak the first visitor's region to everyone served from
+that cache entry.
 
 `middleware.ts` (Vercel Routing Middleware, root of this app) covers the actual
 per-visitor correction: it runs on every real request _before_ the CDN cache — including
-ones that end up served from the static cache — reads the visitor's real geo + `Sec-GPC`,
-and sets a `codefast-ui-initial-consent` cookie (name shared with
+ones served from cache — reads the visitor's real geo, and sets a
+`codefast-ui-initial-consent` cookie (name shared with
 `#/features/tracking/lib/consent`). The bootstrap script in `google-tag.tsx` prefers that
 cookie over the baked-in fallback whenever it's present, so the real visitor's
 region-correct default applies without a second network round trip. `middleware.ts`
