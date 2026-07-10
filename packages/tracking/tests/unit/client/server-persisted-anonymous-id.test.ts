@@ -79,6 +79,20 @@ describe("createServerPersistedAnonymousId", () => {
     expect(persist).toHaveBeenLastCalledWith(second);
   });
 
+  it("skips clearOnServer when the cookie is already gone", () => {
+    const persist = vi.fn().mockResolvedValue(undefined);
+    const clearOnServer = vi.fn().mockResolvedValue(undefined);
+    const anonymousId = createServerPersistedAnonymousId({ clearOnServer, cookieName: COOKIE_NAME, persist });
+
+    anonymousId.getOrCreate();
+    anonymousId.clear();
+    clearOnServer.mockClear();
+
+    anonymousId.clear();
+
+    expect(clearOnServer).not.toHaveBeenCalled();
+  });
+
   it("re-persists after an external cookie clear without an explicit clear() call", () => {
     const persist = vi.fn().mockResolvedValue(undefined);
     const anonymousId = createServerPersistedAnonymousId({ cookieName: COOKIE_NAME, persist });

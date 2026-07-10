@@ -34,11 +34,16 @@ export function createServerPersistedAnonymousId(options: ServerPersistedAnonymo
 
   return {
     clear(): void {
+      // Skip the server round-trip when the cookie is already gone (e.g. a second
+      // withdrawal clear from another mounted consent surface in the same tick).
+      const shouldClearServer =
+        typeof document !== "undefined" && Boolean(readCookieValue(document.cookie, cookieName));
+
       local.clear();
       // A fresh id after a re-grant must be persisted again.
       hasRequestedPersist = false;
 
-      if (typeof document !== "undefined") {
+      if (shouldClearServer) {
         void clearOnServer?.().catch(() => {
           /* the client-side expiry above already took effect */
         });
