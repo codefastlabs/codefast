@@ -11,7 +11,7 @@ import { SITE_URL, absoluteUrl, canonicalHead, jsonLdScript } from "#/lib/seo";
 const NPM_URL = "https://www.npmjs.com/package/@codefast/ui";
 
 export const Route = createFileRoute("/")({
-  // ISR: this is a live render the CDN caches — both headers required (see lib/cache.ts).
+  // Effective in dev and any live render; once prerendered, `routeRules` in vite.config.ts applies instead.
   headers: () => ({ ...CONTENT_CACHE_HEADERS }),
   head: () => {
     const seo = canonicalHead("/");

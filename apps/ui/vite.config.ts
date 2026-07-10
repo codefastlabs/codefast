@@ -34,17 +34,27 @@ function publicCacheRoutePatterns(): Array<string> {
 }
 
 /**
- * Every page path on the site, for the build-time sitemap. With prerendering off there is
- * no crawl to discover them, so this mirrors the registry's own auto-discovery: one
- * `/components/<slug>` per `registry/<slug>/meta.ts`, same rule `_core/components.ts` uses.
+ * The stable entry pages — prerendered at build time for an instant first load (the ISR
+ * guide's "combine with static prerendering"). Also the `routeRules` header targets: a
+ * prerendered file bypasses the route's `headers()`, so its `Cache-Control` must come
+ * from Vercel's static routing config instead.
  */
-function sitemapPages(): Array<{ path: string }> {
-  const registryDir = fileURLToPath(new URL("./src/registry", import.meta.url));
-  const componentPaths = readdirSync(registryDir, { withFileTypes: true })
-    .filter((entry) => entry.isDirectory() && existsSync(path.join(registryDir, entry.name, "meta.ts")))
-    .map((entry) => `/components/${entry.name}`);
+const ENTRY_PAGE_PATHS = ["/", "/about", "/components", "/privacy"];
 
-  return ["/", "/about", "/components", "/privacy", ...componentPaths].map((pagePath) => ({ path: pagePath }));
+/**
+ * Every page on the site: the prerendered entry pages plus one ISR `/components/<slug>`
+ * per `registry/<slug>/meta.ts` (mirrors `_core/components.ts`'s auto-discovery — with
+ * link-crawling off there is nothing else to find them). The slug pages must opt out of
+ * prerendering explicitly — a page entry defaults to `enabled: true` — or their static
+ * files would shadow the ISR server function on Vercel. All entries feed the sitemap.
+ */
+function sitemapPages(): Array<{ path: string; prerender: { enabled: boolean } }> {
+  const registryDir = fileURLToPath(new URL("./src/registry", import.meta.url));
+  const componentPages = readdirSync(registryDir, { withFileTypes: true })
+    .filter((entry) => entry.isDirectory() && existsSync(path.join(registryDir, entry.name, "meta.ts")))
+    .map((entry) => ({ path: `/components/${entry.name}`, prerender: { enabled: false } }));
+
+  return [...ENTRY_PAGE_PATHS.map((pagePath) => ({ path: pagePath, prerender: { enabled: true } })), ...componentPages];
 }
 
 export default defineConfig(({ command }) => {
@@ -113,16 +123,18 @@ export default defineConfig(({ command }) => {
       tailwindcss(),
       tanstackStart({
         /**
-         * ISR (TanStack Start style): no prerendering — every page is server-rendered on
-         * demand and CDN-cached via each route's `headers()` (`Cache-Control` +
-         * `CDN-Cache-Control`, see `src/lib/cache.ts`). A prerendered file would shadow the
-         * server function on Vercel (`handle: filesystem` runs before the function route),
-         * so ISR and prerender are mutually exclusive per route. `pages` feeds the sitemap
-         * the paths the crawl used to discover. `host` must match `SITE_URL` in
-         * `src/lib/seo.ts`.
+         * Hybrid ISR (TanStack Start style): the entry pages are prerendered for an
+         * instant, function-free first load; every `/components/$slug` page is
+         * server-rendered on demand and CDN-cached via its `headers()` (`Cache-Control` +
+         * `CDN-Cache-Control`, see `src/lib/cache.ts`). The split is per route because the
+         * two are mutually exclusive per route on Vercel — a prerendered file is served by
+         * `handle: filesystem` before the server function is ever reached. `crawlLinks`
+         * must stay off (it defaults on): crawling an entry page would discover and
+         * prerender every slug page, silently turning ISR back into full static. `host`
+         * must match `SITE_URL` in `src/lib/seo.ts`.
          */
         prerender: {
-          enabled: false,
+          crawlLinks: false,
         },
         pages: sitemapPages(),
         sitemap: {
@@ -133,13 +145,14 @@ export default defineConfig(({ command }) => {
       nitro({
         preset: "vercel",
         /**
-         * Sets `Cache-Control` for the cacheable `public/` files — static files bypass the
-         * server, so `routeRules` (baked into Vercel's static routing config) is the only
-         * path to their deployed headers. Pages are no longer here: with prerendering off
-         * they are live renders, and each route's `headers()` is the canonical policy.
+         * Sets `Cache-Control` for every static file: the prerendered entry pages and the
+         * cacheable `public/` files. Static files bypass the server, so `routeRules` (baked
+         * into Vercel's static routing config) is the only path to their deployed headers.
+         * The ISR slug pages are not here — they are live renders, and the route's
+         * `headers()` is their canonical policy.
          */
         routeRules: Object.fromEntries(
-          publicCacheRoutePatterns().map((pattern) => [
+          [...ENTRY_PAGE_PATHS, ...publicCacheRoutePatterns()].map((pattern) => [
             pattern,
             { headers: { "cache-control": CONTENT_CACHE_CONTROL } },
           ]),

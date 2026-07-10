@@ -10,7 +10,7 @@ import { CONTENT_CACHE_HEADERS } from "#/lib/cache";
 import { canonicalHead } from "#/lib/seo";
 
 export const Route = createFileRoute("/about")({
-  // ISR: this is a live render the CDN caches — both headers required (see lib/cache.ts).
+  // Effective in dev and any live render; once prerendered, `routeRules` in vite.config.ts applies instead.
   headers: () => ({ ...CONTENT_CACHE_HEADERS }),
   head: () => {
     const seo = canonicalHead("/about");

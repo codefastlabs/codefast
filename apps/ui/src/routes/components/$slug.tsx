@@ -10,6 +10,9 @@ import { COMPONENT_BY_SLUG } from "#/registry/_core/components";
 export const Route = createFileRoute("/components/$slug")({
   // ISR: this is a live render the CDN caches — both headers required (see lib/cache.ts).
   headers: () => ({ ...CONTENT_CACHE_HEADERS }),
+  // The client tier of the ISR stack: detail data changes only on redeploy, so revisits
+  // and intent-preloads within the hour reuse the router cache instead of re-running the loader.
+  staleTime: 60 * 60_000,
   head: ({ params }: { params: { slug: string } }) => {
     const component = COMPONENT_BY_SLUG.get(params.slug);
     const url = absoluteUrl(`/components/${params.slug}`);
