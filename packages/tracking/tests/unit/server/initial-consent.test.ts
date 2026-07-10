@@ -42,8 +42,16 @@ describe("buildInitialConsent", () => {
     });
   });
 
-  it("maps a missing country code to other / opt-out", () => {
+  it("fails closed to the strictest opt-in default for a missing country code (unknown visitor)", () => {
     expect(buildInitialConsent({ categories: ["analytics"], countryCode: undefined })).toEqual({
+      defaultConsent: { ads: false, analytics: false },
+      mode: "opt-in",
+      region: "other",
+    });
+  });
+
+  it("keeps a known non-EU country on the other / opt-out default — unknown ≠ known-elsewhere", () => {
+    expect(buildInitialConsent({ categories: ["analytics"], countryCode: "JP" })).toEqual({
       defaultConsent: { ads: false, analytics: true },
       mode: "opt-out",
       region: "other",

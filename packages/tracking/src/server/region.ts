@@ -41,9 +41,10 @@ export const EU_COUNTRY_CODES: ReadonlySet<string> = new Set([
 export const OPT_IN_EQUIVALENT_COUNTRY_CODES: ReadonlySet<string> = new Set(["GB", "IS", "LI", "NO"]);
 
 /**
- * Missing/unrecognized codes fall back to "other", which `resolveConsentMode` treats
- * as opt-out — the least restrictive default, safe only because opt-in regions (EU/VN
- * plus UK/EEA/EFTA above) are matched explicitly.
+ * Unrecognized codes fall back to "other", which `resolveConsentMode` treats as
+ * opt-out — safe only because opt-in regions (EU/VN plus UK/EEA/EFTA above) are matched
+ * explicitly. A *missing* code also maps to "other" here, but `buildInitialConsent`
+ * intercepts that case first and fails closed — unknown is not known-elsewhere.
  *
  * @since 0.5.0-canary.4
  */
