@@ -8,7 +8,7 @@ import { createServerFn } from "@tanstack/react-start";
  * Domain model
  * ------------------------------------------------------------------------ */
 
-export interface Task {
+interface Task {
   id: string;
   title: string;
   done: boolean;

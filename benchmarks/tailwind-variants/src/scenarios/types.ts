@@ -9,12 +9,11 @@ import type {
   AsyncBenchScenario as HarnessAsyncBenchScenario,
   BenchScenario as HarnessBenchScenario,
 } from "@codefast/benchmark-harness/child/bench-scenario";
-export { isAsyncScenario } from "@codefast/benchmark-harness/child/bench-scenario";
 
 /**
  * @since 0.3.16-canary.0
  */
-export type ScenarioGroup =
+type ScenarioGroup =
   | "simple"
   | "complex"
   | "slots"
@@ -31,7 +30,7 @@ export type BenchScenario = HarnessBenchScenario & { readonly group: ScenarioGro
 /**
  * @since 0.3.16-canary.0
  */
-export type AsyncBenchScenario = HarnessAsyncBenchScenario & { readonly group: ScenarioGroup };
+type AsyncBenchScenario = HarnessAsyncBenchScenario & { readonly group: ScenarioGroup };
 /**
  * @since 0.3.16-canary.0
  */

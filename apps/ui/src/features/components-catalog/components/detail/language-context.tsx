@@ -8,7 +8,7 @@ interface LanguageContextValue {
   setLanguage: (language: Language) => void;
 }
 
-export const LanguageContext = createContext<LanguageContextValue | undefined>(undefined);
+const LanguageContext = createContext<LanguageContextValue | undefined>(undefined);
 
 interface LanguageProviderProps extends Omit<ComponentProps<typeof LanguageContext.Provider>, "value"> {
   readonly defaultLanguage?: Language;

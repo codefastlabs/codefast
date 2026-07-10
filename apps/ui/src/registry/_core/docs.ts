@@ -9,15 +9,6 @@ import type { HighlightedSource } from "#/registry/_core/highlight";
 import { getHighlightedSources } from "#/registry/_core/highlight-source";
 import type { ComponentDoc, ResolvedComponentDoc, ResolvedDocExample, SourceRef } from "#/registry/_core/types";
 
-export type {
-  ApiGroup,
-  ComponentDoc,
-  DocExample,
-  ResolvedComponentDoc,
-  ResolvedDocExample,
-  SourceRef,
-} from "#/registry/_core/types";
-
 /** Doc module loaders, keyed by path e.g. `./button/doc.ts`. */
 const docModules = import.meta.glob<Record<string, unknown>>("../*/doc.ts");
 

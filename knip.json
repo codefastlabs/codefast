@@ -2,15 +2,20 @@
   "$schema": "https://unpkg.com/knip@6/schema.json",
   "workspaces": {
     ".": {
-      "entry": ["package.json", "codefast.config.js"],
-      "ignoreDependencies": ["jsdom"]
+      "entry": ["package.json", "codefast.config.js"]
     },
     "apps/ui": {
       "entry": ["src/router.tsx"]
     },
-    "packages/cli": {
-      "entry": ["src/bin.ts", "src/program.ts", "tests/integration/**/*.test.ts", "tests/integration/**/*.test.tsx"],
-      "project": ["src/**/*.ts", "src/**/*.tsx", "tests/integration/**/*.ts", "tests/integration/**/*.tsx"]
+    "packages/benchmark-harness": {
+      "ignoreBinaries": ["tsx"]
+    },
+    "packages/benchmark-viewer": {
+      "ignoreDependencies": ["babel-plugin-react-compiler"]
+    },
+    "packages/di": {
+      "entry": ["examples/**/*.ts", "tests/integration/accessor-e2e.script.ts"],
+      "ignoreDependencies": ["@babel/plugin-proposal-decorators"]
     }
   },
   "rules": {

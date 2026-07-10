@@ -31,7 +31,6 @@
     "@tanstack/react-router-devtools": "catalog:",
     "@tanstack/react-start": "catalog:",
     "@tanstack/react-table": "catalog:",
-    "@tanstack/router-plugin": "catalog:",
     "@unpic/react": "catalog:",
     "@vercel/analytics": "catalog:",
     "chrono-node": "catalog:",
@@ -45,12 +44,10 @@
     "recharts": "catalog:",
     "shiki": "catalog:",
     "tailwindcss": "catalog:",
-    "tw-animate-css": "catalog:",
     "zod": "catalog:"
   },
   "devDependencies": {
     "@codefast/typescript-config": "workspace:*",
-    "@tailwindcss/typography": "catalog:",
     "@tanstack/devtools-vite": "catalog:",
     "@testing-library/dom": "catalog:",
     "@testing-library/jest-dom": "catalog:",

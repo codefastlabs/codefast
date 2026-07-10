@@ -33,7 +33,6 @@
     "@codefast/di": "workspace:*",
     "inversify": "catalog:",
     "reflect-metadata": "catalog:",
-    "tinybench": "catalog:",
     "tsx": "catalog:"
   },
   "devDependencies": {
