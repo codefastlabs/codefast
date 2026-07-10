@@ -20,9 +20,12 @@ Status: draft. Fullstack event tracking library for apps built on TanStack Start
 
 ```
 @codefast/tracking
-├── core     # event catalog types, EventsOf filter, id generation, consent state machine
-├── client   # browser: batching queue, sendBeacon, localStorage persistence, router hook
-└── server   # node: server-function/middleware helpers, region detection
+├── core          # event catalog types, EventsOf filter, id generation, consent state machine, cookie parser
+├── client        # browser: batching queue, sendBeacon, localStorage persistence, router hook, anon-id cookie
+├── server        # node: server-function/middleware helpers, region detection, anon-id Set-Cookie builders
+├── destinations  # provider adapters (gtag, GTM, GA4 MP, Vercel, HTTP) + Consent Mode bootstraps
+├── react         # headless consent UI (useConsent, ConsentBanner, ConsentToggle)
+└── css           # optional plain-CSS theme for the react parts
 ```
 
 Each app defines its own event catalog (Zod schemas + owner tag) and passes it into `createClientTracker` / `createServerTracker`. The package ships no hardcoded events.
@@ -105,7 +108,7 @@ function createClientTracker<Catalog extends EventCatalog>(catalog: Catalog) {
 
 - `Destination` is an adapter interface (`send(event)`, optional `delivery`/`consent`) — core and client/server trackers depend only on this interface, never on a specific provider SDK. There is no per-destination `flush()`; the client queue owns batching/retry for `"queued"` destinations, and `"immediate"` sinks own their own transport.
 - Multiple destinations can be registered; a `track()` call fans out to all registered destinations.
-- Phase 1 destinations: `createVercelAnalyticsDestination` (`@vercel/analytics/react`, optional peer) — implemented, used by `apps/ui`. `createGoogleAnalyticsDestination` (client, `window.gtag`, no peer dependency — requires the gtag.js snippet mounted by the app) — implemented, wired into `apps/ui`. `createGoogleTagManagerDestination` (client, pushes `{ event, … }` onto `dataLayer`) — implemented, with `buildGtmConsentBootstrapScript` / `loadGtmScript` for advanced Consent Mode container load. `createGa4MeasurementProtocolDestination` (server, plain `fetch`, no peer dependency) — implemented, not wired into `apps/ui` yet (no server-owned events in its catalog). PostHog is not built yet. Google Ads conversion tracking was built and then deliberately not adopted — removed, not a gap to fill.
+- Phase 1 destinations: `createVercelAnalyticsDestination` (base `@vercel/analytics`, optional peer — no React dependency of its own) — implemented, used by `apps/ui`. `createGoogleAnalyticsDestination` (client, `window.gtag`, no peer dependency — requires the gtag.js snippet mounted by the app) — implemented, wired into `apps/ui`. `createGoogleTagManagerDestination` (client, pushes `{ event, … }` onto `dataLayer`) — implemented, with `buildGtmConsentBootstrapScript` / `loadGtmScript` for advanced Consent Mode container load. `createGa4MeasurementProtocolDestination` (server, plain `fetch`, no peer dependency) — implemented, not wired into `apps/ui` yet (no server-owned events in its catalog). PostHog is not built yet. Google Ads conversion tracking was built and then deliberately not adopted — removed, not a gap to fill.
 - **Do not double-mount GA**: if GTM already loads GA4, register only `createGoogleTagManagerDestination` — adding `createGoogleAnalyticsDestination` alongside it double-fires events.
 - **gtag/GTM loader DX**: `ensureGtag` / `loadGtagScript` / `buildGtagConsentBootstrapScript` (and the GTM twins) accept optional `dataLayerName` (default `"dataLayer"`, also sets gtag/gtm.js `l=`), `nonce` (CSP — stamp the same value on the host inline `<script>` and the injected tag), and for gtag `debugMode` (`gtag('config', id, { debug_mode: true })`). `<GtagConsentBootstrap />` (`@codefast/tracking/react`) is a framework-agnostic inline script wrapper. Bootstraps use **advanced** Consent Mode (consent `default` first, then always load the tag); omitting the DX options does not change that.
 - **GA4 name translation**: `TrackedEvent` is a discriminated union on `type` (not magic event-name strings). Destinations `switch` on `event.type` — `group` → recommended `join_group`; `identify` → `gtag('set', { user_id })` (client) / dataLayer `identify` (GTM) / dropped on MP; `alias` → dropped; `page` → dropped by default on gtag/GTM (Enhanced Measurement / container tags already report SPA page views) — `trackPageViews: true` opts in. Catalog `track` names that fail GA4's naming rules are warned about and dropped by gtag, GTM, and Measurement Protocol via shared `warnUnlessGa4EventName`.

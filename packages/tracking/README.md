@@ -124,7 +124,8 @@ default look without writing CSS, import the optional plain-CSS theme:
 
 Or style the parts yourself via `className`/`data-slot` attributes (`consent-banner`,
 `consent-title`, `consent-description`, `consent-actions`, `consent-action`,
-`consent-preferences`, `consent-category`, `consent-toggle`), e.g. Tailwind's
+`consent-preferences`, `consent-category`, `consent-category-checkbox`,
+`consent-toggle`), e.g. Tailwind's
 `**:data-[slot=consent-action]:rounded-md`. `data-state` on the root flips between
 `prompt` and `preferences`.
 
