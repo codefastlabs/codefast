@@ -4,7 +4,7 @@
 
 Add a TanStack Start wiring kit so consumer apps no longer hand-roll consent/bootstrap glue:
 
-- `buildInitialConsent` + exported `EU_COUNTRY_CODES` / `OPT_IN_EQUIVALENT_COUNTRY_CODES` (`@codefast/tracking/server`) — region → mode → default decision for SSR shells and server functions.
+- `buildInitialConsent` + exported `EU_COUNTRY_CODES` / `OPT_IN_EQUIVALENT_COUNTRY_CODES` (`@codefast/tracking/server`) — region → mode → default decision for server functions (or a fail-closed bake when country is unknown).
 - `clearGoogleAnalyticsCookies` (`@codefast/tracking/destinations`) — expire `_ga` / `_ga_*` on consent withdrawal.
 - `createIsTrackingAllowed` / `createConsentWithdrawalHandler` (`@codefast/tracking/client`) — tracker gate + revoke clears.
 - `useGoogleConsentSync` (`@codefast/tracking/react`) — Consent Mode `update` + optional gtag load, including cross-tab / privacy-page decisions.

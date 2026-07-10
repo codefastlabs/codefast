@@ -229,7 +229,9 @@ its route's `headers()` policy (`Cache-Control` + `CDN-Cache-Control`, see
 `src/lib/cache.ts` — TanStack Start's hybrid ISR pattern). Either way the served HTML is
 shared across visitors, so the inline gtag bootstrap in `google-tag.tsx` bakes the
 strictest possible default (`denied`, `opt-in`, region `other`) — a request-derived
-value would leak the first visitor's region to everyone served from that cache entry.
+value (geo in `loaderData`, the document shell, or otherwise) would leak the first
+visitor's region to everyone served from that cache entry. Start does run route loaders
+before SSR render; the constraint is cache sharing, not shell-vs-loader timing.
 
 The per-visitor correction runs on the one lane a shared cache can't poison: after
 hydration, `visitor-consent.ts` calls the `resolveVisitorConsent` server function once

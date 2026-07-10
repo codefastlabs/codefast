@@ -248,9 +248,10 @@ function** that resolves region after hydration:
 4. **`useGoogleConsentSync`** (`@codefast/tracking/react`) — Consent Mode `update` +
    optional idempotent gtag load, including cross-tab / privacy-page decisions.
 
-TanStack Start's `shellComponent` renders before root loaders resolve — bake the
-strictest Consent Mode default into the prerendered shell; do not read geo from root
-`loaderData` on a cached route.
+Cached/prerendered HTML is shared across visitors (CDN ISR or static files) — bake the
+strictest Consent Mode default into that shared render. Do not put geo (or any
+request-derived consent) into it via `loaderData`, the document shell, or otherwise;
+per-visitor region rides the private server-fn lane after hydration.
 
 ## Google tag / GTM loaders (advanced Consent Mode)
 

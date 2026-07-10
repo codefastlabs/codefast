@@ -14,7 +14,8 @@ export interface BuildInitialConsentOptions {
 }
 
 /**
- * Pure region → mode → default-consent resolution for SSR shells and server functions.
+ * Pure region → mode → default-consent resolution for server functions (or a fail-closed
+ * bake when country is unknown).
  *
  * @remarks
  * A missing country code means an unknown visitor (a prerender crawl, a host without a
