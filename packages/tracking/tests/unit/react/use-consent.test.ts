@@ -13,7 +13,7 @@ describe("useConsent", () => {
 
     expect(result.current.decision).toBeUndefined();
     expect(result.current.effectiveConsent).toEqual({ ads: false, analytics: false });
-    expect(result.current.isTrackingAllowed).toBe(false);
+    expect(result.current.isAnalyticsAllowed).toBe(false);
     expect(result.current.isPromptNeeded).toBe(true);
   });
 
@@ -22,16 +22,16 @@ describe("useConsent", () => {
       useConsent({ mode: "opt-out", policyVersion: "v1", storage: createMemoryConsentStorage() }),
     );
 
-    // categories defaults to ["analytics"], so ads stays denied.
+    // requestedCategories defaults to ["analytics"], so ads stays denied.
     expect(result.current.effectiveConsent).toEqual({ ads: false, analytics: true });
-    expect(result.current.isTrackingAllowed).toBe(true);
+    expect(result.current.isAnalyticsAllowed).toBe(true);
     expect(result.current.isPromptNeeded).toBe(false);
   });
 
   it("honors GPC as an ads opt-out without withdrawing analytics", () => {
     const { result } = renderHook(() =>
       useConsent({
-        categories: ["ads", "analytics"],
+        requestedCategories: ["ads", "analytics"],
         hasGlobalPrivacyControlSignal: true,
         mode: "opt-out",
         policyVersion: "v1",
@@ -40,21 +40,21 @@ describe("useConsent", () => {
     );
 
     expect(result.current.effectiveConsent).toEqual({ ads: false, analytics: true });
-    expect(result.current.isTrackingAllowed).toBe(true);
+    expect(result.current.isAnalyticsAllowed).toBe(true);
   });
 
   it("grantAll grants only the requested categories, denyAll denies everything, both call onDecision", () => {
     const storage = createMemoryConsentStorage();
     const onDecision = vi.fn();
     const { result } = renderHook(() =>
-      useConsent({ categories: ["analytics"], mode: "opt-in", onDecision, policyVersion: "v1", storage }),
+      useConsent({ requestedCategories: ["analytics"], mode: "opt-in", onDecision, policyVersion: "v1", storage }),
     );
 
     act(() => {
       result.current.grantAll();
     });
 
-    expect(result.current.isTrackingAllowed).toBe(true);
+    expect(result.current.isAnalyticsAllowed).toBe(true);
     expect(result.current.isPromptNeeded).toBe(false);
     expect(onDecision).toHaveBeenCalledWith({ ads: false, analytics: true });
     expect(storage.load()?.decision).toEqual({ ads: false, analytics: true });
@@ -63,18 +63,18 @@ describe("useConsent", () => {
       result.current.denyAll();
     });
 
-    expect(result.current.isTrackingAllowed).toBe(false);
+    expect(result.current.isAnalyticsAllowed).toBe(false);
     expect(onDecision).toHaveBeenCalledWith({ ads: false, analytics: false });
   });
 
-  it("persists a granular per-category choice via save()", () => {
+  it("persists a granular per-category choice via saveDecision()", () => {
     const storage = createMemoryConsentStorage();
     const { result } = renderHook(() =>
-      useConsent({ categories: ["ads", "analytics"], mode: "opt-in", policyVersion: "v1", storage }),
+      useConsent({ requestedCategories: ["ads", "analytics"], mode: "opt-in", policyVersion: "v1", storage }),
     );
 
     act(() => {
-      result.current.save({ ads: false, analytics: true });
+      result.current.saveDecision({ ads: false, analytics: true });
     });
 
     expect(storage.load()?.decision).toEqual({ ads: false, analytics: true });
@@ -91,7 +91,7 @@ describe("useConsent", () => {
     const { result } = renderHook(() => useConsent({ mode: "opt-in", policyVersion: "v1", storage }));
 
     expect(result.current.decision).toEqual({ ads: false, analytics: true });
-    expect(result.current.isTrackingAllowed).toBe(true);
+    expect(result.current.isAnalyticsAllowed).toBe(true);
     expect(result.current.isPromptNeeded).toBe(false);
   });
 
@@ -104,7 +104,7 @@ describe("useConsent", () => {
     const { result } = renderHook(() => useConsent({ mode: "opt-in", policyVersion: "v2", storage }));
 
     expect(result.current.decision).toBeUndefined();
-    expect(result.current.isTrackingAllowed).toBe(false);
+    expect(result.current.isAnalyticsAllowed).toBe(false);
     expect(result.current.isPromptNeeded).toBe(true);
   });
 
@@ -131,7 +131,7 @@ describe("useConsent", () => {
     });
 
     expect(result.current.isPromptNeeded).toBe(false);
-    expect(result.current.isTrackingAllowed).toBe(true);
+    expect(result.current.isAnalyticsAllowed).toBe(true);
   });
 
   it("keeps the decision referentially stable when the storage parses a fresh object per load", () => {

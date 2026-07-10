@@ -14,8 +14,8 @@ export function initialConsentFromRequest(): InitialConsent {
   setResponseHeader("cache-control", "private, no-store");
 
   return buildInitialConsent({
-    categories: REQUESTED_CONSENT_CATEGORIES,
     countryCode: getRequestHeader("x-vercel-ip-country"),
     hasGlobalPrivacyControlSignal: getRequestHeader("sec-gpc") === "1",
+    requestedCategories: REQUESTED_CONSENT_CATEGORIES,
   });
 }

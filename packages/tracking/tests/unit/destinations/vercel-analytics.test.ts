@@ -137,7 +137,7 @@ describe("createVercelAnalyticsDestination", () => {
   it("defaults to requiring consent, with exempt as an explicit opt-in", async () => {
     const { createVercelAnalyticsDestination } = await import("#/destinations/vercel-analytics");
 
-    expect(createVercelAnalyticsDestination().consent).toBe("required");
-    expect(createVercelAnalyticsDestination({ consent: "exempt" }).consent).toBe("exempt");
+    expect(createVercelAnalyticsDestination().consentRequirement).toBe("required");
+    expect(createVercelAnalyticsDestination({ consentRequirement: "exempt" }).consentRequirement).toBe("exempt");
   });
 });

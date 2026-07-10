@@ -4,7 +4,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { STRICTEST_INITIAL_CONSENT } from "#/features/tracking/lib/consent";
 import {
   ensureVisitorConsentResolved,
-  isTrackingAllowed,
+  isAnalyticsAllowed,
   resetVisitorConsentForTests,
   useVisitorConsent,
   INITIAL_CONSENT_SESSION_KEY,
@@ -203,7 +203,7 @@ describe("useVisitorConsent / ensureVisitorConsentResolved", () => {
   });
 });
 
-describe("isTrackingAllowed", () => {
+describe("isAnalyticsAllowed", () => {
   async function resolveRegion(consent: typeof US_CONSENT | typeof STRICTEST_INITIAL_CONSENT): Promise<void> {
     resolveVisitorConsent.mockResolvedValue(consent);
     ensureVisitorConsentResolved();
@@ -212,43 +212,43 @@ describe("isTrackingAllowed", () => {
     });
     // publish() runs in the resolution microtask — wait for the mode to land
     await vi.waitFor(() => {
-      expect(isTrackingAllowed()).toBe(consent.mode === "opt-out");
+      expect(isAnalyticsAllowed()).toBe(consent.mode === "opt-out");
     });
   }
 
   it("blocks tracking before the region resolves — the strictest default is opt-in with no decision", () => {
-    expect(isTrackingAllowed()).toBe(false);
+    expect(isAnalyticsAllowed()).toBe(false);
   });
 
   it("allows tracking by default once an opt-out region resolves", async () => {
     await resolveRegion(US_CONSENT);
 
-    expect(isTrackingAllowed()).toBe(true);
+    expect(isAnalyticsAllowed()).toBe(true);
   });
 
   it("blocks tracking in an opt-out region after a stored denial", async () => {
     await resolveRegion(US_CONSENT);
     storeDecision(false);
 
-    expect(isTrackingAllowed()).toBe(false);
+    expect(isAnalyticsAllowed()).toBe(false);
   });
 
   it("allows tracking in an opt-in region only after a stored grant", async () => {
     storeDecision(true);
 
-    expect(isTrackingAllowed()).toBe(true);
+    expect(isAnalyticsAllowed()).toBe(true);
   });
 
   it("ignores a grant stored under an older policy version", () => {
     storeDecision(true, "0");
 
-    expect(isTrackingAllowed()).toBe(false);
+    expect(isAnalyticsAllowed()).toBe(false);
   });
 
   it("keeps analytics allowed under a GPC signal in an opt-out region — GPC only covers ads", async () => {
     hasGlobalPrivacyControlSignal.mockReturnValue(true);
     await resolveRegion(US_CONSENT);
 
-    expect(isTrackingAllowed()).toBe(true);
+    expect(isAnalyticsAllowed()).toBe(true);
   });
 });

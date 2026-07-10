@@ -71,10 +71,10 @@ export function useSiteConsent(): UseSiteConsentResult {
   }, []);
 
   const consent = useConsent({
-    categories: REQUESTED_CONSENT_CATEGORIES,
     hasGlobalPrivacyControlSignal: hasGlobalPrivacyControlSignal(),
     mode: initialConsent.mode,
     policyVersion: CONSENT_POLICY_VERSION,
+    requestedCategories: REQUESTED_CONSENT_CATEGORIES,
     storage: consentStorage,
   });
 

@@ -7,16 +7,16 @@ import { CONSENT_CATEGORIES, createConsentDecision, readStoredDecision, resolveD
  * @since 0.5.0-canary.4
  */
 export interface UseConsentOptions {
+  hasGlobalPrivacyControlSignal?: boolean | undefined;
+  mode: ConsentMode;
+  onDecision?: ((decision: ConsentDecision) => void) | undefined;
+  policyVersion: string;
   /**
    * Categories the app's prompt actually asks about — `grantAll` grants exactly these,
    * so an analytics-only banner can never grant ads consent it never asked for.
    * Defaults to `["analytics"]`.
    */
-  categories?: ReadonlyArray<ConsentCategory> | undefined;
-  hasGlobalPrivacyControlSignal?: boolean | undefined;
-  mode: ConsentMode;
-  onDecision?: ((decision: ConsentDecision) => void) | undefined;
-  policyVersion: string;
+  requestedCategories?: ReadonlyArray<ConsentCategory> | undefined;
   /** Must be a stable reference (module-level or memoized) — a new object per render resubscribes every render. */
   storage: ConsentStorage;
 }
@@ -31,15 +31,15 @@ export interface UseConsentResult {
   /** What tags must obey right now — the stored decision, or the region default before one exists. */
   effectiveConsent: ConsentDecision;
   grantAll: () => void;
+  /** Effective `analytics` consent — gates this package's own tracker pipeline. */
+  isAnalyticsAllowed: boolean;
   /** True only for opt-in regions with no stored decision yet — drives whether to render the banner. */
   isPromptNeeded: boolean;
-  /** Effective `analytics` consent — gates this package's own tracker pipeline. */
-  isTrackingAllowed: boolean;
   /** Persist a granular per-category choice, e.g. from a preferences panel. */
-  save: (decision: ConsentDecision) => void;
+  saveDecision: (decision: ConsentDecision) => void;
 }
 
-const DEFAULT_CATEGORIES: ReadonlyArray<ConsentCategory> = ["analytics"];
+const DEFAULT_REQUESTED_CATEGORIES: ReadonlyArray<ConsentCategory> = ["analytics"];
 
 /**
  * Bridges `resolveConsentMode`/`resolveDefaultConsent` (core, region-aware) to React via
@@ -52,7 +52,7 @@ const DEFAULT_CATEGORIES: ReadonlyArray<ConsentCategory> = ["analytics"];
  */
 export function useConsent(options: UseConsentOptions): UseConsentResult {
   const { mode, onDecision, policyVersion, storage } = options;
-  const categories = options.categories ?? DEFAULT_CATEGORIES;
+  const requestedCategories = options.requestedCategories ?? DEFAULT_REQUESTED_CATEGORIES;
   const hasGlobalPrivacyControlSignal = options.hasGlobalPrivacyControlSignal ?? false;
 
   // useSyncExternalStore needs a referentially stable snapshot, but JSON-backed storages
@@ -88,7 +88,7 @@ export function useConsent(options: UseConsentOptions): UseConsentResult {
   // Kept stable across renders (when their own inputs don't change) so a consumer that
   // passes this hook's result down as a prop/effect-dep doesn't get a fresh identity —
   // and therefore an unnecessary re-render/effect-rerun — every render.
-  const save = useCallback(
+  const saveDecision = useCallback(
     (next: ConsentDecision): void => {
       // No local state — the save notifies the subscription, which re-renders with the new snapshot.
       storage.save({ decision: next, policyVersion, timestamp: Date.now() });
@@ -98,14 +98,14 @@ export function useConsent(options: UseConsentOptions): UseConsentResult {
   );
 
   const denyAll = useCallback(() => {
-    save(createConsentDecision([]));
-  }, [save]);
+    saveDecision(createConsentDecision([]));
+  }, [saveDecision]);
 
   const grantAll = useCallback(() => {
-    save(createConsentDecision(categories));
-  }, [categories, save]);
+    saveDecision(createConsentDecision(requestedCategories));
+  }, [requestedCategories, saveDecision]);
 
-  const effectiveConsent = decision ?? resolveDefaultConsent(mode, categories, hasGlobalPrivacyControlSignal);
+  const effectiveConsent = decision ?? resolveDefaultConsent(mode, requestedCategories, hasGlobalPrivacyControlSignal);
 
   return useMemo(
     () => ({
@@ -113,10 +113,10 @@ export function useConsent(options: UseConsentOptions): UseConsentResult {
       denyAll,
       effectiveConsent,
       grantAll,
+      isAnalyticsAllowed: effectiveConsent.analytics,
       isPromptNeeded: mode === "opt-in" && decision === undefined,
-      isTrackingAllowed: effectiveConsent.analytics,
-      save,
+      saveDecision,
     }),
-    [decision, denyAll, effectiveConsent, grantAll, mode, save],
+    [decision, denyAll, effectiveConsent, grantAll, mode, saveDecision],
   );
 }

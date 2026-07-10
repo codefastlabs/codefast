@@ -29,15 +29,18 @@ export type {
   TrackEvent,
   TrackedEvent,
   TrackedEventBase,
+  TrackedEventSeed,
 } from "#/core";
 export {
   assertNever,
+  buildTrackedEvent,
   CONSENT_CATEGORIES,
   createConsentDecision,
   defineEventCatalog,
   deriveEventId,
   generateEventId,
   isConsentDecision,
+  isConsentRecord,
   isTrackedEvent,
   readStoredDecision,
   resolveConsentMode,

@@ -11,6 +11,7 @@ export {
   CONSENT_CATEGORIES,
   createConsentDecision,
   isConsentDecision,
+  isConsentRecord,
   readStoredDecision,
   resolveConsentMode,
   resolveDefaultConsent,
@@ -34,5 +35,6 @@ export type {
   TrackEvent,
   TrackedEvent,
   TrackedEventBase,
+  TrackedEventSeed,
 } from "#/core/tracked-event";
-export { assertNever, isTrackedEvent } from "#/core/tracked-event";
+export { assertNever, buildTrackedEvent, isTrackedEvent } from "#/core/tracked-event";

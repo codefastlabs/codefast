@@ -8,10 +8,10 @@ export interface VercelAnalyticsDestinationOptions {
   /**
    * Vercel Analytics is cookieless and its events carry no identifier from this
    * package, so it qualifies for `"exempt"` — it then keeps receiving events while the
-   * tracker's consent gate is closed. Defaults to `"required"` so pre-consent delivery
+   * tracker's analytics gate is closed. Defaults to `"required"` so pre-consent delivery
    * stays an explicit opt-in.
    */
-  consent?: "exempt" | "required" | undefined;
+  consentRequirement?: "exempt" | "required" | undefined;
   name?: string | undefined;
   /**
    * Forward `page` envelopes as a `page_view` custom event. Off by default: the mounted
@@ -34,7 +34,7 @@ export interface VercelAnalyticsDestinationOptions {
  */
 export function createVercelAnalyticsDestination(options: VercelAnalyticsDestinationOptions = {}): Destination {
   return {
-    consent: options.consent ?? "required",
+    consentRequirement: options.consentRequirement ?? "required",
     delivery: "immediate",
     name: options.name ?? "vercel-analytics",
     // Synchronous today, but declared async so a throw here rejects the returned Promise

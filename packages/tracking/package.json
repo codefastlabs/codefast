@@ -86,10 +86,10 @@
       "types": "./dist/client/gpc.d.mts",
       "import": "./dist/client/gpc.mjs"
     },
-    "./client/is-tracking-allowed": {
-      "source": "./src/client/is-tracking-allowed.ts",
-      "types": "./dist/client/is-tracking-allowed.d.mts",
-      "import": "./dist/client/is-tracking-allowed.mjs"
+    "./client/is-analytics-allowed": {
+      "source": "./src/client/is-analytics-allowed.ts",
+      "types": "./dist/client/is-analytics-allowed.d.mts",
+      "import": "./dist/client/is-analytics-allowed.mjs"
     },
     "./client/lifecycle": {
       "source": "./src/client/lifecycle.ts",

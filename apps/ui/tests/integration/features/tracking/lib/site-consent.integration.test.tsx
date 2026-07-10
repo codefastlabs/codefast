@@ -42,8 +42,8 @@ const DENIED_PARAMS = { ...GRANTED_PARAMS, analytics_storage: "denied" };
 function setRegion(country: string): void {
   resolveVisitorConsent.mockResolvedValue(
     buildInitialConsent({
-      categories: REQUESTED_CONSENT_CATEGORIES,
       countryCode: country,
+      requestedCategories: REQUESTED_CONSENT_CATEGORIES,
     }),
   );
 }

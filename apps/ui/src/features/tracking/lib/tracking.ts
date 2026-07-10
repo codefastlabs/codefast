@@ -9,7 +9,7 @@ import {
   clearAnonymousIdCookie,
   persistAnonymousIdCookie,
 } from "#/features/tracking/lib/anonymous-id";
-import { isTrackingAllowed } from "#/features/tracking/lib/visitor-consent";
+import { isAnalyticsAllowed } from "#/features/tracking/lib/visitor-consent";
 
 /**
  * `copy_code`/`search_query` track *what* was copied or searched, never the raw
@@ -63,8 +63,11 @@ export function getTracker(): ClientTracker<typeof catalog> {
     // while consent gates GA — the same footing as its own native page views.
     // `createGoogleAnalyticsDestination`'s `send()` already no-ops until `<GoogleTag />`
     // mounts gtag.js, so no env-var check is needed here too.
-    destinations: [createVercelAnalyticsDestination({ consent: "exempt" }), createGoogleAnalyticsDestination()],
-    isTrackingAllowed,
+    destinations: [
+      createVercelAnalyticsDestination({ consentRequirement: "exempt" }),
+      createGoogleAnalyticsDestination(),
+    ],
+    isAnalyticsAllowed,
     // no storage: with immediate-only destinations a persisted queue would never drain anywhere
   });
 

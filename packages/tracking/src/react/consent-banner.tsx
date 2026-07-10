@@ -124,7 +124,7 @@ export function ConsentBannerActions(props: ConsentBannerActionsProps): ReactNod
 export interface ConsentBannerAcceptProps extends Omit<ComponentProps<"button">, "type"> {}
 
 /**
- * Grants the categories the app requested (`useConsent`'s `categories`) — never more.
+ * Grants the categories the app requested (`useConsent`'s `requestedCategories`) — never more.
  *
  * @since 0.5.0-canary.5
  */
@@ -287,7 +287,7 @@ export function ConsentBannerSave({ onClick, ...props }: ConsentBannerSaveProps)
       // the part owns the decision — composed so a consumer onClick still runs
       onClick={(event) => {
         onClick?.(event);
-        consent.save(pending);
+        consent.saveDecision(pending);
         setPending(undefined);
       }}
       type="button"
@@ -313,7 +313,7 @@ export interface ConsentToggleProps extends Omit<ComponentProps<"button">, "chil
   /**
    * Purposes this control flips. Defaults to `["ads"]` — CCPA/CPRA "Do Not Sell or Share"
    * mirrors GPC (ads denied, first-party analytics left alone). Pass `["analytics"]` (or
-   * both) for a broader opt-out. Distinct from `useConsent`'s `categories` (what the
+   * both) for a broader opt-out. Distinct from `useConsent`'s `requestedCategories` (what the
    * prompt asks about / `grantAll` grants).
    */
   toggledCategories?: ReadonlyArray<ConsentCategory> | undefined;
@@ -348,7 +348,7 @@ export function ConsentToggle({
           next[category] = !isAnyCategoryGranted;
         }
 
-        consent.save(next);
+        consent.saveDecision(next);
       }}
       type="button"
     >

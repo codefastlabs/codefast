@@ -132,7 +132,7 @@ Or style the parts yourself via `className`/`data-slot` attributes (`consent-ban
 ```tsx
 import {
   createConsentWithdrawalHandler,
-  createIsTrackingAllowed,
+  createIsAnalyticsAllowed,
   createLocalStorageConsentStorage,
   hasGlobalPrivacyControlSignal,
 } from "@codefast/tracking/client";
@@ -155,16 +155,16 @@ import {
 
 // Module scope — useConsent subscribes to the storage, so it must be a stable reference.
 const consentStorage = createLocalStorageConsentStorage("tracking-consent");
-const categories = ["analytics"] as const;
+const requestedCategories = ["analytics"] as const;
 const policyVersion = "2026-01";
 
 // Prefer a re-readable snapshot from your server-fn lane (apps/ui `visitor-consent.ts`).
 // Fail closed to opt-in until that resolve lands.
-const isTrackingAllowed = createIsTrackingAllowed({
-  categories,
+const isAnalyticsAllowed = createIsAnalyticsAllowed({
+  getHasGlobalPrivacyControlSignal: hasGlobalPrivacyControlSignal,
   getMode: () => "opt-in",
-  hasGlobalPrivacyControlSignal,
   policyVersion,
+  requestedCategories,
   storage: consentStorage,
 });
 
@@ -176,10 +176,10 @@ const onDecision = createConsentWithdrawalHandler({
 
 function ConsentGate({ mode }: { mode: "opt-in" | "opt-out" }) {
   const consent = useConsent({
-    categories, // Accept grants exactly these — never unrequested purposes
     mode,
     onDecision,
     policyVersion,
+    requestedCategories, // Accept grants exactly these — never unrequested purposes
     storage: consentStorage,
   });
 
@@ -231,7 +231,7 @@ withdrawing first-party `analytics`.
 pages the HTML cannot be personalized per visitor, so the shipped lane is a **server
 function** that resolves region after hydration:
 
-1. **`buildInitialConsent({ countryCode, categories, hasGlobalPrivacyControlSignal? })`**
+1. **`buildInitialConsent({ countryCode, requestedCategories, hasGlobalPrivacyControlSignal? })`**
    (`@codefast/tracking/server`) — region → mode → default decision. Call it from a
    `createServerFn` handler that reads the geo header (see `apps/ui`
    `resolve-visitor-consent.ts` / `initial-consent-from-request.ts`). Export
@@ -239,10 +239,10 @@ function** that resolves region after hydration:
    must duplicate the map.
 2. **Client snapshot** — after hydration, call the server function once per session
    (`private, no-store`; cache in `sessionStorage`), feed a `useSyncExternalStore` store,
-   and pass `getMode: () => snapshot.initialConsent.mode` into `createIsTrackingAllowed`
+   and pass `getMode: () => snapshot.initialConsent.mode` into `createIsAnalyticsAllowed`
    (see `apps/ui` `visitor-consent.ts`). Until it resolves, fail closed to the strictest
    opt-in default.
-3. **`createIsTrackingAllowed` / `createConsentWithdrawalHandler`**
+3. **`createIsAnalyticsAllowed` / `createConsentWithdrawalHandler`**
    (`@codefast/tracking/client`) — tracker gate + revoke clears (`tracker.clear`,
    anonymous-id cookie, `_ga*` via `clearGoogleAnalyticsCookies`).
 4. **`useGoogleConsentSync`** (`@codefast/tracking/react`) — Consent Mode `update` +
@@ -259,7 +259,7 @@ Prefer the pre-hydration bootstrap (not a post-hydration mount) so Consent Mode'
 lands before any Google hit. Bootstraps use **advanced** Consent Mode: set the v2
 `default` from the stored decision (or region fallback), then **always** load gtag.js /
 gtm.js — even when storage is denied — so cookieless pings and consent modeling can run.
-This does **not** weaken the package's first-party consent gate (`isTrackingAllowed`,
+This does **not** weaken the package's first-party consent gate (`isAnalyticsAllowed`,
 identifier minting, non-exempt destinations); only Google's tag script loading changes.
 
 ```tsx

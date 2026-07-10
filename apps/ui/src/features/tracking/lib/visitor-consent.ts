@@ -1,6 +1,6 @@
-import { createIsTrackingAllowed, hasGlobalPrivacyControlSignal } from "@codefast/tracking/client";
+import { createIsAnalyticsAllowed, hasGlobalPrivacyControlSignal } from "@codefast/tracking/client";
 import type { ConsentRegion } from "@codefast/tracking/core";
-import { resolveConsentMode } from "@codefast/tracking/core";
+import { isConsentDecision, resolveConsentMode } from "@codefast/tracking/core";
 import { useSyncExternalStore } from "react";
 
 import type { InitialConsent } from "#/features/tracking/lib/consent";
@@ -18,6 +18,7 @@ import { resolveVisitorConsent } from "#/features/tracking/lib/resolve-visitor-c
  */
 export const INITIAL_CONSENT_SESSION_KEY = "codefast-ui-initial-consent";
 
+/** Store snapshot shape — also the hook result once region resolution settles. */
 export interface VisitorConsentSnapshot {
   /** The region-correct default once resolved; the strictest default until then. */
   initialConsent: InitialConsent;
@@ -28,6 +29,9 @@ export interface VisitorConsentSnapshot {
    */
   isResolved: boolean;
 }
+
+/** Hook result alias — same shape as the module store snapshot. */
+export type UseVisitorConsentResult = VisitorConsentSnapshot;
 
 const listeners = new Set<() => void>();
 
@@ -99,17 +103,13 @@ function isInitialConsent(value: unknown): value is InitialConsent {
   }
 
   const candidate = value as Record<string, unknown>;
-  const defaultConsent = candidate["defaultConsent"] as Record<string, unknown> | undefined;
   const mode = candidate["mode"];
   const region = candidate["region"];
 
   if (
     (mode !== "opt-in" && mode !== "opt-out") ||
     !isConsentRegion(region) ||
-    typeof defaultConsent !== "object" ||
-    defaultConsent === null ||
-    typeof defaultConsent["ads"] !== "boolean" ||
-    typeof defaultConsent["analytics"] !== "boolean"
+    !isConsentDecision(candidate["defaultConsent"])
   ) {
     return false;
   }
@@ -179,7 +179,7 @@ function subscribe(listener: () => void): () => void {
 const SERVER_SNAPSHOT: VisitorConsentSnapshot = { initialConsent: STRICTEST_INITIAL_CONSENT, isResolved: false };
 
 /** Reactive view of the visitor's resolved consent default — updates once the server lane answers. */
-export function useVisitorConsent(): VisitorConsentSnapshot {
+export function useVisitorConsent(): UseVisitorConsentResult {
   return useSyncExternalStore(
     subscribe,
     () => snapshot,
@@ -201,11 +201,11 @@ export function resetVisitorConsentForTests(): void {
   }
 }
 
-/** Non-React gate for `createClientTracker({ isTrackingAllowed })`. */
-export const isTrackingAllowed = createIsTrackingAllowed({
-  categories: REQUESTED_CONSENT_CATEGORIES,
+/** Non-React gate for `createClientTracker({ isAnalyticsAllowed })`. */
+export const isAnalyticsAllowed = createIsAnalyticsAllowed({
+  getHasGlobalPrivacyControlSignal: hasGlobalPrivacyControlSignal,
   getMode: () => snapshot.initialConsent.mode,
-  hasGlobalPrivacyControlSignal,
   policyVersion: CONSENT_POLICY_VERSION,
+  requestedCategories: REQUESTED_CONSENT_CATEGORIES,
   storage: consentStorage,
 });

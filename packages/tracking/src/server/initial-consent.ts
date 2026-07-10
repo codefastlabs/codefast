@@ -5,12 +5,12 @@ import { resolveRegionFromCountryCode } from "#/server/region";
 export type { InitialConsent };
 
 export interface BuildInitialConsentOptions {
-  /** Categories the app's prompt asks about — opt-out regions grant exactly these by default. */
-  categories: ReadonlyArray<ConsentCategory>;
   /** ISO 3166-1 alpha-2 from the geo header; missing → the strictest opt-in default. */
   countryCode: string | undefined;
   /** Honored as an ads-only opt-out on the default decision. */
   hasGlobalPrivacyControlSignal?: boolean | undefined;
+  /** Categories the app's prompt asks about — opt-out regions grant exactly these by default. */
+  requestedCategories: ReadonlyArray<ConsentCategory>;
 }
 
 /**
@@ -32,7 +32,11 @@ export function buildInitialConsent(options: BuildInitialConsentOptions): Initia
   const mode = resolveConsentMode(region);
 
   return {
-    defaultConsent: resolveDefaultConsent(mode, options.categories, options.hasGlobalPrivacyControlSignal ?? false),
+    defaultConsent: resolveDefaultConsent(
+      mode,
+      options.requestedCategories,
+      options.hasGlobalPrivacyControlSignal ?? false,
+    ),
     mode,
     region,
   };

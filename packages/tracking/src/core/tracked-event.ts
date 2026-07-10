@@ -47,6 +47,48 @@ export interface AliasEvent extends TrackedEventBase {
  */
 export type TrackedEvent = AliasEvent | GroupEvent | IdentifyEvent | PageViewEvent | TrackEvent;
 
+/**
+ * Per-kind payload of an envelope — trackers fill in the shared {@link TrackedEventBase}
+ * fields via {@link buildTrackedEvent}.
+ */
+export type TrackedEventSeed = TrackedEvent extends infer Event
+  ? Event extends TrackedEvent
+    ? Omit<Event, keyof TrackedEventBase>
+    : never
+  : never;
+
+/**
+ * Rejoins a kind-specific seed with the shared base fields into a {@link TrackedEvent}.
+ * Switching on `seed.type` keeps each branch assignable without a union assertion.
+ */
+export function buildTrackedEvent(seed: TrackedEventSeed, base: TrackedEventBase): TrackedEvent {
+  switch (seed.type) {
+    case "alias": {
+      return { ...base, ...seed };
+    }
+
+    case "group": {
+      return { ...base, ...seed };
+    }
+
+    case "identify": {
+      return { ...base, ...seed };
+    }
+
+    case "page": {
+      return { ...base, ...seed };
+    }
+
+    case "track": {
+      return { ...base, ...seed };
+    }
+
+    default: {
+      return assertNever(seed);
+    }
+  }
+}
+
 function isTrackedEventBase(record: Record<string, unknown>): boolean {
   return (
     typeof record.anonymousId === "string" &&
@@ -57,17 +99,17 @@ function isTrackedEventBase(record: Record<string, unknown>): boolean {
   );
 }
 
-function isPlainPropsRecord(value: unknown): value is Record<string, unknown> {
+function isPlainObject(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
 /** Guards records read back from untrusted storage (e.g. a pre-migration offline queue). */
 export function isTrackedEvent(value: unknown): value is TrackedEvent {
-  if (typeof value !== "object" || value === null) {
+  if (!isPlainObject(value)) {
     return false;
   }
 
-  const record = value as Record<string, unknown>;
+  const record = value;
 
   if (!isTrackedEventBase(record)) {
     return false;
@@ -79,19 +121,19 @@ export function isTrackedEvent(value: unknown): value is TrackedEvent {
     }
 
     case "group": {
-      return typeof record.groupId === "string" && isPlainPropsRecord(record.traits);
+      return typeof record.groupId === "string" && isPlainObject(record.traits);
     }
 
     case "identify": {
-      return isPlainPropsRecord(record.traits);
+      return isPlainObject(record.traits);
     }
 
     case "page": {
-      return (record.name === undefined || typeof record.name === "string") && isPlainPropsRecord(record.props);
+      return (record.name === undefined || typeof record.name === "string") && isPlainObject(record.props);
     }
 
     case "track": {
-      return typeof record.name === "string" && isPlainPropsRecord(record.props);
+      return typeof record.name === "string" && isPlainObject(record.props);
     }
 
     default: {

@@ -38,13 +38,13 @@ type GoogleConsentSignal = keyof typeof GOOGLE_CONSENT_SIGNAL_CATEGORIES;
 /** Maps a package `ConsentDecision` onto Consent Mode v2's four storage signals. */
 export function toGoogleConsentParams(decision: ConsentDecision): GoogleConsentParams {
   // Derived from the signal map (not hand-written per signal) so the runtime params and
-  // the bootstrap fragment below can never disagree; the cast rebuilds what
-  // Object.fromEntries erases — every map key is present exactly once.
-  return Object.fromEntries(
-    (Object.entries(GOOGLE_CONSENT_SIGNAL_CATEGORIES) as Array<[GoogleConsentSignal, ConsentCategory]>).map(
-      ([signal, category]) => [signal, decision[category] ? "granted" : "denied"],
-    ),
-  ) as unknown as GoogleConsentParams;
+  // the bootstrap fragment below can never disagree.
+  return {
+    ad_personalization: decision[GOOGLE_CONSENT_SIGNAL_CATEGORIES.ad_personalization] ? "granted" : "denied",
+    ad_storage: decision[GOOGLE_CONSENT_SIGNAL_CATEGORIES.ad_storage] ? "granted" : "denied",
+    ad_user_data: decision[GOOGLE_CONSENT_SIGNAL_CATEGORIES.ad_user_data] ? "granted" : "denied",
+    analytics_storage: decision[GOOGLE_CONSENT_SIGNAL_CATEGORIES.analytics_storage] ? "granted" : "denied",
+  };
 }
 
 /** JS fragment that validates a stored `ConsentRecord.decision` shape inside a bootstrap. */
@@ -59,8 +59,12 @@ function consentDecisionShapeCheckExpression(): string {
  * {@link GOOGLE_CONSENT_SIGNAL_CATEGORIES} so runtime and bootstrap stay aligned.
  */
 function consentSignalAssignmentsExpression(): string {
-  return (Object.entries(GOOGLE_CONSENT_SIGNAL_CATEGORIES) as Array<[GoogleConsentSignal, ConsentCategory]>)
-    .map(([signal, category]) => `${signal}: consent.${category} ? "granted" : "denied"`)
+  return (Object.keys(GOOGLE_CONSENT_SIGNAL_CATEGORIES) as Array<GoogleConsentSignal>)
+    .map((signal) => {
+      const category = GOOGLE_CONSENT_SIGNAL_CATEGORIES[signal];
+
+      return `${signal}: consent.${category} ? "granted" : "denied"`;
+    })
     .join(",\n      ");
 }
 
@@ -79,7 +83,7 @@ export interface GoogleConsentBootstrapPreambleOptions {
  * "default" signal. The builders append only their tag-specific tail, so the consent
  * logic cannot drift between them.
  */
-export function googleConsentBootstrapPreamble(options: GoogleConsentBootstrapPreambleOptions): string {
+export function buildGoogleConsentBootstrapPreamble(options: GoogleConsentBootstrapPreambleOptions): string {
   const dataLayerAccess = `window[${JSON.stringify(options.dataLayerName)}]`;
 
   return `
@@ -99,17 +103,17 @@ export function googleConsentBootstrapPreamble(options: GoogleConsentBootstrapPr
 }
 
 /** Reads or creates a named `window[dataLayerName]` queue array. */
-export function dataLayerOf(dataLayerName: string): Array<unknown> | undefined {
+export function ensureDataLayer(dataLayerName: string): Array<unknown> | undefined {
   if (typeof window === "undefined") {
     return undefined;
   }
 
-  const win = window as unknown as Record<string, unknown>;
-  const existing = win[dataLayerName];
+  const existing = Reflect.get(window, dataLayerName);
+  const layer: Array<unknown> = Array.isArray(existing) ? existing : [];
 
-  win[dataLayerName] = Array.isArray(existing) ? existing : [];
+  Reflect.set(window, dataLayerName, layer);
 
-  return win[dataLayerName] as Array<unknown>;
+  return layer;
 }
 
 /**

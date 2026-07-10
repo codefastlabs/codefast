@@ -11,8 +11,8 @@ export { createCookieAnonymousId } from "#/client/cookie-anonymous-id";
 
 export { hasGlobalPrivacyControlSignal } from "#/client/gpc";
 
-export type { CreateIsTrackingAllowedOptions } from "#/client/is-tracking-allowed";
-export { createIsTrackingAllowed } from "#/client/is-tracking-allowed";
+export type { CreateIsAnalyticsAllowedOptions } from "#/client/is-analytics-allowed";
+export { createIsAnalyticsAllowed } from "#/client/is-analytics-allowed";
 
 export type { ClientLifecycleOptions } from "#/client/lifecycle";
 export { attachClientLifecycle } from "#/client/lifecycle";

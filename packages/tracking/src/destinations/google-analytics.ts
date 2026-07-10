@@ -3,9 +3,9 @@ import type { Destination } from "#/core/destination";
 import { assertNever } from "#/core/tracked-event";
 import type { GoogleConsentParams } from "#/destinations/google-consent";
 import {
+  buildGoogleConsentBootstrapPreamble,
   DEFAULT_DATA_LAYER_NAME,
-  dataLayerOf,
-  googleConsentBootstrapPreamble,
+  ensureDataLayer,
   toGoogleConsentParams,
   warnUnlessGa4EventName,
 } from "#/destinations/google-consent";
@@ -69,12 +69,12 @@ export function ensureGtag(options: EnsureGtagOptions = {}): GtagFunction | unde
 
   const dataLayerName = options.dataLayerName ?? DEFAULT_DATA_LAYER_NAME;
 
-  dataLayerOf(dataLayerName);
+  ensureDataLayer(dataLayerName);
 
   // First stub wins — recreating would orphan commands already queued on another layer.
   // Callers must pass the same dataLayerName for every helper on the page.
   window.gtag ??= function gtag() {
-    dataLayerOf(dataLayerName)?.push(arguments);
+    ensureDataLayer(dataLayerName)?.push(arguments);
   } as GtagFunction;
 
   return window.gtag;
@@ -256,7 +256,7 @@ export function buildGtagConsentBootstrapScript(options: GtagConsentBootstrapOpt
   const configArgs =
     debugMode === true ? `${JSON.stringify(gaMeasurementId)}, { debug_mode: true }` : JSON.stringify(gaMeasurementId);
   const nonceAssignment = nonce === undefined ? "" : `gtagScript.nonce = ${JSON.stringify(nonce)};`;
-  const preamble = googleConsentBootstrapPreamble({
+  const preamble = buildGoogleConsentBootstrapPreamble({
     consentStorageKey,
     dataLayerName,
     defaultConsent,

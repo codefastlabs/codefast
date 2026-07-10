@@ -2,9 +2,9 @@ import type { ConsentDecision } from "#/core/consent";
 import type { Destination } from "#/core/destination";
 import { assertNever } from "#/core/tracked-event";
 import {
+  buildGoogleConsentBootstrapPreamble,
   DEFAULT_DATA_LAYER_NAME,
-  dataLayerOf,
-  googleConsentBootstrapPreamble,
+  ensureDataLayer,
   warnUnlessGa4EventName,
 } from "#/destinations/google-consent";
 import { flattenEventProps, omitHref, toJoinGroupPayload } from "#/destinations/shared";
@@ -84,7 +84,7 @@ export function loadGtmScript(options: LoadGtmScriptOptions): void {
     return;
   }
 
-  const dataLayer = dataLayerOf(dataLayerName);
+  const dataLayer = ensureDataLayer(dataLayerName);
 
   if (dataLayer === undefined) {
     return;
@@ -133,7 +133,7 @@ export function createGoogleTagManagerDestination(options: GoogleTagManagerDesti
     delivery: "immediate",
     name,
     async send(event) {
-      const dataLayer = dataLayerOf(dataLayerName);
+      const dataLayer = ensureDataLayer(dataLayerName);
 
       if (dataLayer === undefined) {
         return;
@@ -248,7 +248,7 @@ export function buildGtmConsentBootstrapScript(options: GtmConsentBootstrapOptio
   const scriptUrl = gtmScriptSrc({ auth, dataLayerName, gtmId, gtmScriptUrl, preview });
   const dataLayerAccess = `window[${JSON.stringify(dataLayerName)}]`;
   const nonceAssignment = nonce === undefined ? "" : `gtmScript.nonce = ${JSON.stringify(nonce)};`;
-  const preamble = googleConsentBootstrapPreamble({
+  const preamble = buildGoogleConsentBootstrapPreamble({
     consentStorageKey,
     dataLayerName,
     defaultConsent,

@@ -60,16 +60,26 @@ export function createConsentDecision(grantedCategories: ReadonlyArray<ConsentCa
   return { ads: grantedCategories.includes("ads"), analytics: grantedCategories.includes("analytics") };
 }
 
+function isPlainObject(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
 /**
  * Guards stored JSON — the record is tamperable, so every category must be an explicit boolean.
  *
  * @since 0.5.0-canary.4
  */
 export function isConsentDecision(value: unknown): value is ConsentDecision {
+  return isPlainObject(value) && CONSENT_CATEGORIES.every((category) => typeof value[category] === "boolean");
+}
+
+/** Guards a persisted consent record read from untrusted storage (e.g. `localStorage`). */
+export function isConsentRecord(value: unknown): value is ConsentRecord {
   return (
-    typeof value === "object" &&
-    value !== null &&
-    CONSENT_CATEGORIES.every((category) => typeof (value as Record<string, unknown>)[category] === "boolean")
+    isPlainObject(value) &&
+    isConsentDecision(value.decision) &&
+    typeof value.policyVersion === "string" &&
+    typeof value.timestamp === "number"
   );
 }
 
@@ -166,7 +176,7 @@ export function readStoredDecision(storage: ConsentStorage, policyVersion: strin
 /**
  * The consent a tracker should honor right now: the stored decision if one exists, else
  * the region default — the same rule `useConsent` applies to its `effectiveConsent`, so a
- * non-React gate (e.g. a tracker's `isTrackingAllowed` option) doesn't have to reimplement
+ * non-React gate (e.g. a tracker's `isAnalyticsAllowed` option) doesn't have to reimplement
  * "read storage, validate the policy version, fall back to `resolveDefaultConsent`" itself.
  */
 export function resolveEffectiveConsent(
