@@ -1,5 +1,3 @@
-import { geolocation, next } from "@vercel/functions";
-
 /**
  * Vercel Routing Middleware — personalizes the statically prerendered pages' consent
  * default per real visitor by setting a cookie `google-tag.tsx` prefers over its
@@ -9,6 +7,12 @@ import { geolocation, next } from "@vercel/functions";
  * build, so it duplicates `@codefast/tracking`'s EU-country / opt-in-equivalent / consent
  * mapping and the cookie-name literal rather than risk an unverified cross-boundary import.
  * Kept in sync by `tests/unit/middleware.test.ts` against `buildInitialConsent`.
+ *
+ * Zero-dependency by design: the two Vercel protocol literals it needs — the
+ * `x-vercel-ip-country` geo header and the `x-middleware-next: 1` continue signal —
+ * are written inline instead of pulling in `@vercel/functions`. The cookie is the
+ * host-agnostic contract; only this setter is Vercel-specific, and a different host
+ * would replace this file with its own geo adapter writing the same cookie.
  */
 
 // Duplicates `src/features/tracking/lib/consent.ts` — middleware.test.ts guards the sync.
@@ -75,7 +79,7 @@ export const config = {
 };
 
 export default function middleware(request: Request): Response {
-  const { country } = geolocation(request);
+  const country = request.headers.get("x-vercel-ip-country") ?? undefined;
   const region = resolveRegion(country);
   const isOptIn = region === "eu" || region === "vn";
 
@@ -86,7 +90,10 @@ export default function middleware(request: Request): Response {
 
   const value = encodeURIComponent(JSON.stringify({ defaultConsent, mode: isOptIn ? "opt-in" : "opt-out", region }));
 
-  return next({
-    headers: { "set-cookie": `${INITIAL_CONSENT_COOKIE_NAME}=${value}; Path=/; Max-Age=86400; SameSite=Lax; Secure` },
+  return new Response(null, {
+    headers: {
+      "set-cookie": `${INITIAL_CONSENT_COOKIE_NAME}=${value}; Path=/; Max-Age=86400; SameSite=Lax; Secure`,
+      "x-middleware-next": "1",
+    },
   });
 }
