@@ -19,6 +19,15 @@ describe("createLocalStorageConsentStorage", () => {
 
     localStorage.setItem("tracking-consent-corrupt", "{not json");
     expect(storage.load()).toBeUndefined();
+
+    localStorage.setItem("tracking-consent-corrupt", JSON.stringify({ foo: 1 }));
+    expect(storage.load()).toBeUndefined();
+
+    localStorage.setItem(
+      "tracking-consent-corrupt",
+      JSON.stringify({ decision: { ads: false }, policyVersion: "2026-01", timestamp: 1 }),
+    );
+    expect(storage.load()).toBeUndefined();
   });
 
   it("notifies subscribers on save and clear, and stops after unsubscribe", () => {
