@@ -18,7 +18,6 @@ export function GtagConsentBootstrap({
   consentStorageKey,
   dataLayerName,
   defaultConsent,
-  defaultConsentExpression,
   debugMode,
   gaMeasurementId,
   nonce,
@@ -27,11 +26,10 @@ export function GtagConsentBootstrap({
 }: GtagConsentBootstrapProps): ReactNode {
   const bootstrapOptions: GtagConsentBootstrapOptions = {
     consentStorageKey,
+    defaultConsent,
     gaMeasurementId,
     policyVersion,
     ...(dataLayerName === undefined ? {} : { dataLayerName }),
-    ...(defaultConsent === undefined ? {} : { defaultConsent }),
-    ...(defaultConsentExpression === undefined ? {} : { defaultConsentExpression }),
     ...(debugMode === undefined ? {} : { debugMode }),
     ...(nonce === undefined ? {} : { nonce }),
   };

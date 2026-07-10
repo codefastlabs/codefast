@@ -64,28 +64,12 @@ function consentSignalAssignmentsExpression(): string {
     .join(",\n      ");
 }
 
-/**
- * The fallback-`ConsentDecision` JS expression from whichever of the two bootstrap
- * options is set — throws when neither is, naming the calling builder.
- */
-export function resolveFallbackConsentExpression(
-  builderName: string,
-  defaultConsent: ConsentDecision | undefined,
-  defaultConsentExpression: string | undefined,
-): string {
-  if (defaultConsentExpression === undefined && defaultConsent === undefined) {
-    throw new Error(`[tracking] ${builderName} requires defaultConsent or defaultConsentExpression`);
-  }
-
-  return defaultConsentExpression ?? JSON.stringify(defaultConsent);
-}
-
 export interface GoogleConsentBootstrapPreambleOptions {
   /** localStorage key holding the package's `ConsentRecord`. */
   consentStorageKey: string;
   dataLayerName: string;
-  /** Raw JS expression evaluating to the fallback `ConsentDecision` — see {@link resolveFallbackConsentExpression}. */
-  fallbackConsentExpression: string;
+  /** Literal fallback when nothing valid is stored — baked into the script as JSON. */
+  defaultConsent: ConsentDecision;
   policyVersion: string;
 }
 
@@ -108,7 +92,7 @@ export function googleConsentBootstrapPreamble(options: GoogleConsentBootstrapPr
         storedConsent = record.decision;
       }
     } catch (e) {}
-    var consent = storedConsent || (${options.fallbackConsentExpression});
+    var consent = storedConsent || (${JSON.stringify(options.defaultConsent)});
     gtag("consent", "default", {
       ${consentSignalAssignmentsExpression()}
     });`;

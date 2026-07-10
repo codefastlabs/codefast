@@ -130,12 +130,6 @@ describe("buildGtmConsentBootstrapScript", () => {
     }
   });
 
-  it("throws when neither defaultConsent nor defaultConsentExpression is given", () => {
-    expect(() =>
-      buildGtmConsentBootstrapScript({ consentStorageKey: "k", gtmId: "GTM-1", policyVersion: "1" }),
-    ).toThrow(/requires defaultConsent or defaultConsentExpression/);
-  });
-
   it("applies consent default and always loads gtm.js (advanced Consent Mode)", () => {
     const script = buildGtmConsentBootstrapScript({
       consentStorageKey: "k",

@@ -6,7 +6,6 @@ import {
   DEFAULT_DATA_LAYER_NAME,
   dataLayerOf,
   googleConsentBootstrapPreamble,
-  resolveFallbackConsentExpression,
   toGoogleConsentParams,
   warnUnlessGa4EventName,
 } from "#/destinations/google-consent";
@@ -214,15 +213,11 @@ export interface GtagConsentBootstrapOptions {
    */
   dataLayerName?: string | undefined;
   /**
-   * Consent to apply when nothing valid is stored yet. Embedded as a literal — for a
-   * value only known via an earlier inline script, use `defaultConsentExpression` instead.
+   * Consent to apply when nothing valid is stored yet. Embedded as a literal — bake the
+   * strictest default on cached/shared HTML; upgrade after hydration via the private
+   * server-fn lane + `updateGoogleConsent`.
    */
-  defaultConsent?: ConsentDecision | undefined;
-  /**
-   * A raw JS expression evaluating to the fallback `ConsentDecision`. Takes precedence
-   * over `defaultConsent` when both are set; one of the two is required.
-   */
-  defaultConsentExpression?: string | undefined;
+  defaultConsent: ConsentDecision;
   /** Forwarded as `gtag('config', id, { debug_mode: true })` after the consent default. */
   debugMode?: boolean | undefined;
   /** Google Analytics 4 Measurement ID (e.g. `"G-XXXXXXX"`). */
@@ -240,18 +235,17 @@ export interface GtagConsentBootstrapOptions {
 /**
  * Builds the literal JS source for a `<script dangerouslySetInnerHTML>` mounted in
  * `<head>`, before hydration: applies Consent Mode v2's default signal from the visitor's
- * stored decision (falling back to `defaultConsent`/`defaultConsentExpression` when none is
- * stored yet), then always loads gtag.js (advanced Consent Mode) so cookieless pings /
- * modeling can run even when storage is denied. A runtime decision change needs
- * `updateGoogleConsent` so the already-loaded tag picks up the grant/deny — this only
- * covers the page-load default + script injection.
+ * stored decision (falling back to literal `defaultConsent` when none is stored yet),
+ * then always loads gtag.js (advanced Consent Mode) so cookieless pings / modeling can
+ * run even when storage is denied. A runtime decision change needs `updateGoogleConsent`
+ * so the already-loaded tag picks up the grant/deny — this only covers the page-load
+ * default + script injection.
  */
 export function buildGtagConsentBootstrapScript(options: GtagConsentBootstrapOptions): string {
   const {
     consentStorageKey,
     dataLayerName = DEFAULT_DATA_LAYER_NAME,
     defaultConsent,
-    defaultConsentExpression,
     debugMode,
     gaMeasurementId,
     nonce,
@@ -265,11 +259,7 @@ export function buildGtagConsentBootstrapScript(options: GtagConsentBootstrapOpt
   const preamble = googleConsentBootstrapPreamble({
     consentStorageKey,
     dataLayerName,
-    fallbackConsentExpression: resolveFallbackConsentExpression(
-      "buildGtagConsentBootstrapScript",
-      defaultConsent,
-      defaultConsentExpression,
-    ),
+    defaultConsent,
     policyVersion,
   });
 

@@ -249,9 +249,9 @@ function** that resolves region after hydration:
    optional idempotent gtag load, including cross-tab / privacy-page decisions.
 
 Cached/prerendered HTML is shared across visitors (CDN ISR or static files) — bake the
-strictest Consent Mode default into that shared render. Do not put geo (or any
-request-derived consent) into it via `loaderData`, the document shell, or otherwise;
-per-visitor region rides the private server-fn lane after hydration.
+strictest Consent Mode default into that shared render via a literal `defaultConsent`.
+Do not put geo (or any request-derived consent) into it via `loaderData` or the document
+shell; per-visitor region rides the private server-fn lane after hydration.
 
 ## Google tag / GTM loaders (advanced Consent Mode)
 
