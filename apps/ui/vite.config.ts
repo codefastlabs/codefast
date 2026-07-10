@@ -34,27 +34,27 @@ function publicCacheRoutePatterns(): Array<string> {
 }
 
 /**
- * The stable entry pages — prerendered at build time for an instant first load (the ISR
- * guide's "combine with static prerendering"). Also the `routeRules` header targets: a
+ * The static entry pages, as `autoStaticPathsDiscovery` will find them (every component
+ * route without path params). Listed here only as the `routeRules` header targets: a
  * prerendered file bypasses the route's `headers()`, so its `Cache-Control` must come
- * from Vercel's static routing config instead.
+ * from Vercel's static routing config instead. Prerendering itself needs no list — the
+ * discovery merges these into `pages` automatically.
  */
 const ENTRY_PAGE_PATHS = ["/", "/about", "/components", "/privacy"];
 
 /**
- * Every page on the site: the prerendered entry pages plus one ISR `/components/<slug>`
- * per `registry/<slug>/meta.ts` (mirrors `_core/components.ts`'s auto-discovery — with
- * link-crawling off there is nothing else to find them). The slug pages must opt out of
- * prerendering explicitly — a page entry defaults to `enabled: true` — or their static
- * files would shadow the ISR server function on Vercel. All entries feed the sitemap.
+ * The ISR `/components/<slug>` pages — one per `registry/<slug>/meta.ts`, mirroring
+ * `_core/components.ts`'s auto-discovery, since `autoStaticPathsDiscovery` skips
+ * param routes and link-crawling is off. Each entry opts out of prerendering (a page
+ * defaults to `enabled: true` — a static file would shadow the ISR server function on
+ * Vercel) and feeds the sitemap, alongside the auto-discovered static pages.
  */
-function sitemapPages(): Array<{ path: string; prerender: { enabled: boolean } }> {
+function componentSlugPages(): Array<{ path: string; prerender: { enabled: boolean } }> {
   const registryDir = fileURLToPath(new URL("./src/registry", import.meta.url));
-  const componentPages = readdirSync(registryDir, { withFileTypes: true })
+
+  return readdirSync(registryDir, { withFileTypes: true })
     .filter((entry) => entry.isDirectory() && existsSync(path.join(registryDir, entry.name, "meta.ts")))
     .map((entry) => ({ path: `/components/${entry.name}`, prerender: { enabled: false } }));
-
-  return [...ENTRY_PAGE_PATHS.map((pagePath) => ({ path: pagePath, prerender: { enabled: true } })), ...componentPages];
 }
 
 export default defineConfig(({ command }) => {
@@ -123,20 +123,22 @@ export default defineConfig(({ command }) => {
       tailwindcss(),
       tanstackStart({
         /**
-         * Hybrid ISR (TanStack Start style): the entry pages are prerendered for an
-         * instant, function-free first load; every `/components/$slug` page is
-         * server-rendered on demand and CDN-cached via its `headers()` (`Cache-Control` +
-         * `CDN-Cache-Control`, see `src/lib/cache.ts`). The split is per route because the
-         * two are mutually exclusive per route on Vercel — a prerendered file is served by
-         * `handle: filesystem` before the server function is ever reached. `crawlLinks`
-         * must stay off (it defaults on): crawling an entry page would discover and
-         * prerender every slug page, silently turning ISR back into full static. `host`
-         * must match `SITE_URL` in `src/lib/seo.ts`.
+         * Hybrid ISR (TanStack Start style): `autoStaticPathsDiscovery` prerenders the
+         * static entry pages for an instant, function-free first load; every
+         * `/components/$slug` page is server-rendered on demand and CDN-cached via its
+         * `headers()` (`Cache-Control` + `CDN-Cache-Control`, see `src/lib/cache.ts`). The
+         * split is per route because the two are mutually exclusive per route on Vercel —
+         * a prerendered file is served by `handle: filesystem` before the server function
+         * is ever reached. `crawlLinks` must stay off (it defaults on): crawling an entry
+         * page would discover and prerender every slug page, silently turning ISR back
+         * into full static. The sitemap is built from the discovered pages plus the
+         * declared slug pages. `host` must match `SITE_URL` in `src/lib/seo.ts`.
          */
         prerender: {
+          enabled: true,
           crawlLinks: false,
         },
-        pages: sitemapPages(),
+        pages: componentSlugPages(),
         sitemap: {
           enabled: true,
           host: "https://codefastlabs.com",
