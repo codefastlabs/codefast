@@ -23,7 +23,7 @@ export interface GoogleConsentParams {
  * Which per-category decision each Consent Mode v2 signal follows: `analytics` drives
  * `analytics_storage`; `ads` drives all three ads signals together.
  */
-export const GOOGLE_CONSENT_SIGNAL_CATEGORIES = {
+const GOOGLE_CONSENT_SIGNAL_CATEGORIES = {
   ad_personalization: "ads",
   ad_storage: "ads",
   ad_user_data: "ads",
@@ -33,18 +33,18 @@ export const GOOGLE_CONSENT_SIGNAL_CATEGORIES = {
   ConsentCategory
 >;
 
-export type GoogleConsentSignal = keyof typeof GOOGLE_CONSENT_SIGNAL_CATEGORIES;
+type GoogleConsentSignal = keyof typeof GOOGLE_CONSENT_SIGNAL_CATEGORIES;
 
 /** Maps a package `ConsentDecision` onto Consent Mode v2's four storage signals. */
 export function toGoogleConsentParams(decision: ConsentDecision): GoogleConsentParams {
-  const params = {
-    ad_personalization: decision.ads ? "granted" : "denied",
-    ad_storage: decision.ads ? "granted" : "denied",
-    ad_user_data: decision.ads ? "granted" : "denied",
-    analytics_storage: decision.analytics ? "granted" : "denied",
-  } satisfies GoogleConsentParams;
-
-  return params;
+  // Derived from the signal map (not hand-written per signal) so the runtime params and
+  // the bootstrap fragment below can never disagree; the cast rebuilds what
+  // Object.fromEntries erases — every map key is present exactly once.
+  return Object.fromEntries(
+    (Object.entries(GOOGLE_CONSENT_SIGNAL_CATEGORIES) as Array<[GoogleConsentSignal, ConsentCategory]>).map(
+      ([signal, category]) => [signal, decision[category] ? "granted" : "denied"],
+    ),
+  ) as unknown as GoogleConsentParams;
 }
 
 /** JS fragment that validates a stored `ConsentRecord.decision` shape inside a bootstrap. */
@@ -135,7 +135,7 @@ export function dataLayerOf(dataLayerName: string): Array<unknown> | undefined {
  */
 const GA4_EVENT_NAME_PATTERN = /^[A-Za-z][\w]{0,39}$/;
 
-export function isGa4EventName(name: string): boolean {
+function isGa4EventName(name: string): boolean {
   return GA4_EVENT_NAME_PATTERN.test(name);
 }
 
