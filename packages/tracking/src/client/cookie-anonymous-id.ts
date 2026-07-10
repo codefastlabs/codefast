@@ -48,21 +48,22 @@ export function createCookieAnonymousId(options: CookieAnonymousIdOptions): Cook
       writeCookie(cookieName, "", 0);
     },
     getOrCreate(): string {
-      if (cachedId !== undefined) {
-        return cachedId;
-      }
-
       if (typeof document === "undefined") {
-        return crypto.randomUUID();
+        return cachedId ?? crypto.randomUUID();
       }
 
       const existing = readCookieValue(document.cookie, cookieName);
 
+      // Prefer the live cookie over `cachedId` — another tab's withdrawal expires the
+      // cookie without calling this instance's `clear()`, and a re-grant must not revive
+      // the pre-withdrawal identity from memory.
       if (existing) {
         cachedId = existing;
 
         return existing;
       }
+
+      cachedId = undefined;
 
       const id = crypto.randomUUID();
 

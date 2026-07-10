@@ -1,5 +1,6 @@
 import type { CookieAnonymousId } from "#/client/cookie-anonymous-id";
 import { createCookieAnonymousId } from "#/client/cookie-anonymous-id";
+import { readCookieValue } from "#/core/cookie";
 
 export interface ServerPersistedAnonymousIdOptions {
   /** Server round-trip that expires the cookie via `Set-Cookie` — the server half of `clear()`. */
@@ -44,6 +45,12 @@ export function createServerPersistedAnonymousId(options: ServerPersistedAnonymo
       }
     },
     getOrCreate(): string {
+      // Cross-tab withdrawal expires the cookie without this instance's `clear()` — reset
+      // so the next minted id is server-persisted (ITP re-issue) again.
+      if (typeof document !== "undefined" && !readCookieValue(document.cookie, cookieName)) {
+        hasRequestedPersist = false;
+      }
+
       const id = local.getOrCreate();
 
       // Also fires when the cookie already existed: the re-issue upgrades a script-written
