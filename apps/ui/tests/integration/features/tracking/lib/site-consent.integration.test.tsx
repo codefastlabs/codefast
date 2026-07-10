@@ -1,9 +1,11 @@
+import { buildInitialConsent } from "@codefast/tracking/server";
 import { cleanup, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { PrivacyChoices } from "#/features/privacy/components/privacy-choices";
 import { ConsentGate } from "#/features/tracking/components/consent-gate";
+import { REQUESTED_CONSENT_CATEGORIES } from "#/features/tracking/lib/consent";
 import { getTracker } from "#/features/tracking/lib/tracking";
 
 /**
@@ -11,16 +13,30 @@ import { getTracker } from "#/features/tracking/lib/tracking";
  * the real tracker with its consent gate, lazy anonymous-id cookie, and consent-exempt
  * Vercel lane (cookieless counts keep flowing while GA and identifiers are gated), and
  * the real GA destination writing to `window.dataLayer`. Only the two external
- * boundaries are faked: Vercel's SDK (`track` spy) and the region header
- * (`getRequestHeader`).
+ * boundaries are faked: Vercel's SDK (`track` spy) and the middleware-personalized
+ * `window.__INITIAL_CONSENT__` value the pre-hydration bootstrap would have set.
  */
 
-const { getRequestHeader, vercelTrack } = vi.hoisted(() => ({
-  getRequestHeader: vi.fn(),
+const { vercelTrack } = vi.hoisted(() => ({
   vercelTrack: vi.fn(),
 }));
 
-vi.mock("@tanstack/react-start/server", () => ({ getRequestHeader }));
+// jsdom is the browser — resolve isomorphic fns to their client branch, as a real page would.
+vi.mock(import("@tanstack/react-start"), async (importOriginal) => {
+  function createIsomorphicFn(): unknown {
+    const chain = {
+      client: (fn: object) => Object.assign(fn, chain),
+      server: () => chain,
+    };
+
+    return chain;
+  }
+
+  return {
+    ...(await importOriginal()),
+    createIsomorphicFn: createIsomorphicFn as never,
+  };
+});
 // Destination imports `track` from `@vercel/analytics` (not `/react`) — mock the base package.
 vi.mock("@vercel/analytics", () => ({ track: vercelTrack }));
 vi.mock("@vercel/analytics/react", () => ({ Analytics: () => null, track: vercelTrack }));
@@ -35,13 +51,11 @@ const GRANTED_PARAMS = {
 };
 const DENIED_PARAMS = { ...GRANTED_PARAMS, analytics_storage: "denied" };
 
-function setRegion(country: string | undefined, hasGpcHeader = false): void {
-  getRequestHeader.mockImplementation((name: string) => {
-    if (name === "x-vercel-ip-country") {
-      return country;
-    }
-
-    return name === "sec-gpc" && hasGpcHeader ? "1" : undefined;
+/** Fakes the value `middleware.ts` + the bootstrap script produce for this visitor's region. */
+function setRegion(country: string): void {
+  window.__INITIAL_CONSENT__ = buildInitialConsent({
+    categories: REQUESTED_CONSENT_CATEGORIES,
+    countryCode: country,
   });
 }
 
@@ -60,6 +74,7 @@ beforeEach(() => {
   vercelTrack.mockClear();
   window.localStorage.clear();
   document.cookie = `${ANON_COOKIE}=; path=/; max-age=0`;
+  delete window.__INITIAL_CONSENT__;
   delete window.dataLayer;
   delete window.gtag;
 });
@@ -189,7 +204,7 @@ describe("consent × tracking matrix", () => {
   });
 
   it("opt-out with GPC: analytics measurement stays allowed — GPC is honored as an ads opt-out only", () => {
-    setRegion("US", true);
+    setRegion("US");
     Object.defineProperty(navigator, "globalPrivacyControl", { configurable: true, value: true });
 
     try {

@@ -20,7 +20,7 @@ export function buildSiteInitialConsentBootstrapScript(fallback: InitialConsent)
 /**
  * This site's gtag Consent Mode bootstrap — reads `window.__INITIAL_CONSENT__.defaultConsent`
  * (set by the script above) rather than a literal, since middleware personalizes it per
- * visitor even on statically prerendered pages.
+ * visitor while the CDN-cached (ISR) HTML stays shared across visitors.
  */
 export function buildGtagBootstrapScript(gaMeasurementId: string): string {
   return buildGtagConsentBootstrapScript({

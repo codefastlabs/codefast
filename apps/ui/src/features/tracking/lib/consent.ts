@@ -5,9 +5,7 @@ import {
 } from "@codefast/tracking/client";
 import type { ConsentCategory, InitialConsent } from "@codefast/tracking/core";
 import { createConsentDecision } from "@codefast/tracking/core";
-import { buildInitialConsent } from "@codefast/tracking/server";
 import { createIsomorphicFn } from "@tanstack/react-start";
-import { getRequestHeader } from "@tanstack/react-start/server";
 
 /** Bump when the privacy policy changes — invalidates any previously stored decision. */
 export const CONSENT_POLICY_VERSION = "1";
@@ -44,27 +42,14 @@ const STRICTEST_DEFAULT: InitialConsent = {
 };
 
 /**
- * Read directly here (not a root-route `loader`) — `shellComponent` renders before the
- * root match's data functions resolve, so loader data never reaches `<GoogleTag />`.
- * This app prerenders every route, so a missing header (the common case — Nitro's
- * prerender crawler hits `localhost`) means "no real visitor", not region "other";
- * `middleware.ts` covers per-visitor personalization for the resulting static HTML, and
- * this is only its last-resort fallback.
+ * Deliberately visitor-independent on the server: every server render is CDN-cached (ISR)
+ * and shared across visitors, so any request-derived value baked here (geo, GPC) would
+ * leak the first visitor's region to everyone served from that cache entry. The strictest
+ * default is the only safe baked value; `middleware.ts`'s cookie personalizes per visitor
+ * outside the cache, and the client reads it via `window.__INITIAL_CONSENT__`.
  */
 export const resolveInitialConsent = createIsomorphicFn()
-  .server((): InitialConsent => {
-    const countryHeader = getRequestHeader("x-vercel-ip-country");
-
-    if (!countryHeader) {
-      return STRICTEST_DEFAULT;
-    }
-
-    return buildInitialConsent({
-      categories: REQUESTED_CONSENT_CATEGORIES,
-      countryCode: countryHeader,
-      hasGlobalPrivacyControlSignal: getRequestHeader("sec-gpc") === "1",
-    });
-  })
+  .server((): InitialConsent => STRICTEST_DEFAULT)
   .client((): InitialConsent => globalThis.window.__INITIAL_CONSENT__ ?? STRICTEST_DEFAULT);
 
 // Module scope — every consumer must share one storage so decisions sync across surfaces.

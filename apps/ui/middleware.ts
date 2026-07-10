@@ -1,7 +1,9 @@
 /**
- * Vercel Routing Middleware — personalizes the statically prerendered pages' consent
- * default per real visitor by setting a cookie `google-tag.tsx` prefers over its
- * build-time fallback (see `resolveInitialConsent` in `src/features/tracking/lib/consent.ts`).
+ * Vercel Routing Middleware — personalizes the CDN-cached (ISR) pages' consent default
+ * per real visitor by setting a cookie `google-tag.tsx` prefers over the strictest
+ * baked fallback (see `resolveInitialConsent` in `src/features/tracking/lib/consent.ts`).
+ * Runs before the cache, so the cookie rides on cache hits too; the cached HTML itself
+ * stays visitor-independent.
  *
  * Self-contained on purpose: Vercel compiles this independently of the app's Vite/Nitro
  * build, so it duplicates `@codefast/tracking`'s EU-country / opt-in-equivalent / consent
