@@ -36,7 +36,7 @@ vi.mock(import("@codefast/tracking/destinations"), async (importOriginal) => ({
   ...(await importOriginal()),
   clearGoogleAnalyticsCookies,
 }));
-vi.mock("#/features/tracking/hooks/use-has-hydrated", () => ({ useHasHydrated }));
+vi.mock("#/hooks/use-has-hydrated", () => ({ useHasHydrated }));
 
 beforeEach(() => {
   clear.mockClear();

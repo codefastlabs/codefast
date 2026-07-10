@@ -4,9 +4,9 @@ import { useState } from "react";
 
 import { ConsentBannerCard } from "#/features/tracking/components/consent-banner-card";
 import { PrivacyChoicesIcon } from "#/features/tracking/components/privacy-choices-icon";
-import { useHasHydrated } from "#/features/tracking/hooks/use-has-hydrated";
 import { loadGoogleTagScript } from "#/features/tracking/lib/google-tag-loader";
 import { useSiteConsent } from "#/features/tracking/lib/site-consent";
+import { useHasHydrated } from "#/hooks/use-has-hydrated";
 
 /**
  * Region-aware consent UI, rendered inside the footer: an opt-in banner plus a "Cookie
