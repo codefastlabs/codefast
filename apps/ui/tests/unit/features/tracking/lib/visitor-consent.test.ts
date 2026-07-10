@@ -94,6 +94,46 @@ describe("useVisitorConsent / ensureVisitorConsentResolved", () => {
     });
   });
 
+  it("ignores a mode/region mismatch in the session cache (e.g. opt-out + eu)", async () => {
+    window.sessionStorage.setItem(
+      INITIAL_CONSENT_SESSION_KEY,
+      JSON.stringify({
+        defaultConsent: { ads: false, analytics: true },
+        mode: "opt-out",
+        region: "eu",
+      }),
+    );
+    resolveVisitorConsent.mockResolvedValue(US_CONSENT);
+
+    const { result } = renderHook(() => useVisitorConsent());
+
+    ensureVisitorConsentResolved();
+
+    await waitFor(() => {
+      expect(result.current.initialConsent).toEqual(US_CONSENT);
+    });
+    expect(resolveVisitorConsent).toHaveBeenCalledOnce();
+  });
+
+  it("accepts the fail-closed unknown-country bake (opt-in + other) from the session cache", async () => {
+    const failClosed = {
+      defaultConsent: { ads: false, analytics: false },
+      mode: "opt-in",
+      region: "other",
+    } as const;
+
+    window.sessionStorage.setItem(INITIAL_CONSENT_SESSION_KEY, JSON.stringify(failClosed));
+
+    const { result } = renderHook(() => useVisitorConsent());
+
+    ensureVisitorConsentResolved();
+
+    await waitFor(() => {
+      expect(result.current).toEqual({ initialConsent: failClosed, isResolved: true });
+    });
+    expect(resolveVisitorConsent).not.toHaveBeenCalled();
+  });
+
   it("fails closed: a failed resolution publishes the strictest default so the consent UI still renders", async () => {
     resolveVisitorConsent.mockRejectedValue(new Error("offline"));
 

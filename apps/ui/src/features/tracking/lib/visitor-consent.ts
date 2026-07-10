@@ -1,4 +1,6 @@
 import { createIsTrackingAllowed, hasGlobalPrivacyControlSignal } from "@codefast/tracking/client";
+import type { ConsentRegion } from "@codefast/tracking/core";
+import { resolveConsentMode } from "@codefast/tracking/core";
 import { useSyncExternalStore } from "react";
 
 import type { InitialConsent } from "#/features/tracking/lib/consent";
@@ -87,6 +89,10 @@ function scheduleResolveRetry(): void {
   window.addEventListener("pageshow", onResolveRetryResume);
 }
 
+function isConsentRegion(value: unknown): value is ConsentRegion {
+  return value === "eu" || value === "other" || value === "us" || value === "vn";
+}
+
 function isInitialConsent(value: unknown): value is InitialConsent {
   if (typeof value !== "object" || value === null) {
     return false;
@@ -94,15 +100,22 @@ function isInitialConsent(value: unknown): value is InitialConsent {
 
   const candidate = value as Record<string, unknown>;
   const defaultConsent = candidate["defaultConsent"] as Record<string, unknown> | undefined;
+  const mode = candidate["mode"];
+  const region = candidate["region"];
 
-  return (
-    (candidate["mode"] === "opt-in" || candidate["mode"] === "opt-out") &&
-    typeof candidate["region"] === "string" &&
-    typeof defaultConsent === "object" &&
-    defaultConsent !== null &&
-    typeof defaultConsent["ads"] === "boolean" &&
-    typeof defaultConsent["analytics"] === "boolean"
-  );
+  if (
+    (mode !== "opt-in" && mode !== "opt-out") ||
+    !isConsentRegion(region) ||
+    typeof defaultConsent !== "object" ||
+    defaultConsent === null ||
+    typeof defaultConsent["ads"] !== "boolean" ||
+    typeof defaultConsent["analytics"] !== "boolean"
+  ) {
+    return false;
+  }
+
+  // Fail-closed unknown-country bake uses region "other" with opt-in (stricter than other→opt-out).
+  return mode === resolveConsentMode(region) || (mode === "opt-in" && region === "other");
 }
 
 function readSessionCache(): InitialConsent | undefined {

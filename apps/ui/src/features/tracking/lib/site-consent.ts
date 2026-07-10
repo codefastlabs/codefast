@@ -1,5 +1,6 @@
 import { createConsentWithdrawalHandler, hasGlobalPrivacyControlSignal } from "@codefast/tracking/client";
 import type { ConsentMode } from "@codefast/tracking/core";
+import { readStoredDecision } from "@codefast/tracking/core";
 import { clearGoogleAnalyticsCookies } from "@codefast/tracking/destinations";
 import type { UseConsentResult } from "@codefast/tracking/react";
 import { useConsent } from "@codefast/tracking/react";
@@ -24,12 +25,41 @@ const onConsentWithdrawal = createConsentWithdrawalHandler({
   },
 });
 
+let isWithdrawalWatchStarted = false;
+
+/**
+ * One storage subscriber for the whole app — `<ConsentGate />` and `<PrivacyChoices />`
+ * both call `useSiteConsent`, and per-instance effects would double `clearOnServer`.
+ */
+function ensureConsentWithdrawalWatch(): void {
+  if (isWithdrawalWatchStarted) {
+    return;
+  }
+
+  isWithdrawalWatchStarted = true;
+
+  const syncWithdrawal = (): void => {
+    const decision = readStoredDecision(consentStorage, CONSENT_POLICY_VERSION);
+
+    if (decision !== undefined) {
+      onConsentWithdrawal(decision);
+    }
+  };
+
+  consentStorage.subscribe(syncWithdrawal);
+  syncWithdrawal();
+}
+
 /**
  * This site's one consent wiring, shared by the footer `<ConsentGate />` and the privacy
  * page's `<PrivacyChoices />` — both hook instances read the same storage, so a decision
  * made on either surface updates the other immediately. The gtag "consent update" effect
  * stays in `<ConsentGate />` alone (it renders on every page), so a decision never emits
  * a duplicate update.
+ *
+ * Only `initialConsent.mode` is consumed here: `effectiveConsent` is recomputed client-side
+ * (live navigator GPC) and `<ConsentGate />` pushes that into gtag. Server `defaultConsent`
+ * is unused on this analytics-only site — GPC only forces `ads` denied.
  */
 export function useSiteConsent(): UseSiteConsentResult {
   const { initialConsent, isResolved } = useVisitorConsent();
@@ -37,6 +67,7 @@ export function useSiteConsent(): UseSiteConsentResult {
   // Post-hydration, once per page load — SSR keeps the baked strictest default.
   useEffect(() => {
     ensureVisitorConsentResolved();
+    ensureConsentWithdrawalWatch();
   }, []);
 
   const consent = useConsent({
@@ -46,15 +77,6 @@ export function useSiteConsent(): UseSiteConsentResult {
     policyVersion: CONSENT_POLICY_VERSION,
     storage: consentStorage,
   });
-
-  // Effect (not `useConsent({ onDecision })`) so a denial written in another tab — which
-  // only arrives via the storage subscription — clears anon-id / GA cookies / tracker
-  // state the same way a local save does. Grants are a no-op inside the handler.
-  useEffect(() => {
-    if (consent.decision !== undefined) {
-      onConsentWithdrawal(consent.decision);
-    }
-  }, [consent.decision]);
 
   return { consent, isResolved, mode: initialConsent.mode };
 }
