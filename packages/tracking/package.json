@@ -111,6 +111,11 @@
       "types": "./dist/client/router.d.mts",
       "import": "./dist/client/router.mjs"
     },
+    "./client/server-persisted-anonymous-id": {
+      "source": "./src/client/server-persisted-anonymous-id.ts",
+      "types": "./dist/client/server-persisted-anonymous-id.d.mts",
+      "import": "./dist/client/server-persisted-anonymous-id.mjs"
+    },
     "./core": {
       "source": "./src/core/index.ts",
       "types": "./dist/core/index.d.mts",
@@ -215,6 +220,11 @@
       "source": "./src/server/index.ts",
       "types": "./dist/server/index.d.mts",
       "import": "./dist/server/index.mjs"
+    },
+    "./server/anonymous-id-cookie": {
+      "source": "./src/server/anonymous-id-cookie.ts",
+      "types": "./dist/server/anonymous-id-cookie.d.mts",
+      "import": "./dist/server/anonymous-id-cookie.mjs"
     },
     "./server/create-server-tracker": {
       "source": "./src/server/create-server-tracker.ts",

@@ -1,3 +1,11 @@
+export type { BuildAnonymousIdSetCookieOptions } from "#/server/anonymous-id-cookie";
+export {
+  buildAnonymousIdSetCookie,
+  buildClearAnonymousIdSetCookie,
+  isValidAnonymousId,
+  readAnonymousIdCookie,
+} from "#/server/anonymous-id-cookie";
+
 export type { ServerTrackContext, ServerTracker, ServerTrackerOptions } from "#/server/create-server-tracker";
 export { createServerTracker } from "#/server/create-server-tracker";
 

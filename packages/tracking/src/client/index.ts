@@ -24,3 +24,6 @@ export { EventQueue } from "#/client/queue";
 
 export type { RouterLike } from "#/client/router";
 export { attachRouterPageTracking } from "#/client/router";
+
+export type { ServerPersistedAnonymousIdOptions } from "#/client/server-persisted-anonymous-id";
+export { createServerPersistedAnonymousId } from "#/client/server-persisted-anonymous-id";
