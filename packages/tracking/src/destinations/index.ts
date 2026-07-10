@@ -42,4 +42,5 @@ export {
 export type { HttpDestinationOptions } from "#/destinations/http-destination";
 export { createHttpDestination } from "#/destinations/http-destination";
 
+export type { VercelAnalyticsDestinationOptions } from "#/destinations/vercel-analytics";
 export { createVercelAnalyticsDestination } from "#/destinations/vercel-analytics";
