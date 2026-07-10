@@ -75,6 +75,7 @@ function createClientTracker<Catalog extends EventCatalog>(catalog: Catalog) {
 ## 3. Identity & correlation
 
 - **Caller-owned, not package-owned**: `createClientTracker`/`createServerTracker` take `anonymousId` as a required option (a string on the server; a `() => string` callback on the client, invoked per allowed event) — the package never mints or persists an ID itself. The app is responsible for generating a stable visitor ID and making it readable on both client and server (e.g. a cookie), so the same ID joins client and server events downstream.
+- **Server-persisted anon-id cookie — implemented ("client mints, server persists")**: Safari ITP caps `document.cookie`-written cookies at 7 days, so a purely client-written id silently churns weekly there. `createServerPersistedAnonymousId` (client) wraps `createCookieAnonymousId` — same lazy, post-consent minting and optimistic client write — and additionally fires an app-supplied `persist(id)` round-trip (at most once per page load, also for a pre-existing cookie) so the server re-issues the cookie via `Set-Cookie` and rolls its expiry forward; `clearOnServer` is the withdrawal half. Failures degrade to the client-written cookie. The server side is framework-agnostic string-in/string-out in `server/anonymous-id-cookie` (`readAnonymousIdCookie` / `buildAnonymousIdSetCookie` / `buildClearAnonymousIdSetCookie` / `isValidAnonymousId`): builders always emit `Secure; SameSite=Lax`, validate the cookie name, and **throw on any non-UUID id** — the persist endpoint is public, so nothing it echoes into a header may be attacker-shaped. The server persists and prolongs an id the client hands it; it never mints one per request (consent lives client-side, so an unconditional server-set id would predate consent). Reference adapter: `apps/ui`'s `features/tracking/lib/anonymous-id.ts` (TanStack Start server functions + `setResponseHeader`); a Next.js app would wire the same builders in a Route Handler or Server Action.
 - `ClientTracker.identify(userId, traits)` only sets the `userId` the client tracker attaches to subsequent client-owned events for the rest of the session — it does not exist on `ServerTracker`, and there is no cross-request identity-resolution logic. A server-owned event's `userId`/`anonymousId` come entirely from the `ServerTrackContext` the caller passes to `track`/`group`/`alias`.
 - **GA4 exception**: GA4 joins hits on gtag.js's _own_ client ID (the `_ga` cookie), not on any app-generated ID — a Measurement Protocol event sent with our anonymous ID lands on a different GA4 user than the visitor's client-side hits. `extractGa4ClientId`/`extractGa4SessionId` read gtag's `_ga`/`_ga_<stream>` cookies from the request so the server destination can echo them (`clientId`/`sessionId` options).
 
@@ -143,7 +144,7 @@ packages/tracking/
 ├── src/
 │   ├── core/           # EventCatalog, EventsOf, TrackedEvent, Destination, consent types/logic, event-id
 │   ├── client/          # createClientTracker, queue, lifecycle, router, gpc, storage, createIsTrackingAllowed, createConsentWithdrawalHandler
-│   ├── server/          # createServerTracker, region sets, buildInitialConsent
+│   ├── server/          # createServerTracker, region sets, buildInitialConsent, anonymous-id cookie builders
 │   ├── destinations/    # http, vercel, GA/GTM/MP, initial-consent bootstrap, clearGoogleAnalyticsCookies; posthog not built (Phase 2)
 │   ├── react/            # useConsent, ConsentBanner + ConsentToggle, GtagConsentBootstrap, useGoogleConsentSync — headless, no @codefast/ui dependency
 │   └── css/              # consent.css — optional plain-CSS default theme for the react/ parts
@@ -174,4 +175,6 @@ packages/tracking/
 - Sampling / rate limiting once volume requires it.
 - Dead-letter handling for server-side destination failures.
 - Geo-detection fallback when the region header is absent (default to strictest — opt-in).
+- `HttpOnly` anon-id via a first-party collection endpoint: client events POST identifier-free to the app's own `/api/track`, the server attaches identity from the (then-`HttpOnly`) cookie and fans out — also hides events from ad-blockers; pairs with the existing `flushWithBeacon` + server tracker. Until then the cookie must stay JS-readable.
+- Mirror the consent decision into a cookie (alongside `localStorage`) once server-owned events ship — the server cannot gate on consent it cannot read; the same endpoint doubles as a server-side consent-evidence log.
 - Candidate future destination: PostHog (EU-hosted, self-serve product analytics — see §6.1). No other provider is planned; a destination without a purpose-built implementation here can use `createHttpDestination` in the meantime (see README).

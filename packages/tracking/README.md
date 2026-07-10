@@ -60,6 +60,37 @@ const serverTracker = createServerTracker({
 await serverTracker.track("order_completed", { orderId: "o1", amount: 10 }, { anonymousId, userId });
 ```
 
+## Durable anonymous id ("client mints, server persists")
+
+Safari ITP caps `document.cookie`-written cookies at 7 days, so a purely client-written
+anonymous id silently churns weekly there. `createServerPersistedAnonymousId` keeps the
+consent-first client-side minting and delegates the durable write to your server, which
+re-issues the cookie via `Set-Cookie` (and rolls its expiry forward on every visit). The
+server helpers are framework-agnostic strings — wire them to a TanStack Start server
+function, a Next.js Route Handler, or anything that can set a response header. They throw
+on any non-UUID id, so the public persist endpoint can never echo attacker input into a
+header. The server persists and prolongs; it never mints — an unconditional server-set id
+would predate consent.
+
+```ts
+// server function / route handler
+import { buildAnonymousIdSetCookie, buildClearAnonymousIdSetCookie } from "@codefast/tracking/server";
+
+// TanStack Start: setResponseHeader("set-cookie", buildAnonymousIdSetCookie({ cookieName, id }))
+// Next.js:       new Response(null, { status: 204, headers: { "set-cookie": buildAnonymousIdSetCookie({ cookieName, id }) } })
+```
+
+```ts
+// client — drop-in for createCookieAnonymousId
+import { createServerPersistedAnonymousId } from "@codefast/tracking/client";
+
+const anonymousId = createServerPersistedAnonymousId({
+  cookieName: "app-anonymous-id",
+  persist: (id) => persistAnonymousIdCookie({ data: { id } }), // your server round-trip
+  clearOnServer: () => clearAnonymousIdCookie(), // consent-withdrawal half
+});
+```
+
 ## Router page views + unload flush
 
 `attachRouterPageTracking` is duck-typed against `Router["subscribe"]`, so it takes a real
