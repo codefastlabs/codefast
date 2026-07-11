@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { STRICTEST_INITIAL_CONSENT } from "#/features/tracking/lib/consent";
-import { initialConsentFromRequest } from "#/features/tracking/lib/initial-consent-from-request";
+import { initialConsentFromRequest } from "#/features/tracking/lib/initial-consent-from-request.server";
 
 const { getRequestHeader, setResponseHeader } = vi.hoisted(() => ({
   getRequestHeader: vi.fn(),

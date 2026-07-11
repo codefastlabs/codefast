@@ -123,6 +123,21 @@ export default defineConfig(({ command }) => {
       tailwindcss(),
       tanstackStart({
         /**
+         * Denies the server-only `@codefast/tracking` lanes in the client environment at
+         * build time — the default rules only cover local `*.server.*` files, and
+         * node_modules specifiers need an explicit entry (merged with the defaults).
+         */
+        importProtection: {
+          client: {
+            specifiers: [
+              "@codefast/tracking/server",
+              "@codefast/tracking/server/**",
+              "@codefast/tracking/tanstack-start",
+              "@codefast/tracking/destinations/ga4-measurement-protocol",
+            ],
+          },
+        },
+        /**
          * Hybrid ISR (TanStack Start style): `autoStaticPathsDiscovery` prerenders the
          * static entry pages for an instant, function-free first load; every
          * `/components/$slug` page is server-rendered on demand and CDN-cached via its

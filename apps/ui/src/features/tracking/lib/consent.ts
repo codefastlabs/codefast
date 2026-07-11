@@ -15,9 +15,9 @@ export const CONSENT_STORAGE_KEY = "codefast-ui-consent";
 export const REQUESTED_CONSENT_CATEGORIES: ReadonlyArray<ConsentCategory> = ["analytics"];
 
 export type { InitialConsent };
-// Every render bakes this visitor-independent default (entry pages are static files and
-// ISR HTML is CDN-cached across visitors); the region-correct value arrives per visitor
-// over the server-function lane (`resolve-visitor-consent.ts`).
+// Every render bakes this visitor-independent default — ISR HTML is CDN-cached and shared
+// across visitors, so nothing per-request may enter it; the region-correct value arrives
+// per visitor over the server-function lane (`resolve-visitor-consent.ts`).
 export { STRICTEST_INITIAL_CONSENT };
 
 // Module scope — every consumer must share one storage so decisions sync across surfaces.
