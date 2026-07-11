@@ -2,7 +2,7 @@
 // - `#/destinations/vercel-analytics` — its top-level `@vercel/analytics` import would make
 //   the optional peer mandatory for every barrel consumer; import it via its own subpath.
 // - `#/destinations/ga4-measurement-protocol` — carries a server `apiSecret`; its subpath
-//   is browser-poisoned so the secret can never ship in a client bundle.
+//   is server-only — deny it in client builds (e.g. Start importProtection) so the secret never ships.
 
 export type {
   EnsureGtagOptions,

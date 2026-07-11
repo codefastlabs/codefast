@@ -14,7 +14,8 @@ import { resolveInitialConsent } from "#/server/initial-consent";
 /**
  * Request/response glue for TanStack Start — each helper reads or writes the framework's
  * ambient request context (AsyncLocalStorage), so a consumer's server functions shrink to
- * one-line handlers around them. Server-only: the subpath is browser-poisoned.
+ * one-line handlers around them. Server-only: deny this subpath in the client environment
+ * via Start's `importProtection` — the compiler already strips it with stubbed handler bodies.
  */
 
 export interface InitialConsentFromRequestOptions {

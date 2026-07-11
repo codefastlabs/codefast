@@ -10,7 +10,7 @@ Breaking (pre-release):
 - `buildInitialConsent` → `resolveInitialConsent`; `ServerTrackContext` → `ServerTrackerContext`.
 - `attachClientLifecycle` drops `flushIntervalMs` — the queue schedules its own flushes (one-shot idle timer armed only while events are pending, offline-aware); the lifecycle keeps hide/pagehide delivery (beacon, or a keepalive `fetch` fallback) and flush-on-reconnect.
 - The `./destinations` barrel is browser-lane only: import `createVercelAnalyticsDestination` from `./destinations/vercel-analytics` (its top-level `@vercel/analytics` import made the optional peer mandatory for barrel consumers) and `createGa4MeasurementProtocolDestination` from its own subpath.
-- `./server`, `./server/*`, `./tanstack-start`, and `./destinations/ga4-measurement-protocol` are browser-poisoned: a client bundle that reaches them fails loudly at import time instead of silently shipping server code or the GA4 `apiSecret`.
+- `./server`, `./server/*`, `./tanstack-start`, and `./destinations/ga4-measurement-protocol` are server-only by contract: on TanStack Start, deny them in the client environment via `importProtection.client.specifiers` (README shows the config) so a leak fails the build with a traced violation instead of silently shipping server code or the GA4 `apiSecret`.
 
 New:
 

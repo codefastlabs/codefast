@@ -8,8 +8,8 @@
  *
  * - **Root** (this module): isomorphic catalog types, `Destination`, consent helpers — safe to import from both client and server code.
  * - **`@codefast/tracking/client`**: `createClientTracker` — batching, offline queue, retry — plus the initial-consent store and consent-cookie mirror.
- * - **`@codefast/tracking/server`**: `createServerTracker`, the beacon relay/ingest lane, region detection and consent-cookie reading. Browser-poisoned.
- * - **`@codefast/tracking/tanstack-start`**: request/response glue over TanStack Start's server context. Browser-poisoned.
+ * - **`@codefast/tracking/server`**: `createServerTracker`, the beacon relay/ingest lane, region detection and consent-cookie reading. Server-only — never import from client code.
+ * - **`@codefast/tracking/tanstack-start`**: request/response glue over TanStack Start's server context. Server-only — deny it in the client environment via Start's `importProtection`.
  * - **`@codefast/tracking/destinations`**: browser destinations (gtag, GTM, HTTP), script loaders, and the Consent Mode bootstrap builders.
  */
 export type {

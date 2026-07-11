@@ -30,9 +30,7 @@
     "LICENSE"
   ],
   "type": "module",
-  "sideEffects": [
-    "./dist/internal/server-only.mjs"
-  ],
+  "sideEffects": false,
   "main": "./dist/index.mjs",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.mts",
@@ -173,6 +171,11 @@
       "types": "./dist/destinations/index.d.mts",
       "import": "./dist/destinations/index.mjs"
     },
+    "./destinations/ga4-measurement-protocol": {
+      "source": "./src/destinations/ga4-measurement-protocol.ts",
+      "types": "./dist/destinations/ga4-measurement-protocol.d.mts",
+      "import": "./dist/destinations/ga4-measurement-protocol.mjs"
+    },
     "./destinations/google-analytics": {
       "source": "./src/destinations/google-analytics.ts",
       "types": "./dist/destinations/google-analytics.d.mts",
@@ -202,12 +205,6 @@
       "source": "./src/destinations/vercel-analytics.ts",
       "types": "./dist/destinations/vercel-analytics.d.mts",
       "import": "./dist/destinations/vercel-analytics.mjs"
-    },
-    "./destinations/ga4-measurement-protocol": {
-      "types": "./dist/destinations/ga4-measurement-protocol.d.mts",
-      "browser": "./dist/internal/server-only.mjs",
-      "source": "./src/destinations/ga4-measurement-protocol.ts",
-      "import": "./dist/destinations/ga4-measurement-protocol.mjs"
     },
     "./react": {
       "source": "./src/react/index.ts",
@@ -240,57 +237,48 @@
       "import": "./dist/react/use-initial-consent.mjs"
     },
     "./server": {
-      "types": "./dist/server/index.d.mts",
-      "browser": "./dist/internal/server-only.mjs",
       "source": "./src/server/index.ts",
+      "types": "./dist/server/index.d.mts",
       "import": "./dist/server/index.mjs"
     },
     "./server/anonymous-id-cookie": {
-      "types": "./dist/server/anonymous-id-cookie.d.mts",
-      "browser": "./dist/internal/server-only.mjs",
       "source": "./src/server/anonymous-id-cookie.ts",
+      "types": "./dist/server/anonymous-id-cookie.d.mts",
       "import": "./dist/server/anonymous-id-cookie.mjs"
     },
     "./server/consent-cookie": {
-      "types": "./dist/server/consent-cookie.d.mts",
-      "browser": "./dist/internal/server-only.mjs",
       "source": "./src/server/consent-cookie.ts",
+      "types": "./dist/server/consent-cookie.d.mts",
       "import": "./dist/server/consent-cookie.mjs"
     },
     "./server/create-server-tracker": {
-      "types": "./dist/server/create-server-tracker.d.mts",
-      "browser": "./dist/internal/server-only.mjs",
       "source": "./src/server/create-server-tracker.ts",
+      "types": "./dist/server/create-server-tracker.d.mts",
       "import": "./dist/server/create-server-tracker.mjs"
     },
     "./server/initial-consent": {
-      "types": "./dist/server/initial-consent.d.mts",
-      "browser": "./dist/internal/server-only.mjs",
       "source": "./src/server/initial-consent.ts",
+      "types": "./dist/server/initial-consent.d.mts",
       "import": "./dist/server/initial-consent.mjs"
     },
     "./server/region": {
-      "types": "./dist/server/region.d.mts",
-      "browser": "./dist/internal/server-only.mjs",
       "source": "./src/server/region.ts",
+      "types": "./dist/server/region.d.mts",
       "import": "./dist/server/region.mjs"
     },
     "./server/relay": {
-      "types": "./dist/server/relay.d.mts",
-      "browser": "./dist/internal/server-only.mjs",
       "source": "./src/server/relay.ts",
+      "types": "./dist/server/relay.d.mts",
       "import": "./dist/server/relay.mjs"
     },
     "./server/send-with-retry": {
-      "types": "./dist/server/send-with-retry.d.mts",
-      "browser": "./dist/internal/server-only.mjs",
       "source": "./src/server/send-with-retry.ts",
+      "types": "./dist/server/send-with-retry.d.mts",
       "import": "./dist/server/send-with-retry.mjs"
     },
     "./tanstack-start": {
-      "types": "./dist/tanstack-start/index.d.mts",
-      "browser": "./dist/internal/server-only.mjs",
       "source": "./src/tanstack-start/index.ts",
+      "types": "./dist/tanstack-start/index.d.mts",
       "import": "./dist/tanstack-start/index.mjs"
     },
     "./css/*": "./src/css/*",
