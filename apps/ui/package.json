@@ -8,6 +8,7 @@
   "scripts": {
     "dev": "vite dev --port 3000",
     "build": "vite build",
+    "generate:og": "node scripts/generate-og-image.ts",
     "preview": "vite preview",
     "check-types": "tsgo --noEmit",
     "test": "vitest run",
@@ -48,6 +49,8 @@
   },
   "devDependencies": {
     "@codefast/typescript-config": "workspace:*",
+    "@expo-google-fonts/inter": "catalog:",
+    "@resvg/resvg-js": "catalog:",
     "@tanstack/devtools-vite": "catalog:",
     "@testing-library/dom": "catalog:",
     "@testing-library/jest-dom": "catalog:",

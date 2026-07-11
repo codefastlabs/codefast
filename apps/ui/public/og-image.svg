@@ -27,9 +27,9 @@
   <text x="78" y="320" font-size="84" font-weight="800" letter-spacing="-2" fill="#fafafa">Beautiful, accessible</text>
   <text x="78" y="420" font-size="84" font-weight="800" letter-spacing="-2" fill="#fafafa">React components</text>
 
-  <!-- Sub -->
+  <!-- Sub — the count and og-image.png are written by scripts/generate-og-image.ts; run `pnpm generate:og` in apps/ui -->
   <text x="80" y="500" font-size="30" font-weight="500" fill="#a3a3a3">
-    60+ components · Radix UI · Tailwind CSS v4 · React 19
+    70+ components · Radix UI · Tailwind CSS v4 · React 19
   </text>
 
   <!-- Footer line -->
