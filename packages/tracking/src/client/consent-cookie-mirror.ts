@@ -1,7 +1,7 @@
+import { writeBrowserCookie } from "#/client/browser-cookie";
 import type { ConsentStorage } from "#/core/consent";
 import { encodeConsentCookieValue } from "#/core/consent-cookie";
-
-const ONE_YEAR_IN_SECONDS = 60 * 60 * 24 * 365;
+import { ONE_YEAR_IN_SECONDS } from "#/core/cookie";
 
 export interface ConsentCookieMirrorOptions {
   /** Cookie name the server reads via `readConsentDecisionCookie` — must match exactly. */
@@ -20,27 +20,15 @@ export interface ConsentCookieMirrorOptions {
 export function withConsentCookieMirror(storage: ConsentStorage, options: ConsentCookieMirrorOptions): ConsentStorage {
   const { cookieName, maxAgeSeconds = ONE_YEAR_IN_SECONDS } = options;
 
-  function writeCookie(value: string, maxAge: number): void {
-    if (typeof document === "undefined") {
-      return;
-    }
-
-    // Secure on HTTPS; SameSite=Lax; readable by the server on every request (no HttpOnly
-    // is fine — the record is the visitor's own, non-secret preference).
-    const secure = globalThis.location.protocol === "https:" ? "; secure" : "";
-
-    document.cookie = `${cookieName}=${value}; path=/; max-age=${String(maxAge)}; samesite=lax${secure}`;
-  }
-
   return {
     clear(): void {
       storage.clear();
-      writeCookie("", 0);
+      writeBrowserCookie(cookieName, "", 0);
     },
     load: () => storage.load(),
     save(record): void {
       storage.save(record);
-      writeCookie(encodeConsentCookieValue(record), maxAgeSeconds);
+      writeBrowserCookie(cookieName, encodeConsentCookieValue(record), maxAgeSeconds);
     },
     subscribe: (listener) => storage.subscribe(listener),
   };

@@ -24,7 +24,6 @@ export type {
   DestinationSendOptions,
   EventCatalog,
   EventDefinition,
-  EventPropsOf,
   EventsOf,
   GroupEvent,
   IdentifyEvent,
@@ -38,7 +37,7 @@ export type {
   TrackedEventSeed,
 } from "#/core";
 export {
-  assertValidEventProps,
+  assertValidEventProperties,
   buildTrackedEvent,
   CONSENT_CATEGORIES,
   CONSENT_REGIONS,

@@ -30,8 +30,8 @@ export { readCookieValue } from "#/core/cookie";
 
 export type { Destination, DestinationSendOptions } from "#/core/destination";
 
-export type { EventCatalog, EventDefinition, EventPropsOf, EventsOf } from "#/core/event-catalog";
-export { assertValidEventProps, defineEventCatalog } from "#/core/event-catalog";
+export type { EventCatalog, EventDefinition, EventsOf } from "#/core/event-catalog";
+export { assertValidEventProperties, defineEventCatalog } from "#/core/event-catalog";
 
 export { deriveEventId, generateEventId } from "#/core/event-id";
 

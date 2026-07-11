@@ -80,6 +80,15 @@ export function isConsentDecision(value: unknown): value is ConsentDecision {
   return isPlainObject(value) && CONSENT_CATEGORIES.every((category) => typeof value[category] === "boolean");
 }
 
+/**
+ * Re-derives a clean per-category decision from a tamperable record — extra keys are
+ * dropped, every category becomes an explicit boolean. The one normalization rule shared
+ * by the client (`readStoredDecision`) and server (`readConsentDecisionCookie`) mirrors.
+ */
+export function normalizeConsentDecision(decision: ConsentDecision): ConsentDecision {
+  return createConsentDecision(CONSENT_CATEGORIES.filter((category) => decision[category]));
+}
+
 /** Guards a persisted consent record read from untrusted storage (e.g. `localStorage`). */
 export function isConsentRecord(value: unknown): value is ConsentRecord {
   return (
@@ -90,9 +99,6 @@ export function isConsentRecord(value: unknown): value is ConsentRecord {
   );
 }
 
-/**
- * @since 0.5.0-canary.4
- */
 export interface ResolveDefaultConsentOptions {
   /** A "do not sell or share" opt-out — forces `ads` denied under opt-out regions. */
   hasGlobalPrivacyControlSignal: boolean;
@@ -127,7 +133,7 @@ export function resolveDefaultConsent(options: ResolveDefaultConsentOptions): Co
 }
 
 /**
- * Region-resolved consent defaults — typically from `buildInitialConsent` on a
+ * Region-resolved consent defaults — typically from `resolveInitialConsent` on a
  * per-request server lane, then handed to the client so it never re-guesses the mode.
  *
  * @remarks
@@ -155,9 +161,9 @@ export const STRICTEST_INITIAL_CONSENT: InitialConsent = Object.freeze({
 
 /**
  * Guards an `InitialConsent` read from untrusted storage (a session cache, a cookie).
- * Enforces the mode/region pairing rule, allowing the one deliberate exception: the
- * fail-closed unknown-country value pairs `opt-in` with region `"other"` — stricter than
- * `"other"`'s usual opt-out, never looser.
+ * Enforces the mode/region pairing rule; the one deliberate exception is
+ * {@link STRICTEST_INITIAL_CONSENT}'s own pairing — stricter than the region's usual
+ * mode, never looser.
  */
 export function isInitialConsent(value: unknown): value is InitialConsent {
   if (!isPlainObject(value)) {
@@ -175,7 +181,10 @@ export function isInitialConsent(value: unknown): value is InitialConsent {
     return false;
   }
 
-  return mode === resolveConsentMode(region) || (mode === "opt-in" && region === "other");
+  return (
+    mode === resolveConsentMode(region) ||
+    (mode === STRICTEST_INITIAL_CONSENT.mode && region === STRICTEST_INITIAL_CONSENT.region)
+  );
 }
 
 /**
@@ -220,9 +229,7 @@ export function readStoredDecision(storage: ConsentStorage, policyVersion: strin
     return undefined;
   }
 
-  const stored = record.decision;
-
-  return createConsentDecision(CONSENT_CATEGORIES.filter((category) => stored[category]));
+  return normalizeConsentDecision(record.decision);
 }
 
 export interface ResolveEffectiveConsentOptions {

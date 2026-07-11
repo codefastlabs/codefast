@@ -1,5 +1,5 @@
 import type { ConsentDecision, ConsentRecord } from "#/core/consent";
-import { CONSENT_CATEGORIES, createConsentDecision } from "#/core/consent";
+import { normalizeConsentDecision } from "#/core/consent";
 import { decodeConsentCookieValue } from "#/core/consent-cookie";
 import { readCookieValue } from "#/core/cookie";
 
@@ -38,7 +38,5 @@ export function readConsentDecisionCookie(
     return undefined;
   }
 
-  const stored = record.decision;
-
-  return createConsentDecision(CONSENT_CATEGORIES.filter((category) => stored[category]));
+  return normalizeConsentDecision(record.decision);
 }

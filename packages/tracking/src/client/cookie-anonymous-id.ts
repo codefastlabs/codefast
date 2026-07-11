@@ -1,6 +1,5 @@
-import { readCookieValue } from "#/core/cookie";
-
-const ONE_YEAR_IN_SECONDS = 60 * 60 * 24 * 365;
+import { writeBrowserCookie } from "#/client/browser-cookie";
+import { ONE_YEAR_IN_SECONDS, readCookieValue } from "#/core/cookie";
 
 export interface CookieAnonymousIdOptions {
   /** Cookie name — must not collide with another cookie on the domain. */
@@ -20,14 +19,6 @@ export interface CookieAnonymousId {
    * visitors who never got an id.
    */
   refresh: () => void;
-}
-
-function writeCookie(cookieName: string, value: string, maxAgeSeconds: number): void {
-  // Secure on HTTPS so the id isn't sent over plain HTTP; SameSite=Lax is enough for a
-  // first-party anonymous id that must stay readable from document.cookie (no HttpOnly).
-  const secure = globalThis.location.protocol === "https:" ? "; secure" : "";
-
-  document.cookie = `${cookieName}=${value}; path=/; max-age=${String(maxAgeSeconds)}; samesite=lax${secure}`;
 }
 
 /**
@@ -51,7 +42,7 @@ export function createCookieAnonymousId(options: CookieAnonymousIdOptions): Cook
         return;
       }
 
-      writeCookie(cookieName, "", 0);
+      writeBrowserCookie(cookieName, "", 0);
     },
     getOrCreate(): string {
       if (typeof document === "undefined") {
@@ -73,7 +64,7 @@ export function createCookieAnonymousId(options: CookieAnonymousIdOptions): Cook
 
       const id = crypto.randomUUID();
 
-      writeCookie(cookieName, id, maxAgeSeconds);
+      writeBrowserCookie(cookieName, id, maxAgeSeconds);
       cachedId = id;
 
       return id;
@@ -87,7 +78,7 @@ export function createCookieAnonymousId(options: CookieAnonymousIdOptions): Cook
 
       if (existing) {
         cachedId = existing;
-        writeCookie(cookieName, existing, maxAgeSeconds);
+        writeBrowserCookie(cookieName, existing, maxAgeSeconds);
       }
     },
   };

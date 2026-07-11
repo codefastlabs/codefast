@@ -6,7 +6,7 @@ Modernize the package around server-first React frameworks and shrink what the c
 
 Breaking (pre-release):
 
-- Event catalogs now accept any Standard Schema library (zod, `zod/mini`, valibot) — `EventDefinition` is typed on `StandardSchemaV1`, validation runs through the new `assertValidEventProps`, and `zod` is no longer a dependency (`@standard-schema/spec` is the only one).
+- Event catalogs now accept any Standard Schema library (zod, `zod/mini`, valibot) — `EventDefinition` is typed on `StandardSchemaV1`, validation runs through the new `assertValidEventProperties`, and `zod` is no longer a dependency (`@standard-schema/spec` is the only one).
 - `buildInitialConsent` → `resolveInitialConsent`; `ServerTrackContext` → `ServerTrackerContext`.
 - `attachClientLifecycle` drops `flushIntervalMs` — the queue schedules its own flushes (one-shot idle timer armed only while events are pending, offline-aware); the lifecycle keeps hide/pagehide delivery (beacon, or a keepalive `fetch` fallback) and flush-on-reconnect.
 - The `./destinations` barrel is browser-lane only: import `createVercelAnalyticsDestination` from `./destinations/vercel-analytics` (its top-level `@vercel/analytics` import made the optional peer mandatory for barrel consumers) and `createGa4MeasurementProtocolDestination` from its own subpath.

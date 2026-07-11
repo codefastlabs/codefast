@@ -3,8 +3,6 @@ import type { TrackedEvent } from "#/core/tracked-event";
 /**
  * Transport hints for a single delivery — set by the caller that knows the page state,
  * honored by destinations that own a raw `fetch`.
- *
- * @since 0.5.0-canary.4
  */
 export interface DestinationSendOptions {
   /**

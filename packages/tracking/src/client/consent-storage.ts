@@ -24,13 +24,7 @@ export function createLocalStorageConsentStorage(storageKey: string): ConsentSto
   let memoryRecord: ConsentRecord | undefined;
   // Keyed by the raw string so ANY write path (save(), another tab, dev tools) is caught
   // by a cheap string compare — parse + validate re-run only when the value changed.
-  let cachedRaw: string | null = null;
-  let cachedRecord: ConsentRecord | undefined;
-  let isCacheSeeded = false;
-
-  function invalidateCache(): void {
-    isCacheSeeded = false;
-  }
+  let cache: { raw: string | null; record: ConsentRecord | undefined } | undefined;
 
   function notify(): void {
     for (const listener of listeners) {
@@ -45,7 +39,7 @@ export function createLocalStorageConsentStorage(storageKey: string): ConsentSto
       }
 
       memoryRecord = undefined;
-      invalidateCache();
+      cache = undefined;
 
       try {
         globalThis.window.localStorage.removeItem(storageKey);
@@ -63,8 +57,8 @@ export function createLocalStorageConsentStorage(storageKey: string): ConsentSto
       try {
         const raw = globalThis.window.localStorage.getItem(storageKey);
 
-        if (isCacheSeeded && raw === cachedRaw) {
-          return cachedRecord;
+        if (cache && raw === cache.raw) {
+          return cache.record;
         }
 
         let record: ConsentRecord | undefined;
@@ -78,9 +72,7 @@ export function createLocalStorageConsentStorage(storageKey: string): ConsentSto
           record = memoryRecord;
         }
 
-        cachedRaw = raw;
-        cachedRecord = record;
-        isCacheSeeded = true;
+        cache = { raw, record };
 
         return record;
       } catch {
@@ -93,7 +85,7 @@ export function createLocalStorageConsentStorage(storageKey: string): ConsentSto
         return;
       }
 
-      invalidateCache();
+      cache = undefined;
 
       try {
         globalThis.window.localStorage.setItem(storageKey, JSON.stringify(record));

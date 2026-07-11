@@ -1,9 +1,10 @@
 import type { StandardSchemaV1 } from "@standard-schema/spec";
 
-import { EventQueue, type EventQueueStorage, type FlushOptions } from "#/client/queue";
+import type { EventQueueStorage, FlushOptions } from "#/client/queue";
+import { EventQueue } from "#/client/queue";
 import type { Destination } from "#/core/destination";
 import type { EventCatalog, EventsOf } from "#/core/event-catalog";
-import { assertValidEventProps } from "#/core/event-catalog";
+import { assertValidEventProperties } from "#/core/event-catalog";
 import { generateEventId } from "#/core/event-id";
 import type { TrackedEvent, TrackedEventBase, TrackedEventSeed } from "#/core/tracked-event";
 import { buildTrackedEvent } from "#/core/tracked-event";
@@ -177,7 +178,7 @@ export function createClientTracker<Catalog extends EventCatalog>(
         throw new Error(`Unknown client-owned event: ${String(name)}`);
       }
 
-      assertValidEventProps(definition.schema, String(name), properties);
+      assertValidEventProperties(definition.schema, String(name), properties);
       // Catalog keys are strings; schema-inferred properties are opaque to the open envelope record.
       enqueue({ name: String(name), properties: properties as Record<string, unknown>, type: "track" });
     },

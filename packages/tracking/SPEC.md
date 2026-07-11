@@ -28,7 +28,7 @@ Status: draft. Fullstack event tracking library for apps built on TanStack Start
 └── css           # optional plain-CSS theme for the react parts
 ```
 
-Each app defines its own event catalog (schemas + owner tag) and passes it into `createClientTracker` / `createServerTracker`. The package ships no hardcoded events. Since 2026-07-11 the schema contract is [Standard Schema](https://standardschema.dev) (`@standard-schema/spec` is the package's only dependency): any conforming library works — zod, `zod/mini`, valibot — and validation runs through `assertValidEventProps` (sync `~standard.validate`; async schemas throw by design, and the validated value is discarded so transforms can never desync client and server).
+Each app defines its own event catalog (schemas + owner tag) and passes it into `createClientTracker` / `createServerTracker`. The package ships no hardcoded events. Since 2026-07-11 the schema contract is [Standard Schema](https://standardschema.dev) (`@standard-schema/spec` is the package's only dependency): any conforming library works — zod, `zod/mini`, valibot — and validation runs through `assertValidEventProperties` (sync `~standard.validate`; async schemas throw by design, and the validated value is discarded so transforms can never desync client and server).
 
 ### 2.1 Event catalog & generics
 
@@ -53,7 +53,7 @@ function createClientTracker<Catalog extends EventCatalog>(catalog: Catalog) {
       name: Name,
       properties: StandardSchemaV1.InferOutput<ClientEvents[Name]["schema"]>,
     ): void {
-      assertValidEventProps(catalog[name].schema, String(name), properties);
+      assertValidEventProperties(catalog[name].schema, String(name), properties);
       // ...enqueue/send
     },
   };
@@ -149,7 +149,7 @@ Consent model differs by region — this is not optional/simplifiable to one glo
 ```
 packages/tracking/
 ├── src/
-│   ├── core/            # EventCatalog, EventsOf, assertValidEventProps, TrackedEvent, Destination, consent types/logic + guards, consent-cookie codec, event-id
+│   ├── core/            # EventCatalog, EventsOf, assertValidEventProperties, TrackedEvent, Destination, consent types/logic + guards, consent-cookie codec, event-id
 │   ├── client/          # createClientTracker, self-scheduling queue, lifecycle, router, gpc, storage, createInitialConsentStore, withConsentCookieMirror, createIsAnalyticsAllowed, createConsentWithdrawalHandler
 │   ├── server/          # createServerTracker (waitUntil, withContext), relay + ingest handler, region sets, resolveInitialConsent, anonymous-id + consent cookie readers/builders
 │   ├── tanstack-start/  # request/response glue over @tanstack/react-start/server (optional peer) — server-only

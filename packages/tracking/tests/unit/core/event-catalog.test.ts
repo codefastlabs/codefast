@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 import { z } from "zod";
 import * as zm from "zod/mini";
 
-import { assertValidEventProps, defineEventCatalog } from "#/core/event-catalog";
+import { assertValidEventProperties, defineEventCatalog } from "#/core/event-catalog";
 
 describe("defineEventCatalog", () => {
   it("returns the catalog unchanged — it exists purely for inference", () => {
@@ -22,24 +22,24 @@ describe("defineEventCatalog", () => {
     });
 
     expect(() => {
-      assertValidEventProps(catalog.search_query.schema, "search_query", { query: "button" });
+      assertValidEventProperties(catalog.search_query.schema, "search_query", { query: "button" });
     }).not.toThrow();
   });
 });
 
-describe("assertValidEventProps", () => {
+describe("assertValidEventProperties", () => {
   const schema = z.object({ id: z.string() });
 
-  it("passes valid props through untouched", () => {
+  it("passes valid properties through untouched", () => {
     expect(() => {
-      assertValidEventProps(schema, "button_clicked", { id: "cta" });
+      assertValidEventProperties(schema, "button_clicked", { id: "cta" });
     }).not.toThrow();
   });
 
   it("throws with the schema issues on mismatch", () => {
     expect(() => {
-      assertValidEventProps(schema, "button_clicked", { id: 42 });
-    }).toThrow(/Invalid props for event "button_clicked"/);
+      assertValidEventProperties(schema, "button_clicked", { id: 42 });
+    }).toThrow(/Invalid properties for event "button_clicked"/);
   });
 
   it("rejects async schemas — tracking sits on synchronous call paths", () => {
@@ -52,7 +52,7 @@ describe("assertValidEventProps", () => {
     };
 
     expect(() => {
-      assertValidEventProps(asyncSchema, "button_clicked", {});
+      assertValidEventProperties(asyncSchema, "button_clicked", {});
     }).toThrow(/async schema/);
   });
 });

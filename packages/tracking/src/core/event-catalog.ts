@@ -31,9 +31,6 @@ export type EventsOf<Catalog extends EventCatalog, Owner extends "client" | "ser
   [Key in keyof Catalog as Catalog[Key]["owner"] extends Owner ? Key : never]: Catalog[Key];
 };
 
-/** The props type a catalog event accepts, inferred from its schema's output. */
-export type EventPropsOf<Definition extends EventDefinition> = StandardSchemaV1.InferOutput<Definition["schema"]>;
-
 /**
  * Identity helper for declaring a catalog with inference — nicer call-site than
  * `satisfies EventCatalog` when the catalog is assembled across multiple files.
@@ -45,23 +42,23 @@ export function defineEventCatalog<Catalog extends EventCatalog>(catalog: Catalo
 }
 
 /**
- * Validates event props against the catalog schema and throws on mismatch. The validated
- * (possibly transformed) value is deliberately discarded — trackers always send the
- * caller's original props, so a schema transform can never desync client and server.
+ * Validates event properties against the catalog schema and throws on mismatch. The
+ * validated (possibly transformed) value is deliberately discarded — trackers always send
+ * the caller's original properties, so a schema transform can never desync client and server.
  *
  * @throws Error when validation reports issues, or when the schema validates asynchronously —
  * tracking sits on synchronous call paths, so async schemas are unsupported by design.
  */
-export function assertValidEventProps(schema: StandardSchemaV1, eventName: string, props: unknown): void {
-  const result = schema["~standard"].validate(props);
+export function assertValidEventProperties(schema: StandardSchemaV1, eventName: string, properties: unknown): void {
+  const result = schema["~standard"].validate(properties);
 
   if (result instanceof Promise) {
-    throw new TypeError(`Event "${eventName}" uses an async schema — event props must validate synchronously`);
+    throw new TypeError(`Event "${eventName}" uses an async schema — event properties must validate synchronously`);
   }
 
   if (result.issues) {
     const detail = result.issues.map((issue) => issue.message).join("; ");
 
-    throw new Error(`Invalid props for event "${eventName}": ${detail}`);
+    throw new Error(`Invalid properties for event "${eventName}": ${detail}`);
   }
 }

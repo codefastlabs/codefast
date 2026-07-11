@@ -1,6 +1,4 @@
-import { readCookieValue } from "#/core/cookie";
-
-const ONE_YEAR_IN_SECONDS = 60 * 60 * 24 * 365;
+import { ONE_YEAR_IN_SECONDS, readCookieValue } from "#/core/cookie";
 
 // The only shape the client ever mints (crypto.randomUUID) — anything else is rejected.
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
