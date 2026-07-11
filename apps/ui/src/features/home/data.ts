@@ -27,6 +27,28 @@ export const FEATURES = [
   },
 ] as const;
 
+interface DemoWallTile {
+  /** Registry slug of the demo to feature. */
+  readonly slug: string;
+  /** Span the tile across two grid columns. */
+  readonly wide?: boolean;
+}
+
+/**
+ * Curated registry slugs for the home playground grid — visually rich and
+ * instantly interactive.
+ */
+export const DEMO_WALL: ReadonlyArray<DemoWallTile> = [
+  { slug: "chart", wide: true },
+  { slug: "calendar" },
+  { slug: "command" },
+  { slug: "bubble" },
+  { slug: "carousel" },
+  { slug: "input-otp" },
+  { slug: "sonner" },
+  { slug: "progress-circle" },
+];
+
 export const STATS = [
   { value: `${COMPONENTS.length}+`, label: "components" },
   { value: "100%", label: "accessible" },

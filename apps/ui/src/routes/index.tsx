@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 
+import { DemoWallSection } from "#/features/home/components/demo-wall-section";
 import { FeaturesSection } from "#/features/home/components/features-section";
 import { HeroSection } from "#/features/home/components/hero-section";
 import { InstallCta } from "#/features/home/components/install-cta";
@@ -45,6 +46,7 @@ function HomePage() {
   return (
     <main>
       <HeroSection />
+      <DemoWallSection />
       <StatsSection />
       <FeaturesSection />
       <InstallCta />
