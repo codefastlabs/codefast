@@ -12,8 +12,6 @@ import { deliverToDestinations, logDestinationError } from "#/server/send-with-r
 /**
  * Per-request identity for server-owned events — resolved once from the request (cookies,
  * session) and either passed per call or bound via `withContext`.
- *
- * @since 0.5.0-canary.4
  */
 export interface ServerTrackerContext {
   anonymousId: string;
@@ -50,8 +48,6 @@ export interface ServerTrackerOptions<Catalog extends EventCatalog> {
 /**
  * A tracker with the per-request context already applied — what `withContext` returns, so
  * request handlers call `track(name, properties)` like client code does.
- *
- * @since 0.5.0-canary.4
  */
 export interface BoundServerTracker<Catalog extends EventCatalog> {
   /** Explicit anonymous → known-user merge, for when `identify` timing can't do it. */
