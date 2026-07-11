@@ -3,6 +3,9 @@ import type { ComponentProps, ReactNode } from "react";
 import type { GtagConsentBootstrapOptions } from "#/destinations/google-analytics";
 import { buildGtagConsentBootstrapScript } from "#/destinations/google-analytics";
 
+/**
+ * @since 1.0.0-canary.6
+ */
 export interface GtagConsentBootstrapProps
   extends
     Omit<ComponentProps<"script">, "children" | "dangerouslySetInnerHTML" | "nonce" | "src" | "type">,
@@ -13,6 +16,8 @@ export interface GtagConsentBootstrapProps
  * hydration. Pass the same `nonce` here and in `loadGtagScript` for CSP; this component
  * only sets the attribute on the host script — the generated source also stamps it onto
  * the injected gtag.js tag when `nonce` is provided.
+ *
+ * @since 1.0.0-canary.6
  */
 export function GtagConsentBootstrap({
   config,

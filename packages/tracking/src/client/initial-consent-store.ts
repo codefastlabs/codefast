@@ -4,6 +4,8 @@ import { isInitialConsent, STRICTEST_INITIAL_CONSENT } from "#/core/consent";
 /**
  * External-store view of the visitor's region default — the strictest value until the
  * server lane answers, then the resolved one.
+ *
+ * @since 1.0.0-canary.6
  */
 export interface InitialConsentSnapshot {
   /** The region-correct default once resolved; {@link STRICTEST_INITIAL_CONSENT} until then. */
@@ -16,6 +18,9 @@ export interface InitialConsentSnapshot {
   isResolved: boolean;
 }
 
+/**
+ * @since 1.0.0-canary.6
+ */
 export interface InitialConsentStoreOptions {
   /**
    * The per-visitor server lane — typically a server function wrapping
@@ -34,6 +39,8 @@ export interface InitialConsentStoreOptions {
 /**
  * `useSyncExternalStore`-shaped — pass `subscribe`/`getSnapshot`/`getServerSnapshot`
  * straight through, or use the `useInitialConsent` hook from `@codefast/tracking/react`.
+ *
+ * @since 1.0.0-canary.6
  */
 export interface InitialConsentStore {
   /**
@@ -59,6 +66,8 @@ const SERVER_SNAPSHOT: InitialConsentSnapshot = {
  * given server function, an optional per-session cache, fail-closed publishing on error
  * (consent UI still renders, under the strictest default), and a retry the next time the
  * tab becomes visible — so one failed request never locks the whole SPA session.
+ *
+ * @since 1.0.0-canary.6
  */
 export function createInitialConsentStore(options: InitialConsentStoreOptions): InitialConsentStore {
   const listeners = new Set<() => void>();

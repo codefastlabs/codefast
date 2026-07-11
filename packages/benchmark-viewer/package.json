@@ -1,6 +1,6 @@
 {
   "name": "@codefast/benchmark-viewer",
-  "version": "0.5.0-canary.5",
+  "version": "1.0.0-canary.6",
   "private": true,
   "description": "React SSR benchmark history viewer server for Codefast benchmark packages",
   "license": "MIT",

@@ -9,6 +9,8 @@ import { resolveInitialConsent } from "#/server/initial-consent";
  * ambient request context (AsyncLocalStorage), so a consumer's server functions shrink to
  * one-line handlers around them. Server-only: deny this subpath in the client environment
  * via Start's `importProtection` — the compiler already strips it with stubbed handler bodies.
+ *
+ * @since 1.0.0-canary.6
  */
 
 export interface InitialConsentFromRequestOptions {
@@ -27,6 +29,8 @@ export interface InitialConsentFromRequestOptions {
  * and `sec-gpc`, fails closed when geo is missing, and stamps
  * `cache-control: private, no-store` — the value is per-visitor by definition, so no
  * shared cache may ever store the response carrying it.
+ *
+ * @since 1.0.0-canary.6
  */
 export function resolveInitialConsentFromRequest(options: InitialConsentFromRequestOptions): InitialConsent {
   setResponseHeader("cache-control", "private, no-store");
@@ -38,6 +42,9 @@ export function resolveInitialConsentFromRequest(options: InitialConsentFromRequ
   });
 }
 
+/**
+ * @since 1.0.0-canary.6
+ */
 export interface AnonymousIdResponseCookieOptions {
   /** Cookie name — must match what the client tracker reads. */
   cookieName: string;
@@ -52,6 +59,8 @@ export interface AnonymousIdResponseCookieOptions {
  * response — the server re-issue that escapes Safari ITP's 7-day cap on script-written
  * cookies. Validation lives in `buildAnonymousIdSetCookie`: a non-UUID id throws, so this
  * can safely back a public server function without echoing attacker input into a header.
+ *
+ * @since 1.0.0-canary.6
  */
 export function setAnonymousIdResponseCookie(options: AnonymousIdResponseCookieOptions): void {
   setResponseHeader(
@@ -64,7 +73,11 @@ export function setAnonymousIdResponseCookie(options: AnonymousIdResponseCookieO
   );
 }
 
-/** Expires the anonymous-id cookie on the current response — the server half of a consent withdrawal. */
+/**
+ * Expires the anonymous-id cookie on the current response — the server half of a consent withdrawal.
+ *
+ * @since 1.0.0-canary.6
+ */
 export function clearAnonymousIdResponseCookie(cookieName: string): void {
   setResponseHeader("set-cookie", buildClearAnonymousIdSetCookie(cookieName));
 }

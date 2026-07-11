@@ -1,6 +1,6 @@
 {
   "name": "@codefast/tracking",
-  "version": "0.5.0-canary.5",
+  "version": "1.0.0-canary.6",
   "description": "Fullstack, type-safe event tracking for TanStack Start — isomorphic client/server trackers over a per-app Zod event catalog",
   "keywords": [
     "analytics",

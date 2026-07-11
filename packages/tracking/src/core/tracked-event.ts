@@ -1,11 +1,19 @@
-/** Fields shared by every envelope the tracker builds. */
+/**
+ * Fields shared by every envelope the tracker builds.
+ *
+ * @since 1.0.0-canary.6
+ */
 export interface TrackedEventBase {
   anonymousId: string;
   eventId: string;
   timestamp: number;
 }
 
-/** A catalog-defined event envelope, as handed to destinations. */
+/**
+ * A catalog-defined event envelope, as handed to destinations.
+ *
+ * @since 1.0.0-canary.6
+ */
 export interface TrackEvent extends TrackedEventBase {
   name: string;
   properties: Record<string, unknown>;

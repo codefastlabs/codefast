@@ -9,6 +9,8 @@ import type { InitialConsentSnapshot, InitialConsentStore } from "#/client/initi
  * when the app already did so at router creation) and re-renders once the server lane
  * answers. SSR and the first client render read the strictest snapshot, so hydration can
  * never mismatch on region.
+ *
+ * @since 1.0.0-canary.6
  */
 export function useInitialConsent(store: InitialConsentStore): InitialConsentSnapshot {
   // Post-hydration safety net — idempotent with an earlier, pre-hydration kick.
