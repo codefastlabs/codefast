@@ -1,7 +1,6 @@
 import type { ConsentDecision } from "#/core/consent";
 import type { ConsentConfig } from "#/core/consent-config";
 import type { Destination } from "#/core/destination";
-import { assertNever } from "#/core/tracked-event";
 import type { GoogleConsentParams } from "#/destinations/google-consent";
 import {
   buildGoogleConsentBootstrapPreamble,
@@ -11,7 +10,7 @@ import {
   warnUnlessGa4EventName,
 } from "#/destinations/google-consent";
 import type { FlatPropertyValue } from "#/destinations/shared";
-import { flattenEventProps, omitHref, toJoinGroupPayload } from "#/destinations/shared";
+import { flattenEventProps } from "#/destinations/shared";
 
 const GTAG_SCRIPT_BASE_URL = "https://www.googletagmanager.com/gtag/js";
 
@@ -162,39 +161,6 @@ export function clearGoogleAnalyticsCookies(): void {
 }
 
 /**
- * @since 0.5.0-canary.4
- */
-export interface GoogleConsentDefaultOptions {
-  /** Name of the queue array on `window`. Defaults to `"dataLayer"` — must match the page's other gtag helpers. */
-  dataLayerName?: string | undefined;
-  /** Restrict the default to these ISO 3166-2 codes (gtag's `region` param); omit for a global default. */
-  region?: ReadonlyArray<string> | undefined;
-  /** Consent Mode's `wait_for_update` — how long tags hold hits so a stored decision can arrive as an update first. */
-  waitForUpdateMs?: number | undefined;
-}
-
-/**
- * Google Consent Mode v2's "default" signal — call before the gtag.js script tag loads
- * (this defines the queueing stub itself, so no snippet has to run first) with the
- * region-resolved default, so GA4/Ads never fire a hit ahead of it.
- *
- * @since 0.5.0-canary.4
- */
-export function setGoogleConsentDefault(decision: ConsentDecision, options: GoogleConsentDefaultOptions = {}): void {
-  const params = toGoogleConsentParams(decision);
-
-  if (options.region !== undefined) {
-    params.region = options.region;
-  }
-
-  if (options.waitForUpdateMs !== undefined) {
-    params.wait_for_update = options.waitForUpdateMs;
-  }
-
-  ensureGtag({ dataLayerName: options.dataLayerName })?.("consent", "default", params);
-}
-
-/**
  * Google Consent Mode v2's "update" signal — call whenever the visitor's effective
  * consent changes (a banner decision, or one synced from another tab), so already-loaded
  * GA4/Ads tags pick up the change without a page reload.
@@ -274,49 +240,18 @@ export function buildGtagConsentBootstrapScript(options: GtagConsentBootstrapOpt
 }
 
 /**
- * Consent Mode's `ads_data_redaction` flag — with `ad_storage` denied, gtag further
- * redacts ad click identifiers (gclid/dclid) from its cookieless pings. Set alongside
- * the consent default.
- *
- * @since 0.5.0-canary.4
- */
-export function setGoogleAdsDataRedaction(enabled: boolean, options: EnsureGtagOptions = {}): void {
-  ensureGtag(options)?.("set", "ads_data_redaction", enabled);
-}
-
-/**
- * Consent Mode's `url_passthrough` flag — carries ad click info through page URLs while
- * storage is denied, preserving conversion attribution without cookies.
- *
- * @since 0.5.0-canary.4
- */
-export function setGoogleUrlPassthrough(enabled: boolean, options: EnsureGtagOptions = {}): void {
-  ensureGtag(options)?.("set", "url_passthrough", enabled);
-}
-
-/**
  * @since 0.5.0-canary.4
  */
 export interface GoogleAnalyticsDestinationOptions {
   name?: string | undefined;
-  /**
-   * Forward `page` envelopes as GA4's `page_view`. Off by default: `gtag('config', ...)`
-   * sends the initial page_view and GA4's Enhanced Measurement (on by default in admin)
-   * tracks SPA history changes, so forwarding here would double-count. Enable only after
-   * setting `send_page_view: false` on config and disabling Enhanced Measurement's
-   * history-based page views.
-   */
-  trackPageViews?: boolean | undefined;
 }
 
 /**
- * Forwards events to `window.gtag`, translating each envelope kind to GA4's vocabulary —
- * `identify` sets `user_id`, `group` becomes the recommended `join_group` event, `page`
- * maps to `page_view` (opt-in, see `trackPageViews`), and `alias` is ignored (GA4 merges
- * identity via `user_id` on later hits). Requires the gtag.js snippet plus
- * `gtag('config', measurementId)` mounted once by the app. Marked
- * `delivery: "immediate"` — gtag.js has its own batching and unload delivery, so
- * queueing in front of it only delays events and replays stale ones next session.
+ * Forwards catalog events to `window.gtag` as GA4 custom events. Page views are not this
+ * destination's job: `gtag('config', ...)` sends the initial page_view and GA4's Enhanced
+ * Measurement tracks SPA history changes. Requires the gtag.js snippet plus
+ * `gtag('config', measurementId)` mounted once by the app (see the consent bootstrap) —
+ * gtag.js owns its own batching and unload delivery.
  *
  * @since 0.5.0-canary.4
  */
@@ -324,7 +259,6 @@ export function createGoogleAnalyticsDestination(options: GoogleAnalyticsDestina
   const name = options.name ?? "google-analytics";
 
   return {
-    delivery: "immediate",
     name,
     // Synchronous today, but declared async so a throw here rejects the returned Promise
     // instead of escaping as a synchronous throw — matches Destination.send's contract.
@@ -333,49 +267,11 @@ export function createGoogleAnalyticsDestination(options: GoogleAnalyticsDestina
         return;
       }
 
-      switch (event.type) {
-        case "alias": {
-          return;
-        }
-
-        case "group": {
-          window.gtag("event", "join_group", flattenEventProps(toJoinGroupPayload(event)));
-
-          return;
-        }
-
-        case "identify": {
-          // GA4 has no identify event — user_id is set once and rides along on later hits.
-          if (event.userId !== undefined) {
-            window.gtag("set", { user_id: event.userId });
-          }
-
-          return;
-        }
-
-        case "page": {
-          if (options.trackPageViews === true) {
-            // gtag.js attaches page_location/page_title from the live document itself.
-            window.gtag("event", "page_view", flattenEventProps(omitHref(event.properties)));
-          }
-
-          return;
-        }
-
-        case "track": {
-          if (!warnUnlessGa4EventName(name, event.name)) {
-            return;
-          }
-
-          window.gtag("event", event.name, flattenEventProps(event.properties));
-
-          return;
-        }
-
-        default: {
-          assertNever(event);
-        }
+      if (!warnUnlessGa4EventName(name, event.name)) {
+        return;
       }
+
+      window.gtag("event", event.name, flattenEventProps(event.properties));
     },
   };
 }

@@ -6,14 +6,12 @@ import { PrivacyChoices } from "#/features/privacy/components/privacy-choices";
 import type { InitialConsent } from "#/features/tracking/lib/consent";
 
 const {
-  clear,
   clearAnonymousId,
   clearGoogleAnalyticsCookies,
   hasGlobalPrivacyControlSignal,
   useVisitorConsent,
   useHasHydrated,
 } = vi.hoisted(() => ({
-  clear: vi.fn(),
   clearAnonymousId: vi.fn(),
   clearGoogleAnalyticsCookies: vi.fn(),
   hasGlobalPrivacyControlSignal: vi.fn(() => false),
@@ -34,7 +32,6 @@ function setRegion(initialConsent: InitialConsent): void {
 
 vi.mock("#/features/tracking/lib/tracking", () => ({
   clearAnonymousId,
-  getTracker: () => ({ clear }),
 }));
 vi.mock(import("@codefast/tracking/client"), async (importOriginal) => ({
   ...(await importOriginal()),
@@ -47,7 +44,6 @@ vi.mock(import("@codefast/tracking/destinations"), async (importOriginal) => ({
 vi.mock("#/hooks/use-has-hydrated", () => ({ useHasHydrated }));
 
 beforeEach(() => {
-  clear.mockClear();
   clearAnonymousId.mockClear();
   clearGoogleAnalyticsCookies.mockClear();
   hasGlobalPrivacyControlSignal.mockReturnValue(false);
@@ -78,7 +74,6 @@ describe("PrivacyChoices", () => {
     await user.click(analyticsSwitch);
 
     expect(analyticsSwitch).not.toBeChecked();
-    expect(clear).toHaveBeenCalledOnce();
     expect(clearAnonymousId).toHaveBeenCalledOnce();
     expect(JSON.parse(window.localStorage.getItem("codefast-ui-consent") ?? "{}").decision).toEqual({
       ads: false,

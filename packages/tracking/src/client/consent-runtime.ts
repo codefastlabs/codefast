@@ -1,4 +1,3 @@
-import { withConsentCookieMirror } from "#/client/consent-cookie-mirror";
 import { createLocalStorageConsentStorage } from "#/client/consent-storage";
 import { hasGlobalPrivacyControlSignal } from "#/client/gpc";
 import type { InitialConsentStore } from "#/client/initial-consent-store";
@@ -41,26 +40,18 @@ export interface ConsentRuntime {
   initialConsentStore: InitialConsentStore;
   /** Non-React gate for `createClientTracker` — the same rule `useConsent` applies. */
   isAnalyticsAllowed: () => boolean;
-  /**
-   * The one `ConsentStorage` instance every surface must share — mirrored into
-   * `config.decisionCookieName` when set, so the server reader sees every decision.
-   */
+  /** The one `ConsentStorage` instance every surface must share. */
   storage: ConsentStorage;
 }
 
 /**
  * Composes the client half of the consent lane from a single `ConsentConfig`:
- * `localStorage`-backed decision storage (cookie-mirrored when the config names a
- * decision cookie), the initial-consent store over the app's server lane, and the
- * non-React analytics gate wired to that store's resolved mode.
+ * `localStorage`-backed decision storage, the initial-consent store over the app's
+ * server lane, and the non-React analytics gate wired to that store's resolved mode.
  */
 export function createConsentRuntime(options: ConsentRuntimeOptions): ConsentRuntime {
   const { config } = options;
-  const localStorage = createLocalStorageConsentStorage(config.storageKey);
-  const storage =
-    config.decisionCookieName === undefined
-      ? localStorage
-      : withConsentCookieMirror(localStorage, { cookieName: config.decisionCookieName });
+  const storage = createLocalStorageConsentStorage(config.storageKey);
   const initialConsentStore = createInitialConsentStore({
     resolve: options.resolveInitialConsent,
     sessionStorageKey: options.initialConsentSessionStorageKey,

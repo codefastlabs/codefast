@@ -7,18 +7,17 @@ import { assertValidEventProperties, defineEventCatalog } from "#/core/event-cat
 
 describe("defineEventCatalog", () => {
   it("returns the catalog unchanged — it exists purely for inference", () => {
-    const catalog = defineEventCatalog({
-      button_clicked: { owner: "client", schema: z.object({ id: z.string() }) },
-      order_completed: { owner: "server", schema: z.object({ orderId: z.string() }) },
-    });
+    const definitions = {
+      button_clicked: { schema: z.object({ id: z.string() }) },
+      order_completed: { schema: z.object({ orderId: z.string() }) },
+    };
 
-    expect(catalog.button_clicked.owner).toBe("client");
-    expect(catalog.order_completed.owner).toBe("server");
+    expect(defineEventCatalog(definitions)).toBe(definitions);
   });
 
   it("accepts any Standard Schema library, not just zod classic", () => {
     const catalog = defineEventCatalog({
-      search_query: { owner: "client", schema: zm.object({ query: zm.string() }) },
+      search_query: { schema: zm.object({ query: zm.string() }) },
     });
 
     expect(() => {

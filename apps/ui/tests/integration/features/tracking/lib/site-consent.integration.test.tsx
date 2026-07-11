@@ -263,12 +263,4 @@ describe("consent × tracking matrix", () => {
     expect(gtagCalls()).not.toContainEqual(["event", "copy_code", COPY_EVENT]);
     expect(readAnonymousIdCookie()).toBeUndefined();
   });
-
-  it("page views never reach Vercel as custom events — the native <Analytics /> component owns them", () => {
-    setRegion("US");
-
-    getTracker().page("/components", { href: "https://example.test/components" });
-
-    expect(vercelTrack).not.toHaveBeenCalled();
-  });
 });

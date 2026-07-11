@@ -3,377 +3,136 @@ import { z } from "zod";
 
 import { createClientTracker } from "#/client/create-client-tracker";
 import { defineEventCatalog } from "#/core/event-catalog";
-import { createMemoryQueueStorage, createRecordingDestination } from "#/tests/unit/client/support/fakes";
+import { createRecordingDestination } from "#/tests/unit/client/support/fakes";
 
 const catalog = defineEventCatalog({
-  button_clicked: { owner: "client", schema: z.object({ id: z.string() }) },
-  order_completed: { owner: "server", schema: z.object({ orderId: z.string() }) },
+  button_clicked: { schema: z.object({ id: z.string() }) },
+  order_completed: { schema: z.object({ orderId: z.string() }) },
 });
 
 describe("createClientTracker", () => {
-  it("validates properties against the catalog schema before enqueueing", () => {
-    const destination = createRecordingDestination();
+  it("builds a full envelope and fans it out to every destination", () => {
+    const first = createRecordingDestination("first");
+    const second = createRecordingDestination("second");
     const tracker = createClientTracker({
       anonymousId: () => "anon-1",
       catalog,
-      destinations: [destination],
-      storage: createMemoryQueueStorage(),
-    });
-
-    expect(() => tracker.track("button_clicked", { id: 42 } as never)).toThrow(/invalid_type|expected string/i);
-  });
-
-  it("flushes a valid client-owned event to every destination", async () => {
-    const destination = createRecordingDestination();
-    const tracker = createClientTracker({
-      anonymousId: () => "anon-1",
-      catalog,
-      destinations: [destination],
-      storage: createMemoryQueueStorage(),
-    });
-
-    tracker.track("button_clicked", { id: "cta" });
-    await tracker.flush();
-
-    expect(destination.received).toMatchObject([{ name: "button_clicked", properties: { id: "cta" }, type: "track" }]);
-  });
-
-  it("rejects a server-owned event at runtime even if the type filter is bypassed", () => {
-    const destination = createRecordingDestination();
-    const tracker = createClientTracker({
-      anonymousId: () => "anon-1",
-      catalog,
-      destinations: [destination],
-      storage: createMemoryQueueStorage(),
-    });
-
-    expect(() => tracker.track("order_completed" as never, { orderId: "o1" } as never)).toThrow(
-      /Unknown client-owned event/,
-    );
-  });
-
-  it("stamps the current user onto events after identify", async () => {
-    const destination = createRecordingDestination();
-    const tracker = createClientTracker({
-      anonymousId: () => "anon-1",
-      catalog,
-      destinations: [destination],
-      storage: createMemoryQueueStorage(),
-    });
-
-    tracker.identify("user-1", { plan: "pro" });
-    tracker.track("button_clicked", { id: "cta" });
-    await tracker.flush();
-
-    expect(destination.received.map((event) => event.userId)).toEqual(["user-1", "user-1"]);
-  });
-
-  it("enqueues a page envelope carrying the given name and properties", async () => {
-    const destination = createRecordingDestination();
-    const tracker = createClientTracker({
-      anonymousId: () => "anon-1",
-      catalog,
-      destinations: [destination],
-      storage: createMemoryQueueStorage(),
-    });
-
-    tracker.page("/pricing", { referrer: "/home" });
-    await tracker.flush();
-
-    expect(destination.received).toMatchObject([{ name: "/pricing", properties: { referrer: "/home" }, type: "page" }]);
-  });
-
-  it("enqueues a group envelope carrying the groupId and traits", async () => {
-    const destination = createRecordingDestination();
-    const tracker = createClientTracker({
-      anonymousId: () => "anon-1",
-      catalog,
-      destinations: [destination],
-      storage: createMemoryQueueStorage(),
-    });
-
-    tracker.group("acme", { plan: "enterprise" });
-    await tracker.flush();
-
-    expect(destination.received).toMatchObject([{ groupId: "acme", traits: { plan: "enterprise" }, type: "group" }]);
-  });
-
-  it("delivers to immediate destinations at track time, without waiting for a flush", () => {
-    const immediate = { ...createRecordingDestination("immediate"), delivery: "immediate" as const };
-    const tracker = createClientTracker({
-      anonymousId: () => "anon-1",
-      catalog,
-      destinations: [immediate],
-      storage: createMemoryQueueStorage(),
+      destinations: [first, second],
     });
 
     tracker.track("button_clicked", { id: "cta" });
 
-    expect(immediate.received).toHaveLength(1);
-  });
-
-  it("never re-delivers to an immediate destination on flush", async () => {
-    const immediate = { ...createRecordingDestination("immediate"), delivery: "immediate" as const };
-    const queued = createRecordingDestination("queued");
-    const tracker = createClientTracker({
-      anonymousId: () => "anon-1",
-      catalog,
-      destinations: [immediate, queued],
-      storage: createMemoryQueueStorage(),
+    expect(first.received).toHaveLength(1);
+    expect(second.received).toHaveLength(1);
+    expect(first.received[0]).toMatchObject({
+      anonymousId: "anon-1",
+      name: "button_clicked",
+      properties: { id: "cta" },
+      type: "track",
     });
-
-    tracker.track("button_clicked", { id: "cta" });
-    await tracker.flush();
-    await tracker.flush();
-
-    expect(immediate.received).toHaveLength(1);
-    expect(queued.received).toHaveLength(1);
+    expect(first.received[0]?.eventId).toBeTruthy();
+    expect(first.received[0]?.timestamp).toBeTypeOf("number");
   });
 
-  it("keeps tracking working when an immediate destination throws synchronously", () => {
-    const throwing = {
-      delivery: "immediate" as const,
-      name: "broken",
-      send: () => {
-        throw new Error("boom");
-      },
-    };
-    const tracker = createClientTracker({
-      anonymousId: () => "anon-1",
-      catalog,
-      destinations: [throwing],
-      storage: createMemoryQueueStorage(),
-    });
-
-    expect(() => tracker.track("button_clicked", { id: "cta" })).not.toThrow();
-  });
-
-  it("clear() drops pending events without sending them", async () => {
+  it("validates properties against the catalog schema and throws on mismatch", () => {
     const destination = createRecordingDestination();
     const tracker = createClientTracker({
       anonymousId: () => "anon-1",
       catalog,
       destinations: [destination],
-      storage: createMemoryQueueStorage(),
     });
 
-    tracker.track("button_clicked", { id: "cta" });
-    tracker.clear();
-    await tracker.flush();
-
+    expect(() => {
+      tracker.track("button_clicked", { id: 42 as unknown as string });
+    }).toThrow(/Invalid properties/);
     expect(destination.received).toHaveLength(0);
   });
 
-  it("clear() forgets the in-memory userId so a later grant does not reattach it", async () => {
-    let allowed = true;
-    const destination = createRecordingDestination();
-    const tracker = createClientTracker({
-      anonymousId: () => "anon-1",
-      catalog,
-      destinations: [destination],
-      isAnalyticsAllowed: () => allowed,
-      storage: createMemoryQueueStorage(),
-    });
-
-    tracker.identify("user-1");
-    await tracker.flush();
-
-    allowed = false;
-    tracker.clear();
-    allowed = true;
-    tracker.track("button_clicked", { id: "cta" });
-    await tracker.flush();
-
-    expect(destination.received).toMatchObject([
-      { type: "identify", userId: "user-1" },
-      { properties: { id: "cta" }, type: "track" },
-    ]);
-    expect(destination.received[1]).not.toHaveProperty("userId");
-  });
-
-  it("flushWithBeacon sends the pending queue via navigator.sendBeacon", () => {
-    const sendBeacon = vi.fn().mockReturnValue(true);
-    vi.stubGlobal("navigator", { sendBeacon });
-
+  it("throws on an event name missing from the catalog", () => {
     const tracker = createClientTracker({
       anonymousId: () => "anon-1",
       catalog,
       destinations: [],
-      storage: createMemoryQueueStorage(),
+    });
+
+    expect(() => {
+      tracker.track("unknown_event" as "button_clicked", { id: "x" });
+    }).toThrow(/Unknown event/);
+  });
+
+  it("drops events entirely while the gate is closed and no destination is exempt", () => {
+    const destination = createRecordingDestination();
+    const anonymousId = vi.fn(() => "anon-1");
+    const tracker = createClientTracker({
+      anonymousId,
+      catalog,
+      destinations: [destination],
+      isAnalyticsAllowed: () => false,
     });
 
     tracker.track("button_clicked", { id: "cta" });
-    tracker.flushWithBeacon("/api/events");
 
-    expect(sendBeacon).toHaveBeenCalledTimes(1);
-    const [endpoint, body] = sendBeacon.mock.calls[0] as [string, string];
-
-    expect(endpoint).toBe("/api/events");
-    expect(JSON.parse(body)).toMatchObject([{ name: "button_clicked" }]);
-
-    vi.unstubAllGlobals();
+    expect(destination.received).toHaveLength(0);
+    // No anonymousId may be resolved for a gated event — resolving could mint a cookie.
+    expect(anonymousId).not.toHaveBeenCalled();
   });
 
-  it("drops every event while isAnalyticsAllowed returns false — nothing sent, nothing queued", async () => {
-    const immediate = { ...createRecordingDestination("immediate"), delivery: "immediate" as const };
-    const queued = createRecordingDestination("queued");
-    const storage = createMemoryQueueStorage();
+  it("keeps exempt destinations receiving identifier-free events while gated", () => {
+    const exempt = createRecordingDestination("exempt");
+
+    exempt.consentRequirement = "exempt";
+
+    const required = createRecordingDestination("required");
     const tracker = createClientTracker({
       anonymousId: () => "anon-1",
       catalog,
-      destinations: [immediate, queued],
+      destinations: [exempt, required],
       isAnalyticsAllowed: () => false,
-      storage,
     });
 
     tracker.track("button_clicked", { id: "cta" });
-    tracker.page("/pricing");
-    tracker.group("acme");
-    await tracker.flush();
 
-    expect(immediate.received).toHaveLength(0);
-    expect(queued.received).toHaveLength(0);
-    expect(storage.load()).toHaveLength(0);
+    expect(required.received).toHaveLength(0);
+    expect(exempt.received).toHaveLength(1);
+    expect(exempt.received[0]?.anonymousId).toBe("");
   });
 
-  it("re-evaluates the consent gate per event, so a mid-session grant applies immediately", async () => {
-    let allowed = false;
+  it("re-reads the gate per event so a mid-session grant applies immediately", () => {
     const destination = createRecordingDestination();
+    let isAllowed = false;
     const tracker = createClientTracker({
       anonymousId: () => "anon-1",
       catalog,
       destinations: [destination],
-      isAnalyticsAllowed: () => allowed,
-      storage: createMemoryQueueStorage(),
+      isAnalyticsAllowed: () => isAllowed,
     });
 
     tracker.track("button_clicked", { id: "before" });
-    allowed = true;
+    isAllowed = true;
     tracker.track("button_clicked", { id: "after" });
-    await tracker.flush();
-
-    expect(destination.received).toMatchObject([{ properties: { id: "after" } }]);
-  });
-
-  it("never invokes an anonymousId callback for a gated event — no id side effect before consent", async () => {
-    const resolveAnonymousId = vi.fn(() => "anon-lazy");
-    let allowed = false;
-    const destination = createRecordingDestination();
-    const tracker = createClientTracker({
-      anonymousId: resolveAnonymousId,
-      catalog,
-      destinations: [destination],
-      isAnalyticsAllowed: () => allowed,
-      storage: createMemoryQueueStorage(),
-    });
-
-    tracker.track("button_clicked", { id: "blocked" });
-
-    expect(resolveAnonymousId).not.toHaveBeenCalled();
-
-    allowed = true;
-    tracker.track("button_clicked", { id: "sent" });
-    await tracker.flush();
-
-    expect(resolveAnonymousId).toHaveBeenCalledOnce();
-    expect(destination.received.map((event) => event.anonymousId)).toEqual(["anon-lazy"]);
-  });
-
-  it("keeps consent-exempt immediate destinations fed while gated — identifier-free, unqueued, counts only", async () => {
-    const exempt = {
-      ...createRecordingDestination("exempt"),
-      consentRequirement: "exempt" as const,
-      delivery: "immediate" as const,
-    };
-    const required = { ...createRecordingDestination("required"), delivery: "immediate" as const };
-    const queued = createRecordingDestination("queued");
-    const resolveAnonymousId = vi.fn(() => "anon-lazy");
-    const storage = createMemoryQueueStorage();
-    const tracker = createClientTracker({
-      anonymousId: resolveAnonymousId,
-      catalog,
-      destinations: [exempt, queued, required],
-      isAnalyticsAllowed: () => false,
-      storage,
-    });
-
-    tracker.identify("user-1");
-    tracker.track("button_clicked", { id: "cta" });
-    tracker.page("/pricing");
-    await tracker.flush();
-
-    expect(required.received).toHaveLength(0);
-    expect(queued.received).toHaveLength(0);
-    expect(storage.load()).toHaveLength(0);
-    expect(resolveAnonymousId).not.toHaveBeenCalled();
-    // only the behavioral kinds flow, and they carry no identity — not even the identify's userId
-    expect(exempt.received.map((event) => event.type)).toEqual(["track", "page"]);
-    expect(exempt.received.every((event) => event.anonymousId === "" && event.userId === undefined)).toBe(true);
-  });
-
-  it("restores full identified delivery to exempt destinations once tracking is allowed", () => {
-    const exempt = {
-      ...createRecordingDestination("exempt"),
-      consentRequirement: "exempt" as const,
-      delivery: "immediate" as const,
-    };
-    const tracker = createClientTracker({
-      anonymousId: () => "anon-1",
-      catalog,
-      destinations: [exempt],
-      isAnalyticsAllowed: () => true,
-    });
-
-    tracker.track("button_clicked", { id: "cta" });
-
-    expect(exempt.received).toMatchObject([{ anonymousId: "anon-1", type: "track" }]);
-  });
-
-  it("never routes gated events to an exempt queued destination — the exempt lane is immediate-only", async () => {
-    const exemptQueued = { ...createRecordingDestination("exempt-queued"), consentRequirement: "exempt" as const };
-    const tracker = createClientTracker({
-      anonymousId: () => "anon-1",
-      catalog,
-      destinations: [exemptQueued],
-      isAnalyticsAllowed: () => false,
-    });
-
-    tracker.track("button_clicked", { id: "cta" });
-    await tracker.flush();
-
-    expect(exemptQueued.received).toHaveLength(0);
-  });
-
-  it("works without a storage — the queue stays in memory only", async () => {
-    const destination = createRecordingDestination();
-    const tracker = createClientTracker({
-      anonymousId: () => "anon-1",
-      catalog,
-      destinations: [destination],
-    });
-
-    tracker.track("button_clicked", { id: "cta" });
-    await tracker.flush();
 
     expect(destination.received).toHaveLength(1);
+    expect(destination.received[0]?.properties).toEqual({ id: "after" });
   });
 
-  it("re-queues events when sendBeacon fails to accept the payload", async () => {
-    vi.stubGlobal("navigator", { sendBeacon: vi.fn().mockReturnValue(false) });
-
-    const destination = createRecordingDestination();
+  it("never lets a throwing destination break the tracked interaction", () => {
+    const throwing = {
+      name: "throwing",
+      send: () => {
+        throw new Error("sync throw");
+      },
+    };
+    const recording = createRecordingDestination();
     const tracker = createClientTracker({
       anonymousId: () => "anon-1",
       catalog,
-      destinations: [destination],
-      storage: createMemoryQueueStorage(),
+      // a sync-throwing destination violates the async contract on purpose
+      destinations: [throwing as never, recording],
     });
 
-    tracker.track("button_clicked", { id: "cta" });
-    tracker.flushWithBeacon("/api/events");
-    vi.unstubAllGlobals();
-
-    await tracker.flush();
-    expect(destination.received).toHaveLength(1);
+    expect(() => {
+      tracker.track("button_clicked", { id: "cta" });
+    }).not.toThrow();
+    expect(recording.received).toHaveLength(1);
   });
 });

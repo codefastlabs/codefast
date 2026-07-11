@@ -5,8 +5,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { ConsentGate } from "#/features/tracking/components/consent-gate";
 import type { InitialConsent } from "#/features/tracking/lib/consent";
 
-const { clear, clearAnonymousId, clearGoogleAnalyticsCookies, useVisitorConsent } = vi.hoisted(() => ({
-  clear: vi.fn(),
+const { clearAnonymousId, clearGoogleAnalyticsCookies, useVisitorConsent } = vi.hoisted(() => ({
   clearAnonymousId: vi.fn(),
   clearGoogleAnalyticsCookies: vi.fn(),
   useVisitorConsent: vi.fn(),
@@ -25,7 +24,6 @@ function setRegion(initialConsent: InitialConsent): void {
 
 vi.mock("#/features/tracking/lib/tracking", () => ({
   clearAnonymousId,
-  getTracker: () => ({ clear }),
 }));
 // Only the cookie clear is spied (jsdom's document.cookie is awkward to assert on);
 // consent updates are asserted on the real gtag stub's dataLayer below.
@@ -51,7 +49,6 @@ const DENIED_PARAMS = {
 const ANALYTICS_ONLY_PARAMS = { ...DENIED_PARAMS, analytics_storage: "granted" };
 
 beforeEach(() => {
-  clear.mockClear();
   clearAnonymousId.mockClear();
   clearGoogleAnalyticsCookies.mockClear();
   window.dataLayer = [];
@@ -91,7 +88,6 @@ describe("ConsentGate", () => {
     render(<ConsentGate />);
     await user.click(screen.getByRole("button", { name: "Reject" }));
 
-    expect(clear).toHaveBeenCalledOnce();
     expect(clearAnonymousId).toHaveBeenCalledOnce();
     expect(clearGoogleAnalyticsCookies).toHaveBeenCalledOnce();
     expect(consentUpdates().at(-1)).toEqual(DENIED_PARAMS);
@@ -105,7 +101,7 @@ describe("ConsentGate", () => {
     render(<ConsentGate />);
     await user.click(screen.getByRole("button", { name: "Accept" }));
 
-    expect(clear).not.toHaveBeenCalled();
+    expect(clearAnonymousId).not.toHaveBeenCalled();
     expect(consentUpdates().at(-1)).toEqual(ANALYTICS_ONLY_PARAMS);
   });
 
@@ -138,7 +134,7 @@ describe("ConsentGate", () => {
     await user.click(screen.getByRole("button", { name: "Cookie settings" }));
     await user.click(screen.getByRole("button", { name: "Reject" }));
 
-    expect(clear).toHaveBeenCalledOnce();
+    expect(clearAnonymousId).toHaveBeenCalledOnce();
     expect(consentUpdates().at(-1)).toEqual(DENIED_PARAMS);
     expect(screen.getByRole("button", { name: "Cookie settings" })).toBeTruthy();
   });
@@ -171,7 +167,6 @@ describe("ConsentGate", () => {
 
     render(<ConsentGate />);
     window.dataLayer = [];
-    clear.mockClear();
     clearAnonymousId.mockClear();
     clearGoogleAnalyticsCookies.mockClear();
 
@@ -184,7 +179,6 @@ describe("ConsentGate", () => {
     });
 
     expect(consentUpdates().at(-1)).toEqual(DENIED_PARAMS);
-    expect(clear).toHaveBeenCalledOnce();
     expect(clearAnonymousId).toHaveBeenCalledOnce();
     expect(clearGoogleAnalyticsCookies).toHaveBeenCalledOnce();
   });

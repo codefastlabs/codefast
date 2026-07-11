@@ -91,11 +91,6 @@
       "types": "./dist/destinations/vercel-analytics.d.mts",
       "import": "./dist/destinations/vercel-analytics.mjs"
     },
-    "./destinations/ga4-measurement-protocol": {
-      "source": "./src/destinations/ga4-measurement-protocol.ts",
-      "types": "./dist/destinations/ga4-measurement-protocol.d.mts",
-      "import": "./dist/destinations/ga4-measurement-protocol.mjs"
-    },
     "./css/*": "./src/css/*",
     "./package.json": "./package.json"
   },

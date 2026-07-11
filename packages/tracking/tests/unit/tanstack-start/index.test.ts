@@ -1,13 +1,8 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import type { ConsentRecord } from "#/core/consent";
-import { encodeConsentCookieValue } from "#/core/consent-cookie";
 import {
   clearAnonymousIdResponseCookie,
-  readAnonymousIdRequestCookie,
-  readConsentDecisionRequestCookie,
   resolveInitialConsentFromRequest,
-  resolveServerTrackerContextFromRequest,
   setAnonymousIdResponseCookie,
 } from "#/tanstack-start";
 
@@ -80,69 +75,5 @@ describe("anonymous-id response cookies", () => {
     clearAnonymousIdResponseCookie("anon-id");
 
     expect(setResponseHeader).toHaveBeenCalledWith("set-cookie", "anon-id=; Path=/; Max-Age=0; SameSite=Lax; Secure");
-  });
-});
-
-describe("request cookie readers", () => {
-  it("reads a valid anonymous id off the request", () => {
-    stubHeaders({ cookie: `anon-id=${ANON_ID}` });
-
-    expect(readAnonymousIdRequestCookie("anon-id")).toBe(ANON_ID);
-  });
-
-  it("reads a tampered anonymous id as absent", () => {
-    stubHeaders({ cookie: "anon-id=not-a-uuid" });
-
-    expect(readAnonymousIdRequestCookie("anon-id")).toBeUndefined();
-  });
-
-  it("reads the mirrored consent decision under the current policy version", () => {
-    const record: ConsentRecord = {
-      decision: { ads: false, analytics: true },
-      policyVersion: "1",
-      timestamp: 1_700_000_000_000,
-    };
-
-    stubHeaders({ cookie: `consent=${encodeConsentCookieValue(record)}` });
-
-    expect(
-      readConsentDecisionRequestCookie({
-        decisionCookieName: "consent",
-        policyVersion: "1",
-        requestedCategories: ["analytics"],
-        storageKey: "consent",
-      }),
-    ).toEqual({
-      ads: false,
-      analytics: true,
-    });
-    expect(
-      readConsentDecisionRequestCookie({
-        decisionCookieName: "consent",
-        policyVersion: "2",
-        requestedCategories: ["analytics"],
-        storageKey: "consent",
-      }),
-    ).toBeUndefined();
-  });
-});
-
-describe("resolveServerTrackerContextFromRequest", () => {
-  it("assembles a context from the anonymous-id cookie and the request-id header", () => {
-    stubHeaders({ cookie: `anon-id=${ANON_ID}`, "x-vercel-id": "req-1" });
-
-    expect(
-      resolveServerTrackerContextFromRequest({
-        anonymousIdCookieName: "anon-id",
-        requestIdHeaderName: "x-vercel-id",
-        userId: "user-1",
-      }),
-    ).toEqual({ anonymousId: ANON_ID, requestId: "req-1", userId: "user-1" });
-  });
-
-  it("returns undefined when the visitor has no valid anonymous id", () => {
-    stubHeaders({});
-
-    expect(resolveServerTrackerContextFromRequest({ anonymousIdCookieName: "anon-id" })).toBeUndefined();
   });
 });

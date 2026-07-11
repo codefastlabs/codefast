@@ -4,7 +4,6 @@ import {
   buildAnonymousIdSetCookie,
   buildClearAnonymousIdSetCookie,
   isValidAnonymousId,
-  readAnonymousIdCookie,
 } from "#/server/anonymous-id-cookie";
 
 const COOKIE_NAME = "test-anon-id";
@@ -21,34 +20,6 @@ describe("isValidAnonymousId", () => {
     expect(isValidAnonymousId("visitor-123")).toBe(false);
     expect(isValidAnonymousId(`${VALID_ID}; Domain=evil.example`)).toBe(false);
     expect(isValidAnonymousId(`${VALID_ID}extra`)).toBe(false);
-  });
-});
-
-describe("readAnonymousIdCookie", () => {
-  it("reads the id from a Cookie header", () => {
-    expect(readAnonymousIdCookie(`other=1; ${COOKIE_NAME}=${VALID_ID}; more=2`, COOKIE_NAME)).toBe(VALID_ID);
-  });
-
-  it("returns undefined when the header is missing or empty", () => {
-    expect(readAnonymousIdCookie(null, COOKIE_NAME)).toBeUndefined();
-    expect(readAnonymousIdCookie(undefined, COOKIE_NAME)).toBeUndefined();
-    expect(readAnonymousIdCookie("", COOKIE_NAME)).toBeUndefined();
-  });
-
-  it("returns undefined when the cookie is absent", () => {
-    expect(readAnonymousIdCookie("other=1", COOKIE_NAME)).toBeUndefined();
-  });
-
-  it("returns undefined for a tampered (non-UUID) value", () => {
-    expect(readAnonymousIdCookie(`${COOKIE_NAME}=visitor-123`, COOKIE_NAME)).toBeUndefined();
-  });
-
-  it("matches the cookie name exactly — a longer prefix sibling is ignored", () => {
-    expect(readAnonymousIdCookie(`${COOKIE_NAME}-extra=${VALID_ID}`, COOKIE_NAME)).toBeUndefined();
-  });
-
-  it("throws on an invalid cookie name", () => {
-    expect(() => readAnonymousIdCookie(`${COOKIE_NAME}=${VALID_ID}`, "bad name;")).toThrow(/cookie name/i);
   });
 });
 

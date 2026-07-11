@@ -7,7 +7,7 @@ import { useConsent } from "@codefast/tracking/react";
 import { useEffect } from "react";
 
 import { consentConfig } from "#/features/tracking/lib/consent";
-import { clearAnonymousId, getTracker } from "#/features/tracking/lib/tracking";
+import { clearAnonymousId } from "#/features/tracking/lib/tracking";
 import { consentRuntime, useVisitorConsent } from "#/features/tracking/lib/visitor-consent";
 
 export interface UseSiteConsentResult {
@@ -20,9 +20,6 @@ export interface UseSiteConsentResult {
 const onConsentWithdrawal = createConsentWithdrawalHandler({
   clearAnonymousId,
   clearGoogleAnalyticsCookies,
-  clearTracker: () => {
-    getTracker().clear();
-  },
 });
 
 let isWithdrawalWatchStarted = false;

@@ -1,9 +1,6 @@
 export type { ClientTracker, ClientTrackerOptions } from "#/client/create-client-tracker";
 export { createClientTracker } from "#/client/create-client-tracker";
 
-export type { ConsentCookieMirrorOptions } from "#/client/consent-cookie-mirror";
-export { withConsentCookieMirror } from "#/client/consent-cookie-mirror";
-
 export type { ConsentRuntime, ConsentRuntimeOptions } from "#/client/consent-runtime";
 export { createConsentRuntime } from "#/client/consent-runtime";
 
@@ -26,16 +23,6 @@ export { createInitialConsentStore } from "#/client/initial-consent-store";
 
 export type { IsAnalyticsAllowedOptions } from "#/client/is-analytics-allowed";
 export { createIsAnalyticsAllowed } from "#/client/is-analytics-allowed";
-
-export type { ClientLifecycleOptions } from "#/client/lifecycle";
-export { attachClientLifecycle } from "#/client/lifecycle";
-
-export { createLocalStorageQueueStorage } from "#/client/local-storage";
-
-export type { EventQueueStorage, FlushOptions } from "#/client/queue";
-
-export type { RouterLike } from "#/client/router";
-export { attachRouterPageTracking } from "#/client/router";
 
 export type { ServerPersistedAnonymousIdOptions } from "#/client/server-persisted-anonymous-id";
 export { createServerPersistedAnonymousId } from "#/client/server-persisted-anonymous-id";

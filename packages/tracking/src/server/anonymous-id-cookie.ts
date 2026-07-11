@@ -1,4 +1,4 @@
-import { ONE_YEAR_IN_SECONDS, readCookieValue } from "#/core/cookie";
+import { ONE_YEAR_IN_SECONDS } from "#/core/cookie";
 
 // The only shape the client ever mints (crypto.randomUUID) — anything else is rejected.
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -19,18 +19,6 @@ function assertCookieName(cookieName: string): void {
  */
 export function isValidAnonymousId(value: string): boolean {
   return UUID_PATTERN.test(value);
-}
-
-/**
- * The anonymous id carried by a request's `Cookie` header, or `undefined` when absent or
- * not UUID-shaped — a tampered value must not propagate into server-owned events.
- */
-export function readAnonymousIdCookie(cookieHeader: string | null | undefined, cookieName: string): string | undefined {
-  assertCookieName(cookieName);
-
-  const value = readCookieValue(cookieHeader, cookieName);
-
-  return value !== undefined && isValidAnonymousId(value) ? value : undefined;
 }
 
 export interface AnonymousIdSetCookieOptions {

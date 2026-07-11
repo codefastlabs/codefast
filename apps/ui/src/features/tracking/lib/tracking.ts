@@ -19,14 +19,12 @@ import { isAnalyticsAllowed } from "#/features/tracking/lib/visitor-consent";
  */
 export const catalog = defineEventCatalog({
   copy_code: {
-    owner: "client",
     schema: z.object({
       kind: z.enum(["install-command", "setup-snippet", "usage-example"]),
       name: z.string(),
     }),
   },
   search_query: {
-    owner: "client",
     schema: z.object({
       query: z.string(),
       queryLength: z.number(),

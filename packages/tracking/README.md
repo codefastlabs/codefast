@@ -1,312 +1,139 @@
 # @codefast/tracking
 
-Fullstack, type-safe event tracking for TanStack Start apps. Each app defines its own
-event catalog over any [Standard Schema](https://standardschema.dev) library (zod,
-`zod/mini`, valibot, ...) tagged with an owner (`"client"` or `"server"`); trackers built
-from that catalog only allow firing events owned by that side — enforced at compile time.
-The package itself depends only on the spec's types, so the client bundle pays for the
-schema library the app already ships (`zod/mini` keeps it smallest).
+Consent-gated, type-safe event tracking for TanStack Start apps.
 
-See [SPEC.md](./SPEC.md) for the full design (identity correlation, offline queue/retry,
-multi-destination fan-out, region-based consent).
+- **One catalog, typed end to end** — apps define their events over any
+  [Standard Schema](https://standardschema.dev) library (zod, `zod/mini`, valibot, ...);
+  `track()` validates properties at the call site and at runtime, and the client bundle
+  only pays for the schema library the app already ships.
+- **One consent config, every surface** — `ConsentConfig` is the single bag for the
+  storage key, policy version, and requested purposes; the React hooks, the tracker gate,
+  and the pre-hydration gtag bootstrap all take the same object, so nothing drifts.
+- **ISR-safe by design** — shared/CDN-cached HTML bakes the strictest consent default;
+  the region-correct default arrives per visitor over a private server-function lane.
 
 ## Status
 
-Early scaffold. `core`, `client`, `server`, and `react` (headless consent) implement the
-shapes described in the spec. `createVercelAnalyticsDestination`,
-`createGoogleAnalyticsDestination`, `createGoogleTagManagerDestination`, and
-`createGa4MeasurementProtocolDestination` are implemented; PostHog is not built yet — use
-`createHttpDestination` or implement the `Destination` interface directly.
+Pre-1.0 (canary). The surface is deliberately small: it covers exactly what a consented
+gtag + Vercel Analytics setup on TanStack Start needs, and nothing speculative. Lanes
+that shipped here before (offline queue, beacon relay, server-side tracker, GTM,
+Segment-style `identify`/`group`/`alias`/`page`) were removed because no consumer called
+them — git history has them if a real need returns.
 
 ## Quick start
 
 ```ts
+// consent.ts — the one consent contract every surface shares
+import { defineConsentConfig } from "@codefast/tracking";
+
+export const consentConfig = defineConsentConfig({
+  policyVersion: "2026-01", // bump to re-prompt everyone
+  requestedCategories: ["analytics"],
+  storageKey: "my-app-consent",
+});
+```
+
+```ts
+// consent-runtime.ts — live client instances derived from the config
+import { createConsentRuntime } from "@codefast/tracking/client";
+
+import { consentConfig } from "./consent";
+import { resolveVisitorConsent } from "./resolve-visitor-consent"; // server fn, see below
+
+export const consentRuntime = createConsentRuntime({
+  config: consentConfig,
+  initialConsentSessionStorageKey: "my-app-initial-consent",
+  resolveInitialConsent: () => resolveVisitorConsent(),
+});
+```
+
+```ts
+// tracking.ts — catalog + tracker
 import { defineEventCatalog } from "@codefast/tracking";
-import {
-  createClientTracker,
-  createCookieAnonymousId,
-  createLocalStorageQueueStorage,
-} from "@codefast/tracking/client";
-import { createHttpDestination } from "@codefast/tracking/destinations";
-import { z } from "zod";
+import { createClientTracker } from "@codefast/tracking/client";
+import { createGoogleAnalyticsDestination } from "@codefast/tracking/destinations";
+import { createVercelAnalyticsDestination } from "@codefast/tracking/destinations/vercel-analytics";
+import * as z from "zod/mini";
+
+import { consentRuntime } from "./consent-runtime";
 
 export const catalog = defineEventCatalog({
-  button_clicked: { owner: "client", schema: z.object({ id: z.string() }) },
-  order_completed: { owner: "server", schema: z.object({ orderId: z.string(), amount: z.number() }) },
+  copy_code: { schema: z.object({ name: z.string() }) },
 });
 
-const anonymousId = createCookieAnonymousId({ cookieName: "app-anonymous-id" });
-
-const tracker = createClientTracker({
-  // A getOrCreate callback, not a plain string — invoked only once an event is actually
-  // allowed to send, so the id is never minted as an import-time side effect.
-  anonymousId: anonymousId.getOrCreate,
-  catalog,
-  destinations: [createHttpDestination({ name: "internal", endpoint: "/api/events" })],
-  storage: createLocalStorageQueueStorage("tracking-queue"),
-});
-
-tracker.track("button_clicked", { id: "cta" });
-// tracker.track("order_completed", { orderId: "o1", amount: 10 }); // compile error — server-owned
-```
-
-```ts
-import { createServerTracker } from "@codefast/tracking/server";
-
-const serverTracker = createServerTracker({
+export const tracker = createClientTracker({
+  anonymousId: () => "...", // see the durable anonymous id section
   catalog,
   destinations: [
-    /* ... */
+    // Vercel is cookieless and receives no identifier — it may keep counting pre-consent.
+    createVercelAnalyticsDestination({ consentRequirement: "exempt" }),
+    createGoogleAnalyticsDestination(),
   ],
+  isAnalyticsAllowed: consentRuntime.isAnalyticsAllowed,
 });
 
-await serverTracker.track("order_completed", { orderId: "o1", amount: 10 }, { anonymousId, userId });
+tracker.track("copy_code", { name: "button" }); // typed + runtime-validated
 ```
 
-## Durable anonymous id ("client mints, server persists")
-
-Safari ITP caps `document.cookie`-written cookies at 7 days, so a purely client-written
-anonymous id silently churns weekly there. `createServerPersistedAnonymousId` keeps the
-consent-first client-side minting and delegates the durable write to your server, which
-re-issues the cookie via `Set-Cookie` (and rolls its expiry forward on every visit). The
-server helpers are framework-agnostic strings — wire them to a TanStack Start server
-function, a Next.js Route Handler, or anything that can set a response header. They throw
-on any non-UUID id, so the public persist endpoint can never echo attacker input into a
-header. The server persists and prolongs; it never mints — an unconditional server-set id
-would predate consent.
-
-```ts
-// server function / route handler
-import { buildAnonymousIdSetCookie, buildClearAnonymousIdSetCookie } from "@codefast/tracking/server";
-
-// TanStack Start: setResponseHeader("set-cookie", buildAnonymousIdSetCookie({ cookieName, id }))
-// Next.js:       new Response(null, { status: 204, headers: { "set-cookie": buildAnonymousIdSetCookie({ cookieName, id }) } })
-```
-
-```ts
-// client — drop-in for createCookieAnonymousId
-import { createServerPersistedAnonymousId } from "@codefast/tracking/client";
-
-const anonymousId = createServerPersistedAnonymousId({
-  cookieName: "app-anonymous-id",
-  persist: (id) => persistAnonymousIdCookie({ data: { id } }), // your server round-trip
-  clearOnServer: () => clearAnonymousIdCookie(), // consent-withdrawal half
-});
-```
-
-## Router page views + unload flush
-
-`attachRouterPageTracking` is duck-typed against `Router["subscribe"]`, so it takes a real
-`@tanstack/react-router` instance without this package depending on it. The queue schedules
-its own flushes — batch-size threshold plus a one-shot idle timer armed only while events
-are pending (an idle page runs no timer), paused while `navigator.onLine` reports offline
-so the retry budget survives a dead connection. `attachClientLifecycle` adds the triggers
-the queue can't own: end-of-session delivery on hide/pagehide (`sendBeacon` to
-`beaconEndpoint`, or a keepalive `fetch` flush without one) and an immediate flush when
-connectivity returns.
-
-```ts
-import { attachClientLifecycle, attachRouterPageTracking } from "@codefast/tracking/client";
-
-attachRouterPageTracking(tracker, router); // router: your app's TanStack Router instance
-attachClientLifecycle(tracker, { beaconEndpoint: "/api/events" });
-```
-
-Skip both helpers when every destination is `delivery: "immediate"` (gtag, Vercel) and
-page views come from GA4 Enhanced Measurement — there is nothing to flush.
+Destinations own their transport (gtag.js and Vercel both batch in-page), so `track()`
+is fire-and-forget — a failing destination can never break the interaction.
 
 ## Consent (region-based, per-category)
 
-Consent is granular per purpose, mirroring Google Consent Mode v2's split: a
-`ConsentDecision` is `{ ads: boolean, analytics: boolean }`, never a single yes/no —
-GDPR requires purpose-level consent, and the ads signals (`ad_storage`/`ad_user_data`/
-`ad_personalization`) must be able to differ from `analytics_storage`.
+`ConsentDecision` is per-purpose (`{ ads, analytics }`), mirroring Google Consent Mode
+v2. Region resolves the mode: GDPR/UK/EEA and Vietnam's PDPL get **opt-in**, CCPA/CPRA
+regions get **opt-out** with GPC honored as an ads opt-out.
 
-Resolve the region/mode server-side (`resolveRegion` + `resolveConsentMode` from
-`@codefast/tracking/server` and `@codefast/tracking`) and pass `mode` down to the client.
-The banner ships as composable, headless parts — no `@codefast/ui` dependency, any
-markup (including a design system's button styles via `className`) slots in. For a
-default look without writing CSS, import the optional plain-CSS theme:
+- `useConsent({ config, mode, storage })` — `useSyncExternalStore` bridge over the stored
+  decision; cross-tab saves sync through the `storage` event.
+- `ConsentBanner` + parts (`Title`/`Description`/`Actions`/`Accept`/`Reject`/`Customize`/
+  `Preferences`/`Category`/`Save`) — headless, `data-slot`-styleable; optional plain-CSS
+  theme at `@codefast/tracking/css/consent.css`. `ConsentToggle` is the persistent
+  opt-out control CCPA requires.
+- `useGoogleConsentSync(consent, { loadGtagScript? })` — pushes Consent Mode `update`
+  signals, including privacy-page and cross-tab decisions.
+- `createConsentWithdrawalHandler({ clearAnonymousId?, clearGoogleAnalyticsCookies? })` —
+  wire to `onDecision` so a denial clears first-party identifiers.
 
-```css
-@import "@codefast/tracking/css/consent.css";
-```
+### The ISR lane
 
-Or style the parts yourself via `className`/`data-slot` attributes (`consent-banner`,
-`consent-title`, `consent-description`, `consent-actions`, `consent-action`,
-`consent-preferences`, `consent-category`, `consent-category-checkbox`,
-`consent-toggle`), e.g. Tailwind's
-`**:data-[slot=consent-action]:rounded-md`. `data-state` on the root flips between
-`prompt` and `preferences`.
-
-```tsx
-import { defineConsentConfig } from "@codefast/tracking";
-import { createConsentRuntime, createConsentWithdrawalHandler } from "@codefast/tracking/client";
-import { clearGoogleAnalyticsCookies, loadGtagScript } from "@codefast/tracking/destinations";
-import {
-  ConsentBanner,
-  ConsentBannerAccept,
-  ConsentBannerActions,
-  ConsentBannerCategory,
-  ConsentBannerCustomize,
-  ConsentBannerDescription,
-  ConsentBannerPreferences,
-  ConsentBannerReject,
-  ConsentBannerSave,
-  ConsentBannerTitle,
-  ConsentToggle,
-  useConsent,
-  useGoogleConsentSync,
-} from "@codefast/tracking/react";
-
-// One config, every surface — the hook, the tracker gate, the bootstraps, and the
-// server cookie reader all take this object, so nothing can drift between them.
-const consentConfig = defineConsentConfig({
-  policyVersion: "2026-01",
-  requestedCategories: ["analytics"],
-  storageKey: "tracking-consent",
-});
-
-// Module scope — one runtime owns the storage instance, the region store, and the
-// tracker gate (`runtime.isAnalyticsAllowed`), all derived from the config.
-const runtime = createConsentRuntime({
-  config: consentConfig,
-  resolveInitialConsent: () => resolveVisitorConsent(), // your server-fn lane
-});
-
-const onDecision = createConsentWithdrawalHandler({
-  clearAnonymousId: anonymousId.clear,
-  clearGoogleAnalyticsCookies,
-  clearTracker: () => tracker.clear(),
-});
-
-function ConsentGate({ mode }: { mode: "opt-in" | "opt-out" }) {
-  const consent = useConsent({
-    config: consentConfig, // Accept grants exactly the requested categories — never more
-    mode,
-    onDecision,
-    storage: runtime.storage,
-  });
-
-  // Mount once on a page-wide surface so privacy-page / cross-tab decisions sync to gtag.
-  useGoogleConsentSync(consent, {
-    loadGtagScript: () => loadGtagScript({ gaMeasurementId: "G-XXXXXXX" }),
-  });
-
-  return mode === "opt-in" ? (
-    <ConsentBanner consent={consent}>
-      <ConsentBannerTitle>Cookies &amp; analytics</ConsentBannerTitle>
-      <ConsentBannerDescription>
-        We use cookies to understand how you use this site. <a href="/privacy">Privacy policy</a>
-      </ConsentBannerDescription>
-      {/* optional second layer: per-category checkboxes ("Customize" → "Save preferences") */}
-      <ConsentBannerPreferences>
-        <ConsentBannerCategory category="analytics">Analytics</ConsentBannerCategory>
-        <ConsentBannerSave>Save preferences</ConsentBannerSave>
-      </ConsentBannerPreferences>
-      <ConsentBannerActions>
-        <ConsentBannerAccept>Accept</ConsentBannerAccept>
-        <ConsentBannerReject>Reject</ConsentBannerReject>
-        <ConsentBannerCustomize>Customize</ConsentBannerCustomize>
-      </ConsentBannerActions>
-    </ConsentBanner>
-  ) : (
-    <ConsentToggle consent={consent} toggledCategories={["analytics"]} />
-  );
-}
-```
-
-The root gates itself on `consent.isPromptNeeded`; pass `open` to override — e.g. reopening
-the banner as a "Cookie settings" panel after a decision (GDPR expects withdrawing
-consent to be as easy as giving it).
-
-The stored decision is the single source of truth (`useSyncExternalStore` under the
-hood): hydration-safe on prerendered pages, and a decision made in one tab dismisses the
-banner in every other tab via the `storage` event.
-
-For Consent Mode v2, `setGoogleConsentDefault(decision, { waitForUpdateMs, region })`
-issues the pre-tag default (it defines the gtag queueing stub itself), and
-`setGoogleAdsDataRedaction`/`setGoogleUrlPassthrough` cover the denied-ads flags. A GPC
-signal is honored as a do-not-sell-or-share opt-out: it forces `ads` denied without
-withdrawing first-party `analytics`.
-
-## TanStack Start wiring
-
-`apps/ui` (`src/features/tracking/`) is the reference consumer. ISR HTML is CDN-cached and
-shared across visitors, so it cannot be personalized per visitor — the shipped lane is a
-**server function** that resolves region after hydration. The
-**`@codefast/tracking/tanstack-start`** subpath (optional peer on
-`@tanstack/react-start`, server-only) owns the request/response glue, so the app's server
-functions are one-liners:
+ISR/CDN-cached HTML is shared across visitors, so no render may read geo. Bake
+`STRICTEST_INITIAL_CONSENT` into the shared render (and into `<GtagConsentBootstrap />`),
+then resolve the region-correct default per visitor after hydration:
 
 1. **Server function** — `resolveInitialConsentFromRequest({ requestedCategories })`
-   reads the geo header (default `x-vercel-ip-country`) and `sec-gpc`, stamps
-   `cache-control: private, no-store`, and fails closed when geo is missing. Anonymous-id
-   persistence: `setAnonymousIdResponseCookie` / `clearAnonymousIdResponseCookie` around
-   `createServerFn` handlers (see `apps/ui` `anonymous-id.ts`). Static top-level imports
-   are fine in server-fn files — the Start compiler strips handler bodies (and their
-   then-unused imports) from the client transform; see the isolation section below for
-   the build-time guard.
-2. **Client runtime** — `createConsentRuntime({ config, resolveInitialConsent, initialConsentSessionStorageKey? })`
-   (`@codefast/tracking/client`) composes the whole client half from one `ConsentConfig`:
-   the shared decision storage (cookie-mirrored when `config.decisionCookieName` is set),
-   the initial-consent store (strictest default until the server answers, single-flight
-   resolve, per-session cache, fail-closed-but-retryable errors, retry on tab-visible),
-   and the tracker gate `runtime.isAnalyticsAllowed` wired to the store's resolved mode.
+   (`@codefast/tracking/tanstack-start`) reads the geo header and `sec-gpc`, stamps
+   `cache-control: private, no-store`, and fails closed when geo is missing.
+2. **Client** — `createConsentRuntime` owns the rest: strictest default until the server
+   answers, single-flight resolve, per-session cache, fail-closed-but-retryable errors.
    Kick `runtime.ensureInitialConsentResolved()` at router creation (window-guarded) so
-   the round trip overlaps hydration; read the store via
+   the round trip overlaps hydration; read it reactively via
    `useInitialConsent(runtime.initialConsentStore)` (`@codefast/tracking/react`).
-3. **`createConsentWithdrawalHandler`** (`@codefast/tracking/client`) — revoke clears
-   (`tracker.clear`, anonymous-id cookie, `_ga*` via `clearGoogleAnalyticsCookies`).
-4. **`useGoogleConsentSync`** (`@codefast/tracking/react`) — Consent Mode `update` +
-   optional idempotent gtag load, including cross-tab / privacy-page decisions.
 
-ISR/CDN-cached HTML is shared across visitors — bake the strictest Consent Mode default
-(`STRICTEST_INITIAL_CONSENT` from the root/`core` entry) into that shared render via a
-literal `defaultConsent`. Do not put geo (or any request-derived consent) into it via
-`loaderData` or the document shell; per-visitor region rides the private server-fn lane
-after hydration.
+## Durable anonymous id ("client mints, server persists")
 
-## Server-side delivery
+`createServerPersistedAnonymousId` (`@codefast/tracking/client`) mints a UUID cookie
+lazily — only once an event is actually allowed to send — and asks the server to re-issue
+it via `Set-Cookie`, which escapes Safari ITP's 7-day cap on script-written cookies. The
+server half is one line per endpoint with `setAnonymousIdResponseCookie` /
+`clearAnonymousIdResponseCookie` (`@codefast/tracking/tanstack-start`); both validate the
+id is exactly UUID-shaped, so a public endpoint can never echo attacker input into a
+response header.
 
-`createServerTracker` accepts `waitUntil` — hand it Cloudflare's `ctx.waitUntil`,
-Vercel's `waitUntil`, or srvx's `request.waitUntil` and `track`/`group`/`alias` resolve
-after validation instead of after the slowest destination's retry ladder; failures still
-report through `onDestinationError`. `withContext(context)` binds the per-request identity
-once (pairs with `resolveServerTrackerContextFromRequest` from the `tanstack-start`
-subpath), so handlers read `tracker.withContext(ctx).track(name, props)`. The fetch-based
-destinations (`createHttpDestination`, `createGa4MeasurementProtocolDestination`) abort
-stalled requests after `requestTimeoutMs` (default 10s), and the HTTP destination ships a
-whole queue flush as one batched POST via `sendBatch`.
+## Google tag (advanced Consent Mode)
 
-### Beacon ingest (the receive half)
+`<GtagConsentBootstrap config={consentConfig} defaultConsent={...} gaMeasurementId="G-…" />`
+(`@codefast/tracking/react`) renders the pre-hydration inline script: Consent Mode v2
+`default` first (stored decision wins over the baked fallback), then gtag.js always loads
+so cookieless pings and consent modeling can run even when storage is denied. Page views
+are gtag's own job (`config` + Enhanced Measurement) — the destination only forwards
+catalog events. Runtime changes go through `useGoogleConsentSync`/`updateGoogleConsent`.
 
-`relayTrackedEvents(payload, { catalog, destinations, context?, isAllowed? })`
-(`@codefast/tracking/server`) validates a batch of client envelopes (shape, catalog
-membership, schema), re-stamps identity from what the server read off the request, keeps
-client-minted `eventId`s so re-sent beacons dedupe, and fans out with the server retry
-ladder. `createTrackedEventIngestHandler(options)` wraps it as a framework-agnostic
-`Request → Response` endpoint (405/400/413 handling included) for
-`flushWithBeacon`/`beaconEndpoint` to target.
+## Keeping server-only subpaths out of client bundles
 
-### Consent on the server
-
-Name a `decisionCookieName` in the `ConsentConfig` and `createConsentRuntime` mirrors
-every saved decision into that cookie (localStorage stays the UI's source of truth;
-`withConsentCookieMirror` is the underlying decorator); `readConsentDecisionCookie(cookieHeader, config)`
-(`@codefast/tracking/server`) or `readConsentDecisionRequestCookie(config)` (`tanstack-start`)
-reads it back under the config's policy version — the same object on both sides, so the
-cookie name and version can never drift, and server-owned tracking honors exactly what
-the visitor chose instead of tracking consent-blind.
-
-### Keeping server-only subpaths out of client bundles
-
-`./server`, `./server/*`, `./tanstack-start`, and
-`./destinations/ga4-measurement-protocol` (it carries an `apiSecret`) must never enter a
-client bundle. On TanStack Start, enforce that at build time with the plugin's
-import-protection — the default rules already deny local `**/*.server.*` files in the
-client environment; spread the package's own deny-list in, so a new server-only subpath
-can never go stale in your config:
+`./server` and `./tanstack-start` must never enter a client bundle. On TanStack Start,
+spread the package's own deny-list into the plugin's import-protection so it versions
+with the package instead of going stale in your config:
 
 ```ts
 import { SERVER_ONLY_IMPORT_SPECIFIERS } from "@codefast/tracking/import-protection";
@@ -319,40 +146,10 @@ tanstackStart({
 ```
 
 A violation is mocked with a console diagnostic in dev and fails the build in prod, with
-a trace of the offending import chain. On other bundlers, wire the same list into the
-equivalent deny mechanism (or an eslint/oxlint import restriction) — the package
-deliberately ships no runtime guard, since `package.json#exports` here is generated by
-tooling that owns the condition map.
+a trace of the offending import chain.
 
-## Google tag / GTM loaders (advanced Consent Mode)
+## Reference consumer
 
-Prefer the pre-hydration bootstrap (not a post-hydration mount) so Consent Mode's default
-lands before any Google hit. Bootstraps use **advanced** Consent Mode: set the v2
-`default` from the stored decision (or region fallback), then **always** load gtag.js /
-gtm.js — even when storage is denied — so cookieless pings and consent modeling can run.
-This does **not** weaken the package's first-party consent gate (`isAnalyticsAllowed`,
-identifier minting, non-exempt destinations); only Google's tag script loading changes.
-
-```tsx
-import { loadGtagScript } from "@codefast/tracking/destinations";
-import { GtagConsentBootstrap } from "@codefast/tracking/react";
-
-// In <head> / shell — bake the strictest default on cached HTML; the server-fn lane
-// corrects the consent UI + gtag update after hydration (see apps/ui).
-// Same nonce on this host script and on loadGtagScript for CSP.
-<GtagConsentBootstrap
-  config={consentConfig} // the same object useConsent receives — key/version can't drift
-  dataLayerName="dataLayer" // optional; custom names also set gtag.js's `l` param
-  debugMode={import.meta.env.DEV} // optional — gtag('config', id, { debug_mode: true })
-  defaultConsent={{ ads: false, analytics: false }}
-  gaMeasurementId="G-XXXXXXX"
-  nonce={cspNonce} // optional — stamped on the injected gtag.js tag too
-/>;
-```
-
-GTM variant: `buildGtmConsentBootstrapScript` / `loadGtmScript` /
-`createGoogleTagManagerDestination`. If GTM already loads GA4, do **not** also register
-`createGoogleAnalyticsDestination` or events will double-fire.
-
-SPA page views: leave `trackPageViews` off (default) and rely on GA4 Enhanced Measurement
-/ GTM history tags — enabling both double-counts.
+`apps/ui` (`src/features/tracking/`) in this repo wires everything above on a real
+ISR-deployed TanStack Start site — consent config + runtime, banner + persistent toggle,
+gtag bootstrap, durable anonymous id, and the private server-function consent lane.

@@ -31,22 +31,6 @@ describe("createConsentRuntime", () => {
     expect(window.localStorage.getItem("runtime-consent")).toContain('"analytics":true');
   });
 
-  it("mirrors decisions into the config's decision cookie when one is named", () => {
-    const runtime = createConsentRuntime({
-      config: {
-        decisionCookieName: "runtime-consent-mirror",
-        policyVersion: "1",
-        requestedCategories: ["analytics"],
-        storageKey: "runtime-consent-mirrored",
-      },
-      resolveInitialConsent: () => Promise.resolve(OPT_OUT_US),
-    });
-
-    runtime.storage.save({ decision: { ads: false, analytics: true }, policyVersion: "1", timestamp: 0 });
-
-    expect(document.cookie).toContain("runtime-consent-mirror=");
-  });
-
   it("gates analytics on the strictest default until the server lane resolves, then on the resolved mode", async () => {
     const resolveInitialConsent = vi.fn(() => Promise.resolve(OPT_OUT_US));
     const runtime = createConsentRuntime({
