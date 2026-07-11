@@ -4,7 +4,7 @@ import { Image } from "@unpic/react";
 export function AspectRatioDemo() {
   return (
     <div className="w-full max-w-sm">
-      <AspectRatio className="rounded-lg bg-ui-muted" ratio={16 / 9}>
+      <AspectRatio className="rounded-lg bg-muted" ratio={16 / 9}>
         <Image
           alt="Photo"
           className="size-full rounded-lg object-cover grayscale"
