@@ -1,8 +1,22 @@
 // Window.dataLayer is declared globally by @codefast/tracking's google-analytics module.
+import { buildGtagConsentBootstrapScript } from "@codefast/tracking/destinations";
 import { afterEach, describe, expect, it } from "vitest";
 
-import { buildGtagBootstrapScript } from "#/features/tracking/components/google-tag";
-import { CONSENT_POLICY_VERSION, CONSENT_STORAGE_KEY } from "#/features/tracking/lib/consent";
+import {
+  CONSENT_POLICY_VERSION,
+  CONSENT_STORAGE_KEY,
+  STRICTEST_INITIAL_CONSENT,
+} from "#/features/tracking/lib/consent";
+
+/** The exact options `<GoogleTag />` passes to the package's `GtagConsentBootstrap`. */
+function buildGtagBootstrapScript(gaMeasurementId: string): string {
+  return buildGtagConsentBootstrapScript({
+    consentStorageKey: CONSENT_STORAGE_KEY,
+    defaultConsent: STRICTEST_INITIAL_CONSENT.defaultConsent,
+    gaMeasurementId,
+    policyVersion: CONSENT_POLICY_VERSION,
+  });
+}
 
 /** Executes the exact source string `<GoogleTag />` inlines into the page, as the browser would. */
 function runScript(script: string): void {
@@ -10,7 +24,7 @@ function runScript(script: string): void {
   new Function(script)();
 }
 
-describe("buildGtagBootstrapScript", () => {
+describe("GoogleTag bootstrap script", () => {
   afterEach(() => {
     delete window.dataLayer;
     window.localStorage.removeItem(CONSENT_STORAGE_KEY);

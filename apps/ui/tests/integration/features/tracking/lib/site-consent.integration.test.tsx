@@ -1,4 +1,4 @@
-import { buildInitialConsent } from "@codefast/tracking/server";
+import { resolveInitialConsent } from "@codefast/tracking/server";
 import { cleanup, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
@@ -41,7 +41,7 @@ const DENIED_PARAMS = { ...GRANTED_PARAMS, analytics_storage: "denied" };
 /** Fakes the server lane's answer for this visitor's region — the real resolver logic, minus the network. */
 function setRegion(country: string): void {
   resolveVisitorConsent.mockResolvedValue(
-    buildInitialConsent({
+    resolveInitialConsent({
       countryCode: country,
       requestedCategories: REQUESTED_CONSENT_CATEGORIES,
     }),

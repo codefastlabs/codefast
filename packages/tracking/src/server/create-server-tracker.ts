@@ -1,15 +1,21 @@
-import type { z } from "zod";
+import type { StandardSchemaV1 } from "@standard-schema/spec";
 
 import type { Destination } from "#/core/destination";
 import type { EventCatalog, EventsOf } from "#/core/event-catalog";
+import { assertValidEventProps } from "#/core/event-catalog";
 import { deriveEventId, generateEventId } from "#/core/event-id";
-import type { TrackedEvent, TrackedEventSeed } from "#/core/tracked-event";
+import type { TrackedEventSeed } from "#/core/tracked-event";
 import { buildTrackedEvent } from "#/core/tracked-event";
+import type { DestinationErrorHandler } from "#/server/send-with-retry";
+import { logDestinationError, sendWithRetry } from "#/server/send-with-retry";
 
 /**
+ * Per-request identity for server-owned events — resolved once from the request (cookies,
+ * session) and either passed per call or bound via `withContext`.
+ *
  * @since 0.5.0-canary.4
  */
-export interface ServerTrackContext {
+export interface ServerTrackerContext {
   anonymousId: string;
   /**
    * A stable identifier for the inbound request, unchanged across retries — when set,
@@ -29,8 +35,32 @@ export interface ServerTrackerOptions<Catalog extends EventCatalog> {
   destinations: Array<Destination>;
   generateEventId?: (() => string) | undefined;
   maxRetries?: number | undefined;
-  onDestinationError?: ((error: unknown, destination: Destination, event: TrackedEvent) => void) | undefined;
+  onDestinationError?: DestinationErrorHandler | undefined;
   retryDelayMs?: number | undefined;
+  /**
+   * Hands destination delivery (including its retry ladder) to the platform's
+   * post-response scheduler — Cloudflare's `ctx.waitUntil`, Vercel's `waitUntil`, srvx's
+   * `request.waitUntil`. With it set, `track`/`group`/`alias` resolve as soon as the event
+   * is validated and built instead of after the slowest destination; failures still
+   * surface through `onDestinationError`.
+   */
+  waitUntil?: ((work: Promise<void>) => void) | undefined;
+}
+
+/**
+ * A tracker with the per-request context already applied — what `withContext` returns, so
+ * request handlers call `track(name, properties)` like client code does.
+ *
+ * @since 0.5.0-canary.4
+ */
+export interface BoundServerTracker<Catalog extends EventCatalog> {
+  /** Explicit anonymous → known-user merge, for when `identify` timing can't do it. */
+  alias: (previousId: string, userId: string) => Promise<void>;
+  group: (groupId: string, traits?: Record<string, unknown>) => Promise<void>;
+  track: <Name extends keyof EventsOf<Catalog, "server">>(
+    name: Name,
+    properties: StandardSchemaV1.InferOutput<EventsOf<Catalog, "server">[Name]["schema"]>,
+  ) => Promise<void>;
 }
 
 /**
@@ -38,44 +68,16 @@ export interface ServerTrackerOptions<Catalog extends EventCatalog> {
  */
 export interface ServerTracker<Catalog extends EventCatalog> {
   /** Explicit anonymous → known-user merge, for when `identify` timing can't do it. */
-  alias: (previousId: string, userId: string, context: ServerTrackContext) => Promise<void>;
+  alias: (previousId: string, userId: string, context: ServerTrackerContext) => Promise<void>;
   // Context is mandatory identity so it reads well right after groupId, and traits stays optional.
-  group: (groupId: string, context: ServerTrackContext, traits?: Record<string, unknown>) => Promise<void>;
+  group: (groupId: string, context: ServerTrackerContext, traits?: Record<string, unknown>) => Promise<void>;
   track: <Name extends keyof EventsOf<Catalog, "server">>(
     name: Name,
-    properties: z.infer<EventsOf<Catalog, "server">[Name]["schema"]>,
-    context: ServerTrackContext,
+    properties: StandardSchemaV1.InferOutput<EventsOf<Catalog, "server">[Name]["schema"]>,
+    context: ServerTrackerContext,
   ) => Promise<void>;
-}
-
-function sleep(ms: number): Promise<void> {
-  return new Promise((resolve) => {
-    setTimeout(resolve, ms);
-  });
-}
-
-async function sendWithRetry(
-  destination: Destination,
-  event: TrackedEvent,
-  maxRetries: number,
-  retryDelayMs: number,
-  onError: (error: unknown, destination: Destination, event: TrackedEvent) => void,
-): Promise<void> {
-  for (let attempt = 0; attempt <= maxRetries; attempt += 1) {
-    try {
-      await destination.send(event);
-
-      return;
-    } catch (error) {
-      if (attempt === maxRetries) {
-        onError(error, destination, event);
-
-        return;
-      }
-
-      await sleep(retryDelayMs * 2 ** attempt);
-    }
-  }
+  /** The same tracker with `context` applied once — for request-scoped use (middleware, handlers). */
+  withContext: (context: ServerTrackerContext) => BoundServerTracker<Catalog>;
 }
 
 /**
@@ -90,15 +92,9 @@ export function createServerTracker<Catalog extends EventCatalog>(
   const maxRetries = options.maxRetries ?? 2;
   const retryDelayMs = options.retryDelayMs ?? 200;
   const createId = options.generateEventId ?? generateEventId;
-  const onError =
-    options.onDestinationError ??
-    ((error: unknown, destination: Destination, event: TrackedEvent): void => {
-      const label = event.type === "track" ? event.name : event.type;
+  const onError = options.onDestinationError ?? logDestinationError;
 
-      console.error(`[tracking] destination "${destination.name}" failed for event "${label}"`, error);
-    });
-
-  async function sendEvent(seed: TrackedEventSeed, context: ServerTrackContext): Promise<void> {
+  async function sendEvent(seed: TrackedEventSeed, context: ServerTrackerContext): Promise<void> {
     // Deriving from the seed plus userId (not just requestId) keeps distinct event kinds —
     // and distinct merge targets, e.g. two `alias` calls for the same previousId — in the
     // same request from colliding, while an identical call on retry reproduces the same id.
@@ -114,14 +110,24 @@ export function createServerTracker<Catalog extends EventCatalog>(
       ...(context.userId === undefined ? {} : { userId: context.userId }),
     });
 
-    await Promise.all(
+    const delivery = Promise.all(
       options.destinations.map(async (destination) =>
         sendWithRetry(destination, event, maxRetries, retryDelayMs, onError),
       ),
-    );
+    ).then(() => {
+      /* collapse to void for waitUntil schedulers typed on Promise<void> */
+    });
+
+    if (options.waitUntil) {
+      options.waitUntil(delivery);
+
+      return;
+    }
+
+    await delivery;
   }
 
-  return {
+  const tracker: ServerTracker<Catalog> = {
     async alias(previousId, userId, context) {
       // The alias's userId is the merge target — it wins over whatever the context carries.
       await sendEvent({ previousId, type: "alias" }, { ...context, userId });
@@ -138,12 +144,21 @@ export function createServerTracker<Catalog extends EventCatalog>(
         throw new Error(`Unknown server-owned event: ${String(name)}`);
       }
 
-      definition.schema.parse(properties);
-      // Catalog keys are strings; zod-inferred properties are opaque to the open envelope record.
+      assertValidEventProps(definition.schema, String(name), properties);
+      // Catalog keys are strings; schema-inferred properties are opaque to the open envelope record.
       await sendEvent(
         { name: String(name), properties: properties as Record<string, unknown>, type: "track" },
         context,
       );
     },
+    withContext(context) {
+      return {
+        alias: (previousId, userId) => tracker.alias(previousId, userId, context),
+        group: (groupId, traits) => tracker.group(groupId, context, traits),
+        track: (name, properties) => tracker.track(name, properties, context),
+      };
+    },
   };
+
+  return tracker;
 }

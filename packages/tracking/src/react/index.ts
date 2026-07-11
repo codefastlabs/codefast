@@ -28,6 +28,8 @@ export {
 export type { UseConsentOptions, UseConsentResult } from "#/react/use-consent";
 export { useConsent } from "#/react/use-consent";
 
+export { useInitialConsent } from "#/react/use-initial-consent";
+
 export type { UseGoogleConsentSyncOptions } from "#/react/use-google-consent-sync";
 export { useGoogleConsentSync } from "#/react/use-google-consent-sync";
 

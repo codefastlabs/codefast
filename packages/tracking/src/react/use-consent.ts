@@ -1,3 +1,5 @@
+"use client";
+
 import { useCallback, useMemo, useRef, useSyncExternalStore } from "react";
 
 import type { ConsentCategory, ConsentDecision, ConsentMode, ConsentStorage } from "#/core/consent";

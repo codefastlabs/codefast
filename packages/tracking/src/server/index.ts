@@ -6,11 +6,27 @@ export {
   readAnonymousIdCookie,
 } from "#/server/anonymous-id-cookie";
 
-export type { ServerTrackContext, ServerTracker, ServerTrackerOptions } from "#/server/create-server-tracker";
+export type { ConsentDecisionCookieOptions } from "#/server/consent-cookie";
+export { readConsentDecisionCookie, readConsentRecordCookie } from "#/server/consent-cookie";
+
+export type {
+  BoundServerTracker,
+  ServerTracker,
+  ServerTrackerContext,
+  ServerTrackerOptions,
+} from "#/server/create-server-tracker";
 export { createServerTracker } from "#/server/create-server-tracker";
 
 export type { InitialConsent, InitialConsentOptions } from "#/server/initial-consent";
-export { buildInitialConsent } from "#/server/initial-consent";
+export { resolveInitialConsent } from "#/server/initial-consent";
+
+export type {
+  RelayContext,
+  RelayResult,
+  RelayTrackedEventsOptions,
+  TrackedEventIngestHandlerOptions,
+} from "#/server/relay";
+export { createTrackedEventIngestHandler, relayTrackedEvents } from "#/server/relay";
 
 export {
   EU_COUNTRY_CODES,

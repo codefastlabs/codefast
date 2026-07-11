@@ -1,5 +1,5 @@
 import type { ConsentCategory, InitialConsent } from "#/core/consent";
-import { createConsentDecision, resolveConsentMode, resolveDefaultConsent } from "#/core/consent";
+import { resolveConsentMode, resolveDefaultConsent, STRICTEST_INITIAL_CONSENT } from "#/core/consent";
 import { resolveRegionFromCountryCode } from "#/server/region";
 
 export type { InitialConsent };
@@ -15,17 +15,17 @@ export interface InitialConsentOptions {
 
 /**
  * Pure region → mode → default-consent resolution for server functions (or a fail-closed
- * bake when country is unknown).
+ * bake when country is unknown). Named with the `resolve*` family it composes.
  *
  * @remarks
  * A missing country code means an unknown visitor (a prerender crawl, a host without a
- * geo header) — not a known non-EU visitor — so it fails closed to the strictest opt-in
- * default instead of `"other"`'s opt-out. Conflating the two would grant analytics by
- * default to every visitor, EU included, on a geo-less host.
+ * geo header) — not a known non-EU visitor — so it fails closed to
+ * {@link STRICTEST_INITIAL_CONSENT} instead of `"other"`'s opt-out. Conflating the two
+ * would grant analytics by default to every visitor, EU included, on a geo-less host.
  */
-export function buildInitialConsent(options: InitialConsentOptions): InitialConsent {
+export function resolveInitialConsent(options: InitialConsentOptions): InitialConsent {
   if (!options.countryCode) {
-    return { defaultConsent: createConsentDecision([]), mode: "opt-in", region: "other" };
+    return STRICTEST_INITIAL_CONSENT;
   }
 
   const region = resolveRegionFromCountryCode(options.countryCode);

@@ -1,8 +1,9 @@
-import type { z } from "zod";
+import type { StandardSchemaV1 } from "@standard-schema/spec";
 
-import { EventQueue, type EventQueueStorage } from "#/client/queue";
+import { EventQueue, type EventQueueStorage, type FlushOptions } from "#/client/queue";
 import type { Destination } from "#/core/destination";
 import type { EventCatalog, EventsOf } from "#/core/event-catalog";
+import { assertValidEventProps } from "#/core/event-catalog";
 import { generateEventId } from "#/core/event-id";
 import type { TrackedEvent, TrackedEventBase, TrackedEventSeed } from "#/core/tracked-event";
 import { buildTrackedEvent } from "#/core/tracked-event";
@@ -56,7 +57,7 @@ export interface ClientTracker<Catalog extends EventCatalog> {
    * helper's `clear()` separately when the visitor withdraws tracking consent.
    */
   clear: () => void;
-  flush: () => Promise<void>;
+  flush: (options?: FlushOptions) => Promise<void>;
   /** Synchronous, best-effort flush via `navigator.sendBeacon` — for page unload only. */
   flushWithBeacon: (endpoint: string) => void;
   group: (groupId: string, traits?: Record<string, unknown>) => void;
@@ -64,7 +65,7 @@ export interface ClientTracker<Catalog extends EventCatalog> {
   page: (name?: string, properties?: Record<string, unknown>) => void;
   track: <Name extends keyof EventsOf<Catalog, "client">>(
     name: Name,
-    properties: z.infer<EventsOf<Catalog, "client">[Name]["schema"]>,
+    properties: StandardSchemaV1.InferOutput<EventsOf<Catalog, "client">[Name]["schema"]>,
   ) => void;
 }
 
@@ -136,7 +137,7 @@ export function createClientTracker<Catalog extends EventCatalog>(
       userId = undefined;
       queue.clear();
     },
-    flush: () => queue.flush(),
+    flush: (flushOptions) => queue.flush(flushOptions),
     flushWithBeacon(endpoint) {
       const events = queue.drain();
 
@@ -176,8 +177,8 @@ export function createClientTracker<Catalog extends EventCatalog>(
         throw new Error(`Unknown client-owned event: ${String(name)}`);
       }
 
-      definition.schema.parse(properties);
-      // Catalog keys are strings; zod-inferred properties are opaque to the open envelope record.
+      assertValidEventProps(definition.schema, String(name), properties);
+      // Catalog keys are strings; schema-inferred properties are opaque to the open envelope record.
       enqueue({ name: String(name), properties: properties as Record<string, unknown>, type: "track" });
     },
   };

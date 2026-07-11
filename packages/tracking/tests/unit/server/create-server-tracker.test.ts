@@ -117,4 +117,48 @@ describe("createServerTracker", () => {
 
     expect(onDestinationError).toHaveBeenCalledTimes(1);
   });
+
+  it("hands delivery to waitUntil so the request path resolves before the destinations do", async () => {
+    let resolveSend: (() => void) | undefined;
+    const scheduled: Array<Promise<void>> = [];
+    const tracker = createServerTracker({
+      catalog,
+      destinations: [
+        {
+          name: "slow",
+          send: () =>
+            new Promise<void>((resolve) => {
+              resolveSend = resolve;
+            }),
+        },
+      ],
+      waitUntil: (work) => {
+        scheduled.push(work);
+      },
+    });
+
+    // resolves immediately — delivery is scheduled, not awaited
+    await tracker.track("order_completed", { orderId: "o1" }, { anonymousId: "anon-1" });
+
+    expect(scheduled).toHaveLength(1);
+
+    resolveSend?.();
+    await scheduled[0];
+  });
+
+  it("withContext binds identity once and forwards every method", async () => {
+    const destination = createFailingDestination("posthog", 0);
+    const tracker = createServerTracker({ catalog, destinations: [destination] });
+    const bound = tracker.withContext({ anonymousId: "anon-1", requestId: "req-1", userId: "user-1" });
+
+    await bound.track("order_completed", { orderId: "o1" });
+    await bound.group("acme", { plan: "enterprise" });
+    await bound.alias("anon-1", "user-2");
+
+    expect(destination.received).toHaveLength(3);
+    expect(destination.received[0]).toMatchObject({ anonymousId: "anon-1", userId: "user-1" });
+    expect(destination.received[1]).toMatchObject({ groupId: "acme", traits: { plan: "enterprise" } });
+    // alias's merge target wins over the bound context's userId
+    expect(destination.received[2]).toMatchObject({ previousId: "anon-1", userId: "user-2" });
+  });
 });

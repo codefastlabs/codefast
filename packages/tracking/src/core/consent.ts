@@ -3,6 +3,13 @@
  */
 export type ConsentRegion = "eu" | "other" | "us" | "vn";
 
+export const CONSENT_REGIONS: ReadonlyArray<ConsentRegion> = ["eu", "other", "us", "vn"];
+
+/** Guards a region read from untrusted storage (a cached `InitialConsent`, a cookie). */
+export function isConsentRegion(value: unknown): value is ConsentRegion {
+  return CONSENT_REGIONS.includes(value as ConsentRegion);
+}
+
 /**
  * @since 0.5.0-canary.4
  */
@@ -132,6 +139,43 @@ export interface InitialConsent {
   defaultConsent: ConsentDecision;
   mode: ConsentMode;
   region: ConsentRegion;
+}
+
+/**
+ * What shared HTML bakes and what an unknown-country request resolves to: all categories
+ * denied under opt-in — the one default that is safe to show any visitor anywhere.
+ * Prerendered/CDN-cached markup must carry nothing region-specific, and a missing geo
+ * header means "unknown visitor", never "known non-EU visitor".
+ */
+export const STRICTEST_INITIAL_CONSENT: InitialConsent = Object.freeze({
+  defaultConsent: Object.freeze(createConsentDecision([])),
+  mode: "opt-in",
+  region: "other",
+});
+
+/**
+ * Guards an `InitialConsent` read from untrusted storage (a session cache, a cookie).
+ * Enforces the mode/region pairing rule, allowing the one deliberate exception: the
+ * fail-closed unknown-country value pairs `opt-in` with region `"other"` — stricter than
+ * `"other"`'s usual opt-out, never looser.
+ */
+export function isInitialConsent(value: unknown): value is InitialConsent {
+  if (!isPlainObject(value)) {
+    return false;
+  }
+
+  const mode = value.mode;
+  const region = value.region;
+
+  if (
+    (mode !== "opt-in" && mode !== "opt-out") ||
+    !isConsentRegion(region) ||
+    !isConsentDecision(value.defaultConsent)
+  ) {
+    return false;
+  }
+
+  return mode === resolveConsentMode(region) || (mode === "opt-in" && region === "other");
 }
 
 /**
