@@ -3,10 +3,9 @@ import type { Destination } from "#/core/destination";
 import { assertNever } from "#/core/tracked-event";
 import type { GoogleConsentParams } from "#/destinations/google-consent";
 import {
+  buildGoogleConsentBootstrapPreamble,
   DEFAULT_DATA_LAYER_NAME,
-  dataLayerOf,
-  googleConsentBootstrapPreamble,
-  resolveFallbackConsentExpression,
+  ensureDataLayer,
   toGoogleConsentParams,
   warnUnlessGa4EventName,
 } from "#/destinations/google-consent";
@@ -70,12 +69,12 @@ export function ensureGtag(options: EnsureGtagOptions = {}): GtagFunction | unde
 
   const dataLayerName = options.dataLayerName ?? DEFAULT_DATA_LAYER_NAME;
 
-  dataLayerOf(dataLayerName);
+  ensureDataLayer(dataLayerName);
 
   // First stub wins — recreating would orphan commands already queued on another layer.
   // Callers must pass the same dataLayerName for every helper on the page.
   window.gtag ??= function gtag() {
-    dataLayerOf(dataLayerName)?.push(arguments);
+    ensureDataLayer(dataLayerName)?.push(arguments);
   } as GtagFunction;
 
   return window.gtag;
@@ -214,17 +213,11 @@ export interface GtagConsentBootstrapOptions {
    */
   dataLayerName?: string | undefined;
   /**
-   * Consent to apply when nothing valid is stored yet. Embedded as a literal — for a
-   * value only known via an earlier inline script (e.g. a middleware-set cookie read on a
-   * statically prerendered page), use `defaultConsentExpression` instead.
+   * Consent to apply when nothing valid is stored yet. Embedded as a literal — bake the
+   * strictest default on cached/shared HTML; upgrade after hydration via the private
+   * server-fn lane + `updateGoogleConsent`.
    */
-  defaultConsent?: ConsentDecision | undefined;
-  /**
-   * A raw JS expression evaluating to the fallback `ConsentDecision`, e.g.
-   * `"window.__INITIAL_CONSENT__.defaultConsent"`. Takes precedence over `defaultConsent`
-   * when both are set; one of the two is required.
-   */
-  defaultConsentExpression?: string | undefined;
+  defaultConsent: ConsentDecision;
   /** Forwarded as `gtag('config', id, { debug_mode: true })` after the consent default. */
   debugMode?: boolean | undefined;
   /** Google Analytics 4 Measurement ID (e.g. `"G-XXXXXXX"`). */
@@ -242,18 +235,17 @@ export interface GtagConsentBootstrapOptions {
 /**
  * Builds the literal JS source for a `<script dangerouslySetInnerHTML>` mounted in
  * `<head>`, before hydration: applies Consent Mode v2's default signal from the visitor's
- * stored decision (falling back to `defaultConsent`/`defaultConsentExpression` when none is
- * stored yet), then always loads gtag.js (advanced Consent Mode) so cookieless pings /
- * modeling can run even when storage is denied. A runtime decision change needs
- * `updateGoogleConsent` so the already-loaded tag picks up the grant/deny — this only
- * covers the page-load default + script injection.
+ * stored decision (falling back to literal `defaultConsent` when none is stored yet),
+ * then always loads gtag.js (advanced Consent Mode) so cookieless pings / modeling can
+ * run even when storage is denied. A runtime decision change needs `updateGoogleConsent`
+ * so the already-loaded tag picks up the grant/deny — this only covers the page-load
+ * default + script injection.
  */
 export function buildGtagConsentBootstrapScript(options: GtagConsentBootstrapOptions): string {
   const {
     consentStorageKey,
     dataLayerName = DEFAULT_DATA_LAYER_NAME,
     defaultConsent,
-    defaultConsentExpression,
     debugMode,
     gaMeasurementId,
     nonce,
@@ -264,14 +256,10 @@ export function buildGtagConsentBootstrapScript(options: GtagConsentBootstrapOpt
   const configArgs =
     debugMode === true ? `${JSON.stringify(gaMeasurementId)}, { debug_mode: true }` : JSON.stringify(gaMeasurementId);
   const nonceAssignment = nonce === undefined ? "" : `gtagScript.nonce = ${JSON.stringify(nonce)};`;
-  const preamble = googleConsentBootstrapPreamble({
+  const preamble = buildGoogleConsentBootstrapPreamble({
     consentStorageKey,
     dataLayerName,
-    fallbackConsentExpression: resolveFallbackConsentExpression(
-      "buildGtagConsentBootstrapScript",
-      defaultConsent,
-      defaultConsentExpression,
-    ),
+    defaultConsent,
     policyVersion,
   });
 

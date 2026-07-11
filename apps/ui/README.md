@@ -210,6 +210,17 @@ function (`src/features/tracking/lib/resolve-visitor-consent.ts` →
   is named by what it does). Both come from `@codefast/tracking/react`, styled here via
   `className`.
 
+### Browser storage naming
+
+Every first-party storage name (cookie, `localStorage`, `sessionStorage`) follows
+`codefast-ui-<content>`: the prefix namespaces the shared origin, `<content>` is a
+kebab-case noun naming exactly what is stored — never the storage kind (the privacy page
+discloses that) and never less than the content (`codefast-ui-initial-consent` holds a
+full `InitialConsent`, so it is not called `-region`). `codefast-ui-anon-id` predates the
+full-word rule and stays: renaming a year-lived cookie would churn every existing
+visitor's identity for a cosmetic gain. `@codefast/tracking` ships no storage names —
+every cookie and key name is supplied by the app.
+
 ### This app's pages are CDN-cached (ISR) — the HTML can't be personalized
 
 The entry pages (`/`, `/about`, `/components`, `/privacy`) are prerendered at build time;
@@ -218,11 +229,13 @@ its route's `headers()` policy (`Cache-Control` + `CDN-Cache-Control`, see
 `src/lib/cache.ts` — TanStack Start's hybrid ISR pattern). Either way the served HTML is
 shared across visitors, so the inline gtag bootstrap in `google-tag.tsx` bakes the
 strictest possible default (`denied`, `opt-in`, region `other`) — a request-derived
-value would leak the first visitor's region to everyone served from that cache entry.
+value (geo in `loaderData`, the document shell, or otherwise) would leak the first
+visitor's region to everyone served from that cache entry. Start does run route loaders
+before SSR render; the constraint is cache sharing, not shell-vs-loader timing.
 
 The per-visitor correction runs on the one lane a shared cache can't poison: after
 hydration, `visitor-consent.ts` calls the `resolveVisitorConsent` server function once
-per session (`private, no-store`; cached in `sessionStorage` as `codefast-ui-region`),
+per session (`private, no-store`; cached in `sessionStorage` as `codefast-ui-initial-consent`),
 and `<ConsentGate />` renders the region-correct UI and pushes the granted regional
 default to gtag for undecided opt-out visitors. The resolver reads the geo header on the
 server, reuses `buildInitialConsent` directly — no duplicated country sets — and fails

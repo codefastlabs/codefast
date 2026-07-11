@@ -9,14 +9,18 @@ import { useHasHydrated } from "#/hooks/use-has-hydrated";
  * The interactive "Your privacy choices" panel on `/privacy`: a switch over the site's
  * own analytics consent (the same stored decision the banner and footer control write),
  * plus a read-only Global Privacy Control row. The panel prerenders statically — the
- * switch is disabled and the GPC row generic until hydration, because both depend on
- * browser-only state. This site sells or shares no personal data and runs no ads, so a
- * GPC signal is acknowledged rather than acted on — the analytics switch is the control.
+ * switch is disabled and the GPC row generic until hydration *and* region resolve, so a
+ * US visitor never sees a brief opt-in "off" flash. This site sells or shares no personal
+ * data and runs no ads, so a GPC signal is acknowledged rather than acted on — the
+ * analytics switch is the control.
  */
 export function PrivacyChoices() {
-  const { consent } = useSiteConsent();
+  const { consent, isResolved } = useSiteConsent();
   const hasHydrated = useHasHydrated();
-  const isGpcDetected = hasHydrated && hasGlobalPrivacyControlSignal();
+  // Same gate as `<ConsentGate />`: region mode arrives post-hydration over the server
+  // lane — showing the switch earlier flashes opt-in "off" then opt-out "on" for US visitors.
+  const isInteractive = hasHydrated && isResolved;
+  const isGpcDetected = isInteractive && hasGlobalPrivacyControlSignal();
 
   const gpcLink = (
     <a
@@ -31,7 +35,7 @@ export function PrivacyChoices() {
 
   let gpcStatus: ReactNode;
 
-  if (!hasHydrated) {
+  if (!isInteractive) {
     gpcStatus = <>A browser setting that asks sites not to sell or share your personal data — see {gpcLink}.</>;
   } else if (isGpcDetected) {
     gpcStatus = (
@@ -60,8 +64,8 @@ export function PrivacyChoices() {
         </div>
         <Switch
           aria-label="Allow analytics"
-          checked={hasHydrated ? consent.effectiveConsent.analytics : false}
-          disabled={!hasHydrated}
+          checked={isInteractive ? consent.effectiveConsent.analytics : false}
+          disabled={!isInteractive}
           onCheckedChange={(checked) => {
             if (checked) {
               consent.grantAll();

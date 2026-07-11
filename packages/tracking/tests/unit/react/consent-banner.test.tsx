@@ -23,9 +23,9 @@ function buildConsent(overrides: Partial<UseConsentResult> = {}): UseConsentResu
     denyAll: vi.fn(),
     effectiveConsent: { ads: false, analytics: false },
     grantAll: vi.fn(),
-    isTrackingAllowed: false,
+    isAnalyticsAllowed: false,
     isPromptNeeded: true,
-    save: vi.fn(),
+    saveDecision: vi.fn(),
     ...overrides,
   };
 }
@@ -123,7 +123,7 @@ describe("ConsentBanner", () => {
     await user.click(screen.getByRole("checkbox", { name: /analytics/i }));
     await user.click(screen.getByRole("button", { name: "Save preferences" }));
 
-    expect(consent.save).toHaveBeenCalledWith({ ads: false, analytics: true });
+    expect(consent.saveDecision).toHaveBeenCalledWith({ ads: false, analytics: true });
   });
 
   it("throws when a part is rendered outside the ConsentBanner root", () => {
@@ -140,13 +140,13 @@ describe("ConsentToggle", () => {
     const user = userEvent.setup();
     const consent = buildConsent({
       effectiveConsent: { ads: true, analytics: true },
-      isTrackingAllowed: true,
+      isAnalyticsAllowed: true,
     });
 
     render(<ConsentToggle consent={consent} />);
 
     await user.click(screen.getByRole("button", { name: /do not sell/i }));
-    expect(consent.save).toHaveBeenCalledWith({ ads: false, analytics: true });
+    expect(consent.saveDecision).toHaveBeenCalledWith({ ads: false, analytics: true });
     expect(consent.denyAll).not.toHaveBeenCalled();
   });
 
@@ -157,7 +157,7 @@ describe("ConsentToggle", () => {
     render(<ConsentToggle consent={consent} />);
 
     await user.click(screen.getByRole("button", { name: "Allow tracking" }));
-    expect(consent.save).toHaveBeenCalledWith({ ads: true, analytics: true });
+    expect(consent.saveDecision).toHaveBeenCalledWith({ ads: true, analytics: true });
     expect(consent.grantAll).not.toHaveBeenCalled();
   });
 
@@ -165,7 +165,7 @@ describe("ConsentToggle", () => {
     const user = userEvent.setup();
     const consent = buildConsent({
       effectiveConsent: { ads: false, analytics: true },
-      isTrackingAllowed: true,
+      isAnalyticsAllowed: true,
     });
 
     render(
@@ -178,6 +178,6 @@ describe("ConsentToggle", () => {
     );
 
     await user.click(screen.getByRole("button", { name: "Turn off analytics" }));
-    expect(consent.save).toHaveBeenCalledWith({ ads: false, analytics: false });
+    expect(consent.saveDecision).toHaveBeenCalledWith({ ads: false, analytics: false });
   });
 });

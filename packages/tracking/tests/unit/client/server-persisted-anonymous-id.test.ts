@@ -79,6 +79,36 @@ describe("createServerPersistedAnonymousId", () => {
     expect(persist).toHaveBeenLastCalledWith(second);
   });
 
+  it("skips clearOnServer when the cookie is already gone", () => {
+    const persist = vi.fn().mockResolvedValue(undefined);
+    const clearOnServer = vi.fn().mockResolvedValue(undefined);
+    const anonymousId = createServerPersistedAnonymousId({ clearOnServer, cookieName: COOKIE_NAME, persist });
+
+    anonymousId.getOrCreate();
+    anonymousId.clear();
+    clearOnServer.mockClear();
+
+    anonymousId.clear();
+
+    expect(clearOnServer).not.toHaveBeenCalled();
+  });
+
+  it("re-persists after an external cookie clear without an explicit clear() call", () => {
+    const persist = vi.fn().mockResolvedValue(undefined);
+    const anonymousId = createServerPersistedAnonymousId({ cookieName: COOKIE_NAME, persist });
+    const first = anonymousId.getOrCreate();
+
+    expect(persist).toHaveBeenCalledTimes(1);
+
+    document.cookie = `${COOKIE_NAME}=; path=/; max-age=0`;
+
+    const second = anonymousId.getOrCreate();
+
+    expect(second).not.toBe(first);
+    expect(persist).toHaveBeenCalledTimes(2);
+    expect(persist).toHaveBeenLastCalledWith(second);
+  });
+
   it("survives a rejected clearOnServer — the client-side expiry already took effect", async () => {
     const persist = vi.fn().mockResolvedValue(undefined);
     const clearOnServer = vi.fn().mockRejectedValue(new Error("offline"));

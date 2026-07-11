@@ -1,6 +1,26 @@
 import { describe, expect, it } from "vitest";
 
-import { isTrackedEvent } from "#/core/tracked-event";
+import { buildTrackedEvent, isTrackedEvent } from "#/core/tracked-event";
+
+describe("buildTrackedEvent", () => {
+  it("rejoins a track seed with base fields without losing the discriminant", () => {
+    const event = buildTrackedEvent(
+      { name: "button_clicked", props: { id: "cta" }, type: "track" },
+      { anonymousId: "anon-1", eventId: "e1", owner: "client", timestamp: 0 },
+    );
+
+    expect(event).toEqual({
+      anonymousId: "anon-1",
+      eventId: "e1",
+      name: "button_clicked",
+      owner: "client",
+      props: { id: "cta" },
+      timestamp: 0,
+      type: "track",
+    });
+    expect(isTrackedEvent(event)).toBe(true);
+  });
+});
 
 describe("isTrackedEvent", () => {
   it("accepts a well-formed track envelope", () => {

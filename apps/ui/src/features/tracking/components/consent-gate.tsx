@@ -7,7 +7,6 @@ import { ConsentBannerCard } from "#/features/tracking/components/consent-banner
 import { PrivacyChoicesIcon } from "#/features/tracking/components/privacy-choices-icon";
 import { loadGoogleTagScript } from "#/features/tracking/lib/google-tag-loader";
 import { useSiteConsent } from "#/features/tracking/lib/site-consent";
-import { useHasHydrated } from "#/hooks/use-has-hydrated";
 
 /**
  * Region-aware consent UI, rendered inside the footer: an opt-in banner plus a "Cookie
@@ -36,9 +35,9 @@ export function ConsentGate() {
     }
   }, [isResolved, mode, consent.decision, consent.effectiveConsent]);
 
-  const hasHydrated = useHasHydrated();
-
-  if (!hasHydrated || !isResolved) {
+  // Also the hydration gate: the store publishes only in an effect, so `isResolved` is
+  // false during SSR and the first client render — no separate hydration check needed.
+  if (!isResolved) {
     return null;
   }
 

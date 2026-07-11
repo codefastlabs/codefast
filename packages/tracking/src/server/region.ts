@@ -35,15 +35,16 @@ export const EU_COUNTRY_CODES: ReadonlySet<string> = new Set([
  * UK GDPR (post-Brexit) and EEA/EFTA states that apply GDPR-equivalent rules — mapped to
  * the same `"eu"` consent region so they get opt-in, not the `"other"` opt-out default.
  *
- * Edge middleware that cannot import this package should duplicate these codes and keep a
- * sync test against this export.
+ * Restricted edge runtimes that cannot import this package should duplicate these codes
+ * and keep a sync test against this export.
  */
 export const OPT_IN_EQUIVALENT_COUNTRY_CODES: ReadonlySet<string> = new Set(["GB", "IS", "LI", "NO"]);
 
 /**
- * Missing/unrecognized codes fall back to "other", which `resolveConsentMode` treats
- * as opt-out — the least restrictive default, safe only because opt-in regions (EU/VN
- * plus UK/EEA/EFTA above) are matched explicitly.
+ * Unrecognized codes fall back to "other", which `resolveConsentMode` treats as
+ * opt-out — safe only because opt-in regions (EU/VN plus UK/EEA/EFTA above) are matched
+ * explicitly. A *missing* code also maps to "other" here, but `buildInitialConsent`
+ * intercepts that case first and fails closed — unknown is not known-elsewhere.
  *
  * @since 0.5.0-canary.4
  */

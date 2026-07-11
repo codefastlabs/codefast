@@ -50,21 +50,21 @@ export const CATEGORIES = [
   },
 ] as const;
 
-export type CategoryId = (typeof CATEGORIES)[number]["id"];
+type CategoryId = (typeof CATEGORIES)[number]["id"];
 
 /* -------------------------------------------------------------------------- */
 /* Component metadata                                                          */
 /* -------------------------------------------------------------------------- */
 
 /** Lifecycle maturity, surfaced as a badge on the detail page. */
-export type ComponentStatus = "stable" | "beta" | "deprecated";
+type ComponentStatus = "stable" | "beta" | "deprecated";
 
 /**
  * Release line whose components still count as "new". A component is flagged
  * when its `meta.since` equals this. Bump it each release and the previous
  * batch's "New" badges clear themselves — no per-meta cleanup.
  */
-export const NEW_SINCE = "0.5";
+const NEW_SINCE = "0.5";
 
 /** The authored fields of an `examples/<slug>.meta.ts` file. */
 export interface ComponentMetaInput {

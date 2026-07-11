@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import {
   createConsentDecision,
   isConsentDecision,
+  isConsentRecord,
   readStoredDecision,
   resolveConsentMode,
   resolveDefaultConsent,
@@ -44,6 +45,18 @@ describe("isConsentDecision", () => {
     expect(isConsentDecision({ ads: "yes", analytics: true })).toBe(false);
     expect(isConsentDecision(null)).toBe(false);
     expect(isConsentDecision(undefined)).toBe(false);
+  });
+});
+
+describe("isConsentRecord", () => {
+  it("accepts a well-formed persisted record", () => {
+    expect(isConsentRecord({ decision: { ads: false, analytics: true }, policyVersion: "1", timestamp: 0 })).toBe(true);
+  });
+
+  it("rejects malformed or incomplete records", () => {
+    expect(isConsentRecord(null)).toBe(false);
+    expect(isConsentRecord({ decision: { ads: false, analytics: true }, policyVersion: "1" })).toBe(false);
+    expect(isConsentRecord({ decision: { ads: false }, policyVersion: "1", timestamp: 0 })).toBe(false);
   });
 });
 

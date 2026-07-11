@@ -1,6 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
 
 import { PrivacyChoices } from "#/features/privacy/components/privacy-choices";
+import { ANONYMOUS_ID_COOKIE_NAME } from "#/features/tracking/lib/anonymous-id";
+import { CONSENT_STORAGE_KEY } from "#/features/tracking/lib/consent";
+import { INITIAL_CONSENT_SESSION_KEY } from "#/features/tracking/lib/visitor-consent";
 import { CONTENT_CACHE_HEADERS } from "#/lib/cache";
 import { canonicalHead } from "#/lib/seo";
 
@@ -84,19 +87,20 @@ function PrivacyPage() {
         <h2 className="mb-3 text-xl font-semibold text-ui-fg" id="privacy-storage">
           What we store in your browser
         </h2>
+        {/* Rendered from the same constants the code reads/writes, so this disclosure cannot drift. */}
         <ul className="flex list-disc flex-col gap-2 ps-5 text-sm leading-6 text-ui-muted">
           <li>
-            <code>codefast-ui-consent</code> (localStorage) — your consent choice, the policy version it was given
+            <code>{CONSENT_STORAGE_KEY}</code> (localStorage) — your consent choice, the policy version it was given
             under, and when.
           </li>
           <li>
-            <code>codefast-ui-anon-id</code> (cookie, 1 year) — a random identifier used to correlate analytics events;
-            created only once analytics is permitted, removed when you opt out, and mapped to no account or personal
-            profile.
+            <code>{ANONYMOUS_ID_COOKIE_NAME}</code> (cookie, 1 year) — a random identifier used to correlate analytics
+            events; created only once analytics is permitted, removed when you opt out, and mapped to no account or
+            personal profile.
           </li>
           <li>
-            <code>codefast-ui-region</code> (sessionStorage, cleared when the tab closes) — the consent default resolved
-            for your region, so it is looked up once per session instead of on every page.
+            <code>{INITIAL_CONSENT_SESSION_KEY}</code> (sessionStorage, cleared when the tab closes) — the consent
+            default resolved for your region, so it is looked up once per session instead of on every page.
           </li>
           <li>
             Google&rsquo;s <code>_ga</code> cookies — set only after analytics consent is granted, removed when you

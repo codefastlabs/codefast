@@ -4,10 +4,8 @@ import { EventQueue, type EventQueueStorage } from "#/client/queue";
 import type { Destination } from "#/core/destination";
 import type { EventCatalog, EventsOf } from "#/core/event-catalog";
 import { generateEventId } from "#/core/event-id";
-import type { TrackedEvent, TrackedEventBase } from "#/core/tracked-event";
-
-/** The per-kind payload of an envelope — the tracker fills in the shared base fields. */
-type EnvelopeSeed<Event = TrackedEvent> = Event extends TrackedEvent ? Omit<Event, keyof TrackedEventBase> : never;
+import type { TrackedEvent, TrackedEventBase, TrackedEventSeed } from "#/core/tracked-event";
+import { buildTrackedEvent } from "#/core/tracked-event";
 
 /**
  * `Destination.send` is typed to always return a `Promise`, but that's unenforceable at
@@ -36,11 +34,12 @@ export interface ClientTrackerOptions<Catalog extends EventCatalog> {
   catalog: Catalog;
   destinations: Array<Destination>;
   /**
-   * Consulted before every event — while it returns `false`, nothing is queued and only
-   * `consent: "exempt"` destinations still receive `track`/`page` events, stripped of
-   * identifiers. Omit to always track.
+   * Analytics-consent gate consulted before every event — while it returns `false`,
+   * nothing is queued and only `consentRequirement: "exempt"` destinations still receive
+   * `track`/`page` events, stripped of identifiers. Omit to always allow. Name mirrors
+   * `useConsent`'s `isAnalyticsAllowed` (the `analytics` category), not all tracking.
    */
-  isTrackingAllowed?: (() => boolean) | undefined;
+  isAnalyticsAllowed?: (() => boolean) | undefined;
   maxQueueSize?: number | undefined;
   maxRetries?: number | undefined;
   /** Cross-reload persistence for the offline queue — omit to keep the queue in memory only. */
@@ -80,7 +79,7 @@ export function createClientTracker<Catalog extends EventCatalog>(
   const immediateDestinations = options.destinations.filter((destination) => destination.delivery === "immediate");
   const queuedDestinations = options.destinations.filter((destination) => destination.delivery !== "immediate");
   // The exempt lane is immediate-only: queueing would persist gated events for later replay.
-  const exemptDestinations = immediateDestinations.filter((destination) => destination.consent === "exempt");
+  const exemptDestinations = immediateDestinations.filter((destination) => destination.consentRequirement === "exempt");
   const queue = new EventQueue({
     destinations: queuedDestinations,
     maxQueueSize: options.maxQueueSize,
@@ -94,9 +93,9 @@ export function createClientTracker<Catalog extends EventCatalog>(
   });
   let userId: string | undefined;
 
-  function enqueue(seed: EnvelopeSeed): void {
+  function enqueue(seed: TrackedEventSeed): void {
     // The gate runs per event (not at creation) so a consent change mid-session applies immediately.
-    const isAllowed = options.isTrackingAllowed?.() !== false;
+    const isAllowed = options.isAnalyticsAllowed?.() !== false;
     // Identity-centric kinds are meaningless without identifiers — the exempt lane only
     // carries behavioral counts.
     const isExemptEligible = seed.type === "track" || seed.type === "page";
@@ -112,14 +111,12 @@ export function createClientTracker<Catalog extends EventCatalog>(
       ? { anonymousId: options.anonymousId(), ...(userId === undefined ? {} : { userId }) }
       : { anonymousId: "" };
 
-    // The seed/base split is total by construction — the assertion only rejoins the union.
-    const envelope = {
-      ...seed,
+    const envelope = buildTrackedEvent(seed, {
       ...identity,
       eventId: generateEventId(),
       owner: "client",
       timestamp: Date.now(),
-    } as TrackedEvent;
+    });
 
     for (const destination of isAllowed ? immediateDestinations : exemptDestinations) {
       sendToDestination(destination, envelope);
@@ -161,7 +158,7 @@ export function createClientTracker<Catalog extends EventCatalog>(
     identify(id, traits = {}) {
       // Mirrors enqueue()'s own gate — a denied identify must never leave its userId in the
       // closure for a later allowed event to pick up.
-      if (options.isTrackingAllowed?.() !== false) {
+      if (options.isAnalyticsAllowed?.() !== false) {
         userId = id;
       }
 
@@ -180,7 +177,8 @@ export function createClientTracker<Catalog extends EventCatalog>(
       }
 
       definition.schema.parse(props);
-      enqueue({ name: name as string, props: props as Record<string, unknown>, type: "track" });
+      // Catalog keys are strings; zod-inferred props are opaque to the open envelope record.
+      enqueue({ name: String(name), props: props as Record<string, unknown>, type: "track" });
     },
   };
 }

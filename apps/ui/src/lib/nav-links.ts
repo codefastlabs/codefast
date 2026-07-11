@@ -17,7 +17,7 @@ export const PRIMARY_NAV = linkOptions([
   { to: "/about", label: "Getting Started" },
 ]);
 
-export type PrimaryNavLink = (typeof PRIMARY_NAV)[number];
+type PrimaryNavLink = (typeof PRIMARY_NAV)[number];
 /** Union of the valid primary-route paths, e.g. `"/" | "/components" | "/about"`. */
 export type PrimaryNavPath = PrimaryNavLink["to"];
 

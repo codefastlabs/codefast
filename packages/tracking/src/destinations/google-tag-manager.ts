@@ -2,10 +2,9 @@ import type { ConsentDecision } from "#/core/consent";
 import type { Destination } from "#/core/destination";
 import { assertNever } from "#/core/tracked-event";
 import {
+  buildGoogleConsentBootstrapPreamble,
   DEFAULT_DATA_LAYER_NAME,
-  dataLayerOf,
-  googleConsentBootstrapPreamble,
-  resolveFallbackConsentExpression,
+  ensureDataLayer,
   warnUnlessGa4EventName,
 } from "#/destinations/google-consent";
 import { flattenEventProps, omitHref, toJoinGroupPayload } from "#/destinations/shared";
@@ -85,7 +84,7 @@ export function loadGtmScript(options: LoadGtmScriptOptions): void {
     return;
   }
 
-  const dataLayer = dataLayerOf(dataLayerName);
+  const dataLayer = ensureDataLayer(dataLayerName);
 
   if (dataLayer === undefined) {
     return;
@@ -134,7 +133,7 @@ export function createGoogleTagManagerDestination(options: GoogleTagManagerDesti
     delivery: "immediate",
     name,
     async send(event) {
-      const dataLayer = dataLayerOf(dataLayerName);
+      const dataLayer = ensureDataLayer(dataLayerName);
 
       if (dataLayer === undefined) {
         return;
@@ -203,15 +202,11 @@ export interface GtmConsentBootstrapOptions {
   /** Name of the queue array on `window`. Defaults to `"dataLayer"`. */
   dataLayerName?: string | undefined;
   /**
-   * Consent to apply when nothing valid is stored yet. Embedded as a literal — for a
-   * value only known via an earlier inline script, use `defaultConsentExpression` instead.
+   * Consent to apply when nothing valid is stored yet. Embedded as a literal — bake the
+   * strictest default on cached/shared HTML; upgrade after hydration via the private
+   * server-fn lane + `updateGoogleConsent`.
    */
-  defaultConsent?: ConsentDecision | undefined;
-  /**
-   * A raw JS expression evaluating to the fallback `ConsentDecision`. Takes precedence
-   * over `defaultConsent` when both are set; one of the two is required.
-   */
-  defaultConsentExpression?: string | undefined;
+  defaultConsent: ConsentDecision;
   /** GTM container ID (e.g. `"GTM-XXXXXXX"`). */
   gtmId: string;
   /**
@@ -243,7 +238,6 @@ export function buildGtmConsentBootstrapScript(options: GtmConsentBootstrapOptio
     consentStorageKey,
     dataLayerName = DEFAULT_DATA_LAYER_NAME,
     defaultConsent,
-    defaultConsentExpression,
     gtmId,
     gtmScriptUrl = DEFAULT_GTM_SCRIPT_URL,
     nonce,
@@ -254,14 +248,10 @@ export function buildGtmConsentBootstrapScript(options: GtmConsentBootstrapOptio
   const scriptUrl = gtmScriptSrc({ auth, dataLayerName, gtmId, gtmScriptUrl, preview });
   const dataLayerAccess = `window[${JSON.stringify(dataLayerName)}]`;
   const nonceAssignment = nonce === undefined ? "" : `gtmScript.nonce = ${JSON.stringify(nonce)};`;
-  const preamble = googleConsentBootstrapPreamble({
+  const preamble = buildGoogleConsentBootstrapPreamble({
     consentStorageKey,
     dataLayerName,
-    fallbackConsentExpression: resolveFallbackConsentExpression(
-      "buildGtmConsentBootstrapScript",
-      defaultConsent,
-      defaultConsentExpression,
-    ),
+    defaultConsent,
     policyVersion,
   });
 

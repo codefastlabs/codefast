@@ -3,10 +3,8 @@ import type { z } from "zod";
 import type { Destination } from "#/core/destination";
 import type { EventCatalog, EventsOf } from "#/core/event-catalog";
 import { deriveEventId, generateEventId } from "#/core/event-id";
-import type { TrackedEvent, TrackedEventBase } from "#/core/tracked-event";
-
-/** The per-kind payload of an envelope — the tracker fills in the shared base fields. */
-type EnvelopeSeed<Event = TrackedEvent> = Event extends TrackedEvent ? Omit<Event, keyof TrackedEventBase> : never;
+import type { TrackedEvent, TrackedEventSeed } from "#/core/tracked-event";
+import { buildTrackedEvent } from "#/core/tracked-event";
 
 /**
  * @since 0.5.0-canary.4
@@ -29,7 +27,7 @@ export interface ServerTrackContext {
 export interface ServerTrackerOptions<Catalog extends EventCatalog> {
   catalog: Catalog;
   destinations: Array<Destination>;
-  generateEventId?: () => string;
+  generateEventId?: (() => string) | undefined;
   maxRetries?: number | undefined;
   onDestinationError?: ((error: unknown, destination: Destination, event: TrackedEvent) => void) | undefined;
   retryDelayMs?: number | undefined;
@@ -99,7 +97,7 @@ export function createServerTracker<Catalog extends EventCatalog>(
       console.error(`[tracking] destination "${destination.name}" failed for event "${label}"`, error);
     });
 
-  async function sendEvent(seed: EnvelopeSeed, context: ServerTrackContext): Promise<void> {
+  async function sendEvent(seed: TrackedEventSeed, context: ServerTrackContext): Promise<void> {
     // Deriving from the seed plus userId (not just requestId) keeps distinct event kinds —
     // and distinct merge targets, e.g. two `alias` calls for the same previousId — in the
     // same request from colliding, while an identical call on retry reproduces the same id.
@@ -107,15 +105,13 @@ export function createServerTracker<Catalog extends EventCatalog>(
     const eventId =
       context.requestId === undefined ? createId() : deriveEventId(context.requestId, JSON.stringify(discriminant));
 
-    // The seed/base split is total by construction — the assertion only rejoins the union.
-    const event = {
-      ...seed,
+    const event = buildTrackedEvent(seed, {
       anonymousId: context.anonymousId,
       eventId,
       owner: "server",
       timestamp: Date.now(),
       ...(context.userId === undefined ? {} : { userId: context.userId }),
-    } as TrackedEvent;
+    });
 
     await Promise.all(
       options.destinations.map(async (destination) =>
@@ -142,7 +138,8 @@ export function createServerTracker<Catalog extends EventCatalog>(
       }
 
       definition.schema.parse(props);
-      await sendEvent({ name: name as string, props: props as Record<string, unknown>, type: "track" }, context);
+      // Catalog keys are strings; zod-inferred props are opaque to the open envelope record.
+      await sendEvent({ name: String(name), props: props as Record<string, unknown>, type: "track" }, context);
     },
   };
 }

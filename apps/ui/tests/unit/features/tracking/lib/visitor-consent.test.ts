@@ -4,10 +4,10 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { STRICTEST_INITIAL_CONSENT } from "#/features/tracking/lib/consent";
 import {
   ensureVisitorConsentResolved,
-  isTrackingAllowed,
+  isAnalyticsAllowed,
   resetVisitorConsentForTests,
   useVisitorConsent,
-  VISITOR_CONSENT_SESSION_KEY,
+  INITIAL_CONSENT_SESSION_KEY,
 } from "#/features/tracking/lib/visitor-consent";
 
 const { hasGlobalPrivacyControlSignal, resolveVisitorConsent } = vi.hoisted(() => ({
@@ -63,12 +63,12 @@ describe("useVisitorConsent / ensureVisitorConsentResolved", () => {
     await waitFor(() => {
       expect(result.current).toEqual({ initialConsent: US_CONSENT, isResolved: true });
     });
-    expect(JSON.parse(window.sessionStorage.getItem(VISITOR_CONSENT_SESSION_KEY) ?? "")).toEqual(US_CONSENT);
+    expect(JSON.parse(window.sessionStorage.getItem(INITIAL_CONSENT_SESSION_KEY) ?? "")).toEqual(US_CONSENT);
     expect(resolveVisitorConsent).toHaveBeenCalledOnce();
   });
 
   it("reuses the session cache without a second server round trip", async () => {
-    window.sessionStorage.setItem(VISITOR_CONSENT_SESSION_KEY, JSON.stringify(US_CONSENT));
+    window.sessionStorage.setItem(INITIAL_CONSENT_SESSION_KEY, JSON.stringify(US_CONSENT));
 
     const { result } = renderHook(() => useVisitorConsent());
 
@@ -82,7 +82,7 @@ describe("useVisitorConsent / ensureVisitorConsentResolved", () => {
   });
 
   it("ignores a tampered session cache and resolves over the server lane", async () => {
-    window.sessionStorage.setItem(VISITOR_CONSENT_SESSION_KEY, JSON.stringify({ mode: "opt-out" }));
+    window.sessionStorage.setItem(INITIAL_CONSENT_SESSION_KEY, JSON.stringify({ mode: "opt-out" }));
     resolveVisitorConsent.mockResolvedValue(US_CONSENT);
 
     const { result } = renderHook(() => useVisitorConsent());
@@ -94,7 +94,47 @@ describe("useVisitorConsent / ensureVisitorConsentResolved", () => {
     });
   });
 
-  it("fails closed: a failed resolution finalizes the strictest default so the consent UI still renders", async () => {
+  it("ignores a mode/region mismatch in the session cache (e.g. opt-out + eu)", async () => {
+    window.sessionStorage.setItem(
+      INITIAL_CONSENT_SESSION_KEY,
+      JSON.stringify({
+        defaultConsent: { ads: false, analytics: true },
+        mode: "opt-out",
+        region: "eu",
+      }),
+    );
+    resolveVisitorConsent.mockResolvedValue(US_CONSENT);
+
+    const { result } = renderHook(() => useVisitorConsent());
+
+    ensureVisitorConsentResolved();
+
+    await waitFor(() => {
+      expect(result.current.initialConsent).toEqual(US_CONSENT);
+    });
+    expect(resolveVisitorConsent).toHaveBeenCalledOnce();
+  });
+
+  it("accepts the fail-closed unknown-country bake (opt-in + other) from the session cache", async () => {
+    const failClosed = {
+      defaultConsent: { ads: false, analytics: false },
+      mode: "opt-in",
+      region: "other",
+    } as const;
+
+    window.sessionStorage.setItem(INITIAL_CONSENT_SESSION_KEY, JSON.stringify(failClosed));
+
+    const { result } = renderHook(() => useVisitorConsent());
+
+    ensureVisitorConsentResolved();
+
+    await waitFor(() => {
+      expect(result.current).toEqual({ initialConsent: failClosed, isResolved: true });
+    });
+    expect(resolveVisitorConsent).not.toHaveBeenCalled();
+  });
+
+  it("fails closed: a failed resolution publishes the strictest default so the consent UI still renders", async () => {
     resolveVisitorConsent.mockRejectedValue(new Error("offline"));
 
     const { result } = renderHook(() => useVisitorConsent());
@@ -105,9 +145,65 @@ describe("useVisitorConsent / ensureVisitorConsentResolved", () => {
       expect(result.current).toEqual({ initialConsent: STRICTEST_INITIAL_CONSENT, isResolved: true });
     });
   });
+
+  it("retries after a failed resolution and publishes the server answer", async () => {
+    resolveVisitorConsent.mockRejectedValueOnce(new Error("offline")).mockResolvedValueOnce(US_CONSENT);
+
+    const { result } = renderHook(() => useVisitorConsent());
+
+    ensureVisitorConsentResolved();
+
+    await waitFor(() => {
+      expect(result.current).toEqual({ initialConsent: STRICTEST_INITIAL_CONSENT, isResolved: true });
+    });
+
+    ensureVisitorConsentResolved();
+
+    await waitFor(() => {
+      expect(result.current).toEqual({ initialConsent: US_CONSENT, isResolved: true });
+    });
+    expect(resolveVisitorConsent).toHaveBeenCalledTimes(2);
+    expect(JSON.parse(window.sessionStorage.getItem(INITIAL_CONSENT_SESSION_KEY) ?? "")).toEqual(US_CONSENT);
+  });
+
+  it("retries a failed resolution when the tab becomes visible again", async () => {
+    resolveVisitorConsent.mockRejectedValueOnce(new Error("offline")).mockResolvedValueOnce(US_CONSENT);
+
+    const { result } = renderHook(() => useVisitorConsent());
+
+    ensureVisitorConsentResolved();
+
+    await waitFor(() => {
+      expect(result.current.isResolved).toBe(true);
+    });
+    expect(resolveVisitorConsent).toHaveBeenCalledOnce();
+
+    Object.defineProperty(document, "visibilityState", { configurable: true, value: "visible" });
+    document.dispatchEvent(new Event("visibilitychange"));
+
+    await waitFor(() => {
+      expect(result.current).toEqual({ initialConsent: US_CONSENT, isResolved: true });
+    });
+    expect(resolveVisitorConsent).toHaveBeenCalledTimes(2);
+  });
+
+  it("does not retry after a successful resolution", async () => {
+    resolveVisitorConsent.mockResolvedValue(US_CONSENT);
+
+    ensureVisitorConsentResolved();
+
+    await waitFor(() => {
+      expect(resolveVisitorConsent).toHaveBeenCalledOnce();
+    });
+
+    ensureVisitorConsentResolved();
+    document.dispatchEvent(new Event("visibilitychange"));
+
+    expect(resolveVisitorConsent).toHaveBeenCalledOnce();
+  });
 });
 
-describe("isTrackingAllowed", () => {
+describe("isAnalyticsAllowed", () => {
   async function resolveRegion(consent: typeof US_CONSENT | typeof STRICTEST_INITIAL_CONSENT): Promise<void> {
     resolveVisitorConsent.mockResolvedValue(consent);
     ensureVisitorConsentResolved();
@@ -116,43 +212,43 @@ describe("isTrackingAllowed", () => {
     });
     // publish() runs in the resolution microtask — wait for the mode to land
     await vi.waitFor(() => {
-      expect(isTrackingAllowed()).toBe(consent.mode === "opt-out");
+      expect(isAnalyticsAllowed()).toBe(consent.mode === "opt-out");
     });
   }
 
   it("blocks tracking before the region resolves — the strictest default is opt-in with no decision", () => {
-    expect(isTrackingAllowed()).toBe(false);
+    expect(isAnalyticsAllowed()).toBe(false);
   });
 
   it("allows tracking by default once an opt-out region resolves", async () => {
     await resolveRegion(US_CONSENT);
 
-    expect(isTrackingAllowed()).toBe(true);
+    expect(isAnalyticsAllowed()).toBe(true);
   });
 
   it("blocks tracking in an opt-out region after a stored denial", async () => {
     await resolveRegion(US_CONSENT);
     storeDecision(false);
 
-    expect(isTrackingAllowed()).toBe(false);
+    expect(isAnalyticsAllowed()).toBe(false);
   });
 
   it("allows tracking in an opt-in region only after a stored grant", async () => {
     storeDecision(true);
 
-    expect(isTrackingAllowed()).toBe(true);
+    expect(isAnalyticsAllowed()).toBe(true);
   });
 
   it("ignores a grant stored under an older policy version", () => {
     storeDecision(true, "0");
 
-    expect(isTrackingAllowed()).toBe(false);
+    expect(isAnalyticsAllowed()).toBe(false);
   });
 
   it("keeps analytics allowed under a GPC signal in an opt-out region — GPC only covers ads", async () => {
     hasGlobalPrivacyControlSignal.mockReturnValue(true);
     await resolveRegion(US_CONSENT);
 
-    expect(isTrackingAllowed()).toBe(true);
+    expect(isAnalyticsAllowed()).toBe(true);
   });
 });

@@ -1,5 +1,5 @@
 interface NavigatorWithGpc extends Navigator {
-  globalPrivacyControl?: boolean;
+  globalPrivacyControl?: boolean | undefined;
 }
 
 /**

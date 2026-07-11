@@ -43,6 +43,19 @@ describe("createCookieAnonymousId", () => {
     expect(second).not.toBe(first);
   });
 
+  it("mints a fresh id when the cookie was cleared externally without clear()", () => {
+    const anonymousId = createCookieAnonymousId({ cookieName: COOKIE_NAME });
+    const first = anonymousId.getOrCreate();
+
+    // Another tab's withdrawal expires the shared cookie but cannot call this instance's clear().
+    document.cookie = `${COOKIE_NAME}=; path=/; max-age=0`;
+
+    const second = anonymousId.getOrCreate();
+
+    expect(second).not.toBe(first);
+    expect(document.cookie).toContain(`${COOKIE_NAME}=${second}`);
+  });
+
   it("two instances sharing a cookie name resolve to the same id", () => {
     const first = createCookieAnonymousId({ cookieName: COOKIE_NAME });
     const second = createCookieAnonymousId({ cookieName: COOKIE_NAME });

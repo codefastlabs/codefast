@@ -19,7 +19,7 @@ import type { HighlightedSource } from "#/registry/_core/highlight";
  */
 export type SourceRef = string;
 
-export interface DocExample {
+interface DocExample {
   /** Anchor id, unique within a component page. */
   readonly id: string;
   readonly title: string;

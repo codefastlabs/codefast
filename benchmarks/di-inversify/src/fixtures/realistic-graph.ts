@@ -19,7 +19,7 @@
  * @since 0.3.16-canary.0
  */
 
-export type NodeLifetime = "singleton" | "transient";
+type NodeLifetime = "singleton" | "transient";
 
 /**
  * One constructable in the graph. `dependencies` lists *other `id`s in this

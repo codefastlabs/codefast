@@ -153,4 +153,23 @@ describe("PrivacyChoices", () => {
     expect(screen.getByText(/a browser setting that asks sites/i)).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "globalprivacycontrol.org" })).toBeInTheDocument();
   });
+
+  it("keeps the switch disabled until the region resolves — no opt-in/opt-out flash", () => {
+    useHasHydrated.mockReturnValue(true);
+    useVisitorConsent.mockReturnValue({
+      initialConsent: {
+        defaultConsent: { ads: false, analytics: false },
+        mode: "opt-in",
+        region: "other",
+      },
+      isResolved: false,
+    });
+
+    render(<PrivacyChoices />);
+
+    const analyticsSwitch = screen.getByRole("switch", { name: "Allow analytics" });
+
+    expect(analyticsSwitch).toBeDisabled();
+    expect(analyticsSwitch).not.toBeChecked();
+  });
 });

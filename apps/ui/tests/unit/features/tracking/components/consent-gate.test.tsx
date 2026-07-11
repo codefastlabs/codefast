@@ -159,11 +159,14 @@ describe("ConsentGate", () => {
     expect(screen.getByRole("link", { name: "Privacy policy" })).toHaveAttribute("href", "/privacy");
   });
 
-  it("syncs a denial made in another tab to gtag", () => {
+  it("syncs a denial made in another tab to gtag and clears identity", () => {
     setRegion({ defaultConsent: ANALYTICS_ONLY, mode: "opt-out", region: "us" });
 
     render(<ConsentGate />);
     updateGoogleConsent.mockClear();
+    clear.mockClear();
+    clearAnonymousId.mockClear();
+    clearGoogleAnalyticsCookies.mockClear();
 
     act(() => {
       window.localStorage.setItem(
@@ -174,5 +177,8 @@ describe("ConsentGate", () => {
     });
 
     expect(updateGoogleConsent).toHaveBeenCalledWith(DENIED);
+    expect(clear).toHaveBeenCalledOnce();
+    expect(clearAnonymousId).toHaveBeenCalledOnce();
+    expect(clearGoogleAnalyticsCookies).toHaveBeenCalledOnce();
   });
 });

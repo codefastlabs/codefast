@@ -383,12 +383,6 @@ describe("buildGtagConsentBootstrapScript", () => {
     }
   });
 
-  it("throws when neither defaultConsent nor defaultConsentExpression is given", () => {
-    expect(() =>
-      buildGtagConsentBootstrapScript({ consentStorageKey: "k", gaMeasurementId: "G-1", policyVersion: "1" }),
-    ).toThrow(/requires defaultConsent or defaultConsentExpression/);
-  });
-
   it("applies the literal defaultConsent and always loads gtag.js (advanced Consent Mode)", () => {
     const script = buildGtagConsentBootstrapScript({
       consentStorageKey: "k",
@@ -459,24 +453,6 @@ describe("buildGtagConsentBootstrapScript", () => {
     runScript(script);
 
     expect(consentDefaultParams().analytics_storage).toBe("denied");
-  });
-
-  it("evaluates defaultConsentExpression, taking precedence over defaultConsent", () => {
-    (window as unknown as { __fallback__: unknown }).__fallback__ = { ads: false, analytics: true };
-
-    const script = buildGtagConsentBootstrapScript({
-      consentStorageKey: "k",
-      defaultConsent: { ads: false, analytics: false },
-      defaultConsentExpression: "window.__fallback__",
-      gaMeasurementId: "G-TEST123",
-      policyVersion: "1",
-    });
-
-    runScript(script);
-
-    expect(consentDefaultParams().analytics_storage).toBe("granted");
-
-    Reflect.deleteProperty(window, "__fallback__");
   });
 
   it("queues onto a custom dataLayerName and passes l= to gtag.js", () => {

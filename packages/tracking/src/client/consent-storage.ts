@@ -1,4 +1,5 @@
 import type { ConsentRecord, ConsentStorage } from "#/core/consent";
+import { isConsentRecord } from "#/core/consent";
 
 /**
  * `localStorage`-backed consent storage. Corrupt state, a private-mode/quota error, or no
@@ -47,7 +48,14 @@ export function createLocalStorageConsentStorage(storageKey: string): ConsentSto
       try {
         const raw = globalThis.window.localStorage.getItem(storageKey);
 
-        return raw ? (JSON.parse(raw) as ConsentRecord) : memoryRecord;
+        if (!raw) {
+          return memoryRecord;
+        }
+
+        const parsed: unknown = JSON.parse(raw);
+
+        // Drop malformed records at the source — mirrors the offline-queue storage guard.
+        return isConsentRecord(parsed) ? parsed : memoryRecord;
       } catch {
         return memoryRecord;
       }

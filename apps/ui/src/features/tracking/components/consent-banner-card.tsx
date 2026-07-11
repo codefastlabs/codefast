@@ -16,7 +16,7 @@ import type { ComponentProps } from "react";
 
 export interface ConsentBannerCardProps extends Omit<ComponentProps<typeof ConsentBanner>, "children"> {
   /** Fires after the visitor decides — lets `<ConsentGate />` close the reopened settings view. */
-  onDecision?: () => void;
+  onDecision?: (() => void) | undefined;
 }
 
 /**

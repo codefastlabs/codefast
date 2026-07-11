@@ -171,7 +171,7 @@ describe("createClientTracker", () => {
       anonymousId: () => "anon-1",
       catalog,
       destinations: [destination],
-      isTrackingAllowed: () => allowed,
+      isAnalyticsAllowed: () => allowed,
       storage: createMemoryQueueStorage(),
     });
 
@@ -214,7 +214,7 @@ describe("createClientTracker", () => {
     vi.unstubAllGlobals();
   });
 
-  it("drops every event while isTrackingAllowed returns false — nothing sent, nothing queued", async () => {
+  it("drops every event while isAnalyticsAllowed returns false — nothing sent, nothing queued", async () => {
     const immediate = { ...createRecordingDestination("immediate"), delivery: "immediate" as const };
     const queued = createRecordingDestination("queued");
     const storage = createMemoryQueueStorage();
@@ -222,7 +222,7 @@ describe("createClientTracker", () => {
       anonymousId: () => "anon-1",
       catalog,
       destinations: [immediate, queued],
-      isTrackingAllowed: () => false,
+      isAnalyticsAllowed: () => false,
       storage,
     });
 
@@ -243,7 +243,7 @@ describe("createClientTracker", () => {
       anonymousId: () => "anon-1",
       catalog,
       destinations: [destination],
-      isTrackingAllowed: () => allowed,
+      isAnalyticsAllowed: () => allowed,
       storage: createMemoryQueueStorage(),
     });
 
@@ -263,7 +263,7 @@ describe("createClientTracker", () => {
       anonymousId: resolveAnonymousId,
       catalog,
       destinations: [destination],
-      isTrackingAllowed: () => allowed,
+      isAnalyticsAllowed: () => allowed,
       storage: createMemoryQueueStorage(),
     });
 
@@ -282,7 +282,7 @@ describe("createClientTracker", () => {
   it("keeps consent-exempt immediate destinations fed while gated — identifier-free, unqueued, counts only", async () => {
     const exempt = {
       ...createRecordingDestination("exempt"),
-      consent: "exempt" as const,
+      consentRequirement: "exempt" as const,
       delivery: "immediate" as const,
     };
     const required = { ...createRecordingDestination("required"), delivery: "immediate" as const };
@@ -293,7 +293,7 @@ describe("createClientTracker", () => {
       anonymousId: resolveAnonymousId,
       catalog,
       destinations: [exempt, queued, required],
-      isTrackingAllowed: () => false,
+      isAnalyticsAllowed: () => false,
       storage,
     });
 
@@ -314,14 +314,14 @@ describe("createClientTracker", () => {
   it("restores full identified delivery to exempt destinations once tracking is allowed", () => {
     const exempt = {
       ...createRecordingDestination("exempt"),
-      consent: "exempt" as const,
+      consentRequirement: "exempt" as const,
       delivery: "immediate" as const,
     };
     const tracker = createClientTracker({
       anonymousId: () => "anon-1",
       catalog,
       destinations: [exempt],
-      isTrackingAllowed: () => true,
+      isAnalyticsAllowed: () => true,
     });
 
     tracker.track("button_clicked", { id: "cta" });
@@ -330,12 +330,12 @@ describe("createClientTracker", () => {
   });
 
   it("never routes gated events to an exempt queued destination — the exempt lane is immediate-only", async () => {
-    const exemptQueued = { ...createRecordingDestination("exempt-queued"), consent: "exempt" as const };
+    const exemptQueued = { ...createRecordingDestination("exempt-queued"), consentRequirement: "exempt" as const };
     const tracker = createClientTracker({
       anonymousId: () => "anon-1",
       catalog,
       destinations: [exemptQueued],
-      isTrackingAllowed: () => false,
+      isAnalyticsAllowed: () => false,
     });
 
     tracker.track("button_clicked", { id: "cta" });
