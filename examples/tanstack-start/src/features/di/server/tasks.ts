@@ -1,5 +1,5 @@
 // Side-effect import: install the Map.prototype.getOrInsert polyfill before @codefast/di loads.
-import "#/server/map-get-or-insert";
+import "#/features/di/server/map-get-or-insert";
 import { Container, injectAll, injectable, Module, optional, postConstruct, preDestroy, token } from "@codefast/di";
 import type { ContainerGraphJson } from "@codefast/di";
 import { toDotGraph } from "@codefast/di/graph-adapters/dot";

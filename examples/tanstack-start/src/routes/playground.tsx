@@ -1,17 +1,14 @@
 import { useAppearance } from "@codefast/theme";
 import { Badge } from "@codefast/ui/badge";
-import { Button } from "@codefast/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@codefast/ui/card";
-import { useMediaQuery } from "@codefast/ui/hooks/use-media-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 
-import { AnimatedStat } from "#/components/animated-stat";
 import { Callout } from "#/components/callout";
-import { CopyField } from "#/components/copy-field";
 import { DemoSection } from "#/components/demo-section";
-import { PaginatedList } from "#/components/paginated-list";
-import { ViewportBadge } from "#/components/viewport-badge";
+import { AnimatedCounterCard } from "#/features/playground/components/animated-counter-card";
+import { CopyField } from "#/features/playground/components/copy-field";
+import { PaginatedList } from "#/features/playground/components/paginated-list";
+import { ViewportBadge } from "#/features/playground/components/viewport-badge";
 
 export const Route = createFileRoute("/playground")({
   component: PlaygroundPage,
@@ -27,20 +24,13 @@ const PACKAGES = [
   "@codefast/typescript-config",
 ] as const;
 
-const COUNTER_STEPS = [0, 42, 128, 512, 1024] as const;
-
 function PlaygroundPage() {
   const { appearance, colorScheme } = useAppearance();
-  const prefersReducedMotion = useMediaQuery("(prefers-reduced-motion: reduce)");
-
-  const [stepIndex, setStepIndex] = useState(1);
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     setMounted(true);
   }, []);
-
-  const counter = COUNTER_STEPS[stepIndex] ?? 0;
 
   return (
     <div className="space-y-12">
@@ -78,30 +68,7 @@ function PlaygroundPage() {
         description="use-animated-value eases the number toward each target; motion respects prefers-reduced-motion."
         title="Animated counter"
       >
-        <Card>
-          <CardHeader>
-            <CardTitle>Downloads</CardTitle>
-            <CardDescription>Pick a target and watch the value ease into place.</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <AnimatedStat animate={!prefersReducedMotion} label="this week" suffix="k" value={counter} />
-            <div className="flex flex-wrap items-center gap-2">
-              {COUNTER_STEPS.map((step, index) => (
-                <Button
-                  key={step}
-                  size="sm"
-                  variant={index === stepIndex ? "default" : "outline"}
-                  // PlaygroundPage owns the counter: selects the animation target.
-                  onClick={() => {
-                    setStepIndex(index);
-                  }}
-                >
-                  {step}k
-                </Button>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+        <AnimatedCounterCard />
       </DemoSection>
 
       <DemoSection

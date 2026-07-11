@@ -41,7 +41,7 @@ function bindingNamesByTarget(edges: ReactFlowGraph["edges"]): Map<string, strin
  * markers (`name:…`) once those names live on the target node.
  */
 function edgeLabel(label: string | undefined): string | undefined {
-  if (label === undefined || /^\[\d+\]$/.test(label) || /^name:/.test(label)) {
+  if (label === undefined || /^\[\d+\]$/.test(label) || label.startsWith("name:")) {
     return undefined;
   }
 
