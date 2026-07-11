@@ -1,140 +1,102 @@
 # @codefast/ui
 
-Accessible, typed React components built on Radix UI primitives and styled with Tailwind CSS 4.
+70+ accessible React components built on [Radix UI](https://www.radix-ui.com/) primitives and styled with Tailwind CSS 4 — fully typed, tree-shakeable, themeable.
 
-[![CI](https://github.com/codefastlabs/codefast/actions/workflows/release.yml/badge.svg)](https://github.com/codefastlabs/codefast/actions/workflows/release.yml)
-[![npm version](https://img.shields.io/npm/v/@codefast/ui.svg)](https://www.npmjs.com/package/@codefast/ui)
-[![npm downloads](https://img.shields.io/npm/dm/@codefast/ui.svg)](https://www.npmjs.com/package/@codefast/ui)
-[![bundle size](https://img.shields.io/bundlephobia/minzip/@codefast/ui)](https://bundlephobia.com/package/@codefast/ui)
-[![license](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![npm version](https://img.shields.io/npm/v/@codefast/ui)](https://www.npmjs.com/package/@codefast/ui)
+[![license](https://img.shields.io/npm/l/@codefast/ui)](https://github.com/codefastlabs/codefast/blob/main/LICENSE)
 
----
+**[codefastlabs.com](https://codefastlabs.com)** — full documentation with live previews and copy-ready source for every component.
 
-## Table of Contents
+## Highlights
 
-- [Why @codefast/ui](#why-codefastui)
-- [Requirements](#requirements)
-- [Installation](#installation)
-- [Styling](#styling)
-  - [With an existing Tailwind 4 setup (recommended)](#with-an-existing-tailwind-4-setup-recommended)
-  - [Standalone (no Tailwind yet)](#standalone-no-tailwind-yet)
-  - [Theme palettes](#theme-palettes)
-  - [Dark mode](#dark-mode)
-  - [Customizing tokens](#customizing-tokens)
-- [Quick Start](#quick-start)
-- [Component catalog](#component-catalog)
-- [Hooks](#hooks)
-- [Primitives and utilities](#primitives-and-utilities)
-- [SSR with Nitro (TanStack Start)](#ssr-with-nitro-tanstack-start)
-- [Troubleshooting](#troubleshooting)
-- [Accessibility](#accessibility)
-- [Browser support](#browser-support)
-- [Contributing](#contributing)
-- [License](#license)
-- [Changelog](#changelog)
-
----
-
-## Why @codefast/ui
-
-- **62+ components** across layout, form, navigation, overlay, and data-display categories.
-- **Built on [Radix UI](https://www.radix-ui.com/)** — keyboard navigation, focus management, and ARIA semantics come for free.
-- **Tailwind CSS 4** tokens shipped as CSS files (`@codefast/ui/css/*`), with 22 palette variants and a dark-mode scheme.
-- **Fully typed.** Every component exports its props (`ButtonProps`, `DialogContentProps`, …) for use in wrappers.
-- **Side-effect-free ESM** with per-component subpaths — bundlers tree-shake to what you actually import.
-- **Dependency-light.** Only the Radix + headless-UI libraries that each component needs are pulled in.
-
----
+- **70+ accessible components** — keyboard navigation, focus management, and ARIA semantics come from Radix UI primitives.
+- **Fully typed** — every component exports its prop types (`ButtonProps`, `DialogContentProps`, …) for use in wrappers.
+- **Tree-shakeable ESM** — per-component subpath exports mean bundlers only include what you import.
+- **Themeable in plain CSS** — 22 palettes of `oklch` design tokens, dark mode included, no JavaScript required.
 
 ## Requirements
 
-- React `>=19.0.0` and `react-dom` (peer; `@types/*` are optional peers)
-- Tailwind CSS `4.x` at build time (only if you use one of the theme CSS imports)
-- TypeScript `>= 5.9` (recommended)
-
----
+- React 19 (`react` and `react-dom` are peer dependencies; `@types/react` and `@types/react-dom` are optional peers)
+- Tailwind CSS 4 at build time
 
 ## Installation
 
 ```bash
 pnpm add @codefast/ui
-# or
-npm install @codefast/ui
-# or
-yarn add @codefast/ui
 ```
 
-Peers:
+Or the equivalent with your package manager: `npm install @codefast/ui`, `yarn add @codefast/ui`, or `bun add @codefast/ui`.
+
+The package is in canary pre-release on the way to 1.0. To follow the canary channel:
 
 ```bash
-pnpm add react react-dom
-pnpm add -D @types/react @types/react-dom
+pnpm add @codefast/ui@canary
 ```
 
----
+## Quick Start
 
-## Styling
-
-`@codefast/ui` ships theme tokens and component-layer styles as CSS files under `@codefast/ui/css/*`. Pick the integration that matches your project.
-
-### With an existing Tailwind 4 setup (recommended)
-
-Import the palette and the preset **after** `tailwindcss` so Tailwind isn't duplicated:
+Import a theme and the preset after `tailwindcss` in your global stylesheet:
 
 ```css
-/* src/styles.css (or app/globals.css, …) */
 @import "tailwindcss";
-
-/* @codefast/ui tokens + preset */
-@import "@codefast/ui/css/themes/slate.css";
+@import "@codefast/ui/css/themes/neutral.css";
 @import "@codefast/ui/css/preset.css";
 ```
 
-Then import the stylesheet once from your app entry:
+Then use any component:
 
-```ts
-import "./styles.css";
+```tsx
+import { Button } from "@codefast/ui/button";
+
+export function MyPage() {
+  return <Button variant="outline">Click me</Button>;
+}
 ```
 
-Works the same for Vite (`@tailwindcss/vite`), Next.js (App Router), and TanStack Start.
+If your app doesn't run Tailwind itself, import the bundled stylesheet instead — it includes Tailwind 4, the neutral theme, and the preset in one file:
 
-### Standalone (no Tailwind yet)
-
-If your app doesn't run Tailwind, import the bundled stylesheet — it includes Tailwind 4 plus the default palette and preset:
-
-```ts
-import "@codefast/ui/css/style.css";
+```css
+@import "@codefast/ui/css/style.css";
 ```
 
-Make sure your bundler can process CSS `@import` (Vite and Next.js do this out of the box; for other setups, add `@tailwindcss/postcss` or `@tailwindcss/vite`).
+## Per-component imports
 
-### Theme palettes
+Every component ships as its own subpath export, so bundlers only pull in what you import:
 
-Replace `themes/slate.css` with any palette under `@codefast/ui/css/themes/`:
-
-```
-amber · blue · cyan · emerald · fuchsia · gray · green · indigo · lime · neutral
-orange · pink · purple · red · rose · sky · slate · stone · teal · violet · yellow · zinc
+```tsx
+import { Button } from "@codefast/ui/button";
+import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "@codefast/ui/dialog";
 ```
 
-Each palette defines a light set on `:root` and a dark set under `.dark`.
+All components and their prop types (`ButtonProps`, `DialogContentProps`, …) are also re-exported from the root entry `@codefast/ui`.
 
-### Dark mode
+Beyond components, the package exposes:
 
-Toggle the `dark` class on `<html>` (or any ancestor) to switch schemes:
+- `@codefast/ui/hooks/*` — standalone hooks, e.g. `useMediaQuery` from `@codefast/ui/hooks/use-media-query`
+- `@codefast/ui/variants/*` — the underlying variant functions, e.g. `buttonVariants` from `@codefast/ui/variants/button` for styling custom elements
+- `@codefast/ui/primitives/*` — unstyled building blocks used by the styled components
+- `@codefast/ui/lib/utils` — the `cn()` classname merge helper
+
+## Theming
+
+Theme tokens live in plain CSS files. Swap `themes/neutral.css` in the import above for any palette under `@codefast/ui/css/themes/`:
+
+```
+amber · blue · cyan · emerald · fuchsia · gray · green · indigo · lime · neutral · orange
+pink · purple · red · rose · sky · slate · stone · teal · violet · yellow · zinc
+```
+
+Each palette defines light tokens on `:root` and dark tokens under `.dark`. Toggle dark mode by adding the `dark` class to `<html>` (or any ancestor):
 
 ```ts
 document.documentElement.classList.toggle("dark", isDark);
 ```
 
-Pair with [`@codefast/theme`](../theme/README.md) for SSR-safe theme management and cross-tab sync.
-
-### Customizing tokens
-
-Override CSS custom properties after the imports:
+Customize by overriding CSS custom properties after the imports:
 
 ```css
-@import "@codefast/ui/css/themes/slate.css";
+@import "tailwindcss";
+@import "@codefast/ui/css/themes/neutral.css";
 @import "@codefast/ui/css/preset.css";
 
 :root {
@@ -147,270 +109,12 @@ Override CSS custom properties after the imports:
 }
 ```
 
----
+## Documentation
 
-## Quick Start
+Browse the full component gallery — live previews, usage examples, and copy-ready source — at **[codefastlabs.com](https://codefastlabs.com)**.
 
-```tsx
-import { Button, Card, CardContent, CardHeader, CardTitle } from "@codefast/ui";
-
-export function Hero() {
-  return (
-    <Card className="w-96">
-      <CardHeader>
-        <CardTitle>Welcome to Codefast UI</CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        <p>A typed React component library built on Radix and Tailwind CSS 4.</p>
-        <Button>Get started</Button>
-      </CardContent>
-    </Card>
-  );
-}
-```
-
-Prefer per-component imports when you care about bundle visibility:
-
-```tsx
-import { Button } from "@codefast/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@codefast/ui/dialog";
-```
-
-Every subpath from the table below is tree-shakeable and ships its own types.
-
----
-
-## Component catalog
-
-All components are also re-exported from the root entry `@codefast/ui`.
-
-### Layout & structure
-
-| Component     | Subpath                     | Notes                                         |
-| ------------- | --------------------------- | --------------------------------------------- |
-| `AspectRatio` | `@codefast/ui/aspect-ratio` | Maintain a consistent width/height ratio.     |
-| `Card`        | `@codefast/ui/card`         | Container with header/content/footer.         |
-| `Resizable`   | `@codefast/ui/resizable`    | Split-panel layouts (react-resizable-panels). |
-| `ScrollArea`  | `@codefast/ui/scroll-area`  | Styled scroll container with custom bars.     |
-| `Separator`   | `@codefast/ui/separator`    | Decorative or semantic divider.               |
-| `Sidebar`     | `@codefast/ui/sidebar`      | App shell sidebar primitive.                  |
-| `Skeleton`    | `@codefast/ui/skeleton`     | Loading placeholder.                          |
-
-### Forms & inputs
-
-| Component        | Subpath                                   | Notes                                     |
-| ---------------- | ----------------------------------------- | ----------------------------------------- |
-| `Button`         | `@codefast/ui/button`                     | Variants + sizes via Tailwind Variants.   |
-| `ButtonGroup`    | `@codefast/ui/button-group`               | Segmented button container.               |
-| `Checkbox`       | `@codefast/ui/checkbox`                   | Single checkbox.                          |
-| `CheckboxCards`  | `@codefast/ui/checkbox-cards`             | Card-style multi-select.                  |
-| `CheckboxGroup`  | `@codefast/ui/checkbox-group`             | Controlled multi-select group.            |
-| `Field` / `Form` | `@codefast/ui/field`, `@codefast/ui/form` | Form primitives, integrates with RHF.     |
-| `Input`          | `@codefast/ui/input`                      | Standard text input.                      |
-| `InputGroup`     | `@codefast/ui/input-group`                | Prefixed / suffixed composite input.      |
-| `InputNumber`    | `@codefast/ui/input-number`               | Numeric stepper with keyboard support.    |
-| `InputOTP`       | `@codefast/ui/input-otp`                  | One-time-password code input (input-otp). |
-| `InputPassword`  | `@codefast/ui/input-password`             | Password field with visibility toggle.    |
-| `InputSearch`    | `@codefast/ui/input-search`               | Search field with clear affordance.       |
-| `Label`          | `@codefast/ui/label`                      | Accessible form label.                    |
-| `NativeSelect`   | `@codefast/ui/native-select`              | Styled `<select>` wrapper.                |
-| `Radio`          | `@codefast/ui/radio`                      | Single radio button.                      |
-| `RadioCards`     | `@codefast/ui/radio-cards`                | Card-style single-select.                 |
-| `RadioGroup`     | `@codefast/ui/radio-group`                | Controlled single-select group.           |
-| `Select`         | `@codefast/ui/select`                     | Rich dropdown (Radix Select).             |
-| `Slider`         | `@codefast/ui/slider`                     | Range slider.                             |
-| `Switch`         | `@codefast/ui/switch`                     | Boolean toggle.                           |
-| `Textarea`       | `@codefast/ui/textarea`                   | Multi-line input.                         |
-| `Toggle`         | `@codefast/ui/toggle`                     | Pressable toggle button.                  |
-| `ToggleGroup`    | `@codefast/ui/toggle-group`               | Grouped toggles.                          |
-
-### Navigation
-
-| Component        | Subpath                        | Notes                       |
-| ---------------- | ------------------------------ | --------------------------- |
-| `Breadcrumb`     | `@codefast/ui/breadcrumb`      | Breadcrumb trail.           |
-| `Menubar`        | `@codefast/ui/menubar`         | Desktop-style menubar.      |
-| `NavigationMenu` | `@codefast/ui/navigation-menu` | Top-level nav with flyouts. |
-| `Pagination`     | `@codefast/ui/pagination`      | Page number controls.       |
-| `Tabs`           | `@codefast/ui/tabs`            | Tabbed content.             |
-
-### Overlay & feedback
-
-| Component      | Subpath                      | Notes                                 |
-| -------------- | ---------------------------- | ------------------------------------- |
-| `AlertDialog`  | `@codefast/ui/alert-dialog`  | Confirm / destructive dialog.         |
-| `Command`      | `@codefast/ui/command`       | Command palette (cmdk).               |
-| `ContextMenu`  | `@codefast/ui/context-menu`  | Right-click menu.                     |
-| `Dialog`       | `@codefast/ui/dialog`        | Modal dialog.                         |
-| `Drawer`       | `@codefast/ui/drawer`        | Mobile-friendly drawer (vaul).        |
-| `DropdownMenu` | `@codefast/ui/dropdown-menu` | Menu triggered from a button.         |
-| `HoverCard`    | `@codefast/ui/hover-card`    | Rich hover preview.                   |
-| `Popover`      | `@codefast/ui/popover`       | Floating panel anchored to a trigger. |
-| `Sheet`        | `@codefast/ui/sheet`         | Side-sheet (dialog from edge).        |
-| `Sonner`       | `@codefast/ui/sonner`        | Toast stack (sonner).                 |
-| `Tooltip`      | `@codefast/ui/tooltip`       | Keyboard-friendly tooltip.            |
-
-### Data display & content
-
-| Component        | Subpath                        | Notes                           |
-| ---------------- | ------------------------------ | ------------------------------- |
-| `Accordion`      | `@codefast/ui/accordion`       | Collapsible sections.           |
-| `Alert`          | `@codefast/ui/alert`           | Inline status message.          |
-| `Avatar`         | `@codefast/ui/avatar`          | User avatar with fallback.      |
-| `Badge`          | `@codefast/ui/badge`           | Status pill.                    |
-| `Calendar`       | `@codefast/ui/calendar`        | Date picker (@daypicker/react). |
-| `Carousel`       | `@codefast/ui/carousel`        | Slider (embla-carousel).        |
-| `Chart`          | `@codefast/ui/chart`           | Responsive charts (recharts).   |
-| `Collapsible`    | `@codefast/ui/collapsible`     | Expand/collapse primitive.      |
-| `Empty`          | `@codefast/ui/empty`           | Empty-state illustration block. |
-| `Item`           | `@codefast/ui/item`            | List-item building block.       |
-| `Kbd`            | `@codefast/ui/kbd`             | Keyboard-key styling.           |
-| `Progress`       | `@codefast/ui/progress`        | Linear progress bar.            |
-| `ProgressCircle` | `@codefast/ui/progress-circle` | Circular progress indicator.    |
-| `Spinner`        | `@codefast/ui/spinner`         | Busy indicator.                 |
-| `Table`          | `@codefast/ui/table`           | Semantic table + styled cells.  |
-
----
-
-## Hooks
-
-Available from `@codefast/ui/hooks/*`:
-
-| Hook                  | Subpath                                    | Purpose                                          |
-| --------------------- | ------------------------------------------ | ------------------------------------------------ |
-| `useAnimatedValue`    | `@codefast/ui/hooks/use-animated-value`    | Tween a number over time with easing control.    |
-| `useCopyToClipboard`  | `@codefast/ui/hooks/use-copy-to-clipboard` | Clipboard write with success state.              |
-| `useIsMobile`         | `@codefast/ui/hooks/use-is-mobile`         | Boolean for the standard mobile breakpoint.      |
-| `useMediaQuery`       | `@codefast/ui/hooks/use-media-query`       | Subscribe to a `matchMedia` query, SSR-safe.     |
-| `useMutationObserver` | `@codefast/ui/hooks/use-mutation-observer` | Run a callback on DOM mutations.                 |
-| `usePagination`       | `@codefast/ui/hooks/use-pagination`        | Page range / ellipsis helper for pagination UIs. |
-
----
-
-## Primitives and utilities
-
-Low-level building blocks, used internally by the styled components, exposed for custom wrappers.
-
-| Import                                    | Contents                                                 |
-| ----------------------------------------- | -------------------------------------------------------- |
-| `@codefast/ui/primitives/input`           | Unstyled controlled-input primitive.                     |
-| `@codefast/ui/primitives/input-number`    | Numeric stepper logic (keyboard, parsing, clamp).        |
-| `@codefast/ui/primitives/checkbox-group`  | Controlled checkbox-group state machine.                 |
-| `@codefast/ui/primitives/progress-circle` | Math + a11y primitive for circular progress.             |
-| `@codefast/ui/lib/utils`                  | `cn()` — classname merge helper used by every component. |
-| `@codefast/ui/css/themes/*`               | Theme palette CSS files (see [Styling](#styling)).       |
-| `@codefast/ui/css/preset.css`             | Tailwind preset: variants, `cf-*` utilities, base layer. |
-| `@codefast/ui/css/style.css`              | Bundled Tailwind + default palette + preset.             |
-
-```tsx
-import { cn } from "@codefast/ui/lib/utils";
-
-const classes = cn("rounded-md px-3 py-1", disabled && "opacity-50");
-```
-
----
-
-## SSR with Nitro (TanStack Start)
-
-If you ship TanStack Start behind **[Nitro](https://v3.nitro.build/)** and **Vite 8 (Rolldown)**, you may hit a server-side `TypeError` referencing `__extends` or `__toESM(...).default` during route loaders or SSR. It originates from CJS `tslib` usage inside overlay-related dependencies (Dialog, Sheet, Menu, …) that reach for `react-remove-scroll-bar` and friends.
-
-**Fix** — make Nitro resolve the ESM entry points of those packages via the `module` export condition. Pass it to the `nitro` plugin so the server build picks ESM over CJS:
-
-```ts
-// vite.config.ts
-import { defineConfig } from "vite";
-import { nitro } from "nitro/vite";
-
-export default defineConfig({
-  plugins: [
-    // tanstackStart(), …
-    nitro({ exportConditions: ["module"] }),
-  ],
-});
-```
-
-Keep the client `resolve.conditions` aligned with the server so both sides resolve the same entry points — a mismatch can otherwise surface as a hydration warning:
-
-```ts
-export default defineConfig({
-  resolve: {
-    conditions: ["module"],
-  },
-  // …
-});
-```
-
----
-
-## Troubleshooting
-
-| Issue                                            | Fix                                                                                               |
-| ------------------------------------------------ | ------------------------------------------------------------------------------------------------- |
-| Components render unstyled                       | Make sure CSS imports run before the first component mounts (import from the app entry).          |
-| Tailwind output is duplicated                    | Use the palette + `preset.css` import — don't also import `css/style.css` in the same app.        |
-| Dark mode doesn't apply                          | Add the `dark` class to `<html>` (or any ancestor). See [Dark mode](#dark-mode).                  |
-| `Cannot destructure property '__extends'` in SSR | Pass `exportConditions: ["module"]` to the `nitro` plugin (see above).                            |
-| Missing font or radius after palette switch      | Re-import the palette **before** `preset.css`. Preset depends on palette variables being defined. |
-
----
-
-## Accessibility
-
-Every component inherits Radix's accessibility guarantees and is audited with `jest-axe` in the test suite:
-
-- Full keyboard navigation (`Tab`, arrows, `Enter` / `Space`, `Escape`, `Home` / `End`).
-- Correct ARIA roles, `aria-expanded`, `aria-controls`, and live regions where relevant.
-- Focus trap + restore for overlays (Dialog, AlertDialog, Sheet, Drawer, DropdownMenu, …).
-- Respects `prefers-reduced-motion`.
-- High-contrast friendly color tokens — palettes use `oklch` and ship explicit `--ring`, `--border` values.
-
----
-
-## Browser support
-
-Last two versions of Chrome, Edge, Firefox, and Safari. Internet Explorer is not supported.
-
----
-
-## Contributing
-
-This package lives in the [Codefast monorepo](https://github.com/codefastlabs/codefast). From the repo root:
-
-```bash
-pnpm --filter @codefast/ui build
-pnpm --filter @codefast/ui dev          # watch build via tsdown
-pnpm --filter @codefast/ui test
-pnpm --filter @codefast/ui test:coverage
-pnpm --filter @codefast/ui check-types
-```
-
-Adding a component:
-
-1. Implement it under `src/components/<name>.tsx`.
-2. Export the component and its prop types from `src/index.ts`.
-3. Add a new subpath entry in `package.json → exports` following the existing pattern.
-4. Add tests under `src/components/__tests__` (unit + `jest-axe` if interactive).
-5. Run `pnpm --filter @codefast/ui build` to verify `tsdown` picks up the new entry.
-
-CSS exports under `@codefast/ui/css/*` map to `src/css/`:
-
-```
-css/
-├── style.css          # Tailwind + themes/neutral + preset
-├── preset.css         # Aggregates foundation + utilities
-├── foundation/        # source, variants, tokens, motion, base
-├── utilities/         # shared + component utilities referenced in TSX
-└── themes/            # amber.css … zinc.css
-```
-
----
+The package is developed in the [codefast monorepo](https://github.com/codefastlabs/codefast); see the [changelog](https://github.com/codefastlabs/codefast/blob/main/packages/ui/CHANGELOG.md) for release history.
 
 ## License
 
-[MIT](https://opensource.org/licenses/MIT) — see [`package.json`](./package.json).
-
----
-
-## Changelog
-
-See [CHANGELOG.md](./CHANGELOG.md) for the full version history. Releases are also published on [npm](https://www.npmjs.com/package/@codefast/ui?activeTab=versions).
+[MIT](https://github.com/codefastlabs/codefast/blob/main/LICENSE)

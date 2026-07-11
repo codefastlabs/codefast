@@ -2,6 +2,9 @@
 
 Consent-gated, type-safe event tracking for TanStack Start apps.
 
+[![npm version](https://img.shields.io/npm/v/@codefast/tracking)](https://www.npmjs.com/package/@codefast/tracking)
+[![license](https://img.shields.io/npm/l/@codefast/tracking)](https://github.com/codefastlabs/codefast/blob/main/LICENSE)
+
 - **One catalog, typed end to end** — apps define their events over any
   [Standard Schema](https://standardschema.dev) library (zod, `zod/mini`, valibot, ...);
   `track()` validates properties at the call site and at runtime, and the client bundle
@@ -20,7 +23,17 @@ that shipped here before (offline queue, beacon relay, server-side tracker, GTM,
 Segment-style `identify`/`group`/`alias`/`page`) were removed because no consumer called
 them — git history has them if a real need returns.
 
-## Quick start
+## Installation
+
+```bash
+pnpm add @codefast/tracking
+```
+
+Every peer is optional and only needed by the surface that uses it: `react`/`react-dom`
+(>= 19) for `/react`, `@tanstack/react-start` (>= 1.168) for `/tanstack-start`, and
+`@vercel/analytics` for the Vercel destination.
+
+## Quick Start
 
 ```ts
 // consent.ts — the one consent contract every surface shares
@@ -78,11 +91,38 @@ tracker.track("copy_code", { name: "button" }); // typed + runtime-validated
 Destinations own their transport (gtag.js and Vercel both batch in-page), so `track()`
 is fire-and-forget — a failing destination can never break the interaction.
 
+## Event catalog
+
+The package ships no events and no schema library — every app builds its own catalog
+with `defineEventCatalog` over whatever Standard Schema validator it already uses.
+`track()` infers both the event name and its properties from the catalog, then validates
+the properties at runtime; a mismatch throws at the call site. Async schemas are rejected
+by design — tracking sits on synchronous call paths.
+
+## Subpaths
+
+| Import                                             | What it holds                                                                                     |
+| -------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| `@codefast/tracking`                               | Isomorphic core: catalog types, `Destination`, consent model + config — safe on client and server |
+| `@codefast/tracking/client`                        | `createClientTracker`, `createConsentRuntime`, anonymous-id helpers                               |
+| `@codefast/tracking/server`                        | Region → initial-consent resolution, anonymous-id `Set-Cookie` builders — server-only             |
+| `@codefast/tracking/react`                         | `useConsent`, consent banner parts, `GtagConsentBootstrap`, `useInitialConsent`                   |
+| `@codefast/tracking/tanstack-start`                | One-line request/response glue over Start's server context — server-only                          |
+| `@codefast/tracking/destinations`                  | The gtag destination, script loader, and Consent Mode helpers                                     |
+| `@codefast/tracking/destinations/vercel-analytics` | Vercel Analytics destination — own subpath so the optional peer stays optional                    |
+| `@codefast/tracking/import-protection`             | `SERVER_ONLY_IMPORT_SPECIFIERS` deny-list for client bundles                                      |
+| `@codefast/tracking/css/consent.css`               | Optional plain-CSS theme for the consent banner                                                   |
+
+There is deliberately no server-side tracker: destinations batch in-page, and the server
+half of the package is consent resolution plus cookie persistence.
+
 ## Consent (region-based, per-category)
 
 `ConsentDecision` is per-purpose (`{ ads, analytics }`), mirroring Google Consent Mode
-v2. Region resolves the mode: GDPR/UK/EEA and Vietnam's PDPL get **opt-in**, CCPA/CPRA
-regions get **opt-out** with GPC honored as an ads opt-out.
+v2. Region resolves the mode: GDPR (EU, plus UK/EEA-EFTA equivalents) and Vietnam's PDPL
+get **opt-in**; the US (CCPA/CPRA) and unrecognized regions get **opt-out**, with GPC
+honored as an ads-only opt-out. Stored records are policy-versioned and shape-checked —
+a malformed or legacy-shaped record re-prompts instead of silently deciding.
 
 - `useConsent({ config, mode, storage })` — `useSyncExternalStore` bridge over the stored
   decision; cross-tab saves sync through the `storage` event.
@@ -150,6 +190,11 @@ a trace of the offending import chain.
 
 ## Reference consumer
 
-`apps/ui` (`src/features/tracking/`) in this repo wires everything above on a real
-ISR-deployed TanStack Start site — consent config + runtime, banner + persistent toggle,
-gtag bootstrap, durable anonymous id, and the private server-function consent lane.
+[`apps/ui` (`src/features/tracking/`)](https://github.com/codefastlabs/codefast/tree/main/apps/ui/src/features/tracking)
+in this repo wires everything above on a real ISR-deployed TanStack Start site — consent
+config + runtime, banner + persistent toggle, gtag bootstrap, durable anonymous id, and
+the private server-function consent lane.
+
+## License
+
+[MIT](https://github.com/codefastlabs/codefast/blob/main/LICENSE)
