@@ -9,7 +9,7 @@ export function InstallCta() {
   return (
     <section aria-labelledby="home-install-title" className="border-t border-ui-border/60 bg-ui-surface py-24 sm:py-32">
       <div className="container mx-auto px-4">
-        <div className="mx-auto max-w-2xl text-center">
+        <div className="reveal-up mx-auto max-w-2xl text-center">
           <SectionHeader
             eyebrow="Get started"
             titleId="home-install-title"
@@ -19,7 +19,7 @@ export function InstallCta() {
           />
 
           <div className="mb-8 flex flex-col items-stretch gap-3 sm:flex-row sm:items-center sm:justify-center">
-            <div className="flex min-w-0 flex-1 items-center justify-between gap-3 rounded-xl border border-ui-border/60 bg-ui-card px-4 py-3 font-mono text-sm text-ui-fg sm:max-w-md">
+            <div className="flex min-w-0 flex-1 items-center justify-between gap-3 rounded-xl border border-ui-border/60 bg-ui-card px-4 py-3 font-mono text-sm text-ui-fg transition-[border-color,box-shadow] duration-200 hover:border-ui-brand/40 hover:shadow-lg hover:shadow-ui-brand/5 sm:max-w-md">
               <code className="truncate">
                 <span className="me-2 text-ui-muted select-none">$</span>
                 {INSTALL_COMMAND}

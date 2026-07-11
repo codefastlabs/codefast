@@ -15,13 +15,15 @@ export function FeaturesSection() {
               you actually work.
             </>
           }
-          className="mb-16"
+          className="reveal-up mb-16"
         />
 
         <div className="divide-y divide-ui-border/60">
           {FEATURES.map(({ number, title, description }) => (
-            <article key={title} className="grid gap-4 py-10 sm:grid-cols-[56px_1fr_1.5fr] sm:gap-10">
-              <p className="font-mono text-sm text-ui-muted tabular-nums">{number}</p>
+            <article key={title} className="group reveal-up grid gap-4 py-10 sm:grid-cols-[56px_1fr_1.5fr] sm:gap-10">
+              <p className="font-mono text-sm text-ui-muted tabular-nums transition-colors duration-200 group-hover:text-ui-brand">
+                {number}
+              </p>
               <h3 className="text-base font-semibold text-ui-fg">{title}</h3>
               <p className="text-sm leading-relaxed text-ui-muted">{description}</p>
             </article>
