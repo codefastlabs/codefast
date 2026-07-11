@@ -56,10 +56,20 @@
       "types": "./dist/index.d.mts",
       "import": "./dist/index.mjs"
     },
+    "./import-protection": {
+      "source": "./src/import-protection.ts",
+      "types": "./dist/import-protection.d.mts",
+      "import": "./dist/import-protection.mjs"
+    },
     "./client": {
       "source": "./src/client/index.ts",
       "types": "./dist/client/index.d.mts",
       "import": "./dist/client/index.mjs"
+    },
+    "./client/browser-cookie": {
+      "source": "./src/client/browser-cookie.ts",
+      "types": "./dist/client/browser-cookie.d.mts",
+      "import": "./dist/client/browser-cookie.mjs"
     },
     "./client/consent-cookie-mirror": {
       "source": "./src/client/consent-cookie-mirror.ts",

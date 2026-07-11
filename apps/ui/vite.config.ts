@@ -2,6 +2,7 @@ import { existsSync, readdirSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
+import { SERVER_ONLY_IMPORT_SPECIFIERS } from "@codefast/tracking/import-protection";
 import babel from "@rolldown/plugin-babel";
 import tailwindcss from "@tailwindcss/vite";
 import { devtools } from "@tanstack/devtools-vite";
@@ -125,16 +126,12 @@ export default defineConfig(({ command }) => {
         /**
          * Denies the server-only `@codefast/tracking` lanes in the client environment at
          * build time — the default rules only cover local `*.server.*` files, and
-         * node_modules specifiers need an explicit entry (merged with the defaults).
+         * node_modules specifiers need an explicit entry (merged with the defaults). The
+         * list ships with the package, so a new server-only subpath can never go stale here.
          */
         importProtection: {
           client: {
-            specifiers: [
-              "@codefast/tracking/server",
-              "@codefast/tracking/server/**",
-              "@codefast/tracking/tanstack-start",
-              "@codefast/tracking/destinations/ga4-measurement-protocol",
-            ],
+            specifiers: [...SERVER_ONLY_IMPORT_SPECIFIERS],
           },
         },
         /**
