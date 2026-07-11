@@ -1,3 +1,5 @@
+"use client";
+
 import { useEffect } from "react";
 
 import { updateGoogleConsent } from "#/destinations/google-analytics";

@@ -63,9 +63,16 @@ export interface Ga4MeasurementProtocolDestinationOptions {
    */
   clientId?: string | undefined;
   /** Routes to GA4's `/debug/mp/collect` validation endpoint — hits are validated but never recorded. */
-  debug?: boolean | undefined;
+  debugMode?: boolean | undefined;
   measurementId: string;
   name?: string | undefined;
+  /**
+   * Per-request abort deadline — a stalled Google endpoint must never hold an awaiting
+   * server function open indefinitely.
+   *
+   * @defaultValue 10_000
+   */
+  requestTimeoutMs?: number | undefined;
   /**
    * Current GA4 session for this visitor (see `extractGa4SessionId`). Without a
    * `session_id`, GA4 accepts the event but leaves it out of session-scoped and realtime
@@ -86,14 +93,15 @@ export function createGa4MeasurementProtocolDestination(
   options: Ga4MeasurementProtocolDestinationOptions,
 ): Destination {
   const name = options.name ?? "ga4-measurement-protocol";
-  const host = options.debug
+  const host = options.debugMode
     ? "https://www.google-analytics.com/debug/mp/collect"
     : "https://www.google-analytics.com/mp/collect";
   const endpoint = `${host}?measurement_id=${encodeURIComponent(options.measurementId)}&api_secret=${encodeURIComponent(options.apiSecret)}`;
+  const requestTimeoutMs = options.requestTimeoutMs ?? 10_000;
 
   return {
     name,
-    async send(event) {
+    async send(event, sendOptions) {
       const translated = toMeasurementProtocolEvent(event);
 
       // No GA4 equivalent (alias merges via user_id; identify only carries identity).
@@ -126,7 +134,10 @@ export function createGa4MeasurementProtocolDestination(
           ...(event.userId === undefined ? {} : { user_id: event.userId }),
         }),
         headers: { "content-type": "application/json" },
+        keepalive: sendOptions?.keepalive ?? false,
         method: "POST",
+        // Created per attempt — a shared signal would start (and stay) aborted after the first timeout.
+        signal: AbortSignal.timeout(requestTimeoutMs),
       });
 
       if (!response.ok) {
@@ -151,11 +162,11 @@ function toMeasurementProtocolEvent(
     }
 
     case "page": {
-      return { name: "page_view", params: flattenEventProps(event.props) };
+      return { name: "page_view", params: flattenEventProps(event.properties) };
     }
 
     case "track": {
-      return { name: event.name, params: flattenEventProps(event.props) };
+      return { name: event.name, params: flattenEventProps(event.properties) };
     }
 
     default: {

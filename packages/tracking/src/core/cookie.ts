@@ -1,3 +1,6 @@
+/** Default lifetime shared by the anonymous-id and consent cookies — one year. */
+export const ONE_YEAR_IN_SECONDS = 60 * 60 * 24 * 365;
+
 /**
  * The value of `cookieName` inside a cookie string — a request `Cookie` header or
  * `document.cookie`, which share the `name=value; name2=value2` wire format — or

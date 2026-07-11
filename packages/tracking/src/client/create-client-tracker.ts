@@ -1,8 +1,10 @@
-import type { z } from "zod";
+import type { StandardSchemaV1 } from "@standard-schema/spec";
 
-import { EventQueue, type EventQueueStorage } from "#/client/queue";
+import type { EventQueueStorage, FlushOptions } from "#/client/queue";
+import { EventQueue } from "#/client/queue";
 import type { Destination } from "#/core/destination";
 import type { EventCatalog, EventsOf } from "#/core/event-catalog";
+import { assertValidEventProperties } from "#/core/event-catalog";
 import { generateEventId } from "#/core/event-id";
 import type { TrackedEvent, TrackedEventBase, TrackedEventSeed } from "#/core/tracked-event";
 import { buildTrackedEvent } from "#/core/tracked-event";
@@ -56,15 +58,15 @@ export interface ClientTracker<Catalog extends EventCatalog> {
    * helper's `clear()` separately when the visitor withdraws tracking consent.
    */
   clear: () => void;
-  flush: () => Promise<void>;
+  flush: (options?: FlushOptions) => Promise<void>;
   /** Synchronous, best-effort flush via `navigator.sendBeacon` — for page unload only. */
   flushWithBeacon: (endpoint: string) => void;
   group: (groupId: string, traits?: Record<string, unknown>) => void;
   identify: (userId: string, traits?: Record<string, unknown>) => void;
-  page: (name?: string, props?: Record<string, unknown>) => void;
+  page: (name?: string, properties?: Record<string, unknown>) => void;
   track: <Name extends keyof EventsOf<Catalog, "client">>(
     name: Name,
-    props: z.infer<EventsOf<Catalog, "client">[Name]["schema"]>,
+    properties: StandardSchemaV1.InferOutput<EventsOf<Catalog, "client">[Name]["schema"]>,
   ) => void;
 }
 
@@ -136,7 +138,7 @@ export function createClientTracker<Catalog extends EventCatalog>(
       userId = undefined;
       queue.clear();
     },
-    flush: () => queue.flush(),
+    flush: (flushOptions) => queue.flush(flushOptions),
     flushWithBeacon(endpoint) {
       const events = queue.drain();
 
@@ -164,10 +166,10 @@ export function createClientTracker<Catalog extends EventCatalog>(
 
       enqueue({ traits, type: "identify" });
     },
-    page(name, props = {}) {
-      enqueue({ name, props, type: "page" });
+    page(name, properties = {}) {
+      enqueue({ name, properties, type: "page" });
     },
-    track(name, props) {
+    track(name, properties) {
       // noUncheckedIndexedAccess types this as possibly undefined; the owner check also
       // guards callers who bypass the EventsOf filter with an `as` cast.
       const definition = options.catalog[name];
@@ -176,9 +178,9 @@ export function createClientTracker<Catalog extends EventCatalog>(
         throw new Error(`Unknown client-owned event: ${String(name)}`);
       }
 
-      definition.schema.parse(props);
-      // Catalog keys are strings; zod-inferred props are opaque to the open envelope record.
-      enqueue({ name: String(name), props: props as Record<string, unknown>, type: "track" });
+      assertValidEventProperties(definition.schema, String(name), properties);
+      // Catalog keys are strings; schema-inferred properties are opaque to the open envelope record.
+      enqueue({ name: String(name), properties: properties as Record<string, unknown>, type: "track" });
     },
   };
 }

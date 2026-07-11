@@ -5,7 +5,7 @@ import { buildTrackedEvent, isTrackedEvent } from "#/core/tracked-event";
 describe("buildTrackedEvent", () => {
   it("rejoins a track seed with base fields without losing the discriminant", () => {
     const event = buildTrackedEvent(
-      { name: "button_clicked", props: { id: "cta" }, type: "track" },
+      { name: "button_clicked", properties: { id: "cta" }, type: "track" },
       { anonymousId: "anon-1", eventId: "e1", owner: "client", timestamp: 0 },
     );
 
@@ -14,7 +14,7 @@ describe("buildTrackedEvent", () => {
       eventId: "e1",
       name: "button_clicked",
       owner: "client",
-      props: { id: "cta" },
+      properties: { id: "cta" },
       timestamp: 0,
       type: "track",
     });
@@ -30,14 +30,14 @@ describe("isTrackedEvent", () => {
         eventId: "e1",
         name: "button_clicked",
         owner: "client",
-        props: { id: "cta" },
+        properties: { id: "cta" },
         timestamp: 0,
         type: "track",
       }),
     ).toBe(true);
   });
 
-  it("rejects a track envelope missing name or props", () => {
+  it("rejects a track envelope missing name or properties", () => {
     expect(
       isTrackedEvent({
         anonymousId: "anon-1",
@@ -85,7 +85,7 @@ describe("isTrackedEvent", () => {
       isTrackedEvent({
         anonymousId: "anon-1",
         eventId: "e1",
-        props: {},
+        properties: {},
         timestamp: 0,
         type: "page",
       }),

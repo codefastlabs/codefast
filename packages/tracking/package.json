@@ -56,10 +56,25 @@
       "types": "./dist/index.d.mts",
       "import": "./dist/index.mjs"
     },
+    "./import-protection": {
+      "source": "./src/import-protection.ts",
+      "types": "./dist/import-protection.d.mts",
+      "import": "./dist/import-protection.mjs"
+    },
     "./client": {
       "source": "./src/client/index.ts",
       "types": "./dist/client/index.d.mts",
       "import": "./dist/client/index.mjs"
+    },
+    "./client/browser-cookie": {
+      "source": "./src/client/browser-cookie.ts",
+      "types": "./dist/client/browser-cookie.d.mts",
+      "import": "./dist/client/browser-cookie.mjs"
+    },
+    "./client/consent-cookie-mirror": {
+      "source": "./src/client/consent-cookie-mirror.ts",
+      "types": "./dist/client/consent-cookie-mirror.d.mts",
+      "import": "./dist/client/consent-cookie-mirror.mjs"
     },
     "./client/consent-storage": {
       "source": "./src/client/consent-storage.ts",
@@ -85,6 +100,11 @@
       "source": "./src/client/gpc.ts",
       "types": "./dist/client/gpc.d.mts",
       "import": "./dist/client/gpc.mjs"
+    },
+    "./client/initial-consent-store": {
+      "source": "./src/client/initial-consent-store.ts",
+      "types": "./dist/client/initial-consent-store.d.mts",
+      "import": "./dist/client/initial-consent-store.mjs"
     },
     "./client/is-analytics-allowed": {
       "source": "./src/client/is-analytics-allowed.ts",
@@ -125,6 +145,11 @@
       "source": "./src/core/consent.ts",
       "types": "./dist/core/consent.d.mts",
       "import": "./dist/core/consent.mjs"
+    },
+    "./core/consent-cookie": {
+      "source": "./src/core/consent-cookie.ts",
+      "types": "./dist/core/consent-cookie.d.mts",
+      "import": "./dist/core/consent-cookie.mjs"
     },
     "./core/cookie": {
       "source": "./src/core/cookie.ts",
@@ -216,6 +241,11 @@
       "types": "./dist/react/use-google-consent-sync.d.mts",
       "import": "./dist/react/use-google-consent-sync.mjs"
     },
+    "./react/use-initial-consent": {
+      "source": "./src/react/use-initial-consent.ts",
+      "types": "./dist/react/use-initial-consent.d.mts",
+      "import": "./dist/react/use-initial-consent.mjs"
+    },
     "./server": {
       "source": "./src/server/index.ts",
       "types": "./dist/server/index.d.mts",
@@ -225,6 +255,11 @@
       "source": "./src/server/anonymous-id-cookie.ts",
       "types": "./dist/server/anonymous-id-cookie.d.mts",
       "import": "./dist/server/anonymous-id-cookie.mjs"
+    },
+    "./server/consent-cookie": {
+      "source": "./src/server/consent-cookie.ts",
+      "types": "./dist/server/consent-cookie.d.mts",
+      "import": "./dist/server/consent-cookie.mjs"
     },
     "./server/create-server-tracker": {
       "source": "./src/server/create-server-tracker.ts",
@@ -240,6 +275,21 @@
       "source": "./src/server/region.ts",
       "types": "./dist/server/region.d.mts",
       "import": "./dist/server/region.mjs"
+    },
+    "./server/relay": {
+      "source": "./src/server/relay.ts",
+      "types": "./dist/server/relay.d.mts",
+      "import": "./dist/server/relay.mjs"
+    },
+    "./server/send-with-retry": {
+      "source": "./src/server/send-with-retry.ts",
+      "types": "./dist/server/send-with-retry.d.mts",
+      "import": "./dist/server/send-with-retry.mjs"
+    },
+    "./tanstack-start": {
+      "source": "./src/tanstack-start/index.ts",
+      "types": "./dist/tanstack-start/index.d.mts",
+      "import": "./dist/tanstack-start/index.mjs"
     },
     "./css/*": "./src/css/*",
     "./package.json": "./package.json"
@@ -260,10 +310,11 @@
     "test:watch": "vitest"
   },
   "dependencies": {
-    "zod": "catalog:"
+    "@standard-schema/spec": "catalog:"
   },
   "devDependencies": {
     "@codefast/typescript-config": "workspace:*",
+    "@tanstack/react-start": "catalog:",
     "@testing-library/dom": "catalog:",
     "@testing-library/jest-dom": "catalog:",
     "@testing-library/react": "catalog:",
@@ -281,9 +332,11 @@
     "react-dom": "catalog:",
     "tsdown": "catalog:",
     "typescript": "catalog:",
-    "vitest": "catalog:"
+    "vitest": "catalog:",
+    "zod": "catalog:"
   },
   "peerDependencies": {
+    "@tanstack/react-start": ">=1.168.0",
     "@types/react": ">=19.0.0",
     "@types/react-dom": ">=19.0.0",
     "@vercel/analytics": ">=1.0.0",
@@ -291,6 +344,9 @@
     "react-dom": ">=19.0.0"
   },
   "peerDependenciesMeta": {
+    "@tanstack/react-start": {
+      "optional": true
+    },
     "@types/react": {
       "optional": true
     },

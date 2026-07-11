@@ -86,4 +86,27 @@ describe("createCookieAnonymousId", () => {
 
     vi.unstubAllGlobals();
   });
+
+  it("refresh rolls an existing id's expiry forward without minting a new one", () => {
+    const writes: Array<string> = [];
+    const id = "3b241101-e2bb-4255-8caf-4136c566a962";
+
+    vi.spyOn(document, "cookie", "set").mockImplementation((value) => writes.push(value));
+    vi.spyOn(document, "cookie", "get").mockReturnValue(`${COOKIE_NAME}=${id}`);
+
+    createCookieAnonymousId({ cookieName: COOKIE_NAME }).refresh();
+
+    expect(writes).toEqual([expect.stringContaining(`${COOKIE_NAME}=${id}; path=/; max-age=31536000`)]);
+  });
+
+  it("refresh is a no-op for a visitor who never got an id", () => {
+    const writes: Array<string> = [];
+
+    vi.spyOn(document, "cookie", "set").mockImplementation((value) => writes.push(value));
+    vi.spyOn(document, "cookie", "get").mockReturnValue("");
+
+    createCookieAnonymousId({ cookieName: COOKIE_NAME }).refresh();
+
+    expect(writes).toHaveLength(0);
+  });
 });

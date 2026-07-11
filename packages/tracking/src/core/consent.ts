@@ -3,6 +3,13 @@
  */
 export type ConsentRegion = "eu" | "other" | "us" | "vn";
 
+export const CONSENT_REGIONS: ReadonlyArray<ConsentRegion> = ["eu", "other", "us", "vn"];
+
+/** Guards a region read from untrusted storage (a cached `InitialConsent`, a cookie). */
+export function isConsentRegion(value: unknown): value is ConsentRegion {
+  return CONSENT_REGIONS.includes(value as ConsentRegion);
+}
+
 /**
  * @since 0.5.0-canary.4
  */
@@ -73,6 +80,15 @@ export function isConsentDecision(value: unknown): value is ConsentDecision {
   return isPlainObject(value) && CONSENT_CATEGORIES.every((category) => typeof value[category] === "boolean");
 }
 
+/**
+ * Re-derives a clean per-category decision from a tamperable record — extra keys are
+ * dropped, every category becomes an explicit boolean. The one normalization rule shared
+ * by the client (`readStoredDecision`) and server (`readConsentDecisionCookie`) mirrors.
+ */
+export function normalizeConsentDecision(decision: ConsentDecision): ConsentDecision {
+  return createConsentDecision(CONSENT_CATEGORIES.filter((category) => decision[category]));
+}
+
 /** Guards a persisted consent record read from untrusted storage (e.g. `localStorage`). */
 export function isConsentRecord(value: unknown): value is ConsentRecord {
   return (
@@ -81,6 +97,13 @@ export function isConsentRecord(value: unknown): value is ConsentRecord {
     typeof value.policyVersion === "string" &&
     typeof value.timestamp === "number"
   );
+}
+
+export interface ResolveDefaultConsentOptions {
+  /** A "do not sell or share" opt-out — forces `ads` denied under opt-out regions. */
+  hasGlobalPrivacyControlSignal: boolean;
+  mode: ConsentMode;
+  requestedCategories: ReadonlyArray<ConsentCategory>;
 }
 
 /**
@@ -93,11 +116,9 @@ export function isConsentRecord(value: unknown): value is ConsentRecord {
  *
  * @since 0.5.0-canary.4
  */
-export function resolveDefaultConsent(
-  mode: ConsentMode,
-  requestedCategories: ReadonlyArray<ConsentCategory>,
-  hasGlobalPrivacyControlSignal: boolean,
-): ConsentDecision {
+export function resolveDefaultConsent(options: ResolveDefaultConsentOptions): ConsentDecision {
+  const { hasGlobalPrivacyControlSignal, mode, requestedCategories } = options;
+
   if (mode === "opt-in") {
     return createConsentDecision([]);
   }
@@ -112,7 +133,7 @@ export function resolveDefaultConsent(
 }
 
 /**
- * Region-resolved consent defaults — typically from `buildInitialConsent` on a
+ * Region-resolved consent defaults — typically from `resolveInitialConsent` on a
  * per-request server lane, then handed to the client so it never re-guesses the mode.
  *
  * @remarks
@@ -124,6 +145,46 @@ export interface InitialConsent {
   defaultConsent: ConsentDecision;
   mode: ConsentMode;
   region: ConsentRegion;
+}
+
+/**
+ * What shared HTML bakes and what an unknown-country request resolves to: all categories
+ * denied under opt-in — the one default that is safe to show any visitor anywhere.
+ * Prerendered/CDN-cached markup must carry nothing region-specific, and a missing geo
+ * header means "unknown visitor", never "known non-EU visitor".
+ */
+export const STRICTEST_INITIAL_CONSENT: InitialConsent = Object.freeze({
+  defaultConsent: Object.freeze(createConsentDecision([])),
+  mode: "opt-in",
+  region: "other",
+});
+
+/**
+ * Guards an `InitialConsent` read from untrusted storage (a session cache, a cookie).
+ * Enforces the mode/region pairing rule; the one deliberate exception is
+ * {@link STRICTEST_INITIAL_CONSENT}'s own pairing — stricter than the region's usual
+ * mode, never looser.
+ */
+export function isInitialConsent(value: unknown): value is InitialConsent {
+  if (!isPlainObject(value)) {
+    return false;
+  }
+
+  const mode = value.mode;
+  const region = value.region;
+
+  if (
+    (mode !== "opt-in" && mode !== "opt-out") ||
+    !isConsentRegion(region) ||
+    !isConsentDecision(value.defaultConsent)
+  ) {
+    return false;
+  }
+
+  return (
+    mode === resolveConsentMode(region) ||
+    (mode === STRICTEST_INITIAL_CONSENT.mode && region === STRICTEST_INITIAL_CONSENT.region)
+  );
 }
 
 /**
@@ -168,9 +229,16 @@ export function readStoredDecision(storage: ConsentStorage, policyVersion: strin
     return undefined;
   }
 
-  const stored = record.decision;
+  return normalizeConsentDecision(record.decision);
+}
 
-  return createConsentDecision(CONSENT_CATEGORIES.filter((category) => stored[category]));
+export interface ResolveEffectiveConsentOptions {
+  /** A "do not sell or share" opt-out — forces `ads` denied under opt-out regions. */
+  hasGlobalPrivacyControlSignal: boolean;
+  mode: ConsentMode;
+  policyVersion: string;
+  requestedCategories: ReadonlyArray<ConsentCategory>;
+  storage: ConsentStorage;
 }
 
 /**
@@ -179,15 +247,11 @@ export function readStoredDecision(storage: ConsentStorage, policyVersion: strin
  * non-React gate (e.g. a tracker's `isAnalyticsAllowed` option) doesn't have to reimplement
  * "read storage, validate the policy version, fall back to `resolveDefaultConsent`" itself.
  */
-export function resolveEffectiveConsent(
-  storage: ConsentStorage,
-  policyVersion: string,
-  requestedCategories: ReadonlyArray<ConsentCategory>,
-  mode: ConsentMode,
-  hasGlobalPrivacyControlSignal: boolean,
-): ConsentDecision {
+export function resolveEffectiveConsent(options: ResolveEffectiveConsentOptions): ConsentDecision {
+  const { hasGlobalPrivacyControlSignal, mode, policyVersion, requestedCategories, storage } = options;
+
   return (
     readStoredDecision(storage, policyVersion) ??
-    resolveDefaultConsent(mode, requestedCategories, hasGlobalPrivacyControlSignal)
+    resolveDefaultConsent({ hasGlobalPrivacyControlSignal, mode, requestedCategories })
   );
 }

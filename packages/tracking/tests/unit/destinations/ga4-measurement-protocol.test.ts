@@ -29,7 +29,7 @@ describe("createGa4MeasurementProtocolDestination", () => {
       eventId: "e1",
       name: "order_completed",
       owner: "server",
-      props: { total: 42, currency: "USD" },
+      properties: { total: 42, currency: "USD" },
       timestamp: 1_700_000_000_000,
       type: "track",
     });
@@ -59,7 +59,7 @@ describe("createGa4MeasurementProtocolDestination", () => {
       eventId: "e1",
       name: "invalid-name",
       owner: "server",
-      props: {},
+      properties: {},
       timestamp: 0,
       type: "track",
     });
@@ -81,7 +81,7 @@ describe("createGa4MeasurementProtocolDestination", () => {
       eventId: "e2",
       name: "order_completed",
       owner: "server",
-      props: {},
+      properties: {},
       timestamp: 0,
       type: "track",
     });
@@ -103,7 +103,7 @@ describe("createGa4MeasurementProtocolDestination", () => {
       eventId: "e3",
       name: "order_completed",
       owner: "server",
-      props: {},
+      properties: {},
       timestamp: 0,
       type: "track",
     });
@@ -125,7 +125,7 @@ describe("createGa4MeasurementProtocolDestination", () => {
       eventId: "e4",
       name: "signed_up",
       owner: "server",
-      props: {},
+      properties: {},
       timestamp: 0,
       type: "track",
       userId: "user-1",
@@ -147,7 +147,7 @@ describe("createGa4MeasurementProtocolDestination", () => {
       eventId: "e5",
       name: "order_completed",
       owner: "server",
-      props: { items: ["a", "b"] },
+      properties: { items: ["a", "b"] },
       timestamp: 0,
       type: "track",
     });
@@ -199,7 +199,7 @@ describe("createGa4MeasurementProtocolDestination", () => {
   it("routes to the debug endpoint when debug is enabled", async () => {
     const destination = createGa4MeasurementProtocolDestination({
       apiSecret: "secret",
-      debug: true,
+      debugMode: true,
       measurementId: "G-TEST123",
     });
 
@@ -208,7 +208,7 @@ describe("createGa4MeasurementProtocolDestination", () => {
       eventId: "e8",
       name: "order_completed",
       owner: "server",
-      props: {},
+      properties: {},
       timestamp: 0,
       type: "track",
     });
@@ -244,7 +244,7 @@ describe("createGa4MeasurementProtocolDestination", () => {
         eventId: "e9",
         name: "order_completed",
         owner: "server",
-        props: {},
+        properties: {},
         timestamp: 0,
         type: "track",
       }),

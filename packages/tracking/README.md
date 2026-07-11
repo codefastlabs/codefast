@@ -1,8 +1,11 @@
 # @codefast/tracking
 
-Fullstack, type-safe event tracking for TanStack Start apps. Each app defines its own Zod
-event catalog tagged with an owner (`"client"` or `"server"`); trackers built from that
-catalog only allow firing events owned by that side — enforced at compile time.
+Fullstack, type-safe event tracking for TanStack Start apps. Each app defines its own
+event catalog over any [Standard Schema](https://standardschema.dev) library (zod,
+`zod/mini`, valibot, ...) tagged with an owner (`"client"` or `"server"`); trackers built
+from that catalog only allow firing events owned by that side — enforced at compile time.
+The package itself depends only on the spec's types, so the client bundle pays for the
+schema library the app already ships (`zod/mini` keeps it smallest).
 
 See [SPEC.md](./SPEC.md) for the full design (identity correlation, offline queue/retry,
 multi-destination fan-out, region-based consent).
@@ -94,16 +97,23 @@ const anonymousId = createServerPersistedAnonymousId({
 ## Router page views + unload flush
 
 `attachRouterPageTracking` is duck-typed against `Router["subscribe"]`, so it takes a real
-`@tanstack/react-router` instance without this package depending on it. `attachClientLifecycle`
-wires the periodic flush and the `sendBeacon` unload flush — `EventQueue` itself already
-auto-flushes once a batch hits its size threshold.
+`@tanstack/react-router` instance without this package depending on it. The queue schedules
+its own flushes — batch-size threshold plus a one-shot idle timer armed only while events
+are pending (an idle page runs no timer), paused while `navigator.onLine` reports offline
+so the retry budget survives a dead connection. `attachClientLifecycle` adds the triggers
+the queue can't own: end-of-session delivery on hide/pagehide (`sendBeacon` to
+`beaconEndpoint`, or a keepalive `fetch` flush without one) and an immediate flush when
+connectivity returns.
 
 ```ts
 import { attachClientLifecycle, attachRouterPageTracking } from "@codefast/tracking/client";
 
 attachRouterPageTracking(tracker, router); // router: your app's TanStack Router instance
-attachClientLifecycle(tracker, { beaconEndpoint: "/api/events", flushIntervalMs: 10_000 });
+attachClientLifecycle(tracker, { beaconEndpoint: "/api/events" });
 ```
+
+Skip both helpers when every destination is `delivery: "immediate"` (gtag, Vercel) and
+page views come from GA4 Enhanced Measurement — there is nothing to flush.
 
 ## Consent (region-based, per-category)
 
@@ -161,7 +171,7 @@ const policyVersion = "2026-01";
 // Prefer a re-readable snapshot from your server-fn lane (apps/ui `visitor-consent.ts`).
 // Fail closed to opt-in until that resolve lands.
 const isAnalyticsAllowed = createIsAnalyticsAllowed({
-  getHasGlobalPrivacyControlSignal: hasGlobalPrivacyControlSignal,
+  hasGlobalPrivacyControlSignal,
   getMode: () => "opt-in",
   policyVersion,
   requestedCategories,
@@ -227,31 +237,96 @@ withdrawing first-party `analytics`.
 
 ## TanStack Start wiring
 
-`apps/ui` (`src/features/tracking/`) is the reference consumer. On CDN-cached / prerendered
-pages the HTML cannot be personalized per visitor, so the shipped lane is a **server
-function** that resolves region after hydration:
+`apps/ui` (`src/features/tracking/`) is the reference consumer. ISR HTML is CDN-cached and
+shared across visitors, so it cannot be personalized per visitor — the shipped lane is a
+**server function** that resolves region after hydration. The
+**`@codefast/tracking/tanstack-start`** subpath (optional peer on
+`@tanstack/react-start`, server-only) owns the request/response glue, so the app's server
+functions are one-liners:
 
-1. **`buildInitialConsent({ countryCode, requestedCategories, hasGlobalPrivacyControlSignal? })`**
-   (`@codefast/tracking/server`) — region → mode → default decision. Call it from a
-   `createServerFn` handler that reads the geo header (see `apps/ui`
-   `resolve-visitor-consent.ts` / `initial-consent-from-request.ts`). Export
-   `EU_COUNTRY_CODES` / `OPT_IN_EQUIVALENT_COUNTRY_CODES` when a restricted edge runtime
-   must duplicate the map.
-2. **Client snapshot** — after hydration, call the server function once per session
-   (`private, no-store`; cache in `sessionStorage`), feed a `useSyncExternalStore` store,
-   and pass `getMode: () => snapshot.initialConsent.mode` into `createIsAnalyticsAllowed`
-   (see `apps/ui` `visitor-consent.ts`). Until it resolves, fail closed to the strictest
-   opt-in default.
+1. **Server function** — `resolveInitialConsentFromRequest({ requestedCategories })`
+   reads the geo header (default `x-vercel-ip-country`) and `sec-gpc`, stamps
+   `cache-control: private, no-store`, and fails closed when geo is missing. Anonymous-id
+   persistence: `setAnonymousIdResponseCookie` / `clearAnonymousIdResponseCookie` around
+   `createServerFn` handlers (see `apps/ui` `anonymous-id.ts`). Static top-level imports
+   are fine in server-fn files — the Start compiler strips handler bodies (and their
+   then-unused imports) from the client transform; see the isolation section below for
+   the build-time guard.
+2. **Client store** — `createInitialConsentStore({ resolve, sessionStorageKey? })`
+   (`@codefast/tracking/client`) owns the whole client half: strictest default until the
+   server answers, single-flight resolve, per-session cache (validated with
+   `isInitialConsent`), fail-closed-but-retryable errors, retry on tab-visible. Kick
+   `store.ensureResolved()` at router creation (window-guarded) so the round trip overlaps
+   hydration; read it via `useInitialConsent(store)` (`@codefast/tracking/react`) or
+   `useSyncExternalStore` directly, and pass
+   `getMode: () => store.getSnapshot().initialConsent.mode` into `createIsAnalyticsAllowed`.
 3. **`createIsAnalyticsAllowed` / `createConsentWithdrawalHandler`**
    (`@codefast/tracking/client`) — tracker gate + revoke clears (`tracker.clear`,
    anonymous-id cookie, `_ga*` via `clearGoogleAnalyticsCookies`).
 4. **`useGoogleConsentSync`** (`@codefast/tracking/react`) — Consent Mode `update` +
    optional idempotent gtag load, including cross-tab / privacy-page decisions.
 
-Cached/prerendered HTML is shared across visitors (CDN ISR or static files) — bake the
-strictest Consent Mode default into that shared render via a literal `defaultConsent`.
-Do not put geo (or any request-derived consent) into it via `loaderData` or the document
-shell; per-visitor region rides the private server-fn lane after hydration.
+ISR/CDN-cached HTML is shared across visitors — bake the strictest Consent Mode default
+(`STRICTEST_INITIAL_CONSENT` from the root/`core` entry) into that shared render via a
+literal `defaultConsent`. Do not put geo (or any request-derived consent) into it via
+`loaderData` or the document shell; per-visitor region rides the private server-fn lane
+after hydration.
+
+## Server-side delivery
+
+`createServerTracker` accepts `waitUntil` — hand it Cloudflare's `ctx.waitUntil`,
+Vercel's `waitUntil`, or srvx's `request.waitUntil` and `track`/`group`/`alias` resolve
+after validation instead of after the slowest destination's retry ladder; failures still
+report through `onDestinationError`. `withContext(context)` binds the per-request identity
+once (pairs with `resolveServerTrackerContextFromRequest` from the `tanstack-start`
+subpath), so handlers read `tracker.withContext(ctx).track(name, props)`. The fetch-based
+destinations (`createHttpDestination`, `createGa4MeasurementProtocolDestination`) abort
+stalled requests after `requestTimeoutMs` (default 10s), and the HTTP destination ships a
+whole queue flush as one batched POST via `sendBatch`.
+
+### Beacon ingest (the receive half)
+
+`relayTrackedEvents(payload, { catalog, destinations, context?, isAllowed? })`
+(`@codefast/tracking/server`) validates a batch of client envelopes (shape, catalog
+membership, schema), re-stamps identity from what the server read off the request, keeps
+client-minted `eventId`s so re-sent beacons dedupe, and fans out with the server retry
+ladder. `createTrackedEventIngestHandler(options)` wraps it as a framework-agnostic
+`Request → Response` endpoint (405/400/413 handling included) for
+`flushWithBeacon`/`beaconEndpoint` to target.
+
+### Consent on the server
+
+`withConsentCookieMirror(storage, { cookieName })` (`@codefast/tracking/client`) mirrors
+every saved decision into a cookie (localStorage stays the UI's source of truth);
+`readConsentDecisionCookie` (`@codefast/tracking/server`) or
+`readConsentDecisionRequestCookie` (`tanstack-start`) reads it back under the current
+policy version — the gate that keeps server-owned tracking honoring exactly what the
+visitor chose, instead of tracking consent-blind.
+
+### Keeping server-only subpaths out of client bundles
+
+`./server`, `./server/*`, `./tanstack-start`, and
+`./destinations/ga4-measurement-protocol` (it carries an `apiSecret`) must never enter a
+client bundle. On TanStack Start, enforce that at build time with the plugin's
+import-protection — the default rules already deny local `**/*.server.*` files in the
+client environment; spread the package's own deny-list in, so a new server-only subpath
+can never go stale in your config:
+
+```ts
+import { SERVER_ONLY_IMPORT_SPECIFIERS } from "@codefast/tracking/import-protection";
+
+tanstackStart({
+  importProtection: {
+    client: { specifiers: [...SERVER_ONLY_IMPORT_SPECIFIERS] },
+  },
+});
+```
+
+A violation is mocked with a console diagnostic in dev and fails the build in prod, with
+a trace of the offending import chain. On other bundlers, wire the same list into the
+equivalent deny mechanism (or an eslint/oxlint import restriction) — the package
+deliberately ships no runtime guard, since `package.json#exports` here is generated by
+tooling that owns the condition map.
 
 ## Google tag / GTM loaders (advanced Consent Mode)
 

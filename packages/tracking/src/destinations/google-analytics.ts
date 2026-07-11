@@ -358,7 +358,7 @@ export function createGoogleAnalyticsDestination(options: GoogleAnalyticsDestina
         case "page": {
           if (options.trackPageViews === true) {
             // gtag.js attaches page_location/page_title from the live document itself.
-            window.gtag("event", "page_view", flattenEventProps(omitHref(event.props)));
+            window.gtag("event", "page_view", flattenEventProps(omitHref(event.properties)));
           }
 
           return;
@@ -369,7 +369,7 @@ export function createGoogleAnalyticsDestination(options: GoogleAnalyticsDestina
             return;
           }
 
-          window.gtag("event", event.name, flattenEventProps(event.props));
+          window.gtag("event", event.name, flattenEventProps(event.properties));
 
           return;
         }

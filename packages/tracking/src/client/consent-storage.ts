@@ -7,6 +7,11 @@ import { isConsentRecord } from "#/core/consent";
  * for the session instead of re-prompting in a loop. `subscribe` fires for same-tab
  * writes and, via the `storage` event, for decisions made in other tabs.
  *
+ * `load()` parses and validates at most once per change: the result is cached and
+ * invalidated by `save`/`clear` and by cross-tab `storage` events, so per-event consent
+ * gates and per-render `useSyncExternalStore` snapshots cost a memory read, not a
+ * `JSON.parse`.
+ *
  * @remarks
  * The record persists as plain `JSON.stringify(ConsentRecord)` — a stable contract, so
  * pre-hydration inline scripts (e.g. a Consent Mode default bootstrap) can read the
@@ -17,6 +22,9 @@ import { isConsentRecord } from "#/core/consent";
 export function createLocalStorageConsentStorage(storageKey: string): ConsentStorage {
   const listeners = new Set<() => void>();
   let memoryRecord: ConsentRecord | undefined;
+  // Keyed by the raw string so ANY write path (save(), another tab, dev tools) is caught
+  // by a cheap string compare — parse + validate re-run only when the value changed.
+  let cache: { raw: string | null; record: ConsentRecord | undefined } | undefined;
 
   function notify(): void {
     for (const listener of listeners) {
@@ -31,6 +39,7 @@ export function createLocalStorageConsentStorage(storageKey: string): ConsentSto
       }
 
       memoryRecord = undefined;
+      cache = undefined;
 
       try {
         globalThis.window.localStorage.removeItem(storageKey);
@@ -48,15 +57,26 @@ export function createLocalStorageConsentStorage(storageKey: string): ConsentSto
       try {
         const raw = globalThis.window.localStorage.getItem(storageKey);
 
-        if (!raw) {
-          return memoryRecord;
+        if (cache && raw === cache.raw) {
+          return cache.record;
         }
 
-        const parsed: unknown = JSON.parse(raw);
+        let record: ConsentRecord | undefined;
 
-        // Drop malformed records at the source — mirrors the offline-queue storage guard.
-        return isConsentRecord(parsed) ? parsed : memoryRecord;
+        if (raw) {
+          const parsed: unknown = JSON.parse(raw);
+
+          // Drop malformed records at the source — mirrors the offline-queue storage guard.
+          record = isConsentRecord(parsed) ? parsed : memoryRecord;
+        } else {
+          record = memoryRecord;
+        }
+
+        cache = { raw, record };
+
+        return record;
       } catch {
+        // Storage blocked — never seed the cache off an error path.
         return memoryRecord;
       }
     },
@@ -64,6 +84,8 @@ export function createLocalStorageConsentStorage(storageKey: string): ConsentSto
       if (typeof globalThis.window === "undefined") {
         return;
       }
+
+      cache = undefined;
 
       try {
         globalThis.window.localStorage.setItem(storageKey, JSON.stringify(record));

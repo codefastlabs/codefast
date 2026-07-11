@@ -8,7 +8,7 @@ import { useEffect } from "react";
 
 import { CONSENT_POLICY_VERSION, consentStorage, REQUESTED_CONSENT_CATEGORIES } from "#/features/tracking/lib/consent";
 import { clearAnonymousId, getTracker } from "#/features/tracking/lib/tracking";
-import { ensureVisitorConsentResolved, useVisitorConsent } from "#/features/tracking/lib/visitor-consent";
+import { useVisitorConsent } from "#/features/tracking/lib/visitor-consent";
 
 export interface UseSiteConsentResult {
   consent: UseConsentResult;
@@ -62,11 +62,11 @@ function ensureConsentWithdrawalWatch(): void {
  * is unused on this analytics-only site — GPC only forces `ads` denied.
  */
 export function useSiteConsent(): UseSiteConsentResult {
+  // useVisitorConsent's own effect re-kicks resolution — no separate ensure call needed.
   const { initialConsent, isResolved } = useVisitorConsent();
 
   // Post-hydration, once per page load — SSR keeps the baked strictest default.
   useEffect(() => {
-    ensureVisitorConsentResolved();
     ensureConsentWithdrawalWatch();
   }, []);
 

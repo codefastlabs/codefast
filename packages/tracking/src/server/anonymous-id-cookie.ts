@@ -1,6 +1,4 @@
-import { readCookieValue } from "#/core/cookie";
-
-const ONE_YEAR_IN_SECONDS = 60 * 60 * 24 * 365;
+import { ONE_YEAR_IN_SECONDS, readCookieValue } from "#/core/cookie";
 
 // The only shape the client ever mints (crypto.randomUUID) — anything else is rejected.
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -35,7 +33,7 @@ export function readAnonymousIdCookie(cookieHeader: string | null | undefined, c
   return value !== undefined && isValidAnonymousId(value) ? value : undefined;
 }
 
-export interface BuildAnonymousIdSetCookieOptions {
+export interface AnonymousIdSetCookieOptions {
   /** Cookie name — must match what the client tracker reads. */
   cookieName: string;
   /** The client-minted id to persist — throws unless it is exactly UUID-shaped. */
@@ -58,7 +56,7 @@ export interface BuildAnonymousIdSetCookieOptions {
  *
  * @throws Error when `id` is not UUID-shaped or `cookieName` is not a valid token.
  */
-export function buildAnonymousIdSetCookie(options: BuildAnonymousIdSetCookieOptions): string {
+export function buildAnonymousIdSetCookie(options: AnonymousIdSetCookieOptions): string {
   const { cookieName, id, maxAgeSeconds = ONE_YEAR_IN_SECONDS } = options;
 
   assertCookieName(cookieName);

@@ -1,3 +1,5 @@
+"use client";
+
 import { useCallback, useMemo, useRef, useSyncExternalStore } from "react";
 
 import type { ConsentCategory, ConsentDecision, ConsentMode, ConsentStorage } from "#/core/consent";
@@ -105,7 +107,8 @@ export function useConsent(options: UseConsentOptions): UseConsentResult {
     saveDecision(createConsentDecision(requestedCategories));
   }, [requestedCategories, saveDecision]);
 
-  const effectiveConsent = decision ?? resolveDefaultConsent(mode, requestedCategories, hasGlobalPrivacyControlSignal);
+  const effectiveConsent =
+    decision ?? resolveDefaultConsent({ hasGlobalPrivacyControlSignal, mode, requestedCategories });
 
   return useMemo(
     () => ({

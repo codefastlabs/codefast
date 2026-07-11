@@ -37,24 +37,24 @@ describe("createIsAnalyticsAllowed", () => {
   it("re-reads mode and GPC on each call", () => {
     const storage = createLocalStorageConsentStorage("test-is-analytics-allowed-gpc");
     const getMode = vi.fn(() => "opt-out" as const);
-    const getHasGlobalPrivacyControlSignal = vi.fn(() => false);
+    const hasGlobalPrivacyControlSignal = vi.fn(() => false);
 
     const isAnalyticsAllowed = createIsAnalyticsAllowed({
       requestedCategories: ["ads", "analytics"],
       getMode,
-      getHasGlobalPrivacyControlSignal,
+      hasGlobalPrivacyControlSignal,
       policyVersion: "1",
       storage,
     });
 
     expect(isAnalyticsAllowed()).toBe(true);
     expect(getMode).toHaveBeenCalledOnce();
-    expect(getHasGlobalPrivacyControlSignal).toHaveBeenCalledOnce();
+    expect(hasGlobalPrivacyControlSignal).toHaveBeenCalledOnce();
 
     getMode.mockClear();
-    getHasGlobalPrivacyControlSignal.mockClear();
+    hasGlobalPrivacyControlSignal.mockClear();
     expect(isAnalyticsAllowed()).toBe(true);
     expect(getMode).toHaveBeenCalledOnce();
-    expect(getHasGlobalPrivacyControlSignal).toHaveBeenCalledOnce();
+    expect(hasGlobalPrivacyControlSignal).toHaveBeenCalledOnce();
   });
 });

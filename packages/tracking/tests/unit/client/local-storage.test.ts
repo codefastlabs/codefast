@@ -8,7 +8,7 @@ const event: TrackedEvent = {
   eventId: "e1",
   name: "button_clicked",
   owner: "client",
-  props: {},
+  properties: {},
   timestamp: 0,
   type: "track",
 };
@@ -40,7 +40,7 @@ describe("createLocalStorageQueueStorage", () => {
       "tracking-queue-malformed",
       JSON.stringify([
         event,
-        { name: "button_clicked", props: {} }, // pre-migration shape, no `type`
+        { name: "button_clicked", properties: {} }, // pre-migration shape, no `type`
         // type presents but missing kind-specific fields
         { anonymousId: "anon-1", eventId: "e2", timestamp: 0, type: "track" },
         null,

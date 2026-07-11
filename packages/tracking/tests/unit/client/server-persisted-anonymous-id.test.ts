@@ -121,4 +121,27 @@ describe("createServerPersistedAnonymousId", () => {
 
     expect(document.cookie).not.toContain(COOKIE_NAME);
   });
+
+  it("refresh re-issues an existing cookie through the server, within the once-per-load budget", () => {
+    document.cookie = `${COOKIE_NAME}=3b241101-e2bb-4255-8caf-4136c566a962; path=/; max-age=3600`;
+
+    const persist = vi.fn().mockResolvedValue(undefined);
+    const anonymousId = createServerPersistedAnonymousId({ cookieName: COOKIE_NAME, persist });
+
+    anonymousId.refresh();
+    anonymousId.refresh();
+    anonymousId.getOrCreate();
+
+    expect(persist).toHaveBeenCalledExactlyOnceWith("3b241101-e2bb-4255-8caf-4136c566a962");
+  });
+
+  it("refresh never mints nor calls the server for a visitor without an id", () => {
+    const persist = vi.fn().mockResolvedValue(undefined);
+    const anonymousId = createServerPersistedAnonymousId({ cookieName: COOKIE_NAME, persist });
+
+    anonymousId.refresh();
+
+    expect(persist).not.toHaveBeenCalled();
+    expect(document.cookie).not.toContain(COOKIE_NAME);
+  });
 });

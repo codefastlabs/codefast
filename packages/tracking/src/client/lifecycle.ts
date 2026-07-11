@@ -5,16 +5,19 @@ import type { EventCatalog } from "#/core/event-catalog";
  * @since 0.5.0-canary.4
  */
 export interface ClientLifecycleOptions {
-  /** `sendBeacon` target used on unload — omit to skip the unload flush entirely. */
+  /**
+   * `sendBeacon` target used on unload — omit to fall back to a keepalive `fetch` flush
+   * through the queue's own destinations.
+   */
   beaconEndpoint?: string | undefined;
-  flushIntervalMs?: number | undefined;
 }
 
 /**
- * Wires the two flush triggers the queue itself can't own (batch-size is handled inside
- * `EventQueue`): a periodic interval flush, and a best-effort `sendBeacon` flush on
- * unload — `fetch` isn't reliable once the page starts unloading, `sendBeacon` is.
- * Returns a cleanup function to remove all listeners/timers.
+ * Wires the flush triggers the queue can't own itself (batch-size and idle-delay flushes
+ * live inside `EventQueue`): end-of-session delivery on hide/pagehide — `sendBeacon` to
+ * `beaconEndpoint` when set, else a keepalive flush so in-flight requests survive the
+ * dismissal — and an immediate flush when connectivity returns, pairing with the queue's
+ * own offline guard. Returns a cleanup function that removes every listener.
  *
  * @since 0.5.0-canary.4
  */
@@ -22,15 +25,14 @@ export function attachClientLifecycle<Catalog extends EventCatalog>(
   tracker: Pick<ClientTracker<Catalog>, "flush" | "flushWithBeacon">,
   options: ClientLifecycleOptions = {},
 ): () => void {
-  const flushIntervalMs = options.flushIntervalMs ?? 10_000;
-  const intervalId = setInterval(() => {
-    void tracker.flush();
-  }, flushIntervalMs);
-
   function flushOnUnload(): void {
-    if (options.beaconEndpoint !== undefined) {
-      tracker.flushWithBeacon(options.beaconEndpoint);
+    if (options.beaconEndpoint === undefined) {
+      void tracker.flush({ keepalive: true });
+
+      return;
     }
+
+    tracker.flushWithBeacon(options.beaconEndpoint);
   }
 
   function handleVisibilityChange(): void {
@@ -39,12 +41,17 @@ export function attachClientLifecycle<Catalog extends EventCatalog>(
     }
   }
 
+  function handleOnline(): void {
+    void tracker.flush();
+  }
+
   document.addEventListener("visibilitychange", handleVisibilityChange);
   window.addEventListener("pagehide", flushOnUnload);
+  window.addEventListener("online", handleOnline);
 
   return () => {
-    clearInterval(intervalId);
     document.removeEventListener("visibilitychange", handleVisibilityChange);
     window.removeEventListener("pagehide", flushOnUnload);
+    window.removeEventListener("online", handleOnline);
   };
 }

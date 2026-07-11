@@ -1,9 +1,8 @@
-export type { Ga4MeasurementProtocolDestinationOptions } from "#/destinations/ga4-measurement-protocol";
-export {
-  createGa4MeasurementProtocolDestination,
-  extractGa4ClientId,
-  extractGa4SessionId,
-} from "#/destinations/ga4-measurement-protocol";
+// Browser-lane barrel only. Deliberately NOT re-exported here:
+// - `#/destinations/vercel-analytics` — its top-level `@vercel/analytics` import would make
+//   the optional peer mandatory for every barrel consumer; import it via its own subpath.
+// - `#/destinations/ga4-measurement-protocol` — carries a server `apiSecret`; its subpath
+//   is server-only — deny it in client builds (e.g. Start importProtection) so the secret never ships.
 
 export type {
   EnsureGtagOptions,
@@ -38,6 +37,3 @@ export {
 
 export type { HttpDestinationOptions } from "#/destinations/http";
 export { createHttpDestination } from "#/destinations/http";
-
-export type { VercelAnalyticsDestinationOptions } from "#/destinations/vercel-analytics";
-export { createVercelAnalyticsDestination } from "#/destinations/vercel-analytics";

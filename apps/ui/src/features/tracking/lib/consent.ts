@@ -1,6 +1,6 @@
 import { createLocalStorageConsentStorage } from "@codefast/tracking/client";
 import type { ConsentCategory, InitialConsent } from "@codefast/tracking/core";
-import { createConsentDecision } from "@codefast/tracking/core";
+import { STRICTEST_INITIAL_CONSENT } from "@codefast/tracking/core";
 
 /** Bump when the privacy policy changes — invalidates any previously stored decision. */
 export const CONSENT_POLICY_VERSION = "1";
@@ -15,19 +15,10 @@ export const CONSENT_STORAGE_KEY = "codefast-ui-consent";
 export const REQUESTED_CONSENT_CATEGORIES: ReadonlyArray<ConsentCategory> = ["analytics"];
 
 export type { InitialConsent };
-
-/**
- * What every render bakes and every visitor starts from — deliberately visitor-independent,
- * since entry pages are static files and ISR HTML is CDN-cached across visitors; a
- * request-derived value here would leak the first visitor's region to everyone behind the
- * cache. The region-correct default arrives per visitor over the server-function lane
- * (`resolve-visitor-consent.ts`) after hydration.
- */
-export const STRICTEST_INITIAL_CONSENT: InitialConsent = {
-  defaultConsent: createConsentDecision([]),
-  mode: "opt-in",
-  region: "other",
-};
+// Every render bakes this visitor-independent default — ISR HTML is CDN-cached and shared
+// across visitors, so nothing per-request may enter it; the region-correct value arrives
+// per visitor over the server-function lane (`resolve-visitor-consent.ts`).
+export { STRICTEST_INITIAL_CONSENT };
 
 // Module scope — every consumer must share one storage so decisions sync across surfaces.
 export const consentStorage = createLocalStorageConsentStorage(CONSENT_STORAGE_KEY);

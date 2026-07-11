@@ -119,7 +119,7 @@ export interface GoogleTagManagerDestinationOptions {
 }
 
 /**
- * Pushes catalog envelopes onto GTM's `dataLayer` as `{ event, …props }` objects —
+ * Pushes catalog envelopes onto GTM's `dataLayer` as `{ event, …properties }` objects —
  * `delivery: "immediate"` because GTM owns its own queue and transport. Requires the GTM
  * container (or a consent-gated bootstrap) to be mounted by the app; this destination only
  * enqueues. If GTM already loads GA4, do not also register `createGoogleAnalyticsDestination`
@@ -165,7 +165,7 @@ export function createGoogleTagManagerDestination(options: GoogleTagManagerDesti
           if (options.trackPageViews === true) {
             dataLayer.push({
               event: "page_view",
-              ...flattenEventProps(omitHref(event.props), { allowNull: true }),
+              ...flattenEventProps(omitHref(event.properties), { allowNull: true }),
             });
           }
 
@@ -180,7 +180,7 @@ export function createGoogleTagManagerDestination(options: GoogleTagManagerDesti
 
           dataLayer.push({
             event: event.name,
-            ...flattenEventProps(event.props, { allowNull: true }),
+            ...flattenEventProps(event.properties, { allowNull: true }),
           });
 
           return;
