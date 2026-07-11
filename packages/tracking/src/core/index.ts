@@ -17,6 +17,7 @@ export {
   isConsentRecord,
   isConsentRegion,
   isInitialConsent,
+  normalizeConsentDecision,
   readStoredDecision,
   resolveConsentMode,
   resolveDefaultConsent,
@@ -24,25 +25,16 @@ export {
   STRICTEST_INITIAL_CONSENT,
 } from "#/core/consent";
 
-export { decodeConsentCookieValue, encodeConsentCookieValue } from "#/core/consent-cookie";
+export type { ConsentConfig } from "#/core/consent-config";
+export { defineConsentConfig } from "#/core/consent-config";
 
 export { readCookieValue } from "#/core/cookie";
 
-export type { Destination, DestinationSendOptions } from "#/core/destination";
+export type { Destination } from "#/core/destination";
 
-export type { EventCatalog, EventDefinition, EventsOf } from "#/core/event-catalog";
+export type { EventCatalog, EventDefinition } from "#/core/event-catalog";
 export { assertValidEventProperties, defineEventCatalog } from "#/core/event-catalog";
 
-export { deriveEventId, generateEventId } from "#/core/event-id";
+export { generateEventId } from "#/core/event-id";
 
-export type {
-  AliasEvent,
-  GroupEvent,
-  IdentifyEvent,
-  PageViewEvent,
-  TrackEvent,
-  TrackedEvent,
-  TrackedEventBase,
-  TrackedEventSeed,
-} from "#/core/tracked-event";
-export { buildTrackedEvent, isTrackedEvent } from "#/core/tracked-event";
+export type { TrackedEvent, TrackedEventBase, TrackEvent } from "#/core/tracked-event";

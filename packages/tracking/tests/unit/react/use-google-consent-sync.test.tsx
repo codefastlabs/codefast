@@ -1,6 +1,7 @@
 import { act, renderHook } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
+import type { ConsentConfig } from "#/core/consent-config";
 import { updateGoogleConsent } from "#/destinations/google-analytics";
 import { useConsent } from "#/react/use-consent";
 import { useGoogleConsentSync } from "#/react/use-google-consent-sync";
@@ -10,6 +11,12 @@ vi.mock(import("#/destinations/google-analytics"), async (importOriginal) => ({
   ...(await importOriginal()),
   updateGoogleConsent: vi.fn(),
 }));
+
+const V1_CONFIG: ConsentConfig = {
+  policyVersion: "v1",
+  requestedCategories: ["analytics"],
+  storageKey: "test-consent",
+};
 
 describe("useGoogleConsentSync", () => {
   afterEach(() => {
@@ -21,7 +28,7 @@ describe("useGoogleConsentSync", () => {
     const loadGtagScript = vi.fn();
 
     renderHook(() => {
-      const consent = useConsent({ mode: "opt-in", policyVersion: "v1", storage });
+      const consent = useConsent({ config: V1_CONFIG, mode: "opt-in", storage });
 
       useGoogleConsentSync(consent, { loadGtagScript });
 
@@ -37,7 +44,7 @@ describe("useGoogleConsentSync", () => {
     const loadGtagScript = vi.fn();
 
     const { result } = renderHook(() => {
-      const consent = useConsent({ mode: "opt-in", policyVersion: "v1", storage });
+      const consent = useConsent({ config: V1_CONFIG, mode: "opt-in", storage });
 
       useGoogleConsentSync(consent, { loadGtagScript });
 
@@ -62,7 +69,7 @@ describe("useGoogleConsentSync", () => {
     const loadGtagScript = vi.fn();
 
     renderHook(() => {
-      const consent = useConsent({ mode: "opt-out", policyVersion: "v1", storage });
+      const consent = useConsent({ config: V1_CONFIG, mode: "opt-out", storage });
 
       useGoogleConsentSync(consent, { loadGtagScript });
 

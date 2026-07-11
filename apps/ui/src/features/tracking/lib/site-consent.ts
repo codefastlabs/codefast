@@ -1,14 +1,14 @@
+import type { ConsentMode } from "@codefast/tracking";
+import { readStoredDecision } from "@codefast/tracking";
 import { createConsentWithdrawalHandler, hasGlobalPrivacyControlSignal } from "@codefast/tracking/client";
-import type { ConsentMode } from "@codefast/tracking/core";
-import { readStoredDecision } from "@codefast/tracking/core";
 import { clearGoogleAnalyticsCookies } from "@codefast/tracking/destinations";
 import type { UseConsentResult } from "@codefast/tracking/react";
 import { useConsent } from "@codefast/tracking/react";
 import { useEffect } from "react";
 
-import { CONSENT_POLICY_VERSION, consentStorage, REQUESTED_CONSENT_CATEGORIES } from "#/features/tracking/lib/consent";
-import { clearAnonymousId, getTracker } from "#/features/tracking/lib/tracking";
-import { useVisitorConsent } from "#/features/tracking/lib/visitor-consent";
+import { consentConfig } from "#/features/tracking/lib/consent";
+import { clearAnonymousId } from "#/features/tracking/lib/tracking";
+import { consentRuntime, useVisitorConsent } from "#/features/tracking/lib/visitor-consent";
 
 export interface UseSiteConsentResult {
   consent: UseConsentResult;
@@ -20,9 +20,6 @@ export interface UseSiteConsentResult {
 const onConsentWithdrawal = createConsentWithdrawalHandler({
   clearAnonymousId,
   clearGoogleAnalyticsCookies,
-  clearTracker: () => {
-    getTracker().clear();
-  },
 });
 
 let isWithdrawalWatchStarted = false;
@@ -39,14 +36,14 @@ function ensureConsentWithdrawalWatch(): void {
   isWithdrawalWatchStarted = true;
 
   const syncWithdrawal = (): void => {
-    const decision = readStoredDecision(consentStorage, CONSENT_POLICY_VERSION);
+    const decision = readStoredDecision(consentRuntime.storage, consentConfig.policyVersion);
 
     if (decision !== undefined) {
       onConsentWithdrawal(decision);
     }
   };
 
-  consentStorage.subscribe(syncWithdrawal);
+  consentRuntime.storage.subscribe(syncWithdrawal);
   syncWithdrawal();
 }
 
@@ -71,11 +68,10 @@ export function useSiteConsent(): UseSiteConsentResult {
   }, []);
 
   const consent = useConsent({
+    config: consentConfig,
     hasGlobalPrivacyControlSignal: hasGlobalPrivacyControlSignal(),
     mode: initialConsent.mode,
-    policyVersion: CONSENT_POLICY_VERSION,
-    requestedCategories: REQUESTED_CONSENT_CATEGORIES,
-    storage: consentStorage,
+    storage: consentRuntime.storage,
   });
 
   return { consent, isResolved, mode: initialConsent.mode };

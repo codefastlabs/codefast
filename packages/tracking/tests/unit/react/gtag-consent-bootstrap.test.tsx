@@ -7,11 +7,10 @@ describe("GtagConsentBootstrap", () => {
   it("renders an inline script whose source matches the consent bootstrap builder", () => {
     const { container } = render(
       <GtagConsentBootstrap
-        consentStorageKey="k"
+        config={{ policyVersion: "1", requestedCategories: ["analytics"], storageKey: "k" }}
         defaultConsent={{ ads: false, analytics: true }}
         gaMeasurementId="G-TEST"
         nonce="csp-1"
-        policyVersion="1"
       />,
     );
 

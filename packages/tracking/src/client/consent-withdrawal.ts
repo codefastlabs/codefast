@@ -5,8 +5,6 @@ export interface ConsentWithdrawalHandlerOptions {
   clearAnonymousId?: (() => void) | undefined;
   /** Expire Google's `_ga` / `_ga_*` cookies when analytics is denied. */
   clearGoogleAnalyticsCookies?: (() => void) | undefined;
-  /** Drop the offline queue and in-memory `userId` — typically `tracker.clear`. */
-  clearTracker: () => void;
 }
 
 /**
@@ -16,14 +14,13 @@ export interface ConsentWithdrawalHandlerOptions {
 export function createConsentWithdrawalHandler(
   options: ConsentWithdrawalHandlerOptions,
 ): (decision: ConsentDecision) => void {
-  const { clearAnonymousId, clearGoogleAnalyticsCookies, clearTracker } = options;
+  const { clearAnonymousId, clearGoogleAnalyticsCookies } = options;
 
   return (decision: ConsentDecision): void => {
     if (decision.analytics) {
       return;
     }
 
-    clearTracker();
     clearAnonymousId?.();
     clearGoogleAnalyticsCookies?.();
   };

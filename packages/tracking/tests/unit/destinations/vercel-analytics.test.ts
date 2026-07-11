@@ -17,7 +17,6 @@ describe("createVercelAnalyticsDestination", () => {
       anonymousId: "anon-1",
       eventId: "e1",
       name: "button_clicked",
-      owner: "client",
       properties: { count: 3, id: "cta", primary: true, url: null },
       timestamp: 0,
       type: "track",
@@ -34,7 +33,6 @@ describe("createVercelAnalyticsDestination", () => {
       anonymousId: "anon-1",
       eventId: "e2",
       name: "order_completed",
-      owner: "client",
       properties: { items: ["a", "b"] },
       timestamp: 0,
       type: "track",
@@ -51,7 +49,6 @@ describe("createVercelAnalyticsDestination", () => {
       anonymousId: "anon-1",
       eventId: "e3",
       name: "page_viewed",
-      owner: "client",
       properties: { referrer: undefined },
       timestamp: 0,
       type: "track",
@@ -64,74 +61,6 @@ describe("createVercelAnalyticsDestination", () => {
     const { createVercelAnalyticsDestination } = await import("#/destinations/vercel-analytics");
 
     expect(createVercelAnalyticsDestination({ name: "va" }).name).toBe("va");
-  });
-
-  it("drops page envelopes by default — the mounted <Analytics /> component already tracks page views", async () => {
-    const { createVercelAnalyticsDestination } = await import("#/destinations/vercel-analytics");
-    const destination = createVercelAnalyticsDestination();
-
-    void destination.send({
-      anonymousId: "anon-1",
-      eventId: "e4",
-      name: "/pricing",
-      owner: "client",
-      properties: { href: "https://x.test/pricing" },
-      timestamp: 0,
-      type: "page",
-    });
-
-    expect(track).not.toHaveBeenCalled();
-  });
-
-  it("forwards page envelopes as page_view with only the caller's extras when trackPageViews is on", async () => {
-    const { createVercelAnalyticsDestination } = await import("#/destinations/vercel-analytics");
-    const destination = createVercelAnalyticsDestination({ trackPageViews: true });
-
-    void destination.send({
-      anonymousId: "anon-1",
-      eventId: "e5",
-      name: "/pricing",
-      owner: "client",
-      properties: { href: "https://x.test/pricing", referrer: "/home" },
-      timestamp: 0,
-      type: "page",
-    });
-
-    expect(track).toHaveBeenCalledWith("page_view", { referrer: "/home" });
-  });
-
-  it("drops identify, group, and alias — Vercel Analytics has no identity API to translate them to", async () => {
-    const { createVercelAnalyticsDestination } = await import("#/destinations/vercel-analytics");
-    const destination = createVercelAnalyticsDestination();
-
-    void destination.send({
-      anonymousId: "anon-1",
-      eventId: "e6",
-      owner: "client",
-      timestamp: 0,
-      traits: { plan: "pro" },
-      type: "identify",
-    });
-    void destination.send({
-      anonymousId: "anon-1",
-      eventId: "e7",
-      groupId: "acme",
-      owner: "client",
-      timestamp: 0,
-      traits: {},
-      type: "group",
-    });
-    void destination.send({
-      anonymousId: "anon-1",
-      eventId: "e8",
-      owner: "client",
-      previousId: "anon-0",
-      timestamp: 0,
-      type: "alias",
-      userId: "user-1",
-    });
-
-    expect(track).not.toHaveBeenCalled();
   });
 
   it("defaults to requiring consent, with exempt as an explicit opt-in", async () => {

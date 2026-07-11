@@ -1,5 +1,3 @@
-import type { GroupEvent } from "#/core/tracked-event";
-
 export type FlatPropertyValue = boolean | number | string;
 
 interface FlattenEventPropsOptions {
@@ -33,16 +31,4 @@ export function flattenEventProps(
   }
 
   return result;
-}
-
-/** GA4's "join_group" recommended event maps a group association onto `group_id` plus the caller's traits. */
-export function toJoinGroupPayload(event: Pick<GroupEvent, "groupId" | "traits">): Record<string, unknown> {
-  return { group_id: event.groupId, ...event.traits };
-}
-
-/** gtag.js/Vercel attach the live page's `href` themselves — forward only the caller's extra properties. */
-export function omitHref(properties: Record<string, unknown>): Record<string, unknown> {
-  const { href: _href, ...extras } = properties;
-
-  return extras;
 }

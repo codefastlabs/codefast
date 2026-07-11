@@ -14,6 +14,10 @@ const config = {
     "@codefast/tailwind-variants": {
       preserve: true,
     },
+    // Hand-curated group entries (dist/ has ~50 modules; regeneration would re-expose them all).
+    "@codefast/tracking": {
+      preserve: true,
+    },
     "@apps/ui": false,
     "@examples/tanstack-start": false,
     "@codefast/cli": false,

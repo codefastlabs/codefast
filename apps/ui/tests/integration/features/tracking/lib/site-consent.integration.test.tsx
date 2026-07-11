@@ -5,7 +5,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { PrivacyChoices } from "#/features/privacy/components/privacy-choices";
 import { ConsentGate } from "#/features/tracking/components/consent-gate";
-import { CONSENT_POLICY_VERSION, REQUESTED_CONSENT_CATEGORIES } from "#/features/tracking/lib/consent";
+import { consentConfig } from "#/features/tracking/lib/consent";
 import { getTracker } from "#/features/tracking/lib/tracking";
 import { resetVisitorConsentForTests } from "#/features/tracking/lib/visitor-consent";
 
@@ -43,7 +43,7 @@ function setRegion(country: string): void {
   resolveVisitorConsent.mockResolvedValue(
     resolveInitialConsent({
       countryCode: country,
-      requestedCategories: REQUESTED_CONSENT_CATEGORIES,
+      requestedCategories: consentConfig.requestedCategories,
     }),
   );
 }
@@ -209,7 +209,7 @@ describe("consent × tracking matrix", () => {
     // Another tab wrote a denial — storage event updates this tab without a local save/onDecision.
     const denialRecord = JSON.stringify({
       decision: { ads: false, analytics: false },
-      policyVersion: CONSENT_POLICY_VERSION,
+      policyVersion: consentConfig.policyVersion,
       timestamp: Date.now(),
     });
 
@@ -262,13 +262,5 @@ describe("consent × tracking matrix", () => {
 
     expect(gtagCalls()).not.toContainEqual(["event", "copy_code", COPY_EVENT]);
     expect(readAnonymousIdCookie()).toBeUndefined();
-  });
-
-  it("page views never reach Vercel as custom events — the native <Analytics /> component owns them", () => {
-    setRegion("US");
-
-    getTracker().page("/components", { href: "https://example.test/components" });
-
-    expect(vercelTrack).not.toHaveBeenCalled();
   });
 });

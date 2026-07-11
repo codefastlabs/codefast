@@ -66,230 +66,30 @@
       "types": "./dist/client/index.d.mts",
       "import": "./dist/client/index.mjs"
     },
-    "./client/browser-cookie": {
-      "source": "./src/client/browser-cookie.ts",
-      "types": "./dist/client/browser-cookie.d.mts",
-      "import": "./dist/client/browser-cookie.mjs"
-    },
-    "./client/consent-cookie-mirror": {
-      "source": "./src/client/consent-cookie-mirror.ts",
-      "types": "./dist/client/consent-cookie-mirror.d.mts",
-      "import": "./dist/client/consent-cookie-mirror.mjs"
-    },
-    "./client/consent-storage": {
-      "source": "./src/client/consent-storage.ts",
-      "types": "./dist/client/consent-storage.d.mts",
-      "import": "./dist/client/consent-storage.mjs"
-    },
-    "./client/consent-withdrawal": {
-      "source": "./src/client/consent-withdrawal.ts",
-      "types": "./dist/client/consent-withdrawal.d.mts",
-      "import": "./dist/client/consent-withdrawal.mjs"
-    },
-    "./client/cookie-anonymous-id": {
-      "source": "./src/client/cookie-anonymous-id.ts",
-      "types": "./dist/client/cookie-anonymous-id.d.mts",
-      "import": "./dist/client/cookie-anonymous-id.mjs"
-    },
-    "./client/create-client-tracker": {
-      "source": "./src/client/create-client-tracker.ts",
-      "types": "./dist/client/create-client-tracker.d.mts",
-      "import": "./dist/client/create-client-tracker.mjs"
-    },
-    "./client/gpc": {
-      "source": "./src/client/gpc.ts",
-      "types": "./dist/client/gpc.d.mts",
-      "import": "./dist/client/gpc.mjs"
-    },
-    "./client/initial-consent-store": {
-      "source": "./src/client/initial-consent-store.ts",
-      "types": "./dist/client/initial-consent-store.d.mts",
-      "import": "./dist/client/initial-consent-store.mjs"
-    },
-    "./client/is-analytics-allowed": {
-      "source": "./src/client/is-analytics-allowed.ts",
-      "types": "./dist/client/is-analytics-allowed.d.mts",
-      "import": "./dist/client/is-analytics-allowed.mjs"
-    },
-    "./client/lifecycle": {
-      "source": "./src/client/lifecycle.ts",
-      "types": "./dist/client/lifecycle.d.mts",
-      "import": "./dist/client/lifecycle.mjs"
-    },
-    "./client/local-storage": {
-      "source": "./src/client/local-storage.ts",
-      "types": "./dist/client/local-storage.d.mts",
-      "import": "./dist/client/local-storage.mjs"
-    },
-    "./client/queue": {
-      "source": "./src/client/queue.ts",
-      "types": "./dist/client/queue.d.mts",
-      "import": "./dist/client/queue.mjs"
-    },
-    "./client/router": {
-      "source": "./src/client/router.ts",
-      "types": "./dist/client/router.d.mts",
-      "import": "./dist/client/router.mjs"
-    },
-    "./client/server-persisted-anonymous-id": {
-      "source": "./src/client/server-persisted-anonymous-id.ts",
-      "types": "./dist/client/server-persisted-anonymous-id.d.mts",
-      "import": "./dist/client/server-persisted-anonymous-id.mjs"
-    },
-    "./core": {
-      "source": "./src/core/index.ts",
-      "types": "./dist/core/index.d.mts",
-      "import": "./dist/core/index.mjs"
-    },
-    "./core/consent": {
-      "source": "./src/core/consent.ts",
-      "types": "./dist/core/consent.d.mts",
-      "import": "./dist/core/consent.mjs"
-    },
-    "./core/consent-cookie": {
-      "source": "./src/core/consent-cookie.ts",
-      "types": "./dist/core/consent-cookie.d.mts",
-      "import": "./dist/core/consent-cookie.mjs"
-    },
-    "./core/cookie": {
-      "source": "./src/core/cookie.ts",
-      "types": "./dist/core/cookie.d.mts",
-      "import": "./dist/core/cookie.mjs"
-    },
-    "./core/destination": {
-      "source": "./src/core/destination.ts",
-      "types": "./dist/core/destination.d.mts",
-      "import": "./dist/core/destination.mjs"
-    },
-    "./core/event-catalog": {
-      "source": "./src/core/event-catalog.ts",
-      "types": "./dist/core/event-catalog.d.mts",
-      "import": "./dist/core/event-catalog.mjs"
-    },
-    "./core/event-id": {
-      "source": "./src/core/event-id.ts",
-      "types": "./dist/core/event-id.d.mts",
-      "import": "./dist/core/event-id.mjs"
-    },
-    "./core/tracked-event": {
-      "source": "./src/core/tracked-event.ts",
-      "types": "./dist/core/tracked-event.d.mts",
-      "import": "./dist/core/tracked-event.mjs"
-    },
-    "./destinations": {
-      "source": "./src/destinations/index.ts",
-      "types": "./dist/destinations/index.d.mts",
-      "import": "./dist/destinations/index.mjs"
-    },
-    "./destinations/ga4-measurement-protocol": {
-      "source": "./src/destinations/ga4-measurement-protocol.ts",
-      "types": "./dist/destinations/ga4-measurement-protocol.d.mts",
-      "import": "./dist/destinations/ga4-measurement-protocol.mjs"
-    },
-    "./destinations/google-analytics": {
-      "source": "./src/destinations/google-analytics.ts",
-      "types": "./dist/destinations/google-analytics.d.mts",
-      "import": "./dist/destinations/google-analytics.mjs"
-    },
-    "./destinations/google-consent": {
-      "source": "./src/destinations/google-consent.ts",
-      "types": "./dist/destinations/google-consent.d.mts",
-      "import": "./dist/destinations/google-consent.mjs"
-    },
-    "./destinations/google-tag-manager": {
-      "source": "./src/destinations/google-tag-manager.ts",
-      "types": "./dist/destinations/google-tag-manager.d.mts",
-      "import": "./dist/destinations/google-tag-manager.mjs"
-    },
-    "./destinations/http": {
-      "source": "./src/destinations/http.ts",
-      "types": "./dist/destinations/http.d.mts",
-      "import": "./dist/destinations/http.mjs"
-    },
-    "./destinations/shared": {
-      "source": "./src/destinations/shared.ts",
-      "types": "./dist/destinations/shared.d.mts",
-      "import": "./dist/destinations/shared.mjs"
-    },
-    "./destinations/vercel-analytics": {
-      "source": "./src/destinations/vercel-analytics.ts",
-      "types": "./dist/destinations/vercel-analytics.d.mts",
-      "import": "./dist/destinations/vercel-analytics.mjs"
+    "./server": {
+      "source": "./src/server/index.ts",
+      "types": "./dist/server/index.d.mts",
+      "import": "./dist/server/index.mjs"
     },
     "./react": {
       "source": "./src/react/index.ts",
       "types": "./dist/react/index.d.mts",
       "import": "./dist/react/index.mjs"
     },
-    "./react/consent-banner": {
-      "source": "./src/react/consent-banner.tsx",
-      "types": "./dist/react/consent-banner.d.mts",
-      "import": "./dist/react/consent-banner.mjs"
-    },
-    "./react/gtag-consent-bootstrap": {
-      "source": "./src/react/gtag-consent-bootstrap.tsx",
-      "types": "./dist/react/gtag-consent-bootstrap.d.mts",
-      "import": "./dist/react/gtag-consent-bootstrap.mjs"
-    },
-    "./react/use-consent": {
-      "source": "./src/react/use-consent.ts",
-      "types": "./dist/react/use-consent.d.mts",
-      "import": "./dist/react/use-consent.mjs"
-    },
-    "./react/use-google-consent-sync": {
-      "source": "./src/react/use-google-consent-sync.ts",
-      "types": "./dist/react/use-google-consent-sync.d.mts",
-      "import": "./dist/react/use-google-consent-sync.mjs"
-    },
-    "./react/use-initial-consent": {
-      "source": "./src/react/use-initial-consent.ts",
-      "types": "./dist/react/use-initial-consent.d.mts",
-      "import": "./dist/react/use-initial-consent.mjs"
-    },
-    "./server": {
-      "source": "./src/server/index.ts",
-      "types": "./dist/server/index.d.mts",
-      "import": "./dist/server/index.mjs"
-    },
-    "./server/anonymous-id-cookie": {
-      "source": "./src/server/anonymous-id-cookie.ts",
-      "types": "./dist/server/anonymous-id-cookie.d.mts",
-      "import": "./dist/server/anonymous-id-cookie.mjs"
-    },
-    "./server/consent-cookie": {
-      "source": "./src/server/consent-cookie.ts",
-      "types": "./dist/server/consent-cookie.d.mts",
-      "import": "./dist/server/consent-cookie.mjs"
-    },
-    "./server/create-server-tracker": {
-      "source": "./src/server/create-server-tracker.ts",
-      "types": "./dist/server/create-server-tracker.d.mts",
-      "import": "./dist/server/create-server-tracker.mjs"
-    },
-    "./server/initial-consent": {
-      "source": "./src/server/initial-consent.ts",
-      "types": "./dist/server/initial-consent.d.mts",
-      "import": "./dist/server/initial-consent.mjs"
-    },
-    "./server/region": {
-      "source": "./src/server/region.ts",
-      "types": "./dist/server/region.d.mts",
-      "import": "./dist/server/region.mjs"
-    },
-    "./server/relay": {
-      "source": "./src/server/relay.ts",
-      "types": "./dist/server/relay.d.mts",
-      "import": "./dist/server/relay.mjs"
-    },
-    "./server/send-with-retry": {
-      "source": "./src/server/send-with-retry.ts",
-      "types": "./dist/server/send-with-retry.d.mts",
-      "import": "./dist/server/send-with-retry.mjs"
-    },
     "./tanstack-start": {
       "source": "./src/tanstack-start/index.ts",
       "types": "./dist/tanstack-start/index.d.mts",
       "import": "./dist/tanstack-start/index.mjs"
+    },
+    "./destinations": {
+      "source": "./src/destinations/index.ts",
+      "types": "./dist/destinations/index.d.mts",
+      "import": "./dist/destinations/index.mjs"
+    },
+    "./destinations/vercel-analytics": {
+      "source": "./src/destinations/vercel-analytics.ts",
+      "types": "./dist/destinations/vercel-analytics.d.mts",
+      "import": "./dist/destinations/vercel-analytics.mjs"
     },
     "./css/*": "./src/css/*",
     "./package.json": "./package.json"

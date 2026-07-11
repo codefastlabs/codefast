@@ -1,13 +1,10 @@
 import type { StandardSchemaV1 } from "@standard-schema/spec";
 
-import type { EventQueueStorage, FlushOptions } from "#/client/queue";
-import { EventQueue } from "#/client/queue";
 import type { Destination } from "#/core/destination";
-import type { EventCatalog, EventsOf } from "#/core/event-catalog";
+import type { EventCatalog } from "#/core/event-catalog";
 import { assertValidEventProperties } from "#/core/event-catalog";
 import { generateEventId } from "#/core/event-id";
-import type { TrackedEvent, TrackedEventBase, TrackedEventSeed } from "#/core/tracked-event";
-import { buildTrackedEvent } from "#/core/tracked-event";
+import type { TrackedEvent } from "#/core/tracked-event";
 
 /**
  * `Destination.send` is typed to always return a `Promise`, but that's unenforceable at
@@ -20,7 +17,7 @@ import { buildTrackedEvent } from "#/core/tracked-event";
 function sendToDestination(destination: Destination, event: TrackedEvent): void {
   try {
     void Promise.resolve(destination.send(event)).catch(() => {
-      /* an immediate destination owns its transport — no retry path here */
+      /* a destination owns its transport — tracking must never break the interaction */
     });
   } catch {
     /* a sync throw must never break the tracked interaction */
@@ -36,37 +33,20 @@ export interface ClientTrackerOptions<Catalog extends EventCatalog> {
   catalog: Catalog;
   destinations: Array<Destination>;
   /**
-   * Analytics-consent gate consulted before every event — while it returns `false`,
-   * nothing is queued and only `consentRequirement: "exempt"` destinations still receive
-   * `track`/`page` events, stripped of identifiers. Omit to always allow. Name mirrors
-   * `useConsent`'s `isAnalyticsAllowed` (the `analytics` category), not all tracking.
+   * Consulted before every event — while it returns `false`, only
+   * `consentRequirement: "exempt"` destinations still receive events, stripped of
+   * identifiers. Omit to always track.
    */
   isAnalyticsAllowed?: (() => boolean) | undefined;
-  maxQueueSize?: number | undefined;
-  maxRetries?: number | undefined;
-  /** Cross-reload persistence for the offline queue — omit to keep the queue in memory only. */
-  storage?: EventQueueStorage | undefined;
 }
 
 /**
  * @since 0.5.0-canary.4
  */
 export interface ClientTracker<Catalog extends EventCatalog> {
-  /**
-   * Drops every pending event and forgets the in-memory `userId` from `identify` — call
-   * when consent is revoked. Does not clear a cookie-backed anonymous id; call that
-   * helper's `clear()` separately when the visitor withdraws tracking consent.
-   */
-  clear: () => void;
-  flush: (options?: FlushOptions) => Promise<void>;
-  /** Synchronous, best-effort flush via `navigator.sendBeacon` — for page unload only. */
-  flushWithBeacon: (endpoint: string) => void;
-  group: (groupId: string, traits?: Record<string, unknown>) => void;
-  identify: (userId: string, traits?: Record<string, unknown>) => void;
-  page: (name?: string, properties?: Record<string, unknown>) => void;
-  track: <Name extends keyof EventsOf<Catalog, "client">>(
+  track: <Name extends keyof Catalog & string>(
     name: Name,
-    properties: StandardSchemaV1.InferOutput<EventsOf<Catalog, "client">[Name]["schema"]>,
+    properties: StandardSchemaV1.InferOutput<Catalog[Name]["schema"]>,
   ) => void;
 }
 
@@ -76,111 +56,42 @@ export interface ClientTracker<Catalog extends EventCatalog> {
 export function createClientTracker<Catalog extends EventCatalog>(
   options: ClientTrackerOptions<Catalog>,
 ): ClientTracker<Catalog> {
-  // SDK-backed destinations own their batching/unload delivery — routing them through
-  // the queue would only delay events and replay stale ones next session.
-  const immediateDestinations = options.destinations.filter((destination) => destination.delivery === "immediate");
-  const queuedDestinations = options.destinations.filter((destination) => destination.delivery !== "immediate");
-  // The exempt lane is immediate-only: queueing would persist gated events for later replay.
-  const exemptDestinations = immediateDestinations.filter((destination) => destination.consentRequirement === "exempt");
-  const queue = new EventQueue({
-    destinations: queuedDestinations,
-    maxQueueSize: options.maxQueueSize,
-    maxRetries: options.maxRetries,
-    storage: options.storage ?? {
-      load: () => [],
-      save: () => {
-        /* in-memory queue — nothing to persist */
-      },
-    },
-  });
-  let userId: string | undefined;
-
-  function enqueue(seed: TrackedEventSeed): void {
-    // The gate runs per event (not at creation) so a consent change mid-session applies immediately.
-    const isAllowed = options.isAnalyticsAllowed?.() !== false;
-    // Identity-centric kinds are meaningless without identifiers — the exempt lane only
-    // carries behavioral counts.
-    const isExemptEligible = seed.type === "track" || seed.type === "page";
-
-    if (!isAllowed && (exemptDestinations.length === 0 || !isExemptEligible)) {
-      return;
-    }
-
-    // Gated events ship identifier-free: no anonymousId is resolved (so none is ever
-    // minted as a side effect) and no userId rides along — the exempt lane only carries
-    // what a cookieless sink may see.
-    const identity: Pick<TrackedEventBase, "anonymousId" | "userId"> = isAllowed
-      ? { anonymousId: options.anonymousId(), ...(userId === undefined ? {} : { userId }) }
-      : { anonymousId: "" };
-
-    const envelope = buildTrackedEvent(seed, {
-      ...identity,
-      eventId: generateEventId(),
-      owner: "client",
-      timestamp: Date.now(),
-    });
-
-    for (const destination of isAllowed ? immediateDestinations : exemptDestinations) {
-      sendToDestination(destination, envelope);
-    }
-
-    if (isAllowed) {
-      // The queue also feeds `flushWithBeacon`, which ships raw envelopes to a custom
-      // endpoint independently of any destination.
-      queue.enqueue(envelope);
-    }
-  }
+  // The exempt lane only carries what a cookieless sink may see — identifier-free counts.
+  const exemptDestinations = options.destinations.filter((destination) => destination.consentRequirement === "exempt");
 
   return {
-    clear: () => {
-      // Revoke must drop identity too — otherwise a later grant would stamp the pre-revoke
-      // userId onto new events without a fresh identify().
-      userId = undefined;
-      queue.clear();
-    },
-    flush: (flushOptions) => queue.flush(flushOptions),
-    flushWithBeacon(endpoint) {
-      const events = queue.drain();
+    track(name, properties) {
+      // noUncheckedIndexedAccess types this as possibly undefined; the check also guards
+      // callers who bypass the catalog key type with an `as` cast.
+      const definition = options.catalog[name];
 
-      if (events.length === 0) {
+      if (!definition) {
+        throw new Error(`Unknown event: ${String(name)}`);
+      }
+
+      assertValidEventProperties(definition.schema, name, properties);
+
+      // The gate runs per event (not at creation) so a consent change mid-session applies immediately.
+      const isAllowed = options.isAnalyticsAllowed?.() !== false;
+
+      if (!isAllowed && exemptDestinations.length === 0) {
         return;
       }
 
-      const delivered = navigator.sendBeacon(endpoint, JSON.stringify(events));
+      const event: TrackedEvent = {
+        // Gated events ship identifier-free: no anonymousId is resolved, so none is ever
+        // minted as a side effect.
+        anonymousId: isAllowed ? options.anonymousId() : "",
+        eventId: generateEventId(),
+        name,
+        properties: properties as Record<string, unknown>,
+        timestamp: Date.now(),
+        type: "track",
+      };
 
-      if (!delivered) {
-        for (const event of events) {
-          queue.enqueue(event);
-        }
+      for (const destination of isAllowed ? options.destinations : exemptDestinations) {
+        sendToDestination(destination, event);
       }
-    },
-    group(groupId, traits = {}) {
-      enqueue({ groupId, traits, type: "group" });
-    },
-    identify(id, traits = {}) {
-      // Mirrors enqueue()'s own gate — a denied identify must never leave its userId in the
-      // closure for a later allowed event to pick up.
-      if (options.isAnalyticsAllowed?.() !== false) {
-        userId = id;
-      }
-
-      enqueue({ traits, type: "identify" });
-    },
-    page(name, properties = {}) {
-      enqueue({ name, properties, type: "page" });
-    },
-    track(name, properties) {
-      // noUncheckedIndexedAccess types this as possibly undefined; the owner check also
-      // guards callers who bypass the EventsOf filter with an `as` cast.
-      const definition = options.catalog[name];
-
-      if (!definition || definition.owner !== "client") {
-        throw new Error(`Unknown client-owned event: ${String(name)}`);
-      }
-
-      assertValidEventProperties(definition.schema, String(name), properties);
-      // Catalog keys are strings; schema-inferred properties are opaque to the open envelope record.
-      enqueue({ name: String(name), properties: properties as Record<string, unknown>, type: "track" });
     },
   };
 }

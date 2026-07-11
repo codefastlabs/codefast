@@ -1,14 +1,7 @@
 import { getRequestHeader, setResponseHeader } from "@tanstack/react-start/server";
 
-import type { ConsentCategory, ConsentDecision, InitialConsent } from "#/core/consent";
-import {
-  buildAnonymousIdSetCookie,
-  buildClearAnonymousIdSetCookie,
-  readAnonymousIdCookie,
-} from "#/server/anonymous-id-cookie";
-import type { ConsentDecisionCookieOptions } from "#/server/consent-cookie";
-import { readConsentDecisionCookie } from "#/server/consent-cookie";
-import type { ServerTrackerContext } from "#/server/create-server-tracker";
+import type { ConsentCategory, InitialConsent } from "#/core/consent";
+import { buildAnonymousIdSetCookie, buildClearAnonymousIdSetCookie } from "#/server/anonymous-id-cookie";
 import { resolveInitialConsent } from "#/server/initial-consent";
 
 /**
@@ -74,59 +67,4 @@ export function setAnonymousIdResponseCookie(options: AnonymousIdResponseCookieO
 /** Expires the anonymous-id cookie on the current response — the server half of a consent withdrawal. */
 export function clearAnonymousIdResponseCookie(cookieName: string): void {
   setResponseHeader("set-cookie", buildClearAnonymousIdSetCookie(cookieName));
-}
-
-/** The current request's anonymous id, or `undefined` when absent or not UUID-shaped. */
-export function readAnonymousIdRequestCookie(cookieName: string): string | undefined {
-  return readAnonymousIdCookie(getRequestHeader("cookie"), cookieName);
-}
-
-/**
- * The current request's stored consent decision under the given policy version — the
- * gate that keeps server-owned tracking honoring exactly what the visitor chose. Requires
- * the client to mirror decisions into a cookie via `withConsentCookieMirror`.
- */
-export function readConsentDecisionRequestCookie(options: ConsentDecisionCookieOptions): ConsentDecision | undefined {
-  return readConsentDecisionCookie(getRequestHeader("cookie"), options);
-}
-
-export interface ServerTrackerContextFromRequestOptions {
-  /** Cookie name the client tracker persists its anonymous id under. */
-  anonymousIdCookieName: string;
-  /**
-   * Header carrying a stable request id (e.g. Vercel's `x-vercel-id`) — when set and
-   * present, retried requests reproduce the same `eventId` for destination-side dedup.
-   */
-  requestIdHeaderName?: string | undefined;
-  userId?: string | undefined;
-}
-
-/**
- * Assembles a `ServerTrackerContext` from the current request, or `undefined` when the
- * visitor has no valid anonymous id yet — pair with `ServerTracker.withContext` so
- * handlers track without re-parsing cookies:
- *
- * @example
- * ```ts
- * const context = resolveServerTrackerContextFromRequest({ anonymousIdCookieName });
- * if (context) await tracker.withContext(context).track("order_completed", { total });
- * ```
- */
-export function resolveServerTrackerContextFromRequest(
-  options: ServerTrackerContextFromRequestOptions,
-): ServerTrackerContext | undefined {
-  const anonymousId = readAnonymousIdRequestCookie(options.anonymousIdCookieName);
-
-  if (anonymousId === undefined) {
-    return undefined;
-  }
-
-  const requestId =
-    options.requestIdHeaderName === undefined ? undefined : getRequestHeader(options.requestIdHeaderName);
-
-  return {
-    anonymousId,
-    ...(requestId === undefined ? {} : { requestId }),
-    ...(options.userId === undefined ? {} : { userId: options.userId }),
-  };
 }
