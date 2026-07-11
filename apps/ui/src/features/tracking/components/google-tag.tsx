@@ -1,4 +1,4 @@
-import { GtagConsentBootstrap } from "@codefast/tracking/react/gtag-consent-bootstrap";
+import { GtagConsentBootstrap } from "@codefast/tracking/react";
 
 import {
   CONSENT_POLICY_VERSION,

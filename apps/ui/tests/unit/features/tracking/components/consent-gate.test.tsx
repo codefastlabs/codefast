@@ -5,15 +5,12 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { ConsentGate } from "#/features/tracking/components/consent-gate";
 import type { InitialConsent } from "#/features/tracking/lib/consent";
 
-const { clear, clearAnonymousId, clearGoogleAnalyticsCookies, useVisitorConsent, updateGoogleConsent } = vi.hoisted(
-  () => ({
-    clear: vi.fn(),
-    clearAnonymousId: vi.fn(),
-    clearGoogleAnalyticsCookies: vi.fn(),
-    useVisitorConsent: vi.fn(),
-    updateGoogleConsent: vi.fn(),
-  }),
-);
+const { clear, clearAnonymousId, clearGoogleAnalyticsCookies, useVisitorConsent } = vi.hoisted(() => ({
+  clear: vi.fn(),
+  clearAnonymousId: vi.fn(),
+  clearGoogleAnalyticsCookies: vi.fn(),
+  useVisitorConsent: vi.fn(),
+}));
 
 vi.mock(import("#/features/tracking/lib/visitor-consent"), async (importOriginal) => ({
   ...(await importOriginal()),
@@ -30,24 +27,34 @@ vi.mock("#/features/tracking/lib/tracking", () => ({
   clearAnonymousId,
   getTracker: () => ({ clear }),
 }));
-// Withdrawal clears via the destinations barrel; gtag sync imports google-analytics
-// directly inside `@codefast/tracking/react` — mock both so the same spies apply.
+// Only the cookie clear is spied (jsdom's document.cookie is awkward to assert on);
+// consent updates are asserted on the real gtag stub's dataLayer below.
 vi.mock(import("@codefast/tracking/destinations"), async (importOriginal) => ({
   ...(await importOriginal()),
   clearGoogleAnalyticsCookies,
-  updateGoogleConsent,
 }));
-vi.mock(import("@codefast/tracking/destinations/google-analytics"), async (importOriginal) => ({
-  ...(await importOriginal()),
-  clearGoogleAnalyticsCookies,
-  updateGoogleConsent,
-}));
+
+/** Consent Mode `update` params pushed onto the real gtag stub's dataLayer, oldest first. */
+function consentUpdates(): Array<Record<string, unknown>> {
+  return (window.dataLayer ?? [])
+    .map((entry) => Array.from(entry as ArrayLike<unknown>))
+    .filter((entry) => entry[0] === "consent" && entry[1] === "update")
+    .map((entry) => entry[2] as Record<string, unknown>);
+}
+
+const DENIED_PARAMS = {
+  ad_personalization: "denied",
+  ad_storage: "denied",
+  ad_user_data: "denied",
+  analytics_storage: "denied",
+};
+const ANALYTICS_ONLY_PARAMS = { ...DENIED_PARAMS, analytics_storage: "granted" };
 
 beforeEach(() => {
   clear.mockClear();
   clearAnonymousId.mockClear();
   clearGoogleAnalyticsCookies.mockClear();
-  updateGoogleConsent.mockClear();
+  window.dataLayer = [];
   window.localStorage.removeItem("codefast-ui-consent");
 });
 
@@ -87,7 +94,7 @@ describe("ConsentGate", () => {
     expect(clear).toHaveBeenCalledOnce();
     expect(clearAnonymousId).toHaveBeenCalledOnce();
     expect(clearGoogleAnalyticsCookies).toHaveBeenCalledOnce();
-    expect(updateGoogleConsent).toHaveBeenCalledWith(DENIED);
+    expect(consentUpdates().at(-1)).toEqual(DENIED_PARAMS);
   });
 
   it("updates gtag consent without clearing the tracker on Accept — analytics only, never ads", async () => {
@@ -99,7 +106,7 @@ describe("ConsentGate", () => {
     await user.click(screen.getByRole("button", { name: "Accept" }));
 
     expect(clear).not.toHaveBeenCalled();
-    expect(updateGoogleConsent).toHaveBeenCalledWith(ANALYTICS_ONLY);
+    expect(consentUpdates().at(-1)).toEqual(ANALYTICS_ONLY_PARAMS);
   });
 
   it("replays a stored grant to gtag on mount, without waiting for a new decision", () => {
@@ -111,7 +118,7 @@ describe("ConsentGate", () => {
 
     render(<ConsentGate />);
 
-    expect(updateGoogleConsent).toHaveBeenCalledWith(ANALYTICS_ONLY);
+    expect(consentUpdates().at(-1)).toEqual(ANALYTICS_ONLY_PARAMS);
   });
 
   it("keeps a persistent Cookie settings control after an opt-in decision and reopens the banner", async () => {
@@ -132,7 +139,7 @@ describe("ConsentGate", () => {
     await user.click(screen.getByRole("button", { name: "Reject" }));
 
     expect(clear).toHaveBeenCalledOnce();
-    expect(updateGoogleConsent).toHaveBeenLastCalledWith(DENIED);
+    expect(consentUpdates().at(-1)).toEqual(DENIED_PARAMS);
     expect(screen.getByRole("button", { name: "Cookie settings" })).toBeTruthy();
   });
 
@@ -147,7 +154,7 @@ describe("ConsentGate", () => {
     await user.click(screen.getByRole("checkbox", { name: /analytics/i }));
     await user.click(screen.getByRole("button", { name: "Save preferences" }));
 
-    expect(updateGoogleConsent).toHaveBeenCalledWith(ANALYTICS_ONLY);
+    expect(consentUpdates().at(-1)).toEqual(ANALYTICS_ONLY_PARAMS);
     expect(JSON.parse(window.localStorage.getItem("codefast-ui-consent") ?? "{}").decision).toEqual(ANALYTICS_ONLY);
   });
 
@@ -163,7 +170,7 @@ describe("ConsentGate", () => {
     setRegion({ defaultConsent: ANALYTICS_ONLY, mode: "opt-out", region: "us" });
 
     render(<ConsentGate />);
-    updateGoogleConsent.mockClear();
+    window.dataLayer = [];
     clear.mockClear();
     clearAnonymousId.mockClear();
     clearGoogleAnalyticsCookies.mockClear();
@@ -176,7 +183,7 @@ describe("ConsentGate", () => {
       window.dispatchEvent(new StorageEvent("storage", { key: "codefast-ui-consent" }));
     });
 
-    expect(updateGoogleConsent).toHaveBeenCalledWith(DENIED);
+    expect(consentUpdates().at(-1)).toEqual(DENIED_PARAMS);
     expect(clear).toHaveBeenCalledOnce();
     expect(clearAnonymousId).toHaveBeenCalledOnce();
     expect(clearGoogleAnalyticsCookies).toHaveBeenCalledOnce();

@@ -1,6 +1,6 @@
+import type { ConsentCategory, InitialConsent } from "@codefast/tracking";
+import { STRICTEST_INITIAL_CONSENT } from "@codefast/tracking";
 import { createLocalStorageConsentStorage } from "@codefast/tracking/client";
-import type { ConsentCategory, InitialConsent } from "@codefast/tracking/core";
-import { STRICTEST_INITIAL_CONSENT } from "@codefast/tracking/core";
 
 /** Bump when the privacy policy changes — invalidates any previously stored decision. */
 export const CONSENT_POLICY_VERSION = "1";

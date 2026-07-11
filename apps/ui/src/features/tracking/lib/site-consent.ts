@@ -1,6 +1,6 @@
+import type { ConsentMode } from "@codefast/tracking";
+import { readStoredDecision } from "@codefast/tracking";
 import { createConsentWithdrawalHandler, hasGlobalPrivacyControlSignal } from "@codefast/tracking/client";
-import type { ConsentMode } from "@codefast/tracking/core";
-import { readStoredDecision } from "@codefast/tracking/core";
 import { clearGoogleAnalyticsCookies } from "@codefast/tracking/destinations";
 import type { UseConsentResult } from "@codefast/tracking/react";
 import { useConsent } from "@codefast/tracking/react";
