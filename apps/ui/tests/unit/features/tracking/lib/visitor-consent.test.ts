@@ -48,6 +48,10 @@ afterEach(() => {
 
 describe("useVisitorConsent / ensureVisitorConsentResolved", () => {
   it("starts from the strictest, unresolved default — what every cached render bakes", () => {
+    // The hook kicks resolution on mount — keep the server lane pending so the first
+    // snapshot is what a visitor sees before any answer arrives.
+    resolveVisitorConsent.mockReturnValue(new Promise(() => undefined));
+
     const { result } = renderHook(() => useVisitorConsent());
 
     expect(result.current).toEqual({ initialConsent: STRICTEST_INITIAL_CONSENT, isResolved: false });

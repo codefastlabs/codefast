@@ -1,31 +1,35 @@
 // Window.dataLayer is declared globally by @codefast/tracking's google-analytics module.
-import { buildGtagConsentBootstrapScript } from "@codefast/tracking/destinations";
-import { afterEach, describe, expect, it } from "vitest";
+import { cleanup, render } from "@testing-library/react";
+import { afterEach, describe, expect, it, vi } from "vitest";
 
-import {
-  CONSENT_POLICY_VERSION,
-  CONSENT_STORAGE_KEY,
-  STRICTEST_INITIAL_CONSENT,
-} from "#/features/tracking/lib/consent";
+import { CONSENT_POLICY_VERSION, CONSENT_STORAGE_KEY } from "#/features/tracking/lib/consent";
 
-/** The exact options `<GoogleTag />` passes to the package's `GtagConsentBootstrap`. */
-function buildGtagBootstrapScript(gaMeasurementId: string): string {
-  return buildGtagConsentBootstrapScript({
-    consentStorageKey: CONSENT_STORAGE_KEY,
-    defaultConsent: STRICTEST_INITIAL_CONSENT.defaultConsent,
-    gaMeasurementId,
-    policyVersion: CONSENT_POLICY_VERSION,
-  });
+/**
+ * Renders the real `<GoogleTag />` and returns the inline script it mounts — the env id
+ * is read at module scope, so each render stubs the env and re-imports the component.
+ * jsdom never executes a script element created through the DOM, so rendering is inert.
+ */
+async function renderBootstrapScript(gaMeasurementId: string | undefined): Promise<string | undefined> {
+  vi.resetModules();
+  vi.stubEnv("VITE_GA4_MEASUREMENT_ID", gaMeasurementId ?? "");
+
+  const { GoogleTag } = await import("#/features/tracking/components/google-tag");
+  const { container } = render(<GoogleTag />);
+
+  return container.querySelector("script")?.innerHTML;
 }
 
 /** Executes the exact source string `<GoogleTag />` inlines into the page, as the browser would. */
-function runScript(script: string): void {
+function runScript(script: string | undefined): void {
+  expect(script).toBeDefined();
   // oxlint-disable-next-line no-implied-eval -- verifying the literal script text is valid, running JS, not eval'ing untrusted input
-  new Function(script)();
+  new Function(script ?? "")();
 }
 
-describe("GoogleTag bootstrap script", () => {
+describe("GoogleTag", () => {
   afterEach(() => {
+    cleanup();
+    vi.unstubAllEnvs();
     delete window.dataLayer;
     window.localStorage.removeItem(CONSENT_STORAGE_KEY);
 
@@ -44,8 +48,12 @@ describe("GoogleTag bootstrap script", () => {
     return document.querySelector('script[src^="https://www.googletagmanager.com/gtag/js"]');
   }
 
-  it("advanced consent mode: bakes the strictest default, still loads and configures gtag.js", () => {
-    runScript(buildGtagBootstrapScript("G-TEST123"));
+  it("renders nothing without a measurement id", async () => {
+    expect(await renderBootstrapScript(undefined)).toBeUndefined();
+  });
+
+  it("advanced consent mode: bakes the strictest default, still loads and configures gtag.js", async () => {
+    runScript(await renderBootstrapScript("G-TEST123"));
 
     const calls = (window.dataLayer ?? []) as Array<ArrayLike<unknown>>;
 
@@ -66,7 +74,7 @@ describe("GoogleTag bootstrap script", () => {
     expect(gtagScriptElement()?.src).toBe("https://www.googletagmanager.com/gtag/js?id=G-TEST123");
   });
 
-  it("prefers a stored grant over the baked strictest default (returning visitor)", () => {
+  it("prefers a stored grant over the baked strictest default (returning visitor)", async () => {
     window.localStorage.setItem(
       CONSENT_STORAGE_KEY,
       JSON.stringify({
@@ -75,14 +83,14 @@ describe("GoogleTag bootstrap script", () => {
         timestamp: 0,
       }),
     );
-    runScript(buildGtagBootstrapScript("G-TEST123"));
+    runScript(await renderBootstrapScript("G-TEST123"));
 
     expect(consentDefaultParams().analytics_storage).toBe("granted");
     expect(consentDefaultParams().ad_storage).toBe("denied");
     expect(gtagScriptElement()).not.toBeNull();
   });
 
-  it("keeps a stored denial denied — advanced mode still injects the tag", () => {
+  it("keeps a stored denial denied — advanced mode still injects the tag", async () => {
     window.localStorage.setItem(
       CONSENT_STORAGE_KEY,
       JSON.stringify({
@@ -91,35 +99,35 @@ describe("GoogleTag bootstrap script", () => {
         timestamp: 0,
       }),
     );
-    runScript(buildGtagBootstrapScript("G-TEST123"));
+    runScript(await renderBootstrapScript("G-TEST123"));
 
     expect(consentDefaultParams().analytics_storage).toBe("denied");
     expect(gtagScriptElement()).not.toBeNull();
   });
 
-  it("ignores a decision recorded under an older policy version", () => {
+  it("ignores a decision recorded under an older policy version", async () => {
     window.localStorage.setItem(
       CONSENT_STORAGE_KEY,
       JSON.stringify({ decision: { ads: false, analytics: true }, policyVersion: "0", timestamp: 0 }),
     );
-    runScript(buildGtagBootstrapScript("G-TEST123"));
+    runScript(await renderBootstrapScript("G-TEST123"));
 
     expect(consentDefaultParams().analytics_storage).toBe("denied");
   });
 
-  it("ignores a legacy granted/denied string record and falls back to the strictest default", () => {
+  it("ignores a legacy granted/denied string record and falls back to the strictest default", async () => {
     window.localStorage.setItem(
       CONSENT_STORAGE_KEY,
       JSON.stringify({ decision: "granted", policyVersion: CONSENT_POLICY_VERSION, timestamp: 0 }),
     );
-    runScript(buildGtagBootstrapScript("G-TEST123"));
+    runScript(await renderBootstrapScript("G-TEST123"));
 
     expect(consentDefaultParams().analytics_storage).toBe("denied");
   });
 
-  it("falls back to the strictest default when the stored record is corrupt", () => {
+  it("falls back to the strictest default when the stored record is corrupt", async () => {
     window.localStorage.setItem(CONSENT_STORAGE_KEY, "not-json");
-    runScript(buildGtagBootstrapScript("G-TEST123"));
+    runScript(await renderBootstrapScript("G-TEST123"));
 
     expect(consentDefaultParams().analytics_storage).toBe("denied");
   });

@@ -4,7 +4,7 @@ import {
   createIsAnalyticsAllowed,
   hasGlobalPrivacyControlSignal,
 } from "@codefast/tracking/client";
-import { useSyncExternalStore } from "react";
+import { useInitialConsent } from "@codefast/tracking/react";
 
 import { CONSENT_POLICY_VERSION, consentStorage, REQUESTED_CONSENT_CATEGORIES } from "#/features/tracking/lib/consent";
 import { resolveVisitorConsent } from "#/features/tracking/lib/resolve-visitor-consent";
@@ -33,13 +33,13 @@ export function ensureVisitorConsentResolved(): void {
   visitorConsentStore.ensureResolved();
 }
 
-/** Reactive view of the visitor's resolved consent default — updates once the server lane answers. */
+/**
+ * Reactive view of the visitor's resolved consent default — updates once the server lane
+ * answers. The package hook also re-kicks resolution on mount, the idempotent safety net
+ * behind `getRouter()`'s pre-hydration kick.
+ */
 export function useVisitorConsent(): UseVisitorConsentResult {
-  return useSyncExternalStore(
-    visitorConsentStore.subscribe,
-    visitorConsentStore.getSnapshot,
-    visitorConsentStore.getServerSnapshot,
-  );
+  return useInitialConsent(visitorConsentStore);
 }
 
 /** Test seam — clears the resolved state and session cache so each test resolves fresh. */
