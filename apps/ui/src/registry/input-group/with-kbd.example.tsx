@@ -51,7 +51,7 @@ export function InputGroupWithKbd() {
             </div>
           </InputGroupAddon>
         </InputGroup>
-        <FieldDescription className="text-green-700">This username is available.</FieldDescription>
+        <FieldDescription className="text-green-700 dark:text-green-400">This username is available.</FieldDescription>
       </Field>
       <InputGroup>
         <InputGroupInput id="input-search-docs-27" placeholder="Search documentation..." />
