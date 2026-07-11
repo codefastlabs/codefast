@@ -14,6 +14,12 @@ export interface CookieAnonymousId {
   clear: () => void;
   /** The existing id, or a freshly minted and persisted one. */
   getOrCreate: () => string;
+  /**
+   * Rolls an *existing* id's expiry forward without ever minting one — safe to call on
+   * page load for returning consented visitors (the ITP-refresh path), a no-op for
+   * visitors who never got an id.
+   */
+  refresh: () => void;
 }
 
 function writeCookie(cookieName: string, value: string, maxAgeSeconds: number): void {
@@ -71,6 +77,18 @@ export function createCookieAnonymousId(options: CookieAnonymousIdOptions): Cook
       cachedId = id;
 
       return id;
+    },
+    refresh(): void {
+      if (typeof document === "undefined") {
+        return;
+      }
+
+      const existing = readCookieValue(document.cookie, cookieName);
+
+      if (existing) {
+        cachedId = existing;
+        writeCookie(cookieName, existing, maxAgeSeconds);
+      }
     },
   };
 }

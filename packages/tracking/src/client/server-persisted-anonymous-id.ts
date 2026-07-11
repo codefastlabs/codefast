@@ -69,5 +69,26 @@ export function createServerPersistedAnonymousId(options: ServerPersistedAnonymo
 
       return id;
     },
+    refresh(): void {
+      if (typeof document === "undefined") {
+        return;
+      }
+
+      const existing = readCookieValue(document.cookie, cookieName);
+
+      if (!existing) {
+        return;
+      }
+
+      local.refresh();
+
+      // Same once-per-load budget as getOrCreate — refresh must not add a second request.
+      if (!hasRequestedPersist) {
+        hasRequestedPersist = true;
+        void persist(existing).catch(() => {
+          /* optimistic client-side prolong above still covers this session */
+        });
+      }
+    },
   };
 }
