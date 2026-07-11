@@ -1,9 +1,9 @@
 import { Suspense } from "react";
 
+import { LazyVisible } from "#/components/shared/lazy-visible";
+import { PreviewSkeleton } from "#/components/shared/preview-skeleton";
 import { ComponentCardMeta } from "#/features/components-catalog/components/gallery/component-card-meta";
-import { LazyVisible } from "#/features/components-catalog/components/gallery/lazy-visible";
 import { PreviewCard } from "#/features/components-catalog/components/gallery/preview-card";
-import { PreviewSkeleton } from "#/features/components-catalog/components/gallery/preview-skeleton.tsx";
 import type { ComponentMeta } from "#/registry/_core/components";
 import { DEMO_BY_SLUG } from "#/registry/_core/demos";
 

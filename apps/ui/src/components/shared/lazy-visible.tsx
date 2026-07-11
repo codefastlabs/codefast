@@ -1,8 +1,8 @@
 import type { ReactElement, ReactNode, Ref } from "react";
 import { cloneElement } from "react";
 
-import { PreviewSkeleton } from "#/features/components-catalog/components/gallery/preview-skeleton";
-import { useInView } from "#/features/components-catalog/hooks/use-in-view";
+import { PreviewSkeleton } from "#/components/shared/preview-skeleton";
+import { useInView } from "#/hooks/use-in-view";
 
 // Renders its children fragment or a cloned placeholder, not a host element of
 // its own, so the props are a plain named interface (no `ComponentProps` extend).
