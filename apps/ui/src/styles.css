@@ -45,6 +45,107 @@
   }
 }
 
+/* --------------------------------------------------------------------------
+   Home-page motion. Plain classes rather than `--animate-*` theme tokens: a
+   var() nested inside a @theme token resolves at :root, so per-element knobs
+   (--hero-enter-delay, --marquee-duration, …) would freeze at their fallbacks.
+   Declaring `animation` on the element keeps the substitution local. The whole
+   block is gated behind prefers-reduced-motion.
+   -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: no-preference) {
+  /* Staggered load-in for hero content — offset per element via --hero-enter-delay. */
+  .hero-enter {
+    animation: hero-enter 0.7s var(--ease-gentle) var(--hero-enter-delay, 0s) backwards;
+  }
+
+  /* Slow bob for the hero's floating cards — desynced per card via --hero-float-delay. */
+  .hero-float {
+    animation: hero-float 7s ease-in-out var(--hero-float-delay, 0s) infinite;
+  }
+
+  /* Breathing glow for the hero backdrop gradient. */
+  .hero-glow {
+    animation: hero-glow 10s ease-in-out infinite alternate;
+  }
+
+  /* Bouncing hero-player equalizer bars — desynced per bar via --equalizer-delay;
+     pause the group by setting --equalizer-play on an ancestor (it inherits). */
+  .equalizer-bar {
+    animation: equalizer 0.9s ease-in-out var(--equalizer-delay, 0s) infinite var(--equalizer-play, running);
+  }
+
+  /* Endless component-pill ticker: the track holds two copies, so -50% loops
+     seamlessly. Speed via --marquee-duration, counter-flow via --marquee-direction. */
+  .marquee-track {
+    animation: marquee var(--marquee-duration, 60s) linear var(--marquee-direction, normal) infinite;
+  }
+
+  .marquee-track:hover {
+    animation-play-state: paused;
+  }
+
+  /* Scroll-driven entrance for below-the-fold sections. Progressive: browsers
+     without animation-timeline simply render static content. */
+  @supports (animation-timeline: view()) {
+    .reveal-up {
+      animation: reveal-up 0.6s var(--ease-gentle) both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 70%;
+    }
+  }
+}
+
+@keyframes hero-enter {
+  from {
+    opacity: 0;
+    translate: 0 16px;
+  }
+}
+
+@keyframes hero-float {
+  0%,
+  100% {
+    translate: 0 0;
+  }
+  50% {
+    translate: 0 -10px;
+  }
+}
+
+@keyframes hero-glow {
+  from {
+    opacity: 0.6;
+    scale: 1;
+  }
+  to {
+    opacity: 1;
+    scale: 1.2;
+  }
+}
+
+@keyframes equalizer {
+  0%,
+  100% {
+    scale: 1 0.35;
+  }
+  50% {
+    scale: 1 1;
+  }
+}
+
+@keyframes marquee {
+  to {
+    translate: -50% 0;
+  }
+}
+
+@keyframes reveal-up {
+  from {
+    opacity: 0;
+    translate: 0 28px;
+  }
+}
+
 :root {
   --ui-bg: var(--color-neutral-100);
   --ui-surface: var(--color-neutral-50);
