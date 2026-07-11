@@ -1,12 +1,12 @@
 import { getRequestHeader, setResponseHeader } from "@tanstack/react-start/server";
 
 import type { ConsentCategory, ConsentDecision, InitialConsent } from "#/core/consent";
+import type { ConsentConfig } from "#/core/consent-config";
 import {
   buildAnonymousIdSetCookie,
   buildClearAnonymousIdSetCookie,
   readAnonymousIdCookie,
 } from "#/server/anonymous-id-cookie";
-import type { ConsentDecisionCookieOptions } from "#/server/consent-cookie";
 import { readConsentDecisionCookie } from "#/server/consent-cookie";
 import type { ServerTrackerContext } from "#/server/create-server-tracker";
 import { resolveInitialConsent } from "#/server/initial-consent";
@@ -86,8 +86,8 @@ export function readAnonymousIdRequestCookie(cookieName: string): string | undef
  * gate that keeps server-owned tracking honoring exactly what the visitor chose. Requires
  * the client to mirror decisions into a cookie via `withConsentCookieMirror`.
  */
-export function readConsentDecisionRequestCookie(options: ConsentDecisionCookieOptions): ConsentDecision | undefined {
-  return readConsentDecisionCookie(getRequestHeader("cookie"), options);
+export function readConsentDecisionRequestCookie(config: ConsentConfig): ConsentDecision | undefined {
+  return readConsentDecisionCookie(getRequestHeader("cookie"), config);
 }
 
 export interface ServerTrackerContextFromRequestOptions {

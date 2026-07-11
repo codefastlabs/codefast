@@ -1,4 +1,5 @@
 import type { ConsentDecision } from "#/core/consent";
+import type { ConsentConfig } from "#/core/consent-config";
 import type { Destination } from "#/core/destination";
 import { assertNever } from "#/core/tracked-event";
 import type { GoogleConsentParams } from "#/destinations/google-consent";
@@ -205,8 +206,8 @@ export function updateGoogleConsent(decision: ConsentDecision, options: EnsureGt
 }
 
 export interface GtagConsentBootstrapOptions {
-  /** localStorage key holding the package's `ConsentRecord` — must match `useConsent`'s `storage`. */
-  consentStorageKey: string;
+  /** The same object `useConsent` receives — the bootstrap reads its `storageKey` and `policyVersion`. */
+  config: ConsentConfig;
   /**
    * Name of the queue array on `window`. Defaults to `"dataLayer"`. Must match
    * `loadGtagScript` / `ensureGtag` if those run later on the same page.
@@ -228,8 +229,6 @@ export interface GtagConsentBootstrapOptions {
    * receive the same nonce from the app (this helper only returns JS text, not a React node).
    */
   nonce?: string | undefined;
-  /** Must match `useConsent`'s `policyVersion` — a decision under any other version is ignored. */
-  policyVersion: string;
 }
 
 /**
@@ -243,13 +242,12 @@ export interface GtagConsentBootstrapOptions {
  */
 export function buildGtagConsentBootstrapScript(options: GtagConsentBootstrapOptions): string {
   const {
-    consentStorageKey,
+    config,
     dataLayerName = DEFAULT_DATA_LAYER_NAME,
     defaultConsent,
     debugMode,
     gaMeasurementId,
     nonce,
-    policyVersion,
   } = options;
 
   const gtagScriptUrl = gtagScriptSrc(gaMeasurementId, dataLayerName);
@@ -257,10 +255,10 @@ export function buildGtagConsentBootstrapScript(options: GtagConsentBootstrapOpt
     debugMode === true ? `${JSON.stringify(gaMeasurementId)}, { debug_mode: true }` : JSON.stringify(gaMeasurementId);
   const nonceAssignment = nonce === undefined ? "" : `gtagScript.nonce = ${JSON.stringify(nonce)};`;
   const preamble = buildGoogleConsentBootstrapPreamble({
-    consentStorageKey,
+    consentStorageKey: config.storageKey,
     dataLayerName,
     defaultConsent,
-    policyVersion,
+    policyVersion: config.policyVersion,
   });
 
   // Advanced Consent Mode: consent default first, then always load the tag (even when denied).

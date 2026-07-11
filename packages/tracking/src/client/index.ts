@@ -4,6 +4,9 @@ export { createClientTracker } from "#/client/create-client-tracker";
 export type { ConsentCookieMirrorOptions } from "#/client/consent-cookie-mirror";
 export { withConsentCookieMirror } from "#/client/consent-cookie-mirror";
 
+export type { ConsentRuntime, ConsentRuntimeOptions } from "#/client/consent-runtime";
+export { createConsentRuntime } from "#/client/consent-runtime";
+
 export { createLocalStorageConsentStorage } from "#/client/consent-storage";
 
 export type { ConsentWithdrawalHandlerOptions } from "#/client/consent-withdrawal";

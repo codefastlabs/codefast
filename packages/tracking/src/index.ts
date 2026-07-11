@@ -15,6 +15,7 @@
 export type {
   AliasEvent,
   ConsentCategory,
+  ConsentConfig,
   ConsentDecision,
   ConsentMode,
   ConsentRecord,
@@ -43,6 +44,7 @@ export {
   CONSENT_REGIONS,
   createConsentDecision,
   decodeConsentCookieValue,
+  defineConsentConfig,
   defineEventCatalog,
   deriveEventId,
   encodeConsentCookieValue,

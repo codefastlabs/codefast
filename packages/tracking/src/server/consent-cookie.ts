@@ -1,5 +1,6 @@
 import type { ConsentDecision, ConsentRecord } from "#/core/consent";
 import { normalizeConsentDecision } from "#/core/consent";
+import type { ConsentConfig } from "#/core/consent-config";
 import { decodeConsentCookieValue } from "#/core/consent-cookie";
 import { readCookieValue } from "#/core/cookie";
 
@@ -17,24 +18,26 @@ export function readConsentRecordCookie(
   return value === undefined ? undefined : decodeConsentCookieValue(value);
 }
 
-export interface ConsentDecisionCookieOptions {
-  cookieName: string;
-  /** Must match the client's `policyVersion` — a superseded record reads as "no decision". */
-  policyVersion: string;
-}
-
 /**
  * The request's stored decision under the current policy version, normalized to drop
  * tampered extra keys — the server-side mirror of `readStoredDecision`, so a server
- * handler gates on exactly the rule the client tracker applies.
+ * handler gates on exactly the rule the client tracker applies. Takes the same
+ * `ConsentConfig` the client runtime mirrors from, so the cookie name and policy
+ * version can never drift between the two sides.
+ *
+ * @throws Error when the config names no `decisionCookieName` — a wiring bug, not "no decision".
  */
 export function readConsentDecisionCookie(
   cookieHeader: string | null | undefined,
-  options: ConsentDecisionCookieOptions,
+  config: ConsentConfig,
 ): ConsentDecision | undefined {
-  const record = readConsentRecordCookie(cookieHeader, options.cookieName);
+  if (config.decisionCookieName === undefined) {
+    throw new Error("[tracking] readConsentDecisionCookie requires config.decisionCookieName");
+  }
 
-  if (record?.policyVersion !== options.policyVersion) {
+  const record = readConsentRecordCookie(cookieHeader, config.decisionCookieName);
+
+  if (record?.policyVersion !== config.policyVersion) {
     return undefined;
   }
 

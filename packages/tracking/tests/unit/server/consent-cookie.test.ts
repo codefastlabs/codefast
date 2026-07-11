@@ -27,7 +27,14 @@ describe("readConsentRecordCookie", () => {
 
 describe("readConsentDecisionCookie", () => {
   it("returns the decision under the current policy version", () => {
-    expect(readConsentDecisionCookie(cookieHeader(record), { cookieName: "consent", policyVersion: "1" })).toEqual({
+    expect(
+      readConsentDecisionCookie(cookieHeader(record), {
+        decisionCookieName: "consent",
+        policyVersion: "1",
+        requestedCategories: ["analytics"],
+        storageKey: "consent",
+      }),
+    ).toEqual({
       ads: false,
       analytics: true,
     });
@@ -35,13 +42,23 @@ describe("readConsentDecisionCookie", () => {
 
   it("reads a superseded policy version as no decision", () => {
     expect(
-      readConsentDecisionCookie(cookieHeader(record), { cookieName: "consent", policyVersion: "2" }),
+      readConsentDecisionCookie(cookieHeader(record), {
+        decisionCookieName: "consent",
+        policyVersion: "2",
+        requestedCategories: ["analytics"],
+        storageKey: "consent",
+      }),
     ).toBeUndefined();
   });
 
   it("normalizes tampered extra keys away", () => {
     const tampered = { ...record, decision: { ads: true, analytics: true, tracking: true } } as ConsentRecord;
-    const decision = readConsentDecisionCookie(cookieHeader(tampered), { cookieName: "consent", policyVersion: "1" });
+    const decision = readConsentDecisionCookie(cookieHeader(tampered), {
+      decisionCookieName: "consent",
+      policyVersion: "1",
+      requestedCategories: ["analytics"],
+      storageKey: "consent",
+    });
 
     expect(decision).toEqual({ ads: true, analytics: true });
   });

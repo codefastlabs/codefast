@@ -7,9 +7,8 @@ describe("createIsAnalyticsAllowed", () => {
   it("follows the region default before a stored decision exists", () => {
     const storage = createLocalStorageConsentStorage("test-is-analytics-allowed");
     const isAnalyticsAllowed = createIsAnalyticsAllowed({
-      requestedCategories: ["analytics"],
+      config: { policyVersion: "1", requestedCategories: ["analytics"], storageKey: "test-is-analytics-allowed" },
       getMode: () => "opt-out",
-      policyVersion: "1",
       storage,
     });
 
@@ -25,9 +24,12 @@ describe("createIsAnalyticsAllowed", () => {
     });
 
     const isAnalyticsAllowed = createIsAnalyticsAllowed({
-      requestedCategories: ["analytics"],
+      config: {
+        policyVersion: "1",
+        requestedCategories: ["analytics"],
+        storageKey: "test-is-analytics-allowed-denied",
+      },
       getMode: () => "opt-out",
-      policyVersion: "1",
       storage,
     });
 
@@ -40,10 +42,13 @@ describe("createIsAnalyticsAllowed", () => {
     const hasGlobalPrivacyControlSignal = vi.fn(() => false);
 
     const isAnalyticsAllowed = createIsAnalyticsAllowed({
-      requestedCategories: ["ads", "analytics"],
+      config: {
+        policyVersion: "1",
+        requestedCategories: ["ads", "analytics"],
+        storageKey: "test-is-analytics-allowed-gpc",
+      },
       getMode,
       hasGlobalPrivacyControlSignal,
-      policyVersion: "1",
       storage,
     });
 

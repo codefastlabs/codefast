@@ -2,23 +2,19 @@
 
 import { useCallback, useMemo, useRef, useSyncExternalStore } from "react";
 
-import type { ConsentCategory, ConsentDecision, ConsentMode, ConsentStorage } from "#/core/consent";
+import type { ConsentDecision, ConsentMode, ConsentStorage } from "#/core/consent";
 import { CONSENT_CATEGORIES, createConsentDecision, readStoredDecision, resolveDefaultConsent } from "#/core/consent";
+import type { ConsentConfig } from "#/core/consent-config";
 
 /**
  * @since 0.5.0-canary.4
  */
 export interface UseConsentOptions {
+  /** Must be the same object the tracker gate and the tag bootstraps receive — one config, every surface. */
+  config: ConsentConfig;
   hasGlobalPrivacyControlSignal?: boolean | undefined;
   mode: ConsentMode;
   onDecision?: ((decision: ConsentDecision) => void) | undefined;
-  policyVersion: string;
-  /**
-   * Categories the app's prompt actually asks about — `grantAll` grants exactly these,
-   * so an analytics-only banner can never grant ads consent it never asked for.
-   * Defaults to `["analytics"]`.
-   */
-  requestedCategories?: ReadonlyArray<ConsentCategory> | undefined;
   /** Must be a stable reference (module-level or memoized) — a new object per render resubscribes every render. */
   storage: ConsentStorage;
 }
@@ -41,8 +37,6 @@ export interface UseConsentResult {
   saveDecision: (decision: ConsentDecision) => void;
 }
 
-const DEFAULT_REQUESTED_CATEGORIES: ReadonlyArray<ConsentCategory> = ["analytics"];
-
 /**
  * Bridges `resolveConsentMode`/`resolveDefaultConsent` (core, region-aware) to React via
  * `useSyncExternalStore`: the stored record is the single source of truth, hydration is
@@ -53,8 +47,8 @@ const DEFAULT_REQUESTED_CATEGORIES: ReadonlyArray<ConsentCategory> = ["analytics
  * @since 0.5.0-canary.4
  */
 export function useConsent(options: UseConsentOptions): UseConsentResult {
-  const { mode, onDecision, policyVersion, storage } = options;
-  const requestedCategories = options.requestedCategories ?? DEFAULT_REQUESTED_CATEGORIES;
+  const { mode, onDecision, storage } = options;
+  const { policyVersion, requestedCategories } = options.config;
   const hasGlobalPrivacyControlSignal = options.hasGlobalPrivacyControlSignal ?? false;
 
   // useSyncExternalStore needs a referentially stable snapshot, but JSON-backed storages

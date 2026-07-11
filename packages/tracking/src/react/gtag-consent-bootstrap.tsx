@@ -15,20 +15,18 @@ export interface GtagConsentBootstrapProps
  * the injected gtag.js tag when `nonce` is provided.
  */
 export function GtagConsentBootstrap({
-  consentStorageKey,
+  config,
   dataLayerName,
   defaultConsent,
   debugMode,
   gaMeasurementId,
   nonce,
-  policyVersion,
   ...props
 }: GtagConsentBootstrapProps): ReactNode {
   const bootstrapOptions: GtagConsentBootstrapOptions = {
-    consentStorageKey,
+    config,
     defaultConsent,
     gaMeasurementId,
-    policyVersion,
     ...(dataLayerName === undefined ? {} : { dataLayerName }),
     ...(debugMode === undefined ? {} : { debugMode }),
     ...(nonce === undefined ? {} : { nonce }),

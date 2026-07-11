@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 
 import { PrivacyChoices } from "#/features/privacy/components/privacy-choices";
 import { ANONYMOUS_ID_COOKIE_NAME } from "#/features/tracking/lib/anonymous-id";
-import { CONSENT_STORAGE_KEY } from "#/features/tracking/lib/consent";
+import { consentConfig } from "#/features/tracking/lib/consent";
 import { INITIAL_CONSENT_SESSION_KEY } from "#/features/tracking/lib/visitor-consent";
 import { CONTENT_CACHE_HEADERS } from "#/lib/cache";
 import { canonicalHead } from "#/lib/seo";
@@ -90,8 +90,8 @@ function PrivacyPage() {
         {/* Rendered from the same constants the code reads/writes, so this disclosure cannot drift. */}
         <ul className="flex list-disc flex-col gap-2 ps-5 text-sm leading-6 text-ui-muted">
           <li>
-            <code>{CONSENT_STORAGE_KEY}</code> (localStorage) — your consent choice, the policy version it was given
-            under, and when.
+            <code>{consentConfig.storageKey}</code> (localStorage) — your consent choice, the policy version it was
+            given under, and when.
           </li>
           <li>
             <code>{ANONYMOUS_ID_COOKIE_NAME}</code> (cookie, 1 year) — a random identifier used to correlate analytics

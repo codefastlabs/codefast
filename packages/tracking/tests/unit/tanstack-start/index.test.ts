@@ -105,11 +105,25 @@ describe("request cookie readers", () => {
 
     stubHeaders({ cookie: `consent=${encodeConsentCookieValue(record)}` });
 
-    expect(readConsentDecisionRequestCookie({ cookieName: "consent", policyVersion: "1" })).toEqual({
+    expect(
+      readConsentDecisionRequestCookie({
+        decisionCookieName: "consent",
+        policyVersion: "1",
+        requestedCategories: ["analytics"],
+        storageKey: "consent",
+      }),
+    ).toEqual({
       ads: false,
       analytics: true,
     });
-    expect(readConsentDecisionRequestCookie({ cookieName: "consent", policyVersion: "2" })).toBeUndefined();
+    expect(
+      readConsentDecisionRequestCookie({
+        decisionCookieName: "consent",
+        policyVersion: "2",
+        requestedCategories: ["analytics"],
+        storageKey: "consent",
+      }),
+    ).toBeUndefined();
   });
 });
 

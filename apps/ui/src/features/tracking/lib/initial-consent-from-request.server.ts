@@ -1,7 +1,7 @@
 import { resolveInitialConsentFromRequest } from "@codefast/tracking/tanstack-start";
 
 import type { InitialConsent } from "#/features/tracking/lib/consent";
-import { REQUESTED_CONSENT_CATEGORIES } from "#/features/tracking/lib/consent";
+import { consentConfig } from "#/features/tracking/lib/consent";
 
 /**
  * Server-only module — the `.server` suffix makes any client-graph leak a traced
@@ -11,5 +11,5 @@ import { REQUESTED_CONSENT_CATEGORIES } from "#/features/tracking/lib/consent";
  * missing geo header.
  */
 export function initialConsentFromRequest(): InitialConsent {
-  return resolveInitialConsentFromRequest({ requestedCategories: REQUESTED_CONSENT_CATEGORIES });
+  return resolveInitialConsentFromRequest({ requestedCategories: consentConfig.requestedCategories });
 }

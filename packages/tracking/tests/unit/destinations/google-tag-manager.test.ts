@@ -1,10 +1,13 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 
+import type { ConsentConfig } from "#/core/consent-config";
 import {
   buildGtmConsentBootstrapScript,
   createGoogleTagManagerDestination,
   loadGtmScript,
 } from "#/destinations/google-tag-manager";
+
+const BOOTSTRAP_CONFIG: ConsentConfig = { policyVersion: "1", requestedCategories: ["analytics"], storageKey: "k" };
 
 describe("createGoogleTagManagerDestination", () => {
   it("delivers immediately — GTM owns its own queue and transport", () => {
@@ -132,10 +135,9 @@ describe("buildGtmConsentBootstrapScript", () => {
 
   it("applies consent default and always loads gtm.js (advanced Consent Mode)", () => {
     const script = buildGtmConsentBootstrapScript({
-      consentStorageKey: "k",
+      config: BOOTSTRAP_CONFIG,
       defaultConsent: { ads: false, analytics: true },
       gtmId: "GTM-TEST",
-      policyVersion: "1",
     });
 
     runScript(script);
@@ -146,10 +148,9 @@ describe("buildGtmConsentBootstrapScript", () => {
 
   it("still loads gtm.js when analytics is denied (advanced Consent Mode)", () => {
     const script = buildGtmConsentBootstrapScript({
-      consentStorageKey: "k",
+      config: BOOTSTRAP_CONFIG,
       defaultConsent: { ads: false, analytics: false },
       gtmId: "GTM-TEST",
-      policyVersion: "1",
     });
 
     runScript(script);
@@ -161,11 +162,10 @@ describe("buildGtmConsentBootstrapScript", () => {
   it("forwards auth/preview and nonce onto the injected script URL/element", () => {
     const script = buildGtmConsentBootstrapScript({
       auth: "auth-token",
-      consentStorageKey: "k",
+      config: BOOTSTRAP_CONFIG,
       defaultConsent: { ads: false, analytics: true },
       gtmId: "GTM-TEST",
       nonce: "csp-nonce",
-      policyVersion: "1",
       preview: "env-1",
     });
 

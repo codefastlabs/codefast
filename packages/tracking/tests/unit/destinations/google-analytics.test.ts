@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
+import type { ConsentConfig } from "#/core/consent-config";
 import {
   buildGtagConsentBootstrapScript,
   clearGoogleAnalyticsCookies,
@@ -13,6 +14,8 @@ import {
 } from "#/destinations/google-analytics";
 
 type GtagFunction = (...args: Array<unknown>) => void;
+
+const BOOTSTRAP_CONFIG: ConsentConfig = { policyVersion: "1", requestedCategories: ["analytics"], storageKey: "k" };
 
 describe("createGoogleAnalyticsDestination", () => {
   let gtag: ReturnType<typeof vi.fn<GtagFunction>>;
@@ -385,10 +388,9 @@ describe("buildGtagConsentBootstrapScript", () => {
 
   it("applies the literal defaultConsent and always loads gtag.js (advanced Consent Mode)", () => {
     const script = buildGtagConsentBootstrapScript({
-      consentStorageKey: "k",
+      config: BOOTSTRAP_CONFIG,
       defaultConsent: { ads: false, analytics: true },
       gaMeasurementId: "G-TEST123",
-      policyVersion: "1",
     });
 
     runScript(script);
@@ -404,10 +406,9 @@ describe("buildGtagConsentBootstrapScript", () => {
 
   it("still loads gtag.js when the default denies analytics (advanced Consent Mode)", () => {
     const script = buildGtagConsentBootstrapScript({
-      consentStorageKey: "k",
+      config: BOOTSTRAP_CONFIG,
       defaultConsent: { ads: false, analytics: false },
       gaMeasurementId: "G-TEST123",
-      policyVersion: "1",
     });
 
     runScript(script);
@@ -425,10 +426,9 @@ describe("buildGtagConsentBootstrapScript", () => {
     );
 
     const script = buildGtagConsentBootstrapScript({
-      consentStorageKey: "k",
+      config: BOOTSTRAP_CONFIG,
       defaultConsent: { ads: false, analytics: false },
       gaMeasurementId: "G-TEST123",
-      policyVersion: "1",
     });
 
     runScript(script);
@@ -444,10 +444,9 @@ describe("buildGtagConsentBootstrapScript", () => {
     );
 
     const script = buildGtagConsentBootstrapScript({
-      consentStorageKey: "k",
+      config: BOOTSTRAP_CONFIG,
       defaultConsent: { ads: false, analytics: false },
       gaMeasurementId: "G-TEST123",
-      policyVersion: "1",
     });
 
     runScript(script);
@@ -457,11 +456,10 @@ describe("buildGtagConsentBootstrapScript", () => {
 
   it("queues onto a custom dataLayerName and passes l= to gtag.js", () => {
     const script = buildGtagConsentBootstrapScript({
-      consentStorageKey: "k",
+      config: BOOTSTRAP_CONFIG,
       dataLayerName: "appDataLayer",
       defaultConsent: { ads: false, analytics: true },
       gaMeasurementId: "G-TEST123",
-      policyVersion: "1",
     });
 
     runScript(script);
@@ -486,11 +484,10 @@ describe("buildGtagConsentBootstrapScript", () => {
 
   it("sets nonce on the injected gtag.js script when provided", () => {
     const script = buildGtagConsentBootstrapScript({
-      consentStorageKey: "k",
+      config: BOOTSTRAP_CONFIG,
       defaultConsent: { ads: false, analytics: true },
       gaMeasurementId: "G-TEST123",
       nonce: "csp-nonce-1",
-      policyVersion: "1",
     });
 
     runScript(script);
@@ -500,11 +497,10 @@ describe("buildGtagConsentBootstrapScript", () => {
 
   it("passes debug_mode on config when debugMode is true", () => {
     const script = buildGtagConsentBootstrapScript({
-      consentStorageKey: "k",
+      config: BOOTSTRAP_CONFIG,
       debugMode: true,
       defaultConsent: { ads: false, analytics: true },
       gaMeasurementId: "G-TEST123",
-      policyVersion: "1",
     });
 
     runScript(script);

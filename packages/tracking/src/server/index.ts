@@ -6,7 +6,6 @@ export {
   readAnonymousIdCookie,
 } from "#/server/anonymous-id-cookie";
 
-export type { ConsentDecisionCookieOptions } from "#/server/consent-cookie";
 export { readConsentDecisionCookie, readConsentRecordCookie } from "#/server/consent-cookie";
 
 export type {

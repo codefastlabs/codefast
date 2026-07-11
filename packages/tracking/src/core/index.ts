@@ -24,6 +24,9 @@ export {
   STRICTEST_INITIAL_CONSENT,
 } from "#/core/consent";
 
+export type { ConsentConfig } from "#/core/consent-config";
+export { defineConsentConfig } from "#/core/consent-config";
+
 export { decodeConsentCookieValue, encodeConsentCookieValue } from "#/core/consent-cookie";
 
 export { readCookieValue } from "#/core/cookie";

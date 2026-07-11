@@ -1,9 +1,8 @@
 import { Analytics as VercelAnalytics } from "@vercel/analytics/react";
 import { useEffect } from "react";
 
-import { consentStorage } from "#/features/tracking/lib/consent";
 import { refreshAnonymousId } from "#/features/tracking/lib/tracking";
-import { visitorConsentStore } from "#/features/tracking/lib/visitor-consent";
+import { consentRuntime } from "#/features/tracking/lib/visitor-consent";
 
 /**
  * Mounted once in the root document. Renders Vercel's own script/pageview component and
@@ -20,8 +19,8 @@ export function Analytics() {
     // safe to call on every signal — resolve, banner grant, cross-tab decision.
     refreshAnonymousId();
 
-    const unsubscribeStore = visitorConsentStore.subscribe(refreshAnonymousId);
-    const unsubscribeStorage = consentStorage.subscribe(refreshAnonymousId);
+    const unsubscribeStore = consentRuntime.initialConsentStore.subscribe(refreshAnonymousId);
+    const unsubscribeStorage = consentRuntime.storage.subscribe(refreshAnonymousId);
 
     return () => {
       unsubscribeStore();

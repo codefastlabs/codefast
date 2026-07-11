@@ -1,4 +1,5 @@
 import type { ConsentDecision } from "#/core/consent";
+import type { ConsentConfig } from "#/core/consent-config";
 import type { Destination } from "#/core/destination";
 import { assertNever } from "#/core/tracked-event";
 import {
@@ -197,8 +198,8 @@ export function createGoogleTagManagerDestination(options: GoogleTagManagerDesti
 export interface GtmConsentBootstrapOptions {
   /** Environment snippet `gtm_auth` — pair with `preview` for GTM preview/debug containers. */
   auth?: string | undefined;
-  /** localStorage key holding the package's `ConsentRecord` — must match `useConsent`'s `storage`. */
-  consentStorageKey: string;
+  /** The same object `useConsent` receives — the bootstrap reads its `storageKey` and `policyVersion`. */
+  config: ConsentConfig;
   /** Name of the queue array on `window`. Defaults to `"dataLayer"`. */
   dataLayerName?: string | undefined;
   /**
@@ -220,8 +221,6 @@ export interface GtmConsentBootstrapOptions {
    * the app.
    */
   nonce?: string | undefined;
-  /** Must match `useConsent`'s `policyVersion`. */
-  policyVersion: string;
   /** Environment snippet `gtm_preview` — pair with `auth`. */
   preview?: string | undefined;
 }
@@ -235,13 +234,12 @@ export interface GtmConsentBootstrapOptions {
 export function buildGtmConsentBootstrapScript(options: GtmConsentBootstrapOptions): string {
   const {
     auth,
-    consentStorageKey,
+    config,
     dataLayerName = DEFAULT_DATA_LAYER_NAME,
     defaultConsent,
     gtmId,
     gtmScriptUrl = DEFAULT_GTM_SCRIPT_URL,
     nonce,
-    policyVersion,
     preview,
   } = options;
 
@@ -249,10 +247,10 @@ export function buildGtmConsentBootstrapScript(options: GtmConsentBootstrapOptio
   const dataLayerAccess = `window[${JSON.stringify(dataLayerName)}]`;
   const nonceAssignment = nonce === undefined ? "" : `gtmScript.nonce = ${JSON.stringify(nonce)};`;
   const preamble = buildGoogleConsentBootstrapPreamble({
-    consentStorageKey,
+    consentStorageKey: config.storageKey,
     dataLayerName,
     defaultConsent,
-    policyVersion,
+    policyVersion: config.policyVersion,
   });
 
   // Advanced Consent Mode: consent default first, then always load the container.

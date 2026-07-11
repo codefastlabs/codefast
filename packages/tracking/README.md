@@ -140,12 +140,8 @@ Or style the parts yourself via `className`/`data-slot` attributes (`consent-ban
 `prompt` and `preferences`.
 
 ```tsx
-import {
-  createConsentWithdrawalHandler,
-  createIsAnalyticsAllowed,
-  createLocalStorageConsentStorage,
-  hasGlobalPrivacyControlSignal,
-} from "@codefast/tracking/client";
+import { defineConsentConfig } from "@codefast/tracking";
+import { createConsentRuntime, createConsentWithdrawalHandler } from "@codefast/tracking/client";
 import { clearGoogleAnalyticsCookies, loadGtagScript } from "@codefast/tracking/destinations";
 import {
   ConsentBanner,
@@ -163,19 +159,19 @@ import {
   useGoogleConsentSync,
 } from "@codefast/tracking/react";
 
-// Module scope — useConsent subscribes to the storage, so it must be a stable reference.
-const consentStorage = createLocalStorageConsentStorage("tracking-consent");
-const requestedCategories = ["analytics"] as const;
-const policyVersion = "2026-01";
+// One config, every surface — the hook, the tracker gate, the bootstraps, and the
+// server cookie reader all take this object, so nothing can drift between them.
+const consentConfig = defineConsentConfig({
+  policyVersion: "2026-01",
+  requestedCategories: ["analytics"],
+  storageKey: "tracking-consent",
+});
 
-// Prefer a re-readable snapshot from your server-fn lane (apps/ui `visitor-consent.ts`).
-// Fail closed to opt-in until that resolve lands.
-const isAnalyticsAllowed = createIsAnalyticsAllowed({
-  hasGlobalPrivacyControlSignal,
-  getMode: () => "opt-in",
-  policyVersion,
-  requestedCategories,
-  storage: consentStorage,
+// Module scope — one runtime owns the storage instance, the region store, and the
+// tracker gate (`runtime.isAnalyticsAllowed`), all derived from the config.
+const runtime = createConsentRuntime({
+  config: consentConfig,
+  resolveInitialConsent: () => resolveVisitorConsent(), // your server-fn lane
 });
 
 const onDecision = createConsentWithdrawalHandler({
@@ -186,11 +182,10 @@ const onDecision = createConsentWithdrawalHandler({
 
 function ConsentGate({ mode }: { mode: "opt-in" | "opt-out" }) {
   const consent = useConsent({
+    config: consentConfig, // Accept grants exactly the requested categories — never more
     mode,
     onDecision,
-    policyVersion,
-    requestedCategories, // Accept grants exactly these — never unrequested purposes
-    storage: consentStorage,
+    storage: runtime.storage,
   });
 
   // Mount once on a page-wide surface so privacy-page / cross-tab decisions sync to gtag.
@@ -252,17 +247,17 @@ functions are one-liners:
    are fine in server-fn files — the Start compiler strips handler bodies (and their
    then-unused imports) from the client transform; see the isolation section below for
    the build-time guard.
-2. **Client store** — `createInitialConsentStore({ resolve, sessionStorageKey? })`
-   (`@codefast/tracking/client`) owns the whole client half: strictest default until the
-   server answers, single-flight resolve, per-session cache (validated with
-   `isInitialConsent`), fail-closed-but-retryable errors, retry on tab-visible. Kick
-   `store.ensureResolved()` at router creation (window-guarded) so the round trip overlaps
-   hydration; read it via `useInitialConsent(store)` (`@codefast/tracking/react`) or
-   `useSyncExternalStore` directly, and pass
-   `getMode: () => store.getSnapshot().initialConsent.mode` into `createIsAnalyticsAllowed`.
-3. **`createIsAnalyticsAllowed` / `createConsentWithdrawalHandler`**
-   (`@codefast/tracking/client`) — tracker gate + revoke clears (`tracker.clear`,
-   anonymous-id cookie, `_ga*` via `clearGoogleAnalyticsCookies`).
+2. **Client runtime** — `createConsentRuntime({ config, resolveInitialConsent, initialConsentSessionStorageKey? })`
+   (`@codefast/tracking/client`) composes the whole client half from one `ConsentConfig`:
+   the shared decision storage (cookie-mirrored when `config.decisionCookieName` is set),
+   the initial-consent store (strictest default until the server answers, single-flight
+   resolve, per-session cache, fail-closed-but-retryable errors, retry on tab-visible),
+   and the tracker gate `runtime.isAnalyticsAllowed` wired to the store's resolved mode.
+   Kick `runtime.ensureInitialConsentResolved()` at router creation (window-guarded) so
+   the round trip overlaps hydration; read the store via
+   `useInitialConsent(runtime.initialConsentStore)` (`@codefast/tracking/react`).
+3. **`createConsentWithdrawalHandler`** (`@codefast/tracking/client`) — revoke clears
+   (`tracker.clear`, anonymous-id cookie, `_ga*` via `clearGoogleAnalyticsCookies`).
 4. **`useGoogleConsentSync`** (`@codefast/tracking/react`) — Consent Mode `update` +
    optional idempotent gtag load, including cross-tab / privacy-page decisions.
 
@@ -296,12 +291,13 @@ ladder. `createTrackedEventIngestHandler(options)` wraps it as a framework-agnos
 
 ### Consent on the server
 
-`withConsentCookieMirror(storage, { cookieName })` (`@codefast/tracking/client`) mirrors
-every saved decision into a cookie (localStorage stays the UI's source of truth);
-`readConsentDecisionCookie` (`@codefast/tracking/server`) or
-`readConsentDecisionRequestCookie` (`tanstack-start`) reads it back under the current
-policy version — the gate that keeps server-owned tracking honoring exactly what the
-visitor chose, instead of tracking consent-blind.
+Name a `decisionCookieName` in the `ConsentConfig` and `createConsentRuntime` mirrors
+every saved decision into that cookie (localStorage stays the UI's source of truth;
+`withConsentCookieMirror` is the underlying decorator); `readConsentDecisionCookie(cookieHeader, config)`
+(`@codefast/tracking/server`) or `readConsentDecisionRequestCookie(config)` (`tanstack-start`)
+reads it back under the config's policy version — the same object on both sides, so the
+cookie name and version can never drift, and server-owned tracking honors exactly what
+the visitor chose instead of tracking consent-blind.
 
 ### Keeping server-only subpaths out of client bundles
 
@@ -345,13 +341,12 @@ import { GtagConsentBootstrap } from "@codefast/tracking/react";
 // corrects the consent UI + gtag update after hydration (see apps/ui).
 // Same nonce on this host script and on loadGtagScript for CSP.
 <GtagConsentBootstrap
-  consentStorageKey="tracking-consent"
+  config={consentConfig} // the same object useConsent receives — key/version can't drift
   dataLayerName="dataLayer" // optional; custom names also set gtag.js's `l` param
   debugMode={import.meta.env.DEV} // optional — gtag('config', id, { debug_mode: true })
   defaultConsent={{ ads: false, analytics: false }}
   gaMeasurementId="G-XXXXXXX"
   nonce={cspNonce} // optional — stamped on the injected gtag.js tag too
-  policyVersion="2026-01"
 />;
 ```
 

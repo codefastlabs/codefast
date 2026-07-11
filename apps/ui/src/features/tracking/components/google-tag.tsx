@@ -1,10 +1,6 @@
 import { GtagConsentBootstrap } from "@codefast/tracking/react";
 
-import {
-  CONSENT_POLICY_VERSION,
-  CONSENT_STORAGE_KEY,
-  STRICTEST_INITIAL_CONSENT,
-} from "#/features/tracking/lib/consent";
+import { consentConfig, STRICTEST_INITIAL_CONSENT } from "#/features/tracking/lib/consent";
 import { GA_MEASUREMENT_ID } from "#/features/tracking/lib/google-tag-loader";
 
 /**
@@ -21,10 +17,9 @@ export function GoogleTag() {
 
   return (
     <GtagConsentBootstrap
-      consentStorageKey={CONSENT_STORAGE_KEY}
+      config={consentConfig}
       defaultConsent={STRICTEST_INITIAL_CONSENT.defaultConsent}
       gaMeasurementId={GA_MEASUREMENT_ID}
-      policyVersion={CONSENT_POLICY_VERSION}
     />
   );
 }

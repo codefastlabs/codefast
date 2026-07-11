@@ -2,13 +2,22 @@ import { act, renderHook } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
 import type { ConsentRecord, ConsentStorage } from "#/core/consent";
+import type { ConsentConfig } from "#/core/consent-config";
 import { useConsent } from "#/react/use-consent";
 import { createMemoryConsentStorage } from "#/tests/unit/core/support/memory-consent-storage";
+
+const V1_CONFIG: ConsentConfig = {
+  policyVersion: "v1",
+  requestedCategories: ["analytics"],
+  storageKey: "test-consent",
+};
+const V1_BOTH_CONFIG: ConsentConfig = { ...V1_CONFIG, requestedCategories: ["ads", "analytics"] };
+const V2_CONFIG: ConsentConfig = { ...V1_CONFIG, policyVersion: "v2" };
 
 describe("useConsent", () => {
   it("blocks tracking and needs a prompt under opt-in with no stored decision", () => {
     const { result } = renderHook(() =>
-      useConsent({ mode: "opt-in", policyVersion: "v1", storage: createMemoryConsentStorage() }),
+      useConsent({ config: V1_CONFIG, mode: "opt-in", storage: createMemoryConsentStorage() }),
     );
 
     expect(result.current.decision).toBeUndefined();
@@ -19,10 +28,10 @@ describe("useConsent", () => {
 
   it("grants the requested categories by default under opt-out — never the unrequested ones", () => {
     const { result } = renderHook(() =>
-      useConsent({ mode: "opt-out", policyVersion: "v1", storage: createMemoryConsentStorage() }),
+      useConsent({ config: V1_CONFIG, mode: "opt-out", storage: createMemoryConsentStorage() }),
     );
 
-    // requestedCategories defaults to ["analytics"], so ads stays denied.
+    // the config requests only analytics, so ads stays denied.
     expect(result.current.effectiveConsent).toEqual({ ads: false, analytics: true });
     expect(result.current.isAnalyticsAllowed).toBe(true);
     expect(result.current.isPromptNeeded).toBe(false);
@@ -31,10 +40,9 @@ describe("useConsent", () => {
   it("honors GPC as an ads opt-out without withdrawing analytics", () => {
     const { result } = renderHook(() =>
       useConsent({
-        requestedCategories: ["ads", "analytics"],
+        config: V1_BOTH_CONFIG,
         hasGlobalPrivacyControlSignal: true,
         mode: "opt-out",
-        policyVersion: "v1",
         storage: createMemoryConsentStorage(),
       }),
     );
@@ -46,9 +54,7 @@ describe("useConsent", () => {
   it("grantAll grants only the requested categories, denyAll denies everything, both call onDecision", () => {
     const storage = createMemoryConsentStorage();
     const onDecision = vi.fn();
-    const { result } = renderHook(() =>
-      useConsent({ requestedCategories: ["analytics"], mode: "opt-in", onDecision, policyVersion: "v1", storage }),
-    );
+    const { result } = renderHook(() => useConsent({ config: V1_CONFIG, mode: "opt-in", onDecision, storage }));
 
     act(() => {
       result.current.grantAll();
@@ -69,9 +75,7 @@ describe("useConsent", () => {
 
   it("persists a granular per-category choice via saveDecision()", () => {
     const storage = createMemoryConsentStorage();
-    const { result } = renderHook(() =>
-      useConsent({ requestedCategories: ["ads", "analytics"], mode: "opt-in", policyVersion: "v1", storage }),
-    );
+    const { result } = renderHook(() => useConsent({ config: V1_BOTH_CONFIG, mode: "opt-in", storage }));
 
     act(() => {
       result.current.saveDecision({ ads: false, analytics: true });
@@ -88,7 +92,7 @@ describe("useConsent", () => {
       policyVersion: "v1",
       timestamp: 0,
     });
-    const { result } = renderHook(() => useConsent({ mode: "opt-in", policyVersion: "v1", storage }));
+    const { result } = renderHook(() => useConsent({ config: V1_CONFIG, mode: "opt-in", storage }));
 
     expect(result.current.decision).toEqual({ ads: false, analytics: true });
     expect(result.current.isAnalyticsAllowed).toBe(true);
@@ -101,7 +105,7 @@ describe("useConsent", () => {
       policyVersion: "v1",
       timestamp: 0,
     });
-    const { result } = renderHook(() => useConsent({ mode: "opt-in", policyVersion: "v2", storage }));
+    const { result } = renderHook(() => useConsent({ config: V2_CONFIG, mode: "opt-in", storage }));
 
     expect(result.current.decision).toBeUndefined();
     expect(result.current.isAnalyticsAllowed).toBe(false);
@@ -114,7 +118,7 @@ describe("useConsent", () => {
       policyVersion: "v1",
       timestamp: 0,
     });
-    const { result } = renderHook(() => useConsent({ mode: "opt-in", policyVersion: "v1", storage }));
+    const { result } = renderHook(() => useConsent({ config: V1_CONFIG, mode: "opt-in", storage }));
 
     expect(result.current.decision).toBeUndefined();
     expect(result.current.isPromptNeeded).toBe(true);
@@ -122,7 +126,7 @@ describe("useConsent", () => {
 
   it("picks up a decision written outside the hook, e.g. from another tab", () => {
     const storage = createMemoryConsentStorage();
-    const { result } = renderHook(() => useConsent({ mode: "opt-in", policyVersion: "v1", storage }));
+    const { result } = renderHook(() => useConsent({ config: V1_CONFIG, mode: "opt-in", storage }));
 
     expect(result.current.isPromptNeeded).toBe(true);
 
@@ -151,7 +155,7 @@ describe("useConsent", () => {
       subscribe: () => () => undefined,
     };
 
-    const { rerender, result } = renderHook(() => useConsent({ mode: "opt-in", policyVersion: "v1", storage }));
+    const { rerender, result } = renderHook(() => useConsent({ config: V1_CONFIG, mode: "opt-in", storage }));
     const first = result.current.decision;
 
     rerender();

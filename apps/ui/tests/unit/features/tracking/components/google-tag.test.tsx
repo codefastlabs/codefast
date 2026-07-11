@@ -2,7 +2,7 @@
 import { cleanup, render } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-import { CONSENT_POLICY_VERSION, CONSENT_STORAGE_KEY } from "#/features/tracking/lib/consent";
+import { consentConfig } from "#/features/tracking/lib/consent";
 
 /**
  * Renders the real `<GoogleTag />` and returns the inline script it mounts — the env id
@@ -31,7 +31,7 @@ describe("GoogleTag", () => {
     cleanup();
     vi.unstubAllEnvs();
     delete window.dataLayer;
-    window.localStorage.removeItem(CONSENT_STORAGE_KEY);
+    window.localStorage.removeItem(consentConfig.storageKey);
 
     for (const script of document.querySelectorAll('script[src^="https://www.googletagmanager.com/gtag/js"]')) {
       script.remove();
@@ -76,10 +76,10 @@ describe("GoogleTag", () => {
 
   it("prefers a stored grant over the baked strictest default (returning visitor)", async () => {
     window.localStorage.setItem(
-      CONSENT_STORAGE_KEY,
+      consentConfig.storageKey,
       JSON.stringify({
         decision: { ads: false, analytics: true },
-        policyVersion: CONSENT_POLICY_VERSION,
+        policyVersion: consentConfig.policyVersion,
         timestamp: 0,
       }),
     );
@@ -92,10 +92,10 @@ describe("GoogleTag", () => {
 
   it("keeps a stored denial denied — advanced mode still injects the tag", async () => {
     window.localStorage.setItem(
-      CONSENT_STORAGE_KEY,
+      consentConfig.storageKey,
       JSON.stringify({
         decision: { ads: false, analytics: false },
-        policyVersion: CONSENT_POLICY_VERSION,
+        policyVersion: consentConfig.policyVersion,
         timestamp: 0,
       }),
     );
@@ -107,7 +107,7 @@ describe("GoogleTag", () => {
 
   it("ignores a decision recorded under an older policy version", async () => {
     window.localStorage.setItem(
-      CONSENT_STORAGE_KEY,
+      consentConfig.storageKey,
       JSON.stringify({ decision: { ads: false, analytics: true }, policyVersion: "0", timestamp: 0 }),
     );
     runScript(await renderBootstrapScript("G-TEST123"));
@@ -117,8 +117,8 @@ describe("GoogleTag", () => {
 
   it("ignores a legacy granted/denied string record and falls back to the strictest default", async () => {
     window.localStorage.setItem(
-      CONSENT_STORAGE_KEY,
-      JSON.stringify({ decision: "granted", policyVersion: CONSENT_POLICY_VERSION, timestamp: 0 }),
+      consentConfig.storageKey,
+      JSON.stringify({ decision: "granted", policyVersion: consentConfig.policyVersion, timestamp: 0 }),
     );
     runScript(await renderBootstrapScript("G-TEST123"));
 
@@ -126,7 +126,7 @@ describe("GoogleTag", () => {
   });
 
   it("falls back to the strictest default when the stored record is corrupt", async () => {
-    window.localStorage.setItem(CONSENT_STORAGE_KEY, "not-json");
+    window.localStorage.setItem(consentConfig.storageKey, "not-json");
     runScript(await renderBootstrapScript("G-TEST123"));
 
     expect(consentDefaultParams().analytics_storage).toBe("denied");
