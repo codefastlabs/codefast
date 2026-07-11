@@ -19,7 +19,7 @@ function buildLlmsTxt(): string {
 
   return `# codefast/ui
 
-> 60+ accessible React components built on Radix UI primitives and Tailwind CSS v4. Copy the source, own the code — strict TypeScript, dark mode, and zero config. Built for React 19.
+> ${COMPONENTS.length}+ accessible React components built on Radix UI primitives and Tailwind CSS v4. Copy the source, own the code — strict TypeScript, dark mode, and zero config. Built for React 19.
 
 ## Key facts
 - Package: \`@codefast/ui\` — install with \`pnpm add @codefast/ui\`

@@ -14,13 +14,13 @@ import { SiteNotFound } from "#/components/shared/site-not-found";
 import { Analytics } from "#/features/tracking/components/analytics";
 import { GoogleTag } from "#/features/tracking/components/google-tag";
 import { SITE_OG_IMAGE } from "#/lib/seo";
+import { COMPONENTS } from "#/registry/_core/components";
 
 import appCss from "#/styles.css?url";
 
 const SITE_NAME = "codefast/ui";
 const SITE_TITLE = "codefast/ui — Beautiful, accessible React components";
-const SITE_DESCRIPTION =
-  "60+ accessible React components built on Radix UI primitives and Tailwind CSS v4. Copy the source, own the code — strict TypeScript, dark mode, and zero config.";
+const SITE_DESCRIPTION = `${COMPONENTS.length}+ accessible React components built on Radix UI primitives and Tailwind CSS v4. Copy the source, own the code — strict TypeScript, dark mode, and zero config.`;
 
 export const Route = createRootRoute({
   head: () => ({

@@ -7,6 +7,7 @@ import { StatsSection } from "#/features/home/components/stats-section";
 import { CONTENT_CACHE_HEADERS } from "#/lib/cache";
 import { GITHUB_URL } from "#/lib/nav-links";
 import { SITE_URL, absoluteUrl, canonicalHead, jsonLdScript } from "#/lib/seo";
+import { COMPONENTS } from "#/registry/_core/components";
 
 const NPM_URL = "https://www.npmjs.com/package/@codefast/ui";
 
@@ -25,8 +26,7 @@ export const Route = createFileRoute("/")({
           "@type": "WebSite",
           name: "codefast/ui",
           url: SITE_URL,
-          description:
-            "60+ accessible React components built on Radix UI primitives and Tailwind CSS v4. Copy the source, own the code.",
+          description: `${COMPONENTS.length}+ accessible React components built on Radix UI primitives and Tailwind CSS v4. Copy the source, own the code.`,
           publisher: {
             "@type": "Organization",
             name: "Codefast Labs",
