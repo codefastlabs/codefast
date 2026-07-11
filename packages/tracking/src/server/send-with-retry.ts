@@ -43,3 +43,79 @@ export async function sendWithRetry(
     }
   }
 }
+
+/** Same ladder for a batch — all-or-nothing per attempt, exhausted retries report every event. */
+async function sendBatchWithRetry(
+  destination: Destination,
+  sendBatch: NonNullable<Destination["sendBatch"]>,
+  events: Array<TrackedEvent>,
+  maxRetries: number,
+  retryDelayMs: number,
+  onError: DestinationErrorHandler,
+): Promise<void> {
+  for (let attempt = 0; attempt <= maxRetries; attempt += 1) {
+    try {
+      await sendBatch.call(destination, events);
+
+      return;
+    } catch (error) {
+      if (attempt === maxRetries) {
+        for (const event of events) {
+          onError(error, destination, event);
+        }
+
+        return;
+      }
+
+      await sleep(retryDelayMs * 2 ** attempt);
+    }
+  }
+}
+
+export interface DeliveryOptions {
+  maxRetries: number;
+  onError: DestinationErrorHandler;
+  retryDelayMs: number;
+  /**
+   * Hands delivery (including its retry ladder) to the platform's post-response
+   * scheduler; omit to await delivery in the request path.
+   */
+  waitUntil?: ((work: Promise<void>) => void) | undefined;
+}
+
+/**
+ * The one server-side delivery lane, shared by the tracker and the relay: fans out per
+ * destination, prefers `sendBatch` for multi-event batches, retries with backoff, and
+ * either defers the whole thing via `waitUntil` or awaits it.
+ */
+export async function deliverToDestinations(
+  destinations: Array<Destination>,
+  events: Array<TrackedEvent>,
+  options: DeliveryOptions,
+): Promise<void> {
+  const { maxRetries, onError, retryDelayMs, waitUntil } = options;
+
+  const delivery = Promise.all(
+    destinations.map(async (destination) => {
+      if (events.length > 1 && destination.sendBatch) {
+        await sendBatchWithRetry(destination, destination.sendBatch, events, maxRetries, retryDelayMs, onError);
+
+        return;
+      }
+
+      await Promise.all(
+        events.map(async (event) => sendWithRetry(destination, event, maxRetries, retryDelayMs, onError)),
+      );
+    }),
+  ).then(() => {
+    /* collapse to void for waitUntil schedulers typed on Promise<void> */
+  });
+
+  if (waitUntil) {
+    waitUntil(delivery);
+
+    return;
+  }
+
+  await delivery;
+}

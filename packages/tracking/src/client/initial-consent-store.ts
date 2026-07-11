@@ -67,7 +67,6 @@ export function createInitialConsentStore(options: InitialConsentStoreOptions): 
   let isFetchInFlight = false;
   /** Sticky only after a successful resolve (or session-cache hit) — failures stay retryable. */
   let hasResolvedSuccessfully = false;
-  let isRetryListening = false;
 
   function notify(): void {
     for (const listener of listeners) {
@@ -75,14 +74,15 @@ export function createInitialConsentStore(options: InitialConsentStoreOptions): 
     }
   }
 
+  // add/removeEventListener dedupe an identical listener, so no armed-flag is needed.
   function stopResolveRetry(): void {
-    if (!isRetryListening || typeof window === "undefined") {
+    if (typeof window === "undefined") {
       return;
     }
 
-    isRetryListening = false;
     document.removeEventListener("visibilitychange", onResolveRetryResume);
     window.removeEventListener("pageshow", onResolveRetryResume);
+    window.removeEventListener("online", onResolveRetryResume);
   }
 
   function onResolveRetryResume(): void {
@@ -97,15 +97,19 @@ export function createInitialConsentStore(options: InitialConsentStoreOptions): 
     }
   }
 
-  /** After a failed fetch, retry when the tab becomes visible again (coalesced by in-flight). */
+  /**
+   * After a failed fetch, retry when the tab becomes visible again or connectivity
+   * returns (coalesced by in-flight) — a visitor who never leaves the tab must not stay
+   * fail-closed for the whole session over one network blip.
+   */
   function scheduleResolveRetry(): void {
-    if (isRetryListening || typeof window === "undefined") {
+    if (typeof window === "undefined") {
       return;
     }
 
-    isRetryListening = true;
     document.addEventListener("visibilitychange", onResolveRetryResume);
     window.addEventListener("pageshow", onResolveRetryResume);
+    window.addEventListener("online", onResolveRetryResume);
   }
 
   function publishResolved(initialConsent: InitialConsent): void {
@@ -163,8 +167,10 @@ export function createInitialConsentStore(options: InitialConsentStoreOptions): 
 
     isFetchInFlight = true;
 
-    options
-      .resolve()
+    // Promise.resolve().then(...) folds a synchronously throwing resolver into the same
+    // fail-closed path — tracking must never break the caller (a React mount effect).
+    Promise.resolve()
+      .then(() => options.resolve())
       .then((resolved) => {
         writeSessionCache(resolved);
         publishResolved(resolved);

@@ -61,6 +61,44 @@ describe("relayTrackedEvents", () => {
     expect(sent[0]?.userId).toBe("user-1");
   });
 
+  it("drops a client-forged userId when the provided context proves none", async () => {
+    const { destination, sent } = captureDestination();
+
+    await relayTrackedEvents([clientTrackEvent({ userId: "victim" } as Partial<TrackedEvent>)], {
+      catalog,
+      context: { anonymousId: "22222222-2222-4222-8222-222222222222" },
+      destinations: [destination],
+    });
+
+    expect(sent[0]?.userId).toBeUndefined();
+    // the envelope's correlation key survives only where the context carries none
+    expect(sent[0]?.anonymousId).toBe("22222222-2222-4222-8222-222222222222");
+  });
+
+  it("prefers a destination's sendBatch for multi-event batches — one call, not N", async () => {
+    const batches: Array<number> = [];
+    const destination: Destination = {
+      name: "batching",
+      async send() {
+        throw new Error("send must not be called when sendBatch exists");
+      },
+      async sendBatch(events) {
+        batches.push(events.length);
+      },
+    };
+
+    const result = await relayTrackedEvents(
+      [clientTrackEvent(), clientTrackEvent({ eventId: "e-2" } as Partial<TrackedEvent>)],
+      {
+        catalog,
+        destinations: [destination],
+      },
+    );
+
+    expect(result).toEqual({ accepted: 2, rejected: 0 });
+    expect(batches).toEqual([2]);
+  });
+
   it("rejects non-envelopes, server-owned envelopes, unknown events, and schema mismatches", async () => {
     const { destination, sent } = captureDestination();
     const result = await relayTrackedEvents(
@@ -155,6 +193,18 @@ describe("createTrackedEventIngestHandler", () => {
     const response = await capped(
       new Request("https://app.test/ingest", { body: JSON.stringify([clientTrackEvent()]), method: "POST" }),
     );
+
+    expect(response.status).toBe(413);
+  });
+
+  it("caps real bytes, not UTF-16 code units — multibyte payloads can't slip 3x past the cap", async () => {
+    const capped = createTrackedEventIngestHandler({ catalog, destinations: [], maxBodyBytes: 30 });
+    // 12 code units but 36 UTF-8 bytes — over the cap only when bytes are measured.
+    const body = JSON.stringify(["ありがとうございます"]);
+
+    expect(body.length).toBeLessThanOrEqual(30);
+
+    const response = await capped(new Request("https://app.test/ingest", { body, method: "POST" }));
 
     expect(response.status).toBe(413);
   });

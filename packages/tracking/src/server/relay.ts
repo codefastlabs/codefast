@@ -1,14 +1,17 @@
 import type { Destination } from "#/core/destination";
 import type { EventCatalog } from "#/core/event-catalog";
-import { assertValidEventProps } from "#/core/event-catalog";
+import { assertValidEventProperties } from "#/core/event-catalog";
 import type { TrackedEvent } from "#/core/tracked-event";
 import { isTrackedEvent } from "#/core/tracked-event";
 import type { DestinationErrorHandler } from "#/server/send-with-retry";
-import { logDestinationError, sendWithRetry } from "#/server/send-with-retry";
+import { deliverToDestinations, logDestinationError } from "#/server/send-with-retry";
 
 /**
  * Server-read identity applied to relayed envelopes — what the request actually proves
- * (cookie, session) wins over whatever the client claimed in the payload.
+ * (cookie, session) wins over whatever the client claimed in the payload. Providing a
+ * context makes it authoritative for `userId`: an absent `userId` here DROPS any
+ * client-claimed one (a forged identity must never ride through). `anonymousId` keeps
+ * the envelope's own correlation key when the request carries none.
  */
 export interface RelayContext {
   anonymousId?: string | undefined;
@@ -72,21 +75,12 @@ export async function relayTrackedEvents<Catalog extends EventCatalog>(
     accepted.push(event);
   }
 
-  const delivery = Promise.all(
-    accepted.flatMap((event) =>
-      options.destinations.map(async (destination) =>
-        sendWithRetry(destination, event, maxRetries, retryDelayMs, onError),
-      ),
-    ),
-  ).then(() => {
-    /* collapse to void for waitUntil schedulers typed on Promise<void> */
+  await deliverToDestinations(options.destinations, accepted, {
+    maxRetries,
+    onError,
+    retryDelayMs,
+    waitUntil: options.waitUntil,
   });
-
-  if (options.waitUntil) {
-    options.waitUntil(delivery);
-  } else {
-    await delivery;
-  }
 
   return { accepted: accepted.length, rejected };
 }
@@ -108,18 +102,24 @@ function validateRelayedEvent<Catalog extends EventCatalog>(
     }
 
     try {
-      assertValidEventProps(definition.schema, candidate.name, candidate.properties);
+      assertValidEventProperties(definition.schema, candidate.name, candidate.properties);
     } catch {
       return undefined;
     }
   }
 
   const context = options.context;
-  const event: TrackedEvent = {
-    ...candidate,
-    ...(context?.anonymousId === undefined ? {} : { anonymousId: context.anonymousId }),
-    ...(context?.userId === undefined ? {} : { userId: context.userId }),
-  };
+  // With a context, the request's identity is authoritative: userId is replaced outright
+  // (undefined drops a client-forged claim); anonymousId keeps the envelope's correlation
+  // key only when the request carries none.
+  const event: TrackedEvent =
+    context === undefined
+      ? candidate
+      : {
+          ...candidate,
+          userId: context.userId,
+          ...(context.anonymousId === undefined ? {} : { anonymousId: context.anonymousId }),
+        };
 
   return options.isAllowed?.(event) === false ? undefined : event;
 }
@@ -149,16 +149,18 @@ export function createTrackedEventIngestHandler<Catalog extends EventCatalog>(
       return new Response(null, { headers: { allow: "POST" }, status: 405 });
     }
 
-    const body = await request.text();
+    // Cap on real bytes — a string's length counts UTF-16 code units and undercounts
+    // multibyte UTF-8 payloads by up to 3x.
+    const body = await request.arrayBuffer();
 
-    if (body.length > maxBodyBytes) {
+    if (body.byteLength > maxBodyBytes) {
       return new Response(null, { status: 413 });
     }
 
     let payload: unknown;
 
     try {
-      payload = JSON.parse(body);
+      payload = JSON.parse(new TextDecoder().decode(body));
     } catch {
       return new Response(null, { status: 400 });
     }

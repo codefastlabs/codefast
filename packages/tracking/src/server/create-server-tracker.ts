@@ -2,12 +2,12 @@ import type { StandardSchemaV1 } from "@standard-schema/spec";
 
 import type { Destination } from "#/core/destination";
 import type { EventCatalog, EventsOf } from "#/core/event-catalog";
-import { assertValidEventProps } from "#/core/event-catalog";
+import { assertValidEventProperties } from "#/core/event-catalog";
 import { deriveEventId, generateEventId } from "#/core/event-id";
 import type { TrackedEventSeed } from "#/core/tracked-event";
 import { buildTrackedEvent } from "#/core/tracked-event";
 import type { DestinationErrorHandler } from "#/server/send-with-retry";
-import { logDestinationError, sendWithRetry } from "#/server/send-with-retry";
+import { deliverToDestinations, logDestinationError } from "#/server/send-with-retry";
 
 /**
  * Per-request identity for server-owned events — resolved once from the request (cookies,
@@ -110,21 +110,12 @@ export function createServerTracker<Catalog extends EventCatalog>(
       ...(context.userId === undefined ? {} : { userId: context.userId }),
     });
 
-    const delivery = Promise.all(
-      options.destinations.map(async (destination) =>
-        sendWithRetry(destination, event, maxRetries, retryDelayMs, onError),
-      ),
-    ).then(() => {
-      /* collapse to void for waitUntil schedulers typed on Promise<void> */
+    await deliverToDestinations(options.destinations, [event], {
+      maxRetries,
+      onError,
+      retryDelayMs,
+      waitUntil: options.waitUntil,
     });
-
-    if (options.waitUntil) {
-      options.waitUntil(delivery);
-
-      return;
-    }
-
-    await delivery;
   }
 
   const tracker: ServerTracker<Catalog> = {
@@ -144,7 +135,7 @@ export function createServerTracker<Catalog extends EventCatalog>(
         throw new Error(`Unknown server-owned event: ${String(name)}`);
       }
 
-      assertValidEventProps(definition.schema, String(name), properties);
+      assertValidEventProperties(definition.schema, String(name), properties);
       // Catalog keys are strings; schema-inferred properties are opaque to the open envelope record.
       await sendEvent(
         { name: String(name), properties: properties as Record<string, unknown>, type: "track" },

@@ -25,9 +25,6 @@ export interface EventQueueOptions {
   storage: EventQueueStorage;
 }
 
-/**
- * @since 0.5.0-canary.4
- */
 export interface FlushOptions {
   /** Forwarded to every destination delivery — set on unload-time flushes. */
   keepalive?: boolean | undefined;
@@ -119,6 +116,10 @@ export class EventQueue {
     // An offline flush is a guaranteed network error per event — it would only burn the
     // retry budget. Fail open when `onLine` is unavailable (non-browser test environments).
     if (typeof navigator !== "undefined" && navigator.onLine === false) {
+      // Keep self-scheduling alive for lifecycle-less consumers — the timer that fired
+      // this flush already disarmed itself.
+      this.armFlushTimer();
+
       return;
     }
 
@@ -129,15 +130,13 @@ export class EventQueue {
 
     const sendOptions: DestinationSendOptions = { keepalive: options?.keepalive };
     const failedIndexes = new Set<number>();
+    const events = batch.map((queued) => queued.event);
 
     await Promise.all(
       this.destinations.map(async (destination) => {
         if (destination.sendBatch) {
           try {
-            await destination.sendBatch(
-              batch.map((queued) => queued.event),
-              sendOptions,
-            );
+            await destination.sendBatch(events, sendOptions);
           } catch {
             // All-or-nothing transport: the whole batch failed for this destination.
             for (const index of batch.keys()) {

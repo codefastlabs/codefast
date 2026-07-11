@@ -76,6 +76,19 @@ describe("createInitialConsentStore", () => {
     expect(store.getSnapshot().initialConsent).toEqual(resolved);
   });
 
+  it("folds a synchronously throwing resolver into the fail-closed path", async () => {
+    const resolve = vi.fn().mockImplementation(() => {
+      throw new Error("boom");
+    });
+    const store = createInitialConsentStore({ resolve });
+
+    // Must not throw into the caller — a React mount effect kicks this.
+    store.ensureResolved();
+    await flushMicrotasks();
+
+    expect(store.getSnapshot()).toEqual({ initialConsent: STRICTEST_INITIAL_CONSENT, isResolved: true });
+  });
+
   it("publishes fail-closed on error but stays retryable", async () => {
     const resolve = vi.fn().mockRejectedValueOnce(new Error("offline")).mockResolvedValueOnce(resolved);
     const store = createInitialConsentStore({ resolve, sessionStorageKey: SESSION_KEY });
@@ -90,6 +103,20 @@ describe("createInitialConsentStore", () => {
 
     expect(resolve).toHaveBeenCalledTimes(2);
     expect(store.getSnapshot()).toEqual({ initialConsent: resolved, isResolved: true });
+  });
+
+  it("retries when connectivity returns after a failure — a visible tab must not stay fail-closed", async () => {
+    const resolve = vi.fn().mockRejectedValueOnce(new Error("offline")).mockResolvedValueOnce(resolved);
+    const store = createInitialConsentStore({ resolve });
+
+    store.ensureResolved();
+    await flushMicrotasks();
+
+    window.dispatchEvent(new Event("online"));
+    await flushMicrotasks();
+
+    expect(resolve).toHaveBeenCalledTimes(2);
+    expect(store.getSnapshot().initialConsent).toEqual(resolved);
   });
 
   it("retries when the tab becomes visible again after a failure", async () => {
