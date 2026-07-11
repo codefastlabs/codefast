@@ -1,6 +1,9 @@
 import { writeBrowserCookie } from "#/client/browser-cookie";
 import { ONE_YEAR_IN_SECONDS, readCookieValue } from "#/core/cookie";
 
+/**
+ * @since 1.0.0-canary.6
+ */
 export interface CookieAnonymousIdOptions {
   /** Cookie name — must not collide with another cookie on the domain. */
   cookieName: string;
@@ -8,6 +11,9 @@ export interface CookieAnonymousIdOptions {
   maxAgeSeconds?: number | undefined;
 }
 
+/**
+ * @since 1.0.0-canary.6
+ */
 export interface CookieAnonymousId {
   /** Expires the cookie — call when the visitor withdraws tracking consent. */
   clear: () => void;
@@ -27,6 +33,8 @@ export interface CookieAnonymousId {
  * `getOrCreate` (not the result of calling it) as `ClientTrackerOptions.anonymousId`:
  * it's invoked lazily, so the cookie is minted only once an event is actually allowed to
  * send, never as an import-time side effect.
+ *
+ * @since 1.0.0-canary.6
  */
 export function createCookieAnonymousId(options: CookieAnonymousIdOptions): CookieAnonymousId {
   const { cookieName, maxAgeSeconds = ONE_YEAR_IN_SECONDS } = options;

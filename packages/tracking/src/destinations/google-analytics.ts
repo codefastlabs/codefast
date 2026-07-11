@@ -20,6 +20,8 @@ type GtagPropertyValue = FlatPropertyValue;
  * All signatures share one `gtag` global, so they must live in a single overloaded type —
  * two separate `declare global` augmentations with different signatures for the same
  * property is a TS error, not a merge.
+ *
+ * @since 1.0.0-canary.6
  */
 export type GtagFunction = {
   (command: "config", targetId: string, params?: Record<string, GtagPropertyValue>): void;
@@ -50,6 +52,9 @@ function gtagScriptSrc(gaMeasurementId: string, dataLayerName: string): string {
   return url.toString();
 }
 
+/**
+ * @since 1.0.0-canary.6
+ */
 export interface EnsureGtagOptions {
   /**
    * Name of the queue array on `window`. Defaults to `"dataLayer"`. Must match across
@@ -61,6 +66,8 @@ export interface EnsureGtagOptions {
 /**
  * Ensures the standard gtag.js queueing stub exists so consent commands can be issued
  * before the tag itself loads — gtag.js replays the queue in order once it boots.
+ *
+ * @since 1.0.0-canary.6
  */
 export function ensureGtag(options: EnsureGtagOptions = {}): GtagFunction | undefined {
   if (typeof window === "undefined") {
@@ -80,6 +87,9 @@ export function ensureGtag(options: EnsureGtagOptions = {}): GtagFunction | unde
   return window.gtag;
 }
 
+/**
+ * @since 1.0.0-canary.6
+ */
 export interface LoadGtagScriptOptions {
   /**
    * Name of the queue array on `window`. Defaults to `"dataLayer"` — must match the
@@ -104,6 +114,8 @@ export interface LoadGtagScriptOptions {
  * consent state once it boots. Prefer `buildGtagConsentBootstrapScript` for page load
  * (advanced Consent Mode always injects the tag after the default); use this when the
  * bootstrap did not run, or as an idempotent safety net after a runtime grant.
+ *
+ * @since 1.0.0-canary.6
  */
 export function loadGtagScript(options: LoadGtagScriptOptions): void {
   if (typeof document === "undefined" || document.querySelector(`script[src^="${GTAG_SCRIPT_BASE_URL}"]`) !== null) {
@@ -141,6 +153,8 @@ export function loadGtagScript(options: LoadGtagScriptOptions): void {
  * Expires Google's `_ga` / `_ga_*` cookies on `path=/` and the current host's parent
  * domain. Consent Mode stops using them once denied but never removes them — call from
  * a consent-withdrawal handler so a revoke does not leave identifier cookies behind.
+ *
+ * @since 1.0.0-canary.6
  */
 export function clearGoogleAnalyticsCookies(): void {
   if (typeof document === "undefined") {
@@ -171,6 +185,9 @@ export function updateGoogleConsent(decision: ConsentDecision, options: EnsureGt
   ensureGtag(options)?.("consent", "update", toGoogleConsentParams(decision));
 }
 
+/**
+ * @since 1.0.0-canary.6
+ */
 export interface GtagConsentBootstrapOptions {
   /** The same object `useConsent` receives — the bootstrap reads its `storageKey` and `policyVersion`. */
   config: ConsentConfig;
@@ -205,6 +222,8 @@ export interface GtagConsentBootstrapOptions {
  * run even when storage is denied. A runtime decision change needs `updateGoogleConsent`
  * so the already-loaded tag picks up the grant/deny — this only covers the page-load
  * default + script injection.
+ *
+ * @since 1.0.0-canary.6
  */
 export function buildGtagConsentBootstrapScript(options: GtagConsentBootstrapOptions): string {
   const {

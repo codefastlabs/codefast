@@ -3,6 +3,9 @@ import { track } from "@vercel/analytics";
 import type { Destination } from "#/core/destination";
 import { flattenEventProps } from "#/destinations/shared";
 
+/**
+ * @since 1.0.0-canary.6
+ */
 export interface VercelAnalyticsDestinationOptions {
   /**
    * Vercel Analytics is cookieless and its events carry no identifier from this

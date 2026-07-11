@@ -1,3 +1,6 @@
+/**
+ * @since 1.0.0-canary.6
+ */
 export type FlatPropertyValue = boolean | number | string;
 
 interface FlattenEventPropsOptions {
@@ -8,12 +11,20 @@ interface FlattenEventPropsOptions {
 /**
  * Event params must be flat string/number/boolean (optionally `null`) — stringify
  * anything else instead of letting the destination silently drop it.
+ *
+ * @since 1.0.0-canary.6
  */
 export function flattenEventProps(properties: Record<string, unknown>): Record<string, FlatPropertyValue>;
+/**
+ * @since 1.0.0-canary.6
+ */
 export function flattenEventProps(
   properties: Record<string, unknown>,
   options: { allowNull: true },
 ): Record<string, FlatPropertyValue | null>;
+/**
+ * @since 1.0.0-canary.6
+ */
 export function flattenEventProps(
   properties: Record<string, unknown>,
   options: FlattenEventPropsOptions = {},

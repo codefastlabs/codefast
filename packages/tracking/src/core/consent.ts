@@ -3,9 +3,16 @@
  */
 export type ConsentRegion = "eu" | "other" | "us" | "vn";
 
+/**
+ * @since 1.0.0-canary.6
+ */
 export const CONSENT_REGIONS: ReadonlyArray<ConsentRegion> = ["eu", "other", "us", "vn"];
 
-/** Guards a region read from untrusted storage (a cached `InitialConsent`, a cookie). */
+/**
+ * Guards a region read from untrusted storage (a cached `InitialConsent`, a cookie).
+ *
+ * @since 1.0.0-canary.6
+ */
 export function isConsentRegion(value: unknown): value is ConsentRegion {
   return CONSENT_REGIONS.includes(value as ConsentRegion);
 }
@@ -84,12 +91,18 @@ export function isConsentDecision(value: unknown): value is ConsentDecision {
  * Re-derives a clean per-category decision from a tamperable record — extra keys are
  * dropped, every category becomes an explicit boolean. The one normalization rule shared
  * by the client (`readStoredDecision`) and server (`readConsentDecisionCookie`) mirrors.
+ *
+ * @since 1.0.0-canary.6
  */
 export function normalizeConsentDecision(decision: ConsentDecision): ConsentDecision {
   return createConsentDecision(CONSENT_CATEGORIES.filter((category) => decision[category]));
 }
 
-/** Guards a persisted consent record read from untrusted storage (e.g. `localStorage`). */
+/**
+ * Guards a persisted consent record read from untrusted storage (e.g. `localStorage`).
+ *
+ * @since 1.0.0-canary.6
+ */
 export function isConsentRecord(value: unknown): value is ConsentRecord {
   return (
     isPlainObject(value) &&
@@ -99,6 +112,9 @@ export function isConsentRecord(value: unknown): value is ConsentRecord {
   );
 }
 
+/**
+ * @since 1.0.0-canary.6
+ */
 export interface ResolveDefaultConsentOptions {
   /** A "do not sell or share" opt-out — forces `ads` denied under opt-out regions. */
   hasGlobalPrivacyControlSignal: boolean;
@@ -140,6 +156,8 @@ export function resolveDefaultConsent(options: ResolveDefaultConsentOptions): Co
  * Drive UI and gates from `mode` (recompute `effectiveConsent` with live navigator GPC).
  * `defaultConsent` is the server snapshot — useful when you need request-time `sec-gpc`
  * as-is; analytics-only apps can ignore it because GPC only forces `ads` denied.
+ *
+ * @since 1.0.0-canary.6
  */
 export interface InitialConsent {
   defaultConsent: ConsentDecision;
@@ -152,6 +170,8 @@ export interface InitialConsent {
  * denied under opt-in — the one default that is safe to show any visitor anywhere.
  * Prerendered/CDN-cached markup must carry nothing region-specific, and a missing geo
  * header means "unknown visitor", never "known non-EU visitor".
+ *
+ * @since 1.0.0-canary.6
  */
 export const STRICTEST_INITIAL_CONSENT: InitialConsent = Object.freeze({
   defaultConsent: Object.freeze(createConsentDecision([])),
@@ -164,6 +184,8 @@ export const STRICTEST_INITIAL_CONSENT: InitialConsent = Object.freeze({
  * Enforces the mode/region pairing rule; the one deliberate exception is
  * {@link STRICTEST_INITIAL_CONSENT}'s own pairing — stricter than the region's usual
  * mode, never looser.
+ *
+ * @since 1.0.0-canary.6
  */
 export function isInitialConsent(value: unknown): value is InitialConsent {
   if (!isPlainObject(value)) {
@@ -221,6 +243,8 @@ export interface ConsentStorage {
  * The stored decision if one exists under the current `policyVersion`, normalized to drop
  * any tampered extra keys — `undefined` if there is none yet, the record is malformed, or
  * it was recorded under a superseded policy version.
+ *
+ * @since 1.0.0-canary.6
  */
 export function readStoredDecision(storage: ConsentStorage, policyVersion: string): ConsentDecision | undefined {
   const record = storage.load();
@@ -232,6 +256,9 @@ export function readStoredDecision(storage: ConsentStorage, policyVersion: strin
   return normalizeConsentDecision(record.decision);
 }
 
+/**
+ * @since 1.0.0-canary.6
+ */
 export interface ResolveEffectiveConsentOptions {
   /** A "do not sell or share" opt-out — forces `ads` denied under opt-out regions. */
   hasGlobalPrivacyControlSignal: boolean;
@@ -246,6 +273,8 @@ export interface ResolveEffectiveConsentOptions {
  * the region default — the same rule `useConsent` applies to its `effectiveConsent`, so a
  * non-React gate (e.g. a tracker's `isAnalyticsAllowed` option) doesn't have to reimplement
  * "read storage, validate the policy version, fall back to `resolveDefaultConsent`" itself.
+ *
+ * @since 1.0.0-canary.6
  */
 export function resolveEffectiveConsent(options: ResolveEffectiveConsentOptions): ConsentDecision {
   const { hasGlobalPrivacyControlSignal, mode, policyVersion, requestedCategories, storage } = options;

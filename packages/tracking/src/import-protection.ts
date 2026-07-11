@@ -10,6 +10,8 @@
  *   importProtection: { client: { specifiers: [...SERVER_ONLY_IMPORT_SPECIFIERS] } },
  * });
  * ```
+ *
+ * @since 1.0.0-canary.6
  */
 export const SERVER_ONLY_IMPORT_SPECIFIERS: ReadonlyArray<string> = [
   "@codefast/tracking/server",

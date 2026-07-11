@@ -6,6 +6,9 @@ import { createIsAnalyticsAllowed } from "#/client/is-analytics-allowed";
 import type { ConsentStorage, InitialConsent } from "#/core/consent";
 import type { ConsentConfig } from "#/core/consent-config";
 
+/**
+ * @since 1.0.0-canary.6
+ */
 export interface ConsentRuntimeOptions {
   config: ConsentConfig;
   /** Re-read per event so a GPC change applies without recreating the runtime. Defaults to the real navigator signal. */
@@ -27,6 +30,8 @@ export interface ConsentRuntimeOptions {
  * The live client-side consent instances, all derived from one `ConsentConfig` — create
  * it once at module scope and every surface (banner hook, tracker gate, privacy page)
  * shares the same storage and region resolution by construction.
+ *
+ * @since 1.0.0-canary.6
  */
 export interface ConsentRuntime {
   config: ConsentConfig;
@@ -48,6 +53,8 @@ export interface ConsentRuntime {
  * Composes the client half of the consent lane from a single `ConsentConfig`:
  * `localStorage`-backed decision storage, the initial-consent store over the app's
  * server lane, and the non-React analytics gate wired to that store's resolved mode.
+ *
+ * @since 1.0.0-canary.6
  */
 export function createConsentRuntime(options: ConsentRuntimeOptions): ConsentRuntime {
   const { config } = options;

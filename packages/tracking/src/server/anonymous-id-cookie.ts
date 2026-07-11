@@ -16,11 +16,16 @@ function assertCookieName(cookieName: string): void {
  * Whether a value is safe to persist as an anonymous id. The persist endpoint is public
  * and echoes its input into a response header, so only an exactly-UUID-shaped value may
  * pass — anything else is a header-injection attempt or corruption, never a valid id.
+ *
+ * @since 1.0.0-canary.6
  */
 export function isValidAnonymousId(value: string): boolean {
   return UUID_PATTERN.test(value);
 }
 
+/**
+ * @since 1.0.0-canary.6
+ */
 export interface AnonymousIdSetCookieOptions {
   /** Cookie name — must match what the client tracker reads. */
   cookieName: string;
@@ -43,6 +48,8 @@ export interface AnonymousIdSetCookieOptions {
  * onto events.
  *
  * @throws Error when `id` is not UUID-shaped or `cookieName` is not a valid token.
+ *
+ * @since 1.0.0-canary.6
  */
 export function buildAnonymousIdSetCookie(options: AnonymousIdSetCookieOptions): string {
   const { cookieName, id, maxAgeSeconds = ONE_YEAR_IN_SECONDS } = options;
@@ -59,6 +66,8 @@ export function buildAnonymousIdSetCookie(options: AnonymousIdSetCookieOptions):
 /**
  * `Set-Cookie` header value that expires the anonymous-id cookie — the server half of a
  * consent withdrawal, alongside the client's own `document.cookie` expiry.
+ *
+ * @since 1.0.0-canary.6
  */
 export function buildClearAnonymousIdSetCookie(cookieName: string): string {
   assertCookieName(cookieName);
