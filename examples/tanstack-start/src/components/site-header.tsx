@@ -11,6 +11,7 @@ const NAV = [
   { to: "/ui", label: "UI" },
   { to: "/variants", label: "Variants" },
   { to: "/di", label: "DI" },
+  { to: "/playground", label: "Playground" },
 ] as const;
 
 export function SiteHeader({ className, ...props }: SiteHeaderProps): ReactElement {

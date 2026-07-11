@@ -2,6 +2,7 @@ import { AppearanceProvider, AppearanceScript, DEFAULT_APPEARANCE, DEFAULT_COLOR
 import { STORAGE_KEY } from "@codefast/theme/constants";
 import { Button } from "@codefast/ui/button";
 import { cn } from "@codefast/ui/lib/utils";
+import { Toaster } from "@codefast/ui/sonner";
 import { HeadContent, Link, Scripts, createRootRoute } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 
@@ -53,6 +54,7 @@ function RootDocument({ children }: { children: ReactNode }) {
           <SiteHeader />
           <main className="mx-auto w-full max-w-5xl px-4 py-10 sm:px-6">{children}</main>
         </AppearanceProvider>
+        <Toaster />
         <Scripts />
       </body>
     </html>

@@ -1,7 +1,7 @@
 import { Button } from "@codefast/ui/button";
 import { Link, createFileRoute } from "@tanstack/react-router";
 
-import { PackageCard } from "#/components/package-card";
+import { PackageCard } from "#/features/home/components/package-card";
 
 export const Route = createFileRoute("/")({
   component: OverviewPage,
