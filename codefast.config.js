@@ -1,7 +1,7 @@
 import { execSync } from "node:child_process";
 
 /**
- * Codefast monorepo tooling — `mirror` is read by `codefast mirror sync`.
+ * Codefast monorepo tooling — sections are read by matching `codefast` subcommands.
  */
 const config = {
   mirror: {
@@ -28,6 +28,20 @@ const config = {
   arrange: {
     onAfterWrite: ({ files }) => {
       execSync(`oxfmt ${files.join(" ")}`, { stdio: "inherit" });
+    },
+  },
+
+  audit: {
+    rtl: {
+      target: "packages/ui/src",
+      // Sheet: slides live in tv() side (left/right) buckets — the side is physical,
+      // so the physical slide is correct; the detector cannot see that tv() context.
+      allowlist: [
+        "packages/ui/src/variants/sheet.ts:data-open:slide-in-from-left-10",
+        "packages/ui/src/variants/sheet.ts:data-closed:slide-out-to-left-10",
+        "packages/ui/src/variants/sheet.ts:data-open:slide-in-from-right-10",
+        "packages/ui/src/variants/sheet.ts:data-closed:slide-out-to-right-10",
+      ],
     },
   },
 

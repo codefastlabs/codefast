@@ -1,6 +1,6 @@
 # @codefast/cli
 
-Developer CLI for the [Codefast monorepo](https://github.com/codefastlabs/codefast) — `arrange` Tailwind class strings, `mirror` export maps from `dist/`, and `tag` exported APIs with `@since`.
+Developer CLI for the [Codefast monorepo](https://github.com/codefastlabs/codefast) — `arrange` Tailwind class strings, `audit` source conventions (RTL), `mirror` export maps from `dist/`, and `tag` exported APIs with `@since`.
 
 [![npm version](https://img.shields.io/npm/v/@codefast/cli)](https://www.npmjs.com/package/@codefast/cli)
 [![license](https://img.shields.io/npm/l/@codefast/cli)](https://github.com/codefastlabs/codefast/blob/main/LICENSE)
@@ -24,6 +24,7 @@ pnpm run cli:arrange:simplify       # codefast arrange simplify
 pnpm run cli:arrange:simplify:preview
 pnpm run cli:mirror                 # codefast mirror
 pnpm run cli:mirror:preview         # codefast mirror --dry-run
+pnpm run cli:audit:rtl              # codefast audit rtl
 ```
 
 Standalone install (Node >= 24):
@@ -96,6 +97,22 @@ codefast mirror --dry-run       # report changes without writing
 
 Exits `1` when any package fails, `0` otherwise.
 
+## `audit rtl`
+
+Read-only scan for physical-direction Tailwind classes (e.g. `ml-*`, `left-*`, `text-left`) that should use logical equivalents (`ms-*`, `start-*`, `text-start`) or an `rtl:` companion (`translate-x`, `space-x`, resize cursors). Exits non-zero when violations remain so it can gate CI.
+
+```bash
+codefast audit rtl                         # uses audit.rtl.target from config
+codefast audit rtl packages/ui/src         # explicit target
+codefast audit rtl --json                  # machine-readable summary
+```
+
+| Flag     | Description                       |
+| -------- | --------------------------------- |
+| `--json` | Print one JSON summary on stdout. |
+
+Configure intentional exceptions via `audit.rtl.allowlist` in `codefast.config` — each entry is a bare class token or `repo/relative/path.tsx:token`.
+
 ## `tag`
 
 Adds `@since <version>` tags to doc comments of exported declarations that lack one, creating the doc block when missing. The version comes from the nearest `package.json` walking up from each target file. Declarations that already carry `@since` are left alone.
@@ -115,7 +132,7 @@ In this repo, `tag` runs as part of the release workflow so published APIs carry
 
 ## Configuration
 
-An optional `codefast.config.*` file adjusts `mirror`, `tag`, and `arrange`. The CLI walks up from the working directory and uses the first match, checking `codefast.config.mjs`, `codefast.config.js`, `codefast.config.cjs`, then `codefast.config.json` in each directory. JS configs are loaded via [jiti](https://github.com/unjs/jiti), so only run the CLI in repositories you trust; JSON configs cannot define hooks.
+An optional `codefast.config.*` file adjusts `mirror`, `tag`, `arrange`, and `audit`. The CLI walks up from the working directory and uses the first match, checking `codefast.config.mjs`, `codefast.config.js`, `codefast.config.cjs`, then `codefast.config.json` in each directory. JS configs are loaded via [jiti](https://github.com/unjs/jiti), so only run the CLI in repositories you trust; JSON configs cannot define hooks.
 
 ```js
 // codefast.config.js
@@ -141,6 +158,15 @@ export default {
   },
   arrange: {
     onAfterWrite: ({ files }) => execSync(`oxfmt ${files.join(" ")}`, { stdio: "inherit" }),
+  },
+  audit: {
+    rtl: {
+      target: "packages/ui/src", // default scan root when no CLI arg is passed
+      allowlist: [
+        // bare token, or `repo/relative/path.tsx:token`
+        "packages/ui/src/variants/sheet.ts:data-open:slide-in-from-left-10",
+      ],
+    },
   },
 };
 ```

@@ -6,6 +6,7 @@ import { fileURLToPath } from "node:url";
 import { Command } from "commander";
 
 import { createArrangeCommand } from "#/arrange/command";
+import { createAuditCommand } from "#/audit/command";
 import { createMirrorCommand } from "#/mirror/command";
 import { createTagCommand } from "#/tag/command";
 
@@ -38,6 +39,7 @@ export async function runCli(argv: Array<string>): Promise<number> {
     .showHelpAfterError("(use --help for usage)");
 
   program.addCommand(createArrangeCommand());
+  program.addCommand(createAuditCommand());
   program.addCommand(createMirrorCommand());
   program.addCommand(createTagCommand());
 
