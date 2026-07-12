@@ -82,8 +82,7 @@ export function CopyButton({
       // While idle, defer to a caller-supplied descriptive label; the copied
       // state always announces itself.
       aria-label={isCopied ? copiedLabel : (ariaLabel ?? idleLabel)}
-      // `onClick` sits after `{...props}` on purpose: the copy handler defines this
-      // component and must not be overridable by a forwarded `onClick`.
+      // `onClick` sits after `{...props}` so callers can't override the copy handler.
       {...props}
       onClick={() => void copyToClipboard(value)}
       className={cn(copyButtonVariants(tone === undefined ? undefined : { tone }), className)}
