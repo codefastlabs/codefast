@@ -14,8 +14,8 @@ import {
 import { isAnalyticsAllowed } from "#/features/tracking/lib/visitor-consent";
 
 /**
- * `copy_code`/`search_query` track *what* was copied or searched, never the raw
- * code content or the full clipboard value — only identifiers/metadata.
+ * Custom events carry identifiers and metadata only — never free-form search text,
+ * clipboard/markdown bodies, or full outbound URLs.
  */
 export const catalog = defineEventCatalog({
   copy_code: {
@@ -26,8 +26,35 @@ export const catalog = defineEventCatalog({
   },
   search_query: {
     schema: z.object({
-      query: z.string(),
       queryLength: z.number(),
+    }),
+  },
+  select_search_result: {
+    schema: z.object({
+      resultType: z.enum(["page", "component"]),
+      destination: z.optional(z.enum(["/", "/components", "/about"])),
+      slug: z.optional(z.string()),
+      hadQuery: z.boolean(),
+      hasDemo: z.optional(z.boolean()),
+    }),
+  },
+  copy_page: {
+    schema: z.object({
+      slug: z.string(),
+      variant: z.enum(["markdown", "markdown-menu"]),
+    }),
+  },
+  select_component: {
+    schema: z.object({
+      slug: z.string(),
+      surface: z.enum(["gallery-sidebar", "gallery-card", "detail-sidebar"]),
+    }),
+  },
+  open_external: {
+    schema: z.object({
+      destination: z.enum(["github", "github-issues", "npm", "chatgpt", "claude", "component-markdown"]),
+      surface: z.enum(["header", "footer", "copy-page-menu"]),
+      slug: z.optional(z.string()),
     }),
   },
 });
@@ -84,3 +111,11 @@ export function getTracker(): ClientTracker<typeof catalog> {
 
   return tracker;
 }
+
+/**
+ * Typed alias for `getTracker().track` — same catalog-coupled signature without reaching
+ * through the lazy singleton at every call site.
+ */
+export const track: ClientTracker<typeof catalog>["track"] = (name, properties) => {
+  getTracker().track(name, properties);
+};
