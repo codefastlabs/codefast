@@ -20,3 +20,30 @@ jobs:
     name: Verify
     uses: ./.github/workflows/reusable-verify-packages.yml
     secrets: inherit
+
+  # Browser e2e for @apps/ui (Playwright + Vite). Kept separate from packages-only
+  # verify so package gates stay fast and do not require the app server.
+  e2e-ui:
+    name: Apps UI Browser E2E
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      TURBO_TOKEN: ${{ secrets.TURBO_TOKEN || secrets.VERCEL_TOKEN }}
+      TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Configure Build Environment
+        uses: ./.github/actions/setup-environment
+
+      - name: Build Workspace Packages
+        run: npx turbo build --filter="./packages/**"
+
+      - name: Install Playwright Browser
+        run: pnpm --filter @apps/ui exec playwright install --with-deps chromium
+
+      - name: Run Apps UI Browser E2E
+        run: pnpm test:e2e:ui
