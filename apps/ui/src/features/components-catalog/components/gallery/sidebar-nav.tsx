@@ -58,6 +58,7 @@ export function SidebarNav({ groups, activeSection = null, activeSlug, className
                       active={component.slug === activeSlug}
                       showScrollTo={activeSlug === undefined}
                       isNew={component.isNew}
+                      surface={activeSlug === undefined ? "gallery-sidebar" : "detail-sidebar"}
                     />
                   ))}
                 </div>

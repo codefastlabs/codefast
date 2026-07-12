@@ -26,7 +26,7 @@ export const GITHUB_URL = "https://github.com/codefastlabs/codefast";
 
 /** External resource links shown in the footer. */
 export const RESOURCE_LINKS = [
-  { href: GITHUB_URL, label: "GitHub" },
-  { href: `${GITHUB_URL}/issues`, label: "Issues" },
-  { href: "https://www.npmjs.com/package/@codefast/ui", label: "npm" },
+  { href: GITHUB_URL, label: "GitHub", destination: "github" },
+  { href: `${GITHUB_URL}/issues`, label: "Issues", destination: "github-issues" },
+  { href: "https://www.npmjs.com/package/@codefast/ui", label: "npm", destination: "npm" },
 ] as const;

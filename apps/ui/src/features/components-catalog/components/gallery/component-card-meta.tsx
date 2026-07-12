@@ -4,6 +4,7 @@ import { ArrowUpRightIcon } from "lucide-react";
 import type { ComponentProps } from "react";
 
 import { NewBadge } from "#/components/shared/new-badge";
+import { track } from "#/features/tracking/lib/tracking";
 
 interface ComponentCardMetaProps extends ComponentProps<"div"> {
   readonly name: string;
@@ -24,6 +25,9 @@ export function ComponentCardMeta({ name, description, slug, isNew, className, .
             to="/components/$slug"
             params={{ slug }}
             className="group inline-flex items-center gap-1 text-sm font-semibold text-ui-fg no-underline"
+            onClick={() => {
+              track("select_component", { slug, surface: "gallery-card" });
+            }}
           >
             {name}
             <ArrowUpRightIcon className="size-3.5 text-ui-muted transition-colors duration-200 group-hover:text-ui-brand" />

@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 
 import { AppearanceToggle } from "#/components/layout/appearance-toggle";
 import { ConsentGate } from "#/features/tracking/components/consent-gate";
+import { track } from "#/features/tracking/lib/tracking";
 import { PRIMARY_NAV, RESOURCE_LINKS } from "#/lib/nav-links";
 
 export function Footer() {
@@ -34,13 +35,16 @@ export function Footer() {
             </div>
             <div className="flex flex-col gap-3">
               <p className="text-xs font-semibold tracking-widest text-ui-muted uppercase">Resources</p>
-              {RESOURCE_LINKS.map(({ href, label }) => (
+              {RESOURCE_LINKS.map(({ href, label, destination }) => (
                 <a
                   key={href}
                   href={href}
                   target="_blank"
                   rel="noreferrer"
                   className="text-ui-muted no-underline hover:text-ui-fg"
+                  onClick={() => {
+                    track("open_external", { destination, surface: "footer" });
+                  }}
                 >
                   {label}
                 </a>

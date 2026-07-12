@@ -11,12 +11,15 @@ import { useCopyToClipboard } from "@codefast/ui/hooks/use-copy-to-clipboard";
 import { cn } from "@codefast/ui/lib/utils";
 import { CheckIcon, ChevronDownIcon, CopyIcon, ExternalLinkIcon, FileTextIcon } from "lucide-react";
 import type { ComponentProps } from "react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { buildComponentMarkdown } from "#/features/components-catalog/lib/component-markdown";
+import { track } from "#/features/tracking/lib/tracking";
 import { absoluteUrl } from "#/lib/seo";
 import type { ComponentMeta } from "#/registry/_core/components";
 import { loadDoc } from "#/registry/_core/docs";
+
+type CopyPageVariant = "markdown" | "markdown-menu";
 
 interface CopyPageMenuProps extends Omit<ComponentProps<typeof ButtonGroup>, "children"> {
   readonly component: ComponentMeta;
@@ -30,7 +33,12 @@ interface CopyPageMenuProps extends Omit<ComponentProps<typeof ButtonGroup>, "ch
  */
 export function CopyPageMenu({ component, className, ...props }: CopyPageMenuProps) {
   const [markdown, setMarkdown] = useState(() => buildComponentMarkdown(component));
-  const { copyToClipboard, isCopied } = useCopyToClipboard();
+  const pendingVariantRef = useRef<CopyPageVariant>("markdown");
+  const { copyToClipboard, isCopied } = useCopyToClipboard({
+    onCopy: () => {
+      track("copy_page", { slug: component.slug, variant: pendingVariantRef.current });
+    },
+  });
 
   useEffect(() => {
     let active = true;
@@ -57,9 +65,20 @@ export function CopyPageMenu({ component, className, ...props }: CopyPageMenuPro
   const chatGptUrl = `https://chatgpt.com/?q=${encodeURIComponent(prompt)}`;
   const claudeUrl = `https://claude.ai/new?q=${encodeURIComponent(prompt)}`;
 
+  const copyPage = (variant: CopyPageVariant) => {
+    pendingVariantRef.current = variant;
+    void copyToClipboard(markdown);
+  };
+
   return (
     <ButtonGroup className={cn("shrink-0", className)} {...props}>
-      <Button variant="outline" size="sm" onClick={() => void copyToClipboard(markdown)}>
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={() => {
+          copyPage("markdown");
+        }}
+      >
         {isCopied ? <CheckIcon data-icon="inline-start" /> : <CopyIcon data-icon="inline-start" />}
         {isCopied ? "Copied" : "Copy page"}
       </Button>
@@ -70,25 +89,62 @@ export function CopyPageMenu({ component, className, ...props }: CopyPageMenuPro
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-56">
-          <DropdownMenuItem onClick={() => void copyToClipboard(markdown)}>
+          <DropdownMenuItem
+            onClick={() => {
+              copyPage("markdown-menu");
+            }}
+          >
             <CopyIcon />
             Copy page as Markdown
           </DropdownMenuItem>
           <DropdownMenuItem asChild>
-            <a href={markdownPath} target="_blank" rel="noreferrer">
+            <a
+              href={markdownPath}
+              target="_blank"
+              rel="noreferrer"
+              onClick={() => {
+                track("open_external", {
+                  destination: "component-markdown",
+                  surface: "copy-page-menu",
+                  slug: component.slug,
+                });
+              }}
+            >
               <FileTextIcon />
               View as Markdown
             </a>
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem asChild>
-            <a href={claudeUrl} target="_blank" rel="noreferrer">
+            <a
+              href={claudeUrl}
+              target="_blank"
+              rel="noreferrer"
+              onClick={() => {
+                track("open_external", {
+                  destination: "claude",
+                  surface: "copy-page-menu",
+                  slug: component.slug,
+                });
+              }}
+            >
               <ExternalLinkIcon />
               Open in Claude
             </a>
           </DropdownMenuItem>
           <DropdownMenuItem asChild>
-            <a href={chatGptUrl} target="_blank" rel="noreferrer">
+            <a
+              href={chatGptUrl}
+              target="_blank"
+              rel="noreferrer"
+              onClick={() => {
+                track("open_external", {
+                  destination: "chatgpt",
+                  surface: "copy-page-menu",
+                  slug: component.slug,
+                });
+              }}
+            >
               <ExternalLinkIcon />
               Open in ChatGPT
             </a>

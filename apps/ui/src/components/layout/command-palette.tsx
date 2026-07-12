@@ -14,7 +14,7 @@ import { SearchIcon } from "lucide-react";
 import { useCallback, useEffect, useEffectEvent, useRef, useState, useSyncExternalStore } from "react";
 
 import { NewBadge } from "#/components/shared/new-badge";
-import { getTracker } from "#/features/tracking/lib/tracking";
+import { track } from "#/features/tracking/lib/tracking";
 import {
   getCommandPaletteAriaKeyshortcuts,
   getCommandPaletteKeyboardAction,
@@ -53,15 +53,17 @@ export function CommandPalette() {
       clearTimeout(searchTrackTimeoutRef.current);
     }
 
-    // Debounced, and only re-tracked once the (trimmed) query actually changes —
+    // Debounced, and only re-tracked once the live query actually changes —
     // otherwise every keystroke of a paused typist would fire its own event.
+    // Length matches the live cmdk filter string (untrimmed); trim only to skip
+    // whitespace-only input.
     searchTrackTimeoutRef.current = setTimeout(() => {
-      const trimmed = value.trim();
-
-      if (trimmed && trimmed !== lastTrackedQueryRef.current) {
-        lastTrackedQueryRef.current = trimmed;
-        getTracker().track("search_query", { query: trimmed, queryLength: trimmed.length });
+      if (!value.trim() || value === lastTrackedQueryRef.current) {
+        return;
       }
+
+      lastTrackedQueryRef.current = value;
+      track("search_query", { queryLength: value.length });
     }, SEARCH_TRACK_DEBOUNCE_MS);
   }, []);
 
@@ -105,14 +107,25 @@ export function CommandPalette() {
 
   const goToPage = useCallback(
     (to: PrimaryNavPath) => {
+      track("select_search_result", {
+        resultType: "page",
+        destination: to,
+        hadQuery: search.trim().length > 0,
+      });
       handleOpenChange(false);
       void navigate({ to });
     },
-    [handleOpenChange, navigate],
+    [handleOpenChange, navigate, search],
   );
 
   const goToComponent = useCallback(
     (slug: string, hasDemo: boolean, name: string) => {
+      track("select_search_result", {
+        resultType: "component",
+        slug,
+        hadQuery: search.trim().length > 0,
+        hasDemo,
+      });
       handleOpenChange(false);
 
       if (hasDemo) {
@@ -123,7 +136,7 @@ export function CommandPalette() {
         void navigate({ to: "/components", hash: `letter-${name.charAt(0).toUpperCase()}` });
       }
     },
-    [handleOpenChange, navigate],
+    [handleOpenChange, navigate, search],
   );
 
   return (

@@ -5,7 +5,7 @@ import type { VariantProps } from "@codefast/ui/lib/utils";
 import { CheckIcon, CopyIcon } from "lucide-react";
 import type { ComponentProps } from "react";
 
-import { getTracker } from "#/features/tracking/lib/tracking";
+import { track } from "#/features/tracking/lib/tracking";
 
 /** `copy_code`'s `kind` values — what's being copied, never the copied text itself. */
 export type CopyAnalyticsKind = "install-command" | "setup-snippet" | "usage-example";
@@ -70,7 +70,7 @@ export function CopyButton({
   const { copyToClipboard, isCopied } = useCopyToClipboard({
     onCopy: () => {
       if (analyticsKind !== undefined && analyticsName !== undefined) {
-        getTracker().track("copy_code", { kind: analyticsKind, name: analyticsName });
+        track("copy_code", { kind: analyticsKind, name: analyticsName });
       }
     },
   });

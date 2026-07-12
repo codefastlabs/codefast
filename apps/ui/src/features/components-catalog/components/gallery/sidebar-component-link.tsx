@@ -4,6 +4,7 @@ import { LocateFixedIcon } from "lucide-react";
 import type { ComponentProps } from "react";
 
 import { NewBadge } from "#/components/shared/new-badge";
+import { track } from "#/features/tracking/lib/tracking";
 
 interface SidebarComponentLinkProps extends ComponentProps<"div"> {
   readonly slug: string;
@@ -13,6 +14,8 @@ interface SidebarComponentLinkProps extends ComponentProps<"div"> {
   readonly showScrollTo?: boolean;
   /** Flags a recently added component with a "New" badge. */
   readonly isNew?: boolean | undefined;
+  /** Which nav surface owns this link — tracked as `select_component.surface`. */
+  readonly surface: "gallery-sidebar" | "detail-sidebar";
 }
 
 /** A single component entry in the sidebar nav, with an optional scroll-to action. */
@@ -22,6 +25,7 @@ export function SidebarComponentLink({
   active,
   showScrollTo,
   isNew,
+  surface,
   className,
   ...props
 }: SidebarComponentLinkProps) {
@@ -43,6 +47,9 @@ export function SidebarComponentLink({
           "min-w-0 flex-1 truncate rounded-md px-2 py-1 text-xs no-underline",
           active ? "font-medium text-ui-fg" : "text-ui-muted group-hover/item:text-ui-fg",
         )}
+        onClick={() => {
+          track("select_component", { slug, surface });
+        }}
       >
         {name}
       </Link>
