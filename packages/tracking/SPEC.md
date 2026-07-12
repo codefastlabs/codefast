@@ -53,3 +53,4 @@ The standing rule: every exported API needs at least one real consumer call site
 - `tests/unit/**` mirrors `src/**` per the repo taxonomy; jsdom for browser surfaces.
 - Consent flows are tested behaviorally where possible (real gtag stub + `dataLayer` assertions) instead of spying package internals.
 - apps/ui carries the integration matrix: real `useSiteConsent` + tracker + GA/Vercel fan-out with only the network boundaries faked.
+- apps/ui also owns **browser e2e** (`apps/ui/tests/e2e/**`, Playwright) for consent-gated catalog events end-to-end. Run via `pnpm test:e2e:ui`. That suite is distinct from package CLI e2e and from `@codefast/ui` Storybook browser tests — see root `TESTING.md`. CI runs it in a dedicated job, not inside packages-only verify.

@@ -19,11 +19,22 @@ npm run build
 
 ## Testing
 
-This project uses [Vitest](https://vitest.dev/) for testing. You can run the tests with:
+Vitest projects: **unit** (`tests/unit/**`, `tests/integration/**`, `tests/types/**`
+under jsdom) and **e2e** (`tests/e2e/**` — Playwright Chromium against a running
+dev server). Taxonomy details live in the repo root [`TESTING.md`](../../TESTING.md).
 
 ```bash
-npm run test
+pnpm --filter @apps/ui test:unit          # unit + jsdom
+pnpm --filter @apps/ui test:integration   # integration
+pnpm test:e2e:ui                          # browser e2e (preferred root alias)
+pnpm --filter @apps/ui test:e2e           # same, filtered
+pnpm --filter @apps/ui test:coverage      # V8 coverage for the unit project only
 ```
+
+Browser e2e boots `pnpm dev` when nothing is listening on `http://localhost:3000`
+(override with `E2E_BASE_URL`). Prefer reusing a warm local server. CI runs
+`pnpm test:e2e:ui` in a dedicated job (separate from packages-only verify).
+Selectors prefer roles/labels; consent Accept is `getByRole("button", { name: "Accept" })`.
 
 ## Styling
 
