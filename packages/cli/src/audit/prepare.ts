@@ -29,7 +29,8 @@ export async function prepareRtlAudit(
 ): Promise<Result<RtlAuditCommandPrelude, AppError>> {
   let rootDir: string;
   try {
-    rootDir = findRepoRoot(args.currentWorkingDirectory, fs);
+    // Realpath so allowlist keys (`path.relative(rootDir, file)`) stay stable when cwd is a symlink.
+    rootDir = fs.canonicalPathSync(findRepoRoot(args.currentWorkingDirectory, fs));
   } catch (caughtError: unknown) {
     return err(new AppError("INFRA_FAILURE", messageFrom(caughtError), caughtError));
   }

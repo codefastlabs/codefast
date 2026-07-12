@@ -19,13 +19,16 @@ export function runRtlAudit(
 ): Result<RtlAuditResult, AppError> {
   try {
     const allowlist = new Set(args.allowlist);
-    const filesToScan = collectScanPaths(fs, args.targetPath);
+    // Align roots before relative() — mismatched symlink vs realpath breaks allowlist keys.
+    const rootDir = fs.canonicalPathSync(args.rootDir);
+    const targetPath = fs.canonicalPathSync(args.targetPath);
+    const filesToScan = collectScanPaths(fs, targetPath);
     const files: Array<RtlFileViolations> = [];
     let violationCount = 0;
     let allowlistedCount = 0;
 
     for (const absolutePath of filesToScan) {
-      const relativePath = toPosixPath(path.relative(args.rootDir, absolutePath));
+      const relativePath = toPosixPath(path.relative(rootDir, absolutePath));
       const content = fs.readFileSync(absolutePath, "utf8");
       const remaining = auditFileContent(content).filter(({ raw }) => {
         const isAllowed = allowlist.has(raw) || allowlist.has(`${relativePath}:${raw}`);
