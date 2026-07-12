@@ -3,6 +3,13 @@
   "private": true,
   "type": "module",
   "imports": {
+    "#/tests/*": [
+      "./tests/*",
+      "./tests/*.ts",
+      "./tests/*.tsx",
+      "./tests/*/index.ts",
+      "./tests/*/index.tsx"
+    ],
     "#/*": "./src/*"
   },
   "scripts": {
@@ -12,11 +19,11 @@
     "preview": "vite preview",
     "check-types": "tsgo --noEmit",
     "test": "vitest run",
-    "test:coverage": "vitest run --coverage",
-    "test:e2e": "vitest run tests/e2e",
-    "test:integration": "vitest run tests/integration",
-    "test:type": "vitest run tests/types",
-    "test:unit": "vitest run tests/unit",
+    "test:coverage": "vitest run --coverage --project unit",
+    "test:e2e": "vitest run --project e2e",
+    "test:integration": "vitest run --project unit tests/integration",
+    "test:type": "vitest run --project unit tests/types",
+    "test:unit": "vitest run --project unit tests/unit",
     "test:watch": "vitest"
   },
   "dependencies": {
@@ -62,6 +69,7 @@
     "@typescript/native-preview": "catalog:",
     "@vitejs/plugin-react": "catalog:",
     "jsdom": "catalog:",
+    "playwright": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:",
     "vitest": "catalog:"
