@@ -69,7 +69,8 @@ export function createClientTracker<Catalog extends EventCatalog>(
         throw new Error(`Unknown event: ${String(name)}`);
       }
 
-      assertValidEventProperties(definition.schema, name, properties);
+      // Forward the parsed output (not the raw input) so unknown keys cannot ride along.
+      const validatedProperties = assertValidEventProperties(definition.schema, name, properties);
 
       // The gate runs per event (not at creation) so a consent change mid-session applies immediately.
       const isAllowed = options.isAnalyticsAllowed?.() !== false;
@@ -84,7 +85,7 @@ export function createClientTracker<Catalog extends EventCatalog>(
         anonymousId: isAllowed ? options.anonymousId() : "",
         eventId: generateEventId(),
         name,
-        properties: properties as Record<string, unknown>,
+        properties: validatedProperties as Record<string, unknown>,
         timestamp: Date.now(),
         type: "track",
       };

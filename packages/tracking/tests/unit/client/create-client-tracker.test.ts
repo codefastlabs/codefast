@@ -48,6 +48,21 @@ describe("createClientTracker", () => {
     expect(destination.received).toHaveLength(0);
   });
 
+  it("forwards schema-parsed properties so unknown keys never reach destinations", () => {
+    const destination = createRecordingDestination();
+    const tracker = createClientTracker({
+      anonymousId: () => "anon-1",
+      catalog,
+      destinations: [destination],
+    });
+
+    tracker.track("button_clicked", { id: "cta", query: "leaked" } as { id: string });
+
+    expect(destination.received).toHaveLength(1);
+    expect(destination.received[0]?.properties).toEqual({ id: "cta" });
+    expect(destination.received[0]?.properties).not.toHaveProperty("query");
+  });
+
   it("throws on an event name missing from the catalog", () => {
     const tracker = createClientTracker({
       anonymousId: () => "anon-1",

@@ -29,16 +29,15 @@ export function defineEventCatalog<Catalog extends EventCatalog>(catalog: Catalo
 }
 
 /**
- * Validates event properties against the catalog schema and throws on mismatch. The
- * validated (possibly transformed) value is deliberately discarded — the tracker always
- * sends the caller's original properties, so a schema transform can never desync callers.
+ * Validates event properties against the catalog schema and returns the parsed output
+ * (unknown keys stripped / transforms applied) so destinations never see raw input.
  *
  * @throws Error when validation reports issues, or when the schema validates asynchronously —
  * tracking sits on synchronous call paths, so async schemas are unsupported by design.
  *
  * @since 1.0.0-canary.6
  */
-export function assertValidEventProperties(schema: StandardSchemaV1, eventName: string, properties: unknown): void {
+export function assertValidEventProperties(schema: StandardSchemaV1, eventName: string, properties: unknown): unknown {
   const result = schema["~standard"].validate(properties);
 
   if (result instanceof Promise) {
@@ -50,4 +49,6 @@ export function assertValidEventProperties(schema: StandardSchemaV1, eventName: 
 
     throw new Error(`Invalid properties for event "${eventName}": ${detail}`);
   }
+
+  return result.value;
 }

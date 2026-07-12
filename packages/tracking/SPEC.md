@@ -34,7 +34,7 @@ The standing rule: every exported API needs at least one real consumer call site
 └── css           # optional plain-CSS theme for the react parts
 ```
 
-- The schema contract is [Standard Schema](https://standardschema.dev) (`@standard-schema/spec` is the only dependency): any conforming library works, validation runs through `assertValidEventProperties` (sync `~standard.validate`; async schemas throw by design; the validated value is discarded so transforms cannot desync callers).
+- The schema contract is [Standard Schema](https://standardschema.dev) (`@standard-schema/spec` is the only dependency): any conforming library works, validation runs through `assertValidEventProperties` (sync `~standard.validate`; async schemas throw by design; the parsed output is what destinations receive so unknown keys cannot ride along).
 - The envelope is `TrackEvent` (`{ type: "track", name, properties, anonymousId, eventId, timestamp }`) — `type` stays a discriminant so a future kind is additive, not a wire break.
 - `Destination` is `{ name, consentRequirement?, send }`. Destinations own their transport; `send` failures are swallowed at the tracker (tracking must never break the interaction). `consentRequirement: "exempt"` keeps a cookieless, identifier-free sink (Vercel) receiving events while the gate is closed — gated envelopes carry an empty `anonymousId` and no id is ever minted for them.
 

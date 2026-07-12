@@ -35,6 +35,12 @@ describe("assertValidEventProperties", () => {
     }).not.toThrow();
   });
 
+  it("returns the schema-parsed value so unknown keys are stripped", () => {
+    expect(assertValidEventProperties(schema, "button_clicked", { id: "cta", query: "leaked" })).toEqual({
+      id: "cta",
+    });
+  });
+
   it("throws with the schema issues on mismatch", () => {
     expect(() => {
       assertValidEventProperties(schema, "button_clicked", { id: 42 });
