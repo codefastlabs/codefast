@@ -38,7 +38,11 @@ interface SidebarContextValue {
 
 const SIDEBAR_PROVIDER_NAME = "SidebarProvider";
 
-const [SidebarContextProvider, useSidebar] = Context.createContext<SidebarContextValue>(SIDEBAR_PROVIDER_NAME);
+const [SidebarContextProvider, useSidebarContext] = Context.createContext<SidebarContextValue>(SIDEBAR_PROVIDER_NAME);
+
+// Explicit signature so the emitted declaration names only SidebarContextValue,
+// not react-context's un-exportable return type (TS4023 under isolated declarations).
+const useSidebar: (consumerName: string) => SidebarContextValue = useSidebarContext;
 
 /* -----------------------------------------------------------------------------
  * Component: SidebarProvider
