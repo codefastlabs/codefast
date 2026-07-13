@@ -38,8 +38,8 @@ Helper files MUST NOT match `*.test.*` / `*.spec.*` filenames.
 ## Hard rules
 
 1. **No tests under `src/**`.** Forbidden filename patterns inside `src/\*_`:
-`_.test._`, `_.spec._`, `_.bench._`, `_.test-helper.\*`, and any
-`**tests**/` directory.
+   `_.test._`, `_.spec._`, `_.bench._`, `_.test-helper.\*`, and any
+   `**tests**/` directory.
 2. **No test files directly under `tests/`** — they MUST live inside a known
    category sub-directory.
 3. **No unknown category directories.** If a test lives under
