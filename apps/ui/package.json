@@ -20,7 +20,6 @@
     "check-types": "tsgo --noEmit",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage --project unit",
-    "test:e2e": "vitest run --project e2e",
     "test:integration": "vitest run --project unit tests/integration",
     "test:type": "vitest run --project unit tests/types",
     "test:unit": "vitest run --project unit tests/unit",
@@ -69,7 +68,6 @@
     "@typescript/native-preview": "catalog:",
     "@vitejs/plugin-react": "catalog:",
     "jsdom": "catalog:",
-    "playwright": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:",
     "vitest": "catalog:"

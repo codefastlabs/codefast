@@ -16,21 +16,13 @@ directory, otherwise it will not be discovered by Vitest. There is no implicit
 
 ### E2E flavors (same folder name, different runners)
 
-The `tests/e2e/**` directory is shared by three flavors — pick the right mental
+The `tests/e2e/**` directory is shared by two flavors — pick the right mental
 model when writing or reviewing tests:
 
 | Flavor                | Where                                 | What it actually drives                                                                                                     |
 | --------------------- | ------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
 | **CLI / package e2e** | `packages/*/tests/e2e/**`             | Subprocesses, built binaries, Node-only Vitest. This is what root `pnpm test:e2e` (Turbo) primarily fans out.               |
-| **Browser app e2e**   | `apps/ui/tests/e2e/**`                | Playwright Chromium against a running Vite app (tracking consent + catalog events).                                         |
 | **Storybook browser** | `@codefast/ui` coverage / story tests | Playwright Chromium for Storybook stories — **not** under `tests/e2e/**`; lives in the package's Storybook/browser project. |
-
-Prefer role/label selectors over `data-testid` in browser e2e when the UI
-already exposes clear accessible names (see unit tests for the same surfaces).
-Split tracking flows into multiple `test()` cases under one `describe` with a
-shared `beforeAll` session (Vitest file order is sequential for the e2e
-project via `fileParallelism: false`) so wall time stays close to a single
-mega-test while failures stay localized.
 
 ### Test helper placement (NOT executed as tests)
 
@@ -94,7 +86,6 @@ pnpm test                  # all categories, all packages + apps
 pnpm test:unit             # unit only, all packages + apps
 pnpm test:integration      # integration only, all packages + apps
 pnpm test:e2e              # e2e only, all packages + apps (Turbo fan-out — slow)
-pnpm test:e2e:ui           # apps/ui browser e2e only (preferred for tracking flows)
 pnpm test:type             # type-only tests, all packages + apps
 pnpm test:coverage         # full coverage, all packages + apps
 ```
@@ -104,24 +95,16 @@ pnpm test:coverage         # full coverage, all packages + apps
 - **Packages gate** (`.github/workflows/reusable-verify-packages.yml`): build +
   lint/format/types + `test:coverage` for `./packages/**` only. Installs
   Playwright Chromium for `@codefast/ui` Storybook browser tests inside that
-  coverage run. Does **not** start `apps/ui` or run browser app e2e.
-- **Apps UI browser e2e** (CI job `e2e-ui` in `.github/workflows/ci.yml`):
-  builds packages, installs Playwright for `@apps/ui`, runs `pnpm test:e2e:ui`.
-  Separate from the packages gate so package verify stays fast and hermetic.
+  coverage run. Does **not** start `apps/ui`.
 
-Locally, for `@apps/ui` browser e2e prefer `pnpm test:e2e:ui` (or
-`pnpm --filter @apps/ui test:e2e`). Reuse a running `pnpm --filter @apps/ui
-dev` when possible; override with `E2E_BASE_URL` if the app is not on
-`http://localhost:3000`. Search debounce stays at the production 500ms —
-assertions use `expect.poll` with a short ceiling. Root `pnpm test:e2e` still
-runs every package that defines the script — use it for full-repo gates, not
-day-to-day UI tracking checks.
+Root `pnpm test:e2e` runs every package that defines the script — use it for
+full-repo gates.
 
 ## Today's coverage (snapshot)
 
 | Package / app                 | unit | integration |                e2e                 | type |
 | ----------------------------- | :--: | :---------: | :--------------------------------: | :--: |
-| `@apps/ui`                    | yes  |     yes     |           yes (browser)            |  —   |
+| `@apps/ui`                    | yes  |     yes     |                 —                  |  —   |
 | `@codefast/benchmark-harness` | yes  |      —      |                 —                  |  —   |
 | `@codefast/cli`               | yes  |      —      |                 —                  |  —   |
 | `@codefast/di`                | yes  |     yes     |                 —                  |  —   |
@@ -139,5 +122,4 @@ purely additive — no config or script change needed.
 2. Place the file under `tests/<category>/<mirrored path>.test.ts`.
 3. Use `#/...` aliases for production imports and `#/tests/...` for helpers.
 4. Run `pnpm --filter <pkg> test:<category>` locally.
-5. Run `pnpm verify` before pushing (packages). For browser tracking flows, also
-   run `pnpm test:e2e:ui`.
+5. Run `pnpm verify` before pushing (packages).
