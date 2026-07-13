@@ -71,7 +71,7 @@ catalog:
   chart.js: ^4.5.1
   chartjs-plugin-zoom: ^2.2.0
   class-variance-authority: ^0.7.1
-  chrono-node: ^2.9.1
+  chrono-node: ^2.10.0
   clsx: ^2.1.1
   cmdk: ^1.1.1
   commander: ^15.0.0
