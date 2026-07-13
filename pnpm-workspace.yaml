@@ -37,10 +37,10 @@ catalog:
   "@resvg/resvg-js": ^2.6.2
   "@rolldown/plugin-babel": ^0.2.3
   "@standard-schema/spec": ^1.1.0
-  "@storybook/addon-a11y": ^10.4.6
-  "@storybook/addon-docs": ^10.4.6
-  "@storybook/addon-vitest": ^10.4.6
-  "@storybook/react-vite": ^10.4.6
+  "@storybook/addon-a11y": ^10.5.0
+  "@storybook/addon-docs": ^10.5.0
+  "@storybook/addon-vitest": ^10.5.0
+  "@storybook/react-vite": ^10.5.0
   "@tailwindcss/postcss": ^4.3.2
   "@tailwindcss/vite": ^4.3.2
   "@tanstack/devtools-vite": ^0.8.1
@@ -108,7 +108,7 @@ catalog:
   shiki: ^4.3.1
   simple-git-hooks: ^2.13.1
   sonner: ^2.0.7
-  storybook: ^10.4.6
+  storybook: ^10.5.0
   tailwind-merge: ^3.6.0
   tailwind-variants: ^3.2.2
   tailwindcss: ^4.3.2
