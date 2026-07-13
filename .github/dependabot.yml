@@ -47,6 +47,12 @@ updates:
           - "@vitest/*"
           - "jsdom"
           - "expect-type"
+      # Storybook enforces a single version across core + every addon; bump them
+      # together or a partial update fails preset load (ERR_PACKAGE_PATH_NOT_EXPORTED).
+      storybook:
+        patterns:
+          - "storybook"
+          - "@storybook/*"
       radix-ui:
         patterns:
           - "@radix-ui/*"
