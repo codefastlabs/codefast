@@ -16,7 +16,7 @@ jobs:
     timeout-minutes: 30
     env:
       NODE_ENV: production
-      TURBO_TOKEN: ${{ secrets.TURBO_TOKEN || secrets.VERCEL_TOKEN }}
+      TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
       TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
     steps:
       - name: Checkout Repository
