@@ -184,8 +184,8 @@ catalogs:
       specifier: ^1.4.0
       version: 1.4.0
     hono:
-      specifier: ^4.12.27
-      version: 4.12.27
+      specifier: ^4.12.30
+      version: 4.12.30
     input-otp:
       specifier: ^1.4.2
       version: 1.4.2
@@ -675,7 +675,7 @@ importers:
         version: link:../tailwind-variants
       '@hono/node-server':
         specifier: 'catalog:'
-        version: 2.0.8(hono@4.12.27)
+        version: 2.0.8(hono@4.12.30)
       chart.js:
         specifier: 'catalog:'
         version: 4.5.1
@@ -684,7 +684,7 @@ importers:
         version: 2.2.0(chart.js@4.5.1)
       hono:
         specifier: 'catalog:'
-        version: 4.12.27
+        version: 4.12.30
       postcss:
         specifier: 'catalog:'
         version: 8.5.16
@@ -5990,8 +5990,8 @@ packages:
   hast-util-whitespace@3.0.0:
     resolution: {integrity: sha512-88JUN06ipLwsnv+dVn+OIYOvAuvBMy/Qoi6O7mQHxdPXpjy+Cd6xRkWwux7DKO+4sYILtLBRIKgsdpS2gQc7qw==}
 
-  hono@4.12.27:
-    resolution: {integrity: sha512-1yrb/+w6HWQJrUCLkJ2IF5jNIPvvFkblV5RNOYl6bV+OA6p9GLcMpHFFGTosSvHvcAUibuUukRqhlYI4z32C7Q==}
+  hono@4.12.30:
+    resolution: {integrity: sha512-emn+JoJjrN9YTpRDS5it/UI2SO9BAE37T6I3d963RxcZ81G9A4pr2SZTEiiaiKbzx+NKRg5BZ89fCL7gCJCUog==}
     engines: {node: '>=16.9.0'}
 
   hookable@6.1.1:
@@ -8530,9 +8530,9 @@ snapshots:
 
   '@fontsource-variable/inter@5.2.8': {}
 
-  '@hono/node-server@2.0.8(hono@4.12.27)':
+  '@hono/node-server@2.0.8(hono@4.12.30)':
     dependencies:
-      hono: 4.12.27
+      hono: 4.12.30
 
   '@inquirer/external-editor@1.0.3(@types/node@26.1.0)':
     dependencies:
@@ -12418,7 +12418,7 @@ snapshots:
     dependencies:
       '@types/hast': 3.0.4
 
-  hono@4.12.27: {}
+  hono@4.12.30: {}
 
   hookable@6.1.1: {}
 
