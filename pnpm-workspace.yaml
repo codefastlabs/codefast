@@ -28,7 +28,7 @@ catalog:
   "@codefast/theme": 0.5.0-canary.2
   "@codefast/typescript-config": 0.5.0-canary.2
   "@codefast/ui": 0.5.0-canary.2
-  "@commitlint/cli": ^21.2.0
+  "@commitlint/cli": ^21.2.1
   "@commitlint/config-conventional": ^21.2.0
   # Static Inter TTFs for the OG-image script — resvg cannot read the woff2 variable font above.
   "@expo-google-fonts/inter": ^0.4.2
@@ -85,13 +85,13 @@ catalog:
   jest-axe: ^10.0.0
   jiti: ^2.7.0
   jsdom: ^29.1.1
-  knip: ^6.24.0
+  knip: ^6.26.0
   lint-staged: ^17.0.8
   lucide-react: ^1.23.0
   next-themes: ^0.4.6
   nitro: 3.0.260610-beta
-  oxfmt: ^0.57.0
-  oxlint: ^1.72.0
+  oxfmt: ^0.58.0
+  oxlint: ^1.73.0
   oxlint-tsgolint: ^0.24.0
   picomatch: ^4.0.5
   playwright: ^1.61.1
