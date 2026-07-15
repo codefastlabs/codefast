@@ -8,8 +8,8 @@ on:
     inputs:
       run-tests:
         description: >-
-          Run the heavy Playwright + coverage suite. PRs pass false for fast
-          lint/type feedback; the merge queue passes true for the full gate.
+          Run the heavy coverage suite. PRs pass false for fast lint/type
+          feedback; the merge queue passes true for the full gate.
         type: boolean
         default: true
 
@@ -39,12 +39,6 @@ jobs:
 
       - name: Validate Code Quality and Type Safety
         run: npx turbo run lint format:check check-types --filter="./packages/**"
-
-      # @codefast/ui runs its Storybook stories as browser tests (Playwright Chromium);
-      # the browser binary isn't in the repo, so install it before the coverage run.
-      - name: Install Playwright Browser
-        if: ${{ inputs.run-tests }}
-        run: pnpm --filter @codefast/ui exec playwright install --with-deps chromium
 
       - name: Execute Automated Tests with Coverage
         if: ${{ inputs.run-tests }}
