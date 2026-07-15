@@ -1,10 +1,6 @@
 {
   "extends": "@codefast/typescript-config/react.json",
   "compilerOptions": {
-    // Storybook's preview.ts imports `./tailwind.css` as a side effect; that file
-    // resolves to a real path with no type declarations, so the side-effect check
-    // would flag it. CSS side effects are intentional here.
-    "noUncheckedSideEffectImports": false,
     "types": ["node", "vitest/globals", "@testing-library/jest-dom"],
     "paths": {
       "#/tests/*": ["./tests/*"],

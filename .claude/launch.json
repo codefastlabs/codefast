@@ -21,13 +21,6 @@
       "runtimeArgs": ["--filter", "@examples/tanstack-start", "exec", "vite", "dev", "--port", "3001"],
       "port": 3001,
       "autoPort": true
-    },
-    {
-      "name": "storybook",
-      "runtimeExecutable": "pnpm",
-      "runtimeArgs": ["--filter", "@codefast/ui", "exec", "storybook", "dev", "-p", "6006", "--no-open"],
-      "port": 6006,
-      "autoPort": true
     }
   ]
 }
