@@ -2,12 +2,12 @@ name: Auto-merge
 
 # Queues PRs for auto-merge once required checks pass, in two lanes:
 #   - Dependabot: non-major dependency bumps (majors left for manual review).
-#   - Owner: PRs authored by the maintainer AND labeled `automerge` (opt-in per PR).
+#   - Owner: every non-draft PR authored by the maintainer.
 # Requires the repo's branch ruleset on main (required "Verify" check + merge
 # queue); without it there is nothing for auto-merge to wait on.
 on:
   pull_request:
-    types: [opened, reopened, synchronize, labeled]
+    types: [opened, reopened, synchronize, ready_for_review]
 
 permissions:
   contents: write
@@ -17,7 +17,7 @@ jobs:
   auto-merge:
     if: >-
       github.actor == 'dependabot[bot]' ||
-      (github.event.pull_request.user.login == 'thevuong' && contains(github.event.pull_request.labels.*.name, 'automerge'))
+      (github.event.pull_request.user.login == 'thevuong' && github.event.pull_request.draft == false)
     runs-on: ubuntu-latest
     steps:
       - name: Fetch Dependabot metadata
@@ -26,7 +26,7 @@ jobs:
         uses: dependabot/fetch-metadata@v2
 
       - name: Enable auto-merge
-        # Dependabot skips majors; the owner lane (already label-gated) always enables.
+        # Dependabot skips majors; the owner lane always enables.
         if: >-
           github.actor != 'dependabot[bot]' ||
           steps.meta.outputs.update-type != 'version-update:semver-major'
