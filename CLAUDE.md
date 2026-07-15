@@ -74,7 +74,8 @@ This is a **TypeScript** project, so doc comments are **TSDoc** — never JSDoc 
 - **`//` comments state the _why_/purpose in one line** — a non-obvious decision, constraint, or gotcha (e.g. `// scoped to the client env — the nitro build sets its own codeSplitting`). If a competent reader could infer it from the code or the types, **delete it**; never narrate obvious lines.
 - **A doc comment on an exported symbol** leads with a one-line summary of intent/purpose (what it's _for_, not how it works). Internal helpers get a comment only when non-obvious.
 - **TSDoc block tags only when they add what the type can't:** `@remarks` (detail past the summary), `@example`, `@deprecated <reason + replacement>`, `@see`, `@throws`, `@defaultValue`.
-- **`@since <version>` is generated** by `codefast tag` at release — never hand-write it.
+- **Speak the API's vocabulary (Apple HIG terms).** In comments and names, **appearance** is the user's preference (Light / Dark / Auto) and **color scheme** is the resolved light/dark value applied — say "appearance" for the preference, "color scheme" for the resolved value, and avoid the legacy "theme" wording. Prefer `/** … */` doc blocks over `//` lines when the comment documents intent.
+- **`@since <version>` is generated** by `codefast tag` at release — never hand-write it, and never remove a released one (the add-only tool would re-stamp it with the current version, destroying the true original).
 - No commented-out code left behind; a `TODO`/`FIXME` must state why or link an issue.
 
 ## API naming (Swift API Design Guidelines, adapted to TS)
@@ -112,6 +113,7 @@ These are project rules the linters do not fully enforce:
 - **No Tailwind-classes-in-a-variable** (`const FOO = "flex gap-3"`) — it loses IntelliSense/auto-sort. Write classes inline in `className`. When a class set repeats, extract a **reusable component**, not a string constant. Conditional classes use `cn()` inline. CSS effects (gradient/mask/background-size) use Tailwind arbitrary values (`bg-[radial-gradient(...)]`), not `style` objects.
 - **One component per file** under `apps/ui/src/components/**`. Extract sub-components/helpers into their own kebab-case file and import. Accepted co-location exceptions: icon sets, and `*.example.tsx` / `demo.tsx` under `registry/`.
 - **No inline prop types.** Declare `interface XxxProps extends ComponentProps<"element">` (matching the host element rendered), spread `{...props}` **last** on that element, and merge classes via `cn(base, className)`. `Omit` any attr the wrapper hard-sets. When forwarding to another component (not a DOM element), extend `ComponentProps<typeof ThatComponent>` and `Omit` the required props the wrapper supplies. Exception: a handler the component must own (e.g. a `CopyButton`'s `onClick`) goes _after_ `{...props}` with a comment.
+- **RTL: keep physical classes that sit under a side variant.** `packages/ui` is RTL-hardened with logical utilities + `rtl:` overrides, but physical `left-/right-/border-l/r/slide-in-from-*` classes gated behind `data-[side=…]` (or the custom `data-side-left`/`data-side-right`) are intentional — Radix resolves `side` per reading direction, so converting them to logical double-flips. Run `pnpm --filter @codefast/ui audit:rtl` to check for genuine gaps.
 
 ## Releases
 
