@@ -37,10 +37,6 @@ catalog:
   "@resvg/resvg-js": ^2.6.2
   "@rolldown/plugin-babel": ^0.2.3
   "@standard-schema/spec": ^1.1.0
-  "@storybook/addon-a11y": ^10.5.0
-  "@storybook/addon-docs": ^10.5.0
-  "@storybook/addon-vitest": ^10.5.0
-  "@storybook/react-vite": ^10.5.0
   "@tailwindcss/postcss": ^4.3.2
   "@tailwindcss/vite": ^4.3.2
   "@tanstack/devtools-vite": ^0.8.1
@@ -64,8 +60,6 @@ catalog:
   "@unpic/react": ^1.0.2
   "@vercel/analytics": ^2.0.1
   "@vitejs/plugin-react": ^6.0.3
-  "@vitest/browser": ^4.1.10
-  "@vitest/browser-playwright": ^4.1.10
   "@vitest/coverage-v8": ^4.1.10
   babel-plugin-react-compiler: ^1.0.0
   chart.js: ^4.5.1
@@ -94,7 +88,6 @@ catalog:
   oxlint: ^1.73.0
   oxlint-tsgolint: ^0.24.0
   picomatch: ^4.0.5
-  playwright: ^1.61.1
   postcss: ^8.5.16
   postcss-import: ^16.1.1
   radix-ui: ^1.6.2
@@ -108,7 +101,6 @@ catalog:
   shiki: ^4.3.1
   simple-git-hooks: ^2.13.1
   sonner: ^2.0.7
-  storybook: ^10.5.0
   tailwind-merge: ^3.6.0
   tailwind-variants: ^3.2.2
   tailwindcss: ^4.3.2
@@ -128,6 +120,6 @@ catalog:
 catalogMode: manual
 
 # 1h maturation window instead of pnpm's 24h default — short enough that our own
-# canary releases and pinned deps (e.g. playwright) age past it without needing
+# canary releases and pinned deps age past it without needing
 # minimumReleaseAgeExclude entries.
 minimumReleaseAge: 60
