@@ -25,7 +25,7 @@
     "bench:inversify": "TSX_TSCONFIG_PATH=tsconfig.inversify.json node --import tsx/esm src/inversify-benches.ts",
     "bench:serve": "node --import tsx/esm src/harness/serve.ts",
     "bench:verbose": "BENCH_VERBOSE=1 node --import tsx/esm src/harness/run.ts",
-    "check-types": "tsgo --noEmit"
+    "check-types": "tsc --noEmit"
   },
   "dependencies": {
     "@codefast/benchmark-harness": "workspace:*",
@@ -38,7 +38,7 @@
   "devDependencies": {
     "@codefast/typescript-config": "workspace:*",
     "@types/node": "catalog:",
-    "@typescript/native-preview": "catalog:",
+    "@typescript/native": "catalog:",
     "typescript": "catalog:"
   },
   "engines": {

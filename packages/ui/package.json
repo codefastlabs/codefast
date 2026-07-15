@@ -609,7 +609,7 @@
   "scripts": {
     "build": "tsdown",
     "build-storybook": "storybook build",
-    "check-types": "tsgo --noEmit",
+    "check-types": "tsc --noEmit",
     "clean": "rm -rf dist storybook-static",
     "storybook": "storybook dev -p 6006",
     "test": "vitest run",
@@ -650,7 +650,7 @@
     "@testing-library/user-event": "catalog:",
     "@types/jest-axe": "catalog:",
     "@types/node": "catalog:",
-    "@typescript/native-preview": "catalog:",
+    "@typescript/native": "catalog:",
     "@vitejs/plugin-react": "catalog:",
     "@vitest/browser": "catalog:",
     "@vitest/browser-playwright": "catalog:",

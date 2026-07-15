@@ -103,7 +103,7 @@
   },
   "scripts": {
     "build": "tsdown",
-    "check-types": "tsgo --noEmit",
+    "check-types": "tsc --noEmit",
     "clean": "rm -rf dist",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
@@ -123,7 +123,7 @@
     "@testing-library/react": "catalog:",
     "@testing-library/user-event": "catalog:",
     "@types/node": "catalog:",
-    "@typescript/native-preview": "catalog:",
+    "@typescript/native": "catalog:",
     "@vitejs/plugin-react": "catalog:",
     "@vitest/coverage-v8": "catalog:",
     "jsdom": "catalog:",

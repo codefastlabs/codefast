@@ -197,7 +197,7 @@
   },
   "scripts": {
     "build": "tsdown",
-    "check-types": "tsgo --noEmit",
+    "check-types": "tsc --noEmit",
     "clean": "rm -rf dist",
     "examples": "for file in examples/*/*.ts; do echo \"=== Running $file ===\"; node --import tsx/esm \"$file\"; echo \"\n\" || exit 1; done",
     "test": "vitest run",
@@ -214,7 +214,7 @@
     "@codefast/typescript-config": "workspace:*",
     "@rolldown/plugin-babel": "catalog:",
     "@types/node": "catalog:",
-    "@typescript/native-preview": "catalog:",
+    "@typescript/native": "catalog:",
     "@vitest/coverage-v8": "catalog:",
     "expect-type": "catalog:",
     "tsdown": "catalog:",

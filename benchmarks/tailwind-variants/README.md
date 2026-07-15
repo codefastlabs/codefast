@@ -179,6 +179,6 @@ For a plain run (no `BENCH_FAST` / `BENCH_FULL`), subprocesses use `BENCHMARK_SU
 
 **Runtime:** `@codefast/benchmark-harness`, `@codefast/tailwind-variants`, `tailwind-variants`, `class-variance-authority`, `tailwind-merge`, `tinybench`, `tsx`.
 
-**Development:** `@codefast/typescript-config`, `@types/node`, `typescript`, `@typescript/native-preview`.
+**Development:** `@codefast/typescript-config`, `@types/node`, `typescript`, `@typescript/native`.
 
 **Engines:** Node `>=24` (see `package.json`).

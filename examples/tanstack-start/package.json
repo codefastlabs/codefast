@@ -9,7 +9,7 @@
     "dev": "vite dev --port 3001",
     "build": "vite build",
     "preview": "vite preview --port 3001",
-    "check-types": "tsgo --noEmit"
+    "check-types": "tsc --noEmit"
   },
   "dependencies": {
     "@codefast/di": "catalog:",
@@ -33,7 +33,7 @@
     "@types/node": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
-    "@typescript/native-preview": "catalog:",
+    "@typescript/native": "catalog:",
     "@vitejs/plugin-react": "catalog:",
     "babel-plugin-react-compiler": "catalog:",
     "nitro": "catalog:",
