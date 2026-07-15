@@ -1,10 +1,17 @@
 # Step order: type-aware oxlint needs built `dist` typings for workspace `package.json` exports.
-# Sequence — build packages, then lint + format check + check-types, then tests with coverage.
+# Sequence — build packages, then lint + format check + check-types, then (heavy lane only) tests with coverage.
 
 name: Reusable verify packages
 
 on:
   workflow_call:
+    inputs:
+      run-tests:
+        description: >-
+          Run the heavy Playwright + coverage suite. PRs pass false for fast
+          lint/type feedback; the merge queue passes true for the full gate.
+        type: boolean
+        default: true
 
 permissions:
   contents: read
@@ -36,12 +43,15 @@ jobs:
       # @codefast/ui runs its Storybook stories as browser tests (Playwright Chromium);
       # the browser binary isn't in the repo, so install it before the coverage run.
       - name: Install Playwright Browser
+        if: ${{ inputs.run-tests }}
         run: pnpm --filter @codefast/ui exec playwright install --with-deps chromium
 
       - name: Execute Automated Tests with Coverage
+        if: ${{ inputs.run-tests }}
         run: npx turbo run test:coverage --filter="./packages/**"
 
       - name: Publish Coverage Results to Codecov
+        if: ${{ inputs.run-tests }}
         uses: codecov/codecov-action@v7
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
