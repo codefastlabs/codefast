@@ -31,13 +31,12 @@ export function createAuditCommand(): Command {
       if (!consumeCliAppError(prelude)) {
         return;
       }
-      const { rootDir, config, targetPath, allowlist } = prelude.value;
+      const { rootDir, targetPath, allowlist } = prelude.value;
       const parsed = parseWithSchema(rtlAuditRunRequestSchema, {
         rootDir,
         targetPath,
         allowlist,
         json: !!opts.json,
-        config: config.audit?.rtl ?? {},
       });
       if (!consumeCliAppError(parsed)) {
         return;

@@ -2,9 +2,6 @@ import path from "node:path";
 
 import { z } from "zod";
 
-import { codefastAuditRtlConfigSchema } from "#/core/config/schema";
-import type { CodefastAuditRtlConfig } from "#/core/config/schema";
-
 /**
  * Resolved request for a single RTL audit run.
  */
@@ -13,7 +10,6 @@ export type RtlAuditRunRequest = {
   readonly targetPath: string;
   readonly allowlist?: ReadonlyArray<string> | undefined;
   readonly json: boolean;
-  readonly config: CodefastAuditRtlConfig;
 };
 
 /**
@@ -24,7 +20,6 @@ export const rtlAuditRunRequestSchema: z.ZodType<RtlAuditRunRequest> = z.object(
   targetPath: z.string().min(1),
   allowlist: z.array(z.string()).optional(),
   json: z.boolean(),
-  config: codefastAuditRtlConfigSchema,
 });
 
 /**

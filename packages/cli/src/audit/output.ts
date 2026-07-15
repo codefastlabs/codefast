@@ -12,7 +12,7 @@ export function exitCodeForRtlAuditResult(result: RtlAuditResult): number {
 /**
  * Human-readable RTL audit report (matches the former packages/ui script shape).
  */
-export function presentRtlAuditResult(result: RtlAuditResult): number {
+export function presentRtlAuditResult(result: RtlAuditResult): void {
   for (const file of result.files) {
     logger.out(`\n${file.relativePath}`);
     for (const { line, raw, suggestion } of file.violations) {
@@ -27,8 +27,6 @@ export function presentRtlAuditResult(result: RtlAuditResult): number {
   } else {
     logger.out(`✓ No physical-direction classes outside the allowlist${allowlistSuffix}`);
   }
-
-  return exitCodeForRtlAuditResult(result);
 }
 
 /**

@@ -19,9 +19,8 @@ export function runRtlAudit(
 ): Result<RtlAuditResult, AppError> {
   try {
     const allowlist = new Set(args.allowlist);
-    // Align roots before relative() — mismatched symlink vs realpath breaks allowlist keys.
-    const rootDir = fs.canonicalPathSync(args.rootDir);
-    const targetPath = fs.canonicalPathSync(args.targetPath);
+    // Caller passes canonical roots (prepareRtlAudit realpaths them) so relative() keys stay stable.
+    const { rootDir, targetPath } = args;
     const filesToScan = collectScanPaths(fs, targetPath);
     const files: Array<RtlFileViolations> = [];
     let violationCount = 0;

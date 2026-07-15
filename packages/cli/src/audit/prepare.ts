@@ -1,6 +1,5 @@
 import { resolveRepoRelativePath } from "#/audit/cli-schema";
 import { loadCodefastConfig } from "#/core/config";
-import type { CodefastConfig } from "#/core/config/schema";
 import { AppError, messageFrom } from "#/core/errors";
 import type { FilesystemPort } from "#/core/filesystem/port";
 import type { Result } from "#/core/result";
@@ -8,11 +7,10 @@ import { err, ok } from "#/core/result";
 import { findRepoRoot } from "#/core/workspace/resolver";
 
 /**
- * Shared prelude for `audit rtl`: repo root, config, and resolved scan target.
+ * Shared prelude for `audit rtl`: repo root and the canonicalized scan target with its allowlist.
  */
 export type RtlAuditCommandPrelude = {
   readonly rootDir: string;
-  readonly config: CodefastConfig;
   readonly targetPath: string;
   readonly allowlist: ReadonlyArray<string>;
 };
@@ -64,7 +62,6 @@ export async function prepareRtlAudit(
 
   return ok({
     rootDir,
-    config,
     targetPath: fs.canonicalPathSync(targetPath),
     allowlist: rtlConfig.allowlist ?? [],
   });
