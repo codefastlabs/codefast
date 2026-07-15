@@ -21,6 +21,7 @@
     "cli:arrange:simplify:preview": "pnpm run codefast arrange simplify --dry-run",
     "cli:mirror": "pnpm run codefast mirror",
     "cli:mirror:preview": "pnpm run codefast mirror --dry-run",
+    "cli:audit:rtl": "pnpm run codefast audit rtl",
     "deps:install": "pnpm install && pnpm build:packages",
     "deps:outdated": "pnpm outdated --recursive",
     "deps:reinstall": "pnpm clean && pnpm clean:modules && pnpm install && pnpm build:packages",

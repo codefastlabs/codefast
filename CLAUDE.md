@@ -98,7 +98,7 @@ Audit every public API you add or touch (exported function/type/prop/option/conf
 | `packages/theme`             | Theme management using React 19 features (optimistic updates, cross-tab sync)                          |
 | `packages/di`                | Lightweight dependency-injection primitives (requires Node ≥ 26)                                       |
 | `packages/tracking`          | Consent-gated, type-safe event tracking for TanStack Start over a Standard Schema event catalog        |
-| `packages/cli`               | `codefast` CLI — subcommands `arrange`, `mirror`, `tag` (run via `pnpm run codefast <cmd>`)            |
+| `packages/cli`               | `codefast` CLI — subcommands `arrange`, `audit`, `mirror`, `tag` (run via `pnpm run codefast <cmd>`)   |
 | `packages/typescript-config` | Shared tsconfig presets                                                                                |
 | `packages/benchmark-*`       | Performance benchmark harness/viewer (`pnpm bench`)                                                    |
 | `benchmarks/*`               | Benchmark suites comparing `@codefast/*` against upstream (`di-inversify`, `tailwind-variants`)        |

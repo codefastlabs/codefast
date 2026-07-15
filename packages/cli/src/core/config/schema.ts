@@ -96,6 +96,39 @@ export const codefastArrangeConfigSchema = z
 export type CodefastArrangeConfig = z.infer<typeof codefastArrangeConfigSchema>;
 
 /**
+ * RTL audit defaults — `target` is relative to the repo root (where `codefast.config` lives).
+ *
+ * @since 0.3.16-canary.0
+ */
+export const codefastAuditRtlConfigSchema = z
+  .object({
+    /** Directory or file to scan when no CLI target is passed. */
+    target: z.string().optional(),
+    /** Bare class tokens or `repo/relative/path.tsx:token` entries to ignore. */
+    allowlist: z.array(z.string()).optional(),
+  })
+  .strict();
+
+/**
+ * @since 0.3.16-canary.0
+ */
+export type CodefastAuditRtlConfig = z.infer<typeof codefastAuditRtlConfigSchema>;
+
+/**
+ * @since 0.3.16-canary.0
+ */
+export const codefastAuditConfigSchema = z
+  .object({
+    rtl: codefastAuditRtlConfigSchema.optional(),
+  })
+  .strict();
+
+/**
+ * @since 0.3.16-canary.0
+ */
+export type CodefastAuditConfig = z.infer<typeof codefastAuditConfigSchema>;
+
+/**
  * Root `codefast.config` Zod schema — single source of truth for both validation and TS types.
  *
  * @since 0.3.16-canary.0
@@ -105,6 +138,7 @@ export const codefastConfigRootSchema = z
     mirror: mirrorConfigSchema.optional(),
     tag: codefastTagConfigSchema.optional(),
     arrange: codefastArrangeConfigSchema.optional(),
+    audit: codefastAuditConfigSchema.optional(),
   })
   .strict();
 
