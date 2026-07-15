@@ -19,4 +19,8 @@ jobs:
   verify:
     name: Verify
     uses: ./.github/workflows/reusable-verify-packages.yml
+    with:
+      # PRs get fast lint/type feedback; the merge queue (and manual dispatch)
+      # run the full test + coverage gate against the real merge result.
+      run-tests: ${{ github.event_name != 'pull_request' }}
     secrets: inherit
