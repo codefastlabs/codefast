@@ -52,7 +52,7 @@
   },
   "scripts": {
     "build": "tsdown",
-    "check-types": "tsgo --noEmit",
+    "check-types": "tsc --noEmit",
     "clean": "rm -rf dist",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
@@ -74,7 +74,7 @@
     "@codefast/typescript-config": "workspace:*",
     "@types/node": "catalog:",
     "@types/picomatch": "catalog:",
-    "@typescript/native-preview": "catalog:",
+    "@typescript/native": "catalog:",
     "@vitest/coverage-v8": "catalog:",
     "tsdown": "catalog:",
     "vite": "catalog:",

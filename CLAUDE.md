@@ -9,7 +9,7 @@ CodeFast is a **pnpm workspaces + Turborepo** monorepo (Node ≥ 24, pnpm 11; `@
 ## Toolchain (non-standard — read before assuming)
 
 - **Lint/format is Oxc, not ESLint/Prettier.** `oxlint` (with type-aware rules via `oxlint-tsgolint`) and `oxfmt`. `oxlint` runs with `--deny-warnings`.
-- **Type checking uses `tsgo --noEmit`** (TypeScript Native / `@typescript/native-preview`), not `tsc`.
+- **Type checking uses the native `tsc --noEmit`** from **TypeScript 7** (the Go port), installed under the `@typescript/native` catalog alias (`npm:typescript@7`). The plain `typescript` dependency is aliased to `@typescript/typescript6` (the JS compiler, bin `tsc6`) — kept because tsdown/`rolldown-plugin-dts` and the TanStack plugins consume the classic TS compiler API. TS 7's `.` export is only `{ version }` (the compiler API lives under the new `./unstable/*` surface); pointing `typescript` at 7.x crashes `rolldown-plugin-dts` dts-gen (`ts.sys` is `undefined`) — verified on both 7.0.2 and 7.1-dev, so this is _not_ fixed by bumping the TS version. **The trigger to drop `@typescript/typescript6` is `rolldown-plugin-dts`/tsdown (and the TanStack plugins) migrating to the `typescript/unstable` API**, not a TS release number. When that lands, point the `typescript` alias at `npm:typescript@7` and collapse the two catalog entries into one.
 - **Bundling is `tsdown`** (Rolldown-based), configured per package via `tsdown.config.ts`.
 - **`exactOptionalPropertyTypes` is enabled** — an optional prop that may receive an explicit value must be typed `?: T | undefined`.
 
@@ -29,7 +29,7 @@ Build packages before running apps, type-checking, or type-aware lint — `@code
 ```bash
 pnpm build:packages   # build only packages/* (run after editing any package src)
 pnpm dev              # start all apps + packages in watch mode (no upfront build — run build:packages once on a fresh clone)
-pnpm check-types      # tsgo type check across the repo (no auto-fix — fix by hand)
+pnpm check-types      # native tsc --noEmit type check across the repo (no auto-fix — fix by hand)
 pnpm check            # lint + format:check + check-types (static gate, no fixes)
 pnpm check:fix        # lint --fix + format write
 pnpm verify           # full gate: build:packages + lint:fix + format + check-types + test:coverage
