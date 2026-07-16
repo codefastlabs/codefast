@@ -97,8 +97,8 @@ catalogs:
       specifier: ^14.6.1
       version: 14.6.1
     '@tsdown/css':
-      specifier: ^0.22.5
-      version: 0.22.5
+      specifier: ^0.22.8
+      version: 0.22.8
     '@types/jest-axe':
       specifier: ^3.5.9
       version: 3.5.9
@@ -685,7 +685,7 @@ importers:
         version: 4.3.2
       '@tsdown/css':
         specifier: 'catalog:'
-        version: 0.22.5(jiti@2.7.0)(postcss-import@16.1.1(postcss@8.5.16))(postcss@8.5.16)(tsdown@0.22.3)(tsx@4.23.0)(yaml@2.9.0)
+        version: 0.22.8(jiti@2.7.0)(postcss-import@16.1.1(postcss@8.5.16))(postcss@8.5.16)(tsdown@0.22.3)(tsx@4.23.0)(yaml@2.9.0)
       '@types/node':
         specifier: 'catalog:'
         version: 26.1.0
@@ -709,7 +709,7 @@ importers:
         version: 16.1.1(postcss@8.5.16)
       tsdown:
         specifier: 'catalog:'
-        version: 0.22.3(@tsdown/css@0.22.5)(@typescript/native-preview@7.0.0-dev.20260706.1)(@typescript/typescript6@6.0.2)(oxc-resolver@11.22.0)(tsx@4.23.0)
+        version: 0.22.3(@tsdown/css@0.22.8)(@typescript/native-preview@7.0.0-dev.20260706.1)(@typescript/typescript6@6.0.2)(oxc-resolver@11.22.0)(tsx@4.23.0)
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -4494,8 +4494,8 @@ packages:
       sass-embedded:
         optional: true
 
-  '@tsdown/css@0.22.5':
-    resolution: {integrity: sha512-sTaQnd5+kTTmRZ48nSGeaMrbcV7kaUQaLcU7V2e/WfdyOFZXPNeF4qn6Fqef10qscfYIcx0/3tJ7iKOJY+p2Rg==}
+  '@tsdown/css@0.22.8':
+    resolution: {integrity: sha512-A5AI1CMD5Su7DK0gv2uR/c+KOaNWLQvgZqQ5bSH79eh+qRBUwZjU0pf0JI0qQI5Dym5mxgy96CKeV29VRJI55w==}
     engines: {node: ^22.18.0 || >=24.11.0}
     peerDependencies:
       postcss: ^8.4.0
@@ -4503,7 +4503,7 @@ packages:
       postcss-modules: ^6.0.0
       sass: '*'
       sass-embedded: '*'
-      tsdown: 0.22.5
+      tsdown: 0.22.8
     peerDependenciesMeta:
       postcss:
         optional: true
@@ -10661,12 +10661,12 @@ snapshots:
       - yaml
     optional: true
 
-  '@tsdown/css@0.22.5(jiti@2.7.0)(postcss-import@16.1.1(postcss@8.5.16))(postcss@8.5.16)(tsdown@0.22.3)(tsx@4.23.0)(yaml@2.9.0)':
+  '@tsdown/css@0.22.8(jiti@2.7.0)(postcss-import@16.1.1(postcss@8.5.16))(postcss@8.5.16)(tsdown@0.22.3)(tsx@4.23.0)(yaml@2.9.0)':
     dependencies:
       lightningcss: 1.32.0
       postcss-load-config: 6.0.1(jiti@2.7.0)(postcss@8.5.16)(tsx@4.23.0)(yaml@2.9.0)
       rolldown: 1.1.5
-      tsdown: 0.22.3(@tsdown/css@0.22.5)(@typescript/native-preview@7.0.0-dev.20260706.1)(@typescript/typescript6@6.0.2)(oxc-resolver@11.22.0)(tsx@4.23.0)
+      tsdown: 0.22.3(@tsdown/css@0.22.8)(@typescript/native-preview@7.0.0-dev.20260706.1)(@typescript/typescript6@6.0.2)(oxc-resolver@11.22.0)(tsx@4.23.0)
     optionalDependencies:
       postcss: 8.5.16
       postcss-import: 16.1.1(postcss@8.5.16)
@@ -13064,7 +13064,7 @@ snapshots:
       - oxc-resolver
       - vue-tsc
 
-  tsdown@0.22.3(@tsdown/css@0.22.5)(@typescript/native-preview@7.0.0-dev.20260706.1)(@typescript/typescript6@6.0.2)(oxc-resolver@11.22.0)(tsx@4.23.0):
+  tsdown@0.22.3(@tsdown/css@0.22.8)(@typescript/native-preview@7.0.0-dev.20260706.1)(@typescript/typescript6@6.0.2)(oxc-resolver@11.22.0)(tsx@4.23.0):
     dependencies:
       ansis: 4.3.1
       cac: 7.0.0
@@ -13082,7 +13082,7 @@ snapshots:
       tree-kill: 1.2.2
       unconfig-core: 7.5.0
     optionalDependencies:
-      '@tsdown/css': 0.22.5(jiti@2.7.0)(postcss-import@16.1.1(postcss@8.5.16))(postcss@8.5.16)(tsdown@0.22.3)(tsx@4.23.0)(yaml@2.9.0)
+      '@tsdown/css': 0.22.8(jiti@2.7.0)(postcss-import@16.1.1(postcss@8.5.16))(postcss@8.5.16)(tsdown@0.22.3)(tsx@4.23.0)(yaml@2.9.0)
       tsx: 4.23.0
       typescript: '@typescript/typescript6@6.0.2'
     transitivePeerDependencies:
