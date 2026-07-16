@@ -1,8 +1,8 @@
 name: Dependabot auto-merge
 
-# Queues Dependabot PRs for auto-merge once required checks pass. Requires the
-# repo's branch ruleset on main (required "Verify" check + merge queue); without
-# it there is nothing for auto-merge to wait on. Majors are left for manual review.
+# Flags Dependabot PRs for auto-merge; GitHub merges once the required "Verify"
+# check passes (no merge queue — a GITHUB_TOKEN-created merge group would never
+# trigger merge_group CI). Majors are left for manual review.
 on: pull_request
 
 permissions:
