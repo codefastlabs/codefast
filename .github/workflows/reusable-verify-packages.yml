@@ -8,8 +8,8 @@ on:
     inputs:
       run-tests:
         description: >-
-          Run the heavy coverage suite. PRs pass false for fast lint/type
-          feedback; the merge queue passes true for the full gate.
+          Run the heavy coverage suite. Pass false for fast lint/type-only
+          feedback when another lane already covers tests.
         type: boolean
         default: true
 
