@@ -6,8 +6,8 @@ name: Dependabot auto-merge
 on: pull_request
 
 permissions:
-  contents: write
-  pull-requests: write
+  contents: read
+  pull-requests: read
 
 jobs:
   auto-merge:
@@ -18,9 +18,20 @@ jobs:
         id: meta
         uses: dependabot/fetch-metadata@v2
 
+      # Enqueue with a GitHub App token, not GITHUB_TOKEN — merge groups created
+      # by GITHUB_TOKEN never trigger the merge_group CI run (recursion guard),
+      # so the queue times out waiting on the required Verify check.
+      - name: Create GitHub App token
+        if: steps.meta.outputs.update-type != 'version-update:semver-major'
+        id: app-token
+        uses: actions/create-github-app-token@v3
+        with:
+          app-id: ${{ secrets.AUTO_MERGE_APP_ID }}
+          private-key: ${{ secrets.AUTO_MERGE_APP_PRIVATE_KEY }}
+
       - name: Enable auto-merge for non-major updates
         if: steps.meta.outputs.update-type != 'version-update:semver-major'
         run: gh pr merge --auto --squash "$PR_URL"
         env:
           PR_URL: ${{ github.event.pull_request.html_url }}
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
