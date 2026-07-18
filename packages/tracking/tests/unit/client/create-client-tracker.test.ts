@@ -257,6 +257,48 @@ describe("createClientTracker", () => {
     expect(onDeliveryError).not.toHaveBeenCalled();
   });
 
+  it("erase invokes each destination's onErasure exactly once with the subject id", () => {
+    const first = { name: "first", onErasure: vi.fn(), send: () => Promise.resolve() };
+    const second = { name: "second", onErasure: vi.fn(), send: () => Promise.resolve() };
+    const noHook = createRecordingDestination("no-hook");
+    const tracker = createClientTracker({
+      anonymousId: () => "anon-1",
+      catalog,
+      destinations: [first, second, noHook],
+    });
+
+    tracker.erase("subject-1");
+
+    expect(first.onErasure).toHaveBeenCalledOnce();
+    expect(first.onErasure).toHaveBeenCalledWith("subject-1");
+    expect(second.onErasure).toHaveBeenCalledOnce();
+    expect(noHook.received).toHaveLength(0);
+  });
+
+  it("never lets a throwing onErasure break the withdrawal flow", () => {
+    const syncThrow = {
+      name: "sync",
+      onErasure: () => {
+        throw new Error("sync erase throw");
+      },
+      send: () => Promise.resolve(),
+    };
+    const asyncReject = {
+      name: "async",
+      onErasure: () => Promise.reject(new Error("async")),
+      send: () => Promise.resolve(),
+    };
+    const tracker = createClientTracker({
+      anonymousId: () => "anon-1",
+      catalog,
+      destinations: [syncThrow, asyncReject],
+    });
+
+    expect(() => {
+      tracker.erase("subject-1");
+    }).not.toThrow();
+  });
+
   it("never lets a throwing onDeliveryError observer break the interaction", () => {
     const throwing = {
       name: "throwing",

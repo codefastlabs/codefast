@@ -46,6 +46,17 @@ function sendToDestination(
   }
 }
 
+/** Invokes a destination's erasure once, swallowing both failure shapes — DSR must never break the flow. */
+function eraseInDestination(destination: Destination, id: string): void {
+  try {
+    void Promise.resolve(destination.onErasure?.(id)).catch(() => {
+      /* an erasure failure must never break the withdrawal flow */
+    });
+  } catch {
+    /* a sync throw must never break the withdrawal flow */
+  }
+}
+
 /**
  * @since 0.5.0-canary.4
  */
@@ -80,6 +91,12 @@ export interface ClientTrackerOptions<Catalog extends EventCatalog> {
  * @since 0.5.0-canary.4
  */
 export interface ClientTracker<Catalog extends EventCatalog> {
+  /**
+   * Runs each destination's {@link Destination.onErasure} once on withdrawal (spec-data-subject-rights
+   * DSR-V2), passing the subject id to erase. Failures are swallowed so a destination that
+   * throws never breaks the withdrawal flow.
+   */
+  erase: (id: string) => void;
   track: <Name extends keyof Catalog & string>(
     name: Name,
     properties: StandardSchemaV1.InferOutput<Catalog[Name]["schema"]>,
@@ -96,6 +113,11 @@ export function createClientTracker<Catalog extends EventCatalog>(
   const exemptDestinations = options.destinations.filter((destination) => destination.consentRequirement === "exempt");
 
   return {
+    erase(id) {
+      for (const destination of options.destinations) {
+        eraseInDestination(destination, id);
+      }
+    },
     track(name, properties) {
       // noUncheckedIndexedAccess types this as possibly undefined; the check also guards
       // callers who bypass the catalog key type with an `as` cast.

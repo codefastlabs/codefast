@@ -31,6 +31,12 @@ export interface MetaEventPayload {
 }
 
 export interface MetaDestinationOptions {
+  /**
+   * Erasure cookie-clear seam — invoked by `onErasure` to drop Meta's `_fbp`/`_fbc` cookies
+   * (spec-data-subject-rights DSR-V4). Meta exposes no per-visitor deletion API, so erasure
+   * is cookie-clear + stop-send only. Omit if the integrator clears cookies elsewhere.
+   */
+  clearCookies?: (() => void) | undefined;
   /** Read per event so an `ads` change restricts data use without recreating the destination. */
   getDecision: () => ConsentDecision;
   name?: string | undefined;
@@ -50,10 +56,21 @@ export interface MetaDestinationOptions {
  * never exempt.
  */
 export function createMetaDestination(options: MetaDestinationOptions): Destination {
+  // Erasure halts delivery for the rest of the session — Meta has no per-visitor deletion API.
+  let stopped = false;
+
   return {
     consentRequirement: "required",
     name: options.name ?? "meta",
+    onErasure() {
+      stopped = true;
+      options.clearCookies?.();
+    },
     async send(event) {
+      if (stopped) {
+        return;
+      }
+
       await options.transport({
         dataProcessingOptions: toMetaDataProcessingOptions(options.getDecision()),
         name: event.name,
