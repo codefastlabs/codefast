@@ -2,7 +2,7 @@ import { existsSync, readdirSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { SERVER_ONLY_SUBPATHS } from "@codefast/tracking/import-protection";
+import { SERVER_ONLY_SUBPATHS } from "@codefast/tracking/tooling/import-protection";
 import babel from "@rolldown/plugin-babel";
 import tailwindcss from "@tailwindcss/vite";
 import { devtools } from "@tanstack/devtools-vite";

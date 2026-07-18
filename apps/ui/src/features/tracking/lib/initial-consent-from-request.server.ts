@@ -1,4 +1,4 @@
-import { resolveInitialConsentFromRequest } from "@codefast/tracking/tanstack-start";
+import { resolveInitialConsentFromRequest } from "@codefast/tracking/adapters/tanstack-start";
 
 import type { InitialConsent } from "#/features/tracking/lib/consent";
 import { consentConfig } from "#/features/tracking/lib/consent";

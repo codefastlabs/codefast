@@ -8,7 +8,7 @@
  * - **Root** (this module): isomorphic catalog types, `Destination`, consent model + config — safe to import from both client and server code.
  * - **`@codefast/tracking/client`**: `createClientTracker`, `createConsentRuntime`, anonymous-id helpers.
  * - **`@codefast/tracking/server`**: region → initial-consent resolution, anonymous-id `Set-Cookie` builders. Server-only — never import from client code.
- * - **`@codefast/tracking/tanstack-start`**: request/response glue over TanStack Start's server context. Server-only — deny it in the client environment via Start's `importProtection`.
+ * - **`@codefast/tracking/adapters/tanstack-start`**: request/response glue over TanStack Start's server context. Server-only — deny it in the client environment via Start's `importProtection`.
  * - **`@codefast/tracking/destinations`**: the gtag destination, script loader, and Consent Mode bootstrap; Vercel Analytics lives on its own subpath.
  */
 export type {

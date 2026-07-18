@@ -1,4 +1,7 @@
-import { clearAnonymousIdResponseCookie, setAnonymousIdResponseCookie } from "@codefast/tracking/tanstack-start";
+import {
+  clearAnonymousIdResponseCookie,
+  setAnonymousIdResponseCookie,
+} from "@codefast/tracking/adapters/tanstack-start";
 import { createServerFn } from "@tanstack/react-start";
 
 /** Shared by the client tracker (reads) and the server functions below (write). */

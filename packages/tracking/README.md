@@ -30,7 +30,7 @@ pnpm add @codefast/tracking
 ```
 
 Every peer is optional and only needed by the surface that uses it: `react`/`react-dom`
-(>= 19) for `/react`, `@tanstack/react-start` (>= 1.168) for `/tanstack-start`, and
+(>= 19) for `/react`, `@tanstack/react-start` (>= 1.168) for `/adapters/tanstack-start`, and
 `@vercel/analytics` for the Vercel destination.
 
 ## Quick Start
@@ -107,10 +107,10 @@ by design — tracking sits on synchronous call paths.
 | `@codefast/tracking/client`                        | `createClientTracker`, `createConsentRuntime`, anonymous-id helpers                               |
 | `@codefast/tracking/server`                        | Region → initial-consent resolution, anonymous-id `Set-Cookie` builders — server-only             |
 | `@codefast/tracking/react`                         | `useConsent`, consent banner parts, `GtagConsentBootstrap`, `useInitialConsent`                   |
-| `@codefast/tracking/tanstack-start`                | One-line request/response glue over Start's server context — server-only                          |
+| `@codefast/tracking/adapters/tanstack-start`       | One-line request/response glue over Start's server context — server-only                          |
 | `@codefast/tracking/destinations`                  | The gtag destination, script loader, and Consent Mode helpers                                     |
 | `@codefast/tracking/destinations/vercel-analytics` | Vercel Analytics destination — own subpath so the optional peer stays optional                    |
-| `@codefast/tracking/import-protection`             | `SERVER_ONLY_SUBPATHS` deny-list for client bundles                                               |
+| `@codefast/tracking/tooling/import-protection`     | `SERVER_ONLY_SUBPATHS` deny-list for client bundles                                               |
 | `@codefast/tracking/css/consent.css`               | Optional plain-CSS theme for the consent banner                                                   |
 
 There is deliberately no server-side tracker: destinations batch in-page, and the server
@@ -142,7 +142,7 @@ ISR/CDN-cached HTML is shared across visitors, so no render may read geo. Bake
 then resolve the region-correct default per visitor after hydration:
 
 1. **Server function** — `resolveInitialConsentFromRequest({ requestedCategories })`
-   (`@codefast/tracking/tanstack-start`) reads the geo header and `sec-gpc`, stamps
+   (`@codefast/tracking/adapters/tanstack-start`) reads the geo header and `sec-gpc`, stamps
    `cache-control: private, no-store`, and fails closed when geo is missing.
 2. **Client** — `createConsentRuntime` owns the rest: strictest default until the server
    answers, single-flight resolve, per-session cache, fail-closed-but-retryable errors.
@@ -156,7 +156,7 @@ then resolve the region-correct default per visitor after hydration:
 lazily — only once an event is actually allowed to send — and asks the server to re-issue
 it via `Set-Cookie`, which escapes Safari ITP's 7-day cap on script-written cookies. The
 server half is one line per endpoint with `setAnonymousIdResponseCookie` /
-`clearAnonymousIdResponseCookie` (`@codefast/tracking/tanstack-start`); both validate the
+`clearAnonymousIdResponseCookie` (`@codefast/tracking/adapters/tanstack-start`); both validate the
 id is exactly UUID-shaped, so a public endpoint can never echo attacker input into a
 response header.
 
@@ -171,12 +171,12 @@ catalog events. Runtime changes go through `useGoogleConsentSync`/`updateGoogleC
 
 ## Keeping server-only subpaths out of client bundles
 
-`./server` and `./tanstack-start` must never enter a client bundle. On TanStack Start,
+`./server` and `./adapters/tanstack-start` must never enter a client bundle. On TanStack Start,
 spread the package's own deny-list into the plugin's import-protection so it versions
 with the package instead of going stale in your config:
 
 ```ts
-import { SERVER_ONLY_SUBPATHS } from "@codefast/tracking/import-protection";
+import { SERVER_ONLY_SUBPATHS } from "@codefast/tracking/tooling/import-protection";
 
 tanstackStart({
   importProtection: {

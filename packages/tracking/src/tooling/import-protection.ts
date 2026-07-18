@@ -18,5 +18,5 @@
 export const SERVER_ONLY_SUBPATHS: ReadonlyArray<string> = [
   "@codefast/tracking/server",
   "@codefast/tracking/server/**",
-  "@codefast/tracking/tanstack-start",
+  "@codefast/tracking/adapters/**",
 ];
