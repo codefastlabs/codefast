@@ -48,3 +48,15 @@ export function resetVisitorConsentForTests(): void {
 
 /** Non-React gate for `createClientTracker({ isAnalyticsAllowed })`. */
 export const isAnalyticsAllowed = consentRuntime.isAnalyticsAllowed;
+
+/**
+ * Site policy for `createClientTracker({ isExemptionAllowed })`: ePrivacy
+ * audience-measurement exemption is jurisdiction-dependent and UNCERTAIN across the EU
+ * (spec-destinations §2), so this fails closed — an exempt sink counts only in the
+ * opt-out regions (us/other) and is gated with everything else in the strict opt-in
+ * regions (eu/vn). Pre-resolution the strictest opt-in default keeps it closed. A
+ * controller with legal sign-off may refine this to country level (e.g. FR/LU).
+ */
+export function isExemptionAllowed(): boolean {
+  return consentRuntime.initialConsentStore.getSnapshot().initialConsent.mode === "opt-out";
+}

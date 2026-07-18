@@ -61,6 +61,14 @@ export interface ClientTrackerOptions<Catalog extends EventCatalog> {
    */
   isAnalyticsAllowed?: (() => boolean) | undefined;
   /**
+   * Consulted before an `exempt` destination receives an event while the gate is closed.
+   * ePrivacy audience-measurement exemption is jurisdiction-dependent (spec-destinations
+   * §2), so it MUST be gateable per region rather than assumed global — return `false`
+   * where exemption is not defensible and even exempt sinks are withheld. Omit to treat
+   * exempt destinations as exempt everywhere.
+   */
+  isExemptionAllowed?: (() => boolean) | undefined;
+  /**
    * Notified once per failed delivery (a destination throwing or rejecting) so a consumer
    * can meter the failure — the tracker still swallows it so tracking never breaks the
    * interaction. Wire it to a monitor in production.
@@ -103,7 +111,15 @@ export function createClientTracker<Catalog extends EventCatalog>(
       // The gate runs per event (not at creation) so a consent change mid-session applies immediately.
       const isAllowed = options.isAnalyticsAllowed?.() !== false;
 
-      if (!isAllowed && exemptDestinations.length === 0) {
+      // While gated, exempt sinks still receive identifier-free events — but only where
+      // exemption is defensible (spec-destinations §2); a `false` here withholds them too.
+      const activeDestinations = isAllowed
+        ? options.destinations
+        : options.isExemptionAllowed?.() === false
+          ? []
+          : exemptDestinations;
+
+      if (activeDestinations.length === 0) {
         return;
       }
 
@@ -118,7 +134,7 @@ export function createClientTracker<Catalog extends EventCatalog>(
         type: "track",
       };
 
-      for (const destination of isAllowed ? options.destinations : exemptDestinations) {
+      for (const destination of activeDestinations) {
         sendToDestination(destination, event, options.onDeliveryError);
       }
     },

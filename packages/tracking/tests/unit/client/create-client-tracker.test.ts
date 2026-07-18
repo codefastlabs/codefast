@@ -112,6 +112,47 @@ describe("createClientTracker", () => {
     expect(exempt.received[0]?.anonymousId).toBe("");
   });
 
+  it("withholds even exempt destinations while gated when exemption is not allowed here", () => {
+    const exempt = createRecordingDestination("exempt");
+
+    exempt.consentRequirement = "exempt";
+
+    const tracker = createClientTracker({
+      anonymousId: () => "anon-1",
+      catalog,
+      destinations: [exempt],
+      isAnalyticsAllowed: () => false,
+      // e.g. a strict opt-in region where audience-measurement exemption is not defensible
+      isExemptionAllowed: () => false,
+    });
+
+    tracker.track("button_clicked", { id: "cta" });
+
+    expect(exempt.received).toHaveLength(0);
+  });
+
+  it("ignores isExemptionAllowed once consent is granted — exemption only gates the closed lane", () => {
+    const exempt = createRecordingDestination("exempt");
+
+    exempt.consentRequirement = "exempt";
+
+    const required = createRecordingDestination("required");
+    const tracker = createClientTracker({
+      anonymousId: () => "anon-1",
+      catalog,
+      destinations: [exempt, required],
+      isAnalyticsAllowed: () => true,
+      isExemptionAllowed: () => false,
+    });
+
+    tracker.track("button_clicked", { id: "cta" });
+
+    // Consent is granted, so every destination receives the full envelope regardless.
+    expect(exempt.received).toHaveLength(1);
+    expect(required.received).toHaveLength(1);
+    expect(exempt.received[0]?.anonymousId).toBe("anon-1");
+  });
+
   it("re-reads the gate per event so a mid-session grant applies immediately", () => {
     const destination = createRecordingDestination();
     let isAllowed = false;
