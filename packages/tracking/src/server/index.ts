@@ -8,8 +8,8 @@ export {
 export type { BuildConsentReceiptOptions } from "#/server/consent-receipt";
 export { buildConsentReceipt, coarsenIp, RECEIPT_SCHEMA_VERSION } from "#/server/consent-receipt";
 
-export type { ReceiptStore } from "#/server/consent-receipt-store";
-export { createInMemoryReceiptStore } from "#/server/consent-receipt-store";
+export type { ReceiptStore, ReceiptStoreBackend } from "#/server/consent-receipt-store";
+export { createDurableReceiptStore, createInMemoryReceiptStore } from "#/server/consent-receipt-store";
 
 export type { InitialConsent, InitialConsentOptions } from "#/server/initial-consent";
 export { resolveInitialConsent } from "#/server/initial-consent";

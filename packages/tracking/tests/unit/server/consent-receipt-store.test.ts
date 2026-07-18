@@ -1,7 +1,8 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 
 import type { ConsentReceipt } from "#/core/consent-receipt";
-import { createInMemoryReceiptStore } from "#/server/consent-receipt-store";
+import type { ReceiptStoreBackend } from "#/server/consent-receipt-store";
+import { createDurableReceiptStore, createInMemoryReceiptStore } from "#/server/consent-receipt-store";
 
 function receipt(receiptId: string): ConsentReceipt {
   return {
@@ -34,6 +35,53 @@ describe("createInMemoryReceiptStore", () => {
 
   it("is append-only: re-appending the same id does not overwrite", async () => {
     const store = createInMemoryReceiptStore();
+
+    await store.append(receipt("r1"));
+    await store.append({ ...receipt("r1"), eventType: "withdraw" });
+
+    expect(await store.get("r1")).toMatchObject({ eventType: "give" });
+  });
+});
+
+/** An idempotent-by-id fake standing in for a real KV/Postgres client. */
+function fakeBackend(): ReceiptStoreBackend & { records: Map<string, ConsentReceipt> } {
+  const records = new Map<string, ConsentReceipt>();
+
+  return {
+    records,
+    get: (receiptId) => Promise.resolve(records.get(receiptId)),
+    put: (receiptId, value) => {
+      if (!records.has(receiptId)) {
+        records.set(receiptId, value);
+      }
+
+      return Promise.resolve();
+    },
+  };
+}
+
+describe("createDurableReceiptStore", () => {
+  it("appends through the backend keyed by receiptId and reads back through it", async () => {
+    const backend = fakeBackend();
+    const store = createDurableReceiptStore({ backend });
+
+    await store.append(receipt("r1"));
+
+    expect(backend.records.get("r1")).toMatchObject({ receiptId: "r1", eventType: "give" });
+    expect(await store.get("r1")).toMatchObject({ receiptId: "r1" });
+  });
+
+  it("delegates the read to the backend for an unknown id", async () => {
+    const backend = fakeBackend();
+    const get = vi.spyOn(backend, "get");
+
+    expect(await createDurableReceiptStore({ backend }).get("missing")).toBeUndefined();
+    expect(get).toHaveBeenCalledWith("missing");
+  });
+
+  it("preserves append-only when the backend is idempotent-by-id", async () => {
+    const backend = fakeBackend();
+    const store = createDurableReceiptStore({ backend });
 
     await store.append(receipt("r1"));
     await store.append({ ...receipt("r1"), eventType: "withdraw" });
