@@ -1,0 +1,72 @@
+{
+  "area": "ad-consent-frameworks",
+  "spec": "spec-ad-consent-frameworks.md",
+  "specVersion": "1.0.0",
+  "vectors": [
+    {
+      "id": "ad-frameworks.no-cmp.inert",
+      "source": "V1",
+      "summary": "with no CMP on the page the resolver is inert and native effective consent governs",
+      "kind": "scenario",
+      "given": { "tcfapi": false, "gpp": false },
+      "when": "resolve reconciled consent",
+      "expect": { "resolverInert": true, "governedBy": "native-effectiveConsent" }
+    },
+    {
+      "id": "ad-frameworks.tcf.grants-ads",
+      "source": "V2",
+      "summary": "TCF in scope with ads purposes and the Google vendor consented reconciles ads=true and captures the strings",
+      "kind": "scenario",
+      "given": { "gdprApplies": true, "adsPurposesConsented": true, "googleVendorConsented": true },
+      "when": "read TCData and reconcile",
+      "expect": { "ads": true, "captured": ["tcString", "addtlConsent"], "mintsStrings": false },
+      "uncertain": true
+    },
+    {
+      "id": "ad-frameworks.cmp-not-ready.fail-closed",
+      "source": "V3",
+      "summary": "a detected but not-yet-loaded CMP denies governed categories until it resolves",
+      "kind": "scenario",
+      "given": { "tcfapi": true, "cmpStatus": "not-loaded" },
+      "when": "resolve reconciled consent",
+      "expect": { "governedCategories": "denied-until-resolved" }
+    },
+    {
+      "id": "ad-frameworks.gpp.us-opt-out",
+      "source": "V4",
+      "summary": "a GPP US sale/share opt-out sets ads=false and leaves first-party analytics",
+      "kind": "scenario",
+      "given": { "gppSection": "usca", "saleShareOptOut": true },
+      "when": "read GPP section and reconcile",
+      "expect": { "ads": false, "analyticsUnaffected": true },
+      "uncertain": true
+    },
+    {
+      "id": "ad-frameworks.gpc-tightens-cmp-grant",
+      "source": "V5",
+      "summary": "a native GPC opt-out can only tighten a CMP grant, never loosen it",
+      "kind": "scenario",
+      "given": { "cmpGrantsAds": true, "nativeGpc": true },
+      "when": "reconcile taking the more restrictive",
+      "expect": { "ads": false }
+    },
+    {
+      "id": "ad-frameworks.out-of-scope.defer-native",
+      "source": "V6",
+      "summary": "gdprApplies=false defers to native consent instead of force-denying",
+      "kind": "scenario",
+      "given": { "gdprApplies": false },
+      "when": "resolve reconciled consent",
+      "expect": { "governedBy": "native-effectiveConsent", "forceDenied": false }
+    },
+    {
+      "id": "ad-frameworks.mid-session-change",
+      "source": "V7",
+      "summary": "a changed CMP decision on a later addEventListener fire updates the reconciled decision and fires withdrawal side effects if analytics flipped false",
+      "kind": "scenario",
+      "given": { "secondListenerFire": true, "analyticsFlippedFalse": true },
+      "when": "re-read on the addEventListener fire",
+      "expect": { "reconciledUpdated": true, "withdrawalSideEffectsFired": true }
+    }
+  ]
+}

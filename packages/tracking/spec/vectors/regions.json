@@ -1,0 +1,93 @@
+{
+  "area": "regions",
+  "spec": "spec-regions.md",
+  "specVersion": "1.0.0",
+  "vectors": [
+    {
+      "id": "regions.us.no-subdivision-fails-closed",
+      "source": "V1",
+      "summary": "US without a subdivision fails closed to the strictest US rule",
+      "kind": "pure",
+      "operation": "resolveRegionRule",
+      "input": { "country": "US", "subdivision": null },
+      "expect": { "consentMode": "opt-in", "optOutSignalBinding": "mandatory", "sensitiveDataModel": "opt-in-consent" },
+      "uncertain": true
+    },
+    {
+      "id": "regions.us-va.no-gpc-mandate",
+      "source": "V1",
+      "summary": "Virginia is opt-out and does not mandate GPC",
+      "kind": "pure",
+      "operation": "resolveRegionRule",
+      "input": { "country": "US", "subdivision": "US-VA" },
+      "expect": { "consentMode": "opt-out", "optOutSignalBinding": "none" },
+      "uncertain": true
+    },
+    {
+      "id": "regions.us-ca.gpc-denies-ads-only",
+      "source": "V1",
+      "summary": "California with GPC present denies ads, leaves first-party analytics",
+      "kind": "scenario",
+      "given": { "country": "US", "subdivision": "US-CA", "gpc": true },
+      "when": "resolveEffectiveConsent under the region rule",
+      "expect": { "ads": false, "analyticsUnaffected": true },
+      "uncertain": true
+    },
+    {
+      "id": "regions.gpc-mandate-divergence",
+      "source": "V2",
+      "summary": "same GPC visitor binds in CO but is only best-practice in UT",
+      "kind": "pure",
+      "operation": "resolveRegionRule",
+      "input": { "country": "US", "subdivisions": ["US-CO", "US-UT"] },
+      "expect": {
+        "US-CO": { "optOutSignalBinding": "mandatory" },
+        "US-UT": { "optOutSignalBinding": "best-practice" }
+      },
+      "uncertain": true
+    },
+    {
+      "id": "regions.us-wa.health-carve-out",
+      "source": "V3",
+      "summary": "Washington flips health-related data to opt-in and prohibits geofence-derived location near a health facility",
+      "kind": "scenario",
+      "given": { "country": "US", "subdivision": "US-WA", "eventCategory": "health-related" },
+      "when": "apply the region rule",
+      "expect": { "consentMode": "opt-in", "geofenceWithin610mProhibited": true },
+      "uncertain": true
+    },
+    {
+      "id": "regions.fail-closed-unknown",
+      "source": "V4",
+      "summary": "missing/unrecognized/low-confidence geo applies EU-style opt-in and honors GPC",
+      "kind": "pure",
+      "operation": "resolveRegionRule",
+      "input": { "country": null },
+      "expect": { "consentMode": "opt-in", "blockNonEssentialUntilConsent": true, "honorsGpc": true }
+    },
+    {
+      "id": "regions.eu-national-override",
+      "source": "V5",
+      "summary": "FR adds a 13-month cookie cap; DE sets minors threshold 16; generic EEA uses the baseline",
+      "kind": "pure",
+      "operation": "resolveRegionRule",
+      "input": { "countries": ["FR", "DE", "IE"] },
+      "expect": { "FR": { "cookieLifetimeCapMonths": 13 }, "DE": { "minorsAgeThreshold": 16 }, "IE": "eu-baseline" },
+      "uncertain": true
+    },
+    {
+      "id": "regions.rest-of-world-opt-in",
+      "source": "V6",
+      "summary": "KR/CN/VN/IN resolve to opt-in (not the old other fail-open); VN/CN carry a localization constraint",
+      "kind": "pure",
+      "operation": "resolveRegionRule",
+      "input": { "countries": ["KR", "CN", "VN", "IN"] },
+      "expect": {
+        "allOptIn": true,
+        "VN": { "dataLocalization": "transfer-assessment" },
+        "CN": { "dataLocalization": "localization-required" }
+      },
+      "uncertain": true
+    }
+  ]
+}

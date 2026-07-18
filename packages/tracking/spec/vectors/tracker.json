@@ -1,0 +1,70 @@
+{
+  "area": "tracker",
+  "spec": "spec-tracker.md",
+  "specVersion": "1.0.0",
+  "vectors": [
+    {
+      "id": "tracker.gate-open.all-receive",
+      "source": "V1",
+      "summary": "gate open: every destination receives the envelope with the resolved id; the id callable is invoked once",
+      "kind": "scenario",
+      "given": { "gate": "open", "destinations": ["required:D_req", "exempt:D_ex"], "anonymousId": "A" },
+      "when": "track('signup', { plan: 'pro' })",
+      "expect": { "received": { "D_req": 1, "D_ex": 1 }, "anonymousId": "A", "anonymousIdCallableInvocations": 1 }
+    },
+    {
+      "id": "tracker.gate-closed.exempt-only",
+      "source": "V2",
+      "summary": "gate closed: only exempt destinations receive, identifier-free; the id callable is never invoked",
+      "kind": "scenario",
+      "given": { "gate": "closed", "destinations": ["required:D_req", "exempt:D_ex"] },
+      "when": "track('signup', { plan: 'pro' })",
+      "expect": { "received": { "D_req": 0, "D_ex": 1 }, "anonymousId": "", "anonymousIdCallableInvocations": 0 }
+    },
+    {
+      "id": "tracker.gate-closed.no-exempt.short-circuit",
+      "source": "V3",
+      "summary": "gate closed with no exempt destinations: nothing is built or sent, no error, no id minted",
+      "kind": "scenario",
+      "given": { "gate": "closed", "destinations": ["required:D_req"] },
+      "when": "track('signup', { plan: 'pro' })",
+      "expect": {
+        "received": { "D_req": 0 },
+        "envelopeBuilt": false,
+        "anonymousIdCallableInvocations": 0,
+        "error": false
+      }
+    },
+    {
+      "id": "tracker.mid-session.per-event-gate",
+      "source": "V4",
+      "summary": "the gate is evaluated per event, so a mid-session change applies to the next event",
+      "kind": "scenario",
+      "given": { "gateSequence": ["closed", "open"], "destinations": ["required:D_req", "exempt:D_ex"] },
+      "when": "track twice",
+      "expect": {
+        "firstEvent": "exempt-only-or-shortcircuit",
+        "secondEvent": "all-receive",
+        "constructionTimeCaching": false
+      }
+    },
+    {
+      "id": "tracker.delivery.failure-isolation",
+      "source": "V5",
+      "summary": "a destination that throws (sync) or rejects (async) does not break track() or starve other destinations",
+      "kind": "scenario",
+      "given": { "gate": "open", "destinations": ["failing:D_req", "ok:D_ok"] },
+      "when": "track('signup', { plan: 'pro' })",
+      "expect": { "trackReturnedNormally": true, "received": { "D_ok": 1 }, "sameForAsyncRejection": true }
+    },
+    {
+      "id": "tracker.errors.caller-bugs-propagate",
+      "source": "V6",
+      "summary": "validation failure and unknown-event are caller bugs and propagate; nothing is delivered",
+      "kind": "scenario",
+      "given": { "gate": "open", "catalog": { "signup": "{ plan: string }" } },
+      "when": "track('signup', { plan: 5 }) and track('nope', {})",
+      "expect": { "bothRaise": true, "delivered": false }
+    }
+  ]
+}

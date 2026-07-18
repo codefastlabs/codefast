@@ -1,0 +1,116 @@
+{
+  "area": "server-lane",
+  "spec": "spec-server-lane.md",
+  "specVersion": "1.0.0",
+  "vectors": [
+    {
+      "id": "server-lane.resolve.fail-closed-missing-geo",
+      "source": "V1",
+      "summary": "a missing country code fails closed to the strictest initial consent, not to other's opt-out",
+      "kind": "pure",
+      "operation": "resolveInitialConsent",
+      "input": { "countryCode": null, "requestedCategories": ["analytics"], "hasGlobalPrivacyControlSignal": false },
+      "expect": {
+        "initialConsent": {
+          "defaultConsent": { "ads": false, "analytics": false },
+          "mode": "opt-in",
+          "region": "other"
+        }
+      }
+    },
+    {
+      "id": "server-lane.resolve.de",
+      "source": "V2",
+      "summary": "Germany resolves to eu/opt-in with all-denied default",
+      "kind": "pure",
+      "operation": "resolveInitialConsent",
+      "input": { "countryCode": "DE", "requestedCategories": ["analytics"], "hasGlobalPrivacyControlSignal": false },
+      "expect": {
+        "initialConsent": { "mode": "opt-in", "region": "eu", "defaultConsent": { "ads": false, "analytics": false } }
+      }
+    },
+    {
+      "id": "server-lane.resolve.us-gpc",
+      "source": "V2",
+      "summary": "US opt-out with GPC grants analytics but denies ads",
+      "kind": "pure",
+      "operation": "resolveInitialConsent",
+      "input": {
+        "countryCode": "US",
+        "requestedCategories": ["ads", "analytics"],
+        "hasGlobalPrivacyControlSignal": true
+      },
+      "expect": {
+        "initialConsent": { "mode": "opt-out", "region": "us", "defaultConsent": { "ads": false, "analytics": true } }
+      }
+    },
+    {
+      "id": "server-lane.endpoint.no-store",
+      "source": "V3",
+      "summary": "every endpoint response carries cache-control: private, no-store",
+      "kind": "scenario",
+      "given": { "anyRequest": true },
+      "when": "resolveInitialConsentFromRequest",
+      "expect": { "responseHeader": { "cache-control": "private, no-store" } }
+    },
+    {
+      "id": "server-lane.store.single-flight",
+      "source": "V4",
+      "summary": "concurrent ensureResolved calls coalesce into one request",
+      "kind": "scenario",
+      "given": { "concurrentEnsureResolved": 3 },
+      "when": "ensureResolved x3",
+      "expect": { "endpointRequests": 1 }
+    },
+    {
+      "id": "server-lane.store.sticky-success",
+      "source": "V5",
+      "summary": "after a success, further calls make no request and keep the resolved value",
+      "kind": "scenario",
+      "given": { "priorResolveSucceeded": true },
+      "when": "ensureResolved again",
+      "expect": { "endpointRequests": 0, "snapshotUnchanged": true }
+    },
+    {
+      "id": "server-lane.store.retryable-failure",
+      "source": "V6",
+      "summary": "a failed resolve publishes the strictest value as resolved but stays retryable on tab-visible/online",
+      "kind": "scenario",
+      "given": { "resolveFails": true },
+      "when": "ensureResolved then a visibility/online signal",
+      "expect": {
+        "afterFailure": { "initialConsent": "strictest", "isResolved": true },
+        "retryRequests": 1,
+        "afterRetrySuccess": { "published": true, "retryListenersStopped": true }
+      }
+    },
+    {
+      "id": "server-lane.store.cache-validation",
+      "source": "V7",
+      "summary": "a session-cache entry failing the initial-consent guard is ignored and the endpoint is called",
+      "kind": "scenario",
+      "given": {
+        "sessionCache": { "defaultConsent": { "ads": false, "analytics": false }, "mode": "opt-out", "region": "eu" }
+      },
+      "when": "ensureResolved",
+      "expect": { "cacheUsed": false, "endpointRequests": 1 }
+    },
+    {
+      "id": "server-lane.store.mode-re-read",
+      "source": "V8",
+      "summary": "the gate re-reads the store's mode, so a post-resolution mode wins without recreating the gate",
+      "kind": "scenario",
+      "given": {
+        "beforeResolution": "opt-in",
+        "afterResolution": {
+          "region": "us",
+          "mode": "opt-out",
+          "requestedCategories": ["analytics"],
+          "storedDecision": "none"
+        }
+      },
+      "when": "evaluate the same gate instance before and after resolution",
+      "expect": { "before": { "analyticsAllowed": false }, "after": { "analyticsAllowed": true } }
+    }
+  ]
+}

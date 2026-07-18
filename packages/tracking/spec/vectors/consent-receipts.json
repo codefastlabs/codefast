@@ -1,0 +1,93 @@
+{
+  "area": "consent-receipts",
+  "spec": "spec-consent-receipts.md",
+  "specVersion": "1.0.0",
+  "vectors": [
+    {
+      "id": "receipts.grant.both-categories",
+      "source": "V1",
+      "summary": "a grant records eventType give, method banner-accept, versioned purposes, server-derived fields, truncated IP, and a no-store response",
+      "kind": "scenario",
+      "given": {
+        "decision": { "ads": true, "analytics": true },
+        "policyVersion": "2026-05",
+        "noticeVersion": "banner-v3",
+        "lang": "en"
+      },
+      "when": "POST /api/consent/receipts",
+      "expect": {
+        "eventType": "give",
+        "method": "banner-accept",
+        "purposesVersionedAsOfTimestamp": true,
+        "serverDerived": ["receiptId", "timestamp", "integrityKey"],
+        "ipCoarseTruncated": true,
+        "responseHeader": { "Cache-Control": "no-store" }
+      },
+      "uncertain": true
+    },
+    {
+      "id": "receipts.granular.per-category-split",
+      "source": "V2",
+      "summary": "a granular choice is recorded as the exact per-category split, not one boolean",
+      "kind": "scenario",
+      "given": { "decision": { "ads": false, "analytics": true }, "method": "granular" },
+      "when": "POST /api/consent/receipts",
+      "expect": { "decision": { "ads": false, "analytics": true }, "collapsedToOneBoolean": false }
+    },
+    {
+      "id": "receipts.gpc.ads-only",
+      "source": "V3",
+      "summary": "a GPC-sourced receipt records method gpc-signal, ads false, analytics unaffected",
+      "kind": "scenario",
+      "given": { "source": "gpc" },
+      "when": "POST /api/consent/receipts",
+      "expect": { "method": "gpc-signal", "decision": { "ads": false }, "analyticsUnaffected": true }
+    },
+    {
+      "id": "receipts.withdrawal.append-only",
+      "source": "V4",
+      "summary": "a withdrawal is a new append-only receipt referencing the prior one; the original grant stays intact",
+      "kind": "scenario",
+      "given": { "priorReceiptId": "r1" },
+      "when": "POST /api/consent/receipts (withdrawal)",
+      "expect": { "eventType": "withdraw", "references": "r1", "priorReceiptIntact": true, "printableVerifiable": true }
+    },
+    {
+      "id": "receipts.full-ip.rejected",
+      "source": "V5",
+      "summary": "a body carrying a full IP is rejected; the server persists only its own truncated ipCoarse",
+      "kind": "scenario",
+      "given": { "bodyContainsFullIp": true },
+      "when": "POST /api/consent/receipts",
+      "expect": { "bodyIpRejected": true, "persisted": "server-truncated-ipCoarse" }
+    },
+    {
+      "id": "receipts.anonymous-visitor",
+      "source": "V6",
+      "summary": "an anonymous visitor's receipt uses a pseudonymous cookie id and remains valid",
+      "kind": "scenario",
+      "given": { "noUserId": true },
+      "when": "POST /api/consent/receipts",
+      "expect": { "subjectIdType": "cookie", "subjectIdIsPseudonymousCookieId": true, "valid": true }
+    },
+    {
+      "id": "receipts.retention.expiry",
+      "source": "V7",
+      "summary": "a receipt past retentionUntil with no active processing or claim hold is purged; one under a claim hold is retained",
+      "kind": "scenario",
+      "given": { "pastRetentionUntil": true, "activeClaimHold": false },
+      "when": "retention sweep",
+      "expect": { "purged": true, "underClaimHoldWouldBeRetained": true },
+      "uncertain": true
+    },
+    {
+      "id": "receipts.notice-snapshot.integrity",
+      "source": "V8",
+      "summary": "the noticeSnapshotRef must resolve to the exact presented text; a dangling ref is a conformance failure",
+      "kind": "scenario",
+      "given": { "noticeVersion": "banner-v3" },
+      "when": "resolve noticeSnapshotRef",
+      "expect": { "resolvesToPresentedText": true, "danglingRefIsFailure": true }
+    }
+  ]
+}

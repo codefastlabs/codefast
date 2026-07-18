@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://codefast.dev/tracking/spec/vectors/vector.schema.json",
+  "title": "Tracking spec conformance-vector file",
+  "type": "object",
+  "required": ["area", "spec", "vectors"],
+  "additionalProperties": false,
+  "properties": {
+    "area": { "type": "string", "description": "Short area name, matches the file basename." },
+    "spec": { "type": "string", "description": "The spec document these vectors project." },
+    "specVersion": { "type": "string", "description": "Spec version written against; see ../CHANGELOG.md." },
+    "vectors": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/vector" }
+    }
+  },
+  "$defs": {
+    "vector": {
+      "type": "object",
+      "required": ["id", "summary", "kind", "expect"],
+      "properties": {
+        "id": { "type": "string", "description": "Stable, unique, dotted identifier." },
+        "source": { "type": "string", "description": "The prose vector id in the spec document (e.g. V3)." },
+        "summary": { "type": "string" },
+        "kind": { "enum": ["pure", "scenario"] },
+        "operation": { "type": "string", "description": "Abstract operation name (pure vectors)." },
+        "input": { "description": "Input payload (pure vectors)." },
+        "given": { "type": "object", "description": "Preconditions (scenario vectors)." },
+        "when": { "type": "string", "description": "The invoked operation/flow (scenario vectors)." },
+        "expect": { "type": "object", "description": "Expected outputs / assertions." },
+        "uncertain": {
+          "type": "boolean",
+          "description": "The underlying legal premise is flagged UNCERTAIN in the spec."
+        },
+        "notes": { "type": "string" }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "kind": { "const": "pure" } } },
+          "then": { "required": ["operation", "input"] }
+        },
+        {
+          "if": { "properties": { "kind": { "const": "scenario" } } },
+          "then": { "required": ["given", "when"] }
+        }
+      ],
+      "additionalProperties": false
+    }
+  }
+}

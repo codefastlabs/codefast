@@ -1,0 +1,61 @@
+{
+  "area": "data-subject-rights",
+  "spec": "spec-data-subject-rights.md",
+  "specVersion": "1.0.0",
+  "vectors": [
+    {
+      "id": "dsr.withdrawal.clears-id",
+      "source": "DSR-V1",
+      "summary": "an analytics-denied decision expires the id cookie, drops the cache, fires one server-expiry request, and stops further sends",
+      "kind": "scenario",
+      "given": { "decision": { "ads": false, "analytics": false } },
+      "when": "save decision",
+      "expect": { "cookieMaxAge": 0, "cacheDropped": true, "serverExpiryRequests": 1, "furtherSends": 0 }
+    },
+    {
+      "id": "dsr.withdrawal.destination-erasure-hook",
+      "source": "DSR-V2",
+      "summary": "withdrawal invokes each destination's onErasure(id) exactly once, swallowing failures",
+      "kind": "scenario",
+      "given": { "destinations": ["D1", "D2"] },
+      "when": "withdraw",
+      "expect": { "onErasureInvocations": { "D1": 1, "D2": 1 }, "failuresSwallowed": true }
+    },
+    {
+      "id": "dsr.ga4.delete-binding",
+      "source": "DSR-V3",
+      "summary": "the GA4 destination emits a User Deletion API request keyed on the client_id",
+      "kind": "pure",
+      "operation": "buildGa4UserDeletionRequest",
+      "input": { "clientId": "GA1.2.123.456" },
+      "expect": { "request": { "id": { "type": "CLIENT_ID", "userId": "GA1.2.123.456" } } }
+    },
+    {
+      "id": "dsr.meta.erasure-is-cookie-clear-and-stop-send",
+      "source": "DSR-V4",
+      "summary": "Meta onErasure clears Meta cookies and halts sending; it does not fabricate a non-existent per-visitor deletion API call",
+      "kind": "scenario",
+      "given": { "destination": "meta" },
+      "when": "onErasure",
+      "expect": { "clearsMetaCookies": true, "stopsSending": true, "fabricatesDeletionApiCall": false }
+    },
+    {
+      "id": "dsr.id-exposure.no-minting",
+      "source": "DSR-V5",
+      "summary": "the id accessor returns the current id without minting one when the gate is closed",
+      "kind": "scenario",
+      "given": { "gate": "closed" },
+      "when": "read the id accessor",
+      "expect": { "returnsCurrentIdOrNone": true, "mintsId": false }
+    },
+    {
+      "id": "dsr.gpc.opt-out-of-share",
+      "source": "DSR-V6",
+      "summary": "a GPC signal denies ads and stops ad destinations while the analytics gate stays independent",
+      "kind": "scenario",
+      "given": { "gpc": true },
+      "when": "evaluate gates",
+      "expect": { "ads": false, "adDestinationsReceive": 0, "analyticsGateIndependent": true }
+    }
+  ]
+}

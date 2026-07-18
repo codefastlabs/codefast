@@ -1,6 +1,6 @@
 # Consent-Gated Event Tracking — Specification
 
-Status: active. Language-neutral specification of the tracking system implemented by `@codefast/tracking`. Any conforming implementation — in any modern language, on any client/server pairing — must satisfy the normative documents below; the TypeScript package is the reference implementation.
+Status: active. **Spec version 1.0.0** ([CHANGELOG](CHANGELOG.md)). Language-neutral specification of the tracking system implemented by `@codefast/tracking`. Any conforming implementation — in any modern language, on any client/server pairing — must satisfy the normative documents below; the TypeScript package is the reference implementation.
 
 The key words MUST, MUST NOT, SHOULD, SHOULD NOT, and MAY are to be interpreted as described in RFC 2119.
 
@@ -16,6 +16,7 @@ The key words MUST, MUST NOT, SHOULD, SHOULD NOT, and MAY are to be interpreted 
 | [spec-tracker.md](spec-tracker.md)           | The tracking pipeline: gate evaluation, envelope construction, fan-out, error handling  |
 | [spec-destinations.md](spec-destinations.md) | Destination interface, the exempt lane, property flattening, reference destinations     |
 | [spec-server-lane.md](spec-server-lane.md)   | Initial-consent resolution over shared/cached HTML: server endpoint + client store      |
+| [spec-security.md](spec-security.md)         | Security & Privacy Considerations, consolidated across all documents                    |
 
 **Commercial-scope extensions (design targets, not yet implemented — see below):**
 
@@ -26,7 +27,7 @@ The key words MUST, MUST NOT, SHOULD, SHOULD NOT, and MAY are to be interpreted 
 | [spec-ad-consent-frameworks.md](spec-ad-consent-frameworks.md) | IAB TCF / GPP interop for programmatic advertising (read an external CMP, don't be one)     |
 | [spec-data-subject-rights.md](spec-data-subject-rights.md)     | DSR obligations for the pseudonymous id: delegate to destinations, keep the surface minimal |
 
-Each document ends with a Conformance section of language-neutral test vectors (JSON input → JSON output) that an implementation can turn into its own test suite. The extension documents additionally cite the governing legal instrument or industry spec for every normative claim, with access dates, and flag items needing legal-counsel review — they are an engineering specification, not legal advice.
+Each document ends with a Conformance section of language-neutral test vectors (JSON input → JSON output) that an implementation can turn into its own test suite. Machine-readable projections of every vector live in [vectors/](vectors/README.md) (one `*.json` per document, validated by `vector.schema.json`) so a conformance suite can be run directly, in any language, without transcribing prose. The extension documents additionally cite the governing legal instrument or industry spec for every normative claim, with access dates, and flag items needing legal-counsel review — they are an engineering specification, not legal advice.
 
 ## Goals
 

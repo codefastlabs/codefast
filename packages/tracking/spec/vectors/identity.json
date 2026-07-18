@@ -1,0 +1,126 @@
+{
+  "area": "identity",
+  "spec": "spec-identity.md",
+  "specVersion": "1.0.0",
+  "vectors": [
+    {
+      "id": "identity.id-shape.valid-lowercase",
+      "source": "V1",
+      "summary": "a canonical lowercase UUID is a valid anonymous id",
+      "kind": "pure",
+      "operation": "isValidAnonymousId",
+      "input": { "value": "6f1c2a4e-9b0d-4c3e-8f5a-1d2e3c4b5a69" },
+      "expect": { "valid": true }
+    },
+    {
+      "id": "identity.id-shape.valid-uppercase",
+      "source": "V1",
+      "summary": "uppercase hex is accepted (case-insensitive)",
+      "kind": "pure",
+      "operation": "isValidAnonymousId",
+      "input": { "value": "6F1C2A4E-9B0D-4C3E-8F5A-1D2E3C4B5A69" },
+      "expect": { "valid": true }
+    },
+    {
+      "id": "identity.id-shape.not-a-uuid",
+      "source": "V1",
+      "summary": "a non-UUID string is rejected",
+      "kind": "pure",
+      "operation": "isValidAnonymousId",
+      "input": { "value": "not-a-uuid" },
+      "expect": { "valid": false }
+    },
+    {
+      "id": "identity.id-shape.empty",
+      "source": "V1",
+      "summary": "the empty string is rejected",
+      "kind": "pure",
+      "operation": "isValidAnonymousId",
+      "input": { "value": "" },
+      "expect": { "valid": false }
+    },
+    {
+      "id": "identity.id-shape.header-injection",
+      "source": "V1",
+      "summary": "a value with header-injection payload is rejected",
+      "kind": "pure",
+      "operation": "isValidAnonymousId",
+      "input": { "value": "6f1c2a4e-9b0d-4c3e-8f5a-1d2e3c4b5a69; Path=/evil" },
+      "expect": { "valid": false }
+    },
+    {
+      "id": "identity.set-cookie.build",
+      "source": "V2",
+      "summary": "the Set-Cookie value carries Path, one-year Max-Age, SameSite=Lax, Secure",
+      "kind": "pure",
+      "operation": "buildAnonymousIdSetCookie",
+      "input": { "cookieName": "anon_id", "id": "6f1c2a4e-9b0d-4c3e-8f5a-1d2e3c4b5a69" },
+      "expect": {
+        "setCookie": "anon_id=6f1c2a4e-9b0d-4c3e-8f5a-1d2e3c4b5a69; Path=/; Max-Age=31536000; SameSite=Lax; Secure"
+      }
+    },
+    {
+      "id": "identity.set-cookie.clear",
+      "source": "V2",
+      "summary": "the clear Set-Cookie expires the cookie (Max-Age 0)",
+      "kind": "pure",
+      "operation": "buildClearAnonymousIdSetCookie",
+      "input": { "cookieName": "anon_id" },
+      "expect": { "setCookie": "anon_id=; Path=/; Max-Age=0; SameSite=Lax; Secure" }
+    },
+    {
+      "id": "identity.set-cookie.bad-name",
+      "source": "V2",
+      "summary": "an invalid cookie name raises",
+      "kind": "pure",
+      "operation": "buildAnonymousIdSetCookie",
+      "input": { "cookieName": "bad name", "id": "6f1c2a4e-9b0d-4c3e-8f5a-1d2e3c4b5a69" },
+      "expect": { "error": true }
+    },
+    {
+      "id": "identity.cookie-read.exact-name",
+      "source": "V3",
+      "summary": "reading requires an exact name match, not a longer prefix sibling",
+      "kind": "pure",
+      "operation": "readCookieValue",
+      "input": { "cookieString": "anon_idX=zzz; anon_id=abc", "cookieName": "anon_id" },
+      "expect": { "value": "abc" }
+    },
+    {
+      "id": "identity.cookie-read.prefix-sibling-ignored",
+      "source": "V3",
+      "summary": "a longer prefix sibling alone does not match",
+      "kind": "pure",
+      "operation": "readCookieValue",
+      "input": { "cookieString": "anon_idX=zzz", "cookieName": "anon_id" },
+      "expect": { "none": true }
+    },
+    {
+      "id": "identity.mint.lazy",
+      "source": "V4",
+      "summary": "no cookie is minted while the gate is closed; the first permitted event mints exactly one, reused after",
+      "kind": "scenario",
+      "given": { "gate": "closed-then-open" },
+      "when": "track twice after the gate opens",
+      "expect": { "cookiesMintedWhileClosed": 0, "idsMintedAfterOpen": 1, "secondEventReusesId": true }
+    },
+    {
+      "id": "identity.cross-tab-withdrawal.no-revive",
+      "source": "V5",
+      "summary": "after the cookie is expired externally, getOrCreate mints a new id and re-persists",
+      "kind": "scenario",
+      "given": { "cookieExpiredExternally": true, "hadCachedId": true },
+      "when": "getOrCreate",
+      "expect": { "mintedNewId": true, "returnedCachedOldId": false, "persistFiredForNewId": true }
+    },
+    {
+      "id": "identity.persist.once-per-load",
+      "source": "V6",
+      "summary": "many events on one page load trigger exactly one persist; refresh adds none",
+      "kind": "scenario",
+      "given": { "eventsThisLoad": 3, "refreshCalled": true },
+      "when": "track x3 then refresh",
+      "expect": { "persistRequests": 1 }
+    }
+  ]
+}

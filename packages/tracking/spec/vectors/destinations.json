@@ -1,0 +1,79 @@
+{
+  "area": "destinations",
+  "spec": "spec-destinations.md",
+  "specVersion": "1.0.0",
+  "vectors": [
+    {
+      "id": "destinations.flatten.null-disallowed",
+      "source": "V1",
+      "summary": "scalars pass through, null is dropped, non-scalars are JSON-stringified",
+      "kind": "pure",
+      "operation": "flattenEventProps",
+      "input": {
+        "properties": { "a": "x", "b": 2, "c": true, "d": null, "e": null, "f": { "g": 1 }, "h": [1] },
+        "allowNull": false
+      },
+      "expect": { "result": { "a": "x", "b": 2, "c": true, "f": "{\"g\":1}", "h": "[1]" } }
+    },
+    {
+      "id": "destinations.flatten.null-allowed",
+      "source": "V1",
+      "summary": "with allowNull, null passes through alongside the scalar and stringified values",
+      "kind": "pure",
+      "operation": "flattenEventProps",
+      "input": {
+        "properties": { "a": "x", "b": 2, "c": true, "d": null, "f": { "g": 1 }, "h": [1] },
+        "allowNull": true
+      },
+      "expect": { "result": { "a": "x", "b": 2, "c": true, "d": null, "f": "{\"g\":1}", "h": "[1]" } }
+    },
+    {
+      "id": "destinations.consent-mapping.ga4",
+      "source": "V2",
+      "summary": "one decision drives the four Consent Mode v2 signals; ads drives all three ad signals",
+      "kind": "pure",
+      "operation": "toGoogleConsentParams",
+      "input": { "decision": { "ads": false, "analytics": true } },
+      "expect": {
+        "params": {
+          "ad_personalization": "denied",
+          "ad_storage": "denied",
+          "ad_user_data": "denied",
+          "analytics_storage": "granted"
+        }
+      }
+    },
+    {
+      "id": "destinations.bootstrap.fallback-order",
+      "source": "V3",
+      "summary": "a valid stored decision drives the default signal, else the baked default; the default always precedes tag load, and the tag loads even when all-denied",
+      "kind": "scenario",
+      "given": { "cases": ["valid-current-policy", "old-version", "malformed", "absent"] },
+      "when": "buildGoogleConsentBootstrap",
+      "expect": {
+        "validCase": "stored-decision-drives-default",
+        "otherCases": "baked-default-drives",
+        "defaultPrecedesTagLoad": true,
+        "tagLoadsWhenAllDenied": true
+      }
+    },
+    {
+      "id": "destinations.ga4-name-guard",
+      "source": "V4",
+      "summary": "GA4-invalid event names are warned and skipped, not sent",
+      "kind": "scenario",
+      "given": { "names": ["newsletter_signup", "9lives", "has-dash", "<41-char-name>"] },
+      "when": "send",
+      "expect": { "sent": ["newsletter_signup"], "warnedAndSkipped": ["9lives", "has-dash", "<41-char-name>"] }
+    },
+    {
+      "id": "destinations.cookie-cleanup.ga",
+      "source": "V5",
+      "summary": "withdrawal expires _ga and _ga_* on both domain variants, leaving unrelated cookies",
+      "kind": "scenario",
+      "given": { "cookies": ["_ga", "_ga_ABC123", "_gcl_au"] },
+      "when": "clearGoogleAnalyticsCookies",
+      "expect": { "expired": ["_ga", "_ga_ABC123"], "bothDomainVariants": true, "untouched": ["_gcl_au"] }
+    }
+  ]
+}

@@ -1,0 +1,74 @@
+{
+  "area": "event-model",
+  "spec": "spec-event-model.md",
+  "specVersion": "1.0.0",
+  "vectors": [
+    {
+      "id": "event-model.validate.strips-unknown-keys",
+      "source": "V1",
+      "summary": "the parsed output is forwarded; unknown keys are stripped",
+      "kind": "pure",
+      "operation": "assertValidEventProperties",
+      "input": {
+        "schema": "{ plan: string }",
+        "eventName": "signup",
+        "properties": { "plan": "pro", "injected": "x" }
+      },
+      "expect": { "value": { "plan": "pro" } }
+    },
+    {
+      "id": "event-model.validate.failure-raises",
+      "source": "V2",
+      "summary": "a validation failure raises with the event name and issue detail; nothing is delivered",
+      "kind": "pure",
+      "operation": "assertValidEventProperties",
+      "input": { "schema": "{ plan: string }", "eventName": "signup", "properties": { "plan": 5 } },
+      "expect": { "error": true, "errorContains": ["signup"], "delivered": false }
+    },
+    {
+      "id": "event-model.validate.async-rejected",
+      "source": "V3",
+      "summary": "a schema that validates asynchronously is rejected at track time",
+      "kind": "pure",
+      "operation": "assertValidEventProperties",
+      "input": { "schema": "async", "eventName": "signup", "properties": { "plan": "pro" } },
+      "expect": { "error": true, "errorContains": ["async"], "delivered": false }
+    },
+    {
+      "id": "event-model.track.unknown-event",
+      "source": "V4",
+      "summary": "tracking a name not in the catalog raises and delivers nothing",
+      "kind": "pure",
+      "operation": "track",
+      "input": { "name": "not_in_catalog", "properties": {} },
+      "expect": { "error": true, "errorContains": ["Unknown event: not_in_catalog"], "delivered": false }
+    },
+    {
+      "id": "event-model.envelope.shape",
+      "source": "V5",
+      "summary": "a permitted track builds the expected envelope shape",
+      "kind": "scenario",
+      "given": { "gate": "open", "anonymousId": "A", "catalog": { "signup": "{ plan: string }" } },
+      "when": "track('signup', { plan: 'pro' })",
+      "expect": {
+        "envelope": {
+          "type": "track",
+          "name": "signup",
+          "properties": { "plan": "pro" },
+          "anonymousId": "A",
+          "eventIdMatches": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "timestampIs": "current-epoch-ms"
+        }
+      }
+    },
+    {
+      "id": "event-model.context.stripped-in-exempt-lane",
+      "source": "V6",
+      "summary": "when context is populated, a gated event to an exempt destination carries neither anonymousId nor context",
+      "kind": "scenario",
+      "given": { "gate": "closed", "contextPopulated": true, "destination": "exempt" },
+      "when": "track('signup', { plan: 'pro' })",
+      "expect": { "envelope": { "anonymousId": "", "hasContext": false } }
+    }
+  ]
+}

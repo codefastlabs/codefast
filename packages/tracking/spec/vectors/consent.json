@@ -1,0 +1,268 @@
+{
+  "area": "consent",
+  "spec": "spec-consent.md",
+  "specVersion": "1.0.0",
+  "vectors": [
+    {
+      "id": "consent.region.de",
+      "source": "V1",
+      "summary": "German country code resolves to the eu region",
+      "kind": "pure",
+      "operation": "resolveRegionFromCountryCode",
+      "input": { "countryCode": "de" },
+      "expect": { "region": "eu" }
+    },
+    {
+      "id": "consent.region.gb",
+      "source": "V1",
+      "summary": "UK resolves to eu (GDPR-equivalent)",
+      "kind": "pure",
+      "operation": "resolveRegionFromCountryCode",
+      "input": { "countryCode": "GB" },
+      "expect": { "region": "eu" }
+    },
+    {
+      "id": "consent.region.vn",
+      "source": "V1",
+      "summary": "Vietnam resolves to vn",
+      "kind": "pure",
+      "operation": "resolveRegionFromCountryCode",
+      "input": { "countryCode": "vn" },
+      "expect": { "region": "vn" }
+    },
+    {
+      "id": "consent.region.us",
+      "source": "V1",
+      "summary": "United States resolves to us",
+      "kind": "pure",
+      "operation": "resolveRegionFromCountryCode",
+      "input": { "countryCode": "US" },
+      "expect": { "region": "us" }
+    },
+    {
+      "id": "consent.region.br",
+      "source": "V1",
+      "summary": "Unrecognized (Brazil) resolves to other",
+      "kind": "pure",
+      "operation": "resolveRegionFromCountryCode",
+      "input": { "countryCode": "BR" },
+      "expect": { "region": "other" }
+    },
+    {
+      "id": "consent.region.jp",
+      "source": "V1",
+      "summary": "Unrecognized (Japan) resolves to other",
+      "kind": "pure",
+      "operation": "resolveRegionFromCountryCode",
+      "input": { "countryCode": "JP" },
+      "expect": { "region": "other" }
+    },
+    {
+      "id": "consent.mode.eu",
+      "source": "V2",
+      "summary": "eu region is opt-in",
+      "kind": "pure",
+      "operation": "resolveConsentMode",
+      "input": { "region": "eu" },
+      "expect": { "mode": "opt-in" }
+    },
+    {
+      "id": "consent.mode.vn",
+      "source": "V2",
+      "summary": "vn region is opt-in",
+      "kind": "pure",
+      "operation": "resolveConsentMode",
+      "input": { "region": "vn" },
+      "expect": { "mode": "opt-in" }
+    },
+    {
+      "id": "consent.mode.us",
+      "source": "V2",
+      "summary": "us region is opt-out",
+      "kind": "pure",
+      "operation": "resolveConsentMode",
+      "input": { "region": "us" },
+      "expect": { "mode": "opt-out" }
+    },
+    {
+      "id": "consent.mode.other",
+      "source": "V2",
+      "summary": "other region is opt-out",
+      "kind": "pure",
+      "operation": "resolveConsentMode",
+      "input": { "region": "other" },
+      "expect": { "mode": "opt-out" }
+    },
+    {
+      "id": "consent.default.opt-in-denies-all",
+      "source": "V3",
+      "summary": "opt-in mode denies every category regardless of GPC",
+      "kind": "pure",
+      "operation": "resolveDefaultConsent",
+      "input": {
+        "mode": "opt-in",
+        "requestedCategories": ["ads", "analytics"],
+        "hasGlobalPrivacyControlSignal": false
+      },
+      "expect": { "decision": { "ads": false, "analytics": false } }
+    },
+    {
+      "id": "consent.default.opt-out-grants-requested",
+      "source": "V3",
+      "summary": "opt-out grants exactly the requested categories",
+      "kind": "pure",
+      "operation": "resolveDefaultConsent",
+      "input": { "mode": "opt-out", "requestedCategories": ["analytics"], "hasGlobalPrivacyControlSignal": false },
+      "expect": { "decision": { "ads": false, "analytics": true } }
+    },
+    {
+      "id": "consent.default.gpc-forces-ads-denied",
+      "source": "V3",
+      "summary": "GPC under opt-out forces ads denied, leaves analytics granted",
+      "kind": "pure",
+      "operation": "resolveDefaultConsent",
+      "input": {
+        "mode": "opt-out",
+        "requestedCategories": ["ads", "analytics"],
+        "hasGlobalPrivacyControlSignal": true
+      },
+      "expect": { "decision": { "ads": false, "analytics": true } }
+    },
+    {
+      "id": "consent.guard.valid",
+      "source": "V4",
+      "summary": "a well-formed per-category decision is valid",
+      "kind": "pure",
+      "operation": "isConsentDecision",
+      "input": { "value": { "ads": true, "analytics": false } },
+      "expect": { "valid": true }
+    },
+    {
+      "id": "consent.guard.missing-category",
+      "source": "V4",
+      "summary": "a decision missing a category is invalid",
+      "kind": "pure",
+      "operation": "isConsentDecision",
+      "input": { "value": { "ads": true } },
+      "expect": { "valid": false }
+    },
+    {
+      "id": "consent.guard.non-boolean",
+      "source": "V4",
+      "summary": "a non-boolean category value is invalid",
+      "kind": "pure",
+      "operation": "isConsentDecision",
+      "input": { "value": { "ads": "yes", "analytics": true } },
+      "expect": { "valid": false }
+    },
+    {
+      "id": "consent.guard.string",
+      "source": "V4",
+      "summary": "a bare string is not a decision",
+      "kind": "pure",
+      "operation": "isConsentDecision",
+      "input": { "value": "granted" },
+      "expect": { "valid": false }
+    },
+    {
+      "id": "consent.guard.array",
+      "source": "V4",
+      "summary": "an array is not a decision",
+      "kind": "pure",
+      "operation": "isConsentDecision",
+      "input": { "value": ["ads"] },
+      "expect": { "valid": false }
+    },
+    {
+      "id": "consent.guard.null",
+      "source": "V4",
+      "summary": "null is not a decision",
+      "kind": "pure",
+      "operation": "isConsentDecision",
+      "input": { "value": null },
+      "expect": { "valid": false }
+    },
+    {
+      "id": "consent.normalize.drops-extra-keys",
+      "source": "V5",
+      "summary": "normalization drops keys outside the category set",
+      "kind": "pure",
+      "operation": "normalizeConsentDecision",
+      "input": { "decision": { "ads": true, "analytics": true, "extra": "x" } },
+      "expect": { "decision": { "ads": true, "analytics": true } }
+    },
+    {
+      "id": "consent.stored.policy-supersession",
+      "source": "V6",
+      "summary": "a stored decision under a superseded policy version reads as none",
+      "kind": "scenario",
+      "given": {
+        "storedRecord": {
+          "decision": { "ads": true, "analytics": true },
+          "policyVersion": "v1",
+          "timestamp": 1752796800000
+        },
+        "currentPolicyVersion": "v2"
+      },
+      "when": "readStoredDecision",
+      "expect": { "none": true, "promptNeededUnderOptIn": true }
+    },
+    {
+      "id": "consent.effective.stored-wins",
+      "source": "V7",
+      "summary": "a stored decision wins over a granting regional default",
+      "kind": "scenario",
+      "given": {
+        "mode": "opt-out",
+        "requestedCategories": ["analytics"],
+        "storedDecision": { "ads": false, "analytics": false }
+      },
+      "when": "resolveEffectiveConsent",
+      "expect": { "effectiveConsent": { "ads": false, "analytics": false } }
+    },
+    {
+      "id": "consent.initial-guard.strictest-exception",
+      "source": "V8",
+      "summary": "the strictest constant's opt-in/other pairing is the one allowed deviation",
+      "kind": "pure",
+      "operation": "isInitialConsent",
+      "input": {
+        "value": { "defaultConsent": { "ads": false, "analytics": false }, "mode": "opt-in", "region": "other" }
+      },
+      "expect": { "valid": true }
+    },
+    {
+      "id": "consent.initial-guard.usual-pairing",
+      "source": "V8",
+      "summary": "opt-out/other is the region's usual pairing and valid",
+      "kind": "pure",
+      "operation": "isInitialConsent",
+      "input": {
+        "value": { "defaultConsent": { "ads": false, "analytics": false }, "mode": "opt-out", "region": "other" }
+      },
+      "expect": { "valid": true }
+    },
+    {
+      "id": "consent.initial-guard.looser-than-region",
+      "source": "V8",
+      "summary": "opt-out under an opt-in region (eu) is looser and invalid",
+      "kind": "pure",
+      "operation": "isInitialConsent",
+      "input": {
+        "value": { "defaultConsent": { "ads": false, "analytics": false }, "mode": "opt-out", "region": "eu" }
+      },
+      "expect": { "valid": false }
+    },
+    {
+      "id": "consent.initial-guard.non-strictest-deviation",
+      "source": "V8",
+      "summary": "only the strictest constant's pairing may deviate; opt-in/us is invalid",
+      "kind": "pure",
+      "operation": "isInitialConsent",
+      "input": {
+        "value": { "defaultConsent": { "ads": false, "analytics": false }, "mode": "opt-in", "region": "us" }
+      },
+      "expect": { "valid": false }
+    }
+  ]
+}
