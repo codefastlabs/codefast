@@ -2,7 +2,7 @@
 
 The key words MUST, MUST NOT, SHOULD, SHOULD NOT, and MAY are to be interpreted as described in RFC 2119.
 
-> **Status: design target for commercial scope, not yet implemented.** The reference implementation models advertising consent as one boolean `ads` ([spec-consent](spec-consent.md) §1) mapping to Google Consent Mode v2's four signals. That is sufficient for measurement and for non-programmatic ads, but **not** for serving programmatic ads in the EEA/UK/CH, which require an IAB-certified CMP and a TC String. This document specifies how the system interoperates with those frameworks. Access dates 2026-07-18; **UNCERTAIN** items need legal/ad-ops review.
+> **Status: interop reconciler implemented; the CMP read and purpose mapping are the integrator's.** The reference implementation models advertising consent as one boolean `ads` ([spec-consent](spec-consent.md) §1) mapping to Google Consent Mode v2's four signals. That is sufficient for measurement and for non-programmatic ads, but **not** for serving programmatic ads in the EEA/UK/CH, which require an IAB-certified CMP and a TC String. This document specifies how the system interoperates with those frameworks. `@codefast/tracking` ships `reconcileAdFrameworkConsent` plus `hasTcfApi`/`hasGppApi` (§3, vectors V1–V6); deriving the `CmpConsentSignal` from a live CMP's `TCData`/GPP — the purpose set and the Google GVL vendor id — remains ad-ops policy the integrator supplies (§5). Access dates 2026-07-18; **UNCERTAIN** items need legal/ad-ops review.
 
 ## 1. Decision: interop, not become a CMP
 
