@@ -65,4 +65,24 @@ describe("createMetaDestination", () => {
 
     expect(destination.consentRequirement).toBe("required");
   });
+
+  it("onErasure clears cookies and stops sending, without any deletion-API call (DSR-V4)", async () => {
+    const transport = vi.fn();
+    const clearCookies = vi.fn();
+    const destination = createMetaDestination({
+      clearCookies,
+      getDecision: () => ({ ads: true, analytics: true }),
+      transport,
+    });
+
+    await destination.onErasure?.("subject-1");
+
+    expect(clearCookies).toHaveBeenCalledOnce();
+    // Erasure is cookie-clear + stop-send only — Meta has no per-visitor deletion API.
+    expect(transport).not.toHaveBeenCalled();
+
+    await destination.send(event);
+
+    expect(transport).not.toHaveBeenCalled();
+  });
 });

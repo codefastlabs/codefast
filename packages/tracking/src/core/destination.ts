@@ -17,6 +17,13 @@ export interface Destination {
    */
   consentRequirement?: "exempt" | "required" | undefined;
   name: string;
+  /**
+   * Erase this destination's trace of the subject on withdrawal (spec-data-subject-rights
+   * §3): clear the destination's cookies and stop sending, and — where the platform offers
+   * one — request per-visitor deletion. Optional: a sink with nothing to erase omits it.
+   * Invoked at most once per withdrawal; the tracker swallows its failures.
+   */
+  onErasure?: ((id: string) => Promise<void> | void) | undefined;
   /** Must always return a `Promise` — mark `send` `async` even if the body has no `await`. */
   send: (event: TrackedEvent) => Promise<void>;
 }
