@@ -56,30 +56,10 @@
       "types": "./dist/index.d.mts",
       "import": "./dist/index.mjs"
     },
-    "./import-protection": {
-      "source": "./src/import-protection.ts",
-      "types": "./dist/import-protection.d.mts",
-      "import": "./dist/import-protection.mjs"
-    },
     "./client": {
       "source": "./src/client/index.ts",
       "types": "./dist/client/index.d.mts",
       "import": "./dist/client/index.mjs"
-    },
-    "./server": {
-      "source": "./src/server/index.ts",
-      "types": "./dist/server/index.d.mts",
-      "import": "./dist/server/index.mjs"
-    },
-    "./react": {
-      "source": "./src/react/index.ts",
-      "types": "./dist/react/index.d.mts",
-      "import": "./dist/react/index.mjs"
-    },
-    "./tanstack-start": {
-      "source": "./src/adapters/tanstack-start/index.ts",
-      "types": "./dist/adapters/tanstack-start/index.d.mts",
-      "import": "./dist/adapters/tanstack-start/index.mjs"
     },
     "./destinations": {
       "source": "./src/destinations/index.ts",
@@ -90,6 +70,26 @@
       "source": "./src/destinations/vercel-analytics.ts",
       "types": "./dist/destinations/vercel-analytics.d.mts",
       "import": "./dist/destinations/vercel-analytics.mjs"
+    },
+    "./import-protection": {
+      "source": "./src/import-protection.ts",
+      "types": "./dist/import-protection.d.mts",
+      "import": "./dist/import-protection.mjs"
+    },
+    "./react": {
+      "source": "./src/react/index.ts",
+      "types": "./dist/react/index.d.mts",
+      "import": "./dist/react/index.mjs"
+    },
+    "./server": {
+      "source": "./src/server/index.ts",
+      "types": "./dist/server/index.d.mts",
+      "import": "./dist/server/index.mjs"
+    },
+    "./tanstack-start": {
+      "source": "./src/adapters/tanstack-start.ts",
+      "types": "./dist/adapters/tanstack-start.d.mts",
+      "import": "./dist/adapters/tanstack-start.mjs"
     },
     "./css/*": "./src/css/*",
     "./package.json": "./package.json"
