@@ -150,4 +150,90 @@ describe("createClientTracker", () => {
     }).not.toThrow();
     expect(recording.received).toHaveLength(1);
   });
+
+  it("reports a sync-throwing destination's failure through onDeliveryError", () => {
+    const error = new Error("sync throw");
+    const throwing = {
+      name: "throwing",
+      send: () => {
+        throw error;
+      },
+    };
+    const onDeliveryError = vi.fn();
+    const tracker = createClientTracker({
+      anonymousId: () => "anon-1",
+      catalog,
+      destinations: [throwing as never],
+      onDeliveryError,
+    });
+
+    tracker.track("button_clicked", { id: "cta" });
+
+    expect(onDeliveryError).toHaveBeenCalledOnce();
+    expect(onDeliveryError).toHaveBeenCalledWith({
+      destination: throwing,
+      error,
+      event: expect.objectContaining({ name: "button_clicked" }),
+    });
+  });
+
+  it("reports an async-rejecting destination's failure through onDeliveryError", async () => {
+    const error = new Error("async reject");
+    const rejecting = { name: "rejecting", send: () => Promise.reject(error) };
+    const onDeliveryError = vi.fn();
+    const tracker = createClientTracker({
+      anonymousId: () => "anon-1",
+      catalog,
+      destinations: [rejecting],
+      onDeliveryError,
+    });
+
+    tracker.track("button_clicked", { id: "cta" });
+
+    // The rejection lands on a microtask — the track() call itself already returned.
+    await new Promise((resolve) => {
+      setTimeout(resolve, 0);
+    });
+
+    expect(onDeliveryError).toHaveBeenCalledOnce();
+    expect(onDeliveryError.mock.calls[0]?.[0]).toMatchObject({ destination: rejecting, error });
+  });
+
+  it("does not call onDeliveryError when every delivery succeeds", async () => {
+    const onDeliveryError = vi.fn();
+    const tracker = createClientTracker({
+      anonymousId: () => "anon-1",
+      catalog,
+      destinations: [createRecordingDestination()],
+      onDeliveryError,
+    });
+
+    tracker.track("button_clicked", { id: "cta" });
+    await new Promise((resolve) => {
+      setTimeout(resolve, 0);
+    });
+
+    expect(onDeliveryError).not.toHaveBeenCalled();
+  });
+
+  it("never lets a throwing onDeliveryError observer break the interaction", () => {
+    const throwing = {
+      name: "throwing",
+      send: () => {
+        throw new Error("sync throw");
+      },
+    };
+    const tracker = createClientTracker({
+      anonymousId: () => "anon-1",
+      catalog,
+      destinations: [throwing as never],
+      onDeliveryError: () => {
+        throw new Error("observer threw");
+      },
+    });
+
+    expect(() => {
+      tracker.track("button_clicked", { id: "cta" });
+    }).not.toThrow();
+  });
 });
