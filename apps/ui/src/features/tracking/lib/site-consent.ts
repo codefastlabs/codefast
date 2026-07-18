@@ -1,14 +1,42 @@
-import type { ConsentMode } from "@codefast/tracking";
-import { readStoredDecision } from "@codefast/tracking";
+import type { ConsentDecision, ConsentMode } from "@codefast/tracking";
+import { readCookieValue, readStoredDecision } from "@codefast/tracking";
 import { createConsentWithdrawalHandler, hasGlobalPrivacyControlSignal } from "@codefast/tracking/client";
 import { clearGoogleAnalyticsCookies } from "@codefast/tracking/destinations";
 import type { UseConsentResult } from "@codefast/tracking/react";
 import { useConsent } from "@codefast/tracking/react";
 import { useEffect } from "react";
 
+import { ANONYMOUS_ID_COOKIE_NAME } from "#/features/tracking/lib/anonymous-id";
 import { consentConfig } from "#/features/tracking/lib/consent";
+import { recordConsentReceipt } from "#/features/tracking/lib/consent-receipt";
 import { clearAnonymousId } from "#/features/tracking/lib/tracking";
 import { consentRuntime, useVisitorConsent } from "#/features/tracking/lib/visitor-consent";
+
+/**
+ * Records a server-side consent receipt for a decision made on this surface. Fired from
+ * `useConsent({ onDecision })`, so cross-tab syncs (which arrive via the storage
+ * subscription, not `onDecision`) never double-record. A receipt write must never break
+ * the decision UX, so failures are swallowed.
+ */
+function recordDecisionReceipt(decision: ConsentDecision): void {
+  const existingId =
+    typeof document === "undefined" ? undefined : readCookieValue(document.cookie, ANONYMOUS_ID_COOKIE_NAME);
+
+  void recordConsentReceipt({
+    data: {
+      decision,
+      eventType: decision.ads || decision.analytics ? "give" : "withdraw",
+      method: "granular",
+      noticeLanguage: typeof navigator === "undefined" ? "en" : navigator.language,
+      noticeVersion: consentConfig.policyVersion,
+      policyVersion: consentConfig.policyVersion,
+      subjectId: existingId ?? crypto.randomUUID(),
+      subjectIdType: "cookie",
+    },
+  }).catch(() => {
+    /* a receipt write must never break the decision UX */
+  });
+}
 
 export interface UseSiteConsentResult {
   consent: UseConsentResult;
@@ -71,6 +99,7 @@ export function useSiteConsent(): UseSiteConsentResult {
     config: consentConfig,
     hasGlobalPrivacyControlSignal: hasGlobalPrivacyControlSignal(),
     mode: initialConsent.mode,
+    onDecision: recordDecisionReceipt,
     storage: consentRuntime.storage,
   });
 
