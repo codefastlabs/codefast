@@ -7,6 +7,14 @@ export { toAdConsentState } from "#/destinations/ad-consent";
 export type { MetaDataProcessingOptions, MetaDestinationOptions, MetaEventPayload } from "#/destinations/meta";
 export { createMetaDestination, toMetaDataProcessingOptions } from "#/destinations/meta";
 export type {
+  MicrosoftUetConsent,
+  MicrosoftUetDestinationOptions,
+  MicrosoftUetEventPayload,
+} from "#/destinations/microsoft-uet";
+export { createMicrosoftUetDestination, toMicrosoftUetConsent } from "#/destinations/microsoft-uet";
+export type { TiktokConsent, TiktokDestinationOptions, TiktokEventPayload } from "#/destinations/tiktok";
+export { createTiktokDestination, toTiktokConsent } from "#/destinations/tiktok";
+export type {
   EnsureGtagOptions,
   GoogleAnalyticsDestinationOptions,
   GtagConsentBootstrapOptions,
