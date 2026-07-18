@@ -1,3 +1,6 @@
+export type { CmpConsentSignal, CmpStatus, ReconcileAdFrameworkConsentOptions } from "#/client/ad-framework-consent";
+export { hasGppApi, hasTcfApi, reconcileAdFrameworkConsent } from "#/client/ad-framework-consent";
+
 export type { ClientTracker, ClientTrackerOptions, DeliveryErrorContext } from "#/client/create-client-tracker";
 export { createClientTracker } from "#/client/create-client-tracker";
 
