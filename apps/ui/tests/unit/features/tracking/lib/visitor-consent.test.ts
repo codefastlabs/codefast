@@ -5,6 +5,7 @@ import { STRICTEST_INITIAL_CONSENT } from "#/features/tracking/lib/consent";
 import {
   ensureVisitorConsentResolved,
   isAnalyticsAllowed,
+  isExemptionAllowed,
   resetVisitorConsentForTests,
   useVisitorConsent,
   INITIAL_CONSENT_SESSION_KEY,
@@ -254,5 +255,34 @@ describe("isAnalyticsAllowed", () => {
     await resolveRegion(US_CONSENT);
 
     expect(isAnalyticsAllowed()).toBe(true);
+  });
+});
+
+describe("isExemptionAllowed", () => {
+  it("fails closed before the region resolves — the strictest default is opt-in", () => {
+    expect(isExemptionAllowed()).toBe(false);
+  });
+
+  it("allows the exempt lane once an opt-out region resolves (us/other)", async () => {
+    resolveVisitorConsent.mockResolvedValue(US_CONSENT);
+    ensureVisitorConsentResolved();
+
+    await vi.waitFor(() => {
+      expect(isExemptionAllowed()).toBe(true);
+    });
+  });
+
+  it("keeps the exempt lane gated in a strict opt-in region (eu)", async () => {
+    resolveVisitorConsent.mockResolvedValue({
+      defaultConsent: { ads: false, analytics: false },
+      mode: "opt-in",
+      region: "eu",
+    });
+    ensureVisitorConsentResolved();
+    await waitFor(() => {
+      expect(resolveVisitorConsent).toHaveBeenCalled();
+    });
+
+    expect(isExemptionAllowed()).toBe(false);
   });
 });

@@ -11,7 +11,7 @@ import {
   clearAnonymousIdCookie,
   persistAnonymousIdCookie,
 } from "#/features/tracking/lib/anonymous-id";
-import { isAnalyticsAllowed } from "#/features/tracking/lib/visitor-consent";
+import { isAnalyticsAllowed, isExemptionAllowed } from "#/features/tracking/lib/visitor-consent";
 
 /**
  * Custom events carry identifiers and metadata only — never free-form search text,
@@ -106,6 +106,9 @@ export function getTracker(): ClientTracker<typeof catalog> {
       createGoogleAnalyticsDestination(),
     ],
     isAnalyticsAllowed,
+    // Vercel's exempt lane counts only where audience-measurement exemption is defensible —
+    // gated in the strict opt-in regions (spec-destinations §2).
+    isExemptionAllowed,
     // Surface delivery failures in dev; a production deployment wires this to its monitor.
     onDeliveryError: ({ destination, error }) => {
       if (import.meta.env.DEV) {
