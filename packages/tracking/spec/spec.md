@@ -18,7 +18,7 @@ The key words MUST, MUST NOT, SHOULD, SHOULD NOT, and MAY are to be interpreted 
 | [spec-server-lane.md](spec-server-lane.md)   | Initial-consent resolution over shared/cached HTML: server endpoint + client store      |
 | [spec-security.md](spec-security.md)         | Security & Privacy Considerations, consolidated across all documents                    |
 
-**Commercial-scope extensions (design targets, not yet implemented — see below):**
+**Commercial-scope extensions (implementation status varies by document — see each Status line and below):**
 
 | Document                                                       | Scope                                                                                       |
 | -------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
@@ -48,7 +48,7 @@ The standing rule: every exported API needs at least one real consumer call site
 
 ## Commercial-scope extensions
 
-The core documents describe what the reference package implements today. The extension documents (regions, consent receipts, ad-consent frameworks, data-subject rights) specify what a **full commercial deployment** — worldwide jurisdictions, programmatic advertising, legally-defensible audit trails — additionally requires. They are **design targets, not yet implemented**, and follow three principles:
+The core documents describe what the reference package implements today. The extension documents (regions, consent receipts, ad-consent frameworks, data-subject rights) specify what a **full commercial deployment** — worldwide jurisdictions, programmatic advertising, legally-defensible audit trails — additionally requires. Their implementation status now **varies by document** (see each Status line): the consent-receipt mechanism and the ad-framework interop reconciler are **implemented in the reference package** (2026-07-18), the data-subject-rights posture is **largely met**, while worldwide data-driven regions remains a **design target**. What is still the consumer's is called out per document — a backend/retention/key for receipts, the live-CMP purpose mapping for ad frameworks, and legal-counsel review of every UNCERTAIN item. All four follow three principles:
 
 - **Every normative claim is sourced.** Legal claims cite the governing statute/regulator guidance; industry-framework claims cite the IAB/ISO spec. Each carries an access date, and items that are newly-in-force, contested, or reachable only via secondary aggregation are flagged **UNCERTAIN — needs legal counsel review**. The research behind them was verified against primary sources as of 2026-07-18, but privacy law moves quarterly: re-verify load-bearing citations before relying on them.
 - **Lean by construction.** The same "real call site before it ships" rule governs extensions. The DSR document, for instance, argues _from the sources_ for a minimal surface (delegate to destinations; don't build a subject-data store); the ad-frameworks document chooses CMP interop over becoming a CMP. The one genuine capability gap found — an optional, consent-gated `context` envelope for attribution — is _reserved_, not populated (spec-event-model §4).
