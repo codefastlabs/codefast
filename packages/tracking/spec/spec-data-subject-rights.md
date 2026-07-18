@@ -2,7 +2,7 @@
 
 The key words MUST, MUST NOT, SHOULD, SHOULD NOT, and MAY are to be interpreted as described in RFC 2119.
 
-> **Status: design target for commercial scope, partially met today.** The system already owns the two load-bearing primitives (the consent gate and `clear()` + server expiry). This document specifies the minimal-but-sufficient data-subject-rights (DSR) posture around them, and — importantly — argues from the sources _against_ over-building. Access dates 2026-07-18; the "is it personal data" question is fact-dependent and flagged **UNCERTAIN — needs legal review**.
+> **Status: design target for commercial scope, largely met today.** The system owns the load-bearing primitives — the consent gate, `clear()` + server expiry, a per-destination `onErasure` hook invoked on withdrawal (`tracker.erase`), and the GA4 delete delegation (`buildGa4UserDeletionRequest` / `submitGa4UserDeletion`). This document specifies the minimal-but-sufficient data-subject-rights (DSR) posture around them, and — importantly — argues from the sources _against_ over-building. Access dates 2026-07-18; the "is it personal data" question is fact-dependent and flagged **UNCERTAIN — needs legal review**.
 
 ## 1. The identifier is pseudonymous, not anonymous
 

@@ -73,7 +73,7 @@ To bake a stricter EEA baseline while defaulting the rest of the world different
 
 ## 5. Additional platform destinations
 
-> **Status: design target, not yet implemented.** The reference implementation ships only GA4 (§4) and the cookieless counter (§6). These mappings specify how the normalized `{ ads, analytics }` decision drives other ad platforms. Access dates 2026-07-18; **UNCERTAIN** items need verification against live platform docs (these APIs change frequently).
+> **Status: reference mappings implemented; transports are the integrator's.** The reference implementation ships GA4 (§4), the cookieless counter (§6), and reference `{ ads, analytics }` mappings for Meta, TikTok, and Microsoft UET (`createMetaDestination` / `createTiktokDestination` / `createMicrosoftUetDestination` plus their consent mappers) — consent-restriction mapping only; the Pixel/CAPI/`ttq`/`uetq` transports, tag ids, and credentials remain the integrator's. These mappings specify how the normalized `{ ads, analytics }` decision drives other ad platforms. Access dates 2026-07-18; **UNCERTAIN** items need verification against live platform docs (these APIs change frequently).
 
 Unlike GA4's unified Consent Mode object, other platforms expose per-vendor shapes. Each MUST consume the same `{ ads, analytics }` decision:
 

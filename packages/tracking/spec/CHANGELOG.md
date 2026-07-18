@@ -4,6 +4,16 @@ Versioning for the tracking specification itself, independent of the `@codefast/
 
 Because the extension documents cite fast-moving law and platform contracts, a **citation refresh** (re-verifying a source, correcting an access-dated fact) is a patch even when it changes a jurisdictional claim — the _engineering_ contract is unchanged. When a re-verified legal fact changes what an implementation must _do_ (e.g. a region's `optOutSignalBinding` flips), that is a minor.
 
+## 1.0.3 — 2026-07-18
+
+### Status refresh across the implemented extensions (patch)
+
+- **spec-destinations §5** — "not yet implemented" → reference `{ ads, analytics }` mappings for Meta / TikTok / Microsoft UET now ship (consent-restriction mapping only; transports the integrator's).
+- **spec-consent-receipts** — the durable store frame (`createDurableReceiptStore` over an injected backend) and the integrity `sign` seam (HMAC wired in the reference app) now ship; what remains is a backend client, retention, and counsel review.
+- **spec-data-subject-rights** — "partially met" → "largely met": the per-destination `onErasure` hook + `tracker.erase` and the GA4 delete delegation now ship alongside the gate + `clear()`.
+
+Non-normative across all three: contracts and vectors are unchanged.
+
 ## 1.0.2 — 2026-07-18
 
 ### spec-ad-consent-frameworks — status refresh (patch)
