@@ -35,3 +35,37 @@ export function createInMemoryReceiptStore(): ReceiptStore {
     },
   };
 }
+
+/**
+ * The minimal id-keyed primitive a durable backend must expose for {@link createDurableReceiptStore}.
+ * Keeping it this small lets an integrator back receipts with any store (Vercel KV, Postgres,
+ * an append-only log) by implementing two methods rather than the full {@link ReceiptStore}.
+ */
+export interface ReceiptStoreBackend {
+  get: (receiptId: string) => Promise<ConsentReceipt | undefined>;
+  /**
+   * Persist one receipt under its id. MUST be idempotent-by-id and never overwrite — a
+   * duplicate `receiptId` is a no-op — so the append-only guarantee holds atomically even
+   * under a client retry or concurrent write (e.g. KV set-if-absent, Postgres
+   * `INSERT … ON CONFLICT DO NOTHING`). The frame delegates rather than doing a racy
+   * get-then-put itself.
+   */
+  put: (receiptId: string, receipt: ConsentReceipt) => Promise<void>;
+}
+
+/**
+ * A durable {@link ReceiptStore} over an injected {@link ReceiptStoreBackend} — the package
+ * supplies the append-only contract and adaptation, the deployment supplies the backend
+ * client (no database dependency is baked in). Pair it with a real backend in production,
+ * where {@link createInMemoryReceiptStore} is not a lawful store on its own.
+ */
+export function createDurableReceiptStore(options: { backend: ReceiptStoreBackend }): ReceiptStore {
+  return {
+    async append(receipt: ConsentReceipt): Promise<void> {
+      await options.backend.put(receipt.receiptId, receipt);
+    },
+    async get(receiptId: string): Promise<ConsentReceipt | undefined> {
+      return options.backend.get(receiptId);
+    },
+  };
+}
