@@ -1,11 +1,11 @@
-# SPEC-IDENTITY — Anonymous Id Lifecycle
+# spec-identity — Anonymous Id Lifecycle
 
 The key words MUST, MUST NOT, SHOULD, and MAY are to be interpreted as described in RFC 2119.
 
 ## 1. Principles
 
 - The anonymous id identifies a **browser/device**, not a person. Its only valid shape is a random UUID (RFC 4122), pattern `^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$` (case-insensitive).
-- **The client mints; the server never does.** Minting happens lazily, only at the moment an event is actually allowed to send (SPEC-TRACKER §3) — never at library init, never as an import/startup side effect, never while the consent gate is closed.
+- **The client mints; the server never does.** Minting happens lazily, only at the moment an event is actually allowed to send (spec-tracker §3) — never at library init, never as an import/startup side effect, never while the consent gate is closed.
 - The server's only roles are to **persist/prolong** an id the client hands it and to **expire** it on withdrawal.
 
 ## 2. Cookie contract
@@ -23,7 +23,7 @@ Operations and their semantics:
 
 - `getOrCreate()` — return the existing cookie value, else mint a fresh UUID, write the cookie, and return it. The **live cookie always wins over any in-memory cache**: another tab's withdrawal expires the cookie without notifying this instance, and a re-grant MUST NOT revive the pre-withdrawal identity from memory.
 - `refresh()` — roll an **existing** id's expiry forward without ever minting; a no-op for visitors who have no id. Safe to call on page load for returning consented visitors.
-- `clear()` — expire the cookie (Max-Age 0) and drop any cached copy. Called on consent withdrawal (SPEC-CONSENT §9).
+- `clear()` — expire the cookie (Max-Age 0) and drop any cached copy. Called on consent withdrawal (spec-consent §9).
 - Implementations MAY cache the id after the first read so a per-event callback does not re-parse the cookie header; the cache MUST be invalidated by `clear()` and never trusted over the live cookie.
 
 ## 4. Server persistence (the ITP re-issue)
@@ -45,7 +45,7 @@ Script-written cookies are capped (e.g. 7 days by Safari ITP); a server Set-Cook
 
 ## 5. Withdrawal
 
-On a decision with `analytics == false`: client-side `clear()` (cookie expiry + cache drop) plus the server-side expiry per §4. Destination identifier cookies are cleared per SPEC-DESTINATIONS §4.
+On a decision with `analytics == false`: client-side `clear()` (cookie expiry + cache drop) plus the server-side expiry per §4. Destination identifier cookies are cleared per spec-destinations §4.
 
 ## Conformance vectors
 

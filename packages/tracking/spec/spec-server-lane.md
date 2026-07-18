@@ -1,4 +1,4 @@
-# SPEC-SERVER-LANE — Initial-Consent Resolution over Shared HTML
+# spec-server-lane — Initial-Consent Resolution over Shared HTML
 
 The key words MUST, MUST NOT, SHOULD, and MAY are to be interpreted as described in RFC 2119.
 
@@ -6,7 +6,7 @@ The key words MUST, MUST NOT, SHOULD, and MAY are to be interpreted as described
 
 Prerendered/ISR/CDN-cached HTML is shared across visitors, so it can carry **nothing region-specific**: baking "US visitor, opt-out" into cached markup would grant analytics by default to every visitor, EU included. Therefore:
 
-- Shared HTML bakes the **strictest initial consent** (SPEC-CONSENT §8) — all denied, opt-in.
+- Shared HTML bakes the **strictest initial consent** (spec-consent §8) — all denied, opt-in.
 - The region-correct default comes only from a **per-visitor server endpoint**, resolved after load.
 
 ## 2. Server resolution
@@ -14,7 +14,7 @@ Prerendered/ISR/CDN-cached HTML is shared across visitors, so it can carry **not
 `resolveInitialConsent(countryCode, requestedCategories, hasGpcSignal)`:
 
 1. **Missing country code → the strictest initial consent.** A missing geo header means "unknown visitor" (a prerender crawl, a host without geo), never "known non-EU visitor" — conflating the two would default-grant analytics to everyone on a geo-less host. This check MUST run before region resolution (whose own fallback for unrecognized codes is `other`).
-2. Otherwise: region from the country code (SPEC-CONSENT §2), mode from the region, default decision from mode + requested categories + GPC (SPEC-CONSENT §3).
+2. Otherwise: region from the country code (spec-consent §2), mode from the region, default decision from mode + requested categories + GPC (spec-consent §3).
 3. Return `{ defaultConsent, mode, region }`.
 
 **Request adapter requirements** (however the endpoint is wired):
@@ -36,13 +36,13 @@ The client holds the resolved value in a subscribable store with snapshots:
 - **Initial**: the strictest initial consent, `isResolved: false`. This is also the permanent server-render snapshot (hydration-safe: it matches what shared HTML could know).
 - `ensureResolved()` — idempotent kick-off; callers SHOULD invoke it early so the round trip overlaps app startup:
   1. Already resolved successfully, or a request in flight → no-op (**single-flight**).
-  2. **Session cache hit** (optional): a cached value that passes the initial-consent guard (SPEC-CONSENT §8) publishes immediately, no request. Cache entries MUST be re-validated before use, never trusted.
+  2. **Session cache hit** (optional): a cached value that passes the initial-consent guard (spec-consent §8) publishes immediately, no request. Cache entries MUST be re-validated before use, never trusted.
   3. Otherwise call the endpoint. Success → write the session cache, publish `{ value, isResolved: true }`; success is **sticky** for the store's lifetime.
   4. Failure (including a synchronous throw from the resolver, which MUST be folded into the same path) → publish **fail-closed**: the strictest value with `isResolved: true` — consent UI can render, under the strictest default — but the failure is **not sticky**: resolution stays retryable.
 - **Retry**: after a failure, re-attempt when the tab becomes visible again, the page is restored from cache, or connectivity returns — a visitor who never leaves the tab must not stay fail-closed for the whole session over one network blip. Retries coalesce through the same single-flight guard, and retry listeners are torn down once a resolve succeeds.
 - Session-cache read/write failures (private mode, quota) are swallowed — resolve again next page load.
 
-**Consumption.** The live consent mode used by the effective-consent rule (SPEC-CONSENT §7) and the prompt rule MUST be **re-read from the store per evaluation**, so a post-hydration region resolve wins over the baked strictest default without recreating any gate or tracker.
+**Consumption.** The live consent mode used by the effective-consent rule (spec-consent §7) and the prompt rule MUST be **re-read from the store per evaluation**, so a post-hydration region resolve wins over the baked strictest default without recreating any gate or tracker.
 
 ## 4. Composition (the consent runtime)
 

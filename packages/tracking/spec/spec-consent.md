@@ -1,4 +1,4 @@
-# SPEC-CONSENT — Categories, Regions, Records, Effective Consent
+# spec-consent — Categories, Regions, Records, Effective Consent
 
 The key words MUST, MUST NOT, SHOULD, and MAY are to be interpreted as described in RFC 2119.
 
@@ -33,7 +33,7 @@ Region values: `eu`, `vn`, `us`, `other`.
 | US                                                                                       | `us`    |
 | any other non-empty code                                                                 | `other` |
 
-A **missing** country code is handled one level up (SPEC-SERVER-LANE §2): unknown is not known-elsewhere, so it MUST fail closed to the strictest default — never fall through to `other`'s opt-out.
+A **missing** country code is handled one level up (spec-server-lane §2): unknown is not known-elsewhere, so it MUST fail closed to the strictest default — never fall through to `other`'s opt-out.
 
 **Mode resolution**: GDPR (EU) and Vietnam's PDPL (Luật 91/2025/QH15) require explicit opt-in; CCPA/CPRA (US) defaults to opt-out. There is no single global default satisfying both, so:
 
@@ -66,7 +66,7 @@ The persisted record:
 { "decision": { "ads": false, "analytics": true }, "policyVersion": "2026-07", "timestamp": 1752796800000 }
 ```
 
-- Persisted as **plain JSON with exactly this shape** — a stable contract, so a pre-hydration bootstrap script (SPEC-DESTINATIONS §4) can read the decision synchronously before any tag fires.
+- Persisted as **plain JSON with exactly this shape** — a stable contract, so a pre-hydration bootstrap script (spec-destinations §4) can read the decision synchronously before any tag fires.
 - **Record guard**: valid only if `decision` passes the shape guard (§1), `policyVersion` is a string, and `timestamp` is a number.
 
 **Storage contract** (implementation supplies the backend):
@@ -113,7 +113,7 @@ The server lane resolves a per-visitor value handed to the client so it never re
 
 ## 9. Withdrawal side effects
 
-When a decision is saved with `analytics == false` (deny or withdraw), the implementation MUST clear first-party tracking state: the anonymous id (SPEC-IDENTITY §5) and any destination identifier cookies (e.g. Google's `_ga*`, SPEC-DESTINATIONS §4). Grant paths are a no-op.
+When a decision is saved with `analytics == false` (deny or withdraw), the implementation MUST clear first-party tracking state: the anonymous id (spec-identity §5) and any destination identifier cookies (e.g. Google's `_ga*`, spec-destinations §4). Grant paths are a no-op.
 
 ## Conformance vectors
 

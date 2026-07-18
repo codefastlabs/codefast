@@ -8,12 +8,12 @@ The key words MUST, MUST NOT, SHOULD, SHOULD NOT, and MAY are to be interpreted 
 
 | Document                                     | Scope                                                                                   |
 | -------------------------------------------- | --------------------------------------------------------------------------------------- |
-| [SPEC-EVENT-MODEL.md](SPEC-EVENT-MODEL.md)   | Event catalog, property validation, the `TrackEvent` envelope                           |
-| [SPEC-CONSENT.md](SPEC-CONSENT.md)           | Consent categories, regions and modes, decision records, the effective-consent rule     |
-| [SPEC-IDENTITY.md](SPEC-IDENTITY.md)         | Anonymous-id lifecycle: client minting, cookie contract, server persistence, withdrawal |
-| [SPEC-TRACKER.md](SPEC-TRACKER.md)           | The tracking pipeline: gate evaluation, envelope construction, fan-out, error handling  |
-| [SPEC-DESTINATIONS.md](SPEC-DESTINATIONS.md) | Destination interface, the exempt lane, property flattening, reference destinations     |
-| [SPEC-SERVER-LANE.md](SPEC-SERVER-LANE.md)   | Initial-consent resolution over shared/cached HTML: server endpoint + client store      |
+| [spec-event-model.md](spec-event-model.md)   | Event catalog, property validation, the `TrackEvent` envelope                           |
+| [spec-consent.md](spec-consent.md)           | Consent categories, regions and modes, decision records, the effective-consent rule     |
+| [spec-identity.md](spec-identity.md)         | Anonymous-id lifecycle: client minting, cookie contract, server persistence, withdrawal |
+| [spec-tracker.md](spec-tracker.md)           | The tracking pipeline: gate evaluation, envelope construction, fan-out, error handling  |
+| [spec-destinations.md](spec-destinations.md) | Destination interface, the exempt lane, property flattening, reference destinations     |
+| [spec-server-lane.md](spec-server-lane.md)   | Initial-consent resolution over shared/cached HTML: server endpoint + client store      |
 
 Each document ends with a Conformance section of language-neutral test vectors (JSON input → JSON output) that an implementation can turn into its own test suite.
 

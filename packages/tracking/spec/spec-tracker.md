@@ -1,4 +1,4 @@
-# SPEC-TRACKER — The Tracking Pipeline
+# spec-tracker — The Tracking Pipeline
 
 The key words MUST, MUST NOT, SHOULD, and MAY are to be interpreted as described in RFC 2119.
 
@@ -6,25 +6,25 @@ The key words MUST, MUST NOT, SHOULD, and MAY are to be interpreted as described
 
 A client tracker is created from:
 
-- `catalog` — the app's event catalog (SPEC-EVENT-MODEL §1).
-- `destinations` — the fan-out list (SPEC-DESTINATIONS).
-- `anonymousId` — a **callable** returning the visitor id, not a pre-resolved value. It is invoked per allowed event, so id minting stays lazy (SPEC-IDENTITY §1) and never happens as a construction side effect.
+- `catalog` — the app's event catalog (spec-event-model §1).
+- `destinations` — the fan-out list (spec-destinations).
+- `anonymousId` — a **callable** returning the visitor id, not a pre-resolved value. It is invoked per allowed event, so id minting stays lazy (spec-identity §1) and never happens as a construction side effect.
 - `isAnalyticsAllowed` — an optional **callable** consent gate. Omitted means "always allowed".
 
 ## 2. The `track(name, properties)` algorithm
 
 1. **Resolve the definition.** `catalog[name]`; unknown → raise `Unknown event: <name>`. This is a programmer error and MUST propagate (unlike delivery errors).
-2. **Validate.** Run schema validation per SPEC-EVENT-MODEL §2; failures propagate. The parsed output replaces the raw input from here on.
+2. **Validate.** Run schema validation per spec-event-model §2; failures propagate. The parsed output replaces the raw input from here on.
 3. **Evaluate the gate — per event, at track time.** Never cache the gate result at construction: a consent change mid-session MUST apply to the very next event.
 4. **Short-circuit.** If the gate is closed and no destination is exempt, return — nothing is built, nothing is sent, and no id is minted.
-5. **Build the envelope** (SPEC-EVENT-MODEL §3):
+5. **Build the envelope** (spec-event-model §3):
    - `anonymousId`: if the gate is open, invoke the `anonymousId` callable (this is the one place minting may happen); if closed, the empty string — the callable MUST NOT be invoked, so no id is ever minted as a side effect of a gated event.
    - `eventId`: fresh random UUID. `timestamp`: now. `type`: `"track"`. `properties`: the parsed output.
 6. **Fan out.** Gate open → every destination receives the envelope; gate closed → only exempt destinations receive it. All destinations receive the same envelope value.
 
 ## 3. The exempt lane
 
-Destinations marked `consentRequirement: "exempt"` (SPEC-DESTINATIONS §2) keep receiving events while the gate is closed, under strict conditions:
+Destinations marked `consentRequirement: "exempt"` (spec-destinations §2) keep receiving events while the gate is closed, under strict conditions:
 
 - Gated envelopes are **identifier-free**: `anonymousId` is `""` and no id is minted for them.
 - Nothing is persisted on the visitor's device for the exempt delivery.

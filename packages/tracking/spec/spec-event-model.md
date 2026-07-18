@@ -1,4 +1,4 @@
-# SPEC-EVENT-MODEL — Catalog, Validation, Envelope
+# spec-event-model — Catalog, Validation, Envelope
 
 The key words MUST, MUST NOT, SHOULD, and MAY are to be interpreted as described in RFC 2119.
 
@@ -44,7 +44,7 @@ Every event handed to a destination is one JSON-representable envelope:
 | `type`        | string | Always `"track"`. A discriminant: a future event kind is an additive union member, never a change to this shape. |
 | `name`        | string | The catalog key the caller tracked.                                                                              |
 | `properties`  | object | The parsed output of schema validation (section 2).                                                              |
-| `anonymousId` | string | The visitor's anonymous id — or the empty string `""` when the consent gate is closed (see SPEC-TRACKER §3).     |
+| `anonymousId` | string | The visitor's anonymous id — or the empty string `""` when the consent gate is closed (see spec-tracker §3).     |
 | `eventId`     | string | A freshly generated random UUID (RFC 4122 v4), stamped at track time. Destinations that dedupe MAY key on it.    |
 | `timestamp`   | number | Milliseconds since the Unix epoch, stamped at track time.                                                        |
 

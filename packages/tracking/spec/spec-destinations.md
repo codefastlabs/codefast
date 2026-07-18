@@ -1,4 +1,4 @@
-# SPEC-DESTINATIONS — Fan-Out Targets and Reference Destinations
+# spec-destinations — Fan-Out Targets and Reference Destinations
 
 The key words MUST, MUST NOT, SHOULD, and MAY are to be interpreted as described in RFC 2119.
 
@@ -8,13 +8,13 @@ A destination is the tracker's only dependency for delivery — never a specific
 
 - `name` — a stable identifier for logs/warnings.
 - `consentRequirement` — `"required"` (default) or `"exempt"` (§2).
-- `send(envelope)` — accepts a `TrackEvent` (SPEC-EVENT-MODEL §3) and returns a deferred/awaitable result. Destinations own their transport: queueing, batching, and unload delivery are the destination's (or its underlying tag's) job — the tracker adds no queue in front.
+- `send(envelope)` — accepts a `TrackEvent` (spec-event-model §3) and returns a deferred/awaitable result. Destinations own their transport: queueing, batching, and unload delivery are the destination's (or its underlying tag's) job — the tracker adds no queue in front.
 
-`send` SHOULD never throw synchronously; the tracker contains both failure shapes regardless (SPEC-TRACKER §4).
+`send` SHOULD never throw synchronously; the tracker contains both failure shapes regardless (spec-tracker §4).
 
 ## 2. Exemption rules
 
-`consentRequirement: "exempt"` asserts the sink is **cookieless and identifier-free**: it may then receive identifier-stripped envelopes while the consent gate is closed (SPEC-TRACKER §3). The default MUST be `"required"` so pre-consent delivery is an explicit opt-in by the integrator, never a silent default.
+`consentRequirement: "exempt"` asserts the sink is **cookieless and identifier-free**: it may then receive identifier-stripped envelopes while the consent gate is closed (spec-tracker §3). The default MUST be `"required"` so pre-consent delivery is an explicit opt-in by the integrator, never a silent default.
 
 ## 3. Property flattening
 
@@ -43,7 +43,7 @@ Normative for any implementation targeting GA4; the mapping and ordering rules a
 **Page-load bootstrap** (runs before any tag, e.g. an inline head script):
 
 1. Ensure the command-queue stub exists (the `dataLayer` array + a `gtag()` that pushes into it). First stub wins — recreating would orphan already-queued commands; every helper on one page MUST use the same queue name (default `dataLayer`).
-2. Read the stored consent record synchronously from the consent store (this is why the record is plain JSON — SPEC-CONSENT §5), validating policy version and decision shape inline; failures fall back to the baked-in default decision. Shared/cached HTML MUST bake the strictest default and upgrade after hydration (SPEC-SERVER-LANE).
+2. Read the stored consent record synchronously from the consent store (this is why the record is plain JSON — spec-consent §5), validating policy version and decision shape inline; failures fall back to the baked-in default decision. Shared/cached HTML MUST bake the strictest default and upgrade after hydration (spec-server-lane).
 3. Issue the consent **default** signal from that decision.
 4. **Then always load the tag** — advanced Consent Mode: the tag runs even when storage is denied (cookieless pings/modeling). The default signal MUST precede tag load.
 5. Queue the tag's own init commands (`js`, `config`) before injecting the script; the tag replays the queue in order once it boots. Script injection is idempotent — a second load call that finds the script already present is a no-op. A CSP nonce, when used, MUST reach both the inline bootstrap and the injected script element.
