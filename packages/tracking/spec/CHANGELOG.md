@@ -4,6 +4,12 @@ Versioning for the tracking specification itself, independent of the `@codefast/
 
 Because the extension documents cite fast-moving law and platform contracts, a **citation refresh** (re-verifying a source, correcting an access-dated fact) is a patch even when it changes a jurisdictional claim — the _engineering_ contract is unchanged. When a re-verified legal fact changes what an implementation must _do_ (e.g. a region's `optOutSignalBinding` flips), that is a minor.
 
+## 1.0.2 — 2026-07-18
+
+### spec-ad-consent-frameworks — status refresh (patch)
+
+- **Interop reconciler now implemented.** The status line flips from "not yet implemented" to note that `@codefast/tracking` ships `reconcileAdFrameworkConsent` + `hasTcfApi`/`hasGppApi` (§3 precedence, vectors V1–V6), while deriving the `CmpConsentSignal` from a live CMP's `TCData`/GPP (the purpose set + Google GVL vendor id) remains ad-ops policy the integrator supplies. Non-normative: the §3 contract and vectors are unchanged.
+
 ## 1.0.1 — 2026-07-18
 
 ### spec-data-subject-rights — citation refresh (patch)
