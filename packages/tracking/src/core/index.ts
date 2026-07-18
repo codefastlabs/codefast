@@ -28,6 +28,15 @@ export {
 export type { ConsentConfig } from "#/core/consent-config";
 export { defineConsentConfig } from "#/core/consent-config";
 
+export type {
+  ConsentReceipt,
+  ConsentReceiptEventType,
+  ConsentReceiptInput,
+  ConsentReceiptMethod,
+  ConsentReceiptSubjectIdType,
+} from "#/core/consent-receipt";
+export { isConsentReceiptInput } from "#/core/consent-receipt";
+
 export { readCookieValue } from "#/core/cookie";
 
 export type { Destination } from "#/core/destination";

@@ -2,7 +2,7 @@
 
 The key words MUST, MUST NOT, SHOULD, SHOULD NOT, and MAY are to be interpreted as described in RFC 2119.
 
-> **Status: design target for commercial scope, not yet implemented.** The reference implementation today persists only a client-side `ConsentRecord` in local storage ([spec-consent](spec-consent.md) §5). That cannot satisfy "demonstrable consent" obligations. This document specifies the server-side receipt layer required for legally-defensible proof of consent. Access dates for all citations: 2026-07-18. Items flagged **UNCERTAIN** need legal counsel review before reliance.
+> **Status: mechanism implemented (2026-07-18); durable storage and legal sufficiency still the consumer's.** The package now ships the receipt model (`ConsentReceipt`/`ConsentReceiptInput` + `isConsentReceiptInput`), a pluggable `ReceiptStore` with an in-memory reference (`createInMemoryReceiptStore`), the server builder (`buildConsentReceipt` + `coarsenIp`), and the TanStack Start endpoint helper (`recordConsentReceiptFromRequest`). What remains for a production deployment: a **durable store backend** (the in-memory one is dev-only), a configured **retention** period, an optional **notice-snapshot store** and integrity **signer**, and **counsel review** of legal sufficiency. This document remains the contract those pieces satisfy. Access dates for all citations: 2026-07-18. Items flagged **UNCERTAIN** need legal counsel review before reliance.
 
 ## 1. Why a client record is not proof
 
