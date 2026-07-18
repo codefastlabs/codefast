@@ -4,7 +4,7 @@ import {
   clearAnonymousIdResponseCookie,
   resolveInitialConsentFromRequest,
   setAnonymousIdResponseCookie,
-} from "#/tanstack-start";
+} from "#/adapters/tanstack-start";
 
 const { getRequestHeader, setResponseHeader } = vi.hoisted(() => ({
   getRequestHeader: vi.fn<(name: string) => string | undefined>(),

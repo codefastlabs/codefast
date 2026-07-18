@@ -9,7 +9,7 @@ const { getRequestHeader, sendMeasurementProtocolEvents } = vi.hoisted(() => ({
 }));
 
 vi.mock("@tanstack/react-start/server", () => ({ getRequestHeader }));
-vi.mock(import("@codefast/tracking/server"), async (importOriginal) => ({
+vi.mock(import("@codefast/tracking/server/measurement-protocol"), async (importOriginal) => ({
   ...(await importOriginal()),
   sendMeasurementProtocolEvents,
 }));

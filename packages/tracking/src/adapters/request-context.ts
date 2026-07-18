@@ -1,5 +1,3 @@
-import { getRequestHeader, setResponseHeader } from "@tanstack/react-start/server";
-
 import type { ConsentCategory, InitialConsent } from "#/core/consent";
 import type { ConsentReceipt, ConsentReceiptInput } from "#/core/consent-receipt";
 import { isConsentReceiptInput } from "#/core/consent-receipt";
@@ -9,13 +7,17 @@ import type { ReceiptStore } from "#/server/consent-receipt-store";
 import { resolveInitialConsent } from "#/server/initial-consent";
 
 /**
- * Request/response glue for TanStack Start — each helper reads or writes the framework's
- * ambient request context (AsyncLocalStorage), so a consumer's server functions shrink to
- * one-line handlers around them. Server-only: deny this subpath in the client environment
- * via Start's `importProtection` — the compiler already strips it with stubbed handler bodies.
- *
- * @since 1.0.0-canary.6
+ * Framework-neutral seam over the ambient request/response — the one interface a framework
+ * adapter (`./tanstack-start`, a future `./next`/`./remix`) must bind to its runtime. Every
+ * helper below reads and writes headers through it, so the request/response logic lives and
+ * is tested once, and each adapter shrinks to wiring these two accessors.
  */
+export interface RequestContext {
+  /** Reads an inbound request header, case-insensitively; `undefined` when absent. */
+  getHeader(name: string): string | undefined;
+  /** Sets an outbound response header, replacing any prior value. */
+  setHeader(name: string, value: string): void;
+}
 
 export interface InitialConsentFromRequestOptions {
   /**
@@ -33,22 +35,20 @@ export interface InitialConsentFromRequestOptions {
  * and `sec-gpc`, fails closed when geo is missing, and stamps
  * `cache-control: private, no-store` — the value is per-visitor by definition, so no
  * shared cache may ever store the response carrying it.
- *
- * @since 1.0.0-canary.6
  */
-export function resolveInitialConsentFromRequest(options: InitialConsentFromRequestOptions): InitialConsent {
-  setResponseHeader("cache-control", "private, no-store");
+export function resolveInitialConsentFromContext(
+  context: RequestContext,
+  options: InitialConsentFromRequestOptions,
+): InitialConsent {
+  context.setHeader("cache-control", "private, no-store");
 
   return resolveInitialConsent({
-    countryCode: getRequestHeader(options.countryHeaderName ?? "x-vercel-ip-country"),
-    hasGlobalPrivacyControlSignal: getRequestHeader("sec-gpc") === "1",
+    countryCode: context.getHeader(options.countryHeaderName ?? "x-vercel-ip-country"),
+    hasGlobalPrivacyControlSignal: context.getHeader("sec-gpc") === "1",
     requestedCategories: options.requestedCategories,
   });
 }
 
-/**
- * @since 1.0.0-canary.6
- */
 export interface AnonymousIdResponseCookieOptions {
   /** Cookie name — must match what the client tracker reads. */
   cookieName: string;
@@ -63,11 +63,12 @@ export interface AnonymousIdResponseCookieOptions {
  * response — the server re-issue that escapes Safari ITP's 7-day cap on script-written
  * cookies. Validation lives in `buildAnonymousIdSetCookie`: a non-UUID id throws, so this
  * can safely back a public server function without echoing attacker input into a header.
- *
- * @since 1.0.0-canary.6
  */
-export function setAnonymousIdResponseCookie(options: AnonymousIdResponseCookieOptions): void {
-  setResponseHeader(
+export function setAnonymousIdResponseCookieOnContext(
+  context: RequestContext,
+  options: AnonymousIdResponseCookieOptions,
+): void {
+  context.setHeader(
     "set-cookie",
     buildAnonymousIdSetCookie({
       cookieName: options.cookieName,
@@ -79,19 +80,17 @@ export function setAnonymousIdResponseCookie(options: AnonymousIdResponseCookieO
 
 /**
  * Expires the anonymous-id cookie on the current response — the server half of a consent withdrawal.
- *
- * @since 1.0.0-canary.6
  */
-export function clearAnonymousIdResponseCookie(cookieName: string): void {
-  setResponseHeader("set-cookie", buildClearAnonymousIdSetCookie(cookieName));
+export function clearAnonymousIdResponseCookieOnContext(context: RequestContext, cookieName: string): void {
+  context.setHeader("set-cookie", buildClearAnonymousIdSetCookie(cookieName));
 }
 
 /** Order the connection IP is read from — first forwarded hop wins, then the single real-ip header. */
 const IP_HEADER_NAMES: ReadonlyArray<string> = ["x-forwarded-for", "x-real-ip"];
 
-function readConnectionIp(): string | undefined {
+function readConnectionIp(context: RequestContext): string | undefined {
   for (const headerName of IP_HEADER_NAMES) {
-    const value = getRequestHeader(headerName);
+    const value = context.getHeader(headerName);
 
     if (value) {
       // x-forwarded-for is "client, proxy1, proxy2" — the client is the first hop.
@@ -130,16 +129,17 @@ export interface RecordConsentReceiptFromRequestOptions {
  * @throws Error when `input` fails {@link isConsentReceiptInput} (including a body that
  * carries an `ip`/`ipCoarse` field — the server owns IP derivation).
  */
-export async function recordConsentReceiptFromRequest(
+export async function recordConsentReceiptFromContext(
+  context: RequestContext,
   options: RecordConsentReceiptFromRequestOptions,
 ): Promise<ConsentReceiptAck> {
-  setResponseHeader("cache-control", "no-store");
+  context.setHeader("cache-control", "no-store");
 
   if (!isConsentReceiptInput(options.input)) {
     throw new Error("Invalid consent receipt input");
   }
 
-  const receipt = buildConsentReceipt({ input: options.input, rawIp: readConnectionIp(), sign: options.sign });
+  const receipt = buildConsentReceipt({ input: options.input, rawIp: readConnectionIp(context), sign: options.sign });
 
   await options.store.append(receipt);
 

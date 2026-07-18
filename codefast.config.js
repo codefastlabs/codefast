@@ -14,9 +14,12 @@ const config = {
     "@codefast/tailwind-variants": {
       preserve: true,
     },
-    // Hand-curated group entries (dist/ has ~50 modules; regeneration would re-expose them all).
+    // Generate exports from dist/ like every other library package; the css directory is a
+    // raw source passthrough (no build output), so it needs an explicit mapping.
     "@codefast/tracking": {
-      preserve: true,
+      exports: {
+        "./css/*": "./src/css/*",
+      },
     },
     "@apps/ui": false,
     "@examples/tanstack-start": false,

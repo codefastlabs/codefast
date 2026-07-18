@@ -1,10 +1,10 @@
-import type { ConsentReceiptInput } from "@codefast/tracking";
-import { readCookieValue } from "@codefast/tracking";
+import type { ConsentReceiptInput } from "@codefast/tracking/core/consent-receipt";
+import { readCookieValue } from "@codefast/tracking/core/cookie";
 import {
   extractGaClientId,
   sendMeasurementProtocolEvents,
   toMeasurementProtocolConsent,
-} from "@codefast/tracking/server";
+} from "@codefast/tracking/server/measurement-protocol";
 import { getRequestHeader } from "@tanstack/react-start/server";
 
 /**

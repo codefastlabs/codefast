@@ -1,7 +1,8 @@
 import { defineEventCatalog } from "@codefast/tracking";
-import type { ClientTracker } from "@codefast/tracking/client";
-import { createClientTracker, createServerPersistedAnonymousId } from "@codefast/tracking/client";
-import { createGoogleAnalyticsDestination } from "@codefast/tracking/destinations";
+import type { ClientTracker } from "@codefast/tracking/client/create-client-tracker";
+import { createClientTracker } from "@codefast/tracking/client/create-client-tracker";
+import { createServerPersistedAnonymousId } from "@codefast/tracking/client/server-persisted-anonymous-id";
+import { createGoogleAnalyticsDestination } from "@codefast/tracking/destinations/google-analytics";
 import { createVercelAnalyticsDestination } from "@codefast/tracking/destinations/vercel-analytics";
 // zod/mini: same schemas over Standard Schema at a fraction of zod classic's client bytes.
 import * as z from "zod/mini";

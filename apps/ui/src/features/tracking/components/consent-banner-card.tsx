@@ -9,7 +9,7 @@ import {
   ConsentBannerReject,
   ConsentBannerSave,
   ConsentBannerTitle,
-} from "@codefast/tracking/react";
+} from "@codefast/tracking/react/consent-banner";
 import { cn } from "@codefast/ui/lib/utils";
 import { buttonVariants } from "@codefast/ui/variants/button";
 import type { ComponentProps } from "react";

@@ -33,11 +33,11 @@ function setRegion(initialConsent: InitialConsent): void {
 vi.mock("#/features/tracking/lib/tracking", () => ({
   clearAnonymousId,
 }));
-vi.mock(import("@codefast/tracking/client"), async (importOriginal) => ({
+vi.mock(import("@codefast/tracking/client/gpc"), async (importOriginal) => ({
   ...(await importOriginal()),
   hasGlobalPrivacyControlSignal,
 }));
-vi.mock(import("@codefast/tracking/destinations"), async (importOriginal) => ({
+vi.mock(import("@codefast/tracking/destinations/google-analytics"), async (importOriginal) => ({
   ...(await importOriginal()),
   clearGoogleAnalyticsCookies,
 }));

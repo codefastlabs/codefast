@@ -1,7 +1,7 @@
-import type { ConsentReceiptInput } from "@codefast/tracking";
-import type { ReceiptStore } from "@codefast/tracking/server";
-import { createInMemoryReceiptStore } from "@codefast/tracking/server";
-import { recordConsentReceiptFromRequest } from "@codefast/tracking/tanstack-start";
+import { recordConsentReceiptFromRequest } from "@codefast/tracking/adapters/tanstack-start";
+import type { ConsentReceiptInput } from "@codefast/tracking/core/consent-receipt";
+import type { ReceiptStore } from "@codefast/tracking/server/consent-receipt-store";
+import { createInMemoryReceiptStore } from "@codefast/tracking/server/consent-receipt-store";
 import { createServerFn } from "@tanstack/react-start";
 
 import { forwardConsentDecisionToGa4 } from "#/features/tracking/lib/ga4-measurement-protocol.server";

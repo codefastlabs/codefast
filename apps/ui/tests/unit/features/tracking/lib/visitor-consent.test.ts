@@ -18,7 +18,7 @@ const { hasGlobalPrivacyControlSignal, resolveVisitorConsent } = vi.hoisted(() =
 
 // The server-function network boundary — the store itself runs for real.
 vi.mock("#/features/tracking/lib/resolve-visitor-consent", () => ({ resolveVisitorConsent }));
-vi.mock(import("@codefast/tracking/client"), async (importOriginal) => ({
+vi.mock(import("@codefast/tracking/client/gpc"), async (importOriginal) => ({
   ...(await importOriginal()),
   hasGlobalPrivacyControlSignal,
 }));
