@@ -14,6 +14,18 @@ export { createDurableReceiptStore, createInMemoryReceiptStore } from "#/server/
 export type { InitialConsent, InitialConsentOptions } from "#/server/initial-consent";
 export { resolveInitialConsent } from "#/server/initial-consent";
 
+export type {
+  MeasurementProtocolConsent,
+  MeasurementProtocolEvent,
+  MeasurementProtocolTransport,
+  SendMeasurementProtocolEventsOptions,
+} from "#/server/measurement-protocol";
+export {
+  extractGaClientId,
+  sendMeasurementProtocolEvents,
+  toMeasurementProtocolConsent,
+} from "#/server/measurement-protocol";
+
 export {
   EU_COUNTRY_CODES,
   OPT_IN_EQUIVALENT_COUNTRY_CODES,
