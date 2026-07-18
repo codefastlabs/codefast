@@ -1,4 +1,4 @@
-import { GtagConsentBootstrap } from "@codefast/tracking/react";
+import { GtagConsentBootstrap } from "@codefast/tracking/react/gtag-consent-bootstrap";
 
 import { consentConfig, STRICTEST_INITIAL_CONSENT } from "#/features/tracking/lib/consent";
 import { GA_MEASUREMENT_ID } from "#/features/tracking/lib/google-tag-loader";

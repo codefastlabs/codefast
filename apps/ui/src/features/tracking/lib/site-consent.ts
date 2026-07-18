@@ -1,9 +1,10 @@
 import type { ConsentDecision, ConsentMode } from "@codefast/tracking";
 import { readCookieValue, readStoredDecision } from "@codefast/tracking";
-import { createConsentWithdrawalHandler, hasGlobalPrivacyControlSignal } from "@codefast/tracking/client";
-import { clearGoogleAnalyticsCookies } from "@codefast/tracking/destinations";
-import type { UseConsentResult } from "@codefast/tracking/react";
-import { useConsent } from "@codefast/tracking/react";
+import { createConsentWithdrawalHandler } from "@codefast/tracking/client/consent-withdrawal";
+import { hasGlobalPrivacyControlSignal } from "@codefast/tracking/client/gpc";
+import { clearGoogleAnalyticsCookies } from "@codefast/tracking/destinations/google-analytics";
+import type { UseConsentResult } from "@codefast/tracking/react/use-consent";
+import { useConsent } from "@codefast/tracking/react/use-consent";
 import { useEffect } from "react";
 
 import { ANONYMOUS_ID_COOKIE_NAME } from "#/features/tracking/lib/anonymous-id";

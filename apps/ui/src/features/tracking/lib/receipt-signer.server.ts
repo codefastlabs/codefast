@@ -1,6 +1,6 @@
 import { createHmac } from "node:crypto";
 
-import type { ConsentReceipt } from "@codefast/tracking";
+import type { ConsentReceipt } from "@codefast/tracking/core/consent-receipt";
 
 /**
  * HMAC-SHA256 signer over a receipt, keyed by `CONSENT_RECEIPT_SECRET`. Stamps the

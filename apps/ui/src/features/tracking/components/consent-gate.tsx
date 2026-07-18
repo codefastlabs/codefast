@@ -1,5 +1,6 @@
-import { updateGoogleConsent } from "@codefast/tracking/destinations";
-import { ConsentToggle, useGoogleConsentSync } from "@codefast/tracking/react";
+import { updateGoogleConsent } from "@codefast/tracking/destinations/google-analytics";
+import { ConsentToggle } from "@codefast/tracking/react/consent-banner";
+import { useGoogleConsentSync } from "@codefast/tracking/react/use-google-consent-sync";
 import { CookieIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 

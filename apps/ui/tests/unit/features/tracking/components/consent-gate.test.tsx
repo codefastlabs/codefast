@@ -27,7 +27,7 @@ vi.mock("#/features/tracking/lib/tracking", () => ({
 }));
 // Only the cookie clear is spied (jsdom's document.cookie is awkward to assert on);
 // consent updates are asserted on the real gtag stub's dataLayer below.
-vi.mock(import("@codefast/tracking/destinations"), async (importOriginal) => ({
+vi.mock(import("@codefast/tracking/destinations/google-analytics"), async (importOriginal) => ({
   ...(await importOriginal()),
   clearGoogleAnalyticsCookies,
 }));

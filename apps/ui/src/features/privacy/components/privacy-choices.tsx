@@ -1,4 +1,4 @@
-import { hasGlobalPrivacyControlSignal } from "@codefast/tracking/client";
+import { hasGlobalPrivacyControlSignal } from "@codefast/tracking/client/gpc";
 import { Switch } from "@codefast/ui/switch";
 import type { ReactNode } from "react";
 

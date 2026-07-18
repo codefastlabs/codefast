@@ -1,4 +1,4 @@
-import { loadGtagScript } from "@codefast/tracking/destinations";
+import { loadGtagScript } from "@codefast/tracking/destinations/google-analytics";
 
 export const GA_MEASUREMENT_ID: string | undefined = import.meta.env.VITE_GA4_MEASUREMENT_ID;
 
