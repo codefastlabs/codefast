@@ -26,7 +26,7 @@ Publishers running programmatic ads already have a certified CMP on the page (th
 
 Dates: a Google-certified CMP integrated with IAB TCF has been required to serve/measure ads to EEA+UK users since **2024-01-16**, Switzerland since **2024-07-31** ([Google Ad Manager Help 13554116](https://support.google.com/admanager/answer/13554116)). Without a certified CMP, traffic may receive only non-personalized/limited ads.
 
-**Version note (UNCERTAIN, verify against IAB Europe primary):** TCF v2.2 (since 2023) is being superseded by **TCF v2.3, reportedly mandatory 2026-02-28**. v2.3 adds a mandatory Disclosed Vendors segment to the Core string but leaves the TC String bit-format and the CMP API otherwise unchanged — so a reader written against the v2.2 `__tcfapi` keeps working.
+**Version note (verified 2026-07-18 against IAB Europe primary):** TCF v2.2 (since 2023) is superseded by **TCF v2.3, released 2025-06-19 and mandatory 2026-02-28** — TC strings created on/after 2026-03-01 without the Disclosed Vendors segment are invalid. v2.3's only wire change is making the previously-optional **Disclosed Vendors** segment mandatory (a separate segment appended after the Core string); the Core-string bit-format and the CMP API (`__tcfapi`, version 2) are unchanged, so a reader that parses standard consent/LI bits keeps working — the burden falls on CMPs (must emit the segment) and on vendors that check disclosure. (The "reader unaffected" conclusion is reasoned from the documented change, not a verbatim IAB statement.)
 
 ## 3. The CMP interop resolver
 
@@ -58,9 +58,9 @@ For sites without a CMP (measurement-only, or ads outside EEA/UK/CH), native `{ 
 
 ## 5. Uncertainties requiring legal / ad-ops review
 
-1. The exact TCF purpose set for `ads` (typically Purposes 1/3/4) and `analytics` (typically 7–10) and Google's GVL vendor id — confirm against the current Global Vendor List; vendor ids and purpose semantics are policy, not memory.
+1. The exact TCF purpose set for `ads` (typically Purposes 1/3/4) and `analytics` (typically 7–10). "Google Advertising Products" is **GVL vendor id 755** (verified 2026-07-18 — corroborated by Google's own TCF validation error 1.4, which flags requests lacking vendor 755; not read directly from the live vendor-list.json, which is too large to machine-search). Still confirm the purpose set and re-check the id against the current Global Vendor List before relying — ids and purpose semantics are policy owned by ad-ops, not memory.
 2. Collapsing a granular multi-vendor TC String into one boolean is lossy by design — legal should confirm the system may reduce it to `{ ads, analytics }` for _its own_ gating while forwarding the full `tcString`/`addtlConsent` untouched to Google tags.
-3. TCF v2.3's 2026-02-28 mandatory date and that no format change beyond the Disclosed Vendors segment affects a reader — confirm against IAB Europe primary (§2 leans partly on secondary sources).
+3. TCF v2.3's 2026-02-28 mandatory date and reader-impact are **verified** against IAB Europe primary (2026-07-18); the "reader unaffected" point is reasoned inference, not a verbatim IAB statement — re-confirm if a v2.4 lands.
 4. `gdprApplies === undefined` — legal/ad-ops decide whether to fail closed (recommended) or fall through to native.
 5. Google Basic vs Advanced Consent Mode is a product decision with revenue/privacy trade-offs — out of scope for this library to mandate; default to Basic, document both.
 

@@ -26,8 +26,17 @@ Initial published specification.
 - `spec-security` — consolidated Security & Privacy Considerations.
 - This changelog + spec versioning.
 
+### Post-publication verification (2026-07-18)
+
+A verification pass against primary sources, same day. Each item is CONFIRMED (matched primary), CORRECTED (fact changed), or STILL-UNREACHABLE (official source blocked this session; claim kept flagged, not fabricated).
+
+- **CORRECTED — Montana dropped from the GPC-mandate list.** Verified against `mca.legmt.gov` and the enrolled SB 297 (both reachable): 2025 SB 297 repealed the universal-opt-out-mechanism duty (Section 15 of Ch. 681, L. 2023). Current MCDPA prescribes only a controller-established opt-out means + a manual link. `spec-regions` Montana row flipped to "no GPC mandate"; the count is now ~11 states. (Under the versioning policy this touches a normative value — a state's `optOutSignalBinding` — but the affected document is a pre-implementation design target and the claim was already UNCERTAIN-flagged, so it is folded into 1.0.0 rather than cut as a minor.)
+- **CORRECTED — Vietnam PDPL article numbering.** Enacted PDPL (Law 91/2025/QH15) uses **Art. 9 (consent) / Art. 10 (withdrawal)**, not the predecessor Decree 13/2023's Art. 11–12. `spec-consent-receipts` updated.
+- **CONFIRMED — TCF v2.3** mandatory 2026-02-28, reader-unaffected (reasoned inference); **Google GVL vendor id 755** for Google Advertising Products (corroborated via Google's TCF validation error 1.4, not a direct read of the live vendor list); **Consent Mode v2 `region`** ISO 3166-2 array with most-specific-wins and a no-region catch-all. `spec-ad-consent-frameworks` de-hedged accordingly.
+- **STILL-UNREACHABLE — six US state primary sites** (Texas served only a JS shell; Connecticut, Rhode Island, Utah, Nebraska, New Jersey refused TLS connections). The TX §541.055(e)/§541.156, CT §42-520(e) (vs the mis-cited §42-518), RI, Utah post-2026-amendment, NE no-PRA, and NJ rulemaking-status citations therefore remain **primary-unverified** and stay flagged; re-run when those hosts are reachable (Texas needs a JS-executing browser).
+
 ### Known verification debt (see per-document UNCERTAIN flags)
 
-- US per-state effective dates and the "~12-state GPC" list are a moving target; several official state sites were unreachable during research and rest on mirrors. **Montana** (2025 SB 297 may have repealed its UOOM mandate) and **Maryland** (permissive "may utilize" wording) are flagged CONTESTED rather than settled.
-- Fast-moving external facts to re-confirm before any extension becomes normative: TCF v2.3 mandatory date, Vietnam PDPL article numbering, Google GVL vendor id, Consent Mode v2 platform mechanics.
-- All UNCERTAIN legal premises require counsel review before implementation.
+- US per-state effective dates and the (now ~11-state) GPC list remain a moving target; the six state citations above are mirror-based pending primary re-verification.
+- **Maryland** (permissive "may utilize" wording) is still flagged CONTESTED rather than settled.
+- All remaining UNCERTAIN legal premises require counsel review before implementation.

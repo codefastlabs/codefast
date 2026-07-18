@@ -10,7 +10,7 @@ The controller carries the burden of proving consent (GDPR Art. 7(1); Recital 42
 
 > a controller should retain, in an online context, information on the session in which consent was expressed, documentation of the consent workflow at the time, and a copy of the information presented to the data subject — and **"it would not be sufficient to merely refer to a correct configuration of the respective website."**
 
-A tamperable client `ConsentRecord` in local storage is exactly such a "website configuration": it can be cleared, forged, or diverge across devices. It therefore **MUST NOT** be the record of proof. Analogous burden-of-proof duties: Brazil LGPD Art. 8 §2; Vietnam PDPD Decree 13/2023 Art. 11–12 (consent and withdrawal must be in a "format that can be printed, copied, or verified"); Quebec Law 25 s.14 (**UNCERTAIN** — precise record-keeping article).
+A tamperable client `ConsentRecord` in local storage is exactly such a "website configuration": it can be cleared, forged, or diverge across devices. It therefore **MUST NOT** be the record of proof. Analogous burden-of-proof duties: Brazil LGPD Art. 8 §2; Vietnam PDPL (Law 91/2025/QH15, in force 2026-01-01) **Art. 9 (consent) / Art. 10 (withdrawal)** — verified 2026-07-18, the enacted-law numbering, superseding the predecessor Decree 13/2023's Art. 11–12; both require a printable/verifiable format; Quebec Law 25 s.14 (**UNCERTAIN** — precise record-keeping article).
 
 The five dimensions a receipt MUST make demonstrable: **who** consented, **when**, **to what** (purposes), **how** (the workflow/method), and **under which notice text/version** presented at that moment.
 
@@ -31,7 +31,7 @@ The five dimensions a receipt MUST make demonstrable: **who** consented, **when*
 | `noticeVersion` + `noticeSnapshotRef`                                           | MUST   | EDPB para 108 "copy of the information presented"               | None (but the snapshot store must exist)                                   |
 | `noticeLanguage` (BCP-47)                                                       | MUST   | EDPB informed-consent                                           | None                                                                       |
 | `method` (`banner-accept`/`banner-reject`/`granular`/`gpc-signal`/`withdrawal`) | MUST   | ISO 27560 method of expression; EDPB "how"                      | None                                                                       |
-| `eventType` (`give`/`update`/`withdraw`)                                        | MUST   | ISO 27560 consent events; PDPD Art. 12                          | None                                                                       |
+| `eventType` (`give`/`update`/`withdraw`)                                        | MUST   | ISO 27560 consent events; PDPL Art. 10                          | None                                                                       |
 | `sourceUrl`                                                                     | SHOULD | Cookiebot; session context                                      | Low (**strip query string**)                                               |
 | `userAgent`                                                                     | SHOULD | market practice                                                 | **Medium** — store browser/OS family only                                  |
 | `ipCoarse` (truncated/pseudonymized)                                            | SHOULD | Cookiebot bit-truncation; TrustArc pseudonymization             | **High if full** — never store full IP                                     |
@@ -70,7 +70,7 @@ Because the response carries PII, the endpoint MUST:
 - **R4 (MUST)** — the receipt MUST NOT collect more personal data than necessary to evidence the consent link. _(EDPB para 106 — a minimization ceiling on the receipt itself.)_
 - **R5 (MUST)** — a full IP address MUST NOT be persisted; only a truncated/pseudonymized form.
 - **R6 (SHOULD)** — `userAgent` SHOULD be reduced to browser/OS family unless the full string is justified as evidence.
-- **R7 (MUST)** — withdrawal events MUST be retained in the same provable, exportable format as grants. _(PDPD Art. 12; GDPR Art. 7(3).)_
+- **R7 (MUST)** — withdrawal events MUST be retained in the same provable, exportable format as grants. _(PDPL Art. 10; GDPR Art. 7(3).)_
 
 ## 5. Authoritative-source rule
 
@@ -96,4 +96,4 @@ The client `ConsentRecord` (local storage) is authoritative **only for runtime U
 
 ## Uncertainties requiring legal review
 
-Quebec Law 25's precise record-keeping article vs. its s.14 validity provision; Vietnam's article numbering under the enacted 2025 PDPL vs. Decree 13/2023 Art. 11–12; and the concrete retention number per target jurisdiction (make it configurable, do not hard-code).
+Quebec Law 25's precise record-keeping article vs. its s.14 validity provision; and the concrete retention number per target jurisdiction (make it configurable, do not hard-code). (Vietnam's PDPL numbering — Art. 9 consent / Art. 10 withdrawal — was resolved in the 2026-07-18 verification pass; see §1.)
