@@ -32,3 +32,10 @@ export {
   resolveRegion,
   resolveRegionFromCountryCode,
 } from "#/server/region";
+
+export type {
+  Ga4UserDeletionRequest,
+  Ga4UserDeletionTransport,
+  SubmitGa4UserDeletionOptions,
+} from "#/server/user-deletion";
+export { buildGa4UserDeletionRequest, submitGa4UserDeletion } from "#/server/user-deletion";
