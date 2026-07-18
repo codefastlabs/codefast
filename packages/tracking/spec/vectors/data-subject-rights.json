@@ -24,11 +24,16 @@
     {
       "id": "dsr.ga4.delete-binding",
       "source": "DSR-V3",
-      "summary": "the GA4 destination emits a User Deletion API request keyed on the client_id",
+      "summary": "buildGa4UserDeletionRequest emits an Admin API submitUserDeletion request keyed on the client_id",
       "kind": "pure",
       "operation": "buildGa4UserDeletionRequest",
-      "input": { "clientId": "GA1.2.123.456" },
-      "expect": { "request": { "id": { "type": "CLIENT_ID", "userId": "GA1.2.123.456" } } }
+      "input": { "clientId": "123.456", "propertyId": "1234567" },
+      "expect": {
+        "request": {
+          "body": { "clientId": "123.456" },
+          "url": "https://analyticsadmin.googleapis.com/v1alpha/properties/1234567:submitUserDeletion"
+        }
+      }
     },
     {
       "id": "dsr.meta.erasure-is-cookie-clear-and-stop-send",

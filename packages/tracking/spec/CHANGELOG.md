@@ -4,6 +4,12 @@ Versioning for the tracking specification itself, independent of the `@codefast/
 
 Because the extension documents cite fast-moving law and platform contracts, a **citation refresh** (re-verifying a source, correcting an access-dated fact) is a patch even when it changes a jurisdictional claim — the _engineering_ contract is unchanged. When a re-verified legal fact changes what an implementation must _do_ (e.g. a region's `optOutSignalBinding` flips), that is a minor.
 
+## 1.0.1 — 2026-07-18
+
+### spec-data-subject-rights — citation refresh (patch)
+
+- **GA4 User Deletion — corrected to the current API.** The legacy v3 `userDeletionRequests:upsert` cited in §3 and vector DSR-V3 was sunset with Universal Analytics. Updated to the Analytics Admin API `properties.submitUserDeletion` (`analytics.edit` scope), keyed by a flat `clientId`. DSR-V3 and `data-subject-rights.json` now snapshot `{ body: { clientId }, url }` at `.../v1alpha/properties/{propertyId}:submitUserDeletion`. Implemented in the reference package as `buildGa4UserDeletionRequest` / `submitGa4UserDeletion`.
+
 ## 1.0.0 — 2026-07-18
 
 Initial published specification.
