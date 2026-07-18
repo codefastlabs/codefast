@@ -14,7 +14,20 @@ A destination is the tracker's only dependency for delivery — never a specific
 
 ## 2. Exemption rules
 
-`consentRequirement: "exempt"` asserts the sink is **cookieless and identifier-free**: it may then receive identifier-stripped envelopes while the consent gate is closed (spec-tracker §3). The default MUST be `"required"` so pre-consent delivery is an explicit opt-in by the integrator, never a silent default.
+`consentRequirement: "exempt"` asserts the sink is cookieless and identifier-free: it may then receive identifier-stripped envelopes while the consent gate is closed (spec-tracker §3). The default MUST be `"required"` so pre-consent delivery is an explicit opt-in by the integrator, never a silent default.
+
+**Conditions for exemption.** A sink MAY be declared `"exempt"` only if it satisfies **all** of the following (CNIL Sheet n°16, the audience-measurement exemption; access 2026-07-18):
+
+1. No client-side persistent storage or read-back of a stable device identifier — no cookies, no local-storage ids, no fingerprint. A **daily-salted rotating hash qualifies; a stable hash does not.**
+2. Purpose strictly limited to first-party audience measurement — no ad or marketing use.
+3. Single-site scope; no cross-site/cross-app linkage of the same user.
+4. No cross-referencing with other datasets (CRM, other-site stats).
+5. IP address truncated/discarded, never stored raw.
+6. Output is aggregate/anonymous, not directly or indirectly re-identifiable.
+7. Retention capped (CNIL: tracker life ≤ 13 months).
+8. Transparency plus a free, simple opt-out even when banner-exempt.
+
+**The non-negotiable caveat.** Exemption is from the ePrivacy **consent banner only** — GDPR still requires a documented legal basis for server-side IP processing (IP is personal data), and EDPB _Guidelines 2/2023 on the Technical Scope of Art. 5(3)_ hold that pixels and fingerprinting are in scope regardless of cookies. Exemption is **jurisdiction-dependent** (France/Luxembourg eligible if all conditions hold; UK conditionally eligible post the DUAA/PECR "statistical purposes" exception — **UNCERTAIN**; Germany treats it as consent-likely) and there is **no EU-wide regulator-certified "no consent" status** — vendor "no cookie banner needed" claims are self-assertions. **Design implication: exemption MUST be gateable per-jurisdiction, not assumed global** — wire it to the region rule ([spec-regions](spec-regions.md)), not to a build-time constant.
 
 ## 3. Property flattening
 
@@ -54,9 +67,27 @@ Normative for any implementation targeting GA4; the mapping and ordering rules a
 
 **Withdrawal.** Consent Mode stops using Google's cookies once denied but never removes them. On analytics withdrawal the implementation MUST expire `_ga` and every `_ga_*` cookie, on `path=/` for both the host and its parent-domain variant (the tag sets its cookie on the broadest domain it can reach).
 
-## 5. Reference destination: cookieless counter (Vercel Analytics shape)
+### 4a. Per-region Consent Mode defaults
 
-A sink that is cookieless and attaches no identifier from this system — hence exempt-eligible (`"exempt"` still opt-in per §2). Delivery only pushes onto the provider's own in-page queue; the provider script is loaded once elsewhere by the app. Properties flatten per §3 with null allowed.
+To bake a stricter EEA baseline while defaulting the rest of the world differently, Consent Mode v2's `default` command takes a `region` array of ISO 3166-2 codes — accepting both country (`"ES"`, `"US"`) and subdivision (`"US-CA"`) codes. Rules stack, **most-specific region wins**, and a `default` command with **no** `region` is the catch-all for visitors not covered by a region-specific command. Emit region-specific defaults first, then the global catch-all. This mirrors [spec-regions](spec-regions.md) §4's "most-specific ISO 3166-2 wins, unknown → strictest" resolution. `wait_for_update` (milliseconds) gives an async consent source time to `update` before tags fire. (`url_passthrough`/`ads_data_redaction` are `gtag('set', …)` flags, **not** consent-command fields — do not place them in the consent object.)
+
+## 5. Additional platform destinations
+
+> **Status: design target, not yet implemented.** The reference implementation ships only GA4 (§4) and the cookieless counter (§6). These mappings specify how the normalized `{ ads, analytics }` decision drives other ad platforms. Access dates 2026-07-18; **UNCERTAIN** items need verification against live platform docs (these APIs change frequently).
+
+Unlike GA4's unified Consent Mode object, other platforms expose per-vendor shapes. Each MUST consume the same `{ ads, analytics }` decision:
+
+| Platform                      | Gate driven by `analytics`                                                                                     | Restriction driven by `ads`                                                                                           | Notes                                                                                                                                                                                                                            |
+| ----------------------------- | -------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Microsoft UET**             | —                                                                                                              | `ad_storage` (the **only enforced** signal) via `uetq.push('consent','default'\|'update',{...})`                      | no `analytics_storage`; absent-signal default is region-dependent (denied in EEA/UK/CH, enforced 2025-05-05). `ad_user_data`/`ad_personalization` accepted but no documented behavior — **UNCERTAIN**, don't model as functional |
+| **Meta Pixel / CAPI**         | transmission gate: `fbq('consent','revoke'\|'grant')` (Pixel); gate at send boundary (CAPI — no consent field) | Limited Data Use: `fbq('dataProcessingOptions',['LDU'],0,0)` (Pixel); `data_processing_options` (CAPI)                | `0,0` = let Meta geolocate (recommended). Only country `1`=USA, state `1000`=California are documented codes — **not FIPS**; use `0,0` beyond California                                                                         |
+| **TikTok Pixel / Events API** | `ttq.holdConsent()` before load, then `ttq.grantConsent()`/`revokeConsent()`                                   | LDU: `ttq.load(id,{limited_data_use:true})` or per-event; server `limited_data_use:true` (**requires IP in payload**) | single boolean, **not** Meta's `data_processing_options` structure; no signal object; `ttq.updateConsent()` is legacy — do not use                                                                                               |
+
+Cross-cutting: a US opt-out (`ads = false` via GPC/GPP) maps to LDU on Meta/TikTok and `ad_storage: denied` on UET/GA4, but MUST NOT withdraw first-party `analytics` (spec-consent §3). What breaks if consent is wrong is legal (EEA users excluded from ad audiences; unlawful pre-consent hits) and often silent (a left-on `revoke` withholds everything; LDU without an IP does nothing) — so these mappings are normative, not advisory. For programmatic ad serving in the EEA/UK/CH the platform decision comes from a CMP, not this native mapping — see [spec-ad-consent-frameworks](spec-ad-consent-frameworks.md).
+
+## 6. Reference destination: cookieless counter (Vercel Analytics shape)
+
+A sink that is cookieless and attaches no identifier from this system — hence exempt-eligible (`"exempt"` still opt-in per §2, and still subject to §2's per-jurisdiction caveat: some regulators require consent even for cookieless analytics). Delivery only pushes onto the provider's own in-page queue; the provider script is loaded once elsewhere by the app. Properties flatten per §3 with null allowed.
 
 ## Conformance vectors
 

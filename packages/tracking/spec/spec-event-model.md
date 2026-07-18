@@ -51,6 +51,23 @@ Every event handed to a destination is one JSON-representable envelope:
 - `eventId` MUST be unique per `track()` call — never reused across retries or destinations.
 - The envelope is immutable once built: every destination in a fan-out receives the same envelope value.
 
+## 4. Reserved: the context envelope
+
+> **Status: reserved key, not yet populated.** Every comparable system (Segment, RudderStack, PostHog, Amplitude, Mixpanel, Snowplow) auto-attaches a context envelope; this system currently omits one. Reserving the key now — without populating it — avoids a breaking envelope change when the first consumer needs attribution, while honoring the standing "real call site before it ships" rule.
+
+An optional `context?` key MAY carry ambient attribution data. Its shape is a Segment-subset:
+
+| `context` field | Contents                                            | Why reserved                                                                             |
+| --------------- | --------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| `page`          | `url`, `path`, `referrer`, `title`, `search`        | referrer/URL can't be reconstructed by the tag after client-side navigation              |
+| `campaign`      | `source`, `medium`, `name`, `term`, `content` (UTM) | first-touch attribution is lost after the first navigation if not captured at track time |
+| `library`       | `name`, `version`                                   | near-free; invaluable for debugging a misbehaving destination                            |
+| `locale`        | BCP-47 string                                       | cheap, standard                                                                          |
+
+`ip`/geo MUST NOT appear in the client envelope — it is consent-sensitive and belongs to the destination's own server-side derivation.
+
+**Consent-first constraint (normative when populated).** `page.url`, `page.referrer`, and `campaign` can carry PII and tracking signal, so any `context` MUST be subject to the same consent gate as the rest of the envelope and **stripped in the exempt lane** — an exempt (identifier-free) envelope carries `anonymousId == ""` **and** no `context`. This is why the field is specified here rather than copied wholesale from an SDK that ships context unconditionally at init: the consent-first thesis (spec-tracker §3) applies to ambient context exactly as it applies to the identifier.
+
 ## Conformance vectors
 
 **V1 — parsed output forwarded, unknown keys stripped.** Schema: `{ plan: string }`. Input properties `{ "plan": "pro", "injected": "x" }` → destinations receive `{ "plan": "pro" }`.
@@ -62,3 +79,5 @@ Every event handed to a destination is one JSON-representable envelope:
 **V4 — unknown event name.** `track("not_in_catalog", …)` → error `Unknown event: not_in_catalog`; no destination receives anything.
 
 **V5 — envelope shape.** A permitted `track("signup", {"plan":"pro"})` with anonymous id `A` produces an envelope where `type == "track"`, `name == "signup"`, `properties == {"plan":"pro"}`, `anonymousId == A`, `eventId` matches `^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$` (case-insensitive), and `timestamp` is the current epoch-milliseconds.
+
+**V6 — context stripped in the exempt lane (when §4 is populated).** A gated event delivered to an exempt destination carries `anonymousId == ""` and no `context` key, even when the same event delivered under an open gate would carry `context`.
