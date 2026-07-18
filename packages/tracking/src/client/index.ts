@@ -1,4 +1,4 @@
-export type { ClientTracker, ClientTrackerOptions } from "#/client/create-client-tracker";
+export type { ClientTracker, ClientTrackerOptions, DeliveryErrorContext } from "#/client/create-client-tracker";
 export { createClientTracker } from "#/client/create-client-tracker";
 
 export type { ConsentRuntime, ConsentRuntimeOptions } from "#/client/consent-runtime";

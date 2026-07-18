@@ -6,21 +6,43 @@ import { assertValidEventProperties } from "#/core/event-catalog";
 import { generateEventId } from "#/core/event-id";
 import type { TrackedEvent } from "#/core/tracked-event";
 
+/** Context handed to {@link ClientTrackerOptions.onDeliveryError} for one failed delivery. */
+export interface DeliveryErrorContext {
+  destination: Destination;
+  error: unknown;
+  event: TrackedEvent;
+}
+
 /**
  * `Destination.send` is typed to always return a `Promise`, but that's unenforceable at
  * runtime for a third-party/plain-JS destination — one that ignores the contract and
  * throws synchronously (or returns a non-`Promise`) must still never break the tracked
  * interaction. `Promise.resolve(...)` normalizes a non-`Promise` return; the outer
  * try/catch is the only thing that can catch a throw that happens before `send` ever
- * gets to return anything.
+ * gets to return anything. Both failure shapes surface through `onDeliveryError` (itself
+ * guarded — an observer that throws must not break the interaction either).
  */
-function sendToDestination(destination: Destination, event: TrackedEvent): void {
+function sendToDestination(
+  destination: Destination,
+  event: TrackedEvent,
+  onDeliveryError?: (context: DeliveryErrorContext) => void,
+): void {
+  const report = (error: unknown): void => {
+    if (!onDeliveryError) {
+      return;
+    }
+
+    try {
+      onDeliveryError({ destination, error, event });
+    } catch {
+      /* an observer must never break the tracked interaction */
+    }
+  };
+
   try {
-    void Promise.resolve(destination.send(event)).catch(() => {
-      /* a destination owns its transport — tracking must never break the interaction */
-    });
-  } catch {
-    /* a sync throw must never break the tracked interaction */
+    void Promise.resolve(destination.send(event)).catch(report);
+  } catch (error) {
+    report(error);
   }
 }
 
@@ -38,6 +60,12 @@ export interface ClientTrackerOptions<Catalog extends EventCatalog> {
    * identifiers. Omit to always track.
    */
   isAnalyticsAllowed?: (() => boolean) | undefined;
+  /**
+   * Notified once per failed delivery (a destination throwing or rejecting) so a consumer
+   * can meter the failure — the tracker still swallows it so tracking never breaks the
+   * interaction. Wire it to a monitor in production.
+   */
+  onDeliveryError?: ((context: DeliveryErrorContext) => void) | undefined;
 }
 
 /**
@@ -91,7 +119,7 @@ export function createClientTracker<Catalog extends EventCatalog>(
       };
 
       for (const destination of isAllowed ? options.destinations : exemptDestinations) {
-        sendToDestination(destination, event);
+        sendToDestination(destination, event, options.onDeliveryError);
       }
     },
   };
