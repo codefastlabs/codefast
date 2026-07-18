@@ -32,10 +32,10 @@ Actors: **System** = this library (near-stateless; forwards to destinations, own
 
 Platforms ship their own DSR tooling; the system MUST delegate rather than reimplement.
 
-- **GA4 — a real per-visitor deletion API exists.** The User Deletion API accepts `CLIENT_ID` / `USER_ID` / `APP_INSTANCE_ID`; GA4's `client_id` (in the `_ga` cookie) is the per-device analog of an analytics id ([developers.google.com/analytics/devguides/config/userdeletion/v3](https://developers.google.com/analytics/devguides/config/userdeletion/v3)). Limits the spec MUST state honestly: removed from the Individual User report within ~72 hours, purged at the next ~bimonthly run, and it does **not** reach previously-aggregated reports or BigQuery exports.
+- **GA4 — a real per-visitor deletion API exists.** GA4's `client_id` (in the `_ga` cookie) is the per-device analog of an analytics id. The legacy v3 `userDeletionRequests:upsert` was **sunset with Universal Analytics**; the current path is the Analytics Admin API `properties.submitUserDeletion` ([developers.google.com/analytics/devguides/config/userdeletion/migration](https://developers.google.com/analytics/devguides/config/userdeletion/migration)), which keys the subject with a flat `clientId` (a oneof with `userId` / `appInstanceId` / `userProvidedData`) and needs the `analytics.edit` OAuth scope. Limits the spec MUST state honestly: removed from the Individual User report within ~72 hours, purged at the next ~bimonthly run, and it does **not** reach previously-aggregated reports or BigQuery exports.
 - **Meta — no per-browser-UUID deletion API.** Meta's Data Deletion Request Callback is Facebook-Login-specific (an app-scoped `user_id` in a `signed_request`); it does **not** delete pixel/Conversions-API browser data. The system's realistic lever is **stop-send (gate) + clear Meta cookies** (spec-destinations §5). **The spec MUST NOT imply a Meta per-visitor deletion hook exists.**
 
-**Posture:** the destination interface gains a generic `onErasure(id)` capability; a **GA4 reference binding** calls the User Deletion API with the destination `client_id`; the **Meta reference behavior** is cookie-clear + stop-send, documented as "no per-visitor deletion API upstream." Do **not** build a bespoke deletion store.
+**Posture:** the destination interface gains a generic `onErasure(id)` capability; a **GA4 reference binding** calls the Admin API `submitUserDeletion` with the destination `client_id`; the **Meta reference behavior** is cookie-clear + stop-send, documented as "no per-visitor deletion API upstream." Do **not** build a bespoke deletion store.
 
 ## 4. Retention and rotation
 
@@ -54,7 +54,7 @@ The spec asserts only:
 
 - **(a)** the id is a pseudonymous device identifier (personal data / unique identifier) — stated plainly for the controller's privacy notice;
 - **(b)** the system's DSR surface is exactly the gate, `clear()` + server expiry, a per-destination erasure hook, and id exposure;
-- **(c)** access, portability, and destination-data deletion are delegated to destinations (GA4 reference binding calls the User Deletion API; Meta = stop-send + cookie-clear);
+- **(c)** access, portability, and destination-data deletion are delegated to destinations (GA4 reference binding calls the Admin API `submitUserDeletion`; Meta = stop-send + cookie-clear);
 - **(d)** rectification and portability are not applicable at the system layer — say so, do not build them;
 - **(e)** retention is a controller proportionality choice (1-year default configurable; rotation optional and noted in tension with the ITP re-issue).
 
@@ -64,7 +64,7 @@ The spec asserts only:
 
 **DSR-V2 — withdrawal triggers destination erasure hook.** On withdrawal, each registered destination's `onErasure(id)` is invoked exactly once with the resolved destination identifier, and swallows failures (tracking never breaks the app).
 
-**DSR-V3 — GA4 delete binding.** Given a `client_id`, the GA4 destination emits a User Deletion API request with `id.type = CLIENT_ID`, `id.userId = <client_id>` — snapshot the request shape (no network).
+**DSR-V3 — GA4 delete binding.** Given a `client_id` and GA4 `propertyId`, `buildGa4UserDeletionRequest` emits an Admin API `submitUserDeletion` request — `POST .../v1alpha/properties/{propertyId}:submitUserDeletion` with body `{ "clientId": "<client_id>" }` — snapshot the request shape (no network). The legacy v3 `{ id: { type: "CLIENT_ID", userId } }` shape is retired.
 
 **DSR-V4 — Meta erasure is cookie-clear + stop-send only.** The Meta destination `onErasure` clears Meta cookies and halts sending, and does **not** fabricate a non-existent per-visitor deletion API call.
 
