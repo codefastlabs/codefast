@@ -73,7 +73,7 @@ afterEach(() => {
 });
 
 describe("consent × tracking matrix", () => {
-  it("opt-in, undecided: shows the banner, blocks GA and identifiers — only cookieless Vercel keeps counting", async () => {
+  it("opt-in, undecided: shows the banner, blocks GA, identifiers, and the exempt lane", async () => {
     setRegion("DE");
 
     render(<ConsentGate />);
@@ -82,8 +82,9 @@ describe("consent × tracking matrix", () => {
 
     getTracker().track("copy_code", COPY_EVENT);
 
-    // the consent-exempt lane: Vercel gets the bare interaction count, nothing else moves
-    expect(vercelTrack).toHaveBeenCalledWith("copy_code", COPY_EVENT);
+    // Audience-measurement exemption is not defensible in opt-in regions, so even the
+    // cookieless Vercel lane is withheld until consent (spec-destinations §2).
+    expect(vercelTrack).not.toHaveBeenCalled();
     expect(gtagCalls()).not.toContainEqual(["event", "copy_code", COPY_EVENT]);
     expect(readAnonymousIdCookie()).toBeUndefined();
   });
@@ -117,8 +118,8 @@ describe("consent × tracking matrix", () => {
     expect(gtagCalls()).toContainEqual(["consent", "update", DENIED_PARAMS]);
     expect(gtagCalls()).not.toContainEqual(["event", "copy_code", COPY_EVENT]);
     expect(readAnonymousIdCookie()).toBeUndefined();
-    // the cookieless exempt lane is unaffected by the refusal
-    expect(vercelTrack).toHaveBeenCalledWith("copy_code", COPY_EVENT);
+    // In an opt-in region the exempt lane is gated too, so the refusal withholds Vercel as well.
+    expect(vercelTrack).not.toHaveBeenCalled();
   });
 
   it("withdrawing on the privacy page stops tracking everywhere and removes the anonymous id", async () => {
@@ -146,8 +147,8 @@ describe("consent × tracking matrix", () => {
 
     getTracker().track("copy_code", COPY_EVENT);
 
-    // Vercel's cookieless count survives the withdrawal; GA and every identifier do not.
-    expect(vercelTrack).toHaveBeenCalledOnce();
+    // In an opt-in region withdrawal gates every lane — the exempt Vercel count included.
+    expect(vercelTrack).not.toHaveBeenCalled();
     expect(readAnonymousIdCookie()).toBeUndefined();
     expect(document.cookie).not.toContain("_ga=");
     // ConsentGate owns the gtag update — the privacy-page decision synced through the shared storage.
