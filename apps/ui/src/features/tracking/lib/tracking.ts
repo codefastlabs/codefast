@@ -106,6 +106,12 @@ export function getTracker(): ClientTracker<typeof catalog> {
       createGoogleAnalyticsDestination(),
     ],
     isAnalyticsAllowed,
+    // Surface delivery failures in dev; a production deployment wires this to its monitor.
+    onDeliveryError: ({ destination, error }) => {
+      if (import.meta.env.DEV) {
+        console.warn(`[tracking] destination "${destination.name}" failed to deliver`, error);
+      }
+    },
     // no storage: with immediate-only destinations a persisted queue would never drain anywhere
   });
 
