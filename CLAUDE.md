@@ -22,6 +22,16 @@ CodeFast is a **pnpm workspaces + Turborepo** monorepo (Node ≥ 24, pnpm 11; `@
 - Read the real `.d.ts`/source under `node_modules/.pnpm/<pkg>@<version>/...` to confirm an API's current shape.
 - Search changelogs/migration guides only when the installed source doesn't clarify _why_ a pattern exists, not just _whether_ an API exists.
 
+### TanStack Start — ground on the docs, then verify against the PRODUCTION build
+
+TanStack Start is where trained knowledge is most likely wrong. Before writing or reviewing any Start code (`createServerFn`, `createMiddleware`, `createStart`, server routes, loaders, request/response access), ground yourself in this order — never write from memory:
+
+1. **Read the doc map at `https://tanstack.com/start/latest/llms.txt`** and fetch the specific `.md` pages it lists (`.../guide/server-functions.md`, `.../guide/server-routes.md`, `.../guide/middleware.md`). The rendered docs are a client SPA — a plain `WebFetch` of the HTML returns an empty shell; the `.md` URLs are static and fetchable.
+2. **Confirm the installed version's real shape** in `node_modules/.pnpm/@tanstack+*/...` — the pin can lag `latest` (e.g. `createServerFn().validator()` is what compiles here; `getRequestHeader`/`getRequest`/`setResponseHeader` come from `@tanstack/react-start/server`).
+3. **Verify against the real `vite build`, not just `dev` + `check-types`.** `pnpm --filter @apps/ui build`. Dev SSRs every request and hides two things that only surface in prod: **(a)** client import-protection denies any client-reachable import of `**/*.server.*` (don't put a `createServerFn` module behind a `.server.` filename the client imports); **(b)** the build **prerenders**, so a route `loader` runs at **build time**, not per visitor.
+
+**The load-bearing deployment fact — `apps/ui` ships to Vercel as ISR/prerender.** The served HTML is **cached and shared across visitors**, so per-visitor data (geo → region consent) MUST come from a **client request to a server function**: Vercel injects `x-vercel-ip-country` on that request, so the fn resolves the real region. A root-route **SSR loader is wrong here** — it resolves at build/regen and bakes one visitor-independent value (the strictest default) into the cached HTML for everyone. This is exactly why `packages/tracking` resolves initial consent via a **client round-trip** (`resolveVisitorConsent`, session-cached) over a strictest-baked HTML shell — the correct idiom for this stack. An SSR loader would only be right for per-request SSR with no CDN cache. Still-true mechanism fact: a request middleware's `next({ context })` does **not** reach a route `beforeLoad` or the component tree (`beforeLoad` re-runs client-side). Use server routes (`createFileRoute(path)({ server: { handlers } })`, explicit `Request`→`Response`) for HTTP endpoints — see `packages/tracking/spec/` for the behavioral contract.
+
 ## Commands
 
 Build packages before running apps, type-checking, or type-aware lint — `@codefast/ui` consumes other packages' built `dist/` and Oxlint's type-aware rules need them.
