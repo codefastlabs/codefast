@@ -67,9 +67,9 @@
       "import": "./dist/adapters/tanstack-start.mjs"
     },
     "./client": {
-      "source": "./src/client/index.ts",
-      "types": "./dist/client/index.d.mts",
-      "import": "./dist/client/index.mjs"
+      "source": "./src/client.ts",
+      "types": "./dist/client.d.mts",
+      "import": "./dist/client.mjs"
     },
     "./client/ad-framework-consent": {
       "source": "./src/client/ad-framework-consent.ts",
@@ -127,9 +127,9 @@
       "import": "./dist/client/server-persisted-anonymous-id.mjs"
     },
     "./core": {
-      "source": "./src/core/index.ts",
-      "types": "./dist/core/index.d.mts",
-      "import": "./dist/core/index.mjs"
+      "source": "./src/core.ts",
+      "types": "./dist/core.d.mts",
+      "import": "./dist/core.mjs"
     },
     "./core/consent": {
       "source": "./src/core/consent.ts",
@@ -172,9 +172,9 @@
       "import": "./dist/core/tracked-event.mjs"
     },
     "./destinations": {
-      "source": "./src/destinations/index.ts",
-      "types": "./dist/destinations/index.d.mts",
-      "import": "./dist/destinations/index.mjs"
+      "source": "./src/destinations.ts",
+      "types": "./dist/destinations.d.mts",
+      "import": "./dist/destinations.mjs"
     },
     "./destinations/ad-consent": {
       "source": "./src/destinations/ad-consent.ts",
@@ -217,9 +217,9 @@
       "import": "./dist/destinations/vercel-analytics.mjs"
     },
     "./react": {
-      "source": "./src/react/index.ts",
-      "types": "./dist/react/index.d.mts",
-      "import": "./dist/react/index.mjs"
+      "source": "./src/react.ts",
+      "types": "./dist/react.d.mts",
+      "import": "./dist/react.mjs"
     },
     "./react/consent-banner": {
       "source": "./src/react/consent-banner.tsx",
@@ -247,9 +247,9 @@
       "import": "./dist/react/use-initial-consent.mjs"
     },
     "./server": {
-      "source": "./src/server/index.ts",
-      "types": "./dist/server/index.d.mts",
-      "import": "./dist/server/index.mjs"
+      "source": "./src/server.ts",
+      "types": "./dist/server.d.mts",
+      "import": "./dist/server.mjs"
     },
     "./server/anonymous-id-cookie": {
       "source": "./src/server/anonymous-id-cookie.ts",
