@@ -110,7 +110,7 @@ by design — tracking sits on synchronous call paths.
 | `@codefast/tracking/tanstack-start`                | One-line request/response glue over Start's server context — server-only                          |
 | `@codefast/tracking/destinations`                  | The gtag destination, script loader, and Consent Mode helpers                                     |
 | `@codefast/tracking/destinations/vercel-analytics` | Vercel Analytics destination — own subpath so the optional peer stays optional                    |
-| `@codefast/tracking/import-protection`             | `SERVER_ONLY_IMPORT_SPECIFIERS` deny-list for client bundles                                      |
+| `@codefast/tracking/import-protection`             | `SERVER_ONLY_SUBPATHS` deny-list for client bundles                                               |
 | `@codefast/tracking/css/consent.css`               | Optional plain-CSS theme for the consent banner                                                   |
 
 There is deliberately no server-side tracker: destinations batch in-page, and the server
@@ -176,11 +176,11 @@ spread the package's own deny-list into the plugin's import-protection so it ver
 with the package instead of going stale in your config:
 
 ```ts
-import { SERVER_ONLY_IMPORT_SPECIFIERS } from "@codefast/tracking/import-protection";
+import { SERVER_ONLY_SUBPATHS } from "@codefast/tracking/import-protection";
 
 tanstackStart({
   importProtection: {
-    client: { specifiers: [...SERVER_ONLY_IMPORT_SPECIFIERS] },
+    client: { specifiers: [...SERVER_ONLY_SUBPATHS] },
   },
 });
 ```

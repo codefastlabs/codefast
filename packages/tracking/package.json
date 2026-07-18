@@ -77,9 +77,9 @@
       "import": "./dist/react/index.mjs"
     },
     "./tanstack-start": {
-      "source": "./src/tanstack-start/index.ts",
-      "types": "./dist/tanstack-start/index.d.mts",
-      "import": "./dist/tanstack-start/index.mjs"
+      "source": "./src/adapters/tanstack-start/index.ts",
+      "types": "./dist/adapters/tanstack-start/index.d.mts",
+      "import": "./dist/adapters/tanstack-start/index.mjs"
     },
     "./destinations": {
       "source": "./src/destinations/index.ts",
