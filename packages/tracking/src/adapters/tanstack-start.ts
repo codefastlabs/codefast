@@ -1,39 +1,25 @@
 import { getRequestHeader, setResponseHeader } from "@tanstack/react-start/server";
 
-import type {
-  AnonymousIdResponseCookieOptions,
-  ConsentReceiptAck,
-  InitialConsentFromRequestOptions,
-  RecordConsentReceiptFromRequestOptions,
-  RequestContext,
-} from "#/adapters/request-context";
-import {
-  clearAnonymousIdResponseCookieOnContext,
-  recordConsentReceiptFromContext,
-  resolveInitialConsentFromContext,
-  setAnonymousIdResponseCookieOnContext,
-} from "#/adapters/request-context";
-import type { InitialConsent } from "#/core/consent";
+import type { ConsentCategory, InitialConsent } from "#/core/consent";
+import type { ConsentReceipt, ConsentReceiptInput } from "#/core/consent-receipt";
+import { isConsentReceiptInput } from "#/core/consent-receipt";
+import { buildAnonymousIdSetCookie, buildClearAnonymousIdSetCookie } from "#/server/anonymous-id-cookie";
+import { buildConsentReceipt } from "#/server/consent-receipt";
+import type { ReceiptStore } from "#/server/consent-receipt-store";
+import { resolveInitialConsent } from "#/server/initial-consent";
 
-export type {
-  AnonymousIdResponseCookieOptions,
-  ConsentReceiptAck,
-  InitialConsentFromRequestOptions,
-  RecordConsentReceiptFromRequestOptions,
-};
+export type { InitialConsent };
 
-/**
- * Request/response glue for TanStack Start — binds the framework's ambient request context
- * (AsyncLocalStorage) to the framework-neutral {@link RequestContext} seam, so every helper
- * below is a one-line delegation. Server-only: deny this subpath in the client environment
- * via Start's `importProtection` — the compiler already strips it with stubbed handler bodies.
- */
-const tanStackRequestContext: RequestContext = {
-  getHeader: (name) => getRequestHeader(name),
-  setHeader: (name, value) => {
-    setResponseHeader(name, value);
-  },
-};
+export interface InitialConsentFromRequestOptions {
+  /**
+   * Header carrying the ISO 3166-1 alpha-2 country code.
+   *
+   * @defaultValue "x-vercel-ip-country"
+   */
+  countryHeaderName?: string | undefined;
+  /** Categories the app's prompt asks about — opt-out regions grant exactly these by default. */
+  requestedCategories: ReadonlyArray<ConsentCategory>;
+}
 
 /**
  * Region-correct `InitialConsent` for the current request: reads the platform geo header
@@ -41,10 +27,28 @@ const tanStackRequestContext: RequestContext = {
  * `cache-control: private, no-store` — the value is per-visitor by definition, so no
  * shared cache may ever store the response carrying it.
  *
+ * Server-only: deny this subpath in the client environment via Start's `importProtection`
+ * — the compiler already strips it with stubbed handler bodies.
+ *
  * @since 1.0.0-canary.6
  */
 export function resolveInitialConsentFromRequest(options: InitialConsentFromRequestOptions): InitialConsent {
-  return resolveInitialConsentFromContext(tanStackRequestContext, options);
+  setResponseHeader("cache-control", "private, no-store");
+
+  return resolveInitialConsent({
+    countryCode: getRequestHeader(options.countryHeaderName ?? "x-vercel-ip-country"),
+    hasGlobalPrivacyControlSignal: getRequestHeader("sec-gpc") === "1",
+    requestedCategories: options.requestedCategories,
+  });
+}
+
+export interface AnonymousIdResponseCookieOptions {
+  /** Cookie name — must match what the client tracker reads. */
+  cookieName: string;
+  /** The client-minted id to persist — throws unless it is exactly UUID-shaped. */
+  id: string;
+  /** How long the id survives a return visit. Defaults to one year. */
+  maxAgeSeconds?: number | undefined;
 }
 
 /**
@@ -56,7 +60,14 @@ export function resolveInitialConsentFromRequest(options: InitialConsentFromRequ
  * @since 1.0.0-canary.6
  */
 export function setAnonymousIdResponseCookie(options: AnonymousIdResponseCookieOptions): void {
-  setAnonymousIdResponseCookieOnContext(tanStackRequestContext, options);
+  setResponseHeader(
+    "set-cookie",
+    buildAnonymousIdSetCookie({
+      cookieName: options.cookieName,
+      id: options.id,
+      maxAgeSeconds: options.maxAgeSeconds,
+    }),
+  );
 }
 
 /**
@@ -65,7 +76,42 @@ export function setAnonymousIdResponseCookie(options: AnonymousIdResponseCookieO
  * @since 1.0.0-canary.6
  */
 export function clearAnonymousIdResponseCookie(cookieName: string): void {
-  clearAnonymousIdResponseCookieOnContext(tanStackRequestContext, cookieName);
+  setResponseHeader("set-cookie", buildClearAnonymousIdSetCookie(cookieName));
+}
+
+/** Order the connection IP is read from — first forwarded hop wins, then the single real-ip header. */
+const IP_HEADER_NAMES: ReadonlyArray<string> = ["x-forwarded-for", "x-real-ip"];
+
+function readConnectionIp(): string | undefined {
+  for (const headerName of IP_HEADER_NAMES) {
+    const value = getRequestHeader(headerName);
+
+    if (value) {
+      // x-forwarded-for is "client, proxy1, proxy2" — the client is the first hop.
+      return value.split(",")[0]?.trim();
+    }
+  }
+
+  return undefined;
+}
+
+/**
+ * The client-visible acknowledgement of a recorded receipt — deliberately minimal so the
+ * stored PII (`subjectId`, `ipCoarse`) is never echoed back over the wire.
+ */
+export interface ConsentReceiptAck {
+  receiptId: string;
+  timestamp: number;
+}
+
+export interface RecordConsentReceiptFromRequestOptions {
+  input: ConsentReceiptInput;
+  /**
+   * Optional tamper-evidence signer — supply an HMAC/signature over the receipt to stamp an
+   * `integrityKey`. Omit it and the stored receipt carries none.
+   */
+  sign?: ((receipt: Omit<ConsentReceipt, "integrityKey">) => string) | undefined;
+  store: ReceiptStore;
 }
 
 /**
@@ -80,5 +126,15 @@ export function clearAnonymousIdResponseCookie(cookieName: string): void {
 export async function recordConsentReceiptFromRequest(
   options: RecordConsentReceiptFromRequestOptions,
 ): Promise<ConsentReceiptAck> {
-  return recordConsentReceiptFromContext(tanStackRequestContext, options);
+  setResponseHeader("cache-control", "no-store");
+
+  if (!isConsentReceiptInput(options.input)) {
+    throw new Error("Invalid consent receipt input");
+  }
+
+  const receipt = buildConsentReceipt({ input: options.input, rawIp: readConnectionIp(), sign: options.sign });
+
+  await options.store.append(receipt);
+
+  return { receiptId: receipt.receiptId, timestamp: receipt.timestamp };
 }

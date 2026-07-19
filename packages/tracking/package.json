@@ -56,11 +56,6 @@
       "types": "./dist/index.d.mts",
       "import": "./dist/index.mjs"
     },
-    "./adapters/request-context": {
-      "source": "./src/adapters/request-context.ts",
-      "types": "./dist/adapters/request-context.d.mts",
-      "import": "./dist/adapters/request-context.mjs"
-    },
     "./adapters/tanstack-start": {
       "source": "./src/adapters/tanstack-start.ts",
       "types": "./dist/adapters/tanstack-start.d.mts",
