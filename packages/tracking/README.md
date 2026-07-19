@@ -101,16 +101,21 @@ by design — tracking sits on synchronous call paths.
 
 ## Subpaths
 
-The root `@codefast/tracking` is the **client entry**: it re-exports the isomorphic core
-(catalog types, `Destination`, consent model + config) plus the whole browser-side surface
-(tracker, consent runtime, React bindings, and the client destinations). Server-only lanes
-are their own subpaths and are never re-exported from the root:
+The root `@codefast/tracking` is the **isomorphic core entry**: it re-exports only the
+side-agnostic primitives (catalog types + `defineEventCatalog`, `Destination`, the consent
+model + `defineConsentConfig`, receipt input types, cookie parsing). The browser surface and
+the server lanes each live at their own subpath and are imported directly, so a consumer
+pulls exactly one lane and React types never couple into the core entry:
 
-- `@codefast/tracking` — client entry: core + `createClientTracker`, `createConsentRuntime`,
-  the `useConsent`/`ConsentBanner`/`GtagConsentBootstrap` React bindings, the gtag +
-  ad-network destinations.
-- `@codefast/tracking/destinations/vercel-analytics` — its own subpath so its
-  `@vercel/analytics` peer is only pulled in when used.
+- `@codefast/tracking` — isomorphic core: consent model + config, event catalog, receipt
+  input types, `readCookieValue`/`readStoredDecision`.
+- `@codefast/tracking/client/*` — browser surface: `createClientTracker`,
+  `createConsentRuntime`, `createServerPersistedAnonymousId`, GPC, the ad-framework reconciler.
+- `@codefast/tracking/react/*` — the `useConsent`/`ConsentBanner`/`GtagConsentBootstrap`
+  React bindings.
+- `@codefast/tracking/destinations/*` — the gtag + ad-network (Meta/TikTok/UET) destinations;
+  `destinations/vercel-analytics` is its own subpath so its `@vercel/analytics` peer is only
+  pulled in when used.
 - `@codefast/tracking/server/*` — request-scoped, **server-only**: `server/initial-consent`,
   `server/consent-receipt-store`, `server/measurement-protocol`, … (server code imports the
   core it needs from `@codefast/tracking/core/*`, never from the client root).
