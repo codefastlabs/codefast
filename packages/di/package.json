@@ -25,9 +25,9 @@
   ],
   "type": "module",
   "sideEffects": false,
-  "main": "./dist/index.mjs",
-  "module": "./dist/index.mjs",
-  "types": "./dist/index.d.mts",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "imports": {
     "#/tests/*": [
       "./tests/*",
@@ -36,159 +36,168 @@
       "./tests/*/index.ts",
       "./tests/*/index.tsx"
     ],
-    "#/*": [
-      "./src/*",
-      "./src/*.ts",
-      "./src/*.tsx",
-      "./src/*/index.ts",
-      "./src/*/index.tsx"
-    ]
+    "#/*": {
+      "source": [
+        "./src/*.ts",
+        "./src/*.tsx",
+        "./src/*/index.ts",
+        "./src/*/index.tsx"
+      ],
+      "types": [
+        "./dist/*.d.ts",
+        "./dist/*/index.d.ts"
+      ],
+      "default": [
+        "./dist/*.js",
+        "./dist/*/index.js"
+      ]
+    }
   },
   "exports": {
     ".": {
       "source": "./src/index.ts",
-      "types": "./dist/index.d.mts",
-      "import": "./dist/index.mjs"
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
     },
     "./binding": {
       "source": "./src/binding.ts",
-      "types": "./dist/binding.d.mts",
-      "import": "./dist/binding.mjs"
+      "types": "./dist/binding.d.ts",
+      "import": "./dist/binding.js"
     },
     "./binding-scope": {
       "source": "./src/binding-scope.ts",
-      "types": "./dist/binding-scope.d.mts",
-      "import": "./dist/binding-scope.mjs"
+      "types": "./dist/binding-scope.d.ts",
+      "import": "./dist/binding-scope.js"
     },
     "./binding-select": {
       "source": "./src/binding-select.ts",
-      "types": "./dist/binding-select.d.mts",
-      "import": "./dist/binding-select.mjs"
+      "types": "./dist/binding-select.d.ts",
+      "import": "./dist/binding-select.js"
     },
     "./constraints": {
       "source": "./src/constraints.ts",
-      "types": "./dist/constraints.d.mts",
-      "import": "./dist/constraints.mjs"
+      "types": "./dist/constraints.d.ts",
+      "import": "./dist/constraints.js"
     },
     "./constructor-type": {
       "source": "./src/constructor-type.ts",
-      "types": "./dist/constructor-type.d.mts",
-      "import": "./dist/constructor-type.mjs"
+      "types": "./dist/constructor-type.d.ts",
+      "import": "./dist/constructor-type.js"
     },
     "./container": {
       "source": "./src/container.ts",
-      "types": "./dist/container.d.mts",
-      "import": "./dist/container.mjs"
+      "types": "./dist/container.d.ts",
+      "import": "./dist/container.js"
     },
     "./decorators/inject": {
       "source": "./src/decorators/inject.ts",
-      "types": "./dist/decorators/inject.d.mts",
-      "import": "./dist/decorators/inject.mjs"
+      "types": "./dist/decorators/inject.d.ts",
+      "import": "./dist/decorators/inject.js"
     },
     "./decorators/injectable": {
       "source": "./src/decorators/injectable.ts",
-      "types": "./dist/decorators/injectable.d.mts",
-      "import": "./dist/decorators/injectable.mjs"
+      "types": "./dist/decorators/injectable.d.ts",
+      "import": "./dist/decorators/injectable.js"
     },
     "./decorators/lifecycle-decorators": {
       "source": "./src/decorators/lifecycle-decorators.ts",
-      "types": "./dist/decorators/lifecycle-decorators.d.mts",
-      "import": "./dist/decorators/lifecycle-decorators.mjs"
+      "types": "./dist/decorators/lifecycle-decorators.d.ts",
+      "import": "./dist/decorators/lifecycle-decorators.js"
     },
     "./dependency-graph": {
       "source": "./src/dependency-graph.ts",
-      "types": "./dist/dependency-graph.d.mts",
-      "import": "./dist/dependency-graph.mjs"
+      "types": "./dist/dependency-graph.d.ts",
+      "import": "./dist/dependency-graph.js"
     },
     "./environment": {
       "source": "./src/environment.ts",
-      "types": "./dist/environment.d.mts",
-      "import": "./dist/environment.mjs"
+      "types": "./dist/environment.d.ts",
+      "import": "./dist/environment.js"
     },
     "./errors": {
       "source": "./src/errors.ts",
-      "types": "./dist/errors.d.mts",
-      "import": "./dist/errors.mjs"
+      "types": "./dist/errors.d.ts",
+      "import": "./dist/errors.js"
     },
     "./graph-adapters/cytoscape": {
       "source": "./src/graph-adapters/cytoscape.ts",
-      "types": "./dist/graph-adapters/cytoscape.d.mts",
-      "import": "./dist/graph-adapters/cytoscape.mjs"
+      "types": "./dist/graph-adapters/cytoscape.d.ts",
+      "import": "./dist/graph-adapters/cytoscape.js"
     },
     "./graph-adapters/dot": {
       "source": "./src/graph-adapters/dot.ts",
-      "types": "./dist/graph-adapters/dot.d.mts",
-      "import": "./dist/graph-adapters/dot.mjs"
+      "types": "./dist/graph-adapters/dot.d.ts",
+      "import": "./dist/graph-adapters/dot.js"
     },
     "./graph-adapters/reactflow": {
       "source": "./src/graph-adapters/reactflow.ts",
-      "types": "./dist/graph-adapters/reactflow.d.mts",
-      "import": "./dist/graph-adapters/reactflow.mjs"
+      "types": "./dist/graph-adapters/reactflow.d.ts",
+      "import": "./dist/graph-adapters/reactflow.js"
     },
     "./inspector": {
       "source": "./src/inspector.ts",
-      "types": "./dist/inspector.d.mts",
-      "import": "./dist/inspector.mjs"
+      "types": "./dist/inspector.d.ts",
+      "import": "./dist/inspector.js"
     },
     "./lifecycle": {
       "source": "./src/lifecycle.ts",
-      "types": "./dist/lifecycle.d.mts",
-      "import": "./dist/lifecycle.mjs"
+      "types": "./dist/lifecycle.d.ts",
+      "import": "./dist/lifecycle.js"
     },
     "./metadata/metadata-keys": {
       "source": "./src/metadata/metadata-keys.ts",
-      "types": "./dist/metadata/metadata-keys.d.mts",
-      "import": "./dist/metadata/metadata-keys.mjs"
+      "types": "./dist/metadata/metadata-keys.d.ts",
+      "import": "./dist/metadata/metadata-keys.js"
     },
     "./metadata/metadata-reader-token": {
       "source": "./src/metadata/metadata-reader-token.ts",
-      "types": "./dist/metadata/metadata-reader-token.d.mts",
-      "import": "./dist/metadata/metadata-reader-token.mjs"
+      "types": "./dist/metadata/metadata-reader-token.d.ts",
+      "import": "./dist/metadata/metadata-reader-token.js"
     },
     "./metadata/metadata-types": {
       "source": "./src/metadata/metadata-types.ts",
-      "types": "./dist/metadata/metadata-types.d.mts",
-      "import": "./dist/metadata/metadata-types.mjs"
+      "types": "./dist/metadata/metadata-types.d.ts",
+      "import": "./dist/metadata/metadata-types.js"
     },
     "./metadata/symbol-metadata-reader": {
       "source": "./src/metadata/symbol-metadata-reader.ts",
-      "types": "./dist/metadata/symbol-metadata-reader.d.mts",
-      "import": "./dist/metadata/symbol-metadata-reader.mjs"
+      "types": "./dist/metadata/symbol-metadata-reader.d.ts",
+      "import": "./dist/metadata/symbol-metadata-reader.js"
     },
     "./module": {
       "source": "./src/module.ts",
-      "types": "./dist/module.d.mts",
-      "import": "./dist/module.mjs"
+      "types": "./dist/module.d.ts",
+      "import": "./dist/module.js"
     },
     "./registry": {
       "source": "./src/registry.ts",
-      "types": "./dist/registry.d.mts",
-      "import": "./dist/registry.mjs"
+      "types": "./dist/registry.d.ts",
+      "import": "./dist/registry.js"
     },
     "./resolve-options": {
       "source": "./src/resolve-options.ts",
-      "types": "./dist/resolve-options.d.mts",
-      "import": "./dist/resolve-options.mjs"
+      "types": "./dist/resolve-options.d.ts",
+      "import": "./dist/resolve-options.js"
     },
     "./resolver": {
       "source": "./src/resolver.ts",
-      "types": "./dist/resolver.d.mts",
-      "import": "./dist/resolver.mjs"
+      "types": "./dist/resolver.d.ts",
+      "import": "./dist/resolver.js"
     },
     "./scope": {
       "source": "./src/scope.ts",
-      "types": "./dist/scope.d.mts",
-      "import": "./dist/scope.mjs"
+      "types": "./dist/scope.d.ts",
+      "import": "./dist/scope.js"
     },
     "./token": {
       "source": "./src/token.ts",
-      "types": "./dist/token.d.mts",
-      "import": "./dist/token.mjs"
+      "types": "./dist/token.d.ts",
+      "import": "./dist/token.js"
     },
     "./types": {
       "source": "./src/types.ts",
-      "types": "./dist/types.d.mts",
-      "import": "./dist/types.mjs"
+      "types": "./dist/types.d.ts",
+      "import": "./dist/types.js"
     },
     "./package.json": "./package.json"
   },
@@ -196,9 +205,9 @@
     "access": "public"
   },
   "scripts": {
-    "build": "tsdown",
+    "build": "tsc -p tsconfig.build.json",
     "check-types": "tsc --noEmit",
-    "clean": "rm -rf dist",
+    "clean": "rm -rf dist .tsbuildinfo",
     "examples": "for file in examples/*/*.ts; do echo \"=== Running $file ===\"; node --import tsx/esm \"$file\"; echo \"\n\" || exit 1; done",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
@@ -206,7 +215,8 @@
     "test:integration": "vitest run tests/integration",
     "test:type": "vitest run tests/types",
     "test:unit": "vitest run tests/unit",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "dev": "tsc -p tsconfig.build.json --watch --preserveWatchOutput"
   },
   "devDependencies": {
     "@babel/core": "catalog:",
@@ -217,7 +227,6 @@
     "@typescript/native": "catalog:",
     "@vitest/coverage-v8": "catalog:",
     "expect-type": "catalog:",
-    "tsdown": "catalog:",
     "tsx": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:"

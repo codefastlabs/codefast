@@ -26,6 +26,15 @@ export default defineConfig({
       ],
     }),
   ],
+  // Resolve internal `#/` subpath imports to `src` (not the built `dist`): the
+  // package's imports map gates dev/test on the `source` condition.
+  // Vitest 4 resolves test modules through the SSR pipeline; gate `#/` on the
+  // `source` condition there so tests run against `src`, not the built `dist`.
+  ssr: {
+    resolve: {
+      conditions: ["source"],
+    },
+  },
   test: {
     coverage: {
       exclude: ["src/**/*.test.?(c|m)[jt]s?(x)", "**/*.d.ts"],
