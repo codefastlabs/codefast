@@ -8,12 +8,16 @@ import type { InitialConsent } from "#/features/tracking/lib/consent";
 const {
   clearAnonymousId,
   clearGoogleAnalyticsCookies,
+  currentAnonymousId,
+  getAnonymousId,
   hasGlobalPrivacyControlSignal,
   useVisitorConsent,
   useHasHydrated,
 } = vi.hoisted(() => ({
   clearAnonymousId: vi.fn(),
   clearGoogleAnalyticsCookies: vi.fn(),
+  currentAnonymousId: vi.fn<() => string | undefined>(() => undefined),
+  getAnonymousId: vi.fn<() => string>(() => "11111111-1111-4111-8111-111111111111"),
   hasGlobalPrivacyControlSignal: vi.fn(() => false),
   useVisitorConsent: vi.fn(),
   useHasHydrated: vi.fn(() => true),
@@ -32,6 +36,8 @@ function setRegion(initialConsent: InitialConsent): void {
 
 vi.mock("#/features/tracking/lib/tracking", () => ({
   clearAnonymousId,
+  currentAnonymousId,
+  getAnonymousId,
 }));
 vi.mock(import("@codefast/tracking/client/gpc"), async (importOriginal) => ({
   ...(await importOriginal()),
