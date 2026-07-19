@@ -22,7 +22,7 @@
     "directory": "packages/cli"
   },
   "bin": {
-    "codefast": "./dist/bin.mjs"
+    "codefast": "./dist/bin.js"
   },
   "files": [
     "dist",
@@ -39,19 +39,25 @@
       "./tests/*/index.ts",
       "./tests/*/index.tsx"
     ],
-    "#/*": [
-      "./src/*",
-      "./src/*.ts",
-      "./src/*.tsx",
-      "./src/*/index.ts",
-      "./src/*/index.tsx"
-    ]
+    "#/*": {
+      "source": [
+        "./src/*",
+        "./src/*.ts",
+        "./src/*.tsx",
+        "./src/*/index.ts",
+        "./src/*/index.tsx"
+      ],
+      "default": [
+        "./dist/*.js",
+        "./dist/*/index.js"
+      ]
+    }
   },
   "publishConfig": {
     "access": "public"
   },
   "scripts": {
-    "build": "tsdown",
+    "build": "rm -rf dist && tsc -p tsconfig.build.json",
     "check-types": "tsc --noEmit",
     "clean": "rm -rf dist",
     "test": "vitest run",
@@ -60,7 +66,8 @@
     "test:integration": "vitest run tests/integration",
     "test:type": "vitest run tests/types",
     "test:unit": "vitest run tests/unit",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "dev": "tsc -p tsconfig.build.json --watch --preserveWatchOutput"
   },
   "dependencies": {
     "commander": "catalog:",
@@ -76,7 +83,6 @@
     "@types/picomatch": "catalog:",
     "@typescript/native": "catalog:",
     "@vitest/coverage-v8": "catalog:",
-    "tsdown": "catalog:",
     "vite": "catalog:",
     "vitest": "catalog:"
   },

@@ -13,7 +13,7 @@
     "clean": "turbo clean",
     "clean:cache": "pnpm store prune",
     "clean:modules": "pnpm -r exec rm -rf node_modules && rm -rf node_modules pnpm-lock.yaml",
-    "codefast": "node ./packages/cli/dist/bin.mjs",
+    "codefast": "node ./packages/cli/dist/bin.js",
     "cli:arrange": "pnpm run codefast arrange",
     "cli:arrange:inspect": "pnpm run codefast arrange inspect",
     "cli:arrange:preview": "pnpm run codefast arrange --dry-run",
