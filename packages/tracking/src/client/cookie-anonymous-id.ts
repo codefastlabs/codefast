@@ -17,6 +17,12 @@ export interface CookieAnonymousIdOptions {
 export interface CookieAnonymousId {
   /** Expires the cookie — call when the visitor withdraws tracking consent. */
   clear: () => void;
+  /**
+   * The existing id **without minting one** — `undefined` when the visitor has none yet.
+   * Use this to stamp a receipt/decision with the id that already identifies the visitor,
+   * rather than re-reading the cookie or minting a throwaway that never correlates.
+   */
+  current: () => string | undefined;
   /** The existing id, or a freshly minted and persisted one. */
   getOrCreate: () => string;
   /**
@@ -51,6 +57,19 @@ export function createCookieAnonymousId(options: CookieAnonymousIdOptions): Cook
       }
 
       writeBrowserCookie(cookieName, "", 0);
+    },
+    current(): string | undefined {
+      // Prefer the live cookie — another tab may have minted or cleared it since this
+      // instance last cached — falling back to the cache only when off the DOM (SSR).
+      if (typeof document === "undefined") {
+        return cachedId;
+      }
+
+      const existing = readCookieValue(document.cookie, cookieName);
+
+      cachedId = existing;
+
+      return existing;
     },
     getOrCreate(): string {
       if (typeof document === "undefined") {

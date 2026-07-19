@@ -1,5 +1,6 @@
 import type { ConsentDecision } from "#/core/consent";
 import type { Destination } from "#/core/destination";
+import { toAdConsentState } from "#/destinations/ad-consent";
 import type { FlatPropertyValue } from "#/destinations/shared";
 import { flattenEventProps } from "#/destinations/shared";
 
@@ -13,9 +14,12 @@ export interface MicrosoftUetConsent {
   ad_storage: "denied" | "granted";
 }
 
-/** Maps a `ConsentDecision` to UET's enforced `ad_storage` signal — driven by `ads`. */
+/**
+ * Maps a `ConsentDecision` to UET's enforced `ad_storage` signal via the shared ad lever, so
+ * it can't drift from Meta/TikTok — `ad_storage` is the inverse of Limited Data Use.
+ */
 export function toMicrosoftUetConsent(decision: ConsentDecision): MicrosoftUetConsent {
-  return { ad_storage: decision.ads ? "granted" : "denied" };
+  return { ad_storage: toAdConsentState(decision).limitedDataUse ? "denied" : "granted" };
 }
 
 /** The mapped per-event payload handed to a UET transport (`uetq.push`). */

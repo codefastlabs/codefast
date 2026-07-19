@@ -75,6 +75,20 @@ export function clearAnonymousId(): void {
   anonymousId.clear();
 }
 
+/** The visitor's existing anonymous id without minting one — `undefined` when none exists yet. */
+export function currentAnonymousId(): string | undefined {
+  return anonymousId.current();
+}
+
+/**
+ * The visitor's durable anonymous id, minting and persisting one if absent — use it to stamp a
+ * consent receipt so the receipt's subject matches the id analytics later reports under, not a
+ * throwaway. Only call this once tracking is actually granted.
+ */
+export function getAnonymousId(): string {
+  return anonymousId.getOrCreate();
+}
+
 /**
  * Rolls an existing id's expiry forward (client write + one server `Set-Cookie` re-issue)
  * without ever minting — called once per load for consented returning visitors, so the id

@@ -29,6 +29,18 @@ describe("createCookieAnonymousId", () => {
     expect(first).toBe(second);
   });
 
+  it("current() returns undefined until an id exists, then the id, without minting", () => {
+    const anonymousId = createCookieAnonymousId({ cookieName: COOKIE_NAME });
+
+    expect(anonymousId.current()).toBeUndefined();
+    // current() must not have minted a cookie.
+    expect(document.cookie).not.toContain(COOKIE_NAME);
+
+    const id = anonymousId.getOrCreate();
+
+    expect(anonymousId.current()).toBe(id);
+  });
+
   it("mints a fresh id after clear", () => {
     const anonymousId = createCookieAnonymousId({ cookieName: COOKIE_NAME });
 

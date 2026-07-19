@@ -9,6 +9,7 @@ import {
 import type { ConsentCategory, InitialConsent } from "#/core/consent";
 import type { ConsentReceipt, ConsentReceiptInput } from "#/core/consent-receipt";
 import { isConsentReceiptInput } from "#/core/consent-receipt";
+import type { AnonymousIdCookieOptions } from "#/server/anonymous-id-cookie";
 import { resolveAnonymousIdCookie, resolveClearAnonymousIdCookie } from "#/server/anonymous-id-cookie";
 import { buildConsentReceipt } from "#/server/consent-receipt";
 import type { ReceiptStore } from "#/server/consent-receipt-store";
@@ -48,14 +49,8 @@ export function resolveInitialConsentFromRequest(options: InitialConsentFromRequ
   });
 }
 
-export interface AnonymousIdResponseCookieOptions {
-  /** Cookie name — must match what the client tracker reads. */
-  cookieName: string;
-  /** The client-minted id to persist — throws unless it is exactly UUID-shaped. */
-  id: string;
-  /** How long the id survives a return visit. Defaults to one year. */
-  maxAgeSeconds?: number | undefined;
-}
+/** The `setAnonymousIdResponseCookie` input — the server cookie options, unchanged. */
+export type AnonymousIdResponseCookieOptions = AnonymousIdCookieOptions;
 
 /**
  * Persists (or prolongs) a client-minted anonymous id via the framework's `setCookie` (which

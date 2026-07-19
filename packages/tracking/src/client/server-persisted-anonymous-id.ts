@@ -54,6 +54,9 @@ export function createServerPersistedAnonymousId(options: ServerPersistedAnonymo
         });
       }
     },
+    current(): string | undefined {
+      return local.current();
+    },
     getOrCreate(): string {
       // Cross-tab withdrawal expires the cookie without this instance's `clear()` — reset
       // so the next minted id is server-persisted (ITP re-issue) again.

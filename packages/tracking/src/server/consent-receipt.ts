@@ -23,9 +23,14 @@ export function coarsenIp(ip: string | null | undefined): string | undefined {
   const trimmed = ip.trim();
 
   if (IPV4_PATTERN.test(trimmed)) {
-    const [first, second] = trimmed.split(".");
+    const octets = trimmed.split(".");
 
-    return `${first}.${second}.0.0`;
+    // Reject out-of-range octets (e.g. "999.1.1.1") rather than storing a malformed coarse value.
+    if (octets.some((octet) => Number(octet) > 255)) {
+      return undefined;
+    }
+
+    return `${octets[0]}.${octets[1]}.0.0`;
   }
 
   if (trimmed.includes(":")) {

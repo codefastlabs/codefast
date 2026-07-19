@@ -36,6 +36,19 @@ describe("createServerPersistedAnonymousId", () => {
     expect(persist).toHaveBeenCalledExactlyOnceWith("3b241101-e2bb-4255-8caf-4136c566a962");
   });
 
+  it("current() reads the existing id without minting or persisting", () => {
+    const persist = vi.fn().mockResolvedValue(undefined);
+    const anonymousId = createServerPersistedAnonymousId({ cookieName: COOKIE_NAME, persist });
+
+    expect(anonymousId.current()).toBeUndefined();
+
+    const id = anonymousId.getOrCreate();
+    persist.mockClear();
+
+    expect(anonymousId.current()).toBe(id);
+    expect(persist).not.toHaveBeenCalled();
+  });
+
   it("persists at most once per page load, however many events fire", () => {
     const persist = vi.fn().mockResolvedValue(undefined);
     const anonymousId = createServerPersistedAnonymousId({ cookieName: COOKIE_NAME, persist });

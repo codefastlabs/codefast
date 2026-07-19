@@ -89,8 +89,8 @@ export function isConsentDecision(value: unknown): value is ConsentDecision {
 
 /**
  * Re-derives a clean per-category decision from a tamperable record — extra keys are
- * dropped, every category becomes an explicit boolean. The one normalization rule shared
- * by the client (`readStoredDecision`) and server (`readConsentDecisionCookie`) mirrors.
+ * dropped, every category becomes an explicit boolean. The one normalization rule every
+ * reader of stored consent shares (e.g. `readStoredDecision`).
  *
  * @since 1.0.0-canary.6
  */

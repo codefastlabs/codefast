@@ -5,11 +5,14 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { ConsentGate } from "#/features/tracking/components/consent-gate";
 import type { InitialConsent } from "#/features/tracking/lib/consent";
 
-const { clearAnonymousId, clearGoogleAnalyticsCookies, useVisitorConsent } = vi.hoisted(() => ({
-  clearAnonymousId: vi.fn(),
-  clearGoogleAnalyticsCookies: vi.fn(),
-  useVisitorConsent: vi.fn(),
-}));
+const { clearAnonymousId, clearGoogleAnalyticsCookies, currentAnonymousId, getAnonymousId, useVisitorConsent } =
+  vi.hoisted(() => ({
+    clearAnonymousId: vi.fn(),
+    clearGoogleAnalyticsCookies: vi.fn(),
+    currentAnonymousId: vi.fn<() => string | undefined>(() => undefined),
+    getAnonymousId: vi.fn<() => string>(() => "11111111-1111-4111-8111-111111111111"),
+    useVisitorConsent: vi.fn(),
+  }));
 
 vi.mock(import("#/features/tracking/lib/visitor-consent"), async (importOriginal) => ({
   ...(await importOriginal()),
@@ -24,6 +27,8 @@ function setRegion(initialConsent: InitialConsent): void {
 
 vi.mock("#/features/tracking/lib/tracking", () => ({
   clearAnonymousId,
+  currentAnonymousId,
+  getAnonymousId,
 }));
 // Only the cookie clear is spied (jsdom's document.cookie is awkward to assert on);
 // consent updates are asserted on the real gtag stub's dataLayer below.
