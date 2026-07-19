@@ -16,9 +16,9 @@
   ],
   "type": "module",
   "sideEffects": false,
-  "main": "./dist/index.mjs",
-  "module": "./dist/index.mjs",
-  "types": "./dist/index.d.mts",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "imports": {
     "#/tests/*": [
       "./tests/*",
@@ -27,109 +27,119 @@
       "./tests/*/index.ts",
       "./tests/*/index.tsx"
     ],
-    "#/*": [
-      "./src/*",
-      "./src/*.ts",
-      "./src/*.tsx",
-      "./src/*/index.ts",
-      "./src/*/index.tsx"
-    ]
+    "#/*": {
+      "source": [
+        "./src/*",
+        "./src/*.ts",
+        "./src/*.tsx",
+        "./src/*/index.ts",
+        "./src/*/index.tsx"
+      ],
+      "types": [
+        "./dist/*.d.ts",
+        "./dist/*/index.d.ts"
+      ],
+      "default": [
+        "./dist/*.js",
+        "./dist/*/index.js"
+      ]
+    }
   },
   "exports": {
     ".": {
       "source": "./src/index.ts",
-      "types": "./dist/index.d.mts",
-      "import": "./dist/index.mjs"
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
     },
     "./child/bench-options": {
       "source": "./src/child/bench-options.ts",
-      "types": "./dist/child/bench-options.d.mts",
-      "import": "./dist/child/bench-options.mjs"
+      "types": "./dist/child/bench-options.d.ts",
+      "import": "./dist/child/bench-options.js"
     },
     "./child/bench-scenario": {
       "source": "./src/child/bench-scenario.ts",
-      "types": "./dist/child/bench-scenario.d.mts",
-      "import": "./dist/child/bench-scenario.mjs"
+      "types": "./dist/child/bench-scenario.d.ts",
+      "import": "./dist/child/bench-scenario.js"
     },
     "./child/create-run-all-trials": {
       "source": "./src/child/create-run-all-trials.ts",
-      "types": "./dist/child/create-run-all-trials.d.mts",
-      "import": "./dist/child/create-run-all-trials.mjs"
+      "types": "./dist/child/create-run-all-trials.d.ts",
+      "import": "./dist/child/create-run-all-trials.js"
     },
     "./child/fingerprint": {
       "source": "./src/child/fingerprint.ts",
-      "types": "./dist/child/fingerprint.d.mts",
-      "import": "./dist/child/fingerprint.mjs"
+      "types": "./dist/child/fingerprint.d.ts",
+      "import": "./dist/child/fingerprint.js"
     },
     "./child/run-benchmark-child-main": {
       "source": "./src/child/run-benchmark-child-main.ts",
-      "types": "./dist/child/run-benchmark-child-main.d.mts",
-      "import": "./dist/child/run-benchmark-child-main.mjs"
+      "types": "./dist/child/run-benchmark-child-main.d.ts",
+      "import": "./dist/child/run-benchmark-child-main.js"
     },
     "./child/run-sanity-checks": {
       "source": "./src/child/run-sanity-checks.ts",
-      "types": "./dist/child/run-sanity-checks.d.mts",
-      "import": "./dist/child/run-sanity-checks.mjs"
+      "types": "./dist/child/run-sanity-checks.d.ts",
+      "import": "./dist/child/run-sanity-checks.js"
     },
     "./parent/resolve-bench-parent-exit-code": {
       "source": "./src/parent/resolve-bench-parent-exit-code.ts",
-      "types": "./dist/parent/resolve-bench-parent-exit-code.d.mts",
-      "import": "./dist/parent/resolve-bench-parent-exit-code.mjs"
+      "types": "./dist/parent/resolve-bench-parent-exit-code.d.ts",
+      "import": "./dist/parent/resolve-bench-parent-exit-code.js"
     },
     "./parent/run-bench-subprocess": {
       "source": "./src/parent/run-bench-subprocess.ts",
-      "types": "./dist/parent/run-bench-subprocess.d.mts",
-      "import": "./dist/parent/run-bench-subprocess.mjs"
+      "types": "./dist/parent/run-bench-subprocess.d.ts",
+      "import": "./dist/parent/run-bench-subprocess.js"
     },
     "./report/aggregate": {
       "source": "./src/report/aggregate.ts",
-      "types": "./dist/report/aggregate.d.mts",
-      "import": "./dist/report/aggregate.mjs"
+      "types": "./dist/report/aggregate.d.ts",
+      "import": "./dist/report/aggregate.js"
     },
     "./report/format": {
       "source": "./src/report/format.ts",
-      "types": "./dist/report/format.d.mts",
-      "import": "./dist/report/format.mjs"
+      "types": "./dist/report/format.d.ts",
+      "import": "./dist/report/format.js"
     },
     "./report/jsonl": {
       "source": "./src/report/jsonl.ts",
-      "types": "./dist/report/jsonl.d.mts",
-      "import": "./dist/report/jsonl.mjs"
+      "types": "./dist/report/jsonl.d.ts",
+      "import": "./dist/report/jsonl.js"
     },
     "./report/quantiles": {
       "source": "./src/report/quantiles.ts",
-      "types": "./dist/report/quantiles.d.mts",
-      "import": "./dist/report/quantiles.mjs"
+      "types": "./dist/report/quantiles.d.ts",
+      "import": "./dist/report/quantiles.js"
     },
     "./report/two-way": {
       "source": "./src/report/two-way.ts",
-      "types": "./dist/report/two-way.d.mts",
-      "import": "./dist/report/two-way.mjs"
+      "types": "./dist/report/two-way.d.ts",
+      "import": "./dist/report/two-way.js"
     },
     "./report/write": {
       "source": "./src/report/write.ts",
-      "types": "./dist/report/write.d.mts",
-      "import": "./dist/report/write.mjs"
+      "types": "./dist/report/write.d.ts",
+      "import": "./dist/report/write.js"
     },
     "./shared/config": {
       "source": "./src/shared/config.ts",
-      "types": "./dist/shared/config.d.mts",
-      "import": "./dist/shared/config.mjs"
+      "types": "./dist/shared/config.d.ts",
+      "import": "./dist/shared/config.js"
     },
     "./shared/env-keys": {
       "source": "./src/shared/env-keys.ts",
-      "types": "./dist/shared/env-keys.d.mts",
-      "import": "./dist/shared/env-keys.mjs"
+      "types": "./dist/shared/env-keys.d.ts",
+      "import": "./dist/shared/env-keys.js"
     },
     "./shared/protocol": {
       "source": "./src/shared/protocol.ts",
-      "types": "./dist/shared/protocol.d.mts",
-      "import": "./dist/shared/protocol.mjs"
+      "types": "./dist/shared/protocol.d.ts",
+      "import": "./dist/shared/protocol.js"
     },
     "./package.json": "./package.json"
   },
   "scripts": {
-    "build": "tsdown",
+    "build": "rm -rf dist && tsc -p tsconfig.build.json",
     "check-types": "tsc --noEmit",
     "clean": "rm -rf dist",
     "test": "vitest run",
@@ -138,7 +148,8 @@
     "test:integration": "vitest run tests/integration",
     "test:type": "vitest run tests/types",
     "test:unit": "vitest run tests/unit",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "dev": "tsc -p tsconfig.build.json --watch --preserveWatchOutput"
   },
   "dependencies": {
     "tinybench": "catalog:"
@@ -148,7 +159,6 @@
     "@types/node": "catalog:",
     "@typescript/native": "catalog:",
     "@vitest/coverage-v8": "catalog:",
-    "tsdown": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:"
   },

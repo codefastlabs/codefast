@@ -10,6 +10,13 @@ import { defineConfig } from "vitest/config";
  * See TESTING.md at the repo root for the full taxonomy.
  */
 export default defineConfig({
+  // Vitest 4 resolves tests through the SSR pipeline; gate `#/` on `source`
+  // so tests run against `src`, not the built `dist`.
+  ssr: {
+    resolve: {
+      conditions: ["source"],
+    },
+  },
   test: {
     coverage: {
       exclude: ["src/**/*.test.?(c|m)[jt]s?(x)", "**/*.d.ts"],
