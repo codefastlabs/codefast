@@ -72,8 +72,8 @@
   "dependencies": {
     "commander": "catalog:",
     "jiti": "catalog:",
+    "oxc-parser": "catalog:",
     "picomatch": "catalog:",
-    "typescript": "catalog:",
     "yaml": "catalog:",
     "zod": "catalog:"
   },
@@ -81,8 +81,8 @@
     "@codefast/typescript-config": "workspace:*",
     "@types/node": "catalog:",
     "@types/picomatch": "catalog:",
-    "@typescript/native": "catalog:",
     "@vitest/coverage-v8": "catalog:",
+    "typescript": "catalog:",
     "vite": "catalog:",
     "vitest": "catalog:"
   },
