@@ -15,8 +15,6 @@ import { buildConsentReceipt } from "#/server/consent-receipt";
 import type { ReceiptStore } from "#/server/consent-receipt-store";
 import { resolveInitialConsent } from "#/server/initial-consent";
 
-export type { InitialConsent };
-
 export interface InitialConsentFromRequestOptions {
   /**
    * Header carrying the ISO 3166-1 alpha-2 country code.
@@ -49,9 +47,6 @@ export function resolveInitialConsentFromRequest(options: InitialConsentFromRequ
   });
 }
 
-/** The `setAnonymousIdResponseCookie` input — the server cookie options, unchanged. */
-export type AnonymousIdResponseCookieOptions = AnonymousIdCookieOptions;
-
 /**
  * Persists (or prolongs) a client-minted anonymous id via the framework's `setCookie` (which
  * appends, so it never clobbers another `Set-Cookie` on the response) — the server re-issue
@@ -61,7 +56,7 @@ export type AnonymousIdResponseCookieOptions = AnonymousIdCookieOptions;
  *
  * @since 1.0.0-canary.6
  */
-export function setAnonymousIdResponseCookie(options: AnonymousIdResponseCookieOptions): void {
+export function setAnonymousIdResponseCookie(options: AnonymousIdCookieOptions): void {
   const { name, value, ...attributes } = resolveAnonymousIdCookie({
     cookieName: options.cookieName,
     id: options.id,
