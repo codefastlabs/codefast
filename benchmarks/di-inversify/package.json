@@ -38,7 +38,6 @@
   "devDependencies": {
     "@codefast/typescript-config": "workspace:*",
     "@types/node": "catalog:",
-    "@typescript/native": "catalog:",
     "typescript": "catalog:"
   },
   "engines": {

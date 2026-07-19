@@ -225,7 +225,6 @@
     "@codefast/typescript-config": "workspace:*",
     "@rolldown/plugin-babel": "catalog:",
     "@types/node": "catalog:",
-    "@typescript/native": "catalog:",
     "@vitest/coverage-v8": "catalog:",
     "expect-type": "catalog:",
     "tsx": "catalog:",
