@@ -3,12 +3,12 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { forwardConsentDecisionToGa4 } from "#/features/tracking/lib/ga4-measurement-protocol.server";
 
-const { getRequestHeader, sendMeasurementProtocolEvents } = vi.hoisted(() => ({
-  getRequestHeader: vi.fn<(name: string) => string | undefined>(),
+const { getCookie, sendMeasurementProtocolEvents } = vi.hoisted(() => ({
+  getCookie: vi.fn<(name: string) => string | undefined>(),
   sendMeasurementProtocolEvents: vi.fn(() => Promise.resolve()),
 }));
 
-vi.mock("@tanstack/react-start/server", () => ({ getRequestHeader }));
+vi.mock("@tanstack/react-start/server", () => ({ getCookie }));
 vi.mock(import("@codefast/tracking/server/measurement-protocol"), async (importOriginal) => ({
   ...(await importOriginal()),
   sendMeasurementProtocolEvents,
@@ -28,7 +28,7 @@ const GRANT: ConsentReceiptInput = {
 beforeEach(() => {
   vi.stubEnv("VITE_GA4_MEASUREMENT_ID", "G-ABC123");
   vi.stubEnv("GA4_API_SECRET", "secret");
-  getRequestHeader.mockReturnValue("_ga=GA1.1.111.222; other=x");
+  getCookie.mockReturnValue("GA1.1.111.222");
   sendMeasurementProtocolEvents.mockClear();
 });
 
@@ -70,7 +70,7 @@ describe("forwardConsentDecisionToGa4", () => {
   });
 
   it("does not forward when the visitor has no GA4 client id yet", async () => {
-    getRequestHeader.mockReturnValue("other=x");
+    getCookie.mockReturnValue(undefined);
 
     await forwardConsentDecisionToGa4(GRANT);
 

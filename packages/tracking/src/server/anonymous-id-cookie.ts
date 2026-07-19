@@ -6,16 +6,21 @@ const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{
 // Conservative subset of the RFC 6265 cookie-name token.
 const COOKIE_NAME_PATTERN = /^[\w-]+$/;
 
-function assertCookieName(cookieName: string): void {
+/**
+ * Guards the cookie name against anything outside the RFC 6265 token set.
+ *
+ * @throws Error when `cookieName` is not a valid token.
+ */
+export function assertValidAnonymousIdCookieName(cookieName: string): void {
   if (!COOKIE_NAME_PATTERN.test(cookieName)) {
     throw new Error(`Invalid anonymous-id cookie name: ${JSON.stringify(cookieName)}`);
   }
 }
 
 /**
- * Whether a value is safe to persist as an anonymous id. The persist endpoint is public
- * and echoes its input into a response header, so only an exactly-UUID-shaped value may
- * pass — anything else is a header-injection attempt or corruption, never a valid id.
+ * Whether a value is safe to persist as an anonymous id. The persist endpoint is public and
+ * writes its input into a `Set-Cookie`, so only an exactly-UUID-shaped value may pass —
+ * anything else is a header-injection attempt or corruption, never a valid id.
  *
  * @since 1.0.0-canary.6
  */
@@ -26,7 +31,7 @@ export function isValidAnonymousId(value: string): boolean {
 /**
  * @since 1.0.0-canary.6
  */
-export interface AnonymousIdSetCookieOptions {
+export interface AnonymousIdCookieOptions {
   /** Cookie name — must match what the client tracker reads. */
   cookieName: string;
   /** The client-minted id to persist — throws unless it is exactly UUID-shaped. */
@@ -36,41 +41,61 @@ export interface AnonymousIdSetCookieOptions {
 }
 
 /**
- * `Set-Cookie` header value that persists (or prolongs) a client-minted anonymous id from
- * the server. A server-set cookie escapes Safari ITP's 7-day cap on `document.cookie`
- * writes, so the id actually lives its full max-age. The server only ever re-sets an id
- * the client hands it — minting stays client-side, after consent, by design.
+ * The validated name/value plus cookie attributes for persisting a client-minted anonymous
+ * id from the server — feed straight into the framework's cookie helper (`setCookie`).
  *
  * @remarks
  * Always `Secure` — on a plain-HTTP dev origin a browser may drop it, and the
  * client-written cookie (`createServerPersistedAnonymousId`'s optimistic write) still
- * covers that session. Not `HttpOnly`: the client tracker must read the id to stamp it
- * onto events.
+ * covers that session. Not `httpOnly`: the client tracker must read the id to stamp it onto
+ * events. A server-set cookie escapes Safari ITP's 7-day cap on `document.cookie` writes, so
+ * the id actually lives its full max-age. The server only ever re-sets an id the client
+ * hands it — minting stays client-side, after consent, by design.
  *
  * @throws Error when `id` is not UUID-shaped or `cookieName` is not a valid token.
  *
  * @since 1.0.0-canary.6
  */
-export function buildAnonymousIdSetCookie(options: AnonymousIdSetCookieOptions): string {
-  const { cookieName, id, maxAgeSeconds = ONE_YEAR_IN_SECONDS } = options;
+export function resolveAnonymousIdCookie(options: AnonymousIdCookieOptions): {
+  maxAge: number;
+  name: string;
+  path: string;
+  sameSite: "lax";
+  secure: true;
+  value: string;
+} {
+  assertValidAnonymousIdCookieName(options.cookieName);
 
-  assertCookieName(cookieName);
-
-  if (!isValidAnonymousId(id)) {
+  if (!isValidAnonymousId(options.id)) {
     throw new Error("Invalid anonymous id: expected a UUID-shaped value");
   }
 
-  return `${cookieName}=${id}; Path=/; Max-Age=${String(maxAgeSeconds)}; SameSite=Lax; Secure`;
+  return {
+    maxAge: options.maxAgeSeconds ?? ONE_YEAR_IN_SECONDS,
+    name: options.cookieName,
+    path: "/",
+    sameSite: "lax",
+    secure: true,
+    value: options.id,
+  };
 }
 
 /**
- * `Set-Cookie` header value that expires the anonymous-id cookie — the server half of a
- * consent withdrawal, alongside the client's own `document.cookie` expiry.
+ * Name plus attributes for expiring the anonymous-id cookie — the server half of a consent
+ * withdrawal. Attributes must match {@link resolveAnonymousIdCookie} so the browser targets
+ * the same cookie. Feed into the framework's `deleteCookie`.
+ *
+ * @throws Error when `cookieName` is not a valid token.
  *
  * @since 1.0.0-canary.6
  */
-export function buildClearAnonymousIdSetCookie(cookieName: string): string {
-  assertCookieName(cookieName);
+export function resolveClearAnonymousIdCookie(cookieName: string): {
+  name: string;
+  path: string;
+  sameSite: "lax";
+  secure: true;
+} {
+  assertValidAnonymousIdCookieName(cookieName);
 
-  return `${cookieName}=; Path=/; Max-Age=0; SameSite=Lax; Secure`;
+  return { name: cookieName, path: "/", sameSite: "lax", secure: true };
 }

@@ -1,9 +1,15 @@
-import { getRequestHeader, setResponseHeader } from "@tanstack/react-start/server";
+import {
+  deleteCookie,
+  getRequestHeader,
+  getRequestIP,
+  setCookie,
+  setResponseHeader,
+} from "@tanstack/react-start/server";
 
 import type { ConsentCategory, InitialConsent } from "#/core/consent";
 import type { ConsentReceipt, ConsentReceiptInput } from "#/core/consent-receipt";
 import { isConsentReceiptInput } from "#/core/consent-receipt";
-import { buildAnonymousIdSetCookie, buildClearAnonymousIdSetCookie } from "#/server/anonymous-id-cookie";
+import { resolveAnonymousIdCookie, resolveClearAnonymousIdCookie } from "#/server/anonymous-id-cookie";
 import { buildConsentReceipt } from "#/server/consent-receipt";
 import type { ReceiptStore } from "#/server/consent-receipt-store";
 import { resolveInitialConsent } from "#/server/initial-consent";
@@ -52,22 +58,22 @@ export interface AnonymousIdResponseCookieOptions {
 }
 
 /**
- * Persists (or prolongs) a client-minted anonymous id via `Set-Cookie` on the current
- * response — the server re-issue that escapes Safari ITP's 7-day cap on script-written
- * cookies. Validation lives in `buildAnonymousIdSetCookie`: a non-UUID id throws, so this
- * can safely back a public server function without echoing attacker input into a header.
+ * Persists (or prolongs) a client-minted anonymous id via the framework's `setCookie` (which
+ * appends, so it never clobbers another `Set-Cookie` on the response) — the server re-issue
+ * that escapes Safari ITP's 7-day cap on script-written cookies. Validation lives in
+ * `resolveAnonymousIdCookie`: a non-UUID id throws, so this can safely back a public server
+ * function without echoing attacker input into a header.
  *
  * @since 1.0.0-canary.6
  */
 export function setAnonymousIdResponseCookie(options: AnonymousIdResponseCookieOptions): void {
-  setResponseHeader(
-    "set-cookie",
-    buildAnonymousIdSetCookie({
-      cookieName: options.cookieName,
-      id: options.id,
-      maxAgeSeconds: options.maxAgeSeconds,
-    }),
-  );
+  const { name, value, ...attributes } = resolveAnonymousIdCookie({
+    cookieName: options.cookieName,
+    id: options.id,
+    maxAgeSeconds: options.maxAgeSeconds,
+  });
+
+  setCookie(name, value, attributes);
 }
 
 /**
@@ -76,23 +82,9 @@ export function setAnonymousIdResponseCookie(options: AnonymousIdResponseCookieO
  * @since 1.0.0-canary.6
  */
 export function clearAnonymousIdResponseCookie(cookieName: string): void {
-  setResponseHeader("set-cookie", buildClearAnonymousIdSetCookie(cookieName));
-}
+  const { name, ...attributes } = resolveClearAnonymousIdCookie(cookieName);
 
-/** Order the connection IP is read from — first forwarded hop wins, then the single real-ip header. */
-const IP_HEADER_NAMES: ReadonlyArray<string> = ["x-forwarded-for", "x-real-ip"];
-
-function readConnectionIp(): string | undefined {
-  for (const headerName of IP_HEADER_NAMES) {
-    const value = getRequestHeader(headerName);
-
-    if (value) {
-      // x-forwarded-for is "client, proxy1, proxy2" — the client is the first hop.
-      return value.split(",")[0]?.trim();
-    }
-  }
-
-  return undefined;
+  deleteCookie(name, attributes);
 }
 
 /**
@@ -132,7 +124,10 @@ export async function recordConsentReceiptFromRequest(
     throw new Error("Invalid consent receipt input");
   }
 
-  const receipt = buildConsentReceipt({ input: options.input, rawIp: readConnectionIp(), sign: options.sign });
+  // getRequestIP reads the platform/socket IP, trusting X-Forwarded-For's first hop — safe
+  // behind the CDN/proxy this app deploys to, and the maintained path over hand-parsing headers.
+  const rawIp = getRequestIP({ xForwardedFor: true });
+  const receipt = buildConsentReceipt({ input: options.input, rawIp, sign: options.sign });
 
   await options.store.append(receipt);
 

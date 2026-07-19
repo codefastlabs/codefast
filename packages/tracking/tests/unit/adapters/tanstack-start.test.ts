@@ -6,12 +6,20 @@ import {
   setAnonymousIdResponseCookie,
 } from "#/adapters/tanstack-start";
 
-const { getRequestHeader, setResponseHeader } = vi.hoisted(() => ({
+const { deleteCookie, getRequestHeader, setCookie, setResponseHeader } = vi.hoisted(() => ({
+  deleteCookie: vi.fn<(name: string, options?: unknown) => void>(),
   getRequestHeader: vi.fn<(name: string) => string | undefined>(),
+  setCookie: vi.fn<(name: string, value: string, options?: unknown) => void>(),
   setResponseHeader: vi.fn<(name: string, value: string) => void>(),
 }));
 
-vi.mock("@tanstack/react-start/server", () => ({ getRequestHeader, setResponseHeader }));
+vi.mock("@tanstack/react-start/server", () => ({
+  deleteCookie,
+  getRequestHeader,
+  getRequestIP: vi.fn<() => string | undefined>(),
+  setCookie,
+  setResponseHeader,
+}));
 
 const ANON_ID = "11111111-1111-4111-8111-111111111111";
 
@@ -22,6 +30,8 @@ function stubHeaders(headers: Record<string, string>): void {
 beforeEach(() => {
   getRequestHeader.mockReset();
   setResponseHeader.mockReset();
+  setCookie.mockReset();
+  deleteCookie.mockReset();
   stubHeaders({});
 });
 
@@ -55,25 +65,28 @@ describe("resolveInitialConsentFromRequest", () => {
 });
 
 describe("anonymous-id response cookies", () => {
-  it("persists a UUID-shaped id via Set-Cookie", () => {
+  it("persists a UUID-shaped id via the framework's setCookie (append-safe, not a raw header)", () => {
     setAnonymousIdResponseCookie({ cookieName: "anon-id", id: ANON_ID });
 
-    expect(setResponseHeader).toHaveBeenCalledWith(
-      "set-cookie",
-      `anon-id=${ANON_ID}; Path=/; Max-Age=31536000; SameSite=Lax; Secure`,
-    );
-  });
-
-  it("throws on a non-UUID id instead of echoing it into a header", () => {
-    expect(() => {
-      setAnonymousIdResponseCookie({ cookieName: "anon-id", id: "evil\r\nSet-Cookie: pwned=1" });
-    }).toThrow("Invalid anonymous id: expected a UUID-shaped value");
+    expect(setCookie).toHaveBeenCalledWith("anon-id", ANON_ID, {
+      maxAge: 31_536_000,
+      path: "/",
+      sameSite: "lax",
+      secure: true,
+    });
     expect(setResponseHeader).not.toHaveBeenCalled();
   });
 
-  it("expires the cookie on clear", () => {
+  it("throws on a non-UUID id instead of writing it to a cookie", () => {
+    expect(() => {
+      setAnonymousIdResponseCookie({ cookieName: "anon-id", id: "evil\r\nSet-Cookie: pwned=1" });
+    }).toThrow("Invalid anonymous id: expected a UUID-shaped value");
+    expect(setCookie).not.toHaveBeenCalled();
+  });
+
+  it("expires the cookie on clear via deleteCookie with matching attributes", () => {
     clearAnonymousIdResponseCookie("anon-id");
 
-    expect(setResponseHeader).toHaveBeenCalledWith("set-cookie", "anon-id=; Path=/; Max-Age=0; SameSite=Lax; Secure");
+    expect(deleteCookie).toHaveBeenCalledWith("anon-id", { path: "/", sameSite: "lax", secure: true });
   });
 });

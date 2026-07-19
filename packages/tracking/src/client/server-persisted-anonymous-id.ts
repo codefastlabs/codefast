@@ -14,7 +14,7 @@ export interface ServerPersistedAnonymousIdOptions {
   maxAgeSeconds?: number | undefined;
   /**
    * Server round-trip that re-sets the cookie via `Set-Cookie` (e.g. a server function
-   * calling `buildAnonymousIdSetCookie`). Fired at most once per page load, only after an
+   * calling `setAnonymousIdResponseCookie`). Fired at most once per page load, only after an
    * id exists client-side — the server persists and prolongs, it never mints.
    */
   persist: (id: string) => Promise<void>;

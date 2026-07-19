@@ -1,9 +1,9 @@
 import { describe, expect, it } from "vitest";
 
 import {
-  buildAnonymousIdSetCookie,
-  buildClearAnonymousIdSetCookie,
   isValidAnonymousId,
+  resolveAnonymousIdCookie,
+  resolveClearAnonymousIdCookie,
 } from "#/server/anonymous-id-cookie";
 
 const COOKIE_NAME = "test-anon-id";
@@ -23,38 +23,46 @@ describe("isValidAnonymousId", () => {
   });
 });
 
-describe("buildAnonymousIdSetCookie", () => {
-  it("builds a one-year, Lax, Secure cookie by default", () => {
-    expect(buildAnonymousIdSetCookie({ cookieName: COOKIE_NAME, id: VALID_ID })).toBe(
-      `${COOKIE_NAME}=${VALID_ID}; Path=/; Max-Age=31536000; SameSite=Lax; Secure`,
-    );
+describe("resolveAnonymousIdCookie", () => {
+  it("resolves a one-year, Lax, Secure cookie by default", () => {
+    expect(resolveAnonymousIdCookie({ cookieName: COOKIE_NAME, id: VALID_ID })).toEqual({
+      maxAge: 31_536_000,
+      name: COOKIE_NAME,
+      path: "/",
+      sameSite: "lax",
+      secure: true,
+      value: VALID_ID,
+    });
   });
 
   it("honors a custom max-age", () => {
-    expect(buildAnonymousIdSetCookie({ cookieName: COOKIE_NAME, id: VALID_ID, maxAgeSeconds: 60 })).toContain(
-      "Max-Age=60",
+    expect(resolveAnonymousIdCookie({ cookieName: COOKIE_NAME, id: VALID_ID, maxAgeSeconds: 60 })).toMatchObject({
+      maxAge: 60,
+    });
+  });
+
+  it("throws instead of persisting a non-UUID id", () => {
+    expect(() => resolveAnonymousIdCookie({ cookieName: COOKIE_NAME, id: `${VALID_ID}; Domain=evil.example` })).toThrow(
+      /anonymous id/i,
     );
   });
 
-  it("throws instead of echoing a non-UUID id into the header", () => {
-    expect(() =>
-      buildAnonymousIdSetCookie({ cookieName: COOKIE_NAME, id: `${VALID_ID}; Domain=evil.example` }),
-    ).toThrow(/anonymous id/i);
-  });
-
   it("throws on an invalid cookie name", () => {
-    expect(() => buildAnonymousIdSetCookie({ cookieName: "bad=name", id: VALID_ID })).toThrow(/cookie name/i);
+    expect(() => resolveAnonymousIdCookie({ cookieName: "bad=name", id: VALID_ID })).toThrow(/cookie name/i);
   });
 });
 
-describe("buildClearAnonymousIdSetCookie", () => {
-  it("expires the cookie immediately", () => {
-    expect(buildClearAnonymousIdSetCookie(COOKIE_NAME)).toBe(
-      `${COOKIE_NAME}=; Path=/; Max-Age=0; SameSite=Lax; Secure`,
-    );
+describe("resolveClearAnonymousIdCookie", () => {
+  it("resolves attributes matching the set path so the browser targets the same cookie", () => {
+    expect(resolveClearAnonymousIdCookie(COOKIE_NAME)).toEqual({
+      name: COOKIE_NAME,
+      path: "/",
+      sameSite: "lax",
+      secure: true,
+    });
   });
 
   it("throws on an invalid cookie name", () => {
-    expect(() => buildClearAnonymousIdSetCookie("bad name")).toThrow(/cookie name/i);
+    expect(() => resolveClearAnonymousIdCookie("bad name")).toThrow(/cookie name/i);
   });
 });
