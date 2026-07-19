@@ -1,4 +1,4 @@
-import ts from "typescript";
+import { parseSync } from "oxc-parser";
 
 import type { FilesystemPort } from "#/core/filesystem/port";
 import { applyEditsDescending, indentOfLineContaining } from "#/core/source-text-edit";
@@ -10,13 +10,43 @@ type TextEdit = {
   replacement: string;
 };
 
-type TaggableDeclaration =
-  | ts.FunctionDeclaration
-  | ts.ClassDeclaration
-  | ts.InterfaceDeclaration
-  | ts.TypeAliasDeclaration
-  | ts.EnumDeclaration
-  | ts.VariableStatement;
+interface OxcNode {
+  readonly type: string;
+  readonly start: number;
+  readonly end: number;
+  readonly [key: string]: unknown;
+}
+
+interface OxcComment {
+  readonly type: "Block" | "Line";
+  readonly value: string;
+  readonly start: number;
+  readonly end: number;
+}
+
+/**
+ * Top-level statement kinds that carry a `@since` tag: function, class, interface,
+ * type alias, enum, and variable declaration.
+ */
+const TAGGABLE_DECLARATION_TYPES = new Set([
+  "FunctionDeclaration",
+  "ClassDeclaration",
+  "TSInterfaceDeclaration",
+  "TSTypeAliasDeclaration",
+  "TSEnumDeclaration",
+  "VariableDeclaration",
+]);
+
+function isOxcNode(value: unknown): value is OxcNode {
+  return typeof value === "object" && value !== null && typeof (value as { type?: unknown }).type === "string";
+}
+
+function identifierName(node: unknown): string | undefined {
+  if (isOxcNode(node) && node.type === "Identifier" && typeof node.name === "string") {
+    return node.name;
+  }
+  return undefined;
+}
 
 /**
  * @since 0.3.16-canary.0
@@ -28,17 +58,15 @@ export class TagSinceWriter {
 
   applySinceTagsToFile(filePath: string, version: string, write: boolean): TagFileResult {
     const sourceText = this.fs.readFileSync(filePath, "utf8");
-    const sf = ts.createSourceFile(
-      filePath,
-      sourceText,
-      ts.ScriptTarget.Latest,
-      true,
-      filePath.endsWith(".tsx") ? ts.ScriptKind.TSX : ts.ScriptKind.TS,
+    const { program, comments } = parseSync(filePath, sourceText);
+    const statements = (program as unknown as { body: ReadonlyArray<OxcNode> }).body;
+    const jsDocComments = (comments as ReadonlyArray<OxcComment>).filter(
+      (comment) => comment.type === "Block" && comment.value.startsWith("*"),
     );
 
     const edits: Array<TextEdit> = [];
-    for (const declaration of this.collectExportedDeclarations(sf)) {
-      const edit = this.makeDeclarationSinceLine(declaration, sf, sourceText, version);
+    for (const declaration of this.collectExportedDeclarations(statements)) {
+      const edit = this.makeDeclarationSinceLine(declaration, jsDocComments, sourceText, version);
       if (edit) {
         edits.push(edit);
       }
@@ -56,120 +84,157 @@ export class TagSinceWriter {
     };
   }
 
-  private hasExportModifier(node: ts.Node): boolean {
-    const modifiers = ts.canHaveModifiers(node) ? ts.getModifiers(node) : undefined;
-    return modifiers?.some((modifier) => modifier.kind === ts.SyntaxKind.ExportKeyword) ?? false;
-  }
-
-  private isTaggableDeclaration(node: ts.Statement): node is TaggableDeclaration {
-    return (
-      ts.isFunctionDeclaration(node) ||
-      ts.isClassDeclaration(node) ||
-      ts.isInterfaceDeclaration(node) ||
-      ts.isTypeAliasDeclaration(node) ||
-      ts.isEnumDeclaration(node) ||
-      ts.isVariableStatement(node)
-    );
-  }
-
-  private addDeclarationName(
-    registry: Map<string, Set<TaggableDeclaration>>,
-    name: string,
-    declaration: TaggableDeclaration,
-  ): void {
-    if (!registry.has(name)) {
-      registry.set(name, new Set([declaration]));
-      return;
+  /**
+   * The taggable declaration a top-level statement introduces, resolving the
+   * `export … <decl>` wrapper to the wrapper node — its `start` sits at `export`,
+   * matching `ts.getStart` on a modifier-bearing declaration.
+   */
+  private taggableDeclarationOf(statement: OxcNode): { anchor: OxcNode; names: Array<string> } | undefined {
+    if (TAGGABLE_DECLARATION_TYPES.has(statement.type)) {
+      return { anchor: statement, names: this.declarationNames(statement) };
     }
+    if (statement.type === "ExportNamedDeclaration" || statement.type === "ExportDefaultDeclaration") {
+      const declaration = statement.declaration;
+      if (isOxcNode(declaration) && TAGGABLE_DECLARATION_TYPES.has(declaration.type)) {
+        return { anchor: statement, names: this.declarationNames(declaration) };
+      }
+    }
+    return undefined;
+  }
+
+  private declarationNames(declaration: OxcNode): Array<string> {
+    if (declaration.type === "VariableDeclaration") {
+      const declarators = Array.isArray(declaration.declarations)
+        ? (declaration.declarations as ReadonlyArray<OxcNode>)
+        : [];
+      const names: Array<string> = [];
+      for (const declarator of declarators) {
+        const name = identifierName(declarator.id);
+        if (name !== undefined) {
+          names.push(name);
+        }
+      }
+      return names;
+    }
+    const name = identifierName(declaration.id);
+    return name === undefined ? [] : [name];
+  }
+
+  private addDeclarationName(registry: Map<string, Set<OxcNode>>, name: string, anchor: OxcNode): void {
     const bucket = registry.get(name);
     if (bucket === undefined) {
-      throw new Error(`declaration registry missing set for ${name}`);
+      registry.set(name, new Set([anchor]));
+      return;
     }
-    bucket.add(declaration);
+    bucket.add(anchor);
   }
 
-  private collectLocalNamedDeclarations(sf: ts.SourceFile): Map<string, Set<TaggableDeclaration>> {
-    const declarations = new Map<string, Set<TaggableDeclaration>>();
-    for (const statement of sf.statements) {
-      if (ts.isFunctionDeclaration(statement) && statement.name) {
-        this.addDeclarationName(declarations, statement.name.text, statement);
+  private collectLocalNamedDeclarations(statements: ReadonlyArray<OxcNode>): Map<string, Set<OxcNode>> {
+    const declarations = new Map<string, Set<OxcNode>>();
+    for (const statement of statements) {
+      const taggable = this.taggableDeclarationOf(statement);
+      if (!taggable) {
         continue;
       }
-      if (ts.isClassDeclaration(statement) && statement.name) {
-        this.addDeclarationName(declarations, statement.name.text, statement);
-        continue;
-      }
-      if (ts.isInterfaceDeclaration(statement)) {
-        this.addDeclarationName(declarations, statement.name.text, statement);
-        continue;
-      }
-      if (ts.isTypeAliasDeclaration(statement)) {
-        this.addDeclarationName(declarations, statement.name.text, statement);
-        continue;
-      }
-      if (ts.isEnumDeclaration(statement)) {
-        this.addDeclarationName(declarations, statement.name.text, statement);
-        continue;
-      }
-      if (!ts.isVariableStatement(statement)) {
-        continue;
-      }
-      for (const declaration of statement.declarationList.declarations) {
-        if (ts.isIdentifier(declaration.name)) {
-          this.addDeclarationName(declarations, declaration.name.text, statement);
-        }
+      for (const name of taggable.names) {
+        this.addDeclarationName(declarations, name, taggable.anchor);
       }
     }
     return declarations;
   }
 
-  private collectExportedDeclarations(sf: ts.SourceFile): Set<TaggableDeclaration> {
-    const exported = new Set<TaggableDeclaration>();
-    const localNamed = this.collectLocalNamedDeclarations(sf);
+  private collectExportedDeclarations(statements: ReadonlyArray<OxcNode>): Set<OxcNode> {
+    const exported = new Set<OxcNode>();
+    const localNamed = this.collectLocalNamedDeclarations(statements);
 
-    for (const statement of sf.statements) {
-      if (this.isTaggableDeclaration(statement) && this.hasExportModifier(statement)) {
-        exported.add(statement);
-        continue;
+    const addByLocalName = (name: string | undefined): void => {
+      if (name === undefined) {
+        return;
       }
+      const anchors = localNamed.get(name);
+      if (!anchors) {
+        return;
+      }
+      for (const anchor of anchors) {
+        exported.add(anchor);
+      }
+    };
 
-      if (
-        ts.isExportDeclaration(statement) &&
-        !statement.moduleSpecifier &&
-        statement.exportClause &&
-        ts.isNamedExports(statement.exportClause)
-      ) {
-        for (const element of statement.exportClause.elements) {
-          const localName = element.propertyName?.text ?? element.name.text;
-          const declarations = localNamed.get(localName);
-          if (!declarations) {
-            continue;
+    for (const statement of statements) {
+      if (statement.type === "ExportNamedDeclaration") {
+        // `export function foo() {}` — the wrapper is itself the taggable anchor.
+        if (isOxcNode(statement.declaration)) {
+          const taggable = this.taggableDeclarationOf(statement);
+          if (taggable) {
+            exported.add(taggable.anchor);
           }
-          for (const declaration of declarations) {
-            exported.add(declaration);
+          continue;
+        }
+        // `export { local }` (no re-export source) — resolve each local binding.
+        if (statement.source === null && Array.isArray(statement.specifiers)) {
+          for (const specifier of statement.specifiers as ReadonlyArray<OxcNode>) {
+            addByLocalName(identifierName(specifier.local));
           }
         }
         continue;
       }
 
-      if (!ts.isExportAssignment(statement) || !ts.isIdentifier(statement.expression)) {
+      if (TAGGABLE_DECLARATION_TYPES.has(statement.type)) {
         continue;
       }
-      const declarations = localNamed.get(statement.expression.text);
-      if (!declarations) {
+
+      // `export default function foo() {}` — declaration is the taggable anchor.
+      if (statement.type === "ExportDefaultDeclaration") {
+        const taggable = this.taggableDeclarationOf(statement);
+        if (taggable) {
+          exported.add(taggable.anchor);
+          continue;
+        }
+        // `export default localName` — resolve the referenced declaration.
+        addByLocalName(identifierName(statement.declaration));
         continue;
       }
-      for (const declaration of declarations) {
-        exported.add(declaration);
+
+      // `export = localName`.
+      if (statement.type === "TSExportAssignment") {
+        addByLocalName(identifierName(statement.expression));
       }
     }
 
     return exported;
   }
 
-  private makeJSDocSinceLine(existingComment: ts.JSDoc, sourceText: string, version: string): TextEdit {
-    const commentText = sourceText.slice(existingComment.pos, existingComment.end);
-    const baseIndent = indentOfLineContaining(sourceText, existingComment.pos);
+  /**
+   * The JSDoc block documenting `anchor`: the nearest preceding `/** … *\/` whose
+   * gap to the declaration is whitespace only, mirroring TS comment attachment.
+   */
+  private associatedJsDoc(
+    anchor: OxcNode,
+    jsDocComments: ReadonlyArray<OxcComment>,
+    sourceText: string,
+  ): OxcComment | undefined {
+    let associated: OxcComment | undefined;
+    for (const comment of jsDocComments) {
+      if (comment.end > anchor.start) {
+        break;
+      }
+      if (/^\s*$/.test(sourceText.slice(comment.end, anchor.start))) {
+        associated = comment;
+      }
+    }
+    return associated;
+  }
+
+  private jsDocHasSinceTag(comment: OxcComment): boolean {
+    return comment.value
+      .split("\n")
+      .map((line) => line.replace(/^\s*\*?\s?/, ""))
+      .some((line) => /^@since\b/.test(line));
+  }
+
+  private makeJSDocSinceLine(commentStart: number, commentEnd: number, sourceText: string, version: string): TextEdit {
+    const commentText = sourceText.slice(commentStart, commentEnd);
+    const baseIndent = indentOfLineContaining(sourceText, commentStart);
     const rawBody = commentText.replace(/^\/\*\*\s?/, "").replace(/\s*\*\/$/, "");
     const normalizedBodyLines = rawBody
       .split("\n")
@@ -191,7 +256,7 @@ export class TagSinceWriter {
         : "";
     const tag = this.sinceDocumentationTag;
     const replacement = `/**\n${formattedBody}${baseIndent} * ${tag} ${version}\n${baseIndent} */`;
-    return { start: existingComment.pos, end: existingComment.end, replacement };
+    return { start: commentStart, end: commentEnd, replacement };
   }
 
   private makeSinceOnlyJSDocBlock(declarationIndent: string, version: string): string {
@@ -200,23 +265,20 @@ export class TagSinceWriter {
   }
 
   private makeDeclarationSinceLine(
-    declaration: TaggableDeclaration,
-    sf: ts.SourceFile,
+    anchor: OxcNode,
+    jsDocComments: ReadonlyArray<OxcComment>,
     sourceText: string,
     version: string,
   ): TextEdit | undefined {
-    const jsDocTags = ts.getJSDocTags(declaration);
-    if (jsDocTags.some((tag) => tag.tagName.text === "since")) {
-      return undefined;
+    const existing = this.associatedJsDoc(anchor, jsDocComments, sourceText);
+    if (existing) {
+      if (this.jsDocHasSinceTag(existing)) {
+        return undefined;
+      }
+      return this.makeJSDocSinceLine(existing.start, existing.end, sourceText, version);
     }
 
-    const jsDocComments = ts.getJSDocCommentsAndTags(declaration).filter(ts.isJSDoc);
-    const lastJsDoc = jsDocComments.at(-1);
-    if (lastJsDoc) {
-      return this.makeJSDocSinceLine(lastJsDoc, sourceText, version);
-    }
-
-    const start = declaration.getStart(sf);
+    const start = anchor.start;
     const indent = indentOfLineContaining(sourceText, start);
     return {
       start,

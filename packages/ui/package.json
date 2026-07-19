@@ -654,7 +654,6 @@
     "@testing-library/user-event": "catalog:",
     "@types/jest-axe": "catalog:",
     "@types/node": "catalog:",
-    "@typescript/native": "catalog:",
     "@vitejs/plugin-react": "catalog:",
     "@vitest/coverage-v8": "catalog:",
     "jest-axe": "catalog:",
