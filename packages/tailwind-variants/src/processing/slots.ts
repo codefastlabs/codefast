@@ -6,6 +6,7 @@
  * and handling slot-specific variant processing.
  */
 
+import { getCompoundClass, matchesCompoundDefinition } from "#/processing/compound";
 import type {
   ClassValue,
   SlotCompoundVariant,
@@ -16,8 +17,6 @@ import type {
   SlotClassResolver,
 } from "#/types/api";
 import { cx, isSlotClassMap } from "#/utilities/utils";
-
-import { getCompoundClass, matchesCompoundDefinition } from "./compound";
 
 const composeSlotClassName = <T extends VariantSchema>(
   classes: Array<ClassValue>,

@@ -1,10 +1,10 @@
-import { EMPTY_MESSAGE_SCROLLER_VISIBILITY_STATE } from "./types";
+import { EMPTY_MESSAGE_SCROLLER_VISIBILITY_STATE } from "#/lib/message-scroller/types";
 import type {
   MessageScrollerScrollable,
   MessageScrollerStore,
   MessageScrollerVisibilityState,
   MessageScrollerVisibilityStore,
-} from "./types";
+} from "#/lib/message-scroller/types";
 
 // Generic useSyncExternalStore backing: a stable snapshot (referentially equal
 // while isEqual holds, so subscribers only re-render on real transitions) plus

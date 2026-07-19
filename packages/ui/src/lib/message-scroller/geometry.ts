@@ -2,8 +2,12 @@ import {
   EMPTY_MESSAGE_SCROLLER_SCROLLABLE,
   EMPTY_MESSAGE_SCROLLER_VISIBILITY_STATE,
   SCROLL_POSITION_EPSILON,
-} from "./types";
-import type { MessageScrollerScrollable, MessageScrollerScrollAlign, MessageScrollerVisibilityState } from "./types";
+} from "#/lib/message-scroller/types";
+import type {
+  MessageScrollerScrollable,
+  MessageScrollerScrollAlign,
+  MessageScrollerVisibilityState,
+} from "#/lib/message-scroller/types";
 
 /**
  * @since 0.5.0-canary.3
