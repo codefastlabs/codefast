@@ -823,9 +823,6 @@ importers:
       expect-type:
         specifier: 'catalog:'
         version: 1.4.0
-      tsdown:
-        specifier: 'catalog:'
-        version: 0.22.8(@tsdown/css@0.22.8)(@typescript/typescript6@6.0.2)(oxc-resolver@11.22.0)(tsx@4.23.1)
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -881,9 +878,6 @@ importers:
       jsdom:
         specifier: 'catalog:'
         version: 29.1.1
-      tsdown:
-        specifier: 'catalog:'
-        version: 0.22.8(@tsdown/css@0.22.8)(@typescript/typescript6@6.0.2)(oxc-resolver@11.22.0)(tsx@4.23.1)
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'

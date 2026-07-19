@@ -34,9 +34,9 @@
   ],
   "type": "module",
   "sideEffects": false,
-  "main": "./dist/index.mjs",
-  "module": "./dist/index.mjs",
-  "types": "./dist/index.d.mts",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "imports": {
     "#/tests/*": [
       "./tests/*",
@@ -45,19 +45,29 @@
       "./tests/*/index.ts",
       "./tests/*/index.tsx"
     ],
-    "#/*": [
-      "./src/*",
-      "./src/*.ts",
-      "./src/*.tsx",
-      "./src/*/index.ts",
-      "./src/*/index.tsx"
-    ]
+    "#/*": {
+      "source": [
+        "./src/*",
+        "./src/*.ts",
+        "./src/*.tsx",
+        "./src/*/index.ts",
+        "./src/*/index.tsx"
+      ],
+      "types": [
+        "./dist/*.d.ts",
+        "./dist/*/index.d.ts"
+      ],
+      "default": [
+        "./dist/*.js",
+        "./dist/*/index.js"
+      ]
+    }
   },
   "exports": {
     ".": {
       "source": "./src/index.ts",
-      "types": "./dist/index.d.mts",
-      "import": "./dist/index.mjs"
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
     },
     "./package.json": "./package.json"
   },
@@ -65,7 +75,7 @@
     "access": "public"
   },
   "scripts": {
-    "build": "tsdown",
+    "build": "rm -rf dist && tsc -p tsconfig.build.json",
     "check-types": "tsc --noEmit",
     "clean": "rm -rf dist",
     "test": "vitest run",
@@ -74,7 +84,8 @@
     "test:integration": "vitest run tests/integration",
     "test:type": "vitest run tests/types",
     "test:unit": "vitest run tests/unit",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "dev": "tsc -p tsconfig.build.json --watch --preserveWatchOutput"
   },
   "dependencies": {
     "clsx": "catalog:",
@@ -86,7 +97,6 @@
     "@typescript/native": "catalog:",
     "@vitest/coverage-v8": "catalog:",
     "expect-type": "catalog:",
-    "tsdown": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:"
   },
