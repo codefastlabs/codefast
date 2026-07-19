@@ -305,4 +305,34 @@ describe("mirror export generation", () => {
       "./package.json": "./package.json",
     });
   });
+
+  it("mirrors main/module/types to a tsc-built `.js` ESM entry", async () => {
+    const packageJsonHarness = createPackageJsonFilesystemHarness({
+      name: "virtual-package",
+      type: "module",
+      exports: {
+        "./package.json": "./package.json",
+      },
+    });
+
+    await writePackageJsonExportsAtomic(packageJsonHarness.filesystem, "/virtual/package.json", {
+      generatedExports: {
+        ".": {
+          types: "./dist/index.d.ts",
+          import: "./dist/index.js",
+        },
+        "./package.json": "./package.json",
+      },
+      managedExportSpecifiers: [".", "./package.json"],
+      originalPathBySpecifier: {
+        ".": ".",
+        "./package.json": "./package.json",
+      },
+    });
+
+    const packageJson = packageJsonHarness.readPackageJson();
+    expect(packageJson.main).toBe("./dist/index.js");
+    expect(packageJson.module).toBe("./dist/index.js");
+    expect(packageJson.types).toBe("./dist/index.d.ts");
+  });
 });
