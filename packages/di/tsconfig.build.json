@@ -6,10 +6,8 @@
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
-    "incremental": true,
     "outDir": "./dist",
     "rootDir": "./src",
-    "tsBuildInfoFile": "./.tsbuildinfo",
     "types": ["node"]
   },
   "include": ["src/**/*.ts"],
