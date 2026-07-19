@@ -14,7 +14,7 @@ export interface ServerPersistedAnonymousIdOptions {
   maxAgeSeconds?: number | undefined;
   /**
    * Server round-trip that re-sets the cookie via `Set-Cookie` (e.g. a server function
-   * calling `buildAnonymousIdSetCookie`). Fired at most once per page load, only after an
+   * calling `setAnonymousIdResponseCookie`). Fired at most once per page load, only after an
    * id exists client-side — the server persists and prolongs, it never mints.
    */
   persist: (id: string) => Promise<void>;
@@ -53,6 +53,9 @@ export function createServerPersistedAnonymousId(options: ServerPersistedAnonymo
           /* the client-side expiry above already took effect */
         });
       }
+    },
+    current(): string | undefined {
+      return local.current();
     },
     getOrCreate(): string {
       // Cross-tab withdrawal expires the cookie without this instance's `clear()` — reset

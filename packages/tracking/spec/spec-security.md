@@ -15,7 +15,7 @@ This document consolidates the security and privacy properties asserted piecemea
 
 - **UUID-only anonymous ids.** The persist endpoint echoes its input into a `Set-Cookie` header, so it MUST accept only an exactly-UUID-shaped value; anything else is a header-injection attempt or corruption and MUST be rejected ([spec-identity](spec-identity.md) §1, §4). Cookie names MUST match a conservative token pattern.
 - **Allow-list-by-default properties.** Schema validation forwards only the parsed output, so unknown caller keys cannot ride along to third-party sinks ([spec-event-model](spec-event-model.md) §2). This is an allow-list, the safer inversion of the blocklist redaction the wider field uses.
-- **No PII in URLs.** Identifiers and receipt data MUST NOT appear in URL query strings — path params and opaque ids only ([spec-consent-receipts](spec-consent-receipts.md) §3). `sourceUrl` captured in a receipt MUST have its query string stripped.
+- **No PII in URLs.** Identifiers and receipt data MUST NOT appear in URL query strings — path params and opaque ids only ([spec-consent-receipts](spec-consent-receipts.md) §3). The receipt model deliberately captures **no** `sourceUrl` (there is no URL field, so nothing to strip); if an implementation adds one, its query string MUST be stripped.
 
 ## 3. Consent-first minimisation
 

@@ -1,11 +1,10 @@
 import type { ConsentReceiptInput } from "@codefast/tracking/core/consent-receipt";
-import { readCookieValue } from "@codefast/tracking/core/cookie";
 import {
   extractGaClientId,
   sendMeasurementProtocolEvents,
   toMeasurementProtocolConsent,
 } from "@codefast/tracking/server/measurement-protocol";
-import { getRequestHeader } from "@tanstack/react-start/server";
+import { getCookie } from "@tanstack/react-start/server";
 
 /**
  * Forwards a recorded consent decision to GA4 as a server-owned `consent_update` event via
@@ -24,7 +23,7 @@ export async function forwardConsentDecisionToGa4(input: ConsentReceiptInput): P
     return;
   }
 
-  const clientId = extractGaClientId(readCookieValue(getRequestHeader("cookie") ?? "", "_ga"));
+  const clientId = extractGaClientId(getCookie("_ga"));
 
   // No GA4 client id yet (gtag never ran, or was blocked) → nothing to correlate against.
   if (!clientId) {

@@ -62,7 +62,7 @@ export { assertValidEventProperties, defineEventCatalog } from "#/core/event-cat
 
 export { generateEventId } from "#/core/event-id";
 
-export type { TrackedEvent, TrackedEventBase, TrackEvent } from "#/core/tracked-event";
+export type { TrackedEvent } from "#/core/tracked-event";
 
 // ── Client ──────────────────────────────────────────────────────────────────────────
 export type { CmpConsentSignal, CmpStatus, ReconcileAdFrameworkConsentOptions } from "#/client/ad-framework-consent";

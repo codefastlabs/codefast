@@ -1,5 +1,5 @@
 import type { ConsentDecision, ConsentMode } from "@codefast/tracking";
-import { readCookieValue, readStoredDecision } from "@codefast/tracking";
+import { readStoredDecision } from "@codefast/tracking";
 import { createConsentWithdrawalHandler } from "@codefast/tracking/client/consent-withdrawal";
 import { hasGlobalPrivacyControlSignal } from "@codefast/tracking/client/gpc";
 import { clearGoogleAnalyticsCookies } from "@codefast/tracking/destinations/google-analytics";
@@ -7,10 +7,9 @@ import type { UseConsentResult } from "@codefast/tracking/react/use-consent";
 import { useConsent } from "@codefast/tracking/react/use-consent";
 import { useEffect } from "react";
 
-import { ANONYMOUS_ID_COOKIE_NAME } from "#/features/tracking/lib/anonymous-id";
 import { consentConfig } from "#/features/tracking/lib/consent";
 import { recordConsentReceipt } from "#/features/tracking/lib/consent-receipt";
-import { clearAnonymousId } from "#/features/tracking/lib/tracking";
+import { clearAnonymousId, currentAnonymousId, getAnonymousId } from "#/features/tracking/lib/tracking";
 import { consentRuntime, useVisitorConsent } from "#/features/tracking/lib/visitor-consent";
 
 /**
@@ -20,18 +19,22 @@ import { consentRuntime, useVisitorConsent } from "#/features/tracking/lib/visit
  * the decision UX, so failures are swallowed.
  */
 function recordDecisionReceipt(decision: ConsentDecision): void {
-  const existingId =
-    typeof document === "undefined" ? undefined : readCookieValue(document.cookie, ANONYMOUS_ID_COOKIE_NAME);
+  const grantsTracking = decision.ads || decision.analytics;
+
+  // A grant establishes (and persists) the durable id so the receipt's subject matches the id
+  // analytics later reports under; a withdrawal records the id being withdrawn without minting
+  // a new one — falling back to a random id only when there was never a cookie to correlate.
+  const subjectId = grantsTracking ? getAnonymousId() : (currentAnonymousId() ?? crypto.randomUUID());
 
   void recordConsentReceipt({
     data: {
       decision,
-      eventType: decision.ads || decision.analytics ? "give" : "withdraw",
+      eventType: grantsTracking ? "give" : "withdraw",
       method: "granular",
       noticeLanguage: typeof navigator === "undefined" ? "en" : navigator.language,
       noticeVersion: consentConfig.policyVersion,
       policyVersion: consentConfig.policyVersion,
-      subjectId: existingId ?? crypto.randomUUID(),
+      subjectId,
       subjectIdType: "cookie",
     },
   }).catch(() => {

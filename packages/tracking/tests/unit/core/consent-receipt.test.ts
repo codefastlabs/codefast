@@ -32,6 +32,14 @@ describe("isConsentReceiptInput", () => {
     expect(isConsentReceiptInput({ ...validInput, eventType: "revoke" })).toBe(false);
   });
 
+  it("rejects a method outside the enum, even though it is a string", () => {
+    expect(isConsentReceiptInput({ ...validInput, method: "foo" })).toBe(false);
+  });
+
+  it("rejects a subjectIdType outside the enum, even though it is a string", () => {
+    expect(isConsentReceiptInput({ ...validInput, subjectIdType: "bar" })).toBe(false);
+  });
+
   it.each([undefined, null, "give", ["give"]])("rejects the non-object value %s", (value) => {
     expect(isConsentReceiptInput(value)).toBe(false);
   });

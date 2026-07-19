@@ -62,6 +62,16 @@ function isString(value: unknown): value is string {
   return typeof value === "string";
 }
 
+const RECEIPT_METHODS: ReadonlySet<ConsentReceiptMethod> = new Set([
+  "banner-accept",
+  "banner-reject",
+  "granular",
+  "gpc-signal",
+  "withdrawal",
+]);
+
+const RECEIPT_SUBJECT_ID_TYPES: ReadonlySet<ConsentReceiptSubjectIdType> = new Set(["cookie", "email-hash", "userId"]);
+
 /**
  * Guards a receipt input received from an untrusted client. Rejects a body carrying an
  * `ip`/`ipCoarse` field so a full address can never be persisted from caller input.
@@ -82,10 +92,12 @@ export function isConsentReceiptInput(value: unknown): value is ConsentReceiptIn
     isConsentDecision(input.decision) &&
     (input.eventType === "give" || input.eventType === "update" || input.eventType === "withdraw") &&
     isString(input.method) &&
+    RECEIPT_METHODS.has(input.method as ConsentReceiptMethod) &&
     isString(input.noticeLanguage) &&
     isString(input.noticeVersion) &&
     isString(input.policyVersion) &&
     isString(input.subjectId) &&
-    isString(input.subjectIdType)
+    isString(input.subjectIdType) &&
+    RECEIPT_SUBJECT_ID_TYPES.has(input.subjectIdType as ConsentReceiptSubjectIdType)
   );
 }
