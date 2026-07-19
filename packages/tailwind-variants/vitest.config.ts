@@ -10,6 +10,13 @@ import { defineConfig } from "vitest/config";
  *   tests/types/**        — static type-only tests using `expectTypeOf`
  */
 export default defineConfig({
+  // Vitest 4 resolves test modules through the SSR pipeline; gate `#/` on the
+  // `source` condition there so tests run against `src`, not the built `dist`.
+  ssr: {
+    resolve: {
+      conditions: ["source"],
+    },
+  },
   test: {
     coverage: {
       exclude: ["src/**/*.test.?(c|m)[jt]s?(x)", "**/*.d.ts"],

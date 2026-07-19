@@ -31,9 +31,9 @@
   ],
   "type": "module",
   "sideEffects": false,
-  "main": "./dist/index.mjs",
-  "module": "./dist/index.mjs",
-  "types": "./dist/index.d.mts",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "imports": {
     "#/tests/*": [
       "./tests/*",
@@ -42,59 +42,69 @@
       "./tests/*/index.ts",
       "./tests/*/index.tsx"
     ],
-    "#/*": [
-      "./src/*",
-      "./src/*.ts",
-      "./src/*.tsx",
-      "./src/*/index.ts",
-      "./src/*/index.tsx"
-    ]
+    "#/*": {
+      "source": [
+        "./src/*",
+        "./src/*.ts",
+        "./src/*.tsx",
+        "./src/*/index.ts",
+        "./src/*/index.tsx"
+      ],
+      "types": [
+        "./dist/*.d.ts",
+        "./dist/*/index.d.ts"
+      ],
+      "default": [
+        "./dist/*.js",
+        "./dist/*/index.js"
+      ]
+    }
   },
   "exports": {
     ".": {
       "source": "./src/index.ts",
-      "types": "./dist/index.d.mts",
-      "import": "./dist/index.mjs"
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
     },
     "./appearance": {
       "source": "./src/appearance.ts",
-      "types": "./dist/appearance.d.mts",
-      "import": "./dist/appearance.mjs"
+      "types": "./dist/appearance.d.ts",
+      "import": "./dist/appearance.js"
     },
     "./appearance-context": {
       "source": "./src/appearance-context.ts",
-      "types": "./dist/appearance-context.d.mts",
-      "import": "./dist/appearance-context.mjs"
+      "types": "./dist/appearance-context.d.ts",
+      "import": "./dist/appearance-context.js"
     },
     "./appearance-provider": {
       "source": "./src/appearance-provider.tsx",
-      "types": "./dist/appearance-provider.d.mts",
-      "import": "./dist/appearance-provider.mjs"
+      "types": "./dist/appearance-provider.d.ts",
+      "import": "./dist/appearance-provider.js"
     },
     "./appearance-script": {
       "source": "./src/appearance-script.tsx",
-      "types": "./dist/appearance-script.d.mts",
-      "import": "./dist/appearance-script.mjs"
+      "types": "./dist/appearance-script.d.ts",
+      "import": "./dist/appearance-script.js"
     },
     "./color-scheme": {
       "source": "./src/color-scheme.ts",
-      "types": "./dist/color-scheme.d.mts",
-      "import": "./dist/color-scheme.mjs"
+      "types": "./dist/color-scheme.d.ts",
+      "import": "./dist/color-scheme.js"
     },
     "./constants": {
       "source": "./src/constants.ts",
-      "types": "./dist/constants.d.mts",
-      "import": "./dist/constants.mjs"
+      "types": "./dist/constants.d.ts",
+      "import": "./dist/constants.js"
     },
     "./dom": {
       "source": "./src/dom.ts",
-      "types": "./dist/dom.d.mts",
-      "import": "./dist/dom.mjs"
+      "types": "./dist/dom.d.ts",
+      "import": "./dist/dom.js"
     },
     "./use-appearance": {
       "source": "./src/use-appearance.ts",
-      "types": "./dist/use-appearance.d.mts",
-      "import": "./dist/use-appearance.mjs"
+      "types": "./dist/use-appearance.d.ts",
+      "import": "./dist/use-appearance.js"
     },
     "./package.json": "./package.json"
   },
@@ -102,7 +112,7 @@
     "access": "public"
   },
   "scripts": {
-    "build": "tsdown",
+    "build": "rm -rf dist && tsc -p tsconfig.build.json",
     "check-types": "tsc --noEmit",
     "clean": "rm -rf dist",
     "test": "vitest run",
@@ -111,7 +121,8 @@
     "test:integration": "vitest run tests/integration",
     "test:type": "vitest run tests/types",
     "test:unit": "vitest run tests/unit",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "dev": "tsc -p tsconfig.build.json --watch --preserveWatchOutput"
   },
   "dependencies": {
     "zod": "catalog:"
@@ -127,7 +138,6 @@
     "@vitejs/plugin-react": "catalog:",
     "@vitest/coverage-v8": "catalog:",
     "jsdom": "catalog:",
-    "tsdown": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:",
     "vitest": "catalog:"
