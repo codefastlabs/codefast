@@ -7,6 +7,9 @@ import { useControllableState } from "radix-ui/internal";
 import type { ComponentProps, JSX } from "react";
 import { useCallback } from "react";
 
+// The resolved checked value the primitive reports; derived from Root so it tracks radix's own type.
+type CheckedState = Parameters<NonNullable<ComponentProps<typeof CheckboxPrimitive.Root>["onCheckedChange"]>>[0];
+
 /* -----------------------------------------------------------------------------
  * Context: CheckboxGroup
  * --------------------------------------------------------------------------- */
@@ -289,7 +292,7 @@ function CheckboxGroupItem({
         required={context.required}
         {...checkboxScope}
         {...props}
-        onCheckedChange={(checkedState) => {
+        onCheckedChange={(checkedState: CheckedState) => {
           if (checkedState) {
             context.onItemCheck(props.value);
           } else {
