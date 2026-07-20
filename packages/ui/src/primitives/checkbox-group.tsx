@@ -1,5 +1,4 @@
 import { Checkbox as CheckboxPrimitive } from "radix-ui";
-import { Checkbox } from "radix-ui";
 import { Direction } from "radix-ui";
 import type { CheckedState } from "radix-ui/checkbox";
 import { Context } from "radix-ui/internal";
@@ -26,11 +25,11 @@ type ScopedProps<P> = P & {
 
 const [createCheckboxGroupContext, createCheckboxGroupScope] = Context.createContextScope(CHECKBOX_GROUP_NAME, [
   RovingFocus.createRovingFocusGroupScope,
-  Checkbox.createCheckboxScope,
+  CheckboxPrimitive.createCheckboxScope,
 ]);
 
 const useRovingFocusGroupScope = RovingFocus.createRovingFocusGroupScope();
-const useCheckboxScope = Checkbox.createCheckboxScope();
+const useCheckboxScope = CheckboxPrimitive.createCheckboxScope();
 
 /**
  * Context values shared between CheckboxGroup components
