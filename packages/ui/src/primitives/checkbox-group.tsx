@@ -1,6 +1,5 @@
-import { Checkbox as CheckboxPrimitive } from "radix-ui";
 import { Direction } from "radix-ui";
-import type { CheckedState } from "radix-ui/checkbox";
+import * as CheckboxPrimitive from "radix-ui/checkbox";
 import { Context } from "radix-ui/internal";
 import { RovingFocus } from "radix-ui/internal";
 import { useControllableState } from "radix-ui/internal";
@@ -289,7 +288,7 @@ function CheckboxGroupItem({
         required={context.required}
         {...checkboxScope}
         {...props}
-        onCheckedChange={(checkedState: CheckedState) => {
+        onCheckedChange={(checkedState: CheckboxPrimitive.CheckedState) => {
           if (checkedState) {
             context.onItemCheck(props.value);
           } else {
