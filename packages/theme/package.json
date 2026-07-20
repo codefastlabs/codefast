@@ -121,8 +121,7 @@
     "test:integration": "vitest run tests/integration",
     "test:type": "vitest run tests/types",
     "test:unit": "vitest run tests/unit",
-    "test:watch": "vitest",
-    "dev": "tsc -p tsconfig.build.json --watch --preserveWatchOutput"
+    "test:watch": "vitest"
   },
   "dependencies": {
     "zod": "catalog:"
