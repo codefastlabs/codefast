@@ -120,7 +120,7 @@ pnpm dev              # start all apps and packages in watch mode
 | `pnpm verify`         | Full gate: build, lint, format, type check, and tests with coverage |
 | `pnpm bench`          | Run the benchmark suites                                            |
 
-Linting and formatting run on [Oxc](https://oxc.rs) (Oxlint + Oxfmt), type checking on TypeScript Native (`tsgo`), and bundling on [tsdown](https://tsdown.dev). Tests follow a strict category taxonomy — see [TESTING.md](TESTING.md).
+Linting and formatting run on [Oxc](https://oxc.rs) (Oxlint + Oxfmt); native [TypeScript 7](https://www.typescriptlang.org) (`tsc`) handles both type checking and library builds (emitting `.js` + `.d.ts` per file, no bundler), while [Vite](https://vite.dev) (Rolldown) bundles the browser apps. Tests follow a strict category taxonomy — see [TESTING.md](TESTING.md).
 
 ## Contributing
 

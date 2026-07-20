@@ -2,7 +2,7 @@
 "@codefast/tracking": minor
 ---
 
-Let `codefast mirror` generate `package.json#exports` from `dist/`, the same as every other library package (di, theme), instead of hand-curating them under mirror's preserve mode. The tsdown build is unchanged (standard `unbundle`), so mirror emits a subpath for each built module, and the root becomes the client entry.
+Let `codefast mirror` generate `package.json#exports` from `dist/`, the same as every other library package (di, theme), instead of hand-curating them under mirror's preserve mode. The per-module build output is unchanged, so mirror emits a subpath for each built module, and the root becomes the client entry.
 
 Breaking:
 

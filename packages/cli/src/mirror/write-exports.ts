@@ -127,8 +127,8 @@ export async function writePackageJsonExportsAtomic(
     if (requirePath || importPath) {
       packageJson.main = requirePath ?? importPath;
     }
-    // The `import` condition is the ESM entry regardless of extension — `.mjs`
-    // (tsdown) or `.js` under `type: module` (tsc). Mirror `module` to it either way.
+    // The `import` condition is the ESM entry regardless of extension (`.js`
+    // under `type: module`, or `.mjs`). Mirror `module` to it either way.
     if (importPath) {
       packageJson.module = importPath;
     }

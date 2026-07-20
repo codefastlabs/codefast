@@ -2663,7 +2663,7 @@ packages/di/
 │
 ├── package.json
 ├── tsconfig.json
-└── tsdown.config.ts
+└── tsconfig.build.json
 ```
 
 **Ownership của `types.ts`:** Kiểu nền tảng (`BindingScope`, `BindingIdentifier`, `BindingKind`, `Constructor`, `ActivationHandler`, `DeactivationHandler`, `ResolveOptions`, `ResolutionContext`, `ConstraintContext`, `ResolutionFrame`, `TokenValue`) được khai báo trong `types.ts` — file có single responsibility, không phụ thuộc bất kỳ file nào khác trong package. `binding.ts`, `resolver.ts`, `scope.ts`... đều import từ `types.ts`. Re-export từ `index.ts`.
@@ -2802,74 +2802,64 @@ export type { ScopeViolationDetails } from "#/errors";
 
 ### 11.2 `package.json`
 
-ESM-only. `engines.node >= 24.0.0`.
+ESM-only. `engines.node >= 26.0.0` — core dùng native `Map.prototype.getOrInsert` (chỉ có từ Node 26).
+
+Mỗi public subpath là một conditional entry: `source` → `src` cho dev/test trong repo (gate bằng điều kiện `source`), `types`/`import` → `dist` cho consumer. Toàn bộ map `exports` được **sinh tự động bằng `codefast mirror`** từ `dist/` sau khi build — không viết tay (danh sách dưới là trích một phần để minh họa hình dạng entry).
 
 ```json
 {
   "name": "@codefast/di",
   "type": "module",
+  "scripts": {
+    "build": "rm -rf dist && tsc -p tsconfig.build.json"
+  },
   "exports": {
     ".": {
-      "import": "./dist/index.mjs",
-      "types": "./dist/index.d.mts"
+      "source": "./src/index.ts",
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
     },
     "./constraints": {
-      "import": "./dist/constraints.mjs",
-      "types": "./dist/constraints.d.mts"
+      "source": "./src/constraints.ts",
+      "types": "./dist/constraints.d.ts",
+      "import": "./dist/constraints.js"
     },
     "./graph-adapters/dot": {
-      "import": "./dist/graph-adapters/dot.mjs",
-      "types": "./dist/graph-adapters/dot.d.mts"
-    },
-    "./graph-adapters/cytoscape": {
-      "import": "./dist/graph-adapters/cytoscape.mjs",
-      "types": "./dist/graph-adapters/cytoscape.d.mts"
-    },
-    "./graph-adapters/reactflow": {
-      "import": "./dist/graph-adapters/reactflow.mjs",
-      "types": "./dist/graph-adapters/reactflow.d.mts"
-    },
-    "./registry": {
-      "import": "./dist/registry.mjs",
-      "types": "./dist/registry.d.mts"
-    },
-    "./resolver": {
-      "import": "./dist/resolver.mjs",
-      "types": "./dist/resolver.d.mts"
-    },
-    "./scope": {
-      "import": "./dist/scope.mjs",
-      "types": "./dist/scope.d.mts"
-    },
-    "./lifecycle": {
-      "import": "./dist/lifecycle.mjs",
-      "types": "./dist/lifecycle.d.mts"
-    },
-    "./binding-select": {
-      "import": "./dist/binding-select.mjs",
-      "types": "./dist/binding-select.d.mts"
-    },
-    "./inspector": {
-      "import": "./dist/inspector.mjs",
-      "types": "./dist/inspector.d.mts"
+      "source": "./src/graph-adapters/dot.ts",
+      "types": "./dist/graph-adapters/dot.d.ts",
+      "import": "./dist/graph-adapters/dot.js"
     }
+    // … các subpath còn lại theo cùng hình dạng (registry, resolver, scope,
+    // lifecycle, binding-select, inspector, decorators/*, metadata/*, …)
   },
-  "files": ["dist"],
+  "files": ["dist", "src", "CHANGELOG.md", "README.md", "LICENSE"],
   "engines": {
-    "node": ">=24.0.0"
+    "node": ">=26.0.0"
   }
 }
 ```
 
-### 11.3 `tsdown.config.ts`
+> **`src` nằm trong `files`:** artifact publish kèm cả `src` vì `tsc` giữ nguyên các subpath `#/` verbatim trong `dist/*.js` — chúng chỉ phân giải được khi bản đồ `imports` (điều kiện `types`/`default` → `dist`) đi cùng, còn điều kiện `source` cho phép dev/test trong repo chạy thẳng TS nguồn không cần build trước.
 
-```ts
-import { defineConfig } from "tsdown";
+### 11.3 `tsconfig.build.json`
 
-export default defineConfig({
-  entry: ["src/**/*.{ts,tsx}", "!src/**/*.test.{ts,tsx}"],
-  unbundle: true,
-});
+Build bằng native `tsc` (TypeScript 7) theo mô hình Turborepo "Compiled Packages" — emit `.js` + `.d.ts` file-by-file vào `dist/`, không bundler. Không còn `tsdown`.
+
+```json
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": false,
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "types": ["node"]
+  },
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules", "dist", ".turbo", "coverage", "src/**/*.test.ts", "tests"]
+}
 ```
 
 ---
@@ -2940,15 +2930,15 @@ Fully spec'd in section 8. Export từ root `@codefast/di` và subpath `@codefas
 
 ## 13. Stack kỹ thuật
 
-| Công cụ                 | Vai trò                                                                               |
-| ----------------------- | ------------------------------------------------------------------------------------- |
-| TypeScript 5.9+         | Decorator Stage 3, `Symbol.metadata` stable, strict                                   |
-| tsdown                  | Bundle ESM, `.d.ts`                                                                   |
-| Vitest (OXC mặc định)   | Unit test và integration test                                                         |
-| Babel decorators        | `@rolldown/plugin-babel` + `@babel/plugin-proposal-decorators` (`version: "2023-11"`) |
-| publint                 | Kiểm tra package exports correctness                                                  |
-| `@arethetypeswrong/cli` | Kiểm tra type resolution correctness                                                  |
-| pnpm                    | Package manager (workspace monorepo)                                                  |
+| Công cụ                 | Vai trò                                                                                                             |
+| ----------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| TypeScript 7            | Decorator Stage 3, `Symbol.metadata` stable, strict; `tsc` build + type-check                                       |
+| `tsc` (native TS 7)     | Emit ESM `.js` + `.d.ts` file-by-file vào `dist/` (Turborepo Compiled model, no bundler)                            |
+| Vitest (OXC mặc định)   | Unit test và integration test                                                                                       |
+| Babel decorators        | Chỉ ở test-time trong Vitest: `@rolldown/plugin-babel` + `@babel/plugin-proposal-decorators` (`version: "2023-11"`) |
+| publint                 | Kiểm tra package exports correctness                                                                                |
+| `@arethetypeswrong/cli` | Kiểm tra type resolution correctness                                                                                |
+| pnpm                    | Package manager (workspace monorepo)                                                                                |
 
 ### tsconfig
 
@@ -2969,6 +2959,8 @@ Fully spec'd in section 8. Export từ root `@codefast/di` và subpath `@codefas
   "include": ["src"]
 }
 ```
+
+Thực tế các option emit (`declaration`, `outDir`, …) tách sang `tsconfig.build.json` (§11.3); base `tsconfig.json` giữ `noEmit: true` cho type-check.
 
 ---
 
@@ -3155,14 +3147,14 @@ Section này đối chiếu toàn bộ public API của InversifyJS v8.0.0 (thá
 
 #### Setup và yêu cầu
 
-| Khía cạnh          | InversifyJS v8                                                | `@codefast/di`                                    |
-| ------------------ | ------------------------------------------------------------- | ------------------------------------------------- |
-| Cài đặt            | `npm install inversify reflect-metadata`                      | `npm install @codefast/di`                        |
-| reflect-metadata   | Bắt buộc — `import 'reflect-metadata'` ở entry point          | Không cần — zero dependency                       |
-| tsconfig flags     | `experimentalDecorators: true`, `emitDecoratorMetadata: true` | Không cần flag đặc biệt                           |
-| Decorator standard | Legacy TC39 Stage 1 (experimentalDecorators)                  | TC39 Stage 3 (`Symbol.metadata`, TypeScript 5.9+) |
-| Module format      | ESM-only                                                      | ESM-only                                          |
-| Node.js tối thiểu  | Node ≥ 20.19.0                                                | Node ≥ 24.0.0                                     |
+| Khía cạnh          | InversifyJS v8                                                | `@codefast/di`                                     |
+| ------------------ | ------------------------------------------------------------- | -------------------------------------------------- |
+| Cài đặt            | `npm install inversify reflect-metadata`                      | `npm install @codefast/di`                         |
+| reflect-metadata   | Bắt buộc — `import 'reflect-metadata'` ở entry point          | Không cần — zero dependency                        |
+| tsconfig flags     | `experimentalDecorators: true`, `emitDecoratorMetadata: true` | Không cần flag đặc biệt                            |
+| Decorator standard | Legacy TC39 Stage 1 (experimentalDecorators)                  | TC39 Stage 3 (`Symbol.metadata`, TypeScript 5.9+)  |
+| Module format      | ESM-only                                                      | ESM-only                                           |
+| Node.js tối thiểu  | Node ≥ 20.19.0                                                | Node ≥ 26.0.0 (native `Map.prototype.getOrInsert`) |
 
 #### Binding API
 
