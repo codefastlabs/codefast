@@ -71,7 +71,7 @@ catalog:
   embla-carousel-autoplay: ^8.6.0
   embla-carousel-react: ^8.6.0
   expect-type: ^1.4.0
-  hono: ^4.12.30
+  hono: ^4.12.31
   input-otp: ^1.4.2
   inversify: ^8.2.0
   jest-axe: ^10.0.0
