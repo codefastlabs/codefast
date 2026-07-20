@@ -15,6 +15,9 @@ import { buildConsentReceipt } from "#/server/consent-receipt";
 import type { ReceiptStore } from "#/server/consent-receipt-store";
 import { resolveInitialConsent } from "#/server/initial-consent";
 
+/**
+ * @since 1.0.0-canary.7
+ */
 export interface InitialConsentFromRequestOptions {
   /**
    * Header carrying the ISO 3166-1 alpha-2 country code.
@@ -80,12 +83,17 @@ export function clearAnonymousIdResponseCookie(cookieName: string): void {
 /**
  * The client-visible acknowledgement of a recorded receipt — deliberately minimal so the
  * stored PII (`subjectId`, `ipCoarse`) is never echoed back over the wire.
+ *
+ * @since 1.0.0-canary.7
  */
 export interface ConsentReceiptAck {
   receiptId: string;
   timestamp: number;
 }
 
+/**
+ * @since 1.0.0-canary.7
+ */
 export interface RecordConsentReceiptFromRequestOptions {
   input: ConsentReceiptInput;
   /**
@@ -104,6 +112,8 @@ export interface RecordConsentReceiptFromRequestOptions {
  *
  * @throws Error when `input` fails {@link isConsentReceiptInput} (including a body that
  * carries an `ip`/`ipCoarse` field — the server owns IP derivation).
+ *
+ * @since 1.0.0-canary.7
  */
 export async function recordConsentReceiptFromRequest(
   options: RecordConsentReceiptFromRequestOptions,

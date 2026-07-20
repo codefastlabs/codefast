@@ -1,5 +1,14 @@
 # @codefast/ui
 
+## 1.0.0-canary.7
+
+### Patch Changes
+
+- [#632](https://github.com/codefastlabs/codefast/pull/632) [`44035ca`](https://github.com/codefastlabs/codefast/commit/44035ca29c99f7e9d9a760f758496965253b650a) Thanks [@thevuong](https://github.com/thevuong)! - Annotate `CheckboxGroupItem`'s `onCheckedChange` callback with a `CheckedState` type derived from the underlying Radix primitive. Radix's `radix-ui` umbrella namespace merge dropped the contextual type for the inline callback parameter, tripping `noImplicitAny` during the build; deriving the type from `Root` keeps it in lockstep with the primitive.
+
+- Updated dependencies []:
+  - @codefast/tailwind-variants@1.0.0-canary.7
+
 ## 1.0.0-canary.6
 
 ### Patch Changes

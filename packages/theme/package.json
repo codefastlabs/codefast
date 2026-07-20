@@ -1,6 +1,6 @@
 {
   "name": "@codefast/theme",
-  "version": "1.0.0-canary.6",
+  "version": "1.0.0-canary.7",
   "description": "Appearance management for React 19 with HIG-inspired vocabulary - optimistic updates, cross-tab sync, and FOUC-free SSR",
   "keywords": [
     "dark-mode",

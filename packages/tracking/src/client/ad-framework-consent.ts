@@ -10,10 +10,16 @@ import type { ConsentCategory, ConsentDecision } from "#/core/consent";
 /**
  * Liveness of a detected CMP. `"out-of-scope"` is TCF `gdprApplies === false` / no applicable
  * GPP section — the framework does not govern this user, so native consent stands.
+ *
+ * @since 1.0.0-canary.7
  */
 export type CmpStatus = "loading" | "out-of-scope" | "ready";
 
-/** A CMP's governance over the native decision, already derived from TCData/GPP by ad-ops policy. */
+/**
+ * A CMP's governance over the native decision, already derived from TCData/GPP by ad-ops policy.
+ *
+ * @since 1.0.0-canary.7
+ */
 export interface CmpConsentSignal {
   /** Per-governed-category grant, read once `status` is `"ready"`. */
   decision?: Partial<ConsentDecision> | undefined;
@@ -22,6 +28,9 @@ export interface CmpConsentSignal {
   status: CmpStatus;
 }
 
+/**
+ * @since 1.0.0-canary.7
+ */
 export interface ReconcileAdFrameworkConsentOptions {
   /** The live CMP signal, or omitted when no CMP is present (the resolver is then inert). */
   cmp?: CmpConsentSignal | undefined;
@@ -35,6 +44,8 @@ export interface ReconcileAdFrameworkConsentOptions {
  * Reconciles native consent with a CMP source of truth per spec-ad-consent-frameworks §3:
  * a governing CMP overrides its categories (fail-closed to denied while loading); a missing
  * or out-of-scope CMP leaves native standing; GPC always tightens `ads` last.
+ *
+ * @since 1.0.0-canary.7
  */
 export function reconcileAdFrameworkConsent(options: ReconcileAdFrameworkConsentOptions): ConsentDecision {
   const result: ConsentDecision = { ...options.native };
@@ -56,12 +67,20 @@ export function reconcileAdFrameworkConsent(options: ReconcileAdFrameworkConsent
   return result;
 }
 
-/** Detects a TCF CMP without reading it — `typeof __tcfapi === "function"` (spec §3). */
+/**
+ * Detects a TCF CMP without reading it — `typeof __tcfapi === "function"` (spec §3).
+ *
+ * @since 1.0.0-canary.7
+ */
 export function hasTcfApi(scope: { __tcfapi?: unknown } = globalThis as { __tcfapi?: unknown }): boolean {
   return typeof scope.__tcfapi === "function";
 }
 
-/** Detects a GPP CMP without reading it — `typeof __gpp === "function"` (spec §3). */
+/**
+ * Detects a GPP CMP without reading it — `typeof __gpp === "function"` (spec §3).
+ *
+ * @since 1.0.0-canary.7
+ */
 export function hasGppApi(scope: { __gpp?: unknown } = globalThis as { __gpp?: unknown }): boolean {
   return typeof scope.__gpp === "function";
 }

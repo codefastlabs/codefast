@@ -1,6 +1,6 @@
 {
   "name": "@codefast/tracking",
-  "version": "1.0.0-canary.6",
+  "version": "1.0.0-canary.7",
   "description": "Consent-gated, type-safe event tracking for TanStack Start — client tracker and server consent helpers over a per-app Standard Schema event catalog",
   "keywords": [
     "analytics",

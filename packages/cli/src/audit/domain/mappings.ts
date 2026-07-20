@@ -1,6 +1,8 @@
 /**
  * Physical → logical replacements. Order matters: negative before positive,
  * specific corners before general edges, with-value before bare.
+ *
+ * @since 1.0.0-canary.7
  */
 export const RTL_MAPPINGS: ReadonlyArray<readonly [string, string]> = [
   ["-ml-", "-ms-"],
@@ -49,19 +51,31 @@ export const RTL_MAPPINGS: ReadonlyArray<readonly [string, string]> = [
   ["origin-right", "origin-end"],
 ];
 
-/** translate-x has no logical equivalent — it needs an rtl:-negated twin. */
+/**
+ * translate-x has no logical equivalent — it needs an rtl:-negated twin.
+ *
+ * @since 1.0.0-canary.7
+ */
 export const RTL_TRANSLATE_X_MAPPINGS: ReadonlyArray<readonly [string, string]> = [
   ["-translate-x-", "translate-x-"],
   ["translate-x-", "-translate-x-"],
 ];
 
-/** Classes that need an rtl:*-reverse companion. */
+/**
+ * Classes that need an rtl:*-reverse companion.
+ *
+ * @since 1.0.0-canary.7
+ */
 export const RTL_REVERSE_MAPPINGS: ReadonlyArray<readonly [string, string]> = [
   ["space-x-", "space-x-reverse"],
   ["divide-x-", "divide-x-reverse"],
 ];
 
-/** Classes that need an rtl: companion with the swapped value. */
+/**
+ * Classes that need an rtl: companion with the swapped value.
+ *
+ * @since 1.0.0-canary.7
+ */
 export const RTL_SWAP_MAPPINGS: ReadonlyArray<readonly [string, string]> = [
   ["cursor-w-resize", "cursor-e-resize"],
   ["cursor-e-resize", "cursor-w-resize"],
@@ -70,6 +84,8 @@ export const RTL_SWAP_MAPPINGS: ReadonlyArray<readonly [string, string]> = [
 /**
  * Anything anchored to a physical side variant stays physical: Radix resolves
  * `side` per direction, and a border/position/slide tied to that side must follow it.
+ *
+ * @since 1.0.0-canary.7
  */
 export const PHYSICAL_SIDE_VARIANT =
   /data-side-(?:left|right)|data-\[side=(?:left|right)\]|\[data-side=(?:left|right)\]/;
@@ -77,9 +93,14 @@ export const PHYSICAL_SIDE_VARIANT =
 /**
  * Slide animations under direction-resolved contexts are correct as-is:
  * Radix flips `side`/`motion` values itself under DirectionProvider.
+ *
+ * @since 1.0.0-canary.7
  */
 export const DIRECTION_RESOLVED_VARIANT = /data-\[motion[=^]/;
 
+/**
+ * @since 1.0.0-canary.7
+ */
 export const SLIDE_PREFIXES = [
   "slide-in-from-left",
   "slide-in-from-right",

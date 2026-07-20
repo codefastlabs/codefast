@@ -1,6 +1,6 @@
 {
   "name": "@codefast/benchmark-di-inversify",
-  "version": "1.0.0-canary.6",
+  "version": "1.0.0-canary.7",
   "private": true,
   "description": "Head-to-head tinybench harness: InversifyJS v8 vs @codefast/di (same scenarios per library)",
   "keywords": [

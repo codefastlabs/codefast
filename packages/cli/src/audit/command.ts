@@ -14,6 +14,8 @@ import { parseWithSchema } from "#/core/schema-parse";
 
 /**
  * Top-level `audit` command — currently hosts the RTL physical-class scan.
+ *
+ * @since 1.0.0-canary.7
  */
 export function createAuditCommand(): Command {
   const cmd = new Command("audit").description("Read-only source audits").enablePositionalOptions();

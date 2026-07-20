@@ -1,6 +1,6 @@
 {
   "name": "@codefast/cli",
-  "version": "1.0.0-canary.6",
+  "version": "1.0.0-canary.7",
   "description": "Developer CLI for the Codefast monorepo (arrange, audit, mirror, tag)",
   "keywords": [
     "cli",

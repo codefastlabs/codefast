@@ -6,6 +6,8 @@ import type { ConsentDecision } from "#/core/consent";
  * `ads` drives Limited Data Use. The levers are independent — a US opt-out (`ads: false`)
  * restricts to LDU but MUST NOT withhold first-party `analytics` (spec-consent §3). Every
  * ad destination consumes this same shape so per-vendor mappings cannot drift.
+ *
+ * @since 1.0.0-canary.7
  */
 export interface AdConsentState {
   /** `ads` denied → the platform must restrict to Limited Data Use (Meta/TikTok LDU, UET `ad_storage` denied). */
@@ -14,7 +16,11 @@ export interface AdConsentState {
   transmissionAllowed: boolean;
 }
 
-/** Normalizes a package `ConsentDecision` to the vendor-agnostic {@link AdConsentState}. */
+/**
+ * Normalizes a package `ConsentDecision` to the vendor-agnostic {@link AdConsentState}.
+ *
+ * @since 1.0.0-canary.7
+ */
 export function toAdConsentState(decision: ConsentDecision): AdConsentState {
   return {
     limitedDataUse: !decision.ads,

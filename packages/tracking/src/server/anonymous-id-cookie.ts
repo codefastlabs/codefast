@@ -10,6 +10,8 @@ const COOKIE_NAME_PATTERN = /^[\w-]+$/;
  * Guards the cookie name against anything outside the RFC 6265 token set.
  *
  * @throws Error when `cookieName` is not a valid token.
+ *
+ * @since 1.0.0-canary.7
  */
 export function assertValidAnonymousIdCookieName(cookieName: string): void {
   if (!COOKIE_NAME_PATTERN.test(cookieName)) {
