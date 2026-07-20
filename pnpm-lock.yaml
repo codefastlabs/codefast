@@ -133,8 +133,8 @@ catalogs:
       specifier: ^2.2.0
       version: 2.2.0
     chrono-node:
-      specifier: ^2.10.0
-      version: 2.10.0
+      specifier: ^2.10.1
+      version: 2.10.1
     class-variance-authority:
       specifier: ^0.7.1
       version: 0.7.1
@@ -370,7 +370,7 @@ importers:
         version: 2.0.1(react@19.2.7)
       chrono-node:
         specifier: 'catalog:'
-        version: 2.10.0
+        version: 2.10.1
       date-fns-jalali:
         specifier: 'catalog:'
         version: 4.4.0-0
@@ -4993,8 +4993,8 @@ packages:
     resolution: {integrity: sha512-TQMmc3w+5AxjpL8iIiwebF73dRDF4fBIieAqGn9RGCWaEVwQ6Fb2cGe31Yns0RRIzii5goJ1Y7xbMwo1TxMplw==}
     engines: {node: '>= 20.19.0'}
 
-  chrono-node@2.10.0:
-    resolution: {integrity: sha512-5fJ4zr5W/5DEf+8FMPMXF2qk9L5dc1rAP9Pw009iMlKAghPgx5o7aUcnjEMe6PTwqiqTa5yzmfSm05EHuwr31Q==}
+  chrono-node@2.10.1:
+    resolution: {integrity: sha512-tPOsBzYVAK5zth+CiHCgp5NGeqRc4mMD8FPthQ5IxkgjPWWxIFdM5odnmfw//IRAzl6C++Xy8olQW7wn5qBR1g==}
     engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
 
   ci-info@4.4.0:
@@ -10918,7 +10918,7 @@ snapshots:
     dependencies:
       readdirp: 5.0.0
 
-  chrono-node@2.10.0: {}
+  chrono-node@2.10.1: {}
 
   ci-info@4.4.0: {}
 
