@@ -1,5 +1,5 @@
 import { CheckIcon, MinusIcon } from "lucide-react";
-import { Checkbox as CheckboxPrimitive } from "radix-ui";
+import * as CheckboxPrimitive from "radix-ui/checkbox";
 import type { ComponentProps, JSX } from "react";
 
 import { cn } from "#/lib/utils";

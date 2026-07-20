@@ -1,5 +1,5 @@
 import { ChevronRightIcon, MoreHorizontalIcon } from "lucide-react";
-import { Slot } from "radix-ui";
+import * as Slot from "radix-ui/slot";
 import type { ComponentProps, JSX } from "react";
 
 import { cn } from "#/lib/utils";

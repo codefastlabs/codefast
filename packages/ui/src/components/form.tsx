@@ -1,6 +1,6 @@
-import type { Label as LabelPrimitive } from "radix-ui";
-import { Slot } from "radix-ui";
 import { Context } from "radix-ui/internal";
+import type * as LabelPrimitive from "radix-ui/label";
+import * as Slot from "radix-ui/slot";
 import type { ComponentProps, JSX, ReactNode } from "react";
 import { useId } from "react";
 import type { ControllerProps, FieldError, FieldPath, FieldValues } from "react-hook-form";

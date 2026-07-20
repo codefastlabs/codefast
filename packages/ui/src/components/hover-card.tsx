@@ -1,4 +1,4 @@
-import { HoverCard as HoverCardPrimitive } from "radix-ui";
+import * as HoverCardPrimitive from "radix-ui/hover-card";
 import type { ComponentProps, JSX } from "react";
 
 import { cn } from "#/lib/utils";

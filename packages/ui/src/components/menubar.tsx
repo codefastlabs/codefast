@@ -1,5 +1,5 @@
 import { CheckIcon, ChevronRightIcon } from "lucide-react";
-import { Menubar as MenubarPrimitive } from "radix-ui";
+import * as MenubarPrimitive from "radix-ui/menubar";
 import type { ComponentProps, JSX } from "react";
 
 import { cn } from "#/lib/utils";

@@ -1,4 +1,4 @@
-import { Avatar as AvatarPrimitive } from "radix-ui";
+import * as AvatarPrimitive from "radix-ui/avatar";
 import type { ComponentProps, JSX } from "react";
 
 import { cn } from "#/lib/utils";

@@ -1,6 +1,6 @@
 import { PanelLeftIcon } from "lucide-react";
-import { Slot } from "radix-ui";
 import { Context } from "radix-ui/internal";
+import * as Slot from "radix-ui/slot";
 import type { ComponentProps, CSSProperties, Dispatch, JSX, SetStateAction } from "react";
 import { useCallback, useEffect, useId, useState } from "react";
 

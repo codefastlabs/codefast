@@ -1,5 +1,5 @@
 import { XIcon } from "lucide-react";
-import { Dialog as DialogPrimitive } from "radix-ui";
+import * as DialogPrimitive from "radix-ui/dialog";
 import type { ComponentProps, JSX } from "react";
 
 import { Button } from "#/components/button";
