@@ -1,14 +1,12 @@
 import { Checkbox as CheckboxPrimitive } from "radix-ui";
 import { Checkbox } from "radix-ui";
 import { Direction } from "radix-ui";
+import type { CheckedState } from "radix-ui/checkbox";
 import { Context } from "radix-ui/internal";
 import { RovingFocus } from "radix-ui/internal";
 import { useControllableState } from "radix-ui/internal";
 import type { ComponentProps, JSX } from "react";
 import { useCallback } from "react";
-
-// The resolved checked value the primitive reports; derived from Root so it tracks radix's own type.
-type CheckedState = Parameters<NonNullable<ComponentProps<typeof CheckboxPrimitive.Root>["onCheckedChange"]>>[0];
 
 /* -----------------------------------------------------------------------------
  * Context: CheckboxGroup
