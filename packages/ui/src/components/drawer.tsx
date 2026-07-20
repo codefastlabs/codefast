@@ -66,7 +66,7 @@ function DrawerContent({ children, className, ...props }: DrawerContentProps): J
         data-slot="drawer-content"
         {...props}
       >
-        <div className="mx-auto mt-4 hidden h-1.5 w-25 shrink-0 rounded-full bg-muted group-data-[vaul-drawer-direction=bottom]/drawer-content:block" />
+        <div className="mx-auto mt-4 hidden h-1 w-25 shrink-0 rounded-full bg-muted group-data-[vaul-drawer-direction=bottom]/drawer-content:block" />
         {children}
       </DrawerPrimitive.Content>
     </DrawerPrimitive.Portal>
@@ -89,7 +89,7 @@ function DrawerHeader({ className, ...props }: DrawerHeaderProps): JSX.Element {
   return (
     <div
       className={cn(
-        "flex flex-col gap-0.5 p-4 group-data-[vaul-drawer-direction=bottom]/drawer-content:text-center group-data-[vaul-drawer-direction=top]/drawer-content:text-center md:gap-1.5 md:text-start",
+        "flex flex-col gap-0.5 p-4 group-data-[vaul-drawer-direction=bottom]/drawer-content:text-center group-data-[vaul-drawer-direction=top]/drawer-content:text-center md:gap-0.5 md:text-start",
         className,
       )}
       data-slot="drawer-header"
@@ -129,7 +129,7 @@ type DrawerTitleProps = ComponentProps<typeof DrawerPrimitive.Title>;
 function DrawerTitle({ className, ...props }: DrawerTitleProps): JSX.Element {
   return (
     <DrawerPrimitive.Title
-      className={cn("font-heading font-medium text-foreground", className)}
+      className={cn("font-heading text-base font-medium text-foreground", className)}
       data-slot="drawer-title"
       {...props}
     />

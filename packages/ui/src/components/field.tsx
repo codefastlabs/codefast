@@ -23,7 +23,7 @@ function FieldSet({ className, ...props }: FieldSetProps): JSX.Element {
   return (
     <fieldset
       className={cn(
-        "flex flex-col gap-6 has-[>[data-slot=checkbox-group]]:gap-3 has-[>[data-slot=radio-group]]:gap-3",
+        "flex flex-col gap-4 has-[>[data-slot=checkbox-group]]:gap-3 has-[>[data-slot=radio-group]]:gap-3",
         className,
       )}
       data-slot="field-set"
@@ -49,7 +49,7 @@ type FieldLegendProps = ComponentProps<"legend"> & {
 function FieldLegend({ className, variant = "legend", ...props }: FieldLegendProps): JSX.Element {
   return (
     <legend
-      className={cn("mb-3 font-medium data-[variant=label]:text-sm data-[variant=legend]:text-base", className)}
+      className={cn("mb-1.5 font-medium data-[variant=label]:text-sm data-[variant=legend]:text-base", className)}
       data-slot="field-legend"
       data-variant={variant}
       {...props}
@@ -73,7 +73,7 @@ function FieldGroup({ className, ...props }: FieldGroupProps): JSX.Element {
   return (
     <div
       className={cn(
-        "group/field-group @container/field-group flex w-full flex-col gap-7 data-[slot=checkbox-group]:gap-3 *:data-[slot=field-group]:gap-4",
+        "group/field-group @container/field-group flex w-full flex-col gap-5 data-[slot=checkbox-group]:gap-3 *:data-[slot=field-group]:gap-4",
         className,
       )}
       data-slot="field-group"
@@ -121,7 +121,7 @@ type FieldContentProps = ComponentProps<"div">;
 function FieldContent({ className, ...props }: FieldContentProps): JSX.Element {
   return (
     <div
-      className={cn("group/field-content flex flex-1 flex-col gap-1 leading-snug", className)}
+      className={cn("group/field-content flex flex-1 flex-col gap-0.5 leading-snug", className)}
       data-slot="field-content"
       {...props}
     />
@@ -144,7 +144,7 @@ function FieldLabel({ className, ...props }: FieldLabelProps): JSX.Element {
   return (
     <Label
       className={cn(
-        "group/field-label peer/field-label flex w-fit gap-2 leading-snug group-data-disabled/field:opacity-50 has-data-checked:border-primary/30 has-data-checked:bg-primary/5 has-[>[data-slot=field]]:rounded-md has-[>[data-slot=field]]:border *:data-[slot=field]:p-3 dark:has-data-checked:border-primary/20 dark:has-data-checked:bg-primary/10",
+        "group/field-label peer/field-label flex w-fit gap-2 leading-snug group-data-disabled/field:opacity-50 has-data-checked:border-primary/30 has-data-checked:bg-primary/5 has-[>[data-slot=field]]:rounded-lg has-[>[data-slot=field]]:border *:data-[slot=field]:p-2.5 dark:has-data-checked:border-primary/20 dark:has-data-checked:bg-primary/10",
         "has-[>[data-slot=field]]:w-full has-[>[data-slot=field]]:flex-col",
         className,
       )}

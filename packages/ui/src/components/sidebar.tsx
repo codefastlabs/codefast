@@ -463,7 +463,7 @@ function SidebarContent({ className, ...props }: SidebarContentProps): JSX.Eleme
   return (
     <div
       className={cn(
-        "flex min-h-0 flex-1 scrollbar-none flex-col gap-2 overflow-auto group-data-[collapsible=icon]:overflow-hidden",
+        "flex min-h-0 flex-1 scrollbar-none flex-col gap-0 overflow-auto group-data-[collapsible=icon]:overflow-hidden",
         className,
       )}
       data-sidebar="content"
@@ -594,7 +594,7 @@ type SidebarMenuProps = ComponentProps<"ul">;
 function SidebarMenu({ className, ...props }: SidebarMenuProps): JSX.Element {
   return (
     <ul
-      className={cn("flex w-full min-w-0 flex-col gap-1", className)}
+      className={cn("flex w-full min-w-0 flex-col gap-0", className)}
       data-sidebar="menu"
       data-slot="sidebar-menu"
       {...props}

@@ -17,7 +17,7 @@ type RadioGroupProps = ComponentProps<typeof RadioGroupPrimitive.Root>;
  */
 function RadioGroup({ className, ...props }: RadioGroupProps): JSX.Element {
   return (
-    <RadioGroupPrimitive.Root className={cn("flex flex-col gap-3", className)} data-slot="radio-group" {...props} />
+    <RadioGroupPrimitive.Root className={cn("flex flex-col gap-2", className)} data-slot="radio-group" {...props} />
   );
 }
 

@@ -35,10 +35,7 @@ type BreadcrumbListProps = ComponentProps<"ol">;
 function BreadcrumbList({ className, ...props }: BreadcrumbListProps): JSX.Element {
   return (
     <ol
-      className={cn(
-        "flex flex-wrap items-center gap-1.5 text-sm wrap-break-word text-muted-foreground sm:gap-2.5",
-        className,
-      )}
+      className={cn("flex flex-wrap items-center gap-1.5 text-sm wrap-break-word text-muted-foreground", className)}
       data-slot="breadcrumb-list"
       {...props}
     />
@@ -58,7 +55,7 @@ type BreadcrumbItemProps = ComponentProps<"li">;
  * @since 0.3.16-canary.0
  */
 function BreadcrumbItem({ className, ...props }: BreadcrumbItemProps): JSX.Element {
-  return <li className={cn("inline-flex items-center gap-1.5", className)} data-slot="breadcrumb-item" {...props} />;
+  return <li className={cn("inline-flex items-center gap-1", className)} data-slot="breadcrumb-item" {...props} />;
 }
 
 /* -----------------------------------------------------------------------------

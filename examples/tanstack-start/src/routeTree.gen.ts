@@ -9,25 +9,15 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as VariantsRouteImport } from './routes/variants'
-import { Route as UiRouteImport } from './routes/ui'
-import { Route as PlaygroundRouteImport } from './routes/playground'
-import { Route as DiRouteImport } from './routes/di'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as DiRouteImport } from './routes/di'
+import { Route as PlaygroundRouteImport } from './routes/playground'
+import { Route as UiRouteImport } from './routes/ui'
+import { Route as VariantsRouteImport } from './routes/variants'
 
-const VariantsRoute = VariantsRouteImport.update({
-  id: '/variants',
-  path: '/variants',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const UiRoute = UiRouteImport.update({
-  id: '/ui',
-  path: '/ui',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PlaygroundRoute = PlaygroundRouteImport.update({
-  id: '/playground',
-  path: '/playground',
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DiRoute = DiRouteImport.update({
@@ -35,9 +25,19 @@ const DiRoute = DiRouteImport.update({
   path: '/di',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const PlaygroundRoute = PlaygroundRouteImport.update({
+  id: '/playground',
+  path: '/playground',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const UiRoute = UiRouteImport.update({
+  id: '/ui',
+  path: '/ui',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VariantsRoute = VariantsRouteImport.update({
+  id: '/variants',
+  path: '/variants',
   getParentRoute: () => rootRouteImport,
 } as any)
 
@@ -81,25 +81,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/variants': {
-      id: '/variants'
-      path: '/variants'
-      fullPath: '/variants'
-      preLoaderRoute: typeof VariantsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/ui': {
-      id: '/ui'
-      path: '/ui'
-      fullPath: '/ui'
-      preLoaderRoute: typeof UiRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/playground': {
-      id: '/playground'
-      path: '/playground'
-      fullPath: '/playground'
-      preLoaderRoute: typeof PlaygroundRouteImport
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/di': {
@@ -109,11 +95,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DiRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+    '/playground': {
+      id: '/playground'
+      path: '/playground'
+      fullPath: '/playground'
+      preLoaderRoute: typeof PlaygroundRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ui': {
+      id: '/ui'
+      path: '/ui'
+      fullPath: '/ui'
+      preLoaderRoute: typeof UiRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/variants': {
+      id: '/variants'
+      path: '/variants'
+      fullPath: '/variants'
+      preLoaderRoute: typeof VariantsRouteImport
       parentRoute: typeof rootRouteImport
     }
   }

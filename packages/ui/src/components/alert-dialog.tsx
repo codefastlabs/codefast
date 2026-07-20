@@ -62,7 +62,7 @@ function AlertDialogContent({ className, size = "default", ...props }: AlertDial
       />
       <AlertDialogPrimitive.Content
         className={cn(
-          "group/alert-dialog-content fixed inset-s-1/2 top-1/2 z-50 flex max-h-[calc(100dvh-2rem)] w-full -translate-x-1/2 -translate-y-1/2 flex-col gap-6 overflow-y-auto rounded-xl bg-popover p-6 text-popover-foreground ring-1 ring-foreground/10 ease-ui outline-none data-[size=default]:max-w-xs data-[size=sm]:max-w-xs data-[size=default]:sm:max-w-lg rtl:translate-x-1/2 data-open:animate-in data-open:animation-duration-overlay-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:ease-exit data-closed:animation-duration-overlay-out data-closed:fade-out-0 data-closed:zoom-out-95",
+          "group/alert-dialog-content fixed inset-s-1/2 top-1/2 z-50 flex max-h-[calc(100dvh-2rem)] w-full -translate-x-1/2 -translate-y-1/2 flex-col gap-4 overflow-y-auto rounded-xl bg-popover p-4 text-popover-foreground ring-1 ring-foreground/10 ease-ui outline-none data-[size=default]:max-w-xs data-[size=sm]:max-w-xs data-[size=default]:sm:max-w-sm rtl:translate-x-1/2 data-open:animate-in data-open:animation-duration-overlay-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:ease-exit data-closed:animation-duration-overlay-out data-closed:fade-out-0 data-closed:zoom-out-95",
           className,
         )}
         data-size={size}
@@ -89,7 +89,7 @@ function AlertDialogHeader({ className, ...props }: AlertDialogHeaderProps): JSX
   return (
     <div
       className={cn(
-        "grid shrink-0 grid-rows-[auto_1fr] place-items-center gap-1.5 text-center has-data-[slot=alert-dialog-media]:grid-rows-[auto_auto_1fr] has-data-[slot=alert-dialog-media]:gap-x-6 sm:group-data-[size=default]/alert-dialog-content:place-items-start sm:group-data-[size=default]/alert-dialog-content:text-start sm:group-data-[size=default]/alert-dialog-content:has-data-[slot=alert-dialog-media]:grid-rows-[auto_1fr]",
+        "grid shrink-0 grid-rows-[auto_1fr] place-items-center gap-1.5 text-center has-data-[slot=alert-dialog-media]:grid-rows-[auto_auto_1fr] has-data-[slot=alert-dialog-media]:gap-x-4 sm:group-data-[size=default]/alert-dialog-content:place-items-start sm:group-data-[size=default]/alert-dialog-content:text-start sm:group-data-[size=default]/alert-dialog-content:has-data-[slot=alert-dialog-media]:grid-rows-[auto_1fr]",
         className,
       )}
       data-slot="alert-dialog-header"
@@ -114,7 +114,7 @@ function AlertDialogMedia({ className, ...props }: AlertDialogMediaProps): JSX.E
   return (
     <div
       className={cn(
-        "mb-2 inline-flex size-16 items-center justify-center rounded-md bg-muted sm:group-data-[size=default]/alert-dialog-content:row-span-2 *:[svg:not([class*='size-'])]:size-8",
+        "mb-2 inline-flex size-10 items-center justify-center rounded-md bg-muted sm:group-data-[size=default]/alert-dialog-content:row-span-2 *:[svg:not([class*='size-'])]:size-6",
         className,
       )}
       data-slot="alert-dialog-media"
@@ -142,7 +142,7 @@ type AlertDialogBodyProps = ComponentProps<"div">;
 function AlertDialogBody({ className, ...props }: AlertDialogBodyProps): JSX.Element {
   return (
     <div
-      className={cn("-mx-6 min-h-0 flex-1 overflow-y-auto px-6", className)}
+      className={cn("-mx-4 min-h-0 flex-1 overflow-y-auto px-4", className)}
       data-slot="alert-dialog-body"
       {...props}
     />
@@ -165,7 +165,7 @@ function AlertDialogFooter({ className, ...props }: AlertDialogFooterProps): JSX
   return (
     <div
       className={cn(
-        "flex shrink-0 flex-col-reverse gap-2 group-data-[size=sm]/alert-dialog-content:grid group-data-[size=sm]/alert-dialog-content:grid-cols-2 sm:flex-row sm:justify-end",
+        "-mx-4 -mb-4 flex shrink-0 flex-col-reverse gap-2 rounded-b-xl border-t bg-muted/50 p-4 group-data-[size=sm]/alert-dialog-content:grid group-data-[size=sm]/alert-dialog-content:grid-cols-2 sm:flex-row sm:justify-end",
         className,
       )}
       data-slot="alert-dialog-footer"
@@ -190,7 +190,7 @@ function AlertDialogTitle({ className, ...props }: AlertDialogTitleProps): JSX.E
   return (
     <AlertDialogPrimitive.Title
       className={cn(
-        "font-heading text-lg font-medium sm:group-data-[size=default]/alert-dialog-content:group-has-data-[slot=alert-dialog-media]/alert-dialog-content:col-start-2",
+        "font-heading text-base font-medium sm:group-data-[size=default]/alert-dialog-content:group-has-data-[slot=alert-dialog-media]/alert-dialog-content:col-start-2",
         className,
       )}
       data-slot="alert-dialog-title"

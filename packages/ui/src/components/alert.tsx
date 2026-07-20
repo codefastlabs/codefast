@@ -83,7 +83,7 @@ type AlertActionProps = ComponentProps<"div">;
  * @since 0.3.16-canary.0
  */
 function AlertAction({ className, ...props }: AlertActionProps): JSX.Element {
-  return <div className={cn("absolute inset-e-3 top-2.5", className)} data-slot="alert-action" {...props} />;
+  return <div className={cn("absolute inset-e-2 top-2", className)} data-slot="alert-action" {...props} />;
 }
 
 /* -----------------------------------------------------------------------------

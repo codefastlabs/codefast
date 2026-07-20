@@ -79,7 +79,7 @@ function SheetContent({
         {showCloseButton ? (
           <SheetPrimitive.Close
             className={buttonVariants({
-              className: "absolute top-4 inset-e-4",
+              className: "absolute top-3 inset-e-3",
               size: "icon-sm",
               variant: "ghost",
             })}
@@ -107,7 +107,7 @@ type SheetHeaderProps = ComponentProps<"div">;
  * @since 0.3.16-canary.0
  */
 function SheetHeader({ className, ...props }: SheetHeaderProps): JSX.Element {
-  return <div className={cn("flex shrink-0 flex-col gap-1.5 p-4", className)} data-slot="sheet-header" {...props} />;
+  return <div className={cn("flex shrink-0 flex-col gap-0.5 p-4", className)} data-slot="sheet-header" {...props} />;
 }
 
 /* -----------------------------------------------------------------------------
@@ -163,7 +163,7 @@ type SheetTitleProps = ComponentProps<typeof SheetPrimitive.Title>;
 function SheetTitle({ className, ...props }: SheetTitleProps): JSX.Element {
   return (
     <SheetPrimitive.Title
-      className={cn("font-heading font-medium text-foreground", className)}
+      className={cn("font-heading text-base font-medium text-foreground", className)}
       data-slot="sheet-title"
       {...props}
     />

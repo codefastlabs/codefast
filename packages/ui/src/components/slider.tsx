@@ -39,7 +39,7 @@ function Slider({ className, defaultValue, max = 100, min = 0, value, ...props }
       {...props}
     >
       <SliderPrimitive.Track
-        className="relative grow overflow-hidden rounded-full bg-muted data-horizontal:h-1.5 data-horizontal:w-full data-vertical:h-full data-vertical:w-1.5"
+        className="relative grow overflow-hidden rounded-full bg-muted data-horizontal:h-1 data-horizontal:w-full data-vertical:h-full data-vertical:w-1"
         data-slot="slider-track"
       >
         <SliderPrimitive.Range
@@ -50,7 +50,7 @@ function Slider({ className, defaultValue, max = 100, min = 0, value, ...props }
       {Array.from({ length: _values.length }, (_, index) => (
         <SliderPrimitive.Thumb
           key={index}
-          className="block size-4 shrink-0 rounded-full border border-primary bg-white shadow-sm ring-ring/50 transition-[color,box-shadow] select-none hover:ring-4 focus-visible:ring-4 focus-visible:outline-hidden disabled:pointer-events-none disabled:opacity-50"
+          className="relative block size-3 shrink-0 rounded-full border border-ring bg-white shadow-sm ring-ring/50 transition-[color,box-shadow] select-none after:absolute after:-inset-2 hover:ring-3 focus-visible:ring-3 focus-visible:outline-hidden active:ring-3 disabled:pointer-events-none disabled:opacity-50"
           data-slot="slider-thumb"
         />
       ))}

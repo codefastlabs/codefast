@@ -9,22 +9,17 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as PrivacyRouteImport } from './routes/privacy'
-import { Route as LlmsDottxtRouteImport } from './routes/llms[.]txt'
-import { Route as AboutRouteRouteImport } from './routes/about/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AboutRouteRouteImport } from './routes/about/route'
+import { Route as LlmsDottxtRouteImport } from './routes/llms[.]txt'
+import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as ComponentsIndexRouteImport } from './routes/components/index'
-import { Route as ComponentsChar123slugChar125DotmdRouteImport } from './routes/components/{$slug}[.]md'
 import { Route as ComponentsSlugRouteImport } from './routes/components/$slug'
+import { Route as ComponentsChar123slugChar125DotmdRouteImport } from './routes/components/{$slug}[.]md'
 
-const PrivacyRoute = PrivacyRouteImport.update({
-  id: '/privacy',
-  path: '/privacy',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const LlmsDottxtRoute = LlmsDottxtRouteImport.update({
-  id: '/llms.txt',
-  path: '/llms.txt',
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AboutRouteRoute = AboutRouteRouteImport.update({
@@ -32,14 +27,24 @@ const AboutRouteRoute = AboutRouteRouteImport.update({
   path: '/about',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const LlmsDottxtRoute = LlmsDottxtRouteImport.update({
+  id: '/llms.txt',
+  path: '/llms.txt',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ComponentsIndexRoute = ComponentsIndexRouteImport.update({
   id: '/components/',
   path: '/components/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ComponentsSlugRoute = ComponentsSlugRouteImport.update({
+  id: '/components/$slug',
+  path: '/components/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ComponentsChar123slugChar125DotmdRoute =
@@ -48,11 +53,6 @@ const ComponentsChar123slugChar125DotmdRoute =
     path: '/components/{$slug}.md',
     getParentRoute: () => rootRouteImport,
   } as any)
-const ComponentsSlugRoute = ComponentsSlugRouteImport.update({
-  id: '/components/$slug',
-  path: '/components/$slug',
-  getParentRoute: () => rootRouteImport,
-} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -124,18 +124,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/privacy': {
-      id: '/privacy'
-      path: '/privacy'
-      fullPath: '/privacy'
-      preLoaderRoute: typeof PrivacyRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/llms.txt': {
-      id: '/llms.txt'
-      path: '/llms.txt'
-      fullPath: '/llms.txt'
-      preLoaderRoute: typeof LlmsDottxtRouteImport
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/about': {
@@ -145,11 +138,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AboutRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+    '/llms.txt': {
+      id: '/llms.txt'
+      path: '/llms.txt'
+      fullPath: '/llms.txt'
+      preLoaderRoute: typeof LlmsDottxtRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/components/': {
@@ -159,18 +159,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ComponentsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/components/{$slug}.md': {
-      id: '/components/{$slug}.md'
-      path: '/components/{$slug}.md'
-      fullPath: '/components/{$slug}.md'
-      preLoaderRoute: typeof ComponentsChar123slugChar125DotmdRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/components/$slug': {
       id: '/components/$slug'
       path: '/components/$slug'
       fullPath: '/components/$slug'
       preLoaderRoute: typeof ComponentsSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/components/{$slug}.md': {
+      id: '/components/{$slug}.md'
+      path: '/components/{$slug}.md'
+      fullPath: '/components/{$slug}.md'
+      preLoaderRoute: typeof ComponentsChar123slugChar125DotmdRouteImport
       parentRoute: typeof rootRouteImport
     }
   }

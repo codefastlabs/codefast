@@ -9,7 +9,7 @@ import { tv } from "#/lib/utils";
  * @since 0.3.16-canary.0
  */
 const fieldVariants = tv({
-  base: "group/field flex w-full gap-3 data-[invalid=true]:text-destructive",
+  base: "group/field flex w-full gap-2 data-[invalid=true]:text-destructive",
   defaultVariants: {
     orientation: "vertical",
   },

@@ -20,7 +20,7 @@ function Card({ className, size = "default", ...props }: CardProps): JSX.Element
   return (
     <div
       className={cn(
-        "group/card flex flex-col gap-(--card-spacing) overflow-hidden rounded-xl bg-card py-(--card-spacing) text-sm text-card-foreground shadow-xs ring-1 ring-foreground/10 [--card-spacing:--spacing(6)] has-data-[slot=card-footer]:pb-0 has-[>img:first-child]:pt-0 data-[size=sm]:[--card-spacing:--spacing(4)] *:[img:first-child]:rounded-t-xl *:[img:last-child]:rounded-b-xl",
+        "group/card flex flex-col gap-(--card-spacing) overflow-hidden rounded-xl bg-card py-(--card-spacing) text-sm text-card-foreground shadow-xs ring-1 ring-foreground/10 [--card-spacing:--spacing(4)] has-data-[slot=card-footer]:pb-0 has-[>img:first-child]:pt-0 data-[size=sm]:[--card-spacing:--spacing(3)] data-[size=sm]:has-data-[slot=card-footer]:pb-0 *:[img:first-child]:rounded-t-xl *:[img:last-child]:rounded-b-xl",
         className,
       )}
       data-size={size}
@@ -70,7 +70,7 @@ type CardTitleProps = ComponentProps<"div">;
 function CardTitle({ className, ...props }: CardTitleProps): JSX.Element {
   return (
     <div
-      className={cn("font-heading text-base leading-normal font-medium group-data-[size=sm]/card:text-sm", className)}
+      className={cn("font-heading text-base leading-snug font-medium group-data-[size=sm]/card:text-sm", className)}
       data-slot="card-title"
       {...props}
     />

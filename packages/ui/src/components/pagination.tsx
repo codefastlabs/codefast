@@ -41,7 +41,7 @@ type PaginationContentProps = ComponentProps<"ul">;
  * @since 0.3.16-canary.0
  */
 function PaginationContent({ className, ...props }: PaginationContentProps): JSX.Element {
-  return <ul className={cn("flex items-center gap-1", className)} data-slot="pagination-content" {...props} />;
+  return <ul className={cn("flex items-center gap-0.5", className)} data-slot="pagination-content" {...props} />;
 }
 
 /* -----------------------------------------------------------------------------
@@ -107,7 +107,7 @@ function PaginationPrevious({ className, text = "Previous", ...props }: Paginati
   return (
     <PaginationLink
       aria-label="Go to previous page"
-      className={cn("ps-2!", className)}
+      className={cn("ps-1.5!", className)}
       data-slot="pagination-previous"
       size="default"
       {...props}
@@ -137,7 +137,7 @@ function PaginationNext({ className, text = "Next", ...props }: PaginationNextPr
   return (
     <PaginationLink
       aria-label="Go to next page"
-      className={cn("pe-2!", className)}
+      className={cn("pe-1.5!", className)}
       data-slot="pagination-next"
       size="default"
       {...props}
@@ -164,7 +164,7 @@ function PaginationEllipsis({ className, ...props }: PaginationEllipsisProps): J
   return (
     <span
       aria-hidden
-      className={cn("flex size-9 items-center justify-center [&_svg:not([class*='size-'])]:size-4", className)}
+      className={cn("flex size-8 items-center justify-center [&_svg:not([class*='size-'])]:size-4", className)}
       data-slot="pagination-ellipsis"
       {...props}
     >

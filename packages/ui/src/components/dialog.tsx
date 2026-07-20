@@ -62,7 +62,7 @@ function DialogContent({ children, className, showCloseButton = true, ...props }
       />
       <DialogPrimitive.Content
         className={cn(
-          "fixed inset-s-1/2 top-1/2 z-50 flex max-h-[calc(100dvh-2rem)] w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 flex-col gap-6 overflow-y-auto rounded-xl bg-popover p-6 text-sm text-popover-foreground ring-1 ring-foreground/10 ease-ui outline-none sm:max-w-md rtl:translate-x-1/2 data-open:animate-in data-open:animation-duration-overlay-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:ease-exit data-closed:animation-duration-overlay-out data-closed:fade-out-0 data-closed:zoom-out-95",
+          "fixed inset-s-1/2 top-1/2 z-50 flex max-h-[calc(100dvh-2rem)] w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 flex-col gap-4 overflow-y-auto rounded-xl bg-popover p-4 text-sm text-popover-foreground ring-1 ring-foreground/10 ease-ui outline-none sm:max-w-sm rtl:translate-x-1/2 data-open:animate-in data-open:animation-duration-overlay-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:ease-exit data-closed:animation-duration-overlay-out data-closed:fade-out-0 data-closed:zoom-out-95",
           className,
         )}
         data-slot="dialog-content"
@@ -71,7 +71,7 @@ function DialogContent({ children, className, showCloseButton = true, ...props }
         {children}
         {showCloseButton ? (
           <DialogPrimitive.Close asChild data-slot="dialog-close">
-            <Button className="absolute inset-e-4 top-4" size="icon-sm" variant="ghost">
+            <Button className="absolute inset-e-2 top-2" size="icon-sm" variant="ghost">
               <XIcon />
               <span className="sr-only">Close</span>
             </Button>
@@ -117,7 +117,7 @@ type DialogBodyProps = ComponentProps<"div">;
  */
 function DialogBody({ className, ...props }: DialogBodyProps): JSX.Element {
   return (
-    <div className={cn("-mx-6 min-h-0 flex-1 overflow-y-auto px-6", className)} data-slot="dialog-body" {...props} />
+    <div className={cn("-mx-4 min-h-0 flex-1 overflow-y-auto px-4", className)} data-slot="dialog-body" {...props} />
   );
 }
 
@@ -138,7 +138,10 @@ interface DialogFooterProps extends ComponentProps<"div"> {
 function DialogFooter({ children, className, showCloseButton = false, ...props }: DialogFooterProps): JSX.Element {
   return (
     <div
-      className={cn("flex shrink-0 flex-col-reverse gap-2 sm:flex-row sm:justify-end", className)}
+      className={cn(
+        "-mx-4 -mb-4 flex shrink-0 flex-col-reverse gap-2 rounded-b-xl border-t bg-muted/50 p-4 sm:flex-row sm:justify-end",
+        className,
+      )}
       data-slot="dialog-footer"
       {...props}
     >
@@ -167,7 +170,7 @@ type DialogTitleProps = ComponentProps<typeof DialogPrimitive.Title>;
 function DialogTitle({ className, ...props }: DialogTitleProps): JSX.Element {
   return (
     <DialogPrimitive.Title
-      className={cn("font-heading leading-none font-medium", className)}
+      className={cn("font-heading text-base leading-none font-medium", className)}
       data-slot="dialog-title"
       {...props}
     />
