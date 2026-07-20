@@ -5,6 +5,8 @@ import type { ConsentReceipt } from "#/core/consent-receipt";
  * (a database, an append-only log). The store is **append-only**: `append` never overwrites,
  * and an update/withdrawal is a new receipt referencing the prior one (spec-consent-receipts §3).
  * May be async so a real backend can await its write.
+ *
+ * @since 1.0.0-canary.7
  */
 export interface ReceiptStore {
   append: (receipt: ConsentReceipt) => Promise<void> | void;
@@ -20,6 +22,8 @@ export interface ReceiptStore {
  * @remarks
  * Append is idempotent-by-id: re-appending the same `receiptId` is ignored, preserving the
  * append-only guarantee even if a client retries.
+ *
+ * @since 1.0.0-canary.7
  */
 export function createInMemoryReceiptStore(): ReceiptStore {
   const receipts = new Map<string, ConsentReceipt>();
@@ -40,6 +44,8 @@ export function createInMemoryReceiptStore(): ReceiptStore {
  * The minimal id-keyed primitive a durable backend must expose for {@link createDurableReceiptStore}.
  * Keeping it this small lets an integrator back receipts with any store (Vercel KV, Postgres,
  * an append-only log) by implementing two methods rather than the full {@link ReceiptStore}.
+ *
+ * @since 1.0.0-canary.7
  */
 export interface ReceiptStoreBackend {
   get: (receiptId: string) => Promise<ConsentReceipt | undefined>;
@@ -58,6 +64,8 @@ export interface ReceiptStoreBackend {
  * supplies the append-only contract and adaptation, the deployment supplies the backend
  * client (no database dependency is baked in). Pair it with a real backend in production,
  * where {@link createInMemoryReceiptStore} is not a lawful store on its own.
+ *
+ * @since 1.0.0-canary.7
  */
 export function createDurableReceiptStore(options: { backend: ReceiptStoreBackend }): ReceiptStore {
   return {

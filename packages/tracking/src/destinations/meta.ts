@@ -9,6 +9,8 @@ import { flattenEventProps } from "#/destinations/shared";
  * lets Meta geolocate the user — the recommended default beyond California, where only
  * country `1` (USA) / state `1000` (California) are documented codes (spec-destinations §5).
  * `[]` applies no restriction.
+ *
+ * @since 1.0.0-canary.7
  */
 export interface MetaDataProcessingOptions {
   country: number;
@@ -16,20 +18,31 @@ export interface MetaDataProcessingOptions {
   state: number;
 }
 
-/** Maps a `ConsentDecision` to Meta's `dataProcessingOptions`: LDU when `ads` is denied. */
+/**
+ * Maps a `ConsentDecision` to Meta's `dataProcessingOptions`: LDU when `ads` is denied.
+ *
+ * @since 1.0.0-canary.7
+ */
 export function toMetaDataProcessingOptions(decision: ConsentDecision): MetaDataProcessingOptions {
   return toAdConsentState(decision).limitedDataUse
     ? { country: 0, options: ["LDU"], state: 0 }
     : { country: 0, options: [], state: 0 };
 }
 
-/** The mapped per-event payload handed to a Meta transport (Pixel `fbq` or a CAPI request). */
+/**
+ * The mapped per-event payload handed to a Meta transport (Pixel `fbq` or a CAPI request).
+ *
+ * @since 1.0.0-canary.7
+ */
 export interface MetaEventPayload {
   dataProcessingOptions: MetaDataProcessingOptions;
   name: string;
   properties: Record<string, FlatPropertyValue>;
 }
 
+/**
+ * @since 1.0.0-canary.7
+ */
 export interface MetaDestinationOptions {
   /**
    * Erasure cookie-clear seam — invoked by `onErasure` to drop Meta's `_fbp`/`_fbc` cookies
@@ -54,6 +67,8 @@ export interface MetaDestinationOptions {
  * transport. Consent-restriction mapping only — the Pixel/CAPI transport and credentials
  * are the integrator's to supply. `consentRequirement` stays `"required"`: an ad sink is
  * never exempt.
+ *
+ * @since 1.0.0-canary.7
  */
 export function createMetaDestination(options: MetaDestinationOptions): Destination {
   // Erasure halts delivery for the rest of the session — Meta has no per-visitor deletion API.

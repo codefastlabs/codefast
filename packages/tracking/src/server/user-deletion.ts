@@ -11,6 +11,9 @@
 
 const ADMIN_API_ORIGIN = "https://analyticsadmin.googleapis.com";
 
+/**
+ * @since 1.0.0-canary.7
+ */
 export interface Ga4UserDeletionRequest {
   body: { clientId: string };
   url: string;
@@ -23,6 +26,8 @@ export interface Ga4UserDeletionRequest {
  * any authenticated transport.
  *
  * @param options - `propertyId` is the numeric GA4 property (no `properties/` prefix).
+ *
+ * @since 1.0.0-canary.7
  */
 export function buildGa4UserDeletionRequest(options: { clientId: string; propertyId: string }): Ga4UserDeletionRequest {
   return {
@@ -31,7 +36,11 @@ export function buildGa4UserDeletionRequest(options: { clientId: string; propert
   };
 }
 
-/** The one network primitive the sender needs — injected so the package ships no HTTP client. */
+/**
+ * The one network primitive the sender needs — injected so the package ships no HTTP client.
+ *
+ * @since 1.0.0-canary.7
+ */
 export type Ga4UserDeletionTransport = (request: {
   body: string;
   headers: Record<string, string>;
@@ -50,6 +59,9 @@ async function defaultTransport(request: {
   }
 }
 
+/**
+ * @since 1.0.0-canary.7
+ */
 export interface SubmitGa4UserDeletionOptions {
   /** A bearer token for the `https://www.googleapis.com/auth/analytics.edit` scope — the caller owns OAuth. */
   accessToken: string;
@@ -64,6 +76,8 @@ export interface SubmitGa4UserDeletionOptions {
  * deletion removes the subject from the Individual User report within ~72h and purges at the
  * next run; it does **not** reach previously-aggregated reports or BigQuery exports
  * (spec-data-subject-rights §3).
+ *
+ * @since 1.0.0-canary.7
  */
 export async function submitGa4UserDeletion(options: SubmitGa4UserDeletionOptions): Promise<void> {
   const request = buildGa4UserDeletionRequest({ clientId: options.clientId, propertyId: options.propertyId });

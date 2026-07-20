@@ -9,6 +9,8 @@ import { flattenEventProps } from "#/destinations/shared";
  * and its `ad_user_data`/`ad_personalization` fields have no documented behavior, so this
  * models the one enforced signal (spec-destinations §5). Pushed via
  * `uetq.push('consent','update', …)`.
+ *
+ * @since 1.0.0-canary.7
  */
 export interface MicrosoftUetConsent {
   ad_storage: "denied" | "granted";
@@ -17,18 +19,27 @@ export interface MicrosoftUetConsent {
 /**
  * Maps a `ConsentDecision` to UET's enforced `ad_storage` signal via the shared ad lever, so
  * it can't drift from Meta/TikTok — `ad_storage` is the inverse of Limited Data Use.
+ *
+ * @since 1.0.0-canary.7
  */
 export function toMicrosoftUetConsent(decision: ConsentDecision): MicrosoftUetConsent {
   return { ad_storage: toAdConsentState(decision).limitedDataUse ? "denied" : "granted" };
 }
 
-/** The mapped per-event payload handed to a UET transport (`uetq.push`). */
+/**
+ * The mapped per-event payload handed to a UET transport (`uetq.push`).
+ *
+ * @since 1.0.0-canary.7
+ */
 export interface MicrosoftUetEventPayload {
   consent: MicrosoftUetConsent;
   name: string;
   properties: Record<string, FlatPropertyValue>;
 }
 
+/**
+ * @since 1.0.0-canary.7
+ */
 export interface MicrosoftUetDestinationOptions {
   /** Erasure cookie-clear seam — UET exposes no per-visitor deletion API, so erasure is cookie-clear + stop-send (DSR-V4). */
   clearCookies?: (() => void) | undefined;
@@ -47,6 +58,8 @@ export interface MicrosoftUetDestinationOptions {
  * UET's `ad_storage` signal, then hands it to an injected transport. Consent-restriction
  * mapping only — the tag id and `uetq` transport are the integrator's. `consentRequirement`
  * stays `"required"`.
+ *
+ * @since 1.0.0-canary.7
  */
 export function createMicrosoftUetDestination(options: MicrosoftUetDestinationOptions): Destination {
   let stopped = false;

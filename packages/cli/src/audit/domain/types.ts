@@ -1,3 +1,6 @@
+/**
+ * @since 1.0.0-canary.7
+ */
 export type RtlClassToken = {
   readonly raw: string;
   readonly token: string;
@@ -7,17 +10,26 @@ export type RtlClassToken = {
   readonly line: number;
 };
 
+/**
+ * @since 1.0.0-canary.7
+ */
 export type RtlViolation = {
   readonly line: number;
   readonly raw: string;
   readonly suggestion: string;
 };
 
+/**
+ * @since 1.0.0-canary.7
+ */
 export type RtlFileViolations = {
   readonly relativePath: string;
   readonly violations: Array<RtlViolation>;
 };
 
+/**
+ * @since 1.0.0-canary.7
+ */
 export type RtlAuditResult = {
   readonly files: Array<RtlFileViolations>;
   readonly violationCount: number;

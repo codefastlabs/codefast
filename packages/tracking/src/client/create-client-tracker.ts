@@ -6,7 +6,11 @@ import { assertValidEventProperties } from "#/core/event-catalog";
 import { generateEventId } from "#/core/event-id";
 import type { TrackedEvent } from "#/core/tracked-event";
 
-/** Context handed to {@link ClientTrackerOptions.onDeliveryError} for one failed delivery. */
+/**
+ * Context handed to {@link ClientTrackerOptions.onDeliveryError} for one failed delivery.
+ *
+ * @since 1.0.0-canary.7
+ */
 export interface DeliveryErrorContext {
   destination: Destination;
   error: unknown;

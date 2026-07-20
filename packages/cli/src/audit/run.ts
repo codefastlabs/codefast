@@ -8,7 +8,11 @@ import type { Result } from "#/core/result";
 import { err, ok } from "#/core/result";
 import { walkTsxFiles } from "#/core/workspace/typescript-walk";
 
-/** Scan a target path for physical-direction Tailwind class violations. */
+/**
+ * Scan a target path for physical-direction Tailwind class violations.
+ *
+ * @since 1.0.0-canary.7
+ */
 export function runRtlAudit(
   fs: FilesystemPort,
   args: {
