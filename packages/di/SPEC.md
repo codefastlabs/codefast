@@ -2845,22 +2845,21 @@ Mỗi public subpath là một conditional entry: `source` → `src` cho dev/tes
 
 Build bằng native `tsc` (TypeScript 7) theo mô hình Turborepo "Compiled Packages" — emit `.js` + `.d.ts` file-by-file vào `dist/`, không bundler. Không còn `tsdown`.
 
+Các flag emit dùng chung nằm ở preset `@codefast/typescript-config/library-build.json` (`noEmit: false`, `declaration`, `declarationMap`, `sourceMap`, `types: ["node"]`). Build file dùng **array `extends`** để vừa kế thừa base của package (flags + `paths`) vừa nạp block emit, chỉ giữ lại `outDir`/`rootDir` local (đường dẫn relative — nếu đặt trong preset sẽ resolve về thư mục preset) cùng `include`/`exclude`:
+
 ```json
 {
-  "extends": "./tsconfig.json",
+  "extends": ["./tsconfig.json", "@codefast/typescript-config/library-build.json"],
   "compilerOptions": {
-    "noEmit": false,
-    "declaration": true,
-    "declarationMap": true,
-    "sourceMap": true,
     "outDir": "./dist",
-    "rootDir": "./src",
-    "types": ["node"]
+    "rootDir": "./src"
   },
   "include": ["src/**/*.ts"],
   "exclude": ["node_modules", "dist", ".turbo", "coverage", "src/**/*.test.ts", "tests"]
 }
 ```
+
+Thứ tự array quyết định override: `library-build.json` đứng sau nên `noEmit: false` và `types: ["node"]` thắng `tsconfig.json`. Package bin (`cli`) override thêm `declaration: false` + `declarationMap: false` vì không consumer nào import type của nó.
 
 ---
 

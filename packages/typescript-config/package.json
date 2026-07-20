@@ -33,6 +33,7 @@
   "exports": {
     "./base.json": "./base.json",
     "./library.json": "./library.json",
+    "./library-build.json": "./library-build.json",
     "./next.json": "./next.json",
     "./react.json": "./react.json"
   },
