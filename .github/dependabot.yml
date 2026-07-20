@@ -25,6 +25,8 @@ updates:
       # Zod is shared via catalog across apps/ui, packages/cli, packages/theme; bump majors deliberately.
       - dependency-name: "zod"
         update-types: ["version-update:semver-major"]
+      # Published @codefast/* consumed by examples/* — bumped by hand per release, not by Dependabot.
+      - dependency-name: "@codefast/*"
     groups:
       # Order matters: first matching group wins (see react vs typescript @types).
       react-core:
@@ -36,7 +38,6 @@ updates:
       typescript:
         patterns:
           - "typescript"
-          - "@typescript/*"
           - "@types/*"
       testing:
         patterns:
@@ -49,7 +50,7 @@ updates:
           - "expect-type"
       radix-ui:
         patterns:
-          - "@radix-ui/*"
+          - "radix-ui"
       tanstack:
         patterns:
           - "@tanstack/*"
@@ -60,31 +61,19 @@ updates:
           - "tailwind-variants"
           - "@tailwindcss/*"
           - "tw-animate-css"
-      remark-rehype:
-        patterns:
-          - "remark-*"
-          - "rehype-*"
-          - "unified"
-          - "unist-*"
-          - "hast-*"
-      content-collections:
-        patterns:
-          - "@content-collections/*"
-      shiki:
-        patterns:
-          - "shiki"
-          - "@shikijs/*"
       vite:
         patterns:
           - "vite"
           - "@vitejs/*"
           - "@rolldown/*"
           - "babel-plugin-react-compiler"
+          - "@babel/*"
       repo-tooling:
         patterns:
           - "turbo"
           - "tsx"
           - "jiti"
+          - "oxc-parser"
           - "@changesets/*"
           - "@commitlint/*"
           - "knip"
@@ -96,7 +85,8 @@ updates:
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
-      interval: "monthly"
+      interval: "weekly"
+      day: "monday"
     open-pull-requests-limit: 5
     labels:
       - "dependencies"
