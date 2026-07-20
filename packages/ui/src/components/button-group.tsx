@@ -1,4 +1,4 @@
-import { Slot } from "radix-ui";
+import * as Slot from "radix-ui/slot";
 import type { ComponentProps, JSX } from "react";
 
 import { Separator } from "#/components/separator";

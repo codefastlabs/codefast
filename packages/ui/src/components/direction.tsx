@@ -1,4 +1,4 @@
-import { Direction } from "radix-ui";
+import * as Direction from "radix-ui/direction";
 import type { ComponentProps } from "react";
 
 /* -----------------------------------------------------------------------------

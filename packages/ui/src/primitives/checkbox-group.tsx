@@ -1,5 +1,5 @@
-import { Direction } from "radix-ui";
 import * as CheckboxPrimitive from "radix-ui/checkbox";
+import * as Direction from "radix-ui/direction";
 import { Context } from "radix-ui/internal";
 import { RovingFocus } from "radix-ui/internal";
 import { useControllableState } from "radix-ui/internal";

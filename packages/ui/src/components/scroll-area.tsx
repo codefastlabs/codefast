@@ -1,5 +1,5 @@
-import { ScrollArea as ScrollAreaPrimitive } from "radix-ui";
 import { Context } from "radix-ui/internal";
+import * as ScrollAreaPrimitive from "radix-ui/scroll-area";
 import type { ComponentProps, JSX } from "react";
 
 import { cn } from "#/lib/utils";

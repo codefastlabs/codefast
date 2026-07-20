@@ -1,4 +1,4 @@
-import { Collapsible as CollapsiblePrimitive } from "radix-ui";
+import * as CollapsiblePrimitive from "radix-ui/collapsible";
 import type { ComponentProps, JSX } from "react";
 
 /* -----------------------------------------------------------------------------

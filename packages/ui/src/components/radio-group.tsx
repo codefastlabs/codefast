@@ -1,4 +1,4 @@
-import { RadioGroup as RadioGroupPrimitive } from "radix-ui";
+import * as RadioGroupPrimitive from "radix-ui/radio-group";
 import type { ComponentProps, JSX } from "react";
 
 import { cn } from "#/lib/utils";

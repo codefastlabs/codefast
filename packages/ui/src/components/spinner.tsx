@@ -1,4 +1,4 @@
-import { VisuallyHidden } from "radix-ui";
+import * as VisuallyHidden from "radix-ui/visually-hidden";
 import type { ComponentProps, CSSProperties, ReactNode } from "react";
 
 import { cn } from "#/lib/utils";
