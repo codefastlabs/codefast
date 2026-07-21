@@ -278,14 +278,14 @@ describe("input-number", () => {
       await user.keyboard("{Enter}");
 
       expect(input).toHaveValue("");
-      expect(handleChange).toHaveBeenLastCalledWith(Number.NaN);
+      expect(handleChange).toHaveBeenLastCalledWith(undefined);
 
       await user.clear(input);
       await user.keyboard("{Enter}");
 
       expect(input).toHaveValue("");
 
-      expect(handleChange).toHaveBeenLastCalledWith(Number.NaN);
+      expect(handleChange).toHaveBeenLastCalledWith(undefined);
     });
 
     test("handles special input cases correctly", async () => {
@@ -338,7 +338,7 @@ describe("input-number", () => {
       expect(screen.getByTestId("input-item")).toHaveValue("10");
     });
 
-    test("should decrement value on wheel up event when input is focused", async () => {
+    test("should increment value on wheel up event when input is focused", async () => {
       const user = userEvent.setup();
       const handleChange = vi.fn();
 
@@ -356,11 +356,11 @@ describe("input-number", () => {
 
       fireEvent.wheel(input, { deltaY: -100 });
 
-      expect(input).toHaveValue("4");
-      expect(handleChange).toHaveBeenCalledWith(4);
+      expect(input).toHaveValue("6");
+      expect(handleChange).toHaveBeenCalledWith(6);
     });
 
-    test("should increment value on wheel down event when input is focused", async () => {
+    test("should decrement value on wheel down event when input is focused", async () => {
       const handleChange = vi.fn();
       const user = userEvent.setup();
 
@@ -378,8 +378,8 @@ describe("input-number", () => {
 
       fireEvent.wheel(input, { deltaY: 100 });
 
-      expect(input).toHaveValue("6");
-      expect(handleChange).toHaveBeenCalledWith(6);
+      expect(input).toHaveValue("4");
+      expect(handleChange).toHaveBeenCalledWith(4);
     });
 
     test("should respect min/max constraints on wheel events", async () => {
@@ -398,13 +398,13 @@ describe("input-number", () => {
 
       await user.click(input);
 
-      fireEvent.wheel(input, { deltaY: 100 });
-      expect(input).toHaveValue("10");
-
-      fireEvent.wheel(input, { deltaY: 100 });
+      fireEvent.wheel(input, { deltaY: -100 });
       expect(input).toHaveValue("10");
 
       fireEvent.wheel(input, { deltaY: -100 });
+      expect(input).toHaveValue("10");
+
+      fireEvent.wheel(input, { deltaY: 100 });
       expect(input).toHaveValue("9");
 
       render(
@@ -419,10 +419,10 @@ describe("input-number", () => {
 
       await user.click(minInput);
 
-      fireEvent.wheel(minInput, { deltaY: -100 });
+      fireEvent.wheel(minInput, { deltaY: 100 });
       expect(minInput).toHaveValue("0");
 
-      fireEvent.wheel(minInput, { deltaY: -100 });
+      fireEvent.wheel(minInput, { deltaY: 100 });
       expect(minInput).toHaveValue("0");
     });
 
@@ -442,11 +442,11 @@ describe("input-number", () => {
 
       await user.click(input);
 
-      fireEvent.wheel(input, { deltaY: 100 });
+      fireEvent.wheel(input, { deltaY: -100 });
       expect(input).toHaveValue("5.5");
       expect(handleChange).toHaveBeenCalledWith(5.5);
 
-      fireEvent.wheel(input, { deltaY: -100 });
+      fireEvent.wheel(input, { deltaY: 100 });
       expect(input).toHaveValue("5");
       expect(handleChange).toHaveBeenCalledWith(5);
     });
@@ -963,17 +963,18 @@ describe("input-number", () => {
       expect(input).toHaveValue("8");
     });
 
-    test("becomes disabled at minimum value", () => {
+    test("becomes disabled at minimum value while increment stays enabled", () => {
       render(
         <InputNumber defaultValue={1} min={1}>
           <InputNumberDecrementButton data-testid="decrement-btn">-</InputNumberDecrementButton>
           <InputNumberField data-testid="input-item" />
+          <InputNumberIncrementButton data-testid="increment-btn">+</InputNumberIncrementButton>
         </InputNumber>,
       );
 
-      const button = screen.getByTestId("decrement-btn");
-
-      expect(button).toBeDisabled();
+      expect(screen.getByTestId("decrement-btn")).toBeDisabled();
+      // The opposite direction must remain usable so the value is never stuck at the bound.
+      expect(screen.getByTestId("increment-btn")).not.toBeDisabled();
     });
 
     test("supports custom rendering", () => {
@@ -1011,17 +1012,18 @@ describe("input-number", () => {
       expect(input).toHaveValue("12");
     });
 
-    test("becomes disabled at maximum value", () => {
+    test("becomes disabled at maximum value while decrement stays enabled", () => {
       render(
         <InputNumber defaultValue={100} max={100}>
+          <InputNumberDecrementButton data-testid="decrement-btn">-</InputNumberDecrementButton>
           <InputNumberField />
           <InputNumberIncrementButton data-testid="increment-btn">+</InputNumberIncrementButton>
         </InputNumber>,
       );
 
-      const button = screen.getByTestId("increment-btn");
-
-      expect(button).toBeDisabled();
+      expect(screen.getByTestId("increment-btn")).toBeDisabled();
+      // The opposite direction must remain usable so the value is never stuck at the bound.
+      expect(screen.getByTestId("decrement-btn")).not.toBeDisabled();
     });
 
     test("supports custom rendering", () => {

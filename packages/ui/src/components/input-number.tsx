@@ -24,8 +24,8 @@ interface InputNumberProps
  * @since 0.3.16-canary.0
  */
 function InputNumber({
-  ariaDecrementLabel,
-  ariaIncrementLabel,
+  ariaDecrementLabel = "Decrement",
+  ariaIncrementLabel = "Increment",
   className,
   defaultValue,
   disabled,
@@ -73,7 +73,6 @@ function InputNumber({
     >
       {isSplit ? (
         <InputNumberPrimitive.DecrementButton
-          aria-label="Decrement"
           className={buttonVariants({
             className: decrementButton(),
             variant: "ghost",
@@ -95,7 +94,6 @@ function InputNumber({
 
       {isSplit ? (
         <InputNumberPrimitive.IncrementButton
-          aria-label="Increment"
           className={buttonVariants({
             className: incrementButton(),
             variant: "ghost",
@@ -107,7 +105,6 @@ function InputNumber({
       ) : (
         <div className={stepper()} data-slot="input-number-buttons">
           <InputNumberPrimitive.IncrementButton
-            aria-label="Increment"
             className={buttonVariants({
               className: stepperButton(),
               variant: "ghost",
@@ -118,7 +115,6 @@ function InputNumber({
           </InputNumberPrimitive.IncrementButton>
 
           <InputNumberPrimitive.DecrementButton
-            aria-label="Decrement"
             className={buttonVariants({
               className: stepperButton(),
               variant: "ghost",

@@ -31,7 +31,7 @@ const inputNumberVariants = tv({
     /**
      * Outer container.
      */
-    root: "group/input-number relative flex h-8 w-full min-w-0 items-center overflow-hidden rounded-lg border border-input bg-transparent text-base transition-[color,box-shadow] not-has-disabled:shadow-xs focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/50 has-disabled:bg-input/50 has-disabled:opacity-50 has-aria-invalid:border-destructive has-aria-invalid:ring-3 has-aria-invalid:ring-destructive/20 motion-reduce:transition-none md:text-sm dark:bg-input/30 dark:has-disabled:bg-input/80 dark:has-aria-invalid:border-destructive/50 dark:has-aria-invalid:ring-destructive/40 [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+    root: "group/input-number relative flex h-8 w-full min-w-0 items-center overflow-hidden rounded-lg border border-input bg-transparent text-base transition-[color,box-shadow] not-has-[input:disabled]:shadow-xs focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/50 has-aria-invalid:border-destructive has-aria-invalid:ring-3 has-aria-invalid:ring-destructive/20 has-[input:disabled]:bg-input/50 has-[input:disabled]:opacity-50 motion-reduce:transition-none md:text-sm dark:bg-input/30 dark:has-aria-invalid:border-destructive/50 dark:has-aria-invalid:ring-destructive/40 dark:has-[input:disabled]:bg-input/80 [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
     /**
      * Stepper layout: stacked chevron column on the trailing edge.
      */

@@ -253,6 +253,13 @@ function InputNumber(numberInputProps: ScopedProps<InputNumberProps>): JSX.Eleme
    */
   const { decimalSeparator, thousandSeparator } = useMemo(() => getNumberFormatSeparators(locale), [locale]);
 
+  // Stable reference so an inline `formatOptions` literal doesn't churn the format callbacks every render.
+  const formatOptionsKey = JSON.stringify(formatOptions);
+  const stableFormatOptions = useMemo<Intl.NumberFormatOptions>(
+    () => JSON.parse(formatOptionsKey) as Intl.NumberFormatOptions,
+    [formatOptionsKey],
+  );
+
   /**
    * Formats a number value into a string representation
    * @param inputValue - The number to format
@@ -264,9 +271,9 @@ function InputNumber(numberInputProps: ScopedProps<InputNumberProps>): JSX.Eleme
         return "";
       }
 
-      return new Intl.NumberFormat(locale, formatOptions).format(inputValue);
+      return new Intl.NumberFormat(locale, stableFormatOptions).format(inputValue);
     },
-    [formatOptions, locale],
+    [stableFormatOptions, locale],
   );
 
   /**
@@ -293,13 +300,13 @@ function InputNumber(numberInputProps: ScopedProps<InputNumberProps>): JSX.Eleme
       const normalizedValue = normalizeInputValue(cleanedValue, thousandSeparator, decimalSeparator);
       let parsedValue = Number.parseFloat(normalizedValue);
 
-      if (formatOptions.style === "percent") {
+      if (stableFormatOptions.style === "percent") {
         parsedValue /= 100;
       }
 
       return Number.isNaN(parsedValue) ? 0 : clamp(parsedValue, min, max);
     },
-    [decimalSeparator, formatOptions.style, max, min, thousandSeparator],
+    [decimalSeparator, stableFormatOptions.style, max, min, thousandSeparator],
   );
 
   /**
@@ -314,13 +321,14 @@ function InputNumber(numberInputProps: ScopedProps<InputNumberProps>): JSX.Eleme
         return;
       }
 
-      const currentValue = parseValue(inputElement.value) || 0;
-      const newValue = clamp(operation(currentValue), min, max);
+      const parsedValue = parseValue(inputElement.value);
+      const currentValue = Number.isNaN(parsedValue) ? 0 : parsedValue;
+      const newValue = clamp(roundToStep(operation(currentValue), step), min, max);
 
       inputElement.value = formatValue(newValue);
       setValue(newValue);
     },
-    [props.disabled, formatValue, max, min, parseValue, props.readOnly, setValue],
+    [props.disabled, formatValue, max, min, parseValue, props.readOnly, setValue, step],
   );
 
   /**
@@ -357,7 +365,7 @@ function InputNumber(numberInputProps: ScopedProps<InputNumberProps>): JSX.Eleme
       ariaIncrementLabel={ariaIncrementLabel}
       defaultValue={defaultValue}
       disabled={props.disabled}
-      formatOptions={formatOptions}
+      formatOptions={stableFormatOptions}
       formatValue={formatValue}
       id={id}
       inputRef={inputRef}
@@ -434,7 +442,8 @@ function InputNumberField({
    */
   const handleBlur = useCallback<FocusEventHandler<HTMLInputElement>>(
     (event) => {
-      const numericValue = parseValue(event.target.value);
+      const parsedValue = parseValue(event.target.value);
+      const numericValue = Number.isNaN(parsedValue) ? undefined : parsedValue;
       const formattedValue = formatValue(numericValue);
 
       if (formattedValue !== event.target.value) {
@@ -491,53 +500,82 @@ function InputNumberField({
    *
    * @param event - The keyboard event to handle.
    */
-  const handleKeyDownPrevent = useCallback<KeyboardEventHandler<HTMLInputElement>>((event) => {
-    switch (event.key) {
-      case "ArrowUp":
+  const handleKeyDownPrevent = useCallback<KeyboardEventHandler<HTMLInputElement>>(
+    (event) => {
+      switch (event.key) {
+        case "ArrowUp":
 
-      case "ArrowDown":
+        case "ArrowDown":
 
-      case "ArrowLeft":
+        case "ArrowLeft":
 
-      case "ArrowRight":
+        case "ArrowRight":
 
-      case "PageUp":
+        case "PageUp":
 
-      case "PageDown":
+        case "PageDown":
 
-      case "Tab":
+        case "Tab":
 
-      case "Escape":
+        case "Escape":
 
-      case "Enter":
+        case "Enter":
 
-      case "Backspace":
+        case "Backspace":
 
-      case "Delete":
+        case "Delete":
 
-      case "Home":
+        case "Home":
 
-      case "End":
+        case "End":
 
-      case ".":
-
-      case ",":
-
-      case "-":
-
-      case "%": {
-        return;
-      }
-
-      default: {
-        if (isNumberKey(event.key) || isModifierKey(event) || isFunctionKey(event.key)) {
+        case "%": {
           return;
         }
 
-        event.preventDefault();
+        case ".":
+
+        case ",": {
+          // Allow at most one decimal separator unless the current one is inside the selection being replaced.
+          const inputElement = inputRef.current;
+
+          if (
+            inputElement &&
+            inputElement.selectionStart === inputElement.selectionEnd &&
+            /[.,]/.test(inputElement.value)
+          ) {
+            event.preventDefault();
+          }
+
+          return;
+        }
+
+        case "-": {
+          // Allow a single leading sign only.
+          const inputElement = inputRef.current;
+
+          if (
+            inputElement &&
+            (inputElement.selectionStart !== 0 ||
+              (inputElement.value.includes("-") && inputElement.selectionStart === inputElement.selectionEnd))
+          ) {
+            event.preventDefault();
+          }
+
+          return;
+        }
+
+        default: {
+          if (isNumberKey(event.key) || isModifierKey(event) || isFunctionKey(event.key)) {
+            return;
+          }
+
+          event.preventDefault();
+        }
       }
-    }
-  }, []);
+    },
+    [inputRef],
+  );
 
   /**
    * Handles the Enter key to format the value of the input.
@@ -552,7 +590,8 @@ function InputNumberField({
         return;
       }
 
-      const numericValue = parseValue(inputElement.value);
+      const parsedValue = parseValue(inputElement.value);
+      const numericValue = Number.isNaN(parsedValue) ? undefined : parsedValue;
       const formattedValue = formatValue(numericValue);
 
       if (formattedValue !== inputElement.value) {
@@ -595,7 +634,8 @@ function InputNumberField({
 
       event.preventDefault();
 
-      if (event.deltaY > 0) {
+      // Match native number inputs: scroll up increases, scroll down decreases.
+      if (event.deltaY < 0) {
         onIncrement();
       } else {
         onDecrement();
@@ -633,7 +673,7 @@ function InputNumberField({
     }
 
     const handleReset = (): void => {
-      onChange(parseValue(defaultValue));
+      onChange(defaultValue === undefined ? undefined : parseValue(defaultValue));
     };
 
     const form = inputElement.form;
@@ -645,9 +685,15 @@ function InputNumberField({
     };
   }, [defaultValue, inputRef, onChange, parseValue]);
 
+  const hasValue = value !== undefined && !Number.isNaN(value);
+
   return (
     <InputPrimitive.Field
       ref={inputRef}
+      aria-valuemax={max}
+      aria-valuemin={min}
+      aria-valuenow={hasValue ? value : undefined}
+      aria-valuetext={hasValue ? formatValue(value) : undefined}
       defaultValue={formatValue(value)}
       disabled={disabled}
       id={id}
@@ -655,6 +701,7 @@ function InputNumberField({
       max={max}
       min={min}
       readOnly={readOnly}
+      role="spinbutton"
       step={step}
       onBlur={composeEventHandlers(onBlur, handleBlur)}
       onKeyDown={combinedKeyDownHandler}
@@ -695,11 +742,17 @@ function NumberStepperButton({
     useInputNumberContext(NUMBER_STEPPER_BUTTON_NAME, __scopeInputNumber);
 
   const isDisabled = useMemo(() => {
-    const atMin = min !== undefined && value !== undefined && value <= min;
-    const atMax = max !== undefined && value !== undefined && value >= max;
+    if (disabled) {
+      return true;
+    }
 
-    return (disabled ?? atMin) || atMax;
-  }, [min, max, value, disabled]);
+    // Only the button that would push past a bound is disabled — the opposite one must stay usable.
+    if (operation === "increment") {
+      return max !== undefined && value !== undefined && value >= max;
+    }
+
+    return min !== undefined && value !== undefined && value <= min;
+  }, [operation, min, max, value, disabled]);
 
   /**
    * Ref to store a timeout ID for managing repeated button actions.
@@ -735,6 +788,15 @@ function NumberStepperButton({
       timeoutIdRef.current = null;
     }
   }, []);
+
+  // Stop repeating once the button hits its bound mid-hold (a disabled button never receives pointerup) and on unmount.
+  useEffect(() => {
+    if (isDisabled) {
+      clearActionInterval();
+    }
+
+    return clearActionInterval;
+  }, [isDisabled, clearActionInterval]);
 
   /**
    * Handles pointer down events and triggers the appropriate action
@@ -778,7 +840,6 @@ function NumberStepperButton({
     <button
       aria-controls={id}
       aria-label={operation === "increment" ? ariaIncrementLabel : ariaDecrementLabel}
-      aria-live="polite"
       disabled={isDisabled}
       type="button"
       onContextMenu={handleContextMenu}
@@ -941,6 +1002,24 @@ function isNumberKey(key: string): boolean {
  */
 function clamp(value: number, min = Number.NEGATIVE_INFINITY, max = Number.POSITIVE_INFINITY): number {
   return Math.min(Math.max(value, min), max);
+}
+
+/**
+ * Rounds a value to the decimal precision implied by the step, avoiding floating-point drift
+ * (e.g. `0.1 + 0.2`) when stepping with fractional increments.
+ *
+ * @param value - The value to round
+ * @param step - The step whose fractional digit count sets the precision
+ * @returns The value rounded to the step's precision
+ */
+function roundToStep(value: number, step: number): number {
+  if (!Number.isFinite(step) || step <= 0) {
+    return value;
+  }
+
+  const fractionDigits = String(step).split(".")[1]?.length ?? 0;
+
+  return Number(value.toFixed(fractionDigits));
 }
 
 /* -----------------------------------------------------------------------------
