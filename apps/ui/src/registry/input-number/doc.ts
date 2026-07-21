@@ -17,8 +17,8 @@ export const inputNumberDoc: ComponentDoc = {
     },
     {
       id: "formats",
-      title: "Formats & variants",
-      description: "Format as currency with Intl options, or use the split stepper layout.",
+      title: "Formats & layouts",
+      description: "Format as currency with Intl options, or flank the field for a split layout.",
       Demo: InputNumberFormats,
       source: docSource("input-number", "formats"),
       previewClassName: "items-start",
@@ -32,17 +32,28 @@ export const inputNumberDoc: ComponentDoc = {
       previewClassName: "items-start",
     },
   ],
-  anatomy: [{ name: "InputNumber" }],
+  anatomy: [
+    {
+      name: "InputNumber",
+      children: [
+        { name: "InputNumberField" },
+        { name: "InputNumberStepper" },
+        { name: "InputNumberDecrement" },
+        { name: "InputNumberIncrement" },
+      ],
+    },
+  ],
   features: [
-    'Two variants — "stepper" (chevrons stacked on one side, default) and "split" (− and + buttons flanking the field).',
+    "Composable parts — pair InputNumberField with InputNumberStepper for the stacked layout, or flank it with InputNumberDecrement and InputNumberIncrement for a split layout. Layout follows child order.",
     "formatOptions (Intl.NumberFormatOptions) formats the displayed value, e.g. currency or percent, while the underlying value stays a plain number.",
-    "min/max/step clamp both typed and stepper-driven changes to a valid range.",
+    "min/max/step clamp both typed and stepper-driven changes to a valid range, and only the button facing a bound is disabled.",
     "Built-in loading/spinner support, e.g. while a computed value is being fetched.",
   ],
   api: [
     {
       name: "InputNumber",
-      description: "A numeric field with steppers, bounds, and locale-aware formatting.",
+      description:
+        "The container that owns the numeric state, bounds, and formatting. Compose the parts below as children.",
       props: [
         {
           name: "value",
@@ -52,7 +63,7 @@ export const inputNumberDoc: ComponentDoc = {
         {
           name: "onChange",
           type: "(value?: number) => void",
-          description: "Called with the parsed number when the value changes.",
+          description: "Called with the parsed number, or undefined when the field is cleared.",
         },
         {
           name: "min",
@@ -75,11 +86,50 @@ export const inputNumberDoc: ComponentDoc = {
           type: "Intl.NumberFormatOptions",
           description: 'Format the display, e.g. { style: "currency", currency: "USD" }.',
         },
+      ],
+    },
+    {
+      name: "InputNumberField",
+      description: "The editable spinbutton input.",
+      props: [
         {
-          name: "variant",
-          type: '"stepper" | "split"',
-          default: '"stepper"',
-          description: "Inline steppers, or − and + on either side.",
+          name: "aria-invalid",
+          type: "boolean",
+          description: "Marks the field invalid and drives the container's invalid styling.",
+        },
+      ],
+    },
+    {
+      name: "InputNumberStepper",
+      description:
+        "A stacked chevron column with both increment and decrement controls — the default layout. Place it after the field.",
+      props: [
+        {
+          name: "className",
+          type: "string",
+          description: "Compose the column's styling.",
+        },
+      ],
+    },
+    {
+      name: "InputNumberDecrement",
+      description: "A standalone decrement button for the split layout. Place it before the field.",
+      props: [
+        {
+          name: "children",
+          type: "ReactNode",
+          description: "Override the default minus icon.",
+        },
+      ],
+    },
+    {
+      name: "InputNumberIncrement",
+      description: "A standalone increment button for the split layout. Place it after the field.",
+      props: [
+        {
+          name: "children",
+          type: "ReactNode",
+          description: "Override the default plus icon.",
         },
       ],
     },

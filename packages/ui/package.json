@@ -555,11 +555,6 @@
       "types": "./dist/variants/input-group.d.ts",
       "import": "./dist/variants/input-group.js"
     },
-    "./variants/input-number": {
-      "source": "./src/variants/input-number.ts",
-      "types": "./dist/variants/input-number.d.ts",
-      "import": "./dist/variants/input-number.js"
-    },
     "./variants/item": {
       "source": "./src/variants/item.ts",
       "types": "./dist/variants/item.d.ts",
