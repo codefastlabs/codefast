@@ -17,12 +17,12 @@ const inputNumberVariants = tv({
      * Split layout: trailing increment button (always on the inline end).
      */
     incrementButton:
-      "order-last h-full w-9 shrink-0 rounded-none rounded-e-[calc(var(--radius-md)-1px)] border-s border-s-input text-muted-foreground group-focus-within/input-number:border-s-ring group-has-aria-invalid/input-number:border-s-destructive focus-visible:bg-ring/50 focus-visible:ring-0 group-has-aria-invalid/input-number:focus-visible:bg-destructive/20 dark:group-has-aria-invalid/input-number:focus-visible:bg-destructive/40",
+      "order-last h-full w-8 shrink-0 rounded-none rounded-e-[calc(var(--radius-lg)-1px)] border-s border-s-input text-muted-foreground group-focus-within/input-number:border-s-ring group-has-aria-invalid/input-number:border-s-destructive focus-visible:bg-ring/50 focus-visible:ring-0 group-has-aria-invalid/input-number:focus-visible:bg-destructive/20 dark:group-has-aria-invalid/input-number:focus-visible:bg-destructive/40",
     /**
      * Split layout: leading decrement button (always on the inline start).
      */
     decrementButton:
-      "order-first h-full w-9 shrink-0 rounded-none rounded-s-[calc(var(--radius-md)-1px)] border-e border-e-input text-muted-foreground group-focus-within/input-number:border-e-ring group-has-aria-invalid/input-number:border-e-destructive focus-visible:bg-ring/50 focus-visible:ring-0 group-has-aria-invalid/input-number:focus-visible:bg-destructive/20 dark:group-has-aria-invalid/input-number:focus-visible:bg-destructive/40",
+      "order-first h-full w-8 shrink-0 rounded-none rounded-s-[calc(var(--radius-lg)-1px)] border-e border-e-input text-muted-foreground group-focus-within/input-number:border-e-ring group-has-aria-invalid/input-number:border-e-destructive focus-visible:bg-ring/50 focus-visible:ring-0 group-has-aria-invalid/input-number:focus-visible:bg-destructive/20 dark:group-has-aria-invalid/input-number:focus-visible:bg-destructive/40",
     /**
      * Editable numeric input.
      */
@@ -31,7 +31,7 @@ const inputNumberVariants = tv({
     /**
      * Outer container.
      */
-    root: "group/input-number relative flex h-9 w-full min-w-0 items-center overflow-hidden rounded-md border border-input bg-transparent text-base transition-[color,box-shadow] not-has-disabled:shadow-xs focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/50 has-disabled:opacity-50 has-aria-invalid:border-destructive has-aria-invalid:ring-3 has-aria-invalid:ring-destructive/20 motion-reduce:transition-none md:text-sm dark:bg-input/30 dark:has-aria-invalid:border-destructive/50 dark:has-aria-invalid:ring-destructive/40 [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+    root: "group/input-number relative flex h-8 w-full min-w-0 items-center overflow-hidden rounded-lg border border-input bg-transparent text-base transition-[color,box-shadow] not-has-disabled:shadow-xs focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/50 has-disabled:bg-input/50 has-disabled:opacity-50 has-aria-invalid:border-destructive has-aria-invalid:ring-3 has-aria-invalid:ring-destructive/20 motion-reduce:transition-none md:text-sm dark:bg-input/30 dark:has-disabled:bg-input/80 dark:has-aria-invalid:border-destructive/50 dark:has-aria-invalid:ring-destructive/40 [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
     /**
      * Stepper layout: stacked chevron column on the trailing edge.
      */
