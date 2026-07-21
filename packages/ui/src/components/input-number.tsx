@@ -76,7 +76,7 @@ function InputNumberStepper({ className, ...props }: InputNumberStepperProps): J
   return (
     <div
       className={cn(
-        "grid h-full w-8 shrink-0 divide-y divide-input border-s border-s-input transition-colors group-focus-within/input-number:divide-ring group-focus-within/input-number:border-s-ring group-has-aria-invalid/input-number:divide-destructive group-has-aria-invalid/input-number:border-s-destructive motion-reduce:transition-none *:[button]:focus-visible:bg-ring/50 *:[button]:focus-visible:ring-0 group-has-aria-invalid/input-number:*:[button]:focus-visible:bg-destructive/20 dark:group-has-aria-invalid/input-number:*:[button]:focus-visible:bg-destructive/40",
+        "grid h-full w-8 shrink-0 grid-rows-2 divide-y divide-input border-s border-s-input transition-colors group-focus-within/input-number:divide-ring group-focus-within/input-number:border-s-ring group-has-aria-invalid/input-number:divide-destructive group-has-aria-invalid/input-number:border-s-destructive motion-reduce:transition-none *:[button]:focus-visible:bg-ring/50 *:[button]:focus-visible:ring-0 group-has-aria-invalid/input-number:*:[button]:focus-visible:bg-destructive/20 dark:group-has-aria-invalid/input-number:*:[button]:focus-visible:bg-destructive/40",
         className,
       )}
       data-slot="input-number-stepper"
@@ -84,7 +84,7 @@ function InputNumberStepper({ className, ...props }: InputNumberStepperProps): J
     >
       <InputNumberPrimitive.IncrementButton
         className={buttonVariants({
-          className: "h-auto min-w-0 rounded-none px-0 text-muted-foreground",
+          className: "h-full min-w-0 rounded-none px-0 text-muted-foreground",
           variant: "ghost",
         })}
         data-slot="input-number-increment"
@@ -94,7 +94,7 @@ function InputNumberStepper({ className, ...props }: InputNumberStepperProps): J
 
       <InputNumberPrimitive.DecrementButton
         className={buttonVariants({
-          className: "h-auto min-w-0 rounded-none px-0 text-muted-foreground",
+          className: "h-full min-w-0 rounded-none px-0 text-muted-foreground",
           variant: "ghost",
         })}
         data-slot="input-number-decrement"
