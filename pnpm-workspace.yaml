@@ -73,7 +73,7 @@ catalog:
   expect-type: ^1.4.0
   hono: ^4.12.31
   input-otp: ^1.4.2
-  inversify: ^8.2.1
+  inversify: ^8.2.2
   jest-axe: ^10.0.0
   jiti: ^2.7.0
   jsdom: ^29.1.1
