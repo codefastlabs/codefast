@@ -21,9 +21,6 @@ export function token<Value>(name: string): Token<Value> {
  * @since 0.3.16-canary.0
  */
 export function tokenName(dependency: Token<unknown> | Constructor): string {
-  if (typeof dependency === "function") {
-    return dependency.name;
-  }
   return dependency.name;
 }
 
