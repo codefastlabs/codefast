@@ -35,6 +35,38 @@ type BindingWithScope = Binding & { scope: BindingScope };
 const RESOLUTION_SET_KEY: unique symbol = Symbol("di:resolution-set");
 const RESOLUTION_SET_THRESHOLD = 32;
 type ResolutionPathWithSet = Array<string> & { [RESOLUTION_SET_KEY]?: Set<string> };
+
+/**
+ * Shared cycle guard for every transient resolution path: attaches the O(1) membership
+ * Set to the path array (lazily past RESOLUTION_SET_THRESHOLD, eagerly when `forceSet`),
+ * throws on a repeated token, then marks the token on both structures.
+ *
+ * Callers unmark with `resolutionPath.pop()` + `set?.delete(name)` on unwind.
+ */
+function enterResolutionPath(resolutionPath: Array<string>, tokenDisplayName: string, forceSet: true): Set<string>;
+function enterResolutionPath(
+  resolutionPath: Array<string>,
+  tokenDisplayName: string,
+  forceSet: boolean,
+): Set<string> | undefined;
+function enterResolutionPath(
+  resolutionPath: Array<string>,
+  tokenDisplayName: string,
+  forceSet: boolean,
+): Set<string> | undefined {
+  const pathWithSet = resolutionPath as ResolutionPathWithSet;
+  let resolutionSet = pathWithSet[RESOLUTION_SET_KEY];
+  if (resolutionSet === undefined && (forceSet || resolutionPath.length >= RESOLUTION_SET_THRESHOLD)) {
+    resolutionSet = new Set<string>(resolutionPath);
+    pathWithSet[RESOLUTION_SET_KEY] = resolutionSet;
+  }
+  if (resolutionSet === undefined ? resolutionPath.includes(tokenDisplayName) : resolutionSet.has(tokenDisplayName)) {
+    throw new CircularDependencyError([...resolutionPath, tokenDisplayName]);
+  }
+  resolutionPath.push(tokenDisplayName);
+  resolutionSet?.add(tokenDisplayName);
+  return resolutionSet;
+}
 const EMPTY_STRING_LIST: ReadonlyArray<string> = [];
 const EMPTY_FRAME_LIST: ReadonlyArray<ResolutionFrame> = [];
 const ROOT_CONSTRAINT_CONTEXT = {
@@ -348,21 +380,7 @@ export class DependencyResolver {
 
     const frame = this.#getResolutionFrame(binding);
     const tokenDisplayName = frame.tokenName;
-    const pathWithSet = resolutionPath as ResolutionPathWithSet;
-    let resolutionSet = pathWithSet[RESOLUTION_SET_KEY];
-    if (resolutionSet === undefined && resolutionPath.length >= RESOLUTION_SET_THRESHOLD) {
-      resolutionSet = new Set<string>(resolutionPath);
-      pathWithSet[RESOLUTION_SET_KEY] = resolutionSet;
-    }
-
-    // Circular dependency detection
-    if (resolutionSet !== undefined ? resolutionSet.has(tokenDisplayName) : resolutionPath.includes(tokenDisplayName)) {
-      const cycle = [...resolutionPath, tokenDisplayName];
-      throw new CircularDependencyError(cycle);
-    }
-
-    resolutionPath.push(tokenDisplayName);
-    resolutionSet?.add(tokenDisplayName);
+    const resolutionSet = enterResolutionPath(resolutionPath, tokenDisplayName, false);
     resolutionStack.push(frame);
     const needsActivation = this.#needsActivation(binding);
     if (!needsActivation && scope === "transient" && binding.kind === "dynamic") {
@@ -725,19 +743,7 @@ export class DependencyResolver {
 
     const frame = this.#getResolutionFrame(binding);
     const frameName = frame.tokenName;
-    const pathWithSet = resolutionPath as ResolutionPathWithSet;
-    let resolutionSet = pathWithSet[RESOLUTION_SET_KEY];
-    if (resolutionSet === undefined && resolutionPath.length >= RESOLUTION_SET_THRESHOLD) {
-      resolutionSet = new Set<string>(resolutionPath);
-      pathWithSet[RESOLUTION_SET_KEY] = resolutionSet;
-    }
-
-    if (resolutionSet !== undefined ? resolutionSet.has(frameName) : resolutionPath.includes(frameName)) {
-      throw new CircularDependencyError([...resolutionPath, frameName]);
-    }
-
-    resolutionPath.push(frameName);
-    resolutionSet?.add(frameName);
+    const resolutionSet = enterResolutionPath(resolutionPath, frameName, false);
     resolutionStack.push(frame);
     const needsActivation = this.#needsActivation(binding);
     if (!needsActivation && scope === "transient" && (binding.kind === "dynamic" || binding.kind === "dynamic-async")) {
@@ -1301,17 +1307,7 @@ export class DependencyResolver {
     // container.resolve() directly and the resulting chain also reached the threshold).
     const frame = this.#getResolutionFrame(binding);
     const tokenDisplayName = frame.tokenName;
-    const pathWithSet = resolutionPath as ResolutionPathWithSet;
-    let resolutionSet = pathWithSet[RESOLUTION_SET_KEY];
-    if (resolutionSet === undefined) {
-      resolutionSet = new Set<string>(resolutionPath);
-      pathWithSet[RESOLUTION_SET_KEY] = resolutionSet;
-    }
-    if (resolutionSet.has(tokenDisplayName)) {
-      throw new CircularDependencyError([...resolutionPath, tokenDisplayName]);
-    }
-    resolutionPath.push(tokenDisplayName);
-    resolutionSet.add(tokenDisplayName);
+    const resolutionSet = enterResolutionPath(resolutionPath, tokenDisplayName, true);
     resolutionStack.push(frame);
     const resolutionCtx = this.#acquireSyncResolutionContext(resolutionPath, resolutionStack, undefined);
     try {
@@ -1443,17 +1439,7 @@ export class DependencyResolver {
   ): Promise<Value> {
     const frame = this.#getResolutionFrame(binding);
     const tokenDisplayName = frame.tokenName;
-    const pathWithSet = resolutionPath as ResolutionPathWithSet;
-    let resolutionSet = pathWithSet[RESOLUTION_SET_KEY];
-    if (resolutionSet === undefined) {
-      resolutionSet = new Set<string>(resolutionPath);
-      pathWithSet[RESOLUTION_SET_KEY] = resolutionSet;
-    }
-    if (resolutionSet.has(tokenDisplayName)) {
-      throw new CircularDependencyError([...resolutionPath, tokenDisplayName]);
-    }
-    resolutionPath.push(tokenDisplayName);
-    resolutionSet.add(tokenDisplayName);
+    const resolutionSet = enterResolutionPath(resolutionPath, tokenDisplayName, true);
     resolutionStack.push(frame);
     const resolutionCtx = new DefaultResolutionContext(
       this as unknown as ResolverCallbacks,
