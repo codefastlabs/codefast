@@ -69,7 +69,7 @@ interface BindingBase<Value> {
   readonly id: BindingIdentifier;
   readonly token: Token<Value> | Constructor<Value>;
   readonly slot: BindingSlot;
-  readonly predicate?: (ctx: ConstraintContext) => boolean;
+  readonly predicate?: ((ctx: ConstraintContext) => boolean) | undefined;
 }
 
 type BindingBaseKeys = keyof BindingBase<unknown>;
@@ -83,8 +83,8 @@ export interface ClassBinding<Value> extends BindingBase<Value> {
   readonly kind: "class";
   readonly target: Constructor<Value>;
   readonly scope: BindingScope;
-  readonly onActivation?: ActivationHandler<Value>;
-  readonly onDeactivation?: DeactivationHandler<Value>;
+  readonly onActivation?: ActivationHandler<Value> | undefined;
+  readonly onDeactivation?: DeactivationHandler<Value> | undefined;
 }
 
 /**
@@ -94,8 +94,8 @@ export interface DynamicBinding<Value> extends BindingBase<Value> {
   readonly kind: "dynamic";
   readonly factory: (ctx: ResolutionContext) => Value;
   readonly scope: BindingScope;
-  readonly onActivation?: ActivationHandler<Value>;
-  readonly onDeactivation?: DeactivationHandler<Value>;
+  readonly onActivation?: ActivationHandler<Value> | undefined;
+  readonly onDeactivation?: DeactivationHandler<Value> | undefined;
 }
 
 /**
@@ -105,8 +105,8 @@ export interface DynamicAsyncBinding<Value> extends BindingBase<Value> {
   readonly kind: "dynamic-async";
   readonly factory: (ctx: ResolutionContext) => Promise<Value>;
   readonly scope: BindingScope;
-  readonly onActivation?: ActivationHandler<Value>;
-  readonly onDeactivation?: DeactivationHandler<Value>;
+  readonly onActivation?: ActivationHandler<Value> | undefined;
+  readonly onDeactivation?: DeactivationHandler<Value> | undefined;
 }
 
 /**
@@ -117,8 +117,8 @@ export interface ResolvedBinding<Value> extends BindingBase<Value> {
   readonly factory: (...args: Array<unknown>) => Value;
   readonly deps: ReadonlyArray<InjectionDescriptor>;
   readonly scope: BindingScope;
-  readonly onActivation?: ActivationHandler<Value>;
-  readonly onDeactivation?: DeactivationHandler<Value>;
+  readonly onActivation?: ActivationHandler<Value> | undefined;
+  readonly onDeactivation?: DeactivationHandler<Value> | undefined;
 }
 
 /**
@@ -129,8 +129,8 @@ export interface ResolvedAsyncBinding<Value> extends BindingBase<Value> {
   readonly factory: (...args: Array<unknown>) => Promise<Value>;
   readonly deps: ReadonlyArray<InjectionDescriptor>;
   readonly scope: BindingScope;
-  readonly onActivation?: ActivationHandler<Value>;
-  readonly onDeactivation?: DeactivationHandler<Value>;
+  readonly onActivation?: ActivationHandler<Value> | undefined;
+  readonly onDeactivation?: DeactivationHandler<Value> | undefined;
 }
 
 /**
@@ -140,8 +140,8 @@ export interface ConstantBinding<Value> extends BindingBase<Value> {
   readonly kind: "constant";
   readonly value: Value;
   readonly scope: "singleton";
-  readonly onActivation?: ActivationHandler<Value>;
-  readonly onDeactivation?: DeactivationHandler<Value>;
+  readonly onActivation?: ActivationHandler<Value> | undefined;
+  readonly onDeactivation?: DeactivationHandler<Value> | undefined;
 }
 
 /**
