@@ -1,3 +1,4 @@
+import { toDotGraph } from "@codefast/di";
 /**
  * Example 13 — Real-World E-Commerce Platform
  *
@@ -68,7 +69,6 @@
  *   6.  Graceful shutdown via await using — all connections closed in order
  *   ```
  */
-
 import {
   Container,
   inject,
@@ -80,7 +80,6 @@ import {
   preDestroy,
   token,
 } from "@codefast/di";
-import { toDotGraph } from "@codefast/di/graph-adapters/dot";
 
 // ============================================================================
 // ─── TOKENS ─────────────────────────────────────────────────────────────────

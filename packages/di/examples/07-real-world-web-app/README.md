@@ -155,7 +155,7 @@ await using container = await Container.fromModulesAsync(...);
 ### Dependency graph for debugging
 
 ```ts
-import { toDotGraph } from "@codefast/di/graph-adapters/dot";
+import { toDotGraph } from "@codefast/di";
 
 const graph = container.generateDependencyGraph();
 const dot = toDotGraph(graph);

@@ -99,3 +99,10 @@ export {
   TokenNotBoundError,
 } from "#/errors";
 export type { ScopeViolationDetails } from "#/errors";
+
+// Graph adapters — render `generateDependencyGraph()` output for common viewers
+export { toDotGraph } from "#/introspection/graph-adapters/dot";
+export { toCytoscapeGraph } from "#/introspection/graph-adapters/cytoscape";
+export type { CytoscapeEdge, CytoscapeElements, CytoscapeNode } from "#/introspection/graph-adapters/cytoscape";
+export { toReactFlowGraph } from "#/introspection/graph-adapters/reactflow";
+export type { ReactFlowEdge, ReactFlowGraph, ReactFlowNode } from "#/introspection/graph-adapters/reactflow";

@@ -13,9 +13,7 @@
  * - toCytoscapeGraph()         → Cytoscape.js elements (drop into a browser app)
  */
 
-import { Container, inject, injectable, Module, token, tokenName } from "@codefast/di";
-import { toCytoscapeGraph } from "@codefast/di/graph-adapters/cytoscape";
-import { toDotGraph } from "@codefast/di/graph-adapters/dot";
+import { Container, inject, injectable, Module, toCytoscapeGraph, toDotGraph, token, tokenName } from "@codefast/di";
 
 // ── Tokens ───────────────────────────────────────────────────────────────────
 

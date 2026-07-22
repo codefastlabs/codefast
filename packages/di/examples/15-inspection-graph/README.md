@@ -130,7 +130,7 @@ const graph = container.generateDependencyGraph();
 ### Graphviz DOT (paste into graphviz.online)
 
 ```ts
-import { toDotGraph } from "@codefast/di/graph-adapters/dot";
+import { toDotGraph } from "@codefast/di";
 
 const dot = toDotGraph(graph);
 console.log(dot);
@@ -142,7 +142,7 @@ Paste the output into [graphviz.online](https://graphviz.online) to visualise th
 ### Cytoscape.js (embed in a React/browser UI)
 
 ```ts
-import { toCytoscapeGraph } from "@codefast/di/graph-adapters/cytoscape";
+import { toCytoscapeGraph } from "@codefast/di";
 
 const elements = toCytoscapeGraph(graph);
 // Drop into <CytoscapeComponent elements={elements} />
@@ -183,8 +183,8 @@ Call this after `initializeAsync()` and `validate()` for a three-layer wiring ch
 Graph adapters are tree-shakeable — import only what you use:
 
 ```ts
-import { toDotGraph } from "@codefast/di/graph-adapters/dot";
-import { toCytoscapeGraph } from "@codefast/di/graph-adapters/cytoscape";
+import { toDotGraph } from "@codefast/di";
+import { toCytoscapeGraph } from "@codefast/di";
 import { toReactFlowGraph } from "@codefast/di/graph-adapters/react-flow";
 ```
 

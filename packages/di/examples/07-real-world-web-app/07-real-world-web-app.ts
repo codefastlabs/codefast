@@ -12,8 +12,7 @@
  * - Graceful shutdown with await using
  */
 
-import { Container, inject, injectable, Module, token } from "@codefast/di";
-import { toDotGraph } from "@codefast/di/graph-adapters/dot";
+import { Container, inject, injectable, Module, toDotGraph, token } from "@codefast/di";
 
 // ============================================================================
 // Domain types

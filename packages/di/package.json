@@ -120,6 +120,21 @@
       "types": "./dist/introspection/dependency-graph.d.ts",
       "import": "./dist/introspection/dependency-graph.js"
     },
+    "./introspection/graph-adapters/cytoscape": {
+      "source": "./src/introspection/graph-adapters/cytoscape.ts",
+      "types": "./dist/introspection/graph-adapters/cytoscape.d.ts",
+      "import": "./dist/introspection/graph-adapters/cytoscape.js"
+    },
+    "./introspection/graph-adapters/dot": {
+      "source": "./src/introspection/graph-adapters/dot.ts",
+      "types": "./dist/introspection/graph-adapters/dot.d.ts",
+      "import": "./dist/introspection/graph-adapters/dot.js"
+    },
+    "./introspection/graph-adapters/reactflow": {
+      "source": "./src/introspection/graph-adapters/reactflow.ts",
+      "types": "./dist/introspection/graph-adapters/reactflow.d.ts",
+      "import": "./dist/introspection/graph-adapters/reactflow.js"
+    },
     "./introspection/inspector": {
       "source": "./src/introspection/inspector.ts",
       "types": "./dist/introspection/inspector.d.ts",
