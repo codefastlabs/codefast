@@ -27,6 +27,8 @@ export const DI_INVERSIFY_MARKDOWN = {
     "Each library runs at its **canonical decorator mode** — inversify with legacy experimental decorators + `reflect-metadata`, @codefast/di with TC39 Stage 3 decorators + `Symbol.metadata`. This measures the shipping experience of each library, not the raw decorator runtimes in isolation.",
     "",
     "Cite these rows when comparing the libraries. `hz/op` is operations per second per logical operation (tinybench `throughput.mean` multiplied by `batch`). `IQR (cf / inv)` is the interquartile range of the per-trial throughput across the trial loop — treat rows above ~5% as noisy.",
+    "",
+    "Rows in the `baseline` group run **no DI library at all** — both children execute identical code. They calibrate the two processes against each other and give a runtime floor to subtract from same-shape rows (V8 promise machinery dominates sub-µs async rows). Run with `BENCH_ISOLATE=1` to bench each scenario in its own subprocess, removing cross-scenario inline-cache wear (~30% on async chains in a shared process).",
   ],
   fingerprintLibraryVersionLabels: {
     left: CODEFAST_DI.libraryName,

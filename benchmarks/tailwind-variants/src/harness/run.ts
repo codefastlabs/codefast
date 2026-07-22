@@ -9,7 +9,11 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { resolveBenchParentExitCode } from "@codefast/benchmark-harness/parent/resolve-bench-parent-exit-code";
-import { runBenchSubprocess } from "@codefast/benchmark-harness/parent/run-bench-subprocess";
+import {
+  isIsolatedBenchRunRequested,
+  runBenchSubprocess,
+  runBenchSubprocessIsolated,
+} from "@codefast/benchmark-harness/parent/run-bench-subprocess";
 import { buildLibraryReport, type LibraryReport } from "@codefast/benchmark-harness/report/aggregate";
 import { renderTwoWayConsoleReport, renderTwoWayMarkdownReport } from "@codefast/benchmark-harness/report/two-way";
 import { writeJsonlRun, writeMarkdownFile } from "@codefast/benchmark-harness/report/write";
@@ -90,7 +94,8 @@ async function main(): Promise<void> {
 
   rebuildCodefastTailwindVariantsPackage();
 
-  const codefastPayload: SubprocessPayload = await runBenchSubprocess({
+  const runSubprocess = isIsolatedBenchRunRequested() ? runBenchSubprocessIsolated : runBenchSubprocess;
+  const codefastPayload: SubprocessPayload = await runSubprocess({
     packageRootDirectory,
     tsconfigFileName: CODEFAST_TV.tsconfigFileName,
     benchEntryFileNameUnderSrc: CODEFAST_TV.benchEntryFileName,
@@ -99,7 +104,7 @@ async function main(): Promise<void> {
     forwardChildStdoutVerbose: VERBOSE_MODE_ENABLED,
   });
 
-  const tailwindVariantsPayload: SubprocessPayload = await runBenchSubprocess({
+  const tailwindVariantsPayload: SubprocessPayload = await runSubprocess({
     packageRootDirectory,
     tsconfigFileName: CODEFAST_TV.tsconfigFileName,
     benchEntryFileNameUnderSrc: TAILWIND_VARIANTS.benchEntryFileName,
@@ -108,7 +113,7 @@ async function main(): Promise<void> {
     forwardChildStdoutVerbose: VERBOSE_MODE_ENABLED,
   });
 
-  const classVarianceAuthorityPayload: SubprocessPayload = await runBenchSubprocess({
+  const classVarianceAuthorityPayload: SubprocessPayload = await runSubprocess({
     packageRootDirectory,
     tsconfigFileName: CODEFAST_TV.tsconfigFileName,
     benchEntryFileNameUnderSrc: CVA.benchEntryFileName,

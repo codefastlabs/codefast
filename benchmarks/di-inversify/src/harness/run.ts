@@ -19,7 +19,11 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { resolveBenchParentExitCode } from "@codefast/benchmark-harness/parent/resolve-bench-parent-exit-code";
-import { runBenchSubprocess } from "@codefast/benchmark-harness/parent/run-bench-subprocess";
+import {
+  isIsolatedBenchRunRequested,
+  runBenchSubprocess,
+  runBenchSubprocessIsolated,
+} from "@codefast/benchmark-harness/parent/run-bench-subprocess";
 import { buildLibraryReport, type LibraryReport } from "@codefast/benchmark-harness/report/aggregate";
 import { renderTwoWayConsoleReport, renderTwoWayMarkdownReport } from "@codefast/benchmark-harness/report/two-way";
 import { writeJsonlRun, writeMarkdownFile } from "@codefast/benchmark-harness/report/write";
@@ -90,7 +94,8 @@ async function main(): Promise<void> {
 
   rebuildCodefastDiPackage();
 
-  const codefastPayload: SubprocessPayload = await runBenchSubprocess({
+  const runSubprocess = isIsolatedBenchRunRequested() ? runBenchSubprocessIsolated : runBenchSubprocess;
+  const codefastPayload: SubprocessPayload = await runSubprocess({
     packageRootDirectory,
     tsconfigFileName: CODEFAST_DI.tsconfigFileName,
     benchEntryFileNameUnderSrc: CODEFAST_DI.benchEntryFileName,
@@ -98,7 +103,7 @@ async function main(): Promise<void> {
     scenarioName: CODEFAST_DI.scenarioName,
     forwardChildStdoutVerbose: VERBOSE_MODE_ENABLED,
   });
-  const inversifyPayload: SubprocessPayload = await runBenchSubprocess({
+  const inversifyPayload: SubprocessPayload = await runSubprocess({
     packageRootDirectory,
     tsconfigFileName: INVERSIFY.tsconfigFileName,
     benchEntryFileNameUnderSrc: INVERSIFY.benchEntryFileName,

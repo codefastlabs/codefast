@@ -23,6 +23,7 @@
     "bench:fast": "BENCH_FAST=1 node --import tsx/esm src/harness/run.ts",
     "bench:full": "BENCH_FULL=1 node --import tsx/esm src/harness/run.ts",
     "bench:inversify": "TSX_TSCONFIG_PATH=tsconfig.inversify.json node --import tsx/esm src/inversify-benches.ts",
+    "bench:isolate": "BENCH_ISOLATE=1 node --import tsx/esm src/harness/run.ts",
     "bench:serve": "node --import tsx/esm src/harness/serve.ts",
     "bench:verbose": "BENCH_VERBOSE=1 node --import tsx/esm src/harness/run.ts",
     "check-types": "tsc --noEmit"

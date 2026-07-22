@@ -1,6 +1,7 @@
 /**
  * Central list of all InversifyJS 8 bench scenarios. Used by the bench subprocess.
  */
+import { buildBaselineScenarios } from "#/scenarios/baseline";
 import { buildInversifyAsyncScenarios } from "#/scenarios/inversify/async";
 import { buildInversifyBindingVariantScenarios } from "#/scenarios/inversify/binding-variants";
 import { buildInversifyBootScenarios } from "#/scenarios/inversify/boot";
@@ -36,5 +37,6 @@ export function collectAllInversifyScenarios(): ReadonlyArray<AnyScenario> {
     ...buildInversifyResolutionPatternScenarios(),
     ...buildInversifyRegistryOpsScenarios(),
     ...buildInversifyModuleScenarios(),
+    ...buildBaselineScenarios(),
   ];
 }

@@ -18,6 +18,7 @@ import type {
  * @since 0.3.16-canary.0
  */
 type ScenarioGroup =
+  | "baseline"
   | "micro"
   | "realistic"
   | "fan-out"
