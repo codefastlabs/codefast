@@ -1,5 +1,5 @@
 ---
-"@codefast/tracking": major
+"@codefast/tracking": minor
 ---
 
 Collapse the export map to group entries — per-file subpaths froze the internal file layout into public API.

@@ -1,5 +1,5 @@
 ---
-"@codefast/tracking": major
+"@codefast/tracking": minor
 ---
 
 Cut every lane that shipped with zero consumer call sites — the package now covers exactly a consented gtag + Vercel Analytics setup on TanStack Start, and nothing speculative. Removed (recoverable from git history when a real need returns):

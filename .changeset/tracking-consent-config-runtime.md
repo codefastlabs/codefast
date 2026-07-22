@@ -1,5 +1,5 @@
 ---
-"@codefast/tracking": major
+"@codefast/tracking": minor
 ---
 
 Collapse the consent "must match" contracts into one `ConsentConfig`, and add `createConsentRuntime`.

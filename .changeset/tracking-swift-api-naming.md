@@ -1,5 +1,5 @@
 ---
-"@codefast/tracking": major
+"@codefast/tracking": minor
 ---
 
 Rename public APIs to follow Swift API Design Guidelines (name by role; nouns for properties; imperative verbs for builders; assertion-form booleans).

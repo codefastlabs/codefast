@@ -1,5 +1,5 @@
 ---
-"@codefast/tracking": major
+"@codefast/tracking": minor
 ---
 
 Remove the deprecated edge-middleware cookie bootstrap path:
