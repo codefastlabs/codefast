@@ -100,21 +100,6 @@
       "types": "./dist/errors.d.ts",
       "import": "./dist/errors.js"
     },
-    "./graph-adapters/cytoscape": {
-      "source": "./src/graph-adapters/cytoscape.ts",
-      "types": "./dist/graph-adapters/cytoscape.d.ts",
-      "import": "./dist/graph-adapters/cytoscape.js"
-    },
-    "./graph-adapters/dot": {
-      "source": "./src/graph-adapters/dot.ts",
-      "types": "./dist/graph-adapters/dot.d.ts",
-      "import": "./dist/graph-adapters/dot.js"
-    },
-    "./graph-adapters/reactflow": {
-      "source": "./src/graph-adapters/reactflow.ts",
-      "types": "./dist/graph-adapters/reactflow.d.ts",
-      "import": "./dist/graph-adapters/reactflow.js"
-    },
     "./introspection/dependency-graph": {
       "source": "./src/introspection/dependency-graph.ts",
       "types": "./dist/introspection/dependency-graph.d.ts",
