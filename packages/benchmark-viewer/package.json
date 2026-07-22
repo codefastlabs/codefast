@@ -107,7 +107,6 @@
     "chart.js": "catalog:",
     "chartjs-plugin-zoom": "catalog:",
     "hono": "catalog:",
-    "postcss": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
     "tailwindcss": "catalog:"
@@ -115,14 +114,13 @@
   "devDependencies": {
     "@codefast/typescript-config": "workspace:*",
     "@rolldown/plugin-babel": "catalog:",
-    "@tailwindcss/postcss": "catalog:",
+    "@tailwindcss/vite": "catalog:",
     "@types/node": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
     "@vitejs/plugin-react": "catalog:",
     "@vitest/coverage-v8": "catalog:",
     "babel-plugin-react-compiler": "catalog:",
-    "postcss-import": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:",
     "vitest": "catalog:"
