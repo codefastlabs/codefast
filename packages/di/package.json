@@ -165,6 +165,11 @@
       "types": "./dist/resolution/binding-select.d.ts",
       "import": "./dist/resolution/binding-select.js"
     },
+    "./resolution/class-plan": {
+      "source": "./src/resolution/class-plan.ts",
+      "types": "./dist/resolution/class-plan.d.ts",
+      "import": "./dist/resolution/class-plan.js"
+    },
     "./resolution/constraints": {
       "source": "./src/resolution/constraints.ts",
       "types": "./dist/resolution/constraints.d.ts",

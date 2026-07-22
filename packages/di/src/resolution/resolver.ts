@@ -15,6 +15,7 @@ import {
 import type { ConstructorMetadata, MetadataReader } from "#/metadata/metadata-types";
 import type { BindingRegistry } from "#/registry";
 import { selectAllBindings, selectBinding } from "#/resolution/binding-select";
+import { ClassPlanCompiler, PLAN_RETRY } from "#/resolution/class-plan";
 import type { ResolverCallbacks } from "#/resolution/environment";
 import { buildResolutionFrame, DefaultResolutionContext, runWithContainer } from "#/resolution/environment";
 import type { LifecycleManager } from "#/resolution/lifecycle";
@@ -41,12 +42,7 @@ interface DefaultLookupEntry {
   readonly owner: DependencyResolver;
 }
 
-// Plan compilation asked to retry later (class lifecycle metadata not discovered yet).
-const PLAN_RETRY: unique symbol = Symbol("di:plan-retry");
-type ClassPlanCompileResult = (() => unknown) | null | typeof PLAN_RETRY;
-
 const ALIAS_HOP_LIMIT = 32;
-const PLAN_DEPTH_LIMIT = 32;
 
 type BindingWithScope = Binding & { scope: BindingScope };
 const EMPTY_STRING_LIST: ReadonlyArray<string> = [];
@@ -438,7 +434,7 @@ export class DependencyResolver {
     if (cached !== undefined) {
       return cached;
     }
-    const compiled = this.#compileClassPlan(binding, new Set<BindingIdentifier>(), 0);
+    const compiled = this.#planCompiler.compile(binding);
     if (compiled === PLAN_RETRY) {
       // Lifecycle metadata not discovered yet — the fallback resolve discovers it; retry then.
       return null;
@@ -447,116 +443,26 @@ export class DependencyResolver {
     return compiled;
   }
 
-  #compileClassPlan(
-    binding: Binding & { kind: "class" },
-    compileStack: Set<BindingIdentifier>,
-    depth: number,
-  ): ClassPlanCompileResult {
-    if (depth > PLAN_DEPTH_LIMIT || compileStack.has(binding.id)) {
-      return null;
-    }
-    if (binding.onActivation !== undefined || this.#lifecycle.hasActivationHandlers(binding.token)) {
-      return null;
-    }
-    const target = binding.target;
-    const hasPostConstruct = this.#classHasPostConstruct.get(target);
-    if (hasPostConstruct === undefined) {
-      return PLAN_RETRY;
-    }
-    if (hasPostConstruct) {
-      return null;
-    }
-    let needsActiveContainer = this.#classNeedsActiveContainer.get(target);
-    if (needsActiveContainer === undefined) {
-      const accessorMetadata = this.#metadataReader.getAccessorMetadata?.(target);
-      needsActiveContainer = (accessorMetadata?.length ?? 0) > 0;
-      this.#classNeedsActiveContainer.set(target, needsActiveContainer);
-    }
-    if (needsActiveContainer) {
-      return null;
-    }
-    const invokable = target as ConstructorInvocation;
-    const meta = this.#getConstructorMetadata(target);
-    if (meta === undefined) {
-      // Metadata-less classes with required params throw on the runtime path — keep them there.
-      return target.length === 0 ? () => new invokable() : null;
-    }
-    const params = meta.params;
-    if (params.length === 0) {
-      return () => new invokable();
-    }
-    const depThunks = new Array<() => unknown>(params.length);
-    compileStack.add(binding.id);
-    try {
-      for (let index = 0; index < params.length; index += 1) {
-        const param = params[index]!;
-        if (param.multi || param.optional || injectionSlotToResolveOptions(param) !== undefined) {
-          return null;
-        }
-        const entry = this.#lookupDefaultEntry(param.token);
-        if (entry === null) {
-          return null;
-        }
-        const thunk = this.#compileDepThunk(entry, compileStack, depth);
-        if (thunk === null || thunk === PLAN_RETRY) {
-          return thunk;
-        }
-        depThunks[index] = thunk;
+  // Compiler behind #getClassPlan — cold path, so the host indirection costs nothing hot.
+  readonly #planCompiler = new ClassPlanCompiler({
+    hasActivationHandlers: (token) => this.#lifecycle.hasActivationHandlers(token),
+    knownPostConstruct: (target) => this.#classHasPostConstruct.get(target),
+    needsActiveContainer: (target) => {
+      let needsActiveContainer = this.#classNeedsActiveContainer.get(target);
+      if (needsActiveContainer === undefined) {
+        const accessorMetadata = this.#metadataReader.getAccessorMetadata?.(target);
+        needsActiveContainer = (accessorMetadata?.length ?? 0) > 0;
+        this.#classNeedsActiveContainer.set(target, needsActiveContainer);
       }
-    } finally {
-      compileStack.delete(binding.id);
-    }
-    switch (depThunks.length) {
-      case 1: {
-        const dep0 = depThunks[0]!;
-        return () => new invokable(dep0());
-      }
-      case 2: {
-        const dep0 = depThunks[0]!;
-        const dep1 = depThunks[1]!;
-        return () => new invokable(dep0(), dep1());
-      }
-      case 3: {
-        const dep0 = depThunks[0]!;
-        const dep1 = depThunks[1]!;
-        const dep2 = depThunks[2]!;
-        return () => new invokable(dep0(), dep1(), dep2());
-      }
-      default:
-        return () => new invokable(...depThunks.map((thunk) => thunk()));
-    }
-  }
-
-  #compileDepThunk(
-    entry: DefaultLookupEntry,
-    compileStack: Set<BindingIdentifier>,
-    depth: number,
-  ): ClassPlanCompileResult {
-    const { binding, owner } = entry;
-    if (binding.kind === "constant") {
-      if (binding.onActivation !== undefined || this.#lifecycle.hasActivationHandlers(binding.token)) {
-        return null;
-      }
-      const value = binding.value;
-      return () => value;
-    }
-    const scope = (binding as BindingWithScope).scope ?? "transient";
-    if (scope === "singleton") {
-      // Cached-singleton read with a full-resolve fallback for the first materialization.
-      const ownerScope = owner.#scope;
-      const bindingId = binding.id;
-      const singletonToken = binding.token;
-      return () => {
-        const cachedSingleton = ownerScope.peekSingleton(bindingId);
-        return cachedSingleton === SINGLETON_MISS ? this.resolve(singletonToken, undefined, [], []) : cachedSingleton;
-      };
-    }
-    if (scope === "transient" && binding.kind === "class") {
-      return this.#compileClassPlan(binding as Binding & { kind: "class" }, compileStack, depth + 1);
-    }
-    // Dynamic/resolved/scoped deps keep the runtime path (and its cycle guard).
-    return null;
-  }
+      return needsActiveContainer;
+    },
+    getConstructorMetadata: (target) => this.#getConstructorMetadata(target),
+    lookupDependencyEntry: (token) => {
+      const entry = this.#lookupDefaultEntry(token);
+      return entry === null ? null : { binding: entry.binding, ownerScope: entry.owner.#scope };
+    },
+    resolveFallback: (token) => this.resolve(token, undefined, [], []),
+  });
 
   resolve<const Value>(
     token: Token<Value> | Constructor<Value>,
