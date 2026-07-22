@@ -81,6 +81,8 @@ export interface SubprocessPayload {
   readonly trials: ReadonlyArray<TrialPayload>;
   /** When non-empty, the harness failed sanity checks for these scenario IDs. */
   readonly sanityFailures: ReadonlyArray<string>;
+  /** Present only in BENCH_LIST discovery mode: every collected scenario id, in run order. */
+  readonly scenarioIds?: ReadonlyArray<string> | undefined;
 }
 
 /**

@@ -3,10 +3,10 @@ import { describe, expect, it } from "vitest";
 import type { TwoWayScenarioComparisonRow } from "#/report/two-way";
 import { summarizeTwoWayComparison } from "#/report/two-way";
 
-function row(id: string, leftHzPerOp: number, rightHzPerOp: number): TwoWayScenarioComparisonRow {
+function row(id: string, leftHzPerOp: number, rightHzPerOp: number, group = "micro"): TwoWayScenarioComparisonRow {
   return {
     id,
-    group: "micro",
+    group,
     batch: 1,
     what: id,
     stress: false,
@@ -54,6 +54,18 @@ describe("summarizeTwoWayComparison", () => {
 
     const evenSummary = summarizeTwoWayComparison([row("a", 100, 100), row("b", 300, 100)]);
     expect(evenSummary.medianRatio).toBe(2);
+  });
+
+  it("reports baseline-group rows separately without tallying them", () => {
+    const summary = summarizeTwoWayComparison([
+      row("baseline-async-chain-8", 100, 200, "baseline"),
+      row("real-scenario", 150, 100),
+    ]);
+
+    expect(summary.comparableCount).toBe(1);
+    expect(summary.wins.map((entry) => entry.id)).toEqual(["real-scenario"]);
+    expect(summary.losses).toEqual([]);
+    expect(summary.baselines.map((entry) => entry.id)).toEqual(["baseline-async-chain-8"]);
   });
 
   it("returns an empty summary when nothing is comparable", () => {

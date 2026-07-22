@@ -1,9 +1,15 @@
 import { spawn } from "node:child_process";
 import { join } from "node:path";
 
-import { BENCH_FAST_ENV_KEY, BENCH_FULL_ENV_KEY } from "#/shared/env-keys";
+import {
+  BENCH_FAST_ENV_KEY,
+  BENCH_FULL_ENV_KEY,
+  BENCH_ISOLATE_ENV_KEY,
+  BENCH_LIST_ENV_KEY,
+  BENCH_ONLY_ENV_KEY,
+} from "#/shared/env-keys";
 import { BENCH_RESULT_JSON_END, BENCH_RESULT_JSON_START, extractSubprocessPayload } from "#/shared/protocol";
-import type { SubprocessPayload } from "#/shared/protocol";
+import type { SubprocessPayload, TrialPayload } from "#/shared/protocol";
 
 const HEARTBEAT_SILENCE_MS = 10_000;
 
@@ -85,6 +91,8 @@ export type RunBenchSubprocessParameters = Readonly<{
   readonly harnessLabel: string;
   readonly scenarioName: string;
   readonly forwardChildStdoutVerbose: boolean;
+  /** Extra env vars for the child (merged over the pinned bench environment). */
+  readonly environmentOverrides?: Readonly<Record<string, string>> | undefined;
 }>;
 
 /**
@@ -100,6 +108,7 @@ export async function runBenchSubprocess(parameters: RunBenchSubprocessParameter
     harnessLabel,
     scenarioName,
     forwardChildStdoutVerbose,
+    environmentOverrides,
   } = parameters;
 
   console.log(`\nRunning ${harnessLabel} subprocess: ${benchEntryFileNameUnderSrc}…`);
@@ -129,7 +138,7 @@ export async function runBenchSubprocess(parameters: RunBenchSubprocessParameter
       {
         cwd: packageRootDirectory,
         stdio: ["ignore", "pipe", "pipe"],
-        env: buildSubprocessEnvironment(),
+        env: { ...buildSubprocessEnvironment(), ...environmentOverrides },
       },
     );
 
@@ -231,4 +240,61 @@ export async function runBenchSubprocess(parameters: RunBenchSubprocessParameter
   }
 
   return payload;
+}
+
+/**
+ * True when the current run asked for per-scenario process isolation (`BENCH_ISOLATE=1`).
+ */
+export function isIsolatedBenchRunRequested(): boolean {
+  return process.env[BENCH_ISOLATE_ENV_KEY] === "1";
+}
+
+function mergeIsolatedTrials(workerPayloads: ReadonlyArray<SubprocessPayload>): Array<TrialPayload> {
+  const trialCount = Math.max(0, ...workerPayloads.map((payload) => payload.trials.length));
+  const merged: Array<TrialPayload> = [];
+  for (let trialIndex = 0; trialIndex < trialCount; trialIndex += 1) {
+    merged.push({
+      trialIndex,
+      scenarios: workerPayloads.flatMap((payload) => payload.trials[trialIndex]?.scenarios ?? []),
+    });
+  }
+  return merged;
+}
+
+/**
+ * Runs every scenario in its own subprocess and merges the results into one payload.
+ *
+ * A single long-lived bench process trains the library's hot-path inline caches with
+ * every scenario that ran before, so later scenarios (measured: ~30% on async chains)
+ * pay for earlier ones. Isolation makes each row order-independent at the cost of one
+ * process spawn per scenario.
+ */
+export async function runBenchSubprocessIsolated(parameters: RunBenchSubprocessParameters): Promise<SubprocessPayload> {
+  const listPayload = await runBenchSubprocess({
+    ...parameters,
+    harnessLabel: `${parameters.harnessLabel} [list]`,
+    environmentOverrides: { ...parameters.environmentOverrides, [BENCH_LIST_ENV_KEY]: "1" },
+  });
+  const scenarioIds = listPayload.scenarioIds ?? [];
+  if (scenarioIds.length === 0) {
+    throw new Error(`${parameters.harnessLabel} list run returned no scenario ids; cannot run isolated.`);
+  }
+
+  console.log(`[bench] BENCH_ISOLATE=1: running ${String(scenarioIds.length)} scenarios in separate subprocesses…`);
+  const workerPayloads: Array<SubprocessPayload> = [];
+  for (const scenarioId of scenarioIds) {
+    workerPayloads.push(
+      await runBenchSubprocess({
+        ...parameters,
+        harnessLabel: `${parameters.harnessLabel} [${scenarioId}]`,
+        environmentOverrides: { ...parameters.environmentOverrides, [BENCH_ONLY_ENV_KEY]: scenarioId },
+      }),
+    );
+  }
+
+  return {
+    fingerprint: listPayload.fingerprint,
+    trials: mergeIsolatedTrials(workerPayloads),
+    sanityFailures: workerPayloads.flatMap((payload) => payload.sanityFailures),
+  };
 }

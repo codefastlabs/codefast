@@ -92,10 +92,12 @@ export type TwoWayConsoleReportOptions = {
 // A ratio within ±3% of 1.0 is statistical parity, not a win or a loss.
 const HEAD_TO_HEAD_PARITY_BAND = 0.03;
 
+// Scenarios in this group are library-free runtime-floor controls — they calibrate the
+// environment (both sides run identical code) and are excluded from the win/loss tally.
+const BASELINE_GROUP = "baseline";
+
 /**
  * One classified head-to-head entry: scenario id plus its left/right throughput ratio.
- *
- * @since 0.3.16-canary.0
  */
 export interface TwoWayHeadToHeadEntry {
   readonly id: string;
@@ -104,8 +106,6 @@ export interface TwoWayHeadToHeadEntry {
 
 /**
  * Win/parity/loss classification of every comparable scenario, from the left library's viewpoint.
- *
- * @since 0.3.16-canary.0
  */
 export interface TwoWayHeadToHeadSummary {
   readonly comparableCount: number;
@@ -115,12 +115,12 @@ export interface TwoWayHeadToHeadSummary {
   readonly medianRatio: number;
   readonly leftOnlyIds: ReadonlyArray<string>;
   readonly rightOnlyIds: ReadonlyArray<string>;
+  /** Runtime-floor control rows (group "baseline") — reported, never tallied. */
+  readonly baselines: ReadonlyArray<TwoWayScenarioComparisonRow>;
 }
 
 /**
  * Classifies comparable rows into wins / parities / losses for the left library.
- *
- * @since 0.3.16-canary.0
  */
 export function summarizeTwoWayComparison(rows: ReadonlyArray<TwoWayScenarioComparisonRow>): TwoWayHeadToHeadSummary {
   const wins: Array<TwoWayHeadToHeadEntry> = [];
@@ -128,8 +128,13 @@ export function summarizeTwoWayComparison(rows: ReadonlyArray<TwoWayScenarioComp
   const losses: Array<TwoWayHeadToHeadEntry> = [];
   const leftOnlyIds: Array<string> = [];
   const rightOnlyIds: Array<string> = [];
+  const baselines: Array<TwoWayScenarioComparisonRow> = [];
 
   for (const row of rows) {
+    if (row.group === BASELINE_GROUP) {
+      baselines.push(row);
+      continue;
+    }
     if (row.rightHzPerOp === 0) {
       if (row.leftHzPerOp > 0) {
         leftOnlyIds.push(row.id);
@@ -159,7 +164,7 @@ export function summarizeTwoWayComparison(rows: ReadonlyArray<TwoWayScenarioComp
         ? ratios[midpoint]!
         : (ratios[midpoint - 1]! + ratios[midpoint]!) / 2;
 
-  return { comparableCount: ratios.length, wins, parities, losses, medianRatio, leftOnlyIds, rightOnlyIds };
+  return { comparableCount: ratios.length, wins, parities, losses, medianRatio, leftOnlyIds, rightOnlyIds, baselines };
 }
 
 function formatRatioTimes(ratio: number): string {
@@ -195,6 +200,11 @@ function buildHeadToHeadSummaryMarkdownLines(
   if (leftOnlyIds.length > 0 || rightOnlyIds.length > 0) {
     lines.push(
       `- Not comparable: ${String(leftOnlyIds.length)} scenario(s) measured only for ${versionLabels.left}, ${String(rightOnlyIds.length)} only for ${versionLabels.right}.`,
+    );
+  }
+  for (const baseline of summary.baselines) {
+    lines.push(
+      `- Runtime floor \`${baseline.id}\` (no library involved): ${formatThroughputOpsPerSecond(baseline.leftHzPerOp)} vs ${formatThroughputOpsPerSecond(baseline.rightHzPerOp)} hz/op — excluded from the tally; subtract this floor from same-shape rows to isolate library overhead.`,
     );
   }
   return lines;
@@ -422,6 +432,11 @@ export function renderTwoWayConsoleReport(
   if (summary.losses.length > 0) {
     console.log(
       `Losses: ${summary.losses.map((entry) => `${entry.id} (${formatRatioTimes(entry.ratio)})`).join(", ")}`,
+    );
+  }
+  for (const baseline of summary.baselines) {
+    console.log(
+      `Runtime floor ${baseline.id}: ${formatThroughputOpsPerSecond(baseline.leftHzPerOp)} vs ${formatThroughputOpsPerSecond(baseline.rightHzPerOp)} hz/op (no library; excluded from tally)`,
     );
   }
   console.log("");

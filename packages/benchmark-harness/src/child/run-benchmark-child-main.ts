@@ -7,6 +7,7 @@ import type { AnyBenchScenario } from "#/child/bench-scenario";
 import { createRunAllTrials } from "#/child/create-run-all-trials";
 import { collectFingerprint } from "#/child/fingerprint";
 import { runSanityChecks } from "#/child/run-sanity-checks";
+import { BENCH_LIST_ENV_KEY, BENCH_ONLY_ENV_KEY } from "#/shared/env-keys";
 import { emitSubprocessPayload } from "#/shared/protocol";
 
 /**
@@ -33,7 +34,29 @@ export async function runBenchmarkChildMain(parameters: RunBenchmarkChildMainPar
   const { libraryName, scenarioName, packageRoot, collectScenarios, benchDefaults } = parameters;
 
   console.error(`[bench] subprocess ${scenarioName} started`);
-  const scenarios = collectScenarios();
+  const allScenarios = collectScenarios();
+
+  // Discovery mode for BENCH_ISOLATE: report ids only, run nothing.
+  if (process.env[BENCH_LIST_ENV_KEY] === "1") {
+    emitSubprocessPayload({
+      fingerprint: collectFingerprint(libraryName, packageRoot),
+      trials: [],
+      sanityFailures: [],
+      scenarioIds: allScenarios.map((scenario) => scenario.id),
+    });
+    console.error(`[bench] subprocess ${scenarioName} completed (list mode)`);
+    return;
+  }
+
+  // Isolated-worker mode: the parent asked for exactly one scenario.
+  const onlyScenarioId = process.env[BENCH_ONLY_ENV_KEY];
+  const scenarios =
+    onlyScenarioId === undefined || onlyScenarioId === ""
+      ? allScenarios
+      : allScenarios.filter((scenario) => scenario.id === onlyScenarioId);
+  if (scenarios.length === 0 && onlyScenarioId !== undefined) {
+    throw new Error(`${BENCH_ONLY_ENV_KEY}="${onlyScenarioId}" matched no collected scenario`);
+  }
   const sanityFailures = await runSanityChecks(scenarios);
   const { runAllTrials } = createRunAllTrials({ benchDefaults });
   const trials = await runAllTrials(scenarios, sanityFailures);
