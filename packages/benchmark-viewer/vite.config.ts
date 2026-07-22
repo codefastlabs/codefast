@@ -1,4 +1,5 @@
 import babel from "@rolldown/plugin-babel";
+import tailwindcss from "@tailwindcss/vite";
 import viteReact, { reactCompilerPreset } from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 
@@ -13,8 +14,8 @@ export default defineConfig({
   resolve: {
     conditions: ["source", "module", "browser"],
   },
-  // Tailwind is applied via the package's postcss.config.ts, which Vite auto-loads.
-  plugins: [viteReact(), babel({ presets: [reactCompilerPreset()] })],
+  // Tailwind v4 via its dedicated Vite plugin — the recommended integration for Vite bundles.
+  plugins: [tailwindcss(), viteReact(), babel({ presets: [reactCompilerPreset()] })],
   build: {
     outDir: "dist/app",
     emptyOutDir: false,
