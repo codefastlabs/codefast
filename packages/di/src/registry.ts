@@ -8,78 +8,78 @@ import type { BindingIdentifier, Constructor, DependencyKey } from "#/types";
  */
 export class BindingRegistry {
   // Map from token key -> array of bindings (order matters for last-wins)
-  private readonly _bindings = new Map<DependencyKey, Array<Binding>>();
+  readonly #bindings = new Map<DependencyKey, Array<Binding>>();
   // Fast lookup by binding ID
-  private readonly _byId = new Map<BindingIdentifier, Binding>();
+  readonly #byId = new Map<BindingIdentifier, Binding>();
   // Fast lookup for slot { name, tags: [] }
-  private readonly _simpleNamed = new Map<DependencyKey, Map<string, Binding>>();
+  readonly #simpleNamed = new Map<DependencyKey, Map<string, Binding>>();
   // Fast path for one default slot binding with no predicate
-  private readonly _fastDefault = new Map<DependencyKey, Binding>();
+  readonly #fastDefault = new Map<DependencyKey, Binding>();
   // Fast lookup for slot { name: undefined, tags: [[key, value]] } with no predicate
-  private readonly _simpleTagged = new Map<DependencyKey, Map<string, Map<unknown, Binding>>>();
+  readonly #simpleTagged = new Map<DependencyKey, Map<string, Map<unknown, Binding>>>();
 
   /** Add or replace binding using slot-aware last-wins. */
   add(binding: Binding): void {
     const key = binding.token as DependencyKey;
     // ✓ TS6.0: Map.getOrInsert (ES2025) replaces the manual get+check+set upsert
-    const bindingsForToken = this._bindings.getOrInsert(key, []);
+    const bindingsForToken = this.#bindings.getOrInsert(key, []);
 
     // Only apply last-wins for slot-based bindings (not predicate-only)
-    if (!this._isPurePredicateBinding(binding)) {
+    if (!this.#isPurePredicateBinding(binding)) {
       const existingIndex = bindingsForToken.findIndex(
-        (candidate) => !this._isPurePredicateBinding(candidate) && bindingSlotEquals(candidate.slot, binding.slot),
+        (candidate) => !this.#isPurePredicateBinding(candidate) && bindingSlotEquals(candidate.slot, binding.slot),
       );
       if (existingIndex !== -1) {
         const replacedBinding = bindingsForToken[existingIndex]!;
-        this._byId.delete(replacedBinding.id);
+        this.#byId.delete(replacedBinding.id);
         bindingsForToken.splice(existingIndex, 1);
       }
     }
 
     bindingsForToken.push(binding);
-    this._byId.set(binding.id, binding);
-    this._indexSimpleNamedBinding(key, binding);
-    this._indexSimpleTaggedBinding(key, binding);
-    this._refreshFastDefaultForToken(key);
+    this.#byId.set(binding.id, binding);
+    this.#indexSimpleNamedBinding(key, binding);
+    this.#indexSimpleTaggedBinding(key, binding);
+    this.#refreshFastDefaultForToken(key);
   }
 
   /** Remove all bindings for a token. Returns removed bindings. */
   removeByToken(token: Token<unknown> | Constructor): Array<Binding> {
     const key = token as DependencyKey;
-    const bindingsForToken = this._bindings.get(key) ?? [];
-    this._bindings.delete(key);
-    this._simpleNamed.delete(key);
-    this._simpleTagged.delete(key);
-    this._fastDefault.delete(key);
+    const bindingsForToken = this.#bindings.get(key) ?? [];
+    this.#bindings.delete(key);
+    this.#simpleNamed.delete(key);
+    this.#simpleTagged.delete(key);
+    this.#fastDefault.delete(key);
     for (const binding of bindingsForToken) {
-      this._byId.delete(binding.id);
+      this.#byId.delete(binding.id);
     }
     return bindingsForToken;
   }
 
   /** Remove a specific binding by ID. Returns the removed binding or undefined. */
   removeById(id: BindingIdentifier): Binding | undefined {
-    const binding = this._byId.get(id);
+    const binding = this.#byId.get(id);
     if (binding === undefined) {
       return undefined;
     }
-    this._byId.delete(id);
+    this.#byId.delete(id);
     const key = binding.token as DependencyKey;
-    const bindingsForToken = this._bindings.get(key);
+    const bindingsForToken = this.#bindings.get(key);
     if (bindingsForToken !== undefined) {
       const bindingIndex = bindingsForToken.findIndex((candidate) => candidate.id === id);
       if (bindingIndex !== -1) {
         bindingsForToken.splice(bindingIndex, 1);
       }
-      this._deindexSimpleNamedBinding(key, binding);
-      this._deindexSimpleTaggedBinding(key, binding);
+      this.#deindexSimpleNamedBinding(key, binding);
+      this.#deindexSimpleTaggedBinding(key, binding);
       if (bindingsForToken.length === 0) {
-        this._bindings.delete(key);
-        this._simpleNamed.delete(key);
-        this._simpleTagged.delete(key);
-        this._fastDefault.delete(key);
+        this.#bindings.delete(key);
+        this.#simpleNamed.delete(key);
+        this.#simpleTagged.delete(key);
+        this.#fastDefault.delete(key);
       } else {
-        this._refreshFastDefaultForToken(key);
+        this.#refreshFastDefaultForToken(key);
       }
     }
     return binding;
@@ -87,25 +87,25 @@ export class BindingRegistry {
 
   /** Get all bindings for a token. */
   getAll(token: Token<unknown> | Constructor): ReadonlyArray<Binding> {
-    return this._bindings.get(token as DependencyKey) ?? [];
+    return this.#bindings.get(token as DependencyKey) ?? [];
   }
 
   /** Get binding by ID. */
   getById(id: BindingIdentifier): Binding | undefined {
-    return this._byId.get(id);
+    return this.#byId.get(id);
   }
 
   /** Check if any binding exists for token. */
   has(token: Token<unknown> | Constructor): boolean {
     const key = token as DependencyKey;
-    const list = this._bindings.get(key);
+    const list = this.#bindings.get(key);
     return list !== undefined && list.length > 0;
   }
 
   /** All bindings in the registry. */
   allBindings(): ReadonlyArray<Binding> {
     const allBindings: Array<Binding> = [];
-    for (const bindingsForToken of this._bindings.values()) {
+    for (const bindingsForToken of this.#bindings.values()) {
       allBindings.push(...bindingsForToken);
     }
     return allBindings;
@@ -114,53 +114,53 @@ export class BindingRegistry {
   /** Remove all bindings. Returns all removed. */
   clear(): ReadonlyArray<Binding> {
     const all = this.allBindings();
-    this._bindings.clear();
-    this._byId.clear();
-    this._simpleNamed.clear();
-    this._simpleTagged.clear();
-    this._fastDefault.clear();
+    this.#bindings.clear();
+    this.#byId.clear();
+    this.#simpleNamed.clear();
+    this.#simpleTagged.clear();
+    this.#fastDefault.clear();
     return all;
   }
 
   getSimpleNamed(token: Token<unknown> | Constructor, name: string): Binding | undefined {
-    return this._simpleNamed.get(token as DependencyKey)?.get(name);
+    return this.#simpleNamed.get(token as DependencyKey)?.get(name);
   }
 
   getSimpleTagged(token: Token<unknown> | Constructor, tagKey: string, tagValue: unknown): Binding | undefined {
-    return this._simpleTagged
+    return this.#simpleTagged
       .get(token as DependencyKey)
       ?.get(tagKey)
       ?.get(tagValue);
   }
 
   getFastDefault(token: Token<unknown> | Constructor): Binding | undefined {
-    return this._fastDefault.get(token as DependencyKey);
+    return this.#fastDefault.get(token as DependencyKey);
   }
 
   /** Summarize available slot strings for a token (for error messages). */
   availableSlotStrings(token: Token<unknown> | Constructor): Array<string> {
-    const bindingsForToken = this._bindings.get(token as DependencyKey) ?? [];
+    const bindingsForToken = this.#bindings.get(token as DependencyKey) ?? [];
     return bindingsForToken.map((binding) => bindingSlotToString(binding.slot));
   }
 
-  private _indexSimpleTaggedBinding(tokenKey: DependencyKey, binding: Binding): void {
+  #indexSimpleTaggedBinding(tokenKey: DependencyKey, binding: Binding): void {
     const slot = binding.slot;
     if (slot.name !== undefined || slot.tags.length !== 1 || binding.predicate !== undefined) {
       return;
     }
     const [tagKey, tagValue] = slot.tags[0]!;
-    const byTagKey = this._simpleTagged.getOrInsert(tokenKey, new Map<string, Map<unknown, Binding>>());
+    const byTagKey = this.#simpleTagged.getOrInsert(tokenKey, new Map<string, Map<unknown, Binding>>());
     const byTagValue = byTagKey.getOrInsert(tagKey, new Map<unknown, Binding>());
     byTagValue.set(tagValue, binding);
   }
 
-  private _deindexSimpleTaggedBinding(tokenKey: DependencyKey, binding: Binding): void {
+  #deindexSimpleTaggedBinding(tokenKey: DependencyKey, binding: Binding): void {
     const slot = binding.slot;
     if (slot.name !== undefined || slot.tags.length !== 1 || binding.predicate !== undefined) {
       return;
     }
     const [tagKey, tagValue] = slot.tags[0]!;
-    const byTagKey = this._simpleTagged.get(tokenKey);
+    const byTagKey = this.#simpleTagged.get(tokenKey);
     if (byTagKey === undefined) {
       return;
     }
@@ -174,13 +174,13 @@ export class BindingRegistry {
       if (byTagValue.size === 0) {
         byTagKey.delete(tagKey);
         if (byTagKey.size === 0) {
-          this._simpleTagged.delete(tokenKey);
+          this.#simpleTagged.delete(tokenKey);
         }
       }
     }
   }
 
-  private _isPurePredicateBinding(binding: Binding): boolean {
+  #isPurePredicateBinding(binding: Binding): boolean {
     const slot = binding.slot;
     const hasPredicate = binding.predicate !== undefined;
     const hasConstraint = slot.name !== undefined || slot.tags.length > 0;
@@ -188,21 +188,21 @@ export class BindingRegistry {
     return hasPredicate && !hasConstraint;
   }
 
-  private _indexSimpleNamedBinding(tokenKey: DependencyKey, binding: Binding): void {
+  #indexSimpleNamedBinding(tokenKey: DependencyKey, binding: Binding): void {
     const slot = binding.slot;
     if (slot.name === undefined || slot.tags.length > 0) {
       return;
     }
-    const bindingsByName = this._simpleNamed.getOrInsert(tokenKey, new Map<string, Binding>());
+    const bindingsByName = this.#simpleNamed.getOrInsert(tokenKey, new Map<string, Binding>());
     bindingsByName.set(slot.name, binding);
   }
 
-  private _deindexSimpleNamedBinding(tokenKey: DependencyKey, binding: Binding): void {
+  #deindexSimpleNamedBinding(tokenKey: DependencyKey, binding: Binding): void {
     const slot = binding.slot;
     if (slot.name === undefined || slot.tags.length > 0) {
       return;
     }
-    const bindingsByName = this._simpleNamed.get(tokenKey);
+    const bindingsByName = this.#simpleNamed.get(tokenKey);
     if (bindingsByName === undefined) {
       return;
     }
@@ -210,23 +210,23 @@ export class BindingRegistry {
     if (currentBinding?.id === binding.id) {
       bindingsByName.delete(slot.name);
       if (bindingsByName.size === 0) {
-        this._simpleNamed.delete(tokenKey);
+        this.#simpleNamed.delete(tokenKey);
       }
     }
   }
 
-  private _refreshFastDefaultForToken(tokenKey: DependencyKey): void {
-    const bindingsForToken = this._bindings.get(tokenKey);
+  #refreshFastDefaultForToken(tokenKey: DependencyKey): void {
+    const bindingsForToken = this.#bindings.get(tokenKey);
     if (bindingsForToken === undefined || bindingsForToken.length !== 1) {
-      this._fastDefault.delete(tokenKey);
+      this.#fastDefault.delete(tokenKey);
       return;
     }
     const onlyBinding = bindingsForToken[0]!;
     const isDefaultSlot = onlyBinding.slot.name === undefined && onlyBinding.slot.tags.length === 0;
     if (!isDefaultSlot || onlyBinding.predicate !== undefined) {
-      this._fastDefault.delete(tokenKey);
+      this.#fastDefault.delete(tokenKey);
       return;
     }
-    this._fastDefault.set(tokenKey, onlyBinding);
+    this.#fastDefault.set(tokenKey, onlyBinding);
   }
 }

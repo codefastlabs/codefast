@@ -7,7 +7,7 @@ import type { Constructor } from "#/types";
  * @since 0.3.16-canary.0
  */
 export class SymbolMetadataReader implements MetadataReader {
-  private _getMetadataRecord(target: Constructor, key: string | symbol): Record<string | symbol, unknown> | undefined {
+  #getMetadataRecord(target: Constructor, key: string | symbol): Record<string | symbol, unknown> | undefined {
     const descriptor = Object.getOwnPropertyDescriptor(target, METADATA_SYMBOL);
     if (descriptor === undefined) {
       return undefined;
@@ -20,19 +20,19 @@ export class SymbolMetadataReader implements MetadataReader {
   }
 
   getConstructorMetadata(target: Constructor): ConstructorMetadata | undefined {
-    const record = this._getMetadataRecord(target, INJECTABLE_KEY);
+    const record = this.#getMetadataRecord(target, INJECTABLE_KEY);
     return record?.[INJECTABLE_KEY] as ConstructorMetadata | undefined;
   }
 
   getLifecycleMetadata(target: Constructor): LifecycleMetadata | undefined {
-    const record = this._getMetadataRecord(target, LIFECYCLE_KEY);
+    const record = this.#getMetadataRecord(target, LIFECYCLE_KEY);
     return record?.[LIFECYCLE_KEY] as LifecycleMetadata | undefined;
   }
 
   getAccessorMetadata(
     target: Constructor,
   ): Array<{ key: string | symbol; descriptor: InjectionDescriptor }> | undefined {
-    const record = this._getMetadataRecord(target, INJECT_ACCESSOR_KEY);
+    const record = this.#getMetadataRecord(target, INJECT_ACCESSOR_KEY);
     return record?.[INJECT_ACCESSOR_KEY] as
       | Array<{ key: string | symbol; descriptor: InjectionDescriptor }>
       | undefined;

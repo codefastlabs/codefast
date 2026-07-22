@@ -119,79 +119,79 @@ export interface ContainerStatic {
 // ── DefaultContainer ──────────────────────────────────────────────────────────
 
 class DefaultContainer implements Container {
-  private _disposed = false;
-  private readonly _registry: BindingRegistry;
-  private readonly _scope: ScopeManager;
-  private readonly _lifecycle: LifecycleManager;
-  private _resolver!: DependencyResolver;
-  private readonly _inspector: Inspector;
-  private readonly _parent: DefaultContainer | undefined;
+  #disposed = false;
+  readonly #registry: BindingRegistry;
+  readonly #scope: ScopeManager;
+  readonly #lifecycle: LifecycleManager;
+  #resolver!: DependencyResolver;
+  readonly #inspector: Inspector;
+  readonly #parent: DefaultContainer | undefined;
 
   // Module tracking: module -> ref count
-  private readonly _moduleRefs = new Map<object, number>();
+  readonly #moduleRefs = new Map<object, number>();
   // Module bindings: module -> array of binding IDs registered by it
-  private readonly _moduleBindingIds = new Map<object, Array<BindingIdentifier>>();
+  readonly #moduleBindingIds = new Map<object, Array<BindingIdentifier>>();
 
   constructor(parent?: DefaultContainer) {
-    this._parent = parent;
-    this._registry = new BindingRegistry();
-    this._scope = new ScopeManager(parent !== undefined);
-    this._lifecycle = new LifecycleManager();
-    this._inspector = new Inspector(this._registry, this._scope, parent !== undefined, () => this._disposed);
-    this._initResolver();
+    this.#parent = parent;
+    this.#registry = new BindingRegistry();
+    this.#scope = new ScopeManager(parent !== undefined);
+    this.#lifecycle = new LifecycleManager();
+    this.#inspector = new Inspector(this.#registry, this.#scope, parent !== undefined, () => this.#disposed);
+    this.#initResolver();
   }
 
-  private _initResolver(): void {
-    const metadataReader = this._getMetadataReader();
-    const parentResolver = this._parent?._resolver;
-    this._resolver = new DependencyResolver(
-      this._registry,
-      this._scope,
-      this._lifecycle,
+  #initResolver(): void {
+    const metadataReader = this.#getMetadataReader();
+    const parentResolver = this.#parent === undefined ? undefined : this.#parent.#resolver;
+    this.#resolver = new DependencyResolver(
+      this.#registry,
+      this.#scope,
+      this.#lifecycle,
       metadataReader,
       this,
       parentResolver,
     );
   }
 
-  private _getMetadataReader(): MetadataReader {
+  #getMetadataReader(): MetadataReader {
     // Check if a custom MetadataReader has been bound
-    const metaBindings = this._registry.getAll(MetadataReaderToken);
+    const metaBindings = this.#registry.getAll(MetadataReaderToken);
     if (metaBindings.length > 0) {
       try {
-        return this._resolver.resolve(MetadataReaderToken, undefined, [], []);
+        return this.#resolver.resolve(MetadataReaderToken, undefined, [], []);
       } catch {
         // fall through to default
       }
     }
-    if (this._parent !== undefined) {
-      return this._parent._getMetadataReader();
+    if (this.#parent !== undefined) {
+      return this.#parent.#getMetadataReader();
     }
     return defaultMetadataReader;
   }
 
   get isDisposed(): boolean {
-    return this._disposed;
+    return this.#disposed;
   }
 
   // ── Binding ──────────────────────────────────────────────────────────────
 
   bind<const Value>(token: Token<Value> | Constructor<Value>): BindToBuilder<Value> {
-    this._assertNotDisposed();
-    return this._createBindToBuilder(token);
+    this.#assertNotDisposed();
+    return this.#createBindToBuilder(token);
   }
 
-  private _createBindToBuilder<const Value>(
+  #createBindToBuilder<const Value>(
     token: Token<Value> | Constructor<Value>,
     moduleRef?: object,
   ): BindToBuilder<Value> {
-    const registry = this._registry;
+    const registry = this.#registry;
 
     const commitBinding = (binding: Binding, previousId?: BindingIdentifier): BindingIdentifier => {
       if (previousId !== undefined) {
         registry.removeById(previousId);
         if (moduleRef !== undefined) {
-          const ids = this._moduleBindingIds.get(moduleRef);
+          const ids = this.#moduleBindingIds.get(moduleRef);
           if (ids !== undefined) {
             const idx = ids.indexOf(previousId);
             if (idx !== -1) {
@@ -202,10 +202,10 @@ class DefaultContainer implements Container {
       }
       registry.add(binding);
       if (moduleRef !== undefined) {
-        let ids = this._moduleBindingIds.get(moduleRef);
+        let ids = this.#moduleBindingIds.get(moduleRef);
         if (ids === undefined) {
           ids = [];
-          this._moduleBindingIds.set(moduleRef, ids);
+          this.#moduleBindingIds.set(moduleRef, ids);
         }
         ids.push(binding.id);
       }
@@ -216,114 +216,112 @@ class DefaultContainer implements Container {
   }
 
   unbind(tokenOrId: Token<unknown> | Constructor | BindingIdentifier): void {
-    this._assertNotDisposed();
-    this._unbindSync(tokenOrId);
+    this.#assertNotDisposed();
+    this.#unbindSync(tokenOrId);
   }
 
   /** Remove bindings from registry + scope and collect [binding, instance] pairs for deactivation. */
-  private _collectDeactivationPairs(
-    tokenOrId: Token<unknown> | Constructor | BindingIdentifier,
-  ): Array<[Binding, unknown]> {
+  #collectDeactivationPairs(tokenOrId: Token<unknown> | Constructor | BindingIdentifier): Array<[Binding, unknown]> {
     const pairs: Array<[Binding, unknown]> = [];
-    for (const binding of this._getBindingsForTokenOrId(tokenOrId)) {
-      this._registry.removeById(binding.id);
-      if (this._scope.hasSingleton(binding.id)) {
-        pairs.push([binding, this._scope.getSingleton(binding.id)]);
-        this._scope.deleteSingleton(binding.id);
+    for (const binding of this.#getBindingsForTokenOrId(tokenOrId)) {
+      this.#registry.removeById(binding.id);
+      if (this.#scope.hasSingleton(binding.id)) {
+        pairs.push([binding, this.#scope.getSingleton(binding.id)]);
+        this.#scope.deleteSingleton(binding.id);
       }
     }
     return pairs;
   }
 
   /** Drain singleton scope entries for a set of already-removed bindings. */
-  private _drainSingletons(bindings: ReadonlyArray<Binding>): Array<[Binding, unknown]> {
+  #drainSingletons(bindings: ReadonlyArray<Binding>): Array<[Binding, unknown]> {
     const pairs: Array<[Binding, unknown]> = [];
     for (const binding of bindings) {
-      if (this._scope.hasSingleton(binding.id)) {
-        pairs.push([binding, this._scope.getSingleton(binding.id)]);
-        this._scope.deleteSingleton(binding.id);
+      if (this.#scope.hasSingleton(binding.id)) {
+        pairs.push([binding, this.#scope.getSingleton(binding.id)]);
+        this.#scope.deleteSingleton(binding.id);
       }
     }
     return pairs;
   }
 
-  private _unbindSync(tokenOrId: Token<unknown> | Constructor | BindingIdentifier): void {
-    const reader = this._getMetadataReader();
-    for (const [binding, instance] of this._collectDeactivationPairs(tokenOrId)) {
-      this._lifecycle.runDeactivationSync(binding, instance, reader);
+  #unbindSync(tokenOrId: Token<unknown> | Constructor | BindingIdentifier): void {
+    const reader = this.#getMetadataReader();
+    for (const [binding, instance] of this.#collectDeactivationPairs(tokenOrId)) {
+      this.#lifecycle.runDeactivationSync(binding, instance, reader);
     }
   }
 
   async unbindAsync(tokenOrId: Token<unknown> | Constructor | BindingIdentifier): Promise<void> {
-    this._assertNotDisposed();
-    const reader = this._getMetadataReader();
-    for (const [binding, instance] of this._collectDeactivationPairs(tokenOrId)) {
-      await this._lifecycle.runDeactivation(binding, instance, reader);
+    this.#assertNotDisposed();
+    const reader = this.#getMetadataReader();
+    for (const [binding, instance] of this.#collectDeactivationPairs(tokenOrId)) {
+      await this.#lifecycle.runDeactivation(binding, instance, reader);
     }
   }
 
   unbindAll(): void {
-    this._assertNotDisposed();
-    const reader = this._getMetadataReader();
-    for (const [binding, instance] of this._drainSingletons(this._registry.clear())) {
-      this._lifecycle.runDeactivationSync(binding, instance, reader);
+    this.#assertNotDisposed();
+    const reader = this.#getMetadataReader();
+    for (const [binding, instance] of this.#drainSingletons(this.#registry.clear())) {
+      this.#lifecycle.runDeactivationSync(binding, instance, reader);
     }
   }
 
   async unbindAllAsync(): Promise<void> {
-    this._assertNotDisposed();
-    const reader = this._getMetadataReader();
-    for (const [binding, instance] of this._drainSingletons(this._registry.clear())) {
-      await this._lifecycle.runDeactivation(binding, instance, reader);
+    this.#assertNotDisposed();
+    const reader = this.#getMetadataReader();
+    for (const [binding, instance] of this.#drainSingletons(this.#registry.clear())) {
+      await this.#lifecycle.runDeactivation(binding, instance, reader);
     }
   }
 
   rebind<const Value>(token: Token<Value> | Constructor<Value>): BindToBuilder<Value> {
-    this._assertNotDisposed();
-    if (!this._registry.has(token)) {
+    this.#assertNotDisposed();
+    if (!this.#registry.has(token)) {
       throw new RebindUnboundTokenError(tokenName(token));
     }
     // Unbind existing (sync — if async deactivation, will throw AsyncDeactivationError)
-    this._unbindSync(token);
-    return this._createBindToBuilder(token);
+    this.#unbindSync(token);
+    return this.#createBindToBuilder(token);
   }
 
-  private _getBindingsForTokenOrId(tokenOrId: Token<unknown> | Constructor | BindingIdentifier): Array<Binding> {
+  #getBindingsForTokenOrId(tokenOrId: Token<unknown> | Constructor | BindingIdentifier): Array<Binding> {
     if (typeof tokenOrId === "string") {
       // It's a BindingIdentifier (string)
-      const binding = this._registry.getById(tokenOrId);
+      const binding = this.#registry.getById(tokenOrId);
       return binding !== undefined ? [binding] : [];
     }
-    return [...this._registry.getAll(tokenOrId)];
+    return [...this.#registry.getAll(tokenOrId)];
   }
 
   // ── Module ────────────────────────────────────────────────────────────────
 
   load(...modules: Array<SyncModule>): void {
-    this._assertNotDisposed();
-    this._loadSyncModules(modules);
+    this.#assertNotDisposed();
+    this.#loadSyncModules(modules);
   }
 
-  private _loadSyncModules(modules: Array<SyncModule>): void {
+  #loadSyncModules(modules: Array<SyncModule>): void {
     // Collect all modules in topological order (dedup by identity)
-    const toLoad = this._collectModuleDeps(modules);
+    const toLoad = this.#collectModuleDeps(modules);
     for (const module of toLoad) {
       if (!isSyncModule(module)) {
         throw new AsyncModuleLoadError(module.name);
       }
       const moduleRef = module as object;
-      const existing = this._moduleRefs.get(moduleRef);
+      const existing = this.#moduleRefs.get(moduleRef);
       if (existing !== undefined) {
-        this._moduleRefs.set(moduleRef, existing + 1);
+        this.#moduleRefs.set(moduleRef, existing + 1);
         continue;
       }
-      this._moduleRefs.set(moduleRef, 1);
-      const builder = this._createModuleBuilder(moduleRef);
+      this.#moduleRefs.set(moduleRef, 1);
+      const builder = this.#createModuleBuilder(moduleRef);
       module._setup(builder);
     }
   }
 
-  private _collectModuleDeps(modules: Array<SyncModule | AsyncModule>): Array<SyncModule | AsyncModule> {
+  #collectModuleDeps(modules: Array<SyncModule | AsyncModule>): Array<SyncModule | AsyncModule> {
     const seen = new Set<object>();
     const result: Array<SyncModule | AsyncModule> = [];
 
@@ -344,27 +342,27 @@ class DefaultContainer implements Container {
   }
 
   async loadAsync(...modules: Array<SyncModule | AsyncModule>): Promise<void> {
-    this._assertNotDisposed();
+    this.#assertNotDisposed();
     for (const module of modules) {
-      await this._loadOneModuleAsync(module);
+      await this.#loadOneModuleAsync(module);
     }
   }
 
-  private async _loadOneModuleAsync(module: SyncModule | AsyncModule): Promise<void> {
+  async #loadOneModuleAsync(module: SyncModule | AsyncModule): Promise<void> {
     const moduleRef = module as object;
-    const existing = this._moduleRefs.get(moduleRef);
+    const existing = this.#moduleRefs.get(moduleRef);
     if (existing !== undefined) {
-      this._moduleRefs.set(moduleRef, existing + 1);
+      this.#moduleRefs.set(moduleRef, existing + 1);
       return;
     }
-    this._moduleRefs.set(moduleRef, 1);
+    this.#moduleRefs.set(moduleRef, 1);
 
     if (isSyncModule(module)) {
-      const builder = this._createModuleBuilder(moduleRef);
+      const builder = this.#createModuleBuilder(moduleRef);
       module._setup(builder);
     } else {
       const importPromises: Array<Promise<void>> = [];
-      const builder = this._createAsyncModuleBuilder(moduleRef, importPromises);
+      const builder = this.#createAsyncModuleBuilder(moduleRef, importPromises);
       await module._setup(builder);
       // Await nested async imports triggered inside _setup
       if (importPromises.length > 0) {
@@ -373,90 +371,90 @@ class DefaultContainer implements Container {
     }
   }
 
-  private _createModuleBuilder(moduleRef: object): ModuleBuilder {
+  #createModuleBuilder(moduleRef: object): ModuleBuilder {
     return {
       bind: <const Value>(token: Token<Value> | Constructor<Value>): BindToBuilder<Value> =>
-        this._createBindToBuilder(token, moduleRef),
+        this.#createBindToBuilder(token, moduleRef),
       import: (...modules: Array<SyncModule>): void => {
-        this._loadSyncModules(modules);
+        this.#loadSyncModules(modules);
       },
     };
   }
 
-  private _createAsyncModuleBuilder(moduleRef: object, importPromises: Array<Promise<void>>): AsyncModuleBuilder {
+  #createAsyncModuleBuilder(moduleRef: object, importPromises: Array<Promise<void>>): AsyncModuleBuilder {
     return {
       bind: <const Value>(token: Token<Value> | Constructor<Value>): BindToBuilder<Value> =>
-        this._createBindToBuilder(token, moduleRef),
+        this.#createBindToBuilder(token, moduleRef),
       import: (...modules: Array<SyncModule | AsyncModule>): void => {
         for (const module of modules) {
-          importPromises.push(this._loadOneModuleAsync(module));
+          importPromises.push(this.#loadOneModuleAsync(module));
         }
       },
     };
   }
 
   unload(...modules: Array<SyncModule>): void {
-    this._assertNotDisposed();
+    this.#assertNotDisposed();
     for (const module of modules) {
-      this._unloadModuleSync(module as object);
+      this.#unloadModuleSync(module as object);
     }
   }
 
   /** Unregister module bindings and collect [binding, instance] pairs for deactivation. */
-  private _removeModuleBindings(ref: object): Array<[Binding, unknown]> {
-    this._moduleRefs.delete(ref);
-    const ids = this._moduleBindingIds.get(ref) ?? [];
-    this._moduleBindingIds.delete(ref);
+  #removeModuleBindings(ref: object): Array<[Binding, unknown]> {
+    this.#moduleRefs.delete(ref);
+    const ids = this.#moduleBindingIds.get(ref) ?? [];
+    this.#moduleBindingIds.delete(ref);
     const pairs: Array<[Binding, unknown]> = [];
     for (const id of ids) {
-      const binding = this._registry.getById(id);
+      const binding = this.#registry.getById(id);
       if (binding !== undefined) {
-        this._registry.removeById(id);
-        if (this._scope.hasSingleton(id)) {
-          pairs.push([binding, this._scope.getSingleton(id)]);
-          this._scope.deleteSingleton(id);
+        this.#registry.removeById(id);
+        if (this.#scope.hasSingleton(id)) {
+          pairs.push([binding, this.#scope.getSingleton(id)]);
+          this.#scope.deleteSingleton(id);
         }
       }
     }
     return pairs;
   }
 
-  private _unloadModuleSync(ref: object): void {
-    const count = this._moduleRefs.get(ref) ?? 0;
+  #unloadModuleSync(ref: object): void {
+    const count = this.#moduleRefs.get(ref) ?? 0;
     if (count <= 1) {
-      const reader = this._getMetadataReader();
-      for (const [binding, instance] of this._removeModuleBindings(ref)) {
-        this._lifecycle.runDeactivationSync(binding, instance, reader);
+      const reader = this.#getMetadataReader();
+      for (const [binding, instance] of this.#removeModuleBindings(ref)) {
+        this.#lifecycle.runDeactivationSync(binding, instance, reader);
       }
     } else {
-      this._moduleRefs.set(ref, count - 1);
+      this.#moduleRefs.set(ref, count - 1);
     }
   }
 
   async unloadAsync(...modules: Array<SyncModule | AsyncModule>): Promise<void> {
-    this._assertNotDisposed();
+    this.#assertNotDisposed();
     for (const module of modules) {
-      await this._unloadModuleAsync(module as object);
+      await this.#unloadModuleAsync(module as object);
     }
   }
 
-  private async _unloadModuleAsync(ref: object): Promise<void> {
-    const count = this._moduleRefs.get(ref) ?? 0;
+  async #unloadModuleAsync(ref: object): Promise<void> {
+    const count = this.#moduleRefs.get(ref) ?? 0;
     if (count <= 1) {
-      const reader = this._getMetadataReader();
-      for (const [binding, instance] of this._removeModuleBindings(ref)) {
-        await this._lifecycle.runDeactivation(binding, instance, reader);
+      const reader = this.#getMetadataReader();
+      for (const [binding, instance] of this.#removeModuleBindings(ref)) {
+        await this.#lifecycle.runDeactivation(binding, instance, reader);
       }
     } else {
-      this._moduleRefs.set(ref, count - 1);
+      this.#moduleRefs.set(ref, count - 1);
     }
   }
 
   loadAutoRegistered(registry: AutoRegisterRegistry): number {
-    this._assertNotDisposed();
+    this.#assertNotDisposed();
     const entries = registry.entries();
     for (const { target, scope } of entries) {
-      const builder = this._createBindToBuilder(target);
+      const builder = this.#createBindToBuilder(target);
       const bindingBuilder = builder.toSelf();
       if (scope === "singleton") {
         bindingBuilder.singleton();
@@ -472,84 +470,84 @@ class DefaultContainer implements Container {
   // ── Lifecycle hooks ────────────────────────────────────────────────────────
 
   onActivation<const Value>(token: Token<Value> | Constructor<Value>, handler: ActivationHandler<Value>): void {
-    this._assertNotDisposed();
-    this._lifecycle.registerActivation(token, handler);
+    this.#assertNotDisposed();
+    this.#lifecycle.registerActivation(token, handler);
   }
 
   onDeactivation<const Value>(token: Token<Value> | Constructor<Value>, handler: DeactivationHandler<Value>): void {
-    this._assertNotDisposed();
-    this._lifecycle.registerDeactivation(token, handler);
+    this.#assertNotDisposed();
+    this.#lifecycle.registerDeactivation(token, handler);
   }
 
   // ── Resolution ────────────────────────────────────────────────────────────
 
   resolve<const Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Value {
-    this._assertNotDisposed();
+    this.#assertNotDisposed();
     if (options === undefined) {
-      return this._resolver.resolveFromContext(token, [], []);
+      return this.#resolver.resolveFromContext(token, [], []);
     }
-    return this._resolver.resolve(token, options, [], []);
+    return this.#resolver.resolve(token, options, [], []);
   }
 
   resolveAsync<const Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Promise<Value> {
-    this._assertNotDisposed();
+    this.#assertNotDisposed();
     if (options === undefined) {
-      return this._resolver.resolveAsyncFromContext(token, [], []);
+      return this.#resolver.resolveAsyncFromContext(token, [], []);
     }
-    return this._resolver.resolveAsync(token, options, [], []);
+    return this.#resolver.resolveAsync(token, options, [], []);
   }
 
   resolveOptional<const Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Value | undefined {
-    this._assertNotDisposed();
-    return this._resolver.resolveOptional(token, options, [], []);
+    this.#assertNotDisposed();
+    return this.#resolver.resolveOptional(token, options, [], []);
   }
 
   resolveOptionalAsync<const Value>(
     token: Token<Value> | Constructor<Value>,
     options?: ResolveOptions,
   ): Promise<Value | undefined> {
-    this._assertNotDisposed();
-    return this._resolver.resolveOptionalAsync(token, options, [], []);
+    this.#assertNotDisposed();
+    return this.#resolver.resolveOptionalAsync(token, options, [], []);
   }
 
   resolveAll<const Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Array<Value> {
-    this._assertNotDisposed();
-    return this._resolver.resolveAll(token, options, [], []);
+    this.#assertNotDisposed();
+    return this.#resolver.resolveAll(token, options, [], []);
   }
 
   resolveAllAsync<const Value>(
     token: Token<Value> | Constructor<Value>,
     options?: ResolveOptions,
   ): Promise<Array<Value>> {
-    this._assertNotDisposed();
-    return this._resolver.resolveAllAsync(token, options, [], []);
+    this.#assertNotDisposed();
+    return this.#resolver.resolveAllAsync(token, options, [], []);
   }
 
   // ── Child ─────────────────────────────────────────────────────────────────
 
   createChild(): Container {
-    this._assertNotDisposed();
+    this.#assertNotDisposed();
     return new DefaultContainer(this);
   }
 
   // ── Dispose ───────────────────────────────────────────────────────────────
 
   async dispose(): Promise<void> {
-    if (this._disposed) {
+    if (this.#disposed) {
       return;
     }
-    this._disposed = true;
+    this.#disposed = true;
 
     // Deactivate all singletons in this container (own only)
-    const reader = this._getMetadataReader();
-    for (const [id, instance] of this._scope.getAllSingletons()) {
-      const binding = this._registry.getById(id);
+    const reader = this.#getMetadataReader();
+    for (const [id, instance] of this.#scope.getAllSingletons()) {
+      const binding = this.#registry.getById(id);
       if (binding !== undefined) {
-        await this._lifecycle.runDeactivation(binding, instance, reader);
+        await this.#lifecycle.runDeactivation(binding, instance, reader);
       }
     }
 
-    this._scope.clearAll();
+    this.#scope.clearAll();
   }
 
   [Symbol.asyncDispose](): Promise<void> {
@@ -563,14 +561,14 @@ class DefaultContainer implements Container {
   // ── Initialization ────────────────────────────────────────────────────────
 
   async initializeAsync(): Promise<void> {
-    this._assertNotDisposed();
-    const allBindings = this._registry.allBindings();
+    this.#assertNotDisposed();
+    const allBindings = this.#registry.allBindings();
     for (const binding of allBindings) {
       if (binding.kind === "alias") {
         continue;
       }
       const scope = effectiveBindingScope(binding);
-      if (scope === "singleton" && !this._scope.hasSingleton(binding.id)) {
+      if (scope === "singleton" && !this.#scope.hasSingleton(binding.id)) {
         if (binding.predicate !== undefined) {
           continue;
         }
@@ -587,19 +585,19 @@ class DefaultContainer implements Container {
   // ── Validate ──────────────────────────────────────────────────────────────
 
   validate(): void {
-    this._assertNotDisposed();
-    const reader = this._getMetadataReader();
-    const allBindings = this._registry.allBindings();
+    this.#assertNotDisposed();
+    const reader = this.#getMetadataReader();
+    const allBindings = this.#registry.allBindings();
 
     for (const binding of allBindings) {
-      if (!this._isSingletonStaticAnalyzableBinding(binding)) {
+      if (!this.#isSingletonStaticAnalyzableBinding(binding)) {
         continue;
       }
-      this._validateSingletonBindingGraph(binding, reader);
+      this.#validateSingletonBindingGraph(binding, reader);
     }
   }
 
-  private _isSingletonStaticAnalyzableBinding(binding: Binding): boolean {
+  #isSingletonStaticAnalyzableBinding(binding: Binding): boolean {
     if (effectiveBindingScope(binding) !== "singleton") {
       return false;
     }
@@ -610,7 +608,7 @@ class DefaultContainer implements Container {
    * DFS over explicit constructor / `toResolved*` dependency edges. Follows `toAlias` chains to the
    * terminal binding for scope checks (SPEC §6.9). Skips `toDynamic*` subtrees (opaque).
    */
-  private _validateSingletonBindingGraph(root: Binding, reader: MetadataReader): void {
+  #validateSingletonBindingGraph(root: Binding, reader: MetadataReader): void {
     const rootName = tokenName(root.token as Token<unknown>);
 
     const dfs = (current: Binding, pathNames: Array<string>, pathBindingIds: Set<BindingIdentifier>): void => {
@@ -620,9 +618,9 @@ class DefaultContainer implements Container {
       const extendedPathIds = new Set(pathBindingIds);
       extendedPathIds.add(current.id);
 
-      for (const edge of this._collectStaticDependencyEdges(current, reader)) {
+      for (const edge of this.#collectStaticDependencyEdges(current, reader)) {
         const { terminal, depTokenName } = edge;
-        const depScope = this._validationScopeFromTerminal(terminal);
+        const depScope = this.#validationScopeFromTerminal(terminal);
         if (depScope === "opaque") {
           continue;
         }
@@ -644,7 +642,7 @@ class DefaultContainer implements Container {
     dfs(root, [rootName], new Set());
   }
 
-  private _validationScopeFromTerminal(terminal: Binding): BindingScope | "opaque" {
+  #validationScopeFromTerminal(terminal: Binding): BindingScope | "opaque" {
     switch (terminal.kind) {
       case "constant":
         return "singleton";
@@ -664,7 +662,7 @@ class DefaultContainer implements Container {
     }
   }
 
-  private _followAliasChainToTerminal(binding: Binding, options: ResolveOptions | undefined): Binding | undefined {
+  #followAliasChainToTerminal(binding: Binding, options: ResolveOptions | undefined): Binding | undefined {
     const cyclePath: Array<string> = [];
     const seenAliasIds = new Set<BindingIdentifier>();
     let current: Binding | undefined = binding;
@@ -676,7 +674,7 @@ class DefaultContainer implements Container {
       seenAliasIds.add(current.id);
       cyclePath.push(tokenName(current.token as Token<unknown>));
       const nextToken = current.target as Token<unknown> | Constructor;
-      const next = this._resolver.peekBindingForValidate(nextToken, options);
+      const next = this.#resolver.peekBindingForValidate(nextToken, options);
       if (next === undefined) {
         return undefined;
       }
@@ -685,7 +683,7 @@ class DefaultContainer implements Container {
     return current;
   }
 
-  private _collectStaticDependencyEdges(
+  #collectStaticDependencyEdges(
     binding: Binding,
     reader: MetadataReader,
   ): Array<{ terminal: Binding; depTokenName: string }> {
@@ -710,21 +708,21 @@ class DefaultContainer implements Container {
         }
         const tokenRef = param.token;
         if (param.multi) {
-          const candidates = this._resolver.peekCandidateBindingsForValidate(tokenRef, paramOptions);
+          const candidates = this.#resolver.peekCandidateBindingsForValidate(tokenRef, paramOptions);
           for (const cand of candidates) {
-            const term = this._followAliasChainToTerminal(cand, paramOptions);
+            const term = this.#followAliasChainToTerminal(cand, paramOptions);
             pushTerminal(term, term !== undefined ? tokenName(term.token as Token<unknown>) : "");
           }
           continue;
         }
         const found =
           paramOptions === undefined
-            ? this._resolver.peekBindingForValidate(tokenRef, undefined)
-            : this._resolver.peekBindingForValidate(tokenRef, paramOptions);
+            ? this.#resolver.peekBindingForValidate(tokenRef, undefined)
+            : this.#resolver.peekBindingForValidate(tokenRef, paramOptions);
         if (found === undefined) {
           continue;
         }
-        const term = this._followAliasChainToTerminal(found.binding, paramOptions);
+        const term = this.#followAliasChainToTerminal(found.binding, paramOptions);
         pushTerminal(term, term !== undefined ? tokenName(term.token as Token<unknown>) : "");
       }
       return edges;
@@ -738,21 +736,21 @@ class DefaultContainer implements Container {
         }
         const tokenRef = dep.token as Token<unknown> | Constructor;
         if (dep.multi) {
-          const candidates = this._resolver.peekCandidateBindingsForValidate(tokenRef, depOptions);
+          const candidates = this.#resolver.peekCandidateBindingsForValidate(tokenRef, depOptions);
           for (const cand of candidates) {
-            const term = this._followAliasChainToTerminal(cand, depOptions);
+            const term = this.#followAliasChainToTerminal(cand, depOptions);
             pushTerminal(term, term !== undefined ? tokenName(term.token as Token<unknown>) : "");
           }
           continue;
         }
         const found =
           depOptions === undefined
-            ? this._resolver.peekBindingForValidate(tokenRef, undefined)
-            : this._resolver.peekBindingForValidate(tokenRef, depOptions);
+            ? this.#resolver.peekBindingForValidate(tokenRef, undefined)
+            : this.#resolver.peekBindingForValidate(tokenRef, depOptions);
         if (found === undefined) {
           continue;
         }
-        const term = this._followAliasChainToTerminal(found.binding, depOptions);
+        const term = this.#followAliasChainToTerminal(found.binding, depOptions);
         pushTerminal(term, term !== undefined ? tokenName(term.token as Token<unknown>) : "");
       }
     }
@@ -763,34 +761,39 @@ class DefaultContainer implements Container {
   // ── Introspection ─────────────────────────────────────────────────────────
 
   has(token: Token<unknown> | Constructor, options?: ResolveOptions): boolean {
-    this._assertNotDisposed();
-    return this._inspector.has(token, options, () => this._parent?.has(token, options) ?? false);
+    this.#assertNotDisposed();
+    return this.#inspector.has(token, options, () => this.#parent?.has(token, options) ?? false);
   }
 
   hasOwn(token: Token<unknown> | Constructor, options?: ResolveOptions): boolean {
-    this._assertNotDisposed();
-    return this._inspector.hasOwn(token, options);
+    this.#assertNotDisposed();
+    return this.#inspector.hasOwn(token, options);
   }
 
   lookupBindings<const Value>(token: Token<Value> | Constructor<Value>): ReadonlyArray<BindingSnapshot> {
-    this._assertNotDisposed();
-    return this._inspector.lookupBindings(token);
+    this.#assertNotDisposed();
+    return this.#inspector.lookupBindings(token);
   }
 
   inspect(): ContainerSnapshot {
-    this._assertNotDisposed();
-    return this._inspector.inspect();
+    this.#assertNotDisposed();
+    return this.#inspector.inspect();
   }
 
   generateDependencyGraph(options?: GraphOptions): ContainerGraphJson {
-    this._assertNotDisposed();
-    return buildDependencyGraph(this._registry, this._getMetadataReader(), options, this._parent?._registry);
+    this.#assertNotDisposed();
+    return buildDependencyGraph(
+      this.#registry,
+      this.#getMetadataReader(),
+      options,
+      this.#parent === undefined ? undefined : this.#parent.#registry,
+    );
   }
 
   // ── Internal ──────────────────────────────────────────────────────────────
 
-  private _assertNotDisposed(): void {
-    if (this._disposed) {
+  #assertNotDisposed(): void {
+    if (this.#disposed) {
       throw new DisposedContainerError();
     }
   }
@@ -850,39 +853,42 @@ abstract class SlotBuilder {
 // ── BindingEntry ──────────────────────────────────────────────────────────────
 
 class BindingEntry<Value> implements BindToBuilder<Value> {
-  constructor(
-    private readonly _token: Token<Value> | Constructor<Value>,
-    private readonly _commit: CommitFn,
-  ) {}
+  readonly #token: Token<Value> | Constructor<Value>;
+  readonly #commit: CommitFn;
+
+  constructor(token: Token<Value> | Constructor<Value>, commit: CommitFn) {
+    this.#token = token;
+    this.#commit = commit;
+  }
 
   to(type: Constructor<Value>): BindingBuilder<Value> {
-    return new ConstraintBuilder<Value>(this._token, { kind: "class", target: type, scope: "transient" }, this._commit);
+    return new ConstraintBuilder<Value>(this.#token, { kind: "class", target: type, scope: "transient" }, this.#commit);
   }
 
   toSelf(): BindingBuilder<Value> {
-    if (typeof this._token !== "function") {
+    if (typeof this.#token !== "function") {
       throw new Error("toSelf() requires token to be a Constructor");
     }
     return new ConstraintBuilder<Value>(
-      this._token,
-      { kind: "class", target: this._token, scope: "transient" },
-      this._commit,
+      this.#token,
+      { kind: "class", target: this.#token, scope: "transient" },
+      this.#commit,
     );
   }
 
   toConstantValue(value: Value): ConstantBindingBuilder<Value> {
-    return new ConstantBuilder<Value>(this._token, value, this._commit);
+    return new ConstantBuilder<Value>(this.#token, value, this.#commit);
   }
 
   toDynamic(factory: (ctx: ResolutionContext) => Value): BindingBuilder<Value> {
-    return new ConstraintBuilder<Value>(this._token, { kind: "dynamic", factory, scope: "transient" }, this._commit);
+    return new ConstraintBuilder<Value>(this.#token, { kind: "dynamic", factory, scope: "transient" }, this.#commit);
   }
 
   toDynamicAsync(factory: (ctx: ResolutionContext) => Promise<Value>): BindingBuilder<Value> {
     return new ConstraintBuilder<Value>(
-      this._token,
+      this.#token,
       { kind: "dynamic-async", factory, scope: "transient" },
-      this._commit,
+      this.#commit,
     );
   }
 
@@ -892,14 +898,14 @@ class BindingEntry<Value> implements BindToBuilder<Value> {
   ): BindingBuilder<Value> {
     const normalizedDeps = deps.map((dependency) => normalizeToDescriptor(dependency));
     return new ConstraintBuilder<Value>(
-      this._token,
+      this.#token,
       {
         kind: "resolved",
         factory: factory as (...args: Array<unknown>) => Value,
         deps: normalizedDeps,
         scope: "transient",
       },
-      this._commit,
+      this.#commit,
     );
   }
 
@@ -909,56 +915,58 @@ class BindingEntry<Value> implements BindToBuilder<Value> {
   ): BindingBuilder<Value> {
     const normalizedDeps = deps.map((dependency) => normalizeToDescriptor(dependency));
     return new ConstraintBuilder<Value>(
-      this._token,
+      this.#token,
       {
         kind: "resolved-async",
         factory: factory as (...args: Array<unknown>) => Promise<Value>,
         deps: normalizedDeps,
         scope: "transient",
       },
-      this._commit,
+      this.#commit,
     );
   }
 
   toAlias(target: Token<Value> | Constructor<Value>): AliasBindingBuilder {
-    return new AliasBuilder<Value>(this._token, target, this._commit);
+    return new AliasBuilder<Value>(this.#token, target, this.#commit);
   }
 }
 
 // ── ConstraintBuilder ─────────────────────────────────────────────────────────
 
 class ConstraintBuilder<Value> extends SlotBuilder implements BindingBuilder<Value> {
-  constructor(
-    private readonly _token: Token<Value> | Constructor<Value>,
-    private readonly _partial: PartialBinding<Value>,
-    private readonly _commit: CommitFn,
-  ) {
+  readonly #token: Token<Value> | Constructor<Value>;
+  readonly #partial: PartialBinding<Value>;
+  readonly #commit: CommitFn;
+
+  constructor(token: Token<Value> | Constructor<Value>, partial: PartialBinding<Value>, commit: CommitFn) {
     super();
+    this.#token = token;
+    this.#partial = partial;
+    this.#commit = commit;
     this._doCommit();
   }
 
   protected _doCommit(): void {
     const previousId = this._committed;
     const binding: Binding<Value> = {
-      ...(this._partial as unknown as object),
+      ...(this.#partial as unknown as object),
       id: generateBindingId(),
-      token: this._token,
+      token: this.#token,
       slot: this._slot,
       predicate: this._predicate,
     } as Binding<Value>;
-    this._committed = this._commit(binding as Binding, previousId);
+    this._committed = this.#commit(binding as Binding, previousId);
   }
 
   singleton(): SingletonBindingBuilder<Value> {
     const previousId = this._committed;
     this._committed = undefined;
-    return new ScopeBuilder<Value, "singleton">(
-      this._token,
-      { ...this._partial, scope: "singleton" } as PartialBinding<Value>,
+    return new ScopeBuilder<Value>(
+      this.#token,
+      { ...this.#partial, scope: "singleton" } as PartialBinding<Value>,
       this._slot,
       this._predicate,
-      this._commit,
-      "singleton",
+      this.#commit,
       previousId,
     );
   }
@@ -966,13 +974,12 @@ class ConstraintBuilder<Value> extends SlotBuilder implements BindingBuilder<Val
   transient(): TransientBindingBuilder<Value> {
     const previousId = this._committed;
     this._committed = undefined;
-    return new ScopeBuilder<Value, "transient">(
-      this._token,
-      { ...this._partial, scope: "transient" } as PartialBinding<Value>,
+    return new ScopeBuilder<Value>(
+      this.#token,
+      { ...this.#partial, scope: "transient" } as PartialBinding<Value>,
       this._slot,
       this._predicate,
-      this._commit,
-      "transient",
+      this.#commit,
       previousId,
     );
   }
@@ -980,13 +987,12 @@ class ConstraintBuilder<Value> extends SlotBuilder implements BindingBuilder<Val
   scoped(): ScopedBindingBuilder<Value> {
     const previousId = this._committed;
     this._committed = undefined;
-    return new ScopeBuilder<Value, "scoped">(
-      this._token,
-      { ...this._partial, scope: "scoped" } as PartialBinding<Value>,
+    return new ScopeBuilder<Value>(
+      this.#token,
+      { ...this.#partial, scope: "scoped" } as PartialBinding<Value>,
       this._slot,
       this._predicate,
-      this._commit,
-      "scoped",
+      this.#commit,
       previousId,
     );
   }
@@ -994,53 +1000,63 @@ class ConstraintBuilder<Value> extends SlotBuilder implements BindingBuilder<Val
 
 // ── ScopeBuilder ─────────────────────────────────────────────────────────────
 
-class ScopeBuilder<Value, Scope extends BindingScope>
-  implements SingletonBindingBuilder<Value>, TransientBindingBuilder<Value>
-{
-  private _onActivation: ActivationHandler<Value> | undefined;
-  private _onDeactivation: DeactivationHandler<Value> | undefined;
-  private _committed: BindingIdentifier | undefined;
+class ScopeBuilder<Value> implements SingletonBindingBuilder<Value>, TransientBindingBuilder<Value> {
+  #onActivation: ActivationHandler<Value> | undefined;
+  #onDeactivation: DeactivationHandler<Value> | undefined;
+  #committed: BindingIdentifier | undefined;
+
+  readonly #token: Token<Value> | Constructor<Value>;
+  readonly #partial: PartialBinding<Value>;
+  readonly #slot: BindingSlot;
+  readonly #predicate: ((ctx: ConstraintContext) => boolean) | undefined;
+  readonly #commit: CommitFn;
+  readonly #initialPreviousId: BindingIdentifier | undefined;
 
   constructor(
-    private readonly _token: Token<Value> | Constructor<Value>,
-    private readonly _partial: PartialBinding<Value>,
-    private readonly _slot: BindingSlot,
-    private readonly _predicate: ((ctx: ConstraintContext) => boolean) | undefined,
-    private readonly _commit: CommitFn,
-    private readonly _scope: Scope,
-    private readonly _initialPreviousId?: BindingIdentifier,
+    token: Token<Value> | Constructor<Value>,
+    partial: PartialBinding<Value>,
+    slot: BindingSlot,
+    predicate: ((ctx: ConstraintContext) => boolean) | undefined,
+    commit: CommitFn,
+    initialPreviousId?: BindingIdentifier,
   ) {
-    this._doCommit();
+    this.#token = token;
+    this.#partial = partial;
+    this.#slot = slot;
+    this.#predicate = predicate;
+    this.#commit = commit;
+    this.#initialPreviousId = initialPreviousId;
+    this.#doCommit();
   }
 
-  private _doCommit(): void {
-    const previousId = this._committed ?? this._initialPreviousId;
+  #doCommit(): void {
+    const previousId = this.#committed ?? this.#initialPreviousId;
     const binding = {
-      ...(this._partial as unknown as object),
+      ...(this.#partial as unknown as object),
       id: generateBindingId(),
-      token: this._token,
-      slot: this._slot,
-      predicate: this._predicate,
-      onActivation: this._onActivation,
-      onDeactivation: this._onDeactivation,
+      token: this.#token,
+      slot: this.#slot,
+      predicate: this.#predicate,
+      onActivation: this.#onActivation,
+      onDeactivation: this.#onDeactivation,
     } as Binding<Value>;
-    this._committed = this._commit(binding as Binding, previousId);
+    this.#committed = this.#commit(binding as Binding, previousId);
   }
 
   onActivation(fn: ActivationHandler<Value>): this {
-    this._onActivation = fn;
-    this._doCommit();
+    this.#onActivation = fn;
+    this.#doCommit();
     return this;
   }
 
   onDeactivation(fn: DeactivationHandler<Value>): this {
-    this._onDeactivation = fn;
-    this._doCommit();
+    this.#onDeactivation = fn;
+    this.#doCommit();
     return this;
   }
 
   id(): BindingIdentifier {
-    return this._committed!;
+    return this.#committed!;
   }
 }
 
@@ -1050,15 +1066,18 @@ class ConstantBuilder<Value>
   extends SlotBuilder
   implements ConstantBindingBuilder<Value>, SingletonLifecycleBuilder<Value>
 {
-  private _onActivation: ActivationHandler<Value> | undefined;
-  private _onDeactivation: DeactivationHandler<Value> | undefined;
+  #onActivation: ActivationHandler<Value> | undefined;
+  #onDeactivation: DeactivationHandler<Value> | undefined;
 
-  constructor(
-    private readonly _token: Token<Value> | Constructor<Value>,
-    private readonly _value: Value,
-    private readonly _commit: CommitFn,
-  ) {
+  readonly #token: Token<Value> | Constructor<Value>;
+  readonly #value: Value;
+  readonly #commit: CommitFn;
+
+  constructor(token: Token<Value> | Constructor<Value>, value: Value, commit: CommitFn) {
     super();
+    this.#token = token;
+    this.#value = value;
+    this.#commit = commit;
     this._doCommit();
   }
 
@@ -1067,25 +1086,25 @@ class ConstantBuilder<Value>
     const binding: Binding<Value> = {
       kind: "constant",
       id: generateBindingId(),
-      token: this._token,
+      token: this.#token,
       slot: this._slot,
       predicate: this._predicate,
-      value: this._value,
+      value: this.#value,
       scope: "singleton",
-      onActivation: this._onActivation,
-      onDeactivation: this._onDeactivation,
+      onActivation: this.#onActivation,
+      onDeactivation: this.#onDeactivation,
     } as unknown as Binding<Value>;
-    this._committed = this._commit(binding as Binding, previousId);
+    this._committed = this.#commit(binding as Binding, previousId);
   }
 
   onActivation(fn: ActivationHandler<Value>): this {
-    this._onActivation = fn;
+    this.#onActivation = fn;
     this._doCommit();
     return this;
   }
 
   onDeactivation(fn: DeactivationHandler<Value>): this {
-    this._onDeactivation = fn;
+    this.#onDeactivation = fn;
     this._doCommit();
     return this;
   }
@@ -1094,12 +1113,15 @@ class ConstantBuilder<Value>
 // ── AliasBuilder ──────────────────────────────────────────────────────────────
 
 class AliasBuilder<Value> extends SlotBuilder implements AliasBindingBuilder {
-  constructor(
-    private readonly _token: Token<Value> | Constructor<Value>,
-    private readonly _target: Token<Value> | Constructor<Value>,
-    private readonly _commit: CommitFn,
-  ) {
+  readonly #token: Token<Value> | Constructor<Value>;
+  readonly #target: Token<Value> | Constructor<Value>;
+  readonly #commit: CommitFn;
+
+  constructor(token: Token<Value> | Constructor<Value>, target: Token<Value> | Constructor<Value>, commit: CommitFn) {
     super();
+    this.#token = token;
+    this.#target = target;
+    this.#commit = commit;
     this._doCommit();
   }
 
@@ -1108,12 +1130,12 @@ class AliasBuilder<Value> extends SlotBuilder implements AliasBindingBuilder {
     const binding: Binding<Value> = {
       kind: "alias",
       id: generateBindingId(),
-      token: this._token,
+      token: this.#token,
       slot: this._slot,
       predicate: this._predicate,
-      target: this._target,
+      target: this.#target,
     } as unknown as Binding<Value>;
-    this._committed = this._commit(binding as Binding, previousId);
+    this._committed = this.#commit(binding as Binding, previousId);
   }
 }
 

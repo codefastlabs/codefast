@@ -47,33 +47,38 @@ export interface ContainerSnapshot {
  * @since 0.3.16-canary.0
  */
 export class Inspector {
-  constructor(
-    private readonly _registry: BindingRegistry,
-    private readonly _scope: ScopeManager,
-    private readonly _hasParent: boolean,
-    private readonly _isDisposed: () => boolean,
-  ) {}
+  readonly #registry: BindingRegistry;
+  readonly #scope: ScopeManager;
+  readonly #hasParent: boolean;
+  readonly #isDisposed: () => boolean;
+
+  constructor(registry: BindingRegistry, scope: ScopeManager, hasParent: boolean, isDisposed: () => boolean) {
+    this.#registry = registry;
+    this.#scope = scope;
+    this.#hasParent = hasParent;
+    this.#isDisposed = isDisposed;
+  }
 
   inspect(): ContainerSnapshot {
     const snapshots = this.allBindingSnapshots();
     return {
       ownBindings: snapshots,
-      cachedSingletonCount: this._scope.getAllSingletons().size,
-      hasParent: this._hasParent,
-      isDisposed: this._isDisposed(),
+      cachedSingletonCount: this.#scope.getAllSingletons().size,
+      hasParent: this.#hasParent,
+      isDisposed: this.#isDisposed(),
     };
   }
 
   lookupBindings<Value>(token: Token<Value> | Constructor<Value>): ReadonlyArray<BindingSnapshot> {
-    const bindings = this._registry.getAll(token);
-    return bindings.map((binding) => this._toSnapshot(binding));
+    const bindings = this.#registry.getAll(token);
+    return bindings.map((binding) => this.#toSnapshot(binding));
   }
 
   has(token: Token<unknown> | Constructor, options?: ResolveOptions, parentHas?: () => boolean): boolean {
-    const bindings = this._registry.getAll(token);
+    const bindings = this.#registry.getAll(token);
     if (bindings.length > 0) {
       if (options !== undefined) {
-        if (selectBinding(bindings, options, this._makeConstraintContext(options), tokenName(token)) !== undefined) {
+        if (selectBinding(bindings, options, this.#makeConstraintContext(options), tokenName(token)) !== undefined) {
           return true;
         }
       } else {
@@ -84,17 +89,17 @@ export class Inspector {
   }
 
   hasOwn(token: Token<unknown> | Constructor, options?: ResolveOptions): boolean {
-    const bindings = this._registry.getAll(token);
+    const bindings = this.#registry.getAll(token);
     if (bindings.length === 0) {
       return false;
     }
     if (options !== undefined) {
-      return selectBinding(bindings, options, this._makeConstraintContext(options), tokenName(token)) !== undefined;
+      return selectBinding(bindings, options, this.#makeConstraintContext(options), tokenName(token)) !== undefined;
     }
     return true;
   }
 
-  private _makeConstraintContext(options: ResolveOptions): ConstraintContext {
+  #makeConstraintContext(options: ResolveOptions): ConstraintContext {
     return {
       resolutionPath: [],
       resolutionStack: [],
@@ -105,10 +110,10 @@ export class Inspector {
   }
 
   private allBindingSnapshots(): ReadonlyArray<BindingSnapshot> {
-    return this._registry.allBindings().map((binding) => this._toSnapshot(binding));
+    return this.#registry.allBindings().map((binding) => this.#toSnapshot(binding));
   }
 
-  private _toSnapshot(binding: Binding): BindingSnapshot {
+  #toSnapshot(binding: Binding): BindingSnapshot {
     const scope = effectiveBindingScope(binding);
     const slot: BindingSnapshot["slot"] =
       binding.slot.name !== undefined

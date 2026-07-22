@@ -49,8 +49,8 @@ const ROOT_CONSTRAINT_CONTEXT = {
  * @since 0.3.16-canary.0
  */
 export class DependencyResolver {
-  private readonly _frameByBindingId = new Map<BindingIdentifier, ResolutionFrame>();
-  private readonly _syncResolutionContextPool: Array<DefaultResolutionContext> = [];
+  readonly #frameByBindingId = new Map<BindingIdentifier, ResolutionFrame>();
+  readonly #syncResolutionContextPool: Array<DefaultResolutionContext> = [];
   // Deep-path state for _resolveTransientDynamicSyncFromContext (depth ≥ RESOLUTION_SET_THRESHOLD):
   //
   // Cycle detection — generation-based marking (replaces Set<BindingIdentifier>):
@@ -72,11 +72,11 @@ export class DependencyResolver {
   //   Trade-off: ctx.graph.resolutionStack only reflects the first RESOLUTION_SET_THRESHOLD
   //   frames; code relying on ctx.graph.parent inside a deep transient-dynamic factory will see
   //   the frame at the threshold boundary, not the current depth.
-  private readonly _deepCycleMarks = new Map<BindingIdentifier, number>();
-  private _deepCycleGen = 0;
-  private _deepActiveLevels = 0;
-  private _deepSyncCtx: DefaultResolutionContext | undefined;
-  private _deepSyncCtxPath: Array<string> | undefined;
+  readonly #deepCycleMarks = new Map<BindingIdentifier, number>();
+  #deepCycleGen = 0;
+  #deepActiveLevels = 0;
+  #deepSyncCtx: DefaultResolutionContext | undefined;
+  #deepSyncCtxPath: Array<string> | undefined;
   // Async shared-context state for _resolveTransientDynamicAsyncFromContext (shallow path):
   //
   // For a SEQUENTIAL async chain (depth < RESOLUTION_SET_THRESHOLD), all levels share the same
@@ -106,44 +106,58 @@ export class DependencyResolver {
   // The function is NOT declared async so that V8 does not create an AsyncGeneratorObject and
   // an implicit Promise on every invocation; instead each level calls factoryPromise.then(cleanup)
   // which chains natively without the extra async state-machine overhead.
-  private _deepAsyncCtx: DefaultResolutionContext | undefined;
-  private _deepAsyncCtxPath: Array<string> | undefined;
-  private _deepAsyncActiveLevels = 0;
-  private readonly _classHasPostConstruct = new WeakMap<Constructor, boolean>();
-  private readonly _classNeedsActiveContainer = new WeakMap<Constructor, boolean>();
-  private readonly _classConstructorMetadata = new WeakMap<Constructor, ConstructorMetadata | null>();
-  private readonly _activationNeedByBindingId = new Map<BindingIdentifier, boolean>();
-  private _activationCacheVersion = -1;
+  #deepAsyncCtx: DefaultResolutionContext | undefined;
+  #deepAsyncCtxPath: Array<string> | undefined;
+  #deepAsyncActiveLevels = 0;
+  readonly #classHasPostConstruct = new WeakMap<Constructor, boolean>();
+  readonly #classNeedsActiveContainer = new WeakMap<Constructor, boolean>();
+  readonly #classConstructorMetadata = new WeakMap<Constructor, ConstructorMetadata | null>();
+  readonly #activationNeedByBindingId = new Map<BindingIdentifier, boolean>();
+  #activationCacheVersion = -1;
+
+  readonly #registry: BindingRegistry;
+  readonly #scope: ScopeManager;
+  readonly #lifecycle: LifecycleManager;
+  readonly #metadataReader: MetadataReader;
+  readonly #container: Container;
+  readonly #parent: DependencyResolver | undefined;
 
   constructor(
-    private readonly _registry: BindingRegistry,
-    private readonly _scope: ScopeManager,
-    private readonly _lifecycle: LifecycleManager,
-    private readonly _metadataReader: MetadataReader,
-    private readonly _container: Container,
-    private readonly _parent: DependencyResolver | undefined,
-  ) {}
+    registry: BindingRegistry,
+    scope: ScopeManager,
+    lifecycle: LifecycleManager,
+    metadataReader: MetadataReader,
+    container: Container,
+    parent: DependencyResolver | undefined,
+  ) {
+    this.#registry = registry;
+    this.#scope = scope;
+    this.#lifecycle = lifecycle;
+    this.#metadataReader = metadataReader;
+    this.#container = container;
+    this.#parent = parent;
+  }
 
   // ── Binding lookup ─────────────────────────────────────────────────────────
 
-  private _findBinding(
+  #findBinding(
     token: Token<unknown> | Constructor,
     options: ResolveOptions | undefined,
     resolutionPath: Array<string>,
     resolutionStack: Array<ResolutionFrame>,
   ): { binding: Binding; owner: DependencyResolver } | undefined {
     if (options === undefined) {
-      const fastDefaultBinding = this._registry.getFastDefault(token);
+      const fastDefaultBinding = this.#registry.getFastDefault(token);
       if (fastDefaultBinding !== undefined) {
         return { binding: fastDefaultBinding, owner: this };
       }
     }
 
     if (options?.name !== undefined && options.tag === undefined && (options.tags?.length ?? 0) === 0) {
-      const namedBinding = this._registry.getSimpleNamed(token, options.name);
+      const namedBinding = this.#registry.getSimpleNamed(token, options.name);
       if (
         namedBinding !== undefined &&
-        this._matchesBindingFast(namedBinding, options, resolutionPath, resolutionStack)
+        this.#matchesBindingFast(namedBinding, options, resolutionPath, resolutionStack)
       ) {
         return { binding: namedBinding, owner: this };
       }
@@ -156,13 +170,13 @@ export class DependencyResolver {
       (options.tags?.length ?? 0) === 1
     ) {
       const [tagKey, tagValue] = options.tags![0]!;
-      const tagged = this._registry.getSimpleTagged(token, tagKey, tagValue);
+      const tagged = this.#registry.getSimpleTagged(token, tagKey, tagValue);
       if (tagged !== undefined) {
         return { binding: tagged, owner: this };
       }
     }
 
-    const bindings = this._registry.getAll(token);
+    const bindings = this.#registry.getAll(token);
     if (bindings.length > 0) {
       if (bindings.length === 1) {
         const onlyBinding = bindings[0]!;
@@ -170,18 +184,18 @@ export class DependencyResolver {
         if (options === undefined && isDefaultSlot && onlyBinding.predicate === undefined) {
           return { binding: onlyBinding, owner: this };
         }
-        if (this._matchesBindingFast(onlyBinding, options, resolutionPath, resolutionStack)) {
+        if (this.#matchesBindingFast(onlyBinding, options, resolutionPath, resolutionStack)) {
           return { binding: onlyBinding, owner: this };
         }
       }
-      const ctx = this._makeConstraintContext(resolutionPath, resolutionStack, options);
-      const binding = selectBinding(bindings, options, ctx, this._getTokenName(token));
+      const ctx = this.#makeConstraintContext(resolutionPath, resolutionStack, options);
+      const binding = selectBinding(bindings, options, ctx, this.#getTokenName(token));
       if (binding !== undefined) {
         return { binding, owner: this };
       }
     }
-    if (this._parent !== undefined) {
-      return this._parent._findBinding(token, options, resolutionPath, resolutionStack);
+    if (this.#parent !== undefined) {
+      return this.#parent.#findBinding(token, options, resolutionPath, resolutionStack);
     }
     return undefined;
   }
@@ -193,7 +207,7 @@ export class DependencyResolver {
     token: Token<unknown> | Constructor,
     options: ResolveOptions | undefined,
   ): { binding: Binding; owner: DependencyResolver } | undefined {
-    return this._findBinding(token, options, [], []);
+    return this.#findBinding(token, options, [], []);
   }
 
   /**
@@ -204,13 +218,13 @@ export class DependencyResolver {
     options: ResolveOptions | undefined,
   ): Array<Binding> {
     if (options?.name !== undefined && options.tag === undefined && (options.tags?.length ?? 0) === 0) {
-      return this._getSimpleNamedBindingsFromChain(token, options.name);
+      return this.#getSimpleNamedBindingsFromChain(token, options.name);
     }
-    const allBindings = this._getAllBindingsFromChain(token);
+    const allBindings = this.#getAllBindingsFromChain(token);
     if (allBindings.length === 0) {
       return [];
     }
-    const ctx = this._makeConstraintContext([], [], options);
+    const ctx = this.#makeConstraintContext([], [], options);
     return selectAllBindings(allBindings, options, ctx);
   }
 
@@ -221,7 +235,7 @@ export class DependencyResolver {
     resolutionPath: Array<string>,
     resolutionStack: Array<ResolutionFrame>,
   ): Value {
-    const fastBinding = this._registry.getFastDefault(token);
+    const fastBinding = this.#registry.getFastDefault(token);
     if (fastBinding !== undefined) {
       if (fastBinding.kind === "alias") {
         return this.resolveFromContext(
@@ -235,26 +249,26 @@ export class DependencyResolver {
         scope === "transient" &&
         fastBinding.kind === "dynamic" &&
         fastBinding.onActivation === undefined &&
-        (this._lifecycle.activationVersion === 0 || !this._lifecycle.hasActivationHandlers(fastBinding.token))
+        (this.#lifecycle.activationVersion === 0 || !this.#lifecycle.hasActivationHandlers(fastBinding.token))
       ) {
-        return this._resolveTransientDynamicSyncFromContext(
+        return this.#resolveTransientDynamicSyncFromContext(
           fastBinding as Binding<Value> & { kind: "dynamic" },
           resolutionPath,
           resolutionStack,
         );
       }
-      if (scope === "singleton" && this._scope.hasSingleton(fastBinding.id)) {
-        return this._scope.getSingleton<Value>(fastBinding.id);
+      if (scope === "singleton" && this.#scope.hasSingleton(fastBinding.id)) {
+        return this.#scope.getSingleton<Value>(fastBinding.id);
       }
       if (scope === "scoped") {
-        if (!this._scope.isChild) {
-          throw new MissingScopeContextError(this._getTokenName(fastBinding.token));
+        if (!this.#scope.isChild) {
+          throw new MissingScopeContextError(this.#getTokenName(fastBinding.token));
         }
-        if (this._scope.hasScoped(fastBinding.id)) {
-          return this._scope.getScoped<Value>(fastBinding.id);
+        if (this.#scope.hasScoped(fastBinding.id)) {
+          return this.#scope.getScoped<Value>(fastBinding.id);
         }
       }
-      return this._resolveBinding(fastBinding as Binding<Value>, undefined, resolutionPath, resolutionStack);
+      return this.#resolveBinding(fastBinding as Binding<Value>, undefined, resolutionPath, resolutionStack);
     }
 
     return this.resolve(token, undefined, resolutionPath, resolutionStack);
@@ -266,14 +280,14 @@ export class DependencyResolver {
     resolutionPath: Array<string>,
     resolutionStack: Array<ResolutionFrame>,
   ): Value {
-    const found = this._findBinding(token, options, resolutionPath, resolutionStack);
+    const found = this.#findBinding(token, options, resolutionPath, resolutionStack);
 
     if (found === undefined) {
-      const ownBindings = this._registry.getAll(token);
+      const ownBindings = this.#registry.getAll(token);
       if (ownBindings.length > 0) {
-        throw new NoMatchingBindingError(this._getTokenName(token), options ?? {}, this._getAvailableSlots(token));
+        throw new NoMatchingBindingError(this.#getTokenName(token), options ?? {}, this.#getAvailableSlots(token));
       }
-      throw new TokenNotBoundError(this._getTokenName(token));
+      throw new TokenNotBoundError(this.#getTokenName(token));
     }
 
     const { binding, owner } = found;
@@ -292,14 +306,14 @@ export class DependencyResolver {
 
     // Singleton from a parent resolver: delegate so the parent caches it correctly
     if (scope === "singleton" && owner !== this) {
-      return owner._resolveBinding(binding as Binding<Value>, options, resolutionPath, resolutionStack);
+      return owner.#resolveBinding(binding as Binding<Value>, options, resolutionPath, resolutionStack);
     }
 
     // Scoped/transient (or own singleton): resolve with this resolver's container/scope
-    return this._resolveBinding(binding as Binding<Value>, options, resolutionPath, resolutionStack);
+    return this.#resolveBinding(binding as Binding<Value>, options, resolutionPath, resolutionStack);
   }
 
-  private _resolveBinding<const Value>(
+  #resolveBinding<const Value>(
     binding: Binding<Value>,
     options: ResolveOptions | undefined,
     resolutionPath: Array<string>,
@@ -308,7 +322,7 @@ export class DependencyResolver {
     if (
       binding.kind === "constant" &&
       binding.onActivation === undefined &&
-      !this._lifecycle.hasActivationHandlers(binding.token)
+      !this.#lifecycle.hasActivationHandlers(binding.token)
     ) {
       return binding.value;
     }
@@ -317,22 +331,22 @@ export class DependencyResolver {
 
     // Singleton cache check
     if (scope === "singleton") {
-      if (this._scope.hasSingleton(binding.id)) {
-        return this._scope.getSingleton<Value>(binding.id);
+      if (this.#scope.hasSingleton(binding.id)) {
+        return this.#scope.getSingleton<Value>(binding.id);
       }
     }
 
     // Scoped cache check
     if (scope === "scoped") {
-      if (!this._scope.isChild) {
-        throw new MissingScopeContextError(this._getTokenName(binding.token));
+      if (!this.#scope.isChild) {
+        throw new MissingScopeContextError(this.#getTokenName(binding.token));
       }
-      if (this._scope.hasScoped(binding.id)) {
-        return this._scope.getScoped<Value>(binding.id);
+      if (this.#scope.hasScoped(binding.id)) {
+        return this.#scope.getScoped<Value>(binding.id);
       }
     }
 
-    const frame = this._getResolutionFrame(binding);
+    const frame = this.#getResolutionFrame(binding);
     const tokenDisplayName = frame.tokenName;
     const pathWithSet = resolutionPath as ResolutionPathWithSet;
     let resolutionSet = pathWithSet[RESOLUTION_SET_KEY];
@@ -350,9 +364,9 @@ export class DependencyResolver {
     resolutionPath.push(tokenDisplayName);
     resolutionSet?.add(tokenDisplayName);
     resolutionStack.push(frame);
-    const needsActivation = this._needsActivation(binding);
+    const needsActivation = this.#needsActivation(binding);
     if (!needsActivation && scope === "transient" && binding.kind === "dynamic") {
-      const resolutionCtx = this._acquireSyncResolutionContext(resolutionPath, resolutionStack, options);
+      const resolutionCtx = this.#acquireSyncResolutionContext(resolutionPath, resolutionStack, options);
       try {
         const dynamicResult = binding.factory(resolutionCtx);
         if (dynamicResult instanceof Promise) {
@@ -371,28 +385,28 @@ export class DependencyResolver {
     }
 
     try {
-      const needsResolutionContext = needsActivation || this._requiresResolutionContext(binding);
+      const needsResolutionContext = needsActivation || this.#requiresResolutionContext(binding);
       const resolutionCtx = needsResolutionContext
-        ? this._acquireSyncResolutionContext(resolutionPath, resolutionStack, options)
+        ? this.#acquireSyncResolutionContext(resolutionPath, resolutionStack, options)
         : undefined;
 
-      const instance = this._instantiateSync(binding, resolutionCtx, resolutionPath, resolutionStack);
+      const instance = this.#instantiateSync(binding, resolutionCtx, resolutionPath, resolutionStack);
 
-      const shouldActivate = this._refreshActivationCacheIfNeeded(binding, needsActivation);
+      const shouldActivate = this.#refreshActivationCacheIfNeeded(binding, needsActivation);
       const activated = shouldActivate
-        ? this._lifecycle.runActivationSync(
+        ? this.#lifecycle.runActivationSync(
             resolutionCtx as DefaultResolutionContext,
             binding,
             instance,
-            this._metadataReader,
+            this.#metadataReader,
           )
         : instance;
 
       // Cache by scope
       if (scope === "singleton") {
-        this._scope.setSingleton(binding.id, activated);
+        this.#scope.setSingleton(binding.id, activated);
       } else if (scope === "scoped") {
-        this._scope.setScoped(binding.id, activated);
+        this.#scope.setScoped(binding.id, activated);
       }
 
       return activated;
@@ -403,7 +417,7 @@ export class DependencyResolver {
     }
   }
 
-  private _instantiateSync<const Value>(
+  #instantiateSync<const Value>(
     binding: Binding<Value>,
     ctx: DefaultResolutionContext | undefined,
     resolutionPath: Array<string>,
@@ -428,13 +442,13 @@ export class DependencyResolver {
         throw new AsyncResolutionError(tokenName(binding.token), tokenName(binding.token));
 
       case "class": {
-        const deps = this._resolveClassDeps(binding.target, resolutionPath, resolutionStack);
-        const instance = this._instantiateClass(binding.target, deps);
+        const deps = this.#resolveClassDeps(binding.target, resolutionPath, resolutionStack);
+        const instance = this.#instantiateClass(binding.target, deps);
         return instance as Value;
       }
 
       case "resolved": {
-        const deps = this._resolveDescriptorDeps(binding.deps, resolutionPath, resolutionStack);
+        const deps = this.#resolveDescriptorDeps(binding.deps, resolutionPath, resolutionStack);
         const factoryResult = binding.factory(...deps);
         if (factoryResult instanceof Promise) {
           throw new AsyncResolutionError(tokenName(binding.token), tokenName(binding.token));
@@ -450,12 +464,12 @@ export class DependencyResolver {
     }
   }
 
-  private _resolveClassDeps(
+  #resolveClassDeps(
     target: Constructor,
     resolutionPath: Array<string>,
     resolutionStack: Array<ResolutionFrame>,
   ): Array<unknown> {
-    const meta = this._getConstructorMetadata(target);
+    const meta = this.#getConstructorMetadata(target);
     if (meta === undefined) {
       if (target.length === 0) {
         return [];
@@ -499,7 +513,7 @@ export class DependencyResolver {
     return deps;
   }
 
-  private _resolveDescriptorDeps(
+  #resolveDescriptorDeps(
     deps: ReadonlyArray<InjectionDescriptor>,
     resolutionPath: Array<string>,
     resolutionStack: Array<ResolutionFrame>,
@@ -540,7 +554,7 @@ export class DependencyResolver {
     resolutionPath: Array<string>,
     resolutionStack: Array<ResolutionFrame>,
   ): Value | undefined {
-    if (this._findBinding(token, options, resolutionPath, resolutionStack) === undefined) {
+    if (this.#findBinding(token, options, resolutionPath, resolutionStack) === undefined) {
       return undefined;
     }
     return this.resolve(token, options, resolutionPath, resolutionStack);
@@ -553,13 +567,13 @@ export class DependencyResolver {
     resolutionStack: Array<ResolutionFrame>,
   ): Array<Value> {
     if (options?.name !== undefined && options.tag === undefined && (options.tags?.length ?? 0) === 0) {
-      const namedCandidates = this._getSimpleNamedBindingsFromChain(token, options.name);
+      const namedCandidates = this.#getSimpleNamedBindingsFromChain(token, options.name);
       if (namedCandidates.length === 0) {
         return [];
       }
       const resolved = new Array<Value>(namedCandidates.length);
       for (let index = 0; index < namedCandidates.length; index += 1) {
-        resolved[index] = this._resolveCandidateSync(
+        resolved[index] = this.#resolveCandidateSync(
           namedCandidates[index] as Binding<Value>,
           options,
           resolutionPath,
@@ -569,17 +583,17 @@ export class DependencyResolver {
       return resolved;
     }
 
-    const allBindings = this._getAllBindingsFromChain(token);
+    const allBindings = this.#getAllBindingsFromChain(token);
     if (allBindings.length === 0) {
       return [];
     }
 
-    const ctx = this._makeConstraintContext(resolutionPath, resolutionStack, options);
+    const ctx = this.#makeConstraintContext(resolutionPath, resolutionStack, options);
     const candidates = selectAllBindings(allBindings, options, ctx);
 
     const resolved = new Array<Value>(candidates.length);
     for (let index = 0; index < candidates.length; index += 1) {
-      resolved[index] = this._resolveCandidateSync(
+      resolved[index] = this.#resolveCandidateSync(
         candidates[index] as Binding<Value>,
         options,
         resolutionPath,
@@ -596,7 +610,7 @@ export class DependencyResolver {
     resolutionPath: Array<string>,
     resolutionStack: Array<ResolutionFrame>,
   ): Promise<Value> {
-    const fastBinding = this._registry.getFastDefault(token);
+    const fastBinding = this.#registry.getFastDefault(token);
     if (fastBinding !== undefined) {
       if (fastBinding.kind === "alias") {
         return this.resolveAsyncFromContext(
@@ -610,26 +624,26 @@ export class DependencyResolver {
         scope === "transient" &&
         (fastBinding.kind === "dynamic" || fastBinding.kind === "dynamic-async") &&
         fastBinding.onActivation === undefined &&
-        (this._lifecycle.activationVersion === 0 || !this._lifecycle.hasActivationHandlers(fastBinding.token))
+        (this.#lifecycle.activationVersion === 0 || !this.#lifecycle.hasActivationHandlers(fastBinding.token))
       ) {
-        return this._resolveTransientDynamicAsyncFromContext(
+        return this.#resolveTransientDynamicAsyncFromContext(
           fastBinding as Binding<Value> & { kind: "dynamic" | "dynamic-async" },
           resolutionPath,
           resolutionStack,
         );
       }
-      if (scope === "singleton" && this._scope.hasSingleton(fastBinding.id)) {
-        return Promise.resolve(this._scope.getSingleton<Value>(fastBinding.id));
+      if (scope === "singleton" && this.#scope.hasSingleton(fastBinding.id)) {
+        return Promise.resolve(this.#scope.getSingleton<Value>(fastBinding.id));
       }
       if (scope === "scoped") {
-        if (!this._scope.isChild) {
-          return Promise.reject(new MissingScopeContextError(this._getTokenName(fastBinding.token)));
+        if (!this.#scope.isChild) {
+          return Promise.reject(new MissingScopeContextError(this.#getTokenName(fastBinding.token)));
         }
-        if (this._scope.hasScoped(fastBinding.id)) {
-          return Promise.resolve(this._scope.getScoped<Value>(fastBinding.id));
+        if (this.#scope.hasScoped(fastBinding.id)) {
+          return Promise.resolve(this.#scope.getScoped<Value>(fastBinding.id));
         }
       }
-      return this._resolveBindingAsync(fastBinding as Binding<Value>, undefined, resolutionPath, resolutionStack);
+      return this.#resolveBindingAsync(fastBinding as Binding<Value>, undefined, resolutionPath, resolutionStack);
     }
 
     return this.resolveAsync(token, undefined, resolutionPath, resolutionStack);
@@ -641,14 +655,14 @@ export class DependencyResolver {
     resolutionPath: Array<string>,
     resolutionStack: Array<ResolutionFrame>,
   ): Promise<Value> {
-    const found = this._findBinding(token, options, resolutionPath, resolutionStack);
+    const found = this.#findBinding(token, options, resolutionPath, resolutionStack);
 
     if (found === undefined) {
-      const ownBindings = this._registry.getAll(token);
+      const ownBindings = this.#registry.getAll(token);
       if (ownBindings.length > 0) {
-        throw new NoMatchingBindingError(this._getTokenName(token), options ?? {}, this._getAvailableSlots(token));
+        throw new NoMatchingBindingError(this.#getTokenName(token), options ?? {}, this.#getAvailableSlots(token));
       }
-      throw new TokenNotBoundError(this._getTokenName(token));
+      throw new TokenNotBoundError(this.#getTokenName(token));
     }
 
     const { binding, owner } = found;
@@ -665,13 +679,13 @@ export class DependencyResolver {
     const scope = (binding as BindingWithScope).scope ?? "transient";
 
     if (scope === "singleton" && owner !== this) {
-      return owner._resolveBindingAsync(binding as Binding<Value>, options, resolutionPath, resolutionStack);
+      return owner.#resolveBindingAsync(binding as Binding<Value>, options, resolutionPath, resolutionStack);
     }
 
-    return this._resolveBindingAsync(binding as Binding<Value>, options, resolutionPath, resolutionStack);
+    return this.#resolveBindingAsync(binding as Binding<Value>, options, resolutionPath, resolutionStack);
   }
 
-  private async _resolveBindingAsync<const Value>(
+  async #resolveBindingAsync<const Value>(
     binding: Binding<Value>,
     options: ResolveOptions | undefined,
     resolutionPath: Array<string>,
@@ -680,7 +694,7 @@ export class DependencyResolver {
     if (
       binding.kind === "constant" &&
       binding.onActivation === undefined &&
-      !this._lifecycle.hasActivationHandlers(binding.token)
+      !this.#lifecycle.hasActivationHandlers(binding.token)
     ) {
       return binding.value;
     }
@@ -689,11 +703,11 @@ export class DependencyResolver {
 
     // Singleton cache
     if (scope === "singleton") {
-      if (this._scope.hasSingleton(binding.id)) {
-        return this._scope.getSingleton<Value>(binding.id);
+      if (this.#scope.hasSingleton(binding.id)) {
+        return this.#scope.getSingleton<Value>(binding.id);
       }
       // In-flight dedup
-      const inflight = this._scope.getInflight(binding.id);
+      const inflight = this.#scope.getInflight(binding.id);
       if (inflight !== undefined) {
         return inflight as Promise<Value>;
       }
@@ -701,15 +715,15 @@ export class DependencyResolver {
 
     // Scoped cache
     if (scope === "scoped") {
-      if (!this._scope.isChild) {
-        throw new MissingScopeContextError(this._getTokenName(binding.token));
+      if (!this.#scope.isChild) {
+        throw new MissingScopeContextError(this.#getTokenName(binding.token));
       }
-      if (this._scope.hasScoped(binding.id)) {
-        return this._scope.getScoped<Value>(binding.id);
+      if (this.#scope.hasScoped(binding.id)) {
+        return this.#scope.getScoped<Value>(binding.id);
       }
     }
 
-    const frame = this._getResolutionFrame(binding);
+    const frame = this.#getResolutionFrame(binding);
     const frameName = frame.tokenName;
     const pathWithSet = resolutionPath as ResolutionPathWithSet;
     let resolutionSet = pathWithSet[RESOLUTION_SET_KEY];
@@ -725,7 +739,7 @@ export class DependencyResolver {
     resolutionPath.push(frameName);
     resolutionSet?.add(frameName);
     resolutionStack.push(frame);
-    const needsActivation = this._needsActivation(binding);
+    const needsActivation = this.#needsActivation(binding);
     if (!needsActivation && scope === "transient" && (binding.kind === "dynamic" || binding.kind === "dynamic-async")) {
       const resolutionCtx = new DefaultResolutionContext(
         this as unknown as ResolverCallbacks,
@@ -746,7 +760,7 @@ export class DependencyResolver {
       }
     }
 
-    const needsResolutionContext = needsActivation || this._requiresResolutionContext(binding);
+    const needsResolutionContext = needsActivation || this.#requiresResolutionContext(binding);
     const resolutionCtx = needsResolutionContext
       ? new DefaultResolutionContext(this as unknown as ResolverCallbacks, resolutionPath, resolutionStack, options)
       : undefined;
@@ -754,45 +768,45 @@ export class DependencyResolver {
     try {
       if (scope === "singleton") {
         const createSingletonPromise = async (): Promise<Value> => {
-          const instance = await this._instantiateAsync(binding, resolutionCtx, resolutionPath, resolutionStack);
+          const instance = await this.#instantiateAsync(binding, resolutionCtx, resolutionPath, resolutionStack);
 
-          const shouldActivate = this._refreshActivationCacheIfNeeded(binding, needsActivation);
+          const shouldActivate = this.#refreshActivationCacheIfNeeded(binding, needsActivation);
           const activated = shouldActivate
-            ? await this._lifecycle.runActivation(
+            ? await this.#lifecycle.runActivation(
                 resolutionCtx as DefaultResolutionContext,
                 binding,
                 instance,
-                this._metadataReader,
+                this.#metadataReader,
               )
             : instance;
 
-          this._scope.setSingleton(binding.id, activated);
-          this._scope.clearInflight(binding.id);
+          this.#scope.setSingleton(binding.id, activated);
+          this.#scope.clearInflight(binding.id);
           return activated;
         };
 
         const singletonPromise = createSingletonPromise().catch((err: unknown) => {
-          this._scope.clearInflight(binding.id);
+          this.#scope.clearInflight(binding.id);
           throw err;
         });
-        this._scope.setInflight(binding.id, singletonPromise as Promise<unknown>);
+        this.#scope.setInflight(binding.id, singletonPromise as Promise<unknown>);
         return await singletonPromise;
       }
 
-      const instance = await this._instantiateAsync(binding, resolutionCtx, resolutionPath, resolutionStack);
+      const instance = await this.#instantiateAsync(binding, resolutionCtx, resolutionPath, resolutionStack);
 
-      const shouldActivate = this._refreshActivationCacheIfNeeded(binding, needsActivation);
+      const shouldActivate = this.#refreshActivationCacheIfNeeded(binding, needsActivation);
       const activated = shouldActivate
-        ? await this._lifecycle.runActivation(
+        ? await this.#lifecycle.runActivation(
             resolutionCtx as DefaultResolutionContext,
             binding,
             instance,
-            this._metadataReader,
+            this.#metadataReader,
           )
         : instance;
 
       if (scope === "scoped") {
-        this._scope.setScoped(binding.id, activated);
+        this.#scope.setScoped(binding.id, activated);
       }
 
       return activated;
@@ -803,7 +817,7 @@ export class DependencyResolver {
     }
   }
 
-  private async _instantiateAsync<const Value>(
+  async #instantiateAsync<const Value>(
     binding: Binding<Value>,
     ctx: DefaultResolutionContext | undefined,
     resolutionPath: Array<string>,
@@ -828,8 +842,8 @@ export class DependencyResolver {
         return binding.factory(ctx);
 
       case "class": {
-        const deps = await this._resolveClassDepsAsync(binding.target, resolutionPath, resolutionStack);
-        const instance = this._instantiateClass(binding.target, deps);
+        const deps = await this.#resolveClassDepsAsync(binding.target, resolutionPath, resolutionStack);
+        const instance = this.#instantiateClass(binding.target, deps);
         return instance as Value;
       }
 
@@ -837,13 +851,13 @@ export class DependencyResolver {
         if (ctx === undefined) {
           throw new InternalError("resolved binding requires resolution context");
         }
-        const deps = await this._resolveDescriptorDepsAsync(binding.deps, resolutionPath, resolutionStack);
+        const deps = await this.#resolveDescriptorDepsAsync(binding.deps, resolutionPath, resolutionStack);
         const factoryResult = binding.factory(...deps);
         return factoryResult instanceof Promise ? factoryResult : Promise.resolve(factoryResult);
       }
 
       case "resolved-async": {
-        const deps = await this._resolveDescriptorDepsAsync(binding.deps, resolutionPath, resolutionStack);
+        const deps = await this.#resolveDescriptorDepsAsync(binding.deps, resolutionPath, resolutionStack);
         return binding.factory(...deps);
       }
 
@@ -852,12 +866,12 @@ export class DependencyResolver {
     }
   }
 
-  private async _resolveClassDepsAsync(
+  async #resolveClassDepsAsync(
     target: Constructor,
     resolutionPath: Array<string>,
     resolutionStack: Array<ResolutionFrame>,
   ): Promise<Array<unknown>> {
-    const meta = this._getConstructorMetadata(target);
+    const meta = this.#getConstructorMetadata(target);
     if (meta === undefined) {
       if (target.length === 0) {
         return [];
@@ -919,7 +933,7 @@ export class DependencyResolver {
     return Promise.all(pending);
   }
 
-  private async _resolveDescriptorDepsAsync(
+  async #resolveDescriptorDepsAsync(
     deps: ReadonlyArray<InjectionDescriptor>,
     resolutionPath: Array<string>,
     resolutionStack: Array<ResolutionFrame>,
@@ -968,7 +982,7 @@ export class DependencyResolver {
     resolutionPath: Array<string>,
     resolutionStack: Array<ResolutionFrame>,
   ): Promise<Value | undefined> {
-    if (this._findBinding(token, options, resolutionPath, resolutionStack) === undefined) {
+    if (this.#findBinding(token, options, resolutionPath, resolutionStack) === undefined) {
       return undefined;
     }
     return this.resolveAsync(token, options, resolutionPath, resolutionStack);
@@ -981,13 +995,13 @@ export class DependencyResolver {
     resolutionStack: Array<ResolutionFrame>,
   ): Promise<Array<Value>> {
     if (options?.name !== undefined && options.tag === undefined && (options.tags?.length ?? 0) === 0) {
-      const namedCandidates = this._getSimpleNamedBindingsFromChain(token, options.name);
+      const namedCandidates = this.#getSimpleNamedBindingsFromChain(token, options.name);
       if (namedCandidates.length === 0) {
         return [];
       }
       const pending = new Array<Promise<Value>>(namedCandidates.length);
       for (let index = 0; index < namedCandidates.length; index += 1) {
-        pending[index] = this._resolveCandidateAsync(
+        pending[index] = this.#resolveCandidateAsync(
           namedCandidates[index] as Binding<Value>,
           options,
           resolutionPath,
@@ -997,17 +1011,17 @@ export class DependencyResolver {
       return Promise.all(pending);
     }
 
-    const allBindings = this._getAllBindingsFromChain(token);
+    const allBindings = this.#getAllBindingsFromChain(token);
     if (allBindings.length === 0) {
       return [];
     }
 
-    const ctx = this._makeConstraintContext(resolutionPath, resolutionStack, options);
+    const ctx = this.#makeConstraintContext(resolutionPath, resolutionStack, options);
     const candidates = selectAllBindings(allBindings, options, ctx);
 
     const pending = new Array<Promise<Value>>(candidates.length);
     for (let index = 0; index < candidates.length; index += 1) {
-      pending[index] = this._resolveCandidateAsync(
+      pending[index] = this.#resolveCandidateAsync(
         candidates[index] as Binding<Value>,
         options,
         resolutionPath,
@@ -1019,48 +1033,48 @@ export class DependencyResolver {
 
   // ── Helpers ────────────────────────────────────────────────────────────────
 
-  private _getAllBindingsFromChain(token: Token<unknown> | Constructor): ReadonlyArray<Binding> {
-    const ownBindings = this._registry.getAll(token);
-    if (this._parent === undefined) {
+  #getAllBindingsFromChain(token: Token<unknown> | Constructor): ReadonlyArray<Binding> {
+    const ownBindings = this.#registry.getAll(token);
+    if (this.#parent === undefined) {
       return ownBindings;
     }
     const result: Array<Binding> = [...ownBindings];
-    let current: DependencyResolver | undefined = this._parent;
+    let current: DependencyResolver | undefined = this.#parent;
     while (current !== undefined) {
-      const own = current._registry.getAll(token);
+      const own = current.#registry.getAll(token);
       if (own.length > 0) {
         result.push(...own);
       }
-      current = current._parent;
+      current = current.#parent;
     }
     return result;
   }
 
-  private _getSimpleNamedBindingsFromChain(token: Token<unknown> | Constructor, name: string): Array<Binding> {
-    const ownBinding = this._registry.getSimpleNamed(token, name);
-    if (this._parent === undefined) {
+  #getSimpleNamedBindingsFromChain(token: Token<unknown> | Constructor, name: string): Array<Binding> {
+    const ownBinding = this.#registry.getSimpleNamed(token, name);
+    if (this.#parent === undefined) {
       return ownBinding !== undefined ? [ownBinding] : [];
     }
     const result: Array<Binding> = [];
     if (ownBinding !== undefined) {
       result.push(ownBinding);
     }
-    let current: DependencyResolver | undefined = this._parent;
+    let current: DependencyResolver | undefined = this.#parent;
     while (current !== undefined) {
-      const binding = current._registry.getSimpleNamed(token, name);
+      const binding = current.#registry.getSimpleNamed(token, name);
       if (binding !== undefined) {
         result.push(binding);
       }
-      current = current._parent;
+      current = current.#parent;
     }
     return result;
   }
 
-  private _getAvailableSlots(token: Token<unknown> | Constructor): Array<string> {
-    return this._registry.availableSlotStrings(token);
+  #getAvailableSlots(token: Token<unknown> | Constructor): Array<string> {
+    return this.#registry.availableSlotStrings(token);
   }
 
-  private _makeConstraintContext(
+  #makeConstraintContext(
     resolutionPath: Array<string>,
     resolutionStack: Array<ResolutionFrame>,
     options: ResolveOptions | undefined,
@@ -1079,23 +1093,23 @@ export class DependencyResolver {
     };
   }
 
-  private _matchesBindingFast(
+  #matchesBindingFast(
     binding: Binding,
     options: ResolveOptions | undefined,
     resolutionPath: Array<string>,
     resolutionStack: Array<ResolutionFrame>,
   ): boolean {
-    if (!this._matchesSlotFast(binding.slot, options)) {
+    if (!this.#matchesSlotFast(binding.slot, options)) {
       return false;
     }
     if (binding.predicate === undefined) {
       return true;
     }
-    const ctx = this._makeConstraintContext(resolutionPath, resolutionStack, options);
+    const ctx = this.#makeConstraintContext(resolutionPath, resolutionStack, options);
     return binding.predicate(ctx);
   }
 
-  private _matchesSlotFast(slot: BindingSlot, options: ResolveOptions | undefined): boolean {
+  #matchesSlotFast(slot: BindingSlot, options: ResolveOptions | undefined): boolean {
     const requestedName = options?.name;
     const requestedTags = options?.tags;
     const singleRequestedTag = options?.tag;
@@ -1114,7 +1128,7 @@ export class DependencyResolver {
         return false;
       }
       for (const [tagKey, tagValue] of slot.tags) {
-        if (!this._matchesRequestedTag(tagKey, tagValue, requestedTags, singleRequestedTag)) {
+        if (!this.#matchesRequestedTag(tagKey, tagValue, requestedTags, singleRequestedTag)) {
           return false;
         }
       }
@@ -1125,35 +1139,35 @@ export class DependencyResolver {
     return true;
   }
 
-  private _getTokenName(token: Token<unknown> | Constructor): string {
+  #getTokenName(token: Token<unknown> | Constructor): string {
     return tokenName(token);
   }
 
-  private _getConstructorMetadata(target: Constructor): ConstructorMetadata | undefined {
-    const cached = this._classConstructorMetadata.get(target);
+  #getConstructorMetadata(target: Constructor): ConstructorMetadata | undefined {
+    const cached = this.#classConstructorMetadata.get(target);
     if (cached !== undefined) {
       return cached === null ? undefined : cached;
     }
-    const metadata = this._metadataReader.getConstructorMetadata(target);
-    this._classConstructorMetadata.set(target, metadata ?? null);
+    const metadata = this.#metadataReader.getConstructorMetadata(target);
+    this.#classConstructorMetadata.set(target, metadata ?? null);
     return metadata;
   }
 
-  private _instantiateClass(target: Constructor, deps: Array<unknown>): unknown {
-    let needsActiveContainer = this._classNeedsActiveContainer.get(target);
+  #instantiateClass(target: Constructor, deps: Array<unknown>): unknown {
+    let needsActiveContainer = this.#classNeedsActiveContainer.get(target);
     if (needsActiveContainer === undefined) {
-      const accessorMetadata = this._metadataReader.getAccessorMetadata?.(target);
+      const accessorMetadata = this.#metadataReader.getAccessorMetadata?.(target);
       needsActiveContainer = (accessorMetadata?.length ?? 0) > 0;
-      this._classNeedsActiveContainer.set(target, needsActiveContainer);
+      this.#classNeedsActiveContainer.set(target, needsActiveContainer);
     }
     const invokable = target as ConstructorInvocation;
     if (!needsActiveContainer) {
       return new invokable(...deps);
     }
-    return runWithContainer(this._container, () => new invokable(...deps));
+    return runWithContainer(this.#container, () => new invokable(...deps));
   }
 
-  private _matchesRequestedTag(
+  #matchesRequestedTag(
     tagKey: string,
     tagValue: unknown,
     requestedTags: ReadonlyArray<BindingTag> | undefined,
@@ -1178,7 +1192,7 @@ export class DependencyResolver {
     return false;
   }
 
-  private _resolveTransientDynamicSyncFromContext<const Value>(
+  #resolveTransientDynamicSyncFromContext<const Value>(
     binding: Binding<Value> & { kind: "dynamic" },
     resolutionPath: Array<string>,
     resolutionStack: Array<ResolutionFrame>,
@@ -1188,14 +1202,14 @@ export class DependencyResolver {
     // faster than a Set lookup. Keep resolutionStack push/pop and the per-depth pool so
     // ctx.graph reflects correct state for shallow-chain factories.
     if (resolutionPath.length < RESOLUTION_SET_THRESHOLD) {
-      const frame = this._getResolutionFrame(binding);
+      const frame = this.#getResolutionFrame(binding);
       const tokenDisplayName = frame.tokenName;
       if (resolutionPath.includes(tokenDisplayName)) {
         throw new CircularDependencyError([...resolutionPath, tokenDisplayName]);
       }
       resolutionPath.push(tokenDisplayName);
       resolutionStack.push(frame);
-      const resolutionCtx = this._acquireSyncResolutionContext(resolutionPath, resolutionStack, undefined);
+      const resolutionCtx = this.#acquireSyncResolutionContext(resolutionPath, resolutionStack, undefined);
       try {
         const dynamicResult = binding.factory(resolutionCtx);
         if (dynamicResult instanceof Promise) {
@@ -1227,20 +1241,20 @@ export class DependencyResolver {
     // Reentrancy: if a *different* deep chain is currently active (factory called
     // container.resolve() internally and that inner chain also reached the threshold),
     // fall back to the slow path to avoid cross-chain Set pollution.
-    if (this._deepActiveLevels > 0 && this._deepSyncCtxPath !== resolutionPath) {
-      return this._resolveTransientDynamicSyncSlow(binding, resolutionPath, resolutionStack);
+    if (this.#deepActiveLevels > 0 && this.#deepSyncCtxPath !== resolutionPath) {
+      return this.#resolveTransientDynamicSyncSlow(binding, resolutionPath, resolutionStack);
     }
 
     // First deep level: bump the generation (implicitly clearing all stale cycle marks from
     // previous chains), seed the marks with the shallow-path frames already on the
     // resolution stack, then initialise (or reset) the shared context once for the
     // whole deep chain.
-    if (this._deepActiveLevels === 0) {
-      const gen = ++this._deepCycleGen;
+    if (this.#deepActiveLevels === 0) {
+      const gen = ++this.#deepCycleGen;
       for (const stackFrame of resolutionStack) {
-        this._deepCycleMarks.set(stackFrame.bindingId, gen);
+        this.#deepCycleMarks.set(stackFrame.bindingId, gen);
       }
-      let ctx = this._deepSyncCtx;
+      let ctx = this.#deepSyncCtx;
       if (ctx === undefined) {
         ctx = new DefaultResolutionContext(
           this as unknown as ResolverCallbacks,
@@ -1248,23 +1262,23 @@ export class DependencyResolver {
           resolutionStack,
           undefined,
         );
-        this._deepSyncCtx = ctx;
+        this.#deepSyncCtx = ctx;
       } else {
         ctx.reset(this as unknown as ResolverCallbacks, resolutionPath, resolutionStack, undefined);
       }
-      this._deepSyncCtxPath = resolutionPath;
+      this.#deepSyncCtxPath = resolutionPath;
     }
 
-    if (this._deepCycleMarks.get(binding.id) === this._deepCycleGen) {
+    if (this.#deepCycleMarks.get(binding.id) === this.#deepCycleGen) {
       throw new CircularDependencyError([...resolutionPath, tokenName(binding.token)]);
     }
 
-    this._deepCycleMarks.set(binding.id, this._deepCycleGen);
-    this._deepActiveLevels++;
+    this.#deepCycleMarks.set(binding.id, this.#deepCycleGen);
+    this.#deepActiveLevels++;
 
     try {
       // Use the pre-initialised context directly — no local variable needed.
-      const dynamicResult = binding.factory(this._deepSyncCtx!);
+      const dynamicResult = binding.factory(this.#deepSyncCtx!);
       if (dynamicResult instanceof Promise) {
         throw new AsyncResolutionError(tokenName(binding.token), tokenName(binding.token));
       }
@@ -1272,20 +1286,20 @@ export class DependencyResolver {
     } finally {
       // No Map.delete needed: the generation counter makes old marks invisible.
       // Only reset the path pointer when the last deep level unwinds.
-      if (--this._deepActiveLevels === 0) {
-        this._deepSyncCtxPath = undefined;
+      if (--this.#deepActiveLevels === 0) {
+        this.#deepSyncCtxPath = undefined;
       }
     }
   }
 
-  private _resolveTransientDynamicSyncSlow<const Value>(
+  #resolveTransientDynamicSyncSlow<const Value>(
     binding: Binding<Value> & { kind: "dynamic" },
     resolutionPath: Array<string>,
     resolutionStack: Array<ResolutionFrame>,
   ): Value {
     // Rare fallback used when deep-chain reentrancy is detected (a factory called
     // container.resolve() directly and the resulting chain also reached the threshold).
-    const frame = this._getResolutionFrame(binding);
+    const frame = this.#getResolutionFrame(binding);
     const tokenDisplayName = frame.tokenName;
     const pathWithSet = resolutionPath as ResolutionPathWithSet;
     let resolutionSet = pathWithSet[RESOLUTION_SET_KEY];
@@ -1299,7 +1313,7 @@ export class DependencyResolver {
     resolutionPath.push(tokenDisplayName);
     resolutionSet.add(tokenDisplayName);
     resolutionStack.push(frame);
-    const resolutionCtx = this._acquireSyncResolutionContext(resolutionPath, resolutionStack, undefined);
+    const resolutionCtx = this.#acquireSyncResolutionContext(resolutionPath, resolutionStack, undefined);
     try {
       const dynamicResult = binding.factory(resolutionCtx);
       if (dynamicResult instanceof Promise) {
@@ -1316,7 +1330,7 @@ export class DependencyResolver {
   // NOT declared `async` — avoids creating a JSAsyncGeneratorObject + implicit Promise wrapper on
   // every invocation.  Cleanup is handled via .then(onFulfilled, onRejected) so the behaviour is
   // identical to a try/finally but without the async machinery overhead.
-  private _resolveTransientDynamicAsyncFromContext<const Value>(
+  #resolveTransientDynamicAsyncFromContext<const Value>(
     binding: Binding<Value> & { kind: "dynamic" | "dynamic-async" },
     resolutionPath: Array<string>,
     resolutionStack: Array<ResolutionFrame>,
@@ -1340,13 +1354,13 @@ export class DependencyResolver {
       // Determine which context to use and whether this level owns the shared context.
       let ctx: DefaultResolutionContext;
       let isOwnerLevel: boolean;
-      if (this._deepAsyncCtxPath === resolutionPath) {
+      if (this.#deepAsyncCtxPath === resolutionPath) {
         // Inner level of the owning chain — reuse the shared context with NO setup overhead.
-        ctx = this._deepAsyncCtx!;
+        ctx = this.#deepAsyncCtx!;
         isOwnerLevel = true;
-      } else if (this._deepAsyncCtxPath === undefined) {
+      } else if (this.#deepAsyncCtxPath === undefined) {
         // Root of a new chain — take ownership and initialise (or reset) the shared context.
-        const existing = this._deepAsyncCtx;
+        const existing = this.#deepAsyncCtx;
         if (existing === undefined) {
           ctx = new DefaultResolutionContext(
             this as unknown as ResolverCallbacks,
@@ -1354,12 +1368,12 @@ export class DependencyResolver {
             resolutionStack,
             undefined,
           );
-          this._deepAsyncCtx = ctx;
+          this.#deepAsyncCtx = ctx;
         } else {
           existing.reset(this as unknown as ResolverCallbacks, resolutionPath, resolutionStack, undefined);
           ctx = existing;
         }
-        this._deepAsyncCtxPath = resolutionPath;
+        this.#deepAsyncCtxPath = resolutionPath;
         isOwnerLevel = true;
       } else {
         // Concurrent chain (e.g. Promise.all) — allocate a dedicated context and do NOT
@@ -1374,7 +1388,7 @@ export class DependencyResolver {
       }
 
       if (isOwnerLevel) {
-        this._deepAsyncActiveLevels++;
+        this.#deepAsyncActiveLevels++;
       }
 
       // Invoke the factory synchronously to get its Promise (or a resolved value for "dynamic").
@@ -1390,8 +1404,8 @@ export class DependencyResolver {
       } catch (err) {
         // Synchronous throw from the factory (rare) — clean up immediately.
         resolutionPath.pop();
-        if (isOwnerLevel && --this._deepAsyncActiveLevels === 0) {
-          this._deepAsyncCtxPath = undefined;
+        if (isOwnerLevel && --this.#deepAsyncActiveLevels === 0) {
+          this.#deepAsyncCtxPath = undefined;
         }
         return Promise.reject(err);
       }
@@ -1400,15 +1414,15 @@ export class DependencyResolver {
       return factoryPromise.then(
         (value) => {
           resolutionPath.pop();
-          if (isOwnerLevel && --this._deepAsyncActiveLevels === 0) {
-            this._deepAsyncCtxPath = undefined;
+          if (isOwnerLevel && --this.#deepAsyncActiveLevels === 0) {
+            this.#deepAsyncCtxPath = undefined;
           }
           return value;
         },
         (err: unknown) => {
           resolutionPath.pop();
-          if (isOwnerLevel && --this._deepAsyncActiveLevels === 0) {
-            this._deepAsyncCtxPath = undefined;
+          if (isOwnerLevel && --this.#deepAsyncActiveLevels === 0) {
+            this.#deepAsyncCtxPath = undefined;
           }
           // Re-throw as the rejected value; the `never` cast suppresses the TS return-type
           // mismatch that arises because `throw` has type `never` in an expression context.
@@ -1419,15 +1433,15 @@ export class DependencyResolver {
 
     // ── Deep async path (depth ≥ RESOLUTION_SET_THRESHOLD) ────────────────────────────────
     // Fall back to the fully-correct slow implementation.
-    return this._resolveTransientDynamicAsyncSlow(binding, resolutionPath, resolutionStack);
+    return this.#resolveTransientDynamicAsyncSlow(binding, resolutionPath, resolutionStack);
   }
 
-  private async _resolveTransientDynamicAsyncSlow<const Value>(
+  async #resolveTransientDynamicAsyncSlow<const Value>(
     binding: Binding<Value> & { kind: "dynamic" | "dynamic-async" },
     resolutionPath: Array<string>,
     resolutionStack: Array<ResolutionFrame>,
   ): Promise<Value> {
-    const frame = this._getResolutionFrame(binding);
+    const frame = this.#getResolutionFrame(binding);
     const tokenDisplayName = frame.tokenName;
     const pathWithSet = resolutionPath as ResolutionPathWithSet;
     let resolutionSet = pathWithSet[RESOLUTION_SET_KEY];
@@ -1460,7 +1474,7 @@ export class DependencyResolver {
     }
   }
 
-  private _resolveCandidateSync<const Value>(
+  #resolveCandidateSync<const Value>(
     binding: Binding<Value>,
     options: ResolveOptions | undefined,
     resolutionPath: Array<string>,
@@ -1469,7 +1483,7 @@ export class DependencyResolver {
     if (
       binding.kind === "constant" &&
       binding.onActivation === undefined &&
-      !this._lifecycle.hasActivationHandlers(binding.token)
+      !this.#lifecycle.hasActivationHandlers(binding.token)
     ) {
       return binding.value;
     }
@@ -1477,21 +1491,21 @@ export class DependencyResolver {
       return this.resolve(binding.target, options, resolutionPath, resolutionStack);
     }
     const scope = (binding as BindingWithScope).scope ?? "transient";
-    if (scope === "singleton" && this._scope.hasSingleton(binding.id)) {
-      return this._scope.getSingleton<Value>(binding.id);
+    if (scope === "singleton" && this.#scope.hasSingleton(binding.id)) {
+      return this.#scope.getSingleton<Value>(binding.id);
     }
     if (scope === "scoped") {
-      if (!this._scope.isChild) {
-        throw new MissingScopeContextError(this._getTokenName(binding.token));
+      if (!this.#scope.isChild) {
+        throw new MissingScopeContextError(this.#getTokenName(binding.token));
       }
-      if (this._scope.hasScoped(binding.id)) {
-        return this._scope.getScoped<Value>(binding.id);
+      if (this.#scope.hasScoped(binding.id)) {
+        return this.#scope.getScoped<Value>(binding.id);
       }
     }
-    return this._resolveBinding(binding, options, resolutionPath, resolutionStack);
+    return this.#resolveBinding(binding, options, resolutionPath, resolutionStack);
   }
 
-  private _resolveCandidateAsync<const Value>(
+  #resolveCandidateAsync<const Value>(
     binding: Binding<Value>,
     options: ResolveOptions | undefined,
     resolutionPath: Array<string>,
@@ -1500,7 +1514,7 @@ export class DependencyResolver {
     if (
       binding.kind === "constant" &&
       binding.onActivation === undefined &&
-      !this._lifecycle.hasActivationHandlers(binding.token)
+      !this.#lifecycle.hasActivationHandlers(binding.token)
     ) {
       return Promise.resolve(binding.value);
     }
@@ -1510,33 +1524,33 @@ export class DependencyResolver {
       return this.resolveAsync(binding.target, options, isolatedPath, isolatedStack);
     }
     const scope = (binding as BindingWithScope).scope ?? "transient";
-    if (scope === "singleton" && this._scope.hasSingleton(binding.id)) {
-      return Promise.resolve(this._scope.getSingleton<Value>(binding.id));
+    if (scope === "singleton" && this.#scope.hasSingleton(binding.id)) {
+      return Promise.resolve(this.#scope.getSingleton<Value>(binding.id));
     }
     if (scope === "scoped") {
-      if (!this._scope.isChild) {
-        return Promise.reject(new MissingScopeContextError(this._getTokenName(binding.token)));
+      if (!this.#scope.isChild) {
+        return Promise.reject(new MissingScopeContextError(this.#getTokenName(binding.token)));
       }
-      if (this._scope.hasScoped(binding.id)) {
-        return Promise.resolve(this._scope.getScoped<Value>(binding.id));
+      if (this.#scope.hasScoped(binding.id)) {
+        return Promise.resolve(this.#scope.getScoped<Value>(binding.id));
       }
     }
-    return this._resolveBindingAsync(binding, options, isolatedPath, isolatedStack);
+    return this.#resolveBindingAsync(binding, options, isolatedPath, isolatedStack);
   }
 
-  private _getResolutionFrame<const Value>(binding: Binding<Value>): ResolutionFrame {
-    const existing = this._frameByBindingId.get(binding.id);
+  #getResolutionFrame<const Value>(binding: Binding<Value>): ResolutionFrame {
+    const existing = this.#frameByBindingId.get(binding.id);
     if (existing !== undefined) {
       return existing;
     }
     const scope = (binding as BindingWithScope).scope ?? "transient";
     const frame = buildResolutionFrame(tokenName(binding.token), scope, binding.id, binding.kind, binding.slot);
-    this._frameByBindingId.set(binding.id, frame);
+    this.#frameByBindingId.set(binding.id, frame);
     return frame;
   }
 
-  private _needsActivation<const Value>(binding: Binding<Value>): boolean {
-    const lifecycleVersion = this._lifecycle.activationVersion;
+  #needsActivation<const Value>(binding: Binding<Value>): boolean {
+    const lifecycleVersion = this.#lifecycle.activationVersion;
     if (
       lifecycleVersion === 0 &&
       binding.kind !== "class" &&
@@ -1545,71 +1559,71 @@ export class DependencyResolver {
     ) {
       return false;
     }
-    if (this._activationCacheVersion !== lifecycleVersion) {
-      this._activationNeedByBindingId.clear();
-      this._activationCacheVersion = lifecycleVersion;
+    if (this.#activationCacheVersion !== lifecycleVersion) {
+      this.#activationNeedByBindingId.clear();
+      this.#activationCacheVersion = lifecycleVersion;
     }
 
-    const cached = this._activationNeedByBindingId.get(binding.id);
+    const cached = this.#activationNeedByBindingId.get(binding.id);
     if (cached !== undefined) {
       return cached;
     }
 
     if (binding.kind === "class") {
-      let hasActivation = this._lifecycle.hasActivationHandlers(binding.token) || binding.onActivation !== undefined;
-      const cachedPostConstruct = this._classHasPostConstruct.get(binding.target);
+      let hasActivation = this.#lifecycle.hasActivationHandlers(binding.token) || binding.onActivation !== undefined;
+      const cachedPostConstruct = this.#classHasPostConstruct.get(binding.target);
       // Unknown class lifecycle metadata: activate once, then cache after first instantiation.
       if (cachedPostConstruct === undefined) {
         hasActivation = true;
       } else if (cachedPostConstruct) {
         hasActivation = true;
       }
-      this._activationNeedByBindingId.set(binding.id, hasActivation);
+      this.#activationNeedByBindingId.set(binding.id, hasActivation);
       return hasActivation;
     }
 
     let hasActivation = false;
     if (binding.kind !== "alias" && binding.onActivation !== undefined) {
       hasActivation = true;
-    } else if (this._lifecycle.hasActivationHandlers(binding.token)) {
+    } else if (this.#lifecycle.hasActivationHandlers(binding.token)) {
       hasActivation = true;
     }
 
-    this._activationNeedByBindingId.set(binding.id, hasActivation);
+    this.#activationNeedByBindingId.set(binding.id, hasActivation);
     return hasActivation;
   }
 
-  private _refreshClassPostConstructCache(target: Constructor): void {
-    const lifecycle = this._metadataReader.getLifecycleMetadata(target);
+  #refreshClassPostConstructCache(target: Constructor): void {
+    const lifecycle = this.#metadataReader.getLifecycleMetadata(target);
     const hasPostConstruct =
       lifecycle !== undefined && lifecycle.postConstruct !== undefined && lifecycle.postConstruct.length > 0;
-    this._classHasPostConstruct.set(target, hasPostConstruct);
+    this.#classHasPostConstruct.set(target, hasPostConstruct);
   }
 
   /**
    * Refreshes the post-construct cache for class bindings on first instantiation and
    * returns the (possibly updated) shouldActivate flag.
    */
-  private _refreshActivationCacheIfNeeded<Value>(binding: Binding<Value>, needsActivation: boolean): boolean {
-    if (binding.kind === "class" && this._classHasPostConstruct.get(binding.target) === undefined) {
-      this._refreshClassPostConstructCache(binding.target);
-      this._activationNeedByBindingId.delete(binding.id);
-      return this._needsActivation(binding);
+  #refreshActivationCacheIfNeeded<Value>(binding: Binding<Value>, needsActivation: boolean): boolean {
+    if (binding.kind === "class" && this.#classHasPostConstruct.get(binding.target) === undefined) {
+      this.#refreshClassPostConstructCache(binding.target);
+      this.#activationNeedByBindingId.delete(binding.id);
+      return this.#needsActivation(binding);
     }
     return needsActivation;
   }
 
-  private _requiresResolutionContext<const Value>(binding: Binding<Value>): boolean {
+  #requiresResolutionContext<const Value>(binding: Binding<Value>): boolean {
     return binding.kind === "dynamic" || binding.kind === "dynamic-async";
   }
 
-  private _acquireSyncResolutionContext(
+  #acquireSyncResolutionContext(
     resolutionPath: Array<string>,
     resolutionStack: Array<ResolutionFrame>,
     options: ResolveOptions | undefined,
   ): DefaultResolutionContext {
     const depth = resolutionStack.length;
-    const existing = this._syncResolutionContextPool[depth];
+    const existing = this.#syncResolutionContextPool[depth];
     if (existing !== undefined) {
       existing.reset(this as unknown as ResolverCallbacks, resolutionPath, resolutionStack, options);
       return existing;
@@ -1620,7 +1634,7 @@ export class DependencyResolver {
       resolutionStack,
       options,
     );
-    this._syncResolutionContextPool[depth] = created;
+    this.#syncResolutionContextPool[depth] = created;
     return created;
   }
 }

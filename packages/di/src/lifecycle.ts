@@ -10,34 +10,34 @@ import type { ActivationHandler, Constructor, DeactivationHandler, ResolutionCon
  */
 export class LifecycleManager {
   // Container-level activation/deactivation hooks per token
-  private readonly _activationHooks = new Map<Token<unknown> | Constructor, Array<ActivationHandler<unknown>>>();
-  private readonly _deactivationHooks = new Map<Token<unknown> | Constructor, Array<DeactivationHandler<unknown>>>();
-  private _activationVersion = 0;
+  readonly #activationHooks = new Map<Token<unknown> | Constructor, Array<ActivationHandler<unknown>>>();
+  readonly #deactivationHooks = new Map<Token<unknown> | Constructor, Array<DeactivationHandler<unknown>>>();
+  #activationVersion = 0;
 
   registerActivation<const Value>(token: Token<Value> | Constructor<Value>, handler: ActivationHandler<Value>): void {
-    this._activationVersion += 1;
+    this.#activationVersion += 1;
     // ✓ TS6.0: Map.getOrInsert (ES2025)
-    const list = this._activationHooks.getOrInsert(token as Token<unknown> | Constructor, []);
+    const list = this.#activationHooks.getOrInsert(token as Token<unknown> | Constructor, []);
     list.push(handler as ActivationHandler<unknown>);
   }
 
   hasActivationHandlers<const Value>(token: Token<Value> | Constructor<Value>): boolean {
-    if (this._activationHooks.size === 0) {
+    if (this.#activationHooks.size === 0) {
       return false;
     }
-    const list = this._activationHooks.get(token as Token<unknown> | Constructor);
+    const list = this.#activationHooks.get(token as Token<unknown> | Constructor);
     return list !== undefined && list.length > 0;
   }
 
   get activationVersion(): number {
-    return this._activationVersion;
+    return this.#activationVersion;
   }
 
   registerDeactivation<const Value>(
     token: Token<Value> | Constructor<Value>,
     handler: DeactivationHandler<Value>,
   ): void {
-    const list = this._deactivationHooks.getOrInsert(token as Token<unknown> | Constructor, []);
+    const list = this.#deactivationHooks.getOrInsert(token as Token<unknown> | Constructor, []);
     list.push(handler as DeactivationHandler<unknown>);
   }
 
@@ -72,7 +72,7 @@ export class LifecycleManager {
     }
 
     // 3. container-level onActivation
-    const containerHooks = this._activationHooks.get(binding.token as Token<unknown> | Constructor);
+    const containerHooks = this.#activationHooks.get(binding.token as Token<unknown> | Constructor);
     if (containerHooks !== undefined) {
       for (const hook of containerHooks) {
         const activationResult = hook(resolutionContext, activatedInstance);
@@ -118,7 +118,7 @@ export class LifecycleManager {
 
     // 3. container-level onActivation (must be sync)
     const tokenDisplayName = tokenName(binding.token);
-    const containerHooks = this._activationHooks.get(binding.token as Token<unknown> | Constructor);
+    const containerHooks = this.#activationHooks.get(binding.token as Token<unknown> | Constructor);
     if (containerHooks !== undefined) {
       for (const hook of containerHooks) {
         const activationResult = hook(resolutionContext, activatedInstance);
@@ -140,7 +140,7 @@ export class LifecycleManager {
     const tokenKey = binding.token as Token<unknown> | Constructor;
 
     // 1. container-level onDeactivation
-    const containerHooks = this._deactivationHooks.get(tokenKey);
+    const containerHooks = this.#deactivationHooks.get(tokenKey);
     if (containerHooks !== undefined) {
       for (const hook of containerHooks) {
         const hookResult = hook(instance);
@@ -180,7 +180,7 @@ export class LifecycleManager {
     const tokenKey = binding.token as Token<unknown> | Constructor;
 
     // 1. container-level onDeactivation
-    const containerHooks = this._deactivationHooks.get(tokenKey);
+    const containerHooks = this.#deactivationHooks.get(tokenKey);
     if (containerHooks !== undefined) {
       for (const hook of containerHooks) {
         const hookResult = hook(instance);

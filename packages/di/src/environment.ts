@@ -13,18 +13,18 @@ import type {
 
 // ── Active container ──────────────────────────────────────────────────────────
 
-let _activeContainer: Container | undefined;
+let activeContainer: Container | undefined;
 
 /**
  * @since 0.3.16-canary.0
  */
 export function runWithContainer<Result>(container: Container, fn: () => Result): Result {
-  const prev = _activeContainer;
-  _activeContainer = container;
+  const prev = activeContainer;
+  activeContainer = container;
   try {
     return fn();
   } finally {
-    _activeContainer = prev;
+    activeContainer = prev;
   }
 }
 
@@ -32,7 +32,7 @@ export function runWithContainer<Result>(container: Container, fn: () => Result)
  * @since 0.3.16-canary.0
  */
 export function getActiveContainer(): Container | undefined {
-  return _activeContainer;
+  return activeContainer;
 }
 
 // ── ResolutionContext implementation ──────────────────────────────────────────
@@ -93,10 +93,10 @@ export interface ResolverCallbacks {
  * @since 0.3.16-canary.0
  */
 export class DefaultResolutionContext implements ResolutionContext {
-  private _resolver: ResolverCallbacks;
-  private _resolutionPath: Array<string>;
-  private _resolutionStack: Array<ResolutionFrame>;
-  private _currentOptions: ResolveOptions | undefined;
+  #resolver: ResolverCallbacks;
+  #resolutionPath: Array<string>;
+  #resolutionStack: Array<ResolutionFrame>;
+  #currentOptions: ResolveOptions | undefined;
 
   constructor(
     resolver: ResolverCallbacks,
@@ -104,19 +104,19 @@ export class DefaultResolutionContext implements ResolutionContext {
     resolutionStack: Array<ResolutionFrame>,
     currentOptions: ResolveOptions | undefined,
   ) {
-    this._resolver = resolver;
-    this._resolutionPath = resolutionPath;
-    this._resolutionStack = resolutionStack;
-    this._currentOptions = currentOptions;
+    this.#resolver = resolver;
+    this.#resolutionPath = resolutionPath;
+    this.#resolutionStack = resolutionStack;
+    this.#currentOptions = currentOptions;
   }
 
-  private _graph: ConstraintContext | undefined;
+  #graph: ConstraintContext | undefined;
 
   get graph(): ConstraintContext {
-    if (this._graph === undefined) {
-      this._graph = new DefaultConstraintContext(this._resolutionPath, this._resolutionStack, this._currentOptions);
+    if (this.#graph === undefined) {
+      this.#graph = new DefaultConstraintContext(this.#resolutionPath, this.#resolutionStack, this.#currentOptions);
     }
-    return this._graph;
+    return this.#graph;
   }
 
   reset(
@@ -125,47 +125,47 @@ export class DefaultResolutionContext implements ResolutionContext {
     resolutionStack: Array<ResolutionFrame>,
     currentOptions: ResolveOptions | undefined,
   ): void {
-    this._resolver = resolver;
-    this._resolutionPath = resolutionPath;
-    this._resolutionStack = resolutionStack;
-    this._currentOptions = currentOptions;
-    this._graph = undefined;
+    this.#resolver = resolver;
+    this.#resolutionPath = resolutionPath;
+    this.#resolutionStack = resolutionStack;
+    this.#currentOptions = currentOptions;
+    this.#graph = undefined;
   }
 
   resolve<const Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Value {
     if (options === undefined) {
-      return this._resolver.resolveFromContext(token, this._resolutionPath, this._resolutionStack);
+      return this.#resolver.resolveFromContext(token, this.#resolutionPath, this.#resolutionStack);
     }
-    return this._resolver.resolve(token, options, this._resolutionPath, this._resolutionStack);
+    return this.#resolver.resolve(token, options, this.#resolutionPath, this.#resolutionStack);
   }
 
   resolveAsync<const Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Promise<Value> {
     if (options === undefined) {
-      return this._resolver.resolveAsyncFromContext(token, this._resolutionPath, this._resolutionStack);
+      return this.#resolver.resolveAsyncFromContext(token, this.#resolutionPath, this.#resolutionStack);
     }
-    return this._resolver.resolveAsync(token, options, this._resolutionPath, this._resolutionStack);
+    return this.#resolver.resolveAsync(token, options, this.#resolutionPath, this.#resolutionStack);
   }
 
   resolveOptional<const Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Value | undefined {
-    return this._resolver.resolveOptional(token, options, this._resolutionPath, this._resolutionStack);
+    return this.#resolver.resolveOptional(token, options, this.#resolutionPath, this.#resolutionStack);
   }
 
   resolveOptionalAsync<const Value>(
     token: Token<Value> | Constructor<Value>,
     options?: ResolveOptions,
   ): Promise<Value | undefined> {
-    return this._resolver.resolveOptionalAsync(token, options, this._resolutionPath, this._resolutionStack);
+    return this.#resolver.resolveOptionalAsync(token, options, this.#resolutionPath, this.#resolutionStack);
   }
 
   resolveAll<const Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Array<Value> {
-    return this._resolver.resolveAll(token, options, this._resolutionPath, this._resolutionStack);
+    return this.#resolver.resolveAll(token, options, this.#resolutionPath, this.#resolutionStack);
   }
 
   resolveAllAsync<const Value>(
     token: Token<Value> | Constructor<Value>,
     options?: ResolveOptions,
   ): Promise<Array<Value>> {
-    return this._resolver.resolveAllAsync(token, options, this._resolutionPath, this._resolutionStack);
+    return this.#resolver.resolveAllAsync(token, options, this.#resolutionPath, this.#resolutionStack);
   }
 }
 
@@ -186,13 +186,13 @@ class DefaultConstraintContext implements ConstraintContext {
     this.currentResolveOptions = currentResolveOptions;
   }
 
-  private _ancestors: ReadonlyArray<ResolutionFrame> | undefined;
+  #ancestors: ReadonlyArray<ResolutionFrame> | undefined;
 
   get ancestors(): ReadonlyArray<ResolutionFrame> {
-    if (this._ancestors === undefined) {
-      this._ancestors = this.resolutionStack.length > 1 ? this.resolutionStack.slice(0, -1) : [];
+    if (this.#ancestors === undefined) {
+      this.#ancestors = this.resolutionStack.length > 1 ? this.resolutionStack.slice(0, -1) : [];
     }
-    return this._ancestors;
+    return this.#ancestors;
   }
 }
 

@@ -6,11 +6,11 @@ import type { BindingIdentifier } from "#/types";
  */
 export class ScopeManager {
   // Singleton cache: bindingId -> instance
-  private readonly _singletons = new Map<BindingIdentifier, unknown>();
+  readonly #singletons = new Map<BindingIdentifier, unknown>();
   // In-flight promises for async singleton creation
-  private readonly _inflight = new Map<BindingIdentifier, Promise<unknown>>();
+  readonly #inflight = new Map<BindingIdentifier, Promise<unknown>>();
   // Scoped cache (for child containers): bindingId -> instance
-  private readonly _scoped = new Map<BindingIdentifier, unknown>();
+  readonly #scoped = new Map<BindingIdentifier, unknown>();
 
   readonly isChild: boolean;
 
@@ -19,59 +19,59 @@ export class ScopeManager {
   }
 
   hasSingleton(id: BindingIdentifier): boolean {
-    return this._singletons.has(id);
+    return this.#singletons.has(id);
   }
 
   getSingleton<Value>(id: BindingIdentifier): Value {
-    return this._singletons.get(id) as Value;
+    return this.#singletons.get(id) as Value;
   }
 
   setSingleton(id: BindingIdentifier, instance: unknown): void {
-    this._singletons.set(id, instance);
+    this.#singletons.set(id, instance);
   }
 
   deleteSingleton(id: BindingIdentifier): boolean {
-    return this._singletons.delete(id);
+    return this.#singletons.delete(id);
   }
 
   getAllSingletons(): ReadonlyMap<BindingIdentifier, unknown> {
-    return this._singletons;
+    return this.#singletons;
   }
 
   getInflight(id: BindingIdentifier): Promise<unknown> | undefined {
-    return this._inflight.get(id);
+    return this.#inflight.get(id);
   }
 
   setInflight(id: BindingIdentifier, p: Promise<unknown>): void {
-    this._inflight.set(id, p);
+    this.#inflight.set(id, p);
   }
 
   clearInflight(id: BindingIdentifier): void {
-    this._inflight.delete(id);
+    this.#inflight.delete(id);
   }
 
   hasScoped(id: BindingIdentifier): boolean {
-    return this._scoped.has(id);
+    return this.#scoped.has(id);
   }
 
   getScoped<Value>(id: BindingIdentifier): Value {
-    return this._scoped.get(id) as Value;
+    return this.#scoped.get(id) as Value;
   }
 
   setScoped(id: BindingIdentifier, instance: unknown): void {
     if (!this.isChild) {
       throw new MissingScopeContextError("(unknown)");
     }
-    this._scoped.set(id, instance);
+    this.#scoped.set(id, instance);
   }
 
   getAllScoped(): ReadonlyMap<BindingIdentifier, unknown> {
-    return this._scoped;
+    return this.#scoped;
   }
 
   clearAll(): void {
-    this._singletons.clear();
-    this._inflight.clear();
-    this._scoped.clear();
+    this.#singletons.clear();
+    this.#inflight.clear();
+    this.#scoped.clear();
   }
 }
