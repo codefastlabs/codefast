@@ -59,9 +59,11 @@ CI/local verification.
   variants — discouraged but accepted by the guardrail).
 - Mirror the `src/` path inside the category. Example:
   `src/utils/dom.ts` → `tests/unit/utils/dom.test.ts`.
-- Integration tests describing a multi-module flow may use a flow-oriented
+- Integration/e2e tests describing a multi-module flow use a flow-oriented
   filename instead of a 1:1 mirror, e.g.
-  `tests/integration/decorators.integration.test.ts`.
+  `tests/integration/decorators.test.ts`. Do not echo the category in the
+  filename (no `.integration.`/`.e2e.` infix) — the directory already carries
+  it; let the filename name the flow.
 
 ## Per-package scripts
 

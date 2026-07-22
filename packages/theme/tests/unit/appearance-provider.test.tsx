@@ -6,7 +6,7 @@ import { renderToString } from "react-dom/server";
 import type { Appearance } from "#/appearance";
 import { AppearanceProvider } from "#/appearance-provider";
 import { DEFAULT_COLOR_SCHEME, STORAGE_KEY, SYNC_CHANNEL } from "#/constants";
-import { createMockMediaQueryList, mockMatchMedia } from "#/tests/support/mocks";
+import { createMockMediaQueryList, mockMatchMedia } from "#/tests/unit/support/mocks";
 import { useAppearance } from "#/use-appearance";
 
 // Dispatch a storage-like event. Builds it via Event + defineProperties rather than the

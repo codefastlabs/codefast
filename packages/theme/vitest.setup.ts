@@ -1,5 +1,5 @@
 import "@testing-library/jest-dom/vitest";
-import { createMockMediaQueryList } from "#/tests/support/mocks";
+import { createMockMediaQueryList } from "#/tests/unit/support/mocks";
 
 Object.defineProperty(window, "matchMedia", {
   value: vi.fn().mockImplementation((query: string) => createMockMediaQueryList(false, query)),

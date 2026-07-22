@@ -2654,12 +2654,14 @@ packages/di/
 │
 ├── tests/
 │   ├── unit/
-│   │   ├── api/               Builder và container API tests
-│   │   └── types/             Type-level inference và resolve-options tests
+│   │   └── api/               Builder và container API tests
 │   │
-│   └── integration/           Cross-module và end-to-end scenarios
-│       ├── decorators.integration.test.ts   @injectable + @inject + @postConstruct end-to-end
-│       └── validate-scope.integration.test.ts  validate() + ScopeViolationError detection
+│   ├── integration/           Cross-module và end-to-end scenarios
+│   │   ├── decorators.test.ts        @injectable + @inject + @postConstruct end-to-end
+│   │   ├── validate-scope.test.ts    validate() + ScopeViolationError detection
+│   │   └── support/                  Subprocess fixtures driven by the suite
+│   │
+│   └── types/                 Type-level inference và resolve-options tests
 │
 ├── package.json
 ├── tsconfig.json

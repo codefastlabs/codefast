@@ -5,13 +5,12 @@ import { defineConfig } from "vitest/config";
  * DI: Node + Stage 3 decorators.
  *
  * Test taxonomy (see TESTING.md):
- *   tests/unit/**         — unit tests (api, types)
- *   tests/integration/**  — multi-module decorator/lifecycle integration
- *   tests/e2e/**          — pre-wired (none yet); the existing accessor-e2e.script.ts
- *                           is a SUPPORT subprocess driven by an integration test, not
- *                           a standalone test entrypoint, so it stays under
- *                           tests/integration/.
- *   tests/types/**        — pre-wired (none yet)
+ *   tests/unit/**         — isolated unit tests
+ *   tests/integration/**  — multi-module decorator/lifecycle integration; the
+ *                           accessor-e2e.script.ts subprocess it drives is a SUPPORT
+ *                           entrypoint, not a test, so it lives under support/.
+ *   tests/e2e/**          — pre-wired (none yet)
+ *   tests/types/**        — static expect-type inference tests
  */
 export default defineConfig({
   plugins: [

@@ -1,6 +1,6 @@
 import { getSystemColorScheme, resolveColorScheme } from "#/color-scheme";
 import { DEFAULT_COLOR_SCHEME } from "#/constants";
-import { createMockMediaQueryList, mockMatchMedia } from "#/tests/support/mocks";
+import { createMockMediaQueryList, mockMatchMedia } from "#/tests/unit/support/mocks";
 
 describe("System Color Scheme Detection", () => {
   const originalMatchMedia = window.matchMedia;
