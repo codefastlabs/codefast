@@ -33,6 +33,13 @@ export class LifecycleManager {
     return this.#activationVersion;
   }
 
+  /** Container-level activation handlers for a token — hot-path accessor, no copies. */
+  activationHandlersFor<const Value>(
+    token: Token<Value> | Constructor<Value>,
+  ): ReadonlyArray<ActivationHandler<unknown>> | undefined {
+    return this.#activationHooks.get(token as Token<unknown> | Constructor);
+  }
+
   registerDeactivation<const Value>(
     token: Token<Value> | Constructor<Value>,
     handler: DeactivationHandler<Value>,

@@ -2,6 +2,12 @@ import { MissingScopeContextError } from "#/errors";
 import type { BindingIdentifier } from "#/types";
 
 /**
+ * Sentinel returned by {@link ScopeManager.peekSingleton} when nothing is cached —
+ * lets hot paths read the cache with a single Map.get even for `undefined` values.
+ */
+export const SINGLETON_MISS: unique symbol = Symbol("di:singleton-miss");
+
+/**
  * @since 0.3.16-canary.0
  */
 export class ScopeManager {
@@ -24,6 +30,15 @@ export class ScopeManager {
 
   getSingleton<Value>(id: BindingIdentifier): Value {
     return this.#singletons.get(id) as Value;
+  }
+
+  /** Cached value, or {@link SINGLETON_MISS} — one Map.get on the hot path. */
+  peekSingleton(id: BindingIdentifier): unknown {
+    const value = this.#singletons.get(id);
+    if (value === undefined && !this.#singletons.has(id)) {
+      return SINGLETON_MISS;
+    }
+    return value;
   }
 
   setSingleton(id: BindingIdentifier, instance: unknown): void {

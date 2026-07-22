@@ -6,6 +6,7 @@ import type { InjectionDescriptor } from "#/decorators/inject";
 import type { ResolverCallbacks } from "#/environment";
 import { buildResolutionFrame, DefaultResolutionContext, runWithContainer } from "#/environment";
 import {
+  AsyncActivationError,
   AsyncResolutionError,
   CircularDependencyError,
   InternalError,
@@ -19,9 +20,11 @@ import type { ConstructorMetadata, MetadataReader } from "#/metadata/metadata-ty
 import type { BindingRegistry } from "#/registry";
 import { injectionSlotToResolveOptions } from "#/resolve-options";
 import type { ScopeManager } from "#/scope";
+import { SINGLETON_MISS } from "#/scope";
 import type { Token } from "#/token";
 import { tokenName } from "#/token";
 import type {
+  ActivationHandler,
   BindingIdentifier,
   BindingScope,
   BindingTag,
@@ -67,6 +70,19 @@ function enterResolutionPath(
   resolutionSet?.add(tokenDisplayName);
   return resolutionSet;
 }
+// Terminal result of the options-less lookup fast lane — alias hops already folded.
+interface DefaultLookupEntry {
+  readonly binding: Binding;
+  readonly owner: DependencyResolver;
+}
+
+// Plan compilation asked to retry later (class lifecycle metadata not discovered yet).
+const PLAN_RETRY: unique symbol = Symbol("di:plan-retry");
+type ClassPlanCompileResult = (() => unknown) | null | typeof PLAN_RETRY;
+
+const ALIAS_HOP_LIMIT = 32;
+const PLAN_DEPTH_LIMIT = 32;
+
 const EMPTY_STRING_LIST: ReadonlyArray<string> = [];
 const EMPTY_FRAME_LIST: ReadonlyArray<ResolutionFrame> = [];
 const ROOT_CONSTRAINT_CONTEXT = {
@@ -146,6 +162,18 @@ export class DependencyResolver {
   readonly #classConstructorMetadata = new WeakMap<Constructor, ConstructorMetadata | null>();
   readonly #activationNeedByBindingId = new Map<BindingIdentifier, boolean>();
   #activationCacheVersion = -1;
+  // Options-less lookup memo across the parent chain: token → terminal {binding, owner}
+  // (alias hops folded). `null` = token must take the slow lookup path. Invalidated when
+  // any registry in the chain mutates (monotonic version sum).
+  readonly #defaultLookupByToken = new Map<Token<unknown> | Constructor, DefaultLookupEntry | null>();
+  #defaultLookupVersion = -1;
+  // Compiled transient-class plans (Dagger-style): a pure-static subgraph (class/constant/
+  // cached-singleton deps only) compiles once into a nested-constructor closure — cycle
+  // checking happens at compile time, so execution skips all per-resolve bookkeeping.
+  // `null` = binding is not plannable under the current versions.
+  readonly #classPlanByBindingId = new Map<BindingIdentifier, (() => unknown) | null>();
+  #classPlanRegistryVersion = -1;
+  #classPlanActivationVersion = -1;
 
   readonly #registry: BindingRegistry;
   readonly #scope: ScopeManager;
@@ -267,43 +295,301 @@ export class DependencyResolver {
     resolutionPath: Array<string>,
     resolutionStack: Array<ResolutionFrame>,
   ): Value {
+    // Hot lane: own-registry fast default. Fall back to the chain-versioned memo
+    // (parent-chain walk + alias folding) only on miss or alias.
     const fastBinding = this.#registry.getFastDefault(token);
-    if (fastBinding !== undefined) {
-      if (fastBinding.kind === "alias") {
-        return this.resolveFromContext(
-          fastBinding.target as Token<Value> | Constructor<Value>,
-          resolutionPath,
-          resolutionStack,
-        );
-      }
-      const scope = (fastBinding as BindingWithScope).scope ?? "transient";
-      if (
-        scope === "transient" &&
-        fastBinding.kind === "dynamic" &&
-        fastBinding.onActivation === undefined &&
-        (this.#lifecycle.activationVersion === 0 || !this.#lifecycle.hasActivationHandlers(fastBinding.token))
-      ) {
-        return this.#resolveTransientDynamicSyncFromContext(
-          fastBinding as Binding<Value> & { kind: "dynamic" },
-          resolutionPath,
-          resolutionStack,
-        );
-      }
-      if (scope === "singleton" && this.#scope.hasSingleton(fastBinding.id)) {
-        return this.#scope.getSingleton<Value>(fastBinding.id);
-      }
-      if (scope === "scoped") {
-        if (!this.#scope.isChild) {
-          throw new MissingScopeContextError(this.#getTokenName(fastBinding.token));
-        }
-        if (this.#scope.hasScoped(fastBinding.id)) {
-          return this.#scope.getScoped<Value>(fastBinding.id);
-        }
-      }
-      return this.#resolveBinding(fastBinding as Binding<Value>, undefined, resolutionPath, resolutionStack);
+    if (fastBinding !== undefined && fastBinding.kind !== "alias") {
+      return this.#resolveDefaultEntry<Value>(fastBinding, this, resolutionPath, resolutionStack);
     }
+    const entry = this.#lookupDefaultEntry(token);
+    if (entry === null) {
+      return this.resolve(token, undefined, resolutionPath, resolutionStack);
+    }
+    return this.#resolveDefaultEntry<Value>(entry.binding, entry.owner, resolutionPath, resolutionStack);
+  }
 
-    return this.resolve(token, undefined, resolutionPath, resolutionStack);
+  #resolveDefaultEntry<const Value>(
+    binding: Binding,
+    owner: DependencyResolver,
+    resolutionPath: Array<string>,
+    resolutionStack: Array<ResolutionFrame>,
+  ): Value {
+    if (
+      binding.kind === "constant" &&
+      binding.onActivation === undefined &&
+      (this.#lifecycle.activationVersion === 0 || !this.#lifecycle.hasActivationHandlers(binding.token))
+    ) {
+      return binding.value as Value;
+    }
+    const scope = (binding as BindingWithScope).scope ?? "transient";
+    if (scope === "transient") {
+      if (binding.kind === "dynamic") {
+        const containerHooks =
+          this.#lifecycle.activationVersion === 0 ? undefined : this.#lifecycle.activationHandlersFor(binding.token);
+        if (binding.onActivation === undefined && (containerHooks === undefined || containerHooks.length === 0)) {
+          return this.#resolveTransientDynamicSyncFromContext(
+            binding as Binding<Value> & { kind: "dynamic" },
+            resolutionPath,
+            resolutionStack,
+          );
+        }
+        return this.#resolveTransientDynamicActivatedSync(
+          binding as Binding<Value> & { kind: "dynamic" },
+          containerHooks,
+          resolutionPath,
+          resolutionStack,
+        );
+      }
+      // Compiled plans only run at the top level — inner levels keep the runtime cycle guard.
+      if (binding.kind === "class" && resolutionPath.length === 0) {
+        const plan = this.#getClassPlan(binding);
+        if (plan !== null) {
+          return plan() as Value;
+        }
+      }
+    } else if (scope === "singleton") {
+      const cachedSingleton = owner.#scope.peekSingleton(binding.id);
+      if (cachedSingleton !== SINGLETON_MISS) {
+        return cachedSingleton as Value;
+      }
+      if (owner !== this) {
+        return owner.#resolveBinding(binding as Binding<Value>, undefined, resolutionPath, resolutionStack);
+      }
+    } else {
+      if (!this.#scope.isChild) {
+        throw new MissingScopeContextError(this.#getTokenName(binding.token));
+      }
+      if (this.#scope.hasScoped(binding.id)) {
+        return this.#scope.getScoped<Value>(binding.id);
+      }
+    }
+    return this.#resolveBinding(binding as Binding<Value>, undefined, resolutionPath, resolutionStack);
+  }
+
+  // Lean lane for an activated transient dynamic binding: same observable behavior as the
+  // generic #resolveBinding path (guard, frame, ctx, per-binding then container hooks) with
+  // the kind/activation dispatch resolved statically.
+  #resolveTransientDynamicActivatedSync<const Value>(
+    binding: Binding<Value> & { kind: "dynamic" },
+    containerHooks: ReadonlyArray<ActivationHandler<unknown>> | undefined,
+    resolutionPath: Array<string>,
+    resolutionStack: Array<ResolutionFrame>,
+  ): Value {
+    const frame = this.#getResolutionFrame(binding);
+    const tokenDisplayName = frame.tokenName;
+    const resolutionSet = enterResolutionPath(resolutionPath, tokenDisplayName, false);
+    resolutionStack.push(frame);
+    try {
+      const resolutionCtx = this.#acquireSyncResolutionContext(resolutionPath, resolutionStack, undefined);
+      const factoryResult = binding.factory(resolutionCtx);
+      if (factoryResult instanceof Promise) {
+        throw new AsyncResolutionError(tokenDisplayName, tokenDisplayName);
+      }
+      let activated = factoryResult;
+      if (binding.onActivation !== undefined) {
+        const activationResult = binding.onActivation(resolutionCtx, activated);
+        if (activationResult instanceof Promise) {
+          throw new AsyncActivationError(tokenDisplayName, "onActivation");
+        }
+        activated = activationResult;
+      }
+      if (containerHooks !== undefined) {
+        for (let index = 0; index < containerHooks.length; index += 1) {
+          const activationResult = containerHooks[index]!(resolutionCtx, activated);
+          if (activationResult instanceof Promise) {
+            throw new AsyncActivationError(tokenDisplayName, "onActivation");
+          }
+          activated = activationResult as Value;
+        }
+      }
+      return activated;
+    } finally {
+      resolutionStack.pop();
+      resolutionPath.pop();
+      resolutionSet?.delete(tokenDisplayName);
+    }
+  }
+
+  #chainRegistryVersion(): number {
+    let version = this.#registry.version;
+    for (let resolver = this.#parent; resolver !== undefined; resolver = resolver.#parent) {
+      version += resolver.#registry.version;
+    }
+    return version;
+  }
+
+  #lookupDefaultEntry(token: Token<unknown> | Constructor): DefaultLookupEntry | null {
+    const version = this.#chainRegistryVersion();
+    if (version !== this.#defaultLookupVersion) {
+      this.#defaultLookupByToken.clear();
+      this.#defaultLookupVersion = version;
+    }
+    let entry = this.#defaultLookupByToken.get(token);
+    if (entry === undefined) {
+      entry = this.#computeDefaultEntry(token);
+      this.#defaultLookupByToken.set(token, entry);
+    }
+    return entry;
+  }
+
+  #computeDefaultEntry(token: Token<unknown> | Constructor): DefaultLookupEntry | null {
+    let current = token;
+    for (let hop = 0; hop < ALIAS_HOP_LIMIT; hop += 1) {
+      const entry = this.#findDefaultEntryInChain(current);
+      if (entry === null) {
+        return null;
+      }
+      if (entry.binding.kind === "alias") {
+        current = entry.binding.target;
+        continue;
+      }
+      return entry;
+    }
+    return null;
+  }
+
+  #findDefaultEntryInChain(token: Token<unknown> | Constructor): DefaultLookupEntry | null {
+    const fast = this.#registry.getFastDefault(token);
+    if (fast !== undefined) {
+      return { binding: fast, owner: this };
+    }
+    // A level with non-fast bindings (multi-slot / predicate) needs full selection — bail.
+    if (this.#registry.has(token)) {
+      return null;
+    }
+    return this.#parent === undefined ? null : this.#parent.#findDefaultEntryInChain(token);
+  }
+
+  #getClassPlan(binding: Binding & { kind: "class" }): (() => unknown) | null {
+    const registryVersion = this.#chainRegistryVersion();
+    const activationVersion = this.#lifecycle.activationVersion;
+    if (registryVersion !== this.#classPlanRegistryVersion || activationVersion !== this.#classPlanActivationVersion) {
+      this.#classPlanByBindingId.clear();
+      this.#classPlanRegistryVersion = registryVersion;
+      this.#classPlanActivationVersion = activationVersion;
+    }
+    const cached = this.#classPlanByBindingId.get(binding.id);
+    if (cached !== undefined) {
+      return cached;
+    }
+    const compiled = this.#compileClassPlan(binding, new Set<BindingIdentifier>(), 0);
+    if (compiled === PLAN_RETRY) {
+      // Lifecycle metadata not discovered yet — the fallback resolve discovers it; retry then.
+      return null;
+    }
+    this.#classPlanByBindingId.set(binding.id, compiled);
+    return compiled;
+  }
+
+  #compileClassPlan(
+    binding: Binding & { kind: "class" },
+    compileStack: Set<BindingIdentifier>,
+    depth: number,
+  ): ClassPlanCompileResult {
+    if (depth > PLAN_DEPTH_LIMIT || compileStack.has(binding.id)) {
+      return null;
+    }
+    if (binding.onActivation !== undefined || this.#lifecycle.hasActivationHandlers(binding.token)) {
+      return null;
+    }
+    const target = binding.target;
+    const hasPostConstruct = this.#classHasPostConstruct.get(target);
+    if (hasPostConstruct === undefined) {
+      return PLAN_RETRY;
+    }
+    if (hasPostConstruct) {
+      return null;
+    }
+    let needsActiveContainer = this.#classNeedsActiveContainer.get(target);
+    if (needsActiveContainer === undefined) {
+      const accessorMetadata = this.#metadataReader.getAccessorMetadata?.(target);
+      needsActiveContainer = (accessorMetadata?.length ?? 0) > 0;
+      this.#classNeedsActiveContainer.set(target, needsActiveContainer);
+    }
+    if (needsActiveContainer) {
+      return null;
+    }
+    const invokable = target as ConstructorInvocation;
+    const meta = this.#getConstructorMetadata(target);
+    if (meta === undefined) {
+      // Metadata-less classes with required params throw on the runtime path — keep them there.
+      return target.length === 0 ? () => new invokable() : null;
+    }
+    const params = meta.params;
+    if (params.length === 0) {
+      return () => new invokable();
+    }
+    const depThunks = new Array<() => unknown>(params.length);
+    compileStack.add(binding.id);
+    try {
+      for (let index = 0; index < params.length; index += 1) {
+        const param = params[index]!;
+        if (param.multi || param.optional || injectionSlotToResolveOptions(param) !== undefined) {
+          return null;
+        }
+        const entry = this.#lookupDefaultEntry(param.token);
+        if (entry === null) {
+          return null;
+        }
+        const thunk = this.#compileDepThunk(entry, compileStack, depth);
+        if (thunk === null || thunk === PLAN_RETRY) {
+          return thunk;
+        }
+        depThunks[index] = thunk;
+      }
+    } finally {
+      compileStack.delete(binding.id);
+    }
+    switch (depThunks.length) {
+      case 1: {
+        const dep0 = depThunks[0]!;
+        return () => new invokable(dep0());
+      }
+      case 2: {
+        const dep0 = depThunks[0]!;
+        const dep1 = depThunks[1]!;
+        return () => new invokable(dep0(), dep1());
+      }
+      case 3: {
+        const dep0 = depThunks[0]!;
+        const dep1 = depThunks[1]!;
+        const dep2 = depThunks[2]!;
+        return () => new invokable(dep0(), dep1(), dep2());
+      }
+      default:
+        return () => new invokable(...depThunks.map((thunk) => thunk()));
+    }
+  }
+
+  #compileDepThunk(
+    entry: DefaultLookupEntry,
+    compileStack: Set<BindingIdentifier>,
+    depth: number,
+  ): ClassPlanCompileResult {
+    const { binding, owner } = entry;
+    if (binding.kind === "constant") {
+      if (binding.onActivation !== undefined || this.#lifecycle.hasActivationHandlers(binding.token)) {
+        return null;
+      }
+      const value = binding.value;
+      return () => value;
+    }
+    const scope = (binding as BindingWithScope).scope ?? "transient";
+    if (scope === "singleton") {
+      // Cached-singleton read with a full-resolve fallback for the first materialization.
+      const ownerScope = owner.#scope;
+      const bindingId = binding.id;
+      const singletonToken = binding.token;
+      return () => {
+        const cachedSingleton = ownerScope.peekSingleton(bindingId);
+        return cachedSingleton === SINGLETON_MISS ? this.resolve(singletonToken, undefined, [], []) : cachedSingleton;
+      };
+    }
+    if (scope === "transient" && binding.kind === "class") {
+      return this.#compileClassPlan(binding as Binding & { kind: "class" }, compileStack, depth + 1);
+    }
+    // Dynamic/resolved/scoped deps keep the runtime path (and its cycle guard).
+    return null;
   }
 
   resolve<const Value>(
@@ -354,7 +640,7 @@ export class DependencyResolver {
     if (
       binding.kind === "constant" &&
       binding.onActivation === undefined &&
-      !this.#lifecycle.hasActivationHandlers(binding.token)
+      (this.#lifecycle.activationVersion === 0 || !this.#lifecycle.hasActivationHandlers(binding.token))
     ) {
       return binding.value;
     }
@@ -628,43 +914,62 @@ export class DependencyResolver {
     resolutionPath: Array<string>,
     resolutionStack: Array<ResolutionFrame>,
   ): Promise<Value> {
+    // Hot lane: own-registry fast default (async chains resolve sibling dynamic bindings).
+    // Fall back to the chain-versioned memo only on miss or alias.
     const fastBinding = this.#registry.getFastDefault(token);
-    if (fastBinding !== undefined) {
-      if (fastBinding.kind === "alias") {
-        return this.resolveAsyncFromContext(
-          fastBinding.target as Token<Value> | Constructor<Value>,
-          resolutionPath,
-          resolutionStack,
-        );
-      }
-      const scope = (fastBinding as BindingWithScope).scope ?? "transient";
+    if (fastBinding !== undefined && fastBinding.kind !== "alias") {
+      return this.#resolveAsyncDefaultEntry<Value>(fastBinding, this, resolutionPath, resolutionStack);
+    }
+    const entry = this.#lookupDefaultEntry(token);
+    if (entry === null) {
+      return this.resolveAsync(token, undefined, resolutionPath, resolutionStack);
+    }
+    return this.#resolveAsyncDefaultEntry<Value>(entry.binding, entry.owner, resolutionPath, resolutionStack);
+  }
+
+  #resolveAsyncDefaultEntry<const Value>(
+    binding: Binding,
+    owner: DependencyResolver,
+    resolutionPath: Array<string>,
+    resolutionStack: Array<ResolutionFrame>,
+  ): Promise<Value> {
+    if (
+      binding.kind === "constant" &&
+      binding.onActivation === undefined &&
+      (this.#lifecycle.activationVersion === 0 || !this.#lifecycle.hasActivationHandlers(binding.token))
+    ) {
+      return Promise.resolve(binding.value as Value);
+    }
+    const scope = (binding as BindingWithScope).scope ?? "transient";
+    if (scope === "transient") {
       if (
-        scope === "transient" &&
-        (fastBinding.kind === "dynamic" || fastBinding.kind === "dynamic-async") &&
-        fastBinding.onActivation === undefined &&
-        (this.#lifecycle.activationVersion === 0 || !this.#lifecycle.hasActivationHandlers(fastBinding.token))
+        (binding.kind === "dynamic" || binding.kind === "dynamic-async") &&
+        binding.onActivation === undefined &&
+        (this.#lifecycle.activationVersion === 0 || !this.#lifecycle.hasActivationHandlers(binding.token))
       ) {
         return this.#resolveTransientDynamicAsyncFromContext(
-          fastBinding as Binding<Value> & { kind: "dynamic" | "dynamic-async" },
+          binding as Binding<Value> & { kind: "dynamic" | "dynamic-async" },
           resolutionPath,
           resolutionStack,
         );
       }
-      if (scope === "singleton" && this.#scope.hasSingleton(fastBinding.id)) {
-        return Promise.resolve(this.#scope.getSingleton<Value>(fastBinding.id));
+    } else if (scope === "singleton") {
+      const cachedSingleton = owner.#scope.peekSingleton(binding.id);
+      if (cachedSingleton !== SINGLETON_MISS) {
+        return Promise.resolve(cachedSingleton as Value);
       }
-      if (scope === "scoped") {
-        if (!this.#scope.isChild) {
-          return Promise.reject(new MissingScopeContextError(this.#getTokenName(fastBinding.token)));
-        }
-        if (this.#scope.hasScoped(fastBinding.id)) {
-          return Promise.resolve(this.#scope.getScoped<Value>(fastBinding.id));
-        }
+      if (owner !== this) {
+        return owner.#resolveBindingAsync(binding as Binding<Value>, undefined, resolutionPath, resolutionStack);
       }
-      return this.#resolveBindingAsync(fastBinding as Binding<Value>, undefined, resolutionPath, resolutionStack);
+    } else {
+      if (!this.#scope.isChild) {
+        return Promise.reject(new MissingScopeContextError(this.#getTokenName(binding.token)));
+      }
+      if (this.#scope.hasScoped(binding.id)) {
+        return Promise.resolve(this.#scope.getScoped<Value>(binding.id));
+      }
     }
-
-    return this.resolveAsync(token, undefined, resolutionPath, resolutionStack);
+    return this.#resolveBindingAsync(binding as Binding<Value>, undefined, resolutionPath, resolutionStack);
   }
 
   async resolveAsync<const Value>(

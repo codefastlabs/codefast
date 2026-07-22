@@ -7,6 +7,8 @@ import type { BindingIdentifier, Constructor, DependencyKey } from "#/types";
  * @since 0.3.16-canary.0
  */
 export class BindingRegistry {
+  // Monotonic mutation counter — lets resolvers version-stamp lookup caches across a container chain.
+  #version = 0;
   // Map from token key -> array of bindings (order matters for last-wins)
   readonly #bindings = new Map<DependencyKey, Array<Binding>>();
   // Fast lookup by binding ID
@@ -18,8 +20,14 @@ export class BindingRegistry {
   // Fast lookup for slot { name: undefined, tags: [[key, value]] } with no predicate
   readonly #simpleTagged = new Map<DependencyKey, Map<string, Map<unknown, Binding>>>();
 
+  /** Monotonic version — increments on every mutation. */
+  get version(): number {
+    return this.#version;
+  }
+
   /** Add or replace binding using slot-aware last-wins. */
   add(binding: Binding): void {
+    this.#version += 1;
     const key = binding.token as DependencyKey;
     // ✓ TS6.0: Map.getOrInsert (ES2025) replaces the manual get+check+set upsert
     const bindingsForToken = this.#bindings.getOrInsert(key, []);
@@ -45,6 +53,7 @@ export class BindingRegistry {
 
   /** Remove all bindings for a token. Returns removed bindings. */
   removeByToken(token: Token<unknown> | Constructor): Array<Binding> {
+    this.#version += 1;
     const key = token as DependencyKey;
     const bindingsForToken = this.#bindings.get(key) ?? [];
     this.#bindings.delete(key);
@@ -63,6 +72,7 @@ export class BindingRegistry {
     if (binding === undefined) {
       return undefined;
     }
+    this.#version += 1;
     this.#byId.delete(id);
     const key = binding.token as DependencyKey;
     const bindingsForToken = this.#bindings.get(key);
@@ -113,6 +123,7 @@ export class BindingRegistry {
 
   /** Remove all bindings. Returns all removed. */
   clear(): ReadonlyArray<Binding> {
+    this.#version += 1;
     const all = this.allBindings();
     this.#bindings.clear();
     this.#byId.clear();
