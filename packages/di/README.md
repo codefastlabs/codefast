@@ -12,7 +12,7 @@ Lightweight, type-safe dependency injection for modern TypeScript — built on T
 - **Modules.** Bundle bindings into reusable units; load, unload, and compose them across containers.
 - **Async-aware.** Async factories, deduped async singleton construction, and `await using` disposal.
 
-> Currently published as `1.0.0-canary.x` pre-releases on the way to a stable 1.0.
+> Currently published as `0.x` canary pre-releases on the way to a stable 1.0 — breaking changes on 0.x ship as minor versions.
 
 ## Requirements
 
@@ -128,7 +128,7 @@ container.resolve(LoggerToken, { name: "file" });
 container.resolve(StorageToken, { tag: ["provider", "s3"] });
 ```
 
-For graph-aware selection, pass a predicate to `.when(...)` — helpers like `whenParentIs`, `whenAnyAncestorNamed`, and `whenParentTagged` ship in `@codefast/di/constraints`.
+For graph-aware selection, pass a predicate to `.when(...)` — helpers like `whenParentIs`, `whenAnyAncestorNamed`, and `whenParentTagged` ship from the root entry (`import { whenParentIs } from "@codefast/di"`).
 
 ## Decorators
 
@@ -236,7 +236,12 @@ Every error extends `DiError` and carries a stable `code` — `TokenNotBoundErro
 
 ## Subpath exports
 
-The root entry re-exports the full public API. Every internal area is also published as a tree-shakeable subpath — `@codefast/di/container`, `@codefast/di/token`, `@codefast/di/module`, `@codefast/di/constraints`, `@codefast/di/errors`, and graph adapters under `@codefast/di/graph-adapters/*` (DOT, Cytoscape, React Flow) for visualizing `container.generateDependencyGraph()` output.
+The root entry re-exports the full public API — prefer it (`import { Container, token, toReactFlowGraph } from "@codefast/di"`). Every module is also published as a tree-shakeable subpath mirroring the source layout:
+
+- **Model** at the top level — `@codefast/di/token`, `/types`, `/binding`, `/registry`, `/errors`, `/module`
+- **Runtime** under `/container/*` and `/resolution/*` — e.g. `@codefast/di/resolution/constraints`
+- **Introspection** under `/introspection/*` — the inspector, `dependency-graph`, and the graph adapters (`@codefast/di/introspection/graph-adapters/{dot,cytoscape,reactflow}`) for visualizing `container.generateDependencyGraph()` output
+- **Decorators & metadata** under `/decorators/*` and `/metadata/*`
 
 ## Benchmarks
 

@@ -116,6 +116,10 @@ Audit every public API you add or touch (exported function/type/prop/option/conf
 | `apps/ui`                    | Docs/showcase site for `@codefast/ui` (TanStack Start); consumes `packages/*` via `workspace:*`        |
 | `examples/tanstack-start`    | Consumer smoke-test: installs the **published** `@codefast/*` from npm (via catalog) on TanStack Start |
 
+### `packages/di` layout
+
+`src/` groups by subsystem: the **model** at the root (`token`, `types`, `constructor-type`, `binding`, `registry`, `errors`, `module`), **`container/`** (container + the fluent binding builders), **`resolution/`** (resolver, resolution-path cycle guard, scope, lifecycle, environment, resolve-options, binding selection, constraints — the perf-critical core; the resolver is deliberately one class because `#` private fields can't span files), **`introspection/`** (inspector, dependency graph, graph adapters), plus `decorators/` and `metadata/`. Tests mirror these paths (`tests/unit/resolution/…`). `package.json#exports` is generated from `dist/` by `codefast mirror` — rerun it after moving/adding modules. The resolution hot paths carry perf-tuned idioms (chain-versioned lookup memos, compiled class plans, a uniform binding hidden class normalized in `registry.add`) — verify changes there against `benchmarks/di-inversify` (`pnpm bench:isolate` for order-independent numbers) before assuming a refactor is free.
+
 ## UI/component conventions (apps/ui and packages/ui)
 
 These are project rules the linters do not fully enforce:
