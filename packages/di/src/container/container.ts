@@ -1,4 +1,5 @@
 import type { Binding, BindToBuilder } from "#/binding";
+import { bindingSlotEquals } from "#/binding";
 import { BindingEntry } from "#/container/binding-builders";
 import type { AutoRegisterRegistry } from "#/decorators/injectable";
 import {
@@ -36,6 +37,17 @@ import type {
   DeactivationHandler,
   ResolveOptions,
 } from "#/types";
+
+// True when re-adding `restored` would immediately be displaced again by `current`
+// (both slot-based with equal slots) — in that case the replacement was legitimate.
+function displacesRestoredBinding(current: Binding, restored: Binding): boolean {
+  const currentIsPurePredicate =
+    current.predicate !== undefined && current.slot.name === undefined && current.slot.tags.length === 0;
+  if (currentIsPurePredicate) {
+    return false;
+  }
+  return bindingSlotEquals(current.slot, restored.slot);
+}
 
 // ── Container interface ────────────────────────────────────────────────────────
 
@@ -169,6 +181,9 @@ class DefaultContainer implements Container {
     moduleRef?: object,
   ): BindToBuilder<Value> {
     const registry = this.#registry;
+    // Binding displaced by this fluent chain's most recent commit — restorable
+    // until a re-commit settles on a shape that genuinely conflicts with it.
+    let displacedByChain: Binding | undefined;
 
     const commitBinding = <BindingValue>(
       binding: Binding<BindingValue>,
@@ -187,7 +202,21 @@ class DefaultContainer implements Container {
         }
       }
       // The registry stores value-erased bindings — this is the single erasure point for the builder chain.
-      registry.add(binding as Binding);
+      const displaced = registry.add(binding as Binding);
+      if (displaced !== undefined) {
+        // A fluent chain commits eagerly on each refinement, so an intermediate
+        // default-slot commit can displace a pre-existing binding that the final
+        // shape would never conflict with. Remember it so a later re-commit that
+        // morphs away (named/tagged slot, pure predicate) can restore it.
+        displacedByChain = displaced;
+      } else if (
+        displacedByChain !== undefined &&
+        previousId !== undefined &&
+        !displacesRestoredBinding(binding as Binding, displacedByChain)
+      ) {
+        registry.add(displacedByChain);
+        displacedByChain = undefined;
+      }
       if (moduleRef !== undefined) {
         let ids = this.#moduleBindingIds.get(moduleRef);
         if (ids === undefined) {

@@ -61,8 +61,8 @@ export class BindingRegistry {
     return this.#version;
   }
 
-  /** Add or replace binding using slot-aware last-wins. */
-  add(uncommittedBinding: Binding): void {
+  /** Add or replace binding using slot-aware last-wins. Returns the displaced binding, if any. */
+  add(uncommittedBinding: Binding): Binding | undefined {
     this.#version += 1;
     const binding = normalizeBindingShape(uncommittedBinding);
     const key = binding.token as DependencyKey;
@@ -70,14 +70,17 @@ export class BindingRegistry {
     const bindingsForToken = this.#bindings.getOrInsert(key, []);
 
     // Only apply last-wins for slot-based bindings (not predicate-only)
+    let displacedBinding: Binding | undefined;
     if (!this.#isPurePredicateBinding(binding)) {
       const existingIndex = bindingsForToken.findIndex(
         (candidate) => !this.#isPurePredicateBinding(candidate) && bindingSlotEquals(candidate.slot, binding.slot),
       );
       if (existingIndex !== -1) {
-        const replacedBinding = bindingsForToken[existingIndex]!;
-        this.#byId.delete(replacedBinding.id);
+        displacedBinding = bindingsForToken[existingIndex]!;
+        this.#byId.delete(displacedBinding.id);
         bindingsForToken.splice(existingIndex, 1);
+        this.#deindexSimpleNamedBinding(key, displacedBinding);
+        this.#deindexSimpleTaggedBinding(key, displacedBinding);
       }
     }
 
@@ -86,6 +89,7 @@ export class BindingRegistry {
     this.#indexSimpleNamedBinding(key, binding);
     this.#indexSimpleTaggedBinding(key, binding);
     this.#refreshFastDefaultForToken(key);
+    return displacedBinding;
   }
 
   /** Remove all bindings for a token. Returns removed bindings. */
