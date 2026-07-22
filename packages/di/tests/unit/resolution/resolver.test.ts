@@ -6,7 +6,7 @@
  */
 import { describe, expect, it } from "vitest";
 
-import { Container } from "#/container";
+import { Container } from "#/container/container";
 import { injectAll, optional } from "#/decorators/inject";
 import { injectable } from "#/decorators/injectable";
 import { postConstruct } from "#/decorators/lifecycle-decorators";

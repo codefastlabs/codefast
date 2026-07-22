@@ -1,7 +1,7 @@
 import { expectTypeOf } from "expect-type";
 import { describe, it } from "vitest";
 
-import { Container } from "#/container";
+import { Container } from "#/container/container";
 import { inject, injectAll, normalizeToDescriptor, optional } from "#/decorators/inject";
 import type { InjectionDescriptor } from "#/decorators/inject";
 import { token } from "#/token";

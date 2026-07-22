@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { Container } from "#/container";
+import { Container } from "#/container/container";
 import { injectable } from "#/decorators/injectable";
 import { AsyncModuleLoadError, CircularDependencyError, ScopeViolationError } from "#/errors";
 import { Module } from "#/module";

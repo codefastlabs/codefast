@@ -1,8 +1,8 @@
 import type { Binding } from "#/binding";
-import { effectiveBindingScope } from "#/binding-scope";
-import { selectBinding } from "#/binding-select";
 import type { BindingRegistry } from "#/registry";
-import type { ScopeManager } from "#/scope";
+import { effectiveBindingScope } from "#/resolution/binding-scope";
+import { selectBinding } from "#/resolution/binding-select";
+import type { ScopeManager } from "#/resolution/scope";
 import type { Token } from "#/token";
 import { tokenName } from "#/token";
 import type {

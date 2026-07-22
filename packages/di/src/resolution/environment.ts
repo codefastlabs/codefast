@@ -1,4 +1,4 @@
-import type { Container } from "#/container";
+import type { Container } from "#/container/container";
 import type { Token } from "#/token";
 import type {
   BindingIdentifier,

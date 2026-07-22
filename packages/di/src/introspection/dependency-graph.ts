@@ -1,6 +1,6 @@
-import { effectiveBindingScope } from "#/binding-scope";
 import type { MetadataReader } from "#/metadata/metadata-types";
 import type { BindingRegistry } from "#/registry";
+import { effectiveBindingScope } from "#/resolution/binding-scope";
 import { tokenName } from "#/token";
 import type { BindingScope, Constructor } from "#/types";
 

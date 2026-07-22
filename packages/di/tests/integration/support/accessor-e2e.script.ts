@@ -7,7 +7,7 @@
  * that can arise when `context.access.set(this, …)` crosses a module boundary inside a
  * single Vitest worker.
  */
-import { Container } from "#/container";
+import { Container } from "#/container/container";
 import { inject } from "#/decorators/inject";
 import { injectable } from "#/decorators/injectable";
 import { postConstruct } from "#/decorators/lifecycle-decorators";

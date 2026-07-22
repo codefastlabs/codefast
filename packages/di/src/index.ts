@@ -33,17 +33,17 @@ export type {
 } from "#/binding";
 
 // Container
-export { Container } from "#/container";
-export type { Container as ContainerInterface, ContainerStatic } from "#/container";
+export { Container } from "#/container/container";
+export type { Container as ContainerInterface, ContainerStatic } from "#/container/container";
 
-export { effectiveBindingScope } from "#/binding-scope";
-export { injectionSlotToResolveOptions, bindingSlotToResolveOptions } from "#/resolve-options";
+export { effectiveBindingScope } from "#/resolution/binding-scope";
+export { injectionSlotToResolveOptions, bindingSlotToResolveOptions } from "#/resolution/resolve-options";
 
 // Introspection types
-export type { BindingSnapshot, ContainerSnapshot } from "#/inspector";
+export type { BindingSnapshot, ContainerSnapshot } from "#/introspection/inspector";
 
 // Graph types
-export type { ContainerGraphJson, GraphEdge, GraphNode, GraphOptions } from "#/dependency-graph";
+export type { ContainerGraphJson, GraphEdge, GraphNode, GraphOptions } from "#/introspection/dependency-graph";
 
 // Module
 export { AsyncModule, isSyncModule, Module, SyncModule } from "#/module";
@@ -76,7 +76,7 @@ export {
   whenParentNamed,
   whenParentTagged,
   whenParentTaggedAll,
-} from "#/constraints";
+} from "#/resolution/constraints";
 
 // Errors
 export {

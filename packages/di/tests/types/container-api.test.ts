@@ -1,7 +1,7 @@
 import { expectTypeOf } from "expect-type";
 import { describe, expect, it } from "vitest";
 
-import { Container } from "#/container";
+import { Container } from "#/container/container";
 import { token } from "#/token";
 import type { BindingScope, ResolutionContext } from "#/types";
 

@@ -21,8 +21,11 @@
  * the contrast with its siblings is clear.
  */
 
-import { Container, inject, injectable, token } from "@codefast/di";
 import {
+  Container,
+  inject,
+  injectable,
+  token,
   whenAnyAncestorIs,
   whenAnyAncestorTagged,
   whenAnyAncestorTaggedAll,
@@ -32,7 +35,7 @@ import {
   whenParentNamed,
   whenParentTagged,
   whenParentTaggedAll,
-} from "@codefast/di/constraints";
+} from "@codefast/di";
 
 // ── Shared logger interface ───────────────────────────────────────────────────
 

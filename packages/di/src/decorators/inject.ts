@@ -1,7 +1,7 @@
-import { getActiveContainer } from "#/environment";
 import { InternalError, MissingContainerContextError } from "#/errors";
 import { INJECT_ACCESSOR_KEY } from "#/metadata/metadata-keys";
-import { injectionSlotToResolveOptions } from "#/resolve-options";
+import { getActiveContainer } from "#/resolution/environment";
+import { injectionSlotToResolveOptions } from "#/resolution/resolve-options";
 import type { Token } from "#/token";
 import type { BindingTag, Constructor } from "#/types";
 

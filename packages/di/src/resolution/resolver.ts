@@ -1,10 +1,7 @@
 import type { Binding, BindingSlot } from "#/binding";
-import { selectAllBindings, selectBinding } from "#/binding-select";
 import type { ConstructorInvocation } from "#/constructor-type";
-import type { Container } from "#/container";
+import type { Container } from "#/container/container";
 import type { InjectionDescriptor } from "#/decorators/inject";
-import type { ResolverCallbacks } from "#/environment";
-import { buildResolutionFrame, DefaultResolutionContext, runWithContainer } from "#/environment";
 import {
   AsyncActivationError,
   AsyncResolutionError,
@@ -15,12 +12,16 @@ import {
   NoMatchingBindingError,
   TokenNotBoundError,
 } from "#/errors";
-import type { LifecycleManager } from "#/lifecycle";
 import type { ConstructorMetadata, MetadataReader } from "#/metadata/metadata-types";
 import type { BindingRegistry } from "#/registry";
-import { injectionSlotToResolveOptions } from "#/resolve-options";
-import type { ScopeManager } from "#/scope";
-import { SINGLETON_MISS } from "#/scope";
+import { selectAllBindings, selectBinding } from "#/resolution/binding-select";
+import type { ResolverCallbacks } from "#/resolution/environment";
+import { buildResolutionFrame, DefaultResolutionContext, runWithContainer } from "#/resolution/environment";
+import type { LifecycleManager } from "#/resolution/lifecycle";
+import { enterResolutionPath, RESOLUTION_SET_THRESHOLD } from "#/resolution/resolution-path";
+import { injectionSlotToResolveOptions } from "#/resolution/resolve-options";
+import type { ScopeManager } from "#/resolution/scope";
+import { SINGLETON_MISS } from "#/resolution/scope";
 import type { Token } from "#/token";
 import { tokenName } from "#/token";
 import type {
@@ -34,42 +35,6 @@ import type {
   ResolveOptions,
 } from "#/types";
 
-type BindingWithScope = Binding & { scope: BindingScope };
-const RESOLUTION_SET_KEY: unique symbol = Symbol("di:resolution-set");
-const RESOLUTION_SET_THRESHOLD = 32;
-type ResolutionPathWithSet = Array<string> & { [RESOLUTION_SET_KEY]?: Set<string> };
-
-/**
- * Shared cycle guard for every transient resolution path: attaches the O(1) membership
- * Set to the path array (lazily past RESOLUTION_SET_THRESHOLD, eagerly when `forceSet`),
- * throws on a repeated token, then marks the token on both structures.
- *
- * Callers unmark with `resolutionPath.pop()` + `set?.delete(name)` on unwind.
- */
-function enterResolutionPath(resolutionPath: Array<string>, tokenDisplayName: string, forceSet: true): Set<string>;
-function enterResolutionPath(
-  resolutionPath: Array<string>,
-  tokenDisplayName: string,
-  forceSet: boolean,
-): Set<string> | undefined;
-function enterResolutionPath(
-  resolutionPath: Array<string>,
-  tokenDisplayName: string,
-  forceSet: boolean,
-): Set<string> | undefined {
-  const pathWithSet = resolutionPath as ResolutionPathWithSet;
-  let resolutionSet = pathWithSet[RESOLUTION_SET_KEY];
-  if (resolutionSet === undefined && (forceSet || resolutionPath.length >= RESOLUTION_SET_THRESHOLD)) {
-    resolutionSet = new Set<string>(resolutionPath);
-    pathWithSet[RESOLUTION_SET_KEY] = resolutionSet;
-  }
-  if (resolutionSet === undefined ? resolutionPath.includes(tokenDisplayName) : resolutionSet.has(tokenDisplayName)) {
-    throw new CircularDependencyError([...resolutionPath, tokenDisplayName]);
-  }
-  resolutionPath.push(tokenDisplayName);
-  resolutionSet?.add(tokenDisplayName);
-  return resolutionSet;
-}
 // Terminal result of the options-less lookup fast lane — alias hops already folded.
 interface DefaultLookupEntry {
   readonly binding: Binding;
@@ -83,6 +48,7 @@ type ClassPlanCompileResult = (() => unknown) | null | typeof PLAN_RETRY;
 const ALIAS_HOP_LIMIT = 32;
 const PLAN_DEPTH_LIMIT = 32;
 
+type BindingWithScope = Binding & { scope: BindingScope };
 const EMPTY_STRING_LIST: ReadonlyArray<string> = [];
 const EMPTY_FRAME_LIST: ReadonlyArray<ResolutionFrame> = [];
 const ROOT_CONSTRAINT_CONTEXT = {

@@ -1,4 +1,4 @@
-import type { ContainerGraphJson } from "#/dependency-graph";
+import type { ContainerGraphJson } from "#/introspection/dependency-graph";
 
 /**
  * @since 0.3.16-canary.0

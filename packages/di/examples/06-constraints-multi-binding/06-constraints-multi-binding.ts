@@ -8,8 +8,7 @@
  * - Collect all bindings with resolveAll
  */
 
-import { Container, inject, injectable, token } from "@codefast/di";
-import { whenParentIs } from "@codefast/di/constraints";
+import { Container, inject, injectable, token, whenParentIs } from "@codefast/di";
 
 // --- Tokens -----------------------------------------------------------------
 
