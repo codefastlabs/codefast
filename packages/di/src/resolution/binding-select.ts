@@ -21,9 +21,22 @@ export function selectBinding(
   if (candidates.length === 1) {
     return candidates[0];
   }
-  // Multiple candidates — check if any is unambiguous (slot-based selection)
-  // Slot-based bindings already have last-wins applied in registry, so
-  // multiple candidates here means ambiguous predicate-only bindings
+  // Most specific wins: a single matching predicate-carrying candidate beats
+  // predicate-less ones (a predicate is a deliberate specialization of the
+  // default). Two matching predicates are genuinely ambiguous.
+  let predicatedCandidate: Binding | undefined;
+  for (const candidate of candidates) {
+    if (candidate.predicate !== undefined) {
+      if (predicatedCandidate !== undefined) {
+        predicatedCandidate = undefined;
+        break;
+      }
+      predicatedCandidate = candidate;
+    }
+  }
+  if (predicatedCandidate !== undefined) {
+    return predicatedCandidate;
+  }
   throw new AmbiguousBindingError(
     tokenDisplayName,
     candidates.map((c) => c.id),

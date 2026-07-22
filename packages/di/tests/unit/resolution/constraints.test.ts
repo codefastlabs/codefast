@@ -139,25 +139,39 @@ describe("predicates gate binding selection end-to-end", () => {
     readonly source: string;
   }
 
-  it("a pure-predicate binding is only eligible when its predicate matches", () => {
+  it("a matching predicate binding wins over the default; the default serves everyone else", () => {
     const loggerToken = token<Logger>("logger");
     const apiToken = token<{ logger: Logger }>("api");
     const jobToken = token<{ logger: Logger }>("job");
 
     const container = Container.create();
-    // Predicate binding FIRST: registering it after a default would replace that
-    // default at the builder's eager commit (see the order-sensitivity test below).
+    container.bind(loggerToken).toConstantValue({ source: "default" });
     container
       .bind(loggerToken)
       .toDynamic(() => ({ source: "api" }))
       .when(whenParentIs(apiToken));
-    container.bind(loggerToken).toConstantValue({ source: "default" });
     container.bind(apiToken).toDynamic((ctx) => ({ logger: ctx.resolve(loggerToken) }));
     container.bind(jobToken).toDynamic((ctx) => ({ logger: ctx.resolve(loggerToken) }));
 
-    // job's parent frame does not satisfy the predicate → only the default matches.
+    // Under api, the predicate is the more specific match; everywhere else the default serves.
+    expect(container.resolve(apiToken).logger.source).toBe("api");
     expect(container.resolve(jobToken).logger.source).toBe("default");
     expect(container.resolve(loggerToken).source).toBe("default");
+  });
+
+  it("two matching predicates are genuinely ambiguous", () => {
+    const loggerToken = token<Logger>("logger");
+    const container = Container.create();
+    container
+      .bind(loggerToken)
+      .toDynamic(() => ({ source: "first" }))
+      .when(() => true);
+    container
+      .bind(loggerToken)
+      .toDynamic(() => ({ source: "second" }))
+      .when(() => true);
+
+    expect(() => container.resolve(loggerToken)).toThrow(/without a clear winner/);
   });
 
   it("registration order does not matter: a chain that morphs to pure-predicate restores the displaced default", () => {
