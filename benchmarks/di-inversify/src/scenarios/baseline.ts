@@ -12,6 +12,7 @@ import { batched } from "#/harness/batched";
 import type { AnyScenario, AsyncBenchScenario, BenchScenario } from "#/scenarios/types";
 
 const ASYNC_CHAIN_DEPTH = 8;
+const ASYNC_FANOUT_CONCURRENCY = 8;
 const SYNC_CALL_BATCH = 1000;
 
 function buildBaselineAsyncChainScenario(): AsyncBenchScenario {
@@ -41,6 +42,36 @@ function buildBaselineAsyncChainScenario(): AsyncBenchScenario {
   };
 }
 
+function buildBaselineAsyncFanOutScenario(): AsyncBenchScenario {
+  // Floor for the async-fanout rows: same Promise.all shape and microtask yield, no DI.
+  const fanOutFns = Array.from({ length: ASYNC_FANOUT_CONCURRENCY }, (_value, index) => async () => {
+    await Promise.resolve();
+    return index;
+  });
+  const expectedTotal = ((ASYNC_FANOUT_CONCURRENCY - 1) * ASYNC_FANOUT_CONCURRENCY) / 2;
+  const sumAll = async (): Promise<number> => {
+    const values = await Promise.all(fanOutFns.map((fanOutFn) => fanOutFn()));
+    return values.reduce((runningTotal, value) => runningTotal + value, 0);
+  };
+
+  return {
+    id: `baseline-async-fanout-${String(ASYNC_FANOUT_CONCURRENCY)}`,
+    group: "baseline",
+    kind: "async",
+    what: "runtime floor: the same Promise.all microtask fan-out with no DI library involved",
+    batch: 1,
+    sanity: async () => (await sumAll()) === expectedTotal,
+    build: () => {
+      return async () => {
+        const total = await sumAll();
+        if (total !== expectedTotal) {
+          throw new Error(`Expected baseline fan-out total ${String(expectedTotal)}, received ${String(total)}`);
+        }
+      };
+    },
+  };
+}
+
 function buildBaselineSyncCallScenario(): BenchScenario {
   // Floor for the sub-µs sync rows: a plain map lookup + function call, no DI.
   const registry = new Map<string, () => number>([["value", () => 42]]);
@@ -59,5 +90,5 @@ function buildBaselineSyncCallScenario(): BenchScenario {
 }
 
 export function buildBaselineScenarios(): ReadonlyArray<AnyScenario> {
-  return [buildBaselineAsyncChainScenario(), buildBaselineSyncCallScenario()];
+  return [buildBaselineAsyncChainScenario(), buildBaselineAsyncFanOutScenario(), buildBaselineSyncCallScenario()];
 }

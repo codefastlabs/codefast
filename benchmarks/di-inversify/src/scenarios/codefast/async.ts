@@ -5,10 +5,10 @@ import type { AsyncBenchScenario } from "#/scenarios/types";
 const ASYNC_CHAIN_DEPTH = 8;
 const ASYNC_CONCURRENT_FANOUT_COUNTS = [8, 32] as const;
 
-function waitForNextImmediateTick(): Promise<void> {
-  return new Promise((resolve) => {
-    setImmediate(resolve);
-  });
+// Fan-out factories yield via microtask, not setImmediate: a macrotask wait (~15µs on
+// Apple silicon) dwarfs both libraries' machinery and the row degrades into measuring libuv.
+function yieldToMicrotaskQueue(): Promise<void> {
+  return Promise.resolve();
 }
 
 function buildResolveAsyncSingleHopScenario(): AsyncBenchScenario {
@@ -97,7 +97,7 @@ function buildAsyncFanOutConcurrentScenario(
     container
       .bind(dependencyToken)
       .toDynamicAsync(async () => {
-        await waitForNextImmediateTick();
+        await yieldToMicrotaskQueue();
         return index;
       })
       .transient();
@@ -109,7 +109,7 @@ function buildAsyncFanOutConcurrentScenario(
     id: `async-fanout-concurrent-${String(concurrency)}`,
     group: "async",
     kind: "async",
-    what: `resolveAsync ${String(concurrency)} independent async dependencies in parallel via Promise.all`,
+    what: `resolveAsync ${String(concurrency)} independent async dependencies in parallel via Promise.all (microtask-yield factories)`,
     batch: 1,
     sanity: async () => {
       const values = await Promise.all(
