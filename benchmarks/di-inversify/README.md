@@ -45,6 +45,8 @@ This harness keeps scenarios that map to production-shaped usage: micro resolves
 
 Each library's bench runs in its own subprocess so neither side contaminates the other's V8 state. Each subprocess writes a single `SubprocessPayload` JSON to stdout, delimited by `BENCH_RESULT_JSON_START` / `BENCH_RESULT_JSON_END`. The parent reads only between those markers — Node deprecation warnings, tsx banners, or stray `console.log`s never break parsing.
 
+`BENCH_ISOLATE=1` (or `pnpm bench:isolate`) goes one step further: **each scenario** gets its own subprocess per library. In the default shared-process mode every scenario trains the library's hot-path inline caches for the scenarios after it (measured at ~30% throughput on async chains), so row order influences results; isolated mode is order-independent. Shared mode approximates a long-lived app that exercises many binding kinds, isolated mode approximates a short-lived process — cite which mode a number came from.
+
 Environment is pinned: `NODE_ENV=production`, `NODE_OPTIONS` always includes `--no-warnings`. When `BENCH_FULL=1`, the parent subprocess launcher also adds **`--expose-gc`**, which unlocks the strided `beforeEach` GC hook in `@codefast/benchmark-harness` (`createRunAllTrials`) for allocation-heavy scenarios. In default / fast runs, GC is not exposed unless your outer environment already sets it.
 
 ## Running
@@ -58,11 +60,12 @@ pnpm --filter @codefast/benchmark-di-inversify bench
 Or from this package:
 
 ```bash
-pnpm bench                 # full head-to-head
+pnpm bench                 # full head-to-head (shared-process mode)
+pnpm bench:isolate         # full head-to-head, one subprocess per scenario (order-independent)
 pnpm bench:verbose         # full run + forward full child subprocess logs (debug mode)
 pnpm bench:codefast        # codefast subprocess only (prints raw JSON payload)
 pnpm bench:inversify       # inversify subprocess only
-pnpm bench:history         # rebuild HTML history viewer from bench-results JSONL
+pnpm bench:serve           # serve bench-results/ in the benchmark viewer
 pnpm check-types           # type-check each tsconfig variant
 ```
 
@@ -86,14 +89,17 @@ pnpm check-types           # type-check each tsconfig variant
 | `BENCH_FULL`    | `1`            | Slower, publishable profile with GC exposed and longer sampling.                   |
 | `BENCH_TRIALS`  | integer `>= 2` | Overrides trial count; lower/invalid values are rejected and fall back to default. |
 | `BENCH_VERBOSE` | `1`            | Forwards child subprocess stdout/stderr for debugging.                             |
+| `BENCH_ISOLATE` | `1`            | One subprocess per scenario per library — removes cross-scenario IC wear.          |
 
 ### Recommended presets
 
-| Goal                        | Command                                   |
-| --------------------------- | ----------------------------------------- |
-| Local sanity check          | `BENCH_FAST=1 pnpm bench`                 |
-| Debug noisy/failed scenario | `BENCH_FAST=1 BENCH_VERBOSE=1 pnpm bench` |
-| Publishable comparison      | `BENCH_FULL=1 BENCH_TRIALS=3 pnpm bench`  |
+| Goal                           | Command                                   |
+| ------------------------------ | ----------------------------------------- |
+| Local sanity check             | `BENCH_FAST=1 pnpm bench`                 |
+| Debug noisy/failed scenario    | `BENCH_FAST=1 BENCH_VERBOSE=1 pnpm bench` |
+| Publishable comparison         | `BENCH_FULL=1 BENCH_TRIALS=3 pnpm bench`  |
+| Order-independent official run | `pnpm bench:isolate`                      |
+| Quick isolated smoke           | `BENCH_FAST=1 BENCH_ISOLATE=1 pnpm bench` |
 
 Outputs land in `bench-results/<timestamp>/`:
 
@@ -104,7 +110,7 @@ And in `bench-results/`:
 
 - `latest.md`, `latest.jsonl` — mirrors of the most recent run, for stable CI paths.
 
-`pnpm bench:history` reads historical runs and writes `bench-results/history-viewer.html` (open locally; see `src/harness/generate-history-html.ts`).
+`pnpm bench:serve` serves `bench-results/` for the `@codefast/benchmark-viewer` UI (see `src/harness/serve.ts`).
 
 ## Reading the output
 
@@ -117,11 +123,15 @@ realistic-graph-resolve-root realistic          234,567           145,678    1.6
 ...
 ```
 
-Three things to check before drawing conclusions:
+The markdown report opens with a **Head-to-head summary** — win/parity/loss counts over comparable rows (parity band ±3%), the median ratio, loss/parity lists, and the runtime-floor baselines. The console prints the same tally under the table.
+
+Things to check before drawing conclusions:
 
 1. **IQR columns** (markdown version only): if either library's IQR exceeds ~5%, the medians are unstable; re-run on a quieter machine.
 2. **Sanity failures**: any scenario that fails its pre-bench sanity check is skipped and listed under "Sanity failures" at the top of the report. Don't read the absence of a row as "the library can't do it".
 3. **GC exposed**: the fingerprint section should say `gcExposed: true, true`. If it says `false` for either library, the `--expose-gc` flag didn't reach the subprocess and allocation-heavy rows are noisier than they should be.
+4. **Baselines**: the `baseline` group rows run **no DI library at all** — both children execute identical code, so the pair should sit at ~1.00× (it calibrates the two processes) and gives a runtime floor to subtract from same-shape rows. V8's promise machinery dominates sub-µs async rows, so raw ratios there mostly compare the runtime, not the libraries. Baselines are never tallied as wins or losses.
+5. **Mode**: shared-process and isolated (`BENCH_ISOLATE=1`) runs are not comparable to each other — cross-scenario inline-cache wear in shared mode is worth ~30% on async chains.
 
 ## Scenario inventory
 
@@ -133,6 +143,7 @@ Three things to check before drawing conclusions:
 | Fan-out                                 | `fan-out/index.ts` → `tree.ts`, `resolve-all-strategies.ts`                                             | Tree scenario uses `batch=20`; `resolve-all-strategies-{10,100}`, `resolve-all-named-{8,32}` use `batch=1` (counts from `src/fixtures/fan-out-descriptor.ts`). |
 | Production / wiring                     | `production.ts`, `binding-variants.ts`, `resolution-patterns.ts`, `registry-ops.ts`, `module.ts`        | Extra micro-style rows in binding/resolution modules; `registry-ops.ts` mixes `lifecycle`, `introspection`, and `scope` **group** labels per row.              |
 | Introspection & startup (codefast-only) | `initialize-inspect.ts`                                                                                 | `initialize-async-warmup` (**`boot`** group), `inspect-snapshot`, `lookup-bindings` (**`introspection`**). Inversify column shows "—" for these ids.           |
+| Runtime floors (both sides, shared)     | `baseline.ts` (one file, collected by **both** children)                                                | `baseline-async-chain-8`, `baseline-sync-map-call` (**`baseline`** group) — no DI library involved; reported as calibration floors, excluded from the tally.   |
 
 Representative **stable ids** (not exhaustive of every `group` value): `constant-resolve`, `singleton-class-1-dep`, `transient-class-1-dep`, `named-constant-get`, `realistic-graph-resolve-root`, `realistic-graph-cold-resolve`, `fan-out-tree-depth-3-breadth-4`, `resolve-all-strategies-10`, `resolve-all-strategies-100`, `resolve-all-named-8`, `resolve-all-named-32`, `resolve-async-single-hop`, `dynamic-async-chain-8`, `async-fanout-concurrent-8`, `async-fanout-concurrent-32`, `lifecycle-post-construct-singleton`, `lifecycle-pre-destroy-unbind`, `child-depth-2-resolve`, `child-request-lifecycle-create-resolve-dispose`, `scale-deep-transient-chain-512`, `boot-decorated-container-build-and-resolve`, `misconfigured-missing-binding`, `circular-dependency-3`, `ambiguous-multi-binding`, plus production / binding / resolution / registry / module / initialize-inspect ids defined in those modules.
 
@@ -184,14 +195,14 @@ Validation status:
 benchmarks/di-inversify/
   src/
     harness/                         # this package’s bench driver (uses @codefast/benchmark-harness for wire + reports)
-      run.ts                         # parent: rebuild @codefast/di, spawn both subprocesses, write report.md + JSONL + console
-      trial.ts                       # per-subprocess: N trials, tinybench, extract per-scenario stats
-      sanity.ts                      # optional per-scenario sanity hooks
+      run.ts                         # parent: rebuild @codefast/di, spawn subprocesses (shared or BENCH_ISOLATE), write report.md + JSONL + console
+      serve.ts                       # serve bench-results/ for the benchmark viewer
+      presentation.ts                # markdown + console column copy for the two-way report
+      config.ts                      # library names / tsconfig / entry-file wiring
       batched.ts                     # inner-loop helper for sub-μs scenarios (throughput × batch)
-      di-two-way-presentation.ts     # markdown + console column copy for the two-way report
-      generate-history-html.ts       # optional: aggregate bench-results → history-viewer.html
     scenarios/
       types.ts                       # BenchScenario / AsyncBenchScenario / ScenarioGroup
+      baseline.ts                    # library-free runtime floors, collected by BOTH children
       collect-codefast-scenarios.ts  # ordered list of codefast scenario builders
       collect-inversify-scenarios.ts # ordered list of inversify scenario builders (ids must align with codefast)
       codefast/                      # @codefast/di scenario implementations
@@ -228,6 +239,8 @@ benchmarks/di-inversify/
         resolution-patterns.ts
         registry-ops.ts
         module.ts
+        multi-tag-constraint.ts
+        initialize-inspect.ts
         fan-out/
           index.ts
           tree.ts
@@ -247,7 +260,7 @@ benchmarks/di-inversify/
   BENCH_GUIDE.md
 ```
 
-**Shared workspace package:** `@codefast/benchmark-harness` owns the framed stdout protocol (`emitSubprocessPayload` / `extractSubprocessPayload`), fingerprinting, `runBenchSubprocess`, `buildLibraryReport`, markdown + JSONL writers, and the two-way comparison row builder. This benchmark package does **not** ship `protocol.ts` / `report.ts` under `src/harness/`.
+**Shared workspace package:** `@codefast/benchmark-harness` owns the framed stdout protocol (`emitSubprocessPayload` / `extractSubprocessPayload`), fingerprinting, `runBenchSubprocess` + `runBenchSubprocessIsolated`, `buildLibraryReport`, the head-to-head summary (`summarizeTwoWayComparison`), and the markdown + JSONL writers. This benchmark package does **not** ship `protocol.ts` / `report.ts` under `src/harness/`.
 
 **Import boundaries**
 

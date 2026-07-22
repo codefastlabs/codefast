@@ -13,10 +13,10 @@ If you only read one other file, read the **Environment** and **Comparable scena
 ## Mental model: parent → child → tinybench
 
 1. You run `pnpm bench` (see README for variants).
-2. The **parent** (`src/harness/run.ts`) spawns a child for codefast and a child for inversify.
+2. The **parent** (`src/harness/run.ts`) spawns a child for codefast and a child for inversify. With `BENCH_ISOLATE=1` it instead spawns one child **per scenario** per library (a `BENCH_LIST` discovery child first, then `BENCH_ONLY=<id>` workers) and merges the trials back into one payload.
 3. Each **child** runs **N trials** (`BENCH_TRIALS`, default 2 or 3 in full mode). Each trial builds a fresh `Bench`, registers every scenario as a tinybench **task**, runs `bench.run()`, then collects per-task stats.
 4. The child prints **one JSON object** to stdout, framed by `BENCH_RESULT_JSON_START` / `BENCH_RESULT_JSON_END` so stray logs do not break parsing.
-5. The parent **aggregates** trials into medians and IQR (`src/harness/report.ts`) and writes `bench-results/latest.md` and `latest.jsonl`.
+5. The parent **aggregates** trials into medians and IQR (`@codefast/benchmark-harness`, `report/aggregate.ts`) and writes `bench-results/latest.md` and `latest.jsonl` with the head-to-head summary on top.
 
 ## Glossary
 
@@ -71,17 +71,19 @@ Each library runs in the mode it is **meant to ship with** (Stage 3 decorators +
 
 ## Where to look in code
 
-| Topic                                   | Location                                             |
-| --------------------------------------- | ---------------------------------------------------- |
-| Wire format, field definitions          | `src/harness/protocol.ts`                            |
-| Trial loop, tinybench options, GC hooks | `@codefast/benchmark-harness` (`createRunAllTrials`) |
-| Medians, IQR, markdown / JSONL          | `src/harness/report.ts`                              |
-| Spawning children, writing `latest.*`   | `src/harness/run.ts`                                 |
-| Scenario list / types                   | `src/scenarios/types.ts`                             |
-| Shared graphs / fixtures                | `src/fixtures/`                                      |
+| Topic                                        | Location                                                                           |
+| -------------------------------------------- | ---------------------------------------------------------------------------------- |
+| Wire format, field definitions               | `@codefast/benchmark-harness` — `src/shared/protocol.ts`                           |
+| Trial loop, tinybench options, GC hooks      | `@codefast/benchmark-harness` — `src/child/create-run-all-trials.ts`               |
+| Medians, IQR, head-to-head summary, markdown | `@codefast/benchmark-harness` — `src/report/aggregate.ts`, `src/report/two-way.ts` |
+| Spawning children, isolated mode             | `@codefast/benchmark-harness` — `src/parent/run-bench-subprocess.ts`               |
+| This package's parent, writing `latest.*`    | `src/harness/run.ts`                                                               |
+| Scenario list / types                        | `src/scenarios/types.ts` + the two `collect-*-scenarios.ts` files                  |
+| Runtime-floor baselines (both sides)         | `src/scenarios/baseline.ts`                                                        |
+| Shared graphs / fixtures                     | `src/fixtures/`                                                                    |
 
 ## Commands (reminder)
 
-See [README.md](./README.md) for `pnpm bench`, `BENCH_FAST`, `BENCH_FULL`, `BENCH_TRIALS`, `BENCH_VERBOSE`, and output paths.
+See [README.md](./README.md) for `pnpm bench` / `pnpm bench:isolate`, `BENCH_FAST`, `BENCH_FULL`, `BENCH_TRIALS`, `BENCH_VERBOSE`, `BENCH_ISOLATE`, and output paths.
 
 When sharing numbers, paste the **Environment** block and the **Comparable scenarios** table (or the whole `latest.md`) so others can reproduce and judge noise from **IQR** and **fingerprint**.
