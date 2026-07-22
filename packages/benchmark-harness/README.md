@@ -8,14 +8,19 @@ Shared [tinybench](https://github.com/tinylibs/tinybench) harness utilities for 
 
 The package is organized by role in the parent/child subprocess model:
 
-| Area       | Purpose                                                                                             |
-| ---------- | --------------------------------------------------------------------------------------------------- |
-| `shared/*` | Subprocess protocol (payload markers, emit/extract), env keys, and suite configuration types        |
-| `child/*`  | Runs inside each benchmark subprocess: scenario types, trial runners, sanity checks, fingerprinting |
-| `parent/*` | Orchestrates subprocesses from the suite entry: spawning, exit-code resolution                      |
-| `report/*` | Aggregation, quantiles, two-way library comparison, JSONL persistence, and formatted output         |
+| Area       | Purpose                                                                                                                                                    |
+| ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `shared/*` | Subprocess protocol (payload markers, emit/extract, `scenarioIds` discovery), env keys, and suite configuration types                                      |
+| `child/*`  | Runs inside each benchmark subprocess: scenario types, trial runners, sanity checks, fingerprinting, `BENCH_LIST` / `BENCH_ONLY` worker modes              |
+| `parent/*` | Orchestrates subprocesses from the suite entry: `runBenchSubprocess`, `runBenchSubprocessIsolated` (+ `isIsolatedBenchRunRequested`), exit-code resolution |
+| `report/*` | Aggregation, quantiles, the two-way comparison table, the head-to-head summary (`summarizeTwoWayComparison`), JSONL persistence, formatted output          |
 
-Each benchmark scenario runs in its own child process so results are isolated from JIT and GC state accumulated by other scenarios. `collectFingerprint` records the runtime environment (Node version, CPU, library versions) alongside every run so historical results stay comparable.
+Two execution shapes:
+
+- **Shared** (`runBenchSubprocess`): one child per library runs every scenario — approximates a long-lived app, but earlier scenarios train the library's hot-path inline caches for later ones (measured at ~30% on async chains), so rows are order-dependent.
+- **Isolated** (`runBenchSubprocessIsolated`, opt in with `BENCH_ISOLATE=1`): one child **per scenario** per library — a `BENCH_LIST` discovery child reports scenario ids, then `BENCH_ONLY=<id>` workers run one scenario each and the parent merges trials back into a single payload. Order-independent.
+
+Reports open with a **head-to-head summary**: win/parity/loss counts over comparable rows (±3% parity band), the median ratio, and loss/parity lists. Scenarios in the `baseline` group are treated as library-free runtime floors — rendered for calibration, never tallied. `collectFingerprint` records the runtime environment (Node version, CPU, library versions) alongside every run so historical results stay comparable.
 
 ## Usage
 
@@ -26,7 +31,7 @@ pnpm bench         # run the benchmark suites
 pnpm bench:serve   # browse historical results (see @codefast/benchmark-viewer)
 ```
 
-Suite-level knobs are environment-driven: `BENCH_FAST=1` (quick pass), `BENCH_FULL=1` (extended pass), `BENCH_VERBOSE=1`.
+Suite-level knobs are environment-driven: `BENCH_FAST=1` (quick pass), `BENCH_FULL=1` (extended pass), `BENCH_TRIALS=<n>` (trial count, min 2), `BENCH_VERBOSE=1` (forward child logs), `BENCH_ISOLATE=1` (one subprocess per scenario). `BENCH_LIST` / `BENCH_ONLY` are internal child-side keys set by the isolated parent — not meant to be set by hand.
 
 ## License
 
