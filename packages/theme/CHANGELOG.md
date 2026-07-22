@@ -1,5 +1,46 @@
 # @codefast/theme
 
+## 0.5.0-canary.6
+
+### Minor Changes
+
+- [`c634b17`](https://github.com/codefastlabs/codefast/commit/c634b17e6a8d742cbc54e4074408eea51fb55d40) Thanks [@thevuong](https://github.com/thevuong)! - Rename `AppearanceContextType` to `AppearanceContextValue` — the "Type" suffix carried no information (every exported type is a type), while "Value" states the role: the payload provided through `AppearanceContext` and returned by `useAppearance`.
+
+- [#547](https://github.com/codefastlabs/codefast/pull/547) [`c7d6818`](https://github.com/codefastlabs/codefast/commit/c7d68182f875040993c1cec8f34914dc37f5237d) Thanks [@thevuong](https://github.com/thevuong)! - Add a `storageKey` prop to `AppearanceProvider` for a fully client-side color scheme path (no server framework, cookie, or loader). When set, the provider reads the persisted preference from `localStorage` in its initial client render, auto-persists changes there (unless an explicit `persistColorScheme` is given), and syncs across tabs via the `storage` event. Paired with `<AppearanceScript storageKey>` using the same key, the inline script applies the stored value before first paint — so there is **no flash even on statically prerendered / CDN-served pages**, where an httpOnly cookie can't reach the pre-paint script and a post-mount server round-trip would otherwise flip the appearance.
+
+  `AppearanceScript` and `AppearanceProvider` now also mirror the **preference** (`light` / `dark` / `automatic`) to a `data-appearance` attribute on `<html>` — set by the inline script before first paint and kept in sync by the provider. This lets preference-aware UI (e.g. a 3-state theme toggle that shows a distinct "system" icon) render the correct state purely from CSS, with no hydration flash from reading client-only state.
+
+- [#526](https://github.com/codefastlabs/codefast/pull/526) [`fad5a21`](https://github.com/codefastlabs/codefast/commit/fad5a21a8b60d9dafc1efc00addf146608bfbb89) Thanks [@thevuong](https://github.com/thevuong)! - Add the `@codefast/theme/vite` plugin. TanStack Start registers the server functions shipped in `@codefast/theme/start` at the consumer's build time, so the package must not be externalized for SSR nor pre-bundled for the client. The new `codefastTheme()` plugin applies that configuration automatically, so consumers no longer need to hand-write `ssr.noExternal` / `optimizeDeps.exclude`.
+
+### Patch Changes
+
+- [#550](https://github.com/codefastlabs/codefast/pull/550) [`0feb8cd`](https://github.com/codefastlabs/codefast/commit/0feb8cd747cf3831dbba9bc9ed0fb819ec4c9a2b) Thanks [@thevuong](https://github.com/thevuong)! - Rename the public API to follow Apple's Human Interface Guidelines vocabulary: **appearance** is the user's preference (`"light" | "dark" | "automatic"`, like macOS System Settings → Appearance), **color scheme** is the resolved light-or-dark value actually applied (like SwiftUI `ColorScheme` and CSS `color-scheme`). Source files are also flattened so each subpath names what it exports.
+
+  **Breaking renames:**
+
+  - Types: `ColorScheme` → `Appearance`; `ResolvedColorScheme` → `ColorScheme`; `ColorSchemeContextType` → `AppearanceContextType`; `colorSchemeSchema` → `appearanceSchema`; `colorSchemes` → `appearances`.
+  - Hook: `useColorScheme()` → `useAppearance()`, returning `{ appearance, colorScheme, setAppearance, isPending }` (was `{ colorScheme, resolvedColorScheme, setColorScheme, isPending }`).
+  - Provider props: `colorScheme` → `appearance`; `persistColorScheme` → `persistAppearance`. Script prop: `colorScheme` → `appearance`. Context: `ColorSchemeContext` → `AppearanceContext`.
+  - Constants: `DEFAULT_COLOR_SCHEME` → `DEFAULT_APPEARANCE` (`"automatic"`); `DEFAULT_RESOLVED_COLOR_SCHEME` → `DEFAULT_COLOR_SCHEME` (`"dark"`). ⚠️ `DEFAULT_COLOR_SCHEME` still exists but now means the resolved fallback — the prop renames make stale usage a compile error.
+  - Subpaths: `./types` → `./appearance`; `./core/provider` → `./appearance-provider`; `./core/use-theme` → `./use-appearance`; `./core/context` → `./appearance-context`; `./script/theme-script` → `./appearance-script`; `./utils/system` → `./color-scheme`; `./utils/dom` → `./dom`.
+
+  - Persisted values: the default `STORAGE_KEY` is now `"ui-appearance"` (was `"ui-theme"`) — returning visitors fall back to `"automatic"` once. The internal `BroadcastChannel` is now `"appearance-sync"` (was `"color-scheme-sync"`).
+
+  Unchanged: `AppearanceProvider` / `AppearanceScript` component names, the `data-appearance` attribute, `resolveColorScheme()` / `getSystemColorScheme()` / `applyColorScheme()` / `suppressTransitions()`.
+
+- [#549](https://github.com/codefastlabs/codefast/pull/549) [`2d16644`](https://github.com/codefastlabs/codefast/commit/2d16644c22f1ad45bb6803ae086caa40e7323576) Thanks [@thevuong](https://github.com/thevuong)! - Remove all server-side handling — the color scheme preference now lives entirely on the client in `localStorage`.
+
+  **Breaking:**
+
+  - Removed `@codefast/theme/start`, `@codefast/theme/vite`, and `@codefast/theme/adapters/tanstack-start/server` — the TanStack Start server functions, httpOnly cookie persistence, and the Vite plugin that wired them into consumer builds.
+  - Removed `AppearanceProvider`'s `ssrColorScheme` and `syncFromServer` props; the provider also no longer re-syncs from a changed `colorScheme` prop after mount (it is a static fallback now).
+  - `resolveColorScheme()` no longer takes an `ssrColorScheme` argument; on the server, `"automatic"` resolves to `DEFAULT_RESOLVED_COLOR_SCHEME`.
+  - Dropped the optional `@tanstack/react-start` and `vite` peer dependencies.
+
+  **Changed defaults:** `storageKey` now defaults to `STORAGE_KEY` (`"ui-appearance"`) and `colorScheme` to `DEFAULT_COLOR_SCHEME` (`"automatic"`) on both `AppearanceScript` and `AppearanceProvider`, so `<AppearanceScript />` + `<AppearanceProvider>` work with zero configuration. `persistColorScheme` / `onPersistError` remain for custom persistence.
+
+  Migration: drop the root loader and the `codefastTheme()` Vite plugin, render the defaults on `<html>` with `suppressHydrationWarning`, and let the inline script correct the class before paint — see the README's TanStack Start recipe.
+
 ## 1.0.0-canary.7
 
 ## 1.0.0-canary.6

@@ -40,10 +40,15 @@ function InputNumber({ className, spinner, ...props }: InputNumberProps): JSX.El
  * Component: InputNumberField
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.5.0-canary.6
+ */
 type InputNumberFieldProps = ComponentProps<typeof InputNumberPrimitive.Field>;
 
 /**
  * The editable numeric input.
+ *
+ * @since 0.5.0-canary.6
  */
 function InputNumberField({ className, ...props }: InputNumberFieldProps): JSX.Element {
   return (
@@ -66,11 +71,16 @@ function InputNumberField({ className, ...props }: InputNumberFieldProps): JSX.E
  * Component: InputNumberStepper
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.5.0-canary.6
+ */
 type InputNumberStepperProps = Omit<ComponentProps<"div">, "children">;
 
 /**
  * A stacked chevron column with the increment and decrement controls — the default
  * stepper layout. Place it after the field.
+ *
+ * @since 0.5.0-canary.6
  */
 function InputNumberStepper({ className, ...props }: InputNumberStepperProps): JSX.Element {
   return (
@@ -109,11 +119,16 @@ function InputNumberStepper({ className, ...props }: InputNumberStepperProps): J
  * Component: InputNumberIncrement
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.5.0-canary.6
+ */
 type InputNumberIncrementProps = ComponentProps<typeof InputNumberPrimitive.IncrementButton>;
 
 /**
  * A standalone increment button for the split layout. Defaults to a plus icon;
  * pass children to override.
+ *
+ * @since 0.5.0-canary.6
  */
 function InputNumberIncrement({ children, className, ...props }: InputNumberIncrementProps): JSX.Element {
   return (
@@ -137,11 +152,16 @@ function InputNumberIncrement({ children, className, ...props }: InputNumberIncr
  * Component: InputNumberDecrement
  * -------------------------------------------------------------------------- */
 
+/**
+ * @since 0.5.0-canary.6
+ */
 type InputNumberDecrementProps = ComponentProps<typeof InputNumberPrimitive.DecrementButton>;
 
 /**
  * A standalone decrement button for the split layout. Defaults to a minus icon;
  * pass children to override.
+ *
+ * @since 0.5.0-canary.6
  */
 function InputNumberDecrement({ children, className, ...props }: InputNumberDecrementProps): JSX.Element {
   return (
