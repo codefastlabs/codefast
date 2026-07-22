@@ -19,7 +19,7 @@ import type { ResolverCallbacks } from "#/resolution/environment";
 import { buildResolutionFrame, DefaultResolutionContext, runWithContainer } from "#/resolution/environment";
 import { InstantiationPlanCompiler, PLAN_RETRY } from "#/resolution/instantiation-plan";
 import type { LifecycleManager } from "#/resolution/lifecycle";
-import { enterResolutionPath, RESOLUTION_SET_THRESHOLD } from "#/resolution/resolution-path";
+import { enterResolutionPath } from "#/resolution/resolution-path";
 import { injectionSlotToResolveOptions } from "#/resolution/resolve-options";
 import type { ScopeManager } from "#/resolution/scope";
 import { SINGLETON_MISS } from "#/resolution/scope";
@@ -42,6 +42,14 @@ interface DefaultLookupEntry {
   readonly owner: DependencyResolver;
 }
 
+// The transient-dynamic fast lanes hand off to the fully-guarded slow path at this
+// depth. This is a design point for the shared-context/pool machinery (bounded pool
+// size, bounded ctx.graph snapshots) — not a scan-cost crossover; see
+// RESOLUTION_SET_THRESHOLD for that measured value.
+const DEEP_LANE_THRESHOLD = 32;
+
+// Fast-lane alias folding gives up past this many hops and defers to the resolve()
+// loop, whose Set-based traversal detects genuine cycles exactly (no arbitrary cap).
 const ALIAS_HOP_LIMIT = 32;
 
 type BindingWithScope = Binding & { scope: BindingScope };
@@ -61,7 +69,7 @@ const ROOT_CONSTRAINT_CONTEXT = {
 export class DependencyResolver {
   readonly #frameByBindingId = new Map<BindingIdentifier, ResolutionFrame>();
   readonly #syncResolutionContextPool: Array<DefaultResolutionContext> = [];
-  // Deep-path state for #resolveTransientDynamicSyncFromContext (depth ≥ RESOLUTION_SET_THRESHOLD):
+  // Deep-path state for #resolveTransientDynamicSyncFromContext (depth ≥ DEEP_LANE_THRESHOLD):
   //
   // Cycle detection — generation-based marking (replaces Set<BindingIdentifier>):
   //   #deepCycleMarks: Map<BindingIdentifier, generation> records which bindings are "in flight"
@@ -79,7 +87,7 @@ export class DependencyResolver {
   // #deepSyncCtx / #deepSyncCtxPath: single shared context for the deep chain; avoids one
   //   per-depth pool reset (5 property writes) for every level beyond the threshold.
   //   resolutionStack is NOT pushed in the deep path — no GC write-barriers for object arrays.
-  //   Trade-off: ctx.graph.resolutionStack only reflects the first RESOLUTION_SET_THRESHOLD
+  //   Trade-off: ctx.graph.resolutionStack only reflects the first DEEP_LANE_THRESHOLD
   //   frames; code relying on ctx.graph.parent inside a deep transient-dynamic factory will see
   //   the frame at the threshold boundary, not the current depth.
   readonly #deepCycleMarks = new Map<BindingIdentifier, number>();
@@ -89,7 +97,7 @@ export class DependencyResolver {
   #deepSyncCtxPath: Array<string> | undefined;
   // Async shared-context state for #resolveTransientDynamicAsyncFromContext (shallow path):
   //
-  // For a SEQUENTIAL async chain (depth < RESOLUTION_SET_THRESHOLD), all levels share the same
+  // For a SEQUENTIAL async chain (depth < DEEP_LANE_THRESHOLD), all levels share the same
   // resolutionPath and resolutionStack arrays (passed by reference through ctx.resolveAsync).
   // Because the context stores references rather than snapshots, a single DefaultResolutionContext
   // can serve the entire chain without any per-level allocation or reset — the arrays reflect the
@@ -534,27 +542,36 @@ export class DependencyResolver {
       }
     }
 
-    const found = this.#findBinding(token, options, resolutionPath, resolutionStack);
+    let currentToken: Token<unknown> | Constructor = token;
+    let visitedAliasTokens: Set<Token<unknown> | Constructor> | undefined;
+    let found = this.#findBinding(currentToken, options, resolutionPath, resolutionStack);
+
+    // Follow aliases iteratively with exact cycle detection — a revisited alias
+    // token throws CircularDependencyError instead of overflowing the call stack.
+    while (found !== undefined && found.binding.kind === "alias") {
+      const target = found.binding.target;
+      visitedAliasTokens ??= new Set([currentToken]);
+      if (visitedAliasTokens.has(target)) {
+        throw new CircularDependencyError([...visitedAliasTokens, target].map((entry) => tokenName(entry)));
+      }
+      visitedAliasTokens.add(target);
+      currentToken = target;
+      found = this.#findBinding(currentToken, options, resolutionPath, resolutionStack);
+    }
 
     if (found === undefined) {
-      const ownBindings = this.#registry.getAll(token);
+      const ownBindings = this.#registry.getAll(currentToken);
       if (ownBindings.length > 0) {
-        throw new NoMatchingBindingError(this.#getTokenName(token), options ?? {}, this.#getAvailableSlots(token));
+        throw new NoMatchingBindingError(
+          this.#getTokenName(currentToken),
+          options ?? {},
+          this.#getAvailableSlots(currentToken),
+        );
       }
-      throw new TokenNotBoundError(this.#getTokenName(token));
+      throw new TokenNotBoundError(this.#getTokenName(currentToken));
     }
 
     const { binding, owner } = found;
-
-    // Follow alias
-    if (binding.kind === "alias") {
-      return this.resolve(
-        binding.target as Token<Value> | Constructor<Value>,
-        options,
-        resolutionPath,
-        resolutionStack,
-      );
-    }
 
     const scope = (binding as BindingWithScope).scope ?? "transient";
 
@@ -937,16 +954,31 @@ export class DependencyResolver {
       throw new TokenNotBoundError(this.#getTokenName(token));
     }
 
-    const { binding, owner } = found;
-
-    if (binding.kind === "alias") {
-      return this.resolveAsync(
-        binding.target as Token<Value> | Constructor<Value>,
-        options,
-        resolutionPath,
-        resolutionStack,
-      );
+    let currentToken: Token<unknown> | Constructor = token;
+    let visitedAliasTokens: Set<Token<unknown> | Constructor> | undefined;
+    let aliasFollowed: DefaultLookupEntry | undefined = found;
+    while (aliasFollowed !== undefined && aliasFollowed.binding.kind === "alias") {
+      const target = aliasFollowed.binding.target;
+      visitedAliasTokens ??= new Set([currentToken]);
+      if (visitedAliasTokens.has(target)) {
+        throw new CircularDependencyError([...visitedAliasTokens, target].map((entry) => tokenName(entry)));
+      }
+      visitedAliasTokens.add(target);
+      currentToken = target;
+      aliasFollowed = this.#findBinding(currentToken, options, resolutionPath, resolutionStack);
     }
+    if (aliasFollowed === undefined) {
+      const ownBindings = this.#registry.getAll(currentToken);
+      if (ownBindings.length > 0) {
+        throw new NoMatchingBindingError(
+          this.#getTokenName(currentToken),
+          options ?? {},
+          this.#getAvailableSlots(currentToken),
+        );
+      }
+      throw new TokenNotBoundError(this.#getTokenName(currentToken));
+    }
+    const { binding, owner } = aliasFollowed;
 
     const scope = (binding as BindingWithScope).scope ?? "transient";
 
@@ -1457,11 +1489,11 @@ export class DependencyResolver {
     resolutionPath: Array<string>,
     resolutionStack: Array<ResolutionFrame>,
   ): Value {
-    // ── Shallow path (depth < RESOLUTION_SET_THRESHOLD) ──────────────────────────────────
+    // ── Shallow path (depth < DEEP_LANE_THRESHOLD) ──────────────────────────────────
     // Use resolutionPath.includes for cycle detection: for tiny arrays (depth 0–31) this is
     // faster than a Set lookup. Keep resolutionStack push/pop and the per-depth pool so
     // ctx.graph reflects correct state for shallow-chain factories.
-    if (resolutionPath.length < RESOLUTION_SET_THRESHOLD) {
+    if (resolutionPath.length < DEEP_LANE_THRESHOLD) {
       const frame = this.#getResolutionFrame(binding);
       const tokenDisplayName = frame.tokenName;
       if (resolutionPath.includes(tokenDisplayName)) {
@@ -1482,7 +1514,7 @@ export class DependencyResolver {
       }
     }
 
-    // ── Deep path (depth >= RESOLUTION_SET_THRESHOLD) ────────────────────────────────────
+    // ── Deep path (depth >= DEEP_LANE_THRESHOLD) ────────────────────────────────────
     // At this depth the O(N) array scan becomes expensive.  Switch to a class-level
     // Set<BindingIdentifier> for O(1) cycle detection.
     //
@@ -1585,7 +1617,7 @@ export class DependencyResolver {
     resolutionPath: Array<string>,
     resolutionStack: Array<ResolutionFrame>,
   ): Promise<Value> {
-    // ── Shallow async path (depth < RESOLUTION_SET_THRESHOLD) ─────────────────────────────
+    // ── Shallow async path (depth < DEEP_LANE_THRESHOLD) ─────────────────────────────
     // For the common case of a sequential async chain (each factory awaits one dependency at a
     // time), all levels share the same resolutionPath/resolutionStack arrays.  A single
     // DefaultResolutionContext can therefore serve the entire chain:
@@ -1593,7 +1625,7 @@ export class DependencyResolver {
     //   • concurrent chains (Promise.all roots): detected by path-identity mismatch → fallback
     //     to a fresh DefaultResolutionContext for that level only
     // resolutionStack is NOT pushed here — see class-level comment for the trade-off.
-    if (resolutionPath.length < RESOLUTION_SET_THRESHOLD) {
+    if (resolutionPath.length < DEEP_LANE_THRESHOLD) {
       const tokenDisplayName = tokenName(binding.token);
       if (resolutionPath.includes(tokenDisplayName)) {
         return Promise.reject(new CircularDependencyError([...resolutionPath, tokenDisplayName]));
@@ -1676,7 +1708,7 @@ export class DependencyResolver {
       return factoryPromise;
     }
 
-    // ── Deep async path (depth ≥ RESOLUTION_SET_THRESHOLD) ────────────────────────────────
+    // ── Deep async path (depth ≥ DEEP_LANE_THRESHOLD) ────────────────────────────────
     // Fall back to the fully-correct slow implementation.
     return this.#resolveTransientDynamicAsyncSlow(binding, resolutionPath, resolutionStack);
   }

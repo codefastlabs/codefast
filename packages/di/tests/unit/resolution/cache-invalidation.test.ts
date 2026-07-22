@@ -241,3 +241,46 @@ describe("resolved-kind plans and the named-lookup memo", () => {
     expect(child.resolve(configToken, { name: "slot" })).toBe(9);
   });
 });
+
+describe("alias cycle safety", () => {
+  it("a cyclic alias throws CircularDependencyError, not a stack overflow (sync)", () => {
+    const aToken = token<number>("alias-a");
+    const bToken = token<number>("alias-b");
+    const container = Container.create();
+    container.bind(aToken).toAlias(bToken);
+    container.bind(bToken).toAlias(aToken);
+
+    expect(() => container.resolve(aToken)).toThrow(/circular/i);
+    expect(() => container.resolve(aToken)).toThrow(/alias-a/);
+  });
+
+  it("a cyclic alias rejects with CircularDependencyError (async)", async () => {
+    const aToken = token<number>("alias-a");
+    const bToken = token<number>("alias-b");
+    const container = Container.create();
+    container.bind(aToken).toAlias(bToken);
+    container.bind(bToken).toAlias(aToken);
+
+    await expect(container.resolveAsync(aToken)).rejects.toThrow(/circular/i);
+  });
+
+  it("a self-alias throws CircularDependencyError", () => {
+    const selfToken = token<number>("self");
+    const container = Container.create();
+    container.bind(selfToken).toAlias(selfToken);
+
+    expect(() => container.resolve(selfToken)).toThrow(/circular/i);
+  });
+
+  it("a long non-cyclic alias chain resolves without any arbitrary hop limit", () => {
+    const CHAIN_LENGTH = 64;
+    const tokens = Array.from({ length: CHAIN_LENGTH }, (_value, index) => token<number>(`hop-${String(index)}`));
+    const container = Container.create();
+    container.bind(tokens[0]!).toConstantValue(7);
+    for (let index = 1; index < CHAIN_LENGTH; index += 1) {
+      container.bind(tokens[index]!).toAlias(tokens[index - 1]!);
+    }
+
+    expect(container.resolve(tokens[CHAIN_LENGTH - 1]!)).toBe(7);
+  });
+});

@@ -35,6 +35,11 @@ export interface ReactFlowGraph {
 /**
  * @since 0.3.16-canary.0
  */
+// Initial grid layout: React Flow expects concrete positions; viewers re-layout anyway.
+const GRID_COLUMN_COUNT = 5;
+const GRID_CELL_WIDTH_PX = 200;
+const GRID_CELL_HEIGHT_PX = 100;
+
 export function toReactFlowGraph(graph: ContainerGraphJson): ReactFlowGraph {
   const nodes: Array<ReactFlowNode> = graph.nodes.map((node, idx) => ({
     id: node.id,
@@ -44,7 +49,10 @@ export function toReactFlowGraph(graph: ContainerGraphJson): ReactFlowGraph {
       scope: node.scope,
       fromParent: node.fromParent,
     },
-    position: { x: (idx % 5) * 200, y: Math.floor(idx / 5) * 100 },
+    position: {
+      x: (idx % GRID_COLUMN_COUNT) * GRID_CELL_WIDTH_PX,
+      y: Math.floor(idx / GRID_COLUMN_COUNT) * GRID_CELL_HEIGHT_PX,
+    },
   }));
 
   const edges: Array<ReactFlowEdge> = graph.edges.map((edge, idx) => ({
