@@ -128,3 +128,5 @@ These are project rules the linters do not fully enforce:
 ## Releases
 
 Versioning is via **Changesets**. The repo is currently in **canary pre-release mode** (`.changeset/pre.json`, `mode: "pre"`). Use the `release` skill for the full publish workflow; `release:canary:exit` leaves pre mode. Commits follow **Conventional Commits** (enforced by commitlint).
+
+**While on 0.x, never author a `major` changeset.** All `@codefast/*` are one `fixed` group (`.changeset/config.json`), so the group versions together at the **highest** bump any changeset requests — a single `major` (even on one package like `@codefast/tracking`) bumps the **whole group** `0.x → 1.0.0`. Breaking changes in 0.x are `minor`. Once a wrong major has been versioned/published in canary mode, editing changesets alone can't undo it (the bump is baked into `package.json` + `pre.json`); the reset recipe is in the `release` skill.
