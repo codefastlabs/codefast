@@ -19,7 +19,7 @@ import type { MetadataReader } from "#/metadata/metadata-types";
 import { defaultMetadataReader } from "#/metadata/symbol-metadata-reader";
 import type { AsyncModule, ModuleBuilder, SyncModule } from "#/module";
 import type { AsyncModuleBuilder } from "#/module";
-import { isSyncModule } from "#/module";
+import { isSyncModule, MODULE_SETUP } from "#/module";
 import { BindingRegistry } from "#/registry";
 import { effectiveBindingScope } from "#/resolution/binding-scope";
 import { LifecycleManager } from "#/resolution/lifecycle";
@@ -304,7 +304,7 @@ class DefaultContainer implements Container {
       }
       this.#moduleRefs.set(moduleRef, 1);
       const builder = this.#createModuleBuilder(moduleRef);
-      module._setup(builder);
+      module[MODULE_SETUP](builder);
     }
   }
 
@@ -346,12 +346,12 @@ class DefaultContainer implements Container {
 
     if (isSyncModule(module)) {
       const builder = this.#createModuleBuilder(moduleRef);
-      module._setup(builder);
+      module[MODULE_SETUP](builder);
     } else {
       const importPromises: Array<Promise<void>> = [];
       const builder = this.#createAsyncModuleBuilder(moduleRef, importPromises);
-      await module._setup(builder);
-      // Await nested async imports triggered inside _setup
+      await module[MODULE_SETUP](builder);
+      // Await nested async imports triggered inside the setup callback
       if (importPromises.length > 0) {
         await Promise.all(importPromises);
       }

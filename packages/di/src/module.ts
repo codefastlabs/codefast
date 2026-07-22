@@ -8,12 +8,18 @@ const SYNC_MODULE_BRAND: unique symbol = Symbol("di:sync-module");
 const ASYNC_MODULE_BRAND: unique symbol = Symbol("di:async-module");
 
 /**
+ * Key for the module's setup callback. A symbol (not exported from the package root)
+ * keeps the container-only member out of consumer-facing autocomplete entirely.
+ */
+export const MODULE_SETUP: unique symbol = Symbol("di:module-setup");
+
+/**
  * @since 0.3.16-canary.0
  */
 export interface SyncModule {
   readonly name: string;
   readonly [SYNC_MODULE_BRAND]: true;
-  readonly _setup: (builder: ModuleBuilder) => void;
+  readonly [MODULE_SETUP]: (builder: ModuleBuilder) => void;
 }
 
 /**
@@ -22,7 +28,7 @@ export interface SyncModule {
 export interface AsyncModule {
   readonly name: string;
   readonly [ASYNC_MODULE_BRAND]: true;
-  readonly _setup: (builder: AsyncModuleBuilder) => Promise<void>;
+  readonly [MODULE_SETUP]: (builder: AsyncModuleBuilder) => Promise<void>;
 }
 
 // ── Builder interfaces ────────────────────────────────────────────────────────
@@ -53,8 +59,8 @@ export const SyncModule = {
     return {
       name,
       [SYNC_MODULE_BRAND]: true as const,
-      _setup: setup,
-    } as SyncModule;
+      [MODULE_SETUP]: setup,
+    };
   },
 };
 
@@ -66,8 +72,8 @@ export const AsyncModule = {
     return {
       name,
       [ASYNC_MODULE_BRAND]: true as const,
-      _setup: setup,
-    } as AsyncModule;
+      [MODULE_SETUP]: setup,
+    };
   },
 };
 

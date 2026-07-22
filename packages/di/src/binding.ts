@@ -180,12 +180,12 @@ export type PartialBinding<Value> =
 
 // ── ID generation ─────────────────────────────────────────────────────────────
 
-let _idCounter = 0;
+let bindingIdCounter = 0;
 /**
  * @since 0.3.16-canary.0
  */
 export function generateBindingId(): BindingIdentifier {
-  return String(++_idCounter) as BindingIdentifier;
+  return String(++bindingIdCounter) as BindingIdentifier;
 }
 
 // ── Builder interfaces ────────────────────────────────────────────────────────

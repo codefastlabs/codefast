@@ -53,27 +53,27 @@ function updateSlotTag(slot: BindingSlot, tag: string, value: unknown): BindingS
 // ── SlotBuilder ───────────────────────────────────────────────────────────────
 
 abstract class SlotBuilder {
-  protected _slot: BindingSlot = DEFAULT_BINDING_SLOT; // ✓ T3-1: no redundant spread
-  protected _predicate: ((ctx: ConstraintContext) => boolean) | undefined;
-  protected _committed: BindingIdentifier | undefined;
+  protected slot: BindingSlot = DEFAULT_BINDING_SLOT; // ✓ T3-1: no redundant spread
+  protected predicate: ((ctx: ConstraintContext) => boolean) | undefined;
+  protected committedId: BindingIdentifier | undefined;
 
-  protected abstract _doCommit(): void;
+  protected abstract commit(): void;
 
   when(predicate: (ctx: ConstraintContext) => boolean): this {
-    this._predicate = predicate;
-    this._doCommit();
+    this.predicate = predicate;
+    this.commit();
     return this;
   }
 
   whenNamed(name: string): this {
-    this._slot = { ...this._slot, name };
-    this._doCommit();
+    this.slot = { ...this.slot, name };
+    this.commit();
     return this;
   }
 
   whenTagged(tag: string, value: unknown): this {
-    this._slot = updateSlotTag(this._slot, tag, value);
-    this._doCommit();
+    this.slot = updateSlotTag(this.slot, tag, value);
+    this.commit();
     return this;
   }
 
@@ -82,7 +82,7 @@ abstract class SlotBuilder {
   }
 
   id(): BindingIdentifier {
-    return this._committed!;
+    return this.committedId!;
   }
 }
 
@@ -90,15 +90,19 @@ abstract class SlotBuilder {
 
 export class BindingEntry<Value> implements BindToBuilder<Value> {
   readonly #token: Token<Value> | Constructor<Value>;
-  readonly #commit: CommitFn;
+  readonly #commitBinding: CommitFn;
 
-  constructor(token: Token<Value> | Constructor<Value>, commit: CommitFn) {
+  constructor(token: Token<Value> | Constructor<Value>, commitBinding: CommitFn) {
     this.#token = token;
-    this.#commit = commit;
+    this.#commitBinding = commitBinding;
   }
 
   to(type: Constructor<Value>): BindingBuilder<Value> {
-    return new ConstraintBuilder<Value>(this.#token, { kind: "class", target: type, scope: "transient" }, this.#commit);
+    return new ConstraintBuilder<Value>(
+      this.#token,
+      { kind: "class", target: type, scope: "transient" },
+      this.#commitBinding,
+    );
   }
 
   toSelf(): BindingBuilder<Value> {
@@ -108,23 +112,27 @@ export class BindingEntry<Value> implements BindToBuilder<Value> {
     return new ConstraintBuilder<Value>(
       this.#token,
       { kind: "class", target: this.#token, scope: "transient" },
-      this.#commit,
+      this.#commitBinding,
     );
   }
 
   toConstantValue(value: Value): ConstantBindingBuilder<Value> {
-    return new ConstantBuilder<Value>(this.#token, value, this.#commit);
+    return new ConstantBuilder<Value>(this.#token, value, this.#commitBinding);
   }
 
   toDynamic(factory: (ctx: ResolutionContext) => Value): BindingBuilder<Value> {
-    return new ConstraintBuilder<Value>(this.#token, { kind: "dynamic", factory, scope: "transient" }, this.#commit);
+    return new ConstraintBuilder<Value>(
+      this.#token,
+      { kind: "dynamic", factory, scope: "transient" },
+      this.#commitBinding,
+    );
   }
 
   toDynamicAsync(factory: (ctx: ResolutionContext) => Promise<Value>): BindingBuilder<Value> {
     return new ConstraintBuilder<Value>(
       this.#token,
       { kind: "dynamic-async", factory, scope: "transient" },
-      this.#commit,
+      this.#commitBinding,
     );
   }
 
@@ -141,7 +149,7 @@ export class BindingEntry<Value> implements BindToBuilder<Value> {
         deps: normalizedDeps,
         scope: "transient",
       },
-      this.#commit,
+      this.#commitBinding,
     );
   }
 
@@ -158,12 +166,12 @@ export class BindingEntry<Value> implements BindToBuilder<Value> {
         deps: normalizedDeps,
         scope: "transient",
       },
-      this.#commit,
+      this.#commitBinding,
     );
   }
 
   toAlias(target: Token<Value> | Constructor<Value>): AliasBindingBuilder {
-    return new AliasBuilder<Value>(this.#token, target, this.#commit);
+    return new AliasBuilder<Value>(this.#token, target, this.#commitBinding);
   }
 }
 
@@ -172,63 +180,63 @@ export class BindingEntry<Value> implements BindToBuilder<Value> {
 class ConstraintBuilder<Value> extends SlotBuilder implements BindingBuilder<Value> {
   readonly #token: Token<Value> | Constructor<Value>;
   readonly #partial: ScopedPartialBinding<Value>;
-  readonly #commit: CommitFn;
+  readonly #commitBinding: CommitFn;
 
-  constructor(token: Token<Value> | Constructor<Value>, partial: ScopedPartialBinding<Value>, commit: CommitFn) {
+  constructor(token: Token<Value> | Constructor<Value>, partial: ScopedPartialBinding<Value>, commitBinding: CommitFn) {
     super();
     this.#token = token;
     this.#partial = partial;
-    this.#commit = commit;
-    this._doCommit();
+    this.#commitBinding = commitBinding;
+    this.commit();
   }
 
-  protected _doCommit(): void {
-    const previousId = this._committed;
+  protected commit(): void {
+    const previousId = this.committedId;
     const binding: Binding<Value> = {
       ...this.#partial,
       id: generateBindingId(),
       token: this.#token,
-      slot: this._slot,
-      predicate: this._predicate,
+      slot: this.slot,
+      predicate: this.predicate,
     };
-    this._committed = this.#commit(binding, previousId);
+    this.committedId = this.#commitBinding(binding, previousId);
   }
 
   singleton(): SingletonBindingBuilder<Value> {
-    const previousId = this._committed;
-    this._committed = undefined;
+    const previousId = this.committedId;
+    this.committedId = undefined;
     return new ScopeBuilder<Value>(
       this.#token,
       { ...this.#partial, scope: "singleton" },
-      this._slot,
-      this._predicate,
-      this.#commit,
+      this.slot,
+      this.predicate,
+      this.#commitBinding,
       previousId,
     );
   }
 
   transient(): TransientBindingBuilder<Value> {
-    const previousId = this._committed;
-    this._committed = undefined;
+    const previousId = this.committedId;
+    this.committedId = undefined;
     return new ScopeBuilder<Value>(
       this.#token,
       { ...this.#partial, scope: "transient" },
-      this._slot,
-      this._predicate,
-      this.#commit,
+      this.slot,
+      this.predicate,
+      this.#commitBinding,
       previousId,
     );
   }
 
   scoped(): ScopedBindingBuilder<Value> {
-    const previousId = this._committed;
-    this._committed = undefined;
+    const previousId = this.committedId;
+    this.committedId = undefined;
     return new ScopeBuilder<Value>(
       this.#token,
       { ...this.#partial, scope: "scoped" },
-      this._slot,
-      this._predicate,
-      this.#commit,
+      this.slot,
+      this.predicate,
+      this.#commitBinding,
       previousId,
     );
   }
@@ -239,13 +247,13 @@ class ConstraintBuilder<Value> extends SlotBuilder implements BindingBuilder<Val
 class ScopeBuilder<Value> implements SingletonBindingBuilder<Value>, TransientBindingBuilder<Value> {
   #onActivation: ActivationHandler<Value> | undefined;
   #onDeactivation: DeactivationHandler<Value> | undefined;
-  #committed: BindingIdentifier | undefined;
+  #committedId: BindingIdentifier | undefined;
 
   readonly #token: Token<Value> | Constructor<Value>;
   readonly #partial: ScopedPartialBinding<Value>;
   readonly #slot: BindingSlot;
   readonly #predicate: ((ctx: ConstraintContext) => boolean) | undefined;
-  readonly #commit: CommitFn;
+  readonly #commitBinding: CommitFn;
   readonly #initialPreviousId: BindingIdentifier | undefined;
 
   constructor(
@@ -253,20 +261,20 @@ class ScopeBuilder<Value> implements SingletonBindingBuilder<Value>, TransientBi
     partial: ScopedPartialBinding<Value>,
     slot: BindingSlot,
     predicate: ((ctx: ConstraintContext) => boolean) | undefined,
-    commit: CommitFn,
+    commitBinding: CommitFn,
     initialPreviousId?: BindingIdentifier,
   ) {
     this.#token = token;
     this.#partial = partial;
     this.#slot = slot;
     this.#predicate = predicate;
-    this.#commit = commit;
+    this.#commitBinding = commitBinding;
     this.#initialPreviousId = initialPreviousId;
-    this.#doCommit();
+    this.#commit();
   }
 
-  #doCommit(): void {
-    const previousId = this.#committed ?? this.#initialPreviousId;
+  #commit(): void {
+    const previousId = this.#committedId ?? this.#initialPreviousId;
     const binding: Binding<Value> = {
       ...this.#partial,
       id: generateBindingId(),
@@ -276,23 +284,23 @@ class ScopeBuilder<Value> implements SingletonBindingBuilder<Value>, TransientBi
       onActivation: this.#onActivation,
       onDeactivation: this.#onDeactivation,
     };
-    this.#committed = this.#commit(binding, previousId);
+    this.#committedId = this.#commitBinding(binding, previousId);
   }
 
   onActivation(fn: ActivationHandler<Value>): this {
     this.#onActivation = fn;
-    this.#doCommit();
+    this.#commit();
     return this;
   }
 
   onDeactivation(fn: DeactivationHandler<Value>): this {
     this.#onDeactivation = fn;
-    this.#doCommit();
+    this.#commit();
     return this;
   }
 
   id(): BindingIdentifier {
-    return this.#committed!;
+    return this.#committedId!;
   }
 }
 
@@ -307,41 +315,41 @@ class ConstantBuilder<Value>
 
   readonly #token: Token<Value> | Constructor<Value>;
   readonly #value: Value;
-  readonly #commit: CommitFn;
+  readonly #commitBinding: CommitFn;
 
-  constructor(token: Token<Value> | Constructor<Value>, value: Value, commit: CommitFn) {
+  constructor(token: Token<Value> | Constructor<Value>, value: Value, commitBinding: CommitFn) {
     super();
     this.#token = token;
     this.#value = value;
-    this.#commit = commit;
-    this._doCommit();
+    this.#commitBinding = commitBinding;
+    this.commit();
   }
 
-  protected _doCommit(): void {
-    const previousId = this._committed;
+  protected commit(): void {
+    const previousId = this.committedId;
     const binding: Binding<Value> = {
       kind: "constant",
       id: generateBindingId(),
       token: this.#token,
-      slot: this._slot,
-      predicate: this._predicate,
+      slot: this.slot,
+      predicate: this.predicate,
       value: this.#value,
       scope: "singleton",
       onActivation: this.#onActivation,
       onDeactivation: this.#onDeactivation,
     };
-    this._committed = this.#commit(binding, previousId);
+    this.committedId = this.#commitBinding(binding, previousId);
   }
 
   onActivation(fn: ActivationHandler<Value>): this {
     this.#onActivation = fn;
-    this._doCommit();
+    this.commit();
     return this;
   }
 
   onDeactivation(fn: DeactivationHandler<Value>): this {
     this.#onDeactivation = fn;
-    this._doCommit();
+    this.commit();
     return this;
   }
 }
@@ -351,26 +359,30 @@ class ConstantBuilder<Value>
 class AliasBuilder<Value> extends SlotBuilder implements AliasBindingBuilder {
   readonly #token: Token<Value> | Constructor<Value>;
   readonly #target: Token<Value> | Constructor<Value>;
-  readonly #commit: CommitFn;
+  readonly #commitBinding: CommitFn;
 
-  constructor(token: Token<Value> | Constructor<Value>, target: Token<Value> | Constructor<Value>, commit: CommitFn) {
+  constructor(
+    token: Token<Value> | Constructor<Value>,
+    target: Token<Value> | Constructor<Value>,
+    commitBinding: CommitFn,
+  ) {
     super();
     this.#token = token;
     this.#target = target;
-    this.#commit = commit;
-    this._doCommit();
+    this.#commitBinding = commitBinding;
+    this.commit();
   }
 
-  protected _doCommit(): void {
-    const previousId = this._committed;
+  protected commit(): void {
+    const previousId = this.committedId;
     const binding: Binding<Value> = {
       kind: "alias",
       id: generateBindingId(),
       token: this.#token,
-      slot: this._slot,
-      predicate: this._predicate,
+      slot: this.slot,
+      predicate: this.predicate,
       target: this.#target,
     };
-    this._committed = this.#commit(binding, previousId);
+    this.committedId = this.#commitBinding(binding, previousId);
   }
 }

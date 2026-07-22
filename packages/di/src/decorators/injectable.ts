@@ -18,13 +18,13 @@ export interface AutoRegisterRegistry {
  * @since 0.3.16-canary.0
  */
 export function createAutoRegisterRegistry(): AutoRegisterRegistry {
-  const _registeredEntries: Array<{ target: Constructor; scope: BindingScope }> = [];
+  const registeredEntries: Array<{ target: Constructor; scope: BindingScope }> = [];
   return {
     register(target: Constructor, scope: BindingScope): void {
-      _registeredEntries.push({ target, scope });
+      registeredEntries.push({ target, scope });
     },
     entries(): ReadonlyArray<{ target: Constructor; scope: BindingScope }> {
-      return _registeredEntries;
+      return registeredEntries;
     },
   };
 }

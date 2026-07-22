@@ -65,22 +65,22 @@ const ROOT_CONSTRAINT_CONTEXT = {
 export class DependencyResolver {
   readonly #frameByBindingId = new Map<BindingIdentifier, ResolutionFrame>();
   readonly #syncResolutionContextPool: Array<DefaultResolutionContext> = [];
-  // Deep-path state for _resolveTransientDynamicSyncFromContext (depth ≥ RESOLUTION_SET_THRESHOLD):
+  // Deep-path state for #resolveTransientDynamicSyncFromContext (depth ≥ RESOLUTION_SET_THRESHOLD):
   //
   // Cycle detection — generation-based marking (replaces Set<BindingIdentifier>):
-  //   _deepCycleMarks: Map<BindingIdentifier, generation> records which bindings are "in flight"
+  //   #deepCycleMarks: Map<BindingIdentifier, generation> records which bindings are "in flight"
   //     during the current deep chain.  A binding is considered "active" when its recorded
-  //     generation matches _deepCycleGen.
-  //   _deepCycleGen: monotonically incremented at the start of each new deep chain.  This acts
+  //     generation matches #deepCycleGen.
+  //   #deepCycleGen: monotonically incremented at the start of each new deep chain.  This acts
   //     as an implicit bulk-clear: old marks from a previous chain have a stale generation number
   //     and are treated as absent — no explicit Map.delete or Map.clear is needed at all.
   //     Eliminating the per-level Map.delete call (was ~10 ns × 480 levels) is the primary
   //     motivation for this design.
   //
-  // _deepActiveLevels: tracks how many deep levels are currently on the call stack so we know
-  //   when the deep portion has fully unwound and can reset _deepSyncCtxPath.
+  // #deepActiveLevels: tracks how many deep levels are currently on the call stack so we know
+  //   when the deep portion has fully unwound and can reset #deepSyncCtxPath.
   //
-  // _deepSyncCtx / _deepSyncCtxPath: single shared context for the deep chain; avoids one
+  // #deepSyncCtx / #deepSyncCtxPath: single shared context for the deep chain; avoids one
   //   per-depth pool reset (5 property writes) for every level beyond the threshold.
   //   resolutionStack is NOT pushed in the deep path — no GC write-barriers for object arrays.
   //   Trade-off: ctx.graph.resolutionStack only reflects the first RESOLUTION_SET_THRESHOLD
@@ -91,7 +91,7 @@ export class DependencyResolver {
   #deepActiveLevels = 0;
   #deepSyncCtx: DefaultResolutionContext | undefined;
   #deepSyncCtxPath: Array<string> | undefined;
-  // Async shared-context state for _resolveTransientDynamicAsyncFromContext (shallow path):
+  // Async shared-context state for #resolveTransientDynamicAsyncFromContext (shallow path):
   //
   // For a SEQUENTIAL async chain (depth < RESOLUTION_SET_THRESHOLD), all levels share the same
   // resolutionPath and resolutionStack arrays (passed by reference through ctx.resolveAsync).
@@ -99,18 +99,18 @@ export class DependencyResolver {
   // can serve the entire chain without any per-level allocation or reset — the arrays reflect the
   // current chain state automatically as we push/pop.
   //
-  // _deepAsyncCtx: the shared context, lazily created on the first chain entry and reset
+  // #deepAsyncCtx: the shared context, lazily created on the first chain entry and reset
   //   (5 property writes) at the start of each new root call.  Levels 2-N of the same chain
   //   reuse it with ZERO setup cost.
   //
-  // _deepAsyncCtxPath: identity pointer of the resolutionPath array that "owns" the shared
+  // #deepAsyncCtxPath: identity pointer of the resolutionPath array that "owns" the shared
   //   context.  Used to distinguish two cases:
   //     • same reference → inner level of the owning chain → reuse ctx with no setup
   //     • different reference → concurrent chain (e.g. Promise.all) → fall back to a fresh
   //       DefaultResolutionContext allocation for that call
   //
-  // _deepAsyncActiveLevels: counts active levels of the OWNING chain so we know when to
-  //   release the path pointer (set _deepAsyncCtxPath = undefined).
+  // #deepAsyncActiveLevels: counts active levels of the OWNING chain so we know when to
+  //   release the path pointer (set #deepAsyncCtxPath = undefined).
   //   Concurrent fallback calls are NOT counted — they don't interfere with the owner.
   //
   // resolutionStack is NOT pushed in this path (same trade-off as the deep sync path):
@@ -1517,14 +1517,14 @@ export class DependencyResolver {
     // Set<BindingIdentifier> for O(1) cycle detection.
     //
     // Performance decisions vs. shallow path:
-    //  1. _getResolutionFrame is NOT called: frameName is only needed for resolutionPath.push
+    //  1. #getResolutionFrame is NOT called: frameName is only needed for resolutionPath.push
     //     and error messages.  Both are handled below without the frame Map lookup.
-    //  2. resolutionPath.push / pop is SKIPPED: cycle detection uses _deepCycleIds (binding IDs),
+    //  2. resolutionPath.push / pop is SKIPPED: cycle detection uses #deepCycleMarks (binding IDs),
     //     so path membership tracking through the string array is unnecessary.  Eliminating
     //     ~480 array writes per 512-chain avoids GC write-barriers on every level.
     //     Trade-off: CircularDependencyError thrown for a deep cycle (depth > 32) will only
     //     include the first 32 path elements in its message; levels 32+ are omitted.
-    //  3. The shared context is set up ONCE (when _deepActiveLevels === 0) rather than
+    //  3. The shared context is set up ONCE (when #deepActiveLevels === 0) rather than
     //     re-checked on every level — saves two property reads + a reference comparison
     //     for each of the ~480 subsequent deep-chain levels.
     //
