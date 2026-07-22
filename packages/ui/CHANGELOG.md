@@ -1,5 +1,49 @@
 # @codefast/ui
 
+## 0.5.0-canary.6
+
+### Minor Changes
+
+- [#552](https://github.com/codefastlabs/codefast/pull/552) [`78bf5a4`](https://github.com/codefastlabs/codefast/commit/78bf5a494de8276f5eeb262bc5dc45c882bb63f7) Thanks [@thevuong](https://github.com/thevuong)! - Refine two surfaces for a more consistent container language:
+
+  - `CardFooter` is now a distinct tinted tray by default (`border-t bg-muted/50` with full `--card-spacing` padding). `Card` drops its bottom padding when a footer is present (`has-data-[slot=card-footer]:pb-0`) so the tint reaches the card's bottom edge. Footers that previously relied on the transparent, opt-in-border behavior will now render with a background and top border.
+  - `Empty` uses `rounded-xl` instead of `rounded-lg`, matching `Card`'s corner radius for a consistent container language.
+
+- [#552](https://github.com/codefastlabs/codefast/pull/552) [`e7839f2`](https://github.com/codefastlabs/codefast/commit/e7839f2d49da7b3af805aafcb6863a32e18e9563) Thanks [@thevuong](https://github.com/thevuong)! - Add chat surface components: `Attachment` (file/media card with upload states, three sizes, and horizontal/vertical orientations), `Bubble` (message bubble with seven variants, alignment, and reaction pills), `Message` (avatar + content row with start/end alignment), and `Marker` (inline feed divider). Each ships per-component and `./variants/*` subpath exports, stories, and unit tests.
+
+  Also adds `scroll-fade-*` (scroll-aware, RTL-mirrored edge fades) and `shimmer` (text loading shimmer) utilities to the foundation preset, used by these components and available on any scroller.
+
+- [#552](https://github.com/codefastlabs/codefast/pull/552) [`5e74e3e`](https://github.com/codefastlabs/codefast/commit/5e74e3e426a10d26f86a053a15acf971dc0115dc) Thanks [@thevuong](https://github.com/thevuong)! - Add `MessageScroller`, a headless-driven scroll manager for chat transcripts: follow-the-bottom autoscroll, scroll preservation on prepend, anchored streaming turns, `defaultScrollPosition`, and a self-hiding scroll-to-edge button. Ships the styled component (`@codefast/ui/message-scroller`), the headless primitive (`@codefast/ui/primitives/message-scroller`), and the `useMessageScroller`, `useMessageScrollerScrollable`, and `useMessageScrollerVisibility` hooks.
+
+  The scroll engine (geometry, stores, and controller hooks) is vendored from an external message-scroller implementation into `@codefast/ui` internals and adapted to codefast conventions, so it carries no extra runtime dependency. Adds an internal `useRender` utility that backs the primitives' `render` prop.
+
+- [`ca47aff`](https://github.com/codefastlabs/codefast/commit/ca47aff20ebb5ac9e4c3db759da31102ff9d5f84) Thanks [@thevuong](https://github.com/thevuong)! - Rename four APIs whose names misstated their role (Swift API Design Guidelines pass).
+
+  **Breaking:**
+
+  - `ProgressCircle`: `animate` → `animated` (a boolean should read as an assertion, not a bare verb) and `customLabel` → `renderLabel` (the prop holds a render function, not a label value; "custom" was filler). `useAnimatedValue`'s third parameter follows suit.
+  - `MessageScrollerItem`: `scrollAnchor` → `isScrollAnchor` (assertion form, matching the existing `isActive` convention). The emitted `data-scroll-anchor` attribute is unchanged.
+  - `UsePaginationProps` → `UsePaginationOptions` — a hook takes options, not component props.
+
+- [#552](https://github.com/codefastlabs/codefast/pull/552) [`feb5639`](https://github.com/codefastlabs/codefast/commit/feb5639ea4443b8c1c90e638e3f9d12e6a32b14e) Thanks [@thevuong](https://github.com/thevuong)! - Complete RTL hardening across the component library, closing the last physical-direction gaps and making the carousel direction-aware.
+
+  - `AvatarGroup` now flips its overlap in RTL (`rtl:space-x-reverse`).
+  - `SidebarRail`'s off-canvas drag line mirrors correctly (`after:start-full`).
+  - **`Carousel` is now direction-aware:** it forwards the resolved reading direction to Embla (so drag/snap physics mirror in RTL) and swaps the arrow-key mapping (in RTL the **Left** arrow advances, **Right** retreats). An explicit `opts.direction` still wins. This is a behavior change for RTL consumers who relied on the previous physical arrow-key mapping.
+
+  Also adds an internal `audit:rtl` script and a Direction (LTR/RTL) Storybook toolbar to keep physical-direction utilities from regressing.
+
+### Patch Changes
+
+- [`3e1050b`](https://github.com/codefastlabs/codefast/commit/3e1050b4e51e8eefd5fce9a979e78acce09a0683) Thanks [@thevuong](https://github.com/thevuong)! - Remove the dead `separator` prop from the `Breadcrumb` root — it was never consumed (a vestige of the old upstream shape) and only leaked onto the `<nav>` element as an invalid DOM attribute. Custom separators keep working the supported way: pass children to `<BreadcrumbSeparator>`.
+
+- [#632](https://github.com/codefastlabs/codefast/pull/632) [`44035ca`](https://github.com/codefastlabs/codefast/commit/44035ca29c99f7e9d9a760f758496965253b650a) Thanks [@thevuong](https://github.com/thevuong)! - Annotate `CheckboxGroupItem`'s `onCheckedChange` callback with a `CheckedState` type derived from the underlying Radix primitive. Radix's `radix-ui` umbrella namespace merge dropped the contextual type for the inline callback parameter, tripping `noImplicitAny` during the build; deriving the type from `Root` keeps it in lockstep with the primitive.
+
+- [#552](https://github.com/codefastlabs/codefast/pull/552) [`04c82de`](https://github.com/codefastlabs/codefast/commit/04c82ded0a01a6a12a4dd66cd35d5635718ba699) Thanks [@thevuong](https://github.com/thevuong)! - Fix a hydration mismatch in `SidebarMenuSkeleton`: its placeholder width was derived from `Math.random()`, which produced different values on the server and client. It now derives a stable, varied width (50–90%) from `useId`, so server and client render the same markup.
+
+- Updated dependencies []:
+  - @codefast/tailwind-variants@0.5.0-canary.6
+
 ## 1.0.0-canary.7
 
 ### Patch Changes

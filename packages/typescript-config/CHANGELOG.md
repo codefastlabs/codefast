@@ -1,5 +1,11 @@
 # @codefast/typescript-config
 
+## 0.5.0-canary.6
+
+### Minor Changes
+
+- [`71cf664`](https://github.com/codefastlabs/codefast/commit/71cf6645124c9b6327acdcce4ee9afd27b3aee10) Thanks [@thevuong](https://github.com/thevuong)! - Add a `library-build.json` preset holding the shared emit options for the native `tsc` package build (`noEmit: false`, `declaration`, `declarationMap`, `sourceMap`, `types: ["node"]`). Each package's `tsconfig.build.json` now uses array `extends` (`["./tsconfig.json", "@codefast/typescript-config/library-build.json"]`) and keeps only its local `outDir`/`rootDir` and `include` — dropping the duplicated emit block across all library packages. Path-relative options stay local because `extends` resolves them against the file that declares them.
+
 ## 1.0.0-canary.7
 
 ### Minor Changes
