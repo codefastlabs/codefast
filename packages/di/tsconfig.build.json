@@ -3,6 +3,8 @@
   "extends": ["./tsconfig.json", "@codefast/typescript-config/library-build.json"],
   "compilerOptions": {
     "outDir": "./dist",
+    "stableTypeOrdering": true,
+    "erasableSyntaxOnly": true,
     "rootDir": "./src"
   },
   "include": ["src/**/*.ts"],
