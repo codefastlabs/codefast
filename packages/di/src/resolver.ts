@@ -918,6 +918,19 @@ export class DependencyResolver {
     // Fall back to the chain-versioned memo only on miss or alias.
     const fastBinding = this.#registry.getFastDefault(token);
     if (fastBinding !== undefined && fastBinding.kind !== "alias") {
+      // Inline the dominant chain shape — transient dynamic factory with no activation.
+      if (
+        (fastBinding.kind === "dynamic-async" || fastBinding.kind === "dynamic") &&
+        fastBinding.scope === "transient" &&
+        fastBinding.onActivation === undefined &&
+        (this.#lifecycle.activationVersion === 0 || !this.#lifecycle.hasActivationHandlers(fastBinding.token))
+      ) {
+        return this.#resolveTransientDynamicAsyncFromContext(
+          fastBinding as Binding<Value> & { kind: "dynamic" | "dynamic-async" },
+          resolutionPath,
+          resolutionStack,
+        );
+      }
       return this.#resolveAsyncDefaultEntry<Value>(fastBinding, this, resolutionPath, resolutionStack);
     }
     const entry = this.#lookupDefaultEntry(token);
@@ -1711,25 +1724,20 @@ export class DependencyResolver {
         return Promise.reject(err);
       }
 
-      // Chain cleanup onto the Promise so it runs whether the factory resolves or rejects.
-      return factoryPromise.then(
-        (value) => {
-          resolutionPath.pop();
-          if (isOwnerLevel && --this.#deepAsyncActiveLevels === 0) {
-            this.#deepAsyncCtxPath = undefined;
-          }
-          return value;
-        },
-        (err: unknown) => {
-          resolutionPath.pop();
-          if (isOwnerLevel && --this.#deepAsyncActiveLevels === 0) {
-            this.#deepAsyncCtxPath = undefined;
-          }
-          // Re-throw as the rejected value; the `never` cast suppresses the TS return-type
-          // mismatch that arises because `throw` has type `never` in an expression context.
-          throw err as never;
-        },
-      );
+      // Cleanup runs as a SIDE listener on the factory promise instead of a derived-promise
+      // chain: registered synchronously here, it is FIFO-guaranteed to run before the awaiting
+      // caller resumes, so ordering is identical while saving one intermediate promise and one
+      // microtask hop per level. Trade-off: the settle handler marks a rejection as handled,
+      // so an unawaited failing resolveAsync no longer surfaces as an unhandledRejection —
+      // callers are expected to await (or .catch) the returned promise.
+      const settle = (): void => {
+        resolutionPath.pop();
+        if (isOwnerLevel && --this.#deepAsyncActiveLevels === 0) {
+          this.#deepAsyncCtxPath = undefined;
+        }
+      };
+      factoryPromise.then(settle, settle);
+      return factoryPromise;
     }
 
     // ── Deep async path (depth ≥ RESOLUTION_SET_THRESHOLD) ────────────────────────────────
