@@ -176,3 +176,68 @@ describe("compiled class-plan invalidation", () => {
     expect(seenLeaves.size).toBe(WARM_ITERATIONS);
   });
 });
+
+describe("resolved-kind plans and the named-lookup memo", () => {
+  it("a warmed toResolved factory sees a rebound dependency", () => {
+    const configToken = token<number>("config");
+    const sumToken = token<number>("sum");
+    const container = Container.create();
+    container.bind(configToken).toConstantValue(1);
+    container.bind(sumToken).toResolved((config) => config + 10, [configToken]);
+    warm(() => container.resolve(sumToken));
+    expect(container.resolve(sumToken)).toBe(11);
+
+    container.rebind(configToken).toConstantValue(2);
+    expect(container.resolve(sumToken)).toBe(12);
+  });
+
+  it("a warmed toResolved factory keeps rejecting async results", () => {
+    const lazyToken = token<unknown>("lazy");
+    const container = Container.create();
+    container.bind(lazyToken).toResolved(async () => 1, []);
+    expect(() => container.resolve(lazyToken)).toThrow(/async/i);
+    expect(() => container.resolve(lazyToken)).toThrow(/async/i);
+  });
+
+  it("a warmed named constant observes rebind and unbind", () => {
+    const configToken = token<number>("config");
+    const container = Container.create();
+    container.bind(configToken).toConstantValue(0);
+    container.bind(configToken).toConstantValue(1).whenNamed("slot");
+    warm(() => container.resolve(configToken, { name: "slot" }));
+    expect(container.resolve(configToken, { name: "slot" })).toBe(1);
+
+    container.bind(configToken).toConstantValue(2).whenNamed("slot");
+    expect(container.resolve(configToken, { name: "slot" })).toBe(2);
+    expect(container.resolve(configToken)).toBe(0);
+  });
+
+  it("a named singleton resolves through the memo after first materialization", () => {
+    let factoryCalls = 0;
+    const serviceToken = token<number>("service");
+    const container = Container.create();
+    container
+      .bind(serviceToken)
+      .toDynamic(() => {
+        factoryCalls += 1;
+        return 7;
+      })
+      .whenNamed("main")
+      .singleton();
+
+    warm(() => container.resolve(serviceToken, { name: "main" }));
+    expect(factoryCalls).toBe(1);
+    expect(container.resolve(serviceToken, { name: "main" })).toBe(7);
+  });
+
+  it("a named binding resolved from a child observes a parent-level rebind", () => {
+    const configToken = token<number>("config");
+    const root = Container.create();
+    root.bind(configToken).toConstantValue(1).whenNamed("slot");
+    const child = root.createChild();
+    warm(() => child.resolve(configToken, { name: "slot" }));
+
+    root.bind(configToken).toConstantValue(9).whenNamed("slot");
+    expect(child.resolve(configToken, { name: "slot" })).toBe(9);
+  });
+});

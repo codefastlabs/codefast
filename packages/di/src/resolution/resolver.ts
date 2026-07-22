@@ -15,9 +15,9 @@ import {
 import type { ConstructorMetadata, MetadataReader } from "#/metadata/metadata-types";
 import type { BindingRegistry } from "#/registry";
 import { selectAllBindings, selectBinding } from "#/resolution/binding-select";
-import { ClassPlanCompiler, PLAN_RETRY } from "#/resolution/class-plan";
 import type { ResolverCallbacks } from "#/resolution/environment";
 import { buildResolutionFrame, DefaultResolutionContext, runWithContainer } from "#/resolution/environment";
+import { InstantiationPlanCompiler, PLAN_RETRY } from "#/resolution/instantiation-plan";
 import type { LifecycleManager } from "#/resolution/lifecycle";
 import { enterResolutionPath, RESOLUTION_SET_THRESHOLD } from "#/resolution/resolution-path";
 import { injectionSlotToResolveOptions } from "#/resolution/resolve-options";
@@ -129,6 +129,10 @@ export class DependencyResolver {
   // any registry in the chain mutates (monotonic version sum).
   readonly #defaultLookupByToken = new Map<Token<unknown> | Constructor, DefaultLookupEntry | null>();
   #defaultLookupVersion = -1;
+  // Name-only lookup memo (token → name → entry) with the same chain-version
+  // invalidation. `null` = shape needs the full selection path.
+  readonly #namedLookupByToken = new Map<Token<unknown> | Constructor, Map<string, DefaultLookupEntry | null>>();
+  #namedLookupVersion = -1;
   // Compiled transient-class plans (Dagger-style): a pure-static subgraph (class/constant/
   // cached-singleton deps only) compiles once into a nested-constructor closure — cycle
   // checking happens at compile time, so execution skips all per-resolve bookkeeping.
@@ -303,8 +307,8 @@ export class DependencyResolver {
         );
       }
       // Compiled plans only run at the top level — inner levels keep the runtime cycle guard.
-      if (binding.kind === "class" && resolutionPath.length === 0) {
-        const plan = this.#getClassPlan(binding);
+      if ((binding.kind === "class" || binding.kind === "resolved") && resolutionPath.length === 0) {
+        const plan = this.#getInstantiationPlan(binding);
         if (plan !== null) {
           return plan() as Value;
         }
@@ -410,6 +414,37 @@ export class DependencyResolver {
     return null;
   }
 
+  #lookupNamedEntry(token: Token<unknown> | Constructor, name: string): DefaultLookupEntry | null {
+    const version = this.#chainRegistryVersion();
+    if (version !== this.#namedLookupVersion) {
+      this.#namedLookupByToken.clear();
+      this.#namedLookupVersion = version;
+    }
+    // ✓ TS6.0: Map.getOrInsert (ES2025)
+    const entriesByName = this.#namedLookupByToken.getOrInsert(token, new Map<string, DefaultLookupEntry | null>());
+    let entry = entriesByName.get(name);
+    if (entry === undefined) {
+      entry = this.#findNamedEntryInChain(token, name);
+      entriesByName.set(name, entry);
+    }
+    return entry;
+  }
+
+  #findNamedEntryInChain(token: Token<unknown> | Constructor, name: string): DefaultLookupEntry | null {
+    const named = this.#registry.getSimpleNamed(token, name);
+    if (named !== undefined) {
+      // Predicates need a live context; aliases carry options through the full path.
+      if (named.predicate !== undefined || named.kind === "alias") {
+        return null;
+      }
+      return { binding: named, owner: this };
+    }
+    if (this.#registry.has(token)) {
+      return null;
+    }
+    return this.#parent === undefined ? null : this.#parent.#findNamedEntryInChain(token, name);
+  }
+
   #findDefaultEntryInChain(token: Token<unknown> | Constructor): DefaultLookupEntry | null {
     const fast = this.#registry.getFastDefault(token);
     if (fast !== undefined) {
@@ -422,7 +457,7 @@ export class DependencyResolver {
     return this.#parent === undefined ? null : this.#parent.#findDefaultEntryInChain(token);
   }
 
-  #getClassPlan(binding: Binding & { kind: "class" }): (() => unknown) | null {
+  #getInstantiationPlan(binding: Binding & { kind: "class" | "resolved" }): (() => unknown) | null {
     const registryVersion = this.#chainRegistryVersion();
     const activationVersion = this.#lifecycle.activationVersion;
     if (registryVersion !== this.#classPlanRegistryVersion || activationVersion !== this.#classPlanActivationVersion) {
@@ -444,7 +479,7 @@ export class DependencyResolver {
   }
 
   // Compiler behind #getClassPlan — cold path, so the host indirection costs nothing hot.
-  readonly #planCompiler = new ClassPlanCompiler({
+  readonly #planCompiler = new InstantiationPlanCompiler({
     hasActivationHandlers: (token) => this.#lifecycle.hasActivationHandlers(token),
     knownPostConstruct: (target) => this.#classHasPostConstruct.get(target),
     needsActiveContainer: (target) => {
@@ -470,6 +505,35 @@ export class DependencyResolver {
     resolutionPath: Array<string>,
     resolutionStack: Array<ResolutionFrame>,
   ): Value {
+    // Name-only fast lane: memoized lookup, dispatching just the shapes whose
+    // semantics involve no resolution context (constants, cached singletons).
+    if (
+      options !== undefined &&
+      options.name !== undefined &&
+      options.tag === undefined &&
+      (options.tags === undefined || options.tags.length === 0)
+    ) {
+      const namedEntry = this.#lookupNamedEntry(token, options.name);
+      if (namedEntry !== null) {
+        const namedBinding = namedEntry.binding;
+        if (
+          namedBinding.kind === "constant" &&
+          namedBinding.onActivation === undefined &&
+          (this.#lifecycle.activationVersion === 0 || !this.#lifecycle.hasActivationHandlers(namedBinding.token))
+        ) {
+          return namedBinding.value as Value;
+        }
+        const namedScope = (namedBinding as BindingWithScope).scope ?? "transient";
+        if (namedScope === "singleton") {
+          const cachedSingleton = namedEntry.owner.#scope.peekSingleton(namedBinding.id);
+          if (cachedSingleton !== SINGLETON_MISS) {
+            return cachedSingleton as Value;
+          }
+        }
+        // Everything else keeps the full path (context, activation, guards).
+      }
+    }
+
     const found = this.#findBinding(token, options, resolutionPath, resolutionStack);
 
     if (found === undefined) {

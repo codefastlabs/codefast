@@ -181,9 +181,11 @@ class DefaultContainer implements Container {
     moduleRef?: object,
   ): BindToBuilder<Value> {
     const registry = this.#registry;
-    // Binding displaced by this fluent chain's most recent commit — restorable
-    // until a re-commit settles on a shape that genuinely conflicts with it.
-    let displacedByChain: Binding | undefined;
+    // Bindings displaced by this fluent chain's commits — each stays restorable
+    // until the chain settles on a shape that genuinely conflicts with it. A list,
+    // because one chain can displace several bindings (the default at an
+    // intermediate commit, then a named/tagged binding at the final one).
+    const displacedByChain: Array<Binding> = [];
 
     const commitBinding = <BindingValue>(
       binding: Binding<BindingValue>,
@@ -205,17 +207,19 @@ class DefaultContainer implements Container {
       const displaced = registry.add(binding as Binding);
       if (displaced !== undefined) {
         // A fluent chain commits eagerly on each refinement, so an intermediate
-        // default-slot commit can displace a pre-existing binding that the final
-        // shape would never conflict with. Remember it so a later re-commit that
-        // morphs away (named/tagged slot, pure predicate) can restore it.
-        displacedByChain = displaced;
-      } else if (
-        displacedByChain !== undefined &&
-        previousId !== undefined &&
-        !displacesRestoredBinding(binding as Binding, displacedByChain)
-      ) {
-        registry.add(displacedByChain);
-        displacedByChain = undefined;
+        // commit can displace a binding that the final shape would never conflict
+        // with. Remember it so a later re-commit that morphs away (named/tagged
+        // slot, pure predicate) can restore it.
+        displacedByChain.push(displaced);
+      }
+      if (previousId !== undefined && displacedByChain.length > 0) {
+        for (let index = displacedByChain.length - 1; index >= 0; index -= 1) {
+          const candidate = displacedByChain[index]!;
+          if (!displacesRestoredBinding(binding as Binding, candidate)) {
+            registry.add(candidate);
+            displacedByChain.splice(index, 1);
+          }
+        }
       }
       if (moduleRef !== undefined) {
         let ids = this.#moduleBindingIds.get(moduleRef);

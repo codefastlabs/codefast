@@ -1,8 +1,9 @@
 /**
- * Compiler for the resolver's Dagger-style class plans: a transient class
- * binding whose dependency subgraph is pure static (class/constant/
- * cached-singleton deps, no activation hooks or postConstruct) compiles once
- * into a nested-constructor closure, cycle-checked at compile time.
+ * Compiler for the resolver's Dagger-style instantiation plans: a transient
+ * class or resolved-factory binding whose dependency subgraph is pure static
+ * (class/constant/cached-singleton deps, no activation hooks or postConstruct)
+ * compiles once into a nested-constructor/factory closure, cycle-checked at
+ * compile time.
  *
  * Compilation is cold-path — it runs once per (binding, cache version). The
  * closures it returns ARE the hot path and touch nothing but their captures.
@@ -11,11 +12,14 @@
  */
 import type { Binding } from "#/binding";
 import type { ConstructorInvocation } from "#/constructor-type";
+import type { InjectionDescriptor } from "#/decorators/inject";
+import { AsyncResolutionError } from "#/errors";
 import type { ConstructorMetadata } from "#/metadata/metadata-types";
 import { injectionSlotToResolveOptions } from "#/resolution/resolve-options";
 import type { ScopeManager } from "#/resolution/scope";
 import { SINGLETON_MISS } from "#/resolution/scope";
 import type { Token } from "#/token";
+import { tokenName } from "#/token";
 import type { BindingScope, Constructor } from "#/types";
 
 // Bail out of pathological graphs — the runtime path handles them correctly.
@@ -28,10 +32,10 @@ export const PLAN_RETRY: unique symbol = Symbol("di:plan-retry");
  * A compiled plan, `null` for "not plannable under the current cache versions",
  * or {@link PLAN_RETRY} when a first runtime resolve must discover metadata first.
  */
-export type ClassPlanCompileResult = (() => unknown) | null | typeof PLAN_RETRY;
+export type InstantiationPlanCompileResult = (() => unknown) | null | typeof PLAN_RETRY;
 
 /** A dependency's terminal binding plus the scope cache of the resolver that owns it. */
-export interface ClassPlanDependencyEntry {
+export interface InstantiationPlanDependencyEntry {
   readonly binding: Binding;
   readonly ownerScope: ScopeManager;
 }
@@ -40,14 +44,14 @@ export interface ClassPlanDependencyEntry {
  * Everything the compiler needs from its resolver, expressed as behavior so the
  * compiler stays independently testable and free of resolver internals.
  */
-export interface ClassPlanHost {
+export interface InstantiationPlanHost {
   hasActivationHandlers(token: Token<unknown> | Constructor): boolean;
   /** Cached postConstruct presence — `undefined` until a runtime resolve discovers it. */
   knownPostConstruct(target: Constructor): boolean | undefined;
   needsActiveContainer(target: Constructor): boolean;
   getConstructorMetadata(target: Constructor): ConstructorMetadata | undefined;
   /** Options-less lookup with alias hops folded; `null` when the fast lane can't answer. */
-  lookupDependencyEntry(token: Token<unknown> | Constructor): ClassPlanDependencyEntry | null;
+  lookupDependencyEntry(token: Token<unknown> | Constructor): InstantiationPlanDependencyEntry | null;
   /** Full runtime resolve — used by singleton thunks for the first materialization. */
   resolveFallback(token: Token<unknown> | Constructor): unknown;
 }
@@ -55,22 +59,76 @@ export interface ClassPlanHost {
 /**
  * @since 0.3.16-canary.1
  */
-export class ClassPlanCompiler {
-  readonly #host: ClassPlanHost;
+export class InstantiationPlanCompiler {
+  readonly #host: InstantiationPlanHost;
 
-  constructor(host: ClassPlanHost) {
+  constructor(host: InstantiationPlanHost) {
     this.#host = host;
   }
 
-  compile(binding: Binding & { kind: "class" }): ClassPlanCompileResult {
-    return this.#compileClassPlan(binding, new Set(), 0);
+  compile(binding: Binding & { kind: "class" | "resolved" }): InstantiationPlanCompileResult {
+    return binding.kind === "class"
+      ? this.#compileClassPlan(binding, new Set(), 0)
+      : this.#compileResolvedPlan(binding, new Set(), 0);
+  }
+
+  // A resolved binding declares its deps as explicit descriptors — same rules as
+  // class params, with the factory call (and its sync-only check) in place of `new`.
+  #compileResolvedPlan(
+    binding: Binding & { kind: "resolved" },
+    compileStack: Set<Binding["id"]>,
+    depth: number,
+  ): InstantiationPlanCompileResult {
+    if (depth > PLAN_DEPTH_LIMIT || compileStack.has(binding.id)) {
+      return null;
+    }
+    if (binding.onActivation !== undefined || this.#host.hasActivationHandlers(binding.token)) {
+      return null;
+    }
+    const factory = binding.factory;
+    const tokenDisplayName = tokenName(binding.token);
+    const depThunks = new Array<() => unknown>(binding.deps.length);
+    compileStack.add(binding.id);
+    try {
+      for (let index = 0; index < binding.deps.length; index += 1) {
+        const thunk = this.#compileDescriptorThunk(binding.deps[index]!, compileStack, depth);
+        if (thunk === null || thunk === PLAN_RETRY) {
+          return thunk;
+        }
+        depThunks[index] = thunk;
+      }
+    } finally {
+      compileStack.delete(binding.id);
+    }
+    return () => {
+      const factoryResult = factory(...depThunks.map((thunk) => thunk()));
+      if (factoryResult instanceof Promise) {
+        throw new AsyncResolutionError(tokenDisplayName, tokenDisplayName);
+      }
+      return factoryResult;
+    };
+  }
+
+  #compileDescriptorThunk(
+    descriptor: InjectionDescriptor,
+    compileStack: Set<Binding["id"]>,
+    depth: number,
+  ): InstantiationPlanCompileResult {
+    if (descriptor.multi || descriptor.optional || injectionSlotToResolveOptions(descriptor) !== undefined) {
+      return null;
+    }
+    const entry = this.#host.lookupDependencyEntry(descriptor.token as Token<unknown> | Constructor);
+    if (entry === null) {
+      return null;
+    }
+    return this.#compileDepThunk(entry, compileStack, depth);
   }
 
   #compileClassPlan(
     binding: Binding & { kind: "class" },
     compileStack: Set<Binding["id"]>,
     depth: number,
-  ): ClassPlanCompileResult {
+  ): InstantiationPlanCompileResult {
     if (depth > PLAN_DEPTH_LIMIT || compileStack.has(binding.id)) {
       return null;
     }
@@ -138,10 +196,10 @@ export class ClassPlanCompiler {
   }
 
   #compileDepThunk(
-    entry: ClassPlanDependencyEntry,
+    entry: InstantiationPlanDependencyEntry,
     compileStack: Set<Binding["id"]>,
     depth: number,
-  ): ClassPlanCompileResult {
+  ): InstantiationPlanCompileResult {
     const { binding, ownerScope } = entry;
     if (binding.kind === "constant") {
       if (binding.onActivation !== undefined || this.#host.hasActivationHandlers(binding.token)) {
