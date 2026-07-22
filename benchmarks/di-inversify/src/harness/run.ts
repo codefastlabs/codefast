@@ -120,6 +120,7 @@ async function main(): Promise<void> {
 
   renderTwoWayConsoleReport(codefastReport, inversifyReport, DI_INVERSIFY_CONSOLE, {
     footerHintLine: `Cite the 'Comparable scenarios' table.`,
+    headToHeadLabels: { left: "codefast", right: "inversify" },
   });
 
   const librariesForJsonl = [

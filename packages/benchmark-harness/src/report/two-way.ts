@@ -82,7 +82,123 @@ export type TwoWayConsoleColumnLabels = {
  */
 export type TwoWayConsoleReportOptions = {
   readonly footerHintLine?: string;
+  /** Short names used in the head-to-head summary line, e.g. "codefast" / "inversify". */
+  readonly headToHeadLabels?: {
+    readonly left: string;
+    readonly right: string;
+  };
 };
+
+// A ratio within ±3% of 1.0 is statistical parity, not a win or a loss.
+const HEAD_TO_HEAD_PARITY_BAND = 0.03;
+
+/**
+ * One classified head-to-head entry: scenario id plus its left/right throughput ratio.
+ *
+ * @since 0.3.16-canary.0
+ */
+export interface TwoWayHeadToHeadEntry {
+  readonly id: string;
+  readonly ratio: number;
+}
+
+/**
+ * Win/parity/loss classification of every comparable scenario, from the left library's viewpoint.
+ *
+ * @since 0.3.16-canary.0
+ */
+export interface TwoWayHeadToHeadSummary {
+  readonly comparableCount: number;
+  readonly wins: ReadonlyArray<TwoWayHeadToHeadEntry>;
+  readonly parities: ReadonlyArray<TwoWayHeadToHeadEntry>;
+  readonly losses: ReadonlyArray<TwoWayHeadToHeadEntry>;
+  readonly medianRatio: number;
+  readonly leftOnlyIds: ReadonlyArray<string>;
+  readonly rightOnlyIds: ReadonlyArray<string>;
+}
+
+/**
+ * Classifies comparable rows into wins / parities / losses for the left library.
+ *
+ * @since 0.3.16-canary.0
+ */
+export function summarizeTwoWayComparison(rows: ReadonlyArray<TwoWayScenarioComparisonRow>): TwoWayHeadToHeadSummary {
+  const wins: Array<TwoWayHeadToHeadEntry> = [];
+  const parities: Array<TwoWayHeadToHeadEntry> = [];
+  const losses: Array<TwoWayHeadToHeadEntry> = [];
+  const leftOnlyIds: Array<string> = [];
+  const rightOnlyIds: Array<string> = [];
+
+  for (const row of rows) {
+    if (row.rightHzPerOp === 0) {
+      if (row.leftHzPerOp > 0) {
+        leftOnlyIds.push(row.id);
+      }
+      continue;
+    }
+    if (row.leftHzPerOp === 0) {
+      rightOnlyIds.push(row.id);
+      continue;
+    }
+    const entry: TwoWayHeadToHeadEntry = { id: row.id, ratio: row.leftHzPerOp / row.rightHzPerOp };
+    if (entry.ratio > 1 + HEAD_TO_HEAD_PARITY_BAND) {
+      wins.push(entry);
+    } else if (entry.ratio < 1 - HEAD_TO_HEAD_PARITY_BAND) {
+      losses.push(entry);
+    } else {
+      parities.push(entry);
+    }
+  }
+
+  const ratios = [...wins, ...parities, ...losses].map((entry) => entry.ratio).sort((left, right) => left - right);
+  const midpoint = Math.floor(ratios.length / 2);
+  const medianRatio =
+    ratios.length === 0
+      ? 0
+      : ratios.length % 2 === 1
+        ? ratios[midpoint]!
+        : (ratios[midpoint - 1]! + ratios[midpoint]!) / 2;
+
+  return { comparableCount: ratios.length, wins, parities, losses, medianRatio, leftOnlyIds, rightOnlyIds };
+}
+
+function formatRatioTimes(ratio: number): string {
+  return `${ratio >= 10 ? ratio.toFixed(1) : ratio.toFixed(2)}×`;
+}
+
+function formatEntryList(entries: ReadonlyArray<TwoWayHeadToHeadEntry>): string {
+  return entries.map((entry) => `\`${entry.id}\` (${formatRatioTimes(entry.ratio)})`).join(", ");
+}
+
+function buildHeadToHeadSummaryMarkdownLines(
+  summary: TwoWayHeadToHeadSummary,
+  versionLabels: TwoWayMarkdownReportOptions["fingerprintLibraryVersionLabels"],
+): Array<string> {
+  const { comparableCount, wins, parities, losses, medianRatio, leftOnlyIds, rightOnlyIds } = summary;
+  const winPercent = comparableCount === 0 ? 0 : Math.round((wins.length / comparableCount) * 100);
+  const lines = [
+    "## Head-to-head summary",
+    "",
+    `**${versionLabels.left} wins ${String(wins.length)} of ${String(comparableCount)} comparable scenarios (${String(winPercent)}%) — ${String(parities.length)} parity, ${String(losses.length)} loss${losses.length === 1 ? "" : "es"}.** Median ratio ${formatRatioTimes(medianRatio)} (${versionLabels.left} / ${versionLabels.right}; win >1.03×, parity 0.97–1.03×, loss <0.97×).`,
+    "",
+  ];
+  if (losses.length > 0) {
+    lines.push(`- Losses: ${formatEntryList(losses)}`);
+  }
+  if (parities.length > 0) {
+    lines.push(`- Parity: ${formatEntryList(parities)}`);
+  }
+  const topWins = [...wins].sort((left, right) => right.ratio - left.ratio).slice(0, 3);
+  if (topWins.length > 0) {
+    lines.push(`- Biggest wins: ${formatEntryList(topWins)}`);
+  }
+  if (leftOnlyIds.length > 0 || rightOnlyIds.length > 0) {
+    lines.push(
+      `- Not comparable: ${String(leftOnlyIds.length)} scenario(s) measured only for ${versionLabels.left}, ${String(rightOnlyIds.length)} only for ${versionLabels.right}.`,
+    );
+  }
+  return lines;
+}
 
 function orderedScenarioIds(leftReport: LibraryReport, rightReport: LibraryReport): Array<string> {
   const seen = new Set<string>();
@@ -220,6 +336,11 @@ export function renderTwoWayMarkdownReport(
           ...rightReport.sanityFailures.map((id) => `- ${options.sanityBulletMarkdownLabels.right}: \`${id}\``),
         ].join("\n");
 
+  const headToHeadLines = buildHeadToHeadSummaryMarkdownLines(
+    summarizeTwoWayComparison(rows),
+    options.fingerprintLibraryVersionLabels,
+  );
+
   const sections: Array<string> = [
     options.documentHeading,
     "",
@@ -227,6 +348,8 @@ export function renderTwoWayMarkdownReport(
     "",
     environmentLines.join("\n"),
     sanitySection,
+    "",
+    headToHeadLines.join("\n"),
     "",
     "## Comparable scenarios",
     "",
@@ -290,6 +413,17 @@ export function renderTwoWayConsoleReport(
     );
   }
 
+  const summary = summarizeTwoWayComparison(rows);
+  const labels = options?.headToHeadLabels ?? { left: "left", right: "right" };
+  console.log("");
+  console.log(
+    `Head-to-head: ${labels.left} ${String(summary.wins.length)} wins · ${String(summary.parities.length)} parity · ${String(summary.losses.length)} loss${summary.losses.length === 1 ? "" : "es"} (of ${String(summary.comparableCount)} comparable vs ${labels.right}) — median ratio ${formatRatioTimes(summary.medianRatio)}`,
+  );
+  if (summary.losses.length > 0) {
+    console.log(
+      `Losses: ${summary.losses.map((entry) => `${entry.id} (${formatRatioTimes(entry.ratio)})`).join(", ")}`,
+    );
+  }
   console.log("");
   console.log(options?.footerHintLine ?? "Cite the comparable scenarios table.");
   console.log("");

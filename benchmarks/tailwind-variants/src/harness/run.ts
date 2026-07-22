@@ -136,11 +136,13 @@ async function main(): Promise<void> {
   console.log(`\n--- Pairwise: ${CODEFAST_TV.libraryName} vs ${TAILWIND_VARIANTS.libraryName} ---\n`);
   renderTwoWayConsoleReport(codefastReport, tailwindVariantsReport, CODEFAST_VS_TAILWIND_VARIANTS_CONSOLE, {
     footerHintLine: "Markdown: report-vs-tailwind-variants.md in the run directory.",
+    headToHeadLabels: { left: "codefast", right: "tailwind-variants" },
   });
 
   console.log(`\n--- Pairwise: ${CODEFAST_TV.libraryName} vs ${CVA.libraryName} ---\n`);
   renderTwoWayConsoleReport(codefastReport, classVarianceAuthorityReport, CODEFAST_VS_CVA_CONSOLE, {
     footerHintLine: "Markdown: report-vs-class-variance-authority.md in the run directory.",
+    headToHeadLabels: { left: "codefast", right: "cva" },
   });
 
   const librariesForJsonl = [
