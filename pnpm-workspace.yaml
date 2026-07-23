@@ -23,11 +23,11 @@ catalog:
   # Published @codefast/* versions consumed by examples/* (which install from npm,
   # not workspace: links). Changesets ignores catalog entries, so these are not
   # auto-bumped on release — bump them by hand when an example should track a newer release.
-  "@codefast/di": 0.5.0-canary.2
-  "@codefast/tailwind-variants": 0.5.0-canary.2
-  "@codefast/theme": 0.5.0-canary.2
-  "@codefast/typescript-config": 0.5.0-canary.2
-  "@codefast/ui": 0.5.0-canary.2
+  "@codefast/di": 0.5.0-canary.6
+  "@codefast/tailwind-variants": 0.5.0-canary.6
+  "@codefast/theme": 0.5.0-canary.6
+  "@codefast/typescript-config": 0.5.0-canary.6
+  "@codefast/ui": 0.5.0-canary.6
   "@commitlint/cli": ^21.2.1
   "@commitlint/config-conventional": ^21.2.0
   # Static Inter TTFs for the OG-image script — resvg cannot read @fontsource-variable/inter's woff2.

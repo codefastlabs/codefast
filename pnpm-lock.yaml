@@ -19,20 +19,20 @@ catalogs:
       specifier: ^2.31.1
       version: 2.31.1
     '@codefast/di':
-      specifier: 0.5.0-canary.2
-      version: 0.5.0-canary.2
+      specifier: 0.5.0-canary.6
+      version: 0.5.0-canary.6
     '@codefast/tailwind-variants':
-      specifier: 0.5.0-canary.2
-      version: 0.5.0-canary.2
+      specifier: 0.5.0-canary.6
+      version: 0.5.0-canary.6
     '@codefast/theme':
-      specifier: 0.5.0-canary.2
-      version: 0.5.0-canary.2
+      specifier: 0.5.0-canary.6
+      version: 0.5.0-canary.6
     '@codefast/typescript-config':
-      specifier: 0.5.0-canary.2
-      version: 0.5.0-canary.2
+      specifier: 0.5.0-canary.6
+      version: 0.5.0-canary.6
     '@codefast/ui':
-      specifier: 0.5.0-canary.2
-      version: 0.5.0-canary.2
+      specifier: 0.5.0-canary.6
+      version: 0.5.0-canary.6
     '@commitlint/cli':
       specifier: ^21.2.1
       version: 21.2.1
@@ -520,16 +520,16 @@ importers:
     dependencies:
       '@codefast/di':
         specifier: 'catalog:'
-        version: 0.5.0-canary.2
+        version: 0.5.0-canary.6
       '@codefast/tailwind-variants':
         specifier: 'catalog:'
-        version: 0.5.0-canary.2
+        version: 0.5.0-canary.6
       '@codefast/theme':
         specifier: 'catalog:'
-        version: 0.5.0-canary.2(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+        version: 0.5.0-canary.6(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@codefast/ui':
         specifier: 'catalog:'
-        version: 0.5.0-canary.2(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.8(react@19.2.8))(react-is@19.2.7)(react@19.2.8)
+        version: 0.5.0-canary.6(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.8(react@19.2.8))(react-is@19.2.7)(react@19.2.8)
       '@tanstack/react-router':
         specifier: 'catalog:'
         version: 1.170.18(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
@@ -560,7 +560,7 @@ importers:
         version: 8.0.2(@babel/core@8.0.1)
       '@codefast/typescript-config':
         specifier: 'catalog:'
-        version: 0.5.0-canary.2(typescript@7.0.2)
+        version: 0.5.0-canary.6(typescript@7.0.2)
       '@rolldown/plugin-babel':
         specifier: 'catalog:'
         version: 0.2.3(@babel/core@8.0.1)(@babel/runtime@7.29.7)(rolldown@1.1.5)(vite@8.1.5(@types/node@26.1.1)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.23.1)(yaml@2.9.0))
@@ -1290,16 +1290,16 @@ packages:
   '@changesets/write@0.4.0':
     resolution: {integrity: sha512-CdTLvIOPiCNuH71pyDu3rA+Q0n65cmAbXnwWH84rKGiFumFzkmHNT8KHTMEchcxN+Kl8I54xGUhJ7l3E7X396Q==}
 
-  '@codefast/di@0.5.0-canary.2':
-    resolution: {integrity: sha512-EXsosgywoZSVMZVsksLopn1aj6Lnm0wSq4lXN0H0wPKBtSa27fU1NGRodJS4iAO94LpaHaKoTHBTf9+Ff2424w==}
+  '@codefast/di@0.5.0-canary.6':
+    resolution: {integrity: sha512-M6zlHB2VVTa6Rx/KJKNpgX/bd2CtSTTKN0/q0PjUjEmwkPV4KX+MV02/aacZjjvBdF0IkHS8NxBrrTZM6d/LeQ==}
     engines: {node: '>=26.0.0'}
 
-  '@codefast/tailwind-variants@0.5.0-canary.2':
-    resolution: {integrity: sha512-fWonaxZCRCuuoDO81owz39sNNjZG585j6L4wVU6Qcbo6UQ0qYVSMAukbDAALzA3X6EKqG/FFKuq8mqaxFElruw==}
+  '@codefast/tailwind-variants@0.5.0-canary.6':
+    resolution: {integrity: sha512-cni2YM7aQP2Qx2UD8/82oe6Y6EQRRfKYxWNhqjhwLfXJLiDbdoM1omjn0COqzQRb4s3yesO9D9M7nUwLpYE3zA==}
     engines: {node: '>=24.0.0'}
 
-  '@codefast/theme@0.5.0-canary.2':
-    resolution: {integrity: sha512-5+VS/+TLOnBla2yKJUyDq+ehe1DsMkAx6UJ1M5PJeOoHhIUF1dXAmFQEGfj/j9Fk+2bmRmY5SBce+0As/Mwsdg==}
+  '@codefast/theme@0.5.0-canary.6':
+    resolution: {integrity: sha512-NtzXzO1CMOqCQbIwr7Ej7F07PQ8+6sfsbrd8x8dv6Y6vUFaVNOqR+OoWeRdoT5X77fEc/ZYSL2MtP26vHzh73A==}
     engines: {node: '>=24.0.0'}
     peerDependencies:
       '@types/react': '>=19.0.0'
@@ -1312,14 +1312,14 @@ packages:
       '@types/react-dom':
         optional: true
 
-  '@codefast/typescript-config@0.5.0-canary.2':
-    resolution: {integrity: sha512-8cZluvjUlRUZPLucghgnXxGcMoagKTUxTp54PlVMmBPBi45V8TKMpnHBMFu1df4fOAzOBg/QgPnNoNxYZcYcGg==}
+  '@codefast/typescript-config@0.5.0-canary.6':
+    resolution: {integrity: sha512-A7DCyODdS3uOJNIVV4EVl/laJVNgGNk9+J9D3k1a/PwuzfpP5fRXloNQc/zBlOXjj/Gouf68yk1Ie3bHm7EnZA==}
     engines: {node: '>=24.0.0'}
     peerDependencies:
       typescript: '>=5.0.0'
 
-  '@codefast/ui@0.5.0-canary.2':
-    resolution: {integrity: sha512-gwxxYQzGR6F3mXaaPQ6bLITiLUxjMAiSxQjjtXfwxEZQw8gcJ4fDASyh778XX/NHYeoluDRxXL3Cam72LGmkUw==}
+  '@codefast/ui@0.5.0-canary.6':
+    resolution: {integrity: sha512-l85i3NPKrY2AflF+wh57WaytRS9QP+xT7CAI46TP23KcDuuh+UAdLZHN3eqXaCJVlVaCqliDbeqWxEj64EFysg==}
     engines: {node: '>=24.0.0'}
     peerDependencies:
       '@types/react': '>=19.0.0'
@@ -6830,14 +6830,14 @@ snapshots:
       human-id: 4.2.0
       prettier: 2.8.8
 
-  '@codefast/di@0.5.0-canary.2': {}
+  '@codefast/di@0.5.0-canary.6': {}
 
-  '@codefast/tailwind-variants@0.5.0-canary.2':
+  '@codefast/tailwind-variants@0.5.0-canary.6':
     dependencies:
       clsx: 2.1.1
       tailwind-merge: 3.6.0
 
-  '@codefast/theme@0.5.0-canary.2(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
+  '@codefast/theme@0.5.0-canary.6(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
     dependencies:
       react: 19.2.8
       react-dom: 19.2.8(react@19.2.8)
@@ -6846,13 +6846,13 @@ snapshots:
       '@types/react': 19.2.17
       '@types/react-dom': 19.2.3(@types/react@19.2.17)
 
-  '@codefast/typescript-config@0.5.0-canary.2(typescript@7.0.2)':
+  '@codefast/typescript-config@0.5.0-canary.6(typescript@7.0.2)':
     dependencies:
       typescript: 7.0.2
 
-  '@codefast/ui@0.5.0-canary.2(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.8(react@19.2.8))(react-is@19.2.7)(react@19.2.8)':
+  '@codefast/ui@0.5.0-canary.6(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.8(react@19.2.8))(react-is@19.2.7)(react@19.2.8)':
     dependencies:
-      '@codefast/tailwind-variants': 0.5.0-canary.2
+      '@codefast/tailwind-variants': 0.5.0-canary.6
       '@daypicker/react': 10.0.1(@types/react@19.2.17)(react@19.2.8)
       cmdk: 1.1.1(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       embla-carousel-react: 8.6.0(react@19.2.8)
