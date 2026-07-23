@@ -73,7 +73,7 @@ pnpm check-types           # type-check each tsconfig variant
 
 ## Environment configuration
 
-### Runtime baseline (pinned by harness)
+### Pinned runtime environment
 
 | Key                        | Value / behavior                       |
 | -------------------------- | -------------------------------------- |
@@ -123,15 +123,14 @@ realistic-graph-resolve-root realistic          234,567           145,678    1.6
 ...
 ```
 
-The markdown report opens with a **Head-to-head summary** — win/parity/loss counts over comparable rows (parity band ±3%), the median ratio, loss/parity lists, and the runtime-floor baselines. The console prints the same tally under the table.
+The markdown report opens with a **Head-to-head summary** — win/parity/loss counts over comparable rows (parity band ±3%), the median ratio, and loss/parity lists. The console prints the same tally under the table.
 
 Things to check before drawing conclusions:
 
 1. **IQR columns** (markdown version only): if either library's IQR exceeds ~5%, the medians are unstable; re-run on a quieter machine.
 2. **Sanity failures**: any scenario that fails its pre-bench sanity check is skipped and listed under "Sanity failures" at the top of the report. Don't read the absence of a row as "the library can't do it".
 3. **GC exposed**: the fingerprint section should say `gcExposed: true, true`. If it says `false` for either library, the `--expose-gc` flag didn't reach the subprocess and allocation-heavy rows are noisier than they should be.
-4. **Baselines**: the `baseline` group rows run **no DI library at all** — both children execute identical code, so the pair should sit at ~1.00× (it calibrates the two processes) and gives a runtime floor to subtract from same-shape rows. V8's promise machinery dominates sub-µs async rows, so raw ratios there mostly compare the runtime, not the libraries. Baselines are never tallied as wins or losses.
-5. **Mode**: shared-process and isolated (`BENCH_ISOLATE=1`) runs are not comparable to each other — cross-scenario inline-cache wear in shared mode is worth ~30% on async chains.
+4. **Mode**: shared-process and isolated (`BENCH_ISOLATE=1`) runs are not comparable to each other — cross-scenario inline-cache wear in shared mode is worth ~30% on async chains.
 
 ## Scenario inventory
 
@@ -143,11 +142,10 @@ Things to check before drawing conclusions:
 | Fan-out                                 | `fan-out/index.ts` → `tree.ts`, `resolve-all-strategies.ts`                                             | Tree scenario uses `batch=20`; `resolve-all-strategies-{10,100}`, `resolve-all-named-{8,32}` use `batch=1` (counts from `src/fixtures/fan-out-descriptor.ts`). |
 | Production / wiring                     | `production.ts`, `binding-variants.ts`, `resolution-patterns.ts`, `registry-ops.ts`, `module.ts`        | Extra micro-style rows in binding/resolution modules; `registry-ops.ts` mixes `lifecycle`, `introspection`, and `scope` **group** labels per row.              |
 | Introspection & startup (codefast-only) | `initialize-inspect.ts`                                                                                 | `initialize-async-warmup` (**`boot`** group), `inspect-snapshot`, `lookup-bindings` (**`introspection`**). Inversify column shows "—" for these ids.           |
-| Runtime floors (both sides, shared)     | `baseline.ts` (one file, collected by **both** children)                                                | `baseline-async-chain-8`, `baseline-sync-map-call` (**`baseline`** group) — no DI library involved; reported as calibration floors, excluded from the tally.   |
 
 Representative **stable ids** (not exhaustive of every `group` value): `constant-resolve`, `singleton-class-1-dep`, `transient-class-1-dep`, `named-constant-get`, `realistic-graph-resolve-root`, `realistic-graph-cold-resolve`, `fan-out-tree-depth-3-breadth-4`, `resolve-all-strategies-10`, `resolve-all-strategies-100`, `resolve-all-named-8`, `resolve-all-named-32`, `resolve-async-single-hop`, `dynamic-async-chain-8`, `async-fanout-concurrent-8`, `async-fanout-concurrent-32`, `lifecycle-post-construct-singleton`, `lifecycle-pre-destroy-unbind`, `child-depth-2-resolve`, `child-request-lifecycle-create-resolve-dispose`, `scale-deep-transient-chain-512`, `boot-decorated-container-build-and-resolve`, `misconfigured-missing-binding`, `circular-dependency-3`, `ambiguous-multi-binding`, plus production / binding / resolution / registry / module / initialize-inspect ids defined in those modules.
 
-### Phase 2 - Fan-out baseline
+### Phase 2 - Fan-out scenarios
 
 Completed in PR #420 [`feat/di-bench-fanout-phase2`](https://github.com/codefastlabs/codefast/pull/420)
 
@@ -161,7 +159,7 @@ Completed in PR #420 [`feat/di-bench-fanout-phase2`](https://github.com/codefast
 
 All scenarios passed: `pnpm check-types`, `pnpm bench`, no sanity failures. IQR < 3%.
 
-### Phase 3 - Async baseline
+### Phase 3 - Async scenarios
 
 Completed on branch `feat/di-bench-fanout-phase2` (pending PR split for async-only review)
 
@@ -202,7 +200,6 @@ benchmarks/di-inversify/
       batched.ts                     # inner-loop helper for sub-μs scenarios (throughput × batch)
     scenarios/
       types.ts                       # BenchScenario / AsyncBenchScenario / ScenarioGroup
-      baseline.ts                    # library-free runtime floors, collected by BOTH children
       collect-codefast-scenarios.ts  # ordered list of codefast scenario builders
       collect-inversify-scenarios.ts # ordered list of inversify scenario builders (ids must align with codefast)
       codefast/                      # @codefast/di scenario implementations

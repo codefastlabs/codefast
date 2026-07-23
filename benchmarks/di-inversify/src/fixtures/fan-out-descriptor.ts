@@ -14,7 +14,7 @@ export type ResolveAllStrategyCount = (typeof RESOLVE_ALL_STRATEGY_COUNTS)[numbe
 /**
  * @since 0.3.16-canary.0
  */
-export const RESOLVE_ALL_NAMED_COUNTS = [8, 32] as const;
+export const RESOLVE_ALL_NAMED_COUNTS = [8, 16, 32, 64] as const;
 /**
  * @since 0.3.16-canary.0
  */

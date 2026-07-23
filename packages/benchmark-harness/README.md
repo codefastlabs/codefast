@@ -20,7 +20,7 @@ Two execution shapes:
 - **Shared** (`runBenchSubprocess`): one child per library runs every scenario — approximates a long-lived app, but earlier scenarios train the library's hot-path inline caches for later ones (measured at ~30% on async chains), so rows are order-dependent.
 - **Isolated** (`runBenchSubprocessIsolated`, opt in with `BENCH_ISOLATE=1`): one child **per scenario** per library — a `BENCH_LIST` discovery child reports scenario ids, then `BENCH_ONLY=<id>` workers run one scenario each and the parent merges trials back into a single payload. Order-independent.
 
-Reports open with a **head-to-head summary**: win/parity/loss counts over comparable rows (±3% parity band), the median ratio, and loss/parity lists. Scenarios in the `baseline` group are treated as library-free runtime floors — rendered for calibration, never tallied. `collectFingerprint` records the runtime environment (Node version, CPU, library versions) alongside every run so historical results stay comparable.
+Reports open with a **head-to-head summary**: win/parity/loss counts over comparable rows (±3% parity band), the median ratio, and loss/parity lists. `collectFingerprint` records the runtime environment (Node version, CPU, library versions) alongside every run so historical results stay comparable.
 
 ## Usage
 

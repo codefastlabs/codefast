@@ -23,7 +23,7 @@ If you only read one other file, read the **Environment** and **Comparable scena
 | Term                          | Meaning                                                                                                                                                                                                                                                         |
 | ----------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Scenario**                  | One named benchmark (one row in the report), e.g. `constant-resolve`. Implemented per library under `src/scenarios/codefast/*.ts` and `src/scenarios/inversify/*.ts`.                                                                                           |
-| **Group**                     | A label that clusters scenarios for reading: `micro`, `realistic`, `fan-out`, `async`, `lifecycle`, `scope`, `scale`, `boot`, `failure`, `production`, `introspection`, and `baseline` (library-free runtime floors, never tallied).                            |
+| **Group**                     | A label that clusters scenarios for reading: `micro`, `realistic`, `fan-out`, `async`, `lifecycle`, `scope`, `scale`, `boot`, `failure`, `production`, and `introspection`.                                                                                     |
 | **Task**                      | tinybench’s unit of work: your scenario’s `fn` (sync or async).                                                                                                                                                                                                 |
 | **Iteration**                 | One execution of the task’s `fn` inside a single tinybench `run()`.                                                                                                                                                                                             |
 | **Batch**                     | How many **logical operations** one iteration performs. If one resolve is faster than `performance.now()` resolution, the scenario loops `batch` times inside `fn`; the reporter scales throughput so **hz/op** is “per logical op”, not “per loop of `batch`”. |
@@ -59,10 +59,9 @@ If you only read one other file, read the **Environment** and **Comparable scena
 
 **Throughput vs latency**: A scenario can be tuned for **throughput** (large `batch`, high hz/op) or **latency** (`batch` 1, sensitive mean/p99). Compare like rows: same **Scenario** and **batch** on the same machine profile.
 
-## Head-to-head summary, baselines, and isolation
+## Head-to-head summary and isolation
 
 - The report opens with a **Head-to-head summary**: win/parity/loss counts over comparable rows (parity band ±3%), the median ratio, and lists of losses/parity rows.
-- Rows in the **`baseline` group run no DI library at all** — both children execute identical code. They calibrate the two processes against each other and give a runtime floor to subtract from same-shape rows (V8's async/promise machinery dominates sub-µs async rows, so raw ratios there mostly compare the runtime, not the libraries). Baselines are listed in the summary but never tallied as wins or losses.
 - **`BENCH_ISOLATE=1`** (or `pnpm bench:isolate`) runs each scenario in its **own subprocess**. In the default shared-process mode, every scenario trains the library's hot-path inline caches for all scenarios after it — measured at ~30% throughput on async chains — so row order influences results. Isolated mode is order-independent (closer to a short-lived process; the shared mode is closer to a long-lived app that exercises many binding kinds). Cite which mode a number came from.
 
 ## Canonical decorator modes (why apples-to-apples is nuanced)
@@ -79,7 +78,6 @@ Each library runs in the mode it is **meant to ship with** (Stage 3 decorators +
 | Spawning children, isolated mode             | `@codefast/benchmark-harness` — `src/parent/run-bench-subprocess.ts`               |
 | This package's parent, writing `latest.*`    | `src/harness/run.ts`                                                               |
 | Scenario list / types                        | `src/scenarios/types.ts` + the two `collect-*-scenarios.ts` files                  |
-| Runtime-floor baselines (both sides)         | `src/scenarios/baseline.ts`                                                        |
 | Shared graphs / fixtures                     | `src/fixtures/`                                                                    |
 
 ## Commands (reminder)

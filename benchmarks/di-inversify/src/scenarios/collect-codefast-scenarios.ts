@@ -1,7 +1,6 @@
 /**
  * Central list of all @codefast/di bench scenarios. Used by the bench subprocess.
  */
-import { buildBaselineScenarios } from "#/scenarios/baseline";
 import { buildCodefastAsyncScenarios } from "#/scenarios/codefast/async";
 import { buildCodefastBindingVariantScenarios } from "#/scenarios/codefast/binding-variants";
 import { buildCodefastBootScenarios } from "#/scenarios/codefast/boot";
@@ -43,6 +42,5 @@ export function collectAllCodefastScenarios(): ReadonlyArray<AnyScenario> {
     ...buildCodefastModuleScenarios(),
     ...buildCodefastInitializeInspectScenarios(),
     ...buildCodefastMultiTagScenarios(),
-    ...buildBaselineScenarios(),
   ];
 }

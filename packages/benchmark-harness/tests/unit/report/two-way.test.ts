@@ -56,18 +56,6 @@ describe("summarizeTwoWayComparison", () => {
     expect(evenSummary.medianRatio).toBe(2);
   });
 
-  it("reports baseline-group rows separately without tallying them", () => {
-    const summary = summarizeTwoWayComparison([
-      row("baseline-async-chain-8", 100, 200, "baseline"),
-      row("real-scenario", 150, 100),
-    ]);
-
-    expect(summary.comparableCount).toBe(1);
-    expect(summary.wins.map((entry) => entry.id)).toEqual(["real-scenario"]);
-    expect(summary.losses).toEqual([]);
-    expect(summary.baselines.map((entry) => entry.id)).toEqual(["baseline-async-chain-8"]);
-  });
-
   it("returns an empty summary when nothing is comparable", () => {
     const summary = summarizeTwoWayComparison([]);
     expect(summary.comparableCount).toBe(0);
