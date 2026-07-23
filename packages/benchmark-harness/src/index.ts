@@ -8,6 +8,7 @@ export {
   BENCH_FULL_ENV_KEY,
   BENCH_PORT_ENV_KEY,
   BENCH_RESULTS_DIR_NAME,
+  BENCH_TRIALS_ENV_KEY,
   BENCH_VERBOSE_ENV_KEY,
   OBSERVATIONS_FILE_NAME,
 } from "#/shared/env-keys";
@@ -25,7 +26,7 @@ export { BENCHMARK_SUITE_DEFAULT_BENCH_OPTIONS } from "#/child/bench-options";
 export type { AsyncBenchScenario, AnyBenchScenario, BenchScenario } from "#/child/bench-scenario";
 export { isAsyncScenario } from "#/child/bench-scenario";
 
-export type { CreateRunAllTrialsParameters, RunAllTrials } from "#/child/create-run-all-trials";
+export type { BenchMode, CreateRunAllTrialsParameters, RunAllTrials } from "#/child/create-run-all-trials";
 export { createRunAllTrials } from "#/child/create-run-all-trials";
 
 export { collectFingerprint } from "#/child/fingerprint";

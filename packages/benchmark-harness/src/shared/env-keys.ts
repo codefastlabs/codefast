@@ -18,6 +18,10 @@ export const BENCH_VERBOSE_ENV_KEY = "BENCH_VERBOSE";
  */
 export const BENCH_PORT_ENV_KEY = "BENCH_PORT";
 /**
+ * Overrides the per-scenario trial count (minimum 2); unset/empty uses the mode default.
+ */
+export const BENCH_TRIALS_ENV_KEY = "BENCH_TRIALS";
+/**
  * When "1", the parent runs each scenario in its own subprocess so hot-path inline
  * caches trained by one scenario cannot skew another (order-independence).
  */
@@ -30,14 +34,12 @@ export const BENCH_ONLY_ENV_KEY = "BENCH_ONLY";
  * Child-side: emit the scenario id list without running anything (isolated-mode discovery).
  */
 export const BENCH_LIST_ENV_KEY = "BENCH_LIST";
-
 /**
  * File written inside each timestamped run directory by {@link writeJsonlRun}.
  *
  * @since 0.3.16-canary.0
  */
 export const OBSERVATIONS_FILE_NAME = "observations.jsonl";
-
 /**
  * Directory name where timestamped run subdirectories are written.
  *
