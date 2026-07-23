@@ -30,7 +30,7 @@ catalog:
   "@codefast/ui": 0.5.0-canary.2
   "@commitlint/cli": ^21.2.1
   "@commitlint/config-conventional": ^21.2.0
-  # Static Inter TTFs for the OG-image script — resvg cannot read the woff2 variable font above.
+  # Static Inter TTFs for the OG-image script — resvg cannot read @fontsource-variable/inter's woff2.
   "@expo-google-fonts/inter": ^0.4.2
   "@fontsource-variable/inter": ^5.3.0
   "@hono/node-server": ^2.0.11
@@ -45,7 +45,6 @@ catalog:
   "@tanstack/react-router-devtools": ^1.167.0
   "@tanstack/react-start": ^1.168.32
   "@tanstack/react-table": ^8.21.3
-  # Experimental — powers build-time Shiki highlighting (peer-deps react-start ^1.168.25).
   "@testing-library/dom": ^10.4.1
   "@testing-library/jest-dom": ^7.0.0
   "@testing-library/react": ^16.3.2
