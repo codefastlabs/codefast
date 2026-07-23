@@ -1,5 +1,6 @@
 import { twMerge } from "tailwind-merge";
 
+import { SIMPLE_WITH_MERGE, SIMPLE_WITHOUT_MERGE } from "#/fixtures/scenario-parity";
 import { buttonVariants, simpleTestProps } from "#/fixtures/simple";
 import { cva } from "#/lib/tv-shims";
 import type { BenchScenario } from "#/scenarios/types";
@@ -15,8 +16,8 @@ const cvaInstance = cva(buttonVariants.base, {
 export function buildClassVarianceAuthoritySimpleScenarios(): ReadonlyArray<BenchScenario> {
   return [
     {
-      id: "simple-without-merge",
-      group: "simple",
+      ...SIMPLE_WITHOUT_MERGE,
+      // cva-specific wording — the shared descriptor supplies the paired id/group
       what: "Simple button variants (cva) without tailwind-merge after cva()",
       build: () => () => {
         for (const props of simpleTestProps) {
@@ -25,8 +26,7 @@ export function buildClassVarianceAuthoritySimpleScenarios(): ReadonlyArray<Benc
       },
     },
     {
-      id: "simple-with-merge",
-      group: "simple",
+      ...SIMPLE_WITH_MERGE,
       what: "Simple button variants with tailwind-merge after cva()",
       build: () => () => {
         for (const props of simpleTestProps) {

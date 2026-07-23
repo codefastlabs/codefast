@@ -1,3 +1,4 @@
+import { SLOTS_WITH_MERGE, SLOTS_WITHOUT_MERGE } from "#/fixtures/scenario-parity";
 import type { ServicePreviewSlots } from "#/fixtures/slot-types";
 import { slotsTestProps, slotsVariants } from "#/fixtures/slots";
 import { TV_MERGE_DISABLED, TV_MERGE_ENABLED } from "#/harness/bench-options";
@@ -28,15 +29,11 @@ function runSlotLoop(renderer: SlotsRenderer): void {
 export function buildTailwindVariantsNpmSlotsScenarios(): ReadonlyArray<BenchScenario> {
   return [
     {
-      id: "slots-without-merge",
-      group: "slots",
-      what: "Slots (card-style) without tailwind-merge",
+      ...SLOTS_WITHOUT_MERGE,
       build: () => () => runSlotLoop(npmNoMerge),
     },
     {
-      id: "slots-with-merge",
-      group: "slots",
-      what: "Slots with tailwind-merge on tv",
+      ...SLOTS_WITH_MERGE,
       build: () => () => runSlotLoop(npmWithMerge),
     },
   ];

@@ -1,6 +1,7 @@
 import { twMerge } from "tailwind-merge";
 
 import { complexTestProps, complexVariants } from "#/fixtures/complex";
+import { COMPLEX_WITH_MERGE, COMPLEX_WITHOUT_MERGE } from "#/fixtures/scenario-parity";
 import { cva } from "#/lib/tv-shims";
 import type { BenchScenario } from "#/scenarios/types";
 
@@ -16,8 +17,8 @@ const cvaInstance = cva(complexVariants.base, {
 export function buildClassVarianceAuthorityComplexScenarios(): ReadonlyArray<BenchScenario> {
   return [
     {
-      id: "complex-without-merge",
-      group: "complex",
+      ...COMPLEX_WITHOUT_MERGE,
+      // cva-specific wording — the shared descriptor supplies the paired id/group
       what: "Complex variants (cva) without tailwind-merge after cva()",
       build: () => () => {
         for (const props of complexTestProps) {
@@ -26,8 +27,7 @@ export function buildClassVarianceAuthorityComplexScenarios(): ReadonlyArray<Ben
       },
     },
     {
-      id: "complex-with-merge",
-      group: "complex",
+      ...COMPLEX_WITH_MERGE,
       what: "Complex variants with tailwind-merge after cva()",
       build: () => () => {
         for (const props of complexTestProps) {

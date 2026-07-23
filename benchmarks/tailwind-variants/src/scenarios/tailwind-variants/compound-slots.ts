@@ -1,4 +1,5 @@
 import { compoundSlotsTestProps, compoundSlotsVariants } from "#/fixtures/compound-slots";
+import { COMPOUND_SLOTS_WITH_MERGE, COMPOUND_SLOTS_WITHOUT_MERGE } from "#/fixtures/scenario-parity";
 import type { CompoundPaginationSlots } from "#/fixtures/slot-types";
 import { TV_MERGE_DISABLED, TV_MERGE_ENABLED } from "#/harness/bench-options";
 import { tailwindVariantsTv } from "#/lib/tv-shims";
@@ -27,15 +28,11 @@ function runCompoundSlotLoop(renderer: CompoundSlotsRenderer): void {
 export function buildTailwindVariantsNpmCompoundSlotsScenarios(): ReadonlyArray<BenchScenario> {
   return [
     {
-      id: "compound-slots-without-merge",
-      group: "compound-slots",
-      what: "Compound slots (pagination-style) without tailwind-merge",
+      ...COMPOUND_SLOTS_WITHOUT_MERGE,
       build: () => () => runCompoundSlotLoop(npmNoMerge),
     },
     {
-      id: "compound-slots-with-merge",
-      group: "compound-slots",
-      what: "Compound slots with tailwind-merge on tv",
+      ...COMPOUND_SLOTS_WITH_MERGE,
       build: () => () => runCompoundSlotLoop(npmWithMerge),
     },
   ];

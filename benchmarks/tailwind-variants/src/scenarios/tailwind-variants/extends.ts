@@ -1,4 +1,5 @@
 import { extendsBaseVariants, extendsExtensionVariants, extendsTestProps } from "#/fixtures/extends";
+import { EXTENDS_WITH_MERGE, EXTENDS_WITHOUT_MERGE } from "#/fixtures/scenario-parity";
 import { TV_MERGE_DISABLED, TV_MERGE_ENABLED } from "#/harness/bench-options";
 import { tailwindVariantsTv } from "#/lib/tv-shims";
 import type { BenchScenario } from "#/scenarios/types";
@@ -21,9 +22,7 @@ const npmExtendsWithMerge = tailwindVariantsTv(
 export function buildTailwindVariantsNpmExtendsScenarios(): ReadonlyArray<BenchScenario> {
   return [
     {
-      id: "extends-without-merge",
-      group: "extends",
-      what: "Extended tv config without tailwind-merge",
+      ...EXTENDS_WITHOUT_MERGE,
       build: () => () => {
         for (const props of extendsTestProps) {
           npmExtendsNoMerge(props);
@@ -31,9 +30,7 @@ export function buildTailwindVariantsNpmExtendsScenarios(): ReadonlyArray<BenchS
       },
     },
     {
-      id: "extends-with-merge",
-      group: "extends",
-      what: "Extended tv config with tailwind-merge on tv",
+      ...EXTENDS_WITH_MERGE,
       build: () => () => {
         for (const props of extendsTestProps) {
           npmExtendsWithMerge(props);
