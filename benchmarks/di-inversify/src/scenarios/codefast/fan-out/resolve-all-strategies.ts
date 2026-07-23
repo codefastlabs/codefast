@@ -21,6 +21,7 @@ import {
   type ResolveAllNamedCount,
   type ResolveAllStrategyCount,
 } from "#/fixtures/fan-out-descriptor";
+import { resolveAllNamedDescriptor, resolveAllStrategiesDescriptor } from "#/fixtures/scenario-parity";
 import type { BenchScenario } from "#/scenarios/types";
 
 /**
@@ -40,9 +41,7 @@ function buildResolveAllStrategiesScenario(strategyCount: ResolveAllStrategyCoun
   const prewarmedStrategies = container.resolveAll(strategyToken);
 
   return {
-    id: `resolve-all-strategies-${String(strategyCount)}`,
-    group: "fan-out",
-    what: `resolveAll() across ${String(strategyCount)} strategy bindings once`,
+    ...resolveAllStrategiesDescriptor(strategyCount),
     batch: 1,
     sanity: () => prewarmedStrategies.length === strategyCount,
     build: () => {
@@ -69,9 +68,7 @@ function buildResolveAllNamedScenario(namedCount: ResolveAllNamedCount): BenchSc
   const prewarmedStrategies = container.resolveAll(strategyToken, { name: targetName });
 
   return {
-    id: `resolve-all-named-${String(namedCount)}`,
-    group: "fan-out",
-    what: `resolveAll() with name qualifier across ${String(namedCount)} named strategy bindings`,
+    ...resolveAllNamedDescriptor(namedCount),
     batch: 1,
     sanity: () => prewarmedStrategies.length === 1 && prewarmedStrategies[0] === 0,
     build: () => {

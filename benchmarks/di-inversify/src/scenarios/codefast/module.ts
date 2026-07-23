@@ -17,6 +17,7 @@
  */
 import { Container, Module, token } from "@codefast/di";
 
+import { MODULE_LOAD_UNLOAD } from "#/fixtures/scenario-parity";
 import type { BenchScenario } from "#/scenarios/types";
 
 // ─── shared tokens ────────────────────────────────────────────────────────────
@@ -82,9 +83,7 @@ function buildModuleLoadUnloadScenario(): BenchScenario {
   runOneLoadCycle();
 
   return {
-    id: "module-load-unload",
-    group: "boot",
-    what: "container.load(2 modules) → resolve root → container.unload() per iteration",
+    ...MODULE_LOAD_UNLOAD,
     batch: 1,
     sanity: () => {
       const result = runOneLoadCycle();

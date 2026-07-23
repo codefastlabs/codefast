@@ -98,13 +98,13 @@ function buildInspectSnapshotScenario(): BenchScenario {
 // ─── scenario 3: lookupBindings single token ─────────────────────────────────
 
 const LOOKUP_BATCH = 200;
+const LOOKUP_VARIANT_COUNT = 4;
 
 const lookupMultiToken = token<string>("bench-cf-ii-lookup-multi");
 
 function buildLookupBindingsScenario(): BenchScenario {
   const container = Container.create();
-  const VARIANT_COUNT = 4;
-  for (let i = 0; i < VARIANT_COUNT; i++) {
+  for (let i = 0; i < LOOKUP_VARIANT_COUNT; i++) {
     container
       .bind(lookupMultiToken)
       .toConstantValue(`v${String(i)}`)
@@ -117,11 +117,11 @@ function buildLookupBindingsScenario(): BenchScenario {
   return {
     id: "lookup-bindings",
     group: "introspection",
-    what: `container.lookupBindings(token) returning ${String(VARIANT_COUNT)} BindingSnapshot entries (codefast-only)`,
+    what: `container.lookupBindings(token) returning ${String(LOOKUP_VARIANT_COUNT)} BindingSnapshot entries (codefast-only)`,
     batch: LOOKUP_BATCH,
     sanity: () => {
       const result = container.lookupBindings(lookupMultiToken);
-      return result.length === VARIANT_COUNT;
+      return result.length === LOOKUP_VARIANT_COUNT;
     },
     build: () =>
       batched(LOOKUP_BATCH, () => {

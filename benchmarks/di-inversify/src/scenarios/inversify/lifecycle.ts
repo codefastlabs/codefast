@@ -8,10 +8,13 @@
 import "reflect-metadata";
 import { Container, inject, injectable, postConstruct, preDestroy } from "inversify";
 
+import {
+  LIFECYCLE_POST_CONSTRUCT_BATCH,
+  LIFECYCLE_POST_CONSTRUCT_SINGLETON,
+  LIFECYCLE_PRE_DESTROY_UNBIND,
+} from "#/fixtures/scenario-parity";
 import { batched } from "#/harness/batched";
 import type { BenchScenario } from "#/scenarios/types";
-
-const LIFECYCLE_POST_CONSTRUCT_BATCH = 250;
 
 @injectable()
 class LifecycleLeafDependency {
@@ -68,9 +71,7 @@ function buildLifecyclePostConstructSingletonScenario(): BenchScenario {
   container.get(postConstructSingletonServiceIdentifier);
 
   return {
-    id: "lifecycle-post-construct-singleton",
-    group: "lifecycle",
-    what: "resolve singleton class with @postConstruct already warmed",
+    ...LIFECYCLE_POST_CONSTRUCT_SINGLETON,
     batch: LIFECYCLE_POST_CONSTRUCT_BATCH,
     sanity: () => {
       const firstResolution = container.get<PostConstructSingletonService>(postConstructSingletonServiceIdentifier);
@@ -111,9 +112,7 @@ function buildLifecyclePreDestroyUnbindScenario(): BenchScenario {
   }
 
   return {
-    id: "lifecycle-pre-destroy-unbind",
-    group: "lifecycle",
-    what: "unbind singleton and run onDeactivation + @preDestroy lifecycle",
+    ...LIFECYCLE_PRE_DESTROY_UNBIND,
     batch: 1,
     sanity: () => {
       runOneUnbindCycle();

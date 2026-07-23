@@ -26,12 +26,22 @@
  */
 import { Container, token } from "@codefast/di";
 
+import {
+  ACTIVATION_HOOK_BATCH,
+  CONTAINER_LEVEL_ACTIVATION_HOOK,
+  HAS_BOUND_BATCH,
+  HAS_BOUND_CHECK,
+  HAS_OWN_BATCH,
+  HAS_OWN_UNBOUND_CHECK,
+  REBIND_BATCH,
+  REBIND_HOT_SWAP,
+  SCOPED_BINDING_PER_CHILD,
+  SCOPED_PER_CHILD_BATCH,
+} from "#/fixtures/scenario-parity";
 import { batched } from "#/harness/batched";
 import type { BenchScenario } from "#/scenarios/types";
 
 // ─── scenario 1: rebind hot-swap ─────────────────────────────────────────────
-
-const REBIND_BATCH = 50;
 
 const rebindToken = token<number>("bench-cf-ro-rebind");
 
@@ -48,9 +58,7 @@ function buildRebindHotSwapScenario(): BenchScenario {
   runOneSwap(0);
 
   return {
-    id: "rebind-hot-swap",
-    group: "lifecycle",
-    what: "rebind(token).toConstantValue() replacing an existing binding then resolve once",
+    ...REBIND_HOT_SWAP,
     batch: REBIND_BATCH,
     sanity: () => {
       const result = runOneSwap(99);
@@ -67,8 +75,6 @@ function buildRebindHotSwapScenario(): BenchScenario {
 
 // ─── scenario 2: has — bound token ───────────────────────────────────────────
 
-const HAS_BOUND_BATCH = 1000;
-
 const hasBoundToken = token<number>("bench-cf-ro-has-bound");
 
 function buildHasBoundCheckScenario(): BenchScenario {
@@ -77,9 +83,7 @@ function buildHasBoundCheckScenario(): BenchScenario {
   container.has(hasBoundToken);
 
   return {
-    id: "has-bound-check",
-    group: "introspection",
-    what: "container.has(token) returning true — registry lookup hot path for optional-dep guards",
+    ...HAS_BOUND_CHECK,
     batch: HAS_BOUND_BATCH,
     sanity: () => container.has(hasBoundToken),
     build: () =>
@@ -91,8 +95,6 @@ function buildHasBoundCheckScenario(): BenchScenario {
 
 // ─── scenario 3: hasOwn — unbound in child ────────────────────────────────────
 
-const HAS_OWN_BATCH = 1000;
-
 const hasOwnToken = token<number>("bench-cf-ro-has-own");
 
 function buildHasOwnUnboundCheckScenario(): BenchScenario {
@@ -103,9 +105,7 @@ function buildHasOwnUnboundCheckScenario(): BenchScenario {
   childContainer.hasOwn(hasOwnToken);
 
   return {
-    id: "has-own-unbound-check",
-    group: "introspection",
-    what: "container.hasOwn(token) returning false — binding lives in parent, not own registry",
+    ...HAS_OWN_UNBOUND_CHECK,
     batch: HAS_OWN_BATCH,
     sanity: () => !childContainer.hasOwn(hasOwnToken) && childContainer.has(hasOwnToken),
     build: () =>
@@ -116,8 +116,6 @@ function buildHasOwnUnboundCheckScenario(): BenchScenario {
 }
 
 // ─── scenario 4: container-level onActivation hook ───────────────────────────
-
-const ACTIVATION_HOOK_BATCH = 200;
 
 interface HookPayload {
   value: number;
@@ -146,9 +144,7 @@ function buildContainerLevelActivationHookScenario(): BenchScenario {
   container.resolve(hookPayloadToken);
 
   return {
-    id: "container-level-activation-hook",
-    group: "lifecycle",
-    what: "resolve transient through a container.onActivation() hook — measures hook dispatch overhead",
+    ...CONTAINER_LEVEL_ACTIVATION_HOOK,
     batch: ACTIVATION_HOOK_BATCH,
     sanity: () => {
       const before = activationCallCount;
@@ -163,8 +159,6 @@ function buildContainerLevelActivationHookScenario(): BenchScenario {
 }
 
 // ─── scenario 5: scoped binding per child ─────────────────────────────────────
-
-const SCOPED_PER_CHILD_BATCH = 100;
 
 interface ScopedInstance {
   readonly id: number;
@@ -196,9 +190,7 @@ function buildScopedBindingPerChildScenario(): BenchScenario {
   runOneScopedRequest();
 
   return {
-    id: "scoped-binding-per-child",
-    group: "scope",
-    what: "resolve .scoped() binding from a fresh child container each iteration — fresh instance per child",
+    ...SCOPED_BINDING_PER_CHILD,
     batch: SCOPED_PER_CHILD_BATCH,
     sanity: () => {
       const r1 = runOneScopedRequest();

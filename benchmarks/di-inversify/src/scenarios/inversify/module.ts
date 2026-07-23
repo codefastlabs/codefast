@@ -16,6 +16,7 @@
 import "reflect-metadata";
 import { Container, ContainerModule } from "inversify";
 
+import { MODULE_LOAD_UNLOAD } from "#/fixtures/scenario-parity";
 import type { BenchScenario } from "#/scenarios/types";
 
 // ─── shared identifiers ───────────────────────────────────────────────────────
@@ -78,8 +79,8 @@ function buildModuleLoadUnloadScenario(): BenchScenario {
   runOneLoadCycle();
 
   return {
-    id: "module-load-unload",
-    group: "boot",
+    ...MODULE_LOAD_UNLOAD,
+    // inversify-specific wording — the shared descriptor supplies the paired id/group
     what: "container.load(2 ContainerModules) → get root → container.unload() per iteration",
     batch: 1,
     sanity: () => {

@@ -15,12 +15,19 @@
 import "reflect-metadata";
 import { Container } from "inversify";
 
+import {
+  EVENT_DISPATCH_BATCH,
+  EVENT_HANDLER_COUNT,
+  HTTP_HANDLER_BATCH,
+  PRODUCTION_EVENT_BUS_DISPATCH,
+  PRODUCTION_HTTP_HANDLER,
+  PRODUCTION_UNIT_OF_WORK,
+  UOW_BATCH,
+} from "#/fixtures/scenario-parity";
 import { batched } from "#/harness/batched";
 import type { BenchScenario } from "#/scenarios/types";
 
 // ─── scenario 1: HTTP request pipeline ───────────────────────────────────────
-
-const HTTP_HANDLER_BATCH = 50;
 
 interface HttpConfig {
   readonly env: string;
@@ -110,9 +117,7 @@ function buildProductionHttpHandlerScenario(): BenchScenario {
   simulateRequest(0);
 
   return {
-    id: "production-http-handler",
-    group: "production",
-    what: "per-request child container: trace ID + auth context + handler resolve then dispose",
+    ...PRODUCTION_HTTP_HANDLER,
     batch: HTTP_HANDLER_BATCH,
     sanity: () => {
       const result = simulateRequest(1);
@@ -128,8 +133,6 @@ function buildProductionHttpHandlerScenario(): BenchScenario {
 }
 
 // ─── scenario 2: Repository + Unit of Work ────────────────────────────────────
-
-const UOW_BATCH = 100;
 
 interface DbPool {
   acquire(): string;
@@ -205,9 +208,7 @@ function buildProductionUnitOfWorkScenario(): BenchScenario {
   runOneOperation(0);
 
   return {
-    id: "production-unit-of-work",
-    group: "production",
-    what: "per-operation child container: UoW + Repository + Service resolve, commit, then dispose",
+    ...PRODUCTION_UNIT_OF_WORK,
     batch: UOW_BATCH,
     sanity: () => {
       const result = runOneOperation(1);
@@ -223,9 +224,6 @@ function buildProductionUnitOfWorkScenario(): BenchScenario {
 }
 
 // ─── scenario 3: Event bus dispatcher ─────────────────────────────────────────
-
-const EVENT_HANDLER_COUNT = 8;
-const EVENT_DISPATCH_BATCH = 100;
 
 interface EventHandler {
   handle(event: string): void;
@@ -249,8 +247,8 @@ function buildProductionEventBusDispatchScenario(): BenchScenario {
   const prewarmedHandlers = container.getAll<EventHandler>(eventHandlerId);
 
   return {
-    id: "production-event-bus-dispatch",
-    group: "production",
+    ...PRODUCTION_EVENT_BUS_DISPATCH,
+    // inversify-specific wording — the shared descriptor supplies the paired id/group
     what: `getAll() ${String(EVENT_HANDLER_COUNT)} singleton event handlers then dispatch event to each`,
     batch: EVENT_DISPATCH_BATCH,
     sanity: () => prewarmedHandlers.length === EVENT_HANDLER_COUNT,

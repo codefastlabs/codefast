@@ -1,9 +1,13 @@
 import { Container, token } from "@codefast/di";
 
+import {
+  ASYNC_CHAIN_DEPTH,
+  ASYNC_CONCURRENT_FANOUT_COUNTS,
+  DYNAMIC_ASYNC_CHAIN_8,
+  RESOLVE_ASYNC_SINGLE_HOP,
+  asyncFanoutConcurrentDescriptor,
+} from "#/fixtures/scenario-parity";
 import type { AsyncBenchScenario } from "#/scenarios/types";
-
-const ASYNC_CHAIN_DEPTH = 8;
-const ASYNC_CONCURRENT_FANOUT_COUNTS = [8, 16, 32, 64] as const;
 
 // Fan-out factories yield via microtask, not setImmediate: a macrotask wait (~15µs on
 // Apple silicon) dwarfs both libraries' machinery and the row degrades into measuring libuv.
@@ -23,10 +27,8 @@ function buildResolveAsyncSingleHopScenario(): AsyncBenchScenario {
     .singleton();
 
   return {
-    id: "resolve-async-single-hop",
-    group: "async",
+    ...RESOLVE_ASYNC_SINGLE_HOP,
     kind: "async",
-    what: "resolveAsync() one singleton async factory (warm path after first await)",
     batch: 1,
     sanity: async () => {
       const value = await container.resolveAsync(asyncValueToken);
@@ -66,10 +68,8 @@ function buildDynamicAsyncChainDepthEightScenario(): AsyncBenchScenario {
   const expectedLeafValue = ASYNC_CHAIN_DEPTH - 1;
 
   return {
-    id: "dynamic-async-chain-8",
-    group: "async",
+    ...DYNAMIC_ASYNC_CHAIN_8,
     kind: "async",
-    what: "resolveAsync() through an 8-step transient async dynamic chain",
     batch: 1,
     sanity: async () => {
       const value = await container.resolveAsync(leafToken);
@@ -106,10 +106,8 @@ function buildAsyncFanOutConcurrentScenario(
   const expectedTotal = ((concurrency - 1) * concurrency) / 2;
 
   return {
-    id: `async-fanout-concurrent-${String(concurrency)}`,
-    group: "async",
+    ...asyncFanoutConcurrentDescriptor(concurrency),
     kind: "async",
-    what: `resolveAsync ${String(concurrency)} independent async dependencies in parallel via Promise.all (microtask-yield factories)`,
     batch: 1,
     sanity: async () => {
       const values = await Promise.all(

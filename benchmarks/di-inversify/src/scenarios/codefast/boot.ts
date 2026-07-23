@@ -6,6 +6,7 @@
  */
 import { Container, injectable } from "@codefast/di";
 
+import { BOOT_DECORATED_CONTAINER_BUILD_AND_RESOLVE } from "#/fixtures/scenario-parity";
 import type { BenchScenario } from "#/scenarios/types";
 
 @injectable()
@@ -84,9 +85,7 @@ function buildBootContainerAndResolveRoot(): BootController {
 
 function buildBootDecoratedContainerScenario(): BenchScenario {
   return {
-    id: "boot-decorated-container-build-and-resolve",
-    group: "boot",
-    what: "create container, bind decorated graph, resolve root once",
+    ...BOOT_DECORATED_CONTAINER_BUILD_AND_RESOLVE,
     batch: 1,
     sanity: () => {
       const controller = buildBootContainerAndResolveRoot();
