@@ -7,12 +7,14 @@
  */
 import { Container, token } from "@codefast/di";
 
+import {
+  CHILD_DEPTH_2_RESOLVE,
+  CHILD_REQUEST_LIFECYCLE_CREATE_RESOLVE_DISPOSE,
+  CHILD_RESOLVE_BATCH,
+  REQUEST_LIFECYCLE_BATCH,
+} from "#/fixtures/scenario-parity";
 import { batched } from "#/harness/batched";
 import type { BenchScenario } from "#/scenarios/types";
-
-const CHILD_RESOLVE_BATCH = 500;
-
-const REQUEST_LIFECYCLE_BATCH = 100;
 
 interface ScopeResolvedPayload {
   readonly appValue: number;
@@ -28,9 +30,7 @@ function buildChildDepthTwoResolveScenario(): BenchScenario {
   secondLevelChildContainer.resolve(childScopeLeafToken);
 
   return {
-    id: "child-depth-2-resolve",
-    group: "scope",
-    what: "resolve a parent binding from a depth-2 child (realistic per-request shape)",
+    ...CHILD_DEPTH_2_RESOLVE,
     batch: CHILD_RESOLVE_BATCH,
     sanity: () => secondLevelChildContainer.resolve(childScopeLeafToken) === 42,
     build: () =>
@@ -75,9 +75,7 @@ function buildChildRequestLifecycleCreateResolveDisposeScenario(): BenchScenario
   }
 
   return {
-    id: "child-request-lifecycle-create-resolve-dispose",
-    group: "scope",
-    what: "create per-request child container, resolve from grandchild depth-2, then unbind/dispose",
+    ...CHILD_REQUEST_LIFECYCLE_CREATE_RESOLVE_DISPOSE,
     batch: REQUEST_LIFECYCLE_BATCH,
     sanity: () => {
       const resolvedPayload = runOneRequestLifecycle();

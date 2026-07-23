@@ -10,19 +10,20 @@
 import "reflect-metadata";
 import { buildInversifyRealisticContainer, sanityCheckInversifyRealisticResolve } from "#/fixtures/inversify-adapter";
 import { REALISTIC_GRAPH } from "#/fixtures/realistic-graph";
+import {
+  REALISTIC_GRAPH_COLD_RESOLVE,
+  REALISTIC_GRAPH_RESOLVE_ROOT,
+  REALISTIC_RESOLVE_BATCH,
+} from "#/fixtures/scenario-parity";
 import { batched } from "#/harness/batched";
 import type { BenchScenario } from "#/scenarios/types";
-
-const REALISTIC_RESOLVE_BATCH = 20;
 
 function buildRealisticGraphResolveRootScenario(): BenchScenario {
   const { container, rootIdentifier } = buildInversifyRealisticContainer(REALISTIC_GRAPH);
   container.get(rootIdentifier);
 
   return {
-    id: "realistic-graph-resolve-root",
-    group: "realistic",
-    what: "resolve the transient root of a 10-node graph (hot path, singletons cached)",
+    ...REALISTIC_GRAPH_RESOLVE_ROOT,
     batch: REALISTIC_RESOLVE_BATCH,
     sanity: () => sanityCheckInversifyRealisticResolve(REALISTIC_GRAPH),
     build: () =>
@@ -34,9 +35,7 @@ function buildRealisticGraphResolveRootScenario(): BenchScenario {
 
 function buildRealisticGraphColdResolveScenario(): BenchScenario {
   return {
-    id: "realistic-graph-cold-resolve",
-    group: "realistic",
-    what: "build a fresh container, bind 10 nodes, resolve root once (cold start)",
+    ...REALISTIC_GRAPH_COLD_RESOLVE,
     batch: 1,
     sanity: () => sanityCheckInversifyRealisticResolve(REALISTIC_GRAPH),
     build: () => {

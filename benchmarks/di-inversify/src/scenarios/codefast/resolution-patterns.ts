@@ -18,12 +18,20 @@
  */
 import { Container, token } from "@codefast/di";
 
+import {
+  OPTIONAL_HIT_BATCH,
+  OPTIONAL_MISS_BATCH,
+  RESOLVE_OPTIONAL_HIT,
+  RESOLVE_OPTIONAL_MISS,
+  TAGGED_BINDING_RESOLVE,
+  TAGGED_ENVS,
+  TAGGED_RESOLVE_BATCH,
+  TARGET_TAG_VALUE,
+} from "#/fixtures/scenario-parity";
 import { batched } from "#/harness/batched";
 import type { BenchScenario } from "#/scenarios/types";
 
 // ─── scenario 1: resolveOptional — hit ───────────────────────────────────────
-
-const OPTIONAL_HIT_BATCH = 500;
 
 const optionalHitToken = token<number>("bench-cf-rp-optional-hit");
 
@@ -33,9 +41,7 @@ function buildResolveOptionalHitScenario(): BenchScenario {
   container.resolveOptional(optionalHitToken);
 
   return {
-    id: "resolve-optional-hit",
-    group: "micro",
-    what: "resolveOptional() when the binding exists — returns the value without throwing",
+    ...RESOLVE_OPTIONAL_HIT,
     batch: OPTIONAL_HIT_BATCH,
     sanity: () => container.resolveOptional(optionalHitToken) === 42,
     build: () =>
@@ -47,8 +53,6 @@ function buildResolveOptionalHitScenario(): BenchScenario {
 
 // ─── scenario 2: resolveOptional — miss ──────────────────────────────────────
 
-const OPTIONAL_MISS_BATCH = 500;
-
 const optionalMissToken = token<string>("bench-cf-rp-optional-miss");
 
 function buildResolveOptionalMissScenario(): BenchScenario {
@@ -57,9 +61,7 @@ function buildResolveOptionalMissScenario(): BenchScenario {
   container.resolveOptional(optionalMissToken);
 
   return {
-    id: "resolve-optional-miss",
-    group: "micro",
-    what: "resolveOptional() when no binding exists — returns undefined without throwing",
+    ...RESOLVE_OPTIONAL_MISS,
     batch: OPTIONAL_MISS_BATCH,
     sanity: () => container.resolveOptional(optionalMissToken) === undefined,
     build: () =>
@@ -71,16 +73,12 @@ function buildResolveOptionalMissScenario(): BenchScenario {
 
 // ─── scenario 3: whenTagged binding selection ────────────────────────────────
 
-const TAGGED_RESOLVE_BATCH = 300;
-
 interface TaggedService {
   readonly env: string;
 }
 
 const taggedServiceToken = token<TaggedService>("bench-cf-rp-tagged-service");
 
-const TAGGED_ENVS = ["dev", "staging", "prod", "canary"] as const;
-const TARGET_TAG_VALUE = "prod";
 const TARGET_TAGS: ReadonlyArray<readonly [string, unknown]> = [["env", TARGET_TAG_VALUE]];
 
 function buildTaggedBindingResolveScenario(): BenchScenario {
@@ -93,9 +91,7 @@ function buildTaggedBindingResolveScenario(): BenchScenario {
   container.resolve(taggedServiceToken, { tags: TARGET_TAGS });
 
   return {
-    id: "tagged-binding-resolve",
-    group: "micro",
-    what: `resolve(token, { tags: [["env","${TARGET_TAG_VALUE}"]] }) from ${String(TAGGED_ENVS.length)}-variant tagged set`,
+    ...TAGGED_BINDING_RESOLVE,
     batch: TAGGED_RESOLVE_BATCH,
     sanity: () => {
       const result = container.resolve(taggedServiceToken, { tags: TARGET_TAGS });

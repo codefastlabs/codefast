@@ -7,12 +7,17 @@
 import "reflect-metadata";
 import { Container, inject, injectable } from "inversify";
 
+import {
+  CLASS_RESOLVE_BATCH,
+  CONSTANT_RESOLVE,
+  CONSTANT_RESOLVE_BATCH,
+  NAMED_CONSTANT_GET,
+  NAMED_RESOLVE_BATCH,
+  SINGLETON_CLASS_1_DEP,
+  TRANSIENT_CLASS_1_DEP,
+} from "#/fixtures/scenario-parity";
 import { batched } from "#/harness/batched";
 import type { BenchScenario } from "#/scenarios/types";
-
-const CONSTANT_RESOLVE_BATCH = 1000;
-const CLASS_RESOLVE_BATCH = 200;
-const NAMED_RESOLVE_BATCH = 500;
 
 const microLeafDependencyIdentifier = Symbol("bench-inv-micro-leaf");
 const microServiceWithOneDependencyIdentifier = Symbol("bench-inv-micro-svc");
@@ -36,9 +41,7 @@ function buildConstantResolveScenario(): BenchScenario {
   container.get(constantValueBindingIdentifier);
 
   return {
-    id: "constant-resolve",
-    group: "micro",
-    what: "resolve a toConstantValue binding",
+    ...CONSTANT_RESOLVE,
     batch: CONSTANT_RESOLVE_BATCH,
     sanity: () => container.get<number>(constantValueBindingIdentifier) === 42,
     build: () =>
@@ -58,9 +61,7 @@ function buildSingletonClassOneDepScenario(): BenchScenario {
   const initialResolution = container.get<MicroServiceWithOneDependency>(microServiceWithOneDependencyIdentifier);
 
   return {
-    id: "singleton-class-1-dep",
-    group: "micro",
-    what: "resolve a singleton class with one dependency (cache hit)",
+    ...SINGLETON_CLASS_1_DEP,
     batch: CLASS_RESOLVE_BATCH,
     sanity: () =>
       container.get<MicroServiceWithOneDependency>(microServiceWithOneDependencyIdentifier).leafDependency ===
@@ -82,9 +83,7 @@ function buildTransientClassOneDepScenario(): BenchScenario {
   container.get(microServiceWithOneDependencyIdentifier);
 
   return {
-    id: "transient-class-1-dep",
-    group: "micro",
-    what: "resolve a transient class with one transient dep (fresh each call)",
+    ...TRANSIENT_CLASS_1_DEP,
     batch: CLASS_RESOLVE_BATCH,
     sanity: () => {
       const firstResolution = container.get<MicroServiceWithOneDependency>(microServiceWithOneDependencyIdentifier);
@@ -107,9 +106,7 @@ function buildNamedConstantGetScenario(): BenchScenario {
   container.get<number>(wideNamedBindingIdentifier, { name: "slot-12" });
 
   return {
-    id: "named-constant-get",
-    group: "micro",
-    what: "resolve a named constant from a 3-candidate set",
+    ...NAMED_CONSTANT_GET,
     batch: NAMED_RESOLVE_BATCH,
     sanity: () => container.get<number>(wideNamedBindingIdentifier, { name: "slot-12" }) === 12,
     build: () =>

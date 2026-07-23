@@ -12,12 +12,22 @@
 import "reflect-metadata";
 import { Container } from "inversify";
 
+import {
+  ACTIVATION_HOOK_BATCH,
+  CONTAINER_LEVEL_ACTIVATION_HOOK,
+  HAS_BOUND_BATCH,
+  HAS_BOUND_CHECK,
+  HAS_OWN_BATCH,
+  HAS_OWN_UNBOUND_CHECK,
+  REBIND_BATCH,
+  REBIND_HOT_SWAP,
+  SCOPED_BINDING_PER_CHILD,
+  SCOPED_PER_CHILD_BATCH,
+} from "#/fixtures/scenario-parity";
 import { batched } from "#/harness/batched";
 import type { BenchScenario } from "#/scenarios/types";
 
 // ─── scenario 1: rebind hot-swap ─────────────────────────────────────────────
-
-const REBIND_BATCH = 50;
 
 const rebindId = Symbol("bench-inv-ro-rebind");
 
@@ -34,8 +44,8 @@ function buildRebindHotSwapScenario(): BenchScenario {
   runOneSwap(0);
 
   return {
-    id: "rebind-hot-swap",
-    group: "lifecycle",
+    ...REBIND_HOT_SWAP,
+    // inversify-specific wording — the shared descriptor supplies the paired id/group
     what: "rebind(id).toConstantValue() replacing an existing binding then get once",
     batch: REBIND_BATCH,
     sanity: () => {
@@ -53,8 +63,6 @@ function buildRebindHotSwapScenario(): BenchScenario {
 
 // ─── scenario 2: isBound — bound identifier ──────────────────────────────────
 
-const HAS_BOUND_BATCH = 1000;
-
 const hasBoundId = Symbol("bench-inv-ro-has-bound");
 
 function buildIsBoundCheckScenario(): BenchScenario {
@@ -63,8 +71,7 @@ function buildIsBoundCheckScenario(): BenchScenario {
   container.isBound(hasBoundId);
 
   return {
-    id: "has-bound-check",
-    group: "introspection",
+    ...HAS_BOUND_CHECK,
     what: "container.isBound(id) returning true — registry lookup hot path for optional-dep guards",
     batch: HAS_BOUND_BATCH,
     sanity: () => container.isBound(hasBoundId),
@@ -77,8 +84,6 @@ function buildIsBoundCheckScenario(): BenchScenario {
 
 // ─── scenario 3: isCurrentBound — unbound in child ───────────────────────────
 
-const HAS_OWN_BATCH = 1000;
-
 const hasOwnId = Symbol("bench-inv-ro-has-own");
 
 function buildIsCurrentBoundCheckScenario(): BenchScenario {
@@ -89,8 +94,7 @@ function buildIsCurrentBoundCheckScenario(): BenchScenario {
   childContainer.isCurrentBound(hasOwnId);
 
   return {
-    id: "has-own-unbound-check",
-    group: "introspection",
+    ...HAS_OWN_UNBOUND_CHECK,
     what: "container.isCurrentBound(id) returning false — binding lives in parent, not own registry",
     batch: HAS_OWN_BATCH,
     sanity: () => !childContainer.isCurrentBound(hasOwnId) && childContainer.isBound(hasOwnId),
@@ -102,8 +106,6 @@ function buildIsCurrentBoundCheckScenario(): BenchScenario {
 }
 
 // ─── scenario 4: container-level onActivation hook ───────────────────────────
-
-const ACTIVATION_HOOK_BATCH = 200;
 
 interface HookPayload {
   value: number;
@@ -132,8 +134,7 @@ function buildContainerLevelActivationHookScenario(): BenchScenario {
   container.get<HookPayload>(hookPayloadId);
 
   return {
-    id: "container-level-activation-hook",
-    group: "lifecycle",
+    ...CONTAINER_LEVEL_ACTIVATION_HOOK,
     what: "get() transient through a container.onActivation() hook — measures hook dispatch overhead",
     batch: ACTIVATION_HOOK_BATCH,
     sanity: () => {
@@ -154,8 +155,6 @@ function buildContainerLevelActivationHookScenario(): BenchScenario {
 // child container.  To exercise this properly: a root service depends on the scoped
 // token through two different intermediate services.  Both intermediates share the
 // same scoped instance within one `get(rootId)` call; the next call creates a fresh one.
-
-const SCOPED_PER_CHILD_BATCH = 100;
 
 interface ScopedInstance {
   readonly id: number;
@@ -207,8 +206,7 @@ function buildScopedBindingPerChildScenario(): BenchScenario {
   container.get<ScopedRoot>(scopedRootId);
 
   return {
-    id: "scoped-binding-per-child",
-    group: "scope",
+    ...SCOPED_BINDING_PER_CHILD,
     what: "inRequestScope() shared within one get() call tree; fresh instance on next get() call",
     batch: SCOPED_PER_CHILD_BATCH,
     sanity: () => {

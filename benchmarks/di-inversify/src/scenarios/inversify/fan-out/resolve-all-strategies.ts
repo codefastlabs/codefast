@@ -13,6 +13,7 @@ import {
   type ResolveAllNamedCount,
   type ResolveAllStrategyCount,
 } from "#/fixtures/fan-out-descriptor";
+import { resolveAllNamedDescriptor, resolveAllStrategiesDescriptor } from "#/fixtures/scenario-parity";
 import type { BenchScenario } from "#/scenarios/types";
 
 function buildResolveAllStrategiesScenario(strategyCount: ResolveAllStrategyCount): BenchScenario {
@@ -27,8 +28,8 @@ function buildResolveAllStrategiesScenario(strategyCount: ResolveAllStrategyCoun
   const prewarmedStrategies = container.getAll<number>(strategyIdentifier);
 
   return {
-    id: `resolve-all-strategies-${String(strategyCount)}`,
-    group: "fan-out",
+    ...resolveAllStrategiesDescriptor(strategyCount),
+    // inversify-specific wording — the shared descriptor supplies the paired id/group
     what: `getAll() across ${String(strategyCount)} strategy bindings once`,
     batch: 1,
     sanity: () => prewarmedStrategies.length === strategyCount,
@@ -56,8 +57,7 @@ function buildResolveAllNamedScenario(namedCount: ResolveAllNamedCount): BenchSc
   const prewarmedStrategies = container.getAll<number>(strategyIdentifier, { name: targetName });
 
   return {
-    id: `resolve-all-named-${String(namedCount)}`,
-    group: "fan-out",
+    ...resolveAllNamedDescriptor(namedCount),
     what: `getAll() with name qualifier across ${String(namedCount)} named strategy bindings`,
     batch: 1,
     sanity: () => prewarmedStrategies.length === 1 && prewarmedStrategies[0] === 0,

@@ -8,9 +8,8 @@ import "reflect-metadata";
 import { Container } from "inversify";
 import type { ServiceIdentifier } from "inversify";
 
+import { SCALE_CHAIN_SIZE, SCALE_DEEP_TRANSIENT_CHAIN_512 } from "#/fixtures/scenario-parity";
 import type { BenchScenario } from "#/scenarios/types";
-
-const SCALE_CHAIN_SIZE = 512;
 
 function buildScaleDeepTransientChainScenario(): BenchScenario {
   const chainIdentifiers = Array.from({ length: SCALE_CHAIN_SIZE }, (_value, chainIndex) =>
@@ -33,9 +32,7 @@ function buildScaleDeepTransientChainScenario(): BenchScenario {
   container.get(leafChainIdentifier);
 
   return {
-    id: "scale-deep-transient-chain-512",
-    group: "scale",
-    what: "resolve a 512-step transient chain (500+ binding registry pressure)",
+    ...SCALE_DEEP_TRANSIENT_CHAIN_512,
     batch: 1,
     sanity: () => container.get<number>(leafChainIdentifier) === expectedLeafValue,
     build: () => {

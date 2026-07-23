@@ -7,6 +7,7 @@
 import "reflect-metadata";
 import { Container, inject, injectable } from "inversify";
 
+import { BOOT_DECORATED_CONTAINER_BUILD_AND_RESOLVE } from "#/fixtures/scenario-parity";
 import type { BenchScenario } from "#/scenarios/types";
 
 const bootConfigIdentifier = Symbol("bench-inv-boot-config");
@@ -122,9 +123,7 @@ function buildBootContainerAndResolveRoot(): BootController {
 
 function buildBootDecoratedContainerScenario(): BenchScenario {
   return {
-    id: "boot-decorated-container-build-and-resolve",
-    group: "boot",
-    what: "create container, bind decorated graph, resolve root once",
+    ...BOOT_DECORATED_CONTAINER_BUILD_AND_RESOLVE,
     batch: 1,
     sanity: () => {
       const controller = buildBootContainerAndResolveRoot();

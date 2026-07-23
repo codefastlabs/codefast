@@ -1,5 +1,10 @@
 import { Container, token } from "@codefast/di";
 
+import {
+  AMBIGUOUS_MULTI_BINDING,
+  CIRCULAR_DEPENDENCY_3,
+  MISCONFIGURED_MISSING_BINDING,
+} from "#/fixtures/scenario-parity";
 import type { BenchScenario } from "#/scenarios/types";
 
 interface CircularNodeA {
@@ -14,18 +19,12 @@ interface CircularNodeC {
   readonly value: "c";
 }
 
-const MISCONFIGURED_MISSING_BINDING_WHAT = "resolve a missing binding and fail fast";
-const CIRCULAR_DEPENDENCY_THREE_WHAT = "resolve a 3-node circular dependency and fail fast";
-const AMBIGUOUS_MULTI_BINDING_WHAT = "resolve a single service from ambiguous multi-bindings and fail fast";
-
 function buildMisconfiguredMissingBindingScenario(): BenchScenario {
   const missingToken = token<number>("bench-cf-failure-missing-binding");
   const container = Container.create();
 
   return {
-    id: "misconfigured-missing-binding",
-    group: "failure",
-    what: MISCONFIGURED_MISSING_BINDING_WHAT,
+    ...MISCONFIGURED_MISSING_BINDING,
     batch: 1,
     sanity: () => {
       try {
@@ -77,9 +76,7 @@ function buildCircularDependencyThreeScenario(): BenchScenario {
     .transient();
 
   return {
-    id: "circular-dependency-3",
-    group: "failure",
-    what: CIRCULAR_DEPENDENCY_THREE_WHAT,
+    ...CIRCULAR_DEPENDENCY_3,
     batch: 1,
     sanity: () => {
       try {
@@ -115,9 +112,7 @@ function buildAmbiguousMultiBindingScenario(): BenchScenario {
     .when(() => true);
 
   return {
-    id: "ambiguous-multi-binding",
-    group: "failure",
-    what: AMBIGUOUS_MULTI_BINDING_WHAT,
+    ...AMBIGUOUS_MULTI_BINDING,
     batch: 1,
     sanity: () => {
       try {

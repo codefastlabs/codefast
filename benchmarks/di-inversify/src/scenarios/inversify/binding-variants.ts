@@ -10,12 +10,18 @@
 import "reflect-metadata";
 import { Container, injectable } from "inversify";
 
+import {
+  TO_ALIAS_BATCH,
+  TO_ALIAS_REDIRECT,
+  TO_RESOLVED_3_DEPS,
+  TO_RESOLVED_BATCH,
+  TO_SELF_BATCH,
+  TO_SELF_BINDING,
+} from "#/fixtures/scenario-parity";
 import { batched } from "#/harness/batched";
 import type { BenchScenario } from "#/scenarios/types";
 
 // ─── scenario 1: toResolvedValue explicit deps ────────────────────────────────
-
-const TO_RESOLVED_BATCH = 200;
 
 interface ResolvedDep {
   readonly id: string;
@@ -50,8 +56,8 @@ function buildToResolvedThreeDepsScenario(): BenchScenario {
   const prewarmed = container.get<ResolvedService>(resolvedServiceId);
 
   return {
-    id: "to-resolved-3-deps",
-    group: "micro",
+    ...TO_RESOLVED_3_DEPS,
+    // inversify-specific wording — the shared descriptor supplies the paired id/group
     what: "resolve singleton bound via toResolvedValue() with 3 explicit dep identifiers (cache hit)",
     batch: TO_RESOLVED_BATCH,
     sanity: () => {
@@ -66,8 +72,6 @@ function buildToResolvedThreeDepsScenario(): BenchScenario {
 }
 
 // ─── scenario 2: toService redirect ──────────────────────────────────────────
-
-const TO_ALIAS_BATCH = 500;
 
 interface AbstractService {
   readonly name: string;
@@ -89,8 +93,7 @@ function buildToServiceRedirectScenario(): BenchScenario {
   const prewarmed = container.get<AbstractService>(abstractId);
 
   return {
-    id: "to-alias-redirect",
-    group: "micro",
+    ...TO_ALIAS_REDIRECT,
     what: "resolve a toService() binding that redirects to a cached singleton (alias chain hit)",
     batch: TO_ALIAS_BATCH,
     sanity: () => {
@@ -106,8 +109,6 @@ function buildToServiceRedirectScenario(): BenchScenario {
 }
 
 // ─── scenario 3: toSelf singleton ─────────────────────────────────────────────
-
-const TO_SELF_BATCH = 300;
 
 @injectable()
 class SelfBoundLeaf {
@@ -133,8 +134,7 @@ function buildToSelfSingletonScenario(): BenchScenario {
   const prewarmed = container.get(SelfBoundRoot);
 
   return {
-    id: "to-self-binding",
-    group: "micro",
+    ...TO_SELF_BINDING,
     what: "resolve singleton bound via toSelf() — class constructor is the identifier (cache hit)",
     batch: TO_SELF_BATCH,
     sanity: () => {

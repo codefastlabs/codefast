@@ -20,12 +20,18 @@
  */
 import { Container, injectable, token } from "@codefast/di";
 
+import {
+  TO_ALIAS_BATCH,
+  TO_ALIAS_REDIRECT,
+  TO_RESOLVED_3_DEPS,
+  TO_RESOLVED_BATCH,
+  TO_SELF_BATCH,
+  TO_SELF_BINDING,
+} from "#/fixtures/scenario-parity";
 import { batched } from "#/harness/batched";
 import type { BenchScenario } from "#/scenarios/types";
 
 // ─── scenario 1: toResolved explicit deps ─────────────────────────────────────
-
-const TO_RESOLVED_BATCH = 200;
 
 interface ResolvedDep {
   readonly id: string;
@@ -57,9 +63,7 @@ function buildToResolvedThreeDepsScenario(): BenchScenario {
   const prewarmed = container.resolve(resolvedServiceToken);
 
   return {
-    id: "to-resolved-3-deps",
-    group: "micro",
-    what: "resolve singleton bound via toResolved() with 3 explicit dep tokens (cache hit)",
+    ...TO_RESOLVED_3_DEPS,
     batch: TO_RESOLVED_BATCH,
     sanity: () => {
       const result = container.resolve(resolvedServiceToken);
@@ -73,8 +77,6 @@ function buildToResolvedThreeDepsScenario(): BenchScenario {
 }
 
 // ─── scenario 2: toAlias redirect ────────────────────────────────────────────
-
-const TO_ALIAS_BATCH = 500;
 
 interface AbstractService {
   readonly name: string;
@@ -95,9 +97,7 @@ function buildToAliasRedirectScenario(): BenchScenario {
   const prewarmed = container.resolve(abstractToken);
 
   return {
-    id: "to-alias-redirect",
-    group: "micro",
-    what: "resolve a toAlias() binding that redirects to a cached singleton (alias chain hit)",
+    ...TO_ALIAS_REDIRECT,
     batch: TO_ALIAS_BATCH,
     sanity: () => {
       const viaAlias = container.resolve(abstractToken);
@@ -112,8 +112,6 @@ function buildToAliasRedirectScenario(): BenchScenario {
 }
 
 // ─── scenario 3: toSelf singleton ─────────────────────────────────────────────
-
-const TO_SELF_BATCH = 300;
 
 @injectable()
 class SelfBoundLeaf {
@@ -135,9 +133,7 @@ function buildToSelfSingletonScenario(): BenchScenario {
   const prewarmed = container.resolve(SelfBoundRoot);
 
   return {
-    id: "to-self-binding",
-    group: "micro",
-    what: "resolve singleton bound via toSelf() — class constructor is the token (cache hit)",
+    ...TO_SELF_BINDING,
     batch: TO_SELF_BATCH,
     sanity: () => {
       const result = container.resolve(SelfBoundRoot);
