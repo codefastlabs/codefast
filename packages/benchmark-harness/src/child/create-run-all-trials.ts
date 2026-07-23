@@ -3,12 +3,8 @@ import { Bench } from "tinybench";
 
 import type { AnyBenchScenario } from "#/child/bench-scenario";
 import { isAsyncScenario } from "#/child/bench-scenario";
-import { BENCH_FAST_ENV_KEY, BENCH_FULL_ENV_KEY } from "#/shared/env-keys";
+import { BENCH_FAST_ENV_KEY, BENCH_FULL_ENV_KEY, BENCH_TRIALS_ENV_KEY } from "#/shared/env-keys";
 import type { ScenarioTrialResult, TrialPayload } from "#/shared/protocol";
-
-const FAST_MODE_ENABLED = process.env[BENCH_FAST_ENV_KEY] === "1";
-const FULL_MODE_ENABLED = process.env[BENCH_FULL_ENV_KEY] === "1";
-const BENCH_TRIALS_ENV_KEY = "BENCH_TRIALS";
 
 /**
  * Keep GC sampling in full mode, but reduce forced collection pressure so
@@ -16,7 +12,7 @@ const BENCH_TRIALS_ENV_KEY = "BENCH_TRIALS";
  */
 const FULL_MODE_SAMPLE_GC_STRIDE = 100;
 const MIN_TRIAL_COUNT = 2;
-const DEFAULT_TRIAL_COUNT = FULL_MODE_ENABLED ? 3 : MIN_TRIAL_COUNT;
+const FULL_MODE_TRIAL_COUNT = 3;
 const FAST_MODE_BENCH_OPTIONS = {
   time: 20,
   iterations: 50,
@@ -42,8 +38,8 @@ function runFullGcIfExposed(): void {
   }
 }
 
-function createBeforeEachGcHook(): () => void {
-  if (!FULL_MODE_ENABLED) {
+function createBeforeEachGcHook(fullModeEnabled: boolean): () => void {
+  if (!fullModeEnabled) {
     return (): void => {};
   }
   let callIndex = 0;
@@ -83,14 +79,28 @@ function createZeroedScenarioTrialResult(scenario: AnyBenchScenario, hzPerIterat
 }
 
 /**
+ * Timing profile for a bench run: `fast` for smoke checks, `full` for GC-enabled stability runs.
+ */
+export type BenchMode = "fast" | "full";
+
+/**
  * @since 0.3.16-canary.0
  */
 export type CreateRunAllTrialsParameters = Readonly<{
   /**
-   * Tinybench settings for each `Bench` when neither `BENCH_FAST` nor `BENCH_FULL` is set.
-   * When either flag is set, the harness uses its built-in fast or full profile instead.
+   * Tinybench settings for each `Bench` when no mode is active.
+   * When a mode is active, the harness uses its built-in fast or full profile instead.
    */
   readonly benchDefaults: BenchOptions;
+  /**
+   * Explicit timing profile; when absent, falls back to the `BENCH_FAST`/`BENCH_FULL` env flags.
+   */
+  readonly mode?: BenchMode | undefined;
+  /**
+   * Explicit per-scenario trial count (minimum 2); when absent, falls back to `BENCH_TRIALS`,
+   * then to the mode default.
+   */
+  readonly trialCount?: number | undefined;
 }>;
 
 /**
@@ -102,34 +112,50 @@ export type RunAllTrials = (
   trialCount?: number,
 ) => Promise<Array<TrialPayload>>;
 
-function resolveBenchOptions(benchDefaults: BenchOptions): BenchOptions {
-  if (FAST_MODE_ENABLED) {
+// `fast` wins when both env flags are set — matches the historical option precedence.
+function resolveMode(explicitMode: BenchMode | undefined): BenchMode | undefined {
+  if (explicitMode !== undefined) {
+    return explicitMode;
+  }
+  if (process.env[BENCH_FAST_ENV_KEY] === "1") {
+    return "fast";
+  }
+  if (process.env[BENCH_FULL_ENV_KEY] === "1") {
+    return "full";
+  }
+  return undefined;
+}
+
+function resolveBenchOptions(benchDefaults: BenchOptions, mode: BenchMode | undefined): BenchOptions {
+  if (mode === "fast") {
     return FAST_MODE_BENCH_OPTIONS;
   }
-  if (FULL_MODE_ENABLED) {
+  if (mode === "full") {
     return FULL_MODE_BENCH_OPTIONS;
   }
   return benchDefaults;
 }
 
-function resolveTrialCountFromEnvironment(): number {
-  const rawValue = process.env[BENCH_TRIALS_ENV_KEY];
-  if (rawValue === undefined || rawValue.trim() === "") {
-    return DEFAULT_TRIAL_COUNT;
+function resolveTrialCount(explicitTrialCount: number | undefined, mode: BenchMode | undefined): number {
+  const defaultTrialCount = mode === "full" ? FULL_MODE_TRIAL_COUNT : MIN_TRIAL_COUNT;
+  const rawValue = explicitTrialCount ?? process.env[BENCH_TRIALS_ENV_KEY];
+  if (rawValue === undefined || (typeof rawValue === "string" && rawValue.trim() === "")) {
+    return defaultTrialCount;
   }
-  const parsed = Number.parseInt(rawValue, 10);
+  const parsed = typeof rawValue === "number" ? Math.trunc(rawValue) : Number.parseInt(rawValue, 10);
   if (!Number.isFinite(parsed) || parsed < MIN_TRIAL_COUNT) {
     console.error(
-      `[trial] ${BENCH_TRIALS_ENV_KEY}="${rawValue}" is below minimum ${String(MIN_TRIAL_COUNT)}; falling back to default ${String(DEFAULT_TRIAL_COUNT)}.`,
+      `[trial] trial count "${String(rawValue)}" is below minimum ${String(MIN_TRIAL_COUNT)}; falling back to default ${String(defaultTrialCount)}.`,
     );
-    return DEFAULT_TRIAL_COUNT;
+    return defaultTrialCount;
   }
   return parsed;
 }
 
 /**
  * Returns `runAllTrials` backed by tinybench options derived from `benchDefaults` and
- * the subprocess env (`BENCH_FAST`, `BENCH_FULL`).
+ * the given mode/trial-count options, falling back to the subprocess env
+ * (`BENCH_FAST`, `BENCH_FULL`, `BENCH_TRIALS`) when they are absent.
  *
  * @since 0.3.16-canary.0
  */
@@ -137,7 +163,9 @@ export function createRunAllTrials(parameters: CreateRunAllTrialsParameters): {
   runAllTrials: RunAllTrials;
 } {
   const { benchDefaults } = parameters;
-  const benchOptions = resolveBenchOptions(benchDefaults);
+  const mode = resolveMode(parameters.mode);
+  const benchOptions = resolveBenchOptions(benchDefaults, mode);
+  const defaultTrialCount = resolveTrialCount(parameters.trialCount, mode);
 
   async function runOneTrial(
     trialIndex: number,
@@ -145,7 +173,7 @@ export function createRunAllTrials(parameters: CreateRunAllTrialsParameters): {
     scenarios: ReadonlyArray<AnyBenchScenario>,
     sanityFailures: ReadonlyArray<string>,
   ): Promise<TrialPayload> {
-    const beforeEachGc = createBeforeEachGcHook();
+    const beforeEachGc = createBeforeEachGcHook(mode === "full");
     const bench = new Bench(benchOptions);
     const sanityFailureSet = new Set(sanityFailures);
     const runnableScenarioCount = scenarios.filter((scenario) => !sanityFailureSet.has(scenario.id)).length;
@@ -237,7 +265,7 @@ export function createRunAllTrials(parameters: CreateRunAllTrialsParameters): {
   async function runAllTrials(
     scenarios: ReadonlyArray<AnyBenchScenario>,
     sanityFailures: ReadonlyArray<string>,
-    trialCount: number = resolveTrialCountFromEnvironment(),
+    trialCount: number = defaultTrialCount,
   ): Promise<Array<TrialPayload>> {
     const trials: Array<TrialPayload> = [];
     const scenarioStartedAtMs = performance.now();

@@ -4,6 +4,7 @@ import { fileURLToPath } from "node:url";
 import type { BenchOptions } from "tinybench";
 
 import type { AnyBenchScenario } from "#/child/bench-scenario";
+import type { BenchMode } from "#/child/create-run-all-trials";
 import { createRunAllTrials } from "#/child/create-run-all-trials";
 import { collectFingerprint } from "#/child/fingerprint";
 import { runSanityChecks } from "#/child/run-sanity-checks";
@@ -21,8 +22,12 @@ export type RunBenchmarkChildMainParameters = Readonly<{
   /** Benchmark package root passed to `collectFingerprint` (directory with that package's `package.json`). */
   readonly packageRoot: string;
   readonly collectScenarios: () => ReadonlyArray<AnyBenchScenario>;
-  /** Default tinybench `Bench` timing; overridden when `BENCH_FAST` or `BENCH_FULL` is set. */
+  /** Default tinybench `Bench` timing; overridden when a mode is active. */
   readonly benchDefaults: BenchOptions;
+  /** Explicit timing profile; when absent, falls back to the `BENCH_FAST`/`BENCH_FULL` env flags. */
+  readonly mode?: BenchMode | undefined;
+  /** Explicit per-scenario trial count (minimum 2); when absent, falls back to `BENCH_TRIALS`. */
+  readonly trialCount?: number | undefined;
 }>;
 
 /**
@@ -31,7 +36,7 @@ export type RunBenchmarkChildMainParameters = Readonly<{
  * @since 0.3.16-canary.0
  */
 export async function runBenchmarkChildMain(parameters: RunBenchmarkChildMainParameters): Promise<void> {
-  const { libraryName, scenarioName, packageRoot, collectScenarios, benchDefaults } = parameters;
+  const { libraryName, scenarioName, packageRoot, collectScenarios, benchDefaults, mode, trialCount } = parameters;
 
   console.error(`[bench] subprocess ${scenarioName} started`);
   const allScenarios = collectScenarios();
@@ -58,7 +63,7 @@ export async function runBenchmarkChildMain(parameters: RunBenchmarkChildMainPar
     throw new Error(`${BENCH_ONLY_ENV_KEY}="${onlyScenarioId}" matched no collected scenario`);
   }
   const sanityFailures = await runSanityChecks(scenarios);
-  const { runAllTrials } = createRunAllTrials({ benchDefaults });
+  const { runAllTrials } = createRunAllTrials({ benchDefaults, mode, trialCount });
   const trials = await runAllTrials(scenarios, sanityFailures);
 
   emitSubprocessPayload({
