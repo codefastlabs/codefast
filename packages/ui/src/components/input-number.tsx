@@ -22,11 +22,19 @@ type InputNumberProps = ComponentProps<typeof InputNumberPrimitive.Root>;
  *
  * @since 0.3.16-canary.0
  */
-function InputNumber({ className, spinner, ...props }: InputNumberProps): JSX.Element {
+function InputNumber({
+  ariaDecrementLabel = "Decrement",
+  ariaIncrementLabel = "Increment",
+  className,
+  spinner,
+  ...props
+}: InputNumberProps): JSX.Element {
   return (
     <InputNumberPrimitive.Root
+      ariaDecrementLabel={ariaDecrementLabel}
+      ariaIncrementLabel={ariaIncrementLabel}
       className={cn(
-        "group/input-number relative flex h-8 w-full min-w-0 items-center overflow-hidden rounded-lg border border-input bg-transparent text-base transition-[color,box-shadow] not-has-[input:disabled]:shadow-xs focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/50 has-aria-invalid:border-destructive has-aria-invalid:ring-3 has-aria-invalid:ring-destructive/20 has-[input:disabled]:bg-input/50 has-[input:disabled]:opacity-50 motion-reduce:transition-none md:text-sm dark:bg-input/30 dark:has-aria-invalid:border-destructive/50 dark:has-aria-invalid:ring-destructive/40 dark:has-[input:disabled]:bg-input/80 [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+        "group/input-number relative flex h-8 w-full min-w-0 items-center overflow-hidden rounded-lg bg-transparent text-base inset-ring inset-ring-input transition-[color,box-shadow] not-has-[input:disabled]:shadow-xs has-aria-invalid:ring-3 has-aria-invalid:ring-destructive/20 has-aria-invalid:inset-ring-destructive has-[input:disabled]:bg-input/50 has-[input:disabled]:opacity-50 has-[input:focus-visible]:ring-3 has-[input:focus-visible]:ring-ring/50 has-[input:focus-visible]:inset-ring-ring motion-reduce:transition-none md:text-sm dark:bg-input/30 dark:has-aria-invalid:ring-destructive/40 dark:has-aria-invalid:inset-ring-destructive/50 dark:has-[input:disabled]:bg-input/80 [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
         className,
       )}
       data-slot="input-number"
@@ -86,7 +94,7 @@ function InputNumberStepper({ className, ...props }: InputNumberStepperProps): J
   return (
     <div
       className={cn(
-        "grid h-full w-8 shrink-0 grid-rows-2 divide-y divide-input border-s border-s-input transition-colors group-focus-within/input-number:divide-ring group-focus-within/input-number:border-s-ring group-has-aria-invalid/input-number:divide-destructive group-has-aria-invalid/input-number:border-s-destructive motion-reduce:transition-none *:[button]:focus-visible:bg-ring/50 *:[button]:focus-visible:ring-0 group-has-aria-invalid/input-number:*:[button]:focus-visible:bg-destructive/20 dark:group-has-aria-invalid/input-number:*:[button]:focus-visible:bg-destructive/40",
+        "grid h-full w-8 shrink-0 grid-rows-2 divide-y divide-input border-s border-s-input transition-colors group-has-aria-invalid/input-number:divide-destructive group-has-aria-invalid/input-number:border-s-destructive motion-reduce:transition-none *:[button]:focus-visible:bg-ring/50 *:[button]:focus-visible:ring-0 group-has-aria-invalid/input-number:*:[button]:focus-visible:bg-destructive/20 dark:group-has-aria-invalid/input-number:*:[button]:focus-visible:bg-destructive/40",
         className,
       )}
       data-slot="input-number-stepper"
@@ -135,7 +143,7 @@ function InputNumberIncrement({ children, className, ...props }: InputNumberIncr
     <InputNumberPrimitive.IncrementButton
       className={buttonVariants({
         className: cn(
-          "h-full w-8 shrink-0 rounded-none rounded-e-[calc(var(--radius-lg)-1px)] border-s border-s-input text-muted-foreground group-focus-within/input-number:border-s-ring group-has-aria-invalid/input-number:border-s-destructive focus-visible:bg-ring/50 focus-visible:ring-0 group-has-aria-invalid/input-number:focus-visible:bg-destructive/20 dark:group-has-aria-invalid/input-number:focus-visible:bg-destructive/40",
+          "h-full w-8 shrink-0 rounded-none rounded-e-[calc(var(--radius-lg)-1px)] border-s border-s-input text-muted-foreground group-has-aria-invalid/input-number:border-s-destructive focus-visible:bg-ring/50 focus-visible:ring-0 group-has-aria-invalid/input-number:focus-visible:bg-destructive/20 dark:group-has-aria-invalid/input-number:focus-visible:bg-destructive/40",
           className,
         ),
         variant: "ghost",
@@ -168,7 +176,7 @@ function InputNumberDecrement({ children, className, ...props }: InputNumberDecr
     <InputNumberPrimitive.DecrementButton
       className={buttonVariants({
         className: cn(
-          "h-full w-8 shrink-0 rounded-none rounded-s-[calc(var(--radius-lg)-1px)] border-e border-e-input text-muted-foreground group-focus-within/input-number:border-e-ring group-has-aria-invalid/input-number:border-e-destructive focus-visible:bg-ring/50 focus-visible:ring-0 group-has-aria-invalid/input-number:focus-visible:bg-destructive/20 dark:group-has-aria-invalid/input-number:focus-visible:bg-destructive/40",
+          "h-full w-8 shrink-0 rounded-none rounded-s-[calc(var(--radius-lg)-1px)] border-e border-e-input text-muted-foreground group-has-aria-invalid/input-number:border-e-destructive focus-visible:bg-ring/50 focus-visible:ring-0 group-has-aria-invalid/input-number:focus-visible:bg-destructive/20 dark:group-has-aria-invalid/input-number:focus-visible:bg-destructive/40",
           className,
         ),
         variant: "ghost",

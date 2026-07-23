@@ -763,6 +763,7 @@ describe("input-number", () => {
 
       expect(input).toHaveValue("5");
 
+      // Steppers are in the tab order: field, then increment.
       await user.tab();
       await user.tab();
       await user.tab();
