@@ -1,4 +1,5 @@
 import { extremeSlotsTestProps, extremeSlotsVariants } from "#/fixtures/extreme";
+import { EXTREME_SLOTS_WITH_MERGE, EXTREME_SLOTS_WITHOUT_MERGE } from "#/fixtures/scenario-parity";
 import type { ExtremeDialogSlots } from "#/fixtures/slot-types";
 import { TV_MERGE_DISABLED, TV_MERGE_ENABLED } from "#/harness/bench-options";
 import { codefastTvFn } from "#/lib/tv-shims";
@@ -37,15 +38,11 @@ function runExtremeSlotsLoop(renderer: ExtremeSlotsRenderer): void {
 export function buildCodefastExtremeSlotsScenarios(): ReadonlyArray<BenchScenario> {
   return [
     {
-      id: "extreme-slots-without-merge",
-      group: "extreme-slots",
-      what: "Many slots without tailwind-merge",
+      ...EXTREME_SLOTS_WITHOUT_MERGE,
       build: () => () => runExtremeSlotsLoop(codefastNoMerge),
     },
     {
-      id: "extreme-slots-with-merge",
-      group: "extreme-slots",
-      what: "Many slots with tailwind-merge on tv",
+      ...EXTREME_SLOTS_WITH_MERGE,
       build: () => () => runExtremeSlotsLoop(codefastWithMerge),
     },
   ];

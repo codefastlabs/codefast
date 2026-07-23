@@ -1,4 +1,5 @@
 import { extremeTestProps, extremeVariants } from "#/fixtures/extreme";
+import { EXTREME_WITH_MERGE, EXTREME_WITHOUT_MERGE } from "#/fixtures/scenario-parity";
 import { TV_MERGE_DISABLED, TV_MERGE_ENABLED } from "#/harness/bench-options";
 import { codefastTvFn } from "#/lib/tv-shims";
 import type { BenchScenario } from "#/scenarios/types";
@@ -12,9 +13,7 @@ const codefastWithMerge = codefastTvFn(extremeVariants, TV_MERGE_ENABLED);
 export function buildCodefastExtremeScenarios(): ReadonlyArray<BenchScenario> {
   return [
     {
-      id: "extreme-without-merge",
-      group: "extreme",
-      what: "Large variant matrix without tailwind-merge",
+      ...EXTREME_WITHOUT_MERGE,
       build: () => () => {
         for (const props of extremeTestProps) {
           codefastNoMerge(props);
@@ -22,9 +21,7 @@ export function buildCodefastExtremeScenarios(): ReadonlyArray<BenchScenario> {
       },
     },
     {
-      id: "extreme-with-merge",
-      group: "extreme",
-      what: "Large variant matrix with tailwind-merge on tv",
+      ...EXTREME_WITH_MERGE,
       build: () => () => {
         for (const props of extremeTestProps) {
           codefastWithMerge(props);
