@@ -5,7 +5,7 @@ import type { ServiceIdentifier } from "inversify";
 import type { AsyncBenchScenario } from "#/scenarios/types";
 
 const ASYNC_CHAIN_DEPTH = 8;
-const ASYNC_CONCURRENT_FANOUT_COUNTS = [8, 32] as const;
+const ASYNC_CONCURRENT_FANOUT_COUNTS = [8, 16, 32, 64] as const;
 
 // Fan-out factories yield via microtask, not setImmediate: a macrotask wait (~15µs on
 // Apple silicon) dwarfs both libraries' machinery and the row degrades into measuring libuv.
