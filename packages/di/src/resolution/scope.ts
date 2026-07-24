@@ -4,6 +4,8 @@ import type { BindingIdentifier } from "#/types";
 /**
  * Sentinel returned by {@link ScopeManager.peekSingleton} when nothing is cached —
  * lets hot paths read the cache with a single Map.get even for `undefined` values.
+ *
+ * @since 0.5.0-canary.7
  */
 export const SINGLETON_MISS: unique symbol = Symbol("di:singleton-miss");
 

@@ -16,7 +16,12 @@
   },
   "changesets": [
     "cli-skippackages-glob",
+    "di-alias-cycle-and-tuned-thresholds",
+    "di-fix-eager-commit-displacement",
     "di-rename-hint-to-options",
+    "di-reorganize-source-layout",
+    "di-resolved-plans-named-memo",
+    "di-resolver-performance-overhaul",
     "theme-context-value-type-name",
     "theme-hig-appearance-naming",
     "theme-provider-storage-key",

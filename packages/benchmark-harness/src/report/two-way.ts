@@ -94,6 +94,8 @@ const HEAD_TO_HEAD_PARITY_BAND = 0.03;
 
 /**
  * One classified head-to-head entry: scenario id plus its left/right throughput ratio.
+ *
+ * @since 0.5.0-canary.7
  */
 export interface TwoWayHeadToHeadEntry {
   readonly id: string;
@@ -102,6 +104,8 @@ export interface TwoWayHeadToHeadEntry {
 
 /**
  * Win/parity/loss classification of every comparable scenario, from the left library's viewpoint.
+ *
+ * @since 0.5.0-canary.7
  */
 export interface TwoWayHeadToHeadSummary {
   readonly comparableCount: number;
@@ -115,6 +119,8 @@ export interface TwoWayHeadToHeadSummary {
 
 /**
  * Classifies comparable rows into wins / parities / losses for the left library.
+ *
+ * @since 0.5.0-canary.7
  */
 export function summarizeTwoWayComparison(rows: ReadonlyArray<TwoWayScenarioComparisonRow>): TwoWayHeadToHeadSummary {
   const wins: Array<TwoWayHeadToHeadEntry> = [];

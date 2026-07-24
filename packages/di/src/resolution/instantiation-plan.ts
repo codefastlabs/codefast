@@ -25,16 +25,26 @@ import type { BindingScope, Constructor } from "#/types";
 // Bail out of pathological graphs — the runtime path handles them correctly.
 const PLAN_DEPTH_LIMIT = 32;
 
-/** Compilation asked to retry later (class lifecycle metadata not discovered yet). */
+/**
+ * Compilation asked to retry later (class lifecycle metadata not discovered yet).
+ *
+ * @since 0.5.0-canary.7
+ */
 export const PLAN_RETRY: unique symbol = Symbol("di:plan-retry");
 
 /**
  * A compiled plan, `null` for "not plannable under the current cache versions",
  * or {@link PLAN_RETRY} when a first runtime resolve must discover metadata first.
+ *
+ * @since 0.5.0-canary.7
  */
 export type InstantiationPlanCompileResult = (() => unknown) | null | typeof PLAN_RETRY;
 
-/** A dependency's terminal binding plus the scope cache of the resolver that owns it. */
+/**
+ * A dependency's terminal binding plus the scope cache of the resolver that owns it.
+ *
+ * @since 0.5.0-canary.7
+ */
 export interface InstantiationPlanDependencyEntry {
   readonly binding: Binding;
   readonly ownerScope: ScopeManager;
@@ -43,6 +53,8 @@ export interface InstantiationPlanDependencyEntry {
 /**
  * Everything the compiler needs from its resolver, expressed as behavior so the
  * compiler stays independently testable and free of resolver internals.
+ *
+ * @since 0.5.0-canary.7
  */
 export interface InstantiationPlanHost {
   hasActivationHandlers(token: Token<unknown> | Constructor): boolean;

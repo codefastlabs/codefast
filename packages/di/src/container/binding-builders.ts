@@ -34,6 +34,9 @@ import type {
 
 // ── Shared builder helpers ────────────────────────────────────────────────────
 
+/**
+ * @since 0.5.0-canary.7
+ */
 export type CommitFn = <Value>(binding: Binding<Value>, previousId?: BindingIdentifier) => BindingIdentifier;
 
 // Builder payloads that still accept a scope — alias/constant bindings never flow through ConstraintBuilder/ScopeBuilder.
@@ -88,6 +91,9 @@ abstract class SlotBuilder {
 
 // ── BindingEntry ──────────────────────────────────────────────────────────────
 
+/**
+ * @since 0.5.0-canary.7
+ */
 export class BindingEntry<Value> implements BindToBuilder<Value> {
   readonly #token: Token<Value> | Constructor<Value>;
   readonly #commitBinding: CommitFn;

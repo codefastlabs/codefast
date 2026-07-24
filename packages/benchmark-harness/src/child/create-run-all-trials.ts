@@ -80,6 +80,8 @@ function createZeroedScenarioTrialResult(scenario: AnyBenchScenario, hzPerIterat
 
 /**
  * Timing profile for a bench run: `fast` for smoke checks, `full` for GC-enabled stability runs.
+ *
+ * @since 0.5.0-canary.7
  */
 export type BenchMode = "fast" | "full";
 
