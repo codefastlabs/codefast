@@ -1,5 +1,7 @@
 import { defineConfig } from "oxlint";
 
+import { ignorePatterns } from "#/oxc.shared";
+
 export default defineConfig({
   env: {
     builtin: true,
@@ -73,11 +75,7 @@ export default defineConfig({
       // (role="group", role="progressbar", role="status", role="list") that have
       // no semantic-equivalent HTML tag in these contexts — e.g. role="progressbar"
       // on <svg>, role="group" on layout divs, role="status" live regions.
-      files: [
-        "apps/ui/src/**/*.{ts,tsx}",
-        "packages/benchmark-viewer/src/**/*.{ts,tsx}",
-        "packages/ui/src/**/*.{ts,tsx}",
-      ],
+      files: ["{apps/ui,packages/benchmark-viewer,packages/ui}/src/**/*.{ts,tsx}"],
       rules: {
         "jsx-a11y/prefer-tag-over-role": "off",
       },
@@ -85,7 +83,7 @@ export default defineConfig({
     {
       // Hot-path preallocation: `new Array(n)` is intentional in these
       // benchmark-backed packages; `Array.from({ length: n })` is slower.
-      files: ["packages/di/src/**/*.ts", "packages/tailwind-variants/src/**/*.ts"],
+      files: ["packages/{di,tailwind-variants}/src/**/*.ts"],
       rules: {
         "unicorn/no-new-array": "off",
       },
@@ -121,21 +119,7 @@ export default defineConfig({
   },
 
   // ---------------------------------------------------------------------------
-  // Ignored paths (generated output, caches, lockfiles)
+  // Ignored paths (shared with oxfmt — see oxc.shared.ts)
   // ---------------------------------------------------------------------------
-  ignorePatterns: [
-    "**/node_modules/**",
-    "**/pnpm-lock.yaml",
-    "**/*.snap",
-    "**/coverage/**",
-    "**/.turbo/**",
-    "**/dist/**",
-    "**/.output/**",
-    "**/.nitro/**",
-    "**/.tanstack/**",
-    "**/.content-collections/**",
-    "**/*.tsbuildinfo",
-    "apps/ui/src/routeTree.gen.ts",
-    "examples/tanstack-start/src/routeTree.gen.ts",
-  ],
+  ignorePatterns,
 });

@@ -1,13 +1,14 @@
 import { defineConfig } from "oxfmt";
 
+import { ignorePatterns } from "#/oxc.shared";
+
 export default defineConfig({
   // ---------------------------------------------------------------------------
   // Layout
   // ---------------------------------------------------------------------------
-  endOfLine: "lf",
-  insertFinalNewline: true,
+  // endOfLine + insertFinalNewline live in .editorconfig (the single source —
+  // oxfmt reads it), so only the non-default printWidth is set here.
   printWidth: 120,
-  proseWrap: "preserve",
 
   // ---------------------------------------------------------------------------
   // Code organization
@@ -29,21 +30,7 @@ export default defineConfig({
   },
 
   // ---------------------------------------------------------------------------
-  // Ignored paths (generated output, caches, lockfiles)
+  // Ignored paths (shared with oxlint — see oxc.shared.ts)
   // ---------------------------------------------------------------------------
-  ignorePatterns: [
-    "**/node_modules/**",
-    "**/pnpm-lock.yaml",
-    "**/*.snap",
-    "**/coverage/**",
-    "**/.turbo/**",
-    "**/dist/**",
-    "**/.output/**",
-    "**/.nitro/**",
-    "**/.tanstack/**",
-    "**/.content-collections/**",
-    "**/*.tsbuildinfo",
-    "apps/ui/src/routeTree.gen.ts",
-    "examples/tanstack-start/src/routeTree.gen.ts",
-  ],
+  ignorePatterns,
 });
