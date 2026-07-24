@@ -1,5 +1,14 @@
 # @codefast/benchmark-di-inversify
 
+## 0.5.0-canary.7
+
+### Patch Changes
+
+- Updated dependencies [[`2def688`](https://github.com/codefastlabs/codefast/commit/2def688e305eebe7e14af4ae163beec13582aad5), [`19199af`](https://github.com/codefastlabs/codefast/commit/19199af174d8971081d1849a36fd9df05c8541ae), [`ad11507`](https://github.com/codefastlabs/codefast/commit/ad115077e23eaed845abd1f093f32d57f2445a36), [`f9aeeb0`](https://github.com/codefastlabs/codefast/commit/f9aeeb04a271877e47a7fbbfc6d62ae0fe1ad955), [`6a25788`](https://github.com/codefastlabs/codefast/commit/6a25788320c73074c3ae0bb06cf7a70b7800c953)]:
+  - @codefast/di@0.5.0-canary.7
+  - @codefast/benchmark-harness@0.5.0-canary.7
+  - @codefast/benchmark-viewer@0.5.0-canary.7
+
 ## 0.5.0-canary.6
 
 ### Patch Changes

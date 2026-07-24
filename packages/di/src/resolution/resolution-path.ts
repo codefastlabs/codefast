@@ -14,6 +14,8 @@ const RESOLUTION_SET_KEY: unique symbol = Symbol("di:resolution-set");
  * check + push + pop per hop): includes costs ~0.8 ns per element and beats the
  * Set's has+add+delete churn up to at least depth 96 (79 ns vs 510 ns), so the
  * Set only pays past roughly this depth.
+ *
+ * @since 0.5.0-canary.7
  */
 export const RESOLUTION_SET_THRESHOLD = 128;
 type ResolutionPathWithSet = Array<string> & { [RESOLUTION_SET_KEY]?: Set<string> };
@@ -35,6 +37,9 @@ export function enterResolutionPath(
   tokenDisplayName: string,
   forceSet: boolean,
 ): Set<string> | undefined;
+/**
+ * @since 0.5.0-canary.7
+ */
 export function enterResolutionPath(
   resolutionPath: Array<string>,
   tokenDisplayName: string,
