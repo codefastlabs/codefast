@@ -48,7 +48,11 @@
     "test:type": "turbo run test:type",
     "test:unit": "turbo run test:unit",
     "test:watch": "turbo run test:watch",
-    "verify": "pnpm build:packages && turbo run lint:fix && turbo run format && turbo run check-types test:coverage"
+    "ui:build": "turbo run build --filter=@apps/ui",
+    "ui:dev": "turbo run dev --filter=@apps/ui",
+    "ui:preview": "turbo run preview --filter=@apps/ui",
+    "verify": "pnpm build:packages && turbo run lint:fix && turbo run format && turbo run check-types test:coverage",
+    "version-packages": "changeset version && pnpm run codefast tag"
   },
   "devDependencies": {
     "@changesets/changelog-github": "catalog:",
