@@ -30,9 +30,20 @@ Ratios are `@codefast/di / competitor` (>1 = di faster). Win band >1.03×, parit
 ## Where it loses
 
 1. **Cold container build, versus the leaner containers.** `realistic-graph-cold-resolve` (build a fresh container, bind 10 nodes, resolve once) beats inversify 2.34× but **loses to awilix (0.76×) and tsyringe (0.53×)**. di's per-container setup does genuinely more work — metadata, lifecycle, introspection — than a decorator-free/factory container's. A deliberate trade-off, not a defect.
-2. **Async chains, but only under forced GC — and the row is measuring GC, not resolution.** `dynamic-async-chain-8` is **0.75× under `BENCH_FULL`** yet **1.26× in the default profile**; the whole `async` group swings from 1.17× to 1.39×. `BENCH_FULL` exposes `--expose-gc` and the harness calls `gc()` on a stride, which pushes per-op cost from ~0.6 µs to ~22 µs — i.e. **97% of what the row measures is the forced collection**.
+2. **Async chains, but only under `BENCH_FULL`'s forced-GC hook.** `dynamic-async-chain-8` is **0.75× under `BENCH_FULL`** yet **1.26× in the default profile**; the `async` group swings from 1.17× to 1.39×.
 
-   Two hypotheses were tested directly. _Allocation volume_ is **not** the cause: reworking the lane to allocate 2.8× less per op (118 B → 42 B, by unwinding in an `async`/`finally` wrapper instead of a discarded `.then` derived promise) left the row unchanged at 0.77×, while costing a microtask hop in the default profile — so that rework was reverted. The actual driver is **retained state**: one forced `gc()` costs ~1783 µs with a `@codefast/di` container live versus ~1446 µs for inversify, a 0.81× ratio that closely tracks the 0.75–0.77× observed. di keeps more live per container — context pools, frame maps, compiled plans — which is exactly what buys the 1.2–2.5× it wins elsewhere. Under a stride of forced collections that retained state is charged back on every iteration.
+   Isolating the cause: running the same scenario with **identical `BENCH_FULL` sampling parameters**, once with `--expose-gc` and once without (which no-ops the harness's strided `gc()` hook), gives
+
+   | Run                         |  codefast | inversify |     ratio |
+   | --------------------------- | --------: | --------: | --------: |
+   | full params, GC hook active |   888,962 | 1,166,301 | **0.76×** |
+   | full params, GC hook inert  | 1,563,780 | 1,228,917 | **1.27×** |
+
+   So the flip is the GC hook, not the shorter warmup or sample counts — and it is lopsided: the forced collections cost `@codefast/di` **43%** but inversify only **5%**. Note the `gc()` call itself is _not_ inside the measured region (tinybench runs `beforeEach` before starting its timer), so this is not GC time being charged to the row; it is di paying to re-warm state that a full collection disturbs. di leans harder on warm cross-iteration state — pooled resolution contexts, deeper call chains, more live objects per container — which is exactly what buys the 1.2–2.5× it wins elsewhere.
+
+   One hypothesis was tested and **rejected**: allocation volume. Reworking the lane to allocate 2.8× less per op (118 B → 42 B, unwinding in an `async`/`finally` wrapper instead of a discarded `.then` derived promise) left the row at 0.77× while costing a microtask hop in the default profile, so that rework was reverted. The exact V8-level mechanism behind the remaining 43% is not yet pinned down.
+
+   Whether a full GC every 100 samples resembles your workload is a judgement call — most applications do not force one every 100 resolutions — which is why both profiles are reported here rather than just the flattering one.
 
 ## Head-to-head: @codefast/di vs inversify (full suite)
 
