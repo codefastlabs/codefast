@@ -108,6 +108,69 @@ describe("container.validate() — transitive scope + alias chain (SPEC §6.9)",
 });
 
 describe("AsyncModuleLoadError", () => {
+  it("walks toResolved() dependency tokens and detects singleton \u2192 transient", () => {
+    @injectable([])
+    class TransientService {}
+
+    const TransientLeaf = token<TransientService>("ResolvedTransientLeaf");
+    const Root = token<string>("ResolvedRoot");
+
+    const container = Container.create();
+    container.bind(TransientLeaf).to(TransientService).transient();
+    container
+      .bind(Root)
+      .toResolved((leaf: TransientService) => `root:${leaf.constructor.name}`, [TransientLeaf])
+      .singleton();
+
+    let thrown: unknown;
+    try {
+      container.validate();
+    } catch (error) {
+      thrown = error;
+    }
+    expect(thrown).toBeInstanceOf(ScopeViolationError);
+    const details = (thrown as ScopeViolationError).details;
+    expect(details.consumerScope).toBe("singleton");
+    expect(details.dependencyScope).toBe("transient");
+  });
+
+  it("accepts a toResolved() singleton whose dependencies are singletons", () => {
+    @injectable([])
+    class SingletonService {}
+
+    const SingletonLeaf = token<SingletonService>("ResolvedSingletonLeaf");
+    const Root = token<string>("ResolvedSingletonRoot");
+
+    const container = Container.create();
+    container.bind(SingletonLeaf).to(SingletonService).singleton();
+    container
+      .bind(Root)
+      .toResolved((leaf: SingletonService) => `root:${leaf.constructor.name}`, [SingletonLeaf])
+      .singleton();
+
+    expect(() => container.validate()).not.toThrow();
+  });
+
+  it("treats a toDynamic terminal as opaque, so its declared scope is not checked", () => {
+    // Documented behaviour (SPEC \u00a76.9): dynamic factories are not statically analyzable, so a
+    // singleton depending on a transient *dynamic* binding is deliberately not reported. Pinned
+    // here so the exemption stays a decision rather than drifting silently.
+    const DynamicLeaf = token<string>("OpaqueDynamicLeaf");
+    const Root = token<string>("OpaqueDynamicRoot");
+
+    const container = Container.create();
+    container
+      .bind(DynamicLeaf)
+      .toDynamic(() => "leaf")
+      .transient();
+    container
+      .bind(Root)
+      .toResolved((leaf: string) => `root:${leaf}`, [DynamicLeaf])
+      .singleton();
+
+    expect(() => container.validate()).not.toThrow();
+  });
+
   it("throws when sync load receives an async module at runtime", () => {
     const asyncModule = Module.createAsync("async-mod", async () => {});
     const container = Container.create();
