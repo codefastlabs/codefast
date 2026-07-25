@@ -9,13 +9,15 @@ import { CircularDependencyError } from "#/errors";
 
 const RESOLUTION_SET_KEY: unique symbol = Symbol("di:resolution-set");
 /**
- * Where the cycle check switches from a linear `Array.includes` scan to an
- * attached Set. Measured on Node 26 / M1 Pro (miss-heavy pattern, one
- * check + push + pop per hop): includes costs ~0.8 ns per element and beats the
- * Set's has+add+delete churn up to at least depth 96 (79 ns vs 510 ns), so the
- * Set only pays past roughly this depth.
+ * Where the cycle check switches from a linear `Array.includes` scan to an attached Set.
+ *
+ * @remarks Re-measured on Node 26 / M3 Max over an async transient chain (ns/op at depth
+ * 16 / 32 / 64 / 128): a threshold of 128 gives 1275 / 3641 / 9645 / 26082, of 32 gives
+ * 1202 / 3285 / 7735 / 16837, of 16 gives 1299 / 3694 / 7449 / 15625. Switching at 32 wins
+ * the shallow-to-mid depths real graphs actually have while staying close to the best deep
+ * numbers; the previous value of 128 was the worst of the three almost everywhere.
  */
-export const RESOLUTION_SET_THRESHOLD = 128;
+export const RESOLUTION_SET_THRESHOLD = 32;
 type ResolutionPathWithSet = Array<string> & { [RESOLUTION_SET_KEY]?: Set<string> };
 
 /**
@@ -52,4 +54,17 @@ export function enterResolutionPath(
   resolutionPath.push(tokenDisplayName);
   resolutionSet?.add(tokenDisplayName);
   return resolutionSet;
+}
+
+/**
+ * Unwinds the innermost `enterResolutionPath` entry, keeping the attached membership Set in
+ * sync. Callers that already hold the entry's name can pop and delete directly; this exists for
+ * unwind paths that only have the path array — notably the async chain's shared settle callback,
+ * which serves every level and therefore cannot capture a per-level name.
+ */
+export function exitResolutionPath(resolutionPath: Array<string>): void {
+  const tokenDisplayName = resolutionPath.pop();
+  if (tokenDisplayName !== undefined) {
+    (resolutionPath as ResolutionPathWithSet)[RESOLUTION_SET_KEY]?.delete(tokenDisplayName);
+  }
 }
