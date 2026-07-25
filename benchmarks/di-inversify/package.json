@@ -2,12 +2,14 @@
   "name": "@codefast/benchmark-di-inversify",
   "version": "0.5.0-canary.6",
   "private": true,
-  "description": "Head-to-head tinybench harness: InversifyJS v8 vs @codefast/di (same scenarios per library)",
+  "description": "Head-to-head tinybench harness: @codefast/di vs InversifyJS v8 (full suite) plus Awilix and tsyringe (core subset)",
   "keywords": [
+    "awilix",
     "benchmark",
     "codefast",
     "dependency-injection",
-    "inversify"
+    "inversify",
+    "tsyringe"
   ],
   "license": "MIT",
   "author": "Vuong Phan <mr.thevuong@gmail.com>",

@@ -1,8 +1,8 @@
 # @codefast/benchmark-di-inversify
 
-Head-to-head performance harness: **InversifyJS 8** vs **@codefast/di**, scenario-by-scenario, reported as per-trial medians with interquartile range.
+Head-to-head performance harness: **@codefast/di** vs **InversifyJS 8** (full suite), plus **Awilix 13** and **tsyringe 4** on a core subset, scenario-by-scenario, reported as per-trial medians with interquartile range.
 
-New to this package? See **[BENCH_GUIDE.md](./BENCH_GUIDE.md)** for a newcomer-oriented glossary, mental model (parent → subprocess → tinybench), and how to read `bench-results/latest.md`.
+Want the numbers and the honest caveats (including where `@codefast/di` loses)? See **[RESULTS.md](./RESULTS.md)**. New to this package? See **[BENCH_GUIDE.md](./BENCH_GUIDE.md)** for a newcomer-oriented glossary, mental model (parent → subprocess → tinybench), and how to read `bench-results/latest.md`.
 
 This is the benchmark _for shipping_. It exists so a regression in `@codefast/di` hot paths cannot silently land on main, and so the "@codefast/di is faster than inversify on the graphs you actually wire" claim is something a skeptical reader can re-run in 30 seconds.
 
@@ -247,15 +247,25 @@ benchmarks/di-inversify/
       fan-out-descriptor.ts          # fan-out counts + tree shape helpers
       codefast-adapter.ts            # descriptor → @codefast/di Container
       inversify-adapter.ts           # descriptor → inversify Container
+      awilix-adapter.ts              # descriptor → awilix container (core subset)
+      tsyringe-adapter.ts            # descriptor → tsyringe container (core subset)
+    scenarios/awilix/, scenarios/tsyringe/   # core-subset scenarios for the N-way report
     codefast-benches.ts              # subprocess entry — tsconfig.codefast.json
     inversify-benches.ts             # subprocess entry — tsconfig.inversify.json (+ reflect-metadata)
+    awilix-benches.ts                # subprocess entry — tsconfig.awilix.json (decorator-free)
+    tsyringe-benches.ts              # subprocess entry — tsconfig.tsyringe.json (+ reflect-metadata)
   tsconfig.json
   tsconfig.codefast.json
   tsconfig.inversify.json
+  tsconfig.awilix.json
+  tsconfig.tsyringe.json
   package.json
   README.md
+  RESULTS.md
   BENCH_GUIDE.md
 ```
+
+The core subset (`scenarios/{awilix,tsyringe}/**`) implements only the factory/class-binding scenarios all four libraries support; `run.ts` renders them as an N-way table (di pivot) via `@codefast/benchmark-harness/report/n-way`, appended after the full di-vs-inversify two-way report.
 
 **Shared workspace package:** `@codefast/benchmark-harness` owns the framed stdout protocol (`emitSubprocessPayload` / `extractSubprocessPayload`), fingerprinting, `runBenchSubprocess` + `runBenchSubprocessIsolated`, `buildLibraryReport`, the head-to-head summary (`summarizeTwoWayComparison`), and the markdown + JSONL writers. This benchmark package does **not** ship `protocol.ts` / `report.ts` under `src/harness/`.
 
@@ -263,4 +273,5 @@ benchmarks/di-inversify/
 
 - Only `src/fixtures/codefast-adapter.ts` and `src/scenarios/codefast/**` may import `@codefast/di`.
 - Only `src/fixtures/inversify-adapter.ts` and `src/scenarios/inversify/**` may import `inversify` (and `inversify-benches.ts` imports `reflect-metadata`).
+- Likewise `src/fixtures/awilix-adapter.ts` + `src/scenarios/awilix/**` import `awilix`; `src/fixtures/tsyringe-adapter.ts` + `src/scenarios/tsyringe/**` import `tsyringe` (+ `reflect-metadata`).
 - `src/harness/**` and `src/fixtures/{realistic-graph,fan-out-descriptor}.ts` stay library-agnostic (they import `@codefast/benchmark-harness`, `tinybench`, and local `#/…` modules only).
