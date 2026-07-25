@@ -242,15 +242,13 @@ class DefaultContainer implements Container {
 
   /** Remove bindings from registry + scope and collect [binding, instance] pairs for deactivation. */
   #collectDeactivationPairs(tokenOrId: Token<unknown> | Constructor | BindingIdentifier): Array<[Binding, unknown]> {
-    const pairs: Array<[Binding, unknown]> = [];
-    for (const binding of this.#getBindingsForTokenOrId(tokenOrId)) {
-      this.#registry.removeById(binding.id);
-      if (this.#scope.hasSingleton(binding.id)) {
-        pairs.push([binding, this.#scope.getSingleton(binding.id)]);
-        this.#scope.deleteSingleton(binding.id);
-      }
+    if (typeof tokenOrId === "string") {
+      const binding = this.#registry.removeById(tokenOrId);
+      return binding === undefined ? [] : this.#drainSingletons([binding]);
     }
-    return pairs;
+    // Dropping the whole token in one pass: removing each binding by id instead would re-scan and
+    // re-index the token's binding list once per binding.
+    return this.#drainSingletons(this.#registry.removeByToken(tokenOrId));
   }
 
   /** Drain singleton scope entries for a set of already-removed bindings. */
@@ -304,15 +302,6 @@ class DefaultContainer implements Container {
     // Unbind existing (sync — if async deactivation, will throw AsyncDeactivationError)
     this.#unbindSync(token);
     return this.#createBindToBuilder(token);
-  }
-
-  #getBindingsForTokenOrId(tokenOrId: Token<unknown> | Constructor | BindingIdentifier): Array<Binding> {
-    if (typeof tokenOrId === "string") {
-      // It's a BindingIdentifier (string)
-      const binding = this.#registry.getById(tokenOrId);
-      return binding !== undefined ? [binding] : [];
-    }
-    return [...this.#registry.getAll(tokenOrId)];
   }
 
   // ── Module ────────────────────────────────────────────────────────────────
