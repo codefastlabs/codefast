@@ -9,6 +9,7 @@ import type {
   DeactivationHandler,
   DependencyKey,
   ResolutionContext,
+  ResolutionFrame,
   TokenValue,
   ConstraintContext,
 } from "#/types";
@@ -76,6 +77,14 @@ interface BindingBase<Value> {
    * @remarks Resolver-owned bookkeeping — `registry.add` normalizes it, so callers never set it.
    */
   inFlight?: boolean | undefined;
+  /**
+   * Memoized resolution frame for this binding. Its contents derive only from immutable binding
+   * fields, so it is computed once on first resolve and reused instead of a per-resolver Map
+   * lookup on every hop.
+   *
+   * @remarks Resolver-owned bookkeeping — `registry.add` normalizes it, so callers never set it.
+   */
+  frame?: ResolutionFrame | undefined;
   readonly token: Token<Value> | Constructor<Value>;
   readonly slot: BindingSlot;
   readonly predicate?: ((ctx: ConstraintContext) => boolean) | undefined;
