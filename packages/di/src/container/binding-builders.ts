@@ -19,6 +19,7 @@ import type {
   TransientBindingBuilder,
 } from "#/binding";
 import { DEFAULT_BINDING_SLOT, generateBindingId } from "#/binding";
+import type { InjectableDependency, ResolvedDependencyValue } from "#/decorators/inject";
 import { normalizeToDescriptor } from "#/decorators/inject";
 import type { Token } from "#/token";
 import type {
@@ -27,9 +28,7 @@ import type {
   ConstraintContext,
   Constructor,
   DeactivationHandler,
-  DependencyKey,
   ResolutionContext,
-  TokenValue,
 } from "#/types";
 
 // ── Shared builder helpers ────────────────────────────────────────────────────
@@ -136,8 +135,8 @@ export class BindingEntry<Value> implements BindToBuilder<Value> {
     );
   }
 
-  toResolved<const Deps extends ReadonlyArray<DependencyKey>>(
-    factory: (...args: { [K in keyof Deps]: TokenValue<NoInfer<Deps>[K]> }) => Value,
+  toResolved<const Deps extends ReadonlyArray<InjectableDependency>>(
+    factory: (...args: { [K in keyof Deps]: ResolvedDependencyValue<NoInfer<Deps>[K]> }) => Value,
     deps: Deps,
   ): BindingBuilder<Value> {
     const normalizedDeps = deps.map((dependency) => normalizeToDescriptor(dependency));
@@ -153,8 +152,8 @@ export class BindingEntry<Value> implements BindToBuilder<Value> {
     );
   }
 
-  toResolvedAsync<const Deps extends ReadonlyArray<DependencyKey>>(
-    factory: (...args: { [K in keyof Deps]: TokenValue<NoInfer<Deps>[K]> }) => Promise<Value>,
+  toResolvedAsync<const Deps extends ReadonlyArray<InjectableDependency>>(
+    factory: (...args: { [K in keyof Deps]: ResolvedDependencyValue<NoInfer<Deps>[K]> }) => Promise<Value>,
     deps: Deps,
   ): BindingBuilder<Value> {
     const normalizedDeps = deps.map((dependency) => normalizeToDescriptor(dependency));

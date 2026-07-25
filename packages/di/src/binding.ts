@@ -1,4 +1,4 @@
-import type { InjectionDescriptor } from "#/decorators/inject";
+import type { InjectableDependency, InjectionDescriptor, ResolvedDependencyValue } from "#/decorators/inject";
 import type { Token } from "#/token";
 import type {
   ActivationHandler,
@@ -7,10 +7,8 @@ import type {
   BindingTag,
   Constructor,
   DeactivationHandler,
-  DependencyKey,
   ResolutionContext,
   ResolutionFrame,
-  TokenValue,
   ConstraintContext,
 } from "#/types";
 
@@ -230,12 +228,12 @@ export interface BindToBuilder<Value> {
   toConstantValue(value: Value): ConstantBindingBuilder<Value>;
   toDynamic(factory: (ctx: ResolutionContext) => Value): BindingBuilder<Value>;
   toDynamicAsync(factory: (ctx: ResolutionContext) => Promise<Value>): BindingBuilder<Value>;
-  toResolved<const Deps extends ReadonlyArray<DependencyKey>>(
-    factory: (...args: { [K in keyof Deps]: TokenValue<NoInfer<Deps>[K]> }) => Value,
+  toResolved<const Deps extends ReadonlyArray<InjectableDependency>>(
+    factory: (...args: { [K in keyof Deps]: ResolvedDependencyValue<NoInfer<Deps>[K]> }) => Value,
     deps: Deps,
   ): BindingBuilder<Value>;
-  toResolvedAsync<const Deps extends ReadonlyArray<DependencyKey>>(
-    factory: (...args: { [K in keyof Deps]: TokenValue<NoInfer<Deps>[K]> }) => Promise<Value>,
+  toResolvedAsync<const Deps extends ReadonlyArray<InjectableDependency>>(
+    factory: (...args: { [K in keyof Deps]: ResolvedDependencyValue<NoInfer<Deps>[K]> }) => Promise<Value>,
     deps: Deps,
   ): BindingBuilder<Value>;
   toAlias(target: Token<Value> | Constructor<Value>): AliasBindingBuilder;

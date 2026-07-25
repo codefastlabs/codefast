@@ -71,3 +71,27 @@ describe("compile-time API inference", () => {
     expectTypeOf(descriptor).toExtend<InjectionDescriptor<number>>();
   });
 });
+
+describe("toResolved dependency inference", () => {
+  it("maps bare tokens, optional() and injectAll() to their factory argument types", () => {
+    const stringToken = token<string>("infer-string");
+    const numberToken = token<number>("infer-number");
+    const container = Container.create();
+
+    container.bind(stringToken).toConstantValue("s");
+    container.bind(numberToken).toConstantValue(1);
+
+    container
+      .bind(token<string>("infer-root"))
+      .toResolved(
+        (bare, optionalDep, multiDep) => {
+          expectTypeOf(bare).toEqualTypeOf<string>();
+          expectTypeOf(optionalDep).toEqualTypeOf<number | undefined>();
+          expectTypeOf(multiDep).toEqualTypeOf<Array<string>>();
+          return "ok";
+        },
+        [stringToken, optional(numberToken), injectAll(stringToken)],
+      )
+      .singleton();
+  });
+});

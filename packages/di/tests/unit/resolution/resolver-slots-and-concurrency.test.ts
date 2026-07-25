@@ -9,6 +9,7 @@
 import { describe, expect, it } from "vitest";
 
 import { Container } from "#/container/container";
+import { inject, injectAll, optional } from "#/decorators/inject";
 import { injectable } from "#/decorators/injectable";
 import { postConstruct } from "#/decorators/lifecycle-decorators";
 import { CircularDependencyError } from "#/errors";
@@ -99,6 +100,48 @@ describe("toResolved dependency tokens", () => {
 
     expect(container.resolve(derivedToken)).toBe(10);
     expect(container.resolve(derivedToken)).toBe(20);
+  });
+});
+
+describe("toResolved with injection descriptors", () => {
+  it("accepts optional() and injectAll() and types each argument accordingly", () => {
+    const presentToken = token<string>("descriptor-present");
+    const absentToken = token<string>("descriptor-absent");
+    const pluginToken = token<string>("descriptor-plugin");
+    const rootToken = token<string>("descriptor-root");
+
+    const container = Container.create();
+    container.bind(presentToken).toConstantValue("here");
+    container.bind(pluginToken).toConstantValue("p1");
+    container.bind(pluginToken).toConstantValue("p2").whenNamed("second");
+    container
+      .bind(rootToken)
+      .toResolved(
+        // No casts: `present` is string, `missing` is string | undefined, `plugins` is string[].
+        (present, missing, plugins) => `${present}|${String(missing)}|${plugins.length}`,
+        [inject(presentToken), optional(absentToken), injectAll(pluginToken)],
+      )
+      .singleton();
+
+    expect(container.resolve(rootToken)).toBe("here|undefined|2");
+  });
+
+  it("accepts descriptors on the async factory too", async () => {
+    const presentToken = token<number>("descriptor-async-present");
+    const absentToken = token<number>("descriptor-async-absent");
+    const sumToken = token<string>("descriptor-async-sum");
+
+    const container = Container.create();
+    container.bind(presentToken).toConstantValue(41);
+    container
+      .bind(sumToken)
+      .toResolvedAsync(
+        async (present, missing) => Promise.resolve(`${String(present + 1)}|${String(missing)}`),
+        [inject(presentToken), optional(absentToken)],
+      )
+      .singleton();
+
+    await expect(container.resolveAsync(sumToken)).resolves.toBe("42|undefined");
   });
 });
 
