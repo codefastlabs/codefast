@@ -26,6 +26,7 @@ function normalizeBindingShape(binding: Binding): Binding {
   return {
     kind: source.kind,
     id: source.id,
+    index: source.index,
     token: source.token,
     slot: source.slot,
     predicate: source.predicate,

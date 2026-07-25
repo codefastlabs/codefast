@@ -69,29 +69,19 @@ const ROOT_CONSTRAINT_CONTEXT = {
 export class DependencyResolver {
   readonly #frameByBindingId = new Map<BindingIdentifier, ResolutionFrame>();
   readonly #syncResolutionContextPool: Array<DefaultResolutionContext> = [];
+  // Cycle detection — a dense typed-array "in flight" marker indexed by binding.index.
+  //   #inFlight[binding.index] === 1 iff that binding's factory is currently on the call stack
+  //   (an ancestor of the current resolution). Marked on factory-enter, cleared on factory-exit,
+  //   so membership is exact path-membership: a re-entry of a still-marked binding is a cycle.
+  //   O(1) with no hashing (unlike a Map/Set) and no O(depth) scan (unlike resolutionPath.includes),
+  //   and it unifies the shallow and deep transient-dynamic lanes on one mechanism. Grown on demand.
+  #inFlight = new Uint8Array(1024);
   // Deep-path state for #resolveTransientDynamicSyncFromContext (depth ≥ DEEP_LANE_THRESHOLD):
-  //
-  // Cycle detection — generation-based marking (replaces Set<BindingIdentifier>):
-  //   #deepCycleMarks: Map<BindingIdentifier, generation> records which bindings are "in flight"
-  //     during the current deep chain.  A binding is considered "active" when its recorded
-  //     generation matches #deepCycleGen.
-  //   #deepCycleGen: monotonically incremented at the start of each new deep chain.  This acts
-  //     as an implicit bulk-clear: old marks from a previous chain have a stale generation number
-  //     and are treated as absent — no explicit Map.delete or Map.clear is needed at all.
-  //     Eliminating the per-level Map.delete call (was ~10 ns × 480 levels) is the primary
-  //     motivation for this design.
-  //
-  // #deepActiveLevels: tracks how many deep levels are currently on the call stack so we know
-  //   when the deep portion has fully unwound and can reset #deepSyncCtxPath.
-  //
+  // #deepActiveLevels tracks how many deep levels are on the call stack so we know when the deep
+  //   portion has fully unwound and can reset #deepSyncCtxPath.
   // #deepSyncCtx / #deepSyncCtxPath: single shared context for the deep chain; avoids one
-  //   per-depth pool reset (5 property writes) for every level beyond the threshold.
-  //   resolutionStack is NOT pushed in the deep path — no GC write-barriers for object arrays.
-  //   Trade-off: ctx.graph.resolutionStack only reflects the first DEEP_LANE_THRESHOLD
-  //   frames; code relying on ctx.graph.parent inside a deep transient-dynamic factory will see
-  //   the frame at the threshold boundary, not the current depth.
-  readonly #deepCycleMarks = new Map<BindingIdentifier, number>();
-  #deepCycleGen = 0;
+  //   per-depth pool reset for every level beyond the threshold. resolutionStack is NOT pushed in
+  //   the deep path, so ctx.graph.resolutionStack only reflects the first DEEP_LANE_THRESHOLD frames.
   #deepActiveLevels = 0;
   #deepSyncCtx: DefaultResolutionContext | undefined;
   #deepSyncCtxPath: Array<string> | undefined;
@@ -1484,6 +1474,18 @@ export class DependencyResolver {
     return false;
   }
 
+  // Grows the in-flight marker so `index` is addressable, preserving current marks. Rare:
+  // only when a binding whose index exceeds the current capacity is first resolved.
+  #growInFlight(index: number): void {
+    let capacity = this.#inFlight.length * 2;
+    while (capacity <= index) {
+      capacity *= 2;
+    }
+    const grown = new Uint8Array(capacity);
+    grown.set(this.#inFlight);
+    this.#inFlight = grown;
+  }
+
   #resolveTransientDynamicSyncFromContext<const Value>(
     binding: Binding<Value> & { kind: "dynamic" },
     resolutionPath: Array<string>,
@@ -1496,9 +1498,14 @@ export class DependencyResolver {
     if (resolutionPath.length < DEEP_LANE_THRESHOLD) {
       const frame = this.#getResolutionFrame(binding);
       const tokenDisplayName = frame.tokenName;
-      if (resolutionPath.includes(tokenDisplayName)) {
+      const inFlightIndex = binding.index;
+      if (inFlightIndex >= this.#inFlight.length) {
+        this.#growInFlight(inFlightIndex);
+      }
+      if (this.#inFlight[inFlightIndex] === 1) {
         throw new CircularDependencyError([...resolutionPath, tokenDisplayName]);
       }
+      this.#inFlight[inFlightIndex] = 1;
       resolutionPath.push(tokenDisplayName);
       resolutionStack.push(frame);
       const resolutionCtx = this.#acquireSyncResolutionContext(resolutionPath, resolutionStack, undefined);
@@ -1511,41 +1518,28 @@ export class DependencyResolver {
       } finally {
         resolutionStack.pop();
         resolutionPath.pop();
+        this.#inFlight[inFlightIndex] = 0;
       }
     }
 
     // ── Deep path (depth >= DEEP_LANE_THRESHOLD) ────────────────────────────────────
-    // At this depth the O(N) array scan becomes expensive.  Switch to a class-level
-    // Set<BindingIdentifier> for O(1) cycle detection.
+    // Same O(1) #inFlight cycle detection as the shallow path (marked/cleared around the
+    // factory call), but skips #getResolutionFrame, resolutionPath/Stack push, and the
+    // per-depth context pool: one shared context serves the whole deep chain.
+    //   Trade-off: resolutionStack/Path are not extended here, so a deep cycle's error message
+    //   includes only the first DEEP_LANE_THRESHOLD path elements, and ctx.graph inside a deep
+    //   factory reflects the frame at the threshold boundary.
     //
-    // Performance decisions vs. shallow path:
-    //  1. #getResolutionFrame is NOT called: frameName is only needed for resolutionPath.push
-    //     and error messages.  Both are handled below without the frame Map lookup.
-    //  2. resolutionPath.push / pop is SKIPPED: cycle detection uses #deepCycleMarks (binding IDs),
-    //     so path membership tracking through the string array is unnecessary.  Eliminating
-    //     ~480 array writes per 512-chain avoids GC write-barriers on every level.
-    //     Trade-off: CircularDependencyError thrown for a deep cycle (depth > 32) will only
-    //     include the first 32 path elements in its message; levels 32+ are omitted.
-    //  3. The shared context is set up ONCE (when #deepActiveLevels === 0) rather than
-    //     re-checked on every level — saves two property reads + a reference comparison
-    //     for each of the ~480 subsequent deep-chain levels.
-    //
-    // Reentrancy: if a *different* deep chain is currently active (factory called
-    // container.resolve() internally and that inner chain also reached the threshold),
-    // fall back to the slow path to avoid cross-chain Set pollution.
+    // Reentrancy: if a *different* deep chain owns the shared context (a factory called
+    // container.resolve() directly and that chain also reached the threshold), fall back to the
+    // slow path so the shared context is not clobbered.
     if (this.#deepActiveLevels > 0 && this.#deepSyncCtxPath !== resolutionPath) {
       return this.#resolveTransientDynamicSyncSlow(binding, resolutionPath, resolutionStack);
     }
 
-    // First deep level: bump the generation (implicitly clearing all stale cycle marks from
-    // previous chains), seed the marks with the shallow-path frames already on the
-    // resolution stack, then initialise (or reset) the shared context once for the
-    // whole deep chain.
+    // First deep level: initialise (or reset) the shared context once for the whole deep chain.
+    // Cycle marks need no seeding — the shallow ancestors are already marked in #inFlight.
     if (this.#deepActiveLevels === 0) {
-      const gen = ++this.#deepCycleGen;
-      for (const stackFrame of resolutionStack) {
-        this.#deepCycleMarks.set(stackFrame.bindingId, gen);
-      }
       let ctx = this.#deepSyncCtx;
       if (ctx === undefined) {
         ctx = new DefaultResolutionContext(
@@ -1561,11 +1555,14 @@ export class DependencyResolver {
       this.#deepSyncCtxPath = resolutionPath;
     }
 
-    if (this.#deepCycleMarks.get(binding.id) === this.#deepCycleGen) {
+    const inFlightIndex = binding.index;
+    if (inFlightIndex >= this.#inFlight.length) {
+      this.#growInFlight(inFlightIndex);
+    }
+    if (this.#inFlight[inFlightIndex] === 1) {
       throw new CircularDependencyError([...resolutionPath, tokenName(binding.token)]);
     }
-
-    this.#deepCycleMarks.set(binding.id, this.#deepCycleGen);
+    this.#inFlight[inFlightIndex] = 1;
     this.#deepActiveLevels++;
 
     try {
@@ -1576,8 +1573,7 @@ export class DependencyResolver {
       }
       return dynamicResult;
     } finally {
-      // No Map.delete needed: the generation counter makes old marks invisible.
-      // Only reset the path pointer when the last deep level unwinds.
+      this.#inFlight[inFlightIndex] = 0;
       if (--this.#deepActiveLevels === 0) {
         this.#deepSyncCtxPath = undefined;
       }

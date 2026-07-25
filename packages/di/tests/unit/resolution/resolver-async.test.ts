@@ -218,6 +218,38 @@ describe("deep chains past the resolution-set threshold", () => {
     expect(() => container.resolve(tokens[DEPTH - 1]!)).toThrow(CircularDependencyError);
   });
 
+  it("resolves a shared transient dep twice at deep level without a false cycle (diamond past threshold)", () => {
+    // A deep node resolves the same transient-dynamic dependency twice in sequence. This is a
+    // diamond, not a cycle: cycle detection must clear a binding's in-flight mark once its factory
+    // returns, or the second resolve is wrongly rejected as circular.
+    const DEPTH = 35;
+    const container = Container.create();
+    const chain = Array.from({ length: DEPTH }, (_value, index) => token<number>(`diamond-${String(index)}`));
+    const sharedToken = token<number>("diamond-shared");
+    container
+      .bind(sharedToken)
+      .toDynamic(() => 7)
+      .transient();
+    container.bind(chain[0]!).toConstantValue(0);
+    for (let index = 1; index < DEPTH; index += 1) {
+      const previousToken = chain[index - 1]!;
+      if (index === 1) {
+        // Deep level (resolved at path length >= threshold): resolve the shared dep twice.
+        container
+          .bind(chain[index]!)
+          .toDynamic((ctx) => ctx.resolve(previousToken) + ctx.resolve(sharedToken) + ctx.resolve(sharedToken))
+          .transient();
+      } else {
+        container
+          .bind(chain[index]!)
+          .toDynamic((ctx) => ctx.resolve(previousToken) + 1)
+          .transient();
+      }
+    }
+
+    expect(() => container.resolve(chain[DEPTH - 1]!)).not.toThrow();
+  });
+
   it("resolves a 40-deep async dynamic chain (deep async fallback)", async () => {
     const DEPTH = 40;
     const tokens = Array.from({ length: DEPTH }, (_value, index) => token<number>(`deep-async-${String(index)}`));

@@ -67,6 +67,9 @@ export function bindingSlotToString(slot: BindingSlot): string {
 
 interface BindingBase<Value> {
   readonly id: BindingIdentifier;
+  // Dense integer companion to `id`, used to index the resolver's typed-array cycle
+  // marker — O(1) membership without hashing the string id.
+  readonly index: number;
   readonly token: Token<Value> | Constructor<Value>;
   readonly slot: BindingSlot;
   readonly predicate?: ((ctx: ConstraintContext) => boolean) | undefined;
@@ -186,6 +189,15 @@ let bindingIdCounter = 0;
  */
 export function generateBindingId(): BindingIdentifier {
   return String(++bindingIdCounter) as BindingIdentifier;
+}
+
+let bindingIndexCounter = 0;
+/**
+ * Dense 0-based index paired with each binding's `id`, used as the typed-array
+ * cycle-marker offset in the resolver.
+ */
+export function nextBindingIndex(): number {
+  return bindingIndexCounter++;
 }
 
 // ── Builder interfaces ────────────────────────────────────────────────────────
