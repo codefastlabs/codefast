@@ -1,7 +1,9 @@
 import { describe, expect, it } from "vitest";
 
+import type { AggregatedScenarioResult, LibraryReport } from "#/report/aggregate";
 import type { TwoWayScenarioComparisonRow } from "#/report/two-way";
-import { summarizeTwoWayComparison } from "#/report/two-way";
+import { renderTwoWayMarkdownReport, summarizeTwoWayComparison } from "#/report/two-way";
+import type { Fingerprint } from "#/shared/protocol";
 
 function row(id: string, leftHzPerOp: number, rightHzPerOp: number, group = "micro"): TwoWayScenarioComparisonRow {
   return {
@@ -85,5 +87,79 @@ describe("summarizeTwoWayComparison", () => {
     expect(summary.medianRatio).toBe(0);
     expect(summary.geomeanRatio).toBe(0);
     expect(summary.groupGeomeans).toEqual([]);
+  });
+});
+
+describe("renderTwoWayMarkdownReport", () => {
+  const FINGERPRINT: Fingerprint = {
+    nodeVersion: "v26.1.0",
+    v8Version: "14.6",
+    platform: "darwin",
+    arch: "arm64",
+    cpuModel: "Test CPU",
+    cpuCount: 8,
+    nodeOptions: "--no-warnings",
+    libraryName: "lib",
+    libraryVersion: "1.0.0",
+    gcExposed: false,
+    timestampIso: "2026-01-01T00:00:00.000Z",
+  };
+
+  function report(scenarios: ReadonlyArray<AggregatedScenarioResult>): LibraryReport {
+    return { fingerprint: FINGERPRINT, trialCount: 2, sanityFailures: [], scenarios };
+  }
+
+  function aggregated(id: string, hzPerOp: number, group: string): AggregatedScenarioResult {
+    return {
+      id,
+      group,
+      stress: false,
+      batch: 1,
+      what: id,
+      trialsIncluded: 2,
+      hzPerOpMedian: hzPerOp,
+      hzPerOpIqrFraction: 0,
+      meanMsMedian: 0,
+      p75MsMedian: 0,
+      p99MsMedian: 0,
+      p999MsMedian: 0,
+    };
+  }
+
+  const OPTIONS = {
+    documentHeading: "# Bench",
+    columnTitles: {
+      leftThroughput: "left hz/op",
+      rightThroughput: "right hz/op",
+      ratioHeading: "left / right",
+      leftMeanMs: "left mean ms",
+      rightMeanMs: "right mean ms",
+      leftP99Ms: "left p99 ms",
+      rightP99Ms: "right p99 ms",
+      iqrCombinedHeading: "IQR",
+    },
+    comparableScenarioIntroLines: ["Cite these rows."],
+    fingerprintLibraryVersionLabels: { left: "left", right: "right" },
+    sanityBulletMarkdownLabels: { left: "**left**", right: "**right**" },
+  } as const;
+
+  it("reports median, geomean, and a per-group geomean breakdown", () => {
+    // micro: 2x and 8x → geomean 4x. failure: 100x, isolated in its own group.
+    const left = report([
+      aggregated("m1", 200, "micro"),
+      aggregated("m2", 800, "micro"),
+      aggregated("f1", 10_000, "failure"),
+    ]);
+    const right = report([
+      aggregated("m1", 100, "micro"),
+      aggregated("m2", 100, "micro"),
+      aggregated("f1", 100, "failure"),
+    ]);
+
+    const markdown = renderTwoWayMarkdownReport(left, right, OPTIONS);
+
+    expect(markdown).toContain("left wins 3 of 3 comparable scenarios (100%)");
+    expect(markdown).toContain("geomean");
+    expect(markdown).toContain("- Geomean by group: micro 4.00× (2), failure 100.0× (1).");
   });
 });
