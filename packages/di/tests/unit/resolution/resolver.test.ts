@@ -352,6 +352,60 @@ describe("circular dependency detection", () => {
 
     expect(() => container.resolve(firstToken)).toThrow(CircularDependencyError);
   });
+
+  it("treats a repeated transient dependency as a diamond, not a cycle", () => {
+    // The same transient binding resolved several times from one parent is legitimate reuse.
+    // Cycle detection must clear a binding's in-flight mark once its factory returns.
+    const leafToken = token<number>("diamond-leaf");
+    const leftToken = token<number>("diamond-left");
+    const rightToken = token<number>("diamond-right");
+    const rootToken = token<number>("diamond-root");
+
+    const container = Container.create();
+    container
+      .bind(leafToken)
+      .toDynamic(() => 1)
+      .transient();
+    container
+      .bind(leftToken)
+      .toDynamic((ctx) => ctx.resolve(leafToken) + 10)
+      .transient();
+    container
+      .bind(rightToken)
+      .toDynamic((ctx) => ctx.resolve(leafToken) + 20)
+      .transient();
+    container
+      .bind(rootToken)
+      .toDynamic((ctx) => ctx.resolve(leftToken) + ctx.resolve(rightToken) + ctx.resolve(leafToken))
+      .transient();
+
+    expect(container.resolve(rootToken)).toBe(33);
+  });
+
+  it("clears in-flight marks after a cycle throws, so later resolves still succeed", () => {
+    const okToken = token<number>("cleanup-ok");
+    const firstToken = token<number>("cleanup-cycle-a");
+    const secondToken = token<number>("cleanup-cycle-b");
+
+    const container = Container.create();
+    container
+      .bind(okToken)
+      .toDynamic(() => 5)
+      .transient();
+    container
+      .bind(firstToken)
+      .toDynamic((ctx) => ctx.resolve(secondToken))
+      .transient();
+    container
+      .bind(secondToken)
+      .toDynamic((ctx) => ctx.resolve(firstToken))
+      .transient();
+
+    expect(() => container.resolve(firstToken)).toThrow(CircularDependencyError);
+    // The failed resolution must not leave firstToken/secondToken marked as in flight.
+    expect(() => container.resolve(firstToken)).toThrow(CircularDependencyError);
+    expect(container.resolve(okToken)).toBe(5);
+  });
 });
 
 describe("deep transient chain", () => {

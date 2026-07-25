@@ -18,7 +18,7 @@ import type {
   SingletonLifecycleBuilder,
   TransientBindingBuilder,
 } from "#/binding";
-import { DEFAULT_BINDING_SLOT, generateBindingId, nextBindingIndex } from "#/binding";
+import { DEFAULT_BINDING_SLOT, generateBindingId } from "#/binding";
 import { normalizeToDescriptor } from "#/decorators/inject";
 import type { Token } from "#/token";
 import type {
@@ -195,7 +195,7 @@ class ConstraintBuilder<Value> extends SlotBuilder implements BindingBuilder<Val
     const binding: Binding<Value> = {
       ...this.#partial,
       id: generateBindingId(),
-      index: nextBindingIndex(),
+      inFlight: false,
       token: this.#token,
       slot: this.slot,
       predicate: this.predicate,
@@ -279,7 +279,7 @@ class ScopeBuilder<Value> implements SingletonBindingBuilder<Value>, TransientBi
     const binding: Binding<Value> = {
       ...this.#partial,
       id: generateBindingId(),
-      index: nextBindingIndex(),
+      inFlight: false,
       token: this.#token,
       slot: this.#slot,
       predicate: this.#predicate,
@@ -332,7 +332,7 @@ class ConstantBuilder<Value>
     const binding: Binding<Value> = {
       kind: "constant",
       id: generateBindingId(),
-      index: nextBindingIndex(),
+      inFlight: false,
       token: this.#token,
       slot: this.slot,
       predicate: this.predicate,
@@ -381,7 +381,7 @@ class AliasBuilder<Value> extends SlotBuilder implements AliasBindingBuilder {
     const binding: Binding<Value> = {
       kind: "alias",
       id: generateBindingId(),
-      index: nextBindingIndex(),
+      inFlight: false,
       token: this.#token,
       slot: this.slot,
       predicate: this.predicate,

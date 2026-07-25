@@ -69,13 +69,10 @@ const ROOT_CONSTRAINT_CONTEXT = {
 export class DependencyResolver {
   readonly #frameByBindingId = new Map<BindingIdentifier, ResolutionFrame>();
   readonly #syncResolutionContextPool: Array<DefaultResolutionContext> = [];
-  // Cycle detection — a dense typed-array "in flight" marker indexed by binding.index.
-  //   #inFlight[binding.index] === 1 iff that binding's factory is currently on the call stack
-  //   (an ancestor of the current resolution). Marked on factory-enter, cleared on factory-exit,
-  //   so membership is exact path-membership: a re-entry of a still-marked binding is a cycle.
-  //   O(1) with no hashing (unlike a Map/Set) and no O(depth) scan (unlike resolutionPath.includes),
-  //   and it unifies the shallow and deep transient-dynamic lanes on one mechanism. Grown on demand.
-  #inFlight = new Uint8Array(1024);
+  // Cycle detection for the sync transient-dynamic lanes lives on `binding.inFlight` — see the
+  // field's doc comment in binding.ts. It is an O(1) field read with no hashing, no path scan and
+  // no side table to allocate or grow, and it unifies the shallow and deep lanes on one mechanism.
+  //
   // Deep-path state for #resolveTransientDynamicSyncFromContext (depth ≥ DEEP_LANE_THRESHOLD):
   // #deepActiveLevels tracks how many deep levels are on the call stack so we know when the deep
   //   portion has fully unwound and can reset #deepSyncCtxPath.
@@ -117,6 +114,10 @@ export class DependencyResolver {
   #deepAsyncCtx: DefaultResolutionContext | undefined;
   #deepAsyncCtxPath: Array<string> | undefined;
   #deepAsyncActiveLevels = 0;
+  // Settle callback shared by every level of the owning async chain: all of them pop the same
+  // resolutionPath and decrement the same counter, so one closure serves the whole chain instead
+  // of allocating one per level (the async lane's dominant per-level allocation).
+  #deepAsyncSettle: (() => void) | undefined;
   readonly #classHasPostConstruct = new WeakMap<Constructor, boolean>();
   readonly #classNeedsActiveContainer = new WeakMap<Constructor, boolean>();
   readonly #classConstructorMetadata = new WeakMap<Constructor, ConstructorMetadata | null>();
@@ -1474,18 +1475,6 @@ export class DependencyResolver {
     return false;
   }
 
-  // Grows the in-flight marker so `index` is addressable, preserving current marks. Rare:
-  // only when a binding whose index exceeds the current capacity is first resolved.
-  #growInFlight(index: number): void {
-    let capacity = this.#inFlight.length * 2;
-    while (capacity <= index) {
-      capacity *= 2;
-    }
-    const grown = new Uint8Array(capacity);
-    grown.set(this.#inFlight);
-    this.#inFlight = grown;
-  }
-
   #resolveTransientDynamicSyncFromContext<const Value>(
     binding: Binding<Value> & { kind: "dynamic" },
     resolutionPath: Array<string>,
@@ -1498,14 +1487,10 @@ export class DependencyResolver {
     if (resolutionPath.length < DEEP_LANE_THRESHOLD) {
       const frame = this.#getResolutionFrame(binding);
       const tokenDisplayName = frame.tokenName;
-      const inFlightIndex = binding.index;
-      if (inFlightIndex >= this.#inFlight.length) {
-        this.#growInFlight(inFlightIndex);
-      }
-      if (this.#inFlight[inFlightIndex] === 1) {
+      if (binding.inFlight) {
         throw new CircularDependencyError([...resolutionPath, tokenDisplayName]);
       }
-      this.#inFlight[inFlightIndex] = 1;
+      binding.inFlight = true;
       resolutionPath.push(tokenDisplayName);
       resolutionStack.push(frame);
       const resolutionCtx = this.#acquireSyncResolutionContext(resolutionPath, resolutionStack, undefined);
@@ -1518,12 +1503,12 @@ export class DependencyResolver {
       } finally {
         resolutionStack.pop();
         resolutionPath.pop();
-        this.#inFlight[inFlightIndex] = 0;
+        binding.inFlight = false;
       }
     }
 
     // ── Deep path (depth >= DEEP_LANE_THRESHOLD) ────────────────────────────────────
-    // Same O(1) #inFlight cycle detection as the shallow path (marked/cleared around the
+    // Same O(1) binding.inFlight cycle detection as the shallow path (marked/cleared around the
     // factory call), but skips #getResolutionFrame, resolutionPath/Stack push, and the
     // per-depth context pool: one shared context serves the whole deep chain.
     //   Trade-off: resolutionStack/Path are not extended here, so a deep cycle's error message
@@ -1538,7 +1523,7 @@ export class DependencyResolver {
     }
 
     // First deep level: initialise (or reset) the shared context once for the whole deep chain.
-    // Cycle marks need no seeding — the shallow ancestors are already marked in #inFlight.
+    // Cycle marks need no seeding — the shallow ancestors are already marked on their bindings.
     if (this.#deepActiveLevels === 0) {
       let ctx = this.#deepSyncCtx;
       if (ctx === undefined) {
@@ -1555,14 +1540,10 @@ export class DependencyResolver {
       this.#deepSyncCtxPath = resolutionPath;
     }
 
-    const inFlightIndex = binding.index;
-    if (inFlightIndex >= this.#inFlight.length) {
-      this.#growInFlight(inFlightIndex);
-    }
-    if (this.#inFlight[inFlightIndex] === 1) {
+    if (binding.inFlight) {
       throw new CircularDependencyError([...resolutionPath, tokenName(binding.token)]);
     }
-    this.#inFlight[inFlightIndex] = 1;
+    binding.inFlight = true;
     this.#deepActiveLevels++;
 
     try {
@@ -1573,7 +1554,7 @@ export class DependencyResolver {
       }
       return dynamicResult;
     } finally {
-      this.#inFlight[inFlightIndex] = 0;
+      binding.inFlight = false;
       if (--this.#deepActiveLevels === 0) {
         this.#deepSyncCtxPath = undefined;
       }
@@ -1684,6 +1665,7 @@ export class DependencyResolver {
         resolutionPath.pop();
         if (isOwnerLevel && --this.#deepAsyncActiveLevels === 0) {
           this.#deepAsyncCtxPath = undefined;
+          this.#deepAsyncSettle = undefined;
         }
         return Promise.reject(err);
       }
@@ -1694,12 +1676,22 @@ export class DependencyResolver {
       // microtask hop per level. Trade-off: the settle handler marks a rejection as handled,
       // so an unawaited failing resolveAsync no longer surfaces as an unhandledRejection —
       // callers are expected to await (or .catch) the returned promise.
-      const settle = (): void => {
-        resolutionPath.pop();
-        if (isOwnerLevel && --this.#deepAsyncActiveLevels === 0) {
-          this.#deepAsyncCtxPath = undefined;
-        }
-      };
+      let settle: () => void;
+      if (isOwnerLevel) {
+        settle =
+          this.#deepAsyncSettle ??
+          (this.#deepAsyncSettle = (): void => {
+            resolutionPath.pop();
+            if (--this.#deepAsyncActiveLevels === 0) {
+              this.#deepAsyncCtxPath = undefined;
+              this.#deepAsyncSettle = undefined;
+            }
+          });
+      } else {
+        settle = (): void => {
+          resolutionPath.pop();
+        };
+      }
       factoryPromise.then(settle, settle);
       return factoryPromise;
     }

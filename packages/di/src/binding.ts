@@ -67,9 +67,15 @@ export function bindingSlotToString(slot: BindingSlot): string {
 
 interface BindingBase<Value> {
   readonly id: BindingIdentifier;
-  // Dense integer companion to `id`, used to index the resolver's typed-array cycle
-  // marker — O(1) membership without hashing the string id.
-  readonly index: number;
+  /**
+   * True while this binding's factory is on the sync resolution stack. The sync resolver marks
+   * it on enter and clears it on exit, making cycle detection an O(1) field read with no hashing,
+   * no path scan, and no side table. Sync resolution is single-threaded, so the flag is exactly
+   * path membership; the async lane keeps its own per-path check because chains can interleave.
+   *
+   * @remarks Resolver-owned bookkeeping — `registry.add` normalizes it, so callers never set it.
+   */
+  inFlight?: boolean | undefined;
   readonly token: Token<Value> | Constructor<Value>;
   readonly slot: BindingSlot;
   readonly predicate?: ((ctx: ConstraintContext) => boolean) | undefined;
@@ -189,15 +195,6 @@ let bindingIdCounter = 0;
  */
 export function generateBindingId(): BindingIdentifier {
   return String(++bindingIdCounter) as BindingIdentifier;
-}
-
-let bindingIndexCounter = 0;
-/**
- * Dense 0-based index paired with each binding's `id`, used as the typed-array
- * cycle-marker offset in the resolver.
- */
-export function nextBindingIndex(): number {
-  return bindingIndexCounter++;
 }
 
 // ── Builder interfaces ────────────────────────────────────────────────────────
