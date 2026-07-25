@@ -32,9 +32,11 @@
     "@codefast/benchmark-harness": "workspace:*",
     "@codefast/benchmark-viewer": "workspace:*",
     "@codefast/di": "workspace:*",
+    "awilix": "catalog:",
     "inversify": "catalog:",
     "reflect-metadata": "catalog:",
-    "tsx": "catalog:"
+    "tsx": "catalog:",
+    "tsyringe": "catalog:"
   },
   "devDependencies": {
     "@codefast/typescript-config": "workspace:*",

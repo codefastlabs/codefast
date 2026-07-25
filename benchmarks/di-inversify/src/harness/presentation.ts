@@ -1,3 +1,4 @@
+import type { NWayReportOptions } from "@codefast/benchmark-harness/report/n-way";
 import type {
   TwoWayConsoleColumnLabels,
   TwoWayMarkdownReportOptions,
@@ -39,6 +40,14 @@ export const DI_INVERSIFY_MARKDOWN = {
     right: "**inversify**",
   },
 } as const satisfies TwoWayMarkdownReportOptions;
+
+export const DI_NWAY_REPORT: NWayReportOptions = {
+  documentHeading: "# @codefast/di — N-way core-subset comparison",
+  sectionHeading: "N-way core subset (di vs inversify vs awilix vs tsyringe)",
+  introLines: [
+    "The core subset is the set of factory/class-binding scenarios every library supports. `hz/op` is operations per second per logical operation; ratio columns are @codefast/di over each competitor. A `—` means the competitor never measured that scenario.",
+  ],
+};
 
 /**
  * @since 0.3.16-canary.0

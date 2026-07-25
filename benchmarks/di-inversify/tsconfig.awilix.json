@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "extends": "@codefast/typescript-config/library.json",
+  "compilerOptions": {
+    "experimentalDecorators": false,
+    "noEmit": true,
+    "paths": {
+      "#/*": ["./src/*"]
+    },
+    "types": ["node"]
+  },
+  "include": [
+    "src/awilix-benches.ts",
+    "src/harness/**/*.ts",
+    "src/scenarios/types.ts",
+    "src/scenarios/collect-awilix-scenarios.ts",
+    "src/scenarios/awilix/**/*.ts",
+    "src/fixtures/realistic-graph.ts",
+    "src/fixtures/fan-out-descriptor.ts",
+    "src/fixtures/scenario-parity.ts",
+    "src/fixtures/awilix-adapter.ts"
+  ]
+}
