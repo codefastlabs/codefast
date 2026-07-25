@@ -24,10 +24,16 @@ import {
   runBenchSubprocess,
   runBenchSubprocessIsolated,
 } from "@codefast/benchmark-harness/parent/run-bench-subprocess";
-import { buildLibraryReport, type LibraryReport } from "@codefast/benchmark-harness/report/aggregate";
+import {
+  type AggregatedScenarioResult,
+  buildLibraryReport,
+  type LibraryReport,
+} from "@codefast/benchmark-harness/report/aggregate";
+import type { NWayLibrary } from "@codefast/benchmark-harness/report/n-way";
+import { renderNWayConsoleReport, renderNWayMarkdownReport } from "@codefast/benchmark-harness/report/n-way";
 import { renderTwoWayConsoleReport, renderTwoWayMarkdownReport } from "@codefast/benchmark-harness/report/two-way";
 import { writeJsonlRun, writeMarkdownFile } from "@codefast/benchmark-harness/report/write";
-import { resolveDisplayName } from "@codefast/benchmark-harness/shared/config";
+import { type BenchSubprocessConfig, resolveDisplayName } from "@codefast/benchmark-harness/shared/config";
 import {
   BENCH_RESULTS_DIR_NAME,
   BENCH_VERBOSE_ENV_KEY,
@@ -35,8 +41,31 @@ import {
 } from "@codefast/benchmark-harness/shared/env-keys";
 import type { SubprocessPayload } from "@codefast/benchmark-harness/shared/protocol";
 
-import { CODEFAST_DI, INVERSIFY } from "#/harness/config";
-import { DI_INVERSIFY_CONSOLE, DI_INVERSIFY_MARKDOWN } from "#/harness/presentation";
+import {
+  CONSTANT_RESOLVE,
+  FAN_OUT_TREE,
+  REALISTIC_GRAPH_COLD_RESOLVE,
+  REALISTIC_GRAPH_RESOLVE_ROOT,
+  SCALE_DEEP_TRANSIENT_CHAIN_512,
+  SCALE_MID_TRANSIENT_CHAIN_32,
+  SINGLETON_CLASS_1_DEP,
+  TRANSIENT_CLASS_1_DEP,
+} from "#/fixtures/scenario-parity";
+import { AWILIX, CODEFAST_DI, INVERSIFY, TSYRINGE } from "#/harness/config";
+import { DI_INVERSIFY_CONSOLE, DI_INVERSIFY_MARKDOWN, DI_NWAY_REPORT } from "#/harness/presentation";
+
+// The N-way table shows only the scenarios every library can express via
+// factory/class bindings — the codefast pivot runs far more than these.
+const CORE_SUBSET_SCENARIO_IDS: ReadonlyArray<string> = [
+  CONSTANT_RESOLVE.id,
+  SINGLETON_CLASS_1_DEP.id,
+  TRANSIENT_CLASS_1_DEP.id,
+  REALISTIC_GRAPH_RESOLVE_ROOT.id,
+  REALISTIC_GRAPH_COLD_RESOLVE.id,
+  SCALE_MID_TRANSIENT_CHAIN_32.id,
+  SCALE_DEEP_TRANSIENT_CHAIN_512.id,
+  FAN_OUT_TREE.id,
+];
 
 const VERBOSE_MODE_ENABLED = process.env[BENCH_VERBOSE_ENV_KEY] === "1";
 
@@ -81,6 +110,29 @@ function buildOutputPaths(): {
   };
 }
 
+async function runLibrary(
+  runSubprocess: typeof runBenchSubprocess,
+  config: BenchSubprocessConfig,
+): Promise<SubprocessPayload> {
+  return runSubprocess({
+    packageRootDirectory,
+    tsconfigFileName: config.tsconfigFileName,
+    benchEntryFileNameUnderSrc: config.benchEntryFileName,
+    harnessLabel: resolveDisplayName(config),
+    scenarioName: config.scenarioName,
+    forwardChildStdoutVerbose: VERBOSE_MODE_ENABLED,
+  });
+}
+
+/** Keeps only the shared core-subset rows, in the declared order, for the N-way pivot. */
+function filterReportToCoreSubset(report: LibraryReport): LibraryReport {
+  const scenariosById = new Map(report.scenarios.map((scenario) => [scenario.id, scenario]));
+  const coreScenarios = CORE_SUBSET_SCENARIO_IDS.map((id) => scenariosById.get(id)).filter(
+    (scenario): scenario is AggregatedScenarioResult => scenario !== undefined,
+  );
+  return { ...report, scenarios: coreScenarios };
+}
+
 async function main(): Promise<void> {
   console.log("\n@codefast/benchmark-di-inversify — head-to-head bench, each library in its canonical decorator mode.");
   console.log(`  ${CODEFAST_DI.libraryName}  : TC39 Stage 3 decorators + Symbol.metadata`);
@@ -95,22 +147,10 @@ async function main(): Promise<void> {
   rebuildCodefastDiPackage();
 
   const runSubprocess = isIsolatedBenchRunRequested() ? runBenchSubprocessIsolated : runBenchSubprocess;
-  const codefastPayload: SubprocessPayload = await runSubprocess({
-    packageRootDirectory,
-    tsconfigFileName: CODEFAST_DI.tsconfigFileName,
-    benchEntryFileNameUnderSrc: CODEFAST_DI.benchEntryFileName,
-    harnessLabel: CODEFAST_DI.libraryName,
-    scenarioName: CODEFAST_DI.scenarioName,
-    forwardChildStdoutVerbose: VERBOSE_MODE_ENABLED,
-  });
-  const inversifyPayload: SubprocessPayload = await runSubprocess({
-    packageRootDirectory,
-    tsconfigFileName: INVERSIFY.tsconfigFileName,
-    benchEntryFileNameUnderSrc: INVERSIFY.benchEntryFileName,
-    harnessLabel: resolveDisplayName(INVERSIFY),
-    scenarioName: INVERSIFY.scenarioName,
-    forwardChildStdoutVerbose: VERBOSE_MODE_ENABLED,
-  });
+  const codefastPayload = await runLibrary(runSubprocess, CODEFAST_DI);
+  const inversifyPayload = await runLibrary(runSubprocess, INVERSIFY);
+  const awilixPayload = await runLibrary(runSubprocess, AWILIX);
+  const tsyringePayload = await runLibrary(runSubprocess, TSYRINGE);
 
   const codefastReport: LibraryReport = buildLibraryReport(
     codefastPayload.fingerprint,
@@ -122,18 +162,42 @@ async function main(): Promise<void> {
     inversifyPayload.trials,
     inversifyPayload.sanityFailures,
   );
+  const awilixReport: LibraryReport = buildLibraryReport(
+    awilixPayload.fingerprint,
+    awilixPayload.trials,
+    awilixPayload.sanityFailures,
+  );
+  const tsyringeReport: LibraryReport = buildLibraryReport(
+    tsyringePayload.fingerprint,
+    tsyringePayload.trials,
+    tsyringePayload.sanityFailures,
+  );
 
+  // Primary comparison stays the full di-vs-inversify two-way report.
   renderTwoWayConsoleReport(codefastReport, inversifyReport, DI_INVERSIFY_CONSOLE, {
     footerHintLine: `Cite the 'Comparable scenarios' table.`,
     headToHeadLabels: { left: "codefast", right: "inversify" },
   });
 
+  // Secondary comparison: the core subset every library can express, di as pivot.
+  const nwayPivot: NWayLibrary = { report: filterReportToCoreSubset(codefastReport), displayName: "codefast" };
+  const nwayCompetitors: ReadonlyArray<NWayLibrary> = [
+    { report: inversifyReport, displayName: resolveDisplayName(INVERSIFY) },
+    { report: awilixReport, displayName: resolveDisplayName(AWILIX) },
+    { report: tsyringeReport, displayName: resolveDisplayName(TSYRINGE) },
+  ];
+  renderNWayConsoleReport(nwayPivot, nwayCompetitors, DI_NWAY_REPORT);
+
   const librariesForJsonl = [
     { fingerprint: codefastPayload.fingerprint, trials: codefastPayload.trials },
     { fingerprint: inversifyPayload.fingerprint, trials: inversifyPayload.trials },
+    { fingerprint: awilixPayload.fingerprint, trials: awilixPayload.trials },
+    { fingerprint: tsyringePayload.fingerprint, trials: tsyringePayload.trials },
   ];
 
-  const markdown = renderTwoWayMarkdownReport(codefastReport, inversifyReport, DI_INVERSIFY_MARKDOWN);
+  const twoWayMarkdown = renderTwoWayMarkdownReport(codefastReport, inversifyReport, DI_INVERSIFY_MARKDOWN);
+  const nwayMarkdown = renderNWayMarkdownReport(nwayPivot, nwayCompetitors, DI_NWAY_REPORT);
+  const markdown = `${twoWayMarkdown}\n\n${nwayMarkdown}`;
 
   const outputPaths = buildOutputPaths();
   writeMarkdownFile(outputPaths.markdownPath, markdown);

@@ -6,17 +6,23 @@
  */
 import { Container, token } from "@codefast/di";
 
-import { SCALE_CHAIN_SIZE, SCALE_DEEP_TRANSIENT_CHAIN_512 } from "#/fixtures/scenario-parity";
+import type { ScenarioDescriptor } from "#/fixtures/scenario-parity";
+import {
+  SCALE_CHAIN_SIZE,
+  SCALE_DEEP_TRANSIENT_CHAIN_512,
+  SCALE_MID_CHAIN_SIZE,
+  SCALE_MID_TRANSIENT_CHAIN_32,
+} from "#/fixtures/scenario-parity";
 import type { BenchScenario } from "#/scenarios/types";
 
-function buildScaleDeepTransientChainScenario(): BenchScenario {
-  const chainTokens = Array.from({ length: SCALE_CHAIN_SIZE }, (_value, chainIndex) =>
-    token<number>(`bench-cf-scale-chain-${String(chainIndex)}`),
+function buildScaleTransientChainScenario(descriptor: ScenarioDescriptor, chainSize: number): BenchScenario {
+  const chainTokens = Array.from({ length: chainSize }, (_value, chainIndex) =>
+    token<number>(`bench-cf-scale-chain-${String(chainSize)}-${String(chainIndex)}`),
   );
   const container = Container.create();
   container.bind(chainTokens[0]!).toConstantValue(0);
 
-  for (let chainIndex = 1; chainIndex < SCALE_CHAIN_SIZE; chainIndex++) {
+  for (let chainIndex = 1; chainIndex < chainSize; chainIndex++) {
     const previousChainToken = chainTokens[chainIndex - 1]!;
     const currentChainToken = chainTokens[chainIndex]!;
     container
@@ -25,12 +31,12 @@ function buildScaleDeepTransientChainScenario(): BenchScenario {
       .transient();
   }
 
-  const leafChainToken = chainTokens[SCALE_CHAIN_SIZE - 1]!;
-  const expectedLeafValue = SCALE_CHAIN_SIZE - 1;
+  const leafChainToken = chainTokens[chainSize - 1]!;
+  const expectedLeafValue = chainSize - 1;
   container.resolve(leafChainToken);
 
   return {
-    ...SCALE_DEEP_TRANSIENT_CHAIN_512,
+    ...descriptor,
     batch: 1,
     sanity: () => container.resolve(leafChainToken) === expectedLeafValue,
     build: () => {
@@ -45,5 +51,8 @@ function buildScaleDeepTransientChainScenario(): BenchScenario {
  * @since 0.3.16-canary.0
  */
 export function buildCodefastScaleScenarios(): ReadonlyArray<BenchScenario> {
-  return [buildScaleDeepTransientChainScenario()];
+  return [
+    buildScaleTransientChainScenario(SCALE_MID_TRANSIENT_CHAIN_32, SCALE_MID_CHAIN_SIZE),
+    buildScaleTransientChainScenario(SCALE_DEEP_TRANSIENT_CHAIN_512, SCALE_CHAIN_SIZE),
+  ];
 }

@@ -108,6 +108,116 @@ describe("container.validate() — transitive scope + alias chain (SPEC §6.9)",
 });
 
 describe("AsyncModuleLoadError", () => {
+  it("walks toResolved() dependency tokens and detects singleton \u2192 transient", () => {
+    @injectable([])
+    class TransientService {}
+
+    const TransientLeaf = token<TransientService>("ResolvedTransientLeaf");
+    const Root = token<string>("ResolvedRoot");
+
+    const container = Container.create();
+    container.bind(TransientLeaf).to(TransientService).transient();
+    container
+      .bind(Root)
+      .toResolved((leaf: TransientService) => `root:${leaf.constructor.name}`, [TransientLeaf])
+      .singleton();
+
+    let thrown: unknown;
+    try {
+      container.validate();
+    } catch (error) {
+      thrown = error;
+    }
+    expect(thrown).toBeInstanceOf(ScopeViolationError);
+    const details = (thrown as ScopeViolationError).details;
+    expect(details.consumerScope).toBe("singleton");
+    expect(details.dependencyScope).toBe("transient");
+  });
+
+  it("accepts a toResolved() singleton whose dependencies are singletons", () => {
+    @injectable([])
+    class SingletonService {}
+
+    const SingletonLeaf = token<SingletonService>("ResolvedSingletonLeaf");
+    const Root = token<string>("ResolvedSingletonRoot");
+
+    const container = Container.create();
+    container.bind(SingletonLeaf).to(SingletonService).singleton();
+    container
+      .bind(Root)
+      .toResolved((leaf: SingletonService) => `root:${leaf.constructor.name}`, [SingletonLeaf])
+      .singleton();
+
+    expect(() => container.validate()).not.toThrow();
+  });
+
+  it("reports a transient toDynamic dependency of a singleton as captive", () => {
+    // The factory body is opaque to static analysis, but the scope it was bound with is not: a
+    // singleton holding a transient pins one instance forever, which is the captive-dependency bug.
+    const DynamicLeaf = token<string>("CaptiveDynamicLeaf");
+    const Root = token<string>("CaptiveDynamicRoot");
+
+    const container = Container.create();
+    container
+      .bind(DynamicLeaf)
+      .toDynamic(() => "leaf")
+      .transient();
+    container
+      .bind(Root)
+      .toResolved((leaf) => `root:${String(leaf)}`, [DynamicLeaf])
+      .singleton();
+
+    let thrown: unknown;
+    try {
+      container.validate();
+    } catch (error) {
+      thrown = error;
+    }
+    expect(thrown).toBeInstanceOf(ScopeViolationError);
+    expect((thrown as ScopeViolationError).details.dependencyScope).toBe("transient");
+  });
+
+  it("accepts a singleton toDynamic dependency", () => {
+    const DynamicLeaf = token<string>("SingletonDynamicLeaf");
+    const Root = token<string>("SingletonDynamicRoot");
+
+    const container = Container.create();
+    container
+      .bind(DynamicLeaf)
+      .toDynamic(() => "leaf")
+      .singleton();
+    container
+      .bind(Root)
+      .toResolved((leaf) => `root:${String(leaf)}`, [DynamicLeaf])
+      .singleton();
+
+    expect(() => container.validate()).not.toThrow();
+  });
+
+  it("does not descend into a factory body", () => {
+    // The dynamic binding is a singleton, so the edge itself is fine; whatever the factory
+    // resolves internally stays invisible to validate() and must not be reported.
+    const HiddenTransient = token<string>("HiddenTransient");
+    const DynamicLeaf = token<string>("OpaqueBodyLeaf");
+    const Root = token<string>("OpaqueBodyRoot");
+
+    const container = Container.create();
+    container
+      .bind(HiddenTransient)
+      .toDynamic(() => "hidden")
+      .transient();
+    container
+      .bind(DynamicLeaf)
+      .toDynamic((ctx) => ctx.resolve(HiddenTransient))
+      .singleton();
+    container
+      .bind(Root)
+      .toResolved((leaf) => `root:${String(leaf)}`, [DynamicLeaf])
+      .singleton();
+
+    expect(() => container.validate()).not.toThrow();
+  });
+
   it("throws when sync load receives an async module at runtime", () => {
     const asyncModule = Module.createAsync("async-mod", async () => {});
     const container = Container.create();

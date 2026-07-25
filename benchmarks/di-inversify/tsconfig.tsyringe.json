@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "extends": "@codefast/typescript-config/library.json",
+  "compilerOptions": {
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "noEmit": true,
+    "paths": {
+      "#/*": ["./src/*"]
+    },
+    "types": ["node", "reflect-metadata"]
+  },
+  "include": [
+    "src/tsyringe-benches.ts",
+    "src/harness/**/*.ts",
+    "src/scenarios/types.ts",
+    "src/scenarios/collect-tsyringe-scenarios.ts",
+    "src/scenarios/tsyringe/**/*.ts",
+    "src/fixtures/realistic-graph.ts",
+    "src/fixtures/fan-out-descriptor.ts",
+    "src/fixtures/scenario-parity.ts",
+    "src/fixtures/tsyringe-adapter.ts"
+  ]
+}

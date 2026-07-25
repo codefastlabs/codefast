@@ -1,4 +1,4 @@
-import type { InjectionDescriptor } from "#/decorators/inject";
+import type { InjectableDependency, InjectionDescriptor, ResolvedDependencyValue } from "#/decorators/inject";
 import type { Token } from "#/token";
 import type {
   ActivationHandler,
@@ -7,9 +7,8 @@ import type {
   BindingTag,
   Constructor,
   DeactivationHandler,
-  DependencyKey,
   ResolutionContext,
-  TokenValue,
+  ResolutionFrame,
   ConstraintContext,
 } from "#/types";
 
@@ -67,6 +66,23 @@ export function bindingSlotToString(slot: BindingSlot): string {
 
 interface BindingBase<Value> {
   readonly id: BindingIdentifier;
+  /**
+   * True while this binding's factory is on the sync resolution stack. The sync resolver marks
+   * it on enter and clears it on exit, making cycle detection an O(1) field read with no hashing,
+   * no path scan, and no side table. Sync resolution is single-threaded, so the flag is exactly
+   * path membership; the async lane keeps its own per-path check because chains can interleave.
+   *
+   * @remarks Resolver-owned bookkeeping — `registry.add` normalizes it, so callers never set it.
+   */
+  inFlight?: boolean | undefined;
+  /**
+   * Memoized resolution frame for this binding. Its contents derive only from immutable binding
+   * fields, so it is computed once on first resolve and reused instead of a per-resolver Map
+   * lookup on every hop.
+   *
+   * @remarks Resolver-owned bookkeeping — `registry.add` normalizes it, so callers never set it.
+   */
+  frame?: ResolutionFrame | undefined;
   readonly token: Token<Value> | Constructor<Value>;
   readonly slot: BindingSlot;
   readonly predicate?: ((ctx: ConstraintContext) => boolean) | undefined;
@@ -212,12 +228,12 @@ export interface BindToBuilder<Value> {
   toConstantValue(value: Value): ConstantBindingBuilder<Value>;
   toDynamic(factory: (ctx: ResolutionContext) => Value): BindingBuilder<Value>;
   toDynamicAsync(factory: (ctx: ResolutionContext) => Promise<Value>): BindingBuilder<Value>;
-  toResolved<const Deps extends ReadonlyArray<DependencyKey>>(
-    factory: (...args: { [K in keyof Deps]: TokenValue<NoInfer<Deps>[K]> }) => Value,
+  toResolved<const Deps extends ReadonlyArray<InjectableDependency>>(
+    factory: (...args: { [K in keyof Deps]: ResolvedDependencyValue<NoInfer<Deps>[K]> }) => Value,
     deps: Deps,
   ): BindingBuilder<Value>;
-  toResolvedAsync<const Deps extends ReadonlyArray<DependencyKey>>(
-    factory: (...args: { [K in keyof Deps]: TokenValue<NoInfer<Deps>[K]> }) => Promise<Value>,
+  toResolvedAsync<const Deps extends ReadonlyArray<InjectableDependency>>(
+    factory: (...args: { [K in keyof Deps]: ResolvedDependencyValue<NoInfer<Deps>[K]> }) => Promise<Value>,
     deps: Deps,
   ): BindingBuilder<Value>;
   toAlias(target: Token<Value> | Constructor<Value>): AliasBindingBuilder;

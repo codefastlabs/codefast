@@ -24,7 +24,23 @@ export const INVERSIFY = {
   displayName: "InversifyJS 8",
 } as const satisfies BenchSubprocessConfig;
 
+export const AWILIX = {
+  libraryName: "awilix",
+  scenarioName: "awilix",
+  tsconfigFileName: "tsconfig.awilix.json",
+  benchEntryFileName: "awilix-benches.ts",
+  displayName: "Awilix 13",
+} as const satisfies BenchSubprocessConfig;
+
+export const TSYRINGE = {
+  libraryName: "tsyringe",
+  scenarioName: "tsyringe",
+  tsconfigFileName: "tsconfig.tsyringe.json",
+  benchEntryFileName: "tsyringe-benches.ts",
+  displayName: "tsyringe 4",
+} as const satisfies BenchSubprocessConfig;
+
 /**
  * @since 0.3.16-canary.0
  */
-export const SERVE_TITLE = "@codefast/di vs inversify — bench history";
+export const SERVE_TITLE = "@codefast/di vs inversify / awilix / tsyringe — bench history";

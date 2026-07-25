@@ -3,7 +3,7 @@ import { INJECT_ACCESSOR_KEY } from "#/metadata/metadata-keys";
 import { getActiveContainer } from "#/resolution/environment";
 import { injectionSlotToResolveOptions } from "#/resolution/resolve-options";
 import type { Token } from "#/token";
-import type { BindingTag, Constructor } from "#/types";
+import type { BindingTag, Constructor, TokenValue } from "#/types";
 
 // ── InjectionDescriptor ───────────────────────────────────────────────────────
 
@@ -30,6 +30,17 @@ export interface InjectionDescriptor<Value = unknown> {
  * @since 0.3.16-canary.0
  */
 export type InjectableDependency<Value = unknown> = Token<Value> | Constructor<Value> | InjectionDescriptor<Value>;
+
+/**
+ * The value a factory receives for one declared dependency.
+ *
+ * @remarks `optional()` and `injectAll()` already fold their effect into the descriptor's own
+ * type parameter — `InjectionDescriptor<Value | undefined>` and `InjectionDescriptor<Array<Value>>`
+ * — so reading that parameter back is enough; bare tokens and constructors fall through to
+ * {@link TokenValue}.
+ */
+export type ResolvedDependencyValue<Dependency> =
+  Dependency extends InjectionDescriptor<infer Value> ? Value : TokenValue<Dependency>;
 
 /**
  * @since 0.3.16-canary.0

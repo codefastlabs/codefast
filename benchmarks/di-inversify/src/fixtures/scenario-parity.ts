@@ -11,7 +11,7 @@
  */
 import type { BenchScenario } from "#/scenarios/types";
 
-type ScenarioDescriptor = Pick<BenchScenario, "id" | "group" | "what">;
+export type ScenarioDescriptor = Pick<BenchScenario, "id" | "group" | "what">;
 
 // ─── micro ───────────────────────────────────────────────────────────────────
 
@@ -147,10 +147,21 @@ export const CHILD_REQUEST_LIFECYCLE_CREATE_RESOLVE_DISPOSE = {
 
 export const SCALE_CHAIN_SIZE = 512;
 
+// Mid-depth chain: the transient-dynamic deep-lane only amortizes its shared-context
+// machinery past ~depth 100, so ~32 (the deep-lane handoff) is where the resolver is
+// weakest vs inversify. Measured explicitly so the report can't hide it behind depth 512.
+export const SCALE_MID_CHAIN_SIZE = 32;
+
 export const SCALE_DEEP_TRANSIENT_CHAIN_512 = {
   id: "scale-deep-transient-chain-512",
   group: "scale",
   what: "resolve a 512-step transient chain (500+ binding registry pressure)",
+} as const satisfies ScenarioDescriptor;
+
+export const SCALE_MID_TRANSIENT_CHAIN_32 = {
+  id: "scale-mid-transient-chain-32",
+  group: "scale",
+  what: "resolve a 32-step transient chain (deep-lane handoff depth — resolver's weakest transient band)",
 } as const satisfies ScenarioDescriptor;
 
 // ─── boot ────────────────────────────────────────────────────────────────────

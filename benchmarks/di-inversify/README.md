@@ -1,10 +1,10 @@
 # @codefast/benchmark-di-inversify
 
-Head-to-head performance harness: **InversifyJS 8** vs **@codefast/di**, scenario-by-scenario, reported as per-trial medians with interquartile range.
+Head-to-head performance harness: **@codefast/di** vs **InversifyJS 8** (full suite), plus **Awilix 13** and **tsyringe 4** on a core subset, scenario-by-scenario, reported as per-trial medians with interquartile range.
 
-New to this package? See **[BENCH_GUIDE.md](./BENCH_GUIDE.md)** for a newcomer-oriented glossary, mental model (parent → subprocess → tinybench), and how to read `bench-results/latest.md`.
+Want the numbers and the honest caveats (including where `@codefast/di` loses)? See **[RESULTS.md](./RESULTS.md)**. New to this package? See **[BENCH_GUIDE.md](./BENCH_GUIDE.md)** for a newcomer-oriented glossary, mental model (parent → subprocess → tinybench), and how to read `bench-results/latest.md`.
 
-This is the benchmark _for shipping_. It exists so a regression in `@codefast/di` hot paths cannot silently land on main, and so the "@codefast/di is faster than inversify on the graphs you actually wire" claim is something a skeptical reader can re-run in 30 seconds.
+This is the benchmark _for shipping_. It exists so a regression in `@codefast/di` hot paths cannot silently land on main, and so the performance claims — `@codefast/di` is faster on most of the graphs you actually wire, with the exceptions ([RESULTS.md](./RESULTS.md)) called out rather than hidden — are something a skeptical reader can re-run in 30 seconds.
 
 ## Philosophy
 
@@ -14,6 +14,8 @@ The goal is not to win microbenchmarks. The goal is to measure _what TC39 Stage 
 
 - `@codefast/di` runs under `tsconfig.codefast.json` — `experimentalDecorators: false`, TC39 Stage 3 decorators, native `Symbol.metadata`.
 - InversifyJS 8 runs under `tsconfig.inversify.json` — `experimentalDecorators: true`, `emitDecoratorMetadata: true`, `reflect-metadata` polyfill required.
+- tsyringe 4 runs under `tsconfig.tsyringe.json` — same legacy-decorator + `reflect-metadata` mode as inversify.
+- Awilix 13 runs under `tsconfig.awilix.json` — decorator-free (factory/class registrations), so no decorator runtime at all.
 
 This compares the _shipping experience_ of each library, not the decorator runtimes in isolation. Forcing one side into the other's mode would measure code neither library would ever ship with.
 
@@ -66,8 +68,10 @@ pnpm bench:verbose         # full run + forward full child subprocess logs (debu
 pnpm bench:codefast        # codefast subprocess only (prints raw JSON payload)
 pnpm bench:inversify       # inversify subprocess only
 pnpm bench:serve           # serve bench-results/ in the benchmark viewer
-pnpm check-types           # type-check each tsconfig variant
+pnpm check-types           # tsc --noEmit over src (editor-default project)
 ```
+
+> `check-types` type-checks `src` under the default `tsconfig.json` (no experimental decorators; tsyringe's parameter decorators are `@ts-ignore`d there, as inversify's already are). To validate each library under _its own_ decorator mode, point `tsc` at the explicit variant: `pnpm exec tsc --noEmit -p tsconfig.{codefast,inversify,awilix,tsyringe}.json`.
 
 `pnpm bench` defaults to quiet mode (suppresses child stdout spam and keeps the final comparison table readable). Use `BENCH_VERBOSE=1` / `pnpm bench:verbose` when debugging scenario-level subprocess logs.
 
@@ -123,7 +127,7 @@ realistic-graph-resolve-root realistic          234,567           145,678    1.6
 ...
 ```
 
-The markdown report opens with a **Head-to-head summary** — win/parity/loss counts over comparable rows (parity band ±3%), the median ratio, and loss/parity lists. The console prints the same tally under the table.
+The markdown report opens with a **Head-to-head summary** — win/parity/loss counts over comparable rows (parity band ±3%), the **median and geomean** ratios, a **geomean-by-group** line (which keeps error-path groups like `failure` separate from throughput), and loss/parity lists. The console prints the same tally under the table. After the full di-vs-inversify table, both the markdown and console append the **N-way core-subset** table comparing di against inversify, awilix, and tsyringe.
 
 Things to check before drawing conclusions:
 
@@ -134,7 +138,7 @@ Things to check before drawing conclusions:
 
 ## Scenario inventory
 
-**Authoritative order** on the codefast side is `src/scenarios/collect-codefast-scenarios.ts`. Inversify’s list is `collect-inversify-scenarios.ts`: it includes the same shared modules in the same relative blocks but **omits** codefast-only sources (`realistic-graph-validate.ts`, `initialize-inspect.ts`). Head-to-head rows still align by shared **`id`** strings; codefast-only ids appear with “—” on the inversify side.
+**Authoritative order** on the codefast side is `src/scenarios/collect-codefast-scenarios.ts`. Inversify’s list is `collect-inversify-scenarios.ts`: it includes the same shared modules in the same relative blocks but **omits** codefast-only sources (`realistic-graph-validate.ts`, `initialize-inspect.ts`, `multi-tag-constraint.ts`). Head-to-head rows still align by shared **`id`** strings; codefast-only ids appear with “—” on the inversify side. **awilix** and **tsyringe** (`collect-{awilix,tsyringe}-scenarios.ts`) implement only the core subset — `micro.ts`, `realistic.ts`, `scale.ts`, `fan-out/` — and appear only in the N-way table, never the full two-way table.
 
 | Area                                    | `codefast/` / `inversify/` modules                                                                      | Notes                                                                                                                                                          |
 | --------------------------------------- | ------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -143,49 +147,7 @@ Things to check before drawing conclusions:
 | Production / wiring                     | `production.ts`, `binding-variants.ts`, `resolution-patterns.ts`, `registry-ops.ts`, `module.ts`        | Extra micro-style rows in binding/resolution modules; `registry-ops.ts` mixes `lifecycle`, `introspection`, and `scope` **group** labels per row.              |
 | Introspection & startup (codefast-only) | `initialize-inspect.ts`                                                                                 | `initialize-async-warmup` (**`boot`** group), `inspect-snapshot`, `lookup-bindings` (**`introspection`**). Inversify column shows "—" for these ids.           |
 
-Representative **stable ids** (not exhaustive of every `group` value): `constant-resolve`, `singleton-class-1-dep`, `transient-class-1-dep`, `named-constant-get`, `realistic-graph-resolve-root`, `realistic-graph-cold-resolve`, `fan-out-tree-depth-3-breadth-4`, `resolve-all-strategies-10`, `resolve-all-strategies-100`, `resolve-all-named-8`, `resolve-all-named-32`, `resolve-async-single-hop`, `dynamic-async-chain-8`, `async-fanout-concurrent-8`, `async-fanout-concurrent-32`, `lifecycle-post-construct-singleton`, `lifecycle-pre-destroy-unbind`, `child-depth-2-resolve`, `child-request-lifecycle-create-resolve-dispose`, `scale-deep-transient-chain-512`, `boot-decorated-container-build-and-resolve`, `misconfigured-missing-binding`, `circular-dependency-3`, `ambiguous-multi-binding`, plus production / binding / resolution / registry / module / initialize-inspect ids defined in those modules.
-
-### Phase 2 - Fan-out scenarios
-
-Completed in PR #420 [`feat/di-bench-fanout-phase2`](https://github.com/codefastlabs/codefast/pull/420)
-
-**A/A stability check** - codefast vs codefast, `BENCH_TRIALS=1` (historical run before the min-2 floor):
-
-| Scenario                         | Hz ratio | Mean-ms ratio | Status |
-| -------------------------------- | -------- | ------------- | ------ |
-| `fan-out-tree-depth-3-breadth-4` | 0.996    | 0.997         | Stable |
-| `resolve-all-strategies-10`      | 0.979    | 1.027         | Stable |
-| `resolve-all-strategies-100`     | 0.978    | 1.026         | Stable |
-
-All scenarios passed: `pnpm check-types`, `pnpm bench`, no sanity failures. IQR < 3%.
-
-### Phase 3 - Async scenarios
-
-Completed on branch `feat/di-bench-fanout-phase2` (pending PR split for async-only review)
-
-**A/A stability check** - codefast vs codefast, `BENCH_TRIALS=1` (historical run before the min-2 floor):
-
-| Scenario                   | Hz ratio | Mean-ms ratio | Status |
-| -------------------------- | -------- | ------------- | ------ |
-| `resolve-async-single-hop` | 1.000    | 1.034         | Stable |
-| `dynamic-async-chain-8`    | 0.963    | 1.078         | Stable |
-
-All scenarios passed: `pnpm check-types`, `pnpm bench`, no sanity failures.
-
-### Phase 4 - Lifecycle, scale, boot migration
-
-Completed in this branch with new scenario modules:
-
-- `lifecycle-post-construct-singleton`
-- `lifecycle-pre-destroy-unbind`
-- `scale-deep-transient-chain-512`
-- `boot-decorated-container-build-and-resolve`
-
-Validation status:
-
-- `pnpm check-types` passes for both `tsconfig.codefast.json` and `tsconfig.inversify.json`.
-- `pnpm bench:fast` runs head-to-head with no sanity failures on either library.
-- Full-run tuning remains the same recommendation: use `pnpm bench` / `pnpm bench:full` when collecting publishable numbers and stability envelopes.
+Representative **stable ids** (not exhaustive of every `group` value): `constant-resolve`, `singleton-class-1-dep`, `transient-class-1-dep`, `named-constant-get`, `realistic-graph-resolve-root`, `realistic-graph-cold-resolve`, `fan-out-tree-depth-3-breadth-4`, `resolve-all-strategies-10`, `resolve-all-strategies-100`, `resolve-all-named-8`, `resolve-all-named-32`, `resolve-async-single-hop`, `dynamic-async-chain-8`, `async-fanout-concurrent-8`, `async-fanout-concurrent-32`, `lifecycle-post-construct-singleton`, `lifecycle-pre-destroy-unbind`, `child-depth-2-resolve`, `child-request-lifecycle-create-resolve-dispose`, `scale-mid-transient-chain-32`, `scale-deep-transient-chain-512`, `boot-decorated-container-build-and-resolve`, `misconfigured-missing-binding`, `circular-dependency-3`, `ambiguous-multi-binding`, plus production / binding / resolution / registry / module / initialize-inspect ids defined in those modules.
 
 ## Layout
 
@@ -195,7 +157,7 @@ benchmarks/di-inversify/
     harness/                         # this package’s bench driver (uses @codefast/benchmark-harness for wire + reports)
       run.ts                         # parent: rebuild @codefast/di, spawn subprocesses (shared or BENCH_ISOLATE), write report.md + JSONL + console
       serve.ts                       # serve bench-results/ for the benchmark viewer
-      presentation.ts                # markdown + console column copy for the two-way report
+      presentation.ts                # markdown + console column copy for the two-way + N-way reports
       config.ts                      # library names / tsconfig / entry-file wiring
       batched.ts                     # inner-loop helper for sub-μs scenarios (throughput × batch)
     scenarios/
@@ -218,6 +180,7 @@ benchmarks/di-inversify/
         registry-ops.ts
         module.ts
         initialize-inspect.ts
+        multi-tag-constraint.ts      # codefast-only (no inversify counterpart)
         fan-out/
           index.ts                   # exports buildCodefastFanOutScenarios
           tree.ts
@@ -236,7 +199,6 @@ benchmarks/di-inversify/
         resolution-patterns.ts
         registry-ops.ts
         module.ts
-        multi-tag-constraint.ts
         initialize-inspect.ts
         fan-out/
           index.ts
@@ -247,15 +209,25 @@ benchmarks/di-inversify/
       fan-out-descriptor.ts          # fan-out counts + tree shape helpers
       codefast-adapter.ts            # descriptor → @codefast/di Container
       inversify-adapter.ts           # descriptor → inversify Container
+      awilix-adapter.ts              # descriptor → awilix container (core subset)
+      tsyringe-adapter.ts            # descriptor → tsyringe container (core subset)
+    scenarios/awilix/, scenarios/tsyringe/   # core-subset scenarios for the N-way report
     codefast-benches.ts              # subprocess entry — tsconfig.codefast.json
     inversify-benches.ts             # subprocess entry — tsconfig.inversify.json (+ reflect-metadata)
+    awilix-benches.ts                # subprocess entry — tsconfig.awilix.json (decorator-free)
+    tsyringe-benches.ts              # subprocess entry — tsconfig.tsyringe.json (+ reflect-metadata)
   tsconfig.json
   tsconfig.codefast.json
   tsconfig.inversify.json
+  tsconfig.awilix.json
+  tsconfig.tsyringe.json
   package.json
   README.md
+  RESULTS.md
   BENCH_GUIDE.md
 ```
+
+The core subset (`scenarios/{awilix,tsyringe}/**`) implements only the factory/class-binding scenarios all four libraries support; `run.ts` renders them as an N-way table (di pivot) via `@codefast/benchmark-harness/report/n-way`, appended after the full di-vs-inversify two-way report.
 
 **Shared workspace package:** `@codefast/benchmark-harness` owns the framed stdout protocol (`emitSubprocessPayload` / `extractSubprocessPayload`), fingerprinting, `runBenchSubprocess` + `runBenchSubprocessIsolated`, `buildLibraryReport`, the head-to-head summary (`summarizeTwoWayComparison`), and the markdown + JSONL writers. This benchmark package does **not** ship `protocol.ts` / `report.ts` under `src/harness/`.
 
@@ -263,4 +235,5 @@ benchmarks/di-inversify/
 
 - Only `src/fixtures/codefast-adapter.ts` and `src/scenarios/codefast/**` may import `@codefast/di`.
 - Only `src/fixtures/inversify-adapter.ts` and `src/scenarios/inversify/**` may import `inversify` (and `inversify-benches.ts` imports `reflect-metadata`).
+- Likewise `src/fixtures/awilix-adapter.ts` + `src/scenarios/awilix/**` import `awilix`; `src/fixtures/tsyringe-adapter.ts` + `src/scenarios/tsyringe/**` import `tsyringe` (+ `reflect-metadata`).
 - `src/harness/**` and `src/fixtures/{realistic-graph,fan-out-descriptor}.ts` stay library-agnostic (they import `@codefast/benchmark-harness`, `tinybench`, and local `#/…` modules only).

@@ -1,10 +1,10 @@
 /**
- * Shared scenario typing for both codefast and inversify harnesses.
+ * Shared scenario typing for every library harness (codefast, inversify, awilix, tsyringe).
  *
- * A scenario module exports two parallel arrays of scenarios — one per library —
- * with matching `id`s for every head-to-head row. Pairwise matching IDs are what
- * lets the reporter align them in the comparison table; an `id` may appear on
- * only one side when a scenario is intentionally library-specific.
+ * Each library exposes its own scenarios with matching `id`s for every head-to-head row.
+ * Matching IDs are what let the reporter align rows across libraries; an `id` may appear on
+ * only some libraries when a scenario is intentionally library-specific or outside the
+ * awilix/tsyringe core subset.
  */
 
 import type {

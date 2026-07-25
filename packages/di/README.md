@@ -245,7 +245,11 @@ The root entry re-exports the full public API — prefer it (`import { Container
 
 ## Benchmarks
 
-A head-to-head benchmark suite against InversifyJS 8 lives in the monorepo: [benchmarks/di-inversify](https://github.com/codefastlabs/codefast/tree/main/benchmarks/di-inversify). Each library runs in its canonical decorator mode, in isolated subprocesses, reported as per-trial medians with interquartile range — designed so the results are re-runnable rather than taken on faith. On the production-shaped scenarios measured there, `@codefast/di` resolves faster than InversifyJS; run `pnpm bench` in that package to reproduce the numbers on your machine.
+A head-to-head benchmark suite lives in the monorepo: [benchmarks/di-inversify](https://github.com/codefastlabs/codefast/tree/main/benchmarks/di-inversify). It compares `@codefast/di` against **InversifyJS 8** on the full scenario set, plus **Awilix** and **tsyringe** on a shared core subset. Each library runs in its canonical mode, in isolated subprocesses, reported as per-trial medians with interquartile range — designed so the results are re-runnable rather than taken on faith. On the production-shaped scenarios measured there, `@codefast/di` is faster on the large majority (e.g. ~2× median vs InversifyJS) — with honestly-reported exceptions such as shallow transient-dynamic chains and cold container builds. See [RESULTS.md](https://github.com/codefastlabs/codefast/blob/main/benchmarks/di-inversify/RESULTS.md) for the numbers and the caveats, or run `pnpm bench` in that package to reproduce them on your machine.
+
+## Contributing
+
+Changing this package's source? [CONTRIBUTING.md](https://github.com/codefastlabs/codefast/blob/main/packages/di/CONTRIBUTING.md) is the full workflow — build, exports mirror, tests, the mandatory perf-guard for resolver changes, and the release gate.
 
 ## License
 

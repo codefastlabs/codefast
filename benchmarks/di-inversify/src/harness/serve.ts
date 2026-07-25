@@ -6,7 +6,7 @@ import { resolveDisplayName } from "@codefast/benchmark-harness/shared/config";
 import { BENCH_PORT_ENV_KEY, BENCH_RESULTS_DIR_NAME } from "@codefast/benchmark-harness/shared/env-keys";
 import { startBenchServer } from "@codefast/benchmark-viewer/server";
 
-import { CODEFAST_DI, INVERSIFY, SERVE_TITLE } from "#/harness/config";
+import { CODEFAST_DI, INVERSIFY, SERVE_TITLE, AWILIX, TSYRINGE } from "#/harness/config";
 
 await startBenchServer({
   benchResultsDir: join(dirname(fileURLToPath(import.meta.url)), "..", "..", BENCH_RESULTS_DIR_NAME),
@@ -19,5 +19,7 @@ await startBenchServer({
       isPrimary: true,
     },
     { name: INVERSIFY.libraryName, displayName: resolveDisplayName(INVERSIFY) },
+    { name: AWILIX.libraryName, displayName: resolveDisplayName(AWILIX) },
+    { name: TSYRINGE.libraryName, displayName: resolveDisplayName(TSYRINGE) },
   ],
 });
