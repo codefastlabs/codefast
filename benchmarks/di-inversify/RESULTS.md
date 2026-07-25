@@ -15,22 +15,22 @@ This is a **first-party** benchmark: the same author maintains `@codefast/di` an
 
 | Comparison (default profile)                 | Win / parity / loss | Median ratio | Geomean |
 | -------------------------------------------- | ------------------- | -----------: | ------: |
-| di vs **inversify** (full 43-scenario suite) | **43 / 0 / 0**      |        1.79× |   2.24× |
+| di vs **inversify** (full 43-scenario suite) | **43 / 0 / 0**      |        1.87× |   2.23× |
 
-Under the stricter `BENCH_FULL` profile (GC exposed, 3 trials) the same suite is **42 / 0 / 1** — median 1.83×, geomean 2.21× — with the one loss explained below. Core-subset comparisons against the other libraries, `BENCH_FULL`:
+Under the stricter `BENCH_FULL` profile (GC exposed, 3 trials) the same suite is **42 / 0 / 1** — median 1.84×, geomean 2.24× — with the one loss explained below. Core-subset comparisons against the other libraries, `BENCH_FULL`:
 
 | Comparison (core subset, `BENCH_FULL`) | Win / parity / loss | Median ratio | Geomean |
 | -------------------------------------- | ------------------- | -----------: | ------: |
-| di vs **inversify**                    | 8 / 0 / 0           |        1.67× |   1.82× |
-| di vs **awilix**                       | 7 / 0 / 1           |        1.99× |   2.64× |
-| di vs **tsyringe**                     | 7 / 0 / 1           |        3.89× |   3.48× |
+| di vs **inversify**                    | 8 / 0 / 0           |        1.67× |   1.80× |
+| di vs **awilix**                       | 7 / 0 / 1           |        2.13× |   2.68× |
+| di vs **tsyringe**                     | 7 / 0 / 1           |        3.77× |   3.44× |
 
 Ratios are `@codefast/di / competitor` (>1 = di faster). Win band >1.03×, parity 0.97–1.03×, loss <0.97×.
 
 ## Where it loses
 
-1. **Cold container build, versus the leaner containers.** `realistic-graph-cold-resolve` (build a fresh container, bind 10 nodes, resolve once) beats inversify 2.34× but **loses to awilix (0.76×) and tsyringe (0.53×)**. di's per-container setup does genuinely more work — metadata, lifecycle, introspection — than a decorator-free/factory container's. A deliberate trade-off, not a defect.
-2. **Async chains, but only under `BENCH_FULL`'s forced-GC hook.** `dynamic-async-chain-8` is **0.75× under `BENCH_FULL`** yet **1.26× in the default profile**; the `async` group swings from 1.17× to 1.39×.
+1. **Cold container build, versus the leaner containers — under `BENCH_FULL` only.** `realistic-graph-cold-resolve` (build a fresh container, bind 10 nodes, resolve once) beats inversify 2.39× but under `BENCH_FULL` still trails awilix (0.78×) and tsyringe (0.45×). In the default profile it now **beats awilix (1.07×)** after frames moved from a per-resolver `Map` to the binding, which cut cold build ~62%. What remains is that di's per-container setup does more work — metadata, lifecycle, introspection — than a decorator-free/factory container's.
+2. **Async chains, but only under `BENCH_FULL`'s forced-GC hook.** `dynamic-async-chain-8` is **0.76× under `BENCH_FULL`** yet a win in the default profile; the `async` group swings from 1.20× to 1.37×.
 
    Isolating the cause: running the same scenario with **identical `BENCH_FULL` sampling parameters**, once with `--expose-gc` and once without (which no-ops the harness's strided `gc()` hook), gives
 
@@ -49,8 +49,8 @@ Ratios are `@codefast/di / competitor` (>1 = di faster). Win band >1.03×, parit
 
 Every scenario both libraries implement (43 comparable). Full table: [`bench-results/latest.md`](./bench-results/latest.md).
 
-- **Default profile: 43 wins / 0 parity / 0 losses** — median 1.79×, geomean 2.24×. Group geomeans: micro 1.73×, realistic 1.72×, fan-out 2.09×, async 1.39×, lifecycle 2.67×, scope 2.94×, scale 1.78×, boot 2.60×, production 3.28×, introspection 3.08×, **failure 7.60×**.
-- **`BENCH_FULL` profile: 42 wins / 0 parity / 1 loss** — median 1.83×, geomean 2.21×; the loss is `dynamic-async-chain-8` (0.75×). Group geomeans: micro 1.53×, realistic 1.95×, fan-out 2.16×, async 1.17×, lifecycle 2.60×, scope 3.02×, scale 1.70×, boot 3.11×, production 3.92×, introspection 3.64×, **failure 7.83×**.
+- **Default profile: 43 wins / 0 parity / 0 losses** — median 1.87×, geomean 2.23×. Group geomeans: micro 1.71×, realistic 1.76×, fan-out 2.26×, async 1.37×, lifecycle 2.52×, scope 2.78×, scale 1.57×, boot 2.47×, production 3.38×, introspection 3.08×, **failure 7.49×**.
+- **`BENCH_FULL` profile: 42 wins / 0 parity / 1 loss** — median 1.84×, geomean 2.24×; the loss is `dynamic-async-chain-8` (0.76×). Group geomeans: micro 1.49×, realistic 2.03×, fan-out 2.34×, async 1.20×, lifecycle 2.66×, scope 3.02×, scale 1.49×, boot 3.37×, production 3.94×, introspection 3.62×, **failure 7.99×**.
 
 The `failure` group is broken out precisely so its ~7.8× — driven by `circular-dependency-3` at ~140× — does not inflate the throughput story.
 
@@ -60,16 +60,16 @@ The factory/class-binding scenarios all four libraries support — the graphs yo
 
 | Scenario                       | Group     |    codefast |  inversify |     awilix |   tsyringe | cf/inv |    cf/awi |    cf/tsy |
 | ------------------------------ | --------- | ----------: | ---------: | ---------: | ---------: | -----: | --------: | --------: |
-| constant-resolve               | micro     | 123,883,450 | 72,408,304 | 41,505,237 | 15,230,904 |  1.71× |     2.98× |     8.13× |
-| singleton-class-1-dep          | micro     |  78,705,089 | 48,910,796 | 38,750,194 | 13,948,034 |  1.61× |     2.03× |     5.64× |
-| transient-class-1-dep          | micro     |  78,594,292 | 31,830,857 |  9,395,457 |  5,521,549 |  2.47× |     8.37× |    14.23× |
-| realistic-graph-resolve-root   | realistic |   9,531,610 |  5,882,273 |  6,554,782 |  2,117,003 |  1.62× |     1.45× |     4.50× |
-| realistic-graph-cold-resolve   | realistic |      57,749 |     24,689 |     76,281 |    109,344 |  2.34× | **0.76×** | **0.53×** |
-| scale-mid-transient-chain-32   | scale     |     591,838 |    436,235 |    304,027 |    340,857 |  1.36× |     1.95× |     1.74× |
-| scale-deep-transient-chain-512 | scale     |      47,971 |     22,594 |      2,667 |     14,643 |  2.12× |    17.99× |     3.28× |
-| fan-out-tree-depth-3-breadth-4 | fan-out   |   1,150,254 |    719,960 |    956,823 |    475,254 |  1.60× |     1.20× |     2.42× |
+| constant-resolve               | micro     | 122,593,946 | 75,522,799 | 41,556,445 | 15,603,884 |  1.62× |     2.95× |     7.86× |
+| singleton-class-1-dep          | micro     |  79,174,954 | 54,729,451 | 40,284,084 | 13,711,462 |  1.45× |     1.97× |     5.77× |
+| transient-class-1-dep          | micro     |  79,470,699 | 30,958,848 |  9,497,564 |  5,528,042 |  2.57× |     8.37× |    14.38× |
+| realistic-graph-resolve-root   | realistic |  10,418,357 |  6,082,878 |  6,979,346 |  2,241,671 |  1.71× |     1.49× |     4.65× |
+| realistic-graph-cold-resolve   | realistic |      60,979 |     25,464 |     77,982 |    135,743 |  2.39× | **0.78×** | **0.45×** |
+| scale-mid-transient-chain-32   | scale     |     703,723 |    435,254 |    307,449 |    355,777 |  1.62× |     2.29× |     1.98× |
+| scale-deep-transient-chain-512 | scale     |      36,366 |     26,337 |      2,624 |     14,306 |  1.38× |    13.86× |     2.54× |
+| fan-out-tree-depth-3-breadth-4 | fan-out   |   1,400,125 |    715,934 |    950,865 |    485,053 |  1.96× |     1.47× |     2.89× |
 
-Per competitor: **vs inversify** 8/0/0 (median 1.67×) · **vs awilix** 7/0/1 (median 1.99×) · **vs tsyringe** 7/0/1 (median 3.89×). The only core-subset loss is cold container build against the two leaner containers.
+Per competitor: **vs inversify** 8/0/0 (median 1.67×) · **vs awilix** 7/0/1 (median 2.13×) · **vs tsyringe** 7/0/1 (median 3.77×). The only core-subset loss is cold container build against the two leaner containers.
 
 ## Reproduce
 
