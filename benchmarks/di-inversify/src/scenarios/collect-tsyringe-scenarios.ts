@@ -9,6 +9,9 @@ import { buildTsyringeRealisticScenarios } from "#/scenarios/tsyringe/realistic"
 import { buildTsyringeScaleScenarios } from "#/scenarios/tsyringe/scale";
 import type { AnyScenario } from "#/scenarios/types";
 
+/**
+ * @since 0.5.0-canary.7
+ */
 export function collectAllTsyringeScenarios(): ReadonlyArray<AnyScenario> {
   return [
     ...buildTsyringeMicroScenarios(),

@@ -38,6 +38,8 @@ export type InjectableDependency<Value = unknown> = Token<Value> | Constructor<V
  * type parameter — `InjectionDescriptor<Value | undefined>` and `InjectionDescriptor<Array<Value>>`
  * — so reading that parameter back is enough; bare tokens and constructors fall through to
  * {@link TokenValue}.
+ *
+ * @since 0.5.0-canary.7
  */
 export type ResolvedDependencyValue<Dependency> =
   Dependency extends InjectionDescriptor<infer Value> ? Value : TokenValue<Dependency>;

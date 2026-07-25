@@ -97,6 +97,9 @@ function buildTransientClassOneDepScenario(): BenchScenario {
   };
 }
 
+/**
+ * @since 0.5.0-canary.7
+ */
 export function buildTsyringeMicroScenarios(): ReadonlyArray<BenchScenario> {
   return [buildConstantResolveScenario(), buildSingletonClassOneDepScenario(), buildTransientClassOneDepScenario()];
 }

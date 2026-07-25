@@ -6,6 +6,8 @@ import { buildTwoWayComparisonRows, summarizeTwoWayComparison } from "#/report/t
 /**
  * One library column in an N-way comparison: its aggregated report plus the
  * short label used in table headers.
+ *
+ * @since 0.5.0-canary.7
  */
 export interface NWayLibrary {
   readonly report: LibraryReport;
@@ -16,6 +18,8 @@ export interface NWayLibrary {
  * One competitor's number for a single scenario. `hzPerOp` is 0 when the
  * competitor never measured that scenario; `ratio` is pivot/competitor
  * throughput, 0 when either side is missing (renders as an em-dash).
+ *
+ * @since 0.5.0-canary.7
  */
 export interface NWayCompetitorCell {
   readonly hzPerOp: number;
@@ -25,6 +29,8 @@ export interface NWayCompetitorCell {
 /**
  * One aligned row: the pivot's scenario plus each competitor's cell in the
  * same column order as the competitor array.
+ *
+ * @since 0.5.0-canary.7
  */
 export interface NWayScenarioRow {
   readonly id: string;
@@ -39,6 +45,8 @@ export interface NWayScenarioRow {
 /**
  * Copy for the single N-way table. Column headers derive from each library's
  * display name, so this stays free of library-specific vocabulary.
+ *
+ * @since 0.5.0-canary.7
  */
 export interface NWayReportOptions {
   readonly documentHeading: string;
@@ -50,6 +58,8 @@ export interface NWayReportOptions {
 /**
  * Aligns every competitor to the pivot by scenario `id`. A scenario appears
  * only when the pivot measured it; competitors that lack it get a zeroed cell.
+ *
+ * @since 0.5.0-canary.7
  */
 export function buildNWayComparisonRows(
   pivot: NWayLibrary,
@@ -82,6 +92,8 @@ export function buildNWayComparisonRows(
 
 /**
  * One competitor's head-to-head classification against the pivot.
+ *
+ * @since 0.5.0-canary.7
  */
 export interface NWayCompetitorSummary {
   readonly displayName: string;
@@ -92,6 +104,8 @@ export interface NWayCompetitorSummary {
  * Reuses the two-way ±3% band + geomean logic once per competitor, so each
  * summary reports geomean, median ratio, and win/parity/loss over the
  * scenarios both the pivot and that competitor measured.
+ *
+ * @since 0.5.0-canary.7
  */
 export function summarizeNWayComparison(
   pivot: NWayLibrary,
@@ -150,6 +164,8 @@ function buildSummaryMarkdownLines(pivot: NWayLibrary, competitors: ReadonlyArra
 
 /**
  * Renders a single Markdown table aligning the pivot against every competitor.
+ *
+ * @since 0.5.0-canary.7
  */
 export function renderNWayMarkdownReport(
   pivot: NWayLibrary,
@@ -179,6 +195,8 @@ const CLI_TABLE_COLUMN_GAP = "  ";
 
 /**
  * Prints a compact N-way table to stdout with aligned ASCII columns.
+ *
+ * @since 0.5.0-canary.7
  */
 export function renderNWayConsoleReport(
   pivot: NWayLibrary,

@@ -244,6 +244,8 @@ export async function runBenchSubprocess(parameters: RunBenchSubprocessParameter
 
 /**
  * True when the current run asked for per-scenario process isolation (`BENCH_ISOLATE=1`).
+ *
+ * @since 0.5.0-canary.7
  */
 export function isIsolatedBenchRunRequested(): boolean {
   return process.env[BENCH_ISOLATE_ENV_KEY] === "1";
@@ -268,6 +270,8 @@ function mergeIsolatedTrials(workerPayloads: ReadonlyArray<SubprocessPayload>): 
  * every scenario that ran before, so later scenarios (measured: ~30% on async chains)
  * pay for earlier ones. Isolation makes each row order-independent at the cost of one
  * process spawn per scenario.
+ *
+ * @since 0.5.0-canary.7
  */
 export async function runBenchSubprocessIsolated(parameters: RunBenchSubprocessParameters): Promise<SubprocessPayload> {
   const listPayload = await runBenchSubprocess({

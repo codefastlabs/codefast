@@ -46,6 +46,9 @@ function buildScaleTransientChainScenario(descriptor: ScenarioDescriptor, chainS
   };
 }
 
+/**
+ * @since 0.5.0-canary.7
+ */
 export function buildTsyringeScaleScenarios(): ReadonlyArray<BenchScenario> {
   return [
     buildScaleTransientChainScenario(SCALE_MID_TRANSIENT_CHAIN_32, SCALE_MID_CHAIN_SIZE),

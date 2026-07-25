@@ -43,6 +43,9 @@ function buildRealisticGraphColdResolveScenario(): BenchScenario {
   };
 }
 
+/**
+ * @since 0.5.0-canary.7
+ */
 export function buildTsyringeRealisticScenarios(): ReadonlyArray<BenchScenario> {
   return [buildRealisticGraphResolveRootScenario(), buildRealisticGraphColdResolveScenario()];
 }

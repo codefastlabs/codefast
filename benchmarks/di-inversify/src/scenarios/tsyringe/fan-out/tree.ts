@@ -23,6 +23,9 @@ function buildFanOutTreeDepthThreeBreadthFourScenario(): BenchScenario {
   };
 }
 
+/**
+ * @since 0.5.0-canary.7
+ */
 export function buildTsyringeFanOutTreeScenarios(): ReadonlyArray<BenchScenario> {
   return [buildFanOutTreeDepthThreeBreadthFourScenario()];
 }

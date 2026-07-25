@@ -40,6 +40,9 @@ const GRID_COLUMN_COUNT = 5;
 const GRID_CELL_WIDTH_PX = 200;
 const GRID_CELL_HEIGHT_PX = 100;
 
+/**
+ * @since 0.5.0-canary.7
+ */
 export function toReactFlowGraph(graph: ContainerGraphJson): ReactFlowGraph {
   const nodes: Array<ReactFlowNode> = graph.nodes.map((node, idx) => ({
     id: node.id,

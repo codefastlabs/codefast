@@ -9,6 +9,9 @@ import { buildAwilixRealisticScenarios } from "#/scenarios/awilix/realistic";
 import { buildAwilixScaleScenarios } from "#/scenarios/awilix/scale";
 import type { AnyScenario } from "#/scenarios/types";
 
+/**
+ * @since 0.5.0-canary.7
+ */
 export function collectAllAwilixScenarios(): ReadonlyArray<AnyScenario> {
   return [
     ...buildAwilixMicroScenarios(),

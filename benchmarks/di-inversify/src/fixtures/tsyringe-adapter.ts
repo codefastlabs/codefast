@@ -23,6 +23,8 @@ import {
  * A built child container plus every registration token, retained so sanity
  * checks can resolve any node. Scenarios typically only need `rootToken` +
  * `container`.
+ *
+ * @since 0.5.0-canary.7
  */
 export interface TsyringeRealisticBuild {
   readonly container: DependencyContainer;
@@ -63,6 +65,8 @@ function bindOneNode(
 /**
  * Builds a fresh child container from the descriptor. A child keeps each
  * build's registrations isolated from the shared root container.
+ *
+ * @since 0.5.0-canary.7
  */
 export function buildTsyringeRealisticContainer(graph: GraphDescriptor): TsyringeRealisticBuild {
   assertGraphIsWellFormed(graph);
@@ -84,6 +88,8 @@ export function buildTsyringeRealisticContainer(graph: GraphDescriptor): Tsyring
 
 /**
  * Sanity helper: resolves the root and asserts the expected shape.
+ *
+ * @since 0.5.0-canary.7
  */
 export function sanityCheckTsyringeRealisticResolve(graph: GraphDescriptor): boolean {
   const { container, rootToken } = buildTsyringeRealisticContainer(graph);

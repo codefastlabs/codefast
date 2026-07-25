@@ -10,6 +10,8 @@ const ASYNC_MODULE_BRAND: unique symbol = Symbol("di:async-module");
 /**
  * Key for the module's setup callback. A symbol (not exported from the package root)
  * keeps the container-only member out of consumer-facing autocomplete entirely.
+ *
+ * @since 0.5.0-canary.7
  */
 export const MODULE_SETUP: unique symbol = Symbol("di:module-setup");
 

@@ -24,6 +24,9 @@ export const INVERSIFY = {
   displayName: "InversifyJS 8",
 } as const satisfies BenchSubprocessConfig;
 
+/**
+ * @since 0.5.0-canary.7
+ */
 export const AWILIX = {
   libraryName: "awilix",
   scenarioName: "awilix",
@@ -32,6 +35,9 @@ export const AWILIX = {
   displayName: "Awilix 13",
 } as const satisfies BenchSubprocessConfig;
 
+/**
+ * @since 0.5.0-canary.7
+ */
 export const TSYRINGE = {
   libraryName: "tsyringe",
   scenarioName: "tsyringe",
