@@ -56,9 +56,34 @@ describe("summarizeTwoWayComparison", () => {
     expect(evenSummary.medianRatio).toBe(2);
   });
 
+  it("computes the geometric mean across comparable scenarios", () => {
+    // geomean(1, 4) = 2, unlike the arithmetic mean of 2.5.
+    const summary = summarizeTwoWayComparison([row("a", 100, 100), row("b", 400, 100)]);
+    expect(summary.geomeanRatio).toBeCloseTo(2, 10);
+  });
+
+  it("breaks geomean down per group in first-appearance order, isolating error-path outliers", () => {
+    const summary = summarizeTwoWayComparison([
+      row("m1", 200, 100, "micro"),
+      row("m2", 800, 100, "micro"),
+      row("f1", 10_000, 100, "failure"),
+    ]);
+
+    expect(summary.groupGeomeans.map((entry) => entry.group)).toEqual(["micro", "failure"]);
+    const micro = summary.groupGeomeans.find((entry) => entry.group === "micro")!;
+    const failure = summary.groupGeomeans.find((entry) => entry.group === "failure")!;
+    // micro geomean(2, 8) = 4 stays independent of the 100× failure-path row.
+    expect(micro.geomeanRatio).toBeCloseTo(4, 10);
+    expect(micro.count).toBe(2);
+    expect(failure.geomeanRatio).toBeCloseTo(100, 10);
+    expect(failure.count).toBe(1);
+  });
+
   it("returns an empty summary when nothing is comparable", () => {
     const summary = summarizeTwoWayComparison([]);
     expect(summary.comparableCount).toBe(0);
     expect(summary.medianRatio).toBe(0);
+    expect(summary.geomeanRatio).toBe(0);
+    expect(summary.groupGeomeans).toEqual([]);
   });
 });

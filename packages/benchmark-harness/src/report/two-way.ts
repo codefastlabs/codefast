@@ -101,6 +101,16 @@ export interface TwoWayHeadToHeadEntry {
 }
 
 /**
+ * Geometric-mean ratio of one scenario group, so error-path outliers (e.g. a 100×+
+ * fail-fast row) stay in their own group instead of skewing the throughput headline.
+ */
+export interface TwoWayGroupGeomean {
+  readonly group: string;
+  readonly geomeanRatio: number;
+  readonly count: number;
+}
+
+/**
  * Win/parity/loss classification of every comparable scenario, from the left library's viewpoint.
  */
 export interface TwoWayHeadToHeadSummary {
@@ -109,8 +119,21 @@ export interface TwoWayHeadToHeadSummary {
   readonly parities: ReadonlyArray<TwoWayHeadToHeadEntry>;
   readonly losses: ReadonlyArray<TwoWayHeadToHeadEntry>;
   readonly medianRatio: number;
+  /** Geometric mean of every comparable ratio — the standard aggregate for ratio data. */
+  readonly geomeanRatio: number;
+  /** Per-group geomean, ordered by first appearance, isolating error-path groups from throughput. */
+  readonly groupGeomeans: ReadonlyArray<TwoWayGroupGeomean>;
   readonly leftOnlyIds: ReadonlyArray<string>;
   readonly rightOnlyIds: ReadonlyArray<string>;
+}
+
+/** Geometric mean of positive ratios; 0 for an empty set. */
+function geometricMean(ratios: ReadonlyArray<number>): number {
+  if (ratios.length === 0) {
+    return 0;
+  }
+  const sumOfLogs = ratios.reduce((total, ratio) => total + Math.log(ratio), 0);
+  return Math.exp(sumOfLogs / ratios.length);
 }
 
 /**
@@ -122,6 +145,8 @@ export function summarizeTwoWayComparison(rows: ReadonlyArray<TwoWayScenarioComp
   const losses: Array<TwoWayHeadToHeadEntry> = [];
   const leftOnlyIds: Array<string> = [];
   const rightOnlyIds: Array<string> = [];
+  // Per-group ratios kept in first-appearance order for a stable breakdown.
+  const ratiosByGroup = new Map<string, Array<number>>();
 
   for (const row of rows) {
     if (row.rightHzPerOp === 0) {
@@ -142,6 +167,7 @@ export function summarizeTwoWayComparison(rows: ReadonlyArray<TwoWayScenarioComp
     } else {
       parities.push(entry);
     }
+    (ratiosByGroup.get(row.group) ?? ratiosByGroup.set(row.group, []).get(row.group)!).push(entry.ratio);
   }
 
   const ratios = [...wins, ...parities, ...losses].map((entry) => entry.ratio).sort((left, right) => left - right);
@@ -152,8 +178,23 @@ export function summarizeTwoWayComparison(rows: ReadonlyArray<TwoWayScenarioComp
       : ratios.length % 2 === 1
         ? ratios[midpoint]!
         : (ratios[midpoint - 1]! + ratios[midpoint]!) / 2;
+  const groupGeomeans: Array<TwoWayGroupGeomean> = [...ratiosByGroup].map(([group, groupRatios]) => ({
+    group,
+    geomeanRatio: geometricMean(groupRatios),
+    count: groupRatios.length,
+  }));
 
-  return { comparableCount: ratios.length, wins, parities, losses, medianRatio, leftOnlyIds, rightOnlyIds };
+  return {
+    comparableCount: ratios.length,
+    wins,
+    parities,
+    losses,
+    medianRatio,
+    geomeanRatio: geometricMean(ratios),
+    groupGeomeans,
+    leftOnlyIds,
+    rightOnlyIds,
+  };
 }
 
 function formatRatioTimes(ratio: number): string {
@@ -168,14 +209,31 @@ function buildHeadToHeadSummaryMarkdownLines(
   summary: TwoWayHeadToHeadSummary,
   versionLabels: TwoWayMarkdownReportOptions["fingerprintLibraryVersionLabels"],
 ): Array<string> {
-  const { comparableCount, wins, parities, losses, medianRatio, leftOnlyIds, rightOnlyIds } = summary;
+  const {
+    comparableCount,
+    wins,
+    parities,
+    losses,
+    medianRatio,
+    geomeanRatio,
+    groupGeomeans,
+    leftOnlyIds,
+    rightOnlyIds,
+  } = summary;
   const winPercent = comparableCount === 0 ? 0 : Math.round((wins.length / comparableCount) * 100);
   const lines = [
     "## Head-to-head summary",
     "",
-    `**${versionLabels.left} wins ${String(wins.length)} of ${String(comparableCount)} comparable scenarios (${String(winPercent)}%) — ${String(parities.length)} parity, ${String(losses.length)} loss${losses.length === 1 ? "" : "es"}.** Median ratio ${formatRatioTimes(medianRatio)} (${versionLabels.left} / ${versionLabels.right}; win >1.03×, parity 0.97–1.03×, loss <0.97×).`,
+    `**${versionLabels.left} wins ${String(wins.length)} of ${String(comparableCount)} comparable scenarios (${String(winPercent)}%) — ${String(parities.length)} parity, ${String(losses.length)} loss${losses.length === 1 ? "" : "es"}.** Median ratio ${formatRatioTimes(medianRatio)}, geomean ${formatRatioTimes(geomeanRatio)} (${versionLabels.left} / ${versionLabels.right}; win >1.03×, parity 0.97–1.03×, loss <0.97×).`,
     "",
   ];
+  if (groupGeomeans.length > 0) {
+    // Per-group geomean keeps error-path groups (fail-fast, cycle detection) visibly
+    // separate from throughput, so a single 100×+ row can't read as a typical speedup.
+    lines.push(
+      `- Geomean by group: ${groupGeomeans.map((entry) => `${entry.group} ${formatRatioTimes(entry.geomeanRatio)} (${String(entry.count)})`).join(", ")}.`,
+    );
+  }
   if (losses.length > 0) {
     lines.push(`- Losses: ${formatEntryList(losses)}`);
   }
@@ -411,8 +469,13 @@ export function renderTwoWayConsoleReport(
   const labels = options?.headToHeadLabels ?? { left: "left", right: "right" };
   console.log("");
   console.log(
-    `Head-to-head: ${labels.left} ${String(summary.wins.length)} wins · ${String(summary.parities.length)} parity · ${String(summary.losses.length)} loss${summary.losses.length === 1 ? "" : "es"} (of ${String(summary.comparableCount)} comparable vs ${labels.right}) — median ratio ${formatRatioTimes(summary.medianRatio)}`,
+    `Head-to-head: ${labels.left} ${String(summary.wins.length)} wins · ${String(summary.parities.length)} parity · ${String(summary.losses.length)} loss${summary.losses.length === 1 ? "" : "es"} (of ${String(summary.comparableCount)} comparable vs ${labels.right}) — median ratio ${formatRatioTimes(summary.medianRatio)}, geomean ${formatRatioTimes(summary.geomeanRatio)}`,
   );
+  if (summary.groupGeomeans.length > 0) {
+    console.log(
+      `By group: ${summary.groupGeomeans.map((entry) => `${entry.group} ${formatRatioTimes(entry.geomeanRatio)}`).join(" · ")}`,
+    );
+  }
   if (summary.losses.length > 0) {
     console.log(
       `Losses: ${summary.losses.map((entry) => `${entry.id} (${formatRatioTimes(entry.ratio)})`).join(", ")}`,
