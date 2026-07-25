@@ -8,17 +8,23 @@ import "reflect-metadata";
 import { Container } from "inversify";
 import type { ServiceIdentifier } from "inversify";
 
-import { SCALE_CHAIN_SIZE, SCALE_DEEP_TRANSIENT_CHAIN_512 } from "#/fixtures/scenario-parity";
+import type { ScenarioDescriptor } from "#/fixtures/scenario-parity";
+import {
+  SCALE_CHAIN_SIZE,
+  SCALE_DEEP_TRANSIENT_CHAIN_512,
+  SCALE_MID_CHAIN_SIZE,
+  SCALE_MID_TRANSIENT_CHAIN_32,
+} from "#/fixtures/scenario-parity";
 import type { BenchScenario } from "#/scenarios/types";
 
-function buildScaleDeepTransientChainScenario(): BenchScenario {
-  const chainIdentifiers = Array.from({ length: SCALE_CHAIN_SIZE }, (_value, chainIndex) =>
-    Symbol(`bench-inv-scale-chain-${String(chainIndex)}`),
+function buildScaleTransientChainScenario(descriptor: ScenarioDescriptor, chainSize: number): BenchScenario {
+  const chainIdentifiers = Array.from({ length: chainSize }, (_value, chainIndex) =>
+    Symbol(`bench-inv-scale-chain-${String(chainSize)}-${String(chainIndex)}`),
   ) as Array<ServiceIdentifier<number>>;
   const container = new Container();
   container.bind<number>(chainIdentifiers[0]!).toConstantValue(0);
 
-  for (let chainIndex = 1; chainIndex < SCALE_CHAIN_SIZE; chainIndex++) {
+  for (let chainIndex = 1; chainIndex < chainSize; chainIndex++) {
     const previousChainIdentifier = chainIdentifiers[chainIndex - 1]!;
     const currentChainIdentifier = chainIdentifiers[chainIndex]!;
     container
@@ -27,12 +33,12 @@ function buildScaleDeepTransientChainScenario(): BenchScenario {
       .inTransientScope();
   }
 
-  const leafChainIdentifier = chainIdentifiers[SCALE_CHAIN_SIZE - 1]!;
-  const expectedLeafValue = SCALE_CHAIN_SIZE - 1;
+  const leafChainIdentifier = chainIdentifiers[chainSize - 1]!;
+  const expectedLeafValue = chainSize - 1;
   container.get(leafChainIdentifier);
 
   return {
-    ...SCALE_DEEP_TRANSIENT_CHAIN_512,
+    ...descriptor,
     batch: 1,
     sanity: () => container.get<number>(leafChainIdentifier) === expectedLeafValue,
     build: () => {
@@ -47,5 +53,8 @@ function buildScaleDeepTransientChainScenario(): BenchScenario {
  * @since 0.3.16-canary.0
  */
 export function buildInversifyScaleScenarios(): ReadonlyArray<BenchScenario> {
-  return [buildScaleDeepTransientChainScenario()];
+  return [
+    buildScaleTransientChainScenario(SCALE_MID_TRANSIENT_CHAIN_32, SCALE_MID_CHAIN_SIZE),
+    buildScaleTransientChainScenario(SCALE_DEEP_TRANSIENT_CHAIN_512, SCALE_CHAIN_SIZE),
+  ];
 }
