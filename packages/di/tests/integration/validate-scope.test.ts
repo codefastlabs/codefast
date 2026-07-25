@@ -151,12 +151,11 @@ describe("AsyncModuleLoadError", () => {
     expect(() => container.validate()).not.toThrow();
   });
 
-  it("treats a toDynamic terminal as opaque, so its declared scope is not checked", () => {
-    // Documented behaviour (SPEC \u00a76.9): dynamic factories are not statically analyzable, so a
-    // singleton depending on a transient *dynamic* binding is deliberately not reported. Pinned
-    // here so the exemption stays a decision rather than drifting silently.
-    const DynamicLeaf = token<string>("OpaqueDynamicLeaf");
-    const Root = token<string>("OpaqueDynamicRoot");
+  it("reports a transient toDynamic dependency of a singleton as captive", () => {
+    // The factory body is opaque to static analysis, but the scope it was bound with is not: a
+    // singleton holding a transient pins one instance forever, which is the captive-dependency bug.
+    const DynamicLeaf = token<string>("CaptiveDynamicLeaf");
+    const Root = token<string>("CaptiveDynamicRoot");
 
     const container = Container.create();
     container
@@ -165,7 +164,55 @@ describe("AsyncModuleLoadError", () => {
       .transient();
     container
       .bind(Root)
-      .toResolved((leaf: string) => `root:${leaf}`, [DynamicLeaf])
+      .toResolved((leaf) => `root:${String(leaf)}`, [DynamicLeaf])
+      .singleton();
+
+    let thrown: unknown;
+    try {
+      container.validate();
+    } catch (error) {
+      thrown = error;
+    }
+    expect(thrown).toBeInstanceOf(ScopeViolationError);
+    expect((thrown as ScopeViolationError).details.dependencyScope).toBe("transient");
+  });
+
+  it("accepts a singleton toDynamic dependency", () => {
+    const DynamicLeaf = token<string>("SingletonDynamicLeaf");
+    const Root = token<string>("SingletonDynamicRoot");
+
+    const container = Container.create();
+    container
+      .bind(DynamicLeaf)
+      .toDynamic(() => "leaf")
+      .singleton();
+    container
+      .bind(Root)
+      .toResolved((leaf) => `root:${String(leaf)}`, [DynamicLeaf])
+      .singleton();
+
+    expect(() => container.validate()).not.toThrow();
+  });
+
+  it("does not descend into a factory body", () => {
+    // The dynamic binding is a singleton, so the edge itself is fine; whatever the factory
+    // resolves internally stays invisible to validate() and must not be reported.
+    const HiddenTransient = token<string>("HiddenTransient");
+    const DynamicLeaf = token<string>("OpaqueBodyLeaf");
+    const Root = token<string>("OpaqueBodyRoot");
+
+    const container = Container.create();
+    container
+      .bind(HiddenTransient)
+      .toDynamic(() => "hidden")
+      .transient();
+    container
+      .bind(DynamicLeaf)
+      .toDynamic((ctx) => ctx.resolve(HiddenTransient))
+      .singleton();
+    container
+      .bind(Root)
+      .toResolved((leaf) => `root:${String(leaf)}`, [DynamicLeaf])
       .singleton();
 
     expect(() => container.validate()).not.toThrow();

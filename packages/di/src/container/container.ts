@@ -615,7 +615,10 @@ class DefaultContainer implements Container {
 
   /**
    * DFS over explicit constructor / `toResolved*` dependency edges. Follows `toAlias` chains to the
-   * terminal binding for scope checks (SPEC §6.9). Skips `toDynamic*` subtrees (opaque).
+   * terminal binding for scope checks (SPEC §6.9).
+   *
+   * @remarks A `toDynamic*` dependency is scope-checked like any other — its declared scope is what
+   * makes it captive — but the DFS does not descend into the factory, whose body is opaque.
    */
   #validateSingletonBindingGraph(root: Binding, reader: MetadataReader): void {
     const rootName = tokenName(root.token as Token<unknown>);
@@ -655,9 +658,12 @@ class DefaultContainer implements Container {
     switch (terminal.kind) {
       case "constant":
         return "singleton";
+      // A factory's *body* is not statically analyzable, but the scope it was bound with is
+      // declared like any other — so the captive-dependency check applies. The DFS below still
+      // refuses to descend into the factory; only this edge is judged.
       case "dynamic":
       case "dynamic-async":
-        return "opaque";
+        return terminal.scope;
       case "class":
       case "resolved":
       case "resolved-async":
