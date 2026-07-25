@@ -1,6 +1,6 @@
 # @codefast/benchmark-harness
 
-Shared [tinybench](https://github.com/tinylibs/tinybench) harness utilities for the `benchmarks/*` suites — subprocess protocol, environment fingerprinting, and two-way comparison reports.
+Shared [tinybench](https://github.com/tinylibs/tinybench) harness utilities for the `benchmarks/*` suites — subprocess protocol, environment fingerprinting, and comparison reports (two-way plus an N-way pivot table).
 
 > **Private package.** Not published to npm; consumed only by the benchmark suites in this repository.
 
@@ -8,19 +8,19 @@ Shared [tinybench](https://github.com/tinylibs/tinybench) harness utilities for 
 
 The package is organized by role in the parent/child subprocess model:
 
-| Area       | Purpose                                                                                                                                                    |
-| ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `shared/*` | Subprocess protocol (payload markers, emit/extract, `scenarioIds` discovery), env keys, and suite configuration types                                      |
-| `child/*`  | Runs inside each benchmark subprocess: scenario types, trial runners, sanity checks, fingerprinting, `BENCH_LIST` / `BENCH_ONLY` worker modes              |
-| `parent/*` | Orchestrates subprocesses from the suite entry: `runBenchSubprocess`, `runBenchSubprocessIsolated` (+ `isIsolatedBenchRunRequested`), exit-code resolution |
-| `report/*` | Aggregation, quantiles, the two-way comparison table, the head-to-head summary (`summarizeTwoWayComparison`), JSONL persistence, formatted output          |
+| Area       | Purpose                                                                                                                                                                                                  |
+| ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `shared/*` | Subprocess protocol (payload markers, emit/extract, `scenarioIds` discovery), env keys, and suite configuration types                                                                                    |
+| `child/*`  | Runs inside each benchmark subprocess: scenario types, trial runners, sanity checks, fingerprinting, `BENCH_LIST` / `BENCH_ONLY` worker modes                                                            |
+| `parent/*` | Orchestrates subprocesses from the suite entry: `runBenchSubprocess`, `runBenchSubprocessIsolated` (+ `isIsolatedBenchRunRequested`), exit-code resolution                                               |
+| `report/*` | Aggregation, quantiles, the two-way comparison table + geomean/per-group head-to-head summary (`summarizeTwoWayComparison`), the N-way pivot table (`report/n-way`), JSONL persistence, formatted output |
 
 Two execution shapes:
 
 - **Shared** (`runBenchSubprocess`): one child per library runs every scenario — approximates a long-lived app, but earlier scenarios train the library's hot-path inline caches for later ones (measured at ~30% on async chains), so rows are order-dependent.
 - **Isolated** (`runBenchSubprocessIsolated`, opt in with `BENCH_ISOLATE=1`): one child **per scenario** per library — a `BENCH_LIST` discovery child reports scenario ids, then `BENCH_ONLY=<id>` workers run one scenario each and the parent merges trials back into a single payload. Order-independent.
 
-Reports open with a **head-to-head summary**: win/parity/loss counts over comparable rows (±3% parity band), the median ratio, and loss/parity lists. `collectFingerprint` records the runtime environment (Node version, CPU, library versions) alongside every run so historical results stay comparable.
+Reports open with a **head-to-head summary**: win/parity/loss counts over comparable rows (±3% parity band), the median and geomean ratios, a geomean-by-group breakdown (which keeps error-path groups separate from throughput), and loss/parity lists. `collectFingerprint` records the runtime environment (Node version, CPU, library versions) alongside every run so historical results stay comparable.
 
 ## Usage
 

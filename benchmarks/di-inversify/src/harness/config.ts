@@ -43,4 +43,4 @@ export const TSYRINGE = {
 /**
  * @since 0.3.16-canary.0
  */
-export const SERVE_TITLE = "@codefast/di vs inversify — bench history";
+export const SERVE_TITLE = "@codefast/di vs inversify / awilix / tsyringe — bench history";
