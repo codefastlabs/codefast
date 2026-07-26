@@ -2517,6 +2517,20 @@ class DisposedContainerError extends DiError {
 }
 ```
 
+**`ChainNotRegisteredError`** — refinement (`when*`, scope, `on*`, `id()`) được gọi trước `to*()`:
+
+```ts
+class ChainNotRegisteredError extends DiError {
+  readonly code = "CHAIN_NOT_REGISTERED";
+  readonly tokenName: string;
+  // "Cannot refine the binding for token 'Logger' before choosing a target.
+  //  Call a to*() method first — for example .to(SomeClass), .toConstantValue(value)
+  //  or .toDynamic(factory)."
+}
+```
+
+TypeScript đã chặn trường hợp này qua kiểu trả về (§2.4), nên error chỉ tới được từ JavaScript hoặc khi caller cast qua kiểu. Nó tồn tại để misuse **nổ rõ ràng** thay vì âm thầm không làm gì.
+
 ---
 
 ## 11. File structure
@@ -2543,9 +2557,10 @@ packages/di/
 │   │
 │   │  ── container/ ────────────────────────────────────────────────────────
 │   ├── container/
-│   │   ├── container.ts       DefaultContainer + ChainCommitter (một chain ↔ registry)
-│   │   └── binding-builders.ts BindingEntry + BindingChain — chain đăng ký MỘT lần rồi
-│   │                          refine tại chỗ; BindingCommitter interface
+│   │   ├── container.ts       DefaultContainer; collaborator dựng khi dùng lần đầu
+│   │   └── binding-builders.ts BindingChain — MỘT object cho cả chain, đăng ký MỘT lần
+│   │                          rồi refine tại chỗ và tự commit vào registry;
+│   │                          BindingRegistration (chain đăng ký ở đâu, cho ai)
 │   │
 │   │  ── resolution/ (perf-critical core) ──────────────────────────────────
 │   ├── resolution/
@@ -2697,6 +2712,7 @@ export {
   MissingMetadataError,
   MissingScopeContextError,
   NoMatchingBindingError,
+  ChainNotRegisteredError,
   RebindUnboundTokenError,
   ScopeViolationError,
   SyncDisposalNotSupportedError,
@@ -2708,29 +2724,25 @@ export type { ScopeViolationDetails } from "#/errors";
 //
 // @codefast/di/constraints  → same as above constraints re-exports
 //
-// ── Chỉ có subpath, không có ở root index ────────────────────────────────────
+// ── Cũng có subpath riêng (song song với root) ───────────────────────────────
 //
-// @codefast/di/graph-adapters/dot
-//   → toDotGraph(graph: ContainerGraphJson): string
-// @codefast/di/introspection/graph-adapters/cytoscape
-//   → CytoscapeNode, CytoscapeEdge, CytoscapeElements, toCytoscapeGraph()
-// @codefast/di/introspection/graph-adapters/reactflow
-//   → ReactFlowNode, ReactFlowEdge, ReactFlowGraph, toReactFlowGraph()
+// @codefast/di/token, /types, /errors, /module,
+// @codefast/di/decorators/{inject,injectable,lifecycle-decorators},
+// @codefast/di/metadata/metadata-reader-token,
+// @codefast/di/inspector, @codefast/di/dependency-graph,
+// @codefast/di/graph-adapters/{dot,cytoscape,reactflow}
 //
-// Subpath advanced (sinh từ dist/ bởi `codefast mirror` — mirror đường dẫn src/):
-// @codefast/di/registry                          — BindingRegistry
-// @codefast/di/container/binding-builders        — BindingEntry, BindingCommitter
-// @codefast/di/resolution/resolver               — DependencyResolver
-// @codefast/di/resolution/scope                  — ScopeManager
-// @codefast/di/resolution/lifecycle              — LifecycleManager
-// @codefast/di/resolution/binding-select         — selectBinding(), selectAllBindings()
-// @codefast/di/resolution/binding-lookup-cache   — BindingLookupCache
-// @codefast/di/resolution/class-introspector     — ClassIntrospector
-// @codefast/di/resolution/activation-need        — ActivationNeedCache
-// @codefast/di/resolution/instantiation-plan     — InstantiationPlanCompiler
-// @codefast/di/introspection/inspector           — Inspector
+// ── KHÔNG export: engine internals ───────────────────────────────────────────
 //
-// ── Không export (implementation internal) ───────────────────────────────────
+// registry, container/*, binding, constructor-type, metadata/* (trừ reader token)
+// và toàn bộ resolution/* — resolver, scope, lifecycle, binding-select,
+// binding-lookup-cache, class-introspector, activation-need, instantiation-plan,
+// resolution-path, constraints (hàm when* đã có ở root), environment, binding-scope,
+// resolve-options.
+//
+// Chúng mang invariant ghi trong ARCHITECTURE.md. Khi còn là entry point thì mọi
+// refactor nội bộ đều là breaking change — nay đã loại qua `mirror.exclude` trong
+// codefast.config.js. Mọi thứ consumer cần đều có ở root export.
 //
 // buildDependencyGraph() từ dependency-graph.ts — đã wrap thành container.generateDependencyGraph()
 ```
