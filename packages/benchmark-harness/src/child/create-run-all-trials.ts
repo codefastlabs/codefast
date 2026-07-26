@@ -11,7 +11,7 @@ import type { ScenarioTrialResult, TrialPayload } from "#/shared/protocol";
  * long-running suites do not balloon due to GC-heavy beforeEach hooks.
  */
 const FULL_MODE_SAMPLE_GC_STRIDE = 100;
-const MIN_TRIAL_COUNT = 2;
+const MIN_TRIAL_COUNT = 3;
 const FULL_MODE_TRIAL_COUNT = 3;
 const FAST_MODE_BENCH_OPTIONS = {
   time: 20,
@@ -99,7 +99,7 @@ export type CreateRunAllTrialsParameters = Readonly<{
    */
   readonly mode?: BenchMode | undefined;
   /**
-   * Explicit per-scenario trial count (minimum 2); when absent, falls back to `BENCH_TRIALS`,
+   * Explicit per-scenario trial count (minimum 3); when absent, falls back to `BENCH_TRIALS`,
    * then to the mode default.
    */
   readonly trialCount?: number | undefined;

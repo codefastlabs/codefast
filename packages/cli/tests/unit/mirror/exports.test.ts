@@ -75,6 +75,23 @@ function createPackageJsonFilesystemHarness(initialPackageJson: Record<string, u
 }
 
 describe("mirrorConfigSchema", () => {
+  it("accepts an exclude list", () => {
+    const result = mirrorConfigSchema.safeParse({
+      "@codefast/di": { strip: "./introspection/", exclude: ["./resolution/*", "./registry"] },
+    });
+
+    expect(result.success).toBe(true);
+    if (!result.success) {
+      return;
+    }
+    const di = result.data["@codefast/di"];
+    expect(di).not.toBe(false);
+    if (!di) {
+      return;
+    }
+    expect(di.exclude).toEqual(["./resolution/*", "./registry"]);
+  });
+
   it("parses per-package config with defaults applied", () => {
     const result = mirrorConfigSchema.safeParse({
       "@codefast/ui": {
@@ -140,6 +157,60 @@ describe("createPathTransform", () => {
 });
 
 describe("mirror export generation", () => {
+  it("leaves excluded specifiers out of the generated map", async () => {
+    const generatedExports = await generateExports(
+      createDistFilesystemStub([
+        "index.mjs",
+        "token.mjs",
+        "resolution/resolver.mjs",
+        "resolution/scope.mjs",
+        "container/container.mjs",
+      ]),
+      "/virtual/dist",
+      null,
+      false,
+      {},
+      { exclude: ["./resolution/*", "./container/container"] },
+    );
+
+    expect(generatedExports.exports).toHaveProperty(".");
+    expect(generatedExports.exports).toHaveProperty("./token");
+    expect(generatedExports.exports).not.toHaveProperty("./resolution/resolver");
+    expect(generatedExports.exports).not.toHaveProperty("./resolution/scope");
+    expect(generatedExports.exports).not.toHaveProperty("./container/container");
+    expect(generatedExports.jsCount).toBe(2);
+  });
+
+  it("matches exclude patterns against the post-strip specifier", async () => {
+    const generatedExports = await generateExports(
+      createDistFilesystemStub(["index.mjs", "introspection/inspector.mjs", "introspection/dependency-graph.mjs"]),
+      "/virtual/dist",
+      createPathTransform("./introspection/"),
+      false,
+      {},
+      { exclude: ["./inspector"] },
+    );
+
+    // `strip` runs first, so the pattern is written as the specifier a consumer would import.
+    expect(generatedExports.exports).toHaveProperty("./dependency-graph");
+    expect(generatedExports.exports).not.toHaveProperty("./inspector");
+    expect(generatedExports.exports).not.toHaveProperty("./introspection/inspector");
+  });
+
+  it("never excludes the root export", async () => {
+    const generatedExports = await generateExports(
+      createDistFilesystemStub(["index.mjs", "token.mjs"]),
+      "/virtual/dist",
+      null,
+      false,
+      {},
+      { exclude: [".", "./token"] },
+    );
+
+    expect(generatedExports.exports).toHaveProperty(".");
+    expect(generatedExports.exports).not.toHaveProperty("./token");
+  });
+
   it("generates import entries for JavaScript modules without declarations", async () => {
     const generatedExports = await generateExports(
       createDistFilesystemStub(["index.mjs", "child/fingerprint.mjs", "server/client/chunks/react-vendor-abc123.js"]),

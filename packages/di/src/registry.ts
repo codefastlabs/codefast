@@ -3,44 +3,6 @@ import { bindingSlotEquals, bindingSlotToString } from "#/binding";
 import type { Token } from "#/token";
 import type { BindingIdentifier, Constructor, DependencyKey } from "#/types";
 
-// Superset of every binding kind's fields, used to normalize hidden classes below.
-type BindingFieldSuperset = Binding & {
-  readonly scope?: unknown;
-  readonly target?: unknown;
-  readonly factory?: unknown;
-  readonly deps?: unknown;
-  readonly value?: unknown;
-  readonly onActivation?: unknown;
-  readonly onDeactivation?: unknown;
-};
-
-/**
- * Rebuilds a binding with every kind's fields in one fixed key order, so all stored
- * bindings share a single V8 hidden class. Mixed binding kinds otherwise turn the
- * resolver's hot property reads (kind/scope/factory/...) megamorphic, which costs
- * ~30% throughput in processes that exercise many kinds. The value-erasing cast is
- * safe: every declared field is copied verbatim and `kind` stays the discriminant.
- */
-function normalizeBindingShape(binding: Binding): Binding {
-  const source = binding as BindingFieldSuperset;
-  return {
-    kind: source.kind,
-    id: source.id,
-    inFlight: false,
-    frame: undefined,
-    token: source.token,
-    slot: source.slot,
-    predicate: source.predicate,
-    scope: source.scope,
-    target: source.target,
-    factory: source.factory,
-    deps: source.deps,
-    value: source.value,
-    onActivation: source.onActivation,
-    onDeactivation: source.onDeactivation,
-  } as Binding;
-}
-
 /**
  * @since 0.3.16-canary.0
  */
@@ -51,22 +13,35 @@ export class BindingRegistry {
   readonly #bindings = new Map<DependencyKey, Array<Binding>>();
   // Fast lookup by binding ID
   readonly #byId = new Map<BindingIdentifier, Binding>();
-  // Fast lookup for slot { name, tags: [] }
-  readonly #simpleNamed = new Map<DependencyKey, Map<string, Binding>>();
+  // Fast lookup for slot { name, tags: [] } — unallocated until a named binding is registered.
+  #simpleNamed: Map<DependencyKey, Map<string, Binding>> | undefined;
   // Fast path for one default slot binding with no predicate
   readonly #fastDefault = new Map<DependencyKey, Binding>();
-  // Fast lookup for slot { name: undefined, tags: [[key, value]] } with no predicate
-  readonly #simpleTagged = new Map<DependencyKey, Map<string, Map<unknown, Binding>>>();
+  // Fast lookup for slot { name: undefined, tags: [[key, value]] } with no predicate — likewise
+  // unallocated until a tagged binding is registered.
+  #simpleTagged: Map<DependencyKey, Map<string, Map<unknown, Binding>>> | undefined;
 
   /** Monotonic version — increments on every mutation. */
   get version(): number {
     return this.#version;
   }
 
-  /** Add or replace binding using slot-aware last-wins. Returns the displaced binding, if any. */
-  add(uncommittedBinding: Binding): Binding | undefined {
+  /**
+   * Registers a mutation the indexes don't care about (a fluent chain refining scope or an
+   * activation hook in place), so version-stamped resolver caches still invalidate.
+   */
+  touch(): void {
     this.#version += 1;
-    const binding = normalizeBindingShape(uncommittedBinding);
+  }
+
+  /**
+   * Add or replace binding using slot-aware last-wins. Returns the displaced binding, if any.
+   *
+   * @remarks The binding is stored by reference — it must come from `createBinding`, which is
+   * what guarantees the single hidden class the resolver's hot reads depend on.
+   */
+  add(binding: Binding): Binding | undefined {
+    this.#version += 1;
     const key = binding.token as DependencyKey;
     // ✓ TS6.0: Map.getOrInsert (ES2025) replaces the manual get+check+set upsert
     const bindingsForToken = this.#bindings.getOrInsert(key, []);
@@ -100,8 +75,8 @@ export class BindingRegistry {
     const key = token as DependencyKey;
     const bindingsForToken = this.#bindings.get(key) ?? [];
     this.#bindings.delete(key);
-    this.#simpleNamed.delete(key);
-    this.#simpleTagged.delete(key);
+    this.#simpleNamed?.delete(key);
+    this.#simpleTagged?.delete(key);
     this.#fastDefault.delete(key);
     for (const binding of bindingsForToken) {
       this.#byId.delete(binding.id);
@@ -128,8 +103,8 @@ export class BindingRegistry {
       this.#deindexSimpleTaggedBinding(key, binding);
       if (bindingsForToken.length === 0) {
         this.#bindings.delete(key);
-        this.#simpleNamed.delete(key);
-        this.#simpleTagged.delete(key);
+        this.#simpleNamed?.delete(key);
+        this.#simpleTagged?.delete(key);
         this.#fastDefault.delete(key);
       } else {
         this.#refreshFastDefaultForToken(key);
@@ -170,19 +145,19 @@ export class BindingRegistry {
     const all = this.allBindings();
     this.#bindings.clear();
     this.#byId.clear();
-    this.#simpleNamed.clear();
-    this.#simpleTagged.clear();
+    this.#simpleNamed?.clear();
+    this.#simpleTagged?.clear();
     this.#fastDefault.clear();
     return all;
   }
 
   getSimpleNamed(token: Token<unknown> | Constructor, name: string): Binding | undefined {
-    return this.#simpleNamed.get(token as DependencyKey)?.get(name);
+    return this.#simpleNamed?.get(token as DependencyKey)?.get(name);
   }
 
   getSimpleTagged(token: Token<unknown> | Constructor, tagKey: string, tagValue: unknown): Binding | undefined {
     return this.#simpleTagged
-      .get(token as DependencyKey)
+      ?.get(token as DependencyKey)
       ?.get(tagKey)
       ?.get(tagValue);
   }
@@ -203,7 +178,7 @@ export class BindingRegistry {
       return;
     }
     const [tagKey, tagValue] = slot.tags[0]!;
-    const byTagKey = this.#simpleTagged.getOrInsert(tokenKey, new Map<string, Map<unknown, Binding>>());
+    const byTagKey = (this.#simpleTagged ??= new Map()).getOrInsert(tokenKey, new Map<string, Map<unknown, Binding>>());
     const byTagValue = byTagKey.getOrInsert(tagKey, new Map<unknown, Binding>());
     byTagValue.set(tagValue, binding);
   }
@@ -214,7 +189,7 @@ export class BindingRegistry {
       return;
     }
     const [tagKey, tagValue] = slot.tags[0]!;
-    const byTagKey = this.#simpleTagged.get(tokenKey);
+    const byTagKey = this.#simpleTagged?.get(tokenKey);
     if (byTagKey === undefined) {
       return;
     }
@@ -228,7 +203,7 @@ export class BindingRegistry {
       if (byTagValue.size === 0) {
         byTagKey.delete(tagKey);
         if (byTagKey.size === 0) {
-          this.#simpleTagged.delete(tokenKey);
+          this.#simpleTagged!.delete(tokenKey);
         }
       }
     }
@@ -247,7 +222,7 @@ export class BindingRegistry {
     if (slot.name === undefined || slot.tags.length > 0) {
       return;
     }
-    const bindingsByName = this.#simpleNamed.getOrInsert(tokenKey, new Map<string, Binding>());
+    const bindingsByName = (this.#simpleNamed ??= new Map()).getOrInsert(tokenKey, new Map<string, Binding>());
     bindingsByName.set(slot.name, binding);
   }
 
@@ -256,7 +231,7 @@ export class BindingRegistry {
     if (slot.name === undefined || slot.tags.length > 0) {
       return;
     }
-    const bindingsByName = this.#simpleNamed.get(tokenKey);
+    const bindingsByName = this.#simpleNamed?.get(tokenKey);
     if (bindingsByName === undefined) {
       return;
     }
@@ -264,7 +239,7 @@ export class BindingRegistry {
     if (currentBinding?.id === binding.id) {
       bindingsByName.delete(slot.name);
       if (bindingsByName.size === 0) {
-        this.#simpleNamed.delete(tokenKey);
+        this.#simpleNamed!.delete(tokenKey);
       }
     }
   }

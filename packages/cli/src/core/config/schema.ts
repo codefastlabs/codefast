@@ -40,6 +40,11 @@ export const mirrorPackageConfigSchema = z
      *  (`source`, `types`, `import`). No dist/ scan is performed. */
     preserve: z.boolean().optional(),
     strip: z.string().optional(),
+    /** Specifiers to leave out of the generated map, so a package's public surface is a decision
+     *  rather than a consequence of its `dist/` layout. Matched against the specifier as it would
+     *  appear in `exports` (after `strip`); a trailing `/*` excludes a whole subtree. The root
+     *  export and `./package.json` are never excluded. */
+    exclude: z.array(z.string()).optional(),
     exports: z.record(z.string(), z.string()).optional(),
     source: z.union([z.boolean(), z.string()]).default(true),
     types: z.boolean().default(true),

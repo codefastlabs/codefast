@@ -1,9 +1,17 @@
 /**
  * Fluent binding-builder chain behind `container.bind()` / `container.rebind()`.
  *
- * Every builder commits eagerly on construction and re-commits (replacing the
- * previous binding by id) whenever a later fluent call refines the binding —
- * so a chain left half-finished is still a valid registration.
+ * The chain registers once, on the `to*()` call, and every later refinement acts on that same
+ * registered object — so a chain left half-finished is still a valid registration and a
+ * completed one costs a single registry insertion. Refinements the indexes don't care about
+ * (scope, activation hooks) are written in place; only `when*()` re-slots, which re-indexes
+ * under the chain's original id.
+ *
+ * **One object per `bind()`.** A single instance plays every role — the `BindToBuilder` before
+ * `to*()` and the kind-specific builder after — and commits to the registry itself rather than
+ * through a separate committer. The ordering `to*()`-before-`when*()` is enforced by the return
+ * types; a caller who defeats them (plain JavaScript, or a cast) gets a
+ * {@link ChainNotRegisteredError} rather than a silent no-op.
  */
 import type {
   AliasBindingBuilder,
@@ -18,380 +26,281 @@ import type {
   SingletonLifecycleBuilder,
   TransientBindingBuilder,
 } from "#/binding";
-import { DEFAULT_BINDING_SLOT, generateBindingId } from "#/binding";
+import { bindingSlotEquals, createBinding, DEFAULT_BINDING_SLOT, refinableFields } from "#/binding";
 import type { InjectableDependency, ResolvedDependencyValue } from "#/decorators/inject";
 import { normalizeToDescriptor } from "#/decorators/inject";
+import { ChainNotRegisteredError } from "#/errors";
+import type { BindingRegistry } from "#/registry";
 import type { Token } from "#/token";
+import { tokenName } from "#/token";
 import type {
   ActivationHandler,
   BindingIdentifier,
+  BindingScope,
   ConstraintContext,
   Constructor,
   DeactivationHandler,
   ResolutionContext,
 } from "#/types";
 
-// ── Shared builder helpers ────────────────────────────────────────────────────
-
-/**
- * @since 0.5.0-canary.7
- */
-export type CommitFn = <Value>(binding: Binding<Value>, previousId?: BindingIdentifier) => BindingIdentifier;
-
-// Builder payloads that still accept a scope — alias/constant bindings never flow through ConstraintBuilder/ScopeBuilder.
-type ScopedPartialBinding<Value> = Exclude<PartialBinding<Value>, { kind: "alias" } | { kind: "constant" }>;
-
 function updateSlotTag(slot: BindingSlot, tag: string, value: unknown): BindingSlot {
-  const existing = [...slot.tags];
-  const idx = existing.findIndex(([k]) => k === tag);
-  if (idx !== -1) {
-    existing[idx] = [tag, value];
+  const tags = [...slot.tags];
+  const existingIndex = tags.findIndex(([key]) => key === tag);
+  if (existingIndex === -1) {
+    tags.push([tag, value]);
   } else {
-    existing.push([tag, value]);
+    tags[existingIndex] = [tag, value];
   }
-  return { ...slot, tags: existing };
+  return { ...slot, tags };
 }
 
-// ── SlotBuilder ───────────────────────────────────────────────────────────────
-
-abstract class SlotBuilder {
-  protected slot: BindingSlot = DEFAULT_BINDING_SLOT; // ✓ T3-1: no redundant spread
-  protected predicate: ((ctx: ConstraintContext) => boolean) | undefined;
-  protected committedId: BindingIdentifier | undefined;
-
-  protected abstract commit(): void;
-
-  when(predicate: (ctx: ConstraintContext) => boolean): this {
-    this.predicate = predicate;
-    this.commit();
-    return this;
+// True when re-adding `restored` would immediately be displaced again by `current`
+// (both slot-based with equal slots) — in that case the replacement was legitimate.
+function displacesRestoredBinding(current: Binding, restored: Binding): boolean {
+  const currentIsPurePredicate =
+    current.predicate !== undefined && current.slot.name === undefined && current.slot.tags.length === 0;
+  if (currentIsPurePredicate) {
+    return false;
   }
-
-  whenNamed(name: string): this {
-    this.slot = { ...this.slot, name };
-    this.commit();
-    return this;
-  }
-
-  whenTagged(tag: string, value: unknown): this {
-    this.slot = updateSlotTag(this.slot, tag, value);
-    this.commit();
-    return this;
-  }
-
-  whenDefault(): this {
-    return this;
-  }
-
-  id(): BindingIdentifier {
-    return this.committedId!;
-  }
+  return bindingSlotEquals(current.slot, restored.slot);
 }
 
-// ── BindingEntry ──────────────────────────────────────────────────────────────
+/** Record a module's binding id, dropping the id the chain re-slotted away from. */
+function trackBindingForModule(
+  ids: Array<BindingIdentifier>,
+  id: BindingIdentifier,
+  previousId: BindingIdentifier | undefined,
+): void {
+  if (previousId !== undefined) {
+    const previousIndex = ids.indexOf(previousId);
+    if (previousIndex !== -1) {
+      ids.splice(previousIndex, 1);
+    }
+  }
+  ids.push(id);
+}
+
+// ── Registration target ───────────────────────────────────────────────────────
 
 /**
+ * Where a chain registers, and on whose behalf.
+ *
+ * @remarks A container builds one of these and every chain it creates shares it, so `bind()`
+ * allocates the builder and nothing else. `moduleBindingIds` is the id list of the module whose
+ * load created this registration — present exactly when the chain belongs to a module load, which
+ * is what lets the module bookkeeping be a plain array push instead of a keyed lookup.
+ *
  * @since 0.5.0-canary.7
  */
-export class BindingEntry<Value> implements BindToBuilder<Value> {
-  readonly #token: Token<Value> | Constructor<Value>;
-  readonly #commitBinding: CommitFn;
+export interface BindingRegistration {
+  readonly registry: BindingRegistry;
+  readonly moduleBindingIds: Array<BindingIdentifier> | undefined;
+}
 
-  constructor(token: Token<Value> | Constructor<Value>, commitBinding: CommitFn) {
+// ── BindingChain ──────────────────────────────────────────────────────────────
+
+/**
+ * The one builder behind `bind()` and every `to*()` return type. Each interface exposes only the
+ * calls that are legal at that point in the chain; the runtime object is shared because every
+ * refinement is the same operation — narrow the registered binding, keep its id.
+ *
+ * @since 0.5.0-canary.7
+ */
+export class BindingChain<Value>
+  implements
+    AliasBindingBuilder,
+    BindingBuilder<Value>,
+    BindToBuilder<Value>,
+    ConstantBindingBuilder<Value>,
+    ScopedBindingBuilder<Value>,
+    SingletonBindingBuilder<Value>,
+    SingletonLifecycleBuilder<Value>,
+    TransientBindingBuilder<Value>
+{
+  // Undefined until a `to*()` call registers the binding.
+  #binding: Binding<Value> | undefined;
+  // Allocated only by a chain that actually displaces something — most never do.
+  #displacedByChain: Array<Binding> | undefined;
+  readonly #token: Token<Value> | Constructor<Value>;
+  readonly #registration: BindingRegistration;
+
+  constructor(token: Token<Value> | Constructor<Value>, registration: BindingRegistration) {
     this.#token = token;
-    this.#commitBinding = commitBinding;
+    this.#registration = registration;
   }
+
+  /** The registered binding, or a loud failure if no `to*()` has run yet. */
+  #registered(): Binding<Value> {
+    if (this.#binding === undefined) {
+      throw new ChainNotRegisteredError(tokenName(this.#token));
+    }
+    return this.#binding;
+  }
+
+  #register(partial: PartialBinding<Value>): this {
+    // Each `to*()` starts its own registration, so anything a previous one displaced is not this
+    // registration's to restore.
+    this.#displacedByChain = undefined;
+    this.#binding = createBinding(partial, this.#token, DEFAULT_BINDING_SLOT, undefined);
+    this.#commit(this.#binding, undefined);
+    return this;
+  }
+
+  // ── Registration ───────────────────────────────────────────────────────────
 
   to(type: Constructor<Value>): BindingBuilder<Value> {
-    return new ConstraintBuilder<Value>(
-      this.#token,
-      { kind: "class", target: type, scope: "transient" },
-      this.#commitBinding,
-    );
+    return this.#register({ kind: "class", target: type, scope: "transient" });
   }
 
   toSelf(): BindingBuilder<Value> {
     if (typeof this.#token !== "function") {
       throw new Error("toSelf() requires token to be a Constructor");
     }
-    return new ConstraintBuilder<Value>(
-      this.#token,
-      { kind: "class", target: this.#token, scope: "transient" },
-      this.#commitBinding,
-    );
+    return this.#register({ kind: "class", target: this.#token, scope: "transient" });
   }
 
   toConstantValue(value: Value): ConstantBindingBuilder<Value> {
-    return new ConstantBuilder<Value>(this.#token, value, this.#commitBinding);
+    return this.#register({ kind: "constant", scope: "singleton", value });
   }
 
   toDynamic(factory: (ctx: ResolutionContext) => Value): BindingBuilder<Value> {
-    return new ConstraintBuilder<Value>(
-      this.#token,
-      { kind: "dynamic", factory, scope: "transient" },
-      this.#commitBinding,
-    );
+    return this.#register({ kind: "dynamic", factory, scope: "transient" });
   }
 
   toDynamicAsync(factory: (ctx: ResolutionContext) => Promise<Value>): BindingBuilder<Value> {
-    return new ConstraintBuilder<Value>(
-      this.#token,
-      { kind: "dynamic-async", factory, scope: "transient" },
-      this.#commitBinding,
-    );
+    return this.#register({ kind: "dynamic-async", factory, scope: "transient" });
   }
 
   toResolved<const Deps extends ReadonlyArray<InjectableDependency>>(
     factory: (...args: { [K in keyof Deps]: ResolvedDependencyValue<NoInfer<Deps>[K]> }) => Value,
     deps: Deps,
   ): BindingBuilder<Value> {
-    const normalizedDeps = deps.map((dependency) => normalizeToDescriptor(dependency));
-    return new ConstraintBuilder<Value>(
-      this.#token,
-      {
-        kind: "resolved",
-        factory: factory as (...args: Array<unknown>) => Value,
-        deps: normalizedDeps,
-        scope: "transient",
-      },
-      this.#commitBinding,
-    );
+    return this.#register({
+      kind: "resolved",
+      deps: deps.map((dependency) => normalizeToDescriptor(dependency)),
+      factory: factory as (...args: Array<unknown>) => Value,
+      scope: "transient",
+    });
   }
 
   toResolvedAsync<const Deps extends ReadonlyArray<InjectableDependency>>(
     factory: (...args: { [K in keyof Deps]: ResolvedDependencyValue<NoInfer<Deps>[K]> }) => Promise<Value>,
     deps: Deps,
   ): BindingBuilder<Value> {
-    const normalizedDeps = deps.map((dependency) => normalizeToDescriptor(dependency));
-    return new ConstraintBuilder<Value>(
-      this.#token,
-      {
-        kind: "resolved-async",
-        factory: factory as (...args: Array<unknown>) => Promise<Value>,
-        deps: normalizedDeps,
-        scope: "transient",
-      },
-      this.#commitBinding,
-    );
+    return this.#register({
+      kind: "resolved-async",
+      deps: deps.map((dependency) => normalizeToDescriptor(dependency)),
+      factory: factory as (...args: Array<unknown>) => Promise<Value>,
+      scope: "transient",
+    });
   }
 
   toAlias(target: Token<Value> | Constructor<Value>): AliasBindingBuilder {
-    return new AliasBuilder<Value>(this.#token, target, this.#commitBinding);
-  }
-}
-
-// ── ConstraintBuilder ─────────────────────────────────────────────────────────
-
-class ConstraintBuilder<Value> extends SlotBuilder implements BindingBuilder<Value> {
-  readonly #token: Token<Value> | Constructor<Value>;
-  readonly #partial: ScopedPartialBinding<Value>;
-  readonly #commitBinding: CommitFn;
-
-  constructor(token: Token<Value> | Constructor<Value>, partial: ScopedPartialBinding<Value>, commitBinding: CommitFn) {
-    super();
-    this.#token = token;
-    this.#partial = partial;
-    this.#commitBinding = commitBinding;
-    this.commit();
+    return this.#register({ kind: "alias", target });
   }
 
-  protected commit(): void {
-    const previousId = this.committedId;
-    const binding: Binding<Value> = {
-      ...this.#partial,
-      id: generateBindingId(),
-      inFlight: false,
-      token: this.#token,
-      slot: this.slot,
-      predicate: this.predicate,
-    };
-    this.committedId = this.#commitBinding(binding, previousId);
+  // ── Refinement ─────────────────────────────────────────────────────────────
+
+  // Slot and predicate are what the registry indexes on, so a re-slot rebuilds the binding and
+  // re-registers it — under the original id, keeping `id()` stable for the whole chain.
+  #reslot(slot: BindingSlot, predicate: ((ctx: ConstraintContext) => boolean) | undefined): this {
+    const previous = this.#registered();
+    this.#binding = createBinding(previous, previous.token, slot, predicate, previous.id);
+    this.#commit(this.#binding, previous.id);
+    return this;
+  }
+
+  #withScope(scope: BindingScope): this {
+    refinableFields(this.#registered()).scope = scope;
+    this.#registration.registry.touch();
+    return this;
+  }
+
+  when(predicate: (ctx: ConstraintContext) => boolean): this {
+    return this.#reslot(this.#registered().slot, predicate);
+  }
+
+  whenNamed(name: string): this {
+    return this.#reslot({ ...this.#registered().slot, name }, this.#registered().predicate);
+  }
+
+  whenTagged(tag: string, value: unknown): this {
+    const binding = this.#registered();
+    return this.#reslot(updateSlotTag(binding.slot, tag, value), binding.predicate);
+  }
+
+  whenDefault(): this {
+    // The default slot is what a fresh registration already has, so there is nothing to re-slot —
+    // but an unregistered chain must fail here exactly as it does in every other refinement.
+    this.#registered();
+    return this;
   }
 
   singleton(): SingletonBindingBuilder<Value> {
-    const previousId = this.committedId;
-    this.committedId = undefined;
-    return new ScopeBuilder<Value>(
-      this.#token,
-      { ...this.#partial, scope: "singleton" },
-      this.slot,
-      this.predicate,
-      this.#commitBinding,
-      previousId,
-    );
+    return this.#withScope("singleton");
   }
 
   transient(): TransientBindingBuilder<Value> {
-    const previousId = this.committedId;
-    this.committedId = undefined;
-    return new ScopeBuilder<Value>(
-      this.#token,
-      { ...this.#partial, scope: "transient" },
-      this.slot,
-      this.predicate,
-      this.#commitBinding,
-      previousId,
-    );
+    return this.#withScope("transient");
   }
 
   scoped(): ScopedBindingBuilder<Value> {
-    const previousId = this.committedId;
-    this.committedId = undefined;
-    return new ScopeBuilder<Value>(
-      this.#token,
-      { ...this.#partial, scope: "scoped" },
-      this.slot,
-      this.predicate,
-      this.#commitBinding,
-      previousId,
-    );
-  }
-}
-
-// ── ScopeBuilder ─────────────────────────────────────────────────────────────
-
-class ScopeBuilder<Value> implements SingletonBindingBuilder<Value>, TransientBindingBuilder<Value> {
-  #onActivation: ActivationHandler<Value> | undefined;
-  #onDeactivation: DeactivationHandler<Value> | undefined;
-  #committedId: BindingIdentifier | undefined;
-
-  readonly #token: Token<Value> | Constructor<Value>;
-  readonly #partial: ScopedPartialBinding<Value>;
-  readonly #slot: BindingSlot;
-  readonly #predicate: ((ctx: ConstraintContext) => boolean) | undefined;
-  readonly #commitBinding: CommitFn;
-  readonly #initialPreviousId: BindingIdentifier | undefined;
-
-  constructor(
-    token: Token<Value> | Constructor<Value>,
-    partial: ScopedPartialBinding<Value>,
-    slot: BindingSlot,
-    predicate: ((ctx: ConstraintContext) => boolean) | undefined,
-    commitBinding: CommitFn,
-    initialPreviousId?: BindingIdentifier,
-  ) {
-    this.#token = token;
-    this.#partial = partial;
-    this.#slot = slot;
-    this.#predicate = predicate;
-    this.#commitBinding = commitBinding;
-    this.#initialPreviousId = initialPreviousId;
-    this.#commit();
-  }
-
-  #commit(): void {
-    const previousId = this.#committedId ?? this.#initialPreviousId;
-    const binding: Binding<Value> = {
-      ...this.#partial,
-      id: generateBindingId(),
-      inFlight: false,
-      token: this.#token,
-      slot: this.#slot,
-      predicate: this.#predicate,
-      onActivation: this.#onActivation,
-      onDeactivation: this.#onDeactivation,
-    };
-    this.#committedId = this.#commitBinding(binding, previousId);
+    return this.#withScope("scoped");
   }
 
   onActivation(fn: ActivationHandler<Value>): this {
-    this.#onActivation = fn;
-    this.#commit();
+    refinableFields(this.#registered()).onActivation = fn;
+    this.#registration.registry.touch();
     return this;
   }
 
   onDeactivation(fn: DeactivationHandler<Value>): this {
-    this.#onDeactivation = fn;
-    this.#commit();
+    refinableFields(this.#registered()).onDeactivation = fn;
+    this.#registration.registry.touch();
     return this;
   }
 
   id(): BindingIdentifier {
-    return this.#committedId!;
-  }
-}
-
-// ── ConstantBuilder ───────────────────────────────────────────────────────────
-
-class ConstantBuilder<Value>
-  extends SlotBuilder
-  implements ConstantBindingBuilder<Value>, SingletonLifecycleBuilder<Value>
-{
-  #onActivation: ActivationHandler<Value> | undefined;
-  #onDeactivation: DeactivationHandler<Value> | undefined;
-
-  readonly #token: Token<Value> | Constructor<Value>;
-  readonly #value: Value;
-  readonly #commitBinding: CommitFn;
-
-  constructor(token: Token<Value> | Constructor<Value>, value: Value, commitBinding: CommitFn) {
-    super();
-    this.#token = token;
-    this.#value = value;
-    this.#commitBinding = commitBinding;
-    this.commit();
+    return this.#registered().id;
   }
 
-  protected commit(): void {
-    const previousId = this.committedId;
-    const binding: Binding<Value> = {
-      kind: "constant",
-      id: generateBindingId(),
-      inFlight: false,
-      token: this.#token,
-      slot: this.slot,
-      predicate: this.predicate,
-      value: this.#value,
-      scope: "singleton",
-      onActivation: this.#onActivation,
-      onDeactivation: this.#onDeactivation,
-    };
-    this.committedId = this.#commitBinding(binding, previousId);
+  // ── Registry ───────────────────────────────────────────────────────────────
+
+  /**
+   * Register `binding`, first removing `previousId` when the chain is re-slotting.
+   *
+   * @remarks A `when*()` that follows `to*()` re-slots an already-live binding and can displace one
+   * the final shape would never conflict with. Those stay parked in `#displacedByChain` until the
+   * chain settles, then get restored.
+   */
+  #commit(binding: Binding<Value>, previousId: BindingIdentifier | undefined): void {
+    const { registry, moduleBindingIds } = this.#registration;
+    // The registry is heterogeneous by design — one instance holds every value type — so the
+    // chain's `Binding<Value>` is erased once, here, rather than at each call site.
+    const registered = binding as Binding;
+
+    if (previousId !== undefined) {
+      registry.removeById(previousId);
+    }
+    const displaced = registry.add(registered);
+    if (displaced !== undefined) {
+      (this.#displacedByChain ??= []).push(displaced);
+    }
+    if (previousId !== undefined && this.#displacedByChain !== undefined) {
+      this.#restoreNonConflicting(registered, this.#displacedByChain);
+    }
+    if (moduleBindingIds !== undefined) {
+      trackBindingForModule(moduleBindingIds, registered.id, previousId);
+    }
   }
 
-  onActivation(fn: ActivationHandler<Value>): this {
-    this.#onActivation = fn;
-    this.commit();
-    return this;
-  }
-
-  onDeactivation(fn: DeactivationHandler<Value>): this {
-    this.#onDeactivation = fn;
-    this.commit();
-    return this;
-  }
-}
-
-// ── AliasBuilder ──────────────────────────────────────────────────────────────
-
-class AliasBuilder<Value> extends SlotBuilder implements AliasBindingBuilder {
-  readonly #token: Token<Value> | Constructor<Value>;
-  readonly #target: Token<Value> | Constructor<Value>;
-  readonly #commitBinding: CommitFn;
-
-  constructor(
-    token: Token<Value> | Constructor<Value>,
-    target: Token<Value> | Constructor<Value>,
-    commitBinding: CommitFn,
-  ) {
-    super();
-    this.#token = token;
-    this.#target = target;
-    this.#commitBinding = commitBinding;
-    this.commit();
-  }
-
-  protected commit(): void {
-    const previousId = this.committedId;
-    const binding: Binding<Value> = {
-      kind: "alias",
-      id: generateBindingId(),
-      inFlight: false,
-      token: this.#token,
-      slot: this.slot,
-      predicate: this.predicate,
-      target: this.#target,
-    };
-    this.committedId = this.#commitBinding(binding, previousId);
+  #restoreNonConflicting(binding: Binding, displaced: Array<Binding>): void {
+    for (let index = displaced.length - 1; index >= 0; index -= 1) {
+      const candidate = displaced[index]!;
+      if (!displacesRestoredBinding(binding, candidate)) {
+        this.#registration.registry.add(candidate);
+        displaced.splice(index, 1);
+      }
+    }
   }
 }

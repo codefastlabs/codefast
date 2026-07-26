@@ -99,6 +99,7 @@ export async function syncExportsForWorkspacePackage(
       source: pkgConfig?.source ?? true,
       types: pkgConfig?.types ?? true,
       import: pkgConfig?.import ?? true,
+      ...(pkgConfig?.exclude === undefined ? {} : { exclude: pkgConfig.exclude }),
       resolveSourcePath,
     };
 

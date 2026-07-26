@@ -233,6 +233,9 @@ export interface GenerateExportsOptions {
   types?: boolean;
   /** Include the `import` condition (default `true`). */
   import?: boolean;
+  /** Specifiers to leave out of the generated map — see `mirror.<pkg>.exclude`. Matched against
+   *  the post-`strip` specifier; a trailing `/*` excludes the whole subtree. */
+  exclude?: ReadonlyArray<string>;
   /** Override the default source path derivation. Receives the module path relative to
    *  `dist/` (e.g. `"components/button"`) and returns the full source specifier
    *  (e.g. `"./src/components/button.tsx"`). When omitted, falls back to `./src/<path>.ts`. */
@@ -244,6 +247,35 @@ export interface GenerateExportsOptions {
  *
  * @since 0.3.16-canary.0
  */
+/**
+ * Predicate for `mirror.<pkg>.exclude`. A pattern ending in `/*` drops the whole subtree; any other
+ * pattern must match the specifier exactly. The root export is never excluded — a package with no
+ * root export is not installable — and `./package.json` is added after this filter runs.
+ */
+function createExcludeMatcher(patterns: ReadonlyArray<string> | undefined): (specifier: string) => boolean {
+  if (patterns === undefined || patterns.length === 0) {
+    return () => false;
+  }
+  const exactSpecifiers = new Set<string>();
+  const subtreePrefixes: Array<string> = [];
+  for (const pattern of patterns) {
+    if (pattern.endsWith("/*")) {
+      subtreePrefixes.push(`${pattern.slice(0, -1)}`);
+    } else {
+      exactSpecifiers.add(pattern);
+    }
+  }
+  return (specifier: string): boolean => {
+    if (specifier === ".") {
+      return false;
+    }
+    if (exactSpecifiers.has(specifier)) {
+      return true;
+    }
+    return subtreePrefixes.some((prefix) => specifier.startsWith(prefix));
+  };
+}
+
 export async function generateExports(
   fileSystemService: DistFilesystem,
   distDir: string,
@@ -276,6 +308,7 @@ export async function generateExports(
     };
   }
 
+  const isExcluded = createExcludeMatcher(options?.exclude);
   const moduleExportsBySpecifier: Record<string, ExportEntry> = {};
   const originalPathBySpecifier: ExportOriginalPathBySpecifier = {};
   for (const distModuleEntry of exportableModules) {
@@ -283,6 +316,10 @@ export async function generateExports(
     let exportPath = originalExportPath;
     if (pathTransform) {
       exportPath = pathTransform(exportPath);
+    }
+
+    if (isExcluded(exportPath)) {
+      continue;
     }
 
     const exportEntry: ExportEntry = {};

@@ -4,7 +4,7 @@ Head-to-head performance harness: **@codefast/di** vs **InversifyJS 8** (full su
 
 Want the numbers and the honest caveats (including where `@codefast/di` loses)? See **[RESULTS.md](./RESULTS.md)**. New to this package? See **[BENCH_GUIDE.md](./BENCH_GUIDE.md)** for a newcomer-oriented glossary, mental model (parent → subprocess → tinybench), and how to read `bench-results/latest.md`.
 
-This is the benchmark _for shipping_. It exists so a regression in `@codefast/di` hot paths cannot silently land on main, and so the performance claims — `@codefast/di` is faster on most of the graphs you actually wire, with the exceptions ([RESULTS.md](./RESULTS.md)) called out rather than hidden — are something a skeptical reader can re-run in 30 seconds.
+This is the benchmark _for shipping_. It exists so a regression in `@codefast/di` hot paths cannot silently land on main, and so the performance claims — currently a clean sweep of all 43 comparable scenarios against InversifyJS, with the one remaining exception against a leaner container called out rather than hidden ([RESULTS.md](./RESULTS.md)) — are something a skeptical reader can re-run in 30 seconds. It is also where losses get found: every scenario in the suite that di once lost was fixed only after this harness made the loss impossible to ignore.
 
 ## Philosophy
 
@@ -23,7 +23,7 @@ A consequence: scenarios that would otherwise bake in a per-library decorator se
 
 ### Trials, medians, IQR
 
-Each library runs **N trials** back-to-back (minimum 2 trials in normal/fast runs, 3 with `BENCH_FULL=1`). Every trial constructs a fresh `Bench` instance so tinybench's internal warmup fires per trial, reducing (though never eliminating) cross-trial correlation from JIT state. Override with `BENCH_TRIALS` (`>=2`).
+Each library runs **N trials** back-to-back (3 minimum; **use 5 for anything publishable** — at 3 trials 70% of rows exceed the 5% IQR this report calls noisy, at 5 trials 30% do, and closing every other application changes neither figure). Every trial constructs a fresh `Bench` instance so tinybench's internal warmup fires per trial, reducing (though never eliminating) cross-trial correlation from JIT state. Override with `BENCH_TRIALS` (`>=3`). Two trials cannot separate a real change from ambient noise — a median of two is just the mean of two. The noise here is **throughput-correlated, not load-correlated**: rows above ~50M ops/s carry 10–25% IQR and rows below ~15M carry 2–5%, and two runs of the same build with and without a browser eating a core flagged the same rows to within 1–2 percentage points.
 
 The reporter collapses N per-trial results into:
 
@@ -91,7 +91,7 @@ pnpm check-types           # tsc --noEmit over src (editor-default project)
 | --------------- | -------------- | ---------------------------------------------------------------------------------- |
 | `BENCH_FAST`    | `1`            | Quick smoke profile (shorter tinybench sampling windows).                          |
 | `BENCH_FULL`    | `1`            | Slower, publishable profile with GC exposed and longer sampling.                   |
-| `BENCH_TRIALS`  | integer `>= 2` | Overrides trial count; lower/invalid values are rejected and fall back to default. |
+| `BENCH_TRIALS`  | integer `>= 3` | Overrides trial count; lower/invalid values are rejected and fall back to default. |
 | `BENCH_VERBOSE` | `1`            | Forwards child subprocess stdout/stderr for debugging.                             |
 | `BENCH_ISOLATE` | `1`            | One subprocess per scenario per library — removes cross-scenario IC wear.          |
 

@@ -6,6 +6,31 @@ import { token } from "#/token";
 import type { BindingScope, ResolutionContext } from "#/types";
 
 describe("Container public API inference", () => {
+  /**
+   * SPEC §2.4 / §5.6 states the to*()-before-when*() ordering is enforced by the compiler through
+   * each step's return type. That is this assertion's job; the runtime half of the same contract —
+   * a ChainNotRegisteredError for callers without types — lives in
+   * `tests/unit/container/bind-to-builder-order.test.ts`.
+   */
+  it("keeps refinements off the object bind() returns", () => {
+    const NumberToken = token<number>("bind-order-types");
+    const container = Container.create();
+    const bindBuilder = container.bind(NumberToken);
+
+    expectTypeOf(bindBuilder).toHaveProperty("toConstantValue");
+    expectTypeOf(bindBuilder).not.toHaveProperty("when");
+    expectTypeOf(bindBuilder).not.toHaveProperty("whenNamed");
+    expectTypeOf(bindBuilder).not.toHaveProperty("whenTagged");
+    expectTypeOf(bindBuilder).not.toHaveProperty("whenDefault");
+    expectTypeOf(bindBuilder).not.toHaveProperty("singleton");
+    expectTypeOf(bindBuilder).not.toHaveProperty("transient");
+    expectTypeOf(bindBuilder).not.toHaveProperty("scoped");
+    expectTypeOf(bindBuilder).not.toHaveProperty("id");
+
+    // ...and they appear only once a to*() has narrowed the chain.
+    expectTypeOf(bindBuilder.toConstantValue(1)).toHaveProperty("whenNamed");
+  });
+
   it("resolveOptional widens to undefined union", () => {
     const StringToken = token<string>("s");
     const container = Container.create();

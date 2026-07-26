@@ -18,7 +18,7 @@ export const BENCH_VERBOSE_ENV_KEY = "BENCH_VERBOSE";
  */
 export const BENCH_PORT_ENV_KEY = "BENCH_PORT";
 /**
- * Overrides the per-scenario trial count (minimum 2); unset/empty uses the mode default.
+ * Overrides the per-scenario trial count (minimum 3); unset/empty uses the mode default.
  *
  * @since 0.5.0-canary.7
  */

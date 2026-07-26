@@ -14,6 +14,23 @@ const config = {
     "@codefast/tailwind-variants": {
       preserve: true,
     },
+    // The engine's collaborators carry invariants documented in ARCHITECTURE.md and are not a
+    // supported surface — publishing them made every internal refactor a breaking change. `strip`
+    // also keeps the introspection entry points at the specifiers they shipped under before those
+    // modules moved into `src/introspection/` (`./graph-adapters/*`, `./dependency-graph`).
+    "@codefast/di": {
+      strip: "./introspection/",
+      exclude: [
+        "./resolution/*",
+        "./registry",
+        "./container/*",
+        "./binding",
+        "./constructor-type",
+        "./metadata/metadata-keys",
+        "./metadata/metadata-types",
+        "./metadata/symbol-metadata-reader",
+      ],
+    },
     // Generate exports from dist/ like every other library package; the css directory is a
     // raw source passthrough (no build output), so it needs an explicit mapping.
     "@codefast/tracking": {

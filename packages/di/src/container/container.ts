@@ -1,6 +1,7 @@
 import type { Binding, BindToBuilder } from "#/binding";
-import { bindingSlotEquals } from "#/binding";
-import { BindingEntry } from "#/container/binding-builders";
+import { NO_INSTANCE } from "#/binding";
+import type { BindingRegistration } from "#/container/binding-builders";
+import { BindingChain } from "#/container/binding-builders";
 import type { AutoRegisterRegistry } from "#/decorators/injectable";
 import {
   AsyncModuleLoadError,
@@ -37,17 +38,6 @@ import type {
   DeactivationHandler,
   ResolveOptions,
 } from "#/types";
-
-// True when re-adding `restored` would immediately be displaced again by `current`
-// (both slot-based with equal slots) — in that case the replacement was legitimate.
-function displacesRestoredBinding(current: Binding, restored: Binding): boolean {
-  const currentIsPurePredicate =
-    current.predicate !== undefined && current.slot.name === undefined && current.slot.tags.length === 0;
-  if (currentIsPurePredicate) {
-    return false;
-  }
-  return bindingSlotEquals(current.slot, restored.slot);
-}
 
 // ── Container interface ────────────────────────────────────────────────────────
 
@@ -119,21 +109,32 @@ class DefaultContainer implements Container {
   readonly #scope: ScopeManager;
   readonly #lifecycle: LifecycleManager;
   #resolver!: DependencyResolver;
-  readonly #inspector: Inspector;
+  // Built on the first introspecting call — a container that only binds and resolves never needs it.
+  #inspector: Inspector | undefined;
   readonly #parent: DefaultContainer | undefined;
 
-  // Module tracking: module -> ref count
-  readonly #moduleRefs = new Map<object, number>();
+  // Module tracking: module -> ref count. Both tables stay unallocated until a module is loaded.
+  #moduleRefs: Map<object, number> | undefined;
   // Module bindings: module -> array of binding IDs registered by it
-  readonly #moduleBindingIds = new Map<object, Array<BindingIdentifier>>();
+  #moduleBindingIds: Map<object, Array<BindingIdentifier>> | undefined;
+  // One shared registration for every chain this container's own `bind()` creates.
+  #registration: BindingRegistration | undefined;
 
   constructor(parent?: DefaultContainer) {
     this.#parent = parent;
     this.#registry = new BindingRegistry();
     this.#scope = new ScopeManager(parent !== undefined);
     this.#lifecycle = new LifecycleManager();
-    this.#inspector = new Inspector(this.#registry, this.#scope, parent !== undefined, () => this.#disposed);
     this.#initResolver();
+  }
+
+  #getInspector(): Inspector {
+    return (this.#inspector ??= new Inspector(
+      this.#registry,
+      this.#scope,
+      this.#parent !== undefined,
+      () => this.#disposed,
+    ));
   }
 
   #initResolver(): void {
@@ -176,63 +177,24 @@ class DefaultContainer implements Container {
     return this.#createBindToBuilder(token);
   }
 
+  /** The registration every non-module chain shares, so `bind()` allocates only the builder. */
+  #ownRegistration(): BindingRegistration {
+    return (this.#registration ??= { registry: this.#registry, moduleBindingIds: undefined });
+  }
+
+  /** One registration per module load, holding that module's id list directly. */
+  #moduleRegistration(moduleRef: object): BindingRegistration {
+    return {
+      registry: this.#registry,
+      moduleBindingIds: (this.#moduleBindingIds ??= new Map()).getOrInsert(moduleRef, []),
+    };
+  }
+
   #createBindToBuilder<const Value>(
     token: Token<Value> | Constructor<Value>,
-    moduleRef?: object,
+    registration: BindingRegistration = this.#ownRegistration(),
   ): BindToBuilder<Value> {
-    const registry = this.#registry;
-    // Bindings displaced by this fluent chain's commits — each stays restorable
-    // until the chain settles on a shape that genuinely conflicts with it. A list,
-    // because one chain can displace several bindings (the default at an
-    // intermediate commit, then a named/tagged binding at the final one).
-    const displacedByChain: Array<Binding> = [];
-
-    const commitBinding = <BindingValue>(
-      binding: Binding<BindingValue>,
-      previousId?: BindingIdentifier,
-    ): BindingIdentifier => {
-      if (previousId !== undefined) {
-        registry.removeById(previousId);
-        if (moduleRef !== undefined) {
-          const ids = this.#moduleBindingIds.get(moduleRef);
-          if (ids !== undefined) {
-            const idx = ids.indexOf(previousId);
-            if (idx !== -1) {
-              ids.splice(idx, 1);
-            }
-          }
-        }
-      }
-      // The registry stores value-erased bindings — this is the single erasure point for the builder chain.
-      const displaced = registry.add(binding as Binding);
-      if (displaced !== undefined) {
-        // A fluent chain commits eagerly on each refinement, so an intermediate
-        // commit can displace a binding that the final shape would never conflict
-        // with. Remember it so a later re-commit that morphs away (named/tagged
-        // slot, pure predicate) can restore it.
-        displacedByChain.push(displaced);
-      }
-      if (previousId !== undefined && displacedByChain.length > 0) {
-        for (let index = displacedByChain.length - 1; index >= 0; index -= 1) {
-          const candidate = displacedByChain[index]!;
-          if (!displacesRestoredBinding(binding as Binding, candidate)) {
-            registry.add(candidate);
-            displacedByChain.splice(index, 1);
-          }
-        }
-      }
-      if (moduleRef !== undefined) {
-        let ids = this.#moduleBindingIds.get(moduleRef);
-        if (ids === undefined) {
-          ids = [];
-          this.#moduleBindingIds.set(moduleRef, ids);
-        }
-        ids.push(binding.id);
-      }
-      return binding.id;
-    };
-
-    return new BindingEntry<Value>(token, commitBinding);
+    return new BindingChain<Value>(token, registration);
   }
 
   unbind(tokenOrId: Token<unknown> | Constructor | BindingIdentifier): void {
@@ -255,9 +217,9 @@ class DefaultContainer implements Container {
   #drainSingletons(bindings: ReadonlyArray<Binding>): Array<[Binding, unknown]> {
     const pairs: Array<[Binding, unknown]> = [];
     for (const binding of bindings) {
-      if (this.#scope.hasSingleton(binding.id)) {
-        pairs.push([binding, this.#scope.getSingleton(binding.id)]);
-        this.#scope.deleteSingleton(binding.id);
+      if (binding.instance !== NO_INSTANCE) {
+        pairs.push([binding, binding.instance]);
+        this.#scope.deleteSingleton(binding);
       }
     }
     return pairs;
@@ -319,12 +281,13 @@ class DefaultContainer implements Container {
         throw new AsyncModuleLoadError(module.name);
       }
       const moduleRef = module as object;
-      const existing = this.#moduleRefs.get(moduleRef);
+      const moduleRefs = (this.#moduleRefs ??= new Map());
+      const existing = moduleRefs.get(moduleRef);
       if (existing !== undefined) {
-        this.#moduleRefs.set(moduleRef, existing + 1);
+        moduleRefs.set(moduleRef, existing + 1);
         continue;
       }
-      this.#moduleRefs.set(moduleRef, 1);
+      moduleRefs.set(moduleRef, 1);
       const builder = this.#createModuleBuilder(moduleRef);
       module[MODULE_SETUP](builder);
     }
@@ -359,12 +322,13 @@ class DefaultContainer implements Container {
 
   async #loadOneModuleAsync(module: SyncModule | AsyncModule): Promise<void> {
     const moduleRef = module as object;
-    const existing = this.#moduleRefs.get(moduleRef);
+    const moduleRefs = (this.#moduleRefs ??= new Map());
+    const existing = moduleRefs.get(moduleRef);
     if (existing !== undefined) {
-      this.#moduleRefs.set(moduleRef, existing + 1);
+      moduleRefs.set(moduleRef, existing + 1);
       return;
     }
-    this.#moduleRefs.set(moduleRef, 1);
+    moduleRefs.set(moduleRef, 1);
 
     if (isSyncModule(module)) {
       const builder = this.#createModuleBuilder(moduleRef);
@@ -381,9 +345,10 @@ class DefaultContainer implements Container {
   }
 
   #createModuleBuilder(moduleRef: object): ModuleBuilder {
+    const registration = this.#moduleRegistration(moduleRef);
     return {
       bind: <const Value>(token: Token<Value> | Constructor<Value>): BindToBuilder<Value> =>
-        this.#createBindToBuilder(token, moduleRef),
+        this.#createBindToBuilder(token, registration),
       import: (...modules: Array<SyncModule>): void => {
         this.#loadSyncModules(modules);
       },
@@ -391,9 +356,10 @@ class DefaultContainer implements Container {
   }
 
   #createAsyncModuleBuilder(moduleRef: object, importPromises: Array<Promise<void>>): AsyncModuleBuilder {
+    const registration = this.#moduleRegistration(moduleRef);
     return {
       bind: <const Value>(token: Token<Value> | Constructor<Value>): BindToBuilder<Value> =>
-        this.#createBindToBuilder(token, moduleRef),
+        this.#createBindToBuilder(token, registration),
       import: (...modules: Array<SyncModule | AsyncModule>): void => {
         for (const module of modules) {
           importPromises.push(this.#loadOneModuleAsync(module));
@@ -411,17 +377,17 @@ class DefaultContainer implements Container {
 
   /** Unregister module bindings and collect [binding, instance] pairs for deactivation. */
   #removeModuleBindings(ref: object): Array<[Binding, unknown]> {
-    this.#moduleRefs.delete(ref);
-    const ids = this.#moduleBindingIds.get(ref) ?? [];
-    this.#moduleBindingIds.delete(ref);
+    this.#moduleRefs?.delete(ref);
+    const ids = this.#moduleBindingIds?.get(ref) ?? [];
+    this.#moduleBindingIds?.delete(ref);
     const pairs: Array<[Binding, unknown]> = [];
     for (const id of ids) {
       const binding = this.#registry.getById(id);
       if (binding !== undefined) {
         this.#registry.removeById(id);
-        if (this.#scope.hasSingleton(id)) {
-          pairs.push([binding, this.#scope.getSingleton(id)]);
-          this.#scope.deleteSingleton(id);
+        if (binding.instance !== NO_INSTANCE) {
+          pairs.push([binding, binding.instance]);
+          this.#scope.deleteSingleton(binding);
         }
       }
     }
@@ -429,14 +395,14 @@ class DefaultContainer implements Container {
   }
 
   #unloadModuleSync(ref: object): void {
-    const count = this.#moduleRefs.get(ref) ?? 0;
+    const count = this.#moduleRefs?.get(ref) ?? 0;
     if (count <= 1) {
       const reader = this.#getMetadataReader();
       for (const [binding, instance] of this.#removeModuleBindings(ref)) {
         this.#lifecycle.runDeactivationSync(binding, instance, reader);
       }
     } else {
-      this.#moduleRefs.set(ref, count - 1);
+      this.#moduleRefs!.set(ref, count - 1);
     }
   }
 
@@ -448,14 +414,14 @@ class DefaultContainer implements Container {
   }
 
   async #unloadModuleAsync(ref: object): Promise<void> {
-    const count = this.#moduleRefs.get(ref) ?? 0;
+    const count = this.#moduleRefs?.get(ref) ?? 0;
     if (count <= 1) {
       const reader = this.#getMetadataReader();
       for (const [binding, instance] of this.#removeModuleBindings(ref)) {
         await this.#lifecycle.runDeactivation(binding, instance, reader);
       }
     } else {
-      this.#moduleRefs.set(ref, count - 1);
+      this.#moduleRefs!.set(ref, count - 1);
     }
   }
 
@@ -549,11 +515,10 @@ class DefaultContainer implements Container {
 
     // Deactivate all singletons in this container (own only)
     const reader = this.#getMetadataReader();
-    for (const [id, instance] of this.#scope.getAllSingletons()) {
-      const binding = this.#registry.getById(id);
-      if (binding !== undefined) {
-        await this.#lifecycle.runDeactivation(binding, instance, reader);
-      }
+    // Iterate a copy: a deactivation handler is user code, and the live list is what
+    // materializing or dropping a singleton mutates.
+    for (const binding of this.#scope.cachedSingletons().slice()) {
+      await this.#lifecycle.runDeactivation(binding, binding.instance, reader);
     }
 
     this.#scope.clearAll();
@@ -577,7 +542,7 @@ class DefaultContainer implements Container {
         continue;
       }
       const scope = effectiveBindingScope(binding);
-      if (scope === "singleton" && !this.#scope.hasSingleton(binding.id)) {
+      if (scope === "singleton" && binding.instance === NO_INSTANCE) {
         if (binding.predicate !== undefined) {
           continue;
         }
@@ -777,22 +742,22 @@ class DefaultContainer implements Container {
 
   has(token: Token<unknown> | Constructor, options?: ResolveOptions): boolean {
     this.#assertNotDisposed();
-    return this.#inspector.has(token, options, () => this.#parent?.has(token, options) ?? false);
+    return this.#getInspector().has(token, options, () => this.#parent?.has(token, options) ?? false);
   }
 
   hasOwn(token: Token<unknown> | Constructor, options?: ResolveOptions): boolean {
     this.#assertNotDisposed();
-    return this.#inspector.hasOwn(token, options);
+    return this.#getInspector().hasOwn(token, options);
   }
 
   lookupBindings<const Value>(token: Token<Value> | Constructor<Value>): ReadonlyArray<BindingSnapshot> {
     this.#assertNotDisposed();
-    return this.#inspector.lookupBindings(token);
+    return this.#getInspector().lookupBindings(token);
   }
 
   inspect(): ContainerSnapshot {
     this.#assertNotDisposed();
-    return this.#inspector.inspect();
+    return this.#getInspector().inspect();
   }
 
   generateDependencyGraph(options?: GraphOptions): ContainerGraphJson {

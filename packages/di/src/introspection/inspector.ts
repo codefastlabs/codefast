@@ -63,7 +63,7 @@ export class Inspector {
     const snapshots = this.allBindingSnapshots();
     return {
       ownBindings: snapshots,
-      cachedSingletonCount: this.#scope.getAllSingletons().size,
+      cachedSingletonCount: this.#scope.cachedSingletons().length,
       hasParent: this.#hasParent,
       isDisposed: this.#isDisposed(),
     };
