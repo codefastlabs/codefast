@@ -23,7 +23,7 @@ export class ScopeManager {
 
   setSingleton<const Value>(binding: Binding<Value>, instance: unknown): void {
     if (binding.instance === NO_INSTANCE) {
-      (this.#singletonBindings ??= []).push(binding as unknown as Binding<unknown>);
+      (this.#singletonBindings ??= []).push(binding as Binding<unknown>);
     }
     binding.instance = instance;
   }
@@ -40,7 +40,7 @@ export class ScopeManager {
     binding.instance = NO_INSTANCE;
     const tracked = this.#singletonBindings;
     if (tracked !== undefined) {
-      const index = tracked.indexOf(binding as unknown as Binding<unknown>);
+      const index = tracked.indexOf(binding as Binding<unknown>);
       if (index !== -1) {
         tracked.splice(index, 1);
       }
@@ -85,6 +85,10 @@ export class ScopeManager {
     }
     this.#inflight?.clear();
     this.#scoped?.clear();
+  }
+  /** Whether the deferred table behind `#scoped` has had to be built. */
+  get isBuilt(): boolean {
+    return this.#scoped !== undefined;
   }
 }
 

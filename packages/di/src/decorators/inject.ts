@@ -193,7 +193,7 @@ export function inject<const Value>(
   }
   Object.defineProperties(decoratorFn, props);
 
-  return decoratorFn as unknown as InjectionDescriptor<Value> & ClassAccessorDecorator<unknown, Value>;
+  return decoratorFn as InjectionDescriptor<Value> & ClassAccessorDecorator<unknown, Value>;
 }
 
 // ── optional() ────────────────────────────────────────────────────────────────

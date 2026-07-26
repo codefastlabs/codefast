@@ -258,4 +258,8 @@ export class BindingRegistry {
     }
     this.#fastDefault.set(tokenKey, onlyBinding);
   }
+  /** Whether the deferred table behind `#simpleNamed` has had to be built. */
+  get isBuilt(): boolean {
+    return this.#simpleNamed !== undefined;
+  }
 }

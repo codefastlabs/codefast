@@ -61,7 +61,7 @@ pnpm --filter @codefast/benchmark-di-inversify bench:isolate
 ```
 
 - Compare against a baseline run on the same machine, **stashed and rebuilt** — not against numbers from an earlier session.
-- Three runs per side minimum, and compare the **best** of each rather than one median: ambient load only ever subtracts throughput, and a single run cannot separate a 5% change from noise. A 5% "regression" in this suite has twice turned out to be nothing.
+- Three trials per side — the ceiling as well as the floor — and compare the **best** of each rather than one median: ambient load only ever subtracts throughput, and a single run cannot separate a 5% change from noise. A 5% "regression" in this suite has twice turned out to be nothing.
 - If optimizing, sweep depth 16 → 512 and confirm you did not regress the deep-chain wins.
 - **Measure cold paths too.** Container construction and binding registration are invisible to the hot loops and have been the source of the suite's real losses. A change that wins `transient-class-1-dep` can lose `realistic-graph-cold-resolve` outright.
 - **Validate a perf hypothesis by throwaway ablation, not by reasoning.** Build the variant, measure it, delete it. Several plausible mechanisms in this package's history were wrong in the direction their author expected.

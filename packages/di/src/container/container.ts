@@ -24,6 +24,8 @@ import type { AsyncModuleBuilder } from "#/module";
 import { isSyncModule, MODULE_SETUP } from "#/module";
 import { BindingRegistry } from "#/registry";
 import { effectiveBindingScope } from "#/resolution/binding-scope";
+import type { ResolutionDiagnostics } from "#/resolution/diagnostics";
+import { RESOLUTION_DIAGNOSTICS } from "#/resolution/diagnostics";
 import { LifecycleManager } from "#/resolution/lifecycle";
 import { injectionSlotToResolveOptions, bindingSlotToResolveOptions } from "#/resolution/resolve-options";
 import { DependencyResolver } from "#/resolution/resolver";
@@ -135,6 +137,26 @@ class DefaultContainer implements Container {
       this.#parent !== undefined,
       () => this.#disposed,
     ));
+  }
+
+  [RESOLUTION_DIAGNOSTICS](): ResolutionDiagnostics {
+    const builtSubsystems: Array<string> = [];
+    if (this.#inspector !== undefined) {
+      builtSubsystems.push("container.inspector");
+    }
+    if (this.#moduleRefs !== undefined || this.#moduleBindingIds !== undefined) {
+      builtSubsystems.push("container.moduleTables");
+    }
+    if (this.#registry.isBuilt) {
+      builtSubsystems.push("registry.namedIndex");
+    }
+    if (this.#scope.isBuilt) {
+      builtSubsystems.push("scope.scoped");
+    }
+    if (this.#lifecycle.isBuilt) {
+      builtSubsystems.push("lifecycle.activationHooks");
+    }
+    return { ...this.#resolver.describeCaches(), builtSubsystems };
   }
 
   #initResolver(): void {
