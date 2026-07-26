@@ -53,7 +53,7 @@ const ROOT_CONSTRAINT_CONTEXT = {
 /**
  * @since 0.3.16-canary.0
  */
-export class DependencyResolver {
+export class DependencyResolver implements ResolverCallbacks {
   readonly #syncResolutionContextPool: Array<DefaultResolutionContext> = [];
   // Pure allocation pool: a chain's own context is threaded through the call, so nothing here
   // identifies a chain.
@@ -886,12 +886,7 @@ export class DependencyResolver {
     resolutionStack.push(frame);
     const needsActivation = this.#activation.needsActivation(binding);
     if (!needsActivation && scope === "transient" && (binding.kind === "dynamic" || binding.kind === "dynamic-async")) {
-      const resolutionCtx = new DefaultResolutionContext(
-        this as unknown as ResolverCallbacks,
-        resolutionPath,
-        resolutionStack,
-        options,
-      );
+      const resolutionCtx = new DefaultResolutionContext(this, resolutionPath, resolutionStack, options);
       try {
         if (binding.kind === "dynamic-async") {
           return await binding.factory(resolutionCtx);
@@ -907,7 +902,7 @@ export class DependencyResolver {
 
     const needsResolutionContext = needsActivation || this.#requiresResolutionContext(binding);
     const resolutionCtx = needsResolutionContext
-      ? new DefaultResolutionContext(this as unknown as ResolverCallbacks, resolutionPath, resolutionStack, options)
+      ? new DefaultResolutionContext(this, resolutionPath, resolutionStack, options)
       : undefined;
 
     try {
@@ -1363,7 +1358,7 @@ export class DependencyResolver {
     // An inner level reuses the context its caller passed down; only a chain's first level
     // borrows from the pool. Pooling is load-bearing here — see ARCHITECTURE.md.
     const ctx =
-      callerContext !== undefined && callerContext.owner === (this as unknown as ResolverCallbacks)
+      callerContext !== undefined && callerContext.owner === this
         ? callerContext
         : this.#acquireAsyncChainContext(resolutionPath, resolutionStack);
     ctx.chainLevels += 1;
@@ -1409,14 +1404,9 @@ export class DependencyResolver {
   ): DefaultResolutionContext {
     const pooled = this.#asyncChainContextPool.pop();
     if (pooled === undefined) {
-      return new DefaultResolutionContext(
-        this as unknown as ResolverCallbacks,
-        resolutionPath,
-        resolutionStack,
-        undefined,
-      );
+      return new DefaultResolutionContext(this, resolutionPath, resolutionStack, undefined);
     }
-    pooled.reset(this as unknown as ResolverCallbacks, resolutionPath, resolutionStack, undefined);
+    pooled.reset(this, resolutionPath, resolutionStack, undefined);
     return pooled;
   }
 
@@ -1510,15 +1500,10 @@ export class DependencyResolver {
     const depth = resolutionStack.length;
     const existing = this.#syncResolutionContextPool[depth];
     if (existing !== undefined) {
-      existing.reset(this as unknown as ResolverCallbacks, resolutionPath, resolutionStack, options);
+      existing.reset(this, resolutionPath, resolutionStack, options);
       return existing;
     }
-    const created = new DefaultResolutionContext(
-      this as unknown as ResolverCallbacks,
-      resolutionPath,
-      resolutionStack,
-      options,
-    );
+    const created = new DefaultResolutionContext(this, resolutionPath, resolutionStack, options);
     this.#syncResolutionContextPool[depth] = created;
     return created;
   }

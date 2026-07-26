@@ -215,6 +215,17 @@ export function generateBindingId(): BindingIdentifier {
 // ── Construction ──────────────────────────────────────────────────────────────
 
 // Superset of every kind's fields, so one literal can copy any binding shape.
+/** Union of every key any binding kind declares — `keyof` a union would give the intersection. */
+type BindingFieldName = Binding<unknown> extends infer Kind ? (Kind extends unknown ? keyof Kind : never) : never;
+
+/**
+ * Completeness guard for {@link createBinding}'s literal.
+ *
+ * @remarks The literal is `satisfies` this, so a field added to any binding kind that the literal
+ * forgets to write is a compile error rather than a binding silently missing it.
+ */
+type ConstructedBindingFields = Record<BindingFieldName, unknown>;
+
 type BindingFieldSuperset = {
   readonly kind: Binding["kind"];
   readonly instance?: unknown;
@@ -259,7 +270,7 @@ export function createBinding<Value>(
     value: fields.value,
     onActivation: fields.onActivation,
     onDeactivation: fields.onDeactivation,
-  } as Binding<Value>;
+  } satisfies ConstructedBindingFields as Binding<Value>;
 }
 
 /**
