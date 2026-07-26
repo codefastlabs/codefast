@@ -204,6 +204,82 @@ export function generateBindingId(): BindingIdentifier {
   return String(++bindingIdCounter) as BindingIdentifier;
 }
 
+// ── Construction ──────────────────────────────────────────────────────────────
+
+// Superset of every kind's fields, so one literal can copy any binding shape.
+type BindingFieldSuperset = {
+  readonly kind: Binding["kind"];
+  readonly scope?: unknown;
+  readonly target?: unknown;
+  readonly factory?: unknown;
+  readonly deps?: unknown;
+  readonly value?: unknown;
+  readonly onActivation?: unknown;
+  readonly onDeactivation?: unknown;
+};
+
+/**
+ * The single construction site for bindings: one literal listing every kind's fields in one
+ * fixed order, so all bindings in a process share a single V8 hidden class.
+ *
+ * @remarks Mixed binding kinds otherwise turn the resolver's hot property reads
+ * (kind/scope/factory/…) megamorphic, which costs ~30% throughput in processes that exercise
+ * many kinds. Because this is the only site, the registry stores what it is given rather than
+ * re-copying it — so a builder that owns the returned object can refine it in place.
+ *
+ * @param source - the kind-specific payload, or an existing binding to re-slot
+ * @param id - reuse a caller's id to keep a fluent chain's `id()` stable across refinements
+ */
+export function createBinding<Value>(
+  source: PartialBinding<Value> | Binding<Value>,
+  token: Token<Value> | Constructor<Value>,
+  slot: BindingSlot,
+  predicate: ((ctx: ConstraintContext) => boolean) | undefined,
+  id: BindingIdentifier = generateBindingId(),
+): Binding<Value> {
+  const fields = source as BindingFieldSuperset;
+  return {
+    kind: fields.kind,
+    id,
+    inFlight: false,
+    frame: undefined,
+    token,
+    slot,
+    predicate,
+    scope: fields.scope,
+    target: fields.target,
+    factory: fields.factory,
+    deps: fields.deps,
+    value: fields.value,
+    onActivation: fields.onActivation,
+    onDeactivation: fields.onDeactivation,
+  } as Binding<Value>;
+}
+
+/**
+ * Writable view of the only fields a fluent chain may refine after registration.
+ *
+ * @remarks No registry index is keyed on these, so a builder that owns the registered object
+ * can write them directly instead of re-registering. `token`, `slot`, `predicate` and `id`
+ * are excluded on purpose — changing those means re-indexing.
+ *
+ * @since 0.5.0-canary.7
+ */
+export interface RefinableBindingFields<Value> {
+  onActivation: ActivationHandler<Value> | undefined;
+  onDeactivation: DeactivationHandler<Value> | undefined;
+  scope: BindingScope;
+}
+
+/**
+ * Narrows a registered binding to the fields a fluent chain may still refine.
+ *
+ * @since 0.5.0-canary.7
+ */
+export function refinableFields<Value>(binding: Binding<Value>): RefinableBindingFields<Value> {
+  return binding as unknown as RefinableBindingFields<Value>;
+}
+
 // ── Builder interfaces ────────────────────────────────────────────────────────
 
 /**

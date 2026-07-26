@@ -3,44 +3,6 @@ import { bindingSlotEquals, bindingSlotToString } from "#/binding";
 import type { Token } from "#/token";
 import type { BindingIdentifier, Constructor, DependencyKey } from "#/types";
 
-// Superset of every binding kind's fields, used to normalize hidden classes below.
-type BindingFieldSuperset = Binding & {
-  readonly scope?: unknown;
-  readonly target?: unknown;
-  readonly factory?: unknown;
-  readonly deps?: unknown;
-  readonly value?: unknown;
-  readonly onActivation?: unknown;
-  readonly onDeactivation?: unknown;
-};
-
-/**
- * Rebuilds a binding with every kind's fields in one fixed key order, so all stored
- * bindings share a single V8 hidden class. Mixed binding kinds otherwise turn the
- * resolver's hot property reads (kind/scope/factory/...) megamorphic, which costs
- * ~30% throughput in processes that exercise many kinds. The value-erasing cast is
- * safe: every declared field is copied verbatim and `kind` stays the discriminant.
- */
-function normalizeBindingShape(binding: Binding): Binding {
-  const source = binding as BindingFieldSuperset;
-  return {
-    kind: source.kind,
-    id: source.id,
-    inFlight: false,
-    frame: undefined,
-    token: source.token,
-    slot: source.slot,
-    predicate: source.predicate,
-    scope: source.scope,
-    target: source.target,
-    factory: source.factory,
-    deps: source.deps,
-    value: source.value,
-    onActivation: source.onActivation,
-    onDeactivation: source.onDeactivation,
-  } as Binding;
-}
-
 /**
  * @since 0.3.16-canary.0
  */
@@ -63,10 +25,22 @@ export class BindingRegistry {
     return this.#version;
   }
 
-  /** Add or replace binding using slot-aware last-wins. Returns the displaced binding, if any. */
-  add(uncommittedBinding: Binding): Binding | undefined {
+  /**
+   * Registers a mutation the indexes don't care about (a fluent chain refining scope or an
+   * activation hook in place), so version-stamped resolver caches still invalidate.
+   */
+  touch(): void {
     this.#version += 1;
-    const binding = normalizeBindingShape(uncommittedBinding);
+  }
+
+  /**
+   * Add or replace binding using slot-aware last-wins. Returns the displaced binding, if any.
+   *
+   * @remarks The binding is stored by reference — it must come from `createBinding`, which is
+   * what guarantees the single hidden class the resolver's hot reads depend on.
+   */
+  add(binding: Binding): Binding | undefined {
+    this.#version += 1;
     const key = binding.token as DependencyKey;
     // ✓ TS6.0: Map.getOrInsert (ES2025) replaces the manual get+check+set upsert
     const bindingsForToken = this.#bindings.getOrInsert(key, []);

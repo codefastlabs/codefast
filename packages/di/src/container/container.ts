@@ -1,5 +1,6 @@
 import type { Binding, BindToBuilder } from "#/binding";
 import { bindingSlotEquals } from "#/binding";
+import type { BindingCommitter } from "#/container/binding-builders";
 import { BindingEntry } from "#/container/binding-builders";
 import type { AutoRegisterRegistry } from "#/decorators/injectable";
 import {
@@ -47,6 +48,73 @@ function displacesRestoredBinding(current: Binding, restored: Binding): boolean 
     return false;
   }
   return bindingSlotEquals(current.slot, restored.slot);
+}
+
+/**
+ * One fluent chain's link to the registry.
+ *
+ * A chain registers on its `to*()` call, so a `when*()` that follows re-slots an already-live
+ * binding and can displace one the final shape would never conflict with. Those stay parked in
+ * `#displacedByChain` until the chain settles, then get restored.
+ */
+class ChainCommitter implements BindingCommitter {
+  // Allocated only by a chain that actually displaces something — most never do.
+  #displacedByChain: Array<Binding> | undefined;
+  readonly #registry: BindingRegistry;
+  readonly #moduleBindingIds: Map<object, Array<BindingIdentifier>>;
+  readonly #moduleRef: object | undefined;
+
+  constructor(
+    registry: BindingRegistry,
+    moduleBindingIds: Map<object, Array<BindingIdentifier>>,
+    moduleRef: object | undefined,
+  ) {
+    this.#registry = registry;
+    this.#moduleBindingIds = moduleBindingIds;
+    this.#moduleRef = moduleRef;
+  }
+
+  commit(binding: Binding, previousId: BindingIdentifier | undefined): void {
+    if (previousId !== undefined) {
+      this.#registry.removeById(previousId);
+    }
+    const displaced = this.#registry.add(binding);
+    if (displaced !== undefined) {
+      (this.#displacedByChain ??= []).push(displaced);
+    }
+    if (previousId !== undefined && this.#displacedByChain !== undefined) {
+      this.#restoreNonConflicting(binding);
+    }
+    if (this.#moduleRef !== undefined) {
+      this.#trackForModule(this.#moduleRef, binding.id, previousId);
+    }
+  }
+
+  refine(): void {
+    this.#registry.touch();
+  }
+
+  #restoreNonConflicting(binding: Binding): void {
+    const displaced = this.#displacedByChain!;
+    for (let index = displaced.length - 1; index >= 0; index -= 1) {
+      const candidate = displaced[index]!;
+      if (!displacesRestoredBinding(binding, candidate)) {
+        this.#registry.add(candidate);
+        displaced.splice(index, 1);
+      }
+    }
+  }
+
+  #trackForModule(moduleRef: object, id: BindingIdentifier, previousId: BindingIdentifier | undefined): void {
+    const ids = this.#moduleBindingIds.getOrInsert(moduleRef, []);
+    if (previousId !== undefined) {
+      const previousIndex = ids.indexOf(previousId);
+      if (previousIndex !== -1) {
+        ids.splice(previousIndex, 1);
+      }
+    }
+    ids.push(id);
+  }
 }
 
 // ── Container interface ────────────────────────────────────────────────────────
@@ -180,59 +248,7 @@ class DefaultContainer implements Container {
     token: Token<Value> | Constructor<Value>,
     moduleRef?: object,
   ): BindToBuilder<Value> {
-    const registry = this.#registry;
-    // Bindings displaced by this fluent chain's commits — each stays restorable
-    // until the chain settles on a shape that genuinely conflicts with it. A list,
-    // because one chain can displace several bindings (the default at an
-    // intermediate commit, then a named/tagged binding at the final one).
-    const displacedByChain: Array<Binding> = [];
-
-    const commitBinding = <BindingValue>(
-      binding: Binding<BindingValue>,
-      previousId?: BindingIdentifier,
-    ): BindingIdentifier => {
-      if (previousId !== undefined) {
-        registry.removeById(previousId);
-        if (moduleRef !== undefined) {
-          const ids = this.#moduleBindingIds.get(moduleRef);
-          if (ids !== undefined) {
-            const idx = ids.indexOf(previousId);
-            if (idx !== -1) {
-              ids.splice(idx, 1);
-            }
-          }
-        }
-      }
-      // The registry stores value-erased bindings — this is the single erasure point for the builder chain.
-      const displaced = registry.add(binding as Binding);
-      if (displaced !== undefined) {
-        // A fluent chain commits eagerly on each refinement, so an intermediate
-        // commit can displace a binding that the final shape would never conflict
-        // with. Remember it so a later re-commit that morphs away (named/tagged
-        // slot, pure predicate) can restore it.
-        displacedByChain.push(displaced);
-      }
-      if (previousId !== undefined && displacedByChain.length > 0) {
-        for (let index = displacedByChain.length - 1; index >= 0; index -= 1) {
-          const candidate = displacedByChain[index]!;
-          if (!displacesRestoredBinding(binding as Binding, candidate)) {
-            registry.add(candidate);
-            displacedByChain.splice(index, 1);
-          }
-        }
-      }
-      if (moduleRef !== undefined) {
-        let ids = this.#moduleBindingIds.get(moduleRef);
-        if (ids === undefined) {
-          ids = [];
-          this.#moduleBindingIds.set(moduleRef, ids);
-        }
-        ids.push(binding.id);
-      }
-      return binding.id;
-    };
-
-    return new BindingEntry<Value>(token, commitBinding);
+    return new BindingEntry<Value>(token, new ChainCommitter(this.#registry, this.#moduleBindingIds, moduleRef));
   }
 
   unbind(tokenOrId: Token<unknown> | Constructor | BindingIdentifier): void {
