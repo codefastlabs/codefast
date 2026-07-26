@@ -1,18 +1,20 @@
-import { Container, NoMatchingBindingError, token } from "@codefast/di";
+import { ChainNotRegisteredError, Container, NoMatchingBindingError, token } from "@codefast/di";
+import type { BindToBuilder } from "@codefast/di";
 import { describe, expect, it } from "vitest";
 
 /**
- * SPEC §2.4 / §5.6: `bind()` returns `BindToBuilder` with only `to*` — constraints come after `to*()`.
+ * SPEC §2.4 / §5.6: constraints and scope come after `to*()`, never before.
+ *
+ * The ordering is a type-level guarantee — `bind()` returns `BindToBuilder`, which declares only
+ * `to*()`, so the out-of-order call does not compile (pinned in `tests/types/container-api.test.ts`).
+ * These tests cover the runtime half of the contract: what a caller who has no types, or who casts
+ * past them, actually gets. The guarantee is that the misuse *fails loudly* — not that the method
+ * happens to be absent from the object.
  */
 describe("BindToBuilder fluent surface", () => {
-  it("does not expose when* on the object returned from bind() before to*", () => {
+  it("offers every to* entry point on the object bind() returns", () => {
     const container = Container.create();
     const bindBuilder = container.bind(token<number>("api-order"));
-
-    expect("whenNamed" in bindBuilder).toBe(false);
-    expect("whenTagged" in bindBuilder).toBe(false);
-    expect("whenDefault" in bindBuilder).toBe(false);
-    expect("when" in bindBuilder).toBe(false);
 
     expect(typeof bindBuilder.to).toBe("function");
     expect(typeof bindBuilder.toSelf).toBe("function");
@@ -22,6 +24,74 @@ describe("BindToBuilder fluent surface", () => {
     expect(typeof bindBuilder.toResolved).toBe("function");
     expect(typeof bindBuilder.toResolvedAsync).toBe("function");
     expect(typeof bindBuilder.toAlias).toBe("function");
+  });
+
+  describe("refining before to*() fails loudly", () => {
+    // Each of these is unreachable from TypeScript; the cast is what a JS caller does implicitly.
+    const refinements: ReadonlyArray<[string, (builder: BindToBuilder<number>) => unknown]> = [
+      ["when", (builder) => (builder as never as { when: (p: () => boolean) => unknown }).when(() => true)],
+      ["whenNamed", (builder) => (builder as never as { whenNamed: (n: string) => unknown }).whenNamed("primary")],
+      [
+        "whenTagged",
+        (builder) => (builder as never as { whenTagged: (t: string, v: unknown) => unknown }).whenTagged("env", "prod"),
+      ],
+      ["whenDefault", (builder) => (builder as never as { whenDefault: () => unknown }).whenDefault()],
+      ["singleton", (builder) => (builder as never as { singleton: () => unknown }).singleton()],
+      ["transient", (builder) => (builder as never as { transient: () => unknown }).transient()],
+      ["scoped", (builder) => (builder as never as { scoped: () => unknown }).scoped()],
+      [
+        "onActivation",
+        (builder) =>
+          (builder as never as { onActivation: (fn: () => unknown) => unknown }).onActivation(() => undefined),
+      ],
+      [
+        "onDeactivation",
+        (builder) =>
+          (builder as never as { onDeactivation: (fn: () => unknown) => unknown }).onDeactivation(() => undefined),
+      ],
+      ["id", (builder) => (builder as never as { id: () => unknown }).id()],
+    ];
+
+    for (const [name, refine] of refinements) {
+      it(`throws ChainNotRegisteredError from ${name}()`, () => {
+        const container = Container.create();
+        const bindBuilder = container.bind(token<number>(`api-order-${name}`));
+
+        expect(() => refine(bindBuilder)).toThrow(ChainNotRegisteredError);
+      });
+    }
+
+    it("names the token and points at to*() in the message", () => {
+      const container = Container.create();
+      const bindBuilder = container.bind(token<number>("api-order-message"));
+
+      expect(() => (bindBuilder as never as { singleton: () => unknown }).singleton()).toThrow(
+        /api-order-message[\s\S]*to\*\(\)/,
+      );
+    });
+
+    it("registers nothing when the misuse is caught", () => {
+      const ServiceToken = token<number>("api-order-no-partial-write");
+      const container = Container.create();
+      const bindBuilder = container.bind(ServiceToken);
+
+      expect(() => (bindBuilder as never as { whenNamed: (n: string) => unknown }).whenNamed("x")).toThrow(
+        ChainNotRegisteredError,
+      );
+      expect(container.has(ServiceToken)).toBe(false);
+      expect(container.lookupBindings(ServiceToken)).toHaveLength(0);
+    });
+
+    it("still works normally once to*() has run", () => {
+      const ServiceToken = token<number>("api-order-recovers");
+      const container = Container.create();
+      const bindBuilder = container.bind(ServiceToken);
+
+      expect(() => (bindBuilder as never as { singleton: () => unknown }).singleton()).toThrow(ChainNotRegisteredError);
+      bindBuilder.toConstantValue(7).whenNamed("primary");
+
+      expect(container.resolve(ServiceToken, { name: "primary" })).toBe(7);
+    });
   });
 
   it("allows whenNamed after toConstantValue", () => {
@@ -58,5 +128,19 @@ describe("BindToBuilder fluent surface", () => {
     expect(scoped.id()).toBe(afterTo);
     container.unbind(afterTo);
     expect(container.has(ServiceToken)).toBe(false);
+  });
+
+  it("gives each to*() on one entry its own binding id", () => {
+    const container = Container.create();
+    const ServiceToken = token<number>("entry-reused");
+    const bindBuilder = container.bind(ServiceToken);
+
+    const first = bindBuilder.toConstantValue(1).id();
+    const second = bindBuilder.toConstantValue(2).id();
+
+    expect(second).not.toBe(first);
+    // Same default slot, so last-wins leaves exactly one binding registered.
+    expect(container.lookupBindings(ServiceToken)).toHaveLength(1);
+    expect(container.resolve(ServiceToken)).toBe(2);
   });
 });
