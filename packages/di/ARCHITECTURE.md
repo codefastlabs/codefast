@@ -96,11 +96,20 @@ An empty `Map` is not free: V8 gives it a backing store, and one costs 184 bytes
 
 Deferring a cache also raises the question of what a bulk reader should hand back when it was never allocated. `ScopeManager.getAllScoped()` was the only such reader, and it had no callers anywhere, so it was removed rather than given an empty-map fallback: the cheapest answer to "what should this return when there is nothing to return" is to not carry the method.
 
-What this did **not** do is close the `realistic-graph-cold-resolve` loss against tsyringe, which is worth recording because the reasoning looked sound. That row is at mutator parity — di is only slower once a forced collection is in the loop — so cutting per-container allocation looked like the fix. It cut 13.7% of the row's allocation and moved throughput by less than the suite's ~5% noise floor, confirmed against an in-run control scenario (`constant-resolve`, which resolves from a pre-built container and so cannot benefit) that drifted by the same amount the target did. Two passes in alternating order disagreed on the sign. The footprint reduction is why this shape stays; do not cite it as a throughput win.
+What this did **not** do is close the `realistic-graph-cold-resolve` loss against tsyringe, which is worth recording because the reasoning looked sound. That row is at mutator parity — di is only slower once a forced collection is in the loop — so cutting per-container allocation looked like the fix. It cut 13.7% of the row's allocation and moved that row by ~1.5%, which the arithmetic predicts: 103 ns off container construction is 2.5% of a 4.06 µs iteration. It is a throughput win where container construction _is_ the work, though — `Container.create()` 1.80× and `createChild()` + resolve 1.31×.
+
+## One binding, one container — and the singleton slot that follows from it
+
+A binding is registered by its chain into exactly one registry, and only that container's scope ever caches it: a child resolving a parent's token delegates to the parent resolver, which owns the same binding object. So a singleton's slot is **per-binding, not per-container**, and the instance lives on `binding.instance` (`NO_INSTANCE` when unset) instead of in a `Map` keyed by binding id.
+
+That replaces a keyed lookup with a field read on the most common resolve shape there is — a transient over cached singletons — worth 1.09×–1.40× on the realistic graph's root resolve depending on what else the process has run. `ScopeManager` keeps only a lazily-created list of the bindings that have materialized, so disposal and `inspect()` can still enumerate them.
+
+> **Rule:** this is only sound while one binding maps to one owning container. Anything that would share a binding object between two registries — a snapshot that re-registers into a different container, a clone that copies bindings by reference — breaks it silently, by making two containers share one instance. `tests/unit/resolution/singleton-on-binding.test.ts` pins the parts that are easy to get wrong: the chain-shared read, invalidation on unbind and rebind, enumeration for disposal, and a cached `undefined` that must stay distinguishable from a miss.
 
 ## Changing anything here
 
 1. **Measure first, on a quiet machine.** `pnpm bench:isolate` from `benchmarks/di-inversify` for order-independent numbers.
 2. **Measure cold paths too.** A change that wins the hot loop can lose badly on container construction — that is how the dense-`Uint8Array` cycle detector was rejected.
 3. **Validate a perf fix by throwaway ablation**, not by reasoning. Two of the four hypotheses tried on the async-chain row were wrong in the direction their author expected.
-4. **Best-of across processes, not a single median.** Ambient load only ever subtracts throughput, and a single run cannot separate a 5% change from noise — three runs each side, minimum.
+4. **A control too fine-grained to measure is worse than no control.** Timing an 11 ns call one at a time made `constant-resolve` read 0.88× when batching it — the way the bench harness does — put it at 1.02× with a 4% spread. Batch anything under ~0.5 µs before believing it.
+5. **Best-of across processes, not a single median.** Ambient load only ever subtracts throughput, and a single run cannot separate a 5% change from noise — three runs each side, minimum.
