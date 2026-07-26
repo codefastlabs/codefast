@@ -104,7 +104,7 @@ bind(token)
 
 **Last-wins / override:** `bind()` áp dụng **slot-aware last-wins ở registration-time**. Cùng slot (`default`, cùng `whenNamed`, cùng `whenTagged`) thì binding mới thay binding cũ; slot khác thì append để phục vụ `resolveAll`. Xem section 5.10 để biết định nghĩa chính xác.
 
-**Eager commit:** `to*()` commit binding ngay lập tức vào registry. Mọi thao tác đọc sau đó (`has`, `resolve*`, `validate`, `inspect`) đều thấy trạng thái mới nhất.
+**Eager commit:** `to*()` commit binding ngay lập tức vào registry — đúng **một** lần cho cả chain. Mọi thao tác đọc sau đó (`has`, `resolve*`, `validate`, `inspect`) đều thấy trạng thái mới nhất, kể cả khi chain bị bỏ dở giữa chừng.
 
 **Async phải explicit:** `resolve()` trên async binding throw `AsyncResolutionError` với message rõ ràng. Không silently return `Promise`.
 
@@ -625,7 +625,7 @@ const fileId = container.bind(Logger).to(FileLogger).whenNamed("file").singleton
 container.unbind(consoleId);
 ```
 
-> **`.id()` và chain order:** `.id()` có thể gọi ở bất kỳ bước nào sau `to*()`. Builder vẫn có thể tiếp tục chain sau `.id()` — `.id()` không phải terminal.
+> **`.id()` và chain order:** `.id()` có thể gọi ở bất kỳ bước nào sau `to*()`. Builder vẫn có thể tiếp tục chain sau `.id()` — `.id()` không phải terminal. Id **ổn định trong suốt chain**: giá trị lấy sớm vẫn trỏ đúng binding sau khi chain được refine.
 
 ### 5.9 Lifecycle hooks
 
@@ -777,7 +777,7 @@ Hai binding slot **bằng nhau** khi: `name` bằng nhau (hoặc cả hai `undef
 
 ### 5.12 `Binding` discriminated union — internal data model
 
-`Binding<Value>` là union type đại diện cho một binding đã được commit vào registry. Implementer phải định nghĩa đây trong `binding.ts`. Tất cả field là `readonly`; mutation chỉ xảy ra qua registry (tạo object mới và replace).
+`Binding<Value>` là union type đại diện cho một binding đã được commit vào registry. Implementer phải định nghĩa đây trong `binding.ts`. Field là `readonly` với người dùng thư viện. Nội bộ, một fluent chain **được phép refine tại chỗ** đúng những field mà không index nào của registry phụ thuộc (`scope`, `onActivation`, `onDeactivation`) trên chính object đã đăng ký; đổi `slot`/`predicate` thì phải re-index nên vẫn dựng object mới. Xem `ARCHITECTURE.md`.
 
 **`BindingSlot` — dùng cho slot-aware last-wins và resolution matching:**
 
@@ -901,7 +901,7 @@ type Binding<Value = unknown> =
 
 - `toSelf()` → `ClassBinding` với `target === token` (token phải là `Constructor<Value>`).
 - Deps array của `toResolved`/`toResolvedAsync`: mỗi element là `Token | Constructor | InjectionDescriptor`. Tại commit-time, plain `Token`/`Constructor` được normalize thành `InjectionDescriptor` với `{ token, optional: false, multi: false }`. `deps` trong `ResolvedBinding`/`ResolvedAsyncBinding` luôn là `readonly InjectionDescriptor[]` — không bao giờ là raw token.
-- `BindingIdentifier` được generate tại commit-time, duy nhất trong toàn bộ container hierarchy (không phải chỉ trong một container). Recommend dùng `crypto.randomUUID()` hoặc monotonic counter.
+- `BindingIdentifier` được generate **một lần cho mỗi fluent chain**, duy nhất trong toàn bộ container hierarchy (không phải chỉ trong một container). Recommend dùng `crypto.randomUUID()` hoặc monotonic counter. Refine sau đó (`.singleton()`, `.whenNamed()`, …) **không** cấp id mới — id lấy từ `.id()` ở bất kỳ bước nào của chain đều hợp lệ cho tới khi chain kết thúc.
 
 **Truy cập scope từ `AliasBinding` — tại resolve-time:**
 
@@ -2523,147 +2523,74 @@ class DisposedContainerError extends DiError {
 
 ```
 packages/di/
+├── ARCHITECTURE.md            Layering, hot-path invariants, và luật đổi code trong resolution/
+│                              — đọc trước khi sửa bất cứ gì dưới src/resolution/
 ├── src/
-│   ├── constructor-type.ts    Constructor<Value>, ConstructorInvocation — primitive type helpers
-│   │                          (re-exported từ types.ts; không export trực tiếp từ root index)
-│   │
-│   ├── types.ts               Tất cả kiểu nền tảng dùng xuyên suốt — re-export Constructor từ
-│   │                          constructor-type.ts, định nghĩa thêm:
-│   │                          DependencyKey, BindingScope, BindingIdentifier, BindingKind,
+│   │  ── model (root) ──────────────────────────────────────────────────────
+│   ├── constructor-type.ts    Constructor<Value>, ConstructorInvocation (re-export qua types.ts)
+│   ├── types.ts               DependencyKey, BindingScope, BindingIdentifier, BindingKind,
 │   │                          ActivationHandler, DeactivationHandler, ResolveOptions,
 │   │                          ResolutionFrame, ConstraintContext, ResolutionContext, TokenValue
+│   ├── token.ts               Token<Value> branded type; token(), tokenName(), isToken()
+│   ├── binding.ts             Binding discriminated union + BindingSlot utilities;
+│   │                          createBinding() — ĐIỂM DỰNG BINDING DUY NHẤT, thứ bảo đảm
+│   │                          một hidden class cho mọi binding; generateBindingId(),
+│   │                          refinableFields(); toàn bộ builder interface công khai
+│   ├── registry.ts            BindingRegistry — slot-aware last-wins, các index tra cứu nhanh,
+│   │                          version counter cho memo; lưu binding BY REFERENCE (không copy lại)
+│   ├── errors.ts              Toàn bộ error class
+│   ├── module.ts              SyncModule / AsyncModule, MODULE_SETUP
 │   │
-│   ├── token.ts               Token<Value> branded type (TOKEN_BRAND symbol);
-│   │                          token(), tokenName(), isToken()
+│   │  ── container/ ────────────────────────────────────────────────────────
+│   ├── container/
+│   │   ├── container.ts       DefaultContainer + ChainCommitter (một chain ↔ registry)
+│   │   └── binding-builders.ts BindingEntry + BindingChain — chain đăng ký MỘT lần rồi
+│   │                          refine tại chỗ; BindingCommitter interface
 │   │
-│   ├── binding.ts             BindingSlot interface, bindingSlotEquals(), DEFAULT_BINDING_SLOT, bindingSlotToString()
-│   │                          — binding slot utilities (internal, exported via subpath).
-│   │                          Binding discriminated union:
-│   │                            ClassBinding, DynamicBinding, DynamicAsyncBinding,
-│   │                            ResolvedBinding, ResolvedAsyncBinding, ConstantBinding, AliasBinding
-│   │                          PartialBinding (builder-only intermediate), generateBindingId()
-│   │                          Builder interfaces (public, root index):
-│   │                            BindToBuilder, BindingBuilder, ConstantBindingBuilder,
-│   │                            AliasBindingBuilder, SingletonBindingBuilder,
-│   │                            TransientBindingBuilder, ScopedBindingBuilder,
-│   │                            SingletonLifecycleBuilder
+│   │  ── resolution/ (perf-critical core) ──────────────────────────────────
+│   ├── resolution/
+│   │   ├── resolver.ts        DependencyResolver — sync + async pipeline. Một class vì
+│   │   │                      `#` private không span file được và cả hai pipeline dùng
+│   │   │                      chung state riêng tư ở mọi hop
+│   │   ├── binding-lookup-cache.ts  Memo tra cứu không-options theo chain, đã fold alias;
+│   │   │                      stamp bằng tổng version của cả chain registry
+│   │   ├── class-introspector.ts    Cache theo class: constructor metadata, phát hiện
+│   │   │                      @postConstruct, accessor injection, và chính lời gọi `new`
+│   │   ├── activation-need.ts Cache theo binding: có cần chạy activation pipeline không
+│   │   ├── instantiation-plan.ts    Compiler cho compiled plan + escape ra runtime path
+│   │   ├── resolution-path.ts Cycle guard trên mảng path (scan tuyến tính → Set khi sâu)
+│   │   ├── environment.ts     DefaultResolutionContext (pooled), ResolverCallbacks,
+│   │   │                      runWithContainer / getActiveContainer
+│   │   ├── scope.ts           ScopeManager — cache singleton/scoped, serialize async
+│   │   ├── lifecycle.ts       LifecycleManager — chuỗi onActivation/onDeactivation
+│   │   ├── binding-select.ts  selectBinding(), selectAllBindings()
+│   │   ├── binding-scope.ts   effectiveBindingScope()
+│   │   ├── constraints.ts     Đánh giá predicate/slot constraint
+│   │   └── resolve-options.ts injectionSlotToResolveOptions(), bindingSlotToResolveOptions()
 │   │
-│   ├── binding-scope.ts       effectiveBindingScope(binding) — resolve scope precedence
-│   │                          (public, root index)
-│   │
-│   ├── binding-select.ts      selectBinding(), selectAllBindings()
-│   │                          — runtime slot+predicate filtering (internal, subpath only)
-│   │
-│   ├── registry.ts            BindingRegistry — slot-aware last-wins, Map<tokenKey, Binding[]>
-│   │                          (internal, subpath @codefast/di/registry)
-│   │
-│   ├── resolver.ts            DependencyResolver — graph walk, circular detection, async
-│   │                          contamination, singleton in-flight deduplication
-│   │                          (internal, subpath @codefast/di/resolver)
-│   │
-│   ├── scope.ts               ScopeManager — singleton/scoped cache per container,
-│   │                          async serialization via in-flight Promise map
-│   │                          (internal, subpath @codefast/di/scope)
-│   │
-│   ├── lifecycle.ts           LifecycleManager — onActivation/onDeactivation chain,
-│   │                          async deactivation, AsyncDeactivationError guard
-│   │                          (internal, subpath @codefast/di/lifecycle)
-│   │
-│   ├── environment.ts         runWithContainer(), getActiveContainer() — container context
-│   │                          for inject() accessor decorator; DefaultResolutionContext impl;
-│   │                          buildResolutionFrame() — internal frame builder
-│   │                          (public helpers re-exported from root; impl internals không export)
-│   │
-│   ├── inspector.ts           Inspector class — implement inspect(), lookupBindings(), has(), hasOwn()
-│   │                          BindingSnapshot, ContainerSnapshot interfaces (public, root index)
-│   │                          (internal, subpath @codefast/di/inspector)
-│   │
-│   ├── dependency-graph.ts    GraphNode, GraphEdge, ContainerGraphJson, GraphOptions (interfaces)
-│   │                          buildDependencyGraph() — build ContainerGraphJson từ container
-│   │                          (types re-export qua graph-adapters/types.ts; hàm internal)
-│   │
-│   ├── resolve-options.ts     injectionSlotToResolveOptions(), bindingSlotToResolveOptions()
-│   │                          (public, root index)
-│   │
-│   ├── constraints.ts         whenParentIs, whenNoParentIs, whenAnyAncestorIs, whenNoAncestorIs,
-│   │                          whenParentNamed, whenAnyAncestorNamed,
-│   │                          whenParentTagged, whenAnyAncestorTagged,
-│   │                          whenParentTaggedAll, whenAnyAncestorTaggedAll
-│   │                          (public — root index + subpath @codefast/di/constraints)
-│   │
-│   ├── module.ts              SyncModule, AsyncModule, Module — branded namespace objects;
-│   │                          ModuleBuilder, AsyncModuleBuilder interfaces;
-│   │                          isSyncModule() type guard
-│   │                          (public, root index)
-│   │
-│   ├── container.ts           Container interface, ContainerStatic interface,
-│   │                          Container const (namespace + factory)
-│   │                          (public, root index)
-│   │
-│   ├── errors.ts              DiError abstract base; concrete subclasses:
-│   │                          InternalError, TokenNotBoundError, NoMatchingBindingError,
-│   │                          AmbiguousBindingError, CircularDependencyError,
-│   │                          AsyncResolutionError, AsyncActivationError, AsyncDeactivationError,
-│   │                          ScopeViolationError (+ ScopeViolationDetails), MissingMetadataError,
-│   │                          AsyncModuleLoadError, SyncDisposalNotSupportedError,
-│   │                          MissingScopeContextError, MissingContainerContextError,
-│   │                          RebindUnboundTokenError, DisposedContainerError
-│   │                          (public, root index)
-│   │
-│   ├── metadata/
-│   │   ├── metadata-keys.ts         Symbol keys + WeakMap stores (internal):
-│   │   │                            INJECTABLE_KEY, LIFECYCLE_KEY, INJECT_ACCESSOR_KEY,
-│   │   │                            constructorMetadataMap, lifecycleMetadataMap,
-│   │   │                            lifecycleByConstructorMetadataMap,
-│   │   │                            accessorMetadataByMetadataObjectMap,
-│   │   │                            accessorMetadataByConstructorMap
-│   │   ├── metadata-types.ts        ParamMetadata, ConstructorMetadata,
-│   │   │                            LifecycleMetadata, MutableLifecycleMetadata,
-│   │   │                            MetadataReader interface
-│   │   │                            (MetadataReader + MutableLifecycleMetadata public, root index)
-│   │   ├── metadata-reader-token.ts MetadataReaderToken — Token<MetadataReader>
-│   │   │                            (public, root index)
-│   │   └── symbol-metadata-reader.ts SymbolMetadataReader class + defaultMetadataReader singleton
-│   │                                  (internal — không export từ root index)
-│   │
+│   │  ── introspection/, decorators/, metadata/ ────────────────────────────
+│   ├── introspection/
+│   │   ├── inspector.ts       inspect(), lookupBindings()
+│   │   ├── dependency-graph.ts buildDependencyGraph()
+│   │   └── graph-adapters/    dot.ts, cytoscape.ts, reactflow.ts
 │   ├── decorators/
-│   │   ├── inject.ts          InjectOptions, InjectionDescriptor, InjectableDependency types;
-│   │   │                      inject(), optional(), injectAll(), isInjectionDescriptor();
-│   │   │                      normalizeToDescriptor() (internal helper)
-│   │   │                      (public types + fns, root index)
-│   │   ├── injectable.ts      AutoRegisterRegistry, InjectableOptions, InjectableDependency (re-export);
-│   │   │                      injectable(), createAutoRegisterRegistry()
-│   │   │                      (public, root index)
-│   │   └── lifecycle-decorators.ts  postConstruct(), preDestroy()
-│   │                                (public, root index)
-│   │
-│   ├── graph-adapters/
-│   │   ├── types.ts           Re-export GraphNode, GraphEdge, ContainerGraphJson, GraphOptions
-│   │   │                      từ #/dependency-graph — shared entry point cho subpath
-│   │   │                      @codefast/di/graph-adapters/dot|cytoscape|reactflow
-│   │   ├── dot.ts             toDotGraph(graph) → DOT string (Graphviz)
-│   │   │                      (subpath @codefast/di/graph-adapters/dot)
-│   │   ├── cytoscape.ts       CytoscapeNode, CytoscapeEdge, CytoscapeElements types;
-│   │   │                      toCytoscapeGraph(graph) → CytoscapeElements
-│   │   │                      (subpath @codefast/di/graph-adapters/cytoscape)
-│   │   └── reactflow.ts       ReactFlowNode, ReactFlowEdge, ReactFlowGraph types;
-│   │                          toReactFlowGraph(graph) → ReactFlowGraph
-│   │                          (subpath @codefast/di/graph-adapters/reactflow)
-│   │
+│   │   ├── injectable.ts      @injectable(), auto-register registry
+│   │   ├── inject.ts          inject(), optional(), injectAll(), InjectionDescriptor
+│   │   └── lifecycle-decorators.ts  @postConstruct(), @preDestroy()
+│   ├── metadata/
+│   │   ├── metadata-types.ts  MetadataReader, ConstructorMetadata
+│   │   ├── metadata-keys.ts   Symbol.metadata keys
+│   │   ├── symbol-metadata-reader.ts  defaultMetadataReader
+│   │   └── metadata-reader-token.ts   MetadataReaderToken
 │   └── index.ts               Public API exports (root entrypoint — xem §11.1)
 │
-├── tests/
-│   ├── unit/
-│   │   └── api/               Builder và container API tests
-│   │
-│   ├── integration/           Cross-module và end-to-end scenarios
-│   │   ├── decorators.test.ts        @injectable + @inject + @postConstruct end-to-end
-│   │   ├── validate-scope.test.ts    validate() + ScopeViolationError detection
-│   │   └── support/                  Subprocess fixtures driven by the suite
-│   │
-│   └── types/                 Type-level inference và resolve-options tests
+├── tests/                     Mirror đường dẫn src/ trong đúng một category
+│   ├── unit/                  binding, registry, container/, decorators/,
+│   │                          introspection/, resolution/
+│   ├── integration/           decorators end-to-end, validate-scope, support/ fixtures
+│   └── types/                 expectTypeOf — inference, container API, resolve-options
 │
-├── package.json
+├── package.json               #exports sinh từ dist/ bởi `codefast mirror`
 ├── tsconfig.json
 └── tsconfig.build.json
 ```
@@ -2785,17 +2712,23 @@ export type { ScopeViolationDetails } from "#/errors";
 //
 // @codefast/di/graph-adapters/dot
 //   → toDotGraph(graph: ContainerGraphJson): string
-// @codefast/di/graph-adapters/cytoscape
+// @codefast/di/introspection/graph-adapters/cytoscape
 //   → CytoscapeNode, CytoscapeEdge, CytoscapeElements, toCytoscapeGraph()
-// @codefast/di/graph-adapters/reactflow
+// @codefast/di/introspection/graph-adapters/reactflow
 //   → ReactFlowNode, ReactFlowEdge, ReactFlowGraph, toReactFlowGraph()
 //
-// @codefast/di/registry       — BindingRegistry (advanced)
-// @codefast/di/resolver       — DependencyResolver (advanced)
-// @codefast/di/scope          — ScopeManager (advanced)
-// @codefast/di/lifecycle      — LifecycleManager (advanced)
-// @codefast/di/binding-select — selectBinding(), selectAllBindings() (advanced)
-// @codefast/di/inspector      — Inspector class (advanced)
+// Subpath advanced (sinh từ dist/ bởi `codefast mirror` — mirror đường dẫn src/):
+// @codefast/di/registry                          — BindingRegistry
+// @codefast/di/container/binding-builders        — BindingEntry, BindingCommitter
+// @codefast/di/resolution/resolver               — DependencyResolver
+// @codefast/di/resolution/scope                  — ScopeManager
+// @codefast/di/resolution/lifecycle              — LifecycleManager
+// @codefast/di/resolution/binding-select         — selectBinding(), selectAllBindings()
+// @codefast/di/resolution/binding-lookup-cache   — BindingLookupCache
+// @codefast/di/resolution/class-introspector     — ClassIntrospector
+// @codefast/di/resolution/activation-need        — ActivationNeedCache
+// @codefast/di/resolution/instantiation-plan     — InstantiationPlanCompiler
+// @codefast/di/introspection/inspector           — Inspector
 //
 // ── Không export (implementation internal) ───────────────────────────────────
 //

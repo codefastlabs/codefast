@@ -10,8 +10,8 @@ Ground rules that bite in this package specifically:
 
 - **Node ≥ 26 required** — the resolver uses native `Map.prototype.getOrInsert`. `engines.node` is `>=26`; examples polyfill it by hand to still run on Node 24.
 - `exactOptionalPropertyTypes` is on — an optional prop that may receive an explicit value is typed `?: T | undefined`.
-- The resolver is deliberately **one class** (`resolution/resolver.ts`) because `#` private fields cannot span files. Resolver changes go there, not in a new file.
-- Before touching `resolution/` or `registry`, read the "packages/di layout" section in [CLAUDE.md](../../CLAUDE.md) — the hot paths carry perf-tuned idioms (chain-versioned lookup memos, compiled class plans, a uniform binding hidden class) that a naive refactor can silently deoptimize.
+- The sync and async resolve pipelines live in **one class** (`resolution/resolver.ts`) because `#` private fields cannot span files and both pipelines touch the same private state on every hop. Everything that does _not_ need that state is already a named collaborator (`binding-lookup-cache`, `class-introspector`, `activation-need`, `instantiation-plan`) — extend those rather than growing the engine.
+- **Before touching `resolution/` or `registry`, read [ARCHITECTURE.md](./ARCHITECTURE.md).** It records the invariants the hot paths depend on — the single binding construction site and its hidden class, why the resolution contexts are pooled, which cycle-detection mechanism each lane uses and why they differ, and the rule that a threshold may choose an implementation but never a semantics. Several of these look like they could be simplified and cannot.
 
 ## 1. Write the code
 
@@ -59,9 +59,12 @@ A resolver refactor is **not** free until measured. Run the head-to-head, order-
 pnpm --filter @codefast/benchmark-di-inversify bench:isolate
 ```
 
-- Compare against a baseline run on the same machine.
+- Compare against a baseline run on the same machine, **stashed and rebuilt** — not against numbers from an earlier session.
+- Three runs per side minimum, and compare the **best** of each rather than one median: ambient load only ever subtracts throughput, and a single run cannot separate a 5% change from noise. A 5% "regression" in this suite has twice turned out to be nothing.
 - If optimizing, sweep depth 16 → 512 and confirm you did not regress the deep-chain wins.
-- Known weak spots to watch (see [benchmarks/di-inversify/RESULTS.md](../../benchmarks/di-inversify/RESULTS.md)): per-hop dispatch in `#resolveDefaultEntry`, cold container build, short async chains.
+- **Measure cold paths too.** Container construction and binding registration are invisible to the hot loops and have been the source of the suite's real losses. A change that wins `transient-class-1-dep` can lose `realistic-graph-cold-resolve` outright.
+- **Validate a perf hypothesis by throwaway ablation, not by reasoning.** Build the variant, measure it, delete it. Several plausible mechanisms in this package's history were wrong in the direction their author expected.
+- Known weak spots to watch (see [benchmarks/di-inversify/RESULTS.md](../../benchmarks/di-inversify/RESULTS.md)): per-hop dispatch in `#resolveDefaultEntry`, and cold container build against the leaner containers.
 - For a material perf change, run the publishable profile and update RESULTS.md:
 
 ```bash
