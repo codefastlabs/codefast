@@ -38,8 +38,6 @@ export type InstantiationPlanCompileResult = (() => unknown) | null | typeof PLA
  *
  * @remarks No `null`: a dependency escapes rather than failing, so "no plan" is only ever a
  * verdict on a plan's root.
- *
- * @since 0.5.0-canary.7
  */
 type DependencyCompileResult = (() => unknown) | typeof PLAN_RETRY;
 
@@ -81,8 +79,6 @@ export interface InstantiationPlanHost {
 /**
  * Which resolve an escaped dependency replays — mirrors how the interpreted path dispatches
  * a constructor param.
- *
- * @since 0.5.0-canary.7
  */
 export type EscapeArity = "all" | "optional" | "single";
 

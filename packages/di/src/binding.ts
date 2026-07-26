@@ -40,11 +40,12 @@ export function bindingSlotEquals(left: BindingSlot, right: BindingSlot): boolea
   return true;
 }
 
+/** Cached singleton absent — distinguishes "not resolved yet" from a cached `undefined`. */
+export const NO_INSTANCE: unique symbol = Symbol("di:no-instance");
+
 /**
  * @since 0.3.16-canary.0
  */
-export const NO_INSTANCE: unique symbol = Symbol("di:no-instance");
-
 export const DEFAULT_BINDING_SLOT = { name: undefined, tags: [] } satisfies BindingSlot;
 
 /**
@@ -267,8 +268,6 @@ export function createBinding<Value>(
  * @remarks No registry index is keyed on these, so a builder that owns the registered object
  * can write them directly instead of re-registering. `token`, `slot`, `predicate` and `id`
  * are excluded on purpose — changing those means re-indexing.
- *
- * @since 0.5.0-canary.7
  */
 export interface RefinableBindingFields<Value> {
   onActivation: ActivationHandler<Value> | undefined;
@@ -278,8 +277,6 @@ export interface RefinableBindingFields<Value> {
 
 /**
  * Narrows a registered binding to the fields a fluent chain may still refine.
- *
- * @since 0.5.0-canary.7
  */
 export function refinableFields<Value>(binding: Binding<Value>): RefinableBindingFields<Value> {
   return binding as unknown as RefinableBindingFields<Value>;

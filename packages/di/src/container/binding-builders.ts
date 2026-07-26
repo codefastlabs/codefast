@@ -77,8 +77,6 @@ function trackBindingForModule(
  *
  * @remarks Built once per container and shared by every chain it creates. `moduleBindingIds` is
  * present exactly when the chain belongs to a module load.
- *
- * @since 0.5.0-canary.7
  */
 export interface BindingRegistration {
   readonly registry: BindingRegistry;
@@ -91,8 +89,6 @@ export interface BindingRegistration {
  * The one builder behind `bind()` and every `to*()` return type. Each interface exposes only the
  * calls that are legal at that point in the chain; the runtime object is shared because every
  * refinement is the same operation — narrow the registered binding, keep its id.
- *
- * @since 0.5.0-canary.7
  */
 export class BindingChain<Value>
   implements
