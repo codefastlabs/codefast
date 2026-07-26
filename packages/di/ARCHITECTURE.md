@@ -24,6 +24,10 @@ registry, binding, token, types, errors                    ← the model
 
 **Registration happens once.** `bind(T).toDynamic(f).singleton()` registers on `toDynamic()`; `singleton()` then writes `scope` in place on that same registered object. Only `when*()` re-slots, because slot and predicate are what the registry indexes on — and it re-registers under the chain's original id, so `id()` is stable for the whole chain. Doing it the other way (commit, remove, re-commit) cost ~2.3× on the bind path.
 
+**The chain is two objects, and cannot be one.** `bind()` returns a `BindingEntry` carrying only `to*()`; `to*()` returns a `BindingChain` carrying the refinements and committing to the registry itself. Collapsing them into a single instance would put `when*()`/`singleton()` on the object `bind()` hands back, and SPEC §2.4 requires that ordering to be enforced at runtime — a missing method — not only in the types. `tests/unit/container/bind-to-builder-order.test.ts` pins it, and it caught exactly that regression.
+
+Worth knowing before trying again: the chain's per-bind allocation was measured against a floor that registers the binding with no builder objects at all. The ceiling for removing _every_ builder object is ~19% on `realistic-graph-cold-resolve` at a forced GC every 4096 iterations — the operating point that reproduces the published 0.80×. Removing just the separate committer object (one of four) moved nothing measurable, and the two the spec requires cannot go. Measure that floor in-process before believing any object-counting argument here: an in-process A/B against it is the only version of this measurement that came out reproducible.
+
 ## The engine
 
 `DependencyResolver` is one large class on purpose: `#private` access is per class, and the sync and async pipelines both need the same private state on every hop. Splitting them behind interfaces would put a call and a property load on paths that run millions of times a second.
