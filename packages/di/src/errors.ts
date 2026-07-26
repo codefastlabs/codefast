@@ -213,6 +213,25 @@ export class MissingContainerContextError extends DiError {
 }
 
 /**
+ * A fluent chain was refined before a `to*()` call gave it a binding to refine.
+ *
+ * @remarks The builder types make this unreachable from TypeScript — `bind()` returns
+ * `BindToBuilder`, which exposes only `to*()`. It exists for JavaScript callers and for anyone who
+ * casts past the types, so the misuse fails loudly instead of mutating nothing.
+ */
+export class ChainNotRegisteredError extends DiError {
+  readonly code = "CHAIN_NOT_REGISTERED";
+  readonly tokenName: string;
+
+  constructor(tokenName: string) {
+    super(
+      `Cannot refine the binding for token '${tokenName}' before choosing a target. Call a to*() method first — for example .to(SomeClass), .toConstantValue(value) or .toDynamic(factory).`,
+    );
+    this.tokenName = tokenName;
+  }
+}
+
+/**
  * @since 0.3.16-canary.0
  */
 export class RebindUnboundTokenError extends DiError {

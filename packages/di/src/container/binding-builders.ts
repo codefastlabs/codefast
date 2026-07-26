@@ -7,11 +7,11 @@
  * (scope, activation hooks) are written in place; only `when*()` re-slots, which re-indexes
  * under the chain's original id.
  *
- * **Two objects, not four.** The chain talks to the registry directly rather than through a
- * separate committer object. It stays two because `bind()` must return something that does not
- * expose `when*`/`singleton()` *at runtime* as well as in the types (SPEC §2.4) — collapsing the
- * entry and the chain into one instance would put every refinement on the object `bind()` hands
- * back. Binding is a cold path, but a container built from a graph pays it once per node.
+ * **One object per `bind()`.** A single instance plays every role — the `BindToBuilder` before
+ * `to*()` and the kind-specific builder after — and commits to the registry itself rather than
+ * through a separate committer. The ordering `to*()`-before-`when*()` is enforced by the return
+ * types; a caller who defeats them (plain JavaScript, or a cast) gets a
+ * {@link ChainNotRegisteredError} rather than a silent no-op.
  */
 import type {
   AliasBindingBuilder,
@@ -29,8 +29,10 @@ import type {
 import { bindingSlotEquals, createBinding, DEFAULT_BINDING_SLOT, refinableFields } from "#/binding";
 import type { InjectableDependency, ResolvedDependencyValue } from "#/decorators/inject";
 import { normalizeToDescriptor } from "#/decorators/inject";
+import { ChainNotRegisteredError } from "#/errors";
 import type { BindingRegistry } from "#/registry";
 import type { Token } from "#/token";
+import { tokenName } from "#/token";
 import type {
   ActivationHandler,
   BindingIdentifier,
@@ -95,15 +97,30 @@ export interface BindingRegistration {
   readonly moduleBindingIds: Array<BindingIdentifier> | undefined;
 }
 
-// ── BindingEntry ──────────────────────────────────────────────────────────────
+// ── BindingChain ──────────────────────────────────────────────────────────────
 
 /**
- * What `bind()` returns: the `to*()` calls and nothing else, so an out-of-order `when*()` is a
- * missing method at runtime and not just a type error.
+ * The one builder behind `bind()` and every `to*()` return type. Each interface exposes only the
+ * calls that are legal at that point in the chain; the runtime object is shared because every
+ * refinement is the same operation — narrow the registered binding, keep its id.
  *
  * @since 0.5.0-canary.7
  */
-export class BindingEntry<Value> implements BindToBuilder<Value> {
+export class BindingChain<Value>
+  implements
+    AliasBindingBuilder,
+    BindingBuilder<Value>,
+    BindToBuilder<Value>,
+    ConstantBindingBuilder<Value>,
+    ScopedBindingBuilder<Value>,
+    SingletonBindingBuilder<Value>,
+    SingletonLifecycleBuilder<Value>,
+    TransientBindingBuilder<Value>
+{
+  // Undefined until a `to*()` call registers the binding.
+  #binding: Binding<Value> | undefined;
+  // Allocated only by a chain that actually displaces something — most never do.
+  #displacedByChain: Array<Binding> | undefined;
   readonly #token: Token<Value> | Constructor<Value>;
   readonly #registration: BindingRegistration;
 
@@ -112,9 +129,24 @@ export class BindingEntry<Value> implements BindToBuilder<Value> {
     this.#registration = registration;
   }
 
-  #register(partial: PartialBinding<Value>): BindingChain<Value> {
-    return new BindingChain<Value>(this.#token, partial, this.#registration);
+  /** The registered binding, or a loud failure if no `to*()` has run yet. */
+  #registered(): Binding<Value> {
+    if (this.#binding === undefined) {
+      throw new ChainNotRegisteredError(tokenName(this.#token));
+    }
+    return this.#binding;
   }
+
+  #register(partial: PartialBinding<Value>): this {
+    // Each `to*()` starts its own registration, so anything a previous one displaced is not this
+    // registration's to restore.
+    this.#displacedByChain = undefined;
+    this.#binding = createBinding(partial, this.#token, DEFAULT_BINDING_SLOT, undefined);
+    this.#commit(this.#binding, undefined);
+    return this;
+  }
+
+  // ── Registration ───────────────────────────────────────────────────────────
 
   to(type: Constructor<Value>): BindingBuilder<Value> {
     return this.#register({ kind: "class", target: type, scope: "transient" });
@@ -166,72 +198,41 @@ export class BindingEntry<Value> implements BindToBuilder<Value> {
   toAlias(target: Token<Value> | Constructor<Value>): AliasBindingBuilder {
     return this.#register({ kind: "alias", target });
   }
-}
 
-// ── BindingChain ──────────────────────────────────────────────────────────────
-
-/**
- * The one builder behind every `to*()` return type. Each interface exposes only the calls that are
- * legal for that binding kind; the runtime object is shared because every refinement is the same
- * operation — narrow the registered binding, keep its id. It commits to the registry itself rather
- * than through a separate committer object.
- *
- * @since 0.5.0-canary.7
- */
-class BindingChain<Value>
-  implements
-    AliasBindingBuilder,
-    BindingBuilder<Value>,
-    ConstantBindingBuilder<Value>,
-    ScopedBindingBuilder<Value>,
-    SingletonBindingBuilder<Value>,
-    SingletonLifecycleBuilder<Value>,
-    TransientBindingBuilder<Value>
-{
-  #binding: Binding<Value>;
-  // Allocated only by a chain that actually displaces something — most never do.
-  #displacedByChain: Array<Binding> | undefined;
-  readonly #registration: BindingRegistration;
-
-  constructor(
-    token: Token<Value> | Constructor<Value>,
-    partial: PartialBinding<Value>,
-    registration: BindingRegistration,
-  ) {
-    this.#registration = registration;
-    this.#binding = createBinding(partial, token, DEFAULT_BINDING_SLOT, undefined);
-    this.#commit(this.#binding, undefined);
-  }
+  // ── Refinement ─────────────────────────────────────────────────────────────
 
   // Slot and predicate are what the registry indexes on, so a re-slot rebuilds the binding and
   // re-registers it — under the original id, keeping `id()` stable for the whole chain.
   #reslot(slot: BindingSlot, predicate: ((ctx: ConstraintContext) => boolean) | undefined): this {
-    const previous = this.#binding;
+    const previous = this.#registered();
     this.#binding = createBinding(previous, previous.token, slot, predicate, previous.id);
     this.#commit(this.#binding, previous.id);
     return this;
   }
 
   #withScope(scope: BindingScope): this {
-    refinableFields(this.#binding).scope = scope;
+    refinableFields(this.#registered()).scope = scope;
     this.#registration.registry.touch();
     return this;
   }
 
   when(predicate: (ctx: ConstraintContext) => boolean): this {
-    return this.#reslot(this.#binding.slot, predicate);
+    return this.#reslot(this.#registered().slot, predicate);
   }
 
   whenNamed(name: string): this {
-    return this.#reslot({ ...this.#binding.slot, name }, this.#binding.predicate);
+    return this.#reslot({ ...this.#registered().slot, name }, this.#registered().predicate);
   }
 
   whenTagged(tag: string, value: unknown): this {
-    const binding = this.#binding;
+    const binding = this.#registered();
     return this.#reslot(updateSlotTag(binding.slot, tag, value), binding.predicate);
   }
 
   whenDefault(): this {
+    // The default slot is what a fresh registration already has, so there is nothing to re-slot —
+    // but an unregistered chain must fail here exactly as it does in every other refinement.
+    this.#registered();
     return this;
   }
 
@@ -248,19 +249,19 @@ class BindingChain<Value>
   }
 
   onActivation(fn: ActivationHandler<Value>): this {
-    refinableFields(this.#binding).onActivation = fn;
+    refinableFields(this.#registered()).onActivation = fn;
     this.#registration.registry.touch();
     return this;
   }
 
   onDeactivation(fn: DeactivationHandler<Value>): this {
-    refinableFields(this.#binding).onDeactivation = fn;
+    refinableFields(this.#registered()).onDeactivation = fn;
     this.#registration.registry.touch();
     return this;
   }
 
   id(): BindingIdentifier {
-    return this.#binding.id;
+    return this.#registered().id;
   }
 
   // ── Registry ───────────────────────────────────────────────────────────────

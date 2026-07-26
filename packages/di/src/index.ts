@@ -85,6 +85,7 @@ export {
   AsyncDeactivationError,
   AsyncModuleLoadError,
   AsyncResolutionError,
+  ChainNotRegisteredError,
   CircularDependencyError,
   DiError,
   DisposedContainerError,

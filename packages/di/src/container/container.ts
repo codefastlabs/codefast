@@ -1,6 +1,6 @@
 import type { Binding, BindToBuilder } from "#/binding";
 import type { BindingRegistration } from "#/container/binding-builders";
-import { BindingEntry } from "#/container/binding-builders";
+import { BindingChain } from "#/container/binding-builders";
 import type { AutoRegisterRegistry } from "#/decorators/injectable";
 import {
   AsyncModuleLoadError,
@@ -193,7 +193,7 @@ class DefaultContainer implements Container {
     token: Token<Value> | Constructor<Value>,
     registration: BindingRegistration = this.#ownRegistration(),
   ): BindToBuilder<Value> {
-    return new BindingEntry<Value>(token, registration);
+    return new BindingChain<Value>(token, registration);
   }
 
   unbind(tokenOrId: Token<unknown> | Constructor | BindingIdentifier): void {
