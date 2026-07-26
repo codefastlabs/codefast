@@ -15,10 +15,10 @@ export const SINGLETON_MISS: unique symbol = Symbol("di:singleton-miss");
 export class ScopeManager {
   // Singleton cache: bindingId -> instance
   readonly #singletons = new Map<BindingIdentifier, unknown>();
-  // In-flight promises for async singleton creation
-  readonly #inflight = new Map<BindingIdentifier, Promise<unknown>>();
-  // Scoped cache (for child containers): bindingId -> instance
-  readonly #scoped = new Map<BindingIdentifier, unknown>();
+  // In-flight promises for async singleton creation — only an async resolve ever needs it.
+  #inflight: Map<BindingIdentifier, Promise<unknown>> | undefined;
+  // Scoped cache — only a child container resolving a `scoped` binding ever needs it.
+  #scoped: Map<BindingIdentifier, unknown> | undefined;
 
   readonly isChild: boolean;
 
@@ -56,39 +56,35 @@ export class ScopeManager {
   }
 
   getInflight(id: BindingIdentifier): Promise<unknown> | undefined {
-    return this.#inflight.get(id);
+    return this.#inflight?.get(id);
   }
 
   setInflight(id: BindingIdentifier, p: Promise<unknown>): void {
-    this.#inflight.set(id, p);
+    (this.#inflight ??= new Map()).set(id, p);
   }
 
   clearInflight(id: BindingIdentifier): void {
-    this.#inflight.delete(id);
+    this.#inflight?.delete(id);
   }
 
   hasScoped(id: BindingIdentifier): boolean {
-    return this.#scoped.has(id);
+    return this.#scoped !== undefined && this.#scoped.has(id);
   }
 
   getScoped<Value>(id: BindingIdentifier): Value {
-    return this.#scoped.get(id) as Value;
+    return this.#scoped?.get(id) as Value;
   }
 
   setScoped(id: BindingIdentifier, instance: unknown): void {
     if (!this.isChild) {
       throw new MissingScopeContextError("(unknown)");
     }
-    this.#scoped.set(id, instance);
-  }
-
-  getAllScoped(): ReadonlyMap<BindingIdentifier, unknown> {
-    return this.#scoped;
+    (this.#scoped ??= new Map()).set(id, instance);
   }
 
   clearAll(): void {
     this.#singletons.clear();
-    this.#inflight.clear();
-    this.#scoped.clear();
+    this.#inflight?.clear();
+    this.#scoped?.clear();
   }
 }

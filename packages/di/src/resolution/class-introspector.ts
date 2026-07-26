@@ -17,9 +17,11 @@ import type { Constructor } from "#/types";
  * @since 0.5.0-canary.7
  */
 export class ClassIntrospector {
-  readonly #constructorMetadata = new WeakMap<Constructor, ConstructorMetadata | null>();
-  readonly #hasPostConstruct = new WeakMap<Constructor, boolean>();
-  readonly #needsActiveContainer = new WeakMap<Constructor, boolean>();
+  // Unallocated until the container resolves its first class binding — a container bound entirely
+  // to constants, factories or aliases never introspects one.
+  #constructorMetadata: WeakMap<Constructor, ConstructorMetadata | null> | undefined;
+  #hasPostConstruct: WeakMap<Constructor, boolean> | undefined;
+  #needsActiveContainer: WeakMap<Constructor, boolean> | undefined;
   readonly #reader: MetadataReader;
   readonly #container: Container;
 
@@ -29,12 +31,12 @@ export class ClassIntrospector {
   }
 
   constructorMetadata(target: Constructor): ConstructorMetadata | undefined {
-    const cached = this.#constructorMetadata.get(target);
+    const cached = this.#constructorMetadata?.get(target);
     if (cached !== undefined) {
       return cached === null ? undefined : cached;
     }
     const metadata = this.#reader.getConstructorMetadata(target);
-    this.#constructorMetadata.set(target, metadata ?? null);
+    (this.#constructorMetadata ??= new WeakMap()).set(target, metadata ?? null);
     return metadata;
   }
 
@@ -47,12 +49,12 @@ export class ClassIntrospector {
    * question. The compiled plans refuse to compile until it is known, then compile for real.
    */
   knownPostConstruct(target: Constructor): boolean | undefined {
-    return this.#hasPostConstruct.get(target);
+    return this.#hasPostConstruct?.get(target);
   }
 
   discoverPostConstruct(target: Constructor): void {
     const lifecycle = this.#reader.getLifecycleMetadata(target);
-    this.#hasPostConstruct.set(
+    (this.#hasPostConstruct ??= new WeakMap()).set(
       target,
       lifecycle !== undefined && lifecycle.postConstruct !== undefined && lifecycle.postConstruct.length > 0,
     );
@@ -60,10 +62,10 @@ export class ClassIntrospector {
 
   /** True when the class has accessor injection, which reads the container during construction. */
   needsActiveContainer(target: Constructor): boolean {
-    let needsActiveContainer = this.#needsActiveContainer.get(target);
+    let needsActiveContainer = this.#needsActiveContainer?.get(target);
     if (needsActiveContainer === undefined) {
       needsActiveContainer = (this.#reader.getAccessorMetadata?.(target)?.length ?? 0) > 0;
-      this.#needsActiveContainer.set(target, needsActiveContainer);
+      (this.#needsActiveContainer ??= new WeakMap()).set(target, needsActiveContainer);
     }
     return needsActiveContainer;
   }

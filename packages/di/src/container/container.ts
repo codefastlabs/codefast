@@ -61,12 +61,13 @@ class ChainCommitter implements BindingCommitter {
   // Allocated only by a chain that actually displaces something — most never do.
   #displacedByChain: Array<Binding> | undefined;
   readonly #registry: BindingRegistry;
-  readonly #moduleBindingIds: Map<object, Array<BindingIdentifier>>;
+  // Present exactly when `moduleRef` is — only a module's chain tracks its binding ids.
+  readonly #moduleBindingIds: Map<object, Array<BindingIdentifier>> | undefined;
   readonly #moduleRef: object | undefined;
 
   constructor(
     registry: BindingRegistry,
-    moduleBindingIds: Map<object, Array<BindingIdentifier>>,
+    moduleBindingIds: Map<object, Array<BindingIdentifier>> | undefined,
     moduleRef: object | undefined,
   ) {
     this.#registry = registry;
@@ -106,7 +107,7 @@ class ChainCommitter implements BindingCommitter {
   }
 
   #trackForModule(moduleRef: object, id: BindingIdentifier, previousId: BindingIdentifier | undefined): void {
-    const ids = this.#moduleBindingIds.getOrInsert(moduleRef, []);
+    const ids = this.#moduleBindingIds!.getOrInsert(moduleRef, []);
     if (previousId !== undefined) {
       const previousIndex = ids.indexOf(previousId);
       if (previousIndex !== -1) {
@@ -187,21 +188,30 @@ class DefaultContainer implements Container {
   readonly #scope: ScopeManager;
   readonly #lifecycle: LifecycleManager;
   #resolver!: DependencyResolver;
-  readonly #inspector: Inspector;
+  // Built on the first introspecting call — a container that only binds and resolves never needs it.
+  #inspector: Inspector | undefined;
   readonly #parent: DefaultContainer | undefined;
 
-  // Module tracking: module -> ref count
-  readonly #moduleRefs = new Map<object, number>();
+  // Module tracking: module -> ref count. Both tables stay unallocated until a module is loaded.
+  #moduleRefs: Map<object, number> | undefined;
   // Module bindings: module -> array of binding IDs registered by it
-  readonly #moduleBindingIds = new Map<object, Array<BindingIdentifier>>();
+  #moduleBindingIds: Map<object, Array<BindingIdentifier>> | undefined;
 
   constructor(parent?: DefaultContainer) {
     this.#parent = parent;
     this.#registry = new BindingRegistry();
     this.#scope = new ScopeManager(parent !== undefined);
     this.#lifecycle = new LifecycleManager();
-    this.#inspector = new Inspector(this.#registry, this.#scope, parent !== undefined, () => this.#disposed);
     this.#initResolver();
+  }
+
+  #getInspector(): Inspector {
+    return (this.#inspector ??= new Inspector(
+      this.#registry,
+      this.#scope,
+      this.#parent !== undefined,
+      () => this.#disposed,
+    ));
   }
 
   #initResolver(): void {
@@ -248,7 +258,8 @@ class DefaultContainer implements Container {
     token: Token<Value> | Constructor<Value>,
     moduleRef?: object,
   ): BindToBuilder<Value> {
-    return new BindingEntry<Value>(token, new ChainCommitter(this.#registry, this.#moduleBindingIds, moduleRef));
+    const moduleBindingIds = moduleRef === undefined ? undefined : (this.#moduleBindingIds ??= new Map());
+    return new BindingEntry<Value>(token, new ChainCommitter(this.#registry, moduleBindingIds, moduleRef));
   }
 
   unbind(tokenOrId: Token<unknown> | Constructor | BindingIdentifier): void {
@@ -335,12 +346,13 @@ class DefaultContainer implements Container {
         throw new AsyncModuleLoadError(module.name);
       }
       const moduleRef = module as object;
-      const existing = this.#moduleRefs.get(moduleRef);
+      const moduleRefs = (this.#moduleRefs ??= new Map());
+      const existing = moduleRefs.get(moduleRef);
       if (existing !== undefined) {
-        this.#moduleRefs.set(moduleRef, existing + 1);
+        moduleRefs.set(moduleRef, existing + 1);
         continue;
       }
-      this.#moduleRefs.set(moduleRef, 1);
+      moduleRefs.set(moduleRef, 1);
       const builder = this.#createModuleBuilder(moduleRef);
       module[MODULE_SETUP](builder);
     }
@@ -375,12 +387,13 @@ class DefaultContainer implements Container {
 
   async #loadOneModuleAsync(module: SyncModule | AsyncModule): Promise<void> {
     const moduleRef = module as object;
-    const existing = this.#moduleRefs.get(moduleRef);
+    const moduleRefs = (this.#moduleRefs ??= new Map());
+    const existing = moduleRefs.get(moduleRef);
     if (existing !== undefined) {
-      this.#moduleRefs.set(moduleRef, existing + 1);
+      moduleRefs.set(moduleRef, existing + 1);
       return;
     }
-    this.#moduleRefs.set(moduleRef, 1);
+    moduleRefs.set(moduleRef, 1);
 
     if (isSyncModule(module)) {
       const builder = this.#createModuleBuilder(moduleRef);
@@ -427,9 +440,9 @@ class DefaultContainer implements Container {
 
   /** Unregister module bindings and collect [binding, instance] pairs for deactivation. */
   #removeModuleBindings(ref: object): Array<[Binding, unknown]> {
-    this.#moduleRefs.delete(ref);
-    const ids = this.#moduleBindingIds.get(ref) ?? [];
-    this.#moduleBindingIds.delete(ref);
+    this.#moduleRefs?.delete(ref);
+    const ids = this.#moduleBindingIds?.get(ref) ?? [];
+    this.#moduleBindingIds?.delete(ref);
     const pairs: Array<[Binding, unknown]> = [];
     for (const id of ids) {
       const binding = this.#registry.getById(id);
@@ -445,14 +458,14 @@ class DefaultContainer implements Container {
   }
 
   #unloadModuleSync(ref: object): void {
-    const count = this.#moduleRefs.get(ref) ?? 0;
+    const count = this.#moduleRefs?.get(ref) ?? 0;
     if (count <= 1) {
       const reader = this.#getMetadataReader();
       for (const [binding, instance] of this.#removeModuleBindings(ref)) {
         this.#lifecycle.runDeactivationSync(binding, instance, reader);
       }
     } else {
-      this.#moduleRefs.set(ref, count - 1);
+      this.#moduleRefs!.set(ref, count - 1);
     }
   }
 
@@ -464,14 +477,14 @@ class DefaultContainer implements Container {
   }
 
   async #unloadModuleAsync(ref: object): Promise<void> {
-    const count = this.#moduleRefs.get(ref) ?? 0;
+    const count = this.#moduleRefs?.get(ref) ?? 0;
     if (count <= 1) {
       const reader = this.#getMetadataReader();
       for (const [binding, instance] of this.#removeModuleBindings(ref)) {
         await this.#lifecycle.runDeactivation(binding, instance, reader);
       }
     } else {
-      this.#moduleRefs.set(ref, count - 1);
+      this.#moduleRefs!.set(ref, count - 1);
     }
   }
 
@@ -793,22 +806,22 @@ class DefaultContainer implements Container {
 
   has(token: Token<unknown> | Constructor, options?: ResolveOptions): boolean {
     this.#assertNotDisposed();
-    return this.#inspector.has(token, options, () => this.#parent?.has(token, options) ?? false);
+    return this.#getInspector().has(token, options, () => this.#parent?.has(token, options) ?? false);
   }
 
   hasOwn(token: Token<unknown> | Constructor, options?: ResolveOptions): boolean {
     this.#assertNotDisposed();
-    return this.#inspector.hasOwn(token, options);
+    return this.#getInspector().hasOwn(token, options);
   }
 
   lookupBindings<const Value>(token: Token<Value> | Constructor<Value>): ReadonlyArray<BindingSnapshot> {
     this.#assertNotDisposed();
-    return this.#inspector.lookupBindings(token);
+    return this.#getInspector().lookupBindings(token);
   }
 
   inspect(): ContainerSnapshot {
     this.#assertNotDisposed();
-    return this.#inspector.inspect();
+    return this.#getInspector().inspect();
   }
 
   generateDependencyGraph(options?: GraphOptions): ContainerGraphJson {
