@@ -155,6 +155,16 @@
       "types": "./dist/registry.d.ts",
       "import": "./dist/registry.js"
     },
+    "./resolution/activation-need": {
+      "source": "./src/resolution/activation-need.ts",
+      "types": "./dist/resolution/activation-need.d.ts",
+      "import": "./dist/resolution/activation-need.js"
+    },
+    "./resolution/binding-lookup-cache": {
+      "source": "./src/resolution/binding-lookup-cache.ts",
+      "types": "./dist/resolution/binding-lookup-cache.d.ts",
+      "import": "./dist/resolution/binding-lookup-cache.js"
+    },
     "./resolution/binding-scope": {
       "source": "./src/resolution/binding-scope.ts",
       "types": "./dist/resolution/binding-scope.d.ts",
@@ -165,10 +175,10 @@
       "types": "./dist/resolution/binding-select.d.ts",
       "import": "./dist/resolution/binding-select.js"
     },
-    "./resolution/class-plan": {
-      "source": "./src/resolution/class-plan.ts",
-      "types": "./dist/resolution/class-plan.d.ts",
-      "import": "./dist/resolution/class-plan.js"
+    "./resolution/class-introspector": {
+      "source": "./src/resolution/class-introspector.ts",
+      "types": "./dist/resolution/class-introspector.d.ts",
+      "import": "./dist/resolution/class-introspector.js"
     },
     "./resolution/constraints": {
       "source": "./src/resolution/constraints.ts",
@@ -179,6 +189,11 @@
       "source": "./src/resolution/environment.ts",
       "types": "./dist/resolution/environment.d.ts",
       "import": "./dist/resolution/environment.js"
+    },
+    "./resolution/instantiation-plan": {
+      "source": "./src/resolution/instantiation-plan.ts",
+      "types": "./dist/resolution/instantiation-plan.d.ts",
+      "import": "./dist/resolution/instantiation-plan.js"
     },
     "./resolution/lifecycle": {
       "source": "./src/resolution/lifecycle.ts",

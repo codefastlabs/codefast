@@ -1,14 +1,18 @@
 /**
- * Compiler for the resolver's Dagger-style instantiation plans: a transient
- * class or resolved-factory binding whose dependency subgraph is pure static
- * (class/constant/cached-singleton deps, no activation hooks or postConstruct)
- * compiles once into a nested-constructor/factory closure, cycle-checked at
- * compile time.
+ * Compiler for the resolver's Dagger-style instantiation plans: a transient class or
+ * resolved-factory binding compiles once into a nested-constructor/factory closure whose
+ * static subgraph (class/constant/cached-singleton deps) is cycle-checked at compile time
+ * and therefore executes with no per-resolve bookkeeping at all.
  *
- * Compilation is cold-path — it runs once per (binding, cache version). The
- * closures it returns ARE the hot path and touch nothing but their captures.
- * Anything dynamic refuses to compile so the runtime cycle guard stays in
- * charge and error semantics never change.
+ * A dependency the compiler cannot see through — a factory, a scoped binding, an activation
+ * hook, a class past the depth limit — does not sink the plan. It compiles to an *escape*:
+ * a re-entry into the runtime resolver seeded with the ancestors the interpreted path would
+ * have pushed by that point, so cycle detection, constraint contexts and error paths are
+ * identical to never having compiled at all. Only the opaque dep pays the runtime price;
+ * its siblings and ancestors stay compiled.
+ *
+ * Compilation is cold-path — it runs once per (binding, cache version). The closures it
+ * returns ARE the hot path and touch nothing but their captures.
  */
 import type { Binding } from "#/binding";
 import type { ConstructorInvocation } from "#/constructor-type";
@@ -20,9 +24,10 @@ import type { ScopeManager } from "#/resolution/scope";
 import { SINGLETON_MISS } from "#/resolution/scope";
 import type { Token } from "#/token";
 import { tokenName } from "#/token";
-import type { BindingScope, Constructor } from "#/types";
+import type { BindingScope, Constructor, ResolutionFrame, ResolveOptions } from "#/types";
 
-// Bail out of pathological graphs — the runtime path handles them correctly.
+// Past this depth a dependency escapes to the runtime path rather than inlining further —
+// compiled closures nest one JS frame per level, and pathological graphs are the runtime's job.
 const PLAN_DEPTH_LIMIT = 32;
 
 /**
@@ -64,9 +69,25 @@ export interface InstantiationPlanHost {
   getConstructorMetadata(target: Constructor): ConstructorMetadata | undefined;
   /** Options-less lookup with alias hops folded; `null` when the fast lane can't answer. */
   lookupDependencyEntry(token: Token<unknown> | Constructor): InstantiationPlanDependencyEntry | null;
-  /** Full runtime resolve — used by singleton thunks for the first materialization. */
-  resolveFallback(token: Token<unknown> | Constructor): unknown;
+  /** The frame the interpreted path pushes for this binding, so escapes can replay it. */
+  getResolutionFrame(binding: Binding): ResolutionFrame;
+  /** Runtime resolve for an escaped dependency, seeded with the ancestors above it. */
+  resolveEscaped(
+    token: Token<unknown> | Constructor,
+    options: ResolveOptions | undefined,
+    arity: EscapeArity,
+    resolutionPath: Array<string>,
+    resolutionStack: Array<ResolutionFrame>,
+  ): unknown;
 }
+
+/**
+ * Which resolve an escaped dependency replays — mirrors how the interpreted path dispatches
+ * a constructor param.
+ *
+ * @since 0.5.0-canary.7
+ */
+export type EscapeArity = "all" | "optional" | "single";
 
 /**
  * @since 0.3.16-canary.1
@@ -80,8 +101,26 @@ export class InstantiationPlanCompiler {
 
   compile(binding: Binding & { kind: "class" | "resolved" }): InstantiationPlanCompileResult {
     return binding.kind === "class"
-      ? this.#compileClassPlan(binding, new Set(), 0)
-      : this.#compileResolvedPlan(binding, new Set(), 0);
+      ? this.#compileClassPlan(binding, new Set(), 0, [])
+      : this.#compileResolvedPlan(binding, new Set(), 0, []);
+  }
+
+  /**
+   * Re-entry into the runtime resolver for a dependency the plan can't see through.
+   *
+   * The ancestors are fixed at compile time, so the seeds are built once; each call copies
+   * them because the resolver pushes and pops on the arrays it is given.
+   */
+  #compileEscapeThunk(
+    token: Token<unknown> | Constructor,
+    ancestors: ReadonlyArray<Binding>,
+    arity: EscapeArity = "single",
+    options?: ResolveOptions,
+  ): () => unknown {
+    const host = this.#host;
+    const frames = ancestors.map((ancestor) => host.getResolutionFrame(ancestor));
+    const names = frames.map((frame) => frame.tokenName);
+    return () => host.resolveEscaped(token, options, arity, [...names], [...frames]);
   }
 
   // A resolved binding declares its deps as explicit descriptors — same rules as
@@ -90,20 +129,19 @@ export class InstantiationPlanCompiler {
     binding: Binding & { kind: "resolved" },
     compileStack: Set<Binding["id"]>,
     depth: number,
+    ancestors: ReadonlyArray<Binding>,
   ): InstantiationPlanCompileResult {
-    if (depth > PLAN_DEPTH_LIMIT || compileStack.has(binding.id)) {
-      return null;
-    }
     if (binding.onActivation !== undefined || this.#host.hasActivationHandlers(binding.token)) {
       return null;
     }
     const factory = binding.factory;
     const tokenDisplayName = tokenName(binding.token);
     const depThunks = new Array<() => unknown>(binding.deps.length);
+    const depAncestors = [...ancestors, binding];
     compileStack.add(binding.id);
     try {
       for (let index = 0; index < binding.deps.length; index += 1) {
-        const thunk = this.#compileDescriptorThunk(binding.deps[index]!, compileStack, depth);
+        const thunk = this.#compileInjectionThunk(binding.deps[index]!, compileStack, depth, depAncestors);
         if (thunk === null || thunk === PLAN_RETRY) {
           return thunk;
         }
@@ -121,29 +159,43 @@ export class InstantiationPlanCompiler {
     };
   }
 
-  #compileDescriptorThunk(
+  /**
+   * One dependency of a plan node — a class constructor param or a `toResolved` descriptor.
+   *
+   * Anything but a plain single required dependency (multi, optional, name/tag-constrained,
+   * or a token needing full binding selection) escapes with the exact resolve the interpreter
+   * would have called for it.
+   */
+  #compileInjectionThunk(
     descriptor: InjectionDescriptor,
     compileStack: Set<Binding["id"]>,
     depth: number,
+    ancestors: ReadonlyArray<Binding>,
   ): InstantiationPlanCompileResult {
-    if (descriptor.multi || descriptor.optional || injectionSlotToResolveOptions(descriptor) !== undefined) {
-      return null;
+    const token = descriptor.token as Token<unknown> | Constructor;
+    const options = injectionSlotToResolveOptions(descriptor);
+    if (descriptor.multi) {
+      return this.#compileEscapeThunk(token, ancestors, "all", options);
     }
-    const entry = this.#host.lookupDependencyEntry(descriptor.token as Token<unknown> | Constructor);
+    if (descriptor.optional) {
+      return this.#compileEscapeThunk(token, ancestors, "optional", options);
+    }
+    if (options !== undefined) {
+      return this.#compileEscapeThunk(token, ancestors, "single", options);
+    }
+    const entry = this.#host.lookupDependencyEntry(token);
     if (entry === null) {
-      return null;
+      return this.#compileEscapeThunk(token, ancestors);
     }
-    return this.#compileDepThunk(entry, compileStack, depth);
+    return this.#compileDepThunk(entry, compileStack, depth, ancestors);
   }
 
   #compileClassPlan(
     binding: Binding & { kind: "class" },
     compileStack: Set<Binding["id"]>,
     depth: number,
+    ancestors: ReadonlyArray<Binding>,
   ): InstantiationPlanCompileResult {
-    if (depth > PLAN_DEPTH_LIMIT || compileStack.has(binding.id)) {
-      return null;
-    }
     if (binding.onActivation !== undefined || this.#host.hasActivationHandlers(binding.token)) {
       return null;
     }
@@ -166,18 +218,11 @@ export class InstantiationPlanCompiler {
       return () => new invokable();
     }
     const depThunks = new Array<() => unknown>(params.length);
+    const depAncestors = [...ancestors, binding];
     compileStack.add(binding.id);
     try {
       for (let index = 0; index < params.length; index += 1) {
-        const param = params[index]!;
-        if (param.multi || param.optional || injectionSlotToResolveOptions(param) !== undefined) {
-          return null;
-        }
-        const entry = this.#host.lookupDependencyEntry(param.token);
-        if (entry === null) {
-          return null;
-        }
-        const thunk = this.#compileDepThunk(entry, compileStack, depth);
+        const thunk = this.#compileInjectionThunk(params[index]!, compileStack, depth, depAncestors);
         if (thunk === null || thunk === PLAN_RETRY) {
           return thunk;
         }
@@ -211,30 +256,44 @@ export class InstantiationPlanCompiler {
     entry: InstantiationPlanDependencyEntry,
     compileStack: Set<Binding["id"]>,
     depth: number,
+    ancestors: ReadonlyArray<Binding>,
   ): InstantiationPlanCompileResult {
     const { binding, ownerScope } = entry;
-    if (binding.kind === "constant") {
-      if (binding.onActivation !== undefined || this.#host.hasActivationHandlers(binding.token)) {
-        return null;
+    if (binding.kind === "constant" && binding.onActivation === undefined) {
+      if (!this.#host.hasActivationHandlers(binding.token)) {
+        const value = binding.value;
+        return () => value;
       }
-      const value = binding.value;
-      return () => value;
     }
     const scope = (binding as Binding & { scope: BindingScope }).scope ?? "transient";
     if (scope === "singleton") {
-      // Cached-singleton read with a full-resolve fallback for the first materialization.
-      const host = this.#host;
+      // Cached-singleton read; the first materialization escapes so it sees the same ancestors
+      // (and therefore the same cycle detection) the interpreted path would have built.
+      const escape = this.#compileEscapeThunk(binding.token, ancestors);
       const bindingId = binding.id;
-      const singletonToken = binding.token;
       return () => {
         const cachedSingleton = ownerScope.peekSingleton(bindingId);
-        return cachedSingleton === SINGLETON_MISS ? host.resolveFallback(singletonToken) : cachedSingleton;
+        return cachedSingleton === SINGLETON_MISS ? escape() : cachedSingleton;
       };
     }
-    if (scope === "transient" && binding.kind === "class") {
-      return this.#compileClassPlan(binding as Binding & { kind: "class" }, compileStack, depth + 1);
+    if (
+      scope === "transient" &&
+      binding.kind === "class" &&
+      depth < PLAN_DEPTH_LIMIT &&
+      !compileStack.has(binding.id)
+    ) {
+      const inlined = this.#compileClassPlan(
+        binding as Binding & { kind: "class" },
+        compileStack,
+        depth + 1,
+        ancestors,
+      );
+      if (inlined !== null) {
+        return inlined;
+      }
     }
-    // Dynamic/resolved/scoped deps keep the runtime path (and its cycle guard).
-    return null;
+    // Anything opaque — a factory, a scoped binding, an activation hook, a class the compiler
+    // declined — runs on the runtime path, seeded with this plan's ancestors.
+    return this.#compileEscapeThunk(binding.token, ancestors);
   }
 }

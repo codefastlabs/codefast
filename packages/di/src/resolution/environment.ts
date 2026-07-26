@@ -56,6 +56,7 @@ export interface ResolverCallbacks {
     token: Token<Value> | Constructor<Value>,
     resolutionPath: Array<string>,
     resolutionStack: Array<ResolutionFrame>,
+    callerContext?: DefaultResolutionContext,
   ): Promise<Value>;
   resolveAsync<const Value>(
     token: Token<Value> | Constructor<Value>,
@@ -105,12 +106,42 @@ export class DefaultResolutionContext implements ResolutionContext {
     currentOptions: ResolveOptions | undefined,
   ) {
     this.#resolver = resolver;
+    this.owner = resolver;
     this.#resolutionPath = resolutionPath;
     this.#resolutionStack = resolutionStack;
     this.#currentOptions = currentOptions;
   }
 
   #graph: ConstraintContext | undefined;
+
+  /**
+   * The unwind callback shared by every level of the async chain this context serves.
+   *
+   * @remarks Levels unwind identically (they pop the one path they share), so the resolver builds
+   * this once for the chain's first level and every later level reuses it. A plain field, not a
+   * lazy accessor: a getter taking a factory would allocate that factory on every level, which is
+   * the allocation this exists to avoid.
+   */
+  chainSettle: (() => void) | undefined;
+
+  /**
+   * How many levels of the async chain are still in flight on this context.
+   *
+   * @remarks The chain's first level acquires the context and every level increments; the last
+   * one to settle returns it to the resolver's pool. Counting here rather than on the resolver
+   * is what lets two concurrent chains run without a shared counter to get wrong.
+   */
+  chainLevels = 0;
+
+  /**
+   * The resolver this context speaks to.
+   *
+   * @remarks An inner async level compares it against itself to know whether it may reuse the
+   * context its caller handed down — a field read, not a method call, because that comparison
+   * happens on every hop of every chain. The path needs no comparison: a context always hands
+   * down its own path, so only a hop into a different resolver can mismatch.
+   */
+  owner: ResolverCallbacks;
 
   get graph(): ConstraintContext {
     if (this.#graph === undefined) {
@@ -126,10 +157,13 @@ export class DefaultResolutionContext implements ResolutionContext {
     currentOptions: ResolveOptions | undefined,
   ): void {
     this.#resolver = resolver;
+    this.owner = resolver;
     this.#resolutionPath = resolutionPath;
     this.#resolutionStack = resolutionStack;
     this.#currentOptions = currentOptions;
     this.#graph = undefined;
+    this.chainSettle = undefined;
+    this.chainLevels = 0;
   }
 
   resolve<const Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Value {
@@ -141,7 +175,8 @@ export class DefaultResolutionContext implements ResolutionContext {
 
   resolveAsync<const Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Promise<Value> {
     if (options === undefined) {
-      return this.#resolver.resolveAsyncFromContext(token, this.#resolutionPath, this.#resolutionStack);
+      // Hand the callee this context: an inner level of the same chain reuses it as-is.
+      return this.#resolver.resolveAsyncFromContext(token, this.#resolutionPath, this.#resolutionStack, this);
     }
     return this.#resolver.resolveAsync(token, options, this.#resolutionPath, this.#resolutionStack);
   }
