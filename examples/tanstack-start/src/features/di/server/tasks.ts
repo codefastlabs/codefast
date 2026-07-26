@@ -2,9 +2,9 @@
 import "#/features/di/server/map-get-or-insert";
 import { Container, injectAll, injectable, Module, optional, postConstruct, preDestroy, token } from "@codefast/di";
 import type { ContainerGraphJson } from "@codefast/di";
-import { toDotGraph } from "@codefast/di/graph-adapters/dot";
-import { toReactFlowGraph } from "@codefast/di/graph-adapters/reactflow";
-import type { ReactFlowGraph } from "@codefast/di/graph-adapters/reactflow";
+import { toDotGraph } from "@codefast/di/introspection/graph-adapters/dot";
+import { toReactFlowGraph } from "@codefast/di/introspection/graph-adapters/reactflow";
+import type { ReactFlowGraph } from "@codefast/di/introspection/graph-adapters/reactflow";
 import { createServerFn } from "@tanstack/react-start";
 
 /* ---------------------------------------------------------------------------
