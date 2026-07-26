@@ -69,12 +69,10 @@ export function bindingSlotToString(slot: BindingSlot): string {
 interface BindingBase<Value> {
   readonly id: BindingIdentifier;
   /**
-   * True while this binding's factory is on the sync resolution stack. The sync resolver marks
-   * it on enter and clears it on exit, making cycle detection an O(1) field read with no hashing,
-   * no path scan, and no side table. Sync resolution is single-threaded, so the flag is exactly
-   * path membership; the async lane keeps its own per-path check because chains can interleave.
+   * True while this binding's factory is on the sync resolution stack — the sync lane's cycle check.
    *
-   * @remarks Resolver-owned bookkeeping — `registry.add` normalizes it, so callers never set it.
+   * @remarks Resolver-owned bookkeeping; callers never set it. See `ARCHITECTURE.md` for why the
+   * sync and async lanes detect cycles differently.
    */
   inFlight?: boolean | undefined;
   /**
@@ -229,13 +227,9 @@ type BindingFieldSuperset = {
 };
 
 /**
- * The single construction site for bindings: one literal listing every kind's fields in one
- * fixed order, so all bindings in a process share a single V8 hidden class.
+ * The single construction site for bindings — one literal, one V8 hidden class.
  *
- * @remarks Mixed binding kinds otherwise turn the resolver's hot property reads
- * (kind/scope/factory/…) megamorphic, which costs ~30% throughput in processes that exercise
- * many kinds. Because this is the only site, the registry stores what it is given rather than
- * re-copying it — so a builder that owns the returned object can refine it in place.
+ * @see `ARCHITECTURE.md` — why the field order and the single site are load-bearing.
  *
  * @param source - the kind-specific payload, or an existing binding to re-slot
  * @param id - reuse a caller's id to keep a fluent chain's `id()` stable across refinements

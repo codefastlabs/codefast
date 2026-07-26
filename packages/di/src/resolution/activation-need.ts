@@ -1,10 +1,7 @@
 /**
- * Answers one question per binding: does resolving it have to go through the activation
- * pipeline (per-binding `onActivation`, container-level hooks, `@postConstruct`)?
+ * Per binding: does resolving it have to go through the activation pipeline?
  *
- * Worth caching because the answer costs several lookups and the resolver asks on every
- * uncached resolve, and worth versioning because `onActivation` can be registered at any time —
- * the whole cache drops whenever the lifecycle manager's activation version moves.
+ * @remarks Versioned on the lifecycle manager, since `onActivation` can be registered at any time.
  */
 import type { Binding } from "#/binding";
 import type { ClassIntrospector } from "#/resolution/class-introspector";

@@ -1,10 +1,7 @@
 /**
- * Everything the resolver needs to know about a class, cached per class.
+ * Per-class decorator metadata, cached by constructor.
  *
- * All of it derives from decorator metadata, which cannot change once the class is defined, so
- * these caches are keyed by the constructor in a WeakMap and never need version stamping — the
- * one exception being post-construct presence, which is only *discovered* on the first real
- * instantiation (see {@link ClassIntrospector.knownPostConstruct}).
+ * @remarks Metadata cannot change once a class is defined, so nothing here needs version stamping.
  */
 
 import type { ConstructorInvocation } from "#/constructor-type";
@@ -41,12 +38,9 @@ export class ClassIntrospector {
   }
 
   /**
-   * Whether the class has a `@postConstruct` hook, or `undefined` when no resolve has looked yet.
+   * Whether the class has a `@postConstruct` hook, or `undefined` until {@link discoverPostConstruct}.
    *
-   * @remarks Reading lifecycle metadata eagerly would cost every class in the graph on first
-   * resolve; instead the answer stays unknown until {@link discoverPostConstruct}, and callers
-   * treat unknown as "assume it does" so the activation pipeline runs once and settles the
-   * question. The compiled plans refuse to compile until it is known, then compile for real.
+   * @remarks Callers treat unknown as "assume it does", so the first activation settles it.
    */
   knownPostConstruct(target: Constructor): boolean | undefined {
     return this.#hasPostConstruct?.get(target);

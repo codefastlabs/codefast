@@ -7,10 +7,8 @@ import type { BindingIdentifier } from "#/types";
  * @since 0.3.16-canary.0
  */
 export class ScopeManager {
-  // Singleton instances live on their binding, not in a table here: a binding belongs to exactly
-  // one container, so its singleton slot is per-binding and a field read replaces a keyed lookup
-  // on the most common resolve shape there is. This list exists only so disposal and `inspect()`
-  // can still enumerate what is cached, and stays unallocated until the first one materializes.
+  // Instances live on their binding (see ARCHITECTURE.md); this list only lets disposal and
+  // `inspect()` enumerate them.
   #singletonBindings: Array<Binding<unknown>> | undefined;
   // In-flight promises for async singleton creation — only an async resolve ever needs it.
   #inflight: Map<BindingIdentifier, Promise<unknown>> | undefined;

@@ -34,10 +34,8 @@ export type InjectableDependency<Value = unknown> = Token<Value> | Constructor<V
 /**
  * The value a factory receives for one declared dependency.
  *
- * @remarks `optional()` and `injectAll()` already fold their effect into the descriptor's own
- * type parameter — `InjectionDescriptor<Value | undefined>` and `InjectionDescriptor<Array<Value>>`
- * — so reading that parameter back is enough; bare tokens and constructors fall through to
- * {@link TokenValue}.
+ * @remarks `optional()` and `injectAll()` fold their effect into the descriptor's own type
+ * parameter, so reading it back is enough; bare tokens fall through to {@link TokenValue}.
  *
  * @since 0.5.0-canary.7
  */
