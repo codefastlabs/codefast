@@ -26,7 +26,7 @@ export type RunBenchmarkChildMainParameters = Readonly<{
   readonly benchDefaults: BenchOptions;
   /** Explicit timing profile; when absent, falls back to the `BENCH_FAST`/`BENCH_FULL` env flags. */
   readonly mode?: BenchMode | undefined;
-  /** Explicit per-scenario trial count (minimum 2); when absent, falls back to `BENCH_TRIALS`. */
+  /** Explicit per-scenario trial count (minimum 3); when absent, falls back to `BENCH_TRIALS`. */
   readonly trialCount?: number | undefined;
 }>;
 

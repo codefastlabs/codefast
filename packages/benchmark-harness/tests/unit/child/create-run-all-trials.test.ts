@@ -23,7 +23,7 @@ describe("createRunAllTrials mode/trialCount resolution", () => {
   });
 
   it("defaults to the minimum trial count without mode or env", async () => {
-    await expect(countExecutedTrials({ benchDefaults: BENCH_DEFAULTS })).resolves.toBe(2);
+    await expect(countExecutedTrials({ benchDefaults: BENCH_DEFAULTS })).resolves.toBe(3);
   });
 
   it("uses the full-mode default when mode is passed explicitly", async () => {
@@ -37,12 +37,12 @@ describe("createRunAllTrials mode/trialCount resolution", () => {
 
   it("falls back to the BENCH_FAST env flag when no mode is passed", async () => {
     vi.stubEnv(BENCH_FAST_ENV_KEY, "1");
-    await expect(countExecutedTrials({ benchDefaults: BENCH_DEFAULTS })).resolves.toBe(2);
+    await expect(countExecutedTrials({ benchDefaults: BENCH_DEFAULTS })).resolves.toBe(3);
   });
 
   it("lets an explicit mode override the env flags", async () => {
     vi.stubEnv(BENCH_FULL_ENV_KEY, "1");
-    await expect(countExecutedTrials({ benchDefaults: BENCH_DEFAULTS, mode: "fast" })).resolves.toBe(2);
+    await expect(countExecutedTrials({ benchDefaults: BENCH_DEFAULTS, mode: "fast" })).resolves.toBe(3);
   });
 
   it("honors an explicit trialCount over BENCH_TRIALS", async () => {
@@ -57,11 +57,11 @@ describe("createRunAllTrials mode/trialCount resolution", () => {
 
   it("treats an empty BENCH_TRIALS as unset and uses the default", async () => {
     vi.stubEnv(BENCH_TRIALS_ENV_KEY, "   ");
-    await expect(countExecutedTrials({ benchDefaults: BENCH_DEFAULTS })).resolves.toBe(2);
+    await expect(countExecutedTrials({ benchDefaults: BENCH_DEFAULTS })).resolves.toBe(3);
   });
 
   it("rejects a trialCount below the minimum and uses the default", async () => {
-    await expect(countExecutedTrials({ benchDefaults: BENCH_DEFAULTS, trialCount: 1 })).resolves.toBe(2);
+    await expect(countExecutedTrials({ benchDefaults: BENCH_DEFAULTS, trialCount: 2 })).resolves.toBe(3);
     expect(console.error).toHaveBeenCalledWith(expect.stringContaining("below minimum"));
   });
 
