@@ -1,18 +1,7 @@
 /**
- * Compiler for the resolver's Dagger-style instantiation plans: a transient class or
- * resolved-factory binding compiles once into a nested-constructor/factory closure whose
- * static subgraph (class/constant/cached-singleton deps) is cycle-checked at compile time
- * and therefore executes with no per-resolve bookkeeping at all.
+ * Compiles a transient class or resolved-factory binding into a nested-constructor closure.
  *
- * A dependency the compiler cannot see through — a factory, a scoped binding, an activation
- * hook, a class past the depth limit — does not sink the plan. It compiles to an *escape*:
- * a re-entry into the runtime resolver seeded with the ancestors the interpreted path would
- * have pushed by that point, so cycle detection, constraint contexts and error paths are
- * identical to never having compiled at all. Only the opaque dep pays the runtime price;
- * its siblings and ancestors stay compiled.
- *
- * Compilation is cold-path — it runs once per (binding, cache version). The closures it
- * returns ARE the hot path and touch nothing but their captures.
+ * @see `ARCHITECTURE.md` — the escape contract every dependency the compiler cannot inline must honour.
  */
 import type { Binding } from "#/binding";
 import { NO_INSTANCE } from "#/binding";
@@ -47,19 +36,13 @@ export type InstantiationPlanCompileResult = (() => unknown) | null | typeof PLA
 /**
  * What compiling one *dependency* can yield.
  *
- * @remarks Narrower than {@link InstantiationPlanCompileResult} on purpose: a dependency the
- * compiler cannot inline escapes to the runtime path rather than failing, so `null` — "this
- * graph has no plan" — is only ever a verdict on a plan's root, never on a dependency.
- *
- * @since 0.5.0-canary.7
+ * @remarks No `null`: a dependency escapes rather than failing, so "no plan" is only ever a
+ * verdict on a plan's root.
  */
 type DependencyCompileResult = (() => unknown) | typeof PLAN_RETRY;
 
 /**
- * A dependency's terminal binding.
- *
- * @remarks Carried no scope reference since singleton instances moved onto the binding itself —
- * a compiled thunk reads the field and needs nothing else.
+ * A dependency's terminal binding — all a compiled thunk needs.
  *
  * @since 0.5.0-canary.7
  */
@@ -96,8 +79,6 @@ export interface InstantiationPlanHost {
 /**
  * Which resolve an escaped dependency replays — mirrors how the interpreted path dispatches
  * a constructor param.
- *
- * @since 0.5.0-canary.7
  */
 export type EscapeArity = "all" | "optional" | "single";
 
@@ -172,11 +153,9 @@ export class InstantiationPlanCompiler {
   }
 
   /**
-   * One dependency of a plan node — a class constructor param or a `toResolved` descriptor.
+   * One dependency of a plan node — a constructor param or a `toResolved` descriptor.
    *
-   * Anything but a plain single required dependency (multi, optional, name/tag-constrained,
-   * or a token needing full binding selection) escapes with the exact resolve the interpreter
-   * would have called for it.
+   * @remarks Anything but a plain required single dependency escapes to the runtime path.
    */
   #compileInjectionThunk(
     descriptor: InjectionDescriptor,

@@ -1,18 +1,7 @@
 /**
- * Memoized options-less binding lookup across a container chain.
+ * Options-less token → terminal binding, memoized per container chain.
  *
- * A resolve that carries no options — the overwhelming majority — only needs to know which
- * binding a token ends at and which container owns it. That answer is stable until some registry
- * in the chain mutates, so it is memoized and stamped with the summed registry versions of the
- * whole chain: any bind, unbind or in-place refinement anywhere above or below moves the sum and
- * drops the memo wholesale.
- *
- * Shapes the fast lane cannot answer (a predicate to evaluate, several candidate slots, an alias
- * loop longer than {@link ALIAS_HOP_LIMIT}) memoize as `null`, which routes the caller to the
- * full selection path rather than being recomputed each time.
- *
- * Caches form their own parent chain, mirroring the resolvers'. That is deliberate: walking the
- * chain needs each level's private state, and `#private` access is per class, not per instance.
+ * @see `ARCHITECTURE.md` — why these caches form their own parent chain.
  */
 import type { Binding } from "#/binding";
 import type { BindingRegistry } from "#/registry";
@@ -23,8 +12,6 @@ import type { Constructor } from "#/types";
  * A token's terminal binding with alias hops already folded, plus the container that owns it.
  *
  * @typeParam Owner - the resolver type, kept generic so this module stays free of resolver internals
- *
- * @since 0.5.0-canary.7
  */
 export interface DefaultLookupEntry<Owner> {
   readonly binding: Binding;
@@ -34,14 +21,9 @@ export interface DefaultLookupEntry<Owner> {
 /**
  * Alias folding gives up past this many hops and defers to the full resolve loop, whose
  * Set-based traversal detects genuine cycles exactly rather than by an arbitrary cap.
- *
- * @since 0.5.0-canary.7
  */
 export const ALIAS_HOP_LIMIT = 32;
 
-/**
- * @since 0.5.0-canary.7
- */
 export class BindingLookupCache<Owner> {
   readonly #byToken = new Map<Token<unknown> | Constructor, DefaultLookupEntry<Owner> | null>();
   #version = -1;

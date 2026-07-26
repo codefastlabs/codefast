@@ -1,9 +1,8 @@
 /**
- * A class (newable) that produces `Value`. Rest parameters are `never[]` so
- * real classes with typed constructors remain assignable under
- * `strictFunctionTypes` (unlike `unknown[]`, which is not assignable from
- * narrower parameter types). Runtime construction still uses the real shape;
- * this alias is the DI “class token” surface only.
+ * A class token: newable, producing `Value`.
+ *
+ * @remarks Rest parameters are `never[]` so classes with typed constructors stay assignable under
+ * `strictFunctionTypes`. Construction uses the real shape; this alias is the token surface only.
  *
  * @since 0.3.16-canary.0
  */

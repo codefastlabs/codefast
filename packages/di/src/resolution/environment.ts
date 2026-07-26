@@ -117,10 +117,8 @@ export class DefaultResolutionContext implements ResolutionContext {
   /**
    * The unwind callback shared by every level of the async chain this context serves.
    *
-   * @remarks Levels unwind identically (they pop the one path they share), so the resolver builds
-   * this once for the chain's first level and every later level reuses it. A plain field, not a
-   * lazy accessor: a getter taking a factory would allocate that factory on every level, which is
-   * the allocation this exists to avoid.
+   * @remarks A plain field, not a lazy accessor — a getter taking a factory would allocate that
+   * factory on every level, which is the allocation this exists to avoid.
    */
   chainSettle: (() => void) | undefined;
 
@@ -134,12 +132,9 @@ export class DefaultResolutionContext implements ResolutionContext {
   chainLevels = 0;
 
   /**
-   * The resolver this context speaks to.
+   * The resolver this context speaks to — an inner async level checks it before reusing this.
    *
-   * @remarks An inner async level compares it against itself to know whether it may reuse the
-   * context its caller handed down — a field read, not a method call, because that comparison
-   * happens on every hop of every chain. The path needs no comparison: a context always hands
-   * down its own path, so only a hop into a different resolver can mismatch.
+   * @remarks A field, not a method, because the check runs on every hop of every chain.
    */
   owner: ResolverCallbacks;
 

@@ -1,17 +1,7 @@
 /**
- * Fluent binding-builder chain behind `container.bind()` / `container.rebind()`.
+ * The fluent chain `bind()` returns: it registers the binding and refines it in place.
  *
- * The chain registers once, on the `to*()` call, and every later refinement acts on that same
- * registered object — so a chain left half-finished is still a valid registration and a
- * completed one costs a single registry insertion. Refinements the indexes don't care about
- * (scope, activation hooks) are written in place; only `when*()` re-slots, which re-indexes
- * under the chain's original id.
- *
- * **One object per `bind()`.** A single instance plays every role — the `BindToBuilder` before
- * `to*()` and the kind-specific builder after — and commits to the registry itself rather than
- * through a separate committer. The ordering `to*()`-before-`when*()` is enforced by the return
- * types; a caller who defeats them (plain JavaScript, or a cast) gets a
- * {@link ChainNotRegisteredError} rather than a silent no-op.
+ * @see `ARCHITECTURE.md` — why one object plays every role, and what pins the ordering.
  */
 import type {
   AliasBindingBuilder,
@@ -85,12 +75,8 @@ function trackBindingForModule(
 /**
  * Where a chain registers, and on whose behalf.
  *
- * @remarks A container builds one of these and every chain it creates shares it, so `bind()`
- * allocates the builder and nothing else. `moduleBindingIds` is the id list of the module whose
- * load created this registration — present exactly when the chain belongs to a module load, which
- * is what lets the module bookkeeping be a plain array push instead of a keyed lookup.
- *
- * @since 0.5.0-canary.7
+ * @remarks Built once per container and shared by every chain it creates. `moduleBindingIds` is
+ * present exactly when the chain belongs to a module load.
  */
 export interface BindingRegistration {
   readonly registry: BindingRegistry;
@@ -103,8 +89,6 @@ export interface BindingRegistration {
  * The one builder behind `bind()` and every `to*()` return type. Each interface exposes only the
  * calls that are legal at that point in the chain; the runtime object is shared because every
  * refinement is the same operation — narrow the registered binding, keep its id.
- *
- * @since 0.5.0-canary.7
  */
 export class BindingChain<Value>
   implements

@@ -135,10 +135,7 @@ function matchesSlot(binding: Binding, options: ResolveOptions | undefined): boo
       }
     }
   } else if (hasRequestedTags) {
-    // Binding has no tags but options requires tags — no match for tagged slots
-    // But: default slot (no tags, no name) can match when options has tags if there are no tag-slotted bindings
-    // Actually per spec: resolveAll with tags only returns bindings that have those tags
-    // and resolve with tags requires exact match
+    // Requested tags require a tagged slot: an untagged binding never matches (SPEC §6.9).
     return false;
   }
 

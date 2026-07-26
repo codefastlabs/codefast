@@ -55,17 +55,10 @@ const ROOT_CONSTRAINT_CONTEXT = {
  */
 export class DependencyResolver {
   readonly #syncResolutionContextPool: Array<DefaultResolutionContext> = [];
-  // Cycle detection for the sync transient-dynamic lane lives on `binding.inFlight` — see the
-  // field's doc comment in binding.ts. It is an O(1) field read with no hashing, no path scan and
-  // no side table to allocate or grow, so the lane needs no depth split.
-  // Free list of contexts for async chains. The lane holds no per-chain state on the resolver —
-  // a chain's context is threaded through the call and counts its own live levels — so this is a
-  // pure allocation pool: chains borrow and return, nothing here identifies a chain.
+  // Pure allocation pool: a chain's own context is threaded through the call, so nothing here
+  // identifies a chain.
   readonly #asyncChainContextPool: Array<DefaultResolutionContext> = [];
-  // Compiled transient-class plans (Dagger-style): a pure-static subgraph (class/constant/
-  // cached-singleton deps only) compiles once into a nested-constructor closure — cycle
-  // checking happens at compile time, so execution skips all per-resolve bookkeeping.
-  // `null` = binding is not plannable under the current versions.
+  // Compiled plans; `null` marks a binding as unplannable under the current cache versions.
   readonly #classPlanByBindingId = new Map<BindingIdentifier, (() => unknown) | null>();
   #classPlanRegistryVersion = -1;
   #classPlanActivationVersion = -1;
@@ -1326,10 +1319,7 @@ export class DependencyResolver {
     resolutionPath: Array<string>,
     resolutionStack: Array<ResolutionFrame>,
   ): Value {
-    // One lane at every depth. The separate deep lane existed because cycle detection used to be
-    // an O(depth) `resolutionPath.includes()` scan, which had to be escaped past ~32 levels; with
-    // the O(1) `binding.inFlight` mark there is nothing to escape, so the depth split — and the
-    // divergent behaviour it caused — is gone.
+    // One lane at every depth: `binding.inFlight` is O(1), so there is nothing to escape.
     const frame = this.#getResolutionFrame(binding);
     const tokenDisplayName = frame.tokenName;
     if (binding.inFlight) {
@@ -1352,25 +1342,14 @@ export class DependencyResolver {
     }
   }
 
-  // NOT declared `async` — avoids creating a JSAsyncGeneratorObject + implicit Promise wrapper on
-  // every invocation.  Cleanup is handled via .then(onFulfilled, onRejected) so the behaviour is
-  // identical to a try/finally but without the async machinery overhead.
+  // Deliberately not `async`: that would allocate a state machine and a promise per level.
   #resolveTransientDynamicAsyncFromContext<const Value>(
     binding: Binding<Value> & { kind: "dynamic" | "dynamic-async" },
     resolutionPath: Array<string>,
     resolutionStack: Array<ResolutionFrame>,
     callerContext?: DefaultResolutionContext,
   ): Promise<Value> {
-    // One lane at every depth. Cycle detection goes through `enterResolutionPath`, which is
-    // path-scoped — the only mechanism that stays correct when chains interleave (Promise.all) —
-    // and adapts on its own: a linear scan while the path is short, an attached Set past
-    // RESOLUTION_SET_THRESHOLD. That removes the depth split, and with it a silent change of
-    // behaviour (context identity, stack frames, promise shape) at the old threshold.
-    //
-    // Every level of a chain shares one resolutionPath/resolutionStack, so the context and the
-    // unwind callback are built once per chain and hang off the path itself. Two concurrent
-    // chains are two path arrays, so they cannot collide — there is nothing to refcount and
-    // nothing left on the resolver between calls.
+    // Path-scoped cycle detection, because async chains interleave — see ARCHITECTURE.md.
     const pool = this.#asyncChainContextPool;
     const frame = this.#getResolutionFrame(binding);
     const tokenDisplayName = frame.tokenName;
@@ -1381,11 +1360,8 @@ export class DependencyResolver {
       return Promise.reject(cycleError);
     }
 
-    // An inner level was handed the context its caller used; same resolver and same path array
-    // means the same chain, so it is reused verbatim. Only a chain's first level takes one from
-    // the pool — and pooling matters here beyond saving an allocation: a per-chain context
-    // survives its chain's microtask hops, so under a collecting profile a fresh one would be
-    // promoted out of the nursery every time and be collected the expensive way.
+    // An inner level reuses the context its caller passed down; only a chain's first level
+    // borrows from the pool. Pooling is load-bearing here — see ARCHITECTURE.md.
     const ctx =
       callerContext !== undefined && callerContext.owner === (this as unknown as ResolverCallbacks)
         ? callerContext
@@ -1412,12 +1388,8 @@ export class DependencyResolver {
       return Promise.reject(factoryError);
     }
 
-    // Cleanup runs as a SIDE listener on the factory promise instead of a derived-promise chain:
-    // registered synchronously here, it is FIFO-guaranteed to run before the awaiting caller
-    // resumes, so ordering is identical while saving one intermediate promise and one microtask
-    // hop per level. Trade-off: the settle handler marks a rejection as handled, so an unawaited
-    // failing resolveAsync no longer surfaces as an unhandledRejection — callers are expected to
-    // await (or .catch) the returned promise.
+    // A side listener, not a derived chain: FIFO puts it before the awaiting caller resumes.
+    // It marks a rejection as handled, so callers must await or `.catch` the returned promise.
     const settle =
       ctx.chainSettle ??
       (ctx.chainSettle = (): void => {

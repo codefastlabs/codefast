@@ -71,7 +71,17 @@ Before escapes existed, one `toDynamic` dependency anywhere dropped the whole gr
 | Sync transient-dynamic         | `binding.inFlight`, set on factory-enter and cleared on exit | Sync resolution runs on one call stack, so the flag _is_ exact path membership: `O(1)`, no hashing, no side table |
 | Everything else, and all async | `enterResolutionPath` on the shared path array               | Async chains interleave, so a per-binding flag would report a cycle where two chains merely overlap               |
 
-`enterResolutionPath` scans linearly while the path is short and attaches a membership `Set` past `RESOLUTION_SET_THRESHOLD`. That threshold switches a **data structure**, not a behaviour: both branches answer identically, and the constant is picked from measurements recorded at its definition. Compare with the deleted `DEEP_LANE_THRESHOLD`, which switched _lanes_ and therefore silently changed context identity, stack frames and promise shape at the crossing point — and reported a false `CircularDependencyError` for a diamond dependency past it.
+`enterResolutionPath` scans linearly while the path is short and attaches a membership `Set` past `RESOLUTION_SET_THRESHOLD`. That threshold switches a **data structure**, not a behaviour: both branches answer identically.
+
+The constant is 32, measured on Node 26 / M3 Max over an async transient chain — ns/op at depth 16 / 32 / 64 / 128:
+
+| Threshold |   16 |   32 |   64 |   128 |
+| --------- | ---: | ---: | ---: | ----: |
+| 16        | 1299 | 3694 | 7449 | 15625 |
+| **32**    | 1202 | 3285 | 7735 | 16837 |
+| 128       | 1275 | 3641 | 9645 | 26082 |
+
+32 wins the shallow-to-mid depths real graphs have while staying near the best deep numbers; 128 is worst almost everywhere. Compare with the deleted `DEEP_LANE_THRESHOLD`, which switched _lanes_ and therefore silently changed context identity, stack frames and promise shape at the crossing point — and reported a false `CircularDependencyError` for a diamond dependency past it.
 
 > **Rule:** a threshold may choose an implementation. It may never choose a semantics.
 

@@ -12,13 +12,10 @@ export const LIFECYCLE_KEY: unique symbol = Symbol("di:lifecycle");
 export const INJECT_ACCESSOR_KEY: unique symbol = Symbol("di:inject-accessor");
 
 /**
- * The well-known symbol used by TC39 Stage 3 decorator transforms to store class metadata.
+ * The symbol TC39 Stage 3 decorator transforms store class metadata under.
  *
- * `Symbol.metadata` is defined natively once the runtime ships the full TC39 decorator
- * proposal.  Until then (current Node.js / browsers), Babel and esbuild both fall back to
- * `Symbol.for("Symbol.metadata")` — a global-registry symbol with the same string key.
- * Resolving it here once keeps the reader and the decorator transforms in sync regardless
- * of which path is taken.
+ * @remarks Falls back to the global-registry symbol, which is what Babel and esbuild emit until
+ * a runtime ships `Symbol.metadata` natively.
  *
  * @since 0.3.16-canary.0
  */

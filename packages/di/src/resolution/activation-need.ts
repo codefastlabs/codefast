@@ -1,19 +1,13 @@
 /**
- * Answers one question per binding: does resolving it have to go through the activation
- * pipeline (per-binding `onActivation`, container-level hooks, `@postConstruct`)?
+ * Per binding: does resolving it have to go through the activation pipeline?
  *
- * Worth caching because the answer costs several lookups and the resolver asks on every
- * uncached resolve, and worth versioning because `onActivation` can be registered at any time —
- * the whole cache drops whenever the lifecycle manager's activation version moves.
+ * @remarks Versioned on the lifecycle manager, since `onActivation` can be registered at any time.
  */
 import type { Binding } from "#/binding";
 import type { ClassIntrospector } from "#/resolution/class-introspector";
 import type { LifecycleManager } from "#/resolution/lifecycle";
 import type { BindingIdentifier } from "#/types";
 
-/**
- * @since 0.5.0-canary.7
- */
 export class ActivationNeedCache {
   readonly #needByBindingId = new Map<BindingIdentifier, boolean>();
   #version = -1;
