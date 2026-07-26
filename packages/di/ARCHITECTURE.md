@@ -82,7 +82,7 @@ Two pools, both in the resolver:
 - **sync** — indexed by depth; a resolve at depth _n_ always reuses the same context.
 - **async chains** — a free list. The chain's first level borrows one, every level increments `chainLevels`, the last to settle returns it.
 
-Pooling here is not about saving an allocation. A per-chain context **survives its chain's microtask hops**, so a freshly allocated one gets promoted out of the nursery and is then collected the expensive way. Measured on `dynamic-async-chain-8` under a forced full GC every 100 samples: allocating per chain costs **2.5×**. Pooling holds the row at 1.16–1.23× against inversify where the resolver-state version sat at 0.97–0.99×.
+Pooling here is not about saving an allocation. A per-chain context **survives its chain's microtask hops**, so a freshly allocated one gets promoted out of the nursery and is then collected the expensive way. Measured on `dynamic-async-chain-8` under a forced full GC every 100 samples: allocating per chain costs **2.5×**. That is why the pool exists — not because it wins the row. At 5 trials on a quiet machine that row is 0.87× of inversify under `BENCH_FULL`, with a 0.6% IQR; an earlier claim of 1.16–1.23× came from a shared-process probe and a 3-trial run under load, and is retracted in RESULTS.md.
 
 What the async lane deliberately does **not** keep is any per-chain state on the resolver. The chain's context is threaded through the call — `ctx.resolveAsync()` hands the callee the context it used, and an inner level reuses it when `ctx.owner === this`. Two concurrent chains are two contexts with two independent `chainLevels`; there is no shared counter and no path-identity heuristic to get wrong.
 

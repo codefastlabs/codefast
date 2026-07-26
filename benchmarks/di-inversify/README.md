@@ -23,7 +23,7 @@ A consequence: scenarios that would otherwise bake in a per-library decorator se
 
 ### Trials, medians, IQR
 
-Each library runs **N trials** back-to-back (3 trials minimum, in every profile). Every trial constructs a fresh `Bench` instance so tinybench's internal warmup fires per trial, reducing (though never eliminating) cross-trial correlation from JIT state. Override with `BENCH_TRIALS` (`>=3`). Two trials cannot separate a real change from ambient noise — a median of two is just the mean of two.
+Each library runs **N trials** back-to-back (3 minimum; **use 5 for anything publishable** — at 3 trials 70% of rows exceed the 5% IQR this report calls noisy, at 5 trials 30% do, and closing every other application changes neither figure). Every trial constructs a fresh `Bench` instance so tinybench's internal warmup fires per trial, reducing (though never eliminating) cross-trial correlation from JIT state. Override with `BENCH_TRIALS` (`>=3`). Two trials cannot separate a real change from ambient noise — a median of two is just the mean of two. The noise here is **throughput-correlated, not load-correlated**: rows above ~50M ops/s carry 10–25% IQR and rows below ~15M carry 2–5%, and two runs of the same build with and without a browser eating a core flagged the same rows to within 1–2 percentage points.
 
 The reporter collapses N per-trial results into:
 
