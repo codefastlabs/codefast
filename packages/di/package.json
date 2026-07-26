@@ -60,26 +60,6 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
     },
-    "./binding": {
-      "source": "./src/binding.ts",
-      "types": "./dist/binding.d.ts",
-      "import": "./dist/binding.js"
-    },
-    "./constructor-type": {
-      "source": "./src/constructor-type.ts",
-      "types": "./dist/constructor-type.d.ts",
-      "import": "./dist/constructor-type.js"
-    },
-    "./container/binding-builders": {
-      "source": "./src/container/binding-builders.ts",
-      "types": "./dist/container/binding-builders.d.ts",
-      "import": "./dist/container/binding-builders.js"
-    },
-    "./container/container": {
-      "source": "./src/container/container.ts",
-      "types": "./dist/container/container.d.ts",
-      "import": "./dist/container/container.js"
-    },
     "./decorators/inject": {
       "source": "./src/decorators/inject.ts",
       "types": "./dist/decorators/inject.d.ts",
@@ -100,125 +80,40 @@
       "types": "./dist/errors.d.ts",
       "import": "./dist/errors.js"
     },
-    "./introspection/dependency-graph": {
+    "./dependency-graph": {
       "source": "./src/introspection/dependency-graph.ts",
       "types": "./dist/introspection/dependency-graph.d.ts",
       "import": "./dist/introspection/dependency-graph.js"
     },
-    "./introspection/graph-adapters/cytoscape": {
+    "./graph-adapters/cytoscape": {
       "source": "./src/introspection/graph-adapters/cytoscape.ts",
       "types": "./dist/introspection/graph-adapters/cytoscape.d.ts",
       "import": "./dist/introspection/graph-adapters/cytoscape.js"
     },
-    "./introspection/graph-adapters/dot": {
+    "./graph-adapters/dot": {
       "source": "./src/introspection/graph-adapters/dot.ts",
       "types": "./dist/introspection/graph-adapters/dot.d.ts",
       "import": "./dist/introspection/graph-adapters/dot.js"
     },
-    "./introspection/graph-adapters/reactflow": {
+    "./graph-adapters/reactflow": {
       "source": "./src/introspection/graph-adapters/reactflow.ts",
       "types": "./dist/introspection/graph-adapters/reactflow.d.ts",
       "import": "./dist/introspection/graph-adapters/reactflow.js"
     },
-    "./introspection/inspector": {
+    "./inspector": {
       "source": "./src/introspection/inspector.ts",
       "types": "./dist/introspection/inspector.d.ts",
       "import": "./dist/introspection/inspector.js"
-    },
-    "./metadata/metadata-keys": {
-      "source": "./src/metadata/metadata-keys.ts",
-      "types": "./dist/metadata/metadata-keys.d.ts",
-      "import": "./dist/metadata/metadata-keys.js"
     },
     "./metadata/metadata-reader-token": {
       "source": "./src/metadata/metadata-reader-token.ts",
       "types": "./dist/metadata/metadata-reader-token.d.ts",
       "import": "./dist/metadata/metadata-reader-token.js"
     },
-    "./metadata/metadata-types": {
-      "source": "./src/metadata/metadata-types.ts",
-      "types": "./dist/metadata/metadata-types.d.ts",
-      "import": "./dist/metadata/metadata-types.js"
-    },
-    "./metadata/symbol-metadata-reader": {
-      "source": "./src/metadata/symbol-metadata-reader.ts",
-      "types": "./dist/metadata/symbol-metadata-reader.d.ts",
-      "import": "./dist/metadata/symbol-metadata-reader.js"
-    },
     "./module": {
       "source": "./src/module.ts",
       "types": "./dist/module.d.ts",
       "import": "./dist/module.js"
-    },
-    "./registry": {
-      "source": "./src/registry.ts",
-      "types": "./dist/registry.d.ts",
-      "import": "./dist/registry.js"
-    },
-    "./resolution/activation-need": {
-      "source": "./src/resolution/activation-need.ts",
-      "types": "./dist/resolution/activation-need.d.ts",
-      "import": "./dist/resolution/activation-need.js"
-    },
-    "./resolution/binding-lookup-cache": {
-      "source": "./src/resolution/binding-lookup-cache.ts",
-      "types": "./dist/resolution/binding-lookup-cache.d.ts",
-      "import": "./dist/resolution/binding-lookup-cache.js"
-    },
-    "./resolution/binding-scope": {
-      "source": "./src/resolution/binding-scope.ts",
-      "types": "./dist/resolution/binding-scope.d.ts",
-      "import": "./dist/resolution/binding-scope.js"
-    },
-    "./resolution/binding-select": {
-      "source": "./src/resolution/binding-select.ts",
-      "types": "./dist/resolution/binding-select.d.ts",
-      "import": "./dist/resolution/binding-select.js"
-    },
-    "./resolution/class-introspector": {
-      "source": "./src/resolution/class-introspector.ts",
-      "types": "./dist/resolution/class-introspector.d.ts",
-      "import": "./dist/resolution/class-introspector.js"
-    },
-    "./resolution/constraints": {
-      "source": "./src/resolution/constraints.ts",
-      "types": "./dist/resolution/constraints.d.ts",
-      "import": "./dist/resolution/constraints.js"
-    },
-    "./resolution/environment": {
-      "source": "./src/resolution/environment.ts",
-      "types": "./dist/resolution/environment.d.ts",
-      "import": "./dist/resolution/environment.js"
-    },
-    "./resolution/instantiation-plan": {
-      "source": "./src/resolution/instantiation-plan.ts",
-      "types": "./dist/resolution/instantiation-plan.d.ts",
-      "import": "./dist/resolution/instantiation-plan.js"
-    },
-    "./resolution/lifecycle": {
-      "source": "./src/resolution/lifecycle.ts",
-      "types": "./dist/resolution/lifecycle.d.ts",
-      "import": "./dist/resolution/lifecycle.js"
-    },
-    "./resolution/resolution-path": {
-      "source": "./src/resolution/resolution-path.ts",
-      "types": "./dist/resolution/resolution-path.d.ts",
-      "import": "./dist/resolution/resolution-path.js"
-    },
-    "./resolution/resolve-options": {
-      "source": "./src/resolution/resolve-options.ts",
-      "types": "./dist/resolution/resolve-options.d.ts",
-      "import": "./dist/resolution/resolve-options.js"
-    },
-    "./resolution/resolver": {
-      "source": "./src/resolution/resolver.ts",
-      "types": "./dist/resolution/resolver.d.ts",
-      "import": "./dist/resolution/resolver.js"
-    },
-    "./resolution/scope": {
-      "source": "./src/resolution/scope.ts",
-      "types": "./dist/resolution/scope.d.ts",
-      "import": "./dist/resolution/scope.js"
     },
     "./token": {
       "source": "./src/token.ts",
