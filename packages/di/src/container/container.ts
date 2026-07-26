@@ -1,6 +1,5 @@
 import type { Binding, BindToBuilder } from "#/binding";
-import { bindingSlotEquals } from "#/binding";
-import type { BindingCommitter } from "#/container/binding-builders";
+import type { BindingRegistration } from "#/container/binding-builders";
 import { BindingEntry } from "#/container/binding-builders";
 import type { AutoRegisterRegistry } from "#/decorators/injectable";
 import {
@@ -38,85 +37,6 @@ import type {
   DeactivationHandler,
   ResolveOptions,
 } from "#/types";
-
-// True when re-adding `restored` would immediately be displaced again by `current`
-// (both slot-based with equal slots) — in that case the replacement was legitimate.
-function displacesRestoredBinding(current: Binding, restored: Binding): boolean {
-  const currentIsPurePredicate =
-    current.predicate !== undefined && current.slot.name === undefined && current.slot.tags.length === 0;
-  if (currentIsPurePredicate) {
-    return false;
-  }
-  return bindingSlotEquals(current.slot, restored.slot);
-}
-
-/**
- * One fluent chain's link to the registry.
- *
- * A chain registers on its `to*()` call, so a `when*()` that follows re-slots an already-live
- * binding and can displace one the final shape would never conflict with. Those stay parked in
- * `#displacedByChain` until the chain settles, then get restored.
- */
-class ChainCommitter implements BindingCommitter {
-  // Allocated only by a chain that actually displaces something — most never do.
-  #displacedByChain: Array<Binding> | undefined;
-  readonly #registry: BindingRegistry;
-  // Present exactly when `moduleRef` is — only a module's chain tracks its binding ids.
-  readonly #moduleBindingIds: Map<object, Array<BindingIdentifier>> | undefined;
-  readonly #moduleRef: object | undefined;
-
-  constructor(
-    registry: BindingRegistry,
-    moduleBindingIds: Map<object, Array<BindingIdentifier>> | undefined,
-    moduleRef: object | undefined,
-  ) {
-    this.#registry = registry;
-    this.#moduleBindingIds = moduleBindingIds;
-    this.#moduleRef = moduleRef;
-  }
-
-  commit(binding: Binding, previousId: BindingIdentifier | undefined): void {
-    if (previousId !== undefined) {
-      this.#registry.removeById(previousId);
-    }
-    const displaced = this.#registry.add(binding);
-    if (displaced !== undefined) {
-      (this.#displacedByChain ??= []).push(displaced);
-    }
-    if (previousId !== undefined && this.#displacedByChain !== undefined) {
-      this.#restoreNonConflicting(binding);
-    }
-    if (this.#moduleRef !== undefined) {
-      this.#trackForModule(this.#moduleRef, binding.id, previousId);
-    }
-  }
-
-  refine(): void {
-    this.#registry.touch();
-  }
-
-  #restoreNonConflicting(binding: Binding): void {
-    const displaced = this.#displacedByChain!;
-    for (let index = displaced.length - 1; index >= 0; index -= 1) {
-      const candidate = displaced[index]!;
-      if (!displacesRestoredBinding(binding, candidate)) {
-        this.#registry.add(candidate);
-        displaced.splice(index, 1);
-      }
-    }
-  }
-
-  #trackForModule(moduleRef: object, id: BindingIdentifier, previousId: BindingIdentifier | undefined): void {
-    const ids = this.#moduleBindingIds!.getOrInsert(moduleRef, []);
-    if (previousId !== undefined) {
-      const previousIndex = ids.indexOf(previousId);
-      if (previousIndex !== -1) {
-        ids.splice(previousIndex, 1);
-      }
-    }
-    ids.push(id);
-  }
-}
 
 // ── Container interface ────────────────────────────────────────────────────────
 
@@ -196,6 +116,8 @@ class DefaultContainer implements Container {
   #moduleRefs: Map<object, number> | undefined;
   // Module bindings: module -> array of binding IDs registered by it
   #moduleBindingIds: Map<object, Array<BindingIdentifier>> | undefined;
+  // One shared registration for every chain this container's own `bind()` creates.
+  #registration: BindingRegistration | undefined;
 
   constructor(parent?: DefaultContainer) {
     this.#parent = parent;
@@ -254,12 +176,24 @@ class DefaultContainer implements Container {
     return this.#createBindToBuilder(token);
   }
 
+  /** The registration every non-module chain shares, so `bind()` allocates only the builder. */
+  #ownRegistration(): BindingRegistration {
+    return (this.#registration ??= { registry: this.#registry, moduleBindingIds: undefined });
+  }
+
+  /** One registration per module load, holding that module's id list directly. */
+  #moduleRegistration(moduleRef: object): BindingRegistration {
+    return {
+      registry: this.#registry,
+      moduleBindingIds: (this.#moduleBindingIds ??= new Map()).getOrInsert(moduleRef, []),
+    };
+  }
+
   #createBindToBuilder<const Value>(
     token: Token<Value> | Constructor<Value>,
-    moduleRef?: object,
+    registration: BindingRegistration = this.#ownRegistration(),
   ): BindToBuilder<Value> {
-    const moduleBindingIds = moduleRef === undefined ? undefined : (this.#moduleBindingIds ??= new Map());
-    return new BindingEntry<Value>(token, new ChainCommitter(this.#registry, moduleBindingIds, moduleRef));
+    return new BindingEntry<Value>(token, registration);
   }
 
   unbind(tokenOrId: Token<unknown> | Constructor | BindingIdentifier): void {
@@ -410,9 +344,10 @@ class DefaultContainer implements Container {
   }
 
   #createModuleBuilder(moduleRef: object): ModuleBuilder {
+    const registration = this.#moduleRegistration(moduleRef);
     return {
       bind: <const Value>(token: Token<Value> | Constructor<Value>): BindToBuilder<Value> =>
-        this.#createBindToBuilder(token, moduleRef),
+        this.#createBindToBuilder(token, registration),
       import: (...modules: Array<SyncModule>): void => {
         this.#loadSyncModules(modules);
       },
@@ -420,9 +355,10 @@ class DefaultContainer implements Container {
   }
 
   #createAsyncModuleBuilder(moduleRef: object, importPromises: Array<Promise<void>>): AsyncModuleBuilder {
+    const registration = this.#moduleRegistration(moduleRef);
     return {
       bind: <const Value>(token: Token<Value> | Constructor<Value>): BindToBuilder<Value> =>
-        this.#createBindToBuilder(token, moduleRef),
+        this.#createBindToBuilder(token, registration),
       import: (...modules: Array<SyncModule | AsyncModule>): void => {
         for (const module of modules) {
           importPromises.push(this.#loadOneModuleAsync(module));
