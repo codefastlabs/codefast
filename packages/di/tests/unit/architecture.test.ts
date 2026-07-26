@@ -191,3 +191,32 @@ describe("comments stay comments", () => {
     expect(offenders).toEqual([]);
   });
 });
+
+describe("SPEC.md keeps up with the API it specifies", () => {
+  const spec = readFileSync(join(packageRoot, "SPEC.md"), "utf8");
+
+  it("documents every error the package can throw", () => {
+    const declared = [
+      ...readFileSync(join(sourceRoot, "errors.ts"), "utf8").matchAll(/export class ([A-Z][A-Za-z]*Error)/g),
+    ].map((match) => match[1]!);
+
+    const undocumented = declared.filter((name) => !new RegExp(`\\b${name}\\b`).test(spec));
+
+    expect(undocumented).toEqual([]);
+  });
+
+  it("documents every method on the Container interface", () => {
+    const container = readFileSync(join(sourceRoot, "container", "container.ts"), "utf8");
+    const members = [
+      .../export interface Container \{([\s\S]*?)\n\}/
+        .exec(container)![1]!
+        .matchAll(/^ {2}([a-zA-Z][A-Za-z0-9]*)[<(]/gm),
+    ].map((match) => match[1]!);
+
+    const undocumented = [...new Set(members)].filter((name) => !new RegExp(`\\b${name}\\b`).test(spec));
+
+    // Coverage only. Whether the prose still describes the behaviour correctly is a human job —
+    // four semantic claims in this document were wrong before anyone checked.
+    expect(undocumented).toEqual([]);
+  });
+});

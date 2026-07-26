@@ -290,7 +290,7 @@ export interface RefinableBindingFields<Value> {
  * Narrows a registered binding to the fields a fluent chain may still refine.
  */
 export function refinableFields<Value>(binding: Binding<Value>): RefinableBindingFields<Value> {
-  return binding as unknown as RefinableBindingFields<Value>;
+  return binding as RefinableBindingFields<Value>;
 }
 
 // ── Builder interfaces ────────────────────────────────────────────────────────
