@@ -41,6 +41,9 @@ export const DI_INVERSIFY_MARKDOWN = {
   },
 } as const satisfies TwoWayMarkdownReportOptions;
 
+/**
+ * @since 0.5.0-canary.7
+ */
 export const DI_NWAY_REPORT: NWayReportOptions = {
   documentHeading: "# @codefast/di — N-way core-subset comparison",
   sectionHeading: "N-way core subset (di vs inversify vs awilix vs tsyringe)",

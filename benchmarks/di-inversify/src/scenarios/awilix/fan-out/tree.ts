@@ -22,6 +22,9 @@ function buildFanOutTreeDepthThreeBreadthFourScenario(): BenchScenario {
   };
 }
 
+/**
+ * @since 0.5.0-canary.7
+ */
 export function buildAwilixFanOutTreeScenarios(): ReadonlyArray<BenchScenario> {
   return [buildFanOutTreeDepthThreeBreadthFourScenario()];
 }

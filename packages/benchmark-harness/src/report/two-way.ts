@@ -94,6 +94,8 @@ const HEAD_TO_HEAD_PARITY_BAND = 0.03;
 
 /**
  * One classified head-to-head entry: scenario id plus its left/right throughput ratio.
+ *
+ * @since 0.5.0-canary.7
  */
 export interface TwoWayHeadToHeadEntry {
   readonly id: string;
@@ -103,6 +105,8 @@ export interface TwoWayHeadToHeadEntry {
 /**
  * Geometric-mean ratio of one scenario group, so error-path outliers (e.g. a 100×+
  * fail-fast row) stay in their own group instead of skewing the throughput headline.
+ *
+ * @since 0.5.0-canary.7
  */
 export interface TwoWayGroupGeomean {
   readonly group: string;
@@ -112,6 +116,8 @@ export interface TwoWayGroupGeomean {
 
 /**
  * Win/parity/loss classification of every comparable scenario, from the left library's viewpoint.
+ *
+ * @since 0.5.0-canary.7
  */
 export interface TwoWayHeadToHeadSummary {
   readonly comparableCount: number;
@@ -138,6 +144,8 @@ function geometricMean(ratios: ReadonlyArray<number>): number {
 
 /**
  * Classifies comparable rows into wins / parities / losses for the left library.
+ *
+ * @since 0.5.0-canary.7
  */
 export function summarizeTwoWayComparison(rows: ReadonlyArray<TwoWayScenarioComparisonRow>): TwoWayHeadToHeadSummary {
   const wins: Array<TwoWayHeadToHeadEntry> = [];

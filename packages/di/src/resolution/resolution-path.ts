@@ -16,6 +16,8 @@ const RESOLUTION_SET_KEY: unique symbol = Symbol("di:resolution-set");
  * 1202 / 3285 / 7735 / 16837, of 16 gives 1299 / 3694 / 7449 / 15625. Switching at 32 wins
  * the shallow-to-mid depths real graphs actually have while staying close to the best deep
  * numbers; the previous value of 128 was the worst of the three almost everywhere.
+ *
+ * @since 0.5.0-canary.7
  */
 export const RESOLUTION_SET_THRESHOLD = 32;
 type ResolutionPathWithSet = Array<string> & { [RESOLUTION_SET_KEY]?: Set<string> };
@@ -37,6 +39,9 @@ export function enterResolutionPath(
   tokenDisplayName: string,
   forceSet: boolean,
 ): Set<string> | undefined;
+/**
+ * @since 0.5.0-canary.7
+ */
 export function enterResolutionPath(
   resolutionPath: Array<string>,
   tokenDisplayName: string,
@@ -61,6 +66,8 @@ export function enterResolutionPath(
  * sync. Callers that already hold the entry's name can pop and delete directly; this exists for
  * unwind paths that only have the path array — notably the async chain's shared settle callback,
  * which serves every level and therefore cannot capture a per-level name.
+ *
+ * @since 0.5.0-canary.7
  */
 export function exitResolutionPath(resolutionPath: Array<string>): void {
   const tokenDisplayName = resolutionPath.pop();

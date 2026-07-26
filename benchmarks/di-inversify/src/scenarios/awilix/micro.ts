@@ -80,6 +80,9 @@ function buildTransientClassOneDepScenario(): BenchScenario {
   };
 }
 
+/**
+ * @since 0.5.0-canary.7
+ */
 export function buildAwilixMicroScenarios(): ReadonlyArray<BenchScenario> {
   return [buildConstantResolveScenario(), buildSingletonClassOneDepScenario(), buildTransientClassOneDepScenario()];
 }

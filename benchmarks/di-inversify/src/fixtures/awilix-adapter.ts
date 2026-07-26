@@ -20,6 +20,8 @@ import {
 /**
  * A built container plus every registration name, retained so sanity checks
  * can resolve any node. Scenarios typically only need `rootName` + `container`.
+ *
+ * @since 0.5.0-canary.7
  */
 export interface AwilixRealisticBuild {
   readonly container: AwilixContainer;
@@ -59,6 +61,8 @@ function bindOneNode(container: AwilixContainer, node: NodeDescriptor, namesById
 /**
  * Builds a fresh awilix container from the descriptor. Use per-iteration for
  * `realistic-graph-cold-resolve`, or once in scenario setup for hot paths.
+ *
+ * @since 0.5.0-canary.7
  */
 export function buildAwilixRealisticContainer(graph: GraphDescriptor): AwilixRealisticBuild {
   assertGraphIsWellFormed(graph);
@@ -80,6 +84,8 @@ export function buildAwilixRealisticContainer(graph: GraphDescriptor): AwilixRea
 
 /**
  * Sanity helper: resolves the root and asserts the expected shape.
+ *
+ * @since 0.5.0-canary.7
  */
 export function sanityCheckAwilixRealisticResolve(graph: GraphDescriptor): boolean {
   const { container, rootName } = buildAwilixRealisticContainer(graph);
