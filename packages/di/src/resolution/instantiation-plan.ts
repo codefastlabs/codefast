@@ -46,6 +46,17 @@ export const PLAN_RETRY: unique symbol = Symbol("di:plan-retry");
 export type InstantiationPlanCompileResult = (() => unknown) | null | typeof PLAN_RETRY;
 
 /**
+ * What compiling one *dependency* can yield.
+ *
+ * @remarks Narrower than {@link InstantiationPlanCompileResult} on purpose: a dependency the
+ * compiler cannot inline escapes to the runtime path rather than failing, so `null` — "this
+ * graph has no plan" — is only ever a verdict on a plan's root, never on a dependency.
+ *
+ * @since 0.5.0-canary.7
+ */
+type DependencyCompileResult = (() => unknown) | typeof PLAN_RETRY;
+
+/**
  * A dependency's terminal binding plus the scope cache of the resolver that owns it.
  *
  * @since 0.5.0-canary.7
@@ -142,7 +153,7 @@ export class InstantiationPlanCompiler {
     try {
       for (let index = 0; index < binding.deps.length; index += 1) {
         const thunk = this.#compileInjectionThunk(binding.deps[index]!, compileStack, depth, depAncestors);
-        if (thunk === null || thunk === PLAN_RETRY) {
+        if (thunk === PLAN_RETRY) {
           return thunk;
         }
         depThunks[index] = thunk;
@@ -171,7 +182,7 @@ export class InstantiationPlanCompiler {
     compileStack: Set<Binding["id"]>,
     depth: number,
     ancestors: ReadonlyArray<Binding>,
-  ): InstantiationPlanCompileResult {
+  ): DependencyCompileResult {
     const token = descriptor.token as Token<unknown> | Constructor;
     const options = injectionSlotToResolveOptions(descriptor);
     if (descriptor.multi) {
@@ -223,7 +234,7 @@ export class InstantiationPlanCompiler {
     try {
       for (let index = 0; index < params.length; index += 1) {
         const thunk = this.#compileInjectionThunk(params[index]!, compileStack, depth, depAncestors);
-        if (thunk === null || thunk === PLAN_RETRY) {
+        if (thunk === PLAN_RETRY) {
           return thunk;
         }
         depThunks[index] = thunk;
@@ -257,7 +268,7 @@ export class InstantiationPlanCompiler {
     compileStack: Set<Binding["id"]>,
     depth: number,
     ancestors: ReadonlyArray<Binding>,
-  ): InstantiationPlanCompileResult {
+  ): DependencyCompileResult {
     const { binding, ownerScope } = entry;
     if (binding.kind === "constant" && binding.onActivation === undefined) {
       if (!this.#host.hasActivationHandlers(binding.token)) {

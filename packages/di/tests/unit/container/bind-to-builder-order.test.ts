@@ -1,4 +1,4 @@
-import { Container, token } from "@codefast/di";
+import { Container, NoMatchingBindingError, token } from "@codefast/di";
 import { describe, expect, it } from "vitest";
 
 /**
@@ -29,5 +29,34 @@ describe("BindToBuilder fluent surface", () => {
     const NamedValueToken = token<number>("named-after-to");
     container.bind(NamedValueToken).toConstantValue(1).whenNamed("a");
     expect(container.resolve(NamedValueToken, { name: "a" })).toBe(1);
+  });
+
+  it("rejects toSelf() on a token that is not a constructor", () => {
+    const container = Container.create();
+    const ValueToken = token<number>("to-self-non-constructor");
+    expect(() => container.bind(ValueToken).toSelf()).toThrow("toSelf() requires token to be a Constructor");
+  });
+
+  it("overwrites a tag value when whenTagged repeats the same key", () => {
+    const container = Container.create();
+    const TaggedToken = token<string>("tag-overwrite");
+    container.bind(TaggedToken).toConstantValue("final").whenTagged("env", "dev").whenTagged("env", "prod");
+
+    expect(container.resolve(TaggedToken, { tags: [["env", "prod"]] })).toBe("final");
+    expect(() => container.resolve(TaggedToken, { tags: [["env", "dev"]] })).toThrow(NoMatchingBindingError);
+  });
+
+  it("keeps the chain id stable across every refinement", () => {
+    const container = Container.create();
+    const ServiceToken = token<string>("stable-chain-id");
+
+    const chain = container.bind(ServiceToken).toDynamic(() => "value");
+    const afterTo = chain.id();
+    const scoped = chain.whenNamed("primary").singleton();
+
+    // An id captured mid-chain must still name the binding the chain settled on.
+    expect(scoped.id()).toBe(afterTo);
+    container.unbind(afterTo);
+    expect(container.has(ServiceToken)).toBe(false);
   });
 });
