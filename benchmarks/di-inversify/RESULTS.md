@@ -1,6 +1,8 @@
 # Results — @codefast/di vs InversifyJS 8, Awilix 13, tsyringe 4
 
 > Two profiles are reported below, both `BENCH_ISOLATE=1` (one subprocess per scenario, order-independent) on Node 26.1.0 / V8 14.6, Apple M3 Max. `@codefast/di` 0.5.0-canary.7 · inversify 8.2.2 · awilix 13.0.5 · tsyringe 4.10.0. **This run was not taken on a fully idle machine** (load average ~3 on 14 cores): the ratios hold because every library ran under the same conditions back to back, but treat the absolute `hz/op` figures as a floor, and re-run before quoting them. See [Reproduce](#reproduce). This page is transcribed by hand from `bench-results/latest.md`; that file is the source of truth for the most recent run.
+>
+> **A later re-run was attempted and deliberately not transcribed.** It came out dirtier still — about half its rows above the ~5% IQR the report itself calls noisy, one at 26.3% — and on a dirty machine the cross-library ratios move even where `@codefast/di` provably has not. That run put `dynamic-async-chain-8` at 0.86× against inversify, a row [fixed below](#where-it-loses) to 1.26×; an A/B of that row against a stashed-and-rebuilt baseline, two passes in alternating order with an in-run control, put the change at 1.003× — di's own throughput was identical at ~1.066M hz/op both sides, and it was inversify's number that moved. Transcribing those figures would have published a regression that does not exist. Clean runs are achievable on this hardware (an earlier run the same day held `constant-resolve` to 2.9% / 4.6%), so the fix is to re-run when the machine is genuinely quiet, not to loosen the threshold.
 
 ## What this measures — and what it doesn't
 
@@ -31,7 +33,13 @@ Ratios are `@codefast/di / competitor` (>1 = di faster). Win band >1.03×, parit
 
 ## Where it loses
 
-**One row, one profile: cold container build against tsyringe under `BENCH_FULL`** — `realistic-graph-cold-resolve` is 0.82× there (1.07× in the default profile). Building a fresh container, binding 10 nodes and resolving once still does more per-container work in di than in a decorator-free/factory container: metadata, lifecycle, introspection. It beats inversify 3.1× and awilix 1.06–1.90× on the same row.
+**One row, one profile: cold container build against tsyringe under `BENCH_FULL`** — `realistic-graph-cold-resolve` is 0.82× there (1.07× in the default profile). It beats inversify 3.1× and awilix 1.06–1.90× on the same row.
+
+The mechanism is now pinned, and it is **entirely garbage collection**. Timed with no collection in the loop, di and tsyringe are at mutator parity on this row — 4.57 µs against 4.58 µs per cold iteration, measured one library per subprocess so neither inherits the other's heap. di only loses once `BENCH_FULL`'s strided forced GC is present, and a forced full collection costs 1.24 ms with di's garbage in flight against 1.05 ms with tsyringe's. Nothing leaks on either side: retained bytes per iteration measure ~0.
+
+The obvious fix was to stop building per-container subsystems eagerly, and it was **tried, shipped, and does not close this row**. A fresh `Container.create()` retained 4763 bytes against tsyringe's 905; deferring the eleven `Map`s a bind-and-resolve container never reads brought that to 2729 (**43% lighter**, and the same for `parent.createChild()`), cutting 13.7% of the whole row's allocation. Throughput moved by less than the suite's noise floor. That is a measurement, not an impression: an A/B against a stashed-and-rebuilt baseline carried `constant-resolve` as an in-run control — it resolves from a pre-built container, so per-container laziness cannot help it — and the control drifted 2.3% while the target moved 2.8%, with two passes in alternating order disagreeing on the sign. An earlier uncontrolled A/B of the same change had shown a tidy +4% on every row including the control, and was pure drift.
+
+So the remaining gap is not per-container setup work. It is that di's cold iteration hands the collector more objects than a factory-only container does — the bindings, closures and compiled-plan state of ten nodes — and the eager subsystems were only 2 KB of it. Worth recording that the deferral was kept anyway, on the footprint result rather than a throughput claim.
 
 Two losses documented in earlier revisions of this page are **fixed**, both by removing work rather than by branching around it:
 

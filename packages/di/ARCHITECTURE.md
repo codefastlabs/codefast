@@ -73,6 +73,18 @@ Pooling here is not about saving an allocation. A per-chain context **survives i
 
 What the async lane deliberately does **not** keep is any per-chain state on the resolver. The chain's context is threaded through the call — `ctx.resolveAsync()` hands the callee the context it used, and an inner level reuses it when `ctx.owner === this`. Two concurrent chains are two contexts with two independent `chainLevels`; there is no shared counter and no path-identity heuristic to get wrong.
 
+## A container defers most of itself
+
+`DefaultContainer`'s constructor builds only what a resolve cannot happen without: the registry, the scope manager, the lifecycle manager and the resolver chain. Everything else arrives on first use — the inspector, the module ref/binding tables, the scope's in-flight and scoped caches, the registry's named and tagged slot indexes, and the class introspector's three metadata caches. Eleven `Map`s a bind-and-resolve container never reads.
+
+An empty `Map` is not free: V8 gives it a backing store, and one costs 184 bytes here. A fresh `Container.create()` retains **2.7 KB against 4.8 KB** eager, and `parent.createChild()` the same — so a service minting a child container per request halves what it allocates. Measured by retention (hold N containers live across a forced collection, divide the heap delta), which is stable to a few bytes, unlike timing a forced `gc()`.
+
+> **Rule:** deferral is an allocation decision only. A deferred collaborator must answer identically whether or not something touched it first — an unallocated cache reads as a miss, never as an error — which is why `tests/unit/container/deferred-subsystems.test.ts` exercises each one as the _first_ thing a fresh container does.
+
+Deferring a cache also raises the question of what a bulk reader should hand back when it was never allocated. `ScopeManager.getAllScoped()` was the only such reader, and it had no callers anywhere, so it was removed rather than given an empty-map fallback: the cheapest answer to "what should this return when there is nothing to return" is to not carry the method.
+
+What this did **not** do is close the `realistic-graph-cold-resolve` loss against tsyringe, which is worth recording because the reasoning looked sound. That row is at mutator parity — di is only slower once a forced collection is in the loop — so cutting per-container allocation looked like the fix. It cut 13.7% of the row's allocation and moved throughput by less than the suite's ~5% noise floor, confirmed against an in-run control scenario (`constant-resolve`, which resolves from a pre-built container and so cannot benefit) that drifted by the same amount the target did. Two passes in alternating order disagreed on the sign. The footprint reduction is why this shape stays; do not cite it as a throughput win.
+
 ## Changing anything here
 
 1. **Measure first, on a quiet machine.** `pnpm bench:isolate` from `benchmarks/di-inversify` for order-independent numbers.
