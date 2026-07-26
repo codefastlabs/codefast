@@ -86,6 +86,10 @@ export class ScopeManager {
     this.#inflight?.clear();
     this.#scoped?.clear();
   }
+  /** Whether the deferred table behind `#scoped` has had to be built. */
+  get isBuilt(): boolean {
+    return this.#scoped !== undefined;
+  }
 }
 
 const EMPTY_BINDINGS: ReadonlyArray<Binding<unknown>> = [];

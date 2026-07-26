@@ -161,3 +161,33 @@ describe("ARCHITECTURE.md still describes this package", () => {
     expect(missing).toEqual([]);
   });
 });
+
+describe("comments stay comments", () => {
+  const COMMENT = /^\s*(?:\/\/|\*|\/\*)(.*)$/;
+  // A number in a source comment cannot be re-verified where it sits and the method behind it is
+  // not there either, so it goes stale silently. Numbers live with their method — ARCHITECTURE.md,
+  // RESULTS.md, or the commit.
+  const NUMBERS = /\b\d+(?:\.\d+)?\s*(?:×|x faster|%|ns\/op|µs|ms\b|KB|MB|bytes)\b/;
+  // Code describes what is. Git carries what was.
+  const HISTORY =
+    /\b(?:used to|previously|an earlier (?:revision|draft|version)|the old \w+|before \w+ existed|no longer surfaces)\b/i;
+
+  it.each([
+    ["a benchmark number", NUMBERS],
+    ["a narrated history", HISTORY],
+  ])("contains no %s", (_label, pattern) => {
+    const offenders: Array<string> = [];
+
+    for (const file of sourceFiles()) {
+      const lines = readFileSync(file, "utf8").split("\n");
+      for (const [index, line] of lines.entries()) {
+        const body = COMMENT.exec(line)?.[1];
+        if (body !== undefined && pattern.test(body)) {
+          offenders.push(`${file.slice(sourceRoot.length + 1)}:${String(index + 1)} ${body.trim()}`);
+        }
+      }
+    }
+
+    expect(offenders).toEqual([]);
+  });
+});

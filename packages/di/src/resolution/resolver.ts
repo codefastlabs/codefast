@@ -19,6 +19,7 @@ import type { DefaultLookupEntry } from "#/resolution/binding-lookup-cache";
 import { BindingLookupCache } from "#/resolution/binding-lookup-cache";
 import { selectAllBindings, selectBinding } from "#/resolution/binding-select";
 import { ClassIntrospector } from "#/resolution/class-introspector";
+import type { ResolutionDiagnostics } from "#/resolution/diagnostics";
 import type { ResolverCallbacks } from "#/resolution/environment";
 import { buildResolutionFrame, DefaultResolutionContext } from "#/resolution/environment";
 import { InstantiationPlanCompiler, PLAN_RETRY } from "#/resolution/instantiation-plan";
@@ -92,6 +93,21 @@ export class DependencyResolver implements ResolverCallbacks {
     );
     this.#classes = new ClassIntrospector(metadataReader, container);
     this.#activation = new ActivationNeedCache(lifecycle, this.#classes);
+  }
+
+  /** Structural counts for {@link RESOLUTION_DIAGNOSTICS}; see `resolution/diagnostics.ts`. */
+  describeCaches(): Pick<ResolutionDiagnostics, "asyncContextPoolSize" | "compiledPlanCount" | "syncContextPoolSize"> {
+    let compiledPlanCount = 0;
+    for (const plan of this.#classPlanByBindingId.values()) {
+      if (plan !== null) {
+        compiledPlanCount += 1;
+      }
+    }
+    return {
+      asyncContextPoolSize: this.#asyncChainContextPool.length,
+      compiledPlanCount,
+      syncContextPoolSize: this.#syncResolutionContextPool.length,
+    };
   }
 
   // ── Binding lookup ─────────────────────────────────────────────────────────
