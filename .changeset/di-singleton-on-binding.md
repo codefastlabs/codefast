@@ -1,0 +1,9 @@
+---
+"@codefast/di": minor
+---
+
+Keep a singleton's instance on its binding instead of in a per-container table. A binding belongs to exactly one container, so its singleton slot is per-binding — which turns every cached-singleton read from a keyed `Map` lookup into a field read, on the most common resolve shape there is. The scope manager keeps only a lazily-created list of the bindings that have materialized, so disposal and `inspect()` can still enumerate them, and the singleton `Map` is gone entirely.
+
+Measured on the realistic graph's root resolve — a transient controller over eight cached singletons — by an interleaved A/B with both builds in one process, 13 trials in alternating order: **1.09× to 1.40× faster** across four runs, never slower, with median and best-of agreeing inside every run. The range is that wide because the magnitude depends on what else the process has run (the benchmark's own README measures ~30% of cross-scenario inline-cache interference), so the suite decides the published figure; what reproduces is the direction. Cold container build came out 1.18× faster in the same runs, from no longer allocating the `Map`. `constant-resolve`, which touches no singleton cache, is a control at 1.02× — and an apparent 0.88× on it was an artifact of timing an 11 ns call one at a time, which is why that control is now batched.
+
+**Breaking:** `ScopeManager`'s singleton API takes a `Binding` rather than a `BindingIdentifier`, and `hasSingleton`/`getSingleton`/`peekSingleton`/`setSingleton(id, …)`/`getAllSingletons` are replaced by `setSingleton(binding, …)`, `deleteSingleton(binding)` and `cachedSingletons()`. The `SINGLETON_MISS` sentinel is gone; `NO_INSTANCE` on the binding replaces it. None of this is a published entry point any more, so it is internal — but a fork reaching into `./resolution/scope` would notice. `InstantiationPlanDependencyEntry` also drops its `ownerScope` field, which a compiled thunk no longer needs.

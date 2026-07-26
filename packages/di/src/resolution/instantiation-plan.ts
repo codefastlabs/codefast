@@ -15,13 +15,12 @@
  * returns ARE the hot path and touch nothing but their captures.
  */
 import type { Binding } from "#/binding";
+import { NO_INSTANCE } from "#/binding";
 import type { ConstructorInvocation } from "#/constructor-type";
 import type { InjectionDescriptor } from "#/decorators/inject";
 import { AsyncResolutionError } from "#/errors";
 import type { ConstructorMetadata } from "#/metadata/metadata-types";
 import { injectionSlotToResolveOptions } from "#/resolution/resolve-options";
-import type { ScopeManager } from "#/resolution/scope";
-import { SINGLETON_MISS } from "#/resolution/scope";
 import type { Token } from "#/token";
 import { tokenName } from "#/token";
 import type { BindingScope, Constructor, ResolutionFrame, ResolveOptions } from "#/types";
@@ -57,13 +56,15 @@ export type InstantiationPlanCompileResult = (() => unknown) | null | typeof PLA
 type DependencyCompileResult = (() => unknown) | typeof PLAN_RETRY;
 
 /**
- * A dependency's terminal binding plus the scope cache of the resolver that owns it.
+ * A dependency's terminal binding.
+ *
+ * @remarks Carried no scope reference since singleton instances moved onto the binding itself —
+ * a compiled thunk reads the field and needs nothing else.
  *
  * @since 0.5.0-canary.7
  */
 export interface InstantiationPlanDependencyEntry {
   readonly binding: Binding;
-  readonly ownerScope: ScopeManager;
 }
 
 /**
@@ -269,7 +270,7 @@ export class InstantiationPlanCompiler {
     depth: number,
     ancestors: ReadonlyArray<Binding>,
   ): DependencyCompileResult {
-    const { binding, ownerScope } = entry;
+    const { binding } = entry;
     if (binding.kind === "constant" && binding.onActivation === undefined) {
       if (!this.#host.hasActivationHandlers(binding.token)) {
         const value = binding.value;
@@ -281,10 +282,10 @@ export class InstantiationPlanCompiler {
       // Cached-singleton read; the first materialization escapes so it sees the same ancestors
       // (and therefore the same cycle detection) the interpreted path would have built.
       const escape = this.#compileEscapeThunk(binding.token, ancestors);
-      const bindingId = binding.id;
+      const singletonBinding = binding;
       return () => {
-        const cachedSingleton = ownerScope.peekSingleton(bindingId);
-        return cachedSingleton === SINGLETON_MISS ? escape() : cachedSingleton;
+        const cached = singletonBinding.instance;
+        return cached === NO_INSTANCE ? escape() : cached;
       };
     }
     if (

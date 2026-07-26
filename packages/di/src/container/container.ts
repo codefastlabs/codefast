@@ -1,4 +1,5 @@
 import type { Binding, BindToBuilder } from "#/binding";
+import { NO_INSTANCE } from "#/binding";
 import type { BindingRegistration } from "#/container/binding-builders";
 import { BindingChain } from "#/container/binding-builders";
 import type { AutoRegisterRegistry } from "#/decorators/injectable";
@@ -216,9 +217,9 @@ class DefaultContainer implements Container {
   #drainSingletons(bindings: ReadonlyArray<Binding>): Array<[Binding, unknown]> {
     const pairs: Array<[Binding, unknown]> = [];
     for (const binding of bindings) {
-      if (this.#scope.hasSingleton(binding.id)) {
-        pairs.push([binding, this.#scope.getSingleton(binding.id)]);
-        this.#scope.deleteSingleton(binding.id);
+      if (binding.instance !== NO_INSTANCE) {
+        pairs.push([binding, binding.instance]);
+        this.#scope.deleteSingleton(binding);
       }
     }
     return pairs;
@@ -384,9 +385,9 @@ class DefaultContainer implements Container {
       const binding = this.#registry.getById(id);
       if (binding !== undefined) {
         this.#registry.removeById(id);
-        if (this.#scope.hasSingleton(id)) {
-          pairs.push([binding, this.#scope.getSingleton(id)]);
-          this.#scope.deleteSingleton(id);
+        if (binding.instance !== NO_INSTANCE) {
+          pairs.push([binding, binding.instance]);
+          this.#scope.deleteSingleton(binding);
         }
       }
     }
@@ -514,11 +515,10 @@ class DefaultContainer implements Container {
 
     // Deactivate all singletons in this container (own only)
     const reader = this.#getMetadataReader();
-    for (const [id, instance] of this.#scope.getAllSingletons()) {
-      const binding = this.#registry.getById(id);
-      if (binding !== undefined) {
-        await this.#lifecycle.runDeactivation(binding, instance, reader);
-      }
+    // Iterate a copy: a deactivation handler is user code, and the live list is what
+    // materializing or dropping a singleton mutates.
+    for (const binding of this.#scope.cachedSingletons().slice()) {
+      await this.#lifecycle.runDeactivation(binding, binding.instance, reader);
     }
 
     this.#scope.clearAll();
@@ -542,7 +542,7 @@ class DefaultContainer implements Container {
         continue;
       }
       const scope = effectiveBindingScope(binding);
-      if (scope === "singleton" && !this.#scope.hasSingleton(binding.id)) {
+      if (scope === "singleton" && binding.instance === NO_INSTANCE) {
         if (binding.predicate !== undefined) {
           continue;
         }

@@ -1,4 +1,5 @@
 import type { Binding, BindingSlot } from "#/binding";
+import { NO_INSTANCE } from "#/binding";
 import type { Container } from "#/container/container";
 import type { InjectionDescriptor } from "#/decorators/inject";
 import {
@@ -25,7 +26,6 @@ import type { LifecycleManager } from "#/resolution/lifecycle";
 import { enterResolutionPath, exitResolutionPath } from "#/resolution/resolution-path";
 import { injectionSlotToResolveOptions } from "#/resolution/resolve-options";
 import type { ScopeManager } from "#/resolution/scope";
-import { SINGLETON_MISS } from "#/resolution/scope";
 import type { Token } from "#/token";
 import { tokenName } from "#/token";
 import type {
@@ -251,8 +251,8 @@ export class DependencyResolver {
         }
       }
     } else if (scope === "singleton") {
-      const cachedSingleton = owner.#scope.peekSingleton(binding.id);
-      if (cachedSingleton !== SINGLETON_MISS) {
+      const cachedSingleton = binding.instance;
+      if (cachedSingleton !== NO_INSTANCE) {
         return cachedSingleton as Value;
       }
       if (owner !== this) {
@@ -342,7 +342,7 @@ export class DependencyResolver {
     getConstructorMetadata: (target) => this.#classes.constructorMetadata(target),
     lookupDependencyEntry: (token) => {
       const entry = this.#lookup.defaultEntry(token);
-      return entry === null ? null : { binding: entry.binding, ownerScope: entry.owner.#scope };
+      return entry === null ? null : { binding: entry.binding };
     },
     getResolutionFrame: (binding) => this.#getResolutionFrame(binding),
     // Dispatches exactly as #resolveClassDeps does, so an escaped dep is indistinguishable
@@ -387,9 +387,8 @@ export class DependencyResolver {
         }
         const namedScope = (namedBinding as BindingWithScope).scope ?? "transient";
         if (namedScope === "singleton") {
-          const cachedSingleton = namedEntry.owner.#scope.peekSingleton(namedBinding.id);
-          if (cachedSingleton !== SINGLETON_MISS) {
-            return cachedSingleton as Value;
+          if (namedBinding.instance !== NO_INSTANCE) {
+            return namedBinding.instance as Value;
           }
         }
         // Everything else keeps the full path (context, activation, guards).
@@ -455,10 +454,8 @@ export class DependencyResolver {
     const scope = (binding as BindingWithScope).scope ?? "transient";
 
     // Singleton cache check
-    if (scope === "singleton") {
-      if (this.#scope.hasSingleton(binding.id)) {
-        return this.#scope.getSingleton<Value>(binding.id);
-      }
+    if (scope === "singleton" && binding.instance !== NO_INSTANCE) {
+      return binding.instance as Value;
     }
 
     // Scoped cache check
@@ -515,7 +512,7 @@ export class DependencyResolver {
 
       // Cache by scope
       if (scope === "singleton") {
-        this.#scope.setSingleton(binding.id, activated);
+        this.#scope.setSingleton(binding, activated);
       } else if (scope === "scoped") {
         this.#scope.setScoped(binding.id, activated);
       }
@@ -784,9 +781,8 @@ export class DependencyResolver {
         );
       }
     } else if (scope === "singleton") {
-      const cachedSingleton = owner.#scope.peekSingleton(binding.id);
-      if (cachedSingleton !== SINGLETON_MISS) {
-        return Promise.resolve(cachedSingleton as Value);
+      if (binding.instance !== NO_INSTANCE) {
+        return Promise.resolve(binding.instance as Value);
       }
       if (owner !== this) {
         return owner.#resolveBindingAsync(binding as Binding<Value>, undefined, resolutionPath, resolutionStack);
@@ -871,8 +867,8 @@ export class DependencyResolver {
 
     // Singleton cache
     if (scope === "singleton") {
-      if (this.#scope.hasSingleton(binding.id)) {
-        return this.#scope.getSingleton<Value>(binding.id);
+      if (binding.instance !== NO_INSTANCE) {
+        return binding.instance as Value;
       }
       // In-flight dedup
       const inflight = this.#scope.getInflight(binding.id);
@@ -936,7 +932,8 @@ export class DependencyResolver {
               )
             : instance;
 
-          this.#scope.setSingleton(binding.id, activated);
+          this.#scope.setSingleton(binding, activated);
+          binding.instance = activated;
           this.#scope.clearInflight(binding.id);
           return activated;
         };
@@ -1468,8 +1465,8 @@ export class DependencyResolver {
       return this.resolve(binding.target, options, resolutionPath, resolutionStack);
     }
     const scope = (binding as BindingWithScope).scope ?? "transient";
-    if (scope === "singleton" && this.#scope.hasSingleton(binding.id)) {
-      return this.#scope.getSingleton<Value>(binding.id);
+    if (scope === "singleton" && binding.instance !== NO_INSTANCE) {
+      return binding.instance as Value;
     }
     if (scope === "scoped") {
       if (!this.#scope.isChild) {
@@ -1501,8 +1498,8 @@ export class DependencyResolver {
       return this.resolveAsync(binding.target, options, isolatedPath, isolatedStack);
     }
     const scope = (binding as BindingWithScope).scope ?? "transient";
-    if (scope === "singleton" && this.#scope.hasSingleton(binding.id)) {
-      return Promise.resolve(this.#scope.getSingleton<Value>(binding.id));
+    if (scope === "singleton" && binding.instance !== NO_INSTANCE) {
+      return Promise.resolve(binding.instance as Value);
     }
     if (scope === "scoped") {
       if (!this.#scope.isChild) {

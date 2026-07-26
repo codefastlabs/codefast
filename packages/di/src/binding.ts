@@ -43,6 +43,8 @@ export function bindingSlotEquals(left: BindingSlot, right: BindingSlot): boolea
 /**
  * @since 0.3.16-canary.0
  */
+export const NO_INSTANCE: unique symbol = Symbol("di:no-instance");
+
 export const DEFAULT_BINDING_SLOT = { name: undefined, tags: [] } satisfies BindingSlot;
 
 /**
@@ -83,6 +85,13 @@ interface BindingBase<Value> {
    * @remarks Resolver-owned bookkeeping — `registry.add` normalizes it, so callers never set it.
    */
   frame?: ResolutionFrame | undefined;
+  /**
+   * Cached singleton instance, or {@link NO_INSTANCE}.
+   *
+   * @remarks A binding belongs to exactly one container, so its singleton slot is per-binding —
+   * a field read replaces a keyed lookup on the hottest resolve shape there is.
+   */
+  instance?: unknown;
   readonly token: Token<Value> | Constructor<Value>;
   readonly slot: BindingSlot;
   readonly predicate?: ((ctx: ConstraintContext) => boolean) | undefined;
@@ -209,6 +218,7 @@ export function generateBindingId(): BindingIdentifier {
 // Superset of every kind's fields, so one literal can copy any binding shape.
 type BindingFieldSuperset = {
   readonly kind: Binding["kind"];
+  readonly instance?: unknown;
   readonly scope?: unknown;
   readonly target?: unknown;
   readonly factory?: unknown;
@@ -243,6 +253,7 @@ export function createBinding<Value>(
     id,
     inFlight: false,
     frame: undefined,
+    instance: (source as { instance?: unknown }).instance ?? NO_INSTANCE,
     token,
     slot,
     predicate,

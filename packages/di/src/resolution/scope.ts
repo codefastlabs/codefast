@@ -1,20 +1,17 @@
+import type { Binding } from "#/binding";
+import { NO_INSTANCE } from "#/binding";
 import { MissingScopeContextError } from "#/errors";
 import type { BindingIdentifier } from "#/types";
-
-/**
- * Sentinel returned by {@link ScopeManager.peekSingleton} when nothing is cached —
- * lets hot paths read the cache with a single Map.get even for `undefined` values.
- *
- * @since 0.5.0-canary.7
- */
-export const SINGLETON_MISS: unique symbol = Symbol("di:singleton-miss");
 
 /**
  * @since 0.3.16-canary.0
  */
 export class ScopeManager {
-  // Singleton cache: bindingId -> instance
-  readonly #singletons = new Map<BindingIdentifier, unknown>();
+  // Singleton instances live on their binding, not in a table here: a binding belongs to exactly
+  // one container, so its singleton slot is per-binding and a field read replaces a keyed lookup
+  // on the most common resolve shape there is. This list exists only so disposal and `inspect()`
+  // can still enumerate what is cached, and stays unallocated until the first one materializes.
+  #singletonBindings: Array<Binding<unknown>> | undefined;
   // In-flight promises for async singleton creation — only an async resolve ever needs it.
   #inflight: Map<BindingIdentifier, Promise<unknown>> | undefined;
   // Scoped cache — only a child container resolving a `scoped` binding ever needs it.
@@ -26,33 +23,31 @@ export class ScopeManager {
     this.isChild = isChild;
   }
 
-  hasSingleton(id: BindingIdentifier): boolean {
-    return this.#singletons.has(id);
-  }
-
-  getSingleton<Value>(id: BindingIdentifier): Value {
-    return this.#singletons.get(id) as Value;
-  }
-
-  /** Cached value, or {@link SINGLETON_MISS} — one Map.get on the hot path. */
-  peekSingleton(id: BindingIdentifier): unknown {
-    const value = this.#singletons.get(id);
-    if (value === undefined && !this.#singletons.has(id)) {
-      return SINGLETON_MISS;
+  setSingleton<const Value>(binding: Binding<Value>, instance: unknown): void {
+    if (binding.instance === NO_INSTANCE) {
+      (this.#singletonBindings ??= []).push(binding as unknown as Binding<unknown>);
     }
-    return value;
+    binding.instance = instance;
   }
 
-  setSingleton(id: BindingIdentifier, instance: unknown): void {
-    this.#singletons.set(id, instance);
+  /** Every binding in this container holding a cached singleton. */
+  cachedSingletons(): ReadonlyArray<Binding<unknown>> {
+    return this.#singletonBindings ?? EMPTY_BINDINGS;
   }
 
-  deleteSingleton(id: BindingIdentifier): boolean {
-    return this.#singletons.delete(id);
-  }
-
-  getAllSingletons(): ReadonlyMap<BindingIdentifier, unknown> {
-    return this.#singletons;
+  deleteSingleton<const Value>(binding: Binding<Value>): boolean {
+    if (binding.instance === NO_INSTANCE) {
+      return false;
+    }
+    binding.instance = NO_INSTANCE;
+    const tracked = this.#singletonBindings;
+    if (tracked !== undefined) {
+      const index = tracked.indexOf(binding as unknown as Binding<unknown>);
+      if (index !== -1) {
+        tracked.splice(index, 1);
+      }
+    }
+    return true;
   }
 
   getInflight(id: BindingIdentifier): Promise<unknown> | undefined {
@@ -83,8 +78,16 @@ export class ScopeManager {
   }
 
   clearAll(): void {
-    this.#singletons.clear();
+    const tracked = this.#singletonBindings;
+    if (tracked !== undefined) {
+      for (const binding of tracked) {
+        binding.instance = NO_INSTANCE;
+      }
+      tracked.length = 0;
+    }
     this.#inflight?.clear();
     this.#scoped?.clear();
   }
 }
+
+const EMPTY_BINDINGS: ReadonlyArray<Binding<unknown>> = [];
