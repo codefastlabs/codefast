@@ -2,6 +2,8 @@
 
 Thanks for helping out. This file covers the repo-wide workflow; `@codefast/di` has its own stricter checklist at [packages/di/CONTRIBUTING.md](packages/di/CONTRIBUTING.md), and the full set of conventions lives in [CLAUDE.md](CLAUDE.md).
 
+Participation is governed by the [Code of Conduct](CODE_OF_CONDUCT.md).
+
 CodeFast is in **canary pre-release** on the road to 1.0. Breaking changes still ship between canaries, which makes API feedback more valuable now than after the surface locks.
 
 ## The toolchain is non-standard — read this first
