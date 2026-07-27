@@ -133,7 +133,7 @@ Linting and formatting run on [Oxc](https://oxc.rs) (Oxlint + Oxfmt); native [Ty
 
 Read [CONTRIBUTING.md](CONTRIBUTING.md) before your first change — the toolchain is deliberately non-standard (Oxc instead of ESLint/Prettier, native TypeScript 7 with no bundler for `packages/*`), and the test taxonomy and comment rules are enforced. Versioning and releases are managed with [Changesets](https://github.com/changesets/changesets).
 
-Found a problem? Use the [issue templates](https://github.com/codefastlabs/codefast/issues/new/choose) — there is a dedicated one for performance regressions.
+Found a problem? Use the [issue templates](https://github.com/codefastlabs/codefast/issues/new/choose) — there is a dedicated one for performance regressions. Participation is governed by the [Code of Conduct](CODE_OF_CONDUCT.md).
 
 ## Security
 
