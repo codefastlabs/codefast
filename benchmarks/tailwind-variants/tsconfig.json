@@ -3,10 +3,7 @@
   "extends": "@codefast/typescript-config/library.json",
   "compilerOptions": {
     "noEmit": true,
-    "types": ["node"],
-    "paths": {
-      "#/*": ["./src/*"]
-    }
+    "types": ["node"]
   },
   "include": ["src"]
 }
