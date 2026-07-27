@@ -78,7 +78,7 @@ catalog:
   jiti: ^2.7.0
   jsdom: ^29.1.1
   knip: ^6.29.0
-  lint-staged: ^17.1.1
+  lint-staged: ^17.2.0
   lucide-react: ^1.27.0
   next-themes: ^0.4.6
   nitro: 3.0.260610-beta
@@ -106,7 +106,7 @@ catalog:
   tinybench: ^6.1.1
   tsx: ^4.23.1
   tsyringe: ^4.10.0
-  turbo: ^2.10.6
+  turbo: ^2.10.7
   tw-animate-css: ^1.4.0
   typescript: ^7.0.2
   vaul: ^1.1.2
