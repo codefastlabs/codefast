@@ -50,7 +50,7 @@ catalog:
   "@testing-library/react": ^16.3.2
   "@testing-library/user-event": ^14.6.1
   "@types/jest-axe": ^3.5.9
-  "@types/node": ^26.1.1
+  "@types/node": ^26.1.2
   "@types/picomatch": ^4.0.3
   "@types/react": ^19.2.17
   "@types/react-dom": ^19.2.3
@@ -76,15 +76,15 @@ catalog:
   inversify: ^8.2.3
   jest-axe: ^11.0.0
   jiti: ^2.7.0
-  jsdom: ^29.1.1
+  jsdom: ^30.0.0
   knip: ^6.29.0
   lint-staged: ^17.2.0
   lucide-react: ^1.27.0
   next-themes: ^0.4.6
   nitro: 3.0.260610-beta
-  oxfmt: ^0.60.0
-  oxc-parser: ^0.141.0
-  oxlint: ^1.75.0
+  oxfmt: ^0.61.0
+  oxc-parser: ^0.142.0
+  oxlint: ^1.76.0
   oxlint-tsgolint: ^7.0.2001
   picomatch: ^4.0.5
   postcss: ^8.5.23
