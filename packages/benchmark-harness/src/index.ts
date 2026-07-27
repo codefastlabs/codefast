@@ -64,6 +64,15 @@ export { jsonlBenchObservationRowToFingerprint, jsonlBenchObservationRowToScenar
 
 export { quantile, sortAscending } from "#/report/quantiles";
 
+export {
+  THROUGHPUT_NOISE_CEILING_HZ_PER_OP,
+  UNRELIABLE_RATIO_MARKER,
+  formatReliabilityCaveatLine,
+  isRatioUnreliable,
+  isThroughputAboveNoiseCeiling,
+  markRatioReliability,
+} from "#/report/reliability";
+
 export type {
   TwoWayConsoleColumnLabels,
   TwoWayConsoleReportOptions,
