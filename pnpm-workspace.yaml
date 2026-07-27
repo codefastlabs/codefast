@@ -87,7 +87,7 @@ catalog:
   oxlint: ^1.75.0
   oxlint-tsgolint: ^7.0.2001
   picomatch: ^4.0.5
-  postcss: ^8.5.22
+  postcss: ^8.5.23
   postcss-import: ^16.1.1
   radix-ui: ^1.6.5
   react: ^19.2.8
