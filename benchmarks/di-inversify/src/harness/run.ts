@@ -24,11 +24,7 @@ import {
   runBenchSubprocess,
   runBenchSubprocessIsolated,
 } from "@codefast/benchmark-harness/parent/run-bench-subprocess";
-import {
-  type AggregatedScenarioResult,
-  buildLibraryReport,
-  type LibraryReport,
-} from "@codefast/benchmark-harness/report/aggregate";
+import { buildLibraryReport, type LibraryReport } from "@codefast/benchmark-harness/report/aggregate";
 import type { ComparisonLibrary } from "@codefast/benchmark-harness/report/comparison";
 import {
   renderComparisonConsoleReport,
@@ -43,31 +39,8 @@ import {
 } from "@codefast/benchmark-harness/shared/env-keys";
 import type { SubprocessPayload } from "@codefast/benchmark-harness/shared/protocol";
 
-import {
-  CONSTANT_RESOLVE,
-  FAN_OUT_TREE,
-  REALISTIC_GRAPH_COLD_RESOLVE,
-  REALISTIC_GRAPH_RESOLVE_ROOT,
-  SCALE_DEEP_TRANSIENT_CHAIN_512,
-  SCALE_MID_TRANSIENT_CHAIN_32,
-  SINGLETON_CLASS_1_DEP,
-  TRANSIENT_CLASS_1_DEP,
-} from "#/fixtures/scenario-parity";
 import { AWILIX, CODEFAST_DI, INVERSIFY, TSYRINGE } from "#/harness/config";
-import { DI_INVERSIFY_CONSOLE, DI_INVERSIFY_MARKDOWN, DI_NWAY_CONSOLE, DI_NWAY_MARKDOWN } from "#/harness/presentation";
-
-// The N-way table shows only the scenarios every library can express via
-// factory/class bindings — the codefast pivot runs far more than these.
-const CORE_SUBSET_SCENARIO_IDS: ReadonlyArray<string> = [
-  CONSTANT_RESOLVE.id,
-  SINGLETON_CLASS_1_DEP.id,
-  TRANSIENT_CLASS_1_DEP.id,
-  REALISTIC_GRAPH_RESOLVE_ROOT.id,
-  REALISTIC_GRAPH_COLD_RESOLVE.id,
-  SCALE_MID_TRANSIENT_CHAIN_32.id,
-  SCALE_DEEP_TRANSIENT_CHAIN_512.id,
-  FAN_OUT_TREE.id,
-];
+import { DI_COMPARISON_CONSOLE, DI_COMPARISON_MARKDOWN } from "#/harness/presentation";
 
 const VERBOSE_MODE_ENABLED = process.env[BENCH_VERBOSE_ENV_KEY] === "1";
 
@@ -126,15 +99,6 @@ async function runLibrary(
   });
 }
 
-/** Keeps only the shared core-subset rows, in the declared order, for the N-way pivot. */
-function filterReportToCoreSubset(report: LibraryReport): LibraryReport {
-  const scenariosById = new Map(report.scenarios.map((scenario) => [scenario.id, scenario]));
-  const coreScenarios = CORE_SUBSET_SCENARIO_IDS.map((id) => scenariosById.get(id)).filter(
-    (scenario): scenario is AggregatedScenarioResult => scenario !== undefined,
-  );
-  return { ...report, scenarios: coreScenarios };
-}
-
 async function main(): Promise<void> {
   console.log("\n@codefast/benchmark-di-inversify — head-to-head bench, each library in its canonical decorator mode.");
   console.log(`  ${CODEFAST_DI.libraryName}  : TC39 Stage 3 decorators + Symbol.metadata`);
@@ -175,30 +139,19 @@ async function main(): Promise<void> {
     tsyringePayload.sanityFailures,
   );
 
-  // Primary comparison: every scenario di and inversify share, with latency and IQR columns.
   const codefastLibrary: ComparisonLibrary = {
     report: codefastReport,
     displayName: CODEFAST_DI.libraryName,
     shortName: "cf",
   };
-  const inversifyLibrary: ComparisonLibrary = {
-    report: inversifyReport,
-    displayName: INVERSIFY.libraryName,
-    shortName: "inv",
-  };
-  renderComparisonConsoleReport(codefastLibrary, [inversifyLibrary], DI_INVERSIFY_CONSOLE);
-
-  // Secondary comparison: the core subset every library can express, di as pivot.
-  const nwayPivot: ComparisonLibrary = {
-    report: filterReportToCoreSubset(codefastReport),
-    displayName: "codefast",
-  };
-  const nwayCompetitors: ReadonlyArray<ComparisonLibrary> = [
-    { report: inversifyReport, displayName: resolveDisplayName(INVERSIFY) },
-    { report: awilixReport, displayName: resolveDisplayName(AWILIX) },
-    { report: tsyringeReport, displayName: resolveDisplayName(TSYRINGE) },
+  // awilix and tsyringe cover only the core subset, so they read `—` outside it; their
+  // head-to-head lines still count only the rows they measured.
+  const competitors: ReadonlyArray<ComparisonLibrary> = [
+    { report: inversifyReport, displayName: INVERSIFY.libraryName, shortName: "inv" },
+    { report: awilixReport, displayName: resolveDisplayName(AWILIX), shortName: "awi" },
+    { report: tsyringeReport, displayName: resolveDisplayName(TSYRINGE), shortName: "tsy" },
   ];
-  renderComparisonConsoleReport(nwayPivot, nwayCompetitors, DI_NWAY_CONSOLE);
+  renderComparisonConsoleReport(codefastLibrary, competitors, DI_COMPARISON_CONSOLE);
 
   const librariesForJsonl = [
     { fingerprint: codefastPayload.fingerprint, trials: codefastPayload.trials },
@@ -207,9 +160,7 @@ async function main(): Promise<void> {
     { fingerprint: tsyringePayload.fingerprint, trials: tsyringePayload.trials },
   ];
 
-  const headToHeadMarkdown = renderComparisonMarkdownReport(codefastLibrary, [inversifyLibrary], DI_INVERSIFY_MARKDOWN);
-  const nwayMarkdown = renderComparisonMarkdownReport(nwayPivot, nwayCompetitors, DI_NWAY_MARKDOWN);
-  const markdown = `${headToHeadMarkdown}\n\n${nwayMarkdown}`;
+  const markdown = renderComparisonMarkdownReport(codefastLibrary, competitors, DI_COMPARISON_MARKDOWN);
 
   const outputPaths = buildOutputPaths();
   writeMarkdownFile(outputPaths.markdownPath, markdown);

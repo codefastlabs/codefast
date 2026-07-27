@@ -22,15 +22,6 @@ export interface ComparisonLibrary {
   readonly shortName?: string;
 }
 
-/**
- * How many columns each library gets.
- *
- * @remarks
- * `full` adds per-library latency and IQR columns, which only fit while the library count is
- * small. `compact` keeps throughput and ratios so a wide comparison stays readable.
- */
-export type ComparisonColumnProfile = "compact" | "full";
-
 /** One competitor's numbers for a single scenario; zeroed when it never measured that scenario. */
 export interface ComparisonCompetitorCell {
   readonly hzPerOp: number;
@@ -59,7 +50,6 @@ export interface ComparisonScenarioRow {
 export interface ComparisonMarkdownReportOptions {
   readonly documentHeading: string;
   readonly sectionHeading: string;
-  readonly columnProfile: ComparisonColumnProfile;
   /** Bullets printed under the section heading, before the table. */
   readonly introLines?: ReadonlyArray<string>;
   /** Emits the fingerprint section; off when this report is appended to one that already has it. */
@@ -71,7 +61,6 @@ export interface ComparisonMarkdownReportOptions {
 /** Copy and column choices for the console report. */
 export interface ComparisonConsoleReportOptions {
   readonly sectionHeading: string;
-  readonly columnProfile: ComparisonColumnProfile;
   readonly footerHintLine?: string;
 }
 
@@ -341,49 +330,34 @@ function buildHeadToHeadMarkdownLines(
 function buildMarkdownHeaderCells(
   pivot: ComparisonLibrary,
   competitors: ReadonlyArray<ComparisonLibrary>,
-  columnProfile: ComparisonColumnProfile,
 ): Array<string> {
   const everyLibrary = [pivot, ...competitors];
-  const ratioHeadings = competitors.map((competitor) => `${pivot.displayName} / ${competitor.displayName}`);
-  if (columnProfile === "compact") {
-    return [
-      "Scenario",
-      "Group",
-      "batch",
-      ...everyLibrary.map((library) => `${library.displayName} hz/op`),
-      ...ratioHeadings,
-      `${pivot.displayName} mean ms`,
-    ];
-  }
   return [
     "Scenario",
     "Group",
     "batch",
     ...everyLibrary.map((library) => `${library.displayName} hz/op`),
-    ...ratioHeadings,
-    ...everyLibrary.map((library) => `${library.displayName} mean ms`),
-    ...everyLibrary.map((library) => `${library.displayName} p99 ms`),
+    ...competitors.map((competitor) => `${pivot.displayName} / ${competitor.displayName}`),
+    `${pivot.displayName} mean ms`,
     `IQR (${everyLibrary.map((library) => consoleLabel(library)).join(" / ")})`,
   ];
 }
 
-function buildMarkdownDataCells(row: ComparisonScenarioRow, columnProfile: ComparisonColumnProfile): Array<string> {
+function buildMarkdownDataCells(row: ComparisonScenarioRow): Array<string> {
   const throughputs = [row.pivotHzPerOp, ...row.competitors.map((competitor) => competitor.hzPerOp)];
-  const ratios = row.competitors.map((competitor) =>
-    markRatioReliability(
-      formatThroughputRatio(row.pivotHzPerOp, competitor.hzPerOp),
-      row.pivotHzPerOp,
-      competitor.hzPerOp,
-    ),
-  );
-  const leading = [row.id, row.group, String(row.batch), ...throughputs.map(formatThroughputOpsPerSecond), ...ratios];
-  if (columnProfile === "compact") {
-    return [...leading, formatLatencyMeanMilliseconds(row.pivotMeanMs)];
-  }
   return [
-    ...leading,
-    ...[row.pivotMeanMs, ...row.competitors.map((competitor) => competitor.meanMs)].map(formatLatencyMeanMilliseconds),
-    ...[row.pivotP99Ms, ...row.competitors.map((competitor) => competitor.p99Ms)].map(formatLatencyMeanMilliseconds),
+    row.id,
+    row.group,
+    String(row.batch),
+    ...throughputs.map(formatThroughputOpsPerSecond),
+    ...row.competitors.map((competitor) =>
+      markRatioReliability(
+        formatThroughputRatio(row.pivotHzPerOp, competitor.hzPerOp),
+        row.pivotHzPerOp,
+        competitor.hzPerOp,
+      ),
+    ),
+    formatLatencyMeanMilliseconds(row.pivotMeanMs),
     [row.pivotIqrFraction, ...row.competitors.map((competitor) => competitor.iqrFraction)]
       .map(formatIqrThroughputFraction)
       .join(" / "),
@@ -435,7 +409,7 @@ export function renderComparisonMarkdownReport(
   options: ComparisonMarkdownReportOptions,
 ): string {
   const rows = buildComparisonRows(pivot, competitors);
-  const headerCells = buildMarkdownHeaderCells(pivot, competitors, options.columnProfile);
+  const headerCells = buildMarkdownHeaderCells(pivot, competitors);
   const separatorCells = headerCells.map((_cell, cellIndex) => (cellIndex < 2 ? "---" : "---:"));
   const unreliableCount = countUnreliableRatioCells(rows);
   const introLines = options.introLines ?? [];
@@ -455,7 +429,7 @@ export function renderComparisonMarkdownReport(
     "",
     `| ${headerCells.join(" | ")} |`,
     `| ${separatorCells.join(" | ")} |`,
-    ...rows.map((row) => `| ${buildMarkdownDataCells(row, options.columnProfile).join(" | ")} |`),
+    ...rows.map((row) => `| ${buildMarkdownDataCells(row).join(" | ")} |`),
     // The caveat sits directly under the table so it travels with the marked ratios.
     ...(unreliableCount === 0 ? [] : ["", formatReliabilityCaveatLine(unreliableCount)]),
   ];
@@ -478,7 +452,6 @@ export function renderComparisonConsoleReport(
   const everyLibrary = [pivot, ...competitors];
   const scenarioColumnWidth = Math.max(28, ...rows.map((row) => row.id.length));
   const groupColumnWidth = Math.max(10, ...rows.map((row) => row.group.length));
-  const isFull = options.columnProfile === "full";
 
   const headerLine = [
     "Scenario".padEnd(scenarioColumnWidth),
@@ -487,12 +460,7 @@ export function renderComparisonConsoleReport(
     ...competitors.map((competitor) =>
       `${consoleLabel(pivot)}/${consoleLabel(competitor)}`.padStart(CONSOLE_RATIO_COLUMN_WIDTH),
     ),
-    ...(isFull
-      ? [
-          ...everyLibrary.map((library) => `${consoleLabel(library)} mean ms`.padStart(CONSOLE_LATENCY_COLUMN_WIDTH)),
-          ...everyLibrary.map((library) => `${consoleLabel(library)} p99 ms`.padStart(CONSOLE_LATENCY_COLUMN_WIDTH)),
-        ]
-      : []),
+    `${consoleLabel(pivot)} mean ms`.padStart(CONSOLE_LATENCY_COLUMN_WIDTH),
   ].join(CLI_TABLE_COLUMN_GAP);
 
   console.log(`\n${options.sectionHeading}`);
@@ -514,16 +482,7 @@ export function renderComparisonConsoleReport(
             competitor.hzPerOp,
           ).padStart(CONSOLE_RATIO_COLUMN_WIDTH),
         ),
-        ...(isFull
-          ? [
-              ...[row.pivotMeanMs, ...row.competitors.map((competitor) => competitor.meanMs)].map((ms) =>
-                formatLatencyMeanMilliseconds(ms).padStart(CONSOLE_LATENCY_COLUMN_WIDTH),
-              ),
-              ...[row.pivotP99Ms, ...row.competitors.map((competitor) => competitor.p99Ms)].map((ms) =>
-                formatLatencyMeanMilliseconds(ms).padStart(CONSOLE_LATENCY_COLUMN_WIDTH),
-              ),
-            ]
-          : []),
+        formatLatencyMeanMilliseconds(row.pivotMeanMs).padStart(CONSOLE_LATENCY_COLUMN_WIDTH),
       ].join(CLI_TABLE_COLUMN_GAP),
     );
   }
