@@ -261,6 +261,9 @@ catalogs:
     tsyringe:
       specifier: ^4.10.0
       version: 4.10.0
+    turbo:
+      specifier: ^2.10.7
+      version: 2.10.7
     tw-animate-css:
       specifier: ^1.4.0
       version: 1.4.0
@@ -321,7 +324,7 @@ importers:
         specifier: 'catalog:'
         version: 2.13.1
       turbo:
-        specifier: 2.10.7
+        specifier: 'catalog:'
         version: 2.10.7
 
   apps/ui:
