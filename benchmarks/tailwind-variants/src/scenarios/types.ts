@@ -2,7 +2,7 @@
  * Shared scenario typing for @codefast/tailwind-variants, tailwind-variants (npm),
  * and class-variance-authority bench subprocesses.
  *
- * Matching `id` values align rows in each two-way comparison report.
+ * Matching `id` values align rows in each comparison report.
  */
 
 import type {

@@ -1,6 +1,6 @@
 # @codefast/benchmark-harness
 
-Shared [tinybench](https://github.com/tinylibs/tinybench) harness utilities for the `benchmarks/*` suites — subprocess protocol, environment fingerprinting, and comparison reports (two-way plus an N-way pivot table).
+Shared [tinybench](https://github.com/tinylibs/tinybench) harness utilities for the `benchmarks/*` suites — subprocess protocol, environment fingerprinting, and one comparison report that renders a pivot library against any number of competitors.
 
 > **Private package.** Not published to npm; consumed only by the benchmark suites in this repository.
 
@@ -8,12 +8,12 @@ Shared [tinybench](https://github.com/tinylibs/tinybench) harness utilities for 
 
 The package is organized by role in the parent/child subprocess model:
 
-| Area       | Purpose                                                                                                                                                                                                  |
-| ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `shared/*` | Subprocess protocol (payload markers, emit/extract, `scenarioIds` discovery), env keys, and suite configuration types                                                                                    |
-| `child/*`  | Runs inside each benchmark subprocess: scenario types, trial runners, sanity checks, fingerprinting, `BENCH_LIST` / `BENCH_ONLY` worker modes                                                            |
-| `parent/*` | Orchestrates subprocesses from the suite entry: `runBenchSubprocess`, `runBenchSubprocessIsolated` (+ `isIsolatedBenchRunRequested`), exit-code resolution                                               |
-| `report/*` | Aggregation, quantiles, the two-way comparison table + geomean/per-group head-to-head summary (`summarizeTwoWayComparison`), the N-way pivot table (`report/n-way`), JSONL persistence, formatted output |
+| Area       | Purpose                                                                                                                                                                                                                                                          |
+| ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `shared/*` | Subprocess protocol (payload markers, emit/extract, `scenarioIds` discovery), env keys, and suite configuration types                                                                                                                                            |
+| `child/*`  | Runs inside each benchmark subprocess: scenario types, trial runners, sanity checks, fingerprinting, `BENCH_LIST` / `BENCH_ONLY` worker modes                                                                                                                    |
+| `parent/*` | Orchestrates subprocesses from the suite entry: `runBenchSubprocess`, `runBenchSubprocessIsolated` (+ `isIsolatedBenchRunRequested`), exit-code resolution                                                                                                       |
+| `report/*` | Aggregation, quantiles, the pivot-vs-competitors comparison table + geomean/per-group head-to-head summary (`report/comparison`), the reliability marker for rows that do not reproduce between runs (`report/reliability`), JSONL persistence, formatted output |
 
 Two execution shapes:
 

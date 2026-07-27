@@ -29,9 +29,11 @@ import {
   buildLibraryReport,
   type LibraryReport,
 } from "@codefast/benchmark-harness/report/aggregate";
-import type { NWayLibrary } from "@codefast/benchmark-harness/report/n-way";
-import { renderNWayConsoleReport, renderNWayMarkdownReport } from "@codefast/benchmark-harness/report/n-way";
-import { renderTwoWayConsoleReport, renderTwoWayMarkdownReport } from "@codefast/benchmark-harness/report/two-way";
+import type { ComparisonLibrary } from "@codefast/benchmark-harness/report/comparison";
+import {
+  renderComparisonConsoleReport,
+  renderComparisonMarkdownReport,
+} from "@codefast/benchmark-harness/report/comparison";
 import { writeJsonlRun, writeMarkdownFile } from "@codefast/benchmark-harness/report/write";
 import { type BenchSubprocessConfig, resolveDisplayName } from "@codefast/benchmark-harness/shared/config";
 import {
@@ -52,7 +54,7 @@ import {
   TRANSIENT_CLASS_1_DEP,
 } from "#/fixtures/scenario-parity";
 import { AWILIX, CODEFAST_DI, INVERSIFY, TSYRINGE } from "#/harness/config";
-import { DI_INVERSIFY_CONSOLE, DI_INVERSIFY_MARKDOWN, DI_NWAY_REPORT } from "#/harness/presentation";
+import { DI_INVERSIFY_CONSOLE, DI_INVERSIFY_MARKDOWN, DI_NWAY_CONSOLE, DI_NWAY_MARKDOWN } from "#/harness/presentation";
 
 // The N-way table shows only the scenarios every library can express via
 // factory/class bindings — the codefast pivot runs far more than these.
@@ -173,20 +175,30 @@ async function main(): Promise<void> {
     tsyringePayload.sanityFailures,
   );
 
-  // Primary comparison stays the full di-vs-inversify two-way report.
-  renderTwoWayConsoleReport(codefastReport, inversifyReport, DI_INVERSIFY_CONSOLE, {
-    footerHintLine: `Cite the 'Comparable scenarios' table.`,
-    headToHeadLabels: { left: "codefast", right: "inversify" },
-  });
+  // Primary comparison: every scenario di and inversify share, with latency and IQR columns.
+  const codefastLibrary: ComparisonLibrary = {
+    report: codefastReport,
+    displayName: CODEFAST_DI.libraryName,
+    shortName: "cf",
+  };
+  const inversifyLibrary: ComparisonLibrary = {
+    report: inversifyReport,
+    displayName: INVERSIFY.libraryName,
+    shortName: "inv",
+  };
+  renderComparisonConsoleReport(codefastLibrary, [inversifyLibrary], DI_INVERSIFY_CONSOLE);
 
   // Secondary comparison: the core subset every library can express, di as pivot.
-  const nwayPivot: NWayLibrary = { report: filterReportToCoreSubset(codefastReport), displayName: "codefast" };
-  const nwayCompetitors: ReadonlyArray<NWayLibrary> = [
+  const nwayPivot: ComparisonLibrary = {
+    report: filterReportToCoreSubset(codefastReport),
+    displayName: "codefast",
+  };
+  const nwayCompetitors: ReadonlyArray<ComparisonLibrary> = [
     { report: inversifyReport, displayName: resolveDisplayName(INVERSIFY) },
     { report: awilixReport, displayName: resolveDisplayName(AWILIX) },
     { report: tsyringeReport, displayName: resolveDisplayName(TSYRINGE) },
   ];
-  renderNWayConsoleReport(nwayPivot, nwayCompetitors, DI_NWAY_REPORT);
+  renderComparisonConsoleReport(nwayPivot, nwayCompetitors, DI_NWAY_CONSOLE);
 
   const librariesForJsonl = [
     { fingerprint: codefastPayload.fingerprint, trials: codefastPayload.trials },
@@ -195,9 +207,9 @@ async function main(): Promise<void> {
     { fingerprint: tsyringePayload.fingerprint, trials: tsyringePayload.trials },
   ];
 
-  const twoWayMarkdown = renderTwoWayMarkdownReport(codefastReport, inversifyReport, DI_INVERSIFY_MARKDOWN);
-  const nwayMarkdown = renderNWayMarkdownReport(nwayPivot, nwayCompetitors, DI_NWAY_REPORT);
-  const markdown = `${twoWayMarkdown}\n\n${nwayMarkdown}`;
+  const headToHeadMarkdown = renderComparisonMarkdownReport(codefastLibrary, [inversifyLibrary], DI_INVERSIFY_MARKDOWN);
+  const nwayMarkdown = renderComparisonMarkdownReport(nwayPivot, nwayCompetitors, DI_NWAY_MARKDOWN);
+  const markdown = `${headToHeadMarkdown}\n\n${nwayMarkdown}`;
 
   const outputPaths = buildOutputPaths();
   writeMarkdownFile(outputPaths.markdownPath, markdown);
