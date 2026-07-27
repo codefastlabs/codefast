@@ -1,6 +1,6 @@
 name: Performance regression
 description: A @codefast/* package got measurably slower between two versions.
-labels: ["bug"]
+labels: ["performance"]
 body:
   - type: markdown
     attributes:
