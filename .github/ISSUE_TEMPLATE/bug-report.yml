@@ -1,0 +1,79 @@
+name: Bug report
+description: A published @codefast/* package behaves incorrectly.
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        CodeFast is in **canary pre-release** on the road to 1.0, so please reproduce against the current canary before filing — the bug may already be fixed there.
+
+        For a security vulnerability, do **not** open an issue: follow [SECURITY.md](https://github.com/codefastlabs/codefast/blob/main/SECURITY.md).
+
+  - type: dropdown
+    id: package
+    attributes:
+      label: Package
+      options:
+        - "@codefast/ui"
+        - "@codefast/tailwind-variants"
+        - "@codefast/theme"
+        - "@codefast/tracking"
+        - "@codefast/di"
+        - "@codefast/cli"
+        - "@codefast/typescript-config"
+        - "Documentation site (codefastlabs.com)"
+        - "Repo tooling / benchmarks"
+        - "Not sure"
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: "Exact version including the channel — `pnpm why <package>` if unsure."
+      placeholder: "0.5.0-canary.8 (canary)"
+    validations:
+      required: true
+
+  - type: textarea
+    id: behavior
+    attributes:
+      label: What happened
+      description: The actual behavior, then what you expected instead. Include the full error or stack trace if there is one.
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Minimal reproduction
+      description: |
+        A link to a repository or StackBlitz, or the smallest code that shows the problem. Issues without one tend to stall.
+
+        [`examples/tanstack-start`](https://github.com/codefastlabs/codefast/tree/main/examples/tanstack-start) installs the published packages and is the fastest starting point.
+    validations:
+      required: true
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: "Node and package manager, plus the peers that matter for your package — React for `ui`/`theme`/`tracking`, Tailwind CSS for `ui`/`tailwind-variants`, TanStack Start for `tracking`."
+      placeholder: |
+        Node 24.18.0
+        pnpm 11.16.0
+        react 19.2.0
+        tailwindcss 4.2.0
+        OS: macOS 15.5
+      render: text
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before submitting
+      options:
+        - label: I searched existing and closed issues.
+          required: true
+        - label: I reproduced this on the current `canary` release, or explained above why I cannot.
+          required: true

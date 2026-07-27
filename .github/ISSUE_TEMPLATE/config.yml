@@ -1,0 +1,11 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Component documentation
+    url: https://codefastlabs.com
+    about: Per-component docs, live previews, and copy-ready source.
+  - name: Question or API feedback
+    url: https://github.com/codefastlabs/codefast/discussions
+    about: Usage questions and naming/API feedback before the 1.0 surface locks.
+  - name: Security vulnerability
+    url: https://github.com/codefastlabs/codefast/blob/main/SECURITY.md
+    about: Report privately — do not open a public issue.

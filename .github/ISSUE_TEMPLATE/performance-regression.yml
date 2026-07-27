@@ -1,0 +1,92 @@
+name: Performance regression
+description: A @codefast/* package got measurably slower between two versions.
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        This form asks for the measurement, not the impression — because most reported regressions in this repo have turned out to be noise.
+
+        The benchmark suites publish their own reliability rules; the checkboxes at the bottom are those rules. Read [benchmarks/di-inversify/RESULTS.md § Reading the noise](https://github.com/codefastlabs/codefast/blob/main/benchmarks/di-inversify/RESULTS.md) first if you have not.
+
+        For a slowdown you cannot yet measure this way, open a **Bug report** and say so — a hypothesis with a reproduction is still worth having.
+
+  - type: dropdown
+    id: package
+    attributes:
+      label: Package
+      options:
+        - "@codefast/di"
+        - "@codefast/tailwind-variants"
+        - "@codefast/ui"
+        - "Other"
+    validations:
+      required: true
+
+  - type: input
+    id: versions
+    attributes:
+      label: Baseline → candidate
+      description: The two builds compared. Versions, tags, or commit SHAs.
+      placeholder: "0.5.0-canary.7 → 0.5.0-canary.8"
+    validations:
+      required: true
+
+  - type: input
+    id: scenarios
+    attributes:
+      label: Affected scenarios
+      description: Scenario names from the suite output, or the operation if you measured your own.
+      placeholder: "realistic-graph-cold-resolve, transient-class-1-dep"
+    validations:
+      required: true
+
+  - type: textarea
+    id: command
+    attributes:
+      label: Command
+      description: "The exact invocation, including env vars and trial count."
+      placeholder: "BENCH_TRIALS=3 pnpm --filter @codefast/benchmark-di-inversify bench:isolate"
+      render: shell
+    validations:
+      required: true
+
+  - type: textarea
+    id: numbers
+    attributes:
+      label: Numbers
+      description: "Paste the affected rows from both sides, **including the IQR column**. A ratio without its IQR cannot be judged."
+      render: text
+    validations:
+      required: true
+
+  - type: textarea
+    id: machine
+    attributes:
+      label: Machine
+      description: "CPU, Node version, OS — and whether the machine was otherwise idle during the run."
+      placeholder: |
+        Apple M3 Max, Node 26.1.0, macOS 15.5
+        Quiet: browser and editor closed
+      render: text
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: methodology
+    attributes:
+      label: Measurement methodology
+      description: These are the suite's own rules. Unchecked boxes are fine — say which and why in the notes below; the report is still useful, just weaker.
+      options:
+        - label: "Ran with process isolation (`bench:isolate` / `BENCH_ISOLATE=1`), so the numbers are order-independent."
+        - label: "At least 3 trials per side. Two cannot separate a real change from ambient noise."
+        - label: "The baseline was stashed and rebuilt on this same machine — not numbers carried over from an earlier session."
+        - label: "Compared the **best** run of each side rather than a single median. Ambient load only ever subtracts throughput."
+        - label: "Each library was measured in its **own process**. Loading two library builds into one process is worth ~30% on async chains."
+        - label: "I am not resting the claim on a single high-throughput row (above ~30M ops/s), which moves between runs whatever its IQR says."
+
+  - type: textarea
+    id: notes
+    attributes:
+      label: Notes
+      description: Suspected cause, an ablation you tried, or which boxes above you could not check and why.
