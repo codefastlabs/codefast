@@ -24,7 +24,7 @@ Each library subprocess runs **N trials** back-to-back (minimum **2** in normal 
 The reporter collapses N per-trial results into:
 
 - **`hz/op`** — median of per-trial `throughput.mean * batch` (here `batch` is almost always `1`).
-- **`IQR`** — interquartile range of per-trial `hz/op`, as a fraction of the median. Treat **> ~5%** as noisy; re-run on a quieter machine.
+- **`IQR`** — interquartile range of per-trial `hz/op`, as a fraction of the median. Exact values are in the JSONL; the report marks a cell `‡` when it exceeds **~5%** — re-run on a quieter machine.
 - **`mean ms`**, **`p99 ms`** — per-trial medians of tinybench `latency.mean`, `latency.p99`.
 
 **JSONL** (`bench-results/latest.jsonl`) is one JSON object per line: one **observation** per `(library, trialIndex, scenario)` with fingerprint fields inlined — same shape as the DI benchmark, with three libraries in one file. Pivot with pandas, DuckDB, or `jq`.
@@ -111,11 +111,11 @@ The **terminal** prints **two** ASCII tables back-to-back (cf vs npm `tailwind-v
 
 ## Reading the output
 
-The console tables follow the same column contract as `@codefast/benchmark-di-inversify` (throughput, ratio, mean ms, p99 ms, IQR in the markdown exports).
+The console table follows the same column contract as `@codefast/benchmark-di-inversify`: the pivot's throughput, then one ratio column per competitor. Latency and IQR live in the JSONL export.
 
 Before you cite a number:
 
-1. **IQR** (markdown): if either side’s IQR fraction is **> ~5%**, treat the median as unstable; re-run.
+1. **Marked cells**: `‡` means that median's per-trial IQR is **> ~5%** and unstable within the run; re-run. `†` means the row is fast enough that its ratio moves between runs of the same build — cite the aggregates.
 2. **Sanity failures**: scenarios that fail `sanity` are **skipped** and listed at the top of the markdown report — absence of a row is not “the library cannot do it”.
 3. **`gcExposed`**: in full mode, confirm the fingerprint block shows exposed GC when you care about allocation-heavy variance (same intuition as DI).
 

@@ -107,7 +107,7 @@ pnpm check-types           # tsc --noEmit over src (editor-default project)
 
 Outputs land in `bench-results/<timestamp>/`:
 
-- `report.md` — rendered markdown table with fingerprint + IQR.
+- `report.md` — rendered markdown report with fingerprint, summary and per-scenario tables.
 - `observations.jsonl` — one line per `(library, trial, scenario)`.
 
 And in `bench-results/`:
@@ -121,17 +121,19 @@ And in `bench-results/`:
 The terminal table looks roughly like:
 
 ```
-Scenario                     Group       codefast hz/op   inversify hz/op    cf/inv     cf mean ms   inv mean ms
-constant-resolve             micro           12,345,678        10,123,456    1.22×        0.0001        0.0001
-realistic-graph-resolve-root realistic          234,567           145,678    1.61×        0.0043        0.0069
+Scenario                     Group         codefast hz/op    vs inv    vs awi    vs tsy
+constant-resolve             micro             12,345,678     1.22×     1.55×     1.71×
+realistic-graph-resolve-root realistic            234,567     1.61×     0.98×         —
 ...
 ```
 
-The markdown report opens with a **Head-to-head summary** — win/parity/loss counts over comparable rows (parity band ±3%), the **median and geomean** ratios, a **geomean-by-group** line (which keeps error-path groups like `failure` separate from throughput), and loss/parity lists. The console prints the same tally under the table. There is one table: every library gets a throughput column, every competitor a ratio column, and awilix/tsyringe read `—` outside the core subset they implement.
+One throughput column — `@codefast/di`'s — then one ratio column per competitor. A competitor's own throughput is that figure divided by its ratio; the exact value, along with `mean ms`, `p99 ms` and every per-trial IQR, is in `latest.jsonl`. awilix and tsyringe read `—` outside the core subset they implement.
+
+The markdown report leads with a **Summary** table — one row per competitor: comparable rows out of the suite, win/parity/loss (parity band ±3%), median and geomean ratios, and how many of those rows carry the `†` marker. A **Geomean by group** matrix follows, keeping error-path groups like `failure` visibly separate from throughput. Losses and parity rows are listed underneath. The console prints the same tally under its table.
 
 Things to check before drawing conclusions:
 
-1. **IQR columns** (markdown version only): if either library's IQR exceeds ~5%, the medians are unstable; re-run on a quieter machine.
+1. **Marked cells**: `‡` means that median's per-trial IQR exceeds ~5% and is unstable within the run — re-run on a quieter machine. `†` means the row sits above ~30M ops/s, where the ratio moves between runs of the same build whatever its IQR says; cite the aggregates instead.
 2. **Sanity failures**: any scenario that fails its pre-bench sanity check is skipped and listed under "Sanity failures" at the top of the report. Don't read the absence of a row as "the library can't do it".
 3. **GC exposed**: the fingerprint section should say `gcExposed: true, true`. If it says `false` for either library, the `--expose-gc` flag didn't reach the subprocess and allocation-heavy rows are noisier than they should be.
 4. **Mode**: shared-process and isolated (`BENCH_ISOLATE=1`) runs are not comparable to each other — cross-scenario inline-cache wear in shared mode is worth ~30% on async chains.
@@ -227,7 +229,7 @@ benchmarks/di-inversify/
   BENCH_GUIDE.md
 ```
 
-The core subset (`scenarios/{awilix,tsyringe}/**`) implements only the factory/class-binding scenarios all four libraries support; `run.ts` renders them as a core-subset table (di pivot) via `@codefast/benchmark-harness/report/comparison`, appended after the full di-vs-inversify head-to-head report.
+The core subset (`scenarios/{awilix,tsyringe}/**`) implements only the factory/class-binding scenarios all four libraries support; `run.ts` renders them as extra ratio columns (di pivot) via `@codefast/benchmark-harness/report/comparison`, reading `—` on every row outside that subset.
 
 **Shared workspace package:** `@codefast/benchmark-harness` owns the framed stdout protocol (`emitSubprocessPayload` / `extractSubprocessPayload`), fingerprinting, `runBenchSubprocess` + `runBenchSubprocessIsolated`, `buildLibraryReport`, the head-to-head summary (`summarizeComparison`), and the markdown + JSONL writers. This benchmark package does **not** ship `protocol.ts` / `report.ts` under `src/harness/`.
 
