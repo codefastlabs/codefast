@@ -17,9 +17,9 @@ export const DI_COMPARISON_MARKDOWN: ComparisonMarkdownReportOptions = {
   introLines: [
     "Each library runs at its **canonical decorator mode** — inversify with legacy experimental decorators + `reflect-metadata`, @codefast/di with TC39 Stage 3 decorators + `Symbol.metadata`. This measures the shipping experience of each library, not the raw decorator runtimes in isolation.",
     "",
-    "One row per scenario `@codefast/di` measures, one throughput column per library, one ratio column per competitor. **awilix and tsyringe implement only the factory/class-binding core subset**, so they read `—` on every scenario outside it; their win/parity/loss lines below count only the rows they actually measured.",
+    "One row per scenario `@codefast/di` measures, one throughput column for it, one ratio column per competitor. **awilix and tsyringe implement only the factory/class-binding core subset**, so they read `—` on every scenario outside it; the `Comparable` column below counts only the rows they actually measured.",
     "",
-    "Cite these rows when comparing the libraries. `hz/op` is operations per second per logical operation (tinybench `throughput.mean` multiplied by `batch`). The `IQR` column is the interquartile range of the per-trial throughput across the trial loop — treat rows above ~5% as noisy. Per-library `mean ms` and `p99 ms` are in `latest.jsonl`, not this table.",
+    "Cite the summary, not the rows. `hz/op` is operations per second per logical operation (tinybench `throughput.mean` multiplied by `batch`); a competitor's own throughput is that figure divided by its ratio, and its exact value, along with `mean ms`, `p99 ms` and every per-trial IQR, is in `latest.jsonl`.",
     "",
     "Run with `BENCH_ISOLATE=1` to bench each scenario in its own subprocess, removing cross-scenario inline-cache wear (~30% on async chains in a shared process).",
   ],

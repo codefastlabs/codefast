@@ -14,11 +14,11 @@ export const TAILWIND_VARIANTS_COMPARISON_MARKDOWN: ComparisonMarkdownReportOpti
   introLines: [
     "Each library runs in its own subprocess with identical tinybench budgets and shared fixtures.",
     "",
-    "One row per scenario `@codefast/tailwind-variants` measures, one throughput column per library, one ratio column per competitor. **class-variance-authority only implements the scenarios with a cva path**, so it reads `—` elsewhere; its win/parity/loss line below counts only the rows it measured.",
+    "One row per scenario `@codefast/tailwind-variants` measures, one throughput column for it, one ratio column per competitor. **class-variance-authority only implements the scenarios with a cva path**, so it reads `—` elsewhere; the `Comparable` column below counts only the rows it measured.",
     "",
     "cva “with merge” uses `tailwind-merge` after `cva()` — the usual production pairing — not identical to `tv`’s internal merge, but stable across runs.",
     "",
-    "`hz/op` is operations per second per logical operation (throughput.mean × batch). The `IQR` column is the interquartile range of per-trial throughput across the trial loop. Per-library `mean ms` and `p99 ms` are in `latest.jsonl`, not this table.",
+    "`hz/op` is operations per second per logical operation (throughput.mean × batch); a competitor's own throughput is that figure divided by its ratio, and its exact value, along with `mean ms`, `p99 ms` and every per-trial IQR, is in `latest.jsonl`.",
   ],
 };
 

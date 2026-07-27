@@ -1,17 +1,17 @@
 /** Renders one pivot library against any number of competitors; a head-to-head is the two-library case. */
 
 import type { AggregatedScenarioResult, LibraryReport } from "#/report/aggregate";
-import {
-  formatIqrThroughputFraction,
-  formatLatencyMeanMilliseconds,
-  formatThroughputOpsPerSecond,
-  formatThroughputRatio,
-} from "#/report/format";
+import { formatRatioMultiple, formatThroughputOpsPerSecond, formatThroughputRatio } from "#/report/format";
+import type { ThroughputQuality } from "#/report/reliability";
 import {
   UNRELIABLE_RATIO_MARKER,
+  formatNoisyIqrCaveatLine,
   formatReliabilityCaveatLine,
+  isRatioNoisy,
   isRatioUnreliable,
-  markRatioReliability,
+  isThroughputCellNoisy,
+  markRatioQuality,
+  markThroughputQuality,
 } from "#/report/reliability";
 
 /** One library column: its aggregated report plus the labels used in table headers. */
@@ -28,8 +28,6 @@ export interface ComparisonCompetitorCell {
   /** Pivot over competitor throughput; 0 when either side is missing, rendering as an em-dash. */
   readonly ratio: number;
   readonly iqrFraction: number;
-  readonly meanMs: number;
-  readonly p99Ms: number;
 }
 
 /** One aligned row: the pivot's scenario plus one cell per competitor, in competitor order. */
@@ -41,8 +39,6 @@ export interface ComparisonScenarioRow {
   readonly stress: boolean;
   readonly pivotHzPerOp: number;
   readonly pivotIqrFraction: number;
-  readonly pivotMeanMs: number;
-  readonly pivotP99Ms: number;
   readonly competitors: ReadonlyArray<ComparisonCompetitorCell>;
 }
 
@@ -50,7 +46,7 @@ export interface ComparisonScenarioRow {
 export interface ComparisonMarkdownReportOptions {
   readonly documentHeading: string;
   readonly sectionHeading: string;
-  /** Bullets printed under the section heading, before the table. */
+  /** Bullets printed under the section heading, before the tables. */
   readonly introLines?: ReadonlyArray<string>;
   /** Emits the fingerprint section; off when this report is appended to one that already has it. */
   readonly includeEnvironment?: boolean;
@@ -126,7 +122,7 @@ function medianOfSorted(ascending: ReadonlyArray<number>): number {
 }
 
 function zeroedCell(): ComparisonCompetitorCell {
-  return { hzPerOp: 0, ratio: 0, iqrFraction: 0, meanMs: 0, p99Ms: 0 };
+  return { hzPerOp: 0, ratio: 0, iqrFraction: 0 };
 }
 
 function toCell(pivotHzPerOp: number, competitor: AggregatedScenarioResult | undefined): ComparisonCompetitorCell {
@@ -138,9 +134,12 @@ function toCell(pivotHzPerOp: number, competitor: AggregatedScenarioResult | und
     hzPerOp: competitor.hzPerOpMedian,
     ratio: comparable ? pivotHzPerOp / competitor.hzPerOpMedian : 0,
     iqrFraction: competitor.hzPerOpIqrFraction,
-    meanMs: competitor.meanMsMedian,
-    p99Ms: competitor.p99MsMedian,
   };
+}
+
+/** The pivot side of a row, in the shape the quality markers consume. */
+function pivotQuality(row: ComparisonScenarioRow): ThroughputQuality {
+  return { hzPerOp: row.pivotHzPerOp, iqrFraction: row.pivotIqrFraction };
 }
 
 /**
@@ -166,8 +165,6 @@ export function buildComparisonRows(
     stress: scenario.stress,
     pivotHzPerOp: scenario.hzPerOpMedian,
     pivotIqrFraction: scenario.hzPerOpIqrFraction,
-    pivotMeanMs: scenario.meanMsMedian,
-    pivotP99Ms: scenario.p99MsMedian,
     competitors: competitorScenariosById.map((scenariosById) =>
       toCell(scenario.hzPerOpMedian, scenariosById.get(scenario.id)),
     ),
@@ -250,14 +247,11 @@ export function summarizeComparison(
   }));
 }
 
-function formatRatioTimes(ratio: number): string {
-  return `${ratio >= 10 ? ratio.toFixed(1) : ratio.toFixed(2)}×`;
-}
-
 function formatEntryList(entries: ReadonlyArray<ComparisonEntry>): string {
   return entries
     .map(
-      (entry) => `\`${entry.id}\` (${formatRatioTimes(entry.ratio)}${entry.unreliable ? UNRELIABLE_RATIO_MARKER : ""})`,
+      (entry) =>
+        `\`${entry.id}\` (${formatRatioMultiple(entry.ratio)}${entry.unreliable ? UNRELIABLE_RATIO_MARKER : ""})`,
     )
     .join(", ");
 }
@@ -271,97 +265,146 @@ function countUnreliableRatioCells(rows: ReadonlyArray<ComparisonScenarioRow>): 
   );
 }
 
+/** Counts rendered cells — throughput and ratio alike — resting on a median unstable within its run. */
+function countNoisyCells(rows: ReadonlyArray<ComparisonScenarioRow>): number {
+  return rows.reduce((total, row) => {
+    const pivot = pivotQuality(row);
+    const noisyRatios = row.competitors.filter((competitor) => isRatioNoisy(pivot, competitor)).length;
+    return total + noisyRatios + (isThroughputCellNoisy(pivot) ? 1 : 0);
+  }, 0);
+}
+
 function consoleLabel(library: ComparisonLibrary): string {
   return library.shortName ?? library.displayName;
 }
 
-function buildHeadToHeadMarkdownLines(
-  pivot: ComparisonLibrary,
-  competitors: ReadonlyArray<ComparisonLibrary>,
+/** Scenario groups in the order the pivot first measured them. */
+function collectGroupOrder(rows: ReadonlyArray<ComparisonScenarioRow>): Array<string> {
+  return [...new Set(rows.map((row) => row.group))];
+}
+
+/**
+ * @param labelColumnCount - how many leading columns hold labels; every column past them
+ * carries a number and lines up on the right
+ */
+function buildMarkdownTableLines(
+  headerCells: ReadonlyArray<string>,
+  dataRows: ReadonlyArray<Array<string>>,
+  labelColumnCount: number,
 ): Array<string> {
+  const separatorCells = headerCells.map((_cell, cellIndex) => (cellIndex < labelColumnCount ? "---" : "---:"));
+  return [
+    `| ${headerCells.join(" | ")} |`,
+    `| ${separatorCells.join(" | ")} |`,
+    ...dataRows.map((cells) => `| ${cells.join(" | ")} |`),
+  ];
+}
+
+/**
+ * One row per competitor, so the summary stays the same height whatever the table is wide.
+ *
+ * @param pivotScenarioCount - denominator of the coverage column, exposing a competitor that
+ * implements only part of the suite
+ */
+function buildSummaryTableLines(
+  pivot: ComparisonLibrary,
+  summaries: ReadonlyArray<ComparisonCompetitorSummary>,
+  pivotScenarioCount: number,
+): Array<string> {
+  return [
+    `Ratios are \`${pivot.displayName} / competitor\` — above 1× means ${pivot.displayName} is faster. Win >1.03×, parity 0.97–1.03×, loss <0.97×. \`Comparable\` counts the rows both libraries measured, of ${String(pivotScenarioCount)} that ${pivot.displayName} measures; \`${UNRELIABLE_RATIO_MARKER}\` how many of those the median and geomean carry but no reader should cite alone.`,
+    "",
+    ...buildMarkdownTableLines(
+      ["Competitor", "Comparable", "Win / parity / loss", "Median", "Geomean", UNRELIABLE_RATIO_MARKER],
+      summaries.map(({ displayName, headToHead }) => [
+        displayName,
+        `${String(headToHead.comparableCount)} of ${String(pivotScenarioCount)}`,
+        `${String(headToHead.wins.length)} / ${String(headToHead.parities.length)} / ${String(headToHead.losses.length)}`,
+        formatRatioMultiple(headToHead.medianRatio),
+        formatRatioMultiple(headToHead.geomeanRatio),
+        String(headToHead.unreliableCount),
+      ]),
+      1,
+    ),
+  ];
+}
+
+/**
+ * Geomean per group as a matrix, keeping error-path groups visibly separate from throughput
+ * so a single fail-fast row cannot read as a typical speedup.
+ */
+function buildGroupGeomeanTableLines(
+  groupOrder: ReadonlyArray<string>,
+  summaries: ReadonlyArray<ComparisonCompetitorSummary>,
+): Array<string> {
+  if (groupOrder.length === 0 || summaries.length === 0) {
+    return [];
+  }
+  const dataRows = groupOrder
+    .map((group) => [
+      group,
+      ...summaries.map(({ headToHead }) => {
+        const entry = headToHead.groupGeomeans.find((candidate) => candidate.group === group);
+        return entry === undefined ? "—" : `${formatRatioMultiple(entry.geomeanRatio)} (${String(entry.count)})`;
+      }),
+    ])
+    // A group no competitor implements is a coverage gap, already counted as `Comparable`.
+    .filter((cells) => cells.slice(1).some((cell) => cell !== "—"));
+  if (dataRows.length === 0) {
+    return [];
+  }
+  return [
+    "Geomean of the ratios in each group, with the comparable row count in parentheses.",
+    "",
+    ...buildMarkdownTableLines(["Group", ...summaries.map((summary) => summary.displayName)], dataRows, 1),
+  ];
+}
+
+/** The exceptions no column holds: which rows lost, which drew, and what the pivot never ran. */
+function buildCompetitorNoteLines(summaries: ReadonlyArray<ComparisonCompetitorSummary>): Array<string> {
   const lines: Array<string> = [];
-  for (const { displayName, headToHead } of summarizeComparison(pivot, competitors)) {
-    const {
-      comparableCount,
-      wins,
-      parities,
-      losses,
-      medianRatio,
-      geomeanRatio,
-      groupGeomeans,
-      unreliableCount,
-      pivotOnlyIds,
-      competitorOnlyIds,
-    } = headToHead;
-    const winPercent = comparableCount === 0 ? 0 : Math.round((wins.length / comparableCount) * 100);
-    lines.push(
-      `- **${pivot.displayName} vs ${displayName}**: ${String(wins.length)} win / ${String(parities.length)} parity / ${String(losses.length)} loss of ${String(comparableCount)} comparable (${String(winPercent)}%) — median ${formatRatioTimes(medianRatio)}, geomean ${formatRatioTimes(geomeanRatio)} (win >1.03×, parity 0.97–1.03×, loss <0.97×).`,
-    );
-    if (groupGeomeans.length > 0) {
-      // Per-group geomean keeps error-path groups visibly separate from throughput, so a
-      // single fail-fast row can't read as a typical speedup.
-      lines.push(
-        `  - Geomean by group: ${groupGeomeans.map((entry) => `${entry.group} ${formatRatioTimes(entry.geomeanRatio)} (${String(entry.count)})`).join(", ")}.`,
-      );
-    }
+  for (const { displayName, headToHead } of summaries) {
+    const { losses, parities, competitorOnlyIds } = headToHead;
     if (losses.length > 0) {
-      lines.push(`  - Losses: ${formatEntryList(losses)}`);
+      lines.push(`- **${displayName}** — losses: ${formatEntryList(losses)}`);
     }
     if (parities.length > 0) {
-      lines.push(`  - Parity: ${formatEntryList(parities)}`);
+      lines.push(`- **${displayName}** — parity: ${formatEntryList(parities)}`);
     }
-    const topWins = [...wins].sort((left, right) => right.ratio - left.ratio).slice(0, 3);
-    if (topWins.length > 0) {
-      lines.push(`  - Biggest wins: ${formatEntryList(topWins)}`);
-    }
-    if (unreliableCount > 0) {
-      // A marked row landing in the loss column is the failure this warning exists for.
-      lines.push(`  - ${formatReliabilityCaveatLine(unreliableCount)}`);
-    }
-    if (pivotOnlyIds.length > 0 || competitorOnlyIds.length > 0) {
+    if (competitorOnlyIds.length > 0) {
       lines.push(
-        `  - Not comparable: ${String(pivotOnlyIds.length)} scenario(s) measured only for ${pivot.displayName}, ${String(competitorOnlyIds.length)} only for ${displayName}.`,
+        `- **${displayName}** — measures ${String(competitorOnlyIds.length)} scenario(s) this suite does not, so they have no row.`,
       );
     }
   }
   return lines;
 }
 
-function buildMarkdownHeaderCells(
+function buildScenarioTableLines(
   pivot: ComparisonLibrary,
   competitors: ReadonlyArray<ComparisonLibrary>,
+  rows: ReadonlyArray<ComparisonScenarioRow>,
 ): Array<string> {
-  const everyLibrary = [pivot, ...competitors];
-  return [
+  const headerCells = [
     "Scenario",
     "Group",
     "batch",
-    ...everyLibrary.map((library) => `${library.displayName} hz/op`),
-    ...competitors.map((competitor) => `${pivot.displayName} / ${competitor.displayName}`),
-    `${pivot.displayName} mean ms`,
-    `IQR (${everyLibrary.map((library) => consoleLabel(library)).join(" / ")})`,
+    `${pivot.displayName} hz/op`,
+    ...competitors.map((competitor) => `vs ${competitor.displayName}`),
   ];
-}
-
-function buildMarkdownDataCells(row: ComparisonScenarioRow): Array<string> {
-  const throughputs = [row.pivotHzPerOp, ...row.competitors.map((competitor) => competitor.hzPerOp)];
-  return [
-    row.id,
-    row.group,
-    String(row.batch),
-    ...throughputs.map(formatThroughputOpsPerSecond),
-    ...row.competitors.map((competitor) =>
-      markRatioReliability(
-        formatThroughputRatio(row.pivotHzPerOp, competitor.hzPerOp),
-        row.pivotHzPerOp,
-        competitor.hzPerOp,
+  const dataRows = rows.map((row) => {
+    const pivotSample = pivotQuality(row);
+    return [
+      row.id,
+      row.group,
+      String(row.batch),
+      markThroughputQuality(formatThroughputOpsPerSecond(row.pivotHzPerOp), pivotSample),
+      ...row.competitors.map((competitor) =>
+        markRatioQuality(formatThroughputRatio(row.pivotHzPerOp, competitor.hzPerOp), pivotSample, competitor),
       ),
-    ),
-    formatLatencyMeanMilliseconds(row.pivotMeanMs),
-    [row.pivotIqrFraction, ...row.competitors.map((competitor) => competitor.iqrFraction)]
-      .map(formatIqrThroughputFraction)
-      .join(" / "),
-  ];
+    ];
+  });
+  return buildMarkdownTableLines(headerCells, dataRows, 2);
 }
 
 function buildEnvironmentBullets(
@@ -409,10 +452,12 @@ export function renderComparisonMarkdownReport(
   options: ComparisonMarkdownReportOptions,
 ): string {
   const rows = buildComparisonRows(pivot, competitors);
-  const headerCells = buildMarkdownHeaderCells(pivot, competitors);
-  const separatorCells = headerCells.map((_cell, cellIndex) => (cellIndex < 2 ? "---" : "---:"));
+  const summaries = summarizeComparison(pivot, competitors);
   const unreliableCount = countUnreliableRatioCells(rows);
+  const noisyCount = countNoisyCells(rows);
   const introLines = options.introLines ?? [];
+  const noteLines = buildCompetitorNoteLines(summaries);
+  const groupTableLines = buildGroupGeomeanTableLines(collectGroupOrder(rows), summaries);
 
   const sections: Array<string> = [
     options.documentHeading,
@@ -425,13 +470,17 @@ export function renderComparisonMarkdownReport(
     "",
     ...introLines,
     ...(introLines.length === 0 ? [] : [""]),
-    ...buildHeadToHeadMarkdownLines(pivot, competitors),
+    ...(summaries.length === 0
+      ? []
+      : ["### Summary", "", ...buildSummaryTableLines(pivot, summaries, rows.length), ""]),
+    ...(noteLines.length === 0 ? [] : [...noteLines, ""]),
+    ...(groupTableLines.length === 0 ? [] : ["### Geomean by group", "", ...groupTableLines, ""]),
+    "### Per scenario",
     "",
-    `| ${headerCells.join(" | ")} |`,
-    `| ${separatorCells.join(" | ")} |`,
-    ...rows.map((row) => `| ${buildMarkdownDataCells(row).join(" | ")} |`),
-    // The caveat sits directly under the table so it travels with the marked ratios.
+    ...buildScenarioTableLines(pivot, competitors, rows),
+    // The caveats sit directly under the table so they travel with the marked cells.
     ...(unreliableCount === 0 ? [] : ["", formatReliabilityCaveatLine(unreliableCount)]),
+    ...(noisyCount === 0 ? [] : ["", formatNoisyIqrCaveatLine(noisyCount)]),
   ];
 
   return sections.join("\n");
@@ -439,8 +488,7 @@ export function renderComparisonMarkdownReport(
 
 const CLI_TABLE_COLUMN_GAP = "  ";
 const CONSOLE_THROUGHPUT_COLUMN_WIDTH = 18;
-const CONSOLE_LATENCY_COLUMN_WIDTH = 12;
-const CONSOLE_RATIO_COLUMN_WIDTH = 14;
+const CONSOLE_RATIO_COLUMN_WIDTH = 12;
 
 /** Prints the comparison to stdout with aligned ASCII columns. */
 export function renderComparisonConsoleReport(
@@ -449,40 +497,35 @@ export function renderComparisonConsoleReport(
   options: ComparisonConsoleReportOptions,
 ): void {
   const rows = buildComparisonRows(pivot, competitors);
-  const everyLibrary = [pivot, ...competitors];
   const scenarioColumnWidth = Math.max(28, ...rows.map((row) => row.id.length));
   const groupColumnWidth = Math.max(10, ...rows.map((row) => row.group.length));
 
   const headerLine = [
     "Scenario".padEnd(scenarioColumnWidth),
     "Group".padEnd(groupColumnWidth),
-    ...everyLibrary.map((library) => `${consoleLabel(library)} hz/op`.padStart(CONSOLE_THROUGHPUT_COLUMN_WIDTH)),
-    ...competitors.map((competitor) =>
-      `${consoleLabel(pivot)}/${consoleLabel(competitor)}`.padStart(CONSOLE_RATIO_COLUMN_WIDTH),
-    ),
-    `${consoleLabel(pivot)} mean ms`.padStart(CONSOLE_LATENCY_COLUMN_WIDTH),
+    `${consoleLabel(pivot)} hz/op`.padStart(CONSOLE_THROUGHPUT_COLUMN_WIDTH),
+    ...competitors.map((competitor) => `vs ${consoleLabel(competitor)}`.padStart(CONSOLE_RATIO_COLUMN_WIDTH)),
   ].join(CLI_TABLE_COLUMN_GAP);
 
   console.log(`\n${options.sectionHeading}`);
   console.log(headerLine);
   console.log("-".repeat(headerLine.length));
   for (const row of rows) {
-    const throughputs = [row.pivotHzPerOp, ...row.competitors.map((competitor) => competitor.hzPerOp)];
+    const pivotSample = pivotQuality(row);
     console.log(
       [
         row.id.padEnd(scenarioColumnWidth),
         row.group.padEnd(groupColumnWidth),
-        ...throughputs.map((hzPerOp) =>
-          formatThroughputOpsPerSecond(hzPerOp).padStart(CONSOLE_THROUGHPUT_COLUMN_WIDTH),
+        markThroughputQuality(formatThroughputOpsPerSecond(row.pivotHzPerOp), pivotSample).padStart(
+          CONSOLE_THROUGHPUT_COLUMN_WIDTH,
         ),
         ...row.competitors.map((competitor) =>
-          markRatioReliability(
+          markRatioQuality(
             formatThroughputRatio(row.pivotHzPerOp, competitor.hzPerOp),
-            row.pivotHzPerOp,
-            competitor.hzPerOp,
+            pivotSample,
+            competitor,
           ).padStart(CONSOLE_RATIO_COLUMN_WIDTH),
         ),
-        formatLatencyMeanMilliseconds(row.pivotMeanMs).padStart(CONSOLE_LATENCY_COLUMN_WIDTH),
       ].join(CLI_TABLE_COLUMN_GAP),
     );
   }
@@ -490,11 +533,11 @@ export function renderComparisonConsoleReport(
   console.log("");
   for (const { displayName, headToHead } of summarizeComparison(pivot, competitors)) {
     console.log(
-      `${consoleLabel(pivot)} vs ${displayName}: ${String(headToHead.wins.length)} wins · ${String(headToHead.parities.length)} parity · ${String(headToHead.losses.length)} loss${headToHead.losses.length === 1 ? "" : "es"} of ${String(headToHead.comparableCount)} comparable — median ${formatRatioTimes(headToHead.medianRatio)}, geomean ${formatRatioTimes(headToHead.geomeanRatio)}`,
+      `${consoleLabel(pivot)} vs ${displayName}: ${String(headToHead.wins.length)} wins · ${String(headToHead.parities.length)} parity · ${String(headToHead.losses.length)} loss${headToHead.losses.length === 1 ? "" : "es"} of ${String(headToHead.comparableCount)} comparable — median ${formatRatioMultiple(headToHead.medianRatio)}, geomean ${formatRatioMultiple(headToHead.geomeanRatio)}`,
     );
     if (headToHead.groupGeomeans.length > 0) {
       console.log(
-        `  By group: ${headToHead.groupGeomeans.map((entry) => `${entry.group} ${formatRatioTimes(entry.geomeanRatio)}`).join(" · ")}`,
+        `  By group: ${headToHead.groupGeomeans.map((entry) => `${entry.group} ${formatRatioMultiple(entry.geomeanRatio)}`).join(" · ")}`,
       );
     }
     if (headToHead.losses.length > 0) {
@@ -502,7 +545,7 @@ export function renderComparisonConsoleReport(
         `  Losses: ${headToHead.losses
           .map(
             (entry) =>
-              `${entry.id} (${formatRatioTimes(entry.ratio)}${entry.unreliable ? UNRELIABLE_RATIO_MARKER : ""})`,
+              `${entry.id} (${formatRatioMultiple(entry.ratio)}${entry.unreliable ? UNRELIABLE_RATIO_MARKER : ""})`,
           )
           .join(", ")}`,
       );
@@ -511,6 +554,10 @@ export function renderComparisonConsoleReport(
   const unreliableCount = countUnreliableRatioCells(rows);
   if (unreliableCount > 0) {
     console.log(formatReliabilityCaveatLine(unreliableCount));
+  }
+  const noisyCount = countNoisyCells(rows);
+  if (noisyCount > 0) {
+    console.log(formatNoisyIqrCaveatLine(noisyCount));
   }
   if (options.footerHintLine !== undefined) {
     console.log("");
