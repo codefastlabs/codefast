@@ -12,11 +12,15 @@
  *
  * @remarks A symbol rather than a method name, so it cannot collide with the public surface or be
  * reached by anyone who has not imported this module.
+ *
+ * @since 0.5.0-canary.8
  */
 export const RESOLUTION_DIAGNOSTICS: unique symbol = Symbol("di:resolution-diagnostics");
 
 /**
  * Structural facts about a container's resolution caches.
+ *
+ * @since 0.5.0-canary.8
  */
 export interface ResolutionDiagnostics {
   /** Bindings with a compiled instantiation plan. */
@@ -31,6 +35,8 @@ export interface ResolutionDiagnostics {
 
 /**
  * A container that can report on its resolution caches.
+ *
+ * @since 0.5.0-canary.8
  */
 export interface DiagnosableContainer {
   [RESOLUTION_DIAGNOSTICS](): ResolutionDiagnostics;

@@ -276,6 +276,9 @@ function createExcludeMatcher(patterns: ReadonlyArray<string> | undefined): (spe
   };
 }
 
+/**
+ * @since 0.5.0-canary.8
+ */
 export async function generateExports(
   fileSystemService: DistFilesystem,
   distDir: string,
