@@ -1,6 +1,11 @@
 import { describe, expect, it } from "vitest";
 
 import type { AggregatedScenarioResult, LibraryReport } from "#/report/aggregate";
+import {
+  THROUGHPUT_NOISE_CEILING_HZ_PER_OP,
+  UNRELIABLE_RATIO_MARKER,
+  formatReliabilityCaveatLine,
+} from "#/report/reliability";
 import type { TwoWayScenarioComparisonRow } from "#/report/two-way";
 import { renderTwoWayMarkdownReport, summarizeTwoWayComparison } from "#/report/two-way";
 import type { Fingerprint } from "#/shared/protocol";
@@ -87,6 +92,21 @@ describe("summarizeTwoWayComparison", () => {
     expect(summary.medianRatio).toBe(0);
     expect(summary.geomeanRatio).toBe(0);
     expect(summary.groupGeomeans).toEqual([]);
+    expect(summary.unreliableCount).toBe(0);
+  });
+
+  it("flags a high-throughput row that lands in the loss column", () => {
+    const above = THROUGHPUT_NOISE_CEILING_HZ_PER_OP + 1;
+    const summary = summarizeTwoWayComparison([
+      row("fast-loss", above, above * 1.2),
+      row("slow-loss", 80, 100),
+      row("slow-win", 200, 100),
+    ]);
+
+    expect(summary.unreliableCount).toBe(1);
+    expect(summary.losses.find((entry) => entry.id === "fast-loss")!.unreliable).toBe(true);
+    expect(summary.losses.find((entry) => entry.id === "slow-loss")!.unreliable).toBe(false);
+    expect(summary.wins.find((entry) => entry.id === "slow-win")!.unreliable).toBe(false);
   });
 });
 
@@ -161,5 +181,26 @@ describe("renderTwoWayMarkdownReport", () => {
     expect(markdown).toContain("left wins 3 of 3 comparable scenarios (100%)");
     expect(markdown).toContain("geomean");
     expect(markdown).toContain("- Geomean by group: micro 4.00× (2), failure 100.0× (1).");
+  });
+
+  it("marks a high-throughput ratio in the table and prints the caveat beneath it", () => {
+    const above = THROUGHPUT_NOISE_CEILING_HZ_PER_OP + 1;
+    const left = report([aggregated("fast", above, "micro"), aggregated("slow", 200, "micro")]);
+    const right = report([aggregated("fast", above, "micro"), aggregated("slow", 100, "micro")]);
+
+    const markdown = renderTwoWayMarkdownReport(left, right, OPTIONS);
+    const tableLines = markdown.split("\n").filter((line) => line.startsWith("| fast") || line.startsWith("| slow"));
+
+    expect(tableLines.find((line) => line.startsWith("| fast"))).toContain(`1.00×${UNRELIABLE_RATIO_MARKER}`);
+    expect(tableLines.find((line) => line.startsWith("| slow"))).toContain("2.00×");
+    expect(tableLines.find((line) => line.startsWith("| slow"))).not.toContain(UNRELIABLE_RATIO_MARKER);
+    expect(markdown).toContain(formatReliabilityCaveatLine(1));
+  });
+
+  it("omits the caveat entirely when every row is below the ceiling", () => {
+    const left = report([aggregated("slow", 200, "micro")]);
+    const right = report([aggregated("slow", 100, "micro")]);
+
+    expect(renderTwoWayMarkdownReport(left, right, OPTIONS)).not.toContain(UNRELIABLE_RATIO_MARKER);
   });
 });

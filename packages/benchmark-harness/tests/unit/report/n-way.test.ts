@@ -8,6 +8,11 @@ import {
   renderNWayMarkdownReport,
   summarizeNWayComparison,
 } from "#/report/n-way";
+import {
+  THROUGHPUT_NOISE_CEILING_HZ_PER_OP,
+  UNRELIABLE_RATIO_MARKER,
+  formatReliabilityCaveatLine,
+} from "#/report/reliability";
 import type { Fingerprint } from "#/shared/protocol";
 
 function scenario(id: string, hzPerOp: number, group = "micro"): AggregatedScenarioResult {
@@ -160,6 +165,31 @@ describe("renderNWayMarkdownReport", () => {
     const row = markdown.split("\n").find((line) => line.startsWith("| only-pivot |"))!;
 
     expect(row).toContain("—");
+  });
+
+  it("marks each high-throughput competitor ratio and counts every marked cell, not every row", () => {
+    const above = THROUGHPUT_NOISE_CEILING_HZ_PER_OP + 1;
+    const pivot = library("di", [scenario("fast", above), scenario("slow", 200)]);
+    const first = library("inv", [scenario("fast", above), scenario("slow", 100)]);
+    const second = library("awi", [scenario("fast", above), scenario("slow", 100)]);
+
+    const markdown = renderNWayMarkdownReport(pivot, [first, second], RENDER_OPTIONS);
+    const lines = markdown.split("\n");
+
+    expect(lines.find((line) => line.startsWith("| fast |"))).toContain(`1.00×${UNRELIABLE_RATIO_MARKER}`);
+    expect(lines.find((line) => line.startsWith("| slow |"))).not.toContain(UNRELIABLE_RATIO_MARKER);
+    // One marked cell per competitor column on the one fast row.
+    expect(markdown).toContain(formatReliabilityCaveatLine(2));
+  });
+
+  it("does not mark a competitor cell that has no measurement to be unreliable about", () => {
+    const above = THROUGHPUT_NOISE_CEILING_HZ_PER_OP + 1;
+    const pivot = library("di", [scenario("only-pivot", above)]);
+    const competitor = library("inv", []);
+
+    const markdown = renderNWayMarkdownReport(pivot, [competitor], RENDER_OPTIONS);
+
+    expect(markdown).not.toContain(UNRELIABLE_RATIO_MARKER);
   });
 
   it("omits the intro block when no intro lines are given", () => {

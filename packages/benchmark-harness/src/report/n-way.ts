@@ -1,5 +1,6 @@
 import type { LibraryReport } from "#/report/aggregate";
 import { formatLatencyMeanMilliseconds, formatThroughputOpsPerSecond, formatThroughputRatio } from "#/report/format";
+import { formatReliabilityCaveatLine, isRatioUnreliable, markRatioReliability } from "#/report/reliability";
 import type { TwoWayHeadToHeadSummary } from "#/report/two-way";
 import { buildTwoWayComparisonRows, summarizeTwoWayComparison } from "#/report/two-way";
 
@@ -142,10 +143,25 @@ function renderMarkdownDataRow(row: NWayScenarioRow): string {
     String(row.batch),
     formatThroughputOpsPerSecond(row.pivotHzPerOp),
     ...row.competitors.map((competitor) => formatThroughputOpsPerSecond(competitor.hzPerOp)),
-    ...row.competitors.map((competitor) => formatThroughputRatio(row.pivotHzPerOp, competitor.hzPerOp)),
+    ...row.competitors.map((competitor) =>
+      markRatioReliability(
+        formatThroughputRatio(row.pivotHzPerOp, competitor.hzPerOp),
+        row.pivotHzPerOp,
+        competitor.hzPerOp,
+      ),
+    ),
     formatLatencyMeanMilliseconds(row.pivotMeanMs),
   ];
   return `| ${cells.join(" | ")} |`;
+}
+
+/** Counts rendered ratio cells the report cannot vouch for, across every competitor column. */
+function countUnreliableRatioCells(rows: ReadonlyArray<NWayScenarioRow>): number {
+  return rows.reduce(
+    (total, row) =>
+      total + row.competitors.filter((competitor) => isRatioUnreliable(row.pivotHzPerOp, competitor.hzPerOp)).length,
+    0,
+  );
 }
 
 function formatRatioTimes(ratio: number): string {
@@ -174,6 +190,7 @@ export function renderNWayMarkdownReport(
 ): string {
   const rows = buildNWayComparisonRows(pivot, competitors);
   const [headerRow, separatorRow] = buildMarkdownHeaderLines(pivot, competitors);
+  const unreliableCount = countUnreliableRatioCells(rows);
 
   const sections: Array<string> = [
     options.documentHeading,
@@ -187,6 +204,7 @@ export function renderNWayMarkdownReport(
     headerRow,
     separatorRow,
     ...rows.map(renderMarkdownDataRow),
+    ...(unreliableCount === 0 ? [] : ["", formatReliabilityCaveatLine(unreliableCount)]),
   ];
   return sections.join("\n");
 }
@@ -226,7 +244,11 @@ export function renderNWayConsoleReport(
         formatThroughputOpsPerSecond(row.pivotHzPerOp).padStart(18),
         ...row.competitors.map((competitor) => formatThroughputOpsPerSecond(competitor.hzPerOp).padStart(18)),
         ...row.competitors.map((competitor) =>
-          formatThroughputRatio(row.pivotHzPerOp, competitor.hzPerOp).padStart(14),
+          markRatioReliability(
+            formatThroughputRatio(row.pivotHzPerOp, competitor.hzPerOp),
+            row.pivotHzPerOp,
+            competitor.hzPerOp,
+          ).padStart(14),
         ),
       ].join(CLI_TABLE_COLUMN_GAP),
     );
@@ -235,6 +257,10 @@ export function renderNWayConsoleReport(
   console.log("");
   for (const line of buildSummaryMarkdownLines(pivot, competitors)) {
     console.log(line.replace(/^- /, "").replaceAll("**", ""));
+  }
+  const unreliableCount = countUnreliableRatioCells(rows);
+  if (unreliableCount > 0) {
+    console.log(formatReliabilityCaveatLine(unreliableCount));
   }
   console.log("");
 }

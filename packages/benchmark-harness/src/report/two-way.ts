@@ -5,6 +5,12 @@ import {
   formatThroughputOpsPerSecond,
   formatThroughputRatio,
 } from "#/report/format";
+import {
+  UNRELIABLE_RATIO_MARKER,
+  formatReliabilityCaveatLine,
+  isRatioUnreliable,
+  markRatioReliability,
+} from "#/report/reliability";
 
 /**
  * One zipped row for Markdown and console two-way comparisons.
@@ -100,6 +106,8 @@ const HEAD_TO_HEAD_PARITY_BAND = 0.03;
 export interface TwoWayHeadToHeadEntry {
   readonly id: string;
   readonly ratio: number;
+  /** True when either side's throughput sits above the ceiling where a single row stops reproducing. */
+  readonly unreliable: boolean;
 }
 
 /**
@@ -129,6 +137,8 @@ export interface TwoWayHeadToHeadSummary {
   readonly geomeanRatio: number;
   /** Per-group geomean, ordered by first appearance, isolating error-path groups from throughput. */
   readonly groupGeomeans: ReadonlyArray<TwoWayGroupGeomean>;
+  /** Comparable rows whose ratio does not reproduce between runs, so the aggregates are what survive. */
+  readonly unreliableCount: number;
   readonly leftOnlyIds: ReadonlyArray<string>;
   readonly rightOnlyIds: ReadonlyArray<string>;
 }
@@ -167,7 +177,11 @@ export function summarizeTwoWayComparison(rows: ReadonlyArray<TwoWayScenarioComp
       rightOnlyIds.push(row.id);
       continue;
     }
-    const entry: TwoWayHeadToHeadEntry = { id: row.id, ratio: row.leftHzPerOp / row.rightHzPerOp };
+    const entry: TwoWayHeadToHeadEntry = {
+      id: row.id,
+      ratio: row.leftHzPerOp / row.rightHzPerOp,
+      unreliable: isRatioUnreliable(row.leftHzPerOp, row.rightHzPerOp),
+    };
     if (entry.ratio > 1 + HEAD_TO_HEAD_PARITY_BAND) {
       wins.push(entry);
     } else if (entry.ratio < 1 - HEAD_TO_HEAD_PARITY_BAND) {
@@ -200,6 +214,7 @@ export function summarizeTwoWayComparison(rows: ReadonlyArray<TwoWayScenarioComp
     medianRatio,
     geomeanRatio: geometricMean(ratios),
     groupGeomeans,
+    unreliableCount: [...wins, ...parities, ...losses].filter((entry) => entry.unreliable).length,
     leftOnlyIds,
     rightOnlyIds,
   };
@@ -210,7 +225,11 @@ function formatRatioTimes(ratio: number): string {
 }
 
 function formatEntryList(entries: ReadonlyArray<TwoWayHeadToHeadEntry>): string {
-  return entries.map((entry) => `\`${entry.id}\` (${formatRatioTimes(entry.ratio)})`).join(", ");
+  return entries
+    .map(
+      (entry) => `\`${entry.id}\` (${formatRatioTimes(entry.ratio)}${entry.unreliable ? UNRELIABLE_RATIO_MARKER : ""})`,
+    )
+    .join(", ");
 }
 
 function buildHeadToHeadSummaryMarkdownLines(
@@ -225,6 +244,7 @@ function buildHeadToHeadSummaryMarkdownLines(
     medianRatio,
     geomeanRatio,
     groupGeomeans,
+    unreliableCount,
     leftOnlyIds,
     rightOnlyIds,
   } = summary;
@@ -247,6 +267,10 @@ function buildHeadToHeadSummaryMarkdownLines(
   }
   if (parities.length > 0) {
     lines.push(`- Parity: ${formatEntryList(parities)}`);
+  }
+  if (unreliableCount > 0) {
+    // A marked row landing in the loss column is the failure this warning exists for.
+    lines.push(`- ${formatReliabilityCaveatLine(unreliableCount)}`);
   }
   const topWins = [...wins].sort((left, right) => right.ratio - left.ratio).slice(0, 3);
   if (topWins.length > 0) {
@@ -340,7 +364,7 @@ function renderMarkdownDataRow(row: TwoWayScenarioComparisonRow): string {
     String(row.batch),
     formatThroughputOpsPerSecond(row.leftHzPerOp),
     formatThroughputOpsPerSecond(row.rightHzPerOp),
-    formatThroughputRatio(row.leftHzPerOp, row.rightHzPerOp),
+    markRatioReliability(formatThroughputRatio(row.leftHzPerOp, row.rightHzPerOp), row.leftHzPerOp, row.rightHzPerOp),
     formatLatencyMeanMilliseconds(row.leftMeanMs),
     formatLatencyMeanMilliseconds(row.rightMeanMs),
     formatLatencyMeanMilliseconds(row.leftP99Ms),
@@ -396,10 +420,11 @@ export function renderTwoWayMarkdownReport(
           ...rightReport.sanityFailures.map((id) => `- ${options.sanityBulletMarkdownLabels.right}: \`${id}\``),
         ].join("\n");
 
-  const headToHeadLines = buildHeadToHeadSummaryMarkdownLines(
-    summarizeTwoWayComparison(rows),
-    options.fingerprintLibraryVersionLabels,
-  );
+  const summary = summarizeTwoWayComparison(rows);
+  const headToHeadLines = buildHeadToHeadSummaryMarkdownLines(summary, options.fingerprintLibraryVersionLabels);
+  // The caveat sits directly under the table so it travels with the marked ratios.
+  const reliabilityLines =
+    summary.unreliableCount === 0 ? [] : ["", formatReliabilityCaveatLine(summary.unreliableCount)];
 
   const sections: Array<string> = [
     options.documentHeading,
@@ -418,6 +443,7 @@ export function renderTwoWayMarkdownReport(
     headerRow,
     separatorRow,
     ...rows.map(renderMarkdownDataRow),
+    ...reliabilityLines,
   ];
 
   return sections.join("\n");
@@ -457,7 +483,11 @@ export function renderTwoWayConsoleReport(
   console.log(headerLine);
   console.log("-".repeat(headerLine.length));
   for (const row of rows) {
-    const ratio = formatThroughputRatio(row.leftHzPerOp, row.rightHzPerOp);
+    const ratio = markRatioReliability(
+      formatThroughputRatio(row.leftHzPerOp, row.rightHzPerOp),
+      row.leftHzPerOp,
+      row.rightHzPerOp,
+    );
     console.log(
       [
         row.id.padEnd(scenarioColumnWidth),
@@ -486,8 +516,15 @@ export function renderTwoWayConsoleReport(
   }
   if (summary.losses.length > 0) {
     console.log(
-      `Losses: ${summary.losses.map((entry) => `${entry.id} (${formatRatioTimes(entry.ratio)})`).join(", ")}`,
+      `Losses: ${summary.losses
+        .map(
+          (entry) => `${entry.id} (${formatRatioTimes(entry.ratio)}${entry.unreliable ? UNRELIABLE_RATIO_MARKER : ""})`,
+        )
+        .join(", ")}`,
     );
+  }
+  if (summary.unreliableCount > 0) {
+    console.log(formatReliabilityCaveatLine(summary.unreliableCount));
   }
   console.log("");
   console.log(options?.footerHintLine ?? "Cite the comparable scenarios table.");
