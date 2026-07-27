@@ -1,28 +1,42 @@
 # Security Policy
 
-## Supported Versions
+## Reporting a vulnerability
 
-Currently, we are supporting the following versions of the project with security updates:
+Report privately through GitHub's private vulnerability reporting, which is enabled on this repository:
 
-| Version | Supported          |
-| ------- | ------------------ |
-| 15.x.x  | :white_check_mark: |
-| 14.x.x  | :white_check_mark: |
-| < 14.0  | :x:                |
+**[Open a draft security advisory](https://github.com/codefastlabs/codefast/security/advisories/new)**
 
-## Reporting a Vulnerability
+Please do **not** open a public issue, discussion, or pull request for a vulnerability.
 
-If you discover a security vulnerability in the project, please report it by:
+Useful things to include: the affected package and version, whether it reproduces on the `canary` channel, and a minimal proof of concept. If the issue is in a dependency rather than in `@codefast/*` code, say so — those are usually handled by Dependabot and may already be in flight.
 
-1. Creating a private issue in our GitHub repository
+This is a small project without a staffed security rotation, so reports are handled on a best-effort basis rather than against a fixed response time. You will get an acknowledgement when the report is read, a decision once it has been assessed, and credit in the advisory unless you ask to remain anonymous.
 
-We will acknowledge receipt of your report within 48 hours and provide updates on the progress within 7 business days.
+## Supported versions
 
-For accepted security vulnerabilities:
+All `@codefast/*` packages version together as one group, so a fix ships across the whole group at once. The project is **pre-1.0**: fixes land on the `canary` channel first, and that is the channel the documentation site tracks.
 
-- We will inform you about our remediation plan
-- We will release patches and version updates as necessary
-- You will be credited for your contribution (unless you request to remain anonymous)
+| Channel / line                           | Supported                                                            |
+| ---------------------------------------- | -------------------------------------------------------------------- |
+| `canary` — `0.5.0-canary.x`              | :white_check_mark: fixes land here first                             |
+| `latest` — `0.4.0`                       | :white_check_mark: patched when a fix is not tied to unreleased work |
+| `1.0.0-canary.6/.7`, `1.0.1-canary.2/.3` | :x: published in error, abandoned — see below                        |
+| Everything below `0.4.0`                 | :x:                                                                  |
 
-We are committed to protecting our users and community,
-and we appreciate your cooperation in reporting potential security issues.
+`@codefast/tracking` has no stable release yet; only its `canary` builds are supported.
+
+Because breaking changes still ship between canaries before 1.0, the practical advice for a security fix is to move to the current `canary` rather than to expect a backport to an older line.
+
+### The stray `1.x` line
+
+Four `1.x` prereleases (`1.0.0-canary.6`, `1.0.0-canary.7`, `1.0.1-canary.2`, `1.0.1-canary.3`) were published by an accidental major bump and remain on npm. They are **not** a newer or more complete version of the library — the release line was reset back to `0.5.0-canary.x`, which is where all subsequent work went.
+
+They sort **above** the current canary in semver, so a range like `^1` or a `latest`-of-`1.x` resolution can silently pin you to an abandoned build that will never receive a fix. If you are on one of them, move to the current `canary`:
+
+```bash
+pnpm add @codefast/ui@canary
+```
+
+## Reporting something that is not a vulnerability
+
+A crash, a wrong render, or a regression with no security impact belongs in a [normal issue](https://github.com/codefastlabs/codefast/issues/new/choose).
