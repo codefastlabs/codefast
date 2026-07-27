@@ -2,16 +2,13 @@
   "$schema": "https://json.schemastore.org/tsconfig",
   "extends": "@codefast/typescript-config/react.json",
   "compilerOptions": {
+    "customConditions": ["source"],
     "exactOptionalPropertyTypes": true,
     "noFallthroughCasesInSwitch": true,
     "noImplicitOverride": true,
     "noImplicitReturns": true,
     "verbatimModuleSyntax": true,
-    "types": ["node", "vitest/globals"],
-    "paths": {
-      "#/tests/*": ["./tests/*"],
-      "#/*": ["./src/*"]
-    }
+    "types": ["node", "vitest/globals"]
   },
   "include": ["**/*.ts", "**/*.tsx"],
   "exclude": ["node_modules", "dist", ".turbo", "coverage"]
