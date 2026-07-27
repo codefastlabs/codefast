@@ -95,17 +95,15 @@ pnpm check-types                       # TypeScript (single tsconfig)
 
 Under `bench-results/<timestamp>/` (gitignored at repo root: `benchmarks/**/bench-results/`):
 
-| File                                    | Purpose                                                                             |
-| --------------------------------------- | ----------------------------------------------------------------------------------- |
-| `report-vs-tailwind-variants.md`        | Markdown head-to-head: @codefast/tailwind-variants **vs** tailwind-variants (npm).  |
-| `report-vs-class-variance-authority.md` | Markdown head-to-head: @codefast/tailwind-variants **vs** class-variance-authority. |
-| `report.md`                             | Both markdown reports concatenated (single file for archiving).                     |
-| `observations.jsonl`                    | Flattened observations for all **three** libraries.                                 |
+| File                 | Purpose                                                                                                    |
+| -------------------- | ---------------------------------------------------------------------------------------------------------- |
+| `report.md`          | Markdown: @codefast/tailwind-variants against tailwind-variants and class-variance-authority in one table. |
+| `report.md`          | Both markdown reports concatenated (single file for archiving).                                            |
+| `observations.jsonl` | Flattened observations for all **three** libraries.                                                        |
 
 Mirrors under `bench-results/` for stable paths / CI diffs:
 
-- `latest-vs-tailwind-variants.md`
-- `latest-vs-class-variance-authority.md`
+- `latest.md`
 - `latest.md` (same concatenation as per-run `report.md`)
 - `latest.jsonl`
 
@@ -144,7 +142,7 @@ Shared **fixture** data lives in `src/fixtures/`. Each **scenario `id`** is impl
 benchmarks/tailwind-variants/
   src/
     harness/
-      run.ts                 # parent: rebuild, spawn 3 children, two head-to-head reports + JSONL
+      run.ts                 # parent: rebuild, spawn 3 children, one comparison report + JSONL
       bench-options.ts       # TV_MERGE_ENABLED / TV_MERGE_DISABLED
       tv-presentation.ts     # markdown + console labels for each pairwise report
     lib/

@@ -127,7 +127,7 @@ realistic-graph-resolve-root realistic          234,567           145,678    1.6
 ...
 ```
 
-The markdown report opens with a **Head-to-head summary** — win/parity/loss counts over comparable rows (parity band ±3%), the **median and geomean** ratios, a **geomean-by-group** line (which keeps error-path groups like `failure` separate from throughput), and loss/parity lists. The console prints the same tally under the table. After the full di-vs-inversify table, both the markdown and console append the **N-way core-subset** table comparing di against inversify, awilix, and tsyringe.
+The markdown report opens with a **Head-to-head summary** — win/parity/loss counts over comparable rows (parity band ±3%), the **median and geomean** ratios, a **geomean-by-group** line (which keeps error-path groups like `failure` separate from throughput), and loss/parity lists. The console prints the same tally under the table. There is one table: every library gets a throughput column, every competitor a ratio column, and awilix/tsyringe read `—` outside the core subset they implement.
 
 Things to check before drawing conclusions:
 
@@ -138,7 +138,7 @@ Things to check before drawing conclusions:
 
 ## Scenario inventory
 
-**Authoritative order** on the codefast side is `src/scenarios/collect-codefast-scenarios.ts`. Inversify’s list is `collect-inversify-scenarios.ts`: it includes the same shared modules in the same relative blocks but **omits** codefast-only sources (`realistic-graph-validate.ts`, `initialize-inspect.ts`, `multi-tag-constraint.ts`). Head-to-head rows still align by shared **`id`** strings; codefast-only ids appear with “—” on the inversify side. **awilix** and **tsyringe** (`collect-{awilix,tsyringe}-scenarios.ts`) implement only the core subset — `micro.ts`, `realistic.ts`, `scale.ts`, `fan-out/` — and appear only in the core-subset table, never the full head-to-head table.
+**Authoritative order** on the codefast side is `src/scenarios/collect-codefast-scenarios.ts`. Inversify’s list is `collect-inversify-scenarios.ts`: it includes the same shared modules in the same relative blocks but **omits** codefast-only sources (`realistic-graph-validate.ts`, `initialize-inspect.ts`, `multi-tag-constraint.ts`). Head-to-head rows still align by shared **`id`** strings; codefast-only ids appear with “—” on the inversify side. **awilix** and **tsyringe** (`collect-{awilix,tsyringe}-scenarios.ts`) implement only the core subset — `micro.ts`, `realistic.ts`, `scale.ts`, `fan-out/` — so their columns read `—` on every row outside that subset.
 
 | Area                                    | `codefast/` / `inversify/` modules                                                                      | Notes                                                                                                                                                          |
 | --------------------------------------- | ------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |

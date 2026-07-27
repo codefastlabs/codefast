@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 /**
  * Parent harness: rebuild @codefast/tailwind-variants, run each library bench in its own subprocess
- * (order: @codefast/tailwind-variants → tailwind-variants → class-variance-authority), then emit
- * pairwise reports vs @codefast/tailwind-variants for tailwind-variants and for cva.
+ * (order: @codefast/tailwind-variants → tailwind-variants → class-variance-authority), then emit one
+ * report with @codefast/tailwind-variants as the pivot.
  */
 import { spawnSync } from "node:child_process";
 import { dirname, join } from "node:path";
@@ -29,12 +29,7 @@ import {
 import type { SubprocessPayload } from "@codefast/benchmark-harness/shared/protocol";
 
 import { CODEFAST_TV, CVA, TAILWIND_VARIANTS } from "#/harness/config";
-import {
-  CODEFAST_VS_CVA_CONSOLE,
-  CODEFAST_VS_CVA_MARKDOWN,
-  CODEFAST_VS_TAILWIND_VARIANTS_CONSOLE,
-  CODEFAST_VS_TAILWIND_VARIANTS_MARKDOWN,
-} from "#/harness/presentation";
+import { TAILWIND_VARIANTS_COMPARISON_CONSOLE, TAILWIND_VARIANTS_COMPARISON_MARKDOWN } from "#/harness/presentation";
 
 const VERBOSE_MODE_ENABLED = process.env[BENCH_VERBOSE_ENV_KEY] === "1";
 
@@ -59,13 +54,9 @@ function rebuildCodefastTailwindVariantsPackage(): void {
 
 function buildOutputPaths(): {
   runDirectory: string;
-  vsTailwindVariantsMarkdownPath: string;
-  vsClassVarianceAuthorityMarkdownPath: string;
-  combinedMarkdownPath: string;
+  markdownPath: string;
   jsonlPath: string;
-  latestVsTailwindVariantsMarkdownPath: string;
-  latestVsCvaMarkdownPath: string;
-  latestCombinedMarkdownPath: string;
+  latestMarkdownPath: string;
   latestJsonlPath: string;
 } {
   const timestamp = new Date().toISOString().replaceAll(":", "-").replaceAll(".", "-");
@@ -73,13 +64,9 @@ function buildOutputPaths(): {
   const runDirectory = join(benchResultsRoot, timestamp);
   return {
     runDirectory,
-    vsTailwindVariantsMarkdownPath: join(runDirectory, "report-vs-tailwind-variants.md"),
-    vsClassVarianceAuthorityMarkdownPath: join(runDirectory, "report-vs-class-variance-authority.md"),
-    combinedMarkdownPath: join(runDirectory, "report.md"),
+    markdownPath: join(runDirectory, "report.md"),
     jsonlPath: join(runDirectory, OBSERVATIONS_FILE_NAME),
-    latestVsTailwindVariantsMarkdownPath: join(benchResultsRoot, "latest-vs-tailwind-variants.md"),
-    latestVsCvaMarkdownPath: join(benchResultsRoot, "latest-vs-class-variance-authority.md"),
-    latestCombinedMarkdownPath: join(benchResultsRoot, "latest.md"),
+    latestMarkdownPath: join(benchResultsRoot, "latest.md"),
     latestJsonlPath: join(benchResultsRoot, "latest.jsonl"),
   };
 }
@@ -158,11 +145,8 @@ async function main(): Promise<void> {
     shortName: "cva",
   };
 
-  console.log(`\n--- Pairwise: ${CODEFAST_TV.libraryName} vs ${TAILWIND_VARIANTS.libraryName} ---\n`);
-  renderComparisonConsoleReport(codefastLibrary, [tailwindVariantsLibrary], CODEFAST_VS_TAILWIND_VARIANTS_CONSOLE);
-
-  console.log(`\n--- Pairwise: ${CODEFAST_TV.libraryName} vs ${CVA.libraryName} ---\n`);
-  renderComparisonConsoleReport(codefastLibrary, [classVarianceAuthorityLibrary], CODEFAST_VS_CVA_CONSOLE);
+  const competitors = [tailwindVariantsLibrary, classVarianceAuthorityLibrary];
+  renderComparisonConsoleReport(codefastLibrary, competitors, TAILWIND_VARIANTS_COMPARISON_CONSOLE);
 
   const librariesForJsonl = [
     { fingerprint: codefastPayload.fingerprint, trials: codefastPayload.trials },
@@ -173,37 +157,18 @@ async function main(): Promise<void> {
     },
   ];
 
-  const vsTailwindVariantsMarkdown = renderComparisonMarkdownReport(
-    codefastLibrary,
-    [tailwindVariantsLibrary],
-    CODEFAST_VS_TAILWIND_VARIANTS_MARKDOWN,
-  );
-  const vsCvaMarkdown = renderComparisonMarkdownReport(
-    codefastLibrary,
-    [classVarianceAuthorityLibrary],
-    CODEFAST_VS_CVA_MARKDOWN,
-  );
-  const combinedMarkdown = `${vsTailwindVariantsMarkdown}\n\n---\n\n${vsCvaMarkdown}\n`;
-
+  const markdown = renderComparisonMarkdownReport(codefastLibrary, competitors, TAILWIND_VARIANTS_COMPARISON_MARKDOWN);
   const outputPaths = buildOutputPaths();
-  writeMarkdownFile(outputPaths.vsTailwindVariantsMarkdownPath, vsTailwindVariantsMarkdown);
-  writeMarkdownFile(outputPaths.vsClassVarianceAuthorityMarkdownPath, vsCvaMarkdown);
-  writeMarkdownFile(outputPaths.combinedMarkdownPath, combinedMarkdown);
+  writeMarkdownFile(outputPaths.markdownPath, markdown);
   writeJsonlRun(outputPaths.jsonlPath, librariesForJsonl);
 
-  writeMarkdownFile(outputPaths.latestVsTailwindVariantsMarkdownPath, vsTailwindVariantsMarkdown);
-  writeMarkdownFile(outputPaths.latestVsCvaMarkdownPath, vsCvaMarkdown);
-  writeMarkdownFile(outputPaths.latestCombinedMarkdownPath, combinedMarkdown);
+  writeMarkdownFile(outputPaths.latestMarkdownPath, markdown);
   writeJsonlRun(outputPaths.latestJsonlPath, librariesForJsonl);
 
   console.log(`Run directory: ${outputPaths.runDirectory}`);
-  console.log(`Markdown (pair): ${outputPaths.vsTailwindVariantsMarkdownPath}`);
-  console.log(`Markdown (pair): ${outputPaths.vsClassVarianceAuthorityMarkdownPath}`);
-  console.log(`Markdown (combined): ${outputPaths.combinedMarkdownPath}`);
+  console.log(`Markdown report: ${outputPaths.markdownPath}`);
   console.log(`JSONL observations: ${outputPaths.jsonlPath}`);
-  console.log(
-    `Also mirrored to latest: ${outputPaths.latestVsTailwindVariantsMarkdownPath}, ${outputPaths.latestVsCvaMarkdownPath}, ${outputPaths.latestCombinedMarkdownPath}, ${outputPaths.latestJsonlPath}`,
-  );
+  console.log(`Also mirrored to latest: ${outputPaths.latestMarkdownPath}, ${outputPaths.latestJsonlPath}`);
 }
 
 main().catch((caught: unknown) => {

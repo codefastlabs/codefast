@@ -74,7 +74,6 @@ export {
 } from "#/report/reliability";
 
 export type {
-  ComparisonColumnProfile,
   ComparisonCompetitorCell,
   ComparisonCompetitorSummary,
   ComparisonConsoleReportOptions,

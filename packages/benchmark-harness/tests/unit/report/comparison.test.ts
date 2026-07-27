@@ -56,16 +56,14 @@ function library(
   return { report, displayName, shortName: displayName.slice(0, 3) };
 }
 
-const COMPACT: ComparisonMarkdownReportOptions = {
-  documentHeading: "# Report",
-  sectionHeading: "Core subset",
-  columnProfile: "compact",
-};
-
-const FULL: ComparisonMarkdownReportOptions = {
+const BARE: ComparisonMarkdownReportOptions = {
   documentHeading: "# Report",
   sectionHeading: "Comparable scenarios",
-  columnProfile: "full",
+};
+
+const WITH_SECTIONS: ComparisonMarkdownReportOptions = {
+  documentHeading: "# Report",
+  sectionHeading: "Comparable scenarios",
   includeEnvironment: true,
   includeSanityFailures: true,
 };
@@ -203,50 +201,50 @@ describe("summarizeComparison", () => {
 });
 
 describe("renderComparisonMarkdownReport", () => {
-  it("gives every library its own latency and IQR columns under the full profile", () => {
+  it("puts every library in one table: throughput each, a ratio each, one IQR cell", () => {
     const markdown = renderComparisonMarkdownReport(
-      library("di", [scenario("a", 200)]),
-      [library("inv", [scenario("a", 100)])],
-      FULL,
+      library("di", [scenario("a", 300)]),
+      [library("inv", [scenario("a", 100)]), library("awi", [scenario("a", 150)])],
+      WITH_SECTIONS,
     );
     const header = markdown.split("\n").find((line) => line.startsWith("| Scenario"))!;
 
     expect(header).toContain("di hz/op");
     expect(header).toContain("inv hz/op");
-    expect(header).toContain("di / inv");
-    expect(header).toContain("di mean ms");
-    expect(header).toContain("inv mean ms");
-    expect(header).toContain("di p99 ms");
-    expect(header).toContain("inv p99 ms");
-    expect(header).toContain("IQR (di / inv)");
-  });
-
-  it("drops per-library latency and IQR columns under the compact profile", () => {
-    const markdown = renderComparisonMarkdownReport(
-      library("di", [scenario("a", 300)]),
-      [library("inv", [scenario("a", 100)]), library("awi", [scenario("a", 150)])],
-      COMPACT,
-    );
-    const header = markdown.split("\n").find((line) => line.startsWith("| Scenario"))!;
-
+    expect(header).toContain("awi hz/op");
     expect(header).toContain("di / inv");
     expect(header).toContain("di / awi");
+    expect(header).toContain("IQR (di / inv / awi)");
+    // Latency stays as one pivot anchor; per-competitor mean and p99 live in the JSONL.
     expect(header).toContain("di mean ms");
     expect(header).not.toContain("inv mean ms");
-    expect(header).not.toContain("IQR");
+    expect(header).not.toContain("p99");
+  });
+
+  it("renders one row per pivot scenario, whatever each competitor covers", () => {
+    const markdown = renderComparisonMarkdownReport(
+      library("di", [scenario("shared", 300), scenario("di-only", 200)]),
+      [library("inv", [scenario("shared", 100), scenario("di-only", 100)]), library("awi", [scenario("shared", 150)])],
+      BARE,
+    );
+    const rows = markdown.split("\n").filter((line) => /^\| (?:shared|di-only) \|/.test(line));
+
+    expect(rows).toHaveLength(2);
+    // awilix covers only `shared`, so its cell on the other row is an em-dash rather than a missing row.
+    expect(rows.find((line) => line.startsWith("| di-only |"))).toContain("—");
   });
 
   it("emits environment and sanity sections only when asked", () => {
     const pivot = library("di", [scenario("a", 200)], ["skipped-scenario"]);
     const competitor = library("inv", [scenario("a", 100)]);
 
-    const withSections = renderComparisonMarkdownReport(pivot, [competitor], FULL);
+    const withSections = renderComparisonMarkdownReport(pivot, [competitor], WITH_SECTIONS);
     expect(withSections).toContain("## Environment");
     expect(withSections).toContain("Node v26.1.0 / V8 14.6");
     expect(withSections).toContain("## Sanity failures");
     expect(withSections).toContain("**di**: `skipped-scenario`");
 
-    const withoutSections = renderComparisonMarkdownReport(pivot, [competitor], COMPACT);
+    const withoutSections = renderComparisonMarkdownReport(pivot, [competitor], BARE);
     expect(withoutSections).not.toContain("## Environment");
     expect(withoutSections).not.toContain("## Sanity failures");
   });
@@ -255,7 +253,7 @@ describe("renderComparisonMarkdownReport", () => {
     const markdown = renderComparisonMarkdownReport(
       library("di", [scenario("m1", 200), scenario("m2", 800), scenario("f1", 10_000, "failure")]),
       [library("inv", [scenario("m1", 100), scenario("m2", 100), scenario("f1", 100, "failure")])],
-      FULL,
+      WITH_SECTIONS,
     );
 
     expect(markdown).toContain("**di vs inv**: 3 win / 0 parity / 0 loss of 3 comparable (100%)");
@@ -267,7 +265,7 @@ describe("renderComparisonMarkdownReport", () => {
     const markdown = renderComparisonMarkdownReport(
       library("di", [scenario("fast", above), scenario("slow", 200)]),
       [library("inv", [scenario("fast", above), scenario("slow", 100)])],
-      FULL,
+      WITH_SECTIONS,
     );
     const lines = markdown.split("\n");
 
@@ -281,7 +279,7 @@ describe("renderComparisonMarkdownReport", () => {
     const markdown = renderComparisonMarkdownReport(
       library("di", [scenario("fast", above)]),
       [library("inv", [scenario("fast", above)]), library("awi", [scenario("fast", above)])],
-      COMPACT,
+      BARE,
     );
 
     expect(markdown).toContain(formatReliabilityCaveatLine(2));
@@ -292,7 +290,7 @@ describe("renderComparisonMarkdownReport", () => {
     const markdown = renderComparisonMarkdownReport(
       library("di", [scenario("only-pivot", above)]),
       [library("inv", [])],
-      COMPACT,
+      BARE,
     );
 
     expect(markdown).toContain("—");
@@ -304,18 +302,14 @@ describe("renderComparisonMarkdownReport", () => {
       library("di", [scenario("a", 100)]),
       [library("inv", [scenario("a", 100)])],
       {
-        ...COMPACT,
+        ...BARE,
         introLines: ["Intro line."],
       },
     );
 
     expect(markdown).toContain("Intro line.");
     expect(
-      renderComparisonMarkdownReport(
-        library("di", [scenario("a", 100)]),
-        [library("inv", [scenario("a", 100)])],
-        COMPACT,
-      ),
+      renderComparisonMarkdownReport(library("di", [scenario("a", 100)]), [library("inv", [scenario("a", 100)])], BARE),
     ).not.toContain("Intro line.");
   });
 });
@@ -341,7 +335,6 @@ describe("renderComparisonConsoleReport", () => {
         [library("inversify", [scenario("alpha", 100), scenario("beta", 100)])],
         {
           sectionHeading: "Comparable scenarios",
-          columnProfile: "full",
         },
       );
     });
@@ -360,7 +353,6 @@ describe("renderComparisonConsoleReport", () => {
     const withHint = captureConsole(() => {
       renderComparisonConsoleReport(library("di", [scenario("a", 200)]), [library("inv", [scenario("a", 100)])], {
         sectionHeading: "Section",
-        columnProfile: "compact",
         footerHintLine: "Cite the table.",
       });
     });
@@ -369,7 +361,6 @@ describe("renderComparisonConsoleReport", () => {
     const withoutHint = captureConsole(() => {
       renderComparisonConsoleReport(library("di", [scenario("a", 200)]), [library("inv", [scenario("a", 100)])], {
         sectionHeading: "Section",
-        columnProfile: "compact",
       });
     });
     expect(withoutHint).not.toContain("Cite the table.");
