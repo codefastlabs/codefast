@@ -218,6 +218,8 @@ export class MissingContainerContextError extends DiError {
  * @remarks The builder types make this unreachable from TypeScript — `bind()` returns
  * `BindToBuilder`, which exposes only `to*()`. It exists for JavaScript callers and for anyone who
  * casts past the types, so the misuse fails loudly instead of mutating nothing.
+ *
+ * @since 0.5.0-canary.8
  */
 export class ChainNotRegisteredError extends DiError {
   readonly code = "CHAIN_NOT_REGISTERED";

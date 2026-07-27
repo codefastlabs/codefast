@@ -1,5 +1,11 @@
 # @codefast/benchmark-harness
 
+## 0.5.0-canary.8
+
+### Patch Changes
+
+- [#646](https://github.com/codefastlabs/codefast/pull/646) [`3044f96`](https://github.com/codefastlabs/codefast/commit/3044f96c4ea8987e8af8583b3b90e0f5c2021105) Thanks [@thevuong](https://github.com/thevuong)! - Raise the minimum per-scenario trial count from 2 to 3 in every profile. A median of two samples is just their mean, so a two-trial run cannot separate a real change from ambient noise — which is exactly the judgement the harness exists to support. `BENCH_TRIALS` now rejects anything below 3.
+
 ## 0.5.0-canary.7
 
 ## 0.5.0-canary.6

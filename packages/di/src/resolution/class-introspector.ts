@@ -10,6 +10,9 @@ import type { ConstructorMetadata, MetadataReader } from "#/metadata/metadata-ty
 import { runWithContainer } from "#/resolution/environment";
 import type { Constructor } from "#/types";
 
+/**
+ * @since 0.5.0-canary.8
+ */
 export class ClassIntrospector {
   // Unallocated until the container resolves its first class binding — a container bound entirely
   // to constants, factories or aliases never introspects one.

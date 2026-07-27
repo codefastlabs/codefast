@@ -79,6 +79,8 @@ export interface InstantiationPlanHost {
 /**
  * Which resolve an escaped dependency replays — mirrors how the interpreted path dispatches
  * a constructor param.
+ *
+ * @since 0.5.0-canary.8
  */
 export type EscapeArity = "all" | "optional" | "single";
 

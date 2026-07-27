@@ -8,6 +8,9 @@ import type { ClassIntrospector } from "#/resolution/class-introspector";
 import type { LifecycleManager } from "#/resolution/lifecycle";
 import type { BindingIdentifier } from "#/types";
 
+/**
+ * @since 0.5.0-canary.8
+ */
 export class ActivationNeedCache {
   readonly #needByBindingId = new Map<BindingIdentifier, boolean>();
   #version = -1;

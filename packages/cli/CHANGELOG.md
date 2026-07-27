@@ -1,5 +1,13 @@
 # @codefast/cli
 
+## 0.5.0-canary.8
+
+### Patch Changes
+
+- [#646](https://github.com/codefastlabs/codefast/pull/646) [`0bbb11c`](https://github.com/codefastlabs/codefast/commit/0bbb11cbd2d4822416e9b51ac854e3473223cca2) Thanks [@thevuong](https://github.com/thevuong)! - Add `mirror.<pkg>.exclude` — a list of specifiers to leave out of the generated `package.json#exports`, so a package's public surface is a decision rather than a consequence of its `dist/` layout. Patterns are matched against the specifier as it would appear in `exports` (after `strip`), a trailing `/*` drops a whole subtree, and the root export is never excluded.
+
+  Until now the only levers were `strip`, extra `exports`, and `preserve: true` — and `preserve` skips the dist scan entirely, so curating a surface meant hand-editing the map that the tool exists to generate. `exclude` closes that gap.
+
 ## 0.5.0-canary.7
 
 ## 0.5.0-canary.6

@@ -12,6 +12,8 @@ import type { Constructor } from "#/types";
  * A token's terminal binding with alias hops already folded, plus the container that owns it.
  *
  * @typeParam Owner - the resolver type, kept generic so this module stays free of resolver internals
+ *
+ * @since 0.5.0-canary.8
  */
 export interface DefaultLookupEntry<Owner> {
   readonly binding: Binding;
@@ -21,9 +23,14 @@ export interface DefaultLookupEntry<Owner> {
 /**
  * Alias folding gives up past this many hops and defers to the full resolve loop, whose
  * Set-based traversal detects genuine cycles exactly rather than by an arbitrary cap.
+ *
+ * @since 0.5.0-canary.8
  */
 export const ALIAS_HOP_LIMIT = 32;
 
+/**
+ * @since 0.5.0-canary.8
+ */
 export class BindingLookupCache<Owner> {
   readonly #byToken = new Map<Token<unknown> | Constructor, DefaultLookupEntry<Owner> | null>();
   #version = -1;
