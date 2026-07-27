@@ -2,7 +2,7 @@
   "name": "@codefast/benchmark-harness",
   "version": "0.5.0-canary.8",
   "private": true,
-  "description": "Shared tinybench harness utilities (subprocess protocol, fingerprinting, two-way reports) for Codefast benchmark packages",
+  "description": "Shared tinybench harness utilities (subprocess protocol, fingerprinting, pivot-vs-competitors reports) for Codefast benchmark packages",
   "license": "MIT",
   "author": "Vuong Phan <mr.thevuong@gmail.com>",
   "repository": {
@@ -96,6 +96,11 @@
       "types": "./dist/report/aggregate.d.ts",
       "import": "./dist/report/aggregate.js"
     },
+    "./report/comparison": {
+      "source": "./src/report/comparison.ts",
+      "types": "./dist/report/comparison.d.ts",
+      "import": "./dist/report/comparison.js"
+    },
     "./report/format": {
       "source": "./src/report/format.ts",
       "types": "./dist/report/format.d.ts",
@@ -106,20 +111,15 @@
       "types": "./dist/report/jsonl.d.ts",
       "import": "./dist/report/jsonl.js"
     },
-    "./report/n-way": {
-      "source": "./src/report/n-way.ts",
-      "types": "./dist/report/n-way.d.ts",
-      "import": "./dist/report/n-way.js"
-    },
     "./report/quantiles": {
       "source": "./src/report/quantiles.ts",
       "types": "./dist/report/quantiles.d.ts",
       "import": "./dist/report/quantiles.js"
     },
-    "./report/two-way": {
-      "source": "./src/report/two-way.ts",
-      "types": "./dist/report/two-way.d.ts",
-      "import": "./dist/report/two-way.js"
+    "./report/reliability": {
+      "source": "./src/report/reliability.ts",
+      "types": "./dist/report/reliability.d.ts",
+      "import": "./dist/report/reliability.js"
     },
     "./report/write": {
       "source": "./src/report/write.ts",

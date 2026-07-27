@@ -15,7 +15,11 @@ import {
   runBenchSubprocessIsolated,
 } from "@codefast/benchmark-harness/parent/run-bench-subprocess";
 import { buildLibraryReport, type LibraryReport } from "@codefast/benchmark-harness/report/aggregate";
-import { renderTwoWayConsoleReport, renderTwoWayMarkdownReport } from "@codefast/benchmark-harness/report/two-way";
+import type { ComparisonLibrary } from "@codefast/benchmark-harness/report/comparison";
+import {
+  renderComparisonConsoleReport,
+  renderComparisonMarkdownReport,
+} from "@codefast/benchmark-harness/report/comparison";
 import { writeJsonlRun, writeMarkdownFile } from "@codefast/benchmark-harness/report/write";
 import {
   BENCH_RESULTS_DIR_NAME,
@@ -138,17 +142,27 @@ async function main(): Promise<void> {
     classVarianceAuthorityPayload.sanityFailures,
   );
 
+  const codefastLibrary: ComparisonLibrary = {
+    report: codefastReport,
+    displayName: CODEFAST_TV.libraryName,
+    shortName: "cf",
+  };
+  const tailwindVariantsLibrary: ComparisonLibrary = {
+    report: tailwindVariantsReport,
+    displayName: TAILWIND_VARIANTS.libraryName,
+    shortName: "tv",
+  };
+  const classVarianceAuthorityLibrary: ComparisonLibrary = {
+    report: classVarianceAuthorityReport,
+    displayName: CVA.libraryName,
+    shortName: "cva",
+  };
+
   console.log(`\n--- Pairwise: ${CODEFAST_TV.libraryName} vs ${TAILWIND_VARIANTS.libraryName} ---\n`);
-  renderTwoWayConsoleReport(codefastReport, tailwindVariantsReport, CODEFAST_VS_TAILWIND_VARIANTS_CONSOLE, {
-    footerHintLine: "Markdown: report-vs-tailwind-variants.md in the run directory.",
-    headToHeadLabels: { left: "codefast", right: "tailwind-variants" },
-  });
+  renderComparisonConsoleReport(codefastLibrary, [tailwindVariantsLibrary], CODEFAST_VS_TAILWIND_VARIANTS_CONSOLE);
 
   console.log(`\n--- Pairwise: ${CODEFAST_TV.libraryName} vs ${CVA.libraryName} ---\n`);
-  renderTwoWayConsoleReport(codefastReport, classVarianceAuthorityReport, CODEFAST_VS_CVA_CONSOLE, {
-    footerHintLine: "Markdown: report-vs-class-variance-authority.md in the run directory.",
-    headToHeadLabels: { left: "codefast", right: "cva" },
-  });
+  renderComparisonConsoleReport(codefastLibrary, [classVarianceAuthorityLibrary], CODEFAST_VS_CVA_CONSOLE);
 
   const librariesForJsonl = [
     { fingerprint: codefastPayload.fingerprint, trials: codefastPayload.trials },
@@ -159,14 +173,14 @@ async function main(): Promise<void> {
     },
   ];
 
-  const vsTailwindVariantsMarkdown = renderTwoWayMarkdownReport(
-    codefastReport,
-    tailwindVariantsReport,
+  const vsTailwindVariantsMarkdown = renderComparisonMarkdownReport(
+    codefastLibrary,
+    [tailwindVariantsLibrary],
     CODEFAST_VS_TAILWIND_VARIANTS_MARKDOWN,
   );
-  const vsCvaMarkdown = renderTwoWayMarkdownReport(
-    codefastReport,
-    classVarianceAuthorityReport,
+  const vsCvaMarkdown = renderComparisonMarkdownReport(
+    codefastLibrary,
+    [classVarianceAuthorityLibrary],
     CODEFAST_VS_CVA_MARKDOWN,
   );
   const combinedMarkdown = `${vsTailwindVariantsMarkdown}\n\n---\n\n${vsCvaMarkdown}\n`;

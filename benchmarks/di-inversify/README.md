@@ -138,7 +138,7 @@ Things to check before drawing conclusions:
 
 ## Scenario inventory
 
-**Authoritative order** on the codefast side is `src/scenarios/collect-codefast-scenarios.ts`. Inversify’s list is `collect-inversify-scenarios.ts`: it includes the same shared modules in the same relative blocks but **omits** codefast-only sources (`realistic-graph-validate.ts`, `initialize-inspect.ts`, `multi-tag-constraint.ts`). Head-to-head rows still align by shared **`id`** strings; codefast-only ids appear with “—” on the inversify side. **awilix** and **tsyringe** (`collect-{awilix,tsyringe}-scenarios.ts`) implement only the core subset — `micro.ts`, `realistic.ts`, `scale.ts`, `fan-out/` — and appear only in the N-way table, never the full two-way table.
+**Authoritative order** on the codefast side is `src/scenarios/collect-codefast-scenarios.ts`. Inversify’s list is `collect-inversify-scenarios.ts`: it includes the same shared modules in the same relative blocks but **omits** codefast-only sources (`realistic-graph-validate.ts`, `initialize-inspect.ts`, `multi-tag-constraint.ts`). Head-to-head rows still align by shared **`id`** strings; codefast-only ids appear with “—” on the inversify side. **awilix** and **tsyringe** (`collect-{awilix,tsyringe}-scenarios.ts`) implement only the core subset — `micro.ts`, `realistic.ts`, `scale.ts`, `fan-out/` — and appear only in the core-subset table, never the full head-to-head table.
 
 | Area                                    | `codefast/` / `inversify/` modules                                                                      | Notes                                                                                                                                                          |
 | --------------------------------------- | ------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -157,7 +157,7 @@ benchmarks/di-inversify/
     harness/                         # this package’s bench driver (uses @codefast/benchmark-harness for wire + reports)
       run.ts                         # parent: rebuild @codefast/di, spawn subprocesses (shared or BENCH_ISOLATE), write report.md + JSONL + console
       serve.ts                       # serve bench-results/ for the benchmark viewer
-      presentation.ts                # markdown + console column copy for the two-way + N-way reports
+      presentation.ts                # markdown + console copy for the head-to-head + core-subset reports
       config.ts                      # library names / tsconfig / entry-file wiring
       batched.ts                     # inner-loop helper for sub-μs scenarios (throughput × batch)
     scenarios/
@@ -227,9 +227,9 @@ benchmarks/di-inversify/
   BENCH_GUIDE.md
 ```
 
-The core subset (`scenarios/{awilix,tsyringe}/**`) implements only the factory/class-binding scenarios all four libraries support; `run.ts` renders them as an N-way table (di pivot) via `@codefast/benchmark-harness/report/n-way`, appended after the full di-vs-inversify two-way report.
+The core subset (`scenarios/{awilix,tsyringe}/**`) implements only the factory/class-binding scenarios all four libraries support; `run.ts` renders them as a core-subset table (di pivot) via `@codefast/benchmark-harness/report/comparison`, appended after the full di-vs-inversify head-to-head report.
 
-**Shared workspace package:** `@codefast/benchmark-harness` owns the framed stdout protocol (`emitSubprocessPayload` / `extractSubprocessPayload`), fingerprinting, `runBenchSubprocess` + `runBenchSubprocessIsolated`, `buildLibraryReport`, the head-to-head summary (`summarizeTwoWayComparison`), and the markdown + JSONL writers. This benchmark package does **not** ship `protocol.ts` / `report.ts` under `src/harness/`.
+**Shared workspace package:** `@codefast/benchmark-harness` owns the framed stdout protocol (`emitSubprocessPayload` / `extractSubprocessPayload`), fingerprinting, `runBenchSubprocess` + `runBenchSubprocessIsolated`, `buildLibraryReport`, the head-to-head summary (`summarizeComparison`), and the markdown + JSONL writers. This benchmark package does **not** ship `protocol.ts` / `report.ts` under `src/harness/`.
 
 **Import boundaries**
 

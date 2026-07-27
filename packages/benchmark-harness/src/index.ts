@@ -74,12 +74,23 @@ export {
 } from "#/report/reliability";
 
 export type {
-  TwoWayConsoleColumnLabels,
-  TwoWayConsoleReportOptions,
-  TwoWayMarkdownColumnTitles,
-  TwoWayMarkdownReportOptions,
-  TwoWayScenarioComparisonRow,
-} from "#/report/two-way";
-export { buildTwoWayComparisonRows, renderTwoWayConsoleReport, renderTwoWayMarkdownReport } from "#/report/two-way";
+  ComparisonColumnProfile,
+  ComparisonCompetitorCell,
+  ComparisonCompetitorSummary,
+  ComparisonConsoleReportOptions,
+  ComparisonEntry,
+  ComparisonGroupGeomean,
+  ComparisonHeadToHead,
+  ComparisonLibrary,
+  ComparisonMarkdownReportOptions,
+  ComparisonScenarioRow,
+} from "#/report/comparison";
+export {
+  buildComparisonRows,
+  renderComparisonConsoleReport,
+  renderComparisonMarkdownReport,
+  summarizeAgainstCompetitor,
+  summarizeComparison,
+} from "#/report/comparison";
 
 export { writeJsonlRun, writeMarkdownFile } from "#/report/write";

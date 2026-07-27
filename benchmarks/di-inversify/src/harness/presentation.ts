@@ -1,52 +1,38 @@
-import type { NWayReportOptions } from "@codefast/benchmark-harness/report/n-way";
 import type {
-  TwoWayConsoleColumnLabels,
-  TwoWayMarkdownReportOptions,
-} from "@codefast/benchmark-harness/report/two-way";
-
-import { CODEFAST_DI, INVERSIFY } from "#/harness/config";
+  ComparisonConsoleReportOptions,
+  ComparisonMarkdownReportOptions,
+} from "@codefast/benchmark-harness/report/comparison";
 
 /**
- * Stable copy for Markdown / console output for `@codefast/di` vs InversifyJS 8.
+ * Stable copy for the head-to-head `@codefast/di` vs InversifyJS 8 report.
  * Keeps `run.ts` free of duplicated prose.
  *
  * @since 0.3.16-canary.0
  */
-export const DI_INVERSIFY_MARKDOWN = {
+export const DI_INVERSIFY_MARKDOWN: ComparisonMarkdownReportOptions = {
   documentHeading: "# @codefast/di vs InversifyJS 8 — benchmark report",
-  columnTitles: {
-    leftThroughput: "codefast hz/op",
-    rightThroughput: "inversify hz/op",
-    ratioHeading: "codefast / inversify",
-    leftMeanMs: "codefast mean ms",
-    rightMeanMs: "inversify mean ms",
-    leftP99Ms: "codefast p99 ms",
-    rightP99Ms: "inversify p99 ms",
-    iqrCombinedHeading: "IQR (cf / inv)",
-  },
-  comparableScenarioIntroLines: [
+  sectionHeading: "Comparable scenarios",
+  columnProfile: "full",
+  includeEnvironment: true,
+  includeSanityFailures: true,
+  introLines: [
     "Each library runs at its **canonical decorator mode** — inversify with legacy experimental decorators + `reflect-metadata`, @codefast/di with TC39 Stage 3 decorators + `Symbol.metadata`. This measures the shipping experience of each library, not the raw decorator runtimes in isolation.",
     "",
-    "Cite these rows when comparing the libraries. `hz/op` is operations per second per logical operation (tinybench `throughput.mean` multiplied by `batch`). `IQR (cf / inv)` is the interquartile range of the per-trial throughput across the trial loop — treat rows above ~5% as noisy.",
+    "Cite these rows when comparing the libraries. `hz/op` is operations per second per logical operation (tinybench `throughput.mean` multiplied by `batch`). The `IQR` column is the interquartile range of the per-trial throughput across the trial loop — treat rows above ~5% as noisy.",
     "",
     "Run with `BENCH_ISOLATE=1` to bench each scenario in its own subprocess, removing cross-scenario inline-cache wear (~30% on async chains in a shared process).",
   ],
-  fingerprintLibraryVersionLabels: {
-    left: CODEFAST_DI.libraryName,
-    right: INVERSIFY.libraryName,
-  },
-  sanityBulletMarkdownLabels: {
-    left: "**@codefast/di**",
-    right: "**inversify**",
-  },
-} as const satisfies TwoWayMarkdownReportOptions;
+};
 
 /**
+ * The core subset every library can express, so a wide table stays readable on ratios alone.
+ *
  * @since 0.5.0-canary.7
  */
-export const DI_NWAY_REPORT: NWayReportOptions = {
+export const DI_NWAY_MARKDOWN: ComparisonMarkdownReportOptions = {
   documentHeading: "# @codefast/di — N-way core-subset comparison",
   sectionHeading: "N-way core subset (di vs inversify vs awilix vs tsyringe)",
+  columnProfile: "compact",
   introLines: [
     "The core subset is the set of factory/class-binding scenarios every library supports. `hz/op` is operations per second per logical operation; ratio columns are @codefast/di over each competitor. A `—` means the competitor never measured that scenario.",
   ],
@@ -55,13 +41,16 @@ export const DI_NWAY_REPORT: NWayReportOptions = {
 /**
  * @since 0.3.16-canary.0
  */
-export const DI_INVERSIFY_CONSOLE: TwoWayConsoleColumnLabels = {
+export const DI_INVERSIFY_CONSOLE: ComparisonConsoleReportOptions = {
   sectionHeading: "Comparable scenarios",
-  leftThroughputHeader: "codefast hz/op",
-  rightThroughputHeader: "inversify hz/op",
-  ratioHeader: "cf/inv",
-  leftMeanHeader: "cf mean ms",
-  rightMeanHeader: "inv mean ms",
-  leftP99Header: "cf p99 ms",
-  rightP99Header: "inv p99 ms",
+  columnProfile: "full",
+  footerHintLine: "Cite the 'Comparable scenarios' table.",
+};
+
+/**
+ * @since 0.5.0-canary.7
+ */
+export const DI_NWAY_CONSOLE: ComparisonConsoleReportOptions = {
+  sectionHeading: "N-way core subset (di vs inversify vs awilix vs tsyringe)",
+  columnProfile: "compact",
 };
