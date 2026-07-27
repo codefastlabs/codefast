@@ -10,7 +10,13 @@
       "./tests/*/index.ts",
       "./tests/*/index.tsx"
     ],
-    "#/*": "./src/*"
+    "#/*": [
+      "./src/*",
+      "./src/*.ts",
+      "./src/*.tsx",
+      "./src/*/index.ts",
+      "./src/*/index.tsx"
+    ]
   },
   "scripts": {
     "dev": "vite dev --port 3000",
