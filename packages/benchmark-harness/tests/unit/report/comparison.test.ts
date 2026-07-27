@@ -10,8 +10,11 @@ import {
   summarizeComparison,
 } from "#/report/comparison";
 import {
+  NOISY_IQR_FRACTION,
+  NOISY_IQR_MARKER,
   THROUGHPUT_NOISE_CEILING_HZ_PER_OP,
   UNRELIABLE_RATIO_MARKER,
+  formatNoisyIqrCaveatLine,
   formatReliabilityCaveatLine,
 } from "#/report/reliability";
 import type { Fingerprint } from "#/shared/protocol";
@@ -90,7 +93,7 @@ describe("buildComparisonRows", () => {
   it("zeroes the whole cell for a competitor missing the scenario", () => {
     const rows = buildComparisonRows(library("di", [scenario("di-only", 100)]), [library("awi", [])]);
 
-    expect(rows[0]!.competitors[0]).toEqual({ hzPerOp: 0, ratio: 0, iqrFraction: 0, meanMs: 0, p99Ms: 0 });
+    expect(rows[0]!.competitors[0]).toEqual({ hzPerOp: 0, ratio: 0, iqrFraction: 0 });
   });
 
   it("keeps one cell per competitor in competitor order", () => {
@@ -201,7 +204,7 @@ describe("summarizeComparison", () => {
 });
 
 describe("renderComparisonMarkdownReport", () => {
-  it("puts every library in one table: throughput each, a ratio each, one IQR cell", () => {
+  it("carries one throughput column and one ratio column per competitor, nothing derivable", () => {
     const markdown = renderComparisonMarkdownReport(
       library("di", [scenario("a", 300)]),
       [library("inv", [scenario("a", 100)]), library("awi", [scenario("a", 150)])],
@@ -210,15 +213,13 @@ describe("renderComparisonMarkdownReport", () => {
     const header = markdown.split("\n").find((line) => line.startsWith("| Scenario"))!;
 
     expect(header).toContain("di hz/op");
-    expect(header).toContain("inv hz/op");
-    expect(header).toContain("awi hz/op");
-    expect(header).toContain("di / inv");
-    expect(header).toContain("di / awi");
-    expect(header).toContain("IQR (di / inv / awi)");
-    // Latency stays as one pivot anchor; per-competitor mean and p99 live in the JSONL.
-    expect(header).toContain("di mean ms");
-    expect(header).not.toContain("inv mean ms");
-    expect(header).not.toContain("p99");
+    expect(header).toContain("vs inv");
+    expect(header).toContain("vs awi");
+    // Competitor throughput, latency and IQR are all recoverable from the ratio or the JSONL.
+    expect(header).not.toContain("inv hz/op");
+    expect(header).not.toContain("mean ms");
+    expect(header).not.toContain("IQR");
+    expect(markdown.split("\n").find((line) => line.startsWith("| a |"))).toContain("3.00×");
   });
 
   it("renders one row per pivot scenario, whatever each competitor covers", () => {
@@ -249,15 +250,45 @@ describe("renderComparisonMarkdownReport", () => {
     expect(withoutSections).not.toContain("## Sanity failures");
   });
 
-  it("reports win/parity/loss, geomean by group, and losses per competitor", () => {
+  it("summarizes each competitor on one row, so the summary does not grow with the table", () => {
     const markdown = renderComparisonMarkdownReport(
-      library("di", [scenario("m1", 200), scenario("m2", 800), scenario("f1", 10_000, "failure")]),
-      [library("inv", [scenario("m1", 100), scenario("m2", 100), scenario("f1", 100, "failure")])],
+      library("di", [scenario("a", 200), scenario("b", 800)]),
+      [library("inv", [scenario("a", 100), scenario("b", 100)]), library("awi", [scenario("a", 400)])],
       WITH_SECTIONS,
     );
 
-    expect(markdown).toContain("**di vs inv**: 3 win / 0 parity / 0 loss of 3 comparable (100%)");
-    expect(markdown).toContain("Geomean by group: micro 4.00× (2), failure 100.0× (1).");
+    expect(markdown).toContain("| Competitor | Comparable | Win / parity / loss | Median | Geomean |");
+    expect(markdown).toContain("| inv | 2 of 2 | 2 / 0 / 0 | 5.00× | 4.00× |");
+    // awilix measured one of the two rows, and the coverage column is where that shows.
+    expect(markdown).toContain("| awi | 1 of 2 | 0 / 0 / 1 | 0.50× | 0.50× |");
+  });
+
+  it("lays geomean by group out as a group × competitor matrix", () => {
+    const markdown = renderComparisonMarkdownReport(
+      library("di", [scenario("m1", 200), scenario("m2", 800), scenario("f1", 10_000, "failure")]),
+      [
+        library("inv", [scenario("m1", 100), scenario("m2", 100), scenario("f1", 100, "failure")]),
+        library("awi", [scenario("m1", 100), scenario("m2", 100)]),
+      ],
+      WITH_SECTIONS,
+    );
+
+    expect(markdown).toContain("| Group | inv | awi |");
+    expect(markdown).toContain("| micro | 4.00× (2) | 4.00× (2) |");
+    // awilix never runs the error path, so its cell is an em-dash rather than a missing group row.
+    expect(markdown).toContain("| failure | 100.0× (1) | — |");
+  });
+
+  it("lists losses and parity per competitor, and never a cherry-picked best row", () => {
+    const markdown = renderComparisonMarkdownReport(
+      library("di", [scenario("won", 800), scenario("lost", 50), scenario("drew", 100)]),
+      [library("inv", [scenario("won", 100), scenario("lost", 100), scenario("drew", 100)])],
+      WITH_SECTIONS,
+    );
+
+    expect(markdown).toContain("- **inv** — losses: `lost` (0.50×)");
+    expect(markdown).toContain("- **inv** — parity: `drew` (1.00×)");
+    expect(markdown).not.toContain("Biggest wins");
   });
 
   it("marks a high-throughput ratio and prints the caveat beneath the table", () => {
@@ -293,8 +324,25 @@ describe("renderComparisonMarkdownReport", () => {
       BARE,
     );
 
-    expect(markdown).toContain("—");
-    expect(markdown).not.toContain(UNRELIABLE_RATIO_MARKER);
+    const row = markdown.split("\n").find((line) => line.startsWith("| only-pivot |"))!;
+
+    expect(row).toContain("—");
+    expect(row).not.toContain(UNRELIABLE_RATIO_MARKER);
+  });
+
+  it("marks a wide-IQR median on both its throughput and its ratio, and counts every marked cell", () => {
+    const noisy = { ...scenario("noisy", 200), hzPerOpIqrFraction: NOISY_IQR_FRACTION * 2 };
+    const markdown = renderComparisonMarkdownReport(
+      library("di", [noisy, scenario("tight", 200)]),
+      [library("inv", [scenario("noisy", 100), scenario("tight", 100)])],
+      BARE,
+    );
+    const lines = markdown.split("\n");
+
+    expect(lines.find((line) => line.startsWith("| noisy |"))).toContain(`200${NOISY_IQR_MARKER}`);
+    expect(lines.find((line) => line.startsWith("| noisy |"))).toContain(`2.00×${NOISY_IQR_MARKER}`);
+    expect(lines.find((line) => line.startsWith("| tight |"))).not.toContain(NOISY_IQR_MARKER);
+    expect(markdown).toContain(formatNoisyIqrCaveatLine(2));
   });
 
   it("omits the intro block when no intro lines are given", () => {
@@ -342,8 +390,8 @@ describe("renderComparisonConsoleReport", () => {
     expect(output).toContain("Comparable scenarios");
     // shortName is the first three characters of displayName in this fixture.
     expect(output).toContain("cod hz/op");
-    expect(output).toContain("inv hz/op");
-    expect(output).toContain("cod/inv");
+    expect(output).not.toContain("inv hz/op");
+    expect(output).toContain("vs inv");
     expect(output).toContain("alpha");
     expect(output).toContain("beta");
     expect(output).toContain("2.00×");

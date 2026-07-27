@@ -1,4 +1,15 @@
 /**
+ * A multiple of 1, dropping a decimal past 10 so a fail-fast outlier stays one column wide.
+ * Em-dash when there is no meaningful multiple.
+ */
+export function formatRatioMultiple(ratio: number): string {
+  if (!Number.isFinite(ratio) || ratio <= 0) {
+    return "—";
+  }
+  return `${ratio >= 10 ? ratio.toFixed(1) : ratio.toFixed(2)}×`;
+}
+
+/**
  * Em-dash when the throughput ratio is undefined or meaningless.
  *
  * @since 0.3.16-canary.0
@@ -7,7 +18,7 @@ export function formatThroughputRatio(numeratorHz: number, denominatorHz: number
   if (denominatorHz <= 0 || numeratorHz <= 0) {
     return "—";
   }
-  return `${(numeratorHz / denominatorHz).toFixed(2)}×`;
+  return formatRatioMultiple(numeratorHz / denominatorHz);
 }
 
 /**
@@ -20,26 +31,4 @@ export function formatThroughputOpsPerSecond(hzPerOpOrIteration: number): string
     return "—";
   }
   return Math.round(hzPerOpOrIteration).toLocaleString("en-US");
-}
-
-/**
- * Formats latency mean(ms) tinybench-derived values for tables.
- *
- * @since 0.3.16-canary.0
- */
-export function formatLatencyMeanMilliseconds(ms: number): string {
-  if (ms <= 0) {
-    return "—";
-  }
-  return ms.toFixed(4);
-}
-
-/**
- * @since 0.3.16-canary.0
- */
-export function formatIqrThroughputFraction(iqr: number): string {
-  if (!Number.isFinite(iqr) || iqr <= 0) {
-    return "—";
-  }
-  return `${(iqr * 100).toFixed(1)}%`;
 }

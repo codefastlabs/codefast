@@ -52,25 +52,28 @@ export {
 export type { AggregatedScenarioResult, LibraryReport } from "#/report/aggregate";
 export { buildLibraryReport } from "#/report/aggregate";
 
-export {
-  formatIqrThroughputFraction,
-  formatLatencyMeanMilliseconds,
-  formatThroughputOpsPerSecond,
-  formatThroughputRatio,
-} from "#/report/format";
+export { formatRatioMultiple, formatThroughputOpsPerSecond, formatThroughputRatio } from "#/report/format";
 
 export type { JsonlBenchObservationRow } from "#/report/jsonl";
 export { jsonlBenchObservationRowToFingerprint, jsonlBenchObservationRowToScenarioTrialResult } from "#/report/jsonl";
 
 export { quantile, sortAscending } from "#/report/quantiles";
 
+export type { ThroughputQuality } from "#/report/reliability";
 export {
+  NOISY_IQR_FRACTION,
+  NOISY_IQR_MARKER,
   THROUGHPUT_NOISE_CEILING_HZ_PER_OP,
   UNRELIABLE_RATIO_MARKER,
+  formatNoisyIqrCaveatLine,
   formatReliabilityCaveatLine,
+  isIqrNoisy,
+  isRatioNoisy,
   isRatioUnreliable,
   isThroughputAboveNoiseCeiling,
-  markRatioReliability,
+  isThroughputCellNoisy,
+  markRatioQuality,
+  markThroughputQuality,
 } from "#/report/reliability";
 
 export type {
