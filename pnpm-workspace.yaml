@@ -74,7 +74,7 @@ catalog:
   hono: ^4.12.32
   input-otp: ^1.4.2
   inversify: ^8.2.3
-  jest-axe: ^10.0.0
+  jest-axe: ^11.0.0
   jiti: ^2.7.0
   jsdom: ^29.1.1
   knip: ^6.29.0
