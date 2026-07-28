@@ -31,6 +31,8 @@
     "deps:update": "pnpm update --latest --recursive",
     "deps:update:interactive": "pnpm dlx taze@latest latest --recursive --interactive --write --install && pnpm build:packages",
     "dev": "turbo run dev",
+    "di:bench": "turbo run bench --filter=@codefast/benchmark-di-inversify",
+    "di:bench:serve": "turbo run bench:serve --filter=@codefast/benchmark-di-inversify",
     "format": "oxfmt",
     "format:check": "oxfmt --check",
     "knip": "knip",
