@@ -2593,7 +2593,7 @@ packages/di/
 │   │   ├── scope.ts           ScopeManager — cache singleton/scoped, serialize async
 │   │   ├── lifecycle.ts       LifecycleManager — chuỗi onActivation/onDeactivation
 │   │   ├── binding-select.ts  selectBinding(), selectAllBindings()
-│   │   ├── binding-scope.ts   effectiveBindingScope()
+│   │   ├── binding-scope.ts   effectiveBindingScope() — internal; dùng BindingSnapshot.scope
 │   │   ├── constraints.ts     Đánh giá predicate/slot constraint
 │   │   └── resolve-options.ts injectionSlotToResolveOptions(), bindingSlotToResolveOptions()
 │   │
@@ -2669,7 +2669,6 @@ export type {
 export { Container } from "#/container";
 export type { Container as ContainerInterface, ContainerStatic } from "#/container";
 
-export { effectiveBindingScope } from "#/binding-scope";
 export { injectionSlotToResolveOptions, bindingSlotToResolveOptions } from "#/resolve-options";
 
 // Introspection types

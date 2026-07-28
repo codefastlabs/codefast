@@ -1,4 +1,3 @@
-import type { BindingSlot } from "#/binding";
 import type { Token } from "#/token";
 import type { BindingTag, Constructor, ResolveOptions } from "#/types";
 
@@ -57,10 +56,17 @@ export function injectionSlotToResolveOptions(injectionSlot: {
 }
 
 /**
- * Resolve options derived from a binding {@link BindingSlot} (tags may be empty; omits when nothing to match).
+ * Resolve options derived from a binding slot (tags may be empty; omits when nothing to match).
+ *
+ * @remarks Takes the slot structurally rather than as `BindingSlot`, so the slot on a public
+ * `BindingSnapshot` — where `name` is an optional property, not a required one holding `undefined` —
+ * is accepted by the same call.
  *
  * @since 0.3.16-canary.0
  */
-export function bindingSlotToResolveOptions(bindingSlot: BindingSlot): ResolveOptions | undefined {
+export function bindingSlotToResolveOptions(bindingSlot: {
+  readonly name?: string | undefined;
+  readonly tags: ReadonlyArray<BindingTag>;
+}): ResolveOptions | undefined {
   return buildOptions(bindingSlot.name, bindingSlot.tags.length > 0 ? bindingSlot.tags : undefined);
 }
