@@ -85,6 +85,25 @@ Two shapes here look like copy-paste of `#resolveBinding` and are not. Both were
 
 The same reasoning covers two smaller shapes: `#namedBindingsFromChain` returns `[binding]` whole for a root container rather than growing an empty list (a name matches at most once per registry, so the size is known), and `#findBinding` treats a lone candidate as its own selection — matching it _is_ the decision, with no specificity to weigh and no ambiguity to report, which is what makes `resolve-optional-hit` ~1.5× its previous throughput.
 
+**An upsert's fallback is eager or computed by hit rate, not by taste.** `Map.prototype.getOrInsert`
+evaluates its fallback on every call; `getOrInsertComputed` calls a function only on a miss. So the
+choice follows which case dominates. `BindingLookupCache.namedEntry()` runs on every named resolve and
+almost always hits, and switching it to the computed form — with the factory hoisted to module scope,
+so no closure is allocated per call either — is worth **~1.72×** on `named-constant-get`. The registry's
+`add()` and index insertions are the mirror image: a bind is usually the token's first, so the fallback
+is usually the value that gets stored, and the computed form there measured **~4% slower** on
+`boot-decorated-container-build-and-resolve` and `module-cold-from-modules`. Both forms are in the tree
+on purpose.
+
+**A tag index cannot express the tag matcher.** The registry keys tagged bindings in a `Map`, whose key
+equality is SameValueZero, while tag values compare by `Object.is` (SPEC §3.5). They part on exactly
+one pair — `+0` and `-0` — and that was enough for one question to have three answers: `resolve` with
+`tags: [pair]` matched, `resolve` with `tag: pair` threw, and `resolveAll` returned nothing. The lane now
+re-checks, but only where the index can be wrong: a request whose value is not zero is already exact, so
+the common path pays one comparison against a literal rather than a call into the matcher. Re-checking
+with the full `matchesSlot` instead cost **~42%** on `tagged-binding-resolve`; the narrow check costs
+**~5%**, which is the price of the answer being the same in all three places.
+
 **A hash lookup a loop repeats deserves an inline cache, and a memo already inlined deserves nothing.** `LifecycleManager.activationHandlersFor()` keeps a one-entry token→hooks cache in front of its map, invalidated by `registerActivation` — a resolve loop asks about the same token every iteration. The mirror-image change failed: folding `#getResolutionFrame` into a single expression so it would inline, with the build extracted to a cold method, cost **~6%** on `fan-out-tree-depth-3-breadth-4` (five paired passes, all five negative) and was reverted. A profile showing self-time in a memo is not evidence that the memo is the cost.
 
 **What sharing the lookup cost, and why it is still shared.** `resolve` and `resolveAsync` both take their terminal binding from `#requireBinding`, so the alias-cycle walk and the not-bound diagnostics exist once. The frame that adds costs `misconfigured-missing-binding` ~5%: an error path is dominated by capturing its stack, and a deeper throw site captures more of it. Constructing the error at the throw site rather than in a helper recovered most of it; the rest is the price of not keeping two copies of the alias walk, and it is paid only when a resolve fails.
