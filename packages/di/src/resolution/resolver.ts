@@ -310,9 +310,15 @@ export class DependencyResolver implements ResolverCallbacks {
     resolutionPath: Array<string>,
     resolutionStack: Array<ResolutionFrame>,
   ): Value {
+    // Same O(1) cycle guard as the unhooked lane: this is still one sync call stack, so the flag
+    // *is* exact path membership — see ARCHITECTURE.md.
     const frame = this.#getResolutionFrame(binding);
     const tokenDisplayName = frame.tokenName;
-    const resolutionSet = enterResolutionPath(resolutionPath, tokenDisplayName);
+    if (binding.inFlight) {
+      throw new CircularDependencyError([...resolutionPath, tokenDisplayName]);
+    }
+    binding.inFlight = true;
+    resolutionPath.push(tokenDisplayName);
     resolutionStack.push(frame);
     try {
       const resolutionCtx = this.#acquireSyncResolutionContext(resolutionPath, resolutionStack, undefined);
@@ -341,7 +347,7 @@ export class DependencyResolver implements ResolverCallbacks {
     } finally {
       resolutionStack.pop();
       resolutionPath.pop();
-      resolutionSet?.delete(tokenDisplayName);
+      binding.inFlight = false;
     }
   }
 

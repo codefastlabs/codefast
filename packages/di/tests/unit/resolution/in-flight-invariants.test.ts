@@ -90,6 +90,61 @@ describe("binding.inFlight is released on every exit path", () => {
     // Both bindings were on the path when it unwound; either flag leaking breaks this.
     expect(container.resolve(rootToken)).toBe("root:leaf");
   });
+
+  it("survives a throwing factory that also carries activation hooks", () => {
+    // The hooked lane guards with the same flag as the unhooked one, so it owes the same release.
+    const serviceToken = token<string>("in-flight-hooked-throwing");
+    let shouldThrow = true;
+    const container = Container.create();
+    container.onActivation(serviceToken, (_ctx, instance) => `${instance}!`);
+    container
+      .bind(serviceToken)
+      .toDynamic(() => {
+        if (shouldThrow) {
+          throw new Error("hooked boom");
+        }
+        return "ok";
+      })
+      .transient();
+
+    expect(() => container.resolve(serviceToken)).toThrow("hooked boom");
+    shouldThrow = false;
+
+    expect(container.resolve(serviceToken)).toBe("ok!");
+  });
+
+  it("reports a cycle through a hooked binding, and resolves it once the cycle is gone", () => {
+    const alphaToken = token<string>("in-flight-hooked-alpha");
+    const betaToken = token<string>("in-flight-hooked-beta");
+    let cyclic = true;
+    const container = Container.create();
+    container.onActivation(alphaToken, (_ctx, instance) => instance);
+    container
+      .bind(alphaToken)
+      .toDynamic((ctx) => (cyclic ? `a:${ctx.resolve(betaToken)}` : "a"))
+      .transient();
+    container
+      .bind(betaToken)
+      .toDynamic((ctx) => `b:${ctx.resolve(alphaToken)}`)
+      .transient();
+
+    expect(() => container.resolve(alphaToken)).toThrow(CircularDependencyError);
+    cyclic = false;
+
+    expect(container.resolve(betaToken)).toBe("b:a");
+  });
+
+  it("a hook that re-resolves its own token reports a cycle, not a stack overflow", () => {
+    const serviceToken = token<string>("in-flight-hook-reentrant");
+    const container = Container.create();
+    container.onActivation(serviceToken, (ctx, instance) => `${instance}:${ctx.resolve(serviceToken)}`);
+    container
+      .bind(serviceToken)
+      .toDynamic(() => "value")
+      .transient();
+
+    expect(() => container.resolve(serviceToken)).toThrow(CircularDependencyError);
+  });
 });
 
 describe("the async chain context is released on every exit path", () => {
