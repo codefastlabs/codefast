@@ -249,6 +249,21 @@ export class RebindUnboundTokenError extends DiError {
 }
 
 /**
+ * `toSelf()` on a token that is not a class, so there is nothing to construct.
+ */
+export class SelfBindingRequiresClassError extends DiError {
+  readonly code = "SELF_BINDING_REQUIRES_CLASS";
+  readonly tokenName: string;
+
+  constructor(tokenName: string) {
+    super(
+      `toSelf() needs the token to be the class it constructs, and '${tokenName}' is not a class. Use .to(SomeClass) to name the implementation, or bind the class itself with container.bind(SomeClass).toSelf().`,
+    );
+    this.tokenName = tokenName;
+  }
+}
+
+/**
  * @since 0.3.16-canary.0
  */
 export class DisposedContainerError extends DiError {

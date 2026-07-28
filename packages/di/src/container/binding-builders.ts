@@ -19,7 +19,7 @@ import type {
 import { bindingSlotEquals, clearBindingFrame, createBinding, DEFAULT_BINDING_SLOT, refinableFields } from "#/binding";
 import type { InjectableDependency, ResolvedDependencyValue } from "#/decorators/inject";
 import { normalizeToDescriptor } from "#/decorators/inject";
-import { ChainNotRegisteredError } from "#/errors";
+import { ChainNotRegisteredError, SelfBindingRequiresClassError } from "#/errors";
 import type { BindingRegistry } from "#/registry";
 import type { Token } from "#/token";
 import { tokenName } from "#/token";
@@ -142,7 +142,7 @@ export class BindingChain<Value>
 
   toSelf(): BindingBuilder<Value> {
     if (typeof this.#token !== "function") {
-      throw new Error("toSelf() requires token to be a Constructor");
+      throw new SelfBindingRequiresClassError(tokenName(this.#token));
     }
     return this.#register({ kind: "class", target: this.#token, scope: "transient" });
   }

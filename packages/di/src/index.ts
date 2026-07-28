@@ -96,6 +96,7 @@ export {
   NoMatchingBindingError,
   RebindUnboundTokenError,
   ScopeViolationError,
+  SelfBindingRequiresClassError,
   SyncDisposalNotSupportedError,
   TokenNotBoundError,
 } from "#/errors";

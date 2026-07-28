@@ -2531,6 +2531,20 @@ class ChainNotRegisteredError extends DiError {
 
 TypeScript đã chặn trường hợp này qua kiểu trả về (§2.4), nên error chỉ tới được từ JavaScript hoặc khi caller cast qua kiểu. Nó tồn tại để misuse **nổ rõ ràng** thay vì âm thầm không làm gì.
 
+**`SelfBindingRequiresClassError`** — `toSelf()` trên token không phải class:
+
+```ts
+class SelfBindingRequiresClassError extends DiError {
+  readonly code = "SELF_BINDING_REQUIRES_CLASS";
+  readonly tokenName: string;
+  // "toSelf() needs the token to be the class it constructs, and 'Logger' is not a class.
+  //  Use .to(SomeClass) to name the implementation, or bind the class itself with
+  //  container.bind(SomeClass).toSelf()."
+}
+```
+
+`toSelf()` bind token **thành chính nó**, nên token phải là constructor. Một `token<Logger>("Logger")` không construct được gì. Như `ChainNotRegisteredError`, kiểu của `bind()` đã chặn phần lớn trường hợp — error này dành cho caller JavaScript hoặc caller đã cast qua kiểu, và nó thuộc taxonomy `DiError` để một `catch (error) { if (error instanceof DiError) … }` không để nó rơi ra ngoài.
+
 ---
 
 ## 11. File structure
