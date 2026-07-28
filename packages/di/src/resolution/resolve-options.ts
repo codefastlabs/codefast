@@ -7,8 +7,6 @@ import type { BindingTag, Constructor, ResolveOptions } from "#/types";
  *
  * @remarks Both dependency sources — a constructor's `ParamMetadata` and a `toResolved`
  * `InjectionDescriptor` — are this shape, which is why one resolve routine serves both.
- *
- * @since 0.5.0-canary.8
  */
 export interface DependencySlot {
   readonly token: Token<unknown> | Constructor;
@@ -20,8 +18,6 @@ export interface DependencySlot {
 
 /**
  * A request whose only criterion is a name — the shape the registry has a direct index for.
- *
- * @since 0.5.0-canary.8
  */
 export function isNameOnlyOptions(options: ResolveOptions): options is ResolveOptions & { name: string } {
   return (
