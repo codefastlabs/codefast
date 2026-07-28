@@ -58,18 +58,10 @@ export class LifecycleManager {
     let activatedInstance: Value = instance;
 
     // 1. @postConstruct() — after TC39 construction (constructor + accessor addInitializer callbacks)
-    if (binding.kind === "class") {
-      const lifecycle = metadataReader.getLifecycleMetadata(binding.target);
-      if (lifecycle?.postConstruct && lifecycle.postConstruct.length > 0) {
-        for (const methodName of lifecycle.postConstruct) {
-          const method = (activatedInstance as Record<string, unknown>)[methodName];
-          if (typeof method === "function") {
-            const hookResult = (method as () => unknown).call(activatedInstance);
-            if (hookResult instanceof Promise) {
-              await hookResult;
-            }
-          }
-        }
+    for (const methodName of lifecycleMethods(binding, metadataReader, "postConstruct")) {
+      const hookResult = callHook(activatedInstance, methodName);
+      if (hookResult instanceof Promise) {
+        await hookResult;
       }
     }
 
@@ -100,18 +92,9 @@ export class LifecycleManager {
     let activatedInstance: Value = instance;
 
     // 1. @postConstruct() — must be sync (instance fully constructed per TC39 order)
-    if (binding.kind === "class") {
-      const lifecycle = metadataReader.getLifecycleMetadata(binding.target);
-      if (lifecycle?.postConstruct && lifecycle.postConstruct.length > 0) {
-        for (const methodName of lifecycle.postConstruct) {
-          const method = (activatedInstance as Record<string, unknown>)[methodName];
-          if (typeof method === "function") {
-            const hookResult = (method as () => unknown).call(activatedInstance);
-            if (hookResult instanceof Promise) {
-              throw new AsyncActivationError(tokenName(binding.token), "postConstruct", methodName);
-            }
-          }
-        }
+    for (const methodName of lifecycleMethods(binding, metadataReader, "postConstruct")) {
+      if (callHook(activatedInstance, methodName) instanceof Promise) {
+        throw new AsyncActivationError(tokenName(binding.token), "postConstruct", methodName);
       }
     }
 
@@ -167,18 +150,10 @@ export class LifecycleManager {
     }
 
     // 3. @preDestroy() — all methods in declaration order
-    if (binding.kind === "class") {
-      const lifecycle = metadataReader.getLifecycleMetadata(binding.target);
-      if (lifecycle?.preDestroy && lifecycle.preDestroy.length > 0) {
-        for (const methodName of lifecycle.preDestroy) {
-          const method = (instance as Record<string, unknown>)[methodName];
-          if (typeof method === "function") {
-            const hookResult = (method as () => unknown).call(instance);
-            if (hookResult instanceof Promise) {
-              await hookResult;
-            }
-          }
-        }
+    for (const methodName of lifecycleMethods(binding, metadataReader, "preDestroy")) {
+      const hookResult = callHook(instance, methodName);
+      if (hookResult instanceof Promise) {
+        await hookResult;
       }
     }
   }
@@ -207,23 +182,35 @@ export class LifecycleManager {
     }
 
     // 3. @preDestroy()
-    if (binding.kind === "class") {
-      const lifecycle = metadataReader.getLifecycleMetadata(binding.target);
-      if (lifecycle?.preDestroy && lifecycle.preDestroy.length > 0) {
-        for (const methodName of lifecycle.preDestroy) {
-          const method = (instance as Record<string, unknown>)[methodName];
-          if (typeof method === "function") {
-            const hookResult = (method as () => unknown).call(instance);
-            if (hookResult instanceof Promise) {
-              throw new AsyncDeactivationError(tokenDisplayName);
-            }
-          }
-        }
+    for (const methodName of lifecycleMethods(binding, metadataReader, "preDestroy")) {
+      if (callHook(instance, methodName) instanceof Promise) {
+        throw new AsyncDeactivationError(tokenDisplayName);
       }
     }
   }
+
   /** Whether the deferred table behind `#activationHooks` has had to be built. */
   get isBuilt(): boolean {
     return this.#activationHooks !== undefined;
   }
+}
+
+const NO_METHODS: ReadonlyArray<string> = [];
+
+/** The `@postConstruct` / `@preDestroy` methods a binding declares — only a class can declare any. */
+function lifecycleMethods<const Value>(
+  binding: Binding<Value>,
+  metadataReader: MetadataReader,
+  phase: "postConstruct" | "preDestroy",
+): ReadonlyArray<string> {
+  if (binding.kind !== "class") {
+    return NO_METHODS;
+  }
+  return metadataReader.getLifecycleMetadata(binding.target)?.[phase] ?? NO_METHODS;
+}
+
+/** Invokes a hook by name, tolerating a name whose member is not (or no longer) a method. */
+function callHook(instance: unknown, methodName: string): unknown {
+  const method = (instance as Record<string, unknown>)[methodName];
+  return typeof method === "function" ? (method as () => unknown).call(instance) : undefined;
 }

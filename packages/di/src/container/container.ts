@@ -27,6 +27,7 @@ import { effectiveBindingScope } from "#/resolution/binding-scope";
 import type { ResolutionDiagnostics } from "#/resolution/diagnostics";
 import { RESOLUTION_DIAGNOSTICS } from "#/resolution/diagnostics";
 import { LifecycleManager } from "#/resolution/lifecycle";
+import type { DependencySlot } from "#/resolution/resolve-options";
 import { injectionSlotToResolveOptions, bindingSlotToResolveOptions } from "#/resolution/resolve-options";
 import { DependencyResolver } from "#/resolution/resolver";
 import { ScopeManager } from "#/resolution/scope";
@@ -295,10 +296,10 @@ class DefaultContainer implements Container {
     this.#loadSyncModules(modules);
   }
 
-  #loadSyncModules(modules: Array<SyncModule>): void {
-    // Collect all modules in topological order (dedup by identity)
-    const toLoad = this.#collectModuleDeps(modules);
-    for (const module of toLoad) {
+  // Imports nested inside a module's setup re-enter here through the builder, so a module listed
+  // twice in one call is deduped by identity and the rest is ref-counting.
+  #loadSyncModules(modules: ReadonlyArray<SyncModule | AsyncModule>): void {
+    for (const module of new Set(modules)) {
       if (!isSyncModule(module)) {
         throw new AsyncModuleLoadError(module.name);
       }
@@ -313,26 +314,6 @@ class DefaultContainer implements Container {
       const builder = this.#createModuleBuilder(moduleRef);
       module[MODULE_SETUP](builder);
     }
-  }
-
-  #collectModuleDeps(modules: Array<SyncModule | AsyncModule>): Array<SyncModule | AsyncModule> {
-    const seen = new Set<object>();
-    const result: Array<SyncModule | AsyncModule> = [];
-
-    const visit = (module: SyncModule | AsyncModule): void => {
-      const moduleRef = module as object;
-      if (seen.has(moduleRef)) {
-        return;
-      }
-      seen.add(moduleRef);
-      // We'll collect deps during setup via the builder's import()
-      result.push(module);
-    };
-
-    for (const module of modules) {
-      visit(module);
-    }
-    return result;
   }
 
   async loadAsync(...modules: Array<SyncModule | AsyncModule>): Promise<void> {
@@ -620,10 +601,7 @@ class DefaultContainer implements Container {
       for (const edge of this.#collectStaticDependencyEdges(current, reader)) {
         const { terminal, depTokenName } = edge;
         const depScope = this.#validationScopeFromTerminal(terminal);
-        if (depScope === "opaque") {
-          continue;
-        }
-        if (depScope === "scoped" || depScope === "transient") {
+        if (depScope !== "singleton") {
           throw new ScopeViolationError({
             consumerToken: rootName,
             consumerScope: "singleton",
@@ -641,27 +619,18 @@ class DefaultContainer implements Container {
     dfs(root, [rootName], new Set());
   }
 
-  #validationScopeFromTerminal(terminal: Binding): BindingScope | "opaque" {
-    switch (terminal.kind) {
-      case "constant":
-        return "singleton";
-      // A factory's *body* is not statically analyzable, but the scope it was bound with is
-      // declared like any other — so the captive-dependency check applies. The DFS below still
-      // refuses to descend into the factory; only this edge is judged.
-      case "dynamic":
-      case "dynamic-async":
-        return terminal.scope;
-      case "class":
-      case "resolved":
-      case "resolved-async":
-        return terminal.scope;
-      case "alias":
-        throw new InternalError("validate: expected terminal binding after alias resolution");
-      default: {
-        const exhaustive: never = terminal;
-        return exhaustive;
-      }
+  /**
+   * The scope this edge is judged against.
+   *
+   * @remarks A factory's *body* is not statically analyzable, but the scope it was bound with is
+   * declared like any other — so the captive-dependency check applies to it too. The DFS still
+   * refuses to descend into a factory; only the edge is judged.
+   */
+  #validationScopeFromTerminal(terminal: Binding): BindingScope {
+    if (terminal.kind === "alias") {
+      throw new InternalError("validate: expected terminal binding after alias resolution");
     }
+    return terminal.scope;
   }
 
   #followAliasChainToTerminal(binding: Binding, options: ResolveOptions | undefined): Binding | undefined {
@@ -685,75 +654,43 @@ class DefaultContainer implements Container {
     return current;
   }
 
+  /** What one dependency could resolve to: every candidate for `injectAll`, else at most one. */
+  #peekDependencyCandidates(dep: DependencySlot, options: ResolveOptions | undefined): ReadonlyArray<Binding> {
+    if (dep.multi) {
+      return this.#resolver.peekCandidateBindingsForValidate(dep.token, options);
+    }
+    const found = this.#resolver.peekBindingForValidate(dep.token, options);
+    return found === undefined ? [] : [found.binding];
+  }
+
+  /** What a binding declares up front — a class's params, a factory's descriptors, else nothing. */
+  #staticDependencies(binding: Binding, reader: MetadataReader): ReadonlyArray<DependencySlot> {
+    if (binding.kind === "class") {
+      return reader.getConstructorMetadata(binding.target as Constructor)?.params ?? [];
+    }
+    if (binding.kind === "resolved" || binding.kind === "resolved-async") {
+      return binding.deps;
+    }
+    return [];
+  }
+
   #collectStaticDependencyEdges(
     binding: Binding,
     reader: MetadataReader,
   ): Array<{ terminal: Binding; depTokenName: string }> {
     const edges: Array<{ terminal: Binding; depTokenName: string }> = [];
 
-    const pushTerminal = (terminal: Binding | undefined, displayName: string): void => {
-      if (terminal === undefined) {
-        return;
+    for (const dep of this.#staticDependencies(binding, reader)) {
+      // An optional dependency imposes no scope constraint: it may legitimately be absent.
+      if (dep.optional) {
+        continue;
       }
-      edges.push({ terminal, depTokenName: displayName });
-    };
-
-    if (binding.kind === "class") {
-      const meta = reader.getConstructorMetadata(binding.target as Constructor);
-      if (meta === undefined) {
-        return edges;
-      }
-      for (const param of meta.params) {
-        const paramOptions = injectionSlotToResolveOptions(param);
-        if (param.optional) {
-          continue;
+      const depOptions = injectionSlotToResolveOptions(dep);
+      for (const candidate of this.#peekDependencyCandidates(dep, depOptions)) {
+        const terminal = this.#followAliasChainToTerminal(candidate, depOptions);
+        if (terminal !== undefined) {
+          edges.push({ terminal, depTokenName: tokenName(terminal.token as Token<unknown>) });
         }
-        const tokenRef = param.token;
-        if (param.multi) {
-          const candidates = this.#resolver.peekCandidateBindingsForValidate(tokenRef, paramOptions);
-          for (const cand of candidates) {
-            const term = this.#followAliasChainToTerminal(cand, paramOptions);
-            pushTerminal(term, term !== undefined ? tokenName(term.token as Token<unknown>) : "");
-          }
-          continue;
-        }
-        const found =
-          paramOptions === undefined
-            ? this.#resolver.peekBindingForValidate(tokenRef, undefined)
-            : this.#resolver.peekBindingForValidate(tokenRef, paramOptions);
-        if (found === undefined) {
-          continue;
-        }
-        const term = this.#followAliasChainToTerminal(found.binding, paramOptions);
-        pushTerminal(term, term !== undefined ? tokenName(term.token as Token<unknown>) : "");
-      }
-      return edges;
-    }
-
-    if (binding.kind === "resolved" || binding.kind === "resolved-async") {
-      for (const dep of binding.deps) {
-        const depOptions = injectionSlotToResolveOptions(dep);
-        if (dep.optional) {
-          continue;
-        }
-        const tokenRef = dep.token as Token<unknown> | Constructor;
-        if (dep.multi) {
-          const candidates = this.#resolver.peekCandidateBindingsForValidate(tokenRef, depOptions);
-          for (const cand of candidates) {
-            const term = this.#followAliasChainToTerminal(cand, depOptions);
-            pushTerminal(term, term !== undefined ? tokenName(term.token as Token<unknown>) : "");
-          }
-          continue;
-        }
-        const found =
-          depOptions === undefined
-            ? this.#resolver.peekBindingForValidate(tokenRef, undefined)
-            : this.#resolver.peekBindingForValidate(tokenRef, depOptions);
-        if (found === undefined) {
-          continue;
-        }
-        const term = this.#followAliasChainToTerminal(found.binding, depOptions);
-        pushTerminal(term, term !== undefined ? tokenName(term.token as Token<unknown>) : "");
       }
     }
 

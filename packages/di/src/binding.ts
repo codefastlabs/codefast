@@ -178,6 +178,13 @@ export interface ConstantBinding<Value> extends BindingBase<Value> {
 export interface AliasBinding<Value> extends BindingBase<Value> {
   readonly kind: "alias";
   readonly target: Token<Value> | Constructor<Value>;
+  /**
+   * Always `transient` — an alias defers scoping to the binding it points at.
+   *
+   * @remarks Declared so `scope` is present on every kind, which is what lets the engine read it
+   * as a plain field instead of testing for the one kind that lacks it.
+   */
+  readonly scope: "transient";
 }
 
 /**
@@ -233,7 +240,7 @@ type ConstructedBindingFields = Record<BindingFieldName, unknown>;
 type BindingFieldSuperset = {
   readonly kind: Binding["kind"];
   readonly instance?: unknown;
-  readonly scope?: unknown;
+  readonly scope: BindingScope;
   readonly target?: unknown;
   readonly factory?: unknown;
   readonly deps?: unknown;

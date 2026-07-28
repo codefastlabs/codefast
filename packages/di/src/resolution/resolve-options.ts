@@ -1,5 +1,33 @@
 import type { BindingSlot } from "#/binding";
-import type { BindingTag, ResolveOptions } from "#/types";
+import type { Token } from "#/token";
+import type { BindingTag, Constructor, ResolveOptions } from "#/types";
+
+/**
+ * What one resolvable dependency declares.
+ *
+ * @remarks Both dependency sources — a constructor's `ParamMetadata` and a `toResolved`
+ * `InjectionDescriptor` — are this shape, which is why one resolve routine serves both.
+ *
+ * @since 0.5.0-canary.8
+ */
+export interface DependencySlot {
+  readonly token: Token<unknown> | Constructor;
+  readonly optional: boolean;
+  readonly multi: boolean;
+  readonly name?: string;
+  readonly tags?: ReadonlyArray<BindingTag>;
+}
+
+/**
+ * A request whose only criterion is a name — the shape the registry has a direct index for.
+ *
+ * @since 0.5.0-canary.8
+ */
+export function isNameOnlyOptions(options: ResolveOptions): options is ResolveOptions & { name: string } {
+  return (
+    options.name !== undefined && options.tag === undefined && (options.tags === undefined || options.tags.length === 0)
+  );
+}
 
 /** Shared core: build a ResolveOptions from already-normalised name + tags. */
 function buildOptions(

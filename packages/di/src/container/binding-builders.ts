@@ -184,7 +184,7 @@ export class BindingChain<Value>
   }
 
   toAlias(target: Token<Value> | Constructor<Value>): AliasBindingBuilder {
-    return this.#register({ kind: "alias", target });
+    return this.#register({ kind: "alias", scope: "transient", target });
   }
 
   // ── Refinement ─────────────────────────────────────────────────────────────

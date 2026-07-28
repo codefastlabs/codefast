@@ -191,6 +191,20 @@ describe("slot selection", () => {
     expect(container.resolveAll(serviceToken)).toHaveLength(4);
   });
 
+  it("honours a predicate on a named binding in resolveAll, as resolve does", () => {
+    // The name index answers the slot; the predicate is a further constraint, and dropping it
+    // would make `resolveAll` return a candidate `resolve` refuses.
+    const container = Container.create();
+    container
+      .bind(serviceToken)
+      .toConstantValue("named")
+      .whenNamed("special")
+      .when(() => false);
+
+    expect(container.resolveAll(serviceToken, { name: "special" })).toEqual([]);
+    expect(container.resolveOptional(serviceToken, { name: "special" })).toBeUndefined();
+  });
+
   it("falls back to a parent container's named binding", () => {
     const parent = Container.create();
     parent.bind(serviceToken).toConstantValue("parent-named").whenNamed("special");

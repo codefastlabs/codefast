@@ -1,7 +1,7 @@
 import type { Binding } from "#/binding";
 import { bindingSlotEquals, bindingSlotToString } from "#/binding";
 import type { Token } from "#/token";
-import type { BindingIdentifier, Constructor, DependencyKey } from "#/types";
+import type { BindingIdentifier, BindingTag, Constructor, DependencyKey } from "#/types";
 
 /**
  * @since 0.3.16-canary.0
@@ -48,9 +48,9 @@ export class BindingRegistry {
 
     // Only apply last-wins for slot-based bindings (not predicate-only)
     let displacedBinding: Binding | undefined;
-    if (!this.#isPurePredicateBinding(binding)) {
+    if (!isPurePredicateBinding(binding)) {
       const existingIndex = bindingsForToken.findIndex(
-        (candidate) => !this.#isPurePredicateBinding(candidate) && bindingSlotEquals(candidate.slot, binding.slot),
+        (candidate) => !isPurePredicateBinding(candidate) && bindingSlotEquals(candidate.slot, binding.slot),
       );
       if (existingIndex !== -1) {
         displacedBinding = bindingsForToken[existingIndex]!;
@@ -173,22 +173,22 @@ export class BindingRegistry {
   }
 
   #indexSimpleTaggedBinding(tokenKey: DependencyKey, binding: Binding): void {
-    const slot = binding.slot;
-    if (slot.name !== undefined || slot.tags.length !== 1 || binding.predicate !== undefined) {
+    const tag = simpleTagOf(binding);
+    if (tag === undefined) {
       return;
     }
-    const [tagKey, tagValue] = slot.tags[0]!;
+    const [tagKey, tagValue] = tag;
     const byTagKey = (this.#simpleTagged ??= new Map()).getOrInsert(tokenKey, new Map<string, Map<unknown, Binding>>());
     const byTagValue = byTagKey.getOrInsert(tagKey, new Map<unknown, Binding>());
     byTagValue.set(tagValue, binding);
   }
 
   #deindexSimpleTaggedBinding(tokenKey: DependencyKey, binding: Binding): void {
-    const slot = binding.slot;
-    if (slot.name !== undefined || slot.tags.length !== 1 || binding.predicate !== undefined) {
+    const tag = simpleTagOf(binding);
+    if (tag === undefined) {
       return;
     }
-    const [tagKey, tagValue] = slot.tags[0]!;
+    const [tagKey, tagValue] = tag;
     const byTagKey = this.#simpleTagged?.get(tokenKey);
     if (byTagKey === undefined) {
       return;
@@ -209,35 +209,26 @@ export class BindingRegistry {
     }
   }
 
-  #isPurePredicateBinding(binding: Binding): boolean {
-    const slot = binding.slot;
-    const hasPredicate = binding.predicate !== undefined;
-    const hasConstraint = slot.name !== undefined || slot.tags.length > 0;
-    // Pure predicate = has predicate but no slot constraint (name/tags)
-    return hasPredicate && !hasConstraint;
-  }
-
   #indexSimpleNamedBinding(tokenKey: DependencyKey, binding: Binding): void {
-    const slot = binding.slot;
-    if (slot.name === undefined || slot.tags.length > 0) {
+    const name = simpleNameOf(binding);
+    if (name === undefined) {
       return;
     }
     const bindingsByName = (this.#simpleNamed ??= new Map()).getOrInsert(tokenKey, new Map<string, Binding>());
-    bindingsByName.set(slot.name, binding);
+    bindingsByName.set(name, binding);
   }
 
   #deindexSimpleNamedBinding(tokenKey: DependencyKey, binding: Binding): void {
-    const slot = binding.slot;
-    if (slot.name === undefined || slot.tags.length > 0) {
+    const name = simpleNameOf(binding);
+    if (name === undefined) {
       return;
     }
     const bindingsByName = this.#simpleNamed?.get(tokenKey);
     if (bindingsByName === undefined) {
       return;
     }
-    const currentBinding = bindingsByName.get(slot.name);
-    if (currentBinding?.id === binding.id) {
-      bindingsByName.delete(slot.name);
+    if (bindingsByName.get(name)?.id === binding.id) {
+      bindingsByName.delete(name);
       if (bindingsByName.size === 0) {
         this.#simpleNamed!.delete(tokenKey);
       }
@@ -246,20 +237,45 @@ export class BindingRegistry {
 
   #refreshFastDefaultForToken(tokenKey: DependencyKey): void {
     const bindingsForToken = this.#bindings.get(tokenKey);
-    if (bindingsForToken === undefined || bindingsForToken.length !== 1) {
-      this.#fastDefault.delete(tokenKey);
+    const onlyBinding = bindingsForToken?.length === 1 ? bindingsForToken[0]! : undefined;
+    if (onlyBinding !== undefined && isDefaultSlotBinding(onlyBinding)) {
+      this.#fastDefault.set(tokenKey, onlyBinding);
       return;
     }
-    const onlyBinding = bindingsForToken[0]!;
-    const isDefaultSlot = onlyBinding.slot.name === undefined && onlyBinding.slot.tags.length === 0;
-    if (!isDefaultSlot || onlyBinding.predicate !== undefined) {
-      this.#fastDefault.delete(tokenKey);
-      return;
-    }
-    this.#fastDefault.set(tokenKey, onlyBinding);
+    this.#fastDefault.delete(tokenKey);
   }
+
   /** Whether the deferred table behind `#simpleNamed` has had to be built. */
   get isBuilt(): boolean {
     return this.#simpleNamed !== undefined;
   }
+}
+
+/** The name a binding is indexed under, or `undefined` when its slot is more than a plain name. */
+function simpleNameOf(binding: Binding): string | undefined {
+  const { name, tags } = binding.slot;
+  return name !== undefined && tags.length === 0 ? name : undefined;
+}
+
+/**
+ * The tag a binding is indexed under, or `undefined` when its slot is more than one plain tag.
+ *
+ * @remarks A predicate is excluded here — unlike the name index — because the tag index is read
+ * without a re-check, so an indexed hit must be unconditional.
+ */
+function simpleTagOf(binding: Binding): BindingTag | undefined {
+  const { name, tags } = binding.slot;
+  return name === undefined && tags.length === 1 && binding.predicate === undefined ? tags[0] : undefined;
+}
+
+/** A binding nothing has to be matched against: the default slot, no predicate. */
+function isDefaultSlotBinding(binding: Binding): boolean {
+  const { name, tags } = binding.slot;
+  return name === undefined && tags.length === 0 && binding.predicate === undefined;
+}
+
+/** A predicate with no slot constraint: last-wins does not apply to it. */
+function isPurePredicateBinding(binding: Binding): boolean {
+  const { name, tags } = binding.slot;
+  return binding.predicate !== undefined && name === undefined && tags.length === 0;
 }
