@@ -43,7 +43,8 @@ export class BindingRegistry {
   add(binding: Binding): Binding | undefined {
     this.#version += 1;
     const key = binding.token as DependencyKey;
-    // ✓ TS6.0: Map.getOrInsert (ES2025) replaces the manual get+check+set upsert
+    // Eager, not computed: a bind is usually the token's first, so the fallback is usually the
+    // one that gets stored — and the computed form would add a call to allocating it anyway.
     const bindingsForToken = this.#bindings.getOrInsert(key, []);
 
     // Only apply last-wins for slot-based bindings (not predicate-only)

@@ -17,7 +17,8 @@ Four things routinely surprise newcomers:
 
 ## Setup
 
-Node ≥ 24 (≥ 26 to work on `@codefast/di`, which uses native `Map.prototype.getOrInsert`), pnpm 11 — pinned via `packageManager`.
+Node ≥ 24 (≥ 26 to work on `@codefast/di`, which uses native `Map.prototype.getOrInsert` and
+`getOrInsertComputed`), pnpm 11 — pinned via `packageManager`.
 
 ```bash
 git clone https://github.com/codefastlabs/codefast.git

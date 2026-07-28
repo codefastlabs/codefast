@@ -31,6 +31,8 @@ export const ALIAS_HOP_LIMIT = 32;
 /**
  * @since 0.5.0-canary.8
  */
+const newNameToEntryMap = <Owner>(): Map<string, DefaultLookupEntry<Owner> | null> => new Map();
+
 export class BindingLookupCache<Owner> {
   readonly #byToken = new Map<Token<unknown> | Constructor, DefaultLookupEntry<Owner> | null>();
   #version = -1;
@@ -78,8 +80,9 @@ export class BindingLookupCache<Owner> {
       this.#byTokenAndName.clear();
       this.#namedVersion = version;
     }
-    // ✓ TS6.0: Map.getOrInsert (ES2025)
-    const byName = this.#byTokenAndName.getOrInsert(token, new Map<string, DefaultLookupEntry<Owner> | null>());
+    // Computed, not eager: this runs on every named resolve, and `getOrInsert(token, new Map())`
+    // would allocate a Map per call only to discard it on the hit that follows.
+    const byName = this.#byTokenAndName.getOrInsertComputed(token, newNameToEntryMap);
     let entry = byName.get(name);
     if (entry === undefined) {
       entry = this.#findNamedInChain(token, name);

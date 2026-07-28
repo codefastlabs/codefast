@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Overview
 
-CodeFast is a **pnpm workspaces + Turborepo** monorepo (Node ≥ 24, pnpm 11; `@codefast/di` alone requires Node ≥ 26 for native `Map.prototype.getOrInsert`) publishing the `@codefast/*` packages. The flagship is `@codefast/ui`, a Radix-based, Tailwind CSS 4 component library. `apps/ui` is a TanStack Start showcase site that consumes the packages.
+CodeFast is a **pnpm workspaces + Turborepo** monorepo (Node ≥ 24, pnpm 11; `@codefast/di` alone requires Node ≥ 26 for native `Map.prototype.getOrInsert`/`getOrInsertComputed`) publishing the `@codefast/*` packages. The flagship is `@codefast/ui`, a Radix-based, Tailwind CSS 4 component library. `apps/ui` is a TanStack Start showcase site that consumes the packages.
 
 ## Toolchain (non-standard — read before assuming)
 
