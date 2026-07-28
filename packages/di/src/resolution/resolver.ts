@@ -135,7 +135,7 @@ export class DependencyResolver implements ResolverCallbacks {
       const singleTag = singleTagOnlyOf(options);
       if (singleTag !== undefined) {
         const tagged = this.#registry.getSimpleTagged(token, singleTag[0], singleTag[1]);
-        if (tagged !== undefined) {
+        if (tagged !== undefined && matchesIndexedTagValue(tagged, singleTag[1])) {
           return { binding: tagged, owner: this };
         }
       }
@@ -1266,6 +1266,19 @@ function anyPredicate(bindings: ReadonlyArray<Binding>): boolean {
 /** Only a factory is handed the resolution context; everything else gets its deps directly. */
 function requiresResolutionContext(binding: { readonly kind: BindingKind }): boolean {
   return binding.kind === "dynamic" || binding.kind === "dynamic-async";
+}
+
+/**
+ * Whether the tag index's answer is the one `Object.is` would give.
+ *
+ * @remarks An indexed binding has no name, no predicate and exactly one tag, and the request carries
+ * only that tag, so `matchesSlot` reduces to the tag values — and the index matched the key already.
+ * It answers by SameValueZero, which parts from `Object.is` (SPEC §3.5) on exactly one pair: `+0` and
+ * `-0`. So a request whose value is not zero is already exact, and only a zero-valued one is worth
+ * reading the stored value for.
+ */
+function matchesIndexedTagValue(binding: Binding, requestedValue: unknown): boolean {
+  return requestedValue !== 0 || Object.is(binding.slot.tags[0]![1], requestedValue);
 }
 
 /** The lone entry of a request whose only criterion is a one-element `tags` list. */
