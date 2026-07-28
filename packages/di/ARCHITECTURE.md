@@ -29,6 +29,10 @@ registry, binding, token, types, errors                    ← the model
 
 > **Rule:** never construct a binding with an object literal. Go through `createBinding()`, and keep its literal's key order untouched.
 
+**`scope` is total, so the engine reads it as a field.** `AliasBinding` declares `scope: "transient"` — an alias defers scoping to what it points at, which _is_ transient behaviour — so no kind is missing the field and no read needs an `undefined` fallback. `effectiveBindingScope()` is that read, kept as a named function because it is the vocabulary validation and introspection speak. The gain is not the removed `??`: it is that the field's type feedback stays one shape.
+
+**A memo on a binding is only sound while what it derives from is immutable.** `frame` derives from the token name, id, kind, slot **and scope** — and `scope` is the one field a fluent chain writes in place after registration. So `singleton()`/`transient()`/`scoped()` call `clearBindingFrame()`. Without it a chain refined after its first resolve reports the old scope to every `when()` predicate that reads `ctx.parent.scope`; `tests/unit/resolution/cache-invalidation.test.ts` pins it.
+
 **Registration happens once.** `bind(T).toDynamic(f).singleton()` registers on `toDynamic()`; `singleton()` then writes `scope` in place on that same registered object. Only `when*()` re-slots, because slot and predicate are what the registry indexes on — and it re-registers under the chain's original id, so `id()` is stable for the whole chain. Doing it the other way (commit, remove, re-commit) cost ~2.3× on the bind path.
 
 **One object per `bind()`.** A single `BindingChain` plays every role — the `BindToBuilder` before `to*()`, the kind-specific builder after — and commits to the registry itself. `bind()` is typed as `BindToBuilder`, so `when*()`/`singleton()` are not reachable before a `to*()`; the ordering is a **type-level** guarantee, which is exactly what SPEC §2.4 claims ("Compiler enforce"). A caller who has no types or casts past them gets a `ChainNotRegisteredError` naming the token, never a silent no-op — `whenDefault()` asserts registration too, for that reason alone, since it otherwise has nothing to do.
@@ -50,9 +54,14 @@ What _is_ split out are the collaborators that need no cross-instance private ac
 | [`activation-need.ts`](src/resolution/activation-need.ts)                                                  | per-binding "does this need the activation pipeline", versioned on the lifecycle manager                           |
 | [`instantiation-plan.ts`](src/resolution/instantiation-plan.ts)                                            | the plan compiler (below)                                                                                          |
 | [`resolution-path.ts`](src/resolution/resolution-path.ts)                                                  | cycle-detection bookkeeping carried on the path array                                                              |
-| [`binding-select.ts`](src/resolution/binding-select.ts), [`constraints.ts`](src/resolution/constraints.ts) | candidate selection for name/tag/predicate shapes                                                                  |
+| [`binding-select.ts`](src/resolution/binding-select.ts), [`constraints.ts`](src/resolution/constraints.ts) | candidate selection for name/tag/predicate shapes, and `matchesSlot()` — the one slot matcher                      |
+| [`resolve-options.ts`](src/resolution/resolve-options.ts)                                                  | `DependencySlot`, the shape both dependency sources share, and the `ResolveOptions` derived from it                |
 
 Lookup caches form their own parent chain mirroring the resolvers', for the same `#private`-is-per-class reason.
+
+**One rule per question, wherever it is asked.** The resolver's fast lanes are lanes, not separate semantics: whether a slot matches a request is answered by `matchesSlot()` alone, and whether a request is name-only by `isNameOnlyOptions()`. A fast lane that re-implements a rule is how the two spellings drift — `resolveAll`'s name lane returned a binding whose `when()` predicate `resolve` was refusing, because it had its own idea of what the name index meant.
+
+**Both dependency sources are one shape.** A class's `ParamMetadata` and a `toResolved` `InjectionDescriptor` are structurally `DependencySlot`, so `#resolveDeps`/`#resolveDepsAsync` serve both and the plan compiler compiles both — four near-identical loops became two, and a dispatch rule can no longer be fixed in one of them.
 
 ## Compiled plans and escapes
 
@@ -63,6 +72,20 @@ A dependency the compiler cannot see through — a factory, a scoped binding, an
 > **Rule:** an escape must stay behaviourally indistinguishable from the interpreted path. If you add a case, seed it with the same ancestors and replay the same call. `tests/unit/resolution/instantiation-plan-escapes.test.ts` pins this.
 
 Before escapes existed, one `toDynamic` dependency anywhere dropped the whole graph to the interpreted path — a 13.9× cliff on a graph shape real applications write constantly.
+
+## Fast lanes that read as duplication — and the order of the tests in them
+
+Two shapes here look like copy-paste of `#resolveBinding` and are not. Both were removed on a DRY pass and put back with a measurement.
+
+**A candidate answers where it is selected.** `#resolveCandidateSync`/`#resolveCandidateAsync` re-check plain-constant and cached-singleton before delegating, which `#resolveBinding` would check anyway. Routing every candidate through `#resolveBinding` instead cost **~24%** on `production-event-bus-dispatch` — eight cached singleton handlers per published event, so `resolveAll` pays that hop per candidate, not per call.
+
+**The dispatcher's prefix is charged to every resolve.** In `#resolveDefaultEntry` the plain-constant test lives _inside_ the `singleton` branch, because a constant is a singleton that is already its own instance. Hoisting it to the top — where it reads more naturally — is worth ~7% to `constant-resolve` and costs **~8%** to `fan-out-tree-depth-3-breadth-4`, which resolves 21 transient factories per iteration and is charged the test 21 times for a kind it never has. Ratios paired against the previous build, alternating per pass, medians of 3+.
+
+> **Rule:** put a test under the branch that already implies it. A test in the hot dispatcher's prefix is paid by every resolve that is not the case it is looking for, and there are far more of those.
+
+The same reasoning covers two smaller shapes: `#namedBindingsFromChain` returns `[binding]` whole for a root container rather than growing an empty list (a name matches at most once per registry, so the size is known), and `#findBinding` treats a lone candidate as its own selection — matching it _is_ the decision, with no specificity to weigh and no ambiguity to report, which is what makes `resolve-optional-hit` ~1.5× its previous throughput.
+
+**What sharing the lookup cost, and why it is still shared.** `resolve` and `resolveAsync` both take their terminal binding from `#requireBinding`, so the alias-cycle walk and the not-bound diagnostics exist once. The frame that adds costs `misconfigured-missing-binding` ~5%: an error path is dominated by capturing its stack, and a deeper throw site captures more of it. Constructing the error at the throw site rather than in a helper recovered most of it; the rest is the price of not keeping two copies of the alias walk, and it is paid only when a resolve fails.
 
 ## Cycle detection — two mechanisms, on purpose
 
