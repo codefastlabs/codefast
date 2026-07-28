@@ -16,7 +16,7 @@ import type {
   SingletonLifecycleBuilder,
   TransientBindingBuilder,
 } from "#/binding";
-import { bindingSlotEquals, createBinding, DEFAULT_BINDING_SLOT, refinableFields } from "#/binding";
+import { bindingSlotEquals, clearBindingFrame, createBinding, DEFAULT_BINDING_SLOT, refinableFields } from "#/binding";
 import type { InjectableDependency, ResolvedDependencyValue } from "#/decorators/inject";
 import { normalizeToDescriptor } from "#/decorators/inject";
 import { ChainNotRegisteredError } from "#/errors";
@@ -199,7 +199,10 @@ export class BindingChain<Value>
   }
 
   #withScope(scope: BindingScope): this {
-    refinableFields(this.#registered()).scope = scope;
+    const binding = this.#registered();
+    refinableFields(binding).scope = scope;
+    // The frame reports the scope, so a resolve before this call memoized the previous one.
+    clearBindingFrame(binding);
     this.#registration.registry.touch();
     return this;
   }

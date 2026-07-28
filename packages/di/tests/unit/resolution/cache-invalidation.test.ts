@@ -77,6 +77,28 @@ describe("lookup memo invalidation", () => {
     container.rebind(facadeToken).toAlias(implementationB);
     expect(container.resolve(facadeToken)).toBe("B");
   });
+  it("a scope refined after the first resolve is what constraints see", () => {
+    // The resolution frame is memoized on the binding, and `scope` is the one field a chain can
+    // still write after registration — so refining it has to drop that memo.
+    const parentToken = token<string>("frame-parent");
+    const childToken = token<string>("frame-child");
+    const container = Container.create();
+    container
+      .bind(childToken)
+      .toDynamic(() => "from-transient")
+      .when((ctx) => ctx.parent?.scope === "transient");
+    container
+      .bind(childToken)
+      .toDynamic(() => "from-singleton")
+      .when((ctx) => ctx.parent?.scope === "singleton");
+    const parentChain = container.bind(parentToken).toDynamic((ctx) => ctx.resolve(childToken));
+
+    expect(container.resolve(parentToken)).toBe("from-transient");
+
+    parentChain.singleton();
+
+    expect(container.resolve(parentToken)).toBe("from-singleton");
+  });
 });
 
 describe("compiled class-plan invalidation", () => {

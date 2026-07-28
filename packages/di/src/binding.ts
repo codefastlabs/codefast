@@ -303,6 +303,18 @@ export function refinableFields<Value>(binding: Binding<Value>): RefinableBindin
   return binding as RefinableBindingFields<Value>;
 }
 
+/**
+ * Drops the memoized resolution frame, for a refinement that changes what the frame reports.
+ *
+ * @remarks `scope` is the only field a chain writes in place that the frame derives from — a
+ * re-slot builds a fresh binding, whose frame starts empty anyway.
+ *
+ * @since 0.5.0-canary.8
+ */
+export function clearBindingFrame<Value>(binding: Binding<Value>): void {
+  (binding as { frame: ResolutionFrame | undefined }).frame = undefined;
+}
+
 // ── Builder interfaces ────────────────────────────────────────────────────────
 
 /**
