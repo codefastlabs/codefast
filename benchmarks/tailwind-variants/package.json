@@ -25,7 +25,13 @@
   },
   "type": "module",
   "imports": {
-    "#/*": "./src/*"
+    "#/*": [
+      "./src/*",
+      "./src/*.ts",
+      "./src/*.tsx",
+      "./src/*/index.ts",
+      "./src/*/index.tsx"
+    ]
   },
   "scripts": {
     "bench": "node --import tsx/esm src/harness/run.ts",

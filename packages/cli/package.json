@@ -47,10 +47,7 @@
         "./src/*/index.ts",
         "./src/*/index.tsx"
       ],
-      "default": [
-        "./dist/*.js",
-        "./dist/*/index.js"
-      ]
+      "default": "./dist/*.js"
     }
   },
   "publishConfig": {

@@ -101,7 +101,6 @@ export default defineConfig(({ command }) => {
        * (`dist/*.mjs`) in prod.
        */
       conditions: isDev ? ["source", "module"] : ["module"],
-      tsconfigPaths: true,
     },
     plugins: [
       devtools({

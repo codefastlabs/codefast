@@ -1,13 +1,10 @@
 {
   "extends": "@codefast/typescript-config/library.json",
   "compilerOptions": {
+    "customConditions": ["source"],
     "experimentalDecorators": false,
     "types": ["node", "vitest/globals"],
-    "jsx": "react-jsx",
-    "paths": {
-      "#/tests/*": ["./tests/*"],
-      "#/*": ["./src/*"]
-    }
+    "jsx": "react-jsx"
   },
   "include": ["**/*.ts"],
   "exclude": ["node_modules", "dist"]

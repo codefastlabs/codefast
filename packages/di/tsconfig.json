@@ -2,6 +2,7 @@
   "$schema": "https://json.schemastore.org/tsconfig",
   "extends": "@codefast/typescript-config/library.json",
   "compilerOptions": {
+    "customConditions": ["source"],
     "experimentalDecorators": false,
     "exactOptionalPropertyTypes": true,
     "noFallthroughCasesInSwitch": true,
@@ -9,11 +10,7 @@
     "noImplicitReturns": true,
     "noUncheckedSideEffectImports": true,
     "verbatimModuleSyntax": true,
-    "types": ["node", "vitest/globals"],
-    "paths": {
-      "#/tests/*": ["./tests/*"],
-      "#/*": ["./src/*"]
-    }
+    "types": ["node", "vitest/globals"]
   },
   "include": ["**/*.ts"],
   "exclude": ["node_modules", "dist", ".turbo", "coverage"]

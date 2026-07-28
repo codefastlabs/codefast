@@ -2,9 +2,6 @@
   "extends": "@codefast/typescript-config/react.json",
   "include": ["**/*.ts", "**/*.tsx"],
   "compilerOptions": {
-    "paths": {
-      "#/*": ["./src/*"]
-    },
     "types": ["vite/client"],
     "allowImportingTsExtensions": true,
     "verbatimModuleSyntax": true,

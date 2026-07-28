@@ -53,14 +53,8 @@
         "./src/*/index.ts",
         "./src/*/index.tsx"
       ],
-      "types": [
-        "./dist/*.d.ts",
-        "./dist/*/index.d.ts"
-      ],
-      "default": [
-        "./dist/*.js",
-        "./dist/*/index.js"
-      ]
+      "types": "./dist/*.d.ts",
+      "default": "./dist/*.js"
     }
   },
   "exports": {

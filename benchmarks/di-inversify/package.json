@@ -19,6 +19,15 @@
     "directory": "benchmarks/di-inversify"
   },
   "type": "module",
+  "imports": {
+    "#/*": [
+      "./src/*",
+      "./src/*.ts",
+      "./src/*.tsx",
+      "./src/*/index.ts",
+      "./src/*/index.tsx"
+    ]
+  },
   "scripts": {
     "bench": "node --import tsx/esm src/harness/run.ts",
     "bench:codefast": "TSX_TSCONFIG_PATH=tsconfig.codefast.json node --import tsx/esm src/codefast-benches.ts",

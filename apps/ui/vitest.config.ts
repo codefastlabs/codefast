@@ -19,9 +19,6 @@ export default defineConfig({
     projects: [
       {
         plugins: [viteReact()],
-        resolve: {
-          tsconfigPaths: true,
-        },
         test: {
           environment: "jsdom",
           include: ["tests/{unit,integration,types}/**/*.test.ts?(x)"],

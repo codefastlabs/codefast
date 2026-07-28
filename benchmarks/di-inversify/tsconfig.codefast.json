@@ -4,9 +4,6 @@
   "compilerOptions": {
     "experimentalDecorators": false,
     "noEmit": true,
-    "paths": {
-      "#/*": ["./src/*"]
-    },
     "types": ["node"]
   },
   "include": [
