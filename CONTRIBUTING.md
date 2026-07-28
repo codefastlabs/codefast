@@ -96,6 +96,11 @@ For anything material, run the publishable profile and update `RESULTS.md`:
 BENCH_FULL=1 BENCH_TRIALS=3 pnpm --filter @codefast/benchmark-di-inversify bench:isolate
 ```
 
+That run is publishable for **your own** before/after ratios. Its **cross-library** ratios are not: the
+runner measures one library's whole suite before the next one starts, so drift over the run lands on
+the ratio and penalises whoever is scheduled later — never `@codefast/di`. A cross-library figure needs
+the interleaved recipe in [`benchmarks/di-inversify/BENCH_GUIDE.md`](benchmarks/di-inversify/BENCH_GUIDE.md).
+
 ## Changesets
 
 Add one whenever a published package changes:
