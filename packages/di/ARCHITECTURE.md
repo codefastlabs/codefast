@@ -85,6 +85,8 @@ Two shapes here look like copy-paste of `#resolveBinding` and are not. Both were
 
 The same reasoning covers two smaller shapes: `#namedBindingsFromChain` returns `[binding]` whole for a root container rather than growing an empty list (a name matches at most once per registry, so the size is known), and `#findBinding` treats a lone candidate as its own selection — matching it _is_ the decision, with no specificity to weigh and no ambiguity to report, which is what makes `resolve-optional-hit` ~1.5× its previous throughput.
 
+**A hash lookup a loop repeats deserves an inline cache, and a memo already inlined deserves nothing.** `LifecycleManager.activationHandlersFor()` keeps a one-entry token→hooks cache in front of its map, invalidated by `registerActivation` — a resolve loop asks about the same token every iteration. The mirror-image change failed: folding `#getResolutionFrame` into a single expression so it would inline, with the build extracted to a cold method, cost **~6%** on `fan-out-tree-depth-3-breadth-4` (five paired passes, all five negative) and was reverted. A profile showing self-time in a memo is not evidence that the memo is the cost.
+
 **What sharing the lookup cost, and why it is still shared.** `resolve` and `resolveAsync` both take their terminal binding from `#requireBinding`, so the alias-cycle walk and the not-bound diagnostics exist once. The frame that adds costs `misconfigured-missing-binding` ~5%: an error path is dominated by capturing its stack, and a deeper throw site captures more of it. Constructing the error at the throw site rather than in a helper recovered most of it; the rest is the price of not keeping two copies of the alias walk, and it is paid only when a resolve fails.
 
 ## Cycle detection — two mechanisms, on purpose
@@ -93,6 +95,8 @@ The same reasoning covers two smaller shapes: `#namedBindingsFromChain` returns 
 | ------------------------------ | ------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------- |
 | Sync transient-dynamic         | `binding.inFlight`, set on factory-enter and cleared on exit | Sync resolution runs on one call stack, so the flag _is_ exact path membership: `O(1)`, no hashing, no side table |
 | Everything else, and all async | `enterResolutionPath` on the shared path array               | Async chains interleave, so a per-binding flag would report a cycle where two chains merely overlap               |
+
+**Both variants of that lane** — with and without activation hooks — take the flag, because the argument for it does not mention hooks: a hook runs on the same call stack the factory did. Giving the hooked variant the same guard is worth **~15%** on `container-level-activation-hook`, which had been the suite's only loss against inversify. A hook that re-resolves its own token still reports `CircularDependencyError` rather than recursing, and the flag is still released on every exit path — `tests/unit/resolution/in-flight-invariants.test.ts` pins both for the hooked lane too.
 
 `enterResolutionPath` scans linearly while the path is short and attaches a membership `Set` past `RESOLUTION_SET_THRESHOLD`. That threshold switches a **data structure**, not a behaviour: both branches answer identically.
 
