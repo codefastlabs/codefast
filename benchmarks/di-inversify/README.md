@@ -71,14 +71,18 @@ everything outside it; the report counts only the rows a competitor actually mea
 - **A row under ~0.5 µs per operation is batched**, and its scenario declares the factor. Timing such
   an operation one at a time measures the timer, not the container.
 
-## Known limitation
+## Run order, and why it decides the ratio
 
-The parent runs **library-major**: every scenario for `@codefast/di`, then every scenario for
-inversify, then awilix, then tsyringe. In `bench:isolate` those phases are minutes apart, so machine
-drift over the run lands on the ratio — and it always lands on whoever is scheduled later, which is
-never `@codefast/di`. Measured on `realistic-graph-cold-resolve` under `BENCH_FULL`: library-major put
-di at 1.28× of tsyringe, and re-running the same two libraries interleaved with rotating order put
-them at 0.99×.
+`bench:isolate` runs **scenario-major and interleaved**: every library measures a scenario before the
+next scenario starts, and which library goes first rotates each time. The report's Environment section
+states which policy produced the numbers.
 
-Until the runner interleaves, **a cross-library ratio from a single suite run is provisional**. The
-guide's paired recipe is what a published claim uses.
+That is not a detail. Scheduling one library's whole suite before the next one starts puts minutes
+between the two sides of every ratio, so any drift over the run lands entirely on whoever was
+scheduled later — and in a suite written to promote one library, that is never the one being promoted.
+Measured on `realistic-graph-cold-resolve` under `BENCH_FULL`, before the runner interleaved:
+library-major read 1.28× of tsyringe, and the same two libraries interleaved read 0.99×.
+
+**Without `bench:isolate` there is nothing to interleave** — one process per library runs that
+library's whole suite — so a cross-library ratio from the plain profile stays provisional, and the
+report says so in the same place.

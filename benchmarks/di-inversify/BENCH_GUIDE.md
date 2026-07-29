@@ -41,8 +41,10 @@ Two things this catches that a before/after comparison cannot:
 ## Comparing two libraries: interleave, and say you did
 
 Run every library on the **same scenario** before moving to the next, rotating which library goes
-first. The suite's own runner does not do this yet (see the README's known limitation), so a published
-cross-library figure comes from a targeted interleaved run, not from a suite table.
+first. `bench:isolate` does exactly that, and the report's Environment section names the policy it
+used — so a cross-library figure from an isolated run is citable, and one from the plain profile is
+not, because there one process per library runs that library's whole suite and there is nothing to
+interleave.
 
 Also required for a comparison to mean anything:
 

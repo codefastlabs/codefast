@@ -8,8 +8,9 @@ is in [`BENCH_GUIDE.md`](./BENCH_GUIDE.md); re-run any of it with the recipes th
 (`BENCH_ISOLATE=1`), 3 trials, unless a row says otherwise.
 
 **The machine was not quiet.** These figures come from a session that had been running benchmarks
-back to back for over an hour. That matters more for the cross-library numbers than for the paired
-ones, and it is why the suite aggregates below are marked provisional.
+back to back for hours, so the absolute throughputs are depressed. Ratios survive that: a paired run
+measures both builds in the same window, and an interleaved run measures every library within the same
+scenario. Absolute `hz/op` from this page is worth less than the ratios on it.
 
 ## What the current branch changed
 
@@ -70,66 +71,62 @@ resolve.
 | `dynamic-async-chain-8`           |                             0.98× |
 
 The last two are the rows this library has historically lost. **Neither moved**, so no engine change
-on this branch may claim them — see [Unsettled](#unsettled).
+on this branch may claim them — see [Where it loses](#where-it-loses).
 
-## Cross-library, measured interleaved
+## Suite aggregates
 
-The only cross-library figures here that a suite run did not produce. Each library runs the same
-scenario back to back within a pass, with the order rotated across four passes, so drift lands on all
-four instead of on whoever the runner schedules last. `--expose-gc` on every library.
+`BENCH_ISOLATE=1 BENCH_FULL=1`, one subprocess per scenario, libraries **interleaved with rotating
+order** — every library measures a scenario before the next scenario starts. Ratios over the 43
+scenarios each competitor implements.
 
-| Row                            | cf/inversify | cf/awilix | cf/tsyringe |
-| ------------------------------ | -----------: | --------: | ----------: |
-| `realistic-graph-cold-resolve` |        4.73× |     1.38× |   **0.99×** |
-| `constant-resolve`             |        2.22× |     4.16× |      10.91× |
+| Competitor | Win / parity / loss | Median | Geomean |
+| ---------- | ------------------: | -----: | ------: |
+| inversify  |          42 / 0 / 1 |  2.23× |   2.76× |
+| Awilix 13  |           8 / 0 / 0 |  2.86× |   3.30× |
+| tsyringe 4 |           7 / 1 / 0 |  4.21× |   4.27× |
 
-`realistic-graph-cold-resolve` against tsyringe is **parity**, and that is the honest reading of this
-row. The same two libraries measured library-major in the suite read 1.28× — a 29% swing produced
-entirely by run order.
+Group geomeans against inversify: failure 8.22× · boot 7.17× · production 6.74× · scope 4.69× ·
+lifecycle 3.49× · introspection 3.40× · realistic 2.96× · micro 2.24× · fan-out 2.21× · scale 1.39× ·
+async 1.13×.
 
-That row is also slower **on purpose**. A cold iteration hands the collector ten bindings, each
-carrying every field any binding kind declares, because one uniform V8 hidden class for every binding
-is worth roughly 30% on hot resolve. Winning this row means paying for it everywhere else.
+**What interleaving cost, which is the point.** The same profile, library-major, read 43 / 0 / 0 at
+median 3.04× and geomean 4.13× — and against awilix and tsyringe, medians of 5.14× and 6.41× rather
+than 2.86× and 4.21×. Those extra wins were the scheduling: one library's whole suite ran minutes
+before the next one's, so drift over the run landed on whoever went later, and `@codefast/di` always
+went first. Nothing about the library changed between the two runs.
 
-## Suite aggregates — provisional
+Two independent checks that the interleaved figures are the real ones: `realistic-graph-cold-resolve`
+against tsyringe reads **0.98×** here and 0.99× in a hand-rolled rotating probe, against 1.28×
+library-major; and awilix on that row reads 1.42× here and 1.38× in the probe, against 1.82×.
 
-Ratios against inversify over the 43 comparable scenarios, one run each.
+The **shared-process** profile (no `BENCH_ISOLATE`) cannot interleave — one process per library runs
+that library's whole suite — so its cross-library ratios stay provisional. It is also a different
+measurement for a second reason: one process running all 51 scenarios trains the resolver's call sites
+with every binding shape in the suite, and later scenarios pay for earlier ones.
 
-| Profile                 | Win / parity / loss | Median | Geomean |
-| ----------------------- | ------------------: | -----: | ------: |
-| Isolated, default       |          42 / 1 / 0 |  2.22× |   2.71× |
-| Isolated, `--expose-gc` |          43 / 0 / 0 |  3.04× |   4.13× |
-| Shared process, default |          41 / 1 / 1 |  2.00× |   2.41× |
+## Where it loses
 
-**Do not cite these as they stand.** The runner is library-major: every scenario for `@codefast/di`
-runs before the first scenario for inversify, and awilix and tsyringe run minutes later still. Machine
-drift over a run therefore lands on the ratio, always against whoever is scheduled later, and
-`@codefast/di` is always first. Comparing the two GC-exposed runs above with the previous release's
-published table shows the shape of it: `@codefast/di` and inversify moved a few percent, while awilix
-and tsyringe — **byte-identical versions in both runs** — measured about 30% slower.
+**`dynamic-async-chain-8` — 0.75× of inversify.** Interleaved and GC-exposed. The row has read 0.87×
+at 5 trials on a quiet machine and 0.75× here, so the honest summary is that this library loses an
+eight-deep async factory chain by 15–25% depending on the day, and the 1.48× a library-major run once
+reported was the scheduling, not the engine — a paired A/B of the two builds in that profile put them
+at 0.98×, which is why no change on this branch ever claimed it.
 
-The isolated/shared difference is a real and separate effect: one process running all 51 scenarios
-trains the resolver's call sites with every binding shape in the suite, and later scenarios pay for
-earlier ones. That is what `BENCH_ISOLATE=1` exists for.
+The mechanism behind the shape is settled even though the ratio is not won: the chain's resolution
+context is pooled because a per-chain context survives its chain's microtask hops, so a freshly
+allocated one is promoted out of the nursery and then collected the expensive way. An ablation that
+allocated per chain cost 2.5× on this row. That is why the pool exists — not evidence the row is won.
 
-## Unsettled
-
-**`dynamic-async-chain-8`.** Has read 0.87× of inversify at 5 trials on a quiet machine, and 1.48× in
-a later isolated GC-exposed run against a newer inversify — while a paired A/B of the two builds in
-that same profile puts them at 0.98×. Whatever moved the row, it was not this library. A claim needs a
-paired measurement against the build being compared; a ratio against a competitor whose version also
-changed measures both at once.
-
-What is settled about that row is the mechanism, not the ratio: the async chain's resolution context is
-pooled because a per-chain context survives its chain's microtask hops, so a freshly allocated one is
-promoted out of the nursery and then collected the expensive way. An ablation that allocated per chain
-cost 2.5× on this row. That is why the pool exists — not evidence that the row is won.
+**`realistic-graph-cold-resolve` — 0.98× of tsyringe**, which is parity, and slower **on purpose**. A
+cold iteration hands the collector ten bindings, each carrying every field any binding kind declares,
+because one uniform V8 hidden class for every binding is worth roughly 30% on hot resolve. Winning this
+row means paying for it everywhere else.
 
 ## Retracted
 
 - **"The async-chain row is fixed and runs at 1.26×."** It came from a 3-trial run on a loaded machine,
   supported by a probe that loaded two libraries into one process — worth roughly 30% on async chains
   by this harness's own measurement. Withdrawn.
-- **"43 / 0 / 0 with no losses."** True of one isolated GC-exposed suite run, and not a claim, because
-  the run order inflates it by an amount this page cannot yet bound. Withdrawn pending an interleaved
-  runner.
+- **"43 / 0 / 0 with no losses, median 3.04×."** Produced by a library-major isolated run. With the
+  runner interleaved, the same profile reads 42 / 0 / 1 at median 2.23×: one row is a real loss and the
+  aggregate is a quarter lower. Withdrawn and replaced above.
