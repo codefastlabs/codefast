@@ -31,6 +31,21 @@ registry, binding, token, types, errors                    ← the model
 
 **`scope` is total, so the engine reads it as a field.** `AliasBinding` declares `scope: "transient"` — an alias defers scoping to what it points at, which _is_ transient behaviour — so no kind is missing the field and no read needs an `undefined` fallback. `effectiveBindingScope()` is that read, kept as a named function because it is the vocabulary validation and introspection speak. The gain is not the removed `??`: it is that the field's type feedback stays one shape.
 
+**The engine erases the value type, and one declaration choice is what allows it.** `Binding<Value>` has
+to stay assignable to `Binding`, because every internal lane takes the erased union and the cast to
+`Value` belongs at the public entry point, where the caller's token is the claim being made. That holds
+only because the lifecycle hooks are declared as **methods** on `BindingLifecycleHooks`: as
+function-typed properties, `Value` sits in a parameter position, `strictFunctionTypes` makes the binding
+invariant, and every internal signature grows either a cast or a structural stand-in for the shape it
+wanted. Method syntax compares those parameters bivariantly. The public `ActivationHandler` stays a
+function-typed property, so a user's handler is still checked strictly — the bivariance reaches only the
+field read off a binding.
+
+> **Rule:** internal lanes take `Binding` and return `unknown`; only the eight public resolve entry
+> points name `Value`, and each casts once. A `Value` type parameter on a private method is a fiction —
+> the caller supplies it through an unchecked cast, so it documents an intent the compiler never
+> verified. `tests/types/binding-variance.test.ts` fails to compile if the hooks lose method syntax.
+
 **A memo on a binding is only sound while what it derives from is immutable.** `frame` derives from the token name, id, kind, slot **and scope** — and `scope` is the one field a fluent chain writes in place after registration. So `singleton()`/`transient()`/`scoped()` call `clearBindingFrame()`. Without it a chain refined after its first resolve reports the old scope to every `when()` predicate that reads `ctx.parent.scope`; `tests/unit/resolution/cache-invalidation.test.ts` pins it.
 
 **Registration happens once.** `bind(T).toDynamic(f).singleton()` registers on `toDynamic()`; `singleton()` then writes `scope` in place on that same registered object. Only `when*()` re-slots, because slot and predicate are what the registry indexes on — and it re-registers under the chain's original id, so `id()` is stable for the whole chain. Doing it the other way (commit, remove, re-commit) cost ~2.3× on the bind path.
