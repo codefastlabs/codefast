@@ -102,74 +102,76 @@ interface BindingBase<Value> {
 
 type BindingBaseKeys = keyof BindingBase<unknown>;
 
+/**
+ * The lifecycle hooks every kind but `alias` may carry.
+ *
+ * @remarks Declared as **methods**, not function-typed properties, so their parameters compare
+ * bivariantly and `Binding<Value>` stays assignable to `Binding`. The engine erases the value type at
+ * every lane boundary regardless; the public `ActivationHandler` / `DeactivationHandler` keep strict
+ * checking, which is where a user's handler is actually verified. Not `readonly`: a fluent chain
+ * refines both in place — see {@link RefinableBindingFields}.
+ */
+interface BindingLifecycleHooks<Value> {
+  onActivation?(ctx: ResolutionContext, instance: Value): Value | Promise<Value>;
+  onDeactivation?(instance: Value): void | Promise<void>;
+}
+
 // ── Binding kinds ─────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
  */
-export interface ClassBinding<Value> extends BindingBase<Value> {
+export interface ClassBinding<Value> extends BindingBase<Value>, BindingLifecycleHooks<Value> {
   readonly kind: "class";
   readonly target: Constructor<Value>;
   readonly scope: BindingScope;
-  readonly onActivation?: ActivationHandler<Value> | undefined;
-  readonly onDeactivation?: DeactivationHandler<Value> | undefined;
 }
 
 /**
  * @since 0.3.16-canary.0
  */
-export interface DynamicBinding<Value> extends BindingBase<Value> {
+export interface DynamicBinding<Value> extends BindingBase<Value>, BindingLifecycleHooks<Value> {
   readonly kind: "dynamic";
   readonly factory: (ctx: ResolutionContext) => Value;
   readonly scope: BindingScope;
-  readonly onActivation?: ActivationHandler<Value> | undefined;
-  readonly onDeactivation?: DeactivationHandler<Value> | undefined;
 }
 
 /**
  * @since 0.3.16-canary.0
  */
-export interface DynamicAsyncBinding<Value> extends BindingBase<Value> {
+export interface DynamicAsyncBinding<Value> extends BindingBase<Value>, BindingLifecycleHooks<Value> {
   readonly kind: "dynamic-async";
   readonly factory: (ctx: ResolutionContext) => Promise<Value>;
   readonly scope: BindingScope;
-  readonly onActivation?: ActivationHandler<Value> | undefined;
-  readonly onDeactivation?: DeactivationHandler<Value> | undefined;
 }
 
 /**
  * @since 0.3.16-canary.0
  */
-export interface ResolvedBinding<Value> extends BindingBase<Value> {
+export interface ResolvedBinding<Value> extends BindingBase<Value>, BindingLifecycleHooks<Value> {
   readonly kind: "resolved";
   readonly factory: (...args: Array<unknown>) => Value;
   readonly deps: ReadonlyArray<InjectionDescriptor>;
   readonly scope: BindingScope;
-  readonly onActivation?: ActivationHandler<Value> | undefined;
-  readonly onDeactivation?: DeactivationHandler<Value> | undefined;
 }
 
 /**
  * @since 0.3.16-canary.0
  */
-export interface ResolvedAsyncBinding<Value> extends BindingBase<Value> {
+export interface ResolvedAsyncBinding<Value> extends BindingBase<Value>, BindingLifecycleHooks<Value> {
   readonly kind: "resolved-async";
   readonly factory: (...args: Array<unknown>) => Promise<Value>;
   readonly deps: ReadonlyArray<InjectionDescriptor>;
   readonly scope: BindingScope;
-  readonly onActivation?: ActivationHandler<Value> | undefined;
-  readonly onDeactivation?: DeactivationHandler<Value> | undefined;
 }
 
 /**
  * @since 0.3.16-canary.0
  */
-export interface ConstantBinding<Value> extends BindingBase<Value> {
+export interface ConstantBinding<Value> extends BindingBase<Value>, BindingLifecycleHooks<Value> {
   readonly kind: "constant";
   readonly value: Value;
   readonly scope: "singleton";
-  readonly onActivation?: ActivationHandler<Value> | undefined;
-  readonly onDeactivation?: DeactivationHandler<Value> | undefined;
 }
 
 /**
