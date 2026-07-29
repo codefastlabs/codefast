@@ -24,6 +24,17 @@ export function isNameOnlyOptions(options: ResolveOptions): options is ResolveOp
   );
 }
 
+/**
+ * The lone entry of a request whose only criterion is a one-element `tags` list — the shape the
+ * registry has a direct tag index for.
+ */
+export function singleTagOnlyOf(options: ResolveOptions): BindingTag | undefined {
+  if (options.name !== undefined || options.tag !== undefined) {
+    return undefined;
+  }
+  return options.tags !== undefined && options.tags.length === 1 ? options.tags[0] : undefined;
+}
+
 /** Shared core: build a ResolveOptions from already-normalised name + tags. */
 function buildOptions(
   name: string | undefined,

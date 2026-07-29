@@ -25,14 +25,13 @@ import { InstantiationPlanCompiler, PLAN_RETRY } from "#/resolution/instantiatio
 import type { LifecycleManager } from "#/resolution/lifecycle";
 import { enterResolutionPath, exitResolutionPath } from "#/resolution/resolution-path";
 import type { DependencySlot } from "#/resolution/resolve-options";
-import { injectionSlotToResolveOptions, isNameOnlyOptions } from "#/resolution/resolve-options";
+import { injectionSlotToResolveOptions, isNameOnlyOptions, singleTagOnlyOf } from "#/resolution/resolve-options";
 import type { ScopeManager } from "#/resolution/scope";
 import type { Token } from "#/token";
 import { tokenName } from "#/token";
 import type {
   ActivationHandler,
   BindingIdentifier,
-  BindingTag,
   ConstraintContext,
   Constructor,
   ResolutionFrame,
@@ -1263,12 +1262,4 @@ function requiresResolutionContext(binding: Binding): boolean {
  */
 function matchesIndexedTagValue(binding: Binding, requestedValue: unknown): boolean {
   return requestedValue !== 0 || Object.is(binding.slot.tags[0]![1], requestedValue);
-}
-
-/** The lone entry of a request whose only criterion is a one-element `tags` list. */
-function singleTagOnlyOf(options: ResolveOptions): BindingTag | undefined {
-  if (options.name !== undefined || options.tag !== undefined) {
-    return undefined;
-  }
-  return options.tags !== undefined && options.tags.length === 1 ? options.tags[0] : undefined;
 }
