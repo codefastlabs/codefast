@@ -157,6 +157,34 @@ Pooling here is not about saving an allocation. A per-chain context **survives i
 
 Where the row stands is **unsettled, and no engine change here may claim it.** It has read 0.87× of inversify at 5 trials on a quiet machine, and 1.48× in a later `BENCH_ISOLATE=1 BENCH_FULL=1` run against inversify 8.2.3 — but a paired A/B of the two builds in that same profile puts them at 0.98×, so whatever moved the row was not the engine. A claim about this row needs a paired measurement against the build being compared, in the profile being cited; a ratio against a competitor whose version also changed measures both at once. One overstated claim about this row has already had to be retracted.
 
+### What the async lane costs, decomposed
+
+Three builds measured in one session against a floor of eight plain awaited async functions with no
+container at all — the inherent cost of the shape, which both libraries pay:
+
+| Build                                                      | Overhead per level | Ratio to floor |
+| ---------------------------------------------------------- | -----------------: | -------------: |
+| Current — cycle detection, pooled chain context            |            44.5 ns |          2.11× |
+| Cycle detection removed, pooling and settle listener kept  |            35.1 ns |          1.90× |
+| Settle listener removed entirely (leaks; measurement only) |            18.4 ns |          1.43× |
+
+So **async cycle detection is 9.4 ns per level, and the settle listener is 16.7 ns.** The listener is
+not the guard's cost: a level has to observe its own settlement to decrement `chainLevels` and return
+the context to the pool, so removing cycle detection leaves the listener — and the row still loses.
+Sacrificing the guarantee buys ~11% on `dynamic-async-chain-8`, nowhere near the ~25% that row is down.
+
+> **Rule:** this lane has been attacked three times. Before the fourth, read this table: the deficit is
+> the per-chain state a pooled context needs, not a missing micro-optimisation, and the shapes that
+> remove it (a depth-indexed pool, deferring path exits to chain end) are unsound for concurrent
+> chains — two chains at the same depth hold different paths, and a diamond dependency reports a false
+> cycle. What would need to change is the _lifetime_ of the chain context, not its bookkeeping.
+
+What the price buys is the thing a container without the state cannot do. On a two-node async factory
+cycle, this library rejects with `CircularDependencyError: cycle-a → cycle-b → cycle-a`; inversify
+rejects with `RangeError: Maximum call stack size exceeded`, naming nothing.
+`tests/unit/resolution/resolver-async.test.ts` pins the path in the message, not just the error class,
+because the path is the whole return.
+
 What the async lane deliberately does **not** keep is any per-chain state on the resolver. The chain's context is threaded through the call — `ctx.resolveAsync()` hands the callee the context it used, and an inner level reuses it when `ctx.owner === this`. Two concurrent chains are two contexts with two independent `chainLevels`; there is no shared counter and no path-identity heuristic to get wrong.
 
 ## A container defers most of itself
