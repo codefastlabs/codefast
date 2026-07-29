@@ -19,10 +19,11 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { resolveBenchParentExitCode } from "@codefast/benchmark-harness/parent/resolve-bench-parent-exit-code";
+import type { RunBenchSubprocessParameters } from "@codefast/benchmark-harness/parent/run-bench-subprocess";
 import {
   isIsolatedBenchRunRequested,
   runBenchSubprocess,
-  runBenchSubprocessIsolated,
+  runBenchSubprocessesInterleaved,
 } from "@codefast/benchmark-harness/parent/run-bench-subprocess";
 import { buildLibraryReport, type LibraryReport } from "@codefast/benchmark-harness/report/aggregate";
 import type { ComparisonLibrary } from "@codefast/benchmark-harness/report/comparison";
@@ -85,18 +86,45 @@ function buildOutputPaths(): {
   };
 }
 
-async function runLibrary(
-  runSubprocess: typeof runBenchSubprocess,
-  config: BenchSubprocessConfig,
-): Promise<SubprocessPayload> {
-  return runSubprocess({
+function subprocessParametersFor(config: BenchSubprocessConfig): RunBenchSubprocessParameters {
+  return {
     packageRootDirectory,
     tsconfigFileName: config.tsconfigFileName,
     benchEntryFileNameUnderSrc: config.benchEntryFileName,
     harnessLabel: resolveDisplayName(config),
     scenarioName: config.scenarioName,
     forwardChildStdoutVerbose: VERBOSE_MODE_ENABLED,
-  });
+  };
+}
+
+const INTERLEAVED_RUN_ORDER =
+  "interleaved — every library runs a scenario before the next scenario starts, rotating which goes first";
+const LIBRARY_MAJOR_RUN_ORDER =
+  "library-major — each library's whole suite runs before the next starts, so drift over the run lands on whoever ran later; cross-library ratios from this profile are provisional";
+
+/**
+ * Every library's payload, keyed by library name.
+ *
+ * @remarks Isolated runs interleave, because a cross-library ratio is only as good as the gap between
+ * the two measurements it divides. Without isolation there is one process per library and nothing to
+ * interleave, so that profile keeps its caveat.
+ */
+async function runEveryLibrary(
+  configs: ReadonlyArray<BenchSubprocessConfig>,
+): Promise<{ payloads: Map<string, SubprocessPayload>; runOrder: string }> {
+  if (isIsolatedBenchRunRequested()) {
+    return {
+      payloads: await runBenchSubprocessesInterleaved(
+        configs.map((config) => ({ key: config.libraryName, parameters: subprocessParametersFor(config) })),
+      ),
+      runOrder: INTERLEAVED_RUN_ORDER,
+    };
+  }
+  const payloads = new Map<string, SubprocessPayload>();
+  for (const config of configs) {
+    payloads.set(config.libraryName, await runBenchSubprocess(subprocessParametersFor(config)));
+  }
+  return { payloads, runOrder: LIBRARY_MAJOR_RUN_ORDER };
 }
 
 async function main(): Promise<void> {
@@ -112,11 +140,12 @@ async function main(): Promise<void> {
 
   rebuildCodefastDiPackage();
 
-  const runSubprocess = isIsolatedBenchRunRequested() ? runBenchSubprocessIsolated : runBenchSubprocess;
-  const codefastPayload = await runLibrary(runSubprocess, CODEFAST_DI);
-  const inversifyPayload = await runLibrary(runSubprocess, INVERSIFY);
-  const awilixPayload = await runLibrary(runSubprocess, AWILIX);
-  const tsyringePayload = await runLibrary(runSubprocess, TSYRINGE);
+  const { payloads, runOrder } = await runEveryLibrary([CODEFAST_DI, INVERSIFY, AWILIX, TSYRINGE]);
+  const codefastPayload = payloads.get(CODEFAST_DI.libraryName)!;
+  const inversifyPayload = payloads.get(INVERSIFY.libraryName)!;
+  const awilixPayload = payloads.get(AWILIX.libraryName)!;
+  const tsyringePayload = payloads.get(TSYRINGE.libraryName)!;
+  console.log(`\n[bench] Run order: ${runOrder}`);
 
   const codefastReport: LibraryReport = buildLibraryReport(
     codefastPayload.fingerprint,
@@ -160,7 +189,10 @@ async function main(): Promise<void> {
     { fingerprint: tsyringePayload.fingerprint, trials: tsyringePayload.trials },
   ];
 
-  const markdown = renderComparisonMarkdownReport(codefastLibrary, competitors, DI_COMPARISON_MARKDOWN);
+  const markdown = renderComparisonMarkdownReport(codefastLibrary, competitors, {
+    ...DI_COMPARISON_MARKDOWN,
+    runOrder,
+  });
 
   const outputPaths = buildOutputPaths();
   writeMarkdownFile(outputPaths.markdownPath, markdown);

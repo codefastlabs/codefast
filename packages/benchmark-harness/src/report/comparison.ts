@@ -50,6 +50,14 @@ export interface ComparisonMarkdownReportOptions {
   readonly introLines?: ReadonlyArray<string>;
   /** Emits the fingerprint section; off when this report is appended to one that already has it. */
   readonly includeEnvironment?: boolean;
+  /**
+   * How the parent scheduled the libraries, stated in the environment section.
+   *
+   * @remarks A cross-library ratio depends on it: scheduling one library's whole suite before the
+   * next one starts hands any drift over the run to whoever ran later. The child cannot know this,
+   * so the parent passes it.
+   */
+  readonly runOrder?: string;
   /** Emits the skipped-scenario section; off when appended to a report that already has it. */
   readonly includeSanityFailures?: boolean;
 }
@@ -410,10 +418,12 @@ function buildScenarioTableLines(
 function buildEnvironmentBullets(
   pivot: ComparisonLibrary,
   competitors: ReadonlyArray<ComparisonLibrary>,
+  runOrder: string | undefined,
 ): Array<string> {
   const everyLibrary = [pivot, ...competitors];
   const { fingerprint } = pivot.report;
   return [
+    ...(runOrder === undefined ? [] : [`- Run order: ${runOrder}`]),
     `- Node ${fingerprint.nodeVersion} / V8 ${fingerprint.v8Version}`,
     `- ${fingerprint.platform}/${fingerprint.arch} · ${fingerprint.cpuModel} × ${String(fingerprint.cpuCount)}`,
     `- NODE_OPTIONS: \`${fingerprint.nodeOptions || "(empty)"}\``,
@@ -462,7 +472,7 @@ export function renderComparisonMarkdownReport(
   const sections: Array<string> = [
     options.documentHeading,
     ...(options.includeEnvironment === true
-      ? ["", "## Environment", "", ...buildEnvironmentBullets(pivot, competitors)]
+      ? ["", "## Environment", "", ...buildEnvironmentBullets(pivot, competitors, options.runOrder)]
       : []),
     ...(options.includeSanityFailures === true ? buildSanityFailureLines(pivot, competitors) : []),
     "",
