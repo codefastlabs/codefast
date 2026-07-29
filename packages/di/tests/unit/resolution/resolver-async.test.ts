@@ -61,6 +61,32 @@ describe("async chains", () => {
 
     await expect(container.resolveAsync(aToken)).rejects.toBeInstanceOf(CircularDependencyError);
   });
+
+  it("names the cycle it detected, which is what the per-level bookkeeping is for", async () => {
+    // The alternative to keeping this state is what a container without it does: recurse until the
+    // stack overflows, reporting a RangeError that names nothing. The path in the message is the
+    // whole return on the async lane's per-level cost — see ARCHITECTURE.md.
+    const firstToken = token<number>("cycle-first");
+    const secondToken = token<number>("cycle-second");
+    const thirdToken = token<number>("cycle-third");
+    const container = Container.create();
+    container
+      .bind(firstToken)
+      .toDynamicAsync(async (ctx) => ctx.resolveAsync(secondToken))
+      .transient();
+    container
+      .bind(secondToken)
+      .toDynamicAsync(async (ctx) => ctx.resolveAsync(thirdToken))
+      .transient();
+    container
+      .bind(thirdToken)
+      .toDynamicAsync(async (ctx) => ctx.resolveAsync(firstToken))
+      .transient();
+
+    await expect(container.resolveAsync(firstToken)).rejects.toThrow(
+      /cycle-first → cycle-second → cycle-third → cycle-first/,
+    );
+  });
 });
 
 describe("async singletons", () => {
