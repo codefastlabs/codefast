@@ -125,10 +125,12 @@ with the full `matchesSlot` instead cost **~42%** on `tagged-binding-resolve`; t
 
 ## Cycle detection — two mechanisms, on purpose
 
-| Lane                           | Mechanism                                                    | Why not the other one                                                                                             |
-| ------------------------------ | ------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------- |
-| Sync transient-dynamic         | `binding.inFlight`, set on factory-enter and cleared on exit | Sync resolution runs on one call stack, so the flag _is_ exact path membership: `O(1)`, no hashing, no side table |
-| Everything else, and all async | `enterResolutionPath` on the shared path array               | Async chains interleave, so a per-binding flag would report a cycle where two chains merely overlap               |
+| Lane                   | Mechanism                                                            | Why not the other one                                                                                               |
+| ---------------------- | -------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| Sync transient-dynamic | `binding.inFlight`, set on factory-enter and cleared on exit         | Sync resolution runs on one call stack, so the flag _is_ exact path membership: `O(1)`, no hashing, no side table   |
+| Everything else sync   | `enterResolutionPath` — push and pop one shared path array           | One call stack, so the array _is_ a stack; a per-binding flag cannot name the path in the error                     |
+| Async, in a cascade    | `binding.inFlight`, cleared when the factory returns its **promise** | The request that closes a cycle comes from a factory's synchronous prefix, and synchronous code does not interleave |
+| Async, out of one      | `extendResolutionBranch` — append-only path, read by branch depth    | A continuation's ancestors are on no call stack, so they have to be carried explicitly                              |
 
 **Both variants of that lane** — with and without activation hooks — take the flag, because the argument for it does not mention hooks: a hook runs on the same call stack the factory did. Giving the hooked variant the same guard is worth **~15%** on `container-level-activation-hook`, which had been the suite's only loss against inversify. A hook that re-resolves its own token still reports `CircularDependencyError` rather than recursing, and the flag is still released on every exit path — `tests/unit/resolution/in-flight-invariants.test.ts` pins both for the hooked lane too.
 
@@ -146,46 +148,85 @@ The constant is 32, measured on Node 26 / M3 Max over an async transient chain �
 
 > **Rule:** a threshold may choose an implementation. It may never choose a semantics.
 
-## Resolution contexts are pooled, and that is not an optimization detail
+## The async lane has two lanes, and the cheap one costs nothing per level
 
-Two pools, both in the resolver:
+A resolution path is the chain of ancestors a level is being resolved under. Sync resolution runs on one
+call stack, so one array pushed and popped **is** that chain, and `binding.inFlight` is exact membership
+in it. Async resolution was assumed not to have either property, and paid for a settle-scoped path on
+every level to compensate.
 
-- **sync** — indexed by depth; a resolve at depth _n_ always reuses the same context.
-- **async chains** — a free list. The chain's first level borrows one, every level increments `chainLevels`, the last to settle returns it.
+It has both, for the requests that matter. **A factory's request for a dependency is made from its
+synchronous prefix** — `async ctx => await ctx.resolveAsync(dep)` calls `resolveAsync` before it awaits
+anything. So the chain of "who is resolving whom" at the moment of a request is the synchronous call
+stack, and a whole eight-level chain is built inside **one** synchronous cascade before any of it
+settles. While that cascade is open the resolver's own `#cascadePath`/`#cascadeStack` are the ancestor
+chain: pushed on factory-enter, popped when the factory returns **its promise** — not when that promise
+settles. Two cascades can never interleave, so `binding.inFlight` is exact path membership again, and
+every level shares one `AsyncCascadeContext`. Nothing is allocated per level, nothing observes its own
+settlement.
 
-Pooling here is not about saving an allocation. A per-chain context **survives its chain's microtask hops**, so a freshly allocated one gets promoted out of the nursery and is then collected the expensive way. Measured on `dynamic-async-chain-8` under a forced full GC every 100 samples: allocating per chain costs **2.5×**. That is why the pool exists — not because it wins the row.
+That also removes a false positive rather than adding one. The shared settle-scoped path reported
+`Circular dependency detected: a → b → d → c → d` for a diamond — `A` awaiting `B` and `C` in parallel,
+both needing `D`, in which `b → d → c` is not a dependency edge at all. Under the cascade, `D`'s flag is
+cleared when `D`'s factory returns its promise, so the second sibling finds it clear.
 
-Where the row stands is **unsettled, and no engine change here may claim it.** It has read 0.87× of inversify at 5 trials on a quiet machine, and 1.48× in a later `BENCH_ISOLATE=1 BENCH_FULL=1` run against inversify 8.2.3 — but a paired A/B of the two builds in that same profile puts them at 0.98×, so whatever moved the row was not the engine. A claim about this row needs a paired measurement against the build being compared, in the profile being cited; a ratio against a competitor whose version also changed measures both at once. One overstated claim about this row has already had to be retracted.
+**What the cascade cannot see is a request made from a continuation**, after an await: its ancestors are
+on no call stack. Such a request arrives with the cascade empty, which is an exact test — a continuation
+never runs inside a synchronous cascade — so it **escapes** to the branch lane, and so does anything the
+cascade lane does not serve, seeded with a snapshot of the ancestors the cascade had reached. Once a
+subtree leaves the cascade it stays off it, which is what keeps a cycle crossing the boundary on one
+path.
 
-### What the async lane costs, decomposed
+The branch lane is the general one: `extendResolutionBranch` appends to a path while this branch still
+owns the next slot and copies its own prefix once a sibling has claimed it. Nothing is removed there
+either, so it needs no settle listener; it pays a context per level instead. A cycle formed entirely
+from post-await edges is caught there — `post-q → post-p → post-q` — one level in from the true root,
+because the ancestors before the first escape were never written down. That imprecision is the price of
+the cascade lane, and `tests/unit/resolution/resolver-async.test.ts` pins it rather than leaving it to
+be discovered.
 
-Three builds measured in one session against a floor of eight plain awaited async functions with no
-container at all — the inherent cost of the shape, which both libraries pay:
+### What each shape costs
 
-| Build                                                      | Overhead per level | Ratio to floor |
-| ---------------------------------------------------------- | -----------------: | -------------: |
-| Current — cycle detection, pooled chain context            |            44.5 ns |          2.11× |
-| Cycle detection removed, pooling and settle listener kept  |            35.1 ns |          1.90× |
-| Settle listener removed entirely (leaks; measurement only) |            18.4 ns |          1.43× |
+Per-level overhead against a floor of eight plain awaited async functions, one process, libraries
+interleaved with rotating order, best of five trials. `BENCH_FULL=1` forces a full GC every 100 samples,
+so the right-hand column is the one published figures come from:
 
-So **async cycle detection is 9.4 ns per level, and the settle listener is 16.7 ns.** The listener is
-not the guard's cost: a level has to observe its own settlement to decrement `chainLevels` and return
-the context to the pool, so removing cycle detection leaves the listener — and the row still loses.
-Sacrificing the guarantee buys ~11% on `dynamic-async-chain-8`, nowhere near the ~25% that row is down.
+| Build                                                                  | Collector idle | Full GC every 100 |
+| ---------------------------------------------------------------------- | -------------: | ----------------: |
+| Pooled chain context, shared settle-scoped path, settle listener       |        48.3 ns |           48.3 ns |
+| Per-level context, per-level path **copied** whole (`[...path, name]`) |        61.4 ns |                 — |
+| Per-level context, append-only branch (the escape lane alone)          |        28.2 ns |           62.6 ns |
+| **Cascade lane + branch escape**                                       |    **19.5 ns** |       **21.3 ns** |
+| Ceiling: no cycle bookkeeping at all (unsound; measurement only)       |        13.8 ns |           12.3 ns |
 
-> **Rule:** this lane has been attacked three times. Before the fourth, read this table: the deficit is
-> the per-chain state a pooled context needs, not a missing micro-optimisation, and the shapes that
-> remove it (a depth-indexed pool, deferring path exits to chain end) are unsound for concurrent
-> chains — two chains at the same depth hold different paths, and a diamond dependency reports a false
-> cycle. What would need to change is the _lifetime_ of the chain context, not its bookkeeping.
+Two things to read here. First, **the middle two rows are the trap**: per-level state fixes the diamond
+and measures _worse_, and it is worse in the profile that counts by 34 ns, because a per-level context is
+held across its factory's await, so it is promoted out of the nursery and then collected the expensive
+way. The pooled build was GC-insensitive and that, not the saved allocation, was what its pool bought.
+Second, the ceiling says the lane's real machinery — promise plumbing, frame lookup, binding dispatch —
+is only ~13 ns, so **everything above it was cycle bookkeeping**, and the cascade lane gets within ~7 ns
+of it while keeping the guarantee.
 
-What the price buys is the thing a container without the state cannot do. On a two-node async factory
-cycle, this library rejects with `CircularDependencyError: cycle-a → cycle-b → cycle-a`; inversify
-rejects with `RangeError: Maximum call stack size exceeded`, naming nothing.
-`tests/unit/resolution/resolver-async.test.ts` pins the path in the message, not just the error class,
-because the path is the whole return.
+In the interleaved isolated suite that moves `dynamic-async-chain-8` from 0.75× to **1.60×** of
+inversify 8.2.3 and the async group's geomean from 1.13× to 1.58×. A paired A/B against the previous
+build holds every measured sync row at parity, `circular-dependency-3` included — it shares the
+`binding.inFlight` flag the cascade uses, so it is the row that would show the two lanes fighting.
 
-What the async lane deliberately does **not** keep is any per-chain state on the resolver. The chain's context is threaded through the call — `ctx.resolveAsync()` hands the callee the context it used, and an inner level reuses it when `ctx.owner === this`. Two concurrent chains are two contexts with two independent `chainLevels`; there is no shared counter and no path-identity heuristic to get wrong.
+> **Rule:** measure this lane in **both** columns, and never quote the idle-collector number alone. Four
+> attempts failed here before the cascade, three of them trying to make a settle-scoped path cheaper —
+> a decomposition priced its settle listener at 16.7 ns per level against 9.4 ns for the cycle check
+> itself, so the bookkeeping was never the lever. The lever was asking whether the path had to be
+> settle-scoped at all.
+
+> **Rule:** the cascade entry answers a plain constant and a cached singleton itself rather than
+> escaping. A materialized async singleton that escapes snapshots both cascade arrays for a resolve
+> that never reads a path — worth **~19%** on `resolve-async-single-hop`, and the suite hid it behind a
+> ratio that was still above 1× against inversify. Only the paired A/B saw it.
+
+The sync lane's answer to the same question is `InstantiationPlanCompiler`, which cycle-checks a static
+subgraph once at compile time and then executes with no bookkeeping. It does not port: it needs a
+dependency graph visible before the resolve, and a `dynamic-async` factory is opaque. The cascade needs
+no such graph — it reads the ancestors off the call stack that is already there.
 
 ## A container defers most of itself
 
