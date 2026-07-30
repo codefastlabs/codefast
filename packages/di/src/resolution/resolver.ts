@@ -28,10 +28,13 @@ import {
 } from "#/resolution/environment";
 import { InstantiationPlanCompiler, PLAN_RETRY } from "#/resolution/instantiation-plan";
 import type { LifecycleManager } from "#/resolution/lifecycle";
+import type { BranchDepth, OwnedBranchPath } from "#/resolution/resolution-path";
 import {
+  branchDepthOf,
   enterResolutionPath,
   extendResolutionBranch,
   extendResolutionStackBranch,
+  ROOT_BRANCH,
   UNOWNED_BRANCH,
 } from "#/resolution/resolution-path";
 import type { DependencySlot } from "#/resolution/resolve-options";
@@ -659,7 +662,7 @@ export class DependencyResolver implements ResolverCallbacks {
     token: Token<Value> | Constructor<Value>,
     resolutionPath: Array<string>,
     resolutionStack: Array<ResolutionFrame>,
-    branchDepth: number,
+    branchDepth: BranchDepth,
   ): Promise<Value> {
     // Hot lane: own-registry fast default (async chains resolve sibling dynamic bindings).
     // Fall back to the chain-versioned memo only on miss or alias.
@@ -704,7 +707,7 @@ export class DependencyResolver implements ResolverCallbacks {
     owner: DependencyResolver,
     resolutionPath: Array<string>,
     resolutionStack: Array<ResolutionFrame>,
-    branchDepth: number,
+    branchDepth: BranchDepth,
   ): Promise<unknown> {
     if (this.#isPlainConstant(binding)) {
       return Promise.resolve(binding.value);
@@ -737,7 +740,7 @@ export class DependencyResolver implements ResolverCallbacks {
     options: ResolveOptions | undefined,
     resolutionPath: Array<string>,
     resolutionStack: Array<ResolutionFrame>,
-    branchDepth: number = UNOWNED_BRANCH,
+    branchDepth: BranchDepth = UNOWNED_BRANCH,
   ): Promise<Value> {
     const { binding, owner } = this.#requireBinding(token, options, resolutionPath, resolutionStack);
 
@@ -752,7 +755,7 @@ export class DependencyResolver implements ResolverCallbacks {
     options: ResolveOptions | undefined,
     resolutionPath: Array<string>,
     resolutionStack: Array<ResolutionFrame>,
-    branchDepth: number,
+    branchDepth: BranchDepth,
   ): Promise<unknown> {
     if (this.#isPlainConstant(binding)) {
       return binding.value;
@@ -779,11 +782,11 @@ export class DependencyResolver implements ResolverCallbacks {
     // This level appends to its own branch and never unwinds — see ARCHITECTURE.md.
     const levelPath = extendResolutionBranch(resolutionPath, branchDepth, frame.tokenName);
     const levelStack = extendResolutionStackBranch(resolutionStack, branchDepth, frame);
-    const levelDepth = levelPath.length;
+    const levelDepth = branchDepthOf(levelPath);
 
     const needsActivation = this.#activation.needsActivation(binding);
     if (!needsActivation && scope === "transient" && (binding.kind === "dynamic" || binding.kind === "dynamic-async")) {
-      const resolutionCtx = new AsyncLevelContext(this, levelPath, levelStack, options, levelDepth);
+      const resolutionCtx = new AsyncLevelContext(this, levelPath, levelStack, options);
       if (binding.kind === "dynamic-async") {
         return await binding.factory(resolutionCtx);
       }
@@ -793,7 +796,7 @@ export class DependencyResolver implements ResolverCallbacks {
 
     const resolutionCtx =
       needsActivation || requiresResolutionContext(binding)
-        ? new AsyncLevelContext(this, levelPath, levelStack, options, levelDepth)
+        ? new AsyncLevelContext(this, levelPath, levelStack, options)
         : undefined;
 
     if (scope === "singleton") {
@@ -839,7 +842,7 @@ export class DependencyResolver implements ResolverCallbacks {
     ctx: AsyncLevelContext | undefined,
     resolutionPath: Array<string>,
     resolutionStack: Array<ResolutionFrame>,
-    branchDepth: number,
+    branchDepth: BranchDepth,
     needsActivation: boolean,
   ): Promise<unknown> {
     const instance = await this.#instantiateAsync(binding, ctx, resolutionPath, resolutionStack, branchDepth);
@@ -854,7 +857,7 @@ export class DependencyResolver implements ResolverCallbacks {
     ctx: AsyncLevelContext | undefined,
     resolutionPath: Array<string>,
     resolutionStack: Array<ResolutionFrame>,
-    branchDepth: number,
+    branchDepth: BranchDepth,
   ): Promise<unknown> {
     switch (binding.kind) {
       case "constant":
@@ -907,7 +910,7 @@ export class DependencyResolver implements ResolverCallbacks {
     deps: ReadonlyArray<DependencySlot>,
     resolutionPath: Array<string>,
     resolutionStack: Array<ResolutionFrame>,
-    branchDepth: number,
+    branchDepth: BranchDepth,
   ): Promise<Array<unknown>> {
     const count = deps.length;
     if (count === 0) {
@@ -929,7 +932,7 @@ export class DependencyResolver implements ResolverCallbacks {
     dep: DependencySlot,
     resolutionPath: Array<string>,
     resolutionStack: Array<ResolutionFrame>,
-    branchDepth: number,
+    branchDepth: BranchDepth,
   ): Promise<unknown> {
     const options = injectionSlotToResolveOptions(dep);
     if (dep.multi) {
@@ -949,7 +952,7 @@ export class DependencyResolver implements ResolverCallbacks {
     options: ResolveOptions | undefined,
     resolutionPath: Array<string>,
     resolutionStack: Array<ResolutionFrame>,
-    branchDepth: number = UNOWNED_BRANCH,
+    branchDepth: BranchDepth = UNOWNED_BRANCH,
   ): Promise<Value | undefined> {
     if (this.#findBinding(token, options, resolutionPath, resolutionStack) === undefined) {
       return undefined;
@@ -962,7 +965,7 @@ export class DependencyResolver implements ResolverCallbacks {
     options: ResolveOptions | undefined,
     resolutionPath: Array<string>,
     resolutionStack: Array<ResolutionFrame>,
-    branchDepth: number = UNOWNED_BRANCH,
+    branchDepth: BranchDepth = UNOWNED_BRANCH,
   ): Promise<Array<Value>> {
     const candidates = this.#candidateBindings(token, options, resolutionPath, resolutionStack);
     const pending = new Array<Promise<Value>>(candidates.length);
@@ -1111,10 +1114,10 @@ export class DependencyResolver implements ResolverCallbacks {
     binding: DynamicBinding<unknown> | DynamicAsyncBinding<unknown>,
     resolutionPath: Array<string>,
     resolutionStack: Array<ResolutionFrame>,
-    branchDepth: number,
+    branchDepth: BranchDepth,
   ): Promise<unknown> {
     const frame = this.#getResolutionFrame(binding);
-    let levelPath: Array<string>;
+    let levelPath: OwnedBranchPath;
     try {
       levelPath = extendResolutionBranch(resolutionPath, branchDepth, frame.tokenName);
     } catch (cycleError) {
@@ -1124,7 +1127,7 @@ export class DependencyResolver implements ResolverCallbacks {
     const levelStack = extendResolutionStackBranch(resolutionStack, branchDepth, frame);
 
     // Nothing this level appended is ever removed, so no level observes its own settlement.
-    const ctx = new AsyncLevelContext(this, levelPath, levelStack, undefined, levelPath.length);
+    const ctx = new AsyncLevelContext(this, levelPath, levelStack, undefined);
     try {
       if (binding.kind === "dynamic-async") {
         return binding.factory(ctx);
@@ -1139,15 +1142,24 @@ export class DependencyResolver implements ResolverCallbacks {
   // ── The cascade lane ───────────────────────────────────────────────────────
 
   /**
-   * Entry for a request made from inside a synchronous factory cascade, or from the container.
+   * Entry for a request a factory makes from inside an open synchronous cascade.
    *
-   * @remarks A request that arrives with no cascade open came out of a continuation, so its
-   * ancestors are not on any call stack — it escapes to the branch lane. See `ARCHITECTURE.md`.
+   * @remarks A request arriving with no cascade open came out of a continuation, so its ancestors
+   * are on no call stack — it escapes to the branch lane. See `ARCHITECTURE.md`.
    */
-  resolveAsyncFromCascade(token: Token<unknown> | Constructor, isRoot: boolean): Promise<unknown> {
-    if (!isRoot && this.#cascadePath.length === 0) {
-      return this.resolveAsyncFromContext(token, [], [], 0);
+  resolveAsyncFromCascade(token: Token<unknown> | Constructor): Promise<unknown> {
+    if (this.#cascadePath.length === 0) {
+      return this.resolveAsyncFromContext(token, [], [], ROOT_BRANCH);
     }
+    return this.#dispatchCascade(token);
+  }
+
+  /** Entry for a resolve the container starts, which opens the cascade rather than joining one. */
+  resolveAsyncFromRoot(token: Token<unknown> | Constructor): Promise<unknown> {
+    return this.#dispatchCascade(token);
+  }
+
+  #dispatchCascade(token: Token<unknown> | Constructor): Promise<unknown> {
     const fastBinding = this.#registry.getFastDefault(token);
     if (fastBinding !== undefined) {
       if (
@@ -1225,7 +1237,7 @@ export class DependencyResolver implements ResolverCallbacks {
     options: ResolveOptions | undefined,
     resolutionPath: Array<string>,
     resolutionStack: Array<ResolutionFrame>,
-    branchDepth: number,
+    branchDepth: BranchDepth,
   ): Promise<unknown> {
     if (this.#isPlainConstant(binding)) {
       return Promise.resolve(binding.value);

@@ -27,6 +27,7 @@ import { effectiveBindingScope } from "#/resolution/binding-scope";
 import type { ResolutionDiagnostics } from "#/resolution/diagnostics";
 import { RESOLUTION_DIAGNOSTICS } from "#/resolution/diagnostics";
 import { LifecycleManager } from "#/resolution/lifecycle";
+import { ROOT_BRANCH } from "#/resolution/resolution-path";
 import type { DependencySlot } from "#/resolution/resolve-options";
 import { injectionSlotToResolveOptions, bindingSlotToResolveOptions } from "#/resolution/resolve-options";
 import { DependencyResolver } from "#/resolution/resolver";
@@ -470,9 +471,9 @@ class DefaultContainer implements Container {
   resolveAsync<const Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Promise<Value> {
     this.#assertNotDisposed();
     if (options === undefined) {
-      return this.#resolver.resolveAsyncFromCascade(token, true) as Promise<Value>;
+      return this.#resolver.resolveAsyncFromRoot(token) as Promise<Value>;
     }
-    return this.#resolver.resolveAsync(token, options, [], [], 0);
+    return this.#resolver.resolveAsync(token, options, [], [], ROOT_BRANCH);
   }
 
   resolveOptional<const Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Value | undefined {
@@ -485,7 +486,7 @@ class DefaultContainer implements Container {
     options?: ResolveOptions,
   ): Promise<Value | undefined> {
     this.#assertNotDisposed();
-    return this.#resolver.resolveOptionalAsync(token, options, [], [], 0);
+    return this.#resolver.resolveOptionalAsync(token, options, [], [], ROOT_BRANCH);
   }
 
   resolveAll<const Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Array<Value> {
@@ -498,7 +499,7 @@ class DefaultContainer implements Container {
     options?: ResolveOptions,
   ): Promise<Array<Value>> {
     this.#assertNotDisposed();
-    return this.#resolver.resolveAllAsync(token, options, [], [], 0);
+    return this.#resolver.resolveAllAsync(token, options, [], [], ROOT_BRANCH);
   }
 
   // ── Child ─────────────────────────────────────────────────────────────────

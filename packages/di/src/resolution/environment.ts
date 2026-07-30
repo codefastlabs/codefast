@@ -1,4 +1,5 @@
 import type { Container } from "#/container/container";
+import type { BranchDepth, OwnedBranchPath, OwnedBranchStack } from "#/resolution/resolution-path";
 import { UNOWNED_BRANCH } from "#/resolution/resolution-path";
 import type { Token } from "#/token";
 import type {
@@ -57,10 +58,10 @@ export interface ResolverCallbacks {
     token: Token<Value> | Constructor<Value>,
     resolutionPath: Array<string>,
     resolutionStack: Array<ResolutionFrame>,
-    branchDepth: number,
+    branchDepth: BranchDepth,
   ): Promise<Value>;
-  /** Not one of the eight `Value`-naming entry points: its two callers are, and each casts once. */
-  resolveAsyncFromCascade(token: Token<unknown> | Constructor, isRoot: boolean): Promise<unknown>;
+  /** Not one of the eight `Value`-naming entry points: its caller is, and casts once. */
+  resolveAsyncFromCascade(token: Token<unknown> | Constructor): Promise<unknown>;
   resolveAsync<const Value>(
     token: Token<Value> | Constructor<Value>,
     options: ResolveOptions | undefined,
@@ -183,23 +184,26 @@ export class DefaultResolutionContext implements ResolutionContext {
  */
 export class AsyncLevelContext implements ResolutionContext {
   readonly #resolver: ResolverCallbacks;
-  readonly #resolutionPath: Array<string>;
-  readonly #resolutionStack: Array<ResolutionFrame>;
+  readonly #resolutionPath: OwnedBranchPath;
+  readonly #resolutionStack: OwnedBranchStack;
   readonly #currentOptions: ResolveOptions | undefined;
-  readonly #branchDepth: number;
+  readonly #branchDepth: BranchDepth;
 
+  /**
+   * @param resolutionPath - this level's own branch; the depth is read off it rather than passed,
+   * so the two cannot disagree about where this level sits
+   */
   constructor(
     resolver: ResolverCallbacks,
-    resolutionPath: Array<string>,
-    resolutionStack: Array<ResolutionFrame>,
+    resolutionPath: OwnedBranchPath,
+    resolutionStack: OwnedBranchStack,
     currentOptions: ResolveOptions | undefined,
-    branchDepth: number,
   ) {
     this.#resolver = resolver;
     this.#resolutionPath = resolutionPath;
     this.#resolutionStack = resolutionStack;
     this.#currentOptions = currentOptions;
-    this.#branchDepth = branchDepth;
+    this.#branchDepth = resolutionPath.length as BranchDepth;
   }
 
   #graph: ConstraintContext | undefined;
@@ -299,7 +303,7 @@ export class AsyncCascadeContext implements ResolutionContext {
 
   resolveAsync<const Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Promise<Value> {
     if (options === undefined) {
-      return this.#resolver.resolveAsyncFromCascade(token, false) as Promise<Value>;
+      return this.#resolver.resolveAsyncFromCascade(token) as Promise<Value>;
     }
     return this.#resolver.resolveAsync(token, options, [...this.#cascadePath], [...this.#cascadeStack]);
   }

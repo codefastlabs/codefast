@@ -1,5 +1,6 @@
 /** Cycle-detection bookkeeping carried on the resolution path itself. */
 import { CircularDependencyError } from "#/errors";
+import type { ResolutionFrame } from "#/types";
 
 const RESOLUTION_SET_KEY: unique symbol = Symbol("di:resolution-set");
 /**
@@ -37,12 +38,41 @@ export function enterResolutionPath(resolutionPath: Array<string>, tokenDisplayN
   return resolutionSet;
 }
 
+declare const BRANCH_BRAND: unique symbol;
+
 /**
- * Marks a branch as not yet owned by the async lane, so its first extension must copy.
+ * A resolution path one async branch owns, so appending to it cannot disturb another branch.
  *
- * @see `ARCHITECTURE.md` — why an async branch may only ever append to an array it made itself.
+ * @remarks Only {@link extendResolutionBranch} mints one. That is what makes "may this lane append
+ * to this array" a question the compiler answers instead of a rule in a doc — a sync frame's path,
+ * which that frame will pop, is a plain `Array<string>` and cannot reach a level that owns its own.
  */
-export const UNOWNED_BRANCH = -1;
+export type OwnedBranchPath = Array<string> & { readonly [BRANCH_BRAND]: true };
+
+/** The stack half of {@link OwnedBranchPath}, minted only by {@link extendResolutionStackBranch}. */
+export type OwnedBranchStack = Array<ResolutionFrame> & { readonly [BRANCH_BRAND]: true };
+
+declare const BRANCH_DEPTH_BRAND: unique symbol;
+
+/**
+ * How many leading entries of a path belong to one async branch.
+ *
+ * @remarks Branded so a bare number cannot be passed: the depth is only ever this branch's own,
+ * {@link ROOT_BRANCH}, or {@link UNOWNED_BRANCH}, and getting it from somewhere else silently
+ * re-parents a level.
+ */
+export type BranchDepth = number & { readonly [BRANCH_DEPTH_BRAND]: true };
+
+/** A path no async branch owns yet, so its first extension must copy rather than append. */
+export const UNOWNED_BRANCH = -1 as BranchDepth;
+
+/** The depth a chain's first level extends from, over an array its caller just minted. */
+export const ROOT_BRANCH = 0 as BranchDepth;
+
+/** A branch's own depth: the length its path had when this level took it. */
+export function branchDepthOf(branch: OwnedBranchPath): BranchDepth {
+  return branch.length as BranchDepth;
+}
 
 /**
  * Extends one branch of an append-only path, throwing if the entry is already an ancestor.
@@ -50,14 +80,12 @@ export const UNOWNED_BRANCH = -1;
  * @remarks Appends in place while this branch still owns the next slot, and copies its own prefix
  * once a sibling has claimed it. Nothing is ever removed, so no async level has to observe its own
  * settlement to unwind — see `ARCHITECTURE.md`.
- *
- * @param branchDepth - how many leading entries belong to this branch, or {@link UNOWNED_BRANCH}
  */
 export function extendResolutionBranch(
   resolutionPath: Array<string>,
-  branchDepth: number,
+  branchDepth: BranchDepth,
   tokenDisplayName: string,
-): Array<string> {
+): OwnedBranchPath {
   const depth = branchDepth === UNOWNED_BRANCH ? resolutionPath.length : branchDepth;
   for (let index = 0; index < depth; index += 1) {
     if (resolutionPath[index] === tokenDisplayName) {
@@ -67,25 +95,27 @@ export function extendResolutionBranch(
   // An unowned array belongs to a sync frame that will pop it, or carries a membership Set this
   // lane cannot keep true; copying is what makes the branch's own appends safe.
   if (branchDepth === resolutionPath.length) {
+    // The sole mint: appending in place needs a depth that came from a branch already owned, or
+    // ROOT_BRANCH over an array its caller minted for this chain alone.
     resolutionPath.push(tokenDisplayName);
-    return resolutionPath;
+    return resolutionPath as OwnedBranchPath;
   }
   const branch = resolutionPath.slice(0, depth);
   branch.push(tokenDisplayName);
-  return branch;
+  return branch as OwnedBranchPath;
 }
 
 /** The stack half of {@link extendResolutionBranch}; frames carry no cycle to detect. */
-export function extendResolutionStackBranch<Entry>(
-  resolutionStack: Array<Entry>,
-  branchDepth: number,
-  frame: Entry,
-): Array<Entry> {
+export function extendResolutionStackBranch(
+  resolutionStack: Array<ResolutionFrame>,
+  branchDepth: BranchDepth,
+  frame: ResolutionFrame,
+): OwnedBranchStack {
   if (branchDepth === resolutionStack.length) {
     resolutionStack.push(frame);
-    return resolutionStack;
+    return resolutionStack as OwnedBranchStack;
   }
   const branch = resolutionStack.slice(0, branchDepth === UNOWNED_BRANCH ? resolutionStack.length : branchDepth);
   branch.push(frame);
-  return branch;
+  return branch as OwnedBranchStack;
 }
