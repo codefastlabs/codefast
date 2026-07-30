@@ -306,3 +306,39 @@ describe("alias cycle safety", () => {
     expect(container.resolve(tokens[CHAIN_LENGTH - 1]!)).toBe(7);
   });
 });
+
+describe("the compiled activation chain follows its binding's own hook", () => {
+  it("picks up a hook added after the chain was already compiled", () => {
+    const serviceToken = token<string>("activator-late-binding-hook");
+    const container = Container.create();
+    // A container hook puts the binding on the activated lane, so a chain gets compiled.
+    container.onActivation(serviceToken, (_ctx, instance) => `${String(instance)}+container`);
+    const chain = container
+      .bind(serviceToken)
+      .toDynamic(() => "base")
+      .transient();
+
+    expect(container.resolve(serviceToken)).toBe("base+container");
+
+    // `.onActivation()` writes the field in place and bumps no version, so the memo has to notice.
+    chain.onActivation((_ctx, instance) => `${String(instance)}+binding`);
+
+    expect(container.resolve(serviceToken)).toBe("base+binding+container");
+  });
+
+  it("drops a hook that was replaced on the same chain", () => {
+    const serviceToken = token<string>("activator-replaced-hook");
+    const container = Container.create();
+    const chain = container
+      .bind(serviceToken)
+      .toDynamic(() => "base")
+      .transient();
+    chain.onActivation((_ctx, instance) => `${String(instance)}+first`);
+
+    expect(container.resolve(serviceToken)).toBe("base+first");
+
+    chain.onActivation((_ctx, instance) => `${String(instance)}+second`);
+
+    expect(container.resolve(serviceToken)).toBe("base+second");
+  });
+});
