@@ -59,7 +59,8 @@ export interface ResolverCallbacks {
     resolutionStack: Array<ResolutionFrame>,
     branchDepth: number,
   ): Promise<Value>;
-  resolveAsyncFromCascade<const Value>(token: Token<Value> | Constructor<Value>, isRoot: boolean): Promise<Value>;
+  /** Not one of the eight `Value`-naming entry points: its two callers are, and each casts once. */
+  resolveAsyncFromCascade(token: Token<unknown> | Constructor, isRoot: boolean): Promise<unknown>;
   resolveAsync<const Value>(
     token: Token<Value> | Constructor<Value>,
     options: ResolveOptions | undefined,
@@ -298,7 +299,7 @@ export class AsyncCascadeContext implements ResolutionContext {
 
   resolveAsync<const Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Promise<Value> {
     if (options === undefined) {
-      return this.#resolver.resolveAsyncFromCascade(token, false);
+      return this.#resolver.resolveAsyncFromCascade(token, false) as Promise<Value>;
     }
     return this.#resolver.resolveAsync(token, options, [...this.#cascadePath], [...this.#cascadeStack]);
   }

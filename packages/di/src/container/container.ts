@@ -470,7 +470,7 @@ class DefaultContainer implements Container {
   resolveAsync<const Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Promise<Value> {
     this.#assertNotDisposed();
     if (options === undefined) {
-      return this.#resolver.resolveAsyncFromCascade(token, true);
+      return this.#resolver.resolveAsyncFromCascade(token, true) as Promise<Value>;
     }
     return this.#resolver.resolveAsync(token, options, [], [], 0);
   }

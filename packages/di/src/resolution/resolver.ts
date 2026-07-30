@@ -1144,7 +1144,7 @@ export class DependencyResolver implements ResolverCallbacks {
    * @remarks A request that arrives with no cascade open came out of a continuation, so its
    * ancestors are not on any call stack — it escapes to the branch lane. See `ARCHITECTURE.md`.
    */
-  resolveAsyncFromCascade<const Value>(token: Token<Value> | Constructor<Value>, isRoot: boolean): Promise<Value> {
+  resolveAsyncFromCascade(token: Token<unknown> | Constructor, isRoot: boolean): Promise<unknown> {
     if (!isRoot && this.#cascadePath.length === 0) {
       return this.resolveAsyncFromContext(token, [], [], 0);
     }
@@ -1155,15 +1155,15 @@ export class DependencyResolver implements ResolverCallbacks {
         fastBinding.scope === "transient" &&
         !this.#hasAnyActivation(fastBinding)
       ) {
-        return this.#resolveTransientDynamicAsyncCascade(fastBinding) as Promise<Value>;
+        return this.#resolveTransientDynamicAsyncCascade(fastBinding);
       }
       // A value that already exists answers here: escaping would snapshot the cascade for a resolve
       // that never looks at a path.
       if (this.#isPlainConstant(fastBinding)) {
-        return Promise.resolve(fastBinding.value) as Promise<Value>;
+        return Promise.resolve(fastBinding.value);
       }
       if (fastBinding.scope === "singleton" && fastBinding.instance !== NO_INSTANCE) {
-        return Promise.resolve(fastBinding.instance) as Promise<Value>;
+        return Promise.resolve(fastBinding.instance);
       }
     }
     // Anything else leaves the cascade lane for good, seeded with a snapshot of the ancestors it
