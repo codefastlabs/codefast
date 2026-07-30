@@ -101,42 +101,6 @@ describe("resolution contexts come from a pool", () => {
     expect(diagnose(container).syncContextPoolSize).toBe(afterTen);
     expect(afterTen).toBeLessThanOrEqual(3);
   });
-
-  it("returns the async chain context so repeated chains do not grow the pool", async () => {
-    const leafToken = token<number>("pool-async-leaf");
-    const rootToken = token<number>("pool-async-root");
-    const container = Container.create();
-    container.bind(leafToken).toConstantValue(1);
-    container
-      .bind(rootToken)
-      .toDynamicAsync(async (ctx) => (await ctx.resolveAsync(leafToken)) + 1)
-      .transient();
-
-    for (let index = 0; index < 20; index += 1) {
-      await container.resolveAsync(rootToken);
-    }
-
-    // A chain that failed to return its context would leave the pool empty and allocate forever;
-    // one that double-released would grow it past the peak number of concurrent chains.
-    expect(diagnose(container).asyncContextPoolSize).toBe(1);
-  });
-
-  it("holds one context per concurrent chain and no more", async () => {
-    const leafToken = token<number>("pool-concurrent-leaf");
-    const rootToken = token<number>("pool-concurrent-root");
-    const container = Container.create();
-    container.bind(leafToken).toConstantValue(1);
-    container
-      .bind(rootToken)
-      .toDynamicAsync(async (ctx) => (await ctx.resolveAsync(leafToken)) + 1)
-      .transient();
-
-    await Promise.all(Array.from({ length: 8 }, () => container.resolveAsync(rootToken)));
-
-    const { asyncContextPoolSize } = diagnose(container);
-    expect(asyncContextPoolSize).toBeGreaterThan(0);
-    expect(asyncContextPoolSize).toBeLessThanOrEqual(8);
-  });
 });
 
 describe("deferred subsystems stay deferred", () => {

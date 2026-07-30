@@ -1,4 +1,5 @@
 import type { Container } from "#/container/container";
+import { UNOWNED_BRANCH } from "#/resolution/resolution-path";
 import type { Token } from "#/token";
 import type {
   BindingIdentifier,
@@ -56,8 +57,9 @@ export interface ResolverCallbacks {
     token: Token<Value> | Constructor<Value>,
     resolutionPath: Array<string>,
     resolutionStack: Array<ResolutionFrame>,
-    callerContext?: DefaultResolutionContext,
+    branchDepth: number,
   ): Promise<Value>;
+  resolveAsyncFromCascade<const Value>(token: Token<Value> | Constructor<Value>, isRoot: boolean): Promise<Value>;
   resolveAsync<const Value>(
     token: Token<Value> | Constructor<Value>,
     options: ResolveOptions | undefined,
@@ -106,37 +108,12 @@ export class DefaultResolutionContext implements ResolutionContext {
     currentOptions: ResolveOptions | undefined,
   ) {
     this.#resolver = resolver;
-    this.owner = resolver;
     this.#resolutionPath = resolutionPath;
     this.#resolutionStack = resolutionStack;
     this.#currentOptions = currentOptions;
   }
 
   #graph: ConstraintContext | undefined;
-
-  /**
-   * The unwind callback shared by every level of the async chain this context serves.
-   *
-   * @remarks A plain field, not a lazy accessor — a getter taking a factory would allocate that
-   * factory on every level, which is the allocation this exists to avoid.
-   */
-  chainSettle: (() => void) | undefined;
-
-  /**
-   * How many levels of the async chain are still in flight on this context.
-   *
-   * @remarks The chain's first level acquires the context and every level increments; the last
-   * one to settle returns it to the resolver's pool. Counting here rather than on the resolver
-   * is what lets two concurrent chains run without a shared counter to get wrong.
-   */
-  chainLevels = 0;
-
-  /**
-   * The resolver this context speaks to — an inner async level checks it before reusing this.
-   *
-   * @remarks A field, not a method, because the check runs on every hop of every chain.
-   */
-  owner: ResolverCallbacks;
 
   get graph(): ConstraintContext {
     if (this.#graph === undefined) {
@@ -152,13 +129,10 @@ export class DefaultResolutionContext implements ResolutionContext {
     currentOptions: ResolveOptions | undefined,
   ): void {
     this.#resolver = resolver;
-    this.owner = resolver;
     this.#resolutionPath = resolutionPath;
     this.#resolutionStack = resolutionStack;
     this.#currentOptions = currentOptions;
     this.#graph = undefined;
-    this.chainSettle = undefined;
-    this.chainLevels = 0;
   }
 
   resolve<const Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Value {
@@ -170,8 +144,8 @@ export class DefaultResolutionContext implements ResolutionContext {
 
   resolveAsync<const Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Promise<Value> {
     if (options === undefined) {
-      // Hand the callee this context: an inner level of the same chain reuses it as-is.
-      return this.#resolver.resolveAsyncFromContext(token, this.#resolutionPath, this.#resolutionStack, this);
+      // UNOWNED_BRANCH: this frame's array is a sync stack it will pop, so the lane must copy it.
+      return this.#resolver.resolveAsyncFromContext(token, this.#resolutionPath, this.#resolutionStack, UNOWNED_BRANCH);
     }
     return this.#resolver.resolveAsync(token, options, this.#resolutionPath, this.#resolutionStack);
   }
@@ -196,6 +170,159 @@ export class DefaultResolutionContext implements ResolutionContext {
     options?: ResolveOptions,
   ): Promise<Array<Value>> {
     return this.#resolver.resolveAllAsync(token, options, this.#resolutionPath, this.#resolutionStack);
+  }
+}
+
+/**
+ * One async level's resolution context, which is also its branch of the resolution path.
+ *
+ * @remarks Separate from {@link DefaultResolutionContext} so the sync lane's pooled context keeps
+ * reading its arrays as plain fields: only an async branch has a prefix to take. See
+ * `ARCHITECTURE.md` — an async level owns its branch of the path.
+ */
+export class AsyncLevelContext implements ResolutionContext {
+  readonly #resolver: ResolverCallbacks;
+  readonly #resolutionPath: Array<string>;
+  readonly #resolutionStack: Array<ResolutionFrame>;
+  readonly #currentOptions: ResolveOptions | undefined;
+  readonly #branchDepth: number;
+
+  constructor(
+    resolver: ResolverCallbacks,
+    resolutionPath: Array<string>,
+    resolutionStack: Array<ResolutionFrame>,
+    currentOptions: ResolveOptions | undefined,
+    branchDepth: number,
+  ) {
+    this.#resolver = resolver;
+    this.#resolutionPath = resolutionPath;
+    this.#resolutionStack = resolutionStack;
+    this.#currentOptions = currentOptions;
+    this.#branchDepth = branchDepth;
+  }
+
+  #graph: ConstraintContext | undefined;
+  #exactPathCache: Array<string> | undefined;
+  #exactStackCache: Array<ResolutionFrame> | undefined;
+
+  get graph(): ConstraintContext {
+    if (this.#graph === undefined) {
+      this.#graph = new DefaultConstraintContext(this.#exactPath(), this.#exactStack(), this.#currentOptions);
+    }
+    return this.#graph;
+  }
+
+  // The path is append-only and a descendant may already have grown it past this level, so every
+  // caller but the async lane is handed this branch's prefix. It is fixed for the level's lifetime.
+  #exactPath(): Array<string> {
+    return (this.#exactPathCache ??= this.#resolutionPath.slice(0, this.#branchDepth));
+  }
+
+  #exactStack(): Array<ResolutionFrame> {
+    return (this.#exactStackCache ??= this.#resolutionStack.slice(0, this.#branchDepth));
+  }
+
+  resolve<const Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Value {
+    if (options === undefined) {
+      return this.#resolver.resolveFromContext(token, this.#exactPath(), this.#exactStack());
+    }
+    return this.#resolver.resolve(token, options, this.#exactPath(), this.#exactStack());
+  }
+
+  resolveAsync<const Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Promise<Value> {
+    if (options === undefined) {
+      // The hot lane: the resolver reads this branch by depth, so nothing is materialized.
+      return this.#resolver.resolveAsyncFromContext(
+        token,
+        this.#resolutionPath,
+        this.#resolutionStack,
+        this.#branchDepth,
+      );
+    }
+    return this.#resolver.resolveAsync(token, options, this.#exactPath(), this.#exactStack());
+  }
+
+  resolveOptional<const Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Value | undefined {
+    return this.#resolver.resolveOptional(token, options, this.#exactPath(), this.#exactStack());
+  }
+
+  resolveOptionalAsync<const Value>(
+    token: Token<Value> | Constructor<Value>,
+    options?: ResolveOptions,
+  ): Promise<Value | undefined> {
+    return this.#resolver.resolveOptionalAsync(token, options, this.#exactPath(), this.#exactStack());
+  }
+
+  resolveAll<const Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Array<Value> {
+    return this.#resolver.resolveAll(token, options, this.#exactPath(), this.#exactStack());
+  }
+
+  resolveAllAsync<const Value>(
+    token: Token<Value> | Constructor<Value>,
+    options?: ResolveOptions,
+  ): Promise<Array<Value>> {
+    return this.#resolver.resolveAllAsync(token, options, this.#exactPath(), this.#exactStack());
+  }
+}
+
+/**
+ * The one context every level of an open synchronous factory cascade shares.
+ *
+ * @remarks It carries no per-level state at all: while the cascade is open, the resolver's arrays
+ * *are* this level's ancestor chain, so nothing has to be allocated per level. See
+ * `ARCHITECTURE.md` — the cascade lane.
+ */
+export class AsyncCascadeContext implements ResolutionContext {
+  readonly #resolver: ResolverCallbacks;
+  readonly #cascadePath: Array<string>;
+  readonly #cascadeStack: Array<ResolutionFrame>;
+
+  constructor(resolver: ResolverCallbacks, cascadePath: Array<string>, cascadeStack: Array<ResolutionFrame>) {
+    this.#resolver = resolver;
+    this.#cascadePath = cascadePath;
+    this.#cascadeStack = cascadeStack;
+  }
+
+  get graph(): ConstraintContext {
+    // Not memoized: this context outlives every level, so a cached graph would describe whichever
+    // level asked first. The cascade arrays are only this level's ancestors while it is open.
+    return new DefaultConstraintContext(this.#cascadePath, this.#cascadeStack, undefined);
+  }
+
+  resolve<const Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Value {
+    if (options === undefined) {
+      return this.#resolver.resolveFromContext(token, this.#cascadePath, this.#cascadeStack);
+    }
+    return this.#resolver.resolve(token, options, this.#cascadePath, this.#cascadeStack);
+  }
+
+  resolveAsync<const Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Promise<Value> {
+    if (options === undefined) {
+      return this.#resolver.resolveAsyncFromCascade(token, false);
+    }
+    return this.#resolver.resolveAsync(token, options, [...this.#cascadePath], [...this.#cascadeStack]);
+  }
+
+  resolveOptional<const Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Value | undefined {
+    return this.#resolver.resolveOptional(token, options, this.#cascadePath, this.#cascadeStack);
+  }
+
+  resolveOptionalAsync<const Value>(
+    token: Token<Value> | Constructor<Value>,
+    options?: ResolveOptions,
+  ): Promise<Value | undefined> {
+    return this.#resolver.resolveOptionalAsync(token, options, [...this.#cascadePath], [...this.#cascadeStack]);
+  }
+
+  resolveAll<const Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Array<Value> {
+    return this.#resolver.resolveAll(token, options, this.#cascadePath, this.#cascadeStack);
+  }
+
+  resolveAllAsync<const Value>(
+    token: Token<Value> | Constructor<Value>,
+    options?: ResolveOptions,
+  ): Promise<Array<Value>> {
+    return this.#resolver.resolveAllAsync(token, options, [...this.#cascadePath], [...this.#cascadeStack]);
   }
 }
 

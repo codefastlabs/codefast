@@ -15,7 +15,8 @@ type ResolutionPathWithSet = Array<string> & { [RESOLUTION_SET_KEY]?: Set<string
 /**
  * Marks a token as in-flight on this path, throwing if it is already there.
  *
- * @remarks Unmark with `resolutionPath.pop()` plus `set?.delete(name)`, or {@link exitResolutionPath}.
+ * @remarks Unmark with `resolutionPath.pop()` plus `set?.delete(name)`. Sync only — the async lane
+ * never removes an entry, so it extends a branch instead; see {@link extendResolutionBranch}.
  *
  * @returns the membership set once the path is deep enough to carry one, else `undefined`.
  *
@@ -37,13 +38,54 @@ export function enterResolutionPath(resolutionPath: Array<string>, tokenDisplayN
 }
 
 /**
- * Unwinds the innermost {@link enterResolutionPath} entry, for callers that hold only the path.
+ * Marks a branch as not yet owned by the async lane, so its first extension must copy.
  *
- * @since 0.5.0-canary.7
+ * @see `ARCHITECTURE.md` — why an async branch may only ever append to an array it made itself.
  */
-export function exitResolutionPath(resolutionPath: Array<string>): void {
-  const tokenDisplayName = resolutionPath.pop();
-  if (tokenDisplayName !== undefined) {
-    (resolutionPath as ResolutionPathWithSet)[RESOLUTION_SET_KEY]?.delete(tokenDisplayName);
+export const UNOWNED_BRANCH = -1;
+
+/**
+ * Extends one branch of an append-only path, throwing if the entry is already an ancestor.
+ *
+ * @remarks Appends in place while this branch still owns the next slot, and copies its own prefix
+ * once a sibling has claimed it. Nothing is ever removed, so no async level has to observe its own
+ * settlement to unwind — see `ARCHITECTURE.md`.
+ *
+ * @param branchDepth - how many leading entries belong to this branch, or {@link UNOWNED_BRANCH}
+ */
+export function extendResolutionBranch(
+  resolutionPath: Array<string>,
+  branchDepth: number,
+  tokenDisplayName: string,
+): Array<string> {
+  const depth = branchDepth === UNOWNED_BRANCH ? resolutionPath.length : branchDepth;
+  for (let index = 0; index < depth; index += 1) {
+    if (resolutionPath[index] === tokenDisplayName) {
+      throw new CircularDependencyError([...resolutionPath.slice(0, depth), tokenDisplayName]);
+    }
   }
+  // An unowned array belongs to a sync frame that will pop it, or carries a membership Set this
+  // lane cannot keep true; copying is what makes the branch's own appends safe.
+  if (branchDepth === resolutionPath.length) {
+    resolutionPath.push(tokenDisplayName);
+    return resolutionPath;
+  }
+  const branch = resolutionPath.slice(0, depth);
+  branch.push(tokenDisplayName);
+  return branch;
+}
+
+/** The stack half of {@link extendResolutionBranch}; frames carry no cycle to detect. */
+export function extendResolutionStackBranch<Entry>(
+  resolutionStack: Array<Entry>,
+  branchDepth: number,
+  frame: Entry,
+): Array<Entry> {
+  if (branchDepth === resolutionStack.length) {
+    resolutionStack.push(frame);
+    return resolutionStack;
+  }
+  const branch = resolutionStack.slice(0, branchDepth === UNOWNED_BRANCH ? resolutionStack.length : branchDepth);
+  branch.push(frame);
+  return branch;
 }

@@ -470,9 +470,9 @@ class DefaultContainer implements Container {
   resolveAsync<const Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Promise<Value> {
     this.#assertNotDisposed();
     if (options === undefined) {
-      return this.#resolver.resolveAsyncFromContext(token, [], []);
+      return this.#resolver.resolveAsyncFromCascade(token, true);
     }
-    return this.#resolver.resolveAsync(token, options, [], []);
+    return this.#resolver.resolveAsync(token, options, [], [], 0);
   }
 
   resolveOptional<const Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Value | undefined {
@@ -485,7 +485,7 @@ class DefaultContainer implements Container {
     options?: ResolveOptions,
   ): Promise<Value | undefined> {
     this.#assertNotDisposed();
-    return this.#resolver.resolveOptionalAsync(token, options, [], []);
+    return this.#resolver.resolveOptionalAsync(token, options, [], [], 0);
   }
 
   resolveAll<const Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Array<Value> {
@@ -498,7 +498,7 @@ class DefaultContainer implements Container {
     options?: ResolveOptions,
   ): Promise<Array<Value>> {
     this.#assertNotDisposed();
-    return this.#resolver.resolveAllAsync(token, options, [], []);
+    return this.#resolver.resolveAllAsync(token, options, [], [], 0);
   }
 
   // ── Child ─────────────────────────────────────────────────────────────────
