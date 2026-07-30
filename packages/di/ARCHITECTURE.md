@@ -185,6 +185,20 @@ because the ancestors before the first escape were never written down. That impr
 the cascade lane, and `tests/unit/resolution/resolver-async.test.ts` pins it rather than leaving it to
 be discovered.
 
+**Who owns an array is a type, not a rule.** A branch may only ever append to an array it minted
+itself: a sync frame's path is one that frame will pop in its own `finally`, and it may carry an
+`enterResolutionPath` membership `Set` this lane cannot keep true. So `extendResolutionBranch` is the
+only thing that mints an `OwnedBranchPath`, `AsyncLevelContext` accepts nothing else, and a
+`BranchDepth` is branded so a bare number cannot stand in for one — a depth from anywhere but this
+branch silently re-parents a level. `AsyncLevelContext` reads its depth off the branch it was handed
+rather than taking it as a parameter, so the two cannot disagree at all.
+
+> **Rule:** this was prose in an earlier revision of this file, which is the failure mode this project
+> already named — hold the architecture with the compiler and tests, not comments.
+> `tests/types/async-branch-ownership.test.ts` fails to compile if either brand is removed; check that
+> before trusting it, because a type test that still compiles once its invariant is gone asserts
+> nothing.
+
 ### What each shape costs
 
 Per-level overhead against a floor of eight plain awaited async functions, one process, libraries
