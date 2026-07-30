@@ -89,6 +89,128 @@ describe("async chains", () => {
   });
 });
 
+describe("concurrent branches of one async chain", () => {
+  /** A -> (B, C) in parallel, both -> D. Two siblings sharing a dependency is not a cycle. */
+  function buildDiamondContainer(): { container: Container; rootToken: ReturnType<typeof token<number>> } {
+    const sharedToken = token<number>("branch-shared");
+    const leftToken = token<number>("branch-left");
+    const rightToken = token<number>("branch-right");
+    const rootToken = token<number>("branch-root");
+    const container = Container.create();
+    container
+      .bind(sharedToken)
+      .toDynamicAsync(async () => 1)
+      .transient();
+    container
+      .bind(leftToken)
+      .toDynamicAsync(async (ctx) => ctx.resolveAsync(sharedToken))
+      .transient();
+    container
+      .bind(rightToken)
+      .toDynamicAsync(async (ctx) => ctx.resolveAsync(sharedToken))
+      .transient();
+    container
+      .bind(rootToken)
+      .toDynamicAsync(async (ctx) => {
+        const [left, right] = await Promise.all([ctx.resolveAsync(leftToken), ctx.resolveAsync(rightToken)]);
+        return left + right;
+      })
+      .transient();
+    return { container, rootToken };
+  }
+
+  it("resolves a diamond started in parallel from one factory", async () => {
+    const { container, rootToken } = buildDiamondContainer();
+    await expect(container.resolveAsync(rootToken)).resolves.toBe(2);
+  });
+
+  it("still reports a cycle inside one branch, with only that branch's path", async () => {
+    const siblingToken = token<number>("sibling");
+    const loopToken = token<number>("loop");
+    const rootToken = token<number>("branch-cycle-root");
+    const container = Container.create();
+    container
+      .bind(siblingToken)
+      .toDynamicAsync(async () => 1)
+      .transient();
+    container
+      .bind(loopToken)
+      .toDynamicAsync(async (ctx) => ctx.resolveAsync(loopToken))
+      .transient();
+    container
+      .bind(rootToken)
+      .toDynamicAsync(async (ctx) => {
+        const [sibling, looped] = await Promise.all([ctx.resolveAsync(siblingToken), ctx.resolveAsync(loopToken)]);
+        return sibling + looped;
+      })
+      .transient();
+
+    // The sibling branch must not appear in the path: it is not an ancestor of the cycle.
+    await expect(container.resolveAsync(rootToken)).rejects.toThrow(/branch-cycle-root → loop → loop$/);
+  });
+
+  it("keeps branches independent past the resolution-set threshold", async () => {
+    const DEPTH = 40;
+    const chainTokens = Array.from({ length: DEPTH }, (_value, index) => token<number>(`deep-branch-${String(index)}`));
+    const sharedToken = token<number>("deep-branch-shared");
+    const container = Container.create();
+    container
+      .bind(sharedToken)
+      .toDynamicAsync(async () => 1)
+      .transient();
+    container.bind(chainTokens[0]!).toConstantValue(0);
+    for (let index = 1; index < DEPTH; index += 1) {
+      const previous = chainTokens[index - 1]!;
+      container
+        .bind(chainTokens[index]!)
+        .toDynamicAsync(async (ctx) => {
+          const [previousValue, left, right] = await Promise.all([
+            ctx.resolveAsync(previous),
+            ctx.resolveAsync(sharedToken),
+            ctx.resolveAsync(sharedToken),
+          ]);
+          return previousValue + left + right - 1;
+        })
+        .transient();
+    }
+
+    await expect(container.resolveAsync(chainTokens[DEPTH - 1]!)).resolves.toBe(DEPTH - 1);
+  });
+
+  it("reports a cycle whose every edge is requested after an await", async () => {
+    // The cascade lane cannot see these edges — a continuation's ancestors are on no call stack — so
+    // the request escapes to the branch lane, which accumulates its own path and catches the repeat.
+    const firstToken = token<number>("post-first");
+    const secondToken = token<number>("post-second");
+    const container = Container.create();
+    container
+      .bind(firstToken)
+      .toDynamicAsync(async (ctx) => {
+        await Promise.resolve();
+        return ctx.resolveAsync(secondToken);
+      })
+      .transient();
+    container
+      .bind(secondToken)
+      .toDynamicAsync(async (ctx) => {
+        await Promise.resolve();
+        return ctx.resolveAsync(firstToken);
+      })
+      .transient();
+
+    // Named from the first escaped level, not the true root: the ancestors before the escape were
+    // never written down. See ARCHITECTURE.md — that is the cascade lane's price.
+    await expect(container.resolveAsync(firstToken)).rejects.toThrow(/post-second → post-first → post-second/);
+  });
+
+  it("leaves nothing behind between chains", async () => {
+    const { container, rootToken } = buildDiamondContainer();
+    await Promise.all(Array.from({ length: 8 }, () => container.resolveAsync(rootToken)));
+    // A chain that leaked a path entry would make the next one report a cycle that is not there.
+    await expect(container.resolveAsync(rootToken)).resolves.toBe(2);
+  });
+});
+
 describe("async singletons", () => {
   it("dedupes concurrent materialization through the inflight cache", async () => {
     let factoryCalls = 0;
