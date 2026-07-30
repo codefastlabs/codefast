@@ -9,7 +9,7 @@ import { expectTypeOf } from "expect-type";
 import { describe, expect, it } from "vitest";
 
 import type { ResolutionDiagnostics } from "#/resolution/diagnostics";
-import type { BranchDepth, OwnedBranchPath, OwnedBranchStack } from "#/resolution/resolution-path";
+import type { BranchDepth, OwnedBranchDepth, OwnedBranchPath, OwnedBranchStack } from "#/resolution/resolution-path";
 import {
   branchDepthOf,
   extendResolutionBranch,
@@ -36,9 +36,17 @@ describe("a branch depth cannot be an arbitrary number", () => {
   it("rejects a bare number and accepts only the lane's own depths", () => {
     expectTypeOf<number>().not.toExtend<BranchDepth>();
     expectTypeOf<BranchDepth>().toExtend<number>();
-    expectTypeOf(ROOT_BRANCH).toEqualTypeOf<BranchDepth>();
-    expectTypeOf(branchDepthOf).returns.toEqualTypeOf<BranchDepth>();
+    expectTypeOf(ROOT_BRANCH).toEqualTypeOf<OwnedBranchDepth>();
+    expectTypeOf(branchDepthOf).returns.toEqualTypeOf<OwnedBranchDepth>();
     expectTypeOf(extendResolutionBranch).parameter(1).toEqualTypeOf<BranchDepth>();
+  });
+
+  it("keeps the unowned case visible in the type rather than hidden in the brand", () => {
+    // Both members are reachable, so a signature taking one says that an unowned array is allowed.
+    expectTypeOf<OwnedBranchDepth>().toExtend<BranchDepth>();
+    expectTypeOf<-1>().toExtend<BranchDepth>();
+    // ...and the owned half is still not something a bare number can satisfy.
+    expectTypeOf<number>().not.toExtend<OwnedBranchDepth>();
   });
 
   it("only reads a depth off a branch that owns one", () => {

@@ -74,12 +74,14 @@ export function bindingSlotToString(slot: BindingSlot): string {
 interface BindingBase<Value> {
   readonly id: BindingIdentifier;
   /**
-   * True while this binding's factory is on the sync resolution stack — the sync lane's cycle check.
+   * True while this binding's factory is executing on the current synchronous call stack.
    *
-   * @remarks Resolver-owned bookkeeping; callers never set it. See `ARCHITECTURE.md` for why the
-   * sync and async lanes detect cycles differently.
+   * @remarks Both cycle guards that can use an `O(1)` flag read this — the sync transient-dynamic
+   * lane and the async cascade lane — because synchronous code does not interleave, so the flag *is*
+   * exact path membership. Not optional: `createBinding` always sets it, and a field that may be
+   * absent is a field that can cost the shared hidden class. Resolver-owned; callers never set it.
    */
-  inFlight?: boolean | undefined;
+  inFlight: boolean;
   /**
    * Memoized resolution frame for this binding. Its contents derive only from immutable binding
    * fields, so it is computed once on first resolve and reused instead of a per-resolver Map

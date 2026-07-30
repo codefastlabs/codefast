@@ -57,21 +57,28 @@ declare const BRANCH_DEPTH_BRAND: unique symbol;
 /**
  * How many leading entries of a path belong to one async branch.
  *
- * @remarks Branded so a bare number cannot be passed: the depth is only ever this branch's own,
- * {@link ROOT_BRANCH}, or {@link UNOWNED_BRANCH}, and getting it from somewhere else silently
+ * @remarks Branded so a bare number cannot be passed: a depth from anywhere but this branch silently
  * re-parents a level.
  */
-export type BranchDepth = number & { readonly [BRANCH_DEPTH_BRAND]: true };
+export type OwnedBranchDepth = number & { readonly [BRANCH_DEPTH_BRAND]: true };
 
 /** A path no async branch owns yet, so its first extension must copy rather than append. */
-export const UNOWNED_BRANCH = -1 as BranchDepth;
+export const UNOWNED_BRANCH = -1;
+
+/**
+ * How far into a path one extension may reach: this branch's own depth, or nobody's.
+ *
+ * @remarks A union rather than a sentinel hidden inside the branded number, so the two cases are
+ * visible at every signature that takes one and `=== UNOWNED_BRANCH` narrows to the owned case.
+ */
+export type BranchDepth = OwnedBranchDepth | typeof UNOWNED_BRANCH;
 
 /** The depth a chain's first level extends from, over an array its caller just minted. */
-export const ROOT_BRANCH = 0 as BranchDepth;
+export const ROOT_BRANCH = 0 as OwnedBranchDepth;
 
 /** A branch's own depth: the length its path had when this level took it. */
-export function branchDepthOf(branch: OwnedBranchPath): BranchDepth {
-  return branch.length as BranchDepth;
+export function branchDepthOf(branch: OwnedBranchPath): OwnedBranchDepth {
+  return branch.length as OwnedBranchDepth;
 }
 
 /**

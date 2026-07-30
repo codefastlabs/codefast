@@ -1190,7 +1190,7 @@ export class DependencyResolver implements ResolverCallbacks {
     // The request that closes a cycle is made from a factory's synchronous prefix, and synchronous
     // code does not interleave — so the O(1) flag is exact path membership here, as it is for the
     // sync lane. It is cleared when the factory returns its promise, not when that promise settles.
-    if (binding.inFlight === true) {
+    if (binding.inFlight) {
       return Promise.reject(new CircularDependencyError([...this.#cascadePath, frame.tokenName]));
     }
     const ctx = (this.#cascadeContext ??= new AsyncCascadeContext(this, this.#cascadePath, this.#cascadeStack));
