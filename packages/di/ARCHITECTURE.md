@@ -121,6 +121,34 @@ with the full `matchesSlot` instead cost **~42%** on `tagged-binding-resolve`; t
 
 **A hash lookup a loop repeats deserves an inline cache, and a memo already inlined deserves nothing.** `LifecycleManager.activationHandlersFor()` keeps a one-entry token→hooks cache in front of its map, invalidated by `registerActivation` — a resolve loop asks about the same token every iteration. The mirror-image change failed: folding `#getResolutionFrame` into a single expression so it would inline, with the build extracted to a cold method, cost **~6%** on `fan-out-tree-depth-3-breadth-4` (five paired passes, all five negative) and was reverted. A profile showing self-time in a memo is not evidence that the memo is the cost.
 
+**Compiling the activation chain was tried three ways and rejected.** `container-level-activation-hook`
+is the suite's thinnest win, and the hook pipeline is re-decided per resolve while its shape is fixed
+per `(binding, activationVersion)` — the same redundancy the async cascade removed. So: memoize a
+closure over the exact hooks, keyed on the resolver (not the binding: `this.#lifecycle` belongs to
+whichever container is resolving, and a child's hooks differ from its parent's for the same binding).
+All three shapes lost, in different places, over five paired passes each:
+
+| Shape                                                  | Target row | What it cost instead                     |
+| ------------------------------------------------------ | ---------: | ---------------------------------------- |
+| Fast exit moved behind the memo lookup                 |      1.11× | `scale-mid-transient-chain-32` **0.89×** |
+| Fast exit inlined at the dispatcher, memo behind it    |      1.00× | `transient-class-1-dep` **0.85×**        |
+| Dispatcher byte-identical, lane compiles its own chain |  **0.94×** | controls clean                           |
+
+Two lessons, both already stated elsewhere in this file and both re-earned the hard way. `#resolveDefaultEntry`
+is inlining-sensitive: adding one test inside a branch it does not take moved a **class**-binding row
+15%, which is the dispatcher-prefix rule reappearing as a code-size effect rather than an extra
+comparison. And a compiled chain does not pay at the arity that actually occurs — with one hook it is a
+closure call wrapping a hook call, against one direct call after two checks, so the indirection costs
+more than the loop it removes.
+
+> **Rule:** before compiling a pipeline, count the arity in the row you are trying to move. Compilation
+> pays for a loop, and a one-element loop is not one.
+
+The bug that hunt did find is real and outlives it: `.onActivation()` writes the field **in place** on
+an already-registered binding and bumps no version, so any memo over a binding's own hook must key on
+that hook's identity. `tests/unit/resolution/cache-invalidation.test.ts` pins it against the current
+read-it-fresh implementation, so a future memo that forgets cannot land quietly.
+
 **What sharing the lookup cost, and why it is still shared.** `resolve` and `resolveAsync` both take their terminal binding from `#requireBinding`, so the alias-cycle walk and the not-bound diagnostics exist once. The frame that adds costs `misconfigured-missing-binding` ~5%: an error path is dominated by capturing its stack, and a deeper throw site captures more of it. Constructing the error at the throw site rather than in a helper recovered most of it; the rest is the price of not keeping two copies of the alias walk, and it is paid only when a resolve fails.
 
 ## Cycle detection — two mechanisms, on purpose
