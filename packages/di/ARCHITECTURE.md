@@ -158,8 +158,12 @@ more than the loop it removes.
 
 The bug that hunt did find is real and outlives it: `.onActivation()` writes the field **in place** on
 an already-registered binding and bumps no version, so any memo over a binding's own hook must key on
-that hook's identity. `tests/unit/resolution/cache-invalidation.test.ts` pins it against the current
-read-it-fresh implementation, so a future memo that forgets cannot land quietly.
+that hook's identity. The activation-need memo learned this the hard way — it cached "no activation"
+per binding id and silently skipped a late hook on every lane that consulted it, while the default
+dynamic lane read the field fresh and honored it. `needsActivation()` therefore answers the binding's
+own hook from the field itself before touching the memo, and stamps the memo with the registry version
+too, so a rebind loop cannot grow it. `tests/unit/resolution/cache-invalidation.test.ts` pins all the
+lanes, so a future memo that forgets cannot land quietly.
 
 **What sharing the lookup cost, and why it is still shared.** `resolve` and `resolveAsync` both take their terminal binding from `#requireBinding`, so the alias-cycle walk and the not-bound diagnostics exist once. The frame that adds costs `misconfigured-missing-binding` ~5%: an error path is dominated by capturing its stack, and a deeper throw site captures more of it. Constructing the error at the throw site rather than in a helper recovered most of it; the rest is the price of not keeping two copies of the alias walk, and it is paid only when a resolve fails.
 
