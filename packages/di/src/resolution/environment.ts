@@ -130,11 +130,21 @@ export class DefaultResolutionContext implements ResolutionContext {
     resolutionStack: Array<ResolutionFrame>,
     currentOptions: ResolveOptions | undefined,
   ): void {
-    this.#resolver = resolver;
-    this.#resolutionPath = resolutionPath;
-    this.#resolutionStack = resolutionStack;
+    // Compared before storing: a pooled context lives long enough to be in old space, so storing a
+    // pointer costs a write barrier, and a sync resolve hands every depth the same two arrays.
+    if (this.#resolver !== resolver) {
+      this.#resolver = resolver;
+    }
+    if (this.#resolutionPath !== resolutionPath) {
+      this.#resolutionPath = resolutionPath;
+    }
+    if (this.#resolutionStack !== resolutionStack) {
+      this.#resolutionStack = resolutionStack;
+    }
     this.#currentOptions = currentOptions;
-    this.#graph = undefined;
+    if (this.#graph !== undefined) {
+      this.#graph = undefined;
+    }
   }
 
   resolve<const Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Value {

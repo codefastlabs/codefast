@@ -462,10 +462,17 @@ class DefaultContainer implements Container {
 
   resolve<const Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Value {
     this.#assertNotDisposed();
-    if (options === undefined) {
-      return this.#resolver.resolveFromContext(token, [], []);
+    const rootStack = this.#resolver.rootStack;
+    // A resolve already holding the shared pair means this one is nested; it mints its own.
+    if (rootStack.length !== 0) {
+      return options === undefined
+        ? this.#resolver.resolveFromContext(token, [], [])
+        : this.#resolver.resolve(token, options, [], []);
     }
-    return this.#resolver.resolve(token, options, [], []);
+    if (options === undefined) {
+      return this.#resolver.resolveFromContext(token, this.#resolver.rootPath, rootStack);
+    }
+    return this.#resolver.resolve(token, options, this.#resolver.rootPath, rootStack);
   }
 
   resolveAsync<const Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Promise<Value> {
@@ -478,7 +485,10 @@ class DefaultContainer implements Container {
 
   resolveOptional<const Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Value | undefined {
     this.#assertNotDisposed();
-    return this.#resolver.resolveOptional(token, options, [], []);
+    const rootStack = this.#resolver.rootStack;
+    return rootStack.length === 0
+      ? this.#resolver.resolveOptional(token, options, this.#resolver.rootPath, rootStack)
+      : this.#resolver.resolveOptional(token, options, [], []);
   }
 
   resolveOptionalAsync<const Value>(
@@ -491,7 +501,10 @@ class DefaultContainer implements Container {
 
   resolveAll<const Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Array<Value> {
     this.#assertNotDisposed();
-    return this.#resolver.resolveAll(token, options, [], []);
+    const rootStack = this.#resolver.rootStack;
+    return rootStack.length === 0
+      ? this.#resolver.resolveAll(token, options, this.#resolver.rootPath, rootStack)
+      : this.#resolver.resolveAll(token, options, [], []);
   }
 
   resolveAllAsync<const Value>(

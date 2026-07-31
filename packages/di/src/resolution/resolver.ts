@@ -67,6 +67,17 @@ const ROOT_CONSTRAINT_CONTEXT = {
  */
 export class DependencyResolver implements ResolverCallbacks {
   readonly #syncResolutionContextPool: Array<DefaultResolutionContext> = [];
+  /**
+   * The pair a top-level **sync** resolve reuses instead of minting two arrays per call.
+   *
+   * @remarks Read directly rather than through an accessor returning both: a shallow resolve is one
+   * top-level call, so a call and an object literal there are not amortised over anything. Every sync
+   * lane pops what it pushes, so `rootStack.length === 0` means no resolve holds the pair; async
+   * appends without popping and mints its own. Keeping the pair stable is also what lets a pooled
+   * context skip storing pointers it already holds.
+   */
+  readonly rootPath: Array<string> = [];
+  readonly rootStack: Array<ResolutionFrame> = [];
   // The open synchronous factory cascade: its arrays are the ancestor chain, and they are balanced
   // because synchronous code does not interleave.
   readonly #cascadePath: Array<string> = [];
