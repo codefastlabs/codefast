@@ -1,5 +1,142 @@
 # @codefast/di
 
+## 0.5.0-canary.9
+
+### Minor Changes
+
+- [#677](https://github.com/codefastlabs/codefast/pull/677) [`7fd9ba8`](https://github.com/codefastlabs/codefast/commit/7fd9ba82426493bee6ffd11a512920103a644842) Thanks [@thevuong](https://github.com/thevuong)! - Detect async cycles from the synchronous factory cascade instead of a settle-scoped path, and escape to a per-branch path only where the cascade cannot see.
+
+  A factory asks for its dependencies from its **synchronous prefix** — `async ctx => await ctx.resolveAsync(dep)` calls `resolveAsync` before it awaits anything — so an eight-level chain is built inside one synchronous cascade before any of it settles, and the chain of who-is-resolving-whom at the moment of a request is the call stack itself. While that cascade is open the resolver's own arrays are the ancestor chain, pushed on factory-enter and popped when the factory returns its promise rather than when that promise settles. Two cascades cannot interleave, so `binding.inFlight` is exact path membership for async too, exactly as it already was for sync. Every level shares one context; nothing is allocated per level and no level observes its own settlement.
+
+  This fixes a false `CircularDependencyError`. A diamond — `A` awaiting `B` and `C` in parallel, both needing `D` — rejected with `Circular dependency detected: a → b → d → c → d`, a path in which `b → d → c` is not a dependency edge at all. `D`'s flag is now clear by the time the second sibling asks for it.
+
+  A request made from a continuation, after an await, has its ancestors on no call stack. It arrives with the cascade empty — an exact test, since a continuation never runs inside one — and escapes to a branch lane whose path is append-only: a level appends while its branch still owns the next slot and copies its own prefix once a sibling has claimed it. Anything the cascade lane does not serve escapes the same way, seeded with a snapshot of the ancestors reached so far, and a subtree that has left the cascade stays off it. A cycle formed entirely from post-await edges is still reported, one level in from the true root, because the ancestors before the first escape were never written down; `resolver-async.test.ts` pins that message.
+
+  Measured with `BENCH_ISOLATE=1 BENCH_FULL=1`, libraries interleaved with rotating order, 3 trials: against inversify 8.2.3 the suite goes from **42 / 0 / 1** to **43 / 0 / 0** — the async chain row this library had always lost now reads **1.60×** where it read 0.75×, and the async group's geomean goes **1.13× to 1.58×**. Per-level overhead against a floor of eight plain awaited async functions falls from 48.3 ns to **19.5 ns** with the collector idle and **21.3 ns** with a full GC forced every 100 samples — the lane is now within ~7 ns of a build carrying no cycle bookkeeping at all, and it is GC-insensitive again.
+
+  A paired A/B of the two builds, five passes alternating which side ran first, holds all seventeen measured sync rows at parity (0.99–1.08× medians, no row negative across every pass), including `circular-dependency-3`, which shares the `binding.inFlight` flag the cascade now uses. That A/B is also what caught a regression the suite reported as a win: a materialized async singleton did not match the cascade lane and escaped, snapshotting both cascade arrays on every resolve, for **0.81×** of the previous build across all five passes. The cascade entry now answers a plain constant and a cached singleton itself.
+
+  `ARCHITECTURE.md` records the two shapes tried before this one, including the one that fixed the same bug and measured worse, and why the sync lane's compiled-plan answer does not port to async.
+
+  `ResolutionDiagnostics` no longer carries `asyncContextPoolSize`, since there is no async context pool to report.
+
+- [#677](https://github.com/codefastlabs/codefast/pull/677) [`7fd9ba8`](https://github.com/codefastlabs/codefast/commit/7fd9ba82426493bee6ffd11a512920103a644842) Thanks [@thevuong](https://github.com/thevuong)! - **Breaking:** `effectiveBindingScope` is no longer exported from the package root. It read a `Binding`,
+  which `package.json#exports` deliberately withholds, and no public API ever handed one out — so it was
+  exported and impossible to call. Read a binding's scope from `BindingSnapshot.scope`
+  (`container.lookupBindings()` / `container.inspect()`) or from `GraphNode.scope`
+  (`container.generateDependencyGraph()`), both of which have always carried it.
+
+  `bindingSlotToResolveOptions` now takes its slot structurally, so the slot on a public
+  `BindingSnapshot` — where `name` is an optional property rather than a required one holding
+  `undefined` — is accepted. Passing a `BindingSlot`-shaped literal keeps working.
+
+  A type test now asserts each exported function is callable with values a consumer can actually obtain
+  from the package's own exports, which is what neither of these satisfied.
+
+### Patch Changes
+
+- [#677](https://github.com/codefastlabs/codefast/pull/677) [`7fd9ba8`](https://github.com/codefastlabs/codefast/commit/7fd9ba82426493bee6ffd11a512920103a644842) Thanks [@thevuong](https://github.com/thevuong)! - Make resolving through a container-level `onActivation` hook as cheap as resolving without one.
+
+  A transient factory binding that carries activation hooks now takes the same `O(1)` `binding.inFlight`
+  cycle guard as the unhooked lane — the argument for that guard never mentioned hooks, since a hook
+  runs on the call stack the factory did — and `LifecycleManager` keeps a one-entry token→hooks cache
+  in front of its map, because a resolve loop asks about the same token every iteration. Together they
+  halve what the hook lane costs over the plain one. A hook that re-resolves its own token still
+  reports `CircularDependencyError`, and the flag is still released on every exit path.
+
+- [#677](https://github.com/codefastlabs/codefast/pull/677) [`7fd9ba8`](https://github.com/codefastlabs/codefast/commit/7fd9ba82426493bee6ffd11a512920103a644842) Thanks [@thevuong](https://github.com/thevuong)! - Fix three defects found by an audit of the resolution engine's memoization:
+
+  - A `.onActivation()` hook added to a chain **after** its binding's first resolve was silently skipped on every lane that consults the activation-need memo (named resolves and nested dependency resolves) while the default-slot dynamic lane honored it. The memo now reads the binding's own hook fresh on every call, so all lanes give one answer.
+  - The activation-need memo is keyed by binding id and was only invalidated by the lifecycle version, so a long-running container that rebinds in a loop grew it without bound (~60 B per rebind). The memo is now also stamped with the registry version, evicting entries whose binding ids a rebind has retired.
+  - A `scoped` instance cached in a child container survived `unbind`/`unbindAll`/module unload — the drain released singletons only. Scoped entries are now released with their binding (no deactivation, per SPEC §5.2), and resolution diagnostics expose a `scopedInstanceCount` so the release is pinned structurally.
+
+  A paired A/B against the previous build over six activation- and dispatch-sensitive rows (three passes, alternating order) held every row within noise of parity.
+
+- [#677](https://github.com/codefastlabs/codefast/pull/677) [`7fd9ba8`](https://github.com/codefastlabs/codefast/commit/7fd9ba82426493bee6ffd11a512920103a644842) Thanks [@thevuong](https://github.com/thevuong)! - Stop allocating a throwaway `Map` on every named resolve. The named-lookup memo upserted with
+  `getOrInsert(token, new Map())`, whose fallback JavaScript evaluates eagerly — so every call built a
+  `Map` for the hit that immediately discarded it. It now uses `Map.prototype.getOrInsertComputed` with a
+  module-level factory, which allocates nothing on a hit and no closure per call: **~1.72×** on
+  `named-constant-get`, measured paired against the previous build with the order alternated.
+
+  The bind-time upserts keep the eager form deliberately — a bind is usually a token's first, so the
+  fallback is usually the value stored, and the computed form measured slower there.
+
+  `@codefast/di` now calls `Map.prototype.getOrInsertComputed` as well as `getOrInsert`; both ship in Node
+  26+, which the package already required.
+
+- [#677](https://github.com/codefastlabs/codefast/pull/677) [`7fd9ba8`](https://github.com/codefastlabs/codefast/commit/7fd9ba82426493bee6ffd11a512920103a644842) Thanks [@thevuong](https://github.com/thevuong)! - Put a one-entry cache in front of `BindingLookupCache`'s options-less token map. Two shapes reach that map and neither can use the registry's direct index: an **alias**, whose terminal binding the index cannot name, and a token owned by a **parent container**, whose entry has to carry the owner. Both are then resolved in a loop over the same token, so the map lookup they repeat deserves an inline cache — the rule this package already applies to `LifecycleManager.activationHandlersFor()`.
+
+  Paired A/B against the previous build, seven passes alternating which side ran first, medians: `to-alias-redirect` **1.16×** (every pass 1.15–1.18) and `child-depth-2-resolve` **1.23×** (every pass 1.22–1.27), which were the two thinnest wins in the suite outside the lifecycle rows. `rebind-hot-swap` — the row that invalidates the cache on every iteration, so the only place a front cache could be pure overhead — reads 1.17×, after a five-pass run had put it at 0.88× on mixed signs; the tighter run is the one to believe.
+
+  In the interleaved isolated suite `to-alias-redirect` reads **1.53×** of inversify 8.2.3, up from 1.33×, which is what the paired ratio predicts. `child-depth-2-resolve` reads **1.14×** there against 1.36× before — that row carries both of the report's instability markers (above 30M ops/s, and a per-trial IQR over 5%), its own throughput went _up_, and seven paired passes put it at 1.22–1.27×, so the paired number is the one that describes this change. The suite's aggregate moved from 42/0/1 to 42/1/0 at a slightly lower median on rows this change cannot reach, which is run-to-run drift rather than an effect.
+
+  `null` is a real answer from that map, meaning "this token's shape needs the full selection path", so absence is tracked by the token slot rather than by the entry, and a registry-version change clears the slot along with the map.
+
+  Folding alias hops into `registry.getFastDefault()` instead was considered and rejected as unsound: that index is a bare own-registry `Map.get` returning a binding, while an alias's terminal may live in a parent container and its invalidation depends on the whole chain's summed version, neither of which the registry can see.
+
+- [#677](https://github.com/codefastlabs/codefast/pull/677) [`7fd9ba8`](https://github.com/codefastlabs/codefast/commit/7fd9ba82426493bee6ffd11a512920103a644842) Thanks [@thevuong](https://github.com/thevuong)! - Remove a type parameter the resolver could never honour. Fifteen private methods took `Binding<Value>`
+  and returned `Value`, but every caller supplied `Value` through an unchecked `as Binding<Value>` — so the
+  generic documented an intent the compiler never verified. The internal lanes now take the erased
+  `Binding` and return `unknown`, and the eight public resolve entry points each cast once, where the
+  caller's token is the claim being made. Seventeen casts fewer in the resolver.
+
+  What made that possible: the binding kinds declare their lifecycle hooks as methods rather than
+  function-typed properties, so their parameters compare bivariantly and `Binding<Value>` stays assignable
+  to `Binding`. The public `ActivationHandler` and `DeactivationHandler` are unchanged and still checked
+  strictly, so a handler you write is verified exactly as before.
+
+  No behaviour change: the emitted JavaScript is identical apart from one line break.
+
+- [#677](https://github.com/codefastlabs/codefast/pull/677) [`7fd9ba8`](https://github.com/codefastlabs/codefast/commit/7fd9ba82426493bee6ffd11a512920103a644842) Thanks [@thevuong](https://github.com/thevuong)! - Collapse the resolver's duplicated logic onto one rule per question, and fix the two places where a
+  second copy had drifted.
+
+  - `resolveAll(token, { name })` now evaluates a `when()` predicate on a named binding, as `resolve`
+    always did. The name index answers the slot; the predicate is a further constraint, and the
+    fast lane was returning a candidate `resolve` refuses.
+  - Refining a binding's scope after its first resolve (`bind(T).toDynamic(f)` … later `.singleton()`)
+    now reports the new scope to `when()` predicates that read `ctx.parent.scope`. The resolution
+    frame is memoized on the binding and derives from `scope`, so the refinement has to drop it.
+
+  Internally: slot matching, name-only requests, and the alias walk each exist once; a class's
+  constructor params and a `toResolved` factory's descriptors resolve through one routine per lane;
+  `scope` is declared by every binding kind, so the engine reads it as a plain field. No public API
+  changed. Resolution throughput is unchanged or better across the benchmark suite — `resolveOptional`
+  ~1.5×, transient class and `toResolved` construction ~1.35–1.44×, constants and named lookups
+  ~1.3×, with the deep/wide graph rows at parity.
+
+- [#677](https://github.com/codefastlabs/codefast/pull/677) [`7fd9ba8`](https://github.com/codefastlabs/codefast/commit/7fd9ba82426493bee6ffd11a512920103a644842) Thanks [@thevuong](https://github.com/thevuong)! - Stop minting two arrays per top-level sync resolve, and stop a pooled resolution context re-storing pointers it already holds.
+
+  `--prof` over the four thinnest rows put the largest di-attributed cost in a place none of this package's notes mention: `#acquireSyncResolutionContext` and `DefaultResolutionContext.reset()` together take **22%** of ticks on `fan-out-tree-depth-3-breadth-4` and **16%** on `scale-deep-transient-chain-512`, and `reset()` alone takes **10%** on `container-level-activation-hook`. The reason `reset()` is not free is that a pooled context outlives enough resolves to sit in old space, so each of its five field writes is a pointer store with a write barrier — and three of the five write the same resolver and the same two arrays every time.
+
+  Except they did not, because `container.resolve()` handed every call a fresh `[]` pair. So both halves are needed together: a resolver now keeps one sync `rootPath`/`rootStack` pair, lent to a top-level resolve when `rootStack.length === 0` and otherwise replaced by a fresh pair, and `reset()` compares before storing. Every sync lane pops what it pushes, so an empty stack is an exact "nobody holds this"; a nested `container.resolve()` from inside a factory still starts from an empty path, and if a resolve ever left the pair dirty the only consequence is that later resolves mint their own.
+
+  Paired A/B against this commit's parent, six passes alternating which side ran first: `constant-resolve` **1.70×**, `container-level-activation-hook` **1.67×**, `realistic-graph-resolve-root` **1.34×**, `fan-out-tree-depth-3-breadth-4` **1.28×**, `scale-deep-transient-chain-512` **1.21×**, `scale-mid-transient-chain-32` 1.16×, `singleton-class-1-dep` 1.13×, `to-alias-redirect` 1.09×, and `dynamic-async-chain-8` 0.99× as the untouched control.
+
+  `transient-class-1-dep` reads **0.91×**, negative in all six passes, and the mechanism is the same one that wins the other rows: a fresh array is in new space, so pushing a frame onto it needs no write barrier, while the shared pair is in old space and every push pays one. That row pushes a frame and does nothing else, so it is the one shape where the barrier costs more than the two allocations saved. Kept because it is one row at −9% against five between +21% and +70%.
+
+  `tests/unit/resolution/in-flight-invariants.test.ts` pins the lending rule in both directions — a nested root resolve gets its own pair, and a throwing resolve hands the pair back — and both were checked by breaking the guard.
+
+- [#677](https://github.com/codefastlabs/codefast/pull/677) [`7fd9ba8`](https://github.com/codefastlabs/codefast/commit/7fd9ba82426493bee6ffd11a512920103a644842) Thanks [@thevuong](https://github.com/thevuong)! - `toSelf()` on a token that is not a class now throws `SelfBindingRequiresClassError` instead of a bare
+  `Error`, so it is catchable as a `DiError` like every other failure this package raises, carries a
+  `code` and the token name, and is documented in SPEC.
+
+  It was the one throw site outside the error taxonomy, and the architecture test could not see it —
+  that test only read `export class …Error` declarations. It now also fails on any `throw new Error(…)`
+  under `src/`, and on an error class the root barrel forgets to export.
+
+- [#677](https://github.com/codefastlabs/codefast/pull/677) [`7fd9ba8`](https://github.com/codefastlabs/codefast/commit/7fd9ba82426493bee6ffd11a512920103a644842) Thanks [@thevuong](https://github.com/thevuong)! - Fix a tag request answering differently depending on how it was spelled. `resolve(T, { tags: [["n", -0]] })`
+  matched a binding tagged `["n", 0]` while `resolve(T, { tag: ["n", -0] })` threw `NoMatchingBindingError`
+  and `resolveAll` returned `[]` — three answers to one question.
+
+  The registry indexes tagged bindings in a `Map`, so it answers by SameValueZero, while tag values compare
+  by `Object.is` as SPEC §3.5 requires; the two differ on `+0` versus `-0`. The fast path now re-checks the
+  index's answer, and only where the index can be wrong — a request whose tag value is not zero was already
+  exact. `NaN` was never affected: both rules treat it as equal to itself.
+
+- [#676](https://github.com/codefastlabs/codefast/pull/676) [`641e233`](https://github.com/codefastlabs/codefast/commit/641e2338d77fb61be2ca585a5986f34cf32ec746) Thanks [@thevuong](https://github.com/thevuong)! - Collapse the `types` and `default` lanes of `package.json#imports` from fallback arrays to single strings.
+
+  Node resolves an imports array by taking the first candidate it can parse, without checking that the file exists and without falling through — a specifier whose first candidate is missing throws `ERR_MODULE_NOT_FOUND` rather than trying the second. `./dist/*/index.js` and `./dist/*/index.d.ts` could therefore never be reached, so they read as a safety net that does not exist. The `source` lane keeps its extension candidates, which only `tsc` and Vite read and both probe.
+
 ## 0.5.0-canary.8
 
 ### Minor Changes

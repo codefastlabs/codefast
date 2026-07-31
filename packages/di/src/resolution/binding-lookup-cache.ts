@@ -33,6 +33,9 @@ export const ALIAS_HOP_LIMIT = 32;
  */
 const newNameToEntryMap = <Owner>(): Map<string, DefaultLookupEntry<Owner> | null> => new Map();
 
+/**
+ * @since 0.5.0-canary.9
+ */
 export class BindingLookupCache<Owner> {
   readonly #byToken = new Map<Token<unknown> | Constructor, DefaultLookupEntry<Owner> | null>();
   #version = -1;

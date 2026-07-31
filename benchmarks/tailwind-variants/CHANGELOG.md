@@ -1,5 +1,14 @@
 # @codefast/benchmark-tailwind-variants
 
+## 0.5.0-canary.9
+
+### Patch Changes
+
+- Updated dependencies [[`7fd9ba8`](https://github.com/codefastlabs/codefast/commit/7fd9ba82426493bee6ffd11a512920103a644842), [`7fd9ba8`](https://github.com/codefastlabs/codefast/commit/7fd9ba82426493bee6ffd11a512920103a644842), [`15b732a`](https://github.com/codefastlabs/codefast/commit/15b732a8ade895dec5df464e9ba30f646e0bf39d), [`641e233`](https://github.com/codefastlabs/codefast/commit/641e2338d77fb61be2ca585a5986f34cf32ec746)]:
+  - @codefast/benchmark-harness@0.5.0-canary.9
+  - @codefast/benchmark-viewer@0.5.0-canary.9
+  - @codefast/tailwind-variants@0.5.0-canary.9
+
 ## 0.5.0-canary.8
 
 ### Patch Changes

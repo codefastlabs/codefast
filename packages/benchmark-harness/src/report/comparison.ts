@@ -14,7 +14,11 @@ import {
   markThroughputQuality,
 } from "#/report/reliability";
 
-/** One library column: its aggregated report plus the labels used in table headers. */
+/**
+ * One library column: its aggregated report plus the labels used in table headers.
+ *
+ * @since 0.5.0-canary.9
+ */
 export interface ComparisonLibrary {
   readonly report: LibraryReport;
   readonly displayName: string;
@@ -22,7 +26,11 @@ export interface ComparisonLibrary {
   readonly shortName?: string;
 }
 
-/** One competitor's numbers for a single scenario; zeroed when it never measured that scenario. */
+/**
+ * One competitor's numbers for a single scenario; zeroed when it never measured that scenario.
+ *
+ * @since 0.5.0-canary.9
+ */
 export interface ComparisonCompetitorCell {
   readonly hzPerOp: number;
   /** Pivot over competitor throughput; 0 when either side is missing, rendering as an em-dash. */
@@ -30,7 +38,11 @@ export interface ComparisonCompetitorCell {
   readonly iqrFraction: number;
 }
 
-/** One aligned row: the pivot's scenario plus one cell per competitor, in competitor order. */
+/**
+ * One aligned row: the pivot's scenario plus one cell per competitor, in competitor order.
+ *
+ * @since 0.5.0-canary.9
+ */
 export interface ComparisonScenarioRow {
   readonly id: string;
   readonly group: string;
@@ -44,7 +56,11 @@ export interface ComparisonScenarioRow {
   readonly competitors: ReadonlyArray<ComparisonCompetitorCell>;
 }
 
-/** Copy and column choices for the Markdown report. */
+/**
+ * Copy and column choices for the Markdown report.
+ *
+ * @since 0.5.0-canary.9
+ */
 export interface ComparisonMarkdownReportOptions {
   readonly documentHeading: string;
   readonly sectionHeading: string;
@@ -64,7 +80,11 @@ export interface ComparisonMarkdownReportOptions {
   readonly includeSanityFailures?: boolean;
 }
 
-/** Copy and column choices for the console report. */
+/**
+ * Copy and column choices for the console report.
+ *
+ * @since 0.5.0-canary.9
+ */
 export interface ComparisonConsoleReportOptions {
   readonly sectionHeading: string;
   readonly footerHintLine?: string;
@@ -73,7 +93,11 @@ export interface ComparisonConsoleReportOptions {
 // A ratio within ±3% of 1.0 is statistical parity, not a win or a loss.
 const HEAD_TO_HEAD_PARITY_BAND = 0.03;
 
-/** One classified entry: scenario id plus its pivot/competitor throughput ratio. */
+/**
+ * One classified entry: scenario id plus its pivot/competitor throughput ratio.
+ *
+ * @since 0.5.0-canary.9
+ */
 export interface ComparisonEntry {
   readonly id: string;
   readonly ratio: number;
@@ -84,6 +108,8 @@ export interface ComparisonEntry {
 /**
  * Geometric-mean ratio of one scenario group, so error-path outliers stay in their own
  * group instead of skewing the throughput headline.
+ *
+ * @since 0.5.0-canary.9
  */
 export interface ComparisonGroupGeomean {
   readonly group: string;
@@ -91,7 +117,11 @@ export interface ComparisonGroupGeomean {
   readonly count: number;
 }
 
-/** Win/parity/loss classification of every comparable scenario, from the pivot's viewpoint. */
+/**
+ * Win/parity/loss classification of every comparable scenario, from the pivot's viewpoint.
+ *
+ * @since 0.5.0-canary.9
+ */
 export interface ComparisonHeadToHead {
   readonly comparableCount: number;
   readonly wins: ReadonlyArray<ComparisonEntry>;
@@ -110,7 +140,11 @@ export interface ComparisonHeadToHead {
   readonly excludedFromAggregatesIds: ReadonlyArray<string>;
 }
 
-/** One competitor's head-to-head against the pivot, paired with its label. */
+/**
+ * One competitor's head-to-head against the pivot, paired with its label.
+ *
+ * @since 0.5.0-canary.9
+ */
 export interface ComparisonCompetitorSummary {
   readonly displayName: string;
   readonly headToHead: ComparisonHeadToHead;
@@ -160,6 +194,8 @@ function pivotQuality(row: ComparisonScenarioRow): ThroughputQuality {
  * @remarks
  * A scenario appears only when the pivot measured it — a competitor-only scenario has nothing
  * to compare against, and is reported through `competitorOnlyIds` on the head-to-head instead.
+ *
+ * @since 0.5.0-canary.9
  */
 export function buildComparisonRows(
   pivot: ComparisonLibrary,
@@ -189,6 +225,8 @@ export function buildComparisonRows(
  * Classifies one competitor's column into wins / parities / losses for the pivot.
  *
  * @param competitorIndex - position in the competitor array the rows were built from
+ *
+ * @since 0.5.0-canary.9
  */
 export function summarizeAgainstCompetitor(
   rows: ReadonlyArray<ComparisonScenarioRow>,
@@ -255,7 +293,11 @@ export function summarizeAgainstCompetitor(
   };
 }
 
-/** One head-to-head per competitor, in competitor order. */
+/**
+ * One head-to-head per competitor, in competitor order.
+ *
+ * @since 0.5.0-canary.9
+ */
 export function summarizeComparison(
   pivot: ComparisonLibrary,
   competitors: ReadonlyArray<ComparisonLibrary>,
@@ -496,7 +538,11 @@ function buildSanityFailureLines(
   ];
 }
 
-/** Renders the Markdown report for a pivot against any number of competitors. */
+/**
+ * Renders the Markdown report for a pivot against any number of competitors.
+ *
+ * @since 0.5.0-canary.9
+ */
 export function renderComparisonMarkdownReport(
   pivot: ComparisonLibrary,
   competitors: ReadonlyArray<ComparisonLibrary>,
@@ -541,7 +587,11 @@ const CLI_TABLE_COLUMN_GAP = "  ";
 const CONSOLE_THROUGHPUT_COLUMN_WIDTH = 18;
 const CONSOLE_RATIO_COLUMN_WIDTH = 12;
 
-/** Prints the comparison to stdout with aligned ASCII columns. */
+/**
+ * Prints the comparison to stdout with aligned ASCII columns.
+ *
+ * @since 0.5.0-canary.9
+ */
 export function renderComparisonConsoleReport(
   pivot: ComparisonLibrary,
   competitors: ReadonlyArray<ComparisonLibrary>,

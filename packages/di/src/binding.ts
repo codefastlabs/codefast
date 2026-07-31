@@ -319,6 +319,8 @@ export function refinableFields<Value>(binding: Binding<Value>): RefinableBindin
  *
  * @remarks `scope` is the only field a chain writes in place that the frame derives from — a
  * re-slot builds a fresh binding, whose frame starts empty anyway.
+ *
+ * @since 0.5.0-canary.9
  */
 export function clearBindingFrame<Value>(binding: Binding<Value>): void {
   (binding as { frame: ResolutionFrame | undefined }).frame = undefined;

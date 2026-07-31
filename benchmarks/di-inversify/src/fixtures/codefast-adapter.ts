@@ -143,6 +143,8 @@ function bindOneResolvedNode(
 /**
  * Builds the same graph through `toResolved` (explicit dep tokens) — the shape the
  * instantiation-plan compiler serves, mirroring inversify's `toResolvedValue` adapter.
+ *
+ * @since 0.5.0-canary.9
  */
 export function buildCodefastRealisticResolvedContainer(graph: GraphDescriptor): CodefastRealisticBuild {
   assertGraphIsWellFormed(graph);
@@ -164,6 +166,8 @@ export function buildCodefastRealisticResolvedContainer(graph: GraphDescriptor):
 
 /**
  * Sanity for the `toResolved` variant — same assertions as the factory-binding one.
+ *
+ * @since 0.5.0-canary.9
  */
 export function sanityCheckCodefastRealisticResolvedResolve(graph: GraphDescriptor): boolean {
   const { container, rootToken } = buildCodefastRealisticResolvedContainer(graph);
