@@ -121,6 +121,18 @@ with the full `matchesSlot` instead cost **~42%** on `tagged-binding-resolve`; t
 
 **A hash lookup a loop repeats deserves an inline cache, and a memo already inlined deserves nothing.** `LifecycleManager.activationHandlersFor()` keeps a one-entry token→hooks cache in front of its map, invalidated by `registerActivation` — a resolve loop asks about the same token every iteration. The mirror-image change failed: folding `#getResolutionFrame` into a single expression so it would inline, with the build extracted to a cold method, cost **~6%** on `fan-out-tree-depth-3-breadth-4` (five paired passes, all five negative) and was reverted. A profile showing self-time in a memo is not evidence that the memo is the cost.
 
+**The same rule pays again one layer down.** `BindingLookupCache.defaultEntry()` is reached by exactly
+two shapes, neither of which the registry's direct index can serve: an **alias**, whose terminal the
+index cannot name, and a token owned by a **parent**, whose entry has to carry that owner. Both are
+resolved in a loop over one token, so a one-entry slot in front of the map is worth **1.16×** on
+`to-alias-redirect` and **1.23×** on `child-depth-2-resolve` (seven paired passes, every pass positive,
+spreads of 0.03 and 0.05). `null` is a real answer there — "this shape needs full selection" — so the
+slot tracks absence by its token, not by its entry.
+
+> **Rule:** do not try to fold alias hops into `registry.getFastDefault()`. It is a bare own-registry
+> `Map.get` returning a binding, and an alias terminal may live in a parent container whose rebind only
+> the chain's summed version can see. Alias folding belongs where the version stamp is.
+
 **Compiling the activation chain was tried three ways and rejected.** `container-level-activation-hook`
 is the suite's thinnest win, and the hook pipeline is re-decided per resolve while its shape is fixed
 per `(binding, activationVersion)` — the same redundancy the async cascade removed. So: memoize a
