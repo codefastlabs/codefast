@@ -356,3 +356,49 @@ describe("a nested cascade unwinds to exactly where it started", () => {
     ]);
   });
 });
+
+describe("the reused root frames are only lent to one resolve at a time", () => {
+  it("gives a nested container.resolve() its own pair, so it starts from an empty path", () => {
+    const innerToken = token<string>("root-frames-inner");
+    const outerToken = token<string>("root-frames-outer");
+    const seen: Array<ReadonlyArray<string>> = [];
+    const container = Container.create();
+    container
+      .bind(innerToken)
+      .toDynamic((ctx) => {
+        seen.push([...ctx.graph.resolutionPath]);
+        return "inner";
+      })
+      .transient();
+    container
+      .bind(outerToken)
+      // Deliberately the container, not `ctx` — a fresh root resolve, not a nested one.
+      .toDynamic(() => `outer:${container.resolve(innerToken)}`)
+      .transient();
+
+    expect(container.resolve(outerToken)).toBe("outer:inner");
+    // A shared pair handed to both would have shown the outer level as the inner one's ancestor.
+    expect(seen).toEqual([["root-frames-inner"]]);
+  });
+
+  it("hands the pair back after a resolve throws, so later resolves still reuse it", () => {
+    const failingToken = token<string>("root-frames-failing");
+    const workingToken = token<string>("root-frames-working");
+    const container = Container.create();
+    container
+      .bind(failingToken)
+      .toDynamic(() => {
+        throw new Error("root frames boom");
+      })
+      .transient();
+    container
+      .bind(workingToken)
+      .toDynamic((ctx) => `ok:${String(ctx.graph.resolutionPath.length)}`)
+      .transient();
+
+    expect(() => container.resolve(failingToken)).toThrow("root frames boom");
+    // Depth 1, not 2: the failed resolve popped its frame on the way out.
+    expect(container.resolve(workingToken)).toBe("ok:1");
+    expect(container.resolve(workingToken)).toBe("ok:1");
+  });
+});
