@@ -36,6 +36,11 @@ const newNameToEntryMap = <Owner>(): Map<string, DefaultLookupEntry<Owner> | nul
 export class BindingLookupCache<Owner> {
   readonly #byToken = new Map<Token<unknown> | Constructor, DefaultLookupEntry<Owner> | null>();
   #version = -1;
+  // One entry in front of the map: the two shapes that reach here — an alias, and a token owned by
+  // a parent — are both resolved in a loop over the same token. `null` is a real answer, so absence
+  // is tracked by the token slot rather than by the entry.
+  #lastToken: Token<unknown> | Constructor | undefined;
+  #lastEntry: DefaultLookupEntry<Owner> | null = null;
   readonly #byTokenAndName = new Map<Token<unknown> | Constructor, Map<string, DefaultLookupEntry<Owner> | null>>();
   #namedVersion = -1;
 
@@ -64,12 +69,17 @@ export class BindingLookupCache<Owner> {
     if (version !== this.#version) {
       this.#byToken.clear();
       this.#version = version;
+      this.#lastToken = undefined;
+    } else if (token === this.#lastToken) {
+      return this.#lastEntry;
     }
     let entry = this.#byToken.get(token);
     if (entry === undefined) {
       entry = this.#foldAliases(token);
       this.#byToken.set(token, entry);
     }
+    this.#lastToken = token;
+    this.#lastEntry = entry;
     return entry;
   }
 
