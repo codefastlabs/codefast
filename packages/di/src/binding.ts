@@ -74,12 +74,14 @@ export function bindingSlotToString(slot: BindingSlot): string {
 interface BindingBase<Value> {
   readonly id: BindingIdentifier;
   /**
-   * True while this binding's factory is on the sync resolution stack — the sync lane's cycle check.
+   * True while this binding's factory is executing on the current synchronous call stack.
    *
-   * @remarks Resolver-owned bookkeeping; callers never set it. See `ARCHITECTURE.md` for why the
-   * sync and async lanes detect cycles differently.
+   * @remarks Both cycle guards that can use an `O(1)` flag read this — the sync transient-dynamic
+   * lane and the async cascade lane — because synchronous code does not interleave, so the flag *is*
+   * exact path membership. Not optional: `createBinding` always sets it, and a field that may be
+   * absent is a field that can cost the shared hidden class. Resolver-owned; callers never set it.
    */
-  inFlight?: boolean | undefined;
+  inFlight: boolean;
   /**
    * Memoized resolution frame for this binding. Its contents derive only from immutable binding
    * fields, so it is computed once on first resolve and reused instead of a per-resolver Map
@@ -102,74 +104,76 @@ interface BindingBase<Value> {
 
 type BindingBaseKeys = keyof BindingBase<unknown>;
 
+/**
+ * The lifecycle hooks every kind but `alias` may carry.
+ *
+ * @remarks Declared as **methods**, not function-typed properties, so their parameters compare
+ * bivariantly and `Binding<Value>` stays assignable to `Binding`. The engine erases the value type at
+ * every lane boundary regardless; the public `ActivationHandler` / `DeactivationHandler` keep strict
+ * checking, which is where a user's handler is actually verified. Not `readonly`: a fluent chain
+ * refines both in place — see {@link RefinableBindingFields}.
+ */
+interface BindingLifecycleHooks<Value> {
+  onActivation?(ctx: ResolutionContext, instance: Value): Value | Promise<Value>;
+  onDeactivation?(instance: Value): void | Promise<void>;
+}
+
 // ── Binding kinds ─────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
  */
-export interface ClassBinding<Value> extends BindingBase<Value> {
+export interface ClassBinding<Value> extends BindingBase<Value>, BindingLifecycleHooks<Value> {
   readonly kind: "class";
   readonly target: Constructor<Value>;
   readonly scope: BindingScope;
-  readonly onActivation?: ActivationHandler<Value> | undefined;
-  readonly onDeactivation?: DeactivationHandler<Value> | undefined;
 }
 
 /**
  * @since 0.3.16-canary.0
  */
-export interface DynamicBinding<Value> extends BindingBase<Value> {
+export interface DynamicBinding<Value> extends BindingBase<Value>, BindingLifecycleHooks<Value> {
   readonly kind: "dynamic";
   readonly factory: (ctx: ResolutionContext) => Value;
   readonly scope: BindingScope;
-  readonly onActivation?: ActivationHandler<Value> | undefined;
-  readonly onDeactivation?: DeactivationHandler<Value> | undefined;
 }
 
 /**
  * @since 0.3.16-canary.0
  */
-export interface DynamicAsyncBinding<Value> extends BindingBase<Value> {
+export interface DynamicAsyncBinding<Value> extends BindingBase<Value>, BindingLifecycleHooks<Value> {
   readonly kind: "dynamic-async";
   readonly factory: (ctx: ResolutionContext) => Promise<Value>;
   readonly scope: BindingScope;
-  readonly onActivation?: ActivationHandler<Value> | undefined;
-  readonly onDeactivation?: DeactivationHandler<Value> | undefined;
 }
 
 /**
  * @since 0.3.16-canary.0
  */
-export interface ResolvedBinding<Value> extends BindingBase<Value> {
+export interface ResolvedBinding<Value> extends BindingBase<Value>, BindingLifecycleHooks<Value> {
   readonly kind: "resolved";
   readonly factory: (...args: Array<unknown>) => Value;
   readonly deps: ReadonlyArray<InjectionDescriptor>;
   readonly scope: BindingScope;
-  readonly onActivation?: ActivationHandler<Value> | undefined;
-  readonly onDeactivation?: DeactivationHandler<Value> | undefined;
 }
 
 /**
  * @since 0.3.16-canary.0
  */
-export interface ResolvedAsyncBinding<Value> extends BindingBase<Value> {
+export interface ResolvedAsyncBinding<Value> extends BindingBase<Value>, BindingLifecycleHooks<Value> {
   readonly kind: "resolved-async";
   readonly factory: (...args: Array<unknown>) => Promise<Value>;
   readonly deps: ReadonlyArray<InjectionDescriptor>;
   readonly scope: BindingScope;
-  readonly onActivation?: ActivationHandler<Value> | undefined;
-  readonly onDeactivation?: DeactivationHandler<Value> | undefined;
 }
 
 /**
  * @since 0.3.16-canary.0
  */
-export interface ConstantBinding<Value> extends BindingBase<Value> {
+export interface ConstantBinding<Value> extends BindingBase<Value>, BindingLifecycleHooks<Value> {
   readonly kind: "constant";
   readonly value: Value;
   readonly scope: "singleton";
-  readonly onActivation?: ActivationHandler<Value> | undefined;
-  readonly onDeactivation?: DeactivationHandler<Value> | undefined;
 }
 
 /**
@@ -178,6 +182,13 @@ export interface ConstantBinding<Value> extends BindingBase<Value> {
 export interface AliasBinding<Value> extends BindingBase<Value> {
   readonly kind: "alias";
   readonly target: Token<Value> | Constructor<Value>;
+  /**
+   * Always `transient` — an alias defers scoping to the binding it points at.
+   *
+   * @remarks Declared so `scope` is present on every kind, which is what lets the engine read it
+   * as a plain field instead of testing for the one kind that lacks it.
+   */
+  readonly scope: "transient";
 }
 
 /**
@@ -233,7 +244,7 @@ type ConstructedBindingFields = Record<BindingFieldName, unknown>;
 type BindingFieldSuperset = {
   readonly kind: Binding["kind"];
   readonly instance?: unknown;
-  readonly scope?: unknown;
+  readonly scope: BindingScope;
   readonly target?: unknown;
   readonly factory?: unknown;
   readonly deps?: unknown;
@@ -301,6 +312,16 @@ export interface RefinableBindingFields<Value> {
  */
 export function refinableFields<Value>(binding: Binding<Value>): RefinableBindingFields<Value> {
   return binding as RefinableBindingFields<Value>;
+}
+
+/**
+ * Drops the memoized resolution frame, for a refinement that changes what the frame reports.
+ *
+ * @remarks `scope` is the only field a chain writes in place that the frame derives from — a
+ * re-slot builds a fresh binding, whose frame starts empty anyway.
+ */
+export function clearBindingFrame<Value>(binding: Binding<Value>): void {
+  (binding as { frame: ResolutionFrame | undefined }).frame = undefined;
 }
 
 // ── Builder interfaces ────────────────────────────────────────────────────────

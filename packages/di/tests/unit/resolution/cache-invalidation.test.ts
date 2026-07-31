@@ -77,6 +77,28 @@ describe("lookup memo invalidation", () => {
     container.rebind(facadeToken).toAlias(implementationB);
     expect(container.resolve(facadeToken)).toBe("B");
   });
+  it("a scope refined after the first resolve is what constraints see", () => {
+    // The resolution frame is memoized on the binding, and `scope` is the one field a chain can
+    // still write after registration — so refining it has to drop that memo.
+    const parentToken = token<string>("frame-parent");
+    const childToken = token<string>("frame-child");
+    const container = Container.create();
+    container
+      .bind(childToken)
+      .toDynamic(() => "from-transient")
+      .when((ctx) => ctx.parent?.scope === "transient");
+    container
+      .bind(childToken)
+      .toDynamic(() => "from-singleton")
+      .when((ctx) => ctx.parent?.scope === "singleton");
+    const parentChain = container.bind(parentToken).toDynamic((ctx) => ctx.resolve(childToken));
+
+    expect(container.resolve(parentToken)).toBe("from-transient");
+
+    parentChain.singleton();
+
+    expect(container.resolve(parentToken)).toBe("from-singleton");
+  });
 });
 
 describe("compiled class-plan invalidation", () => {
@@ -282,5 +304,104 @@ describe("alias cycle safety", () => {
     }
 
     expect(container.resolve(tokens[CHAIN_LENGTH - 1]!)).toBe(7);
+  });
+});
+
+describe("the compiled activation chain follows its binding's own hook", () => {
+  it("picks up a hook added after the chain was already compiled", () => {
+    const serviceToken = token<string>("activator-late-binding-hook");
+    const container = Container.create();
+    // A container hook puts the binding on the activated lane, so a chain gets compiled.
+    container.onActivation(serviceToken, (_ctx, instance) => `${String(instance)}+container`);
+    const chain = container
+      .bind(serviceToken)
+      .toDynamic(() => "base")
+      .transient();
+
+    expect(container.resolve(serviceToken)).toBe("base+container");
+
+    // `.onActivation()` writes the field in place and bumps no version, so the memo has to notice.
+    chain.onActivation((_ctx, instance) => `${String(instance)}+binding`);
+
+    expect(container.resolve(serviceToken)).toBe("base+binding+container");
+  });
+
+  it("drops a hook that was replaced on the same chain", () => {
+    const serviceToken = token<string>("activator-replaced-hook");
+    const container = Container.create();
+    const chain = container
+      .bind(serviceToken)
+      .toDynamic(() => "base")
+      .transient();
+    chain.onActivation((_ctx, instance) => `${String(instance)}+first`);
+
+    expect(container.resolve(serviceToken)).toBe("base+first");
+
+    chain.onActivation((_ctx, instance) => `${String(instance)}+second`);
+
+    expect(container.resolve(serviceToken)).toBe("base+second");
+  });
+});
+
+describe("a late binding hook is honored on lanes that memoize activation need", () => {
+  it("named transient class: hook added after the first resolve runs on the next one", () => {
+    @injectable()
+    class Widget {
+      flagged = false;
+    }
+    const widgetToken = token<Widget>("late-hook-named-class");
+    const container = Container.create();
+    const chain = container.bind(widgetToken).to(Widget).whenNamed("n").transient();
+    warm(() => container.resolve(widgetToken, { name: "n" }));
+
+    chain.onActivation((_ctx, instance) => {
+      instance.flagged = true;
+      return instance;
+    });
+
+    expect(container.resolve(widgetToken, { name: "n" }).flagged).toBe(true);
+  });
+
+  it("named transient dynamic with the memo already populated by an unrelated container hook", () => {
+    const unrelatedToken = token<string>("late-hook-unrelated");
+    const serviceToken = token<{ flagged?: boolean }>("late-hook-named-dynamic");
+    const container = Container.create();
+    container.onActivation(unrelatedToken, (_ctx, instance) => instance);
+    const chain = container
+      .bind(serviceToken)
+      .toDynamic(() => ({}))
+      .whenNamed("n")
+      .transient();
+    warm(() => container.resolve(serviceToken, { name: "n" }));
+
+    chain.onActivation((_ctx, instance) => {
+      instance.flagged = true;
+      return instance;
+    });
+
+    expect(container.resolve(serviceToken, { name: "n" }).flagged).toBe(true);
+  });
+
+  it("class resolved as a factory dependency: hook added after the first resolve runs nested", () => {
+    @injectable()
+    class Leaf {
+      flagged = false;
+    }
+    const leafToken = token<Leaf>("late-hook-nested-leaf");
+    const rootToken = token<{ leaf: Leaf }>("late-hook-nested-root");
+    const container = Container.create();
+    const leafChain = container.bind(leafToken).to(Leaf).transient();
+    container
+      .bind(rootToken)
+      .toDynamic((ctx) => ({ leaf: ctx.resolve(leafToken) }))
+      .transient();
+    warm(() => container.resolve(rootToken));
+
+    leafChain.onActivation((_ctx, instance) => {
+      instance.flagged = true;
+      return instance;
+    });
+
+    expect(container.resolve(rootToken).leaf.flagged).toBe(true);
   });
 });

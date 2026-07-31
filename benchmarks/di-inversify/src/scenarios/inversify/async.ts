@@ -19,7 +19,7 @@ function yieldToMicrotaskQueue(): Promise<void> {
 
 function buildResolveAsyncSingleHopScenario(): AsyncBenchScenario {
   const asyncValueIdentifier = Symbol("bench-inv-async-single-hop");
-  const container = new Container();
+  const container = new Container({ jitless: false });
   container
     .bind<number>(asyncValueIdentifier)
     .toDynamicValue(async () => {
@@ -51,7 +51,7 @@ function buildDynamicAsyncChainDepthEightScenario(): AsyncBenchScenario {
   const chainIdentifiers = Array.from({ length: ASYNC_CHAIN_DEPTH }, (_value, depthIndex) =>
     Symbol(`bench-inv-async-chain-${String(depthIndex)}`),
   ) as Array<ServiceIdentifier<number>>;
-  const container = new Container();
+  const container = new Container({ jitless: false });
 
   container.bind<number>(chainIdentifiers[0]!).toConstantValue(0);
   for (let depthIndex = 1; depthIndex < ASYNC_CHAIN_DEPTH; depthIndex++) {
@@ -94,7 +94,7 @@ function buildAsyncFanOutConcurrentScenario(
   const dependencyIdentifiers = Array.from({ length: concurrency }, (_value, index) =>
     Symbol(`bench-inv-async-fanout-${String(concurrency)}-${String(index)}`),
   ) as Array<ServiceIdentifier<number>>;
-  const container = new Container();
+  const container = new Container({ jitless: false });
 
   for (const [index, dependencyIdentifier] of dependencyIdentifiers.entries()) {
     container

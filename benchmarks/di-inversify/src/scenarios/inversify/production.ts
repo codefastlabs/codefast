@@ -3,7 +3,7 @@
  * {@link ../codefast/production.ts}.
  *
  * Inversify-specific mapping:
- *   - `Container.create()` → `new Container()`
+ *   - `Container.create()` → `new Container({ jitless: false })`
  *   - `container.createChild()` → `new Container({ parent: ... })`
  *   - `container.resolve(token)` → `container.get(identifier)`
  *   - `container.resolveAll(token)` → `container.getAll(identifier)`
@@ -59,7 +59,7 @@ const httpAuthContextId = Symbol("bench-inv-prod-http-auth-context");
 const httpHandlerId = Symbol("bench-inv-prod-http-handler");
 
 function buildProductionHttpHandlerScenario(): BenchScenario {
-  const appContainer = new Container();
+  const appContainer = new Container({ jitless: false });
 
   appContainer
     .bind<HttpConfig>(httpConfigId)
@@ -80,7 +80,7 @@ function buildProductionHttpHandlerScenario(): BenchScenario {
     .inSingletonScope();
 
   function simulateRequest(requestIndex: number): string {
-    const requestChild = new Container({ parent: appContainer });
+    const requestChild = new Container({ jitless: false, parent: appContainer });
 
     requestChild.bind<string>(httpTraceIdId).toConstantValue(`trace-${String(requestIndex)}`);
 
@@ -157,7 +157,7 @@ const userRepositoryId = Symbol("bench-inv-prod-user-repository");
 const userServiceId = Symbol("bench-inv-prod-user-service");
 
 function buildProductionUnitOfWorkScenario(): BenchScenario {
-  const appContainer = new Container();
+  const appContainer = new Container({ jitless: false });
   let connectionCounter = 0;
 
   appContainer
@@ -166,7 +166,7 @@ function buildProductionUnitOfWorkScenario(): BenchScenario {
     .inSingletonScope();
 
   function runOneOperation(operationIndex: number): string {
-    const operationChild = new Container({ parent: appContainer });
+    const operationChild = new Container({ jitless: false, parent: appContainer });
 
     operationChild
       .bind<UnitOfWork>(unitOfWorkId)
@@ -232,7 +232,7 @@ interface EventHandler {
 const eventHandlerId = Symbol("bench-inv-prod-event-handler");
 
 function buildProductionEventBusDispatchScenario(): BenchScenario {
-  const container = new Container();
+  const container = new Container({ jitless: false });
 
   for (let handlerIndex = 0; handlerIndex < EVENT_HANDLER_COUNT; handlerIndex++) {
     const index = handlerIndex;

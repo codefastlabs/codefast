@@ -1,94 +1,103 @@
-# Bench guide for newcomers
+# How to measure so the number survives
 
-This file sits next to [README.md](./README.md) and explains **how the harness thinks**, **what the words mean**, and **how to read the numbers** without re-reading the whole implementation.
+The standard a figure has to meet before it goes in [`RESULTS.md`](./RESULTS.md), a package's
+`ARCHITECTURE.md`, or a commit message. Every rule here exists because a measurement that skipped it
+produced a confident number that later turned out to be wrong.
 
-## What this benchmark is
+## The two questions are different, and so are the methods
 
-- **Goal**: Compare **@codefast/di** against **InversifyJS 8** (full suite) plus **Awilix 13** and **tsyringe 4** (core subset) on the same _production-shaped_ scenarios (resolve paths, graphs, async, lifecycle, scopes, boot), not toy APIs in isolation.
-- **Engine**: Each scenario is a [tinybench](https://github.com/tinylibs/tinybench) **task**: the harness runs your closure many times, records latencies, and derives throughput and percentiles.
-- **Shape**: One **subprocess per library** so V8 JIT state from one side does not affect the others. The parent merges results into tables and JSONL.
+**"Did my change make this faster?"** compares two builds of the same library. Nothing else may
+differ, and both builds must run in the same time window.
 
-If you only want the takeaways (and where `@codefast/di` loses), read **[RESULTS.md](./RESULTS.md)**. If you only read one other file, read the **Environment** and **Comparable scenarios** sections at the top of `bench-results/latest.md` after a run.
+**"Are we faster than library X?"** compares two libraries. Their versions, their decorator modes and
+their heaps all differ by construction, so the only thing you can defend is a ratio measured with both
+sides interleaved.
 
-## Mental model: parent → child → tinybench
+Answering the first question with a cross-library ratio is the most common way to be wrong here. A
+ratio moves when the competitor's version changes, when the machine warms up, or when the runner
+schedules one side later — none of which is your change.
 
-1. You run `pnpm bench` (see README for variants).
-2. The **parent** (`src/harness/run.ts`) spawns one child per library (codefast, inversify, awilix, tsyringe). With `BENCH_ISOLATE=1` it instead spawns one child **per scenario** per library (a `BENCH_LIST` discovery child first, then `BENCH_ONLY=<id>` workers) and merges the trials back into one payload.
-3. Each **child** runs **N trials** (`BENCH_TRIALS`, default 2 or 3 in full mode). Each trial builds a fresh `Bench`, registers every scenario as a tinybench **task**, runs `bench.run()`, then collects per-task stats.
-4. The child prints **one JSON object** to stdout, framed by `BENCH_RESULT_JSON_START` / `BENCH_RESULT_JSON_END` so stray logs do not break parsing.
-5. The parent **aggregates** trials into medians and IQR (`@codefast/benchmark-harness`, `report/aggregate.ts`), writes `bench-results/latest.md` and `latest.jsonl` as **one table** over every scenario di measures, with di's throughput column and one ratio column per competitor.
+## Comparing two builds: paired, alternating, best-of
 
-## Glossary
+1. Build the baseline and the candidate into two directories.
+2. For each scenario, run **one subprocess per side, back to back**, and record the ratio.
+3. Repeat for at least three passes, **swapping which side goes first each pass**.
+4. Report the median of the per-pass ratios, and show them all.
 
-| Term                          | Meaning                                                                                                                                                                                                                                                         |
-| ----------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Scenario**                  | One named benchmark (one row in the report), e.g. `constant-resolve`. Implemented per library under `src/scenarios/{codefast,inversify,awilix,tsyringe}/*.ts` (awilix + tsyringe cover the core subset only).                                                   |
-| **Group**                     | A label that clusters scenarios for reading: `micro`, `realistic`, `fan-out`, `async`, `lifecycle`, `scope`, `scale`, `boot`, `failure`, `production`, and `introspection`.                                                                                     |
-| **Task**                      | tinybench’s unit of work: your scenario’s `fn` (sync or async).                                                                                                                                                                                                 |
-| **Iteration**                 | One execution of the task’s `fn` inside a single tinybench `run()`.                                                                                                                                                                                             |
-| **Batch**                     | How many **logical operations** one iteration performs. If one resolve is faster than `performance.now()` resolution, the scenario loops `batch` times inside `fn`; the reporter scales throughput so **hz/op** is “per logical op”, not “per loop of `batch`”. |
-| **Logical operation**         | What you declare one “op” to be for that scenario (e.g. one `container.get`, one cold graph build). Same idea as `batch` in protocol comments.                                                                                                                  |
-| **Trial**                     | One full pass: new `Bench`, all tasks run, numbers recorded. Multiple trials capture **run-to-run** variance (JIT, GC, OS noise).                                                                                                                               |
-| **hz/op**                     | **Operations per second per logical op**: tinybench’s `throughput.mean` × `batch`. Higher = more throughput. Reported values are **medians across trials** (per scenario, per library).                                                                         |
-| **hz/iteration**              | Throughput per **bench closure invocation** (one iteration of the loop). Useful when debugging; the markdown table uses **hz/op**.                                                                                                                              |
-| **mean ms**                   | Mean latency of one **iteration** (ms), from tinybench’s `latency.mean`. In the report: **median of that value across trials** (per library).                                                                                                                   |
-| **p75 / p99 / p999 ms**       | Percentiles of iteration latency within a trial. The markdown table shows **p99** (again as **median across trials**).                                                                                                                                          |
-| **Median across trials**      | For each metric, the harness sorts per-trial values and takes the 50th percentile. That dampens a bad first trial (warmup) and occasional GC spikes better than a mean would.                                                                                   |
-| **IQR (interquartile range)** | For **hz/op** across trials: Q75 − Q25, then divided by the **median hz/op**. Exact values live in the JSONL; the report marks a cell `‡` when it exceeds **~5%** — unstable within that run, so re-run or don’t over-interpret.                                |
-| **vs \<competitor>**          | Ratio of median **hz/op** (di over that competitor — one column per competitor). **> 1×** ⇒ codefast higher throughput on that row; **< 1×** ⇒ the competitor higher. `—` if undefined (e.g. missing data).                                                     |
-| **`†` / `‡`**                 | `†`: the row sits above ~30M ops/s, where a single ratio moves between runs of the same build whatever its IQR says — cite the aggregates. `‡`: that median’s per-trial IQR is above ~5%.                                                                       |
-| **Geomean / median ratio**    | Two headline aggregates over comparable rows: the **geometric mean** (the standard aggregate for ratio data) and the **median** of the per-row ratios. Robust to a single extreme row.                                                                          |
-| **Fingerprint**               | Metadata stamped into the report: Node/V8 version, platform, CPU, `NODE_OPTIONS`, library versions, whether `gc` was exposed, timestamps. Use it to compare runs fairly.                                                                                        |
-| **Sanity check**              | A quick pre-flight for a scenario; if it fails, that scenario is **skipped** for that library and listed under “Sanity failures”. Missing row ≠ “unsupported”; check the report header.                                                                         |
-| **Comparable scenarios**      | The main comparison table: both libraries run the same scenario id where possible. Some rows are **library-specific** (e.g. codefast-only); the missing side shows `—`.                                                                                         |
-| **Stress**                    | Optional boolean on a scenario (`stress: true` tags a heavier workload). Carried in the wire format and JSONL for filtering or docs; not its own column in the markdown table.                                                                                  |
-| **`what`**                    | Short human description string carried in the protocol for each scenario (not always repeated in the markdown table).                                                                                                                                           |
-| **JSONL**                     | `bench-results/latest.jsonl`: one JSON object per line, one **observation** per `(library, trialIndex, scenario)` with fingerprint fields inlined — good for pandas, DuckDB, or jq.                                                                             |
-| **GC exposed**                | Node started with `--expose-gc` so the harness can call `globalThis.gc()` between tasks/trials to reduce GC-driven variance in allocation-heavy scenarios (especially in `BENCH_FULL=1`).                                                                       |
+Swapping the order is what makes drift cancel instead of accumulate. Reporting every pass is what
+lets a reader see a pass that disagrees — if pass 2 says 0.81 and the rest say 0.99, that is worth
+knowing, and a lone median hides it.
 
-## Reading `bench-results/latest.md`
+Two things this catches that a before/after comparison cannot:
 
-| Column               | Plain language                                    |
-| -------------------- | ------------------------------------------------- |
-| **Scenario**         | Which benchmark.                                  |
-| **Group**            | Which family it belongs to.                       |
-| **batch**            | Logical ops per tinybench iteration for that row. |
-| **codefast hz/op**   | Median throughput per logical op.                 |
-| **vs \<competitor>** | Throughput ratio (see glossary).                  |
+- **Machine drift between runs.** Two consecutive runs of the same build on a quiet machine have moved
+  a single high-throughput row by 39%. A cross-build comparison without an in-run control once
+  reported a clean +4% that was entirely drift.
+- **An unrelated regression.** Measure the rows your change cannot touch alongside the ones it should.
+  Three "obviously faster" changes in this repo were reverted because a row they had no business
+  affecting moved: collapsing a memoised accessor into an inlinable expression cost ~6% on a row that
+  only reads the memo, and removing a fast lane that looked like duplication cost ~24% elsewhere.
 
-**Throughput vs latency**: A scenario can be tuned for **throughput** (large `batch`, high hz/op) or **latency** (`batch` 1, sensitive mean/p99). Compare like rows: same **Scenario** and **batch** on the same machine profile.
+## Comparing two libraries: interleave, and say you did
 
-## Head-to-head summary and isolation
+Run every library on the **same scenario** before moving to the next, rotating which library goes
+first. `bench:isolate` does exactly that, and the report's Environment section names the policy it
+used — so a cross-library figure from an isolated run is citable, and one from the plain profile is
+not, because there one process per library runs that library's whole suite and there is nothing to
+interleave.
 
-- The report opens with a **Summary** table, one row per competitor: comparable rows out of the suite, win/parity/loss counts (parity band ±3%), the **median** and **geomean** ratios, and the count of rows carrying `†`. A **geomean-by-group** matrix follows, keeping error-path groups (`failure` — fail-fast, cycle detection) visibly separate from throughput so a single 100×+ row can't read as a typical speedup. Losses and parity rows are listed under the summary.
-- **`BENCH_ISOLATE=1`** (or `pnpm bench:isolate`) runs each scenario in its **own subprocess**. In the default shared-process mode, every scenario trains the library's hot-path inline caches for all scenarios after it — measured at ~30% throughput on async chains — so row order influences results. Isolated mode is order-independent (closer to a short-lived process; the shared mode is closer to a long-lived app that exercises many binding kinds). Cite which mode a number came from.
+Also required for a comparison to mean anything:
 
-## Reading a sparse column
+- **Each library in its canonical mode.** Forcing a library into another's decorator model measures
+  the adapter.
+- **The same profile on both sides.** `--expose-gc` changes what is being measured; the report header
+  prints it per library, and all four must agree.
+- **The same workload, enforced by code.** `src/fixtures/scenario-parity.ts` holds each scenario's id,
+  group, description and batch factor once and both sides import it. When adding a scenario, put the
+  shared constants there — a batch factor that drifts scales `hzPerOp` silently.
+- **The same observable outcome.** Every scenario declares a `sanity()` check that asserts the work
+  actually happened — the hook fired, the instance count matched. A scenario that is fast because it
+  did less is not a win.
 
-There is **one** table, pivoted on `@codefast/di`: one row per scenario di measures, di's throughput column, one ratio column per competitor. A competitor's own throughput is di's divided by its ratio; exact figures are in the JSONL.
+## What the harness enforces so you cannot forget
 
-**awilix and tsyringe implement only the factory/class-binding core subset** (constant/singleton/transient resolve, the realistic graph, transient chains, fan-out tree), so their columns read `—` on every other row. That is missing data, not a zero — and their summary rows count only what they actually measured, which the `Comparable` column states outright, so a sparse column never dilutes its own aggregate.
+- **Three trials minimum where a median is claimed.** The default and `BENCH_FULL` profiles run 3
+  trials, and `BENCH_TRIALS=1` is rejected with a warning and the default restored — a median of two
+  samples is their mean, and cannot separate a change from noise. `BENCH_FAST` runs **one** trial: it
+  is a smoke profile, answering "does it run and roughly how fast", never a citable number.
+- **Batching for sub-µs work.** `batched(factor, op)` and the scenario's `batch` field must agree; the
+  reporter multiplies by it. Timing an 11 ns call one at a time made a control read 0.88×; batched, the
+  same control read 1.02×.
+- **Instability flags in the output.** `†` marks rows above ~30M ops/s whose ratio moves between runs
+  of the same build; `‡` marks cells whose per-trial IQR exceeded 5%.
+- **No benchmark numbers in source comments.** A unit test in `packages/di` fails on them. A number in
+  a comment cannot be re-verified where it sits and the method behind it is not there either. Numbers
+  live with their method: this file, `RESULTS.md`, an `ARCHITECTURE.md`, or the commit.
 
-The renderer is `@codefast/benchmark-harness`, `src/report/comparison.ts`.
+## Interpreting what you get
 
-## Canonical decorator modes (why apples-to-apples is nuanced)
+- **Cite the median and geomean over the suite**, not a row. Averaging dozens of scenarios cancels
+  most per-row noise.
+- **Distrust anything above ~30M ops/s at the 10% level.** Those rows have swung 39% between
+  consecutive runs of one build.
+- **The rows worth reading closely sit below ~15M ops/s**: the realistic graph, the fan-out tree, the
+  async chains, the `production/*` group.
+- **A ratio near 1.00× is parity, not a win.** The report's bands are win >1.03×, parity 0.97–1.03×,
+  loss <0.97×.
+- **IQR is within-run stability and is blind to between-run variance.** Two runs have reported the same
+  row as one of the tightest in the suite while disagreeing with each other by 39%.
 
-Each library runs in the mode it is **meant to ship with** (Stage 3 decorators + `Symbol.metadata` vs legacy decorators + `reflect-metadata`). README explains why. When you add a scenario, keep that rule: do not force one library into the other’s decorator story unless you are explicitly building a _separate_ experiment.
+## Before publishing a figure
 
-## Where to look in code
+- Is it a paired same-build measurement, or an interleaved cross-library one? Say which.
+- How many passes, and what were they? Publish the spread, not just the median.
+- What else did you measure that should **not** have moved?
+- Which profile, which trial count, which library versions? The report header has all four; copy them.
+- Does the claim survive a re-run tomorrow? If nobody has checked, say that too.
 
-| Topic                                       | Location                                                                              |
-| ------------------------------------------- | ------------------------------------------------------------------------------------- |
-| Wire format, field definitions              | `@codefast/benchmark-harness` — `src/shared/protocol.ts`                              |
-| Trial loop, tinybench options, GC hooks     | `@codefast/benchmark-harness` — `src/child/create-run-all-trials.ts`                  |
-| Medians, IQR, head-to-head summary, geomean | `@codefast/benchmark-harness` — `src/report/aggregate.ts`, `src/report/comparison.ts` |
-| Spawning children, isolated mode            | `@codefast/benchmark-harness` — `src/parent/run-bench-subprocess.ts`                  |
-| This package's parent, writing `latest.*`   | `src/harness/run.ts`                                                                  |
-| Scenario list / types                       | `src/scenarios/types.ts` + the four `collect-*-scenarios.ts` files                    |
-| Shared graphs / fixtures                    | `src/fixtures/`                                                                       |
+## Losses stay published
 
-## Commands (reminder)
-
-See [README.md](./README.md) for `pnpm bench` / `pnpm bench:isolate`, `BENCH_FAST`, `BENCH_FULL`, `BENCH_TRIALS`, `BENCH_VERBOSE`, `BENCH_ISOLATE`, and output paths.
-
-When sharing numbers, paste the **Environment** block and the **Summary** table (or the whole `latest.md`) so others can reproduce and judge noise from the `†`/`‡` markers and the fingerprint.
+A page that reports only wins tells a reader nothing about the ones it left out. Where this library
+loses, or is at parity, or is slower **by a deliberate trade**, the row and the reason belong in
+`RESULTS.md` next to the wins — and a claim that a better measurement contradicts gets retracted in
+place, not quietly dropped.

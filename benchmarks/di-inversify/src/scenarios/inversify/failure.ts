@@ -23,7 +23,7 @@ interface CircularNodeC {
 
 function buildMisconfiguredMissingBindingScenario(): BenchScenario {
   const missingIdentifier = Symbol("bench-inv-failure-missing-binding");
-  const container = new Container();
+  const container = new Container({ jitless: false });
 
   return {
     ...MISCONFIGURED_MISSING_BINDING,
@@ -53,7 +53,7 @@ function buildCircularDependencyThreeScenario(): BenchScenario {
   const circularNodeAIdentifier = Symbol("bench-inv-failure-circular-a");
   const circularNodeBIdentifier = Symbol("bench-inv-failure-circular-b");
   const circularNodeCIdentifier = Symbol("bench-inv-failure-circular-c");
-  const container = new Container();
+  const container = new Container({ jitless: false });
 
   container
     .bind<CircularNodeA>(circularNodeAIdentifier)
@@ -103,7 +103,7 @@ function buildCircularDependencyThreeScenario(): BenchScenario {
 
 function buildAmbiguousMultiBindingScenario(): BenchScenario {
   const ambiguousIdentifier = Symbol("bench-inv-failure-ambiguous") as ServiceIdentifier<string>;
-  const container = new Container();
+  const container = new Container({ jitless: false });
   container.bind<string>(ambiguousIdentifier).toConstantValue("first");
   container.bind<string>(ambiguousIdentifier).toConstantValue("second");
 

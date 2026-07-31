@@ -75,6 +75,16 @@ export class ScopeManager {
     (this.#scoped ??= new Map()).set(id, instance);
   }
 
+  /** Releases a removed binding's scoped instance — no deactivation, per SPEC §5.2. */
+  deleteScoped(id: BindingIdentifier): void {
+    this.#scoped?.delete(id);
+  }
+
+  /** Scoped instances currently cached — a structural count for diagnostics. */
+  get scopedCount(): number {
+    return this.#scoped?.size ?? 0;
+  }
+
   clearAll(): void {
     const tracked = this.#singletonBindings;
     if (tracked !== undefined) {

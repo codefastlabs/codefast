@@ -36,7 +36,7 @@ class MicroServiceWithOneDependency {
 
 function buildConstantResolveScenario(): BenchScenario {
   const constantValueBindingIdentifier = Symbol("bench-inv-micro-constant");
-  const container = new Container();
+  const container = new Container({ jitless: false });
   container.bind<number>(constantValueBindingIdentifier).toConstantValue(42);
   container.get(constantValueBindingIdentifier);
 
@@ -52,7 +52,7 @@ function buildConstantResolveScenario(): BenchScenario {
 }
 
 function buildSingletonClassOneDepScenario(): BenchScenario {
-  const container = new Container();
+  const container = new Container({ jitless: false });
   container.bind<MicroLeafDependency>(microLeafDependencyIdentifier).to(MicroLeafDependency).inSingletonScope();
   container
     .bind<MicroServiceWithOneDependency>(microServiceWithOneDependencyIdentifier)
@@ -74,7 +74,7 @@ function buildSingletonClassOneDepScenario(): BenchScenario {
 }
 
 function buildTransientClassOneDepScenario(): BenchScenario {
-  const container = new Container();
+  const container = new Container({ jitless: false });
   container.bind<MicroLeafDependency>(microLeafDependencyIdentifier).to(MicroLeafDependency).inTransientScope();
   container
     .bind<MicroServiceWithOneDependency>(microServiceWithOneDependencyIdentifier)
@@ -99,7 +99,7 @@ function buildTransientClassOneDepScenario(): BenchScenario {
 
 function buildNamedConstantGetScenario(): BenchScenario {
   const wideNamedBindingIdentifier = Symbol("bench-inv-micro-named");
-  const container = new Container();
+  const container = new Container({ jitless: false });
   container.bind<number>(wideNamedBindingIdentifier).toConstantValue(5).whenNamed("slot-5");
   container.bind<number>(wideNamedBindingIdentifier).toConstantValue(12).whenNamed("slot-12");
   container.bind<number>(wideNamedBindingIdentifier).toConstantValue(20).whenNamed("slot-20");

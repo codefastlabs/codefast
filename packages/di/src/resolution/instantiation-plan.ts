@@ -6,13 +6,13 @@
 import type { Binding } from "#/binding";
 import { NO_INSTANCE } from "#/binding";
 import type { ConstructorInvocation } from "#/constructor-type";
-import type { InjectionDescriptor } from "#/decorators/inject";
 import { AsyncResolutionError } from "#/errors";
 import type { ConstructorMetadata } from "#/metadata/metadata-types";
+import type { DependencySlot } from "#/resolution/resolve-options";
 import { injectionSlotToResolveOptions } from "#/resolution/resolve-options";
 import type { Token } from "#/token";
 import { tokenName } from "#/token";
-import type { BindingScope, Constructor, ResolutionFrame, ResolveOptions } from "#/types";
+import type { Constructor, ResolutionFrame, ResolveOptions } from "#/types";
 
 // Past this depth a dependency escapes to the runtime path rather than inlining further —
 // compiled closures nest one JS frame per level, and pathological graphs are the runtime's job.
@@ -160,12 +160,12 @@ export class InstantiationPlanCompiler {
    * @remarks Anything but a plain required single dependency escapes to the runtime path.
    */
   #compileInjectionThunk(
-    descriptor: InjectionDescriptor,
+    descriptor: DependencySlot,
     compileStack: Set<Binding["id"]>,
     depth: number,
     ancestors: ReadonlyArray<Binding>,
   ): DependencyCompileResult {
-    const token = descriptor.token as Token<unknown> | Constructor;
+    const token = descriptor.token;
     const options = injectionSlotToResolveOptions(descriptor);
     if (descriptor.multi) {
       return this.#compileEscapeThunk(token, ancestors, "all", options);
@@ -258,7 +258,7 @@ export class InstantiationPlanCompiler {
         return () => value;
       }
     }
-    const scope = (binding as Binding & { scope: BindingScope }).scope ?? "transient";
+    const scope = binding.scope;
     if (scope === "singleton") {
       // Cached-singleton read; the first materialization escapes so it sees the same ancestors
       // (and therefore the same cycle detection) the interpreted path would have built.

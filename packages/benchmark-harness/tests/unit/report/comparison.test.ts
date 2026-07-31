@@ -38,6 +38,7 @@ function scenario(id: string, hzPerOp: number, group = "micro"): AggregatedScena
     id,
     group,
     stress: false,
+    excludeFromAggregates: false,
     batch: 1,
     what: id,
     trialsIncluded: 3,

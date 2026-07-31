@@ -10,6 +10,7 @@ export interface AggregatedScenarioResult {
   readonly id: string;
   readonly group: string;
   readonly stress: boolean;
+  readonly excludeFromAggregates: boolean;
   readonly batch: number;
   readonly what: string;
   readonly trialsIncluded: number;
@@ -58,6 +59,7 @@ function aggregateTrialsForScenario(
     id: scenarioId,
     group: firstTrial.group,
     stress: firstTrial.stress,
+    excludeFromAggregates: firstTrial.excludeFromAggregates,
     batch: firstTrial.batch,
     what: firstTrial.what,
     trialsIncluded: successfulTrials.length,

@@ -1,9 +1,11 @@
 /**
  * Per binding: does resolving it have to go through the activation pipeline?
  *
- * @remarks Versioned on the lifecycle manager, since `onActivation` can be registered at any time.
+ * @remarks Versioned on the lifecycle manager plus the own registry, since `onActivation` can be
+ * registered at any time and a rebind mints binding ids the memo must not keep forever.
  */
 import type { Binding } from "#/binding";
+import type { BindingRegistry } from "#/registry";
 import type { ClassIntrospector } from "#/resolution/class-introspector";
 import type { LifecycleManager } from "#/resolution/lifecycle";
 import type { BindingIdentifier } from "#/types";
@@ -16,27 +18,31 @@ export class ActivationNeedCache {
   #version = -1;
   readonly #lifecycle: LifecycleManager;
   readonly #classes: ClassIntrospector;
+  readonly #registry: BindingRegistry;
 
-  constructor(lifecycle: LifecycleManager, classes: ClassIntrospector) {
+  constructor(lifecycle: LifecycleManager, classes: ClassIntrospector, registry: BindingRegistry) {
     this.#lifecycle = lifecycle;
     this.#classes = classes;
+    this.#registry = registry;
   }
 
   needsActivation<const Value>(binding: Binding<Value>): boolean {
+    // The chain writes a binding's own hook in place with no version anything here can see, so it
+    // is read fresh on every call; the memo covers only container hooks and lifecycle metadata.
+    if (binding.kind !== "alias" && binding.onActivation !== undefined) {
+      return true;
+    }
     const lifecycleVersion = this.#lifecycle.activationVersion;
     // No hooks registered anywhere and none on the binding: only classes can still surprise us,
     // via a @postConstruct we have not looked for yet.
-    if (
-      lifecycleVersion === 0 &&
-      binding.kind !== "class" &&
-      binding.kind !== "alias" &&
-      binding.onActivation === undefined
-    ) {
+    if (lifecycleVersion === 0 && binding.kind !== "class" && binding.kind !== "alias") {
       return false;
     }
-    if (this.#version !== lifecycleVersion) {
+    // The registry version evicts entries for binding ids a rebind has retired.
+    const version = lifecycleVersion + this.#registry.version;
+    if (this.#version !== version) {
       this.#needByBindingId.clear();
-      this.#version = lifecycleVersion;
+      this.#version = version;
     }
     const cached = this.#needByBindingId.get(binding.id);
     if (cached !== undefined) {
@@ -64,8 +70,9 @@ export class ActivationNeedCache {
     return this.needsActivation(binding);
   }
 
+  // Own hooks are answered before the memo, so both computations cover the memoizable rest only.
   #classNeedsActivation<const Value>(binding: Binding<Value> & { kind: "class" }): boolean {
-    if (this.#lifecycle.hasActivationHandlers(binding.token) || binding.onActivation !== undefined) {
+    if (this.#lifecycle.hasActivationHandlers(binding.token)) {
       return true;
     }
     // Unknown lifecycle metadata: activate once so the first instantiation can settle it.
@@ -73,9 +80,6 @@ export class ActivationNeedCache {
   }
 
   #nonClassNeedsActivation<const Value>(binding: Binding<Value>): boolean {
-    if (binding.kind !== "alias" && binding.onActivation !== undefined) {
-      return true;
-    }
     return this.#lifecycle.hasActivationHandlers(binding.token);
   }
 }

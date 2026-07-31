@@ -21,7 +21,7 @@ function buildScaleTransientChainScenario(descriptor: ScenarioDescriptor, chainS
   const chainIdentifiers = Array.from({ length: chainSize }, (_value, chainIndex) =>
     Symbol(`bench-inv-scale-chain-${String(chainSize)}-${String(chainIndex)}`),
   ) as Array<ServiceIdentifier<number>>;
-  const container = new Container();
+  const container = new Container({ jitless: false });
   container.bind<number>(chainIdentifiers[0]!).toConstantValue(0);
 
   for (let chainIndex = 1; chainIndex < chainSize; chainIndex++) {

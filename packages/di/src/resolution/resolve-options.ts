@@ -1,5 +1,39 @@
-import type { BindingSlot } from "#/binding";
-import type { BindingTag, ResolveOptions } from "#/types";
+import type { Token } from "#/token";
+import type { BindingTag, Constructor, ResolveOptions } from "#/types";
+
+/**
+ * What one resolvable dependency declares.
+ *
+ * @remarks Both dependency sources — a constructor's `ParamMetadata` and a `toResolved`
+ * `InjectionDescriptor` — are this shape, which is why one resolve routine serves both.
+ */
+export interface DependencySlot {
+  readonly token: Token<unknown> | Constructor;
+  readonly optional: boolean;
+  readonly multi: boolean;
+  readonly name?: string;
+  readonly tags?: ReadonlyArray<BindingTag>;
+}
+
+/**
+ * A request whose only criterion is a name — the shape the registry has a direct index for.
+ */
+export function isNameOnlyOptions(options: ResolveOptions): options is ResolveOptions & { name: string } {
+  return (
+    options.name !== undefined && options.tag === undefined && (options.tags === undefined || options.tags.length === 0)
+  );
+}
+
+/**
+ * The lone entry of a request whose only criterion is a one-element `tags` list — the shape the
+ * registry has a direct tag index for.
+ */
+export function singleTagOnlyOf(options: ResolveOptions): BindingTag | undefined {
+  if (options.name !== undefined || options.tag !== undefined) {
+    return undefined;
+  }
+  return options.tags !== undefined && options.tags.length === 1 ? options.tags[0] : undefined;
+}
 
 /** Shared core: build a ResolveOptions from already-normalised name + tags. */
 function buildOptions(
@@ -33,10 +67,17 @@ export function injectionSlotToResolveOptions(injectionSlot: {
 }
 
 /**
- * Resolve options derived from a binding {@link BindingSlot} (tags may be empty; omits when nothing to match).
+ * Resolve options derived from a binding slot (tags may be empty; omits when nothing to match).
+ *
+ * @remarks Takes the slot structurally rather than as `BindingSlot`, so the slot on a public
+ * `BindingSnapshot` — where `name` is an optional property, not a required one holding `undefined` —
+ * is accepted by the same call.
  *
  * @since 0.3.16-canary.0
  */
-export function bindingSlotToResolveOptions(bindingSlot: BindingSlot): ResolveOptions | undefined {
+export function bindingSlotToResolveOptions(bindingSlot: {
+  readonly name?: string | undefined;
+  readonly tags: ReadonlyArray<BindingTag>;
+}): ResolveOptions | undefined {
   return buildOptions(bindingSlot.name, bindingSlot.tags.length > 0 ? bindingSlot.tags : undefined);
 }

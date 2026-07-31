@@ -1,4 +1,4 @@
-import type { Binding } from "#/binding";
+import type { Binding, BindingSlot } from "#/binding";
 import { AmbiguousBindingError } from "#/errors";
 import type { BindingTag, ConstraintContext, ResolveOptions } from "#/types";
 
@@ -62,50 +62,27 @@ function filterBindings(
   ctx: ConstraintContext,
   selectionMode: "single" | "all" = "single",
 ): Array<Binding> {
-  if (options === undefined) {
-    const resultWithoutOptions: Array<Binding> = [];
-    if (selectionMode === "all") {
-      for (const binding of bindings) {
-        if (matchesPredicate(binding, ctx)) {
-          resultWithoutOptions.push(binding);
-        }
-      }
-    } else {
-      for (const binding of bindings) {
-        const slot = binding.slot;
-        if (slot.name === undefined && slot.tags.length === 0 && matchesPredicate(binding, ctx)) {
-          resultWithoutOptions.push(binding);
-        }
-      }
-    }
-    return resultWithoutOptions;
-  }
-
+  // `resolveAll` with no slot criterion takes every binding; `resolve` always matches the slot,
+  // where an absent criterion means "the default slot".
+  const requiresSlotMatch = selectionMode === "single" || (options !== undefined && hasSlotCriterion(options));
   const result: Array<Binding> = [];
   for (const binding of bindings) {
-    const slotMatched =
-      selectionMode === "all" ? matchesSlotForResolveAll(binding, options) : matchesSlot(binding, options);
-    if (slotMatched && matchesPredicate(binding, ctx)) {
+    if ((!requiresSlotMatch || matchesSlot(binding.slot, options)) && matchesPredicate(binding, ctx)) {
       result.push(binding);
     }
   }
   return result;
 }
 
-function matchesSlotForResolveAll(binding: Binding, options: ResolveOptions | undefined): boolean {
-  const hasExplicitSlotFilter =
-    options !== undefined &&
-    (options.name !== undefined ||
-      (options.tags !== undefined && options.tags.length > 0) ||
-      options.tag !== undefined);
-  if (!hasExplicitSlotFilter) {
-    return true;
-  }
-  return matchesSlot(binding, options);
+function hasSlotCriterion(options: ResolveOptions): boolean {
+  return options.name !== undefined || options.tag !== undefined || (options.tags?.length ?? 0) > 0;
 }
 
-function matchesSlot(binding: Binding, options: ResolveOptions | undefined): boolean {
-  const slot = binding.slot;
+/**
+ * Whether a binding's slot satisfies a request: names must be equal, and every tag the slot
+ * declares must be among the tags requested (SPEC §6.9).
+ */
+export function matchesSlot(slot: BindingSlot, options: ResolveOptions | undefined): boolean {
   const requestedName = options?.name;
   const requestedTags = options?.tags;
   const singleRequestedTag = options?.tag;

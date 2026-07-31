@@ -16,10 +16,10 @@ import type {
   SingletonLifecycleBuilder,
   TransientBindingBuilder,
 } from "#/binding";
-import { bindingSlotEquals, createBinding, DEFAULT_BINDING_SLOT, refinableFields } from "#/binding";
+import { bindingSlotEquals, clearBindingFrame, createBinding, DEFAULT_BINDING_SLOT, refinableFields } from "#/binding";
 import type { InjectableDependency, ResolvedDependencyValue } from "#/decorators/inject";
 import { normalizeToDescriptor } from "#/decorators/inject";
-import { ChainNotRegisteredError } from "#/errors";
+import { ChainNotRegisteredError, SelfBindingRequiresClassError } from "#/errors";
 import type { BindingRegistry } from "#/registry";
 import type { Token } from "#/token";
 import { tokenName } from "#/token";
@@ -142,7 +142,7 @@ export class BindingChain<Value>
 
   toSelf(): BindingBuilder<Value> {
     if (typeof this.#token !== "function") {
-      throw new Error("toSelf() requires token to be a Constructor");
+      throw new SelfBindingRequiresClassError(tokenName(this.#token));
     }
     return this.#register({ kind: "class", target: this.#token, scope: "transient" });
   }
@@ -184,7 +184,7 @@ export class BindingChain<Value>
   }
 
   toAlias(target: Token<Value> | Constructor<Value>): AliasBindingBuilder {
-    return this.#register({ kind: "alias", target });
+    return this.#register({ kind: "alias", scope: "transient", target });
   }
 
   // ── Refinement ─────────────────────────────────────────────────────────────
@@ -199,7 +199,10 @@ export class BindingChain<Value>
   }
 
   #withScope(scope: BindingScope): this {
-    refinableFields(this.#registered()).scope = scope;
+    const binding = this.#registered();
+    refinableFields(binding).scope = scope;
+    // The frame reports the scope, so a resolve before this call memoized the previous one.
+    clearBindingFrame(binding);
     this.#registration.registry.touch();
     return this;
   }

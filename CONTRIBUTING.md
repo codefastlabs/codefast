@@ -17,7 +17,8 @@ Four things routinely surprise newcomers:
 
 ## Setup
 
-Node ≥ 24 (≥ 26 to work on `@codefast/di`, which uses native `Map.prototype.getOrInsert`), pnpm 11 — pinned via `packageManager`.
+Node ≥ 24 (≥ 26 to work on `@codefast/di`, which uses native `Map.prototype.getOrInsert` and
+`getOrInsertComputed`), pnpm 11 — pinned via `packageManager`.
 
 ```bash
 git clone https://github.com/codefastlabs/codefast.git
@@ -95,6 +96,12 @@ For anything material, run the publishable profile and update `RESULTS.md`:
 ```bash
 BENCH_FULL=1 BENCH_TRIALS=3 pnpm --filter @codefast/benchmark-di-inversify bench:isolate
 ```
+
+`bench:isolate` runs **scenario-major and interleaved** — every library measures a scenario before the
+next one starts, rotating who goes first — so drift over the run no longer lands on whoever was
+scheduled last. The report states the policy it used. Without `bench:isolate` there is one process per
+library and nothing to interleave, so a cross-library ratio from that profile stays provisional; see
+[`benchmarks/di-inversify/BENCH_GUIDE.md`](benchmarks/di-inversify/BENCH_GUIDE.md).
 
 ## Changesets
 

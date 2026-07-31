@@ -60,9 +60,8 @@ export class Inspector {
   }
 
   inspect(): ContainerSnapshot {
-    const snapshots = this.allBindingSnapshots();
     return {
-      ownBindings: snapshots,
+      ownBindings: this.#registry.allBindings().map((binding) => this.#toSnapshot(binding)),
       cachedSingletonCount: this.#scope.cachedSingletons().length,
       hasParent: this.#hasParent,
       isDisposed: this.#isDisposed(),
@@ -109,12 +108,7 @@ export class Inspector {
     };
   }
 
-  private allBindingSnapshots(): ReadonlyArray<BindingSnapshot> {
-    return this.#registry.allBindings().map((binding) => this.#toSnapshot(binding));
-  }
-
   #toSnapshot(binding: Binding): BindingSnapshot {
-    const scope = effectiveBindingScope(binding);
     const slot: BindingSnapshot["slot"] =
       binding.slot.name !== undefined
         ? { name: binding.slot.name, tags: binding.slot.tags }
@@ -122,7 +116,7 @@ export class Inspector {
     return {
       tokenName: tokenName(binding.token),
       kind: binding.kind,
-      scope,
+      scope: effectiveBindingScope(binding),
       slot,
       id: binding.id,
     };

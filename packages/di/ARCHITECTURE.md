@@ -29,6 +29,25 @@ registry, binding, token, types, errors                    ← the model
 
 > **Rule:** never construct a binding with an object literal. Go through `createBinding()`, and keep its literal's key order untouched.
 
+**`scope` is total, so the engine reads it as a field.** `AliasBinding` declares `scope: "transient"` — an alias defers scoping to what it points at, which _is_ transient behaviour — so no kind is missing the field and no read needs an `undefined` fallback. `effectiveBindingScope()` is that read, kept as a named function because it is the vocabulary validation and introspection speak. The gain is not the removed `??`: it is that the field's type feedback stays one shape.
+
+**The engine erases the value type, and one declaration choice is what allows it.** `Binding<Value>` has
+to stay assignable to `Binding`, because every internal lane takes the erased union and the cast to
+`Value` belongs at the public entry point, where the caller's token is the claim being made. That holds
+only because the lifecycle hooks are declared as **methods** on `BindingLifecycleHooks`: as
+function-typed properties, `Value` sits in a parameter position, `strictFunctionTypes` makes the binding
+invariant, and every internal signature grows either a cast or a structural stand-in for the shape it
+wanted. Method syntax compares those parameters bivariantly. The public `ActivationHandler` stays a
+function-typed property, so a user's handler is still checked strictly — the bivariance reaches only the
+field read off a binding.
+
+> **Rule:** internal lanes take `Binding` and return `unknown`; only the eight public resolve entry
+> points name `Value`, and each casts once. A `Value` type parameter on a private method is a fiction —
+> the caller supplies it through an unchecked cast, so it documents an intent the compiler never
+> verified. `tests/types/binding-variance.test.ts` fails to compile if the hooks lose method syntax.
+
+**A memo on a binding is only sound while what it derives from is immutable.** `frame` derives from the token name, id, kind, slot **and scope** — and `scope` is the one field a fluent chain writes in place after registration. So `singleton()`/`transient()`/`scoped()` call `clearBindingFrame()`. Without it a chain refined after its first resolve reports the old scope to every `when()` predicate that reads `ctx.parent.scope`; `tests/unit/resolution/cache-invalidation.test.ts` pins it.
+
 **Registration happens once.** `bind(T).toDynamic(f).singleton()` registers on `toDynamic()`; `singleton()` then writes `scope` in place on that same registered object. Only `when*()` re-slots, because slot and predicate are what the registry indexes on — and it re-registers under the chain's original id, so `id()` is stable for the whole chain. Doing it the other way (commit, remove, re-commit) cost ~2.3× on the bind path.
 
 **One object per `bind()`.** A single `BindingChain` plays every role — the `BindToBuilder` before `to*()`, the kind-specific builder after — and commits to the registry itself. `bind()` is typed as `BindToBuilder`, so `when*()`/`singleton()` are not reachable before a `to*()`; the ordering is a **type-level** guarantee, which is exactly what SPEC §2.4 claims ("Compiler enforce"). A caller who has no types or casts past them gets a `ChainNotRegisteredError` naming the token, never a silent no-op — `whenDefault()` asserts registration too, for that reason alone, since it otherwise has nothing to do.
@@ -50,9 +69,14 @@ What _is_ split out are the collaborators that need no cross-instance private ac
 | [`activation-need.ts`](src/resolution/activation-need.ts)                                                  | per-binding "does this need the activation pipeline", versioned on the lifecycle manager                           |
 | [`instantiation-plan.ts`](src/resolution/instantiation-plan.ts)                                            | the plan compiler (below)                                                                                          |
 | [`resolution-path.ts`](src/resolution/resolution-path.ts)                                                  | cycle-detection bookkeeping carried on the path array                                                              |
-| [`binding-select.ts`](src/resolution/binding-select.ts), [`constraints.ts`](src/resolution/constraints.ts) | candidate selection for name/tag/predicate shapes                                                                  |
+| [`binding-select.ts`](src/resolution/binding-select.ts), [`constraints.ts`](src/resolution/constraints.ts) | candidate selection for name/tag/predicate shapes, and `matchesSlot()` — the one slot matcher                      |
+| [`resolve-options.ts`](src/resolution/resolve-options.ts)                                                  | `DependencySlot`, the shape both dependency sources share, and the `ResolveOptions` derived from it                |
 
 Lookup caches form their own parent chain mirroring the resolvers', for the same `#private`-is-per-class reason.
+
+**One rule per question, wherever it is asked.** The resolver's fast lanes are lanes, not separate semantics: whether a slot matches a request is answered by `matchesSlot()` alone, and whether a request is name-only by `isNameOnlyOptions()`. A fast lane that re-implements a rule is how the two spellings drift — `resolveAll`'s name lane returned a binding whose `when()` predicate `resolve` was refusing, because it had its own idea of what the name index meant.
+
+**Both dependency sources are one shape.** A class's `ParamMetadata` and a `toResolved` `InjectionDescriptor` are structurally `DependencySlot`, so `#resolveDeps`/`#resolveDepsAsync` serve both and the plan compiler compiles both — four near-identical loops became two, and a dispatch rule can no longer be fixed in one of them.
 
 ## Compiled plans and escapes
 
@@ -64,12 +88,95 @@ A dependency the compiler cannot see through — a factory, a scoped binding, an
 
 Before escapes existed, one `toDynamic` dependency anywhere dropped the whole graph to the interpreted path — a 13.9× cliff on a graph shape real applications write constantly.
 
+## Fast lanes that read as duplication — and the order of the tests in them
+
+Two shapes here look like copy-paste of `#resolveBinding` and are not. Both were removed on a DRY pass and put back with a measurement.
+
+**A candidate answers where it is selected.** `#resolveCandidateSync`/`#resolveCandidateAsync` re-check plain-constant and cached-singleton before delegating, which `#resolveBinding` would check anyway. Routing every candidate through `#resolveBinding` instead cost **~24%** on `production-event-bus-dispatch` — eight cached singleton handlers per published event, so `resolveAll` pays that hop per candidate, not per call.
+
+**The dispatcher's prefix is charged to every resolve.** In `#resolveDefaultEntry` the plain-constant test lives _inside_ the `singleton` branch, because a constant is a singleton that is already its own instance. Hoisting it to the top — where it reads more naturally — is worth ~7% to `constant-resolve` and costs **~8%** to `fan-out-tree-depth-3-breadth-4`, which resolves 21 transient factories per iteration and is charged the test 21 times for a kind it never has. Ratios paired against the previous build, alternating per pass, medians of 3+.
+
+> **Rule:** put a test under the branch that already implies it. A test in the hot dispatcher's prefix is paid by every resolve that is not the case it is looking for, and there are far more of those.
+
+The same reasoning covers two smaller shapes: `#namedBindingsFromChain` returns `[binding]` whole for a root container rather than growing an empty list (a name matches at most once per registry, so the size is known), and `#findBinding` treats a lone candidate as its own selection — matching it _is_ the decision, with no specificity to weigh and no ambiguity to report, which is what makes `resolve-optional-hit` ~1.5× its previous throughput.
+
+**An upsert's fallback is eager or computed by hit rate, not by taste.** `Map.prototype.getOrInsert`
+evaluates its fallback on every call; `getOrInsertComputed` calls a function only on a miss. So the
+choice follows which case dominates. `BindingLookupCache.namedEntry()` runs on every named resolve and
+almost always hits, and switching it to the computed form — with the factory hoisted to module scope,
+so no closure is allocated per call either — is worth **~1.72×** on `named-constant-get`. The registry's
+`add()` and index insertions are the mirror image: a bind is usually the token's first, so the fallback
+is usually the value that gets stored, and the computed form there measured **~4% slower** on
+`boot-decorated-container-build-and-resolve` and `module-cold-from-modules`. Both forms are in the tree
+on purpose.
+
+**A tag index cannot express the tag matcher.** The registry keys tagged bindings in a `Map`, whose key
+equality is SameValueZero, while tag values compare by `Object.is` (SPEC §3.5). They part on exactly
+one pair — `+0` and `-0` — and that was enough for one question to have three answers: `resolve` with
+`tags: [pair]` matched, `resolve` with `tag: pair` threw, and `resolveAll` returned nothing. The lane now
+re-checks, but only where the index can be wrong: a request whose value is not zero is already exact, so
+the common path pays one comparison against a literal rather than a call into the matcher. Re-checking
+with the full `matchesSlot` instead cost **~42%** on `tagged-binding-resolve`; the narrow check costs
+**~5%**, which is the price of the answer being the same in all three places.
+
+**A hash lookup a loop repeats deserves an inline cache, and a memo already inlined deserves nothing.** `LifecycleManager.activationHandlersFor()` keeps a one-entry token→hooks cache in front of its map, invalidated by `registerActivation` — a resolve loop asks about the same token every iteration. The mirror-image change failed: folding `#getResolutionFrame` into a single expression so it would inline, with the build extracted to a cold method, cost **~6%** on `fan-out-tree-depth-3-breadth-4` (five paired passes, all five negative) and was reverted. A profile showing self-time in a memo is not evidence that the memo is the cost.
+
+**The same rule pays again one layer down.** `BindingLookupCache.defaultEntry()` is reached by exactly
+two shapes, neither of which the registry's direct index can serve: an **alias**, whose terminal the
+index cannot name, and a token owned by a **parent**, whose entry has to carry that owner. Both are
+resolved in a loop over one token, so a one-entry slot in front of the map is worth **1.16×** on
+`to-alias-redirect` and **1.23×** on `child-depth-2-resolve` (seven paired passes, every pass positive,
+spreads of 0.03 and 0.05). `null` is a real answer there — "this shape needs full selection" — so the
+slot tracks absence by its token, not by its entry.
+
+> **Rule:** do not try to fold alias hops into `registry.getFastDefault()`. It is a bare own-registry
+> `Map.get` returning a binding, and an alias terminal may live in a parent container whose rebind only
+> the chain's summed version can see. Alias folding belongs where the version stamp is.
+
+**Compiling the activation chain was tried three ways and rejected.** `container-level-activation-hook`
+is the suite's thinnest win, and the hook pipeline is re-decided per resolve while its shape is fixed
+per `(binding, activationVersion)` — the same redundancy the async cascade removed. So: memoize a
+closure over the exact hooks, keyed on the resolver (not the binding: `this.#lifecycle` belongs to
+whichever container is resolving, and a child's hooks differ from its parent's for the same binding).
+All three shapes lost, in different places, over five paired passes each:
+
+| Shape                                                  | Target row | What it cost instead                     |
+| ------------------------------------------------------ | ---------: | ---------------------------------------- |
+| Fast exit moved behind the memo lookup                 |      1.11× | `scale-mid-transient-chain-32` **0.89×** |
+| Fast exit inlined at the dispatcher, memo behind it    |      1.00× | `transient-class-1-dep` **0.85×**        |
+| Dispatcher byte-identical, lane compiles its own chain |  **0.94×** | controls clean                           |
+
+Two lessons, both already stated elsewhere in this file and both re-earned the hard way. `#resolveDefaultEntry`
+is inlining-sensitive: adding one test inside a branch it does not take moved a **class**-binding row
+15%, which is the dispatcher-prefix rule reappearing as a code-size effect rather than an extra
+comparison. And a compiled chain does not pay at the arity that actually occurs — with one hook it is a
+closure call wrapping a hook call, against one direct call after two checks, so the indirection costs
+more than the loop it removes.
+
+> **Rule:** before compiling a pipeline, count the arity in the row you are trying to move. Compilation
+> pays for a loop, and a one-element loop is not one.
+
+The bug that hunt did find is real and outlives it: `.onActivation()` writes the field **in place** on
+an already-registered binding and bumps no version, so any memo over a binding's own hook must key on
+that hook's identity. The activation-need memo learned this the hard way — it cached "no activation"
+per binding id and silently skipped a late hook on every lane that consulted it, while the default
+dynamic lane read the field fresh and honored it. `needsActivation()` therefore answers the binding's
+own hook from the field itself before touching the memo, and stamps the memo with the registry version
+too, so a rebind loop cannot grow it. `tests/unit/resolution/cache-invalidation.test.ts` pins all the
+lanes, so a future memo that forgets cannot land quietly.
+
+**What sharing the lookup cost, and why it is still shared.** `resolve` and `resolveAsync` both take their terminal binding from `#requireBinding`, so the alias-cycle walk and the not-bound diagnostics exist once. The frame that adds costs `misconfigured-missing-binding` ~5%: an error path is dominated by capturing its stack, and a deeper throw site captures more of it. Constructing the error at the throw site rather than in a helper recovered most of it; the rest is the price of not keeping two copies of the alias walk, and it is paid only when a resolve fails.
+
 ## Cycle detection — two mechanisms, on purpose
 
-| Lane                           | Mechanism                                                    | Why not the other one                                                                                             |
-| ------------------------------ | ------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------- |
-| Sync transient-dynamic         | `binding.inFlight`, set on factory-enter and cleared on exit | Sync resolution runs on one call stack, so the flag _is_ exact path membership: `O(1)`, no hashing, no side table |
-| Everything else, and all async | `enterResolutionPath` on the shared path array               | Async chains interleave, so a per-binding flag would report a cycle where two chains merely overlap               |
+| Lane                   | Mechanism                                                            | Why not the other one                                                                                               |
+| ---------------------- | -------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| Sync transient-dynamic | `binding.inFlight`, set on factory-enter and cleared on exit         | Sync resolution runs on one call stack, so the flag _is_ exact path membership: `O(1)`, no hashing, no side table   |
+| Everything else sync   | `enterResolutionPath` — push and pop one shared path array           | One call stack, so the array _is_ a stack; a per-binding flag cannot name the path in the error                     |
+| Async, in a cascade    | `binding.inFlight`, cleared when the factory returns its **promise** | The request that closes a cycle comes from a factory's synchronous prefix, and synchronous code does not interleave |
+| Async, out of one      | `extendResolutionBranch` — append-only path, read by branch depth    | A continuation's ancestors are on no call stack, so they have to be carried explicitly                              |
+
+**Both variants of that lane** — with and without activation hooks — take the flag, because the argument for it does not mention hooks: a hook runs on the same call stack the factory did. Giving the hooked variant the same guard is worth **~15%** on `container-level-activation-hook`, which had been the suite's only loss against inversify. A hook that re-resolves its own token still reports `CircularDependencyError` rather than recursing, and the flag is still released on every exit path — `tests/unit/resolution/in-flight-invariants.test.ts` pins both for the hooked lane too.
 
 `enterResolutionPath` scans linearly while the path is short and attaches a membership `Set` past `RESOLUTION_SET_THRESHOLD`. That threshold switches a **data structure**, not a behaviour: both branches answer identically.
 
@@ -85,16 +192,136 @@ The constant is 32, measured on Node 26 / M3 Max over an async transient chain �
 
 > **Rule:** a threshold may choose an implementation. It may never choose a semantics.
 
-## Resolution contexts are pooled, and that is not an optimization detail
+## The async lane has two lanes, and the cheap one costs nothing per level
 
-Two pools, both in the resolver:
+A resolution path is the chain of ancestors a level is being resolved under. Sync resolution runs on one
+call stack, so one array pushed and popped **is** that chain, and `binding.inFlight` is exact membership
+in it. Async resolution was assumed not to have either property, and paid for a settle-scoped path on
+every level to compensate.
 
-- **sync** — indexed by depth; a resolve at depth _n_ always reuses the same context.
-- **async chains** — a free list. The chain's first level borrows one, every level increments `chainLevels`, the last to settle returns it.
+It has both, for the requests that matter. **A factory's request for a dependency is made from its
+synchronous prefix** — `async ctx => await ctx.resolveAsync(dep)` calls `resolveAsync` before it awaits
+anything. So the chain of "who is resolving whom" at the moment of a request is the synchronous call
+stack, and a whole eight-level chain is built inside **one** synchronous cascade before any of it
+settles. While that cascade is open the resolver's own `#cascadePath`/`#cascadeStack` are the ancestor
+chain: pushed on factory-enter, popped when the factory returns **its promise** — not when that promise
+settles. Two cascades can never interleave, so `binding.inFlight` is exact path membership again, and
+every level shares one `AsyncCascadeContext`. Nothing is allocated per level, nothing observes its own
+settlement.
 
-Pooling here is not about saving an allocation. A per-chain context **survives its chain's microtask hops**, so a freshly allocated one gets promoted out of the nursery and is then collected the expensive way. Measured on `dynamic-async-chain-8` under a forced full GC every 100 samples: allocating per chain costs **2.5×**. That is why the pool exists — not because it wins the row. At 5 trials on a quiet machine that row is 0.87× of inversify under `BENCH_FULL`, with a 0.6% IQR; an earlier claim of 1.16–1.23× came from a shared-process probe and a 3-trial run under load, and is retracted in RESULTS.md.
+That also removes a false positive rather than adding one. The shared settle-scoped path reported
+`Circular dependency detected: a → b → d → c → d` for a diamond — `A` awaiting `B` and `C` in parallel,
+both needing `D`, in which `b → d → c` is not a dependency edge at all. Under the cascade, `D`'s flag is
+cleared when `D`'s factory returns its promise, so the second sibling finds it clear.
 
-What the async lane deliberately does **not** keep is any per-chain state on the resolver. The chain's context is threaded through the call — `ctx.resolveAsync()` hands the callee the context it used, and an inner level reuses it when `ctx.owner === this`. Two concurrent chains are two contexts with two independent `chainLevels`; there is no shared counter and no path-identity heuristic to get wrong.
+**What the cascade cannot see is a request made from a continuation**, after an await: its ancestors are
+on no call stack. Such a request arrives with the cascade empty, which is an exact test — a continuation
+never runs inside a synchronous cascade — so it **escapes** to the branch lane, and so does anything the
+cascade lane does not serve, seeded with a snapshot of the ancestors the cascade had reached. Once a
+subtree leaves the cascade it stays off it, which is what keeps a cycle crossing the boundary on one
+path.
+
+The branch lane is the general one: `extendResolutionBranch` appends to a path while this branch still
+owns the next slot and copies its own prefix once a sibling has claimed it. Nothing is removed there
+either, so it needs no settle listener; it pays a context per level instead. A cycle formed entirely
+from post-await edges is caught there — `post-q → post-p → post-q` — one level in from the true root,
+because the ancestors before the first escape were never written down. That imprecision is the price of
+the cascade lane, and `tests/unit/resolution/resolver-async.test.ts` pins it rather than leaving it to
+be discovered.
+
+**Who owns an array is a type, not a rule.** A branch may only ever append to an array it minted
+itself: a sync frame's path is one that frame will pop in its own `finally`, and it may carry an
+`enterResolutionPath` membership `Set` this lane cannot keep true. So `extendResolutionBranch` is the
+only thing that mints an `OwnedBranchPath`, `AsyncLevelContext` accepts nothing else, and a
+`BranchDepth` is branded so a bare number cannot stand in for one — a depth from anywhere but this
+branch silently re-parents a level. `AsyncLevelContext` reads its depth off the branch it was handed
+rather than taking it as a parameter, so the two cannot disagree at all.
+
+> **Rule:** this was prose in an earlier revision of this file, which is the failure mode this project
+> already named — hold the architecture with the compiler and tests, not comments.
+> `tests/types/async-branch-ownership.test.ts` fails to compile if either brand is removed; check that
+> before trusting it, because a type test that still compiles once its invariant is gone asserts
+> nothing.
+
+### What each shape costs
+
+Per-level overhead against a floor of eight plain awaited async functions, one process, libraries
+interleaved with rotating order, best of five trials. `BENCH_FULL=1` forces a full GC every 100 samples,
+so the right-hand column is the one published figures come from:
+
+| Build                                                                  | Collector idle | Full GC every 100 |
+| ---------------------------------------------------------------------- | -------------: | ----------------: |
+| Pooled chain context, shared settle-scoped path, settle listener       |        48.3 ns |           48.3 ns |
+| Per-level context, per-level path **copied** whole (`[...path, name]`) |        61.4 ns |                 — |
+| Per-level context, append-only branch (the escape lane alone)          |        28.2 ns |           62.6 ns |
+| **Cascade lane + branch escape**                                       |    **19.5 ns** |       **21.3 ns** |
+| Ceiling: no cycle bookkeeping at all (unsound; measurement only)       |        13.8 ns |           12.3 ns |
+
+Two things to read here. First, **the middle two rows are the trap**: per-level state fixes the diamond
+and measures _worse_, and it is worse in the profile that counts by 34 ns, because a per-level context is
+held across its factory's await, so it is promoted out of the nursery and then collected the expensive
+way. The pooled build was GC-insensitive and that, not the saved allocation, was what its pool bought.
+Second, the ceiling says the lane's real machinery — promise plumbing, frame lookup, binding dispatch —
+is only ~13 ns, so **everything above it was cycle bookkeeping**, and the cascade lane gets within ~7 ns
+of it while keeping the guarantee.
+
+In the interleaved isolated suite that moves `dynamic-async-chain-8` from 0.75× to **1.60×** of
+inversify 8.2.3 and the async group's geomean from 1.13× to 1.58×. A paired A/B against the previous
+build holds every measured sync row at parity, `circular-dependency-3` included — it shares the
+`binding.inFlight` flag the cascade uses, so it is the row that would show the two lanes fighting.
+
+> **Rule:** measure this lane in **both** columns, and never quote the idle-collector number alone. Four
+> attempts failed here before the cascade, three of them trying to make a settle-scoped path cheaper —
+> a decomposition priced its settle listener at 16.7 ns per level against 9.4 ns for the cycle check
+> itself, so the bookkeeping was never the lever. The lever was asking whether the path had to be
+> settle-scoped at all.
+
+> **Rule:** the cascade entry answers a plain constant and a cached singleton itself rather than
+> escaping. A materialized async singleton that escapes snapshots both cascade arrays for a resolve
+> that never reads a path — worth **~19%** on `resolve-async-single-hop`, and the suite hid it behind a
+> ratio that was still above 1× against inversify. Only the paired A/B saw it.
+
+The sync lane's answer to the same question is `InstantiationPlanCompiler`, which cycle-checks a static
+subgraph once at compile time and then executes with no bookkeeping. It does not port: it needs a
+dependency graph visible before the resolve, and a `dynamic-async` factory is opaque. The cascade needs
+no such graph — it reads the ancestors off the call stack that is already there.
+
+## What the sync context pool actually costs
+
+Pooling a resolution context by depth beats allocating one per level, which is why it is there. What
+nothing here recorded is what the pool costs once it exists, and `--prof` over the four thinnest rows
+put it first among everything attributable to this package:
+
+| Row                               | `#acquireSyncResolutionContext` | `reset()` |
+| --------------------------------- | ------------------------------: | --------: |
+| `fan-out-tree-depth-3-breadth-4`  |                           13.5% |      8.8% |
+| `scale-deep-transient-chain-512`  |                            8.4% |      7.4% |
+| `container-level-activation-hook` |                         inlined |      9.8% |
+| `resolve-async-single-hop`        |                               — |         — |
+
+`reset()` writes five fields. A pooled context outlives enough resolves to sit in **old space**, so each
+pointer write takes a write barrier — and three of the five wrote the same resolver and the same two
+arrays every time. They only _looked_ different because `container.resolve()` minted a fresh `[]` pair
+per call, so the comparison would never have hit. Reusing one pair per resolver and comparing before
+storing is therefore one change, not two, and it is worth **1.90×** on `constant-resolve` and **1.71×**
+on `container-level-activation-hook`.
+
+The same mechanism sets the price. A fresh array is in new space, so pushing a frame onto it needs no
+barrier; the shared pair is in old space and every push pays one. `transient-class-1-dep` pushes exactly
+one frame and does nothing else, so it is the one shape where that barrier costs more than the two
+allocations saved — **0.93×**, negative in all six paired passes, kept against five rows between +16%
+and +90%.
+
+> **Rule:** an empty `rootStack` is the whole lending protocol — every sync lane pops what it pushes, so
+> a non-empty one means a resolve is holding the pair and the caller mints its own. A nested
+> `container.resolve()` inside a factory must therefore still see an empty path, and a resolve that
+> throws must hand the pair back; `tests/unit/resolution/in-flight-invariants.test.ts` pins both, and the
+> failure mode if the pair ever leaks dirty is lost reuse, never a wrong path.
+
+> **Rule:** `--prof` before theorising about this engine. Reading its structure produced five wrong
+> guesses in a row about where time goes — an alias `Set`, a resolved-promise memo, a redundant deep-path
+> `Set`, and two shapes of compiled activation chain — while the profiler pointed at a collaborator none
+> of them mentioned.
 
 ## A container defers most of itself
 

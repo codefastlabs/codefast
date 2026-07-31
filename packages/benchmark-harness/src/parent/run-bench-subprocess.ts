@@ -302,3 +302,98 @@ export async function runBenchSubprocessIsolated(parameters: RunBenchSubprocessP
     sanityFailures: workerPayloads.flatMap((payload) => payload.sanityFailures),
   };
 }
+
+/**
+ * One library to schedule in an interleaved isolated run.
+ *
+ * @since 0.5.0-canary.8
+ */
+export type InterleavedLibraryRun = Readonly<{
+  /** Keys the returned map — the library name the report aligns on. */
+  readonly key: string;
+  readonly parameters: RunBenchSubprocessParameters;
+}>;
+
+/** The ordered union of the libraries' scenario ids, first library's order first. */
+function unionScenarioIds(perLibraryIds: ReadonlyArray<ReadonlyArray<string>>): Array<string> {
+  const ordered: Array<string> = [];
+  const seen = new Set<string>();
+  for (const ids of perLibraryIds) {
+    for (const id of ids) {
+      if (!seen.has(id)) {
+        seen.add(id);
+        ordered.push(id);
+      }
+    }
+  }
+  return ordered;
+}
+
+/**
+ * Runs every library on the same scenario before moving to the next, rotating which library goes
+ * first each time.
+ *
+ * Scheduling one library's whole suite before the next one starts puts minutes between the two sides
+ * of every ratio, so drift over the run lands entirely on whoever is scheduled later — and that is
+ * never the library the suite is written to promote. Interleaving spreads the drift across all of
+ * them; rotating stops the first slot from being a permanent advantage.
+ *
+ * @remarks A library that does not implement a scenario is skipped for it, so partial suites cost
+ * nothing. Results are collected in scenario order rather than run order, keeping report rows stable.
+ *
+ * @since 0.5.0-canary.8
+ */
+export async function runBenchSubprocessesInterleaved(
+  libraries: ReadonlyArray<InterleavedLibraryRun>,
+): Promise<Map<string, SubprocessPayload>> {
+  const listPayloads = new Map<string, SubprocessPayload>();
+  for (const library of libraries) {
+    const listPayload = await runBenchSubprocess({
+      ...library.parameters,
+      harnessLabel: `${library.parameters.harnessLabel} [list]`,
+      environmentOverrides: { ...library.parameters.environmentOverrides, [BENCH_LIST_ENV_KEY]: "1" },
+    });
+    if ((listPayload.scenarioIds ?? []).length === 0) {
+      throw new Error(`${library.parameters.harnessLabel} list run returned no scenario ids; cannot run isolated.`);
+    }
+    listPayloads.set(library.key, listPayload);
+  }
+
+  const scenarioIds = unionScenarioIds(libraries.map((library) => listPayloads.get(library.key)?.scenarioIds ?? []));
+  console.log(
+    `[bench] BENCH_ISOLATE=1: ${String(scenarioIds.length)} scenarios × ${String(libraries.length)} libraries, interleaved with rotating order.`,
+  );
+
+  const workerPayloads = new Map<string, Array<SubprocessPayload>>(libraries.map((library) => [library.key, []]));
+  for (const [scenarioIndex, scenarioId] of scenarioIds.entries()) {
+    // Rotate over the libraries that implement this scenario — rotating the full list and then
+    // filtering hands the first slot to whichever library survives the filter most often.
+    const implementing = libraries.filter((library) =>
+      (listPayloads.get(library.key)?.scenarioIds ?? []).includes(scenarioId),
+    );
+    if (implementing.length === 0) {
+      continue;
+    }
+    const rotation = scenarioIndex % implementing.length;
+    const order = [...implementing.slice(rotation), ...implementing.slice(0, rotation)];
+    for (const library of order) {
+      const payload = await runBenchSubprocess({
+        ...library.parameters,
+        harnessLabel: `${library.parameters.harnessLabel} [${scenarioId}]`,
+        environmentOverrides: { ...library.parameters.environmentOverrides, [BENCH_ONLY_ENV_KEY]: scenarioId },
+      });
+      workerPayloads.get(library.key)?.push(payload);
+    }
+  }
+
+  const merged = new Map<string, SubprocessPayload>();
+  for (const library of libraries) {
+    const payloads = workerPayloads.get(library.key) ?? [];
+    merged.set(library.key, {
+      fingerprint: listPayloads.get(library.key)!.fingerprint,
+      trials: mergeIsolatedTrials(payloads),
+      sanityFailures: payloads.flatMap((payload) => payload.sanityFailures),
+    });
+  }
+  return merged;
+}

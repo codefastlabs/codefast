@@ -192,6 +192,36 @@ describe("comments stay comments", () => {
   });
 });
 
+describe("every failure this package raises is part of its taxonomy", () => {
+  // The SPEC check below only sees `export class …Error`, so a bare `new Error(…)` was invisible to
+  // it — and invisible to a consumer's `catch (error) { if (error instanceof DiError) … }`.
+  it("throws only DiError subclasses", () => {
+    const offenders: Array<string> = [];
+
+    for (const file of sourceFiles()) {
+      const lines = readFileSync(file, "utf8").split("\n");
+      for (const [index, line] of lines.entries()) {
+        if (/throw new (?:Error|TypeError|RangeError)\(/.test(line)) {
+          offenders.push(`${file.slice(sourceRoot.length + 1)}:${String(index + 1)}`);
+        }
+      }
+    }
+
+    expect(offenders).toEqual([]);
+  });
+
+  it("exports every error class from the root barrel", () => {
+    const declared = [
+      ...readFileSync(join(sourceRoot, "errors.ts"), "utf8").matchAll(/export class ([A-Z][A-Za-z]*Error)/g),
+    ].map((match) => match[1]!);
+    const barrel = readFileSync(join(sourceRoot, "index.ts"), "utf8");
+
+    const unexported = declared.filter((name) => !new RegExp(`\\b${name}\\b`).test(barrel));
+
+    expect(unexported).toEqual([]);
+  });
+});
+
 describe("SPEC.md keeps up with the API it specifies", () => {
   const spec = readFileSync(join(packageRoot, "SPEC.md"), "utf8");
 

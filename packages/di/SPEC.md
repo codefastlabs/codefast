@@ -181,6 +181,8 @@ interface ResolveOptions {
 }
 ```
 
+**Tag value comparison là `Object.is` — normative, kể cả trên fast-path.** `tag` và `tags: [pair]` phải cho **cùng một kết quả**, và cùng kết quả với `resolveAll` / `resolveOptional` trên cùng options. Cảnh báo cho implementer: một index dạng `Map` keyed theo tag value trả lời bằng **SameValueZero**, nên nó coi `-0` và `+0` là **cùng khoá** — trái với `Object.is` (section 5.11, section 8). Fast-path đọc index như vậy phải **kiểm lại bằng matcher** trước khi trả về, nếu không cùng một câu hỏi sẽ có hai câu trả lời tuỳ cách viết. `NaN` không bị ảnh hưởng: cả hai quy tắc coi `NaN` bằng chính nó.
+
 ### 3.6 `ResolutionContext`
 
 `ctx` trong `toDynamic` / `toDynamicAsync` — không phải container đầy đủ, chỉ expose resolve trong ngữ cảnh hiện tại:
@@ -2531,6 +2533,20 @@ class ChainNotRegisteredError extends DiError {
 
 TypeScript đã chặn trường hợp này qua kiểu trả về (§2.4), nên error chỉ tới được từ JavaScript hoặc khi caller cast qua kiểu. Nó tồn tại để misuse **nổ rõ ràng** thay vì âm thầm không làm gì.
 
+**`SelfBindingRequiresClassError`** — `toSelf()` trên token không phải class:
+
+```ts
+class SelfBindingRequiresClassError extends DiError {
+  readonly code = "SELF_BINDING_REQUIRES_CLASS";
+  readonly tokenName: string;
+  // "toSelf() needs the token to be the class it constructs, and 'Logger' is not a class.
+  //  Use .to(SomeClass) to name the implementation, or bind the class itself with
+  //  container.bind(SomeClass).toSelf()."
+}
+```
+
+`toSelf()` bind token **thành chính nó**, nên token phải là constructor. Một `token<Logger>("Logger")` không construct được gì. Như `ChainNotRegisteredError`, kiểu của `bind()` đã chặn phần lớn trường hợp — error này dành cho caller JavaScript hoặc caller đã cast qua kiểu, và nó thuộc taxonomy `DiError` để một `catch (error) { if (error instanceof DiError) … }` không để nó rơi ra ngoài.
+
 ---
 
 ## 11. File structure
@@ -2579,7 +2595,7 @@ packages/di/
 │   │   ├── scope.ts           ScopeManager — cache singleton/scoped, serialize async
 │   │   ├── lifecycle.ts       LifecycleManager — chuỗi onActivation/onDeactivation
 │   │   ├── binding-select.ts  selectBinding(), selectAllBindings()
-│   │   ├── binding-scope.ts   effectiveBindingScope()
+│   │   ├── binding-scope.ts   effectiveBindingScope() — internal; dùng BindingSnapshot.scope
 │   │   ├── constraints.ts     Đánh giá predicate/slot constraint
 │   │   └── resolve-options.ts injectionSlotToResolveOptions(), bindingSlotToResolveOptions()
 │   │
@@ -2655,7 +2671,6 @@ export type {
 export { Container } from "#/container";
 export type { Container as ContainerInterface, ContainerStatic } from "#/container";
 
-export { effectiveBindingScope } from "#/binding-scope";
 export { injectionSlotToResolveOptions, bindingSlotToResolveOptions } from "#/resolve-options";
 
 // Introspection types

@@ -24,12 +24,16 @@ import {
 import { batched } from "#/harness/batched";
 import type { BenchScenario } from "#/scenarios/types";
 
+// Hoisted like the codefast side's TARGET_TAGS, so the measured closures allocate alike.
+const OPTIONAL_GET = { optional: true } as const;
+const TARGET_TAG_GET = { tag: { key: "env", value: TARGET_TAG_VALUE } } as const;
+
 // ─── scenario 1: optional get — hit ──────────────────────────────────────────
 
 const optionalHitId = Symbol("bench-inv-rp-optional-hit");
 
 function buildGetOptionalHitScenario(): BenchScenario {
-  const container = new Container();
+  const container = new Container({ jitless: false });
   container.bind<number>(optionalHitId).toConstantValue(42);
   container.get<number>(optionalHitId, { optional: true });
 
@@ -41,7 +45,7 @@ function buildGetOptionalHitScenario(): BenchScenario {
     sanity: () => container.get<number>(optionalHitId, { optional: true }) === 42,
     build: () =>
       batched(OPTIONAL_HIT_BATCH, () => {
-        container.get(optionalHitId, { optional: true });
+        container.get(optionalHitId, OPTIONAL_GET);
       }),
   };
 }
@@ -51,7 +55,7 @@ function buildGetOptionalHitScenario(): BenchScenario {
 const optionalMissId = Symbol("bench-inv-rp-optional-miss");
 
 function buildGetOptionalMissScenario(): BenchScenario {
-  const container = new Container();
+  const container = new Container({ jitless: false });
   // Intentionally NOT binding the identifier — miss path returns undefined.
   container.get<string>(optionalMissId, { optional: true });
 
@@ -62,7 +66,7 @@ function buildGetOptionalMissScenario(): BenchScenario {
     sanity: () => container.get<string>(optionalMissId, { optional: true }) === undefined,
     build: () =>
       batched(OPTIONAL_MISS_BATCH, () => {
-        container.get(optionalMissId, { optional: true });
+        container.get(optionalMissId, OPTIONAL_GET);
       }),
   };
 }
@@ -76,7 +80,7 @@ interface TaggedService {
 const taggedServiceId = Symbol("bench-inv-rp-tagged-service");
 
 function buildTaggedBindingResolveScenario(): BenchScenario {
-  const container = new Container();
+  const container = new Container({ jitless: false });
 
   for (const env of TAGGED_ENVS) {
     container.bind<TaggedService>(taggedServiceId).toConstantValue({ env }).whenTagged("env", env);
@@ -96,7 +100,7 @@ function buildTaggedBindingResolveScenario(): BenchScenario {
     },
     build: () =>
       batched(TAGGED_RESOLVE_BATCH, () => {
-        container.get(taggedServiceId, { tag: { key: "env", value: TARGET_TAG_VALUE } });
+        container.get(taggedServiceId, TARGET_TAG_GET);
       }),
   };
 }

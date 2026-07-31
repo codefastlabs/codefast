@@ -12,11 +12,17 @@
  *     + resolve root per iteration. Measures cold-start; catches regressions
  *     in registry mutation + first-resolve code paths.
  */
-import { buildCodefastRealisticContainer, sanityCheckCodefastRealisticResolve } from "#/fixtures/codefast-adapter";
+import {
+  buildCodefastRealisticContainer,
+  buildCodefastRealisticResolvedContainer,
+  sanityCheckCodefastRealisticResolve,
+  sanityCheckCodefastRealisticResolvedResolve,
+} from "#/fixtures/codefast-adapter";
 import { REALISTIC_GRAPH } from "#/fixtures/realistic-graph";
 import {
   REALISTIC_GRAPH_COLD_RESOLVE,
   REALISTIC_GRAPH_RESOLVE_ROOT,
+  REALISTIC_GRAPH_RESOLVED_ROOT,
   REALISTIC_RESOLVE_BATCH,
 } from "#/fixtures/scenario-parity";
 import { batched } from "#/harness/batched";
@@ -53,9 +59,28 @@ function buildRealisticGraphColdResolveScenario(): BenchScenario {
   };
 }
 
+function buildRealisticGraphResolvedRootScenario(): BenchScenario {
+  const { container, rootToken } = buildCodefastRealisticResolvedContainer(REALISTIC_GRAPH);
+  container.resolve(rootToken);
+
+  return {
+    ...REALISTIC_GRAPH_RESOLVED_ROOT,
+    batch: REALISTIC_RESOLVE_BATCH,
+    sanity: () => sanityCheckCodefastRealisticResolvedResolve(REALISTIC_GRAPH),
+    build: () =>
+      batched(REALISTIC_RESOLVE_BATCH, () => {
+        container.resolve(rootToken);
+      }),
+  };
+}
+
 /**
  * @since 0.3.16-canary.0
  */
 export function buildCodefastRealisticScenarios(): ReadonlyArray<BenchScenario> {
-  return [buildRealisticGraphResolveRootScenario(), buildRealisticGraphColdResolveScenario()];
+  return [
+    buildRealisticGraphResolveRootScenario(),
+    buildRealisticGraphColdResolveScenario(),
+    buildRealisticGraphResolvedRootScenario(),
+  ];
 }

@@ -12,6 +12,8 @@ export interface BenchScenario {
   readonly group: string;
   readonly batch?: number;
   readonly stress?: boolean;
+  /** Render the row but keep it out of median/geomean aggregates — for rows whose sides do incomparable work. */
+  readonly excludeFromAggregates?: boolean;
   readonly sanity?: () => boolean | Promise<boolean>;
   readonly build: () => () => void;
 }

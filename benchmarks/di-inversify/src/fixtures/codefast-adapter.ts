@@ -107,3 +107,66 @@ export function sanityCheckCodefastRealisticResolve(graph: GraphDescriptor): boo
   const resolved = container.resolve(rootToken);
   return resolved.__id === graph.rootId && resolved.resolvedDependencies.length > 0;
 }
+
+function bindOneResolvedNode(
+  container: CodefastContainer,
+  node: NodeDescriptor,
+  tokensById: ReadonlyMap<string, Token<RealisticNode>>,
+): void {
+  const nodeToken = tokensById.get(node.id);
+  if (nodeToken === undefined) {
+    throw new Error(`Codefast adapter: token missing for node "${node.id}"`);
+  }
+  const dependencyTokens = node.dependencies.map((dependencyId) => {
+    const dependencyToken = tokensById.get(dependencyId);
+    if (dependencyToken === undefined) {
+      throw new Error(`Codefast adapter: dependency token missing for "${node.id}" -> "${dependencyId}"`);
+    }
+    return dependencyToken;
+  });
+
+  const binding = container.bind(nodeToken).toResolved(
+    (...resolvedDependencies: Array<RealisticNode>): RealisticNode => ({
+      __id: node.id,
+      resolvedDependencies,
+    }),
+    dependencyTokens,
+  );
+
+  if (node.lifetime === "singleton") {
+    binding.singleton();
+  } else {
+    binding.transient();
+  }
+}
+
+/**
+ * Builds the same graph through `toResolved` (explicit dep tokens) — the shape the
+ * instantiation-plan compiler serves, mirroring inversify's `toResolvedValue` adapter.
+ */
+export function buildCodefastRealisticResolvedContainer(graph: GraphDescriptor): CodefastRealisticBuild {
+  assertGraphIsWellFormed(graph);
+
+  const container = Container.create();
+  const tokensById = new Map<string, Token<RealisticNode>>();
+  for (const nodeId of topologicallyOrderedNodeIds(graph)) {
+    tokensById.set(nodeId, token<RealisticNode>(`realistic-resolved:${nodeId}`));
+  }
+  for (const node of graph.nodes) {
+    bindOneResolvedNode(container, node, tokensById);
+  }
+  const rootToken = tokensById.get(graph.rootId);
+  if (rootToken === undefined) {
+    throw new Error(`Codefast adapter: root token missing for "${graph.rootId}"`);
+  }
+  return { container, rootToken, tokensById };
+}
+
+/**
+ * Sanity for the `toResolved` variant — same assertions as the factory-binding one.
+ */
+export function sanityCheckCodefastRealisticResolvedResolve(graph: GraphDescriptor): boolean {
+  const { container, rootToken } = buildCodefastRealisticResolvedContainer(graph);
+  const resolved = container.resolve(rootToken);
+  return resolved.__id === graph.rootId && resolved.resolvedDependencies.length > 0;
+}

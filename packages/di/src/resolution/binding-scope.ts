@@ -2,25 +2,14 @@ import type { Binding } from "#/binding";
 import type { BindingScope } from "#/types";
 
 /**
- * Runtime scope used for validation and introspection. Alias bindings are treated as transient
- * because they defer scope to the aliased target at resolve time.
+ * The scope a binding resolves under.
+ *
+ * @remarks Every kind declares one — an alias declares `transient`, since it defers scoping to the
+ * binding it points at — so this is a field read, kept as a named function because it is the
+ * vocabulary validation and introspection speak.
  *
  * @since 0.3.16-canary.0
  */
 export function effectiveBindingScope(binding: Binding): BindingScope {
-  switch (binding.kind) {
-    case "alias":
-      return "transient";
-    case "class":
-    case "constant":
-    case "dynamic":
-    case "dynamic-async":
-    case "resolved":
-    case "resolved-async":
-      return binding.scope;
-    default: {
-      const exhaustive: never = binding;
-      return exhaustive;
-    }
-  }
+  return binding.scope;
 }

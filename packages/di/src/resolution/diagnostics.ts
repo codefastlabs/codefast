@@ -27,8 +27,8 @@ export interface ResolutionDiagnostics {
   readonly compiledPlanCount: number;
   /** Contexts held by the depth-indexed sync pool. */
   readonly syncContextPoolSize: number;
-  /** Contexts returned to the async chain pool and available for reuse. */
-  readonly asyncContextPoolSize: number;
+  /** Scoped instances currently cached by this container's scope manager. */
+  readonly scopedInstanceCount: number;
   /** Deferred collaborators this container has had to build. */
   readonly builtSubsystems: ReadonlyArray<string>;
 }

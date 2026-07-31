@@ -21,6 +21,7 @@ export interface JsonlBenchObservationRow {
   readonly scenarioId: string;
   readonly group: string;
   readonly stress: boolean;
+  readonly excludeFromAggregates?: boolean;
   readonly batch: number;
   readonly what: string;
   readonly hzPerIteration: number;
@@ -61,6 +62,7 @@ export function jsonlBenchObservationRowToScenarioTrialResult(row: JsonlBenchObs
     id: row.scenarioId,
     group: row.group,
     stress: row.stress,
+    excludeFromAggregates: row.excludeFromAggregates === true,
     batch: row.batch,
     what: row.what,
     hzPerIteration: row.hzPerIteration,

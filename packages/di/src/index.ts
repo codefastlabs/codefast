@@ -36,7 +36,8 @@ export type {
 export { Container } from "#/container/container";
 export type { Container as ContainerInterface, ContainerStatic } from "#/container/container";
 
-export { effectiveBindingScope } from "#/resolution/binding-scope";
+// `effectiveBindingScope` is deliberately absent: it reads a `Binding`, which is internal, and no
+// public API hands one out. `BindingSnapshot.scope` and `GraphNode.scope` are the public answers.
 export { injectionSlotToResolveOptions, bindingSlotToResolveOptions } from "#/resolution/resolve-options";
 
 // Introspection types
@@ -96,6 +97,7 @@ export {
   NoMatchingBindingError,
   RebindUnboundTokenError,
   ScopeViolationError,
+  SelfBindingRequiresClassError,
   SyncDisposalNotSupportedError,
   TokenNotBoundError,
 } from "#/errors";

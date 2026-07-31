@@ -1,4 +1,11 @@
-import { ChainNotRegisteredError, Container, NoMatchingBindingError, token } from "@codefast/di";
+import {
+  ChainNotRegisteredError,
+  Container,
+  DiError,
+  NoMatchingBindingError,
+  SelfBindingRequiresClassError,
+  token,
+} from "@codefast/di";
 import type { BindToBuilder } from "@codefast/di";
 import { describe, expect, it } from "vitest";
 
@@ -11,6 +18,16 @@ import { describe, expect, it } from "vitest";
  * past them, actually gets. The guarantee is that the misuse *fails loudly* — not that the method
  * happens to be absent from the object.
  */
+/** Returns what `run` threw, so the assertions about it stay unconditional. */
+function captureThrown(run: () => void): unknown {
+  try {
+    run();
+  } catch (error) {
+    return error;
+  }
+  return expect.fail("expected the call to throw");
+}
+
 describe("BindToBuilder fluent surface", () => {
   it("offers every to* entry point on the object bind() returns", () => {
     const container = Container.create();
@@ -101,10 +118,17 @@ describe("BindToBuilder fluent surface", () => {
     expect(container.resolve(NamedValueToken, { name: "a" })).toBe(1);
   });
 
-  it("rejects toSelf() on a token that is not a constructor", () => {
+  it("rejects toSelf() on a token that is not a constructor, inside the error taxonomy", () => {
     const container = Container.create();
     const ValueToken = token<number>("to-self-non-constructor");
-    expect(() => container.bind(ValueToken).toSelf()).toThrow("toSelf() requires token to be a Constructor");
+
+    // A consumer's `catch (error) { if (error instanceof DiError) … }` must see this one too.
+    const thrown = captureThrown(() => container.bind(ValueToken).toSelf());
+
+    expect(thrown).toBeInstanceOf(SelfBindingRequiresClassError);
+    expect(thrown).toBeInstanceOf(DiError);
+    expect((thrown as SelfBindingRequiresClassError).code).toBe("SELF_BINDING_REQUIRES_CLASS");
+    expect((thrown as SelfBindingRequiresClassError).tokenName).toBe("to-self-non-constructor");
   });
 
   it("overwrites a tag value when whenTagged repeats the same key", () => {
