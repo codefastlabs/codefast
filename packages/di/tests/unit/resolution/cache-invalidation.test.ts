@@ -342,3 +342,66 @@ describe("the compiled activation chain follows its binding's own hook", () => {
     expect(container.resolve(serviceToken)).toBe("base+second");
   });
 });
+
+describe("a late binding hook is honored on lanes that memoize activation need", () => {
+  it("named transient class: hook added after the first resolve runs on the next one", () => {
+    @injectable()
+    class Widget {
+      flagged = false;
+    }
+    const widgetToken = token<Widget>("late-hook-named-class");
+    const container = Container.create();
+    const chain = container.bind(widgetToken).to(Widget).whenNamed("n").transient();
+    warm(() => container.resolve(widgetToken, { name: "n" }));
+
+    chain.onActivation((_ctx, instance) => {
+      instance.flagged = true;
+      return instance;
+    });
+
+    expect(container.resolve(widgetToken, { name: "n" }).flagged).toBe(true);
+  });
+
+  it("named transient dynamic with the memo already populated by an unrelated container hook", () => {
+    const unrelatedToken = token<string>("late-hook-unrelated");
+    const serviceToken = token<{ flagged?: boolean }>("late-hook-named-dynamic");
+    const container = Container.create();
+    container.onActivation(unrelatedToken, (_ctx, instance) => instance);
+    const chain = container
+      .bind(serviceToken)
+      .toDynamic(() => ({}))
+      .whenNamed("n")
+      .transient();
+    warm(() => container.resolve(serviceToken, { name: "n" }));
+
+    chain.onActivation((_ctx, instance) => {
+      instance.flagged = true;
+      return instance;
+    });
+
+    expect(container.resolve(serviceToken, { name: "n" }).flagged).toBe(true);
+  });
+
+  it("class resolved as a factory dependency: hook added after the first resolve runs nested", () => {
+    @injectable()
+    class Leaf {
+      flagged = false;
+    }
+    const leafToken = token<Leaf>("late-hook-nested-leaf");
+    const rootToken = token<{ leaf: Leaf }>("late-hook-nested-root");
+    const container = Container.create();
+    const leafChain = container.bind(leafToken).to(Leaf).transient();
+    container
+      .bind(rootToken)
+      .toDynamic((ctx) => ({ leaf: ctx.resolve(leafToken) }))
+      .transient();
+    warm(() => container.resolve(rootToken));
+
+    leafChain.onActivation((_ctx, instance) => {
+      instance.flagged = true;
+      return instance;
+    });
+
+    expect(container.resolve(rootToken).leaf.flagged).toBe(true);
+  });
+});

@@ -116,7 +116,7 @@ export class DependencyResolver implements ResolverCallbacks {
       parent === undefined ? undefined : parent.#lookup,
     );
     this.#classes = new ClassIntrospector(metadataReader, container);
-    this.#activation = new ActivationNeedCache(lifecycle, this.#classes);
+    this.#activation = new ActivationNeedCache(lifecycle, this.#classes, registry);
   }
 
   /** Structural counts for {@link RESOLUTION_DIAGNOSTICS}; see `resolution/diagnostics.ts`. */

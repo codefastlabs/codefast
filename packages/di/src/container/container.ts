@@ -158,7 +158,7 @@ class DefaultContainer implements Container {
     if (this.#lifecycle.isBuilt) {
       builtSubsystems.push("lifecycle.activationHooks");
     }
-    return { ...this.#resolver.describeCaches(), builtSubsystems };
+    return { ...this.#resolver.describeCaches(), scopedInstanceCount: this.#scope.scopedCount, builtSubsystems };
   }
 
   #initResolver(): void {
@@ -237,7 +237,7 @@ class DefaultContainer implements Container {
     return this.#drainSingletons(this.#registry.removeByToken(tokenOrId));
   }
 
-  /** Drain singleton scope entries for a set of already-removed bindings. */
+  /** Drain scope entries for already-removed bindings; only singletons yield deactivation pairs. */
   #drainSingletons(bindings: ReadonlyArray<Binding>): Array<[Binding, unknown]> {
     const pairs: Array<[Binding, unknown]> = [];
     for (const binding of bindings) {
@@ -245,6 +245,7 @@ class DefaultContainer implements Container {
         pairs.push([binding, binding.instance]);
         this.#scope.deleteSingleton(binding);
       }
+      this.#scope.deleteScoped(binding.id);
     }
     return pairs;
   }
@@ -393,6 +394,7 @@ class DefaultContainer implements Container {
           pairs.push([binding, binding.instance]);
           this.#scope.deleteSingleton(binding);
         }
+        this.#scope.deleteScoped(binding.id);
       }
     }
     return pairs;
