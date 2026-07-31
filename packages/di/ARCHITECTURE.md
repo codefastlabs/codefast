@@ -282,6 +282,43 @@ subgraph once at compile time and then executes with no bookkeeping. It does not
 dependency graph visible before the resolve, and a `dynamic-async` factory is opaque. The cascade needs
 no such graph — it reads the ancestors off the call stack that is already there.
 
+## What the sync context pool actually costs
+
+Pooling a resolution context by depth beats allocating one per level, which is why it is there. What
+nothing here recorded is what the pool costs once it exists, and `--prof` over the four thinnest rows
+put it first among everything attributable to this package:
+
+| Row                               | `#acquireSyncResolutionContext` | `reset()` |
+| --------------------------------- | ------------------------------: | --------: |
+| `fan-out-tree-depth-3-breadth-4`  |                           13.5% |      8.8% |
+| `scale-deep-transient-chain-512`  |                            8.4% |      7.4% |
+| `container-level-activation-hook` |                         inlined |      9.8% |
+| `resolve-async-single-hop`        |                               — |         — |
+
+`reset()` writes five fields. A pooled context outlives enough resolves to sit in **old space**, so each
+pointer write takes a write barrier — and three of the five wrote the same resolver and the same two
+arrays every time. They only _looked_ different because `container.resolve()` minted a fresh `[]` pair
+per call, so the comparison would never have hit. Reusing one pair per resolver and comparing before
+storing is therefore one change, not two, and it is worth **1.90×** on `constant-resolve` and **1.71×**
+on `container-level-activation-hook`.
+
+The same mechanism sets the price. A fresh array is in new space, so pushing a frame onto it needs no
+barrier; the shared pair is in old space and every push pays one. `transient-class-1-dep` pushes exactly
+one frame and does nothing else, so it is the one shape where that barrier costs more than the two
+allocations saved — **0.93×**, negative in all six paired passes, kept against five rows between +16%
+and +90%.
+
+> **Rule:** an empty `rootStack` is the whole lending protocol — every sync lane pops what it pushes, so
+> a non-empty one means a resolve is holding the pair and the caller mints its own. A nested
+> `container.resolve()` inside a factory must therefore still see an empty path, and a resolve that
+> throws must hand the pair back; `tests/unit/resolution/in-flight-invariants.test.ts` pins both, and the
+> failure mode if the pair ever leaks dirty is lost reuse, never a wrong path.
+
+> **Rule:** `--prof` before theorising about this engine. Reading its structure produced five wrong
+> guesses in a row about where time goes — an alias `Set`, a resolved-promise memo, a redundant deep-path
+> `Set`, and two shapes of compiled activation chain — while the profiler pointed at a collaborator none
+> of them mentioned.
+
 ## A container defers most of itself
 
 `DefaultContainer`'s constructor builds only what a resolve cannot happen without: the registry, the scope manager, the lifecycle manager and the resolver chain. Everything else arrives on first use — the inspector, the module ref/binding tables, the scope's in-flight and scoped caches, the registry's named and tagged slot indexes, and the class introspector's three metadata caches. Eleven `Map`s a bind-and-resolve container never reads.
