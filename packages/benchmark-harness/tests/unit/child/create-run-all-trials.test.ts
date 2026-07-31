@@ -35,14 +35,14 @@ describe("createRunAllTrials mode/trialCount resolution", () => {
     await expect(countExecutedTrials({ benchDefaults: BENCH_DEFAULTS })).resolves.toBe(3);
   });
 
-  it("falls back to the BENCH_FAST env flag when no mode is passed", async () => {
+  it("falls back to the BENCH_FAST env flag when no mode is passed — one smoke trial", async () => {
     vi.stubEnv(BENCH_FAST_ENV_KEY, "1");
-    await expect(countExecutedTrials({ benchDefaults: BENCH_DEFAULTS })).resolves.toBe(3);
+    await expect(countExecutedTrials({ benchDefaults: BENCH_DEFAULTS })).resolves.toBe(1);
   });
 
   it("lets an explicit mode override the env flags", async () => {
     vi.stubEnv(BENCH_FULL_ENV_KEY, "1");
-    await expect(countExecutedTrials({ benchDefaults: BENCH_DEFAULTS, mode: "fast" })).resolves.toBe(3);
+    await expect(countExecutedTrials({ benchDefaults: BENCH_DEFAULTS, mode: "fast" })).resolves.toBe(1);
   });
 
   it("honors an explicit trialCount over BENCH_TRIALS", async () => {
