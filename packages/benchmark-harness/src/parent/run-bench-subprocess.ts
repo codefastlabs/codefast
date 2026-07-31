@@ -366,12 +366,17 @@ export async function runBenchSubprocessesInterleaved(
 
   const workerPayloads = new Map<string, Array<SubprocessPayload>>(libraries.map((library) => [library.key, []]));
   for (const [scenarioIndex, scenarioId] of scenarioIds.entries()) {
-    const rotation = scenarioIndex % libraries.length;
-    const order = [...libraries.slice(rotation), ...libraries.slice(0, rotation)];
+    // Rotate over the libraries that implement this scenario — rotating the full list and then
+    // filtering hands the first slot to whichever library survives the filter most often.
+    const implementing = libraries.filter((library) =>
+      (listPayloads.get(library.key)?.scenarioIds ?? []).includes(scenarioId),
+    );
+    if (implementing.length === 0) {
+      continue;
+    }
+    const rotation = scenarioIndex % implementing.length;
+    const order = [...implementing.slice(rotation), ...implementing.slice(0, rotation)];
     for (const library of order) {
-      if (!(listPayloads.get(library.key)?.scenarioIds ?? []).includes(scenarioId)) {
-        continue;
-      }
       const payload = await runBenchSubprocess({
         ...library.parameters,
         harnessLabel: `${library.parameters.harnessLabel} [${scenarioId}]`,
