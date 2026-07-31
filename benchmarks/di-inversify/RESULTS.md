@@ -7,10 +7,14 @@ is in [`BENCH_GUIDE.md`](./BENCH_GUIDE.md); re-run any of it with the recipes th
 0.5.0-canary.8 · inversify 8.2.3 · awilix 13.0.5 · tsyringe 4.10.0. Isolated profile
 (`BENCH_ISOLATE=1`), 3 trials, unless a row says otherwise.
 
-**The machine was not quiet.** These figures come from a session that had been running benchmarks
+**The machine was not quiet.** These figures come from sessions that had been running benchmarks
 back to back for hours, so the absolute throughputs are depressed. Ratios survive that: a paired run
 measures both builds in the same window, and an interleaved run measures every library within the same
 scenario. Absolute `hz/op` from this page is worth less than the ratios on it.
+
+**Last full re-measure: 2026-07-31**, after the cascade-lane change (`3a0ad82e0`) and the root-frame
+change (`65443f167`) landed, on a freshly rebuilt `dist`. 78 of the run's cells carried a per-trial
+IQR above 5%, so single rows from it are read through the aggregates, not alone.
 
 ## What the current branch changed
 
@@ -70,8 +74,9 @@ resolve.
 | `realistic-graph-cold-resolve`    |          1.02× (spread 0.81–1.18) |
 | `dynamic-async-chain-8`           |                             0.98× |
 
-The last two are the rows this library has historically lost. **Neither moved**, so no engine change
-on this branch may claim them — see [Where it loses](#where-it-loses).
+The last two are the rows this library has historically lost. **Neither moved in that cross-check**,
+so no change up to that point could claim them. The async row was claimed later, by `3a0ad82e0` —
+see [Where it loses](#where-it-loses).
 
 ## Suite aggregates
 
@@ -81,13 +86,19 @@ scenarios each competitor implements.
 
 | Competitor | Win / parity / loss | Median | Geomean |
 | ---------- | ------------------: | -----: | ------: |
-| inversify  |          42 / 0 / 1 |  2.23× |   2.76× |
-| Awilix 13  |           8 / 0 / 0 |  2.86× |   3.30× |
-| tsyringe 4 |           7 / 1 / 0 |  4.21× |   4.27× |
+| inversify  |          43 / 0 / 0 |  2.21× |   2.92× |
+| Awilix 13  |           8 / 0 / 0 |  3.25× |   3.83× |
+| tsyringe 4 |           7 / 0 / 1 |  5.68× |   4.88× |
 
-Group geomeans against inversify: failure 8.22× · boot 7.17× · production 6.74× · scope 4.69× ·
-lifecycle 3.49× · introspection 3.40× · realistic 2.96× · micro 2.24× · fan-out 2.21× · scale 1.39× ·
-async 1.13×.
+Group geomeans against inversify: production 7.60× · failure 6.77× · boot 5.33× · scope 4.67× ·
+lifecycle 3.82× · realistic 3.70× · introspection 3.27× · micro 2.20× · fan-out 2.18× · scale 1.69× ·
+async 1.67×.
+
+The async group moved from 1.13× to 1.67× between the previous measurement and this one; that is the
+cascade-lane change (`3a0ad82e0`), and it is what retires the suite's last loss against inversify —
+see [Where it loses](#where-it-loses). The tsyringe column's single loss is `realistic-graph-cold-resolve`
+at 0.94×, the row this page already documents as parity-by-design. inversify fails its own sanity
+check on `scoped-binding-per-child` and is skipped there, so its comparable count stays 43.
 
 **What interleaving cost, which is the point.** The same profile, library-major, read 43 / 0 / 0 at
 median 3.04× and geomean 4.13× — and against awilix and tsyringe, medians of 5.14× and 6.41× rather
@@ -96,8 +107,9 @@ before the next one's, so drift over the run landed on whoever went later, and `
 went first. Nothing about the library changed between the two runs.
 
 Two independent checks that the interleaved figures are the real ones: `realistic-graph-cold-resolve`
-against tsyringe reads **0.98×** here and 0.99× in a hand-rolled rotating probe, against 1.28×
-library-major; and awilix on that row reads 1.42× here and 1.38× in the probe, against 1.82×.
+against tsyringe read **0.98×** in that session and 0.99× in a hand-rolled rotating probe, against
+1.28× library-major; and awilix on that row read 1.42× and 1.38× in the probe, against 1.82×. The
+2026-07-31 re-measure reads 0.94× on it, inside the same band.
 
 The **shared-process** profile (no `BENCH_ISOLATE`) cannot interleave — one process per library runs
 that library's whole suite — so its cross-library ratios stay provisional. It is also a different
@@ -106,24 +118,26 @@ with every binding shape in the suite, and later scenarios pay for earlier ones.
 
 ## Where it loses
 
-**`dynamic-async-chain-8` — 0.75× of inversify.** Interleaved and GC-exposed. The row has read 0.87×
-at 5 trials on a quiet machine and 0.75× here, so the honest summary is that this library loses an
-eight-deep async factory chain by 15–25% depending on the day, and the 1.48× a library-major run once
-reported was the scheduling, not the engine — a paired A/B of the two builds in that profile put them
-at 0.98×, which is why no change on this branch ever claimed it.
-
-The mechanism behind the shape is settled even though the ratio is not won: the chain's resolution
-context is pooled because a per-chain context survives its chain's microtask hops, so a freshly
-allocated one is promoted out of the nursery and then collected the expensive way. An ablation that
-allocated per chain cost 2.5× on this row. That is why the pool exists — not evidence the row is won.
-
-**`realistic-graph-cold-resolve` — 0.98× of tsyringe**, which is parity, and slower **on purpose**. A
+**`realistic-graph-cold-resolve` — 0.94× of tsyringe** in the 2026-07-31 interleaved run (0.98× in the
+prior session, 1.15× shared-process — the row breathes around parity), and slower **on purpose**. A
 cold iteration hands the collector ten bindings, each carrying every field any binding kind declares,
 because one uniform V8 hidden class for every binding is worth roughly 30% on hot resolve. Winning this
 row means paying for it everywhere else.
 
+**`dynamic-async-chain-8` no longer belongs here.** The 0.75× documented below under Retracted was
+real when measured, and the cascade-lane change (`3a0ad82e0`) is what removed it: async cycle
+detection now reads its ancestors off the synchronous cascade instead of paying a settle-scoped path
+per level. The 2026-07-31 interleaved GC-exposed run reads **1.73×** on the row and **1.67×** on the
+async group's geomean; the per-level cost table and the paired A/B behind the change are in
+[`packages/di/ARCHITECTURE.md`](../../packages/di/ARCHITECTURE.md). The pooled-context mechanism note
+that used to live here survives inside that section.
+
 ## Retracted
 
+- **"`dynamic-async-chain-8` — 0.75× of inversify."** True for the build it measured, retired by
+  `3a0ad82e0`: the 2026-07-31 re-measure under the same interleaved GC-exposed profile reads 1.73×.
+  Kept here because the surrounding claim — "no engine change on this branch may claim this row" —
+  was the correct standard, and this retraction is the row finally meeting it.
 - **"The async-chain row is fixed and runs at 1.26×."** It came from a 3-trial run on a loaded machine,
   supported by a probe that loaded two libraries into one process — worth roughly 30% on async chains
   by this harness's own measurement. Withdrawn.
