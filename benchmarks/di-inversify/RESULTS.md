@@ -16,6 +16,56 @@ scenario. Absolute `hz/op` from this page is worth less than the ratios on it.
 change (`65443f167`) landed, on a freshly rebuilt `dist`. 78 of the run's cells carried a per-trial
 IQR above 5%, so single rows from it are read through the aggregates, not alone.
 
+## 2026-08-01 — fairness fixes supersede every aggregate below
+
+A fairness audit changed the harness and several fixtures, so **the suite aggregates on this page
+predate the current bench and stand only as history** until the next full isolated re-measure:
+
+- `circular-dependency-3` is now rendered but **excluded from all aggregates**: with the published
+  fixture, codefast throws on its **3rd** factory entry while inversify 8.2.3 re-enters the user
+  factory **1413 times** before its own error (reproduced, counters in the fixture) — the two sides
+  never did comparable work per op. This row alone carried the `failure` group geomean and ~9% of
+  the headline geomean.
+- The isolated runner's rotation now rotates over the libraries that implement each scenario;
+  before, filtering after rotation left `@codefast/di` in the first slot for 3 of every 4
+  codefast-vs-inversify rows.
+- Every inversify container now runs `{ jitless: false }` — its codegen resolvers, off by default
+  as a CSP-safe fallback (verified against the installed `@inversifyjs/container` 3.1.3 source).
+- `scoped-binding-per-child` was re-fixtured on the inversify side (per-request child + own
+  singleton bind, its idiom for the same user story); it previously failed its own sanity check
+  and silently dropped out. `to-self-binding` now injects its leaf on both sides; the inversify
+  `resolution-patterns` closures hoist their options literals like the codefast side does.
+- New row `realistic-graph-resolved-root`: the shared graph bound via `toResolved` /
+  `toResolvedValue` — the shape both libraries compile ahead of time, so the row compares each
+  library's best path rather than both on codefast's idiom.
+- The report now names rows excluded from aggregates, pivot-only rows, and medians resting on
+  fewer trials than the run scheduled.
+
+**Re-measure under the fixed harness (2026-08-01, `BENCH_ISOLATE=1 BENCH_FULL=1`, interleaved,
+3 trials): 44 / 0 / 0 against inversify, median 2.39×, geomean 2.90×.** Groups: micro 2.56× ·
+realistic 2.35× · fan-out 2.23× · async 1.57× · lifecycle 4.21× · scope 8.20× · scale 1.82× ·
+boot 7.00× · failure 1.73× · production 6.86× · introspection 3.49×. Against awilix 8 / 0 / 0
+(median 3.31×); against tsyringe 7 / 0 / 1, the loss being `realistic-graph-cold-resolve` at
+0.90× — the parity-by-design row, which read 1.01× in the same-day default-profile session (44
+wins there too, median 2.21× / geomean 2.68×; the GC-exposed profile is the one that favors this
+library, and both sessions carried ~50 cells with per-trial IQR above 5%, so the aggregates are
+the reading).
+
+Two rows say what the fairness fixes changed. The new best-vs-best row
+`realistic-graph-resolved-root` reads **1.24×** (1.26× in the default-profile session) — when
+inversify runs its compiled `toResolvedValue` path on the same graph, the gap narrows from ~2.4×
+(the `toDynamic` row) to ~1.25×. And under `jitless: false`, `transient-class-1-dep` sits at
+2.36× against ~2.7× before. The headline geomean landing back at 2.90× after removing the
+circular row, the rotation bias and the jitless handicap means the old 2.92× was roughly right
+for the GC-exposed profile — for partially compensating reasons, which is why the number needed
+re-earning.
+
+Engine changes on this date (late `.onActivation()` honored on memoized lanes, activation-need
+memo evicted on rebind, scoped instances released on unbind) were paired-A/B checked old-vs-new
+on six sensitive rows, three passes, alternating order: every row within noise of parity
+(`fan-out-tree-depth-3-breadth-4` read 0.976× median with a 0.935–1.001 spread — re-check under
+the full isolated protocol before release).
+
 ## What the current branch changed
 
 Paired A/B of two builds of `@codefast/di`, one subprocess per side back to back, alternating which
@@ -134,6 +184,11 @@ that used to live here survives inside that section.
 
 ## Retracted
 
+- **"Group geomean: failure 6.77×."** Carried almost entirely by `circular-dependency-3`, whose
+  two sides do incomparable work per op (3 vs 1413 factory entries before the throw — see the
+  2026-08-01 note). With the row excluded the group reads ~1.2–1.5× from its two remaining rows.
+  Withdrawn; the headline geomean quoted alongside it (2.92×) drops by roughly a tenth on the same
+  data with the row removed.
 - **"`dynamic-async-chain-8` — 0.75× of inversify."** True for the build it measured, retired by
   `3a0ad82e0`: the 2026-07-31 re-measure under the same interleaved GC-exposed profile reads 1.73×.
   Kept here because the surrounding claim — "no engine change on this branch may claim this row" —
