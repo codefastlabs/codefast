@@ -8,7 +8,7 @@
  *   - `toSelf().singleton()` → `toSelf().inSingletonScope()`
  */
 import "reflect-metadata";
-import { Container, injectable } from "inversify";
+import { Container, inject, injectable } from "inversify";
 
 import {
   TO_ALIAS_BATCH,
@@ -39,7 +39,7 @@ const depCId = Symbol("bench-inv-bv-dep-c");
 const resolvedServiceId = Symbol("bench-inv-bv-resolved-service");
 
 function buildToResolvedThreeDepsScenario(): BenchScenario {
-  const container = new Container();
+  const container = new Container({ jitless: false });
 
   container.bind<ResolvedDep>(depAId).toConstantValue({ id: "a" });
   container.bind<ResolvedDep>(depBId).toConstantValue({ id: "b" });
@@ -81,7 +81,7 @@ const concreteId = Symbol("bench-inv-bv-concrete");
 const abstractId = Symbol("bench-inv-bv-abstract");
 
 function buildToServiceRedirectScenario(): BenchScenario {
-  const container = new Container();
+  const container = new Container({ jitless: false });
 
   container
     .bind<AbstractService>(concreteId)
@@ -117,16 +117,18 @@ class SelfBoundLeaf {
 
 @injectable()
 class SelfBoundRoot {
-  readonly leaf: SelfBoundLeaf;
   readonly tag = "self-bound-root";
 
-  constructor() {
-    this.leaf = new SelfBoundLeaf();
-  }
+  // Container-injected like the codefast side's fixture — the two sides describe the same graph.
+  constructor(
+    // @ts-ignore reflect-metadata picks this up at decorator eval time
+    @inject(SelfBoundLeaf)
+    readonly leaf: SelfBoundLeaf,
+  ) {}
 }
 
 function buildToSelfSingletonScenario(): BenchScenario {
-  const container = new Container();
+  const container = new Container({ jitless: false });
 
   container.bind(SelfBoundLeaf).toSelf().inSingletonScope();
   container.bind(SelfBoundRoot).toSelf().inSingletonScope();

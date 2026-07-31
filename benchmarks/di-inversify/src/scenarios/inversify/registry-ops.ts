@@ -7,7 +7,7 @@
  *   - `container.has(token)` → `container.isBound(id)` (checks parent chain)
  *   - `container.hasOwn(token)` → `container.isCurrentBound(id)` (own only)
  *   - `container.onActivation(token, fn)` → `container.onActivation(id, fn)`
- *   - `.scoped()` → `.inRequestScope()` (singleton per child container)
+ *   - `.scoped()` → per-request child container + own singleton bind (see scenario 5)
  */
 import "reflect-metadata";
 import { Container } from "inversify";
@@ -32,7 +32,7 @@ import type { BenchScenario } from "#/scenarios/types";
 const rebindId = Symbol("bench-inv-ro-rebind");
 
 function buildRebindHotSwapScenario(): BenchScenario {
-  const container = new Container();
+  const container = new Container({ jitless: false });
   container.bind<number>(rebindId).toConstantValue(1);
 
   function runOneSwap(iteration: number): number {
@@ -66,7 +66,7 @@ function buildRebindHotSwapScenario(): BenchScenario {
 const hasBoundId = Symbol("bench-inv-ro-has-bound");
 
 function buildIsBoundCheckScenario(): BenchScenario {
-  const container = new Container();
+  const container = new Container({ jitless: false });
   container.bind<number>(hasBoundId).toConstantValue(1);
   container.isBound(hasBoundId);
 
@@ -87,9 +87,9 @@ function buildIsBoundCheckScenario(): BenchScenario {
 const hasOwnId = Symbol("bench-inv-ro-has-own");
 
 function buildIsCurrentBoundCheckScenario(): BenchScenario {
-  const parentContainer = new Container();
+  const parentContainer = new Container({ jitless: false });
   parentContainer.bind<number>(hasOwnId).toConstantValue(42);
-  const childContainer = new Container({ parent: parentContainer });
+  const childContainer = new Container({ jitless: false, parent: parentContainer });
   // The binding is in parent, not child — isCurrentBound returns false
   childContainer.isCurrentBound(hasOwnId);
 
@@ -115,7 +115,7 @@ interface HookPayload {
 const hookPayloadId = Symbol("bench-inv-ro-hook-payload");
 
 function buildContainerLevelActivationHookScenario(): BenchScenario {
-  const container = new Container();
+  const container = new Container({ jitless: false });
   let activationCallCount = 0;
 
   container
@@ -149,76 +149,53 @@ function buildContainerLevelActivationHookScenario(): BenchScenario {
   };
 }
 
-// ─── scenario 5: inRequestScope — shared within one resolution call ────────────
+// ─── scenario 5: per-request child sharing ────────────────────────────────────
 //
-// inversify's `inRequestScope()` scopes to a single `get()` call tree, not to a
-// child container.  To exercise this properly: a root service depends on the scoped
-// token through two different intermediate services.  Both intermediates share the
-// same scoped instance within one `get(rootId)` call; the next call creates a fresh one.
+// inversify 8 has no per-child binding scope (`inRequestScope()` spans a single
+// `get()` call tree), so per-request sharing across several resolves is expressed
+// as a per-request child container carrying its own singleton bind. Same user
+// story as the codefast side, idiomatic to each library.
 
 interface ScopedInstance {
   readonly id: number;
 }
-interface ScopedBranchA {
-  readonly scoped: ScopedInstance;
-}
-interface ScopedBranchB {
-  readonly scoped: ScopedInstance;
-}
-interface ScopedRoot {
-  readonly a: ScopedBranchA;
-  readonly b: ScopedBranchB;
-}
 
 const scopedId = Symbol("bench-inv-ro-scoped");
-const scopedBranchAId = Symbol("bench-inv-ro-scoped-branch-a");
-const scopedBranchBId = Symbol("bench-inv-ro-scoped-branch-b");
-const scopedRootId = Symbol("bench-inv-ro-scoped-root");
 
 function buildScopedBindingPerChildScenario(): BenchScenario {
-  const container = new Container();
+  const appContainer = new Container({ jitless: false });
   let instanceCounter = 0;
 
-  container
-    .bind<ScopedInstance>(scopedId)
-    .toDynamicValue(() => ({ id: ++instanceCounter }))
-    .inRequestScope();
-
-  container
-    .bind<ScopedBranchA>(scopedBranchAId)
-    .toDynamicValue((ctx) => ({ scoped: ctx.get<ScopedInstance>(scopedId) }))
-    .inTransientScope();
-
-  container
-    .bind<ScopedBranchB>(scopedBranchBId)
-    .toDynamicValue((ctx) => ({ scoped: ctx.get<ScopedInstance>(scopedId) }))
-    .inTransientScope();
-
-  container
-    .bind<ScopedRoot>(scopedRootId)
-    .toDynamicValue((ctx) => ({
-      a: ctx.get<ScopedBranchA>(scopedBranchAId),
-      b: ctx.get<ScopedBranchB>(scopedBranchBId),
-    }))
-    .inTransientScope();
+  function runOneScopedRequest(): ScopedInstance {
+    const child = new Container({ jitless: false, parent: appContainer });
+    child
+      .bind<ScopedInstance>(scopedId)
+      .toDynamicValue(() => ({ id: ++instanceCounter }))
+      .inSingletonScope();
+    const first = child.get<ScopedInstance>(scopedId);
+    const second = child.get<ScopedInstance>(scopedId);
+    if (first !== second) {
+      throw new Error("Expected per-child singleton to return same instance within child");
+    }
+    child.unbindAll();
+    return first;
+  }
 
   // Pre-warm
-  container.get<ScopedRoot>(scopedRootId);
+  runOneScopedRequest();
 
   return {
     ...SCOPED_BINDING_PER_CHILD,
-    what: "inRequestScope() shared within one get() call tree; fresh instance on next get() call",
+    what: "per-request child container with its own singleton bind — inversify's idiom for per-request sharing (one bind per iteration)",
     batch: SCOPED_PER_CHILD_BATCH,
     sanity: () => {
-      const r1 = container.get<ScopedRoot>(scopedRootId);
-      const r2 = container.get<ScopedRoot>(scopedRootId);
-      // Within one call: both branches share the same scoped instance
-      // Across calls: each call creates a fresh scoped instance
-      return r1.a.scoped === r1.b.scoped && r1.a.scoped !== r2.a.scoped;
+      const r1 = runOneScopedRequest();
+      const r2 = runOneScopedRequest();
+      return r1 !== r2 && r1.id < r2.id;
     },
     build: () =>
       batched(SCOPED_PER_CHILD_BATCH, () => {
-        container.get(scopedRootId);
+        runOneScopedRequest();
       }),
   };
 }

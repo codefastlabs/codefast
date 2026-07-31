@@ -14,7 +14,8 @@ import type { BenchScenario } from "#/scenarios/types";
 /**
  * @since 0.5.0-canary.7
  */
-export type ScenarioDescriptor = Pick<BenchScenario, "id" | "group" | "what">;
+export type ScenarioDescriptor = Pick<BenchScenario, "id" | "group" | "what"> &
+  Partial<Pick<BenchScenario, "excludeFromAggregates">>;
 
 // ─── micro ───────────────────────────────────────────────────────────────────
 
@@ -90,6 +91,14 @@ export const REALISTIC_GRAPH_COLD_RESOLVE = {
   id: "realistic-graph-cold-resolve",
   group: "realistic",
   what: "build a fresh container, bind 10 nodes, resolve root once (cold start)",
+} as const satisfies ScenarioDescriptor;
+
+// Explicit-deps factories are the shape both libraries compile ahead of time (codefast's
+// instantiation plans, inversify's plan tree + codegen resolvers) — the best-vs-best row.
+export const REALISTIC_GRAPH_RESOLVED_ROOT = {
+  id: "realistic-graph-resolved-root",
+  group: "realistic",
+  what: "resolve the transient root of the 10-node graph bound via explicit-deps factories (each library's compiled path)",
 } as const satisfies ScenarioDescriptor;
 
 // ─── fan-out ─────────────────────────────────────────────────────────────────
@@ -497,10 +506,13 @@ export const MISCONFIGURED_MISSING_BINDING = {
 /**
  * @since 0.5.0-canary.7
  */
+// Excluded from aggregates: the sides do incomparable work per op — codefast throws on the third
+// factory entry while inversify re-enters the user factory hundreds of times before its own error.
 export const CIRCULAR_DEPENDENCY_3 = {
   id: "circular-dependency-3",
   group: "failure",
-  what: "resolve a 3-node circular dependency and fail fast",
+  what: "resolve a 3-node circular dependency and fail fast (row only — sides do incomparable work)",
+  excludeFromAggregates: true,
 } as const satisfies ScenarioDescriptor;
 
 /**

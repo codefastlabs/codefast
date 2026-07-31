@@ -17,6 +17,10 @@ export const DI_COMPARISON_MARKDOWN: ComparisonMarkdownReportOptions = {
   introLines: [
     "Each library runs at its **canonical decorator mode** — inversify with legacy experimental decorators + `reflect-metadata`, @codefast/di with TC39 Stage 3 decorators + `Symbol.metadata`. This measures the shipping experience of each library, not the raw decorator runtimes in isolation.",
     "",
+    "Every inversify container is created with **`{ jitless: false }`**, enabling its codegen resolvers for transient instance/resolved bindings — inversify's fastest documented configuration (the default `jitless: true` is the CSP-safe fallback).",
+    "",
+    "Rows flagged as excluded from aggregates stay in the table but out of the medians/geomeans: their two sides do incomparable amounts of work per op (`circular-dependency-3` — codefast fails on the third factory entry, inversify re-enters the user factory hundreds of times before its own error).",
+    "",
     "One row per scenario `@codefast/di` measures, one throughput column for it, one ratio column per competitor. **awilix and tsyringe implement only the factory/class-binding core subset**, so they read `—` on every scenario outside it; the `Comparable` column below counts only the rows they actually measured.",
     "",
     "Cite the summary, not the rows. `hz/op` is operations per second per logical operation (tinybench `throughput.mean` multiplied by `batch`); a competitor's own throughput is that figure divided by its ratio, and its exact value, along with `mean ms`, `p99 ms` and every per-trial IQR, is in `latest.jsonl`.",

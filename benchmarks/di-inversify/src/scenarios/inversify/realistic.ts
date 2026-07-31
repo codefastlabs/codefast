@@ -8,11 +8,17 @@
  * The reporter renders the missing row as "—" on the inversify column.
  */
 import "reflect-metadata";
-import { buildInversifyRealisticContainer, sanityCheckInversifyRealisticResolve } from "#/fixtures/inversify-adapter";
+import {
+  buildInversifyRealisticContainer,
+  buildInversifyRealisticResolvedContainer,
+  sanityCheckInversifyRealisticResolve,
+  sanityCheckInversifyRealisticResolvedResolve,
+} from "#/fixtures/inversify-adapter";
 import { REALISTIC_GRAPH } from "#/fixtures/realistic-graph";
 import {
   REALISTIC_GRAPH_COLD_RESOLVE,
   REALISTIC_GRAPH_RESOLVE_ROOT,
+  REALISTIC_GRAPH_RESOLVED_ROOT,
   REALISTIC_RESOLVE_BATCH,
 } from "#/fixtures/scenario-parity";
 import { batched } from "#/harness/batched";
@@ -47,9 +53,29 @@ function buildRealisticGraphColdResolveScenario(): BenchScenario {
   };
 }
 
+function buildRealisticGraphResolvedRootScenario(): BenchScenario {
+  const { container, rootIdentifier } = buildInversifyRealisticResolvedContainer(REALISTIC_GRAPH);
+  container.get(rootIdentifier);
+
+  return {
+    ...REALISTIC_GRAPH_RESOLVED_ROOT,
+    what: "resolve the transient root of the 10-node graph bound via toResolvedValue() (plan tree + codegen resolvers)",
+    batch: REALISTIC_RESOLVE_BATCH,
+    sanity: () => sanityCheckInversifyRealisticResolvedResolve(REALISTIC_GRAPH),
+    build: () =>
+      batched(REALISTIC_RESOLVE_BATCH, () => {
+        container.get(rootIdentifier);
+      }),
+  };
+}
+
 /**
  * @since 0.3.16-canary.0
  */
 export function buildInversifyRealisticScenarios(): ReadonlyArray<BenchScenario> {
-  return [buildRealisticGraphResolveRootScenario(), buildRealisticGraphColdResolveScenario()];
+  return [
+    buildRealisticGraphResolveRootScenario(),
+    buildRealisticGraphColdResolveScenario(),
+    buildRealisticGraphResolvedRootScenario(),
+  ];
 }

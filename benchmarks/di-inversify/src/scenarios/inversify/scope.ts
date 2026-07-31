@@ -20,10 +20,10 @@ import type { BenchScenario } from "#/scenarios/types";
 
 function buildChildDepthTwoResolveScenario(): BenchScenario {
   const childScopeLeafIdentifier = Symbol("bench-inv-child2-leaf");
-  const rootContainer = new Container();
+  const rootContainer = new Container({ jitless: false });
   rootContainer.bind<number>(childScopeLeafIdentifier).toConstantValue(42);
-  const firstLevelChildContainer = new Container({ parent: rootContainer });
-  const secondLevelChildContainer = new Container({ parent: firstLevelChildContainer });
+  const firstLevelChildContainer = new Container({ jitless: false, parent: rootContainer });
+  const secondLevelChildContainer = new Container({ jitless: false, parent: firstLevelChildContainer });
   secondLevelChildContainer.get(childScopeLeafIdentifier);
 
   return {
@@ -47,15 +47,15 @@ function buildChildRequestLifecycleCreateResolveDisposeScenario(): BenchScenario
   const childRequestServiceIdentifier = Symbol("bench-inv-scope-request-child");
   const resolvedPayloadIdentifier = Symbol("bench-inv-scope-request-payload");
 
-  const appContainer = new Container();
+  const appContainer = new Container({ jitless: false });
   appContainer
     .bind<number>(appRootServiceIdentifier)
     .toDynamicValue(() => 41)
     .inTransientScope();
 
   function runOneRequestLifecycle(): ScopeResolvedPayload {
-    const firstLevelChildContainer = new Container({ parent: appContainer });
-    const secondLevelChildContainer = new Container({ parent: firstLevelChildContainer });
+    const firstLevelChildContainer = new Container({ jitless: false, parent: appContainer });
+    const secondLevelChildContainer = new Container({ jitless: false, parent: firstLevelChildContainer });
 
     firstLevelChildContainer
       .bind<number>(childRequestServiceIdentifier)

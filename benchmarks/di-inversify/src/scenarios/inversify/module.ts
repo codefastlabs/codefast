@@ -7,7 +7,7 @@
  *   - `container.load(...modules)` → `container.load(...modules)`
  *   - `container.unload(...modules)` → `container.unload(...modules)`
  *   - `Container.fromModules(...)` → no direct equivalent; approximated by
- *     `new Container()` + `container.load(modules)` to match the cold-start shape.
+ *     `new Container({ jitless: false })` + `container.load(modules)` to match the cold-start shape.
  *
  * Note: inversify's `ContainerModule` does NOT support the `module-cold-from-modules`
  * scenario ID (no `fromModules` static), so that row appears as codefast-only in
@@ -68,7 +68,7 @@ function buildModuleLoadUnloadScenario(): BenchScenario {
   });
 
   function runOneLoadCycle(): string {
-    const container = new Container();
+    const container = new Container({ jitless: false });
     container.load(infraModule, appModule);
     const service = container.get<ModuleService>(moduleServiceId);
     container.unload(appModule, infraModule);

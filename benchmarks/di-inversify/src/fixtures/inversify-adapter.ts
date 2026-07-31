@@ -76,7 +76,7 @@ function bindOneNode(
 export function buildInversifyRealisticContainer(graph: GraphDescriptor): InversifyRealisticBuild {
   assertGraphIsWellFormed(graph);
 
-  const container = new Container();
+  const container = new Container({ jitless: false });
   const identifiersById = new Map<string, ServiceIdentifier<RealisticNode>>();
   for (const nodeId of topologicallyOrderedNodeIds(graph)) {
     // `Symbol()` (not `Symbol.for`) keeps the inversify identifier unique
@@ -101,6 +101,69 @@ export function buildInversifyRealisticContainer(graph: GraphDescriptor): Invers
  */
 export function sanityCheckInversifyRealisticResolve(graph: GraphDescriptor): boolean {
   const { container, rootIdentifier } = buildInversifyRealisticContainer(graph);
+  const resolved = container.get<RealisticNode>(rootIdentifier);
+  return resolved.__id === graph.rootId && resolved.resolvedDependencies.length > 0;
+}
+
+function bindOneResolvedNode(
+  container: InversifyContainerType,
+  node: NodeDescriptor,
+  identifiersById: ReadonlyMap<string, ServiceIdentifier<RealisticNode>>,
+): void {
+  const nodeIdentifier = identifiersById.get(node.id);
+  if (nodeIdentifier === undefined) {
+    throw new Error(`Inversify adapter: identifier missing for node "${node.id}"`);
+  }
+  const dependencyIdentifiers = node.dependencies.map((dependencyId) => {
+    const dependencyIdentifier = identifiersById.get(dependencyId);
+    if (dependencyIdentifier === undefined) {
+      throw new Error(`Inversify adapter: dependency identifier missing for "${node.id}" -> "${dependencyId}"`);
+    }
+    return dependencyIdentifier;
+  });
+
+  const binding = container.bind<RealisticNode>(nodeIdentifier).toResolvedValue(
+    (...resolvedDependencies: Array<RealisticNode>): RealisticNode => ({
+      __id: node.id,
+      resolvedDependencies,
+    }),
+    dependencyIdentifiers,
+  );
+
+  if (node.lifetime === "singleton") {
+    binding.inSingletonScope();
+  } else {
+    binding.inTransientScope();
+  }
+}
+
+/**
+ * Builds the same graph through `toResolvedValue` (explicit dep identifiers) — the shape
+ * inversify's plan tree and codegen resolvers serve, mirroring codefast's `toResolved` adapter.
+ */
+export function buildInversifyRealisticResolvedContainer(graph: GraphDescriptor): InversifyRealisticBuild {
+  assertGraphIsWellFormed(graph);
+
+  const container = new Container({ jitless: false });
+  const identifiersById = new Map<string, ServiceIdentifier<RealisticNode>>();
+  for (const nodeId of topologicallyOrderedNodeIds(graph)) {
+    identifiersById.set(nodeId, Symbol(`realistic-resolved:${nodeId}`));
+  }
+  for (const node of graph.nodes) {
+    bindOneResolvedNode(container, node, identifiersById);
+  }
+  const rootIdentifier = identifiersById.get(graph.rootId);
+  if (rootIdentifier === undefined) {
+    throw new Error(`Inversify adapter: root identifier missing for "${graph.rootId}"`);
+  }
+  return { container, rootIdentifier, identifiersById };
+}
+
+/**
+ * Sanity for the `toResolvedValue` variant — same assertions as the dynamic-value one.
+ */
+export function sanityCheckInversifyRealisticResolvedResolve(graph: GraphDescriptor): boolean {
+  const { container, rootIdentifier } = buildInversifyRealisticResolvedContainer(graph);
   const resolved = container.get<RealisticNode>(rootIdentifier);
   return resolved.__id === graph.rootId && resolved.resolvedDependencies.length > 0;
 }

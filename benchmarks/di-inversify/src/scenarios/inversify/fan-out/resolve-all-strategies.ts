@@ -18,7 +18,7 @@ import type { BenchScenario } from "#/scenarios/types";
 
 function buildResolveAllStrategiesScenario(strategyCount: ResolveAllStrategyCount): BenchScenario {
   const strategyIdentifier = Symbol("bench-inv-fanout-resolve-all-strategy");
-  const container = new Container();
+  const container = new Container({ jitless: false });
   for (let index = 0; index < strategyCount; index++) {
     container
       .bind<number>(strategyIdentifier)
@@ -47,7 +47,7 @@ function buildResolveAllStrategiesScenario(strategyCount: ResolveAllStrategyCoun
 function buildResolveAllNamedScenario(namedCount: ResolveAllNamedCount): BenchScenario {
   const strategyIdentifier = Symbol("bench-inv-fanout-resolve-all-named");
   const targetName = "strategy-0";
-  const container = new Container();
+  const container = new Container({ jitless: false });
   for (let index = 0; index < namedCount; index++) {
     container
       .bind<number>(strategyIdentifier)

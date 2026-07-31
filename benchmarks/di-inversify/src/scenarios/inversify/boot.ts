@@ -109,7 +109,7 @@ class BootController {
 }
 
 function buildBootContainerAndResolveRoot(): BootController {
-  const container = new Container();
+  const container = new Container({ jitless: false });
   container.bind<BootConfig>(bootConfigIdentifier).to(BootConfig).inSingletonScope();
   container.bind<BootLogger>(bootLoggerIdentifier).to(BootLogger).inSingletonScope();
   container.bind<BootDatabaseClient>(bootDatabaseClientIdentifier).to(BootDatabaseClient).inSingletonScope();
