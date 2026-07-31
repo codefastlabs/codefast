@@ -31,6 +31,7 @@ export interface ScenarioTrialResult {
   readonly id: string;
   readonly group: string;
   readonly stress: boolean;
+  readonly excludeFromAggregates: boolean;
   readonly batch: number;
   readonly what: string;
   readonly hzPerIteration: number;

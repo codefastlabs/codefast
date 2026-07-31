@@ -37,6 +37,8 @@ export interface ComparisonScenarioRow {
   readonly batch: number;
   readonly what: string;
   readonly stress: boolean;
+  readonly excludeFromAggregates: boolean;
+  readonly pivotTrialsIncluded: number;
   readonly pivotHzPerOp: number;
   readonly pivotIqrFraction: number;
   readonly competitors: ReadonlyArray<ComparisonCompetitorCell>;
@@ -104,6 +106,8 @@ export interface ComparisonHeadToHead {
   readonly unreliableCount: number;
   readonly pivotOnlyIds: ReadonlyArray<string>;
   readonly competitorOnlyIds: ReadonlyArray<string>;
+  /** Rows rendered in the table but kept out of every aggregate, by scenario declaration. */
+  readonly excludedFromAggregatesIds: ReadonlyArray<string>;
 }
 
 /** One competitor's head-to-head against the pivot, paired with its label. */
@@ -171,6 +175,8 @@ export function buildComparisonRows(
     batch: scenario.batch,
     what: scenario.what,
     stress: scenario.stress,
+    excludeFromAggregates: scenario.excludeFromAggregates,
+    pivotTrialsIncluded: scenario.trialsIncluded,
     pivotHzPerOp: scenario.hzPerOpMedian,
     pivotIqrFraction: scenario.hzPerOpIqrFraction,
     competitors: competitorScenariosById.map((scenariosById) =>
@@ -193,11 +199,16 @@ export function summarizeAgainstCompetitor(
   const parities: Array<ComparisonEntry> = [];
   const losses: Array<ComparisonEntry> = [];
   const pivotOnlyIds: Array<string> = [];
+  const excludedFromAggregatesIds: Array<string> = [];
   // Per-group ratios kept in first-appearance order for a stable breakdown.
   const ratiosByGroup = new Map<string, Array<number>>();
   const pivotScenarioIds = new Set(rows.map((row) => row.id));
 
   for (const row of rows) {
+    if (row.excludeFromAggregates) {
+      excludedFromAggregatesIds.push(row.id);
+      continue;
+    }
     const cell = row.competitors[competitorIndex];
     if (cell === undefined || cell.hzPerOp === 0 || row.pivotHzPerOp === 0) {
       if (row.pivotHzPerOp > 0) {
@@ -236,6 +247,7 @@ export function summarizeAgainstCompetitor(
       count: groupRatios.length,
     })),
     unreliableCount: classified.filter((entry) => entry.unreliable).length,
+    excludedFromAggregatesIds,
     pivotOnlyIds,
     competitorOnlyIds: competitorReport.scenarios
       .filter((scenario) => !pivotScenarioIds.has(scenario.id))
@@ -368,20 +380,49 @@ function buildGroupGeomeanTableLines(
   ];
 }
 
-/** The exceptions no column holds: which rows lost, which drew, and what the pivot never ran. */
+const PIVOT_ONLY_LIST_LIMIT = 12;
+
+/** The exceptions no column holds: which rows lost, which drew, and what only one side ran. */
 function buildCompetitorNoteLines(summaries: ReadonlyArray<ComparisonCompetitorSummary>): Array<string> {
   const lines: Array<string> = [];
   for (const { displayName, headToHead } of summaries) {
-    const { losses, parities, competitorOnlyIds } = headToHead;
+    const { losses, parities, competitorOnlyIds, pivotOnlyIds, excludedFromAggregatesIds } = headToHead;
     if (losses.length > 0) {
       lines.push(`- **${displayName}** — losses: ${formatEntryList(losses)}`);
     }
     if (parities.length > 0) {
       lines.push(`- **${displayName}** — parity: ${formatEntryList(parities)}`);
     }
+    if (excludedFromAggregatesIds.length > 0) {
+      lines.push(
+        `- **${displayName}** — excluded from aggregates by declaration (incomparable work per op): ${excludedFromAggregatesIds.map((id) => `\`${id}\``).join(", ")}`,
+      );
+    }
+    if (pivotOnlyIds.length > 0) {
+      const listed =
+        pivotOnlyIds.length <= PIVOT_ONLY_LIST_LIMIT ? `: ${pivotOnlyIds.map((id) => `\`${id}\``).join(", ")}` : ".";
+      lines.push(`- **${displayName}** — has no counterpart for ${String(pivotOnlyIds.length)} pivot row(s)${listed}`);
+    }
     if (competitorOnlyIds.length > 0) {
       lines.push(
         `- **${displayName}** — measures ${String(competitorOnlyIds.length)} scenario(s) this suite does not, so they have no row.`,
+      );
+    }
+  }
+  return lines;
+}
+
+/** Rows whose median rests on fewer surviving trials than the run scheduled. */
+function buildPartialTrialNoteLines(
+  pivot: ComparisonLibrary,
+  competitors: ReadonlyArray<ComparisonLibrary>,
+): Array<string> {
+  const lines: Array<string> = [];
+  for (const library of [pivot, ...competitors]) {
+    const partial = library.report.scenarios.filter((scenario) => scenario.trialsIncluded < library.report.trialCount);
+    if (partial.length > 0) {
+      lines.push(
+        `- **${library.displayName}** — medians resting on fewer trials than the run's ${String(library.report.trialCount)}: ${partial.map((scenario) => `\`${scenario.id}\` (${String(scenario.trialsIncluded)})`).join(", ")}`,
       );
     }
   }
@@ -466,7 +507,7 @@ export function renderComparisonMarkdownReport(
   const unreliableCount = countUnreliableRatioCells(rows);
   const noisyCount = countNoisyCells(rows);
   const introLines = options.introLines ?? [];
-  const noteLines = buildCompetitorNoteLines(summaries);
+  const noteLines = [...buildCompetitorNoteLines(summaries), ...buildPartialTrialNoteLines(pivot, competitors)];
   const groupTableLines = buildGroupGeomeanTableLines(collectGroupOrder(rows), summaries);
 
   const sections: Array<string> = [

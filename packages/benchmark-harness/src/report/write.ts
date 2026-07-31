@@ -37,6 +37,7 @@ function flattenLibraryToJsonl(
         scenarioId: scenarioResult.id,
         group: scenarioResult.group,
         stress: scenarioResult.stress,
+        excludeFromAggregates: scenarioResult.excludeFromAggregates,
         batch: scenarioResult.batch,
         what: scenarioResult.what,
         hzPerIteration: scenarioResult.hzPerIteration,
