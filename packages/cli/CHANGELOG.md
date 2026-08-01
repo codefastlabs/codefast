@@ -1,5 +1,19 @@
 # @codefast/cli
 
+## 0.5.0
+
+### Patch Changes
+
+- [#646](https://github.com/codefastlabs/codefast/pull/646) [`0bbb11c`](https://github.com/codefastlabs/codefast/commit/0bbb11cbd2d4822416e9b51ac854e3473223cca2) Thanks [@thevuong](https://github.com/thevuong)! - Add `mirror.<pkg>.exclude` — a list of specifiers to leave out of the generated `package.json#exports`, so a package's public surface is a decision rather than a consequence of its `dist/` layout. Patterns are matched against the specifier as it would appear in `exports` (after `strip`), a trailing `/*` drops a whole subtree, and the root export is never excluded.
+
+  Until now the only levers were `strip`, extra `exports`, and `preserve: true` — and `preserve` skips the dist scan entirely, so curating a surface meant hand-editing the map that the tool exists to generate. `exclude` closes that gap.
+
+- [#529](https://github.com/codefastlabs/codefast/pull/529) [`ca90f1c`](https://github.com/codefastlabs/codefast/commit/ca90f1c86dbc8626b6fad9cde38f277abd9fd0c0) Thanks [@thevuong](https://github.com/thevuong)! - `codefast tag` now matches `tag.skipPackages` entries as glob patterns (picomatch), so a single `@apps/*` entry skips every private app instead of listing each by name. This fixes the release `Publish packages` step failing on `@apps/start-demo` (a private, version-less app the command tried to tag). The compile-patterns-then-match-any logic is now shared via a single `createAnyGlobMatcher` helper, also used by workspace-package discovery.
+
+- [#676](https://github.com/codefastlabs/codefast/pull/676) [`641e233`](https://github.com/codefastlabs/codefast/commit/641e2338d77fb61be2ca585a5986f34cf32ec746) Thanks [@thevuong](https://github.com/thevuong)! - Collapse the `types` and `default` lanes of `package.json#imports` from fallback arrays to single strings.
+
+  Node resolves an imports array by taking the first candidate it can parse, without checking that the file exists and without falling through — a specifier whose first candidate is missing throws `ERR_MODULE_NOT_FOUND` rather than trying the second. `./dist/*/index.js` and `./dist/*/index.d.ts` could therefore never be reached, so they read as a safety net that does not exist. The `source` lane keeps its extension candidates, which only `tsc` and Vite read and both probe.
+
 ## 0.5.0-canary.9
 
 ### Patch Changes
