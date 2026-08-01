@@ -1,4 +1,4 @@
-import type { ContainerGraphJson } from "#/introspection/dependency-graph";
+import type { ContainerGraphJson, GraphNode } from "#/introspection/dependency-graph";
 
 /**
  * @since 0.3.16-canary.0
@@ -7,8 +7,9 @@ export interface CytoscapeNode {
   readonly data: {
     readonly id: string;
     readonly label: string;
-    readonly kind: string;
-    readonly scope: string;
+    readonly tokenKey: string;
+    readonly kind: GraphNode["kind"];
+    readonly scope: GraphNode["scope"];
     readonly fromParent: boolean;
   };
 }
@@ -22,6 +23,8 @@ export interface CytoscapeEdge {
     readonly source: string;
     readonly target: string;
     readonly label?: string;
+    readonly optional: boolean;
+    readonly slotName?: string;
   };
 }
 
@@ -41,6 +44,7 @@ export function toCytoscapeGraph(graph: ContainerGraphJson): CytoscapeElements {
       data: {
         id: node.id,
         label: node.tokenName,
+        tokenKey: node.tokenKey,
         kind: node.kind,
         scope: node.scope,
         fromParent: node.fromParent,
@@ -56,6 +60,8 @@ export function toCytoscapeGraph(graph: ContainerGraphJson): CytoscapeElements {
         source: edge.from,
         target: edge.to,
         ...(edge.label !== undefined ? { label: edge.label } : {}),
+        optional: edge.optional,
+        ...(edge.slotName !== undefined ? { slotName: edge.slotName } : {}),
       },
     });
   }

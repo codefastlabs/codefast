@@ -69,7 +69,7 @@ describe("generateDependencyGraph", () => {
     expect(graph.edges).toContainEqual(expect.objectContaining({ from: serviceNode!.id, to: configNode!.id }));
   });
 
-  it("marks optional dependencies on the edge label", () => {
+  it("reports an optional dependency as a field, not only in the label", () => {
     const metricsToken = token<number>("metrics");
     @injectable([optional(metricsToken)])
     class Service {
@@ -82,7 +82,41 @@ describe("generateDependencyGraph", () => {
     const graph = container.generateDependencyGraph();
     const serviceNode = graph.nodes.find((node) => node.tokenName === "Service");
 
-    expect(graph.edges).toContainEqual(expect.objectContaining({ from: serviceNode!.id, label: "[0] optional" }));
+    expect(graph.edges).toContainEqual(
+      expect.objectContaining({ from: serviceNode!.id, label: "[0] optional", optional: true }),
+    );
+  });
+
+  it("keeps required edges marked not-optional", () => {
+    const { container } = buildContainer();
+    const graph = container.generateDependencyGraph();
+
+    expect(graph.edges.every((edge) => edge.optional === false)).toBe(true);
+  });
+
+  it("distinguishes two tokens that share a display name", () => {
+    const first = token<number>("config");
+    const second = token<number>("config");
+    const container = Container.create();
+    container.bind(first).toConstantValue(1);
+    container.bind(second).toConstantValue(2);
+
+    const graph = container.generateDependencyGraph();
+    const keys = graph.nodes.filter((node) => node.tokenName === "config").map((node) => node.tokenKey);
+
+    expect(keys).toHaveLength(2);
+    expect(new Set(keys).size).toBe(2);
+  });
+
+  it("gives the same token the same key across graphs", () => {
+    const configToken = token<number>("config");
+    const container = Container.create();
+    container.bind(configToken).toConstantValue(1);
+
+    const first = container.generateDependencyGraph().nodes[0]!.tokenKey;
+    const second = container.generateDependencyGraph().nodes[0]!.tokenKey;
+
+    expect(second).toBe(first);
   });
 
   it("keeps an optional-but-unbound dependency visible via an unbound placeholder node", () => {
@@ -98,8 +132,13 @@ describe("generateDependencyGraph", () => {
     const placeholder = graph.nodes.find((node) => node.tokenName === "metrics");
     const serviceNode = graph.nodes.find((node) => node.tokenName === "Service");
 
-    expect(placeholder).toMatchObject({ id: "unbound:metrics", kind: "unbound", scope: "unbound" });
-    expect(graph.edges).toContainEqual({ from: serviceNode!.id, to: "unbound:metrics", label: "[0] optional" });
+    expect(placeholder).toMatchObject({ tokenName: "metrics", kind: "unbound", scope: "unbound" });
+    expect(graph.edges).toContainEqual({
+      from: serviceNode!.id,
+      to: placeholder!.id,
+      label: "[0] optional",
+      optional: true,
+    });
   });
 
   it("omits a required-but-unbound dependency (validate() owns that story)", () => {
@@ -134,6 +173,7 @@ describe("generateDependencyGraph", () => {
     const fanOut = graph.edges.filter((edge) => edge.from === compositeNode!.id);
 
     expect(fanOut.map((edge) => edge.to).sort()).toEqual([...validatorIds].sort());
+    expect(fanOut.map((edge) => edge.slotName ?? "").sort()).toEqual(["first", "second"]);
     expect(fanOut.map((edge) => edge.label ?? "").sort()).toEqual(["name:first", "name:second"]);
   });
 
@@ -153,6 +193,7 @@ describe("generateDependencyGraph", () => {
     const fanOut = graph.edges.filter((edge) => edge.from === serviceNode!.id);
 
     expect(fanOut).toHaveLength(1);
+    expect(fanOut[0]!.slotName).toBe("primary");
     expect(fanOut[0]!.label).toBe("name:primary");
   });
 });

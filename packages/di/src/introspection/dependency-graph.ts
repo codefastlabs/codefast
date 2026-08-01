@@ -5,7 +5,7 @@ import { effectiveBindingScope } from "#/resolution/binding-scope";
 import { matchesSlot } from "#/resolution/binding-select";
 import type { Token } from "#/token";
 import { tokenName } from "#/token";
-import type { BindingScope, Constructor, ResolveOptions } from "#/types";
+import type { BindingKind, BindingScope, Constructor, ResolveOptions } from "#/types";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -18,18 +18,26 @@ import type { BindingScope, Constructor, ResolveOptions } from "#/types";
 export interface GraphNode {
   readonly id: string;
   readonly tokenName: string;
-  readonly kind: string;
+  /** Identifies the token itself, so bindings that share a display name stay distinguishable. */
+  readonly tokenKey: string;
+  readonly kind: BindingKind | "unbound";
   readonly scope: BindingScope | "unbound";
   readonly fromParent: boolean;
 }
 
 /**
  * @since 0.3.16-canary.0
+ *
+ * @remarks `label` is presentation, assembled for the adapters; read `optional` and `slotName`
+ * rather than parsing it.
  */
 export interface GraphEdge {
   readonly from: string;
   readonly to: string;
   readonly label?: string;
+  readonly optional: boolean;
+  /** The named slot this edge resolves to, when the binding declares one. */
+  readonly slotName?: string;
 }
 
 /**
@@ -58,6 +66,26 @@ interface DependencyRef {
 }
 
 // ── Builder ───────────────────────────────────────────────────────────────────
+
+// Tokens are compared by object identity, and a name is free to repeat, so the graph mints its
+// own per-process key. Weakly held: a discarded token takes its key with it.
+const tokenKeys = new WeakMap<object, string>();
+let tokenKeySequence = 0;
+
+function tokenKeyOf(dependency: Token<unknown> | Constructor): string {
+  const existing = tokenKeys.get(dependency);
+
+  if (existing !== undefined) {
+    return existing;
+  }
+
+  tokenKeySequence += 1;
+  const key = `${tokenName(dependency)}@${String(tokenKeySequence)}`;
+
+  tokenKeys.set(dependency, key);
+
+  return key;
+}
 
 function slotCriterion(ref: DependencyRef): ResolveOptions | undefined {
   if (ref.name === undefined && (ref.tags === undefined || ref.tags.length === 0)) {
@@ -124,28 +152,41 @@ export function buildDependencyGraph(
       }
 
       const name = tokenName(ref.token);
-      let id = unboundNodeIds.get(name);
+      const key = tokenKeyOf(ref.token);
+      let id = unboundNodeIds.get(key);
 
       if (id === undefined) {
-        id = `unbound:${name}`;
-        unboundNodeIds.set(name, id);
-        nodes.push({ id, tokenName: name, kind: "unbound", scope: "unbound", fromParent: false });
+        id = `unbound:${key}`;
+        unboundNodeIds.set(key, id);
+        nodes.push({ id, tokenName: name, tokenKey: key, kind: "unbound", scope: "unbound", fromParent: false });
       }
 
-      edges.push({ from, to: id, label });
+      edges.push({
+        from,
+        to: id,
+        label,
+        optional: true,
+        ...(ref.name !== undefined ? { slotName: ref.name } : {}),
+      });
 
       return;
     }
 
     for (const target of targets) {
       // A multi dep with no criterion of its own fans out — each edge names the slot it hits.
-      const slotName = target.slot.name;
+      const slotName = target.slot.name ?? ref.name;
       const perTargetLabel =
         ref.multi && ref.name === undefined && slotName !== undefined
           ? edgeLabel({ ...ref, name: slotName }, index)
           : label;
 
-      edges.push({ from, to: target.id, label: perTargetLabel });
+      edges.push({
+        from,
+        to: target.id,
+        label: perTargetLabel,
+        optional: ref.optional,
+        ...(slotName !== undefined ? { slotName } : {}),
+      });
     }
   };
 
@@ -157,13 +198,13 @@ export function buildDependencyGraph(
     // Own bindings shadow the fallback; the parent chain is consulted only when the token has
     // no local binding, mirroring resolution's upward walk.
     const lookup = (token: Token<unknown> | Constructor): ReadonlyArray<Binding> => {
-      const own = sourceRegistry.getAll(token as Constructor);
+      const own = sourceRegistry.getAll(token);
 
       if (own.length > 0 || fallbackRegistry === undefined) {
         return own;
       }
 
-      return fallbackRegistry.getAll(token as Constructor);
+      return fallbackRegistry.getAll(token);
     };
 
     for (const binding of sourceRegistry.allBindings()) {
@@ -171,13 +212,14 @@ export function buildDependencyGraph(
       nodes.push({
         id: binding.id,
         tokenName: tokenName(binding.token),
+        tokenKey: tokenKeyOf(binding.token),
         kind: binding.kind,
         scope,
         fromParent,
       });
 
       if (binding.kind === "class") {
-        const meta = metadataReader.getConstructorMetadata(binding.target as Constructor);
+        const meta = metadataReader.getConstructorMetadata(binding.target);
 
         if (meta !== undefined) {
           for (const [index, param] of meta.params.entries()) {
@@ -192,7 +234,7 @@ export function buildDependencyGraph(
         const aliasRef: DependencyRef = { token: binding.target, optional: false, multi: false };
 
         for (const target of matchingTargets(lookup(binding.target), aliasRef)) {
-          edges.push({ from: binding.id, to: target.id, label: "alias" });
+          edges.push({ from: binding.id, to: target.id, label: "alias", optional: false });
         }
       }
     }
