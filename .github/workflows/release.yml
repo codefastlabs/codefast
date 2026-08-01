@@ -15,6 +15,10 @@ on:
       - "turbo.json"
       - "packages/**"
       - ".changeset/**"
+      # changeset version reads every workspace manifest, including private apps/examples/benchmarks
+      - "apps/*/package.json"
+      - "examples/*/package.json"
+      - "benchmarks/*/package.json"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
