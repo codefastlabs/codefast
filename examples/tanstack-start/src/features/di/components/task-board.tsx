@@ -2,6 +2,7 @@ import { Badge } from "@codefast/ui/badge";
 import { Button } from "@codefast/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@codefast/ui/card";
 import { Input } from "@codefast/ui/input";
+import { Switch } from "@codefast/ui/switch";
 import { useRouter } from "@tanstack/react-router";
 import { useState } from "react";
 
@@ -11,6 +12,7 @@ import {
   addTaskServerFn,
   removeTaskServerFn,
   resetBoardServerFn,
+  setMetricsServerFn,
   toggleTaskServerFn,
 } from "#/features/di/server/tasks";
 
@@ -73,9 +75,19 @@ export function TaskBoard({ board }: TaskBoardProps) {
         <CardHeader>
           <div className="flex items-center justify-between gap-2">
             <CardTitle className="text-base">Tasks</CardTitle>
-            <Badge variant={board.metricsEnabled ? "default" : "secondary"}>
-              metrics {board.metricsEnabled ? "on" : "off"}
-            </Badge>
+            <div className="flex items-center gap-2">
+              <Badge variant={board.metricsEnabled ? "default" : "secondary"}>
+                metrics {board.metricsEnabled ? "on" : "off"}
+              </Badge>
+              <Switch
+                aria-label="Toggle metrics"
+                checked={board.metricsEnabled}
+                disabled={busy}
+                onCheckedChange={(checked) => {
+                  void run(() => setMetricsServerFn({ data: { enabled: checked } }));
+                }}
+              />
+            </div>
           </div>
           <CardDescription>
             Handled by request <code className="font-mono text-xs">{board.requestId}</code> · service instance is unique
@@ -151,7 +163,9 @@ export function TaskBoard({ board }: TaskBoardProps) {
 
           <div className="flex items-center justify-between gap-3 border-t border-border pt-3">
             <span className="text-xs text-muted-foreground">
-              Reset uses <code className="font-mono">container.rebind()</code> to swap the repository instance.
+              Reset uses <code className="font-mono">container.rebind()</code> to swap the repository instance; the
+              metrics switch <code className="font-mono">bind()</code>s/<code className="font-mono">unbind()</code>s the
+              optional exporter at runtime.
             </span>
             <Button
               disabled={busy}

@@ -79,7 +79,7 @@ interface TaskValidation {
   collect: (title: string, existingTitles: ReadonlyArray<string>) => Array<string>;
 }
 
-/** Optional telemetry sink — absent in this demo to show graceful degradation. */
+/** Optional telemetry sink — bound/unbound at runtime by the metrics toggle. */
 interface MetricsExporter {
   record: (event: string) => void;
 }
@@ -149,6 +149,20 @@ class UuidGenerator implements IdGenerator {
 
   next(): string {
     return globalThis.crypto.randomUUID();
+  }
+}
+
+// Records into the singleton ActivityLog so toggled-on metrics show up in the log panel.
+@injectable([ActivityLogToken])
+class ActivityLogMetricsExporter implements MetricsExporter {
+  readonly #log: ActivityLog;
+
+  constructor(log: ActivityLog) {
+    this.#log = log;
+  }
+
+  record(event: string): void {
+    this.#log.record(`metric · ${event}`);
   }
 }
 
@@ -536,6 +550,12 @@ function readId(input: unknown): string {
   return value.trim();
 }
 
+function readEnabled(input: unknown): boolean {
+  const value = typeof input === "object" && input !== null ? (input as Record<string, unknown>).enabled : undefined;
+
+  return value === true;
+}
+
 /* ---------------------------------------------------------------------------
  * Server functions — every interaction runs through a DI-resolved service
  * ------------------------------------------------------------------------ */
@@ -553,6 +573,27 @@ export const toggleTaskServerFn = createServerFn({ method: "POST" })
 export const removeTaskServerFn = createServerFn({ method: "POST" })
   .validator((input: unknown): { id: string } => ({ id: readId(input) }))
   .handler(async ({ data }): Promise<BoardSnapshot> => handleRequest((service) => service.remove(data.id)));
+
+// Demonstrates runtime `bind`/`unbind`: the optional MetricsExporter appears or disappears for
+// every later resolve, and TaskService keeps working either way (`optional(...)` degrades to
+// `undefined` instead of throwing).
+export const setMetricsServerFn = createServerFn({ method: "POST" })
+  .validator((input: unknown): { enabled: boolean } => ({ enabled: readEnabled(input) }))
+  .handler(async ({ data }): Promise<BoardSnapshot> => {
+    const root = getRootContainer();
+    const log = root.resolve(ActivityLogToken);
+    const bound = root.resolveOptional(MetricsExporterToken) !== undefined;
+
+    if (data.enabled && !bound) {
+      root.bind(MetricsExporterToken).to(ActivityLogMetricsExporter).singleton();
+      log.record("metrics enabled · MetricsExporter bound");
+    } else if (!data.enabled && bound) {
+      root.unbind(MetricsExporterToken);
+      log.record("metrics disabled · MetricsExporter unbound");
+    }
+
+    return handleRequest();
+  });
 
 // Demonstrates `rebind`: swap the singleton repository implementation at runtime, clearing state
 // without touching any consumer of TaskRepositoryToken (ActivityLog stays put).
