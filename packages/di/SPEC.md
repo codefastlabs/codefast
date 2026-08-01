@@ -1319,10 +1319,12 @@ interface ContainerGraphJson {
 }
 
 interface GraphNode {
-  readonly id: string; // BindingIdentifier.toString()
+  readonly id: string; // BindingIdentifier.toString(), hoặc "unbound:<tokenKey>" cho placeholder
   readonly tokenName: string;
-  readonly kind: BindingKind;
-  readonly scope: BindingScope;
+  /** Định danh của token — hai token trùng tên vẫn khác key. Ổn định trong cùng process. */
+  readonly tokenKey: string;
+  readonly kind: BindingKind | "unbound";
+  readonly scope: BindingScope | "unbound";
   /** true nếu node này từ parent container (chỉ xuất hiện khi includeParent: true). */
   readonly fromParent: boolean;
 }
@@ -1331,13 +1333,18 @@ interface GraphEdge {
   readonly from: string; // node id (consumer)
   readonly to: string; // node id (dependency)
   /**
-   * Mô tả mối quan hệ — format chuẩn:
+   * Chuỗi để hiển thị — đọc `optional`/`slotName` thay vì parse chuỗi này:
    * - `"[0]"`, `"[1]"`, … — dep theo index
    * - `"name:file"` — named dep
    * - `"tag:fuel=petrol"` — tagged dep
    * - `"alias"` — alias edge
+   * - hậu tố `" optional"` khi dep là optional
    */
   readonly label?: string;
+  /** Dep được khai báo bằng `optional(...)`. */
+  readonly optional: boolean;
+  /** Named slot mà edge này trỏ tới, nếu binding khai báo. */
+  readonly slotName?: string;
 }
 
 interface GraphOptions {
@@ -1348,6 +1355,15 @@ interface GraphOptions {
   readonly includeParent?: boolean;
 }
 ```
+
+**Những gì graph biểu diễn — và không biểu diễn:**
+
+- **Optional dep chưa bind vẫn hiện**, dưới dạng node placeholder `kind`/`scope` = `"unbound"` với edge `optional: true`. Nhờ vậy "optional nhưng vắng mặt" khác được với "không phải dependency".
+- **Required dep chưa bind bị bỏ qua** — đó là việc của `validate()`, không phải của graph.
+- **`injectAll` fan-out đủ mọi binding** của token, mỗi edge mang `slotName` tương ứng.
+- **Edge target lọc theo đúng luật slot của resolution** (§6.9): request không nêu tên sẽ không nối tới named binding mà nó vốn không resolve được.
+- **Predicate (`when...`) không được đánh giá** — predicate cần ngữ cảnh resolve thật, nên graph giữ lại mọi candidate có predicate.
+- **Với `includeParent: true`**, binding của container hiện tại che (shadow) binding cùng token ở parent, đúng như thứ tự resolve leo lên; edge từ child nối thẳng tới binding parent thoả mãn nó.
 
 ### 6.11 Container interface
 

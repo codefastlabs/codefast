@@ -1,4 +1,4 @@
-import type { ContainerGraphJson } from "#/introspection/dependency-graph";
+import type { ContainerGraphJson, GraphNode } from "#/introspection/dependency-graph";
 
 /**
  * @since 0.3.16-canary.0
@@ -7,8 +7,9 @@ export interface ReactFlowNode {
   readonly id: string;
   readonly data: {
     readonly label: string;
-    readonly kind: string;
-    readonly scope: string;
+    readonly tokenKey: string;
+    readonly kind: GraphNode["kind"];
+    readonly scope: GraphNode["scope"];
     readonly fromParent: boolean;
   };
   readonly position: { readonly x: number; readonly y: number };
@@ -22,6 +23,8 @@ export interface ReactFlowEdge {
   readonly source: string;
   readonly target: string;
   readonly label?: string;
+  readonly optional: boolean;
+  readonly slotName?: string;
 }
 
 /**
@@ -48,6 +51,7 @@ export function toReactFlowGraph(graph: ContainerGraphJson): ReactFlowGraph {
     id: node.id,
     data: {
       label: node.tokenName,
+      tokenKey: node.tokenKey,
       kind: node.kind,
       scope: node.scope,
       fromParent: node.fromParent,
@@ -63,6 +67,8 @@ export function toReactFlowGraph(graph: ContainerGraphJson): ReactFlowGraph {
     source: edge.from,
     target: edge.to,
     ...(edge.label !== undefined ? { label: edge.label } : {}),
+    optional: edge.optional,
+    ...(edge.slotName !== undefined ? { slotName: edge.slotName } : {}),
   }));
 
   return { nodes, edges };

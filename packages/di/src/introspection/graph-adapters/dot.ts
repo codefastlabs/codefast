@@ -8,7 +8,9 @@ export function toDotGraph(graph: ContainerGraphJson): string {
 
   for (const node of graph.nodes) {
     const label = `${node.tokenName}\\n[${node.kind}/${node.scope}]`;
-    const style = node.fromParent ? ' style="dashed"' : "";
+    // Dashed for anything that is not a live binding of this container: the parent chain
+    // and unbound-optional placeholders.
+    const style = node.fromParent || node.kind === "unbound" ? ' style="dashed"' : "";
     lines.push(`  "${node.id}" [label="${label}"${style}];`);
   }
 

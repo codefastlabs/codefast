@@ -9,3 +9,16 @@
   --font-heading: var(--font-sans);
   --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
 }
+
+/* Binding scopes in the DI dependency graph — see features/di/components/scope-colors.ts. */
+:root {
+  --scope-singleton: #2a78d6;
+  --scope-scoped: #eb6834;
+  --scope-transient: #1baf7a;
+}
+
+.dark {
+  --scope-singleton: #3987e5;
+  --scope-scoped: #d95926;
+  --scope-transient: #199e70;
+}

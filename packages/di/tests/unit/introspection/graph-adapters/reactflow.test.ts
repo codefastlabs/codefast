@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vitest";
 
 import { Container } from "#/container/container";
+import { optional } from "#/decorators/inject";
+import { injectable } from "#/decorators/injectable";
 import { toReactFlowGraph } from "#/introspection/graph-adapters/reactflow";
 import { token } from "#/token";
 
@@ -26,5 +28,22 @@ describe("toReactFlowGraph", () => {
       source: graph.edges[0]!.from,
       target: graph.edges[0]!.to,
     });
+  });
+
+  it("carries the graph's own facts through — token identity and optional edges", () => {
+    const metricsToken = token<number>("metrics");
+    @injectable([optional(metricsToken)])
+    class Service {
+      constructor(readonly metrics: number | undefined) {}
+    }
+    const container = Container.create();
+    container.bind(Service).toSelf().singleton();
+
+    const flow = toReactFlowGraph(container.generateDependencyGraph());
+    const placeholder = flow.nodes.find((node) => node.data.label === "metrics");
+
+    expect(flow.nodes.every((node) => node.data.tokenKey.length > 0)).toBe(true);
+    expect(placeholder?.data.kind).toBe("unbound");
+    expect(flow.edges).toContainEqual(expect.objectContaining({ target: placeholder!.id, optional: true }));
   });
 });

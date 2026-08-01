@@ -109,6 +109,11 @@
       "types": "./dist/introspection/graph-adapters/dot.d.ts",
       "import": "./dist/introspection/graph-adapters/dot.js"
     },
+    "./graph-adapters/mermaid": {
+      "source": "./src/introspection/graph-adapters/mermaid.ts",
+      "types": "./dist/introspection/graph-adapters/mermaid.d.ts",
+      "import": "./dist/introspection/graph-adapters/mermaid.js"
+    },
     "./graph-adapters/reactflow": {
       "source": "./src/introspection/graph-adapters/reactflow.ts",
       "types": "./dist/introspection/graph-adapters/reactflow.d.ts",
