@@ -115,6 +115,8 @@ function DependencyGraphCanvas({ nodes, edges, showShadowed }: DependencyGraphPr
           fromParent: node.data.fromParent,
           unbound: node.data.kind === "unbound",
           shadowsRoot: prepared.shadowingIds.has(node.id),
+          hasDependents: prepared.withDependents.has(node.id),
+          hasDependencies: prepared.withDependencies.has(node.id),
           dimmed: false,
           selected: false,
         },

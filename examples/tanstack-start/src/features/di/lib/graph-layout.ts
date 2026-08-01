@@ -24,6 +24,10 @@ export interface PreparedGraph {
   readonly edges: GraphEdges;
   /** Child bindings that hide a root binding of the same token. */
   readonly shadowingIds: ReadonlySet<string>;
+  /** Nodes something depends on — they need a target handle for the edge to arrive at. */
+  readonly withDependents: ReadonlySet<string>;
+  /** Nodes that depend on something — they need a source handle for the edge to leave from. */
+  readonly withDependencies: ReadonlySet<string>;
 }
 
 export interface GraphLayout {
@@ -62,15 +66,21 @@ export function prepareGraph(graph: ReactFlowGraph, showShadowed: boolean): Prep
       .map((node) => node.id),
   );
 
-  if (showShadowed) {
-    return { nodes: graph.nodes, edges: graph.edges, shadowingIds };
-  }
-
-  const nodes = graph.nodes.filter((node) => !shadowedIds.has(node.id));
+  const nodes = showShadowed ? graph.nodes : graph.nodes.filter((node) => !shadowedIds.has(node.id));
   const visible = new Set(nodes.map((node) => node.id));
-  const edges = graph.edges.filter((edge) => visible.has(edge.source) && visible.has(edge.target));
+  // One derivation point: the handle sets come from the very edges being returned, so a filtered
+  // edge can never leave a stray handle behind on the node it used to touch.
+  const edges = showShadowed
+    ? graph.edges
+    : graph.edges.filter((edge) => visible.has(edge.source) && visible.has(edge.target));
 
-  return { nodes, edges, shadowingIds };
+  return {
+    nodes,
+    edges,
+    shadowingIds,
+    withDependents: new Set(edges.map((edge) => edge.target)),
+    withDependencies: new Set(edges.map((edge) => edge.source)),
+  };
 }
 
 /**

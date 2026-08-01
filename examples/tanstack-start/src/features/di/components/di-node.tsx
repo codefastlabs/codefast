@@ -16,6 +16,10 @@ export interface DiNodeData extends Record<string, unknown> {
   readonly fromParent: boolean;
   readonly unbound: boolean;
   readonly shadowsRoot: boolean;
+  /** Something depends on this binding, so an edge arrives at the top. */
+  readonly hasDependents: boolean;
+  /** This binding depends on something, so an edge leaves from the bottom. */
+  readonly hasDependencies: boolean;
   readonly dimmed: boolean;
   readonly selected: boolean;
 }
@@ -35,7 +39,8 @@ export const DiServiceNode = memo(function DiServiceNode({ data }: NodeProps<DiN
       )}
       title={data.unbound ? "optional dependency with no binding" : `${data.kind} binding`}
     >
-      <Handle className="!bg-muted-foreground" position={Position.Top} type="target" />
+      {/* A handle only exists where an edge actually lands; otherwise it reads as a dangling dot. */}
+      {data.hasDependents ? <Handle className="!bg-muted-foreground" position={Position.Top} type="target" /> : null}
       <div className="flex items-center justify-center gap-1.5 text-xs font-medium text-foreground">
         <span>{data.label}</span>
         {data.shadowsRoot ? (
@@ -51,7 +56,9 @@ export const DiServiceNode = memo(function DiServiceNode({ data }: NodeProps<DiN
         {data.unbound ? null : <ScopeDot scope={data.scope} />}
         <span>{data.unbound ? "optional · not bound" : data.scope}</span>
       </div>
-      <Handle className="!bg-muted-foreground" position={Position.Bottom} type="source" />
+      {data.hasDependencies ? (
+        <Handle className="!bg-muted-foreground" position={Position.Bottom} type="source" />
+      ) : null}
     </div>
   );
 });
