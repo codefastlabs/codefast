@@ -140,6 +140,8 @@ function bindOneResolvedNode(
 /**
  * Builds the same graph through `toResolvedValue` (explicit dep identifiers) — the shape
  * inversify's plan tree and codegen resolvers serve, mirroring codefast's `toResolved` adapter.
+ *
+ * @since 0.5.0-canary.9
  */
 export function buildInversifyRealisticResolvedContainer(graph: GraphDescriptor): InversifyRealisticBuild {
   assertGraphIsWellFormed(graph);
@@ -161,6 +163,8 @@ export function buildInversifyRealisticResolvedContainer(graph: GraphDescriptor)
 
 /**
  * Sanity for the `toResolvedValue` variant — same assertions as the dynamic-value one.
+ *
+ * @since 0.5.0-canary.9
  */
 export function sanityCheckInversifyRealisticResolvedResolve(graph: GraphDescriptor): boolean {
   const { container, rootIdentifier } = buildInversifyRealisticResolvedContainer(graph);

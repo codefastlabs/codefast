@@ -1,6 +1,8 @@
 /**
  * A multiple of 1, dropping a decimal past 10 so a fail-fast outlier stays one column wide.
  * Em-dash when there is no meaningful multiple.
+ *
+ * @since 0.5.0-canary.9
  */
 export function formatRatioMultiple(ratio: number): string {
   if (!Number.isFinite(ratio) || ratio <= 0) {

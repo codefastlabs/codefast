@@ -250,6 +250,8 @@ export class RebindUnboundTokenError extends DiError {
 
 /**
  * `toSelf()` on a token that is not a class, so there is nothing to construct.
+ *
+ * @since 0.5.0-canary.9
  */
 export class SelfBindingRequiresClassError extends DiError {
   readonly code = "SELF_BINDING_REQUIRES_CLASS";

@@ -95,6 +95,9 @@ export const REALISTIC_GRAPH_COLD_RESOLVE = {
 
 // Explicit-deps factories are the shape both libraries compile ahead of time (codefast's
 // instantiation plans, inversify's plan tree + codegen resolvers) — the best-vs-best row.
+/**
+ * @since 0.5.0-canary.9
+ */
 export const REALISTIC_GRAPH_RESOLVED_ROOT = {
   id: "realistic-graph-resolved-root",
   group: "realistic",
@@ -508,6 +511,9 @@ export const MISCONFIGURED_MISSING_BINDING = {
  */
 // Excluded from aggregates: the sides do incomparable work per op — codefast throws on the third
 // factory entry while inversify re-enters the user factory hundreds of times before its own error.
+/**
+ * @since 0.5.0-canary.9
+ */
 export const CIRCULAR_DEPENDENCY_3 = {
   id: "circular-dependency-3",
   group: "failure",
