@@ -31,7 +31,13 @@ function DiPage() {
 
       <TaskBoard board={board} />
       <ActivityLogCard entries={board.activity} />
-      <DependencyGraphCard graph={board.graph} graphDot={board.graphDot} validated={board.validated} />
+      <DependencyGraphCard
+        graph={board.graph}
+        graphCytoscape={board.graphCytoscape}
+        graphDot={board.graphDot}
+        graphMermaid={board.graphMermaid}
+        validated={board.validated}
+      />
       <ContainerInspectorCard bindings={board.bindings} transientProof={board.transientProof} />
     </div>
   );

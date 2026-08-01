@@ -2,7 +2,9 @@
 import "#/features/di/server/map-get-or-insert";
 import { Container, injectAll, injectable, Module, optional, postConstruct, preDestroy, token } from "@codefast/di";
 import type { ContainerGraphJson } from "@codefast/di";
+import { toCytoscapeGraph } from "@codefast/di/graph-adapters/cytoscape";
 import { toDotGraph } from "@codefast/di/graph-adapters/dot";
+import { toMermaidGraph } from "@codefast/di/graph-adapters/mermaid";
 import { toReactFlowGraph } from "@codefast/di/graph-adapters/reactflow";
 import type { ReactFlowGraph } from "@codefast/di/graph-adapters/reactflow";
 import { createServerFn } from "@tanstack/react-start";
@@ -43,6 +45,10 @@ export interface BoardSnapshot {
   graph: ReactFlowGraph;
   /** Graphviz DOT source from `toDotGraph(generateDependencyGraph())`. */
   graphDot: string;
+  /** Mermaid `flowchart TD` source from `toMermaidGraph(generateDependencyGraph())`. */
+  graphMermaid: string;
+  /** Pretty-printed `toCytoscapeGraph(generateDependencyGraph())` elements JSON. */
+  graphCytoscape: string;
   /** Result of `container.validate()` for this snapshot — runtime rebinding can change it. */
   validated: boolean;
   /** Validation errors from the last add attempt — empty when nothing was rejected. */
@@ -430,13 +436,20 @@ function stabilizeNodeIds(graph: ContainerGraphJson): ContainerGraphJson {
   };
 }
 
-/** React Flow + DOT views of the request child's wiring — its overrides plus the root chain. */
-function dependencyViews(container: Container): { graph: ReactFlowGraph; graphDot: string } {
+/** Every adapter view of the request child's wiring — its overrides plus the root chain. */
+function dependencyViews(container: Container): {
+  graph: ReactFlowGraph;
+  graphDot: string;
+  graphMermaid: string;
+  graphCytoscape: string;
+} {
   const stable = stabilizeNodeIds(container.generateDependencyGraph({ includeParent: true }));
 
   return {
     graph: toReactFlowGraph(stable),
     graphDot: toDotGraph(stable),
+    graphMermaid: toMermaidGraph(stable),
+    graphCytoscape: JSON.stringify(toCytoscapeGraph(stable), undefined, 2),
   };
 }
 
@@ -482,7 +495,7 @@ async function handleRequest(mutate?: (service: TaskService) => Array<string> | 
   const bindings = describeBindings(root);
 
   // The graph must render the child's wiring, so it is captured before the child is disposed.
-  const { graph, graphDot } = dependencyViews(request);
+  const { graph, graphDot, graphMermaid, graphCytoscape } = dependencyViews(request);
 
   // Runtime bind/unbind/rebind can invalidate the graph after boot — re-check every snapshot.
   let validated = true;
@@ -507,6 +520,8 @@ async function handleRequest(mutate?: (service: TaskService) => Array<string> | 
     activity: log.entries(),
     graph,
     graphDot,
+    graphMermaid,
+    graphCytoscape,
     validated,
     validationErrors,
     metricsEnabled,

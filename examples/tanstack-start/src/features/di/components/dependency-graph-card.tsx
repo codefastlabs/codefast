@@ -8,12 +8,29 @@ import { DependencyGraph } from "#/features/di/components/dependency-graph";
 interface DependencyGraphCardProps {
   graph: ReactFlowGraph;
   graphDot: string;
+  graphMermaid: string;
+  graphCytoscape: string;
   /** Fresh `container.validate()` result — runtime bind/unbind/rebind can change it. */
   validated: boolean;
 }
 
-/** React Flow visual + Graphviz DOT source, both from `generateDependencyGraph()`. */
-export function DependencyGraphCard({ graph, graphDot, validated }: DependencyGraphCardProps) {
+/** Shared scrollable source block for the text-based adapter outputs. */
+function GraphSource({ source }: { source: string }) {
+  return (
+    <pre className="h-[28rem] overflow-auto rounded-md border border-border bg-muted p-4 font-mono text-xs text-muted-foreground">
+      {source}
+    </pre>
+  );
+}
+
+/** One graph, every adapter: React Flow visual plus DOT, Mermaid, and Cytoscape sources. */
+export function DependencyGraphCard({
+  graph,
+  graphDot,
+  graphMermaid,
+  graphCytoscape,
+  validated,
+}: DependencyGraphCardProps) {
   return (
     <Card>
       <CardHeader>
@@ -23,7 +40,7 @@ export function DependencyGraphCard({ graph, graphDot, validated }: DependencyGr
         </div>
         <CardDescription>
           The request child&apos;s wiring via <code className="font-mono text-xs">generateDependencyGraph()</code> —
-          child overrides plus the root chain, as React Flow and Graphviz DOT.
+          child overrides plus the root chain, rendered by every graph adapter the package ships.
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -31,14 +48,20 @@ export function DependencyGraphCard({ graph, graphDot, validated }: DependencyGr
           <TabsList>
             <TabsTrigger value="graph">Graph</TabsTrigger>
             <TabsTrigger value="dot">DOT</TabsTrigger>
+            <TabsTrigger value="mermaid">Mermaid</TabsTrigger>
+            <TabsTrigger value="cytoscape">Cytoscape</TabsTrigger>
           </TabsList>
           <TabsContent className="pt-3" value="graph">
             <DependencyGraph edges={graph.edges} nodes={graph.nodes} />
           </TabsContent>
           <TabsContent className="pt-3" value="dot">
-            <pre className="h-[28rem] overflow-auto rounded-md border border-border bg-muted p-4 font-mono text-xs text-muted-foreground">
-              {graphDot}
-            </pre>
+            <GraphSource source={graphDot} />
+          </TabsContent>
+          <TabsContent className="pt-3" value="mermaid">
+            <GraphSource source={graphMermaid} />
+          </TabsContent>
+          <TabsContent className="pt-3" value="cytoscape">
+            <GraphSource source={graphCytoscape} />
           </TabsContent>
         </Tabs>
       </CardContent>
