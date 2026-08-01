@@ -1,19 +1,25 @@
+import type { Binding } from "#/binding";
 import type { MetadataReader } from "#/metadata/metadata-types";
 import type { BindingRegistry } from "#/registry";
 import { effectiveBindingScope } from "#/resolution/binding-scope";
+import { matchesSlot } from "#/resolution/binding-select";
+import type { Token } from "#/token";
 import { tokenName } from "#/token";
-import type { BindingScope, Constructor } from "#/types";
+import type { BindingScope, Constructor, ResolveOptions } from "#/types";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
+ *
+ * @remarks `kind`/`scope` are `"unbound"` for the placeholder node an optional, currently
+ * unsatisfied dependency points at.
  */
 export interface GraphNode {
   readonly id: string;
   readonly tokenName: string;
   readonly kind: string;
-  readonly scope: BindingScope;
+  readonly scope: BindingScope | "unbound";
   readonly fromParent: boolean;
 }
 
@@ -42,7 +48,50 @@ export interface GraphOptions {
   readonly includeParent?: boolean;
 }
 
+/** What every dependency declaration shares — constructor params and resolved-factory deps alike. */
+interface DependencyRef {
+  readonly token: Token<unknown> | Constructor;
+  readonly optional: boolean;
+  readonly multi: boolean;
+  readonly name?: string | undefined;
+  readonly tags?: ReadonlyArray<readonly [string, unknown]> | undefined;
+}
+
 // ── Builder ───────────────────────────────────────────────────────────────────
+
+function slotCriterion(ref: DependencyRef): ResolveOptions | undefined {
+  if (ref.name === undefined && (ref.tags === undefined || ref.tags.length === 0)) {
+    return undefined;
+  }
+
+  return {
+    ...(ref.name !== undefined ? { name: ref.name } : {}),
+    ...(ref.tags !== undefined && ref.tags.length > 0 ? { tags: ref.tags } : {}),
+  };
+}
+
+// Mirrors filterBindings' slot semantics (SPEC §6.9); predicates need a live resolution
+// context, so the graph keeps every predicate-carrying candidate.
+function matchingTargets(candidates: ReadonlyArray<Binding>, ref: DependencyRef): ReadonlyArray<Binding> {
+  const criterion = slotCriterion(ref);
+
+  if (ref.multi && criterion === undefined) {
+    return candidates;
+  }
+
+  return candidates.filter((candidate) => matchesSlot(candidate.slot, criterion));
+}
+
+function edgeLabel(ref: DependencyRef, index: number): string {
+  const criterion =
+    ref.name !== undefined
+      ? `name:${ref.name}`
+      : ref.tags !== undefined && ref.tags.length > 0
+        ? `tag:${ref.tags[0]?.[0]}=${String(ref.tags[0]?.[1])}`
+        : `[${index}]`;
+
+  return ref.optional ? `${criterion} optional` : criterion;
+}
 
 /**
  * @since 0.3.16-canary.0
@@ -56,8 +105,67 @@ export function buildDependencyGraph(
   const nodes: Array<GraphNode> = [];
   const edges: Array<GraphEdge> = [];
   const includesParent = options?.includeParent === true;
+  // One placeholder node per optional-but-unbound token keeps the declared edge visible.
+  const unboundNodeIds = new Map<string, string>();
 
-  const addBindings = (sourceRegistry: BindingRegistry, fromParent: boolean): void => {
+  const addDependencyEdges = (
+    from: string,
+    ref: DependencyRef,
+    index: number,
+    lookup: (token: Token<unknown> | Constructor) => ReadonlyArray<Binding>,
+  ): void => {
+    const targets = matchingTargets(lookup(ref.token), ref);
+    const label = edgeLabel(ref, index);
+
+    if (targets.length === 0) {
+      // A required-but-unbound dependency is validate()'s story, not the graph's.
+      if (!ref.optional) {
+        return;
+      }
+
+      const name = tokenName(ref.token);
+      let id = unboundNodeIds.get(name);
+
+      if (id === undefined) {
+        id = `unbound:${name}`;
+        unboundNodeIds.set(name, id);
+        nodes.push({ id, tokenName: name, kind: "unbound", scope: "unbound", fromParent: false });
+      }
+
+      edges.push({ from, to: id, label });
+
+      return;
+    }
+
+    for (const target of targets) {
+      // A multi dep with no criterion of its own fans out — each edge names the slot it hits.
+      const slotName = target.slot.name;
+      const perTargetLabel =
+        ref.multi && ref.name === undefined && slotName !== undefined
+          ? edgeLabel({ ...ref, name: slotName }, index)
+          : label;
+
+      edges.push({ from, to: target.id, label: perTargetLabel });
+    }
+  };
+
+  const addBindings = (
+    sourceRegistry: BindingRegistry,
+    fromParent: boolean,
+    fallbackRegistry?: BindingRegistry,
+  ): void => {
+    // Own bindings shadow the fallback; the parent chain is consulted only when the token has
+    // no local binding, mirroring resolution's upward walk.
+    const lookup = (token: Token<unknown> | Constructor): ReadonlyArray<Binding> => {
+      const own = sourceRegistry.getAll(token as Constructor);
+
+      if (own.length > 0 || fallbackRegistry === undefined) {
+        return own;
+      }
+
+      return fallbackRegistry.getAll(token as Constructor);
+    };
+
     for (const binding of sourceRegistry.allBindings()) {
       const scope = effectiveBindingScope(binding);
       nodes.push({
@@ -68,46 +176,29 @@ export function buildDependencyGraph(
         fromParent,
       });
 
-      // Build edges
       if (binding.kind === "class") {
         const meta = metadataReader.getConstructorMetadata(binding.target as Constructor);
+
         if (meta !== undefined) {
-          for (let index = 0; index < meta.params.length; index += 1) {
-            const param = meta.params[index]!;
-            const dependencyBinding = sourceRegistry.getAll(param.token as Constructor)[0];
-            if (dependencyBinding !== undefined) {
-              edges.push({
-                from: binding.id,
-                to: dependencyBinding.id,
-                label: `[${index}]`,
-              });
-            }
+          for (const [index, param] of meta.params.entries()) {
+            addDependencyEdges(binding.id, param, index, lookup);
           }
         }
       } else if (binding.kind === "resolved" || binding.kind === "resolved-async") {
-        for (let index = 0; index < binding.deps.length; index += 1) {
-          const dependency = binding.deps[index]!;
-          const dependencyBindings = sourceRegistry.getAll(dependency.token as Constructor);
-          if (dependencyBindings.length > 0 && dependencyBindings[0] !== undefined) {
-            const label =
-              dependency.name !== undefined
-                ? `name:${dependency.name}`
-                : dependency.tags !== undefined && dependency.tags.length > 0
-                  ? `tag:${dependency.tags[0]?.[0]}=${String(dependency.tags[0]?.[1])}`
-                  : `[${index}]`;
-            edges.push({ from: binding.id, to: dependencyBindings[0].id, label });
-          }
+        for (const [index, dependency] of binding.deps.entries()) {
+          addDependencyEdges(binding.id, dependency, index, lookup);
         }
       } else if (binding.kind === "alias") {
-        const targetBindings = sourceRegistry.getAll(binding.target as Constructor);
-        if (targetBindings.length > 0 && targetBindings[0] !== undefined) {
-          edges.push({ from: binding.id, to: targetBindings[0].id, label: "alias" });
+        const aliasRef: DependencyRef = { token: binding.target, optional: false, multi: false };
+
+        for (const target of matchingTargets(lookup(binding.target), aliasRef)) {
+          edges.push({ from: binding.id, to: target.id, label: "alias" });
         }
       }
     }
   };
 
-  addBindings(registry, false);
+  addBindings(registry, false, includesParent ? parentRegistry : undefined);
   if (includesParent && parentRegistry !== undefined) {
     addBindings(parentRegistry, true);
   }

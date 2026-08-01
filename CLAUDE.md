@@ -110,19 +110,19 @@ Audit every public API you add or touch (exported function/type/prop/option/conf
 
 ## Packages
 
-| Path                         | Role                                                                                                   |
-| ---------------------------- | ------------------------------------------------------------------------------------------------------ |
-| `packages/ui`                | `@codefast/ui` — Radix + Tailwind component library; per-component subpath exports (`./button`, etc.)  |
-| `packages/tailwind-variants` | Type-safe variant styling API (faster `tailwind-variants` replacement); used by `ui`                   |
-| `packages/theme`             | Theme management using React 19 features (optimistic updates, cross-tab sync)                          |
-| `packages/di`                | Lightweight dependency-injection primitives (requires Node ≥ 26)                                       |
-| `packages/tracking`          | Consent-gated, type-safe event tracking for TanStack Start over a Standard Schema event catalog        |
-| `packages/cli`               | `codefast` CLI — subcommands `arrange`, `audit`, `mirror`, `tag` (run via `pnpm run codefast <cmd>`)   |
-| `packages/typescript-config` | Shared tsconfig presets                                                                                |
-| `packages/benchmark-*`       | Performance benchmark harness/viewer (`pnpm bench`)                                                    |
-| `benchmarks/*`               | Benchmark suites comparing `@codefast/*` against upstream (`di-inversify`, `tailwind-variants`)        |
-| `apps/ui`                    | Docs/showcase site for `@codefast/ui` (TanStack Start); consumes `packages/*` via `workspace:*`        |
-| `examples/tanstack-start`    | Consumer smoke-test: installs the **published** `@codefast/*` from npm (via catalog) on TanStack Start |
+| Path                         | Role                                                                                                  |
+| ---------------------------- | ----------------------------------------------------------------------------------------------------- |
+| `packages/ui`                | `@codefast/ui` — Radix + Tailwind component library; per-component subpath exports (`./button`, etc.) |
+| `packages/tailwind-variants` | Type-safe variant styling API (faster `tailwind-variants` replacement); used by `ui`                  |
+| `packages/theme`             | Theme management using React 19 features (optimistic updates, cross-tab sync)                         |
+| `packages/di`                | Lightweight dependency-injection primitives (requires Node ≥ 26)                                      |
+| `packages/tracking`          | Consent-gated, type-safe event tracking for TanStack Start over a Standard Schema event catalog       |
+| `packages/cli`               | `codefast` CLI — subcommands `arrange`, `audit`, `mirror`, `tag` (run via `pnpm run codefast <cmd>`)  |
+| `packages/typescript-config` | Shared tsconfig presets                                                                               |
+| `packages/benchmark-*`       | Performance benchmark harness/viewer (`pnpm bench`)                                                   |
+| `benchmarks/*`               | Benchmark suites comparing `@codefast/*` against upstream (`di-inversify`, `tailwind-variants`)       |
+| `apps/ui`                    | Docs/showcase site for `@codefast/ui` (TanStack Start); consumes `packages/*` via `workspace:*`       |
+| `examples/tanstack-start`    | TanStack Start consumer demo; uses `workspace:*` so package changes are testable here directly        |
 
 ### `packages/di` layout
 

@@ -46,7 +46,7 @@ describe("every exported function is callable with public values", () => {
     container.bind(serviceToken).toConstantValue(1);
     const graph = container.generateDependencyGraph();
 
-    expectTypeOf(graph.nodes[0]!.scope).toEqualTypeOf<BindingScope>();
+    expectTypeOf(graph.nodes[0]!.scope).toEqualTypeOf<BindingScope | "unbound">();
     expect(graph.nodes[0]!.scope).toBe("singleton");
   });
 });

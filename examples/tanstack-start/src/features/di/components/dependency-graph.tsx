@@ -14,6 +14,8 @@ interface DiNodeData extends Record<string, unknown> {
   /** Named multi-binding slot (e.g. `non-empty`) when this node is one of several on a token. */
   readonly bindingName: string | undefined;
   readonly meta: string;
+  /** Placeholder for an optional dependency with no binding — rendered dashed and dimmed. */
+  readonly unbound: boolean;
 }
 
 type DiNode = Node<DiNodeData, "di">;
@@ -38,14 +40,14 @@ function bindingNamesByTarget(edges: ReactFlowGraph["edges"]): Map<string, strin
 
 /**
  * Edge labels kept on the wire: drop constructor indices (`[0]`) and named-slot
- * markers (`name:…`) once those names live on the target node.
+ * markers (`name:…`) once those names live on the target node; `optional` stays.
  */
 function edgeLabel(label: string | undefined): string | undefined {
   if (label === undefined || /^\[\d+\]$/.test(label) || label.startsWith("name:")) {
     return undefined;
   }
 
-  return label;
+  return /^\[\d+\] optional$/.test(label) ? "optional" : label;
 }
 
 /**
@@ -136,7 +138,13 @@ function layoutPositions(
 
 const DiServiceNode = memo(function DiServiceNode({ data }: NodeProps<DiNode>): ReactElement {
   return (
-    <div className="min-w-44 rounded-md border border-border bg-card px-3 py-2 text-center shadow-sm">
+    <div
+      className={
+        data.unbound
+          ? "min-w-44 rounded-md border border-dashed border-border bg-card/50 px-3 py-2 text-center opacity-70"
+          : "min-w-44 rounded-md border border-border bg-card px-3 py-2 text-center shadow-sm"
+      }
+    >
       <Handle className="!bg-muted-foreground" position={Position.Top} type="target" />
       <div className="text-xs font-medium text-foreground">{data.label}</div>
       {data.bindingName !== undefined ? (
@@ -160,6 +168,7 @@ function DependencyGraphCanvas({ nodes, edges }: DependencyGraphProps): ReactEle
     () =>
       nodes.map((node) => {
         const bindingName = bindingNames.get(node.id);
+        const unbound = node.data.kind === "unbound";
 
         return {
           id: node.id,
@@ -168,7 +177,10 @@ function DependencyGraphCanvas({ nodes, edges }: DependencyGraphProps): ReactEle
           data: {
             label: node.data.label,
             bindingName,
-            meta: `${node.data.scope} · ${node.data.kind}`,
+            meta: unbound
+              ? "optional · not bound"
+              : `${node.data.scope} · ${node.data.kind}${node.data.fromParent ? " · root" : ""}`,
+            unbound,
           },
           sourcePosition: Position.Bottom,
           targetPosition: Position.Top,

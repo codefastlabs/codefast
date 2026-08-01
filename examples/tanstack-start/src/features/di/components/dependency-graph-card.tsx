@@ -8,20 +8,22 @@ import { DependencyGraph } from "#/features/di/components/dependency-graph";
 interface DependencyGraphCardProps {
   graph: ReactFlowGraph;
   graphDot: string;
+  /** Fresh `container.validate()` result — runtime bind/unbind/rebind can change it. */
+  validated: boolean;
 }
 
 /** React Flow visual + Graphviz DOT source, both from `generateDependencyGraph()`. */
-export function DependencyGraphCard({ graph, graphDot }: DependencyGraphCardProps) {
+export function DependencyGraphCard({ graph, graphDot, validated }: DependencyGraphCardProps) {
   return (
     <Card>
       <CardHeader>
         <div className="flex items-center justify-between gap-2">
           <CardTitle className="text-base">Dependency graph</CardTitle>
-          <Badge variant="secondary">validated ✓</Badge>
+          <Badge variant={validated ? "secondary" : "destructive"}>{validated ? "validated ✓" : "invalid ✗"}</Badge>
         </div>
         <CardDescription>
-          From <code className="font-mono text-xs">generateDependencyGraph()</code> — React Flow visual and Graphviz DOT
-          source.
+          The request child&apos;s wiring via <code className="font-mono text-xs">generateDependencyGraph()</code> —
+          child overrides plus the root chain, as React Flow and Graphviz DOT.
         </CardDescription>
       </CardHeader>
       <CardContent>

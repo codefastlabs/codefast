@@ -43,6 +43,8 @@ export interface BoardSnapshot {
   graph: ReactFlowGraph;
   /** Graphviz DOT source from `toDotGraph(generateDependencyGraph())`. */
   graphDot: string;
+  /** Result of `container.validate()` for this snapshot — runtime rebinding can change it. */
+  validated: boolean;
   /** Validation errors from the last add attempt — empty when nothing was rejected. */
   validationErrors: Array<string>;
   /** Whether the optional MetricsExporter dependency is bound. */
@@ -403,65 +405,38 @@ function getRootContainer(): Container {
 }
 
 /**
- * Patch injectAll multi-binding edges so TaskValidation links to every validator
- * (`buildDependencyGraph` only wires the first). Named slot labels replace opaque
- * `[0]` constructor-index labels. Applied on the JSON graph so React Flow and DOT stay in sync.
+ * Stable presentation ids: binding ids are minted per registration, so rebinds and per-request
+ * child bindings would give React Flow a "new" node every snapshot. Token names don't drift.
  */
-function expandInjectAllEdges(graph: ContainerGraphJson): ContainerGraphJson {
-  const container = getRootContainer();
-  const validation = graph.nodes.find((node) => node.tokenName === "TaskValidation");
+function stabilizeNodeIds(graph: ContainerGraphJson): ContainerGraphJson {
+  const idByBinding = new Map<string, string>();
+  const occurrences = new Map<string, number>();
 
-  if (validation === undefined) {
-    return graph;
+  for (const node of graph.nodes) {
+    const count = occurrences.get(node.tokenName) ?? 0;
+
+    occurrences.set(node.tokenName, count + 1);
+    idByBinding.set(node.id, count === 0 ? node.tokenName : `${node.tokenName}#${String(count)}`);
   }
-
-  // BindingIdentifier is a branded string at compile time; graph ids are plain strings.
-  const validatorById = new Map(
-    container.lookupBindings(TaskValidatorToken).map((binding) => [String(binding.id), binding] as const),
-  );
-  const linked = new Set<string>();
-  const edges: Array<ContainerGraphJson["edges"][number]> = [];
-
-  for (const edge of graph.edges) {
-    if (edge.from !== validation.id || !validatorById.has(edge.to)) {
-      edges.push(edge);
-      continue;
-    }
-
-    linked.add(edge.to);
-    const name = validatorById.get(edge.to)?.slot.name;
-
-    edges.push({
-      from: edge.from,
-      to: edge.to,
-      ...(name !== undefined ? { label: `name:${name}` } : {}),
-    });
-  }
-
-  for (const [id, binding] of validatorById) {
-    if (linked.has(id)) {
-      continue;
-    }
-
-    const name = binding.slot.name;
-
-    edges.push({
-      from: validation.id,
-      to: id,
-      ...(name !== undefined ? { label: `name:${name}` } : {}),
-    });
-  }
-
-  return { nodes: graph.nodes, edges, includesParent: graph.includesParent };
-}
-
-/** React Flow + DOT views from the same patched dependency graph. */
-function dependencyViews(): { graph: ReactFlowGraph; graphDot: string } {
-  const patched = expandInjectAllEdges(getRootContainer().generateDependencyGraph());
 
   return {
-    graph: toReactFlowGraph(patched),
-    graphDot: toDotGraph(patched),
+    nodes: graph.nodes.map((node) => ({ ...node, id: idByBinding.get(node.id) ?? node.id })),
+    edges: graph.edges.map((edge) => ({
+      ...edge,
+      from: idByBinding.get(edge.from) ?? edge.from,
+      to: idByBinding.get(edge.to) ?? edge.to,
+    })),
+    includesParent: graph.includesParent,
+  };
+}
+
+/** React Flow + DOT views of the request child's wiring — its overrides plus the root chain. */
+function dependencyViews(container: Container): { graph: ReactFlowGraph; graphDot: string } {
+  const stable = stabilizeNodeIds(container.generateDependencyGraph({ includeParent: true }));
+
+  return {
+    graph: toReactFlowGraph(stable),
+    graphDot: toDotGraph(stable),
   };
 }
 
@@ -506,14 +481,24 @@ async function handleRequest(mutate?: (service: TaskService) => Array<string> | 
   const metricsEnabled = root.resolveOptional(MetricsExporterToken) !== undefined;
   const bindings = describeBindings(root);
 
+  // The graph must render the child's wiring, so it is captured before the child is disposed.
+  const { graph, graphDot } = dependencyViews(request);
+
+  // Runtime bind/unbind/rebind can invalidate the graph after boot — re-check every snapshot.
+  let validated = true;
+
+  try {
+    root.validate();
+  } catch {
+    validated = false;
+  }
+
   // Async-only disposal — tears down the child and runs the service's @preDestroy hook.
   await request.dispose();
 
   // Read state from the surviving root singletons after teardown so the log includes the teardown.
   const repository = root.resolve(TaskRepositoryToken);
   const log = root.resolve(ActivityLogToken);
-
-  const { graph, graphDot } = dependencyViews();
 
   return {
     requestId: context.requestId,
@@ -522,6 +507,7 @@ async function handleRequest(mutate?: (service: TaskService) => Array<string> | 
     activity: log.entries(),
     graph,
     graphDot,
+    validated,
     validationErrors,
     metricsEnabled,
     bindings,
