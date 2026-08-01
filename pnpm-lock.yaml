@@ -19,20 +19,20 @@ catalogs:
       specifier: ^2.31.1
       version: 2.31.1
     '@codefast/di':
-      specifier: 0.5.0-canary.7
-      version: 0.5.0-canary.7
+      specifier: 0.5.0
+      version: 0.5.0
     '@codefast/tailwind-variants':
-      specifier: 0.5.0-canary.7
-      version: 0.5.0-canary.7
+      specifier: 0.5.0
+      version: 0.5.0
     '@codefast/theme':
-      specifier: 0.5.0-canary.7
-      version: 0.5.0-canary.7
+      specifier: 0.5.0
+      version: 0.5.0
     '@codefast/typescript-config':
-      specifier: 0.5.0-canary.7
-      version: 0.5.0-canary.7
+      specifier: 0.5.0
+      version: 0.5.0
     '@codefast/ui':
-      specifier: 0.5.0-canary.7
-      version: 0.5.0-canary.7
+      specifier: 0.5.0
+      version: 0.5.0
     '@commitlint/cli':
       specifier: ^21.2.1
       version: 21.2.1
@@ -532,16 +532,16 @@ importers:
     dependencies:
       '@codefast/di':
         specifier: 'catalog:'
-        version: 0.5.0-canary.7
+        version: 0.5.0
       '@codefast/tailwind-variants':
         specifier: 'catalog:'
-        version: 0.5.0-canary.7
+        version: 0.5.0
       '@codefast/theme':
         specifier: 'catalog:'
-        version: 0.5.0-canary.7(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+        version: 0.5.0(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@codefast/ui':
         specifier: 'catalog:'
-        version: 0.5.0-canary.7(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react-is@19.2.8)(react@19.2.8)
+        version: 0.5.0(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react-is@19.2.8)(react@19.2.8)
       '@tanstack/react-router':
         specifier: 'catalog:'
         version: 1.170.18(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
@@ -572,7 +572,7 @@ importers:
         version: 8.0.2(@babel/core@8.0.1)
       '@codefast/typescript-config':
         specifier: 'catalog:'
-        version: 0.5.0-canary.7(typescript@7.0.2)
+        version: 0.5.0(typescript@7.0.2)
       '@rolldown/plugin-babel':
         specifier: 'catalog:'
         version: 0.2.3(@babel/core@8.0.1)(@babel/runtime@7.29.7)(rolldown@1.2.1)(vite@8.2.0(@types/node@26.1.2)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.23.1)(yaml@2.9.0))
@@ -1295,16 +1295,16 @@ packages:
   '@changesets/write@0.4.0':
     resolution: {integrity: sha512-CdTLvIOPiCNuH71pyDu3rA+Q0n65cmAbXnwWH84rKGiFumFzkmHNT8KHTMEchcxN+Kl8I54xGUhJ7l3E7X396Q==}
 
-  '@codefast/di@0.5.0-canary.7':
-    resolution: {integrity: sha512-PuILHqAFh+JAw7CSOxn1sLfr4jZNc9a/klOsrBg6s1QzAaYDGZ84xaZYHVB8W2eqaROtoMMLCjP5zvacIA8PXQ==}
+  '@codefast/di@0.5.0':
+    resolution: {integrity: sha512-TLq54nRz53rhYCrSHnPPhhjR8tS5oMyHBWRNnXF0G6i0XTaBVs2f9iIuUA1ZX4Nr1UyM1vxqJYA8pRstLZtDGA==}
     engines: {node: '>=26.0.0'}
 
-  '@codefast/tailwind-variants@0.5.0-canary.7':
-    resolution: {integrity: sha512-vwCQzbKynu4MvghRKBBAmXr61HZcBKvusuazPKXbe82olqjNJcOcnjWyHWc4PuQfiLum+97EtUhOGISMDiU74A==}
+  '@codefast/tailwind-variants@0.5.0':
+    resolution: {integrity: sha512-ug4YqF9d3MYp2Z2p69hHH6quGUDeeZiIhnCfb4rWpJ4MVDuKH8/eVKxS5DTX5jLjViBAEpVtH+XeJWo6HYfXOQ==}
     engines: {node: '>=24.0.0'}
 
-  '@codefast/theme@0.5.0-canary.7':
-    resolution: {integrity: sha512-saOZ2TLPbfgdNfYju7Cs0R6rQ80KNMZPY5g+PmaA/dNNhvsTUCRdI6g4HVJErIZ6BikVtVDleipXvPD+EsXfhg==}
+  '@codefast/theme@0.5.0':
+    resolution: {integrity: sha512-rHb/x6Yvvg0nPi3kxW1X5KKdBQXRBrTOJdCiB1+lJFtqwEivhF9GyNyxhNg4TqH0D48enUV2/wgGtZLKnC+4HA==}
     engines: {node: '>=24.0.0'}
     peerDependencies:
       '@types/react': '>=19.0.0'
@@ -1317,14 +1317,14 @@ packages:
       '@types/react-dom':
         optional: true
 
-  '@codefast/typescript-config@0.5.0-canary.7':
-    resolution: {integrity: sha512-++kUC3h0HOGwXB0R7DkbsCjbrnKT3qupXNVGkoSXoQeXM2hTX4VEtamTWIBmDptLUXEjxTNZsRZboZ+sX3AnCg==}
+  '@codefast/typescript-config@0.5.0':
+    resolution: {integrity: sha512-hu+aN2IEWJW/UGnPJj32vhoZuvkibJtSNDI68M6h9VknjX7KVfakJSoZGs8wCynb9eozOfeapzpex3AXYD9m9A==}
     engines: {node: '>=24.0.0'}
     peerDependencies:
       typescript: '>=5.0.0'
 
-  '@codefast/ui@0.5.0-canary.7':
-    resolution: {integrity: sha512-yy65A8lRi5ou3IZ2Kf7J7KXUPLiFLbfX3OHI0MEpxYHSy/13VL3brxvR4hwbwiHdimHlwxua23doR3CdRJRNUw==}
+  '@codefast/ui@0.5.0':
+    resolution: {integrity: sha512-kjGKbXgK722y+hwWQpCxkdXvhkyyKXw4me7oxYA24uThokEqRMAMFQjbNTvF+AtOGitMEk1U8UReMMPnGpJCqA==}
     engines: {node: '>=24.0.0'}
     peerDependencies:
       '@types/react': '>=19.0.0'
@@ -5873,10 +5873,6 @@ packages:
     resolution: {integrity: sha512-Pugqs6M0m7Lv1I7FtxN4aoyToKg1C4tu+/381vH35y8oENM/Ai7f7C4StcoK4/+BSw9ebcS8jRiVrORFKCALLw==}
     engines: {node: ^20.0.0 || >=22.0.0}
 
-  tinyrainbow@3.1.0:
-    resolution: {integrity: sha512-Bf+ILmBgretUrdJxzXM0SgXLZ3XfiaUuOj/IKQHuTXip+05Xn+uyEYdVg0kYDipTBcLrCVyUzAPz7QmArb0mmw==}
-    engines: {node: '>=14.0.0'}
-
   tinyrainbow@3.1.1:
     resolution: {integrity: sha512-yau8yJdTt989Mm0Bd/236QnzEiPf2xLLTqUZRUJOo/3CB078LSwzei343DgtJVmfJKJE3TMINY1u42SQsP6mXw==}
     engines: {node: '>=14.0.0'}
@@ -6772,14 +6768,14 @@ snapshots:
       human-id: 4.2.0
       prettier: 2.8.8
 
-  '@codefast/di@0.5.0-canary.7': {}
+  '@codefast/di@0.5.0': {}
 
-  '@codefast/tailwind-variants@0.5.0-canary.7':
+  '@codefast/tailwind-variants@0.5.0':
     dependencies:
       clsx: 2.1.1
       tailwind-merge: 3.6.0
 
-  '@codefast/theme@0.5.0-canary.7(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
+  '@codefast/theme@0.5.0(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
     dependencies:
       react: 19.2.8
       react-dom: 19.2.8(react@19.2.8)
@@ -6788,13 +6784,13 @@ snapshots:
       '@types/react': 19.2.18
       '@types/react-dom': 19.2.4(@types/react@19.2.18)
 
-  '@codefast/typescript-config@0.5.0-canary.7(typescript@7.0.2)':
+  '@codefast/typescript-config@0.5.0(typescript@7.0.2)':
     dependencies:
       typescript: 7.0.2
 
-  '@codefast/ui@0.5.0-canary.7(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react-is@19.2.8)(react@19.2.8)':
+  '@codefast/ui@0.5.0(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react-is@19.2.8)(react@19.2.8)':
     dependencies:
-      '@codefast/tailwind-variants': 0.5.0-canary.7
+      '@codefast/tailwind-variants': 0.5.0
       '@daypicker/react': 10.0.1(@types/react@19.2.18)(react@19.2.8)
       cmdk: 1.1.1(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       embla-carousel-react: 8.6.0(react@19.2.8)
@@ -8801,8 +8797,8 @@ snapshots:
     dependencies:
       '@tanstack/history': 1.162.0
       cookie-es: 3.1.1
-      seroval: 1.5.6
-      seroval-plugins: 1.5.4(seroval@1.5.6)
+      seroval: 1.6.0
+      seroval-plugins: 1.5.4(seroval@1.6.0)
 
   '@tanstack/router-devtools-core@1.168.0(@tanstack/router-core@1.171.15)(csstype@3.2.3)':
     dependencies:
@@ -9215,7 +9211,7 @@ snapshots:
       '@vitest/browser': 4.1.10(vite@8.2.0(@types/node@26.1.2)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.23.1)(yaml@2.9.0))(vitest@4.1.10)
       '@vitest/mocker': 4.1.10(vite@8.2.0(@types/node@26.1.2)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.23.1)(yaml@2.9.0))
       playwright: 1.61.1
-      tinyrainbow: 3.1.0
+      tinyrainbow: 3.1.1
       vitest: 4.1.10(@types/node@26.1.2)(@vitest/browser-playwright@4.1.10)(@vitest/coverage-v8@4.1.10)(jsdom@30.0.1)(vite@8.2.0(@types/node@26.1.2)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.23.1)(yaml@2.9.0))
     transitivePeerDependencies:
       - bufferutil
@@ -9232,7 +9228,7 @@ snapshots:
       magic-string: 0.30.21
       pngjs: 7.0.0
       sirv: 3.0.2
-      tinyrainbow: 3.1.0
+      tinyrainbow: 3.1.1
       vitest: 4.1.10(@types/node@26.1.2)(@vitest/browser-playwright@4.1.10)(@vitest/coverage-v8@4.1.10)(jsdom@30.0.1)(vite@8.2.0(@types/node@26.1.2)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.23.1)(yaml@2.9.0))
       ws: 8.21.1
     transitivePeerDependencies:
@@ -9253,7 +9249,7 @@ snapshots:
       magicast: 0.5.3
       obug: 2.1.4
       std-env: 4.2.0
-      tinyrainbow: 3.1.0
+      tinyrainbow: 3.1.1
       vitest: 4.1.10(@types/node@26.1.2)(@vitest/browser-playwright@4.1.10)(@vitest/coverage-v8@4.1.10)(jsdom@30.0.1)(vite@8.2.0(@types/node@26.1.2)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.23.1)(yaml@2.9.0))
     optionalDependencies:
       '@vitest/browser': 4.1.10(vite@8.2.0(@types/node@26.1.2)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.23.1)(yaml@2.9.0))(vitest@4.1.10)
@@ -9297,7 +9293,7 @@ snapshots:
     dependencies:
       '@vitest/pretty-format': 4.1.10
       convert-source-map: 2.0.0
-      tinyrainbow: 3.1.0
+      tinyrainbow: 3.1.1
 
   '@xyflow/react@12.11.2(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(immer@11.1.15)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
     dependencies:
@@ -10880,6 +10876,10 @@ snapshots:
     dependencies:
       seroval: 1.5.6
 
+  seroval-plugins@1.5.4(seroval@1.6.0):
+    dependencies:
+      seroval: 1.6.0
+
   seroval@1.5.6: {}
 
   seroval@1.6.0: {}
@@ -11025,8 +11025,6 @@ snapshots:
       picomatch: 4.0.5
 
   tinypool@2.1.0: {}
-
-  tinyrainbow@3.1.0: {}
 
   tinyrainbow@3.1.1: {}
 
