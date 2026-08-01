@@ -35,6 +35,7 @@ function DiPage() {
         graph={board.graph}
         graphCytoscape={board.graphCytoscape}
         graphDot={board.graphDot}
+        graphJson={board.graphJson}
         graphMermaid={board.graphMermaid}
         validated={board.validated}
       />

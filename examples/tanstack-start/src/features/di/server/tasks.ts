@@ -49,6 +49,8 @@ export interface BoardSnapshot {
   graphMermaid: string;
   /** Pretty-printed `toCytoscapeGraph(generateDependencyGraph())` elements JSON. */
   graphCytoscape: string;
+  /** Pretty-printed raw `ContainerGraphJson` — the adapters' common input. */
+  graphJson: string;
   /** Result of `container.validate()` for this snapshot — runtime rebinding can change it. */
   validated: boolean;
   /** Validation errors from the last add attempt — empty when nothing was rejected. */
@@ -442,6 +444,7 @@ function dependencyViews(container: Container): {
   graphDot: string;
   graphMermaid: string;
   graphCytoscape: string;
+  graphJson: string;
 } {
   const stable = stabilizeNodeIds(container.generateDependencyGraph({ includeParent: true }));
 
@@ -450,6 +453,7 @@ function dependencyViews(container: Container): {
     graphDot: toDotGraph(stable),
     graphMermaid: toMermaidGraph(stable),
     graphCytoscape: JSON.stringify(toCytoscapeGraph(stable), undefined, 2),
+    graphJson: JSON.stringify(stable, undefined, 2),
   };
 }
 
@@ -495,7 +499,7 @@ async function handleRequest(mutate?: (service: TaskService) => Array<string> | 
   const bindings = describeBindings(root);
 
   // The graph must render the child's wiring, so it is captured before the child is disposed.
-  const { graph, graphDot, graphMermaid, graphCytoscape } = dependencyViews(request);
+  const { graph, graphDot, graphMermaid, graphCytoscape, graphJson } = dependencyViews(request);
 
   // Runtime bind/unbind/rebind can invalidate the graph after boot — re-check every snapshot.
   let validated = true;
@@ -522,6 +526,7 @@ async function handleRequest(mutate?: (service: TaskService) => Array<string> | 
     graphDot,
     graphMermaid,
     graphCytoscape,
+    graphJson,
     validated,
     validationErrors,
     metricsEnabled,
