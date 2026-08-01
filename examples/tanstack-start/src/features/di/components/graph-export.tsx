@@ -3,41 +3,40 @@ import type { ReactElement } from "react";
 
 import { CopyButton } from "#/features/di/components/copy-button";
 import { GraphSource } from "#/features/di/components/graph-source";
+import type { GraphExports } from "#/features/di/server/tasks";
 
 interface GraphExportProps {
-  graphDot: string;
-  graphMermaid: string;
-  graphCytoscape: string;
-  graphJson: string;
+  exports: GraphExports;
 }
 
-/** The same graph as portable sources — take it to Graphviz, Mermaid, Cytoscape, or your own tooling. */
-export function GraphExport({ graphDot, graphMermaid, graphCytoscape, graphJson }: GraphExportProps): ReactElement {
-  const formats = [
-    { value: "dot", label: "DOT", source: graphDot, hint: "Graphviz / edotor.net" },
-    { value: "mermaid", label: "Mermaid", source: graphMermaid, hint: "GitHub markdown / mermaid.live" },
-    { value: "cytoscape", label: "Cytoscape", source: graphCytoscape, hint: "cytoscape.js elements" },
-    { value: "json", label: "JSON", source: graphJson, hint: "raw ContainerGraphJson" },
-  ];
+/** Where each adapter's output is meant to be pasted. */
+const DESTINATIONS = {
+  dot: { label: "DOT", hint: "Graphviz / edotor.net" },
+  mermaid: { label: "Mermaid", hint: "GitHub markdown / mermaid.live" },
+  cytoscape: { label: "Cytoscape", hint: "cytoscape.js elements" },
+  json: { label: "JSON", hint: "raw ContainerGraphJson" },
+} as const satisfies Record<keyof GraphExports, { label: string; hint: string }>;
 
+const FORMATS = Object.keys(DESTINATIONS) as Array<keyof GraphExports>;
+
+/** The same graph as portable sources — take it to Graphviz, Mermaid, Cytoscape, or your own tooling. */
+export function GraphExport({ exports }: GraphExportProps): ReactElement {
   return (
     <Tabs defaultValue="dot">
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <TabsList>
-          {formats.map((format) => (
-            <TabsTrigger key={format.value} value={format.value}>
-              {format.label}
-            </TabsTrigger>
-          ))}
-        </TabsList>
-      </div>
-      {formats.map((format) => (
-        <TabsContent className="pt-2" key={format.value} value={format.value}>
+      <TabsList>
+        {FORMATS.map((format) => (
+          <TabsTrigger key={format} value={format}>
+            {DESTINATIONS[format].label}
+          </TabsTrigger>
+        ))}
+      </TabsList>
+      {FORMATS.map((format) => (
+        <TabsContent className="pt-2" key={format} value={format}>
           <div className="mb-2 flex items-center justify-between gap-2">
-            <span className="text-xs text-muted-foreground">{format.hint}</span>
-            <CopyButton value={format.source} />
+            <span className="text-xs text-muted-foreground">{DESTINATIONS[format].hint}</span>
+            <CopyButton value={exports[format]} />
           </div>
-          <GraphSource source={format.source} />
+          <GraphSource source={exports[format]} />
         </TabsContent>
       ))}
     </Tabs>

@@ -1,36 +1,25 @@
 import type { ReactFlowGraph } from "@codefast/di/graph-adapters/reactflow";
-import { useAppearance } from "@codefast/theme";
 import { Badge } from "@codefast/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@codefast/ui/card";
 import { Label } from "@codefast/ui/label";
 import { Switch } from "@codefast/ui/switch";
 import { useState } from "react";
 
-import { DependencyGraph, SCOPE_COLORS } from "#/features/di/components/dependency-graph";
+import { DependencyGraph } from "#/features/di/components/dependency-graph";
 import { GraphExport } from "#/features/di/components/graph-export";
+import { SCOPE_ORDER, ScopeDot } from "#/features/di/components/scope-dot";
+import type { GraphExports } from "#/features/di/server/tasks";
 
 interface DependencyGraphCardProps {
   graph: ReactFlowGraph;
-  graphDot: string;
-  graphMermaid: string;
-  graphCytoscape: string;
-  graphJson: string;
+  graphExports: GraphExports;
   /** Fresh `container.validate()` result — runtime bind/unbind/rebind can change it. */
   validated: boolean;
 }
 
 /** One designed canvas for the request wiring, plus every adapter output as a portable source. */
-export function DependencyGraphCard({
-  graph,
-  graphDot,
-  graphMermaid,
-  graphCytoscape,
-  graphJson,
-  validated,
-}: DependencyGraphCardProps) {
-  const { colorScheme } = useAppearance();
+export function DependencyGraphCard({ graph, graphExports, validated }: DependencyGraphCardProps) {
   const [showShadowed, setShowShadowed] = useState(false);
-  const mode = colorScheme === "dark" ? "dark" : "light";
 
   return (
     <Card>
@@ -53,13 +42,9 @@ export function DependencyGraphCard({
         </div>
         <DependencyGraph edges={graph.edges} nodes={graph.nodes} showShadowed={showShadowed} />
         <ul className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted-foreground">
-          {(["singleton", "scoped", "transient"] as const).map((scope) => (
+          {SCOPE_ORDER.map((scope) => (
             <li className="flex items-center gap-1.5" key={scope}>
-              <span
-                aria-hidden
-                className="size-2 rounded-full"
-                style={{ backgroundColor: SCOPE_COLORS[scope]?.[mode] }}
-              />
+              <ScopeDot scope={scope} />
               {scope}
             </li>
           ))}
@@ -84,12 +69,7 @@ export function DependencyGraphCard({
             <code className="font-mono">toMermaidGraph</code> / <code className="font-mono">toCytoscapeGraph</code>,
             ready for your own tooling.
           </p>
-          <GraphExport
-            graphCytoscape={graphCytoscape}
-            graphDot={graphDot}
-            graphJson={graphJson}
-            graphMermaid={graphMermaid}
-          />
+          <GraphExport exports={graphExports} />
         </div>
       </CardContent>
     </Card>

@@ -1,13 +1,13 @@
 import { Button } from "@codefast/ui/button";
-import type { ReactElement } from "react";
+import type { ComponentProps, ReactElement } from "react";
 import { useEffect, useRef, useState } from "react";
 
-interface CopyButtonProps {
+interface CopyButtonProps extends Omit<ComponentProps<typeof Button>, "children"> {
   value: string;
 }
 
-/** Copies `value` to the clipboard with a transient "Copied" confirmation. */
-export function CopyButton({ value }: CopyButtonProps): ReactElement {
+/** Copies `value` to the clipboard and confirms it on the label until the moment passes. */
+export function CopyButton({ value, size = "sm", variant = "outline", ...props }: CopyButtonProps): ReactElement {
   const [copied, setCopied] = useState(false);
   const timerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
@@ -19,7 +19,12 @@ export function CopyButton({ value }: CopyButtonProps): ReactElement {
 
   return (
     <Button
-      onClick={() => {
+      size={size}
+      variant={variant}
+      {...props}
+      // Owned by this component: copying is what the button is for.
+      onClick={(event) => {
+        props.onClick?.(event);
         void navigator.clipboard.writeText(value).then(() => {
           setCopied(true);
           clearTimeout(timerRef.current);
@@ -28,8 +33,6 @@ export function CopyButton({ value }: CopyButtonProps): ReactElement {
           }, 1500);
         });
       }}
-      size="sm"
-      variant="outline"
     >
       {copied ? "Copied ✓" : "Copy"}
     </Button>

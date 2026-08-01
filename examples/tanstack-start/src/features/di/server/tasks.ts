@@ -27,6 +27,14 @@ export interface BindingInfo {
   kind: string;
 }
 
+/** One entry per graph adapter; the key is what the export panel labels the tab. */
+export interface GraphExports {
+  dot: string;
+  mermaid: string;
+  cytoscape: string;
+  json: string;
+}
+
 /** Evidence that a transient binding hands back a fresh instance on every resolve. */
 export interface TransientProof {
   first: string;
@@ -41,16 +49,10 @@ export interface BoardSnapshot {
   tasks: Array<Task>;
   /** Append-only log from the singleton ActivityLog — survives across requests. */
   activity: Array<string>;
-  /** React Flow nodes/edges from `toReactFlowGraph(generateDependencyGraph())`. */
+  /** React Flow nodes/edges from `toReactFlowGraph(generateDependencyGraph())` — the canvas input. */
   graph: ReactFlowGraph;
-  /** Graphviz DOT source from `toDotGraph(generateDependencyGraph())`. */
-  graphDot: string;
-  /** Mermaid `flowchart TD` source from `toMermaidGraph(generateDependencyGraph())`. */
-  graphMermaid: string;
-  /** Pretty-printed `toCytoscapeGraph(generateDependencyGraph())` elements JSON. */
-  graphCytoscape: string;
-  /** Pretty-printed raw `ContainerGraphJson` — the adapters' common input. */
-  graphJson: string;
+  /** The same graph as portable sources, one per adapter, for the export panel. */
+  graphExports: GraphExports;
   /** Result of `container.validate()` for this snapshot — runtime rebinding can change it. */
   validated: boolean;
   /** Validation errors from the last add attempt — empty when nothing was rejected. */
@@ -414,17 +416,19 @@ function getRootContainer(): Container {
 
 /**
  * Stable presentation ids: binding ids are minted per registration, so rebinds and per-request
- * child bindings would give React Flow a "new" node every snapshot. Token names don't drift.
+ * child bindings would give React Flow a "new" node every snapshot. A token's key does not drift,
+ * and the lane keeps a child binding distinct from the root one it shadows.
  */
 function stabilizeNodeIds(graph: ContainerGraphJson): ContainerGraphJson {
   const idByBinding = new Map<string, string>();
   const occurrences = new Map<string, number>();
 
   for (const node of graph.nodes) {
-    const count = occurrences.get(node.tokenName) ?? 0;
+    const base = `${node.tokenKey}:${node.fromParent ? "root" : "own"}`;
+    const count = occurrences.get(base) ?? 0;
 
-    occurrences.set(node.tokenName, count + 1);
-    idByBinding.set(node.id, count === 0 ? node.tokenName : `${node.tokenName}#${String(count)}`);
+    occurrences.set(base, count + 1);
+    idByBinding.set(node.id, count === 0 ? base : `${base}#${String(count)}`);
   }
 
   return {
@@ -439,21 +443,17 @@ function stabilizeNodeIds(graph: ContainerGraphJson): ContainerGraphJson {
 }
 
 /** Every adapter view of the request child's wiring — its overrides plus the root chain. */
-function dependencyViews(container: Container): {
-  graph: ReactFlowGraph;
-  graphDot: string;
-  graphMermaid: string;
-  graphCytoscape: string;
-  graphJson: string;
-} {
+function dependencyViews(container: Container): Pick<BoardSnapshot, "graph" | "graphExports"> {
   const stable = stabilizeNodeIds(container.generateDependencyGraph({ includeParent: true }));
 
   return {
     graph: toReactFlowGraph(stable),
-    graphDot: toDotGraph(stable),
-    graphMermaid: toMermaidGraph(stable),
-    graphCytoscape: JSON.stringify(toCytoscapeGraph(stable), undefined, 2),
-    graphJson: JSON.stringify(stable, undefined, 2),
+    graphExports: {
+      dot: toDotGraph(stable),
+      mermaid: toMermaidGraph(stable),
+      cytoscape: JSON.stringify(toCytoscapeGraph(stable), undefined, 2),
+      json: JSON.stringify(stable, undefined, 2),
+    },
   };
 }
 
@@ -499,7 +499,7 @@ async function handleRequest(mutate?: (service: TaskService) => Array<string> | 
   const bindings = describeBindings(root);
 
   // The graph must render the child's wiring, so it is captured before the child is disposed.
-  const { graph, graphDot, graphMermaid, graphCytoscape, graphJson } = dependencyViews(request);
+  const { graph, graphExports } = dependencyViews(request);
 
   // Runtime bind/unbind/rebind can invalidate the graph after boot — re-check every snapshot.
   let validated = true;
@@ -523,10 +523,7 @@ async function handleRequest(mutate?: (service: TaskService) => Array<string> | 
     tasks: repository.list(),
     activity: log.entries(),
     graph,
-    graphDot,
-    graphMermaid,
-    graphCytoscape,
-    graphJson,
+    graphExports,
     validated,
     validationErrors,
     metricsEnabled,
