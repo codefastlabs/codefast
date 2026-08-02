@@ -921,10 +921,15 @@ import { Container } from "@codefast/di";
 // Static factory — không dùng new Container()
 const container = Container.create();
 
+// Construction-time options (§7.4) — thứ container phải biết trước khi tồn tại
+const container = Container.create({ metadataReader: customReader });
+
 // Từ modules — load tất cả modules rồi trả về container
 const container = Container.fromModules(AppModule, DatabaseModule);
 const container = await Container.fromModulesAsync(AppModule, DatabaseModule);
 ```
+
+`fromModules`/`fromModulesAsync` nhận modules dạng variadic nên không có chỗ cho options. Cần cả hai thì dùng `Container.create(options)` rồi `load(...)`/`loadAsync(...)` — đúng những gì hai factory kia làm.
 
 ### 6.2 Resolution
 
@@ -1429,8 +1434,13 @@ interface Container {
 }
 
 // Static API
+interface ContainerOptions {
+  /** Reader resolver dùng cho class metadata; mặc định là decorator reader. Child kế thừa. */
+  readonly metadataReader?: MetadataReader | undefined;
+}
+
 interface ContainerStatic {
-  create(): Container;
+  create(options?: ContainerOptions): Container;
   fromModules(...modules: SyncModule[]): Container;
   fromModulesAsync(...modules: Array<SyncModule | AsyncModule>): Promise<Container>;
 }
@@ -1627,6 +1637,13 @@ Container không đọc `Symbol.metadata` trực tiếp — đọc qua port này
 interface MetadataReader {
   getConstructorMetadata(target: Constructor): ConstructorMetadata | undefined;
   getLifecycleMetadata(target: Constructor): LifecycleMetadata | undefined;
+  /**
+   * Danh sách `@inject accessor` field. Optional — reader bỏ method này thì không class nào
+   * được mở container context, nên mọi accessor injection throw MissingContainerContextError (§7.5).
+   */
+  getAccessorMetadata?(
+    target: Constructor,
+  ): ReadonlyArray<{ readonly key: string | symbol; readonly descriptor: InjectionDescriptor }> | undefined;
 }
 
 interface ConstructorMetadata {
@@ -1656,16 +1673,31 @@ interface LifecycleMetadata {
 }
 ```
 
-**`MetadataReaderToken` — swap trong test:**
+**Cài reader của riêng mình — normative:**
 
-Container nhận `MetadataReader` qua token để có thể override trong test:
+Resolver được **trao** reader lúc nó được khởi tạo, tức trong constructor của container. Vì vậy nguồn duy nhất mà resolution chắc chắn đọc được là `ContainerOptions.metadataReader` (§6.1):
+
+```ts
+import { Container } from "@codefast/di";
+
+const container = Container.create({ metadataReader: customReader });
+```
+
+Reader này outrank mọi binding `MetadataReaderToken`, và child kế thừa nó (child gọi lại `#getMetadataReader()` của parent khi tự dựng resolver).
+
+**`MetadataReaderToken` — binding, và giới hạn của nó:**
 
 ```ts
 import { MetadataReaderToken } from "@codefast/di";
 
-// Override MetadataReader trong test
-testContainer.bind(MetadataReaderToken).toConstantValue(customReader);
+const root = Container.create();
+root.bind(MetadataReaderToken).toConstantValue(customReader);
+const app = root.createChild(); // resolver của app dựng sau khi binding đã tồn tại → thấy reader
 ```
+
+Bind token **lên chính container đang dùng** thì không đường nào thấy: constructor đã chạy trước khi có binding, nên resolver giữ reader mặc định và class không decorator throw `MissingMetadataError`.
+
+**Normative — một container, một reader.** Reader được chốt khi resolver của container được dựng; `validate()`, `inspect()`, `generateDependencyGraph()`, `unbind*` đều trả lời bằng đúng reader đó. Introspection không thể bất đồng với resolution.
 
 `MetadataReaderToken` có type `Token<MetadataReader>` và được export từ `@codefast/di`.
 
