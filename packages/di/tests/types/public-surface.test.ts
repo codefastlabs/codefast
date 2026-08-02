@@ -7,8 +7,25 @@
  * API returns one — so it was exported and uncallable. These assertions import through the package
  * specifier, exactly as a consumer does, so a repeat shows up here rather than in an issue.
  */
-import { bindingSlotToResolveOptions, Container, injectionSlotToResolveOptions, token } from "@codefast/di";
-import type { BindingScope, BindingSnapshot, ResolveOptions } from "@codefast/di";
+import {
+  bindingSlotToResolveOptions,
+  Container,
+  defaultMetadataReader,
+  getActiveContainer,
+  injectionSlotToResolveOptions,
+  runWithContainer,
+  token,
+} from "@codefast/di";
+import type {
+  BindingScope,
+  BindingSnapshot,
+  ConstructorMetadata,
+  Constructor,
+  ContainerInterface,
+  LifecycleMetadata,
+  MetadataReader,
+  ResolveOptions,
+} from "@codefast/di";
 import { expectTypeOf } from "expect-type";
 import { describe, expect, it } from "vitest";
 
@@ -48,5 +65,49 @@ describe("every exported function is callable with public values", () => {
 
     expectTypeOf(graph.nodes[0]!.scope).toEqualTypeOf<BindingScope | "unbound">();
     expect(graph.nodes[0]!.scope).toBe("singleton");
+  });
+});
+
+describe("the ambient container is reachable from the root entry", () => {
+  it("opens a context around a callback and restores it after", () => {
+    const container = Container.create();
+
+    expectTypeOf(getActiveContainer()).toEqualTypeOf<ContainerInterface | undefined>();
+    expect(getActiveContainer()).toBeUndefined();
+
+    const seen = runWithContainer(container, () => getActiveContainer());
+
+    expectTypeOf(seen).toEqualTypeOf<ContainerInterface | undefined>();
+    expect(seen).toBe(container);
+    expect(getActiveContainer()).toBeUndefined();
+  });
+});
+
+describe("a MetadataReader can be written and installed with root exports only", () => {
+  const dsnToken = token<string>("public-surface.dsn");
+
+  class Pool {
+    constructor(readonly dsn: string) {}
+  }
+
+  it("describes an undecorated class and delegates the rest to the default reader", () => {
+    const reader: MetadataReader = {
+      getConstructorMetadata(target: Constructor): ConstructorMetadata | undefined {
+        return target === (Pool as Constructor)
+          ? { params: [{ index: 0, token: dsnToken, optional: false, multi: false }] }
+          : defaultMetadataReader.getConstructorMetadata(target);
+      },
+      getLifecycleMetadata(target: Constructor): LifecycleMetadata | undefined {
+        return defaultMetadataReader.getLifecycleMetadata(target);
+      },
+    };
+
+    const container = Container.create({ metadataReader: reader });
+
+    container.bind(dsnToken).toConstantValue("postgres://localhost/app");
+    container.bind(Pool).toSelf().singleton();
+
+    expectTypeOf(container.resolve(Pool)).toEqualTypeOf<Pool>();
+    expect(container.resolve(Pool).dsn).toBe("postgres://localhost/app");
   });
 });

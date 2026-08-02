@@ -34,7 +34,11 @@ export type {
 
 // Container
 export { Container } from "#/container/container";
-export type { Container as ContainerInterface, ContainerStatic } from "#/container/container";
+export type { Container as ContainerInterface, ContainerOptions, ContainerStatic } from "#/container/container";
+
+// Ambient container — the context an `@inject` accessor initializer resolves from. The rest of
+// `resolution/environment` stays internal: it hands out resolver callbacks, not public values.
+export { getActiveContainer, runWithContainer } from "#/resolution/environment";
 
 // `effectiveBindingScope` is deliberately absent: it reads a `Binding`, which is internal, and no
 // public API hands one out. `BindingSnapshot.scope` and `GraphNode.scope` are the public answers.
@@ -61,9 +65,16 @@ export { postConstruct, preDestroy } from "#/decorators/lifecycle-decorators";
 export { createAutoRegisterRegistry } from "#/decorators/injectable";
 export type { AutoRegisterRegistry } from "#/decorators/injectable";
 
-// MetadataReader
+// MetadataReader — everything a consumer needs to write one and pass it to Container.create()
 export { MetadataReaderToken } from "#/metadata/metadata-reader-token";
-export type { MetadataReader, MutableLifecycleMetadata } from "#/metadata/metadata-types";
+export type {
+  ConstructorMetadata,
+  LifecycleMetadata,
+  MetadataReader,
+  MutableLifecycleMetadata,
+  ParamMetadata,
+} from "#/metadata/metadata-types";
+export { defaultMetadataReader, SymbolMetadataReader } from "#/metadata/symbol-metadata-reader";
 
 // Constraints — contextual injection predicates for .when()
 export {
@@ -109,3 +120,4 @@ export { toCytoscapeGraph } from "#/introspection/graph-adapters/cytoscape";
 export type { CytoscapeEdge, CytoscapeElements, CytoscapeNode } from "#/introspection/graph-adapters/cytoscape";
 export { toReactFlowGraph } from "#/introspection/graph-adapters/reactflow";
 export type { ReactFlowEdge, ReactFlowGraph, ReactFlowNode } from "#/introspection/graph-adapters/reactflow";
+export { toMermaidGraph } from "#/introspection/graph-adapters/mermaid";

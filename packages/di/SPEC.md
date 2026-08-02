@@ -1769,7 +1769,7 @@ Chỉ accessor injection được bridge. Lifecycle thuộc resolver, nên insta
 TC39 `context.addInitializer` chạy synchronously ngay sau constructor body, trong cùng call frame với `new`. Container khai thác điều này qua pattern **module-level active container variable**:
 
 ```ts
-// environment.ts — exported để inject.ts import
+// environment.ts — inject.ts import, và cả hai hàm đều là public API (root entry)
 let _activeContainer: Container | undefined;
 
 /**
@@ -1787,7 +1787,7 @@ export function runWithContainer<Result>(container: Container, fn: () => Result)
   }
 }
 
-/** Đọc active container hiện tại — chỉ dùng bên trong addInitializer callback. */
+/** Đọc active container hiện tại — undefined nếu không có context nào đang mở. */
 export function getActiveContainer(): Container | undefined {
   return _activeContainer;
 }
