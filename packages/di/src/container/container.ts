@@ -24,7 +24,7 @@ import type { AsyncModuleBuilder } from "#/module";
 import { isSyncModule, MODULE_SETUP } from "#/module";
 import { BindingRegistry } from "#/registry";
 import { effectiveBindingScope } from "#/resolution/binding-scope";
-import { assertConstructorMetadata } from "#/resolution/class-introspector";
+import { verifyConstructorMetadata } from "#/resolution/class-introspector";
 import type { ResolutionDiagnostics } from "#/resolution/diagnostics";
 import { RESOLUTION_DIAGNOSTICS } from "#/resolution/diagnostics";
 import { LifecycleManager } from "#/resolution/lifecycle";
@@ -700,9 +700,7 @@ class DefaultContainer implements Container {
   /** What a binding declares up front — a class's params, a factory's descriptors, else nothing. */
   #staticDependencies(binding: Binding, reader: MetadataReader): ReadonlyArray<DependencySlot> {
     if (binding.kind === "class") {
-      const target = binding.target as Constructor;
-
-      return assertConstructorMetadata(reader.getConstructorMetadata(target), target)?.params ?? [];
+      return verifyConstructorMetadata(reader, binding.target as Constructor)?.params ?? [];
     }
     if (binding.kind === "resolved" || binding.kind === "resolved-async") {
       return binding.deps;

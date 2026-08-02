@@ -9,7 +9,7 @@ import { describe, expect, it } from "vitest";
 import { Container } from "#/container/container";
 import { InvalidMetadataError } from "#/errors";
 import type { ConstructorMetadata, MetadataReader } from "#/metadata/metadata-types";
-import { assertConstructorMetadata } from "#/resolution/class-introspector";
+import { assertConstructorMetadata, verifyConstructorMetadata } from "#/resolution/class-introspector";
 import { token } from "#/token";
 import type { Constructor } from "#/types";
 
@@ -95,5 +95,32 @@ describe("a reader's mistake reaches every consumer as the same error", () => {
 
   it("throws on generateDependencyGraph() rather than drawing a class with no edges", () => {
     expect(() => containerWith({}).generateDependencyGraph()).toThrow(InvalidMetadataError);
+  });
+});
+
+describe("verifyConstructorMetadata", () => {
+  it("verifies a (reader, class) pair once, then trusts it", () => {
+    let calls = 0;
+    const reader: MetadataReader = {
+      getConstructorMetadata: () => {
+        calls += 1;
+
+        return { params: [{ index: 0, token: dsnToken, optional: false, multi: false }] };
+      },
+      getLifecycleMetadata: () => undefined,
+    };
+
+    expect(verifyConstructorMetadata(reader, Pool)?.params).toHaveLength(1);
+    expect(verifyConstructorMetadata(reader, Pool)?.params).toHaveLength(1);
+    // The reader is still asked every time — only the verification is remembered.
+    expect(calls).toBe(2);
+  });
+
+  it("verifies each reader separately, so one reader's mistake is still caught", () => {
+    const good: MetadataReader = readerReturning({ params: [] });
+    const bad: MetadataReader = readerReturning({ params: "none" });
+
+    expect(verifyConstructorMetadata(good, Pool)).toBeDefined();
+    expect(() => verifyConstructorMetadata(bad, Pool)).toThrow(InvalidMetadataError);
   });
 });
