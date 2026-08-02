@@ -2529,7 +2529,7 @@ class InvalidMetadataError extends DiError {
 }
 ```
 
-Khác `MissingMetadataError`: vắng metadata là class container chưa được kể; metadata sai là reader trả lời sai. Kiểm tra một lần mỗi class, chỉ những field mà consumer dereference (`params`, và `token` của từng entry) — nên reader sai cho error có `code` và tên class, thay vì `TypeError` trần sâu trong resolve.
+Khác `MissingMetadataError`: vắng metadata là class container chưa được kể; metadata sai là reader trả lời sai. Chỉ reader **do người dùng cấp** bị kiểm tra — reader decorator mặc định tự ghi metadata mà nó đọc lại, nên không có gì để kiểm và container không cấp reader riêng không phải trả gì. Kiểm một lần mỗi cặp `(reader, class)` mỗi process, chỉ những field mà consumer dereference (`params`, và `token` của từng entry).
 
 **`AsyncModuleLoadError`** — `load()` sync nhận `AsyncModule`:
 
