@@ -142,6 +142,26 @@ export class ScopeViolationError extends DiError {
 }
 
 /**
+ * A {@link MetadataReader} described a class with something that is not constructor metadata.
+ *
+ * @remarks Separate from {@link MissingMetadataError}: absent metadata is a class the container was
+ * never told about, while invalid metadata is a reader that answered wrongly.
+ */
+export class InvalidMetadataError extends DiError {
+  readonly code = "INVALID_METADATA";
+  readonly targetName: string;
+  readonly reason: string;
+
+  constructor(targetName: string, reason: string) {
+    super(
+      `MetadataReader returned invalid constructor metadata for class '${targetName}': ${reason}. Check the reader bound to MetadataReaderToken or passed to Container.create().`,
+    );
+    this.targetName = targetName;
+    this.reason = reason;
+  }
+}
+
+/**
  * @since 0.3.16-canary.0
  */
 export class MissingMetadataError extends DiError {
@@ -198,17 +218,29 @@ export class MissingScopeContextError extends DiError {
 }
 
 /**
+ * An `@inject` accessor initialized with no container context open.
+ *
+ * @remarks Carries the class and the accessor separately: a nameless class is possible (an anonymous
+ * class expression has an empty `name`), and a message that claims a class it does not have is what
+ * sent readers looking for a class called `clock`.
+ *
  * @since 0.3.16-canary.0
  */
 export class MissingContainerContextError extends DiError {
   readonly code = "MISSING_CONTAINER_CONTEXT";
-  readonly targetName: string;
+  /** The class being constructed, or `undefined` when it has no readable name. */
+  readonly className: string | undefined;
+  readonly accessorName: string | symbol;
 
-  constructor(targetName: string) {
+  constructor(className: string | undefined, accessorName: string | symbol) {
+    const accessor = `@inject accessor '${String(accessorName)}'`;
     super(
-      `Class '${targetName}' has @inject accessor fields but was instantiated outside a container context. Resolve it via container.resolve(${targetName}) instead.`,
+      className === undefined
+        ? `An ${accessor} was initialized outside a container context. Resolve its class through a container, or open a context with runWithContainer().`
+        : `Class '${className}' has an ${accessor} but was constructed outside a container context. Resolve it via container.resolve(${className}), or open a context with runWithContainer().`,
     );
-    this.targetName = targetName;
+    this.className = className;
+    this.accessorName = accessorName;
   }
 }
 

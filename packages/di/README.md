@@ -167,6 +167,16 @@ class Controller {
 }
 ```
 
+An accessor resolves from the container that is constructing the instance. When something else owns the `new` — a router, an ORM, a test helper — open that context yourself with `runWithContainer(container, () => new Controller())`; otherwise the accessor throws `MissingContainerContextError`.
+
+Classes you cannot decorate (a dependency's class, generated code, plain JavaScript) are wired by supplying their metadata yourself:
+
+```typescript
+const container = Container.create({ metadataReader: myReader });
+```
+
+A `MetadataReader` reports constructor parameters, lifecycle method names, and `@inject` accessors; delegate misses to `defaultMetadataReader` so decorated classes keep working. The reader is read while the container is constructed, so the option — not a later `MetadataReaderToken` binding — is what resolution sees. See [examples/19-custom-metadata-reader](./examples/19-custom-metadata-reader) and SPEC §7.4.
+
 ## Container
 
 ```typescript
@@ -249,7 +259,7 @@ The root entry re-exports the full public API — prefer it (`import { Container
 
 A head-to-head benchmark suite lives in the monorepo: [benchmarks/di-inversify](https://github.com/codefastlabs/codefast/tree/main/benchmarks/di-inversify). It compares `@codefast/di` against **InversifyJS 8** on the full scenario set, plus **Awilix** and **tsyringe** on a shared core subset. Each library runs in its canonical mode, in isolated subprocesses, reported as per-trial medians with interquartile range — designed so the results are re-runnable rather than taken on faith.
 
-Against InversifyJS — the only one of the three that covers a comparable feature surface — `@codefast/di` currently wins **all 43 comparable scenarios** in both profiles, at a median of 1.86×–2.21× and a geometric mean of 2.38×–2.76×. Against the two deliberately leaner containers it wins the shared core subset as well, with one exception: cold container build against tsyringe under the forced-GC profile. See [RESULTS.md](https://github.com/codefastlabs/codefast/blob/main/benchmarks/di-inversify/RESULTS.md) for the full tables, the caveats, and the losses that earlier revisions reported — or run `pnpm bench` in that package to reproduce them on your machine.
+Against InversifyJS — the only one of the three that covers a comparable feature surface — `@codefast/di` currently wins **all 44 comparable scenarios** in both profiles, at a median of 2.21×–2.39× and a geometric mean of 2.68×–2.90×. Against the two deliberately leaner containers it wins the shared core subset as well, with one exception: `realistic-graph-cold-resolve` against tsyringe, which reads parity in the default profile and a loss under the forced-GC one. See [RESULTS.md](https://github.com/codefastlabs/codefast/blob/main/benchmarks/di-inversify/RESULTS.md) for the full tables, the caveats, and the losses that earlier revisions reported — or run `pnpm bench` in that package to reproduce them on your machine.
 
 ## Contributing
 

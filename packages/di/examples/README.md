@@ -45,6 +45,8 @@ npx tsx examples/01-basic-tokens/01-basic-tokens.ts
 | 15  | [15-inspection-graph](./15-inspection-graph)                       | `inspect()`, `lookupBindings()`, `generateDependencyGraph()`, DOT / Cytoscape adapters   |
 | 16  | [16-testing-patterns](./16-testing-patterns)                       | Fresh containers, `rebind()` stubs, child-container overrides, `validate()`              |
 | 17  | [17-extended-constraints](./17-extended-constraints)               | Full constraint family: `whenAnyAncestorIs`, `whenParentNamed`, `whenParentTaggedAll`, … |
+| 18  | [18-ambient-container](./18-ambient-container)                     | `@inject()` accessor injection, `getActiveContainer()`, `runWithContainer()`             |
+| 19  | [19-custom-metadata-reader](./19-custom-metadata-reader)           | `MetadataReader`, `MetadataReaderToken` — wiring classes that carry no decorators        |
 
 ---
 
@@ -63,3 +65,5 @@ These five examples build a complete mental model: tokens, class injection, scop
 - Reducing boilerplate → `14`
 - Debugging / architecture review → `15`
 - Writing tests → `16`
+- Injecting into properties, or into objects a framework constructs → `18`
+- Wiring classes you cannot decorate → `19`

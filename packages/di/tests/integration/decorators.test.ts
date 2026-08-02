@@ -8,7 +8,7 @@ import { Container } from "#/container/container";
 import { inject } from "#/decorators/inject";
 import { injectable } from "#/decorators/injectable";
 import { postConstruct, preDestroy } from "#/decorators/lifecycle-decorators";
-import { InternalError } from "#/errors";
+import { InternalError, MissingContainerContextError } from "#/errors";
 import { defaultMetadataReader } from "#/metadata/symbol-metadata-reader";
 import { token } from "#/token";
 
@@ -30,6 +30,57 @@ describe("Stage 3 decorators — metadata & lifecycle", () => {
     const accessorMetadata = defaultMetadataReader.getAccessorMetadata(AccessorMetadataProbe);
     expect(accessorMetadata?.length).toBe(1);
     expect(accessorMetadata?.[0]?.descriptor.token).toBe(MetadataDepToken);
+  });
+
+  it("names the class, not the accessor, when there is no container context", () => {
+    const ContextDepToken = token<string>("decorators.no-context");
+
+    @injectable([])
+    class ContextlessProbe {
+      @inject(ContextDepToken) accessor value!: string;
+    }
+
+    let caught: unknown;
+
+    try {
+      new ContextlessProbe();
+    } catch (error) {
+      caught = error;
+    }
+
+    expect(caught).toBeInstanceOf(MissingContainerContextError);
+    // The class and the accessor stay separate, so the message can name each for what it is.
+    expect((caught as MissingContainerContextError).className).toBe("ContextlessProbe");
+    expect((caught as MissingContainerContextError).accessorName).toBe("value");
+    expect((caught as MissingContainerContextError).message).toContain("Class 'ContextlessProbe'");
+    expect((caught as MissingContainerContextError).message).toContain("@inject accessor 'value'");
+  });
+
+  it("reports no class when the instance reaches no constructor", () => {
+    const ContextDepToken = token<string>("decorators.no-constructor");
+
+    @injectable([])
+    class UnreachableConstructorProbe {
+      @inject(ContextDepToken) accessor value!: string;
+    }
+
+    // The only way to have no class name to report: nothing on the chain answers `constructor`.
+    Reflect.deleteProperty(UnreachableConstructorProbe.prototype, "constructor");
+    Object.setPrototypeOf(UnreachableConstructorProbe.prototype, null);
+
+    let caught: unknown;
+
+    try {
+      new UnreachableConstructorProbe();
+    } catch (error) {
+      caught = error;
+    }
+
+    expect(caught).toBeInstanceOf(MissingContainerContextError);
+    expect((caught as MissingContainerContextError).className).toBeUndefined();
+    expect((caught as MissingContainerContextError).accessorName).toBe("value");
+    // No class to name, so the message must not invent one.
+    expect((caught as MissingContainerContextError).message).not.toContain("Class");
   });
 
   it("rejects @postConstruct on static method at class evaluation time", () => {

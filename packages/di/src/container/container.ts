@@ -19,6 +19,7 @@ import { Inspector } from "#/introspection/inspector";
 import { MetadataReaderToken } from "#/metadata/metadata-reader-token";
 import type { MetadataReader } from "#/metadata/metadata-types";
 import { defaultMetadataReader } from "#/metadata/symbol-metadata-reader";
+import { verifyingMetadataReader } from "#/metadata/verifying-metadata-reader";
 import type { AsyncModule, ModuleBuilder, SyncModule } from "#/module";
 import type { AsyncModuleBuilder } from "#/module";
 import { isSyncModule, MODULE_SETUP } from "#/module";
@@ -97,10 +98,24 @@ export interface Container {
 }
 
 /**
+ * What a container has to be told before it exists, as opposed to what it can be bound later.
+ */
+export interface ContainerOptions {
+  /**
+   * Reader the resolver consults for class metadata, replacing the decorator reader.
+   *
+   * @remarks Takes precedence over a {@link MetadataReaderToken} binding, and children inherit it.
+   * A resolver is handed its reader when it is built, so this is the only way to give the container
+   * you are creating a reader of your own — see SPEC §7.4.
+   */
+  readonly metadataReader?: MetadataReader | undefined;
+}
+
+/**
  * @since 0.3.16-canary.0
  */
 export interface ContainerStatic {
-  create(): Container;
+  create(options?: ContainerOptions): Container;
   fromModules(...modules: Array<SyncModule>): Container;
   fromModulesAsync(...modules: Array<SyncModule | AsyncModule>): Promise<Container>;
 }
@@ -124,12 +139,12 @@ class DefaultContainer implements Container {
   // One shared registration for every chain this container's own `bind()` creates.
   #registration: BindingRegistration | undefined;
 
-  constructor(parent?: DefaultContainer) {
+  constructor(parent?: DefaultContainer, options?: ContainerOptions) {
     this.#parent = parent;
     this.#registry = new BindingRegistry();
     this.#scope = new ScopeManager(parent !== undefined);
     this.#lifecycle = new LifecycleManager();
-    this.#initResolver();
+    this.#initResolver(options?.metadataReader);
   }
 
   #getInspector(): Inspector {
@@ -161,9 +176,12 @@ class DefaultContainer implements Container {
     return { ...this.#resolver.describeCaches(), scopedInstanceCount: this.#scope.scopedCount, builtSubsystems };
   }
 
-  #initResolver(): void {
-    const metadataReader = this.#getMetadataReader();
-    const parentResolver = this.#parent === undefined ? undefined : this.#parent.#resolver;
+  #initResolver(configuredReader: MetadataReader | undefined): void {
+    const parent = this.#parent;
+    const metadataReader = verifyingMetadataReader(
+      configuredReader ?? (parent === undefined ? defaultMetadataReader : parent.#readerForChild()),
+    );
+    const parentResolver = parent === undefined ? undefined : parent.#resolver;
     this.#resolver = new DependencyResolver(
       this.#registry,
       this.#scope,
@@ -174,20 +192,21 @@ class DefaultContainer implements Container {
     );
   }
 
-  #getMetadataReader(): MetadataReader {
-    // Check if a custom MetadataReader has been bound
-    const metaBindings = this.#registry.getAll(MetadataReaderToken);
-    if (metaBindings.length > 0) {
+  /** What a container being constructed under this one inherits: a reader bound here, else this one's. */
+  #readerForChild(): MetadataReader {
+    if (this.#registry.getAll(MetadataReaderToken).length > 0) {
       try {
         return this.#resolver.resolve(MetadataReaderToken, undefined, [], []);
       } catch {
-        // fall through to default
+        // An unresolvable reader binding is not worth failing a child over.
       }
     }
-    if (this.#parent !== undefined) {
-      return this.#parent.#getMetadataReader();
-    }
-    return defaultMetadataReader;
+    return this.#resolver.metadataReader;
+  }
+
+  /** One reader per container, fixed when its resolver was built — so every path agrees on it. */
+  #getMetadataReader(): MetadataReader {
+    return this.#resolver.metadataReader;
   }
 
   get isDisposed(): boolean {
@@ -759,11 +778,13 @@ class DefaultContainer implements Container {
 /**
  * @since 0.3.16-canary.0
  */
-export const Container: ContainerStatic & { create(): Container } = {
-  create(): Container {
-    return new DefaultContainer();
+export const Container: ContainerStatic = {
+  create(options?: ContainerOptions): Container {
+    return new DefaultContainer(undefined, options);
   },
 
+  // Variadic modules leave no room for an options argument. A container that needs both is
+  // `Container.create(options)` followed by `load(...)`, which is what these two do anyway.
   fromModules(...modules: Array<SyncModule>): Container {
     const container = new DefaultContainer();
     container.load(...modules);

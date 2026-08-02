@@ -921,10 +921,15 @@ import { Container } from "@codefast/di";
 // Static factory — không dùng new Container()
 const container = Container.create();
 
+// Construction-time options (§7.4) — thứ container phải biết trước khi tồn tại
+const container = Container.create({ metadataReader: customReader });
+
 // Từ modules — load tất cả modules rồi trả về container
 const container = Container.fromModules(AppModule, DatabaseModule);
 const container = await Container.fromModulesAsync(AppModule, DatabaseModule);
 ```
+
+`fromModules`/`fromModulesAsync` nhận modules dạng variadic nên không có chỗ cho options. Cần cả hai thì dùng `Container.create(options)` rồi `load(...)`/`loadAsync(...)` — đúng những gì hai factory kia làm.
 
 ### 6.2 Resolution
 
@@ -1429,8 +1434,13 @@ interface Container {
 }
 
 // Static API
+interface ContainerOptions {
+  /** Reader resolver dùng cho class metadata; mặc định là decorator reader. Child kế thừa. */
+  readonly metadataReader?: MetadataReader | undefined;
+}
+
 interface ContainerStatic {
-  create(): Container;
+  create(options?: ContainerOptions): Container;
   fromModules(...modules: SyncModule[]): Container;
   fromModulesAsync(...modules: Array<SyncModule | AsyncModule>): Promise<Container>;
 }
@@ -1627,6 +1637,13 @@ Container không đọc `Symbol.metadata` trực tiếp — đọc qua port này
 interface MetadataReader {
   getConstructorMetadata(target: Constructor): ConstructorMetadata | undefined;
   getLifecycleMetadata(target: Constructor): LifecycleMetadata | undefined;
+  /**
+   * Danh sách `@inject accessor` field. Optional — reader bỏ method này thì không class nào
+   * được mở container context, nên mọi accessor injection throw MissingContainerContextError (§7.5).
+   */
+  getAccessorMetadata?(
+    target: Constructor,
+  ): ReadonlyArray<{ readonly key: string | symbol; readonly descriptor: InjectionDescriptor }> | undefined;
 }
 
 interface ConstructorMetadata {
@@ -1656,16 +1673,31 @@ interface LifecycleMetadata {
 }
 ```
 
-**`MetadataReaderToken` — swap trong test:**
+**Cài reader của riêng mình — normative:**
 
-Container nhận `MetadataReader` qua token để có thể override trong test:
+Resolver được **trao** reader lúc nó được khởi tạo, tức trong constructor của container. Vì vậy nguồn duy nhất mà resolution chắc chắn đọc được là `ContainerOptions.metadataReader` (§6.1):
+
+```ts
+import { Container } from "@codefast/di";
+
+const container = Container.create({ metadataReader: customReader });
+```
+
+Reader này outrank mọi binding `MetadataReaderToken`, và child kế thừa nó (child gọi lại `#getMetadataReader()` của parent khi tự dựng resolver).
+
+**`MetadataReaderToken` — binding, và giới hạn của nó:**
 
 ```ts
 import { MetadataReaderToken } from "@codefast/di";
 
-// Override MetadataReader trong test
-testContainer.bind(MetadataReaderToken).toConstantValue(customReader);
+const root = Container.create();
+root.bind(MetadataReaderToken).toConstantValue(customReader);
+const app = root.createChild(); // resolver của app dựng sau khi binding đã tồn tại → thấy reader
 ```
+
+Bind token **lên chính container đang dùng** thì không đường nào thấy: constructor đã chạy trước khi có binding, nên resolver giữ reader mặc định và class không decorator throw `MissingMetadataError`.
+
+**Normative — một container, một reader.** Reader được chốt khi resolver của container được dựng; `validate()`, `inspect()`, `generateDependencyGraph()`, `unbind*` đều trả lời bằng đúng reader đó. Introspection không thể bất đồng với resolution.
 
 `MetadataReaderToken` có type `Token<MetadataReader>` và được export từ `@codefast/di`.
 
@@ -1718,7 +1750,17 @@ const dash = container.resolve(Dashboard);
 
 **Ngoài container context:**
 
-Nếu class được `new` thủ công (không qua container), accessor initializer không có container → throw `MissingContainerContextError`.
+Nếu class được `new` thủ công (không qua container), accessor initializer không có container → throw `MissingContainerContextError`, mang tên class đó (`className`) và tên accessor (`accessorName`) tách biệt.
+
+Khi code khác (router, ORM, test helper) giữ quyền `new`, bọc call site bằng `runWithContainer` — cả nó và `getActiveContainer` đều export từ `@codefast/di`:
+
+```ts
+import { runWithContainer } from "@codefast/di";
+
+const instance = runWithContainer(container, () => new Dashboard());
+```
+
+Chỉ accessor injection được bridge. Lifecycle thuộc resolver, nên instance dựng bằng tay **không** chạy `@postConstruct` và container cũng không dispose nó.
 
 **Construction (TC39) và activation (container):** Một lần resolve gồm (1) **construction** — thân constructor rồi `addInitializer` (inject accessor tại đây, trước khi `new` return; xem [decorators proposal](https://github.com/tc39/proposal-decorators)); (2) **activation** — `@postConstruct()` rồi `onActivation()`, do resolver/lifecycle gọi sau khi (1) đã hoàn tất.
 
@@ -1727,7 +1769,7 @@ Nếu class được `new` thủ công (không qua container), accessor initiali
 TC39 `context.addInitializer` chạy synchronously ngay sau constructor body, trong cùng call frame với `new`. Container khai thác điều này qua pattern **module-level active container variable**:
 
 ```ts
-// environment.ts — exported để inject.ts import
+// environment.ts — inject.ts import, và cả hai hàm đều là public API (root entry)
 let _activeContainer: Container | undefined;
 
 /**
@@ -1745,7 +1787,7 @@ export function runWithContainer<Result>(container: Container, fn: () => Result)
   }
 }
 
-/** Đọc active container hiện tại — chỉ dùng bên trong addInitializer callback. */
+/** Đọc active container hiện tại — undefined nếu không có context nào đang mở. */
 export function getActiveContainer(): Container | undefined {
   return _activeContainer;
 }
@@ -1790,7 +1832,9 @@ function inject<Value>(token: Token<Value> | Constructor<Value>, options?: Injec
     context.addInitializer(function (this: unknown) {
       const container = getActiveContainer();
       if (container === undefined) {
-        throw new MissingContainerContextError(String(context.name));
+        // Class và accessor đi riêng: class ẩn danh có `name` rỗng, và một message
+        // khẳng định class mà nó không có chính là nguồn gốc của bug cũ.
+        throw new MissingContainerContextError(classNameOf(this), context.name);
       }
       // Resolve token từ container và set qua accessor setter
       const value = descriptor.optional
@@ -2473,6 +2517,20 @@ class MissingMetadataError extends DiError {
 }
 ```
 
+**`InvalidMetadataError`** — `MetadataReader` trả về thứ không phải constructor metadata:
+
+```ts
+class InvalidMetadataError extends DiError {
+  readonly code = "INVALID_METADATA";
+  readonly targetName: string;
+  readonly reason: string;
+  // "MetadataReader returned invalid constructor metadata for class 'Pool': params is not
+  //  an array. Check the reader bound to MetadataReaderToken or passed to Container.create()."
+}
+```
+
+Khác `MissingMetadataError`: vắng metadata là class container chưa được kể; metadata sai là reader trả lời sai. Chỉ reader **do người dùng cấp** bị kiểm tra — reader decorator mặc định tự ghi metadata mà nó đọc lại, nên không có gì để kiểm và container không cấp reader riêng không phải trả gì. Kiểm một lần mỗi cặp `(reader, class)` mỗi process, chỉ những field mà consumer dereference (`params`, và `token` của từng entry).
+
 **`AsyncModuleLoadError`** — `load()` sync nhận `AsyncModule`:
 
 ```ts
@@ -2509,9 +2567,14 @@ class MissingScopeContextError extends DiError {
 ```ts
 class MissingContainerContextError extends DiError {
   readonly code = "MISSING_CONTAINER_CONTEXT";
-  readonly targetName: string;
-  // "Class 'Dashboard' has @inject accessor fields but was instantiated outside
-  //  a container context. Resolve it via container.resolve(Dashboard) instead."
+  /** undefined khi class không có tên đọc được (class expression ẩn danh). */
+  readonly className: string | undefined;
+  readonly accessorName: string | symbol;
+  // className !== undefined:
+  //   "Class 'Dashboard' has an @inject accessor 'logger' but was constructed outside a
+  //    container context. Resolve it via container.resolve(Dashboard), or open a context
+  //    with runWithContainer()."
+  // className === undefined: câu không nhắc chữ "Class".
 }
 ```
 

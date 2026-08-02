@@ -153,9 +153,18 @@ Each element has `data.id`, `data.label`, `data.kind`, `data.scope`. Edge elemen
 ### React Flow adapter
 
 ```ts
-import { toReactFlowGraph } from "@codefast/di/graph-adapters/react-flow";
+import { toReactFlowGraph } from "@codefast/di";
 const { nodes, edges } = toReactFlowGraph(graph);
 ```
+
+### Mermaid
+
+```ts
+import { toMermaidGraph } from "@codefast/di";
+console.log(toMermaidGraph(graph)); // flowchart TD source
+```
+
+Paste the output into any Mermaid renderer — GitHub markdown, docs tooling, [mermaid.live](https://mermaid.live) — with no extra library. Parent-chain nodes and unbound-optional placeholders come through dashed.
 
 ---
 
@@ -183,9 +192,8 @@ Call this after `initializeAsync()` and `validate()` for a three-layer wiring ch
 Graph adapters are tree-shakeable — import only what you use:
 
 ```ts
-import { toDotGraph } from "@codefast/di";
-import { toCytoscapeGraph } from "@codefast/di";
-import { toReactFlowGraph } from "@codefast/di/graph-adapters/react-flow";
+import { toCytoscapeGraph, toDotGraph, toMermaidGraph, toReactFlowGraph } from "@codefast/di";
+// or narrowly: @codefast/di/graph-adapters/{dot,cytoscape,mermaid,reactflow}
 ```
 
 ---

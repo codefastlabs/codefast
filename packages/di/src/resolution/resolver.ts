@@ -119,6 +119,11 @@ export class DependencyResolver implements ResolverCallbacks {
     this.#activation = new ActivationNeedCache(lifecycle, this.#classes, registry);
   }
 
+  /** The reader this resolver was built with, which is the one its container answers with. */
+  get metadataReader(): MetadataReader {
+    return this.#metadataReader;
+  }
+
   /** Structural counts for {@link RESOLUTION_DIAGNOSTICS}; see `resolution/diagnostics.ts`. */
   describeCaches(): Pick<ResolutionDiagnostics, "compiledPlanCount" | "syncContextPoolSize"> {
     let compiledPlanCount = 0;

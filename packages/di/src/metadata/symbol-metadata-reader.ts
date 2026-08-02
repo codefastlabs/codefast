@@ -7,33 +7,37 @@ import type { Constructor } from "#/types";
  * @since 0.3.16-canary.0
  */
 export class SymbolMetadataReader implements MetadataReader {
-  #getMetadataRecord(target: Constructor, key: string | symbol): Record<string | symbol, unknown> | undefined {
+  /**
+   * Whatever a decorator stored under `key`, narrowed as far as the platform allows.
+   *
+   * @remarks Own-property only: an inherited `Symbol.metadata` belongs to the base class, and a
+   * subclass without `@injectable()` must not borrow it. The value stays `unknown` — declaring its
+   * shape is the caller's claim, and {@link assertConstructorMetadata} is what verifies it.
+   */
+  #read(target: Constructor, key: string | symbol): unknown {
     const descriptor = Object.getOwnPropertyDescriptor(target, METADATA_SYMBOL);
     if (descriptor === undefined) {
       return undefined;
     }
-    const record = descriptor.value as Record<string | symbol, unknown> | null | undefined;
-    if (!record || typeof record !== "object" || !Object.hasOwn(record, key)) {
+    const record: unknown = descriptor.value;
+    if (typeof record !== "object" || record === null || !Object.hasOwn(record, key)) {
       return undefined;
     }
-    return record;
+    return Reflect.get(record, key);
   }
 
   getConstructorMetadata(target: Constructor): ConstructorMetadata | undefined {
-    const record = this.#getMetadataRecord(target, INJECTABLE_KEY);
-    return record?.[INJECTABLE_KEY] as ConstructorMetadata | undefined;
+    return this.#read(target, INJECTABLE_KEY) as ConstructorMetadata | undefined;
   }
 
   getLifecycleMetadata(target: Constructor): LifecycleMetadata | undefined {
-    const record = this.#getMetadataRecord(target, LIFECYCLE_KEY);
-    return record?.[LIFECYCLE_KEY] as LifecycleMetadata | undefined;
+    return this.#read(target, LIFECYCLE_KEY) as LifecycleMetadata | undefined;
   }
 
   getAccessorMetadata(
     target: Constructor,
   ): Array<{ key: string | symbol; descriptor: InjectionDescriptor }> | undefined {
-    const record = this.#getMetadataRecord(target, INJECT_ACCESSOR_KEY);
-    return record?.[INJECT_ACCESSOR_KEY] as
+    return this.#read(target, INJECT_ACCESSOR_KEY) as
       | Array<{ key: string | symbol; descriptor: InjectionDescriptor }>
       | undefined;
   }

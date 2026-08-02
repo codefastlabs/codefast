@@ -6,9 +6,76 @@
 
 import type { ConstructorInvocation } from "#/constructor-type";
 import type { Container } from "#/container/container";
+import { InvalidMetadataError } from "#/errors";
 import type { ConstructorMetadata, MetadataReader } from "#/metadata/metadata-types";
 import { runWithContainer } from "#/resolution/environment";
 import type { Constructor } from "#/types";
+
+// Verified pairs, not verified classes: two readers may disagree about the same class, and a reader
+// that goes out of scope takes its record with it.
+const verifiedTargets = new WeakMap<MetadataReader, WeakSet<Constructor>>();
+
+/**
+ * A reader's constructor metadata for a class, verified the first time this process asks.
+ *
+ * @remarks Metadata cannot change once a class is defined, so re-checking per container would charge
+ * every fresh container for a fact already established — a per-request child or a cold boot pays
+ * that repeatedly.
+ */
+export function verifyConstructorMetadata(
+  reader: MetadataReader,
+  target: Constructor,
+): ConstructorMetadata | undefined {
+  const metadata = reader.getConstructorMetadata(target);
+  if (metadata === undefined) {
+    return undefined;
+  }
+  let verified = verifiedTargets.get(reader);
+  if (verified !== undefined && verified.has(target)) {
+    return metadata;
+  }
+  assertConstructorMetadata(metadata, target);
+  if (verified === undefined) {
+    verified = new WeakSet();
+    verifiedTargets.set(reader, verified);
+  }
+  verified.add(target);
+
+  return metadata;
+}
+
+/**
+ * Verifies what a reader claims about a class, since a `MetadataReader` is a public seam.
+ *
+ * @remarks Every path that reads constructor metadata comes through here, so a reader that answers
+ * wrongly is a named error at the class it described rather than a `TypeError` raised later inside a
+ * resolve. Only what a consumer dereferences is checked: `params` and each entry's `token`.
+ * `optional`/`multi` degrade to falsy without crashing, and `index` is decorative — dependencies are
+ * consumed positionally.
+ */
+export function assertConstructorMetadata(metadata: unknown, target: Constructor): ConstructorMetadata | undefined {
+  if (metadata === undefined) {
+    return undefined;
+  }
+  if (typeof metadata !== "object" || metadata === null) {
+    throw new InvalidMetadataError(target.name, `expected an object, received ${typeof metadata}`);
+  }
+  const params: unknown = Reflect.get(metadata, "params");
+  if (!Array.isArray(params)) {
+    throw new InvalidMetadataError(target.name, "params is not an array");
+  }
+  for (const [position, param] of params.entries()) {
+    if (typeof param !== "object" || param === null) {
+      throw new InvalidMetadataError(target.name, `params[${String(position)}] is not an object`);
+    }
+    const dependency: unknown = Reflect.get(param, "token");
+    if (typeof dependency !== "object" && typeof dependency !== "function") {
+      throw new InvalidMetadataError(target.name, `params[${String(position)}].token is not a token or a class`);
+    }
+  }
+
+  return metadata as ConstructorMetadata;
+}
 
 /**
  * @since 0.5.0-canary.8
