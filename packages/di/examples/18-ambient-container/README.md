@@ -88,7 +88,7 @@ The resolver opens the context **only for classes whose metadata declares access
 new Notifier(); // ✗ MissingContainerContextError — code: "MISSING_CONTAINER_CONTEXT"
 ```
 
-`error.targetName` is the class that was constructed — the condition is per-class, not per-field, and the message tells you to resolve that class instead.
+The error carries the two facts separately rather than flattening them: `className` (the class constructed, or `undefined` when it has no readable name — an anonymous class expression has an empty `name`) and `accessorName` (the field that could not resolve). The message names each for what it is, and drops the word "Class" entirely when there is no class to name.
 
 ---
 
