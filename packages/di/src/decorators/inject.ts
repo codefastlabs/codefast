@@ -131,6 +131,13 @@ function buildInjectionDescriptor<const Value>(
   return withOptions({ token, optional: false, multi: false }, options);
 }
 
+/** The class under construction, which is what MissingContainerContextError reports on. */
+function constructedClassName(instance: unknown, fallback: string | symbol): string {
+  const name = (instance as { constructor?: { name?: string } } | null | undefined)?.constructor?.name;
+
+  return name === undefined || name === "" ? String(fallback) : name;
+}
+
 // ── inject() — dual-role ──────────────────────────────────────────────────────
 
 type ClassAccessorDecorator<This, Value> = (
@@ -168,7 +175,7 @@ export function inject<const Value>(
     context.addInitializer(function (this: unknown) {
       const container = getActiveContainer();
       if (container === undefined) {
-        throw new MissingContainerContextError(String(context.name));
+        throw new MissingContainerContextError(constructedClassName(this, context.name));
       }
       const resolveOptions =
         options === undefined

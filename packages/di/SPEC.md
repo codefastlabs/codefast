@@ -1718,7 +1718,17 @@ const dash = container.resolve(Dashboard);
 
 **Ngoài container context:**
 
-Nếu class được `new` thủ công (không qua container), accessor initializer không có container → throw `MissingContainerContextError`.
+Nếu class được `new` thủ công (không qua container), accessor initializer không có container → throw `MissingContainerContextError`, mang tên class đó.
+
+Khi code khác (router, ORM, test helper) giữ quyền `new`, bọc call site bằng `runWithContainer` — cả nó và `getActiveContainer` đều export từ `@codefast/di`:
+
+```ts
+import { runWithContainer } from "@codefast/di";
+
+const instance = runWithContainer(container, () => new Dashboard());
+```
+
+Chỉ accessor injection được bridge. Lifecycle thuộc resolver, nên instance dựng bằng tay **không** chạy `@postConstruct` và container cũng không dispose nó.
 
 **Construction (TC39) và activation (container):** Một lần resolve gồm (1) **construction** — thân constructor rồi `addInitializer` (inject accessor tại đây, trước khi `new` return; xem [decorators proposal](https://github.com/tc39/proposal-decorators)); (2) **activation** — `@postConstruct()` rồi `onActivation()`, do resolver/lifecycle gọi sau khi (1) đã hoàn tất.
 
@@ -1790,7 +1800,9 @@ function inject<Value>(token: Token<Value> | Constructor<Value>, options?: Injec
     context.addInitializer(function (this: unknown) {
       const container = getActiveContainer();
       if (container === undefined) {
-        throw new MissingContainerContextError(String(context.name));
+        // Điều kiện này ở mức class, nên error mang tên class đang được construct —
+        // tên accessor chỉ là fallback cho anonymous class.
+        throw new MissingContainerContextError(constructedClassName(this, context.name));
       }
       // Resolve token từ container và set qua accessor setter
       const value = descriptor.optional
