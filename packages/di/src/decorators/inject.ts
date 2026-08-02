@@ -131,11 +131,16 @@ function buildInjectionDescriptor<const Value>(
   return withOptions({ token, optional: false, multi: false }, options);
 }
 
-/** The class under construction, which is what MissingContainerContextError reports on. */
+/**
+ * The class under construction, which is what MissingContainerContextError reports on.
+ *
+ * @remarks Falls back to the accessor when the instance reaches no constructor at all; an anonymous
+ * class still has a name, since every decorator transform binds one.
+ */
 function constructedClassName(instance: unknown, fallback: string | symbol): string {
   const name = (instance as { constructor?: { name?: string } } | null | undefined)?.constructor?.name;
 
-  return name === undefined || name === "" ? String(fallback) : name;
+  return name ?? String(fallback);
 }
 
 // ── inject() — dual-role ──────────────────────────────────────────────────────

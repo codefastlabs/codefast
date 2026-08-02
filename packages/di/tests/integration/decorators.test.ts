@@ -54,6 +54,30 @@ describe("Stage 3 decorators — metadata & lifecycle", () => {
     expect((caught as MissingContainerContextError).message).toContain("Class 'ContextlessProbe'");
   });
 
+  it("falls back to the accessor when the instance reaches no constructor", () => {
+    const ContextDepToken = token<string>("decorators.no-constructor");
+
+    @injectable([])
+    class UnreachableConstructorProbe {
+      @inject(ContextDepToken) accessor value!: string;
+    }
+
+    // The only way to have no class name to report: nothing on the chain answers `constructor`.
+    Reflect.deleteProperty(UnreachableConstructorProbe.prototype, "constructor");
+    Object.setPrototypeOf(UnreachableConstructorProbe.prototype, null);
+
+    let caught: unknown;
+
+    try {
+      new UnreachableConstructorProbe();
+    } catch (error) {
+      caught = error;
+    }
+
+    expect(caught).toBeInstanceOf(MissingContainerContextError);
+    expect((caught as MissingContainerContextError).targetName).toBe("value");
+  });
+
   it("rejects @postConstruct on static method at class evaluation time", () => {
     expect(() => {
       class StaticPostConstructTarget {
