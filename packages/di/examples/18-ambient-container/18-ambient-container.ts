@@ -127,9 +127,10 @@ try {
   console.log("unreachable", escaped);
 } catch (error) {
   if (error instanceof MissingContainerContextError) {
-    console.log("code:      ", error.code);
-    console.log("targetName:", error.targetName);
-    console.log("message:   ", error.message);
+    console.log("code:        ", error.code);
+    console.log("className:   ", error.className);
+    console.log("accessorName:", error.accessorName);
+    console.log("message:     ", error.message);
   }
 }
 

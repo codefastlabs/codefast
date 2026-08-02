@@ -49,12 +49,14 @@ describe("Stage 3 decorators — metadata & lifecycle", () => {
     }
 
     expect(caught).toBeInstanceOf(MissingContainerContextError);
-    // The condition is per-class, and the message tells the reader to resolve that class.
-    expect((caught as MissingContainerContextError).targetName).toBe("ContextlessProbe");
+    // The class and the accessor stay separate, so the message can name each for what it is.
+    expect((caught as MissingContainerContextError).className).toBe("ContextlessProbe");
+    expect((caught as MissingContainerContextError).accessorName).toBe("value");
     expect((caught as MissingContainerContextError).message).toContain("Class 'ContextlessProbe'");
+    expect((caught as MissingContainerContextError).message).toContain("@inject accessor 'value'");
   });
 
-  it("falls back to the accessor when the instance reaches no constructor", () => {
+  it("reports no class when the instance reaches no constructor", () => {
     const ContextDepToken = token<string>("decorators.no-constructor");
 
     @injectable([])
@@ -75,7 +77,10 @@ describe("Stage 3 decorators — metadata & lifecycle", () => {
     }
 
     expect(caught).toBeInstanceOf(MissingContainerContextError);
-    expect((caught as MissingContainerContextError).targetName).toBe("value");
+    expect((caught as MissingContainerContextError).className).toBeUndefined();
+    expect((caught as MissingContainerContextError).accessorName).toBe("value");
+    // No class to name, so the message must not invent one.
+    expect((caught as MissingContainerContextError).message).not.toContain("Class");
   });
 
   it("rejects @postConstruct on static method at class evaluation time", () => {

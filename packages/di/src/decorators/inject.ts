@@ -132,15 +132,22 @@ function buildInjectionDescriptor<const Value>(
 }
 
 /**
- * The class under construction, which is what MissingContainerContextError reports on.
+ * The name of the class being constructed, or `undefined` when there is none to report.
  *
- * @remarks Falls back to the accessor when the instance reaches no constructor at all; an anonymous
- * class still has a name, since every decorator transform binds one.
+ * @remarks Two ways there is none: an anonymous class expression has an empty `name`, and an
+ * instance whose prototype chain answers no `constructor` has nothing to read. Narrowed rather than
+ * asserted — the value arrives as `unknown` and the platform makes no promise about it.
  */
-function constructedClassName(instance: unknown, fallback: string | symbol): string {
-  const name = (instance as { constructor?: { name?: string } } | null | undefined)?.constructor?.name;
+function classNameOf(instance: unknown): string | undefined {
+  if (typeof instance !== "object" || instance === null) {
+    return undefined;
+  }
+  const constructor: unknown = Reflect.get(instance, "constructor");
+  if (typeof constructor !== "function" || constructor.name === "") {
+    return undefined;
+  }
 
-  return name ?? String(fallback);
+  return constructor.name;
 }
 
 // ── inject() — dual-role ──────────────────────────────────────────────────────
@@ -180,7 +187,7 @@ export function inject<const Value>(
     context.addInitializer(function (this: unknown) {
       const container = getActiveContainer();
       if (container === undefined) {
-        throw new MissingContainerContextError(constructedClassName(this, context.name));
+        throw new MissingContainerContextError(classNameOf(this), context.name);
       }
       const resolveOptions =
         options === undefined

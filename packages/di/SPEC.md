@@ -1750,7 +1750,7 @@ const dash = container.resolve(Dashboard);
 
 **Ngoài container context:**
 
-Nếu class được `new` thủ công (không qua container), accessor initializer không có container → throw `MissingContainerContextError`, mang tên class đó.
+Nếu class được `new` thủ công (không qua container), accessor initializer không có container → throw `MissingContainerContextError`, mang tên class đó (`className`) và tên accessor (`accessorName`) tách biệt.
 
 Khi code khác (router, ORM, test helper) giữ quyền `new`, bọc call site bằng `runWithContainer` — cả nó và `getActiveContainer` đều export từ `@codefast/di`:
 
@@ -1832,9 +1832,9 @@ function inject<Value>(token: Token<Value> | Constructor<Value>, options?: Injec
     context.addInitializer(function (this: unknown) {
       const container = getActiveContainer();
       if (container === undefined) {
-        // Điều kiện này ở mức class, nên error mang tên class đang được construct —
-        // tên accessor chỉ là fallback cho anonymous class.
-        throw new MissingContainerContextError(constructedClassName(this, context.name));
+        // Class và accessor đi riêng: class ẩn danh có `name` rỗng, và một message
+        // khẳng định class mà nó không có chính là nguồn gốc của bug cũ.
+        throw new MissingContainerContextError(classNameOf(this), context.name);
       }
       // Resolve token từ container và set qua accessor setter
       const value = descriptor.optional
@@ -2567,9 +2567,14 @@ class MissingScopeContextError extends DiError {
 ```ts
 class MissingContainerContextError extends DiError {
   readonly code = "MISSING_CONTAINER_CONTEXT";
-  readonly targetName: string;
-  // "Class 'Dashboard' has @inject accessor fields but was instantiated outside
-  //  a container context. Resolve it via container.resolve(Dashboard) instead."
+  /** undefined khi class không có tên đọc được (class expression ẩn danh). */
+  readonly className: string | undefined;
+  readonly accessorName: string | symbol;
+  // className !== undefined:
+  //   "Class 'Dashboard' has an @inject accessor 'logger' but was constructed outside a
+  //    container context. Resolve it via container.resolve(Dashboard), or open a context
+  //    with runWithContainer()."
+  // className === undefined: câu không nhắc chữ "Class".
 }
 ```
 
