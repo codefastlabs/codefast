@@ -2517,6 +2517,20 @@ class MissingMetadataError extends DiError {
 }
 ```
 
+**`InvalidMetadataError`** — `MetadataReader` trả về thứ không phải constructor metadata:
+
+```ts
+class InvalidMetadataError extends DiError {
+  readonly code = "INVALID_METADATA";
+  readonly targetName: string;
+  readonly reason: string;
+  // "MetadataReader returned invalid constructor metadata for class 'Pool': params is not
+  //  an array. Check the reader bound to MetadataReaderToken or passed to Container.create()."
+}
+```
+
+Khác `MissingMetadataError`: vắng metadata là class container chưa được kể; metadata sai là reader trả lời sai. Kiểm tra một lần mỗi class, chỉ những field mà consumer dereference (`params`, và `token` của từng entry) — nên reader sai cho error có `code` và tên class, thay vì `TypeError` trần sâu trong resolve.
+
 **`AsyncModuleLoadError`** — `load()` sync nhận `AsyncModule`:
 
 ```ts

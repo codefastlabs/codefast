@@ -102,6 +102,7 @@ export {
   DiError,
   DisposedContainerError,
   InternalError,
+  InvalidMetadataError,
   MissingContainerContextError,
   MissingMetadataError,
   MissingScopeContextError,

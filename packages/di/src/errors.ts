@@ -142,6 +142,26 @@ export class ScopeViolationError extends DiError {
 }
 
 /**
+ * A {@link MetadataReader} described a class with something that is not constructor metadata.
+ *
+ * @remarks Separate from {@link MissingMetadataError}: absent metadata is a class the container was
+ * never told about, while invalid metadata is a reader that answered wrongly.
+ */
+export class InvalidMetadataError extends DiError {
+  readonly code = "INVALID_METADATA";
+  readonly targetName: string;
+  readonly reason: string;
+
+  constructor(targetName: string, reason: string) {
+    super(
+      `MetadataReader returned invalid constructor metadata for class '${targetName}': ${reason}. Check the reader bound to MetadataReaderToken or passed to Container.create().`,
+    );
+    this.targetName = targetName;
+    this.reason = reason;
+  }
+}
+
+/**
  * @since 0.3.16-canary.0
  */
 export class MissingMetadataError extends DiError {

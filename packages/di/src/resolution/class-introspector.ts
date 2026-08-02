@@ -6,9 +6,43 @@
 
 import type { ConstructorInvocation } from "#/constructor-type";
 import type { Container } from "#/container/container";
+import { InvalidMetadataError } from "#/errors";
 import type { ConstructorMetadata, MetadataReader } from "#/metadata/metadata-types";
 import { runWithContainer } from "#/resolution/environment";
 import type { Constructor } from "#/types";
+
+/**
+ * Verifies what a reader claims about a class, since a `MetadataReader` is a public seam.
+ *
+ * @remarks Every path that reads constructor metadata comes through here or a container's cold
+ * introspection, so a reader that answers wrongly is a named error at the class it described rather
+ * than a `TypeError` raised later inside a resolve. Only what a consumer dereferences is checked:
+ * `params` and each entry's `token`. `optional`/`multi` degrade to falsy without crashing, and
+ * `index` is decorative — dependencies are consumed positionally.
+ */
+export function assertConstructorMetadata(metadata: unknown, target: Constructor): ConstructorMetadata | undefined {
+  if (metadata === undefined) {
+    return undefined;
+  }
+  if (typeof metadata !== "object" || metadata === null) {
+    throw new InvalidMetadataError(target.name, `expected an object, received ${typeof metadata}`);
+  }
+  const params: unknown = Reflect.get(metadata, "params");
+  if (!Array.isArray(params)) {
+    throw new InvalidMetadataError(target.name, "params is not an array");
+  }
+  for (const [position, param] of params.entries()) {
+    if (typeof param !== "object" || param === null) {
+      throw new InvalidMetadataError(target.name, `params[${String(position)}] is not an object`);
+    }
+    const dependency: unknown = Reflect.get(param, "token");
+    if (typeof dependency !== "object" && typeof dependency !== "function") {
+      throw new InvalidMetadataError(target.name, `params[${String(position)}].token is not a token or a class`);
+    }
+  }
+
+  return metadata as ConstructorMetadata;
+}
 
 /**
  * @since 0.5.0-canary.8
@@ -32,7 +66,7 @@ export class ClassIntrospector {
     if (cached !== undefined) {
       return cached === null ? undefined : cached;
     }
-    const metadata = this.#reader.getConstructorMetadata(target);
+    const metadata = assertConstructorMetadata(this.#reader.getConstructorMetadata(target), target);
     (this.#constructorMetadata ??= new WeakMap()).set(target, metadata ?? null);
     return metadata;
   }
