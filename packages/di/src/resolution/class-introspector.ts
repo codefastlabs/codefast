@@ -99,7 +99,7 @@ export class ClassIntrospector {
     if (cached !== undefined) {
       return cached === null ? undefined : cached;
     }
-    const metadata = verifyConstructorMetadata(this.#reader, target);
+    const metadata = this.#reader.getConstructorMetadata(target);
     (this.#constructorMetadata ??= new WeakMap()).set(target, metadata ?? null);
     return metadata;
   }

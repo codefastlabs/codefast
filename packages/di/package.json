@@ -144,6 +144,11 @@
       "types": "./dist/metadata/symbol-metadata-reader.d.ts",
       "import": "./dist/metadata/symbol-metadata-reader.js"
     },
+    "./metadata/verifying-metadata-reader": {
+      "source": "./src/metadata/verifying-metadata-reader.ts",
+      "types": "./dist/metadata/verifying-metadata-reader.d.ts",
+      "import": "./dist/metadata/verifying-metadata-reader.js"
+    },
     "./module": {
       "source": "./src/module.ts",
       "types": "./dist/module.d.ts",

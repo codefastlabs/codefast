@@ -3,7 +3,6 @@ import type { MetadataReader } from "#/metadata/metadata-types";
 import type { BindingRegistry } from "#/registry";
 import { effectiveBindingScope } from "#/resolution/binding-scope";
 import { matchesSlot } from "#/resolution/binding-select";
-import { verifyConstructorMetadata } from "#/resolution/class-introspector";
 import type { Token } from "#/token";
 import { tokenName } from "#/token";
 import type { BindingKind, BindingScope, Constructor, ResolveOptions } from "#/types";
@@ -220,7 +219,7 @@ export function buildDependencyGraph(
       });
 
       if (binding.kind === "class") {
-        const meta = verifyConstructorMetadata(metadataReader, binding.target);
+        const meta = metadataReader.getConstructorMetadata(binding.target);
 
         if (meta !== undefined) {
           for (const [index, param] of meta.params.entries()) {

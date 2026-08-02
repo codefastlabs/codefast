@@ -19,12 +19,12 @@ import { Inspector } from "#/introspection/inspector";
 import { MetadataReaderToken } from "#/metadata/metadata-reader-token";
 import type { MetadataReader } from "#/metadata/metadata-types";
 import { defaultMetadataReader } from "#/metadata/symbol-metadata-reader";
+import { verifyingMetadataReader } from "#/metadata/verifying-metadata-reader";
 import type { AsyncModule, ModuleBuilder, SyncModule } from "#/module";
 import type { AsyncModuleBuilder } from "#/module";
 import { isSyncModule, MODULE_SETUP } from "#/module";
 import { BindingRegistry } from "#/registry";
 import { effectiveBindingScope } from "#/resolution/binding-scope";
-import { verifyConstructorMetadata } from "#/resolution/class-introspector";
 import type { ResolutionDiagnostics } from "#/resolution/diagnostics";
 import { RESOLUTION_DIAGNOSTICS } from "#/resolution/diagnostics";
 import { LifecycleManager } from "#/resolution/lifecycle";
@@ -178,8 +178,9 @@ class DefaultContainer implements Container {
 
   #initResolver(configuredReader: MetadataReader | undefined): void {
     const parent = this.#parent;
-    const metadataReader =
-      configuredReader ?? (parent === undefined ? defaultMetadataReader : parent.#readerForChild());
+    const metadataReader = verifyingMetadataReader(
+      configuredReader ?? (parent === undefined ? defaultMetadataReader : parent.#readerForChild()),
+    );
     const parentResolver = parent === undefined ? undefined : parent.#resolver;
     this.#resolver = new DependencyResolver(
       this.#registry,
@@ -700,7 +701,7 @@ class DefaultContainer implements Container {
   /** What a binding declares up front — a class's params, a factory's descriptors, else nothing. */
   #staticDependencies(binding: Binding, reader: MetadataReader): ReadonlyArray<DependencySlot> {
     if (binding.kind === "class") {
-      return verifyConstructorMetadata(reader, binding.target as Constructor)?.params ?? [];
+      return reader.getConstructorMetadata(binding.target as Constructor)?.params ?? [];
     }
     if (binding.kind === "resolved" || binding.kind === "resolved-async") {
       return binding.deps;
