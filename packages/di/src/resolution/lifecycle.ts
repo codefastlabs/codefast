@@ -3,7 +3,7 @@ import { AsyncActivationError, AsyncDeactivationError } from "#/errors";
 import type { MetadataReader } from "#/metadata/metadata-types";
 import type { Token } from "#/token";
 import { tokenName } from "#/token";
-import type { ActivationHandler, Constructor, DeactivationHandler, ResolutionContext } from "#/types";
+import type { ActivationHandler, Constructor, DeactivationHandler, DependencyKey, ResolutionContext } from "#/types";
 
 /**
  * @since 0.3.16-canary.0
@@ -11,8 +11,8 @@ import type { ActivationHandler, Constructor, DeactivationHandler, ResolutionCon
 export class LifecycleManager {
   // Container-level activation/deactivation hooks per token — most containers register none, so
   // both tables stay unallocated until the first hook arrives.
-  #activationHooks: Map<Token<unknown> | Constructor, Array<ActivationHandler<unknown>>> | undefined;
-  #deactivationHooks: Map<Token<unknown> | Constructor, Array<DeactivationHandler<unknown>>> | undefined;
+  #activationHooks: Map<DependencyKey, Array<ActivationHandler<unknown>>> | undefined;
+  #deactivationHooks: Map<DependencyKey, Array<DeactivationHandler<unknown>>> | undefined;
   #activationVersion = 0;
 
   // One-entry cache in front of the map: a resolve loop asks about the same token over and over,
@@ -25,7 +25,7 @@ export class LifecycleManager {
     this.#cachedToken = undefined;
     this.#cachedHooks = undefined;
     // ✓ TS6.0: Map.getOrInsert (ES2025)
-    const list = (this.#activationHooks ??= new Map()).getOrInsert(token as Token<unknown> | Constructor, []);
+    const list = (this.#activationHooks ??= new Map()).getOrInsert(token as DependencyKey, []);
     list.push(handler as ActivationHandler<unknown>);
   }
 
@@ -46,7 +46,7 @@ export class LifecycleManager {
     if (hooks === undefined) {
       return undefined;
     }
-    const key = token as Token<unknown> | Constructor;
+    const key = token as DependencyKey;
     if (key === this.#cachedToken) {
       return this.#cachedHooks;
     }
@@ -60,7 +60,7 @@ export class LifecycleManager {
     token: Token<Value> | Constructor<Value>,
     handler: DeactivationHandler<Value>,
   ): void {
-    const list = (this.#deactivationHooks ??= new Map()).getOrInsert(token as Token<unknown> | Constructor, []);
+    const list = (this.#deactivationHooks ??= new Map()).getOrInsert(token as DependencyKey, []);
     list.push(handler as DeactivationHandler<unknown>);
   }
 
@@ -87,7 +87,7 @@ export class LifecycleManager {
     }
 
     // 3. container-level onActivation
-    const containerHooks = this.#activationHooks?.get(binding.token as Token<unknown> | Constructor);
+    const containerHooks = this.#activationHooks?.get(binding.token as DependencyKey);
     if (containerHooks !== undefined) {
       for (const hook of containerHooks) {
         const activationResult = hook(resolutionContext, activatedInstance);
@@ -124,7 +124,7 @@ export class LifecycleManager {
 
     // 3. container-level onActivation (must be sync)
     const tokenDisplayName = tokenName(binding.token);
-    const containerHooks = this.#activationHooks?.get(binding.token as Token<unknown> | Constructor);
+    const containerHooks = this.#activationHooks?.get(binding.token as DependencyKey);
     if (containerHooks !== undefined) {
       for (const hook of containerHooks) {
         const activationResult = hook(resolutionContext, activatedInstance);
@@ -143,7 +143,7 @@ export class LifecycleManager {
     instance: Value,
     metadataReader: MetadataReader,
   ): Promise<void> {
-    const tokenKey = binding.token as Token<unknown> | Constructor;
+    const tokenKey = binding.token as DependencyKey;
 
     // 1. container-level onDeactivation
     const containerHooks = this.#deactivationHooks?.get(tokenKey);
@@ -175,7 +175,7 @@ export class LifecycleManager {
 
   runDeactivationSync<const Value>(binding: Binding<Value>, instance: Value, metadataReader: MetadataReader): void {
     const tokenDisplayName = tokenName(binding.token);
-    const tokenKey = binding.token as Token<unknown> | Constructor;
+    const tokenKey = binding.token as DependencyKey;
 
     // 1. container-level onDeactivation
     const containerHooks = this.#deactivationHooks?.get(tokenKey);
@@ -226,6 +226,10 @@ function lifecycleMethods<const Value>(
 
 /** Invokes a hook by name, tolerating a name whose member is not (or no longer) a method. */
 function callHook(instance: unknown, methodName: string): unknown {
-  const method = (instance as Record<string, unknown>)[methodName];
-  return typeof method === "function" ? (method as () => unknown).call(instance) : undefined;
+  if (typeof instance !== "object" || instance === null) {
+    return undefined;
+  }
+  const method: unknown = Reflect.get(instance, methodName);
+
+  return typeof method === "function" ? method.call(instance) : undefined;
 }

@@ -276,7 +276,7 @@ export function createBinding<Value>(
     id,
     inFlight: false,
     frame: undefined,
-    instance: (source as { instance?: unknown }).instance ?? NO_INSTANCE,
+    instance: fields.instance ?? NO_INSTANCE,
     token,
     slot,
     predicate,
@@ -315,6 +315,16 @@ export function refinableFields<Value>(binding: Binding<Value>): RefinableBindin
 }
 
 /**
+ * Writable view of the memoized frame, which is a cache rather than part of a binding's identity.
+ *
+ * @remarks Named for the same reason as {@link RefinableBindingFields}: a write view stated once
+ * cannot drift from `Binding`, where an inline cast at each site can.
+ */
+interface MemoizedFrameField {
+  frame: ResolutionFrame | undefined;
+}
+
+/**
  * Drops the memoized resolution frame, for a refinement that changes what the frame reports.
  *
  * @remarks `scope` is the only field a chain writes in place that the frame derives from — a
@@ -323,7 +333,7 @@ export function refinableFields<Value>(binding: Binding<Value>): RefinableBindin
  * @since 0.5.0-canary.9
  */
 export function clearBindingFrame<Value>(binding: Binding<Value>): void {
-  (binding as { frame: ResolutionFrame | undefined }).frame = undefined;
+  (binding as MemoizedFrameField).frame = undefined;
 }
 
 // ── Builder interfaces ────────────────────────────────────────────────────────
