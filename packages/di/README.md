@@ -167,6 +167,16 @@ class Controller {
 }
 ```
 
+An accessor resolves from the container that is constructing the instance. When something else owns the `new` — a router, an ORM, a test helper — open that context yourself with `runWithContainer(container, () => new Controller())`; otherwise the accessor throws `MissingContainerContextError`.
+
+Classes you cannot decorate (a dependency's class, generated code, plain JavaScript) are wired by supplying their metadata yourself:
+
+```typescript
+const container = Container.create({ metadataReader: myReader });
+```
+
+A `MetadataReader` reports constructor parameters, lifecycle method names, and `@inject` accessors; delegate misses to `defaultMetadataReader` so decorated classes keep working. The reader is read while the container is constructed, so the option — not a later `MetadataReaderToken` binding — is what resolution sees. See [examples/19-custom-metadata-reader](./examples/19-custom-metadata-reader) and SPEC §7.4.
+
 ## Container
 
 ```typescript
