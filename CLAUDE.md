@@ -141,6 +141,16 @@ These are project rules the linters do not fully enforce:
 
 ## Releases
 
-Versioning is via **Changesets**. The repo is currently in **canary pre-release mode** (`.changeset/pre.json`, `mode: "pre"`). Use the `release` skill for the full publish workflow; `release:canary:exit` leaves pre mode. Commits follow **Conventional Commits** (enforced by commitlint).
+Versioning is via **Changesets**. Commits follow **Conventional Commits** (enforced by commitlint). Use the `release` skill for the full publish workflow.
 
-**While on 0.x, never author a `major` changeset.** All `@codefast/*` are one `fixed` group (`.changeset/config.json`), so the group versions together at the **highest** bump any changeset requests — a single `major` (even on one package like `@codefast/tracking`) bumps the **whole group** `0.x → 1.0.0`. Breaking changes in 0.x are `minor`. Once a wrong major has been versioned/published in canary mode, editing changesets alone can't undo it (the bump is baked into `package.json` + `pre.json`); the reset recipe is in the `release` skill.
+**Read the pre-release state, never assume it** — it flips whenever someone runs `release:canary:enter` / `release:canary:exit`, so any statement pinned here goes stale:
+
+```bash
+test -f .changeset/pre.json && echo "pre mode: $(python3 -c 'import json;print(json.load(open(".changeset/pre.json"))["tag"])')" || echo "normal mode"
+```
+
+`.changeset/pre.json` **present** → pre mode: `changeset version` produces `X.Y.Z-<tag>.N` and publishes under that dist-tag, and every changeset consumed so far is recorded in that file. **Absent** → normal mode: versions land on `latest`. A leftover `canary` dist-tag on npm proves nothing about the current mode — check the file.
+
+**Never author a `major` changeset.** All `@codefast/*` are one `fixed` group (`.changeset/config.json`), so the group versions together at the **highest** bump any changeset requests — a single `major` (even on one package like `@codefast/tracking`) bumps the **whole group** `0.x → 1.0.0`. Breaking changes are `minor`.
+
+**There is no planned 1.0.** These packages are consumed internally by the maintainer's own projects, so the version number is Changesets bookkeeping, not a compatibility promise to third parties — staying on 0.x is what keeps breaking changes cheap, and one stray `major` throws that away permanently. Once a wrong major has been versioned, editing changesets alone can't undo it — the bump is already baked into every `package.json` (plus `pre.json` when in pre mode); the reset recipe is in the `release` skill.
