@@ -77,6 +77,29 @@ describe("resolveAll over a one-tag request", () => {
     expect(child.resolveAll(serviceToken, { tag: [TAG, VALUE] })).toStrictEqual(["from-child", "from-parent"]);
   });
 
+  it("answers from the parent when the child owns nothing under the tag", () => {
+    const serviceToken = token<string>("tagged-selection-child-empty");
+    const parent = Container.create();
+    parent.bind(serviceToken).toConstantValue("from-parent").whenTagged(TAG, VALUE);
+
+    // The child starts the walk with an empty result — the shape a per-request container takes.
+    const child = parent.createChild();
+
+    expect(child.resolveAll(serviceToken, { tags: [[TAG, VALUE]] })).toStrictEqual(["from-parent"]);
+  });
+
+  it("steps over a container in the chain that has nothing under the tag", () => {
+    const serviceToken = token<string>("tagged-selection-chain-gap");
+    const grandparent = Container.create();
+    grandparent.bind(serviceToken).toConstantValue("from-grandparent").whenTagged(TAG, VALUE);
+
+    const parent = grandparent.createChild();
+    const child = parent.createChild();
+    child.bind(serviceToken).toConstantValue("from-child").whenTagged(TAG, VALUE);
+
+    expect(child.resolveAll(serviceToken, { tags: [[TAG, VALUE]] })).toStrictEqual(["from-child", "from-grandparent"]);
+  });
+
   it("takes only the requested slot, not every tagged binding under the token", () => {
     const serviceToken = token<string>("tagged-selection-slots");
     const container = Container.create();
