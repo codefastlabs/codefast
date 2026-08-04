@@ -134,8 +134,8 @@ missing.
 
 > **Rule:** a fast lane's admission test is part of the contract, not an implementation detail. Two
 > spellings SPEC calls equivalent must reach the same lane, or the shorter one becomes the slower one
-> and the documentation that recommends it becomes wrong. SPEC §3.5 states this normatively and
-> `tests/unit/resolution/tag-shorthand-parity.test.ts` pins the admission alongside the answer.
+> and the documentation that recommends it becomes wrong. SPEC §3.5 makes the two spellings one
+> request; `tests/unit/resolution/tag-shorthand-parity.test.ts` pins the lane alongside the answer.
 
 **`resolveAll` reads the tag index too, and one tag is not the subset query several are.** A request
 carrying one tag and no name matches exactly the bindings whose slot _is_ that tag — a named or
@@ -160,47 +160,23 @@ that read the index now evaluate the predicate on what they find, as the name la
 > needs either a per-resolve allocation where the cost today is a handful of comparisons, or the tag
 > values stringified, which the `Object.is` rule in SPEC §3.5 forbids.
 
-**Hoisting the request out of the candidate loop was tried and reverted.** `--prof` over the multi-tag
-lane put over half its JavaScript time inside `matchesSlot`, re-deriving the same request — name, tag
-list, shorthand, "were any tags asked for" — once per candidate. Reading it once in `filterBindings`
-and passing it to the rule does speed up every lane the index cannot serve: **1.27×** on
-`slot-tag-resolve-all`, **1.19×** on a tagged miss, **1.13×** on multi-tag, **1.06×** on name+tag.
-
-It also costs **0.87×** on `resolve-all-strategies-10`, **0.90×** on `resolve-all-strategies-100` and
-**0.93×** on `production-event-bus-dispatch`. Every row it wins is codefast-only and carries
-`excludeFromAggregates`; every row it loses counts against the other libraries, one of them in the
-`production` group. That is the trade, and it is the wrong way round.
-
-The mechanism is V8's cumulative inlining budget, not an added comparison. `filterBindings` growing
-pushes the tail of `resolveAll → #candidateBindings → selectAllBindings → filterBindings →
-matchesPredicate` out of the inlined chain, so the per-candidate loop loses its inlining — which is why
-`resolve-all-strategies-10` loses as much as the hundred-binding row at a tenth the work per call, and
-why raising `--max-inlined-bytecode-size*` on both sides erases the whole difference. Two remedies
-failed: extracting the lane into its own method changed nothing, because the budget counts bytecode and
-call sites present rather than how often a call runs; branching in the caller so the request never
-enters the lane's function made it worse, because the budget is cumulative and the caller is the
-chain's root, so bytecode moved there is merely re-accounted.
+**Hoisting the request out of the candidate loop was tried and rejected.** `--prof` puts over half
+this lane's JavaScript time in `matchesSlot`, re-deriving the same request per candidate; reading it
+once in `filterBindings` is worth 1.27×/1.19×/1.13×/1.06× on the four slot rows and costs
+**0.87×**/**0.90×**/**0.93×** on `resolve-all-strategies-10`, `-100` and
+`production-event-bus-dispatch`. Every row it wins carries `excludeFromAggregates`; every row it loses
+is one of the 44 that count. The mechanism is V8's cumulative inlining budget, not an added
+comparison: a bigger `filterBindings` pushes the tail of
+`resolveAll → #candidateBindings → selectAllBindings → filterBindings → matchesPredicate` out of the
+inlined chain, so the per-candidate loop loses its inlining. Two remedies failed — extracting the lane
+into its own method, then branching in the caller, which made it worse.
 
 > **Rule:** a hot chain can be too big as well as too eager, and the two fail differently. An extra
 > comparison scales with call count; a lost inlining edge scales with candidates and survives being
-> moved into another method. Raising `--max-inlined-bytecode-size*` on both sides is the oracle for
-> the second, and a fix is only real if it measures equal in **both** budget modes.
-
-> **Rule:** before trading throughput between rows, check which side of the trade is comparable.
-> A win on a row carrying `excludeFromAggregates` buys nothing any published figure can see, and it
-> does not pay for a loss on a row that counts.
-
-> **Rule:** measure with **per-scenario isolation** — `pnpm di:bench:isolate`, or one subprocess per
-> scenario via `BENCH_ONLY`. A whole-suite paired A/B put these same rows at 0.95×–0.97×, small enough
-> to argue past, and read the hoist's own cost as a clean win; under isolation the numbers are
-> 0.87×–0.93×. Every row here exercises `resolveAll` and they share its inline caches when they share
-> an isolate, so the shared-isolate run compressed the differences in both directions. Three
-> attributions in a row came out of that instrument and all three were wrong — including one revert of
-> an innocent commit.
-
-> **Rule:** do not argue past a bar you set before measuring. The bar here — no row outside its own
-> A/A floor — rejected this change, and the argument that it was the wrong shape for a lane-adding
-> change rested entirely on numbers the wrong instrument had produced. The bar was right.
+> moved into another method — the budget counts bytecode and call sites present, not how often a call
+> runs, and it is cumulative, so moving bytecode into the caller only re-accounts it. Raising
+> `--max-inlined-bytecode-size*` on both sides is the oracle: if the difference vanishes, code size
+> was the cause.
 
 **A hash lookup a loop repeats deserves an inline cache, and a memo already inlined deserves nothing.** `LifecycleManager.activationHandlersFor()` keeps a one-entry token→hooks cache in front of its map, invalidated by `registerActivation` — a resolve loop asks about the same token every iteration. The mirror-image change failed: folding `#getResolutionFrame` into a single expression so it would inline, with the build extracted to a cold method, cost **~6%** on `fan-out-tree-depth-3-breadth-4` (five paired passes, all five negative) and was reverted. A profile showing self-time in a memo is not evidence that the memo is the cost.
 

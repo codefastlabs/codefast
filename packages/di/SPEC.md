@@ -184,8 +184,6 @@ interface ResolveOptions {
 
 **Tag value comparison là `Object.is` — normative, kể cả trên fast-path.** `tag` và `tags: [pair]` phải cho **cùng một kết quả**, và cùng kết quả với `resolveAll` / `resolveOptional` trên cùng options. Cảnh báo cho implementer: một index dạng `Map` keyed theo tag value trả lời bằng **SameValueZero**, nên nó coi `-0` và `+0` là **cùng khoá** — trái với `Object.is` (section 5.11, section 8). Fast-path đọc index như vậy phải **kiểm lại bằng matcher** trước khi trả về, nếu không cùng một câu hỏi sẽ có hai câu trả lời tuỳ cách viết. `NaN` không bị ảnh hưởng: cả hai quy tắc coi `NaN` bằng chính nó.
 
-**Một fast-path phục vụ được `tags: [pair]` thì phải phục vụ luôn `tag: pair` — normative.** Hai cách viết là **một** yêu cầu, nên một lane nhanh mà chỉ một trong hai đi vào được là bug về hiệu năng, không phải lựa chọn thiết kế: nó khiến cách viết ngắn hơn lại là cách chậm hơn, đúng thứ mà người đọc tài liệu sẽ chọn nhầm. Yêu cầu này nói về **lane**, không phải về kết quả — kết quả đã do quy tắc `Object.is` ở trên ràng buộc.
-
 ### 3.6 `ResolutionContext`
 
 `ctx` trong `toDynamic` / `toDynamicAsync` — không phải container đầy đủ, chỉ expose resolve trong ngữ cảnh hiện tại:

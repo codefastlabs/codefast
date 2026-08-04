@@ -24,6 +24,13 @@ schedules one side later — none of which is your change.
 3. Repeat for at least three passes, **swapping which side goes first each pass**.
 4. Report the median of the per-pass ratios, and show them all.
 
+Step 2 means **one subprocess per (side, scenario)** — `BENCH_ISOLATE=1`, or `BENCH_ONLY=<id>` on the
+child directly. Running a side's whole suite in one process is not a cheaper version of the same
+measurement: scenarios that share an isolate share inline caches and optimisation state, so a change
+to a function several rows exercise shows up compressed. A whole-suite paired A/B once read a change
+as a clean win whose real cost, measured per-scenario, was 0.87×–0.93× on three rows — and mis-blamed
+two neighbouring commits before the isolation was added.
+
 Swapping the order is what makes drift cancel instead of accumulate. Reporting every pass is what
 lets a reader see a pass that disagrees — if pass 2 says 0.81 and the rest say 0.99, that is worth
 knowing, and a lone median hides it.
@@ -107,6 +114,9 @@ Also required for a comparison to mean anything:
   async chains, the `production/*` group.
 - **A ratio near 1.00× is parity, not a win.** The report's bands are win >1.03×, parity 0.97–1.03×,
   loss <0.97×.
+- **Check which side of a trade is comparable before taking it.** A row with `excludeFromAggregates`,
+  or one no other library implements, contributes to no published figure — a win there does not pay
+  for a loss on one of the head-to-head rows.
 - **IQR is within-run stability and is blind to between-run variance.** Two runs have reported the same
   row as one of the tightest in the suite while disagreeing with each other by 39%.
 
