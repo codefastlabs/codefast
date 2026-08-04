@@ -118,6 +118,25 @@ the common path pays one comparison against a literal rather than a call into th
 with the full `matchesSlot` instead cost **~42%** on `tagged-binding-resolve`; the narrow check costs
 **~5%**, which is the price of the answer being the same in all three places.
 
+**Agreeing on the answer is not agreeing on the lane.** The paragraph above bought `tag: pair` and
+`tags: [pair]` the same result; what it did not buy them was the same path to it. `singleTagOnlyOf` is
+the admission test for the tagged index, and it read the presence of `tag` as a reason to give up —
+so the shorthand, the form the README reaches for and `ResolveOptions` advertised as the fast one, was
+the only spelling the index never served. Admitting it is worth **2.42×** on a single-tag resolve with
+the pair hoisted and **2.38×** with it inline, against `tags` rows and the sync controls all at parity
+(paired, alternating, five passes, every pass agreeing). A request carrying a tag from both sources at
+once still declines: two tags asked for is not something a one-tag index can answer without skipping
+the ambiguity check the full path would run. The `slot-selection` group in `benchmarks/di-inversify`
+exists so this family has rows at all — the four it added are a 2×2 over request form × where the tag
+literal lives, which is what separates lane cost from allocation cost. Read together they also price
+the shorthand's own advantage: one fewer object per call, worth about a thirtieth of the lane it was
+missing.
+
+> **Rule:** a fast lane's admission test is part of the contract, not an implementation detail. Two
+> spellings SPEC calls equivalent must reach the same lane, or the shorter one becomes the slower one
+> and the documentation that recommends it becomes wrong. SPEC §3.5 states this normatively and
+> `tests/unit/resolution/tag-shorthand-parity.test.ts` pins the admission alongside the answer.
+
 **A hash lookup a loop repeats deserves an inline cache, and a memo already inlined deserves nothing.** `LifecycleManager.activationHandlersFor()` keeps a one-entry token→hooks cache in front of its map, invalidated by `registerActivation` — a resolve loop asks about the same token every iteration. The mirror-image change failed: folding `#getResolutionFrame` into a single expression so it would inline, with the build extracted to a cold method, cost **~6%** on `fan-out-tree-depth-3-breadth-4` (five paired passes, all five negative) and was reverted. A profile showing self-time in a memo is not evidence that the memo is the cost.
 
 **The same rule pays again one layer down.** `BindingLookupCache.defaultEntry()` is reached by exactly

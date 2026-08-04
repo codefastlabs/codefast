@@ -29,16 +29,24 @@ export function isNameOnlyOptions(options: ResolveOptions): options is ResolveOp
 }
 
 /**
- * The lone entry of a request whose only criterion is a one-element `tags` list — the shape the
- * registry has a direct tag index for.
+ * The lone tag of a request that asks for exactly one, written either way — the shape the registry
+ * has a direct tag index for.
+ *
+ * @remarks Both spellings answer here, so the index is not something one of them silently misses.
  *
  * @since 0.5.0-canary.9
  */
 export function singleTagOnlyOf(options: ResolveOptions): BindingTag | undefined {
-  if (options.name !== undefined || options.tag !== undefined) {
+  if (options.name !== undefined) {
     return undefined;
   }
-  return options.tags !== undefined && options.tags.length === 1 ? options.tags[0] : undefined;
+  const listed = options.tags;
+  const shorthand = options.tag;
+  if (shorthand !== undefined) {
+    // Both sources present means the request carries two tags, which no single-tag index can answer.
+    return listed === undefined || listed.length === 0 ? shorthand : undefined;
+  }
+  return listed !== undefined && listed.length === 1 ? listed[0] : undefined;
 }
 
 /** Shared core: build a ResolveOptions from already-normalised name + tags. */
