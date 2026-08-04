@@ -428,7 +428,9 @@ container.bind(Logger).to(FileLogger).whenNamed("file").singleton();
 container.bind(Engine).to(PetrolEngine).whenTagged("fuel", "petrol");
 container.bind(Engine).to(ElectricEngine).whenTagged("fuel", "electric");
 
-// Nhiều tag trên cùng binding
+// Nhiều tag trên cùng binding — chuyên biệt hoá của binding petrol ở trên. Hint
+// {fuel:petrol} lấy PetrolEngine; hint {fuel:petrol, size:v8} lấy TurboV8 vì nó khai
+// báo nhiều tag hơn, tức cụ thể hơn (section 5.11).
 container.bind(Engine).to(TurboV8).whenTagged("fuel", "petrol").whenTagged("size", "v8");
 
 // Default slot tường minh — match khi không có name/tag nào
@@ -783,18 +785,30 @@ Hai binding slot **bằng nhau** khi: `name` bằng nhau (hoặc cả hai `undef
 
 **Bảng tình huống:**
 
-| #   | Tình huống                                                          | Kết quả slot          | `resolve` không hint                        | `resolveAll` / hint     |
-| --- | ------------------------------------------------------------------- | --------------------- | ------------------------------------------- | ----------------------- |
-| 1   | `bind(T).to*(A)`                                                    | Default               | A                                           | `[A]`                   |
-| 2   | `bind(T).to*(A)` rồi `bind(T).to*(B)`                               | Default last-wins     | B                                           | `[B]`                   |
-| 3   | `to*(A).whenNamed("a")` rồi `to*(B).whenNamed("a")`                 | Named "a" last-wins   | `NoMatchingBindingError` (không có default) | Hint `{name:"a"}` → B   |
-| 4   | `to*(A).whenNamed("a")` và `to*(B).whenNamed("b")`                  | Named "a" + Named "b" | `NoMatchingBindingError`                    | `resolveAll` → `[A, B]` |
-| 5   | `to*(A)` và `to*(B).whenNamed("x")`                                 | Default + Named "x"   | A                                           | `resolveAll` → `[A, B]` |
-| 6   | `rebind(T).to*(C)`                                                  | Explicit reset        | C                                           | `[C]`                   |
-| 7   | Tags `{fuel:petrol, size:v8}.to*(A)` rồi cùng tags `.to*(B)`        | Tag-set last-wins     | Hint `{tags:[...]}` → B                     | Hint → B                |
-| 8   | Tags `{fuel:petrol}.to*(A)` và tags `{fuel:petrol, size:v8}.to*(B)` | Hai tag-set khác nhau | Hint cụ thể                                 | `resolveAll` → `[A, B]` |
+| #   | Tình huống                                                          | Kết quả slot          | `resolve` không hint                                                      | `resolveAll` / hint     |
+| --- | ------------------------------------------------------------------- | --------------------- | ------------------------------------------------------------------------- | ----------------------- |
+| 1   | `bind(T).to*(A)`                                                    | Default               | A                                                                         | `[A]`                   |
+| 2   | `bind(T).to*(A)` rồi `bind(T).to*(B)`                               | Default last-wins     | B                                                                         | `[B]`                   |
+| 3   | `to*(A).whenNamed("a")` rồi `to*(B).whenNamed("a")`                 | Named "a" last-wins   | `NoMatchingBindingError` (không có default)                               | Hint `{name:"a"}` → B   |
+| 4   | `to*(A).whenNamed("a")` và `to*(B).whenNamed("b")`                  | Named "a" + Named "b" | `NoMatchingBindingError`                                                  | `resolveAll` → `[A, B]` |
+| 5   | `to*(A)` và `to*(B).whenNamed("x")`                                 | Default + Named "x"   | A                                                                         | `resolveAll` → `[A, B]` |
+| 6   | `rebind(T).to*(C)`                                                  | Explicit reset        | C                                                                         | `[C]`                   |
+| 7   | Tags `{fuel:petrol, size:v8}.to*(A)` rồi cùng tags `.to*(B)`        | Tag-set last-wins     | Hint `{tags:[...]}` → B                                                   | Hint → B                |
+| 8   | Tags `{fuel:petrol}.to*(A)` và tags `{fuel:petrol, size:v8}.to*(B)` | Hai tag-set khác nhau | Hint `{tags:[fuel]}` → A; hint `{tags:[fuel, size]}` → **B** (cụ thể hơn) | `resolveAll` → `[A, B]` |
 
 **Row 3 — `resolve` không hint:** Throw `NoMatchingBindingError` (không phải `TokenNotBoundError`) vì token có binding nhưng không có slot nào match hint trống. Message bao gồm danh sách các slot có sẵn: `"Available slots: [name:a, name:b]"`.
+
+**Row 8 — hint càng chi tiết thì càng nhiều binding thoả, nên phải có luật cụ-thể-hơn.** Tag của binding là **điều kiện của nó**, không phải bộ lọc phải trùng khít. Hint `{fuel:petrol}` loại B vì B còn đòi `size`; hint `{fuel:petrol, size:v8}` thoả **cả** A lẫn B, vì điều kiện duy nhất của A cũng được nêu. Đây là mô hình điều phối (như routing, media query, overload resolution), và mọi mô hình điều phối đều cần một luật phá thế cân bằng.
+
+**Luật cụ-thể-hơn cho `resolve` / `resolveOptional` (normative)** — xét theo thứ tự, dừng ở bước đầu tiên chọn được đúng một candidate:
+
+1. **Predicate:** đúng một candidate mang `when()` predicate thì candidate đó thắng. Hai trở lên là nhập nhằng thật.
+2. **Số lượng tag:** candidate khai báo **nhiều tag hơn mọi candidate khác** thì thắng — nó khớp nhiều phần hơn của điều được hỏi.
+3. Không bước nào chọn được thì throw `AmbiguousBindingError`.
+
+Nên row 8 giải quyết được cả hai chiều: `{fuel}` → A, `{fuel, size}` → B. Bằng số tag cân nhau thì vẫn nhập nhằng — `{fuel:petrol}.to*(A)` và `{size:v8}.to*(B)` với hint đủ cả hai tag thì không cái nào cụ thể hơn.
+
+`resolveAll` **không** áp luật này: nó trả về mọi candidate khớp, specificity chỉ dùng khi phải chọn một.
 
 > **`has(token)` và slot semantics:** `container.has(token)` trả `true` nếu token có **bất kỳ binding nào** (kể cả chỉ named/tagged slots, không có default). `container.resolve(token)` không hint có thể throw `NoMatchingBindingError` ngay cả khi `has(token)` là `true`. Xem section 6.10 để biết cách dùng đúng `has` + `hasOwn`.
 

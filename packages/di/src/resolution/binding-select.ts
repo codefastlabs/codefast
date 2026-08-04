@@ -21,9 +21,10 @@ export function selectBinding(
   if (candidates.length === 1) {
     return candidates[0];
   }
-  // Most specific wins: a single matching predicate-carrying candidate beats
-  // predicate-less ones (a predicate is a deliberate specialization of the
-  // default). Two matching predicates are genuinely ambiguous.
+  // Most specific wins, predicate first: a single matching predicate-carrying candidate beats
+  // predicate-less ones (a predicate is a deliberate specialization of the default), then tag count
+  // breaks what is left. Predicate order is first because it is the older rule and moving it would
+  // re-decide resolutions that already succeed.
   let predicatedCandidate: Binding | undefined;
   for (const candidate of candidates) {
     if (candidate.predicate !== undefined) {
@@ -37,10 +38,34 @@ export function selectBinding(
   if (predicatedCandidate !== undefined) {
     return predicatedCandidate;
   }
+  // Reached only where the throw was: a slot declaring more of what the request carries is the more
+  // specific match, so an over-specified request resolves instead of being ambiguous (SPEC §5.11).
+  const mostSpecific = mostSpecificByTagCount(candidates);
+  if (mostSpecific !== undefined) {
+    return mostSpecific;
+  }
   throw new AmbiguousBindingError(
     tokenDisplayName,
     candidates.map((c) => c.id),
   );
+}
+
+/** The lone candidate declaring more tags than every other, or `undefined` when that is a tie. */
+function mostSpecificByTagCount(candidates: ReadonlyArray<Binding>): Binding | undefined {
+  let best: Binding | undefined;
+  let bestCount = -1;
+  let tied = false;
+  for (const candidate of candidates) {
+    const count = candidate.slot.tags.length;
+    if (count > bestCount) {
+      best = candidate;
+      bestCount = count;
+      tied = false;
+    } else if (count === bestCount) {
+      tied = true;
+    }
+  }
+  return tied ? undefined : best;
 }
 
 /**
