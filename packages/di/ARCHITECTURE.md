@@ -195,6 +195,44 @@ slot tracks absence by its token, not by its entry.
 > `Map.get` returning a binding, and an alias terminal may live in a parent container whose rebind only
 > the chain's summed version can see. Alias folding belongs where the version stamp is.
 
+**The single-tag lane has no chain memo, and a warm benchmark cannot tell you whether it should.** Two
+of the three criteria lanes memoize the walk: the one-entry slot above for a no-options token owned by
+a parent, and `namedEntry` for a name-only one. A single-tag request consults each container's tag index
+on the way up, every time. Measured against a **long-lived** child that resolves in a loop, that reads
+as a flat deficit — the memoized lanes land at ~14 ns/op whatever the depth
+(`child-depth-2-resolve`, `slot-name-parent-owned`) against ~26 ns flat plus ~10 ns per hop for tagged
+(`slot-tag-array-hoisted`, `slot-tag-parent-owned`).
+
+A **fresh** child says something else. Marginal cost per resolve of one token, netting out a 166 ns
+create-plus-dispose cycle, for N resolves inside one child:
+
+| lane                              |      N=1 |  N=2 |  N=4 |
+| --------------------------------- | -------: | ---: | ---: |
+| single tag — no memo              |     33.0 | 34.2 | 34.6 |
+| name only — `namedEntry`, a map   | **54.5** | 34.5 | 27.1 |
+| no options — one-entry slot + map |     36.7 |    — | 17.7 |
+
+The unmemoized lane is flat, which is what having no per-container state looks like. The memoized one
+is dear at N=1 and amortizes, so the crossover against its unmemoized neighbour sits at **N=2** — it
+loses by ~21 ns at N=1, ties at N=2, and wins from N=3. That 21 ns is the `Map` `namedEntry` allocates
+per token through `getOrInsertComputed`, thrown away when the container is; `defaultEntry`'s one-entry
+slot costs ~4 ns cold by comparison. **Which memo shape is chosen therefore matters more than whether
+to memoize**, and for a per-request container it is the only thing that matters.
+
+Two consequences. A tagged memo should be the one-entry slot, not a map, and shaped that way it is
+close to free at N=1 rather than a loss — so the objection to it is the 15% blast radius this file
+records for `#findBinding`-adjacent edits, which a paired A/B with controls can settle, and not the
+duty cycle. And the justification standing over `namedEntry` — that it "almost always hits" — is a
+statement about a long-lived container that inverts in a per-request one, where every first resolve of
+a named token buys a map it will not read again.
+
+Still unsettled, and not answerable here: how often real code resolves one tagged token twice in one
+container. Nothing outside `packages/di` and `benchmarks/` in this repo binds a tag at all.
+
+> **Rule:** a chain memo is justified by hit rate, not by symmetry with a lane that has one — and the
+> hit rate to quote is a **fresh** container's, because that is where the memo is paid for and a warm
+> loop hides the payment entirely.
+
 **Compiling the activation chain was tried three ways and rejected.** `container-level-activation-hook`
 is the suite's thinnest win, and the hook pipeline is re-decided per resolve while its shape is fixed
 per `(binding, activationVersion)` — the same redundancy the async cascade removed. So: memoize a

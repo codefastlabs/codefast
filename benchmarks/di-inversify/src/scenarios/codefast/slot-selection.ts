@@ -242,7 +242,11 @@ function buildMissOptionalScenario(): BenchScenario {
   };
 }
 
-// ── Parent-owned slot: the per-request child container shape ─────────────────
+// ── Parent-owned slot: repeated resolves from a long-lived child ─────────────
+//
+// The child is built once, outside `batched`, on purpose: these price a warm chain walk against a
+// warm memo. A per-request child disposes before a second resolve reaches either — a different
+// question, and ARCHITECTURE.md answers it with different numbers.
 
 const parentTaggedToken = token<TaggedService>("bench-cf-slot-parent-tagged-service");
 const parentNamedToken = token<TaggedService>("bench-cf-slot-parent-named-service");
@@ -255,9 +259,9 @@ function buildTaggedParentOwnedScenario(): BenchScenario {
   for (const env of TAGGED_ENVS) {
     appContainer.bind(parentTaggedToken).toConstantValue({ env }).whenTagged("env", env);
   }
-  const requestChild = appContainer.createChild();
+  const longLivedChild = appContainer.createChild();
 
-  requestChild.resolve(parentTaggedToken, { tags: HOISTED_TAGS });
+  longLivedChild.resolve(parentTaggedToken, { tags: HOISTED_TAGS });
 
   return {
     id: "slot-tag-parent-owned",
@@ -267,11 +271,11 @@ function buildTaggedParentOwnedScenario(): BenchScenario {
     excludeFromAggregates: true,
     // A chain walk only if the child owns nothing under the token — otherwise this is a local hit.
     sanity: () =>
-      !requestChild.hasOwn(parentTaggedToken) &&
-      requestChild.resolve(parentTaggedToken, { tags: HOISTED_TAGS }).env === TARGET_TAG_VALUE,
+      !longLivedChild.hasOwn(parentTaggedToken) &&
+      longLivedChild.resolve(parentTaggedToken, { tags: HOISTED_TAGS }).env === TARGET_TAG_VALUE,
     build: () =>
       batched(SLOT_RESOLVE_BATCH, () => {
-        requestChild.resolve(parentTaggedToken, { tags: HOISTED_TAGS });
+        longLivedChild.resolve(parentTaggedToken, { tags: HOISTED_TAGS });
       }),
   };
 }
@@ -282,9 +286,9 @@ function buildNamedParentOwnedScenario(): BenchScenario {
   for (const env of TAGGED_ENVS) {
     appContainer.bind(parentNamedToken).toConstantValue({ env }).whenNamed(env);
   }
-  const requestChild = appContainer.createChild();
+  const longLivedChild = appContainer.createChild();
 
-  requestChild.resolve(parentNamedToken, { name: TARGET_TAG_VALUE });
+  longLivedChild.resolve(parentNamedToken, { name: TARGET_TAG_VALUE });
 
   return {
     id: "slot-name-parent-owned",
@@ -293,11 +297,11 @@ function buildNamedParentOwnedScenario(): BenchScenario {
     batch: SLOT_RESOLVE_BATCH,
     excludeFromAggregates: true,
     sanity: () =>
-      !requestChild.hasOwn(parentNamedToken) &&
-      requestChild.resolve(parentNamedToken, { name: TARGET_TAG_VALUE }).env === TARGET_TAG_VALUE,
+      !longLivedChild.hasOwn(parentNamedToken) &&
+      longLivedChild.resolve(parentNamedToken, { name: TARGET_TAG_VALUE }).env === TARGET_TAG_VALUE,
     build: () =>
       batched(SLOT_RESOLVE_BATCH, () => {
-        requestChild.resolve(parentNamedToken, { name: TARGET_TAG_VALUE });
+        longLivedChild.resolve(parentNamedToken, { name: TARGET_TAG_VALUE });
       }),
   };
 }
