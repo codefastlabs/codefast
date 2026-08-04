@@ -18,9 +18,11 @@
  *     an outer array and the pair; `{ tag: [k, v] }` mints one fewer. Whether V8's escape
  *     analysis elides any of it is part of what the row answers.
  *
- * The remaining four cover slot lanes no other row reaches: the zero-valued tag that
+ * The remaining six cover slot lanes no other row reaches: the zero-valued tag that
  * forces the index's `Object.is` re-check, a name+tag request that no index can serve, `resolveAll`
- * over a tagged token, and a tagged miss walking to a parentless container.
+ * over a tagged token, a tagged miss walking to a parentless container, and a tagged/named pair
+ * owned by a parent and resolved from a child — the two that price the named lane's memo against
+ * the tagged lane's unmemoized chain walk.
  */
 import { Container, token } from "@codefast/di";
 
@@ -240,6 +242,66 @@ function buildMissOptionalScenario(): BenchScenario {
   };
 }
 
+// ── Parent-owned slot: the per-request child container shape ─────────────────
+
+const parentTaggedToken = token<TaggedService>("bench-cf-slot-parent-tagged-service");
+const parentNamedToken = token<TaggedService>("bench-cf-slot-parent-named-service");
+
+// These two differ only in the criterion — same binding count, same constant, same one options
+// object per call — so the gap between them is the lane and nothing else.
+function buildTaggedParentOwnedScenario(): BenchScenario {
+  const appContainer = Container.create();
+
+  for (const env of TAGGED_ENVS) {
+    appContainer.bind(parentTaggedToken).toConstantValue({ env }).whenTagged("env", env);
+  }
+  const requestChild = appContainer.createChild();
+
+  requestChild.resolve(parentTaggedToken, { tags: HOISTED_TAGS });
+
+  return {
+    id: "slot-tag-parent-owned",
+    group: "slot-selection",
+    what: "resolve(token, { tags }) from a child for a binding the parent owns — the tagged index consulted per container up the chain, unmemoized (codefast-only)",
+    batch: SLOT_RESOLVE_BATCH,
+    excludeFromAggregates: true,
+    // A chain walk only if the child owns nothing under the token — otherwise this is a local hit.
+    sanity: () =>
+      !requestChild.hasOwn(parentTaggedToken) &&
+      requestChild.resolve(parentTaggedToken, { tags: HOISTED_TAGS }).env === TARGET_TAG_VALUE,
+    build: () =>
+      batched(SLOT_RESOLVE_BATCH, () => {
+        requestChild.resolve(parentTaggedToken, { tags: HOISTED_TAGS });
+      }),
+  };
+}
+
+function buildNamedParentOwnedScenario(): BenchScenario {
+  const appContainer = Container.create();
+
+  for (const env of TAGGED_ENVS) {
+    appContainer.bind(parentNamedToken).toConstantValue({ env }).whenNamed(env);
+  }
+  const requestChild = appContainer.createChild();
+
+  requestChild.resolve(parentNamedToken, { name: TARGET_TAG_VALUE });
+
+  return {
+    id: "slot-name-parent-owned",
+    group: "slot-selection",
+    what: "resolve(token, { name }) from a child for a binding the parent owns — the tagged row's shape on the memoized named lane (codefast-only)",
+    batch: SLOT_RESOLVE_BATCH,
+    excludeFromAggregates: true,
+    sanity: () =>
+      !requestChild.hasOwn(parentNamedToken) &&
+      requestChild.resolve(parentNamedToken, { name: TARGET_TAG_VALUE }).env === TARGET_TAG_VALUE,
+    build: () =>
+      batched(SLOT_RESOLVE_BATCH, () => {
+        requestChild.resolve(parentNamedToken, { name: TARGET_TAG_VALUE });
+      }),
+  };
+}
+
 export function buildCodefastSlotSelectionScenarios(): ReadonlyArray<BenchScenario> {
   return [
     buildArrayHoistedScenario(),
@@ -250,5 +312,7 @@ export function buildCodefastSlotSelectionScenarios(): ReadonlyArray<BenchScenar
     buildNameAndTagScenario(),
     buildResolveAllScenario(),
     buildMissOptionalScenario(),
+    buildTaggedParentOwnedScenario(),
+    buildNamedParentOwnedScenario(),
   ];
 }
