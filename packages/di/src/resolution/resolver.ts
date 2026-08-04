@@ -45,6 +45,7 @@ import { tokenName } from "#/token";
 import type {
   ActivationHandler,
   BindingIdentifier,
+  BindingTag,
   ConstraintContext,
   Constructor,
   ResolutionFrame,
@@ -163,7 +164,11 @@ export class DependencyResolver implements ResolverCallbacks {
       const singleTag = singleTagOnlyOf(options);
       if (singleTag !== undefined) {
         const tagged = this.#registry.getSimpleTagged(token, singleTag[0], singleTag[1]);
-        if (tagged !== undefined && matchesIndexedTagValue(tagged, singleTag[1])) {
+        if (
+          tagged !== undefined &&
+          matchesIndexedTagValue(tagged, singleTag[1]) &&
+          this.#satisfiesPredicate(tagged, options, resolutionPath, resolutionStack)
+        ) {
           return { binding: tagged, owner: this };
         }
       }
@@ -652,14 +657,11 @@ export class DependencyResolver implements ResolverCallbacks {
     resolutionPath: Array<string>,
     resolutionStack: Array<ResolutionFrame>,
   ): ReadonlyArray<Binding> {
-    if (options !== undefined && isNameOnlyOptions(options)) {
-      // The name index has matched the slot already, but a hit may still carry a predicate —
-      // and that is the selection path's job to evaluate.
-      const named = this.#namedBindingsFromChain(token, options.name);
-      if (!anyPredicate(named)) {
-        return named;
+    if (options !== undefined) {
+      const indexed = this.#indexedCandidates(token, options, resolutionPath, resolutionStack);
+      if (indexed !== null) {
+        return indexed;
       }
-      return selectAllBindings(named, options, this.#makeConstraintContext(resolutionPath, resolutionStack, options));
     }
     const allBindings = this.#allBindingsFromChain(token);
     if (allBindings.length === 0) {
@@ -1032,6 +1034,65 @@ export class DependencyResolver implements ResolverCallbacks {
     return result;
   }
 
+  /**
+   * The candidates an index can name outright, or `null` when the request needs full selection.
+   *
+   * @remarks Kept off `#candidateBindings` so that method stays the size it was: a request neither
+   * index serves must not pay for the two that do — see ARCHITECTURE.md on the dispatcher prefix.
+   * An index has matched the slot already, but a hit may still carry a predicate, and evaluating
+   * that is the selection path's job.
+   */
+  #indexedCandidates(
+    token: Token<unknown> | Constructor,
+    options: ResolveOptions,
+    resolutionPath: Array<string>,
+    resolutionStack: Array<ResolutionFrame>,
+  ): ReadonlyArray<Binding> | null {
+    if (isNameOnlyOptions(options)) {
+      const named = this.#namedBindingsFromChain(token, options.name);
+      return anyPredicate(named)
+        ? selectAllBindings(named, options, this.#makeConstraintContext(resolutionPath, resolutionStack, options))
+        : named;
+    }
+    const singleTag = singleTagOnlyOf(options);
+    if (singleTag === undefined) {
+      return null;
+    }
+    const tagged = this.#taggedBindingsFromChain(token, singleTag);
+    return anyPredicate(tagged)
+      ? selectAllBindings(tagged, options, this.#makeConstraintContext(resolutionPath, resolutionStack, options))
+      : tagged;
+  }
+
+  /**
+   * Every binding the chain's tag indexes hold for one tag, nearest container first.
+   *
+   * @remarks A request for one tag and no name matches exactly the bindings the index keys, so this
+   * is the whole candidate set rather than a prefilter — a named or multi-tag slot cannot satisfy it.
+   */
+  #taggedBindingsFromChain(token: Token<unknown> | Constructor, tag: BindingTag): Array<Binding> {
+    // A tag matches at most one binding per registry, so a root container's answer is built whole
+    // rather than grown — the shape `#namedBindingsFromChain` takes, for the same reason.
+    const ownBinding = this.#taggedBinding(token, tag);
+    if (this.#parent === undefined) {
+      return ownBinding === undefined ? [] : [ownBinding];
+    }
+    const result: Array<Binding> = ownBinding === undefined ? [] : [ownBinding];
+    for (let current: DependencyResolver | undefined = this.#parent; current !== undefined; current = current.#parent) {
+      const binding = current.#taggedBinding(token, tag);
+      if (binding !== undefined) {
+        result.push(binding);
+      }
+    }
+    return result;
+  }
+
+  /** This container's indexed binding for one tag, with the index's zero-value blind spot re-checked. */
+  #taggedBinding(token: Token<unknown> | Constructor, tag: BindingTag): Binding | undefined {
+    const binding = this.#registry.getSimpleTagged(token, tag[0], tag[1]);
+    return binding !== undefined && matchesIndexedTagValue(binding, tag[1]) ? binding : undefined;
+  }
+
   /** A constant with no activation anywhere resolves to its value with no pipeline at all. */
   #isPlainConstant(binding: Binding): binding is ConstantBinding<unknown> {
     return (
@@ -1091,10 +1152,21 @@ export class DependencyResolver implements ResolverCallbacks {
     if (!matchesSlot(binding.slot, options)) {
       return false;
     }
-    if (binding.predicate === undefined) {
+    return this.#satisfiesPredicate(binding, options, resolutionPath, resolutionStack);
+  }
+
+  /** The predicate half of a match, for a lane whose index has already settled the slot. */
+  #satisfiesPredicate(
+    binding: Binding,
+    options: ResolveOptions | undefined,
+    resolutionPath: Array<string>,
+    resolutionStack: Array<ResolutionFrame>,
+  ): boolean {
+    const predicate = binding.predicate;
+    if (predicate === undefined) {
       return true;
     }
-    return binding.predicate(this.#makeConstraintContext(resolutionPath, resolutionStack, options));
+    return predicate(this.#makeConstraintContext(resolutionPath, resolutionStack, options));
   }
 
   #resolveTransientDynamicSyncFromContext(

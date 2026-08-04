@@ -261,12 +261,12 @@ function simpleNameOf(binding: Binding): string | undefined {
 /**
  * The tag a binding is indexed under, or `undefined` when its slot is more than one plain tag.
  *
- * @remarks A predicate is excluded here — unlike the name index — because the tag index is read
- * without a re-check, so an indexed hit must be unconditional.
+ * @remarks Carries predicate-bearing bindings too, exactly as the name index does: every lane that
+ * reads this index already re-checks what it finds, so an indexed hit was never unconditional.
  */
 function simpleTagOf(binding: Binding): BindingTag | undefined {
   const { name, tags } = binding.slot;
-  return name === undefined && tags.length === 1 && binding.predicate === undefined ? tags[0] : undefined;
+  return name === undefined && tags.length === 1 ? tags[0] : undefined;
 }
 
 /** A binding nothing has to be matched against: the default slot, no predicate. */
