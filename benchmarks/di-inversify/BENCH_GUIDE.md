@@ -38,6 +38,29 @@ Two things this catches that a before/after comparison cannot:
   affecting moved: collapsing a memoised accessor into an inlinable expression cost ~6% on a row that
   only reads the memo, and removing a fast lane that looked like duplication cost ~24% elsewhere.
 
+### Measure the floor before you set the threshold
+
+A "must not regress" threshold is only meaningful above the row's own noise. Get that number the
+same way you get everything else here — **run the harness against itself**: copy the baseline build
+into both slots and run the identical paired procedure. Whatever spread comes back is what that row
+cannot distinguish, on this machine, today.
+
+It is not small, and it is not uniform. An A/A run over this suite put the fastest rows —
+`slot-tag-array-hoisted`, `tagged-binding-resolve`, `named-constant-get`, all above 20 M ops/s — at
+per-pass swings of **±12%**, one of them **±20%**, with medians landing as far out as 1.028×. The
+slower rows in the same run sat inside **±3%**. Faster row, noisier ratio: the work per sample
+shrinks while the timer's error does not.
+
+So a threshold of 0.98× on a ±12% row is not strict, it is meaningless — it will fire on noise
+about as often as it fires on a regression, and it fired exactly that way here, rejecting a change
+on two rows the change could not reach. Two defences, and the first is worth more:
+
+- **Ask whether a causal path exists at all.** A row that never executes the changed function cannot
+  have regressed because of it, and no amount of re-running turns that into evidence. Say which rows
+  those are before measuring, not after seeing the number you dislike.
+- **Set each must-hold threshold from that row's measured A/A spread**, not from a round number. A
+  round number encodes how strict you feel, not what the instrument can see.
+
 ## Comparing two libraries: interleave, and say you did
 
 Run every library on the **same scenario** before moving to the next, rotating which library goes

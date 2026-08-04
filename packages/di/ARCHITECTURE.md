@@ -122,9 +122,9 @@ with the full `matchesSlot` instead cost **~42%** on `tagged-binding-resolve`; t
 `tags: [pair]` the same result; what it did not buy them was the same path to it. `singleTagOnlyOf` is
 the admission test for the tagged index, and it read the presence of `tag` as a reason to give up —
 so the shorthand, the form the README reaches for and `ResolveOptions` advertised as the fast one, was
-the only spelling the index never served. Admitting it is worth **2.42×** on a single-tag resolve with
-the pair hoisted and **2.38×** with it inline, against `tags` rows and the sync controls all at parity
-(paired, alternating, five passes, every pass agreeing). A request carrying a tag from both sources at
+the only spelling the index never served. Admitting it is worth **2.77×** on a single-tag resolve with
+the pair hoisted and **2.66×** with it inline (per-scenario isolation, seven passes), against `tags`
+rows and the sync controls all at parity. A request carrying a tag from both sources at
 once still declines: two tags asked for is not something a one-tag index can answer without skipping
 the ambiguity check the full path would run. The `slot-selection` group in `benchmarks/di-inversify`
 exists so this family has rows at all — the four it added are a 2×2 over request form × where the tag
@@ -137,73 +137,70 @@ missing.
 > and the documentation that recommends it becomes wrong. SPEC §3.5 states this normatively and
 > `tests/unit/resolution/tag-shorthand-parity.test.ts` pins the admission alongside the answer.
 
-**A request is read once, a candidate list is walked once per candidate.** Everything the index
-cannot serve — more than one tag, a name and a tag together, `resolveAll`, a miss — lands in
-`filterBindings`, and `--prof` puts over half the JS time of that lane inside `matchesSlot`, called
-per candidate. What it was doing per candidate was re-reading the same request: `name`, `tags`, `tag`
-and the derived "were any tags asked for". The rule now lives in `slotSatisfiesRequest`, which takes
-the request already read apart; `filterBindings` reads it once before its loop and `matchesSlot`
-stays the entry for a caller holding raw options, so there is still exactly one implementation of the
-rule. Worth **1.23×** on `slot-tag-resolve-all`, **1.18×** on a tagged miss, **1.14×** on name+tag and
-**1.12×** on multi-tag, both GC columns agreeing and every pass positive.
+**`resolveAll` reads the tag index too, and one tag is not the subset query several are.** A request
+carrying one tag and no name matches exactly the bindings whose slot _is_ that tag — a named or
+multi-tag slot cannot satisfy it, and last-wins keeps at most one such binding per registry. So the
+index holds the whole answer per container and walking the chain is the candidate set rather than a
+prefilter, which is the shape the name lane had all along. Worth **3.07×** on `slot-tag-resolve-all`
+under isolation, with every other row at parity.
 
-> **Rule:** the derived half of a per-candidate test belongs outside the loop, but the test itself
-> must not fork. Parameters, not a criterion object — the object is the allocation the hoist exists
-> to avoid, and this runs on `resolve-optional-hit` too.
-
-Reading that measurement is where the method mattered more than the change. Three rows the hoist
-cannot reach — a one-tag request returns from the index inside `#findBinding` and never enters
-`filterBindings` — came back at 0.961×–0.985×, under the threshold set in advance. An A/A run
-settled it: those rows swing **±12%** against an identical build, one of them ±20%, so the threshold
-had been finer than the instrument. `BENCH_GUIDE.md` now carries the technique and the numbers.
-
-**What is left in that lane is the comparisons, and two ways at them were rejected.** A profile after
-the hoist still puts well over half the lane's JavaScript time in the matcher, now called with
-nothing left to hoist — so the only way down is to call it on fewer candidates, which means an index.
-There is no sound one: a multi-tag request is a **subset** query, not a point lookup, because a
-binding matches when every tag it declares was requested. So `[A]`, `[B]` and `[A,B]` all match a
-request for `[A,B]`, a `Map` cannot express that in one lookup, and every shape that gets close —
-union of per-pair lists, intersection, a canonical set key — either needs a per-resolve allocation
-where the current cost is a handful of comparisons, or needs the tag values stringified, which
-`Object.is` semantics forbid outright. Second, the matcher's own tag walk was converted from a
-destructured `for…of` to an indexed loop, matching its already-indexed sibling: real and consistent
-at **1.038×** on `multi-tag-slot-resolve`, nine passes all positive — and reverted, because the bar
-fixed beforehand was 1.04× and that bar was the price of keeping the loop readable. Nine passes also
-moved every row in that family _down_ from the five-pass read, which is the usual direction.
-
-> **Rule:** when a five-pass result sits within a percent of the bar, run nine before believing it,
-> and do not round toward the answer you want. A bar set in advance is only worth having if it is
-> allowed to reject.
-
-**One tag is not a subset query, and that is why `resolveAll` gets an index where multi-tag cannot.**
-The paragraph above rules out an index for a request carrying several tags. A request carrying
-exactly one, with no name, is a different question: the bindings it matches are precisely those whose
-slot _is_ that one tag, a named or multi-tag slot cannot satisfy it, and last-wins keeps at most one
-such binding per registry. So the index holds the whole answer per container, and walking the chain
-is the whole candidate set rather than a prefilter — which is what the name lane had been doing all
-along. Giving the tag lane the same shape is worth **1.72×** on `slot-tag-resolve-all` (nine passes,
-every one positive), ~**2.16×** against the state before this whole line of work, and it lands that row
-at the ceiling `resolve-all-named-*` had already established for the shape.
-
-What unblocked it was a stale reason, not a new idea. `simpleTagOf` had excluded predicate-bearing
-bindings from the tag index, justified in a comment by the index being _"read without a re-check"_ —
-which stopped being true when the `±0` fix gave every indexed hit a re-check. With the premise dead,
-the exclusion was vestigial, and it was the only thing keeping `resolveAll` off the index. Both lanes
-that read the index now evaluate the predicate, exactly as the name lane always has.
+What had blocked it was a stale reason. `simpleTagOf` excluded predicate-bearing bindings from the tag
+index, justified by the index being _"read without a re-check"_ — which the `±0` fix had already made
+false by giving every indexed hit one. With the premise dead the exclusion was vestigial. Both lanes
+that read the index now evaluate the predicate on what they find, as the name lane always has.
 
 > **Rule:** when a comment justifies a restriction by a fact about another part of the engine, the
-> restriction outlives the fact. `tests/unit/resolution/tagged-selection.test.ts` pins the re-check so
-> the reverse cannot happen — an indexed hit reaching a caller past a predicate that refused it.
+> restriction outlives the fact. `tests/unit/resolution/tagged-selection.test.ts` pins the re-check, so
+> the failure this could have caused — an indexed hit reaching a caller past a predicate that refused
+> it — cannot land quietly.
 
-The cost is recorded rather than explained. `resolve-all-strategies-100` — `resolveAll` with no
-options over a hundred pure-predicate bindings — measures **0.95×** against the build before this
-change and **~0.97×** against the start of this work, nine passes inside a one-percent spread, so it
-is not noise. It also has no causal path: that request leaves `#candidateBindings` at its first test
-and never reaches the index, the new methods, or anything else this change touched. Extracting the
-lanes into `#indexedCandidates` to keep `#candidateBindings` its original size was the obvious remedy
-and did not move it. Treat the number as attributable to code layout until someone bisects the change
-into its behaviour-free half and shows that half reproducing it — the experiment that would settle it,
-and which has not been run.
+> **Rule:** the multi-tag case has no such index and is not waiting for one. A request carrying several
+> tags matches every binding whose tags are a **subset** of them, so `[A]`, `[B]` and `[A,B]` all answer
+> a request for `[A,B]`; a `Map` cannot resolve that in one lookup, and every shape that gets close
+> needs either a per-resolve allocation where the cost today is a handful of comparisons, or the tag
+> values stringified, which the `Object.is` rule in SPEC §3.5 forbids.
+
+**Hoisting the request out of the candidate loop was tried and reverted.** `--prof` over the multi-tag
+lane put over half its JavaScript time inside `matchesSlot`, re-deriving the same request — name, tag
+list, shorthand, "were any tags asked for" — once per candidate. Reading it once in `filterBindings`
+and passing it to the rule does speed up every lane the index cannot serve: **1.27×** on
+`slot-tag-resolve-all`, **1.19×** on a tagged miss, **1.13×** on multi-tag, **1.06×** on name+tag.
+
+It also costs **0.87×** on `resolve-all-strategies-10`, **0.90×** on `resolve-all-strategies-100` and
+**0.93×** on `production-event-bus-dispatch`. Every row it wins is codefast-only and carries
+`excludeFromAggregates`; every row it loses counts against the other libraries, one of them in the
+`production` group. That is the trade, and it is the wrong way round.
+
+The mechanism is V8's cumulative inlining budget, not an added comparison. `filterBindings` growing
+pushes the tail of `resolveAll → #candidateBindings → selectAllBindings → filterBindings →
+matchesPredicate` out of the inlined chain, so the per-candidate loop loses its inlining — which is why
+`resolve-all-strategies-10` loses as much as the hundred-binding row at a tenth the work per call, and
+why raising `--max-inlined-bytecode-size*` on both sides erases the whole difference. Two remedies
+failed: extracting the lane into its own method changed nothing, because the budget counts bytecode and
+call sites present rather than how often a call runs; branching in the caller so the request never
+enters the lane's function made it worse, because the budget is cumulative and the caller is the
+chain's root, so bytecode moved there is merely re-accounted.
+
+> **Rule:** a hot chain can be too big as well as too eager, and the two fail differently. An extra
+> comparison scales with call count; a lost inlining edge scales with candidates and survives being
+> moved into another method. Raising `--max-inlined-bytecode-size*` on both sides is the oracle for
+> the second, and a fix is only real if it measures equal in **both** budget modes.
+
+> **Rule:** before trading throughput between rows, check which side of the trade is comparable.
+> A win on a row carrying `excludeFromAggregates` buys nothing any published figure can see, and it
+> does not pay for a loss on a row that counts.
+
+> **Rule:** measure with **per-scenario isolation** — `pnpm di:bench:isolate`, or one subprocess per
+> scenario via `BENCH_ONLY`. A whole-suite paired A/B put these same rows at 0.95×–0.97×, small enough
+> to argue past, and read the hoist's own cost as a clean win; under isolation the numbers are
+> 0.87×–0.93×. Every row here exercises `resolveAll` and they share its inline caches when they share
+> an isolate, so the shared-isolate run compressed the differences in both directions. Three
+> attributions in a row came out of that instrument and all three were wrong — including one revert of
+> an innocent commit.
+
+> **Rule:** do not argue past a bar you set before measuring. The bar here — no row outside its own
+> A/A floor — rejected this change, and the argument that it was the wrong shape for a lane-adding
+> change rested entirely on numbers the wrong instrument had produced. The bar was right.
 
 **A hash lookup a loop repeats deserves an inline cache, and a memo already inlined deserves nothing.** `LifecycleManager.activationHandlersFor()` keeps a one-entry token→hooks cache in front of its map, invalidated by `registerActivation` — a resolve loop asks about the same token every iteration. The mirror-image change failed: folding `#getResolutionFrame` into a single expression so it would inline, with the build extracted to a cold method, cost **~6%** on `fan-out-tree-depth-3-breadth-4` (five paired passes, all five negative) and was reverted. A profile showing self-time in a memo is not evidence that the memo is the cost.
 
