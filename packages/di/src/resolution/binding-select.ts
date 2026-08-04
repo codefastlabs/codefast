@@ -21,10 +21,9 @@ export function selectBinding(
   if (candidates.length === 1) {
     return candidates[0];
   }
-  // Most specific wins, predicate first: a single matching predicate-carrying candidate beats
-  // predicate-less ones (a predicate is a deliberate specialization of the default), then tag count
-  // breaks what is left. Predicate order is first because it is the older rule and moving it would
-  // re-decide resolutions that already succeed.
+  // Most specific wins, predicate before tag count: a lone predicate-carrying candidate beats
+  // predicate-less ones, a predicate being a deliberate specialization of the default. This order is
+  // what keeps every resolution that already succeeds deciding the same way — see SPEC §5.11.
   let predicatedCandidate: Binding | undefined;
   for (const candidate of candidates) {
     if (candidate.predicate !== undefined) {
