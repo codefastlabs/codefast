@@ -12,6 +12,13 @@ import type { BindingTag, Constructor, TokenValue } from "#/types";
  */
 export interface InjectOptions {
   name?: string;
+  /**
+   * Single-tag shorthand, equivalent to listing the one pair in `tags` (SPEC §3.5).
+   *
+   * @remarks Folded into `tags` when the descriptor is built, so nothing downstream sees two
+   * spellings of one request. Giving both is a request for every pair across the two.
+   */
+  tag?: BindingTag;
   tags?: ReadonlyArray<BindingTag>;
 }
 
@@ -108,18 +115,34 @@ function materializeInjectionDescriptor(dependency: InjectionDescriptor): Inject
   return base;
 }
 
+/**
+ * The one tag list a request carries, with the single-tag shorthand folded in (SPEC §3.5).
+ *
+ * @remarks Folding here is what keeps `tag` from reaching `InjectionDescriptor` and everything
+ * derived from it, so one request never has two spellings past this point.
+ */
+function requestedTagsOf(options: InjectOptions | undefined): ReadonlyArray<BindingTag> | undefined {
+  const shorthand = options?.tag;
+  const listed = options?.tags;
+  if (shorthand === undefined) {
+    return listed;
+  }
+  return listed === undefined || listed.length === 0 ? [shorthand] : [shorthand, ...listed];
+}
+
 function withOptions<DescValue>(
   base: Pick<InjectionDescriptor<DescValue>, "token" | "optional" | "multi">,
   options: InjectOptions | undefined,
 ): InjectionDescriptor<DescValue> {
-  if (options?.name !== undefined && options.tags !== undefined) {
-    return { ...base, name: options.name, tags: options.tags };
+  const tags = requestedTagsOf(options);
+  if (options?.name !== undefined && tags !== undefined) {
+    return { ...base, name: options.name, tags };
   }
   if (options?.name !== undefined) {
     return { ...base, name: options.name };
   }
-  if (options?.tags !== undefined) {
-    return { ...base, tags: options.tags };
+  if (tags !== undefined) {
+    return { ...base, tags };
   }
   return base;
 }
@@ -165,6 +188,9 @@ export function inject<const Value>(
   options?: InjectOptions,
 ): InjectionDescriptor<Value> & ClassAccessorDecorator<unknown, Value> {
   const descriptor = buildInjectionDescriptor(token, options);
+  // Derived from the descriptor, not from `options`: the descriptor is where the tag shorthand has
+  // already been folded. Built once here rather than per constructed instance.
+  const resolveOptions = injectionSlotToResolveOptions(descriptor);
 
   const decoratorFn = (
     _target: ClassAccessorDecoratorTarget<unknown, Value>,
@@ -189,13 +215,6 @@ export function inject<const Value>(
       if (container === undefined) {
         throw new MissingContainerContextError(classNameOf(this), context.name);
       }
-      const resolveOptions =
-        options === undefined
-          ? undefined
-          : injectionSlotToResolveOptions({
-              ...(options.name !== undefined ? { name: options.name } : {}),
-              ...(options.tags !== undefined ? { tags: options.tags } : {}),
-            });
       const value = descriptor.optional
         ? container.resolveOptional(token, resolveOptions)
         : container.resolve(token, resolveOptions);

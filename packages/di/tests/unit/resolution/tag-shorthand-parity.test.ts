@@ -6,6 +6,7 @@
 import { describe, expect, it } from "vitest";
 
 import { Container } from "#/container/container";
+import { inject, injectAll, normalizeToDescriptor, optional } from "#/decorators/inject";
 import { singleTagOnlyOf } from "#/resolution/resolve-options";
 import { token } from "#/token";
 import type { BindingTag } from "#/types";
@@ -80,6 +81,52 @@ describe("tag shorthand parity", () => {
     expect(container.resolveOptional(serviceToken, { tag: [TAG_KEY, -0] })).toBeUndefined();
     expect(container.resolveOptional(serviceToken, { tags: [[TAG_KEY, -0]] })).toBeUndefined();
     expect(container.resolveOptional(serviceToken, { tag: [TAG_KEY, 0] })).toBe("hit");
+  });
+});
+
+describe("tag shorthand on the injection surface", () => {
+  const pair: BindingTag = ["env", "prod"];
+
+  it.each([
+    ["inject", inject],
+    ["optional", optional],
+    ["injectAll", injectAll],
+  ])("%s builds the same descriptor from either spelling", (_label, build) => {
+    const dependency = token<string>("inject-parity-dep");
+
+    expect(normalizeToDescriptor(build(dependency, { tag: pair }))).toStrictEqual(
+      normalizeToDescriptor(build(dependency, { tags: [pair] })),
+    );
+  });
+
+  it("folds the shorthand into tags rather than carrying a second spelling", () => {
+    const dependency = token<string>("inject-fold-dep");
+    const listed: BindingTag = ["tier", "premium"];
+
+    const shorthandOnly = normalizeToDescriptor(inject(dependency, { tag: pair }));
+    expect(shorthandOnly.tags).toStrictEqual([pair]);
+    expect("tag" in shorthandOnly).toBe(false);
+
+    // Both given is a request for every pair across the two.
+    expect(normalizeToDescriptor(inject(dependency, { tag: pair, tags: [listed] })).tags).toStrictEqual([pair, listed]);
+  });
+
+  it("selects the same binding through a factory dependency either way", () => {
+    const dependency = token<string>("inject-resolve-dep");
+
+    for (const options of [{ tag: pair }, { tags: [pair] }] as const) {
+      const container = Container.create();
+      container
+        .bind(dependency)
+        .toConstantValue("hit")
+        .whenTagged(...pair);
+      container.bind(dependency).toConstantValue("other").whenTagged("env", "dev");
+
+      const consumer = token<string>("inject-resolve-consumer");
+      container.bind(consumer).toResolved((value: string) => value, [inject(dependency, options)]);
+
+      expect(container.resolve(consumer)).toBe("hit");
+    }
   });
 });
 

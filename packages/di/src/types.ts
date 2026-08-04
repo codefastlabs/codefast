@@ -62,8 +62,8 @@ export interface ResolveOptions {
   /**
    * Single-tag shorthand, equivalent to listing the one pair in `tags` (SPEC §3.5).
    *
-   * @remarks Reaches the same tagged index, so choosing it costs nothing. Only `tags` expresses a
-   * request for more than one tag, and only `tags` exists on `InjectOptions`.
+   * @remarks Reaches the same tagged index, so choosing it costs nothing. `InjectOptions` accepts it
+   * too and folds it into `tags`. Only `tags` expresses a request for more than one tag.
    */
   tag?: BindingTag;
   tags?: ReadonlyArray<BindingTag>;

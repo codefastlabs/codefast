@@ -175,7 +175,8 @@ interface ResolveOptions {
   tags?: ReadonlyArray<readonly [tag: string, value: unknown]>;
   /**
    * Tuỳ chọn — shorthand một cặp `[tagKey, value]` tương đương một phần tử trong `tags`.
-   * Chỉ diễn tả được một tag; nhiều tag phải dùng `tags`, và `InjectOptions` chỉ có `tags`.
+   * Chỉ diễn tả được một tag; nhiều tag phải dùng `tags`. `InjectOptions` nhận cả hai và gấp
+   * `tag` vào `tags`, nên `InjectionDescriptor` chỉ bao giờ mang một cách viết.
    */
   tag?: readonly [tag: string, value: unknown];
 }
@@ -1544,6 +1545,8 @@ function injectAll<Value>(
 
 interface InjectOptions {
   name?: string;
+  /** Shorthand một cặp, gấp vào `tags` khi dựng descriptor — xem section 3.5. */
+  tag?: readonly [tag: string, value: unknown];
   tags?: ReadonlyArray<readonly [tag: string, value: unknown]>;
 }
 
