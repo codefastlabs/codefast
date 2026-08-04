@@ -171,7 +171,10 @@ type DeactivationHandler<Value> = (instance: Value) => void | Promise<void>;
 interface ResolveOptions {
   /** Match binding có `whenNamed(name)`. */
   name?: string;
-  /** Match binding có tất cả các tag trong array này. */
+  /**
+   * Match binding mà **mọi tag nó khai báo** đều nằm trong array này — request là superset
+   * filter, không phải "binding phải có đủ các tag này". Luật đầy đủ ở section 5.11.
+   */
   tags?: ReadonlyArray<readonly [tag: string, value: unknown]>;
   /**
    * Tuỳ chọn — shorthand một cặp `[tagKey, value]` tương đương một phần tử trong `tags`.
@@ -183,6 +186,8 @@ interface ResolveOptions {
 ```
 
 **Tag value comparison là `Object.is` — normative, kể cả trên fast-path.** `tag` và `tags: [pair]` phải cho **cùng một kết quả**, và cùng kết quả với `resolveAll` / `resolveOptional` trên cùng options. Cảnh báo cho implementer: một index dạng `Map` keyed theo tag value trả lời bằng **SameValueZero**, nên nó coi `-0` và `+0` là **cùng khoá** — trái với `Object.is` (section 5.11, section 8). Fast-path đọc index như vậy phải **kiểm lại bằng matcher** trước khi trả về, nếu không cùng một câu hỏi sẽ có hai câu trả lời tuỳ cách viết. `NaN` không bị ảnh hưởng: cả hai quy tắc coi `NaN` bằng chính nó.
+
+**Cho cả `tag` và `tags` cùng lúc (normative):** request mang **hợp** của hai nguồn — tương đương `tags: [tag, ...tags]`, và `InjectOptions` gấp đúng thành hình đó. Một request như vậy hỏi từ hai tag trở lên nên không dùng được single-tag index; nó đi đường selection đầy đủ.
 
 ### 3.6 `ResolutionContext`
 
@@ -760,6 +765,21 @@ Hai binding slot **bằng nhau** khi: `name` bằng nhau (hoặc cả hai `undef
 **Predicate-only `when()`:** Binding chỉ có `.when(predicate)` (không kèm `whenNamed`/`whenTagged`) **không tham gia slot last-wins** — nhiều binding cùng token có thể tồn tại song song với binding slot giống nhau. Nếu sau lọc runtime vẫn còn ≥ 2 candidates, `resolve`/`resolveAsync` throw `AmbiguousBindingError` (không phải `InternalError` — đây là lỗi của người dùng, không phải lỗi internal).
 
 **Candidate:** Binding vượt qua lọc `ResolveOptions` (name/tags) và tất cả `when(ctx)` predicates.
+
+**Lọc `ResolveOptions` → slot (normative).** `name` và `tags` là hai luật độc lập, và chúng **không cùng dạng**:
+
+- **`name` so sánh bằng nhau, kể cả sự vắng mặt.** Slot có name chỉ match request yêu cầu đúng name đó; slot không name không match request có name. Đây **không** phải quan hệ subset.
+- **`tags` là superset filter: mọi tag slot khai báo phải nằm trong tập tag của request.** Thêm tag vào request làm nó match **nhiều** hơn, không ít hơn.
+- **Slot không tag không match request có tag** — một request có tag không bao giờ rơi về default slot.
+- Tập tag của request là **hợp** của `tag` và `tags` (section 3.5); `tags: []` tính là không có criterion.
+- Tag value so sánh bằng `Object.is`; predicate đánh giá **sau** slot match.
+
+| Request                         | Slot `{}` | Slot `{fuel:petrol}` | Slot `{fuel:petrol, size:v8}` |
+| ------------------------------- | --------- | -------------------- | ----------------------------- |
+| `{tags:[fuel:petrol]}`          | ✗         | ✓                    | ✗                             |
+| `{tags:[fuel:petrol, size:v8]}` | ✗         | ✓                    | ✓                             |
+
+**Không criterion — `resolve` và `resolveAll` khác nhau (normative):** khi `ResolveOptions` vắng hoặc không mang criterion nào, `resolve`/`resolveOptional` coi đó là yêu cầu **đúng default slot**, nên một binding chỉ có named/tagged slot **không** được chọn. `resolveAll` thì lấy **mọi** binding của token, kể cả named/tagged.
 
 **Bảng tình huống:**
 

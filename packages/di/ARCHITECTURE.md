@@ -128,9 +128,12 @@ rows and the sync controls all at parity. A request carrying a tag from both sou
 once still declines: two tags asked for is not something a one-tag index can answer without skipping
 the ambiguity check the full path would run. The `slot-selection` group in `benchmarks/di-inversify`
 exists so this family has rows at all — the four it added are a 2×2 over request form × where the tag
-literal lives, which is what separates lane cost from allocation cost. Read together they also price
-the shorthand's own advantage: one fewer object per call, worth about a thirtieth of the lane it was
-missing.
+literal lives, which is what separates lane cost from allocation cost. An independent paired A/B —
+three passes of `di:bench:isolate`, alternating which side ran first — reproduced the lane figures at
+**2.91×**/**2.94×** and `slot-tag-resolve-all` at **3.04×**, so the numbers above are conservative and
+survive a re-run. It did **not** reproduce a measurable allocation advantage for the shorthand: 0.5%
+between the two spellings, on rows whose measured A/A spread is ±12%. That difference sits below what
+this 2×2 can resolve, and pricing it needs a row built for it.
 
 > **Rule:** a fast lane's admission test is part of the contract, not an implementation detail. Two
 > spellings SPEC calls equivalent must reach the same lane, or the shorter one becomes the slower one

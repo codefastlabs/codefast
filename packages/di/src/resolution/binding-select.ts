@@ -80,7 +80,7 @@ function hasSlotCriterion(options: ResolveOptions): boolean {
 
 /**
  * Whether a binding's slot satisfies a request: names must be equal, and every tag the slot
- * declares must be among the tags requested (SPEC §6.9).
+ * declares must be among the tags requested (SPEC §5.11).
  *
  * @since 0.5.0-canary.9
  */
@@ -114,7 +114,7 @@ export function matchesSlot(slot: BindingSlot, options: ResolveOptions | undefin
       }
     }
   } else if (hasRequestedTags) {
-    // Requested tags require a tagged slot: an untagged binding never matches (SPEC §6.9).
+    // Requested tags require a tagged slot: an untagged binding never matches (SPEC §5.11).
     return false;
   }
 

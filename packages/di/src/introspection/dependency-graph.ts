@@ -98,7 +98,7 @@ function slotCriterion(ref: DependencyRef): ResolveOptions | undefined {
   };
 }
 
-// Mirrors filterBindings' slot semantics (SPEC §6.9); predicates need a live resolution
+// Mirrors filterBindings' slot semantics (SPEC §5.11); predicates need a live resolution
 // context, so the graph keeps every predicate-carrying candidate.
 function matchingTargets(candidates: ReadonlyArray<Binding>, ref: DependencyRef): ReadonlyArray<Binding> {
   const criterion = slotCriterion(ref);
