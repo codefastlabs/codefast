@@ -1,6 +1,6 @@
 import { Badge } from "@codefast/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@codefast/ui/card";
-import { CircleCheckIcon, CircleXIcon, PackageIcon } from "lucide-react";
+import { CircleCheckIcon, CircleXIcon, PackageIcon, TriangleAlertIcon } from "lucide-react";
 
 import type { RequestOutcome } from "#/features/inspector/server/run-request";
 
@@ -25,12 +25,19 @@ export function RuntimeHealthCard({ outcome }: RuntimeHealthCardProps) {
       <CardContent className="grid gap-8 text-sm lg:grid-cols-3">
         <div className="space-y-3">
           <div className="flex items-center gap-2">
+            {boot.asExpected ? (
+              <CircleCheckIcon aria-hidden className="size-4 text-primary" />
+            ) : (
+              <TriangleAlertIcon aria-hidden className="size-4 text-destructive" />
+            )}
             <p className="font-medium">Async singleton, warmed at boot</p>
-            <Badge variant="outline">{boot.revision}</Badge>
+            <Badge variant={boot.asExpected ? "secondary" : "destructive"}>
+              {boot.asExpected ? "both as expected" : "unexpected"}
+            </Badge>
           </div>
           <p className="text-sm text-muted-foreground">
-            The pricing config can only answer asynchronously, so a sync resolve fails until something awaits it. Both
-            sides of that are run on every request against two containers with the identical binding:
+            The pricing config can only answer asynchronously, so a sync resolve of it <em>must</em> fail until
+            something awaits it. Both outcomes below are the required ones — the second is the evidence, not a fault:
           </p>
           <dl className="grid gap-2 font-mono text-xs">
             <div className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
@@ -39,7 +46,10 @@ export function RuntimeHealthCard({ outcome }: RuntimeHealthCardProps) {
             </div>
             <div className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
               <dt className="min-w-0 shrink text-muted-foreground">never warmed</dt>
-              <dd className="text-destructive">{boot.coldSyncResolve}</dd>
+              <dd className={boot.asExpected ? "text-foreground" : "text-destructive"}>
+                {boot.coldSyncResolve}
+                {boot.asExpected ? <span className="ml-2 text-muted-foreground">— as it must</span> : null}
+              </dd>
             </div>
           </dl>
         </div>

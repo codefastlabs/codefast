@@ -16,6 +16,8 @@ export interface BootReport {
   readonly warmSyncResolve: string;
   /** The same sync resolve on a container nobody warmed — the error `initializeAsync` prevents. */
   readonly coldSyncResolve: string;
+  /** False only if one of the two outcomes is not the one the contract requires — then it is a real fault. */
+  readonly asExpected: boolean;
 }
 
 /** Registers the remote pricing config as an async singleton, exactly as a real fetch would be. */
@@ -50,10 +52,15 @@ export async function warmAndReport(container: Container, cold: Container): Prom
 
   const config = container.resolve(pricingConfigToken);
 
+  const warmSyncResolve = syncResolveOutcome(container);
+  const coldSyncResolve = syncResolveOutcome(cold);
+
   return {
     revision: config.revision,
     surchargePercent: config.surchargePercent,
-    warmSyncResolve: syncResolveOutcome(container),
-    coldSyncResolve: syncResolveOutcome(cold),
+    warmSyncResolve,
+    coldSyncResolve,
+    // The cold error is the evidence, not a fault; a fault is either side answering the other way.
+    asExpected: warmSyncResolve.startsWith("ok") && coldSyncResolve === "AsyncResolutionError",
   };
 }
