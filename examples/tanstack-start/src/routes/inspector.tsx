@@ -4,13 +4,17 @@ import { useState } from "react";
 import { DecisionCard } from "#/features/inspector/components/decision-card";
 import { OutcomeSummary } from "#/features/inspector/components/outcome-summary";
 import { RequestConsole } from "#/features/inspector/components/request-console";
+import { RuntimeHealthCard } from "#/features/inspector/components/runtime-health-card";
 import type { Region, Tier } from "#/features/inspector/server/catalog";
 import type { RequestOutcome } from "#/features/inspector/server/run-request";
 import { runRequestServerFn } from "#/features/inspector/server/run-request";
 
 export const Route = createFileRoute("/inspector")({
   // The first outcome is resolved on the server so the page has a trace before any interaction.
-  loader: () => runRequestServerFn({ data: { tenant: "acme-gmbh", region: "eu", tier: "enterprise" } }),
+  loader: () =>
+    runRequestServerFn({
+      data: { tenant: "acme-gmbh", region: "eu", tier: "enterprise", fraudScreening: true, introduceCaptive: false },
+    }),
   component: InspectorPage,
 });
 
@@ -20,11 +24,13 @@ function InspectorPage() {
   const [tenant, setTenant] = useState(initial.context.tenant);
   const [region, setRegion] = useState<Region>(initial.context.region);
   const [tier, setTier] = useState<Tier>(initial.context.tier);
+  const [fraudScreening, setFraudScreening] = useState(true);
+  const [introduceCaptive, setIntroduceCaptive] = useState(false);
   const [pending, setPending] = useState(false);
 
   const send = (): void => {
     setPending(true);
-    void runRequestServerFn({ data: { tenant, region, tier } })
+    void runRequestServerFn({ data: { tenant, region, tier, fraudScreening, introduceCaptive } })
       .then(setOutcome)
       .catch(() => {
         // A transport failure is not a resolution failure; the console just stops spinning.
@@ -48,6 +54,10 @@ function InspectorPage() {
       <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,22rem)_minmax(0,1fr)]">
         <div className="space-y-6 lg:sticky lg:top-6">
           <RequestConsole
+            fraudScreening={fraudScreening}
+            introduceCaptive={introduceCaptive}
+            onFraudScreeningChange={setFraudScreening}
+            onIntroduceCaptiveChange={setIntroduceCaptive}
             onRegionChange={setRegion}
             onSend={send}
             onTenantChange={setTenant}
@@ -58,6 +68,7 @@ function InspectorPage() {
             tier={tier}
           />
           <OutcomeSummary outcome={outcome} />
+          <RuntimeHealthCard outcome={outcome} />
         </div>
 
         <div className="space-y-4">

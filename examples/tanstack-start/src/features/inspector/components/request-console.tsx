@@ -3,6 +3,7 @@ import { Button } from "@codefast/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@codefast/ui/card";
 import { Input } from "@codefast/ui/input";
 import { Label } from "@codefast/ui/label";
+import { Switch } from "@codefast/ui/switch";
 import { PlayIcon } from "lucide-react";
 
 import type { Region, Tier } from "#/features/inspector/server/catalog";
@@ -13,6 +14,10 @@ interface RequestConsoleProps {
   region: Region;
   tier: Tier;
   pending: boolean;
+  fraudScreening: boolean;
+  introduceCaptive: boolean;
+  onFraudScreeningChange: (enabled: boolean) => void;
+  onIntroduceCaptiveChange: (enabled: boolean) => void;
   onTenantChange: (tenant: string) => void;
   onRegionChange: (region: Region) => void;
   onTierChange: (tier: Tier) => void;
@@ -28,6 +33,10 @@ export function RequestConsole({
   region,
   tier,
   pending,
+  fraudScreening,
+  introduceCaptive,
+  onFraudScreeningChange,
+  onIntroduceCaptiveChange,
   onTenantChange,
   onRegionChange,
   onTierChange,
@@ -92,6 +101,28 @@ export function RequestConsole({
                 {option === "enterprise" ? <Badge variant="secondary">tier:enterprise</Badge> : null}
               </Button>
             ))}
+          </div>
+        </fieldset>
+
+        <fieldset className="grid gap-3 border-t border-border pt-4">
+          <legend className="mb-2 text-sm font-medium">Feature flags</legend>
+          <div className="flex items-start justify-between gap-3">
+            <Label className="grid gap-1" htmlFor="fraud">
+              <span>Fraud screening</span>
+              <span className="text-xs font-normal text-muted-foreground">
+                loads a module, so the binding exists only for this request
+              </span>
+            </Label>
+            <Switch checked={fraudScreening} id="fraud" onCheckedChange={onFraudScreeningChange} />
+          </div>
+          <div className="flex items-start justify-between gap-3">
+            <Label className="grid gap-1" htmlFor="captive">
+              <span>Introduce a captive dependency</span>
+              <span className="text-xs font-normal text-muted-foreground">
+                wires a singleton onto a scoped service for validate() to catch
+              </span>
+            </Label>
+            <Switch checked={introduceCaptive} id="captive" onCheckedChange={onIntroduceCaptiveChange} />
           </div>
         </fieldset>
 

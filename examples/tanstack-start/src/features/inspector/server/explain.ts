@@ -136,9 +136,8 @@ function predict(
 }
 
 /**
- * Runs one request for real and explains the slot it landed on.
- *
- * @param entries - descriptors for every binding under this token, from `registerCatalog`
+ * Runs one request for real and explains the slot it landed on, given every descriptor registered
+ * under that token.
  */
 export function explainSlot(
   container: Container,
