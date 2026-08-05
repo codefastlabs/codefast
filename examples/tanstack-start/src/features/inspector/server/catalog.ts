@@ -1,0 +1,210 @@
+/**
+ * The domain a multi-region SaaS request runs through, and the bindings that serve it.
+ *
+ * @remarks Every slot exists because the product needs it: storage and payment differ per region by
+ * law and by contract, an enterprise tier gets a negotiated gateway, and the audit logger depends on
+ * which stage asked for it. Registration hands back a descriptor per binding — `BindingSnapshot`
+ * cannot say whether a binding carries a predicate, and the trace has to show that.
+ */
+import type { BindingIdentifier, Container } from "@codefast/di";
+import { token, whenParentIs } from "@codefast/di";
+
+export const REGIONS = ["eu", "us", "apac"] as const;
+export const TIERS = ["free", "pro", "enterprise"] as const;
+
+export type Region = (typeof REGIONS)[number];
+export type Tier = (typeof TIERS)[number];
+
+/** What one request carries; every slot decision is taken against this. */
+export interface TenantContext {
+  readonly tenant: string;
+  readonly region: Region;
+  readonly tier: Tier;
+}
+
+export interface Storage {
+  readonly adapter: string;
+  readonly residency: string;
+}
+
+export interface PaymentGateway {
+  readonly gateway: string;
+  readonly feePercent: number;
+}
+
+export interface Notifier {
+  readonly channel: string;
+}
+
+export interface AuditLogger {
+  readonly sink: string;
+}
+
+export const storageToken = token<Storage>("Storage");
+export const paymentToken = token<PaymentGateway>("PaymentGateway");
+export const notifierToken = token<Notifier>("Notifier");
+export const auditLoggerToken = token<AuditLogger>("AuditLogger");
+
+export type SlotTags = ReadonlyArray<readonly [string, unknown]>;
+
+/** What the trace needs about one registered binding, including what the snapshot cannot tell it. */
+export interface CatalogEntry {
+  readonly id: BindingIdentifier;
+  /** Which token this binding serves, so a trace can gather one slot's candidates exactly. */
+  readonly tokenName: string;
+  readonly label: string;
+  readonly slot: { readonly name?: string; readonly tags: SlotTags };
+  /** Present when a `when()` predicate guards the binding, which no snapshot reports. */
+  readonly guard?: string;
+  /** Server-side only: used to identify which entry a real resolve returned. */
+  readonly value: unknown;
+}
+
+const RESIDENCY: Record<Region, string> = {
+  eu: "Frankfurt · GDPR",
+  us: "us-east-1 · SOC 2",
+  apac: "Singapore · PDPA",
+};
+
+const GATEWAY: Record<Region, string> = { eu: "Adyen", us: "Stripe", apac: "Stripe" };
+
+/** Negotiated rates exist for the two regions where enterprise contracts are sold. */
+const NEGOTIATED: ReadonlyArray<{ region: Region; gateway: string; feePercent: number }> = [
+  { region: "eu", gateway: "Adyen · negotiated", feePercent: 1.4 },
+  { region: "us", gateway: "Stripe · negotiated", feePercent: 1.6 },
+];
+
+/** Registers everything a request can select from, returning one descriptor per binding. */
+export function registerCatalog(container: Container): Array<CatalogEntry> {
+  const entries: Array<CatalogEntry> = [];
+
+  for (const region of REGIONS) {
+    const storage: Storage = { adapter: `S3Adapter(${region})`, residency: RESIDENCY[region] };
+    const storageBinding = container.bind(storageToken).toConstantValue(storage).whenTagged("region", region);
+
+    entries.push({
+      id: storageBinding.id(),
+      tokenName: "Storage",
+      label: storage.adapter,
+      slot: { tags: [["region", region]] },
+      value: storage,
+    });
+
+    const payment: PaymentGateway = { gateway: GATEWAY[region], feePercent: 2.9 };
+    const paymentBinding = container.bind(paymentToken).toConstantValue(payment).whenTagged("region", region);
+
+    entries.push({
+      id: paymentBinding.id(),
+      tokenName: "PaymentGateway",
+      label: `${payment.gateway} (list rate)`,
+      slot: { tags: [["region", region]] },
+      value: payment,
+    });
+  }
+
+  // An enterprise contract is a *specialisation* of a region, not a second axis: it declares both
+  // tags, so a request naming both takes it while everyone else keeps the regional list rate.
+  for (const { region, gateway, feePercent } of NEGOTIATED) {
+    const negotiated: PaymentGateway = { gateway, feePercent };
+    const binding = container
+      .bind(paymentToken)
+      .toConstantValue(negotiated)
+      .whenTagged("region", region)
+      .whenTagged("tier", "enterprise");
+
+    entries.push({
+      id: binding.id(),
+      tokenName: "PaymentGateway",
+      label: gateway,
+      slot: {
+        tags: [
+          ["region", region],
+          ["tier", "enterprise"],
+        ],
+      },
+      value: negotiated,
+    });
+  }
+
+  // A global enterprise promo, tagged on tier alone. In eu and us the negotiated binding declares
+  // two tags and outranks it; in apac, where no contract exists, both carry one tag and the
+  // container has nothing to separate them — the one combination that genuinely cannot be answered.
+  const promo: PaymentGateway = { gateway: "Promo rate (global)", feePercent: 1.9 };
+  const promoBinding = container.bind(paymentToken).toConstantValue(promo).whenTagged("tier", "enterprise");
+
+  entries.push({
+    id: promoBinding.id(),
+    tokenName: "PaymentGateway",
+    label: promo.gateway,
+    slot: { tags: [["tier", "enterprise"]] },
+    value: promo,
+  });
+
+  for (const [name, channel] of [
+    ["transactional", "email"],
+    ["system", "webhook"],
+  ] as const) {
+    const notifier: Notifier = { channel };
+    const binding = container.bind(notifierToken).toConstantValue(notifier).whenNamed(name);
+
+    entries.push({
+      id: binding.id(),
+      tokenName: "Notifier",
+      label: `${channel} notifier`,
+      slot: { name, tags: [] },
+      value: notifier,
+    });
+  }
+
+  // Whoever the logger is resolved *for* decides where it writes — the reason contextual constraints
+  // exist, rather than threading a sink parameter through every stage.
+  const appLog: AuditLogger = { sink: "app.log" };
+  const appLogBinding = container.bind(auditLoggerToken).toConstantValue(appLog);
+
+  entries.push({
+    id: appLogBinding.id(),
+    tokenName: "AuditLogger",
+    label: appLog.sink,
+    slot: { tags: [] },
+    value: appLog,
+  });
+
+  const paymentsLog: AuditLogger = { sink: "payments.audit · retained 7y" };
+  const paymentsLogBinding = container
+    .bind(auditLoggerToken)
+    .toConstantValue(paymentsLog)
+    .when(whenParentIs(paymentToken));
+
+  entries.push({
+    id: paymentsLogBinding.id(),
+    tokenName: "AuditLogger",
+    label: paymentsLog.sink,
+    slot: { tags: [] },
+    guard: "when the parent is PaymentGateway",
+    value: paymentsLog,
+  });
+
+  return entries;
+}
+
+/** The request that selects a tenant's storage adapter. */
+export function storageRequest(context: TenantContext): { tags: SlotTags } {
+  return { tags: [["region", context.region]] };
+}
+
+/**
+ * The request that selects a tenant's payment gateway.
+ *
+ * @remarks An enterprise tenant names both tags, which is what lets the specialisation win; every
+ * other tier names only the region and lands on the list rate.
+ */
+export function paymentRequest(context: TenantContext): { tags: SlotTags } {
+  return context.tier === "enterprise"
+    ? {
+        tags: [
+          ["region", context.region],
+          ["tier", "enterprise"],
+        ],
+      }
+    : { tags: [["region", context.region]] };
+}
