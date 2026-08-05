@@ -40,10 +40,19 @@ export interface AuditLogger {
   readonly sink: string;
 }
 
+/** The service that actually settles a payment, and therefore the one that needs an audit trail. */
+export interface Settlement {
+  readonly gateway: string;
+  readonly feePercent: number;
+  readonly audit: AuditLogger;
+}
+
 export const storageToken = token<Storage>("Storage");
 export const paymentToken = token<PaymentGateway>("PaymentGateway");
 export const notifierToken = token<Notifier>("Notifier");
 export const auditLoggerToken = token<AuditLogger>("AuditLogger");
+export const settlementToken = token<Settlement>("Settlement");
+export const tenantContextToken = token<TenantContext>("TenantContext");
 
 export type SlotTags = ReadonlyArray<readonly [string, unknown]>;
 
@@ -173,15 +182,24 @@ export function registerCatalog(container: Container): Array<CatalogEntry> {
   const paymentsLogBinding = container
     .bind(auditLoggerToken)
     .toConstantValue(paymentsLog)
-    .when(whenParentIs(paymentToken));
+    .when(whenParentIs(settlementToken));
 
   entries.push({
     id: paymentsLogBinding.id(),
     tokenName: "AuditLogger",
     label: paymentsLog.sink,
     slot: { tags: [] },
-    guard: "when the parent is PaymentGateway",
+    guard: "when the parent is Settlement",
     value: paymentsLog,
+  });
+
+  // Settlement is what makes the audit guard reachable: the logger is resolved *inside* this
+  // binding, so the frame above it is Settlement rather than nothing.
+  container.bind(settlementToken).toDynamic((ctx) => {
+    const context = ctx.resolve(tenantContextToken);
+    const gateway = ctx.resolve(paymentToken, paymentRequest(context));
+
+    return { ...gateway, audit: ctx.resolve(auditLoggerToken) };
   });
 
   return entries;

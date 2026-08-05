@@ -39,6 +39,8 @@ export type DecidingRule = "sole candidate" | "predicate" | "more tags" | "ambig
 
 export interface Decision {
   readonly token: string;
+  /** Set when the slot was resolved as somebody's dependency rather than at the top level. */
+  readonly via?: string;
   readonly request: RequestView;
   readonly candidates: ReadonlyArray<CandidateView>;
   readonly winner: string | undefined;
@@ -136,8 +138,19 @@ function predict(
 }
 
 /**
+ * A slot resolved as somebody else's dependency: the parent has already run, so the value is observed
+ * from its result rather than resolved again — resolving again would lose the parent frame the guard
+ * reads.
+ */
+export interface NestedObservation {
+  readonly via: string;
+  readonly observed: unknown;
+  readonly error?: { readonly name: string; readonly message: string };
+}
+
+/**
  * Runs one request for real and explains the slot it landed on, given every descriptor registered
- * under that token.
+ * under that token. Pass an observation to explain a slot that was filled inside another resolve.
  */
 export function explainSlot(
   container: Container,
@@ -145,6 +158,7 @@ export function explainSlot(
   tokenName: string,
   request: SlotRequest,
   entries: ReadonlyArray<CatalogEntry>,
+  nested?: NestedObservation,
 ): Decision {
   const verdicts = new Map<CatalogEntry, CandidateVerdict>();
 
@@ -158,19 +172,24 @@ export function explainSlot(
   let resolvedEntry: CatalogEntry | undefined;
   let error: Decision["error"];
 
-  try {
-    const options = request.name === undefined ? { tags: request.tags } : { name: request.name, tags: request.tags };
-    const resolved = container.resolve(
-      slotToken,
-      request.tags.length === 0 && request.name === undefined ? undefined : options,
-    );
+  if (nested !== undefined) {
+    resolvedEntry = entries.find((entry) => entry.value === nested.observed);
+    error = nested.error;
+  } else {
+    try {
+      const options = request.name === undefined ? { tags: request.tags } : { name: request.name, tags: request.tags };
+      const resolved = container.resolve(
+        slotToken,
+        request.tags.length === 0 && request.name === undefined ? undefined : options,
+      );
 
-    resolvedEntry = entries.find((entry) => entry.value === resolved);
-  } catch (caught) {
-    error = {
-      name: caught instanceof DiError ? caught.constructor.name : "Error",
-      message: caught instanceof Error ? caught.message : String(caught),
-    };
+      resolvedEntry = entries.find((entry) => entry.value === resolved);
+    } catch (caught) {
+      error = {
+        name: caught instanceof DiError ? caught.constructor.name : "Error",
+        message: caught instanceof Error ? caught.message : String(caught),
+      };
+    }
   }
 
   const winner = resolvedEntry?.label;
@@ -187,6 +206,7 @@ export function explainSlot(
 
   return {
     token: tokenName,
+    ...(nested === undefined ? {} : { via: nested.via }),
     request: requestView,
     candidates: entries.map((entry) => ({
       label: entry.label,

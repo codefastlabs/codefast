@@ -31,7 +31,12 @@ export function DecisionCard({ decision }: DecisionCardProps) {
     <Card className={decision.error === undefined ? undefined : "border-destructive/50"}>
       <CardHeader>
         <div className="flex flex-wrap items-center justify-between gap-2">
-          <CardTitle className="font-mono text-base">{decision.token}</CardTitle>
+          <CardTitle className="flex flex-wrap items-center gap-2 font-mono text-base">
+            {decision.token}
+            {decision.via === undefined ? null : (
+              <span className="text-xs font-normal text-muted-foreground">resolved inside {decision.via}</span>
+            )}
+          </CardTitle>
           <div className="flex items-center gap-2">
             {decision.check === "disagrees" ? <Badge variant="destructive">trace disagreed with resolve</Badge> : null}
             {decision.check === "not predicted" ? <Badge variant="outline">settled at resolve time</Badge> : null}
@@ -39,7 +44,11 @@ export function DecisionCard({ decision }: DecisionCardProps) {
           </div>
         </div>
         <CardDescription>
-          asked for <code className="font-mono text-xs">{`{ ${requested} }`}</code> — {RULE_COPY[decision.rule]}
+          asked for <code className="font-mono text-xs">{`{ ${requested} }`}</code>
+          {decision.via === undefined
+            ? " at the top level, so no parent frame exists for a guard to read"
+            : ` as a dependency of ${decision.via}, so a guard reading the parent frame can fire`}{" "}
+          — {RULE_COPY[decision.rule]}
         </CardDescription>
       </CardHeader>
 

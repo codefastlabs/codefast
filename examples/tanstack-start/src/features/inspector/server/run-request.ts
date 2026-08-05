@@ -17,11 +17,13 @@ import {
   paymentToken,
   REGIONS,
   registerCatalog,
+  settlementToken,
   storageRequest,
   storageToken,
+  tenantContextToken,
   TIERS,
 } from "#/features/inspector/server/catalog";
-import type { Decision } from "#/features/inspector/server/explain";
+import type { Decision, NestedObservation } from "#/features/inspector/server/explain";
 import { explainSlot } from "#/features/inspector/server/explain";
 import { loadFeatureModules, riskCheckToken } from "#/features/inspector/server/feature-modules";
 
@@ -144,6 +146,8 @@ export async function runRequest(input: RequestInput): Promise<RequestOutcome> {
   const request = root.container.createChild();
 
   request.bind(requestIdToken).toConstantValue(nextId());
+  // The tenant is a binding, so Settlement can read it instead of being handed it.
+  request.bind(tenantContextToken).toConstantValue(context);
 
   const loaded = loadFeatureModules(request, input.fraudScreening);
 
@@ -159,6 +163,27 @@ export async function runRequest(input: RequestInput): Promise<RequestOutcome> {
     explainSlot(request, notifierToken, "Notifier", { name: "transactional", tags: [] }, candidatesFor("Notifier")),
     explainSlot(request, auditLoggerToken, "AuditLogger", { tags: [] }, candidatesFor("AuditLogger")),
   ];
+
+  // Resolving Settlement fills the logger slot from inside it, which is the only way the guard sees a
+  // parent frame at all. Observing the result is how the nested decision learns which one won.
+  let settlementAudit: NestedObservation = { via: "Settlement", observed: undefined };
+
+  try {
+    settlementAudit = { via: "Settlement", observed: request.resolve(settlementToken).audit };
+  } catch (caught) {
+    settlementAudit = {
+      via: "Settlement",
+      observed: undefined,
+      error: {
+        name: caught instanceof DiError ? caught.constructor.name : "Error",
+        message: caught instanceof Error ? caught.message : String(caught),
+      },
+    };
+  }
+
+  decisions.push(
+    explainSlot(request, auditLoggerToken, "AuditLogger", { tags: [] }, candidatesFor("AuditLogger"), settlementAudit),
+  );
 
   const risk = request.resolveOptional(riskCheckToken);
   const scope: ScopeProof = {

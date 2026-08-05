@@ -73,7 +73,7 @@ function InspectorPage() {
 
         <div className="space-y-4">
           {outcome.decisions.map((decision) => (
-            <DecisionCard decision={decision} key={decision.token} />
+            <DecisionCard decision={decision} key={`${decision.token}:${decision.via ?? "top"}`} />
           ))}
         </div>
       </div>
