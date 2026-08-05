@@ -3,24 +3,18 @@ import { createFileRoute } from "@tanstack/react-router";
 import { ActivityLogCard } from "#/features/di/components/activity-log-card";
 import { ContainerInspectorCard } from "#/features/di/components/container-inspector-card";
 import { DependencyGraphCard } from "#/features/di/components/dependency-graph-card";
-import { FeatureTourCard } from "#/features/di/components/feature-tour-card";
 import { TaskBoard } from "#/features/di/components/task-board";
-import { getFeatureTourServerFn } from "#/features/di/server/feature-tour";
 import { getBoardServerFn } from "#/features/di/server/tasks";
 
 export const Route = createFileRoute("/di")({
-  // The loader calls server functions, so the DI containers resolve on the server; only the plain
-  // snapshots cross to the client.
-  loader: async () => {
-    const [board, tour] = await Promise.all([getBoardServerFn(), getFeatureTourServerFn()]);
-
-    return { board, tour };
-  },
+  // The loader calls a server function, so the DI container resolves a per-request TaskService on
+  // the server; only the plain board snapshot crosses to the client.
+  loader: () => getBoardServerFn(),
   component: DiPage,
 });
 
 function DiPage() {
-  const { board, tour } = Route.useLoaderData();
+  const board = Route.useLoaderData();
 
   return (
     <div className="space-y-10">
@@ -39,7 +33,6 @@ function DiPage() {
       <ActivityLogCard entries={board.activity} />
       <DependencyGraphCard graph={board.graph} graphExports={board.graphExports} validated={board.validated} />
       <ContainerInspectorCard bindings={board.bindings} transientProof={board.transientProof} />
-      <FeatureTourCard tour={tour} />
     </div>
   );
 }
