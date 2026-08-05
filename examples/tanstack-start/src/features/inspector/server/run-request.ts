@@ -9,23 +9,21 @@ import { createServerFn } from "@tanstack/react-start";
 
 import type { BootReport } from "#/features/inspector/server/boot";
 import { bindPricingConfig, warmAndReport } from "#/features/inspector/server/boot";
-import type { CatalogEntry, Region, TenantContext, Tier } from "#/features/inspector/server/catalog";
+import type { CatalogEntry } from "#/features/inspector/server/catalog";
 import {
   auditLoggerToken,
   notifierToken,
-  paymentRequest,
   paymentToken,
-  REGIONS,
   registerCatalog,
   settlementToken,
-  storageRequest,
   storageToken,
   tenantContextToken,
-  TIERS,
 } from "#/features/inspector/server/catalog";
 import type { Decision, NestedObservation } from "#/features/inspector/server/explain";
 import { explainSlot } from "#/features/inspector/server/explain";
 import { loadFeatureModules, riskCheckToken } from "#/features/inspector/server/feature-modules";
+import type { Region, TenantContext, Tier } from "#/features/inspector/shared/tenant";
+import { paymentRequest, REGIONS, storageRequest, TIERS } from "#/features/inspector/shared/tenant";
 
 export interface RequestInput {
   readonly region: Region;

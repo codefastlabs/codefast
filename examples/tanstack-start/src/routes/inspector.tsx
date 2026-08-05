@@ -5,9 +5,9 @@ import { DecisionCard } from "#/features/inspector/components/decision-card";
 import { OutcomeSummary } from "#/features/inspector/components/outcome-summary";
 import { RequestConsole } from "#/features/inspector/components/request-console";
 import { RuntimeHealthCard } from "#/features/inspector/components/runtime-health-card";
-import type { Region, Tier } from "#/features/inspector/server/catalog";
 import type { RequestOutcome } from "#/features/inspector/server/run-request";
 import { runRequestServerFn } from "#/features/inspector/server/run-request";
+import type { Region, Tier } from "#/features/inspector/shared/tenant";
 
 export const Route = createFileRoute("/inspector")({
   // The first outcome is resolved on the server so the page has a trace before any interaction.

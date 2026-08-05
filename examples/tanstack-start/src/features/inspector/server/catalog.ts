@@ -2,18 +2,8 @@
 import type { BindingIdentifier, Container } from "@codefast/di";
 import { token, whenParentIs } from "@codefast/di";
 
-export const REGIONS = ["eu", "us", "apac"] as const;
-export const TIERS = ["free", "pro", "enterprise"] as const;
-
-export type Region = (typeof REGIONS)[number];
-export type Tier = (typeof TIERS)[number];
-
-/** What one request carries; every slot decision is taken against this. */
-export interface TenantContext {
-  readonly tenant: string;
-  readonly region: Region;
-  readonly tier: Tier;
-}
+import type { Region, SlotTags, TenantContext } from "#/features/inspector/shared/tenant";
+import { paymentRequest, REGIONS } from "#/features/inspector/shared/tenant";
 
 export interface Storage {
   readonly adapter: string;
@@ -46,8 +36,6 @@ export const notifierToken = token<Notifier>("Notifier");
 export const auditLoggerToken = token<AuditLogger>("AuditLogger");
 export const settlementToken = token<Settlement>("Settlement");
 export const tenantContextToken = token<TenantContext>("TenantContext");
-
-export type SlotTags = ReadonlyArray<readonly [string, unknown]>;
 
 /** What the trace needs about one registered binding, including what the snapshot cannot tell it. */
 export interface CatalogEntry {
@@ -196,26 +184,4 @@ export function registerCatalog(container: Container): Array<CatalogEntry> {
   });
 
   return entries;
-}
-
-/** The request that selects a tenant's storage adapter. */
-export function storageRequest(context: TenantContext): { tags: SlotTags } {
-  return { tags: [["region", context.region]] };
-}
-
-/**
- * The request that selects a tenant's payment gateway.
- *
- * @remarks An enterprise tenant names both tags, which is what lets the specialisation win; every
- * other tier names only the region and lands on the list rate.
- */
-export function paymentRequest(context: TenantContext): { tags: SlotTags } {
-  return context.tier === "enterprise"
-    ? {
-        tags: [
-          ["region", context.region],
-          ["tier", "enterprise"],
-        ],
-      }
-    : { tags: [["region", context.region]] };
 }
