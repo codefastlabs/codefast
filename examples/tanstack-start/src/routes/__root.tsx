@@ -52,7 +52,7 @@ function RootDocument({ children }: { children: ReactNode }) {
       <body className="min-h-svh bg-background text-foreground antialiased">
         <AppearanceProvider appearance={DEFAULT_APPEARANCE} storageKey={STORAGE_KEY}>
           <SiteHeader />
-          <main className="mx-auto w-full max-w-5xl px-4 py-10 sm:px-6">{children}</main>
+          <main className="mx-auto w-full max-w-7xl px-4 py-10 sm:px-6 lg:px-8">{children}</main>
         </AppearanceProvider>
         <Toaster />
         <Scripts />

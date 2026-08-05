@@ -41,7 +41,7 @@ function InspectorPage() {
   };
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-10">
       <header className="space-y-2">
         <h1 className="text-2xl font-bold tracking-tight">Resolution inspector</h1>
         <p className="max-w-3xl text-sm text-muted-foreground">
@@ -51,7 +51,7 @@ function InspectorPage() {
         </p>
       </header>
 
-      <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,22rem)_minmax(0,1fr)]">
+      <div className="grid items-start gap-8 lg:grid-cols-[minmax(0,24rem)_minmax(0,1fr)]">
         <div className="space-y-6 lg:sticky lg:top-6">
           <RequestConsole
             fraudScreening={fraudScreening}
@@ -68,15 +68,16 @@ function InspectorPage() {
             tier={tier}
           />
           <OutcomeSummary outcome={outcome} />
-          <RuntimeHealthCard outcome={outcome} />
         </div>
 
-        <div className="space-y-4">
+        <div className="space-y-5">
           {outcome.decisions.map((decision) => (
             <DecisionCard decision={decision} key={`${decision.token}:${decision.via ?? "top"}`} />
           ))}
         </div>
       </div>
+
+      <RuntimeHealthCard outcome={outcome} />
     </div>
   );
 }

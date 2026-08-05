@@ -1,11 +1,4 @@
-/**
- * The domain a multi-region SaaS request runs through, and the bindings that serve it.
- *
- * @remarks Every slot exists because the product needs it: storage and payment differ per region by
- * law and by contract, an enterprise tier gets a negotiated gateway, and the audit logger depends on
- * which stage asked for it. Registration hands back a descriptor per binding — `BindingSnapshot`
- * cannot say whether a binding carries a predicate, and the trace has to show that.
- */
+/** The bindings a multi-region SaaS request selects from, plus a descriptor per binding for the trace. */
 import type { BindingIdentifier, Container } from "@codefast/di";
 import { token, whenParentIs } from "@codefast/di";
 

@@ -16,7 +16,7 @@ export function CandidateRow({ candidate }: CandidateRowProps) {
   return (
     <li
       className={cn(
-        "flex flex-wrap items-center gap-x-3 gap-y-1 rounded-md border px-3 py-2 text-sm transition-colors",
+        "grid grid-cols-[auto_minmax(0,1fr)] items-center gap-x-3 gap-y-1.5 rounded-md border px-3.5 py-2.5 text-sm transition-colors sm:grid-cols-[auto_minmax(0,1fr)_auto]",
         candidate.won
           ? "border-primary/40 bg-primary/5"
           : rejected
@@ -34,13 +34,14 @@ export function CandidateRow({ candidate }: CandidateRowProps) {
         )}
       </span>
 
-      <span className={cn("font-medium", rejected && "line-through decoration-muted-foreground/40")}>
-        {candidate.label}
+      <span className="flex min-w-0 flex-wrap items-baseline gap-x-2.5 gap-y-1">
+        <span className={cn("font-medium", rejected && "line-through decoration-muted-foreground/40")}>
+          {candidate.label}
+        </span>
+        <code className="font-mono text-xs text-muted-foreground">{candidate.slotLabel}</code>
       </span>
 
-      <code className="font-mono text-xs text-muted-foreground">{candidate.slotLabel}</code>
-
-      <span className="ml-auto flex items-center gap-2">
+      <span className="col-start-2 flex flex-wrap items-center gap-2 sm:col-start-3 sm:justify-end">
         {verdict.kind === "rejected" ? (
           <span className="text-xs">{verdict.because}</span>
         ) : (

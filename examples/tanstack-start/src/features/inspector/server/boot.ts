@@ -1,10 +1,4 @@
-/**
- * Boot-time warm-up, and the proof that it happened.
- *
- * @remarks An async singleton cannot be resolved synchronously until something has awaited it. That
- * is what `initializeAsync()` is for, and it is also how the claim is checked here: the same sync
- * resolve is run against a warmed container and a cold one, and both outcomes are reported.
- */
+/** Boot-time warm-up of the async pricing config, and the proof that it happened. */
 import type { Container } from "@codefast/di";
 import { DiError, token } from "@codefast/di";
 

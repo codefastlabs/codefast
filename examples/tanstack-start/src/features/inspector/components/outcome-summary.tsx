@@ -30,15 +30,17 @@ export function OutcomeSummary({ outcome }: OutcomeSummaryProps) {
         </CardDescription>
       </CardHeader>
 
-      <CardContent className="grid gap-4 sm:grid-cols-3">
-        {outcome.summary.map((item) => (
-          <div className="space-y-1" key={item.label}>
-            <p className="text-xs tracking-wide text-muted-foreground uppercase">{item.label}</p>
-            <p className="font-mono text-sm">{item.value}</p>
-          </div>
-        ))}
+      <CardContent className="grid gap-5">
+        <dl className="grid gap-3">
+          {outcome.summary.map((item) => (
+            <div className="flex items-baseline justify-between gap-3" key={item.label}>
+              <dt className="text-xs tracking-wide text-muted-foreground uppercase">{item.label}</dt>
+              <dd className="text-right font-mono text-sm">{item.value}</dd>
+            </div>
+          ))}
+        </dl>
 
-        <div className="space-y-1 sm:col-span-3">
+        <div className="space-y-1 border-t border-border pt-4">
           <p className="text-xs tracking-wide text-muted-foreground uppercase">Scope proof</p>
           <p className="text-sm text-muted-foreground">
             Two resolves inside this one request — scoped gave{" "}

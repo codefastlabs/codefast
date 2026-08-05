@@ -1,10 +1,4 @@
-/**
- * Why the container picked the binding it picked, derived and then checked against the real resolve.
- *
- * @remarks The verdicts here mirror SPEC §5.11. They are a *model* of the engine, so every decision
- * also records whether the model agreed with what `resolve()` actually returned — a disagreement is
- * shown rather than hidden, because a trace nobody can falsify is decoration.
- */
+/** Why the container picked the binding it picked, checked against what the real resolve returned. */
 import type { Container, Token } from "@codefast/di";
 import { DiError } from "@codefast/di";
 
