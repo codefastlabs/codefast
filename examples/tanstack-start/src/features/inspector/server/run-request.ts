@@ -126,6 +126,22 @@ function introduceCaptiveDependency(request: Container): void {
     .singleton();
 }
 
+/** The logger `Settlement` was handed, or the error that stopped it from being handed one. */
+function observeSettlementAudit(request: Container): NestedObservation {
+  try {
+    return { via: "Settlement", observed: request.resolve(settlementToken).audit };
+  } catch (caught) {
+    return {
+      via: "Settlement",
+      observed: undefined,
+      error: {
+        name: caught instanceof DiError ? caught.constructor.name : "Error",
+        message: caught instanceof Error ? caught.message : String(caught),
+      },
+    };
+  }
+}
+
 function validationReport(request: Container): ValidationReport {
   try {
     request.validate();
@@ -166,20 +182,7 @@ export async function runRequest(input: RequestInput): Promise<RequestOutcome> {
 
   // Resolving Settlement fills the logger slot from inside it, which is the only way the guard sees a
   // parent frame at all. Observing the result is how the nested decision learns which one won.
-  let settlementAudit: NestedObservation = { via: "Settlement", observed: undefined };
-
-  try {
-    settlementAudit = { via: "Settlement", observed: request.resolve(settlementToken).audit };
-  } catch (caught) {
-    settlementAudit = {
-      via: "Settlement",
-      observed: undefined,
-      error: {
-        name: caught instanceof DiError ? caught.constructor.name : "Error",
-        message: caught instanceof Error ? caught.message : String(caught),
-      },
-    };
-  }
+  const settlementAudit = observeSettlementAudit(request);
 
   decisions.push(
     explainSlot(request, auditLoggerToken, "AuditLogger", { tags: [] }, candidatesFor("AuditLogger"), settlementAudit),
