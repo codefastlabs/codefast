@@ -52,7 +52,9 @@ function InspectorPage() {
       </header>
 
       <div className="grid items-start gap-8 lg:grid-cols-[minmax(0,24rem)_minmax(0,1fr)]">
-        <div className="space-y-6 lg:sticky lg:top-6">
+        {/* top-20 clears the 57px sticky site header; the max-height keeps the console reachable on
+            short viewports, where this column is taller than the screen. */}
+        <div className="space-y-6 lg:sticky lg:top-20 lg:max-h-[calc(100dvh-6rem)] lg:overflow-y-auto lg:pr-1">
           <RequestConsole
             fraudScreening={fraudScreening}
             introduceCaptive={introduceCaptive}
