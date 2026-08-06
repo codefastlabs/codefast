@@ -1,4 +1,6 @@
 /** The tenant context and the requests derived from it, shared by the console and the container. */
+// Type-only, so the console's bundle stays free of the container it describes.
+import type { BindingTag } from "@codefast/di";
 
 export const REGIONS = ["eu", "us", "apac"] as const;
 export const TIERS = ["free", "pro", "enterprise"] as const;
@@ -13,7 +15,8 @@ export interface TenantContext {
   readonly tier: Tier;
 }
 
-export type SlotTags = ReadonlyArray<readonly [string, unknown]>;
+/** The tags one slot carries — `BindingTag` is the container's own pair, not a copy of its shape. */
+export type SlotTags = ReadonlyArray<BindingTag>;
 
 /** The request that selects a tenant's storage adapter. */
 export function storageRequest(context: TenantContext): { tags: SlotTags } {
