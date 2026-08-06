@@ -90,7 +90,8 @@ export function injectionSlotToResolveOptions(
  */
 export function bindingSlotToResolveOptions(bindingSlot: {
   readonly name?: string | undefined;
-  readonly tags: ReadonlyArray<BindingTag>;
+  readonly tags?: ReadonlyArray<BindingTag> | undefined;
 }): ResolveOptions | undefined {
-  return buildOptions(bindingSlot.name, bindingSlot.tags.length > 0 ? bindingSlot.tags : undefined);
+  const tags = bindingSlot.tags;
+  return buildOptions(bindingSlot.name, tags !== undefined && tags.length > 0 ? tags : undefined);
 }

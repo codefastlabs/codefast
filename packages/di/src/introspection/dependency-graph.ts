@@ -3,7 +3,9 @@ import { effectiveBindingScope } from "#/core/binding-scope";
 import type { BindingRegistry } from "#/core/registry";
 import type { Token } from "#/core/token";
 import { tokenName } from "#/core/token";
-import type { BindingKind, BindingScope, Constructor, ResolveOptions } from "#/core/types";
+import type { BindingKind, BindingScope, Constructor } from "#/core/types";
+import type { DependencySlot } from "#/injection/resolve-options";
+import { bindingSlotToResolveOptions } from "#/injection/resolve-options";
 import type { MetadataReader } from "#/metadata/metadata-types";
 import { matchesSlot } from "#/resolution/select/binding-select";
 
@@ -53,16 +55,7 @@ export interface ContainerGraphJson {
  * @since 0.3.16-canary.0
  */
 export interface GraphOptions {
-  readonly includeParent?: boolean;
-}
-
-/** What every dependency declaration shares — constructor params and resolved-factory deps alike. */
-interface DependencyRef {
-  readonly token: Token<unknown> | Constructor;
-  readonly optional: boolean;
-  readonly multi: boolean;
-  readonly name?: string | undefined;
-  readonly tags?: ReadonlyArray<readonly [string, unknown]> | undefined;
+  readonly includeParent?: boolean | undefined;
 }
 
 // ── Builder ───────────────────────────────────────────────────────────────────
@@ -87,21 +80,10 @@ function tokenKeyOf(dependency: Token<unknown> | Constructor): string {
   return key;
 }
 
-function slotCriterion(ref: DependencyRef): ResolveOptions | undefined {
-  if (ref.name === undefined && (ref.tags === undefined || ref.tags.length === 0)) {
-    return undefined;
-  }
-
-  return {
-    ...(ref.name !== undefined ? { name: ref.name } : {}),
-    ...(ref.tags !== undefined && ref.tags.length > 0 ? { tags: ref.tags } : {}),
-  };
-}
-
 // Mirrors filterBindings' slot semantics (SPEC §5.11); predicates need a live resolution
 // context, so the graph keeps every predicate-carrying candidate.
-function matchingTargets(candidates: ReadonlyArray<Binding>, ref: DependencyRef): ReadonlyArray<Binding> {
-  const criterion = slotCriterion(ref);
+function matchingTargets(candidates: ReadonlyArray<Binding>, ref: DependencySlot): ReadonlyArray<Binding> {
+  const criterion = bindingSlotToResolveOptions(ref);
 
   if (ref.multi && criterion === undefined) {
     return candidates;
@@ -110,7 +92,7 @@ function matchingTargets(candidates: ReadonlyArray<Binding>, ref: DependencyRef)
   return candidates.filter((candidate) => matchesSlot(candidate.slot, criterion));
 }
 
-function edgeLabel(ref: DependencyRef, index: number): string {
+function edgeLabel(ref: DependencySlot, index: number): string {
   const criterion =
     ref.name !== undefined
       ? `name:${ref.name}`
@@ -138,7 +120,7 @@ export function buildDependencyGraph(
 
   const addDependencyEdges = (
     from: string,
-    ref: DependencyRef,
+    ref: DependencySlot,
     index: number,
     lookup: (token: Token<unknown> | Constructor) => ReadonlyArray<Binding>,
   ): void => {
@@ -231,7 +213,7 @@ export function buildDependencyGraph(
           addDependencyEdges(binding.id, dependency, index, lookup);
         }
       } else if (binding.kind === "alias") {
-        const aliasRef: DependencyRef = { token: binding.target, optional: false, multi: false };
+        const aliasRef: DependencySlot = { token: binding.target, optional: false, multi: false };
 
         for (const target of matchingTargets(lookup(binding.target), aliasRef)) {
           edges.push({ from: binding.id, to: target.id, label: "alias", optional: false });

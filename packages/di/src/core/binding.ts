@@ -203,19 +203,18 @@ export type Binding<Value = unknown> =
   | ConstantBinding<Value>
   | AliasBinding<Value>;
 
+/** `Omit` applied per union member, since a bare `Omit` would collapse the union into one shape. */
+type DistributiveOmit<Union, Keys extends PropertyKey> = Union extends unknown ? Omit<Union, Keys> : never;
+
 /**
  * Builder-only payload before `id`, `token`, `slot`, and `predicate` are applied.
  *
+ * @remarks Derived rather than listed: a new binding kind joins this the moment it joins
+ * {@link Binding}, so the two unions cannot diverge.
+ *
  * @since 0.3.16-canary.0
  */
-export type PartialBinding<Value> =
-  | Omit<ClassBinding<Value>, BindingBaseKeys>
-  | Omit<DynamicBinding<Value>, BindingBaseKeys>
-  | Omit<DynamicAsyncBinding<Value>, BindingBaseKeys>
-  | Omit<ResolvedBinding<Value>, BindingBaseKeys>
-  | Omit<ResolvedAsyncBinding<Value>, BindingBaseKeys>
-  | Omit<ConstantBinding<Value>, BindingBaseKeys>
-  | Omit<AliasBinding<Value>, BindingBaseKeys>;
+export type PartialBinding<Value> = DistributiveOmit<Binding<Value>, BindingBaseKeys>;
 
 // ── ID generation ─────────────────────────────────────────────────────────────
 
@@ -229,9 +228,11 @@ export function generateBindingId(): BindingIdentifier {
 
 // ── Construction ──────────────────────────────────────────────────────────────
 
+/** Every key any member declares — a bare `keyof` on a union gives only the shared ones. */
+type KeysOfUnion<Union> = Union extends unknown ? keyof Union : never;
+
 // Superset of every kind's fields, so one literal can copy any binding shape.
-/** Union of every key any binding kind declares — `keyof` a union would give the intersection. */
-type BindingFieldName = Binding<unknown> extends infer Kind ? (Kind extends unknown ? keyof Kind : never) : never;
+type BindingFieldName = KeysOfUnion<Binding<unknown>>;
 
 /**
  * Completeness guard for {@link createBinding}'s literal.

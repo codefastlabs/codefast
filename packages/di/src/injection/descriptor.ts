@@ -1,6 +1,7 @@
 /** The one shape every declared dependency is normalised to, whatever channel declared it. */
 import type { Token } from "#/core/token";
 import type { BindingTag, Constructor, TokenValue } from "#/core/types";
+import type { DependencySlot } from "#/injection/resolve-options";
 
 /**
  * @since 0.3.16-canary.0
@@ -18,14 +19,15 @@ export interface InjectOptions {
 }
 
 /**
+ * One dependency a `toResolved` factory or an `@inject` accessor declares.
+ *
+ * @remarks Extends {@link DependencySlot} so the two dependency sources stay literally one shape,
+ * narrowing only `token` to carry the value type a factory's parameter is checked against.
+ *
  * @since 0.3.16-canary.0
  */
-export interface InjectionDescriptor<Value = unknown> {
+export interface InjectionDescriptor<Value = unknown> extends DependencySlot {
   readonly token: Token<Value> | Constructor<Value>;
-  readonly optional: boolean;
-  readonly multi: boolean;
-  readonly name?: string;
-  readonly tags?: ReadonlyArray<BindingTag>;
 }
 
 /**
