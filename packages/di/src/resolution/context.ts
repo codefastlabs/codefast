@@ -356,7 +356,7 @@ export function buildResolutionFrame(
   scope: BindingScope,
   bindingId: BindingIdentifier,
   kind: BindingKind,
-  slot: { name: string | undefined; tags: ReadonlyArray<readonly [string, unknown]> },
+  slot: ResolutionFrame["slot"],
 ): ResolutionFrame {
   return { tokenName, scope, bindingId, kind, slot };
 }

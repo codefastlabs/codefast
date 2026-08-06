@@ -37,6 +37,17 @@ jobs:
       - name: Build Workspace Packages
         run: npx turbo build --filter="./packages/**"
 
+      # `codefast mirror` generates `package.json#exports` from `dist/`, so a module added, moved or
+      # renamed in `src/` silently changes the published surface until someone reruns it. Mirror is
+      # idempotent: a diff here means it was not rerun.
+      - name: Verify Generated Package Exports
+        run: |
+          pnpm cli:mirror
+          if ! git diff --exit-code -- ':(glob)**/package.json'; then
+            echo "::error::package.json exports are stale — run 'pnpm cli:mirror' and commit the result"
+            exit 1
+          fi
+
       - name: Validate Code Quality and Type Safety
         run: npx turbo run lint format:check check-types --filter="./packages/**"
 

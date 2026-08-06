@@ -282,3 +282,62 @@ sau khi Phase 4 đã đóng.
 | Perf lệch mà không biết do move hay do split                              | Phase 1 và Phase 2 tách commit; bisect được                                          |
 | Ai đó "sửa" fixture ở `packages/cli/tests/unit/mirror/exports.test.ts:80` | Đó là fixture unit test của CLI, không phải config thật — không đụng                 |
 | Consumer ngoài repo dùng deep specifier đã đổi tên                        | Changeset `minor` + ghi rõ bảng rename trong phần mô tả changeset                    |
+
+---
+
+## 8. Đã thi hành — và ba điểm lệch khỏi kế hoạch
+
+Phase 0–5 hoàn tất trên nhánh `refactor/di-src-layout`. Ba chỗ thực tế khác kế hoạch, đều đã xử lý
+chứ không để treo.
+
+### 8.1 Phase 0 đo bằng paired A/B, không bằng bảng số ghi trước
+
+Kế hoạch nói "chạy `bench:isolate`, lưu lại các row". Thực tế chỉ **giữ lại `dist/` baseline** rồi
+đo bằng paired A/B ở Phase 4. Lý do: so với một bảng số ghi từ trước là so xuyên hai thời điểm máy
+khác nhau — đúng cái sai mà `BENCH_GUIDE.md` gọi tên. A/B có control trong cùng cửa sổ thời gian
+mạnh hơn hẳn, và bảng số ghi trước không thêm được gì.
+
+Kết quả: A/A control cho median mọi row trong ±2.4% (per-pass tới ±12%); A/B cho lệch median lớn
+nhất 4.7%, ở phía **được**. Row duy nhất trông như thua ở 3 pass — `fan-out-tree-depth-3-breadth-4`,
+0.966 — chạy lại 7 pass ra **0.993**, trong khi A/A của chính nó là **0.991**.
+
+### 8.2 `architecture.test.ts` được thêm một check ngoài kế hoạch
+
+Doc dẫn test bằng backtick `` `tests/…` ``, không phải link `](src/…)`, nên check link sẵn có không
+nhìn thấy chúng — ba đường dẫn test mà đợt move này làm hỏng sẽ mục âm thầm. Check mới nằm cùng
+describe với check link. Giữ, không revert: nó đóng đúng lỗ hổng mà chính đợt move vừa lộ ra.
+
+### 8.3 `pnpm cli:mirror` chạy tay, và CI không hề kiểm
+
+Đây là điểm lệch thật sự nghiêm trọng hơn hai cái trên. `reusable-verify-packages.yml` chạy build →
+lint/format/check-types → test, **không có bước nào xác minh `package.json#exports` còn khớp
+`dist/`**. Với `@codefast/di` thì `architecture.test.ts` bắt được, nhưng năm package khác được mirror
+thì không có gì bắt: thêm/đổi tên một module trong `src/` là bề mặt publish lệch đi trong im lặng.
+
+Đã thêm bước `Verify Generated Package Exports` vào workflow, ngay sau bước build (mirror đọc
+`dist/`). Mirror idempotent nên diff khác rỗng nghĩa là ai đó quên chạy:
+
+```bash
+pnpm cli:mirror
+git diff --exit-code -- ':(glob)**/package.json'
+```
+
+### 8.4 Rà TypeScript trên bốn file mới/đổi
+
+Ràng buộc tự đặt: **chỉ sửa những gì không đổi JS phát ra**, vì phép đo ở 8.1 chỉ còn giá trị khi
+`dist/*.js` không đổi. Đã kiểm chứng bằng `cmp` từng file sau khi sửa — khác biệt duy nhất là hai
+dòng comment mới.
+
+| Sửa                                                                                             | Vì sao                                                                                                                                             |
+| ----------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `resolution/context.ts` — tham số `slot` của `buildResolutionFrame` → `ResolutionFrame["slot"]` | Shape viết tay đã trôi khỏi bản chuẩn theo **ba** hướng: mất `readonly` cả hai prop, nội suy định nghĩa của `BindingTag`, và mất nhãn tuple của nó |
+| `injection/descriptor.ts` — `const explicitTags: unknown`                                       | `PropertyDescriptor.value` là `any`; một `any` chạm tới cast phía dưới làm cast trông như đã kiểm tra trong khi không có gì kiểm                   |
+| `injection/resolve-options.ts` — tham số → `Pick<DependencySlot, "name" \| "tags">`             | Tập con của `DependencySlot` viết lại bằng tay ngay trong chính file khai báo nó                                                                   |
+
+Còn treo, cần đổi JS nên phải đo lại — **không** làm chung đợt này:
+
+- `isInjectionDescriptor` cache `typeof value` vào biến, nên `value` không hẹp lại và phải cast
+  `as object` bốn lần. Viết `typeof value !== "object" && typeof value !== "function"` trực tiếp thì
+  bỏ được cả bốn cast — nhưng đổi JS phát ra trên đường bind.
+- `materializeInjectionDescriptor` nhận `tags` không kiểm kiểu. Một `Array.isArray` guard là đúng,
+  nhưng nó nằm trên đường `normalizeToDescriptor` mà `to-resolved-3-deps` có đo.

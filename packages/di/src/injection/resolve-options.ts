@@ -73,10 +73,9 @@ function buildOptions(
  *
  * @since 0.3.16-canary.0
  */
-export function injectionSlotToResolveOptions(injectionSlot: {
-  readonly name?: string;
-  readonly tags?: ReadonlyArray<BindingTag>;
-}): ResolveOptions | undefined {
+export function injectionSlotToResolveOptions(
+  injectionSlot: Pick<DependencySlot, "name" | "tags">,
+): ResolveOptions | undefined {
   return buildOptions(injectionSlot.name, injectionSlot.tags);
 }
 

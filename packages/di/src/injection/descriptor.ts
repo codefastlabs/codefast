@@ -92,7 +92,9 @@ function materializeInjectionDescriptor(dependency: InjectionDescriptor): Inject
   const nameDesc = Object.getOwnPropertyDescriptor(dualRole, "name");
   const tagsDesc = Object.getOwnPropertyDescriptor(dualRole, "tags");
   const explicitName = nameDesc?.enumerable === true && typeof nameDesc.value === "string" ? nameDesc.value : undefined;
-  const explicitTags = tagsDesc?.enumerable === true ? tagsDesc.value : undefined;
+  // Annotated because `PropertyDescriptor.value` is `any`, and an `any` reaching the cast below
+  // would make it look checked when nothing checked it.
+  const explicitTags: unknown = tagsDesc?.enumerable === true ? tagsDesc.value : undefined;
 
   if (explicitName !== undefined && explicitTags !== undefined) {
     return {
