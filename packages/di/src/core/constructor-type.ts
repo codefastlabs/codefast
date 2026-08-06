@@ -6,7 +6,7 @@
  *
  * @since 0.3.16-canary.0
  */
-export type Constructor<Value = unknown> = new (...args: Array<never>) => Value;
+export type Constructor<out Value = unknown> = new (...args: Array<never>) => Value;
 
 /**
  * Class constructor as invoked by the resolver after metadata-driven

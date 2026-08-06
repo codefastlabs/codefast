@@ -31,6 +31,18 @@ Three of those directories name a rule rather than a topic. **`errors/` is cold 
 
 > **Rule:** never hand-edit `package.json#exports` — change `codefast.config.js` and re-run `pnpm cli:mirror`. If a refactor moves a directory, check `pnpm cli:mirror:preview` for renamed specifiers before committing.
 
+**The build runs `isolatedDeclarations`, so every exported value carries an explicit type.** A
+`satisfies` alone is not one: it validates a literal without naming the type the declaration emits,
+which is exactly what per-file declaration emit needs. The flag is set once for the whole repo in
+`@codefast/typescript-config/library-build.json`.
+
+**Covariance is annotated, not assumed.** `Token`, `Constructor` and `InjectionDescriptor` declare
+`out Value`, so the compiler rejects the annotation the day one of them stops being covariant —
+which is the property the engine leans on when it erases the value type at every internal lane and
+casts once at a public entry point. The binding kinds deliberately have **no** variance annotation:
+their lifecycle hooks are methods so their parameters compare bivariantly, and pinning a variance
+there would fight the assignability `tests/types/binding-variance.test.ts` exists to protect.
+
 ## The model
 
 **One binding shape, one construction site.** Every binding is built by `createBinding()` in [`binding.ts`](src/core/binding.ts) — a single object literal listing every kind's fields in one fixed order, so all bindings in a process share one V8 hidden class. Mixed binding kinds otherwise make the resolver's hot property reads (`kind`/`scope`/`factory`) megamorphic, worth ~30% throughput. The registry therefore stores what it is handed **by reference** rather than re-copying it.

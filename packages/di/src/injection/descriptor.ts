@@ -26,7 +26,7 @@ export interface InjectOptions {
  *
  * @since 0.3.16-canary.0
  */
-export interface InjectionDescriptor<Value = unknown> extends DependencySlot {
+export interface InjectionDescriptor<out Value = unknown> extends DependencySlot {
   readonly token: Token<Value> | Constructor<Value>;
 }
 
