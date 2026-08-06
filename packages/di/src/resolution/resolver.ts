@@ -906,9 +906,6 @@ export class DependencyResolver implements ResolverCallbacks {
       }
 
       case "resolved": {
-        if (ctx === undefined) {
-          throw new InternalError("resolved binding requires resolution context");
-        }
         const deps = await this.#resolveDepsAsync(binding.deps, resolutionPath, resolutionStack, branchDepth);
         const factoryResult = binding.factory(...deps);
         return factoryResult instanceof Promise ? factoryResult : Promise.resolve(factoryResult);
