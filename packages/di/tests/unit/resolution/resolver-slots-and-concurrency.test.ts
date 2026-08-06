@@ -9,6 +9,7 @@
 import { describe, expect, it } from "vitest";
 
 import { Container } from "#/container/container";
+import { tag } from "#/core/tag";
 import { token } from "#/core/token";
 import { inject } from "#/decorators/inject";
 import { injectable } from "#/decorators/injectable";
@@ -16,36 +17,33 @@ import { postConstruct } from "#/decorators/lifecycle-decorators";
 import { CircularDependencyError } from "#/errors/errors";
 import { injectAll, optional } from "#/injection/descriptor";
 
+const ENV_TAG = tag("env");
+const REGION_TAG = tag("region");
+
 describe("multi-tag slot matching", () => {
   const serviceToken = token<string>("multi-tag-service");
 
   function container(): ReturnType<typeof Container.create> {
     const instance = Container.create();
-    instance.bind(serviceToken).toConstantValue("both").whenTagged("env", "prod").whenTagged("region", "eu");
+    instance.bind(serviceToken).toConstantValue("both").whenTagged(ENV_TAG.of("prod")).whenTagged(REGION_TAG.of("eu"));
     return instance;
   }
 
   it("matches only when every tag the binding declares is requested", () => {
     const resolved = container().resolve(serviceToken, {
-      tags: [
-        ["env", "prod"],
-        ["region", "eu"],
-      ],
+      tags: [ENV_TAG.of("prod"), REGION_TAG.of("eu")],
     });
     expect(resolved).toBe("both");
   });
 
   it("does not match when only part of the binding's tags are requested", () => {
-    expect(container().resolveOptional(serviceToken, { tags: [["env", "prod"]] })).toBeUndefined();
+    expect(container().resolveOptional(serviceToken, { tags: [ENV_TAG.of("prod")] })).toBeUndefined();
   });
 
   it("does not match when a tag value differs", () => {
     expect(
       container().resolveOptional(serviceToken, {
-        tags: [
-          ["env", "prod"],
-          ["region", "us"],
-        ],
+        tags: [ENV_TAG.of("prod"), REGION_TAG.of("us")],
       }),
     ).toBeUndefined();
   });
@@ -55,7 +53,7 @@ describe("multi-tag slot matching", () => {
     plain.bind(serviceToken).toConstantValue("plain");
 
     expect(plain.resolve(serviceToken)).toBe("plain");
-    expect(plain.resolveOptional(serviceToken, { tag: ["env", "prod"] })).toBeUndefined();
+    expect(plain.resolveOptional(serviceToken, { tag: ENV_TAG.of("prod") })).toBeUndefined();
   });
 
   it("excludes a name-only binding when the request also carries tags", () => {
@@ -63,7 +61,7 @@ describe("multi-tag slot matching", () => {
     named.bind(serviceToken).toConstantValue("named").whenNamed("primary");
 
     expect(named.resolve(serviceToken, { name: "primary" })).toBe("named");
-    expect(named.resolveOptional(serviceToken, { name: "primary", tag: ["env", "prod"] })).toBeUndefined();
+    expect(named.resolveOptional(serviceToken, { name: "primary", tag: ENV_TAG.of("prod") })).toBeUndefined();
   });
 });
 

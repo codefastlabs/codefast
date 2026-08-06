@@ -6,11 +6,15 @@
 import { describe, expect, it } from "vitest";
 
 import { Container } from "#/container/container";
+import { tag } from "#/core/tag";
 import { token } from "#/core/token";
 import { inject } from "#/decorators/inject";
 import { injectable } from "#/decorators/injectable";
 import { AsyncResolutionError, NoMatchingBindingError } from "#/errors/errors";
 import { injectAll, optional } from "#/injection/descriptor";
+
+const ENV_TAG = tag("env");
+const N_TAG = tag("n");
 
 describe("activation on transient dynamic bindings", () => {
   it("applies the binding's own onActivation to every fresh instance", () => {
@@ -167,8 +171,8 @@ describe("slot selection", () => {
     const container = Container.create();
     container.bind(serviceToken).toConstantValue("default");
     container.bind(serviceToken).toConstantValue("named").whenNamed("special");
-    container.bind(serviceToken).toConstantValue("prod").whenTagged("env", "prod");
-    container.bind(serviceToken).toConstantValue("dev").whenTagged("env", "dev");
+    container.bind(serviceToken).toConstantValue("prod").whenTagged(ENV_TAG.of("prod"));
+    container.bind(serviceToken).toConstantValue("dev").whenTagged(ENV_TAG.of("dev"));
     return container;
   }
 
@@ -178,15 +182,15 @@ describe("slot selection", () => {
 
   it("selects by the single-tag shorthand and by the tags array", () => {
     const container = containerWithSlots();
-    expect(container.resolve(serviceToken, { tag: ["env", "prod"] })).toBe("prod");
-    expect(container.resolve(serviceToken, { tags: [["env", "dev"]] })).toBe("dev");
+    expect(container.resolve(serviceToken, { tag: ENV_TAG.of("prod") })).toBe("prod");
+    expect(container.resolve(serviceToken, { tags: [ENV_TAG.of("dev")] })).toBe("dev");
   });
 
   it("returns only the matching slot from resolveAll", () => {
     const container = containerWithSlots();
 
     expect(container.resolveAll(serviceToken, { name: "special" })).toEqual(["named"]);
-    expect(container.resolveAll(serviceToken, { tag: ["env", "prod"] })).toEqual(["prod"]);
+    expect(container.resolveAll(serviceToken, { tag: ENV_TAG.of("prod") })).toEqual(["prod"]);
     expect(container.resolveAll(serviceToken, { name: "missing" })).toEqual([]);
     // Without a filter every candidate comes back.
     expect(container.resolveAll(serviceToken)).toHaveLength(4);
@@ -198,25 +202,25 @@ describe("slot selection", () => {
     // allowed to answer what the matcher refuses. SPEC §6.9: tag values compare with `Object.is`.
     const numericToken = token<string>("slot-numeric-tag");
     const container = Container.create();
-    container.bind(numericToken).toConstantValue("zero").whenTagged("n", 0);
+    container.bind(numericToken).toConstantValue("zero").whenTagged(N_TAG.of(0));
 
-    expect(container.resolve(numericToken, { tags: [["n", 0]] })).toBe("zero");
-    expect(container.resolve(numericToken, { tag: ["n", 0] })).toBe("zero");
+    expect(container.resolve(numericToken, { tags: [N_TAG.of(0)] })).toBe("zero");
+    expect(container.resolve(numericToken, { tag: N_TAG.of(0) })).toBe("zero");
 
-    expect(() => container.resolve(numericToken, { tags: [["n", -0]] })).toThrow(NoMatchingBindingError);
-    expect(() => container.resolve(numericToken, { tag: ["n", -0] })).toThrow(NoMatchingBindingError);
-    expect(container.resolveAll(numericToken, { tags: [["n", -0]] })).toEqual([]);
-    expect(container.resolveOptional(numericToken, { tags: [["n", -0]] })).toBeUndefined();
+    expect(() => container.resolve(numericToken, { tags: [N_TAG.of(-0)] })).toThrow(NoMatchingBindingError);
+    expect(() => container.resolve(numericToken, { tag: N_TAG.of(-0) })).toThrow(NoMatchingBindingError);
+    expect(container.resolveAll(numericToken, { tags: [N_TAG.of(-0)] })).toEqual([]);
+    expect(container.resolveOptional(numericToken, { tags: [N_TAG.of(-0)] })).toBeUndefined();
   });
 
   it("treats NaN tag values as equal to themselves, in both spellings", () => {
     const nanToken = token<string>("slot-nan-tag");
     const container = Container.create();
-    container.bind(nanToken).toConstantValue("nan").whenTagged("n", Number.NaN);
+    container.bind(nanToken).toConstantValue("nan").whenTagged(N_TAG.of(Number.NaN));
 
-    expect(container.resolve(nanToken, { tags: [["n", Number.NaN]] })).toBe("nan");
-    expect(container.resolve(nanToken, { tag: ["n", Number.NaN] })).toBe("nan");
-    expect(container.resolveAll(nanToken, { tags: [["n", Number.NaN]] })).toEqual(["nan"]);
+    expect(container.resolve(nanToken, { tags: [N_TAG.of(Number.NaN)] })).toBe("nan");
+    expect(container.resolve(nanToken, { tag: N_TAG.of(Number.NaN) })).toBe("nan");
+    expect(container.resolveAll(nanToken, { tags: [N_TAG.of(Number.NaN)] })).toEqual(["nan"]);
   });
 
   it("honours a predicate on a named binding in resolveAll, as resolve does", () => {

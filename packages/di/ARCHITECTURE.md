@@ -130,14 +130,25 @@ is usually the value that gets stored, and the computed form there measured **~4
 `boot-decorated-container-build-and-resolve` and `module-cold-from-modules`. Both forms are in the tree
 on purpose.
 
-**A tag index cannot express the tag matcher.** The registry keys tagged bindings in a `Map`, whose key
-equality is SameValueZero, while tag values compare by `Object.is` (SPEC §3.5). They part on exactly
-one pair — `+0` and `-0` — and that was enough for one question to have three answers: `resolve` with
-`tags: [pair]` matched, `resolve` with `tag: pair` threw, and `resolveAll` returned nothing. The lane now
-re-checks, but only where the index can be wrong: a request whose value is not zero is already exact, so
-the common path pays one comparison against a literal rather than a call into the matcher. Re-checking
-with the full `matchesSlot` instead cost **~42%** on `tagged-binding-resolve`; the narrow check costs
-**~5%**, which is the price of the answer being the same in all three places.
+**A criterion is interned, so the index can be keyed by it.** A tag key is minted by `tag()` and its
+criteria by `TagKey.of()`, which caches one object per value — so `Object.is` equality (SPEC §3.5)
+becomes object identity, and the registry keys tagged bindings by the criterion itself rather than by
+key-then-value. That removes a hash level from every tagged lookup and, more importantly, removes the
+divergence a value-keyed `Map` had: its keys compare by SameValueZero, which holds `+0` and `-0`
+equal where `Object.is` does not. The intern cache splits those two under a private symbol, so the
+index cannot conflate them and the re-check that used to correct it is gone.
+
+> **Rule:** interning is what makes identity sound here, so nothing may construct a `BindingTag`
+> outside `TagKey.of()` — the brand on the type is the enforcement, and
+> `tests/unit/resolution/select/tagged-selection.test.ts` pins the `±0` split it buys.
+
+**The multi-tag lane prefilters on keys, which is a subset test a `Map` still cannot do.** Each key
+carries a bit, each slot the OR of its keys, and a request the OR of what it names; a slot whose keys
+the request does not cover is rejected by `(requestMask & slotMask) !== slotMask` before any
+criterion is read. Bits wrap every 32 keys, so two keys can share one — a false positive the identity
+comparison then rejects, never a false negative. The `mask-*` rows in `benchmarks/di-inversify` price
+the three shapes that matter: a reject-heavy catalog, an admit-then-decide request, and the
+shared-bit collision.
 
 **Agreeing on the answer is not agreeing on the lane.** The paragraph above bought `tag: pair` and
 `tags: [pair]` the same result; what it did not buy them was the same path to it. `singleTagOnlyOf` is
@@ -171,12 +182,14 @@ under isolation, with every other row at parity.
 What had blocked it was a stale reason. `simpleTagOf` excluded predicate-bearing bindings from the tag
 index, justified by the index being _"read without a re-check"_ — which the `±0` fix had already made
 false by giving every indexed hit one. With the premise dead the exclusion was vestigial. Both lanes
-that read the index now evaluate the predicate on what they find, as the name lane always has.
+that read the index now evaluate the predicate on what they find, as the name lane always has. The
+value re-check itself is since gone — interning made the index exact — but the predicate one remains,
+because a predicate needs a live context no index can hold.
 
 > **Rule:** when a comment justifies a restriction by a fact about another part of the engine, the
-> restriction outlives the fact. `tests/unit/resolution/select/tagged-selection.test.ts` pins the re-check, so
-> the failure this could have caused — an indexed hit reaching a caller past a predicate that refused
-> it — cannot land quietly.
+> restriction outlives the fact. `tests/unit/resolution/select/tagged-selection.test.ts` pins the
+> predicate evaluation, so the failure this could have caused — an indexed hit reaching a caller past
+> a predicate that refused it — cannot land quietly.
 
 > **Rule:** the multi-tag case has no such index and is not waiting for one. A request carrying several
 > tags matches every binding whose tags are a **subset** of them, so `[A]`, `[B]` and `[A,B]` all answer

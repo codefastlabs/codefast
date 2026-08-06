@@ -1,38 +1,60 @@
 import { describe, expect, it } from "vitest";
 
 import { bindingSlotEquals, bindingSlotToString, DEFAULT_BINDING_SLOT, generateBindingId } from "#/core/binding";
+import { tag, tagKeyMaskOf } from "#/core/tag";
+
+const A_TAG = tag("a");
+const B_TAG = tag("b");
+const TIER_TAG = tag("tier");
 
 describe("bindingSlotEquals", () => {
   it("treats tag order as irrelevant and compares values with Object.is", () => {
     const left = {
       name: undefined,
-      tags: [
-        ["a", 1],
-        ["b", Number.NaN],
-      ] as const,
+      tags: [A_TAG.of(1), B_TAG.of(Number.NaN)] as const,
+      keyMask: tagKeyMaskOf([A_TAG.of(1), B_TAG.of(Number.NaN)]),
     };
     const right = {
       name: undefined,
-      tags: [
-        ["b", Number.NaN],
-        ["a", 1],
-      ] as const,
+      tags: [B_TAG.of(Number.NaN), A_TAG.of(1)] as const,
+      keyMask: tagKeyMaskOf([B_TAG.of(Number.NaN), A_TAG.of(1)]),
     };
     expect(bindingSlotEquals(left, right)).toBe(true);
   });
 
   it("differs on name, tag count, or tag value", () => {
-    expect(bindingSlotEquals({ name: "x", tags: [] }, { name: "y", tags: [] })).toBe(false);
-    expect(bindingSlotEquals({ name: undefined, tags: [["a", 1]] }, DEFAULT_BINDING_SLOT)).toBe(false);
-    expect(bindingSlotEquals({ name: undefined, tags: [["a", 1]] }, { name: undefined, tags: [["a", 2]] })).toBe(false);
+    expect(
+      bindingSlotEquals(
+        { name: "x", tags: [], keyMask: tagKeyMaskOf([]) },
+        { name: "y", tags: [], keyMask: tagKeyMaskOf([]) },
+      ),
+    ).toBe(false);
+    expect(
+      bindingSlotEquals(
+        { name: undefined, tags: [A_TAG.of(1)], keyMask: tagKeyMaskOf([A_TAG.of(1)]) },
+        DEFAULT_BINDING_SLOT,
+      ),
+    ).toBe(false);
+    expect(
+      bindingSlotEquals(
+        { name: undefined, tags: [A_TAG.of(1)], keyMask: tagKeyMaskOf([A_TAG.of(1)]) },
+        { name: undefined, tags: [A_TAG.of(2)], keyMask: tagKeyMaskOf([A_TAG.of(2)]) },
+      ),
+    ).toBe(false);
   });
 });
 
 describe("bindingSlotToString", () => {
   it("renders 'default' for the default slot and name/tags otherwise", () => {
     expect(bindingSlotToString(DEFAULT_BINDING_SLOT)).toBe("default");
-    expect(bindingSlotToString({ name: "primary", tags: [] })).toBe("name:primary");
-    expect(bindingSlotToString({ name: "primary", tags: [["tier", "gold"]] })).toBe("name:primary,tag:tier=gold");
+    expect(bindingSlotToString({ name: "primary", tags: [], keyMask: tagKeyMaskOf([]) })).toBe("name:primary");
+    expect(
+      bindingSlotToString({
+        name: "primary",
+        tags: [TIER_TAG.of("gold")],
+        keyMask: tagKeyMaskOf([TIER_TAG.of("gold")]),
+      }),
+    ).toBe("name:primary,tag:tier=gold");
   });
 });
 

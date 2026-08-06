@@ -54,7 +54,7 @@ export interface Decision {
 const slotLabel = (slot: { name?: string; tags: SlotTags }): string => {
   const parts = [
     ...(slot.name === undefined ? [] : [`name:${slot.name}`]),
-    ...slot.tags.map(([key, value]) => `${key}:${String(value)}`),
+    ...slot.tags.map((criterion) => `${criterion.key.name}:${String(criterion.value)}`),
   ];
 
   return parts.length === 0 ? "default slot" : `{ ${parts.join(", ")} }`;
@@ -74,15 +74,17 @@ function verdictFor(entry: CatalogEntry, request: SlotRequest): CandidateVerdict
     return { kind: "rejected", because: "untagged, and the request carries tags" };
   }
 
-  for (const [key, value] of tags) {
-    const requested = request.tags.find(([otherKey]) => otherKey === key);
+  for (const criterion of tags) {
+    if (request.tags.includes(criterion)) {
+      continue;
+    }
+    // Criteria are interned, so a miss is either the key absent or its value different — the
+    // distinction still worth showing, read off the key rather than compared pair by pair.
+    const sameKey = request.tags.find((other) => other.key === criterion.key);
 
-    if (requested === undefined) {
-      return { kind: "rejected", because: `request never names ${key}` };
-    }
-    if (!Object.is(requested[1], value)) {
-      return { kind: "rejected", because: `wants ${key}:${String(value)}` };
-    }
+    return sameKey === undefined
+      ? { kind: "rejected", because: `request never names ${criterion.key.name}` }
+      : { kind: "rejected", because: `wants ${criterion.key.name}:${String(criterion.value)}` };
   }
 
   return entry.guard === undefined
@@ -198,7 +200,7 @@ export function explainSlot(
 
   const requestView: RequestView = {
     ...(request.name === undefined ? {} : { name: request.name }),
-    tags: request.tags.map(([key, value]) => [key, String(value)] as const),
+    tags: request.tags.map((criterion) => [criterion.key.name, String(criterion.value)] as const),
   };
 
   return {

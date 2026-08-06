@@ -9,6 +9,10 @@ import {
 import type { BindToBuilder } from "@codefast/di";
 import { describe, expect, it } from "vitest";
 
+import { tag } from "#/core/tag";
+
+const ENV_TAG = tag("env");
+
 /**
  * SPEC §2.4 / §5.6: constraints and scope come after `to*()`, never before.
  *
@@ -50,7 +54,8 @@ describe("BindToBuilder fluent surface", () => {
       ["whenNamed", (builder) => (builder as never as { whenNamed: (n: string) => unknown }).whenNamed("primary")],
       [
         "whenTagged",
-        (builder) => (builder as never as { whenTagged: (t: string, v: unknown) => unknown }).whenTagged("env", "prod"),
+        (builder) =>
+          (builder as never as { whenTagged: (criterion: unknown) => unknown }).whenTagged(ENV_TAG.of("prod")),
       ],
       ["whenDefault", (builder) => (builder as never as { whenDefault: () => unknown }).whenDefault()],
       ["singleton", (builder) => (builder as never as { singleton: () => unknown }).singleton()],
@@ -134,10 +139,10 @@ describe("BindToBuilder fluent surface", () => {
   it("overwrites a tag value when whenTagged repeats the same key", () => {
     const container = Container.create();
     const TaggedToken = token<string>("tag-overwrite");
-    container.bind(TaggedToken).toConstantValue("final").whenTagged("env", "dev").whenTagged("env", "prod");
+    container.bind(TaggedToken).toConstantValue("final").whenTagged(ENV_TAG.of("dev")).whenTagged(ENV_TAG.of("prod"));
 
-    expect(container.resolve(TaggedToken, { tags: [["env", "prod"]] })).toBe("final");
-    expect(() => container.resolve(TaggedToken, { tags: [["env", "dev"]] })).toThrow(NoMatchingBindingError);
+    expect(container.resolve(TaggedToken, { tags: [ENV_TAG.of("prod")] })).toBe("final");
+    expect(() => container.resolve(TaggedToken, { tags: [ENV_TAG.of("dev")] })).toThrow(NoMatchingBindingError);
   });
 
   it("keeps the chain id stable across every refinement", () => {

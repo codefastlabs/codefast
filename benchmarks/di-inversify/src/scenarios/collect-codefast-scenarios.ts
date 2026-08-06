@@ -19,6 +19,7 @@ import { buildCodefastResolutionPatternScenarios } from "#/scenarios/codefast/re
 import { buildCodefastScaleScenarios } from "#/scenarios/codefast/scale";
 import { buildCodefastScopeScenarios } from "#/scenarios/codefast/scope";
 import { buildCodefastSlotSelectionScenarios } from "#/scenarios/codefast/slot-selection";
+import { buildCodefastTagKeyMaskScenarios } from "#/scenarios/codefast/tag-key-mask";
 import type { AnyScenario } from "#/scenarios/types";
 
 /**
@@ -43,6 +44,7 @@ export function collectAllCodefastScenarios(): ReadonlyArray<AnyScenario> {
     ...buildCodefastModuleScenarios(),
     ...buildCodefastInitializeInspectScenarios(),
     ...buildCodefastMultiTagScenarios(),
+    ...buildCodefastTagKeyMaskScenarios(),
     ...buildCodefastSlotSelectionScenarios(),
   ];
 }

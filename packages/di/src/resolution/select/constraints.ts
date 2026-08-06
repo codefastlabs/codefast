@@ -1,6 +1,8 @@
+import type { BindingTag } from "#/core/tag";
+import { coversTagKeys, tagKeyMaskOf } from "#/core/tag";
 import type { Token } from "#/core/token";
 import { tokenName } from "#/core/token";
-import type { BindingConstraint, BindingTag, Constructor } from "#/core/types";
+import type { BindingConstraint, Constructor } from "#/core/types";
 
 /**
  * @since 0.3.16-canary.0
@@ -55,20 +57,17 @@ export function whenAnyAncestorNamed(name: string): BindingConstraint {
 /**
  * @since 0.3.16-canary.0
  */
-export function whenParentTagged(tag: string, value: unknown): BindingConstraint {
+export function whenParentTagged(criterion: BindingTag): BindingConstraint {
   return (constraintContext) =>
-    constraintContext.parent !== undefined &&
-    constraintContext.parent.slot.tags.some(([tagKey, tagValue]) => tagKey === tag && Object.is(tagValue, value));
+    constraintContext.parent !== undefined && constraintContext.parent.slot.tags.includes(criterion);
 }
 
 /**
  * @since 0.3.16-canary.0
  */
-export function whenAnyAncestorTagged(tag: string, value: unknown): BindingConstraint {
+export function whenAnyAncestorTagged(criterion: BindingTag): BindingConstraint {
   return (constraintContext) =>
-    constraintContext.ancestors.some((ancestorFrame) =>
-      ancestorFrame.slot.tags.some(([tagKey, tagValue]) => tagKey === tag && Object.is(tagValue, value)),
-    );
+    constraintContext.ancestors.some((ancestorFrame) => ancestorFrame.slot.tags.includes(criterion));
 }
 
 /**
@@ -79,15 +78,13 @@ export function whenAnyAncestorTagged(tag: string, value: unknown): BindingConst
  * @since 0.3.16-canary.1
  */
 export function whenParentTaggedAll(tags: ReadonlyArray<BindingTag>): BindingConstraint {
+  const wanted = tagKeyMaskOf(tags);
   return (constraintContext) => {
     const { parent } = constraintContext;
-    if (parent === undefined) {
+    if (parent === undefined || !coversTagKeys(parent.slot.keyMask, wanted)) {
       return false;
     }
-    const { tags: parentTags } = parent.slot;
-    return tags.every(([tagKey, tagValue]) =>
-      parentTags.some(([otherKey, otherValue]) => otherKey === tagKey && Object.is(otherValue, tagValue)),
-    );
+    return tags.every((criterion) => parent.slot.tags.includes(criterion));
   };
 }
 
@@ -99,11 +96,10 @@ export function whenParentTaggedAll(tags: ReadonlyArray<BindingTag>): BindingCon
  * @since 0.3.16-canary.1
  */
 export function whenAnyAncestorTaggedAll(tags: ReadonlyArray<BindingTag>): BindingConstraint {
+  const wanted = tagKeyMaskOf(tags);
   return (constraintContext) =>
-    constraintContext.ancestors.some((frame) => {
-      const { tags: frameTags } = frame.slot;
-      return tags.every(([tagKey, tagValue]) =>
-        frameTags.some(([otherKey, otherValue]) => otherKey === tagKey && Object.is(otherValue, tagValue)),
-      );
-    });
+    constraintContext.ancestors.some(
+      (frame) =>
+        coversTagKeys(frame.slot.keyMask, wanted) && tags.every((criterion) => frame.slot.tags.includes(criterion)),
+    );
 }

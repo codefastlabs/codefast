@@ -1,18 +1,21 @@
 /**
- * SPEC §3.5 makes `{ tag: pair }` and `{ tags: [pair] }` one request: same lane, same answer. These
- * pin both halves across every value kind `Object.is` and a `Map`'s SameValueZero can part on, so a
- * fast lane cannot serve one spelling and skip the other.
+ * SPEC §3.5 makes `{ tag: pair }` and `{ tags: [pair] }` one request: same lane, same answer. Since
+ * criteria are interned the two now carry the *same object*, so parity holds by construction — what
+ * still has teeth is the intern cache itself, which must split `-0` from `0` and fold `NaN` onto one
+ * criterion, because a `Map` key compares by SameValueZero and SPEC answers to `Object.is`.
  */
 import { describe, expect, it } from "vitest";
 
 import { Container } from "#/container/container";
+import { tag } from "#/core/tag";
 import { token } from "#/core/token";
-import type { BindingTag } from "#/core/types";
 import { inject } from "#/decorators/inject";
 import { injectAll, normalizeToDescriptor, optional } from "#/injection/descriptor";
 import { singleTagOnlyOf } from "#/injection/resolve-options";
 
-const TAG_KEY = "slot";
+const SLOT = tag("slot");
+const ENV = tag("env");
+const TIER = tag("tier");
 
 /**
  * Value kinds worth pinning: `Object.is` and a `Map`'s SameValueZero part on `-0`, and `NaN` is the
@@ -42,8 +45,8 @@ function containerWith(value: unknown): { container: Container; serviceToken: Re
   const serviceToken = token<string>("tag-parity-service");
   const container = Container.create();
 
-  container.bind(serviceToken).toConstantValue("hit").whenTagged(TAG_KEY, value);
-  container.bind(serviceToken).toConstantValue("other").whenTagged(TAG_KEY, "other-slot");
+  container.bind(serviceToken).toConstantValue("hit").whenTagged(SLOT.of(value));
+  container.bind(serviceToken).toConstantValue("other").whenTagged(SLOT.of("other-slot"));
 
   return { container, serviceToken };
 }
@@ -56,8 +59,8 @@ describe("tag shorthand parity", () => {
     ])("resolve agrees between tag and tags for a %s request", (_kind, requested) => {
       const { container, serviceToken } = containerWith(value);
 
-      expect(outcomeOf(() => container.resolve(serviceToken, { tag: [TAG_KEY, requested] }))).toStrictEqual(
-        outcomeOf(() => container.resolve(serviceToken, { tags: [[TAG_KEY, requested]] })),
+      expect(outcomeOf(() => container.resolve(serviceToken, { tag: SLOT.of(requested) }))).toStrictEqual(
+        outcomeOf(() => container.resolve(serviceToken, { tags: [SLOT.of(requested)] })),
       );
     });
 
@@ -65,28 +68,35 @@ describe("tag shorthand parity", () => {
       const { container, serviceToken } = containerWith(value);
 
       for (const requested of [value, "no-such-value"]) {
-        expect(outcomeOf(() => container.resolveOptional(serviceToken, { tag: [TAG_KEY, requested] }))).toStrictEqual(
-          outcomeOf(() => container.resolveOptional(serviceToken, { tags: [[TAG_KEY, requested]] })),
+        expect(outcomeOf(() => container.resolveOptional(serviceToken, { tag: SLOT.of(requested) }))).toStrictEqual(
+          outcomeOf(() => container.resolveOptional(serviceToken, { tags: [SLOT.of(requested)] })),
         );
-        expect(outcomeOf(() => container.resolveAll(serviceToken, { tag: [TAG_KEY, requested] }))).toStrictEqual(
-          outcomeOf(() => container.resolveAll(serviceToken, { tags: [[TAG_KEY, requested]] })),
+        expect(outcomeOf(() => container.resolveAll(serviceToken, { tag: SLOT.of(requested) }))).toStrictEqual(
+          outcomeOf(() => container.resolveAll(serviceToken, { tags: [SLOT.of(requested)] })),
         );
       }
     });
+  });
+
+  it("interns one criterion per value, splitting -0 from 0 and folding NaN", () => {
+    expect(SLOT.of("prod")).toBe(SLOT.of("prod"));
+    expect(SLOT.of(0)).not.toBe(SLOT.of(-0));
+    expect(SLOT.of(Number.NaN)).toBe(SLOT.of(Number.NaN));
+    expect(SLOT.of(0)).not.toBe(ENV.of(0));
   });
 
   it("negative zero is refused by both forms where positive zero is bound", () => {
     const { container, serviceToken } = containerWith(0);
 
     // Not merely "the two agree": SameValueZero would have let the index answer this one.
-    expect(container.resolveOptional(serviceToken, { tag: [TAG_KEY, -0] })).toBeUndefined();
-    expect(container.resolveOptional(serviceToken, { tags: [[TAG_KEY, -0]] })).toBeUndefined();
-    expect(container.resolveOptional(serviceToken, { tag: [TAG_KEY, 0] })).toBe("hit");
+    expect(container.resolveOptional(serviceToken, { tag: SLOT.of(-0) })).toBeUndefined();
+    expect(container.resolveOptional(serviceToken, { tags: [SLOT.of(-0)] })).toBeUndefined();
+    expect(container.resolveOptional(serviceToken, { tag: SLOT.of(0) })).toBe("hit");
   });
 });
 
 describe("tag shorthand on the injection surface", () => {
-  const pair: BindingTag = ["env", "prod"];
+  const pair = ENV.of("prod");
 
   it.each([
     ["inject", inject],
@@ -102,7 +112,7 @@ describe("tag shorthand on the injection surface", () => {
 
   it("folds the shorthand into tags rather than carrying a second spelling", () => {
     const dependency = token<string>("inject-fold-dep");
-    const listed: BindingTag = ["tier", "premium"];
+    const listed = TIER.of("premium");
 
     const shorthandOnly = normalizeToDescriptor(inject(dependency, { tag: pair }));
     expect(shorthandOnly.tags).toStrictEqual([pair]);
@@ -117,11 +127,8 @@ describe("tag shorthand on the injection surface", () => {
 
     for (const options of [{ tag: pair }, { tags: [pair] }] as const) {
       const container = Container.create();
-      container
-        .bind(dependency)
-        .toConstantValue("hit")
-        .whenTagged(...pair);
-      container.bind(dependency).toConstantValue("other").whenTagged("env", "dev");
+      container.bind(dependency).toConstantValue("hit").whenTagged(pair);
+      container.bind(dependency).toConstantValue("other").whenTagged(ENV.of("dev"));
 
       const consumer = token<string>("inject-resolve-consumer");
       container.bind(consumer).toResolved((value: string) => value, [inject(dependency, options)]);
@@ -132,7 +139,7 @@ describe("tag shorthand on the injection surface", () => {
 });
 
 describe("singleTagOnlyOf", () => {
-  const pair: BindingTag = ["env", "prod"];
+  const pair = ENV.of("prod");
 
   it("admits both spellings of a one-tag request to the index lane", () => {
     expect(singleTagOnlyOf({ tag: pair })).toBe(pair);
@@ -142,8 +149,8 @@ describe("singleTagOnlyOf", () => {
 
   it("withholds requests the single-tag index cannot answer", () => {
     // Two sources means two tags requested, and a one-tag index would skip the ambiguity check.
-    expect(singleTagOnlyOf({ tag: pair, tags: [["tier", "premium"]] })).toBeUndefined();
-    expect(singleTagOnlyOf({ tags: [pair, ["tier", "premium"]] })).toBeUndefined();
+    expect(singleTagOnlyOf({ tag: pair, tags: [TIER.of("premium")] })).toBeUndefined();
+    expect(singleTagOnlyOf({ tags: [pair, TIER.of("premium")] })).toBeUndefined();
     expect(singleTagOnlyOf({ name: "primary", tag: pair })).toBeUndefined();
     expect(singleTagOnlyOf({})).toBeUndefined();
   });

@@ -164,12 +164,8 @@ export class DependencyResolver implements ResolverCallbacks {
     } else {
       const singleTag = singleTagOnlyOf(options);
       if (singleTag !== undefined) {
-        const tagged = this.#registry.getSimpleTagged(token, singleTag[0], singleTag[1]);
-        if (
-          tagged !== undefined &&
-          matchesIndexedTagValue(tagged, singleTag[1]) &&
-          this.#satisfiesPredicate(tagged, options, resolutionPath, resolutionStack)
-        ) {
+        const tagged = this.#registry.getSimpleTagged(token, singleTag);
+        if (tagged !== undefined && this.#satisfiesPredicate(tagged, options, resolutionPath, resolutionStack)) {
           return { binding: tagged, owner: this };
         }
       }
@@ -1072,24 +1068,18 @@ export class DependencyResolver implements ResolverCallbacks {
   #taggedBindingsFromChain(token: Token<unknown> | Constructor, tag: BindingTag): Array<Binding> {
     // A tag matches at most one binding per registry, so a root container's answer is built whole
     // rather than grown — the shape `#namedBindingsFromChain` takes, for the same reason.
-    const ownBinding = this.#taggedBinding(token, tag);
+    const ownBinding = this.#registry.getSimpleTagged(token, tag);
     if (this.#parent === undefined) {
       return ownBinding === undefined ? [] : [ownBinding];
     }
     const result: Array<Binding> = ownBinding === undefined ? [] : [ownBinding];
     for (let current: DependencyResolver | undefined = this.#parent; current !== undefined; current = current.#parent) {
-      const binding = current.#taggedBinding(token, tag);
+      const binding = current.#registry.getSimpleTagged(token, tag);
       if (binding !== undefined) {
         result.push(binding);
       }
     }
     return result;
-  }
-
-  /** This container's indexed binding for one tag, with the index's zero-value blind spot re-checked. */
-  #taggedBinding(token: Token<unknown> | Constructor, tag: BindingTag): Binding | undefined {
-    const binding = this.#registry.getSimpleTagged(token, tag[0], tag[1]);
-    return binding !== undefined && matchesIndexedTagValue(binding, tag[1]) ? binding : undefined;
   }
 
   /** A constant with no activation anywhere resolves to its value with no pipeline at all. */
@@ -1383,17 +1373,4 @@ function asyncResolutionErrorFor(binding: Binding, resolutionPath: ReadonlyArray
 /** Only a factory is handed the resolution context; everything else gets its deps directly. */
 function requiresResolutionContext(binding: Binding): boolean {
   return binding.kind === "dynamic" || binding.kind === "dynamic-async";
-}
-
-/**
- * Whether the tag index's answer is the one `Object.is` would give.
- *
- * @remarks An indexed binding has no name, no predicate and exactly one tag, and the request carries
- * only that tag, so `matchesSlot` reduces to the tag values — and the index matched the key already.
- * It answers by SameValueZero, which parts from `Object.is` (SPEC §3.5) on exactly one pair: `+0` and
- * `-0`. So a request whose value is not zero is already exact, and only a zero-valued one is worth
- * reading the stored value for.
- */
-function matchesIndexedTagValue(binding: Binding, requestedValue: unknown): boolean {
-  return requestedValue !== 0 || Object.is(binding.slot.tags[0]![1], requestedValue);
 }

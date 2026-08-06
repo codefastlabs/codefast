@@ -1,7 +1,8 @@
 import type { Binding } from "#/core/binding";
 import { bindingSlotEquals, bindingSlotToString } from "#/core/binding";
+import type { BindingTag } from "#/core/tag";
 import type { Token } from "#/core/token";
-import type { BindingIdentifier, BindingTag, Constructor, DependencyKey } from "#/core/types";
+import type { BindingIdentifier, Constructor, DependencyKey } from "#/core/types";
 
 /**
  * @since 0.3.16-canary.0
@@ -17,9 +18,9 @@ export class BindingRegistry {
   #simpleNamed: Map<DependencyKey, Map<string, Binding>> | undefined;
   // Fast path for one default slot binding with no predicate
   readonly #fastDefault = new Map<DependencyKey, Binding>();
-  // Fast lookup for slot { name: undefined, tags: [[key, value]] } with no predicate — likewise
-  // unallocated until a tagged binding is registered.
-  #simpleTagged: Map<DependencyKey, Map<string, Map<unknown, Binding>>> | undefined;
+  // Fast lookup for a slot carrying exactly one tag — keyed by the interned criterion itself, so
+  // the (key, value) pair is one hash rather than two. Unallocated until a tagged binding lands.
+  #simpleTagged: Map<DependencyKey, Map<BindingTag, Binding>> | undefined;
 
   /** Monotonic version — increments on every mutation. */
   get version(): number {
@@ -156,8 +157,14 @@ export class BindingRegistry {
     return this.#simpleNamed?.get(token)?.get(name);
   }
 
-  getSimpleTagged(token: Token<unknown> | Constructor, tagKey: string, tagValue: unknown): Binding | undefined {
-    return this.#simpleTagged?.get(token)?.get(tagKey)?.get(tagValue);
+  /**
+   * The binding indexed under one criterion.
+   *
+   * @remarks Exact, with no re-check: criteria are interned, so a `Map` keyed by the pair answers by
+   * identity — where a value-keyed map answered by SameValueZero and parted from `Object.is` on ±0.
+   */
+  getSimpleTagged(token: Token<unknown> | Constructor, criterion: BindingTag): Binding | undefined {
+    return this.#simpleTagged?.get(token)?.get(criterion);
   }
 
   getFastDefault(token: Token<unknown> | Constructor): Binding | undefined {
@@ -171,38 +178,27 @@ export class BindingRegistry {
   }
 
   #indexSimpleTaggedBinding(tokenKey: DependencyKey, binding: Binding): void {
-    const tag = simpleTagOf(binding);
-    if (tag === undefined) {
+    const criterion = simpleTagOf(binding);
+    if (criterion === undefined) {
       return;
     }
-    const [tagKey, tagValue] = tag;
-    const byTagKey = (this.#simpleTagged ??= new Map()).getOrInsert(tokenKey, new Map<string, Map<unknown, Binding>>());
-    const byTagValue = byTagKey.getOrInsert(tagKey, new Map<unknown, Binding>());
-    byTagValue.set(tagValue, binding);
+    const byCriterion = (this.#simpleTagged ??= new Map()).getOrInsert(tokenKey, new Map<BindingTag, Binding>());
+    byCriterion.set(criterion, binding);
   }
 
   #deindexSimpleTaggedBinding(tokenKey: DependencyKey, binding: Binding): void {
-    const tag = simpleTagOf(binding);
-    if (tag === undefined) {
+    const criterion = simpleTagOf(binding);
+    if (criterion === undefined) {
       return;
     }
-    const [tagKey, tagValue] = tag;
-    const byTagKey = this.#simpleTagged?.get(tokenKey);
-    if (byTagKey === undefined) {
+    const byCriterion = this.#simpleTagged?.get(tokenKey);
+    if (byCriterion === undefined) {
       return;
     }
-    const byTagValue = byTagKey.get(tagKey);
-    if (byTagValue === undefined) {
-      return;
-    }
-    const current = byTagValue.get(tagValue);
-    if (current?.id === binding.id) {
-      byTagValue.delete(tagValue);
-      if (byTagValue.size === 0) {
-        byTagKey.delete(tagKey);
-        if (byTagKey.size === 0) {
-          this.#simpleTagged!.delete(tokenKey);
-        }
+    if (byCriterion.get(criterion)?.id === binding.id) {
+      byCriterion.delete(criterion);
+      if (byCriterion.size === 0) {
+        this.#simpleTagged!.delete(tokenKey);
       }
     }
   }

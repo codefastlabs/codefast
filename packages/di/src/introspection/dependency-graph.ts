@@ -97,7 +97,7 @@ function edgeLabel(ref: DependencySlot, index: number): string {
     ref.name !== undefined
       ? `name:${ref.name}`
       : ref.tags !== undefined && ref.tags.length > 0
-        ? `tag:${ref.tags[0]?.[0]}=${String(ref.tags[0]?.[1])}`
+        ? `tag:${ref.tags[0]?.key.name}=${String(ref.tags[0]?.value)}`
         : `[${index}]`;
 
   return ref.optional ? `${criterion} optional` : criterion;

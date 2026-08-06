@@ -1,9 +1,10 @@
+import type { BindingTag, TagKeyMask } from "#/core/tag";
+import { NO_TAG_KEYS } from "#/core/tag";
 import type { Token } from "#/core/token";
 import type {
   ActivationHandler,
   BindingIdentifier,
   BindingScope,
-  BindingTag,
   Constructor,
   DeactivationHandler,
   ResolutionContext,
@@ -20,20 +21,19 @@ import type { InjectableDependency, InjectionDescriptor, ResolvedDependencyValue
 export interface BindingSlot {
   readonly name: string | undefined;
   readonly tags: ReadonlyArray<BindingTag>;
+  /** OR of this slot's tag keys, so the subset test is one word compare — see `ARCHITECTURE.md`. */
+  readonly keyMask: TagKeyMask;
 }
 
 /**
  * @since 0.3.16-canary.0
  */
 export function bindingSlotEquals(left: BindingSlot, right: BindingSlot): boolean {
-  if (left.name !== right.name) {
+  if (left.name !== right.name || left.keyMask !== right.keyMask || left.tags.length !== right.tags.length) {
     return false;
   }
-  if (left.tags.length !== right.tags.length) {
-    return false;
-  }
-  for (const [tagKey, tagValue] of left.tags) {
-    if (!right.tags.some(([otherKey, otherValue]) => otherKey === tagKey && Object.is(otherValue, tagValue))) {
+  for (const criterion of left.tags) {
+    if (!right.tags.includes(criterion)) {
       return false;
     }
   }
@@ -50,7 +50,7 @@ export const NO_INSTANCE: unique symbol = Symbol("di:no-instance");
 /**
  * @since 0.3.16-canary.0
  */
-export const DEFAULT_BINDING_SLOT: BindingSlot = { name: undefined, tags: [] };
+export const DEFAULT_BINDING_SLOT: BindingSlot = { name: undefined, tags: [], keyMask: NO_TAG_KEYS };
 
 /**
  * @since 0.3.16-canary.0
@@ -63,8 +63,8 @@ export function bindingSlotToString(slot: BindingSlot): string {
   if (slot.name !== undefined) {
     parts.push(`name:${slot.name}`);
   }
-  for (const [tagKey, tagValue] of slot.tags) {
-    parts.push(`tag:${tagKey}=${String(tagValue)}`);
+  for (const criterion of slot.tags) {
+    parts.push(`tag:${criterion.key.name}=${String(criterion.value)}`);
   }
   return parts.join(",");
 }
@@ -347,7 +347,7 @@ export function clearBindingFrame<Value>(binding: Binding<Value>): void {
 export interface SlotConstrainedBuilder {
   when(predicate: BindingConstraint): this;
   whenNamed(name: string): this;
-  whenTagged(tag: string, value: unknown): this;
+  whenTagged(criterion: BindingTag): this;
   whenDefault(): this;
   id(): BindingIdentifier;
 }

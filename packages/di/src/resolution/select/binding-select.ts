@@ -1,5 +1,7 @@
 import type { Binding, BindingSlot } from "#/core/binding";
-import type { BindingTag, ConstraintContext, ResolveOptions } from "#/core/types";
+import type { BindingTag, TagKeyMask } from "#/core/tag";
+import { coversTagKeys, NO_TAG_KEYS } from "#/core/tag";
+import type { ConstraintContext, ResolveOptions } from "#/core/types";
 import { AmbiguousBindingError } from "#/errors/errors";
 
 /**
@@ -99,74 +101,90 @@ function filterBindings(
 }
 
 function hasSlotCriterion(options: ResolveOptions): boolean {
-  return options.name !== undefined || options.tag !== undefined || (options.tags?.length ?? 0) > 0;
+  return options.name !== undefined || requestedTagKeyMask(options) !== NO_TAG_KEYS;
 }
 
 /**
  * Whether a binding's slot satisfies a request: names must be equal, and every tag the slot
  * declares must be among the tags requested (SPEC §5.11).
  *
+ * @remarks The tag half is a key-mask subset test before any criterion is read, so a slot the
+ * request cannot satisfy is rejected in one word compare. Criteria are interned, so what follows is
+ * identity — see `ARCHITECTURE.md`.
+ *
  * @since 0.5.0-canary.9
  */
 export function matchesSlot(slot: BindingSlot, options: ResolveOptions | undefined): boolean {
   const requestedName = options?.name;
-  const requestedTags = options?.tags;
-  const singleRequestedTag = options?.tag;
-  const hasRequestedTags = (requestedTags?.length ?? 0) > 0 || singleRequestedTag !== undefined;
 
-  // Match by name
   if (slot.name !== undefined) {
-    if (requestedName === undefined) {
-      return false;
-    }
     if (slot.name !== requestedName) {
       return false;
     }
   } else if (requestedName !== undefined) {
-    // Binding has no name but options requests a specific name — no match
     return false;
   }
 
-  // Match by tags — binding's tags must all be present in options
-  if (slot.tags.length > 0) {
-    if (!hasRequestedTags) {
+  const slotMask = slot.keyMask;
+  const requestMask = requestedTagKeyMask(options);
+
+  if (slotMask === NO_TAG_KEYS) {
+    // A request carrying tags needs a tagged slot: an untagged binding never matches (SPEC §5.11).
+    return requestMask === NO_TAG_KEYS;
+  }
+  if (!coversTagKeys(requestMask, slotMask)) {
+    return false;
+  }
+
+  // The mask can collide two keys onto one bit, so the exact criteria still have to be confirmed.
+  const slotTags = slot.tags;
+
+  for (let index = 0; index < slotTags.length; index += 1) {
+    if (!requestCarries(options, slotTags[index]!)) {
       return false;
     }
-    for (const [tagKey, tagValue] of slot.tags) {
-      if (!matchesRequestedTag(tagKey, tagValue, requestedTags, singleRequestedTag)) {
-        return false;
-      }
-    }
-  } else if (hasRequestedTags) {
-    // Requested tags require a tagged slot: an untagged binding never matches (SPEC §5.11).
-    return false;
   }
 
   return true;
 }
 
-function matchesRequestedTag(
-  tagKey: string,
-  tagValue: unknown,
-  requestedTags: ReadonlyArray<BindingTag> | undefined,
-  singleRequestedTag: BindingTag | undefined,
-): boolean {
-  if (
-    singleRequestedTag !== undefined &&
-    singleRequestedTag[0] === tagKey &&
-    Object.is(singleRequestedTag[1], tagValue)
-  ) {
-    return true;
+/** The key set a request covers, across both spellings SPEC §3.5 folds into one. */
+export function requestedTagKeyMask(options: ResolveOptions | undefined): TagKeyMask {
+  if (options === undefined) {
+    return NO_TAG_KEYS;
   }
-  if (requestedTags === undefined || requestedTags.length === 0) {
+  const single = options.tag;
+  const listed = options.tags;
+  let mask = single === undefined ? NO_TAG_KEYS : single.mask;
+
+  if (listed !== undefined) {
+    for (let index = 0; index < listed.length; index += 1) {
+      mask = (mask | listed[index]!.mask) as TagKeyMask;
+    }
+  }
+
+  return mask;
+}
+
+/** Whether a request names this exact criterion — identity, because criteria are interned. */
+function requestCarries(options: ResolveOptions | undefined, criterion: BindingTag): boolean {
+  if (options === undefined) {
     return false;
   }
-  for (let index = 0; index < requestedTags.length; index += 1) {
-    const requestedTag = requestedTags[index]!;
-    if (requestedTag[0] === tagKey && Object.is(requestedTag[1], tagValue)) {
+  if (options.tag === criterion) {
+    return true;
+  }
+  const listed = options.tags;
+
+  if (listed === undefined) {
+    return false;
+  }
+  for (let index = 0; index < listed.length; index += 1) {
+    if (listed[index] === criterion) {
       return true;
     }
   }
+
   return false;
 }
 

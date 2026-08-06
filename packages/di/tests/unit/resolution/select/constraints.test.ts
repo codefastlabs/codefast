@@ -7,7 +7,15 @@ import { describe, expect, it } from "vitest";
 
 import { Container } from "#/container/container";
 import type { BindingSlot } from "#/core/binding";
+import { tag, tagKeyMaskOf } from "#/core/tag";
 import { token } from "#/core/token";
+
+const TIER = tag<number | string>("tier");
+const ENV = tag<string>("env");
+const X = tag<number>("x");
+const REGION = tag<string>("region");
+const EXTRA = tag<number>("extra");
+const Y = tag<number>("y");
 import type { BindingIdentifier, ConstraintContext, ResolutionFrame } from "#/core/types";
 import {
   whenAnyAncestorIs,
@@ -28,7 +36,7 @@ function frame(tokenName: string, slot: Partial<BindingSlot> = {}): ResolutionFr
     scope: "transient",
     bindingId: "test" as BindingIdentifier,
     kind: "dynamic",
-    slot: { name: slot.name, tags: slot.tags ?? [] },
+    slot: { name: slot.name, tags: slot.tags ?? [], keyMask: tagKeyMaskOf(slot.tags ?? []) },
   };
 }
 
@@ -69,37 +77,30 @@ describe("parent predicates", () => {
   });
 
   it("whenParentTagged compares tag values with Object.is", () => {
-    const predicate = whenParentTagged("tier", Number.NaN);
-    expect(predicate(contextWith([frame("svc", { tags: [["tier", Number.NaN]] })]))).toBe(true);
-    expect(predicate(contextWith([frame("svc", { tags: [["tier", "gold"]] })]))).toBe(false);
+    const predicate = whenParentTagged(TIER.of(Number.NaN));
+    expect(predicate(contextWith([frame("svc", { tags: [TIER.of(Number.NaN)] })]))).toBe(true);
+    expect(predicate(contextWith([frame("svc", { tags: [TIER.of("gold")] })]))).toBe(false);
   });
 
   it("whenParentTaggedAll requires every pair on the direct parent", () => {
-    const predicate = whenParentTaggedAll([
-      ["tier", "gold"],
-      ["region", "eu"],
-    ]);
+    const predicate = whenParentTaggedAll([TIER.of("gold"), REGION.of("eu")]);
     expect(
       predicate(
         contextWith([
           frame("svc", {
-            tags: [
-              ["tier", "gold"],
-              ["region", "eu"],
-              ["extra", 1],
-            ],
+            tags: [TIER.of("gold"), REGION.of("eu"), EXTRA.of(1)],
           }),
         ]),
       ),
     ).toBe(true);
-    expect(predicate(contextWith([frame("svc", { tags: [["tier", "gold"]] })]))).toBe(false);
+    expect(predicate(contextWith([frame("svc", { tags: [TIER.of("gold")] })]))).toBe(false);
     expect(predicate(ROOT_CONTEXT)).toBe(false);
   });
 });
 
 describe("ancestor predicates", () => {
   const rootToken = token<number>("root");
-  const deepStack = [frame("root", { name: "app", tags: [["env", "prod"]] }), frame("mid"), frame("leafParent")];
+  const deepStack = [frame("root", { name: "app", tags: [ENV.of("prod")] }), frame("mid"), frame("leafParent")];
 
   it("whenAnyAncestorIs scans the whole stack; whenNoAncestorIs negates it", () => {
     expect(whenAnyAncestorIs(rootToken)(contextWith(deepStack))).toBe(true);
@@ -111,24 +112,18 @@ describe("ancestor predicates", () => {
   it("whenAnyAncestorNamed / whenAnyAncestorTagged match any frame's slot", () => {
     expect(whenAnyAncestorNamed("app")(contextWith(deepStack))).toBe(true);
     expect(whenAnyAncestorNamed("missing")(contextWith(deepStack))).toBe(false);
-    expect(whenAnyAncestorTagged("env", "prod")(contextWith(deepStack))).toBe(true);
-    expect(whenAnyAncestorTagged("env", "dev")(contextWith(deepStack))).toBe(false);
+    expect(whenAnyAncestorTagged(ENV.of("prod"))(contextWith(deepStack))).toBe(true);
+    expect(whenAnyAncestorTagged(ENV.of("dev"))(contextWith(deepStack))).toBe(false);
   });
 
   it("whenAnyAncestorTaggedAll requires all pairs on one single frame", () => {
-    const split = [frame("a", { tags: [["x", 1]] }), frame("b", { tags: [["y", 2]] })];
+    const split = [frame("a", { tags: [X.of(1)] }), frame("b", { tags: [Y.of(2)] })];
     const combined = [
       frame("a", {
-        tags: [
-          ["x", 1],
-          ["y", 2],
-        ],
+        tags: [X.of(1), Y.of(2)],
       }),
     ];
-    const predicate = whenAnyAncestorTaggedAll([
-      ["x", 1],
-      ["y", 2],
-    ]);
+    const predicate = whenAnyAncestorTaggedAll([X.of(1), Y.of(2)]);
     expect(predicate(contextWith(split))).toBe(false);
     expect(predicate(contextWith(combined))).toBe(true);
   });

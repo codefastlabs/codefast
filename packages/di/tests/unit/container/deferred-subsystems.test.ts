@@ -10,8 +10,11 @@ import { describe, expect, it } from "vitest";
 
 import { Container } from "#/container/container";
 import { Module } from "#/core/module";
+import { tag } from "#/core/tag";
 import { token } from "#/core/token";
 import { MissingScopeContextError } from "#/errors/errors";
+
+const ENV_TAG = tag("env");
 
 describe("inspector built on first use", () => {
   it("answers inspect() on a container that has done nothing else", () => {
@@ -109,9 +112,9 @@ describe("registry slot indexes built on first use", () => {
   it("resolves a tagged binding registered as the container's only binding", () => {
     const serviceToken = token<string>("deferred-tagged");
     const container = Container.create();
-    container.bind(serviceToken).toConstantValue("prod").whenTagged("env", "prod");
+    container.bind(serviceToken).toConstantValue("prod").whenTagged(ENV_TAG.of("prod"));
 
-    expect(container.resolve(serviceToken, { tags: [["env", "prod"]] })).toBe("prod");
+    expect(container.resolve(serviceToken, { tags: [ENV_TAG.of("prod")] })).toBe("prod");
   });
 
   it("drops the named index again when its last binding goes", () => {
