@@ -2297,7 +2297,7 @@ Các quy tắc trong section 5.4 áp dụng đầy đủ cho advanced constraint
 ### 8.8 Subpath export
 
 ```ts
-// @codefast/di/constraints — src/constraints.ts
+// @codefast/di/resolution/select/constraints — src/resolution/select/constraints.ts
 export {
   whenAnyAncestorIs,
   whenAnyAncestorNamed,
@@ -2897,18 +2897,21 @@ Mỗi public subpath là một conditional entry: `source` → `src` cho dev/tes
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
     },
-    "./constraints": {
-      "source": "./src/constraints.ts",
-      "types": "./dist/constraints.d.ts",
-      "import": "./dist/constraints.js"
+    "./resolution/select/constraints": {
+      "source": "./src/resolution/select/constraints.ts",
+      "types": "./dist/resolution/select/constraints.d.ts",
+      "import": "./dist/resolution/select/constraints.js"
     },
+    // `strip: "./introspection/"` trong codefast.config.js giữ specifier của nhóm
+    // introspection phẳng, nên subpath không mang tiền tố thư mục nguồn.
     "./graph-adapters/dot": {
-      "source": "./src/graph-adapters/dot.ts",
-      "types": "./dist/graph-adapters/dot.d.ts",
-      "import": "./dist/graph-adapters/dot.js"
+      "source": "./src/introspection/graph-adapters/dot.ts",
+      "types": "./dist/introspection/graph-adapters/dot.d.ts",
+      "import": "./dist/introspection/graph-adapters/dot.js"
     }
-    // … các subpath còn lại theo cùng hình dạng (registry, resolver, scope,
-    // lifecycle, binding-select, inspector, decorators/*, metadata/*, …)
+    // … các subpath còn lại theo cùng hình dạng (core/registry, resolution/resolver,
+    // lifecycle/scope-manager, lifecycle/lifecycle-manager, resolution/select/binding-select,
+    // inspector, decorators/*, injection/*, metadata/*, …)
   },
   "files": ["dist", "src", "CHANGELOG.md", "README.md", "LICENSE"],
   "engines": {

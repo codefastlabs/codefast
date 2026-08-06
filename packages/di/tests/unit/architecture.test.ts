@@ -139,6 +139,24 @@ describe("ARCHITECTURE.md still describes this package", () => {
     expect(missing).toEqual([]);
   });
 
+  it("names only test files that exist", () => {
+    // The document pins a rule by naming the test that holds it, so a moved test file turns a
+    // citation into a dead end. Backticked here rather than linked, which is why the link check
+    // above does not see them.
+    const missing = [...doc.matchAll(/`(tests\/[^`]+\.test\.ts)`/g)]
+      .map((match) => match[1]!)
+      .filter((relative) => {
+        try {
+          statSync(join(packageRoot, relative));
+          return false;
+        } catch {
+          return true;
+        }
+      });
+
+    expect(missing).toEqual([]);
+  });
+
   it("names only symbols that exist", () => {
     const source = sourceFiles()
       .map((file) => readFileSync(file, "utf8"))
