@@ -7,15 +7,15 @@ import type { DependencySlot } from "#/injection/resolve-options";
  * @since 0.3.16-canary.0
  */
 export interface InjectOptions {
-  name?: string;
+  name?: string | undefined;
   /**
    * Single-tag shorthand, equivalent to listing the one pair in `tags` (SPEC §3.5).
    *
    * @remarks Folded into `tags` when the descriptor is built, so nothing downstream sees two
    * spellings of one request. Giving both is a request for every pair across the two.
    */
-  tag?: BindingTag;
-  tags?: ReadonlyArray<BindingTag>;
+  tag?: BindingTag | undefined;
+  tags?: ReadonlyArray<BindingTag> | undefined;
 }
 
 /**

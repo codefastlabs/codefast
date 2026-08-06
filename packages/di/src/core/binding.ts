@@ -89,14 +89,14 @@ interface BindingBase<Value> {
    *
    * @remarks Resolver-owned bookkeeping — `registry.add` normalizes it, so callers never set it.
    */
-  frame?: ResolutionFrame | undefined;
+  frame: ResolutionFrame | undefined;
   /**
    * Cached singleton instance, or {@link NO_INSTANCE}.
    *
    * @remarks A binding belongs to exactly one container, so its singleton slot is per-binding —
    * a field read replaces a keyed lookup on the hottest resolve shape there is.
    */
-  instance?: unknown;
+  instance: unknown;
   readonly token: Token<Value> | Constructor<Value>;
   readonly slot: BindingSlot;
   readonly predicate?: BindingConstraint | undefined;

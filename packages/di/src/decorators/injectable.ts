@@ -35,8 +35,8 @@ export function createAutoRegisterRegistry(): AutoRegisterRegistry {
  * @since 0.3.16-canary.0
  */
 export interface InjectableOptions {
-  autoRegister?: AutoRegisterRegistry;
-  scope?: BindingScope;
+  autoRegister?: AutoRegisterRegistry | undefined;
+  scope?: BindingScope | undefined;
 }
 
 // ── @injectable() ─────────────────────────────────────────────────────────────

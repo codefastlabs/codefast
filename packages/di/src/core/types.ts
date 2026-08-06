@@ -58,15 +58,15 @@ export type DeactivationHandler<Value> = (instance: Value) => void | Promise<voi
  * @since 0.3.16-canary.0
  */
 export interface ResolveOptions {
-  name?: string;
+  name?: string | undefined;
   /**
    * Single-tag shorthand, equivalent to listing the one pair in `tags` (SPEC §3.5).
    *
    * @remarks Reaches the same tagged index, so choosing it costs nothing. `InjectOptions` accepts it
    * too and folds it into `tags`. Only `tags` expresses a request for more than one tag.
    */
-  tag?: BindingTag;
-  tags?: ReadonlyArray<BindingTag>;
+  tag?: BindingTag | undefined;
+  tags?: ReadonlyArray<BindingTag> | undefined;
 }
 
 // ── ResolutionFrame ──────────────────────────────────────────────────────

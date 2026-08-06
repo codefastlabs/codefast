@@ -13,8 +13,8 @@ export interface DependencySlot {
   readonly token: Token<unknown> | Constructor;
   readonly optional: boolean;
   readonly multi: boolean;
-  readonly name?: string;
-  readonly tags?: ReadonlyArray<BindingTag>;
+  readonly name?: string | undefined;
+  readonly tags?: ReadonlyArray<BindingTag> | undefined;
 }
 
 /**
