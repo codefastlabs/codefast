@@ -130,6 +130,11 @@ container.resolve(LoggerToken, { name: "file" });
 container.resolve(StorageToken, { tag: ["provider", "s3"] });
 ```
 
+`{ tag: pair }` and `{ tags: [pair] }` are the same request and take the same lookup path, on
+`resolve` and on `inject` / `optional` / `injectAll` alike. Reach for `tags` when a slot carries more
+than one tag — `whenTagged("env", "prod").whenTagged("tier", "premium")` needs
+`{ tags: [["env", "prod"], ["tier", "premium"]] }`.
+
 For graph-aware selection, pass a predicate to `.when(...)` — helpers like `whenParentIs`, `whenAnyAncestorNamed`, and `whenParentTagged` ship from the root entry (`import { whenParentIs } from "@codefast/di"`).
 
 ## Decorators

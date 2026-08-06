@@ -24,6 +24,13 @@ schedules one side later — none of which is your change.
 3. Repeat for at least three passes, **swapping which side goes first each pass**.
 4. Report the median of the per-pass ratios, and show them all.
 
+Step 2 means **one subprocess per (side, scenario)** — `BENCH_ISOLATE=1`, or `BENCH_ONLY=<id>` on the
+child directly. Running a side's whole suite in one process is not a cheaper version of the same
+measurement: scenarios that share an isolate share inline caches and optimisation state, so a change
+to a function several rows exercise shows up compressed. A whole-suite paired A/B once read a change
+as a clean win whose real cost, measured per-scenario, was 0.87×–0.93× on three rows — and mis-blamed
+two neighbouring commits before the isolation was added.
+
 Swapping the order is what makes drift cancel instead of accumulate. Reporting every pass is what
 lets a reader see a pass that disagrees — if pass 2 says 0.81 and the rest say 0.99, that is worth
 knowing, and a lone median hides it.
@@ -37,6 +44,29 @@ Two things this catches that a before/after comparison cannot:
   Three "obviously faster" changes in this repo were reverted because a row they had no business
   affecting moved: collapsing a memoised accessor into an inlinable expression cost ~6% on a row that
   only reads the memo, and removing a fast lane that looked like duplication cost ~24% elsewhere.
+
+### Measure the floor before you set the threshold
+
+A "must not regress" threshold is only meaningful above the row's own noise. Get that number the
+same way you get everything else here — **run the harness against itself**: copy the baseline build
+into both slots and run the identical paired procedure. Whatever spread comes back is what that row
+cannot distinguish, on this machine, today.
+
+It is not small, and it is not uniform. An A/A run over this suite put the fastest rows —
+`slot-tag-array-hoisted`, `tagged-binding-resolve`, `named-constant-get`, all above 20 M ops/s — at
+per-pass swings of **±12%**, one of them **±20%**, with medians landing as far out as 1.028×. The
+slower rows in the same run sat inside **±3%**. Faster row, noisier ratio: the work per sample
+shrinks while the timer's error does not.
+
+So a threshold of 0.98× on a ±12% row is not strict, it is meaningless — it will fire on noise
+about as often as it fires on a regression, and it fired exactly that way here, rejecting a change
+on two rows the change could not reach. Two defences, and the first is worth more:
+
+- **Ask whether a causal path exists at all.** A row that never executes the changed function cannot
+  have regressed because of it, and no amount of re-running turns that into evidence. Say which rows
+  those are before measuring, not after seeing the number you dislike.
+- **Set each must-hold threshold from that row's measured A/A spread**, not from a round number. A
+  round number encodes how strict you feel, not what the instrument can see.
 
 ## Comparing two libraries: interleave, and say you did
 
@@ -84,6 +114,9 @@ Also required for a comparison to mean anything:
   async chains, the `production/*` group.
 - **A ratio near 1.00× is parity, not a win.** The report's bands are win >1.03×, parity 0.97–1.03×,
   loss <0.97×.
+- **Check which side of a trade is comparable before taking it.** A row with `excludeFromAggregates`,
+  or one no other library implements, contributes to no published figure — a win there does not pay
+  for a loss on one of the head-to-head rows.
 - **IQR is within-run stability and is blind to between-run variance.** Two runs have reported the same
   row as one of the tightest in the suite while disagreeing with each other by 39%.
 

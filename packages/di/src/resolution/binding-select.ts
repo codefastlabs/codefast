@@ -21,9 +21,9 @@ export function selectBinding(
   if (candidates.length === 1) {
     return candidates[0];
   }
-  // Most specific wins: a single matching predicate-carrying candidate beats
-  // predicate-less ones (a predicate is a deliberate specialization of the
-  // default). Two matching predicates are genuinely ambiguous.
+  // Most specific wins, predicate before tag count: a lone predicate-carrying candidate beats
+  // predicate-less ones, a predicate being a deliberate specialization of the default. This order is
+  // what keeps every resolution that already succeeds deciding the same way — see SPEC §5.11.
   let predicatedCandidate: Binding | undefined;
   for (const candidate of candidates) {
     if (candidate.predicate !== undefined) {
@@ -37,10 +37,34 @@ export function selectBinding(
   if (predicatedCandidate !== undefined) {
     return predicatedCandidate;
   }
+  // Reached only where the throw was: a slot declaring more of what the request carries is the more
+  // specific match, so an over-specified request resolves instead of being ambiguous (SPEC §5.11).
+  const mostSpecific = mostSpecificByTagCount(candidates);
+  if (mostSpecific !== undefined) {
+    return mostSpecific;
+  }
   throw new AmbiguousBindingError(
     tokenDisplayName,
     candidates.map((c) => c.id),
   );
+}
+
+/** The lone candidate declaring more tags than every other, or `undefined` when that is a tie. */
+function mostSpecificByTagCount(candidates: ReadonlyArray<Binding>): Binding | undefined {
+  let best: Binding | undefined;
+  let bestCount = -1;
+  let tied = false;
+  for (const candidate of candidates) {
+    const count = candidate.slot.tags.length;
+    if (count > bestCount) {
+      best = candidate;
+      bestCount = count;
+      tied = false;
+    } else if (count === bestCount) {
+      tied = true;
+    }
+  }
+  return tied ? undefined : best;
 }
 
 /**
@@ -80,7 +104,7 @@ function hasSlotCriterion(options: ResolveOptions): boolean {
 
 /**
  * Whether a binding's slot satisfies a request: names must be equal, and every tag the slot
- * declares must be among the tags requested (SPEC §6.9).
+ * declares must be among the tags requested (SPEC §5.11).
  *
  * @since 0.5.0-canary.9
  */
@@ -114,7 +138,7 @@ export function matchesSlot(slot: BindingSlot, options: ResolveOptions | undefin
       }
     }
   } else if (hasRequestedTags) {
-    // Requested tags require a tagged slot: an untagged binding never matches (SPEC §6.9).
+    // Requested tags require a tagged slot: an untagged binding never matches (SPEC §5.11).
     return false;
   }
 

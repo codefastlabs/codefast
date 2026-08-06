@@ -118,6 +118,69 @@ the common path pays one comparison against a literal rather than a call into th
 with the full `matchesSlot` instead cost **~42%** on `tagged-binding-resolve`; the narrow check costs
 **~5%**, which is the price of the answer being the same in all three places.
 
+**Agreeing on the answer is not agreeing on the lane.** The paragraph above bought `tag: pair` and
+`tags: [pair]` the same result; what it did not buy them was the same path to it. `singleTagOnlyOf` is
+the admission test for the tagged index, and it read the presence of `tag` as a reason to give up —
+so the shorthand, the form the README reaches for and `ResolveOptions` advertised as the fast one, was
+the only spelling the index never served. Admitting it is worth **2.77×** on a single-tag resolve with
+the pair hoisted and **2.66×** with it inline (per-scenario isolation, seven passes), against `tags`
+rows and the sync controls all at parity. A request carrying a tag from both sources at
+once still declines: two tags asked for is not something a one-tag index can answer without skipping
+the ambiguity check the full path would run. The `slot-selection` group in `benchmarks/di-inversify`
+exists so this family has rows at all — the four it added are a 2×2 over request form × where the tag
+literal lives, which is what separates lane cost from allocation cost. An independent paired A/B —
+three passes of `di:bench:isolate`, alternating which side ran first — reproduced the lane figures at
+**2.91×**/**2.94×** and `slot-tag-resolve-all` at **3.04×**, so the numbers above are conservative and
+survive a re-run. It did **not** reproduce a measurable allocation advantage for the shorthand: 0.5%
+between the two spellings, on rows whose measured A/A spread is ±12%. That difference sits below what
+this 2×2 can resolve, and pricing it needs a row built for it.
+
+> **Rule:** a fast lane's admission test is part of the contract, not an implementation detail. Two
+> spellings SPEC calls equivalent must reach the same lane, or the shorter one becomes the slower one
+> and the documentation that recommends it becomes wrong. SPEC §3.5 makes the two spellings one
+> request; `tests/unit/resolution/tag-shorthand-parity.test.ts` pins the lane alongside the answer.
+
+**`resolveAll` reads the tag index too, and one tag is not the subset query several are.** A request
+carrying one tag and no name matches exactly the bindings whose slot _is_ that tag — a named or
+multi-tag slot cannot satisfy it, and last-wins keeps at most one such binding per registry. So the
+index holds the whole answer per container and walking the chain is the candidate set rather than a
+prefilter, which is the shape the name lane had all along. Worth **3.07×** on `slot-tag-resolve-all`
+under isolation, with every other row at parity.
+
+What had blocked it was a stale reason. `simpleTagOf` excluded predicate-bearing bindings from the tag
+index, justified by the index being _"read without a re-check"_ — which the `±0` fix had already made
+false by giving every indexed hit one. With the premise dead the exclusion was vestigial. Both lanes
+that read the index now evaluate the predicate on what they find, as the name lane always has.
+
+> **Rule:** when a comment justifies a restriction by a fact about another part of the engine, the
+> restriction outlives the fact. `tests/unit/resolution/tagged-selection.test.ts` pins the re-check, so
+> the failure this could have caused — an indexed hit reaching a caller past a predicate that refused
+> it — cannot land quietly.
+
+> **Rule:** the multi-tag case has no such index and is not waiting for one. A request carrying several
+> tags matches every binding whose tags are a **subset** of them, so `[A]`, `[B]` and `[A,B]` all answer
+> a request for `[A,B]`; a `Map` cannot resolve that in one lookup, and every shape that gets close
+> needs either a per-resolve allocation where the cost today is a handful of comparisons, or the tag
+> values stringified, which the `Object.is` rule in SPEC §3.5 forbids.
+
+**Hoisting the request out of the candidate loop was tried and rejected.** `--prof` puts over half
+this lane's JavaScript time in `matchesSlot`, re-deriving the same request per candidate; reading it
+once in `filterBindings` is worth 1.27×/1.19×/1.13×/1.06× on the four slot rows and costs
+**0.87×**/**0.90×**/**0.93×** on `resolve-all-strategies-10`, `-100` and
+`production-event-bus-dispatch`. Every row it wins carries `excludeFromAggregates`; every row it loses
+is one of the 44 that count. The mechanism is V8's cumulative inlining budget, not an added
+comparison: a bigger `filterBindings` pushes the tail of
+`resolveAll → #candidateBindings → selectAllBindings → filterBindings → matchesPredicate` out of the
+inlined chain, so the per-candidate loop loses its inlining. Two remedies failed — extracting the lane
+into its own method, then branching in the caller, which made it worse.
+
+> **Rule:** a hot chain can be too big as well as too eager, and the two fail differently. An extra
+> comparison scales with call count; a lost inlining edge scales with candidates and survives being
+> moved into another method — the budget counts bytecode and call sites present, not how often a call
+> runs, and it is cumulative, so moving bytecode into the caller only re-accounts it. Raising
+> `--max-inlined-bytecode-size*` on both sides is the oracle: if the difference vanishes, code size
+> was the cause.
+
 **A hash lookup a loop repeats deserves an inline cache, and a memo already inlined deserves nothing.** `LifecycleManager.activationHandlersFor()` keeps a one-entry token→hooks cache in front of its map, invalidated by `registerActivation` — a resolve loop asks about the same token every iteration. The mirror-image change failed: folding `#getResolutionFrame` into a single expression so it would inline, with the build extracted to a cold method, cost **~6%** on `fan-out-tree-depth-3-breadth-4` (five paired passes, all five negative) and was reverted. A profile showing self-time in a memo is not evidence that the memo is the cost.
 
 **The same rule pays again one layer down.** `BindingLookupCache.defaultEntry()` is reached by exactly
@@ -131,6 +194,44 @@ slot tracks absence by its token, not by its entry.
 > **Rule:** do not try to fold alias hops into `registry.getFastDefault()`. It is a bare own-registry
 > `Map.get` returning a binding, and an alias terminal may live in a parent container whose rebind only
 > the chain's summed version can see. Alias folding belongs where the version stamp is.
+
+**The single-tag lane has no chain memo, and a warm benchmark cannot tell you whether it should.** Two
+of the three criteria lanes memoize the walk: the one-entry slot above for a no-options token owned by
+a parent, and `namedEntry` for a name-only one. A single-tag request consults each container's tag index
+on the way up, every time. Measured against a **long-lived** child that resolves in a loop, that reads
+as a flat deficit — the memoized lanes land at ~14 ns/op whatever the depth
+(`child-depth-2-resolve`, `slot-name-parent-owned`) against ~26 ns flat plus ~10 ns per hop for tagged
+(`slot-tag-array-hoisted`, `slot-tag-parent-owned`).
+
+A **fresh** child says something else. Marginal cost per resolve of one token, netting out a 166 ns
+create-plus-dispose cycle, for N resolves inside one child:
+
+| lane                              |      N=1 |  N=2 |  N=4 |
+| --------------------------------- | -------: | ---: | ---: |
+| single tag — no memo              |     33.0 | 34.2 | 34.6 |
+| name only — `namedEntry`, a map   | **54.5** | 34.5 | 27.1 |
+| no options — one-entry slot + map |     36.7 |    — | 17.7 |
+
+The unmemoized lane is flat, which is what having no per-container state looks like. The memoized one
+is dear at N=1 and amortizes, so the crossover against its unmemoized neighbour sits at **N=2** — it
+loses by ~21 ns at N=1, ties at N=2, and wins from N=3. That 21 ns is the `Map` `namedEntry` allocates
+per token through `getOrInsertComputed`, thrown away when the container is; `defaultEntry`'s one-entry
+slot costs ~4 ns cold by comparison. **Which memo shape is chosen therefore matters more than whether
+to memoize**, and for a per-request container it is the only thing that matters.
+
+Two consequences. A tagged memo should be the one-entry slot, not a map, and shaped that way it is
+close to free at N=1 rather than a loss — so the objection to it is the 15% blast radius this file
+records for `#findBinding`-adjacent edits, which a paired A/B with controls can settle, and not the
+duty cycle. And the justification standing over `namedEntry` — that it "almost always hits" — is a
+statement about a long-lived container that inverts in a per-request one, where every first resolve of
+a named token buys a map it will not read again.
+
+Still unsettled, and not answerable here: how often real code resolves one tagged token twice in one
+container. Nothing outside `packages/di` and `benchmarks/` in this repo binds a tag at all.
+
+> **Rule:** a chain memo is justified by hit rate, not by symmetry with a lane that has one — and the
+> hit rate to quote is a **fresh** container's, because that is where the memo is paid for and a warm
+> loop hides the payment entirely.
 
 **Compiling the activation chain was tried three ways and rejected.** `container-level-activation-hook`
 is the suite's thinnest win, and the hook pipeline is re-decided per resolve while its shape is fixed

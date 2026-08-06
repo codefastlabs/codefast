@@ -28,7 +28,8 @@ type ScenarioGroup =
   | "boot"
   | "failure"
   | "production"
-  | "introspection";
+  | "introspection"
+  | "slot-selection";
 
 /**
  * @since 0.3.16-canary.0

@@ -60,8 +60,10 @@ export type DeactivationHandler<Value> = (instance: Value) => void | Promise<voi
 export interface ResolveOptions {
   name?: string;
   /**
-   * Single-tag shorthand — semantics match including one pair in `tags`.
-   * Enables fast-path lookup alongside `tags`.
+   * Single-tag shorthand, equivalent to listing the one pair in `tags` (SPEC §3.5).
+   *
+   * @remarks Reaches the same tagged index, so choosing it costs nothing. `InjectOptions` accepts it
+   * too and folds it into `tags`. Only `tags` expresses a request for more than one tag.
    */
   tag?: BindingTag;
   tags?: ReadonlyArray<BindingTag>;

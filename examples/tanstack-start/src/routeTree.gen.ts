@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as DiRouteImport } from './routes/di'
+import { Route as InspectorRouteImport } from './routes/inspector'
 import { Route as PlaygroundRouteImport } from './routes/playground'
 import { Route as UiRouteImport } from './routes/ui'
 import { Route as VariantsRouteImport } from './routes/variants'
@@ -23,6 +24,11 @@ const IndexRoute = IndexRouteImport.update({
 const DiRoute = DiRouteImport.update({
   id: '/di',
   path: '/di',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const InspectorRoute = InspectorRouteImport.update({
+  id: '/inspector',
+  path: '/inspector',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PlaygroundRoute = PlaygroundRouteImport.update({
@@ -44,6 +50,7 @@ const VariantsRoute = VariantsRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/di': typeof DiRoute
+  '/inspector': typeof InspectorRoute
   '/playground': typeof PlaygroundRoute
   '/ui': typeof UiRoute
   '/variants': typeof VariantsRoute
@@ -51,6 +58,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/di': typeof DiRoute
+  '/inspector': typeof InspectorRoute
   '/playground': typeof PlaygroundRoute
   '/ui': typeof UiRoute
   '/variants': typeof VariantsRoute
@@ -59,21 +67,30 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/di': typeof DiRoute
+  '/inspector': typeof InspectorRoute
   '/playground': typeof PlaygroundRoute
   '/ui': typeof UiRoute
   '/variants': typeof VariantsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/di' | '/playground' | '/ui' | '/variants'
+  fullPaths: '/' | '/di' | '/inspector' | '/playground' | '/ui' | '/variants'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/di' | '/playground' | '/ui' | '/variants'
-  id: '__root__' | '/' | '/di' | '/playground' | '/ui' | '/variants'
+  to: '/' | '/di' | '/inspector' | '/playground' | '/ui' | '/variants'
+  id:
+    | '__root__'
+    | '/'
+    | '/di'
+    | '/inspector'
+    | '/playground'
+    | '/ui'
+    | '/variants'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   DiRoute: typeof DiRoute
+  InspectorRoute: typeof InspectorRoute
   PlaygroundRoute: typeof PlaygroundRoute
   UiRoute: typeof UiRoute
   VariantsRoute: typeof VariantsRoute
@@ -93,6 +110,13 @@ declare module '@tanstack/react-router' {
       path: '/di'
       fullPath: '/di'
       preLoaderRoute: typeof DiRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/inspector': {
+      id: '/inspector'
+      path: '/inspector'
+      fullPath: '/inspector'
+      preLoaderRoute: typeof InspectorRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/playground': {
@@ -122,6 +146,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DiRoute: DiRoute,
+  InspectorRoute: InspectorRoute,
   PlaygroundRoute: PlaygroundRoute,
   UiRoute: UiRoute,
   VariantsRoute: VariantsRoute,
