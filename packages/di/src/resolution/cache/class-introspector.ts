@@ -4,12 +4,12 @@
  * @remarks Metadata cannot change once a class is defined, so nothing here needs version stamping.
  */
 
+import { runWithContainer } from "#/ambient/active-container";
 import type { Container } from "#/container/container";
 import type { ConstructorInvocation } from "#/core/constructor-type";
 import type { Constructor } from "#/core/types";
 import { InvalidMetadataError } from "#/errors/errors";
 import type { ConstructorMetadata, MetadataReader } from "#/metadata/metadata-types";
-import { runWithContainer } from "#/resolution/environment";
 
 // Verified pairs, not verified classes: two readers may disagree about the same class, and a reader
 // that goes out of scope takes its record with it.

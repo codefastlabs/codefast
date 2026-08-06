@@ -1,3 +1,4 @@
+import { getActiveContainer } from "#/ambient/active-container";
 /** `@inject` — the accessor-decorator channel, resolving from the ambient container. */
 import type { Token } from "#/core/token";
 import type { Constructor } from "#/core/types";
@@ -6,7 +7,6 @@ import type { InjectionDescriptor, InjectOptions } from "#/injection/descriptor"
 import { buildInjectionDescriptor } from "#/injection/descriptor";
 import { injectionSlotToResolveOptions } from "#/injection/resolve-options";
 import { INJECT_ACCESSOR_KEY } from "#/metadata/metadata-keys";
-import { getActiveContainer } from "#/resolution/environment";
 
 /**
  * The name of the class being constructed, or `undefined` when there is none to report.

@@ -54,6 +54,11 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
     },
+    "./ambient/active-container": {
+      "source": "./src/ambient/active-container.ts",
+      "types": "./dist/ambient/active-container.d.ts",
+      "import": "./dist/ambient/active-container.js"
+    },
     "./container/binding-builders": {
       "source": "./src/container/binding-builders.ts",
       "types": "./dist/container/binding-builders.d.ts",
@@ -214,10 +219,10 @@
       "types": "./dist/resolution/cache/class-introspector.d.ts",
       "import": "./dist/resolution/cache/class-introspector.js"
     },
-    "./resolution/environment": {
-      "source": "./src/resolution/environment.ts",
-      "types": "./dist/resolution/environment.d.ts",
-      "import": "./dist/resolution/environment.js"
+    "./resolution/context": {
+      "source": "./src/resolution/context.ts",
+      "types": "./dist/resolution/context.d.ts",
+      "import": "./dist/resolution/context.js"
     },
     "./resolution/path/resolution-path": {
       "source": "./src/resolution/path/resolution-path.ts",

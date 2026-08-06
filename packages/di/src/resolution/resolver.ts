@@ -33,13 +33,13 @@ import { ActivationNeedCache } from "#/resolution/cache/activation-need";
 import type { DefaultLookupEntry } from "#/resolution/cache/binding-lookup-cache";
 import { BindingLookupCache } from "#/resolution/cache/binding-lookup-cache";
 import { ClassIntrospector } from "#/resolution/cache/class-introspector";
-import type { ResolverCallbacks } from "#/resolution/environment";
+import type { ResolverCallbacks } from "#/resolution/context";
 import {
   AsyncCascadeContext,
   AsyncLevelContext,
   buildResolutionFrame,
   DefaultResolutionContext,
-} from "#/resolution/environment";
+} from "#/resolution/context";
 import type { BranchDepth, OwnedBranchPath } from "#/resolution/path/resolution-path";
 import {
   branchDepthOf,

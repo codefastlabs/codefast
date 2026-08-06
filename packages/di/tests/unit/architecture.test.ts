@@ -53,8 +53,8 @@ describe("every binding shares one shape", () => {
 });
 
 describe("the layering points one way", () => {
-  // {core, errors, injection} → lifecycle → resolution → {decorators, metadata} →
-  // {container, introspection}. A decorator needs the resolution environment (accessor injection
+  // {core, errors, injection} → {lifecycle, ambient} → resolution → {decorators, metadata} →
+  // {container, introspection}. A decorator needs the ambient container (accessor injection
   // resolves at property-access time); the container composes all of it. Same-layer imports are
   // fine; only an upward value import is a violation.
   const LAYERS: Record<string, number> = {
@@ -62,6 +62,7 @@ describe("the layering points one way", () => {
     core: 0,
     errors: 0,
     injection: 0,
+    ambient: 1,
     lifecycle: 1,
     resolution: 2,
     decorators: 3,

@@ -36,9 +36,9 @@ export type {
 export { Container } from "#/container/container";
 export type { Container as ContainerInterface, ContainerOptions, ContainerStatic } from "#/container/container";
 
-// Ambient container — the context an `@inject` accessor initializer resolves from. The rest of
-// `resolution/environment` stays internal: it hands out resolver callbacks, not public values.
-export { getActiveContainer, runWithContainer } from "#/resolution/environment";
+// Ambient container — the context an `@inject` accessor initializer resolves from. `resolution/context`
+// stays internal: it hands out resolver callbacks, not public values.
+export { getActiveContainer, runWithContainer } from "#/ambient/active-container";
 
 // `effectiveBindingScope` is deliberately absent: it reads a `Binding`, which is internal, and no
 // public API hands one out. `BindingSnapshot.scope` and `GraphNode.scope` are the public answers.
