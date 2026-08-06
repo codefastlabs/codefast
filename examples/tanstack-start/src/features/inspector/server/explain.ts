@@ -1,5 +1,5 @@
 /** Why the container picked the binding it picked, checked against what the real resolve returned. */
-import type { Container, Token } from "@codefast/di";
+import type { BindingIdentifier, Container, Token } from "@codefast/di";
 import { DiError } from "@codefast/di";
 
 import type { CatalogEntry } from "#/features/inspector/server/catalog";
@@ -23,6 +23,8 @@ export type CandidateVerdict =
   | { readonly kind: "rejected"; readonly because: string };
 
 export interface CandidateView {
+  /** Which binding this is — two bindings can share a label, so identity has to come from the id. */
+  readonly id: BindingIdentifier;
   readonly label: string;
   readonly slotLabel: string;
   readonly verdict: CandidateVerdict;
@@ -204,6 +206,7 @@ export function explainSlot(
     ...(nested === undefined ? {} : { via: nested.via }),
     request: requestView,
     candidates: entries.map((entry) => ({
+      id: entry.id,
       label: entry.label,
       slotLabel: slotLabel(entry.slot),
       verdict: verdicts.get(entry) ?? { kind: "rejected", because: "unknown" },

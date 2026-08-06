@@ -55,7 +55,7 @@ export function DecisionCard({ decision }: DecisionCardProps) {
       <CardContent className="space-y-3">
         <ul className="space-y-1.5">
           {decision.candidates.map((candidate) => (
-            <CandidateRow candidate={candidate} key={candidate.label} />
+            <CandidateRow candidate={candidate} key={candidate.id} />
           ))}
         </ul>
 
