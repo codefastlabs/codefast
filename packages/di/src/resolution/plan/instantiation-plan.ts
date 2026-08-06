@@ -10,9 +10,9 @@ import type { Token } from "#/core/token";
 import { tokenName } from "#/core/token";
 import type { Constructor, ResolutionFrame, ResolveOptions } from "#/core/types";
 import { AsyncResolutionError } from "#/errors/errors";
+import type { DependencySlot } from "#/injection/resolve-options";
+import { injectionSlotToResolveOptions } from "#/injection/resolve-options";
 import type { ConstructorMetadata } from "#/metadata/metadata-types";
-import type { DependencySlot } from "#/resolution/resolve-options";
-import { injectionSlotToResolveOptions } from "#/resolution/resolve-options";
 
 // Past this depth a dependency escapes to the runtime path rather than inlining further —
 // compiled closures nest one JS frame per level, and pathological graphs are the runtime's job.

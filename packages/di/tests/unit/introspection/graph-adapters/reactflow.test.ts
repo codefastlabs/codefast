@@ -2,8 +2,8 @@ import { describe, expect, it } from "vitest";
 
 import { Container } from "#/container/container";
 import { token } from "#/core/token";
-import { optional } from "#/decorators/inject";
 import { injectable } from "#/decorators/injectable";
+import { optional } from "#/injection/descriptor";
 import { toReactFlowGraph } from "#/introspection/graph-adapters/reactflow";
 
 describe("toReactFlowGraph", () => {

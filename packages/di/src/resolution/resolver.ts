@@ -24,6 +24,8 @@ import {
   NoMatchingBindingError,
   TokenNotBoundError,
 } from "#/errors/errors";
+import type { DependencySlot } from "#/injection/resolve-options";
+import { injectionSlotToResolveOptions, isNameOnlyOptions, singleTagOnlyOf } from "#/injection/resolve-options";
 import type { LifecycleManager } from "#/lifecycle/lifecycle-manager";
 import type { ScopeManager } from "#/lifecycle/scope-manager";
 import type { MetadataReader, ParamMetadata } from "#/metadata/metadata-types";
@@ -48,8 +50,6 @@ import {
   UNOWNED_BRANCH,
 } from "#/resolution/path/resolution-path";
 import { InstantiationPlanCompiler, PLAN_RETRY } from "#/resolution/plan/instantiation-plan";
-import type { DependencySlot } from "#/resolution/resolve-options";
-import { injectionSlotToResolveOptions, isNameOnlyOptions, singleTagOnlyOf } from "#/resolution/resolve-options";
 import { matchesSlot, selectAllBindings, selectBinding } from "#/resolution/select/binding-select";
 
 const EMPTY_STRING_LIST: ReadonlyArray<string> = [];

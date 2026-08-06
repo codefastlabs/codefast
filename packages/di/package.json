@@ -124,6 +124,16 @@
       "types": "./dist/errors/errors.d.ts",
       "import": "./dist/errors/errors.js"
     },
+    "./injection/descriptor": {
+      "source": "./src/injection/descriptor.ts",
+      "types": "./dist/injection/descriptor.d.ts",
+      "import": "./dist/injection/descriptor.js"
+    },
+    "./injection/resolve-options": {
+      "source": "./src/injection/resolve-options.ts",
+      "types": "./dist/injection/resolve-options.d.ts",
+      "import": "./dist/injection/resolve-options.js"
+    },
     "./dependency-graph": {
       "source": "./src/introspection/dependency-graph.ts",
       "types": "./dist/introspection/dependency-graph.d.ts",
@@ -218,11 +228,6 @@
       "source": "./src/resolution/plan/instantiation-plan.ts",
       "types": "./dist/resolution/plan/instantiation-plan.d.ts",
       "import": "./dist/resolution/plan/instantiation-plan.js"
-    },
-    "./resolution/resolve-options": {
-      "source": "./src/resolution/resolve-options.ts",
-      "types": "./dist/resolution/resolve-options.d.ts",
-      "import": "./dist/resolution/resolve-options.js"
     },
     "./resolution/resolver": {
       "source": "./src/resolution/resolver.ts",

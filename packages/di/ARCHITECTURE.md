@@ -69,7 +69,7 @@ What _is_ split out are the collaborators that need no cross-instance private ac
 | [`instantiation-plan.ts`](src/resolution/plan/instantiation-plan.ts)                                                     | the plan compiler (below)                                                                                          |
 | [`resolution-path.ts`](src/resolution/path/resolution-path.ts)                                                           | cycle-detection bookkeeping carried on the path array                                                              |
 | [`binding-select.ts`](src/resolution/select/binding-select.ts), [`constraints.ts`](src/resolution/select/constraints.ts) | candidate selection for name/tag/predicate shapes, and `matchesSlot()` — the one slot matcher                      |
-| [`resolve-options.ts`](src/resolution/resolve-options.ts)                                                                | `DependencySlot`, the shape both dependency sources share, and the `ResolveOptions` derived from it                |
+| [`resolve-options.ts`](src/injection/resolve-options.ts)                                                                 | `DependencySlot`, the shape both dependency sources share, and the `ResolveOptions` derived from it                |
 
 Lookup caches form their own parent chain mirroring the resolvers', for the same `#private`-is-per-class reason.
 

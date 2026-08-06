@@ -35,9 +35,9 @@ import type {
   DeactivationHandler,
   ResolutionContext,
 } from "#/core/types";
-import type { InjectableDependency, ResolvedDependencyValue } from "#/decorators/inject";
-import { normalizeToDescriptor } from "#/decorators/inject";
 import { ChainNotRegisteredError, SelfBindingRequiresClassError } from "#/errors/errors";
+import type { InjectableDependency, ResolvedDependencyValue } from "#/injection/descriptor";
+import { normalizeToDescriptor } from "#/injection/descriptor";
 
 function updateSlotTag(slot: BindingSlot, tag: string, value: unknown): BindingSlot {
   const tags = [...slot.tags];

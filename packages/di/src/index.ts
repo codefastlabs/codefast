@@ -42,7 +42,7 @@ export { getActiveContainer, runWithContainer } from "#/resolution/environment";
 
 // `effectiveBindingScope` is deliberately absent: it reads a `Binding`, which is internal, and no
 // public API hands one out. `BindingSnapshot.scope` and `GraphNode.scope` are the public answers.
-export { injectionSlotToResolveOptions, bindingSlotToResolveOptions } from "#/resolution/resolve-options";
+export { injectionSlotToResolveOptions, bindingSlotToResolveOptions } from "#/injection/resolve-options";
 
 // Introspection types
 export type { BindingSnapshot, ContainerSnapshot } from "#/introspection/inspector";
@@ -55,8 +55,9 @@ export { AsyncModule, isSyncModule, Module, SyncModule } from "#/core/module";
 export type { AsyncModuleBuilder, ModuleBuilder } from "#/core/module";
 
 // Decorators
-export { inject, injectAll, isInjectionDescriptor, optional } from "#/decorators/inject";
-export type { InjectionDescriptor, InjectOptions } from "#/decorators/inject";
+export { inject } from "#/decorators/inject";
+export { injectAll, isInjectionDescriptor, optional } from "#/injection/descriptor";
+export type { InjectionDescriptor, InjectOptions } from "#/injection/descriptor";
 export { injectable } from "#/decorators/injectable";
 export type { InjectableDependency, InjectableOptions } from "#/decorators/injectable";
 export { postConstruct, preDestroy } from "#/decorators/lifecycle-decorators";

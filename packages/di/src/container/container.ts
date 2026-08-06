@@ -29,6 +29,8 @@ import {
   ScopeViolationError,
   SyncDisposalNotSupportedError,
 } from "#/errors/errors";
+import type { DependencySlot } from "#/injection/resolve-options";
+import { injectionSlotToResolveOptions, bindingSlotToResolveOptions } from "#/injection/resolve-options";
 import type { ContainerGraphJson, GraphOptions } from "#/introspection/dependency-graph";
 import { buildDependencyGraph } from "#/introspection/dependency-graph";
 import type { BindingSnapshot, ContainerSnapshot } from "#/introspection/inspector";
@@ -40,8 +42,6 @@ import type { MetadataReader } from "#/metadata/metadata-types";
 import { defaultMetadataReader } from "#/metadata/symbol-metadata-reader";
 import { verifyingMetadataReader } from "#/metadata/verifying-metadata-reader";
 import { ROOT_BRANCH } from "#/resolution/path/resolution-path";
-import type { DependencySlot } from "#/resolution/resolve-options";
-import { injectionSlotToResolveOptions, bindingSlotToResolveOptions } from "#/resolution/resolve-options";
 import { DependencyResolver } from "#/resolution/resolver";
 
 // ── Container interface ────────────────────────────────────────────────────────

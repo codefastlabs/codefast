@@ -8,8 +8,9 @@ import { describe, expect, it } from "vitest";
 import { Container } from "#/container/container";
 import { token } from "#/core/token";
 import type { BindingTag } from "#/core/types";
-import { inject, injectAll, normalizeToDescriptor, optional } from "#/decorators/inject";
-import { singleTagOnlyOf } from "#/resolution/resolve-options";
+import { inject } from "#/decorators/inject";
+import { injectAll, normalizeToDescriptor, optional } from "#/injection/descriptor";
+import { singleTagOnlyOf } from "#/injection/resolve-options";
 
 const TAG_KEY = "slot";
 

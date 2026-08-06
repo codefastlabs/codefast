@@ -10,10 +10,11 @@ import { describe, expect, it } from "vitest";
 
 import { Container } from "#/container/container";
 import { token } from "#/core/token";
-import { inject, injectAll, optional } from "#/decorators/inject";
+import { inject } from "#/decorators/inject";
 import { injectable } from "#/decorators/injectable";
 import { postConstruct } from "#/decorators/lifecycle-decorators";
 import { CircularDependencyError } from "#/errors/errors";
+import { injectAll, optional } from "#/injection/descriptor";
 
 describe("multi-tag slot matching", () => {
   const serviceToken = token<string>("multi-tag-service");

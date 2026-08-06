@@ -1,5 +1,5 @@
 import type { Constructor } from "#/core/types";
-import type { InjectionDescriptor } from "#/decorators/inject";
+import type { InjectionDescriptor } from "#/injection/descriptor";
 import { INJECT_ACCESSOR_KEY, INJECTABLE_KEY, LIFECYCLE_KEY, METADATA_SYMBOL } from "#/metadata/metadata-keys";
 import type { ConstructorMetadata, LifecycleMetadata, MetadataReader } from "#/metadata/metadata-types";
 

@@ -2,8 +2,9 @@ import { describe, expect, it } from "vitest";
 
 import { Container } from "#/container/container";
 import { token } from "#/core/token";
-import { inject, injectAll, optional } from "#/decorators/inject";
+import { inject } from "#/decorators/inject";
 import { injectable } from "#/decorators/injectable";
+import { injectAll, optional } from "#/injection/descriptor";
 
 function buildContainer(): { container: ReturnType<typeof Container.create> } {
   const configToken = token<number>("config");

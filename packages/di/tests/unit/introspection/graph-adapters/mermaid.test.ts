@@ -2,8 +2,8 @@ import { describe, expect, it } from "vitest";
 
 import { Container } from "#/container/container";
 import { token } from "#/core/token";
-import { injectAll, optional } from "#/decorators/inject";
 import { injectable } from "#/decorators/injectable";
+import { injectAll, optional } from "#/injection/descriptor";
 import { toMermaidGraph } from "#/introspection/graph-adapters/mermaid";
 
 describe("toMermaidGraph", () => {

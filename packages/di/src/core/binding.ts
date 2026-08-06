@@ -10,7 +10,7 @@ import type {
   ResolutionFrame,
   ConstraintContext,
 } from "#/core/types";
-import type { InjectableDependency, InjectionDescriptor, ResolvedDependencyValue } from "#/decorators/inject";
+import type { InjectableDependency, InjectionDescriptor, ResolvedDependencyValue } from "#/injection/descriptor";
 
 // ── BindingSlot ───────────────────────────────────────────────────────────────────
 

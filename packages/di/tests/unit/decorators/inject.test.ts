@@ -12,9 +12,10 @@
 import { describe, expect, it } from "vitest";
 
 import { token } from "#/core/token";
-import type { InjectionDescriptor } from "#/decorators/inject";
-import { inject, injectAll, isInjectionDescriptor, normalizeToDescriptor, optional } from "#/decorators/inject";
+import { inject } from "#/decorators/inject";
 import { InternalError } from "#/errors/errors";
+import type { InjectionDescriptor } from "#/injection/descriptor";
+import { injectAll, isInjectionDescriptor, normalizeToDescriptor, optional } from "#/injection/descriptor";
 
 const serviceToken = token<string>("inject-service");
 
