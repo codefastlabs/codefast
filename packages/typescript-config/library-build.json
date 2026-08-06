@@ -4,6 +4,7 @@
   "compilerOptions": {
     "noEmit": false,
     "declaration": true,
+    "isolatedDeclarations": true,
     "declarationMap": true,
     "sourceMap": true,
     "types": ["node"]

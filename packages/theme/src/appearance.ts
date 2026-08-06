@@ -17,7 +17,11 @@ import { z } from "zod";
  *
  * @since 0.5.0-canary.2
  */
-export const appearanceSchema = z.enum(["light", "dark", "automatic"]);
+export const appearanceSchema: z.ZodEnum<{ light: "light"; dark: "dark"; automatic: "automatic" }> = z.enum([
+  "light",
+  "dark",
+  "automatic",
+]);
 
 /**
  * User's appearance preference.
@@ -46,7 +50,7 @@ export type ColorScheme = Exclude<Appearance, "automatic">;
  *
  * @since 0.5.0-canary.2
  */
-export const appearances = appearanceSchema.options;
+export const appearances: Array<Appearance> = appearanceSchema.options;
 
 /**
  * Shape of the context value provided by AppearanceProvider.

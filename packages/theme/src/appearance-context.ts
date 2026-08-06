@@ -1,3 +1,4 @@
+import type { Context } from "react";
 import { createContext } from "react";
 
 import type { AppearanceContextValue } from "#/appearance";
@@ -17,4 +18,6 @@ import type { AppearanceContextValue } from "#/appearance";
  *
  * @since 0.5.0-canary.2
  */
-export const AppearanceContext = createContext<null | AppearanceContextValue>(null);
+export const AppearanceContext: Context<null | AppearanceContextValue> = createContext<null | AppearanceContextValue>(
+  null,
+);
