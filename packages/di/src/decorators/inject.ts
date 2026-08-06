@@ -37,7 +37,7 @@ type ClassAccessorDecorator<This, Value> = (
 /**
  * @since 0.3.16-canary.0
  */
-export function inject<const Value>(
+export function inject<Value>(
   token: Token<Value> | Constructor<Value>,
   options?: InjectOptions,
 ): InjectionDescriptor<Value> & ClassAccessorDecorator<unknown, Value> {

@@ -263,7 +263,7 @@ export class DependencyResolver implements ResolverCallbacks {
 
   // ── Sync resolve ───────────────────────────────────────────────────────────
 
-  resolveFromContext<const Value>(
+  resolveFromContext<Value>(
     token: Token<Value> | Constructor<Value>,
     resolutionPath: Array<string>,
     resolutionStack: Array<ResolutionFrame>,
@@ -423,7 +423,7 @@ export class DependencyResolver implements ResolverCallbacks {
     },
   });
 
-  resolve<const Value>(
+  resolve<Value>(
     token: Token<Value> | Constructor<Value>,
     options: ResolveOptions | undefined,
     resolutionPath: Array<string>,
@@ -619,7 +619,7 @@ export class DependencyResolver implements ResolverCallbacks {
     return this.resolve(dep.token, options, resolutionPath, resolutionStack);
   }
 
-  resolveOptional<const Value>(
+  resolveOptional<Value>(
     token: Token<Value> | Constructor<Value>,
     options: ResolveOptions | undefined,
     resolutionPath: Array<string>,
@@ -631,7 +631,7 @@ export class DependencyResolver implements ResolverCallbacks {
     return this.resolve(token, options, resolutionPath, resolutionStack);
   }
 
-  resolveAll<const Value>(
+  resolveAll<Value>(
     token: Token<Value> | Constructor<Value>,
     options: ResolveOptions | undefined,
     resolutionPath: Array<string>,
@@ -676,7 +676,7 @@ export class DependencyResolver implements ResolverCallbacks {
 
   // ── Async resolve ──────────────────────────────────────────────────────────
 
-  resolveAsyncFromContext<const Value>(
+  resolveAsyncFromContext<Value>(
     token: Token<Value> | Constructor<Value>,
     resolutionPath: Array<string>,
     resolutionStack: Array<ResolutionFrame>,
@@ -753,7 +753,7 @@ export class DependencyResolver implements ResolverCallbacks {
     return this.#resolveBindingAsync(binding, undefined, resolutionPath, resolutionStack, branchDepth);
   }
 
-  async resolveAsync<const Value>(
+  async resolveAsync<Value>(
     token: Token<Value> | Constructor<Value>,
     options: ResolveOptions | undefined,
     resolutionPath: Array<string>,
@@ -962,7 +962,7 @@ export class DependencyResolver implements ResolverCallbacks {
     return this.resolveAsync(dep.token, options, resolutionPath, resolutionStack, branchDepth);
   }
 
-  async resolveOptionalAsync<const Value>(
+  async resolveOptionalAsync<Value>(
     token: Token<Value> | Constructor<Value>,
     options: ResolveOptions | undefined,
     resolutionPath: Array<string>,
@@ -975,7 +975,7 @@ export class DependencyResolver implements ResolverCallbacks {
     return this.resolveAsync(token, options, resolutionPath, resolutionStack, branchDepth);
   }
 
-  async resolveAllAsync<const Value>(
+  async resolveAllAsync<Value>(
     token: Token<Value> | Constructor<Value>,
     options: ResolveOptions | undefined,
     resolutionPath: Array<string>,

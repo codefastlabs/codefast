@@ -19,18 +19,18 @@ import { UNOWNED_BRANCH } from "#/resolution/path/resolution-path";
  * @since 0.3.16-canary.0
  */
 export interface ResolverCallbacks {
-  resolveFromContext<const Value>(
+  resolveFromContext<Value>(
     token: Token<Value> | Constructor<Value>,
     resolutionPath: Array<string>,
     resolutionStack: Array<ResolutionFrame>,
   ): Value;
-  resolve<const Value>(
+  resolve<Value>(
     token: Token<Value> | Constructor<Value>,
     options: ResolveOptions | undefined,
     resolutionPath: Array<string>,
     resolutionStack: Array<ResolutionFrame>,
   ): Value;
-  resolveAsyncFromContext<const Value>(
+  resolveAsyncFromContext<Value>(
     token: Token<Value> | Constructor<Value>,
     resolutionPath: Array<string>,
     resolutionStack: Array<ResolutionFrame>,
@@ -38,31 +38,31 @@ export interface ResolverCallbacks {
   ): Promise<Value>;
   /** Not one of the eight `Value`-naming entry points: its caller is, and casts once. */
   resolveAsyncFromCascade(token: Token<unknown> | Constructor): Promise<unknown>;
-  resolveAsync<const Value>(
+  resolveAsync<Value>(
     token: Token<Value> | Constructor<Value>,
     options: ResolveOptions | undefined,
     resolutionPath: Array<string>,
     resolutionStack: Array<ResolutionFrame>,
   ): Promise<Value>;
-  resolveOptional<const Value>(
+  resolveOptional<Value>(
     token: Token<Value> | Constructor<Value>,
     options: ResolveOptions | undefined,
     resolutionPath: Array<string>,
     resolutionStack: Array<ResolutionFrame>,
   ): Value | undefined;
-  resolveOptionalAsync<const Value>(
+  resolveOptionalAsync<Value>(
     token: Token<Value> | Constructor<Value>,
     options: ResolveOptions | undefined,
     resolutionPath: Array<string>,
     resolutionStack: Array<ResolutionFrame>,
   ): Promise<Value | undefined>;
-  resolveAll<const Value>(
+  resolveAll<Value>(
     token: Token<Value> | Constructor<Value>,
     options: ResolveOptions | undefined,
     resolutionPath: Array<string>,
     resolutionStack: Array<ResolutionFrame>,
   ): Array<Value>;
-  resolveAllAsync<const Value>(
+  resolveAllAsync<Value>(
     token: Token<Value> | Constructor<Value>,
     options: ResolveOptions | undefined,
     resolutionPath: Array<string>,
@@ -123,14 +123,14 @@ export class DefaultResolutionContext implements ResolutionContext {
     }
   }
 
-  resolve<const Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Value {
+  resolve<Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Value {
     if (options === undefined) {
       return this.#resolver.resolveFromContext(token, this.#resolutionPath, this.#resolutionStack);
     }
     return this.#resolver.resolve(token, options, this.#resolutionPath, this.#resolutionStack);
   }
 
-  resolveAsync<const Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Promise<Value> {
+  resolveAsync<Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Promise<Value> {
     if (options === undefined) {
       // UNOWNED_BRANCH: this frame's array is a sync stack it will pop, so the lane must copy it.
       return this.#resolver.resolveAsyncFromContext(token, this.#resolutionPath, this.#resolutionStack, UNOWNED_BRANCH);
@@ -138,25 +138,22 @@ export class DefaultResolutionContext implements ResolutionContext {
     return this.#resolver.resolveAsync(token, options, this.#resolutionPath, this.#resolutionStack);
   }
 
-  resolveOptional<const Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Value | undefined {
+  resolveOptional<Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Value | undefined {
     return this.#resolver.resolveOptional(token, options, this.#resolutionPath, this.#resolutionStack);
   }
 
-  resolveOptionalAsync<const Value>(
+  resolveOptionalAsync<Value>(
     token: Token<Value> | Constructor<Value>,
     options?: ResolveOptions,
   ): Promise<Value | undefined> {
     return this.#resolver.resolveOptionalAsync(token, options, this.#resolutionPath, this.#resolutionStack);
   }
 
-  resolveAll<const Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Array<Value> {
+  resolveAll<Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Array<Value> {
     return this.#resolver.resolveAll(token, options, this.#resolutionPath, this.#resolutionStack);
   }
 
-  resolveAllAsync<const Value>(
-    token: Token<Value> | Constructor<Value>,
-    options?: ResolveOptions,
-  ): Promise<Array<Value>> {
+  resolveAllAsync<Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Promise<Array<Value>> {
     return this.#resolver.resolveAllAsync(token, options, this.#resolutionPath, this.#resolutionStack);
   }
 }
@@ -215,14 +212,14 @@ export class AsyncLevelContext implements ResolutionContext {
     return (this.#exactStackCache ??= this.#resolutionStack.slice(0, this.#branchDepth));
   }
 
-  resolve<const Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Value {
+  resolve<Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Value {
     if (options === undefined) {
       return this.#resolver.resolveFromContext(token, this.#exactPath(), this.#exactStack());
     }
     return this.#resolver.resolve(token, options, this.#exactPath(), this.#exactStack());
   }
 
-  resolveAsync<const Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Promise<Value> {
+  resolveAsync<Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Promise<Value> {
     if (options === undefined) {
       // The hot lane: the resolver reads this branch by depth, so nothing is materialized.
       return this.#resolver.resolveAsyncFromContext(
@@ -235,25 +232,22 @@ export class AsyncLevelContext implements ResolutionContext {
     return this.#resolver.resolveAsync(token, options, this.#exactPath(), this.#exactStack());
   }
 
-  resolveOptional<const Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Value | undefined {
+  resolveOptional<Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Value | undefined {
     return this.#resolver.resolveOptional(token, options, this.#exactPath(), this.#exactStack());
   }
 
-  resolveOptionalAsync<const Value>(
+  resolveOptionalAsync<Value>(
     token: Token<Value> | Constructor<Value>,
     options?: ResolveOptions,
   ): Promise<Value | undefined> {
     return this.#resolver.resolveOptionalAsync(token, options, this.#exactPath(), this.#exactStack());
   }
 
-  resolveAll<const Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Array<Value> {
+  resolveAll<Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Array<Value> {
     return this.#resolver.resolveAll(token, options, this.#exactPath(), this.#exactStack());
   }
 
-  resolveAllAsync<const Value>(
-    token: Token<Value> | Constructor<Value>,
-    options?: ResolveOptions,
-  ): Promise<Array<Value>> {
+  resolveAllAsync<Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Promise<Array<Value>> {
     return this.#resolver.resolveAllAsync(token, options, this.#exactPath(), this.#exactStack());
   }
 }
@@ -284,39 +278,36 @@ export class AsyncCascadeContext implements ResolutionContext {
     return new DefaultConstraintContext(this.#cascadePath, this.#cascadeStack, undefined);
   }
 
-  resolve<const Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Value {
+  resolve<Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Value {
     if (options === undefined) {
       return this.#resolver.resolveFromContext(token, this.#cascadePath, this.#cascadeStack);
     }
     return this.#resolver.resolve(token, options, this.#cascadePath, this.#cascadeStack);
   }
 
-  resolveAsync<const Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Promise<Value> {
+  resolveAsync<Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Promise<Value> {
     if (options === undefined) {
       return this.#resolver.resolveAsyncFromCascade(token) as Promise<Value>;
     }
     return this.#resolver.resolveAsync(token, options, [...this.#cascadePath], [...this.#cascadeStack]);
   }
 
-  resolveOptional<const Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Value | undefined {
+  resolveOptional<Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Value | undefined {
     return this.#resolver.resolveOptional(token, options, this.#cascadePath, this.#cascadeStack);
   }
 
-  resolveOptionalAsync<const Value>(
+  resolveOptionalAsync<Value>(
     token: Token<Value> | Constructor<Value>,
     options?: ResolveOptions,
   ): Promise<Value | undefined> {
     return this.#resolver.resolveOptionalAsync(token, options, [...this.#cascadePath], [...this.#cascadeStack]);
   }
 
-  resolveAll<const Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Array<Value> {
+  resolveAll<Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Array<Value> {
     return this.#resolver.resolveAll(token, options, this.#cascadePath, this.#cascadeStack);
   }
 
-  resolveAllAsync<const Value>(
-    token: Token<Value> | Constructor<Value>,
-    options?: ResolveOptions,
-  ): Promise<Array<Value>> {
+  resolveAllAsync<Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Promise<Array<Value>> {
     return this.#resolver.resolveAllAsync(token, options, [...this.#cascadePath], [...this.#cascadeStack]);
   }
 }

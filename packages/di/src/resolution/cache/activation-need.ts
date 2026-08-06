@@ -26,7 +26,7 @@ export class ActivationNeedCache {
     this.#registry = registry;
   }
 
-  needsActivation<const Value>(binding: Binding<Value>): boolean {
+  needsActivation<Value>(binding: Binding<Value>): boolean {
     // The chain writes a binding's own hook in place with no version anything here can see, so it
     // is read fresh on every call; the memo covers only container hooks and lifecycle metadata.
     if (binding.kind !== "alias" && binding.onActivation !== undefined) {
@@ -71,7 +71,7 @@ export class ActivationNeedCache {
   }
 
   // Own hooks are answered before the memo, so both computations cover the memoizable rest only.
-  #classNeedsActivation<const Value>(binding: Binding<Value> & { kind: "class" }): boolean {
+  #classNeedsActivation<Value>(binding: Binding<Value> & { kind: "class" }): boolean {
     if (this.#lifecycle.hasActivationHandlers(binding.token)) {
       return true;
     }
@@ -79,7 +79,7 @@ export class ActivationNeedCache {
     return this.#classes.knownPostConstruct(binding.target) !== false;
   }
 
-  #nonClassNeedsActivation<const Value>(binding: Binding<Value>): boolean {
+  #nonClassNeedsActivation<Value>(binding: Binding<Value>): boolean {
     return this.#lifecycle.hasActivationHandlers(binding.token);
   }
 }

@@ -26,7 +26,7 @@ export class LifecycleManager {
   #cachedToken: Token<unknown> | Constructor | undefined;
   #cachedHooks: Array<ActivationHandler<unknown>> | undefined;
 
-  registerActivation<const Value>(token: Token<Value> | Constructor<Value>, handler: ActivationHandler<Value>): void {
+  registerActivation<Value>(token: Token<Value> | Constructor<Value>, handler: ActivationHandler<Value>): void {
     this.#activationVersion += 1;
     this.#cachedToken = undefined;
     this.#cachedHooks = undefined;
@@ -35,7 +35,7 @@ export class LifecycleManager {
     list.push(handler as ActivationHandler<unknown>);
   }
 
-  hasActivationHandlers<const Value>(token: Token<Value> | Constructor<Value>): boolean {
+  hasActivationHandlers<Value>(token: Token<Value> | Constructor<Value>): boolean {
     const list = this.activationHandlersFor(token);
     return list !== undefined && list.length > 0;
   }
@@ -45,7 +45,7 @@ export class LifecycleManager {
   }
 
   /** Container-level activation handlers for a token — hot-path accessor, no copies. */
-  activationHandlersFor<const Value>(
+  activationHandlersFor<Value>(
     token: Token<Value> | Constructor<Value>,
   ): ReadonlyArray<ActivationHandler<unknown>> | undefined {
     const hooks = this.#activationHooks;
@@ -62,15 +62,12 @@ export class LifecycleManager {
     return list;
   }
 
-  registerDeactivation<const Value>(
-    token: Token<Value> | Constructor<Value>,
-    handler: DeactivationHandler<Value>,
-  ): void {
-    const list = (this.#deactivationHooks ??= new Map()).getOrInsert(token as DependencyKey, []);
+  registerDeactivation<Value>(token: Token<Value> | Constructor<Value>, handler: DeactivationHandler<Value>): void {
+    const list = (this.#deactivationHooks ??= new Map()).getOrInsert(token, []);
     list.push(handler as DeactivationHandler<unknown>);
   }
 
-  async runActivation<const Value>(
+  async runActivation<Value>(
     resolutionContext: ResolutionContext,
     binding: Binding<Value>,
     instance: Value,
@@ -104,7 +101,7 @@ export class LifecycleManager {
     return activatedInstance;
   }
 
-  runActivationSync<const Value>(
+  runActivationSync<Value>(
     resolutionContext: ResolutionContext,
     binding: Binding<Value>,
     instance: Value,
@@ -144,7 +141,7 @@ export class LifecycleManager {
     return activatedInstance;
   }
 
-  async runDeactivation<const Value>(
+  async runDeactivation<Value>(
     binding: Binding<Value>,
     instance: Value,
     metadataReader: MetadataReader,
@@ -179,7 +176,7 @@ export class LifecycleManager {
     }
   }
 
-  runDeactivationSync<const Value>(binding: Binding<Value>, instance: Value, metadataReader: MetadataReader): void {
+  runDeactivationSync<Value>(binding: Binding<Value>, instance: Value, metadataReader: MetadataReader): void {
     const tokenDisplayName = tokenName(binding.token);
     const tokenKey = binding.token as DependencyKey;
 
@@ -219,7 +216,7 @@ export class LifecycleManager {
 const NO_METHODS: ReadonlyArray<string> = [];
 
 /** The `@postConstruct` / `@preDestroy` methods a binding declares — only a class can declare any. */
-function lifecycleMethods<const Value>(
+function lifecycleMethods<Value>(
   binding: Binding<Value>,
   metadataReader: MetadataReader,
   phase: "postConstruct" | "preDestroy",

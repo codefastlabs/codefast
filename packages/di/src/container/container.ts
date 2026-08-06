@@ -52,12 +52,12 @@ import { DependencyResolver } from "#/resolution/resolver";
 export interface Container {
   readonly isDisposed: boolean;
 
-  bind<const Value>(token: Token<Value> | Constructor<Value>): BindToBuilder<Value>;
+  bind<Value>(token: Token<Value> | Constructor<Value>): BindToBuilder<Value>;
   unbind(tokenOrId: Token<unknown> | Constructor | BindingIdentifier): void;
   unbindAsync(tokenOrId: Token<unknown> | Constructor | BindingIdentifier): Promise<void>;
   unbindAll(): void;
   unbindAllAsync(): Promise<void>;
-  rebind<const Value>(token: Token<Value> | Constructor<Value>): BindToBuilder<Value>;
+  rebind<Value>(token: Token<Value> | Constructor<Value>): BindToBuilder<Value>;
 
   load(...modules: Array<SyncModule>): void;
   loadAsync(...modules: Array<SyncModule | AsyncModule>): Promise<void>;
@@ -65,21 +65,18 @@ export interface Container {
   unloadAsync(...modules: Array<SyncModule | AsyncModule>): Promise<void>;
   loadAutoRegistered(registry: AutoRegisterRegistry): number;
 
-  onActivation<const Value>(token: Token<Value> | Constructor<Value>, handler: ActivationHandler<Value>): void;
-  onDeactivation<const Value>(token: Token<Value> | Constructor<Value>, handler: DeactivationHandler<Value>): void;
+  onActivation<Value>(token: Token<Value> | Constructor<Value>, handler: ActivationHandler<Value>): void;
+  onDeactivation<Value>(token: Token<Value> | Constructor<Value>, handler: DeactivationHandler<Value>): void;
 
-  resolve<const Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Value;
-  resolveAsync<const Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Promise<Value>;
-  resolveOptional<const Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Value | undefined;
-  resolveOptionalAsync<const Value>(
+  resolve<Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Value;
+  resolveAsync<Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Promise<Value>;
+  resolveOptional<Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Value | undefined;
+  resolveOptionalAsync<Value>(
     token: Token<Value> | Constructor<Value>,
     options?: ResolveOptions,
   ): Promise<Value | undefined>;
-  resolveAll<const Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Array<Value>;
-  resolveAllAsync<const Value>(
-    token: Token<Value> | Constructor<Value>,
-    options?: ResolveOptions,
-  ): Promise<Array<Value>>;
+  resolveAll<Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Array<Value>;
+  resolveAllAsync<Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Promise<Array<Value>>;
 
   createChild(): Container;
 
@@ -92,7 +89,7 @@ export interface Container {
 
   has(token: Token<unknown> | Constructor, options?: ResolveOptions): boolean;
   hasOwn(token: Token<unknown> | Constructor, options?: ResolveOptions): boolean;
-  lookupBindings<const Value>(token: Token<Value> | Constructor<Value>): ReadonlyArray<BindingSnapshot>;
+  lookupBindings<Value>(token: Token<Value> | Constructor<Value>): ReadonlyArray<BindingSnapshot>;
   inspect(): ContainerSnapshot;
   generateDependencyGraph(options?: GraphOptions): ContainerGraphJson;
 }
@@ -215,7 +212,7 @@ class DefaultContainer implements Container {
 
   // ── Binding ──────────────────────────────────────────────────────────────
 
-  bind<const Value>(token: Token<Value> | Constructor<Value>): BindToBuilder<Value> {
+  bind<Value>(token: Token<Value> | Constructor<Value>): BindToBuilder<Value> {
     this.#assertNotDisposed();
     return this.#createBindToBuilder(token);
   }
@@ -233,7 +230,7 @@ class DefaultContainer implements Container {
     };
   }
 
-  #createBindToBuilder<const Value>(
+  #createBindToBuilder<Value>(
     token: Token<Value> | Constructor<Value>,
     registration: BindingRegistration = this.#ownRegistration(),
   ): BindToBuilder<Value> {
@@ -300,7 +297,7 @@ class DefaultContainer implements Container {
     }
   }
 
-  rebind<const Value>(token: Token<Value> | Constructor<Value>): BindToBuilder<Value> {
+  rebind<Value>(token: Token<Value> | Constructor<Value>): BindToBuilder<Value> {
     this.#assertNotDisposed();
     if (!this.#registry.has(token)) {
       throw new RebindUnboundTokenError(tokenName(token));
@@ -371,7 +368,7 @@ class DefaultContainer implements Container {
   #createModuleBuilder(moduleRef: object): ModuleBuilder {
     const registration = this.#moduleRegistration(moduleRef);
     return {
-      bind: <const Value>(token: Token<Value> | Constructor<Value>): BindToBuilder<Value> =>
+      bind: <Value>(token: Token<Value> | Constructor<Value>): BindToBuilder<Value> =>
         this.#createBindToBuilder(token, registration),
       import: (...modules: Array<SyncModule>): void => {
         this.#loadSyncModules(modules);
@@ -382,7 +379,7 @@ class DefaultContainer implements Container {
   #createAsyncModuleBuilder(moduleRef: object, importPromises: Array<Promise<void>>): AsyncModuleBuilder {
     const registration = this.#moduleRegistration(moduleRef);
     return {
-      bind: <const Value>(token: Token<Value> | Constructor<Value>): BindToBuilder<Value> =>
+      bind: <Value>(token: Token<Value> | Constructor<Value>): BindToBuilder<Value> =>
         this.#createBindToBuilder(token, registration),
       import: (...modules: Array<SyncModule | AsyncModule>): void => {
         for (const module of modules) {
@@ -469,19 +466,19 @@ class DefaultContainer implements Container {
 
   // ── Lifecycle hooks ────────────────────────────────────────────────────────
 
-  onActivation<const Value>(token: Token<Value> | Constructor<Value>, handler: ActivationHandler<Value>): void {
+  onActivation<Value>(token: Token<Value> | Constructor<Value>, handler: ActivationHandler<Value>): void {
     this.#assertNotDisposed();
     this.#lifecycle.registerActivation(token, handler);
   }
 
-  onDeactivation<const Value>(token: Token<Value> | Constructor<Value>, handler: DeactivationHandler<Value>): void {
+  onDeactivation<Value>(token: Token<Value> | Constructor<Value>, handler: DeactivationHandler<Value>): void {
     this.#assertNotDisposed();
     this.#lifecycle.registerDeactivation(token, handler);
   }
 
   // ── Resolution ────────────────────────────────────────────────────────────
 
-  resolve<const Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Value {
+  resolve<Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Value {
     this.#assertNotDisposed();
     const rootStack = this.#resolver.rootStack;
     // A resolve already holding the shared pair means this one is nested; it mints its own.
@@ -496,7 +493,7 @@ class DefaultContainer implements Container {
     return this.#resolver.resolve(token, options, this.#resolver.rootPath, rootStack);
   }
 
-  resolveAsync<const Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Promise<Value> {
+  resolveAsync<Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Promise<Value> {
     this.#assertNotDisposed();
     if (options === undefined) {
       return this.#resolver.resolveAsyncFromRoot(token) as Promise<Value>;
@@ -504,7 +501,7 @@ class DefaultContainer implements Container {
     return this.#resolver.resolveAsync(token, options, [], [], ROOT_BRANCH);
   }
 
-  resolveOptional<const Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Value | undefined {
+  resolveOptional<Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Value | undefined {
     this.#assertNotDisposed();
     const rootStack = this.#resolver.rootStack;
     return rootStack.length === 0
@@ -512,7 +509,7 @@ class DefaultContainer implements Container {
       : this.#resolver.resolveOptional(token, options, [], []);
   }
 
-  resolveOptionalAsync<const Value>(
+  resolveOptionalAsync<Value>(
     token: Token<Value> | Constructor<Value>,
     options?: ResolveOptions,
   ): Promise<Value | undefined> {
@@ -520,7 +517,7 @@ class DefaultContainer implements Container {
     return this.#resolver.resolveOptionalAsync(token, options, [], [], ROOT_BRANCH);
   }
 
-  resolveAll<const Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Array<Value> {
+  resolveAll<Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Array<Value> {
     this.#assertNotDisposed();
     const rootStack = this.#resolver.rootStack;
     return rootStack.length === 0
@@ -528,10 +525,7 @@ class DefaultContainer implements Container {
       : this.#resolver.resolveAll(token, options, [], []);
   }
 
-  resolveAllAsync<const Value>(
-    token: Token<Value> | Constructor<Value>,
-    options?: ResolveOptions,
-  ): Promise<Array<Value>> {
+  resolveAllAsync<Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Promise<Array<Value>> {
     this.#assertNotDisposed();
     return this.#resolver.resolveAllAsync(token, options, [], [], ROOT_BRANCH);
   }
@@ -744,7 +738,7 @@ class DefaultContainer implements Container {
     return this.#getInspector().hasOwn(token, options);
   }
 
-  lookupBindings<const Value>(token: Token<Value> | Constructor<Value>): ReadonlyArray<BindingSnapshot> {
+  lookupBindings<Value>(token: Token<Value> | Constructor<Value>): ReadonlyArray<BindingSnapshot> {
     this.#assertNotDisposed();
     return this.#getInspector().lookupBindings(token);
   }

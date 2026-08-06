@@ -39,7 +39,7 @@ export interface AsyncModule {
  * @since 0.3.16-canary.0
  */
 export interface ModuleBuilder {
-  bind<const Value>(token: Token<Value> | Constructor<Value>): BindToBuilder<Value>;
+  bind<Value>(token: Token<Value> | Constructor<Value>): BindToBuilder<Value>;
   import(...modules: Array<SyncModule>): void;
 }
 
@@ -47,7 +47,7 @@ export interface ModuleBuilder {
  * @since 0.3.16-canary.0
  */
 export interface AsyncModuleBuilder {
-  bind<const Value>(token: Token<Value> | Constructor<Value>): BindToBuilder<Value>;
+  bind<Value>(token: Token<Value> | Constructor<Value>): BindToBuilder<Value>;
   import(...modules: Array<SyncModule | AsyncModule>): void;
 }
 

@@ -21,7 +21,7 @@ export class ScopeManager {
     this.isChild = isChild;
   }
 
-  setSingleton<const Value>(binding: Binding<Value>, instance: unknown): void {
+  setSingleton<Value>(binding: Binding<Value>, instance: unknown): void {
     if (binding.instance === NO_INSTANCE) {
       (this.#singletonBindings ??= []).push(binding as Binding<unknown>);
     }
@@ -33,7 +33,7 @@ export class ScopeManager {
     return this.#singletonBindings ?? EMPTY_BINDINGS;
   }
 
-  deleteSingleton<const Value>(binding: Binding<Value>): boolean {
+  deleteSingleton<Value>(binding: Binding<Value>): boolean {
     if (binding.instance === NO_INSTANCE) {
       return false;
     }

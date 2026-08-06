@@ -145,7 +145,7 @@ function withOptions<DescValue>(
 }
 
 /** The descriptor half of `inject()`, shared with the accessor decorator that wraps it. */
-export function buildInjectionDescriptor<const Value>(
+export function buildInjectionDescriptor<Value>(
   token: Token<Value> | Constructor<Value>,
   options?: InjectOptions,
 ): InjectionDescriptor<Value> {
@@ -155,7 +155,7 @@ export function buildInjectionDescriptor<const Value>(
 /**
  * @since 0.3.16-canary.0
  */
-export function optional<const Value>(
+export function optional<Value>(
   token: Token<Value> | Constructor<Value>,
   options?: InjectOptions,
 ): InjectionDescriptor<Value | undefined> {
@@ -172,7 +172,7 @@ export function optional<const Value>(
 /**
  * @since 0.3.16-canary.0
  */
-export function injectAll<const Value>(
+export function injectAll<Value>(
   token: Token<Value> | Constructor<Value>,
   options?: InjectOptions,
 ): InjectionDescriptor<Array<Value>> {

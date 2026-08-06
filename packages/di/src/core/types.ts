@@ -104,18 +104,15 @@ export interface ConstraintContext {
  * @since 0.3.16-canary.0
  */
 export interface ResolutionContext {
-  resolve<const Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Value;
-  resolveAsync<const Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Promise<Value>;
-  resolveOptional<const Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Value | undefined;
-  resolveOptionalAsync<const Value>(
+  resolve<Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Value;
+  resolveAsync<Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Promise<Value>;
+  resolveOptional<Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Value | undefined;
+  resolveOptionalAsync<Value>(
     token: Token<Value> | Constructor<Value>,
     options?: ResolveOptions,
   ): Promise<Value | undefined>;
-  resolveAll<const Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Array<Value>;
-  resolveAllAsync<const Value>(
-    token: Token<Value> | Constructor<Value>,
-    options?: ResolveOptions,
-  ): Promise<Array<Value>>;
+  resolveAll<Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Array<Value>;
+  resolveAllAsync<Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Promise<Array<Value>>;
   readonly graph: ConstraintContext;
 }
 
