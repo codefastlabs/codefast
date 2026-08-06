@@ -28,9 +28,9 @@ import type { Token } from "#/core/token";
 import { tokenName } from "#/core/token";
 import type {
   ActivationHandler,
+  BindingConstraint,
   BindingIdentifier,
   BindingScope,
-  ConstraintContext,
   Constructor,
   DeactivationHandler,
   ResolutionContext,
@@ -197,7 +197,7 @@ export class BindingChain<Value>
 
   // Slot and predicate are what the registry indexes on, so a re-slot rebuilds the binding and
   // re-registers it — under the original id, keeping `id()` stable for the whole chain.
-  #reslot(slot: BindingSlot, predicate: ((ctx: ConstraintContext) => boolean) | undefined): this {
+  #reslot(slot: BindingSlot, predicate: BindingConstraint | undefined): this {
     const previous = this.#registered();
     this.#binding = createBinding(previous, previous.token, slot, predicate, previous.id);
     this.#commit(this.#binding, previous.id);
@@ -213,7 +213,7 @@ export class BindingChain<Value>
     return this;
   }
 
-  when(predicate: (ctx: ConstraintContext) => boolean): this {
+  when(predicate: BindingConstraint): this {
     return this.#reslot(this.#registered().slot, predicate);
   }
 

@@ -98,6 +98,11 @@ export interface ConstraintContext {
   readonly currentResolveOptions: ResolveOptions | undefined;
 }
 
+/**
+ * The predicate `when()` selects a binding by, and the shape every `when*` helper returns.
+ */
+export type BindingConstraint = (ctx: ConstraintContext) => boolean;
+
 // ── ResolutionContext ─────────────────────────────────────────────────────────
 
 /**

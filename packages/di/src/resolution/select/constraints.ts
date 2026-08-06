@@ -1,16 +1,12 @@
 import type { Token } from "#/core/token";
 import { tokenName } from "#/core/token";
-import type { BindingTag, ConstraintContext, Constructor } from "#/core/types";
-
-function tokenNameOf(token: Token<unknown> | Constructor): string {
-  return tokenName(token);
-}
+import type { BindingConstraint, BindingTag, Constructor } from "#/core/types";
 
 /**
  * @since 0.3.16-canary.0
  */
-export function whenParentIs(token: Token<unknown> | Constructor): (constraintContext: ConstraintContext) => boolean {
-  const tokenDisplayName = tokenNameOf(token);
+export function whenParentIs(token: Token<unknown> | Constructor): BindingConstraint {
+  const tokenDisplayName = tokenName(token);
   return (constraintContext) =>
     constraintContext.parent !== undefined && constraintContext.parent.tokenName === tokenDisplayName;
 }
@@ -18,8 +14,8 @@ export function whenParentIs(token: Token<unknown> | Constructor): (constraintCo
 /**
  * @since 0.3.16-canary.0
  */
-export function whenNoParentIs(token: Token<unknown> | Constructor): (constraintContext: ConstraintContext) => boolean {
-  const tokenDisplayName = tokenNameOf(token);
+export function whenNoParentIs(token: Token<unknown> | Constructor): BindingConstraint {
+  const tokenDisplayName = tokenName(token);
   return (constraintContext) =>
     constraintContext.parent === undefined || constraintContext.parent.tokenName !== tokenDisplayName;
 }
@@ -27,10 +23,8 @@ export function whenNoParentIs(token: Token<unknown> | Constructor): (constraint
 /**
  * @since 0.3.16-canary.0
  */
-export function whenAnyAncestorIs(
-  token: Token<unknown> | Constructor,
-): (constraintContext: ConstraintContext) => boolean {
-  const tokenDisplayName = tokenNameOf(token);
+export function whenAnyAncestorIs(token: Token<unknown> | Constructor): BindingConstraint {
+  const tokenDisplayName = tokenName(token);
   return (constraintContext) =>
     constraintContext.ancestors.some((ancestorFrame) => ancestorFrame.tokenName === tokenDisplayName);
 }
@@ -38,10 +32,8 @@ export function whenAnyAncestorIs(
 /**
  * @since 0.3.16-canary.0
  */
-export function whenNoAncestorIs(
-  token: Token<unknown> | Constructor,
-): (constraintContext: ConstraintContext) => boolean {
-  const tokenDisplayName = tokenNameOf(token);
+export function whenNoAncestorIs(token: Token<unknown> | Constructor): BindingConstraint {
+  const tokenDisplayName = tokenName(token);
   return (constraintContext) =>
     constraintContext.ancestors.every((ancestorFrame) => ancestorFrame.tokenName !== tokenDisplayName);
 }
@@ -49,21 +41,21 @@ export function whenNoAncestorIs(
 /**
  * @since 0.3.16-canary.0
  */
-export function whenParentNamed(name: string): (constraintContext: ConstraintContext) => boolean {
+export function whenParentNamed(name: string): BindingConstraint {
   return (constraintContext) => constraintContext.parent !== undefined && constraintContext.parent.slot.name === name;
 }
 
 /**
  * @since 0.3.16-canary.0
  */
-export function whenAnyAncestorNamed(name: string): (constraintContext: ConstraintContext) => boolean {
+export function whenAnyAncestorNamed(name: string): BindingConstraint {
   return (constraintContext) => constraintContext.ancestors.some((ancestorFrame) => ancestorFrame.slot.name === name);
 }
 
 /**
  * @since 0.3.16-canary.0
  */
-export function whenParentTagged(tag: string, value: unknown): (constraintContext: ConstraintContext) => boolean {
+export function whenParentTagged(tag: string, value: unknown): BindingConstraint {
   return (constraintContext) =>
     constraintContext.parent !== undefined &&
     constraintContext.parent.slot.tags.some(([tagKey, tagValue]) => tagKey === tag && Object.is(tagValue, value));
@@ -72,7 +64,7 @@ export function whenParentTagged(tag: string, value: unknown): (constraintContex
 /**
  * @since 0.3.16-canary.0
  */
-export function whenAnyAncestorTagged(tag: string, value: unknown): (constraintContext: ConstraintContext) => boolean {
+export function whenAnyAncestorTagged(tag: string, value: unknown): BindingConstraint {
   return (constraintContext) =>
     constraintContext.ancestors.some((ancestorFrame) =>
       ancestorFrame.slot.tags.some(([tagKey, tagValue]) => tagKey === tag && Object.is(tagValue, value)),
@@ -86,9 +78,7 @@ export function whenAnyAncestorTagged(tag: string, value: unknown): (constraintC
  *
  * @since 0.3.16-canary.1
  */
-export function whenParentTaggedAll(
-  tags: ReadonlyArray<BindingTag>,
-): (constraintContext: ConstraintContext) => boolean {
+export function whenParentTaggedAll(tags: ReadonlyArray<BindingTag>): BindingConstraint {
   return (constraintContext) => {
     const { parent } = constraintContext;
     if (parent === undefined) {
@@ -108,9 +98,7 @@ export function whenParentTaggedAll(
  *
  * @since 0.3.16-canary.1
  */
-export function whenAnyAncestorTaggedAll(
-  tags: ReadonlyArray<BindingTag>,
-): (constraintContext: ConstraintContext) => boolean {
+export function whenAnyAncestorTaggedAll(tags: ReadonlyArray<BindingTag>): BindingConstraint {
   return (constraintContext) =>
     constraintContext.ancestors.some((frame) => {
       const { tags: frameTags } = frame.slot;

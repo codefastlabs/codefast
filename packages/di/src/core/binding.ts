@@ -8,7 +8,7 @@ import type {
   DeactivationHandler,
   ResolutionContext,
   ResolutionFrame,
-  ConstraintContext,
+  BindingConstraint,
 } from "#/core/types";
 import type { InjectableDependency, InjectionDescriptor, ResolvedDependencyValue } from "#/injection/descriptor";
 
@@ -99,7 +99,7 @@ interface BindingBase<Value> {
   instance?: unknown;
   readonly token: Token<Value> | Constructor<Value>;
   readonly slot: BindingSlot;
-  readonly predicate?: ((ctx: ConstraintContext) => boolean) | undefined;
+  readonly predicate?: BindingConstraint | undefined;
 }
 
 type BindingBaseKeys = keyof BindingBase<unknown>;
@@ -268,7 +268,7 @@ export function createBinding<Value>(
   source: PartialBinding<Value> | Binding<Value>,
   token: Token<Value> | Constructor<Value>,
   slot: BindingSlot,
-  predicate: ((ctx: ConstraintContext) => boolean) | undefined,
+  predicate: BindingConstraint | undefined,
   id: BindingIdentifier = generateBindingId(),
 ): Binding<Value> {
   const fields = source as BindingFieldSuperset;
@@ -345,7 +345,7 @@ export function clearBindingFrame<Value>(binding: Binding<Value>): void {
  * @since 0.3.16-canary.0
  */
 export interface SlotConstrainedBuilder {
-  when(predicate: (ctx: ConstraintContext) => boolean): this;
+  when(predicate: BindingConstraint): this;
   whenNamed(name: string): this;
   whenTagged(tag: string, value: unknown): this;
   whenDefault(): this;

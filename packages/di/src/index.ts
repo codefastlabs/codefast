@@ -1,6 +1,7 @@
 // Foundation types
 export type {
   ActivationHandler,
+  BindingConstraint,
   BindingIdentifier,
   BindingKind,
   BindingScope,
