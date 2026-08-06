@@ -247,8 +247,12 @@ duty cycle. And the justification standing over `namedEntry` — that it "almost
 statement about a long-lived container that inverts in a per-request one, where every first resolve of
 a named token buys a map it will not read again.
 
-Still unsettled, and not answerable here: how often real code resolves one tagged token twice in one
-container. Nothing outside `packages/di` and `benchmarks/` in this repo binds a tag at all.
+The one consumer outside this package answers that with **N=1**. The inspector in
+`examples/tanstack-start` binds two tokens per region with `whenTagged()`, opens a child per request
+with `createChild()`, and resolves each tagged token exactly once inside it — its two repeated
+requests carry `tags: []`, which SPEC §3.5 counts as no criterion, so they never reach this lane.
+That is the column where a `Map`-shaped memo loses outright and the one-entry slot is close to free,
+so it does not settle whether to memoize, but it does settle the shape.
 
 > **Rule:** a chain memo is justified by hit rate, not by symmetry with a lane that has one — and the
 > hit rate to quote is a **fresh** container's, because that is where the memo is paid for and a warm
