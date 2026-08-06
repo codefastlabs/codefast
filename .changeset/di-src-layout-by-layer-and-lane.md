@@ -15,3 +15,5 @@ Renamed specifiers: `./binding`, `./constructor-type`, `./module`, `./registry`,
 No behaviour changes. Measured as a paired, alternating, per-scenario A/B against the pre-move build over thirteen scenarios: every median inside the A/A control's own spread, and the one row that looked down at three passes (`fan-out-tree-depth-3-breadth-4`, 0.966) came back at 0.993 over seven passes against an A/A median of 0.991 on the same row.
 
 `tests/unit/architecture.test.ts` gains a check that ARCHITECTURE.md's backticked `tests/…` citations point at files that exist — the existing link check only saw `](src/…)` links, so a moved test file could invalidate a citation silently.
+
+Three re-declared types are now derived, which is structurally identical and breaks nothing: `buildResolutionFrame`'s `slot` parameter is `ResolutionFrame["slot"]` rather than a hand-written shape that had lost both `readonly` modifiers, inlined `BindingTag`'s definition and dropped its tuple labels; `injectionSlotToResolveOptions` takes `Pick<DependencySlot, "name" | "tags">`; and the descriptor's `tags` no longer carries `any` from `PropertyDescriptor.value` into a cast that looked checked.
