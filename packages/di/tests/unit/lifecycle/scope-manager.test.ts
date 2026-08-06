@@ -5,6 +5,7 @@
 import { describe, expect, it } from "vitest";
 
 import { Container } from "#/container/container";
+import { createBinding, DEFAULT_BINDING_SLOT } from "#/core/binding";
 import { token } from "#/core/token";
 import type { BindingIdentifier } from "#/core/types";
 import type { DiagnosableContainer } from "#/errors/diagnostics";
@@ -15,13 +16,20 @@ function scopedInstanceCount(container: unknown): number {
   return (container as DiagnosableContainer)[RESOLUTION_DIAGNOSTICS]().scopedInstanceCount;
 }
 
-const FIRST_ID = "binding-1" as BindingIdentifier;
+// `setScoped` takes the binding so a scope failure can name the token, as `setSingleton` does.
+const FIRST_BINDING = createBinding(
+  { kind: "constant", scope: "singleton", value: 1 },
+  token<number>("scoped-first"),
+  DEFAULT_BINDING_SLOT,
+  undefined,
+);
+const FIRST_ID: BindingIdentifier = FIRST_BINDING.id;
 const UNSEEN_ID = "binding-never-seen" as BindingIdentifier;
 
 describe("ScopeManager scoped entries", () => {
   it("deleteScoped releases a cached entry and is a no-op for unknown ids", () => {
     const scope = new ScopeManager(true);
-    scope.setScoped(FIRST_ID, { alive: true });
+    scope.setScoped(FIRST_BINDING, { alive: true });
     expect(scope.hasScoped(FIRST_ID)).toBe(true);
     expect(scope.scopedCount).toBe(1);
 

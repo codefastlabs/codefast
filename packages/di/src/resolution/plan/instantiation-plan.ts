@@ -148,7 +148,7 @@ export class InstantiationPlanCompiler {
     return () => {
       const factoryResult = factory(...depThunks.map((thunk) => thunk()));
       if (factoryResult instanceof Promise) {
-        throw new AsyncResolutionError(tokenDisplayName, tokenDisplayName);
+        throw new AsyncResolutionError(tokenDisplayName);
       }
       return factoryResult;
     };

@@ -1,5 +1,6 @@
 import type { Binding } from "#/core/binding";
 import { NO_INSTANCE } from "#/core/binding";
+import { tokenName } from "#/core/token";
 import type { BindingIdentifier } from "#/core/types";
 import { MissingScopeContextError } from "#/errors/errors";
 
@@ -64,15 +65,34 @@ export class ScopeManager {
     return this.#scoped !== undefined && this.#scoped.has(id);
   }
 
-  getScoped<Value>(id: BindingIdentifier): Value {
-    return this.#scoped?.get(id) as Value;
+  getScoped(id: BindingIdentifier): unknown {
+    return this.#scoped?.get(id);
   }
 
-  setScoped(id: BindingIdentifier, instance: unknown): void {
-    if (!this.isChild) {
-      throw new MissingScopeContextError("(unknown)");
+  /**
+   * The cached scoped instance, or {@link SCOPED_MISS}.
+   *
+   * @remarks One map read where `hasScoped` + `getScoped` took two; a cached `undefined` is the only
+   * shape that pays for the second, and it is the rare one.
+   */
+  readScoped(id: BindingIdentifier): unknown {
+    const scoped = this.#scoped;
+    if (scoped === undefined) {
+      return SCOPED_MISS;
     }
-    (this.#scoped ??= new Map()).set(id, instance);
+    const cached = scoped.get(id);
+    if (cached !== undefined) {
+      return cached;
+    }
+    return scoped.has(id) ? undefined : SCOPED_MISS;
+  }
+
+  /** Takes the binding rather than its id, so a failure here can name the token — as `setSingleton` does. */
+  setScoped(binding: Binding, instance: unknown): void {
+    if (!this.isChild) {
+      throw new MissingScopeContextError(tokenName(binding.token));
+    }
+    (this.#scoped ??= new Map()).set(binding.id, instance);
   }
 
   /** Releases a removed binding's scoped instance — no deactivation, per SPEC §5.2. */
@@ -103,3 +123,10 @@ export class ScopeManager {
 }
 
 const EMPTY_BINDINGS: ReadonlyArray<Binding<unknown>> = [];
+
+/**
+ * Absent scoped entry — distinguishes it from a cached `undefined`.
+ *
+ * @remarks A `unique symbol`, so no value a caller could cache can ever equal it.
+ */
+export const SCOPED_MISS: unique symbol = Symbol("di:scoped-miss");

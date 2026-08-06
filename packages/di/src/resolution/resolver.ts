@@ -28,6 +28,7 @@ import type { DependencySlot } from "#/injection/resolve-options";
 import { injectionSlotToResolveOptions, isNameOnlyOptions, singleTagOnlyOf } from "#/injection/resolve-options";
 import type { LifecycleManager } from "#/lifecycle/lifecycle-manager";
 import type { ScopeManager } from "#/lifecycle/scope-manager";
+import { SCOPED_MISS } from "#/lifecycle/scope-manager";
 import type { MetadataReader, ParamMetadata } from "#/metadata/metadata-types";
 import { ActivationNeedCache } from "#/resolution/cache/activation-need";
 import type { DefaultLookupEntry } from "#/resolution/cache/binding-lookup-cache";
@@ -348,7 +349,7 @@ export class DependencyResolver implements ResolverCallbacks {
       const resolutionCtx = this.#acquireSyncResolutionContext(resolutionPath, resolutionStack, undefined);
       const factoryResult = binding.factory(resolutionCtx);
       if (factoryResult instanceof Promise) {
-        throw new AsyncResolutionError(tokenDisplayName, tokenDisplayName);
+        throw new AsyncResolutionError(resolutionPath[0] ?? tokenDisplayName, tokenDisplayName);
       }
       let activated = factoryResult;
       if (binding.onActivation !== undefined) {
@@ -486,7 +487,7 @@ export class DependencyResolver implements ResolverCallbacks {
         const resolutionCtx = this.#acquireSyncResolutionContext(resolutionPath, resolutionStack, options);
         const dynamicResult = binding.factory(resolutionCtx);
         if (dynamicResult instanceof Promise) {
-          throw new AsyncResolutionError(tokenDisplayName, tokenDisplayName);
+          throw new AsyncResolutionError(resolutionPath[0] ?? tokenDisplayName, tokenDisplayName);
         }
         return dynamicResult;
       }
@@ -510,7 +511,7 @@ export class DependencyResolver implements ResolverCallbacks {
       if (scope === "singleton") {
         this.#scope.setSingleton(binding, activated);
       } else if (scope === "scoped") {
-        this.#scope.setScoped(binding.id, activated);
+        this.#scope.setScoped(binding, activated);
       }
 
       return activated;
@@ -537,13 +538,13 @@ export class DependencyResolver implements ResolverCallbacks {
         }
         const factoryResult = binding.factory(ctx);
         if (factoryResult instanceof Promise) {
-          throw new AsyncResolutionError(tokenName(binding.token), tokenName(binding.token));
+          throw asyncResolutionErrorFor(binding, resolutionPath);
         }
         return factoryResult;
       }
 
       case "dynamic-async":
-        throw new AsyncResolutionError(tokenName(binding.token), tokenName(binding.token));
+        throw asyncResolutionErrorFor(binding, resolutionPath);
 
       case "class": {
         const deps = this.#resolveDeps(this.#constructorParams(binding.target), resolutionPath, resolutionStack);
@@ -554,13 +555,13 @@ export class DependencyResolver implements ResolverCallbacks {
         const deps = this.#resolveDeps(binding.deps, resolutionPath, resolutionStack);
         const factoryResult = binding.factory(...deps);
         if (factoryResult instanceof Promise) {
-          throw new AsyncResolutionError(tokenName(binding.token), tokenName(binding.token));
+          throw asyncResolutionErrorFor(binding, resolutionPath);
         }
         return factoryResult;
       }
 
       case "resolved-async":
-        throw new AsyncResolutionError(tokenName(binding.token), tokenName(binding.token));
+        throw asyncResolutionErrorFor(binding, resolutionPath);
 
       case "alias":
         throw new InternalError("alias should have been followed before instantiation");
@@ -743,8 +744,9 @@ export class DependencyResolver implements ResolverCallbacks {
         return owner.#resolveBindingAsync(binding, undefined, resolutionPath, resolutionStack, branchDepth);
       }
     } else if (this.#scope.isChild) {
-      if (this.#scope.hasScoped(binding.id)) {
-        return Promise.resolve(this.#scope.getScoped(binding.id));
+      const cachedScoped = this.#scope.readScoped(binding.id);
+      if (cachedScoped !== SCOPED_MISS) {
+        return Promise.resolve(cachedScoped);
       }
     } else {
       // Not `#readScoped`: this entry point reports failure as a rejection, never a sync throw.
@@ -850,7 +852,7 @@ export class DependencyResolver implements ResolverCallbacks {
       needsActivation,
     );
     if (scope === "scoped") {
-      this.#scope.setScoped(binding.id, activated);
+      this.#scope.setScoped(binding, activated);
     }
     return activated;
   }
@@ -1117,10 +1119,7 @@ export class DependencyResolver implements ResolverCallbacks {
     if (!this.#scope.isChild) {
       throw new MissingScopeContextError(tokenName(binding.token));
     }
-    if (this.#scope.hasScoped(binding.id)) {
-      return this.#scope.getScoped(binding.id);
-    }
-    return SCOPED_MISS;
+    return this.#scope.readScoped(binding.id);
   }
 
   #makeConstraintContext(
@@ -1184,7 +1183,7 @@ export class DependencyResolver implements ResolverCallbacks {
     try {
       const dynamicResult = binding.factory(resolutionCtx);
       if (dynamicResult instanceof Promise) {
-        throw new AsyncResolutionError(tokenDisplayName, tokenDisplayName);
+        throw new AsyncResolutionError(resolutionPath[0] ?? tokenDisplayName, tokenDisplayName);
       }
       return dynamicResult;
     } finally {
@@ -1366,9 +1365,6 @@ export class DependencyResolver implements ResolverCallbacks {
   }
 }
 
-/** Absent scoped entry — distinguishes it from a cached `undefined`. */
-const SCOPED_MISS: unique symbol = Symbol("di:scoped-miss");
-
 function anyPredicate(bindings: ReadonlyArray<Binding>): boolean {
   for (let index = 0; index < bindings.length; index += 1) {
     if (bindings[index]!.predicate !== undefined) {
@@ -1376,6 +1372,12 @@ function anyPredicate(bindings: ReadonlyArray<Binding>): boolean {
     }
   }
   return false;
+}
+
+/** The async-resolution failure for a binding reached on a sync path, naming what to await instead. */
+function asyncResolutionErrorFor(binding: Binding, resolutionPath: ReadonlyArray<string>): AsyncResolutionError {
+  const sourceName = tokenName(binding.token);
+  return new AsyncResolutionError(resolutionPath[0] ?? sourceName, sourceName);
 }
 
 /** Only a factory is handed the resolution context; everything else gets its deps directly. */
