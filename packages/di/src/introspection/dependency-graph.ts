@@ -103,6 +103,157 @@ function edgeLabel(ref: DependencySlot, index: number): string {
   return ref.optional ? `${criterion} optional` : criterion;
 }
 
+/** The collections a graph walk fills, so each step of the walk can be a function of its own. */
+interface GraphAccumulator {
+  readonly nodes: Array<GraphNode>;
+  readonly edges: Array<GraphEdge>;
+  // One placeholder node per optional-but-unbound token keeps the declared edge visible.
+  readonly unboundNodeIds: Map<string, string>;
+}
+
+/** Own bindings shadow the fallback, mirroring resolution's upward walk. */
+type BindingLookup = (token: Token<unknown> | Constructor) => ReadonlyArray<Binding>;
+
+function bindingLookup(sourceRegistry: BindingRegistry, fallbackRegistry: BindingRegistry | undefined): BindingLookup {
+  return (token) => {
+    const own = sourceRegistry.getAll(token);
+
+    if (own.length > 0 || fallbackRegistry === undefined) {
+      return own;
+    }
+
+    return fallbackRegistry.getAll(token);
+  };
+}
+
+/** The placeholder node an optional-but-unbound dependency points at, minted once per token. */
+function unboundNodeIdFor(accumulator: GraphAccumulator, dependency: Token<unknown> | Constructor): string {
+  const key = tokenKeyOf(dependency);
+  const existing = accumulator.unboundNodeIds.get(key);
+
+  if (existing !== undefined) {
+    return existing;
+  }
+
+  const id = `unbound:${key}`;
+
+  accumulator.unboundNodeIds.set(key, id);
+  accumulator.nodes.push({
+    id,
+    tokenName: tokenName(dependency),
+    tokenKey: key,
+    kind: "unbound",
+    scope: "unbound",
+    fromParent: false,
+  });
+
+  return id;
+}
+
+function addDependencyEdges(
+  accumulator: GraphAccumulator,
+  from: string,
+  ref: DependencySlot,
+  index: number,
+  lookup: BindingLookup,
+): void {
+  const targets = matchingTargets(lookup(ref.token), ref);
+  const label = edgeLabel(ref, index);
+
+  if (targets.length === 0) {
+    // A required-but-unbound dependency is validate()'s story, not the graph's.
+    if (!ref.optional) {
+      return;
+    }
+
+    accumulator.edges.push({
+      from,
+      to: unboundNodeIdFor(accumulator, ref.token),
+      label,
+      optional: true,
+      ...(ref.name !== undefined ? { slotName: ref.name } : {}),
+    });
+
+    return;
+  }
+
+  for (const target of targets) {
+    // A multi dep with no criterion of its own fans out — each edge names the slot it hits.
+    const slotName = target.slot.name ?? ref.name;
+    const perTargetLabel =
+      ref.multi && ref.name === undefined && slotName !== undefined
+        ? edgeLabel({ ...ref, name: slotName }, index)
+        : label;
+
+    accumulator.edges.push({
+      from,
+      to: target.id,
+      label: perTargetLabel,
+      optional: ref.optional,
+      ...(slotName !== undefined ? { slotName } : {}),
+    });
+  }
+}
+
+/** What one binding declares up front — a class's params, a factory's descriptors, an alias's target. */
+function addBindingEdges(
+  accumulator: GraphAccumulator,
+  binding: Binding,
+  metadataReader: MetadataReader,
+  lookup: BindingLookup,
+): void {
+  if (binding.kind === "class") {
+    const meta = metadataReader.getConstructorMetadata(binding.target);
+
+    if (meta !== undefined) {
+      for (const [index, param] of meta.params.entries()) {
+        addDependencyEdges(accumulator, binding.id, param, index, lookup);
+      }
+    }
+
+    return;
+  }
+
+  if (binding.kind === "resolved" || binding.kind === "resolved-async") {
+    for (const [index, dependency] of binding.deps.entries()) {
+      addDependencyEdges(accumulator, binding.id, dependency, index, lookup);
+    }
+
+    return;
+  }
+
+  if (binding.kind === "alias") {
+    const aliasRef: DependencySlot = { token: binding.target, optional: false, multi: false };
+
+    for (const target of matchingTargets(lookup(binding.target), aliasRef)) {
+      accumulator.edges.push({ from: binding.id, to: target.id, label: "alias", optional: false });
+    }
+  }
+}
+
+function addRegistryBindings(
+  accumulator: GraphAccumulator,
+  sourceRegistry: BindingRegistry,
+  metadataReader: MetadataReader,
+  fromParent: boolean,
+  fallbackRegistry?: BindingRegistry,
+): void {
+  const lookup = bindingLookup(sourceRegistry, fallbackRegistry);
+
+  for (const binding of sourceRegistry.allBindings()) {
+    accumulator.nodes.push({
+      id: binding.id,
+      tokenName: tokenName(binding.token),
+      tokenKey: tokenKeyOf(binding.token),
+      kind: binding.kind,
+      scope: effectiveBindingScope(binding),
+      fromParent,
+    });
+
+    addBindingEdges(accumulator, binding, metadataReader, lookup);
+  }
+}
+
 /**
  * @since 0.3.16-canary.0
  */
@@ -112,120 +263,14 @@ export function buildDependencyGraph(
   options: GraphOptions | undefined,
   parentRegistry?: BindingRegistry,
 ): ContainerGraphJson {
-  const nodes: Array<GraphNode> = [];
-  const edges: Array<GraphEdge> = [];
+  const accumulator: GraphAccumulator = { nodes: [], edges: [], unboundNodeIds: new Map() };
   const includesParent = options?.includeParent === true;
-  // One placeholder node per optional-but-unbound token keeps the declared edge visible.
-  const unboundNodeIds = new Map<string, string>();
 
-  const addDependencyEdges = (
-    from: string,
-    ref: DependencySlot,
-    index: number,
-    lookup: (token: Token<unknown> | Constructor) => ReadonlyArray<Binding>,
-  ): void => {
-    const targets = matchingTargets(lookup(ref.token), ref);
-    const label = edgeLabel(ref, index);
+  addRegistryBindings(accumulator, registry, metadataReader, false, includesParent ? parentRegistry : undefined);
 
-    if (targets.length === 0) {
-      // A required-but-unbound dependency is validate()'s story, not the graph's.
-      if (!ref.optional) {
-        return;
-      }
-
-      const name = tokenName(ref.token);
-      const key = tokenKeyOf(ref.token);
-      let id = unboundNodeIds.get(key);
-
-      if (id === undefined) {
-        id = `unbound:${key}`;
-        unboundNodeIds.set(key, id);
-        nodes.push({ id, tokenName: name, tokenKey: key, kind: "unbound", scope: "unbound", fromParent: false });
-      }
-
-      edges.push({
-        from,
-        to: id,
-        label,
-        optional: true,
-        ...(ref.name !== undefined ? { slotName: ref.name } : {}),
-      });
-
-      return;
-    }
-
-    for (const target of targets) {
-      // A multi dep with no criterion of its own fans out — each edge names the slot it hits.
-      const slotName = target.slot.name ?? ref.name;
-      const perTargetLabel =
-        ref.multi && ref.name === undefined && slotName !== undefined
-          ? edgeLabel({ ...ref, name: slotName }, index)
-          : label;
-
-      edges.push({
-        from,
-        to: target.id,
-        label: perTargetLabel,
-        optional: ref.optional,
-        ...(slotName !== undefined ? { slotName } : {}),
-      });
-    }
-  };
-
-  const addBindings = (
-    sourceRegistry: BindingRegistry,
-    fromParent: boolean,
-    fallbackRegistry?: BindingRegistry,
-  ): void => {
-    // Own bindings shadow the fallback; the parent chain is consulted only when the token has
-    // no local binding, mirroring resolution's upward walk.
-    const lookup = (token: Token<unknown> | Constructor): ReadonlyArray<Binding> => {
-      const own = sourceRegistry.getAll(token);
-
-      if (own.length > 0 || fallbackRegistry === undefined) {
-        return own;
-      }
-
-      return fallbackRegistry.getAll(token);
-    };
-
-    for (const binding of sourceRegistry.allBindings()) {
-      const scope = effectiveBindingScope(binding);
-      nodes.push({
-        id: binding.id,
-        tokenName: tokenName(binding.token),
-        tokenKey: tokenKeyOf(binding.token),
-        kind: binding.kind,
-        scope,
-        fromParent,
-      });
-
-      if (binding.kind === "class") {
-        const meta = metadataReader.getConstructorMetadata(binding.target);
-
-        if (meta !== undefined) {
-          for (const [index, param] of meta.params.entries()) {
-            addDependencyEdges(binding.id, param, index, lookup);
-          }
-        }
-      } else if (binding.kind === "resolved" || binding.kind === "resolved-async") {
-        for (const [index, dependency] of binding.deps.entries()) {
-          addDependencyEdges(binding.id, dependency, index, lookup);
-        }
-      } else if (binding.kind === "alias") {
-        const aliasRef: DependencySlot = { token: binding.target, optional: false, multi: false };
-
-        for (const target of matchingTargets(lookup(binding.target), aliasRef)) {
-          edges.push({ from: binding.id, to: target.id, label: "alias", optional: false });
-        }
-      }
-    }
-  };
-
-  addBindings(registry, false, includesParent ? parentRegistry : undefined);
   if (includesParent && parentRegistry !== undefined) {
-    addBindings(parentRegistry, true);
+    addRegistryBindings(accumulator, parentRegistry, metadataReader, true);
   }
 
-  return { nodes, edges, includesParent };
+  return { nodes: accumulator.nodes, edges: accumulator.edges, includesParent };
 }
