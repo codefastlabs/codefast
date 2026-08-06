@@ -42,7 +42,7 @@ export class BindingRegistry {
    */
   add(binding: Binding): Binding | undefined {
     this.#version += 1;
-    const key = binding.token as DependencyKey;
+    const key: DependencyKey = binding.token;
     // Eager, not computed: a bind is usually the token's first, so the fallback is usually the
     // one that gets stored — and the computed form would add a call to allocating it anyway.
     const bindingsForToken = this.#bindings.getOrInsert(key, []);
@@ -73,7 +73,7 @@ export class BindingRegistry {
   /** Remove all bindings for a token. Returns removed bindings. */
   removeByToken(token: Token<unknown> | Constructor): Array<Binding> {
     this.#version += 1;
-    const key = token as DependencyKey;
+    const key: DependencyKey = token;
     const bindingsForToken = this.#bindings.get(key) ?? [];
     this.#bindings.delete(key);
     this.#simpleNamed?.delete(key);
@@ -93,7 +93,7 @@ export class BindingRegistry {
     }
     this.#version += 1;
     this.#byId.delete(id);
-    const key = binding.token as DependencyKey;
+    const key: DependencyKey = binding.token;
     const bindingsForToken = this.#bindings.get(key);
     if (bindingsForToken !== undefined) {
       const bindingIndex = bindingsForToken.findIndex((candidate) => candidate.id === id);
@@ -116,7 +116,7 @@ export class BindingRegistry {
 
   /** Get all bindings for a token. */
   getAll(token: Token<unknown> | Constructor): ReadonlyArray<Binding> {
-    return this.#bindings.get(token as DependencyKey) ?? [];
+    return this.#bindings.get(token) ?? [];
   }
 
   /** Get binding by ID. */
@@ -126,7 +126,7 @@ export class BindingRegistry {
 
   /** Check if any binding exists for token. */
   has(token: Token<unknown> | Constructor): boolean {
-    const key = token as DependencyKey;
+    const key: DependencyKey = token;
     const list = this.#bindings.get(key);
     return list !== undefined && list.length > 0;
   }
@@ -153,23 +153,20 @@ export class BindingRegistry {
   }
 
   getSimpleNamed(token: Token<unknown> | Constructor, name: string): Binding | undefined {
-    return this.#simpleNamed?.get(token as DependencyKey)?.get(name);
+    return this.#simpleNamed?.get(token)?.get(name);
   }
 
   getSimpleTagged(token: Token<unknown> | Constructor, tagKey: string, tagValue: unknown): Binding | undefined {
-    return this.#simpleTagged
-      ?.get(token as DependencyKey)
-      ?.get(tagKey)
-      ?.get(tagValue);
+    return this.#simpleTagged?.get(token)?.get(tagKey)?.get(tagValue);
   }
 
   getFastDefault(token: Token<unknown> | Constructor): Binding | undefined {
-    return this.#fastDefault.get(token as DependencyKey);
+    return this.#fastDefault.get(token);
   }
 
   /** Summarize available slot strings for a token (for error messages). */
   availableSlotStrings(token: Token<unknown> | Constructor): Array<string> {
-    const bindingsForToken = this.#bindings.get(token as DependencyKey) ?? [];
+    const bindingsForToken = this.#bindings.get(token) ?? [];
     return bindingsForToken.map((binding) => bindingSlotToString(binding.slot));
   }
 

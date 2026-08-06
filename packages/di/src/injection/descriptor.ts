@@ -72,7 +72,7 @@ export function normalizeToDescriptor(dependency: InjectableDependency): Injecti
   if (isInjectionDescriptor(dependency)) {
     return materializeInjectionDescriptor(dependency);
   }
-  return { token: dependency as Token<unknown> | Constructor, optional: false, multi: false };
+  return { token: dependency, optional: false, multi: false };
 }
 
 /**

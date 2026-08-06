@@ -31,7 +31,7 @@ export class LifecycleManager {
     this.#cachedToken = undefined;
     this.#cachedHooks = undefined;
     // ✓ TS6.0: Map.getOrInsert (ES2025)
-    const list = (this.#activationHooks ??= new Map()).getOrInsert(token as DependencyKey, []);
+    const list = (this.#activationHooks ??= new Map()).getOrInsert(token, []);
     list.push(handler as ActivationHandler<unknown>);
   }
 
@@ -52,7 +52,7 @@ export class LifecycleManager {
     if (hooks === undefined) {
       return undefined;
     }
-    const key = token as DependencyKey;
+    const key: DependencyKey = token;
     if (key === this.#cachedToken) {
       return this.#cachedHooks;
     }
@@ -90,7 +90,7 @@ export class LifecycleManager {
     }
 
     // 3. container-level onActivation
-    const containerHooks = this.#activationHooks?.get(binding.token as DependencyKey);
+    const containerHooks = this.#activationHooks?.get(binding.token);
     if (containerHooks !== undefined) {
       for (const hook of containerHooks) {
         const activationResult = hook(resolutionContext, activatedInstance);
@@ -127,7 +127,7 @@ export class LifecycleManager {
 
     // 3. container-level onActivation (must be sync)
     const tokenDisplayName = tokenName(binding.token);
-    const containerHooks = this.#activationHooks?.get(binding.token as DependencyKey);
+    const containerHooks = this.#activationHooks?.get(binding.token);
     if (containerHooks !== undefined) {
       for (const hook of containerHooks) {
         const activationResult = hook(resolutionContext, activatedInstance);
@@ -146,7 +146,7 @@ export class LifecycleManager {
     instance: Value,
     metadataReader: MetadataReader,
   ): Promise<void> {
-    const tokenKey = binding.token as DependencyKey;
+    const tokenKey: DependencyKey = binding.token;
 
     // 1. container-level onDeactivation
     const containerHooks = this.#deactivationHooks?.get(tokenKey);
@@ -178,7 +178,7 @@ export class LifecycleManager {
 
   runDeactivationSync<Value>(binding: Binding<Value>, instance: Value, metadataReader: MetadataReader): void {
     const tokenDisplayName = tokenName(binding.token);
-    const tokenKey = binding.token as DependencyKey;
+    const tokenKey: DependencyKey = binding.token;
 
     // 1. container-level onDeactivation
     const containerHooks = this.#deactivationHooks?.get(tokenKey);

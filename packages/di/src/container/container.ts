@@ -583,7 +583,7 @@ class DefaultContainer implements Container {
           continue;
         }
         const slotOptions = bindingSlotToResolveOptions(binding.slot);
-        await this.resolveAsync(binding.token as Token<unknown>, slotOptions);
+        await this.resolveAsync(binding.token, slotOptions);
       }
     }
   }
@@ -618,7 +618,7 @@ class DefaultContainer implements Container {
    * makes it captive — but the DFS does not descend into the factory, whose body is opaque.
    */
   #validateSingletonBindingGraph(root: Binding, reader: MetadataReader): void {
-    const rootName = tokenName(root.token as Token<unknown>);
+    const rootName = tokenName(root.token);
 
     const dfs = (current: Binding, pathNames: Array<string>, pathBindingIds: Set<BindingIdentifier>): void => {
       if (pathBindingIds.has(current.id)) {
@@ -672,8 +672,8 @@ class DefaultContainer implements Container {
         throw new CircularDependencyError(cyclePath);
       }
       seenAliasIds.add(current.id);
-      cyclePath.push(tokenName(current.token as Token<unknown>));
-      const nextToken = current.target as Token<unknown> | Constructor;
+      cyclePath.push(tokenName(current.token));
+      const nextToken = current.target;
       const next = this.#resolver.peekBindingForValidate(nextToken, options);
       if (next === undefined) {
         return undefined;
@@ -695,7 +695,7 @@ class DefaultContainer implements Container {
   /** What a binding declares up front — a class's params, a factory's descriptors, else nothing. */
   #staticDependencies(binding: Binding, reader: MetadataReader): ReadonlyArray<DependencySlot> {
     if (binding.kind === "class") {
-      return reader.getConstructorMetadata(binding.target as Constructor)?.params ?? [];
+      return reader.getConstructorMetadata(binding.target)?.params ?? [];
     }
     if (binding.kind === "resolved" || binding.kind === "resolved-async") {
       return binding.deps;
@@ -718,7 +718,7 @@ class DefaultContainer implements Container {
       for (const candidate of this.#peekDependencyCandidates(dep, depOptions)) {
         const terminal = this.#followAliasChainToTerminal(candidate, depOptions);
         if (terminal !== undefined) {
-          edges.push({ terminal, depTokenName: tokenName(terminal.token as Token<unknown>) });
+          edges.push({ terminal, depTokenName: tokenName(terminal.token) });
         }
       }
     }
