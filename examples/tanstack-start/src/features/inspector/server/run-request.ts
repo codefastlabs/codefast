@@ -1,12 +1,11 @@
 /**
  * One tenant request, run through a per-request child container, with every slot decision recorded.
  */
-// Side-effect import: install the Map.prototype.getOrInsert polyfill before @codefast/di loads.
-import "#/features/di/server/map-get-or-insert";
 import type { Container } from "@codefast/di";
 import { Container as DiContainer, DiError, token } from "@codefast/di";
 import { createServerFn } from "@tanstack/react-start";
 
+import { ensureMapPolyfill } from "#/features/di/server/ensure-map-polyfill";
 import type { BootReport } from "#/features/inspector/server/boot";
 import { bindPricingConfig, warmAndReport } from "#/features/inspector/server/boot";
 import type { CatalogEntry } from "#/features/inspector/server/catalog";
@@ -100,6 +99,8 @@ function bindInfrastructure(container: Container): void {
 
 /** The application container: built and warmed once, holding everything a request selects from. */
 async function buildRoot(): Promise<Root> {
+  await ensureMapPolyfill();
+
   const container = DiContainer.create();
 
   bindInfrastructure(container);
