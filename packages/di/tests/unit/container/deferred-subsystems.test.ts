@@ -9,9 +9,9 @@
 import { describe, expect, it } from "vitest";
 
 import { Container } from "#/container/container";
-import { MissingScopeContextError } from "#/errors";
-import { Module } from "#/module";
-import { token } from "#/token";
+import { Module } from "#/core/module";
+import { token } from "#/core/token";
+import { MissingScopeContextError } from "#/errors/errors";
 
 describe("inspector built on first use", () => {
   it("answers inspect() on a container that has done nothing else", () => {

@@ -7,10 +7,10 @@
 import { describe, expect, it } from "vitest";
 
 import { Container } from "#/container/container";
+import { Module } from "#/core/module";
+import { token } from "#/core/token";
 import { createAutoRegisterRegistry } from "#/decorators/injectable";
-import { AsyncModuleLoadError, DisposedContainerError } from "#/errors";
-import { Module } from "#/module";
-import { token } from "#/token";
+import { AsyncModuleLoadError, DisposedContainerError } from "#/errors/errors";
 
 describe("unbinding", () => {
   it("removes the binding and runs deactivation on the cached singleton", () => {

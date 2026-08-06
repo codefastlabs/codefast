@@ -1,11 +1,11 @@
-import type { Binding } from "#/binding";
+import type { Binding } from "#/core/binding";
+import { effectiveBindingScope } from "#/core/binding-scope";
+import type { BindingRegistry } from "#/core/registry";
+import type { Token } from "#/core/token";
+import { tokenName } from "#/core/token";
+import type { BindingKind, BindingScope, Constructor, ResolveOptions } from "#/core/types";
 import type { MetadataReader } from "#/metadata/metadata-types";
-import type { BindingRegistry } from "#/registry";
-import { effectiveBindingScope } from "#/resolution/binding-scope";
-import { matchesSlot } from "#/resolution/binding-select";
-import type { Token } from "#/token";
-import { tokenName } from "#/token";
-import type { BindingKind, BindingScope, Constructor, ResolveOptions } from "#/types";
+import { matchesSlot } from "#/resolution/select/binding-select";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 

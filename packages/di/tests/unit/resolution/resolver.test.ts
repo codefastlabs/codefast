@@ -7,11 +7,11 @@
 import { describe, expect, it } from "vitest";
 
 import { Container } from "#/container/container";
+import { token } from "#/core/token";
 import { injectAll, optional } from "#/decorators/inject";
 import { injectable } from "#/decorators/injectable";
 import { postConstruct } from "#/decorators/lifecycle-decorators";
-import { CircularDependencyError, MissingScopeContextError } from "#/errors";
-import { token } from "#/token";
+import { CircularDependencyError, MissingScopeContextError } from "#/errors/errors";
 
 describe("class instantiation — arity 0..3 (unrolled fast path)", () => {
   it("resolves a zero-arg transient class fresh each time", () => {

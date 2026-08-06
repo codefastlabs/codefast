@@ -15,14 +15,17 @@ import type {
   SingletonBindingBuilder,
   SingletonLifecycleBuilder,
   TransientBindingBuilder,
-} from "#/binding";
-import { bindingSlotEquals, clearBindingFrame, createBinding, DEFAULT_BINDING_SLOT, refinableFields } from "#/binding";
-import type { InjectableDependency, ResolvedDependencyValue } from "#/decorators/inject";
-import { normalizeToDescriptor } from "#/decorators/inject";
-import { ChainNotRegisteredError, SelfBindingRequiresClassError } from "#/errors";
-import type { BindingRegistry } from "#/registry";
-import type { Token } from "#/token";
-import { tokenName } from "#/token";
+} from "#/core/binding";
+import {
+  bindingSlotEquals,
+  clearBindingFrame,
+  createBinding,
+  DEFAULT_BINDING_SLOT,
+  refinableFields,
+} from "#/core/binding";
+import type { BindingRegistry } from "#/core/registry";
+import type { Token } from "#/core/token";
+import { tokenName } from "#/core/token";
 import type {
   ActivationHandler,
   BindingIdentifier,
@@ -31,7 +34,10 @@ import type {
   Constructor,
   DeactivationHandler,
   ResolutionContext,
-} from "#/types";
+} from "#/core/types";
+import type { InjectableDependency, ResolvedDependencyValue } from "#/decorators/inject";
+import { normalizeToDescriptor } from "#/decorators/inject";
+import { ChainNotRegisteredError, SelfBindingRequiresClassError } from "#/errors/errors";
 
 function updateSlotTag(slot: BindingSlot, tag: string, value: unknown): BindingSlot {
   const tags = [...slot.tags];

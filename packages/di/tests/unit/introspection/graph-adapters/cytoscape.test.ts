@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
 
 import { Container } from "#/container/container";
+import { token } from "#/core/token";
 import { toCytoscapeGraph } from "#/introspection/graph-adapters/cytoscape";
-import { token } from "#/token";
 
 describe("toCytoscapeGraph", () => {
   it("emits one node element per binding and one edge element per dependency", () => {

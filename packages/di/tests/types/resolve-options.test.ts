@@ -1,9 +1,9 @@
 import { expectTypeOf } from "expect-type";
 import { describe, expect, it } from "vitest";
 
-import { DEFAULT_BINDING_SLOT } from "#/binding";
+import { DEFAULT_BINDING_SLOT } from "#/core/binding";
+import type { ResolveOptions } from "#/core/types";
 import { injectionSlotToResolveOptions, bindingSlotToResolveOptions } from "#/resolution/resolve-options";
-import type { ResolveOptions } from "#/types";
 
 describe("ResolveOptions helpers (EOPT-friendly)", () => {
   it("bindingSlotToResolveOptions returns undefined for default slot", () => {

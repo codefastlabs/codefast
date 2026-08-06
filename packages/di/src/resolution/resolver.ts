@@ -1,6 +1,19 @@
-import type { Binding, ConstantBinding, DynamicAsyncBinding, DynamicBinding } from "#/binding";
-import { NO_INSTANCE } from "#/binding";
 import type { Container } from "#/container/container";
+import type { Binding, ConstantBinding, DynamicAsyncBinding, DynamicBinding } from "#/core/binding";
+import { NO_INSTANCE } from "#/core/binding";
+import type { BindingRegistry } from "#/core/registry";
+import type { Token } from "#/core/token";
+import { tokenName } from "#/core/token";
+import type {
+  ActivationHandler,
+  BindingIdentifier,
+  BindingTag,
+  ConstraintContext,
+  Constructor,
+  ResolutionFrame,
+  ResolveOptions,
+} from "#/core/types";
+import type { ResolutionDiagnostics } from "#/errors/diagnostics";
 import {
   AsyncActivationError,
   AsyncResolutionError,
@@ -10,15 +23,14 @@ import {
   MissingScopeContextError,
   NoMatchingBindingError,
   TokenNotBoundError,
-} from "#/errors";
+} from "#/errors/errors";
+import type { LifecycleManager } from "#/lifecycle/lifecycle-manager";
+import type { ScopeManager } from "#/lifecycle/scope-manager";
 import type { MetadataReader, ParamMetadata } from "#/metadata/metadata-types";
-import type { BindingRegistry } from "#/registry";
-import { ActivationNeedCache } from "#/resolution/activation-need";
-import type { DefaultLookupEntry } from "#/resolution/binding-lookup-cache";
-import { BindingLookupCache } from "#/resolution/binding-lookup-cache";
-import { matchesSlot, selectAllBindings, selectBinding } from "#/resolution/binding-select";
-import { ClassIntrospector } from "#/resolution/class-introspector";
-import type { ResolutionDiagnostics } from "#/resolution/diagnostics";
+import { ActivationNeedCache } from "#/resolution/cache/activation-need";
+import type { DefaultLookupEntry } from "#/resolution/cache/binding-lookup-cache";
+import { BindingLookupCache } from "#/resolution/cache/binding-lookup-cache";
+import { ClassIntrospector } from "#/resolution/cache/class-introspector";
 import type { ResolverCallbacks } from "#/resolution/environment";
 import {
   AsyncCascadeContext,
@@ -26,9 +38,7 @@ import {
   buildResolutionFrame,
   DefaultResolutionContext,
 } from "#/resolution/environment";
-import { InstantiationPlanCompiler, PLAN_RETRY } from "#/resolution/instantiation-plan";
-import type { LifecycleManager } from "#/resolution/lifecycle";
-import type { BranchDepth, OwnedBranchPath } from "#/resolution/resolution-path";
+import type { BranchDepth, OwnedBranchPath } from "#/resolution/path/resolution-path";
 import {
   branchDepthOf,
   enterResolutionPath,
@@ -36,21 +46,11 @@ import {
   extendResolutionStackBranch,
   ROOT_BRANCH,
   UNOWNED_BRANCH,
-} from "#/resolution/resolution-path";
+} from "#/resolution/path/resolution-path";
+import { InstantiationPlanCompiler, PLAN_RETRY } from "#/resolution/plan/instantiation-plan";
 import type { DependencySlot } from "#/resolution/resolve-options";
 import { injectionSlotToResolveOptions, isNameOnlyOptions, singleTagOnlyOf } from "#/resolution/resolve-options";
-import type { ScopeManager } from "#/resolution/scope";
-import type { Token } from "#/token";
-import { tokenName } from "#/token";
-import type {
-  ActivationHandler,
-  BindingIdentifier,
-  BindingTag,
-  ConstraintContext,
-  Constructor,
-  ResolutionFrame,
-  ResolveOptions,
-} from "#/types";
+import { matchesSlot, selectAllBindings, selectBinding } from "#/resolution/select/binding-select";
 
 const EMPTY_STRING_LIST: ReadonlyArray<string> = [];
 const EMPTY_FRAME_LIST: ReadonlyArray<ResolutionFrame> = [];

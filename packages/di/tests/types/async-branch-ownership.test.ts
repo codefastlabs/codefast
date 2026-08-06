@@ -8,15 +8,20 @@
 import { expectTypeOf } from "expect-type";
 import { describe, expect, it } from "vitest";
 
-import type { ResolutionDiagnostics } from "#/resolution/diagnostics";
-import type { BranchDepth, OwnedBranchDepth, OwnedBranchPath, OwnedBranchStack } from "#/resolution/resolution-path";
+import type { ResolutionFrame } from "#/core/types";
+import type { ResolutionDiagnostics } from "#/errors/diagnostics";
+import type {
+  BranchDepth,
+  OwnedBranchDepth,
+  OwnedBranchPath,
+  OwnedBranchStack,
+} from "#/resolution/path/resolution-path";
 import {
   branchDepthOf,
   extendResolutionBranch,
   extendResolutionStackBranch,
   ROOT_BRANCH,
-} from "#/resolution/resolution-path";
-import type { ResolutionFrame } from "#/types";
+} from "#/resolution/path/resolution-path";
 
 describe("only the lane's own helpers mint a branch", () => {
   it("returns an owned branch, which a plain array is not", () => {

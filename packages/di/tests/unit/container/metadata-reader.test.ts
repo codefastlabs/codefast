@@ -7,11 +7,11 @@
 import { describe, expect, it } from "vitest";
 
 import { Container } from "#/container/container";
-import { MissingMetadataError } from "#/errors";
+import { token } from "#/core/token";
+import type { Constructor } from "#/core/types";
+import { MissingMetadataError } from "#/errors/errors";
 import { MetadataReaderToken } from "#/metadata/metadata-reader-token";
 import type { ConstructorMetadata, LifecycleMetadata, MetadataReader } from "#/metadata/metadata-types";
-import { token } from "#/token";
-import type { Constructor } from "#/types";
 
 const dsnToken = token<string>("metadata-reader.dsn");
 

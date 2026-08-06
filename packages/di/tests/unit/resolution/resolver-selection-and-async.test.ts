@@ -6,10 +6,10 @@
 import { describe, expect, it } from "vitest";
 
 import { Container } from "#/container/container";
+import { token } from "#/core/token";
 import { inject, injectAll, optional } from "#/decorators/inject";
 import { injectable } from "#/decorators/injectable";
-import { AsyncResolutionError, NoMatchingBindingError } from "#/errors";
-import { token } from "#/token";
+import { AsyncResolutionError, NoMatchingBindingError } from "#/errors/errors";
 
 describe("activation on transient dynamic bindings", () => {
   it("applies the binding's own onActivation to every fresh instance", () => {

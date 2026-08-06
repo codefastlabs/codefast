@@ -13,11 +13,11 @@ export type {
   ResolveOptions,
   ResolutionContext,
   TokenValue,
-} from "#/types";
+} from "#/core/types";
 
 // Token
-export { token, tokenName, isToken } from "#/token";
-export type { Token } from "#/token";
+export { token, tokenName, isToken } from "#/core/token";
+export type { Token } from "#/core/token";
 
 // Binding builders — types only
 export type {
@@ -30,7 +30,7 @@ export type {
   SingletonLifecycleBuilder,
   SlotConstrainedBuilder,
   TransientBindingBuilder,
-} from "#/binding";
+} from "#/core/binding";
 
 // Container
 export { Container } from "#/container/container";
@@ -51,8 +51,8 @@ export type { BindingSnapshot, ContainerSnapshot } from "#/introspection/inspect
 export type { ContainerGraphJson, GraphEdge, GraphNode, GraphOptions } from "#/introspection/dependency-graph";
 
 // Module
-export { AsyncModule, isSyncModule, Module, SyncModule } from "#/module";
-export type { AsyncModuleBuilder, ModuleBuilder } from "#/module";
+export { AsyncModule, isSyncModule, Module, SyncModule } from "#/core/module";
+export type { AsyncModuleBuilder, ModuleBuilder } from "#/core/module";
 
 // Decorators
 export { inject, injectAll, isInjectionDescriptor, optional } from "#/decorators/inject";
@@ -88,7 +88,7 @@ export {
   whenParentNamed,
   whenParentTagged,
   whenParentTaggedAll,
-} from "#/resolution/constraints";
+} from "#/resolution/select/constraints";
 
 // Errors
 export {
@@ -112,8 +112,8 @@ export {
   SelfBindingRequiresClassError,
   SyncDisposalNotSupportedError,
   TokenNotBoundError,
-} from "#/errors";
-export type { ScopeViolationDetails } from "#/errors";
+} from "#/errors/errors";
+export type { ScopeViolationDetails } from "#/errors/errors";
 
 // Graph adapters — render `generateDependencyGraph()` output for common viewers
 export { toDotGraph } from "#/introspection/graph-adapters/dot";

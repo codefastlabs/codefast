@@ -10,8 +10,8 @@ import { fileURLToPath } from "node:url";
 
 import { describe, expect, it } from "vitest";
 
-import { createBinding, DEFAULT_BINDING_SLOT } from "#/binding";
-import { token } from "#/token";
+import { createBinding, DEFAULT_BINDING_SLOT } from "#/core/binding";
+import { token } from "#/core/token";
 
 const packageRoot = fileURLToPath(new URL("../../", import.meta.url));
 const sourceRoot = join(packageRoot, "src");
@@ -53,16 +53,20 @@ describe("every binding shares one shape", () => {
 });
 
 describe("the layering points one way", () => {
-  // model → resolution → {decorators, metadata} → {container, introspection}. A decorator needs the
-  // resolution environment (accessor injection resolves at property-access time); the container
-  // composes all of it. Same-layer imports are fine; only an upward value import is a violation.
+  // {core, errors} → lifecycle → resolution → {decorators, metadata} → {container, introspection}.
+  // A decorator needs the resolution environment (accessor injection resolves at property-access
+  // time); the container composes all of it. Same-layer imports are fine; only an upward value
+  // import is a violation.
   const LAYERS: Record<string, number> = {
     "": 0,
-    resolution: 1,
-    decorators: 2,
-    metadata: 2,
-    container: 3,
-    introspection: 3,
+    core: 0,
+    errors: 0,
+    lifecycle: 1,
+    resolution: 2,
+    decorators: 3,
+    metadata: 3,
+    container: 4,
+    introspection: 4,
   };
 
   function layerOf(file: string): number {
@@ -202,7 +206,7 @@ describe("every failure this package raises is part of its taxonomy", () => {
 
   it("exports every error class from the root barrel", () => {
     const declared = [
-      ...readFileSync(join(sourceRoot, "errors.ts"), "utf8").matchAll(/export class ([A-Z][A-Za-z]*Error)/g),
+      ...readFileSync(join(sourceRoot, "errors", "errors.ts"), "utf8").matchAll(/export class ([A-Z][A-Za-z]*Error)/g),
     ].map((match) => match[1]!);
     const barrel = readFileSync(join(sourceRoot, "index.ts"), "utf8");
 
@@ -217,7 +221,7 @@ describe("SPEC.md keeps up with the API it specifies", () => {
 
   it("documents every error the package can throw", () => {
     const declared = [
-      ...readFileSync(join(sourceRoot, "errors.ts"), "utf8").matchAll(/export class ([A-Z][A-Za-z]*Error)/g),
+      ...readFileSync(join(sourceRoot, "errors", "errors.ts"), "utf8").matchAll(/export class ([A-Z][A-Za-z]*Error)/g),
     ].map((match) => match[1]!);
 
     const undocumented = declared.filter((name) => !new RegExp(`\\b${name}\\b`).test(spec));

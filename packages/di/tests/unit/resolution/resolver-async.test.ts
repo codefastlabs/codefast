@@ -6,8 +6,8 @@
 import { describe, expect, it } from "vitest";
 
 import { Container } from "#/container/container";
-import { AsyncResolutionError, CircularDependencyError } from "#/errors";
-import { token } from "#/token";
+import { token } from "#/core/token";
+import { AsyncResolutionError, CircularDependencyError } from "#/errors/errors";
 
 describe("async chains", () => {
   it("resolves a dynamic-async chain in order", async () => {

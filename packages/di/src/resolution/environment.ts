@@ -1,7 +1,5 @@
 import type { Container } from "#/container/container";
-import type { BranchDepth, OwnedBranchPath, OwnedBranchStack } from "#/resolution/resolution-path";
-import { UNOWNED_BRANCH } from "#/resolution/resolution-path";
-import type { Token } from "#/token";
+import type { Token } from "#/core/token";
 import type {
   BindingIdentifier,
   BindingKind,
@@ -11,7 +9,9 @@ import type {
   ResolutionFrame,
   ResolutionContext,
   ResolveOptions,
-} from "#/types";
+} from "#/core/types";
+import type { BranchDepth, OwnedBranchPath, OwnedBranchStack } from "#/resolution/path/resolution-path";
+import { UNOWNED_BRANCH } from "#/resolution/path/resolution-path";
 
 // ── Active container ──────────────────────────────────────────────────────────
 

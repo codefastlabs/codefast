@@ -1,10 +1,10 @@
 import { describe, expect, it } from "vitest";
 
 import { Container } from "#/container/container";
+import { token } from "#/core/token";
 import { injectAll, optional } from "#/decorators/inject";
 import { injectable } from "#/decorators/injectable";
 import { toMermaidGraph } from "#/introspection/graph-adapters/mermaid";
-import { token } from "#/token";
 
 describe("toMermaidGraph", () => {
   it("renders a flowchart with every node and edge", () => {

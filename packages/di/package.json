@@ -54,16 +54,6 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
     },
-    "./binding": {
-      "source": "./src/binding.ts",
-      "types": "./dist/binding.d.ts",
-      "import": "./dist/binding.js"
-    },
-    "./constructor-type": {
-      "source": "./src/constructor-type.ts",
-      "types": "./dist/constructor-type.d.ts",
-      "import": "./dist/constructor-type.js"
-    },
     "./container/binding-builders": {
       "source": "./src/container/binding-builders.ts",
       "types": "./dist/container/binding-builders.d.ts",
@@ -73,6 +63,41 @@
       "source": "./src/container/container.ts",
       "types": "./dist/container/container.d.ts",
       "import": "./dist/container/container.js"
+    },
+    "./core/binding": {
+      "source": "./src/core/binding.ts",
+      "types": "./dist/core/binding.d.ts",
+      "import": "./dist/core/binding.js"
+    },
+    "./core/binding-scope": {
+      "source": "./src/core/binding-scope.ts",
+      "types": "./dist/core/binding-scope.d.ts",
+      "import": "./dist/core/binding-scope.js"
+    },
+    "./core/constructor-type": {
+      "source": "./src/core/constructor-type.ts",
+      "types": "./dist/core/constructor-type.d.ts",
+      "import": "./dist/core/constructor-type.js"
+    },
+    "./core/module": {
+      "source": "./src/core/module.ts",
+      "types": "./dist/core/module.d.ts",
+      "import": "./dist/core/module.js"
+    },
+    "./core/registry": {
+      "source": "./src/core/registry.ts",
+      "types": "./dist/core/registry.d.ts",
+      "import": "./dist/core/registry.js"
+    },
+    "./core/token": {
+      "source": "./src/core/token.ts",
+      "types": "./dist/core/token.d.ts",
+      "import": "./dist/core/token.js"
+    },
+    "./core/types": {
+      "source": "./src/core/types.ts",
+      "types": "./dist/core/types.d.ts",
+      "import": "./dist/core/types.js"
     },
     "./decorators/inject": {
       "source": "./src/decorators/inject.ts",
@@ -89,10 +114,15 @@
       "types": "./dist/decorators/lifecycle-decorators.d.ts",
       "import": "./dist/decorators/lifecycle-decorators.js"
     },
-    "./errors": {
-      "source": "./src/errors.ts",
-      "types": "./dist/errors.d.ts",
-      "import": "./dist/errors.js"
+    "./errors/diagnostics": {
+      "source": "./src/errors/diagnostics.ts",
+      "types": "./dist/errors/diagnostics.d.ts",
+      "import": "./dist/errors/diagnostics.js"
+    },
+    "./errors/errors": {
+      "source": "./src/errors/errors.ts",
+      "types": "./dist/errors/errors.d.ts",
+      "import": "./dist/errors/errors.js"
     },
     "./dependency-graph": {
       "source": "./src/introspection/dependency-graph.ts",
@@ -124,6 +154,16 @@
       "types": "./dist/introspection/inspector.d.ts",
       "import": "./dist/introspection/inspector.js"
     },
+    "./lifecycle/lifecycle-manager": {
+      "source": "./src/lifecycle/lifecycle-manager.ts",
+      "types": "./dist/lifecycle/lifecycle-manager.d.ts",
+      "import": "./dist/lifecycle/lifecycle-manager.js"
+    },
+    "./lifecycle/scope-manager": {
+      "source": "./src/lifecycle/scope-manager.ts",
+      "types": "./dist/lifecycle/scope-manager.d.ts",
+      "import": "./dist/lifecycle/scope-manager.js"
+    },
     "./metadata/metadata-keys": {
       "source": "./src/metadata/metadata-keys.ts",
       "types": "./dist/metadata/metadata-keys.d.ts",
@@ -149,70 +189,35 @@
       "types": "./dist/metadata/verifying-metadata-reader.d.ts",
       "import": "./dist/metadata/verifying-metadata-reader.js"
     },
-    "./module": {
-      "source": "./src/module.ts",
-      "types": "./dist/module.d.ts",
-      "import": "./dist/module.js"
+    "./resolution/cache/activation-need": {
+      "source": "./src/resolution/cache/activation-need.ts",
+      "types": "./dist/resolution/cache/activation-need.d.ts",
+      "import": "./dist/resolution/cache/activation-need.js"
     },
-    "./registry": {
-      "source": "./src/registry.ts",
-      "types": "./dist/registry.d.ts",
-      "import": "./dist/registry.js"
+    "./resolution/cache/binding-lookup-cache": {
+      "source": "./src/resolution/cache/binding-lookup-cache.ts",
+      "types": "./dist/resolution/cache/binding-lookup-cache.d.ts",
+      "import": "./dist/resolution/cache/binding-lookup-cache.js"
     },
-    "./resolution/activation-need": {
-      "source": "./src/resolution/activation-need.ts",
-      "types": "./dist/resolution/activation-need.d.ts",
-      "import": "./dist/resolution/activation-need.js"
-    },
-    "./resolution/binding-lookup-cache": {
-      "source": "./src/resolution/binding-lookup-cache.ts",
-      "types": "./dist/resolution/binding-lookup-cache.d.ts",
-      "import": "./dist/resolution/binding-lookup-cache.js"
-    },
-    "./resolution/binding-scope": {
-      "source": "./src/resolution/binding-scope.ts",
-      "types": "./dist/resolution/binding-scope.d.ts",
-      "import": "./dist/resolution/binding-scope.js"
-    },
-    "./resolution/binding-select": {
-      "source": "./src/resolution/binding-select.ts",
-      "types": "./dist/resolution/binding-select.d.ts",
-      "import": "./dist/resolution/binding-select.js"
-    },
-    "./resolution/class-introspector": {
-      "source": "./src/resolution/class-introspector.ts",
-      "types": "./dist/resolution/class-introspector.d.ts",
-      "import": "./dist/resolution/class-introspector.js"
-    },
-    "./resolution/constraints": {
-      "source": "./src/resolution/constraints.ts",
-      "types": "./dist/resolution/constraints.d.ts",
-      "import": "./dist/resolution/constraints.js"
-    },
-    "./resolution/diagnostics": {
-      "source": "./src/resolution/diagnostics.ts",
-      "types": "./dist/resolution/diagnostics.d.ts",
-      "import": "./dist/resolution/diagnostics.js"
+    "./resolution/cache/class-introspector": {
+      "source": "./src/resolution/cache/class-introspector.ts",
+      "types": "./dist/resolution/cache/class-introspector.d.ts",
+      "import": "./dist/resolution/cache/class-introspector.js"
     },
     "./resolution/environment": {
       "source": "./src/resolution/environment.ts",
       "types": "./dist/resolution/environment.d.ts",
       "import": "./dist/resolution/environment.js"
     },
-    "./resolution/instantiation-plan": {
-      "source": "./src/resolution/instantiation-plan.ts",
-      "types": "./dist/resolution/instantiation-plan.d.ts",
-      "import": "./dist/resolution/instantiation-plan.js"
+    "./resolution/path/resolution-path": {
+      "source": "./src/resolution/path/resolution-path.ts",
+      "types": "./dist/resolution/path/resolution-path.d.ts",
+      "import": "./dist/resolution/path/resolution-path.js"
     },
-    "./resolution/lifecycle": {
-      "source": "./src/resolution/lifecycle.ts",
-      "types": "./dist/resolution/lifecycle.d.ts",
-      "import": "./dist/resolution/lifecycle.js"
-    },
-    "./resolution/resolution-path": {
-      "source": "./src/resolution/resolution-path.ts",
-      "types": "./dist/resolution/resolution-path.d.ts",
-      "import": "./dist/resolution/resolution-path.js"
+    "./resolution/plan/instantiation-plan": {
+      "source": "./src/resolution/plan/instantiation-plan.ts",
+      "types": "./dist/resolution/plan/instantiation-plan.d.ts",
+      "import": "./dist/resolution/plan/instantiation-plan.js"
     },
     "./resolution/resolve-options": {
       "source": "./src/resolution/resolve-options.ts",
@@ -224,20 +229,15 @@
       "types": "./dist/resolution/resolver.d.ts",
       "import": "./dist/resolution/resolver.js"
     },
-    "./resolution/scope": {
-      "source": "./src/resolution/scope.ts",
-      "types": "./dist/resolution/scope.d.ts",
-      "import": "./dist/resolution/scope.js"
+    "./resolution/select/binding-select": {
+      "source": "./src/resolution/select/binding-select.ts",
+      "types": "./dist/resolution/select/binding-select.d.ts",
+      "import": "./dist/resolution/select/binding-select.js"
     },
-    "./token": {
-      "source": "./src/token.ts",
-      "types": "./dist/token.d.ts",
-      "import": "./dist/token.js"
-    },
-    "./types": {
-      "source": "./src/types.ts",
-      "types": "./dist/types.d.ts",
-      "import": "./dist/types.js"
+    "./resolution/select/constraints": {
+      "source": "./src/resolution/select/constraints.ts",
+      "types": "./dist/resolution/select/constraints.d.ts",
+      "import": "./dist/resolution/select/constraints.js"
     },
     "./package.json": "./package.json"
   },

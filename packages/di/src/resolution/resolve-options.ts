@@ -1,5 +1,5 @@
-import type { Token } from "#/token";
-import type { BindingTag, Constructor, ResolveOptions } from "#/types";
+import type { Token } from "#/core/token";
+import type { BindingTag, Constructor, ResolveOptions } from "#/core/types";
 
 /**
  * What one resolvable dependency declares.

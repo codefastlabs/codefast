@@ -7,10 +7,10 @@
 import { describe, expect, it } from "vitest";
 
 import { Container } from "#/container/container";
+import { token } from "#/core/token";
 import { injectable } from "#/decorators/injectable";
 import { postConstruct } from "#/decorators/lifecycle-decorators";
-import { TokenNotBoundError } from "#/errors";
-import { token } from "#/token";
+import { TokenNotBoundError } from "#/errors/errors";
 
 const WARM_ITERATIONS = 5;
 

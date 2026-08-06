@@ -1,9 +1,9 @@
-import { InternalError, MissingContainerContextError } from "#/errors";
+import type { Token } from "#/core/token";
+import type { BindingTag, Constructor, TokenValue } from "#/core/types";
+import { InternalError, MissingContainerContextError } from "#/errors/errors";
 import { INJECT_ACCESSOR_KEY } from "#/metadata/metadata-keys";
 import { getActiveContainer } from "#/resolution/environment";
 import { injectionSlotToResolveOptions } from "#/resolution/resolve-options";
-import type { Token } from "#/token";
-import type { BindingTag, Constructor, TokenValue } from "#/types";
 
 // ── InjectionDescriptor ───────────────────────────────────────────────────────
 

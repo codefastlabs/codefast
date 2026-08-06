@@ -24,7 +24,7 @@ registry, binding, token, types, errors                    ← the model
 
 ## The model
 
-**One binding shape, one construction site.** Every binding is built by `createBinding()` in [`binding.ts`](src/binding.ts) — a single object literal listing every kind's fields in one fixed order, so all bindings in a process share one V8 hidden class. Mixed binding kinds otherwise make the resolver's hot property reads (`kind`/`scope`/`factory`) megamorphic, worth ~30% throughput. The registry therefore stores what it is handed **by reference** rather than re-copying it.
+**One binding shape, one construction site.** Every binding is built by `createBinding()` in [`binding.ts`](src/core/binding.ts) — a single object literal listing every kind's fields in one fixed order, so all bindings in a process share one V8 hidden class. Mixed binding kinds otherwise make the resolver's hot property reads (`kind`/`scope`/`factory`) megamorphic, worth ~30% throughput. The registry therefore stores what it is handed **by reference** rather than re-copying it.
 
 > **Rule:** never construct a binding with an object literal. Go through `createBinding()`, and keep its literal's key order untouched.
 
@@ -61,15 +61,15 @@ Worth knowing before optimizing here: the chain's per-bind allocation was measur
 
 What _is_ split out are the collaborators that need no cross-instance private access:
 
-| Module                                                                                                     | Owns                                                                                                               |
-| ---------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
-| [`binding-lookup-cache.ts`](src/resolution/binding-lookup-cache.ts)                                        | options-less token → `{binding, owner}` memo, alias hops folded, stamped with the chain's summed registry versions |
-| [`class-introspector.ts`](src/resolution/class-introspector.ts)                                            | per-class metadata: constructor params, `@postConstruct` presence, accessor injection, and the `new` itself        |
-| [`activation-need.ts`](src/resolution/activation-need.ts)                                                  | per-binding "does this need the activation pipeline", versioned on the lifecycle manager                           |
-| [`instantiation-plan.ts`](src/resolution/instantiation-plan.ts)                                            | the plan compiler (below)                                                                                          |
-| [`resolution-path.ts`](src/resolution/resolution-path.ts)                                                  | cycle-detection bookkeeping carried on the path array                                                              |
-| [`binding-select.ts`](src/resolution/binding-select.ts), [`constraints.ts`](src/resolution/constraints.ts) | candidate selection for name/tag/predicate shapes, and `matchesSlot()` — the one slot matcher                      |
-| [`resolve-options.ts`](src/resolution/resolve-options.ts)                                                  | `DependencySlot`, the shape both dependency sources share, and the `ResolveOptions` derived from it                |
+| Module                                                                                                                   | Owns                                                                                                               |
+| ------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------ |
+| [`binding-lookup-cache.ts`](src/resolution/cache/binding-lookup-cache.ts)                                                | options-less token → `{binding, owner}` memo, alias hops folded, stamped with the chain's summed registry versions |
+| [`class-introspector.ts`](src/resolution/cache/class-introspector.ts)                                                    | per-class metadata: constructor params, `@postConstruct` presence, accessor injection, and the `new` itself        |
+| [`activation-need.ts`](src/resolution/cache/activation-need.ts)                                                          | per-binding "does this need the activation pipeline", versioned on the lifecycle manager                           |
+| [`instantiation-plan.ts`](src/resolution/plan/instantiation-plan.ts)                                                     | the plan compiler (below)                                                                                          |
+| [`resolution-path.ts`](src/resolution/path/resolution-path.ts)                                                           | cycle-detection bookkeeping carried on the path array                                                              |
+| [`binding-select.ts`](src/resolution/select/binding-select.ts), [`constraints.ts`](src/resolution/select/constraints.ts) | candidate selection for name/tag/predicate shapes, and `matchesSlot()` — the one slot matcher                      |
+| [`resolve-options.ts`](src/resolution/resolve-options.ts)                                                                | `DependencySlot`, the shape both dependency sources share, and the `ResolveOptions` derived from it                |
 
 Lookup caches form their own parent chain mirroring the resolvers', for the same `#private`-is-per-class reason.
 

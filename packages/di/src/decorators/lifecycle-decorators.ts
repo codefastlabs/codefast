@@ -1,4 +1,4 @@
-import { InternalError } from "#/errors";
+import { InternalError } from "#/errors/errors";
 import { LIFECYCLE_KEY } from "#/metadata/metadata-keys";
 import type { MutableLifecycleMetadata } from "#/metadata/metadata-types";
 

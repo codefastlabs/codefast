@@ -1,8 +1,25 @@
-import type { Binding, BindToBuilder } from "#/binding";
-import { NO_INSTANCE } from "#/binding";
 import type { BindingRegistration } from "#/container/binding-builders";
 import { BindingChain } from "#/container/binding-builders";
+import type { Binding, BindToBuilder } from "#/core/binding";
+import { NO_INSTANCE } from "#/core/binding";
+import { effectiveBindingScope } from "#/core/binding-scope";
+import type { AsyncModule, ModuleBuilder, SyncModule } from "#/core/module";
+import type { AsyncModuleBuilder } from "#/core/module";
+import { isSyncModule, MODULE_SETUP } from "#/core/module";
+import { BindingRegistry } from "#/core/registry";
+import type { Token } from "#/core/token";
+import { tokenName } from "#/core/token";
+import type {
+  ActivationHandler,
+  BindingIdentifier,
+  BindingScope,
+  Constructor,
+  DeactivationHandler,
+  ResolveOptions,
+} from "#/core/types";
 import type { AutoRegisterRegistry } from "#/decorators/injectable";
+import type { ResolutionDiagnostics } from "#/errors/diagnostics";
+import { RESOLUTION_DIAGNOSTICS } from "#/errors/diagnostics";
 import {
   AsyncModuleLoadError,
   CircularDependencyError,
@@ -11,38 +28,21 @@ import {
   RebindUnboundTokenError,
   ScopeViolationError,
   SyncDisposalNotSupportedError,
-} from "#/errors";
+} from "#/errors/errors";
 import type { ContainerGraphJson, GraphOptions } from "#/introspection/dependency-graph";
 import { buildDependencyGraph } from "#/introspection/dependency-graph";
 import type { BindingSnapshot, ContainerSnapshot } from "#/introspection/inspector";
 import { Inspector } from "#/introspection/inspector";
+import { LifecycleManager } from "#/lifecycle/lifecycle-manager";
+import { ScopeManager } from "#/lifecycle/scope-manager";
 import { MetadataReaderToken } from "#/metadata/metadata-reader-token";
 import type { MetadataReader } from "#/metadata/metadata-types";
 import { defaultMetadataReader } from "#/metadata/symbol-metadata-reader";
 import { verifyingMetadataReader } from "#/metadata/verifying-metadata-reader";
-import type { AsyncModule, ModuleBuilder, SyncModule } from "#/module";
-import type { AsyncModuleBuilder } from "#/module";
-import { isSyncModule, MODULE_SETUP } from "#/module";
-import { BindingRegistry } from "#/registry";
-import { effectiveBindingScope } from "#/resolution/binding-scope";
-import type { ResolutionDiagnostics } from "#/resolution/diagnostics";
-import { RESOLUTION_DIAGNOSTICS } from "#/resolution/diagnostics";
-import { LifecycleManager } from "#/resolution/lifecycle";
-import { ROOT_BRANCH } from "#/resolution/resolution-path";
+import { ROOT_BRANCH } from "#/resolution/path/resolution-path";
 import type { DependencySlot } from "#/resolution/resolve-options";
 import { injectionSlotToResolveOptions, bindingSlotToResolveOptions } from "#/resolution/resolve-options";
 import { DependencyResolver } from "#/resolution/resolver";
-import { ScopeManager } from "#/resolution/scope";
-import type { Token } from "#/token";
-import { tokenName } from "#/token";
-import type {
-  ActivationHandler,
-  BindingIdentifier,
-  BindingScope,
-  Constructor,
-  DeactivationHandler,
-  ResolveOptions,
-} from "#/types";
 
 // ── Container interface ────────────────────────────────────────────────────────
 
