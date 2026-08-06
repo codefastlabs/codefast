@@ -112,6 +112,7 @@ export {
   RebindUnboundTokenError,
   ScopeViolationError,
   SelfBindingRequiresClassError,
+  StaticMemberDecoratorError,
   SyncDisposalNotSupportedError,
   TokenNotBoundError,
 } from "#/errors/errors";

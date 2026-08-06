@@ -13,7 +13,8 @@ import { describe, expect, it } from "vitest";
 
 import { token } from "#/core/token";
 import { inject } from "#/decorators/inject";
-import { InternalError } from "#/errors/errors";
+import { postConstruct, preDestroy } from "#/decorators/lifecycle-decorators";
+import { StaticMemberDecoratorError } from "#/errors/errors";
 import type { InjectionDescriptor } from "#/injection/descriptor";
 import { injectAll, isInjectionDescriptor, normalizeToDescriptor, optional } from "#/injection/descriptor";
 
@@ -142,6 +143,26 @@ describe("inject() as an accessor decorator", () => {
         @inject(serviceToken) static accessor dependency: string;
       }
       return Holder;
-    }).toThrow(InternalError);
+    }).toThrow(StaticMemberDecoratorError);
+  });
+});
+
+describe("the lifecycle decorators reject static members too", () => {
+  it.each([
+    ["postConstruct", postConstruct],
+    ["preDestroy", preDestroy],
+  ])("rejects a static @%s method at class evaluation time", (name, decorator) => {
+    expect(() => {
+      class Holder {
+        @decorator() static warm(): void {}
+      }
+      return Holder;
+    }).toThrow(StaticMemberDecoratorError);
+    expect(() => {
+      class Holder {
+        @decorator() static warm(): void {}
+      }
+      return Holder;
+    }).toThrow(new RegExp(`@${name}\\(\\) applies to instance members only`));
   });
 });

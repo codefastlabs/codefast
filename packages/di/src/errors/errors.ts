@@ -90,12 +90,16 @@ export class CircularDependencyError extends DiError {
  */
 export class AsyncResolutionError extends DiError {
   readonly code = "ASYNC_RESOLUTION";
+  /** The token the caller asked for — what `resolveAsync` has to be called with. */
   readonly tokenName: string;
+  /** The token whose factory is async: `tokenName` itself unless a dependency forced it. */
   readonly asyncSourceToken: string;
 
-  constructor(tokenName: string, asyncSourceToken: string) {
+  constructor(tokenName: string, asyncSourceToken: string = tokenName) {
     super(
-      `Token '${tokenName}' requires async resolution because '${asyncSourceToken}' in its dependency chain has an async factory. Use container.resolveAsync(${tokenName}).`,
+      asyncSourceToken === tokenName
+        ? `Token '${tokenName}' requires async resolution because its factory is async. Use container.resolveAsync(${tokenName}).`
+        : `Token '${tokenName}' requires async resolution because '${asyncSourceToken}' in its dependency chain has an async factory. Use container.resolveAsync(${tokenName}).`,
     );
     this.tokenName = tokenName;
     this.asyncSourceToken = asyncSourceToken;
@@ -142,10 +146,11 @@ export class ScopeViolationError extends DiError {
 }
 
 /**
- * A {@link MetadataReader} described a class with something that is not constructor metadata.
+ * A {@link MetadataReader} described a class with something the container cannot use.
  *
  * @remarks Separate from {@link MissingMetadataError}: absent metadata is a class the container was
- * never told about, while invalid metadata is a reader that answered wrongly.
+ * never told about, while invalid metadata is a reader that answered wrongly. Covers both the
+ * constructor answer and the lifecycle one, since only the `reason` differs.
  */
 export class InvalidMetadataError extends DiError {
   readonly code = "INVALID_METADATA";
@@ -154,7 +159,7 @@ export class InvalidMetadataError extends DiError {
 
   constructor(targetName: string, reason: string) {
     super(
-      `MetadataReader returned invalid constructor metadata for class '${targetName}': ${reason}. Check the reader bound to MetadataReaderToken or passed to Container.create().`,
+      `MetadataReader returned invalid metadata for class '${targetName}': ${reason}. Check the reader bound to MetadataReaderToken or passed to Container.create().`,
     );
     this.targetName = targetName;
     this.reason = reason;
@@ -294,6 +299,27 @@ export class SelfBindingRequiresClassError extends DiError {
       `toSelf() needs the token to be the class it constructs, and '${tokenName}' is not a class. Use .to(SomeClass) to name the implementation, or bind the class itself with container.bind(SomeClass).toSelf().`,
     );
     this.tokenName = tokenName;
+  }
+}
+
+/**
+ * A decorator that acts on one instance was applied to a static member.
+ *
+ * @remarks Instance-only by construction: `@inject` resolves through the container active while an
+ * instance is built, and `@postConstruct`/`@preDestroy` bracket one instance's lifecycle. A static
+ * member belongs to the class, which no container constructs.
+ */
+export class StaticMemberDecoratorError extends DiError {
+  readonly code = "STATIC_MEMBER_DECORATOR";
+  readonly decoratorName: string;
+  readonly memberName: string;
+
+  constructor(decoratorName: string, memberName: string) {
+    super(
+      `@${decoratorName}() applies to instance members only, and '${memberName}' is static. Move it to an instance member, or read the value from the container where the static member is used.`,
+    );
+    this.decoratorName = decoratorName;
+    this.memberName = memberName;
   }
 }
 

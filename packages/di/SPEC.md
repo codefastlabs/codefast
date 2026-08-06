@@ -2554,19 +2554,22 @@ class MissingMetadataError extends DiError {
 }
 ```
 
-**`InvalidMetadataError`** — `MetadataReader` trả về thứ không phải constructor metadata:
+**`InvalidMetadataError`** — `MetadataReader` trả về thứ container không dùng được:
 
 ```ts
 class InvalidMetadataError extends DiError {
   readonly code = "INVALID_METADATA";
   readonly targetName: string;
   readonly reason: string;
-  // "MetadataReader returned invalid constructor metadata for class 'Pool': params is not
-  //  an array. Check the reader bound to MetadataReaderToken or passed to Container.create()."
+  // "MetadataReader returned invalid metadata for class 'Pool': constructor metadata:
+  //  params is not an array. Check the reader bound to MetadataReaderToken or passed to
+  //  Container.create()."
 }
 ```
 
 Khác `MissingMetadataError`: vắng metadata là class container chưa được kể; metadata sai là reader trả lời sai. Chỉ reader **do người dùng cấp** bị kiểm tra — reader decorator mặc định tự ghi metadata mà nó đọc lại, nên không có gì để kiểm và container không cấp reader riêng không phải trả gì. Kiểm một lần mỗi cặp `(reader, class)` mỗi process, chỉ những field mà consumer dereference (`params`, và `token` của từng entry).
+
+Câu trả lời **lifecycle** cũng vào đây, với `reason` khác: nếu reader kể một tên `postConstruct`/`preDestroy` mà instance không có method đó, hook bị bỏ qua là thất bại **caller không nhìn thấy được** — nên nó được báo (`"lifecycle method 'strat' is not a method on the instance"`) thay vì im lặng. Tên class lấy từ chính instance tại chỗ throw, nên happy path không mang thêm đối số nào.
 
 **`AsyncModuleLoadError`** — `load()` sync nhận `AsyncModule`:
 
@@ -2662,6 +2665,21 @@ class SelfBindingRequiresClassError extends DiError {
 ```
 
 `toSelf()` bind token **thành chính nó**, nên token phải là constructor. Một `token<Logger>("Logger")` không construct được gì. Như `ChainNotRegisteredError`, kiểu của `bind()` đã chặn phần lớn trường hợp — error này dành cho caller JavaScript hoặc caller đã cast qua kiểu, và nó thuộc taxonomy `DiError` để một `catch (error) { if (error instanceof DiError) … }` không để nó rơi ra ngoài.
+
+**`StaticMemberDecoratorError`** — `@inject`, `@postConstruct` hoặc `@preDestroy` đặt trên static member:
+
+```ts
+class StaticMemberDecoratorError extends DiError {
+  readonly code = "STATIC_MEMBER_DECORATOR";
+  readonly decoratorName: string;
+  readonly memberName: string;
+  // "@inject() applies to instance members only, and 'clock' is static.
+  //  Move it to an instance member, or read the value from the container where
+  //  the static member is used."
+}
+```
+
+Cả ba decorator này đều tác động lên **một instance**: `@inject` resolve qua container đang active trong lúc instance được construct, còn `@postConstruct`/`@preDestroy` bao quanh lifecycle của một instance. Static member thuộc về class, mà container không construct class — nên đây là misuse của caller, không phải assertion nội bộ. Trước đây ba site này throw `InternalError`, cùng loại sai mà §10 đã ghi nhận ở predicate ambiguity: `InternalError` nghĩa là **library** hỏng, và một consumer bắt nó để báo bug sẽ nhận về chính lỗi của mình.
 
 ---
 
@@ -2846,6 +2864,7 @@ export {
   ChainNotRegisteredError,
   RebindUnboundTokenError,
   ScopeViolationError,
+  StaticMemberDecoratorError,
   SyncDisposalNotSupportedError,
   TokenNotBoundError,
 } from "#/errors";

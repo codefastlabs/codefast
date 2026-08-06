@@ -8,7 +8,7 @@ import type {
   DependencyKey,
   ResolutionContext,
 } from "#/core/types";
-import { AsyncActivationError, AsyncDeactivationError } from "#/errors/errors";
+import { AsyncActivationError, AsyncDeactivationError, InvalidMetadataError } from "#/errors/errors";
 import type { MetadataReader } from "#/metadata/metadata-types";
 
 /**
@@ -30,7 +30,6 @@ export class LifecycleManager {
     this.#activationVersion += 1;
     this.#cachedToken = undefined;
     this.#cachedHooks = undefined;
-    // ✓ TS6.0: Map.getOrInsert (ES2025)
     const list = (this.#activationHooks ??= new Map()).getOrInsert(token, []);
     list.push(handler as ActivationHandler<unknown>);
   }
@@ -227,12 +226,24 @@ function lifecycleMethods<Value>(
   return metadataReader.getLifecycleMetadata(binding.target)?.[phase] ?? NO_METHODS;
 }
 
-/** Invokes a hook by name, tolerating a name whose member is not (or no longer) a method. */
+/**
+ * Invokes a lifecycle hook by name.
+ *
+ * @remarks A name that is not a method can only come from a {@link MetadataReader} that answered
+ * wrongly, so it is reported rather than skipped — a hook that never runs is the failure a caller
+ * cannot see. A non-object instance has no hooks to run and is not an error.
+ */
 function callHook(instance: unknown, methodName: string): unknown {
   if (typeof instance !== "object" || instance === null) {
     return undefined;
   }
   const method: unknown = Reflect.get(instance, methodName);
+  if (typeof method !== "function") {
+    // The class is derived here rather than passed in, so the happy path carries no extra argument.
+    const constructor: unknown = Reflect.get(instance, "constructor");
+    const className = typeof constructor === "function" && constructor.name !== "" ? constructor.name : "(anonymous)";
+    throw new InvalidMetadataError(className, `lifecycle method '${methodName}' is not a method on the instance`);
+  }
 
-  return typeof method === "function" ? method.call(instance) : undefined;
+  return method.call(instance);
 }

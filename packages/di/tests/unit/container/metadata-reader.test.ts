@@ -9,7 +9,7 @@ import { describe, expect, it } from "vitest";
 import { Container } from "#/container/container";
 import { token } from "#/core/token";
 import type { Constructor } from "#/core/types";
-import { MissingMetadataError } from "#/errors/errors";
+import { InvalidMetadataError, MissingMetadataError } from "#/errors/errors";
 import { MetadataReaderToken } from "#/metadata/metadata-reader-token";
 import type { ConstructorMetadata, LifecycleMetadata, MetadataReader } from "#/metadata/metadata-types";
 
@@ -147,5 +147,22 @@ describe("MetadataReaderToken binding", () => {
     child.bind(Pool).toSelf().singleton();
 
     expect(child.resolve(Pool).dsn).toBe("postgres://localhost/child");
+  });
+});
+
+describe("a reader that names a lifecycle method the class does not have", () => {
+  it("reports it instead of silently skipping the hook", () => {
+    class Pool {
+      started = false;
+    }
+    const lyingReader: MetadataReader = {
+      getConstructorMetadata: () => ({ params: [] }),
+      getLifecycleMetadata: () => ({ postConstruct: ["strat"], preDestroy: [] }),
+    };
+    const container = Container.create({ metadataReader: lyingReader });
+    container.bind(Pool).toSelf();
+
+    expect(() => container.resolve(Pool)).toThrow(InvalidMetadataError);
+    expect(() => container.resolve(Pool)).toThrow(/lifecycle method 'strat' is not a method/);
   });
 });

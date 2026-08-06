@@ -2,7 +2,7 @@ import { getActiveContainer } from "#/ambient/active-container";
 /** `@inject` — the accessor-decorator channel, resolving from the ambient container. */
 import type { Token } from "#/core/token";
 import type { Constructor } from "#/core/types";
-import { InternalError, MissingContainerContextError } from "#/errors/errors";
+import { MissingContainerContextError, StaticMemberDecoratorError } from "#/errors/errors";
 import type { InjectionDescriptor, InjectOptions } from "#/injection/descriptor";
 import { buildInjectionDescriptor } from "#/injection/descriptor";
 import { injectionSlotToResolveOptions } from "#/injection/resolve-options";
@@ -51,9 +51,7 @@ export function inject<Value>(
     context: ClassAccessorDecoratorContext<unknown, Value>,
   ): ClassAccessorDecoratorResult<unknown, Value> => {
     if (context.static) {
-      throw new InternalError(
-        "@inject() on static accessors is not supported; only instance accessors participate in runWithContainer-based property injection.",
-      );
+      throw new StaticMemberDecoratorError("inject", String(context.name));
     }
     const meta = context.metadata as Record<string | symbol, unknown>;
     if (!Array.isArray(meta[INJECT_ACCESSOR_KEY])) {

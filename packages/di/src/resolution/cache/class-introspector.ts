@@ -58,19 +58,25 @@ export function assertConstructorMetadata(metadata: unknown, target: Constructor
     return undefined;
   }
   if (typeof metadata !== "object" || metadata === null) {
-    throw new InvalidMetadataError(target.name, `expected an object, received ${typeof metadata}`);
+    throw new InvalidMetadataError(
+      target.name,
+      `constructor metadata: expected an object, received ${typeof metadata}`,
+    );
   }
   const params: unknown = Reflect.get(metadata, "params");
   if (!Array.isArray(params)) {
-    throw new InvalidMetadataError(target.name, "params is not an array");
+    throw new InvalidMetadataError(target.name, "constructor metadata: params is not an array");
   }
   for (const [position, param] of params.entries()) {
     if (typeof param !== "object" || param === null) {
-      throw new InvalidMetadataError(target.name, `params[${String(position)}] is not an object`);
+      throw new InvalidMetadataError(target.name, `constructor metadata: params[${String(position)}] is not an object`);
     }
     const dependency: unknown = Reflect.get(param, "token");
     if (typeof dependency !== "object" && typeof dependency !== "function") {
-      throw new InvalidMetadataError(target.name, `params[${String(position)}].token is not a token or a class`);
+      throw new InvalidMetadataError(
+        target.name,
+        `constructor metadata: params[${String(position)}].token is not a token or a class`,
+      );
     }
   }
 
