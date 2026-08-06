@@ -50,7 +50,7 @@ export const NO_INSTANCE: unique symbol = Symbol("di:no-instance");
 /**
  * @since 0.3.16-canary.0
  */
-export const DEFAULT_BINDING_SLOT = { name: undefined, tags: [] } satisfies BindingSlot;
+export const DEFAULT_BINDING_SLOT: BindingSlot = { name: undefined, tags: [] };
 
 /**
  * @since 0.3.16-canary.0

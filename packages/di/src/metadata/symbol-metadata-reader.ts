@@ -46,4 +46,4 @@ export class SymbolMetadataReader implements MetadataReader {
 /**
  * @since 0.3.16-canary.0
  */
-export const defaultMetadataReader = new SymbolMetadataReader();
+export const defaultMetadataReader: SymbolMetadataReader = new SymbolMetadataReader();

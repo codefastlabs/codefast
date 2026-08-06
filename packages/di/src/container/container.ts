@@ -1,10 +1,9 @@
 import type { BindingRegistration } from "#/container/binding-builders";
 import { BindingChain } from "#/container/binding-builders";
-import type { Binding, BindToBuilder } from "#/core/binding";
+import type { Binding, BindingBuilder, BindToBuilder } from "#/core/binding";
 import { NO_INSTANCE } from "#/core/binding";
 import { effectiveBindingScope } from "#/core/binding-scope";
-import type { AsyncModule, ModuleBuilder, SyncModule } from "#/core/module";
-import type { AsyncModuleBuilder } from "#/core/module";
+import type { AsyncModule, AsyncModuleBuilder, ModuleBuilder, SyncModule } from "#/core/module";
 import { isSyncModule, MODULE_SETUP } from "#/core/module";
 import { BindingRegistry } from "#/core/registry";
 import type { Token } from "#/core/token";
@@ -116,6 +115,20 @@ export interface ContainerStatic {
   fromModules(...modules: Array<SyncModule>): Container;
   fromModulesAsync(...modules: Array<SyncModule | AsyncModule>): Promise<Container>;
 }
+
+// A Record rather than an if-chain, so a new `BindingScope` is a compile error here instead of
+// silently landing in whichever branch happened to be last.
+const APPLY_BINDING_SCOPE: Record<BindingScope, (builder: BindingBuilder<unknown>) => void> = {
+  singleton: (builder) => {
+    builder.singleton();
+  },
+  scoped: (builder) => {
+    builder.scoped();
+  },
+  transient: (builder) => {
+    builder.transient();
+  },
+};
 
 // ── DefaultContainer ──────────────────────────────────────────────────────────
 
@@ -451,15 +464,7 @@ class DefaultContainer implements Container {
     this.#assertNotDisposed();
     const entries = registry.entries();
     for (const { target, scope } of entries) {
-      const builder = this.#createBindToBuilder(target);
-      const bindingBuilder = builder.toSelf();
-      if (scope === "singleton") {
-        bindingBuilder.singleton();
-      } else if (scope === "scoped") {
-        bindingBuilder.scoped();
-      } else {
-        bindingBuilder.transient();
-      }
+      APPLY_BINDING_SCOPE[scope](this.#createBindToBuilder(target).toSelf());
     }
     return entries.length;
   }
