@@ -98,10 +98,11 @@ tags to a request makes it match more bindings rather than fewer.
 
 ## Parent-aware constraints (`whenParentIs`)
 
-Import from `@codefast/di/constraints`:
+On the root entry, or narrowly from the module that owns them:
 
 ```ts
-import { whenParentIs } from "@codefast/di/constraints";
+import { whenParentIs } from "@codefast/di";
+import { whenParentIs } from "@codefast/di/resolution/select/constraints";
 ```
 
 Register two bindings for `LoggerToken`; each fires only when the correct consumer is being resolved:
