@@ -1,6 +1,6 @@
+import { token } from "#/core/token";
+import type { Token } from "#/core/token";
 import type { MetadataReader } from "#/metadata/metadata-types";
-import { token } from "#/token";
-import type { Token } from "#/token";
 
 /**
  * @since 0.3.16-canary.0

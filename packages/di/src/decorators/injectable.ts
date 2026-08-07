@@ -1,8 +1,8 @@
-import type { InjectableDependency } from "#/decorators/inject";
-import { normalizeToDescriptor } from "#/decorators/inject";
+import type { BindingScope, Constructor } from "#/core/types";
+import type { InjectableDependency } from "#/injection/descriptor";
+import { normalizeToDescriptor } from "#/injection/descriptor";
 import { INJECTABLE_KEY } from "#/metadata/metadata-keys";
 import type { ParamMetadata } from "#/metadata/metadata-types";
-import type { BindingScope, Constructor } from "#/types";
 
 // ── AutoRegisterRegistry ──────────────────────────────────────────────────────
 
@@ -35,8 +35,8 @@ export function createAutoRegisterRegistry(): AutoRegisterRegistry {
  * @since 0.3.16-canary.0
  */
 export interface InjectableOptions {
-  autoRegister?: AutoRegisterRegistry;
-  scope?: BindingScope;
+  autoRegister?: AutoRegisterRegistry | undefined;
+  scope?: BindingScope | undefined;
 }
 
 // ── @injectable() ─────────────────────────────────────────────────────────────

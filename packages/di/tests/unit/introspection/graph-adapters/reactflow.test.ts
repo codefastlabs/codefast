@@ -1,10 +1,10 @@
 import { describe, expect, it } from "vitest";
 
 import { Container } from "#/container/container";
-import { optional } from "#/decorators/inject";
+import { token } from "#/core/token";
 import { injectable } from "#/decorators/injectable";
+import { optional } from "#/injection/descriptor";
 import { toReactFlowGraph } from "#/introspection/graph-adapters/reactflow";
-import { token } from "#/token";
 
 describe("toReactFlowGraph", () => {
   it("maps nodes with grid positions and edges with stable ids", () => {

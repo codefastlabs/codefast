@@ -1,6 +1,7 @@
 // Foundation types
 export type {
   ActivationHandler,
+  BindingConstraint,
   BindingIdentifier,
   BindingKind,
   BindingScope,
@@ -13,11 +14,15 @@ export type {
   ResolveOptions,
   ResolutionContext,
   TokenValue,
-} from "#/types";
+} from "#/core/types";
 
 // Token
-export { token, tokenName, isToken } from "#/token";
-export type { Token } from "#/token";
+export { token, tokenName, isToken } from "#/core/token";
+export type { Token } from "#/core/token";
+
+// Tag — the interned slot criteria a `whenTagged` and a resolve both take
+export { coversTagKeys, NO_TAG_KEYS, tag, tagKeyMaskOf } from "#/core/tag";
+export type { TagKey } from "#/core/tag";
 
 // Binding builders — types only
 export type {
@@ -30,19 +35,19 @@ export type {
   SingletonLifecycleBuilder,
   SlotConstrainedBuilder,
   TransientBindingBuilder,
-} from "#/binding";
+} from "#/core/binding";
 
 // Container
 export { Container } from "#/container/container";
 export type { Container as ContainerInterface, ContainerOptions, ContainerStatic } from "#/container/container";
 
-// Ambient container — the context an `@inject` accessor initializer resolves from. The rest of
-// `resolution/environment` stays internal: it hands out resolver callbacks, not public values.
-export { getActiveContainer, runWithContainer } from "#/resolution/environment";
+// Ambient container — the context an `@inject` accessor initializer resolves from. `resolution/context`
+// stays internal: it hands out resolver callbacks, not public values.
+export { getActiveContainer, runWithContainer } from "#/ambient/active-container";
 
 // `effectiveBindingScope` is deliberately absent: it reads a `Binding`, which is internal, and no
 // public API hands one out. `BindingSnapshot.scope` and `GraphNode.scope` are the public answers.
-export { injectionSlotToResolveOptions, bindingSlotToResolveOptions } from "#/resolution/resolve-options";
+export { injectionSlotToResolveOptions, bindingSlotToResolveOptions } from "#/injection/resolve-options";
 
 // Introspection types
 export type { BindingSnapshot, ContainerSnapshot } from "#/introspection/inspector";
@@ -51,12 +56,13 @@ export type { BindingSnapshot, ContainerSnapshot } from "#/introspection/inspect
 export type { ContainerGraphJson, GraphEdge, GraphNode, GraphOptions } from "#/introspection/dependency-graph";
 
 // Module
-export { AsyncModule, isSyncModule, Module, SyncModule } from "#/module";
-export type { AsyncModuleBuilder, ModuleBuilder } from "#/module";
+export { AsyncModule, isSyncModule, Module, SyncModule } from "#/core/module";
+export type { AsyncModuleBuilder, ModuleBuilder } from "#/core/module";
 
 // Decorators
-export { inject, injectAll, isInjectionDescriptor, optional } from "#/decorators/inject";
-export type { InjectionDescriptor, InjectOptions } from "#/decorators/inject";
+export { inject } from "#/decorators/inject";
+export { injectAll, isInjectionDescriptor, optional } from "#/injection/descriptor";
+export type { InjectionDescriptor, InjectOptions } from "#/injection/descriptor";
 export { injectable } from "#/decorators/injectable";
 export type { InjectableDependency, InjectableOptions } from "#/decorators/injectable";
 export { postConstruct, preDestroy } from "#/decorators/lifecycle-decorators";
@@ -88,7 +94,7 @@ export {
   whenParentNamed,
   whenParentTagged,
   whenParentTaggedAll,
-} from "#/resolution/constraints";
+} from "#/resolution/select/constraints";
 
 // Errors
 export {
@@ -110,10 +116,11 @@ export {
   RebindUnboundTokenError,
   ScopeViolationError,
   SelfBindingRequiresClassError,
+  StaticMemberDecoratorError,
   SyncDisposalNotSupportedError,
   TokenNotBoundError,
-} from "#/errors";
-export type { ScopeViolationDetails } from "#/errors";
+} from "#/errors/errors";
+export type { ScopeViolationDetails } from "#/errors/errors";
 
 // Graph adapters — render `generateDependencyGraph()` output for common viewers
 export { toDotGraph } from "#/introspection/graph-adapters/dot";

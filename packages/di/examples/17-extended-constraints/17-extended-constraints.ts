@@ -35,7 +35,13 @@ import {
   whenParentNamed,
   whenParentTagged,
   whenParentTaggedAll,
+  tag,
 } from "@codefast/di";
+
+const BACKEND_TAG = tag("backend");
+const REGION_TAG = tag("region");
+const TENANT_TAG = tag("tenant");
+const TIER_TAG = tag("tier");
 
 // ── Shared logger interface ───────────────────────────────────────────────────
 
@@ -295,37 +301,29 @@ const taggedContainer = Container.create();
 taggedContainer
   .bind(CacheAdapterToken)
   .toConstantValue({ backend: "redis-eu", read: () => undefined })
-  .when(
-    whenParentTaggedAll([
-      ["backend", "redis"],
-      ["region", "eu"],
-    ]),
-  );
+  .when(whenParentTaggedAll([BACKEND_TAG.of("redis"), REGION_TAG.of("eu")]));
 
 // Memcached adapter: requires parent to have backend=memcached (single tag).
 taggedContainer
   .bind(CacheAdapterToken)
   .toConstantValue({ backend: "memcached", read: () => undefined })
-  .when(whenParentTagged("backend", "memcached"));
+  .when(whenParentTagged(BACKEND_TAG.of("memcached")));
 
 // Tag SessionStore with both backend=redis and region=eu.
 taggedContainer
   .bind(SessionStoreToken)
   .to(SessionStore)
-  .whenTagged("backend", "redis")
-  .whenTagged("region", "eu")
+  .whenTagged(BACKEND_TAG.of("redis"))
+  .whenTagged(REGION_TAG.of("eu"))
   .singleton();
 
 // Tag ProductCache with backend=memcached only.
-taggedContainer.bind(ProductCacheToken).to(ProductCache).whenTagged("backend", "memcached").singleton();
+taggedContainer.bind(ProductCacheToken).to(ProductCache).whenTagged(BACKEND_TAG.of("memcached")).singleton();
 
 taggedContainer.resolve(SessionStoreToken, {
-  tags: [
-    ["backend", "redis"],
-    ["region", "eu"],
-  ],
+  tags: [BACKEND_TAG.of("redis"), REGION_TAG.of("eu")],
 });
-taggedContainer.resolve(ProductCacheToken, { tags: [["backend", "memcached"]] });
+taggedContainer.resolve(ProductCacheToken, { tags: [BACKEND_TAG.of("memcached")] });
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 5. whenAnyAncestorTagged / whenAnyAncestorTaggedAll
@@ -382,12 +380,7 @@ tenantContainer
     tier: "enterprise",
     audit: (event) => console.log(`[ENTERPRISE AUDIT] ${event}`),
   })
-  .when(
-    whenAnyAncestorTaggedAll([
-      ["tenant", "enterprise"],
-      ["tier", "paid"],
-    ]),
-  );
+  .when(whenAnyAncestorTaggedAll([TENANT_TAG.of("enterprise"), TIER_TAG.of("paid")]));
 
 // whenAnyAncestorTagged checks a single tag — simpler when only one tag identifies the tier.
 tenantContainer
@@ -396,7 +389,7 @@ tenantContainer
     tier: "starter",
     audit: (event) => console.log(`[starter audit] ${event}`),
   })
-  .when(whenAnyAncestorTagged("tenant", "starter"));
+  .when(whenAnyAncestorTagged(TENANT_TAG.of("starter")));
 
 // ReportGenerator: single untagged transient binding — no tenant knowledge needed.
 // Transient so each AnalyticsDashboard singleton gets its own instance (and thus
@@ -408,24 +401,21 @@ tenantContainer.bind(ReportGeneratorToken).to(ReportGenerator).transient();
 tenantContainer
   .bind(AnalyticsDashboardToken)
   .to(AnalyticsDashboard)
-  .whenTagged("tenant", "enterprise")
-  .whenTagged("tier", "paid")
+  .whenTagged(TENANT_TAG.of("enterprise"))
+  .whenTagged(TIER_TAG.of("paid"))
   .singleton();
 
-tenantContainer.bind(AnalyticsDashboardToken).to(AnalyticsDashboard).whenTagged("tenant", "starter").singleton();
+tenantContainer.bind(AnalyticsDashboardToken).to(AnalyticsDashboard).whenTagged(TENANT_TAG.of("starter")).singleton();
 
 console.log("Enterprise tenant:");
 tenantContainer
   .resolve(AnalyticsDashboardToken, {
-    tags: [
-      ["tenant", "enterprise"],
-      ["tier", "paid"],
-    ],
+    tags: [TENANT_TAG.of("enterprise"), TIER_TAG.of("paid")],
   })
   .open(); // [ENTERPRISE AUDIT] report.generated
 
 console.log("Starter tenant:");
-tenantContainer.resolve(AnalyticsDashboardToken, { tags: [["tenant", "starter"]] }).open(); // [starter audit] report.generated
+tenantContainer.resolve(AnalyticsDashboardToken, { tags: [TENANT_TAG.of("starter")] }).open(); // [starter audit] report.generated
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Quick reference — when to use each constraint

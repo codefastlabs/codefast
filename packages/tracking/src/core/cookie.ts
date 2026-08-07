@@ -3,7 +3,7 @@
  *
  * @since 1.0.0-canary.6
  */
-export const ONE_YEAR_IN_SECONDS = 60 * 60 * 24 * 365;
+export const ONE_YEAR_IN_SECONDS: number = 60 * 60 * 24 * 365;
 
 /**
  * The value of `cookieName` inside a cookie string — a request `Cookie` header or

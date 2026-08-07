@@ -10,6 +10,10 @@
 
 import { Container, inject, injectable, token, whenParentIs } from "@codefast/di";
 
+import { tag } from "#/core/tag";
+
+const PROVIDER_TAG = tag("provider");
+
 // --- Tokens -----------------------------------------------------------------
 
 const LoggerToken = token<Logger>("Logger");
@@ -167,8 +171,8 @@ appContainer.bind(LoggerToken).toConstantValue(consoleLogger).when(whenParentIs(
 appContainer.bind(PaymentLoggerToken).toConstantValue(fileLogger);
 
 // Tagged storages
-appContainer.bind(StorageToken).to(S3Storage).whenTagged("provider", "s3").singleton();
-appContainer.bind(StorageToken).to(LocalStorage).whenTagged("provider", "local").singleton();
+appContainer.bind(StorageToken).to(S3Storage).whenTagged(PROVIDER_TAG.of("s3")).singleton();
+appContainer.bind(StorageToken).to(LocalStorage).whenTagged(PROVIDER_TAG.of("local")).singleton();
 appContainer.bind(S3StorageToken).to(S3Storage).singleton();
 appContainer.bind(LocalStorageToken).to(LocalStorage).singleton();
 
@@ -190,8 +194,8 @@ consoleLoggerInstance.log("hello from console");
 fileLoggerInstance.log("hello from file");
 
 console.log("\n=== Tagged bindings ===");
-const s3Storage = appContainer.resolve(StorageToken, { tags: [["provider", "s3"]] });
-const localStorageInstance = appContainer.resolve(StorageToken, { tags: [["provider", "local"]] });
+const s3Storage = appContainer.resolve(StorageToken, { tags: [PROVIDER_TAG.of("s3")] });
+const localStorageInstance = appContainer.resolve(StorageToken, { tags: [PROVIDER_TAG.of("local")] });
 console.log("s3Storage.provider:", s3Storage.provider);
 console.log("localStorage.provider:", localStorageInstance.provider);
 

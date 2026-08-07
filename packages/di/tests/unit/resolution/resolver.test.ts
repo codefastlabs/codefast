@@ -7,11 +7,11 @@
 import { describe, expect, it } from "vitest";
 
 import { Container } from "#/container/container";
-import { injectAll, optional } from "#/decorators/inject";
+import { token } from "#/core/token";
 import { injectable } from "#/decorators/injectable";
 import { postConstruct } from "#/decorators/lifecycle-decorators";
-import { CircularDependencyError, MissingScopeContextError } from "#/errors";
-import { token } from "#/token";
+import { AsyncResolutionError, CircularDependencyError, MissingScopeContextError } from "#/errors/errors";
+import { injectAll, optional } from "#/injection/descriptor";
 
 describe("class instantiation — arity 0..3 (unrolled fast path)", () => {
   it("resolves a zero-arg transient class fresh each time", () => {
@@ -437,5 +437,50 @@ describe("deep transient chain", () => {
     const root = container.resolve(l1);
     expect(root.next.next.next).toBeInstanceOf(L4);
     expect(container.resolve(l1)).not.toBe(root);
+  });
+});
+
+/** Returns what `run` threw, so every assertion below it runs unconditionally. */
+function captureThrown(run: () => unknown): unknown {
+  try {
+    run();
+  } catch (error) {
+    return error;
+  }
+  return undefined;
+}
+
+describe("AsyncResolutionError names the root request and the async source", () => {
+  it("names the dependency that forced async, not the requested token twice", () => {
+    const dependencyToken = token<number>("Database");
+    const rootToken = token<{ value: number }>("App");
+    const container = Container.create();
+    container
+      .bind(dependencyToken)
+      .toDynamicAsync(async () => 1)
+      .transient();
+    container.bind(rootToken).toResolved((value: number) => ({ value }), [dependencyToken]);
+
+    const caught = captureThrown(() => container.resolve(rootToken));
+
+    expect(caught).toBeInstanceOf(AsyncResolutionError);
+    expect((caught as AsyncResolutionError).tokenName).toBe("App");
+    expect((caught as AsyncResolutionError).asyncSourceToken).toBe("Database");
+    expect((caught as AsyncResolutionError).message).toContain("'Database' in its dependency chain");
+  });
+
+  it("says the factory is async when the requested token is itself the source", () => {
+    const asyncToken = token<number>("Solo");
+    const container = Container.create();
+    container
+      .bind(asyncToken)
+      .toDynamicAsync(async () => 1)
+      .transient();
+
+    const caught = captureThrown(() => container.resolve(asyncToken));
+
+    expect((caught as AsyncResolutionError).tokenName).toBe("Solo");
+    expect((caught as AsyncResolutionError).asyncSourceToken).toBe("Solo");
+    expect((caught as AsyncResolutionError).message).toContain("its factory is async");
   });
 });

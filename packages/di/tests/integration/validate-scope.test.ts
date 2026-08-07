@@ -1,10 +1,10 @@
 import { describe, expect, it } from "vitest";
 
 import { Container } from "#/container/container";
+import { Module } from "#/core/module";
+import { token } from "#/core/token";
 import { injectable } from "#/decorators/injectable";
-import { AsyncModuleLoadError, CircularDependencyError, ScopeViolationError } from "#/errors";
-import { Module } from "#/module";
-import { token } from "#/token";
+import { AsyncModuleLoadError, CircularDependencyError, ScopeViolationError } from "#/errors/errors";
 
 describe("container.validate() — transitive scope + alias chain (SPEC §6.9)", () => {
   it("throws ScopeViolationError when a singleton transitively depends on a scoped binding", () => {

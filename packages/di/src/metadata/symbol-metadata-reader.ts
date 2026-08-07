@@ -1,7 +1,7 @@
-import type { InjectionDescriptor } from "#/decorators/inject";
+import type { Constructor } from "#/core/types";
+import type { InjectionDescriptor } from "#/injection/descriptor";
 import { INJECT_ACCESSOR_KEY, INJECTABLE_KEY, LIFECYCLE_KEY, METADATA_SYMBOL } from "#/metadata/metadata-keys";
 import type { ConstructorMetadata, LifecycleMetadata, MetadataReader } from "#/metadata/metadata-types";
-import type { Constructor } from "#/types";
 
 /**
  * @since 0.3.16-canary.0
@@ -46,4 +46,4 @@ export class SymbolMetadataReader implements MetadataReader {
 /**
  * @since 0.3.16-canary.0
  */
-export const defaultMetadataReader = new SymbolMetadataReader();
+export const defaultMetadataReader: SymbolMetadataReader = new SymbolMetadataReader();

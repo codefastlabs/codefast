@@ -170,22 +170,44 @@ type DeactivationHandler<Value> = (instance: Value) => void | Promise<void>;
 ```ts
 interface ResolveOptions {
   /** Match binding có `whenNamed(name)`. */
-  name?: string;
+  name?: string | undefined;
   /**
    * Match binding mà **mọi tag nó khai báo** đều nằm trong array này — request là superset
    * filter, không phải "binding phải có đủ các tag này". Luật đầy đủ ở section 5.11.
    */
-  tags?: ReadonlyArray<readonly [tag: string, value: unknown]>;
+  tags?: ReadonlyArray<BindingTag> | undefined;
   /**
-   * Tuỳ chọn — shorthand một cặp `[tagKey, value]` tương đương một phần tử trong `tags`.
+   * Tuỳ chọn — shorthand một criterion tương đương một phần tử trong `tags`.
    * Chỉ diễn tả được một tag; nhiều tag phải dùng `tags`. `InjectOptions` nhận cả hai và gấp
    * `tag` vào `tags`, nên `InjectionDescriptor` chỉ bao giờ mang một cách viết.
    */
-  tag?: readonly [tag: string, value: unknown];
+  tag?: BindingTag | undefined;
 }
 ```
 
-**Tag value comparison là `Object.is` — normative, kể cả trên fast-path.** `tag` và `tags: [pair]` phải cho **cùng một kết quả**, và cùng kết quả với `resolveAll` / `resolveOptional` trên cùng options. Cảnh báo cho implementer: một index dạng `Map` keyed theo tag value trả lời bằng **SameValueZero**, nên nó coi `-0` và `+0` là **cùng khoá** — trái với `Object.is` (section 5.11, section 8). Fast-path đọc index như vậy phải **kiểm lại bằng matcher** trước khi trả về, nếu không cùng một câu hỏi sẽ có hai câu trả lời tuỳ cách viết. `NaN` không bị ảnh hưởng: cả hai quy tắc coi `NaN` bằng chính nó.
+**Criterion được mint bởi `TagKey.of()`, và chỉ bởi nó — normative.** Một tag key khai báo bằng
+`tag<Value>(name)`; `key.of(value)` trả về một `BindingTag` **interned**: cùng một value luôn cho
+**cùng một object**. `BindingTag` được brand nên không thể dựng bằng tay.
+
+```ts
+const Region = tag<"eu" | "us">("region");
+container.bind(Storage).to(S3).whenTagged(Region.of("eu"));
+container.resolve(Storage, { tag: Region.of("eu") });
+```
+
+**Tag value comparison là `Object.is` — normative, kể cả trên fast-path.** Interning là _cách_
+implement luật đó: vì mỗi value có đúng một criterion, so sánh criterion bằng **identity** cho kết quả
+giống `Object.is` trên value. Hệ quả cho implementer: một index keyed theo **criterion** là exact và
+không cần kiểm lại. Trước đây index keyed theo _value_ trả lời bằng **SameValueZero**, coi `-0` và `+0`
+cùng khoá — trái `Object.is` (section 5.11, section 8) — và fast-path phải kiểm lại bằng matcher.
+Intern cache phải tách `-0` khỏi `+0` để giữ luật này. `NaN` không bị ảnh hưởng: cả hai quy tắc coi
+`NaN` bằng chính nó, nên nó gấp về một criterion.
+
+**Key set của slot và của request là một bitmask — không normative, nhưng luật subset thì có.** Một
+slot chỉ match khi request mang **mọi** key slot khai báo (section 5.11). Implementation OR các key
+thành một word và reject bằng `(requestMask & slotMask) !== slotMask` trước khi đọc criterion nào.
+Bit wrap sau mỗi 32 key, nên hai key có thể chung bit: đó là **false positive** mà identity loại bỏ
+sau đó, không bao giờ là false negative.
 
 **Cho cả `tag` và `tags` cùng lúc (normative):** request mang **hợp** của hai nguồn — tương đương `tags: [tag, ...tags]`, và `InjectOptions` gấp đúng thành hình đó. Một request như vậy hỏi từ hai tag trở lên nên không dùng được single-tag index; nó đi đường selection đầy đủ.
 
@@ -2297,7 +2319,7 @@ Các quy tắc trong section 5.4 áp dụng đầy đủ cho advanced constraint
 ### 8.8 Subpath export
 
 ```ts
-// @codefast/di/constraints — src/constraints.ts
+// @codefast/di/resolution/select/constraints — src/resolution/select/constraints.ts
 export {
   whenAnyAncestorIs,
   whenAnyAncestorNamed,
@@ -2554,19 +2576,22 @@ class MissingMetadataError extends DiError {
 }
 ```
 
-**`InvalidMetadataError`** — `MetadataReader` trả về thứ không phải constructor metadata:
+**`InvalidMetadataError`** — `MetadataReader` trả về thứ container không dùng được:
 
 ```ts
 class InvalidMetadataError extends DiError {
   readonly code = "INVALID_METADATA";
   readonly targetName: string;
   readonly reason: string;
-  // "MetadataReader returned invalid constructor metadata for class 'Pool': params is not
-  //  an array. Check the reader bound to MetadataReaderToken or passed to Container.create()."
+  // "MetadataReader returned invalid metadata for class 'Pool': constructor metadata:
+  //  params is not an array. Check the reader bound to MetadataReaderToken or passed to
+  //  Container.create()."
 }
 ```
 
 Khác `MissingMetadataError`: vắng metadata là class container chưa được kể; metadata sai là reader trả lời sai. Chỉ reader **do người dùng cấp** bị kiểm tra — reader decorator mặc định tự ghi metadata mà nó đọc lại, nên không có gì để kiểm và container không cấp reader riêng không phải trả gì. Kiểm một lần mỗi cặp `(reader, class)` mỗi process, chỉ những field mà consumer dereference (`params`, và `token` của từng entry).
+
+Câu trả lời **lifecycle** cũng vào đây, với `reason` khác: nếu reader kể một tên `postConstruct`/`preDestroy` mà instance không có method đó, hook bị bỏ qua là thất bại **caller không nhìn thấy được** — nên nó được báo (`"lifecycle method 'strat' is not a method on the instance"`) thay vì im lặng. Tên class lấy từ chính instance tại chỗ throw, nên happy path không mang thêm đối số nào.
 
 **`AsyncModuleLoadError`** — `load()` sync nhận `AsyncModule`:
 
@@ -2662,6 +2687,21 @@ class SelfBindingRequiresClassError extends DiError {
 ```
 
 `toSelf()` bind token **thành chính nó**, nên token phải là constructor. Một `token<Logger>("Logger")` không construct được gì. Như `ChainNotRegisteredError`, kiểu của `bind()` đã chặn phần lớn trường hợp — error này dành cho caller JavaScript hoặc caller đã cast qua kiểu, và nó thuộc taxonomy `DiError` để một `catch (error) { if (error instanceof DiError) … }` không để nó rơi ra ngoài.
+
+**`StaticMemberDecoratorError`** — `@inject`, `@postConstruct` hoặc `@preDestroy` đặt trên static member:
+
+```ts
+class StaticMemberDecoratorError extends DiError {
+  readonly code = "STATIC_MEMBER_DECORATOR";
+  readonly decoratorName: string;
+  readonly memberName: string;
+  // "@inject() applies to instance members only, and 'clock' is static.
+  //  Move it to an instance member, or read the value from the container where
+  //  the static member is used."
+}
+```
+
+Cả ba decorator này đều tác động lên **một instance**: `@inject` resolve qua container đang active trong lúc instance được construct, còn `@postConstruct`/`@preDestroy` bao quanh lifecycle của một instance. Static member thuộc về class, mà container không construct class — nên đây là misuse của caller, không phải assertion nội bộ. Trước đây ba site này throw `InternalError`, cùng loại sai mà §10 đã ghi nhận ở predicate ambiguity: `InternalError` nghĩa là **library** hỏng, và một consumer bắt nó để báo bug sẽ nhận về chính lỗi của mình.
 
 ---
 
@@ -2846,6 +2886,7 @@ export {
   ChainNotRegisteredError,
   RebindUnboundTokenError,
   ScopeViolationError,
+  StaticMemberDecoratorError,
   SyncDisposalNotSupportedError,
   TokenNotBoundError,
 } from "#/errors";
@@ -2897,18 +2938,21 @@ Mỗi public subpath là một conditional entry: `source` → `src` cho dev/tes
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
     },
-    "./constraints": {
-      "source": "./src/constraints.ts",
-      "types": "./dist/constraints.d.ts",
-      "import": "./dist/constraints.js"
+    "./resolution/select/constraints": {
+      "source": "./src/resolution/select/constraints.ts",
+      "types": "./dist/resolution/select/constraints.d.ts",
+      "import": "./dist/resolution/select/constraints.js"
     },
+    // `strip: "./introspection/"` trong codefast.config.js giữ specifier của nhóm
+    // introspection phẳng, nên subpath không mang tiền tố thư mục nguồn.
     "./graph-adapters/dot": {
-      "source": "./src/graph-adapters/dot.ts",
-      "types": "./dist/graph-adapters/dot.d.ts",
-      "import": "./dist/graph-adapters/dot.js"
+      "source": "./src/introspection/graph-adapters/dot.ts",
+      "types": "./dist/introspection/graph-adapters/dot.d.ts",
+      "import": "./dist/introspection/graph-adapters/dot.js"
     }
-    // … các subpath còn lại theo cùng hình dạng (registry, resolver, scope,
-    // lifecycle, binding-select, inspector, decorators/*, metadata/*, …)
+    // … các subpath còn lại theo cùng hình dạng (core/registry, resolution/resolver,
+    // lifecycle/scope-manager, lifecycle/lifecycle-manager, resolution/select/binding-select,
+    // inspector, decorators/*, injection/*, metadata/*, …)
   },
   "files": ["dist", "src", "CHANGELOG.md", "README.md", "LICENSE"],
   "engines": {

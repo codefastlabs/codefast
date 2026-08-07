@@ -19,17 +19,29 @@ schedules one side later — none of which is your change.
 
 ## Comparing two builds: paired, alternating, best-of
 
-1. Build the baseline and the candidate into two directories.
+1. Put the two builds where the bench can reach them. **Two mechanisms work, and which one you pick
+   decides which runner you may use in step 2** — see the table below.
 2. For each scenario, run **one subprocess per side, back to back**, and record the ratio.
 3. Repeat for at least three passes, **swapping which side goes first each pass**.
 4. Report the median of the per-pass ratios, and show them all.
 
-Step 2 means **one subprocess per (side, scenario)** — `BENCH_ISOLATE=1`, or `BENCH_ONLY=<id>` on the
-child directly. Running a side's whole suite in one process is not a cheaper version of the same
-measurement: scenarios that share an isolate share inline caches and optimisation state, so a change
-to a function several rows exercise shows up compressed. A whole-suite paired A/B once read a change
-as a clean win whose real cost, measured per-scenario, was 0.87×–0.93× on three rows — and mis-blamed
-two neighbouring commits before the isolation was added.
+Step 2 means **one subprocess per (side, scenario)**. Both runners below give you that; what they do
+not share is what they do to the build first, and pairing them wrong fails _silently_.
+
+| Step 1 mechanism                                                                | Step 2 runner                                                            | Why that pairing                                                                                                                                                                          |
+| ------------------------------------------------------------------------------- | ------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Swap the source** — checkout, stash or patch `packages/di/src` per side       | `bench:isolate`                                                          | `src/harness/run.ts` calls `rebuildCodefastDiPackage()` before it spawns anything, and that rebuild is exactly what makes the swap take effect                                            |
+| **Swap the build** — two prebuilt dirs, copied over `packages/di/dist` per side | `BENCH_ONLY=<id>` on a child entry: `bench:codefast` / `bench:inversify` | The same rebuild would overwrite `packages/di/dist` from `src` before the first sample, so both sides measure HEAD and **every row reports parity** — an A/B that never compared anything |
+
+Swapping the build is faster and is the only option when the two builds are not both reachable from
+the working tree. Whichever you use, `bench`, `bench:fast`, `bench:full` and `bench:verbose` are all
+`run.ts` too, and none of them isolates per scenario — so they are wrong here for a second reason.
+
+Running a side's whole suite in one process is not a cheaper version of the same measurement either:
+scenarios that share an isolate share inline caches and optimisation state, so a change to a function
+several rows exercise shows up compressed. A whole-suite paired A/B once read a change as a clean win
+whose real cost, measured per-scenario, was 0.87×–0.93× on three rows — and mis-blamed two
+neighbouring commits before the isolation was added.
 
 Swapping the order is what makes drift cancel instead of accumulate. Reporting every pass is what
 lets a reader see a pass that disagrees — if pass 2 says 0.81 and the rest say 0.99, that is worth

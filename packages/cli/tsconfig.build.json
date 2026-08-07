@@ -4,9 +4,10 @@
   "compilerOptions": {
     "outDir": "./dist",
     "rootDir": "./src",
-    // Bin package — no consumer imports its types.
+    // Bin package — no consumer imports its types, so there are no declarations to isolate.
     "declaration": false,
-    "declarationMap": false
+    "declarationMap": false,
+    "isolatedDeclarations": false
   },
   "include": ["src/**/*.ts"],
   "exclude": ["src/**/*.test.ts"]

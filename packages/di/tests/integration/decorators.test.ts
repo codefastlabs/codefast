@@ -5,12 +5,12 @@ import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 
 import { Container } from "#/container/container";
+import { token } from "#/core/token";
 import { inject } from "#/decorators/inject";
 import { injectable } from "#/decorators/injectable";
 import { postConstruct, preDestroy } from "#/decorators/lifecycle-decorators";
-import { InternalError, MissingContainerContextError } from "#/errors";
+import { StaticMemberDecoratorError, MissingContainerContextError } from "#/errors/errors";
 import { defaultMetadataReader } from "#/metadata/symbol-metadata-reader";
-import { token } from "#/token";
 
 const integrationDir = dirname(fileURLToPath(import.meta.url));
 const packageRoot = join(integrationDir, "..", "..");
@@ -90,7 +90,7 @@ describe("Stage 3 decorators — metadata & lifecycle", () => {
         static init(): void {}
       }
       void StaticPostConstructTarget;
-    }).toThrow(InternalError);
+    }).toThrow(StaticMemberDecoratorError);
   });
 
   it("rejects @preDestroy on static method at class evaluation time", () => {
@@ -100,7 +100,7 @@ describe("Stage 3 decorators — metadata & lifecycle", () => {
         static cleanup(): void {}
       }
       void StaticPreDestroyTarget;
-    }).toThrow(InternalError);
+    }).toThrow(StaticMemberDecoratorError);
   });
 });
 

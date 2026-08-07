@@ -15,33 +15,42 @@ import type {
   SingletonBindingBuilder,
   SingletonLifecycleBuilder,
   TransientBindingBuilder,
-} from "#/binding";
-import { bindingSlotEquals, clearBindingFrame, createBinding, DEFAULT_BINDING_SLOT, refinableFields } from "#/binding";
-import type { InjectableDependency, ResolvedDependencyValue } from "#/decorators/inject";
-import { normalizeToDescriptor } from "#/decorators/inject";
-import { ChainNotRegisteredError, SelfBindingRequiresClassError } from "#/errors";
-import type { BindingRegistry } from "#/registry";
-import type { Token } from "#/token";
-import { tokenName } from "#/token";
+} from "#/core/binding";
+import {
+  bindingSlotEquals,
+  clearBindingFrame,
+  createBinding,
+  DEFAULT_BINDING_SLOT,
+  refinableFields,
+} from "#/core/binding";
+import type { BindingRegistry } from "#/core/registry";
+import type { BindingTag } from "#/core/tag";
+import { tagKeyMaskOf } from "#/core/tag";
+import type { Token } from "#/core/token";
+import { tokenName } from "#/core/token";
 import type {
   ActivationHandler,
+  BindingConstraint,
   BindingIdentifier,
   BindingScope,
-  ConstraintContext,
   Constructor,
   DeactivationHandler,
   ResolutionContext,
-} from "#/types";
+} from "#/core/types";
+import { ChainNotRegisteredError, SelfBindingRequiresClassError } from "#/errors/errors";
+import type { InjectableDependency, ResolvedDependencyValue } from "#/injection/descriptor";
+import { normalizeToDescriptor } from "#/injection/descriptor";
 
-function updateSlotTag(slot: BindingSlot, tag: string, value: unknown): BindingSlot {
+/** One criterion per key: re-tagging the same key replaces it rather than asking for both values. */
+function updateSlotTag(slot: BindingSlot, criterion: BindingTag): BindingSlot {
   const tags = [...slot.tags];
-  const existingIndex = tags.findIndex(([key]) => key === tag);
+  const existingIndex = tags.findIndex((existing) => existing.key === criterion.key);
   if (existingIndex === -1) {
-    tags.push([tag, value]);
+    tags.push(criterion);
   } else {
-    tags[existingIndex] = [tag, value];
+    tags[existingIndex] = criterion;
   }
-  return { ...slot, tags };
+  return { ...slot, tags, keyMask: tagKeyMaskOf(tags) };
 }
 
 // True when re-adding `restored` would immediately be displaced again by `current`
@@ -191,7 +200,7 @@ export class BindingChain<Value>
 
   // Slot and predicate are what the registry indexes on, so a re-slot rebuilds the binding and
   // re-registers it — under the original id, keeping `id()` stable for the whole chain.
-  #reslot(slot: BindingSlot, predicate: ((ctx: ConstraintContext) => boolean) | undefined): this {
+  #reslot(slot: BindingSlot, predicate: BindingConstraint | undefined): this {
     const previous = this.#registered();
     this.#binding = createBinding(previous, previous.token, slot, predicate, previous.id);
     this.#commit(this.#binding, previous.id);
@@ -207,7 +216,7 @@ export class BindingChain<Value>
     return this;
   }
 
-  when(predicate: (ctx: ConstraintContext) => boolean): this {
+  when(predicate: BindingConstraint): this {
     return this.#reslot(this.#registered().slot, predicate);
   }
 
@@ -215,9 +224,9 @@ export class BindingChain<Value>
     return this.#reslot({ ...this.#registered().slot, name }, this.#registered().predicate);
   }
 
-  whenTagged(tag: string, value: unknown): this {
+  whenTagged(criterion: BindingTag): this {
     const binding = this.#registered();
-    return this.#reslot(updateSlotTag(binding.slot, tag, value), binding.predicate);
+    return this.#reslot(updateSlotTag(binding.slot, criterion), binding.predicate);
   }
 
   whenDefault(): this {

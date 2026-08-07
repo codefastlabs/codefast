@@ -1,13 +1,13 @@
 /**
  * Async resolution semantics: dynamic-async chains, inflight singleton dedupe,
- * sync/async mixing errors, the ResolutionContext surface inside factories,
- * and the deep-chain paths past RESOLUTION_SET_THRESHOLD (32).
+ * sync/async mixing errors, the `toResolved*` factory lane, the ResolutionContext
+ * surface inside factories, and the deep-chain paths past RESOLUTION_SET_THRESHOLD (32).
  */
 import { describe, expect, it } from "vitest";
 
 import { Container } from "#/container/container";
-import { AsyncResolutionError, CircularDependencyError } from "#/errors";
-import { token } from "#/token";
+import { token } from "#/core/token";
+import { AsyncResolutionError, CircularDependencyError } from "#/errors/errors";
 
 describe("async chains", () => {
   it("resolves a dynamic-async chain in order", async () => {
@@ -289,6 +289,62 @@ describe("optional and resolveAll variants", () => {
       .whenNamed("late");
 
     await expect(container.resolveAllAsync(handlerToken)).resolves.toEqual(expect.arrayContaining(["sync", "async"]));
+  });
+});
+
+describe("the toResolved factory lane on the async path", () => {
+  // `requiresResolutionContext()` answers only for the two factory kinds handed a context, so a
+  // `resolved` binding legitimately reaches instantiation with none — every scope, every entry.
+  it.each(["transient", "singleton", "scoped"] as const)("resolves a %s toResolved binding", async (scope) => {
+    const dependencyToken = token<number>("dependency");
+    const madeToken = token<string>("made");
+    const container = Container.create();
+    container.bind(dependencyToken).toConstantValue(41);
+    const chain = container.bind(madeToken).toResolved((value: number) => `v${String(value + 1)}`, [dependencyToken]);
+    if (scope === "singleton") {
+      chain.singleton();
+    } else if (scope === "scoped") {
+      chain.scoped();
+    }
+    const resolver = scope === "scoped" ? container.createChild() : container;
+
+    await expect(resolver.resolveAsync(madeToken)).resolves.toBe("v42");
+  });
+
+  it("resolves a toResolved binding reached from inside an async factory", async () => {
+    const dependencyToken = token<number>("dependency");
+    const madeToken = token<string>("made");
+    const rootToken = token<{ value: string }>("root");
+    const container = Container.create();
+    container.bind(dependencyToken).toConstantValue(41);
+    container.bind(madeToken).toResolved((value: number) => `v${String(value + 1)}`, [dependencyToken]);
+    container
+      .bind(rootToken)
+      .toDynamicAsync(async (ctx) => ({ value: await ctx.resolveAsync(madeToken) }))
+      .transient();
+
+    await expect(container.resolveAsync(rootToken)).resolves.toEqual({ value: "v42" });
+  });
+
+  it("keeps activation running on a toResolved binding, which does take a context", async () => {
+    const madeToken = token<string>("made");
+    const container = Container.create();
+    container
+      .bind(madeToken)
+      .toResolved(() => "base", [])
+      .transient()
+      .onActivation((_ctx, instance) => `${instance}+activated`);
+
+    await expect(container.resolveAsync(madeToken)).resolves.toBe("base+activated");
+  });
+
+  it("resolves a toResolved binding through resolveAllAsync and resolveOptionalAsync", async () => {
+    const madeToken = token<string>("made");
+    const container = Container.create();
+    container.bind(madeToken).toResolved(() => "only", []);
+
+    await expect(container.resolveAllAsync(madeToken)).resolves.toEqual(["only"]);
+    await expect(container.resolveOptionalAsync(madeToken)).resolves.toBe("only");
   });
 });
 

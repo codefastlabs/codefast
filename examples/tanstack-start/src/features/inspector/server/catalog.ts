@@ -3,6 +3,7 @@ import type { BindingIdentifier, Container } from "@codefast/di";
 import { token, whenParentIs } from "@codefast/di";
 
 import type { Region, SlotTags, TenantContext } from "#/features/inspector/shared/tenant";
+import { REGION_TAG, TIER_TAG } from "#/features/inspector/shared/tenant";
 import { paymentRequest, REGIONS } from "#/features/inspector/shared/tenant";
 
 export interface Storage {
@@ -70,24 +71,24 @@ export function registerCatalog(container: Container): Array<CatalogEntry> {
 
   for (const region of REGIONS) {
     const storage: Storage = { adapter: `S3Adapter(${region})`, residency: RESIDENCY[region] };
-    const storageBinding = container.bind(storageToken).toConstantValue(storage).whenTagged("region", region);
+    const storageBinding = container.bind(storageToken).toConstantValue(storage).whenTagged(REGION_TAG.of(region));
 
     entries.push({
       id: storageBinding.id(),
       tokenName: "Storage",
       label: storage.adapter,
-      slot: { tags: [["region", region]] },
+      slot: { tags: [REGION_TAG.of(region)] },
       value: storage,
     });
 
     const payment: PaymentGateway = { gateway: GATEWAY[region], feePercent: 2.9 };
-    const paymentBinding = container.bind(paymentToken).toConstantValue(payment).whenTagged("region", region);
+    const paymentBinding = container.bind(paymentToken).toConstantValue(payment).whenTagged(REGION_TAG.of(region));
 
     entries.push({
       id: paymentBinding.id(),
       tokenName: "PaymentGateway",
       label: `${payment.gateway} (list rate)`,
-      slot: { tags: [["region", region]] },
+      slot: { tags: [REGION_TAG.of(region)] },
       value: payment,
     });
   }
@@ -99,18 +100,15 @@ export function registerCatalog(container: Container): Array<CatalogEntry> {
     const binding = container
       .bind(paymentToken)
       .toConstantValue(negotiated)
-      .whenTagged("region", region)
-      .whenTagged("tier", "enterprise");
+      .whenTagged(REGION_TAG.of(region))
+      .whenTagged(TIER_TAG.of("enterprise"));
 
     entries.push({
       id: binding.id(),
       tokenName: "PaymentGateway",
       label: gateway,
       slot: {
-        tags: [
-          ["region", region],
-          ["tier", "enterprise"],
-        ],
+        tags: [REGION_TAG.of(region), TIER_TAG.of("enterprise")],
       },
       value: negotiated,
     });
@@ -120,13 +118,13 @@ export function registerCatalog(container: Container): Array<CatalogEntry> {
   // two tags and outranks it; in apac, where no contract exists, both carry one tag and the
   // container has nothing to separate them — the one combination that genuinely cannot be answered.
   const promo: PaymentGateway = { gateway: "Promo rate (global)", feePercent: 1.9 };
-  const promoBinding = container.bind(paymentToken).toConstantValue(promo).whenTagged("tier", "enterprise");
+  const promoBinding = container.bind(paymentToken).toConstantValue(promo).whenTagged(TIER_TAG.of("enterprise"));
 
   entries.push({
     id: promoBinding.id(),
     tokenName: "PaymentGateway",
     label: promo.gateway,
-    slot: { tags: [["tier", "enterprise"]] },
+    slot: { tags: [TIER_TAG.of("enterprise")] },
     value: promo,
   });
 

@@ -1,6 +1,19 @@
-import type { Binding, ConstantBinding, DynamicAsyncBinding, DynamicBinding } from "#/binding";
-import { NO_INSTANCE } from "#/binding";
 import type { Container } from "#/container/container";
+import type { Binding, ConstantBinding, DynamicAsyncBinding, DynamicBinding } from "#/core/binding";
+import { NO_INSTANCE } from "#/core/binding";
+import type { BindingRegistry } from "#/core/registry";
+import type { Token } from "#/core/token";
+import { tokenName } from "#/core/token";
+import type {
+  ActivationHandler,
+  BindingIdentifier,
+  BindingTag,
+  ConstraintContext,
+  Constructor,
+  ResolutionFrame,
+  ResolveOptions,
+} from "#/core/types";
+import type { ResolutionDiagnostics } from "#/errors/diagnostics";
 import {
   AsyncActivationError,
   AsyncResolutionError,
@@ -10,25 +23,25 @@ import {
   MissingScopeContextError,
   NoMatchingBindingError,
   TokenNotBoundError,
-} from "#/errors";
+} from "#/errors/errors";
+import type { DependencySlot } from "#/injection/resolve-options";
+import { injectionSlotToResolveOptions, isNameOnlyOptions, singleTagOnlyOf } from "#/injection/resolve-options";
+import type { LifecycleManager } from "#/lifecycle/lifecycle-manager";
+import type { ScopeManager } from "#/lifecycle/scope-manager";
+import { SCOPED_MISS } from "#/lifecycle/scope-manager";
 import type { MetadataReader, ParamMetadata } from "#/metadata/metadata-types";
-import type { BindingRegistry } from "#/registry";
-import { ActivationNeedCache } from "#/resolution/activation-need";
-import type { DefaultLookupEntry } from "#/resolution/binding-lookup-cache";
-import { BindingLookupCache } from "#/resolution/binding-lookup-cache";
-import { matchesSlot, selectAllBindings, selectBinding } from "#/resolution/binding-select";
-import { ClassIntrospector } from "#/resolution/class-introspector";
-import type { ResolutionDiagnostics } from "#/resolution/diagnostics";
-import type { ResolverCallbacks } from "#/resolution/environment";
+import { ActivationNeedCache } from "#/resolution/cache/activation-need";
+import type { DefaultLookupEntry } from "#/resolution/cache/binding-lookup-cache";
+import { BindingLookupCache } from "#/resolution/cache/binding-lookup-cache";
+import { ClassIntrospector } from "#/resolution/cache/class-introspector";
+import type { ResolverCallbacks } from "#/resolution/context";
 import {
   AsyncCascadeContext,
   AsyncLevelContext,
   buildResolutionFrame,
   DefaultResolutionContext,
-} from "#/resolution/environment";
-import { InstantiationPlanCompiler, PLAN_RETRY } from "#/resolution/instantiation-plan";
-import type { LifecycleManager } from "#/resolution/lifecycle";
-import type { BranchDepth, OwnedBranchPath } from "#/resolution/resolution-path";
+} from "#/resolution/context";
+import type { BranchDepth, OwnedBranchPath } from "#/resolution/path/resolution-path";
 import {
   branchDepthOf,
   enterResolutionPath,
@@ -36,21 +49,9 @@ import {
   extendResolutionStackBranch,
   ROOT_BRANCH,
   UNOWNED_BRANCH,
-} from "#/resolution/resolution-path";
-import type { DependencySlot } from "#/resolution/resolve-options";
-import { injectionSlotToResolveOptions, isNameOnlyOptions, singleTagOnlyOf } from "#/resolution/resolve-options";
-import type { ScopeManager } from "#/resolution/scope";
-import type { Token } from "#/token";
-import { tokenName } from "#/token";
-import type {
-  ActivationHandler,
-  BindingIdentifier,
-  BindingTag,
-  ConstraintContext,
-  Constructor,
-  ResolutionFrame,
-  ResolveOptions,
-} from "#/types";
+} from "#/resolution/path/resolution-path";
+import { InstantiationPlanCompiler, PLAN_RETRY } from "#/resolution/plan/instantiation-plan";
+import { matchesSlot, selectAllBindings, selectBinding } from "#/resolution/select/binding-select";
 
 const EMPTY_STRING_LIST: ReadonlyArray<string> = [];
 const EMPTY_FRAME_LIST: ReadonlyArray<ResolutionFrame> = [];
@@ -163,12 +164,8 @@ export class DependencyResolver implements ResolverCallbacks {
     } else {
       const singleTag = singleTagOnlyOf(options);
       if (singleTag !== undefined) {
-        const tagged = this.#registry.getSimpleTagged(token, singleTag[0], singleTag[1]);
-        if (
-          tagged !== undefined &&
-          matchesIndexedTagValue(tagged, singleTag[1]) &&
-          this.#satisfiesPredicate(tagged, options, resolutionPath, resolutionStack)
-        ) {
+        const tagged = this.#registry.getSimpleTagged(token, singleTag);
+        if (tagged !== undefined && this.#satisfiesPredicate(tagged, options, resolutionPath, resolutionStack)) {
           return { binding: tagged, owner: this };
         }
       }
@@ -263,7 +260,7 @@ export class DependencyResolver implements ResolverCallbacks {
 
   // ── Sync resolve ───────────────────────────────────────────────────────────
 
-  resolveFromContext<const Value>(
+  resolveFromContext<Value>(
     token: Token<Value> | Constructor<Value>,
     resolutionPath: Array<string>,
     resolutionStack: Array<ResolutionFrame>,
@@ -348,7 +345,7 @@ export class DependencyResolver implements ResolverCallbacks {
       const resolutionCtx = this.#acquireSyncResolutionContext(resolutionPath, resolutionStack, undefined);
       const factoryResult = binding.factory(resolutionCtx);
       if (factoryResult instanceof Promise) {
-        throw new AsyncResolutionError(tokenDisplayName, tokenDisplayName);
+        throw new AsyncResolutionError(resolutionPath[0] ?? tokenDisplayName, tokenDisplayName);
       }
       let activated = factoryResult;
       if (binding.onActivation !== undefined) {
@@ -423,7 +420,7 @@ export class DependencyResolver implements ResolverCallbacks {
     },
   });
 
-  resolve<const Value>(
+  resolve<Value>(
     token: Token<Value> | Constructor<Value>,
     options: ResolveOptions | undefined,
     resolutionPath: Array<string>,
@@ -486,7 +483,7 @@ export class DependencyResolver implements ResolverCallbacks {
         const resolutionCtx = this.#acquireSyncResolutionContext(resolutionPath, resolutionStack, options);
         const dynamicResult = binding.factory(resolutionCtx);
         if (dynamicResult instanceof Promise) {
-          throw new AsyncResolutionError(tokenDisplayName, tokenDisplayName);
+          throw new AsyncResolutionError(resolutionPath[0] ?? tokenDisplayName, tokenDisplayName);
         }
         return dynamicResult;
       }
@@ -510,7 +507,7 @@ export class DependencyResolver implements ResolverCallbacks {
       if (scope === "singleton") {
         this.#scope.setSingleton(binding, activated);
       } else if (scope === "scoped") {
-        this.#scope.setScoped(binding.id, activated);
+        this.#scope.setScoped(binding, activated);
       }
 
       return activated;
@@ -537,13 +534,13 @@ export class DependencyResolver implements ResolverCallbacks {
         }
         const factoryResult = binding.factory(ctx);
         if (factoryResult instanceof Promise) {
-          throw new AsyncResolutionError(tokenName(binding.token), tokenName(binding.token));
+          throw asyncResolutionErrorFor(binding, resolutionPath);
         }
         return factoryResult;
       }
 
       case "dynamic-async":
-        throw new AsyncResolutionError(tokenName(binding.token), tokenName(binding.token));
+        throw asyncResolutionErrorFor(binding, resolutionPath);
 
       case "class": {
         const deps = this.#resolveDeps(this.#constructorParams(binding.target), resolutionPath, resolutionStack);
@@ -554,13 +551,13 @@ export class DependencyResolver implements ResolverCallbacks {
         const deps = this.#resolveDeps(binding.deps, resolutionPath, resolutionStack);
         const factoryResult = binding.factory(...deps);
         if (factoryResult instanceof Promise) {
-          throw new AsyncResolutionError(tokenName(binding.token), tokenName(binding.token));
+          throw asyncResolutionErrorFor(binding, resolutionPath);
         }
         return factoryResult;
       }
 
       case "resolved-async":
-        throw new AsyncResolutionError(tokenName(binding.token), tokenName(binding.token));
+        throw asyncResolutionErrorFor(binding, resolutionPath);
 
       case "alias":
         throw new InternalError("alias should have been followed before instantiation");
@@ -619,7 +616,7 @@ export class DependencyResolver implements ResolverCallbacks {
     return this.resolve(dep.token, options, resolutionPath, resolutionStack);
   }
 
-  resolveOptional<const Value>(
+  resolveOptional<Value>(
     token: Token<Value> | Constructor<Value>,
     options: ResolveOptions | undefined,
     resolutionPath: Array<string>,
@@ -631,7 +628,7 @@ export class DependencyResolver implements ResolverCallbacks {
     return this.resolve(token, options, resolutionPath, resolutionStack);
   }
 
-  resolveAll<const Value>(
+  resolveAll<Value>(
     token: Token<Value> | Constructor<Value>,
     options: ResolveOptions | undefined,
     resolutionPath: Array<string>,
@@ -676,7 +673,7 @@ export class DependencyResolver implements ResolverCallbacks {
 
   // ── Async resolve ──────────────────────────────────────────────────────────
 
-  resolveAsyncFromContext<const Value>(
+  resolveAsyncFromContext<Value>(
     token: Token<Value> | Constructor<Value>,
     resolutionPath: Array<string>,
     resolutionStack: Array<ResolutionFrame>,
@@ -743,8 +740,9 @@ export class DependencyResolver implements ResolverCallbacks {
         return owner.#resolveBindingAsync(binding, undefined, resolutionPath, resolutionStack, branchDepth);
       }
     } else if (this.#scope.isChild) {
-      if (this.#scope.hasScoped(binding.id)) {
-        return Promise.resolve(this.#scope.getScoped(binding.id));
+      const cachedScoped = this.#scope.readScoped(binding.id);
+      if (cachedScoped !== SCOPED_MISS) {
+        return Promise.resolve(cachedScoped);
       }
     } else {
       // Not `#readScoped`: this entry point reports failure as a rejection, never a sync throw.
@@ -753,7 +751,7 @@ export class DependencyResolver implements ResolverCallbacks {
     return this.#resolveBindingAsync(binding, undefined, resolutionPath, resolutionStack, branchDepth);
   }
 
-  async resolveAsync<const Value>(
+  async resolveAsync<Value>(
     token: Token<Value> | Constructor<Value>,
     options: ResolveOptions | undefined,
     resolutionPath: Array<string>,
@@ -850,7 +848,7 @@ export class DependencyResolver implements ResolverCallbacks {
       needsActivation,
     );
     if (scope === "scoped") {
-      this.#scope.setScoped(binding.id, activated);
+      this.#scope.setScoped(binding, activated);
     }
     return activated;
   }
@@ -906,9 +904,6 @@ export class DependencyResolver implements ResolverCallbacks {
       }
 
       case "resolved": {
-        if (ctx === undefined) {
-          throw new InternalError("resolved binding requires resolution context");
-        }
         const deps = await this.#resolveDepsAsync(binding.deps, resolutionPath, resolutionStack, branchDepth);
         const factoryResult = binding.factory(...deps);
         return factoryResult instanceof Promise ? factoryResult : Promise.resolve(factoryResult);
@@ -965,7 +960,7 @@ export class DependencyResolver implements ResolverCallbacks {
     return this.resolveAsync(dep.token, options, resolutionPath, resolutionStack, branchDepth);
   }
 
-  async resolveOptionalAsync<const Value>(
+  async resolveOptionalAsync<Value>(
     token: Token<Value> | Constructor<Value>,
     options: ResolveOptions | undefined,
     resolutionPath: Array<string>,
@@ -978,7 +973,7 @@ export class DependencyResolver implements ResolverCallbacks {
     return this.resolveAsync(token, options, resolutionPath, resolutionStack, branchDepth);
   }
 
-  async resolveAllAsync<const Value>(
+  async resolveAllAsync<Value>(
     token: Token<Value> | Constructor<Value>,
     options: ResolveOptions | undefined,
     resolutionPath: Array<string>,
@@ -1073,24 +1068,18 @@ export class DependencyResolver implements ResolverCallbacks {
   #taggedBindingsFromChain(token: Token<unknown> | Constructor, tag: BindingTag): Array<Binding> {
     // A tag matches at most one binding per registry, so a root container's answer is built whole
     // rather than grown — the shape `#namedBindingsFromChain` takes, for the same reason.
-    const ownBinding = this.#taggedBinding(token, tag);
+    const ownBinding = this.#registry.getSimpleTagged(token, tag);
     if (this.#parent === undefined) {
       return ownBinding === undefined ? [] : [ownBinding];
     }
     const result: Array<Binding> = ownBinding === undefined ? [] : [ownBinding];
     for (let current: DependencyResolver | undefined = this.#parent; current !== undefined; current = current.#parent) {
-      const binding = current.#taggedBinding(token, tag);
+      const binding = current.#registry.getSimpleTagged(token, tag);
       if (binding !== undefined) {
         result.push(binding);
       }
     }
     return result;
-  }
-
-  /** This container's indexed binding for one tag, with the index's zero-value blind spot re-checked. */
-  #taggedBinding(token: Token<unknown> | Constructor, tag: BindingTag): Binding | undefined {
-    const binding = this.#registry.getSimpleTagged(token, tag[0], tag[1]);
-    return binding !== undefined && matchesIndexedTagValue(binding, tag[1]) ? binding : undefined;
   }
 
   /** A constant with no activation anywhere resolves to its value with no pipeline at all. */
@@ -1120,10 +1109,7 @@ export class DependencyResolver implements ResolverCallbacks {
     if (!this.#scope.isChild) {
       throw new MissingScopeContextError(tokenName(binding.token));
     }
-    if (this.#scope.hasScoped(binding.id)) {
-      return this.#scope.getScoped(binding.id);
-    }
-    return SCOPED_MISS;
+    return this.#scope.readScoped(binding.id);
   }
 
   #makeConstraintContext(
@@ -1187,7 +1173,7 @@ export class DependencyResolver implements ResolverCallbacks {
     try {
       const dynamicResult = binding.factory(resolutionCtx);
       if (dynamicResult instanceof Promise) {
-        throw new AsyncResolutionError(tokenDisplayName, tokenDisplayName);
+        throw new AsyncResolutionError(resolutionPath[0] ?? tokenDisplayName, tokenDisplayName);
       }
       return dynamicResult;
     } finally {
@@ -1369,9 +1355,6 @@ export class DependencyResolver implements ResolverCallbacks {
   }
 }
 
-/** Absent scoped entry — distinguishes it from a cached `undefined`. */
-const SCOPED_MISS: unique symbol = Symbol("di:scoped-miss");
-
 function anyPredicate(bindings: ReadonlyArray<Binding>): boolean {
   for (let index = 0; index < bindings.length; index += 1) {
     if (bindings[index]!.predicate !== undefined) {
@@ -1381,20 +1364,13 @@ function anyPredicate(bindings: ReadonlyArray<Binding>): boolean {
   return false;
 }
 
+/** The async-resolution failure for a binding reached on a sync path, naming what to await instead. */
+function asyncResolutionErrorFor(binding: Binding, resolutionPath: ReadonlyArray<string>): AsyncResolutionError {
+  const sourceName = tokenName(binding.token);
+  return new AsyncResolutionError(resolutionPath[0] ?? sourceName, sourceName);
+}
+
 /** Only a factory is handed the resolution context; everything else gets its deps directly. */
 function requiresResolutionContext(binding: Binding): boolean {
   return binding.kind === "dynamic" || binding.kind === "dynamic-async";
-}
-
-/**
- * Whether the tag index's answer is the one `Object.is` would give.
- *
- * @remarks An indexed binding has no name, no predicate and exactly one tag, and the request carries
- * only that tag, so `matchesSlot` reduces to the tag values — and the index matched the key already.
- * It answers by SameValueZero, which parts from `Object.is` (SPEC §3.5) on exactly one pair: `+0` and
- * `-0`. So a request whose value is not zero is already exact, and only a zero-valued one is worth
- * reading the stored value for.
- */
-function matchesIndexedTagValue(binding: Binding, requestedValue: unknown): boolean {
-  return requestedValue !== 0 || Object.is(binding.slot.tags[0]![1], requestedValue);
 }

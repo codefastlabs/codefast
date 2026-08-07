@@ -29,6 +29,10 @@ import type {
 import { expectTypeOf } from "expect-type";
 import { describe, expect, it } from "vitest";
 
+import { tag } from "#/core/tag";
+
+const ENV_TAG = tag("env");
+
 describe("every exported function is callable with public values", () => {
   const serviceToken = token<number>("public-surface");
 
@@ -46,10 +50,10 @@ describe("every exported function is callable with public values", () => {
   });
 
   it("derives resolve options from an injection slot literal", () => {
-    const options = injectionSlotToResolveOptions({ name: "primary", tags: [["env", "prod"]] });
+    const options = injectionSlotToResolveOptions({ name: "primary", tags: [ENV_TAG.of("prod")] });
 
     expectTypeOf(options).toEqualTypeOf<ResolveOptions | undefined>();
-    expect(options).toEqual({ name: "primary", tags: [["env", "prod"]] });
+    expect(options).toEqual({ name: "primary", tags: [ENV_TAG.of("prod")] });
   });
 
   it("reads a binding's scope off the snapshot rather than off an internal binding", () => {

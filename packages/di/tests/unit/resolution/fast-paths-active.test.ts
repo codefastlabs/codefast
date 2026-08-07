@@ -10,10 +10,10 @@
 import { describe, expect, it } from "vitest";
 
 import { Container } from "#/container/container";
+import { token } from "#/core/token";
 import { injectable } from "#/decorators/injectable";
-import type { DiagnosableContainer, ResolutionDiagnostics } from "#/resolution/diagnostics";
-import { RESOLUTION_DIAGNOSTICS } from "#/resolution/diagnostics";
-import { token } from "#/token";
+import type { DiagnosableContainer, ResolutionDiagnostics } from "#/errors/diagnostics";
+import { RESOLUTION_DIAGNOSTICS } from "#/errors/diagnostics";
 
 const WARM_ITERATIONS = 5;
 

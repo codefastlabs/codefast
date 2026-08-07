@@ -1,17 +1,17 @@
-import type { InjectionDescriptor } from "#/decorators/inject";
-import type { Token } from "#/token";
-import type { Constructor } from "#/types";
+import type { Constructor } from "#/core/types";
+import type { InjectionDescriptor } from "#/injection/descriptor";
+import type { DependencySlot } from "#/injection/resolve-options";
 
 /**
+ * One constructor parameter's declaration.
+ *
+ * @remarks Extends {@link DependencySlot} so the two dependency sources stay literally one shape
+ * rather than two that happen to match; `index` is the only thing a parameter adds.
+ *
  * @since 0.3.16-canary.0
  */
-export interface ParamMetadata {
+export interface ParamMetadata extends DependencySlot {
   readonly index: number;
-  readonly token: Token<unknown> | Constructor;
-  readonly optional: boolean;
-  readonly multi: boolean;
-  readonly name?: string;
-  readonly tags?: ReadonlyArray<readonly [string, unknown]>;
 }
 
 /**
