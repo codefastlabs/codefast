@@ -185,10 +185,15 @@ describe("comments stay comments", () => {
   // Code describes what is. Git carries what was.
   const HISTORY =
     /\b(?:used to|previously|an earlier (?:revision|draft|version)|the old \w+|before \w+ existed|no longer surfaces)\b/i;
+  // A comment pointing at a document couples code to a heading no compiler checks: a section number
+  // shifts the moment one is inserted, and a topic phrase outlives the section it named. State the
+  // invariant here instead — if one line will not hold it, the name above it is not saying enough.
+  const DOC_REFERENCE = /(?:\b\w+\.md\b|\bSPEC §|§\d)/;
 
   it.each([
     ["a benchmark number", NUMBERS],
     ["a narrated history", HISTORY],
+    ["a pointer into a document", DOC_REFERENCE],
   ])("contains no %s", (_label, pattern) => {
     const offenders: Array<string> = [];
 
@@ -262,5 +267,36 @@ describe("SPEC.md keeps up with the API it specifies", () => {
     // Coverage only. Whether the prose still describes the behaviour correctly is a human job —
     // four semantic claims in this document were wrong before anyone checked.
     expect(undocumented).toEqual([]);
+  });
+
+  // A cross-reference used to be a bare section number, which goes stale silently the moment a
+  // section is inserted — one such reference pointed at a §4.8 that had never existed.
+  it("resolves every internal cross-reference", () => {
+    const targets = new Set([...spec.matchAll(/<a id="([^"]+)"><\/a>/g)].map((match) => match[1]!));
+
+    // The table of contents links headings by their rendered slug, so those count as targets too.
+    for (const heading of spec.matchAll(/^#{1,3} (.+)$/gm)) {
+      targets.add(
+        heading[1]!
+          .toLowerCase()
+          .replaceAll(/[^\p{L}\p{N} -]/gu, "")
+          .trim()
+          .replaceAll(" ", "-"),
+      );
+    }
+
+    const dangling = [...spec.matchAll(/]\(#([^)]+)\)/g)]
+      .map((match) => match[1]!)
+      .filter((target) => !targets.has(target));
+
+    expect([...new Set(dangling)]).toEqual([]);
+  });
+
+  it("leaves no cross-reference as a bare section number", () => {
+    // Links carry their own section number as label text, so strip them before looking.
+    const withoutLinks = spec.replaceAll(/\[[^\]]*]\([^)]*\)/g, "");
+    const bare = [...withoutLinks.matchAll(/(?:section |§)\d+\.\d+/gi)].map((match) => match[0]);
+
+    expect([...new Set(bare)]).toEqual([]);
   });
 });
