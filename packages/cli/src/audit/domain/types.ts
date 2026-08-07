@@ -36,3 +36,32 @@ export type RtlAuditResult = {
   readonly allowlistedCount: number;
   readonly scannedFileCount: number;
 };
+
+/**
+ * @since 0.5.0
+ */
+export type LinkBreakage = {
+  readonly line: number;
+  /** The link target as written, fragment included. */
+  readonly raw: string;
+  readonly reason: string;
+};
+
+/**
+ * @since 0.5.0
+ */
+export type LinkFileBreakages = {
+  readonly relativePath: string;
+  readonly breakages: Array<LinkBreakage>;
+};
+
+/**
+ * @since 0.5.0
+ */
+export type LinkAuditResult = {
+  readonly files: Array<LinkFileBreakages>;
+  readonly breakageCount: number;
+  readonly allowlistedCount: number;
+  readonly linkCount: number;
+  readonly scannedFileCount: number;
+};

@@ -23,6 +23,7 @@
     "cli:arrange:simplify": "pnpm run codefast arrange simplify",
     "cli:arrange:simplify:preview": "pnpm run codefast arrange simplify --dry-run",
     "cli:audit:rtl": "pnpm run codefast audit rtl",
+    "cli:audit:links": "pnpm run codefast audit links",
     "cli:mirror": "pnpm run codefast mirror",
     "cli:mirror:preview": "pnpm run codefast mirror --dry-run",
     "codefast": "node ./packages/cli/dist/bin.js",
