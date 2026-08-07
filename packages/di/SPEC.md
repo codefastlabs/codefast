@@ -84,6 +84,8 @@ InversifyJS dùng `string | symbol | Newable<T>` làm service identifier — lin
 
 Thư viện này dùng `Token<Value>` — branded type — làm identifier duy nhất. Class cũng có thể dùng trực tiếp làm token, nhưng `Token<Value>` là cách ưu tiên khi cần abstraction.
 
+<a id="chain-order"></a>
+
 ### 2.4 Fluent chain — thứ tự chuẩn và bất biến
 
 ```
@@ -102,7 +104,7 @@ bind(token)
 
 **Zero magic:** Decorator là optional. Toàn bộ app có thể viết với explicit binding, không cần một decorator nào.
 
-**Last-wins / override:** `bind()` áp dụng **slot-aware last-wins ở registration-time**. Cùng slot (`default`, cùng `whenNamed`, cùng `whenTagged`) thì binding mới thay binding cũ; slot khác thì append để phục vụ `resolveAll`. Xem section 5.10 để biết định nghĩa chính xác.
+**Last-wins / override:** `bind()` áp dụng **slot-aware last-wins ở registration-time**. Cùng slot (`default`, cùng `whenNamed`, cùng `whenTagged`) thì binding mới thay binding cũ; slot khác thì append để phục vụ `resolveAll`. Xem [section 5.10](#binding-examples) để biết định nghĩa chính xác.
 
 **Eager commit:** `to*()` commit binding ngay lập tức vào registry — đúng **một** lần cho cả chain. Mọi thao tác đọc sau đó (`has`, `resolve*`, `validate`, `inspect`) đều thấy trạng thái mới nhất, kể cả khi chain bị bỏ dở giữa chừng.
 
@@ -110,7 +112,7 @@ bind(token)
 
 **Lifecycle là first-class:** `onActivation` và `onDeactivation` trên từng binding — học từ InversifyJS v8 — nhưng type-safe hơn. Container cũng có container-level hooks áp dụng cho tất cả binding của một token.
 
-**Singleton async creation là serialized:** Concurrent `resolveAsync` cho cùng một singleton token share cùng in-flight Promise — factory chỉ chạy một lần, `onActivation` chỉ chạy một lần. Xem section 6.2.
+**Singleton async creation là serialized:** Concurrent `resolveAsync` cho cùng một singleton token share cùng in-flight Promise — factory chỉ chạy một lần, `onActivation` chỉ chạy một lần. Xem [section 6.2](#resolution).
 
 ---
 
@@ -145,45 +147,29 @@ type Constructor<Value = unknown> = new (...args: unknown[]) => Value;
 
 > **Abstract class:** TypeScript không cho phép `new AbstractClass()`, nên abstract class không satisfy `Constructor<Value>`. Nếu cần bind abstract class làm token, dùng `Token<Value>` thay thế. `container.bind(AbstractLogger)` với `AbstractLogger` là abstract class sẽ là TypeScript error.
 
+<a id="lifecycle-handlers"></a>
+
 ### 3.4 `ActivationHandler` và `DeactivationHandler`
 
-```ts
-/**
- * Chạy sau @postConstruct(), trước khi cache vào scope. Instance đã qua `new` đầy đủ, gồm accessor initializers (`addInitializer`).
- * Phải return instance (có thể là instance gốc hoặc Proxy wrap).
- * Nếu return Promise, resolve() phải là resolveAsync().
- */
-type ActivationHandler<Value> = (ctx: ResolutionContext, instance: Value) => Value | Promise<Value>;
+**Activation handler** nhận resolution context và instance, chạy sau `@postConstruct()` và trước khi instance được cache vào scope. Tại thời điểm nó chạy, instance đã qua `new` đầy đủ, gồm cả các accessor initializer. Nó **phải** trả về một instance — chính nó, hoặc một Proxy bọc quanh. Trả về `Promise` thì lần resolve phải là `resolveAsync()`.
 
-/**
- * Chạy khi instance bị evict khỏi scope (singleton: unbind/dispose).
- * Return value bị bỏ qua.
- * Chỉ fire cho singleton và toConstantValue — không fire cho transient và scoped.
- */
-type DeactivationHandler<Value> = (instance: Value) => void | Promise<void>;
-```
+**Deactivation handler** nhận instance, chạy khi instance bị đẩy khỏi scope. Giá trị trả về bị bỏ qua.
+
+> **Hình dạng chính xác:** `src/core/types.ts` — `ActivationHandler`, `DeactivationHandler`.
 
 > **`DeactivationHandler` scope restriction:** `onDeactivation` chỉ được gọi cho `singleton` (khi container bị dispose hoặc binding bị unbind) và `toConstantValue` (treat as singleton). `transient` không có deactivation — mỗi instance là orphan sau khi trao cho caller. `scoped` không có deactivation — child container chỉ clear cache, không notify instance.
 
+<a id="resolve-options"></a>
+
 ### 3.5 `ResolveOptions`
 
-```ts
-interface ResolveOptions {
-  /** Match binding có `whenNamed(name)`. */
-  name?: string | undefined;
-  /**
-   * Match binding mà **mọi tag nó khai báo** đều nằm trong array này — request là superset
-   * filter, không phải "binding phải có đủ các tag này". Luật đầy đủ ở section 5.11.
-   */
-  tags?: ReadonlyArray<BindingTag> | undefined;
-  /**
-   * Tuỳ chọn — shorthand một criterion tương đương một phần tử trong `tags`.
-   * Chỉ diễn tả được một tag; nhiều tag phải dùng `tags`. `InjectOptions` nhận cả hai và gấp
-   * `tag` vào `tags`, nên `InjectionDescriptor` chỉ bao giờ mang một cách viết.
-   */
-  tag?: BindingTag | undefined;
-}
-```
+Hint truyền vào một lần resolve có ba trường, đều tuỳ chọn:
+
+- **`name`** — khớp binding có `whenNamed(name)`.
+- **`tags`** — mảng criterion, hiểu theo nghĩa **bộ lọc superset**: khớp binding mà _mọi_ tag nó khai báo đều nằm trong mảng này, chứ không phải "binding phải có đủ các tag này". Luật đầy đủ ở [section 5.11](#slot-matching).
+- **`tag`** — viết tắt cho đúng một criterion, tương đương một phần tử của `tags`. Nhiều criterion thì phải dùng `tags`; `InjectOptions` nhận cả hai và gấp `tag` vào `tags`, nên `InjectionDescriptor` chỉ bao giờ mang một cách viết.
+
+> **Hình dạng chính xác:** `src/core/types.ts` — `ResolveOptions`.
 
 **Criterion được mint bởi `TagKey.of()`, và chỉ bởi nó — normative.** Một tag key khai báo bằng
 `tag<Value>(name)`; `key.of(value)` trả về một `BindingTag` **interned**: cùng một value luôn cho
@@ -199,12 +185,13 @@ container.resolve(Storage, { tag: Region.of("eu") });
 implement luật đó: vì mỗi value có đúng một criterion, so sánh criterion bằng **identity** cho kết quả
 giống `Object.is` trên value. Hệ quả cho implementer: một index keyed theo **criterion** là exact và
 không cần kiểm lại. Trước đây index keyed theo _value_ trả lời bằng **SameValueZero**, coi `-0` và `+0`
-cùng khoá — trái `Object.is` (section 5.11, section 8) — và fast-path phải kiểm lại bằng matcher.
+cùng khoá — trái `Object.is` ([section 5.11](#slot-matching), [section 8](#8-advanced-constraints)) — và fast-path
+phải kiểm lại bằng matcher.
 Intern cache phải tách `-0` khỏi `+0` để giữ luật này. `NaN` không bị ảnh hưởng: cả hai quy tắc coi
 `NaN` bằng chính nó, nên nó gấp về một criterion.
 
 **Key set của slot và của request là một bitmask — không normative, nhưng luật subset thì có.** Một
-slot chỉ match khi request mang **mọi** key slot khai báo (section 5.11). Implementation OR các key
+slot chỉ match khi request mang **mọi** key slot khai báo ([section 5.11](#slot-matching)). Implementation OR các key
 thành một word và reject bằng `(requestMask & slotMask) !== slotMask` trước khi đọc criterion nào.
 Bit wrap sau mỗi 32 key, nên hai key có thể chung bit: đó là **false positive** mà identity loại bỏ
 sau đó, không bao giờ là false negative.
@@ -215,71 +202,27 @@ sau đó, không bao giờ là false negative.
 
 `ctx` trong `toDynamic` / `toDynamicAsync` — không phải container đầy đủ, chỉ expose resolve trong ngữ cảnh hiện tại:
 
-```ts
-interface ResolutionContext {
-  resolve<Value>(token: Token<Value> | Constructor<Value>, hint?: ResolveOptions): Value;
-  resolveAsync<Value>(token: Token<Value> | Constructor<Value>, hint?: ResolveOptions): Promise<Value>;
-  resolveOptional<Value>(token: Token<Value> | Constructor<Value>, hint?: ResolveOptions): Value | undefined;
-  resolveOptionalAsync<Value>(
-    token: Token<Value> | Constructor<Value>,
-    hint?: ResolveOptions,
-  ): Promise<Value | undefined>;
-  /**
-   * Resolve tất cả binding match token + hint trong ngữ cảnh hiện tại.
-   * Throw AsyncResolutionError nếu bất kỳ binding nào là async.
-   * Trả [] nếu không có binding nào match.
-   */
-  resolveAll<Value>(token: Token<Value> | Constructor<Value>, hint?: ResolveOptions): Value[];
-  resolveAllAsync<Value>(token: Token<Value> | Constructor<Value>, hint?: ResolveOptions): Promise<Value[]>;
-  /**
-   * Dependency-graph context — dùng trong `when()` predicates.
-   * Không cần cho resolve thông thường.
-   */
-  readonly graph: ConstraintContext;
-}
-```
+`ctx` là thứ một dynamic factory nhận được. Nó **không** phải container đầy đủ — chỉ mở ra đúng khả năng resolve trong ngữ cảnh hiện tại: `resolve`, `resolveAsync`, `resolveOptional`, `resolveOptionalAsync`, `resolveAll`, `resolveAllAsync`, mỗi phương thức nhận token cùng một hint tuỳ chọn. `resolveAll` throw `AsyncResolutionError` nếu bất kỳ binding khớp nào là async, và trả `[]` khi không có binding nào khớp.
+
+Ngoài ra nó có `graph` mang `ConstraintContext` — ngữ cảnh dependency graph dùng trong predicate của `when()`. Resolve thông thường không cần tới.
+
+> **Hình dạng chính xác:** `src/core/types.ts` — `ResolutionContext`.
 
 ### 3.7 `ConstraintContext`
 
-```ts
-interface ConstraintContext {
-  /** Mảng token name trên resolution path hiện tại (readonly snapshot). */
-  readonly resolutionPath: readonly string[];
-  /**
-   * Stack frames đầy đủ trên construction chain.
-   * Khác với `resolutionPath` (chỉ là string label), `resolutionStack`
-   * chứa metadata đầy đủ để detect captive dependency.
-   */
-  readonly resolutionStack: readonly ResolutionFrame[];
-  /** Frame ngay trên (direct parent), hoặc `undefined` ở root. */
-  readonly parent: ResolutionFrame | undefined;
-  /** Tất cả frame trên direct parent. */
-  readonly ancestors: readonly ResolutionFrame[];
-  /** Hint được truyền vào lần resolve hiện tại, hoặc `undefined` nếu không có. */
-  readonly currentResolveHint: ResolveOptions | undefined;
-}
+`ConstraintContext` mô tả vị trí hiện tại trong một lần resolve, gồm năm phần:
 
-interface ResolutionFrame {
-  /** Token name dùng để hiển thị trong error message. */
-  readonly tokenName: string;
-  readonly scope: BindingScope;
-  readonly bindingId: BindingIdentifier;
-  readonly kind: BindingKind;
-  /**
-   * Slot của binding được match cho frame này.
-   * `slot.name` là `undefined` nếu binding không khai báo `whenNamed()`.
-   * `slot.tags` là `[]` nếu binding không khai báo `whenTagged()`.
-   * Phản ánh constraint đăng ký lúc bind — không phải hint truyền vào lúc resolve.
-   * Dùng trong advanced constraints (section 8): `whenParentNamed`, `whenAnyAncestorTagged`, …
-   */
-  readonly slot: {
-    readonly name: string | undefined;
-    readonly tags: ReadonlyArray<readonly [tag: string, value: unknown]>;
-  };
-}
+- **`resolutionPath`** — mảng tên token trên đường resolve hiện tại, readonly.
+- **`resolutionStack`** — các `ResolutionFrame` đầy đủ trên chuỗi construction. Khác `resolutionPath` vốn chỉ là nhãn chuỗi, stack mang đủ metadata để phát hiện captive dependency.
+- **`parent`** — frame ngay phía trên, `undefined` ở root.
+- **`ancestors`** — tất cả frame nằm trên `parent`.
+- **`currentResolveOptions`** — hint truyền vào lần resolve hiện tại, `undefined` nếu không có.
 
-type BindingKind = "class" | "dynamic" | "dynamic-async" | "resolved" | "resolved-async" | "constant" | "alias";
-```
+Một **`ResolutionFrame`** gồm: `tokenName` (để hiển thị trong error message), `scope`, `bindingId`, `kind`, và **`slot`** của binding được match cho frame đó. Slot có hai phần: `name` (`undefined` nếu binding không khai báo `whenNamed()`) và `tags` (`[]` nếu không khai báo `whenTagged()`). Điểm quan trọng: slot phản ánh **constraint đăng ký lúc bind**, không phải hint truyền vào lúc resolve — advanced constraints ở [section 8](#8-advanced-constraints) đọc chính trường này.
+
+**`BindingKind`** là một trong bảy giá trị: `class`, `dynamic`, `dynamic-async`, `resolved`, `resolved-async`, `constant`, `alias`.
+
+> **Hình dạng chính xác:** `src/core/types.ts` — `ConstraintContext`, `ResolutionFrame`, `BindingKind`.
 
 **`resolutionStack` — thứ tự và quan hệ với `parent`/`ancestors` (normative):**
 
@@ -402,7 +345,9 @@ Binding mô tả cách tạo ra một value từ một token. API theo kiểu fl
 
 > **`toResolved` vs `toResolvedAsync`:** `toResolved` là shorthand của `toDynamic` khi deps đơn giản và factory sync. `toResolvedAsync` là shorthand của `toDynamicAsync` khi deps đơn giản nhưng factory cần async (ví dụ: khởi tạo cache từ config). Cả hai đều là syntactic sugar — không có capability khác biệt so với `toDynamic`/`toDynamicAsync`.
 
-> **`toAlias` chain:** Alias có thể trỏ vào alias khác — container tự resolve chain đến binding cuối cùng. Cycle (`A → B → A`) bị detect và throw `CircularDependencyError`. `toAlias` trả về `AliasBindingBuilder<Value>` để hỗ trợ constraint và `.id()`.
+> **`toAlias` chain:** Alias có thể trỏ vào alias khác — container tự resolve chain đến binding cuối cùng. Cycle (`A → B → A`) bị detect và throw `CircularDependencyError`. `toAlias` trả về `AliasBindingBuilder` để hỗ trợ constraint và `.id()` — builder duy nhất không mang type parameter, vì alias không tự tạo giá trị nào.
+
+<a id="scope"></a>
 
 ### 5.2 Scope
 
@@ -412,7 +357,7 @@ Binding mô tả cách tạo ra một value từ một token. API theo kiểu fl
 .scoped()     // ←→ .inRequestScope()   — 1 lần mỗi child container
 ```
 
-Scope **luôn** đứng sau `when*` trong chain (xem 2.4). Default khi không khai báo scope là `transient` — nhưng lifecycle hooks `on*()` **chỉ available sau khi gọi scope()** tường minh. Nếu không cần lifecycle hooks, có thể bỏ qua `scope()` và nhận default transient.
+Scope **luôn** đứng sau `when*` trong chain ([xem 2.4](#chain-order)). Default khi không khai báo scope là `transient` — nhưng lifecycle hooks `on*()` **chỉ available sau khi gọi scope()** tường minh. Nếu không cần lifecycle hooks, có thể bỏ qua `scope()` và nhận default transient.
 
 **Scope validation matrix — captive dependency:**
 
@@ -422,7 +367,7 @@ Scope **luôn** đứng sau `when*` trong chain (xem 2.4). Default khi không kh
 | `scoped`              | ✅ OK       | ✅ OK        | ✅ OK        |
 | `transient`           | ✅ OK       | ✅ OK        | ✅ OK        |
 
-`container.validate()` duyệt toàn bộ dependency graph và throw `ScopeViolationError` cho bất kỳ vi phạm nào. Xem section 6.9 để biết giới hạn của `validate()`.
+`container.validate()` duyệt toàn bộ dependency graph và throw `ScopeViolationError` cho bất kỳ vi phạm nào. Xem [section 6.9](#validate) để biết giới hạn của `validate()`.
 
 > **`scoped` trong parent container:** `scoped` binding chỉ singleton trong phạm vi child container gọi resolve đầu tiên. Resolve `scoped` trực tiếp từ parent container (không có child scope context) throw `MissingScopeContextError`.
 
@@ -437,6 +382,8 @@ Scope **luôn** đứng sau `when*` trong chain (xem 2.4). Default khi không kh
 - `onDeactivation` có thể được đăng ký và sẽ được gọi khi binding bị unbind hoặc container dispose.
 - Value gốc được coi là immutable — `onActivation` có thể return một Proxy wrap. Sau activation, giá trị được cache là kết quả từ activation (không phải value gốc).
 
+<a id="constraints"></a>
+
 ### 5.4 Constraint — `when*`
 
 `when*` đứng ngay sau `to*()`, trước scope. Mỗi binding có thể có một hoặc nhiều constraint kết hợp.
@@ -446,14 +393,17 @@ Scope **luôn** đứng sau `when*` trong chain (xem 2.4). Default khi không kh
 container.bind(Logger).to(ConsoleLogger).whenNamed("console").singleton();
 container.bind(Logger).to(FileLogger).whenNamed("file").singleton();
 
-// Tagged binding — tag key là string, value là unknown
-container.bind(Engine).to(PetrolEngine).whenTagged("fuel", "petrol");
-container.bind(Engine).to(ElectricEngine).whenTagged("fuel", "electric");
+// Tagged binding — criterion chỉ mint được từ một tag key, không dựng tay
+const Fuel = tag<"petrol" | "electric">("fuel");
+const Size = tag<"v8" | "v6">("size");
+
+container.bind(Engine).to(PetrolEngine).whenTagged(Fuel.of("petrol"));
+container.bind(Engine).to(ElectricEngine).whenTagged(Fuel.of("electric"));
 
 // Nhiều tag trên cùng binding — chuyên biệt hoá của binding petrol ở trên. Hint
 // {fuel:petrol} lấy PetrolEngine; hint {fuel:petrol, size:v8} lấy TurboV8 vì nó khai
-// báo nhiều tag hơn, tức cụ thể hơn (section 5.11).
-container.bind(Engine).to(TurboV8).whenTagged("fuel", "petrol").whenTagged("size", "v8");
+// báo nhiều tag hơn, tức cụ thể hơn.
+container.bind(Engine).to(TurboV8).whenTagged(Fuel.of("petrol")).whenTagged(Size.of("v8"));
 
 // Default slot tường minh — match khi không có name/tag nào
 container.bind(Logger).to(NoopLogger).whenDefault();
@@ -472,7 +422,7 @@ container
   .when((ctx) => ctx.parent?.scope === "singleton");
 ```
 
-> **Tag key là `string`:** `whenTagged` chỉ nhận `string` làm tag key. Dùng namespace prefix để tránh collision: `"mylib:fuel"`, `"@scope/pkg:env"`.
+> **`whenTagged` nhận criterion, không nhận cặp rời:** criterion chỉ mint được bằng `TagKey.of()`, nên key phải khai báo trước bằng `tag<Value>(name)` — đó là thứ khiến so sánh bằng identity đủ để thay `Object.is` ([section 3.5](#resolve-options)). Tên key vẫn là `string`, nên dùng namespace prefix để tránh collision: `tag("mylib:fuel")`, `tag("@scope/pkg:env")`.
 
 > **`whenDefault()` tường minh vs không khai báo constraint:** Binding không có bất kỳ `when*` nào cũng match default slot. `whenDefault()` hữu ích khi muốn document rõ ràng ý định hoặc kết hợp với custom `when()`.
 
@@ -486,22 +436,19 @@ container
 **Resolve bằng hint:**
 
 ```ts
+const Env = tag<"production" | "staging">("env");
+
 // Named
 container.resolve(Logger, { name: "file" });
 
-// Một tag
-container.resolve(Engine, { tags: [["fuel", "electric"]] });
+// Một tag — `tag` là shorthand cho đúng một criterion
+container.resolve(Engine, { tag: Fuel.of("electric") });
 
-// Nhiều tag — binding phải có TẤT CẢ tag này
-container.resolve(Engine, {
-  tags: [
-    ["fuel", "petrol"],
-    ["size", "v8"],
-  ],
-});
+// Nhiều tag — request phải nêu mọi tag mà binding khai báo
+container.resolve(Engine, { tags: [Fuel.of("petrol"), Size.of("v8")] });
 
 // Kết hợp name + tag
-container.resolve(Logger, { name: "audit", tags: [["env", "production"]] });
+container.resolve(Logger, { name: "audit", tag: Env.of("production") });
 ```
 
 ### 5.5 `toAlias` — hint forwarding
@@ -521,10 +468,10 @@ const fileLogger = container.resolve(AbstractLogger, { name: "file" });
 Nếu alias có constraint riêng (`whenNamed("audit")`), constraint đó dùng để **chọn alias binding**, không ảnh hưởng hint forward:
 
 ```ts
-container.bind(AuditLogger).toAlias(Logger).whenNamed("audit");
-// Binding này chỉ được chọn khi resolve AuditLogger với hint { name: "audit" }
+container.bind(AbstractAuditLogger).toAlias(Logger).whenNamed("audit");
+// Binding này chỉ được chọn khi resolve AbstractAuditLogger với hint { name: "audit" }
 // Khi chọn xong, hint { name: "audit" } được forward đến Logger resolution
-const logger = container.resolve(AuditLogger, { name: "audit" });
+const logger = container.resolve(AbstractAuditLogger, { name: "audit" });
 // → Logger binding khớp hint { name: "audit" } (nếu có) hoặc default
 ```
 
@@ -532,90 +479,21 @@ const logger = container.resolve(AuditLogger, { name: "audit" });
 
 ### 5.6 Builder type interfaces
 
-```ts
-// Trả về từ bind(token) — chỉ có to* methods
-interface BindToBuilder<Value> {
-  to(type: Constructor<Value>): BindingBuilder<Value>;
-  toSelf(): BindingBuilder<Value>;
-  toConstantValue(value: Value): ConstantBindingBuilder<Value>;
-  toDynamic(factory: (ctx: ResolutionContext) => Value): BindingBuilder<Value>;
-  toDynamicAsync(factory: (ctx: ResolutionContext) => Promise<Value>): BindingBuilder<Value>;
-  toResolved<Deps extends readonly (Token<unknown> | Constructor)[]>(
-    factory: (...args: { [K in keyof Deps]: TokenValue<Deps[K]> }) => Value,
-    deps: Deps,
-  ): BindingBuilder<Value>;
-  toResolvedAsync<Deps extends readonly (Token<unknown> | Constructor)[]>(
-    factory: (...args: { [K in keyof Deps]: TokenValue<Deps[K]> }) => Promise<Value>,
-    deps: Deps,
-  ): BindingBuilder<Value>;
-  /**
-   * Alias token này → token khác.
-   * Trả về AliasBindingBuilder để hỗ trợ constraint và .id().
-   * Alias không có scope riêng — scope quyết định bởi binding đích.
-   */
-  toAlias(target: Token<Value> | Constructor<Value>): AliasBindingBuilder<Value>;
-}
+Mỗi bước trong chain trả về một builder khác nhau, và chính tập phương thức của builder đó là thứ cưỡng chế thứ tự ở [section 2.4](#chain-order):
 
-// Trả về từ to*() (trừ toAlias, toConstantValue)
-// Chỉ có: constraint → scope. KHÔNG có on*() trực tiếp.
-interface BindingBuilder<Value> {
-  // 1. Constraint
-  when(predicate: (ctx: ConstraintContext) => boolean): this;
-  whenNamed(name: string): this;
-  whenTagged(tag: string, value: unknown): this;
-  whenDefault(): this;
-  // 2. Scope (bắt buộc nếu muốn lifecycle hooks)
-  singleton(): SingletonBindingBuilder<Value>;
-  transient(): TransientBindingBuilder<Value>;
-  scoped(): ScopedBindingBuilder<Value>;
-  // 3. ID (không cần scope)
-  id(): BindingIdentifier;
-}
+| Builder trả về từ   | Constraint | Scope | `onActivation` | `onDeactivation` | `id()` |
+| ------------------- | :--------: | :---: | :------------: | :--------------: | :----: |
+| `bind(token)`       |     —      |   —   |       —        |        —         |   —    |
+| `to*()`             |     ✅     |  ✅   |       —        |        —         |   ✅   |
+| `toConstantValue()` |     ✅     |   —   |       ✅       |        ✅        |   ✅   |
+| `toAlias()`         |     ✅     |   —   |       —        |        —         |   ✅   |
+| `singleton()`       |     —      |   —   |       ✅       |        ✅        |   ✅   |
+| `transient()`       |     —      |   —   |       ✅       |        —         |   ✅   |
+| `scoped()`          |     —      |   —   |       ✅       |        —         |   ✅   |
 
-// Trả về từ toConstantValue() — luôn singleton-like, không có scope choice
-interface ConstantBindingBuilder<Value> {
-  when(predicate: (ctx: ConstraintContext) => boolean): this;
-  whenNamed(name: string): this;
-  whenTagged(tag: string, value: unknown): this;
-  whenDefault(): this;
-  onActivation(fn: ActivationHandler<Value>): SingletonLifecycleBuilder<Value>;
-  onDeactivation(fn: DeactivationHandler<Value>): SingletonLifecycleBuilder<Value>;
-  id(): BindingIdentifier;
-}
+Builder từ `bind(token)` **chỉ** có nhóm `to*`, không gì khác. Bốn phương thức constraint (`when`, `whenNamed`, `whenTagged`, `whenDefault`) cộng `id()` là phần chung, tách thành một interface `SlotConstrainedBuilder` mà ba builder cụ thể cùng kế thừa — nó không xuất hiện trong chain, không lời gọi nào trả về nó. Builder từ `toConstantValue()` không có bước scope vì binding hằng luôn là singleton; gọi một lifecycle hook trên nó chuyển sang builder chỉ còn lifecycle và `id()`, tức trạng thái một chiều: gọi hook đồng nghĩa với khoá phần constraint lại. Builder từ `toAlias()` là builder duy nhất **không mang type parameter** — alias không tự tạo giá trị nào nên chẳng có kiểu gì để suy. `transient` và `scoped` không có `onDeactivation` vì hai scope đó không có deactivation ([section 3.4](#lifecycle-handlers)).
 
-// Trả về từ toAlias() — chỉ constraint và id, không có scope hay lifecycle
-interface AliasBindingBuilder<Value> {
-  when(predicate: (ctx: ConstraintContext) => boolean): this;
-  whenNamed(name: string): this;
-  whenTagged(tag: string, value: unknown): this;
-  whenDefault(): this;
-  id(): BindingIdentifier;
-}
-
-// Trả về từ .singleton() — activation + deactivation
-interface SingletonBindingBuilder<Value> {
-  onActivation(fn: ActivationHandler<Value>): this;
-  onDeactivation(fn: DeactivationHandler<Value>): this;
-  id(): BindingIdentifier;
-}
-
-// Trả về từ .transient() — chỉ activation, không có deactivation
-interface TransientBindingBuilder<Value> {
-  onActivation(fn: ActivationHandler<Value>): this;
-  id(): BindingIdentifier;
-}
-
-// Trả về từ .scoped() — như transient
-interface ScopedBindingBuilder<Value> extends TransientBindingBuilder<Value> {}
-
-// Trả về sau khi gọi on*() trên ConstantBindingBuilder
-// (state đã lock constraint, chỉ còn lifecycle và id)
-interface SingletonLifecycleBuilder<Value> {
-  onActivation(fn: ActivationHandler<Value>): this;
-  onDeactivation(fn: DeactivationHandler<Value>): this;
-  id(): BindingIdentifier;
-}
-```
+> **Hình dạng chính xác:** `src/core/binding.ts` — `BindToBuilder`, `SlotConstrainedBuilder`, `BindingBuilder`, `ConstantBindingBuilder`, `AliasBindingBuilder`, `SingletonBindingBuilder`, `TransientBindingBuilder`, `ScopedBindingBuilder`, `SingletonLifecycleBuilder`.
 
 > **Tại sao `BindingBuilder` không có `on*()`?** Lifecycle hooks cần biết scope context để có semantics rõ ràng: `onDeactivation` chỉ có ý nghĩa với singleton, `onActivation` với transient fire mỗi lần tạo instance mới. Buộc khai báo scope trước lifecycle loại bỏ hoàn toàn ambiguity — compiler không cho phép nhầm lẫn.
 
@@ -714,6 +592,8 @@ container.bind(Database).to(PostgresDatabase)
   });
 ```
 
+<a id="binding-examples"></a>
+
 ### 5.10 Ví dụ đầy đủ
 
 ```ts
@@ -724,16 +604,21 @@ container.bind(Logger).to(ConsoleLogger).singleton();
 container.bind(ConsoleLogger).toSelf().singleton();
 
 // Constant value
-container.bind(Config).toConstantValue({ port: 3000, env: "production" });
+container.bind(Config).toConstantValue({
+  port: 3000,
+  env: "production",
+  dbUrl: "postgres://localhost/app",
+  redisUrl: "redis://localhost",
+});
 
 // Named bindings
 container.bind(Logger).to(ConsoleLogger).whenNamed("console").singleton();
 container.bind(Logger).to(FileLogger).whenNamed("file").singleton();
 
 // Tagged binding
-container.bind(Engine).to(PetrolEngine).whenTagged("fuel", "petrol");
-container.bind(Engine).to(ElectricEngine).whenTagged("fuel", "electric");
-container.bind(Engine).to(TurboV8).whenTagged("fuel", "petrol").whenTagged("size", "v8");
+container.bind(Engine).to(PetrolEngine).whenTagged(Fuel.of("petrol"));
+container.bind(Engine).to(ElectricEngine).whenTagged(Fuel.of("electric"));
+container.bind(Engine).to(TurboV8).whenTagged(Fuel.of("petrol")).whenTagged(Size.of("v8"));
 
 // Dynamic factory sync
 container
@@ -768,8 +653,10 @@ container
 
 // Alias
 container.bind(AbstractLogger).toAlias(Logger);
-container.bind(AuditLogger).toAlias(Logger).whenNamed("audit");
+container.bind(AbstractAuditLogger).toAlias(Logger).whenNamed("audit");
 ```
+
+<a id="slot-matching"></a>
 
 ### 5.11 Slot và last-wins — định nghĩa chính xác
 
@@ -779,12 +666,12 @@ container.bind(AuditLogger).toAlias(Logger).whenNamed("audit");
 
 ```
 BindingSlot = {
-  name: string | undefined,            // từ whenNamed() — undefined nếu không có
-  tags: ReadonlySet<[string, unknown]>, // từ TẤT CẢ whenTagged() trên binding này
+  name: string | undefined,      // từ whenNamed() — undefined nếu không có
+  tags: ReadonlySet<BindingTag>, // từ TẤT CẢ whenTagged() trên binding này
 }
 ```
 
-Hai binding slot **bằng nhau** khi: `name` bằng nhau (hoặc cả hai `undefined`) **và** `tags` bằng nhau theo deep equality trên từng `[key, value]` pair (thứ tự không quan trọng). Slot `default` là `{ name: undefined, tags: new Set() }`.
+Hai binding slot **bằng nhau** khi: `name` bằng nhau (hoặc cả hai `undefined`) **và** `tags` bằng nhau theo identity của từng criterion (thứ tự không quan trọng). Vì criterion được intern ([section 3.5](#resolve-options)), identity ở đây cho đúng kết quả của `Object.is` trên `[key, value]`. Slot `default` là `{ name: undefined, tags: new Set() }`.
 
 **Predicate-only `when()`:** Binding chỉ có `.when(predicate)` (không kèm `whenNamed`/`whenTagged`) **không tham gia slot last-wins** — nhiều binding cùng token có thể tồn tại song song với binding slot giống nhau. Nếu sau lọc runtime vẫn còn ≥ 2 candidates, `resolve`/`resolveAsync` throw `AmbiguousBindingError` (không phải `InternalError` — đây là lỗi của người dùng, không phải lỗi internal).
 
@@ -795,7 +682,7 @@ Hai binding slot **bằng nhau** khi: `name` bằng nhau (hoặc cả hai `undef
 - **`name` so sánh bằng nhau, kể cả sự vắng mặt.** Slot có name chỉ match request yêu cầu đúng name đó; slot không name không match request có name. Đây **không** phải quan hệ subset.
 - **`tags` là superset filter: mọi tag slot khai báo phải nằm trong tập tag của request.** Thêm tag vào request làm nó match **nhiều** hơn, không ít hơn.
 - **Slot không tag không match request có tag** — một request có tag không bao giờ rơi về default slot.
-- Tập tag của request là **hợp** của `tag` và `tags` (section 3.5); `tags: []` tính là không có criterion.
+- Tập tag của request là **hợp** của `tag` và `tags` ([section 3.5](#resolve-options)); `tags: []` tính là không có criterion.
 - Tag value so sánh bằng `Object.is`; predicate đánh giá **sau** slot match.
 
 | Request                         | Slot `{}` | Slot `{fuel:petrol}` | Slot `{fuel:petrol, size:v8}` |
@@ -832,7 +719,7 @@ Nên row 8 giải quyết được cả hai chiều: `{fuel}` → A, `{fuel, siz
 
 `resolveAll` **không** áp luật này: nó trả về mọi candidate khớp, specificity chỉ dùng khi phải chọn một.
 
-> **`has(token)` và slot semantics:** `container.has(token)` trả `true` nếu token có **bất kỳ binding nào** (kể cả chỉ named/tagged slots, không có default). `container.resolve(token)` không hint có thể throw `NoMatchingBindingError` ngay cả khi `has(token)` là `true`. Xem section 6.10 để biết cách dùng đúng `has` + `hasOwn`.
+> **`has(token)` và slot semantics:** `container.has(token)` trả `true` nếu token có **bất kỳ binding nào** (kể cả chỉ named/tagged slots, không có default). `container.resolve(token)` không hint có thể throw `NoMatchingBindingError` ngay cả khi `has(token)` là `true`. Xem [section 6.10](#introspection) để biết cách dùng đúng `has` + `hasOwn`.
 
 ### 5.12 `Binding` discriminated union — internal data model
 
@@ -840,121 +727,31 @@ Nên row 8 giải quyết được cả hai chiều: `{fuel}` → A, `{fuel, siz
 
 **`BindingSlot` — dùng cho slot-aware last-wins và resolution matching:**
 
-```ts
-interface BindingSlot {
-  /** undefined = default slot (không có whenNamed). */
-  readonly name: string | undefined;
-  /** [] = không có whenTagged. Thứ tự không ảnh hưởng equality. */
-  readonly tags: ReadonlyArray<readonly [tag: string, value: unknown]>;
-}
-```
+`BindingSlot` mang `name` (`undefined` = default slot, tức không có `whenNamed`) và `tags` (`[]` = không có `whenTagged`; thứ tự không ảnh hưởng equality).
 
-Hai `BindingSlot` bằng nhau khi `name` equal (hoặc cả hai `undefined`) **và** `tags` bằng nhau theo deep equality trên từng `[key, value]` pair (dùng `Object.is` cho value, thứ tự không quan trọng). Implementer nên cung cấp helper `bindingSlotEquals(left: BindingSlot, right: BindingSlot): boolean`.
+Hai `BindingSlot` bằng nhau khi `name` equal (hoặc cả hai `undefined`) **và** `tags` bằng nhau theo identity của từng criterion (thứ tự không quan trọng) — tương đương `Object.is` trên `[key, value]` nhờ interning. Implementer nên cung cấp helper `bindingSlotEquals(left: BindingSlot, right: BindingSlot): boolean`.
 
 **Fields chung cho tất cả binding (trừ ghi chú riêng):**
 
-```ts
-interface BindingBase<Value> {
-  readonly id: BindingIdentifier;
-  readonly token: Token<Value> | Constructor<Value>;
-  readonly slot: BindingSlot;
-  /**
-   * Predicate từ .when(predicate) — undefined nếu không có.
-   * Lưu ý: whenNamed / whenTagged lưu vào slot, không lưu vào predicate.
-   * Khi cả slot lẫn predicate được khai báo (.whenNamed("x").when(p)),
-   * cả hai đều phải pass: slot match trước (O(1)), predicate check sau (runtime).
-   */
-  readonly predicate?: (ctx: ConstraintContext) => boolean;
-}
-```
+Mọi binding đã commit đều mang: `id`, `token`, `slot`, và một `predicate` tuỳ chọn đến từ `.when()`. Lưu ý `whenNamed`/`whenTagged` **không** đi vào predicate — chúng đi vào slot. Khi một binding khai báo cả slot lẫn predicate, cả hai đều phải qua: slot match trước với chi phí hằng số, predicate kiểm sau lúc chạy.
 
 **7 binding kinds:**
 
-```ts
-/** .to(Class) và .toSelf() — container new + inject deps từ @injectable metadata */
-interface ClassBinding<Value> extends BindingBase<Value> {
-  readonly kind: "class";
-  readonly target: Constructor<Value>;
-  readonly scope: BindingScope;
-  readonly onActivation?: ActivationHandler<Value>;
-  /** undefined nếu scope !== "singleton" — enforced bởi builder type, không bởi runtime */
-  readonly onDeactivation?: DeactivationHandler<Value>;
-}
+Bảy kind, mỗi kind thêm trường riêng lên phần chung ở trên:
 
-/** .toDynamic(ctx => Value) */
-interface DynamicBinding<Value> extends BindingBase<Value> {
-  readonly kind: "dynamic";
-  readonly factory: (ctx: ResolutionContext) => Value;
-  readonly scope: BindingScope;
-  readonly onActivation?: ActivationHandler<Value>;
-  readonly onDeactivation?: DeactivationHandler<Value>;
-}
+| `kind`           | Từ                        | Trường riêng                                                        |
+| ---------------- | ------------------------- | ------------------------------------------------------------------- |
+| `class`          | `.to(Class)`, `.toSelf()` | `target` (constructor), `scope`, `onActivation?`, `onDeactivation?` |
+| `dynamic`        | `.toDynamic()`            | `factory` sync, `scope`, hai hook                                   |
+| `dynamic-async`  | `.toDynamicAsync()`       | `factory` trả `Promise`, `scope`, hai hook                          |
+| `resolved`       | `.toResolved()`           | `factory` sync, `deps` đã normalize, `scope`, hai hook              |
+| `resolved-async` | `.toResolvedAsync()`      | `factory` trả `Promise`, `deps`, `scope`, hai hook                  |
+| `constant`       | `.toConstantValue()`      | `value`; `scope` luôn là `"singleton"`, không có lựa chọn           |
+| `alias`          | `.toAlias()`              | `target` token. Không `scope`, không lifecycle — chỉ là con trỏ     |
 
-/** .toDynamicAsync(ctx => Promise<Value>) */
-interface DynamicAsyncBinding<Value> extends BindingBase<Value> {
-  readonly kind: "dynamic-async";
-  readonly factory: (ctx: ResolutionContext) => Promise<Value>;
-  readonly scope: BindingScope;
-  readonly onActivation?: ActivationHandler<Value>;
-  readonly onDeactivation?: DeactivationHandler<Value>;
-}
+`onDeactivation` chỉ có nghĩa khi `scope` là `"singleton"`; điều đó được cưỡng chế bởi kiểu của builder chứ không phải runtime. Với `constant`, `onActivation` chạy lần đầu tiên value được resolve và kết quả của nó mới là thứ được cache.
 
-/**
- * .toResolved(factory, deps)
- * `deps` lưu dưới dạng readonly array của InjectionDescriptor đã normalize:
- * plain Token/Constructor được wrap thành InjectionDescriptor tương đương.
- */
-interface ResolvedBinding<Value> extends BindingBase<Value> {
-  readonly kind: "resolved";
-  readonly factory: (...args: unknown[]) => Value;
-  readonly deps: readonly InjectionDescriptor[];
-  readonly scope: BindingScope;
-  readonly onActivation?: ActivationHandler<Value>;
-  readonly onDeactivation?: DeactivationHandler<Value>;
-}
-
-/** .toResolvedAsync(factory, deps) */
-interface ResolvedAsyncBinding<Value> extends BindingBase<Value> {
-  readonly kind: "resolved-async";
-  readonly factory: (...args: unknown[]) => Promise<Value>;
-  readonly deps: readonly InjectionDescriptor[];
-  readonly scope: BindingScope;
-  readonly onActivation?: ActivationHandler<Value>;
-  readonly onDeactivation?: DeactivationHandler<Value>;
-}
-
-/**
- * .toConstantValue(value)
- * scope luôn là "singleton" — không có scope choice.
- * onActivation chạy lần đầu tiên value được resolve; kết quả sau activation được cache.
- */
-interface ConstantBinding<Value> extends BindingBase<Value> {
-  readonly kind: "constant";
-  readonly value: Value;
-  readonly scope: "singleton";
-  readonly onActivation?: ActivationHandler<Value>;
-  readonly onDeactivation?: DeactivationHandler<Value>;
-}
-
-/**
- * .toAlias(target)
- * Không có scope riêng — scope quyết định bởi target binding.
- * Không có lifecycle hooks — chỉ pointer, không cache instance.
- */
-interface AliasBinding<Value> extends BindingBase<Value> {
-  readonly kind: "alias";
-  readonly target: Token<Value> | Constructor<Value>;
-}
-
-type Binding<Value = unknown> =
-  | ClassBinding<Value>
-  | DynamicBinding<Value>
-  | DynamicAsyncBinding<Value>
-  | ResolvedBinding<Value>
-  | ResolvedAsyncBinding<Value>
-  | ConstantBinding<Value>
-  | AliasBinding<Value>;
-```
+> **Hình dạng chính xác:** `src/core/binding.ts` — `Binding` và bảy interface thành viên.
 
 **Normalization khi commit (normative):**
 
@@ -970,6 +767,8 @@ type Binding<Value = unknown> =
 
 ## 6. Container API
 
+<a id="container-create"></a>
+
 ### 6.1 Tạo container
 
 ```ts
@@ -978,7 +777,7 @@ import { Container } from "@codefast/di";
 // Static factory — không dùng new Container()
 const container = Container.create();
 
-// Construction-time options (§7.4) — thứ container phải biết trước khi tồn tại
+// Construction-time options — thứ container phải biết trước khi nó tồn tại
 const container = Container.create({ metadataReader: customReader });
 
 // Từ modules — load tất cả modules rồi trả về container
@@ -987,6 +786,8 @@ const container = await Container.fromModulesAsync(AppModule, DatabaseModule);
 ```
 
 `fromModules`/`fromModulesAsync` nhận modules dạng variadic nên không có chỗ cho options. Cần cả hai thì dùng `Container.create(options)` rồi `load(...)`/`loadAsync(...)` — đúng những gì hai factory kia làm.
+
+<a id="resolution"></a>
 
 ### 6.2 Resolution
 
@@ -1007,7 +808,7 @@ const plugins = await container.resolveAllAsync(Plugin); // ^? Plugin[]
 
 // Named / tagged hint
 const fileLogger = container.resolve(Logger, { name: "file" });
-const petrolEngine = container.resolve(Engine, { tags: [["fuel", "petrol"]] });
+const petrolEngine = container.resolve(Engine, { tag: Fuel.of("petrol") });
 ```
 
 **`resolveOptionalAsync` error semantics:**
@@ -1105,7 +906,7 @@ Khi `unbind(token)` hoặc `unbind(bindingId)` được gọi:
 - Nếu binding cũ **không có** `onDeactivation` async (hoặc không có `onDeactivation` nào): `rebind()` sync là an toàn.
 - Nếu binding cũ **có** `onDeactivation` async: `rebind()` sync throw `AsyncDeactivationError` — cùng behavior với `unbind()` sync.
 
-Vì spec không có `rebindAsync()` (xem section 15.4), workaround bắt buộc là:
+Vì spec không có `rebindAsync()` (xem [section 15.4](#not-adopted-from-v8)), workaround bắt buộc là:
 
 ```ts
 // Khi binding cũ có async onDeactivation:
@@ -1114,6 +915,8 @@ container.bind(Logger).to(FileLogger).singleton(); // tạo binding mới
 ```
 
 > **Lý do không có `rebindAsync()`:** `rebind` là test/reconfiguration utility — luôn xảy ra khi không có traffic. Nếu binding có async deactivation, tách thành hai bước explicit (`unbindAsync` + `bind`) là rõ ràng hơn về intent.
+
+<a id="module-management"></a>
 
 ### 6.4 Module management
 
@@ -1172,7 +975,7 @@ Ngoài per-binding `.onActivation()`, container hỗ trợ container-level hooks
 
 ```ts
 container.onActivation(Logger, (ctx, logger) => {
-  logger.setCorrelationId(ctx.graph.currentResolveHint?.name ?? "default");
+  logger.setCorrelationId?.(ctx.graph.currentResolveOptions?.name ?? "default");
   return logger;
 });
 
@@ -1246,12 +1049,7 @@ container.bind(Logger).toSelf(); // throws DisposedContainerError
 await container.dispose(); // safe — không throw, không double-deactivate
 ```
 
-```ts
-interface Container {
-  /** true nếu container đã được dispose. */
-  readonly isDisposed: boolean;
-}
-```
+Container phơi ra một thuộc tính readonly `isDisposed`.
 
 ### 6.8 `initializeAsync` — warm up singletons
 
@@ -1269,13 +1067,15 @@ Resolve và cache tất cả `singleton` binding trong **container hiện tại*
 - **Idempotent:** Gọi nhiều lần là an toàn — singleton đã cache không bị tạo lại, factory không chạy lại.
 - Binding được thêm **sau** khi gọi `initializeAsync()` không được warm up tự động — gọi lại nếu cần.
 
+<a id="validate"></a>
+
 ### 6.9 `validate` — detect captive dependency
 
 ```ts
 container.validate();
 ```
 
-Duyệt dependency graph và throw `ScopeViolationError` cho vi phạm theo scope matrix ở section 5.2.
+Duyệt dependency graph và throw `ScopeViolationError` cho vi phạm theo scope matrix ở [section 5.2](#scope).
 
 **Phạm vi phân tích (normative):**
 
@@ -1297,6 +1097,8 @@ Duyệt dependency graph và throw `ScopeViolationError` cho vi phạm theo scop
 `toDynamic` và `toDynamicAsync` là **opaque** với `validate()` — không báo false positive, không báo false negative. Scope violation trong dynamic factory chỉ được detect tại runtime.
 
 Gọi `validate()` sau khi load tất cả module, trước khi serve request đầu tiên.
+
+<a id="introspection"></a>
 
 ### 6.10 Introspection
 
@@ -1343,165 +1145,52 @@ container.resolve(Logger, { name: "file" }); // FileLogger
 
 **`ContainerSnapshot` interface:**
 
-```ts
-interface ContainerSnapshot {
-  /** Tất cả binding tại container này (không gồm parent). */
-  readonly ownBindings: readonly BindingSnapshot[];
-  /**
-   * Số lượng singleton đang được cache tại container này.
-   * Không bao gồm singleton từ parent.
-   */
-  readonly cachedSingletonCount: number;
-  /** Có parent container không. */
-  readonly hasParent: boolean;
-  /** Trạng thái disposed. */
-  readonly isDisposed: boolean;
-}
+`ContainerSnapshot` mang: `ownBindings` (mọi binding tại container này, không gồm parent), `cachedSingletonCount` (số singleton đang cache tại đây, cũng không gồm parent), `hasParent`, và `isDisposed`.
 
-interface BindingSnapshot {
-  readonly tokenName: string;
-  readonly kind: BindingKind;
-  readonly scope: BindingScope;
-  readonly slot: {
-    readonly name?: string;
-    readonly tags: ReadonlyArray<readonly [string, unknown]>;
-  };
-  readonly id: BindingIdentifier;
-}
-```
+Mỗi `BindingSnapshot` mang: `tokenName`, `kind`, `scope`, `slot`, và `id`.
+
+> **Hình dạng chính xác:** `src/introspection/inspector.ts` — `ContainerSnapshot`, `BindingSnapshot`.
 
 **`ContainerGraphJson` interface:**
 
-```ts
-interface ContainerGraphJson {
-  readonly nodes: readonly GraphNode[];
-  readonly edges: readonly GraphEdge[];
-  /** Có include bindings từ parent containers không (phụ thuộc vào GraphOptions). */
-  readonly includesParent: boolean;
-}
+`ContainerGraphJson` gồm ba phần: `nodes`, `edges`, và `includesParent` (có gộp binding của parent hay không — phụ thuộc `GraphOptions`).
 
-interface GraphNode {
-  readonly id: string; // BindingIdentifier.toString(), hoặc "unbound:<tokenKey>" cho placeholder
-  readonly tokenName: string;
-  /** Định danh của token — hai token trùng tên vẫn khác key. Ổn định trong cùng process. */
-  readonly tokenKey: string;
-  readonly kind: BindingKind | "unbound";
-  readonly scope: BindingScope | "unbound";
-  /** true nếu node này từ parent container (chỉ xuất hiện khi includeParent: true). */
-  readonly fromParent: boolean;
-}
+Mỗi **`GraphNode`** mang `id` (chính là `BindingIdentifier`, hoặc `"unbound:<tokenKey>"` cho node placeholder), `tokenName`, `tokenKey` (định danh của bản thân token — hai token trùng tên vẫn khác key; ổn định trong cùng process), `kind` (hoặc `"unbound"`), `scope` (hoặc `"unbound"`), và `fromParent`.
 
-interface GraphEdge {
-  readonly from: string; // node id (consumer)
-  readonly to: string; // node id (dependency)
-  /**
-   * Chuỗi để hiển thị — đọc `optional`/`slotName` thay vì parse chuỗi này:
-   * - `"[0]"`, `"[1]"`, … — dep theo index
-   * - `"name:file"` — named dep
-   * - `"tag:fuel=petrol"` — tagged dep
-   * - `"alias"` — alias edge
-   * - hậu tố `" optional"` khi dep là optional
-   */
-  readonly label?: string;
-  /** Dep được khai báo bằng `optional(...)`. */
-  readonly optional: boolean;
-  /** Named slot mà edge này trỏ tới, nếu binding khai báo. */
-  readonly slotName?: string;
-}
+Mỗi **`GraphEdge`** đi từ consumer (`from`) tới dependency (`to`), kèm `optional` và `slotName` (named slot mà edge trỏ tới, nếu binding khai báo). Trường `label` **chỉ để hiển thị** — hãy đọc `optional`/`slotName` thay vì parse chuỗi. Các dạng label: `"[0]"`, `"[1]"`, … cho dep theo index; `"name:file"` cho named dep; `"tag:fuel=petrol"` cho tagged dep; `"alias"` cho alias edge; và hậu tố `" optional"` khi dep là optional.
 
-interface GraphOptions {
-  /**
-   * Include bindings từ parent containers trong graph.
-   * Mặc định: false — chỉ graph của container hiện tại.
-   */
-  readonly includeParent?: boolean;
-}
-```
+`GraphOptions` hiện có một trường: `includeParent`, mặc định `false`.
+
+> **Hình dạng chính xác:** `src/introspection/dependency-graph.ts` — `ContainerGraphJson`, `GraphNode`, `GraphEdge`, `GraphOptions`.
 
 **Những gì graph biểu diễn — và không biểu diễn:**
 
 - **Optional dep chưa bind vẫn hiện**, dưới dạng node placeholder `kind`/`scope` = `"unbound"` với edge `optional: true`. Nhờ vậy "optional nhưng vắng mặt" khác được với "không phải dependency".
 - **Required dep chưa bind bị bỏ qua** — đó là việc của `validate()`, không phải của graph.
 - **`injectAll` fan-out đủ mọi binding** của token, mỗi edge mang `slotName` tương ứng.
-- **Edge target lọc theo đúng luật slot của resolution** (§6.9): request không nêu tên sẽ không nối tới named binding mà nó vốn không resolve được.
+- **Edge target lọc theo đúng luật slot của resolution** ([§6.9](#validate)): request không nêu tên sẽ không nối tới named binding mà nó vốn không resolve được.
 - **Predicate (`when...`) không được đánh giá** — predicate cần ngữ cảnh resolve thật, nên graph giữ lại mọi candidate có predicate.
 - **Với `includeParent: true`**, binding của container hiện tại che (shadow) binding cùng token ở parent, đúng như thứ tự resolve leo lên; edge từ child nối thẳng tới binding parent thoả mãn nó.
 
 ### 6.11 Container interface
 
-```ts
-interface Container {
-  readonly isDisposed: boolean;
+Gom lại, một container phơi ra tám nhóm:
 
-  // --- Binding ---
-  bind<Value>(token: Token<Value> | Constructor<Value>): BindToBuilder<Value>;
-  unbind(tokenOrId: Token<unknown> | Constructor | BindingIdentifier): void;
-  unbindAsync(tokenOrId: Token<unknown> | Constructor | BindingIdentifier): Promise<void>;
-  unbindAll(): void;
-  unbindAllAsync(): Promise<void>;
-  /**
-   * Throw RebindUnboundTokenError nếu token chưa có binding own trong container này.
-   * Không check parent chain — để override binding từ parent, dùng bind().
-   */
-  rebind<Value>(token: Token<Value> | Constructor<Value>): BindToBuilder<Value>;
+| Nhóm                | Thành viên                                                                                            |
+| ------------------- | ----------------------------------------------------------------------------------------------------- |
+| Trạng thái          | `isDisposed`                                                                                          |
+| Binding             | `bind`, `unbind`, `unbindAsync`, `unbindAll`, `unbindAllAsync`, `rebind`                              |
+| Module              | `load`, `loadAsync`, `unload`, `unloadAsync`, `loadAutoRegistered`                                    |
+| Hook tầng container | `onActivation`, `onDeactivation`                                                                      |
+| Resolution          | `resolve`, `resolveAsync`, `resolveOptional`, `resolveOptionalAsync`, `resolveAll`, `resolveAllAsync` |
+| Child               | `createChild`                                                                                         |
+| Disposal            | `dispose`, `[Symbol.asyncDispose]`, `[Symbol.dispose]` (luôn throw)                                   |
+| Khởi tạo & kiểm     | `initializeAsync`, `validate`                                                                         |
+| Introspection       | `has`, `hasOwn`, `lookupBindings`, `inspect`, `generateDependencyGraph`                               |
 
-  // --- Module ---
-  load(...modules: SyncModule[]): void;
-  loadAsync(...modules: Array<SyncModule | AsyncModule>): Promise<void>;
-  unload(...modules: SyncModule[]): void;
-  unloadAsync(...modules: Array<SyncModule | AsyncModule>): Promise<void>;
-  loadAutoRegistered(registry: AutoRegisterRegistry): number;
+Ở tầng tĩnh có ba: `create(options?)`, `fromModules(...)`, `fromModulesAsync(...)`. `ContainerOptions` hiện chỉ có `metadataReader` — mặc định là decorator reader, child kế thừa.
 
-  // --- Container-level lifecycle hooks ---
-  onActivation<Value>(token: Token<Value> | Constructor<Value>, handler: ActivationHandler<Value>): void;
-  onDeactivation<Value>(token: Token<Value> | Constructor<Value>, handler: DeactivationHandler<Value>): void;
-
-  // --- Resolution ---
-  resolve<Value>(token: Token<Value> | Constructor<Value>, hint?: ResolveOptions): Value;
-  resolveAsync<Value>(token: Token<Value> | Constructor<Value>, hint?: ResolveOptions): Promise<Value>;
-  resolveOptional<Value>(token: Token<Value> | Constructor<Value>, hint?: ResolveOptions): Value | undefined;
-  resolveOptionalAsync<Value>(
-    token: Token<Value> | Constructor<Value>,
-    hint?: ResolveOptions,
-  ): Promise<Value | undefined>;
-  resolveAll<Value>(token: Token<Value> | Constructor<Value>, hint?: ResolveOptions): Value[];
-  resolveAllAsync<Value>(token: Token<Value> | Constructor<Value>, hint?: ResolveOptions): Promise<Value[]>;
-
-  // --- Child ---
-  createChild(): Container;
-
-  // --- Disposal ---
-  dispose(): Promise<void>;
-  [Symbol.asyncDispose](): Promise<void>;
-  /** Luôn throw SyncDisposalNotSupportedError. Dùng `await using`. */
-  [Symbol.dispose](): never;
-
-  // --- Initialization ---
-  initializeAsync(): Promise<void>;
-
-  // --- Validation ---
-  validate(): void;
-
-  // --- Introspection ---
-  has(token: Token<unknown> | Constructor, hint?: ResolveOptions): boolean;
-  hasOwn(token: Token<unknown> | Constructor, hint?: ResolveOptions): boolean;
-  lookupBindings<Value>(token: Token<Value> | Constructor<Value>): readonly BindingSnapshot[];
-  inspect(): ContainerSnapshot;
-  generateDependencyGraph(options?: GraphOptions): ContainerGraphJson;
-}
-
-// Static API
-interface ContainerOptions {
-  /** Reader resolver dùng cho class metadata; mặc định là decorator reader. Child kế thừa. */
-  readonly metadataReader?: MetadataReader | undefined;
-}
-
-interface ContainerStatic {
-  create(options?: ContainerOptions): Container;
-  fromModules(...modules: SyncModule[]): Container;
-  fromModulesAsync(...modules: Array<SyncModule | AsyncModule>): Promise<Container>;
-}
-```
+> **Hình dạng chính xác:** `src/container/container.ts` — `Container`, `ContainerOptions`, `ContainerStatic`.
 
 ---
 
@@ -1555,7 +1244,7 @@ class PluginRunner {
 `inject()`, `optional()`, `injectAll()` là plain functions trả về `InjectionDescriptor`:
 
 ```ts
-@injectable([inject(Logger, { name: "console" }), inject(Engine, { tags: [["fuel", "electric"]] })])
+@injectable([inject(Logger, { name: "console" }), inject(Engine, { tag: Fuel.of("electric") })])
 class Dashboard {
   constructor(
     private logger: LoggerService,
@@ -1584,38 +1273,13 @@ class Runner {
 
 Type signatures:
 
-```ts
-function inject<Value>(token: Token<Value> | Constructor<Value>, options?: InjectOptions): InjectionDescriptor<Value>;
+Cả ba nhận token cùng một `InjectOptions` tuỳ chọn, và trả về `InjectionDescriptor`: `inject` cho dependency bắt buộc, `optional` trả `undefined` khi không có binding, `injectAll` gom mọi binding match thành mảng.
 
-function optional<Value>(
-  token: Token<Value> | Constructor<Value>,
-  options?: InjectOptions,
-): InjectionDescriptor<Value | undefined>;
+`InjectOptions` có ba trường: `name`, `tag` (viết tắt một criterion, gấp vào `tags` khi dựng descriptor — xem [section 3.5](#resolve-options)), và `tags`.
 
-function injectAll<Value>(
-  token: Token<Value> | Constructor<Value>,
-  options?: InjectOptions,
-): InjectionDescriptor<Value[]>;
+`InjectionDescriptor` mang: `token`, `optional`, `multi` (true khi tạo bởi `injectAll`), `name?`, `tags?`. Kèm theo là type guard `isInjectionDescriptor(value)`.
 
-interface InjectOptions {
-  name?: string;
-  /** Shorthand một cặp, gấp vào `tags` khi dựng descriptor — xem section 3.5. */
-  tag?: readonly [tag: string, value: unknown];
-  tags?: ReadonlyArray<readonly [tag: string, value: unknown]>;
-}
-
-interface InjectionDescriptor<Value = unknown> {
-  readonly token: Token<Value> | Constructor<Value>;
-  readonly optional: boolean;
-  /** true nếu tạo bởi injectAll() — inject tất cả binding match thành mảng. */
-  readonly multi: boolean;
-  readonly name?: string;
-  readonly tags?: ReadonlyArray<readonly [string, unknown]>;
-}
-
-/** Type guard để kiểm tra một value là InjectionDescriptor */
-function isInjectionDescriptor(value: unknown): value is InjectionDescriptor;
-```
+> **Hình dạng chính xác:** `src/injection/descriptor.ts` — `injectAll`, `optional`, `isInjectionDescriptor`, `InjectionDescriptor`, `InjectOptions`; `src/decorators/inject.ts` — `inject`.
 
 **`InjectableDependency` — union type cho một phần tử trong deps array:**
 
@@ -1636,35 +1300,17 @@ Tại metadata-read time, resolver normalize toàn bộ `InjectableDependency[]`
 - `Constructor<Value>` → `{ token, optional: false, multi: false, name: undefined, tags: undefined }`
 - `InjectionDescriptor<Value>` → giữ nguyên
 
-`InjectableDependency` được export từ `@codefast/di` (xem section 11.1).
+`InjectableDependency` được export từ `@codefast/di` (xem [section 11.1](#public-api)).
 
 **`InjectableOptions` — options cho `@injectable()`:**
 
-```ts
-interface InjectableOptions {
-  /**
-   * Registry để auto-register class. Nếu undefined, không auto-register.
-   * Xem section 7.7.
-   */
-  autoRegister?: AutoRegisterRegistry;
-  /**
-   * Scope khi auto-register. Bị bỏ qua nếu autoRegister không được cung cấp.
-   * Default: "transient".
-   */
-  scope?: BindingScope;
-}
-```
+`InjectableOptions` có hai trường: `autoRegister` (registry để class tự đăng ký; bỏ trống thì không tự đăng ký — xem [section 7.7](#auto-registration)) và `scope` (scope khi tự đăng ký, bị bỏ qua nếu không có `autoRegister`, mặc định `"transient"`).
 
 `InjectableOptions` được export từ `@codefast/di`.
 
 **Signature đầy đủ của `@injectable()`:**
 
-```ts
-function injectable(
-  deps?: readonly InjectableDependency[],
-  options?: InjectableOptions,
-): (target: unknown, context: ClassDecoratorContext) => void;
-```
+`injectable(deps?, options?)` trả về một class decorator; `deps` là `readonly InjectableDependency[]`, `options` là `InjectableOptions`.
 
 ### 7.3 Inheritance — explicit, không có magic
 
@@ -1688,53 +1334,23 @@ class UserService extends BaseService {
 }
 ```
 
+<a id="metadata-reader"></a>
+
 ### 7.4 MetadataReader — port interface
 
 Container không đọc `Symbol.metadata` trực tiếp — đọc qua port này để có thể swap trong test:
 
-```ts
-interface MetadataReader {
-  getConstructorMetadata(target: Constructor): ConstructorMetadata | undefined;
-  getLifecycleMetadata(target: Constructor): LifecycleMetadata | undefined;
-  /**
-   * Danh sách `@inject accessor` field. Optional — reader bỏ method này thì không class nào
-   * được mở container context, nên mọi accessor injection throw MissingContainerContextError (§7.5).
-   */
-  getAccessorMetadata?(
-    target: Constructor,
-  ): ReadonlyArray<{ readonly key: string | symbol; readonly descriptor: InjectionDescriptor }> | undefined;
-}
+Cổng có ba phương thức:
 
-interface ConstructorMetadata {
-  readonly params: readonly ParamMetadata[];
-}
+- **`getConstructorMetadata(target)`** — mô tả dependency của constructor: một danh sách `ParamMetadata`, mỗi mục gồm `index`, `token`, `optional`, `multi`, `name?`, `tags?`.
+- **`getLifecycleMetadata(target)`** — hai danh sách tên method: `postConstruct` và `preDestroy`. Thứ tự gọi theo thứ tự xuất hiện trong class (top-down).
+- **`getAccessorMetadata(target)`** — **tuỳ chọn** — danh sách field `@inject accessor`, mỗi mục gồm `key` và `descriptor`. Reader bỏ phương thức này thì không class nào được mở container context, nên mọi accessor injection throw `MissingContainerContextError` ([§7.5](#accessor-injection)).
 
-interface ParamMetadata {
-  readonly index: number;
-  readonly token: Token<unknown> | Constructor;
-  readonly optional: boolean;
-  readonly multi: boolean;
-  readonly name?: string;
-  readonly tags?: ReadonlyArray<readonly [string, unknown]>;
-}
-
-interface LifecycleMetadata {
-  /**
-   * Tên các method được đánh dấu @postConstruct().
-   * Thứ tự gọi: theo thứ tự xuất hiện trong class (top-down).
-   */
-  readonly postConstruct: readonly string[];
-  /**
-   * Tên các method được đánh dấu @preDestroy().
-   * Thứ tự gọi: theo thứ tự xuất hiện trong class (top-down).
-   */
-  readonly preDestroy: readonly string[];
-}
-```
+> **Hình dạng chính xác:** `src/metadata/metadata-types.ts` — `MetadataReader`, `ConstructorMetadata`, `ParamMetadata`, `LifecycleMetadata`.
 
 **Cài reader của riêng mình — normative:**
 
-Resolver được **trao** reader lúc nó được khởi tạo, tức trong constructor của container. Vì vậy nguồn duy nhất mà resolution chắc chắn đọc được là `ContainerOptions.metadataReader` (§6.1):
+Resolver được **trao** reader lúc nó được khởi tạo, tức trong constructor của container. Vì vậy nguồn duy nhất mà resolution chắc chắn đọc được là `ContainerOptions.metadataReader` ([§6.1](#container-create)):
 
 ```ts
 import { Container } from "@codefast/di";
@@ -1777,6 +1393,8 @@ getConstructorMetadata(target: Constructor): ConstructorMetadata | undefined {
 ```
 
 Nếu child kế thừa parent nhưng không có `@injectable()` → `getConstructorMetadata` trả `undefined` → container throw `MissingMetadataError`. Không silently leak metadata của parent class.
+
+<a id="accessor-injection"></a>
 
 ### 7.5 Property injection qua `accessor` field decorator
 
@@ -1827,30 +1445,9 @@ Chỉ accessor injection được bridge. Lifecycle thuộc resolver, nên insta
 
 TC39 `context.addInitializer` chạy synchronously ngay sau constructor body, trong cùng call frame với `new`. Container khai thác điều này qua pattern **module-level active container variable**:
 
-```ts
-// environment.ts — inject.ts import, và cả hai hàm đều là public API (root entry)
-let _activeContainer: Container | undefined;
+`runWithContainer(container, fn)` đặt biến active thành container đã cho, chạy `fn`, rồi khôi phục giá trị cũ trong khối `finally` — nên nó đúng cả khi constructor throw, và các lần gọi lồng nhau (A dựng B dựng C) khôi phục đúng thứ tự. `getActiveContainer()` đọc container đang active, trả `undefined` khi không có context nào đang mở.
 
-/**
- * Set active container tạm thời trong thời gian chạy fn().
- * try/finally đảm bảo restore kể cả khi constructor throw.
- * Stack-safe: gọi lồng nhau (nested construction) restore đúng container trước.
- */
-export function runWithContainer<Result>(container: Container, fn: () => Result): Result {
-  const prev = _activeContainer;
-  _activeContainer = container;
-  try {
-    return fn();
-  } finally {
-    _activeContainer = prev;
-  }
-}
-
-/** Đọc active container hiện tại — undefined nếu không có context nào đang mở. */
-export function getActiveContainer(): Container | undefined {
-  return _activeContainer;
-}
-```
+> **Hình dạng chính xác:** `src/ambient/active-container.ts`.
 
 **Resolver dùng `runWithContainer` khi new class:**
 
@@ -1861,59 +1458,9 @@ const instance = runWithContainer(this.container, () => new target(...constructo
 
 **`inject()` accessor decorator dùng `getActiveContainer` trong initializer:**
 
-```ts
-// decorators/inject.ts
-function inject<Value>(token: Token<Value> | Constructor<Value>, options?: InjectOptions) {
-  // Dual-role: InjectionDescriptor + ClassAccessorDecorator
-  const descriptor = buildInjectionDescriptor(token, options);
+Bản cài đặt của `inject()` làm ba việc trong vai accessor decorator: throw nếu `context.static` là `true`; ghi `{ key, descriptor }` vào `Symbol.metadata` qua `context.metadata` để `MetadataReader` đọc lại được; và cài một initializer qua `context.addInitializer`. Initializer đó gọi `getActiveContainer()` — không có container thì throw `MissingContainerContextError` mang tên class và tên accessor — có thì resolve token (bản `resolveOptional` nếu descriptor là optional) và ghi giá trị qua `context.access.set`. Nó không override `get`/`set`, chỉ thêm initializer.
 
-  // Accessor decorator role — chỉ kích hoạt khi dùng trên accessor field
-  const decoratorFn = (
-    _target: ClassAccessorDecoratorTarget<unknown, Value>,
-    context: ClassAccessorDecoratorContext,
-  ): ClassAccessorDecoratorResult<unknown, Value> => {
-    if (context.static === true) {
-      throw new InternalError("static accessor not supported");
-    }
-    // Ghi token vào Symbol.metadata để MetadataReader đọc được
-    const meta = context.metadata as Record<string | symbol, unknown>;
-    const accessorKey = INJECT_ACCESSOR_KEY;
-    if (!Array.isArray(meta[accessorKey])) meta[accessorKey] = [];
-    (meta[accessorKey] as Array<{ key: string | symbol; descriptor: InjectionDescriptor }>).push({
-      key: context.name,
-      descriptor,
-    });
-    accessorMetadataByMetadataObjectMap.set(
-      context.metadata as object,
-      meta[accessorKey] as Array<{ key: string | symbol; descriptor: InjectionDescriptor }>,
-    );
-
-    context.addInitializer(function (this: unknown) {
-      const container = getActiveContainer();
-      if (container === undefined) {
-        // Class và accessor đi riêng: class ẩn danh có `name` rỗng, và một message
-        // khẳng định class mà nó không có chính là nguồn gốc của bug cũ.
-        throw new MissingContainerContextError(classNameOf(this), context.name);
-      }
-      // Resolve token từ container và set qua accessor setter
-      const value = descriptor.optional
-        ? container.resolveOptional(token, { name: options?.name, tags: options?.tags })
-        : container.resolve(token, { name: options?.name, tags: options?.tags });
-      context.access.set(this, value as Value);
-    });
-
-    return {}; // không override get/set — chỉ thêm initializer
-  };
-
-  // Gắn descriptor lên function (defineProperties) để tương thích dual-role
-  const props: PropertyDescriptorMap = {};
-  for (const key of Object.keys(descriptor) as Array<keyof typeof descriptor>) {
-    props[key] = { value: descriptor[key], writable: true, enumerable: true, configurable: true };
-  }
-  Object.defineProperties(decoratorFn, props);
-  return decoratorFn as InjectionDescriptor<Value> & ClassAccessorDecorator<unknown, Value>;
-}
-```
+> **Hình dạng chính xác:** `src/decorators/inject.ts`.
 
 **Luồng với `runWithContainer`:**
 
@@ -1940,16 +1487,7 @@ resolver.resolve(Dashboard)
 
 `inject()` hoạt động như cả plain function (trong deps array) lẫn accessor decorator. Return type là intersection:
 
-```ts
-function inject<const Value>(
-  token: Token<Value> | Constructor<Value>,
-  options?: InjectOptions,
-): InjectionDescriptor<Value> &
-  ((
-    target: ClassAccessorDecoratorTarget<unknown, Value>,
-    context: ClassAccessorDecoratorContext<unknown, Value>,
-  ) => ClassAccessorDecoratorResult<unknown, Value> | void);
-```
+Kiểu trả về của `inject()` là **giao** của `InjectionDescriptor<Value>` và một `ClassAccessorDecorator`. Dùng trong deps array thì TypeScript match vế thứ nhất; dùng làm decorator thì match vế thứ hai. Cùng một function, một đường import.
 
 Khi dùng trong deps array, TypeScript match `InjectionDescriptor<Value>`. Khi dùng làm decorator, TypeScript match `ClassAccessorDecorator<unknown, Value>`. Cả hai roles hoạt động với cùng một function — không cần import khác nhau.
 
@@ -1984,6 +1522,8 @@ container.bind(Database).to(DatabaseService).singleton();
 >
 > **Async contamination:** `@postConstruct()` async buộc `resolveAsync()` — async contamination lan truyền toàn bộ dependency path.
 
+<a id="auto-registration"></a>
+
 ### 7.7 Auto-registration
 
 `@injectable()` hỗ trợ `autoRegister` — class tự đăng ký vào **explicit registry** tại module load time. Không có global singleton.
@@ -2011,16 +1551,9 @@ const count = container.loadAutoRegistered(appRegistry);
 
 **`AutoRegisterRegistry` interface:**
 
-```ts
-interface AutoRegisterRegistry {
-  /** Thêm class vào registry. Gọi tự động bởi @injectable({ autoRegister }). */
-  register(target: Constructor, scope: BindingScope): void;
-  /** Lấy tất cả entry đã đăng ký. */
-  entries(): ReadonlyArray<{ target: Constructor; scope: BindingScope }>;
-}
+`AutoRegisterRegistry` có hai phương thức: `register(target, scope)` — được `@injectable({ autoRegister })` gọi tự động — và `entries()` trả về mọi mục đã đăng ký. `createAutoRegisterRegistry()` dựng một registry mới.
 
-function createAutoRegisterRegistry(): AutoRegisterRegistry;
-```
+> **Hình dạng chính xác:** `src/decorators/injectable.ts`.
 
 ### 7.8 Danh sách decorator và helpers
 
@@ -2063,7 +1596,7 @@ Advanced constraints là nhóm predicate factory — mỗi function nhận tham 
 
 Khác với `whenNamed` / `whenTagged` (lọc slot tĩnh, O(1)), advanced constraints kiểm tra **vị trí của binding trong dependency graph tại runtime**: token nào đang đứng ở direct parent, slot nào của ancestor đang active. Use case điển hình là inject khác nhau tùy vào subtree đang được resolve — ví dụ: dùng `VerboseLogger` khi ancestor là `DebugModule`, dùng `SandboxMailer` khi ancestor nào đó có tag `env=test`.
 
-Advanced constraints export từ cả root `@codefast/di` lẫn subpath `@codefast/di/constraints` — hai entry point đều trỏ vào cùng một module.
+Advanced constraints export từ root `@codefast/di`, và cũng có subpath riêng `@codefast/di/resolution/select/constraints` trỏ vào cùng một module. Ví dụ trong section này import từ root — đường ngắn hơn và luôn đúng.
 
 ### 8.1 Token name resolution
 
@@ -2076,86 +1609,24 @@ Tất cả constraint function nhận `Token<unknown> | Constructor` và resolve
 
 ### 8.2 Type signatures
 
-```ts
-import type { ConstraintContext, Constructor, Token } from "@codefast/di";
+Mười constraint, mỗi cái nhận tham số cấu hình và trả về một predicate trên `ConstraintContext`:
 
-// ─── Parent constraints ───────────────────────────────────────────────────────
+| Constraint                         | Match khi                                                            | Khi vắng parent / ancestor |
+| ---------------------------------- | -------------------------------------------------------------------- | :------------------------: |
+| `whenParentIs(token)`              | direct parent là token đó                                            |          `false`           |
+| `whenNoParentIs(token)`            | direct parent **không** phải token đó                                |           `true`           |
+| `whenParentNamed(name)`            | slot của binding parent mang đúng tên đó                             |          `false`           |
+| `whenParentTagged(criterion)`      | slot của parent chứa criterion đó                                    |          `false`           |
+| `whenParentTaggedAll(tags)`        | slot của parent chứa **tất cả** criterion đã cho                     |          `false`           |
+| `whenAnyAncestorIs(token)`         | ít nhất một ancestor là token đó                                     |          `false`           |
+| `whenNoAncestorIs(token)`          | **không** ancestor nào là token đó                                   |           `true`           |
+| `whenAnyAncestorNamed(name)`       | có ancestor mang slot đúng tên đó                                    |          `false`           |
+| `whenAnyAncestorTagged(criterion)` | có ancestor mang criterion đó                                        |          `false`           |
+| `whenAnyAncestorTaggedAll(tags)`   | có **ít nhất một** ancestor mà slot chứa **tất cả** criterion đã cho |          `false`           |
 
-/**
- * Match khi direct parent trong dependency graph là token đã cho.
- * Trả `false` khi không có parent (root resolve — không có gì đang inject token này).
- */
-function whenParentIs(token: Token<unknown> | Constructor): (ctx: ConstraintContext) => boolean;
+Hai dạng phủ định trả `true` khi vắng mặt là chủ đích: "không có parent nào là X" đúng hiển nhiên khi chẳng có parent nào. Hai dạng `…TaggedAll` tương đương AND-compose nhiều criterion riêng lẻ nhưng chỉ tốn một lần gọi predicate và không allocate closure trung gian. So sánh criterion bằng identity — tương đương `Object.is` trên `[key, value]` nhờ interning, nhất quán với slot equality ở [section 5.11](#slot-matching).
 
-/**
- * Match khi KHÔNG có direct parent là token đã cho.
- * Trả `true` khi không có parent (root resolve).
- */
-function whenNoParentIs(token: Token<unknown> | Constructor): (ctx: ConstraintContext) => boolean;
-
-// ─── Ancestor constraints ─────────────────────────────────────────────────────
-
-/**
- * Match khi bất kỳ ancestor nào trong dependency graph là token đã cho.
- * `ctx.ancestors` là tất cả frame phía trên direct parent — không bao gồm parent.
- * Trả `false` khi không có ancestor.
- */
-function whenAnyAncestorIs(token: Token<unknown> | Constructor): (ctx: ConstraintContext) => boolean;
-
-/**
- * Match khi không có ancestor nào là token đã cho.
- * Trả `true` khi không có ancestor.
- */
-function whenNoAncestorIs(token: Token<unknown> | Constructor): (ctx: ConstraintContext) => boolean;
-
-// ─── Named variants ───────────────────────────────────────────────────────────
-
-/**
- * Match khi direct parent binding được match với slot name đã cho.
- * Đọc `ctx.parent.slot.name` — slot name của binding, không phải resolve hint.
- * Trả `false` khi không có parent.
- */
-function whenParentNamed(name: string): (ctx: ConstraintContext) => boolean;
-
-/**
- * Match khi bất kỳ ancestor binding nào được match với slot name đã cho.
- * Trả `false` khi không có ancestor.
- */
-function whenAnyAncestorNamed(name: string): (ctx: ConstraintContext) => boolean;
-
-// ─── Tagged variants ──────────────────────────────────────────────────────────
-
-/**
- * Match khi direct parent binding được match với slot tag đã cho.
- * Tag value so sánh bằng `Object.is` — nhất quán với slot equality (section 5.11).
- * Trả `false` khi không có parent.
- */
-function whenParentTagged(tag: string, value: unknown): (ctx: ConstraintContext) => boolean;
-
-/**
- * Match khi bất kỳ ancestor binding nào được match với slot tag đã cho.
- * Trả `false` khi không có ancestor.
- */
-function whenAnyAncestorTagged(tag: string, value: unknown): (ctx: ConstraintContext) => boolean;
-
-/**
- * Match khi direct parent slot chứa **tất cả** các tag pair đã cho.
- * Tương đương AND-compose nhiều `whenParentTagged` nhưng chỉ tốn một lần gọi predicate —
- * không allocate closure trung gian. Trả `false` khi không có parent.
- */
-function whenParentTaggedAll(
-  tags: ReadonlyArray<readonly [tag: string, value: unknown]>,
-): (ctx: ConstraintContext) => boolean;
-
-/**
- * Match khi ít nhất một ancestor slot chứa **tất cả** các tag pair đã cho.
- * Tương đương AND-compose nhiều `whenAnyAncestorTagged` nhưng chỉ tốn một lần gọi predicate.
- * Trả `false` khi không có ancestor.
- */
-function whenAnyAncestorTaggedAll(
-  tags: ReadonlyArray<readonly [tag: string, value: unknown]>,
-): (ctx: ConstraintContext) => boolean;
-```
+> **Hình dạng chính xác:** `src/resolution/select/constraints.ts`.
 
 ### 8.3 Semantics
 
@@ -2163,29 +1634,29 @@ function whenAnyAncestorTaggedAll(
 
 **Bảng implementation chuẩn (normative):**
 
-| Function                            | Logic                                                                                                                       |
-| ----------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
-| `whenParentIs(token)`               | `ctx.parent !== undefined && ctx.parent.tokenName === tokenNameOf(token)`                                                   |
-| `whenNoParentIs(token)`             | `ctx.parent === undefined \|\| ctx.parent.tokenName !== tokenNameOf(token)`                                                 |
-| `whenAnyAncestorIs(token)`          | `ctx.ancestors.some(f => f.tokenName === tokenNameOf(token))`                                                               |
-| `whenNoAncestorIs(token)`           | `ctx.ancestors.every(f => f.tokenName !== tokenNameOf(token))`                                                              |
-| `whenParentNamed(name)`             | `ctx.parent !== undefined && ctx.parent.slot.name === name`                                                                 |
-| `whenAnyAncestorNamed(name)`        | `ctx.ancestors.some(f => f.slot.name === name)`                                                                             |
-| `whenParentTagged(tag, value)`      | `ctx.parent !== undefined && ctx.parent.slot.tags.some(([t, v]) => t === tag && Object.is(v, value))`                       |
-| `whenAnyAncestorTagged(tag, value)` | `ctx.ancestors.some(f => f.slot.tags.some(([t, v]) => t === tag && Object.is(v, value)))`                                   |
-| `whenParentTaggedAll(tags)`         | `ctx.parent !== undefined && tags.every(([tk, tv]) => ctx.parent.slot.tags.some(([t, v]) => t === tk && Object.is(v, tv)))` |
-| `whenAnyAncestorTaggedAll(tags)`    | `ctx.ancestors.some(f => tags.every(([tk, tv]) => f.slot.tags.some(([t, v]) => t === tk && Object.is(v, tv))))`             |
+| Function                           | Logic                                                                           |
+| ---------------------------------- | ------------------------------------------------------------------------------- |
+| `whenParentIs(token)`              | `ctx.parent !== undefined && ctx.parent.tokenName === tokenNameOf(token)`       |
+| `whenNoParentIs(token)`            | `ctx.parent === undefined \|\| ctx.parent.tokenName !== tokenNameOf(token)`     |
+| `whenAnyAncestorIs(token)`         | `ctx.ancestors.some(f => f.tokenName === tokenNameOf(token))`                   |
+| `whenNoAncestorIs(token)`          | `ctx.ancestors.every(f => f.tokenName !== tokenNameOf(token))`                  |
+| `whenParentNamed(name)`            | `ctx.parent !== undefined && ctx.parent.slot.name === name`                     |
+| `whenAnyAncestorNamed(name)`       | `ctx.ancestors.some(f => f.slot.name === name)`                                 |
+| `whenParentTagged(criterion)`      | `ctx.parent !== undefined && ctx.parent.slot.tags.includes(criterion)`          |
+| `whenAnyAncestorTagged(criterion)` | `ctx.ancestors.some(f => f.slot.tags.includes(criterion))`                      |
+| `whenParentTaggedAll(tags)`        | `ctx.parent !== undefined && tags.every(t => ctx.parent.slot.tags.includes(t))` |
+| `whenAnyAncestorTaggedAll(tags)`   | `ctx.ancestors.some(f => tags.every(t => f.slot.tags.includes(t)))`             |
 
-> **`Object.is` cho tag value:** So sánh value bằng `Object.is` thay vì `===` — xử lý đúng `NaN` và phân biệt `+0` với `-0`. Nhất quán với slot equality trong section 5.11.
+> **Vì sao chỉ cần so identity:** criterion được intern nên mỗi `[key, value]` có đúng một object; so bằng identity vì thế cho đúng kết quả của `Object.is` trên value — xử lý đúng `NaN` và phân biệt `+0` với `-0`, nhất quán với slot equality trong [section 5.11](#slot-matching). Đây cũng là lý do bảng trên không còn vòng lặp so từng cặp.
 
-> **Named variant đọc `slot.name`, không đọc `currentResolveHint`:** `whenParentNamed("console")` hỏi "binding của parent có `whenNamed("console")` không?" — không hỏi "parent được resolve với hint `{ name: "console" }` không?". Hai câu hỏi khác nhau: một binding có thể match slot `"console"` mà không cần resolve hint khi nó là binding duy nhất được chọn, và ngược lại.
+> **Named variant đọc `slot.name`, không đọc `currentResolveOptions`:** `whenParentNamed("console")` hỏi "binding của parent có `whenNamed("console")` không?" — không hỏi "parent được resolve với hint `{ name: "console" }` không?". Hai câu hỏi khác nhau: một binding có thể match slot `"console"` mà không cần resolve hint khi nó là binding duy nhất được chọn, và ngược lại.
 
 ### 8.4 Ví dụ
 
 **`whenParentIs` — Logger verbose chỉ khi parent là `DebugService`:**
 
 ```ts
-import { whenParentIs } from "@codefast/di/constraints";
+import { whenParentIs } from "@codefast/di";
 
 container.bind(Logger).to(ConsoleLogger);
 container.bind(Logger).to(VerboseLogger).when(whenParentIs(DebugService));
@@ -2198,7 +1669,7 @@ Khi `DebugService` yêu cầu `Logger`, predicate match và `VerboseLogger` đư
 **`whenAnyAncestorIs` — inject config riêng cho toàn subtree của `TestHarness`:**
 
 ```ts
-import { whenAnyAncestorIs, whenNoAncestorIs } from "@codefast/di/constraints";
+import { whenAnyAncestorIs, whenNoAncestorIs } from "@codefast/di";
 
 container.bind(Config).toConstantValue(prodConfig).when(whenNoAncestorIs(TestHarness));
 
@@ -2210,7 +1681,7 @@ Bất kỳ service nào được resolve trong subtree bắt đầu từ `TestHa
 **`whenParentNamed` — Logger biết mình đang phục vụ slot nào của `Database`:**
 
 ```ts
-import { whenParentNamed } from "@codefast/di/constraints";
+import { whenParentNamed } from "@codefast/di";
 
 container.bind(Database).to(PrimaryDatabase).whenNamed("primary").singleton();
 container.bind(Database).to(ReplicaDatabase).whenNamed("replica").singleton();
@@ -2225,33 +1696,36 @@ Khi `PrimaryDatabase` được resolve (binding slot `"primary"`), nó inject `P
 **`whenAnyAncestorTagged` — chọn infrastructure khác nhau theo tag môi trường:**
 
 ```ts
-import { whenAnyAncestorTagged } from "@codefast/di/constraints";
+import { tag, whenAnyAncestorTagged } from "@codefast/di";
+
+const Env = tag<"test" | "prod">("env");
 
 // Ancestor nào đó trong chain có tag env=test → dùng sandbox
-container.bind(Mailer).to(SandboxMailer).when(whenAnyAncestorTagged("env", "test"));
+container
+  .bind(Mailer)
+  .to(SandboxMailer)
+  .when(whenAnyAncestorTagged(Env.of("test")));
 
 // Không có ancestor nào có tag env=test → dùng SMTP thật
 container
   .bind(Mailer)
   .to(SmtpMailer)
-  .when((ctx) => !whenAnyAncestorTagged("env", "test")(ctx));
+  .when((ctx) => !whenAnyAncestorTagged(Env.of("test"))(ctx));
 ```
 
 **`whenParentTaggedAll` — inject khác nhau khi parent có nhiều tag đồng thời:**
 
 ```ts
-import { whenParentTaggedAll } from "@codefast/di/constraints";
+import { tag, whenParentTaggedAll } from "@codefast/di";
+
+const Env = tag<"test" | "prod">("env");
+const Tier = tag<"basic" | "premium">("tier");
 
 // PremiumPlugin chỉ được inject khi parent có CẢ HAI tag env=prod VÀ tier=premium
 container
   .bind(Plugin)
   .to(PremiumPlugin)
-  .when(
-    whenParentTaggedAll([
-      ["env", "prod"],
-      ["tier", "premium"],
-    ]),
-  );
+  .when(whenParentTaggedAll([Env.of("prod"), Tier.of("premium")]));
 
 // Default fallback cho các trường hợp còn lại
 container.bind(Plugin).to(BasicPlugin);
@@ -2261,10 +1735,10 @@ Tương đương viết tay nhưng không tạo closure trung gian:
 
 ```ts
 // Tránh — mỗi lần resolve gọi hai predicate riêng, mỗi predicate tạo một lần tìm kiếm
-.when((ctx) => whenParentTagged("env", "prod")(ctx) && whenParentTagged("tier", "premium")(ctx))
+.when((ctx) => whenParentTagged(Env.of("prod"))(ctx) && whenParentTagged(Tier.of("premium"))(ctx))
 
 // Dùng — một predicate call, một lần duyệt `parentTags`
-.when(whenParentTaggedAll([["env", "prod"], ["tier", "premium"]]))
+.when(whenParentTaggedAll([Env.of("prod"), Tier.of("premium")]))
 ```
 
 ### 8.5 Composability
@@ -2272,7 +1746,7 @@ Tương đương viết tay nhưng không tạo closure trung gian:
 Các constraint function trả về `(ctx: ConstraintContext) => boolean` nên composable tự nhiên với toán tử JavaScript:
 
 ```ts
-import { whenAnyAncestorIs, whenParentIs } from "@codefast/di/constraints";
+import { whenAnyAncestorIs, whenParentIs } from "@codefast/di";
 
 // AND — cả hai điều kiện phải đúng
 container
@@ -2303,7 +1777,7 @@ container.bind(Tracer).to(VerboseTracer).when(whenAnyAncestorIs(DebugModule));
 
 ### 8.6 Quy tắc (normative)
 
-Các quy tắc trong section 5.4 áp dụng đầy đủ cho advanced constraints — đây là predicate `when()` thông thường:
+Các quy tắc trong [section 5.4](#constraints) áp dụng đầy đủ cho advanced constraints — đây là predicate `when()` thông thường:
 
 - Predicate được gọi mỗi lần resolve cần chọn candidate, không cached.
 - Predicate phải pure và deterministic — không có side effects, không gọi I/O.
@@ -2331,10 +1805,10 @@ export {
   whenParentNamed,
   whenParentTagged,
   whenParentTaggedAll,
-} from "#/constraints";
+} from "#/resolution/select/constraints";
 ```
 
-Export từ cả root `@codefast/di` lẫn subpath `@codefast/di/constraints` — hai import path đều hợp lệ và trỏ vào cùng một module.
+Export từ cả root `@codefast/di` lẫn subpath `@codefast/di/resolution/select/constraints` — hai import path đều hợp lệ và trỏ vào cùng một module. Bản đồ `exports` sinh từ `dist/` nên subpath mang đúng đường dẫn nguồn; **không có alias `@codefast/di/constraints`**.
 
 ---
 
@@ -2400,7 +1874,7 @@ testContainer.rebind(Database).toConstantValue(mockDatabase);
 
 > **Module là pure description — không ôm state runtime:** Cùng một `SyncModule` / `AsyncModule` object có thể load vào nhiều containers độc lập song song. Module chỉ giữ `name` và callback `setup`; container track "đã load module nào" và "binding nào thuộc module nào".
 >
-> **Deduplication:** Gọi `container.load(M)` nhiều lần hoặc `m.import(M)` từ nhiều module là no-op từ lần thứ hai. Dedup dựa trên **object identity**, không phải `name`. Unload reference-counting dùng cùng identity — xem section 6.4.
+> **Deduplication:** Gọi `container.load(M)` nhiều lần hoặc `m.import(M)` từ nhiều module là no-op từ lần thứ hai. Dedup dựa trên **object identity**, không phải `name`. Unload reference-counting dùng cùng identity — xem [section 6.4](#module-management).
 
 ### 9.4 `SyncModule` không thể import `AsyncModule`
 
@@ -2420,42 +1894,11 @@ export const AppModule = AsyncModule.create("App", async (builder) => {
 
 ### 9.5 Module interface
 
-```ts
-// ModuleBuilder — chỉ tồn tại trong callback của SyncModule.create()
-// Additive-only: chỉ bind và import, không unbind hay rebind
-interface ModuleBuilder {
-  bind<Value>(token: Token<Value> | Constructor<Value>): BindToBuilder<Value>;
-  import(...modules: SyncModule[]): void; // chỉ SyncModule
-}
+**`ModuleBuilder`** — chỉ tồn tại trong callback của `SyncModule.create()` — có đúng hai việc: `bind(token)` và `import(...modules)` nhận **chỉ** `SyncModule`. **`AsyncModuleBuilder`** cũng hai việc, nhưng `import` nhận cả `SyncModule` lẫn `AsyncModule`.
 
-interface AsyncModuleBuilder {
-  bind<Value>(token: Token<Value> | Constructor<Value>): BindToBuilder<Value>;
-  import(...modules: Array<SyncModule | AsyncModule>): void; // sync + async
-}
+`SyncModule` và `AsyncModule` đều mang `name` và một **branded field** phân biệt hai loại ở tầng kiểu. Factory tĩnh: `SyncModule.create(name, setup)` với `setup` sync, `AsyncModule.create(name, setup)` với `setup` async. Ngoài ra có `Module.create` / `Module.createAsync` — chỉ forward sang hai factory trên, cho call site muốn import một tên duy nhất — và type guard `isSyncModule(module)` để phân biệt lúc chạy khi chỉ có union trong tay.
 
-// SyncModule — branded để phân biệt với AsyncModule ở type level
-declare const SYNC_MODULE_BRAND: unique symbol;
-interface SyncModule {
-  readonly name: string;
-  readonly [SYNC_MODULE_BRAND]: true;
-}
-
-// AsyncModule — branded để phân biệt với SyncModule ở type level
-declare const ASYNC_MODULE_BRAND: unique symbol;
-interface AsyncModule {
-  readonly name: string;
-  readonly [ASYNC_MODULE_BRAND]: true;
-}
-
-// Static factories
-interface SyncModuleStatic {
-  create(name: string, setup: (builder: ModuleBuilder) => void): SyncModule;
-}
-
-interface AsyncModuleStatic {
-  create(name: string, setup: (builder: AsyncModuleBuilder) => Promise<void>): AsyncModule;
-}
-```
+> **Hình dạng chính xác:** `src/core/module.ts` — `ModuleBuilder`, `AsyncModuleBuilder`, `SyncModule`, `AsyncModule`, `Module`, `isSyncModule`.
 
 > **Tại sao branded field?** TypeScript dùng structural typing — nếu hai interface chỉ có `name: string`, `container.load(asyncModule)` compile được mà không báo lỗi. Branded field đảm bảo `load(asyncModule)` là TypeScript error tại compile time.
 >
@@ -2465,243 +1908,59 @@ interface AsyncModuleStatic {
 
 ## 10. Error hierarchy
 
-Tất cả error kế thừa `DiError` — có `code` string (machine-readable) và message đủ context:
+Tất cả error kế thừa `DiError` — một abstract class buộc mọi subclass khai báo một `code` string (machine-readable), bên cạnh message mang đủ context cho người đọc.
 
-```ts
-// Base — abstract, buộc mọi subclass khai báo code cụ thể
-abstract class DiError extends Error {
-  abstract readonly code: string;
-}
+| Error                           | `code`                        | Throw khi                                                           | Trường ngữ cảnh                                  |
+| ------------------------------- | ----------------------------- | ------------------------------------------------------------------- | ------------------------------------------------ |
+| `InternalError`                 | `INTERNAL_ERROR`              | Assertion nội bộ fail — **không** phải lỗi user                     | —                                                |
+| `TokenNotBoundError`            | `TOKEN_NOT_BOUND`             | Token không có binding nào, kể cả sau khi leo hết parent chain      | `tokenName`                                      |
+| `NoMatchingBindingError`        | `NO_MATCHING_BINDING`         | Token **có** binding nhưng không slot nào match hint                | `tokenName`, `hint`, `availableSlots`            |
+| `AmbiguousBindingError`         | `AMBIGUOUS_BINDING`           | Còn ≥ 2 candidate và luật cụ-thể-hơn không phân định được           | `tokenName`, `candidateIds`                      |
+| `CircularDependencyError`       | `CIRCULAR_DEPENDENCY`         | A → B → A, kể cả khi cycle nằm trên alias chain                     | `cycle`                                          |
+| `AsyncResolutionError`          | `ASYNC_RESOLUTION`            | `resolve()` sync trên async binding, trực tiếp hoặc qua dep chain   | `tokenName`, `asyncSourceToken`                  |
+| `AsyncActivationError`          | `ASYNC_ACTIVATION`            | `@postConstruct` hoặc `onActivation` trả `Promise` trên đường sync  | `tokenName`, `hookKind`, `methodName`            |
+| `AsyncDeactivationError`        | `ASYNC_DEACTIVATION`          | `unbind()` sync trên binding có async `onDeactivation`              | `tokenName`                                      |
+| `ScopeViolationError`           | `SCOPE_VIOLATION`             | Captive dependency — singleton phụ thuộc scoped hoặc transient      | `details`: token + scope hai bên, cùng `path`    |
+| `MissingMetadataError`          | `MISSING_METADATA`            | Class cần container tự dựng nhưng thiếu `@injectable()`             | `targetName`                                     |
+| `InvalidMetadataError`          | `INVALID_METADATA`            | `MetadataReader` trả về thứ container không dùng được               | `targetName`, `reason`                           |
+| `AsyncModuleLoadError`          | `ASYNC_MODULE_LOAD`           | `load()` sync nhận `AsyncModule`                                    | `moduleName`                                     |
+| `SyncDisposalNotSupportedError` | `SYNC_DISPOSAL_NOT_SUPPORTED` | `[Symbol.dispose]()` được gọi                                       | —                                                |
+| `MissingScopeContextError`      | `MISSING_SCOPE_CONTEXT`       | Resolve binding `scoped` từ container không có child scope context  | `tokenName`                                      |
+| `MissingContainerContextError`  | `MISSING_CONTAINER_CONTEXT`   | Class có `@inject accessor` bị `new` ngoài container context        | `className` (có thể `undefined`), `accessorName` |
+| `RebindUnboundTokenError`       | `REBIND_UNBOUND_TOKEN`        | `rebind()` trên token chưa có binding own trong container này       | `tokenName`                                      |
+| `DisposedContainerError`        | `DISPOSED_CONTAINER`          | Mọi thao tác trên container đã dispose                              | —                                                |
+| `ChainNotRegisteredError`       | `CHAIN_NOT_REGISTERED`        | Refinement (`when*`, scope, `on*`, `id()`) gọi trước `to*()`        | `tokenName`                                      |
+| `SelfBindingRequiresClassError` | `SELF_BINDING_REQUIRES_CLASS` | `toSelf()` trên token không phải class                              | `tokenName`                                      |
+| `StaticMemberDecoratorError`    | `STATIC_MEMBER_DECORATOR`     | `@inject` / `@postConstruct` / `@preDestroy` đặt trên static member | `decoratorName`, `memberName`                    |
+
+> **Hình dạng chính xác:** `src/errors/errors.ts` — mọi class trên, cộng `ScopeViolationDetails`.
+
+Mọi message đều nêu lối ra chứ không chỉ nêu triệu chứng. Hai ví dụ đại diện:
+
+```
+No binding for 'Logger' matching { name: 'file' }. Available slots: [default, name:console].
+
+Token 'App' requires async resolution because 'Database' in its dependency
+chain has an async factory. Use container.resolveAsync(App).
 ```
 
-**`InternalError`** — assertion failure / lỗi internal không expected (không phải lỗi user):
+### Ranh giới giữa lỗi của library và lỗi của caller
 
-```ts
-class InternalError extends DiError {
-  readonly code = "INTERNAL_ERROR";
-  // Message: mô tả assertion nào fail
-}
-```
+`InternalError` nghĩa là **library hỏng** — một consumer bắt được nó là bắt được bug của thư viện. Vì vậy không lỗi nào do người dùng gây ra được phép mang kiểu này. Ba error trong bảng tồn tại chính vì luật đó: `AmbiguousBindingError` (predicate không loại trừ nhau), `StaticMemberDecoratorError`, và `ChainNotRegisteredError` — cả ba trước đây throw `InternalError`, và cả ba đều là caller dùng sai.
 
-**`TokenNotBoundError`** — token không có binding nào (kể cả sau khi leo lên parent chain):
+`ChainNotRegisteredError` và `SelfBindingRequiresClassError` gần như không tới được từ TypeScript: kiểu trả về của chain ([§2.4](#chain-order)) và kiểu của `bind()` đã chặn phần lớn. Chúng dành cho caller JavaScript hoặc caller đã cast qua kiểu, tồn tại để misuse **nổ rõ ràng** thay vì âm thầm không làm gì, và thuộc taxonomy `DiError` để một `catch (error) { if (error instanceof DiError) … }` không để chúng rơi ra ngoài.
 
-```ts
-class TokenNotBoundError extends DiError {
-  readonly code = "TOKEN_NOT_BOUND";
-  readonly tokenName: string;
-  // "No binding found for token 'Database'. Did you forget container.bind(Database)?"
-}
-```
+`StaticMemberDecoratorError` có mặt vì cả ba decorator ấy đều tác động lên **một instance**: `@inject` resolve qua container đang active trong lúc instance được construct, còn `@postConstruct`/`@preDestroy` bao quanh lifecycle của một instance. Static member thuộc về class, mà container không construct class.
 
-**`NoMatchingBindingError`** — token có binding nhưng không có slot nào match hint (kể cả trường hợp không có default slot):
+### `MissingMetadataError` khác `InvalidMetadataError`
 
-```ts
-class NoMatchingBindingError extends DiError {
-  readonly code = "NO_MATCHING_BINDING";
-  readonly tokenName: string;
-  readonly hint: ResolveOptions;
-  readonly availableSlots: string[]; // ["default", "name:console", "tag:fuel=petrol"]
-  // "No binding for 'Logger' matching { name: 'file' }. Available slots: [default, name:console]."
-}
-```
+Vắng metadata là class container chưa được kể; metadata sai là reader trả lời sai. Chỉ reader **do người dùng cấp** bị kiểm tra — reader decorator mặc định tự ghi metadata mà nó đọc lại, nên không có gì để kiểm, và container không cấp reader riêng thì không phải trả gì. Kiểm một lần mỗi cặp `(reader, class)` mỗi process, chỉ những field mà consumer dereference (`params`, và `token` của từng entry).
 
-**`AmbiguousBindingError`** — `when()` predicate-only: sau filter runtime còn ≥ 2 candidates (lỗi của người dùng — predicates không mutually exclusive):
+Câu trả lời **lifecycle** cũng vào `InvalidMetadataError` với `reason` khác: nếu reader kể một tên `postConstruct`/`preDestroy` mà instance không có method đó, hook bị bỏ qua là thất bại **caller không nhìn thấy được** — nên nó được báo (`"lifecycle method 'strat' is not a method on the instance"`) thay vì im lặng. Tên class lấy từ chính instance tại chỗ throw, nên happy path không mang thêm đối số nào.
 
-```ts
-class AmbiguousBindingError extends DiError {
-  readonly code = "AMBIGUOUS_BINDING";
-  readonly tokenName: string;
-  readonly candidateIds: readonly BindingIdentifier[];
-  // "Multiple bindings for 'Logger' matched without a clear winner.
-  //  Candidates: [id1, id2]. Ensure when() predicates are mutually exclusive."
-}
-```
+### `AsyncActivationError` khác `AsyncResolutionError`
 
-**`CircularDependencyError`** — A → B → A (bao gồm alias chain cycle):
-
-```ts
-class CircularDependencyError extends DiError {
-  readonly code = "CIRCULAR_DEPENDENCY";
-  readonly cycle: string[]; // ["App", "Database", "App"] — in toàn bộ cycle
-}
-```
-
-**`AsyncResolutionError`** — `resolve()` sync trên async binding (trực tiếp hoặc qua dep chain):
-
-```ts
-class AsyncResolutionError extends DiError {
-  readonly code = "ASYNC_RESOLUTION";
-  readonly tokenName: string;
-  readonly asyncSourceToken: string; // token là nguồn gốc async trong chain
-  // "Token 'App' requires async resolution because 'Database' in its dependency
-  //  chain has an async factory. Use container.resolveAsync(App)."
-}
-```
-
-**`AsyncDeactivationError`** — `unbind()` sync trên binding có async `onDeactivation`:
-
-```ts
-class AsyncDeactivationError extends DiError {
-  readonly code = "ASYNC_DEACTIVATION";
-  readonly tokenName: string;
-  // "Token 'Database' has an async onDeactivation handler. Use unbindAsync() instead."
-}
-```
-
-**`ScopeViolationError`** — singleton phụ thuộc vào scoped/transient:
-
-```ts
-class ScopeViolationError extends DiError {
-  readonly code = "SCOPE_VIOLATION";
-  readonly details: ScopeViolationDetails;
-}
-
-interface ScopeViolationDetails {
-  readonly consumerToken: string;
-  readonly consumerScope: BindingScope;
-  readonly dependencyToken: string;
-  readonly dependencyScope: BindingScope;
-  readonly path: string[]; // full resolution path để trace
-}
-```
-
-**`MissingMetadataError`** — `@injectable()` thiếu trên class cần auto-resolve:
-
-```ts
-class MissingMetadataError extends DiError {
-  readonly code = "MISSING_METADATA";
-  readonly targetName: string;
-  // "Class 'UserService' is missing @injectable() decorator.
-  //  Add @injectable([...deps]) or use toDynamic()/toResolved() instead."
-}
-```
-
-**`InvalidMetadataError`** — `MetadataReader` trả về thứ container không dùng được:
-
-```ts
-class InvalidMetadataError extends DiError {
-  readonly code = "INVALID_METADATA";
-  readonly targetName: string;
-  readonly reason: string;
-  // "MetadataReader returned invalid metadata for class 'Pool': constructor metadata:
-  //  params is not an array. Check the reader bound to MetadataReaderToken or passed to
-  //  Container.create()."
-}
-```
-
-Khác `MissingMetadataError`: vắng metadata là class container chưa được kể; metadata sai là reader trả lời sai. Chỉ reader **do người dùng cấp** bị kiểm tra — reader decorator mặc định tự ghi metadata mà nó đọc lại, nên không có gì để kiểm và container không cấp reader riêng không phải trả gì. Kiểm một lần mỗi cặp `(reader, class)` mỗi process, chỉ những field mà consumer dereference (`params`, và `token` của từng entry).
-
-Câu trả lời **lifecycle** cũng vào đây, với `reason` khác: nếu reader kể một tên `postConstruct`/`preDestroy` mà instance không có method đó, hook bị bỏ qua là thất bại **caller không nhìn thấy được** — nên nó được báo (`"lifecycle method 'strat' is not a method on the instance"`) thay vì im lặng. Tên class lấy từ chính instance tại chỗ throw, nên happy path không mang thêm đối số nào.
-
-**`AsyncModuleLoadError`** — `load()` sync nhận `AsyncModule`:
-
-```ts
-class AsyncModuleLoadError extends DiError {
-  readonly code = "ASYNC_MODULE_LOAD";
-  readonly moduleName: string;
-  // "Module 'Database' is async. Use container.loadAsync() instead."
-}
-```
-
-**`SyncDisposalNotSupportedError`** — `[Symbol.dispose]()` được gọi:
-
-```ts
-class SyncDisposalNotSupportedError extends DiError {
-  readonly code = "SYNC_DISPOSAL_NOT_SUPPORTED";
-  // "Container cannot be disposed synchronously because onDeactivation handlers
-  //  may be async. Use `await using` or call container.dispose() explicitly."
-}
-```
-
-**`MissingScopeContextError`** — `scoped` binding được resolve từ container không có child scope context:
-
-```ts
-class MissingScopeContextError extends DiError {
-  readonly code = "MISSING_SCOPE_CONTEXT";
-  readonly tokenName: string;
-  // "Token 'RequestHandler' is scoped but was resolved from a container without
-  //  a child scope context. Use container.createChild() to create a scoped context."
-}
-```
-
-**`MissingContainerContextError`** — property injection (accessor) được khởi tạo ngoài container:
-
-```ts
-class MissingContainerContextError extends DiError {
-  readonly code = "MISSING_CONTAINER_CONTEXT";
-  /** undefined khi class không có tên đọc được (class expression ẩn danh). */
-  readonly className: string | undefined;
-  readonly accessorName: string | symbol;
-  // className !== undefined:
-  //   "Class 'Dashboard' has an @inject accessor 'logger' but was constructed outside a
-  //    container context. Resolve it via container.resolve(Dashboard), or open a context
-  //    with runWithContainer()."
-  // className === undefined: câu không nhắc chữ "Class".
-}
-```
-
-**`RebindUnboundTokenError`** — `rebind()` trên token chưa có binding own:
-
-```ts
-class RebindUnboundTokenError extends DiError {
-  readonly code = "REBIND_UNBOUND_TOKEN";
-  readonly tokenName: string;
-  // "Cannot rebind token 'Logger' because it has no own binding in this container.
-  //  Use container.bind(Logger) to create a new binding instead."
-}
-```
-
-**`DisposedContainerError`** — thao tác trên container đã dispose:
-
-```ts
-class DisposedContainerError extends DiError {
-  readonly code = "DISPOSED_CONTAINER";
-  // "Cannot perform operations on a disposed container."
-}
-```
-
-**`ChainNotRegisteredError`** — refinement (`when*`, scope, `on*`, `id()`) được gọi trước `to*()`:
-
-```ts
-class ChainNotRegisteredError extends DiError {
-  readonly code = "CHAIN_NOT_REGISTERED";
-  readonly tokenName: string;
-  // "Cannot refine the binding for token 'Logger' before choosing a target.
-  //  Call a to*() method first — for example .to(SomeClass), .toConstantValue(value)
-  //  or .toDynamic(factory)."
-}
-```
-
-TypeScript đã chặn trường hợp này qua kiểu trả về (§2.4), nên error chỉ tới được từ JavaScript hoặc khi caller cast qua kiểu. Nó tồn tại để misuse **nổ rõ ràng** thay vì âm thầm không làm gì.
-
-**`SelfBindingRequiresClassError`** — `toSelf()` trên token không phải class:
-
-```ts
-class SelfBindingRequiresClassError extends DiError {
-  readonly code = "SELF_BINDING_REQUIRES_CLASS";
-  readonly tokenName: string;
-  // "toSelf() needs the token to be the class it constructs, and 'Logger' is not a class.
-  //  Use .to(SomeClass) to name the implementation, or bind the class itself with
-  //  container.bind(SomeClass).toSelf()."
-}
-```
-
-`toSelf()` bind token **thành chính nó**, nên token phải là constructor. Một `token<Logger>("Logger")` không construct được gì. Như `ChainNotRegisteredError`, kiểu của `bind()` đã chặn phần lớn trường hợp — error này dành cho caller JavaScript hoặc caller đã cast qua kiểu, và nó thuộc taxonomy `DiError` để một `catch (error) { if (error instanceof DiError) … }` không để nó rơi ra ngoài.
-
-**`StaticMemberDecoratorError`** — `@inject`, `@postConstruct` hoặc `@preDestroy` đặt trên static member:
-
-```ts
-class StaticMemberDecoratorError extends DiError {
-  readonly code = "STATIC_MEMBER_DECORATOR";
-  readonly decoratorName: string;
-  readonly memberName: string;
-  // "@inject() applies to instance members only, and 'clock' is static.
-  //  Move it to an instance member, or read the value from the container where
-  //  the static member is used."
-}
-```
-
-Cả ba decorator này đều tác động lên **một instance**: `@inject` resolve qua container đang active trong lúc instance được construct, còn `@postConstruct`/`@preDestroy` bao quanh lifecycle của một instance. Static member thuộc về class, mà container không construct class — nên đây là misuse của caller, không phải assertion nội bộ. Trước đây ba site này throw `InternalError`, cùng loại sai mà §10 đã ghi nhận ở predicate ambiguity: `InternalError` nghĩa là **library** hỏng, và một consumer bắt nó để báo bug sẽ nhận về chính lỗi của mình.
+Cùng là luật ở [§3.4](#lifecycle-handlers) — hook trả `Promise` thì lần resolve phải là `resolveAsync()` — nhưng nguồn async không nằm ở factory của binding mà ở hook, thứ chỉ lộ ra **sau** khi instance đã được tạo. Container không thể biết trước lúc chọn binding. `hookKind` cho biết `postConstruct` hay `onActivation`; `methodName` chỉ đúng method khi một class có nhiều `@postConstruct()`.
 
 ---
 
@@ -2711,69 +1970,92 @@ Cả ba decorator này đều tác động lên **một instance**: `@inject` re
 packages/di/
 ├── ARCHITECTURE.md            Layering, hot-path invariants, và luật đổi code trong resolution/
 │                              — đọc trước khi sửa bất cứ gì dưới src/resolution/
-├── src/
-│   │  ── model (root) ──────────────────────────────────────────────────────
-│   ├── constructor-type.ts    Constructor<Value>, ConstructorInvocation (re-export qua types.ts)
-│   ├── types.ts               DependencyKey, BindingScope, BindingIdentifier, BindingKind,
-│   │                          ActivationHandler, DeactivationHandler, ResolveOptions,
-│   │                          ResolutionFrame, ConstraintContext, ResolutionContext, TokenValue
-│   ├── token.ts               Token<Value> branded type; token(), tokenName(), isToken()
-│   ├── binding.ts             Binding discriminated union + BindingSlot utilities;
-│   │                          createBinding() — ĐIỂM DỰNG BINDING DUY NHẤT, thứ bảo đảm
-│   │                          một hidden class cho mọi binding; generateBindingId(),
-│   │                          refinableFields(); toàn bộ builder interface công khai
-│   ├── registry.ts            BindingRegistry — slot-aware last-wins, các index tra cứu nhanh,
-│   │                          version counter cho memo; lưu binding BY REFERENCE (không copy lại)
-│   ├── errors.ts              Toàn bộ error class
-│   ├── module.ts              SyncModule / AsyncModule, MODULE_SETUP
+├── src/                       Thư mục = tầng. Import chỉ đi xuôi theo thứ tự dưới đây;
+│   │                          `tests/unit/architecture.test.ts` cưỡng chế chiều đó.
+│   │  ── tầng 0: core/, errors/, injection/ ────────────────────────────────
+│   ├── core/
+│   │   ├── constructor-type.ts Constructor<Value>, ConstructorInvocation (re-export qua types.ts)
+│   │   ├── types.ts           DependencyKey, BindingScope, BindingIdentifier, BindingKind,
+│   │   │                      ActivationHandler, DeactivationHandler, ResolveOptions,
+│   │   │                      ResolutionFrame, ConstraintContext, ResolutionContext, TokenValue
+│   │   ├── token.ts           Token<Value> branded type; token(), tokenName(), isToken()
+│   │   ├── tag.ts             tag() — nhà máy tag key duy nhất; BindingTag interned,
+│   │   │                      TagKeyMask và phép kiểm subset trên key
+│   │   ├── binding.ts         Binding discriminated union + BindingSlot utilities;
+│   │   │                      createBinding() — ĐIỂM DỰNG BINDING DUY NHẤT, thứ bảo đảm
+│   │   │                      một hidden class cho mọi binding; generateBindingId(),
+│   │   │                      refinableFields(); toàn bộ builder interface công khai
+│   │   ├── binding-scope.ts   effectiveBindingScope() — internal; dùng BindingSnapshot.scope
+│   │   ├── registry.ts        BindingRegistry — slot-aware last-wins, các index tra cứu nhanh,
+│   │   │                      version counter cho memo; lưu binding BY REFERENCE (không copy lại)
+│   │   └── module.ts          SyncModule / AsyncModule, MODULE_SETUP
+│   ├── errors/
+│   │   ├── errors.ts          Toàn bộ error class
+│   │   └── diagnostics.ts     RESOLUTION_DIAGNOSTICS — kênh đọc số liệu runtime của resolver
+│   ├── injection/
+│   │   ├── descriptor.ts      inject-descriptor layer: optional(), injectAll(),
+│   │   │                      isInjectionDescriptor(), normalizeToDescriptor(); gấp `tag`
+│   │   │                      vào `tags` để phía sau chỉ thấy một cách viết
+│   │   └── resolve-options.ts injectionSlotToResolveOptions(), bindingSlotToResolveOptions()
 │   │
-│   │  ── container/ ────────────────────────────────────────────────────────
+│   │  ── tầng 1: lifecycle/, ambient/ ──────────────────────────────────────
+│   ├── lifecycle/
+│   │   ├── scope-manager.ts   ScopeManager — cache singleton/scoped, serialize async
+│   │   └── lifecycle-manager.ts LifecycleManager — chuỗi onActivation/onDeactivation
+│   ├── ambient/
+│   │   └── active-container.ts runWithContainer() / getActiveContainer() — biến active
+│   │                          tầng module mà accessor injection đọc lúc `new`
+│   │
+│   │  ── tầng 2: resolution/ (perf-critical core) ──────────────────────────
+│   ├── resolution/
+│   │   ├── resolver.ts        DependencyResolver — sync + async pipeline. Một class vì
+│   │   │                      `#` private không span file được và cả hai pipeline dùng
+│   │   │                      chung state riêng tư ở mọi hop
+│   │   ├── context.ts         DefaultResolutionContext (pooled), AsyncLevelContext,
+│   │   │                      AsyncCascadeContext, ResolverCallbacks
+│   │   ├── cache/
+│   │   │   ├── binding-lookup-cache.ts  Memo tra cứu không-options theo chain, đã fold
+│   │   │   │                  alias; stamp bằng tổng version của cả chain registry
+│   │   │   ├── class-introspector.ts    Cache theo class: constructor metadata, phát hiện
+│   │   │   │                  @postConstruct, accessor injection, và chính lời gọi `new`
+│   │   │   └── activation-need.ts  Cache theo binding: có cần chạy activation pipeline không
+│   │   ├── plan/
+│   │   │   └── instantiation-plan.ts   Compiler cho compiled plan + escape ra runtime path
+│   │   ├── path/
+│   │   │   └── resolution-path.ts      Cycle guard trên mảng path (scan tuyến tính → Set
+│   │   │                      khi sâu); OwnedBranchPath cho nhánh async
+│   │   └── select/
+│   │       ├── binding-select.ts   selectBinding(), selectAllBindings(), matchesSlot()
+│   │       └── constraints.ts      Advanced constraint predicates (whenParentNamed, …)
+│   │
+│   │  ── tầng 3: decorators/, metadata/ ────────────────────────────────────
+│   ├── decorators/
+│   │   ├── injectable.ts      @injectable(), auto-register registry
+│   │   ├── inject.ts          inject() và @inject accessor field decorator
+│   │   └── lifecycle-decorators.ts  @postConstruct(), @preDestroy()
+│   ├── metadata/
+│   │   ├── metadata-types.ts  MetadataReader, ConstructorMetadata, ParamMetadata
+│   │   ├── metadata-keys.ts   Symbol.metadata keys
+│   │   ├── symbol-metadata-reader.ts   defaultMetadataReader
+│   │   ├── verifying-metadata-reader.ts  Bọc reader do người dùng cấp, kiểm một lần
+│   │   │                      mỗi cặp (reader, class) — nguồn InvalidMetadataError
+│   │   └── metadata-reader-token.ts    MetadataReaderToken
+│   │
+│   │  ── tầng 4: container/, introspection/ ────────────────────────────────
 │   ├── container/
 │   │   ├── container.ts       DefaultContainer; collaborator dựng khi dùng lần đầu
 │   │   └── binding-builders.ts BindingChain — MỘT object cho cả chain, đăng ký MỘT lần
 │   │                          rồi refine tại chỗ và tự commit vào registry;
 │   │                          BindingRegistration (chain đăng ký ở đâu, cho ai)
-│   │
-│   │  ── resolution/ (perf-critical core) ──────────────────────────────────
-│   ├── resolution/
-│   │   ├── resolver.ts        DependencyResolver — sync + async pipeline. Một class vì
-│   │   │                      `#` private không span file được và cả hai pipeline dùng
-│   │   │                      chung state riêng tư ở mọi hop
-│   │   ├── binding-lookup-cache.ts  Memo tra cứu không-options theo chain, đã fold alias;
-│   │   │                      stamp bằng tổng version của cả chain registry
-│   │   ├── class-introspector.ts    Cache theo class: constructor metadata, phát hiện
-│   │   │                      @postConstruct, accessor injection, và chính lời gọi `new`
-│   │   ├── activation-need.ts Cache theo binding: có cần chạy activation pipeline không
-│   │   ├── instantiation-plan.ts    Compiler cho compiled plan + escape ra runtime path
-│   │   ├── resolution-path.ts Cycle guard trên mảng path (scan tuyến tính → Set khi sâu)
-│   │   ├── environment.ts     DefaultResolutionContext (pooled), ResolverCallbacks,
-│   │   │                      runWithContainer / getActiveContainer
-│   │   ├── scope.ts           ScopeManager — cache singleton/scoped, serialize async
-│   │   ├── lifecycle.ts       LifecycleManager — chuỗi onActivation/onDeactivation
-│   │   ├── binding-select.ts  selectBinding(), selectAllBindings()
-│   │   ├── binding-scope.ts   effectiveBindingScope() — internal; dùng BindingSnapshot.scope
-│   │   ├── constraints.ts     Đánh giá predicate/slot constraint
-│   │   └── resolve-options.ts injectionSlotToResolveOptions(), bindingSlotToResolveOptions()
-│   │
-│   │  ── introspection/, decorators/, metadata/ ────────────────────────────
 │   ├── introspection/
 │   │   ├── inspector.ts       inspect(), lookupBindings()
 │   │   ├── dependency-graph.ts buildDependencyGraph()
-│   │   └── graph-adapters/    dot.ts, cytoscape.ts, reactflow.ts
-│   ├── decorators/
-│   │   ├── injectable.ts      @injectable(), auto-register registry
-│   │   ├── inject.ts          inject(), optional(), injectAll(), InjectionDescriptor
-│   │   └── lifecycle-decorators.ts  @postConstruct(), @preDestroy()
-│   ├── metadata/
-│   │   ├── metadata-types.ts  MetadataReader, ConstructorMetadata
-│   │   ├── metadata-keys.ts   Symbol.metadata keys
-│   │   ├── symbol-metadata-reader.ts  defaultMetadataReader
-│   │   └── metadata-reader-token.ts   MetadataReaderToken
-│   └── index.ts               Public API exports (root entrypoint — xem §11.1)
+│   │   └── graph-adapters/    dot.ts, cytoscape.ts, mermaid.ts, reactflow.ts
+│   └── index.ts               Public API exports (root entrypoint)
 │
 ├── tests/                     Mirror đường dẫn src/ trong đúng một category
-│   ├── unit/                  binding, registry, container/, decorators/,
-│   │                          introspection/, resolution/
+│   ├── unit/                  architecture, core/, container/, decorators/, lifecycle/,
+│   │                          introspection/, resolution/{cache,plan,select}
 │   ├── integration/           decorators end-to-end, validate-scope, support/ fixtures
 │   └── types/                 expectTypeOf — inference, container API, resolve-options
 │
@@ -2782,11 +2064,15 @@ packages/di/
 └── tsconfig.build.json
 ```
 
-**Ownership của `types.ts`:** Kiểu nền tảng (`BindingScope`, `BindingIdentifier`, `BindingKind`, `Constructor`, `ActivationHandler`, `DeactivationHandler`, `ResolveOptions`, `ResolutionContext`, `ConstraintContext`, `ResolutionFrame`, `TokenValue`) được khai báo trong `types.ts` — file có single responsibility, không phụ thuộc bất kỳ file nào khác trong package. `binding.ts`, `resolver.ts`, `scope.ts`... đều import từ `types.ts`. Re-export từ `index.ts`.
+**Thư mục là tầng, và import chỉ đi một chiều.** `{core, errors, injection}` → `{lifecycle, ambient}` → `resolution` → `{decorators, metadata}` → `{container, introspection}`. Import cùng tầng thì tự do; chỉ value import ngược lên tầng cao hơn mới là vi phạm, và `tests/unit/architecture.test.ts` chặn đúng điều đó. `index.ts` được miễn — barrel gom mọi tầng là việc của nó. Type-only import không tính, vì nó bay hơi lúc build nên không ràng buộc gì ở runtime.
 
-**Phân tách `binding-select.ts` khỏi `registry.ts`:** `registry.ts` là storage layer — lưu binding và xử lý slot-aware last-wins. `binding-select.ts` là runtime filtering layer — nhận token + `ResolveOptions` + `when()` predicates, trả candidates. `resolver.ts` consume kết quả của `binding-select.ts`. Phân tách này làm từng layer dễ test độc lập.
+**Ownership của `core/types.ts`:** Kiểu nền tảng (`BindingScope`, `BindingIdentifier`, `BindingKind`, `Constructor`, `ActivationHandler`, `DeactivationHandler`, `ResolveOptions`, `ResolutionContext`, `ConstraintContext`, `ResolutionFrame`, `TokenValue`) được khai báo ở đây — file có single responsibility, không phụ thuộc bất kỳ file nào khác trong package. `core/binding.ts`, `resolution/resolver.ts`, `lifecycle/scope-manager.ts`… đều import từ nó. Re-export từ `index.ts`.
 
-**`metadata-reader-token.ts` tách riêng:** `MetadataReaderToken` là bridge giữa decorator layer và container. Tách riêng để tránh circular import (`container.ts` → `metadata-reader-token.ts` → không phụ thuộc `container.ts`).
+**Phân tách `resolution/select/binding-select.ts` khỏi `core/registry.ts`:** registry là storage layer — lưu binding và xử lý slot-aware last-wins. `binding-select.ts` là runtime filtering layer — nhận token + `ResolveOptions` + `when()` predicates, trả candidates. `resolver.ts` consume kết quả của nó. Phân tách này làm từng layer dễ test độc lập, và giữ registry ở tầng 0 trong khi selection ngồi cùng tầng với resolver.
+
+**`metadata/metadata-reader-token.ts` tách riêng:** `MetadataReaderToken` là bridge giữa decorator layer và container. Tách riêng để tránh circular import (`container/container.ts` → `metadata-reader-token.ts` → không phụ thuộc ngược lại).
+
+<a id="public-api"></a>
 
 ### 11.1 Public API (`index.ts`)
 
@@ -2805,11 +2091,11 @@ export type {
   ResolveOptions,
   ResolutionContext,
   TokenValue,
-} from "#/types";
+} from "#/core/types";
 
 // Token
-export { token, tokenName, isToken } from "#/token";
-export type { Token } from "#/token";
+export { token, tokenName, isToken } from "#/core/token";
+export type { Token } from "#/core/token";
 
 // Binding builders — types only
 export type {
@@ -2821,23 +2107,23 @@ export type {
   SingletonBindingBuilder,
   SingletonLifecycleBuilder,
   TransientBindingBuilder,
-} from "#/binding";
+} from "#/core/binding";
 
 // Container
-export { Container } from "#/container";
-export type { Container as ContainerInterface, ContainerStatic } from "#/container";
+export { Container } from "#/container/container";
+export type { Container as ContainerInterface, ContainerStatic } from "#/container/container";
 
-export { injectionSlotToResolveOptions, bindingSlotToResolveOptions } from "#/resolve-options";
+export { injectionSlotToResolveOptions, bindingSlotToResolveOptions } from "#/injection/resolve-options";
 
 // Introspection types
-export type { BindingSnapshot, ContainerSnapshot } from "#/inspector";
+export type { BindingSnapshot, ContainerSnapshot } from "#/introspection/inspector";
 
 // Graph types
-export type { ContainerGraphJson, GraphEdge, GraphNode, GraphOptions } from "#/graph-adapters/types";
+export type { ContainerGraphJson, GraphEdge, GraphNode, GraphOptions } from "#/introspection/dependency-graph";
 
 // Module
-export { AsyncModule, isSyncModule, Module, SyncModule } from "#/module";
-export type { AsyncModuleBuilder, ModuleBuilder } from "#/module";
+export { AsyncModule, isSyncModule, Module, SyncModule } from "#/core/module";
+export type { AsyncModuleBuilder, ModuleBuilder } from "#/core/module";
 
 // Constraints — contextual injection predicates for .when()
 export {
@@ -2851,11 +2137,12 @@ export {
   whenParentNamed,
   whenParentTagged,
   whenParentTaggedAll,
-} from "#/constraints";
+} from "#/resolution/select/constraints";
 
 // Decorators
-export { inject, injectAll, isInjectionDescriptor, optional } from "#/decorators/inject";
-export type { InjectionDescriptor, InjectOptions } from "#/decorators/inject";
+export { inject } from "#/decorators/inject";
+export { injectAll, isInjectionDescriptor, optional } from "#/injection/descriptor";
+export type { InjectionDescriptor, InjectOptions } from "#/injection/descriptor";
 export { injectable } from "#/decorators/injectable";
 export type { InjectableDependency, InjectableOptions } from "#/decorators/injectable";
 export { postConstruct, preDestroy } from "#/decorators/lifecycle-decorators";
@@ -2889,12 +2176,12 @@ export {
   StaticMemberDecoratorError,
   SyncDisposalNotSupportedError,
   TokenNotBoundError,
-} from "#/errors";
-export type { ScopeViolationDetails } from "#/errors";
+} from "#/errors/errors";
+export type { ScopeViolationDetails } from "#/errors/errors";
 
 // ── Subpath aliases (cùng module, import từ subpath cũng hợp lệ) ─────────────
 //
-// @codefast/di/constraints  → same as above constraints re-exports
+// @codefast/di/resolution/select/constraints  → same as above constraints re-exports
 //
 // ── Cũng có subpath riêng (song song với root) ───────────────────────────────
 //
@@ -2963,6 +2250,8 @@ Mỗi public subpath là một conditional entry: `source` → `src` cho dev/tes
 
 > **`src` nằm trong `files`:** artifact publish kèm cả `src` vì `tsc` giữ nguyên các subpath `#/` verbatim trong `dist/*.js` — chúng chỉ phân giải được khi bản đồ `imports` (điều kiện `types`/`default` → `dist`) đi cùng, còn điều kiện `source` cho phép dev/test trong repo chạy thẳng TS nguồn không cần build trước.
 
+<a id="tsconfig-build"></a>
+
 ### 11.3 `tsconfig.build.json`
 
 Build bằng native `tsc` (TypeScript 7) theo mô hình Turborepo "Compiled Packages" — emit `.js` + `.d.ts` file-by-file vào `dist/`, không bundler. Không còn `tsdown`.
@@ -3029,7 +2318,7 @@ Thứ tự array quyết định override: `library-build.json` đứng sau nên
 
 ### Error classes
 
-Tất cả error subclasses với `readonly code` và context fields đầy đủ như section 10. Bao gồm `AmbiguousBindingError`, `AsyncDeactivationError`, `DisposedContainerError` mới.
+Tất cả error subclasses với `readonly code` và context fields đầy đủ như [section 10](#10-error-hierarchy). Bao gồm `AmbiguousBindingError`, `AsyncDeactivationError`, `DisposedContainerError` mới.
 
 ### Introspection và diagnostics
 
@@ -3040,7 +2329,7 @@ Tất cả error subclasses với `readonly code` và context fields đầy đ�
 
 ### Advanced constraints
 
-Fully spec'd in section 8. Export từ root `@codefast/di` và subpath `@codefast/di/constraints`: `whenParentIs`, `whenNoParentIs`, `whenAnyAncestorIs`, `whenNoAncestorIs`, `whenParentNamed`, `whenAnyAncestorNamed`, `whenParentTagged`, `whenAnyAncestorTagged`, `whenParentTaggedAll`, `whenAnyAncestorTaggedAll`.
+Fully spec'd in [section 8](#8-advanced-constraints). Export từ root `@codefast/di` và subpath `@codefast/di/resolution/select/constraints`: `whenParentIs`, `whenNoParentIs`, `whenAnyAncestorIs`, `whenNoAncestorIs`, `whenParentNamed`, `whenAnyAncestorNamed`, `whenParentTagged`, `whenAnyAncestorTagged`, `whenParentTaggedAll`, `whenAnyAncestorTaggedAll`.
 
 ### Integration packages
 
@@ -3081,7 +2370,7 @@ Fully spec'd in section 8. Export từ root `@codefast/di` và subpath `@codefas
 }
 ```
 
-Thực tế các option emit (`declaration`, `outDir`, …) tách sang `tsconfig.build.json` (§11.3); base `tsconfig.json` giữ `noEmit: true` cho type-check.
+Thực tế các option emit (`declaration`, `outDir`, …) tách sang `tsconfig.build.json` ([§11.3](#tsconfig-build)); base `tsconfig.json` giữ `noEmit: true` cho type-check.
 
 ---
 
@@ -3110,6 +2399,8 @@ describe("UserService", () => {
 });
 ```
 
+<a id="test-child-override"></a>
+
 ### 14.2 Child container — override binding từ parent
 
 Để override binding đã định nghĩa trong module, dùng `bind()` tại child container (không cần `rebind()` vì child không có own binding):
@@ -3136,6 +2427,8 @@ container.bind(Logger).to(ConsoleLogger).singleton();
 container.rebind(Logger).toConstantValue(mockLogger);
 // Lưu ý: singleton cũ bị deactivate (onDeactivation được gọi nếu có)
 ```
+
+<a id="test-metadata-reader"></a>
 
 ### 14.4 Swap MetadataReader
 
@@ -3252,9 +2545,9 @@ afterEach(async () => {
 });
 ```
 
-**Không mock `Symbol.metadata` trực tiếp:** Dùng `MetadataReaderToken` thay thế (xem 13.4).
+**Không mock `Symbol.metadata` trực tiếp:** Dùng `MetadataReaderToken` thay thế (xem [14.4](#test-metadata-reader)).
 
-**Không dùng `rebind()` để override từ parent:** Dùng `bind()` tại child container (xem 13.2).
+**Không dùng `rebind()` để override từ parent:** Dùng `bind()` tại child container (xem [14.2](#test-child-override)).
 
 ---
 
@@ -3338,7 +2631,7 @@ Section này đối chiếu toàn bộ public API của InversifyJS v8.0.0 (thá
 | `toResolvedValue(factory, injectOptions)`                      | `toResolved(factory, deps)` sync + `toResolvedAsync` mới                            |
 | `toService()` alias concept                                    | `toAlias()` — đổi tên rõ hơn, hint forwarding được spec                             |
 | `BindingIdentifier` / `.getIdentifier()`                       | Giữ concept, đổi thành `.id()` — tên ngắn hơn                                       |
-| `whenNamed` / `whenTagged` / `whenDefault` / `when(predicate)` | Giữ nguyên, tag key là `string` only                                                |
+| `whenNamed` / `whenTagged` / `whenDefault` / `when(predicate)` | Giữ nguyên; tag key khai báo bằng `tag()`, criterion mint bằng `TagKey.of()`        |
 | `isBound()` check hierarchy                                    | `has()` — giữ semantics với hint support                                            |
 | `isCurrentBound()` check current only                          | `hasOwn()` — tên rõ hơn                                                             |
 | `unbindAll()` / `unbindAllAsync()`                             | Giữ nguyên                                                                          |
@@ -3350,44 +2643,46 @@ Section này đối chiếu toàn bộ public API của InversifyJS v8.0.0 (thá
 
 ### 15.3 Tổng hợp: cải thiện hơn v8
 
-| InversifyJS v8                                                          | Thư viện này                                                                   |
-| ----------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
-| `reflect-metadata` + `experimentalDecorators` bắt buộc                  | Zero `reflect-metadata` — TC39 Stage 3, không flag legacy                      |
-| `ServiceIdentifier` = union type, không branded                         | `Token<Value>` branded — `resolve` luôn đúng type                              |
-| `container.get<WrongType>('id')` compile được                           | Impossible — `Token<Value>` mang type tại compile time                         |
-| `inSingletonScope()` / `inTransientScope()` / `inRequestScope()`        | `singleton()` / `transient()` / `scoped()` — tên ngắn, không prefix `in`       |
-| `toDynamicValue` nhận cả sync lẫn async, compiler không enforce         | `toDynamic` vs `toDynamicAsync` — compiler enforce `resolveAsync()` khi cần    |
-| Không có `toResolvedValueAsync`                                         | `toResolvedAsync(factory, deps)` — symmetric với `toResolved`                  |
-| `when*` khả dụng sau scope                                              | `on*()` chỉ sau scope — chain order bất biến, loại bỏ ambiguity                |
-| `onDeactivation` không có compile-time guard                            | Builder type narrowing — `onDeactivation` chỉ trên `SingletonBindingBuilder`   |
-| `toService()` trả về `void`                                             | `toAlias()` trả về `AliasBindingBuilder` — có `when*`, `.id()`, hint forward   |
-| `@inject` trên parameter cần `experimentalDecorators`                   | `@injectable([deps])` + `inject()` — TC39 Stage 3 thuần                        |
-| `@inject` trên plain property                                           | `@inject accessor field` — dùng TC39 `accessor` keyword                        |
-| `getAll()` chỉ có sync                                                  | `resolveAll()` + `resolveAllAsync()`                                           |
-| `container.get()` + `{ optional: true }` — ẩn trong options             | `resolveOptional()` + `resolveOptionalAsync()` — tên method tường minh         |
-| `tag` là single tag object — không hỗ trợ multi-tag                     | `tags` là `ReadonlyArray<readonly [string, unknown]>` — multi-tag lookup       |
-| `Symbol.metadata` prototype chain không được xử lý                      | `SymbolMetadataReader` dùng `Object.hasOwn` guard — không leak parent metadata |
-| `ContainerModule` / `AsyncContainerModule` không phân biệt ở type level | `SyncModule` / `AsyncModule` branded — `load(asyncModule)` là TypeScript error |
-| `@postConstruct` chỉ một method per class                               | Support mảng — nhiều `@postConstruct()` / `@preDestroy()` per class            |
-| Không có `validate()`                                                   | `container.validate()` — detect captive dependency tĩnh, transitive alias      |
-| Không có `initializeAsync()`                                            | Idempotent warm-up, cross-container trigger documented                         |
-| Không có typed error hierarchy                                          | `DiError` abstract + `code` string + context fields trên mọi subclass          |
-| Module có thể `unbind` / `rebind` binding của module khác               | `ModuleBuilder` additive-only — tránh hidden coupling giữa modules             |
-| Module deduplication không được spec                                    | Object identity deduplication + reference-counting rõ ràng                     |
-| `rebind` không throw khi token chưa bound                               | `RebindUnboundTokenError` — contract tường minh                                |
-| Predicate ambiguity throw `InternalError`                               | `AmbiguousBindingError` với `candidateIds` — lỗi của user, không phải internal |
-| Concurrent async singleton resolution không được spec                   | Serialized via in-flight Promise map — factory chỉ chạy 1 lần                  |
-| Container sau dispose: undefined behavior                               | `DisposedContainerError` + `isDisposed` getter                                 |
-| Async unbind sync: silent fail                                          | `AsyncDeactivationError` — explicit                                            |
-| `lookupBindings` không có                                               | `lookupBindings()` trả `BindingSnapshot[]` — không bao giờ `undefined`         |
-| `toService()` + hint semantics không được spec                          | `toAlias()` hint forwarding documented                                         |
-| Không có Testing guide                                                  | Section 13 với patterns cho isolated container, child override, MetadataReader |
-| `autoRegister` qua global option hoặc per-get                           | `createAutoRegisterRegistry()` — explicit registry, không global state         |
-| `[Symbol.asyncDispose]()` không được spec                               | `dispose()` + `[Symbol.asyncDispose]()` — `await using` support                |
-| `[Symbol.dispose]()` không được spec                                    | `[Symbol.dispose](): never` — throw `SyncDisposalNotSupportedError` rõ ràng    |
-| Không có `lookupBindings()`, `inspect()`, `generateDependencyGraph()`   | Introspection API đầy đủ — typed snapshot, JSON graph, DOT export              |
+| InversifyJS v8                                                          | Thư viện này                                                                                        |
+| ----------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
+| `reflect-metadata` + `experimentalDecorators` bắt buộc                  | Zero `reflect-metadata` — TC39 Stage 3, không flag legacy                                           |
+| `ServiceIdentifier` = union type, không branded                         | `Token<Value>` branded — `resolve` luôn đúng type                                                   |
+| `container.get<WrongType>('id')` compile được                           | Impossible — `Token<Value>` mang type tại compile time                                              |
+| `inSingletonScope()` / `inTransientScope()` / `inRequestScope()`        | `singleton()` / `transient()` / `scoped()` — tên ngắn, không prefix `in`                            |
+| `toDynamicValue` nhận cả sync lẫn async, compiler không enforce         | `toDynamic` vs `toDynamicAsync` — compiler enforce `resolveAsync()` khi cần                         |
+| Không có `toResolvedValueAsync`                                         | `toResolvedAsync(factory, deps)` — symmetric với `toResolved`                                       |
+| `when*` khả dụng sau scope                                              | `on*()` chỉ sau scope — chain order bất biến, loại bỏ ambiguity                                     |
+| `onDeactivation` không có compile-time guard                            | Builder type narrowing — `onDeactivation` chỉ trên `SingletonBindingBuilder`                        |
+| `toService()` trả về `void`                                             | `toAlias()` trả về `AliasBindingBuilder` — có `when*`, `.id()`, hint forward                        |
+| `@inject` trên parameter cần `experimentalDecorators`                   | `@injectable([deps])` + `inject()` — TC39 Stage 3 thuần                                             |
+| `@inject` trên plain property                                           | `@inject accessor field` — dùng TC39 `accessor` keyword                                             |
+| `getAll()` chỉ có sync                                                  | `resolveAll()` + `resolveAllAsync()`                                                                |
+| `container.get()` + `{ optional: true }` — ẩn trong options             | `resolveOptional()` + `resolveOptionalAsync()` — tên method tường minh                              |
+| `tag` là single tag object — không hỗ trợ multi-tag                     | `tags` là `ReadonlyArray<BindingTag>` interned — multi-tag, so bằng identity                        |
+| `Symbol.metadata` prototype chain không được xử lý                      | `SymbolMetadataReader` dùng `Object.hasOwn` guard — không leak parent metadata                      |
+| `ContainerModule` / `AsyncContainerModule` không phân biệt ở type level | `SyncModule` / `AsyncModule` branded — `load(asyncModule)` là TypeScript error                      |
+| `@postConstruct` chỉ một method per class                               | Support mảng — nhiều `@postConstruct()` / `@preDestroy()` per class                                 |
+| Không có `validate()`                                                   | `container.validate()` — detect captive dependency tĩnh, transitive alias                           |
+| Không có `initializeAsync()`                                            | Idempotent warm-up, cross-container trigger documented                                              |
+| Không có typed error hierarchy                                          | `DiError` abstract + `code` string + context fields trên mọi subclass                               |
+| Module có thể `unbind` / `rebind` binding của module khác               | `ModuleBuilder` additive-only — tránh hidden coupling giữa modules                                  |
+| Module deduplication không được spec                                    | Object identity deduplication + reference-counting rõ ràng                                          |
+| `rebind` không throw khi token chưa bound                               | `RebindUnboundTokenError` — contract tường minh                                                     |
+| Predicate ambiguity throw `InternalError`                               | `AmbiguousBindingError` với `candidateIds` — lỗi của user, không phải internal                      |
+| Concurrent async singleton resolution không được spec                   | Serialized via in-flight Promise map — factory chỉ chạy 1 lần                                       |
+| Container sau dispose: undefined behavior                               | `DisposedContainerError` + `isDisposed` getter                                                      |
+| Async unbind sync: silent fail                                          | `AsyncDeactivationError` — explicit                                                                 |
+| `lookupBindings` không có                                               | `lookupBindings()` trả `BindingSnapshot[]` — không bao giờ `undefined`                              |
+| `toService()` + hint semantics không được spec                          | `toAlias()` hint forwarding documented                                                              |
+| Không có Testing guide                                                  | [Section 14](#14-testing-guide) với patterns cho isolated container, child override, MetadataReader |
+| `autoRegister` qua global option hoặc per-get                           | `createAutoRegisterRegistry()` — explicit registry, không global state                              |
+| `[Symbol.asyncDispose]()` không được spec                               | `dispose()` + `[Symbol.asyncDispose]()` — `await using` support                                     |
+| `[Symbol.dispose]()` không được spec                                    | `[Symbol.dispose](): never` — throw `SyncDisposalNotSupportedError` rõ ràng                         |
+| Không có `lookupBindings()`, `inspect()`, `generateDependencyGraph()`   | Introspection API đầy đủ — typed snapshot, JSON graph, DOT export                                   |
 
 ---
+
+<a id="not-adopted-from-v8"></a>
 
 ### 15.4 Tổng hợp: không học từ v8
 
@@ -3410,7 +2705,7 @@ Section này đối chiếu toàn bộ public API của InversifyJS v8.0.0 (thá
 | `decorate(decorator, target, idx)`                                  | Không target third-party class integration                                 |
 | `LazyServiceIdentifier<T>` — defer evaluation cho circular deps     | `accessor` property injection giải quyết circular dep trực tiếp            |
 | `ContainerModule` callback có `bind`, `unbind`, `rebind`, `isBound` | `ModuleBuilder` chỉ `bind` + `import` — tránh hidden coupling giữa modules |
-| `when*` ancestor/parent constraints trên main API surface           | Export từ `@codefast/di/constraints` — giữ main API surface nhỏ            |
+| `when*` ancestor/parent constraints trên main API surface           | Có ở root, cộng subpath riêng cho ai muốn import hẹp                       |
 | `inRequestScope()` per-resolve-tree semantics                       | `scoped()` per-child-container — ranh giới lifecycle rõ ràng hơn           |
 | `toResolvedValue` với per-dep name/tag injection options            | `toResolved` chỉ plain token array — khi cần name/tag, dùng `toDynamic`    |
 

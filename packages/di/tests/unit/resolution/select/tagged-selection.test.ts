@@ -3,7 +3,7 @@
  * predicate on what they find. These pin that: an indexed hit whose predicate refuses must not reach
  * the caller, `resolveAll` must see the same candidates through the index that full selection would
  * give, and `±0` must stay two criteria — the index answers by identity, so interning is what keeps
- * `Object.is` (SPEC §3.5) true of it.
+ * `Object.is` true of it.
  */
 import { describe, expect, it } from "vitest";
 

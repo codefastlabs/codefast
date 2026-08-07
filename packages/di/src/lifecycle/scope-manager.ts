@@ -8,8 +8,7 @@ import { MissingScopeContextError } from "#/errors/errors";
  * @since 0.3.16-canary.0
  */
 export class ScopeManager {
-  // Instances live on their binding (see ARCHITECTURE.md); this list only lets disposal and
-  // `inspect()` enumerate them.
+  // Instances live on their binding; this list only lets disposal and `inspect()` enumerate them.
   #singletonBindings: Array<Binding<unknown>> | undefined;
   // In-flight promises for async singleton creation — only an async resolve ever needs it.
   #inflight: Map<BindingIdentifier, Promise<unknown>> | undefined;
@@ -95,7 +94,7 @@ export class ScopeManager {
     (this.#scoped ??= new Map()).set(binding.id, instance);
   }
 
-  /** Releases a removed binding's scoped instance — no deactivation, per SPEC §5.2. */
+  /** Releases a removed binding's scoped instance. A scoped instance has no deactivation. */
   deleteScoped(id: BindingIdentifier): void {
     this.#scoped?.delete(id);
   }

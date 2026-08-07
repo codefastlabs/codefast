@@ -15,9 +15,8 @@ const MASK_WIDTH = 32;
  * A slot's or a request's tag key set, as one word.
  *
  * @remarks A slot matches only if the request carries every key the slot declares, which is
- * `(requestMask & slotMask) === slotMask` — the whole subset test, before any value is read.
- *
- * @see `ARCHITECTURE.md` — why the multi-tag lane prefilters on keys rather than indexing values.
+ * `(requestMask & slotMask) === slotMask` — the whole subset test, before any value is read. Keys
+ * are prefiltered rather than values indexed because a key set fits in a word and a value set does not.
  */
 export type TagKeyMask = number & { readonly [TAG_KEY_BRAND]: "mask" };
 
@@ -28,9 +27,8 @@ export const NO_TAG_KEYS = 0 as TagKeyMask;
  * One `[key, value]` criterion, interned so equal criteria are the same object.
  *
  * @remarks Only {@link TagKey.of} mints one, which is what makes identity a sound stand-in for the
- * `Object.is` comparison SPEC §3.5 requires. Never build one by hand.
- *
- * @see `ARCHITECTURE.md` — the interning contract the matcher and the registry index both rely on.
+ * `Object.is` comparison the slot contract requires. Never build one by hand — the matcher and the
+ * registry index both read identity, so a hand-built criterion matches nothing.
  */
 export interface BindingTag<Value = unknown> {
   readonly key: TagKey<Value>;
@@ -59,8 +57,8 @@ let tagKeyCounter = -1;
 /**
  * Distinguishes `-0` from `+0` in the intern cache.
  *
- * @remarks A `Map` key compares by SameValueZero, which holds `+0` and `-0` equal; SPEC §3.5 says
- * tag values compare by `Object.is`, which does not. Interning them to one object would make the
+ * @remarks A `Map` key compares by SameValueZero, which holds `+0` and `-0` equal, while tag values
+ * compare by `Object.is`, which does not. Interning them to one object would make the
  * two indistinguishable everywhere downstream, so the negative one is cached under this instead.
  */
 const NEGATIVE_ZERO_KEY: unique symbol = Symbol("di:tag-negative-zero");

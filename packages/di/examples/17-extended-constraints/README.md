@@ -55,8 +55,8 @@ flowchart TD
     Q6 -->|"Any ancestor"| C8["whenAnyAncestorTagged(k, v)"]
 
     Q5 -->|"Multiple tags\n(AND)"| Q7{Depth?}
-    Q7 -->|"Direct parent"| C9["whenParentTaggedAll([[k,v],...])"]
-    Q7 -->|"Any ancestor\n(same frame)"| C10["whenAnyAncestorTaggedAll([[k,v],...])"]
+    Q7 -->|"Direct parent"| C9["whenParentTaggedAll([Key.of(v),...])"]
+    Q7 -->|"Any ancestor\n(same frame)"| C10["whenAnyAncestorTaggedAll([Key.of(v),...])"]
 ```
 
 ### Visual comparison: `whenParentIs` vs `whenAnyAncestorIs`
@@ -154,24 +154,28 @@ container.resolve(QueryRunnerToken).execute(); // [replica-logger] connected
 **Scenario:** `CacheAdapter` has multiple backends. Services carry tags; the container selects the matching adapter.
 
 ```ts
+// Tag keys are declared once; `key.of(value)` mints the criterion every tag API takes.
+const BACKEND_TAG = tag<"memcached" | "redis">("backend");
+const REGION_TAG = tag<"eu" | "us">("region");
+
 // Redis-EU requires BOTH backend=redis AND region=eu (AND semantics)
 container
   .bind(CacheAdapterToken)
   .toConstantValue({ backend: "redis-eu", ... })
-  .when(whenParentTaggedAll([["backend", "redis"], ["region", "eu"]]));
+  .when(whenParentTaggedAll([BACKEND_TAG.of("redis"), REGION_TAG.of("eu")]));
 
 // Memcached requires only backend=memcached (single tag)
 container
   .bind(CacheAdapterToken)
   .toConstantValue({ backend: "memcached", ... })
-  .when(whenParentTagged("backend", "memcached"));
+  .when(whenParentTagged(BACKEND_TAG.of("memcached")));
 
 // Tag SessionStore with both redis AND eu
 container
   .bind(SessionStoreToken)
   .to(SessionStore)
-  .whenTagged("backend", "redis")
-  .whenTagged("region", "eu")
+  .whenTagged(BACKEND_TAG.of("redis"))
+  .whenTagged(REGION_TAG.of("eu"))
   .singleton();
 ```
 
@@ -185,29 +189,27 @@ container
 **Scenario:** Multi-tenant app. Root service bindings are tagged by tenant tier. A deep dependency (`AuditLogger`) automatically picks the right implementation based on which tagged ancestor is in the chain — intermediate nodes stay tag-free.
 
 ```ts
+const TENANT_TAG = tag<"enterprise" | "starter">("tenant");
+const TIER_TAG = tag<"free" | "paid">("tier");
+
 // Enterprise audit logger: parent chain must carry tenant=enterprise AND tier=paid on the same frame
 container
   .bind(AuditLoggerToken)
   .toConstantValue({ tier: "enterprise", audit: (e) => console.log(`[ENTERPRISE] ${e}`) })
-  .when(
-    whenAnyAncestorTaggedAll([
-      ["tenant", "enterprise"],
-      ["tier", "paid"],
-    ]),
-  );
+  .when(whenAnyAncestorTaggedAll([TENANT_TAG.of("enterprise"), TIER_TAG.of("paid")]));
 
 // Starter: single tag sufficient
 container
   .bind(AuditLoggerToken)
   .toConstantValue({ tier: "starter", audit: (e) => console.log(`[starter] ${e}`) })
-  .when(whenAnyAncestorTagged("tenant", "starter"));
+  .when(whenAnyAncestorTagged(TENANT_TAG.of("starter")));
 
 // Root bindings carry the tags; intermediate nodes are untagged
 container
   .bind(AnalyticsDashboardToken)
   .to(AnalyticsDashboard)
-  .whenTagged("tenant", "enterprise")
-  .whenTagged("tier", "paid")
+  .whenTagged(TENANT_TAG.of("enterprise"))
+  .whenTagged(TIER_TAG.of("paid"))
   .singleton();
 ```
 

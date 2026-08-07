@@ -1,6 +1,6 @@
 /**
  * ScopeManager's scoped-cache bookkeeping: entries release on unbind (no deactivation,
- * per SPEC §5.2) and the structural count diagnostics rely on stays exact.
+ * a scoped instance has no deactivation) and the structural count diagnostics rely on stays exact.
  */
 import { describe, expect, it } from "vitest";
 

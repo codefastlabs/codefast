@@ -9,7 +9,7 @@ import type { DependencySlot } from "#/injection/resolve-options";
 export interface InjectOptions {
   name?: string | undefined;
   /**
-   * Single-tag shorthand, equivalent to listing the one pair in `tags` (SPEC §3.5).
+   * Single-tag shorthand, equivalent to listing the one pair in `tags`.
    *
    * @remarks Folded into `tags` when the descriptor is built, so nothing downstream sees two
    * spellings of one request. Giving both is a request for every pair across the two.
@@ -115,7 +115,7 @@ function materializeInjectionDescriptor(dependency: InjectionDescriptor): Inject
 }
 
 /**
- * The one tag list a request carries, with the single-tag shorthand folded in (SPEC §3.5).
+ * The one tag list a request carries, with the single-tag shorthand folded in.
  *
  * @remarks Folding here is what keeps `tag` from reaching `InjectionDescriptor` and everything
  * derived from it, so one request never has two spellings past this point.

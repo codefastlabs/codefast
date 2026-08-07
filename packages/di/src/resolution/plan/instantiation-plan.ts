@@ -1,7 +1,8 @@
 /**
  * Compiles a transient class or resolved-factory binding into a nested-constructor closure.
  *
- * @see `ARCHITECTURE.md` — the escape contract every dependency the compiler cannot inline must honour.
+ * @remarks A dependency the compiler cannot inline escapes to a resolver callback instead; the
+ * closure must stay callable for it, which is what bounds what may be inlined.
  */
 import type { Binding } from "#/core/binding";
 import { NO_INSTANCE } from "#/core/binding";

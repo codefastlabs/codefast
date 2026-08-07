@@ -65,7 +65,7 @@ describe("async chains", () => {
   it("names the cycle it detected, which is what the per-level bookkeeping is for", async () => {
     // The alternative to keeping this state is what a container without it does: recurse until the
     // stack overflows, reporting a RangeError that names nothing. The path in the message is the
-    // whole return on the async lane's per-level cost — see ARCHITECTURE.md.
+    // whole return on the async lane's per-level cost.
     const firstToken = token<number>("cycle-first");
     const secondToken = token<number>("cycle-second");
     const thirdToken = token<number>("cycle-third");
@@ -199,7 +199,7 @@ describe("concurrent branches of one async chain", () => {
       .transient();
 
     // Named from the first escaped level, not the true root: the ancestors before the escape were
-    // never written down. See ARCHITECTURE.md — that is the cascade lane's price.
+    // never written down — that is the cascade lane's price.
     await expect(container.resolveAsync(firstToken)).rejects.toThrow(/post-second → post-first → post-second/);
   });
 

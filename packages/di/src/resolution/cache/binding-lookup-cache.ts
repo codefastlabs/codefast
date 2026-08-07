@@ -1,7 +1,8 @@
 /**
  * Options-less token → terminal binding, memoized per container chain.
  *
- * @see `ARCHITECTURE.md` — why these caches form their own parent chain.
+ * @remarks Each cache links to its parent's, so a child answers from its own chain without walking
+ * the container hierarchy again.
  */
 import type { Binding } from "#/core/binding";
 import type { BindingRegistry } from "#/core/registry";

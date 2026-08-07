@@ -102,7 +102,7 @@ export interface ContainerOptions {
    *
    * @remarks Takes precedence over a {@link MetadataReaderToken} binding, and children inherit it.
    * A resolver is handed its reader when it is built, so this is the only way to give the container
-   * you are creating a reader of your own — see SPEC §7.4.
+   * you are creating a reader of your own.
    */
   readonly metadataReader?: MetadataReader | undefined;
 }
@@ -617,7 +617,7 @@ class DefaultContainer implements Container {
 
   /**
    * DFS over explicit constructor / `toResolved*` dependency edges. Follows `toAlias` chains to the
-   * terminal binding for scope checks (SPEC §6.9).
+   * terminal binding for scope checks.
    *
    * @remarks A `toDynamic*` dependency is scope-checked like any other — its declared scope is what
    * makes it captive — but the DFS does not descend into the factory, whose body is opaque.

@@ -80,8 +80,8 @@ function tokenKeyOf(dependency: Token<unknown> | Constructor): string {
   return key;
 }
 
-// Mirrors filterBindings' slot semantics (SPEC §5.11); predicates need a live resolution
-// context, so the graph keeps every predicate-carrying candidate.
+// Mirrors filterBindings' slot semantics; predicates need a live resolution context, so the graph
+// keeps every predicate-carrying candidate.
 function matchingTargets(candidates: ReadonlyArray<Binding>, ref: DependencySlot): ReadonlyArray<Binding> {
   const criterion = bindingSlotToResolveOptions(ref);
 

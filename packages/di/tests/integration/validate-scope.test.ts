@@ -6,7 +6,7 @@ import { token } from "#/core/token";
 import { injectable } from "#/decorators/injectable";
 import { AsyncModuleLoadError, CircularDependencyError, ScopeViolationError } from "#/errors/errors";
 
-describe("container.validate() — transitive scope + alias chain (SPEC §6.9)", () => {
+describe("container.validate() — transitive scope + alias chain", () => {
   it("throws ScopeViolationError when a singleton transitively depends on a scoped binding", () => {
     @injectable([])
     class ScopedService {}

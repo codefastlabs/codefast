@@ -21,7 +21,7 @@ import type { InjectableDependency, InjectionDescriptor, ResolvedDependencyValue
 export interface BindingSlot {
   readonly name: string | undefined;
   readonly tags: ReadonlyArray<BindingTag>;
-  /** OR of this slot's tag keys, so the subset test is one word compare — see `ARCHITECTURE.md`. */
+  /** OR of this slot's tag keys, so the subset test is one word compare. */
   readonly keyMask: TagKeyMask;
 }
 
@@ -257,7 +257,8 @@ type BindingFieldSuperset = {
 /**
  * The single construction site for bindings — one literal, one V8 hidden class.
  *
- * @see `ARCHITECTURE.md` — why the field order and the single site are load-bearing.
+ * @remarks Field order is fixed and this is the only construction site, so every binding shares one
+ * hidden class. Reordering the fields, or adding a second site, gives that up.
  *
  * @param source - the kind-specific payload, or an existing binding to re-slot
  * @param id - reuse a caller's id to keep a fluent chain's `id()` stable across refinements

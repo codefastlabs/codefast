@@ -162,8 +162,8 @@ export class DefaultResolutionContext implements ResolutionContext {
  * One async level's resolution context, which is also its branch of the resolution path.
  *
  * @remarks Separate from {@link DefaultResolutionContext} so the sync lane's pooled context keeps
- * reading its arrays as plain fields: only an async branch has a prefix to take. See
- * `ARCHITECTURE.md` — an async level owns its branch of the path.
+ * reading its arrays as plain fields: only an async branch has a prefix to take, because an async
+ * level owns its branch of the path.
  *
  * @since 0.5.0-canary.9
  */
@@ -256,8 +256,7 @@ export class AsyncLevelContext implements ResolutionContext {
  * The one context every level of an open synchronous factory cascade shares.
  *
  * @remarks It carries no per-level state at all: while the cascade is open, the resolver's arrays
- * *are* this level's ancestor chain, so nothing has to be allocated per level. See
- * `ARCHITECTURE.md` — the cascade lane.
+ * *are* this level's ancestor chain, so nothing has to be allocated per level.
  *
  * @since 0.5.0-canary.9
  */

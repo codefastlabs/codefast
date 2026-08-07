@@ -199,7 +199,7 @@ describe("slot selection", () => {
   it("answers a tag request the same way however it is spelled, and however it is asked", () => {
     // `tags: [pair]` reads the registry's tag index, a Map, whose key equality is SameValueZero;
     // every other path compares with `Object.is`. The two disagree on -0, so the index must not be
-    // allowed to answer what the matcher refuses. SPEC §6.9: tag values compare with `Object.is`.
+    // allowed to answer what the matcher refuses: tag values compare with `Object.is`.
     const numericToken = token<string>("slot-numeric-tag");
     const container = Container.create();
     container.bind(numericToken).toConstantValue("zero").whenTagged(N_TAG.of(0));

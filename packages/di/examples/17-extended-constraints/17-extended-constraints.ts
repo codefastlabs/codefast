@@ -12,10 +12,10 @@
  * whenNoAncestorIs(T)     | no token in the ancestor chain === T
  * whenParentNamed(n)      | direct parent was resolved with name n
  * whenAnyAncestorNamed(n) | any ancestor was resolved with name n
- * whenParentTagged(k,v)   | direct parent slot carries tag k=v
- * whenParentTaggedAll([]) | direct parent slot carries ALL given tags
- * whenAnyAncestorTagged(k,v)    | any ancestor slot carries tag k=v
- * whenAnyAncestorTaggedAll([])  | any ancestor slot carries ALL given tags
+ * whenParentTagged(c)     | direct parent slot carries criterion c
+ * whenParentTaggedAll([c]) | direct parent slot carries ALL given criteria
+ * whenAnyAncestorTagged(c)     | any ancestor slot carries criterion c
+ * whenAnyAncestorTaggedAll([c]) | any ancestor slot carries ALL given criteria
  *
  * Each section below builds a minimal scenario that isolates one predicate so
  * the contrast with its siblings is clear.
@@ -38,10 +38,10 @@ import {
   tag,
 } from "@codefast/di";
 
-const BACKEND_TAG = tag("backend");
-const REGION_TAG = tag("region");
-const TENANT_TAG = tag("tenant");
-const TIER_TAG = tag("tier");
+const BACKEND_TAG = tag<"memcached" | "redis">("backend");
+const REGION_TAG = tag<"eu" | "us">("region");
+const TENANT_TAG = tag<"enterprise" | "starter">("tenant");
+const TIER_TAG = tag<"free" | "paid">("tier");
 
 // ── Shared logger interface ───────────────────────────────────────────────────
 
