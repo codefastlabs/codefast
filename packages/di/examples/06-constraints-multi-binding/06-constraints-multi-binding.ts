@@ -12,7 +12,7 @@ import { Container, inject, injectable, token, whenParentIs } from "@codefast/di
 
 import { tag } from "#/core/tag";
 
-const PROVIDER_TAG = tag("provider");
+const PROVIDER_TAG = tag<"local" | "s3">("provider");
 
 // --- Tokens -----------------------------------------------------------------
 

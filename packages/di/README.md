@@ -12,7 +12,7 @@ Lightweight, type-safe dependency injection for modern TypeScript — built on T
 - **Modules.** Bundle bindings into reusable units; load, unload, and compose them across containers.
 - **Async-aware.** Async factories, deduped async singleton construction, and `await using` disposal.
 
-> Currently published as `0.x` canary pre-releases on the way to a stable 1.0 — breaking changes on 0.x ship as minor versions.
+> Published on `0.x`, deliberately and with no 1.0 planned — breaking changes ship as minor versions, which is what keeps them cheap. Pin the minor if you need stability.
 
 ## Requirements
 
@@ -120,20 +120,41 @@ container.bind(RequestContextToken).toSelf().scoped();
 
 ### Constraints
 
-Multiple bindings can share one token; a constraint picks the winner at resolution time.
+Multiple bindings can share one token; a constraint picks the winner at resolution time. Named slots
+take a plain string; tagged slots take a **criterion** minted from a tag key.
 
 ```typescript
+import { tag } from "@codefast/di";
+
+const Provider = tag<"s3" | "gcs">("provider");
+
 container.bind(LoggerToken).toConstantValue(fileLogger).whenNamed("file");
-container.bind(StorageToken).to(S3Storage).whenTagged("provider", "s3");
+container.bind(StorageToken).to(S3Storage).whenTagged(Provider.of("s3"));
 
 container.resolve(LoggerToken, { name: "file" });
-container.resolve(StorageToken, { tag: ["provider", "s3"] });
+container.resolve(StorageToken, { tag: Provider.of("s3") });
 ```
 
-`{ tag: pair }` and `{ tags: [pair] }` are the same request and take the same lookup path, on
+`tag<Value>(name)` declares the key once and types both ends: a key declared `tag<"s3" | "gcs">` refuses
+any other value, so a bind site and a resolve site cannot drift apart silently. `key.of(value)` interns,
+so the same value always yields the same criterion — which is what lets lookup compare by identity.
+Build a criterion by hand and it matches nothing.
+
+`{ tag: criterion }` and `{ tags: [criterion] }` are the same request and take the same lookup path, on
 `resolve` and on `inject` / `optional` / `injectAll` alike. Reach for `tags` when a slot carries more
-than one tag — `whenTagged("env", "prod").whenTagged("tier", "premium")` needs
-`{ tags: [["env", "prod"], ["tier", "premium"]] }`.
+than one tag:
+
+```typescript
+const Env = tag<"prod" | "dev">("env");
+const Tier = tag<"premium" | "basic">("tier");
+
+container.bind(LoggerToken).toConstantValue(auditLogger).whenTagged(Env.of("prod")).whenTagged(Tier.of("premium"));
+
+container.resolve(LoggerToken, { tags: [Env.of("prod"), Tier.of("premium")] });
+```
+
+A request matches a slot when it carries **every** tag that slot declares — adding tags to a request
+makes it match more slots, not fewer. When several match, the slot declaring more of them wins.
 
 For graph-aware selection, pass a predicate to `.when(...)` — helpers like `whenParentIs`, `whenAnyAncestorNamed`, and `whenParentTagged` ship from the root entry (`import { whenParentIs } from "@codefast/di"`).
 
@@ -180,7 +201,7 @@ Classes you cannot decorate (a dependency's class, generated code, plain JavaScr
 const container = Container.create({ metadataReader: myReader });
 ```
 
-A `MetadataReader` reports constructor parameters, lifecycle method names, and `@inject` accessors; delegate misses to `defaultMetadataReader` so decorated classes keep working. The reader is read while the container is constructed, so the option — not a later `MetadataReaderToken` binding — is what resolution sees. See [examples/19-custom-metadata-reader](./examples/19-custom-metadata-reader) and SPEC §7.4.
+A `MetadataReader` reports constructor parameters, lifecycle method names, and `@inject` accessors; delegate misses to `defaultMetadataReader` so decorated classes keep working. The reader is read while the container is constructed, so the option — not a later `MetadataReaderToken` binding — is what resolution sees. See [examples/19-custom-metadata-reader](https://github.com/codefastlabs/codefast/tree/main/packages/di/examples/19-custom-metadata-reader) and the MetadataReader section of [SPEC.md](https://github.com/codefastlabs/codefast/blob/main/packages/di/SPEC.md).
 
 ## Container
 
@@ -249,15 +270,16 @@ const container = Container.fromModules(AppModule);
 
 ## Errors
 
-Every error extends `DiError` and carries a stable `code` — `TokenNotBoundError` (`"TOKEN_NOT_BOUND"`), `CircularDependencyError`, `ScopeViolationError`, `AsyncResolutionError`, `AmbiguousBindingError`, and friends. Import them from the root or from `@codefast/di/errors`.
+Every error extends `DiError` and carries a stable `code` — `TokenNotBoundError` (`"TOKEN_NOT_BOUND"`), `CircularDependencyError`, `ScopeViolationError`, `AsyncResolutionError`, `AmbiguousBindingError`, and friends. Import them from the root or from `@codefast/di/errors/errors`.
 
 ## Subpath exports
 
 The root entry re-exports the full public API — prefer it (`import { Container, token, toReactFlowGraph } from "@codefast/di"`). Every module is also published as a tree-shakeable subpath mirroring the source layout:
 
-- **Model** at the top level — `@codefast/di/token`, `/types`, `/binding`, `/registry`, `/errors`, `/module`
-- **Runtime** under `/container/*` and `/resolution/*` — e.g. `@codefast/di/resolution/constraints`
-- **Introspection** under `/introspection/*` — the inspector, `dependency-graph`, and the graph adapters (`@codefast/di/introspection/graph-adapters/{dot,cytoscape,reactflow}`) for visualizing `container.generateDependencyGraph()` output
+- **Model** under `/core/*` — `@codefast/di/core/token`, `/core/types`, `/core/binding`, `/core/tag`, `/core/registry`, `/core/module`
+- **Errors** under `/errors/*` — `@codefast/di/errors/errors`, `/errors/diagnostics`
+- **Runtime** under `/container/*`, `/injection/*`, `/lifecycle/*` and `/resolution/*` — e.g. `@codefast/di/resolution/select/constraints`
+- **Introspection** ships at flat specifiers, without the directory prefix — `@codefast/di/inspector`, `/dependency-graph`, and the graph adapters (`@codefast/di/graph-adapters/{dot,cytoscape,mermaid,reactflow}`) for visualizing `container.generateDependencyGraph()` output
 - **Decorators & metadata** under `/decorators/*` and `/metadata/*`
 
 ## Benchmarks

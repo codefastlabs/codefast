@@ -26,7 +26,7 @@ flowchart TD
 
     N -->|name: 'console'| WN1["whenNamed('console')\n→ ConsoleLogger ✓"]
     N -->|name: 'file'| WN2["whenNamed('file')\n→ FileLogger ✓"]
-    N -->|tags: provider=s3| WT1["whenTagged('provider','s3')\n→ S3Storage ✓"]
+    N -->|tags: PROVIDER_TAG.of('s3')| WT1["whenTagged(PROVIDER_TAG.of('s3'))\n→ S3Storage ✓"]
     N -->|parent = OrderService| WP["when(whenParentIs(OrderServiceToken))\n→ ConsoleLogger for OrderService ✓"]
     N -->|no hint| RA["resolveAll(EventHandlerToken)\n→ [Log, Metrics, Alert]"]
 ```
@@ -71,20 +71,28 @@ class MyService { ... }
 
 ## Tagged bindings
 
-Tags are arbitrary key-value pairs attached to a binding with `.whenTagged(key, value)`:
+A tag key is declared once with `tag<Value>(name)`; `key.of(value)` mints the criterion that both
+`.whenTagged()` and a resolve hint take. Criteria are interned, so the same value is always the same
+object — which is what lets lookup compare by identity. Building one by hand matches nothing.
 
 ```ts
-container.bind(StorageToken).to(S3Storage).whenTagged("provider", "s3").singleton();
-container.bind(StorageToken).to(LocalStorage).whenTagged("provider", "local").singleton();
+const PROVIDER_TAG = tag<"local" | "s3">("provider");
+
+container.bind(StorageToken).to(S3Storage).whenTagged(PROVIDER_TAG.of("s3")).singleton();
+container.bind(StorageToken).to(LocalStorage).whenTagged(PROVIDER_TAG.of("local")).singleton();
 ```
 
 Resolve by tags:
 
 ```ts
-const s3 = container.resolve(StorageToken, { tags: [["provider", "s3"]] });
+const s3 = container.resolve(StorageToken, { tags: [PROVIDER_TAG.of("s3")] });
 ```
 
-A binding can carry multiple tags (all must match for the binding to be selected).
+Because the key is typed, a bind site and a resolve site cannot drift apart silently — `PROVIDER_TAG.of("gcs")`
+is a compile error, not a resolve that quietly finds nothing.
+
+A binding can carry multiple tags: the request must name **every** tag the binding declares, so adding
+tags to a request makes it match more bindings rather than fewer.
 
 ---
 

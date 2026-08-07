@@ -4,7 +4,7 @@
 
 A `resolve` whose tags match several bindings now takes the one declaring the most tags, instead of throwing `AmbiguousBindingError`.
 
-Tags on a binding are its own conditions, not a filter the request must match exactly, so naming more tags satisfies more bindings rather than fewer. Given `whenTagged("fuel","petrol")` and a specialisation `whenTagged("fuel","petrol").whenTagged("size","v8")`, a request for `{fuel}` skipped the specialisation — it also requires `size` — and a request for `{fuel, size}` satisfied both and was ambiguous. No request reached the specialisation at all, so declaring one was pointless.
+Tags on a binding are its own conditions, not a filter the request must match exactly, so naming more tags satisfies more bindings rather than fewer. Given `whenTagged(Fuel.of("petrol"))` and a specialisation `whenTagged(Fuel.of("petrol")).whenTagged(Size.of("v8"))`, a request for `{fuel}` skipped the specialisation — it also requires `size` — and a request for `{fuel, size}` satisfied both and was ambiguous. No request reached the specialisation at all, so declaring one was pointless.
 
 That is the dispatch model, the same one routing, media queries and overload resolution use, and every one of those pairs it with a most-specific-wins rule for exactly this reason. This adds the rule that was missing: a candidate declaring more tags than every other is the more specific match. `{fuel}` now resolves the general binding and `{fuel, size}` the specialisation, which is what both the filter reading and the dispatch reading of tags predict.
 
