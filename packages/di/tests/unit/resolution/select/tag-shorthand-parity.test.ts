@@ -1,5 +1,5 @@
 /**
- * SPEC §3.5 makes `{ tag: pair }` and `{ tags: [pair] }` one request: same lane, same answer. Since
+ * `{ tag: pair }` and `{ tags: [pair] }` are one request: same lane, same answer. Since
  * criteria are interned the two now carry the *same object*, so parity holds by construction — what
  * still has teeth is the intern cache itself, which must split `-0` from `0` and fold `NaN` onto one
  * criterion, because a `Map` key compares by SameValueZero and SPEC answers to `Object.is`.

@@ -14,7 +14,7 @@ import { tag } from "#/core/tag";
 const ENV_TAG = tag("env");
 
 /**
- * SPEC §2.4 / §5.6: constraints and scope come after `to*()`, never before.
+ * Constraints and scope come after `to*()`, never before.
  *
  * The ordering is a type-level guarantee — `bind()` returns `BindToBuilder`, which declares only
  * `to*()`, so the out-of-order call does not compile (pinned in `tests/types/container-api.test.ts`).

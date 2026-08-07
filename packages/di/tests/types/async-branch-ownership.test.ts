@@ -1,7 +1,7 @@
 /**
  * The async lane's central invariant is that a branch may only ever append to an array it minted
  * itself — a sync frame's path is one that frame will pop, and it may carry a membership `Set` this
- * lane cannot keep true. That used to be a rule in `ARCHITECTURE.md` and a comment. It is a type
+ * lane cannot keep true. That used to be a prose rule and a comment. It is a type
  * here instead, so the compiler answers it: `OwnedBranchPath` is minted only by
  * `extendResolutionBranch`, and a `BranchDepth` cannot be a number that came from anywhere else.
  */

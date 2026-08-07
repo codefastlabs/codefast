@@ -1,7 +1,8 @@
 /**
  * The fluent chain `bind()` returns: it registers the binding and refines it in place.
  *
- * @see `ARCHITECTURE.md` — why one object plays every role, and what pins the ordering.
+ * @remarks One object plays every role in the chain; the return type of each step is what pins the
+ * order, so no runtime check has to.
  */
 import type {
   AliasBindingBuilder,

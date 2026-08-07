@@ -12,7 +12,7 @@
  *   { tags: [pair] }     slot-tag-array-hoisted     slot-tag-array-inline
  *   { tag: pair }        slot-tag-shorthand-hoisted slot-tag-shorthand-inline
  *
- *   - across a row  → the lane, which SPEC §3.5 requires both spellings to share: both reach the
+ *   - across a row  → the lane, which both spellings of a single tag must share: both reach the
  *     registry's tagged index, so a gap opening here is that equivalence breaking.
  *   - down a column → the allocation: an inline `{ tags: [[k, v]] }` mints an options object,
  *     an outer array and the pair; `{ tag: [k, v] }` mints one fewer. Whether V8's escape
@@ -248,7 +248,7 @@ function buildMissOptionalScenario(): BenchScenario {
 //
 // The child is built once, outside `batched`, on purpose: these price a warm chain walk against a
 // warm memo. A per-request child disposes before a second resolve reaches either — a different
-// question, and ARCHITECTURE.md answers it with different numbers.
+// question, and the resolution internals answer it with different numbers.
 
 const parentTaggedToken = token<TaggedService>("bench-cf-slot-parent-tagged-service");
 const parentNamedToken = token<TaggedService>("bench-cf-slot-parent-named-service");

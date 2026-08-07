@@ -6,7 +6,7 @@ const RESOLUTION_SET_KEY: unique symbol = Symbol("di:resolution-set");
 /**
  * Where the cycle check switches from a linear `Array.includes` scan to an attached Set.
  *
- * @see `ARCHITECTURE.md` — the depth sweep this value comes from.
+ * @remarks Measured rather than guessed: below this depth the linear scan wins, above it the Set does.
  *
  * @since 0.5.0-canary.7
  */
@@ -108,7 +108,7 @@ export function branchDepthOf(branch: OwnedBranchPath): OwnedBranchDepth {
  *
  * @remarks Appends in place while this branch still owns the next slot, and copies its own prefix
  * once a sibling has claimed it. Nothing is ever removed, so no async level has to observe its own
- * settlement to unwind — see `ARCHITECTURE.md`.
+ * settlement to unwind.
  *
  * @since 0.5.0-canary.9
  */

@@ -332,7 +332,7 @@ export class DependencyResolver implements ResolverCallbacks {
     resolutionStack: Array<ResolutionFrame>,
   ): unknown {
     // Same O(1) cycle guard as the unhooked lane: this is still one sync call stack, so the flag
-    // *is* exact path membership — see ARCHITECTURE.md.
+    // *is* exact path membership.
     const frame = this.#getResolutionFrame(binding);
     const tokenDisplayName = frame.tokenName;
     if (binding.inFlight) {
@@ -795,7 +795,7 @@ export class DependencyResolver implements ResolverCallbacks {
     }
 
     const frame = this.#getResolutionFrame(binding);
-    // This level appends to its own branch and never unwinds — see ARCHITECTURE.md.
+    // This level appends to its own branch and never unwinds.
     const levelPath = extendResolutionBranch(resolutionPath, branchDepth, frame.tokenName);
     const levelStack = extendResolutionStackBranch(resolutionStack, branchDepth, frame);
     const levelDepth = branchDepthOf(levelPath);
@@ -1033,7 +1033,7 @@ export class DependencyResolver implements ResolverCallbacks {
    * The candidates an index can name outright, or `null` when the request needs full selection.
    *
    * @remarks Kept off `#candidateBindings` so that method stays the size it was: a request neither
-   * index serves must not pay for the two that do — see ARCHITECTURE.md on the dispatcher prefix.
+   * index serves must not pay for the two that do.
    * An index has matched the slot already, but a hit may still carry a predicate, and evaluating
    * that is the selection path's job.
    */
@@ -1219,7 +1219,7 @@ export class DependencyResolver implements ResolverCallbacks {
    * Entry for a request a factory makes from inside an open synchronous cascade.
    *
    * @remarks A request arriving with no cascade open came out of a continuation, so its ancestors
-   * are on no call stack — it escapes to the branch lane. See `ARCHITECTURE.md`.
+   * are on no call stack — it escapes to the branch lane.
    */
   resolveAsyncFromCascade(token: Token<unknown> | Constructor): Promise<unknown> {
     if (this.#cascadePath.length === 0) {

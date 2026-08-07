@@ -11,7 +11,8 @@
  * multi-registration strategy. We use the library’s **constraint-only** slot (`.when(() => true)`)
  * so each of the N `toConstantValue` lines remains a distinct multi-binding — same as the
  * multi-bind shape Inversify uses for this benchmark; there is no `whenNamed` walk.
- * See @codefast/di SPEC.md §4.8 (“constraint-based bindings as multi registrations”).
+ * A predicate-only binding does not take part in slot last-wins, which is what lets N of them
+ * coexist on one token.
  */
 import { Container, token } from "@codefast/di";
 

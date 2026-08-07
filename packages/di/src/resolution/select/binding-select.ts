@@ -25,7 +25,7 @@ export function selectBinding(
   }
   // Most specific wins, predicate before tag count: a lone predicate-carrying candidate beats
   // predicate-less ones, a predicate being a deliberate specialization of the default. This order is
-  // what keeps every resolution that already succeeds deciding the same way — see SPEC §5.11.
+  // what keeps every resolution that already succeeds deciding the same way.
   let predicatedCandidate: Binding | undefined;
   for (const candidate of candidates) {
     if (candidate.predicate !== undefined) {
@@ -40,7 +40,7 @@ export function selectBinding(
     return predicatedCandidate;
   }
   // Reached only where the throw was: a slot declaring more of what the request carries is the more
-  // specific match, so an over-specified request resolves instead of being ambiguous (SPEC §5.11).
+  // specific match, so an over-specified request resolves instead of being ambiguous.
   const mostSpecific = mostSpecificByTagCount(candidates);
   if (mostSpecific !== undefined) {
     return mostSpecific;
@@ -106,11 +106,11 @@ function hasSlotCriterion(options: ResolveOptions): boolean {
 
 /**
  * Whether a binding's slot satisfies a request: names must be equal, and every tag the slot
- * declares must be among the tags requested (SPEC §5.11).
+ * declares must be among the tags requested.
  *
  * @remarks The tag half is a key-mask subset test before any criterion is read, so a slot the
  * request cannot satisfy is rejected in one word compare. Criteria are interned, so what follows is
- * identity — see `ARCHITECTURE.md`.
+ * identity.
  *
  * @since 0.5.0-canary.9
  */
@@ -129,7 +129,7 @@ export function matchesSlot(slot: BindingSlot, options: ResolveOptions | undefin
   const requestMask = requestedTagKeyMask(options);
 
   if (slotMask === NO_TAG_KEYS) {
-    // A request carrying tags needs a tagged slot: an untagged binding never matches (SPEC §5.11).
+    // A request carrying tags needs a tagged slot: an untagged binding never matches.
     return requestMask === NO_TAG_KEYS;
   }
   if (!coversTagKeys(requestMask, slotMask)) {
@@ -148,7 +148,7 @@ export function matchesSlot(slot: BindingSlot, options: ResolveOptions | undefin
   return true;
 }
 
-/** The key set a request covers, across both spellings SPEC §3.5 folds into one. */
+/** The key set a request covers, across both spellings the shorthand folds into one. */
 export function requestedTagKeyMask(options: ResolveOptions | undefined): TagKeyMask {
   if (options === undefined) {
     return NO_TAG_KEYS;
