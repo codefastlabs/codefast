@@ -50,6 +50,20 @@ export type VariantProps<Component> =
     : never;
 
 /**
+ * Classes a variant value contributes to named slots, each slot already resolved to its position
+ * in the plan so that resolution distributes them by index rather than by key.
+ */
+export interface SlotClassGroup {
+  readonly classes: ReadonlyArray<string>;
+  readonly slotIndexes: ReadonlyArray<number>;
+}
+
+/**
+ * Flattened classes a compiled plan holds: one string, or one string per slot it names.
+ */
+export type PlanClasses = SlotClassGroup | string;
+
+/**
  * Base configuration schema for variant groups.
  *
  * This type defines the structure of variant configurations where each

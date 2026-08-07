@@ -16,6 +16,8 @@ import type {
   VariantSchema,
   SlotVariantConfig,
   ExtendedVariantConfig,
+  PlanClasses,
+  SlotClassGroup,
   SlotSchema,
   VariantResolver,
 } from "#/types/api";
@@ -135,6 +137,75 @@ export const createTailwindMergeFn = (
   configuration?: ConfigExtension<string, string>,
 ): ((classes: string) => string) => {
   return configuration ? extendTailwindMerge(configuration) : twMerge;
+};
+
+/**
+ * Flatten a class value to the string it contributes.
+ *
+ * @remarks Applied to configuration values once, when a plan is compiled, so resolution only ever
+ * concatenates strings. Flattening each value separately matches flattening them together, because
+ * clsx joins its arguments' contributions in order and drops the empty ones.
+ */
+export const toClassText = (value: ClassValue): string => {
+  return typeof value === "string" ? value : clsx(value);
+};
+
+/**
+ * Flatten a slot map into parallel classes and slot positions.
+ *
+ * @remarks A slot the plan does not declare, and one whose classes flatten to nothing, are both
+ * dropped here — no resolver could ever ask for them.
+ */
+const toSlotClassGroup = (
+  slotClassMap: Record<string, ClassValue>,
+  slotIndexByName: Record<string, number>,
+): SlotClassGroup => {
+  const classes: Array<string> = [];
+  const slotIndexes: Array<number> = [];
+
+  for (const slotKey of Object.keys(slotClassMap)) {
+    const slotIndex = slotIndexByName[slotKey];
+
+    if (slotIndex === undefined) {
+      continue;
+    }
+
+    const text = toClassText(slotClassMap[slotKey]);
+
+    if (text !== "") {
+      classes.push(text);
+      slotIndexes.push(slotIndex);
+    }
+  }
+
+  return { classes, slotIndexes };
+};
+
+/**
+ * Flatten a configuration class value for a compiled plan.
+ *
+ * @param slotIndexByName - Slot positions when the configuration has slots, `null` when it does not
+ * and an object value is therefore clsx conditions rather than slot names
+ */
+export const toPlanClasses = (value: ClassValue, slotIndexByName: Record<string, number> | null): PlanClasses => {
+  return slotIndexByName !== null && isSlotClassMap(value)
+    ? toSlotClassGroup(value, slotIndexByName)
+    : toClassText(value);
+};
+
+/**
+ * The key a variant value selects inside its group, with booleans spelled as their group keys.
+ */
+export const toVariantKey = (value: unknown): string | undefined => {
+  if (value === true) {
+    return "true";
+  }
+
+  if (value === false) {
+    return "false";
+  }
+
+  return value as string | undefined;
 };
 
 /**

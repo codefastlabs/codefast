@@ -1,298 +1,220 @@
 /**
  * Slot Functions Module
  *
- * This module handles the creation and processing of slot-based component functions.
- * It provides utilities for resolving slot classes, creating slot function factories,
- * and handling slot-specific variant processing.
+ * This module turns a compiled plan plus one set of variant props into the per-slot class
+ * resolvers a slot-based component destructures.
  */
 
-import { getCompoundClass, matchesCompoundDefinition } from "#/processing/compound";
-import type {
-  ClassValue,
-  SlotCompoundVariant,
-  VariantSchema,
-  VariantSelection,
-  SlotSchema,
-  SlotResolverProps,
-  SlotClassResolver,
-} from "#/types/api";
-import { cx, isSlotClassMap } from "#/utilities/utils";
+import type { SlotPlanEntry, VariantPlan } from "#/core/plan";
+import type { CompoundSlotPlanEntry } from "#/processing/compound";
+import { collectMatchedCompoundSlots, matchesCompoundConditions } from "#/processing/compound";
+import type { ClassValue, PlanClasses, SlotClassResolver, SlotResolverProps, VariantSchema } from "#/types/api";
+import { toClassText, toVariantKey } from "#/utilities/utils";
 
-const composeSlotClassName = <T extends VariantSchema>(
-  classes: Array<ClassValue>,
-  slotProps: SlotResolverProps<T>,
-  shouldMergeClasses: boolean,
-  tailwindMergeFn: (classes: string) => string,
-): string | undefined => {
-  const slotClassName = slotProps.className;
-  const slotClass = slotProps.class;
-  const extraCount = (slotClassName ? 1 : 0) + (slotClass ? 1 : 0);
-  const totalLength = classes.length + extraCount;
+/**
+ * One resolution of the variant props, shared by every slot of that call.
+ *
+ * @remarks `texts` is the whole answer for a slot called without props: rather than each of N slots
+ * scanning every variant, each variant distributes its classes to the slots it names. Slot maps are
+ * sparse, so that is far less work than the scan it replaces.
+ */
+interface SlotCallContext {
+  readonly compoundSlots: ReadonlyArray<CompoundSlotPlanEntry>;
+  readonly matched: ReadonlyArray<PlanClasses | undefined>;
+  readonly texts: ReadonlyArray<string>;
+  readonly variantProps: Record<string, unknown>;
+}
 
-  if (totalLength === 0) {
-    return;
+/** Distribute one compiled value across the slots it names, or to `base` when it is a plain string. */
+const distribute = (classes: PlanClasses | undefined, texts: Array<string>): void => {
+  if (typeof classes === "object") {
+    const slotIndexes = classes.slotIndexes;
+    const slotClasses = classes.classes;
+
+    for (let index = 0, length = slotIndexes.length; index < length; index++) {
+      const slotIndex = slotIndexes[index] as number;
+      const text = texts[slotIndex] as string;
+
+      texts[slotIndex] = text === "" ? (slotClasses[index] as string) : text + " " + slotClasses[index];
+    }
+  } else if (classes) {
+    texts[0] = texts[0] === "" ? classes : texts[0] + " " + classes;
+  }
+};
+
+const createSlotCallContext = (
+  plan: VariantPlan,
+  slots: ReadonlyArray<SlotPlanEntry>,
+  variantProps: Record<string, unknown>,
+): SlotCallContext => {
+  const texts: Array<string> = [];
+
+  for (const slot of slots) {
+    texts.push(slot.classes);
   }
 
-  if (extraCount === 0) {
-    const classString = cx(...classes);
+  const matched: Array<PlanClasses | undefined> = [];
 
-    return shouldMergeClasses ? tailwindMergeFn(classString) : classString || undefined;
+  for (const entry of plan.entries) {
+    const selected = variantProps[entry.name];
+    let classes: PlanClasses | undefined;
+
+    if (selected === undefined) {
+      classes = entry.defaultClasses;
+    } else {
+      const key = toVariantKey(selected);
+
+      classes = key ? entry.group[key] : undefined;
+    }
+
+    matched.push(classes);
+    distribute(classes, texts);
   }
 
-  const allClasses: Array<ClassValue> = new Array(totalLength);
-  let classIndex = 0;
-
-  for (let index = 0, length = classes.length; index < length; index++) {
-    allClasses[classIndex++] = classes[index];
+  for (const compound of plan.compounds) {
+    if (matchesCompoundConditions(compound.conditions, variantProps, null)) {
+      distribute(compound.classes, texts);
+    }
   }
 
-  if (slotClassName) {
-    allClasses[classIndex++] = slotClassName;
+  const compoundSlots = collectMatchedCompoundSlots(plan.compoundSlots, variantProps);
+
+  for (const compoundSlot of compoundSlots) {
+    for (const slotIndex of compoundSlot.slotIndexes) {
+      const text = texts[slotIndex] as string;
+
+      texts[slotIndex] = text === "" ? compoundSlot.classes : text + " " + compoundSlot.classes;
+    }
   }
 
-  if (slotClass) {
-    allClasses[classIndex++] = slotClass;
+  return { compoundSlots, matched, texts, variantProps };
+};
+
+/** The classes a compiled value contributes to one slot, for the lane that cannot use `texts`. */
+const selectForSlot = (classes: PlanClasses | undefined, slotIndex: number): string | undefined => {
+  if (typeof classes === "object") {
+    const slotIndexes = classes.slotIndexes;
+
+    for (let index = 0, length = slotIndexes.length; index < length; index++) {
+      if (slotIndexes[index] === slotIndex) {
+        return classes.classes[index];
+      }
+    }
+
+    return undefined;
   }
 
-  allClasses.length = classIndex;
-
-  const classString = cx(...allClasses);
-
-  return shouldMergeClasses ? tailwindMergeFn(classString) : classString || undefined;
+  return slotIndex === 0 ? classes : undefined;
 };
 
 /**
- * Resolve CSS classes for a specific slot.
- *
- * This function processes variant configurations and resolves the appropriate
- * CSS classes for a specific slot, including base classes, variant classes,
- * compound variant classes, and compound slot classes.
- *
- * @typeParam T - The configuration schema type
- * @typeParam S - The slot configuration schema type
- * @param targetSlotKey - The slot key to resolve classes for
- * @param baseSlotClasses - Base CSS classes for the slot
- * @param variantGroups - Variant group configurations
- * @param variantKeys - Cached variant keys from the variant configuration
- * @param slotProps - The slot properties passed to the component
- * @param variantProps - Variant properties passed to the component
- * @param defaultVariantProps - Default variant properties from configuration
- * @param precomputedDefaults - Pre-computed default variant values
- * @param compoundVariantGroups - Compound variant configurations with slots
- * @param compoundSlotClasses - Pre-computed compound slot classes
- * @returns Array of resolved CSS classes for the slot
- *
- * @since 0.3.16-canary.0
+ * Re-resolve one slot from scratch, because its own props can select different variant values and
+ * flip a compound's conditions.
  */
-export const resolveSlotClasses = <T extends VariantSchema, S extends SlotSchema>(
-  targetSlotKey: keyof S,
-  baseSlotClasses: ClassValue,
-  variantGroups: T | undefined,
-  variantKeys: Array<keyof T>,
-  slotProps: VariantSelection<T>,
-  variantProps: VariantSelection<T>,
-  defaultVariantProps: VariantSelection<T>,
-  precomputedDefaults: Record<string, string>,
-  compoundVariantGroups: ReadonlyArray<SlotCompoundVariant<T, S>> | undefined,
-  compoundSlotClasses: Array<ClassValue>,
-): Array<ClassValue> => {
-  const estimatedSize = variantKeys.length + compoundSlotClasses.length + (compoundVariantGroups?.length ?? 0) + 5;
-  const resolvedClasses: Array<ClassValue> = new Array(estimatedSize);
-  let classIndex = 0;
+const resolveSlotWithOverrides = (
+  plan: VariantPlan,
+  context: SlotCallContext,
+  slot: SlotPlanEntry,
+  slotIndex: number,
+  overrides: Record<string, unknown>,
+): string => {
+  let text = slot.classes;
+  let index = 0;
 
-  if (baseSlotClasses) {
-    resolvedClasses[classIndex++] = baseSlotClasses;
-  }
+  for (const entry of plan.entries) {
+    const override = overrides[entry.name];
+    let classes: PlanClasses | undefined;
 
-  if (variantGroups && variantKeys.length > 0) {
-    const slotPropsRecord = slotProps as Record<string, unknown>;
-    const variantPropsRecord = variantProps as Record<string, unknown>;
+    if (override === undefined) {
+      classes = context.matched[index];
+    } else {
+      const key = toVariantKey(override);
 
-    for (let index = 0, length = variantKeys.length; index < length; index++) {
-      const variantKey = variantKeys[index];
-      if (variantKey === undefined) {
-        continue;
-      }
-      const variantGroup = variantGroups[variantKey] as Record<string, ClassValue> | undefined;
-      if (variantGroup === undefined) {
-        continue;
-      }
+      classes = key ? entry.group[key] : undefined;
+    }
 
-      const variantKeyString = variantKey as string;
-      const slotValue = slotPropsRecord[variantKeyString];
-      const variantValue = variantPropsRecord[variantKeyString];
-      const resolvedValue =
-        slotValue !== undefined
-          ? slotValue === true
-            ? "true"
-            : slotValue === false
-              ? "false"
-              : (slotValue as string)
-          : variantValue === undefined
-            ? precomputedDefaults[variantKeyString]
-            : variantValue === true
-              ? "true"
-              : variantValue === false
-                ? "false"
-                : (variantValue as string);
+    index++;
 
-      if (resolvedValue && resolvedValue in variantGroup) {
-        const variantConfiguration = variantGroup[resolvedValue];
+    const slotClasses = selectForSlot(classes, slotIndex);
 
-        if (variantConfiguration) {
-          if (isSlotClassMap(variantConfiguration)) {
-            const slotVariantClass = variantConfiguration[targetSlotKey as string];
-
-            if (slotVariantClass !== undefined) {
-              resolvedClasses[classIndex++] = slotVariantClass;
-            }
-          } else if (targetSlotKey === "base") {
-            resolvedClasses[classIndex++] = variantConfiguration;
-          }
-        }
-      }
+    if (slotClasses) {
+      text = text === "" ? slotClasses : text + " " + slotClasses;
     }
   }
 
-  if (compoundVariantGroups && compoundVariantGroups.length > 0) {
-    const compoundMatchOptions = {
-      coerceMissingBoolean: false,
-      slotProps: slotProps as Record<string, unknown>,
-    };
-
-    for (let index = 0, length = compoundVariantGroups.length; index < length; index++) {
-      const compoundVariant = compoundVariantGroups[index];
-      if (compoundVariant === undefined) {
-        continue;
-      }
-
-      if (
-        matchesCompoundDefinition(
-          compoundVariant as Record<string, unknown>,
-          variantProps as Record<string, unknown>,
-          defaultVariantProps as Record<string, unknown>,
-          compoundMatchOptions,
-        )
-      ) {
-        const compoundClassName = getCompoundClass(compoundVariant);
-
-        if (isSlotClassMap(compoundClassName)) {
-          const slotClass = compoundClassName[targetSlotKey as string];
-
-          if (slotClass !== undefined) {
-            resolvedClasses[classIndex++] = slotClass;
-          }
-        } else if (targetSlotKey === "base") {
-          resolvedClasses[classIndex++] = compoundClassName;
-        }
-      }
-    }
-  }
-
-  for (let index = 0, length = compoundSlotClasses.length; index < length; index++) {
-    const slotClass = compoundSlotClasses[index];
-    if (slotClass !== undefined) {
-      resolvedClasses[classIndex++] = slotClass;
-    }
-  }
-
-  resolvedClasses.length = classIndex;
-
-  return resolvedClasses;
-};
-
-/**
- * Create slot class resolvers.
- *
- * This function creates individual slot functions that can generate CSS classes
- * for each slot in a component. It handles base slots and named slots,
- * processing variants, compound variants, and compound slots.
- *
- * @typeParam T - The configuration schema type
- * @typeParam S - The slot configuration schema type
- * @param mergedSlotDefinitions - The merged slot definitions
- * @param mergedBaseClasses - Base CSS classes for the component
- * @param mergedVariantGroups - Merged variant group configurations
- * @param mergedDefaultVariantProps - Merged default variant properties
- * @param mergedCompoundVariantGroups - Merged compound variant configurations
- * @param compoundSlotClasses - Pre-computed compound slot classes
- * @param variantProps - Variant properties passed to the component
- * @param shouldMergeClasses - Whether to merge conflicting classes
- * @param tailwindMergeFn - The Tailwind merge function function
- * @returns Object containing slot functions for each slot
- *
- * @since 0.3.16-canary.0
- */
-export const createSlotResolvers = <T extends VariantSchema, S extends SlotSchema>(
-  mergedSlotDefinitions: S,
-  mergedBaseClasses: ClassValue,
-  mergedVariantGroups: T,
-  cachedVariantKeys: Array<keyof T>,
-  mergedDefaultVariantProps: VariantSelection<T>,
-  precomputedDefaults: Record<string, string>,
-  mergedCompoundVariantGroups: ReadonlyArray<SlotCompoundVariant<T, S>> | undefined,
-  compoundSlotClasses: Partial<Record<keyof S, Array<ClassValue>>>,
-  variantProps: VariantSelection<T>,
-  shouldMergeClasses: boolean,
-  tailwindMergeFn: (classes: string) => string,
-): Record<keyof S, SlotClassResolver<T>> & { base: SlotClassResolver<T> } => {
-  const slotFunctions = {} as Record<keyof S, SlotClassResolver<T>> & {
-    base: SlotClassResolver<T>;
-  };
-  const baseCompoundSlotClasses = compoundSlotClasses.base ?? [];
-
-  slotFunctions.base = (slotProps: SlotResolverProps<T> = {} as SlotResolverProps<T>): string | undefined => {
-    const baseSlotClass = mergedSlotDefinitions.base === undefined ? mergedBaseClasses : mergedSlotDefinitions.base;
-
-    const baseClasses = resolveSlotClasses(
-      "base",
-      baseSlotClass,
-      mergedVariantGroups,
-      cachedVariantKeys,
-      slotProps as VariantSelection<T>,
-      variantProps,
-      mergedDefaultVariantProps,
-      precomputedDefaults,
-      mergedCompoundVariantGroups,
-      baseCompoundSlotClasses,
-    );
-
-    return composeSlotClassName(baseClasses, slotProps, shouldMergeClasses, tailwindMergeFn);
-  };
-
-  const slotKeys = Object.keys(mergedSlotDefinitions);
-
-  for (let index = 0, length = slotKeys.length; index < length; index++) {
-    const rawSlotKey = slotKeys[index];
-    if (rawSlotKey === undefined) {
+  for (const compound of plan.compounds) {
+    if (!matchesCompoundConditions(compound.conditions, context.variantProps, overrides)) {
       continue;
     }
-    const slotKey = rawSlotKey as keyof S;
 
-    if (slotKey !== "base") {
-      const slotDefinition = mergedSlotDefinitions[slotKey];
-      const slotCompoundClasses = compoundSlotClasses[slotKey] ?? [];
+    const slotClasses = selectForSlot(compound.classes, slotIndex);
 
-      (slotFunctions as Record<keyof S, SlotClassResolver<T>>)[slotKey] = (
-        slotProps: SlotResolverProps<T> = {} as SlotResolverProps<T>,
-      ): string | undefined => {
-        const slotClasses = resolveSlotClasses(
-          slotKey,
-          slotDefinition,
-          mergedVariantGroups,
-          cachedVariantKeys,
-          slotProps as VariantSelection<T>,
-          variantProps,
-          mergedDefaultVariantProps,
-          precomputedDefaults,
-          mergedCompoundVariantGroups,
-          slotCompoundClasses,
-        );
-
-        return composeSlotClassName(slotClasses, slotProps, shouldMergeClasses, tailwindMergeFn);
-      };
+    if (slotClasses) {
+      text = text === "" ? slotClasses : text + " " + slotClasses;
     }
   }
 
-  return slotFunctions;
+  for (const compoundSlot of context.compoundSlots) {
+    if (compoundSlot.slotIndexes.includes(slotIndex)) {
+      text = text === "" ? compoundSlot.classes : text + " " + compoundSlot.classes;
+    }
+  }
+
+  return text;
+};
+
+const resolveSlot = (
+  plan: VariantPlan,
+  context: SlotCallContext,
+  slot: SlotPlanEntry,
+  slotIndex: number,
+  slotProps: SlotResolverProps<VariantSchema> | undefined,
+): string | undefined => {
+  let text: string;
+
+  if (slotProps === undefined) {
+    text = context.texts[slotIndex] as string;
+  } else {
+    const overrides = slotProps as Record<string, unknown>;
+
+    text = resolveSlotWithOverrides(plan, context, slot, slotIndex, overrides);
+
+    const slotClassName = toClassText(overrides.className as ClassValue);
+    const slotClass = toClassText(overrides.class as ClassValue);
+
+    if (slotClassName) {
+      text = text === "" ? slotClassName : text + " " + slotClassName;
+    }
+
+    if (slotClass) {
+      text = text === "" ? slotClass : text + " " + slotClass;
+    }
+  }
+
+  if (text === "") {
+    return undefined;
+  }
+
+  return plan.shouldMerge ? plan.tailwindMerge(text) : text;
+};
+
+/**
+ * Create one class resolver per slot, sharing a single resolution of the variant props.
+ *
+ * @since 0.3.16-canary.0
+ */
+export const createSlotResolvers = (
+  plan: VariantPlan,
+  slots: ReadonlyArray<SlotPlanEntry>,
+  variantProps: Record<string, unknown>,
+): Record<string, SlotClassResolver<VariantSchema>> => {
+  const context = createSlotCallContext(plan, slots, variantProps);
+  const resolvers: Record<string, SlotClassResolver<VariantSchema>> = {};
+
+  for (const [slotIndex, slot] of slots.entries()) {
+    resolvers[slot.name] = (props?: SlotResolverProps<VariantSchema>): string | undefined =>
+      resolveSlot(plan, context, slot, slotIndex, props);
+  }
+
+  return resolvers;
 };

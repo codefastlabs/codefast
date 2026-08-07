@@ -1,76 +1,63 @@
 /**
  * Compound Variants Processing Module
  *
- * This module handles the processing of compound variants and compound slots.
- * It provides functions to apply compound variant classes based on
- * multiple variant conditions being met simultaneously.
+ * This module compiles compound variant and compound slot definitions into flat condition
+ * lists, and matches those conditions against the props passed to a resolver.
  */
 
 import type {
   ClassValue,
   CompoundSlot,
   CompoundVariant,
+  PlanClasses,
+  SlotCompoundVariant,
   VariantSchema,
-  VariantSelection,
-  SlotSchema,
 } from "#/types/api";
+import { toClassText, toPlanClasses } from "#/utilities/utils";
 
-type CompoundDefinition = Record<string, unknown>;
+/** Condition satisfied when the resolved value strictly equals the configured one. */
+const CONDITION_STRICT = 0;
+/** Condition on a boolean where a value absent from both props and defaults counts as `false`. */
+const CONDITION_BOOLEAN = 1;
+/** Condition satisfied when the resolved value appears in the configured list. */
+const CONDITION_LIST = 2;
 
-type CompoundMatchOptions = {
-  readonly coerceMissingBoolean?: boolean;
-  readonly slotProps?: Record<string, unknown>;
-  readonly skipSlots?: boolean;
-};
+type ConditionKind = typeof CONDITION_BOOLEAN | typeof CONDITION_LIST | typeof CONDITION_STRICT;
 
 /**
- * @since 0.3.16-canary.2
+ * One `variant: value` test from a compound definition, with the configured default it falls
+ * back to already resolved.
  */
-export const matchesCompoundDefinition = (
-  compoundDefinition: CompoundDefinition,
-  variantProps: Record<string, unknown>,
-  defaultVariantProps: Record<string, unknown>,
-  options?: CompoundMatchOptions,
-): boolean => {
-  const skipSlots = options?.skipSlots ?? false;
-  const slotProps = options?.slotProps;
-  const coerceMissingBoolean = options?.coerceMissingBoolean ?? true;
-  const compoundKeys = Object.keys(compoundDefinition);
-
-  for (let index = 0, length = compoundKeys.length; index < length; index++) {
-    const compoundKey = compoundKeys[index];
-    if (compoundKey === undefined) {
-      continue;
-    }
-
-    if (compoundKey === "className" || compoundKey === "class" || (skipSlots && compoundKey === "slots")) {
-      continue;
-    }
-
-    const slotValue = slotProps?.[compoundKey];
-    const propValue = slotValue === undefined ? variantProps[compoundKey] : slotValue;
-    const propertyValue = propValue === undefined ? defaultVariantProps[compoundKey] : propValue;
-    const compoundValue = compoundDefinition[compoundKey];
-
-    if (typeof compoundValue === "boolean") {
-      const resolvedValue = propertyValue === undefined && coerceMissingBoolean ? false : propertyValue;
-
-      if (resolvedValue !== compoundValue) {
-        return false;
-      }
-    } else if (Array.isArray(compoundValue)) {
-      if (!compoundValue.includes(propertyValue)) {
-        return false;
-      }
-    } else if (propertyValue !== compoundValue) {
-      return false;
-    }
-  }
-
-  return true;
-};
+export interface CompoundCondition {
+  readonly expected: unknown;
+  readonly fallback: unknown;
+  readonly kind: ConditionKind;
+  readonly name: string;
+}
 
 /**
+ * A compound variant reduced to the conditions to test and the classes to apply.
+ */
+export interface CompoundPlanEntry {
+  readonly classes: PlanClasses;
+  readonly conditions: ReadonlyArray<CompoundCondition>;
+}
+
+/**
+ * A compound slot reduced to its conditions, its classes, and the slot positions they land on.
+ */
+export interface CompoundSlotPlanEntry {
+  readonly classes: string;
+  readonly conditions: ReadonlyArray<CompoundCondition>;
+  readonly slotIndexes: ReadonlyArray<number>;
+}
+
+const EMPTY_COMPOUNDS: ReadonlyArray<CompoundPlanEntry> = [];
+const EMPTY_COMPOUND_SLOTS: ReadonlyArray<CompoundSlotPlanEntry> = [];
+
+/**
+ * The classes a compound definition contributes, preferring `className` over `class`.
+ *
  * @since 0.3.16-canary.2
  */
 export const getCompoundClass = (compoundDefinition: {
@@ -80,114 +67,167 @@ export const getCompoundClass = (compoundDefinition: {
   return compoundDefinition.className === undefined ? compoundDefinition.class : compoundDefinition.className;
 };
 
-/**
- * Apply compound variant classes based on variant conditions.
- *
- * This function processes compound variants and applies their classes when
- * all specified variant conditions are met. It merges by default and provides
- * variant props to determine which compound variants should be applied.
- *
- * @typeParam T - The configuration schema type
- * @param compoundVariantGroups - Array of compound variant definitions
- * @param variantProps - Variant properties passed to the component
- * @param defaultVariantProps - Default variant properties from configuration
- * @returns Array of CSS classes from matching compound variants
- *
- * @since 0.3.16-canary.0
- */
-export const resolveCompoundVariantClasses = <T extends VariantSchema>(
-  compoundVariantGroups: ReadonlyArray<CompoundVariant<T>>,
-  variantProps: VariantSelection<T>,
-  defaultVariantProps: VariantSelection<T>,
-): Array<ClassValue> => {
-  const groupLength = compoundVariantGroups.length;
+const compileConditions = (
+  definition: Record<string, unknown>,
+  defaultVariantProps: Record<string, unknown>,
+  coerceMissingBoolean: boolean,
+  skipSlots: boolean,
+): ReadonlyArray<CompoundCondition> => {
+  const conditions: Array<CompoundCondition> = [];
 
-  if (groupLength === 0) {
-    return [];
-  }
-
-  const resolvedClasses: Array<ClassValue> = [];
-
-  for (let index = 0; index < groupLength; index++) {
-    const compoundVariant = compoundVariantGroups[index];
-    if (compoundVariant === undefined) {
+  for (const name of Object.keys(definition)) {
+    if (name === "class" || name === "className" || (skipSlots && name === "slots")) {
       continue;
     }
 
-    if (
-      matchesCompoundDefinition(
-        compoundVariant as CompoundDefinition,
-        variantProps as Record<string, unknown>,
-        defaultVariantProps as Record<string, unknown>,
-      )
-    ) {
-      resolvedClasses.push(getCompoundClass(compoundVariant));
-    }
+    const expected = definition[name];
+    // Without coercion a boolean condition is an ordinary strict comparison.
+    const kind: ConditionKind = Array.isArray(expected)
+      ? CONDITION_LIST
+      : typeof expected === "boolean" && coerceMissingBoolean
+        ? CONDITION_BOOLEAN
+        : CONDITION_STRICT;
+
+    conditions.push({ expected, fallback: defaultVariantProps[name], kind, name });
   }
 
-  return resolvedClasses;
+  return conditions;
 };
 
 /**
- * Apply compound slot classes based on variant conditions.
+ * Compile compound variants into condition lists.
  *
- * This function processes compound slots and applies their classes to
- * specific slots when all specified variant conditions are met.
- * It returns a mapping of slot names to their applied classes.
+ * @param slotIndexByName - Slot positions when the configuration has slots, `null` when it does not
+ * @param coerceMissingBoolean - Whether a boolean condition treats an absent value as `false`
+ */
+export const compileCompoundVariants = <T extends VariantSchema>(
+  compoundVariants: ReadonlyArray<CompoundVariant<T> | SlotCompoundVariant<T, never>> | undefined,
+  defaultVariantProps: Record<string, unknown>,
+  slotIndexByName: Record<string, number> | null,
+  coerceMissingBoolean: boolean,
+): ReadonlyArray<CompoundPlanEntry> => {
+  if (compoundVariants === undefined || compoundVariants.length === 0) {
+    return EMPTY_COMPOUNDS;
+  }
+
+  const entries: Array<CompoundPlanEntry> = [];
+
+  for (const compoundVariant of compoundVariants) {
+    entries.push({
+      classes: toPlanClasses(getCompoundClass(compoundVariant) as ClassValue, slotIndexByName),
+      conditions: compileConditions(
+        compoundVariant as Record<string, unknown>,
+        defaultVariantProps,
+        coerceMissingBoolean,
+        false,
+      ),
+    });
+  }
+
+  return entries;
+};
+
+/**
+ * Compile compound slots into condition lists paired with the slots they target.
+ */
+export const compileCompoundSlots = <T extends VariantSchema>(
+  compoundSlots: ReadonlyArray<CompoundSlot<T, never>> | undefined,
+  defaultVariantProps: Record<string, unknown>,
+  slotIndexByName: Record<string, number>,
+): ReadonlyArray<CompoundSlotPlanEntry> => {
+  if (compoundSlots === undefined || compoundSlots.length === 0) {
+    return EMPTY_COMPOUND_SLOTS;
+  }
+
+  const entries: Array<CompoundSlotPlanEntry> = [];
+
+  for (const compoundSlot of compoundSlots) {
+    const slotIndexes: Array<number> = [];
+
+    for (const slotKey of compoundSlot.slots as ReadonlyArray<string>) {
+      const slotIndex = slotIndexByName[slotKey];
+
+      if (slotIndex !== undefined) {
+        slotIndexes.push(slotIndex);
+      }
+    }
+
+    entries.push({
+      classes: toClassText(getCompoundClass(compoundSlot)),
+      conditions: compileConditions(
+        compoundSlot as unknown as Record<string, unknown>,
+        defaultVariantProps,
+        true,
+        true,
+      ),
+      slotIndexes,
+    });
+  }
+
+  return entries;
+};
+
+/**
+ * Whether every condition holds, reading slot props first, then variant props, then the default.
  *
- * @typeParam T - The configuration schema type
- * @typeParam S - The slot configuration schema type
- * @param compoundSlotDefinitions - Array of compound slot definitions
- * @param variantProps - Variant properties passed to the component
- * @param defaultVariantProps - Default variant properties from configuration
- * @returns Object mapping slot names to arrays of CSS classes
+ * @param slotProps - Per-slot overrides that outrank the resolver's props, or `null` for none
+ */
+export const matchesCompoundConditions = (
+  conditions: ReadonlyArray<CompoundCondition>,
+  variantProps: Record<string, unknown>,
+  slotProps: Record<string, unknown> | null,
+): boolean => {
+  for (const condition of conditions) {
+    let value = slotProps === null ? undefined : slotProps[condition.name];
+
+    if (value === undefined) {
+      value = variantProps[condition.name];
+    }
+
+    if (value === undefined) {
+      value = condition.fallback;
+    }
+
+    const kind = condition.kind;
+
+    if (kind === CONDITION_STRICT) {
+      if (value !== condition.expected) {
+        return false;
+      }
+    } else if (kind === CONDITION_BOOLEAN) {
+      if ((value === undefined ? false : value) !== condition.expected) {
+        return false;
+      }
+    } else if (!(condition.expected as Array<unknown>).includes(value)) {
+      return false;
+    }
+  }
+
+  return true;
+};
+
+/**
+ * The compound slots whose conditions hold for these props.
+ *
+ * @remarks Compound slots never read per-slot props, so one match pass serves every slot.
  *
  * @since 0.3.16-canary.0
  */
-export const resolveCompoundSlotClasses = <T extends VariantSchema, S extends SlotSchema>(
-  compoundSlotDefinitions: ReadonlyArray<CompoundSlot<T, S>> | undefined,
-  variantProps: VariantSelection<T>,
-  defaultVariantProps: VariantSelection<T>,
-): Partial<Record<keyof S, Array<ClassValue>>> => {
-  if (!compoundSlotDefinitions || compoundSlotDefinitions.length === 0) {
-    return {} as Partial<Record<keyof S, Array<ClassValue>>>;
+export const collectMatchedCompoundSlots = (
+  compoundSlots: ReadonlyArray<CompoundSlotPlanEntry>,
+  variantProps: Record<string, unknown>,
+): ReadonlyArray<CompoundSlotPlanEntry> => {
+  if (compoundSlots.length === 0) {
+    return EMPTY_COMPOUND_SLOTS;
   }
 
-  const resolvedSlotClasses = {} as Partial<Record<keyof S, Array<ClassValue>>>;
+  const matched: Array<CompoundSlotPlanEntry> = [];
 
-  for (let index = 0, length = compoundSlotDefinitions.length; index < length; index++) {
-    const compoundSlot = compoundSlotDefinitions[index];
-    if (compoundSlot === undefined) {
-      continue;
-    }
-
-    if (
-      matchesCompoundDefinition(
-        compoundSlot as CompoundDefinition,
-        variantProps as Record<string, unknown>,
-        defaultVariantProps as Record<string, unknown>,
-        { skipSlots: true },
-      )
-    ) {
-      const compoundClass = getCompoundClass(compoundSlot);
-
-      const slots = compoundSlot.slots;
-
-      for (let slotIndex = 0, slotLength = slots.length; slotIndex < slotLength; slotIndex++) {
-        const slotKey = slots[slotIndex];
-        if (slotKey === undefined) {
-          continue;
-        }
-        const existing = resolvedSlotClasses[slotKey];
-
-        if (existing) {
-          existing.push(compoundClass);
-        } else {
-          resolvedSlotClasses[slotKey] = [compoundClass];
-        }
-      }
+  for (const compoundSlot of compoundSlots) {
+    if (matchesCompoundConditions(compoundSlot.conditions, variantProps, null)) {
+      matched.push(compoundSlot);
     }
   }
 
-  return resolvedSlotClasses;
+  return matched;
 };

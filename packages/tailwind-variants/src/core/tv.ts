@@ -7,12 +7,12 @@
  */
 
 import { mergeVariantConfigs } from "#/core/config";
-import { resolveCompoundSlotClasses, resolveCompoundVariantClasses } from "#/processing/compound";
+import type { VariantPlan } from "#/core/plan";
+import { compileVariantPlan } from "#/core/plan";
+import { matchesCompoundConditions } from "#/processing/compound";
 import { createSlotResolvers } from "#/processing/slots";
 import type {
   ClassValue,
-  CompoundVariant,
-  SlotCompoundVariant,
   VariantConfig,
   VariantSchema,
   VariantSelection,
@@ -26,108 +26,68 @@ import type {
   VariantResolverResult,
   VariantResolver,
 } from "#/types/api";
-import { createTailwindMergeFn, cx, hasExtendConfig, hasSlotsConfig, hasBooleanVariantValues } from "#/utilities/utils";
+import { createTailwindMergeFn, cx, hasExtendConfig, toClassText, toVariantKey } from "#/utilities/utils";
+
+/** Shared stand-in for a call that passed no props, so the common case allocates nothing. */
+const EMPTY_PROPS: Record<string, unknown> = {};
 
 /**
- * Resolve classes for components without slots.
+ * Resolve classes for a configuration without slots.
  *
- * This function processes variant configurations and resolves the appropriate
- * CSS classes based on the provided variant props and default values.
+ * @remarks Such a configuration compiles every class value to a string, so the plan's per-slot form
+ * cannot reach here — which is what the casts below rely on.
  *
- * @typeParam T - The configuration schema type
- * @param mergedBaseClasses - The base CSS classes to apply
- * @param mergedVariantGroups - The variant group configurations
- * @param mergedDefaultVariantProps - Default variant property values
- * @param mergedCompoundVariantGroups - Compound variant configurations
- * @param variantProps - The variant properties passed to the component
- * @param customClassName - Additional custom CSS classes
- * @param shouldMergeClasses - Whether to merge conflicting classes
- * @param tailwindMergeFn - The Tailwind merge function function
- * @param cachedVariantKeys - Pre-computed variant keys for performance optimization
- * @param precomputedDefaults - Pre-computed default variant values
- * @returns The resolved CSS class string or undefined
+ * @param customClasses - The `className`/`class` prop, appended after everything the config contributes
  */
-const resolveVariantClasses = <T extends VariantSchema>(
-  mergedBaseClasses: ClassValue,
-  mergedVariantGroups: T,
-  mergedDefaultVariantProps: VariantSelection<T>,
-  mergedCompoundVariantGroups: ReadonlyArray<CompoundVariant<T>> | undefined,
-  variantProps: VariantSelection<T>,
-  customClassName: ClassValue,
-  shouldMergeClasses: boolean,
-  tailwindMergeFn: (classes: string) => string,
-  cachedVariantKeys: Array<keyof T>,
-  precomputedDefaults: Record<string, string>,
+const resolveVariantClasses = (
+  plan: VariantPlan,
+  variantProps: Record<string, unknown>,
+  customClasses: ClassValue,
 ): string | undefined => {
-  const estimatedSize = cachedVariantKeys.length + (mergedCompoundVariantGroups?.length ?? 0) + 2;
-  const resolvedClasses: Array<ClassValue> = new Array(estimatedSize);
-  let classIndex = 0;
+  let text = plan.base;
 
-  if (mergedBaseClasses) {
-    resolvedClasses[classIndex++] = mergedBaseClasses;
-  }
+  for (const entry of plan.entries) {
+    const selected = variantProps[entry.name];
+    let classes: string | undefined;
 
-  for (let index = 0, length = cachedVariantKeys.length; index < length; index++) {
-    const variantKey = cachedVariantKeys[index];
-    if (variantKey === undefined) {
-      continue;
-    }
-    const variantGroup = mergedVariantGroups[variantKey];
-    if (variantGroup === undefined) {
-      continue;
-    }
-    const variantValue = variantProps[variantKey];
-
-    let resolvedValue: string | undefined;
-
-    // Resolve the variant value based on priority:
-    // 1. Explicit variant props
-    // 2. Pre-computed default (includes boolean variant defaults)
-    if (variantValue === undefined) {
-      resolvedValue = precomputedDefaults[variantKey as string];
+    if (selected === undefined) {
+      classes = entry.defaultClasses as string | undefined;
     } else {
-      // Fast path for boolean values - avoid String() call
-      resolvedValue = variantValue === true ? "true" : variantValue === false ? "false" : (variantValue as string);
+      const key = toVariantKey(selected);
+
+      classes = key === undefined ? undefined : (entry.group[key] as string | undefined);
     }
 
-    // Add the resolved variant class if it exists
-    if (resolvedValue !== undefined) {
-      const variantClass = variantGroup[resolvedValue];
-
-      if (variantClass) {
-        resolvedClasses[classIndex++] = variantClass;
-      }
+    if (classes) {
+      text = text === "" ? classes : text + " " + classes;
     }
   }
 
-  if (mergedCompoundVariantGroups) {
-    const compoundVariantClasses = resolveCompoundVariantClasses(
-      mergedCompoundVariantGroups,
-      variantProps,
-      mergedDefaultVariantProps,
-    );
+  for (const compound of plan.compounds) {
+    if (!matchesCompoundConditions(compound.conditions, variantProps, null)) {
+      continue;
+    }
 
-    for (let index = 0, length = compoundVariantClasses.length; index < length; index++) {
-      const compoundClass = compoundVariantClasses[index];
-      if (compoundClass !== undefined) {
-        resolvedClasses[classIndex++] = compoundClass;
-      }
+    const classes = compound.classes as string;
+
+    if (classes) {
+      text = text === "" ? classes : text + " " + classes;
     }
   }
 
-  if (customClassName) {
-    resolvedClasses[classIndex++] = customClassName;
+  if (customClasses) {
+    const classes = toClassText(customClasses);
+
+    if (classes) {
+      text = text === "" ? classes : text + " " + classes;
+    }
   }
 
-  if (classIndex === 0) {
-    return;
+  if (text === "") {
+    return undefined;
   }
 
-  resolvedClasses.length = classIndex;
-
-  const classString = cx(...resolvedClasses);
-
-  return shouldMergeClasses ? tailwindMergeFn(classString) : classString || undefined;
+  return plan.shouldMerge ? plan.tailwindMerge(text) : text;
 };
 
 /**
@@ -243,78 +203,31 @@ export function tv<T extends VariantSchema, S extends SlotSchema>(
         )
       : (configuration as VariantConfig<VariantSchema> | SlotVariantConfig<VariantSchema, SlotSchema>);
 
-  const mergedBaseClasses = mergedConfiguration.base;
-  const mergedSlotDefinitions = hasSlotsConfig(mergedConfiguration) ? mergedConfiguration.slots : undefined;
-  const mergedVariantGroups = mergedConfiguration.variants ?? ({} as T);
-  const mergedDefaultVariantProps = mergedConfiguration.defaultVariants ?? ({} as VariantSelection<T>);
-  const mergedCompoundVariantGroups = mergedConfiguration.compoundVariants;
-
-  const cachedVariantKeys = Object.keys(mergedVariantGroups) as Array<keyof T>;
-
-  const precomputedDefaults: Record<string, string> = {};
-
-  for (let index = 0, length = cachedVariantKeys.length; index < length; index++) {
-    const key = cachedVariantKeys[index];
-    if (key === undefined) {
-      continue;
-    }
-    const keyString = key as string;
-    const defaultValue = (mergedDefaultVariantProps as Record<string, unknown>)[keyString];
-    const variantGroup = (mergedVariantGroups as Record<string, Record<string, unknown>>)[keyString];
-
-    if (defaultValue !== undefined) {
-      precomputedDefaults[keyString] =
-        defaultValue === true ? "true" : defaultValue === false ? "false" : (defaultValue as string);
-    } else if (variantGroup !== undefined && hasBooleanVariantValues(variantGroup)) {
-      precomputedDefaults[keyString] = "false";
-    }
-  }
-
   if (mergedConfiguration.compoundVariants && !Array.isArray(mergedConfiguration.compoundVariants)) {
     throw new Error("compoundVariants must be an array");
   }
 
+  const plan = compileVariantPlan(mergedConfiguration, shouldMergeClasses, tailwindMergeFn);
+  const slots = plan.slots;
+
   const variantResolverFunction = (
-    variantProps: VariantSelection<T> = {},
+    variantProps?: VariantSelection<T>,
   ): S extends Record<string, never> ? string | undefined : VariantResolverResult<T, S> => {
-    const classProperty = variantProps.class;
-    const className = variantProps.className;
-    const resolvedVariantProps = variantProps;
+    const props = (variantProps ?? EMPTY_PROPS) as Record<string, unknown>;
 
-    if (mergedSlotDefinitions) {
-      const compoundSlotClasses = resolveCompoundSlotClasses(
-        hasSlotsConfig(mergedConfiguration) ? mergedConfiguration.compoundSlots : undefined,
-        resolvedVariantProps as VariantSelection<VariantSchema>,
-        mergedDefaultVariantProps as VariantSelection<VariantSchema>,
-      );
-
-      return createSlotResolvers(
-        mergedSlotDefinitions,
-        mergedBaseClasses,
-        mergedVariantGroups,
-        cachedVariantKeys as Array<keyof VariantSchema>,
-        mergedDefaultVariantProps as VariantSelection<VariantSchema>,
-        precomputedDefaults,
-        mergedCompoundVariantGroups as ReadonlyArray<SlotCompoundVariant<VariantSchema, SlotSchema>> | undefined,
-        compoundSlotClasses,
-        resolvedVariantProps as VariantSelection<VariantSchema>,
-        shouldMergeClasses,
-        tailwindMergeFn,
-      ) as unknown as S extends Record<string, never> ? string | undefined : VariantResolverResult<T, S>;
-    } else {
-      return resolveVariantClasses(
-        mergedBaseClasses,
-        mergedVariantGroups,
-        mergedDefaultVariantProps as VariantSelection<VariantSchema>,
-        mergedCompoundVariantGroups as ReadonlyArray<CompoundVariant<VariantSchema>> | undefined,
-        resolvedVariantProps as VariantSelection<VariantSchema>,
-        className ?? classProperty,
-        shouldMergeClasses,
-        tailwindMergeFn,
-        cachedVariantKeys as Array<keyof VariantSchema>,
-        precomputedDefaults,
-      ) as unknown as S extends Record<string, never> ? string | undefined : VariantResolverResult<T, S>;
+    if (slots !== null) {
+      return createSlotResolvers(plan, slots, props) as unknown as S extends Record<string, never>
+        ? string | undefined
+        : VariantResolverResult<T, S>;
     }
+
+    const className = props.className as ClassValue;
+
+    return resolveVariantClasses(
+      plan,
+      props,
+      className === undefined || className === null ? (props.class as ClassValue) : className,
+    ) as unknown as S extends Record<string, never> ? string | undefined : VariantResolverResult<T, S>;
   };
 
   const configuredVariantResolver = variantResolverFunction as VariantResolver<T, S>;
