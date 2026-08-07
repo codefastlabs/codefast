@@ -10,18 +10,22 @@ import — a type-only one erases at build time and couples nothing.
 
 ```
 container/        Container, fluent binding chain             ← the public surface
+introspection/    inspector, dependency graph, adapters
+  ↓
+decorators/       @injectable, @inject, lifecycle decorators
+metadata/         the reader port and its default reader
   ↓
 resolution/       DependencyResolver + its collaborators      ← the engine
   ↓
 lifecycle/        LifecycleManager, ScopeManager              ← per-container state
 ambient/          the container an @inject accessor reads
   ↓
-core/             token, types, binding, registry, module     ← the model
+core/             token, types, tag, binding, registry, module   ← the model
 errors/           the taxonomy and its diagnostics
 injection/        the descriptor every dependency normalises to
 ```
 
-`introspection/`, `decorators/` and `metadata/` hang off the side: introspection reads the model, decorators and metadata feed it. Neither is on a hot path.
+Five levels, not four: `decorators/` sits above the engine because accessor injection resolves through the ambient container at property-access time, and `container/` sits above both because it composes them — it imports `@injectable`'s registry and four of the metadata modules. Neither of those two levels is on a hot path, which is why they read as peripheral; they are still ordered, and an import the other way is a violation the test reports.
 
 Three of those directories name a rule rather than a topic. **`errors/` is cold by construction** — the hot path imports the constructors and nothing else, because message building at a throw site is what an error path can afford and a hot function's prefix is not. **`injection/` is the one shape both dependency sources normalise to**, which is why the model can read it without reaching up into `decorators/`. And **`resolution/` groups by lane** — `cache/`, `path/`, `plan/`, `select/` — because the reasoning below is per-lane, not per-noun.
 
@@ -70,7 +74,7 @@ field read off a binding.
 
 **Registration happens once.** `bind(T).toDynamic(f).singleton()` registers on `toDynamic()`; `singleton()` then writes `scope` in place on that same registered object. Only `when*()` re-slots, because slot and predicate are what the registry indexes on — and it re-registers under the chain's original id, so `id()` is stable for the whole chain. Doing it the other way (commit, remove, re-commit) cost ~2.3× on the bind path.
 
-**One object per `bind()`.** A single `BindingChain` plays every role — the `BindToBuilder` before `to*()`, the kind-specific builder after — and commits to the registry itself. `bind()` is typed as `BindToBuilder`, so `when*()`/`singleton()` are not reachable before a `to*()`; the ordering is a **type-level** guarantee, which is exactly what SPEC §2.4 claims ("Compiler enforce"). A caller who has no types or casts past them gets a `ChainNotRegisteredError` naming the token, never a silent no-op — `whenDefault()` asserts registration too, for that reason alone, since it otherwise has nothing to do.
+**One object per `bind()`.** A single `BindingChain` plays every role — the `BindToBuilder` before `to*()`, the kind-specific builder after — and commits to the registry itself. `bind()` is typed as `BindToBuilder`, so `when*()`/`singleton()` are not reachable before a `to*()`; the ordering is a **type-level** guarantee, which is exactly what [SPEC’s fluent-chain section](SPEC.md#chain-order) claims ("Compiler enforce"). A caller who has no types or casts past them gets a `ChainNotRegisteredError` naming the token, never a silent no-op — `whenDefault()` asserts registration too, for that reason alone, since it otherwise has nothing to do.
 
 > **Rule:** both halves of that contract are pinned. `tests/types/container-api.test.ts` asserts the refinements are absent from `bind()`'s **type**; `tests/unit/container/bind-to-builder-order.test.ts` asserts every one of them **throws** before `to*()`. An earlier revision of the unit test asserted the methods were absent from the _object_, which silently forbade this shape — if you change the class, check whether a test is pinning an implementation detail rather than the contract.
 
@@ -131,7 +135,7 @@ is usually the value that gets stored, and the computed form there measured **~4
 on purpose.
 
 **A criterion is interned, so the index can be keyed by it.** A tag key is minted by `tag()` and its
-criteria by `TagKey.of()`, which caches one object per value — so `Object.is` equality (SPEC §3.5)
+criteria by `TagKey.of()`, which caches one object per value — so `Object.is` equality ([SPEC — ResolveOptions](SPEC.md#resolve-options))
 becomes object identity, and the registry keys tagged bindings by the criterion itself rather than by
 key-then-value. That removes a hash level from every tagged lookup and, more importantly, removes the
 divergence a value-keyed `Map` had: its keys compare by SameValueZero, which holds `+0` and `-0`
@@ -169,7 +173,7 @@ this 2×2 can resolve, and pricing it needs a row built for it.
 
 > **Rule:** a fast lane's admission test is part of the contract, not an implementation detail. Two
 > spellings SPEC calls equivalent must reach the same lane, or the shorter one becomes the slower one
-> and the documentation that recommends it becomes wrong. SPEC §3.5 makes the two spellings one
+> and the documentation that recommends it becomes wrong. [SPEC](SPEC.md#resolve-options) makes the two spellings one
 > request; `tests/unit/resolution/select/tag-shorthand-parity.test.ts` pins the lane alongside the answer.
 
 **`resolveAll` reads the tag index too, and one tag is not the subset query several are.** A request
@@ -195,7 +199,7 @@ because a predicate needs a live context no index can hold.
 > tags matches every binding whose tags are a **subset** of them, so `[A]`, `[B]` and `[A,B]` all answer
 > a request for `[A,B]`; a `Map` cannot resolve that in one lookup, and every shape that gets close
 > needs either a per-resolve allocation where the cost today is a handful of comparisons, or the tag
-> values stringified, which the `Object.is` rule in SPEC §3.5 forbids.
+> values stringified, which the `Object.is` rule in [SPEC](SPEC.md#resolve-options) forbids.
 
 **Hoisting the request out of the candidate loop was tried and rejected.** `--prof` puts over half
 this lane's JavaScript time in `matchesSlot`, re-deriving the same request per candidate; reading it
@@ -263,7 +267,7 @@ a named token buys a map it will not read again.
 The one consumer outside this package answers that with **N=1**. The inspector in
 `examples/tanstack-start` binds two tokens per region with `whenTagged()`, opens a child per request
 with `createChild()`, and resolves each tagged token exactly once inside it — its two repeated
-requests carry `tags: []`, which SPEC §3.5 counts as no criterion, so they never reach this lane.
+requests carry `tags: []`, which [SPEC](SPEC.md#resolve-options) counts as no criterion, so they never reach this lane.
 That is the column where a `Map`-shaped memo loses outright and the one-entry slot is close to free,
 so it does not settle whether to memoize, but it does settle the shape.
 

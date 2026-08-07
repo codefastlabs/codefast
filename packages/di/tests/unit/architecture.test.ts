@@ -139,6 +139,19 @@ describe("ARCHITECTURE.md still describes this package", () => {
     expect(missing).toEqual([]);
   });
 
+  // Citing SPEC by a stable anchor is what replaced citing it by section number, and it only helps
+  // while the anchor is there — deleting one turns the link into a scroll to the top, silently.
+  it("links only to SPEC anchors that exist", () => {
+    const spec = readFileSync(join(packageRoot, "SPEC.md"), "utf8");
+    const anchors = new Set([...spec.matchAll(/<a id="([^"]+)"><\/a>/g)].map((match) => match[1]!));
+
+    const dangling = [...doc.matchAll(/\]\(SPEC\.md#([^)]+)\)/g)]
+      .map((match) => match[1]!)
+      .filter((anchor) => !anchors.has(anchor));
+
+    expect([...new Set(dangling)]).toEqual([]);
+  });
+
   it("names only test files that exist", () => {
     // The document pins a rule by naming the test that holds it, so a moved test file turns a
     // citation into a dead end. Backticked here rather than linked, which is why the link check
