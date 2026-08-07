@@ -51,6 +51,11 @@ jobs:
       - name: Validate Code Quality and Type Safety
         run: npx turbo run lint format:check check-types --filter="./packages/**"
 
+      # Repo-wide on purpose: the cross-package references are the ones most likely to rot, and a
+      # dangling anchor into another document degrades to a scroll rather than a visible 404.
+      - name: Verify Documentation Cross-References
+        run: pnpm cli:audit:links
+
       - name: Execute Automated Tests with Coverage
         if: ${{ inputs.run-tests }}
         run: npx turbo run test:coverage --filter="./packages/**"

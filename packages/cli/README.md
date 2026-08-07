@@ -25,6 +25,7 @@ pnpm run cli:arrange:simplify:preview
 pnpm run cli:mirror                 # codefast mirror
 pnpm run cli:mirror:preview         # codefast mirror --dry-run
 pnpm run cli:audit:rtl              # codefast audit rtl
+pnpm run cli:audit:links            # codefast audit links
 ```
 
 Standalone install (Node >= 24):
@@ -112,6 +113,22 @@ codefast audit rtl --json                  # machine-readable summary
 | `--json` | Print one JSON summary on stdout. |
 
 Configure intentional exceptions via `audit.rtl.allowlist` in `codefast.config` — each entry is a bare class token or `repo/relative/path.tsx:token`.
+
+## `audit links`
+
+Read-only scan for markdown cross-references that point at nothing: a relative path that does not exist, an in-document anchor with no matching heading or `<a id>`, and an anchor into another document that the target does not offer. That last one is the reason this exists — it fails silently in a browser by scrolling to the top, so nothing else notices. External URLs are somebody else's to check and are skipped, as are links inside fenced code, which are examples rather than references. Exits non-zero when breakages remain so it can gate CI.
+
+```bash
+codefast audit links                       # whole repo
+codefast audit links packages/di           # explicit target
+codefast audit links --json                # machine-readable summary
+```
+
+| Flag     | Description                       |
+| -------- | --------------------------------- |
+| `--json` | Print one JSON summary on stdout. |
+
+Configure intentional exceptions via `audit.links.allowlist` in `codefast.config` — each entry is a bare link target or `repo/relative/doc.md:target`.
 
 ## `tag`
 

@@ -70,3 +70,44 @@ export async function prepareRtlAudit(
     allowlist: rtlConfig.allowlist ?? [],
   });
 }
+
+/**
+ * Load config and resolve the scan target for `audit links`.
+ *
+ * @remarks Defaults to the repo root rather than a configured path: a link audit that only covers one
+ * package cannot see the cross-package references that are the ones most likely to rot.
+ *
+ * @since 0.5.0
+ */
+export async function prepareLinkAudit(
+  fs: FilesystemPort,
+  args: {
+    readonly currentWorkingDirectory: string;
+    readonly rawTarget: string | undefined;
+  },
+): Promise<Result<RtlAuditCommandPrelude, AppError>> {
+  let rootDir: string;
+  try {
+    rootDir = fs.canonicalPathSync(findRepoRoot(args.currentWorkingDirectory, fs));
+  } catch (caughtError: unknown) {
+    return err(new AppError("INFRA_FAILURE", messageFrom(caughtError), caughtError));
+  }
+
+  const loadedOutcome = await loadCodefastConfig(rootDir, fs);
+  if (!loadedOutcome.ok) {
+    return loadedOutcome;
+  }
+  const linksConfig = loadedOutcome.value.config.audit?.links ?? {};
+
+  const targetPath =
+    args.rawTarget === undefined ? rootDir : resolveRepoRelativePath(args.currentWorkingDirectory, args.rawTarget);
+  if (!fs.existsSync(targetPath)) {
+    return err(new AppError("NOT_FOUND", `Not found: ${targetPath}`));
+  }
+
+  return ok({
+    rootDir,
+    targetPath: fs.canonicalPathSync(targetPath),
+    allowlist: linksConfig.allowlist ?? [],
+  });
+}

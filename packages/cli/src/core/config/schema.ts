@@ -120,11 +120,29 @@ export const codefastAuditRtlConfigSchema = z
 export type CodefastAuditRtlConfig = z.infer<typeof codefastAuditRtlConfigSchema>;
 
 /**
+ * Link audit defaults — the scan always starts at the repo root, so only exceptions are configured.
+ *
+ * @since 0.5.0
+ */
+export const codefastAuditLinksConfigSchema = z
+  .object({
+    /** Bare link targets or `repo/relative/doc.md:target` entries to ignore. */
+    allowlist: z.array(z.string()).optional(),
+  })
+  .strict();
+
+/**
+ * @since 0.5.0
+ */
+export type CodefastAuditLinksConfig = z.infer<typeof codefastAuditLinksConfigSchema>;
+
+/**
  * @since 0.3.16-canary.0
  */
 export const codefastAuditConfigSchema = z
   .object({
     rtl: codefastAuditRtlConfigSchema.optional(),
+    links: codefastAuditLinksConfigSchema.optional(),
   })
   .strict();
 

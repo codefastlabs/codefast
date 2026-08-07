@@ -140,6 +140,10 @@ These are project rules the linters do not fully enforce:
 - **No inline prop types.** Declare `interface XxxProps extends ComponentProps<"element">` (matching the host element rendered), spread `{...props}` **last** on that element, and merge classes via `cn(base, className)`. `Omit` any attr the wrapper hard-sets. When forwarding to another component (not a DOM element), extend `ComponentProps<typeof ThatComponent>` and `Omit` the required props the wrapper supplies. Exception: a handler the component must own (e.g. a `CopyButton`'s `onClick`) goes _after_ `{...props}` with a comment.
 - **RTL: keep physical classes that sit under a side variant.** `packages/ui` is RTL-hardened with logical utilities + `rtl:` overrides, but physical `left-/right-/border-l/r/slide-in-from-*` classes gated behind `data-[side=…]` (or the custom `data-side-left`/`data-side-right`) are intentional — Radix resolves `side` per reading direction, so converting them to logical double-flips. Run `pnpm run codefast audit rtl` (the RTL scan lives in the `codefast` CLI, config under `audit.rtl` in `codefast.config.js`) to check for genuine gaps.
 
+## Documentation cross-references
+
+`pnpm cli:audit:links` scans every `.md` in the repo for a relative path that does not exist, an in-document anchor with no matching heading, and an anchor into another document the target does not offer — the last of which fails silently in a browser. It gates CI, so a doc link that rots is a red build rather than a discovery months later. Cite a section by an explicit `<a id="…"></a>` anchor rather than a number: a number shifts the moment a section is inserted, and nothing checks it.
+
 ## Releases
 
 Versioning is via **Changesets**. Commits follow **Conventional Commits** (enforced by commitlint). Use the `release` skill for the full publish workflow.
