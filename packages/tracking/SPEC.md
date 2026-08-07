@@ -1,8 +1,10 @@
 # @codefast/tracking — Spec
 
-The specification now lives in [spec/](spec/spec.md), rewritten as a language-neutral contract: any modern language can implement it, and this package is the reference implementation.
+The specification lives in [spec/](spec/README.md) as a language-neutral contract: any modern language can implement it, and this package is the reference implementation.
 
-- [spec/spec.md](spec/spec.md) — index: goals, non-goals, architecture layers, terminology, and the TypeScript-binding notes.
+Each document is named for the identifier it is cited by — `spec-consent §3` in a comment or a test points at [spec/spec-consent.md](spec/spec-consent.md).
+
+- [spec/README.md](spec/README.md) — index: goals, non-goals, architecture layers, terminology, and the TypeScript-binding notes.
 - [spec/spec-event-model.md](spec/spec-event-model.md) — catalog, validation, the `TrackEvent` envelope.
 - [spec/spec-consent.md](spec/spec-consent.md) — categories, regions/modes, records, effective consent.
 - [spec/spec-identity.md](spec/spec-identity.md) — anonymous-id lifecycle and cookie contract.

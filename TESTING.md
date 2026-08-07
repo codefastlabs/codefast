@@ -14,15 +14,13 @@ directory, otherwise it will not be discovered by Vitest. There is no implicit
 | **E2E**         | `tests/e2e/**`         | End-to-end: spawns subprocesses, exercises the built CLI binary, real network/HTTP, cross-process behavior.                               | `node`              |
 | **Type**        | `tests/types/**`       | Static type-only tests using `expectTypeOf` / `expect-type`. Validates public type surface; runtime assertions are a side-effect at most. | `node`              |
 
-### E2E flavors (same folder name, different runners)
+### E2E has one flavor
 
-The `tests/e2e/**` directory is shared by two flavors — pick the right mental
-model when writing or reviewing tests:
-
-| Flavor                | Where                                 | What it actually drives                                                                                                     |
-| --------------------- | ------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
-| **CLI / package e2e** | `packages/*/tests/e2e/**`             | Subprocesses, built binaries, Node-only Vitest. This is what root `pnpm test:e2e` (Turbo) primarily fans out.               |
-| **Storybook browser** | `@codefast/ui` coverage / story tests | Playwright Chromium for Storybook stories — **not** under `tests/e2e/**`; lives in the package's Storybook/browser project. |
+`tests/e2e/**` means Node-only Vitest driving subprocesses and built binaries —
+that is what root `pnpm test:e2e` fans out over. There is **no browser runner in
+this repo**: no Playwright, no Storybook, no browser-mode Vitest project. A test
+that needs a real browser has nowhere to live yet, so adding one means adding the
+runner first.
 
 ### Test helper placement (NOT executed as tests)
 
@@ -37,9 +35,9 @@ Helper files MUST NOT match `*.test.*` / `*.spec.*` filenames.
 
 ## Hard rules
 
-1. **No tests under `src/**`.** Forbidden filename patterns inside `src/\*_`:
-   `_.test._`, `_.spec._`, `_.bench._`, `_.test-helper.\*`, and any
-   `**tests**/` directory.
+1. **No tests under `src/**`.** Forbidden inside `src/`: any file matching
+   `*.test.*`, `*.spec.*`, `*.bench.*` or `*.test-helper.*`, and any
+   `__tests__/` directory.
 2. **No test files directly under `tests/`** — they MUST live inside a known
    category sub-directory.
 3. **No unknown category directories.** If a test lives under
@@ -94,25 +92,29 @@ pnpm test:coverage         # full coverage, all packages + apps
 
 ### CI honesty
 
-- **Packages gate** (`.github/workflows/reusable-verify-packages.yml`): build +
-  lint/format/types + `test:coverage` for `./packages/**` only. Installs
-  Playwright Chromium for `@codefast/ui` Storybook browser tests inside that
-  coverage run. Does **not** start `apps/ui`.
+- **Packages gate** (`.github/workflows/reusable-verify-packages.yml`): build,
+  verify the generated exports, lint/format/types, then `test:coverage` — all
+  scoped to `./packages/**`, so `apps/*` is not built, started, or tested there.
 
 Root `pnpm test:e2e` runs every package that defines the script — use it for
 full-repo gates.
 
 ## Today's coverage (snapshot)
 
-| Package / app                 | unit | integration |                e2e                 | type |
-| ----------------------------- | :--: | :---------: | :--------------------------------: | :--: |
-| `@apps/ui`                    | yes  |     yes     |                 —                  |  —   |
-| `@codefast/benchmark-harness` | yes  |      —      |                 —                  |  —   |
-| `@codefast/cli`               | yes  |      —      |                 —                  |  —   |
-| `@codefast/di`                | yes  |     yes     |                 —                  |  —   |
-| `@codefast/tailwind-variants` | yes  |      —      |                 —                  | yes  |
-| `@codefast/theme`             | yes  |      —      |                 —                  |  —   |
-| `@codefast/ui`                | yes  |      —      | — (Storybook browser via coverage) |  —   |
+| Package / app                 | unit | integration | e2e | type |
+| ----------------------------- | :--: | :---------: | :-: | :--: |
+| `@apps/ui`                    | yes  |     yes     |  —  |  —   |
+| `@codefast/benchmark-harness` | yes  |     yes     |  —  |  —   |
+| `@codefast/benchmark-viewer`  | yes  |      —      |  —  |  —   |
+| `@codefast/cli`               | yes  |      —      |  —  |  —   |
+| `@codefast/di`                | yes  |     yes     |  —  | yes  |
+| `@codefast/tailwind-variants` | yes  |      —      |  —  | yes  |
+| `@codefast/theme`             | yes  |      —      |  —  |  —   |
+| `@codefast/tracking`          | yes  |      —      |  —  |  —   |
+| `@codefast/ui`                | yes  |      —      |  —  |  —   |
+
+No package has an `e2e/` directory yet — the category is wired everywhere and
+empty everywhere.
 
 Categories without tests are still **wired into the Vitest include glob and
 into the package scripts** so adding the first test in a new category is
