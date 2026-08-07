@@ -6,18 +6,20 @@
  * inversify column and serve as regression protection for codefast's multi-tag paths.
  *
  *   - `multi-tag-slot-resolve` — resolves a binding selected by two slot tags
- *     simultaneously (`{ tags: [["env","prod"],["tier","premium"]] }`). Four binding
+ *     simultaneously (`{ tags: [ENV_TAG.of("prod"),TIER_TAG.of("premium")] }`). Four binding
  *     variants, each registered with a distinct `[env, tier]` combination. Exercises
  *     the multi-pair slot-matching loop on the hot path.
  *
  *   - `multi-tag-constraint-resolve` — resolves a parent service whose own slot carries
  *     two tags. The inner `IPlugin` dependency has three bindings, one of which uses
- *     `whenParentTaggedAll([["env","prod"],["tier","premium"]])`. Exercises the new
+ *     `whenParentTaggedAll([ENV_TAG.of("prod"),TIER_TAG.of("premium")])`. Exercises the new
  *     multi-tag predicate helper: all pairs must match the parent slot in a single
  *     closure call, with no intermediate allocation.
  */
+import type { BindingTag } from "@codefast/di";
 import { Container, token, whenParentTaggedAll } from "@codefast/di";
 
+import { ENV_TAG, TIER_TAG } from "#/fixtures/bench-tags";
 import { batched } from "#/harness/batched";
 import type { BenchScenario } from "#/scenarios/types";
 
@@ -39,16 +41,17 @@ const SLOT_VARIANTS: ReadonlyArray<readonly [env: string, tier: string]> = [
   ["prod", "premium"],
 ] as const;
 
-const TARGET_SLOT_TAGS: ReadonlyArray<readonly [string, unknown]> = [
-  ["env", "prod"],
-  ["tier", "premium"],
-];
+const TARGET_SLOT_TAGS: ReadonlyArray<BindingTag> = [ENV_TAG.of("prod"), TIER_TAG.of("premium")];
 
 function buildMultiTagSlotResolveScenario(): BenchScenario {
   const container = Container.create();
 
   for (const [env, tier] of SLOT_VARIANTS) {
-    container.bind(slottedServiceToken).toConstantValue({ env, tier }).whenTagged("env", env).whenTagged("tier", tier);
+    container
+      .bind(slottedServiceToken)
+      .toConstantValue({ env, tier })
+      .whenTagged(ENV_TAG.of(env))
+      .whenTagged(TIER_TAG.of(tier));
   }
 
   container.resolve(slottedServiceToken, { tags: TARGET_SLOT_TAGS });
@@ -56,7 +59,7 @@ function buildMultiTagSlotResolveScenario(): BenchScenario {
   return {
     id: "multi-tag-slot-resolve",
     group: "micro",
-    what: `resolve(token, { tags: [["env","prod"],["tier","premium"]] }) from ${String(SLOT_VARIANTS.length)}-variant multi-tag set (codefast-only)`,
+    what: `resolve(token, { tags: [ENV_TAG.of("prod"),TIER_TAG.of("premium")] }) from ${String(SLOT_VARIANTS.length)}-variant multi-tag set (codefast-only)`,
     batch: MULTI_TAG_SLOT_BATCH,
     sanity: () => {
       const result = container.resolve(slottedServiceToken, { tags: TARGET_SLOT_TAGS });
@@ -84,10 +87,7 @@ interface AppService {
 const pluginToken = token<Plugin>("bench-cf-mt-plugin");
 const appServiceToken = token<AppService>("bench-cf-mt-app-service");
 
-const CONSTRAINT_TAGS: ReadonlyArray<readonly [string, unknown]> = [
-  ["env", "prod"],
-  ["tier", "premium"],
-];
+const CONSTRAINT_TAGS: ReadonlyArray<BindingTag> = [ENV_TAG.of("prod"), TIER_TAG.of("premium")];
 
 function buildMultiTagConstraintResolveScenario(): BenchScenario {
   const container = Container.create();
@@ -110,8 +110,8 @@ function buildMultiTagConstraintResolveScenario(): BenchScenario {
   container
     .bind(appServiceToken)
     .toDynamic((ctx) => ({ plugin: ctx.resolve(pluginToken) }))
-    .whenTagged("env", "prod")
-    .whenTagged("tier", "premium")
+    .whenTagged(ENV_TAG.of("prod"))
+    .whenTagged(TIER_TAG.of("premium"))
     .transient();
 
   // Pre-warm

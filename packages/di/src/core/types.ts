@@ -1,15 +1,10 @@
 import type { Constructor } from "#/core/constructor-type";
+import type { BindingTag, TagKeyMask } from "#/core/tag";
 import type { Token } from "#/core/token";
 
 // Re-export for consumers that import from `#/types`
 export type { Constructor } from "#/core/constructor-type";
-
-/**
- * A single [tag, value] pair used in slot constraints and resolve options.
- *
- * @since 0.3.16-canary.0
- */
-export type BindingTag = readonly [tag: string, value: unknown];
+export type { BindingTag, TagKey, TagKeyMask } from "#/core/tag";
 
 /**
  * Token or class constructor used as a binding / injection / resolve key.
@@ -82,6 +77,7 @@ export interface ResolutionFrame {
   readonly slot: {
     readonly name: string | undefined;
     readonly tags: ReadonlyArray<BindingTag>;
+    readonly keyMask: TagKeyMask;
   };
 }
 

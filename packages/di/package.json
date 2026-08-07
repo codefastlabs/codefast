@@ -94,6 +94,11 @@
       "types": "./dist/core/registry.d.ts",
       "import": "./dist/core/registry.js"
     },
+    "./core/tag": {
+      "source": "./src/core/tag.ts",
+      "types": "./dist/core/tag.d.ts",
+      "import": "./dist/core/tag.js"
+    },
     "./core/token": {
       "source": "./src/core/token.ts",
       "types": "./dist/core/token.d.ts",

@@ -24,8 +24,10 @@
  * owned by a parent and resolved from a child — the two that price the named lane's memo against
  * the tagged lane's unmemoized chain walk.
  */
+import type { BindingTag } from "@codefast/di";
 import { Container, token } from "@codefast/di";
 
+import { ENV_TAG, LEVEL_TAG } from "#/fixtures/bench-tags";
 import { TAGGED_ENVS, TARGET_TAG_VALUE } from "#/fixtures/scenario-parity";
 import { batched } from "#/harness/batched";
 import type { BenchScenario } from "#/scenarios/types";
@@ -39,15 +41,15 @@ interface TaggedService {
 const taggedServiceToken = token<TaggedService>("bench-cf-slot-tagged-service");
 
 /** Hoisted so the hoisted rows allocate only the options object per call. */
-const HOISTED_PAIR: readonly [string, unknown] = ["env", TARGET_TAG_VALUE];
-const HOISTED_TAGS: ReadonlyArray<readonly [string, unknown]> = [HOISTED_PAIR];
+const HOISTED_PAIR: BindingTag = ENV_TAG.of(TARGET_TAG_VALUE);
+const HOISTED_TAGS: ReadonlyArray<BindingTag> = [HOISTED_PAIR];
 
 /** The same four-variant tagged set `tagged-binding-resolve` uses, so the rows stay comparable. */
 function buildTaggedContainer(): Container {
   const container = Container.create();
 
   for (const env of TAGGED_ENVS) {
-    container.bind(taggedServiceToken).toConstantValue({ env }).whenTagged("env", env);
+    container.bind(taggedServiceToken).toConstantValue({ env }).whenTagged(ENV_TAG.of(env));
   }
 
   return container;
@@ -93,7 +95,7 @@ function buildShorthandHoistedScenario(): BenchScenario {
 }
 
 function buildArrayInlineScenario(): BenchScenario {
-  matrixContainer.resolve(taggedServiceToken, { tags: [["env", TARGET_TAG_VALUE]] });
+  matrixContainer.resolve(taggedServiceToken, { tags: [ENV_TAG.of(TARGET_TAG_VALUE)] });
 
   return {
     id: "slot-tag-array-inline",
@@ -102,16 +104,16 @@ function buildArrayInlineScenario(): BenchScenario {
     batch: SLOT_RESOLVE_BATCH,
     excludeFromAggregates: true,
     sanity: () =>
-      matrixContainer.resolve(taggedServiceToken, { tags: [["env", TARGET_TAG_VALUE]] }).env === TARGET_TAG_VALUE,
+      matrixContainer.resolve(taggedServiceToken, { tags: [ENV_TAG.of(TARGET_TAG_VALUE)] }).env === TARGET_TAG_VALUE,
     build: () =>
       batched(SLOT_RESOLVE_BATCH, () => {
-        matrixContainer.resolve(taggedServiceToken, { tags: [["env", TARGET_TAG_VALUE]] });
+        matrixContainer.resolve(taggedServiceToken, { tags: [ENV_TAG.of(TARGET_TAG_VALUE)] });
       }),
   };
 }
 
 function buildShorthandInlineScenario(): BenchScenario {
-  matrixContainer.resolve(taggedServiceToken, { tag: ["env", TARGET_TAG_VALUE] });
+  matrixContainer.resolve(taggedServiceToken, { tag: ENV_TAG.of(TARGET_TAG_VALUE) });
 
   return {
     id: "slot-tag-shorthand-inline",
@@ -120,10 +122,10 @@ function buildShorthandInlineScenario(): BenchScenario {
     batch: SLOT_RESOLVE_BATCH,
     excludeFromAggregates: true,
     sanity: () =>
-      matrixContainer.resolve(taggedServiceToken, { tag: ["env", TARGET_TAG_VALUE] }).env === TARGET_TAG_VALUE,
+      matrixContainer.resolve(taggedServiceToken, { tag: ENV_TAG.of(TARGET_TAG_VALUE) }).env === TARGET_TAG_VALUE,
     build: () =>
       batched(SLOT_RESOLVE_BATCH, () => {
-        matrixContainer.resolve(taggedServiceToken, { tag: ["env", TARGET_TAG_VALUE] });
+        matrixContainer.resolve(taggedServiceToken, { tag: ENV_TAG.of(TARGET_TAG_VALUE) });
       }),
   };
 }
@@ -136,13 +138,13 @@ interface NumberedService {
 
 const numberedServiceToken = token<NumberedService>("bench-cf-slot-numbered-service");
 const NUMBERED_LEVELS: ReadonlyArray<number> = [0, 1, 2, 3];
-const ZERO_TAGS: ReadonlyArray<readonly [string, unknown]> = [["level", 0]];
+const ZERO_TAGS: ReadonlyArray<BindingTag> = [LEVEL_TAG.of(0)];
 
 function buildZeroValueScenario(): BenchScenario {
   const container = Container.create();
 
   for (const level of NUMBERED_LEVELS) {
-    container.bind(numberedServiceToken).toConstantValue({ level }).whenTagged("level", level);
+    container.bind(numberedServiceToken).toConstantValue({ level }).whenTagged(LEVEL_TAG.of(level));
   }
 
   container.resolve(numberedServiceToken, { tags: ZERO_TAGS });
@@ -165,13 +167,13 @@ function buildZeroValueScenario(): BenchScenario {
 
 const namedTaggedToken = token<TaggedService>("bench-cf-slot-named-tagged-service");
 const NAMED_TAG_NAME = "primary";
-const NAMED_TAGS: ReadonlyArray<readonly [string, unknown]> = [["env", TARGET_TAG_VALUE]];
+const NAMED_TAGS: ReadonlyArray<BindingTag> = [ENV_TAG.of(TARGET_TAG_VALUE)];
 
 function buildNameAndTagScenario(): BenchScenario {
   const container = Container.create();
 
   for (const env of TAGGED_ENVS) {
-    container.bind(namedTaggedToken).toConstantValue({ env }).whenNamed(NAMED_TAG_NAME).whenTagged("env", env);
+    container.bind(namedTaggedToken).toConstantValue({ env }).whenNamed(NAMED_TAG_NAME).whenTagged(ENV_TAG.of(env));
   }
 
   container.resolve(namedTaggedToken, { name: NAMED_TAG_NAME, tags: NAMED_TAGS });
@@ -218,7 +220,7 @@ function buildResolveAllScenario(): BenchScenario {
 
 // ── Tagged miss: the lane a failed slot request pays ─────────────────────────
 
-const MISSING_TAGS: ReadonlyArray<readonly [string, unknown]> = [["env", "no-such-env"]];
+const MISSING_TAGS: ReadonlyArray<BindingTag> = [ENV_TAG.of("no-such-env")];
 
 function buildMissOptionalScenario(): BenchScenario {
   const container = buildTaggedContainer();
@@ -257,7 +259,7 @@ function buildTaggedParentOwnedScenario(): BenchScenario {
   const appContainer = Container.create();
 
   for (const env of TAGGED_ENVS) {
-    appContainer.bind(parentTaggedToken).toConstantValue({ env }).whenTagged("env", env);
+    appContainer.bind(parentTaggedToken).toConstantValue({ env }).whenTagged(ENV_TAG.of(env));
   }
   const longLivedChild = appContainer.createChild();
 

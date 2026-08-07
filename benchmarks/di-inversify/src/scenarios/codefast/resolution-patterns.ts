@@ -16,8 +16,10 @@
  *     value.  `resolve(token, { tags: [...] })` filters to the matching candidate.
  *     Measures the tag-based slot lookup on the hot path.
  */
+import type { BindingTag } from "@codefast/di";
 import { Container, token } from "@codefast/di";
 
+import { ENV_TAG } from "#/fixtures/bench-tags";
 import {
   OPTIONAL_HIT_BATCH,
   OPTIONAL_MISS_BATCH,
@@ -79,13 +81,13 @@ interface TaggedService {
 
 const taggedServiceToken = token<TaggedService>("bench-cf-rp-tagged-service");
 
-const TARGET_TAGS: ReadonlyArray<readonly [string, unknown]> = [["env", TARGET_TAG_VALUE]];
+const TARGET_TAGS: ReadonlyArray<BindingTag> = [ENV_TAG.of(TARGET_TAG_VALUE)];
 
 function buildTaggedBindingResolveScenario(): BenchScenario {
   const container = Container.create();
 
   for (const env of TAGGED_ENVS) {
-    container.bind(taggedServiceToken).toConstantValue({ env }).whenTagged("env", env);
+    container.bind(taggedServiceToken).toConstantValue({ env }).whenTagged(ENV_TAG.of(env));
   }
 
   container.resolve(taggedServiceToken, { tags: TARGET_TAGS });

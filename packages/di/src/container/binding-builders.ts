@@ -24,6 +24,8 @@ import {
   refinableFields,
 } from "#/core/binding";
 import type { BindingRegistry } from "#/core/registry";
+import type { BindingTag } from "#/core/tag";
+import { tagKeyMaskOf } from "#/core/tag";
 import type { Token } from "#/core/token";
 import { tokenName } from "#/core/token";
 import type {
@@ -39,15 +41,16 @@ import { ChainNotRegisteredError, SelfBindingRequiresClassError } from "#/errors
 import type { InjectableDependency, ResolvedDependencyValue } from "#/injection/descriptor";
 import { normalizeToDescriptor } from "#/injection/descriptor";
 
-function updateSlotTag(slot: BindingSlot, tag: string, value: unknown): BindingSlot {
+/** One criterion per key: re-tagging the same key replaces it rather than asking for both values. */
+function updateSlotTag(slot: BindingSlot, criterion: BindingTag): BindingSlot {
   const tags = [...slot.tags];
-  const existingIndex = tags.findIndex(([key]) => key === tag);
+  const existingIndex = tags.findIndex((existing) => existing.key === criterion.key);
   if (existingIndex === -1) {
-    tags.push([tag, value]);
+    tags.push(criterion);
   } else {
-    tags[existingIndex] = [tag, value];
+    tags[existingIndex] = criterion;
   }
-  return { ...slot, tags };
+  return { ...slot, tags, keyMask: tagKeyMaskOf(tags) };
 }
 
 // True when re-adding `restored` would immediately be displaced again by `current`
@@ -221,9 +224,9 @@ export class BindingChain<Value>
     return this.#reslot({ ...this.#registered().slot, name }, this.#registered().predicate);
   }
 
-  whenTagged(tag: string, value: unknown): this {
+  whenTagged(criterion: BindingTag): this {
     const binding = this.#registered();
-    return this.#reslot(updateSlotTag(binding.slot, tag, value), binding.predicate);
+    return this.#reslot(updateSlotTag(binding.slot, criterion), binding.predicate);
   }
 
   whenDefault(): this {

@@ -170,22 +170,44 @@ type DeactivationHandler<Value> = (instance: Value) => void | Promise<void>;
 ```ts
 interface ResolveOptions {
   /** Match binding có `whenNamed(name)`. */
-  name?: string;
+  name?: string | undefined;
   /**
    * Match binding mà **mọi tag nó khai báo** đều nằm trong array này — request là superset
    * filter, không phải "binding phải có đủ các tag này". Luật đầy đủ ở section 5.11.
    */
-  tags?: ReadonlyArray<readonly [tag: string, value: unknown]>;
+  tags?: ReadonlyArray<BindingTag> | undefined;
   /**
-   * Tuỳ chọn — shorthand một cặp `[tagKey, value]` tương đương một phần tử trong `tags`.
+   * Tuỳ chọn — shorthand một criterion tương đương một phần tử trong `tags`.
    * Chỉ diễn tả được một tag; nhiều tag phải dùng `tags`. `InjectOptions` nhận cả hai và gấp
    * `tag` vào `tags`, nên `InjectionDescriptor` chỉ bao giờ mang một cách viết.
    */
-  tag?: readonly [tag: string, value: unknown];
+  tag?: BindingTag | undefined;
 }
 ```
 
-**Tag value comparison là `Object.is` — normative, kể cả trên fast-path.** `tag` và `tags: [pair]` phải cho **cùng một kết quả**, và cùng kết quả với `resolveAll` / `resolveOptional` trên cùng options. Cảnh báo cho implementer: một index dạng `Map` keyed theo tag value trả lời bằng **SameValueZero**, nên nó coi `-0` và `+0` là **cùng khoá** — trái với `Object.is` (section 5.11, section 8). Fast-path đọc index như vậy phải **kiểm lại bằng matcher** trước khi trả về, nếu không cùng một câu hỏi sẽ có hai câu trả lời tuỳ cách viết. `NaN` không bị ảnh hưởng: cả hai quy tắc coi `NaN` bằng chính nó.
+**Criterion được mint bởi `TagKey.of()`, và chỉ bởi nó — normative.** Một tag key khai báo bằng
+`tag<Value>(name)`; `key.of(value)` trả về một `BindingTag` **interned**: cùng một value luôn cho
+**cùng một object**. `BindingTag` được brand nên không thể dựng bằng tay.
+
+```ts
+const Region = tag<"eu" | "us">("region");
+container.bind(Storage).to(S3).whenTagged(Region.of("eu"));
+container.resolve(Storage, { tag: Region.of("eu") });
+```
+
+**Tag value comparison là `Object.is` — normative, kể cả trên fast-path.** Interning là _cách_
+implement luật đó: vì mỗi value có đúng một criterion, so sánh criterion bằng **identity** cho kết quả
+giống `Object.is` trên value. Hệ quả cho implementer: một index keyed theo **criterion** là exact và
+không cần kiểm lại. Trước đây index keyed theo _value_ trả lời bằng **SameValueZero**, coi `-0` và `+0`
+cùng khoá — trái `Object.is` (section 5.11, section 8) — và fast-path phải kiểm lại bằng matcher.
+Intern cache phải tách `-0` khỏi `+0` để giữ luật này. `NaN` không bị ảnh hưởng: cả hai quy tắc coi
+`NaN` bằng chính nó, nên nó gấp về một criterion.
+
+**Key set của slot và của request là một bitmask — không normative, nhưng luật subset thì có.** Một
+slot chỉ match khi request mang **mọi** key slot khai báo (section 5.11). Implementation OR các key
+thành một word và reject bằng `(requestMask & slotMask) !== slotMask` trước khi đọc criterion nào.
+Bit wrap sau mỗi 32 key, nên hai key có thể chung bit: đó là **false positive** mà identity loại bỏ
+sau đó, không bao giờ là false negative.
 
 **Cho cả `tag` và `tags` cùng lúc (normative):** request mang **hợp** của hai nguồn — tương đương `tags: [tag, ...tags]`, và `InjectOptions` gấp đúng thành hình đó. Một request như vậy hỏi từ hai tag trở lên nên không dùng được single-tag index; nó đi đường selection đầy đủ.
 

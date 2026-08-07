@@ -11,12 +11,16 @@
  */
 import { describe, expect, it } from "vitest";
 
+import { tag } from "#/core/tag";
 import { token } from "#/core/token";
 import { inject } from "#/decorators/inject";
 import { postConstruct, preDestroy } from "#/decorators/lifecycle-decorators";
 import { StaticMemberDecoratorError } from "#/errors/errors";
 import type { InjectionDescriptor } from "#/injection/descriptor";
 import { injectAll, isInjectionDescriptor, normalizeToDescriptor, optional } from "#/injection/descriptor";
+
+const ENV_TAG = tag("env");
+const KIND_TAG = tag("kind");
 
 const serviceToken = token<string>("inject-service");
 
@@ -53,7 +57,7 @@ describe("descriptor options", () => {
   });
 
   it("carries a name on its own, tags on their own, and both together", () => {
-    const tags = [["env", "prod"]] as const;
+    const tags = [ENV_TAG.of("prod")] as const;
 
     const named = normalizeToDescriptor(inject(serviceToken, { name: "primary" }));
     expect(named.name).toBe("primary");
@@ -78,7 +82,7 @@ describe("descriptor options", () => {
 
 describe("optional()", () => {
   it("marks the dependency optional and keeps slot options", () => {
-    const tags = [["env", "dev"]] as const;
+    const tags = [ENV_TAG.of("dev")] as const;
 
     const plain = optional(serviceToken);
     expect(plain.optional).toBe(true);
@@ -96,7 +100,7 @@ describe("optional()", () => {
 
 describe("injectAll()", () => {
   it("marks the dependency multi and keeps slot options", () => {
-    const tags = [["kind", "handler"]] as const;
+    const tags = [KIND_TAG.of("handler")] as const;
 
     const plain = injectAll(serviceToken);
     expect(plain.multi).toBe(true);
