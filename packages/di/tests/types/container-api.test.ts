@@ -7,10 +7,9 @@ import type { BindingScope, ResolutionContext } from "#/core/types";
 
 describe("Container public API inference", () => {
   /**
-   * The to*()-before-when*() ordering is enforced by the compiler through
-   * each step's return type. That is this assertion's job; the runtime half of the same contract —
-   * a ChainNotRegisteredError for callers without types — lives in
-   * `tests/unit/container/bind-to-builder-order.test.ts`.
+   * The to*()-before-when*() ordering is enforced by the compiler through each step's return type.
+   * That is this assertion's job; the runtime half of the same contract — a ChainNotRegisteredError
+   * for callers without types — lives in `tests/unit/container/bind-to-builder-order.test.ts`.
    */
   it("keeps refinements off the object bind() returns", () => {
     const NumberToken = token<number>("bind-order-types");

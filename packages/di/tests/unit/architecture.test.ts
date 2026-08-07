@@ -293,10 +293,82 @@ describe("SPEC.md keeps up with the API it specifies", () => {
   });
 
   it("leaves no cross-reference as a bare section number", () => {
-    // Links carry their own section number as label text, so strip them before looking.
+    // Links carry their own section number as label text, so strip them before looking. The
+    // sub-number is optional: a whole-section reference rots the same way, and one pointing at
+    // the wrong section survived here until the pattern stopped requiring a dot.
     const withoutLinks = spec.replaceAll(/\[[^\]]*]\([^)]*\)/g, "");
-    const bare = [...withoutLinks.matchAll(/(?:section |§)\d+\.\d+/gi)].map((match) => match[0]);
+    const bare = [...withoutLinks.matchAll(/(?:section |§)\d+(?:\.\d+)?/gi)].map((match) => match[0]);
 
     expect([...new Set(bare)]).toEqual([]);
+  });
+
+  // The label carries the section number the reader sees; the anchor only keeps the jump working.
+  // Renumber a section and the link still lands, silently labelled with the old number.
+  it("labels every cross-reference with the section it lands on", () => {
+    const lines = spec.split("\n");
+    const sectionOfAnchor = new Map<string, string>();
+
+    for (const [index, line] of lines.entries()) {
+      const anchor = /<a id="([^"]+)"><\/a>/.exec(line);
+      if (anchor === null) {
+        continue;
+      }
+      // The anchor sits a blank line above its heading, never further.
+      for (const candidate of lines.slice(index + 1, index + 4)) {
+        const heading = /^#{2,3} (\d+(?:\.\d+)?)\.? /.exec(candidate);
+        if (heading !== null) {
+          sectionOfAnchor.set(anchor[1]!, heading[1]!);
+          break;
+        }
+      }
+    }
+
+    const mislabelled: Array<string> = [];
+
+    for (const link of spec.matchAll(/\[([^\]]*?)]\(#([^)]+)\)/g)) {
+      const [, label, target] = link;
+      const landsOn = sectionOfAnchor.get(target!);
+      const claimed = /(?:section |§|xem )(\d+(?:\.\d+)?)/i.exec(label!);
+      if (landsOn !== undefined && claimed !== null && claimed[1] !== landsOn) {
+        mislabelled.push(`[${label!}](#${target!}) → section ${landsOn}`);
+      }
+    }
+
+    expect([...new Set(mislabelled)]).toEqual([]);
+  });
+
+  // SPEC.md stops duplicating declarations by pointing at the file that holds them, which only
+  // works while the pointer resolves — and no compiler reads prose.
+  it("points only at source files that exist, naming only symbols they export", () => {
+    const dangling: Array<string> = [];
+
+    for (const pointer of spec.matchAll(/^> \*\*Hình dạng chính xác:\*\* (.+)$/gm)) {
+      // One pointer may cite two files, separated by a semicolon: `a.ts` — `X`; `b.ts` — `Y`.
+      for (const clause of pointer[1]!.split(";")) {
+        const cited = [...clause.matchAll(/`([^`]+)`/g)].map((match) => match[1]!);
+        const [path, ...symbols] = cited;
+        if (path === undefined) {
+          continue;
+        }
+
+        let source: string;
+        try {
+          source = readFileSync(join(packageRoot, path), "utf8");
+        } catch {
+          dangling.push(path);
+          continue;
+        }
+
+        // Prose between the backticks ("bảy interface thành viên") carries no backticks, so only
+        // real identifiers reach this filter.
+        for (const symbol of symbols.filter((name) => /^[A-Za-z_][A-Za-z0-9_]*$/.test(name))) {
+          if (!new RegExp(`\\b${symbol}\\b`).test(source)) {
+            dangling.push(`${path} — ${symbol}`);
+          }
+        }
+      }
+    }
+
+    expect(dangling).toEqual([]);
   });
 });
