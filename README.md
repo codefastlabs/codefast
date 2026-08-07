@@ -60,15 +60,17 @@ export function MyPage() {
 
 Requires React 19 and Tailwind CSS 4. See [codefastlabs.com](https://codefastlabs.com) for per-component documentation.
 
-## Status: Heading to 1.0
+## Status: 0.x, on purpose
 
-CodeFast is in **canary pre-release** on the road to **1.0**. The canary channel carries the upcoming 1.0 API — the one the documentation site tracks:
+CodeFast stays on **0.x**, and there is no 1.0 planned. These packages are built for the maintainer's own projects first, so the version number is release bookkeeping rather than a compatibility promise — staying on 0.x is what keeps breaking changes cheap enough to actually make. In practice that means **breaking changes ship as minor versions**. On `0.x` the default `^0.5.0` range already holds you inside `0.5.x`, so one never arrives unasked — read the [changelog](https://github.com/codefastlabs/codefast/releases) before you widen it.
+
+Install the default `latest` — the documentation site tracks it:
 
 ```bash
-pnpm add @codefast/ui@canary
+pnpm add @codefast/ui
 ```
 
-Until 1.0 lands, breaking changes can still ship between canaries. That makes this the best window for API feedback — if a name is confusing, a prop feels awkward, or a component is missing, [open an issue](https://github.com/codefastlabs/codefast/issues/new) or [start a discussion](https://github.com/codefastlabs/codefast/discussions) before the API locks.
+An open API is the point rather than a phase to get through, so feedback stays welcome indefinitely — if a name is confusing, a prop feels awkward, or a component is missing, [open an issue](https://github.com/codefastlabs/codefast/issues/new) or [start a discussion](https://github.com/codefastlabs/codefast/discussions).
 
 ## Packages
 

@@ -96,7 +96,7 @@ pnpm --filter @apps/ui build
 pnpm changeset
 ```
 
-All `@codefast/*` are one `fixed` group and version together at the highest bump. **While on 0.x, never author a `major`** — breaking changes are `minor`. The repo is in canary pre-release mode; use the `release` skill for the publish flow.
+All `@codefast/*` are one `fixed` group and version together at the highest bump. **Never author a `major`** — there is no 1.0 planned, and breaking changes are `minor`. Whether the repo is currently in canary pre-release mode is a thing to read, not to remember (`test -f .changeset/pre.json`), because it flips either way; use the `release` skill for the publish flow.
 
 ## 9. Full gate before commit / PR
 

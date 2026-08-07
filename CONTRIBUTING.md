@@ -4,7 +4,7 @@ Thanks for helping out. This file covers the repo-wide workflow; `@codefast/di` 
 
 Participation is governed by the [Code of Conduct](CODE_OF_CONDUCT.md).
 
-CodeFast is in **canary pre-release** on the road to 1.0. Breaking changes still ship between canaries, which makes API feedback more valuable now than after the surface locks.
+CodeFast stays on **0.x** with no 1.0 planned — breaking changes ship as minor versions, which is what keeps them cheap enough to make. The API surface never "locks", so feedback on a name or a shape is worth raising whenever you hit it.
 
 ## The toolchain is non-standard — read this first
 
