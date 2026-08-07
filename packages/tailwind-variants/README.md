@@ -240,7 +240,9 @@ The repository maintains a [benchmark suite](https://github.com/codefastlabs/cod
 pnpm --filter @codefast/benchmark-tailwind-variants bench
 ```
 
-The speed comes from work done once at `tv()` creation time — variant keys and boolean defaults are pre-computed — plus string fast paths in `cn` / `cx` that skip `clsx` when every argument is already a string.
+The speed comes from settling the configuration once, when `tv()` is called: variant groups, compound conditions and slot positions are compiled into a plan, and every class value is flattened to a string, so resolving a component is string concatenation rather than dictionary lookups. `cn` / `cx` take the same string fast path and skip `clsx` when every argument is already a string.
+
+[ARCHITECTURE.md](https://github.com/codefastlabs/codefast/blob/main/packages/tailwind-variants/ARCHITECTURE.md) explains that design, which parts of it are load-bearing, and how to measure a change to it.
 
 ## License
 
