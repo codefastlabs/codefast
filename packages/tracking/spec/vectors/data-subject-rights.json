@@ -1,7 +1,7 @@
 {
   "area": "data-subject-rights",
   "spec": "spec-data-subject-rights.md",
-  "specVersion": "1.0.0",
+  "specVersion": "1.0.1",
   "vectors": [
     {
       "id": "dsr.withdrawal.clears-id",

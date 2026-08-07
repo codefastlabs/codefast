@@ -12,4 +12,4 @@ Each document is named for the identifier it is cited by — `spec-consent §3` 
 - [spec/spec-destinations.md](spec/spec-destinations.md) — destination interface and reference destinations.
 - [spec/spec-server-lane.md](spec/spec-server-lane.md) — initial-consent resolution over shared/cached HTML.
 
-Each document ends with conformance test vectors (JSON input → output) mirroring this package's `tests/unit/**` suite.
+Each document ends with a prose Conformance section, projected into machine-readable vectors under [spec/vectors/](spec/vectors/README.md) so an implementation in any language can run them. This package ships **no runner for them** — `tests/unit/**` implements the same contract independently, so a vector and a unit test agreeing is evidence, not a tautology. The index above lists the six core documents; four commercial-scope extensions and `spec-security` sit alongside them.
