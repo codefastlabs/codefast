@@ -1,16 +1,13 @@
 /**
- * Tailwind Variants Core Implementation
- *
- * This module contains the main implementation of the Tailwind Variants system.
- * It provides functions to create variant-based styling functions with support
- * for slots, compound variants, and configuration merging.
+ * The package's public entry point: `tv` compiles a configuration into a plan, and the resolver it
+ * returns runs that plan against one set of props.
  */
 
-import { mergeVariantConfigs } from "#/core/config";
-import type { VariantPlan } from "#/core/plan";
-import { compileVariantPlan } from "#/core/plan";
-import { matchesCompoundConditions } from "#/processing/compound";
-import { createSlotResolvers } from "#/processing/slots";
+import { createTailwindMergeFn, cx } from "#/class-names";
+import { hasExtendConfig, mergeVariantConfigs } from "#/compile/configuration";
+import { compileVariantPlan } from "#/compile/plan";
+import { createSlotResolvers } from "#/resolve/slots";
+import { resolveVariantClasses } from "#/resolve/variants";
 import type {
   ClassValue,
   VariantConfig,
@@ -25,70 +22,10 @@ import type {
   TailwindVariantsApi,
   VariantResolverResult,
   VariantResolver,
-} from "#/types/api";
-import { createTailwindMergeFn, cx, hasExtendConfig, toClassText, toVariantKey } from "#/utilities/utils";
+} from "#/types";
 
 /** Shared stand-in for a call that passed no props, so the common case allocates nothing. */
 const EMPTY_PROPS: Record<string, unknown> = {};
-
-/**
- * Resolve classes for a configuration without slots.
- *
- * @remarks Such a configuration compiles every class value to a string, so the plan's per-slot form
- * cannot reach here — which is what the casts below rely on.
- *
- * @param customClasses - The `className`/`class` prop, appended after everything the config contributes
- */
-const resolveVariantClasses = (
-  plan: VariantPlan,
-  variantProps: Record<string, unknown>,
-  customClasses: ClassValue,
-): string | undefined => {
-  let text = plan.base;
-
-  for (const entry of plan.entries) {
-    const selected = variantProps[entry.name];
-    let classes: string | undefined;
-
-    if (selected === undefined) {
-      classes = entry.defaultClasses as string | undefined;
-    } else {
-      const key = toVariantKey(selected);
-
-      classes = key === undefined ? undefined : (entry.group[key] as string | undefined);
-    }
-
-    if (classes) {
-      text = text === "" ? classes : text + " " + classes;
-    }
-  }
-
-  for (const compound of plan.compounds) {
-    if (!matchesCompoundConditions(compound.conditions, variantProps, null)) {
-      continue;
-    }
-
-    const classes = compound.classes as string;
-
-    if (classes) {
-      text = text === "" ? classes : text + " " + classes;
-    }
-  }
-
-  if (customClasses) {
-    const classes = toClassText(customClasses);
-
-    if (classes) {
-      text = text === "" ? classes : text + " " + classes;
-    }
-  }
-
-  if (text === "") {
-    return undefined;
-  }
-
-  return plan.shouldMerge ? plan.tailwindMerge(text) : text;
-};
 
 /**
  * Create a Tailwind Variants function for regular components.

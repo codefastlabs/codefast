@@ -1,11 +1,10 @@
 /**
- * Variant Configuration Management Module
- *
- * This module handles the merging and processing of variant configurations.
- * It provides utilities for combining base configurations with extensions,
- * merging variant groups, and handling slot configurations.
+ * What a raw configuration is: how to ask about its shape, and how to collapse an `extend` chain
+ * into the single configuration a plan is compiled from.
  */
 
+import { cx } from "#/class-names";
+import { isSlotClassMap } from "#/compile/class-values";
 import type {
   ClassValue,
   CompoundSlot,
@@ -14,8 +13,32 @@ import type {
   SlotVariantConfig,
   ExtendedVariantConfig,
   SlotSchema,
-} from "#/types/api";
-import { cx, hasExtendConfig, hasSlotsConfig, isSlotClassMap } from "#/utilities/utils";
+  VariantResolver,
+} from "#/types";
+
+/**
+ * Whether a configuration declares slots.
+ *
+ * @since 0.3.16-canary.0
+ */
+export const hasSlotsConfig = <T extends VariantSchema, S extends SlotSchema>(
+  configuration: VariantConfig<T> | SlotVariantConfig<T, S>,
+): configuration is SlotVariantConfig<T, S> => {
+  return "slots" in configuration && configuration.slots !== undefined;
+};
+
+/**
+ * Whether a configuration extends another resolver's configuration.
+ *
+ * @since 0.3.16-canary.0
+ */
+export const hasExtendConfig = <T extends VariantSchema, S extends SlotSchema>(
+  configuration: VariantConfig<T> | SlotVariantConfig<T, S> | ExtendedVariantConfig<VariantSchema, T, SlotSchema, S>,
+): configuration is ExtendedVariantConfig<VariantSchema, T, SlotSchema, S> & {
+  readonly extend: VariantResolver<VariantSchema>;
+} => {
+  return "extend" in configuration && configuration.extend !== undefined;
+};
 
 /**
  * Merge two variant groups.

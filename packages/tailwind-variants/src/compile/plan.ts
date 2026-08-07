@@ -6,8 +6,10 @@
  * resolution never calls clsx.
  */
 
-import type { CompoundPlanEntry, CompoundSlotPlanEntry } from "#/processing/compound";
-import { compileCompoundSlots, compileCompoundVariants } from "#/processing/compound";
+import { toClassText, toPlanClasses, toVariantKey } from "#/compile/class-values";
+import type { CompoundPlanEntry, CompoundSlotPlanEntry } from "#/compile/compound";
+import { compileCompoundSlots, compileCompoundVariants } from "#/compile/compound";
+import { hasSlotsConfig } from "#/compile/configuration";
 import type {
   ClassValue,
   CompoundSlot,
@@ -17,8 +19,12 @@ import type {
   SlotVariantConfig,
   VariantConfig,
   VariantSchema,
-} from "#/types/api";
-import { hasBooleanVariantValues, hasSlotsConfig, toClassText, toPlanClasses, toVariantKey } from "#/utilities/utils";
+} from "#/types";
+
+/** A group keyed by "true"/"false" accepts boolean variant values. */
+const hasBooleanVariantValues = (variantGroup: Record<string, unknown>): boolean => {
+  return "true" in variantGroup || "false" in variantGroup;
+};
 
 /**
  * One variant group with the classes its default selects already resolved.

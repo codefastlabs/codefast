@@ -1,15 +1,13 @@
 /**
- * Slot Functions Module
- *
- * This module turns a compiled plan plus one set of variant props into the per-slot class
- * resolvers a slot-based component destructures.
+ * The slot lane: turning a plan plus one set of props into the per-slot class resolvers a
+ * slot-based component destructures.
  */
 
-import type { SlotPlanEntry, VariantPlan } from "#/core/plan";
-import type { CompoundSlotPlanEntry } from "#/processing/compound";
-import { collectMatchedCompoundSlots, matchesCompoundConditions } from "#/processing/compound";
-import type { ClassValue, PlanClasses, SlotClassResolver, SlotResolverProps, VariantSchema } from "#/types/api";
-import { toClassText, toVariantKey } from "#/utilities/utils";
+import { toClassText, toVariantKey } from "#/compile/class-values";
+import type { CompoundSlotPlanEntry } from "#/compile/compound";
+import { collectMatchedCompoundSlots, matchesCompoundConditions } from "#/compile/compound";
+import type { SlotPlanEntry, VariantPlan } from "#/compile/plan";
+import type { ClassValue, PlanClasses, SlotClassResolver, SlotResolverProps, VariantSchema } from "#/types";
 
 /**
  * One resolution of the variant props, shared by every slot of that call.

@@ -1,9 +1,5 @@
 /**
- * Tailwind Variants Type Definitions
- *
- * This module contains all TypeScript type definitions for the Tailwind Variants system.
- * It provides comprehensive type safety for variant configurations, component props,
- * and class value handling throughout the package.
+ * The model: configurations, variant selections, and the compiled shapes a plan holds.
  */
 
 import type { ClassValue } from "clsx";

@@ -1,10 +1,11 @@
 /**
- * Compound Variants Processing Module
+ * Compound variants and compound slots, reduced to flat condition lists.
  *
- * This module compiles compound variant and compound slot definitions into flat condition
- * lists, and matches those conditions against the props passed to a resolver.
+ * Testing a compiled condition lives here rather than under `resolve/` because it and the encoding
+ * it reads are one contract; splitting them would put the two halves out of each other's sight.
  */
 
+import { toClassText, toPlanClasses } from "#/compile/class-values";
 import type {
   ClassValue,
   CompoundSlot,
@@ -12,8 +13,7 @@ import type {
   PlanClasses,
   SlotCompoundVariant,
   VariantSchema,
-} from "#/types/api";
-import { toClassText, toPlanClasses } from "#/utilities/utils";
+} from "#/types";
 
 /** Condition satisfied when the resolved value strictly equals the configured one. */
 const CONDITION_STRICT = 0;

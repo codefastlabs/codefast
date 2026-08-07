@@ -6,9 +6,9 @@
  * variants in a type-safe manner.
  */
 
-export { createTV, tv } from "#/core/tv";
+export { createTV, tv } from "#/tv";
 
-export { cn, cx } from "#/utilities/utils";
+export { cn, cx } from "#/class-names";
 
 export type {
   ClassValue,
@@ -34,4 +34,4 @@ export type {
   VariantSchema,
   VariantSelection,
   VariantValue,
-} from "#/types/api";
+} from "#/types";
