@@ -128,7 +128,7 @@ Both functions are on the root entry; the module that owns them is also a subpat
 
 ```ts
 import { getActiveContainer, runWithContainer } from "@codefast/di";
-import { getActiveContainer, runWithContainer } from "@codefast/di/resolution/environment";
+import { getActiveContainer, runWithContainer } from "@codefast/di/ambient/active-container";
 ```
 
 ---

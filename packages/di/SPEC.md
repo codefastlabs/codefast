@@ -2179,29 +2179,33 @@ export {
 } from "#/errors/errors";
 export type { ScopeViolationDetails } from "#/errors/errors";
 
-// ── Subpath aliases (cùng module, import từ subpath cũng hợp lệ) ─────────────
+// ── Subpath: mirror đầy đủ, không loại trừ gì ────────────────────────────────
 //
-// @codefast/di/resolution/select/constraints  → same as above constraints re-exports
+// `codefast mirror` sinh một entry cho MỌI module dưới src/, nên mỗi file ở đây
+// đều là một subpath song song với root. Cấu hình của package này chỉ có một
+// dòng — `strip: "./introspection/"` — và trong toàn bộ codefast.config.js không
+// có khoá `exclude` nào.
 //
-// ── Cũng có subpath riêng (song song với root) ───────────────────────────────
+// @codefast/di/core/{token,types,binding,tag,registry,module,binding-scope,constructor-type}
+// @codefast/di/errors/{errors,diagnostics}
+// @codefast/di/injection/{descriptor,resolve-options}
+// @codefast/di/lifecycle/{scope-manager,lifecycle-manager}
+// @codefast/di/ambient/active-container
+// @codefast/di/container/{container,binding-builders}
+// @codefast/di/resolution/{resolver,context}
+// @codefast/di/resolution/cache/{binding-lookup-cache,class-introspector,activation-need}
+// @codefast/di/resolution/{plan/instantiation-plan,path/resolution-path}
+// @codefast/di/resolution/select/{binding-select,constraints}
+// @codefast/di/decorators/{inject,injectable,lifecycle-decorators}
+// @codefast/di/metadata/{metadata-types,metadata-keys,symbol-metadata-reader,verifying-metadata-reader,metadata-reader-token}
 //
-// @codefast/di/token, /types, /errors, /module,
-// @codefast/di/decorators/{inject,injectable,lifecycle-decorators},
-// @codefast/di/metadata/metadata-reader-token,
-// @codefast/di/inspector, @codefast/di/dependency-graph,
-// @codefast/di/graph-adapters/{dot,cytoscape,reactflow}
+// `strip` bỏ tiền tố introspection/, nên bốn module đó ở specifier phẳng:
+// @codefast/di/{inspector,dependency-graph}, @codefast/di/graph-adapters/{dot,cytoscape,mermaid,reactflow}
 //
-// ── KHÔNG export: engine internals ───────────────────────────────────────────
-//
-// registry, container/*, binding, constructor-type, metadata/* (trừ reader token)
-// và toàn bộ resolution/* — resolver, scope, lifecycle, binding-select,
-// binding-lookup-cache, class-introspector, activation-need, instantiation-plan,
-// resolution-path, constraints (hàm when* đã có ở root), environment, binding-scope,
-// resolve-options.
-//
-// Chúng mang invariant ghi trong ARCHITECTURE.md. Khi còn là entry point thì mọi
-// refactor nội bộ đều là breaking change — nay đã loại qua `mirror.exclude` trong
-// codefast.config.js. Mọi thứ consumer cần đều có ở root export.
+// Engine internals hiện ra ngoài là có chủ đích: package này chỉ có một consumer
+// là chính repo, nên thu hẹp bề mặt export không mua được gì, còn mở thì cho phép
+// benchmark và test chạm thẳng vào lớp cần đo. Invariant của chúng nằm trong
+// ARCHITECTURE.md, không nằm ở việc giấu module đi.
 //
 // buildDependencyGraph() từ dependency-graph.ts — đã wrap thành container.generateDependencyGraph()
 ```

@@ -22,7 +22,7 @@ import {
   whenParentTaggedAll,
   whenAnyAncestorTagged,
   whenAnyAncestorTaggedAll,
-} from "@codefast/di/constraints";
+} from "@codefast/di/resolution/select/constraints";
 ```
 
 ---

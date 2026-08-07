@@ -54,7 +54,8 @@ graph LR
 **Step 1** — create a registry (one per architectural layer, or one global):
 
 ```ts
-import { createAutoRegisterRegistry, type AutoRegisterRegistry } from "@codefast/di";
+import { createAutoRegisterRegistry } from "@codefast/di";
+import type { AutoRegisterRegistry } from "@codefast/di";
 
 const infrastructureRegistry: AutoRegisterRegistry = createAutoRegisterRegistry();
 const domainRegistry: AutoRegisterRegistry = createAutoRegisterRegistry();
