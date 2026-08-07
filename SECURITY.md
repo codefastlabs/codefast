@@ -31,10 +31,10 @@ Because breaking changes still ship between canaries before 1.0, the practical a
 
 Four `1.x` prereleases (`1.0.0-canary.6`, `1.0.0-canary.7`, `1.0.1-canary.2`, `1.0.1-canary.3`) were published by an accidental major bump and remain on npm. They are **not** a newer or more complete version of the library — the release line was reset back to `0.5.0-canary.x`, which is where all subsequent work went.
 
-They sort **above** the current canary in semver, so a range like `^1` or a `latest`-of-`1.x` resolution can silently pin you to an abandoned build that will never receive a fix. If you are on one of them, move to the current `canary`:
+They sort **above** the current release in semver, so a range like `^1` can silently pin you to an abandoned build that will never receive a fix. If you are on one of them, move back to the published release line:
 
 ```bash
-pnpm add @codefast/ui@canary
+pnpm add @codefast/ui@latest
 ```
 
 ## Reporting something that is not a vulnerability

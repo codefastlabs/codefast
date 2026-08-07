@@ -22,7 +22,7 @@ pnpm add @codefast/theme
 # yarn add @codefast/theme
 ```
 
-Requires `react` and `react-dom` version 19 or later as peer dependencies. Published as `1.0.0-canary.*` pre-releases on the way to a stable 1.0.
+Requires `react` and `react-dom` version 19 or later as peer dependencies. Published on `0.x` with no 1.0 planned — breaking changes ship as minor versions.
 
 ## Quick Start
 

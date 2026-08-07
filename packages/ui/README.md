@@ -27,11 +27,7 @@ pnpm add @codefast/ui
 
 Or the equivalent with your package manager: `npm install @codefast/ui`, `yarn add @codefast/ui`, or `bun add @codefast/ui`.
 
-The package is in canary pre-release on the way to 1.0. To follow the canary channel:
-
-```bash
-pnpm add @codefast/ui@canary
-```
+The package stays on `0.x` with no 1.0 planned, so breaking changes ship as minor versions — the default `^0.5.0` range holds you inside `0.5.x` until you widen it.
 
 ## Quick Start
 
