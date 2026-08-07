@@ -6,7 +6,7 @@
 > **Trạng thái (đã triển khai):** Các mục tiêu và checklist §7 đã được áp dụng trong `packages/cli/src/` hiện tại. **Kiến trúc sau refactor** (cây thư mục, ranh giới module, quy ước import `#/…`): xem [ARCHITECTURE.md](./ARCHITECTURE.md).  
 > Các mục **§1** dưới đây mô tả **bối cảnh trước refactor** (đường dẫn kiểu `src/domains/...`, `src/shell/...` không còn tồn tại trong repo).
 
-**Lệch nhỏ so với §3.1 (chấp nhận được):** thay `core/fs.ts` + `core/path.ts` riêng lẻ bằng `core/node-filesystem.ts` và `node:path` trực tiếp ở chỗ cần; helper xử lý `Result` đặt tên `consumeCliAppError` / `runCliResultAsync` trong `core/result-handle.ts` (tương đương ý §3.7); tokenizer class string nằm `arrange/domain/tailwind-token.ts` cạnh `token-classifier.ts` cho rõ vai trò.
+**Lệch nhỏ so với §3.1 (chấp nhận được):** thay `core/fs.ts` + `core/path.ts` riêng lẻ bằng [`core/filesystem/node.ts`](./src/core/filesystem/node.ts) và `node:path` trực tiếp ở chỗ cần; helper xử lý `Result` đặt tên `consumeCliAppError` / `runCliResultAsync` trong [`core/cli/result-handle.ts`](./src/core/cli/result-handle.ts) (tương đương ý §3.7); tokenizer class string nằm [`arrange/domain/tailwind-token.ts`](./src/arrange/domain/tailwind-token.ts) cạnh `token-classifier.ts` cho rõ vai trò.
 
 ---
 
