@@ -16,6 +16,8 @@ const verifyingReaders = new WeakSet<MetadataReader>();
  * @remarks The decorator reader writes the metadata it later reads, so there is nothing to check and
  * nothing to pay — a container that supplies no reader of its own is left on the same code path it
  * has always taken. A supplied reader is a claim, and only its callers can be charged for checking.
+ *
+ * @since 0.6.0
  */
 export function verifyingMetadataReader(reader: MetadataReader): MetadataReader {
   if (reader === defaultMetadataReader || verifyingReaders.has(reader)) {

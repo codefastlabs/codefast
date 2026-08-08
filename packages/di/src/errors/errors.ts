@@ -151,6 +151,8 @@ export class ScopeViolationError extends DiError {
  * @remarks Separate from {@link MissingMetadataError}: absent metadata is a class the container was
  * never told about, while invalid metadata is a reader that answered wrongly. Covers both the
  * constructor answer and the lifecycle one, since only the `reason` differs.
+ *
+ * @since 0.6.0
  */
 export class InvalidMetadataError extends DiError {
   readonly code = "INVALID_METADATA";
@@ -308,6 +310,8 @@ export class SelfBindingRequiresClassError extends DiError {
  * @remarks Instance-only by construction: `@inject` resolves through the container active while an
  * instance is built, and `@postConstruct`/`@preDestroy` bracket one instance's lifecycle. A static
  * member belongs to the class, which no container constructs.
+ *
+ * @since 0.6.0
  */
 export class StaticMemberDecoratorError extends DiError {
   readonly code = "STATIC_MEMBER_DECORATOR";

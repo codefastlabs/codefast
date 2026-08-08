@@ -1,5 +1,14 @@
 # @codefast/ui
 
+## 0.6.0
+
+### Patch Changes
+
+- [#700](https://github.com/codefastlabs/codefast/pull/700) [`8f48c7b`](https://github.com/codefastlabs/codefast/commit/8f48c7b81b8a1a1fcad8a6b62685381a2be48144) Thanks [@thevuong](https://github.com/thevuong)! - `ProgressCircle` no longer wraps its `progressCircleVariants(...)` call in `useMemo`. A variant function now remembers what each selection resolved to, so the call already returns the same object for the same selection — the hook was re-deriving a dependency array to guard a lookup.
+
+- Updated dependencies [[`ea48ae2`](https://github.com/codefastlabs/codefast/commit/ea48ae205305ee7913cf0ade11f3dc32f6cac874), [`fe7e9e4`](https://github.com/codefastlabs/codefast/commit/fe7e9e46c6f42b8ae0bc5070656e085a4fe60436), [`93b18ac`](https://github.com/codefastlabs/codefast/commit/93b18ac606e7fa6b5de95ca2679a38585c072e5c), [`d0dd326`](https://github.com/codefastlabs/codefast/commit/d0dd326e01d2bf3ecdf9283384bda22f07c2a6fe)]:
+  - @codefast/tailwind-variants@0.6.0
+
 ## 0.5.0
 
 ### Minor Changes

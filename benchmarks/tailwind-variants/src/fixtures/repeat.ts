@@ -24,11 +24,17 @@ const SLOTS_SELECTIONS = [
 
 const REPEAT_LENGTH = 12;
 
+/**
+ * @since 0.6.0
+ */
 export const repeatSimpleTestProps: ReadonlyArray<Record<string, string>> = Array.from(
   { length: REPEAT_LENGTH },
   (_, index) => ({ ...SIMPLE_SELECTIONS[index % SIMPLE_SELECTIONS.length] }),
 );
 
+/**
+ * @since 0.6.0
+ */
 export const repeatSlotsTestProps: ReadonlyArray<Record<string, string>> = Array.from(
   { length: REPEAT_LENGTH },
   (_, index) => ({ ...SLOTS_SELECTIONS[index % SLOTS_SELECTIONS.length] }),
