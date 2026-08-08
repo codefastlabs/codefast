@@ -56,9 +56,9 @@ path taken by every variant the caller did not pass, which is most of them.
 compound variant per call_, and resolves each condition's configured fallback once.
 
 **Every class value is flattened to a string.** This is what lets resolution be nothing but string
-concatenation — no intermediate array, no spread, no clsx at runtime. It is safe because clsx joins
-its arguments' contributions in order and drops the empty ones, so flattening each value separately
-gives the same answer as flattening them together.
+concatenation — no intermediate array, no spread, no flattening pass at runtime. It is safe because
+flattening joins each argument's contributions in order and drops the empty ones, so flattening each
+value separately gives the same answer as flattening them together.
 
 **Slot maps carry slot positions, not slot names.** See below.
 
@@ -123,8 +123,12 @@ Everything else follows from having to make that distinction hold:
 - **The flat lane casts `PlanClasses` to `string`.** A configuration without slots compiles every
   class value to a string, so the per-slot form cannot reach that code. The cast encodes an
   invariant the compiler cannot see, not a shortcut.
-- **`toClassText` is not a wrapper around clsx.** Its string check is what keeps the common case off
-  clsx entirely, at compile time and for the runtime `class`/`className` prop.
+- **`toClassText` is not a wrapper around the flattener.** Its string check is what keeps the common
+  case out of it entirely, at compile time and for the runtime `class`/`className` prop.
+- **The flattener in `class-names.ts` reproduces clsx exactly, corners included** — a `bigint`
+  contributes nothing though the type admits one, and object keys are read with `for…in`. It
+  replaced the dependency, so matching it is the contract; the behaviour sweep run against the build
+  that still had clsx is what holds it there.
 - **A slot call context keeps `conditionValues`, not the caller's props.** A cached resolver
   outlives its call, and the props object a component passes carries `children` — most of a tree.
   Only the names a compound tests are copied out, and a configuration without compounds shares one
