@@ -52,12 +52,14 @@ describe("resolution cache", () => {
     expect(toggle({ pressed: "true" } as never)).toBe("block opacity-100");
   });
 
+  // The types reject this shape — a call could never satisfy the condition — but a JavaScript
+  // caller, or a hand-merged configuration, still reaches the runtime with it.
   test("keys a compound on a variant the configuration never declares", () => {
     const badge = tv({
       base: "block",
       compoundVariants: [{ class: "text-red-500", ghost: true, size: "sm" }],
       variants: { size: { md: "p-4", sm: "p-2" } },
-    });
+    } as never) as (props?: Record<string, unknown>) => string | undefined;
 
     expect(badge({ ghost: true, size: "sm" } as never)).toBe("block p-2 text-red-500");
     expect(badge({ size: "sm" } as never)).toBe("block p-2");

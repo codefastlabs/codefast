@@ -73,13 +73,21 @@ export type SlotSchema = Record<string, ClassValue>;
  *
  * @since 0.3.16-canary.0
  */
-export type VariantSelection<T extends VariantSchema> = {
+export type VariantSelection<T extends VariantSchema> = VariantValues<T> & {
+  className?: ClassValue;
+  class?: ClassValue;
+};
+
+/**
+ * One value chosen per variant, with none of the class properties a call may also carry.
+ *
+ * @remarks This is what `defaultVariants` declares. Sharing the call-site type there would accept a
+ * `className` the configuration has no use for.
+ */
+export type VariantValues<T extends VariantSchema> = {
   readonly [Variant in keyof T]?: HasBooleanVariant<T[Variant]> extends true
     ? boolean | VariantValue<keyof T[Variant]>
     : VariantValue<keyof T[Variant]>;
-} & {
-  className?: ClassValue;
-  class?: ClassValue;
 };
 
 /**
@@ -93,6 +101,22 @@ export type VariantSelection<T extends VariantSchema> = {
 export type SlotClassMap<S extends SlotSchema> = {
   readonly [Slot in keyof S]?: ClassValue;
 };
+
+/** A class value with no bare object form, so the only object a slot configuration takes is a map. */
+export type PlainClassValue = ReadonlyArray<PlainClassValue> | bigint | boolean | null | number | string | undefined;
+
+/**
+ * What one variant value carries in a slot configuration: classes for the base slot, or a map
+ * naming the slots it targets.
+ *
+ * @remarks Resolution reads any object here as slot names, never as clsx conditions, so the type
+ * says the same. `base` is admitted whether or not the configuration declares it, because the plan
+ * synthesises it as slot position zero either way.
+ */
+export type SlotClassValue<S extends SlotSchema> = PlainClassValue | (SlotClassMap<S> & { base?: ClassValue });
+
+/** A variant schema whose object values name slots rather than clsx conditions. */
+export type SlotVariantSchema<S extends SlotSchema> = Record<string, Record<string, SlotClassValue<S>>>;
 
 /**
  * Type for compound variant definitions.
@@ -163,8 +187,8 @@ export type CompoundSlot<T extends VariantSchema, S extends SlotSchema> =
  */
 export interface VariantConfig<T extends VariantSchema> {
   readonly base?: ClassValue;
-  readonly compoundVariants?: ReadonlyArray<CompoundVariant<T>>;
-  readonly defaultVariants?: VariantSelection<T>;
+  readonly compoundVariants?: ReadonlyArray<CompoundVariant<NoInfer<T>>>;
+  readonly defaultVariants?: VariantValues<NoInfer<T>>;
   readonly variants?: T;
 }
 
@@ -178,11 +202,11 @@ export interface VariantConfig<T extends VariantSchema> {
  */
 export interface SlotVariantConfig<T extends VariantSchema, S extends SlotSchema> {
   readonly base?: ClassValue;
-  readonly compoundSlots?: ReadonlyArray<CompoundSlot<T, S>>;
-  readonly compoundVariants?: ReadonlyArray<SlotCompoundVariant<T, S>>;
-  readonly defaultVariants?: VariantSelection<T>;
+  readonly compoundSlots?: ReadonlyArray<CompoundSlot<NoInfer<T>, NoInfer<S>>>;
+  readonly compoundVariants?: ReadonlyArray<SlotCompoundVariant<NoInfer<T>, NoInfer<S>>>;
+  readonly defaultVariants?: VariantValues<NoInfer<T>>;
   readonly slots?: S;
-  readonly variants?: T;
+  readonly variants?: SlotVariantSchema<NoInfer<S>> & T;
 }
 
 /**
@@ -355,8 +379,14 @@ export interface ExtendedVariantConfig<
   readonly compoundVariants?: ReadonlyArray<
     SlotCompoundVariant<MergedVariantSchema<TBase, TExtension>, MergedSlotSchema<SBase, SExtension>>
   >;
-  readonly defaultVariants?: VariantSelection<MergedVariantSchema<TBase, TExtension>>;
-  readonly extend?: VariantResolver<TBase, SBase>;
+  readonly defaultVariants?: VariantValues<MergedVariantSchema<TBase, TExtension>>;
+  /**
+   * Required, because this is the overload for extending. Optional, it makes the last overload a
+   * catch-all: a configuration the earlier ones correctly reject still matches here, and `TBase`
+   * having nothing to infer from widens to `VariantSchema`, whose key is `string` — so every
+   * mistyped variant name becomes legal again.
+   */
+  readonly extend: VariantResolver<TBase, SBase>;
   readonly slots?: SExtension;
   readonly variants?: TExtension;
 }
