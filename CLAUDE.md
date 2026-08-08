@@ -101,6 +101,8 @@ This is a **TypeScript** project, so doc comments are **TSDoc** — never JSDoc 
 
 Audit every public API you add or touch (exported function/type/prop/option/config key) against these — clarity at the point of use beats brevity, and every word must convey information:
 
+- **No `I` or `T` prefix, and no `Impl` suffix.** An interface describes behaviour, so `Container` — not `IContainer`; `DefaultContainer` — not `ContainerImpl`. **A type parameter is named for what it holds**: `Value`, `Target`, `Deps`, `Ctx`, `Result` — not `T`, `TValue`, `TResult`. A bare `T` says nothing at the use site, which is where the reader meets it. Verbatim external API quoted for comparison (Inversify's `Newable<T>`) keeps its own spelling. This originated as [`packages/di/SPEC.md` §2.1](packages/di/SPEC.md) and applies repo-wide — it lived in one package's spec long enough for another package to drift from it.
+
 - **Name by role, never lie.** A name must state what the thing actually does (`options` for a hard selection criterion, never `hint`; a render function is `renderX`, never `customLabel`). No filler suffixes — `Type` on a type alias says nothing (`AppearanceContextValue`, not `AppearanceContextType`).
 - **Properties/types are nouns** (`delivery: "immediate"`, not `deliver`); **side-effecting functions are imperative verbs** (`track`, `flush`); handlers are `onX`.
 - **Booleans read as assertions** (`animated`, `isScrollAnchor`, `isTrackingAllowed`), or as conventional option-bag instructions (`trackPageViews`, `includeAds`) when they configure behavior.

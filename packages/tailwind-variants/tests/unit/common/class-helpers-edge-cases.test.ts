@@ -1,6 +1,7 @@
-import { cn, cx, isSlotClassMap } from "#/utilities/utils";
+import { cn, cx } from "#/class-names";
+import { isSlotClassMap } from "#/compile/class-values";
 
-describe("Tailwind Variants (TV) - Utils Edge Cases", () => {
+describe("Tailwind Variants (TV) - Class Helper Edge Cases", () => {
   describe("cx function edge cases", () => {
     test("should handle empty array", () => {
       expect(cx()).toBe("");
