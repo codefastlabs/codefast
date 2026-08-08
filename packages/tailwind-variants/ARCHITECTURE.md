@@ -136,17 +136,22 @@ Everything else follows from having to make that distinction hold:
 
 ## The trade this design makes
 
-`tv` is the expensive end. It flattens every class value and precomputes slot positions, and the
-`construct-*` rows — added because the other scenarios hoist `tv` out of the timed loop and so could
-never see it — put the cost at **0.47× of `tailwind-variants` for a flat component and 0.19× for a
-slot one**. That is the deliberate shape of the design, not a defect: it buys a resolution the same
-run measures at 5.8× to 96× upstream, so a component pays for its definition within a render or two.
+`tv` is the expensive end. It flattens every class value, precomputes slot positions and copies every
+variant group onto a prototype-less object, and the `construct-*` rows — added because the other
+scenarios hoist `tv` out of the timed loop and so could never see it — put the cost at **0.24× of
+`tailwind-variants` for a flat component and roughly a fifth for a slot one**. Read the slot figure
+loosely: the harness marks that cell unstable in most runs, which is the same reason this file tells
+you not to read a single slot row closely.
 
-The selection cache widens that trade slightly, and the same rows bound how much: **0.77× and 0.94×
-against this package's own previous build**, or about a quarter of a microsecond added per component
-definition. Two things keep it there, and both are worth preserving — the encoder is compiled on
-first resolution rather than in `tv`, so a component defined and never rendered pays nothing; and
-value ids are handed out as values turn up rather than up front.
+That is the deliberate shape of the design, not a defect. The same run measures resolution at 4.2×
+to 118× upstream, so a component pays for its definition within a render or two.
+
+Two later changes widened the trade rather than the design itself. The selection cache added about a
+quarter of a microsecond per definition, and the prototype-less copy roughly doubled what was left —
+the flat row went from 0.47× to 0.24× on that alone. Two things keep the first of those small, and
+both are worth preserving: the encoder is compiled on first resolution rather than in `tv`, so a
+component defined and never rendered pays nothing, and value ids are handed out as values turn up
+rather than up front.
 
 If construction ever needs to come down, that is where to look, and `construct-*` is the row to read.
 
