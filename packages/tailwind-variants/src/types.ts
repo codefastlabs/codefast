@@ -194,6 +194,15 @@ export interface SlotVariantConfig<T extends VariantSchema, S extends SlotSchema
  * @since 0.3.16-canary.0
  */
 export interface TailwindVariantsOptions {
+  /**
+   * Answer a repeated variant selection from what the resolver already produced.
+   *
+   * @remarks Turn this off for a component whose selections are effectively unique per call, where
+   * the store would fill with entries nothing reads again.
+   *
+   * @defaultValue true
+   */
+  readonly cacheResolutions?: boolean;
   readonly twMerge?: boolean;
   readonly twMergeConfig?: ConfigExtension<string, string>;
 }

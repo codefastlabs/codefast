@@ -19,10 +19,39 @@ import type { ClassValue, SlotClassResolver, SlotResolverProps, VariantSchema } 
  */
 interface SlotCallContext {
   readonly compoundSlots: ReadonlyArray<CompoundSlotPlanEntry>;
+  readonly conditionValues: Record<string, unknown>;
   readonly matched: ReadonlyArray<PlanClasses | undefined>;
+  readonly resolved: Array<string | typeof NOT_RESOLVED | undefined>;
   readonly texts: ReadonlyArray<string>;
-  readonly variantProps: Record<string, unknown>;
 }
+
+/** Distinguishes a slot nobody has asked for yet from one that resolved to nothing. */
+const NOT_RESOLVED: unique symbol = Symbol("not-resolved");
+
+const EMPTY_CONDITION_VALUES: Record<string, unknown> = {};
+
+/**
+ * Copy out the props a compound can still read once the call is over.
+ *
+ * @remarks A context outlives its call when a resolver is reused, and holding the caller's props
+ * object would pin whatever else it carries — `children`, most of a component's tree.
+ */
+const toConditionValues = (
+  conditionNames: ReadonlyArray<string>,
+  variantProps: Record<string, unknown>,
+): Record<string, unknown> => {
+  if (conditionNames.length === 0) {
+    return EMPTY_CONDITION_VALUES;
+  }
+
+  const values: Record<string, unknown> = {};
+
+  for (const name of conditionNames) {
+    values[name] = variantProps[name];
+  }
+
+  return values;
+};
 
 /** Distribute one compiled value across the slots it names, or to `base` when it is a plain string. */
 const distribute = (classes: PlanClasses | undefined, texts: Array<string>): void => {
@@ -47,9 +76,11 @@ const createSlotCallContext = (
   variantProps: Record<string, unknown>,
 ): SlotCallContext => {
   const texts: Array<string> = [];
+  const resolved: Array<string | typeof NOT_RESOLVED | undefined> = [];
 
   for (const slot of slots) {
     texts.push(slot.classes);
+    resolved.push(NOT_RESOLVED);
   }
 
   const matched: Array<PlanClasses | undefined> = [];
@@ -86,7 +117,13 @@ const createSlotCallContext = (
     }
   }
 
-  return { compoundSlots, matched, texts, variantProps };
+  return {
+    compoundSlots,
+    conditionValues: toConditionValues(plan.conditionNames, variantProps),
+    matched,
+    resolved,
+    texts,
+  };
 };
 
 /** The classes a compiled value contributes to one slot, for the lane that cannot use `texts`. */
@@ -142,7 +179,7 @@ const resolveSlotWithOverrides = (
   }
 
   for (const compound of plan.compounds) {
-    if (!matchesCompoundConditions(compound.conditions, context.variantProps, overrides)) {
+    if (!matchesCompoundConditions(compound.conditions, context.conditionValues, overrides)) {
       continue;
     }
 
@@ -169,25 +206,35 @@ const resolveSlot = (
   slotIndex: number,
   slotProps: SlotResolverProps<VariantSchema> | undefined,
 ): string | undefined => {
-  let text: string;
-
   if (slotProps === undefined) {
-    text = context.texts[slotIndex] as string;
-  } else {
-    const overrides = slotProps as Record<string, unknown>;
+    // A resolver shared across calls reads each slot again, and the merge is the expensive part.
+    const memoised = context.resolved[slotIndex];
 
-    text = resolveSlotWithOverrides(plan, context, slot, slotIndex, overrides);
-
-    const slotClassName = toClassText(overrides.className as ClassValue);
-    const slotClass = toClassText(overrides.class as ClassValue);
-
-    if (slotClassName) {
-      text = text === "" ? slotClassName : text + " " + slotClassName;
+    if (memoised !== NOT_RESOLVED) {
+      return memoised;
     }
 
-    if (slotClass) {
-      text = text === "" ? slotClass : text + " " + slotClass;
-    }
+    const slotText = context.texts[slotIndex] as string;
+    const answer = slotText === "" ? undefined : plan.shouldMerge ? plan.tailwindMerge(slotText) : slotText;
+
+    context.resolved[slotIndex] = answer;
+
+    return answer;
+  }
+
+  const overrides = slotProps as Record<string, unknown>;
+
+  let text = resolveSlotWithOverrides(plan, context, slot, slotIndex, overrides);
+
+  const slotClassName = toClassText(overrides.className as ClassValue);
+  const slotClass = toClassText(overrides.class as ClassValue);
+
+  if (slotClassName) {
+    text = text === "" ? slotClassName : text + " " + slotClassName;
+  }
+
+  if (slotClass) {
+    text = text === "" ? slotClass : text + " " + slotClass;
   }
 
   if (text === "") {

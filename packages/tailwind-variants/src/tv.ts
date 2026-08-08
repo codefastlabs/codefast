@@ -6,10 +6,14 @@
 import { createTailwindMergeFn, cx } from "#/class-names";
 import { hasExtendConfig, mergeVariantConfigs } from "#/compile/configuration";
 import { compileVariantPlan } from "#/compile/plan";
+import { compileSelectionEncoder, UNENCODABLE } from "#/compile/selection";
+import type { ResolutionCache } from "#/resolve/cache";
+import { createResolutionCache } from "#/resolve/cache";
 import { createSlotResolvers } from "#/resolve/slots";
 import { resolveVariantClasses } from "#/resolve/variants";
 import type {
   ClassValue,
+  SlotClassResolver,
   VariantConfig,
   VariantSchema,
   VariantSelection,
@@ -26,6 +30,30 @@ import type {
 
 /** Shared stand-in for a call that passed no props, so the common case allocates nothing. */
 const EMPTY_PROPS: Record<string, unknown> = {};
+
+/** Stored for a selection that resolves to no classes, so a miss stays distinguishable from it. */
+const NO_CLASSES = null;
+
+/** One resolver's selection encoder paired with the store it fills. */
+interface ResolverMemo<TValue> {
+  readonly cache: ResolutionCache<TValue>;
+  readonly keyOf: (variantProps: Record<string, unknown>) => number;
+}
+
+/**
+ * The caller's own classes as a key fragment, or `null` for a clsx-shaped value no key can carry.
+ *
+ * @remarks Tested before the selection is encoded: a call the cache can never answer should not pay
+ * to find that out.
+ */
+const toCustomClassKey = (customClasses: ClassValue): string | null => {
+  // Every falsy value contributes nothing, so they all share the selection's own key.
+  if (!customClasses) {
+    return "";
+  }
+
+  return typeof customClasses === "string" ? customClasses : null;
+};
 
 /**
  * Create a class resolver for a component without slots.
@@ -81,7 +109,11 @@ export function tv<T extends VariantSchema, S extends SlotSchema>(
   configuration: VariantConfig<T> | SlotVariantConfig<T, S> | ExtendedVariantConfig<VariantSchema, T, SlotSchema, S>,
   tvConfiguration: TailwindVariantsOptions = {},
 ): VariantResolver<T, S> {
-  const { twMerge: shouldMergeClasses = true, twMergeConfig } = tvConfiguration;
+  const {
+    cacheResolutions: shouldCacheResolutions = true,
+    twMerge: shouldMergeClasses = true,
+    twMergeConfig,
+  } = tvConfiguration;
   const tailwindMergeFn = createTailwindMergeFn(twMergeConfig);
 
   const mergedConfiguration: VariantConfig<VariantSchema> | SlotVariantConfig<VariantSchema, SlotSchema> =
@@ -99,24 +131,81 @@ export function tv<T extends VariantSchema, S extends SlotSchema>(
   const plan = compileVariantPlan(mergedConfiguration, shouldMergeClasses, tailwindMergeFn);
   const slots = plan.slots;
 
+  const compileMemo = <TValue>(): ResolverMemo<TValue> | null => {
+    const encoder = shouldCacheResolutions ? compileSelectionEncoder(plan, slots !== null) : null;
+
+    return encoder === null ? null : { cache: createResolutionCache<TValue>(), keyOf: encoder.keyOf };
+  };
+
+  // Compiled on first resolution, so a component defined and never rendered pays nothing for it.
+  let flatMemo: ResolverMemo<string | typeof NO_CLASSES> | null | undefined;
+  let slotMemo: ResolverMemo<Record<string, SlotClassResolver<VariantSchema>>> | null | undefined;
+
   const variantResolverFunction = (
     variantProps?: VariantSelection<T>,
   ): S extends Record<string, never> ? string | undefined : VariantResolverResult<T, S> => {
     const props = (variantProps ?? EMPTY_PROPS) as Record<string, unknown>;
 
+    type Result = S extends Record<string, never> ? string | undefined : VariantResolverResult<T, S>;
+
     if (slots !== null) {
-      return createSlotResolvers(plan, slots, props) as unknown as S extends Record<string, never>
-        ? string | undefined
-        : VariantResolverResult<T, S>;
+      if (slotMemo === undefined) {
+        slotMemo = compileMemo<Record<string, SlotClassResolver<VariantSchema>>>();
+      }
+
+      const memo = slotMemo;
+
+      if (memo !== null) {
+        const selectionKey = memo.keyOf(props);
+
+        if (selectionKey !== UNENCODABLE) {
+          const hit = memo.cache.get(selectionKey);
+
+          if (hit !== undefined) {
+            return hit as unknown as Result;
+          }
+
+          const resolvers = createSlotResolvers(plan, slots, props);
+
+          memo.cache.set(selectionKey, resolvers);
+
+          return resolvers as unknown as Result;
+        }
+      }
+
+      return createSlotResolvers(plan, slots, props) as unknown as Result;
     }
 
     const className = props.className as ClassValue;
+    const customClasses = className === undefined || className === null ? (props.class as ClassValue) : className;
 
-    return resolveVariantClasses(
-      plan,
-      props,
-      className === undefined || className === null ? (props.class as ClassValue) : className,
-    ) as unknown as S extends Record<string, never> ? string | undefined : VariantResolverResult<T, S>;
+    if (flatMemo === undefined) {
+      flatMemo = compileMemo<string | typeof NO_CLASSES>();
+    }
+
+    const memo = flatMemo;
+    const customClassKey = memo === null ? null : toCustomClassKey(customClasses);
+
+    if (memo !== null && customClassKey !== null) {
+      const selectionKey = memo.keyOf(props);
+
+      if (selectionKey !== UNENCODABLE) {
+        const cacheKey = customClassKey === "" ? selectionKey : `${String(selectionKey)} ${customClassKey}`;
+        const hit = memo.cache.get(cacheKey);
+
+        if (hit !== undefined) {
+          return (hit === NO_CLASSES ? undefined : hit) as unknown as Result;
+        }
+
+        const resolved = resolveVariantClasses(plan, props, customClasses);
+
+        memo.cache.set(cacheKey, resolved ?? NO_CLASSES);
+
+        return resolved as unknown as Result;
+      }
+    }
+
+    return resolveVariantClasses(plan, props, customClasses) as unknown as Result;
   };
 
   const configuredVariantResolver = variantResolverFunction as VariantResolver<T, S>;

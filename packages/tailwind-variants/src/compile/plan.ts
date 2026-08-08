@@ -48,6 +48,8 @@ export interface SlotPlanEntry {
  */
 export interface VariantPlan {
   readonly base: string;
+  /** Every variant name a compound tests — the only props a resolution has to remember. */
+  readonly conditionNames: ReadonlyArray<string>;
   readonly compoundSlots: ReadonlyArray<CompoundSlotPlanEntry>;
   readonly compounds: ReadonlyArray<CompoundPlanEntry>;
   readonly entries: ReadonlyArray<VariantPlanEntry>;
@@ -57,6 +59,32 @@ export interface VariantPlan {
 }
 
 const EMPTY_ENTRIES: ReadonlyArray<VariantPlanEntry> = [];
+const EMPTY_CONDITION_NAMES: ReadonlyArray<string> = [];
+
+const collectConditionNames = (
+  compounds: ReadonlyArray<CompoundPlanEntry>,
+  compoundSlots: ReadonlyArray<CompoundSlotPlanEntry>,
+): ReadonlyArray<string> => {
+  if (compounds.length === 0 && compoundSlots.length === 0) {
+    return EMPTY_CONDITION_NAMES;
+  }
+
+  const names = new Set<string>();
+
+  for (const compound of compounds) {
+    for (const condition of compound.conditions) {
+      names.add(condition.name);
+    }
+  }
+
+  for (const compoundSlot of compoundSlots) {
+    for (const condition of compoundSlot.conditions) {
+      names.add(condition.name);
+    }
+  }
+
+  return [...names];
+};
 
 /** Flatten a variant group's classes, reusing the source object when nothing needed flattening. */
 const normalizeVariantGroup = (
@@ -161,22 +189,26 @@ export const compileVariantPlan = (
     }
   }
 
+  const compoundSlots = compileCompoundSlots(
+    (hasSlotsConfig(configuration) ? configuration.compoundSlots : undefined) as
+      | ReadonlyArray<CompoundSlot<VariantSchema, never>>
+      | undefined,
+    defaultVariantProps,
+    slotIndexByName ?? {},
+  );
+  // Only the flat lane treats a boolean absent from props and defaults as false.
+  const compounds = compileCompoundVariants(
+    configuration.compoundVariants as ReadonlyArray<SlotCompoundVariant<VariantSchema, never>> | undefined,
+    defaultVariantProps,
+    slotIndexByName,
+    slotIndexByName === null,
+  );
+
   return {
     base: toClassText(configuration.base),
-    compoundSlots: compileCompoundSlots(
-      (hasSlotsConfig(configuration) ? configuration.compoundSlots : undefined) as
-        | ReadonlyArray<CompoundSlot<VariantSchema, never>>
-        | undefined,
-      defaultVariantProps,
-      slotIndexByName ?? {},
-    ),
-    // Only the flat lane treats a boolean absent from props and defaults as false.
-    compounds: compileCompoundVariants(
-      configuration.compoundVariants as ReadonlyArray<SlotCompoundVariant<VariantSchema, never>> | undefined,
-      defaultVariantProps,
-      slotIndexByName,
-      slotIndexByName === null,
-    ),
+    compoundSlots,
+    compounds,
+    conditionNames: collectConditionNames(compounds, compoundSlots),
     entries: compileVariantEntries(configuration.variants ?? {}, defaultVariantProps, slotIndexByName),
     shouldMerge,
     slots,
