@@ -28,9 +28,8 @@ export const resolveVariantClasses = (
     if (selected === undefined) {
       classes = entry.defaultClasses as string | undefined;
     } else {
-      const key = toVariantKey(selected);
-
-      classes = key === undefined ? undefined : (entry.group[key] as string | undefined);
+      // `toVariantKey` only answers `undefined` for `undefined`, which the branch above took.
+      classes = entry.group[toVariantKey(selected) as string] as string | undefined;
     }
 
     if (classes) {
