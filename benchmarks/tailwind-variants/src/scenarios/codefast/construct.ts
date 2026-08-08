@@ -28,6 +28,7 @@ export function buildCodefastConstructScenarios(): ReadonlyArray<BenchScenario> 
   return [
     {
       ...CONSTRUCT_SIMPLE,
+      batch: DEFINITIONS_PER_LOOP,
       excludeFromAggregates: true,
       // Consuming the render keeps the definition alive: a `tv` call nothing reads can be elided.
       build: () => {
@@ -47,6 +48,7 @@ export function buildCodefastConstructScenarios(): ReadonlyArray<BenchScenario> 
     },
     {
       ...CONSTRUCT_SLOTS,
+      batch: DEFINITIONS_PER_LOOP,
       excludeFromAggregates: true,
       build: () => {
         let renderedLength = 0;

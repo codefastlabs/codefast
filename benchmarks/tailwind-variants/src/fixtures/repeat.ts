@@ -1,11 +1,13 @@
 /**
  * Repeat Benchmark Data
  *
- * The other prop fixtures rotate a distinct selection on every call, which is the right shape for
- * measuring resolution but the wrong shape for the workload a UI actually has: a list renders the
- * same few selections thousands of times. Values repeat with period 3; the objects carrying them
- * are fresh, because React builds a new props object per render and a fixture reusing one
- * reference would measure an identity a real caller never has.
+ * A smaller working set than the other prop fixtures: twelve calls over three distinct selections
+ * rather than twelve distinct ones, which is what a list rendering one component looks like.
+ *
+ * What this does **not** vary is object identity. The array is built once, so the timed loop hands
+ * the same twelve references over and over — as every other fixture here does. Measuring the cost of
+ * the fresh props object React builds per render would need a fixture that allocates inside the
+ * timed function, and none of these do.
  */
 
 const SIMPLE_SELECTIONS = [

@@ -10,4 +10,8 @@ Two smaller corrections fall out. `defaultVariants` is typed by the new `Variant
 
 A configuration without slots keeps its clsx object values, and a compound condition naming an undeclared variant still resolves at runtime for JavaScript callers and merged configurations — it is only the typed authoring path that now rejects it, since no typed call could ever satisfy such a condition.
 
-`tests/types/config-authoring.test.ts` holds all of this with `@ts-expect-error`, the first negative type tests in the package. The 110 existing assertions only ever proved what compiles, which is exactly how three gaps survived.
+`tests/types/common/config-authoring.test.ts` holds all of this with `@ts-expect-error`, the first negative type tests in the package. The 110 existing assertions only ever proved what compiles, which is exactly how three gaps survived.
+
+**One configuration shape stops compiling.** Requiring `extend` closes the overload that used to accept anything, and that overload was also what accepted a configuration whose literal types had widened — a hoisted `const defaultVariants = { size: "sm" }`, a hoisted `compoundVariants` array, a spread of a shared partial. Those have type `{ size: string }`, which was never assignable to `{ size?: "sm" }`; they compiled only because the catch-all widened the schema to swallow them. Add `as const` to the hoisted value, or inline it.
+
+The error TypeScript reports for this is `Property 'extend' is missing`, which names the last overload tried rather than the real mismatch. It is the same message a plain variant typo now produces. Nothing in this repository hit either case, but a consumer with a shared configuration fragment will.
