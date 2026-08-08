@@ -64,8 +64,8 @@ function makeLogger(source: string): Logger {
 console.log("=== 1. whenParentIs / whenNoParentIs ===\n");
 
 const LoggerToken = token<Logger>("Logger");
-const OrderServiceToken = token<{ run(): void }>("OrderService");
-const BillingServiceToken = token<{ run(): void }>("BillingService");
+const OrderServiceToken = token<OrderService>("OrderService");
+const BillingServiceToken = token<BillingService>("BillingService");
 
 @injectable([inject(LoggerToken)])
 class OrderService {
@@ -115,11 +115,11 @@ parentIsContainer.resolve(BillingServiceToken).run(); // [silent]  processing bi
 
 console.log("\n=== 2. whenAnyAncestorIs / whenNoAncestorIs ===\n");
 
-const RiskScorerToken = token<{ score(): string }>("RiskScorer");
-const FraudCheckerToken = token<{ check(): string }>("FraudChecker");
-const PaymentOrchestratorToken = token<{ run(): void }>("PaymentOrchestrator");
-const InvoiceBuilderToken = token<{ build(): string }>("InvoiceBuilder");
-const BillingOrchestratorToken = token<{ run(): void }>("BillingOrchestrator");
+const RiskScorerToken = token<RiskScorer>("RiskScorer");
+const FraudCheckerToken = token<FraudChecker>("FraudChecker");
+const PaymentOrchestratorToken = token<PaymentOrchestrator>("PaymentOrchestrator");
+const InvoiceBuilderToken = token<InvoiceBuilder>("InvoiceBuilder");
+const BillingOrchestratorToken = token<BillingOrchestrator>("BillingOrchestrator");
 
 @injectable([inject(LoggerToken)])
 class RiskScorer {
@@ -205,8 +205,8 @@ ancestorIsContainer.resolve(BillingOrchestratorToken).run(); // [standard] build
 
 console.log("\n=== 3. whenParentNamed / whenAnyAncestorNamed ===\n");
 
-const DataSourceToken = token<{ connect(): void }>("DataSource");
-const QueryRunnerToken = token<{ execute(): void }>("QueryRunner");
+const DataSourceToken = token<DataSource>("DataSource");
+const QueryRunnerToken = token<QueryRunner>("QueryRunner");
 
 @injectable([inject(LoggerToken)])
 class DataSource {
@@ -268,8 +268,8 @@ interface CacheAdapter {
 }
 
 const CacheAdapterToken = token<CacheAdapter>("CacheAdapter");
-const SessionStoreToken = token<{ getSession(id: string): string | undefined }>("SessionStore");
-const ProductCacheToken = token<{ getProduct(id: string): string | undefined }>("ProductCache");
+const SessionStoreToken = token<SessionStore>("SessionStore");
+const ProductCacheToken = token<ProductCache>("ProductCache");
 
 // SessionStore needs backend=redis AND region=eu.
 @injectable([inject(CacheAdapterToken)])
@@ -349,8 +349,8 @@ interface AuditLogger {
 }
 
 const AuditLoggerToken = token<AuditLogger>("AuditLogger");
-const ReportGeneratorToken = token<{ generate(): void }>("ReportGenerator");
-const AnalyticsDashboardToken = token<{ open(): void }>("AnalyticsDashboard");
+const ReportGeneratorToken = token<ReportGenerator>("ReportGenerator");
+const AnalyticsDashboardToken = token<AnalyticsDashboard>("AnalyticsDashboard");
 
 @injectable([inject(AuditLoggerToken)])
 class ReportGenerator {
