@@ -87,21 +87,25 @@ changing compile-time work.
 
 Resolution is a hot path and it is layout-sensitive: reshaping a function has moved rows the change
 could not reach. Treat every edit under `resolve/`, and any reshape of `compileVariantPlan`, as a
-performance change requiring a paired A/B — the method is in
-[`benchmarks/di-inversify/BENCH_GUIDE.md`](../../benchmarks/di-inversify/BENCH_GUIDE.md), and the
-mechanism differs for this suite:
+performance change requiring a paired A/B. The method is in
+[`benchmarks/di-inversify/BENCH_GUIDE.md`](../../benchmarks/di-inversify/BENCH_GUIDE.md); both of the
+mechanisms it describes work here, and **pairing them wrong fails silently**:
 
-`benchmarks/tailwind-variants` has **no `bench:isolate` script**, so the source-swap route does not
-apply. Swap the _build_ instead — copy a prebuilt `dist` over `packages/tailwind-variants/dist` per
-side and drive the child entry directly:
+- **Swap the source** — check out or stash `packages/tailwind-variants/src` per side, then run
+  `bench:isolate`. That runner rebuilds the package before sampling, which is exactly what makes the
+  swap take effect.
+- **Swap the build** — copy a prebuilt `dist` over `packages/tailwind-variants/dist` per side, then
+  drive the child entry directly, one scenario at a time:
 
-```bash
-BENCH_ONLY=slots-without-merge node --import tsx/esm src/codefast-benches.ts
-```
+  ```bash
+  BENCH_ONLY=slots-without-merge node --import tsx/esm src/codefast-benches.ts
+  ```
 
-`bench`, `bench:fast`, `bench:full` and `bench:verbose` all run `src/harness/run.ts`, which rebuilds
-the package before sampling and would silently make both sides measure the same build. Scenario ids
-come from `BENCH_LIST=1`.
+  The child entry is mandatory here. `bench`, `bench:isolate`, `bench:fast`, `bench:full` and
+  `bench:verbose` all run `src/harness/run.ts`, whose unconditional rebuild would overwrite the
+  swapped `dist` from `src` — both sides then measure the same build and every row reports parity.
+
+Scenario ids come from `BENCH_LIST=1`.
 
 Rows here are batched loops, so the noise floor is tighter than the DI suite's: an A/A run put every
 median within ±0.6%. Treat a ratio at or above 1.03× as signal, and re-measure anything smaller with
