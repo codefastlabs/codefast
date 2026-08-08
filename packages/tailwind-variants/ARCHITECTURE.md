@@ -146,6 +146,21 @@ value ids are handed out as values turn up rather than up front.
 
 If construction ever needs to come down, that is where to look, and `construct-*` is the row to read.
 
+## How much of this a page can actually feel
+
+Every figure above is a microbenchmark, and one measurement bounds what any of them is worth.
+Rendering `apps/ui`'s registry demos through `renderToString` — sixty-eight components, the densest
+page this repository can assemble — takes about 15 ms and makes **266 resolver calls**. At the ~95 ns
+a call the cache saves on those configurations, the whole cache is worth **~25 µs, or 0.17% of the
+render**. Three runs of the identical build spread 1.15 ms, so the effect sits roughly four times
+below the noise it would have to clear to be seen at all.
+
+That is not an argument against the work — the library is measurably faster, and a consumer with a
+heavier variant load than this one gets more of it. It is an argument about where to spend next:
+resolution is no longer what a page waits on, so a further micro-optimisation here buys a fraction
+of a fraction of a percent. Anyone about to open this file to shave nanoseconds should read this
+paragraph first and go find a bigger number somewhere else.
+
 `cacheResolutions: false` may not be free: the slot lane still allocates a per-slot memo that the
 option guarantees will never be read, and `uncached-slots-with-merge` has read 0.89–0.99 against the
 build before the cache existed. That is also the suite's least stable row, and the cost was never
