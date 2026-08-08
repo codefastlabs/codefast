@@ -26,7 +26,7 @@ export default defineConfig({
   // `codefast arrange` — the two are complementary.
   sortTailwindcss: {
     stylesheet: "apps/ui/src/styles.css",
-    functions: ["cn", "cva", "tv"],
+    functions: ["cn", "cva", "cx", "tv"],
   },
 
   // ---------------------------------------------------------------------------
