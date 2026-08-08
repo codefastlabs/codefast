@@ -73,12 +73,8 @@ const normalizeVariantGroup = (
       continue;
     }
 
-    const next = toPlanClasses(classes, slotIndexByName);
-
-    if (next !== classes) {
-      normalized ??= { ...variantGroup } as Record<string, PlanClasses>;
-      normalized[value] = next;
-    }
+    normalized ??= { ...variantGroup } as Record<string, PlanClasses>;
+    normalized[value] = toPlanClasses(classes, slotIndexByName);
   }
 
   return normalized ?? (variantGroup as Record<string, PlanClasses>);

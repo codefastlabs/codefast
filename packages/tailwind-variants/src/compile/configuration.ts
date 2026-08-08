@@ -46,7 +46,7 @@ export const hasExtendConfig = <T extends VariantSchema, S extends SlotSchema>(
  *
  * @since 0.3.16-canary.0
  */
-export const mergeVariantClassGroup = (
+const mergeVariantClassGroup = (
   baseVariantGroup: Record<string, ClassValue>,
   extensionVariantGroup: Record<string, ClassValue>,
 ): Record<string, ClassValue> => {
