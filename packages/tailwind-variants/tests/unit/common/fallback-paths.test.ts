@@ -49,6 +49,32 @@ describe("Fallback Paths", () => {
     }
   });
 
+  test("treats a variant value naming an Object.prototype member as unrecognised", () => {
+    // A compiled group is indexed by whatever a caller passes. On a plain object `group.toString`
+    // answers with a function, which the flat lane concatenates and the slot lane reads slot
+    // positions off — `__proto__` crashing outright. Every one of these must contribute nothing.
+    const flat = tv({ base: "block", variants: { size: { sm: "p-2" } } });
+
+    for (const value of ["toString", "constructor", "valueOf", "hasOwnProperty", "__proto__"]) {
+      expect(flat({ size: value } as never)).toBe("block");
+    }
+
+    const card = tv({ slots: { base: "rounded", label: "text-sm" }, variants: { size: { sm: { base: "p-2" } } } });
+
+    for (const value of ["toString", "__proto__"]) {
+      expect(card({ size: value } as never).base()).toBe("rounded");
+      expect(card({ size: value } as never).label()).toBe("text-sm");
+    }
+
+    // A slot map may name one too, and it must be dropped rather than resolve to a prototype member.
+    const odd = tv({
+      slots: { base: "rounded" },
+      variants: { size: { sm: { base: "p-2", toString: "p-9" } } },
+    } as never) as unknown as (props?: Record<string, unknown>) => Record<string, () => string | undefined>;
+
+    expect(odd({ size: "sm" }).base?.()).toBe("rounded p-2");
+  });
+
   test("falls back to clsx when an argument is not a string", () => {
     expect(cx("a", ["b", "c"])).toBe("a b c");
     expect(cx("a", { b: true, c: false })).toBe("a b");

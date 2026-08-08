@@ -86,26 +86,27 @@ const collectConditionNames = (
   return [...names];
 };
 
-/** Flatten a variant group's classes, reusing the source object when nothing needed flattening. */
+/**
+ * Flatten a variant group's classes onto an object with no prototype.
+ *
+ * @remarks The group is indexed by whatever value a caller passes, and on a plain object
+ * `group["toString"]` answers with a function rather than `undefined` — which resolution then
+ * concatenates, and `"__proto__"` makes it read slot positions off `Object.prototype`.
+ */
 const normalizeVariantGroup = (
   variantGroup: Record<string, ClassValue>,
   slotIndexByName: Record<string, number> | null,
 ): Record<string, PlanClasses> => {
-  let normalized: Record<string, PlanClasses> | null = null;
+  const normalized = Object.create(null) as Record<string, PlanClasses>;
 
   for (const value of Object.keys(variantGroup)) {
     const classes = variantGroup[value];
 
     // A string is already in plan form; only a clsx-shaped value costs a flattening pass.
-    if (typeof classes === "string") {
-      continue;
-    }
-
-    normalized ??= { ...variantGroup } as Record<string, PlanClasses>;
-    normalized[value] = toPlanClasses(classes, slotIndexByName);
+    normalized[value] = typeof classes === "string" ? classes : toPlanClasses(classes, slotIndexByName);
   }
 
-  return normalized ?? (variantGroup as Record<string, PlanClasses>);
+  return normalized;
 };
 
 const compileVariantEntries = (
@@ -182,7 +183,8 @@ export const compileVariantPlan = (
   let slotIndexByName: Record<string, number> | null = null;
 
   if (slots !== null) {
-    slotIndexByName = {};
+    // Indexed by slot names a configuration supplies, so the same prototype hazard applies.
+    slotIndexByName = Object.create(null) as Record<string, number>;
 
     for (const [slotIndex, slot] of slots.entries()) {
       slotIndexByName[slot.name] = slotIndex;
