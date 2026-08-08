@@ -5,8 +5,7 @@
  * concatenates strings and never reaches clsx.
  */
 
-import { clsx } from "clsx";
-
+import { flattenClassValues } from "#/class-names";
 import type { ClassValue } from "#/types";
 
 /**
@@ -30,7 +29,7 @@ export type PlanClasses = SlotClassGroup | string;
  * its arguments' contributions in order and drops the empty ones.
  */
 export const toClassText = (value: ClassValue): string => {
-  return typeof value === "string" ? value : clsx(value);
+  return typeof value === "string" ? value : flattenClassValues([value]);
 };
 
 /**

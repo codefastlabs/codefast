@@ -80,17 +80,17 @@
     "test:unit": "vitest run tests/unit",
     "test:watch": "vitest"
   },
-  "dependencies": {
-    "clsx": "catalog:",
-    "tailwind-merge": "catalog:"
-  },
   "devDependencies": {
     "@codefast/typescript-config": "workspace:*",
     "@types/node": "catalog:",
     "@vitest/coverage-v8": "catalog:",
     "expect-type": "catalog:",
+    "tailwind-merge": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:"
+  },
+  "peerDependencies": {
+    "tailwind-merge": ">=3.0.0"
   },
   "engines": {
     "node": ">=24.0.0"

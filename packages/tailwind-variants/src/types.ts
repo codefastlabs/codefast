@@ -2,7 +2,6 @@
  * The model: configurations, variant selections, and the compiled shapes a plan holds.
  */
 
-import type { ClassValue } from "clsx";
 import type { ConfigExtension } from "tailwind-merge";
 
 /**
@@ -403,8 +402,22 @@ export interface ExtendedVariantConfig<
 }
 
 /**
- * Re-export ClassValue type from clsx for convenience.
+ * Anything accepted where classes are expected.
  *
- * This type represents any value that can be converted to a CSS class string.
+ * @remarks Declared here rather than re-exported, so the package carries no runtime dependency of
+ * its own. The shape is the one consumers already pass — `bigint` included, though nothing
+ * contributes it.
+ *
+ * @since 0.3.16-canary.0
  */
-export type { ClassValue } from "clsx";
+export type ClassValue = ClassArray | ClassDictionary | bigint | boolean | null | number | string | undefined;
+
+/**
+ * Class names keyed by the condition that includes them.
+ */
+export type ClassDictionary = Record<string, unknown>;
+
+/**
+ * Class values nested to any depth.
+ */
+export type ClassArray = Array<ClassValue>;
