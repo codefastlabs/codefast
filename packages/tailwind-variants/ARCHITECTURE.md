@@ -18,19 +18,29 @@ tv(config)  ──compile──▶  VariantPlan  ──resolve──▶  "px-4 p
    once                                   per call
 ```
 
+The same idea applied a second time: within one configuration, the answer depends only on the
+selection, and a list renders the same few selections thousands of times. So a resolution is settled
+**once per selection**, and a repeat call is a lookup.
+
+```
+props ──encode──▶ selection key ──▶ cache hit ──▶ the same answer, no walk and no merge
+```
+
 That split is the directory layout:
 
 | Path                       | Owns                                                                  |
 | -------------------------- | --------------------------------------------------------------------- |
 | `types.ts`                 | the model: configurations, variant selections, compiled shapes        |
-| `tv.ts`                    | the public entry point, and the seam between the two phases           |
+| `tv.ts`                    | the public entry point, and the seam between the phases               |
 | `class-names.ts`           | `cx` / `cn` / `createTailwindMergeFn` — class utilities, variant-free |
 | `compile/plan.ts`          | `VariantPlan` and how it is built                                     |
 | `compile/compound.ts`      | compound variants and slots as flat condition lists, and testing them |
 | `compile/class-values.ts`  | flattening configuration class values into plan form                  |
 | `compile/configuration.ts` | shape guards, and collapsing an `extend` chain into one configuration |
+| `compile/selection.ts`     | encoding a call's selection as one number                             |
 | `resolve/variants.ts`      | the flat lane                                                         |
 | `resolve/slots.ts`         | the slot lane                                                         |
+| `resolve/cache.ts`         | the bounded store a resolver answers a repeated selection from        |
 
 Testing a compound condition lives in `compile/` rather than `resolve/` because the test and the
 encoding it reads are one contract. Splitting them by phase would put the two halves of that
@@ -69,6 +79,39 @@ lane is deliberately the slow one.
 **`base` is always slot position zero.** The plan synthesises it whether or not the configuration
 declares it, which is why a plain string class value can be assigned to `texts[0]` without a lookup.
 
+## What the selection key may and may not collapse
+
+A key is a mixed-radix number, one digit per variant. Two calls sharing a key must be
+indistinguishable to _everything_ downstream, and there are two different notions of "same value":
+
+- **Resolution** only reads `entry.group[key]`, so two values with the same group key select the
+  same classes and can share a digit. A digit is therefore the group key's id — cheap, because it
+  is an object read.
+- **A compound** compares against the value the caller passed. `true` and `"true"` share the group
+  key `"true"` and compare differently, so for any variant a compound tests, a digit is instead the
+  id of the **raw value**, held in a `Map` (which distinguishes them, and `0` from `"0"`). That
+  costs a `Map.get` on those axes only.
+
+Everything else follows from having to make that distinction hold:
+
+- A digit is reserved for "the call omitted this variant", distinct from every value, because an
+  omitted variant takes the compiled default and a compound reads its configured fallback.
+- Every value the group does not answer shares one id, because they all resolve to no classes.
+- A compound may test a name no variant declares. That name still decides the outcome, so it gets
+  an axis of its own.
+- A raw-value axis is capped. Past the cap the call reports itself unencodable and resolves the long
+  way, which is also what a configuration too large to address in one safe integer does.
+- The store's generation limit is sized against what a design system actually asks for, not a guess.
+  A key is one selection plus the caller's own class string, so the entries a component can fill is
+  the number of distinct call sites it has. Across this repository — 748 `.tsx` files — the busiest
+  component reaches fifty, and none exceeds the limit. Two generations then mean nothing in a real
+  page is ever evicted, and the caller's class needs no tier of its own.
+- Ids are handed out as values turn up rather than up front, so a group of two hundred values costs
+  nothing to compile and only what a caller actually selects to run.
+- `valueIds` is a **null-prototype** object. A plain one answers `valueIds["toString"]` with
+  `Object.prototype.toString`, which reads as an id already assigned — three prototype keys then
+  collapse onto one entry. The differential dump caught exactly this; the unit tests did not.
+
 ## Shapes that are load-bearing
 
 - **`selectForSlot` stays out of line.** Inlining it by hand measured slower on every slot scenario
@@ -78,14 +121,36 @@ declares it, which is why a plain string class value can be assigned to `texts[0
   invariant the compiler cannot see, not a shortcut.
 - **`toClassText` is not a wrapper around clsx.** Its string check is what keeps the common case off
   clsx entirely, at compile time and for the runtime `class`/`className` prop.
+- **A slot call context keeps `conditionValues`, not the caller's props.** A cached resolver
+  outlives its call, and the props object a component passes carries `children` — most of a tree.
+  Only the names a compound tests are copied out, and a configuration without compounds shares one
+  empty object.
+- **The per-slot memo holds `undefined` and a sentinel apart.** A slot that resolves to nothing and
+  a slot nobody has read yet are both absent from an array of strings, and they are not the same.
+- **A resolver returns the same slot object for a repeated selection.** That is the point — the
+  merge per slot happens once — and it makes the object shared, so nothing may mutate it.
 
 ## The trade this design makes
 
-`tv` costs more than it used to — it flattens every class value and precomputes slot positions.
-That is once per component definition, at module load, against a resolution that is several times
-cheaper on every call. It pays for itself within a couple of renders, and the scenario benchmarks
-cannot see it because they hoist `tv` out of the timed loop. Measure construction separately when
-changing compile-time work.
+`tv` is the expensive end. It flattens every class value and precomputes slot positions, and the
+`construct-*` rows — added because the other scenarios hoist `tv` out of the timed loop and so could
+never see it — put the cost at **0.47× of `tailwind-variants` for a flat component and 0.19× for a
+slot one**. That is the deliberate shape of the design, not a defect: it buys a resolution the same
+run measures at 5.8× to 96× upstream, so a component pays for its definition within a render or two.
+
+The selection cache widens that trade slightly, and the same rows bound how much: **0.77× and 0.94×
+against this package's own previous build**, or about a quarter of a microsecond added per component
+definition. Two things keep it there, and both are worth preserving — the encoder is compiled on
+first resolution rather than in `tv`, so a component defined and never rendered pays nothing; and
+value ids are handed out as values turn up rather than up front.
+
+If construction ever needs to come down, that is where to look, and `construct-*` is the row to read.
+
+`cacheResolutions: false` may not be free: the slot lane still allocates a per-slot memo that the
+option guarantees will never be read, and `uncached-slots-with-merge` has read 0.89–0.99 against the
+build before the cache existed. That is also the suite's least stable row, and the cost was never
+isolated from it — treat the allocation as a suspect, not a finding. Nothing in this repository
+passes the option, which is why it stayed a suspect.
 
 ## Changing any of this
 
@@ -111,12 +176,38 @@ mechanisms it describes work here, and **pairing them wrong fails silently**:
 
 Scenario ids come from `BENCH_LIST=1`.
 
+**Read the right row for what you changed.** Every prop fixture repeats its selections, so with the
+cache on almost every row now measures a lookup rather than the resolver:
+
+- `uncached-*` runs with `cacheResolutions: false` and is the only row that still measures the plan
+  walk. A change under `resolve/` that does not move it did not do what you think. It has no
+  counterpart in a library without the same switch, so its ratio column is meaningless — it is a
+  control, and it is off the aggregates for that reason.
+- `repeat-*` is the shape a UI actually has: three selections, fresh props objects, over and over.
+- `construct-*` is per component definition where everything else is per render, so it is off the
+  aggregates too.
+
 Rows here are batched loops, so the noise floor is tighter than the DI suite's: an A/A run put every
 median within ±0.6%. Treat a ratio at or above 1.03× as signal, and re-measure anything smaller with
 more passes before believing it — a flat-lane row with no causal path to a slot change once read
-0.979 over three passes and 1.013 over five.
+0.979 over three passes and 1.013 over five. The slot rows carry the widest per-trial IQR and have
+swung 0.91 to 0.99 across runs on unchanged code; do not read a single one closely.
 
-Correctness is checked by differential dump rather than by the unit tests alone: run every fixture,
-prop sweep, slot-props combination and edge configuration through two builds in separate processes
-and diff the outputs. The suite passed the compiled-plan rewrite on the first run while the dump
-still surfaced a real behavioural delta.
+Correctness is not checked by the hand-written tests alone. They assert the behaviour someone thought
+to write down, and the changes that hurt here are the ones nobody considered.
+
+[`tests/unit/support/behaviour-sweep.ts`](./tests/unit/support/behaviour-sweep.ts) generates the
+corpus instead — every variant value, every pair, every slot with and without per-slot props, every
+odd value a caller can pass including the inherited keys of a plain object — and runs the whole thing
+twice, because a resolver that remembers must answer the second pass exactly as it answered the
+first. Over fifty thousand outcomes, in well under a second.
+
+[`tests/unit/common/behaviour-sweep.test.ts`](./tests/unit/common/behaviour-sweep.test.ts) then
+holds the corpus to a property that needs no stored baseline: **a resolver that remembers must answer
+exactly what one that does not answers.** That is what caught the selection cache collapsing
+`toString`, `constructor` and `hasOwnProperty` onto one entry while every other test stayed green,
+and it now runs on every `pnpm test:unit`.
+
+For a change the property cannot see — one that moves both lanes together, such as a reshape of
+`resolveVariantClasses` — run `collectSweepOutcomes` under each build and diff the two, which is what
+the property does across an option rather than across a version.

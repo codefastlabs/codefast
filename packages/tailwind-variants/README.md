@@ -166,6 +166,12 @@ iconButton({ tone: "outline", size: "sm" });
 
 - `twMerge` — set `false` to keep every declared class instead of resolving conflicts (default `true`).
 - `twMergeConfig` — a `tailwind-merge` `ConfigExtension` for custom class groups.
+- `cacheResolutions` — set `false` to resolve every call from scratch (default `true`).
+
+A variant function remembers what each selection resolved to, because a list renders the same few selections thousands of times and both the plan walk and the merge are pure functions of the selection. Two consequences are worth knowing:
+
+- A slot component called twice with the same selection gets back the **same** object of slot functions. That is stable enough for a React dependency array; it also means the object is shared, so do not mutate it.
+- The store is bounded and keyed by the selection, so a variant whose values are effectively unique per call (an id, a timestamp, a fresh object) fills it with entries nothing reads again. `cacheResolutions: false` is the escape hatch for that component.
 
 `createTV(options)` bakes those options into a shared factory and returns `{ tv, cn }`:
 
@@ -240,7 +246,9 @@ The repository maintains a [benchmark suite](https://github.com/codefastlabs/cod
 pnpm --filter @codefast/benchmark-tailwind-variants bench
 ```
 
-The speed comes from settling the configuration once, when `tv()` is called: variant groups, compound conditions and slot positions are compiled into a plan, and every class value is flattened to a string, so resolving a component is string concatenation rather than dictionary lookups. `cn` / `cx` take the same string fast path and skip `clsx` when every argument is already a string.
+The speed comes from settling things once. The configuration is settled when `tv()` is called: variant groups, compound conditions and slot positions are compiled into a plan, and every class value is flattened to a string, so resolving a component is string concatenation rather than dictionary lookups. The answer is then settled per selection, so a list rendering the same few selections resolves each of them once. `cn` / `cx` take the same string fast path and skip `clsx` when every argument is already a string.
+
+The trade is that `tv()` itself is slower than upstream's — that cost is per component definition, against a resolution that is far cheaper on every render, and the suite measures both.
 
 [ARCHITECTURE.md](https://github.com/codefastlabs/codefast/blob/main/packages/tailwind-variants/ARCHITECTURE.md) explains that design, which parts of it are load-bearing, and how to measure a change to it.
 
