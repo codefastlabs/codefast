@@ -21,9 +21,9 @@ import type {
  *
  * @since 0.3.16-canary.0
  */
-export const hasSlotsConfig = <T extends VariantSchema, S extends SlotSchema>(
-  configuration: VariantConfig<T> | SlotVariantConfig<T, S>,
-): configuration is SlotVariantConfig<T, S> => {
+export const hasSlotsConfig = <Variants extends VariantSchema, Slots extends SlotSchema>(
+  configuration: VariantConfig<Variants> | SlotVariantConfig<Variants, Slots>,
+): configuration is SlotVariantConfig<Variants, Slots> => {
   return "slots" in configuration && configuration.slots !== undefined;
 };
 
@@ -32,9 +32,12 @@ export const hasSlotsConfig = <T extends VariantSchema, S extends SlotSchema>(
  *
  * @since 0.3.16-canary.0
  */
-export const hasExtendConfig = <T extends VariantSchema, S extends SlotSchema>(
-  configuration: VariantConfig<T> | SlotVariantConfig<T, S> | ExtendedVariantConfig<VariantSchema, T, SlotSchema, S>,
-): configuration is ExtendedVariantConfig<VariantSchema, T, SlotSchema, S> & {
+export const hasExtendConfig = <Variants extends VariantSchema, Slots extends SlotSchema>(
+  configuration:
+    | VariantConfig<Variants>
+    | SlotVariantConfig<Variants, Slots>
+    | ExtendedVariantConfig<VariantSchema, Variants, SlotSchema, Slots>,
+): configuration is ExtendedVariantConfig<VariantSchema, Variants, SlotSchema, Slots> & {
   readonly extend: VariantResolver<VariantSchema>;
 } => {
   return "extend" in configuration && configuration.extend !== undefined;

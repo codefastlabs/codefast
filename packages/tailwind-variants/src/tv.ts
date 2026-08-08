@@ -35,8 +35,8 @@ const EMPTY_PROPS: Record<string, unknown> = {};
 const NO_CLASSES = null;
 
 /** One resolver's selection encoder paired with the store it fills. */
-interface ResolverMemo<TValue> {
-  readonly cache: ResolutionCache<TValue>;
+interface ResolverMemo<Value> {
+  readonly cache: ResolutionCache<Value>;
   readonly keyOf: (variantProps: Record<string, unknown>) => number;
 }
 
@@ -60,30 +60,30 @@ const toCustomClassKey = (customClasses: ClassValue): string | null => {
  *
  * @since 0.3.16-canary.0
  */
-export function tv<T extends VariantSchema = Record<never, never>>(
-  config: VariantConfig<T>,
+export function tv<Variants extends VariantSchema = Record<never, never>>(
+  config: VariantConfig<Variants>,
   tvConfig?: TailwindVariantsOptions,
-): VariantResolver<T, Record<string, never>>;
+): VariantResolver<Variants, Record<string, never>>;
 
 /**
  * Create a class resolver for a component whose slots carry all of its styling.
  *
  * @since 0.3.16-canary.0
  */
-export function tv<S extends SlotSchema>(
-  config: SlotVariantConfig<Record<string, never>, S>,
+export function tv<Slots extends SlotSchema>(
+  config: SlotVariantConfig<Record<string, never>, Slots>,
   tvConfig?: TailwindVariantsOptions,
-): VariantResolver<Record<string, never>, S>;
+): VariantResolver<Record<string, never>, Slots>;
 
 /**
  * Create a class resolver for a component with both variants and slots.
  *
  * @since 0.3.16-canary.0
  */
-export function tv<T extends VariantSchema, S extends SlotSchema>(
-  config: SlotVariantConfig<T, S>,
+export function tv<Variants extends VariantSchema, Slots extends SlotSchema>(
+  config: SlotVariantConfig<Variants, Slots>,
   tvConfig?: TailwindVariantsOptions,
-): VariantResolver<T, S>;
+): VariantResolver<Variants, Slots>;
 
 /**
  * Create a class resolver that extends another resolver's configuration.
@@ -91,24 +91,27 @@ export function tv<T extends VariantSchema, S extends SlotSchema>(
  * @since 0.3.16-canary.0
  */
 export function tv<
-  TBase extends VariantSchema,
-  TExtension extends VariantSchema,
-  SBase extends SlotSchema,
-  SExtension extends SlotSchema,
+  BaseVariants extends VariantSchema,
+  ExtensionVariants extends VariantSchema,
+  BaseSlots extends SlotSchema,
+  ExtensionSlots extends SlotSchema,
 >(
-  config: ExtendedVariantConfig<TBase, TExtension, SBase, SExtension>,
+  config: ExtendedVariantConfig<BaseVariants, ExtensionVariants, BaseSlots, ExtensionSlots>,
   tvConfig?: TailwindVariantsOptions,
-): VariantResolver<MergedVariantSchema<TBase, TExtension>, MergedSlotSchema<SBase, SExtension>>;
+): VariantResolver<MergedVariantSchema<BaseVariants, ExtensionVariants>, MergedSlotSchema<BaseSlots, ExtensionSlots>>;
 
 /**
  * Compile a configuration into a plan, and return the resolver that runs it.
  *
  * @since 0.3.16-canary.0
  */
-export function tv<T extends VariantSchema, S extends SlotSchema>(
-  configuration: VariantConfig<T> | SlotVariantConfig<T, S> | ExtendedVariantConfig<VariantSchema, T, SlotSchema, S>,
+export function tv<Variants extends VariantSchema, Slots extends SlotSchema>(
+  configuration:
+    | VariantConfig<Variants>
+    | SlotVariantConfig<Variants, Slots>
+    | ExtendedVariantConfig<VariantSchema, Variants, SlotSchema, Slots>,
   tvConfiguration: TailwindVariantsOptions = {},
-): VariantResolver<T, S> {
+): VariantResolver<Variants, Slots> {
   const {
     cacheResolutions: shouldCacheResolutions = true,
     twMerge: shouldMergeClasses = true,
@@ -131,10 +134,10 @@ export function tv<T extends VariantSchema, S extends SlotSchema>(
   const plan = compileVariantPlan(mergedConfiguration, shouldMergeClasses, tailwindMergeFn);
   const slots = plan.slots;
 
-  const compileMemo = <TValue>(): ResolverMemo<TValue> | null => {
+  const compileMemo = <Value>(): ResolverMemo<Value> | null => {
     const encoder = shouldCacheResolutions ? compileSelectionEncoder(plan, slots !== null) : null;
 
-    return encoder === null ? null : { cache: createResolutionCache<TValue>(), keyOf: encoder.keyOf };
+    return encoder === null ? null : { cache: createResolutionCache<Value>(), keyOf: encoder.keyOf };
   };
 
   // Compiled on first resolution, so a component defined and never rendered pays nothing for it.
@@ -142,11 +145,11 @@ export function tv<T extends VariantSchema, S extends SlotSchema>(
   let slotMemo: ResolverMemo<Record<string, SlotClassResolver<VariantSchema>>> | null | undefined;
 
   const variantResolverFunction = (
-    variantProps?: VariantSelection<T>,
-  ): S extends Record<string, never> ? string | undefined : VariantResolverResult<T, S> => {
+    variantProps?: VariantSelection<Variants>,
+  ): Slots extends Record<string, never> ? string | undefined : VariantResolverResult<Variants, Slots> => {
     const props = (variantProps ?? EMPTY_PROPS) as Record<string, unknown>;
 
-    type Result = S extends Record<string, never> ? string | undefined : VariantResolverResult<T, S>;
+    type Result = Slots extends Record<string, never> ? string | undefined : VariantResolverResult<Variants, Slots>;
 
     if (slots !== null) {
       if (slotMemo === undefined) {
@@ -208,7 +211,7 @@ export function tv<T extends VariantSchema, S extends SlotSchema>(
     return resolveVariantClasses(plan, props, customClasses) as unknown as Result;
   };
 
-  const configuredVariantResolver = variantResolverFunction as VariantResolver<T, S>;
+  const configuredVariantResolver = variantResolverFunction as VariantResolver<Variants, Slots>;
 
   Object.defineProperty(configuredVariantResolver, "config", {
     configurable: false,
@@ -230,42 +233,45 @@ export function createTV(globalConfiguration: TailwindVariantsOptions = {}): Tai
   const tailwindMergeFn = createTailwindMergeFn(twMergeConfig);
 
   /** Create a class resolver for a component without slots. */
-  function tvFactory<T extends VariantSchema = Record<never, never>>(
-    configuration: VariantConfig<T>,
+  function tvFactory<Variants extends VariantSchema = Record<never, never>>(
+    configuration: VariantConfig<Variants>,
     localConfiguration?: TailwindVariantsOptions,
-  ): VariantResolver<T, Record<string, never>>;
+  ): VariantResolver<Variants, Record<string, never>>;
 
   /** Create a class resolver for a component whose slots carry all of its styling. */
-  function tvFactory<S extends SlotSchema>(
-    configuration: SlotVariantConfig<Record<string, never>, S>,
+  function tvFactory<Slots extends SlotSchema>(
+    configuration: SlotVariantConfig<Record<string, never>, Slots>,
     localConfiguration?: TailwindVariantsOptions,
-  ): VariantResolver<Record<string, never>, S>;
+  ): VariantResolver<Record<string, never>, Slots>;
 
   /** Create a class resolver for a component with both variants and slots. */
-  function tvFactory<T extends VariantSchema, S extends SlotSchema>(
-    configuration: SlotVariantConfig<T, S>,
+  function tvFactory<Variants extends VariantSchema, Slots extends SlotSchema>(
+    configuration: SlotVariantConfig<Variants, Slots>,
     localConfiguration?: TailwindVariantsOptions,
-  ): VariantResolver<T, S>;
+  ): VariantResolver<Variants, Slots>;
 
   /** Create a class resolver that extends another resolver's configuration. */
   function tvFactory<
-    TBase extends VariantSchema,
-    TExtension extends VariantSchema,
-    SBase extends SlotSchema,
-    SExtension extends SlotSchema,
+    BaseVariants extends VariantSchema,
+    ExtensionVariants extends VariantSchema,
+    BaseSlots extends SlotSchema,
+    ExtensionSlots extends SlotSchema,
   >(
-    configuration: ExtendedVariantConfig<TBase, TExtension, SBase, SExtension>,
+    configuration: ExtendedVariantConfig<BaseVariants, ExtensionVariants, BaseSlots, ExtensionSlots>,
     localConfiguration?: TailwindVariantsOptions,
-  ): VariantResolver<MergedVariantSchema<TBase, TExtension>, MergedSlotSchema<SBase, SExtension>>;
+  ): VariantResolver<MergedVariantSchema<BaseVariants, ExtensionVariants>, MergedSlotSchema<BaseSlots, ExtensionSlots>>;
 
   /** Local options win over the shared ones. */
-  function tvFactory<T extends VariantSchema, S extends SlotSchema>(
-    configuration: VariantConfig<T> | SlotVariantConfig<T, S> | ExtendedVariantConfig<VariantSchema, T, SlotSchema, S>,
+  function tvFactory<Variants extends VariantSchema, Slots extends SlotSchema>(
+    configuration:
+      | VariantConfig<Variants>
+      | SlotVariantConfig<Variants, Slots>
+      | ExtendedVariantConfig<VariantSchema, Variants, SlotSchema, Slots>,
     localConfiguration?: TailwindVariantsOptions,
-  ): VariantResolver<T, S> {
+  ): VariantResolver<Variants, Slots> {
     const mergedConfiguration = { ...globalConfiguration, ...localConfiguration };
 
-    return tv(configuration, mergedConfiguration) as VariantResolver<T, S>;
+    return tv(configuration, mergedConfiguration) as VariantResolver<Variants, Slots>;
   }
 
   const cnFunction = (...classes: Array<ClassValue>): string => {

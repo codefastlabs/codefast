@@ -94,8 +94,8 @@ const compileConditions = (
  * @remarks A `null` `slotIndexByName` says the configuration has no slots. `coerceMissingBoolean`
  * decides whether a boolean condition reads a value absent from both props and defaults as `false`.
  */
-export const compileCompoundVariants = <T extends VariantSchema>(
-  compoundVariants: ReadonlyArray<CompoundVariant<T> | SlotCompoundVariant<T, never>> | undefined,
+export const compileCompoundVariants = <Variants extends VariantSchema>(
+  compoundVariants: ReadonlyArray<CompoundVariant<Variants> | SlotCompoundVariant<Variants, never>> | undefined,
   defaultVariantProps: Record<string, unknown>,
   slotIndexByName: Record<string, number> | null,
   coerceMissingBoolean: boolean,
@@ -124,8 +124,8 @@ export const compileCompoundVariants = <T extends VariantSchema>(
 /**
  * Compile compound slots into condition lists paired with the slots they target.
  */
-export const compileCompoundSlots = <T extends VariantSchema>(
-  compoundSlots: ReadonlyArray<CompoundSlot<T, never>> | undefined,
+export const compileCompoundSlots = <Variants extends VariantSchema>(
+  compoundSlots: ReadonlyArray<CompoundSlot<Variants, never>> | undefined,
   defaultVariantProps: Record<string, unknown>,
   slotIndexByName: Record<string, number>,
 ): ReadonlyArray<CompoundSlotPlanEntry> => {
