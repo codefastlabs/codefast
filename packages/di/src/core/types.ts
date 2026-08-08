@@ -96,6 +96,8 @@ export interface ConstraintContext {
 
 /**
  * The predicate `when()` selects a binding by, and the shape every `when*` helper returns.
+ *
+ * @since 0.6.0
  */
 export type BindingConstraint = (ctx: ConstraintContext) => boolean;
 

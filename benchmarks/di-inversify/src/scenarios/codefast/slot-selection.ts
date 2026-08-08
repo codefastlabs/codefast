@@ -308,6 +308,9 @@ function buildNamedParentOwnedScenario(): BenchScenario {
   };
 }
 
+/**
+ * @since 0.6.0
+ */
 export function buildCodefastSlotSelectionScenarios(): ReadonlyArray<BenchScenario> {
   return [
     buildArrayHoistedScenario(),

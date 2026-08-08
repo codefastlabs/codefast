@@ -1,5 +1,71 @@
 # @codefast/tailwind-variants
 
+## 0.6.0
+
+### Minor Changes
+
+- [#700](https://github.com/codefastlabs/codefast/pull/700) [`ea48ae2`](https://github.com/codefastlabs/codefast/commit/ea48ae205305ee7913cf0ade11f3dc32f6cac874) Thanks [@thevuong](https://github.com/thevuong)! - Authoring a configuration is now type-checked as strictly as calling one. Three typos used to compile and then do nothing: a `defaultVariants` key naming no variant, a `compoundVariants` key naming no variant, and a variant class map naming no slot. Each failed the same silent way — nothing read the stray key, the compound never matched, the slot map was dropped — so a mistyped character removed a style with no error anywhere.
+
+  The root cause was one overload. `extend` was optional on `ExtendedVariantConfig`, which made the last overload a catch-all: a configuration the earlier three correctly rejected still matched it, and `TBase` with nothing to infer from widened to `VariantSchema`, whose key is `string` — so every mistyped name became legal again. `extend` is now required there, which is what that overload was always for. Alongside it, `defaultVariants` and `compoundVariants` no longer act as inference sites for the variant schema (`NoInfer`), so a stray key is rejected instead of quietly widening the schema to include it.
+
+  Two smaller corrections fall out. `defaultVariants` is typed by the new `VariantValues<T>` rather than the call-site `VariantSelection<T>`, so it no longer accepts a `className` a configuration has no use for. And in a slot configuration a variant's object value is now held to the declared slots — `SlotClassValue<S>` — because resolution has always read an object there as slot names rather than clsx conditions; `base` stays admissible whether or not it is declared, matching the plan that synthesises it.
+
+  A configuration without slots keeps its clsx object values, and a compound condition naming an undeclared variant still resolves at runtime for JavaScript callers and merged configurations — it is only the typed authoring path that now rejects it, since no typed call could ever satisfy such a condition.
+
+  `tests/types/common/config-authoring.test.ts` holds all of this with `@ts-expect-error`, the first negative type tests in the package. The 110 existing assertions only ever proved what compiles, which is exactly how three gaps survived.
+
+  **One configuration shape stops compiling.** Requiring `extend` closes the overload that used to accept anything, and that overload was also what accepted a configuration whose literal types had widened — a hoisted `const defaultVariants = { size: "sm" }`, a hoisted `compoundVariants` array, a spread of a shared partial. Those have type `{ size: string }`, which was never assignable to `{ size?: "sm" }`; they compiled only because the catch-all widened the schema to swallow them. Add `as const` to the hoisted value, or inline it.
+
+  The error TypeScript reports for this is `Property 'extend' is missing`, which names the last overload tried rather than the real mismatch. It is the same message a plain variant typo now produces. Nothing in this repository hit either case, but a consumer with a shared configuration fragment will.
+
+- [#700](https://github.com/codefastlabs/codefast/pull/700) [`93b18ac`](https://github.com/codefastlabs/codefast/commit/93b18ac606e7fa6b5de95ca2679a38585c072e5c) Thanks [@thevuong](https://github.com/thevuong)! - A variant function now remembers what each selection resolved to, so a repeated selection skips both the plan walk and `tailwind-merge`. Against the previous build the resolution rows measure 1.08× to 11.9×, and against `tailwind-variants` the suite geomean moves from 6.18× to 19.8×. The motivating measurement: in the merged lane most of the cost was never the merge algorithm — `tailwind-merge` caches — but building and hashing the joined class string to look that cache up, which a key built from the selection avoids entirely.
+
+  The key is a mixed-radix number, one digit per variant. A variant no compound tests is keyed by its group key, since two values sharing a key select the same classes; a variant a compound tests is keyed by the raw value, because a compound compares against what the caller passed and `true` and `"true"` share a group key while comparing differently. A call the key cannot represent — an axis past its capacity, a configuration too large to address in one safe integer, a clsx-shaped `className` — resolves the long way as before.
+
+  Two consequences are worth knowing. A slot component called twice with the same selection gets back the **same** object of slot functions: stable enough for a React dependency array, and shared, so nothing may mutate it. And the store is bounded and keyed by the selection, so a component whose variant values are effectively unique per call fills it with entries nothing reads again — the new `cacheResolutions: false` option turns it off for that component.
+
+  Alongside it: `extendTailwindMerge` is now memoised by `twMergeConfig` identity, so a design system handing one config to a hundred components builds one merge function instead of a hundred, each with its own cache; a slot resolution keeps only the props a compound can read rather than the caller's whole props object, which would otherwise pin `children` for as long as the entry lives; and each slot's merged text is memoised, so re-reading a slot no longer re-runs the merge.
+
+  `tv` itself costs about a quarter of a microsecond more per component definition. The encoder is compiled on first resolution rather than in `tv`, so a component that is defined and never rendered pays nothing for it.
+
+- [#700](https://github.com/codefastlabs/codefast/pull/700) [`d0dd326`](https://github.com/codefastlabs/codefast/commit/d0dd326e01d2bf3ecdf9283384bda22f07c2a6fe) Thanks [@thevuong](https://github.com/thevuong)! - Compile the configuration once, in `tv`, instead of re-deriving it on every resolver call.
+
+  `tv` now builds a plan. Variant groups become an array of entries whose default classes are already looked up, compound variants become flat condition lists whose fallbacks are already resolved, and every class value is flattened to a string. Resolution reads monomorphic fields and concatenates strings, so the per-call work that used to happen — `Object.keys` per compound variant, a dictionary lookup per variant per slot, an intermediate array plus a spread into `clsx` — is gone.
+
+  Slot resolution is also inverted. A slot map names only a few slots, so having each of N slots scan every variant meant mostly-missing lookups. Each variant value now carries the slot positions it targets, and one pass distributes classes into a per-slot buffer that every resolver of that call shares; a slot called without its own props just reads its entry. Compound slots ride the same pass.
+
+  Measured against the previous release on `benchmarks/tailwind-variants` (paired A/B, one subprocess per side per scenario, three passes with the order alternated, median of per-pass ratios): every one of the sixteen scenarios is faster, geometric mean **2.86×**.
+
+  | shape                                          | without `tailwind-merge` |        with |
+  | ---------------------------------------------- | -----------------------: | ----------: |
+  | `extreme-slots`                                |                    9.64× |       5.99× |
+  | `slots`                                        |                    5.55× |       3.48× |
+  | `compound-slots`                               |                    4.94× |       3.21× |
+  | `complex`                                      |                    2.59× |       2.00× |
+  | `simple` / `extends` / `create-tv` / `extreme` |              2.22×–2.33× | 1.56×–1.89× |
+
+  The merge-enabled rows gain least because merging, not resolution, is what is left in them. The suite's A/A noise floor on the same machine is ±1%.
+
+  The trade is a slower `tv` call: flattening every class value and precomputing slot positions costs roughly 400ns more for a simple config and ~3.4µs for a ten-slot one. That is once per component definition, at module load, and against a slot resolution that got ~1.6µs cheaper it pays for itself after about two renders.
+
+  One behavioural change, in a corner: a configuration whose classes are all truthy but render to nothing — `tv({ base: {} })` — now returns `undefined` with `twMerge` enabled, where it previously returned `""`. It already returned `undefined` with `twMerge` disabled, so `undefined` is now what "no classes" means either way.
+
+### Patch Changes
+
+- [#700](https://github.com/codefastlabs/codefast/pull/700) [`fe7e9e4`](https://github.com/codefastlabs/codefast/commit/fe7e9e46c6f42b8ae0bc5070656e085a4fe60436) Thanks [@thevuong](https://github.com/thevuong)! - A variant value naming an `Object.prototype` member no longer reaches it. A compiled variant group is indexed by whatever a caller passes, and it was a plain object — so `group["toString"]` answered with a function instead of `undefined`. The flat lane concatenated that function's source text into the class string, and the slot lane read slot positions off `Object.prototype` and threw:
+
+  ```
+  tv({ base: "block", variants: { size: { sm: "p-2" } } })({ size: "toString" })
+    →  "block function toString() { [native code] }"
+
+  tv({ slots: { base: "rounded" }, … })({ size: "__proto__" }).base()
+    →  TypeError: Cannot read properties of undefined (reading 'length')
+  ```
+
+  Groups and the slot index map are now compiled onto prototype-less objects, which closes both resolvers and the selection encoder at once since all three read the same object. It costs roughly twice what reusing the source object did, once per component definition.
+
+  Two smaller things fall out of the same reading. A value the group does not answer is no longer memoised into the id table, which a long-lived server rendering user-supplied values would otherwise grow without bound; and inherited keys no longer consume the ids a group's declared values need, which used to disable a resolver's cache permanently after a few junk values.
+
 ## 0.5.0
 
 ### Patch Changes

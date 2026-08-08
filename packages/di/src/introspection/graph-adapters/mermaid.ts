@@ -3,6 +3,8 @@ import type { ContainerGraphJson } from "#/introspection/dependency-graph";
 /**
  * Mermaid `flowchart TD` source for a container graph — renders anywhere Mermaid does
  * (GitHub markdown, docs tooling, mermaid.live) with no extra library.
+ *
+ * @since 0.6.0
  */
 export function toMermaidGraph(graph: ContainerGraphJson): string {
   // Mermaid identifiers must stay word-safe; labels carry the real token names.

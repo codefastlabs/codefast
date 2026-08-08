@@ -21,6 +21,8 @@ const verifiedTargets = new WeakMap<MetadataReader, WeakSet<Constructor>>();
  * @remarks Metadata cannot change once a class is defined, so re-checking per container would charge
  * every fresh container for a fact already established — a per-request child or a cold boot pays
  * that repeatedly.
+ *
+ * @since 0.6.0
  */
 export function verifyConstructorMetadata(
   reader: MetadataReader,
@@ -52,6 +54,8 @@ export function verifyConstructorMetadata(
  * resolve. Only what a consumer dereferences is checked: `params` and each entry's `token`.
  * `optional`/`multi` degrade to falsy without crashing, and `index` is decorative — dependencies are
  * consumed positionally.
+ *
+ * @since 0.6.0
  */
 export function assertConstructorMetadata(metadata: unknown, target: Constructor): ConstructorMetadata | undefined {
   if (metadata === undefined) {

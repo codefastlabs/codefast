@@ -17,10 +17,16 @@ const MASK_WIDTH = 32;
  * @remarks A slot matches only if the request carries every key the slot declares, which is
  * `(requestMask & slotMask) === slotMask` — the whole subset test, before any value is read. Keys
  * are prefiltered rather than values indexed because a key set fits in a word and a value set does not.
+ *
+ * @since 0.6.0
  */
 export type TagKeyMask = number & { readonly [TAG_KEY_BRAND]: "mask" };
 
-/** The empty key set: what an untagged slot and an untagged request both carry. */
+/**
+ * The empty key set: what an untagged slot and an untagged request both carry.
+ *
+ * @since 0.6.0
+ */
 export const NO_TAG_KEYS = 0 as TagKeyMask;
 
 /**
@@ -29,6 +35,8 @@ export const NO_TAG_KEYS = 0 as TagKeyMask;
  * @remarks Only {@link TagKey.of} mints one, which is what makes identity a sound stand-in for the
  * `Object.is` comparison the slot contract requires. Never build one by hand — the matcher and the
  * registry index both read identity, so a hand-built criterion matches nothing.
+ *
+ * @since 0.6.0
  */
 export interface BindingTag<Value = unknown> {
   readonly key: TagKey<Value>;
@@ -111,7 +119,11 @@ export function tag<Value = unknown>(name: string): TagKey<Value> {
   return key;
 }
 
-/** The key set a list of criteria covers. */
+/**
+ * The key set a list of criteria covers.
+ *
+ * @since 0.6.0
+ */
 export function tagKeyMaskOf(tags: ReadonlyArray<BindingTag>): TagKeyMask {
   let mask = NO_TAG_KEYS;
 
@@ -122,7 +134,11 @@ export function tagKeyMaskOf(tags: ReadonlyArray<BindingTag>): TagKeyMask {
   return mask;
 }
 
-/** Whether a request carrying `requestMask` covers every key in `slotMask`. */
+/**
+ * Whether a request carrying `requestMask` covers every key in `slotMask`.
+ *
+ * @since 0.6.0
+ */
 export function coversTagKeys(requestMask: TagKeyMask, slotMask: TagKeyMask): boolean {
   return (requestMask & slotMask) === slotMask;
 }

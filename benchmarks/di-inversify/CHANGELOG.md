@@ -1,5 +1,14 @@
 # @codefast/benchmark-di-inversify
 
+## 0.6.0
+
+### Patch Changes
+
+- Updated dependencies [[`ed1387c`](https://github.com/codefastlabs/codefast/commit/ed1387c7be719ece9a271993834dd23347b5bf6e), [`4a29f20`](https://github.com/codefastlabs/codefast/commit/4a29f2086dd7ad8e9d3a1e429470776478af668c), [`c415c6b`](https://github.com/codefastlabs/codefast/commit/c415c6bd9466421419fd7d97445fb29f76257d95), [`f4b1aa6`](https://github.com/codefastlabs/codefast/commit/f4b1aa6335f535574eae5cf559b81a568f5a7a30), [`08a5f2d`](https://github.com/codefastlabs/codefast/commit/08a5f2d6425960d7674b257196962009ab6279dd), [`c415c6b`](https://github.com/codefastlabs/codefast/commit/c415c6bd9466421419fd7d97445fb29f76257d95), [`3112841`](https://github.com/codefastlabs/codefast/commit/31128417f8ac1212c2861df0e1270ba818324e31), [`c415c6b`](https://github.com/codefastlabs/codefast/commit/c415c6bd9466421419fd7d97445fb29f76257d95), [`3bcb204`](https://github.com/codefastlabs/codefast/commit/3bcb2041e6e154b5fbd3a55a75161a614ce96b77), [`c3403a0`](https://github.com/codefastlabs/codefast/commit/c3403a037f2ab7a9e3cdab15d33c1be2eacadcb4), [`02ea054`](https://github.com/codefastlabs/codefast/commit/02ea0542e4c99b5cf0e59c70ac11673aff85dcee), [`6dcb736`](https://github.com/codefastlabs/codefast/commit/6dcb736a561c527b14b1153a2a4b79d84d28ce79), [`bbc111b`](https://github.com/codefastlabs/codefast/commit/bbc111b61611c1e62924503c6be713a96579dca8)]:
+  - @codefast/di@0.6.0
+  - @codefast/benchmark-viewer@0.6.0
+  - @codefast/benchmark-harness@0.6.0
+
 ## 0.5.0
 
 ### Patch Changes

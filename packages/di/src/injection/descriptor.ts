@@ -146,7 +146,11 @@ function withOptions<DescValue>(
   return base;
 }
 
-/** The descriptor half of `inject()`, shared with the accessor decorator that wraps it. */
+/**
+ * The descriptor half of `inject()`, shared with the accessor decorator that wraps it.
+ *
+ * @since 0.6.0
+ */
 export function buildInjectionDescriptor<Value>(
   token: Token<Value> | Constructor<Value>,
   options?: InjectOptions,

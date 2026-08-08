@@ -83,6 +83,8 @@ export type VariantSelection<Variants extends VariantSchema> = VariantValues<Var
  *
  * @remarks This is what `defaultVariants` declares. Sharing the call-site type there would accept a
  * `className` the configuration has no use for.
+ *
+ * @since 0.6.0
  */
 export type VariantValues<Variants extends VariantSchema> = {
   readonly [Variant in keyof Variants]?: HasBooleanVariant<Variants[Variant]> extends true
@@ -102,7 +104,11 @@ export type SlotClassMap<Slots extends SlotSchema> = {
   readonly [Slot in keyof Slots]?: ClassValue;
 };
 
-/** A class value with no bare object form, so the only object a slot configuration takes is a map. */
+/**
+ * A class value with no bare object form, so the only object a slot configuration takes is a map.
+ *
+ * @since 0.6.0
+ */
 export type PlainClassValue = ReadonlyArray<PlainClassValue> | bigint | boolean | null | number | string | undefined;
 
 /**
@@ -112,10 +118,16 @@ export type PlainClassValue = ReadonlyArray<PlainClassValue> | bigint | boolean 
  * @remarks Resolution reads any object here as slot names, never as clsx conditions, so the type
  * says the same. `base` is admitted whether or not the configuration declares it, because the plan
  * synthesises it as slot position zero either way.
+ *
+ * @since 0.6.0
  */
 export type SlotClassValue<Slots extends SlotSchema> = PlainClassValue | (SlotClassMap<Slots> & { base?: ClassValue });
 
-/** A variant schema whose object values name slots rather than clsx conditions. */
+/**
+ * A variant schema whose object values name slots rather than clsx conditions.
+ *
+ * @since 0.6.0
+ */
 export type SlotVariantSchema<Slots extends SlotSchema> = Record<string, Record<string, SlotClassValue<Slots>>>;
 
 /**

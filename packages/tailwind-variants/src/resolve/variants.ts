@@ -13,6 +13,8 @@ import type { ClassValue } from "#/types";
  *
  * @remarks Such a configuration compiles every class value to a string, so the plan's per-slot form
  * cannot reach here — which is what the casts below rely on.
+ *
+ * @since 0.6.0
  */
 export const resolveVariantClasses = (
   plan: VariantPlan,

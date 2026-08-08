@@ -11,7 +11,11 @@
 import { toVariantKey } from "#/compile/class-values";
 import type { VariantPlan } from "#/compile/plan";
 
-/** The selection of a call this encoder cannot represent, and which therefore must not be cached. */
+/**
+ * The selection of a call this encoder cannot represent, and which therefore must not be cached.
+ *
+ * @since 0.6.0
+ */
 export const UNENCODABLE = -1;
 
 /** Distinct raw values one axis admits before it stops encoding calls. */
@@ -35,6 +39,8 @@ interface SelectionAxis {
 
 /**
  * Encodes a call's selection, or reports it as unencodable.
+ *
+ * @since 0.6.0
  */
 export interface SelectionEncoder {
   keyOf: (variantProps: Record<string, unknown>) => number;
@@ -58,6 +64,8 @@ const EMPTY_VALUE_IDS: Record<string, number> = createValueIds();
  *
  * @remarks `treatFalsyKeyAsUnknown` mirrors the lane the encoder serves: the slot lane rejects a
  * falsy variant key where the flat lane looks it up.
+ *
+ * @since 0.6.0
  */
 export const compileSelectionEncoder = (
   plan: VariantPlan,
