@@ -21,7 +21,11 @@ type ScenarioGroup =
   | "extends"
   | "create-tv"
   | "extreme"
-  | "extreme-slots";
+  | "extreme-slots"
+  | "repeat-simple"
+  | "repeat-slots"
+  | "construct"
+  | "uncached";
 
 /**
  * @since 0.3.16-canary.0
