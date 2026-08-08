@@ -97,6 +97,15 @@ export const cn = (...classes: Array<ClassValue>): string => {
 };
 
 /**
+ * One merge function per configuration object, because a design system hands the same one to every
+ * component and each `extendTailwindMerge` builds its own parsed config and its own cache.
+ *
+ * @remarks Keyed by identity, so a configuration mutated after first use keeps the merge function
+ * it already produced.
+ */
+const tailwindMergeFnByConfiguration = new WeakMap<ConfigExtension<string, string>, (classes: string) => string>();
+
+/**
  * Create a Tailwind merge function, extended when the caller supplies a configuration.
  *
  * @since 0.3.16-canary.0
@@ -104,5 +113,19 @@ export const cn = (...classes: Array<ClassValue>): string => {
 export const createTailwindMergeFn = (
   configuration?: ConfigExtension<string, string>,
 ): ((classes: string) => string) => {
-  return configuration ? extendTailwindMerge(configuration) : twMerge;
+  if (!configuration) {
+    return twMerge;
+  }
+
+  const existing = tailwindMergeFnByConfiguration.get(configuration);
+
+  if (existing !== undefined) {
+    return existing;
+  }
+
+  const created = extendTailwindMerge(configuration);
+
+  tailwindMergeFnByConfiguration.set(configuration, created);
+
+  return created;
 };
