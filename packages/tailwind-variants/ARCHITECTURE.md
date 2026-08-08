@@ -103,14 +103,18 @@ Everything else follows from having to make that distinction hold:
   way, which is also what a configuration too large to address in one safe integer does.
 - The store's generation limit is sized against what a design system actually asks for, not a guess.
   A key is one selection plus the caller's own class string, so the entries a component can fill is
-  the number of distinct call sites it has. Across this repository — 748 `.tsx` files — the busiest
+  the number of distinct call sites it has. Across this repository's 800 `.tsx` files the busiest
   component reaches fifty, and none exceeds the limit. Two generations then mean nothing in a real
   page is ever evicted, and the caller's class needs no tier of its own.
 - Ids are handed out as values turn up rather than up front, so a group of two hundred values costs
   nothing to compile and only what a caller actually selects to run.
-- `valueIds` is a **null-prototype** object. A plain one answers `valueIds["toString"]` with
-  `Object.prototype.toString`, which reads as an id already assigned — three prototype keys then
-  collapse onto one entry. The differential dump caught exactly this; the unit tests did not.
+- `valueIds` is a **null-prototype** object, and so is every compiled variant group and the slot
+  index map. A plain object answers `group["toString"]` with a function rather than `undefined`, and
+  a caller chooses that key by passing it as a variant value: the flat lane concatenates the
+  function's source text, and `"__proto__"` hands the slot lane `Object.prototype` to read slot
+  positions off. Copying a group key by key onto a prototype-less object costs roughly twice what
+  reusing the source object did, which is the price of the whole class of bug and is paid once per
+  component definition. Both bulk alternatives measured about four times the key-by-key loop.
 
 ## Shapes that are load-bearing
 
@@ -161,11 +165,12 @@ resolution is no longer what a page waits on, so a further micro-optimisation he
 of a fraction of a percent. Anyone about to open this file to shave nanoseconds should read this
 paragraph first and go find a bigger number somewhere else.
 
-`cacheResolutions: false` may not be free: the slot lane still allocates a per-slot memo that the
-option guarantees will never be read, and `uncached-slots-with-merge` has read 0.89–0.99 against the
-build before the cache existed. That is also the suite's least stable row, and the cost was never
-isolated from it — treat the allocation as a suspect, not a finding. Nothing in this repository
-passes the option, which is why it stayed a suspect.
+`cacheResolutions: false` may not be free: the slot lane still allocates a per-slot memo, and
+`uncached-slots-with-merge` has read 0.89–0.99 against the build before the cache existed. That is
+also the suite's least stable row, and the cost was never isolated from it — treat the allocation as
+a suspect, not a finding. Nothing in this repository passes the option, which is why it stayed one.
+The memo itself is not wasted under the option: the propless path reads it on every slot call, so it
+still pays for a caller that reads one slot twice.
 
 ## Changing any of this
 
@@ -194,10 +199,11 @@ Scenario ids come from `BENCH_LIST=1`.
 **Read the right row for what you changed.** Every prop fixture repeats its selections, so with the
 cache on almost every row now measures a lookup rather than the resolver:
 
-- `uncached-*` runs with `cacheResolutions: false` and is the only row that still measures the plan
-  walk. A change under `resolve/` that does not move it did not do what you think. It has no
-  counterpart in a library without the same switch, so its ratio column is meaningless — it is a
-  control, and it is off the aggregates for that reason.
+- `uncached-*` runs with `cacheResolutions: false` and is the row to read for the plan walk. A
+  change under `resolve/` that does not move it did not do what you think. It has no counterpart in
+  a library without the same switch, so its ratio column is meaningless — it is a control, and it is
+  off the aggregates for that reason. `construct-*` measures the walk too, since each of its
+  definitions resolves once against an empty cache, but it measures compilation alongside it.
 - `repeat-*` is the shape a UI actually has: three selections, fresh props objects, over and over.
 - `construct-*` is per component definition where everything else is per render, so it is off the
   aggregates too.

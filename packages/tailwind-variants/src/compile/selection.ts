@@ -149,9 +149,9 @@ export const compileSelectionEncoder = (
             if (found !== undefined) {
               id = found;
             } else if (axis.group[variantKey] === undefined) {
-              // The same read resolution makes, so a value the group does not answer shares one id.
+              // Not remembered: the ids table is only ever as large as the group, where remembering
+              // every value a caller passes would grow it without bound for the resolver's lifetime.
               id = axis.unknownId;
-              axis.valueIds[variantKey] = id;
             } else if (axis.nextId < axis.unknownId) {
               id = axis.nextId++;
               axis.valueIds[variantKey] = id;

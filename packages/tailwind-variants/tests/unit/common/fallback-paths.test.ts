@@ -75,6 +75,19 @@ describe("Fallback Paths", () => {
     expect(odd({ size: "sm" }).base?.()).toBe("rounded p-2");
   });
 
+  test("keeps resolving after a flood of values it does not recognise", () => {
+    // What a server rendering user content does to a module-scope resolver. None of these may be
+    // remembered, and none may consume an id the declared values need.
+    const badge = tv({ base: "block", variants: { tone: { info: "p-1", warn: "p-2" } } });
+
+    for (let index = 0; index < 5000; index++) {
+      expect(badge({ tone: `status-${String(index)}` } as never)).toBe("block");
+    }
+
+    expect(badge({ tone: "info" })).toBe("block p-1");
+    expect(badge({ tone: "warn" })).toBe("block p-2");
+  });
+
   test("falls back to clsx when an argument is not a string", () => {
     expect(cx("a", ["b", "c"])).toBe("a b c");
     expect(cx("a", { b: true, c: false })).toBe("a b");
