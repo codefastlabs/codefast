@@ -2,16 +2,84 @@
  * The class-name utilities this package exposes to consumers, independent of variants.
  */
 
-import { clsx } from "clsx";
 import type { ConfigExtension } from "tailwind-merge";
 import { extendTailwindMerge, twMerge } from "tailwind-merge";
 
 import type { ClassValue } from "#/types";
 
 /**
- * Combine CSS classes using clsx.
+ * One class value flattened to the classes it contributes.
  *
- * @remarks Takes a string-only fast path and falls back to clsx for anything else.
+ * @remarks Deliberately identical to clsx, which this replaced so the package ships no runtime
+ * dependency of its own — including the corners its own types disagree with: a `bigint` contributes
+ * nothing despite being a `ClassValue`, and an object's keys are read with `for…in`, so an
+ * inherited enumerable one counts.
+ */
+const flattenClassValue = (value: ClassValue): string => {
+  if (typeof value === "string") {
+    return value;
+  }
+
+  if (typeof value === "number") {
+    return String(value);
+  }
+
+  if (typeof value !== "object" || value === null) {
+    return "";
+  }
+
+  let text = "";
+
+  if (Array.isArray(value)) {
+    for (const item of value) {
+      if (!item) {
+        continue;
+      }
+
+      const part = flattenClassValue(item);
+
+      if (part) {
+        text = text === "" ? part : `${text} ${part}`;
+      }
+    }
+
+    return text;
+  }
+
+  for (const key in value) {
+    if (value[key]) {
+      text = text === "" ? key : `${text} ${key}`;
+    }
+  }
+
+  return text;
+};
+
+/**
+ * Flatten every class value a caller passed, dropping the ones that contribute nothing.
+ */
+export const flattenClassValues = (classes: ReadonlyArray<ClassValue>): string => {
+  let text = "";
+
+  for (const value of classes) {
+    if (!value) {
+      continue;
+    }
+
+    const part = flattenClassValue(value);
+
+    if (part) {
+      text = text === "" ? part : `${text} ${part}`;
+    }
+  }
+
+  return text;
+};
+
+/**
+ * Combine CSS classes.
+ *
+ * @remarks Takes a string-only fast path and flattens anything else.
  *
  * @since 0.3.16-canary.0
  */
@@ -33,7 +101,7 @@ export const cx = (...classes: Array<ClassValue>): string => {
       return "";
     }
 
-    return clsx(single);
+    return flattenClassValue(single);
   }
 
   let result = "";
@@ -46,7 +114,7 @@ export const cx = (...classes: Array<ClassValue>): string => {
         result = result ? result + " " + classValue : classValue;
       }
     } else if (classValue) {
-      return clsx(classes);
+      return flattenClassValues(classes);
     }
   }
 
@@ -76,7 +144,7 @@ export const cn = (...classes: Array<ClassValue>): string => {
       return "";
     }
 
-    return twMerge(clsx(single));
+    return twMerge(flattenClassValue(single));
   }
 
   let result = "";
@@ -89,7 +157,7 @@ export const cn = (...classes: Array<ClassValue>): string => {
         result = result ? result + " " + classValue : classValue;
       }
     } else if (classValue) {
-      return twMerge(clsx(classes));
+      return twMerge(flattenClassValues(classes));
     }
   }
 

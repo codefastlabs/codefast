@@ -126,9 +126,6 @@ catalogs:
     class-variance-authority:
       specifier: ^0.7.1
       version: 0.7.1
-    clsx:
-      specifier: ^2.1.1
-      version: 2.1.1
     cmdk:
       specifier: ^1.1.1
       version: 1.1.1
@@ -755,13 +752,6 @@ importers:
         version: 4.1.10(@types/node@26.1.2)(@vitest/browser-playwright@4.1.10)(@vitest/coverage-v8@4.1.10)(jsdom@30.0.1)(vite@8.2.0(@types/node@26.1.2)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.23.1)(yaml@2.9.0))
 
   packages/tailwind-variants:
-    dependencies:
-      clsx:
-        specifier: 'catalog:'
-        version: 2.1.1
-      tailwind-merge:
-        specifier: 'catalog:'
-        version: 3.6.0
     devDependencies:
       '@codefast/typescript-config':
         specifier: workspace:*
@@ -775,6 +765,9 @@ importers:
       expect-type:
         specifier: 'catalog:'
         version: 1.4.0
+      tailwind-merge:
+        specifier: 'catalog:'
+        version: 3.6.0
       typescript:
         specifier: 'catalog:'
         version: 7.0.2
@@ -957,6 +950,9 @@ importers:
       sonner:
         specifier: 'catalog:'
         version: 2.0.7(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      tailwind-merge:
+        specifier: 'catalog:'
+        version: 3.6.0
       tw-animate-css:
         specifier: 'catalog:'
         version: 1.4.0

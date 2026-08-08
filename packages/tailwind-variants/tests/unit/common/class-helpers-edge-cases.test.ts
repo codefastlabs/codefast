@@ -73,10 +73,12 @@ describe("Tailwind Variants (TV) - Class Helper Edge Cases", () => {
       expect(isSlotClassMap(null)).toBe(false);
       expect(isSlotClassMap(undefined)).toBe(false);
       expect(isSlotClassMap([])).toBe(false);
+      // A function is no longer a `ClassValue` — clsx typed its dictionary `Record<string, any>`,
+      // which admitted one. The runtime still has to answer for it.
       expect(
-        isSlotClassMap(() => {
+        isSlotClassMap((() => {
           /* empty function for test */
-        }),
+        }) as never),
       ).toBe(false);
     });
 
