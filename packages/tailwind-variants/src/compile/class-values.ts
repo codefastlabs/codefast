@@ -7,7 +7,21 @@
 
 import { clsx } from "clsx";
 
-import type { ClassValue, PlanClasses, SlotClassGroup } from "#/types";
+import type { ClassValue } from "#/types";
+
+/**
+ * Classes a variant value contributes to named slots, each slot already resolved to its position
+ * in the plan so that resolution distributes them by index rather than by key.
+ */
+export interface SlotClassGroup {
+  readonly classes: ReadonlyArray<string>;
+  readonly slotIndexes: ReadonlyArray<number>;
+}
+
+/**
+ * Flattened classes a compiled plan holds: one string, or one string per slot it names.
+ */
+export type PlanClasses = SlotClassGroup | string;
 
 /**
  * Flatten a class value to the string it contributes.
@@ -62,8 +76,8 @@ const toSlotClassGroup = (
 /**
  * Flatten a configuration class value for a compiled plan.
  *
- * @param slotIndexByName - Slot positions when the configuration has slots, `null` when it does not
- * and an object value is therefore clsx conditions rather than slot names
+ * @remarks A `null` `slotIndexByName` says the configuration has no slots, so an object value is
+ * clsx conditions rather than slot names.
  */
 export const toPlanClasses = (value: ClassValue, slotIndexByName: Record<string, number> | null): PlanClasses => {
   return slotIndexByName !== null && isSlotClassMap(value)

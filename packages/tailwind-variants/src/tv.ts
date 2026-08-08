@@ -28,16 +28,7 @@ import type {
 const EMPTY_PROPS: Record<string, unknown> = {};
 
 /**
- * Create a Tailwind Variants function for regular components.
- *
- * This function creates a variant-based styling function for components
- * that don't use slots. It provides type-safe variant handling with
- * support for compound variants and configuration merging.
- *
- * @typeParam T - The configuration schema type
- * @param config - The variant configuration object
- * @param tvConfig - Optional Tailwind Variants configuration
- * @returns A variant function for the component
+ * Create a class resolver for a component without slots.
  *
  * @since 0.3.16-canary.0
  */
@@ -47,15 +38,7 @@ export function tv<T extends VariantSchema = Record<never, never>>(
 ): VariantResolver<T, Record<string, never>>;
 
 /**
- * Create a Tailwind Variants function for slot-based components.
- *
- * This overload creates a variant function for components that use slots
- * but don't have regular variants. It provides type-safe slot handling.
- *
- * @typeParam S - The slot configuration schema type
- * @param config - The slot configuration object
- * @param tvConfig - Optional Tailwind Variants configuration
- * @returns A variant function with slot support
+ * Create a class resolver for a component whose slots carry all of its styling.
  *
  * @since 0.3.16-canary.0
  */
@@ -65,16 +48,7 @@ export function tv<S extends SlotSchema>(
 ): VariantResolver<Record<string, never>, S>;
 
 /**
- * Create a Tailwind Variants function for components with both variants and slots.
- *
- * This overload creates a variant function for components that have both
- * regular variants and slots. It provides full type safety for both systems.
- *
- * @typeParam T - The configuration schema type
- * @typeParam S - The slot configuration schema type
- * @param config - The configuration object with variants and slots
- * @param tvConfig - Optional Tailwind Variants configuration
- * @returns A variant function with full variant and slot support
+ * Create a class resolver for a component with both variants and slots.
  *
  * @since 0.3.16-canary.0
  */
@@ -84,19 +58,7 @@ export function tv<T extends VariantSchema, S extends SlotSchema>(
 ): VariantResolver<T, S>;
 
 /**
- * Create a Tailwind Variants function with configuration extension.
- *
- * This overload creates a variant function that extends an existing
- * configuration with additional variants and slots. It merges the
- * base and extension configurations automatically.
- *
- * @typeParam TBase - The base configuration schema type
- * @typeParam TExtension - The extension configuration schema type
- * @typeParam SBase - The base slot configuration schema type
- * @typeParam SExtension - The extension slot configuration schema type
- * @param config - The extended configuration object
- * @param tvConfig - Optional Tailwind Variants configuration
- * @returns A variant function with merged configurations
+ * Create a class resolver that extends another resolver's configuration.
  *
  * @since 0.3.16-canary.0
  */
@@ -111,17 +73,7 @@ export function tv<
 ): VariantResolver<MergedVariantSchema<TBase, TExtension>, MergedSlotSchema<SBase, SExtension>>;
 
 /**
- * Main Tailwind Variants function implementation.
- *
- * This is the core implementation that handles all variant function creation.
- * It processes the configuration, merges extended configurations if needed,
- * and returns a fully configured variant function.
- *
- * @typeParam T - The configuration schema type
- * @typeParam S - The slot configuration schema type
- * @param configuration - The variant configuration
- * @param tvConfiguration - Tailwind Variants configuration options
- * @returns A configured variant function
+ * Compile a configuration into a plan, and return the resolver that runs it.
  *
  * @since 0.3.16-canary.0
  */
@@ -180,14 +132,7 @@ export function tv<T extends VariantSchema, S extends SlotSchema>(
 }
 
 /**
- * Create a Tailwind Variants factory with global configuration.
- *
- * This function creates a factory that can be used to create variant functions
- * with a shared global configuration. It's useful for setting up consistent
- * behavior across multiple components.
- *
- * @param globalConfiguration - The global configuration to apply
- * @returns A factory object with `tv` and `cn` functions
+ * Create a `tv` and a `cn` that share one set of options, so components need not repeat them.
  *
  * @since 0.3.16-canary.0
  */
@@ -195,57 +140,25 @@ export function createTV(globalConfiguration: TailwindVariantsOptions = {}): Tai
   const { twMerge: shouldMergeClasses = true, twMergeConfig } = globalConfiguration;
   const tailwindMergeFn = createTailwindMergeFn(twMergeConfig);
 
-  /**
-   * Factory function for creating regular variant functions.
-   *
-   * @typeParam T - The configuration schema type
-   * @param configuration - The variant configuration
-   * @param localConfiguration - Optional local configuration override
-   * @returns A variant function for regular components
-   */
+  /** Create a class resolver for a component without slots. */
   function tvFactory<T extends VariantSchema = Record<never, never>>(
     configuration: VariantConfig<T>,
     localConfiguration?: TailwindVariantsOptions,
   ): VariantResolver<T, Record<string, never>>;
 
-  /**
-   * Factory function for creating slot-based variant functions.
-   *
-   * @typeParam S - The slot configuration schema type
-   * @param configuration - The slot configuration
-   * @param localConfiguration - Optional local configuration override
-   * @returns A variant function for slot-based components
-   */
+  /** Create a class resolver for a component whose slots carry all of its styling. */
   function tvFactory<S extends SlotSchema>(
     configuration: SlotVariantConfig<Record<string, never>, S>,
     localConfiguration?: TailwindVariantsOptions,
   ): VariantResolver<Record<string, never>, S>;
 
-  /**
-   * Factory function for creating variant functions with both variants and slots.
-   *
-   * @typeParam T - The configuration schema type
-   * @typeParam S - The slot configuration schema type
-   * @param configuration - The configuration with variants and slots
-   * @param localConfiguration - Optional local configuration override
-   * @returns A variant function with full support
-   */
+  /** Create a class resolver for a component with both variants and slots. */
   function tvFactory<T extends VariantSchema, S extends SlotSchema>(
     configuration: SlotVariantConfig<T, S>,
     localConfiguration?: TailwindVariantsOptions,
   ): VariantResolver<T, S>;
 
-  /**
-   * Factory function for creating extended variant functions.
-   *
-   * @typeParam TBase - The base configuration schema type
-   * @typeParam TExtension - The extension configuration schema type
-   * @typeParam SBase - The base slot configuration schema type
-   * @typeParam SExtension - The extension slot configuration schema type
-   * @param configuration - The extended configuration
-   * @param localConfiguration - Optional local configuration override
-   * @returns A variant function with merged configurations
-   */
+  /** Create a class resolver that extends another resolver's configuration. */
   function tvFactory<
     TBase extends VariantSchema,
     TExtension extends VariantSchema,
@@ -256,18 +169,7 @@ export function createTV(globalConfiguration: TailwindVariantsOptions = {}): Tai
     localConfiguration?: TailwindVariantsOptions,
   ): VariantResolver<MergedVariantSchema<TBase, TExtension>, MergedSlotSchema<SBase, SExtension>>;
 
-  /**
-   * Main factory implementation.
-   *
-   * This function merges global and local configurations and creates
-   * the appropriate variant function using the main `tv` function.
-   *
-   * @typeParam T - The configuration schema type
-   * @typeParam S - The slot configuration schema type
-   * @param configuration - The variant configuration
-   * @param localConfiguration - Optional local configuration override
-   * @returns A configured variant function
-   */
+  /** Local options win over the shared ones. */
   function tvFactory<T extends VariantSchema, S extends SlotSchema>(
     configuration: VariantConfig<T> | SlotVariantConfig<T, S> | ExtendedVariantConfig<VariantSchema, T, SlotSchema, S>,
     localConfiguration?: TailwindVariantsOptions,
@@ -277,12 +179,6 @@ export function createTV(globalConfiguration: TailwindVariantsOptions = {}): Tai
     return tv(configuration, mergedConfiguration) as VariantResolver<T, S>;
   }
 
-  /**
-   * Create a class name utility function with global configuration.
-   *
-   * @param classes - The CSS classes to combine
-   * @returns The combined and optionally merged class string
-   */
   const cnFunction = (...classes: Array<ClassValue>): string => {
     return shouldMergeClasses ? tailwindMergeFn(cx(...classes)) : cx(...classes);
   };

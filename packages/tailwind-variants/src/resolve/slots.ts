@@ -3,11 +3,12 @@
  * slot-based component destructures.
  */
 
+import type { PlanClasses } from "#/compile/class-values";
 import { toClassText, toVariantKey } from "#/compile/class-values";
 import type { CompoundSlotPlanEntry } from "#/compile/compound";
 import { collectMatchedCompoundSlots, matchesCompoundConditions } from "#/compile/compound";
 import type { SlotPlanEntry, VariantPlan } from "#/compile/plan";
-import type { ClassValue, PlanClasses, SlotClassResolver, SlotResolverProps, VariantSchema } from "#/types";
+import type { ClassValue, SlotClassResolver, SlotResolverProps, VariantSchema } from "#/types";
 
 /**
  * One resolution of the variant props, shared by every slot of that call.

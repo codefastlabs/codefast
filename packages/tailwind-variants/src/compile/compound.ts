@@ -6,14 +6,8 @@
  */
 
 import { toClassText, toPlanClasses } from "#/compile/class-values";
-import type {
-  ClassValue,
-  CompoundSlot,
-  CompoundVariant,
-  PlanClasses,
-  SlotCompoundVariant,
-  VariantSchema,
-} from "#/types";
+import type { PlanClasses } from "#/compile/class-values";
+import type { ClassValue, CompoundSlot, CompoundVariant, SlotCompoundVariant, VariantSchema } from "#/types";
 
 /** Condition satisfied when the resolved value strictly equals the configured one. */
 const CONDITION_STRICT = 0;
@@ -60,7 +54,7 @@ const EMPTY_COMPOUND_SLOTS: ReadonlyArray<CompoundSlotPlanEntry> = [];
  *
  * @since 0.3.16-canary.2
  */
-export const getCompoundClass = (compoundDefinition: {
+const getCompoundClass = (compoundDefinition: {
   readonly class?: ClassValue;
   readonly className?: ClassValue;
 }): ClassValue => {
@@ -97,8 +91,8 @@ const compileConditions = (
 /**
  * Compile compound variants into condition lists.
  *
- * @param slotIndexByName - Slot positions when the configuration has slots, `null` when it does not
- * @param coerceMissingBoolean - Whether a boolean condition treats an absent value as `false`
+ * @remarks A `null` `slotIndexByName` says the configuration has no slots. `coerceMissingBoolean`
+ * decides whether a boolean condition reads a value absent from both props and defaults as `false`.
  */
 export const compileCompoundVariants = <T extends VariantSchema>(
   compoundVariants: ReadonlyArray<CompoundVariant<T> | SlotCompoundVariant<T, never>> | undefined,
@@ -170,7 +164,7 @@ export const compileCompoundSlots = <T extends VariantSchema>(
 /**
  * Whether every condition holds, reading slot props first, then variant props, then the default.
  *
- * @param slotProps - Per-slot overrides that outrank the resolver's props, or `null` for none
+ * @remarks `slotProps` is `null` when the slot was called without props of its own.
  */
 export const matchesCompoundConditions = (
   conditions: ReadonlyArray<CompoundCondition>,

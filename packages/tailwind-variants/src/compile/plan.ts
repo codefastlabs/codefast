@@ -6,6 +6,7 @@
  * resolution never calls clsx.
  */
 
+import type { PlanClasses } from "#/compile/class-values";
 import { toClassText, toPlanClasses, toVariantKey } from "#/compile/class-values";
 import type { CompoundPlanEntry, CompoundSlotPlanEntry } from "#/compile/compound";
 import { compileCompoundSlots, compileCompoundVariants } from "#/compile/compound";
@@ -13,7 +14,6 @@ import { hasSlotsConfig } from "#/compile/configuration";
 import type {
   ClassValue,
   CompoundSlot,
-  PlanClasses,
   SlotCompoundVariant,
   SlotSchema,
   SlotVariantConfig,
