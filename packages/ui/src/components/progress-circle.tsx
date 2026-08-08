@@ -106,7 +106,7 @@ function ProgressCircle({
     [strokeWidth, thickness, actualSize],
   );
 
-  const slots = useMemo(() => progressCircleVariants({ size, thickness, variant }), [variant, size, thickness]);
+  const slots = progressCircleVariants({ size, thickness, variant });
 
   const shouldShowLabel = showValue || Boolean(renderLabel);
 
