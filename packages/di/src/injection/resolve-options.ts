@@ -88,13 +88,11 @@ interface SlotWithMemoizedOptions {
 }
 
 /**
- * The options a dependency resolves with, built once per slot.
+ * The options a dependency resolves with — one object per slot, since a slot's criteria are fixed
+ * when it is declared.
  *
- * @remarks A slot's name and tags are fixed when it is declared, so the options derived from them are
- * too — but a dependency is resolved on every hop, and building them there allocated an object per hop
- * for every named or tagged dependency. The plain case is answered from the two fields without a call
- * into the builder at all; only a slot that actually carries a criterion reaches the memo, which is
- * why the memo can be written lazily without costing the common shape a hidden-class transition.
+ * @remarks A slot carrying no criterion answers from its two fields, so the common shape never
+ * reaches the memo.
  */
 export function resolveOptionsForSlot(injectionSlot: DependencySlot): ResolveOptions | undefined {
   const { name, tags } = injectionSlot;
@@ -109,14 +107,8 @@ export function resolveOptionsForSlot(injectionSlot: DependencySlot): ResolveOpt
 /**
  * Builds, freezes and stores a slot's options on first use.
  *
- * @remarks Frozen because one object now answers every resolve of that slot, in every container, and
- * a constraint predicate is handed it as `currentResolveOptions`. Writing through that reference would
- * rewrite what the dependency asks for from then on; frozen, the attempt throws where it is made.
- *
- * Split out for the `try`: V8 declines to inline a function containing one, and this is reached from
- * the path every dependency of every resolve takes, so a `try` in there costs the early return its
- * inlining. The `catch` covers a frozen slot, which a custom {@link MetadataReader} may hand out —
- * correct either way, it just keeps rebuilding.
+ * @remarks Frozen because one object answers every resolve of the slot and a constraint predicate is
+ * handed it. Split out for the `try`: in the caller it would cost the early return its inlining.
  */
 function memoizeResolveOptions(
   slot: SlotWithMemoizedOptions,
@@ -127,7 +119,7 @@ function memoizeResolveOptions(
   try {
     slot[MEMOIZED_RESOLVE_OPTIONS] = built;
   } catch {
-    /* frozen slot */
+    // A frozen slot rebuilds on every hop rather than throwing.
   }
   return built;
 }
