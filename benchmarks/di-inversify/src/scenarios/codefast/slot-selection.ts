@@ -23,9 +23,13 @@
  * over a tagged token, a tagged miss walking to a parentless container, and a tagged/named pair
  * owned by a parent and resolved from a child — the two that price the named lane's memo against
  * the tagged lane's unmemoized chain walk.
+ *
+ * Every row above requests its criteria as a caller's argument. The last two instead resolve a class
+ * whose *dependencies* carry a name, once with the class's plan compiled and once with it declined —
+ * the only rows in the suite where a criterion arrives from an injection slot.
  */
 import type { BindingTag } from "@codefast/di";
-import { Container, token } from "@codefast/di";
+import { Container, inject, injectable, token } from "@codefast/di";
 
 import { ENV_TAG, LEVEL_TAG } from "#/fixtures/bench-tags";
 import { TAGGED_ENVS, TARGET_TAG_VALUE } from "#/fixtures/scenario-parity";
@@ -308,6 +312,84 @@ function buildNamedParentOwnedScenario(): BenchScenario {
   };
 }
 
+// ── Injected slots: the lane every request-side row above misses ─────────────
+
+interface InjectedLeaf {
+  readonly id: string;
+}
+
+const injectedLeafToken = token<InjectedLeaf>("bench-cf-slot-injected-leaf");
+const INJECTED_SLOT_NAMES = ["alpha", "beta", "gamma", "delta"] as const;
+
+@injectable([
+  inject(injectedLeafToken, { name: "alpha" }),
+  inject(injectedLeafToken, { name: "beta" }),
+  inject(injectedLeafToken, { name: "gamma" }),
+  inject(injectedLeafToken, { name: "delta" }),
+])
+class InjectedNamedRoot {
+  constructor(
+    readonly alpha: InjectedLeaf,
+    readonly beta: InjectedLeaf,
+    readonly gamma: InjectedLeaf,
+    readonly delta: InjectedLeaf,
+  ) {}
+}
+
+/** An activation hook is the cheapest thing that makes the plan compiler decline a class. */
+function buildInjectedNamedContainer(declinePlan: boolean): Container {
+  const container = Container.create();
+
+  for (const name of INJECTED_SLOT_NAMES) {
+    container.bind(injectedLeafToken).toConstantValue({ id: name }).whenNamed(name);
+  }
+  const binding = container.bind(InjectedNamedRoot).toSelf().transient();
+
+  if (declinePlan) {
+    binding.onActivation((_ctx, instance) => instance);
+  }
+
+  return container;
+}
+
+function buildInjectedNameCompiledScenario(): BenchScenario {
+  const container = buildInjectedNamedContainer(false);
+
+  container.resolve(InjectedNamedRoot);
+
+  return {
+    id: "slot-injected-name-compiled",
+    group: "slot-selection",
+    what: "resolve a class whose four dependencies each request a name — the compiled plan's escape thunks (codefast-only)",
+    batch: SLOT_RESOLVE_BATCH,
+    excludeFromAggregates: true,
+    sanity: () => container.resolve(InjectedNamedRoot).alpha.id === "alpha",
+    build: () =>
+      batched(SLOT_RESOLVE_BATCH, () => {
+        container.resolve(InjectedNamedRoot);
+      }),
+  };
+}
+
+function buildInjectedNameInterpretedScenario(): BenchScenario {
+  const container = buildInjectedNamedContainer(true);
+
+  container.resolve(InjectedNamedRoot);
+
+  return {
+    id: "slot-injected-name-interpreted",
+    group: "slot-selection",
+    what: "the same four named dependencies with the class's plan declined — the interpreted dependency lane (codefast-only)",
+    batch: SLOT_RESOLVE_BATCH,
+    excludeFromAggregates: true,
+    sanity: () => container.resolve(InjectedNamedRoot).delta.id === "delta",
+    build: () =>
+      batched(SLOT_RESOLVE_BATCH, () => {
+        container.resolve(InjectedNamedRoot);
+      }),
+  };
+}
+
 export function buildCodefastSlotSelectionScenarios(): ReadonlyArray<BenchScenario> {
   return [
     buildArrayHoistedScenario(),
@@ -320,5 +402,7 @@ export function buildCodefastSlotSelectionScenarios(): ReadonlyArray<BenchScenar
     buildMissOptionalScenario(),
     buildTaggedParentOwnedScenario(),
     buildNamedParentOwnedScenario(),
+    buildInjectedNameCompiledScenario(),
+    buildInjectedNameInterpretedScenario(),
   ];
 }
