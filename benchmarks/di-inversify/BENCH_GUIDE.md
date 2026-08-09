@@ -80,6 +80,30 @@ on two rows the change could not reach. Two defences, and the first is worth mor
 - **Set each must-hold threshold from that row's measured A/A spread**, not from a round number. A
   round number encodes how strict you feel, not what the instrument can see.
 
+### When the claim is about allocation, count allocations
+
+A throughput row cannot see a few hundred bytes per resolve — the floor above is ±12% on the fast
+rows, and an allocation change is far below it. An allocation claim is deterministic, so measure it
+deterministically: `pnpm --filter @codefast/benchmark-di-inversify instrument:alloc` reports scavenges per 2M
+resolves across three shapes, one child process each, under a 1 MB young generation where scavenge
+count tracks bytes allocated. It is what settled the per-hop options allocation — the interpreted
+named-slot lane went 870 → 442, landing exactly on the criteria-free control's 443, while the
+compiled lane sat at 1260 on both builds.
+
+Two instruments that look right and are not, both tried here first:
+
+- **`heapUsed` delta over a window, guarded by `PerformanceObserver({ entryTypes: ["gc"] })`.** The
+  observer never fires, so the "no collection in this window" guard is vacuous — and a collection
+  inside the window makes the number _lower_, so the failure reads as a win. Under a 1 MB semi-space,
+  where scavenges are certain, the same code read 28 B/resolve instead of 232 B and still reported a
+  clean window. Validate a guard by forcing the condition it claims to detect.
+- **`HeapProfiler.startSampling`.** Samples are held weakly, so garbage that dies before
+  `stopSampling` — exactly what is under test — is absent from the profile. It also records nothing
+  at all unless `HeapProfiler.enable` is posted first, which looks identical to "nothing allocated".
+
+`--trace-gc` writes to **stdout**, not stderr. A pipeline that merges the two hides it, and one that
+counts on the wrong stream reports a confident zero.
+
 ## Comparing two libraries: interleave, and say you did
 
 Run every library on the **same scenario** before moving to the next, rotating which library goes
