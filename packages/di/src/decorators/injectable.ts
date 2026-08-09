@@ -1,5 +1,5 @@
 import type { BindingScope, Constructor } from "#/core/types";
-import type { InjectableDependency } from "#/injection/descriptor";
+import type { InjectableDependency, ResolvedDependencyValue } from "#/injection/descriptor";
 import { normalizeToDescriptor } from "#/injection/descriptor";
 import { INJECTABLE_KEY } from "#/metadata/metadata-keys";
 import type { ParamMetadata } from "#/metadata/metadata-types";
@@ -42,13 +42,40 @@ export interface InjectableOptions {
 // ── @injectable() ─────────────────────────────────────────────────────────────
 
 /**
+ * The parameters a constructor is handed, given what its `deps` declare.
+ *
+ * @remarks Reuses the same reading a `toResolved` factory gets, so `injectAll` arrives as an array
+ * and `optional` as possibly undefined in both places.
+ */
+type InjectedParameters<Deps extends ReadonlyArray<InjectableDependency>> = {
+  -readonly [Index in keyof Deps]: ResolvedDependencyValue<Deps[Index]>;
+};
+
+/**
+ * Declare a class injectable, and what its constructor is to be handed.
+ *
  * @since 0.3.16-canary.0
  */
+export function injectable(): (target: unknown, context: ClassDecoratorContext) => void;
+
+/**
+ * @remarks Declaring dependencies constrains the class: the decorator only accepts one whose
+ * constructor takes exactly what `deps` resolve to, in that order. A class taking fewer parameters
+ * than `deps` declares still satisfies it, which is the one mismatch TypeScript's arity rules let
+ * through — the surplus dependency is resolved and discarded.
+ *
+ * @since 0.3.16-canary.0
+ */
+export function injectable<const Deps extends ReadonlyArray<InjectableDependency>>(
+  deps: Deps,
+  options?: InjectableOptions,
+): (target: abstract new (...args: InjectedParameters<Deps>) => unknown, context: ClassDecoratorContext) => void;
+
 export function injectable(
   deps?: ReadonlyArray<InjectableDependency>,
   options?: InjectableOptions,
-): (target: unknown, context: ClassDecoratorContext) => void {
-  return function (target: unknown, context: ClassDecoratorContext): void {
+): (target: never, context: ClassDecoratorContext) => void {
+  return function (target: never, context: ClassDecoratorContext): void {
     const parameterMetadataList: Array<ParamMetadata> = (deps ?? []).map((dependency, index) => {
       const descriptor = normalizeToDescriptor(dependency);
       const baseParameterMetadata: Pick<ParamMetadata, "index" | "token" | "optional" | "multi"> = {
