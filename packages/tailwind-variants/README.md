@@ -15,7 +15,7 @@ pnpm add @codefast/tailwind-variants
 # yarn add @codefast/tailwind-variants
 ```
 
-Ships ESM only, with `clsx` and `tailwind-merge` as its sole runtime dependencies. Requires Node >= 24 at build/install time.
+Ships ESM only, with **no runtime dependencies of its own**. `tailwind-merge` is a peer (`>=3.0.0`) — install it alongside — so you get one copy at the version you chose. Requires Node >= 24 at build/install time.
 
 ## Quick Start
 
@@ -194,9 +194,9 @@ Options passed locally to `tv(config, options)` override the factory's globals. 
 ```ts
 import { cn, cx } from "@codefast/tailwind-variants";
 
-cn("px-4 py-2", "px-6"); // => "py-2 px-6" — clsx + tailwind-merge
-cx("px-4 py-2", "px-6"); // => "px-4 py-2 px-6" — clsx only, no merging
-cn("base", isActive && "text-primary", { hidden: false }); // conditional values, same shapes as clsx
+cn("px-4 py-2", "px-6"); // => "py-2 px-6" — joined, then tailwind-merge
+cx("px-4 py-2", "px-6"); // => "px-4 py-2 px-6" — joined only, no merging
+cn("base", isActive && "text-primary", { hidden: false }); // conditional values, the shapes clsx accepts
 ```
 
 ## TypeScript
@@ -246,7 +246,7 @@ The repository maintains a [benchmark suite](https://github.com/codefastlabs/cod
 pnpm --filter @codefast/benchmark-tailwind-variants bench
 ```
 
-The speed comes from settling things once. The configuration is settled when `tv()` is called: variant groups, compound conditions and slot positions are compiled into a plan, and every class value is flattened to a string, so resolving a component is string concatenation rather than dictionary lookups. The answer is then settled per selection, so a list rendering the same few selections resolves each of them once. `cn` / `cx` take the same string fast path and skip `clsx` when every argument is already a string.
+The speed comes from settling things once. The configuration is settled when `tv()` is called: variant groups, compound conditions and slot positions are compiled into a plan, and every class value is flattened to a string, so resolving a component is string concatenation rather than dictionary lookups. The answer is then settled per selection, so a list rendering the same few selections resolves each of them once. `cn` / `cx` take the same string fast path, joining directly when every argument is already a string.
 
 The trade is that `tv()` itself is slower than upstream's — that cost is per component definition, against a resolution that is far cheaper on every render, and the suite measures both.
 

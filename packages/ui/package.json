@@ -630,6 +630,7 @@
     "react-resizable-panels": "catalog:",
     "recharts": "catalog:",
     "sonner": "catalog:",
+    "tailwind-merge": "catalog:",
     "tw-animate-css": "catalog:",
     "vaul": "catalog:"
   },
