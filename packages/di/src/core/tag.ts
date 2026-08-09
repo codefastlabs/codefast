@@ -40,8 +40,6 @@ export interface BindingTag<Value = unknown> {
 
 /**
  * A named tag key, and the factory for its criteria.
- *
- * @since 0.6.0
  */
 export interface TagKey<Value = unknown> {
   readonly name: string;
@@ -79,8 +77,6 @@ function internKeyFor(value: unknown): unknown {
  * container.bind(Storage).to(S3).whenTagged(Region.of("eu"));
  * container.resolve(Storage, { tag: Region.of("eu") });
  * ```
- *
- * @since 0.6.0
  */
 export function tag<Value = unknown>(name: string): TagKey<Value> {
   tagKeyCounter += 1;
