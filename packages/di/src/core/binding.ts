@@ -97,6 +97,17 @@ interface BindingBase<Value> {
    * a field read replaces a keyed lookup on the hottest resolve shape there is.
    */
   instance: unknown;
+  /**
+   * The class the last instance came from, and the `@postConstruct` methods it declares.
+   *
+   * @remarks A factory names no class, so the only way to find its hooks is to read them off what it
+   * returned — a metadata lookup that would otherwise repeat on every resolve. A factory almost
+   * always returns the same class, so the identity check against `producedClass` settles it and the
+   * list is reused. Not optional, for the same reason `inFlight` is not: one hidden class.
+   * Resolver-owned; callers never set either.
+   */
+  producedClass: Constructor | undefined;
+  producedPostConstruct: ReadonlyArray<string> | undefined;
   readonly token: Token<Value> | Constructor<Value>;
   readonly slot: BindingSlot;
   readonly predicate?: BindingConstraint | undefined;
@@ -279,6 +290,8 @@ export function createBinding<Value>(
     inFlight: false,
     frame: undefined,
     instance: fields.instance ?? NO_INSTANCE,
+    producedClass: undefined,
+    producedPostConstruct: undefined,
     token,
     slot,
     predicate,

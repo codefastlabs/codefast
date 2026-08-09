@@ -1,6 +1,7 @@
 import type { Container } from "#/container/container";
 import type { Binding, ConstantBinding, DynamicAsyncBinding, DynamicBinding } from "#/core/binding";
 import { NO_INSTANCE } from "#/core/binding";
+import { anyLifecycleMethodDeclared, producesOwnInstance } from "#/core/lifecycle-declarations";
 import type { BindingRegistry } from "#/core/registry";
 import type { Token } from "#/core/token";
 import { tokenName } from "#/core/token";
@@ -298,7 +299,11 @@ export class DependencyResolver implements ResolverCallbacks {
       if ((binding.kind === "class" || binding.kind === "resolved") && resolutionPath.length === 0) {
         const plan = this.#getInstantiationPlan(binding);
         if (plan !== null) {
-          return plan();
+          const planned = plan();
+          if (anyLifecycleMethodDeclared() && producesOwnInstance(binding)) {
+            this.#lifecycle.runProducedPostConstructSync(binding, planned, this.#metadataReader);
+          }
+          return planned;
         }
       }
     } else if (scope === "singleton") {
@@ -346,6 +351,9 @@ export class DependencyResolver implements ResolverCallbacks {
       const factoryResult = binding.factory(resolutionCtx);
       if (factoryResult instanceof Promise) {
         throw new AsyncResolutionError(resolutionPath[0] ?? tokenDisplayName, tokenDisplayName);
+      }
+      if (anyLifecycleMethodDeclared()) {
+        this.#lifecycle.runProducedPostConstructSync(binding, factoryResult, this.#metadataReader);
       }
       let activated = factoryResult;
       if (binding.onActivation !== undefined) {
@@ -495,14 +503,17 @@ export class DependencyResolver implements ResolverCallbacks {
 
       const instance = this.#instantiateSync(binding, resolutionCtx, resolutionPath, resolutionStack);
 
-      const activated = this.#activation.refreshAfterFirstInstantiation(binding, needsActivation)
-        ? this.#lifecycle.runActivationSync(
-            resolutionCtx as DefaultResolutionContext,
-            binding,
-            instance,
-            this.#metadataReader,
-          )
-        : instance;
+      let activated: unknown = instance;
+      if (this.#activation.refreshAfterFirstInstantiation(binding, needsActivation)) {
+        activated = this.#lifecycle.runActivationSync(
+          resolutionCtx as DefaultResolutionContext,
+          binding,
+          instance,
+          this.#metadataReader,
+        );
+      } else if (anyLifecycleMethodDeclared() && producesOwnInstance(binding)) {
+        this.#lifecycle.runProducedPostConstructSync(binding, instance, this.#metadataReader);
+      }
 
       if (scope === "singleton") {
         this.#scope.setSingleton(binding, activated);
@@ -863,6 +874,9 @@ export class DependencyResolver implements ResolverCallbacks {
   ): Promise<unknown> {
     const instance = await this.#instantiateAsync(binding, ctx, resolutionPath, resolutionStack, branchDepth);
     if (!this.#activation.refreshAfterFirstInstantiation(binding, needsActivation)) {
+      if (anyLifecycleMethodDeclared() && producesOwnInstance(binding)) {
+        await this.#lifecycle.runProducedPostConstruct(binding, instance, this.#metadataReader);
+      }
       return instance;
     }
     return this.#lifecycle.runActivation(ctx as AsyncLevelContext, binding, instance, this.#metadataReader);
@@ -1175,6 +1189,9 @@ export class DependencyResolver implements ResolverCallbacks {
       if (dynamicResult instanceof Promise) {
         throw new AsyncResolutionError(resolutionPath[0] ?? tokenDisplayName, tokenDisplayName);
       }
+      if (anyLifecycleMethodDeclared()) {
+        this.#lifecycle.runProducedPostConstructSync(binding, dynamicResult, this.#metadataReader);
+      }
       return dynamicResult;
     } finally {
       resolutionStack.pop();
@@ -1203,11 +1220,18 @@ export class DependencyResolver implements ResolverCallbacks {
     // Nothing this level appended is ever removed, so no level observes its own settlement.
     const ctx = new AsyncLevelContext(this, levelPath, levelStack, undefined);
     try {
-      if (binding.kind === "dynamic-async") {
-        return binding.factory(ctx);
-      }
       const factoryResult = binding.factory(ctx);
-      return factoryResult instanceof Promise ? factoryResult : Promise.resolve(factoryResult);
+      const settled = factoryResult instanceof Promise ? factoryResult : Promise.resolve(factoryResult);
+      if (!anyLifecycleMethodDeclared()) {
+        return settled;
+      }
+      return settled.then((produced) => {
+        const methods = this.#lifecycle.producedPostConstructMethods(binding, produced, this.#metadataReader);
+        if (methods === undefined) {
+          return produced;
+        }
+        return this.#lifecycle.runProducedPostConstruct(binding, produced, this.#metadataReader).then(() => produced);
+      });
     } catch (factoryError) {
       return Promise.reject(factoryError);
     }
@@ -1272,11 +1296,18 @@ export class DependencyResolver implements ResolverCallbacks {
     this.#cascadePath.push(frame.tokenName);
     this.#cascadeStack.push(frame);
     try {
-      if (binding.kind === "dynamic-async") {
-        return binding.factory(ctx);
-      }
       const factoryResult = binding.factory(ctx);
-      return factoryResult instanceof Promise ? factoryResult : Promise.resolve(factoryResult);
+      const settled = factoryResult instanceof Promise ? factoryResult : Promise.resolve(factoryResult);
+      if (!anyLifecycleMethodDeclared()) {
+        return settled;
+      }
+      return settled.then((produced) => {
+        const methods = this.#lifecycle.producedPostConstructMethods(binding, produced, this.#metadataReader);
+        if (methods === undefined) {
+          return produced;
+        }
+        return this.#lifecycle.runProducedPostConstruct(binding, produced, this.#metadataReader).then(() => produced);
+      });
     } catch (factoryError) {
       return Promise.reject(factoryError);
     } finally {

@@ -5,6 +5,7 @@
  * registered at any time and a rebind mints binding ids the memo must not keep forever.
  */
 import type { Binding } from "#/core/binding";
+import { lifecycleDeclarationVersion } from "#/core/lifecycle-declarations";
 import type { BindingRegistry } from "#/core/registry";
 import type { BindingIdentifier } from "#/core/types";
 import type { LifecycleManager } from "#/lifecycle/lifecycle-manager";
@@ -33,13 +34,14 @@ export class ActivationNeedCache {
       return true;
     }
     const lifecycleVersion = this.#lifecycle.activationVersion;
-    // No hooks registered anywhere and none on the binding: only classes can still surprise us,
-    // via a @postConstruct we have not looked for yet.
+    // No hooks registered anywhere and none on the binding: what is left that can still surprise us
+    // is a `@postConstruct` — declared by a class, or by whatever a factory turns out to return.
     if (lifecycleVersion === 0 && binding.kind !== "class" && binding.kind !== "alias") {
       return false;
     }
-    // The registry version evicts entries for binding ids a rebind has retired.
-    const version = lifecycleVersion + this.#registry.version;
+    // The registry version evicts entries for binding ids a rebind has retired; the declaration
+    // version evicts a `false` decided before a lazily imported class declared its first hook.
+    const version = lifecycleVersion + this.#registry.version + lifecycleDeclarationVersion();
     if (this.#version !== version) {
       this.#needByBindingId.clear();
       this.#version = version;

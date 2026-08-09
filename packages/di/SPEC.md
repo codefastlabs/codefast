@@ -1522,6 +1522,8 @@ container.bind(Database).to(DatabaseService).singleton();
 >
 > **Scope:** `@postConstruct()` chạy cho mọi scope — mỗi lần instance mới được tạo. `@preDestroy()` chỉ chạy cho `singleton` khi container dispose hoặc unbind. `scoped` và `transient` instance không có `@preDestroy()`.
 >
+> **Binding kind:** hook thuộc về **instance**, không thuộc về binding — nên `.to(Class)` và một factory (`toDynamic`/`toResolved`, cả hai biến thể async) trả về instance của cùng class đó đều chạy như nhau. Factory không khai báo class nào, nên class được đọc từ chính giá trị nó trả về; factory đổi class giữa các lần resolve thì lần nào cũng đọc lại. `toConstantValue` **không** chạy — instance ấy do caller dựng chứ không phải container. `toAlias` cũng không: binding nó trỏ tới đã chạy rồi.
+>
 > **Async contamination:** `@postConstruct()` async buộc `resolveAsync()` — async contamination lan truyền toàn bộ dependency path.
 
 <a id="auto-registration"></a>

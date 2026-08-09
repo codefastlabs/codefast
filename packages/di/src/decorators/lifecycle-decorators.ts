@@ -1,3 +1,4 @@
+import { noteLifecycleMethodDeclared } from "#/core/lifecycle-declarations";
 import { StaticMemberDecoratorError } from "#/errors/errors";
 import { LIFECYCLE_KEY } from "#/metadata/metadata-keys";
 import type { MutableLifecycleMetadata } from "#/metadata/metadata-types";
@@ -10,6 +11,8 @@ function recordLifecycleMethod(phase: "postConstruct" | "preDestroy"): MethodDec
     if (context.static) {
       throw new StaticMemberDecoratorError(phase, String(context.name));
     }
+    // Lets resolution skip inspecting what a factory returned, in a process where nothing declares one.
+    noteLifecycleMethodDeclared();
     const meta = context.metadata as Record<string | symbol, unknown>;
     meta[LIFECYCLE_KEY] ??= { postConstruct: [], preDestroy: [] };
     const lifecycle = meta[LIFECYCLE_KEY] as MutableLifecycleMetadata;

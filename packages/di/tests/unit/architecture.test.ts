@@ -47,7 +47,7 @@ describe("every binding shares one shape", () => {
     // literal somewhere else, shows up here as a different key order.
     expect(new Set(shapes).size).toBe(1);
     expect(shapes[0]).toMatchInlineSnapshot(
-      `"kind,id,inFlight,frame,instance,token,slot,predicate,scope,target,factory,deps,value,onActivation,onDeactivation"`,
+      `"kind,id,inFlight,frame,instance,producedClass,producedPostConstruct,token,slot,predicate,scope,target,factory,deps,value,onActivation,onDeactivation"`,
     );
   });
 });

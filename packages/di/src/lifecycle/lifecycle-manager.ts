@@ -1,4 +1,5 @@
 import type { Binding } from "#/core/binding";
+import { producesOwnInstance, producingClassOf } from "#/core/lifecycle-declarations";
 import type { Token } from "#/core/token";
 import { tokenName } from "#/core/token";
 import type {
@@ -84,6 +85,66 @@ export class LifecycleManager {
     return hooked;
   }
 
+  /**
+   * The `@postConstruct` methods declared by the class a factory just returned.
+   *
+   * @remarks Callers gate on {@link anyLifecycleMethodDeclared} first — that boolean is the entire
+   * cost where nothing declares a hook, which is what keeps the specialised lanes lean. The class is
+   * read off the instance and memoized on the binding, so a factory returning the same class every
+   * time pays one identity check rather than a metadata lookup per resolve.
+   */
+  producedPostConstructMethods<Value>(
+    binding: Binding<Value>,
+    instance: Value,
+    metadataReader: MetadataReader,
+  ): ReadonlyArray<string> | undefined {
+    // A class binding's hooks are already known from its target, and a constant was built by the
+    // caller — only a factory leaves its class to be discovered here.
+    if (!producesOwnInstance(binding)) {
+      return undefined;
+    }
+    const producedClass = producingClassOf(instance);
+    if (producedClass === undefined) {
+      return undefined;
+    }
+    if (binding.producedClass !== producedClass) {
+      binding.producedClass = producedClass;
+      binding.producedPostConstruct = metadataReader.getLifecycleMetadata(producedClass)?.postConstruct;
+    }
+    return binding.producedPostConstruct;
+  }
+
+  /** Runs a factory-built instance's `@postConstruct` on a lane that skipped the pipeline. */
+  runProducedPostConstructSync<Value>(binding: Binding<Value>, instance: Value, metadataReader: MetadataReader): void {
+    const methods = this.producedPostConstructMethods(binding, instance, metadataReader);
+    if (methods === undefined) {
+      return;
+    }
+    for (const methodName of methods) {
+      if (callHook(instance, methodName) instanceof Promise) {
+        throw new AsyncActivationError(tokenName(binding.token), "postConstruct", methodName);
+      }
+    }
+  }
+
+  /** The async twin, for a lane whose value arrives as a promise. */
+  async runProducedPostConstruct<Value>(
+    binding: Binding<Value>,
+    instance: Value,
+    metadataReader: MetadataReader,
+  ): Promise<void> {
+    const methods = this.producedPostConstructMethods(binding, instance, metadataReader);
+    if (methods === undefined) {
+      return;
+    }
+    for (const methodName of methods) {
+      const hookResult = callHook(instance, methodName);
+      if (hookResult instanceof Promise) {
+        await hookResult;
+      }
+    }
+  }
+
   async runActivation<Value>(
     resolutionContext: ResolutionContext,
     binding: Binding<Value>,
@@ -93,7 +154,7 @@ export class LifecycleManager {
     let activatedInstance: Value = instance;
 
     // 1. @postConstruct() — after TC39 construction (constructor + accessor addInitializer callbacks)
-    for (const methodName of lifecycleMethods(binding, metadataReader, "postConstruct")) {
+    for (const methodName of lifecycleMethods(binding, activatedInstance, metadataReader, "postConstruct")) {
       const hookResult = callHook(activatedInstance, methodName);
       if (hookResult instanceof Promise) {
         await hookResult;
@@ -127,7 +188,7 @@ export class LifecycleManager {
     let activatedInstance: Value = instance;
 
     // 1. @postConstruct() — must be sync (instance fully constructed per TC39 order)
-    for (const methodName of lifecycleMethods(binding, metadataReader, "postConstruct")) {
+    for (const methodName of lifecycleMethods(binding, activatedInstance, metadataReader, "postConstruct")) {
       if (callHook(activatedInstance, methodName) instanceof Promise) {
         throw new AsyncActivationError(tokenName(binding.token), "postConstruct", methodName);
       }
@@ -185,7 +246,7 @@ export class LifecycleManager {
     }
 
     // 3. @preDestroy() — all methods in declaration order
-    for (const methodName of lifecycleMethods(binding, metadataReader, "preDestroy")) {
+    for (const methodName of lifecycleMethods(binding, instance, metadataReader, "preDestroy")) {
       const hookResult = callHook(instance, methodName);
       if (hookResult instanceof Promise) {
         await hookResult;
@@ -217,7 +278,7 @@ export class LifecycleManager {
     }
 
     // 3. @preDestroy()
-    for (const methodName of lifecycleMethods(binding, metadataReader, "preDestroy")) {
+    for (const methodName of lifecycleMethods(binding, instance, metadataReader, "preDestroy")) {
       if (callHook(instance, methodName) instanceof Promise) {
         throw new AsyncDeactivationError(tokenDisplayName);
       }
@@ -232,16 +293,27 @@ export class LifecycleManager {
 
 const NO_METHODS: ReadonlyArray<string> = [];
 
-/** The `@postConstruct` / `@preDestroy` methods a binding declares — only a class can declare any. */
+/**
+ * The `@postConstruct` / `@preDestroy` methods that apply to one instance.
+ *
+ * @remarks A factory names no class, so the instance it returned is the only place one can be read.
+ * An alias is excluded because it produces nothing of its own — the binding it points at ran these
+ * already, and reading them here would run every hook a second time.
+ */
 function lifecycleMethods<Value>(
   binding: Binding<Value>,
+  instance: Value,
   metadataReader: MetadataReader,
   phase: "postConstruct" | "preDestroy",
 ): ReadonlyArray<string> {
-  if (binding.kind !== "class") {
+  if (binding.kind === "alias") {
     return NO_METHODS;
   }
-  return metadataReader.getLifecycleMetadata(binding.target)?.[phase] ?? NO_METHODS;
+  const declaringClass = binding.kind === "class" ? binding.target : producingClassOf(instance);
+  if (declaringClass === undefined) {
+    return NO_METHODS;
+  }
+  return metadataReader.getLifecycleMetadata(declaringClass)?.[phase] ?? NO_METHODS;
 }
 
 /**
