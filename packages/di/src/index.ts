@@ -118,7 +118,9 @@ export {
   SelfBindingRequiresClassError,
   StaticMemberDecoratorError,
   SyncDisposalNotSupportedError,
+  EmptyTagCriteriaError,
   TokenNotBoundError,
+  UnreachableConstraintError,
   UnreachableLifecycleHookError,
 } from "#/errors/errors";
 export type { ScopeViolationDetails } from "#/errors/errors";

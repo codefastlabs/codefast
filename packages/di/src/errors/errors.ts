@@ -146,6 +146,48 @@ export class ScopeViolationError extends DiError {
 }
 
 /**
+ * A `…TaggedAll` constraint built from a criteria list with nothing in it.
+ *
+ * @remarks Reported where the list is passed rather than where it fails to match, because it does
+ * not fail to match — "carries all of no criteria" holds for any ancestor, so the constraint quietly
+ * becomes a weaker one that still outranks an unconstrained binding.
+ */
+export class EmptyTagCriteriaError extends DiError {
+  readonly code = "EMPTY_TAG_CRITERIA";
+  readonly helperName: string;
+
+  constructor(helperName: string) {
+    super(
+      `${helperName}() was given no criteria. An empty list matches any ancestor, which is not what the call says — pass the criteria to require, or drop the constraint if there are none.`,
+    );
+    this.helperName = helperName;
+  }
+}
+
+/**
+ * A constraint waiting on a slot name that nothing in the container chain declares.
+ *
+ * @remarks A name is a bare string, so a typo produces a constraint that is never satisfied and
+ * never reported. Reported by `validate()` rather than at bind time, because the binding carrying
+ * the name may be registered after the constraint is built.
+ */
+export class UnreachableConstraintError extends DiError {
+  readonly code = "UNREACHABLE_CONSTRAINT";
+  readonly tokenName: string;
+  readonly requiredName: string;
+  readonly helperName: string;
+
+  constructor(tokenName: string, requiredName: string, helperName: string) {
+    super(
+      `The binding for '${tokenName}' is constrained by ${helperName}('${requiredName}'), but no binding in this container or its ancestors declares the slot name '${requiredName}', so the constraint can never hold. Name the slot with .whenNamed('${requiredName}') on the binding it should match, or correct the name here.`,
+    );
+    this.tokenName = tokenName;
+    this.requiredName = requiredName;
+    this.helperName = helperName;
+  }
+}
+
+/**
  * A container-level lifecycle hook whose token nothing is bound to, so it can never run.
  *
  * @remarks Hooks are keyed by token identity, which makes a class that is only ever a `to()` target

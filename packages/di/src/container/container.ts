@@ -3,6 +3,7 @@ import { BindingChain } from "#/container/binding-builders";
 import type { Binding, BindingBuilder, BindToBuilder, ConstantBinding } from "#/core/binding";
 import { NO_INSTANCE } from "#/core/binding";
 import { effectiveBindingScope } from "#/core/binding-scope";
+import { constraintRequirementOf } from "#/core/constraint-requirement";
 import type { AsyncModule, AsyncModuleBuilder, ModuleBuilder, SyncModule } from "#/core/module";
 import { isSyncModule, MODULE_SETUP } from "#/core/module";
 import { BindingRegistry } from "#/core/registry";
@@ -27,6 +28,7 @@ import {
   RebindUnboundTokenError,
   ScopeViolationError,
   SyncDisposalNotSupportedError,
+  UnreachableConstraintError,
   UnreachableLifecycleHookError,
 } from "#/errors/errors";
 import type { DependencySlot } from "#/injection/resolve-options";
@@ -640,6 +642,39 @@ class DefaultContainer implements Container {
         throw new UnreachableLifecycleHookError(tokenName(hookToken), phase);
       }
     }
+
+    this.#validateConstraintRequirements(allBindings);
+  }
+
+  /** A constraint waiting on a slot name no binding declares can never hold. */
+  #validateConstraintRequirements(allBindings: ReadonlyArray<Binding>): void {
+    let declaredSlotNames: Set<string> | undefined;
+
+    for (const binding of allBindings) {
+      const { predicate } = binding;
+      if (predicate === undefined) {
+        continue;
+      }
+      const requirement = constraintRequirementOf(predicate);
+      if (requirement === undefined) {
+        continue;
+      }
+      declaredSlotNames ??= this.#slotNamesInChain();
+      if (!declaredSlotNames.has(requirement.name)) {
+        throw new UnreachableConstraintError(tokenName(binding.token), requirement.name, requirement.helperName);
+      }
+    }
+  }
+
+  /** Every slot name declared anywhere a resolve through this container could reach. */
+  #slotNamesInChain(): Set<string> {
+    const names = this.#parent === undefined ? new Set<string>() : this.#parent.#slotNamesInChain();
+    for (const binding of this.#registry.allBindings()) {
+      if (binding.slot.name !== undefined) {
+        names.add(binding.slot.name);
+      }
+    }
+    return names;
   }
 
   // Ancestors count: a parent-owned binding is one this container can still resolve through.
