@@ -66,6 +66,24 @@ export class LifecycleManager {
     list.push(handler as DeactivationHandler<unknown>);
   }
 
+  /** Asked only while tearing down, so it reads the map directly rather than caching like activation. */
+  hasDeactivationHandlers<Value>(token: Token<Value> | Constructor<Value>): boolean {
+    const list = this.#deactivationHooks?.get(token);
+    return list !== undefined && list.length > 0;
+  }
+
+  /** Every token carrying a container-level hook, paired with the phase that registered it. */
+  hookedTokens(): Array<[DependencyKey, "onActivation" | "onDeactivation"]> {
+    const hooked: Array<[DependencyKey, "onActivation" | "onDeactivation"]> = [];
+    for (const key of this.#activationHooks?.keys() ?? []) {
+      hooked.push([key, "onActivation"]);
+    }
+    for (const key of this.#deactivationHooks?.keys() ?? []) {
+      hooked.push([key, "onDeactivation"]);
+    }
+    return hooked;
+  }
+
   async runActivation<Value>(
     resolutionContext: ResolutionContext,
     binding: Binding<Value>,

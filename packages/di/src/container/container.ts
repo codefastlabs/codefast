@@ -1,6 +1,6 @@
 import type { BindingRegistration } from "#/container/binding-builders";
 import { BindingChain } from "#/container/binding-builders";
-import type { Binding, BindingBuilder, BindToBuilder } from "#/core/binding";
+import type { Binding, BindingBuilder, BindToBuilder, ConstantBinding } from "#/core/binding";
 import { NO_INSTANCE } from "#/core/binding";
 import { effectiveBindingScope } from "#/core/binding-scope";
 import type { AsyncModule, AsyncModuleBuilder, ModuleBuilder, SyncModule } from "#/core/module";
@@ -27,6 +27,7 @@ import {
   RebindUnboundTokenError,
   ScopeViolationError,
   SyncDisposalNotSupportedError,
+  UnreachableLifecycleHookError,
 } from "#/errors/errors";
 import type { DependencySlot } from "#/injection/resolve-options";
 import { injectionSlotToResolveOptions, bindingSlotToResolveOptions } from "#/injection/resolve-options";
@@ -266,17 +267,33 @@ class DefaultContainer implements Container {
     return this.#drainSingletons(this.#registry.removeByToken(tokenOrId));
   }
 
-  /** Drain scope entries for already-removed bindings; only singletons yield deactivation pairs. */
+  /** Drain scope entries for already-removed bindings, and pair each one that still owes a deactivation. */
   #drainSingletons(bindings: ReadonlyArray<Binding>): Array<[Binding, unknown]> {
     const pairs: Array<[Binding, unknown]> = [];
     for (const binding of bindings) {
       if (binding.instance !== NO_INSTANCE) {
         pairs.push([binding, binding.instance]);
         this.#scope.deleteSingleton(binding);
+      } else if (this.#owesConstantDeactivation(binding)) {
+        pairs.push([binding, binding.value]);
       }
       this.#scope.deleteScoped(binding.id);
     }
     return pairs;
+  }
+
+  /**
+   * Whether a constant still owes its deactivation.
+   *
+   * @remarks A constant's value is handed in at bind time rather than built on demand, so its hook is
+   * owed whether or not anything ever resolved it. Callers check `instance` first: a constant that
+   * carries one was cached through activation and is deactivated with that value instead.
+   */
+  #owesConstantDeactivation(binding: Binding): binding is ConstantBinding<unknown> {
+    return (
+      binding.kind === "constant" &&
+      (binding.onDeactivation !== undefined || this.#lifecycle.hasDeactivationHandlers(binding.token))
+    );
   }
 
   #unbindSync(tokenOrId: Token<unknown> | Constructor | BindingIdentifier): void {
@@ -422,6 +439,8 @@ class DefaultContainer implements Container {
         if (binding.instance !== NO_INSTANCE) {
           pairs.push([binding, binding.instance]);
           this.#scope.deleteSingleton(binding);
+        } else if (this.#owesConstantDeactivation(binding)) {
+          pairs.push([binding, binding.value]);
         }
         this.#scope.deleteScoped(binding.id);
       }
@@ -557,6 +576,15 @@ class DefaultContainer implements Container {
     for (const binding of this.#scope.cachedSingletons().slice()) {
       await this.#lifecycle.runDeactivation(binding, binding.instance, reader);
     }
+    // A constant never reaches the singleton cache unless activation put it there, so its hook is
+    // owed from the registry instead — and only a container that has held one pays for looking.
+    if (this.#registry.hasHeldConstantBinding) {
+      for (const binding of this.#registry.allBindings()) {
+        if (binding.instance === NO_INSTANCE && this.#owesConstantDeactivation(binding)) {
+          await this.#lifecycle.runDeactivation(binding, binding.value, reader);
+        }
+      }
+    }
 
     this.#scope.clearAll();
   }
@@ -606,6 +634,21 @@ class DefaultContainer implements Container {
       }
       this.#validateSingletonBindingGraph(binding, reader);
     }
+
+    for (const [hookToken, phase] of this.#lifecycle.hookedTokens()) {
+      if (!this.#isBoundInChain(hookToken)) {
+        throw new UnreachableLifecycleHookError(tokenName(hookToken), phase);
+      }
+    }
+  }
+
+  // Ancestors count: a parent-owned binding is one this container can still resolve through.
+  #isBoundInChain(token: Token<unknown> | Constructor): boolean {
+    if (this.#registry.has(token)) {
+      return true;
+    }
+    const parent = this.#parent;
+    return parent !== undefined && parent.#isBoundInChain(token);
   }
 
   #isSingletonStaticAnalyzableBinding(binding: Binding): boolean {

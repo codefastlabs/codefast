@@ -146,6 +146,27 @@ export class ScopeViolationError extends DiError {
 }
 
 /**
+ * A container-level lifecycle hook whose token nothing is bound to, so it can never run.
+ *
+ * @remarks Hooks are keyed by token identity, which makes a class that is only ever a `to()` target
+ * look like a token and match nothing. Reported by `validate()` rather than at registration, because
+ * binding after registering the hook is a supported order.
+ */
+export class UnreachableLifecycleHookError extends DiError {
+  readonly code = "UNREACHABLE_LIFECYCLE_HOOK";
+  readonly tokenName: string;
+  readonly phase: "onActivation" | "onDeactivation";
+
+  constructor(tokenName: string, phase: "onActivation" | "onDeactivation") {
+    super(
+      `${phase}() is registered for '${tokenName}', which nothing is bound to in this container or its ancestors, so the hook can never run. Bind the token, or — if '${tokenName}' is a class you bound as an implementation via .to(${tokenName}) — register the hook against the token you bound instead.`,
+    );
+    this.tokenName = tokenName;
+    this.phase = phase;
+  }
+}
+
+/**
  * A {@link MetadataReader} described a class with something the container cannot use.
  *
  * @remarks Separate from {@link MissingMetadataError}: absent metadata is a class the container was

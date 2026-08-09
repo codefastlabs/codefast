@@ -22,9 +22,18 @@ export class BindingRegistry {
   // the (key, value) pair is one hash rather than two. Unallocated until a tagged binding lands.
   #simpleTagged: Map<DependencyKey, Map<BindingTag, Binding>> | undefined;
 
+  // Set on the first constant registered and never cleared. Teardown only needs the negative answer
+  // to be exact, and that is what lets a container holding no constant skip its sweep entirely.
+  #heldConstantBinding = false;
+
   /** Monotonic version — increments on every mutation. */
   get version(): number {
     return this.#version;
+  }
+
+  /** Whether a constant has ever been registered here, and so whether teardown has anything to sweep. */
+  get hasHeldConstantBinding(): boolean {
+    return this.#heldConstantBinding;
   }
 
   /**
@@ -43,6 +52,9 @@ export class BindingRegistry {
    */
   add(binding: Binding): Binding | undefined {
     this.#version += 1;
+    if (binding.kind === "constant") {
+      this.#heldConstantBinding = true;
+    }
     const key: DependencyKey = binding.token;
     // Eager, not computed: a bind is usually the token's first, so the fallback is usually the
     // one that gets stored — and the computed form would add a call to allocating it anyway.
