@@ -1,10 +1,7 @@
 /**
- * A chain's `when()` calls narrow rather than replace.
- *
- * SPEC calls a candidate a binding that passes *all* of a chain's `when(ctx)` predicates, and §5.4
- * describes a binding as carrying "one or several constraints combined". The chain's type says the
- * same by returning `this`. Only the implementation used to disagree, and it did so silently: the
- * earlier predicate vanished, leaving the binding strictly more permissive than it was written.
+ * A chain's `when()` calls narrow rather than replace: a candidate passes only if every predicate
+ * the chain declared holds, which is what returning `this` promises. A binding that lost one is
+ * strictly more permissive than it was written, and silently so.
  */
 import { describe, expect, it, vi } from "vitest";
 

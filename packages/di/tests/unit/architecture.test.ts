@@ -26,6 +26,19 @@ function sourceFiles(directory: string = sourceRoot): Array<string> {
   });
 }
 
+const testRoot = join(packageRoot, "tests");
+
+/** This file names the documents it checks, so it is not one of the files it checks. */
+function testFiles(directory: string = testRoot): Array<string> {
+  return readdirSync(directory).flatMap((entry) => {
+    const full = join(directory, entry);
+    if (statSync(full).isDirectory()) {
+      return testFiles(full);
+    }
+    return full.endsWith(".ts") && !full.endsWith("architecture.test.ts") ? [full] : [];
+  });
+}
+
 describe("every binding shares one shape", () => {
   it("produces identical keys, in identical order, for every kind", () => {
     const target = token<unknown>("architecture-shape");
@@ -216,6 +229,25 @@ describe("comments stay comments", () => {
         const body = COMMENT.exec(line)?.[1];
         if (body !== undefined && pattern.test(body)) {
           offenders.push(`${file.slice(sourceRoot.length + 1)}:${String(index + 1)} ${body.trim()}`);
+        }
+      }
+    }
+
+    expect(offenders).toEqual([]);
+  });
+
+  // A section number rots the same way whichever tree it sits in. Only the pointer rule widens to
+  // the tests: a regression test's header naming the defect it pins is not the same thing as
+  // implementation code narrating its own past.
+  it("contains no pointer into a document, in the tests either", () => {
+    const offenders: Array<string> = [];
+
+    for (const file of testFiles()) {
+      const lines = readFileSync(file, "utf8").split("\n");
+      for (const [index, line] of lines.entries()) {
+        const body = COMMENT.exec(line)?.[1];
+        if (body !== undefined && DOC_REFERENCE.test(body)) {
+          offenders.push(`${file.slice(testRoot.length + 1)}:${String(index + 1)} ${body.trim()}`);
         }
       }
     }
