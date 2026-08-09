@@ -25,7 +25,7 @@ import {
   TokenNotBoundError,
 } from "#/errors/errors";
 import type { DependencySlot } from "#/injection/resolve-options";
-import { injectionSlotToResolveOptions, isNameOnlyOptions, singleTagOnlyOf } from "#/injection/resolve-options";
+import { isNameOnlyOptions, resolveOptionsForSlot, singleTagOnlyOf } from "#/injection/resolve-options";
 import type { LifecycleManager } from "#/lifecycle/lifecycle-manager";
 import type { ScopeManager } from "#/lifecycle/scope-manager";
 import { SCOPED_MISS } from "#/lifecycle/scope-manager";
@@ -603,7 +603,7 @@ export class DependencyResolver implements ResolverCallbacks {
   }
 
   #resolveDep(dep: DependencySlot, resolutionPath: Array<string>, resolutionStack: Array<ResolutionFrame>): unknown {
-    const options = injectionSlotToResolveOptions(dep);
+    const options = resolveOptionsForSlot(dep);
     if (dep.multi) {
       return this.resolveAll(dep.token, options, resolutionPath, resolutionStack);
     }
@@ -947,7 +947,7 @@ export class DependencyResolver implements ResolverCallbacks {
     resolutionStack: Array<ResolutionFrame>,
     branchDepth: BranchDepth,
   ): Promise<unknown> {
-    const options = injectionSlotToResolveOptions(dep);
+    const options = resolveOptionsForSlot(dep);
     if (dep.multi) {
       return this.resolveAllAsync(dep.token, options, resolutionPath, resolutionStack, branchDepth);
     }

@@ -80,6 +80,42 @@ export function injectionSlotToResolveOptions(
   return buildOptions(injectionSlot.name, injectionSlot.tags);
 }
 
+/** Where a slot's derived options are memoized, so the same object is handed out every resolve. */
+const MEMOIZED_RESOLVE_OPTIONS: unique symbol = Symbol("di:resolve-options");
+
+interface SlotWithMemoizedOptions {
+  [MEMOIZED_RESOLVE_OPTIONS]?: ResolveOptions;
+}
+
+/**
+ * The options a dependency resolves with, built once per slot.
+ *
+ * @remarks A slot's name and tags are fixed when it is declared, so the options derived from them are
+ * too — but a dependency is resolved on every hop, and building them there allocated an object per hop
+ * for every named or tagged dependency. The plain case is answered from the two fields without a call
+ * into the builder at all; only a slot that actually carries a criterion reaches the memo, which is
+ * why the memo can be written lazily without costing the common shape a hidden-class transition.
+ */
+export function resolveOptionsForSlot(injectionSlot: DependencySlot): ResolveOptions | undefined {
+  const { name, tags } = injectionSlot;
+  if (name === undefined && tags === undefined) {
+    return undefined;
+  }
+  const slot = injectionSlot as SlotWithMemoizedOptions;
+  const memoized = slot[MEMOIZED_RESOLVE_OPTIONS];
+  if (memoized !== undefined) {
+    return memoized;
+  }
+  const built = buildOptions(name, tags) as ResolveOptions;
+  try {
+    slot[MEMOIZED_RESOLVE_OPTIONS] = built;
+  } catch {
+    // A frozen slot — a custom MetadataReader may hand one out. Correct either way; it just keeps
+    // rebuilding, and the cost of finding out sits on this path rather than on every resolve.
+  }
+  return built;
+}
+
 /**
  * Resolve options derived from a binding slot (tags may be empty; omits when nothing to match).
  *
