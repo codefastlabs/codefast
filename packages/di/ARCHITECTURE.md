@@ -112,6 +112,12 @@ A dependency the compiler cannot see through — a factory, a scoped binding, an
 
 Before escapes existed, one `toDynamic` dependency anywhere dropped the whole graph to the interpreted path — a 13.9× cliff on a graph shape real applications write constantly.
 
+**A dependency's criteria are fixed when it is declared — but only the interpreted lane ever paid to rebuild them.** `#compileInjectionThunk` derives a named or tagged param's `ResolveOptions` at _compile_ time and captures them in the escape thunk, so a compiled plan builds them once per plan and never again. The interpreted path has no such moment: `#resolveDep` runs per hop, so a criteria-carrying slot minted an options object per hop, per resolve. `resolveOptionsForSlot` memoizes them on the slot itself — sound to share across containers because they derive from the slot alone, which a binding-keyed memo would not be, since class metadata is global to the class rather than per container. The memoized object is **frozen**: one object now answers every resolve of that slot, and a constraint predicate is handed it as `currentResolveOptions`, so a write through that reference would rewrite what the dependency asks for from then on. Frozen, the attempt throws where it is made.
+
+Measured as allocation, because that is the claim. Scavenges per 2M resolves under a 1 MB young generation, on a four-named-dependency class whose plan an activation hook declines: **870 → 442**, landing exactly on the criteria-free control's **443**, while the compiled lane sat at **1260** on both builds. `pnpm --filter @codefast/benchmark-di-inversify instrument:alloc` is the instrument. That compiled-lane number is the larger remaining target: every criteria-carrying dependency escapes, and an escape copies its ancestor path and stack on every call.
+
+> **Rule:** measure the claim you are making. A per-hop allocation is far below what a throughput row can resolve here, and until `slot-injected-name-compiled` / `slot-injected-name-interpreted` were added the suite had no row that injected a criteria-carrying dependency at all — so a paired A/B over 65 rows read flat, correctly and uninformatively.
+
 ## Fast lanes that read as duplication — and the order of the tests in them
 
 Two shapes here look like copy-paste of `#resolveBinding` and are not. Both were removed on a DRY pass and put back with a measurement.

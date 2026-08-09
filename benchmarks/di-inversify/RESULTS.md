@@ -128,6 +128,46 @@ The last two are the rows this library has historically lost. **Neither moved in
 so no change up to that point could claim them. The async row was claimed later, by `3a0ad82e0` —
 see [Where it loses](#where-it-loses).
 
+### `perf(di)` precomputed resolve options, against `main` — 65 rows, 5 passes, default profile
+
+**Flat, and that is the correct reading rather than a failure to find something.** Median 0.9988×,
+geomean 0.9997× across every row, after normalising each pass by that pass's competitor rows — the
+other three libraries run identical code on both sides, so their ratios are the session's drift, and
+five passes cannot split A-first from B-first evenly (3 vs 2). Their spread is also the noise floor
+this session could see at all: p5 0.919× / p95 1.070×, over 305 paired cells.
+
+No row moved because no row reached the changed code. A compiled plan already derives a
+criteria-carrying dependency's options at compile time and captures them in its escape thunk; only
+the interpreted path rebuilt them per hop. Nothing in the suite injected a criteria-carrying
+dependency until `slot-injected-name-compiled` and `slot-injected-name-interpreted` were added with
+this change — the `slot-*` rows request their criteria as a caller's argument, which never enters
+that function.
+
+**Two rows looked like signal and were not.** The 5-pass run put `realistic-graph-cold-resolve` at
+1.10× and `slot-tag-zero-value` at 0.88×. Re-measured alone over 24 passes (build-swap, `BENCH_ONLY`
+on the child entry) they read **0.96×** (min 0.858, max 1.175) and **1.01×** (min 0.803, max 1.319).
+Neither survives, and `slot-tag-zero-value` never had a causal path to survive on. The same 24 passes
+put the within-pass order effect on `realistic-graph-cold-resolve` at ~11% — larger than anything
+being looked for.
+
+**What the suite cannot see, counted instead.** Scavenges per 2M resolves under a 1 MB young
+generation (`pnpm instrument:alloc`; method in
+[`BENCH_GUIDE.md`](./BENCH_GUIDE.md#when-the-claim-is-about-allocation-count-allocations)):
+
+| Shape                                            | main | this branch |
+| ------------------------------------------------ | ---: | ----------: |
+| `slot-injected-name-compiled`                    | 1260 |        1260 |
+| `slot-injected-name-interpreted`                 |  870 |     **442** |
+| criteria-free control (no row — it is a control) |  443 |         443 |
+
+Freezing that memoized object — it is shared, and a constraint predicate is handed it — was A/B'd on
+its own over six rows and twelve passes: every row within ±1.6% of parity, and `constant-resolve`,
+which the freeze cannot reach, moved as much as the row that it can. Inside noise.
+
+The interpreted lane lands exactly on the control, so the per-hop allocation is gone rather than
+reduced. The compiled lane is untouched by this change and is the larger remaining target: every
+criteria-carrying dependency escapes, and an escape copies its ancestor path and stack per call.
+
 ## Suite aggregates
 
 `BENCH_ISOLATE=1 BENCH_FULL=1`, one subprocess per scenario, libraries **interleaved with rotating
