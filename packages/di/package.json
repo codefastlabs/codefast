@@ -79,6 +79,11 @@
       "types": "./dist/core/binding-scope.d.ts",
       "import": "./dist/core/binding-scope.js"
     },
+    "./core/constraint-requirement": {
+      "source": "./src/core/constraint-requirement.ts",
+      "types": "./dist/core/constraint-requirement.d.ts",
+      "import": "./dist/core/constraint-requirement.js"
+    },
     "./core/constructor-type": {
       "source": "./src/core/constructor-type.ts",
       "types": "./dist/core/constructor-type.d.ts",

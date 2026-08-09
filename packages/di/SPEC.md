@@ -1626,6 +1626,10 @@ Mười constraint, mỗi cái nhận tham số cấu hình và trả về một
 | `whenAnyAncestorTagged(criterion)` | có ancestor mang criterion đó                                        |          `false`           |
 | `whenAnyAncestorTaggedAll(tags)`   | có **ít nhất một** ancestor mà slot chứa **tất cả** criterion đã cho |          `false`           |
 
+> **Danh sách criterion rỗng bị từ chối:** `whenParentTaggedAll([])` đọc theo nghĩa đen là "parent mang tất cả của không gì cả", tức đúng với mọi parent — constraint âm thầm yếu đi thành "có parent bất kỳ", mà vẫn thắng specificity trước binding không constraint. Cả hai `…TaggedAll` throw `EmptyTagCriteriaError` ngay tại chỗ gọi.
+>
+> **Slot name không ai khai báo:** `whenParentNamed`/`whenAnyAncestorNamed` chờ một chuỗi, nên gõ sai tạo ra constraint không bao giờ đúng và không ai báo. `validate()` throw `UnreachableConstraintError` khi không binding nào trong chuỗi container khai báo slot name đó.
+
 Hai dạng phủ định trả `true` khi vắng mặt là chủ đích: "không có parent nào là X" đúng hiển nhiên khi chẳng có parent nào. Hai dạng `…TaggedAll` tương đương AND-compose nhiều criterion riêng lẻ nhưng chỉ tốn một lần gọi predicate và không allocate closure trung gian. So sánh criterion bằng identity — tương đương `Object.is` trên `[key, value]` nhờ interning, nhất quán với slot equality ở [section 5.11](#slot-matching).
 
 > **Hình dạng chính xác:** `src/resolution/select/constraints.ts`.
@@ -1935,6 +1939,8 @@ Tất cả error kế thừa `DiError` — một abstract class buộc mọi sub
 | `SelfBindingRequiresClassError` | `SELF_BINDING_REQUIRES_CLASS` | `toSelf()` trên token không phải class                              | `tokenName`                                      |
 | `StaticMemberDecoratorError`    | `STATIC_MEMBER_DECORATOR`     | `@inject` / `@postConstruct` / `@preDestroy` đặt trên static member | `decoratorName`, `memberName`                    |
 | `UnreachableLifecycleHookError` | `UNREACHABLE_LIFECYCLE_HOOK`  | `validate()` — hook container-level cho token không ai bind         | `tokenName`, `phase`                             |
+| `EmptyTagCriteriaError`         | `EMPTY_TAG_CRITERIA`          | `…TaggedAll()` nhận danh sách criterion rỗng                        | `helperName`                                     |
+| `UnreachableConstraintError`    | `UNREACHABLE_CONSTRAINT`      | `validate()` — constraint chờ slot name không ai khai báo           | `tokenName`, `requiredName`, `helperName`        |
 
 > **Hình dạng chính xác:** `src/errors/errors.ts` — mọi class trên, cộng `ScopeViolationDetails`.
 
