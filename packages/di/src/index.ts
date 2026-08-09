@@ -119,6 +119,7 @@ export {
   StaticMemberDecoratorError,
   SyncDisposalNotSupportedError,
   TokenNotBoundError,
+  UnreachableLifecycleHookError,
 } from "#/errors/errors";
 export type { ScopeViolationDetails } from "#/errors/errors";
 

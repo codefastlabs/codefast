@@ -159,6 +159,8 @@ type Constructor<Value = unknown> = new (...args: unknown[]) => Value;
 
 > **`DeactivationHandler` scope restriction:** `onDeactivation` chỉ được gọi cho `singleton` (khi container bị dispose hoặc binding bị unbind) và `toConstantValue` (treat as singleton). `transient` không có deactivation — mỗi instance là orphan sau khi trao cho caller. `scoped` không có deactivation — child container chỉ clear cache, không notify instance.
 
+> **`toConstantValue` deactivate kể cả khi chưa từng resolve:** một singleton chỉ tồn tại sau lần resolve đầu, nên không resolve thì không có gì để deactivate. Constant thì ngược lại — giá trị do caller đưa vào tại thời điểm bind, nên nó tồn tại ngay từ đó. Hook được gọi tại `dispose()` / `unbind()` bất kể có ai resolve hay không; nếu đã resolve qua `onActivation` thì hook nhận giá trị **sau activation**, không phải giá trị gốc.
+
 <a id="resolve-options"></a>
 
 ### 3.5 `ResolveOptions`
@@ -1932,6 +1934,7 @@ Tất cả error kế thừa `DiError` — một abstract class buộc mọi sub
 | `ChainNotRegisteredError`       | `CHAIN_NOT_REGISTERED`        | Refinement (`when*`, scope, `on*`, `id()`) gọi trước `to*()`        | `tokenName`                                      |
 | `SelfBindingRequiresClassError` | `SELF_BINDING_REQUIRES_CLASS` | `toSelf()` trên token không phải class                              | `tokenName`                                      |
 | `StaticMemberDecoratorError`    | `STATIC_MEMBER_DECORATOR`     | `@inject` / `@postConstruct` / `@preDestroy` đặt trên static member | `decoratorName`, `memberName`                    |
+| `UnreachableLifecycleHookError` | `UNREACHABLE_LIFECYCLE_HOOK`  | `validate()` — hook container-level cho token không ai bind         | `tokenName`, `phase`                             |
 
 > **Hình dạng chính xác:** `src/errors/errors.ts` — mọi class trên, cộng `ScopeViolationDetails`.
 
@@ -2176,6 +2179,7 @@ export {
   StaticMemberDecoratorError,
   SyncDisposalNotSupportedError,
   TokenNotBoundError,
+  UnreachableLifecycleHookError,
 } from "#/errors/errors";
 export type { ScopeViolationDetails } from "#/errors/errors";
 
