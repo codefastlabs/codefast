@@ -12,7 +12,7 @@ import { tokenName } from "#/core/token";
 import type { Constructor, ResolutionFrame, ResolveOptions } from "#/core/types";
 import { AsyncResolutionError } from "#/errors/errors";
 import type { DependencySlot } from "#/injection/resolve-options";
-import { injectionSlotToResolveOptions } from "#/injection/resolve-options";
+import { injectionSlotToResolveOptions, isNameOnlyOptions } from "#/injection/resolve-options";
 import type { ConstructorMetadata } from "#/metadata/metadata-types";
 
 // Past this depth a dependency escapes to the runtime path rather than inlining further —
@@ -65,6 +65,16 @@ export interface InstantiationPlanHost {
   getConstructorMetadata(target: Constructor): ConstructorMetadata | undefined;
   /** Options-less lookup with alias hops folded; `null` when the fast lane can't answer. */
   lookupDependencyEntry(token: Token<unknown> | Constructor): InstantiationPlanDependencyEntry | null;
+  /**
+   * A name-only lookup a plan may bake in, or `null` when the answer is not the compiler's to make.
+   *
+   * @remarks Selection for a named request is an index hit *and* a predicate, and a predicate reads
+   * the resolution path — so only a candidate carrying none of one can be decided ahead of time.
+   */
+  lookupPathIndependentNamedEntry(
+    token: Token<unknown> | Constructor,
+    options: ResolveOptions & { name: string },
+  ): InstantiationPlanDependencyEntry | null;
   /** The frame the interpreted path pushes for this binding, so escapes can replay it. */
   getResolutionFrame(binding: Binding): ResolutionFrame;
   /** Runtime resolve for an escaped dependency, seeded with the ancestors above it. */
@@ -175,6 +185,14 @@ export class InstantiationPlanCompiler {
       return this.#compileEscapeThunk(token, ancestors, "optional", options);
     }
     if (options !== undefined) {
+      // A name the registry can settle without reading a path is a dependency like any other: it
+      // escapes only because it carries a criterion, not because anything about it is opaque.
+      if (isNameOnlyOptions(options)) {
+        const named = this.#host.lookupPathIndependentNamedEntry(token, options);
+        if (named !== null) {
+          return this.#compileDepThunk(named, compileStack, depth, ancestors, options);
+        }
+      }
       return this.#compileEscapeThunk(token, ancestors, "single", options);
     }
     const entry = this.#host.lookupDependencyEntry(token);
@@ -251,6 +269,7 @@ export class InstantiationPlanCompiler {
     compileStack: Set<Binding["id"]>,
     depth: number,
     ancestors: ReadonlyArray<Binding>,
+    options?: ResolveOptions,
   ): DependencyCompileResult {
     const { binding } = entry;
     if (binding.kind === "constant" && binding.onActivation === undefined) {
@@ -263,7 +282,7 @@ export class InstantiationPlanCompiler {
     if (scope === "singleton") {
       // Cached-singleton read; the first materialization escapes so it sees the same ancestors
       // (and therefore the same cycle detection) the interpreted path would have built.
-      const escape = this.#compileEscapeThunk(binding.token, ancestors);
+      const escape = this.#compileEscapeThunk(binding.token, ancestors, "single", options);
       const singletonBinding = binding;
       return () => {
         const cached = singletonBinding.instance;
@@ -288,6 +307,6 @@ export class InstantiationPlanCompiler {
     }
     // Anything opaque — a factory, a scoped binding, an activation hook, a class the compiler
     // declined — runs on the runtime path, seeded with this plan's ancestors.
-    return this.#compileEscapeThunk(binding.token, ancestors);
+    return this.#compileEscapeThunk(binding.token, ancestors, "single", options);
   }
 }

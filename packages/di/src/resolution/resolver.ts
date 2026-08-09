@@ -403,6 +403,15 @@ export class DependencyResolver implements ResolverCallbacks {
       const entry = this.#lookup.defaultEntry(token);
       return entry === null ? null : { binding: entry.binding };
     },
+    // Exactly what #findBinding's named lane accepts, minus the half that reads a path: a predicate
+    // is the compiler's cue to leave the selection to the runtime.
+    lookupPathIndependentNamedEntry: (token, options) => {
+      const entry = this.#lookup.namedEntry(token, options.name);
+      if (entry === null || entry.binding.predicate !== undefined || !matchesSlot(entry.binding.slot, options)) {
+        return null;
+      }
+      return { binding: entry.binding };
+    },
     getResolutionFrame: (binding) => this.#getResolutionFrame(binding),
     // Dispatches exactly as #resolveDep does, so an escaped dep is indistinguishable
     // from the same dep on a fully interpreted resolve.
