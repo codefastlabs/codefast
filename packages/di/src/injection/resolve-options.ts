@@ -107,19 +107,23 @@ export function resolveOptionsForSlot(injectionSlot: DependencySlot): ResolveOpt
 }
 
 /**
- * Builds and stores a slot's options on first use.
+ * Builds, freezes and stores a slot's options on first use.
  *
- * @remarks Split out for the `try`: V8 declines to inline a function containing one, and this is
- * reached from the path every dependency of every resolve takes, so a `try` in there costs the early
- * return its inlining. The `catch` covers a frozen slot, which a custom {@link MetadataReader} may
- * hand out — correct either way, it just keeps rebuilding.
+ * @remarks Frozen because one object now answers every resolve of that slot, in every container, and
+ * a constraint predicate is handed it as `currentResolveOptions`. Writing through that reference would
+ * rewrite what the dependency asks for from then on; frozen, the attempt throws where it is made.
+ *
+ * Split out for the `try`: V8 declines to inline a function containing one, and this is reached from
+ * the path every dependency of every resolve takes, so a `try` in there costs the early return its
+ * inlining. The `catch` covers a frozen slot, which a custom {@link MetadataReader} may hand out —
+ * correct either way, it just keeps rebuilding.
  */
 function memoizeResolveOptions(
   slot: SlotWithMemoizedOptions,
   name: string | undefined,
   tags: ReadonlyArray<BindingTag> | undefined,
 ): ResolveOptions {
-  const built = buildOptions(name, tags) as ResolveOptions;
+  const built = Object.freeze(buildOptions(name, tags) as ResolveOptions);
   try {
     slot[MEMOIZED_RESOLVE_OPTIONS] = built;
   } catch {
