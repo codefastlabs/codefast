@@ -128,6 +128,89 @@ The last two are the rows this library has historically lost. **Neither moved in
 so no change up to that point could claim them. The async row was claimed later, by `3a0ad82e0` —
 see [Where it loses](#where-it-loses).
 
+### `perf(di)` precomputed resolve options, against `main` — 65 rows, 5 passes, default profile
+
+**Flat, and that is the correct reading rather than a failure to find something.** Median 0.9988×,
+geomean 0.9997× across every row, after normalising each pass by that pass's competitor rows — the
+other three libraries run identical code on both sides, so their ratios are the session's drift, and
+five passes cannot split A-first from B-first evenly (3 vs 2). Their spread is also the noise floor
+this session could see at all: p5 0.919× / p95 1.070×, over 305 paired cells.
+
+No row moved because no row reached the changed code. A compiled plan already derives a
+criteria-carrying dependency's options at compile time and captures them in its escape thunk; only
+the interpreted path rebuilt them per hop. Nothing in the suite injected a criteria-carrying
+dependency until `slot-injected-name-compiled` and `slot-injected-name-interpreted` were added with
+this change — the `slot-*` rows request their criteria as a caller's argument, which never enters
+that function.
+
+**Two rows looked like signal and were not.** The 5-pass run put `realistic-graph-cold-resolve` at
+1.10× and `slot-tag-zero-value` at 0.88×. Re-measured alone over 24 passes (build-swap, `BENCH_ONLY`
+on the child entry) they read **0.96×** (min 0.858, max 1.175) and **1.01×** (min 0.803, max 1.319).
+Neither survives, and `slot-tag-zero-value` never had a causal path to survive on. The same 24 passes
+put the within-pass order effect on `realistic-graph-cold-resolve` at ~11% — larger than anything
+being looked for.
+
+**What the suite cannot see, counted instead.** Scavenges per 2M resolves under a 1 MB young
+generation (`pnpm instrument:alloc`; method in
+[`BENCH_GUIDE.md`](./BENCH_GUIDE.md#when-the-claim-is-about-allocation-count-allocations)):
+
+| Shape                                            | main | this branch |
+| ------------------------------------------------ | ---: | ----------: |
+| `slot-injected-name-compiled`                    | 1260 |        1260 |
+| `slot-injected-name-interpreted`                 |  870 |     **442** |
+| criteria-free control (no row — it is a control) |  443 |         443 |
+
+**What should not have moved, measured.** The whole change — the memo, the freeze on it, and the two
+new rows — was paired against the commit before it over ten rows and twenty passes, alternating:
+
+| Row                                  |                 Ratio |
+| ------------------------------------ | --------------------: |
+| `slot-tag-zero-value`                | 1.0079× (0.753–1.150) |
+| `mask-reject-wide-catalog`           | 1.0072× (0.637–1.659) |
+| `lifecycle-post-construct-singleton` |               1.0049× |
+| `slot-tag-shorthand-hoisted`         |               1.0031× |
+| `constant-resolve`                   |               1.0027× |
+| `slot-tag-array-hoisted`             |               1.0026× |
+| `transient-class-1-dep`              |               1.0018× |
+| `slot-tag-parent-owned`              |               1.0016× |
+| `tagged-binding-resolve`             |               0.9975× |
+| `named-constant-get`                 |               0.9941× |
+
+Every row inside ±0.8%. The two spreads printed in full are why a cross-session reading of this suite
+is worth nothing: on **identical code**, `mask-reject-wide-catalog` ranged 0.637–1.659 between passes.
+A full isolated run four hours earlier had put those same rows at 0.79–0.82× against a run from that
+morning, which looked exactly like a regression in the lane this change touches. Measured paired, in
+one window, there is none — and the shape of the "drop" was the suite's noisiest rows, the ones
+[`BENCH_GUIDE.md`](./BENCH_GUIDE.md#measure-the-floor-before-you-set-the-threshold) already names.
+
+The interpreted lane lands exactly on the control, so the per-hop allocation is gone rather than
+reduced. The compiled lane is untouched by this change and is the larger remaining target: every
+criteria-carrying dependency escapes, and an escape copies its ancestor path and stack per call.
+
+### `perf(di)` compile-time named selection, against the commit before it — 8 rows, 12 passes, default profile
+
+| Row                              |                   Ratio |
+| -------------------------------- | ----------------------: |
+| `slot-injected-name-compiled`    | **4.06×** (3.877–4.246) |
+| `slot-injected-name-interpreted` |                   0.98× |
+| `slot-name-and-tag`              |                   0.98× |
+| `realistic-graph-resolve-root`   |                   1.00× |
+| four further control rows        |     0.99–1.01× (parity) |
+
+A dependency escaped as soon as it carried any criterion, before anything tried to look it up. Since
+`whenNamed` writes a slot name rather than a predicate, a name-only request is usually a plain hit in
+the registry's named index — so four named constants stop escaping and compile to four `() => value`
+thunks. Allocation on the same shape falls **1260 → 366** scavenges per 2M resolves, level with the
+criteria-free plan of the same arity.
+
+Two things make the row's size believable rather than suspicious. Every one of the twelve passes read
+above 3.87×, on a row whose A/A spread is ±3%; and the mechanism predicts it — the row's whole body
+was four escapes, each re-entering the resolver and copying an ancestor path and stack per call.
+
+Before the change, a gate: the compiled lane was measured at **155.3 ns/op** against the interpreted
+lane's **170.1 ns/op** on the same graph, 8 alternating runs. Had that read the other way, the correct
+change would have been one line declining the plan, not this one.
+
 ## Suite aggregates
 
 `BENCH_ISOLATE=1 BENCH_FULL=1`, one subprocess per scenario, libraries **interleaved with rotating

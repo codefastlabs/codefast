@@ -80,6 +80,50 @@ export function injectionSlotToResolveOptions(
   return buildOptions(injectionSlot.name, injectionSlot.tags);
 }
 
+/** Where a slot's derived options are memoized, so the same object is handed out every resolve. */
+const MEMOIZED_RESOLVE_OPTIONS: unique symbol = Symbol("di:resolve-options");
+
+interface SlotWithMemoizedOptions {
+  [MEMOIZED_RESOLVE_OPTIONS]?: ResolveOptions;
+}
+
+/**
+ * The options a dependency resolves with — one object per slot, since a slot's criteria are fixed
+ * when it is declared.
+ *
+ * @remarks A slot carrying no criterion answers from its two fields, so the common shape never
+ * reaches the memo.
+ */
+export function resolveOptionsForSlot(injectionSlot: DependencySlot): ResolveOptions | undefined {
+  const { name, tags } = injectionSlot;
+  if (name === undefined && tags === undefined) {
+    return undefined;
+  }
+  const slot = injectionSlot as SlotWithMemoizedOptions;
+  const memoized = slot[MEMOIZED_RESOLVE_OPTIONS];
+  return memoized ?? memoizeResolveOptions(slot, name, tags);
+}
+
+/**
+ * Builds, freezes and stores a slot's options on first use.
+ *
+ * @remarks Frozen because one object answers every resolve of the slot and a constraint predicate is
+ * handed it. Split out for the `try`: in the caller it would cost the early return its inlining.
+ */
+function memoizeResolveOptions(
+  slot: SlotWithMemoizedOptions,
+  name: string | undefined,
+  tags: ReadonlyArray<BindingTag> | undefined,
+): ResolveOptions {
+  const built = Object.freeze(buildOptions(name, tags) as ResolveOptions);
+  try {
+    slot[MEMOIZED_RESOLVE_OPTIONS] = built;
+  } catch {
+    // A frozen slot rebuilds on every hop rather than throwing.
+  }
+  return built;
+}
+
 /**
  * Resolve options derived from a binding slot (tags may be empty; omits when nothing to match).
  *

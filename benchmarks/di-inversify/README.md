@@ -42,7 +42,27 @@ src/harness/config.ts       the four library configs (entry file, tsconfig, disp
 src/*-benches.ts            one child entry per library
 src/scenarios/<library>/    that library's implementation of each scenario
 src/fixtures/               workloads and descriptors both sides share
+src/instruments/            diagnostic tools, outside the comparison
 ```
+
+`src/instruments/` holds what the comparison table cannot answer, and nothing else. Today that is one
+tool: `pnpm instrument:alloc`, which reports how much a resolve allocates —
+[`BENCH_GUIDE.md`](./BENCH_GUIDE.md#when-the-claim-is-about-allocation-count-allocations) says when
+reaching for it beats re-running the suite.
+
+It produces no row and no ratio, and it is **not** exempt from the standard on that account: a
+figure from here is a figure, so it meets [`BENCH_GUIDE.md`](./BENCH_GUIDE.md) and it is published in
+[`RESULTS.md`](./RESULTS.md) before it appears in a package's `ARCHITECTURE.md` or a commit message,
+exactly like a ratio. An instrument that quietly measured to a lower bar than the suite would be a
+way of not being wrong on the record.
+
+**For time, there is no instrument, because the suite already is one.** `BENCH_ONLY=<id> pnpm
+bench:codefast` runs a single scenario and reports its ns/op across trials with percentiles and
+sample counts; a bare loop measuring the same thing is strictly worse and should not be written.
+
+What a shape measures is the **bench row's own scenario**, so its construction, batch factor and
+sanity check come from the one place that owns them. A shape the suite has no row for says so, which
+is what stops an unmeasured lane from staying invisible.
 
 Each library runs **in its own subprocess, under its own tsconfig, in its canonical mode**:
 `@codefast/di` with TC39 Stage 3 decorators and `Symbol.metadata`, `inversify` and `tsyringe` with

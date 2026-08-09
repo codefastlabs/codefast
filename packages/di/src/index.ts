@@ -47,7 +47,12 @@ export { getActiveContainer, runWithContainer } from "#/ambient/active-container
 
 // `effectiveBindingScope` is deliberately absent: it reads a `Binding`, which is internal, and no
 // public API hands one out. `BindingSnapshot.scope` and `GraphNode.scope` are the public answers.
-export { injectionSlotToResolveOptions, bindingSlotToResolveOptions } from "#/injection/resolve-options";
+export {
+  bindingSlotToResolveOptions,
+  injectionSlotToResolveOptions,
+  resolveOptionsForSlot,
+} from "#/injection/resolve-options";
+export type { DependencySlot } from "#/injection/resolve-options";
 
 // Introspection types
 export type { BindingSnapshot, ContainerSnapshot } from "#/introspection/inspector";
