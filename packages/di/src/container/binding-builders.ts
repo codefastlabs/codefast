@@ -217,8 +217,13 @@ export class BindingChain<Value>
     return this;
   }
 
+  // SPEC calls a candidate a binding that passes *all* of a chain's predicates, and the chain type
+  // reads as refinement, so a second `when()` narrows rather than replaces.
   when(predicate: BindingConstraint): this {
-    return this.#reslot(this.#registered().slot, predicate);
+    const binding = this.#registered();
+    const previous = binding.predicate;
+
+    return this.#reslot(binding.slot, previous === undefined ? predicate : (ctx) => previous(ctx) && predicate(ctx));
   }
 
   whenNamed(name: string): this {
