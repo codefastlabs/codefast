@@ -151,8 +151,6 @@ export class ScopeViolationError extends DiError {
  * @remarks Hooks are keyed by token identity, which makes a class that is only ever a `to()` target
  * look like a token and match nothing. Reported by `validate()` rather than at registration, because
  * binding after registering the hook is a supported order.
- *
- * @since 0.5.0-canary.10
  */
 export class UnreachableLifecycleHookError extends DiError {
   readonly code = "UNREACHABLE_LIFECYCLE_HOOK";
