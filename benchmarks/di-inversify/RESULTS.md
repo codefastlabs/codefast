@@ -160,9 +160,28 @@ generation (`pnpm instrument:alloc`; method in
 | `slot-injected-name-interpreted`                 |  870 |     **442** |
 | criteria-free control (no row — it is a control) |  443 |         443 |
 
-Freezing that memoized object — it is shared, and a constraint predicate is handed it — was A/B'd on
-its own over six rows and twelve passes: every row within ±1.6% of parity, and `constant-resolve`,
-which the freeze cannot reach, moved as much as the row that it can. Inside noise.
+**What should not have moved, measured.** The whole change — the memo, the freeze on it, and the two
+new rows — was paired against the commit before it over ten rows and twenty passes, alternating:
+
+| Row                                  |                 Ratio |
+| ------------------------------------ | --------------------: |
+| `slot-tag-zero-value`                | 1.0079× (0.753–1.150) |
+| `mask-reject-wide-catalog`           | 1.0072× (0.637–1.659) |
+| `lifecycle-post-construct-singleton` |               1.0049× |
+| `slot-tag-shorthand-hoisted`         |               1.0031× |
+| `constant-resolve`                   |               1.0027× |
+| `slot-tag-array-hoisted`             |               1.0026× |
+| `transient-class-1-dep`              |               1.0018× |
+| `slot-tag-parent-owned`              |               1.0016× |
+| `tagged-binding-resolve`             |               0.9975× |
+| `named-constant-get`                 |               0.9941× |
+
+Every row inside ±0.8%. The two spreads printed in full are why a cross-session reading of this suite
+is worth nothing: on **identical code**, `mask-reject-wide-catalog` ranged 0.637–1.659 between passes.
+A full isolated run four hours earlier had put those same rows at 0.79–0.82× against a run from that
+morning, which looked exactly like a regression in the lane this change touches. Measured paired, in
+one window, there is none — and the shape of the "drop" was the suite's noisiest rows, the ones
+[`BENCH_GUIDE.md`](./BENCH_GUIDE.md#measure-the-floor-before-you-set-the-threshold) already names.
 
 The interpreted lane lands exactly on the control, so the per-hop allocation is gone rather than
 reduced. The compiled lane is untouched by this change and is the larger remaining target: every
