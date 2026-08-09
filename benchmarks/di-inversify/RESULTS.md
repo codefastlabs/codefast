@@ -168,6 +168,30 @@ The interpreted lane lands exactly on the control, so the per-hop allocation is 
 reduced. The compiled lane is untouched by this change and is the larger remaining target: every
 criteria-carrying dependency escapes, and an escape copies its ancestor path and stack per call.
 
+### `perf(di)` compile-time named selection, against the commit before it — 8 rows, 12 passes, default profile
+
+| Row                              |                   Ratio |
+| -------------------------------- | ----------------------: |
+| `slot-injected-name-compiled`    | **4.06×** (3.877–4.246) |
+| `slot-injected-name-interpreted` |                   0.98× |
+| `slot-name-and-tag`              |                   0.98× |
+| `realistic-graph-resolve-root`   |                   1.00× |
+| four further control rows        |     0.99–1.01× (parity) |
+
+A dependency escaped as soon as it carried any criterion, before anything tried to look it up. Since
+`whenNamed` writes a slot name rather than a predicate, a name-only request is usually a plain hit in
+the registry's named index — so four named constants stop escaping and compile to four `() => value`
+thunks. Allocation on the same shape falls **1260 → 366** scavenges per 2M resolves, level with the
+criteria-free plan of the same arity.
+
+Two things make the row's size believable rather than suspicious. Every one of the twelve passes read
+above 3.87×, on a row whose A/A spread is ±3%; and the mechanism predicts it — the row's whole body
+was four escapes, each re-entering the resolver and copying an ancestor path and stack per call.
+
+Before the change, a gate: the compiled lane was measured at **155.3 ns/op** against the interpreted
+lane's **170.1 ns/op** on the same graph, 8 alternating runs. Had that read the other way, the correct
+change would have been one line declining the plan, not this one.
+
 ## Suite aggregates
 
 `BENCH_ISOLATE=1 BENCH_FULL=1`, one subprocess per scenario, libraries **interleaved with rotating
