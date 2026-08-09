@@ -15,10 +15,10 @@ container.bind(Pool).toDynamic(() => new Connection()); // start() did not
 
 `toConstantValue` is deliberately excluded: the caller built that instance, not the container. `toAlias` too, since the binding it points at has already run them.
 
-### What this cost, and what it bought
+### Throughput is unchanged
 
-The resolver reaches an instance through several specialised lanes that each hand the value back without a pipeline — transient dynamic sync, its async and cascade twins, the compiled instantiation plan, and the general path. A first attempt fixed the general path only and passed 6 of 14 lanes; a second made every factory binding decline its fast lane, which was correct but cost a **0.79× suite geomean**, with async fan-out rows at 0.22×.
+The resolver reaches an instance through several specialised lanes that each hand the value back without a pipeline — transient dynamic sync, its async and cascade twins, the compiled instantiation plan, and the general path. Fixing the general path alone passed 6 of the 14 lanes; making every factory binding decline its fast lane passed all of them and cost roughly 4× on async fan-out, so neither shipped.
 
-What ships keeps every fast lane and adds a check on what each one produced: the class is read from the instance and memoized on the binding, so a factory returning the same class pays one identity comparison rather than a metadata lookup. A process that declares no lifecycle method anywhere skips even that, on one boolean.
+What ships keeps every fast lane and checks what it produced. The class is read off the instance and memoized on the binding, so a factory returning the same class pays one identity comparison rather than a metadata lookup, and a process that declares no lifecycle method anywhere pays a single boolean.
 
-Measured against `main` over 65 scenarios: **geomean 0.9399×, median 0.9773×**, worst rows ~0.72×, and no cost at all where nothing declares a hook. The remaining cost is inherent for async lanes — whether an asynchronously produced value carries a hook cannot be known before it exists, so one `.then` per resolve is unavoidable.
+Paired A/B against `main`, 8 alternating isolated runs in both orders, 65 scenarios: **geomean 0.9940×, median 0.9967×, 64 of 65 rows within ±5%**. The same build compared against itself over the same runs gives 0.9929×–0.9952×, so the measured difference sits inside the method's own noise — there is no detectable cost.
