@@ -1,12 +1,14 @@
 # Example 12 — Production Microservice Bootstrap
 
-**Concepts:** Full service lifecycle — config, async DB/Redis pools, job worker, health registry, HTTP server, `container.validate()`, graceful shutdown via `await using`
+**Concepts:** Full service lifecycle — config, async DB/Redis pools, job worker, health registry, HTTP server,
+`container.validate()`, graceful shutdown via `await using`
 
 ---
 
 ## What this example shows
 
-A complete, production-grade microservice where DI manages the entire lifecycle: ordered async startup, health checks, background job processing, and graceful shutdown triggered by a single `container.dispose()`.
+A complete, production-grade microservice where DI manages the entire lifecycle: ordered async startup, health checks,
+background job processing, and graceful shutdown triggered by a single `container.dispose()`.
 
 ---
 
@@ -60,7 +62,8 @@ graph LR
 
 ## The problem DI solves here
 
-Without DI, microservice startup looks like 200+ lines of explicit ordering, manual null-checks, and teardown scattered across `try/finally` blocks:
+Without DI, microservice startup looks like 200+ lines of explicit ordering, manual null-checks, and teardown scattered
+across `try/finally` blocks:
 
 ```ts
 // Without DI
@@ -174,7 +177,8 @@ startHttpServer(); // safe to accept traffic
 
 ## Shutdown sequence (reverse of startup)
 
-`await using` ensures `container.dispose()` fires even if an exception is thrown. Deactivation hooks run in **reverse dependency order**:
+`await using` ensures `container.dispose()` fires even if an exception is thrown. Deactivation hooks run in **reverse
+dependency order**:
 
 ```
 HTTP server  → stop accepting requests

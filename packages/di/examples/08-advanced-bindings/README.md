@@ -63,9 +63,12 @@ container.bind(MailerToken).toResolved(
 );
 ```
 
-The second argument is a `const` tuple of tokens. TypeScript infers the factory parameter types from it — no manual casting needed. Equivalent to `toDynamic((ctx) => new SmtpMailer(ctx.resolve(LoggerToken), ctx.resolve(ConfigToken)))` but cleaner when deps are simple.
+The second argument is a `const` tuple of tokens. TypeScript infers the factory parameter types from it — no manual
+casting needed. Equivalent to `toDynamic((ctx) => new SmtpMailer(ctx.resolve(LoggerToken), ctx.resolve(ConfigToken)))`
+but cleaner when deps are simple.
 
-The `as const` assertion is required so TypeScript sees a fixed-length tuple instead of a generic array, enabling per-parameter type inference.
+The `as const` assertion is required so TypeScript sees a fixed-length tuple instead of a generic array, enabling
+per-parameter type inference.
 
 ---
 
@@ -75,7 +78,8 @@ The `as const` assertion is required so TypeScript sees a fixed-length tuple ins
 container.bind(AbstractLoggerToken).toAlias(LoggerToken);
 ```
 
-Resolving `AbstractLoggerToken` returns whatever `LoggerToken` resolves to — same instance, same scope. Useful for interface tokens that should map to a concrete singleton token without duplicating the binding.
+Resolving `AbstractLoggerToken` returns whatever `LoggerToken` resolves to — same instance, same scope. Useful for
+interface tokens that should map to a concrete singleton token without duplicating the binding.
 
 ```ts
 const a = container.resolve(LoggerToken);
@@ -87,7 +91,8 @@ console.log(a === b); // true
 
 ## 3. Plain tokens in `@injectable`
 
-When you don't need named or tagged injection, pass tokens or constructors directly in the deps array — no `inject()` wrapper required:
+When you don't need named or tagged injection, pass tokens or constructors directly in the deps array — no `inject()`
+wrapper required:
 
 ```ts
 @injectable([LoggerToken, ConfigToken])       // plain tokens
@@ -107,7 +112,8 @@ Use `inject()` only when you need its options (`{ name, tags }`). Plain tokens a
 
 ## 4. `BindingIdentifier` + `.id()` — targeted unbind in multi-binding
 
-When multiple bindings share a token, `.unbind(token)` removes _all_ of them. To remove only one, capture its `BindingIdentifier` with `.id()`:
+When multiple bindings share a token, `.unbind(token)` removes _all_ of them. To remove only one, capture its
+`BindingIdentifier` with `.id()`:
 
 ```ts
 const logPluginId = container
@@ -145,7 +151,9 @@ container.bind(LoggerToken).toConstantValue(new ConsoleLogger());
 container.rebind(LoggerToken).toConstantValue(new FileLogger());
 ```
 
-`rebind()` removes **all** existing bindings for the token, then returns a fresh `BindingBuilder`. Subsequent `resolve()` calls see only the new binding. This is the correct pattern for hot-reload and for overriding bindings in tests.
+`rebind()` removes **all** existing bindings for the token, then returns a fresh `BindingBuilder`. Subsequent
+`resolve()` calls see only the new binding. This is the correct pattern for hot-reload and for overriding bindings in
+tests.
 
 Difference from unbind + bind:
 

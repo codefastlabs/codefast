@@ -1,12 +1,14 @@
 # Example 16 — Testing Patterns
 
-**Concepts:** fresh containers per test, `rebind()` for targeted stub injection, child container overrides, module-based setup with factory helper, `container.validate()` as a wiring smoke-test
+**Concepts:** fresh containers per test, `rebind()` for targeted stub injection, child container overrides, module-based
+setup with factory helper, `container.validate()` as a wiring smoke-test
 
 ---
 
 ## What this example shows
 
-Five patterns for writing isolated, deterministic tests for code that uses `@codefast/di`, without a global shared container that leaks state between tests.
+Five patterns for writing isolated, deterministic tests for code that uses `@codefast/di`, without a global shared
+container that leaks state between tests.
 
 ---
 
@@ -90,7 +92,8 @@ it("throws when the payment gateway fails", () => {
 });
 ```
 
-`rebind()` atomically removes all existing bindings for the token before adding the new one — no stale binding can survive.
+`rebind()` atomically removes all existing bindings for the token before adding the new one — no stale binding can
+survive.
 
 **When to use:** integration tests where you want the real service graph but need to isolate one external dependency.
 
@@ -125,7 +128,8 @@ it("child container shadows PaymentGateway without mutating parent", () => {
 
 ## Pattern D — Factory helper with `rebind()`
 
-Extract container construction into a reusable factory function. Tests call the factory and get a fully wired container with stubs already in place:
+Extract container construction into a reusable factory function. Tests call the factory and get a fully wired container
+with stubs already in place:
 
 ```ts
 function buildTestContainer(stubUser: StubUserService, stubPayment: StubPaymentGateway) {
@@ -154,7 +158,8 @@ it("module override replaces all three stubs", () => {
 
 ## Pattern E — `validate()` as a wiring smoke-test
 
-Call `validate()` at the start of an integration test suite to catch missing or mismatched bindings before any test runs:
+Call `validate()` at the start of an integration test suite to catch missing or mismatched bindings before any test
+runs:
 
 ```ts
 it("fully-wired container passes validate()", () => {
@@ -172,7 +177,8 @@ it("incomplete container detected via inspect() and has()", () => {
 });
 ```
 
-**When to use:** add a single `validate()` call in your `beforeAll` hook for integration tests to surface misconfigured containers immediately.
+**When to use:** add a single `validate()` call in your `beforeAll` hook for integration tests to surface misconfigured
+containers immediately.
 
 ---
 

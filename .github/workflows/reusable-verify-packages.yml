@@ -1,5 +1,6 @@
 # Step order: type-aware oxlint needs built `dist` typings for workspace `package.json` exports.
-# Sequence — build packages, then lint + format check + check-types, then (heavy lane only) tests with coverage.
+# Sequence — build packages, then repo-wide lint + format check and per-package check-types, then
+# (heavy lane only) tests with coverage.
 
 name: Reusable verify packages
 
@@ -48,8 +49,15 @@ jobs:
             exit 1
           fi
 
+      # `lint` and `format:check` are root-workspace tasks in turbo.json (`//#lint`, `//#format:check`),
+      # so a `--filter="./packages/**"` drops both without failing — this step once ran neither, and
+      # a file committed unformatted stayed green. Both root scripts already scan the whole repo, and
+      # calling them directly cannot silently resolve to zero tasks. Only `check-types` is per-package.
       - name: Validate Code Quality and Type Safety
-        run: npx turbo run lint format:check check-types --filter="./packages/**"
+        run: |
+          pnpm lint
+          pnpm format:check
+          npx turbo run check-types --filter="./packages/**"
 
       # Repo-wide on purpose: the cross-package references are the ones most likely to rot, and a
       # dangling anchor into another document degrades to a scroll rather than a visible 404.

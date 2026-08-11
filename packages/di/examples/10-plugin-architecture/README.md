@@ -1,12 +1,15 @@
 # Example 10 — Plugin Architecture
 
-**Concepts:** `Module.createAsync`, `container.load()` / `container.unload()`, named multi-binding slots, `onDeactivation` for resource cleanup, diamond deduplication across plugins
+**Concepts:** `Module.createAsync`, `container.load()` / `container.unload()`, named multi-binding slots,
+`onDeactivation` for resource cleanup, diamond deduplication across plugins
 
 ---
 
 ## What this example shows
 
-How to build an application platform where every capability (storage, analytics, notifications) is a self-contained, hot-swappable plugin. Plugins can be loaded and unloaded at runtime; the `DocumentService` that uses them never imports a plugin class directly.
+How to build an application platform where every capability (storage, analytics, notifications) is a self-contained,
+hot-swappable plugin. Plugins can be loaded and unloaded at runtime; the `DocumentService` that uses them never imports
+a plugin class directly.
 
 ---
 
@@ -89,7 +92,8 @@ const S3PluginModule = Module.createAsync("S3Plugin", async (builder) => {
 
 ## Multi-binding for plugin descriptors
 
-A `PluginToken` multi-binding registry keeps one named slot per capability. This allows `resolveAll(PluginToken)` to enumerate every loaded plugin:
+A `PluginToken` multi-binding registry keeps one named slot per capability. This allows `resolveAll(PluginToken)` to
+enumerate every loaded plugin:
 
 ```ts
 // After loading modules, register a named descriptor for each capability

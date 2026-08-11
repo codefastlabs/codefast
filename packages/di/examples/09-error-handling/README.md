@@ -1,12 +1,15 @@
 # Example 09 — Error Handling
 
-**Concepts:** `TokenNotBoundError`, `NoMatchingBindingError`, `AsyncResolutionError`, `CircularDependencyError`, `MissingMetadataError`, `ScopeViolationError`, `AsyncModuleLoadError`
+**Concepts:** `TokenNotBoundError`, `NoMatchingBindingError`, `AsyncResolutionError`, `CircularDependencyError`,
+`MissingMetadataError`, `ScopeViolationError`, `AsyncModuleLoadError`
 
 ---
 
 ## What this example shows
 
-Every error thrown by `@codefast/di` has a stable `.code` string property and a message with enough context to diagnose the problem without reading source code. This example demonstrates how each error is triggered and how to recover from it.
+Every error thrown by `@codefast/di` has a stable `.code` string property and a message with enough context to diagnose
+the problem without reading source code. This example demonstrates how each error is triggered and how to recover from
+it.
 
 ---
 
@@ -81,7 +84,8 @@ container.resolve(DbToken); // ← throws
 await container.resolveAsync(DbToken); // ← correct
 ```
 
-The container cannot await a factory during a synchronous `resolve()` call. Always use `resolveAsync` / `resolveOptionalAsync` for bindings declared with `toDynamicAsync` or `toResolvedAsync`.
+The container cannot await a factory during a synchronous `resolve()` call. Always use `resolveAsync` /
+`resolveOptionalAsync` for bindings declared with `toDynamicAsync` or `toResolvedAsync`.
 
 ---
 
@@ -123,7 +127,8 @@ container.bind(UnmarkedToken).to(UnmarkedService);
 container.resolve(UnmarkedToken); // ← throws
 ```
 
-The container uses metadata recorded by `@injectable` to know which tokens to inject. Without it, it cannot resolve constructor arguments.
+The container uses metadata recorded by `@injectable` to know which tokens to inject. Without it, it cannot resolve
+constructor arguments.
 
 **Recovery options:**
 
@@ -136,7 +141,8 @@ The container uses metadata recorded by `@injectable` to know which tokens to in
 
 **Code:** `SCOPE_VIOLATION`
 
-A **captive dependency** occurs when a `singleton` depends on a `scoped` or `transient` binding. The singleton is created once and permanently captures the shorter-lived instance, breaking isolation.
+A **captive dependency** occurs when a `singleton` depends on a `scoped` or `transient` binding. The singleton is
+created once and permanently captures the shorter-lived instance, breaking isolation.
 
 ```ts
 container.bind(ScopedServiceToken).to(ScopedService).scoped();

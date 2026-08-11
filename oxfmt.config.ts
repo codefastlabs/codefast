@@ -30,6 +30,20 @@ export default defineConfig({
   },
 
   // ---------------------------------------------------------------------------
+  // Prose wrapping
+  // ---------------------------------------------------------------------------
+  // Markdown only — proseWrap also governs YAML, where it would reflow a workflow's
+  // folded block scalars. CHANGELOG.md is exempt: `changeset version` rewrites it in a
+  // bot commit that runs no git hooks, so a prose rule there fails the release PR's gate.
+  overrides: [
+    {
+      files: ["**/*.md"],
+      excludeFiles: ["**/CHANGELOG.md"],
+      options: { proseWrap: "always" },
+    },
+  ],
+
+  // ---------------------------------------------------------------------------
   // Ignored paths (shared with oxlint — see oxc.shared.ts)
   // ---------------------------------------------------------------------------
   ignorePatterns,

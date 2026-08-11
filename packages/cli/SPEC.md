@@ -1,12 +1,19 @@
 # SPEC.md — Refactor: `@codefast/cli`
 
-> **Phản biện kiến trúc và đặc tả cải tiến lớn (không tương thích ngược)**
-> Mục tiêu: giảm ~60% số file, xóa toàn bộ tầng lễ nghi, giữ nguyên mọi domain logic thuần túy.
+> **Phản biện kiến trúc và đặc tả cải tiến lớn (không tương thích ngược)** Mục tiêu: giảm ~60% số file, xóa toàn bộ tầng
+> lễ nghi, giữ nguyên mọi domain logic thuần túy.
 
-> **Trạng thái (đã triển khai):** Các mục tiêu và checklist §7 đã được áp dụng trong `packages/cli/src/` hiện tại. **Kiến trúc sau refactor** (cây thư mục, ranh giới module, quy ước import `#/…`): xem [ARCHITECTURE.md](./ARCHITECTURE.md).  
-> Các mục **§1** dưới đây mô tả **bối cảnh trước refactor** (đường dẫn kiểu `src/domains/...`, `src/shell/...` không còn tồn tại trong repo).
+> **Trạng thái (đã triển khai):** Các mục tiêu và checklist §7 đã được áp dụng trong `packages/cli/src/` hiện tại.
+> **Kiến trúc sau refactor** (cây thư mục, ranh giới module, quy ước import `#/…`): xem
+> [ARCHITECTURE.md](./ARCHITECTURE.md).  
+> Các mục **§1** dưới đây mô tả **bối cảnh trước refactor** (đường dẫn kiểu `src/domains/...`, `src/shell/...` không còn
+> tồn tại trong repo).
 
-**Lệch nhỏ so với §3.1 (chấp nhận được):** thay `core/fs.ts` + `core/path.ts` riêng lẻ bằng [`core/filesystem/node.ts`](./src/core/filesystem/node.ts) và `node:path` trực tiếp ở chỗ cần; helper xử lý `Result` đặt tên `consumeCliAppError` / `runCliResultAsync` trong [`core/cli/result-handle.ts`](./src/core/cli/result-handle.ts) (tương đương ý §3.7); tokenizer class string nằm [`arrange/domain/tailwind-token.ts`](./src/arrange/domain/tailwind-token.ts) cạnh `token-classifier.ts` cho rõ vai trò.
+**Lệch nhỏ so với §3.1 (chấp nhận được):** thay `core/fs.ts` + `core/path.ts` riêng lẻ bằng
+[`core/filesystem/node.ts`](./src/core/filesystem/node.ts) và `node:path` trực tiếp ở chỗ cần; helper xử lý `Result` đặt
+tên `consumeCliAppError` / `runCliResultAsync` trong [`core/cli/result-handle.ts`](./src/core/cli/result-handle.ts)
+(tương đương ý §3.7); tokenizer class string nằm
+[`arrange/domain/tailwind-token.ts`](./src/arrange/domain/tailwind-token.ts) cạnh `token-classifier.ts` cho rõ vai trò.
 
 ---
 
@@ -14,7 +21,9 @@
 
 ### 1.1 Explicit Architecture bị áp dụng sai tầm
 
-Codebase này là **một CLI tool với 3 lệnh** (arrange, mirror, tag). Nó đang áp dụng đầy đủ Hexagonal Architecture / Explicit Architecture — một pattern sinh ra để **tách biệt domain khỏi database/network trong hệ thống enterprise lớn**. Kết quả là:
+Codebase này là **một CLI tool với 3 lệnh** (arrange, mirror, tag). Nó đang áp dụng đầy đủ Hexagonal Architecture /
+Explicit Architecture — một pattern sinh ra để **tách biệt domain khỏi database/network trong hệ thống enterprise lớn**.
+Kết quả là:
 
 - **164 file TypeScript** để thực hiện công việc có thể làm trong ~55 file.
 - **6 cấp thư mục lồng nhau**: `src/domains/arrange/application/ports/inbound/analyze-directory.port.ts`
@@ -22,13 +31,17 @@ Codebase này là **một CLI tool với 3 lệnh** (arrange, mirror, tag). Nó 
 - **30 adapter files** — mỗi file implement đúng 1 interface ở trên.
 - **5 file `tokens.ts`** — mỗi injectable phải có 1 token constant tương ứng.
 
-Đây không phải "sạch hơn" — đây là **ceremony vì ceremony**. Sự phức tạp hiển thị không phải là sự sạch sẽ; nó là tiếng ồn làm chết chìm tín hiệu.
+Đây không phải "sạch hơn" — đây là **ceremony vì ceremony**. Sự phức tạp hiển thị không phải là sự sạch sẽ; nó là tiếng
+ồn làm chết chìm tín hiệu.
 
 ---
 
 ### 1.2 DI Container không cần thiết cho một CLI
 
-`@codefast/di` với `Module.create`, `moduleBuilder.bind().to().singleton().onActivation()`, `@injectable([inject(Token)])`, `Container.create()`, `runtimeContainer.validate()`, `runtimeContainer.initializeAsync()`, `runtimeContainer.dispose()` — đây là mức độ phức tạp của NestJS, áp dụng cho một process Node.js chạy rồi thoát trong vài giây.
+`@codefast/di` với `Module.create`, `moduleBuilder.bind().to().singleton().onActivation()`,
+`@injectable([inject(Token)])`, `Container.create()`, `runtimeContainer.validate()`,
+`runtimeContainer.initializeAsync()`, `runtimeContainer.dispose()` — đây là mức độ phức tạp của NestJS, áp dụng cho một
+process Node.js chạy rồi thoát trong vài giây.
 
 **Vấn đề cụ thể:**
 
@@ -36,7 +49,8 @@ Codebase này là **một CLI tool với 3 lệnh** (arrange, mirror, tag). Nó 
 - `runtimeContainer.validate()` chỉ được gọi khi `NODE_ENV !== "production"` — production không được kiểm tra.
 - Token string `"AnalyzeDirectoryUseCase"` hoàn toàn không type-safe tại điểm đăng ký.
 - `onActivation(createOptionalCliPortTelemetryActivation(...))` là side-effect magic khó trace.
-- Module dependencies được khai báo qua `moduleBuilder.import(ShellInfrastructureModule)` nhưng dependency thực sự nằm ở class constructor — bất đồng bộ giữa hai nơi.
+- Module dependencies được khai báo qua `moduleBuilder.import(ShellInfrastructureModule)` nhưng dependency thực sự nằm ở
+  class constructor — bất đồng bộ giữa hai nơi.
 
 Một CLI không cần IoC container. Nó cần **function composition** thẳng thắn.
 
@@ -54,7 +68,8 @@ export interface AnalyzeDirectoryPort {
 export class AnalyzeDirectoryUseCase implements AnalyzeDirectoryPort { ... }
 ```
 
-Interface này có **duy nhất một implementation**. Nó không bao giờ được swap. Nó không đại diện cho một boundary thật sự. Nó chỉ tồn tại vì kiến trúc "yêu cầu" phải có inbound port — đây là cargo cult.
+Interface này có **duy nhất một implementation**. Nó không bao giờ được swap. Nó không đại diện cho một boundary thật
+sự. Nó chỉ tồn tại vì kiến trúc "yêu cầu" phải có inbound port — đây là cargo cult.
 
 Cùng vấn đề với tất cả 4 inbound ports của `arrange`, 2 của `mirror`, 2 của `tag`, và toàn bộ presenting ports.
 
@@ -69,7 +84,9 @@ export type ArrangeAnalyzeDirectoryRequest = {
 };
 ```
 
-Đây là `{ analyzeRootPath: string }` được đặt tên và cho vào file riêng. Nó không có validation, không có behavior, không xứng đáng có file riêng. Tương tự với `arrange-sync.request.ts`, `suggest-groups.request.ts`, và tất cả request files trong mirror/tag.
+Đây là `{ analyzeRootPath: string }` được đặt tên và cho vào file riêng. Nó không có validation, không có behavior,
+không xứng đáng có file riêng. Tương tự với `arrange-sync.request.ts`, `suggest-groups.request.ts`, và tất cả request
+files trong mirror/tag.
 
 ---
 
@@ -81,7 +98,8 @@ src/domains/mirror/contracts/models.ts
 src/domains/tag/contracts/models.ts
 ```
 
-Mỗi file chứa 2-3 type aliases. "Contracts" folder tồn tại để ngăn domain domain import lẫn nhau — nhưng trong CLI này, các domain **không import lẫn nhau** ngay cả khi không có folder này. Pattern này giải quyết một vấn đề không tồn tại.
+Mỗi file chứa 2-3 type aliases. "Contracts" folder tồn tại để ngăn domain domain import lẫn nhau — nhưng trong CLI này,
+các domain **không import lẫn nhau** ngay cả khi không có folder này. Pattern này giải quyết một vấn đề không tồn tại.
 
 ---
 
@@ -92,7 +110,9 @@ src/shell/application/coordination/cli-executor.coordination.ts
 src/shell/application/coordination/cli-schema-parsing.coordination.ts
 ```
 
-`CliExecutorService` và `SchemaValidatorService` được inject vào commands qua token, thay vì được gọi trực tiếp. `consumeCliAppError()` là một helper function được bọc thành interface + injectable class + token để có thể được DI. Đây là complexity thuần túy không có giá trị.
+`CliExecutorService` và `SchemaValidatorService` được inject vào commands qua token, thay vì được gọi trực tiếp.
+`consumeCliAppError()` là một helper function được bọc thành interface + injectable class + token để có thể được DI. Đây
+là complexity thuần túy không có giá trị.
 
 ---
 
@@ -111,7 +131,8 @@ src/shell/application/coordination/cli-schema-parsing.coordination.ts
 - `wiring/optional-cli-port-telemetry-activation.ts`
 - `shell.module.ts`
 
-`shell/` là một **micro-monolith trong monolith**. Nó phức tạp như một domain đầy đủ nhưng chỉ wrap `node:fs`, `node:path`, `process`, và `commander`.
+`shell/` là một **micro-monolith trong monolith**. Nó phức tạp như một domain đầy đủ nhưng chỉ wrap `node:fs`,
+`node:path`, `process`, và `commander`.
 
 ---
 
@@ -263,9 +284,11 @@ Không có container, không có module, không có token. Type-safe hoàn toàn
 
 ### 3.3 Loại bỏ Port Interface 1:1
 
-**Quy tắc mới:** Chỉ tạo interface khi có **ít nhất 2 implementations cụ thể** hoặc khi cần **mock cho testing** ở module khác.
+**Quy tắc mới:** Chỉ tạo interface khi có **ít nhất 2 implementations cụ thể** hoặc khi cần **mock cho testing** ở
+module khác.
 
-Trong CLI này, tất cả infrastructure calls (fs, path, process) đều có thể được test bằng cách truyền đường dẫn tmp thật — không cần mock interface. Domain logic thuần túy không cần interface.
+Trong CLI này, tất cả infrastructure calls (fs, path, process) đều có thể được test bằng cách truyền đường dẫn tmp thật
+— không cần mock interface. Domain logic thuần túy không cần interface.
 
 Với telemetry: nếu cần wrap, dùng **decorator function**, không phải DI `onActivation`:
 
@@ -311,7 +334,8 @@ export function createArrangeCommand(): Command {
 }
 ```
 
-Commander đã là declarative và composable. Wrapping nó trong `CommandTree` JSON chỉ thêm translation layer không có giá trị.
+Commander đã là declarative và composable. Wrapping nó trong `CommandTree` JSON chỉ thêm translation layer không có giá
+trị.
 
 ---
 
@@ -331,7 +355,8 @@ export const logger = {
 
 Import trực tiếp. Nếu cần test, dùng `vi.spyOn(logger, 'out')`. Không cần interface, không cần token.
 
-Tương tự với `CliPathPort` (chỉ gọi `node:path`), `CliRuntimePort` (chỉ gọi `process`), `CliFilesystemPort` (chỉ gọi `node:fs`).
+Tương tự với `CliPathPort` (chỉ gọi `node:path`), `CliRuntimePort` (chỉ gọi `process`), `CliFilesystemPort` (chỉ gọi
+`node:fs`).
 
 ---
 
@@ -474,16 +499,22 @@ Không cần container setup, không cần mock tokens. Test rõ ràng và nhanh
 - [x] `shell/application/ports/outbound/` (11 files) **xóa**
 - [x] `shell/application/coordination/` **xóa**
 - [x] `shell/wiring/` **xóa**
-- [x] Test coverage cho domain không giảm _(trước và sau refactor đều không có suite domain đo được trong `tests/`; không hồi quy đo lường — bổ sung test theo §6 là bước tiếp theo tùy chọn)_
+- [x] Test coverage cho domain không giảm _(trước và sau refactor đều không có suite domain đo được trong `tests/`;
+      không hồi quy đo lường — bổ sung test theo §6 là bước tiếp theo tùy chọn)_
 
 ---
 
 ## 8. Tổng kết
 
-Codebase này có **domain logic tốt** bị chôn dưới **3 tầng ceremony kiến trúc**. Hexagonal Architecture không có nghĩa là mọi function phải được bọc trong interface + injectable class + token + module binding. Nó có nghĩa là **domain logic không phụ thuộc vào infrastructure** — và điều đó có thể đạt được chỉ với function composition thẳng thắn.
+Codebase này có **domain logic tốt** bị chôn dưới **3 tầng ceremony kiến trúc**. Hexagonal Architecture không có nghĩa
+là mọi function phải được bọc trong interface + injectable class + token + module binding. Nó có nghĩa là **domain logic
+không phụ thuộc vào infrastructure** — và điều đó có thể đạt được chỉ với function composition thẳng thắn.
 
-> "A codebase is not complex because it has many patterns. It is simple because it has only as many patterns as the problem requires."
+> "A codebase is not complex because it has many patterns. It is simple because it has only as many patterns as the
+> problem requires."
 
-Sau refactor, mọi developer mới có thể đọc `cli.ts` và hiểu toàn bộ flow trong 5 phút — thay vì phải trace qua 8 layers của DI container để tìm xem `console.log` được gọi ở đâu.
+Sau refactor, mọi developer mới có thể đọc `cli.ts` và hiểu toàn bộ flow trong 5 phút — thay vì phải trace qua 8 layers
+của DI container để tìm xem `console.log` được gọi ở đâu.
 
-**Đã áp dụng:** Cấu trúc `src/` hiện tại khớp tinh thần §3; tài liệu vận hành là [ARCHITECTURE.md](./ARCHITECTURE.md). Tệp SPEC này giữ vai trò **lịch sử quyết định** (vì sao đổi) và **checklist đã đóng** (§7).
+**Đã áp dụng:** Cấu trúc `src/` hiện tại khớp tinh thần §3; tài liệu vận hành là [ARCHITECTURE.md](./ARCHITECTURE.md).
+Tệp SPEC này giữ vai trò **lịch sử quyết định** (vì sao đổi) và **checklist đã đóng** (§7).

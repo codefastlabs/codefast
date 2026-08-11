@@ -71,9 +71,9 @@ class MyService { ... }
 
 ## Tagged bindings
 
-A tag key is declared once with `tag<Value>(name)`; `key.of(value)` mints the criterion that both
-`.whenTagged()` and a resolve hint take. Criteria are interned, so the same value is always the same
-object — which is what lets lookup compare by identity. Building one by hand matches nothing.
+A tag key is declared once with `tag<Value>(name)`; `key.of(value)` mints the criterion that both `.whenTagged()` and a
+resolve hint take. Criteria are interned, so the same value is always the same object — which is what lets lookup
+compare by identity. Building one by hand matches nothing.
 
 ```ts
 const PROVIDER_TAG = tag<"local" | "s3">("provider");
@@ -88,11 +88,11 @@ Resolve by tags:
 const s3 = container.resolve(StorageToken, { tags: [PROVIDER_TAG.of("s3")] });
 ```
 
-Because the key is typed, a bind site and a resolve site cannot drift apart silently — `PROVIDER_TAG.of("gcs")`
-is a compile error, not a resolve that quietly finds nothing.
+Because the key is typed, a bind site and a resolve site cannot drift apart silently — `PROVIDER_TAG.of("gcs")` is a
+compile error, not a resolve that quietly finds nothing.
 
-A binding can carry multiple tags: the request must name **every** tag the binding declares, so adding
-tags to a request makes it match more bindings rather than fewer.
+A binding can carry multiple tags: the request must name **every** tag the binding declares, so adding tags to a request
+makes it match more bindings rather than fewer.
 
 ---
 
@@ -113,7 +113,8 @@ container.bind(LoggerToken).toConstantValue(consoleLogger).when(whenParentIs(Ord
 container.bind(PaymentLoggerToken).toConstantValue(fileLogger); // dedicated token for PaymentService
 ```
 
-`whenParentIs(token)` matches when the class currently being constructed has `token` as its binding token. This keeps the injection invisible to the consumers — they both inject `LoggerToken` but receive different instances.
+`whenParentIs(token)` matches when the class currently being constructed has `token` as its binding token. This keeps
+the injection invisible to the consumers — they both inject `LoggerToken` but receive different instances.
 
 See Example 17 for the full constraint family (`whenAnyAncestorIs`, `whenParentNamed`, `whenParentTagged`, …).
 
@@ -155,5 +156,6 @@ for (const handler of handlers) {
 
 ## What to read next
 
-- **Example 08** — `toAlias` for redirecting one token to another, `BindingIdentifier` for removing a specific named binding.
+- **Example 08** — `toAlias` for redirecting one token to another, `BindingIdentifier` for removing a specific named
+  binding.
 - **Example 17** — full constraint family for deep ancestor-chain matching.

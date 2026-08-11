@@ -1,12 +1,14 @@
 # Example 15 — Container Inspection & Graph Visualization
 
-**Concepts:** `container.inspect()`, `container.lookupBindings()`, `container.has()` / `hasOwn()`, `container.generateDependencyGraph()`, `toDotGraph()`, `toCytoscapeGraph()`, startup audit helper
+**Concepts:** `container.inspect()`, `container.lookupBindings()`, `container.has()` / `hasOwn()`,
+`container.generateDependencyGraph()`, `toDotGraph()`, `toCytoscapeGraph()`, startup audit helper
 
 ---
 
 ## What this example shows
 
-How to introspect a running container — enumerate bindings, check existence, trace parent/child visibility, and export the full dependency graph as Graphviz DOT or Cytoscape.js data for visualization and debugging.
+How to introspect a running container — enumerate bindings, check existence, trace parent/child visibility, and export
+the full dependency graph as Graphviz DOT or Cytoscape.js data for visualization and debugging.
 
 ---
 
@@ -96,7 +98,8 @@ container.has(PluginToken, { name: "alpha" }); // true if "alpha" slot is bound
 container.has(PluginToken, { name: "gamma" }); // false
 ```
 
-`has` walks up to parent containers; `hasOwn` is strictly local. Use `hasOwn` when you need to know whether a child container shadows a parent binding.
+`has` walks up to parent containers; `hasOwn` is strictly local. Use `hasOwn` when you need to know whether a child
+container shadows a parent binding.
 
 ---
 
@@ -164,7 +167,8 @@ import { toMermaidGraph } from "@codefast/di";
 console.log(toMermaidGraph(graph)); // flowchart TD source
 ```
 
-Paste the output into any Mermaid renderer — GitHub markdown, docs tooling, [mermaid.live](https://mermaid.live) — with no extra library. Parent-chain nodes and unbound-optional placeholders come through dashed.
+Paste the output into any Mermaid renderer — GitHub markdown, docs tooling, [mermaid.live](https://mermaid.live) — with
+no extra library. Parent-chain nodes and unbound-optional placeholders come through dashed.
 
 ---
 

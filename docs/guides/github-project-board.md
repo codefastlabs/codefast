@@ -1,16 +1,21 @@
 # Board GitHub Projects — cách hoạt động và cách dùng
 
-> **Board:** [`orgs/codefastlabs/projects/4`](https://github.com/orgs/codefastlabs/projects/4) — private, link vào `codefastlabs/codefast`
+> **Board:** [`orgs/codefastlabs/projects/4`](https://github.com/orgs/codefastlabs/projects/4) — private, link vào
+> `codefastlabs/codefast`
 >
-> **Cập nhật:** 2026-08-03 · Vì sao thiết kế như vậy: [`decisions/github-project-board.md`](../decisions/github-project-board.md) · Sửa cấu hình: [`runbooks/github-project-maintenance.md`](../runbooks/github-project-maintenance.md)
+> **Cập nhật:** 2026-08-03 · Vì sao thiết kế như vậy:
+> [`decisions/github-project-board.md`](../decisions/github-project-board.md) · Sửa cấu hình:
+> [`runbooks/github-project-maintenance.md`](../runbooks/github-project-maintenance.md)
 
-Board này là **repo-level Projects v2 đặt ở cấp org**. `github.com/codefastlabs/codefast/projects` chỉ là trang liệt kê các project được link vào repo — Projects (classic) đã bị GitHub khai tử, không còn board nào sống ở cấp repo.
+Board này là **repo-level Projects v2 đặt ở cấp org**. `github.com/codefastlabs/codefast/projects` chỉ là trang liệt kê
+các project được link vào repo — Projects (classic) đã bị GitHub khai tử, không còn board nào sống ở cấp repo.
 
 ---
 
 ## 1. Mô hình một câu
 
-**Board theo dõi issue, không theo dõi PR.** Issue đi từ `Inbox` xuống `Done` gần như hoàn toàn tự động; PR chỉ tác động lên trạng thái của issue mà nó gắn vào, và bản thân PR không bao giờ xuất hiện thành card.
+**Board theo dõi issue, không theo dõi PR.** Issue đi từ `Inbox` xuống `Done` gần như hoàn toàn tự động; PR chỉ tác động
+lên trạng thái của issue mà nó gắn vào, và bản thân PR không bao giờ xuất hiện thành card.
 
 ## 2. Field
 
@@ -21,9 +26,11 @@ Board này là **repo-level Projects v2 đặt ở cấp org**. `github.com/code
 | `Kind`    | single-select | `feat` · `fix` · `perf` · `docs` · `dx` · `chore` · `idea` · `learn`                                        |
 | `Target`  | text          | **Dự án downstream nào đang cần cái này.** Không phải mốc version — repo không có mốc 1.0                   |
 
-`Package` là field quan trọng nhất: câu hỏi thường trực của monorepo là _"còn gì treo ở package nào"_, và ba trong bốn view group theo nó.
+`Package` là field quan trọng nhất: câu hỏi thường trực của monorepo là _"còn gì treo ở package nào"_, và ba trong bốn
+view group theo nó.
 
-Sáu option đầu của `Kind` khớp Conventional Commits (commitlint đang enforce), nên `Kind` của issue thường thành prefix commit luôn.
+Sáu option đầu của `Kind` khớp Conventional Commits (commitlint đang enforce), nên `Kind` của issue thường thành prefix
+commit luôn.
 
 `Kind` và `Target` **không có workflow nào tự điền** — set tay khi triage.
 
@@ -58,9 +65,11 @@ Ba luật giữ board không mục, bỏ luật nào cũng rữa:
 | `Auto-close issue`             | `Status` chuyển sang `Done` | **close issue**          |
 | `Auto-add sub-issues`          | item có sub-issue           | thêm sub-issue vào board |
 
-Hai workflow cuối làm vòng lặp kín cả hai chiều: đóng issue → card sang `Done`, và kéo card sang `Done` → issue tự đóng. Không còn trạng thái nào phải sửa tay.
+Hai workflow cuối làm vòng lặp kín cả hai chiều: đóng issue → card sang `Done`, và kéo card sang `Done` → issue tự đóng.
+Không còn trạng thái nào phải sửa tay.
 
-`Pull request linked to issue` **không kéo PR vào board** — nó set field trên **issue**. Đó là lý do board không cần chứa PR mà vẫn biết issue đang chờ review.
+`Pull request linked to issue` **không kéo PR vào board** — nó set field trên **issue**. Đó là lý do board không cần
+chứa PR mà vẫn biết issue đang chờ review.
 
 ## 5. Cái gì lên board, cái gì không
 
@@ -74,7 +83,8 @@ is:issue is:open -label:dependencies -label:github-actions
 
 - PR Dependabot (~10/tuần, grouped, auto-merge trừ major) **không lên board** — chúng không cần trạng thái.
 - PR `chore: release new version` của Changesets **không lên board** — nó là checkpoint, không phải task.
-- **PR của chính bạn cũng không lên board.** PR nhỏ không gắn issue sẽ vô hình với board — đó là chủ ý, không phải thiếu sót.
+- **PR của chính bạn cũng không lên board.** PR nhỏ không gắn issue sẽ vô hình với board — đó là chủ ý, không phải thiếu
+  sót.
 
 ## 6. Ý tưởng, mục tiêu học, tầm nhìn
 
@@ -86,7 +96,9 @@ Ba loại nội dung này có **điều kiện kết thúc khác nhau**, nên �
 | **Ý tưởng**      | **draft issue**, `Kind: idea`, `Someday`     | Không tạo issue trong repo: không đốt số, không notification, không lộ khi chưa chín |
 | **Mục tiêu học** | draft issue `Kind: learn` (nếu phục vụ repo) | Học thuần cá nhân, không liên quan repo, thì không thuộc project này                 |
 
-**Draft issue** là cơ chế đáng dùng nhất ở đây: item sống trong board, có đủ `Package`/`Kind`/`Target`, nhưng repo vẫn sạch. Đã kiểm chứng: draft issue **vẫn được `Item added to project` set `Status: Inbox`**, nên nó hoà vào luồng sẵn có mà không cần workflow riêng.
+**Draft issue** là cơ chế đáng dùng nhất ở đây: item sống trong board, có đủ `Package`/`Kind`/`Target`, nhưng repo vẫn
+sạch. Đã kiểm chứng: draft issue **vẫn được `Item added to project` set `Status: Inbox`**, nên nó hoà vào luồng sẵn có
+mà không cần workflow riêng.
 
 Khi một ý tưởng chín → **Convert to issue**, từ đó các workflow tiếp quản.
 
@@ -107,7 +119,8 @@ gh api graphql -f query='mutation { addProjectV2DraftIssue(input:{ projectId:"PV
 
 Số view nhảy từ 3 sang 5 vì view `Roadmap` (số 4) đã bị xoá — xem [decisions](../decisions/github-project-board.md).
 
-View `Perf` ăn khớp với hạ tầng có sẵn: label `performance`, issue template `.github/ISSUE_TEMPLATE/performance-regression.yml`, và `benchmarks/*`.
+View `Perf` ăn khớp với hạ tầng có sẵn: label `performance`, issue template
+`.github/ISSUE_TEMPLATE/performance-regression.yml`, và `benchmarks/*`.
 
 ## 8. Nhịp vận hành
 
@@ -117,4 +130,5 @@ View `Perf` ăn khớp với hạ tầng có sẵn: label `performance`, issue t
 | **Mỗi kỳ release** | Đọc `Someday` (view `Ideas`), mỗi item hỏi đúng một câu: _"còn đúng không?"_ Không thì close. |
 | **Khi nào cũng**   | `In progress` tối đa 1 item.                                                                  |
 
-Nhịp đọc lại `Someday` **gắn vào release chứ không tạo nhịp mới** — một danh sách ý tưởng không có nhịp đọc lại thì bằng không, và ý tưởng nằm im tám tháng làm nhiễu mọi lần mở board.
+Nhịp đọc lại `Someday` **gắn vào release chứ không tạo nhịp mới** — một danh sách ý tưởng không có nhịp đọc lại thì bằng
+không, và ý tưởng nằm im tám tháng làm nhiễu mọi lần mở board.

@@ -1,14 +1,19 @@
 # RFC: Tailwind Variants (TV) - Type-Safe Variant API for Tailwind CSS
 
-> **Trạng thái:** đã chấp nhận và đã triển khai. Viết 2025-09-14; `tv()`, slots, `extend`, compound variants, `cn`/`cx` và `createTV` đều đã ship trong `@codefast/tailwind-variants`.
+> **Trạng thái:** đã chấp nhận và đã triển khai. Viết 2025-09-14; `tv()`, slots, `extend`, compound variants, `cn`/`cx`
+> và `createTV` đều đã ship trong `@codefast/tailwind-variants`.
 >
-> **Đây là hồ sơ thiết kế, không phải tài liệu API.** Cách dùng thực tế nằm ở [README.md](./README.md) — đọc nó trước. Giữ tài liệu này vì phần _vì sao_ (so sánh với `tailwind-variants`/`cva`, các đánh đổi về type inference) không nằm ở đâu khác; các đoạn mã bên dưới minh hoạ ý định lúc thiết kế và không được kiểm theo API hiện tại.
+> **Đây là hồ sơ thiết kế, không phải tài liệu API.** Cách dùng thực tế nằm ở [README.md](./README.md) — đọc nó trước.
+> Giữ tài liệu này vì phần _vì sao_ (so sánh với `tailwind-variants`/`cva`, các đánh đổi về type inference) không nằm ở
+> đâu khác; các đoạn mã bên dưới minh hoạ ý định lúc thiết kế và không được kiểm theo API hiện tại.
 >
-> Mục **Future Roadmap** ở cuối là danh sách mong muốn lúc viết RFC, không phải kế hoạch: browser extension, VS Code extension và CLI migration tool đều chưa tồn tại và chưa được lên lịch.
+> Mục **Future Roadmap** ở cuối là danh sách mong muốn lúc viết RFC, không phải kế hoạch: browser extension, VS Code
+> extension và CLI migration tool đều chưa tồn tại và chưa được lên lịch.
 
 ## Tóm tắt
 
-**Tailwind Variants (TV)** là một thư viện mạnh mẽ được thiết kế để tạo ra các API variant type-safe cho Tailwind CSS, cho phép developers xây dựng các hệ thống component linh hoạt với cú pháp đơn giản và trải nghiệm developer tuyệt vời.
+**Tailwind Variants (TV)** là một thư viện mạnh mẽ được thiết kế để tạo ra các API variant type-safe cho Tailwind CSS,
+cho phép developers xây dựng các hệ thống component linh hoạt với cú pháp đơn giản và trải nghiệm developer tuyệt vời.
 
 ## Động lực
 
@@ -20,7 +25,8 @@ Việc quản lý các variant của component trong Tailwind CSS thường dẫ
 - Khó khăn trong việc mở rộng và tái sử dụng components
 - Xung đột classes không được xử lý tự động
 
-TV giải quyết những vấn đề này bằng cách cung cấp một API declarative, type-safe với khả năng tự động merge classes và hệ thống variant mạnh mẽ.
+TV giải quyết những vấn đề này bằng cách cung cấp một API declarative, type-safe với khả năng tự động merge classes và
+hệ thống variant mạnh mẽ.
 
 ## Thiết kế chi tiết
 
@@ -605,4 +611,5 @@ Tailwind Variants (TV) cung cấp một solution hoàn chỉnh cho việc quản
 - **DX**: Excellent developer experience với IntelliSense và clear APIs
 - **Scalability**: Từ simple components đến complex design systems
 
-TV là công cụ lý tưởng cho teams muốn xây dựng maintainable, scalable component systems với Tailwind CSS trong môi trường production.
+TV là công cụ lý tưởng cho teams muốn xây dựng maintainable, scalable component systems với Tailwind CSS trong môi
+trường production.

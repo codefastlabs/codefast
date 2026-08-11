@@ -1,14 +1,13 @@
 # @examples/tanstack-start
 
-A [TanStack Start](https://tanstack.com/start) app that demonstrates the `@codefast/*` libraries
-**as published on npm** — a smoke test for the real shipped artifacts. It's the TanStack Start
-entry under `examples/*`; sibling examples cover other React frameworks.
+A [TanStack Start](https://tanstack.com/start) app that demonstrates the `@codefast/*` libraries **as published on npm**
+— a smoke test for the real shipped artifacts. It's the TanStack Start entry under `examples/*`; sibling examples cover
+other React frameworks.
 
 ## What makes this different from `apps/ui`
 
-`apps/ui` (the docs site) consumes the packages through `workspace:*` links (their in-repo
-source). This app instead depends on the **registry-published** versions, referenced through the
-catalog so all examples share one pin:
+`apps/ui` (the docs site) consumes the packages through `workspace:*` links (their in-repo source). This app instead
+depends on the **registry-published** versions, referenced through the catalog so all examples share one pin:
 
 ```jsonc
 // package.json
@@ -18,25 +17,23 @@ catalog so all examples share one pin:
 "@codefast/di": "catalog:"
 ```
 
-The catalog entries (in the root `pnpm-workspace.yaml`) pin the published versions, e.g.
-`"@codefast/ui": ^0.4.0`. Two repo settings make pnpm fetch these from the registry rather than
-linking the local `packages/*`:
+The catalog entries (in the root `pnpm-workspace.yaml`) pin the published versions, e.g. `"@codefast/ui": ^0.4.0`. Two
+repo settings make pnpm fetch these from the registry rather than linking the local `packages/*`:
 
-- `.npmrc` → `link-workspace-packages=false`, so a non-`workspace:` spec (incl. `catalog:`)
-  resolves from npm even when a matching workspace package exists.
+- `.npmrc` → `link-workspace-packages=false`, so a non-`workspace:` spec (incl. `catalog:`) resolves from npm even when
+  a matching workspace package exists.
 - `catalogMode: manual`, so the catalog is not enforced repo-wide.
 
-Because the `@codefast/*` deps go through the catalog, Changesets leaves them alone on release
-(it doesn't rewrite `catalog:` specs or catalog entries) — so a canary version bump can't break
-this app's install. To track a newer published release, bump the catalog entries by hand.
+Because the `@codefast/*` deps go through the catalog, Changesets leaves them alone on release (it doesn't rewrite
+`catalog:` specs or catalog entries) — so a canary version bump can't break this app's install. To track a newer
+published release, bump the catalog entries by hand.
 
-`vite.config.ts` deliberately omits the dev-only `source` resolve condition that `apps/ui`
-uses, so what runs here is the packages' built `dist/`, not their `src/`.
+`vite.config.ts` deliberately omits the dev-only `source` resolve condition that `apps/ui` uses, so what runs here is
+the packages' built `dist/`, not their `src/`.
 
-It also adds `@rolldown/plugin-babel` with `@babel/plugin-proposal-decorators`: `@codefast/di` uses
-TC39 Stage 3 decorators (`@injectable`, `@postConstruct`). Vite 8 bundles with Rolldown (oxc), whose
-built-in decorator transform only covers _legacy_ (`experimentalDecorators`) decorators — not the
-standard ones — so Babel lowers them.
+It also adds `@rolldown/plugin-babel` with `@babel/plugin-proposal-decorators`: `@codefast/di` uses TC39 Stage 3
+decorators (`@injectable`, `@postConstruct`). Vite 8 bundles with Rolldown (oxc), whose built-in decorator transform
+only covers _legacy_ (`experimentalDecorators`) decorators — not the standard ones — so Babel lowers them.
 
 ## What it demos
 

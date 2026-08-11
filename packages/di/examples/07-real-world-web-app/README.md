@@ -1,6 +1,7 @@
 # Example 07 — Real-world Web App
 
-**Concepts:** All features combined — `AsyncModule`, scoped child containers per request, lifecycle hooks, named environment overrides, `resolveAll` middleware pipeline, `validate()`, `await using`, dependency graph export
+**Concepts:** All features combined — `AsyncModule`, scoped child containers per request, lifecycle hooks, named
+environment overrides, `resolveAll` middleware pipeline, `validate()`, `await using`, dependency graph export
 
 ---
 
@@ -130,7 +131,8 @@ async function handleHttpRequest(raw: HttpRequest): Promise<HttpResponse> {
 }
 ```
 
-The root container holds all singletons (DB, cache, services). The child container holds only the request-specific binding (`RequestContext`). Scoped services resolve from the child, singletons resolve from the parent transparently.
+The root container holds all singletons (DB, cache, services). The child container holds only the request-specific
+binding (`RequestContext`). Scoped services resolve from the child, singletons resolve from the parent transparently.
 
 ### Validation before serving traffic
 
@@ -178,7 +180,8 @@ const mailer = container.resolve(MailerToken, { name: config.env });
 
 ## What this example is NOT
 
-This is not a framework — it's a demonstration of wiring patterns. In production you would separate each module into its own file, and typically each architectural layer into its own package.
+This is not a framework — it's a demonstration of wiring patterns. In production you would separate each module into its
+own file, and typically each architectural layer into its own package.
 
 ---
 

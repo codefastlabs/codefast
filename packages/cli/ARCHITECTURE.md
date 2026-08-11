@@ -1,6 +1,8 @@
 # CLI package architecture
 
-The `@codefast/cli` package is a **small Node CLI** (top-level commands: `arrange`, `audit`, `mirror`, `tag`). It intentionally avoids hexagonal/DI ceremony: behavior is wired with **plain functions**, **Commander** for argv, and **`Result<T, AppError>`** for recoverable failures.
+The `@codefast/cli` package is a **small Node CLI** (top-level commands: `arrange`, `audit`, `mirror`, `tag`). It
+intentionally avoids hexagonal/DI ceremony: behavior is wired with **plain functions**, **Commander** for argv, and
+**`Result<T, AppError>`** for recoverable failures.
 
 ## Layout (`src/`)
 
@@ -17,13 +19,17 @@ The `@codefast/cli` package is a **small Node CLI** (top-level commands: `arrang
 
 ## Boundaries
 
-- **Domain modules** (`*/domain/**`) stay **pure** where possible: no Commander, no `process`, no ad-hoc logging—only types and algorithms (I/O lives in callers or thin `core/` helpers).
-- **Commands** (`*/command.ts`) parse argv, call `parseWithSchema` / `consumeCliAppError`, delegate to `prepare*` / `run*` functions, set `process.exitCode`.
-- **Config** is loaded once per resolved repo root via [`core/config/loader.ts`](src/core/config/loader.ts); warnings go through [`core/config/warnings.ts`](src/core/config/warnings.ts).
+- **Domain modules** (`*/domain/**`) stay **pure** where possible: no Commander, no `process`, no ad-hoc logging—only
+  types and algorithms (I/O lives in callers or thin `core/` helpers).
+- **Commands** (`*/command.ts`) parse argv, call `parseWithSchema` / `consumeCliAppError`, delegate to `prepare*` /
+  `run*` functions, set `process.exitCode`.
+- **Config** is loaded once per resolved repo root via [`core/config/loader.ts`](src/core/config/loader.ts); warnings go
+  through [`core/config/warnings.ts`](src/core/config/warnings.ts).
 
 ## Imports
 
-Internal code uses the `#/…` alias (see `package.json` `imports`). Prefer `#/core/…`, `#/arrange/…`, etc., over deep relative paths.
+Internal code uses the `#/…` alias (see `package.json` `imports`). Prefer `#/core/…`, `#/arrange/…`, etc., over deep
+relative paths.
 
 ## File naming
 
@@ -31,12 +37,15 @@ Rationale and the full checklist live in [`SPEC.md`](SPEC.md).
 
 - Prefer **one concept per filename** (`grouping.ts`, `grouping-service.ts`, `analyze-service.ts`, `exports.ts`).
 - **`ast/`** uses short names: `ast-node.ts`, `helpers.ts`, `collectors-cn.ts`, `targets.ts`, etc.
-- Zod schemas are named for what they parse, not with a reserved suffix: per-command argv schemas are `cli-schema.ts`, the config schema is [`core/config/schema.ts`](src/core/config/schema.ts).
-- **`.test.ts`** is reserved for Vitest. No `*.port.ts`, `*.adapter.ts`, `*.domain-service.ts`, or `*.value-object.ts` in new code.
+- Zod schemas are named for what they parse, not with a reserved suffix: per-command argv schemas are `cli-schema.ts`,
+  the config schema is [`core/config/schema.ts`](src/core/config/schema.ts).
+- **`.test.ts`** is reserved for Vitest. No `*.port.ts`, `*.adapter.ts`, `*.domain-service.ts`, or `*.value-object.ts`
+  in new code.
 
 ## Testing
 
-Tests live under [`tests/`](tests/) only (see workspace rules). The CLI Vitest profile is **Node**, `tests/**/*.test.*`, `passWithNoTests: true`.
+Tests live under [`tests/`](tests/) only (see workspace rules). The CLI Vitest profile is **Node**, `tests/**/*.test.*`,
+`passWithNoTests: true`.
 
 ## Further reading
 

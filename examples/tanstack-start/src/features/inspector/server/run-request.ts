@@ -218,13 +218,11 @@ export async function runRequest(input: RequestInput): Promise<RequestOutcome> {
 }
 
 export const runRequestServerFn = createServerFn({ method: "POST" })
-  .validator(
-    (input: RequestInput): RequestInput => ({
-      tenant: String(input.tenant).slice(0, 40),
-      region: REGIONS.includes(input.region) ? input.region : "eu",
-      tier: TIERS.includes(input.tier) ? input.tier : "free",
-      fraudScreening: input.fraudScreening === true,
-      introduceCaptive: input.introduceCaptive === true,
-    }),
-  )
+  .validator((input: RequestInput): RequestInput => ({
+    tenant: String(input.tenant).slice(0, 40),
+    region: REGIONS.includes(input.region) ? input.region : "eu",
+    tier: TIERS.includes(input.tier) ? input.tier : "free",
+    fraudScreening: input.fraudScreening === true,
+    introduceCaptive: input.introduceCaptive === true,
+  }))
   .handler(async ({ data }): Promise<RequestOutcome> => runRequest(data));

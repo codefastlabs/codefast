@@ -1,12 +1,16 @@
 # Example 13 — E-Commerce Platform
 
-**Concepts:** All DI features combined in a domain-rich context — bounded contexts as modules, `@postConstruct`, `@preDestroy`, `injectAll`, `optional`, multi-gateway payment, notification pipeline, per-request scoped cart, `resolveOptional` for A/B testing
+**Concepts:** All DI features combined in a domain-rich context — bounded contexts as modules, `@postConstruct`,
+`@preDestroy`, `injectAll`, `optional`, multi-gateway payment, notification pipeline, per-request scoped cart,
+`resolveOptional` for A/B testing
 
 ---
 
 ## What this example shows
 
-The largest example in the set. Every feature of `@codefast/di` is exercised inside a realistic domain — an e-commerce backend with eight bounded contexts (Catalog, Cart, Orders, Payments, Users, Notifications, Search, Analytics) backed by PostgreSQL, Redis, S3, and Elasticsearch.
+The largest example in the set. Every feature of `@codefast/di` is exercised inside a realistic domain — an e-commerce
+backend with eight bounded contexts (Catalog, Cart, Orders, Payments, Users, Notifications, Search, Analytics) backed by
+PostgreSQL, Redis, S3, and Elasticsearch.
 
 Use this example as a reference for how DI scales to a real production application.
 
@@ -64,7 +68,8 @@ sequenceDiagram
 
 ## Bounded contexts as modules
 
-Each domain context is one (or more) modules. Infrastructure modules are imported by domain modules and deduplicated automatically:
+Each domain context is one (or more) modules. Infrastructure modules are imported by domain modules and deduplicated
+automatically:
 
 ```
 InfrastructureModule (AsyncModule)
@@ -107,7 +112,8 @@ class CatalogService {
 }
 ```
 
-`@postConstruct` and `@preDestroy` are method decorators — no binding-level `.onActivation()` / `.onDeactivation()` needed when the logic belongs to the class itself.
+`@postConstruct` and `@preDestroy` are method decorators — no binding-level `.onActivation()` / `.onDeactivation()`
+needed when the logic belongs to the class itself.
 
 ---
 
@@ -131,7 +137,8 @@ class PaymentOrchestrator {
 }
 ```
 
-`injectAll(token)` resolves all bindings for that token and injects them as an array. Used here for multi-gateway payment fallback and for the notification pipeline.
+`injectAll(token)` resolves all bindings for that token and injects them as an array. Used here for multi-gateway
+payment fallback and for the notification pipeline.
 
 ---
 
@@ -216,7 +223,8 @@ class SearchController {
 
 ## What to read next
 
-- This example intentionally covers everything. If a specific feature is unclear, the earlier numbered examples isolate that feature:
+- This example intentionally covers everything. If a specific feature is unclear, the earlier numbered examples isolate
+  that feature:
   - Async lifecycle → **Example 05**
   - Multi-binding / `resolveAll` → **Example 06**
   - Scoped containers → **Example 03**

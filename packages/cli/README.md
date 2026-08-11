@@ -1,11 +1,14 @@
 # @codefast/cli
 
-Developer CLI for the [Codefast monorepo](https://github.com/codefastlabs/codefast) — `arrange` Tailwind class strings, `audit` source conventions (RTL), `mirror` export maps from `dist/`, and `tag` exported APIs with `@since`.
+Developer CLI for the [Codefast monorepo](https://github.com/codefastlabs/codefast) — `arrange` Tailwind class strings,
+`audit` source conventions (RTL), `mirror` export maps from `dist/`, and `tag` exported APIs with `@since`.
 
 [![npm version](https://img.shields.io/npm/v/@codefast/cli)](https://www.npmjs.com/package/@codefast/cli)
 [![license](https://img.shields.io/npm/l/@codefast/cli)](https://github.com/codefastlabs/codefast/blob/main/LICENSE)
 
-This package exists to maintain the Codefast repository itself. It is published to npm and works in any pnpm workspace with a similar layout, but its flags and defaults follow Codefast's conventions — treat it as repo tooling, not a general-purpose product.
+This package exists to maintain the Codefast repository itself. It is published to npm and works in any pnpm workspace
+with a similar layout, but its flags and defaults follow Codefast's conventions — treat it as repo tooling, not a
+general-purpose product.
 
 ## Installation and usage
 
@@ -36,11 +39,15 @@ pnpm add -g @codefast/cli
 pnpm dlx @codefast/cli --help
 ```
 
-Every command writes by default; pass `--dry-run` to preview. The global `--no-color` flag must come before the command name (`codefast --no-color mirror`). Commands that accept `--json` print a single JSON object on stdout and suppress human progress output.
+Every command writes by default; pass `--dry-run` to preview. The global `--no-color` flag must come before the command
+name (`codefast --no-color mirror`). Commands that accept `--json` print a single JSON object on stdout and suppress
+human progress output.
 
 ## `arrange`
 
-Rewrites Tailwind class strings inside `cn()` and `tv()` calls, regrouping utilities in render-pipeline order (existence, position, layout, sizing, spacing, shape, background, shadow, typography, composite, motion, behavior, state, selector) instead of alphabetically.
+Rewrites Tailwind class strings inside `cn()` and `tv()` calls, regrouping utilities in render-pipeline order
+(existence, position, layout, sizing, spacing, shape, background, shadow, typography, composite, motion, behavior,
+state, selector) instead of alphabetically.
 
 ```bash
 codefast arrange inspect packages/ui/src          # read-only report
@@ -48,7 +55,8 @@ codefast arrange --dry-run packages/ui/src        # preview the rewrite
 codefast arrange packages/ui/src                  # write
 ```
 
-When `[target]` is omitted, `arrange` uses the nearest package directory found by walking up from the current working directory. Directory scans skip test files (`*.test.*` / `*.spec.*`); pass such a file explicitly to process it.
+When `[target]` is omitted, `arrange` uses the nearest package directory found by walking up from the current working
+directory. Directory scans skip test files (`*.test.*` / `*.spec.*`); pass such a file explicitly to process it.
 
 | Flag                 | Description                                                                   |
 | -------------------- | ----------------------------------------------------------------------------- |
@@ -63,7 +71,8 @@ Read-only report of long strings, nested `cn` inside `tv()`, and related finding
 
 ### `arrange simplify [target]`
 
-Flattens grouped arrays and static-only `cn()` calls back to plain strings in `tv()` slots — the inverse cleanup pass. Accepts `--dry-run` and `--json`.
+Flattens grouped arrays and static-only `cn()` calls back to plain strings in `tv()` slots — the inverse cleanup pass.
+Accepts `--dry-run` and `--json`.
 
 ### `arrange group <tokens...>`
 
@@ -82,7 +91,9 @@ codefast arrange group --tv "flex items-center gap-2"
 
 ## `mirror`
 
-Scans each workspace package's built `dist/` tree and writes its `package.json#exports` map (plus top-level `main`, `module`, `types`, and a `files` entry for `dist`). The workspace root is discovered via `pnpm-workspace.yaml`, so it runs from anywhere inside the repo. Build first — `mirror` reads `dist/`, and stale output produces stale exports.
+Scans each workspace package's built `dist/` tree and writes its `package.json#exports` map (plus top-level `main`,
+`module`, `types`, and a `files` entry for `dist`). The workspace root is discovered via `pnpm-workspace.yaml`, so it
+runs from anywhere inside the repo. Build first — `mirror` reads `dist/`, and stale output produces stale exports.
 
 ```bash
 codefast mirror                 # all workspace packages
@@ -100,7 +111,9 @@ Exits `1` when any package fails, `0` otherwise.
 
 ## `audit rtl`
 
-Read-only scan for physical-direction Tailwind classes (e.g. `ml-*`, `left-*`, `text-left`) that should use logical equivalents (`ms-*`, `start-*`, `text-start`) or an `rtl:` companion (`translate-x`, `space-x`, resize cursors). Exits non-zero when violations remain so it can gate CI.
+Read-only scan for physical-direction Tailwind classes (e.g. `ml-*`, `left-*`, `text-left`) that should use logical
+equivalents (`ms-*`, `start-*`, `text-start`) or an `rtl:` companion (`translate-x`, `space-x`, resize cursors). Exits
+non-zero when violations remain so it can gate CI.
 
 ```bash
 codefast audit rtl                         # uses audit.rtl.target from config
@@ -112,11 +125,16 @@ codefast audit rtl --json                  # machine-readable summary
 | -------- | --------------------------------- |
 | `--json` | Print one JSON summary on stdout. |
 
-Configure intentional exceptions via `audit.rtl.allowlist` in `codefast.config` — each entry is a bare class token or `repo/relative/path.tsx:token`.
+Configure intentional exceptions via `audit.rtl.allowlist` in `codefast.config` — each entry is a bare class token or
+`repo/relative/path.tsx:token`.
 
 ## `audit links`
 
-Read-only scan for markdown cross-references that point at nothing: a relative path that does not exist, an in-document anchor with no matching heading or `<a id>`, and an anchor into another document that the target does not offer. That last one is the reason this exists — it fails silently in a browser by scrolling to the top, so nothing else notices. External URLs are somebody else's to check and are skipped, as are links inside fenced code, which are examples rather than references. Exits non-zero when breakages remain so it can gate CI.
+Read-only scan for markdown cross-references that point at nothing: a relative path that does not exist, an in-document
+anchor with no matching heading or `<a id>`, and an anchor into another document that the target does not offer. That
+last one is the reason this exists — it fails silently in a browser by scrolling to the top, so nothing else notices.
+External URLs are somebody else's to check and are skipped, as are links inside fenced code, which are examples rather
+than references. Exits non-zero when breakages remain so it can gate CI.
 
 ```bash
 codefast audit links                       # whole repo
@@ -128,11 +146,14 @@ codefast audit links --json                # machine-readable summary
 | -------- | --------------------------------- |
 | `--json` | Print one JSON summary on stdout. |
 
-Configure intentional exceptions via `audit.links.allowlist` in `codefast.config` — each entry is a bare link target or `repo/relative/doc.md:target`.
+Configure intentional exceptions via `audit.links.allowlist` in `codefast.config` — each entry is a bare link target or
+`repo/relative/doc.md:target`.
 
 ## `tag`
 
-Adds `@since <version>` tags to doc comments of exported declarations that lack one, creating the doc block when missing. The version comes from the nearest `package.json` walking up from each target file. Declarations that already carry `@since` are left alone.
+Adds `@since <version>` tags to doc comments of exported declarations that lack one, creating the doc block when
+missing. The version comes from the nearest `package.json` walking up from each target file. Declarations that already
+carry `@since` are left alone.
 
 ```bash
 codefast tag                   # auto-discover workspace packages from cwd
@@ -145,11 +166,15 @@ codefast tag --dry-run         # summary only, no writes
 | `--dry-run` | Show summary without writing files.                           |
 | `--json`    | Print one JSON summary on stdout (suppresses human progress). |
 
-In this repo, `tag` runs as part of the release workflow so published APIs carry accurate version metadata — never hand-write `@since` tags.
+In this repo, `tag` runs as part of the release workflow so published APIs carry accurate version metadata — never
+hand-write `@since` tags.
 
 ## Configuration
 
-An optional `codefast.config.*` file adjusts `mirror`, `tag`, `arrange`, and `audit`. The CLI walks up from the working directory and uses the first match, checking `codefast.config.mjs`, `codefast.config.js`, `codefast.config.cjs`, then `codefast.config.json` in each directory. JS configs are loaded via [jiti](https://github.com/unjs/jiti), so only run the CLI in repositories you trust; JSON configs cannot define hooks.
+An optional `codefast.config.*` file adjusts `mirror`, `tag`, `arrange`, and `audit`. The CLI walks up from the working
+directory and uses the first match, checking `codefast.config.mjs`, `codefast.config.js`, `codefast.config.cjs`, then
+`codefast.config.json` in each directory. JS configs are loaded via [jiti](https://github.com/unjs/jiti), so only run
+the CLI in repositories you trust; JSON configs cannot define hooks.
 
 ```js
 // codefast.config.js
@@ -188,7 +213,8 @@ export default {
 };
 ```
 
-The `onAfterWrite` hooks (sync or async) run only when files were actually written — never on `--dry-run`. A hook failure is reported on stderr and the command exits `1`.
+The `onAfterWrite` hooks (sync or async) run only when files were actually written — never on `--dry-run`. A hook
+failure is reported on stderr and the command exits `1`.
 
 ## Exit codes
 

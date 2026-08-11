@@ -1,12 +1,15 @@
 # Example 14 — Auto-Register Registry
 
-**Concepts:** `createAutoRegisterRegistry()`, `autoRegister` option in `@injectable`, `container.loadAutoRegistered()`, per-layer registries, conditional (env-based) registration
+**Concepts:** `createAutoRegisterRegistry()`, `autoRegister` option in `@injectable`, `container.loadAutoRegistered()`,
+per-layer registries, conditional (env-based) registration
 
 ---
 
 ## What this example shows
 
-When a large number of services share the same wiring strategy (all singletons, all bound to their own constructor token), writing a `container.bind(X).to(X).singleton()` call for each one is repetitive. The auto-register registry eliminates that boilerplate.
+When a large number of services share the same wiring strategy (all singletons, all bound to their own constructor
+token), writing a `container.bind(X).to(X).singleton()` call for each one is repetitive. The auto-register registry
+eliminates that boilerplate.
 
 ---
 
@@ -78,7 +81,8 @@ class PostgresDatabase implements Database {
 }
 ```
 
-`autoRegister` records the class and its scope in the registry at decoration time. No `container.bind()` call needed here.
+`autoRegister` records the class and its scope in the registry at decoration time. No `container.bind()` call needed
+here.
 
 **Step 3** — bulk-load the registry into a container at bootstrap:
 
@@ -90,7 +94,8 @@ const appCount = container.loadAutoRegistered(applicationRegistry);
 console.log(`Auto-registered: ${infraCount} infra + ${domainCount} domain + ${appCount} app`);
 ```
 
-`loadAutoRegistered` internally calls `container.bind(Constructor).to(Constructor).scope()` for each entry and returns the number of bindings added.
+`loadAutoRegistered` internally calls `container.bind(Constructor).to(Constructor).scope()` for each entry and returns
+the number of bindings added.
 
 ---
 
@@ -102,7 +107,8 @@ For each entry in the registry:
 container.bind(Constructor).to(Constructor).singleton(); // or .transient() / .scoped()
 ```
 
-This binds the class **to itself** — the token is the constructor. If you need interface tokens (e.g. `DatabaseToken`), add alias bindings afterward:
+This binds the class **to itself** — the token is the constructor. If you need interface tokens (e.g. `DatabaseToken`),
+add alias bindings afterward:
 
 ```ts
 container.bind(DatabaseToken).to(PostgresDatabase).singleton();
@@ -112,7 +118,8 @@ container.bind(DatabaseToken).to(PostgresDatabase).singleton();
 
 ## Per-layer registries
 
-Separate registries per architectural layer enforce separation of concerns and make it easy to load only the layers you need (e.g. skip `applicationRegistry` in a CLI tool that only needs infrastructure):
+Separate registries per architectural layer enforce separation of concerns and make it easy to load only the layers you
+need (e.g. skip `applicationRegistry` in a CLI tool that only needs infrastructure):
 
 ```ts
 const infrastructureRegistry = createAutoRegisterRegistry(); // heavy resources
@@ -124,7 +131,8 @@ const applicationRegistry = createAutoRegisterRegistry(); // use-case services
 
 ## Conditional (environment-based) registration
 
-Because classes are registered at decorator-application time (module load), use separate registries per environment and select one at bootstrap:
+Because classes are registered at decorator-application time (module load), use separate registries per environment and
+select one at bootstrap:
 
 ```ts
 const devRegistry  = createAutoRegisterRegistry();
