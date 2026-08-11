@@ -1,5 +1,14 @@
 ---
+name: commit
 description: Group changes by relatedness and commit each group separately (Conventional Commits)
+disable-model-invocation: true
+allowed-tools:
+  - Bash(git status *)
+  - Bash(git diff *)
+  - Bash(git log *)
+  - Bash(git add *)
+  - Bash(git commit *)
+  - Bash(pnpm run check-types)
 ---
 
 # Commit related changes in groups
@@ -18,7 +27,10 @@ Goal: do NOT commit every file in a single commit. Instead, group changes by log
    - Changes belonging to the same feature / fix / refactor / concern go together.
    - Keep separate: config/tooling changes, docs, tests, codegen output, lockfile/dependency bumps.
    - A change and its accompanying test should live in the same group.
-   - If a single file mixes unrelated changes, use `git add -p` to split it by hunk.
+   - If a single file mixes unrelated changes, split it by hunk **without** interactive git: send
+     `git diff -- <file>` to a patch file, delete the hunks belonging to other groups, then
+     `git apply --cached <patch>` to stage only what remains. The deleted hunks stay unstaged and
+     are picked up by a later group.
 
 3. **Quality check before committing (REQUIRED)**
    - Run `pnpm run check-types`.
@@ -27,7 +39,7 @@ Goal: do NOT commit every file in a single commit. Instead, group changes by log
 
 4. **Commit each group — automatically, no confirmation**
    For each group, in a sensible order (e.g. deps/config first, then features, then tests, then docs):
-   - `git add <only the files for this group>` (or `git add -p` to split by hunk).
+   - `git add <only the files for this group>` (or the `git apply --cached` hunk split above).
    - `git commit -m "<message>"` following the repo's Conventional Commits style:
      - Format: `type(scope): short imperative description, in English, lowercase`.
      - `type`: `feat`, `fix`, `refactor`, `test`, `docs`, `chore`, `perf`, `build`, `ci`, `style`.
@@ -43,5 +55,7 @@ Goal: do NOT commit every file in a single commit. Instead, group changes by log
 
 - Do NOT `git push` unless the user asks.
 - Do NOT use `git add -A` / `git add .` for everything at once — always stage exactly the files of each group.
+- Interactive git is unavailable here — no `git add -p`, `git add -i`, or `git rebase -i`. Hunk-level
+  staging goes through the `git apply --cached` patch route.
 - Do NOT edit code just to "make grouping look nicer"; only edit when check-types reports an error.
 - Each commit should compile/type-check independently where possible (don't split commits in a way that breaks type-check midway when the changes depend on each other — in that case, put them in the same group).
