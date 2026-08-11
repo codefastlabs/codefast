@@ -1,12 +1,15 @@
 # Example 11 — Multi-Tenant SaaS
 
-**Concepts:** child containers per tenant request, scoped bindings for tenant-specific resources, plan-gated feature flags, per-plan rate limiting
+**Concepts:** child containers per tenant request, scoped bindings for tenant-specific resources, plan-gated feature
+flags, per-plan rate limiting
 
 ---
 
 ## What this example shows
 
-In a multi-tenant SaaS application each request belongs to a specific tenant with its own database schema, cache namespace, logger context, feature flags, and rate limits. This example shows how a single child container per request threads tenant context through an entire service graph without passing it as a function argument.
+In a multi-tenant SaaS application each request belongs to a specific tenant with its own database schema, cache
+namespace, logger context, feature flags, and rate limits. This example shows how a single child container per request
+threads tenant context through an entire service graph without passing it as a function argument.
 
 ---
 
@@ -128,7 +131,8 @@ class PlanFeatureFlags implements FeatureFlags {
 }
 ```
 
-`PLAN_FEATURES` maps `"free" | "pro" | "enterprise"` to a list of enabled flag names. The flags object is automatically different for each tenant because `TenantContext` is tenant-specific.
+`PLAN_FEATURES` maps `"free" | "pro" | "enterprise"` to a list of enabled flag names. The flags object is automatically
+different for each tenant because `TenantContext` is tenant-specific.
 
 ---
 
@@ -163,11 +167,13 @@ const acmeUsers = await freeContainer.resolve(UserServiceToken).listUsers();
 const betaUsers = await proContainer.resolve(UserServiceToken).listUsers();
 ```
 
-The root `DatabasePool` singleton is shared (one connection pool for efficiency); the tenant wrappers namespace queries to the correct schema automatically.
+The root `DatabasePool` singleton is shared (one connection pool for efficiency); the tenant wrappers namespace queries
+to the correct schema automatically.
 
 ---
 
 ## What to read next
 
 - **Example 03** — scoped lifetime and child containers.
-- **Example 12** — production microservice: similar patterns applied to a single-tenant service with health checks and graceful shutdown.
+- **Example 12** — production microservice: similar patterns applied to a single-tenant service with health checks and
+  graceful shutdown.

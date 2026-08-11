@@ -19,9 +19,8 @@ npm run build
 
 ## Testing
 
-Vitest runs a single **unit** project (`tests/unit/**`, `tests/integration/**`,
-`tests/types/**` under jsdom). Taxonomy details live in the repo root
-[`TESTING.md`](../../TESTING.md).
+Vitest runs a single **unit** project (`tests/unit/**`, `tests/integration/**`, `tests/types/**` under jsdom). Taxonomy
+details live in the repo root [`TESTING.md`](../../TESTING.md).
 
 ```bash
 pnpm --filter @apps/ui test:unit          # unit + jsdom
@@ -44,7 +43,8 @@ If you prefer not to use Tailwind CSS:
 
 ## Routing
 
-This project uses [TanStack Router](https://tanstack.com/router) with file-based routing. Routes are managed as files in `src/routes`.
+This project uses [TanStack Router](https://tanstack.com/router) with file-based routing. Routes are managed as files in
+`src/routes`.
 
 ### Adding A Route
 
@@ -56,7 +56,8 @@ Now that you have two routes you can use a `Link` component to navigate between 
 
 ### Adding Links
 
-To use SPA (Single Page Application) navigation you will need to import the `Link` component from `@tanstack/react-router`.
+To use SPA (Single Page Application) navigation you will need to import the `Link` component from
+`@tanstack/react-router`.
 
 ```tsx
 import { Link } from "@tanstack/react-router";
@@ -70,11 +71,14 @@ Then anywhere in your JSX you can use it like so:
 
 This will create a link that will navigate to the `/about` route.
 
-More information on the `Link` component can be found in the [Link documentation](https://tanstack.com/router/v1/docs/framework/react/api/router/linkComponent).
+More information on the `Link` component can be found in the
+[Link documentation](https://tanstack.com/router/v1/docs/framework/react/api/router/linkComponent).
 
 ### Using A Layout
 
-In the File Based Routing setup the layout is located in `src/routes/__root.tsx`. Anything you add to the root route will appear in all the routes. The route content will appear in the JSX where you render `{children}` in the `shellComponent`.
+In the File Based Routing setup the layout is located in `src/routes/__root.tsx`. Anything you add to the root route
+will appear in all the routes. The route content will appear in the JSX where you render `{children}` in the
+`shellComponent`.
 
 Here is an example layout that includes a header:
 
@@ -109,11 +113,13 @@ export const Route = createRootRoute({
 });
 ```
 
-More information on layouts can be found in the [Layouts documentation](https://tanstack.com/router/latest/docs/framework/react/guide/routing-concepts#layouts).
+More information on layouts can be found in the
+[Layouts documentation](https://tanstack.com/router/latest/docs/framework/react/guide/routing-concepts#layouts).
 
 ## Server Functions
 
-TanStack Start provides server functions that allow you to write server-side code that seamlessly integrates with your client components.
+TanStack Start provides server functions that allow you to write server-side code that seamlessly integrates with your
+client components.
 
 ```tsx
 import { createServerFn } from "@tanstack/react-start";
@@ -155,7 +161,9 @@ export const Route = createFileRoute("/api/hello")({
 
 ## Data Fetching
 
-There are multiple ways to fetch data in your application. You can use TanStack Query to fetch data from a server. But you can also use the `loader` functionality built into TanStack Router to load the data for a route before it's rendered.
+There are multiple ways to fetch data in your application. You can use TanStack Query to fetch data from a server. But
+you can also use the `loader` functionality built into TanStack Router to load the data for a route before it's
+rendered.
 
 For example:
 
@@ -182,14 +190,14 @@ function PeopleComponent() {
 }
 ```
 
-Loaders simplify your data fetching logic dramatically. Check out more information in the [Loader documentation](https://tanstack.com/router/latest/docs/framework/react/guide/data-loading#loader-parameters).
+Loaders simplify your data fetching logic dramatically. Check out more information in the
+[Loader documentation](https://tanstack.com/router/latest/docs/framework/react/guide/data-loading#loader-parameters).
 
 # Analytics
 
-GA4 (`src/features/tracking/lib/tracking.ts`,
-`src/features/tracking/components/google-tag.tsx`) is gated behind an env var — set it in
-`.env.local` (gitignored) to enable it; leave it unset and it stays fully inert (no
-script loads, no gtag calls):
+GA4 (`src/features/tracking/lib/tracking.ts`, `src/features/tracking/components/google-tag.tsx`) is gated behind an env
+var — set it in `.env.local` (gitignored) to enable it; leave it unset and it stays fully inert (no script loads, no
+gtag calls):
 
 ```
 VITE_GA4_MEASUREMENT_ID=G-XXXXXXXXXX
@@ -197,61 +205,54 @@ VITE_GA4_MEASUREMENT_ID=G-XXXXXXXXXX
 
 - `VITE_GA4_MEASUREMENT_ID` — GA4 property → Admin → Data Streams → Web stream → "Measurement ID".
 
-Google Ads conversion tracking was built (`createGoogleAdsConversionDestination` in `@codefast/tracking`) and then deliberately not adopted for this app — removed rather than left wired but unused.
+Google Ads conversion tracking was built (`createGoogleAdsConversionDestination` in `@codefast/tracking`) and then
+deliberately not adopted for this app — removed rather than left wired but unused.
 
 ## Consent
 
-Region (`x-vercel-ip-country`) and GPC (`Sec-GPC`) are resolved per visitor by a server
-function (`src/features/tracking/lib/resolve-visitor-consent.ts` →
-`buildInitialConsent` from `@codefast/tracking/server`) and drive both:
+Region (`x-vercel-ip-country`) and GPC (`Sec-GPC`) are resolved per visitor by a server function
+(`src/features/tracking/lib/resolve-visitor-consent.ts` → `buildInitialConsent` from `@codefast/tracking/server`) and
+drive both:
 
-- The Consent Mode v2 state in `src/features/tracking/components/google-tag.tsx` /
-  `consent-gate.tsx` (denied for EU/VN opt-in regions, analytics granted for US/other —
-  GPC is ads-only).
-- The consent UI in `src/features/tracking/components/consent-gate.tsx` — a blocking
-  accept/reject banner for opt-in regions, an always-visible "Turn on/off analytics"
-  toggle for opt-out regions (this site sells or shares no personal data, so the control
-  is named by what it does). Both come from `@codefast/tracking/react`, styled here via
+- The Consent Mode v2 state in `src/features/tracking/components/google-tag.tsx` / `consent-gate.tsx` (denied for EU/VN
+  opt-in regions, analytics granted for US/other — GPC is ads-only).
+- The consent UI in `src/features/tracking/components/consent-gate.tsx` — a blocking accept/reject banner for opt-in
+  regions, an always-visible "Turn on/off analytics" toggle for opt-out regions (this site sells or shares no personal
+  data, so the control is named by what it does). Both come from `@codefast/tracking/react`, styled here via
   `className`.
 
 ### Browser storage naming
 
-Every first-party storage name (cookie, `localStorage`, `sessionStorage`) follows
-`codefast-ui-<content>`: the prefix namespaces the shared origin, `<content>` is a
-kebab-case noun naming exactly what is stored — never the storage kind (the privacy page
-discloses that) and never less than the content (`codefast-ui-initial-consent` holds a
-full `InitialConsent`, so it is not called `-region`). `codefast-ui-anon-id` predates the
-full-word rule and stays: renaming a year-lived cookie would churn every existing
-visitor's identity for a cosmetic gain. `@codefast/tracking` ships no storage names —
-every cookie and key name is supplied by the app.
+Every first-party storage name (cookie, `localStorage`, `sessionStorage`) follows `codefast-ui-<content>`: the prefix
+namespaces the shared origin, `<content>` is a kebab-case noun naming exactly what is stored — never the storage kind
+(the privacy page discloses that) and never less than the content (`codefast-ui-initial-consent` holds a full
+`InitialConsent`, so it is not called `-region`). `codefast-ui-anon-id` predates the full-word rule and stays: renaming
+a year-lived cookie would churn every existing visitor's identity for a cosmetic gain. `@codefast/tracking` ships no
+storage names — every cookie and key name is supplied by the app.
 
 ### This app's pages are CDN-cached (ISR) — the HTML can't be personalized
 
-The entry pages (`/`, `/about`, `/components`, `/privacy`) are prerendered at build time;
-every `/components/$slug` page is server-rendered on demand and cached by the CDN under
-its route's `headers()` policy (`Cache-Control` + `CDN-Cache-Control`, see
-`src/lib/cache.ts` — TanStack Start's hybrid ISR pattern). Either way the served HTML is
-shared across visitors, so the inline gtag bootstrap in `google-tag.tsx` bakes the
-strictest possible default (`denied`, `opt-in`, region `other`) — a request-derived
-value (geo in `loaderData`, the document shell, or otherwise) would leak the first
-visitor's region to everyone served from that cache entry. Start does run route loaders
-before SSR render; the constraint is cache sharing, not shell-vs-loader timing.
+The entry pages (`/`, `/about`, `/components`, `/privacy`) are prerendered at build time; every `/components/$slug` page
+is server-rendered on demand and cached by the CDN under its route's `headers()` policy (`Cache-Control` +
+`CDN-Cache-Control`, see `src/lib/cache.ts` — TanStack Start's hybrid ISR pattern). Either way the served HTML is shared
+across visitors, so the inline gtag bootstrap in `google-tag.tsx` bakes the strictest possible default (`denied`,
+`opt-in`, region `other`) — a request-derived value (geo in `loaderData`, the document shell, or otherwise) would leak
+the first visitor's region to everyone served from that cache entry. Start does run route loaders before SSR render; the
+constraint is cache sharing, not shell-vs-loader timing.
 
-The per-visitor correction runs on the one lane a shared cache can't poison: after
-hydration, `visitor-consent.ts` calls the `resolveVisitorConsent` server function once
-per session (`private, no-store`; cached in `sessionStorage` as `codefast-ui-initial-consent`),
-and `<ConsentGate />` renders the region-correct UI and pushes the granted regional
-default to gtag for undecided opt-out visitors. The resolver reads the geo header on the
-server, reuses `buildInitialConsent` directly — no duplicated country sets — and fails
-closed to the strictest default when the header is absent (a host without geo), when the
-request fails, or before it resolves. There is no edge middleware, no consent cookie,
-and no `window.__INITIAL_CONSENT__`; the trade is one round trip before the consent UI
-appears (and before an undecided US visitor's first hits upgrade from cookieless pings
-to full measurement).
+The per-visitor correction runs on the one lane a shared cache can't poison: after hydration, `visitor-consent.ts` calls
+the `resolveVisitorConsent` server function once per session (`private, no-store`; cached in `sessionStorage` as
+`codefast-ui-initial-consent`), and `<ConsentGate />` renders the region-correct UI and pushes the granted regional
+default to gtag for undecided opt-out visitors. The resolver reads the geo header on the server, reuses
+`buildInitialConsent` directly — no duplicated country sets — and fails closed to the strictest default when the header
+is absent (a host without geo), when the request fails, or before it resolves. There is no edge middleware, no consent
+cookie, and no `window.__INITIAL_CONSENT__`; the trade is one round trip before the consent UI appears (and before an
+undecided US visitor's first hits upgrade from cookieless pings to full measurement).
 
 # Demo files
 
-Files prefixed with `demo` can be safely deleted. They are there to provide a starting point for you to play around with the features you've installed.
+Files prefixed with `demo` can be safely deleted. They are there to provide a starting point for you to play around with
+the features you've installed.
 
 # Learn More
 

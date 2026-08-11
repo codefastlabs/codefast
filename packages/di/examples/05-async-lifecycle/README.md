@@ -1,12 +1,14 @@
 # Example 05 — Async Factories, Lifecycle Hooks & Disposal
 
-**Concepts:** `toDynamicAsync`, `toResolvedAsync`, `onActivation`, `onDeactivation`, `Module.createAsync`, `Container.fromModulesAsync`, `initializeAsync`, `resolveAsync`, `await using`
+**Concepts:** `toDynamicAsync`, `toResolvedAsync`, `onActivation`, `onDeactivation`, `Module.createAsync`,
+`Container.fromModulesAsync`, `initializeAsync`, `resolveAsync`, `await using`
 
 ---
 
 ## What this example shows
 
-Real infrastructure — databases, caches, message brokers — needs async setup and teardown. This example shows how `@codefast/di` handles the full async lifecycle: creation, activation, and graceful shutdown.
+Real infrastructure — databases, caches, message brokers — needs async setup and teardown. This example shows how
+`@codefast/di` handles the full async lifecycle: creation, activation, and graceful shutdown.
 
 ---
 
@@ -62,7 +64,8 @@ builder
   .singleton();
 ```
 
-Works exactly like `toDynamic` but the factory can `await`. Use `resolveAsync()` (not `resolve()`) when consuming such a binding.
+Works exactly like `toDynamic` but the factory can `await`. Use `resolveAsync()` (not `resolve()`) when consuming such a
+binding.
 
 ---
 
@@ -119,7 +122,9 @@ const container = await Container.fromModulesAsync(InfrastructureModule, Databas
 await container.initializeAsync();
 ```
 
-Without this call, async singletons are resolved lazily (on first `resolveAsync`). `initializeAsync()` eagerly resolves all singletons — all `onActivation` hooks run before the app starts serving traffic. This is the recommended pattern for production services.
+Without this call, async singletons are resolved lazily (on first `resolveAsync`). `initializeAsync()` eagerly resolves
+all singletons — all `onActivation` hooks run before the app starts serving traffic. This is the recommended pattern for
+production services.
 
 ---
 
@@ -135,13 +140,15 @@ async function main(): Promise<void> {
 } // container.dispose() called automatically here, firing all onDeactivation hooks
 ```
 
-`await using` is an ES2022 explicit resource management feature. The container implements `Symbol.asyncDispose` so cleanup is guaranteed even if an exception is thrown.
+`await using` is an ES2022 explicit resource management feature. The container implements `Symbol.asyncDispose` so
+cleanup is guaranteed even if an exception is thrown.
 
 ---
 
 ## Parallel in-flight deduplication
 
-For async singletons, two concurrent `resolveAsync` calls share a single in-flight `Promise` — the factory runs exactly once:
+For async singletons, two concurrent `resolveAsync` calls share a single in-flight `Promise` — the factory runs exactly
+once:
 
 ```ts
 const [db1, db2] = await Promise.all([container.resolveAsync(DatabaseToken), container.resolveAsync(DatabaseToken)]);

@@ -1,6 +1,8 @@
 # @codefast/benchmark-harness
 
-Shared [tinybench](https://github.com/tinylibs/tinybench) harness utilities for the `benchmarks/*` suites — subprocess protocol, environment fingerprinting, and one comparison report that renders a pivot library against any number of competitors.
+Shared [tinybench](https://github.com/tinylibs/tinybench) harness utilities for the `benchmarks/*` suites — subprocess
+protocol, environment fingerprinting, and one comparison report that renders a pivot library against any number of
+competitors.
 
 > **Private package.** Not published to npm; consumed only by the benchmark suites in this repository.
 
@@ -17,21 +19,34 @@ The package is organized by role in the parent/child subprocess model:
 
 Two execution shapes:
 
-- **Shared** (`runBenchSubprocess`): one child per library runs every scenario — approximates a long-lived app, but earlier scenarios train the library's hot-path inline caches for later ones (measured at ~30% on async chains), so rows are order-dependent.
-- **Isolated** (`runBenchSubprocessIsolated`, opt in with `BENCH_ISOLATE=1`): one child **per scenario** per library — a `BENCH_LIST` discovery child reports scenario ids, then `BENCH_ONLY=<id>` workers run one scenario each and the parent merges trials back into a single payload. Order-independent.
+- **Shared** (`runBenchSubprocess`): one child per library runs every scenario — approximates a long-lived app, but
+  earlier scenarios train the library's hot-path inline caches for later ones (measured at ~30% on async chains), so
+  rows are order-dependent.
+- **Isolated** (`runBenchSubprocessIsolated`, opt in with `BENCH_ISOLATE=1`): one child **per scenario** per library — a
+  `BENCH_LIST` discovery child reports scenario ids, then `BENCH_ONLY=<id>` workers run one scenario each and the parent
+  merges trials back into a single payload. Order-independent.
 
-Reports open with a **summary table, one row per competitor** — comparable rows out of the suite, win/parity/loss counts (±3% parity band), median and geomean ratios, and how many of those rows carry the unreliable marker — followed by a geomean-by-group matrix (which keeps error-path groups separate from throughput) and the loss/parity lists. The per-scenario table below them carries the pivot's throughput and one ratio column per competitor; everything derivable from those, along with per-trial IQR, stays in the JSONL. `collectFingerprint` records the runtime environment (Node version, CPU, library versions) alongside every run so historical results stay comparable.
+Reports open with a **summary table, one row per competitor** — comparable rows out of the suite, win/parity/loss counts
+(±3% parity band), median and geomean ratios, and how many of those rows carry the unreliable marker — followed by a
+geomean-by-group matrix (which keeps error-path groups separate from throughput) and the loss/parity lists. The
+per-scenario table below them carries the pivot's throughput and one ratio column per competitor; everything derivable
+from those, along with per-trial IQR, stays in the JSONL. `collectFingerprint` records the runtime environment (Node
+version, CPU, library versions) alongside every run so historical results stay comparable.
 
 ## Usage
 
-Consumed by the suites under [`benchmarks/`](https://github.com/codefastlabs/codefast/tree/main/benchmarks) via `workspace:*`. From the repo root:
+Consumed by the suites under [`benchmarks/`](https://github.com/codefastlabs/codefast/tree/main/benchmarks) via
+`workspace:*`. From the repo root:
 
 ```bash
 pnpm bench         # run the benchmark suites
 pnpm bench:serve   # browse historical results (see @codefast/benchmark-viewer)
 ```
 
-Suite-level knobs are environment-driven: `BENCH_FAST=1` (quick pass), `BENCH_FULL=1` (extended pass), `BENCH_TRIALS=<n>` (trial count, min 2), `BENCH_VERBOSE=1` (forward child logs), `BENCH_ISOLATE=1` (one subprocess per scenario). `BENCH_LIST` / `BENCH_ONLY` are internal child-side keys set by the isolated parent — not meant to be set by hand.
+Suite-level knobs are environment-driven: `BENCH_FAST=1` (quick pass), `BENCH_FULL=1` (extended pass),
+`BENCH_TRIALS=<n>` (trial count, min 2), `BENCH_VERBOSE=1` (forward child logs), `BENCH_ISOLATE=1` (one subprocess per
+scenario). `BENCH_LIST` / `BENCH_ONLY` are internal child-side keys set by the isolated parent — not meant to be set by
+hand.
 
 ## License
 

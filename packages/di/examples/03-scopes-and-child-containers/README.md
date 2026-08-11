@@ -6,7 +6,9 @@
 
 ## What this example shows
 
-`@codefast/di` has three lifetimes. The first two (`singleton`, `transient`) were introduced in Example 01. This example adds the third — `scoped` — which requires a **child container** to work and is the standard pattern for per-HTTP-request or per-session isolation.
+`@codefast/di` has three lifetimes. The first two (`singleton`, `transient`) were introduced in Example 01. This example
+adds the third — `scoped` — which requires a **child container** to work and is the standard pattern for
+per-HTTP-request or per-session isolation.
 
 ---
 
@@ -119,7 +121,9 @@ console.log(handlerA === handlerB); // false
 
 ## Scope violation warning
 
-A **singleton** must never depend on a **scoped** or **transient** binding directly — the singleton is created once and would capture an instance from the first child container forever, breaking isolation for all subsequent requests. Call `container.validate()` to detect this (shown in Example 09).
+A **singleton** must never depend on a **scoped** or **transient** binding directly — the singleton is created once and
+would capture an instance from the first child container forever, breaking isolation for all subsequent requests. Call
+`container.validate()` to detect this (shown in Example 09).
 
 ---
 

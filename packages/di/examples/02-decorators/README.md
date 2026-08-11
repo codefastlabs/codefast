@@ -6,7 +6,8 @@
 
 ## What this example shows
 
-When a class has constructor dependencies, you don't have to write a factory function by hand. The `@injectable` decorator records the dependency list once; the container reads it and wires up arguments automatically.
+When a class has constructor dependencies, you don't have to write a factory function by hand. The `@injectable`
+decorator records the dependency list once; the container reads it and wires up arguments automatically.
 
 This uses **TC39 Stage 3 decorators** — no `reflect-metadata`, no `experimentalDecorators`.
 
@@ -75,7 +76,8 @@ class UserService {
 }
 ```
 
-`inject(token)` is the standard way to mark a dependency. You can pass a `Token<T>` or a class constructor directly (see Example 08 for the plain-token shorthand).
+`inject(token)` is the standard way to mark a dependency. You can pass a `Token<T>` or a class constructor directly (see
+Example 08 for the plain-token shorthand).
 
 ---
 
@@ -85,7 +87,8 @@ class UserService {
 optional(LoggerToken);
 ```
 
-If `LoggerToken` is not bound in the container the parameter receives `undefined`. The TypeScript type must be `T | undefined` (or `T?`) to match.
+If `LoggerToken` is not bound in the container the parameter receives `undefined`. The TypeScript type must be
+`T | undefined` (or `T?`) to match.
 
 ---
 
@@ -95,13 +98,15 @@ If `LoggerToken` is not bound in the container the parameter receives `undefined
 container.bind(CacheToken).to(InMemoryCache).singleton();
 ```
 
-`.to(Constructor)` tells the container "construct this class when `CacheToken` is resolved." The class must have `@injectable`.
+`.to(Constructor)` tells the container "construct this class when `CacheToken` is resolved." The class must have
+`@injectable`.
 
 ```ts
 container.bind(Database).toSelf().singleton();
 ```
 
-`.toSelf()` is shorthand when the token _is_ the class constructor — `bind(Database).toSelf()` is equivalent to `bind(Database).to(Database)`.
+`.toSelf()` is shorthand when the token _is_ the class constructor — `bind(Database).toSelf()` is equivalent to
+`bind(Database).to(Database)`.
 
 ---
 

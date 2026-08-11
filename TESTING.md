@@ -1,8 +1,7 @@
 # Testing taxonomy
 
-This monorepo uses **four explicit test categories**. Every test file in
-`packages/*/tests/**` and `apps/*/tests/**` MUST live under exactly one category
-directory, otherwise it will not be discovered by Vitest. There is no implicit
+This monorepo uses **four explicit test categories**. Every test file in `packages/*/tests/**` and `apps/*/tests/**`
+MUST live under exactly one category directory, otherwise it will not be discovered by Vitest. There is no implicit
 "leftover" bucket.
 
 ## Categories
@@ -16,57 +15,44 @@ directory, otherwise it will not be discovered by Vitest. There is no implicit
 
 ### E2E has one flavor
 
-`tests/e2e/**` means Node-only Vitest driving subprocesses and built binaries —
-that is what root `pnpm test:e2e` fans out over. There is **no browser runner in
-this repo**: no Playwright, no Storybook, no browser-mode Vitest project. A test
-that needs a real browser has nowhere to live yet, so adding one means adding the
-runner first.
+`tests/e2e/**` means Node-only Vitest driving subprocesses and built binaries — that is what root `pnpm test:e2e` fans
+out over. There is **no browser runner in this repo**: no Playwright, no Storybook, no browser-mode Vitest project. A
+test that needs a real browser has nowhere to live yet, so adding one means adding the runner first.
 
 ### Test helper placement (NOT executed as tests)
 
 Helpers and fixtures must be scoped under a category directory, such as:
 
-- `tests/unit/support/**`, `tests/integration/support/**`,
-  `tests/e2e/support/**`, `tests/types/support/**`
-- `tests/unit/fixtures/**`, `tests/integration/fixtures/**`,
-  `tests/e2e/fixtures/**`, `tests/types/fixtures/**`
+- `tests/unit/support/**`, `tests/integration/support/**`, `tests/e2e/support/**`, `tests/types/support/**`
+- `tests/unit/fixtures/**`, `tests/integration/fixtures/**`, `tests/e2e/fixtures/**`, `tests/types/fixtures/**`
 
 Helper files MUST NOT match `*.test.*` / `*.spec.*` filenames.
 
 ## Hard rules
 
-1. **No tests under `src/**`.** Forbidden inside `src/`: any file matching
-   `*.test.*`, `*.spec.*`, `*.bench.*` or `*.test-helper.*`, and any
-   `__tests__/` directory.
-2. **No test files directly under `tests/`** — they MUST live inside a known
-   category sub-directory.
-3. **No unknown category directories.** If a test lives under
-   `tests/something-else/**` it will be reported as miscategorized.
-4. **Keep helper directories category-scoped.** Do not create top-level
-   helper categories such as `tests/support/**` or `tests/fixtures/**`;
-   place helpers under a valid category path (for example,
-   `tests/unit/support/**`).
+1. **No tests under `src/**`.** Forbidden inside `src/`: any file matching `*.test.*`, `*.spec.*`, `*.bench.*` or
+   `*.test-helper.*`, and any `__tests__/` directory.
+2. **No test files directly under `tests/`** — they MUST live inside a known category sub-directory.
+3. **No unknown category directories.** If a test lives under `tests/something-else/**` it will be reported as
+   miscategorized.
+4. **Keep helper directories category-scoped.** Do not create top-level helper categories such as `tests/support/**` or
+   `tests/fixtures/**`; place helpers under a valid category path (for example, `tests/unit/support/**`).
 
-These rules are project conventions and should be validated as part of normal
-CI/local verification.
+These rules are project conventions and should be validated as part of normal CI/local verification.
 
 ## File naming
 
-- Test files: `*.test.ts` / `*.test.tsx` / `*.test.cts` / `*.test.mts` /
-  `*.test.js` / `*.test.jsx` / `*.test.cjs` / `*.test.mjs` (and the `.spec.`
-  variants — discouraged but accepted by the guardrail).
-- Mirror the `src/` path inside the category. Example:
-  `src/utils/dom.ts` → `tests/unit/utils/dom.test.ts`.
-- Integration/e2e tests describing a multi-module flow use a flow-oriented
-  filename instead of a 1:1 mirror, e.g.
-  `tests/integration/decorators.test.ts`. Do not echo the category in the
-  filename (no `.integration.`/`.e2e.` infix) — the directory already carries
-  it; let the filename name the flow.
+- Test files: `*.test.ts` / `*.test.tsx` / `*.test.cts` / `*.test.mts` / `*.test.js` / `*.test.jsx` / `*.test.cjs` /
+  `*.test.mjs` (and the `.spec.` variants — discouraged but accepted by the guardrail).
+- Mirror the `src/` path inside the category. Example: `src/utils/dom.ts` → `tests/unit/utils/dom.test.ts`.
+- Integration/e2e tests describing a multi-module flow use a flow-oriented filename instead of a 1:1 mirror, e.g.
+  `tests/integration/decorators.test.ts`. Do not echo the category in the filename (no `.integration.`/`.e2e.` infix) —
+  the directory already carries it; let the filename name the flow.
 
 ## Per-package scripts
 
-Every package **and app** that ships a `vitest.config.ts` exposes the same
-script surface (empty categories pass via `passWithNoTests: true`):
+Every package **and app** that ships a `vitest.config.ts` exposes the same script surface (empty categories pass via
+`passWithNoTests: true`):
 
 ```sh
 pnpm --filter <pkg> test               # run every category
@@ -78,8 +64,7 @@ pnpm --filter <pkg> test:coverage      # coverage (apps/ui: unit project only)
 pnpm --filter <pkg> test:watch         # interactive watch mode
 ```
 
-Aggregate (root) commands run the same task across all packages and apps via
-Turbo:
+Aggregate (root) commands run the same task across all packages and apps via Turbo:
 
 ```sh
 pnpm test                  # all categories, all packages + apps
@@ -92,12 +77,11 @@ pnpm test:coverage         # full coverage, all packages + apps
 
 ### CI honesty
 
-- **Packages gate** (`.github/workflows/reusable-verify-packages.yml`): build,
-  verify the generated exports, lint/format/types, then `test:coverage` — all
-  scoped to `./packages/**`, so `apps/*` is not built, started, or tested there.
+- **Packages gate** (`.github/workflows/reusable-verify-packages.yml`): build, verify the generated exports,
+  lint/format/types, then `test:coverage` — all scoped to `./packages/**`, so `apps/*` is not built, started, or tested
+  there.
 
-Root `pnpm test:e2e` runs every package that defines the script — use it for
-full-repo gates.
+Root `pnpm test:e2e` runs every package that defines the script — use it for full-repo gates.
 
 ## Today's coverage (snapshot)
 
@@ -113,12 +97,10 @@ full-repo gates.
 | `@codefast/tracking`          | yes  |      —      |  —  |  —   |
 | `@codefast/ui`                | yes  |      —      |  —  |  —   |
 
-No package has an `e2e/` directory yet — the category is wired everywhere and
-empty everywhere.
+No package has an `e2e/` directory yet — the category is wired everywhere and empty everywhere.
 
-Categories without tests are still **wired into the Vitest include glob and
-into the package scripts** so adding the first test in a new category is
-purely additive — no config or script change needed.
+Categories without tests are still **wired into the Vitest include glob and into the package scripts** so adding the
+first test in a new category is purely additive — no config or script change needed.
 
 ## Adding a new test
 

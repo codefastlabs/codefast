@@ -1,12 +1,16 @@
 # Example 18 — Ambient Container & Property Injection
 
-**Concepts:** `@inject()` on an `accessor` field, named slots on accessors, `getActiveContainer()`, `runWithContainer()`, `MissingContainerContextError`, nested contexts
+**Concepts:** `@inject()` on an `accessor` field, named slots on accessors, `getActiveContainer()`,
+`runWithContainer()`, `MissingContainerContextError`, nested contexts
 
 ---
 
 ## What this example shows
 
-`@inject()` has a second role: applied to an auto-accessor it becomes **property injection**. The accessor's initializer needs a container to resolve from, and it finds one through an _ambient container context_ the resolver opens around construction. This example shows when that context exists, what happens when it does not, and how `runWithContainer()` opens one for instances the container does not build itself.
+`@inject()` has a second role: applied to an auto-accessor it becomes **property injection**. The accessor's initializer
+needs a container to resolve from, and it finds one through an _ambient container context_ the resolver opens around
+construction. This example shows when that context exists, what happens when it does not, and how `runWithContainer()`
+opens one for instances the container does not build itself.
 
 ---
 
@@ -54,12 +58,15 @@ notifier.clock.now(); // already injected
 
 Requirements:
 
-- The field must be an **auto-accessor** (`accessor clock!: Clock`), not a plain property — the decorator hooks the accessor's initializer.
+- The field must be an **auto-accessor** (`accessor clock!: Clock`), not a plain property — the decorator hooks the
+  accessor's initializer.
 - The class still needs `@injectable([...])` for its **constructor** parameters; the accessor list is separate metadata.
 - Instance accessors only. A `static` accessor throws at class-evaluation time.
 - `optional()` is not a decorator — accessor injection always goes through `resolve()`, so an unbound token throws.
 
-Use it for a dependency that is awkward as a constructor parameter (a base class shared by many subclasses, a framework-constructed object). Constructor injection stays the default: it is checked by `validate()` and visible in the dependency graph.
+Use it for a dependency that is awkward as a constructor parameter (a base class shared by many subclasses, a
+framework-constructed object). Constructor injection stays the default: it is checked by `validate()` and visible in the
+dependency graph.
 
 ---
 
@@ -69,7 +76,8 @@ Use it for a dependency that is awkward as a constructor parameter (a base class
 getActiveContainer(); // undefined at module scope
 ```
 
-The resolver opens the context **only for classes whose metadata declares accessor injection** — the wrapper costs a `try`/`finally` per instantiation, so classes with plain constructor injection skip it. That means:
+The resolver opens the context **only for classes whose metadata declares accessor injection** — the wrapper costs a
+`try`/`finally` per instantiation, so classes with plain constructor injection skip it. That means:
 
 | Where                                   | `getActiveContainer()` |
 | --------------------------------------- | ---------------------- |
@@ -78,7 +86,8 @@ The resolver opens the context **only for classes whose metadata declares access
 | constructor of a class with accessors   | the container          |
 | inside `@postConstruct`                 | `undefined`            |
 
-`@postConstruct` runs after the constructor returns, so the context has already closed — the accessors are set by then, which is what the hook needs.
+`@postConstruct` runs after the constructor returns, so the context has already closed — the accessors are set by then,
+which is what the hook needs.
 
 ---
 
@@ -88,7 +97,10 @@ The resolver opens the context **only for classes whose metadata declares access
 new Notifier(); // ✗ MissingContainerContextError — code: "MISSING_CONTAINER_CONTEXT"
 ```
 
-The error carries the two facts separately rather than flattening them: `className` (the class constructed, or `undefined` when it has no readable name — an anonymous class expression has an empty `name`) and `accessorName` (the field that could not resolve). The message names each for what it is, and drops the word "Class" entirely when there is no class to name.
+The error carries the two facts separately rather than flattening them: `className` (the class constructed, or
+`undefined` when it has no readable name — an anonymous class expression has an empty `name`) and `accessorName` (the
+field that could not resolve). The message names each for what it is, and drops the word "Class" entirely when there is
+no class to name.
 
 ---
 
@@ -102,9 +114,11 @@ import { runWithContainer } from "@codefast/di";
 const instance = runWithContainer(container, () => new Notifier());
 ```
 
-Only accessor injection is bridged. Lifecycle belongs to the resolver, so a hand-built instance **does not** run `@postConstruct`, and the container will not dispose it either. If you need lifecycle, bind the class and resolve it.
+Only accessor injection is bridged. Lifecycle belongs to the resolver, so a hand-built instance **does not** run
+`@postConstruct`, and the container will not dispose it either. If you need lifecycle, bind the class and resolve it.
 
-Nesting restores the previous context on exit (`try`/`finally`), so a per-request child container can shadow the root for the duration of a handler and leave nothing behind.
+Nesting restores the previous context on exit (`try`/`finally`), so a per-request child container can shadow the root
+for the duration of a handler and leave nothing behind.
 
 ---
 
@@ -118,7 +132,8 @@ function currentRequestId(): string {
 }
 ```
 
-This is a service-locator escape hatch: the dependency is invisible to `validate()` and to the graph. Reach for it when a signature genuinely cannot carry the dependency, not to avoid threading one.
+This is a service-locator escape hatch: the dependency is invisible to `validate()` and to the graph. Reach for it when
+a signature genuinely cannot carry the dependency, not to avoid threading one.
 
 ---
 

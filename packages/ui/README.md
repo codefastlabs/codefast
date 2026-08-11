@@ -1,15 +1,18 @@
 # @codefast/ui
 
-70+ accessible React components built on [Radix UI](https://www.radix-ui.com/) primitives and styled with Tailwind CSS 4 — fully typed, tree-shakeable, themeable.
+70+ accessible React components built on [Radix UI](https://www.radix-ui.com/) primitives and styled with Tailwind CSS 4
+— fully typed, tree-shakeable, themeable.
 
 [![npm version](https://img.shields.io/npm/v/@codefast/ui)](https://www.npmjs.com/package/@codefast/ui)
 [![license](https://img.shields.io/npm/l/@codefast/ui)](https://github.com/codefastlabs/codefast/blob/main/LICENSE)
 
-**[codefastlabs.com](https://codefastlabs.com)** — full documentation with live previews and copy-ready source for every component.
+**[codefastlabs.com](https://codefastlabs.com)** — full documentation with live previews and copy-ready source for every
+component.
 
 ## Highlights
 
-- **70+ accessible components** — keyboard navigation, focus management, and ARIA semantics come from Radix UI primitives.
+- **70+ accessible components** — keyboard navigation, focus management, and ARIA semantics come from Radix UI
+  primitives.
 - **Fully typed** — every component exports its prop types (`ButtonProps`, `DialogContentProps`, …) for use in wrappers.
 - **Tree-shakeable ESM** — per-component subpath exports mean bundlers only include what you import.
 - **Themeable in plain CSS** — 22 palettes of `oklch` design tokens, dark mode included, no JavaScript required.
@@ -25,9 +28,11 @@
 pnpm add @codefast/ui
 ```
 
-Or the equivalent with your package manager: `npm install @codefast/ui`, `yarn add @codefast/ui`, or `bun add @codefast/ui`.
+Or the equivalent with your package manager: `npm install @codefast/ui`, `yarn add @codefast/ui`, or
+`bun add @codefast/ui`.
 
-The package stays on `0.x` with no 1.0 planned, so breaking changes ship as minor versions — the default `^0.5.0` range holds you inside `0.5.x` until you widen it.
+The package stays on `0.x` with no 1.0 planned, so breaking changes ship as minor versions — the default `^0.5.0` range
+holds you inside `0.5.x` until you widen it.
 
 ## Quick Start
 
@@ -49,7 +54,8 @@ export function MyPage() {
 }
 ```
 
-If your app doesn't run Tailwind itself, import the bundled stylesheet instead — it includes Tailwind 4, the neutral theme, and the preset in one file:
+If your app doesn't run Tailwind itself, import the bundled stylesheet instead — it includes Tailwind 4, the neutral
+theme, and the preset in one file:
 
 ```css
 @import "@codefast/ui/css/style.css";
@@ -64,25 +70,29 @@ import { Button } from "@codefast/ui/button";
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "@codefast/ui/dialog";
 ```
 
-All components and their prop types (`ButtonProps`, `DialogContentProps`, …) are also re-exported from the root entry `@codefast/ui`.
+All components and their prop types (`ButtonProps`, `DialogContentProps`, …) are also re-exported from the root entry
+`@codefast/ui`.
 
 Beyond components, the package exposes:
 
 - `@codefast/ui/hooks/*` — standalone hooks, e.g. `useMediaQuery` from `@codefast/ui/hooks/use-media-query`
-- `@codefast/ui/variants/*` — the underlying variant functions, e.g. `buttonVariants` from `@codefast/ui/variants/button` for styling custom elements
+- `@codefast/ui/variants/*` — the underlying variant functions, e.g. `buttonVariants` from
+  `@codefast/ui/variants/button` for styling custom elements
 - `@codefast/ui/primitives/*` — unstyled building blocks used by the styled components
 - `@codefast/ui/lib/utils` — the `cn()` classname merge helper
 
 ## Theming
 
-Theme tokens live in plain CSS files. Swap `themes/neutral.css` in the import above for any palette under `@codefast/ui/css/themes/`:
+Theme tokens live in plain CSS files. Swap `themes/neutral.css` in the import above for any palette under
+`@codefast/ui/css/themes/`:
 
 ```
 amber · blue · cyan · emerald · fuchsia · gray · green · indigo · lime · neutral · orange
 pink · purple · red · rose · sky · slate · stone · teal · violet · yellow · zinc
 ```
 
-Each palette defines light tokens on `:root` and dark tokens under `.dark`. Toggle dark mode by adding the `dark` class to `<html>` (or any ancestor):
+Each palette defines light tokens on `:root` and dark tokens under `.dark`. Toggle dark mode by adding the `dark` class
+to `<html>` (or any ancestor):
 
 ```ts
 document.documentElement.classList.toggle("dark", isDark);
@@ -107,9 +117,11 @@ Customize by overriding CSS custom properties after the imports:
 
 ## Documentation
 
-Browse the full component gallery — live previews, usage examples, and copy-ready source — at **[codefastlabs.com](https://codefastlabs.com)**.
+Browse the full component gallery — live previews, usage examples, and copy-ready source — at
+**[codefastlabs.com](https://codefastlabs.com)**.
 
-The package is developed in the [codefast monorepo](https://github.com/codefastlabs/codefast); see the [changelog](https://github.com/codefastlabs/codefast/blob/main/packages/ui/CHANGELOG.md) for release history.
+The package is developed in the [codefast monorepo](https://github.com/codefastlabs/codefast); see the
+[changelog](https://github.com/codefastlabs/codefast/blob/main/packages/ui/CHANGELOG.md) for release history.
 
 ## License
 

@@ -1,7 +1,7 @@
 # @codefast/di — Examples
 
-A progressive set of runnable examples covering every feature of `@codefast/di`.
-Each example is a standalone TypeScript file you can run with `tsx` or `ts-node`.
+A progressive set of runnable examples covering every feature of `@codefast/di`. Each example is a standalone TypeScript
+file you can run with `tsx` or `ts-node`.
 
 ```sh
 npx tsx examples/01-basic-tokens/01-basic-tokens.ts
@@ -54,7 +54,8 @@ npx tsx examples/01-basic-tokens/01-basic-tokens.ts
 
 **Start here** → `01` → `02` → `03` → `04` → `05`
 
-These five examples build a complete mental model: tokens, class injection, scopes, modules, and async lifecycle. Everything else builds on top of them.
+These five examples build a complete mental model: tokens, class injection, scopes, modules, and async lifecycle.
+Everything else builds on top of them.
 
 **Then pick by need:**
 

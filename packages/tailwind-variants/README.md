@@ -1,11 +1,13 @@
 # @codefast/tailwind-variants
 
-A type-safe variant styling API for Tailwind CSS — a faster drop-in replacement for `tailwind-variants`, used in production by [@codefast/ui](https://github.com/codefastlabs/codefast/tree/main/packages/ui).
+A type-safe variant styling API for Tailwind CSS — a faster drop-in replacement for `tailwind-variants`, used in
+production by [@codefast/ui](https://github.com/codefastlabs/codefast/tree/main/packages/ui).
 
 [![npm version](https://img.shields.io/npm/v/@codefast/tailwind-variants)](https://www.npmjs.com/package/@codefast/tailwind-variants)
 [![license](https://img.shields.io/npm/l/@codefast/tailwind-variants)](https://github.com/codefastlabs/codefast/blob/main/LICENSE)
 
-Describe a component's `base` classes, `variants`, `compoundVariants`, `slots`, and `defaultVariants` once; get back a fully typed function that resolves the right Tailwind classes and settles conflicts with `tailwind-merge`.
+Describe a component's `base` classes, `variants`, `compoundVariants`, `slots`, and `defaultVariants` once; get back a
+fully typed function that resolves the right Tailwind classes and settles conflicts with `tailwind-merge`.
 
 ## Installation
 
@@ -15,7 +17,8 @@ pnpm add @codefast/tailwind-variants
 # yarn add @codefast/tailwind-variants
 ```
 
-Ships ESM only, with **no runtime dependencies of its own**. `tailwind-merge` is a peer (`>=3.0.0`) — install it alongside — so you get one copy at the version you chose. Requires Node >= 24 at build/install time.
+Ships ESM only, with **no runtime dependencies of its own**. `tailwind-merge` is a peer (`>=3.0.0`) — install it
+alongside — so you get one copy at the version you chose. Requires Node >= 24 at build/install time.
 
 ## Quick Start
 
@@ -48,13 +51,15 @@ button({ size: "sm", className: "w-full" });
 // => "... bg-primary text-primary-foreground h-9 px-3 text-sm w-full"
 ```
 
-Every call site accepts `className` or `class` for ad-hoc additions; conflicting Tailwind classes are merged automatically (`className` wins when both are passed).
+Every call site accepts `className` or `class` for ad-hoc additions; conflicting Tailwind classes are merged
+automatically (`className` wins when both are passed).
 
 ## Variants
 
 ### Boolean variants
 
-A variant group with `"true"` / `"false"` keys accepts real booleans. When such a group has no entry in `defaultVariants`, it defaults to `false`:
+A variant group with `"true"` / `"false"` keys accepts real booleans. When such a group has no entry in
+`defaultVariants`, it defaults to `false`:
 
 ```ts
 const toggle = tv({
@@ -72,7 +77,8 @@ toggle({ pressed: true, disabled: true });
 
 ### Compound variants
 
-`compoundVariants` apply extra classes only when all listed conditions match. A condition value may be an array, matching any of its entries:
+`compoundVariants` apply extra classes only when all listed conditions match. A condition value may be an array,
+matching any of its entries:
 
 ```ts
 const alert = tv({
@@ -91,7 +97,8 @@ alert({ variant: "destructive" });
 
 ## Slots
 
-Add `slots` to style a multi-part component. The variant function then returns an object of per-slot functions. Variant values can be a plain class string (applied to the `base` slot) or a slot-to-class map:
+Add `slots` to style a multi-part component. The variant function then returns an object of per-slot functions. Variant
+values can be a plain class string (applied to the `base` slot) or a slot-to-class map:
 
 ```ts
 const card = tv({
@@ -114,7 +121,8 @@ styles.content(); // => "p-6 pt-0 px-3"
 styles.content({ className: "pb-0" }); // per-slot override, merged per slot
 ```
 
-Each slot function also accepts variant props of its own, which override the values given at the top-level call for that slot only.
+Each slot function also accepts variant props of its own, which override the values given at the top-level call for that
+slot only.
 
 ### Compound slots
 
@@ -137,7 +145,8 @@ pagination({ size: "sm" }).item();
 
 ## Extending
 
-`extend` inherits another variant function's configuration — base classes, variants, slots, defaults, and compound definitions all merge, and the resulting types reflect the union:
+`extend` inherits another variant function's configuration — base classes, variants, slots, defaults, and compound
+definitions all merge, and the resulting types reflect the union:
 
 ```ts
 const baseButton = tv({
@@ -168,10 +177,14 @@ iconButton({ tone: "outline", size: "sm" });
 - `twMergeConfig` — a `tailwind-merge` `ConfigExtension` for custom class groups.
 - `cacheResolutions` — set `false` to resolve every call from scratch (default `true`).
 
-A variant function remembers what each selection resolved to, because a list renders the same few selections thousands of times and both the plan walk and the merge are pure functions of the selection. Two consequences are worth knowing:
+A variant function remembers what each selection resolved to, because a list renders the same few selections thousands
+of times and both the plan walk and the merge are pure functions of the selection. Two consequences are worth knowing:
 
-- A slot component called twice with the same selection gets back the **same** object of slot functions. That is stable enough for a React dependency array; it also means the object is shared, so do not mutate it.
-- The store is bounded and keyed by the selection, so a variant whose values are effectively unique per call (an id, a timestamp, a fresh object) fills it with entries nothing reads again. `cacheResolutions: false` is the escape hatch for that component.
+- A slot component called twice with the same selection gets back the **same** object of slot functions. That is stable
+  enough for a React dependency array; it also means the object is shared, so do not mutate it.
+- The store is bounded and keyed by the selection, so a variant whose values are effectively unique per call (an id, a
+  timestamp, a fresh object) fills it with entries nothing reads again. `cacheResolutions: false` is the escape hatch
+  for that component.
 
 `createTV(options)` bakes those options into a shared factory and returns `{ tv, cn }`:
 
@@ -187,7 +200,8 @@ const { tv, cn } = createTV({
 cn("text-base", "text-huge"); // => "text-huge" — custom group is understood
 ```
 
-Options passed locally to `tv(config, options)` override the factory's globals. Every variant function also exposes a read-only `config` property carrying its fully merged configuration.
+Options passed locally to `tv(config, options)` override the factory's globals. Every variant function also exposes a
+read-only `config` property carrying its fully merged configuration.
 
 ## Class utilities
 
@@ -201,7 +215,8 @@ cn("base", isActive && "text-primary", { hidden: false }); // conditional values
 
 ## TypeScript
 
-`VariantProps` extracts the variant props of a variant function (with `class` / `className` stripped) for reuse in component props:
+`VariantProps` extracts the variant props of a variant function (with `class` / `className` stripped) for reuse in
+component props:
 
 ```tsx
 import { tv } from "@codefast/tailwind-variants";
@@ -220,11 +235,15 @@ function Button({ variant, className, ...props }: ButtonProps) {
 }
 ```
 
-Variant values, slot names, and compound conditions are all inferred — passing an unknown variant value or accessing a slot that does not exist is a type error. Configuration and option types (`VariantConfig`, `SlotVariantConfig`, `TailwindVariantsOptions`, `ClassValue`, and friends) are exported for library authors.
+Variant values, slot names, and compound conditions are all inferred — passing an unknown variant value or accessing a
+slot that does not exist is a type error. Configuration and option types (`VariantConfig`, `SlotVariantConfig`,
+`TailwindVariantsOptions`, `ClassValue`, and friends) are exported for library authors.
 
 ## Migrating from `tailwind-variants`
 
-The configuration shape is the same — `base`, `variants`, `slots`, `defaultVariants`, `compoundVariants`, `compoundSlots`, `extend`, plus the `twMerge` / `twMergeConfig` options — so for most codebases the migration is the import:
+The configuration shape is the same — `base`, `variants`, `slots`, `defaultVariants`, `compoundVariants`,
+`compoundSlots`, `extend`, plus the `twMerge` / `twMergeConfig` options — so for most codebases the migration is the
+import:
 
 ```diff
 - import { tv, cn, cx } from "tailwind-variants";
@@ -235,23 +254,36 @@ The configuration shape is the same — `base`, `variants`, `slots`, `defaultVar
 
 Two verified differences:
 
-- `createTV` returns an object `{ tv, cn }` sharing the global options, rather than a bare `tv` function — destructure instead of assigning directly.
+- `createTV` returns an object `{ tv, cn }` sharing the global options, rather than a bare `tv` function — destructure
+  instead of assigning directly.
 - `cnMerge` and the mutable `defaultConfig` are not exported; use `createTV` to configure merging.
 
 ## Benchmarks
 
-The repository maintains a [benchmark suite](https://github.com/codefastlabs/codefast/tree/main/benchmarks/tailwind-variants) that runs the same variant workloads — simple, complex, slots, compound slots, `extend`, `createTV`, and extreme configurations, each with and without merging — against the upstream `tailwind-variants` package and `class-variance-authority` in isolated subprocesses. `@codefast/tailwind-variants` is consistently faster than upstream `tailwind-variants` across that suite. Numbers vary by hardware, so run it yourself:
+The repository maintains a
+[benchmark suite](https://github.com/codefastlabs/codefast/tree/main/benchmarks/tailwind-variants) that runs the same
+variant workloads — simple, complex, slots, compound slots, `extend`, `createTV`, and extreme configurations, each with
+and without merging — against the upstream `tailwind-variants` package and `class-variance-authority` in isolated
+subprocesses. `@codefast/tailwind-variants` is consistently faster than upstream `tailwind-variants` across that suite.
+Numbers vary by hardware, so run it yourself:
 
 ```bash
 pnpm --filter @codefast/benchmark-tailwind-variants bench
 ```
 
-The speed comes from settling things once. The configuration is settled when `tv()` is called: variant groups, compound conditions and slot positions are compiled into a plan, and every class value is flattened to a string, so resolving a component is string concatenation rather than dictionary lookups. The answer is then settled per selection, so a list rendering the same few selections resolves each of them once. `cn` / `cx` take the same string fast path, joining directly when every argument is already a string.
+The speed comes from settling things once. The configuration is settled when `tv()` is called: variant groups, compound
+conditions and slot positions are compiled into a plan, and every class value is flattened to a string, so resolving a
+component is string concatenation rather than dictionary lookups. The answer is then settled per selection, so a list
+rendering the same few selections resolves each of them once. `cn` / `cx` take the same string fast path, joining
+directly when every argument is already a string.
 
-The trade is that `tv()` itself is slower than upstream's — that cost is per component definition, against a resolution that is far cheaper on every render, and the suite measures both.
+The trade is that `tv()` itself is slower than upstream's — that cost is per component definition, against a resolution
+that is far cheaper on every render, and the suite measures both.
 
-[ARCHITECTURE.md](https://github.com/codefastlabs/codefast/blob/main/packages/tailwind-variants/ARCHITECTURE.md) explains that design, which parts of it are load-bearing, and how to measure a change to it.
+[ARCHITECTURE.md](https://github.com/codefastlabs/codefast/blob/main/packages/tailwind-variants/ARCHITECTURE.md)
+explains that design, which parts of it are load-bearing, and how to measure a change to it.
 
 ## License
 
-MIT — see [LICENSE](https://github.com/codefastlabs/codefast/blob/main/LICENSE). Release history lives in the [CHANGELOG](https://github.com/codefastlabs/codefast/blob/main/packages/tailwind-variants/CHANGELOG.md).
+MIT — see [LICENSE](https://github.com/codefastlabs/codefast/blob/main/LICENSE). Release history lives in the
+[CHANGELOG](https://github.com/codefastlabs/codefast/blob/main/packages/tailwind-variants/CHANGELOG.md).

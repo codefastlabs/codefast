@@ -1,6 +1,7 @@
 # Sửa cấu hình board GitHub Projects
 
-> **Board:** [`orgs/codefastlabs/projects/4`](https://github.com/orgs/codefastlabs/projects/4) · **Project ID:** `PVT_kwDOBoFaAM4BfM8Z`
+> **Board:** [`orgs/codefastlabs/projects/4`](https://github.com/orgs/codefastlabs/projects/4) · **Project ID:**
+> `PVT_kwDOBoFaAM4BfM8Z`
 >
 > **Cập nhật:** 2026-08-03 · Board dùng thế nào: [`guides/github-project-board.md`](../guides/github-project-board.md)
 
@@ -29,7 +30,9 @@ gh api graphql -f query='{ organization(login:"codefastlabs"){ projectV2(number:
 
 ## 1. Thêm/sửa option của single-select — **phải truyền `id` của option cũ**
 
-`updateProjectV2Field` **thay toàn bộ** danh sách option. Truyền chỉ `name` cho những option đang tồn tại sẽ **tạo option mới hoàn toàn**, và mọi workflow đang trỏ tới option cũ **mất target** — chúng hiện icon cảnh báo đỏ và ngừng hoạt động cho tới khi được cấu hình lại từng cái.
+`updateProjectV2Field` **thay toàn bộ** danh sách option. Truyền chỉ `name` cho những option đang tồn tại sẽ **tạo
+option mới hoàn toàn**, và mọi workflow đang trỏ tới option cũ **mất target** — chúng hiện icon cảnh báo đỏ và ngừng
+hoạt động cho tới khi được cấu hình lại từng cái.
 
 **Bước 1** — lấy `id` các option hiện có:
 
@@ -49,15 +52,19 @@ gh api graphql -f query='mutation { updateProjectV2Field(input:{
   ]}) { projectV2Field { ... on ProjectV2SingleSelectField { options{ name } } } } }'
 ```
 
-**Bước 3** — verify workflow còn nguyên. `enabled: true` **không** chứng minh target còn đúng; phải mở trang workflows và xác nhận **không có icon cảnh báo đỏ** nào.
+**Bước 3** — verify workflow còn nguyên. `enabled: true` **không** chứng minh target còn đúng; phải mở trang workflows
+và xác nhận **không có icon cảnh báo đỏ** nào.
 
-`color` là enum: `GRAY` `BLUE` `GREEN` `YELLOW` `ORANGE` `RED` `PINK` `PURPLE`. `name`, `color`, `description` đều bắt buộc; `id` là optional.
+`color` là enum: `GRAY` `BLUE` `GREEN` `YELLOW` `ORANGE` `RED` `PINK` `PURPLE`. `name`, `color`, `description` đều bắt
+buộc; `id` là optional.
 
 ## 2. Sửa built-in workflow — chỉ làm được trên UI
 
-GraphQL **không** có mutation tạo/sửa built-in workflow (chỉ có `deleteProjectV2Workflow`). Phải vào `…/projects/4/workflows`.
+GraphQL **không** có mutation tạo/sửa built-in workflow (chỉ có `deleteProjectV2Workflow`). Phải vào
+`…/projects/4/workflows`.
 
-**Lưu và bật là hai bước, không phải một.** Nút `Save and turn on workflow` chỉ ghi cấu hình — workflow **vẫn Off**. Phải bấm tiếp toggle ở góc phải. Đúng cho mọi workflow, dù nút có chữ "turn on".
+**Lưu và bật là hai bước, không phải một.** Nút `Save and turn on workflow` chỉ ghi cấu hình — workflow **vẫn Off**.
+Phải bấm tiếp toggle ở góc phải. Đúng cho mọi workflow, dù nút có chữ "turn on".
 
 Kiểm chứng bằng counter `Workflows N` ở header, hoặc:
 
@@ -87,7 +94,9 @@ Không có autocomplete gợi ý field. UI báo lỗi đỏ ngay dưới ô nế
 
 GraphQL **không** set được group-by (`ProjectV2ViewConfigurationInput` chỉ nhận `visibleFieldIds`).
 
-Trên UI: mở view → nút `View` (bánh răng, góc phải) → `Group by` → chọn field → **`Save view`** (nằm trong cùng menu đó, không phải trong menu của tab) → **bấm `Save` trong dialog xác nhận** _"Saving these display options will make it the default for everyone in this view"_.
+Trên UI: mở view → nút `View` (bánh răng, góc phải) → `Group by` → chọn field → **`Save view`** (nằm trong cùng menu đó,
+không phải trong menu của tab) → **bấm `Save` trong dialog xác nhận** _"Saving these display options will make it the
+default for everyone in this view"_.
 
 Bỏ bước dialog là thay đổi **không được lưu**, và reload là mất. Dấu xanh trên bánh răng `View` = có thay đổi chưa lưu.
 
@@ -100,7 +109,8 @@ gh api graphql -f query='{ organization(login:"codefastlabs"){ projectV2(number:
 
 ## 5. Tạo/xoá view — API được
 
-`createProjectV2View` nhận `projectId`, `name`, `layout` (`BOARD_LAYOUT` · `TABLE_LAYOUT` · `ROADMAP_LAYOUT`) và `configuration`. **Không** nhận `filter` — phải `updateProjectV2View` ở bước hai.
+`createProjectV2View` nhận `projectId`, `name`, `layout` (`BOARD_LAYOUT` · `TABLE_LAYOUT` · `ROADMAP_LAYOUT`) và
+`configuration`. **Không** nhận `filter` — phải `updateProjectV2View` ở bước hai.
 
 ```bash
 gh api graphql -f query='mutation { createProjectV2View(input:{
@@ -114,7 +124,8 @@ gh api graphql -f query='mutation { updateProjectV2View(input:{
 
 Group-by vẫn phải làm trên UI theo §4.
 
-Xoá view: `deleteProjectV2View(input:{viewId:"…"})` — chỉ trả `clientMutationId`, không trả về view đã xoá. **Số view không được cấp lại** sau khi xoá, nên thứ tự số sẽ có lỗ.
+Xoá view: `deleteProjectV2View(input:{viewId:"…"})` — chỉ trả `clientMutationId`, không trả về view đã xoá. **Số view
+không được cấp lại** sau khi xoá, nên thứ tự số sẽ có lỗ.
 
 ## 6. Sửa README / description của project
 
@@ -140,10 +151,13 @@ gh api graphql -f query='mutation { deleteProjectV2Item(input:{
 }) { deletedItemId } }'
 ```
 
-Draft issue **được workflow xử lý như item thường** — nhận `Status: Inbox` khi thêm, và bị `Auto-close issue` đóng nếu chuyển sang `Done`.
+Draft issue **được workflow xử lý như item thường** — nhận `Status: Inbox` khi thêm, và bị `Auto-close issue` đóng nếu
+chuyển sang `Done`.
 
 Nâng draft thành issue thật: `convertProjectV2DraftIssueItemToIssue`.
 
 ## 8. Nếu board là private thì browser tool phải đang đăng nhập
 
-Board private trả **404** cho truy cập vô danh — không phải lỗi đường dẫn. Trước khi kết luận URL sai, kiểm tra trạng thái đăng nhập của đúng browser đang điều khiển: mỗi browser/profile có session riêng, và tab mở ở profile khác **không dùng chung cookie**.
+Board private trả **404** cho truy cập vô danh — không phải lỗi đường dẫn. Trước khi kết luận URL sai, kiểm tra trạng
+thái đăng nhập của đúng browser đang điều khiển: mỗi browser/profile có session riêng, và tab mở ở profile khác **không
+dùng chung cookie**.

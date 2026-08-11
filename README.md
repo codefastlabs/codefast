@@ -28,7 +28,9 @@
 
 ---
 
-The flagship package is [`@codefast/ui`](packages/ui): **70+ accessible React components** built on Radix UI primitives, styled with Tailwind CSS 4, and fully typed. Around it, this monorepo publishes the supporting `@codefast/*` packages — variant styling, theming, event tracking, dependency injection, and shared TypeScript configuration.
+The flagship package is [`@codefast/ui`](packages/ui): **70+ accessible React components** built on Radix UI primitives,
+styled with Tailwind CSS 4, and fully typed. Around it, this monorepo publishes the supporting `@codefast/*` packages —
+variant styling, theming, event tracking, dependency injection, and shared TypeScript configuration.
 
 Browse every component with live previews and copy-ready source at **[codefastlabs.com](https://codefastlabs.com)**.
 
@@ -62,7 +64,11 @@ Requires React 19 and Tailwind CSS 4. See [codefastlabs.com](https://codefastlab
 
 ## Status: 0.x, on purpose
 
-CodeFast stays on **0.x**, and there is no 1.0 planned. These packages are built for the maintainer's own projects first, so the version number is release bookkeeping rather than a compatibility promise — staying on 0.x is what keeps breaking changes cheap enough to actually make. In practice that means **breaking changes ship as minor versions**. On `0.x` the default `^0.5.0` range already holds you inside `0.5.x`, so one never arrives unasked — read the [changelog](https://github.com/codefastlabs/codefast/releases) before you widen it.
+CodeFast stays on **0.x**, and there is no 1.0 planned. These packages are built for the maintainer's own projects
+first, so the version number is release bookkeeping rather than a compatibility promise — staying on 0.x is what keeps
+breaking changes cheap enough to actually make. In practice that means **breaking changes ship as minor versions**. On
+`0.x` the default `^0.5.0` range already holds you inside `0.5.x`, so one never arrives unasked — read the
+[changelog](https://github.com/codefastlabs/codefast/releases) before you widen it.
 
 Install the default `latest` — the documentation site tracks it:
 
@@ -70,7 +76,10 @@ Install the default `latest` — the documentation site tracks it:
 pnpm add @codefast/ui
 ```
 
-An open API is the point rather than a phase to get through, so feedback stays welcome indefinitely — if a name is confusing, a prop feels awkward, or a component is missing, [open an issue](https://github.com/codefastlabs/codefast/issues/new) or [start a discussion](https://github.com/codefastlabs/codefast/discussions).
+An open API is the point rather than a phase to get through, so feedback stays welcome indefinitely — if a name is
+confusing, a prop feels awkward, or a component is missing,
+[open an issue](https://github.com/codefastlabs/codefast/issues/new) or
+[start a discussion](https://github.com/codefastlabs/codefast/discussions).
 
 ## Packages
 
@@ -122,7 +131,10 @@ pnpm dev              # start all apps and packages in watch mode
 | `pnpm verify`         | Full gate: build, lint, format, type check, and tests with coverage |
 | `pnpm bench`          | Run the benchmark suites                                            |
 
-Linting and formatting run on [Oxc](https://oxc.rs) (Oxlint + Oxfmt); native [TypeScript 7](https://www.typescriptlang.org) (`tsc`) handles both type checking and library builds (emitting `.js` + `.d.ts` per file, no bundler), while [Vite](https://vite.dev) (Rolldown) bundles the browser apps. Tests follow a strict category taxonomy — see [TESTING.md](TESTING.md).
+Linting and formatting run on [Oxc](https://oxc.rs) (Oxlint + Oxfmt); native
+[TypeScript 7](https://www.typescriptlang.org) (`tsc`) handles both type checking and library builds (emitting `.js` +
+`.d.ts` per file, no bundler), while [Vite](https://vite.dev) (Rolldown) bundles the browser apps. Tests follow a strict
+category taxonomy — see [TESTING.md](TESTING.md).
 
 ## Contributing
 
@@ -131,11 +143,15 @@ Linting and formatting run on [Oxc](https://oxc.rs) (Oxlint + Oxfmt); native [Ty
 3. Create a feature branch and make your changes, adding tests where applicable (see [TESTING.md](TESTING.md)).
 4. Run `pnpm verify` from the repo root.
 5. Add a changeset (`pnpm exec changeset`) when a published package changes.
-6. Commit following [Conventional Commits](https://www.conventionalcommits.org/) and open a [Pull Request](https://github.com/codefastlabs/codefast/pulls).
+6. Commit following [Conventional Commits](https://www.conventionalcommits.org/) and open a
+   [Pull Request](https://github.com/codefastlabs/codefast/pulls).
 
-Read [CONTRIBUTING.md](CONTRIBUTING.md) before your first change — the toolchain is deliberately non-standard (Oxc instead of ESLint/Prettier, native TypeScript 7 with no bundler for `packages/*`), and the test taxonomy and comment rules are enforced. Versioning and releases are managed with [Changesets](https://github.com/changesets/changesets).
+Read [CONTRIBUTING.md](CONTRIBUTING.md) before your first change — the toolchain is deliberately non-standard (Oxc
+instead of ESLint/Prettier, native TypeScript 7 with no bundler for `packages/*`), and the test taxonomy and comment
+rules are enforced. Versioning and releases are managed with [Changesets](https://github.com/changesets/changesets).
 
-Found a problem? Use the [issue templates](https://github.com/codefastlabs/codefast/issues/new/choose) — there is a dedicated one for performance regressions. Participation is governed by the [Code of Conduct](CODE_OF_CONDUCT.md).
+Found a problem? Use the [issue templates](https://github.com/codefastlabs/codefast/issues/new/choose) — there is a
+dedicated one for performance regressions. Participation is governed by the [Code of Conduct](CODE_OF_CONDUCT.md).
 
 ## Security
 

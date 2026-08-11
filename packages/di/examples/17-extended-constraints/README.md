@@ -1,12 +1,14 @@
 # Example 17 — Extended Constraint Family
 
-**Concepts:** `whenParentIs`, `whenNoParentIs`, `whenAnyAncestorIs`, `whenNoAncestorIs`, `whenParentNamed`, `whenAnyAncestorNamed`, `whenParentTagged`, `whenParentTaggedAll`, `whenAnyAncestorTagged`, `whenAnyAncestorTaggedAll`
+**Concepts:** `whenParentIs`, `whenNoParentIs`, `whenAnyAncestorIs`, `whenNoAncestorIs`, `whenParentNamed`,
+`whenAnyAncestorNamed`, `whenParentTagged`, `whenParentTaggedAll`, `whenAnyAncestorTagged`, `whenAnyAncestorTaggedAll`
 
 ---
 
 ## What this example shows
 
-Example 06 introduced `whenParentIs`. This example covers the complete constraint family, showing when each predicate is the right choice with a focused scenario per constraint.
+Example 06 introduced `whenParentIs`. This example covers the complete constraint family, showing when each predicate is
+the right choice with a focused scenario per constraint.
 
 All constraints are imported from a tree-shakeable subpath:
 
@@ -106,13 +108,15 @@ container.bind(LoggerToken).toConstantValue(makeLogger("verbose")).when(whenPare
 container.bind(LoggerToken).toConstantValue(makeLogger("silent")).when(whenNoParentIs(OrderServiceToken)); // everyone else
 ```
 
-`whenParentIs` checks the **immediate** parent. Use it when a specific consumer should receive a different implementation.
+`whenParentIs` checks the **immediate** parent. Use it when a specific consumer should receive a different
+implementation.
 
 ---
 
 ## 2. `whenAnyAncestorIs` / `whenNoAncestorIs` — deep chain match
 
-**Scenario:** A Logger should switch to "audit" mode whenever `PaymentOrchestrator` is anywhere in the resolution chain — regardless of depth.
+**Scenario:** A Logger should switch to "audit" mode whenever `PaymentOrchestrator` is anywhere in the resolution chain
+— regardless of depth.
 
 ```
 PaymentOrchestrator → FraudChecker → RiskScorer → Logger
@@ -124,13 +128,15 @@ container.bind(LoggerToken).toConstantValue(makeLogger("audit")).when(whenAnyAnc
 container.bind(LoggerToken).toConstantValue(makeLogger("standard")).when(whenNoAncestorIs(PaymentOrchestratorToken));
 ```
 
-Even though `RiskScorer`'s direct parent is `FraudChecker`, `whenAnyAncestorIs` scans the entire chain upward and finds `PaymentOrchestrator`.
+Even though `RiskScorer`'s direct parent is `FraudChecker`, `whenAnyAncestorIs` scans the entire chain upward and finds
+`PaymentOrchestrator`.
 
 ---
 
 ## 3. `whenParentNamed` / `whenAnyAncestorNamed` — name propagation
 
-**Scenario:** `DataSource` has two named bindings ("primary", "replica"). The `Logger` injected into each adapts based on which named slot is being resolved.
+**Scenario:** `DataSource` has two named bindings ("primary", "replica"). The `Logger` injected into each adapts based
+on which named slot is being resolved.
 
 ```ts
 container.bind(LoggerToken).toConstantValue(makeLogger("primary-logger")).when(whenParentNamed("primary"));
@@ -186,7 +192,9 @@ container
 
 ## 5. `whenAnyAncestorTagged` / `whenAnyAncestorTaggedAll` — tag propagation through the chain
 
-**Scenario:** Multi-tenant app. Root service bindings are tagged by tenant tier. A deep dependency (`AuditLogger`) automatically picks the right implementation based on which tagged ancestor is in the chain — intermediate nodes stay tag-free.
+**Scenario:** Multi-tenant app. Root service bindings are tagged by tenant tier. A deep dependency (`AuditLogger`)
+automatically picks the right implementation based on which tagged ancestor is in the chain — intermediate nodes stay
+tag-free.
 
 ```ts
 const TENANT_TAG = tag<"enterprise" | "starter">("tenant");
@@ -213,7 +221,8 @@ container
   .singleton();
 ```
 
-The tag sits on the root binding slot. `whenAnyAncestorTaggedAll` requires both tags to appear on the **same ancestor frame** (not spread across different ancestor nodes).
+The tag sits on the root binding slot. `whenAnyAncestorTaggedAll` requires both tags to appear on the **same ancestor
+frame** (not spread across different ancestor nodes).
 
 ---
 

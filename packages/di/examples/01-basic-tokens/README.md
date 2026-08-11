@@ -8,7 +8,8 @@
 
 This is the entry point to `@codefast/di`. Every feature in the library starts with two ideas:
 
-1. **Tokens** are typed keys — `Token<T>` carries the value type `T` through every `bind → resolve` call, so the return type of `resolve()` is always what you registered.
+1. **Tokens** are typed keys — `Token<T>` carries the value type `T` through every `bind → resolve` call, so the return
+   type of `resolve()` is always what you registered.
 2. **Bindings** tell the container _how_ to create a value for a token.
 
 ---
@@ -51,7 +52,8 @@ const GreeterToken = token<Greeter>("Greeter");
 const MessageToken = token<string>("Message");
 ```
 
-`token<T>(name)` creates a `Token<T>`. The string name is used only for debugging — it has no effect on resolution. Two calls with the same name produce two distinct tokens.
+`token<T>(name)` creates a `Token<T>`. The string name is used only for debugging — it has no effect on resolution. Two
+calls with the same name produce two distinct tokens.
 
 ---
 
@@ -77,7 +79,8 @@ container
   .singleton();
 ```
 
-The factory runs once (singleton) or every time (transient). `ctx` is the resolution context — use it to pull other tokens without going back to the container directly.
+The factory runs once (singleton) or every time (transient). `ctx` is the resolution context — use it to pull other
+tokens without going back to the container directly.
 
 #### Scopes
 
@@ -125,5 +128,6 @@ console.log(counterB.value()); // 0  ← separate state
 
 ## What to read next
 
-- **Example 02** — use `@injectable` and `inject()` so the container constructs classes automatically instead of writing factory functions.
+- **Example 02** — use `@injectable` and `inject()` so the container constructs classes automatically instead of writing
+  factory functions.
 - **Example 03** — understand the third scope, `scoped`, and how child containers enable per-request isolation.

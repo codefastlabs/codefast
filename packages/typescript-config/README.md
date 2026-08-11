@@ -1,8 +1,10 @@
 # @codefast/typescript-config
 
-Shared TypeScript configuration presets — one strict, bundler-first base plus focused variants for libraries, React, and Next.js.
+Shared TypeScript configuration presets — one strict, bundler-first base plus focused variants for libraries, React, and
+Next.js.
 
-[![npm version](https://img.shields.io/npm/v/@codefast/typescript-config)](https://www.npmjs.com/package/@codefast/typescript-config) [![license](https://img.shields.io/npm/l/@codefast/typescript-config)](https://github.com/codefastlabs/codefast/blob/main/LICENSE)
+[![npm version](https://img.shields.io/npm/v/@codefast/typescript-config)](https://www.npmjs.com/package/@codefast/typescript-config)
+[![license](https://img.shields.io/npm/l/@codefast/typescript-config)](https://github.com/codefastlabs/codefast/blob/main/LICENSE)
 
 ## Installation
 
@@ -10,11 +12,13 @@ Shared TypeScript configuration presets — one strict, bundler-first base plus 
 pnpm add -D @codefast/typescript-config
 ```
 
-TypeScript >= 5.0 is a peer dependency (`moduleResolution: "bundler"` requires it). The package ships plain JSON — it adds no runtime code.
+TypeScript >= 5.0 is a peer dependency (`moduleResolution: "bundler"` requires it). The package ships plain JSON — it
+adds no runtime code.
 
 ## Usage
 
-Extend the preset that matches your project in `tsconfig.json`. Keep the `.json` extension — the package export map only exposes the full file names.
+Extend the preset that matches your project in `tsconfig.json`. Keep the `.json` extension — the package export map only
+exposes the full file names.
 
 A generic TypeScript project:
 
@@ -78,9 +82,11 @@ All strictness comes from `base.json`, so every preset inherits it:
 
 - `strict` — the full strict family (`strictNullChecks`, `noImplicitAny`, and friends).
 - `noUncheckedIndexedAccess` — indexed access is typed `T | undefined`, forcing explicit handling.
-- `isolatedModules` + `moduleDetection: "force"` — every file is a module and must transpile in isolation, as bundlers require.
+- `isolatedModules` + `moduleDetection: "force"` — every file is a module and must transpile in isolation, as bundlers
+  require.
 - `module: "ESNext"` + `moduleResolution: "bundler"` — modern ESM with bundler-style `exports`/`imports` resolution.
-- `noEmit` — presets type-check only; emitting is your bundler's job (override in a build config if `tsc` emits for you).
+- `noEmit` — presets type-check only; emitting is your bundler's job (override in a build config if `tsc` emits for
+  you).
 - `forceConsistentCasingInFileNames` — catches import-path casing mismatches before they break case-sensitive CI.
 
 ## License

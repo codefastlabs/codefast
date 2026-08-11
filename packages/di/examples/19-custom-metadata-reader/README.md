@@ -1,12 +1,16 @@
 # Example 19 — Custom Metadata Reader
 
-**Concepts:** `MetadataReader`, `Container.create({ metadataReader })`, `defaultMetadataReader`, `getConstructorMetadata`, `getLifecycleMetadata`, `getAccessorMetadata`, `MetadataReaderToken`
+**Concepts:** `MetadataReader`, `Container.create({ metadataReader })`, `defaultMetadataReader`,
+`getConstructorMetadata`, `getLifecycleMetadata`, `getAccessorMetadata`, `MetadataReaderToken`
 
 ---
 
 ## What this example shows
 
-Everything the resolver knows about a class — its constructor parameters, its lifecycle hooks, its `@inject` accessors — it learns through one interface: `MetadataReader`. The default implementation reads Stage 3 decorator metadata. Bind your own and you can wire classes that carry no decorators at all: a class from a dependency, generated code, plain JavaScript.
+Everything the resolver knows about a class — its constructor parameters, its lifecycle hooks, its `@inject` accessors —
+it learns through one interface: `MetadataReader`. The default implementation reads Stage 3 decorator metadata. Bind
+your own and you can wire classes that carry no decorators at all: a class from a dependency, generated code, plain
+JavaScript.
 
 ---
 
@@ -58,9 +62,13 @@ interface MetadataReader {
 }
 ```
 
-- `ConstructorMetadata.params` — one `ParamMetadata` per constructor parameter: `{ index, token, optional, multi, name?, tags? }`. This is the same shape `@injectable([inject(A), optional(B)])` produces.
+- `ConstructorMetadata.params` — one `ParamMetadata` per constructor parameter:
+  `{ index, token, optional, multi, name?, tags? }`. This is the same shape `@injectable([inject(A), optional(B)])`
+  produces.
 - `LifecycleMetadata` — **method names**, not functions: `{ postConstruct: ["open"], preDestroy: ["close"] }`.
-- `getAccessorMetadata` is optional — but omitting it means no class gets an ambient container context, so any `@inject` accessor then throws `MissingContainerContextError` (see example 18). Delegate it unless you are replacing property injection wholesale.
+- `getAccessorMetadata` is optional — but omitting it means no class gets an ambient container context, so any `@inject`
+  accessor then throws `MissingContainerContextError` (see example 18). Delegate it unless you are replacing property
+  injection wholesale.
 
 ---
 
@@ -93,7 +101,8 @@ const lifecycleMetadata = new Map<Constructor, LifecycleMetadata>([
 ]);
 ```
 
-`open` / `close` stay ordinary methods, so the class remains importable by code that has no DI at all — the reader is what promotes them to hooks.
+`open` / `close` stay ordinary methods, so the class remains importable by code that has no DI at all — the reader is
+what promotes them to hooks.
 
 ---
 
@@ -113,22 +122,26 @@ class TableFirstMetadataReader implements MetadataReader {
 }
 ```
 
-The resolver has **one** reader for every class it builds, so a table-only reader would make every `@injectable` class throw `MissingMetadataError`. Delegating keeps the decorator path intact and makes the table purely additive.
+The resolver has **one** reader for every class it builds, so a table-only reader would make every `@injectable` class
+throw `MissingMetadataError`. Delegating keeps the decorator path intact and makes the table purely additive.
 
 ---
 
 ## Installing it — the construction-time rule
 
-A container hands its reader to the resolver it builds **in its constructor**, so the reader has to be knowable by then. `ContainerOptions.metadataReader` is:
+A container hands its reader to the resolver it builds **in its constructor**, so the reader has to be knowable by then.
+`ContainerOptions.metadataReader` is:
 
 ```ts
 const app = Container.create({ metadataReader: new TableFirstMetadataReader() });
 app.bind(PoolToken).to(LegacyPool).singleton(); // ✓ resolves from the table
 ```
 
-Children inherit it, so a per-request child needs no extra wiring. The option also outranks a `MetadataReaderToken` binding, which keeps every path — resolution, `validate()`, the graph — reading the same reader.
+Children inherit it, so a per-request child needs no extra wiring. The option also outranks a `MetadataReaderToken`
+binding, which keeps every path — resolution, `validate()`, the graph — reading the same reader.
 
-`MetadataReaderToken` still works, in exactly one shape: bound on a container that already exists when the _using_ container is constructed.
+`MetadataReaderToken` still works, in exactly one shape: bound on a container that already exists when the _using_
+container is constructed.
 
 ```ts
 // ✓ the child is constructed after the parent binding exists
@@ -145,9 +158,13 @@ container.resolve(PoolToken); // MissingMetadataError
 Container.fromModules(moduleThatBindsTheReader);
 ```
 
-In the last two, nothing sees the reader — not resolution, and not `validate()` / `inspect()` / `generateDependencyGraph()` either. One container has exactly one reader, fixed when its resolver was built, so introspection can never disagree with resolution about how a class is wired. Prefer the option; reach for the token only when the reader itself has to be resolved from other bindings.
+In the last two, nothing sees the reader — not resolution, and not `validate()` / `inspect()` /
+`generateDependencyGraph()` either. One container has exactly one reader, fixed when its resolver was built, so
+introspection can never disagree with resolution about how a class is wired. Prefer the option; reach for the token only
+when the reader itself has to be resolved from other bindings.
 
-Since `fromModules` takes modules variadically, there is no options argument to pass — `Container.create(options)` followed by `load(...)` is the equivalent.
+Since `fromModules` takes modules variadically, there is no options argument to pass — `Container.create(options)`
+followed by `load(...)` is the equivalent.
 
 ---
 
@@ -182,7 +199,8 @@ import type {
 } from "@codefast/di";
 ```
 
-The owning modules are subpaths too, if you prefer importing narrowly: `@codefast/di/metadata/metadata-types`, `@codefast/di/metadata/symbol-metadata-reader`.
+The owning modules are subpaths too, if you prefer importing narrowly: `@codefast/di/metadata/metadata-types`,
+`@codefast/di/metadata/symbol-metadata-reader`.
 
 ---
 
@@ -197,5 +215,6 @@ node --import tsx/esm examples/19-custom-metadata-reader/19-custom-metadata-read
 ## What to read next
 
 - **Example 02** — the decorator metadata this reader replaces or augments.
-- **Example 08** — `toResolved()` / `toDynamic()`, the decorator-free alternative when you only have a handful of foreign classes.
+- **Example 08** — `toResolved()` / `toDynamic()`, the decorator-free alternative when you only have a handful of
+  foreign classes.
 - **Example 15** — the dependency graph that consumes the same reader.

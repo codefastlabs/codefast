@@ -1,24 +1,30 @@
 # @codefast/di
 
-Lightweight, type-safe dependency injection for modern TypeScript — built on TC39 Stage 3 decorators, with no `reflect-metadata` and no `experimentalDecorators`.
+Lightweight, type-safe dependency injection for modern TypeScript — built on TC39 Stage 3 decorators, with no
+`reflect-metadata` and no `experimentalDecorators`.
 
 [![npm version](https://img.shields.io/npm/v/@codefast/di)](https://www.npmjs.com/package/@codefast/di)
 [![license](https://img.shields.io/npm/l/@codefast/di)](https://github.com/codefastlabs/codefast/blob/main/LICENSE)
 
-- **Typed tokens.** `Token<Value>` flows through every `bind → resolve` path; `resolve()` returns the type you registered.
-- **Native Stage 3 decorators.** `@injectable`, `inject`, `optional`, `@postConstruct`, `@preDestroy` — no runtime reflection tricks.
-- **Fluent bindings.** Constants, classes, sync/async factories, aliases, named/tagged/predicate constraints, lifecycle hooks.
-- **Scopes with validation.** `singleton` / `scoped` / `transient`, plus `validate()` to catch captive dependencies early.
+- **Typed tokens.** `Token<Value>` flows through every `bind → resolve` path; `resolve()` returns the type you
+  registered.
+- **Native Stage 3 decorators.** `@injectable`, `inject`, `optional`, `@postConstruct`, `@preDestroy` — no runtime
+  reflection tricks.
+- **Fluent bindings.** Constants, classes, sync/async factories, aliases, named/tagged/predicate constraints, lifecycle
+  hooks.
+- **Scopes with validation.** `singleton` / `scoped` / `transient`, plus `validate()` to catch captive dependencies
+  early.
 - **Modules.** Bundle bindings into reusable units; load, unload, and compose them across containers.
 - **Async-aware.** Async factories, deduped async singleton construction, and `await using` disposal.
 
-> Published on `0.x`, deliberately and with no 1.0 planned — breaking changes ship as minor versions, which is what keeps them cheap. Pin the minor if you need stability.
+> Published on `0.x`, deliberately and with no 1.0 planned — breaking changes ship as minor versions, which is what
+> keeps them cheap. Pin the minor if you need stability.
 
 ## Requirements
 
 - **Node.js 26 or later — required.** The container uses the native `Map.prototype.getOrInsert` and
-  `Map.prototype.getOrInsertComputed` (ES2025), which ship in Node 26+. On older Node versions the
-  package throws at runtime.
+  `Map.prototype.getOrInsertComputed` (ES2025), which ship in Node 26+. On older Node versions the package throws at
+  runtime.
 - **TypeScript 5.2+** with native Stage 3 decorators — leave `experimentalDecorators` **off** (it is off by default).
 
 ## Installation
@@ -63,7 +69,8 @@ container.rebind(LoggerToken).toConstantValue({
 });
 ```
 
-`@injectable([...])` lists constructor dependencies in parameter order — no parameter-type reflection, so it works in any ESM runtime that supports Stage 3 decorators.
+`@injectable([...])` lists constructor dependencies in parameter order — no parameter-type reflection, so it works in
+any ESM runtime that supports Stage 3 decorators.
 
 ## Tokens
 
@@ -75,7 +82,8 @@ import { token } from "@codefast/di";
 const DbToken = token<Database>("Database");
 ```
 
-A class constructor can also be a key directly: `container.bind(UserService).toSelf()` then `container.resolve(UserService)`.
+A class constructor can also be a key directly: `container.bind(UserService).toSelf()` then
+`container.resolve(UserService)`.
 
 ## Bindings
 
@@ -120,8 +128,8 @@ container.bind(RequestContextToken).toSelf().scoped();
 
 ### Constraints
 
-Multiple bindings can share one token; a constraint picks the winner at resolution time. Named slots
-take a plain string; tagged slots take a **criterion** minted from a tag key.
+Multiple bindings can share one token; a constraint picks the winner at resolution time. Named slots take a plain
+string; tagged slots take a **criterion** minted from a tag key.
 
 ```typescript
 import { tag } from "@codefast/di";
@@ -135,14 +143,13 @@ container.resolve(LoggerToken, { name: "file" });
 container.resolve(StorageToken, { tag: Provider.of("s3") });
 ```
 
-`tag<Value>(name)` declares the key once and types both ends: a key declared `tag<"s3" | "gcs">` refuses
-any other value, so a bind site and a resolve site cannot drift apart silently. `key.of(value)` interns,
-so the same value always yields the same criterion — which is what lets lookup compare by identity.
-Build a criterion by hand and it matches nothing.
+`tag<Value>(name)` declares the key once and types both ends: a key declared `tag<"s3" | "gcs">` refuses any other
+value, so a bind site and a resolve site cannot drift apart silently. `key.of(value)` interns, so the same value always
+yields the same criterion — which is what lets lookup compare by identity. Build a criterion by hand and it matches
+nothing.
 
-`{ tag: criterion }` and `{ tags: [criterion] }` are the same request and take the same lookup path, on
-`resolve` and on `inject` / `optional` / `injectAll` alike. Reach for `tags` when a slot carries more
-than one tag:
+`{ tag: criterion }` and `{ tags: [criterion] }` are the same request and take the same lookup path, on `resolve` and on
+`inject` / `optional` / `injectAll` alike. Reach for `tags` when a slot carries more than one tag:
 
 ```typescript
 const Env = tag<"prod" | "dev">("env");
@@ -153,14 +160,16 @@ container.bind(LoggerToken).toConstantValue(auditLogger).whenTagged(Env.of("prod
 container.resolve(LoggerToken, { tags: [Env.of("prod"), Tier.of("premium")] });
 ```
 
-A request matches a slot when it carries **every** tag that slot declares — adding tags to a request
-makes it match more slots, not fewer. When several match, the slot declaring more of them wins.
+A request matches a slot when it carries **every** tag that slot declares — adding tags to a request makes it match more
+slots, not fewer. When several match, the slot declaring more of them wins.
 
-For graph-aware selection, pass a predicate to `.when(...)` — helpers like `whenParentIs`, `whenAnyAncestorNamed`, and `whenParentTagged` ship from the root entry (`import { whenParentIs } from "@codefast/di"`).
+For graph-aware selection, pass a predicate to `.when(...)` — helpers like `whenParentIs`, `whenAnyAncestorNamed`, and
+`whenParentTagged` ship from the root entry (`import { whenParentIs } from "@codefast/di"`).
 
 ## Decorators
 
-All decorators use TC39 Stage 3 syntax. `inject()` wraps a dependency with resolve options, `optional()` resolves to `undefined` when unbound, and `injectAll()` collects every matching binding into an array.
+All decorators use TC39 Stage 3 syntax. `inject()` wraps a dependency with resolve options, `optional()` resolves to
+`undefined` when unbound, and `injectAll()` collects every matching binding into an array.
 
 ```typescript
 import { inject, injectable, optional, postConstruct, preDestroy } from "@codefast/di";
@@ -193,15 +202,22 @@ class Controller {
 }
 ```
 
-An accessor resolves from the container that is constructing the instance. When something else owns the `new` — a router, an ORM, a test helper — open that context yourself with `runWithContainer(container, () => new Controller())`; otherwise the accessor throws `MissingContainerContextError`.
+An accessor resolves from the container that is constructing the instance. When something else owns the `new` — a
+router, an ORM, a test helper — open that context yourself with `runWithContainer(container, () => new Controller())`;
+otherwise the accessor throws `MissingContainerContextError`.
 
-Classes you cannot decorate (a dependency's class, generated code, plain JavaScript) are wired by supplying their metadata yourself:
+Classes you cannot decorate (a dependency's class, generated code, plain JavaScript) are wired by supplying their
+metadata yourself:
 
 ```typescript
 const container = Container.create({ metadataReader: myReader });
 ```
 
-A `MetadataReader` reports constructor parameters, lifecycle method names, and `@inject` accessors; delegate misses to `defaultMetadataReader` so decorated classes keep working. The reader is read while the container is constructed, so the option — not a later `MetadataReaderToken` binding — is what resolution sees. See [examples/19-custom-metadata-reader](https://github.com/codefastlabs/codefast/tree/main/packages/di/examples/19-custom-metadata-reader) and the MetadataReader section of [SPEC.md](https://github.com/codefastlabs/codefast/blob/main/packages/di/SPEC.md).
+A `MetadataReader` reports constructor parameters, lifecycle method names, and `@inject` accessors; delegate misses to
+`defaultMetadataReader` so decorated classes keep working. The reader is read while the container is constructed, so the
+option — not a later `MetadataReaderToken` binding — is what resolution sees. See
+[examples/19-custom-metadata-reader](https://github.com/codefastlabs/codefast/tree/main/packages/di/examples/19-custom-metadata-reader)
+and the MetadataReader section of [SPEC.md](https://github.com/codefastlabs/codefast/blob/main/packages/di/SPEC.md).
 
 ## Container
 
@@ -215,11 +231,13 @@ container.resolveAll(HandlerToken); // every matching binding
 const db = await container.resolveAsync(DbToken); // required for async bindings
 ```
 
-Mixing an async binding into a sync `resolve()` throws `AsyncResolutionError` — use `resolveAsync` / `resolveAllAsync` / `resolveOptionalAsync` whenever the chain contains async work.
+Mixing an async binding into a sync `resolve()` throws `AsyncResolutionError` — use `resolveAsync` / `resolveAllAsync` /
+`resolveOptionalAsync` whenever the chain contains async work.
 
 ### Child containers
 
-Children fall through to the parent's bindings and share its singleton cache, while `scoped` bindings get one instance per child — ideal for per-request wiring.
+Children fall through to the parent's bindings and share its singleton cache, while `scoped` bindings get one instance
+per child — ideal for per-request wiring.
 
 ```typescript
 const requestContainer = container.createChild();
@@ -229,7 +247,8 @@ await requestContainer.dispose(); // releases scoped instances owned by this chi
 
 ### Validation
 
-`validate()` fails fast on captive dependencies — for example a `singleton` depending on a `scoped` or `transient` binding.
+`validate()` fails fast on captive dependencies — for example a `singleton` depending on a `scoped` or `transient`
+binding.
 
 ```typescript
 container.validate(); // throws ScopeViolationError on the first violation
@@ -266,32 +285,56 @@ const AppModule = Module.create("App", (api) => {
 const container = Container.fromModules(AppModule);
 ```
 
-`Module.createAsync` supports awaiting during setup (remote config, connections); load those with `Container.fromModulesAsync` or `container.loadAsync`. Modules are ref-counted: re-loading is a no-op and `unload` only removes bindings once the count reaches zero.
+`Module.createAsync` supports awaiting during setup (remote config, connections); load those with
+`Container.fromModulesAsync` or `container.loadAsync`. Modules are ref-counted: re-loading is a no-op and `unload` only
+removes bindings once the count reaches zero.
 
 ## Errors
 
-Every error extends `DiError` and carries a stable `code` — `TokenNotBoundError` (`"TOKEN_NOT_BOUND"`), `CircularDependencyError`, `ScopeViolationError`, `AsyncResolutionError`, `AmbiguousBindingError`, and friends. Import them from the root or from `@codefast/di/errors/errors`.
+Every error extends `DiError` and carries a stable `code` — `TokenNotBoundError` (`"TOKEN_NOT_BOUND"`),
+`CircularDependencyError`, `ScopeViolationError`, `AsyncResolutionError`, `AmbiguousBindingError`, and friends. Import
+them from the root or from `@codefast/di/errors/errors`.
 
 ## Subpath exports
 
-The root entry re-exports the full public API — prefer it (`import { Container, token, toReactFlowGraph } from "@codefast/di"`). Every module is also published as a tree-shakeable subpath mirroring the source layout:
+The root entry re-exports the full public API — prefer it
+(`import { Container, token, toReactFlowGraph } from "@codefast/di"`). Every module is also published as a
+tree-shakeable subpath mirroring the source layout:
 
-- **Model** under `/core/*` — `@codefast/di/core/token`, `/core/types`, `/core/binding`, `/core/tag`, `/core/registry`, `/core/module`
+- **Model** under `/core/*` — `@codefast/di/core/token`, `/core/types`, `/core/binding`, `/core/tag`, `/core/registry`,
+  `/core/module`
 - **Errors** under `/errors/*` — `@codefast/di/errors/errors`, `/errors/diagnostics`
-- **Runtime** under `/container/*`, `/injection/*`, `/lifecycle/*` and `/resolution/*` — e.g. `@codefast/di/resolution/select/constraints`
-- **Introspection** ships at flat specifiers, without the directory prefix — `@codefast/di/inspector`, `/dependency-graph`, and the graph adapters (`@codefast/di/graph-adapters/{dot,cytoscape,mermaid,reactflow}`) for visualizing `container.generateDependencyGraph()` output
+- **Runtime** under `/container/*`, `/injection/*`, `/lifecycle/*` and `/resolution/*` — e.g.
+  `@codefast/di/resolution/select/constraints`
+- **Introspection** ships at flat specifiers, without the directory prefix — `@codefast/di/inspector`,
+  `/dependency-graph`, and the graph adapters (`@codefast/di/graph-adapters/{dot,cytoscape,mermaid,reactflow}`) for
+  visualizing `container.generateDependencyGraph()` output
 - **Decorators & metadata** under `/decorators/*` and `/metadata/*`
 
 ## Benchmarks
 
-A head-to-head benchmark suite lives in the monorepo: [benchmarks/di-inversify](https://github.com/codefastlabs/codefast/tree/main/benchmarks/di-inversify). It compares `@codefast/di` against **InversifyJS 8** on the full scenario set, plus **Awilix** and **tsyringe** on a shared core subset. Each library runs in its canonical mode, in isolated subprocesses, reported as per-trial medians with interquartile range — designed so the results are re-runnable rather than taken on faith.
+A head-to-head benchmark suite lives in the monorepo:
+[benchmarks/di-inversify](https://github.com/codefastlabs/codefast/tree/main/benchmarks/di-inversify). It compares
+`@codefast/di` against **InversifyJS 8** on the full scenario set, plus **Awilix** and **tsyringe** on a shared core
+subset. Each library runs in its canonical mode, in isolated subprocesses, reported as per-trial medians with
+interquartile range — designed so the results are re-runnable rather than taken on faith.
 
-Against InversifyJS — the only one of the three that covers a comparable feature surface — `@codefast/di` currently wins **all 44 comparable scenarios** in both profiles, at a median of 2.21×–2.39× and a geometric mean of 2.68×–2.90×. Against the two deliberately leaner containers it wins the shared core subset as well, with one exception: `realistic-graph-cold-resolve` against tsyringe, which reads parity in the default profile and a loss under the forced-GC one. See [RESULTS.md](https://github.com/codefastlabs/codefast/blob/main/benchmarks/di-inversify/RESULTS.md) for the full tables, the caveats, and the losses that earlier revisions reported — or run `pnpm bench` in that package to reproduce them on your machine.
+Against InversifyJS — the only one of the three that covers a comparable feature surface — `@codefast/di` currently wins
+**all 44 comparable scenarios** in both profiles, at a median of 2.21×–2.39× and a geometric mean of 2.68×–2.90×.
+Against the two deliberately leaner containers it wins the shared core subset as well, with one exception:
+`realistic-graph-cold-resolve` against tsyringe, which reads parity in the default profile and a loss under the
+forced-GC one. See [RESULTS.md](https://github.com/codefastlabs/codefast/blob/main/benchmarks/di-inversify/RESULTS.md)
+for the full tables, the caveats, and the losses that earlier revisions reported — or run `pnpm bench` in that package
+to reproduce them on your machine.
 
 ## Contributing
 
-Changing this package's source? [CONTRIBUTING.md](https://github.com/codefastlabs/codefast/blob/main/packages/di/CONTRIBUTING.md) is the full workflow — build, exports mirror, tests, the mandatory perf-guard for resolver changes, and the release gate.
+Changing this package's source?
+[CONTRIBUTING.md](https://github.com/codefastlabs/codefast/blob/main/packages/di/CONTRIBUTING.md) is the full workflow —
+build, exports mirror, tests, the mandatory perf-guard for resolver changes, and the release gate.
 
 ## License
 
-[MIT](https://github.com/codefastlabs/codefast/blob/main/LICENSE) — part of the [codefast monorepo](https://github.com/codefastlabs/codefast). See [CHANGELOG.md](https://github.com/codefastlabs/codefast/blob/main/packages/di/CHANGELOG.md) for release history.
+[MIT](https://github.com/codefastlabs/codefast/blob/main/LICENSE) — part of the
+[codefast monorepo](https://github.com/codefastlabs/codefast). See
+[CHANGELOG.md](https://github.com/codefastlabs/codefast/blob/main/packages/di/CHANGELOG.md) for release history.
