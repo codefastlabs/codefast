@@ -1,4 +1,6 @@
 /**
+ * @codefast/di — fan-out scenarios: the transient resolution tree plus the `resolveAll()` rows.
+ *
  * `resolve-all-strategies-*` fan-out: measures `resolveAll()` on N `toConstantValue`
  * registrations for the same service id, **without** a name or tag (no disambiguation
  * qualifier in the hot path for `getAll` on the Inversify side).
@@ -16,14 +18,39 @@
  */
 import { Container, token } from "@codefast/di";
 
+import { buildCodefastRealisticContainer } from "#/fixtures/codefast-adapter";
 import {
+  FAN_OUT_TREE_DEPTH_3_BREADTH_4,
   RESOLVE_ALL_NAMED_COUNTS,
   RESOLVE_ALL_STRATEGY_COUNTS,
   type ResolveAllNamedCount,
   type ResolveAllStrategyCount,
 } from "#/fixtures/fan-out-descriptor";
-import { resolveAllNamedDescriptor, resolveAllStrategiesDescriptor } from "#/fixtures/scenario-parity";
+import {
+  FAN_OUT_TREE,
+  FAN_OUT_TREE_BATCH,
+  resolveAllNamedDescriptor,
+  resolveAllStrategiesDescriptor,
+} from "#/fixtures/scenario-parity";
+import { batched } from "#/harness/batched";
 import type { BenchScenario } from "#/scenarios/types";
+
+function buildFanOutTreeDepthThreeBreadthFourScenario(): BenchScenario {
+  const { container, rootToken } = buildCodefastRealisticContainer(FAN_OUT_TREE_DEPTH_3_BREADTH_4);
+  const firstResolution = container.resolve(rootToken);
+
+  return {
+    ...FAN_OUT_TREE,
+    batch: FAN_OUT_TREE_BATCH,
+    sanity: () =>
+      firstResolution.__id === FAN_OUT_TREE_DEPTH_3_BREADTH_4.rootId &&
+      firstResolution.resolvedDependencies.length === 4,
+    build: () =>
+      batched(FAN_OUT_TREE_BATCH, () => {
+        container.resolve(rootToken);
+      }),
+  };
+}
 
 /**
  * Both libraries use predicate-only registrations (`when(() => true)`) so the
@@ -86,8 +113,9 @@ function buildResolveAllNamedScenario(namedCount: ResolveAllNamedCount): BenchSc
 /**
  * @since 0.3.16-canary.0
  */
-export function buildCodefastResolveAllStrategiesScenarios(): ReadonlyArray<BenchScenario> {
+export function buildCodefastFanOutScenarios(): ReadonlyArray<BenchScenario> {
   return [
+    buildFanOutTreeDepthThreeBreadthFourScenario(),
     ...RESOLVE_ALL_STRATEGY_COUNTS.map((strategyCount) => buildResolveAllStrategiesScenario(strategyCount)),
     ...RESOLVE_ALL_NAMED_COUNTS.map((namedCount) => buildResolveAllNamedScenario(namedCount)),
   ];
