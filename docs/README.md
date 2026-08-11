@@ -2,7 +2,8 @@
 
 Thư mục `docs/` được tổ chức theo **loại tài liệu**, không theo lĩnh vực. Lĩnh vực nằm trong tên file.
 
-Lý do: câu hỏi _"tài liệu này thuộc lĩnh vực nào?"_ thường có nhiều đáp án, nên phân theo lĩnh vực sẽ đẻ ra ngăn kéo tạp nham. Câu hỏi _"tài liệu này loại gì?"_ chỉ có một đáp án.
+Lý do: câu hỏi _"tài liệu này thuộc lĩnh vực nào?"_ thường có nhiều đáp án, nên phân theo lĩnh vực sẽ đẻ ra ngăn kéo tạp
+nham. Câu hỏi _"tài liệu này loại gì?"_ chỉ có một đáp án.
 
 ---
 
@@ -23,8 +24,10 @@ Chỉ tạo thư mục khi thật sự có file thuộc loại đó — không d
 
 ### Quy ước đặt tên
 
-- kebab-case, không dấu, không hậu tố thừa: `github-project-board.md` chứ không phải `github-project-board-guide.md` (đã nằm trong `guides/` rồi)
-- Cùng một lĩnh vực có thể xuất hiện ở nhiều loại — `guides/github-project-board.md` và `decisions/github-project-board.md` là hai tài liệu khác nhau về cùng một thứ, và đó là bình thường
+- kebab-case, không dấu, không hậu tố thừa: `github-project-board.md` chứ không phải `github-project-board-guide.md` (đã
+  nằm trong `guides/` rồi)
+- Cùng một lĩnh vực có thể xuất hiện ở nhiều loại — `guides/github-project-board.md` và
+  `decisions/github-project-board.md` là hai tài liệu khác nhau về cùng một thứ, và đó là bình thường
 - `reports/` gắn thời gian vào tên: `security-status-2026-05.md`
 
 ---
@@ -55,10 +58,12 @@ Ghi lại đã chọn gì và vì sao. Không sửa nội dung cũ; nếu quyế
 
 Tài liệu chỉ liên quan tới một package thì để ngay trong package đó, không đưa vào `docs/`:
 
-- `packages/di/ARCHITECTURE.md` — nguồn chân lý cho `resolution/`, đọc trước khi sửa hot path
+- `packages/di/ARCHITECTURE.md` — nguồn chân lý cho `resolution/`, đọc trước khi sửa hot path; `PERFORMANCE.md` (mỗi
+  shape đáng giá bao nhiêu, đo bằng cách nào) và `REJECTED.md` (đã thử và bị loại) đi kèm nó
 - `packages/tracking/spec/` — contract hành vi
 - `packages/*/README.md`, `packages/*/CHANGELOG.md`
 
 `docs/` dành cho tài liệu cắt ngang nhiều package, hoặc về hạ tầng quanh repo (board, quy trình, vận hành).
 
-Tài liệu ở root có vai trò riêng, không chuyển vào đây: [`CLAUDE.md`](../CLAUDE.md) (hướng dẫn cho agent), [`TESTING.md`](../TESTING.md), [`CONTRIBUTING.md`](../CONTRIBUTING.md).
+Tài liệu ở root có vai trò riêng, không chuyển vào đây: [`CLAUDE.md`](../CLAUDE.md) (hướng dẫn cho agent),
+[`TESTING.md`](../TESTING.md), [`CONTRIBUTING.md`](../CONTRIBUTING.md).

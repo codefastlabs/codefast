@@ -1,8 +1,8 @@
 /**
- * Invariants that ARCHITECTURE.md states in prose and that nothing else checks: the single binding
- * shape, the direction of the layering, the curated export surface, and whether the document still
- * names things that exist. Each of these used to be held by a comment, which is the arrangement
- * that let them rot in the first place.
+ * Invariants the design documents state in prose and that nothing else checks: the single binding
+ * shape, the direction of the layering, the curated export surface, and whether those documents
+ * still name things that exist. Each of these used to be held by a comment, which is the
+ * arrangement that let them rot in the first place.
  */
 import { readdirSync, readFileSync, statSync } from "node:fs";
 import { join } from "node:path";
@@ -134,8 +134,16 @@ describe("the published surface mirrors the source tree", () => {
   });
 });
 
-describe("ARCHITECTURE.md still describes this package", () => {
-  const doc = readFileSync(join(packageRoot, "ARCHITECTURE.md"), "utf8");
+/** Every identifier the documents present as this package's own, read once for all three. */
+const allSource = sourceFiles()
+  .map((file) => readFileSync(file, "utf8"))
+  .join("\n");
+
+// Three documents, one kind of rot. ARCHITECTURE.md holds the shapes and their invariants,
+// PERFORMANCE.md what each one costs, REJECTED.md what was tried against them and lost — and all
+// three cite this source tree, so all three go stale the same way.
+describe.each(["ARCHITECTURE.md", "PERFORMANCE.md", "REJECTED.md"])("%s still describes this package", (name) => {
+  const doc = readFileSync(join(packageRoot, name), "utf8");
 
   it("links only to source files that exist", () => {
     const missing = [...doc.matchAll(/\]\((src\/[^)]+\.ts)\)/g)]
@@ -184,19 +192,27 @@ describe("ARCHITECTURE.md still describes this package", () => {
   });
 
   it("names only symbols that exist", () => {
-    const source = sourceFiles()
-      .map((file) => readFileSync(file, "utf8"))
-      .join("\n");
     // Identifiers the document presents as this package's own — `SomeClass`, `someFunction()`.
     const named = new Set(
       [...doc.matchAll(/`([A-Z][A-Za-z]{4,})`/g), ...doc.matchAll(/`([a-z][A-Za-z]{4,})\(\)`/g)].map(
         (match) => match[1]!,
       ),
     );
-    // Words the document uses about the ecosystem rather than about this source tree.
-    const external = new Set(["ARCHITECTURE", "RESULTS", "CONTRIBUTING", "InversifyJS", "Dagger", "Turborepo"]);
+    // Words the documents use about the ecosystem, or about each other, rather than about this tree.
+    const external = new Set([
+      "ARCHITECTURE",
+      "PERFORMANCE",
+      "REJECTED",
+      "RESULTS",
+      "CONTRIBUTING",
+      "InversifyJS",
+      "Dagger",
+      "Turborepo",
+    ]);
 
-    const missing = [...named].filter((name) => !external.has(name) && !new RegExp(`\\b${name}\\b`).test(source));
+    const missing = [...named].filter(
+      (symbol) => !external.has(symbol) && !new RegExp(`\\b${symbol}\\b`).test(allSource),
+    );
 
     expect(missing).toEqual([]);
   });
@@ -205,8 +221,8 @@ describe("ARCHITECTURE.md still describes this package", () => {
 describe("comments stay comments", () => {
   const COMMENT = /^\s*(?:\/\/|\*|\/\*)(.*)$/;
   // A number in a source comment cannot be re-verified where it sits and the method behind it is
-  // not there either, so it goes stale silently. Numbers live with their method — ARCHITECTURE.md,
-  // RESULTS.md, or the commit.
+  // not there either, so it goes stale silently. Numbers live with their method — PERFORMANCE.md,
+  // REJECTED.md, RESULTS.md, or the commit.
   const NUMBERS = /\b\d+(?:\.\d+)?\s*(?:×|x faster|%|ns\/op|µs|ms\b|KB|MB|bytes)\b/;
   // Code describes what is. Git carries what was.
   const HISTORY =
