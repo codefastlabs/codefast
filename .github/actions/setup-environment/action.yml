@@ -1,5 +1,6 @@
 name: "Setup Node.js and pnpm Environment"
-description: "Sets up Node.js, pnpm, and project dependencies with caching for efficient CI/CD builds"
+description: "Sets up Node.js, pnpm, and project dependencies with caching for
+  efficient CI/CD builds"
 author: "codefastlabs"
 
 inputs:
@@ -9,7 +10,8 @@ inputs:
     required: false
 
   package-manager-version:
-    description: "pnpm version; leave unset to use the packageManager field in root package.json"
+    description: "pnpm version; leave unset to use the packageManager field in root
+      package.json"
     required: false
 
   install-dependencies:
@@ -37,25 +39,26 @@ runs:
   steps:
     - name: "Setup Turborepo Cache"
       id: turbo-cache
-      uses: actions/cache@v5
+      uses: actions/cache@v6
       with:
         path: .turbo
         # Primary key excludes commit SHA so restores apply across commits for the same ref and lockfile.
-        key: ${{ runner.os }}-turbo-${{ hashFiles('**/pnpm-lock.yaml') }}-${{ github.ref_name }}
+        key: ${{ runner.os }}-turbo-${{ hashFiles('**/pnpm-lock.yaml') }}-${{
+          github.ref_name }}
         restore-keys: |
           ${{ runner.os }}-turbo-${{ hashFiles('**/pnpm-lock.yaml') }}-
           ${{ runner.os }}-turbo-
 
     - name: "Set Up pnpm Package Manager"
       id: pnpm-setup
-      uses: pnpm/action-setup@v5
+      uses: pnpm/action-setup@v6
       with:
         version: ${{ inputs.package-manager-version }}
         run_install: false
 
     - name: "Set Up Node.js Environment"
       id: node-setup
-      uses: actions/setup-node@v6
+      uses: actions/setup-node@v7
       with:
         node-version-file: ${{ inputs.node-version-file }}
         cache: "pnpm"
@@ -71,7 +74,8 @@ runs:
     - name: "Log Turborepo remote cache context"
       id: turbo-remote-cache
       shell: bash
-      if: ${{ inputs.enable-remote-cache == 'true' && env.TURBO_TOKEN != '' && env.TURBO_TEAM != '' }}
+      if: ${{ inputs.enable-remote-cache == 'true' && env.TURBO_TOKEN != '' &&
+        env.TURBO_TEAM != '' }}
       run: |
         echo "Turborepo remote cache credentials are present for team: $TURBO_TEAM"
         npx turbo --version
