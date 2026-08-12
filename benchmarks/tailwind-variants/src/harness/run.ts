@@ -26,6 +26,7 @@ import type { BenchSubprocessConfig } from "@codefast/benchmark-harness/shared/c
 import {
   BENCH_RESULTS_DIR_NAME,
   BENCH_VERBOSE_ENV_KEY,
+  isEnvFlagEnabled,
   OBSERVATIONS_FILE_NAME,
 } from "@codefast/benchmark-harness/shared/env-keys";
 import type { SubprocessPayload } from "@codefast/benchmark-harness/shared/protocol";
@@ -33,7 +34,7 @@ import type { SubprocessPayload } from "@codefast/benchmark-harness/shared/proto
 import { CODEFAST_TV, CVA, TAILWIND_VARIANTS } from "#/harness/config";
 import { TAILWIND_VARIANTS_COMPARISON_CONSOLE, TAILWIND_VARIANTS_COMPARISON_MARKDOWN } from "#/harness/presentation";
 
-const VERBOSE_MODE_ENABLED = process.env[BENCH_VERBOSE_ENV_KEY] === "1";
+const VERBOSE_MODE_ENABLED = isEnvFlagEnabled(BENCH_VERBOSE_ENV_KEY);
 
 const packageRootDirectory = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
 
@@ -121,7 +122,7 @@ async function main(): Promise<void> {
   if (!VERBOSE_MODE_ENABLED) {
     console.log(
       `[bench] Quiet mode: child stdout is suppressed; per-scenario progress streams on stderr ` +
-        `(\`[${CODEFAST_TV.scenarioName}]\` / \`[${TAILWIND_VARIANTS.scenarioName}]\` / \`[${CVA.scenarioName}]\`). Use \`${BENCH_VERBOSE_ENV_KEY}=1\` for full child stdout.\n`,
+        `(\`[${CODEFAST_TV.scenarioName}]\` / \`[${TAILWIND_VARIANTS.scenarioName}]\` / \`[${CVA.scenarioName}]\`). Use \`${BENCH_VERBOSE_ENV_KEY}=true\` for full child stdout.\n`,
     );
   }
 

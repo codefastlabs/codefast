@@ -37,6 +37,7 @@ import {
   BENCH_ONLY_ENV_KEY,
   BENCH_RESULTS_DIR_NAME,
   BENCH_VERBOSE_ENV_KEY,
+  isEnvFlagEnabled,
   OBSERVATIONS_FILE_NAME,
   parseScenarioFilter,
 } from "@codefast/benchmark-harness/shared/env-keys";
@@ -45,7 +46,7 @@ import type { SubprocessPayload } from "@codefast/benchmark-harness/shared/proto
 import { AWILIX, CODEFAST_DI, INVERSIFY, TSYRINGE } from "#/harness/config";
 import { DI_COMPARISON_CONSOLE, DI_COMPARISON_MARKDOWN } from "#/harness/presentation";
 
-const VERBOSE_MODE_ENABLED = process.env[BENCH_VERBOSE_ENV_KEY] === "1";
+const VERBOSE_MODE_ENABLED = isEnvFlagEnabled(BENCH_VERBOSE_ENV_KEY);
 
 const packageRootDirectory = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
 
@@ -136,7 +137,7 @@ async function main(): Promise<void> {
   console.log("Each library runs N trials; the table reports per-trial medians and IQR.\n");
   if (!VERBOSE_MODE_ENABLED) {
     console.log(
-      `[bench] Quiet mode: child stdout is suppressed; per-scenario progress still streams on stderr (prefixed \`[${CODEFAST_DI.scenarioName}]\` / \`[${INVERSIFY.scenarioName}]\`). Use \`${BENCH_VERBOSE_ENV_KEY}=1\` (or \`pnpm bench:verbose\`) for full child stdout.\n`,
+      `[bench] Quiet mode: child stdout is suppressed; per-scenario progress still streams on stderr (prefixed \`[${CODEFAST_DI.scenarioName}]\` / \`[${INVERSIFY.scenarioName}]\`). Use \`${BENCH_VERBOSE_ENV_KEY}=true\` (or \`pnpm bench:verbose\`) for full child stdout.\n`,
     );
   }
 
