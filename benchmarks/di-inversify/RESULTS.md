@@ -4,7 +4,7 @@ What has actually been measured, separated by what each measurement can support.
 [`BENCH_GUIDE.md`](./BENCH_GUIDE.md); re-run any of it with the recipes there.
 
 **Environment.** Node 26.1.0 / V8 14.6, Apple M3 Max × 14, darwin/arm64. `@codefast/di` 0.5.0-canary.8 · inversify 8.2.3
-· awilix 13.0.5 · tsyringe 4.10.0. Isolated profile (`BENCH_ISOLATE=1`), 3 trials, unless a row says otherwise.
+· awilix 13.0.5 · tsyringe 4.10.0. Isolated profile (`BENCH_ISOLATE=true`), 3 trials, unless a row says otherwise.
 
 **The machine was not quiet.** These figures come from sessions that had been running benchmarks back to back for hours,
 so the absolute throughputs are depressed. Ratios survive that: a paired run measures both builds in the same window,
@@ -37,9 +37,9 @@ bench and stand only as history** until the next full isolated re-measure:
 - The report now names rows excluded from aggregates, pivot-only rows, and medians resting on fewer trials than the run
   scheduled.
 
-**Re-measure under the fixed harness (2026-08-01, `BENCH_ISOLATE=1 BENCH_FULL=1`, interleaved, 3 trials): 44 / 0 / 0
-against inversify, median 2.39×, geomean 2.90×.** Groups: micro 2.56× · realistic 2.35× · fan-out 2.23× · async 1.57× ·
-lifecycle 4.21× · scope 8.20× · scale 1.82× · boot 7.00× · failure 1.73× · production 6.86× · introspection 3.49×.
+**Re-measure under the fixed harness (2026-08-01, `BENCH_ISOLATE=true BENCH_MODE=full`, interleaved, 3 trials): 44 / 0 /
+0 against inversify, median 2.39×, geomean 2.90×.** Groups: micro 2.56× · realistic 2.35× · fan-out 2.23× · async 1.57×
+· lifecycle 4.21× · scope 8.20× · scale 1.82× · boot 7.00× · failure 1.73× · production 6.86× · introspection 3.49×.
 Against awilix 8 / 0 / 0 (median 3.31×); against tsyringe 7 / 0 / 1, the loss being `realistic-graph-cold-resolve` at
 0.90× — the parity-by-design row, which read 1.01× in the same-day default-profile session (44 wins there too, median
 2.21× / geomean 2.68×; the GC-exposed profile is the one that favors this library, and both sessions carried ~50 cells
@@ -198,7 +198,7 @@ declining the plan, not this one.
 
 ## Suite aggregates
 
-`BENCH_ISOLATE=1 BENCH_FULL=1`, one subprocess per scenario, libraries **interleaved with rotating order** — every
+`BENCH_ISOLATE=true BENCH_MODE=full`, one subprocess per scenario, libraries **interleaved with rotating order** — every
 library measures a scenario before the next scenario starts. Ratios over the 43 scenarios each competitor implements.
 
 | Competitor | Win / parity / loss | Median | Geomean |

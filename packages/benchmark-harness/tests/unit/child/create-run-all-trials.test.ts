@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { createRunAllTrials } from "#/child/create-run-all-trials";
-import { BENCH_FAST_ENV_KEY, BENCH_FULL_ENV_KEY, BENCH_TRIALS_ENV_KEY } from "#/shared/env-keys";
+import { BENCH_MODE_ENV_KEY, BENCH_TRIALS_ENV_KEY } from "#/shared/env-keys";
 
 const BENCH_DEFAULTS = { time: 1, iterations: 1, warmupTime: 0, warmupIterations: 0 };
 
@@ -30,18 +30,23 @@ describe("createRunAllTrials mode/trialCount resolution", () => {
     await expect(countExecutedTrials({ benchDefaults: BENCH_DEFAULTS, mode: "full" })).resolves.toBe(3);
   });
 
-  it("falls back to the BENCH_FULL env flag when no mode is passed", async () => {
-    vi.stubEnv(BENCH_FULL_ENV_KEY, "1");
+  it("falls back to BENCH_MODE=full when no mode is passed", async () => {
+    vi.stubEnv(BENCH_MODE_ENV_KEY, "full");
     await expect(countExecutedTrials({ benchDefaults: BENCH_DEFAULTS })).resolves.toBe(3);
   });
 
-  it("falls back to the BENCH_FAST env flag when no mode is passed — one smoke trial", async () => {
-    vi.stubEnv(BENCH_FAST_ENV_KEY, "1");
+  it("falls back to BENCH_MODE=fast when no mode is passed — one smoke trial", async () => {
+    vi.stubEnv(BENCH_MODE_ENV_KEY, "fast");
     await expect(countExecutedTrials({ benchDefaults: BENCH_DEFAULTS })).resolves.toBe(1);
   });
 
-  it("lets an explicit mode override the env flags", async () => {
-    vi.stubEnv(BENCH_FULL_ENV_KEY, "1");
+  it("treats BENCH_MODE=default as the default profile", async () => {
+    vi.stubEnv(BENCH_MODE_ENV_KEY, "default");
+    await expect(countExecutedTrials({ benchDefaults: BENCH_DEFAULTS })).resolves.toBe(3);
+  });
+
+  it("lets an explicit mode override BENCH_MODE", async () => {
+    vi.stubEnv(BENCH_MODE_ENV_KEY, "full");
     await expect(countExecutedTrials({ benchDefaults: BENCH_DEFAULTS, mode: "fast" })).resolves.toBe(1);
   });
 

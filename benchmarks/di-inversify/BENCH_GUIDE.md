@@ -66,6 +66,9 @@ they do to the build first, and pairing them wrong fails _silently_.
 | **Swap the source** — checkout, stash or patch `packages/di/src` per side       | `bench:isolate`                                                          | `src/harness/run.ts` calls `rebuildCodefastDiPackage()` before it spawns anything, and that rebuild is exactly what makes the swap take effect                                                                                                                                                                    |
 | **Swap the build** — two prebuilt dirs, copied over `packages/di/dist` per side | `BENCH_ONLY=<id>` on a child entry: `bench:codefast` / `bench:inversify` | The same rebuild would overwrite `packages/di/dist` from `src` before the first sample, so both sides measure HEAD and **every row reports parity** — an A/B that never compared anything. Prove the swap is live before trusting a number: install a build whose target function throws, and check the row fails |
 
+A narrowed run writes its own timestamped directory but leaves `latest.*` alone, so an A/B pass cannot quietly become
+the suite's published state.
+
 **Prefer swapping the source, and narrow the run instead.** `BENCH_ONLY=<id>` — a comma-separated list — is read by the
 parent as well as the child, so `BENCH_ONLY=<id> pnpm bench:isolate` runs that row alone, isolated and interleaved, in
 seconds. The rebuild it does first is around half a second, so nothing about the source lane is slow; what used to be
@@ -113,7 +116,7 @@ Throughput alone does not settle it, though, which is why the floor is measured 
 of `binding-level-activation-hook` — 31 M ops/s, inside the band above — put its medians at 30.53–31.34 M ops/s, **2.7%
 peak-to-peak**. The median of three trials is what buys that: wherever the trial order was recorded, on both libraries
 and on both activation rows, the **first** trial came back high — around 12% on the inversify rows, around 25% on the
-codefast ones — and never landed on the median. `BENCH_FAST`, which runs one trial, inherits that spread instead of
+codefast ones — and never landed on the median. `BENCH_MODE=fast`, which runs one trial, inherits that spread instead of
 discarding it.
 
 So a threshold of 0.98× on a ±12% row is not strict, it is meaningless — it will fire on noise about as often as it
@@ -169,10 +172,10 @@ Also required for a comparison to mean anything:
 
 ## What the harness enforces so you cannot forget
 
-- **Three trials minimum where a median is claimed.** The default and `BENCH_FULL` profiles run 3 trials, and
-  `BENCH_TRIALS=1` is rejected with a warning and the default restored — a median of two samples is their mean, and
-  cannot separate a change from noise. `BENCH_FAST` runs **one** trial: it is a smoke profile, answering "does it run
-  and roughly how fast", never a citable number.
+- **Three trials minimum where a median is claimed.** The default and full profiles run 3 trials, and `BENCH_TRIALS=1`
+  is rejected outright rather than quietly restored to the default — a median of two samples is their mean, and cannot
+  separate a change from noise. `BENCH_MODE=fast` runs **one** trial: it is a smoke profile, answering "does it run and
+  roughly how fast", never a citable number.
 - **Batching for sub-µs work.** `batched(factor, op)` and the scenario's `batch` field must agree; the reporter
   multiplies by it. Timing an 11 ns call one at a time made a control read 0.88×; batched, the same control read 1.02×.
 - **Instability flags in the output.** `†` marks rows above ~30M ops/s whose ratio moves between runs of the same build;

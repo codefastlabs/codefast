@@ -3,15 +3,29 @@
 export type { BenchSubprocessConfig } from "#/shared/config";
 export { resolveDisplayName } from "#/shared/config";
 
+export type { AssertBenchEnvKeysOptions, BenchEnvSpec, BenchMode, IntegerEnvBounds } from "#/shared/env-keys";
 export {
-  BENCH_FAST_ENV_KEY,
-  BENCH_FULL_ENV_KEY,
+  BENCH_ENV_SPECS,
+  BENCH_ISOLATE_ENV_KEY,
+  BENCH_LIST_ENV_KEY,
+  BENCH_MODE_ENV_KEY,
+  BENCH_ONLY_ENV_KEY,
   BENCH_PORT_ENV_KEY,
   BENCH_RESULTS_DIR_NAME,
   BENCH_TRIALS_ENV_KEY,
   BENCH_VERBOSE_ENV_KEY,
+  INTERNAL_BENCH_ENV_KEYS,
+  MINIMUM_TRIAL_COUNT,
   OBSERVATIONS_FILE_NAME,
+  USER_BENCH_ENV_KEYS,
+  assertBenchEnvKeys,
+  isEnvFlagEnabled,
+  parseEnvInteger,
+  parseScenarioFilter,
+  resolveBenchModeFromEnvironment,
 } from "#/shared/env-keys";
+
+export { assertSubjectMeasuredSomething } from "#/parent/assert-subject-measured";
 
 export type { Fingerprint, ScenarioTrialResult, SubprocessPayload, TrialPayload } from "#/shared/protocol";
 export {
@@ -26,7 +40,7 @@ export { BENCHMARK_SUITE_DEFAULT_BENCH_OPTIONS } from "#/child/bench-options";
 export type { AsyncBenchScenario, AnyBenchScenario, BenchScenario } from "#/child/bench-scenario";
 export { isAsyncScenario } from "#/child/bench-scenario";
 
-export type { BenchMode, CreateRunAllTrialsParameters, RunAllTrials } from "#/child/create-run-all-trials";
+export type { CreateRunAllTrialsParameters, RunAllTrials } from "#/child/create-run-all-trials";
 export { createRunAllTrials } from "#/child/create-run-all-trials";
 
 export { collectFingerprint } from "#/child/fingerprint";
@@ -46,6 +60,7 @@ export type { RunBenchSubprocessParameters } from "#/parent/run-bench-subprocess
 export {
   SubprocessExecutionError,
   buildSubprocessEnvironment,
+  discoverBenchScenarioIds,
   runBenchSubprocess,
 } from "#/parent/run-bench-subprocess";
 
@@ -95,4 +110,13 @@ export {
   summarizeComparison,
 } from "#/report/comparison";
 
-export { writeJsonlRun, writeMarkdownFile } from "#/report/write";
+export type {
+  ComparisonDocument,
+  ComparisonDocumentCell,
+  ComparisonDocumentEnvironment,
+  ComparisonDocumentLibrary,
+  ComparisonDocumentScenario,
+} from "#/report/comparison-document";
+export { COMPARISON_DOCUMENT_SCHEMA_VERSION, buildComparisonDocument } from "#/report/comparison-document";
+
+export { writeJsonFile, writeJsonlRun, writeMarkdownFile } from "#/report/write";

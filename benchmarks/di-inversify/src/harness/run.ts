@@ -18,6 +18,11 @@ import { spawnSync } from "node:child_process";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
+import { assertSubjectMeasuredSomething } from "@codefast/benchmark-harness/parent/assert-subject-measured";
+import {
+  buildBenchRunOutputPaths,
+  writeBenchRunArtifacts,
+} from "@codefast/benchmark-harness/parent/bench-run-artifacts";
 import { resolveBenchParentExitCode } from "@codefast/benchmark-harness/parent/resolve-bench-parent-exit-code";
 import type { RunBenchSubprocessParameters } from "@codefast/benchmark-harness/parent/run-bench-subprocess";
 import {
@@ -31,21 +36,19 @@ import {
   renderComparisonConsoleReport,
   renderComparisonMarkdownReport,
 } from "@codefast/benchmark-harness/report/comparison";
-import { writeJsonlRun, writeMarkdownFile } from "@codefast/benchmark-harness/report/write";
+import { buildComparisonDocument } from "@codefast/benchmark-harness/report/comparison-document";
 import { type BenchSubprocessConfig, resolveDisplayName } from "@codefast/benchmark-harness/shared/config";
 import {
-  BENCH_ONLY_ENV_KEY,
-  BENCH_RESULTS_DIR_NAME,
+  assertBenchEnvKeys,
   BENCH_VERBOSE_ENV_KEY,
-  OBSERVATIONS_FILE_NAME,
-  parseScenarioFilter,
+  isEnvFlagEnabled,
 } from "@codefast/benchmark-harness/shared/env-keys";
 import type { SubprocessPayload } from "@codefast/benchmark-harness/shared/protocol";
 
 import { AWILIX, CODEFAST_DI, INVERSIFY, TSYRINGE } from "#/harness/config";
 import { DI_COMPARISON_CONSOLE, DI_COMPARISON_MARKDOWN } from "#/harness/presentation";
 
-const VERBOSE_MODE_ENABLED = process.env[BENCH_VERBOSE_ENV_KEY] === "1";
+const VERBOSE_MODE_ENABLED = isEnvFlagEnabled(BENCH_VERBOSE_ENV_KEY);
 
 const packageRootDirectory = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
 
@@ -64,28 +67,6 @@ function rebuildCodefastDiPackage(): void {
   }
   const elapsedSeconds = (performance.now() - startedAtMs) / 1000;
   console.log(`Finished rebuild of ${CODEFAST_DI.libraryName} (${elapsedSeconds.toFixed(1)}s wall).`);
-}
-
-/**
- * Build the timestamped output directory for this run. We date stamp every
- * run so historical comparisons are never clobbered; the short-lived
- * `latest` symlink-style file gives CI a stable filename to diff against.
- */
-function buildOutputPaths(): {
-  markdownPath: string;
-  jsonlPath: string;
-  latestMarkdownPath: string;
-  latestJsonlPath: string;
-} {
-  const timestamp = new Date().toISOString().replaceAll(":", "-").replaceAll(".", "-");
-  const benchResultsRoot = join(packageRootDirectory, BENCH_RESULTS_DIR_NAME);
-  const runDirectory = join(benchResultsRoot, timestamp);
-  return {
-    markdownPath: join(runDirectory, "report.md"),
-    jsonlPath: join(runDirectory, OBSERVATIONS_FILE_NAME),
-    latestMarkdownPath: join(benchResultsRoot, "latest.md"),
-    latestJsonlPath: join(benchResultsRoot, "latest.jsonl"),
-  };
 }
 
 function subprocessParametersFor(config: BenchSubprocessConfig): RunBenchSubprocessParameters {
@@ -130,13 +111,14 @@ async function runEveryLibrary(
 }
 
 async function main(): Promise<void> {
+  assertBenchEnvKeys();
   console.log("\n@codefast/benchmark-di-inversify — head-to-head bench, each library in its canonical decorator mode.");
   console.log(`  ${CODEFAST_DI.libraryName}  : TC39 Stage 3 decorators + Symbol.metadata`);
   console.log(`  ${resolveDisplayName(INVERSIFY)} : legacy experimental decorators + reflect-metadata`);
   console.log("Each library runs N trials; the table reports per-trial medians and IQR.\n");
   if (!VERBOSE_MODE_ENABLED) {
     console.log(
-      `[bench] Quiet mode: child stdout is suppressed; per-scenario progress still streams on stderr (prefixed \`[${CODEFAST_DI.scenarioName}]\` / \`[${INVERSIFY.scenarioName}]\`). Use \`${BENCH_VERBOSE_ENV_KEY}=1\` (or \`pnpm bench:verbose\`) for full child stdout.\n`,
+      `[bench] Quiet mode: child stdout is suppressed; per-scenario progress still streams on stderr (prefixed \`[${CODEFAST_DI.scenarioName}]\` / \`[${INVERSIFY.scenarioName}]\`). Use \`${BENCH_VERBOSE_ENV_KEY}=true\` (or \`pnpm bench:verbose\`) for full child stdout.\n`,
     );
   }
 
@@ -149,16 +131,7 @@ async function main(): Promise<void> {
   const tsyringePayload = payloads.get(TSYRINGE.libraryName)!;
   console.log(`\n[bench] Run order: ${runOrder}`);
 
-  // A competitor may implement none of the requested rows and measure nothing; the subject may not,
-  // since then the run has nothing to report and the likeliest cause is a mistyped id.
-  if (
-    parseScenarioFilter(process.env[BENCH_ONLY_ENV_KEY]) !== undefined &&
-    codefastPayload.trials.every((trial) => trial.scenarios.length === 0)
-  ) {
-    throw new Error(
-      `${BENCH_ONLY_ENV_KEY}="${process.env[BENCH_ONLY_ENV_KEY] ?? ""}" matched no scenario in ${CODEFAST_DI.libraryName}.`,
-    );
-  }
+  assertSubjectMeasuredSomething(CODEFAST_DI.libraryName, codefastPayload.trials);
 
   const codefastReport: LibraryReport = buildLibraryReport(
     codefastPayload.fingerprint,
@@ -207,16 +180,16 @@ async function main(): Promise<void> {
     runOrder,
   });
 
-  const outputPaths = buildOutputPaths();
-  writeMarkdownFile(outputPaths.markdownPath, markdown);
-  writeJsonlRun(outputPaths.jsonlPath, librariesForJsonl);
+  // The same comparison the markdown renders, kept as data: the table rounds every ratio and
+  // spends its reliability verdicts as glyphs, neither of which reads back.
+  const outputPaths = buildBenchRunOutputPaths(packageRootDirectory);
+  const comparisonDocument = buildComparisonDocument(codefastLibrary, competitors, {
+    runId: outputPaths.runId,
+    runOrder,
+    scenariosAvailable: codefastPayload.scenarioIds?.length,
+  });
 
-  writeMarkdownFile(outputPaths.latestMarkdownPath, markdown);
-  writeJsonlRun(outputPaths.latestJsonlPath, librariesForJsonl);
-
-  console.log(`Markdown report: ${outputPaths.markdownPath}`);
-  console.log(`JSONL observations: ${outputPaths.jsonlPath}`);
-  console.log(`Also mirrored to: ${outputPaths.latestMarkdownPath}, ${outputPaths.latestJsonlPath}`);
+  writeBenchRunArtifacts({ paths: outputPaths, markdown, comparisonDocument, librariesForJsonl });
 }
 
 main().catch((caught: unknown) => {

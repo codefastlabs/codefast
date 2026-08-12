@@ -75,10 +75,25 @@
       "types": "./dist/child/run-sanity-checks.d.ts",
       "import": "./dist/child/run-sanity-checks.js"
     },
+    "./parent/assert-subject-measured": {
+      "source": "./src/parent/assert-subject-measured.ts",
+      "types": "./dist/parent/assert-subject-measured.d.ts",
+      "import": "./dist/parent/assert-subject-measured.js"
+    },
+    "./parent/bench-run-artifacts": {
+      "source": "./src/parent/bench-run-artifacts.ts",
+      "types": "./dist/parent/bench-run-artifacts.d.ts",
+      "import": "./dist/parent/bench-run-artifacts.js"
+    },
     "./parent/resolve-bench-parent-exit-code": {
       "source": "./src/parent/resolve-bench-parent-exit-code.ts",
       "types": "./dist/parent/resolve-bench-parent-exit-code.d.ts",
       "import": "./dist/parent/resolve-bench-parent-exit-code.js"
+    },
+    "./parent/run-bench-listing-main": {
+      "source": "./src/parent/run-bench-listing-main.ts",
+      "types": "./dist/parent/run-bench-listing-main.d.ts",
+      "import": "./dist/parent/run-bench-listing-main.js"
     },
     "./parent/run-bench-subprocess": {
       "source": "./src/parent/run-bench-subprocess.ts",
@@ -94,6 +109,11 @@
       "source": "./src/report/comparison.ts",
       "types": "./dist/report/comparison.d.ts",
       "import": "./dist/report/comparison.js"
+    },
+    "./report/comparison-document": {
+      "source": "./src/report/comparison-document.ts",
+      "types": "./dist/report/comparison-document.d.ts",
+      "import": "./dist/report/comparison-document.js"
     },
     "./report/format": {
       "source": "./src/report/format.ts",

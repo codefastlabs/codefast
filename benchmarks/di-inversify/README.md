@@ -24,15 +24,21 @@ working tree rather than a stale `dist/`.
 | `pnpm bench:full`    | `--expose-gc` for every library, forcing collections into the measured loop       |
 | `pnpm bench:isolate` | One subprocess per scenario, so no scenario inherits another's inline caches      |
 | `pnpm bench:verbose` | Per-trial detail on stdout                                                        |
+| `pnpm bench:list`    | Prints scenario ids as JSON on stdout, measuring nothing — no bench run needed    |
 | `pnpm bench:serve`   | Serves the run history from `bench-results/` in a browser                         |
+| `BENCH_MODE=<mode>`  | Timing profile: `fast`, `default` or `full` — what the `bench:*` scripts set      |
+| `BENCH_PORT=<n>`     | Preferred port for `bench:serve`                                                  |
 | `BENCH_TRIALS=<n>`   | Trials per scenario; the harness refuses anything below 3                         |
 | `BENCH_ONLY=<id>`    | One scenario, in the child processes — what the A/B recipes in the guide use      |
 
-Profiles compose: `BENCH_FULL=1 pnpm bench:isolate` is the slowest and the most order-independent.
+Profiles compose: `BENCH_MODE=full pnpm bench:isolate` is the slowest and the most order-independent.
 
-Every run writes a timestamped directory under `bench-results/` (git-ignored) holding `report.md` and
-`observations.jsonl`, and mirrors the newest to `latest.md` / `latest.jsonl`. The JSONL carries every per-trial figure
-the markdown summarises, including each cell's IQR.
+Every run writes a timestamped directory under `bench-results/` (git-ignored) holding `report.md`, `report.json` and
+`observations.jsonl`, and mirrors the newest to `latest.md` / `latest.json` / `latest.jsonl`. `report.json` is the same
+comparison as data — full-precision ratios and reliability as booleans, where the markdown rounds and uses glyphs. Its
+`run` block records the profile, isolation and any scenario filter, so a narrowed run cannot be mistaken for a whole one
+— and a narrowed run leaves `latest.*` alone for that reason. The JSONL carries every per-trial figure the markdown
+summarises, including each cell's IQR.
 
 ## How it is put together
 
@@ -46,9 +52,9 @@ src/instruments/            diagnostic tools, outside the comparison
 ```
 
 `src/instruments/` holds what the comparison table cannot answer, and nothing else. Today that is one tool:
-`pnpm instrument:alloc`, which reports how much a resolve allocates —
-[`BENCH_GUIDE.md`](./BENCH_GUIDE.md#when-the-claim-is-about-allocation-count-allocations) says when reaching for it
-beats re-running the suite.
+`pnpm instrument:alloc` (`BENCH_ALLOC_OPERATIONS=<n>` to change the loop size), which reports how much a resolve
+allocates — [`BENCH_GUIDE.md`](./BENCH_GUIDE.md#when-the-claim-is-about-allocation-count-allocations) says when reaching
+for it beats re-running the suite.
 
 It produces no row and no ratio, and it is **not** exempt from the standard on that account: a figure from here is a
 figure, so it meets [`BENCH_GUIDE.md`](./BENCH_GUIDE.md) and it is published in [`RESULTS.md`](./RESULTS.md) before it
@@ -95,9 +101,9 @@ the numbers.
 
 That is not a detail. Scheduling one library's whole suite before the next one starts puts minutes between the two sides
 of every ratio, so any drift over the run lands entirely on whoever was scheduled later — and in a suite written to
-promote one library, that is never the one being promoted. Measured on `realistic-graph-cold-resolve` under
-`BENCH_FULL`, before the runner interleaved: library-major read 1.28× of tsyringe, and the same two libraries
-interleaved read 0.99×.
+promote one library, that is never the one being promoted. Measured on `realistic-graph-cold-resolve` under the full
+profile, before the runner interleaved: library-major read 1.28× of tsyringe, and the same two libraries interleaved
+read 0.99×.
 
 **Without `bench:isolate` there is nothing to interleave** — one process per library runs that library's whole suite —
 so a cross-library ratio from the plain profile stays provisional, and the report says so in the same place.

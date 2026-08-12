@@ -22,9 +22,9 @@ Two execution shapes:
 - **Shared** (`runBenchSubprocess`): one child per library runs every scenario — approximates a long-lived app, but
   earlier scenarios train the library's hot-path inline caches for later ones (measured at ~30% on async chains), so
   rows are order-dependent.
-- **Isolated** (`runBenchSubprocessIsolated`, opt in with `BENCH_ISOLATE=1`): one child **per scenario** per library — a
-  `BENCH_LIST` discovery child reports scenario ids, then `BENCH_ONLY=<id>` workers run one scenario each and the parent
-  merges trials back into a single payload. Order-independent.
+- **Isolated** (`runBenchSubprocessIsolated`, opt in with `BENCH_ISOLATE=true`): one child **per scenario** per library
+  — a `BENCH_LIST` discovery child reports scenario ids, then `BENCH_ONLY=<id>` workers run one scenario each and the
+  parent merges trials back into a single payload. Order-independent.
 
 Reports open with a **summary table, one row per competitor** — comparable rows out of the suite, win/parity/loss counts
 (±3% parity band), median and geomean ratios, and how many of those rows carry the unreliable marker — followed by a
@@ -43,10 +43,57 @@ pnpm bench         # run the benchmark suites
 pnpm bench:serve   # browse historical results (see @codefast/benchmark-viewer)
 ```
 
-Suite-level knobs are environment-driven: `BENCH_FAST=1` (quick pass), `BENCH_FULL=1` (extended pass),
-`BENCH_TRIALS=<n>` (trial count, min 2), `BENCH_VERBOSE=1` (forward child logs), `BENCH_ISOLATE=1` (one subprocess per
-scenario). `BENCH_LIST` / `BENCH_ONLY` are internal child-side keys set by the isolated parent — not meant to be set by
-hand.
+Suite-level knobs are environment-driven:
+
+| Key                    | Effect                                                                  |
+| ---------------------- | ----------------------------------------------------------------------- |
+| `BENCH_MODE=fast`      | Smoke pass: shorter sampling windows, one trial. Never a citable number |
+| `BENCH_MODE=default`   | The default profile — same as leaving `BENCH_MODE` unset                |
+| `BENCH_MODE=full`      | Extended pass with `--expose-gc`                                        |
+| `BENCH_TRIALS=<n>`     | Trial count; the harness refuses anything below 3                       |
+| `BENCH_VERBOSE=true`   | Forward child stdout                                                    |
+| `BENCH_ISOLATE=true`   | One subprocess per scenario                                             |
+| `BENCH_ONLY=<id>,<id>` | Restrict the run to these scenario ids                                  |
+| `BENCH_PORT=<n>`       | Preferred port for `bench:serve`                                        |
+
+Each run writes three artifacts into its timestamped directory, mirrored to `latest.*`:
+
+| File                 | For                                                                                        |
+| -------------------- | ------------------------------------------------------------------------------------------ |
+| `report.md`          | Reading. Rounded figures, `†`/`‡` reliability glyphs, the prose that frames the comparison |
+| `report.json`        | Querying. The same comparison as data — full-precision ratios, reliability as booleans     |
+| `observations.jsonl` | Raw per-trial rows, one per `(library, trial, scenario)`, fingerprint on every row         |
+
+Every `report.json` opens with a `run` block — `runId`, `mode`, `isolated`, `scenarioFilter`, `trialCount`, and
+`scenariosMeasured` against `scenariosAvailable`. Without it a run narrowed to one row is indistinguishable from a whole
+suite except by counting, which only helps a reader who already knows how many rows the suite has. `runId` is the
+run-directory basename, so a `latest.*` mirror joins back to its directory exactly rather than by nearest timestamp.
+
+**A filtered run does not move `latest.*`.** It writes its own directory and says so. `latest.*` is what CI diffs and
+what a published figure is checked against, so it has to mean the whole suite. A smoke run does mirror — `run.mode` is
+how you tell it apart from a publishable one.
+
+`report.json` exists because `report.md` is a lossy projection: a ratio rounded to three significant figures cannot
+resolve a few percent, and the glyphs encode thresholds only the renderer knows. Every figure in it was already computed
+on the way to the markdown — `buildComparisonDocument` stops discarding it. Two `report.json` files are a plain dict
+join, which is what makes "did this row move between runs" answerable without recomputing the aggregate layer.
+
+`pnpm bench:list` prints the suite's scenario ids as JSON on stdout — the id list a `BENCH_ONLY` filter needs, and which
+libraries implement each row. Discovery progress goes to stderr, so stdout needs no framing markers or last-line
+heuristic to read back.
+
+[`shared/env-keys.ts`](src/shared/env-keys.ts) is the single source for all of it: `BENCH_ENV_SPECS` declares each key's
+accepted values, who may set it, and which Turbo tasks must pass it through. Everything else derives from that map — the
+parsers, the keys the parent strips before spawning a child, and a test asserting `turbo.json` lists every user-facing
+key. Turbo runs in strict env mode, so a key missing from `passThroughEnv` is dropped for any run started at the repo
+root, which looks exactly like the key having no effect.
+
+Nothing in the namespace fails quietly. On/off keys accept `1`, `true`, `yes` or `on` in any case; numeric keys take
+digits only and are range-checked, so `BENCH_TRIALS=3abc` and `BENCH_PORT=0` are errors rather than a silently different
+number. An unknown `BENCH_*` key is rejected too — `BENCH_MODEE=fast` selects nothing, so it throws instead.
+`BENCH_MODE` is one key with three values rather than a flag per profile — the profiles are mutually exclusive, so a
+flag pair could express a both-on state with no meaning. `BENCH_LIST` is an internal child-side key set by the isolated
+parent — not meant to be set by hand.
 
 ## License
 

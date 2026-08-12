@@ -8,6 +8,11 @@ import { spawnSync } from "node:child_process";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
+import { assertSubjectMeasuredSomething } from "@codefast/benchmark-harness/parent/assert-subject-measured";
+import {
+  buildBenchRunOutputPaths,
+  writeBenchRunArtifacts,
+} from "@codefast/benchmark-harness/parent/bench-run-artifacts";
 import { resolveBenchParentExitCode } from "@codefast/benchmark-harness/parent/resolve-bench-parent-exit-code";
 import type { RunBenchSubprocessParameters } from "@codefast/benchmark-harness/parent/run-bench-subprocess";
 import {
@@ -21,19 +26,19 @@ import {
   renderComparisonConsoleReport,
   renderComparisonMarkdownReport,
 } from "@codefast/benchmark-harness/report/comparison";
-import { writeJsonlRun, writeMarkdownFile } from "@codefast/benchmark-harness/report/write";
+import { buildComparisonDocument } from "@codefast/benchmark-harness/report/comparison-document";
 import type { BenchSubprocessConfig } from "@codefast/benchmark-harness/shared/config";
 import {
-  BENCH_RESULTS_DIR_NAME,
+  assertBenchEnvKeys,
   BENCH_VERBOSE_ENV_KEY,
-  OBSERVATIONS_FILE_NAME,
+  isEnvFlagEnabled,
 } from "@codefast/benchmark-harness/shared/env-keys";
 import type { SubprocessPayload } from "@codefast/benchmark-harness/shared/protocol";
 
 import { CODEFAST_TV, CVA, TAILWIND_VARIANTS } from "#/harness/config";
 import { TAILWIND_VARIANTS_COMPARISON_CONSOLE, TAILWIND_VARIANTS_COMPARISON_MARKDOWN } from "#/harness/presentation";
 
-const VERBOSE_MODE_ENABLED = process.env[BENCH_VERBOSE_ENV_KEY] === "1";
+const VERBOSE_MODE_ENABLED = isEnvFlagEnabled(BENCH_VERBOSE_ENV_KEY);
 
 const packageRootDirectory = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
 
@@ -52,25 +57,6 @@ function rebuildCodefastTailwindVariantsPackage(): void {
   }
   const elapsedSeconds = (performance.now() - startedAtMs) / 1000;
   console.log(`Finished rebuild of ${CODEFAST_TV.libraryName} (${elapsedSeconds.toFixed(1)}s wall).`);
-}
-
-function buildOutputPaths(): {
-  runDirectory: string;
-  markdownPath: string;
-  jsonlPath: string;
-  latestMarkdownPath: string;
-  latestJsonlPath: string;
-} {
-  const timestamp = new Date().toISOString().replaceAll(":", "-").replaceAll(".", "-");
-  const benchResultsRoot = join(packageRootDirectory, BENCH_RESULTS_DIR_NAME);
-  const runDirectory = join(benchResultsRoot, timestamp);
-  return {
-    runDirectory,
-    markdownPath: join(runDirectory, "report.md"),
-    jsonlPath: join(runDirectory, OBSERVATIONS_FILE_NAME),
-    latestMarkdownPath: join(benchResultsRoot, "latest.md"),
-    latestJsonlPath: join(benchResultsRoot, "latest.jsonl"),
-  };
 }
 
 const INTERLEAVED_RUN_ORDER =
@@ -114,6 +100,7 @@ async function runEveryLibrary(
 }
 
 async function main(): Promise<void> {
+  assertBenchEnvKeys();
   console.log(
     `\n@codefast/benchmark-tailwind-variants — each library runs in its own subprocess; ` +
       `comparisons are ${CODEFAST_TV.libraryName} vs ${TAILWIND_VARIANTS.libraryName} and vs ${CVA.libraryName}.\n`,
@@ -121,7 +108,7 @@ async function main(): Promise<void> {
   if (!VERBOSE_MODE_ENABLED) {
     console.log(
       `[bench] Quiet mode: child stdout is suppressed; per-scenario progress streams on stderr ` +
-        `(\`[${CODEFAST_TV.scenarioName}]\` / \`[${TAILWIND_VARIANTS.scenarioName}]\` / \`[${CVA.scenarioName}]\`). Use \`${BENCH_VERBOSE_ENV_KEY}=1\` for full child stdout.\n`,
+        `(\`[${CODEFAST_TV.scenarioName}]\` / \`[${TAILWIND_VARIANTS.scenarioName}]\` / \`[${CVA.scenarioName}]\`). Use \`${BENCH_VERBOSE_ENV_KEY}=true\` for full child stdout.\n`,
     );
   }
 
@@ -132,6 +119,8 @@ async function main(): Promise<void> {
   const tailwindVariantsPayload = payloads.get(TAILWIND_VARIANTS.libraryName)!;
   const classVarianceAuthorityPayload = payloads.get(CVA.libraryName)!;
   console.log(`\n[bench] Run order: ${runOrder}`);
+
+  assertSubjectMeasuredSomething(CODEFAST_TV.libraryName, codefastPayload.trials);
 
   const codefastReport: LibraryReport = buildLibraryReport(
     codefastPayload.fingerprint,
@@ -181,17 +170,16 @@ async function main(): Promise<void> {
     ...TAILWIND_VARIANTS_COMPARISON_MARKDOWN,
     runOrder,
   });
-  const outputPaths = buildOutputPaths();
-  writeMarkdownFile(outputPaths.markdownPath, markdown);
-  writeJsonlRun(outputPaths.jsonlPath, librariesForJsonl);
+  // The same comparison the markdown renders, kept as data: the table rounds every ratio and
+  // spends its reliability verdicts as glyphs, neither of which reads back.
+  const outputPaths = buildBenchRunOutputPaths(packageRootDirectory);
+  const comparisonDocument = buildComparisonDocument(codefastLibrary, competitors, {
+    runId: outputPaths.runId,
+    runOrder,
+    scenariosAvailable: codefastPayload.scenarioIds?.length,
+  });
 
-  writeMarkdownFile(outputPaths.latestMarkdownPath, markdown);
-  writeJsonlRun(outputPaths.latestJsonlPath, librariesForJsonl);
-
-  console.log(`Run directory: ${outputPaths.runDirectory}`);
-  console.log(`Markdown report: ${outputPaths.markdownPath}`);
-  console.log(`JSONL observations: ${outputPaths.jsonlPath}`);
-  console.log(`Also mirrored to latest: ${outputPaths.latestMarkdownPath}, ${outputPaths.latestJsonlPath}`);
+  writeBenchRunArtifacts({ paths: outputPaths, markdown, comparisonDocument, librariesForJsonl });
 }
 
 main().catch((caught: unknown) => {

@@ -35,12 +35,13 @@
     "bench": "node --import tsx/esm src/harness/run.ts",
     "bench:class-variance-authority": "node --import tsx/esm src/class-variance-authority-benches.ts",
     "bench:codefast": "node --import tsx/esm src/codefast-benches.ts",
-    "bench:fast": "BENCH_FAST=1 node --import tsx/esm src/harness/run.ts",
-    "bench:full": "BENCH_FULL=1 node --import tsx/esm src/harness/run.ts",
-    "bench:isolate": "BENCH_ISOLATE=1 node --import tsx/esm src/harness/run.ts",
+    "bench:fast": "BENCH_MODE=fast node --import tsx/esm src/harness/run.ts",
+    "bench:full": "BENCH_MODE=full node --import tsx/esm src/harness/run.ts",
+    "bench:isolate": "BENCH_ISOLATE=true node --import tsx/esm src/harness/run.ts",
+    "bench:list": "node --import tsx/esm src/harness/list.ts",
     "bench:serve": "node --import tsx/esm src/harness/serve.ts",
     "bench:tailwind-variants": "node --import tsx/esm src/tailwind-variants-benches.ts",
-    "bench:verbose": "BENCH_VERBOSE=1 node --import tsx/esm src/harness/run.ts",
+    "bench:verbose": "BENCH_VERBOSE=true node --import tsx/esm src/harness/run.ts",
     "check-types": "tsc --noEmit"
   },
   "dependencies": {

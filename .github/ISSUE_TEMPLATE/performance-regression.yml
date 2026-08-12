@@ -78,7 +78,7 @@ body:
       label: Measurement methodology
       description: These are the suite's own rules. Unchecked boxes are fine — say which and why in the notes below; the report is still useful, just weaker.
       options:
-        - label: "Ran with process isolation (`bench:isolate` / `BENCH_ISOLATE=1`), so the numbers are order-independent."
+        - label: "Ran with process isolation (`bench:isolate` / `BENCH_ISOLATE=true`), so the numbers are order-independent."
         - label: "At least 3 trials per side. Two cannot separate a real change from ambient noise."
         - label: "The baseline was stashed and rebuilt on this same machine — not numbers carried over from an earlier session."
         - label: "Compared the **best** run of each side rather than a single median. Ambient load only ever subtracts throughput."

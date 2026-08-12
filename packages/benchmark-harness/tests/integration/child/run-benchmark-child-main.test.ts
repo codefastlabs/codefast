@@ -70,7 +70,7 @@ describe("runBenchmarkChildMain", () => {
   });
 
   it("emits scenario ids without running trials in BENCH_LIST discovery mode", async () => {
-    vi.stubEnv(BENCH_LIST_ENV_KEY, "1");
+    vi.stubEnv(BENCH_LIST_ENV_KEY, "true");
     const payload = await runChildAndCapture({
       libraryName: "lib",
       scenarioName: "test",

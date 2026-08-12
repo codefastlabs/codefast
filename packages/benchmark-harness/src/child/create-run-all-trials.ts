@@ -3,7 +3,13 @@ import { Bench } from "tinybench";
 
 import type { AnyBenchScenario } from "#/child/bench-scenario";
 import { isAsyncScenario } from "#/child/bench-scenario";
-import { BENCH_FAST_ENV_KEY, BENCH_FULL_ENV_KEY, BENCH_TRIALS_ENV_KEY } from "#/shared/env-keys";
+import type { BenchMode } from "#/shared/env-keys";
+import {
+  BENCH_TRIALS_ENV_KEY,
+  MINIMUM_TRIAL_COUNT,
+  parseEnvInteger,
+  resolveBenchModeFromEnvironment,
+} from "#/shared/env-keys";
 import type { ScenarioTrialResult, TrialPayload } from "#/shared/protocol";
 
 /**
@@ -11,7 +17,6 @@ import type { ScenarioTrialResult, TrialPayload } from "#/shared/protocol";
  * long-running suites do not balloon due to GC-heavy beforeEach hooks.
  */
 const FULL_MODE_SAMPLE_GC_STRIDE = 100;
-const MIN_TRIAL_COUNT = 3;
 const FULL_MODE_TRIAL_COUNT = 3;
 // Fast mode is a smoke profile: one trial answers "does it run and roughly how fast",
 // and anything needing a median belongs in the default or full profile.
@@ -82,12 +87,7 @@ function createZeroedScenarioTrialResult(scenario: AnyBenchScenario, hzPerIterat
   };
 }
 
-/**
- * Timing profile for a bench run: `fast` for smoke checks, `full` for GC-enabled stability runs.
- *
- * @since 0.5.0-canary.7
- */
-export type BenchMode = "fast" | "full";
+export type { BenchMode };
 
 /**
  * @since 0.3.16-canary.0
@@ -99,7 +99,7 @@ export type CreateRunAllTrialsParameters = Readonly<{
    */
   readonly benchDefaults: BenchOptions;
   /**
-   * Explicit timing profile; when absent, falls back to the `BENCH_FAST`/`BENCH_FULL` env flags.
+   * Explicit timing profile; when absent, falls back to `BENCH_MODE`.
    */
   readonly mode?: BenchMode | undefined;
   /**
@@ -118,20 +118,6 @@ export type RunAllTrials = (
   trialCount?: number,
 ) => Promise<Array<TrialPayload>>;
 
-// `fast` wins when both env flags are set — matches the historical option precedence.
-function resolveMode(explicitMode: BenchMode | undefined): BenchMode | undefined {
-  if (explicitMode !== undefined) {
-    return explicitMode;
-  }
-  if (process.env[BENCH_FAST_ENV_KEY] === "1") {
-    return "fast";
-  }
-  if (process.env[BENCH_FULL_ENV_KEY] === "1") {
-    return "full";
-  }
-  return undefined;
-}
-
 function resolveBenchOptions(benchDefaults: BenchOptions, mode: BenchMode | undefined): BenchOptions {
   if (mode === "fast") {
     return FAST_MODE_BENCH_OPTIONS;
@@ -144,25 +130,26 @@ function resolveBenchOptions(benchDefaults: BenchOptions, mode: BenchMode | unde
 
 function resolveTrialCount(explicitTrialCount: number | undefined, mode: BenchMode | undefined): number {
   const defaultTrialCount =
-    mode === "fast" ? FAST_MODE_TRIAL_COUNT : mode === "full" ? FULL_MODE_TRIAL_COUNT : MIN_TRIAL_COUNT;
-  const rawValue = explicitTrialCount ?? process.env[BENCH_TRIALS_ENV_KEY];
-  if (rawValue === undefined || (typeof rawValue === "string" && rawValue.trim() === "")) {
-    return defaultTrialCount;
+    mode === "fast" ? FAST_MODE_TRIAL_COUNT : mode === "full" ? FULL_MODE_TRIAL_COUNT : MINIMUM_TRIAL_COUNT;
+  // A caller passing the count in code gets a warning and the default; the env value throws, since
+  // a person asking for a trial count and silently getting another one cannot tell.
+  if (explicitTrialCount !== undefined) {
+    const truncatedCount = Math.trunc(explicitTrialCount);
+    if (!Number.isFinite(truncatedCount) || truncatedCount < MINIMUM_TRIAL_COUNT) {
+      console.error(
+        `[trial] trial count "${String(explicitTrialCount)}" is below minimum ${String(MINIMUM_TRIAL_COUNT)}; falling back to default ${String(defaultTrialCount)}.`,
+      );
+      return defaultTrialCount;
+    }
+    return truncatedCount;
   }
-  const parsed = typeof rawValue === "number" ? Math.trunc(rawValue) : Number.parseInt(rawValue, 10);
-  if (!Number.isFinite(parsed) || parsed < MIN_TRIAL_COUNT) {
-    console.error(
-      `[trial] trial count "${String(rawValue)}" is below minimum ${String(MIN_TRIAL_COUNT)}; falling back to default ${String(defaultTrialCount)}.`,
-    );
-    return defaultTrialCount;
-  }
-  return parsed;
+  return parseEnvInteger(BENCH_TRIALS_ENV_KEY) ?? defaultTrialCount;
 }
 
 /**
  * Returns `runAllTrials` backed by tinybench options derived from `benchDefaults` and
  * the given mode/trial-count options, falling back to the subprocess env
- * (`BENCH_FAST`, `BENCH_FULL`, `BENCH_TRIALS`) when they are absent.
+ * (`BENCH_MODE`, `BENCH_TRIALS`) when they are absent.
  *
  * @since 0.3.16-canary.0
  */
@@ -170,7 +157,7 @@ export function createRunAllTrials(parameters: CreateRunAllTrialsParameters): {
   runAllTrials: RunAllTrials;
 } {
   const { benchDefaults } = parameters;
-  const mode = resolveMode(parameters.mode);
+  const mode = parameters.mode ?? resolveBenchModeFromEnvironment();
   const benchOptions = resolveBenchOptions(benchDefaults, mode);
   const defaultTrialCount = resolveTrialCount(parameters.trialCount, mode);
 
