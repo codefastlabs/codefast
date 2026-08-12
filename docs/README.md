@@ -1,69 +1,71 @@
-# Chỉ mục tài liệu
+# Documentation index
 
-Thư mục `docs/` được tổ chức theo **loại tài liệu**, không theo lĩnh vực. Lĩnh vực nằm trong tên file.
+The `docs/` directory is organised by **document type**, not by subject area. The subject area lives in the filename.
 
-Lý do: câu hỏi _"tài liệu này thuộc lĩnh vực nào?"_ thường có nhiều đáp án, nên phân theo lĩnh vực sẽ đẻ ra ngăn kéo tạp
-nham. Câu hỏi _"tài liệu này loại gì?"_ chỉ có một đáp án.
-
----
-
-## Đặt file mới ở đâu
-
-Đi từ trên xuống, dừng ở điều kiện đầu tiên đúng:
-
-| Câu hỏi                                                                  | Thư mục      | Vòng đời                                             |
-| ------------------------------------------------------------------------ | ------------ | ---------------------------------------------------- |
-| Đây có phải **nguồn chân lý** mà code hoặc bên khác phải bám theo không? | `specs/`     | sống lâu, có owner rõ ràng                           |
-| Đây có phải **một quyết định đã chốt + lý do** không?                    | `decisions/` | không sửa sau khi chốt, chỉ thay bằng quyết định mới |
-| Đây có phải **hướng dẫn làm một việc** không?                            | `guides/`    | sống lâu, cập nhật khi hệ thống đổi                  |
-| Đây có phải **quy trình chạy tay lặp lại** không?                        | `runbooks/`  | sống lâu                                             |
-| Đây có phải **việc có thời hạn, có checklist** không?                    | `plans/`     | đóng lại khi xong                                    |
-| Đây có phải **ảnh chụp tại một thời điểm** không?                        | `reports/`   | không bao giờ cập nhật, chỉ thêm bản mới             |
-
-Chỉ tạo thư mục khi thật sự có file thuộc loại đó — không dựng thư mục rỗng để "cho đủ bộ".
-
-### Quy ước đặt tên
-
-- kebab-case, không dấu, không hậu tố thừa: `github-project-board.md` chứ không phải `github-project-board-guide.md` (đã
-  nằm trong `guides/` rồi)
-- Cùng một lĩnh vực có thể xuất hiện ở nhiều loại — `guides/github-project-board.md` và
-  `decisions/github-project-board.md` là hai tài liệu khác nhau về cùng một thứ, và đó là bình thường
-- `reports/` gắn thời gian vào tên: `security-status-2026-05.md`
+Why: the question _"which area does this document belong to?"_ usually has several answers, so splitting by area breeds
+a junk drawer. The question _"what type of document is this?"_ has exactly one answer.
 
 ---
 
-## decisions/ — quyết định và lý do
+## Where a new file goes
 
-Ghi lại đã chọn gì và vì sao. Không sửa nội dung cũ; nếu quyết định thay đổi thì viết bản mới và trỏ ngược lại.
+Work down the list and stop at the first row that is true:
 
-| File                                                           | Nội dung                                                                                         |
-| -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
-| [`github-project-board.md`](decisions/github-project-board.md) | Thiết kế board GitHub Projects: chọn gì, vì sao, ràng buộc nào của nền tảng đã buộc đổi thiết kế |
+| Question                                                              | Directory    | Lifecycle                                               |
+| --------------------------------------------------------------------- | ------------ | ------------------------------------------------------- |
+| Is this a **source of truth** that code or another party must follow? | `specs/`     | long-lived, with a clear owner                          |
+| Is this **a settled decision plus its reasoning**?                    | `decisions/` | never edited once settled, only superseded by a new one |
+| Is this **instructions for doing something**?                         | `guides/`    | long-lived, updated when the system changes             |
+| Is this **a repeatable manual procedure**?                            | `runbooks/`  | long-lived                                              |
+| Is this **time-boxed work with a checklist**?                         | `plans/`     | closed when it is finished                              |
+| Is this **a snapshot of one moment**?                                 | `reports/`   | never updated, only joined by a newer one               |
 
-## guides/ — hướng dẫn thao tác
+Only create a directory once there is a file that genuinely belongs in it — do not stand up empty directories "for
+completeness".
 
-| File                                                        | Nội dung                                            |
-| ----------------------------------------------------------- | --------------------------------------------------- |
-| [`github-project-board.md`](guides/github-project-board.md) | Board hoạt động thế nào và dùng nó hằng ngày ra sao |
+### Naming convention
 
-## runbooks/ — quy trình vận hành
-
-| File                                                                      | Nội dung                                                       |
-| ------------------------------------------------------------------------- | -------------------------------------------------------------- |
-| [`github-project-maintenance.md`](runbooks/github-project-maintenance.md) | Sửa field / workflow / view của board mà không làm vỡ cấu hình |
+- kebab-case, no diacritics, no redundant suffix: `github-project-board.md`, not `github-project-board-guide.md` (it is
+  already in `guides/`)
+- The same subject may appear under several types — `guides/github-project-board.md` and
+  `decisions/github-project-board.md` are two different documents about the same thing, and that is fine
+- `reports/` puts the time in the name: `security-status-2026-05.md`
 
 ---
 
-## Tài liệu nằm trong package
+## decisions/ — decisions and their reasoning
 
-Tài liệu chỉ liên quan tới một package thì để ngay trong package đó, không đưa vào `docs/`:
+A record of what was chosen and why. Never edit the old content; if a decision changes, write a new one and link back.
 
-- `packages/di/ARCHITECTURE.md` — nguồn chân lý cho `resolution/`, đọc trước khi sửa hot path; `PERFORMANCE.md` (mỗi
-  shape đáng giá bao nhiêu, đo bằng cách nào) và `REJECTED.md` (đã thử và bị loại) đi kèm nó
-- `packages/tracking/spec/` — contract hành vi
+| File                                                           | Content                                                                                             |
+| -------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
+| [`github-project-board.md`](decisions/github-project-board.md) | The GitHub Projects board design: what was chosen, why, and which platform limits forced a redesign |
+
+## guides/ — how to do things
+
+| File                                                        | Content                                          |
+| ----------------------------------------------------------- | ------------------------------------------------ |
+| [`github-project-board.md`](guides/github-project-board.md) | How the board works and how to use it day to day |
+
+## runbooks/ — operational procedures
+
+| File                                                                      | Content                                                                            |
+| ------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| [`github-project-maintenance.md`](runbooks/github-project-maintenance.md) | Changing the board's fields / workflows / views without breaking the configuration |
+
+---
+
+## Documents that live inside a package
+
+A document that concerns exactly one package stays in that package rather than moving into `docs/`:
+
+- `packages/di/ARCHITECTURE.md` — the source of truth for `resolution/`, read it before touching a hot path;
+  `PERFORMANCE.md` (what each shape costs, and by what method) and `REJECTED.md` (tried and rejected) go with it
+- `packages/tracking/spec/` — the behavioural contract
 - `packages/*/README.md`, `packages/*/CHANGELOG.md`
 
-`docs/` dành cho tài liệu cắt ngang nhiều package, hoặc về hạ tầng quanh repo (board, quy trình, vận hành).
+`docs/` is for documents that cut across several packages, or that are about the infrastructure around the repo (the
+board, processes, operations).
 
-Tài liệu ở root có vai trò riêng, không chuyển vào đây: [`CLAUDE.md`](../CLAUDE.md) (hướng dẫn cho agent),
+The root documents have their own role and do not move here: [`CLAUDE.md`](../CLAUDE.md) (instructions for agents),
 [`TESTING.md`](../TESTING.md), [`CONTRIBUTING.md`](../CONTRIBUTING.md).
