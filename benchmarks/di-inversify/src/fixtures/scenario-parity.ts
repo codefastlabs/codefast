@@ -394,6 +394,14 @@ export const CONTAINER_LEVEL_ACTIVATION_HOOK = {
   what: "resolve transient through a container.onActivation() hook — measures hook dispatch overhead",
 } as const satisfies ScenarioDescriptor;
 
+// Shares ACTIVATION_HOOK_BATCH with the container-level row on purpose: the pair is only readable
+// side by side if the two dispatch lanes are measured at the same workload factor.
+export const BINDING_LEVEL_ACTIVATION_HOOK = {
+  id: "binding-level-activation-hook",
+  group: "lifecycle",
+  what: "resolve transient through a per-binding .onActivation() hook — measures hook dispatch overhead",
+} as const satisfies ScenarioDescriptor;
+
 /**
  * @since 0.5.0-canary.7
  */

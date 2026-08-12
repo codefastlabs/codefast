@@ -4,11 +4,14 @@
  * Mirrors {@link ../codefast/lifecycle.ts} with equivalent IDs:
  * - `lifecycle-post-construct-singleton`
  * - `lifecycle-pre-destroy-unbind`
+ * - `binding-level-activation-hook`
  */
 import "reflect-metadata";
 import { Container, inject, injectable, postConstruct, preDestroy } from "inversify";
 
 import {
+  ACTIVATION_HOOK_BATCH,
+  BINDING_LEVEL_ACTIVATION_HOOK,
   LIFECYCLE_POST_CONSTRUCT_BATCH,
   LIFECYCLE_POST_CONSTRUCT_SINGLETON,
   LIFECYCLE_PRE_DESTROY_UNBIND,
@@ -126,9 +129,53 @@ function buildLifecyclePreDestroyUnbindScenario(): BenchScenario {
   };
 }
 
+interface BindingHookPayload {
+  activated: boolean;
+  value: number;
+}
+
+const bindingHookPayloadIdentifier = Symbol("bench-inv-lifecycle-binding-hook-payload");
+
+function buildBindingLevelActivationHookScenario(): BenchScenario {
+  const container = new Container({ jitless: false });
+  let activationCallCount = 0;
+
+  container
+    .bind<BindingHookPayload>(bindingHookPayloadIdentifier)
+    .toDynamicValue(() => ({ activated: false, value: 1 }))
+    .inTransientScope()
+    .onActivation((_ctx, instance) => {
+      activationCallCount += 1;
+      instance.activated = true;
+      return instance;
+    });
+
+  // Pre-warm
+  container.get<BindingHookPayload>(bindingHookPayloadIdentifier);
+
+  return {
+    ...BINDING_LEVEL_ACTIVATION_HOOK,
+    what: "get() transient through a per-binding .onActivation() hook — measures hook dispatch overhead",
+    batch: ACTIVATION_HOOK_BATCH,
+    sanity: () => {
+      const before = activationCallCount;
+      const result = container.get<BindingHookPayload>(bindingHookPayloadIdentifier);
+      return result.activated && activationCallCount === before + 1;
+    },
+    build: () =>
+      batched(ACTIVATION_HOOK_BATCH, () => {
+        container.get(bindingHookPayloadIdentifier);
+      }),
+  };
+}
+
 /**
  * @since 0.3.16-canary.0
  */
 export function buildInversifyLifecycleScenarios(): ReadonlyArray<BenchScenario> {
-  return [buildLifecyclePostConstructSingletonScenario(), buildLifecyclePreDestroyUnbindScenario()];
+  return [
+    buildLifecyclePostConstructSingletonScenario(),
+    buildLifecyclePreDestroyUnbindScenario(),
+    buildBindingLevelActivationHookScenario(),
+  ];
 }

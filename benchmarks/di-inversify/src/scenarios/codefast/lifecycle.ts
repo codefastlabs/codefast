@@ -4,10 +4,13 @@
  * These rows exercise hot paths tied to lifecycle decorators and deactivation:
  * - `lifecycle-post-construct-singleton`: singleton resolve with `@postConstruct`.
  * - `lifecycle-pre-destroy-unbind`: singleton unbind path with `@preDestroy`.
+ * - `binding-level-activation-hook`: transient resolve through a per-binding `.onActivation()`.
  */
 import { Container, injectable, postConstruct, preDestroy, token } from "@codefast/di";
 
 import {
+  ACTIVATION_HOOK_BATCH,
+  BINDING_LEVEL_ACTIVATION_HOOK,
   LIFECYCLE_POST_CONSTRUCT_BATCH,
   LIFECYCLE_POST_CONSTRUCT_SINGLETON,
   LIFECYCLE_PRE_DESTROY_UNBIND,
@@ -112,9 +115,54 @@ function buildLifecyclePreDestroyUnbindScenario(): BenchScenario {
   };
 }
 
+interface BindingHookPayload {
+  activated: boolean;
+  value: number;
+}
+
+const bindingHookPayloadToken = token<BindingHookPayload>("bench-cf-lifecycle-binding-hook-payload");
+
+// The per-binding twin of `container-level-activation-hook`: same lane, same workload, the hook
+// carried by the binding instead of the container, so the two dispatch costs read apart.
+function buildBindingLevelActivationHookScenario(): BenchScenario {
+  const container = Container.create();
+  let activationCallCount = 0;
+
+  container
+    .bind(bindingHookPayloadToken)
+    .toDynamic(() => ({ activated: false, value: 1 }))
+    .transient()
+    .onActivation((_ctx, instance) => {
+      activationCallCount += 1;
+      instance.activated = true;
+      return instance;
+    });
+
+  // Pre-warm
+  container.resolve(bindingHookPayloadToken);
+
+  return {
+    ...BINDING_LEVEL_ACTIVATION_HOOK,
+    batch: ACTIVATION_HOOK_BATCH,
+    sanity: () => {
+      const before = activationCallCount;
+      const result = container.resolve(bindingHookPayloadToken);
+      return result.activated && activationCallCount === before + 1;
+    },
+    build: () =>
+      batched(ACTIVATION_HOOK_BATCH, () => {
+        container.resolve(bindingHookPayloadToken);
+      }),
+  };
+}
+
 /**
  * @since 0.3.16-canary.0
  */
 export function buildCodefastLifecycleScenarios(): ReadonlyArray<BenchScenario> {
-  return [buildLifecyclePostConstructSingletonScenario(), buildLifecyclePreDestroyUnbindScenario()];
+  return [
+    buildLifecyclePostConstructSingletonScenario(),
+    buildLifecyclePreDestroyUnbindScenario(),
+    buildBindingLevelActivationHookScenario(),
+  ];
 }
