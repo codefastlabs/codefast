@@ -9,6 +9,10 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { assertSubjectMeasuredSomething } from "@codefast/benchmark-harness/parent/assert-subject-measured";
+import {
+  buildBenchRunOutputPaths,
+  writeBenchRunArtifacts,
+} from "@codefast/benchmark-harness/parent/bench-run-artifacts";
 import { resolveBenchParentExitCode } from "@codefast/benchmark-harness/parent/resolve-bench-parent-exit-code";
 import type { RunBenchSubprocessParameters } from "@codefast/benchmark-harness/parent/run-bench-subprocess";
 import {
@@ -22,14 +26,12 @@ import {
   renderComparisonConsoleReport,
   renderComparisonMarkdownReport,
 } from "@codefast/benchmark-harness/report/comparison";
-import { writeJsonlRun, writeMarkdownFile } from "@codefast/benchmark-harness/report/write";
+import { buildComparisonDocument } from "@codefast/benchmark-harness/report/comparison-document";
 import type { BenchSubprocessConfig } from "@codefast/benchmark-harness/shared/config";
 import {
   assertBenchEnvKeys,
-  BENCH_RESULTS_DIR_NAME,
   BENCH_VERBOSE_ENV_KEY,
   isEnvFlagEnabled,
-  OBSERVATIONS_FILE_NAME,
 } from "@codefast/benchmark-harness/shared/env-keys";
 import type { SubprocessPayload } from "@codefast/benchmark-harness/shared/protocol";
 
@@ -55,25 +57,6 @@ function rebuildCodefastTailwindVariantsPackage(): void {
   }
   const elapsedSeconds = (performance.now() - startedAtMs) / 1000;
   console.log(`Finished rebuild of ${CODEFAST_TV.libraryName} (${elapsedSeconds.toFixed(1)}s wall).`);
-}
-
-function buildOutputPaths(): {
-  runDirectory: string;
-  markdownPath: string;
-  jsonlPath: string;
-  latestMarkdownPath: string;
-  latestJsonlPath: string;
-} {
-  const timestamp = new Date().toISOString().replaceAll(":", "-").replaceAll(".", "-");
-  const benchResultsRoot = join(packageRootDirectory, BENCH_RESULTS_DIR_NAME);
-  const runDirectory = join(benchResultsRoot, timestamp);
-  return {
-    runDirectory,
-    markdownPath: join(runDirectory, "report.md"),
-    jsonlPath: join(runDirectory, OBSERVATIONS_FILE_NAME),
-    latestMarkdownPath: join(benchResultsRoot, "latest.md"),
-    latestJsonlPath: join(benchResultsRoot, "latest.jsonl"),
-  };
 }
 
 const INTERLEAVED_RUN_ORDER =
@@ -187,17 +170,16 @@ async function main(): Promise<void> {
     ...TAILWIND_VARIANTS_COMPARISON_MARKDOWN,
     runOrder,
   });
-  const outputPaths = buildOutputPaths();
-  writeMarkdownFile(outputPaths.markdownPath, markdown);
-  writeJsonlRun(outputPaths.jsonlPath, librariesForJsonl);
+  // The same comparison the markdown renders, kept as data: the table rounds every ratio and
+  // spends its reliability verdicts as glyphs, neither of which reads back.
+  const comparisonDocument = buildComparisonDocument(codefastLibrary, competitors, runOrder);
 
-  writeMarkdownFile(outputPaths.latestMarkdownPath, markdown);
-  writeJsonlRun(outputPaths.latestJsonlPath, librariesForJsonl);
-
-  console.log(`Run directory: ${outputPaths.runDirectory}`);
-  console.log(`Markdown report: ${outputPaths.markdownPath}`);
-  console.log(`JSONL observations: ${outputPaths.jsonlPath}`);
-  console.log(`Also mirrored to latest: ${outputPaths.latestMarkdownPath}, ${outputPaths.latestJsonlPath}`);
+  writeBenchRunArtifacts({
+    paths: buildBenchRunOutputPaths(packageRootDirectory),
+    markdown,
+    comparisonDocument,
+    librariesForJsonl,
+  });
 }
 
 main().catch((caught: unknown) => {
