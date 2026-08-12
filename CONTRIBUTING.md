@@ -120,7 +120,7 @@ The rules that make a result publishable — learned the hard way, and enforced 
 For anything material, run the publishable profile and update `RESULTS.md`:
 
 ```bash
-BENCH_FULL=1 BENCH_TRIALS=3 pnpm --filter @codefast/benchmark-di-inversify bench:isolate
+BENCH_MODE=full BENCH_TRIALS=3 pnpm --filter @codefast/benchmark-di-inversify bench:isolate
 ```
 
 `bench:isolate` runs **scenario-major and interleaved** — every library measures a scenario before the next one starts,

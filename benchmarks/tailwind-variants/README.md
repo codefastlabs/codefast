@@ -79,7 +79,7 @@ Same rules as the DI suite: cite the aggregates rather than a row; `†` marks r
 between runs of the same build; `‡` marks cells whose per-trial IQR exceeded 5%; a ratio between 0.97× and 1.03× is
 parity.
 
-Set `BENCH_ISOLATE=1` for a citable cross-library ratio. It gives each scenario its own subprocess and runs the
+Set `BENCH_ISOLATE=true` for a citable cross-library ratio. It gives each scenario its own subprocess and runs the
 libraries **interleaved** — every library measures a scenario before the next scenario starts, rotating which goes first
 — so drift over the run no longer lands on whoever was scheduled last. The report's Environment section names the policy
 it used. Without it, one process per library runs that library's whole suite and there is nothing to interleave, so

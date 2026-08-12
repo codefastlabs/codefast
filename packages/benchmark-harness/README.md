@@ -22,9 +22,9 @@ Two execution shapes:
 - **Shared** (`runBenchSubprocess`): one child per library runs every scenario — approximates a long-lived app, but
   earlier scenarios train the library's hot-path inline caches for later ones (measured at ~30% on async chains), so
   rows are order-dependent.
-- **Isolated** (`runBenchSubprocessIsolated`, opt in with `BENCH_ISOLATE=1`): one child **per scenario** per library — a
-  `BENCH_LIST` discovery child reports scenario ids, then `BENCH_ONLY=<id>` workers run one scenario each and the parent
-  merges trials back into a single payload. Order-independent.
+- **Isolated** (`runBenchSubprocessIsolated`, opt in with `BENCH_ISOLATE=true`): one child **per scenario** per library
+  — a `BENCH_LIST` discovery child reports scenario ids, then `BENCH_ONLY=<id>` workers run one scenario each and the
+  parent merges trials back into a single payload. Order-independent.
 
 Reports open with a **summary table, one row per competitor** — comparable rows out of the suite, win/parity/loss counts
 (±3% parity band), median and geomean ratios, and how many of those rows carry the unreliable marker — followed by a
@@ -43,9 +43,22 @@ pnpm bench         # run the benchmark suites
 pnpm bench:serve   # browse historical results (see @codefast/benchmark-viewer)
 ```
 
-Suite-level knobs are environment-driven: `BENCH_FAST=1` (quick pass), `BENCH_FULL=1` (extended pass),
-`BENCH_TRIALS=<n>` (trial count, min 2), `BENCH_VERBOSE=1` (forward child logs), `BENCH_ISOLATE=1` (one subprocess per
-scenario). `BENCH_LIST` / `BENCH_ONLY` are internal child-side keys set by the isolated parent — not meant to be set by
+Suite-level knobs are environment-driven:
+
+| Key                    | Effect                                                                  |
+| ---------------------- | ----------------------------------------------------------------------- |
+| `BENCH_MODE=fast`      | Smoke pass: shorter sampling windows, one trial. Never a citable number |
+| `BENCH_MODE=default`   | The default profile — same as leaving `BENCH_MODE` unset                |
+| `BENCH_MODE=full`      | Extended pass with `--expose-gc`                                        |
+| `BENCH_TRIALS=<n>`     | Trial count; the harness refuses anything below 3                       |
+| `BENCH_VERBOSE=true`   | Forward child stdout                                                    |
+| `BENCH_ISOLATE=true`   | One subprocess per scenario                                             |
+| `BENCH_ONLY=<id>,<id>` | Restrict the run to these scenario ids                                  |
+
+On/off keys accept `1`, `true`, `yes` or `on` in any case; anything else throws rather than reading as off, because a
+profile that silently fails to turn on yields numbers for a run nobody asked for. `BENCH_MODE` is one key with three
+values rather than a flag per profile — the profiles are mutually exclusive, so a flag pair could express a both-on
+state with no meaning. `BENCH_LIST` is an internal child-side key set by the isolated parent — not meant to be set by
 hand.
 
 ## License

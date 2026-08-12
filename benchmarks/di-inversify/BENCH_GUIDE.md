@@ -113,7 +113,7 @@ Throughput alone does not settle it, though, which is why the floor is measured 
 of `binding-level-activation-hook` — 31 M ops/s, inside the band above — put its medians at 30.53–31.34 M ops/s, **2.7%
 peak-to-peak**. The median of three trials is what buys that: wherever the trial order was recorded, on both libraries
 and on both activation rows, the **first** trial came back high — around 12% on the inversify rows, around 25% on the
-codefast ones — and never landed on the median. `BENCH_FAST`, which runs one trial, inherits that spread instead of
+codefast ones — and never landed on the median. `BENCH_MODE=fast`, which runs one trial, inherits that spread instead of
 discarding it.
 
 So a threshold of 0.98× on a ±12% row is not strict, it is meaningless — it will fire on noise about as often as it
@@ -169,10 +169,10 @@ Also required for a comparison to mean anything:
 
 ## What the harness enforces so you cannot forget
 
-- **Three trials minimum where a median is claimed.** The default and `BENCH_FULL` profiles run 3 trials, and
-  `BENCH_TRIALS=1` is rejected with a warning and the default restored — a median of two samples is their mean, and
-  cannot separate a change from noise. `BENCH_FAST` runs **one** trial: it is a smoke profile, answering "does it run
-  and roughly how fast", never a citable number.
+- **Three trials minimum where a median is claimed.** The default and full profiles run 3 trials, and `BENCH_TRIALS=1`
+  is rejected with a warning and the default restored — a median of two samples is their mean, and cannot separate a
+  change from noise. `BENCH_MODE=fast` runs **one** trial: it is a smoke profile, answering "does it run and roughly how
+  fast", never a citable number.
 - **Batching for sub-µs work.** `batched(factor, op)` and the scenario's `batch` field must agree; the reporter
   multiplies by it. Timing an 11 ns call one at a time made a control read 0.88×; batched, the same control read 1.02×.
 - **Instability flags in the output.** `†` marks rows above ~30M ops/s whose ratio moves between runs of the same build;

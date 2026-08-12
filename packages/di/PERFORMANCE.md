@@ -156,8 +156,8 @@ everywhere.
 ## The async lane
 
 Per-level overhead against a floor of eight plain awaited async functions, one process, libraries interleaved with
-rotating order, best of five trials. `BENCH_FULL=1` forces a full GC every 100 samples, so the right-hand column is the
-one published figures come from:
+rotating order, best of five trials. `BENCH_MODE=full` forces a full GC every 100 samples, so the right-hand column is
+the one published figures come from:
 
 | Build                                                                  | Collector idle | Full GC every 100 |
 | ---------------------------------------------------------------------- | -------------: | ----------------: |

@@ -107,7 +107,7 @@ pnpm --filter @codefast/benchmark-di-inversify bench:isolate
   with its cost:
 
 ```bash
-BENCH_FULL=1 BENCH_TRIALS=3 pnpm --filter @codefast/benchmark-di-inversify bench:isolate
+BENCH_MODE=full BENCH_TRIALS=3 pnpm --filter @codefast/benchmark-di-inversify bench:isolate
 ```
 
 ## 6. Static checks

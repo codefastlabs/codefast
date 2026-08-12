@@ -25,10 +25,11 @@ working tree rather than a stale `dist/`.
 | `pnpm bench:isolate` | One subprocess per scenario, so no scenario inherits another's inline caches      |
 | `pnpm bench:verbose` | Per-trial detail on stdout                                                        |
 | `pnpm bench:serve`   | Serves the run history from `bench-results/` in a browser                         |
+| `BENCH_MODE=<mode>`  | Timing profile: `fast`, `default` or `full` — what the `bench:*` scripts set      |
 | `BENCH_TRIALS=<n>`   | Trials per scenario; the harness refuses anything below 3                         |
 | `BENCH_ONLY=<id>`    | One scenario, in the child processes — what the A/B recipes in the guide use      |
 
-Profiles compose: `BENCH_FULL=1 pnpm bench:isolate` is the slowest and the most order-independent.
+Profiles compose: `BENCH_MODE=full pnpm bench:isolate` is the slowest and the most order-independent.
 
 Every run writes a timestamped directory under `bench-results/` (git-ignored) holding `report.md` and
 `observations.jsonl`, and mirrors the newest to `latest.md` / `latest.jsonl`. The JSONL carries every per-trial figure
@@ -95,9 +96,9 @@ the numbers.
 
 That is not a detail. Scheduling one library's whole suite before the next one starts puts minutes between the two sides
 of every ratio, so any drift over the run lands entirely on whoever was scheduled later — and in a suite written to
-promote one library, that is never the one being promoted. Measured on `realistic-graph-cold-resolve` under
-`BENCH_FULL`, before the runner interleaved: library-major read 1.28× of tsyringe, and the same two libraries
-interleaved read 0.99×.
+promote one library, that is never the one being promoted. Measured on `realistic-graph-cold-resolve` under the full
+profile, before the runner interleaved: library-major read 1.28× of tsyringe, and the same two libraries interleaved
+read 0.99×.
 
 **Without `bench:isolate` there is nothing to interleave** — one process per library runs that library's whole suite —
 so a cross-library ratio from the plain profile stays provisional, and the report says so in the same place.
