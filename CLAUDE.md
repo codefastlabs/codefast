@@ -168,8 +168,7 @@ carry the types.**
   while the compiler stays silent — a `SPEC.md §4.8` survived in this repo long after §4.8 stopped existing. State the
   invariant in the comment; if one line will not hold it, the name above it is not saying enough. Discoverability of the
   design docs is a repo rule (below and in each package's `CONTRIBUTING.md`), not something to re-litigate at 30 call
-  sites. `packages/di/tests/unit/architecture.test.ts` enforces this. The reverse direction is fine and encouraged: a
-  doc citing a source path or symbol.
+  sites. The reverse direction is fine and encouraged: a doc citing a source path or symbol.
 - **No numbers in source comments.** No benchmark figures, `ns/op` tables, percentages, byte counts or ratios. They
   cannot be re-verified where they sit, they go stale silently, and the method behind them is not there either. Numbers
   live with their method — a `PERFORMANCE.md`, `RESULTS.md`, or the commit. An `ARCHITECTURE.md` states what a shape

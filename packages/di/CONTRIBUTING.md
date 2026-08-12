@@ -42,9 +42,8 @@ Ground rules that bite in this package specifically:
   belongs in [ARCHITECTURE.md](./ARCHITECTURE.md) and a number in [PERFORMANCE.md](./PERFORMANCE.md), but do **not**
   link to either from the code — state the invariant in the comment instead. A pointer rots silently: section numbers
   shift and topic phrases outlive their section, and nothing type-checks either. This package's comments once accreted
-  into per-site essays defending each optimization — the doc is where that argument goes, once.
-  `tests/unit/architecture.test.ts` fails on `.md`, `SPEC §`, benchmark numbers, and history wording; grep your diff for
-  `used to`, `previously`, `the old`, `×`, `%` and `ns/op` before pushing.
+  into per-site essays defending each optimization — the doc is where that argument goes, once. Grep your diff for
+  `.md`, `SPEC §`, `used to`, `previously`, `the old`, `×`, `%` and `ns/op` before pushing.
 - Audit any new/changed public API (exported function/type/prop/option) against the Swift-style naming rubric in
   CLAUDE.md.
 - No speculative features — every new public API needs a real call site.

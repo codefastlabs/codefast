@@ -2362,8 +2362,7 @@ packages/di/
 ├── PERFORMANCE.md             What each shape costs, and by what method it was measured
 ├── REJECTED.md                Tried against this engine and rejected, with the price paid
 │                              — read it before proposing a new optimization
-├── src/                       Directory = layer. Imports only flow downward in the order below;
-│   │                          `tests/unit/architecture.test.ts` enforces that direction.
+├── src/                       Directory = layer. Imports only flow downward in the order below.
 │   │  ── layer 0: core/, errors/, injection/ ──────────────────────────────
 │   ├── core/
 │   │   ├── constructor-type.ts Constructor<Value>, ConstructorInvocation (re-exported via types.ts)
@@ -2458,9 +2457,8 @@ packages/di/
 
 **A directory is a layer, and imports only go one way.** `{core, errors, injection}` → `{lifecycle, ambient}` →
 `resolution` → `{decorators, metadata}` → `{container, introspection}`. Imports within a layer are free; only a value
-import back up to a higher layer is a violation, and `tests/unit/architecture.test.ts` blocks exactly that. `index.ts`
-is exempt — gathering every layer into a barrel is its job. Type-only imports do not count, because they evaporate at
-build time and constrain nothing at runtime.
+import back up to a higher layer is a violation. `index.ts` is exempt — gathering every layer into a barrel is its job.
+Type-only imports do not count, because they evaporate at build time and constrain nothing at runtime.
 
 **Ownership of `core/types.ts`:** the foundation types (`BindingScope`, `BindingIdentifier`, `BindingKind`,
 `Constructor`, `ActivationHandler`, `DeactivationHandler`, `ResolveOptions`, `ResolutionContext`, `ConstraintContext`,
