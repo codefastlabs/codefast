@@ -119,14 +119,14 @@ export async function runBenchSubprocess(parameters: RunBenchSubprocessParameter
     environmentOverrides,
   } = parameters;
 
-  console.log(`\nRunning ${harnessLabel} subprocess: ${benchEntryFileNameUnderSrc}…`);
+  console.error(`\nRunning ${harnessLabel} subprocess: ${benchEntryFileNameUnderSrc}…`);
   const benchMode = resolveBenchModeFromEnvironment();
   if (benchMode === "full") {
-    console.log(
+    console.error(
       "[bench] Running benchmark with --expose-gc (BENCH_MODE=full). This profile prioritizes stability and may still run significantly longer on large suites.",
     );
   } else if (benchMode === undefined) {
-    console.log(
+    console.error(
       "[bench] Running benchmark without --expose-gc (default profile). Use BENCH_MODE=fast for smoke checks or BENCH_MODE=full for GC-enabled stability runs.",
     );
   }
@@ -163,7 +163,7 @@ export async function runBenchSubprocess(parameters: RunBenchSubprocessParameter
       const nowMs = performance.now();
       if (nowMs - lastOutputAtMs >= HEARTBEAT_SILENCE_MS && nowMs - lastHeartbeatAtMs >= HEARTBEAT_SILENCE_MS) {
         const elapsedSeconds = (nowMs - startedAtMs) / 1000;
-        console.log(`Still running ${scenarioName}... ${elapsedSeconds.toFixed(1)}s elapsed`);
+        console.error(`Still running ${scenarioName}... ${elapsedSeconds.toFixed(1)}s elapsed`);
         lastHeartbeatAtMs = nowMs;
       }
     }, 1000);
@@ -210,7 +210,7 @@ export async function runBenchSubprocess(parameters: RunBenchSubprocessParameter
   });
 
   const elapsedSeconds = (performance.now() - startedAtMs) / 1000;
-  console.log(
+  console.error(
     `${harnessLabel} subprocess finished in ${elapsedSeconds.toFixed(1)}s wall (exit ${String(spawnResult.exitCode)}).`,
   );
 
@@ -271,6 +271,27 @@ function mergeIsolatedTrials(workerPayloads: ReadonlyArray<SubprocessPayload>): 
 }
 
 /**
+ * Runs one discovery subprocess and returns the scenario ids the library collected, in run order.
+ *
+ * @remarks Nothing is measured, so this is also the supported way to ask a suite what rows it has
+ * without benching them — `BENCH_LIST` itself is a protocol key the parent owns.
+ */
+export async function discoverBenchScenarioIds(
+  parameters: RunBenchSubprocessParameters,
+): Promise<{ fingerprint: SubprocessPayload["fingerprint"]; scenarioIds: ReadonlyArray<string> }> {
+  const listPayload = await runBenchSubprocess({
+    ...parameters,
+    harnessLabel: `${parameters.harnessLabel} [list]`,
+    environmentOverrides: { ...parameters.environmentOverrides, [BENCH_LIST_ENV_KEY]: "true" },
+  });
+  const scenarioIds = listPayload.scenarioIds ?? [];
+  if (scenarioIds.length === 0) {
+    throw new Error(`${parameters.harnessLabel} list run returned no scenario ids.`);
+  }
+  return { fingerprint: listPayload.fingerprint, scenarioIds };
+}
+
+/**
  * Runs every scenario in its own subprocess and merges the results into one payload.
  *
  * A single long-lived bench process trains the library's hot-path inline caches with
@@ -281,15 +302,7 @@ function mergeIsolatedTrials(workerPayloads: ReadonlyArray<SubprocessPayload>): 
  * @since 0.5.0-canary.7
  */
 export async function runBenchSubprocessIsolated(parameters: RunBenchSubprocessParameters): Promise<SubprocessPayload> {
-  const listPayload = await runBenchSubprocess({
-    ...parameters,
-    harnessLabel: `${parameters.harnessLabel} [list]`,
-    environmentOverrides: { ...parameters.environmentOverrides, [BENCH_LIST_ENV_KEY]: "true" },
-  });
-  const scenarioIds = listPayload.scenarioIds ?? [];
-  if (scenarioIds.length === 0) {
-    throw new Error(`${parameters.harnessLabel} list run returned no scenario ids; cannot run isolated.`);
-  }
+  const { fingerprint: listFingerprint, scenarioIds } = await discoverBenchScenarioIds(parameters);
 
   // Discovery reports every scenario the library has, so the filter is applied here — the per-worker
   // BENCH_ONLY the loop sets below would otherwise overwrite it and run the whole suite.
@@ -299,11 +312,11 @@ export async function runBenchSubprocessIsolated(parameters: RunBenchSubprocessP
   const selectedScenarioIds =
     requestedScenarioIds === undefined ? scenarioIds : scenarioIds.filter((id) => requestedScenarioIds.has(id));
   if (selectedScenarioIds.length === 0) {
-    console.log(`[bench] ${parameters.harnessLabel} implements none of the requested scenarios; skipping.`);
-    return { fingerprint: listPayload.fingerprint, trials: [], sanityFailures: [] };
+    console.error(`[bench] ${parameters.harnessLabel} implements none of the requested scenarios; skipping.`);
+    return { fingerprint: listFingerprint, trials: [], sanityFailures: [] };
   }
 
-  console.log(
+  console.error(
     `[bench] BENCH_ISOLATE=true: running ${String(selectedScenarioIds.length)} scenarios in separate subprocesses…`,
   );
   const workerPayloads: Array<SubprocessPayload> = [];
@@ -318,7 +331,7 @@ export async function runBenchSubprocessIsolated(parameters: RunBenchSubprocessP
   }
 
   return {
-    fingerprint: listPayload.fingerprint,
+    fingerprint: listFingerprint,
     trials: mergeIsolatedTrials(workerPayloads),
     sanityFailures: workerPayloads.flatMap((payload) => payload.sanityFailures),
   };
@@ -367,30 +380,22 @@ function unionScenarioIds(perLibraryIds: ReadonlyArray<ReadonlyArray<string>>): 
 export async function runBenchSubprocessesInterleaved(
   libraries: ReadonlyArray<InterleavedLibraryRun>,
 ): Promise<Map<string, SubprocessPayload>> {
-  const listPayloads = new Map<string, SubprocessPayload>();
+  const discoveries = new Map<string, Awaited<ReturnType<typeof discoverBenchScenarioIds>>>();
   for (const library of libraries) {
-    const listPayload = await runBenchSubprocess({
-      ...library.parameters,
-      harnessLabel: `${library.parameters.harnessLabel} [list]`,
-      environmentOverrides: { ...library.parameters.environmentOverrides, [BENCH_LIST_ENV_KEY]: "true" },
-    });
-    if ((listPayload.scenarioIds ?? []).length === 0) {
-      throw new Error(`${library.parameters.harnessLabel} list run returned no scenario ids; cannot run isolated.`);
-    }
-    listPayloads.set(library.key, listPayload);
+    discoveries.set(library.key, await discoverBenchScenarioIds(library.parameters));
   }
 
   // Filtered here rather than in the child: the loop below sets BENCH_ONLY per scenario, so a
   // filter left to the child would be overwritten and the whole suite would run anyway.
   const requestedScenarioIds = parseScenarioFilter(process.env[BENCH_ONLY_ENV_KEY]);
   const discoveredScenarioIds = unionScenarioIds(
-    libraries.map((library) => listPayloads.get(library.key)?.scenarioIds ?? []),
+    libraries.map((library) => discoveries.get(library.key)?.scenarioIds ?? []),
   );
   const scenarioIds =
     requestedScenarioIds === undefined
       ? discoveredScenarioIds
       : discoveredScenarioIds.filter((id) => requestedScenarioIds.has(id));
-  console.log(
+  console.error(
     `[bench] BENCH_ISOLATE=true: ${String(scenarioIds.length)} scenarios × ${String(libraries.length)} libraries, interleaved with rotating order.`,
   );
 
@@ -399,7 +404,7 @@ export async function runBenchSubprocessesInterleaved(
     // Rotate over the libraries that implement this scenario — rotating the full list and then
     // filtering hands the first slot to whichever library survives the filter most often.
     const implementing = libraries.filter((library) =>
-      (listPayloads.get(library.key)?.scenarioIds ?? []).includes(scenarioId),
+      (discoveries.get(library.key)?.scenarioIds ?? []).includes(scenarioId),
     );
     if (implementing.length === 0) {
       continue;
@@ -420,7 +425,7 @@ export async function runBenchSubprocessesInterleaved(
   for (const library of libraries) {
     const payloads = workerPayloads.get(library.key) ?? [];
     merged.set(library.key, {
-      fingerprint: listPayloads.get(library.key)!.fingerprint,
+      fingerprint: discoveries.get(library.key)!.fingerprint,
       trials: mergeIsolatedTrials(payloads),
       sanityFailures: payloads.flatMap((payload) => payload.sanityFailures),
     });
