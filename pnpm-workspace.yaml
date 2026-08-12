@@ -9,17 +9,11 @@ allowBuilds:
   esbuild: true
   simple-git-hooks: true
 
-overrides:
-  # read-yaml-file@1 pulls js-yaml@3 (GHSA-h67p-54hq-rp68 DoS, no 3.x patch
-  # exists). v2 uses the API-compatible js-yaml@4. Only consumer is the
-  # transitive @manypkg/get-packages via @changesets/cli.
-  read-yaml-file@1: ^2.1.0
-
 catalog:
   "@babel/core": ^8.0.1
   "@babel/plugin-proposal-decorators": 8.0.2
-  "@changesets/changelog-github": ^0.7.0
-  "@changesets/cli": ^2.31.1
+  "@changesets/changelog-github": ^1.0.0
+  "@changesets/cli": ^3.0.0
   "@commitlint/cli": ^21.2.1
   "@commitlint/config-conventional": ^21.2.0
   # Static Inter TTFs for the OG-image script — resvg cannot read @fontsource-variable/inter's woff2.
@@ -32,15 +26,15 @@ catalog:
   "@tailwindcss/postcss": ^4.3.3
   "@tailwindcss/vite": ^4.3.3
   "@tanstack/devtools-vite": ^0.8.3
-  "@tanstack/react-devtools": ^0.10.9
-  "@tanstack/react-router": ^1.170.25
+  "@tanstack/react-devtools": ^0.10.10
+  "@tanstack/react-router": ^1.170.27
   "@tanstack/react-router-devtools": ^1.167.1
-  "@tanstack/react-start": ^1.168.42
+  "@tanstack/react-start": ^1.168.44
   "@tanstack/react-table": ^9.1.2
   "@testing-library/dom": ^10.4.1
   "@testing-library/jest-dom": ^7.0.1
   "@testing-library/react": ^16.3.2
-  "@testing-library/user-event": ^14.6.3
+  "@testing-library/user-event": ^14.6.4
   "@types/jest-axe": ^3.5.9
   "@types/node": ^26.2.0
   "@types/picomatch": ^4.0.3
@@ -50,6 +44,7 @@ catalog:
   "@vercel/analytics": ^2.0.1
   "@vitejs/plugin-react": ^6.0.5
   "@vitest/coverage-v8": ^4.1.10
+  "@xyflow/react": ^12.11.3
   awilix: ^13.0.5
   babel-plugin-react-compiler: ^1.0.0
   chart.js: ^4.5.1
@@ -69,7 +64,7 @@ catalog:
   jest-axe: ^11.0.0
   jiti: ^2.7.0
   jsdom: ^30.0.1
-  knip: ^6.32.1
+  knip: ^6.32.2
   lint-staged: ^17.3.0
   lucide-react: ^1.31.0
   next-themes: ^0.4.6
@@ -107,8 +102,10 @@ catalog:
   yaml: ^2.9.0
   zod: ^4.4.3
 
-# `manual` (not `strict`): the catalog is a convenience, not enforced repo-wide.
-catalogMode: manual
+# `strict`: `pnpm add` routes every dep through the catalog — a new one is
+# inserted there, a range conflicting with an existing entry is refused. A
+# hand-edited manifest is unchecked, so one-version-per-dep still needs review.
+catalogMode: strict
 
 # 1h maturation window instead of pnpm's 24h default — short enough that our own
 # canary releases and pinned deps age past it without needing
