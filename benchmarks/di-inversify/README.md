@@ -26,6 +26,7 @@ working tree rather than a stale `dist/`.
 | `pnpm bench:verbose` | Per-trial detail on stdout                                                        |
 | `pnpm bench:serve`   | Serves the run history from `bench-results/` in a browser                         |
 | `BENCH_MODE=<mode>`  | Timing profile: `fast`, `default` or `full` — what the `bench:*` scripts set      |
+| `BENCH_PORT=<n>`     | Preferred port for `bench:serve`                                                  |
 | `BENCH_TRIALS=<n>`   | Trials per scenario; the harness refuses anything below 3                         |
 | `BENCH_ONLY=<id>`    | One scenario, in the child processes — what the A/B recipes in the guide use      |
 
@@ -47,9 +48,9 @@ src/instruments/            diagnostic tools, outside the comparison
 ```
 
 `src/instruments/` holds what the comparison table cannot answer, and nothing else. Today that is one tool:
-`pnpm instrument:alloc`, which reports how much a resolve allocates —
-[`BENCH_GUIDE.md`](./BENCH_GUIDE.md#when-the-claim-is-about-allocation-count-allocations) says when reaching for it
-beats re-running the suite.
+`pnpm instrument:alloc` (`BENCH_ALLOC_OPERATIONS=<n>` to change the loop size), which reports how much a resolve
+allocates — [`BENCH_GUIDE.md`](./BENCH_GUIDE.md#when-the-claim-is-about-allocation-count-allocations) says when reaching
+for it beats re-running the suite.
 
 It produces no row and no ratio, and it is **not** exempt from the standard on that account: a figure from here is a
 figure, so it meets [`BENCH_GUIDE.md`](./BENCH_GUIDE.md) and it is published in [`RESULTS.md`](./RESULTS.md) before it

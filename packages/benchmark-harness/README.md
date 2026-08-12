@@ -54,12 +54,20 @@ Suite-level knobs are environment-driven:
 | `BENCH_VERBOSE=true`   | Forward child stdout                                                    |
 | `BENCH_ISOLATE=true`   | One subprocess per scenario                                             |
 | `BENCH_ONLY=<id>,<id>` | Restrict the run to these scenario ids                                  |
+| `BENCH_PORT=<n>`       | Preferred port for `bench:serve`                                        |
 
-On/off keys accept `1`, `true`, `yes` or `on` in any case; anything else throws rather than reading as off, because a
-profile that silently fails to turn on yields numbers for a run nobody asked for. `BENCH_MODE` is one key with three
-values rather than a flag per profile — the profiles are mutually exclusive, so a flag pair could express a both-on
-state with no meaning. `BENCH_LIST` is an internal child-side key set by the isolated parent — not meant to be set by
-hand.
+[`shared/env-keys.ts`](src/shared/env-keys.ts) is the single source for all of it: `BENCH_ENV_SPECS` declares each key's
+accepted values, who may set it, and which Turbo tasks must pass it through. Everything else derives from that map — the
+parsers, the keys the parent strips before spawning a child, and a test asserting `turbo.json` lists every user-facing
+key. Turbo runs in strict env mode, so a key missing from `passThroughEnv` is dropped for any run started at the repo
+root, which looks exactly like the key having no effect.
+
+Nothing in the namespace fails quietly. On/off keys accept `1`, `true`, `yes` or `on` in any case; numeric keys take
+digits only and are range-checked, so `BENCH_TRIALS=3abc` and `BENCH_PORT=0` are errors rather than a silently different
+number. An unknown `BENCH_*` key is rejected too — `BENCH_MODEE=fast` selects nothing, so it throws instead.
+`BENCH_MODE` is one key with three values rather than a flag per profile — the profiles are mutually exclusive, so a
+flag pair could express a both-on state with no meaning. `BENCH_LIST` is an internal child-side key set by the isolated
+parent — not meant to be set by hand.
 
 ## License
 

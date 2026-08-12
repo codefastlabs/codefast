@@ -170,9 +170,9 @@ Also required for a comparison to mean anything:
 ## What the harness enforces so you cannot forget
 
 - **Three trials minimum where a median is claimed.** The default and full profiles run 3 trials, and `BENCH_TRIALS=1`
-  is rejected with a warning and the default restored — a median of two samples is their mean, and cannot separate a
-  change from noise. `BENCH_MODE=fast` runs **one** trial: it is a smoke profile, answering "does it run and roughly how
-  fast", never a citable number.
+  is rejected outright rather than quietly restored to the default — a median of two samples is their mean, and cannot
+  separate a change from noise. `BENCH_MODE=fast` runs **one** trial: it is a smoke profile, answering "does it run and
+  roughly how fast", never a citable number.
 - **Batching for sub-µs work.** `batched(factor, op)` and the scenario's `batch` field must agree; the reporter
   multiplies by it. Timing an 11 ns call one at a time made a control read 0.88×; batched, the same control read 1.02×.
 - **Instability flags in the output.** `†` marks rows above ~30M ops/s whose ratio moves between runs of the same build;
