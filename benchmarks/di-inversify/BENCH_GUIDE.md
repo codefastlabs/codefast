@@ -16,6 +16,40 @@ Answering the first question with a cross-library ratio is the most common way t
 competitor's version changes, when the machine warms up, or when the runner schedules one side later — none of which is
 your change.
 
+## When a change earns a new row
+
+Adding a row and guarding the rows already here are different jobs, and doing them in one commit is how a suite ends up
+answering neither.
+
+**A guard row is only worth having while it stays identical** — same id, same batch, same workload. A feature that
+forces an existing row to change shape is telling you the change is not backward-neutral: leave that row alone and add a
+new one beside it. Editing a row in place retires every comparison against every earlier commit, and reports nothing
+when it does.
+
+**A coverage row has no baseline in the parent commit.** Swapping the source runs both sides against the same
+`benchmarks/` tree, so a row reaching for an API only one side has either throws or is dropped by its own `sanity()` —
+and an A/B you cannot run is not evidence. **Land the row in its own commit, ahead of the feature.** Then the feature
+commit has something to be measured against. Where the API does not exist yet, the row measures the nearest existing
+shape and the feature commit adds the variant.
+
+A change earns a row when:
+
+- **It adds a branch to a measured path that no row executes.** `container-level-activation-hook` covered the container
+  hook list while per-binding `.onActivation()` dispatch had no row of its own — the one place it was being timed was
+  `slot-injected-name-interpreted`, where a hook is the lever that makes the plan compiler decline, not the thing under
+  test. A change to that dispatch would have moved a row that measures something else.
+- **The new cost scales with something** — handlers per binding, tags per token, depth. A row at N=1 cannot see a shape
+  that is free there and quadratic at N=3.
+- **Work moves between phases**, bind-time against resolve-time. A resolve row cannot see a cost paid at bind.
+- **A failure path starts being paid per request.** The `failure` group is where those go.
+
+A branch that lands on a measured path but is never taken does **not** earn a row. It needs the other half of the job:
+name the rows that must not move _before_ measuring, and read one that moves as the inlining accident it usually is.
+
+Rows are not free — suite wall-clock, times trials, times isolated subprocesses. And a row whose two sides do
+incomparable work takes `excludeFromAggregates: true` plus a `what` that says why, the way `circular-dependency-3` does.
+It then contributes to no published figure, so a win there does not pay for a loss on a head-to-head row.
+
 ## Comparing two builds: paired, alternating, best-of
 
 1. Put the two builds where the bench can reach them. **Two mechanisms work, and which one you pick decides which runner
@@ -27,12 +61,22 @@ your change.
 Step 2 means **one subprocess per (side, scenario)**. Both runners below give you that; what they do not share is what
 they do to the build first, and pairing them wrong fails _silently_.
 
-| Step 1 mechanism                                                                | Step 2 runner                                                            | Why that pairing                                                                                                                                                                          |
-| ------------------------------------------------------------------------------- | ------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Swap the source** — checkout, stash or patch `packages/di/src` per side       | `bench:isolate`                                                          | `src/harness/run.ts` calls `rebuildCodefastDiPackage()` before it spawns anything, and that rebuild is exactly what makes the swap take effect                                            |
-| **Swap the build** — two prebuilt dirs, copied over `packages/di/dist` per side | `BENCH_ONLY=<id>` on a child entry: `bench:codefast` / `bench:inversify` | The same rebuild would overwrite `packages/di/dist` from `src` before the first sample, so both sides measure HEAD and **every row reports parity** — an A/B that never compared anything |
+| Step 1 mechanism                                                                | Step 2 runner                                                            | Why that pairing                                                                                                                                                                                                                                                                                                  |
+| ------------------------------------------------------------------------------- | ------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Swap the source** — checkout, stash or patch `packages/di/src` per side       | `bench:isolate`                                                          | `src/harness/run.ts` calls `rebuildCodefastDiPackage()` before it spawns anything, and that rebuild is exactly what makes the swap take effect                                                                                                                                                                    |
+| **Swap the build** — two prebuilt dirs, copied over `packages/di/dist` per side | `BENCH_ONLY=<id>` on a child entry: `bench:codefast` / `bench:inversify` | The same rebuild would overwrite `packages/di/dist` from `src` before the first sample, so both sides measure HEAD and **every row reports parity** — an A/B that never compared anything. Prove the swap is live before trusting a number: install a build whose target function throws, and check the row fails |
 
-Swapping the build is faster and is the only option when the two builds are not both reachable from the working tree.
+**Prefer swapping the source, and narrow the run instead.** `BENCH_ONLY=<id>` — a comma-separated list — is read by the
+parent as well as the child, so `BENCH_ONLY=<id> pnpm bench:isolate` runs that row alone, isolated and interleaved, in
+seconds. The rebuild it does first is around half a second, so nothing about the source lane is slow; what used to be
+slow was the whole suite. A library that implements none of the requested ids measures nothing and reads `—`, rather
+than failing the run, so a row only this package has is still a legal filter.
+
+That leaves swapping the build for one case: when the two builds are not both reachable from the working tree. It buys
+speed you no longer need and gives up what the parent does — interleaving, the Environment header, the instability
+flags, and a cross-library ratio you are allowed to cite. It also leaves `packages/di/dist` disagreeing with `src` until
+someone rebuilds, and it ties the measurement to a directory rather than a commit.
+
 Whichever you use, `bench`, `bench:fast`, `bench:full` and `bench:verbose` are all `run.ts` too, and none of them
 isolates per scenario — so they are wrong here for a second reason.
 
@@ -64,6 +108,13 @@ It is not small, and it is not uniform. An A/A run over this suite put the faste
 `tagged-binding-resolve`, `named-constant-get`, all above 20 M ops/s — at per-pass swings of **±12%**, one of them
 **±20%**, with medians landing as far out as 1.028×. The slower rows in the same run sat inside **±3%**. Faster row,
 noisier ratio: the work per sample shrinks while the timer's error does not.
+
+Throughput alone does not settle it, though, which is why the floor is measured and not inferred. Six same-build passes
+of `binding-level-activation-hook` — 31 M ops/s, inside the band above — put its medians at 30.53–31.34 M ops/s, **2.7%
+peak-to-peak**. The median of three trials is what buys that: wherever the trial order was recorded, on both libraries
+and on both activation rows, the **first** trial came back high — around 12% on the inversify rows, around 25% on the
+codefast ones — and never landed on the median. `BENCH_FAST`, which runs one trial, inherits that spread instead of
+discarding it.
 
 So a threshold of 0.98× on a ±12% row is not strict, it is meaningless — it will fire on noise about as often as it
 fires on a regression, and it fired exactly that way here, rejecting a change on two rows the change could not reach.
