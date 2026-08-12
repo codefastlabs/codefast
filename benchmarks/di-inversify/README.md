@@ -24,6 +24,7 @@ working tree rather than a stale `dist/`.
 | `pnpm bench:full`    | `--expose-gc` for every library, forcing collections into the measured loop       |
 | `pnpm bench:isolate` | One subprocess per scenario, so no scenario inherits another's inline caches      |
 | `pnpm bench:verbose` | Per-trial detail on stdout                                                        |
+| `pnpm bench:list`    | Prints scenario ids as JSON on stdout, measuring nothing — no bench run needed    |
 | `pnpm bench:serve`   | Serves the run history from `bench-results/` in a browser                         |
 | `BENCH_MODE=<mode>`  | Timing profile: `fast`, `default` or `full` — what the `bench:*` scripts set      |
 | `BENCH_PORT=<n>`     | Preferred port for `bench:serve`                                                  |
@@ -32,9 +33,10 @@ working tree rather than a stale `dist/`.
 
 Profiles compose: `BENCH_MODE=full pnpm bench:isolate` is the slowest and the most order-independent.
 
-Every run writes a timestamped directory under `bench-results/` (git-ignored) holding `report.md` and
-`observations.jsonl`, and mirrors the newest to `latest.md` / `latest.jsonl`. The JSONL carries every per-trial figure
-the markdown summarises, including each cell's IQR.
+Every run writes a timestamped directory under `bench-results/` (git-ignored) holding `report.md`, `report.json` and
+`observations.jsonl`, and mirrors the newest to `latest.md` / `latest.json` / `latest.jsonl`. `report.json` is the same
+comparison as data — full-precision ratios and reliability as booleans, where the markdown rounds and uses glyphs. The
+JSONL carries every per-trial figure the markdown summarises, including each cell's IQR.
 
 ## How it is put together
 

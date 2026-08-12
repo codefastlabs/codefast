@@ -56,6 +56,23 @@ Suite-level knobs are environment-driven:
 | `BENCH_ONLY=<id>,<id>` | Restrict the run to these scenario ids                                  |
 | `BENCH_PORT=<n>`       | Preferred port for `bench:serve`                                        |
 
+Each run writes three artifacts into its timestamped directory, mirrored to `latest.*`:
+
+| File                 | For                                                                                        |
+| -------------------- | ------------------------------------------------------------------------------------------ |
+| `report.md`          | Reading. Rounded figures, `†`/`‡` reliability glyphs, the prose that frames the comparison |
+| `report.json`        | Querying. The same comparison as data — full-precision ratios, reliability as booleans     |
+| `observations.jsonl` | Raw per-trial rows, one per `(library, trial, scenario)`, fingerprint on every row         |
+
+`report.json` exists because `report.md` is a lossy projection: a ratio rounded to three significant figures cannot
+resolve a few percent, and the glyphs encode thresholds only the renderer knows. Every figure in it was already computed
+on the way to the markdown — `buildComparisonDocument` stops discarding it. Two `report.json` files are a plain dict
+join, which is what makes "did this row move between runs" answerable without recomputing the aggregate layer.
+
+`pnpm bench:list` prints the suite's scenario ids as JSON on stdout — the id list a `BENCH_ONLY` filter needs, and which
+libraries implement each row. Discovery progress goes to stderr, so stdout needs no framing markers or last-line
+heuristic to read back.
+
 [`shared/env-keys.ts`](src/shared/env-keys.ts) is the single source for all of it: `BENCH_ENV_SPECS` declares each key's
 accepted values, who may set it, and which Turbo tasks must pass it through. Everything else derives from that map — the
 parsers, the keys the parent strips before spawning a child, and a test asserting `turbo.json` lists every user-facing
