@@ -1,8 +1,13 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import {
+  assertBenchEnvKeys,
+  BENCH_LIST_ENV_KEY,
   BENCH_MODE_ENV_KEY,
+  BENCH_PORT_ENV_KEY,
+  BENCH_TRIALS_ENV_KEY,
   isEnvFlagEnabled,
+  parseEnvInteger,
   parseScenarioFilter,
   resolveBenchModeFromEnvironment,
 } from "#/shared/env-keys";
@@ -69,19 +74,6 @@ describe("resolveBenchModeFromEnvironment", () => {
     vi.stubEnv(BENCH_MODE_ENV_KEY, "quick");
     expect(() => resolveBenchModeFromEnvironment()).toThrow(/is not a bench mode/);
   });
-
-  it.each([
-    ["BENCH_FAST", "fast"],
-    ["BENCH_FULL", "full"],
-  ])("points %j at its replacement instead of ignoring it", (retiredKey, replacementMode) => {
-    vi.stubEnv(retiredKey, "1");
-    expect(() => resolveBenchModeFromEnvironment()).toThrow(`${BENCH_MODE_ENV_KEY}=${replacementMode}`);
-  });
-
-  it("rejects a retired key even when it is set to an off value", () => {
-    vi.stubEnv("BENCH_FULL", "0");
-    expect(() => resolveBenchModeFromEnvironment()).toThrow(/is not read/);
-  });
 });
 
 describe("parseScenarioFilter", () => {
@@ -95,5 +87,101 @@ describe("parseScenarioFilter", () => {
 
   it("trims and drops empty entries", () => {
     expect(parseScenarioFilter("alpha, beta ,,gamma")).toEqual(new Set(["alpha", "beta", "gamma"]));
+  });
+});
+
+describe("parseEnvInteger", () => {
+  afterEach(() => {
+    vi.unstubAllEnvs();
+  });
+
+  it.each(["", "   "])("reads %j as unset", (value) => {
+    vi.stubEnv(BENCH_TRIALS_ENV_KEY, value);
+    expect(parseEnvInteger(BENCH_TRIALS_ENV_KEY)).toBeUndefined();
+  });
+
+  it.each([
+    ["3", 3],
+    ["10", 10],
+    [" 4 ", 4],
+  ])("reads %j as %i", (value, expected) => {
+    vi.stubEnv(BENCH_TRIALS_ENV_KEY, value);
+    expect(parseEnvInteger(BENCH_TRIALS_ENV_KEY)).toBe(expected);
+  });
+
+  // Each of these is a value `Number()` or `parseInt` turns into a different, plausible number.
+  it.each(["3abc", "1e9", "3.9", "0x10", "abc", "-5", "+4"])("throws on %j", (value) => {
+    vi.stubEnv(BENCH_TRIALS_ENV_KEY, value);
+    expect(() => parseEnvInteger(BENCH_TRIALS_ENV_KEY)).toThrow(/is not a whole number/);
+  });
+
+  it("rejects a value below the spec minimum", () => {
+    vi.stubEnv(BENCH_TRIALS_ENV_KEY, "1");
+    expect(() => parseEnvInteger(BENCH_TRIALS_ENV_KEY)).toThrow(/out of range/);
+  });
+
+  it.each(["0", "65536"])("rejects port %j as out of range", (value) => {
+    vi.stubEnv(BENCH_PORT_ENV_KEY, value);
+    expect(() => parseEnvInteger(BENCH_PORT_ENV_KEY)).toThrow(/out of range/);
+  });
+
+  it("honours explicit bounds for a key the harness does not own", () => {
+    vi.stubEnv("BENCH_ALLOC_OPERATIONS", "5");
+    expect(parseEnvInteger("BENCH_ALLOC_OPERATIONS", { min: 1 })).toBe(5);
+  });
+
+  it("refuses a non-integer harness key rather than guessing bounds", () => {
+    expect(() => parseEnvInteger(BENCH_MODE_ENV_KEY)).toThrow(/pass explicit bounds/);
+  });
+});
+
+describe("assertBenchEnvKeys", () => {
+  afterEach(() => {
+    vi.unstubAllEnvs();
+  });
+
+  it("accepts an environment with no bench keys set", () => {
+    expect(() => assertBenchEnvKeys()).not.toThrow();
+  });
+
+  it("accepts every user-facing key", () => {
+    vi.stubEnv(BENCH_MODE_ENV_KEY, "full");
+    vi.stubEnv(BENCH_TRIALS_ENV_KEY, "3");
+    expect(() => assertBenchEnvKeys()).not.toThrow();
+  });
+
+  // A misspelled key was the last way left to ask for something and be silently ignored.
+  it("rejects a misspelled key", () => {
+    vi.stubEnv("BENCH_MODEE", "fast");
+    expect(() => assertBenchEnvKeys()).toThrow(/BENCH_MODEE is not a bench environment key/);
+  });
+
+  it.each([
+    ["BENCH_FAST", "BENCH_MODE=fast"],
+    ["BENCH_FULL", "BENCH_MODE=full"],
+  ])("points %j at its replacement instead of ignoring it", (retiredKey, replacement) => {
+    vi.stubEnv(retiredKey, "1");
+    expect(() => assertBenchEnvKeys()).toThrow(`Use ${replacement} instead.`);
+  });
+
+  it("rejects a retired key even when set to an off value", () => {
+    vi.stubEnv("BENCH_FULL", "0");
+    expect(() => assertBenchEnvKeys()).toThrow(/is not read/);
+  });
+
+  it("rejects a protocol key set from the shell", () => {
+    vi.stubEnv(BENCH_LIST_ENV_KEY, "true");
+    expect(() => assertBenchEnvKeys()).toThrow(/set by the harness per subprocess/);
+  });
+
+  it("accepts a protocol key on a child, which receives it from its parent", () => {
+    vi.stubEnv(BENCH_LIST_ENV_KEY, "true");
+    expect(() => assertBenchEnvKeys({ allowInternalKeys: true })).not.toThrow();
+  });
+
+  it("accepts suite-owned keys the caller declares", () => {
+    vi.stubEnv("BENCH_ALLOC_OPERATIONS", "10");
+    expect(() => assertBenchEnvKeys()).toThrow(/is not a bench environment key/);
+    expect(() => assertBenchEnvKeys({ extraKeys: new Set(["BENCH_ALLOC_OPERATIONS"]) })).not.toThrow();
   });
 });

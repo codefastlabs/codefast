@@ -5,6 +5,7 @@ import {
   BENCH_ISOLATE_ENV_KEY,
   BENCH_LIST_ENV_KEY,
   BENCH_ONLY_ENV_KEY,
+  INTERNAL_BENCH_ENV_KEYS,
   isEnvFlagEnabled,
   parseScenarioFilter,
   resolveBenchModeFromEnvironment,
@@ -47,11 +48,18 @@ export function buildSubprocessEnvironment(): NodeJS.ProcessEnv {
   const mergedNodeOptions = [existingNodeOptions, ...requiredFlags]
     .filter((segment) => segment.trim().length > 0)
     .join(" ");
-  return {
+  const childEnvironment: NodeJS.ProcessEnv = {
     ...parentEnvironment,
     NODE_ENV: "production",
     NODE_OPTIONS: mergedNodeOptions,
   };
+  // The protocol keys travel per subprocess, never by inheritance: a `BENCH_LIST` from the
+  // surrounding shell would otherwise put every measuring child into discovery mode, and the run
+  // would report an empty comparison as though the suite had no comparable rows.
+  for (const internalKey of INTERNAL_BENCH_ENV_KEYS) {
+    delete childEnvironment[internalKey];
+  }
+  return childEnvironment;
 }
 
 function createStreamLineForwarder(

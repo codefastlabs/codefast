@@ -3,8 +3,9 @@
 export type { BenchSubprocessConfig } from "#/shared/config";
 export { resolveDisplayName } from "#/shared/config";
 
-export type { BenchMode } from "#/shared/env-keys";
+export type { AssertBenchEnvKeysOptions, BenchEnvSpec, BenchMode, IntegerEnvBounds } from "#/shared/env-keys";
 export {
+  BENCH_ENV_SPECS,
   BENCH_ISOLATE_ENV_KEY,
   BENCH_LIST_ENV_KEY,
   BENCH_MODE_ENV_KEY,
@@ -13,11 +14,18 @@ export {
   BENCH_RESULTS_DIR_NAME,
   BENCH_TRIALS_ENV_KEY,
   BENCH_VERBOSE_ENV_KEY,
+  INTERNAL_BENCH_ENV_KEYS,
+  MINIMUM_TRIAL_COUNT,
   OBSERVATIONS_FILE_NAME,
+  USER_BENCH_ENV_KEYS,
+  assertBenchEnvKeys,
   isEnvFlagEnabled,
+  parseEnvInteger,
   parseScenarioFilter,
   resolveBenchModeFromEnvironment,
 } from "#/shared/env-keys";
+
+export { assertSubjectMeasuredSomething } from "#/parent/assert-subject-measured";
 
 export type { Fingerprint, ScenarioTrialResult, SubprocessPayload, TrialPayload } from "#/shared/protocol";
 export {

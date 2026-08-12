@@ -8,7 +8,13 @@ import { createRunAllTrials } from "#/child/create-run-all-trials";
 import { collectFingerprint } from "#/child/fingerprint";
 import { runSanityChecks } from "#/child/run-sanity-checks";
 import type { BenchMode } from "#/shared/env-keys";
-import { BENCH_LIST_ENV_KEY, BENCH_ONLY_ENV_KEY, isEnvFlagEnabled, parseScenarioFilter } from "#/shared/env-keys";
+import {
+  assertBenchEnvKeys,
+  BENCH_LIST_ENV_KEY,
+  BENCH_ONLY_ENV_KEY,
+  isEnvFlagEnabled,
+  parseScenarioFilter,
+} from "#/shared/env-keys";
 import { emitSubprocessPayload } from "#/shared/protocol";
 
 /**
@@ -38,6 +44,9 @@ export type RunBenchmarkChildMainParameters = Readonly<{
 export async function runBenchmarkChildMain(parameters: RunBenchmarkChildMainParameters): Promise<void> {
   const { libraryName, scenarioName, packageRoot, collectScenarios, benchDefaults, mode, trialCount } = parameters;
 
+  // A child is also a supported entry point (`bench:codefast`), so it validates its own environment
+  // rather than trusting a parent to have done it.
+  assertBenchEnvKeys({ allowInternalKeys: true });
   console.error(`[bench] subprocess ${scenarioName} started`);
   const allScenarios = collectScenarios();
 

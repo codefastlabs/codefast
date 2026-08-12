@@ -75,6 +75,11 @@
       "types": "./dist/child/run-sanity-checks.d.ts",
       "import": "./dist/child/run-sanity-checks.js"
     },
+    "./parent/assert-subject-measured": {
+      "source": "./src/parent/assert-subject-measured.ts",
+      "types": "./dist/parent/assert-subject-measured.d.ts",
+      "import": "./dist/parent/assert-subject-measured.js"
+    },
     "./parent/resolve-bench-parent-exit-code": {
       "source": "./src/parent/resolve-bench-parent-exit-code.ts",
       "types": "./dist/parent/resolve-bench-parent-exit-code.d.ts",

@@ -4,7 +4,12 @@ import { Bench } from "tinybench";
 import type { AnyBenchScenario } from "#/child/bench-scenario";
 import { isAsyncScenario } from "#/child/bench-scenario";
 import type { BenchMode } from "#/shared/env-keys";
-import { BENCH_TRIALS_ENV_KEY, resolveBenchModeFromEnvironment } from "#/shared/env-keys";
+import {
+  BENCH_TRIALS_ENV_KEY,
+  MINIMUM_TRIAL_COUNT,
+  parseEnvInteger,
+  resolveBenchModeFromEnvironment,
+} from "#/shared/env-keys";
 import type { ScenarioTrialResult, TrialPayload } from "#/shared/protocol";
 
 /**
@@ -12,7 +17,6 @@ import type { ScenarioTrialResult, TrialPayload } from "#/shared/protocol";
  * long-running suites do not balloon due to GC-heavy beforeEach hooks.
  */
 const FULL_MODE_SAMPLE_GC_STRIDE = 100;
-const MIN_TRIAL_COUNT = 3;
 const FULL_MODE_TRIAL_COUNT = 3;
 // Fast mode is a smoke profile: one trial answers "does it run and roughly how fast",
 // and anything needing a median belongs in the default or full profile.
@@ -126,19 +130,20 @@ function resolveBenchOptions(benchDefaults: BenchOptions, mode: BenchMode | unde
 
 function resolveTrialCount(explicitTrialCount: number | undefined, mode: BenchMode | undefined): number {
   const defaultTrialCount =
-    mode === "fast" ? FAST_MODE_TRIAL_COUNT : mode === "full" ? FULL_MODE_TRIAL_COUNT : MIN_TRIAL_COUNT;
-  const rawValue = explicitTrialCount ?? process.env[BENCH_TRIALS_ENV_KEY];
-  if (rawValue === undefined || (typeof rawValue === "string" && rawValue.trim() === "")) {
-    return defaultTrialCount;
+    mode === "fast" ? FAST_MODE_TRIAL_COUNT : mode === "full" ? FULL_MODE_TRIAL_COUNT : MINIMUM_TRIAL_COUNT;
+  // A caller passing the count in code gets a warning and the default; the env value throws, since
+  // a person asking for a trial count and silently getting another one cannot tell.
+  if (explicitTrialCount !== undefined) {
+    const truncatedCount = Math.trunc(explicitTrialCount);
+    if (!Number.isFinite(truncatedCount) || truncatedCount < MINIMUM_TRIAL_COUNT) {
+      console.error(
+        `[trial] trial count "${String(explicitTrialCount)}" is below minimum ${String(MINIMUM_TRIAL_COUNT)}; falling back to default ${String(defaultTrialCount)}.`,
+      );
+      return defaultTrialCount;
+    }
+    return truncatedCount;
   }
-  const parsed = typeof rawValue === "number" ? Math.trunc(rawValue) : Number.parseInt(rawValue, 10);
-  if (!Number.isFinite(parsed) || parsed < MIN_TRIAL_COUNT) {
-    console.error(
-      `[trial] trial count "${String(rawValue)}" is below minimum ${String(MIN_TRIAL_COUNT)}; falling back to default ${String(defaultTrialCount)}.`,
-    );
-    return defaultTrialCount;
-  }
-  return parsed;
+  return parseEnvInteger(BENCH_TRIALS_ENV_KEY) ?? defaultTrialCount;
 }
 
 /**
