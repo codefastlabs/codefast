@@ -8,6 +8,7 @@ import { spawnSync } from "node:child_process";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
+import { assertSubjectMeasuredSomething } from "@codefast/benchmark-harness/parent/assert-subject-measured";
 import { resolveBenchParentExitCode } from "@codefast/benchmark-harness/parent/resolve-bench-parent-exit-code";
 import type { RunBenchSubprocessParameters } from "@codefast/benchmark-harness/parent/run-bench-subprocess";
 import {
@@ -24,6 +25,7 @@ import {
 import { writeJsonlRun, writeMarkdownFile } from "@codefast/benchmark-harness/report/write";
 import type { BenchSubprocessConfig } from "@codefast/benchmark-harness/shared/config";
 import {
+  assertBenchEnvKeys,
   BENCH_RESULTS_DIR_NAME,
   BENCH_VERBOSE_ENV_KEY,
   isEnvFlagEnabled,
@@ -115,6 +117,7 @@ async function runEveryLibrary(
 }
 
 async function main(): Promise<void> {
+  assertBenchEnvKeys();
   console.log(
     `\n@codefast/benchmark-tailwind-variants — each library runs in its own subprocess; ` +
       `comparisons are ${CODEFAST_TV.libraryName} vs ${TAILWIND_VARIANTS.libraryName} and vs ${CVA.libraryName}.\n`,
@@ -133,6 +136,8 @@ async function main(): Promise<void> {
   const tailwindVariantsPayload = payloads.get(TAILWIND_VARIANTS.libraryName)!;
   const classVarianceAuthorityPayload = payloads.get(CVA.libraryName)!;
   console.log(`\n[bench] Run order: ${runOrder}`);
+
+  assertSubjectMeasuredSomething(CODEFAST_TV.libraryName, codefastPayload.trials);
 
   const codefastReport: LibraryReport = buildLibraryReport(
     codefastPayload.fingerprint,

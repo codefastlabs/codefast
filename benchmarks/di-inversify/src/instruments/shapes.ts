@@ -122,7 +122,7 @@ export function findShape(id: string): InstrumentShape {
   const shape = INSTRUMENT_SHAPES.find((candidate) => candidate.id === id);
 
   if (shape === undefined) {
-    throw new Error(`unknown SHAPE "${id}"; known: ${INSTRUMENT_SHAPES.map((each) => each.id).join(", ")}`);
+    throw new Error(`unknown BENCH_ALLOC_SHAPE "${id}"; known: ${INSTRUMENT_SHAPES.map((each) => each.id).join(", ")}`);
   }
 
   return shape;

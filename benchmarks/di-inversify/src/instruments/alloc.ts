@@ -9,15 +9,22 @@
  * report one, so the guard reads clean while the number halves; and V8's sampling heap profiler
  * holds its samples weakly, so the short-lived garbage under test is gone before it reports.
  *
- * Run with no `SHAPE` for the table; a child measures the one shape it is given.
+ * Run with no `BENCH_ALLOC_SHAPE` for the table; a child measures the one shape it is given.
  */
 
 import { spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 
+import { assertBenchEnvKeys, parseEnvInteger } from "@codefast/benchmark-harness/shared/env-keys";
+
 import { findShape, INSTRUMENT_SHAPES } from "#/instruments/shapes";
 
-const OPERATIONS = Number(process.env.OPERATIONS ?? 2_000_000);
+const OPERATIONS_ENV_KEY = "BENCH_ALLOC_OPERATIONS";
+const SHAPE_ENV_KEY = "BENCH_ALLOC_SHAPE";
+
+assertBenchEnvKeys({ allowInternalKeys: true, extraKeys: new Set([OPERATIONS_ENV_KEY, SHAPE_ENV_KEY]) });
+
+const OPERATIONS = parseEnvInteger(OPERATIONS_ENV_KEY, { min: 1 }) ?? 2_000_000;
 const WARMUP_OPERATIONS = 50_000;
 const MEASURE_BEGIN = "=== MEASURE BEGIN ===";
 const MEASURE_END = "=== MEASURE END ===";
@@ -52,7 +59,7 @@ function countScavenges(shapeId: string): number {
     process.execPath,
     ["--trace-gc", "--max-semi-space-size=1", "--no-warnings", "--import", "tsx/esm", fileURLToPath(import.meta.url)],
     // One trace line per collection adds up, and a truncated buffer undercounts rather than fails.
-    { encoding: "utf8", env: { ...process.env, SHAPE: shapeId }, maxBuffer: OUTPUT_LIMIT_BYTES },
+    { encoding: "utf8", env: { ...process.env, [SHAPE_ENV_KEY]: shapeId }, maxBuffer: OUTPUT_LIMIT_BYTES },
   );
 
   if (result.status !== 0) {
@@ -71,7 +78,7 @@ function countScavenges(shapeId: string): number {
     .filter((line) => line.includes("Scavenge")).length;
 }
 
-const shapeId = process.env.SHAPE;
+const shapeId = process.env[SHAPE_ENV_KEY];
 
 if (shapeId === undefined) {
   console.log(`scavenges per ${(OPERATIONS / 1e6).toFixed(1)}M resolves\n`);
