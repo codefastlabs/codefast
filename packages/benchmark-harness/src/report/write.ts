@@ -14,6 +14,17 @@ export function writeMarkdownFile(outputPath: string, markdown: string): void {
   writeFileSync(outputPath, `${markdown}\n`, "utf8");
 }
 
+/**
+ * Writes a value as indented JSON, creating parent directories as needed.
+ *
+ * @remarks Indented so a run directory stays diffable between runs, which is most of why the file
+ * is written at all.
+ */
+export function writeJsonFile(outputPath: string, value: unknown): void {
+  mkdirSync(dirname(outputPath), { recursive: true });
+  writeFileSync(outputPath, `${JSON.stringify(value, undefined, 2)}\n`, "utf8");
+}
+
 function flattenLibraryToJsonl(
   fingerprint: Fingerprint,
   trials: ReadonlyArray<TrialPayload>,

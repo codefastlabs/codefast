@@ -60,6 +60,7 @@ export type { RunBenchSubprocessParameters } from "#/parent/run-bench-subprocess
 export {
   SubprocessExecutionError,
   buildSubprocessEnvironment,
+  discoverBenchScenarioIds,
   runBenchSubprocess,
 } from "#/parent/run-bench-subprocess";
 
@@ -109,4 +110,13 @@ export {
   summarizeComparison,
 } from "#/report/comparison";
 
-export { writeJsonlRun, writeMarkdownFile } from "#/report/write";
+export type {
+  ComparisonDocument,
+  ComparisonDocumentCell,
+  ComparisonDocumentEnvironment,
+  ComparisonDocumentLibrary,
+  ComparisonDocumentScenario,
+} from "#/report/comparison-document";
+export { COMPARISON_DOCUMENT_SCHEMA_VERSION, buildComparisonDocument } from "#/report/comparison-document";
+
+export { writeJsonFile, writeJsonlRun, writeMarkdownFile } from "#/report/write";
