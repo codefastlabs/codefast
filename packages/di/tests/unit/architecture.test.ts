@@ -389,7 +389,7 @@ describe("SPEC.md keeps up with the API it specifies", () => {
     for (const link of spec.matchAll(/\[([^\]]*?)]\(#([^)]+)\)/g)) {
       const [, label, target] = link;
       const landsOn = sectionOfAnchor.get(target!);
-      const claimed = /(?:section |§|xem )(\d+(?:\.\d+)?)/i.exec(label!);
+      const claimed = /(?:section |§|see )(\d+(?:\.\d+)?)/i.exec(label!);
       if (landsOn !== undefined && claimed !== null && claimed[1] !== landsOn) {
         mislabelled.push(`[${label!}](#${target!}) → section ${landsOn}`);
       }
@@ -403,7 +403,7 @@ describe("SPEC.md keeps up with the API it specifies", () => {
   it("points only at source files that exist, naming only symbols they export", () => {
     const dangling: Array<string> = [];
 
-    for (const pointer of spec.matchAll(/^> \*\*Hình dạng chính xác:\*\* (.+)$/gm)) {
+    for (const pointer of spec.matchAll(/^> \*\*Exact shape:\*\* (.+)$/gm)) {
       // One pointer may cite two files, separated by a semicolon: `a.ts` — `X`; `b.ts` — `Y`.
       for (const clause of pointer[1]!.split(";")) {
         const cited = [...clause.matchAll(/`([^`]+)`/g)].map((match) => match[1]!);
@@ -420,7 +420,7 @@ describe("SPEC.md keeps up with the API it specifies", () => {
           continue;
         }
 
-        // Prose between the backticks ("bảy interface thành viên") carries no backticks, so only
+        // Prose between the backticks ("seven member interfaces") carries no backticks, so only
         // real identifiers reach this filter.
         for (const symbol of symbols.filter((name) => /^[A-Za-z_][A-Za-z0-9_]*$/.test(name))) {
           if (!new RegExp(`\\b${symbol}\\b`).test(source)) {
