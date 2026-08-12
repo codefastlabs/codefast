@@ -1,10 +1,13 @@
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 
 import type { AggregatedScenarioResult, LibraryReport } from "#/report/aggregate";
 import type { ComparisonLibrary } from "#/report/comparison";
 import { buildComparisonDocument, COMPARISON_DOCUMENT_SCHEMA_VERSION } from "#/report/comparison-document";
 import { NOISY_IQR_FRACTION, THROUGHPUT_NOISE_CEILING_HZ_PER_OP } from "#/report/reliability";
+import { BENCH_ISOLATE_ENV_KEY, BENCH_MODE_ENV_KEY, BENCH_ONLY_ENV_KEY } from "#/shared/env-keys";
 import type { Fingerprint } from "#/shared/protocol";
+
+const RUN = { runId: "2026-08-12T00-00-00-000Z" };
 
 function fingerprint(libraryName: string, libraryVersion: string): Fingerprint {
   return {
@@ -55,15 +58,21 @@ function library(
 }
 
 describe("buildComparisonDocument", () => {
+  afterEach(() => {
+    vi.unstubAllEnvs();
+  });
+
   it("stamps the schema version so an older run directory is identifiable", () => {
-    const document = buildComparisonDocument(library("pivot", [scenario("a", 100)]), []);
+    const document = buildComparisonDocument(library("pivot", [scenario("a", 100)]), [], RUN);
     expect(document.schemaVersion).toBe(COMPARISON_DOCUMENT_SCHEMA_VERSION);
   });
 
   it("carries the environment and each library at the version measured", () => {
-    const document = buildComparisonDocument(library("pivot", [scenario("a", 100)]), [
-      library("rival", [scenario("a", 50)], "Rival 1"),
-    ]);
+    const document = buildComparisonDocument(
+      library("pivot", [scenario("a", 100)]),
+      [library("rival", [scenario("a", 50)], "Rival 1")],
+      RUN,
+    );
     expect(document.environment.cpuModel).toBe("Apple M1 Pro");
     expect(document.pivot.libraryName).toBe("pivot");
     expect(document.competitors).toHaveLength(1);
@@ -72,24 +81,29 @@ describe("buildComparisonDocument", () => {
 
   // The markdown table rounds to three significant figures, which cannot resolve a few percent.
   it("keeps ratios at full precision rather than the rendered rounding", () => {
-    const document = buildComparisonDocument(library("pivot", [scenario("a", 100)]), [
-      library("rival", [scenario("a", 30)]),
-    ]);
+    const document = buildComparisonDocument(
+      library("pivot", [scenario("a", 100)]),
+      [library("rival", [scenario("a", 30)])],
+      RUN,
+    );
     expect(document.scenarios[0]?.competitors[0]?.ratio).toBeCloseTo(100 / 30, 12);
   });
 
   it("names each competitor on its own cell, so a cell reads without positional context", () => {
-    const document = buildComparisonDocument(library("pivot", [scenario("a", 100)]), [
-      library("first", [scenario("a", 50)], "First"),
-      library("second", [scenario("a", 25)], "Second"),
-    ]);
+    const document = buildComparisonDocument(
+      library("pivot", [scenario("a", 100)]),
+      [library("first", [scenario("a", 50)], "First"), library("second", [scenario("a", 25)], "Second")],
+      RUN,
+    );
     expect(document.scenarios[0]?.competitors.map((cell) => cell.displayName)).toEqual(["First", "Second"]);
   });
 
   it("zeroes the ratio when a competitor never measured the scenario", () => {
-    const document = buildComparisonDocument(library("pivot", [scenario("only-pivot", 100)]), [
-      library("rival", [scenario("other", 50)]),
-    ]);
+    const document = buildComparisonDocument(
+      library("pivot", [scenario("only-pivot", 100)]),
+      [library("rival", [scenario("other", 50)])],
+      RUN,
+    );
     expect(document.scenarios[0]?.competitors[0]).toMatchObject({ hzPerOp: 0, ratio: 0 });
   });
 
@@ -99,6 +113,7 @@ describe("buildComparisonDocument", () => {
     const document = buildComparisonDocument(
       library("pivot", [scenario("noisy", fast, NOISY_IQR_FRACTION * 2), scenario("calm", 100, 0)]),
       [library("rival", [scenario("noisy", fast / 2), scenario("calm", 50)])],
+      RUN,
     );
     expect(document.scenarios[0]).toMatchObject({ isPivotIqrNoisy: true });
     expect(document.scenarios[0]?.competitors[0]?.isRatioUnreliable).toBe(true);
@@ -107,25 +122,76 @@ describe("buildComparisonDocument", () => {
   });
 
   it("includes the head-to-head classification per competitor", () => {
-    const document = buildComparisonDocument(library("pivot", [scenario("a", 100), scenario("b", 10)]), [
-      library("rival", [scenario("a", 50), scenario("b", 20)], "Rival"),
-    ]);
+    const document = buildComparisonDocument(
+      library("pivot", [scenario("a", 100), scenario("b", 10)]),
+      [library("rival", [scenario("a", 50), scenario("b", 20)], "Rival")],
+      RUN,
+    );
     const [summary] = document.headToHead;
     expect(summary?.displayName).toBe("Rival");
     expect(summary?.headToHead.wins.map((entry) => entry.id)).toEqual(["a"]);
     expect(summary?.headToHead.losses.map((entry) => entry.id)).toEqual(["b"]);
   });
 
-  it("records the run order, which decides whether a cross-library ratio is citable", () => {
-    const withOrder = buildComparisonDocument(library("pivot", [scenario("a", 100)]), [], "interleaved");
-    expect(withOrder.runOrder).toBe("interleaved");
-    expect(buildComparisonDocument(library("pivot", [scenario("a", 100)]), []).runOrder).toBeUndefined();
+  // Strict, so a field holding undefined fails here rather than vanishing from the written file.
+  it("survives a JSON round trip, which is the only way it is ever read", () => {
+    const document = buildComparisonDocument(
+      library("pivot", [scenario("a", 100)]),
+      [library("rival", [scenario("a", 30)])],
+      RUN,
+    );
+    expect(JSON.parse(JSON.stringify(document))).toStrictEqual(document);
+  });
+});
+
+describe("buildComparisonDocument run provenance", () => {
+  afterEach(() => {
+    vi.unstubAllEnvs();
   });
 
-  it("survives a JSON round trip, which is the only way it is ever read", () => {
-    const document = buildComparisonDocument(library("pivot", [scenario("a", 100)]), [
-      library("rival", [scenario("a", 30)]),
-    ]);
-    expect(JSON.parse(JSON.stringify(document))).toEqual(document);
+  it("carries the run id, so a latest.* mirror joins back to its directory exactly", () => {
+    const document = buildComparisonDocument(library("pivot", [scenario("a", 100)]), [], RUN);
+    expect(document.run.runId).toBe(RUN.runId);
+  });
+
+  it("defaults to the default profile with no filter and no isolation", () => {
+    const document = buildComparisonDocument(library("pivot", [scenario("a", 100)]), [], RUN);
+    expect(document.run).toMatchObject({ isolated: false, mode: "default", scenarioFilter: null });
+  });
+
+  it.each(["fast", "full"])("records the %s profile", (mode) => {
+    vi.stubEnv(BENCH_MODE_ENV_KEY, mode);
+    expect(buildComparisonDocument(library("pivot", [scenario("a", 100)]), [], RUN).run.mode).toBe(mode);
+  });
+
+  it("records isolation, which decides whether a row is order-independent", () => {
+    vi.stubEnv(BENCH_ISOLATE_ENV_KEY, "true");
+    expect(buildComparisonDocument(library("pivot", [scenario("a", 100)]), [], RUN).run.isolated).toBe(true);
+  });
+
+  it("records the run order the parent supplies", () => {
+    const withOrder = buildComparisonDocument(library("pivot", [scenario("a", 100)]), [], {
+      ...RUN,
+      runOrder: "interleaved",
+    });
+    expect(withOrder.run.runOrder).toBe("interleaved");
+    expect(buildComparisonDocument(library("pivot", [scenario("a", 100)]), [], RUN).run.runOrder).toBeNull();
+  });
+
+  // The whole point: a narrowed run must not read as the state of the suite.
+  it("records the filter and how many of the suite's rows it measured", () => {
+    vi.stubEnv(BENCH_ONLY_ENV_KEY, "a, b");
+    const document = buildComparisonDocument(library("pivot", [scenario("a", 100)]), [], {
+      ...RUN,
+      scenariosAvailable: 24,
+    });
+    expect(document.run.scenarioFilter).toEqual(["a", "b"]);
+    expect(document.run.scenariosMeasured).toBe(1);
+    expect(document.run.scenariosAvailable).toBe(24);
+  });
+
+  it("falls back to the measured count when the suite's total is unknown", () => {
+    const document = buildComparisonDocument(library("pivot", [scenario("a", 100), scenario("b", 50)]), [], RUN);
+    expect(document.run.scenariosAvailable).toBe(2);
   });
 });

@@ -1,6 +1,13 @@
 import type { ComparisonCompetitorSummary, ComparisonLibrary } from "#/report/comparison";
 import { buildComparisonRows, summarizeComparison } from "#/report/comparison";
 import { isIqrNoisy, isRatioUnreliable } from "#/report/reliability";
+import {
+  BENCH_ISOLATE_ENV_KEY,
+  BENCH_ONLY_ENV_KEY,
+  isEnvFlagEnabled,
+  parseScenarioFilter,
+  resolveBenchModeFromEnvironment,
+} from "#/shared/env-keys";
 
 /**
  * Shape of {@link ComparisonDocument}, so a reader of an older run directory can tell that the file
@@ -9,7 +16,43 @@ import { isIqrNoisy, isRatioUnreliable } from "#/report/reliability";
  * @remarks Bumped whenever a field changes meaning or leaves — run directories are kept for
  * historical comparison, and a silently reinterpreted field is the failure this exists to prevent.
  */
-export const COMPARISON_DOCUMENT_SCHEMA_VERSION = 1;
+export const COMPARISON_DOCUMENT_SCHEMA_VERSION = 2;
+
+/**
+ * How the run was invoked, so a reader can tell a publishable run from a smoke or narrowed one.
+ *
+ * @remarks Without this a filtered run is indistinguishable from a whole suite except by row count,
+ * which only helps a reader who already knows how many rows the suite has.
+ */
+export interface ComparisonDocumentRun {
+  /** Basename of this run's directory — the exact key joining a `latest.*` mirror to its run. */
+  readonly runId: string;
+  readonly mode: "default" | "fast" | "full";
+  readonly isolated: boolean;
+  /**
+   * Ids requested through `BENCH_ONLY`, or `null` when the whole suite ran.
+   *
+   * @remarks Null rather than absent: `JSON.stringify` drops an undefined property, and a reader
+   * cannot tell a key that means "no filter" from one this writer forgot.
+   */
+  readonly scenarioFilter: ReadonlyArray<string> | null;
+  readonly trialCount: number;
+  readonly scenariosMeasured: number;
+  /** Rows the subject collects, filtered or not; above `scenariosMeasured` means a partial run. */
+  readonly scenariosAvailable: number;
+  /** How the parent scheduled the libraries, which decides whether a cross-library ratio is citable. */
+  readonly runOrder: string | null;
+}
+
+/**
+ * What a suite has to supply; the rest of {@link ComparisonDocumentRun} comes from the environment.
+ */
+export interface ComparisonDocumentRunInput {
+  readonly runId: string;
+  readonly runOrder?: string | undefined;
+  /** Every row the subject collects — `SubprocessPayload.scenarioIds`, not the measured subset. */
+  readonly scenariosAvailable?: number | undefined;
+}
 
 /**
  * Machine and runtime the whole run shared.
@@ -78,9 +121,8 @@ export interface ComparisonDocumentScenario {
  */
 export interface ComparisonDocument {
   readonly schemaVersion: number;
+  readonly run: ComparisonDocumentRun;
   readonly environment: ComparisonDocumentEnvironment;
-  /** How the parent scheduled the libraries, which decides whether a cross-library ratio is citable. */
-  readonly runOrder: string | undefined;
   readonly pivot: ComparisonDocumentLibrary;
   readonly competitors: ReadonlyArray<ComparisonDocumentLibrary>;
   readonly scenarios: ReadonlyArray<ComparisonDocumentScenario>;
@@ -100,16 +142,28 @@ function toDocumentLibrary(library: ComparisonLibrary): ComparisonDocumentLibrar
 /**
  * Serialises the comparison the console and markdown reports render.
  *
- * @param runOrder - The parent's scheduling policy; a child cannot know it.
+ * @param run - Identity and scheduling the parent knows; the profile and filter come from the env.
  */
 export function buildComparisonDocument(
   pivot: ComparisonLibrary,
   competitors: ReadonlyArray<ComparisonLibrary>,
-  runOrder?: string,
+  run: ComparisonDocumentRunInput,
 ): ComparisonDocument {
   const { fingerprint } = pivot.report;
+  const scenarioFilter = parseScenarioFilter(process.env[BENCH_ONLY_ENV_KEY]);
+  const scenariosMeasured = pivot.report.scenarios.length;
   return {
     schemaVersion: COMPARISON_DOCUMENT_SCHEMA_VERSION,
+    run: {
+      runId: run.runId,
+      mode: resolveBenchModeFromEnvironment() ?? "default",
+      isolated: isEnvFlagEnabled(BENCH_ISOLATE_ENV_KEY),
+      scenarioFilter: scenarioFilter === undefined ? null : [...scenarioFilter],
+      trialCount: pivot.report.trialCount,
+      scenariosMeasured,
+      scenariosAvailable: run.scenariosAvailable ?? scenariosMeasured,
+      runOrder: run.runOrder ?? null,
+    },
     environment: {
       nodeVersion: fingerprint.nodeVersion,
       v8Version: fingerprint.v8Version,
@@ -121,7 +175,6 @@ export function buildComparisonDocument(
       gcExposed: fingerprint.gcExposed,
       timestampIso: fingerprint.timestampIso,
     },
-    runOrder,
     pivot: toDocumentLibrary(pivot),
     competitors: competitors.map(toDocumentLibrary),
     scenarios: buildComparisonRows(pivot, competitors).map((row) => ({

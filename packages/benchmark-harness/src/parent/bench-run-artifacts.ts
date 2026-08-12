@@ -9,6 +9,8 @@ import type { Fingerprint, TrialPayload } from "#/shared/protocol";
  * Where one run's artifacts go: a timestamped directory, mirrored to stable `latest.*` names.
  */
 export interface BenchRunOutputPaths {
+  /** Run-directory basename, carried into the document so a `latest.*` mirror joins back exactly. */
+  readonly runId: string;
   readonly runDirectory: string;
   readonly markdownPath: string;
   readonly jsonPath: string;
@@ -25,10 +27,13 @@ export interface BenchRunOutputPaths {
  * mirror gives CI and cross-run tooling a stable filename to diff against.
  */
 export function buildBenchRunOutputPaths(packageRootDirectory: string): BenchRunOutputPaths {
-  const timestamp = new Date().toISOString().replaceAll(":", "-").replaceAll(".", "-");
+  // One stamp for the directory name and the document, so the two cannot disagree — the fingerprint's
+  // own timestamp comes from a child and lands a second or so earlier.
+  const runId = new Date().toISOString().replaceAll(":", "-").replaceAll(".", "-");
   const benchResultsRoot = join(packageRootDirectory, BENCH_RESULTS_DIR_NAME);
-  const runDirectory = join(benchResultsRoot, timestamp);
+  const runDirectory = join(benchResultsRoot, runId);
   return {
+    runId,
     runDirectory,
     markdownPath: join(runDirectory, "report.md"),
     jsonPath: join(runDirectory, "report.json"),
@@ -56,6 +61,10 @@ export interface WriteBenchRunArtifactsParameters {
 /**
  * Writes a run's three artifacts into its directory, mirrors them to `latest.*`, and names them on
  * stdout.
+ *
+ * @remarks A narrowed run does not mirror. `latest.*` is what CI diffs and what a published figure is
+ * checked against, so it has to mean the whole suite — a run filtered to a row or two would overwrite
+ * it with something that looks complete and is not.
  */
 export function writeBenchRunArtifacts(parameters: WriteBenchRunArtifactsParameters): void {
   const { paths, markdown, comparisonDocument, librariesForJsonl } = parameters;
@@ -64,13 +73,22 @@ export function writeBenchRunArtifacts(parameters: WriteBenchRunArtifactsParamet
   writeJsonFile(paths.jsonPath, comparisonDocument);
   writeJsonlRun(paths.jsonlPath, librariesForJsonl);
 
-  writeMarkdownFile(paths.latestMarkdownPath, markdown);
-  writeJsonFile(paths.latestJsonPath, comparisonDocument);
-  writeJsonlRun(paths.latestJsonlPath, librariesForJsonl);
-
   console.log(`\nRun directory: ${paths.runDirectory}`);
   console.log(`  report.md   ${paths.markdownPath}`);
   console.log(`  report.json ${paths.jsonPath}`);
   console.log(`  ${OBSERVATIONS_FILE_NAME} ${paths.jsonlPath}`);
-  console.log(`Mirrored to ${paths.latestMarkdownPath}, ${paths.latestJsonPath}, ${paths.latestJsonlPath}`);
+
+  const { scenarioFilter, mode, scenariosMeasured, scenariosAvailable } = comparisonDocument.run;
+  if (scenarioFilter !== null) {
+    console.log(
+      `Not mirrored to latest.*: filtered to ${String(scenariosMeasured)} of ${String(scenariosAvailable)} rows ` +
+        `(${scenarioFilter.join(", ")}). Run the whole suite to move latest.*.`,
+    );
+    return;
+  }
+
+  writeMarkdownFile(paths.latestMarkdownPath, markdown);
+  writeJsonFile(paths.latestJsonPath, comparisonDocument);
+  writeJsonlRun(paths.latestJsonlPath, librariesForJsonl);
+  console.log(`Mirrored to latest.* (${mode} profile, ${String(scenariosMeasured)} rows)`);
 }

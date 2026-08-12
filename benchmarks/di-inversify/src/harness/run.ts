@@ -182,14 +182,14 @@ async function main(): Promise<void> {
 
   // The same comparison the markdown renders, kept as data: the table rounds every ratio and
   // spends its reliability verdicts as glyphs, neither of which reads back.
-  const comparisonDocument = buildComparisonDocument(codefastLibrary, competitors, runOrder);
-
-  writeBenchRunArtifacts({
-    paths: buildBenchRunOutputPaths(packageRootDirectory),
-    markdown,
-    comparisonDocument,
-    librariesForJsonl,
+  const outputPaths = buildBenchRunOutputPaths(packageRootDirectory);
+  const comparisonDocument = buildComparisonDocument(codefastLibrary, competitors, {
+    runId: outputPaths.runId,
+    runOrder,
+    scenariosAvailable: codefastPayload.scenarioIds?.length,
   });
+
+  writeBenchRunArtifacts({ paths: outputPaths, markdown, comparisonDocument, librariesForJsonl });
 }
 
 main().catch((caught: unknown) => {
