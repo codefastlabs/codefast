@@ -1,152 +1,157 @@
-# Thiết kế board GitHub Projects — hồ sơ quyết định
+# GitHub Projects board design — decision record
 
-**Ngày:** 2026-08-03 · **Trạng thái:** đã chốt và đã triển khai · **Board:**
+**Date:** 2026-08-03 · **Status:** settled and implemented · **Board:**
 [`orgs/codefastlabs/projects/4`](https://github.com/orgs/codefastlabs/projects/4)
 
-Ghi lại đã chọn gì, vì sao, và — quan trọng nhất — **những ràng buộc của GitHub Projects đã buộc đổi thiết kế giữa
-đường**. Cách dùng board nằm ở [`guides/github-project-board.md`](../guides/github-project-board.md).
+A record of what was chosen, why, and — most importantly — **which GitHub Projects limits forced a redesign midway**.
+How to use the board is in [`guides/github-project-board.md`](../guides/github-project-board.md).
 
 ---
 
-## 1. Bối cảnh khi thiết kế
+## 1. The context at design time
 
-Trạng thái repo lúc dựng board, vì nó quyết định gần hết các lựa chọn:
+The state of the repo when the board was built, because it decided nearly every choice:
 
-- **0 issue đang mở**, 1 PR duy nhất là bot `chore: release new version`
-- Dependabot chạy weekly + grouped, **auto-merge** trừ major (`.github/workflows/dependabot-auto-merge.yml`)
-- 9 package + 1 app + 2 benchmark suite, một người bảo trì
-- Labels gần như mặc định, chỉ thêm `dependencies`, `github-actions`, `performance`
+- **0 open issues**, and one single PR: the `chore: release new version` bot
+- Dependabot running weekly and grouped, with **auto-merge** except for majors
+  (`.github/workflows/dependabot-auto-merge.yml`)
+- 9 packages + 1 app + 2 benchmark suites, one maintainer
+- Labels almost entirely default, with only `dependencies`, `github-actions` and `performance` added
 
-Với 0 issue và một người làm, một board kiểu Jira 8 field sẽ chết trong hai tuần. **Mỗi field là thuế phải trả trên mọi
-item**, nên chốt đúng 4.
+With 0 issues and one person working, a Jira-style board with 8 fields would be dead in two weeks. **Every field is a
+tax paid on every item**, so exactly 4 were settled on.
 
-## 2. Các quyết định
+## 2. The decisions
 
-### 2.1 Board ở cấp org, không phải cấp repo
+### 2.1 An org-level board, not a repo-level one
 
-Projects (classic) đã bị khai tử. `github.com/codefastlabs/codefast/projects` chỉ là trang liệt kê. Board thật sống ở
-`orgs/codefastlabs/projects/4` và được link vào repo — lợi thế là sau này phủ được nhiều repo của org.
+Projects (classic) has been killed off. `github.com/codefastlabs/codefast/projects` is only a listing page. The real
+board lives at `orgs/codefastlabs/projects/4` and is linked into the repo — with the upside that it can later span
+several of the org's repos.
 
-### 2.2 Bốn field, không nhiều hơn
+### 2.2 Four fields, no more
 
 `Status` · `Package` · `Kind` · `Target`.
 
-**Bỏ `Priority` và `Size`.** Một người làm thì **thứ tự trong cột `Next` chính là priority** — kéo-thả rẻ hơn set field.
-`Size` không dùng để lập kế hoạch cho ai nên nó chỉ là thuế.
+**`Priority` and `Size` were dropped.** With one person working, **the order within the `Next` column is the priority**
+— dragging is cheaper than setting a field. `Size` is not used to plan for anyone, so it is pure tax.
 
-`Package` được giữ vì đây là monorepo: câu hỏi thực tế hằng ngày là _"còn gì treo ở package nào"_, không phải _"issue
-này ưu tiên mấy"_.
+`Package` is kept because this is a monorepo: the real day-to-day question is _"what is still outstanding in which
+package"_, not _"what priority is this issue"_.
 
-### 2.3 Chỉ auto-add issue, không auto-add PR
+### 2.3 Auto-add issues only, never PRs
 
-> **Đây là quyết định bị nền tảng buộc đổi, không phải lựa chọn ban đầu.**
+> **This was forced by the platform, not the original choice.**
 >
-> Thiết kế đầu tiên là auto-add cả issue lẫn PR, rồi loại bot bằng `-author:app/dependabot -author:app/github-actions`.
-> GitHub **từ chối**:
+> The first design auto-added both issues and PRs, then excluded bots with
+> `-author:app/dependabot -author:app/github-actions`. GitHub **refused**:
 >
 > ```
 > Invalid filter: Unknown field names "author", "author"
 > ```
 >
-> Filter của project auto-add **không hỗ trợ `author:`**. Cũng không có autocomplete để tra field nào được hỗ trợ.
+> A project's auto-add filter **does not support `author:`**. There is no autocomplete either, to find out which fields
+> are supported.
 
-Cách thay thế: chỉ nhận issue.
+The replacement: accept issues only.
 
 ```
 is:issue is:open -label:dependencies -label:github-actions
 ```
 
-Cả PR Dependabot lẫn PR release đều là PR nên bị loại sạch **mà không cần `author:`**. PR release lại không có label
-nào, nên nếu vẫn muốn nhận PR thì không có cách nào lọc riêng nó.
+Both Dependabot PRs and the release PR are PRs, so they are all excluded **without needing `author:`**. The release PR
+carries no label at all, so if PRs were still wanted there would be no way to filter it out on its own.
 
-**Đánh đổi đã chấp nhận:** PR của chính maintainer cũng không lên board. PR nhỏ không gắn issue sẽ vô hình. Với repo một
-người, PR merge trong ngày không cần trạng thái.
+**The accepted trade-off:** the maintainer's own PRs do not reach the board either. A small PR with no linked issue is
+invisible. For a one-person repo, a PR that merges the same day does not need a status.
 
-Bù lại bằng workflow `Pull request linked to issue` → issue tự sang `In review`. Cần ghi rõ vì dễ hiểu sai: workflow này
-**set field trên issue**, nó **không** kéo PR vào board.
+This is offset by the `Pull request linked to issue` workflow → the issue moves to `In review` by itself. Worth spelling
+out, because it is easy to misread: that workflow **sets a field on the issue**, it does **not** pull the PR onto the
+board.
 
-### 2.4 Thêm bậc `Someday`
+### 2.4 Adding a `Someday` stage
 
-Bộ `Status` đầu tiên là 5 bậc: `Inbox → Next → In progress → In review → Done`.
+The first `Status` set had 5 stages: `Inbox → Next → In progress → In review → Done`.
 
-Bộ đó **xung đột với luật của chính nó**: luật nói _"`Inbox` rỗng mỗi tuần"_, nhưng ý tưởng cần park hàng tháng. Ý tưởng
-nằm ở `Inbox` thì luật chết ngay tuần đầu, và đó đúng là lúc board bắt đầu mục.
+That set **conflicted with its own rule**: the rule says _"`Inbox` is empty every week"_, but ideas need to be parked
+for months. Park an idea in `Inbox` and the rule dies in week one — which is exactly when a board starts to rot.
 
-Thêm `Someday` giải xung đột: `Inbox` = chưa triage (rỗng mỗi tuần), `Someday` = park có chủ ý (đọc lại mỗi kỳ release),
-`Next` = đã cam kết.
+Adding `Someday` resolves the conflict: `Inbox` = not yet triaged (empty every week), `Someday` = deliberately parked
+(re-read every release), `Next` = committed to.
 
-### 2.5 Ý tưởng và mục tiêu học là draft issue
+### 2.5 Ideas and learning goals are draft issues
 
-Không phải issue thật: không đốt số issue, không gửi notification, không lộ ra công khai khi chưa chín.
+Not real issues: they burn no issue number, send no notifications, and leak nothing publicly before they are ripe.
 
-Đã kiểm chứng bằng thực nghiệm (tạo draft → đọc field → xoá): draft issue **vẫn được `Item added to project` set
-`Status: Inbox`**, nên không cần workflow riêng.
+Verified experimentally (create a draft → read the field → delete): a draft issue **still gets `Status: Inbox` from
+`Item added to project`**, so no separate workflow is needed.
 
-Học thuần cá nhân, không liên quan repo, **không thuộc project này** — trộn "học Rust" với "sửa RTL cho Tooltip" phá
-đúng cái tín hiệu cần từ board: _cái gì đang ship được_.
+Purely personal learning, unrelated to the repo, **does not belong in this project** — mixing "learn Rust" with "fix RTL
+for Tooltip" destroys the very signal the board exists to give: _what can actually ship_.
 
-### 2.6 Bật `Auto-close issue`
+### 2.6 Turning on `Auto-close issue`
 
-Kéo card sang `Done` → issue tự đóng. Cùng với `Item closed` → `Done`, vòng lặp kín cả hai chiều, không idempotent-loop
-vì cả hai đầu đều hội tụ.
+Drag a card to `Done` → the issue closes itself. Together with `Item closed` → `Done`, the loop is closed in both
+directions, with no idempotency loop because both ends converge.
 
-**Tác dụng phụ cần biết:** áp cho cả draft issue. Đó là lý do §3 của guide nhấn mạnh park ý tưởng bằng `Someday` chứ
-không phải `Done`.
+**A side effect worth knowing:** it applies to draft issues too. That is why §3 of the guide stresses parking ideas in
+`Someday` rather than `Done`.
 
-### 2.7 Xoá view `Roadmap`
+### 2.7 Deleting the `Roadmap` view
 
-Đã tạo rồi xoá. Hai lý do:
+Created, then deleted. Two reasons:
 
-1. **Không chạy được về mặt kỹ thuật.** Layout Roadmap cần field kiểu **DATE** để vẽ thanh thời gian. `Target` là
-   **TEXT**, nên item hiện ra nhưng không có vị trí trên trục thời gian.
-2. **Mất lý do tồn tại.** Lý do ban đầu là roadmap công khai cho người ngoài đọc. Project để **private**, nên lý do đó
-   không còn.
+1. **It does not work technically.** The Roadmap layout needs a **DATE** field to draw its time bars. `Target` is
+   **TEXT**, so items appear but have no position on the timeline.
+2. **Its reason for existing went away.** The original reason was a public roadmap for outsiders to read. The project is
+   **private**, so that reason is gone.
 
-Giữ nó lại chỉ là một tab chết. Nếu sau này thật sự cần timeline: thêm field `Target date` kiểu DATE, đừng đổi `Target`.
+Keeping it would only be a dead tab. If a timeline is genuinely needed later: add a `Target date` field of type DATE, do
+not change `Target`.
 
-### 2.8 `Target` nghĩa là dự án downstream, không phải mốc version
+### 2.8 `Target` means a downstream project, not a version milestone
 
-Đây là **dự án nội bộ, không có mốc 1.0 nào được lên kế hoạch** — số version là giấy tờ của Changesets, không phải lời
-hứa tương thích với bên thứ ba.
+This is an **internal project with no planned 1.0** — the version number is Changesets bookkeeping, not a compatibility
+promise to third parties.
 
-Nên câu hỏi đúng mỗi kỳ release không phải _"đã 1.0 chưa"_ mà là _"dự án downstream nào đang chờ cái gì"_. `Target` trả
-lời câu đó.
+So the right question each release is not _"are we at 1.0 yet"_ but _"which downstream project is waiting on what"_.
+`Target` answers that one.
 
-Ghi chú kèm: bằng chứng trong repo (npm `access: public`, doc site codefastlabs.com, badge downloads/bundle-size) chỉ về
-hướng "sản phẩm công khai" — **ngược với ý định thật**. Đó là lý do việc này phải được ghi ra thay vì để mỗi người suy
-luận lại từ repo.
+A note alongside it: the evidence in the repo (npm `access: public`, the codefastlabs.com doc site,
+downloads/bundle-size badges) all points at "a public product" — **the opposite of the real intent**. That is exactly
+why this has to be written down rather than left for each reader to re-infer from the repo.
 
-### 2.9 Giữ project private
+### 2.9 Keeping the project private
 
-Đã cân nhắc để public để board thành roadmap cho người ngoài. Chốt **private** — phù hợp với bản chất nội bộ của dự án,
-và kéo theo quyết định 2.7.
+Making it public, so the board could serve as a roadmap for outsiders, was considered. Settled on **private** — it fits
+the internal nature of the project, and it is what decision 2.7 follows from.
 
-## 3. Ràng buộc của GitHub Projects đã gặp
+## 3. GitHub Projects limits encountered
 
-Ghi lại để không phải tự phát hiện lại:
+Recorded so they do not have to be rediscovered:
 
-| Ràng buộc                                                                 | Hệ quả                                                                            |
-| ------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
-| Filter auto-add **không hỗ trợ `author:`**                                | Không loại bot theo tác giả được → quyết định 2.3                                 |
-| Filter **có** hỗ trợ custom field (`kind:idea,learn`)                     | Đã kiểm chứng trên UI, không báo lỗi                                              |
-| GraphQL **không** cấu hình được built-in workflow                         | `deleteProjectV2Workflow` tồn tại nhưng không có create/update — phải làm trên UI |
-| GraphQL **không** set được group-by của view                              | `ProjectV2ViewConfigurationInput` chỉ nhận `visibleFieldIds`                      |
-| `filter` chỉ có ở `updateProjectV2View`, không có ở `createProjectV2View` | Tạo view rồi update filter thành 2 bước                                           |
-| Layout Roadmap cần field DATE                                             | → quyết định 2.7                                                                  |
+| Limit                                                                       | Consequence                                                                      |
+| --------------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| The auto-add filter **does not support `author:`**                          | Bots cannot be excluded by author → decision 2.3                                 |
+| The filter **does** support custom fields (`kind:idea,learn`)               | Verified in the UI, no error                                                     |
+| GraphQL **cannot** configure a built-in workflow                            | `deleteProjectV2Workflow` exists but there is no create/update — must use the UI |
+| GraphQL **cannot** set a view's group-by                                    | `ProjectV2ViewConfigurationInput` only accepts `visibleFieldIds`                 |
+| `filter` exists only on `updateProjectV2View`, not on `createProjectV2View` | Creating a view then setting its filter is two steps                             |
+| The Roadmap layout needs a DATE field                                       | → decision 2.7                                                                   |
 
-## 4. Cái đã cân nhắc và loại
+## 4. Considered and rejected
 
-- **Một project cho mỗi package** (9 project) — loại: chia cắt cùng một luồng công việc, và `Package` field giải quyết
-  xong nhu cầu đó.
-- **Đưa dependency bump lên board** — loại: chúng auto-merge, một cột trạng thái cho việc không cần quyết định gì là
-  thuế thuần.
-- **Dùng cả Milestones và Projects iteration** — loại: hai cơ chế cho cùng một việc. Release không theo lịch nên
-  `Target` dạng text phù hợp hơn iteration cố định độ dài.
-- **Label `good first issue` / `help wanted`** — hiện vô nghĩa với dự án nội bộ, chưa dọn.
+- **One project per package** (9 projects) — rejected: it splits one stream of work apart, and the `Package` field
+  already covers that need.
+- **Putting dependency bumps on the board** — rejected: they auto-merge, and a status column for work that needs no
+  decision is pure tax.
+- **Using both Milestones and Projects iterations** — rejected: two mechanisms for one job. Releases do not follow a
+  schedule, so a text `Target` fits better than a fixed-length iteration.
+- **The `good first issue` / `help wanted` labels** — currently meaningless for an internal project, not yet cleaned up.
 
-## 5. Còn mở
+## 5. Still open
 
-- Mấy signal công khai cho một dự án nội bộ: npm `access: public`, doc site, và hai label ở trên. Dọn hay để — chưa
-  quyết.
-- `Kind` và `Target` chưa có cách nào tự điền; nếu triage tay tỏ ra tốn công thì cân nhắc một workflow suy `Kind` từ
-  prefix title.
+- The public-facing signals on an internal project: npm `access: public`, the doc site, and the two labels above.
+  Whether to clean them up or leave them is undecided.
+- `Kind` and `Target` have no way to be filled in automatically; if manual triage proves to cost too much, consider a
+  workflow that infers `Kind` from the title prefix.

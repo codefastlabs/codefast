@@ -1,36 +1,37 @@
 # RFC: Tailwind Variants (TV) - Type-Safe Variant API for Tailwind CSS
 
-> **Trạng thái:** đã chấp nhận và đã triển khai. Viết 2025-09-14; `tv()`, slots, `extend`, compound variants, `cn`/`cx`
-> và `createTV` đều đã ship trong `@codefast/tailwind-variants`.
+> **Status:** accepted and implemented. Written 2025-09-14; `tv()`, slots, `extend`, compound variants, `cn`/`cx` and
+> `createTV` have all shipped in `@codefast/tailwind-variants`.
 >
-> **Đây là hồ sơ thiết kế, không phải tài liệu API.** Cách dùng thực tế nằm ở [README.md](./README.md) — đọc nó trước.
-> Giữ tài liệu này vì phần _vì sao_ (so sánh với `tailwind-variants`/`cva`, các đánh đổi về type inference) không nằm ở
-> đâu khác; các đoạn mã bên dưới minh hoạ ý định lúc thiết kế và không được kiểm theo API hiện tại.
+> **This is a design record, not API documentation.** For real usage see [README.md](./README.md) — read that first.
+> This document is kept for the _why_ (the comparison against `tailwind-variants`/`cva`, the type-inference trade-offs),
+> which is written down nowhere else; the code below illustrates design intent at the time and is not checked against
+> the current API.
 >
-> Mục **Future Roadmap** ở cuối là danh sách mong muốn lúc viết RFC, không phải kế hoạch: browser extension, VS Code
-> extension và CLI migration tool đều chưa tồn tại và chưa được lên lịch.
+> The **Future Roadmap** section at the end is a wish list from when the RFC was written, not a plan: the browser
+> extension, the VS Code extension and the CLI migration tool do not exist and are not scheduled.
 
-## Tóm tắt
+## Summary
 
-**Tailwind Variants (TV)** là một thư viện mạnh mẽ được thiết kế để tạo ra các API variant type-safe cho Tailwind CSS,
-cho phép developers xây dựng các hệ thống component linh hoạt với cú pháp đơn giản và trải nghiệm developer tuyệt vời.
+**Tailwind Variants (TV)** is a powerful library designed to create type-safe variant APIs for Tailwind CSS, letting
+developers build flexible component systems with a simple syntax and an excellent developer experience.
 
-## Động lực
+## Motivation
 
-Việc quản lý các variant của component trong Tailwind CSS thường dẫn đến:
+Managing component variants in Tailwind CSS usually leads to:
 
-- Code duplication và khó maintain
-- Thiếu type safety khi sử dụng TypeScript
-- Logic phức tạp để handle conditional classes
-- Khó khăn trong việc mở rộng và tái sử dụng components
-- Xung đột classes không được xử lý tự động
+- Code duplication and poor maintainability
+- Missing type safety when using TypeScript
+- Complex logic to handle conditional classes
+- Difficulty extending and reusing components
+- Class conflicts that are not resolved automatically
 
-TV giải quyết những vấn đề này bằng cách cung cấp một API declarative, type-safe với khả năng tự động merge classes và
-hệ thống variant mạnh mẽ.
+TV solves these problems by providing a declarative, type-safe API with automatic class merging and a capable variant
+system.
 
-## Thiết kế chi tiết
+## Detailed Design
 
-### 1. Core API - Hàm `tv()`
+### 1. Core API - The `tv()` Function
 
 #### 1.1 Basic Usage
 
@@ -123,8 +124,8 @@ const button = tv({
 
 #### 2.2 Type Safety
 
-- Compound variants chỉ chấp nhận valid combinations
-- Compile-time error cho invalid variant keys
+- Compound variants only accept valid combinations
+- Compile-time errors for invalid variant keys
 - Full IntelliSense support
 
 ### 3. Slots System - Multi-Element Components
@@ -313,7 +314,7 @@ const component = tv(
 // Result: "px-4 px-2" (no merging)
 ```
 
-### 6. Factory Pattern với createTV
+### 6. Factory Pattern with createTV
 
 #### 6.1 Theme Configuration
 
@@ -446,19 +447,19 @@ const textarea = tv({
 });
 ```
 
-## Trải nghiệm Developer (DX)
+## Developer Experience (DX)
 
 ### 1. IntelliSense & Autocompletion
 
-- Full TypeScript support với strict type inference
-- Autocomplete cho variant keys và values
-- Error highlighting cho invalid configurations
+- Full TypeScript support with strict type inference
+- Autocomplete for variant keys and values
+- Error highlighting for invalid configurations
 
 ### 2. Runtime Safety
 
-- Automatic validation của compound variants configuration
-- Clear error messages cho configuration errors
-- Graceful handling của undefined/null values
+- Automatic validation of the compound variants configuration
+- Clear error messages for configuration errors
+- Graceful handling of undefined/null values
 
 ### 3. Performance
 
@@ -468,13 +469,13 @@ const textarea = tv({
 
 ### 4. Debugging
 
-- Clear component hierarchy với extends
+- Clear component hierarchy with extends
 - Transparent class resolution process
 - Development mode warnings
 
 ## Migration & Adoption
 
-### 1. Từ CSS Modules/Styled Components
+### 1. From CSS Modules/Styled Components
 
 ```typescript
 // Before: CSS Modules
@@ -489,11 +490,11 @@ const button = tv({
 const className = button({ variant: "primary" });
 ```
 
-### 2. Từ Class Variance Authority (CVA)
+### 2. From Class Variance Authority (CVA)
 
-- API tương tự nhưng với nhiều tính năng mở rộng
-- Migration path đơn giản với syntax gần giống nhau
-- Thêm slots, extends, và compound slots
+- A similar API, with many more features on top
+- A simple migration path — the syntax is nearly identical
+- Adds slots, extends and compound slots
 
 ## Ecosystem Integration
 
@@ -537,29 +538,29 @@ const props = defineProps<{variant?: "primary" | "secondary"}>();
 
 ### 3. Framework Agnostic
 
-- Không phụ thuộc vào framework cụ thể
-- Có thể sử dụng với vanilla JS, React, Vue, Svelte, Solid.js
+- No dependency on any specific framework
+- Usable with vanilla JS, React, Vue, Svelte and Solid.js
 - Server-side rendering friendly
 
 ## Performance Considerations
 
 ### 1. Bundle Size
 
-- Tree-shaking để loại bỏ unused code
-- Minimal runtime với optimized class concatenation
-- No external dependencies ngoài tailwind-merge
+- Tree-shaking to drop unused code
+- Minimal runtime with optimized class concatenation
+- No external dependencies other than tailwind-merge
 
 ### 2. Runtime Performance
 
-- Efficient caching của compiled class strings
-- Optimized conditional logic cho variants
+- Efficient caching of compiled class strings
+- Optimized conditional logic for variants
 - Minimal memory footprint
 
 ### 3. Build Time
 
 - No build-time dependencies
-- Compatible với tất cả bundlers
-- Works với Tailwind CSS JIT compiler
+- Compatible with every bundler
+- Works with the Tailwind CSS JIT compiler
 
 ## Testing Strategy
 
@@ -567,7 +568,7 @@ const props = defineProps<{variant?: "primary" | "secondary"}>();
 
 - Test individual variant combinations
 - Validate class string outputs
-- Test edge cases và error conditions
+- Test edge cases and error conditions
 
 ### 2. Integration Testing
 
@@ -585,8 +586,8 @@ const props = defineProps<{variant?: "primary" | "secondary"}>();
 
 ### 1. Enhanced Type Safety
 
-- Stricter validation cho compound variants
-- Better error messages với suggestions
+- Stricter validation for compound variants
+- Better error messages with suggestions
 - Advanced type inference improvements
 
 ### 2. Additional Features
@@ -597,19 +598,19 @@ const props = defineProps<{variant?: "primary" | "secondary"}>();
 
 ### 3. Developer Tools
 
-- Browser extension cho debugging
-- VS Code extension với enhanced IntelliSense
-- CLI tools cho migration assistance
+- Browser extension for debugging
+- VS Code extension with enhanced IntelliSense
+- CLI tools for migration assistance
 
-## Kết luận
+## Conclusion
 
-Tailwind Variants (TV) cung cấp một solution hoàn chỉnh cho việc quản lý variants trong Tailwind CSS với:
+Tailwind Variants (TV) provides a complete solution for managing variants in Tailwind CSS:
 
-- **Type Safety**: Full TypeScript support với strict inference
-- **Flexibility**: Slots, extends, compound variants cho mọi use case
-- **Performance**: Minimal overhead với efficient class merging
-- **DX**: Excellent developer experience với IntelliSense và clear APIs
-- **Scalability**: Từ simple components đến complex design systems
+- **Type Safety**: Full TypeScript support with strict inference
+- **Flexibility**: Slots, extends and compound variants for every use case
+- **Performance**: Minimal overhead with efficient class merging
+- **DX**: Excellent developer experience with IntelliSense and clear APIs
+- **Scalability**: From simple components to complex design systems
 
-TV là công cụ lý tưởng cho teams muốn xây dựng maintainable, scalable component systems với Tailwind CSS trong môi
-trường production.
+TV is the ideal tool for teams that want to build maintainable, scalable component systems with Tailwind CSS in
+production.

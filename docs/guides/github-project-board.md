@@ -1,134 +1,136 @@
-# Board GitHub Projects — cách hoạt động và cách dùng
+# The GitHub Projects board — how it works and how to use it
 
-> **Board:** [`orgs/codefastlabs/projects/4`](https://github.com/orgs/codefastlabs/projects/4) — private, link vào
+> **Board:** [`orgs/codefastlabs/projects/4`](https://github.com/orgs/codefastlabs/projects/4) — private, linked into
 > `codefastlabs/codefast`
 >
-> **Cập nhật:** 2026-08-03 · Vì sao thiết kế như vậy:
-> [`decisions/github-project-board.md`](../decisions/github-project-board.md) · Sửa cấu hình:
+> **Updated:** 2026-08-03 · Why it is designed this way:
+> [`decisions/github-project-board.md`](../decisions/github-project-board.md) · Changing the configuration:
 > [`runbooks/github-project-maintenance.md`](../runbooks/github-project-maintenance.md)
 
-Board này là **repo-level Projects v2 đặt ở cấp org**. `github.com/codefastlabs/codefast/projects` chỉ là trang liệt kê
-các project được link vào repo — Projects (classic) đã bị GitHub khai tử, không còn board nào sống ở cấp repo.
+This board is a **repo-level Projects v2 board hosted at org level**. `github.com/codefastlabs/codefast/projects` is
+only the page listing the projects linked into the repo — Projects (classic) has been killed off by GitHub, and no board
+lives at repo level any more.
 
 ---
 
-## 1. Mô hình một câu
+## 1. The model in one sentence
 
-**Board theo dõi issue, không theo dõi PR.** Issue đi từ `Inbox` xuống `Done` gần như hoàn toàn tự động; PR chỉ tác động
-lên trạng thái của issue mà nó gắn vào, và bản thân PR không bao giờ xuất hiện thành card.
+**The board tracks issues, not PRs.** An issue moves from `Inbox` down to `Done` almost entirely automatically; a PR
+only affects the status of the issue it is linked to, and never appears as a card itself.
 
-## 2. Field
+## 2. Fields
 
-| Field     | Loại          | Ý nghĩa                                                                                                     |
+| Field     | Type          | Meaning                                                                                                     |
 | --------- | ------------- | ----------------------------------------------------------------------------------------------------------- |
-| `Status`  | single-select | Bậc trong luồng làm việc — xem §3                                                                           |
+| `Status`  | single-select | The stage in the workflow — see §3                                                                          |
 | `Package` | single-select | `ui` · `di` · `tailwind-variants` · `theme` · `tracking` · `cli` · `benchmark` · `apps/ui` · `repo-tooling` |
 | `Kind`    | single-select | `feat` · `fix` · `perf` · `docs` · `dx` · `chore` · `idea` · `learn`                                        |
-| `Target`  | text          | **Dự án downstream nào đang cần cái này.** Không phải mốc version — repo không có mốc 1.0                   |
+| `Target`  | text          | **Which downstream project needs this.** Not a version milestone — the repo has no 1.0 milestone            |
 
-`Package` là field quan trọng nhất: câu hỏi thường trực của monorepo là _"còn gì treo ở package nào"_, và ba trong bốn
-view group theo nó.
+`Package` is the most important field: the standing question in a monorepo is _"what is still outstanding in which
+package"_, and three of the four views group by it.
 
-Sáu option đầu của `Kind` khớp Conventional Commits (commitlint đang enforce), nên `Kind` của issue thường thành prefix
-commit luôn.
+The first six `Kind` options match Conventional Commits (which commitlint enforces), so an issue's `Kind` usually
+becomes the commit prefix directly.
 
-`Kind` và `Target` **không có workflow nào tự điền** — set tay khi triage.
+`Kind` and `Target` have **no workflow filling them in** — set them by hand at triage.
 
-## 3. Status — sáu bậc
+## 3. Status — six stages
 
-| Bậc           | Nghĩa         | Ai đặt                              | Luật                                            |
-| ------------- | ------------- | ----------------------------------- | ----------------------------------------------- |
-| `Inbox`       | chưa triage   | tự động, khi item vào board         | **rỗng mỗi tuần** — hoặc lên `Next`, hoặc close |
-| `Someday`     | park có chủ ý | tay                                 | đọc lại mỗi kỳ release: _"còn đúng không?"_     |
-| `Next`        | đã cam kết    | tay                                 | **thứ tự trong cột chính là priority**          |
-| `In progress` | đang làm      | tay                                 | **WIP = 1** — không cột nào khác được có 2 item |
-| `In review`   | PR đang mở    | tự động, khi PR link tới issue      | —                                               |
-| `Done`        | xong          | tự động, khi issue close / PR merge | kéo tay sang đây sẽ **tự đóng issue**           |
+| Stage         | Meaning             | Who sets it                          | Rule                                              |
+| ------------- | ------------------- | ------------------------------------ | ------------------------------------------------- |
+| `Inbox`       | not yet triaged     | automatic, when an item is added     | **empty every week** — either to `Next`, or close |
+| `Someday`     | deliberately parked | by hand                              | re-read every release: _"is this still right?"_   |
+| `Next`        | committed to        | by hand                              | **the order in the column is the priority**       |
+| `In progress` | being worked on     | by hand                              | **WIP = 1** — no other column may hold 2 items    |
+| `In review`   | a PR is open        | automatic, when a PR links an issue  | —                                                 |
+| `Done`        | finished            | automatic, on issue close / PR merge | dragging here by hand **closes the issue**        |
 
-Ba luật giữ board không mục, bỏ luật nào cũng rữa:
+Three rules keep the board from rotting, and dropping any one of them rots it:
 
 1. **WIP = 1.**
-2. **`Inbox` rỗng mỗi tuần.**
-3. **Item ở `Next` quá 30 ngày không chạm → close.** 30 ngày không làm thì đó không phải `Next`.
+2. **`Inbox` is empty every week.**
+3. **An item sitting in `Next` untouched for 30 days → close it.** If it has not been done in 30 days, it is not `Next`.
 
-> Park ý tưởng thì dùng `Someday`, **đừng dùng `Done`** — `Done` sẽ đóng cả draft issue.
+> To park an idea use `Someday`, **not `Done`** — `Done` will close draft issues too.
 
-## 4. Bảy workflow tự động
+## 4. The seven automated workflows
 
-| Workflow                       | Trigger                     | Hành động                |
-| ------------------------------ | --------------------------- | ------------------------ |
-| `Auto-add to project`          | issue khớp filter (§5)      | thêm vào board           |
-| `Item added to project`        | item vào board              | `Status: Inbox`          |
-| `Pull request linked to issue` | PR gắn vào issue            | `Status: In review`      |
-| `Item closed`                  | issue/PR close              | `Status: Done`           |
-| `Pull request merged`          | PR merge                    | `Status: Done`           |
-| `Auto-close issue`             | `Status` chuyển sang `Done` | **close issue**          |
-| `Auto-add sub-issues`          | item có sub-issue           | thêm sub-issue vào board |
+| Workflow                       | Trigger                          | Action                 |
+| ------------------------------ | -------------------------------- | ---------------------- |
+| `Auto-add to project`          | an issue matches the filter (§5) | add it to the board    |
+| `Item added to project`        | an item reaches the board        | `Status: Inbox`        |
+| `Pull request linked to issue` | a PR is linked to an issue       | `Status: In review`    |
+| `Item closed`                  | an issue/PR closes               | `Status: Done`         |
+| `Pull request merged`          | a PR merges                      | `Status: Done`         |
+| `Auto-close issue`             | `Status` changes to `Done`       | **close the issue**    |
+| `Auto-add sub-issues`          | an item has sub-issues           | add the sub-issues too |
 
-Hai workflow cuối làm vòng lặp kín cả hai chiều: đóng issue → card sang `Done`, và kéo card sang `Done` → issue tự đóng.
-Không còn trạng thái nào phải sửa tay.
+The last two close the loop in both directions: closing an issue moves its card to `Done`, and dragging a card to `Done`
+closes the issue. There is no status left to fix by hand.
 
-`Pull request linked to issue` **không kéo PR vào board** — nó set field trên **issue**. Đó là lý do board không cần
-chứa PR mà vẫn biết issue đang chờ review.
+`Pull request linked to issue` **does not pull the PR onto the board** — it sets a field on the **issue**. That is why
+the board can know an issue is awaiting review without containing any PRs.
 
-## 5. Cái gì lên board, cái gì không
+## 5. What reaches the board, and what does not
 
-Filter của `Auto-add to project`:
+The `Auto-add to project` filter:
 
 ```
 is:issue is:open -label:dependencies -label:github-actions
 ```
 
-**Chỉ issue.** Hệ quả trực tiếp:
+**Issues only.** The direct consequences:
 
-- PR Dependabot (~10/tuần, grouped, auto-merge trừ major) **không lên board** — chúng không cần trạng thái.
-- PR `chore: release new version` của Changesets **không lên board** — nó là checkpoint, không phải task.
-- **PR của chính bạn cũng không lên board.** PR nhỏ không gắn issue sẽ vô hình với board — đó là chủ ý, không phải thiếu
-  sót.
+- Dependabot PRs (~10/week, grouped, auto-merged except majors) **do not reach the board** — they need no status.
+- The Changesets `chore: release new version` PR **does not reach the board** — it is a checkpoint, not a task.
+- **Your own PRs do not reach the board either.** A small PR with no linked issue is invisible to the board — that is
+  deliberate, not an oversight.
 
-## 6. Ý tưởng, mục tiêu học, tầm nhìn
+## 6. Ideas, learning goals, and vision
 
-Ba loại nội dung này có **điều kiện kết thúc khác nhau**, nên ở khác chỗ:
+These three kinds of content have **different ending conditions**, so they live in different places:
 
-| Loại             | Chỗ ở                                        | Vì sao                                                                               |
-| ---------------- | -------------------------------------------- | ------------------------------------------------------------------------------------ |
-| **Tầm nhìn**     | README của project (tab Settings)            | Tầm nhìn không bao giờ `Done`                                                        |
-| **Ý tưởng**      | **draft issue**, `Kind: idea`, `Someday`     | Không tạo issue trong repo: không đốt số, không notification, không lộ khi chưa chín |
-| **Mục tiêu học** | draft issue `Kind: learn` (nếu phục vụ repo) | Học thuần cá nhân, không liên quan repo, thì không thuộc project này                 |
+| Kind              | Where it lives                                      | Why                                                                                  |
+| ----------------- | --------------------------------------------------- | ------------------------------------------------------------------------------------ |
+| **Vision**        | The project README (Settings tab)                   | A vision is never `Done`                                                             |
+| **Idea**          | a **draft issue**, `Kind: idea`, `Someday`          | No issue in the repo: no burnt number, no notification, no leaking before it is ripe |
+| **Learning goal** | a draft issue `Kind: learn` (if it serves the repo) | Purely personal learning, unrelated to the repo, does not belong in this project     |
 
-**Draft issue** là cơ chế đáng dùng nhất ở đây: item sống trong board, có đủ `Package`/`Kind`/`Target`, nhưng repo vẫn
-sạch. Đã kiểm chứng: draft issue **vẫn được `Item added to project` set `Status: Inbox`**, nên nó hoà vào luồng sẵn có
-mà không cần workflow riêng.
+A **draft issue** is the mechanism most worth using here: the item lives on the board with a full
+`Package`/`Kind`/`Target`, yet the repo stays clean. Verified: a draft issue **still gets `Status: Inbox` from
+`Item added to project`**, so it joins the existing flow with no separate workflow.
 
-Khi một ý tưởng chín → **Convert to issue**, từ đó các workflow tiếp quản.
+When an idea ripens → **Convert to issue**, and the workflows take over from there.
 
-Tạo draft nhanh bằng API:
+Creating a draft quickly through the API:
 
 ```bash
 gh api graphql -f query='mutation { addProjectV2DraftIssue(input:{ projectId:"PVT_kwDOBoFaAM4BfM8Z", title:"…", body:"…" }) { projectItem { id } } }'
 ```
 
-## 7. Bốn view
+## 7. The four views
 
-| #   | View         | Layout | Group     | Filter              | Dùng khi                                    |
-| --- | ------------ | ------ | --------- | ------------------- | ------------------------------------------- |
-| 1   | `Board`      | board  | `Status`  | —                   | view mặc định, làm việc hằng ngày           |
-| 2   | `By package` | table  | `Package` | —                   | _"còn gì treo ở package nào"_               |
-| 3   | `Perf`       | table  | `Package` | `label:performance` | vòng lặp regression → benchmark → changeset |
-| 5   | `Ideas`      | table  | `Package` | `kind:idea,learn`   | đọc lại mỗi kỳ release                      |
+| #   | View         | Layout | Group     | Filter              | Use it for                                     |
+| --- | ------------ | ------ | --------- | ------------------- | ---------------------------------------------- |
+| 1   | `Board`      | board  | `Status`  | —                   | the default view, day-to-day work              |
+| 2   | `By package` | table  | `Package` | —                   | _"what is still outstanding in which package"_ |
+| 3   | `Perf`       | table  | `Package` | `label:performance` | the regression → benchmark → changeset loop    |
+| 5   | `Ideas`      | table  | `Package` | `kind:idea,learn`   | re-read every release                          |
 
-Số view nhảy từ 3 sang 5 vì view `Roadmap` (số 4) đã bị xoá — xem [decisions](../decisions/github-project-board.md).
+The view numbers jump from 3 to 5 because the `Roadmap` view (number 4) was deleted — see
+[decisions](../decisions/github-project-board.md).
 
-View `Perf` ăn khớp với hạ tầng có sẵn: label `performance`, issue template
-`.github/ISSUE_TEMPLATE/performance-regression.yml`, và `benchmarks/*`.
+The `Perf` view lines up with existing infrastructure: the `performance` label, the
+`.github/ISSUE_TEMPLATE/performance-regression.yml` issue template, and `benchmarks/*`.
 
-## 8. Nhịp vận hành
+## 8. The operating rhythm
 
-| Nhịp               | Việc                                                                                          |
-| ------------------ | --------------------------------------------------------------------------------------------- |
-| **Hằng tuần**      | `Inbox` về rỗng. Mỗi item: lên `Next` hoặc close.                                             |
-| **Mỗi kỳ release** | Đọc `Someday` (view `Ideas`), mỗi item hỏi đúng một câu: _"còn đúng không?"_ Không thì close. |
-| **Khi nào cũng**   | `In progress` tối đa 1 item.                                                                  |
+| Rhythm           | What to do                                                                                                                   |
+| ---------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| **Weekly**       | Get `Inbox` back to empty. For each item: move it to `Next`, or close it.                                                    |
+| **Each release** | Read through `Someday` (the `Ideas` view) and ask each item exactly one question: _"is this still right?"_ If not, close it. |
+| **At all times** | `In progress` holds at most 1 item.                                                                                          |
 
-Nhịp đọc lại `Someday` **gắn vào release chứ không tạo nhịp mới** — một danh sách ý tưởng không có nhịp đọc lại thì bằng
-không, và ý tưởng nằm im tám tháng làm nhiễu mọi lần mở board.
+The `Someday` re-read is **attached to the release rather than creating a new rhythm** — an idea list with no re-read
+rhythm is worth nothing, and an idea sitting untouched for eight months adds noise to every visit to the board.

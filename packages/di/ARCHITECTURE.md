@@ -11,9 +11,8 @@ is not here.
 
 ## Layers
 
-Dependencies point downward only. Nothing below knows about anything above, and
-[`tests/unit/architecture.test.ts`](tests/unit/architecture.test.ts) fails on an upward **value** import — a type-only
-one erases at build time and couples nothing.
+Dependencies point downward only. Nothing below knows about anything above. An upward **value** import is a violation; a
+type-only one erases at build time and couples nothing.
 
 ```
 container/        Container, fluent binding chain             ← the public surface
@@ -35,7 +34,7 @@ injection/        the descriptor every dependency normalises to
 Five levels, not four: `decorators/` sits above the engine because accessor injection resolves through the ambient
 container at property-access time, and `container/` sits above both because it composes them — it imports
 `@injectable`'s registry and four of the metadata modules. Neither of those two levels is on a hot path, which is why
-they read as peripheral; they are still ordered, and an import the other way is a violation the test reports.
+they read as peripheral; they are still ordered, and an import the other way is a violation.
 
 Three of those directories name a rule rather than a topic. **`errors/` is cold by construction** — the hot path imports
 the constructors and nothing else, because message building at a throw site is what an error path can afford and a hot

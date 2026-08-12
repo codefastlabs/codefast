@@ -1,71 +1,74 @@
 ---
 name: release
 description:
-  Quy trình release packages @codefast/* — tạo changeset, canary, version và publish qua CI. Dùng khi cần release, chuẩn
-  bị version mới, vào/ra chế độ canary, hoặc kiểm tra vì sao package chưa được publish.
+  Release flow for the @codefast/* packages — writing a changeset, canary mode, versioning and publishing through CI.
+  Use when releasing, preparing a new version, entering or leaving canary mode, or working out why a package has not
+  been published.
 ---
 
 # Release flow (changesets + CI)
 
-## Nguyên tắc chung
+## Ground rules
 
-- Mọi package `@codefast/*` nằm trong nhóm `fixed` (`.changeset/config.json`) — **version cùng nhau**. `@apps/ui` nằm
-  trong `ignore`, không bao giờ cần changeset.
-- **Không chạy `pnpm changeset add`** (TUI tương tác). Tự viết file `.changeset/<kebab-case>.md`:
+- Every `@codefast/*` package is in the `fixed` group (`.changeset/config.json`) — **they version together**. `@apps/ui`
+  is in `ignore` and never needs a changeset.
+- **Do not run `pnpm changeset add`** (an interactive TUI). Write the `.changeset/<kebab-case>.md` file yourself:
 
   ```md
   ---
   "@codefast/ui": patch
   ---
 
-  Một câu tóm tắt cho changelog.
+  One sentence summarising it for the changelog.
   ```
 
-- Publish do **CI đảm nhiệm** (`.github/workflows/release.yml`, `changesets/action` chạy `npx changeset publish`) khi
-  thay đổi trong `.changeset/**` lên `main`. Không publish thủ công từ máy local.
-- CI publish theo **2 bước**: push có changeset lên `main` → `changesets/action` **không publish ngay** mà mở release PR
-  `chore: release new version` (branch `changeset-release/main`) chứa version bump. **Merge PR đó** thì lần chạy kế tiếp
-  mới `changeset publish` lên npm.
+- Publishing is **CI's job** (`.github/workflows/release.yml`, where `changesets/action` runs `npx changeset publish`)
+  when a change under `.changeset/**` lands on `main`. Never publish by hand from a local machine.
+- CI publishes in **two steps**: pushing a changeset to `main` makes `changesets/action` **not publish immediately**,
+  but open the release PR `chore: release new version` (branch `changeset-release/main`) carrying the version bump.
+  **Merging that PR** is what makes the next run `changeset publish` to npm.
 
-## ⚠️ Khi còn 0.x: KHÔNG viết changeset `major`
+## ⚠️ While on 0.x: never write a `major` changeset
 
-Vì nhóm `fixed` version cùng nhau ở **mức bump cao nhất**, chỉ một `major` (kể cả trên một package như
-`@codefast/tracking`) đẩy **cả nhóm** `0.x → 1.0.0`. Breaking change trong 0.x phải là `minor`. Đã lỡ version/publish
-major sai trong canary thì **sửa changeset suông không đảo ngược được** (bump đã bake vào `package.json` + `pre.json`) —
-dùng recipe reset bên dưới.
+Because the `fixed` group versions together at the **highest bump**, a single `major` (even on one package such as
+`@codefast/tracking`) pushes **the whole group** `0.x → 1.0.0`. A breaking change in 0.x must be a `minor`. If a wrong
+major has already been versioned or published in canary, **editing changesets alone cannot undo it** (the bump is baked
+into `package.json` + `pre.json`) — use the reset recipe below.
 
-## Reset canary về 0.x sau cú nhảy version sai (đã kiểm chứng)
+## Resetting canary back to 0.x after a wrong version jump (verified)
 
-1. Hạ các changeset sai `major → minor`.
-2. Reset **mọi** `@codefast/*` package.json — gồm cả 2 cái ở `benchmarks/*` (`benchmark-di-inversify`,
-   `benchmark-tailwind-variants`), không chỉ `packages/*`. Bỏ sót chúng thì fixed group vẫn bị neo cao.
-3. Đặt base package.json = bản canary **đã publish gần nhất** của dòng muốn tiếp tục (vd `0.5.0-canary.5`) để CI tính ra
-   bản kế `.6` — counter = (max prerelease trong nhóm) + 1, nên phải tránh các số đã publish.
-4. Xoá `pre.json.changesets` (`[]`) để bộ changeset re-apply từ base đó.
-5. Commit → push → merge release PR → CI publish.
-6. Bản 1.x lỡ publish không gỡ được; `npm deprecate` chúng.
+1. Lower the incorrect changesets from `major` to `minor`.
+2. Reset **every** `@codefast/*` package.json — including the two under `benchmarks/*` (`benchmark-di-inversify`,
+   `benchmark-tailwind-variants`), not just `packages/*`. Miss them and the fixed group stays anchored high.
+3. Set the base package.json to the **most recently published** canary of the line you want to continue (e.g.
+   `0.5.0-canary.5`) so CI computes the next one as `.6` — the counter is (max prerelease in the group) + 1, so you must
+   avoid numbers already published.
+4. Clear `pre.json.changesets` (`[]`) so the changeset set re-applies from that base.
+5. Commit → push → merge the release PR → CI publishes.
+6. A 1.x that was already published cannot be removed; `npm deprecate` those.
 
-Kiểm chứng số version local (không cần `GITHUB_TOKEN`): tạm đặt `changelog: false` trong `.changeset/config.json`, chạy
-`pnpm exec changeset version`, đọc số, rồi `git checkout -- .` (changelog-github mặc định cần token nên
-`changeset version` bị escape, không phải lỗi logic version).
+To verify the version numbers locally (no `GITHUB_TOKEN` needed): temporarily set `changelog: false` in
+`.changeset/config.json`, run `pnpm exec changeset version`, read the numbers, then `git checkout -- .`
+(changelog-github needs a token by default, so `changeset version` bails out — that is not a version-logic error).
 
-## Release stable
+## Stable release
 
-1. Đảm bảo mỗi thay đổi đáng release đã có changeset đi kèm trong commit.
-2. Merge lên `main` — CI sẽ version + publish (script `version-packages` = `changeset version && pnpm run codefast tag`,
-   trong đó `codefast tag` bổ sung `@since` vào JSDoc).
+1. Make sure every change worth releasing has a changeset alongside it in the commit.
+2. Merge to `main` — CI will version and publish (the `version-packages` script is
+   `changeset version && pnpm run codefast tag`, where `codefast tag` adds `@since` to the JSDoc).
 
 ## Canary
 
 ```bash
-pnpm run release:canary:enter   # changeset pre enter canary — commit file .changeset/pre.json
-# ... các changeset sau đó sẽ version dạng x.y.z-canary.N
-pnpm run release:canary:exit    # changeset pre exit — thoát chế độ canary
+pnpm run release:canary:enter   # changeset pre enter canary — commits the .changeset/pre.json file
+# ... changesets from here on will version as x.y.z-canary.N
+pnpm run release:canary:exit    # changeset pre exit — leave canary mode
 ```
 
-Kiểm tra trạng thái: nếu `.changeset/pre.json` tồn tại thì repo đang ở chế độ canary.
+Checking the state: if `.changeset/pre.json` exists, the repo is in canary mode.
 
-## Checklist trước khi merge release
+## Checklist before merging a release
 
-- `pnpm run verify` xanh (build packages + lint + format + check-types + test:coverage).
-- Changeset mô tả đúng mức bump (patch/minor/major) — nhớ nhóm fixed nên mức cao nhất sẽ áp cho tất cả.
+- `pnpm run verify` is green (build packages + lint + format + check-types + test:coverage).
+- The changeset states the right bump level (patch/minor/major) — remember the fixed group, so the highest level applies
+  to everything.
