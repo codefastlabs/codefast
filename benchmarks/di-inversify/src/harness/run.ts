@@ -34,9 +34,11 @@ import {
 import { writeJsonlRun, writeMarkdownFile } from "@codefast/benchmark-harness/report/write";
 import { type BenchSubprocessConfig, resolveDisplayName } from "@codefast/benchmark-harness/shared/config";
 import {
+  BENCH_ONLY_ENV_KEY,
   BENCH_RESULTS_DIR_NAME,
   BENCH_VERBOSE_ENV_KEY,
   OBSERVATIONS_FILE_NAME,
+  parseScenarioFilter,
 } from "@codefast/benchmark-harness/shared/env-keys";
 import type { SubprocessPayload } from "@codefast/benchmark-harness/shared/protocol";
 
@@ -146,6 +148,17 @@ async function main(): Promise<void> {
   const awilixPayload = payloads.get(AWILIX.libraryName)!;
   const tsyringePayload = payloads.get(TSYRINGE.libraryName)!;
   console.log(`\n[bench] Run order: ${runOrder}`);
+
+  // A competitor may implement none of the requested rows and measure nothing; the subject may not,
+  // since then the run has nothing to report and the likeliest cause is a mistyped id.
+  if (
+    parseScenarioFilter(process.env[BENCH_ONLY_ENV_KEY]) !== undefined &&
+    codefastPayload.trials.every((trial) => trial.scenarios.length === 0)
+  ) {
+    throw new Error(
+      `${BENCH_ONLY_ENV_KEY}="${process.env[BENCH_ONLY_ENV_KEY] ?? ""}" matched no scenario in ${CODEFAST_DI.libraryName}.`,
+    );
+  }
 
   const codefastReport: LibraryReport = buildLibraryReport(
     codefastPayload.fingerprint,
