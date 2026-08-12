@@ -64,6 +64,15 @@ Each run writes three artifacts into its timestamped directory, mirrored to `lat
 | `report.json`        | Querying. The same comparison as data — full-precision ratios, reliability as booleans     |
 | `observations.jsonl` | Raw per-trial rows, one per `(library, trial, scenario)`, fingerprint on every row         |
 
+Every `report.json` opens with a `run` block — `runId`, `mode`, `isolated`, `scenarioFilter`, `trialCount`, and
+`scenariosMeasured` against `scenariosAvailable`. Without it a run narrowed to one row is indistinguishable from a whole
+suite except by counting, which only helps a reader who already knows how many rows the suite has. `runId` is the
+run-directory basename, so a `latest.*` mirror joins back to its directory exactly rather than by nearest timestamp.
+
+**A filtered run does not move `latest.*`.** It writes its own directory and says so. `latest.*` is what CI diffs and
+what a published figure is checked against, so it has to mean the whole suite. A smoke run does mirror — `run.mode` is
+how you tell it apart from a publishable one.
+
 `report.json` exists because `report.md` is a lossy projection: a ratio rounded to three significant figures cannot
 resolve a few percent, and the glyphs encode thresholds only the renderer knows. Every figure in it was already computed
 on the way to the markdown — `buildComparisonDocument` stops discarding it. Two `report.json` files are a plain dict

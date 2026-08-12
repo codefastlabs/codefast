@@ -35,8 +35,10 @@ Profiles compose: `BENCH_MODE=full pnpm bench:isolate` is the slowest and the mo
 
 Every run writes a timestamped directory under `bench-results/` (git-ignored) holding `report.md`, `report.json` and
 `observations.jsonl`, and mirrors the newest to `latest.md` / `latest.json` / `latest.jsonl`. `report.json` is the same
-comparison as data — full-precision ratios and reliability as booleans, where the markdown rounds and uses glyphs. The
-JSONL carries every per-trial figure the markdown summarises, including each cell's IQR.
+comparison as data — full-precision ratios and reliability as booleans, where the markdown rounds and uses glyphs. Its
+`run` block records the profile, isolation and any scenario filter, so a narrowed run cannot be mistaken for a whole one
+— and a narrowed run leaves `latest.*` alone for that reason. The JSONL carries every per-trial figure the markdown
+summarises, including each cell's IQR.
 
 ## How it is put together
 

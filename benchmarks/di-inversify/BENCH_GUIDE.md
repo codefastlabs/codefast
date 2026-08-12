@@ -66,6 +66,9 @@ they do to the build first, and pairing them wrong fails _silently_.
 | **Swap the source** — checkout, stash or patch `packages/di/src` per side       | `bench:isolate`                                                          | `src/harness/run.ts` calls `rebuildCodefastDiPackage()` before it spawns anything, and that rebuild is exactly what makes the swap take effect                                                                                                                                                                    |
 | **Swap the build** — two prebuilt dirs, copied over `packages/di/dist` per side | `BENCH_ONLY=<id>` on a child entry: `bench:codefast` / `bench:inversify` | The same rebuild would overwrite `packages/di/dist` from `src` before the first sample, so both sides measure HEAD and **every row reports parity** — an A/B that never compared anything. Prove the swap is live before trusting a number: install a build whose target function throws, and check the row fails |
 
+A narrowed run writes its own timestamped directory but leaves `latest.*` alone, so an A/B pass cannot quietly become
+the suite's published state.
+
 **Prefer swapping the source, and narrow the run instead.** `BENCH_ONLY=<id>` — a comma-separated list — is read by the
 parent as well as the child, so `BENCH_ONLY=<id> pnpm bench:isolate` runs that row alone, isolated and interleaved, in
 seconds. The rebuild it does first is around half a second, so nothing about the source lane is slow; what used to be
