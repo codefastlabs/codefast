@@ -83,6 +83,9 @@ export async function runBenchmarkChildMain(parameters: RunBenchmarkChildMainPar
     fingerprint: collectFingerprint(libraryName, packageRoot),
     trials,
     sanityFailures,
+    // Every id the library has, not only the measured ones: the parent cannot otherwise tell a
+    // filtered run from a whole suite, and a partial run must not read as the current state.
+    scenarioIds: allScenarios.map((scenario) => scenario.id),
   });
   console.error(`[bench] subprocess ${scenarioName} completed`);
 }

@@ -313,7 +313,7 @@ export async function runBenchSubprocessIsolated(parameters: RunBenchSubprocessP
     requestedScenarioIds === undefined ? scenarioIds : scenarioIds.filter((id) => requestedScenarioIds.has(id));
   if (selectedScenarioIds.length === 0) {
     console.error(`[bench] ${parameters.harnessLabel} implements none of the requested scenarios; skipping.`);
-    return { fingerprint: listFingerprint, trials: [], sanityFailures: [] };
+    return { fingerprint: listFingerprint, trials: [], sanityFailures: [], scenarioIds };
   }
 
   console.error(
@@ -334,6 +334,7 @@ export async function runBenchSubprocessIsolated(parameters: RunBenchSubprocessP
     fingerprint: listFingerprint,
     trials: mergeIsolatedTrials(workerPayloads),
     sanityFailures: workerPayloads.flatMap((payload) => payload.sanityFailures),
+    scenarioIds,
   };
 }
 
@@ -428,6 +429,7 @@ export async function runBenchSubprocessesInterleaved(
       fingerprint: discoveries.get(library.key)!.fingerprint,
       trials: mergeIsolatedTrials(payloads),
       sanityFailures: payloads.flatMap((payload) => payload.sanityFailures),
+      scenarioIds: discoveries.get(library.key)!.scenarioIds,
     });
   }
   return merged;
