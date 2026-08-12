@@ -307,9 +307,16 @@ test -f .changeset/pre.json && echo "pre mode: $(python3 -c 'import json;print(j
 dist-tag, and every changeset consumed so far is recorded in that file. **Absent** → normal mode: versions land on
 `latest`. A leftover `canary` dist-tag on npm proves nothing about the current mode — check the file.
 
+In pre mode, a versioned changeset's `.md` file is **moved into `.changeset/pre/`** rather than deleted, so a nearly
+empty `.changeset/` root during canary is expected and is not a sign that changesets went missing — they are still read
+from there, under the id `pre/<name>`.
+
 **Never author a `major` changeset.** All `@codefast/*` are one `fixed` group (`.changeset/config.json`), so the group
 versions together at the **highest** bump any changeset requests — a single `major` (even on one package like
-`@codefast/tracking`) bumps the **whole group** `0.x → 1.0.0`. Breaking changes are `minor`.
+`@codefast/tracking`) bumps the **whole group** `0.x → 1.0.0`. Breaking changes are `minor`. The group spans the four
+private `@codefast/benchmark-*` too, which is why the config sets `privatePackages.version: true` — the group's floor is
+the highest version across every member, so a member left unversioned can pin the group where `changeset version` cannot
+reach it.
 
 **There is no planned 1.0.** These packages are consumed internally by the maintainer's own projects, so the version
 number is Changesets bookkeeping, not a compatibility promise to third parties — staying on 0.x is what keeps breaking
