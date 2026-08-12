@@ -8,7 +8,7 @@ import type { BenchMode } from "#/child/create-run-all-trials";
 import { createRunAllTrials } from "#/child/create-run-all-trials";
 import { collectFingerprint } from "#/child/fingerprint";
 import { runSanityChecks } from "#/child/run-sanity-checks";
-import { BENCH_LIST_ENV_KEY, BENCH_ONLY_ENV_KEY } from "#/shared/env-keys";
+import { BENCH_LIST_ENV_KEY, BENCH_ONLY_ENV_KEY, parseScenarioFilter } from "#/shared/env-keys";
 import { emitSubprocessPayload } from "#/shared/protocol";
 
 /**
@@ -53,14 +53,18 @@ export async function runBenchmarkChildMain(parameters: RunBenchmarkChildMainPar
     return;
   }
 
-  // Isolated-worker mode: the parent asked for exactly one scenario.
-  const onlyScenarioId = process.env[BENCH_ONLY_ENV_KEY];
+  // A scenario filter, either from the parent in isolated mode or set directly to bench one row.
+  // Matching nothing measures nothing: only some libraries implement any given row, and failing
+  // here would take the whole comparison down with them.
+  const requestedScenarioIds = parseScenarioFilter(process.env[BENCH_ONLY_ENV_KEY]);
   const scenarios =
-    onlyScenarioId === undefined || onlyScenarioId === ""
+    requestedScenarioIds === undefined
       ? allScenarios
-      : allScenarios.filter((scenario) => scenario.id === onlyScenarioId);
-  if (scenarios.length === 0 && onlyScenarioId !== undefined) {
-    throw new Error(`${BENCH_ONLY_ENV_KEY}="${onlyScenarioId}" matched no collected scenario`);
+      : allScenarios.filter((scenario) => requestedScenarioIds.has(scenario.id));
+  if (scenarios.length === 0) {
+    console.error(
+      `[bench] ${scenarioName} implements none of ${BENCH_ONLY_ENV_KEY}="${process.env[BENCH_ONLY_ENV_KEY] ?? ""}"; measuring nothing.`,
+    );
   }
   const sanityFailures = await runSanityChecks(scenarios);
   const { runAllTrials } = createRunAllTrials({ benchDefaults, mode, trialCount });

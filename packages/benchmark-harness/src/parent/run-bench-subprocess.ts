@@ -7,6 +7,7 @@ import {
   BENCH_ISOLATE_ENV_KEY,
   BENCH_LIST_ENV_KEY,
   BENCH_ONLY_ENV_KEY,
+  parseScenarioFilter,
 } from "#/shared/env-keys";
 import { BENCH_RESULT_JSON_END, BENCH_RESULT_JSON_START, extractSubprocessPayload } from "#/shared/protocol";
 import type { SubprocessPayload, TrialPayload } from "#/shared/protocol";
@@ -284,9 +285,23 @@ export async function runBenchSubprocessIsolated(parameters: RunBenchSubprocessP
     throw new Error(`${parameters.harnessLabel} list run returned no scenario ids; cannot run isolated.`);
   }
 
-  console.log(`[bench] BENCH_ISOLATE=1: running ${String(scenarioIds.length)} scenarios in separate subprocesses…`);
+  // Discovery reports every scenario the library has, so the filter is applied here — the per-worker
+  // BENCH_ONLY the loop sets below would otherwise overwrite it and run the whole suite.
+  const requestedScenarioIds = parseScenarioFilter(
+    parameters.environmentOverrides?.[BENCH_ONLY_ENV_KEY] ?? process.env[BENCH_ONLY_ENV_KEY],
+  );
+  const selectedScenarioIds =
+    requestedScenarioIds === undefined ? scenarioIds : scenarioIds.filter((id) => requestedScenarioIds.has(id));
+  if (selectedScenarioIds.length === 0) {
+    console.log(`[bench] ${parameters.harnessLabel} implements none of the requested scenarios; skipping.`);
+    return { fingerprint: listPayload.fingerprint, trials: [], sanityFailures: [] };
+  }
+
+  console.log(
+    `[bench] BENCH_ISOLATE=1: running ${String(selectedScenarioIds.length)} scenarios in separate subprocesses…`,
+  );
   const workerPayloads: Array<SubprocessPayload> = [];
-  for (const scenarioId of scenarioIds) {
+  for (const scenarioId of selectedScenarioIds) {
     workerPayloads.push(
       await runBenchSubprocess({
         ...parameters,
@@ -359,7 +374,16 @@ export async function runBenchSubprocessesInterleaved(
     listPayloads.set(library.key, listPayload);
   }
 
-  const scenarioIds = unionScenarioIds(libraries.map((library) => listPayloads.get(library.key)?.scenarioIds ?? []));
+  // Filtered here rather than in the child: the loop below sets BENCH_ONLY per scenario, so a
+  // filter left to the child would be overwritten and the whole suite would run anyway.
+  const requestedScenarioIds = parseScenarioFilter(process.env[BENCH_ONLY_ENV_KEY]);
+  const discoveredScenarioIds = unionScenarioIds(
+    libraries.map((library) => listPayloads.get(library.key)?.scenarioIds ?? []),
+  );
+  const scenarioIds =
+    requestedScenarioIds === undefined
+      ? discoveredScenarioIds
+      : discoveredScenarioIds.filter((id) => requestedScenarioIds.has(id));
   console.log(
     `[bench] BENCH_ISOLATE=1: ${String(scenarioIds.length)} scenarios × ${String(libraries.length)} libraries, interleaved with rotating order.`,
   );

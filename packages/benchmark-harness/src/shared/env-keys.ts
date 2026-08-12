@@ -31,7 +31,11 @@ export const BENCH_TRIALS_ENV_KEY = "BENCH_TRIALS";
  */
 export const BENCH_ISOLATE_ENV_KEY = "BENCH_ISOLATE";
 /**
- * Child-side: run only this scenario id (set by the parent in isolated mode).
+ * Restricts the run to these scenario ids, comma-separated.
+ *
+ * @remarks Honoured at both levels — set it yourself to bench one row through the full parent
+ * report, and the parent sets it per scenario in isolated mode. A library implementing none of the
+ * ids measures nothing instead of failing, so a row only some libraries have is still runnable.
  *
  * @since 0.5.0-canary.7
  */
@@ -54,3 +58,20 @@ export const OBSERVATIONS_FILE_NAME = "observations.jsonl";
  * @since 0.3.16-canary.0
  */
 export const BENCH_RESULTS_DIR_NAME = "bench-results";
+
+/**
+ * Parses {@link BENCH_ONLY_ENV_KEY} into the set of ids to keep.
+ *
+ * @returns `undefined` when nothing was requested, which means run everything — distinct from an
+ * empty set, which would mean run nothing.
+ */
+export function parseScenarioFilter(value: string | undefined): ReadonlySet<string> | undefined {
+  if (value === undefined) {
+    return undefined;
+  }
+  const ids = value
+    .split(",")
+    .map((id) => id.trim())
+    .filter((id) => id.length > 0);
+  return ids.length === 0 ? undefined : new Set(ids);
+}

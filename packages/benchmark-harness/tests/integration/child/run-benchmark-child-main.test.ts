@@ -97,16 +97,34 @@ describe("runBenchmarkChildMain", () => {
     expect(payload.trials[0]?.scenarios.map((scenario) => scenario.id)).toEqual(["beta"]);
   });
 
-  it("throws when BENCH_ONLY matches no collected scenario", async () => {
+  it("runs every id BENCH_ONLY lists, so one filter can span several rows", async () => {
+    vi.stubEnv(BENCH_ONLY_ENV_KEY, "alpha, gamma");
+    const payload = await runChildAndCapture({
+      libraryName: "lib",
+      scenarioName: "test",
+      packageRoot: process.cwd(),
+      collectScenarios: () => [trivialScenario("alpha"), trivialScenario("beta"), trivialScenario("gamma")],
+      benchDefaults: BENCH_DEFAULTS,
+      trialCount: 2,
+    });
+
+    expect(payload.trials[0]?.scenarios.map((scenario) => scenario.id)).toEqual(["alpha", "gamma"]);
+  });
+
+  // A library implementing none of the requested rows measures nothing rather than failing —
+  // failing here would take down every other library in the same comparison.
+  it("measures nothing when BENCH_ONLY matches no collected scenario", async () => {
     vi.stubEnv(BENCH_ONLY_ENV_KEY, "missing");
-    await expect(
-      runBenchmarkChildMain({
-        libraryName: "lib",
-        scenarioName: "test",
-        packageRoot: process.cwd(),
-        collectScenarios: () => [trivialScenario("alpha")],
-        benchDefaults: BENCH_DEFAULTS,
-      }),
-    ).rejects.toThrow(/matched no collected scenario/);
+    const payload = await runChildAndCapture({
+      libraryName: "lib",
+      scenarioName: "test",
+      packageRoot: process.cwd(),
+      collectScenarios: () => [trivialScenario("alpha")],
+      benchDefaults: BENCH_DEFAULTS,
+      trialCount: 2,
+    });
+
+    expect(payload.sanityFailures).toEqual([]);
+    expect(payload.trials.every((trial) => trial.scenarios.length === 0)).toBe(true);
   });
 });
