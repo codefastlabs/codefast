@@ -79,7 +79,9 @@ there once, and both sides import them. A batch factor that drifted between two 
 
 Scenarios are grouped so one kind of work cannot masquerade as another — `micro`, `realistic`, `fan-out`, `async`,
 `lifecycle`, `scope`, `scale`, `boot`, `production`, `introspection`, and `failure` (error paths, which run orders of
-magnitude faster than success paths and are reported apart for that reason).
+magnitude faster than success paths and are reported apart for that reason). Two groups hold `@codefast/di`-only
+instrumentation instead of a head-to-head pair: `slot-selection` for the criteria lanes, and `resolution` for the engine
+lanes — compiled plans and their escapes, the depth thresholds, the sync context pool, the accessor channel.
 
 Awilix and tsyringe implement only the factory/class-binding core subset, so they read `—` on everything outside it; the
 report counts only the rows a competitor actually measured.

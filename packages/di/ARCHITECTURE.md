@@ -31,10 +31,10 @@ errors/           the taxonomy and its diagnostics
 injection/        the descriptor every dependency normalises to
 ```
 
-Five levels, not four: `decorators/` sits above the engine because accessor injection resolves through the ambient
-container at property-access time, and `container/` sits above both because it composes them — it imports
-`@injectable`'s registry and four of the metadata modules. Neither of those two levels is on a hot path, which is why
-they read as peripheral; they are still ordered, and an import the other way is a violation.
+Five levels, not four: `decorators/` sits above the engine because an `@inject` accessor's initializer resolves through
+the ambient container while the instance is being constructed, and `container/` sits above both because it composes them
+— it imports `@injectable`'s registry and four of the metadata modules. Neither of those two levels is on a hot path,
+which is why they read as peripheral; they are still ordered, and an import the other way is a violation.
 
 Three of those directories name a rule rather than a topic. **`errors/` is cold by construction** — the hot path imports
 the constructors and nothing else, because message building at a throw site is what an error path can afford and a hot
@@ -172,12 +172,12 @@ it is made.
 
 **The two array copies in `#compileEscapeThunk` are load-bearing — do not share, lend or plan-own those arrays.** Two
 mechanisms defeat every variant. The membership `Set` that `enterResolutionPath` attaches past
-`RESOLUTION_SET_THRESHOLD` lives on the **array object** and is stale by construction — names already on the path when
-it attaches are never deleted on unwind — and `[...names]` is the only reason nothing ever observes it, because a spread
-does not copy symbol-keyed properties. And a constraint predicate runs on a live seed **before any push**, at exactly
-the length a depth guard reads as idle, and can re-enter the same cached plan; one indexed write into a lent seed then
-survives forever, where the interpreted lane's `rootPath` drains to zero after each top-level resolve and self-heals. A
-poisoned frame changes which binding is selected — a wrong value, not a diagnostic.
+`RESOLUTION_SET_THRESHOLD` lives on the **array object**, so a lent array carries it into a lane that does not maintain
+it; `[...names]` hands the escape an array with no set at all, because a spread does not copy symbol-keyed properties.
+And a constraint predicate runs on a live seed **before any push**, at exactly the length a depth guard reads as idle,
+and can re-enter the same cached plan; one indexed write into a lent seed then survives forever, where the interpreted
+lane's `rootPath` drains to zero after each top-level resolve and self-heals. A poisoned frame changes which binding is
+selected — a wrong value, not a diagnostic.
 
 **A name the registry can settle is not opaque.** A dependency used to escape on `options !== undefined`, before
 anything tried to look it up — yet `whenNamed` writes `slot.name` rather than a predicate, so a name-only request is
@@ -313,9 +313,18 @@ reports `CircularDependencyError` rather than recursing, and the flag is still r
 `RESOLUTION_SET_THRESHOLD`, which is 32. That threshold switches a **data structure**, not a behaviour: both branches
 answer identically.
 
+**The set is seeded from the path, so it has to be able to notice that it has gone stale.** The frames already on the
+path when it attaches are handed no set and delete nothing on unwind, and the array outlives a resolve — the resolver
+lends one pair per resolver — so a set that survived the unwind would refuse names nobody is resolving. A live set
+mirrors the path exactly; `enterResolutionPath` drops one whose size no longer matches the path's length, and the next
+deep frame rebuilds it. `tests/unit/resolution/path/resolution-path.test.ts` pins the three ways the seed becomes
+observable: a second resolve of the same deep graph, a sibling branch below the attach depth, and the entry point called
+directly.
+
 > **Rule:** a threshold may choose an implementation. It may never choose a semantics. The deleted `DEEP_LANE_THRESHOLD`
 > switched _lanes_, so it silently changed context identity, stack frames and promise shape at the crossing point — and
-> reported a false `CircularDependencyError` for a diamond dependency past it.
+> reported a false `CircularDependencyError` for a diamond dependency past it. `RESOLUTION_SET_THRESHOLD` broke the same
+> rule while looking like it was only choosing a data structure.
 
 ## The async lane has two lanes, and the cheap one costs nothing per level
 

@@ -11,7 +11,7 @@ const RESOLUTION_SET_KEY: unique symbol = Symbol("di:resolution-set");
  * @since 0.5.0-canary.7
  */
 export const RESOLUTION_SET_THRESHOLD = 32;
-type ResolutionPathWithSet = Array<string> & { [RESOLUTION_SET_KEY]?: Set<string> };
+type ResolutionPathWithSet = Array<string> & { [RESOLUTION_SET_KEY]?: Set<string> | undefined };
 
 /**
  * Marks a token as in-flight on this path, throwing if it is already there.
@@ -26,6 +26,13 @@ type ResolutionPathWithSet = Array<string> & { [RESOLUTION_SET_KEY]?: Set<string
 export function enterResolutionPath(resolutionPath: Array<string>, tokenDisplayName: string): Set<string> | undefined {
   const pathWithSet = resolutionPath as ResolutionPathWithSet;
   let resolutionSet = pathWithSet[RESOLUTION_SET_KEY];
+  // A live set mirrors the path exactly, so a size that disagrees means it is holding names of
+  // frames that unwound: the ones already on the path when it attached were handed no set to delete
+  // from. Dropped rather than repaired, because the next deep frame rebuilds it from the path.
+  if (resolutionSet !== undefined && resolutionSet.size !== resolutionPath.length) {
+    resolutionSet = undefined;
+    pathWithSet[RESOLUTION_SET_KEY] = undefined;
+  }
   if (resolutionSet === undefined && resolutionPath.length >= RESOLUTION_SET_THRESHOLD) {
     resolutionSet = new Set<string>(resolutionPath);
     pathWithSet[RESOLUTION_SET_KEY] = resolutionSet;
