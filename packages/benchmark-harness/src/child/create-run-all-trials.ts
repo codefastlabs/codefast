@@ -3,7 +3,8 @@ import { Bench } from "tinybench";
 
 import type { AnyBenchScenario } from "#/child/bench-scenario";
 import { isAsyncScenario } from "#/child/bench-scenario";
-import { BENCH_FAST_ENV_KEY, BENCH_FULL_ENV_KEY, BENCH_TRIALS_ENV_KEY } from "#/shared/env-keys";
+import type { BenchMode } from "#/shared/env-keys";
+import { BENCH_TRIALS_ENV_KEY, resolveBenchModeFromEnvironment } from "#/shared/env-keys";
 import type { ScenarioTrialResult, TrialPayload } from "#/shared/protocol";
 
 /**
@@ -82,12 +83,7 @@ function createZeroedScenarioTrialResult(scenario: AnyBenchScenario, hzPerIterat
   };
 }
 
-/**
- * Timing profile for a bench run: `fast` for smoke checks, `full` for GC-enabled stability runs.
- *
- * @since 0.5.0-canary.7
- */
-export type BenchMode = "fast" | "full";
+export type { BenchMode };
 
 /**
  * @since 0.3.16-canary.0
@@ -99,7 +95,7 @@ export type CreateRunAllTrialsParameters = Readonly<{
    */
   readonly benchDefaults: BenchOptions;
   /**
-   * Explicit timing profile; when absent, falls back to the `BENCH_FAST`/`BENCH_FULL` env flags.
+   * Explicit timing profile; when absent, falls back to `BENCH_MODE`.
    */
   readonly mode?: BenchMode | undefined;
   /**
@@ -117,20 +113,6 @@ export type RunAllTrials = (
   sanityFailures: ReadonlyArray<string>,
   trialCount?: number,
 ) => Promise<Array<TrialPayload>>;
-
-// `fast` wins when both env flags are set — matches the historical option precedence.
-function resolveMode(explicitMode: BenchMode | undefined): BenchMode | undefined {
-  if (explicitMode !== undefined) {
-    return explicitMode;
-  }
-  if (process.env[BENCH_FAST_ENV_KEY] === "1") {
-    return "fast";
-  }
-  if (process.env[BENCH_FULL_ENV_KEY] === "1") {
-    return "full";
-  }
-  return undefined;
-}
 
 function resolveBenchOptions(benchDefaults: BenchOptions, mode: BenchMode | undefined): BenchOptions {
   if (mode === "fast") {
@@ -162,7 +144,7 @@ function resolveTrialCount(explicitTrialCount: number | undefined, mode: BenchMo
 /**
  * Returns `runAllTrials` backed by tinybench options derived from `benchDefaults` and
  * the given mode/trial-count options, falling back to the subprocess env
- * (`BENCH_FAST`, `BENCH_FULL`, `BENCH_TRIALS`) when they are absent.
+ * (`BENCH_MODE`, `BENCH_TRIALS`) when they are absent.
  *
  * @since 0.3.16-canary.0
  */
@@ -170,7 +152,7 @@ export function createRunAllTrials(parameters: CreateRunAllTrialsParameters): {
   runAllTrials: RunAllTrials;
 } {
   const { benchDefaults } = parameters;
-  const mode = resolveMode(parameters.mode);
+  const mode = parameters.mode ?? resolveBenchModeFromEnvironment();
   const benchOptions = resolveBenchOptions(benchDefaults, mode);
   const defaultTrialCount = resolveTrialCount(parameters.trialCount, mode);
 

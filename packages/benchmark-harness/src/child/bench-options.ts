@@ -1,8 +1,8 @@
 import type { BenchOptions } from "tinybench";
 
 /**
- * Default tinybench `Bench` timing when `BENCH_FAST` and `BENCH_FULL` are not set.
- * The trial harness substitutes shorter or longer presets when either flag is on.
+ * Default tinybench `Bench` timing for the default profile.
+ * The trial harness substitutes shorter or longer presets in the fast and full profiles.
  *
  * @since 0.3.16-canary.0
  */

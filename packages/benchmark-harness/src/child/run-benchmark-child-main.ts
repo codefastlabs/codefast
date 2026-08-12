@@ -4,11 +4,11 @@ import { fileURLToPath } from "node:url";
 import type { BenchOptions } from "tinybench";
 
 import type { AnyBenchScenario } from "#/child/bench-scenario";
-import type { BenchMode } from "#/child/create-run-all-trials";
 import { createRunAllTrials } from "#/child/create-run-all-trials";
 import { collectFingerprint } from "#/child/fingerprint";
 import { runSanityChecks } from "#/child/run-sanity-checks";
-import { BENCH_LIST_ENV_KEY, BENCH_ONLY_ENV_KEY, parseScenarioFilter } from "#/shared/env-keys";
+import type { BenchMode } from "#/shared/env-keys";
+import { BENCH_LIST_ENV_KEY, BENCH_ONLY_ENV_KEY, isEnvFlagEnabled, parseScenarioFilter } from "#/shared/env-keys";
 import { emitSubprocessPayload } from "#/shared/protocol";
 
 /**
@@ -24,7 +24,7 @@ export type RunBenchmarkChildMainParameters = Readonly<{
   readonly collectScenarios: () => ReadonlyArray<AnyBenchScenario>;
   /** Default tinybench `Bench` timing; overridden when a mode is active. */
   readonly benchDefaults: BenchOptions;
-  /** Explicit timing profile; when absent, falls back to the `BENCH_FAST`/`BENCH_FULL` env flags. */
+  /** Explicit timing profile; when absent, falls back to `BENCH_MODE`. */
   readonly mode?: BenchMode | undefined;
   /** Explicit per-scenario trial count (minimum 3); when absent, falls back to `BENCH_TRIALS`. */
   readonly trialCount?: number | undefined;
@@ -42,7 +42,7 @@ export async function runBenchmarkChildMain(parameters: RunBenchmarkChildMainPar
   const allScenarios = collectScenarios();
 
   // Discovery mode for BENCH_ISOLATE: report ids only, run nothing.
-  if (process.env[BENCH_LIST_ENV_KEY] === "1") {
+  if (isEnvFlagEnabled(BENCH_LIST_ENV_KEY)) {
     emitSubprocessPayload({
       fingerprint: collectFingerprint(libraryName, packageRoot),
       trials: [],

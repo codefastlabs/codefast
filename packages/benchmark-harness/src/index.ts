@@ -3,14 +3,20 @@
 export type { BenchSubprocessConfig } from "#/shared/config";
 export { resolveDisplayName } from "#/shared/config";
 
+export type { BenchMode } from "#/shared/env-keys";
 export {
-  BENCH_FAST_ENV_KEY,
-  BENCH_FULL_ENV_KEY,
+  BENCH_ISOLATE_ENV_KEY,
+  BENCH_LIST_ENV_KEY,
+  BENCH_MODE_ENV_KEY,
+  BENCH_ONLY_ENV_KEY,
   BENCH_PORT_ENV_KEY,
   BENCH_RESULTS_DIR_NAME,
   BENCH_TRIALS_ENV_KEY,
   BENCH_VERBOSE_ENV_KEY,
   OBSERVATIONS_FILE_NAME,
+  isEnvFlagEnabled,
+  parseScenarioFilter,
+  resolveBenchModeFromEnvironment,
 } from "#/shared/env-keys";
 
 export type { Fingerprint, ScenarioTrialResult, SubprocessPayload, TrialPayload } from "#/shared/protocol";
@@ -26,7 +32,7 @@ export { BENCHMARK_SUITE_DEFAULT_BENCH_OPTIONS } from "#/child/bench-options";
 export type { AsyncBenchScenario, AnyBenchScenario, BenchScenario } from "#/child/bench-scenario";
 export { isAsyncScenario } from "#/child/bench-scenario";
 
-export type { BenchMode, CreateRunAllTrialsParameters, RunAllTrials } from "#/child/create-run-all-trials";
+export type { CreateRunAllTrialsParameters, RunAllTrials } from "#/child/create-run-all-trials";
 export { createRunAllTrials } from "#/child/create-run-all-trials";
 
 export { collectFingerprint } from "#/child/fingerprint";

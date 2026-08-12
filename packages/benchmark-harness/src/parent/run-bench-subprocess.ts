@@ -2,12 +2,12 @@ import { spawn } from "node:child_process";
 import { join } from "node:path";
 
 import {
-  BENCH_FAST_ENV_KEY,
-  BENCH_FULL_ENV_KEY,
   BENCH_ISOLATE_ENV_KEY,
   BENCH_LIST_ENV_KEY,
   BENCH_ONLY_ENV_KEY,
+  isEnvFlagEnabled,
   parseScenarioFilter,
+  resolveBenchModeFromEnvironment,
 } from "#/shared/env-keys";
 import { BENCH_RESULT_JSON_END, BENCH_RESULT_JSON_START, extractSubprocessPayload } from "#/shared/protocol";
 import type { SubprocessPayload, TrialPayload } from "#/shared/protocol";
@@ -29,16 +29,15 @@ export class SubprocessExecutionError extends Error {
 
 /**
  * Environment pinned across bench subprocesses. Uses `NODE_OPTIONS` for
- * `--expose-gc` when `BENCH_FULL=1`, and `--no-warnings` to keep stdout parsable.
+ * `--expose-gc` in the full profile, and `--no-warnings` to keep stdout parsable.
  *
  * @since 0.3.16-canary.0
  */
 export function buildSubprocessEnvironment(): NodeJS.ProcessEnv {
   const parentEnvironment = process.env;
   const existingNodeOptions = parentEnvironment["NODE_OPTIONS"] ?? "";
-  const fastModeEnabled = parentEnvironment[BENCH_FAST_ENV_KEY] === "1";
-  const fullModeEnabled = parentEnvironment[BENCH_FULL_ENV_KEY] === "1";
-  const requiredFlags = fastModeEnabled || !fullModeEnabled ? ["--no-warnings"] : ["--expose-gc", "--no-warnings"];
+  const requiredFlags =
+    resolveBenchModeFromEnvironment() === "full" ? ["--expose-gc", "--no-warnings"] : ["--no-warnings"];
   const hasInspectFlag = existingNodeOptions.includes("--inspect-brk") || existingNodeOptions.includes("--inspect");
   if (hasInspectFlag) {
     console.warn(
@@ -113,15 +112,14 @@ export async function runBenchSubprocess(parameters: RunBenchSubprocessParameter
   } = parameters;
 
   console.log(`\nRunning ${harnessLabel} subprocess: ${benchEntryFileNameUnderSrc}…`);
-  const fastModeEnabled = process.env[BENCH_FAST_ENV_KEY] === "1";
-  const fullModeEnabled = process.env[BENCH_FULL_ENV_KEY] === "1";
-  if (fullModeEnabled) {
+  const benchMode = resolveBenchModeFromEnvironment();
+  if (benchMode === "full") {
     console.log(
-      "[bench] Running benchmark with --expose-gc (BENCH_FULL=1). This profile prioritizes stability and may still run significantly longer on large suites.",
+      "[bench] Running benchmark with --expose-gc (BENCH_MODE=full). This profile prioritizes stability and may still run significantly longer on large suites.",
     );
-  } else if (!fastModeEnabled) {
+  } else if (benchMode === undefined) {
     console.log(
-      "[bench] Running benchmark without --expose-gc (default profile). Use BENCH_FAST=1 for smoke checks or BENCH_FULL=1 for GC-enabled stability runs.",
+      "[bench] Running benchmark without --expose-gc (default profile). Use BENCH_MODE=fast for smoke checks or BENCH_MODE=full for GC-enabled stability runs.",
     );
   }
   const startedAtMs = performance.now();
@@ -244,12 +242,12 @@ export async function runBenchSubprocess(parameters: RunBenchSubprocessParameter
 }
 
 /**
- * True when the current run asked for per-scenario process isolation (`BENCH_ISOLATE=1`).
+ * True when the current run asked for per-scenario process isolation (`BENCH_ISOLATE=true`).
  *
  * @since 0.5.0-canary.7
  */
 export function isIsolatedBenchRunRequested(): boolean {
-  return process.env[BENCH_ISOLATE_ENV_KEY] === "1";
+  return isEnvFlagEnabled(BENCH_ISOLATE_ENV_KEY);
 }
 
 function mergeIsolatedTrials(workerPayloads: ReadonlyArray<SubprocessPayload>): Array<TrialPayload> {
@@ -278,7 +276,7 @@ export async function runBenchSubprocessIsolated(parameters: RunBenchSubprocessP
   const listPayload = await runBenchSubprocess({
     ...parameters,
     harnessLabel: `${parameters.harnessLabel} [list]`,
-    environmentOverrides: { ...parameters.environmentOverrides, [BENCH_LIST_ENV_KEY]: "1" },
+    environmentOverrides: { ...parameters.environmentOverrides, [BENCH_LIST_ENV_KEY]: "true" },
   });
   const scenarioIds = listPayload.scenarioIds ?? [];
   if (scenarioIds.length === 0) {
@@ -298,7 +296,7 @@ export async function runBenchSubprocessIsolated(parameters: RunBenchSubprocessP
   }
 
   console.log(
-    `[bench] BENCH_ISOLATE=1: running ${String(selectedScenarioIds.length)} scenarios in separate subprocesses…`,
+    `[bench] BENCH_ISOLATE=true: running ${String(selectedScenarioIds.length)} scenarios in separate subprocesses…`,
   );
   const workerPayloads: Array<SubprocessPayload> = [];
   for (const scenarioId of selectedScenarioIds) {
@@ -366,7 +364,7 @@ export async function runBenchSubprocessesInterleaved(
     const listPayload = await runBenchSubprocess({
       ...library.parameters,
       harnessLabel: `${library.parameters.harnessLabel} [list]`,
-      environmentOverrides: { ...library.parameters.environmentOverrides, [BENCH_LIST_ENV_KEY]: "1" },
+      environmentOverrides: { ...library.parameters.environmentOverrides, [BENCH_LIST_ENV_KEY]: "true" },
     });
     if ((listPayload.scenarioIds ?? []).length === 0) {
       throw new Error(`${library.parameters.harnessLabel} list run returned no scenario ids; cannot run isolated.`);
@@ -385,7 +383,7 @@ export async function runBenchSubprocessesInterleaved(
       ? discoveredScenarioIds
       : discoveredScenarioIds.filter((id) => requestedScenarioIds.has(id));
   console.log(
-    `[bench] BENCH_ISOLATE=1: ${String(scenarioIds.length)} scenarios × ${String(libraries.length)} libraries, interleaved with rotating order.`,
+    `[bench] BENCH_ISOLATE=true: ${String(scenarioIds.length)} scenarios × ${String(libraries.length)} libraries, interleaved with rotating order.`,
   );
 
   const workerPayloads = new Map<string, Array<SubprocessPayload>>(libraries.map((library) => [library.key, []]));
