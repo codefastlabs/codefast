@@ -9,7 +9,7 @@ import { token } from "#/core/token";
 import { inject } from "#/decorators/inject";
 import { injectable } from "#/decorators/injectable";
 import { postConstruct, preDestroy } from "#/decorators/lifecycle-decorators";
-import { StaticMemberDecoratorError, MissingContainerContextError } from "#/errors/errors";
+import { CircularDependencyError, StaticMemberDecoratorError, MissingContainerContextError } from "#/errors/errors";
 import { defaultMetadataReader } from "#/metadata/symbol-metadata-reader";
 
 const integrationDir = dirname(fileURLToPath(import.meta.url));
@@ -207,6 +207,48 @@ describe("decorator metadata across class inheritance", () => {
     container.bind(PlainSub).toSelf().transient();
 
     expect(container.resolve(PlainSub).cfg).toBe("hello");
+  });
+
+  it("reports a cycle through an accessor instead of recursing", () => {
+    const CycleAToken = token<object>("inherit.cycleA");
+    const CycleBToken = token<object>("inherit.cycleB");
+
+    @injectable([])
+    class CycleA {
+      @inject(CycleBToken) accessor b!: object;
+    }
+
+    @injectable([CycleAToken])
+    class CycleB {
+      constructor(readonly a: object) {}
+    }
+
+    const container = Container.create();
+    container.bind(CycleAToken).to(CycleA).transient();
+    container.bind(CycleBToken).to(CycleB).transient();
+
+    expect(() => container.resolve(CycleAToken)).toThrow(CircularDependencyError);
+  });
+
+  it("reports an accessor cycle on the async lane too", async () => {
+    const CycleAToken = token<object>("inherit.async.cycleA");
+    const CycleBToken = token<object>("inherit.async.cycleB");
+
+    @injectable([])
+    class CycleA {
+      @inject(CycleBToken) accessor b!: object;
+    }
+
+    @injectable([CycleAToken])
+    class CycleB {
+      constructor(readonly a: object) {}
+    }
+
+    const container = Container.create();
+    container.bind(CycleAToken).to(CycleA).transient();
+    container.bind(CycleBToken).to(CycleB).transient();
+
+    await expect(container.resolveAsync(CycleAToken)).rejects.toThrow(CircularDependencyError);
   });
 });
 

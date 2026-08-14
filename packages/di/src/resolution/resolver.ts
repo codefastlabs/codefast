@@ -1,3 +1,4 @@
+import type { AmbientResolution } from "#/ambient/active-container";
 import type { Container } from "#/container/container";
 import type { Binding, ConstantBinding, DynamicAsyncBinding, DynamicBinding } from "#/core/binding";
 import { NO_INSTANCE } from "#/core/binding";
@@ -527,6 +528,18 @@ export class DependencyResolver implements ResolverCallbacks {
     }
   }
 
+  /** Path-continuing resolution handed to the ambient slot while an accessor class constructs. */
+  #ambientResolutionFor(resolutionPath: Array<string>, resolutionStack: Array<ResolutionFrame>): AmbientResolution {
+    return {
+      resolve: <Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Value =>
+        options === undefined
+          ? this.resolveFromContext(token, resolutionPath, resolutionStack)
+          : this.resolve(token, options, resolutionPath, resolutionStack),
+      resolveOptional: <Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Value | undefined =>
+        this.resolveOptional(token, options, resolutionPath, resolutionStack),
+    };
+  }
+
   #instantiateSync(
     binding: Binding,
     ctx: DefaultResolutionContext | undefined,
@@ -553,7 +566,13 @@ export class DependencyResolver implements ResolverCallbacks {
 
       case "class": {
         const deps = this.#resolveDeps(this.#constructorParams(binding.target), resolutionPath, resolutionStack);
-        return this.#classes.instantiate(binding.target, deps);
+        return this.#classes.instantiate(
+          binding.target,
+          deps,
+          this.#classes.needsActiveContainer(binding.target)
+            ? this.#ambientResolutionFor(resolutionPath, resolutionStack)
+            : undefined,
+        );
       }
 
       case "resolved": {
@@ -909,7 +928,14 @@ export class DependencyResolver implements ResolverCallbacks {
           resolutionStack,
           branchDepth,
         );
-        return this.#classes.instantiate(binding.target, deps);
+        // Accessor initializers resolve synchronously, so the branch-owned path serves them directly.
+        return this.#classes.instantiate(
+          binding.target,
+          deps,
+          this.#classes.needsActiveContainer(binding.target)
+            ? this.#ambientResolutionFor(resolutionPath, resolutionStack)
+            : undefined,
+        );
       }
 
       case "resolved": {

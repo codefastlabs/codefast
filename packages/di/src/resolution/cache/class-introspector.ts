@@ -4,7 +4,8 @@
  * @remarks Metadata cannot change once a class is defined, so nothing here needs version stamping.
  */
 
-import { runWithContainer } from "#/ambient/active-container";
+import { runWithAmbientResolution } from "#/ambient/active-container";
+import type { AmbientResolution } from "#/ambient/active-container";
 import type { Container } from "#/container/container";
 import type { ConstructorInvocation } from "#/core/constructor-type";
 import type { Constructor } from "#/core/types";
@@ -137,11 +138,11 @@ export class ClassIntrospector {
     return needsActiveContainer;
   }
 
-  instantiate(target: Constructor, deps: Array<unknown>): unknown {
+  instantiate(target: Constructor, deps: Array<unknown>, resolution?: AmbientResolution): unknown {
     const invokable = target as ConstructorInvocation;
     if (!this.needsActiveContainer(target)) {
       return new invokable(...deps);
     }
-    return runWithContainer(this.#container, () => new invokable(...deps));
+    return runWithAmbientResolution(this.#container, resolution, () => new invokable(...deps));
   }
 }
