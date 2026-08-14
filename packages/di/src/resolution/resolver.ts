@@ -19,6 +19,7 @@ import {
   AsyncActivationError,
   AsyncResolutionError,
   CircularDependencyError,
+  DisposedContainerError,
   InternalError,
   MissingMetadataError,
   MissingScopeContextError,
@@ -492,6 +493,9 @@ export class DependencyResolver implements ResolverCallbacks {
       if (this.#scope.getInflight(binding.id) !== undefined) {
         throw new AsyncResolutionError(resolutionPath[0] ?? tokenName(binding.token), tokenName(binding.token));
       }
+      if (this.#scope.isClosed) {
+        throw new DisposedContainerError();
+      }
     } else if (scope === "scoped") {
       const cachedScoped = this.#readScoped(binding);
       if (cachedScoped !== SCOPED_MISS) {
@@ -499,6 +503,9 @@ export class DependencyResolver implements ResolverCallbacks {
       }
       if (this.#scope.getInflight(binding.id) !== undefined) {
         throw new AsyncResolutionError(resolutionPath[0] ?? tokenName(binding.token), tokenName(binding.token));
+      }
+      if (this.#scope.isClosed) {
+        throw new DisposedContainerError();
       }
     }
 
@@ -835,6 +842,9 @@ export class DependencyResolver implements ResolverCallbacks {
       if (inflight !== undefined) {
         return inflight;
       }
+      if (this.#scope.isClosed) {
+        throw new DisposedContainerError();
+      }
     } else if (scope === "scoped") {
       const cachedScoped = this.#readScoped(binding);
       if (cachedScoped !== SCOPED_MISS) {
@@ -844,6 +854,9 @@ export class DependencyResolver implements ResolverCallbacks {
       const inflight = this.#scope.getInflight(binding.id);
       if (inflight !== undefined) {
         return inflight;
+      }
+      if (this.#scope.isClosed) {
+        throw new DisposedContainerError();
       }
     }
 

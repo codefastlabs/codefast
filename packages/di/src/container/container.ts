@@ -137,6 +137,8 @@ const APPLY_BINDING_SCOPE: Record<BindingScope, (builder: BindingBuilder<unknown
 
 class DefaultContainer implements Container {
   #disposed = false;
+  // The one teardown run — every dispose() call returns it once it exists.
+  #disposePromise: Promise<void> | undefined;
   readonly #registry: BindingRegistry;
   readonly #scope: ScopeManager;
   readonly #lifecycle: LifecycleManager;
@@ -299,35 +301,56 @@ class DefaultContainer implements Container {
     );
   }
 
-  #unbindSync(tokenOrId: Token<unknown> | Constructor | BindingIdentifier): void {
-    const reader = this.#getMetadataReader();
-    for (const [binding, instance] of this.#collectDeactivationPairs(tokenOrId)) {
-      this.#lifecycle.runDeactivationSync(binding, instance, reader);
+  /** Runs every pair's deactivation even when one throws, then reports what threw. */
+  #deactivatePairsSync(pairs: ReadonlyArray<[Binding, unknown]>): void {
+    if (pairs.length === 0) {
+      return;
     }
+    const reader = this.#getMetadataReader();
+    const errors: Array<unknown> = [];
+    for (const [binding, instance] of pairs) {
+      try {
+        this.#lifecycle.runDeactivationSync(binding, instance, reader);
+      } catch (error) {
+        errors.push(error);
+      }
+    }
+    throwCollected(errors, "unbind completed, but deactivation hooks threw");
+  }
+
+  async #deactivatePairs(pairs: ReadonlyArray<[Binding, unknown]>): Promise<void> {
+    if (pairs.length === 0) {
+      return;
+    }
+    const reader = this.#getMetadataReader();
+    const errors: Array<unknown> = [];
+    for (const [binding, instance] of pairs) {
+      try {
+        await this.#lifecycle.runDeactivation(binding, instance, reader);
+      } catch (error) {
+        errors.push(error);
+      }
+    }
+    throwCollected(errors, "unbind completed, but deactivation hooks threw");
+  }
+
+  #unbindSync(tokenOrId: Token<unknown> | Constructor | BindingIdentifier): void {
+    this.#deactivatePairsSync(this.#collectDeactivationPairs(tokenOrId));
   }
 
   async unbindAsync(tokenOrId: Token<unknown> | Constructor | BindingIdentifier): Promise<void> {
     this.#assertNotDisposed();
-    const reader = this.#getMetadataReader();
-    for (const [binding, instance] of this.#collectDeactivationPairs(tokenOrId)) {
-      await this.#lifecycle.runDeactivation(binding, instance, reader);
-    }
+    await this.#deactivatePairs(this.#collectDeactivationPairs(tokenOrId));
   }
 
   unbindAll(): void {
     this.#assertNotDisposed();
-    const reader = this.#getMetadataReader();
-    for (const [binding, instance] of this.#drainSingletons(this.#registry.clear())) {
-      this.#lifecycle.runDeactivationSync(binding, instance, reader);
-    }
+    this.#deactivatePairsSync(this.#drainSingletons(this.#registry.clear()));
   }
 
   async unbindAllAsync(): Promise<void> {
     this.#assertNotDisposed();
-    const reader = this.#getMetadataReader();
-    for (const [binding, instance] of this.#drainSingletons(this.#registry.clear())) {
-      await this.#lifecycle.runDeactivation(binding, instance, reader);
-    }
+    await this.#deactivatePairs(this.#drainSingletons(this.#registry.clear()));
   }
 
   rebind<Value>(token: Token<Value> | Constructor<Value>): BindToBuilder<Value> {
@@ -363,15 +386,41 @@ class DefaultContainer implements Container {
       }
       moduleRefs.set(moduleRef, 1);
       const builder = this.#createModuleBuilder(moduleRef);
-      module[MODULE_SETUP](builder);
+      try {
+        module[MODULE_SETUP](builder);
+      } catch (error) {
+        throw this.#rollbackFailedLoadSync(moduleRef, error);
+      }
     }
   }
 
   async loadAsync(...modules: Array<SyncModule | AsyncModule>): Promise<void> {
     this.#assertNotDisposed();
-    for (const module of modules) {
+    // Deduped by identity like the sync lane, so `loadAsync(m, m)` ref-counts once.
+    for (const module of new Set(modules)) {
       await this.#loadOneModuleAsync(module);
     }
+  }
+
+  /** Undo a failed load — bindings registered before the throw and the ref-count both roll back. */
+  #rollbackFailedLoadSync(moduleRef: object, cause: unknown): unknown {
+    const pairs = this.#removeModuleBindings(moduleRef);
+    try {
+      this.#deactivatePairsSync(pairs);
+    } catch (rollbackError) {
+      return new AggregateError([cause, rollbackError], "module load failed, and rolling it back threw too");
+    }
+    return cause;
+  }
+
+  async #rollbackFailedLoad(moduleRef: object, cause: unknown): Promise<unknown> {
+    const pairs = this.#removeModuleBindings(moduleRef);
+    try {
+      await this.#deactivatePairs(pairs);
+    } catch (rollbackError) {
+      return new AggregateError([cause, rollbackError], "module load failed, and rolling it back threw too");
+    }
+    return cause;
   }
 
   async #loadOneModuleAsync(module: SyncModule | AsyncModule): Promise<void> {
@@ -386,14 +435,25 @@ class DefaultContainer implements Container {
 
     if (isSyncModule(module)) {
       const builder = this.#createModuleBuilder(moduleRef);
-      module[MODULE_SETUP](builder);
+      try {
+        module[MODULE_SETUP](builder);
+      } catch (error) {
+        throw this.#rollbackFailedLoadSync(moduleRef, error);
+      }
     } else {
       const importPromises: Array<Promise<void>> = [];
       const builder = this.#createAsyncModuleBuilder(moduleRef, importPromises);
-      await module[MODULE_SETUP](builder);
-      // Await nested async imports triggered inside the setup callback
-      if (importPromises.length > 0) {
-        await Promise.all(importPromises);
+      try {
+        await module[MODULE_SETUP](builder);
+        // Await nested async imports triggered inside the setup callback
+        if (importPromises.length > 0) {
+          await Promise.all(importPromises);
+        }
+      } catch (error) {
+        // Nested imports may still be registering — let them settle before rolling back, so no
+        // registration lands after the rejection and none becomes an unhandled rejection.
+        await Promise.allSettled(importPromises);
+        throw await this.#rollbackFailedLoad(moduleRef, error);
       }
     }
   }
@@ -454,10 +514,7 @@ class DefaultContainer implements Container {
   #unloadModuleSync(ref: object): void {
     const count = this.#moduleRefs?.get(ref) ?? 0;
     if (count <= 1) {
-      const reader = this.#getMetadataReader();
-      for (const [binding, instance] of this.#removeModuleBindings(ref)) {
-        this.#lifecycle.runDeactivationSync(binding, instance, reader);
-      }
+      this.#deactivatePairsSync(this.#removeModuleBindings(ref));
     } else {
       this.#moduleRefs!.set(ref, count - 1);
     }
@@ -473,10 +530,7 @@ class DefaultContainer implements Container {
   async #unloadModuleAsync(ref: object): Promise<void> {
     const count = this.#moduleRefs?.get(ref) ?? 0;
     if (count <= 1) {
-      const reader = this.#getMetadataReader();
-      for (const [binding, instance] of this.#removeModuleBindings(ref)) {
-        await this.#lifecycle.runDeactivation(binding, instance, reader);
-      }
+      await this.#deactivatePairs(this.#removeModuleBindings(ref));
     } else {
       this.#moduleRefs!.set(ref, count - 1);
     }
@@ -566,30 +620,48 @@ class DefaultContainer implements Container {
 
   // ── Dispose ───────────────────────────────────────────────────────────────
 
-  async dispose(): Promise<void> {
-    if (this.#disposed) {
-      return;
-    }
-    this.#disposed = true;
+  dispose(): Promise<void> {
+    // One teardown, shared: a second caller awaits the same run instead of returning early while
+    // hooks from the first are still executing.
+    return (this.#disposePromise ??= this.#runDispose());
+  }
 
-    // Deactivate all singletons in this container (own only)
+  async #runDispose(): Promise<void> {
+    this.#disposed = true;
+    // Refuses new materializations immediately; in-flight ones are drained just below.
+    this.#scope.markClosed();
+    await this.#scope.settleInflight();
+
     const reader = this.#getMetadataReader();
+    const errors: Array<unknown> = [];
     // Iterate a copy: a deactivation handler is user code, and the live list is what
-    // materializing or dropping a singleton mutates.
-    for (const binding of this.#scope.cachedSingletons().slice()) {
-      await this.#lifecycle.runDeactivation(binding, binding.instance, reader);
+    // materializing or dropping a singleton mutates. Reverse materialization order, so a
+    // dependent tears down before the dependencies it may still reach through.
+    const cached = this.#scope.cachedSingletons().slice();
+    for (let index = cached.length - 1; index >= 0; index -= 1) {
+      const binding = cached[index]!;
+      try {
+        await this.#lifecycle.runDeactivation(binding, binding.instance, reader);
+      } catch (error) {
+        errors.push(error);
+      }
     }
     // A constant never reaches the singleton cache unless activation put it there, so its hook is
     // owed from the registry instead — and only a container that has held one pays for looking.
     if (this.#registry.hasHeldConstantBinding) {
       for (const binding of this.#registry.allBindings()) {
         if (binding.instance === NO_INSTANCE && this.#owesConstantDeactivation(binding)) {
-          await this.#lifecycle.runDeactivation(binding, binding.value, reader);
+          try {
+            await this.#lifecycle.runDeactivation(binding, binding.value, reader);
+          } catch (error) {
+            errors.push(error);
+          }
         }
       }
     }
 
     this.#scope.clearAll();
+    throwCollected(errors, "dispose() completed, but deactivation hooks threw");
   }
 
   [Symbol.asyncDispose](): Promise<void> {
@@ -849,6 +921,17 @@ class DefaultContainer implements Container {
       throw new DisposedContainerError();
     }
   }
+}
+
+/** Reports collected hook failures once teardown finished: the one error as itself, several aggregated. */
+function throwCollected(errors: ReadonlyArray<unknown>, message: string): void {
+  if (errors.length === 0) {
+    return;
+  }
+  if (errors.length === 1) {
+    throw errors[0];
+  }
+  throw new AggregateError(errors, message);
 }
 
 // ── Container static ──────────────────────────────────────────────────────────

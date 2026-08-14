@@ -14,11 +14,30 @@ export class ScopeManager {
   #inflight: Map<BindingIdentifier, Promise<unknown>> | undefined;
   // Scoped cache — only a child container resolving a `scoped` binding ever needs it.
   #scoped: Map<BindingIdentifier, unknown> | undefined;
+  // Set once by the owning container's dispose — refuses new materializations into torn-down state.
+  #closed = false;
 
   readonly isChild: boolean;
 
   constructor(isChild = false) {
     this.isChild = isChild;
+  }
+
+  get isClosed(): boolean {
+    return this.#closed;
+  }
+
+  markClosed(): void {
+    this.#closed = true;
+  }
+
+  /** Awaits every in-flight async materialization, so teardown deactivates what they produce. */
+  async settleInflight(): Promise<void> {
+    let previousSize = -1;
+    while (this.#inflight !== undefined && this.#inflight.size > 0 && this.#inflight.size !== previousSize) {
+      previousSize = this.#inflight.size;
+      await Promise.allSettled(this.#inflight.values());
+    }
   }
 
   setSingleton<Value>(binding: Binding<Value>, instance: unknown): void {
