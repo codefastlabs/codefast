@@ -92,8 +92,18 @@ function filterBindings(
   // where an absent criterion means "the default slot".
   const requiresSlotMatch = selectionMode === "single" || (options !== undefined && hasSlotCriterion(options));
   const result: Array<Binding> = [];
-  for (const binding of bindings) {
-    if ((!requiresSlotMatch || matchesSlot(binding.slot, options)) && matchesPredicate(binding, ctx)) {
+  // Snapshot lazily, right before the first predicate runs: a predicate is user code that may
+  // rebind the very token being selected, and a mid-selection splice must not skip candidates.
+  let stable: ReadonlyArray<Binding> = bindings;
+  for (let index = 0; index < stable.length; index += 1) {
+    const binding = stable[index]!;
+    if (requiresSlotMatch && !matchesSlot(binding.slot, options)) {
+      continue;
+    }
+    if (binding.predicate !== undefined && stable === bindings) {
+      stable = bindings.slice();
+    }
+    if (matchesPredicate(binding, ctx)) {
       result.push(binding);
     }
   }

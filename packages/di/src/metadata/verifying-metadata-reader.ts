@@ -5,7 +5,11 @@
 
 import type { MetadataReader } from "#/metadata/metadata-types";
 import { defaultMetadataReader } from "#/metadata/symbol-metadata-reader";
-import { verifyConstructorMetadata } from "#/resolution/cache/class-introspector";
+import {
+  verifyAccessorMetadata,
+  verifyConstructorMetadata,
+  verifyLifecycleMetadata,
+} from "#/resolution/cache/class-introspector";
 
 // Wrapping a wrapper would stack a layer per child container, so each one is remembered.
 const verifyingReaders = new WeakSet<MetadataReader>();
@@ -21,11 +25,12 @@ export function verifyingMetadataReader(reader: MetadataReader): MetadataReader 
   if (reader === defaultMetadataReader || verifyingReaders.has(reader)) {
     return reader;
   }
-  const readAccessors = reader.getAccessorMetadata?.bind(reader);
   const verifying: MetadataReader = {
     getConstructorMetadata: (target) => verifyConstructorMetadata(reader, target),
-    getLifecycleMetadata: (target) => reader.getLifecycleMetadata(target),
-    ...(readAccessors === undefined ? {} : { getAccessorMetadata: readAccessors }),
+    getLifecycleMetadata: (target) => verifyLifecycleMetadata(reader, target),
+    ...(reader.getAccessorMetadata === undefined
+      ? {}
+      : { getAccessorMetadata: (target) => verifyAccessorMetadata(reader, target) }),
   };
 
   verifyingReaders.add(verifying);

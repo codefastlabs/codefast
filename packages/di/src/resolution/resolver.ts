@@ -676,10 +676,20 @@ export class DependencyResolver implements ResolverCallbacks {
     resolutionPath: Array<string>,
     resolutionStack: Array<ResolutionFrame>,
   ): Value | undefined {
-    if (this.#findBinding(token, options, resolutionPath, resolutionStack) === undefined) {
+    const entry = this.#findBinding(token, options, resolutionPath, resolutionStack);
+    if (entry === undefined) {
       return undefined;
     }
-    return this.resolve(token, options, resolutionPath, resolutionStack);
+    // Resolve the entry the probe found: re-looking the token up would evaluate every `when()`
+    // predicate a second time, and a changed answer would throw where `undefined` was promised.
+    const { binding, owner } = entry;
+    if (binding.kind === "alias") {
+      return this.resolve(token, options, resolutionPath, resolutionStack);
+    }
+    if (binding.scope === "singleton" && owner !== this) {
+      return owner.#resolveBinding(binding, options, resolutionPath, resolutionStack, owner) as Value;
+    }
+    return this.#resolveBinding(binding, options, resolutionPath, resolutionStack, owner) as Value;
   }
 
   resolveAll<Value>(
@@ -1064,10 +1074,33 @@ export class DependencyResolver implements ResolverCallbacks {
     resolutionStack: Array<ResolutionFrame>,
     branchDepth: BranchDepth = UNOWNED_BRANCH,
   ): Promise<Value | undefined> {
-    if (this.#findBinding(token, options, resolutionPath, resolutionStack) === undefined) {
+    const entry = this.#findBinding(token, options, resolutionPath, resolutionStack);
+    if (entry === undefined) {
       return undefined;
     }
-    return this.resolveAsync(token, options, resolutionPath, resolutionStack, branchDepth);
+    // Same single-evaluation contract as the sync lane: resolve what the probe found.
+    const { binding, owner } = entry;
+    if (binding.kind === "alias") {
+      return this.resolveAsync(token, options, resolutionPath, resolutionStack, branchDepth);
+    }
+    if (binding.scope === "singleton" && owner !== this) {
+      return owner.#resolveBindingAsync(
+        binding,
+        options,
+        resolutionPath,
+        resolutionStack,
+        branchDepth,
+        owner,
+      ) as Promise<Value>;
+    }
+    return this.#resolveBindingAsync(
+      binding,
+      options,
+      resolutionPath,
+      resolutionStack,
+      branchDepth,
+      owner,
+    ) as Promise<Value>;
   }
 
   async resolveAllAsync<Value>(

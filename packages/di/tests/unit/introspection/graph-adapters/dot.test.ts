@@ -23,4 +23,16 @@ describe("toDotGraph", () => {
       expect(dot).toContain(`"${edge.from}" -> "${edge.to}"`);
     }
   });
+
+  it("escapes quotes in token names so they cannot inject DOT structure", () => {
+    const hostileToken = token<number>('a"] ; malicious [label="pwn');
+    const container = Container.create();
+    container.bind(hostileToken).toConstantValue(1);
+
+    const dot = toDotGraph(container.generateDependencyGraph());
+
+    // One node, no edges: header, rankdir, the node line, and the closing brace.
+    expect(dot.split("\n")).toHaveLength(4);
+    expect(dot).toContain('a\\"] ; malicious [label=\\"pwn');
+  });
 });
