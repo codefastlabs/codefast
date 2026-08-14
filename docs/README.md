@@ -59,8 +59,8 @@ A record of what was chosen and why. Never edit the old content; if a decision c
 
 A document that concerns exactly one package stays in that package rather than moving into `docs/`:
 
-- `packages/di/ARCHITECTURE.md` — the source of truth for `resolution/`, read it before touching a hot path;
-  `PERFORMANCE.md` (what each shape costs, and by what method) and `REJECTED.md` (tried and rejected) go with it
+- `packages/di/ARCHITECTURE.md` — the source of truth for `resolution/`, read it before touching a hot path; what each
+  shape costs is measured empirically by the `benchmarks/di-inversify` suite rather than recorded in a doc alongside it
 - `packages/tracking/spec/` — the behavioural contract
 - `packages/*/README.md`, `packages/*/CHANGELOG.md`
 

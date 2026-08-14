@@ -171,7 +171,7 @@ carry the types.**
   sites. The reverse direction is fine and encouraged: a doc citing a source path or symbol.
 - **No numbers in source comments.** No benchmark figures, `ns/op` tables, percentages, byte counts or ratios. They
   cannot be re-verified where they sit, they go stale silently, and the method behind them is not there either. Numbers
-  live with their method — a `PERFORMANCE.md`, `RESULTS.md`, or the commit. An `ARCHITECTURE.md` states what a shape
+  live with their method — a benchmark suite's `RESULTS.md`, or the commit. An `ARCHITECTURE.md` states what a shape
   guarantees, which is a different claim and does not need a figure to make it.
 - **No history.** Code describes what _is_. Never "used to", "previously", "an earlier revision", "the old threshold",
   "before X existed" — git and the PR carry that, and a reader who wants it knows where to look.
@@ -243,13 +243,12 @@ point of use beats brevity, and every word must convey information:
 
 ### `packages/di` layout
 
-**Three design docs, and which one you want depends on the question — read them before changing anything under
-`resolution/`.** [`ARCHITECTURE.md`](packages/di/ARCHITECTURE.md) is the source of truth for _what the shape is and what
-it guarantees_: the layering, the invariants each hot path depends on, which shapes that look simplifiable are
-load-bearing. [`PERFORMANCE.md`](packages/di/PERFORMANCE.md) is what each shape _costs_ and by what method.
-[`REJECTED.md`](packages/di/REJECTED.md) is what has been tried against the engine and lost — read it before proposing
-an optimization, because most of the obvious ones are already there. Keep the boundary when adding to them: a figure
-goes in PERFORMANCE or REJECTED, never in ARCHITECTURE.
+**One design doc, plus the benchmark suite.** [`ARCHITECTURE.md`](packages/di/ARCHITECTURE.md) is the source of truth
+for _what the shape is and what it guarantees_: the layering, the invariants each hot path depends on, and which shapes
+that look simplifiable are load-bearing — worth reading before changing anything under `resolution/`. What a shape
+_costs_, and whether a new idea beats it, is an empirical question the benchmark suite (`benchmarks/di-inversify`)
+answers by re-running; numbers live there and in its `RESULTS.md` ledger, never in a source comment and never in
+ARCHITECTURE.
 
 `src/` groups by subsystem: the **model** at the root (`token`, `types`, `constructor-type`, `binding`, `registry`,
 `errors`, `module`), **`container/`** (container + the fluent binding chain), **`resolution/`** (the engine class plus

@@ -1,8 +1,7 @@
 # How to measure so the number survives
 
-The standard a figure has to meet before it goes in [`RESULTS.md`](./RESULTS.md), a package's `PERFORMANCE.md`, or a
-commit message. Every rule here exists because a measurement that skipped it produced a confident number that later
-turned out to be wrong.
+The standard a figure has to meet before it goes in [`RESULTS.md`](./RESULTS.md) or a commit message. Every rule here
+exists because a measurement that skipped it produced a confident number that later turned out to be wrong.
 
 ## The two questions are different, and so are the methods
 
@@ -182,7 +181,7 @@ Also required for a comparison to mean anything:
   `‡` marks cells whose per-trial IQR exceeded 5%.
 - **No benchmark numbers in source comments.** A unit test in `packages/di` fails on them. A number in a comment cannot
   be re-verified where it sits and the method behind it is not there either. Numbers live with their method: this file,
-  `RESULTS.md`, a package's `PERFORMANCE.md`, or the commit.
+  `RESULTS.md`, or the commit.
 
 ## Interpreting what you get
 

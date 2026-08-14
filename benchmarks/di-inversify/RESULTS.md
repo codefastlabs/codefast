@@ -242,9 +242,8 @@ is worth roughly 30% on hot resolve. Winning this row means paying for it everyw
 and the cascade-lane change (`3a0ad82e0`) is what removed it: async cycle detection now reads its ancestors off the
 synchronous cascade instead of paying a settle-scoped path per level. The 2026-07-31 interleaved GC-exposed run reads
 **1.73×** on the row and **1.67×** on the async group's geomean; the per-level cost table and the paired A/B behind the
-change are in [`packages/di/PERFORMANCE.md`](../../packages/di/PERFORMANCE.md), which is where every per-mechanism
-figure for that package lives — this page stays the per-run ledger. The pooled-context mechanism note that used to live
-here survives there too.
+change were measured with the isolate suite and belong on this page, which is the per-run ledger for `@codefast/di` —
+re-run `bench:isolate` to reproduce either.
 
 ## Retracted
 
