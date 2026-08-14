@@ -235,13 +235,14 @@ class DefaultContainer implements Container {
 
   /** The registration every non-module chain shares, so `bind()` allocates only the builder. */
   #ownRegistration(): BindingRegistration {
-    return (this.#registration ??= { registry: this.#registry, moduleBindingIds: undefined });
+    return (this.#registration ??= { registry: this.#registry, scope: this.#scope, moduleBindingIds: undefined });
   }
 
   /** One registration per module load, holding that module's id list directly. */
   #moduleRegistration(moduleRef: object): BindingRegistration {
     return {
       registry: this.#registry,
+      scope: this.#scope,
       moduleBindingIds: (this.#moduleBindingIds ??= new Map()).getOrInsert(moduleRef, []),
     };
   }

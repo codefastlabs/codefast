@@ -278,7 +278,8 @@ export function createBinding<Value>(
     id,
     inFlight: false,
     frame: undefined,
-    instance: fields.instance ?? NO_INSTANCE,
+    // An `in` probe, not `??`: a re-slotted singleton may legitimately hold a cached `undefined`.
+    instance: "instance" in fields ? fields.instance : NO_INSTANCE,
     token,
     slot,
     predicate,

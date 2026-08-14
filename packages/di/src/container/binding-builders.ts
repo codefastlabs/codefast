@@ -17,13 +17,7 @@ import type {
   SingletonLifecycleBuilder,
   TransientBindingBuilder,
 } from "#/core/binding";
-import {
-  bindingSlotEquals,
-  clearBindingFrame,
-  createBinding,
-  DEFAULT_BINDING_SLOT,
-  refinableFields,
-} from "#/core/binding";
+import { clearBindingFrame, createBinding, DEFAULT_BINDING_SLOT, refinableFields } from "#/core/binding";
 import type { BindingRegistry } from "#/core/registry";
 import type { BindingTag } from "#/core/tag";
 import { tagKeyMaskOf } from "#/core/tag";
@@ -41,6 +35,7 @@ import type {
 import { ChainNotRegisteredError, SelfBindingRequiresClassError } from "#/errors/errors";
 import type { InjectableDependency, ResolvedDependencyValue } from "#/injection/descriptor";
 import { normalizeToDescriptor } from "#/injection/descriptor";
+import type { ScopeManager } from "#/lifecycle/scope-manager";
 
 /** One criterion per key: re-tagging the same key replaces it rather than asking for both values. */
 function updateSlotTag(slot: BindingSlot, criterion: BindingTag): BindingSlot {
@@ -52,17 +47,6 @@ function updateSlotTag(slot: BindingSlot, criterion: BindingTag): BindingSlot {
     tags[existingIndex] = criterion;
   }
   return { ...slot, tags, keyMask: tagKeyMaskOf(tags) };
-}
-
-// True when re-adding `restored` would immediately be displaced again by `current`
-// (both slot-based with equal slots) — in that case the replacement was legitimate.
-function displacesRestoredBinding(current: Binding, restored: Binding): boolean {
-  const currentIsPurePredicate =
-    current.predicate !== undefined && current.slot.name === undefined && current.slot.tags.length === 0;
-  if (currentIsPurePredicate) {
-    return false;
-  }
-  return bindingSlotEquals(current.slot, restored.slot);
 }
 
 /** Record a module's binding id, dropping the id the chain re-slotted away from. */
@@ -92,6 +76,7 @@ function trackBindingForModule(
  */
 export interface BindingRegistration {
   readonly registry: BindingRegistry;
+  readonly scope: ScopeManager;
   readonly moduleBindingIds: Array<BindingIdentifier> | undefined;
 }
 
@@ -119,6 +104,8 @@ export class BindingChain<Value>
   #binding: Binding<Value> | undefined;
   // Allocated only by a chain that actually displaces something — most never do.
   #displacedByChain: Array<Binding> | undefined;
+  // Registry version after this chain's last write — a mismatch means someone else wrote in between.
+  #versionAfterLastWrite = -1;
   readonly #token: Token<Value> | Constructor<Value>;
   readonly #registration: BindingRegistration;
 
@@ -205,15 +192,24 @@ export class BindingChain<Value>
     const previous = this.#registered();
     this.#binding = createBinding(previous, previous.token, slot, predicate, previous.id);
     this.#commit(this.#binding, previous.id);
+    // The tracked-singleton list holds object references, and the re-slot just replaced the object.
+    this.#registration.scope.replaceSingleton(previous as Binding, this.#binding as Binding);
     return this;
   }
 
   #withScope(scope: BindingScope): this {
     const binding = this.#registered();
-    refinableFields(binding).scope = scope;
+    if (binding.scope !== scope) {
+      // An instance cached under the old scope must not survive the change — a later flip back
+      // to that scope would resurrect it.
+      this.#registration.scope.deleteSingleton(binding);
+      this.#registration.scope.deleteScoped(binding.id);
+      refinableFields(binding).scope = scope;
+    }
     // The frame reports the scope, so a resolve before this call memoized the previous one.
     clearBindingFrame(binding);
     this.#registration.registry.touch();
+    this.#versionAfterLastWrite = this.#registration.registry.version;
     return this;
   }
 
@@ -257,12 +253,14 @@ export class BindingChain<Value>
   onActivation(fn: ActivationHandler<Value>): this {
     refinableFields(this.#registered()).onActivation = fn;
     this.#registration.registry.touch();
+    this.#versionAfterLastWrite = this.#registration.registry.version;
     return this;
   }
 
   onDeactivation(fn: DeactivationHandler<Value>): this {
     refinableFields(this.#registered()).onDeactivation = fn;
     this.#registration.registry.touch();
+    this.#versionAfterLastWrite = this.#registration.registry.version;
     return this;
   }
 
@@ -286,24 +284,38 @@ export class BindingChain<Value>
     const registered = binding as Binding;
 
     if (previousId !== undefined) {
-      registry.removeById(previousId);
+      // A registry someone else wrote since this chain's last write invalidates the parked
+      // snapshot: restoring it could undo an unbind or shadow a newer binding.
+      if (registry.version !== this.#versionAfterLastWrite) {
+        this.#displacedByChain = undefined;
+      }
+      if (registry.removeById(previousId) === undefined) {
+        // The chain's binding is no longer live (unbound or displaced) — a refinement must not
+        // resurrect it, so the chain goes inert against the registry.
+        this.#displacedByChain = undefined;
+        this.#versionAfterLastWrite = registry.version;
+        return;
+      }
     }
     const displaced = registry.add(registered);
     if (displaced !== undefined) {
       (this.#displacedByChain ??= []).push(displaced);
     }
     if (previousId !== undefined && this.#displacedByChain !== undefined) {
-      this.#restoreNonConflicting(registered, this.#displacedByChain);
+      this.#restoreNonConflicting(this.#displacedByChain);
     }
     if (moduleBindingIds !== undefined) {
       trackBindingForModule(moduleBindingIds, registered.id, previousId);
     }
+    this.#versionAfterLastWrite = registry.version;
   }
 
-  #restoreNonConflicting(binding: Binding, displaced: Array<Binding>): void {
+  #restoreNonConflicting(displaced: Array<Binding>): void {
     for (let index = displaced.length - 1; index >= 0; index -= 1) {
       const candidate = displaced[index]!;
-      if (!displacesRestoredBinding(binding, candidate)) {
+      // A restore must never displace: a slot that has been re-occupied keeps its occupant, and
+      // the candidate stays parked.
+      if (!this.#registration.registry.hasSlotOccupant(candidate)) {
         this.#registration.registry.add(candidate);
         displaced.splice(index, 1);
       }

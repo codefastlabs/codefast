@@ -48,6 +48,18 @@ export class ScopeManager {
     return true;
   }
 
+  /** Swaps a re-slotted binding's tracked entry, so teardown pairs the instance with the live object. */
+  replaceSingleton(previous: Binding, next: Binding): void {
+    const tracked = this.#singletonBindings;
+    if (tracked === undefined) {
+      return;
+    }
+    const index = tracked.indexOf(previous as Binding<unknown>);
+    if (index !== -1) {
+      tracked[index] = next as Binding<unknown>;
+    }
+  }
+
   getInflight(id: BindingIdentifier): Promise<unknown> | undefined {
     return this.#inflight?.get(id);
   }
