@@ -58,7 +58,8 @@ export interface InstantiationPlanDependencyEntry {
  * @since 0.5.0-canary.7
  */
 export interface InstantiationPlanHost {
-  hasActivationHandlers(token: Token<unknown> | Constructor): boolean;
+  /** Owner-aware: container-level hooks belong to the binding's owner, which may be a parent. */
+  hasActivationHandlers(binding: Binding): boolean;
   /** Cached postConstruct presence — `undefined` until a runtime resolve discovers it. */
   knownPostConstruct(target: Constructor): boolean | undefined;
   needsActiveContainer(target: Constructor): boolean;
@@ -137,7 +138,7 @@ export class InstantiationPlanCompiler {
     depth: number,
     ancestors: ReadonlyArray<Binding>,
   ): InstantiationPlanCompileResult {
-    if (binding.onActivation !== undefined || this.#host.hasActivationHandlers(binding.token)) {
+    if (binding.onActivation !== undefined || this.#host.hasActivationHandlers(binding)) {
       return null;
     }
     const factory = binding.factory;
@@ -208,7 +209,7 @@ export class InstantiationPlanCompiler {
     depth: number,
     ancestors: ReadonlyArray<Binding>,
   ): InstantiationPlanCompileResult {
-    if (binding.onActivation !== undefined || this.#host.hasActivationHandlers(binding.token)) {
+    if (binding.onActivation !== undefined || this.#host.hasActivationHandlers(binding)) {
       return null;
     }
     const target = binding.target;
@@ -273,7 +274,7 @@ export class InstantiationPlanCompiler {
   ): DependencyCompileResult {
     const { binding } = entry;
     if (binding.kind === "constant" && binding.onActivation === undefined) {
-      if (!this.#host.hasActivationHandlers(binding.token)) {
+      if (!this.#host.hasActivationHandlers(binding)) {
         const value = binding.value;
         return () => value;
       }
