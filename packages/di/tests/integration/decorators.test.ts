@@ -104,6 +104,112 @@ describe("Stage 3 decorators — metadata & lifecycle", () => {
   });
 });
 
+describe("decorator metadata across class inheritance", () => {
+  it("leaves the base class resolvable with only its own hooks after a subclass is defined", () => {
+    const ran: Array<string> = [];
+
+    @injectable([])
+    class HookParent {
+      @postConstruct()
+      initParent(): void {
+        ran.push("initParent");
+      }
+    }
+
+    @injectable([])
+    class HookChild extends HookParent {
+      @postConstruct()
+      initChild(): void {
+        ran.push("initChild");
+      }
+    }
+
+    const container = Container.create();
+    container.bind(HookParent).toSelf().transient();
+    container.bind(HookChild).toSelf().transient();
+
+    container.resolve(HookParent);
+    expect(ran).toEqual(["initParent"]);
+
+    ran.length = 0;
+    container.resolve(HookChild);
+    expect(ran).toEqual(["initParent", "initChild"]);
+  });
+
+  it("runs preDestroy derived-first across the chain", () => {
+    const ran: Array<string> = [];
+
+    @injectable([])
+    class TeardownParent {
+      @preDestroy()
+      closeParent(): void {
+        ran.push("closeParent");
+      }
+    }
+
+    @injectable([])
+    class TeardownChild extends TeardownParent {
+      @preDestroy()
+      closeChild(): void {
+        ran.push("closeChild");
+      }
+    }
+
+    const container = Container.create();
+    container.bind(TeardownChild).toSelf().singleton();
+    container.resolve(TeardownChild);
+    container.unbind(TeardownChild);
+
+    expect(ran).toEqual(["closeChild", "closeParent"]);
+  });
+
+  it("injects base and derived accessors on the derived class", () => {
+    const CfgToken = token<string>("inherit.cfg");
+    const ExtraToken = token<number>("inherit.extra");
+
+    @injectable([])
+    class AccessorBase {
+      @inject(CfgToken) accessor cfg!: string;
+    }
+
+    @injectable([])
+    class AccessorDerived extends AccessorBase {
+      @inject(ExtraToken) accessor extra!: number;
+    }
+
+    const container = Container.create();
+    container.bind(CfgToken).toConstantValue("hello");
+    container.bind(ExtraToken).toConstantValue(42);
+    container.bind(AccessorBase).toSelf().transient();
+    container.bind(AccessorDerived).toSelf().transient();
+
+    const derived = container.resolve(AccessorDerived);
+    expect(derived.cfg).toBe("hello");
+    expect(derived.extra).toBe(42);
+
+    const base = container.resolve(AccessorBase);
+    expect(base.cfg).toBe("hello");
+  });
+
+  it("constructs a subclass with no own accessors under the container context", () => {
+    const CfgToken = token<string>("inherit.plain-sub.cfg");
+
+    @injectable([])
+    class InjectingBase {
+      @inject(CfgToken) accessor cfg!: string;
+    }
+
+    @injectable([])
+    class PlainSub extends InjectingBase {}
+
+    const container = Container.create();
+    container.bind(CfgToken).toConstantValue("hello");
+    container.bind(PlainSub).toSelf().transient();
+
+    expect(container.resolve(PlainSub).cfg).toBe("hello");
+  });
+});
+
 describe("Accessor injection e2e (tsx subprocess)", () => {
   it("constructor → accessor inject → @postConstruct with tsx emit", () => {
     const scriptPath = join(integrationDir, "support", "accessor-e2e.script.ts");

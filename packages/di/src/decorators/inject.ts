@@ -54,7 +54,9 @@ export function inject<Value>(
       throw new StaticMemberDecoratorError("inject", String(context.name));
     }
     const meta = context.metadata as Record<string | symbol, unknown>;
-    if (!Array.isArray(meta[INJECT_ACCESSOR_KEY])) {
+    // Own bucket only: the metadata record inherits the base class's, and pushing into an inherited
+    // array would register this accessor on the base class instead.
+    if (!Object.hasOwn(meta, INJECT_ACCESSOR_KEY) || !Array.isArray(meta[INJECT_ACCESSOR_KEY])) {
       meta[INJECT_ACCESSOR_KEY] = [];
     }
     (meta[INJECT_ACCESSOR_KEY] as Array<{ key: string | symbol; descriptor: InjectionDescriptor }>).push({
