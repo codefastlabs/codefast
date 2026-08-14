@@ -20,14 +20,16 @@ Ground rules that bite in this package specifically:
   `instantiation-plan`) — extend those rather than growing the engine.
 - **Before touching `resolution/` or `registry`, read [ARCHITECTURE.md](./ARCHITECTURE.md).** It records the invariants
   the hot paths depend on — the single binding construction site and its hidden class, why the resolution contexts are
-  pooled, which cycle-detection mechanism each lane uses and why they differ, and the rule that a threshold may choose
-  an implementation but never a semantics. Several of these look like they could be simplified and cannot.
-- **Two documents sit alongside it, and the boundary between the three is load-bearing.**
-  [PERFORMANCE.md](./PERFORMANCE.md) is what each shape costs and by what method; [REJECTED.md](./REJECTED.md) is what
-  has been tried against the engine and lost. Read REJECTED.md before proposing an optimization here — most of the
-  obvious ones are on it, each with the figure a new attempt has to beat. When you add to any of them: a figure goes in
-  PERFORMANCE or REJECTED, an invariant goes in ARCHITECTURE, and a dated suite run goes in
-  [benchmarks/di-inversify/RESULTS.md](../../benchmarks/di-inversify/RESULTS.md).
+  pooled, which cycle-detection mechanism each lane uses and why they differ, and the (correctness) invariant that a
+  threshold may choose an implementation but never a semantics. Several of these are load-bearing in ways that aren't
+  obvious from the code — understand why before you simplify one; a few turn out to be genuine correctness invariants.
+  Treat it as working notes, not law — the invariants are the load-bearing part; any performance rationale in it is a
+  pointer to go measure, not a settled fact.
+- **Numbers are empirical, and the benchmark suite is where they live.** What a shape costs, and whether a new idea
+  beats it, is answered by re-running [`benchmarks/di-inversify`](../../benchmarks/di-inversify/README.md), not by a
+  figure written into a doc — [`BENCH_GUIDE.md`](../../benchmarks/di-inversify/BENCH_GUIDE.md) is the method and
+  [benchmarks/di-inversify/RESULTS.md](../../benchmarks/di-inversify/RESULTS.md) is the dated per-run ledger. When you
+  add to the docs, an invariant goes in ARCHITECTURE and a dated suite run goes in RESULTS.md.
 
 ## 1. Write the code
 
@@ -39,11 +41,12 @@ Ground rules that bite in this package specifically:
   is correct. Check rather than remember: `git diff --cached | grep -E '^\+.*@since'` — any hit is a bug, and a removed
   tag is a bug too unless the symbol is gone.
 - **Three prose lines is the cap, and no numbers, history, or document pointers in source comments.** A longer _why_
-  belongs in [ARCHITECTURE.md](./ARCHITECTURE.md) and a number in [PERFORMANCE.md](./PERFORMANCE.md), but do **not**
-  link to either from the code — state the invariant in the comment instead. A pointer rots silently: section numbers
-  shift and topic phrases outlive their section, and nothing type-checks either. This package's comments once accreted
-  into per-site essays defending each optimization — the doc is where that argument goes, once. Grep your diff for
-  `.md`, `SPEC §`, `used to`, `previously`, `the old`, `×`, `%` and `ns/op` before pushing.
+  belongs in [ARCHITECTURE.md](./ARCHITECTURE.md) and a number belongs with its method (the benchmark suite or its
+  RESULTS.md), but do **not** link to either from the code — state the invariant in the comment instead. A pointer rots
+  silently: section numbers shift and topic phrases outlive their section, and nothing type-checks either. This
+  package's comments once accreted into per-site essays defending each optimization — the doc is where that argument
+  goes, once. Grep your diff for `.md`, `SPEC §`, `used to`, `previously`, `the old`, `×`, `%` and `ns/op` before
+  pushing.
 - Audit any new/changed public API (exported function/type/prop/option) against the Swift-style naming rubric in
   CLAUDE.md.
 - No speculative features — every new public API needs a real call site.
@@ -82,8 +85,8 @@ Add coverage for the new behavior.
 
 ## 5. Guard performance — (conditional: touched resolver / resolution / registry hot paths)
 
-A resolver refactor is **not** free until measured. Check [REJECTED.md](./REJECTED.md) before you build it and
-[PERFORMANCE.md](./PERFORMANCE.md) for what the shape is currently worth, then run the head-to-head, order-independent:
+A resolver refactor's cost isn't known until it's measured. Run the head-to-head, order-independent suite against a
+freshly rebuilt baseline:
 
 ```bash
 pnpm --filter @codefast/benchmark-di-inversify bench:isolate
@@ -102,9 +105,9 @@ pnpm --filter @codefast/benchmark-di-inversify bench:isolate
   Several plausible mechanisms in this package's history were wrong in the direction their author expected.
 - Known weak spots to watch (see [benchmarks/di-inversify/RESULTS.md](../../benchmarks/di-inversify/RESULTS.md)):
   per-hop dispatch in `#resolveDefaultEntry`, and cold container build against the leaner containers.
-- For a material perf change, run the publishable profile, then record the run in RESULTS.md and what the shape is now
-  worth in [PERFORMANCE.md](./PERFORMANCE.md) — or, if you are dropping the attempt, in [REJECTED.md](./REJECTED.md)
-  with its cost:
+- For a material perf change (kept or dropped), run the publishable profile and record the dated run in
+  [RESULTS.md](../../benchmarks/di-inversify/RESULTS.md) — that ledger is the record now, so a dropped attempt with its
+  cost goes there too:
 
 ```bash
 BENCH_MODE=full BENCH_TRIALS=3 pnpm --filter @codefast/benchmark-di-inversify bench:isolate

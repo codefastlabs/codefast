@@ -327,6 +327,15 @@ forced-GC one. See [RESULTS.md](https://github.com/codefastlabs/codefast/blob/ma
 for the full tables, the caveats, and the losses that earlier revisions reported — or run `pnpm bench` in that package
 to reproduce them on your machine.
 
+## Learning how it works
+
+Curious how the engine is built, or want to learn from it?
+[LEARNING.md](https://github.com/codefastlabs/codefast/blob/main/packages/di/LEARNING.md) is a guided read of the real
+architectural patterns, design patterns, algorithms, TypeScript techniques, and performance work in this codebase — a
+tour of one `resolve()` call, then a catalogue by topic, each pointing at the code. For the exact behavioural contract
+see [SPEC.md](https://github.com/codefastlabs/codefast/blob/main/packages/di/SPEC.md); for the invariants the engine
+depends on see [ARCHITECTURE.md](https://github.com/codefastlabs/codefast/blob/main/packages/di/ARCHITECTURE.md).
+
 ## Contributing
 
 Changing this package's source?
