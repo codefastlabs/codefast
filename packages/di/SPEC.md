@@ -2359,9 +2359,7 @@ several `@postConstruct()`.
 packages/di/
 ├── ARCHITECTURE.md            Layering, hot-path invariants, and the rules for changing resolution/
 │                              — read it before touching anything under src/resolution/
-├── PERFORMANCE.md             What each shape costs, and by what method it was measured
-├── REJECTED.md                Tried against this engine and rejected, with the price paid
-│                              — read it before proposing a new optimization
+│                                (per-shape costs are measured by the benchmarks/di-inversify suite, not recorded here)
 ├── src/                       Directory = layer. Imports only flow downward in the order below.
 │   │  ── layer 0: core/, errors/, injection/ ──────────────────────────────
 │   ├── core/

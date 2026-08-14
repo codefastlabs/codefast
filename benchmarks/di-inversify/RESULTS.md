@@ -40,10 +40,9 @@ rest.
 Two of those cross-check a figure this page already carried. `plan-deps-inlined` reads 24.5M hz/op against
 `slot-injected-name-compiled`'s 24.8M — a plan whose four named dependencies were settled at compile time lands exactly
 on the criteria-free plan of the same arity, which is what that change claimed. And the six `fresh-child-*` rows
-reproduce the ad-hoc N-table in [`packages/di/PERFORMANCE.md`](../../packages/di/PERFORMANCE.md). Per cycle of create,
-resolve N times, tear down — no-options 210 → 258 ns, name-only 227 → 299 ns, single-tag 206 → 320 ns from N=1 to N=4:
-the tagged lane is the **cheapest** at N=1 and the dearest by N=4, putting the crossover at **N≈2–3** where the ad-hoc
-measurement put N=2.
+reproduce an ad-hoc N-table measured independently of the suite. Per cycle of create, resolve N times, tear down —
+no-options 210 → 258 ns, name-only 227 → 299 ns, single-tag 206 → 320 ns from N=1 to N=4: the tagged lane is the
+**cheapest** at N=1 and the dearest by N=4, putting the crossover at **N≈2–3** where the ad-hoc measurement put N=2.
 
 The 2×2 also separates the cliff from the depth. Compiled, going 24 → 40 levels costs **3.99×** for 1.67× the depth;
 interpreted, the same step costs **2.10×** — near-linear, because that lane has no limit to cross. What the deep row
@@ -324,9 +323,8 @@ is worth roughly 30% on hot resolve. Winning this row means paying for it everyw
 and the cascade-lane change (`3a0ad82e0`) is what removed it: async cycle detection now reads its ancestors off the
 synchronous cascade instead of paying a settle-scoped path per level. The 2026-07-31 interleaved GC-exposed run reads
 **1.73×** on the row and **1.67×** on the async group's geomean; the per-level cost table and the paired A/B behind the
-change are in [`packages/di/PERFORMANCE.md`](../../packages/di/PERFORMANCE.md), which is where every per-mechanism
-figure for that package lives — this page stays the per-run ledger. The pooled-context mechanism note that used to live
-here survives there too.
+change were measured with the isolate suite and belong on this page, which is the per-run ledger for `@codefast/di` —
+re-run `bench:isolate` to reproduce either.
 
 ## Retracted
 

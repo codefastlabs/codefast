@@ -58,8 +58,8 @@ for it beats re-running the suite.
 
 It produces no row and no ratio, and it is **not** exempt from the standard on that account: a figure from here is a
 figure, so it meets [`BENCH_GUIDE.md`](./BENCH_GUIDE.md) and it is published in [`RESULTS.md`](./RESULTS.md) before it
-appears in a package's `PERFORMANCE.md` or a commit message, exactly like a ratio. An instrument that quietly measured
-to a lower bar than the suite would be a way of not being wrong on the record.
+appears in a commit message, exactly like a ratio. An instrument that quietly measured to a lower bar than the suite
+would be a way of not being wrong on the record.
 
 **For time, there is no instrument, because the suite already is one.** `BENCH_ONLY=<id> pnpm bench:codefast` runs a
 single scenario and reports its ns/op across trials with percentiles and sample counts; a bare loop measuring the same
