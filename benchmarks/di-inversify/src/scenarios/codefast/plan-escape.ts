@@ -7,16 +7,21 @@
  * ancestor path and a stack on every call. Several kinds of dependency reach that escape, and only
  * one of them (a name-carrying dependency, in `slot-selection.ts`) had a row.
  *
- * All six rows resolve the same arity — one transient root class with four dependencies, each leaf
- * yielding the same value shape — so the only thing that differs is what makes the dependency
- * opaque. `plan-deps-inlined` is the control: four transient class leaves the compiler inlines, zero
- * escapes.
+ * Five of the six rows resolve the same arity — one transient root class with four dependencies, each
+ * leaf yielding the same value shape and rebuilt on every resolve — so the only thing that differs is
+ * what makes the dependency opaque. `plan-deps-inlined` is the control: four transient class leaves
+ * the compiler inlines, zero escapes.
  *
- * A row read against the control is the whole cost of that kind of dependency, four times over — the
- * escape **plus** what the escape then has to do, which is a hook dispatch, a `resolveAll` or an
- * optional lookup depending on the row. That is the reading the rows support; isolating the escape
- * alone would need a shape where the same dependency can be had both ways, and only the named
- * dependency in `slot-selection.ts` has one.
+ * A transient-leaf row read against the control is the whole cost of that kind of dependency, four
+ * times over — the escape **plus** what the escape then has to do, which is a hook dispatch, a
+ * `resolveAll` or an optional lookup depending on the row. That is the reading those rows support;
+ * isolating the escape alone would need a shape where the same dependency can be had both ways, and
+ * only the named dependency in `slot-selection.ts` has one.
+ *
+ * `plan-escape-scoped-dep` is the exception the control cannot price: a scoped leaf is built once and
+ * served from the scope cache after, so it pays four escapes but no per-resolve rebuild. Its number
+ * is escape + cache hit, not the transient-leaf rows' escape + build, so it stays out of the
+ * aggregates rather than being read beside them.
  */
 import type { Constructor } from "@codefast/di";
 import { Container, injectAll, injectable, optional, token } from "@codefast/di";
@@ -121,7 +126,11 @@ function buildEscapeContainer<Root>(rootClass: Constructor<Root>, bindLeaf: Bind
   return container;
 }
 
-function buildPlainDepsScenario(descriptor: ScenarioDescriptor, bindLeaf: BindLeaf): BenchScenario {
+function buildPlainDepsScenario(
+  descriptor: ScenarioDescriptor,
+  bindLeaf: BindLeaf,
+  excludeFromAggregates = false,
+): BenchScenario {
   const container = buildEscapeContainer(PlainDepsRoot, bindLeaf);
 
   container.resolve(PlainDepsRoot);
@@ -129,6 +138,7 @@ function buildPlainDepsScenario(descriptor: ScenarioDescriptor, bindLeaf: BindLe
   return {
     ...descriptor,
     batch: PLAN_RESOLVE_BATCH,
+    excludeFromAggregates,
     sanity: () => container.resolve(PlainDepsRoot).delta.id === "leaf",
     build: () =>
       batched(PLAN_RESOLVE_BATCH, () => {
@@ -196,9 +206,10 @@ export function buildCodefastPlanEscapeScenarios(): ReadonlyArray<BenchScenario>
       {
         id: "plan-escape-scoped-dep",
         group: "resolution",
-        what: "the same class with scoped leaves — four escapes, one per scope the plan cannot cache (codefast-only)",
+        what: "the same class with scoped leaves served from a warm scope — four escapes, no per-resolve rebuild, held out of the aggregates (codefast-only)",
       },
       bindScopedLeaf,
+      true,
     ),
     buildPlainDepsScenario(
       {

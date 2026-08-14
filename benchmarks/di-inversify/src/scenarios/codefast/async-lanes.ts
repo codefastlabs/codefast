@@ -23,16 +23,19 @@ import { ASYNC_CHAIN_DEPTH } from "#/fixtures/scenario-parity";
 import type { AsyncBenchScenario } from "#/scenarios/types";
 
 const ASYNC_BRANCH_CHAIN = {
-  id: "async-branch-chain-8",
+  id: `async-branch-chain-${String(ASYNC_CHAIN_DEPTH)}`,
   group: "async",
   what: `resolveAsync() through an ${String(ASYNC_CHAIN_DEPTH)}-step async chain whose every factory requests after an await — branch lane at every level (codefast-only)`,
 } as const satisfies ScenarioDescriptor;
 
-/** Half the chain either side of the crossing, so neither lane dominates the row. */
-const MID_CHAIN_ESCAPE_LEVEL = ASYNC_CHAIN_DEPTH / 2;
+/**
+ * Half the chain either side of the crossing, so neither lane dominates the row. Floored so it lands
+ * on a real level for any depth: an integer level is what `level === …` can ever match.
+ */
+const MID_CHAIN_ESCAPE_LEVEL = Math.floor(ASYNC_CHAIN_DEPTH / 2);
 
 const ASYNC_BRANCH_ESCAPE_MID_CHAIN = {
-  id: "async-branch-escape-mid-chain-8",
+  id: `async-branch-escape-mid-chain-${String(ASYNC_CHAIN_DEPTH)}`,
   group: "async",
   what: `resolveAsync() through the same chain with one level requesting after an await — the single cascade→branch crossing (codefast-only)`,
 } as const satisfies ScenarioDescriptor;
