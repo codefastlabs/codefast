@@ -824,9 +824,23 @@ export class DependencyResolver implements ResolverCallbacks {
     const { binding, owner } = this.#requireBinding(token, options, resolutionPath, resolutionStack);
 
     if (binding.scope === "singleton" && owner !== this) {
-      return owner.#resolveBindingAsync(binding, options, resolutionPath, resolutionStack, branchDepth, owner) as Value;
+      return owner.#resolveBindingAsync(
+        binding,
+        options,
+        resolutionPath,
+        resolutionStack,
+        branchDepth,
+        owner,
+      ) as Promise<Value>;
     }
-    return this.#resolveBindingAsync(binding, options, resolutionPath, resolutionStack, branchDepth, owner) as Value;
+    return this.#resolveBindingAsync(
+      binding,
+      options,
+      resolutionPath,
+      resolutionStack,
+      branchDepth,
+      owner,
+    ) as Promise<Value>;
   }
 
   async #resolveBindingAsync(

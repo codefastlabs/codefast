@@ -686,8 +686,13 @@ class DefaultContainer implements Container {
         if (binding.predicate !== undefined) {
           continue;
         }
-        // Has activation — need to resolve
-        if (binding.kind === "constant" && binding.onActivation === undefined) {
+        // A constant is already its own instance, so only an activation hook gives the warm-up
+        // something to run — and a container-level hook counts as one just as a per-binding hook does.
+        if (
+          binding.kind === "constant" &&
+          binding.onActivation === undefined &&
+          !this.#lifecycle.hasActivationHandlers(binding.token)
+        ) {
           continue;
         }
         const slotOptions = bindingSlotToResolveOptions(binding.slot);
