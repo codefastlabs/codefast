@@ -1,4 +1,4 @@
-import { getActiveContainer } from "#/ambient/active-container";
+import { getActiveContainer, getAmbientResolution } from "#/ambient/active-container";
 /** `@inject` — the accessor-decorator channel, resolving from the ambient container. */
 import type { Token } from "#/core/token";
 import type { Constructor } from "#/core/types";
@@ -54,7 +54,9 @@ export function inject<Value>(
       throw new StaticMemberDecoratorError("inject", String(context.name));
     }
     const meta = context.metadata as Record<string | symbol, unknown>;
-    if (!Array.isArray(meta[INJECT_ACCESSOR_KEY])) {
+    // Own bucket only: the metadata record inherits the base class's, and pushing into an inherited
+    // array would register this accessor on the base class instead.
+    if (!Object.hasOwn(meta, INJECT_ACCESSOR_KEY) || !Array.isArray(meta[INJECT_ACCESSOR_KEY])) {
       meta[INJECT_ACCESSOR_KEY] = [];
     }
     (meta[INJECT_ACCESSOR_KEY] as Array<{ key: string | symbol; descriptor: InjectionDescriptor }>).push({
@@ -63,6 +65,16 @@ export function inject<Value>(
     });
 
     context.addInitializer(function (this: unknown) {
+      // Prefer the engine's path-continuing resolver: it keeps this accessor's dependencies on the
+      // live resolution path, so a cycle through an accessor is detected instead of recursing.
+      const ambient = getAmbientResolution();
+      if (ambient !== undefined) {
+        const value = descriptor.optional
+          ? ambient.resolveOptional(token, resolveOptions)
+          : ambient.resolve(token, resolveOptions);
+        context.access.set(this, value as Value);
+        return;
+      }
       const container = getActiveContainer();
       if (container === undefined) {
         throw new MissingContainerContextError(classNameOf(this), context.name);

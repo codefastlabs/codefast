@@ -11,7 +11,11 @@ function recordLifecycleMethod(phase: "postConstruct" | "preDestroy"): MethodDec
       throw new StaticMemberDecoratorError(phase, String(context.name));
     }
     const meta = context.metadata as Record<string | symbol, unknown>;
-    meta[LIFECYCLE_KEY] ??= { postConstruct: [], preDestroy: [] };
+    // Own bucket only: `context.metadata` inherits the base class's record, and writing through an
+    // inherited bucket would register this hook on the base class instead.
+    if (!Object.hasOwn(meta, LIFECYCLE_KEY)) {
+      meta[LIFECYCLE_KEY] = { postConstruct: [], preDestroy: [] };
+    }
     const lifecycle = meta[LIFECYCLE_KEY] as MutableLifecycleMetadata;
     const methodName = String(context.name);
     if (!lifecycle[phase].includes(methodName)) {

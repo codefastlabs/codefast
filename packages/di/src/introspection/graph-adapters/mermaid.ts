@@ -1,5 +1,11 @@
 import type { ContainerGraphJson } from "#/introspection/dependency-graph";
 
+// Token names are caller-supplied and Mermaid labels are HTML-bearing quoted strings, so quotes
+// and markup are neutralized with Mermaid's decimal entity codes before they reach a renderer.
+function escapeMermaidLabel(value: string): string {
+  return value.replaceAll("&", "#38;").replaceAll('"', "#34;").replaceAll("<", "#60;").replaceAll(">", "#62;");
+}
+
 /**
  * Mermaid `flowchart TD` source for a container graph — renders anywhere Mermaid does
  * (GitHub markdown, docs tooling, mermaid.live) with no extra library.
@@ -15,7 +21,7 @@ export function toMermaidGraph(graph: ContainerGraphJson): string {
     const id = `n${String(index)}`;
 
     idByNode.set(node.id, id);
-    lines.push(`  ${id}["${node.tokenName}<br/>${node.kind} · ${node.scope}"]`);
+    lines.push(`  ${id}["${escapeMermaidLabel(node.tokenName)}<br/>${node.kind} · ${node.scope}"]`);
 
     if (node.fromParent) {
       parentIds.push(id);
@@ -34,7 +40,9 @@ export function toMermaidGraph(graph: ContainerGraphJson): string {
       continue;
     }
 
-    lines.push(edge.label === undefined ? `  ${from} --> ${to}` : `  ${from} -->|"${edge.label}"| ${to}`);
+    lines.push(
+      edge.label === undefined ? `  ${from} --> ${to}` : `  ${from} -->|"${escapeMermaidLabel(edge.label)}"| ${to}`,
+    );
   }
 
   if (parentIds.length > 0) {

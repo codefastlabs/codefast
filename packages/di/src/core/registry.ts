@@ -165,6 +165,20 @@ export class BindingRegistry {
     return all;
   }
 
+  /** Whether a slot-based binding currently occupies `binding`'s slot, so adding it would displace. */
+  hasSlotOccupant(binding: Binding): boolean {
+    if (isPurePredicateBinding(binding)) {
+      return false;
+    }
+    const candidates = this.#bindings.get(binding.token);
+    if (candidates === undefined) {
+      return false;
+    }
+    return candidates.some(
+      (candidate) => !isPurePredicateBinding(candidate) && bindingSlotEquals(candidate.slot, binding.slot),
+    );
+  }
+
   getSimpleNamed(token: Token<unknown> | Constructor, name: string): Binding | undefined {
     return this.#simpleNamed?.get(token)?.get(name);
   }

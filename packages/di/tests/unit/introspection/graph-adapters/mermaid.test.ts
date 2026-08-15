@@ -57,4 +57,20 @@ describe("toMermaidGraph", () => {
     expect(mermaid).toContain('|"name:first"|');
     expect(mermaid).toContain('|"name:second"|');
   });
+
+  it("escapes quotes and markup in token names so they cannot inject Mermaid directives", () => {
+    const directiveToken = token<number>('x"]; click n0 href "javascript:alert(1)"; %%');
+    const markupToken = token<number>("<img src=x onerror=alert(1)>");
+    const container = Container.create();
+    container.bind(directiveToken).toConstantValue(1);
+    container.bind(markupToken).toConstantValue(2);
+
+    const mermaid = toMermaidGraph(container.generateDependencyGraph());
+
+    // The label string must never be closed early, and raw markup must not pass through.
+    expect(mermaid).not.toContain('"];');
+    expect(mermaid).not.toContain("<img");
+    expect(mermaid).toContain("#34;");
+    expect(mermaid).toContain("#60;img src=x onerror=alert(1)#62;");
+  });
 });

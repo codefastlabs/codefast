@@ -9,7 +9,7 @@ import { token } from "#/core/token";
 import { inject } from "#/decorators/inject";
 import { injectable } from "#/decorators/injectable";
 import { postConstruct, preDestroy } from "#/decorators/lifecycle-decorators";
-import { StaticMemberDecoratorError, MissingContainerContextError } from "#/errors/errors";
+import { CircularDependencyError, StaticMemberDecoratorError, MissingContainerContextError } from "#/errors/errors";
 import { defaultMetadataReader } from "#/metadata/symbol-metadata-reader";
 
 const integrationDir = dirname(fileURLToPath(import.meta.url));
@@ -101,6 +101,154 @@ describe("Stage 3 decorators — metadata & lifecycle", () => {
       }
       void StaticPreDestroyTarget;
     }).toThrow(StaticMemberDecoratorError);
+  });
+});
+
+describe("decorator metadata across class inheritance", () => {
+  it("leaves the base class resolvable with only its own hooks after a subclass is defined", () => {
+    const ran: Array<string> = [];
+
+    @injectable([])
+    class HookParent {
+      @postConstruct()
+      initParent(): void {
+        ran.push("initParent");
+      }
+    }
+
+    @injectable([])
+    class HookChild extends HookParent {
+      @postConstruct()
+      initChild(): void {
+        ran.push("initChild");
+      }
+    }
+
+    const container = Container.create();
+    container.bind(HookParent).toSelf().transient();
+    container.bind(HookChild).toSelf().transient();
+
+    container.resolve(HookParent);
+    expect(ran).toEqual(["initParent"]);
+
+    ran.length = 0;
+    container.resolve(HookChild);
+    expect(ran).toEqual(["initParent", "initChild"]);
+  });
+
+  it("runs preDestroy derived-first across the chain", () => {
+    const ran: Array<string> = [];
+
+    @injectable([])
+    class TeardownParent {
+      @preDestroy()
+      closeParent(): void {
+        ran.push("closeParent");
+      }
+    }
+
+    @injectable([])
+    class TeardownChild extends TeardownParent {
+      @preDestroy()
+      closeChild(): void {
+        ran.push("closeChild");
+      }
+    }
+
+    const container = Container.create();
+    container.bind(TeardownChild).toSelf().singleton();
+    container.resolve(TeardownChild);
+    container.unbind(TeardownChild);
+
+    expect(ran).toEqual(["closeChild", "closeParent"]);
+  });
+
+  it("injects base and derived accessors on the derived class", () => {
+    const CfgToken = token<string>("inherit.cfg");
+    const ExtraToken = token<number>("inherit.extra");
+
+    @injectable([])
+    class AccessorBase {
+      @inject(CfgToken) accessor cfg!: string;
+    }
+
+    @injectable([])
+    class AccessorDerived extends AccessorBase {
+      @inject(ExtraToken) accessor extra!: number;
+    }
+
+    const container = Container.create();
+    container.bind(CfgToken).toConstantValue("hello");
+    container.bind(ExtraToken).toConstantValue(42);
+    container.bind(AccessorBase).toSelf().transient();
+    container.bind(AccessorDerived).toSelf().transient();
+
+    const derived = container.resolve(AccessorDerived);
+    expect(derived.cfg).toBe("hello");
+    expect(derived.extra).toBe(42);
+
+    const base = container.resolve(AccessorBase);
+    expect(base.cfg).toBe("hello");
+  });
+
+  it("constructs a subclass with no own accessors under the container context", () => {
+    const CfgToken = token<string>("inherit.plain-sub.cfg");
+
+    @injectable([])
+    class InjectingBase {
+      @inject(CfgToken) accessor cfg!: string;
+    }
+
+    @injectable([])
+    class PlainSub extends InjectingBase {}
+
+    const container = Container.create();
+    container.bind(CfgToken).toConstantValue("hello");
+    container.bind(PlainSub).toSelf().transient();
+
+    expect(container.resolve(PlainSub).cfg).toBe("hello");
+  });
+
+  it("reports a cycle through an accessor instead of recursing", () => {
+    const CycleAToken = token<object>("inherit.cycleA");
+    const CycleBToken = token<object>("inherit.cycleB");
+
+    @injectable([])
+    class CycleA {
+      @inject(CycleBToken) accessor b!: object;
+    }
+
+    @injectable([CycleAToken])
+    class CycleB {
+      constructor(readonly a: object) {}
+    }
+
+    const container = Container.create();
+    container.bind(CycleAToken).to(CycleA).transient();
+    container.bind(CycleBToken).to(CycleB).transient();
+
+    expect(() => container.resolve(CycleAToken)).toThrow(CircularDependencyError);
+  });
+
+  it("reports an accessor cycle on the async lane too", async () => {
+    const CycleAToken = token<object>("inherit.async.cycleA");
+    const CycleBToken = token<object>("inherit.async.cycleB");
+
+    @injectable([])
+    class CycleA {
+      @inject(CycleBToken) accessor b!: object;
+    }
+
+    @injectable([CycleAToken])
+    class CycleB {
+      constructor(readonly a: object) {}
+    }
+
+    const container = Container.create();
+    container.bind(CycleAToken).to(CycleA).transient();
+    container.bind(CycleBToken).to(CycleB).transient();
+
+    await expect(container.resolveAsync(CycleAToken)).rejects.toThrow(CircularDependencyError);
   });
 });
 
