@@ -1531,11 +1531,21 @@ export class DependencyResolver implements ResolverCallbacks {
     const depth = resolutionStack.length;
     const existing = this.#syncResolutionContextPool[depth];
     if (existing !== undefined) {
-      existing.reset(this, resolutionPath, resolutionStack, options);
-      return existing;
+      // Reuse only a context already bound to these arrays: the pooled one may still be held by a
+      // live frame at this depth on another pair, and re-pointing it would hand that frame the
+      // wrong path — a nested top-level resolve reaches this depth while the outer factory runs.
+      if (existing.holdsArrays(resolutionPath, resolutionStack)) {
+        existing.reset(this, resolutionPath, resolutionStack, options);
+        return existing;
+      }
+      return new DefaultResolutionContext(this, resolutionPath, resolutionStack, options);
     }
     const created = new DefaultResolutionContext(this, resolutionPath, resolutionStack, options);
-    this.#syncResolutionContextPool[depth] = created;
+    // Only the resolver's two stable pairs may claim a slot — a throwaway pair (a nested resolve's
+    // minted arrays, an async level's snapshot) would poison the slot into allocating forever.
+    if (resolutionPath === this.rootPath || resolutionPath === this.#cascadePath) {
+      this.#syncResolutionContextPool[depth] = created;
+    }
     return created;
   }
 }
