@@ -530,6 +530,7 @@ export class DependencyResolver implements ResolverCallbacks {
 
       const instance = this.#instantiateSync(binding, resolutionCtx, resolutionPath, resolutionStack);
 
+      this.#mirrorPostConstructFromOwner(binding, owner);
       const activated = owner.#activation.refreshAfterFirstInstantiation(binding, needsActivation)
         ? owner.#lifecycle.runActivationSync(
             resolutionCtx as DefaultResolutionContext,
@@ -965,6 +966,19 @@ export class DependencyResolver implements ResolverCallbacks {
     );
   }
 
+  /**
+   * Settles this resolver's own `postConstruct` answer for a class binding a parent owns.
+   *
+   * @remarks The owner discovers it on first instantiation, but the plan compiler reads the
+   * introspector of whoever is resolving — left unknown, that resolver refuses to compile a plan for
+   * this binding on every call, forever.
+   */
+  #mirrorPostConstructFromOwner(binding: Binding, owner: DependencyResolver): void {
+    if (owner !== this && binding.kind === "class" && this.#classes.knownPostConstruct(binding.target) === undefined) {
+      this.#classes.discoverPostConstruct(binding.target);
+    }
+  }
+
   async #instantiateAndActivateAsync(
     binding: Binding,
     ctx: AsyncLevelContext | undefined,
@@ -975,6 +989,7 @@ export class DependencyResolver implements ResolverCallbacks {
     owner: DependencyResolver,
   ): Promise<unknown> {
     const instance = await this.#instantiateAsync(binding, ctx, resolutionPath, resolutionStack, branchDepth);
+    this.#mirrorPostConstructFromOwner(binding, owner);
     if (!owner.#activation.refreshAfterFirstInstantiation(binding, needsActivation)) {
       return instance;
     }
