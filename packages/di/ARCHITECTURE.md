@@ -432,13 +432,14 @@ barrier to push a frame onto, while the shared pair pays one per push.
 > pair back; `tests/unit/resolution/in-flight-invariants.test.ts` pins both. If the pair ever leaks dirty the failure
 > mode is lost reuse (slower), never a wrong path — the protocol is built so that the correctness case can't break here.
 
-> **Invariant (correctness).** A pooled context is reused only for the array pair it already holds. The pool is
-> depth-indexed, and a nested top-level resolve reaches the same depth while the outer factory still holds that depth's
-> pooled context — re-pointing it at the nested resolve's freshly minted pair would leave the outer factory's `ctx`
-> answering from the wrong path, so a `when()` predicate reading `ctx.parent` selects the wrong binding. On a mismatch
-> the resolver mints a fresh context instead, and only the resolver's two stable pairs (root and cascade) may claim a
-> pool slot, so a throwaway pair cannot poison a slot into allocating forever.
-> `tests/unit/resolution/context-pool-isolation.test.ts` pins both halves.
+> **Invariant (correctness).** A pooled context is reused only for the array pair it already holds. The pools are keyed
+> by pair — one for the root pair, one for the cascade pair, each depth-indexed — and any other pair (a nested resolve's
+> minted arrays, an async level's snapshot) mints a context per call. A nested top-level resolve reaches the same depth
+> while the outer factory still holds that depth's pooled context — re-pointing it at the nested resolve's freshly
+> minted pair would leave the outer factory's `ctx` answering from the wrong path, so a `when()` predicate reading
+> `ctx.parent` selects the wrong binding. Keying the pools by pair holds this structurally, with one pointer compare on
+> the hot lane; asking the context whether it holds the requested arrays answered the same question but cost the acquire
+> its inlining. `tests/unit/resolution/context-pool-isolation.test.ts` pins the behaviour.
 
 ## A container defers most of itself
 

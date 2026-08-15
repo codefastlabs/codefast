@@ -100,11 +100,6 @@ export class DefaultResolutionContext implements ResolutionContext {
     return this.#graph;
   }
 
-  /** Whether this context already answers from exactly these two arrays. */
-  holdsArrays(resolutionPath: Array<string>, resolutionStack: Array<ResolutionFrame>): boolean {
-    return this.#resolutionPath === resolutionPath && this.#resolutionStack === resolutionStack;
-  }
-
   reset(
     resolver: ResolverCallbacks,
     resolutionPath: Array<string>,

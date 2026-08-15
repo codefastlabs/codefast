@@ -71,6 +71,8 @@ const ROOT_CONSTRAINT_CONTEXT = {
  */
 export class DependencyResolver implements ResolverCallbacks {
   readonly #syncResolutionContextPool: Array<DefaultResolutionContext> = [];
+  // Contexts bound to the cascade pair — deferred: only an async cascade's sync resolves need it.
+  #cascadeContextPool: Array<DefaultResolutionContext> | undefined;
   /**
    * The pair a top-level **sync** resolve reuses instead of minting two arrays per call.
    *
@@ -1523,29 +1525,46 @@ export class DependencyResolver implements ResolverCallbacks {
     return frame;
   }
 
+  // A pool is keyed by the one array pair its contexts hold, so reuse can never re-point a context
+  // a live frame still reads — a nested top-level resolve reaches the same depth while the outer
+  // factory runs, and it must get its own context, not the outer frame's re-bound.
   #acquireSyncResolutionContext(
     resolutionPath: Array<string>,
     resolutionStack: Array<ResolutionFrame>,
     options: ResolveOptions | undefined,
   ): DefaultResolutionContext {
-    const depth = resolutionStack.length;
-    const existing = this.#syncResolutionContextPool[depth];
-    if (existing !== undefined) {
-      // Reuse only a context already bound to these arrays: the pooled one may still be held by a
-      // live frame at this depth on another pair, and re-pointing it would hand that frame the
-      // wrong path — a nested top-level resolve reaches this depth while the outer factory runs.
-      if (existing.holdsArrays(resolutionPath, resolutionStack)) {
+    if (resolutionPath === this.rootPath) {
+      const depth = resolutionStack.length;
+      const existing = this.#syncResolutionContextPool[depth];
+      if (existing !== undefined) {
         existing.reset(this, resolutionPath, resolutionStack, options);
         return existing;
       }
+      const created = new DefaultResolutionContext(this, resolutionPath, resolutionStack, options);
+      this.#syncResolutionContextPool[depth] = created;
+      return created;
+    }
+    return this.#acquireOffRootSyncContext(resolutionPath, resolutionStack, options);
+  }
+
+  /** The cascade pair pools separately; a throwaway pair (nested resolve, async snapshot) mints per call. */
+  #acquireOffRootSyncContext(
+    resolutionPath: Array<string>,
+    resolutionStack: Array<ResolutionFrame>,
+    options: ResolveOptions | undefined,
+  ): DefaultResolutionContext {
+    if (resolutionPath !== this.#cascadePath) {
       return new DefaultResolutionContext(this, resolutionPath, resolutionStack, options);
     }
-    const created = new DefaultResolutionContext(this, resolutionPath, resolutionStack, options);
-    // Only the resolver's two stable pairs may claim a slot — a throwaway pair (a nested resolve's
-    // minted arrays, an async level's snapshot) would poison the slot into allocating forever.
-    if (resolutionPath === this.rootPath || resolutionPath === this.#cascadePath) {
-      this.#syncResolutionContextPool[depth] = created;
+    const depth = resolutionStack.length;
+    const pool = (this.#cascadeContextPool ??= []);
+    const existing = pool[depth];
+    if (existing !== undefined) {
+      existing.reset(this, resolutionPath, resolutionStack, options);
+      return existing;
     }
+    const created = new DefaultResolutionContext(this, resolutionPath, resolutionStack, options);
+    pool[depth] = created;
     return created;
   }
 }
