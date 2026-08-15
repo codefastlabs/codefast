@@ -250,16 +250,19 @@ _costs_, and whether a new idea beats it, is an empirical question the benchmark
 answers by re-running; numbers live there and in its `RESULTS.md` ledger, never in a source comment and never in
 ARCHITECTURE.
 
-`src/` groups by subsystem: the **model** at the root (`token`, `types`, `constructor-type`, `binding`, `registry`,
-`errors`, `module`), **`container/`** (container + the fluent binding chain), **`resolution/`** (the engine class plus
-its collaborators — lookup cache, class introspector, activation-need cache, instantiation-plan compiler,
-resolution-path cycle guard, scope, lifecycle, environment, binding selection, constraints), **`introspection/`**
-(inspector, dependency graph, graph adapters), plus `decorators/` and `metadata/`. The sync and async pipelines stay in
-one class because `#` private fields can't span files and both touch the same private state per hop; anything that
-doesn't is already extracted. Tests mirror these paths (`tests/unit/resolution/…`). `package.json#exports` is generated
-from `dist/` by `codefast mirror` — rerun it after moving/adding modules. Verify hot-path changes against
-`benchmarks/di-inversify` (`pnpm bench:isolate` for order-independent numbers, ≥3 trials, best-of across several
-processes) before assuming a refactor is free — and measure cold paths too, which the hot loops hide.
+`src/` groups by subsystem: **`core/`** is the model (`token`, `types`, `tag`, `constructor-type`, `binding`,
+`registry`, `module`), **`errors/`** the error taxonomy and its diagnostics, **`injection/`** the descriptor every
+dependency normalises to plus resolve options, **`ambient/`** the active container an `@inject` accessor reads,
+**`lifecycle/`** the per-container lifecycle and scope managers, **`container/`** the container + the fluent binding
+chain, **`resolution/`** the engine class plus its collaborators grouped by lane (`cache/` — binding lookup, class
+introspector, activation need; `path/` — the resolution-path cycle guard; `plan/` — the instantiation-plan compiler;
+`select/` — binding selection and constraints), and **`introspection/`** the inspector, dependency graph, and graph
+adapters, plus `decorators/` and `metadata/`. The sync and async pipelines stay in one class because `#` private fields
+can't span files and both touch the same private state per hop; anything that doesn't is already extracted. Tests mirror
+these paths (`tests/unit/resolution/…`). `package.json#exports` is generated from `dist/` by `codefast mirror` — rerun
+it after moving/adding modules. Verify hot-path changes against `benchmarks/di-inversify` (`pnpm bench:isolate` for
+order-independent numbers, ≥3 trials, best-of across several processes) before assuming a refactor is free — and measure
+cold paths too, which the hot loops hide.
 
 ## UI/component conventions (apps/ui and packages/ui)
 
