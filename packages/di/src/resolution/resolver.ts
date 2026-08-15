@@ -1270,6 +1270,8 @@ export class DependencyResolver implements ResolverCallbacks {
     return this.#scope.readScoped(binding.id);
   }
 
+  // The shared root context answers every top-level request; building one is the rarer half and
+  // lives outside, so what a selection inlines is the test and not the literal.
   #makeConstraintContext(
     resolutionPath: Array<string>,
     resolutionStack: Array<ResolutionFrame>,
@@ -1278,13 +1280,7 @@ export class DependencyResolver implements ResolverCallbacks {
     if (options === undefined && resolutionPath.length === 0 && resolutionStack.length === 0) {
       return ROOT_CONSTRAINT_CONTEXT;
     }
-    return {
-      resolutionPath,
-      resolutionStack,
-      parent: resolutionStack.at(-1),
-      ancestors: resolutionStack.length > 1 ? resolutionStack.slice(0, -1) : [],
-      currentResolveOptions: options,
-    };
+    return buildConstraintContext(resolutionPath, resolutionStack, options);
   }
 
   #matchesBindingFast(
@@ -1551,6 +1547,20 @@ function anyPredicate(bindings: ReadonlyArray<Binding>): boolean {
     }
   }
   return false;
+}
+
+function buildConstraintContext(
+  resolutionPath: Array<string>,
+  resolutionStack: Array<ResolutionFrame>,
+  options: ResolveOptions | undefined,
+): ConstraintContext {
+  return {
+    resolutionPath,
+    resolutionStack,
+    parent: resolutionStack.at(-1),
+    ancestors: resolutionStack.length > 1 ? resolutionStack.slice(0, -1) : [],
+    currentResolveOptions: options,
+  };
 }
 
 /** The async-resolution failure for a binding reached on a sync path, naming what to await instead. */

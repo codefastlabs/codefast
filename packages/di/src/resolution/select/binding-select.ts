@@ -16,7 +16,7 @@ export function selectBinding(
   ctx: ConstraintContext,
   tokenDisplayName: string,
 ): Binding | undefined {
-  const candidates = filterBindings(bindings, options, ctx);
+  const candidates = filterBindings(bindings, options, ctx, true);
   if (candidates.length === 0) {
     return undefined;
   }
@@ -79,18 +79,21 @@ export function selectAllBindings(
   options: ResolveOptions | undefined,
   ctx: ConstraintContext,
 ): Array<Binding> {
-  return filterBindings(bindings, options, ctx, "all");
+  // `resolveAll` matches the slot only when the request carries a criterion; with none it takes
+  // every binding, where `resolve` would read an absent criterion as "the default slot".
+  return filterBindings(bindings, options, ctx, options !== undefined && hasSlotCriterion(options));
 }
 
+/**
+ * @param requiresSlotMatch - `resolve` always matches the slot, where an absent criterion means
+ * "the default slot"; `resolveAll` matches only when the request carries one
+ */
 function filterBindings(
   bindings: ReadonlyArray<Binding>,
   options: ResolveOptions | undefined,
   ctx: ConstraintContext,
-  selectionMode: "single" | "all" = "single",
+  requiresSlotMatch: boolean,
 ): Array<Binding> {
-  // `resolveAll` with no slot criterion takes every binding; `resolve` always matches the slot,
-  // where an absent criterion means "the default slot".
-  const requiresSlotMatch = selectionMode === "single" || (options !== undefined && hasSlotCriterion(options));
   const result: Array<Binding> = [];
   // Snapshot lazily, right before the first predicate runs: a predicate is user code that may
   // rebind the very token being selected, and a mid-selection splice must not skip candidates.
@@ -100,10 +103,15 @@ function filterBindings(
     if (requiresSlotMatch && !matchesSlot(binding.slot, options)) {
       continue;
     }
-    if (binding.predicate !== undefined && stable === bindings) {
+    const predicate = binding.predicate;
+    if (predicate === undefined) {
+      result.push(binding);
+      continue;
+    }
+    if (stable === bindings) {
       stable = bindings.slice();
     }
-    if (matchesPredicate(binding, ctx)) {
+    if (predicate(ctx)) {
       result.push(binding);
     }
   }
@@ -196,11 +204,4 @@ function requestCarries(options: ResolveOptions | undefined, criterion: BindingT
   }
 
   return false;
-}
-
-function matchesPredicate(binding: Binding, ctx: ConstraintContext): boolean {
-  if (binding.predicate === undefined) {
-    return true;
-  }
-  return binding.predicate(ctx);
 }
