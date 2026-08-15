@@ -1,47 +1,63 @@
-import type { ResolutionFrame } from "#/core/types";
+import type { BindingIdentifier, ResolutionFrame } from "#/core/types";
 /** Cycle-detection bookkeeping carried on the resolution path itself. */
 import { CircularDependencyError } from "#/errors/errors";
 
 const RESOLUTION_SET_KEY: unique symbol = Symbol("di:resolution-set");
 /**
- * Where the cycle check switches from a linear `Array.includes` scan to an attached Set.
+ * Where the cycle check switches from a linear frame scan to an attached Set.
  *
  * @remarks Measured rather than guessed: below this depth the linear scan wins, above it the Set does.
  *
  * @since 0.5.0-canary.7
  */
 export const RESOLUTION_SET_THRESHOLD = 32;
-type ResolutionPathWithSet = Array<string> & { [RESOLUTION_SET_KEY]?: Set<string> | undefined };
+type ResolutionPathWithSet = Array<string> & { [RESOLUTION_SET_KEY]?: Set<BindingIdentifier> | undefined };
 
 /**
- * Marks a token as in-flight on this path, throwing if it is already there.
+ * Marks a level as in-flight on this path and stack, throwing if its binding is already an ancestor.
  *
- * @remarks Unmark with `resolutionPath.pop()` plus `set?.delete(name)`. Sync only — the async lane
- * never removes an entry, so it extends a branch instead; see {@link extendResolutionBranch}.
+ * @remarks The check keys on binding identity — two distinct tokens may share a display name — while
+ * the name array exists only for the error message. Unmark by popping both arrays plus
+ * `set?.delete(frame.bindingId)`. Sync only — the async lane never removes an entry, so it extends
+ * a branch instead; see {@link extendResolutionBranch}.
  *
  * @returns the membership set once the path is deep enough to carry one, else `undefined`.
  *
  * @since 0.5.0-canary.7
  */
-export function enterResolutionPath(resolutionPath: Array<string>, tokenDisplayName: string): Set<string> | undefined {
+export function enterResolutionPath(
+  resolutionPath: Array<string>,
+  resolutionStack: Array<ResolutionFrame>,
+  frame: ResolutionFrame,
+): Set<BindingIdentifier> | undefined {
   const pathWithSet = resolutionPath as ResolutionPathWithSet;
   let resolutionSet = pathWithSet[RESOLUTION_SET_KEY];
-  // A live set mirrors the path exactly, so a size that disagrees means it is holding names of
+  // A live set mirrors the path exactly, so a size that disagrees means it is holding ids of
   // frames that unwound: the ones already on the path when it attached were handed no set to delete
-  // from. Dropped rather than repaired, because the next deep frame rebuilds it from the path.
+  // from. Dropped rather than repaired, because the next deep frame rebuilds it from the stack.
   if (resolutionSet !== undefined && resolutionSet.size !== resolutionPath.length) {
     resolutionSet = undefined;
     pathWithSet[RESOLUTION_SET_KEY] = undefined;
   }
   if (resolutionSet === undefined && resolutionPath.length >= RESOLUTION_SET_THRESHOLD) {
-    resolutionSet = new Set<string>(resolutionPath);
+    resolutionSet = new Set<BindingIdentifier>();
+    for (let index = 0; index < resolutionStack.length; index += 1) {
+      resolutionSet.add(resolutionStack[index]!.bindingId);
+    }
     pathWithSet[RESOLUTION_SET_KEY] = resolutionSet;
   }
-  if (resolutionSet === undefined ? resolutionPath.includes(tokenDisplayName) : resolutionSet.has(tokenDisplayName)) {
-    throw new CircularDependencyError([...resolutionPath, tokenDisplayName]);
+  if (resolutionSet === undefined) {
+    for (let index = 0; index < resolutionStack.length; index += 1) {
+      if (resolutionStack[index]!.bindingId === frame.bindingId) {
+        throw new CircularDependencyError([...resolutionPath, frame.tokenName]);
+      }
+    }
+  } else if (resolutionSet.has(frame.bindingId)) {
+    throw new CircularDependencyError([...resolutionPath, frame.tokenName]);
   }
-  resolutionPath.push(tokenDisplayName);
-  resolutionSet?.add(tokenDisplayName);
+  resolutionPath.push(frame.tokenName);
+  resolutionStack.push(frame);
+  resolutionSet?.add(frame.bindingId);
   return resolutionSet;
 }
 
@@ -111,9 +127,10 @@ export function branchDepthOf(branch: OwnedBranchPath): OwnedBranchDepth {
 }
 
 /**
- * Extends one branch of an append-only path, throwing if the entry is already an ancestor.
+ * Extends one branch of an append-only path, throwing if the binding is already an ancestor.
  *
- * @remarks Appends in place while this branch still owns the next slot, and copies its own prefix
+ * @remarks The check compares binding ids on the paired stack — the path's names are for the error
+ * alone. Appends in place while this branch still owns the next slot, and copies its own prefix
  * once a sibling has claimed it. Nothing is ever removed, so no async level has to observe its own
  * settlement to unwind.
  *
@@ -121,13 +138,14 @@ export function branchDepthOf(branch: OwnedBranchPath): OwnedBranchDepth {
  */
 export function extendResolutionBranch(
   resolutionPath: Array<string>,
+  resolutionStack: ReadonlyArray<ResolutionFrame>,
   branchDepth: BranchDepth,
-  tokenDisplayName: string,
+  frame: ResolutionFrame,
 ): OwnedBranchPath {
   const depth = branchDepth === UNOWNED_BRANCH ? resolutionPath.length : branchDepth;
   for (let index = 0; index < depth; index += 1) {
-    if (resolutionPath[index] === tokenDisplayName) {
-      throw new CircularDependencyError([...resolutionPath.slice(0, depth), tokenDisplayName]);
+    if (resolutionStack[index]!.bindingId === frame.bindingId) {
+      throw new CircularDependencyError([...resolutionPath.slice(0, depth), frame.tokenName]);
     }
   }
   // An unowned array belongs to a sync frame that will pop it, or carries a membership Set this
@@ -135,11 +153,11 @@ export function extendResolutionBranch(
   if (branchDepth === resolutionPath.length) {
     // The sole mint: appending in place needs a depth that came from a branch already owned, or
     // ROOT_BRANCH over an array its caller minted for this chain alone.
-    resolutionPath.push(tokenDisplayName);
+    resolutionPath.push(frame.tokenName);
     return resolutionPath as OwnedBranchPath;
   }
   const branch = resolutionPath.slice(0, depth);
-  branch.push(tokenDisplayName);
+  branch.push(frame.tokenName);
   return branch as OwnedBranchPath;
 }
 

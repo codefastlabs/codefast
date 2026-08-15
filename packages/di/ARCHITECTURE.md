@@ -331,7 +331,7 @@ resolve that fails, and constructing the error at the throw site rather than in 
 | Lane                   | Mechanism                                                            | Why not the other one                                                                                               |
 | ---------------------- | -------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
 | Sync transient-dynamic | `binding.inFlight`, set on factory-enter and cleared on exit         | Sync resolution runs on one call stack, so the flag _is_ exact path membership: `O(1)`, no hashing, no side table   |
-| Everything else sync   | `enterResolutionPath` — push and pop one shared path array           | One call stack, so the array _is_ a stack; a per-binding flag cannot name the path in the error                     |
+| Everything else sync   | `enterResolutionPath` — push and pop one shared path/stack pair      | One call stack, so the array _is_ a stack; a per-binding flag cannot name the path in the error                     |
 | Async, in a cascade    | `binding.inFlight`, cleared when the factory returns its **promise** | The request that closes a cycle comes from a factory's synchronous prefix, and synchronous code does not interleave |
 | Async, out of one      | `extendResolutionBranch` — append-only path, read by branch depth    | A continuation's ancestors are on no call stack, so they have to be carried explicitly                              |
 
@@ -340,18 +340,26 @@ doesn't mention hooks: a hook runs on the same call stack the factory did. A hoo
 reports `CircularDependencyError` rather than recursing, and the flag is still released on every exit path —
 `tests/unit/resolution/in-flight-invariants.test.ts` pins both for the hooked lane too.
 
-`enterResolutionPath` scans linearly while the path is short and attaches a membership `Set` past
-`RESOLUTION_SET_THRESHOLD`, which is 32. That threshold switches a **data structure**, not a behaviour: both branches
-answer identically. (The 32 is a tuning constant from a depth sweep; re-sweeping it with the benchmark is cheap if the
-typical graph depth in real consumers shifts, or the collector's behaviour changes.)
+**Every path-based check keys on binding identity, never on a token's display name.** A display name is not unique — two
+`token("Config")` from different modules are distinct tokens, and a name-keyed check reported a false cycle for a
+legitimately acyclic chain that held both. `enterResolutionPath` and `extendResolutionBranch` compare `bindingId` read
+off the frame stack; the name array exists only so the error can print the chain. That makes the path/stack **lockstep**
+load-bearing: every site that grows one grows the other — `enterResolutionPath` pushes both itself, the branch helpers
+take one depth for both halves, the cascade pushes and pops both together, and an escape thunk copies a name array it
+derived from its frame array. A depth read off the path is therefore always a valid index into the paired stack.
 
-**The set is seeded from the path, so it has to be able to notice that it has gone stale.** The frames already on the
+`enterResolutionPath` scans the frames linearly while the path is short and attaches a membership `Set` of binding ids
+past `RESOLUTION_SET_THRESHOLD`, which is 32. That threshold switches a **data structure**, not a behaviour: both
+branches answer identically. (The 32 is a tuning constant from a depth sweep; re-sweeping it with the benchmark is cheap
+if the typical graph depth in real consumers shifts, or the collector's behaviour changes.)
+
+**The set is seeded from the stack, so it has to be able to notice that it has gone stale.** The frames already on the
 path when it attaches are handed no set and delete nothing on unwind, and the array outlives a resolve — the resolver
-lends one pair per resolver — so a set that survived the unwind would refuse names nobody is resolving. A live set
-mirrors the path exactly; `enterResolutionPath` drops one whose size no longer matches the path's length, and the next
-deep frame rebuilds it. `tests/unit/resolution/path/resolution-path.test.ts` pins the three ways the seed becomes
-observable: a second resolve of the same deep graph, a sibling branch below the attach depth, and the entry point called
-directly.
+lends one pair per resolver — so a set that survived the unwind would refuse bindings nobody is resolving. A live set
+mirrors the path exactly (ids on an acyclic path are unique); `enterResolutionPath` drops one whose size no longer
+matches the path's length, and the next deep frame rebuilds it. `tests/unit/resolution/path/resolution-path.test.ts`
+pins the three ways the seed becomes observable: a second resolve of the same deep graph, a sibling branch below the
+attach depth, and the entry point called directly.
 
 > **Invariant (correctness).** A threshold here may choose an implementation; it must not choose a semantics. The
 > removed `DEEP_LANE_THRESHOLD` switched _lanes_, so it silently changed context identity, stack frames and promise

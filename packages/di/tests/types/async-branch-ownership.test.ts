@@ -8,7 +8,8 @@
 import { expectTypeOf } from "expect-type";
 import { describe, expect, it } from "vitest";
 
-import type { ResolutionFrame } from "#/core/types";
+import { NO_TAG_KEYS } from "#/core/tag";
+import type { BindingIdentifier, ResolutionFrame } from "#/core/types";
 import type { ResolutionDiagnostics } from "#/errors/diagnostics";
 import type {
   BranchDepth,
@@ -22,6 +23,16 @@ import {
   extendResolutionStackBranch,
   ROOT_BRANCH,
 } from "#/resolution/path/resolution-path";
+
+function frameOf(name: string, id: number): ResolutionFrame {
+  return {
+    tokenName: name,
+    scope: "transient",
+    bindingId: String(id) as BindingIdentifier,
+    kind: "class",
+    slot: { name: undefined, tags: [], keyMask: NO_TAG_KEYS },
+  };
+}
 
 describe("only the lane's own helpers mint a branch", () => {
   it("returns an owned branch, which a plain array is not", () => {
@@ -43,7 +54,8 @@ describe("a branch depth cannot be an arbitrary number", () => {
     expectTypeOf<BranchDepth>().toExtend<number>();
     expectTypeOf(ROOT_BRANCH).toEqualTypeOf<OwnedBranchDepth>();
     expectTypeOf(branchDepthOf).returns.toEqualTypeOf<OwnedBranchDepth>();
-    expectTypeOf(extendResolutionBranch).parameter(1).toEqualTypeOf<BranchDepth>();
+    expectTypeOf(extendResolutionBranch).parameter(1).toEqualTypeOf<ReadonlyArray<ResolutionFrame>>();
+    expectTypeOf(extendResolutionBranch).parameter(2).toEqualTypeOf<BranchDepth>();
   });
 
   it("keeps the unowned case visible in the type rather than hidden in the brand", () => {
@@ -59,9 +71,13 @@ describe("a branch depth cannot be an arbitrary number", () => {
   });
 
   it("is the length the branch had when the level took it", () => {
-    const branch = extendResolutionBranch([], ROOT_BRANCH, "root");
+    const rootFrame = frameOf("root", 1);
+    const branch = extendResolutionBranch([], [], ROOT_BRANCH, rootFrame);
+    const stackBranch = extendResolutionStackBranch([], ROOT_BRANCH, rootFrame);
     expect(branchDepthOf(branch)).toBe(1);
-    expect(branchDepthOf(extendResolutionBranch(branch, branchDepthOf(branch), "child"))).toBe(2);
+    expect(branchDepthOf(extendResolutionBranch(branch, stackBranch, branchDepthOf(branch), frameOf("child", 2)))).toBe(
+      2,
+    );
   });
 });
 

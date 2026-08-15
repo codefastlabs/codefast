@@ -511,8 +511,7 @@ export class DependencyResolver implements ResolverCallbacks {
 
     const frame = this.#getResolutionFrame(binding);
     const tokenDisplayName = frame.tokenName;
-    const resolutionSet = enterResolutionPath(resolutionPath, tokenDisplayName);
-    resolutionStack.push(frame);
+    const resolutionSet = enterResolutionPath(resolutionPath, resolutionStack, frame);
     try {
       const needsActivation = owner.#activation.needsActivation(binding);
       if (!needsActivation && scope === "transient" && binding.kind === "dynamic") {
@@ -550,7 +549,7 @@ export class DependencyResolver implements ResolverCallbacks {
     } finally {
       resolutionStack.pop();
       resolutionPath.pop();
-      resolutionSet?.delete(tokenDisplayName);
+      resolutionSet?.delete(frame.bindingId);
     }
   }
 
@@ -872,7 +871,7 @@ export class DependencyResolver implements ResolverCallbacks {
 
     const frame = this.#getResolutionFrame(binding);
     // This level appends to its own branch and never unwinds.
-    const levelPath = extendResolutionBranch(resolutionPath, branchDepth, frame.tokenName);
+    const levelPath = extendResolutionBranch(resolutionPath, resolutionStack, branchDepth, frame);
     const levelStack = extendResolutionStackBranch(resolutionStack, branchDepth, frame);
     const levelDepth = branchDepthOf(levelPath);
 
@@ -1323,7 +1322,7 @@ export class DependencyResolver implements ResolverCallbacks {
     const frame = this.#getResolutionFrame(binding);
     let levelPath: OwnedBranchPath;
     try {
-      levelPath = extendResolutionBranch(resolutionPath, branchDepth, frame.tokenName);
+      levelPath = extendResolutionBranch(resolutionPath, resolutionStack, branchDepth, frame);
     } catch (cycleError) {
       // This method is not `async`; keep failures as rejections rather than sync throws.
       return Promise.reject(cycleError);
