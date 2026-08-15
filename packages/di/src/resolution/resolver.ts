@@ -128,7 +128,7 @@ export class DependencyResolver implements ResolverCallbacks {
     return this.#metadataReader;
   }
 
-  /** Structural counts for {@link RESOLUTION_DIAGNOSTICS}; see `resolution/diagnostics.ts`. */
+  /** Structural counts for the {@link ResolutionDiagnostics} a container reports. */
   describeCaches(): Pick<ResolutionDiagnostics, "compiledPlanCount" | "syncContextPoolSize"> {
     let compiledPlanCount = 0;
     for (const plan of this.#classPlanByBindingId.values()) {

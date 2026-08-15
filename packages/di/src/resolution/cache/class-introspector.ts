@@ -55,16 +55,11 @@ export function verifyConstructorMetadata(
   if (metadata === undefined) {
     return undefined;
   }
-  let verified = verifiedTargets.get(reader);
-  if (verified !== undefined && verified.has(target)) {
+  if (isVerified(verifiedTargets, reader, target)) {
     return metadata;
   }
   assertConstructorMetadata(metadata, target);
-  if (verified === undefined) {
-    verified = new WeakSet();
-    verifiedTargets.set(reader, verified);
-  }
-  verified.add(target);
+  markVerified(verifiedTargets, reader, target);
 
   return metadata;
 }

@@ -494,21 +494,14 @@ class DefaultContainer implements Container {
     this.#moduleRefs?.delete(ref);
     const ids = this.#moduleBindingIds?.get(ref) ?? [];
     this.#moduleBindingIds?.delete(ref);
-    const pairs: Array<[Binding, unknown]> = [];
+    const removed: Array<Binding> = [];
     for (const id of ids) {
-      const binding = this.#registry.getById(id);
+      const binding = this.#registry.removeById(id);
       if (binding !== undefined) {
-        this.#registry.removeById(id);
-        if (binding.instance !== NO_INSTANCE) {
-          pairs.push([binding, binding.instance]);
-          this.#scope.deleteSingleton(binding);
-        } else if (this.#owesConstantDeactivation(binding)) {
-          pairs.push([binding, binding.value]);
-        }
-        this.#scope.deleteScoped(binding.id);
+        removed.push(binding);
       }
     }
-    return pairs;
+    return this.#drainSingletons(removed);
   }
 
   #unloadModuleSync(ref: object): void {
