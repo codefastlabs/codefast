@@ -2367,7 +2367,7 @@ packages/di/
 │   │   ├── types.ts           DependencyKey, BindingScope, BindingIdentifier, BindingKind,
 │   │   │                      ActivationHandler, DeactivationHandler, ResolveOptions,
 │   │   │                      ResolutionFrame, ConstraintContext, ResolutionContext, TokenValue
-│   │   ├── token.ts           Token<Value> branded type; token(), tokenName(), isToken()
+│   │   ├── token.ts           Token<Value> branded type; token(), tokenName()
 │   │   ├── tag.ts             tag() — the one and only tag-key factory; interned BindingTag,
 │   │   │                      TagKeyMask and the subset check over keys
 │   │   ├── binding.ts         The Binding discriminated union + BindingSlot utilities;
@@ -2496,7 +2496,7 @@ export type {
 } from "#/core/types";
 
 // Token
-export { token, tokenName, isToken } from "#/core/token";
+export { token, tokenName } from "#/core/token";
 export type { Token } from "#/core/token";
 
 // Binding builders — types only

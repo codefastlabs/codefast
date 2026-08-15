@@ -17,7 +17,7 @@ export type {
 } from "#/core/types";
 
 // Token
-export { token, tokenName, isToken } from "#/core/token";
+export { token, tokenName } from "#/core/token";
 export type { Token } from "#/core/token";
 
 // Tag — the interned slot criteria a `whenTagged` and a resolve both take

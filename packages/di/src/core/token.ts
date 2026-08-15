@@ -23,15 +23,3 @@ export function token<Value>(name: string): Token<Value> {
 export function tokenName(dependency: Token<unknown> | Constructor): string {
   return dependency.name;
 }
-
-/**
- * @since 0.3.16-canary.0
- */
-export function isToken(value: unknown): value is Token<unknown> {
-  return (
-    typeof value === "object" &&
-    value !== null &&
-    "name" in value &&
-    typeof (value as Record<string, unknown>)["name"] === "string"
-  );
-}
