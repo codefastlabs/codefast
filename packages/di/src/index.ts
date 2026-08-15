@@ -22,7 +22,7 @@ export type { Token } from "#/core/token";
 
 // Tag — the interned slot criteria a `whenTagged` and a resolve both take
 export { coversTagKeys, NO_TAG_KEYS, tag, tagKeyMaskOf } from "#/core/tag";
-export type { TagKey } from "#/core/tag";
+export type { TagKey, TagKeyMask } from "#/core/tag";
 
 // Binding builders — types only
 export type {
