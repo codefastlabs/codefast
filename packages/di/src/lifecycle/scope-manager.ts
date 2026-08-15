@@ -83,27 +83,19 @@ export class ScopeManager {
     return this.#inflight?.get(id);
   }
 
-  setInflight(id: BindingIdentifier, p: Promise<unknown>): void {
-    (this.#inflight ??= new Map()).set(id, p);
+  setInflight(id: BindingIdentifier, promise: Promise<unknown>): void {
+    (this.#inflight ??= new Map()).set(id, promise);
   }
 
   clearInflight(id: BindingIdentifier): void {
     this.#inflight?.delete(id);
   }
 
-  hasScoped(id: BindingIdentifier): boolean {
-    return this.#scoped !== undefined && this.#scoped.has(id);
-  }
-
-  getScoped(id: BindingIdentifier): unknown {
-    return this.#scoped?.get(id);
-  }
-
   /**
    * The cached scoped instance, or {@link SCOPED_MISS}.
    *
-   * @remarks One map read where `hasScoped` + `getScoped` took two; a cached `undefined` is the only
-   * shape that pays for the second, and it is the rare one.
+   * @remarks One map read answers both existence and value; a cached `undefined` is the only
+   * shape that pays for a second, and it is the rare one.
    */
   readScoped(id: BindingIdentifier): unknown {
     const scoped = this.#scoped;
@@ -146,8 +138,8 @@ export class ScopeManager {
     this.#inflight?.clear();
     this.#scoped?.clear();
   }
-  /** Whether the deferred table behind `#scoped` has had to be built. */
-  get isBuilt(): boolean {
+  /** Whether the deferred scoped-instance cache has had to be built. */
+  get isScopedCacheBuilt(): boolean {
     return this.#scoped !== undefined;
   }
 }

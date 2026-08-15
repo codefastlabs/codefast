@@ -265,9 +265,14 @@ export class BindingRegistry {
     this.#fastDefault.delete(tokenKey);
   }
 
-  /** Whether the deferred table behind `#simpleNamed` has had to be built. */
-  get isBuilt(): boolean {
+  /** Whether the deferred named-slot index has had to be built. */
+  get isNamedIndexBuilt(): boolean {
     return this.#simpleNamed !== undefined;
+  }
+
+  /** Whether the deferred tagged-slot index has had to be built. */
+  get isTaggedIndexBuilt(): boolean {
+    return this.#simpleTagged !== undefined;
   }
 }
 
