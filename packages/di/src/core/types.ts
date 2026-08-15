@@ -91,7 +91,8 @@ export interface ConstraintContext {
   readonly resolutionStack: ReadonlyArray<ResolutionFrame>;
   readonly parent: ResolutionFrame | undefined;
   readonly ancestors: ReadonlyArray<ResolutionFrame>;
-  readonly currentResolveOptions: ResolveOptions | undefined;
+  /** Readonly because one frozen object answers every resolve of a slot — a write would throw. */
+  readonly currentResolveOptions: Readonly<ResolveOptions> | undefined;
 }
 
 /**

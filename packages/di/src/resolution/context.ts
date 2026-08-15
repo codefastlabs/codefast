@@ -320,7 +320,7 @@ class DefaultConstraintContext implements ConstraintContext {
   readonly resolutionPath: ReadonlyArray<string>;
   readonly resolutionStack: ReadonlyArray<ResolutionFrame>;
   readonly parent: ResolutionFrame | undefined;
-  readonly currentResolveOptions: ResolveOptions | undefined;
+  readonly currentResolveOptions: Readonly<ResolveOptions> | undefined;
 
   constructor(
     resolutionPath: ReadonlyArray<string>,
