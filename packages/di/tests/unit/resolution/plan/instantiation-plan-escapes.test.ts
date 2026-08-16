@@ -56,6 +56,34 @@ describe("escaped dependencies inside a compiled plan", () => {
     expect(factoryCalls).toBe(1);
   });
 
+  it("an escaped factory that throws leaves the escape reusable", () => {
+    const configToken = token<string>("escape-throwing-config");
+    let shouldThrow = false;
+
+    @injectable([configToken])
+    class Root {
+      constructor(readonly config: string) {}
+    }
+
+    const container = Container.create();
+    container.bind(configToken).toDynamic(() => {
+      if (shouldThrow) {
+        throw new Error("boom");
+      }
+      return "ok";
+    });
+    container.bind(Root).toSelf().transient();
+
+    warm(() => container.resolve(Root));
+
+    shouldThrow = true;
+    expect(() => container.resolve(Root)).toThrow("boom");
+    expect(() => container.resolve(Root)).toThrow("boom");
+
+    shouldThrow = false;
+    expect(container.resolve(Root).config).toBe("ok");
+  });
+
   it("detects a cycle that closes through an escaped factory", () => {
     const spawnToken = token<unknown>("spawn");
 

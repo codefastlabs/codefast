@@ -436,6 +436,18 @@ export class DependencyResolver implements ResolverCallbacks {
       }
       return { binding: entry.binding };
     },
+    // The named rule verbatim, on the single-tag lane's memo.
+    lookupPathIndependentTaggedEntry: (token, options) => {
+      const singleTag = singleTagOnlyOf(options);
+      if (singleTag === undefined) {
+        return null;
+      }
+      const entry = this.#lookup.taggedEntry(token, singleTag);
+      if (entry === null || entry.binding.predicate !== undefined || !matchesSlot(entry.binding.slot, options)) {
+        return null;
+      }
+      return { binding: entry.binding };
+    },
     getResolutionFrame: (binding) => this.#getResolutionFrame(binding),
     // Dispatches exactly as #resolveDep does, so an escaped dep is indistinguishable
     // from the same dep on a fully interpreted resolve.
@@ -508,6 +520,22 @@ export class DependencyResolver implements ResolverCallbacks {
           return namedBinding.instance as Value;
         }
         // Everything else keeps the full path (context, activation, guards).
+      }
+    } else if (options !== undefined) {
+      // Single-tag fast lane: the named lane's tagged twin, memoizing the chain walk.
+      const singleTag = singleTagOnlyOf(options);
+      if (singleTag !== undefined) {
+        const taggedEntry = this.#lookup.taggedEntry(token, singleTag);
+        if (taggedEntry !== null) {
+          const taggedBinding = taggedEntry.binding;
+          if (taggedEntry.owner.#isPlainConstant(taggedBinding)) {
+            return taggedBinding.value as Value;
+          }
+          if (taggedBinding.scope === "singleton" && taggedBinding.instance !== NO_INSTANCE) {
+            return taggedBinding.instance as Value;
+          }
+          // Everything else keeps the full path (context, activation, guards).
+        }
       }
     }
 

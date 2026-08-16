@@ -324,11 +324,15 @@ entry.
 > chain's summed version can see. Alias folding belongs where the version stamp is; moving it into `getFastDefault()`
 > would miss a parent rebind.
 
-**The single-tag lane has no chain memo.** Two of the three criteria lanes memoize the walk — the one-entry slot above
-for a no-options token owned by a parent, and `namedEntry` for a name-only one — while a single-tag request consults
-each container's tag index on the way up, every time. Whether it should is a question a warm benchmark answers
-differently from a fresh one, and the shape of the memo matters more than whether to have one. This is an open design
-question, not a closed one — the fresh-vs-warm measurement (run it against the benchmark) is what would settle it.
+**All three criteria lanes memoize the chain walk, and the single-tag one defers its map.** `taggedEntry` mirrors
+`namedEntry` — chain-versioned, `null` meaning "this shape needs full selection", predicate- and alias-carrying hits
+declined — with one difference the fresh-vs-warm measurement forced: a per-request child usually asks one `(token, tag)`
+exactly once, and an inner-map allocation on that first ask was the whole cost of the memo on that shape. So the first
+shape a cache generation sees is answered from the walk and parked in a one-entry front, and the map is not written
+until a second distinct shape appears; an alternating pair converges after one extra walk per key. The memo key is the
+criterion object itself — interning makes identity the slot contract's own `Object.is`, the same exactness the
+registry's tagged index relies on, so an indexed hit needs no value re-check. The warm-vs-fresh numbers that settled
+this, and the shape's A/B, live in the benchmark suite's `RESULTS.md`.
 
 **Late hooks are why a memo over a binding keys on the hook's identity.** `.onActivation()` writes the field **in
 place** on an already-registered binding and bumps no version. `needsActivation()` therefore answers the binding's own

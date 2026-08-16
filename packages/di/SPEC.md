@@ -608,6 +608,14 @@ is nothing to infer. `transient` and `scoped` have no `onDeactivation` because t
 > is called, the builder no longer exposes `when*` — a one-way state: calling lifecycle "locks" the constraint and moves
 > into the lifecycle phase.
 
+> **A repeated `on*()` on one chain replaces the hook it already carries — normative.** The three chain verbs
+> deliberately compose three different ways: `when()` narrows (a candidate passes every predicate), container-level
+> hooks accumulate (each registration is another listener), and a chain's `onActivation`/`onDeactivation` replaces — a
+> chain held in a variable is a reconfiguration handle, and re-calling its lifecycle verb means "this hook now", not
+> "this hook too". A caller who wants several activation steps composes them in one handler or registers container-level
+> hooks. Pinned by `tests/unit/resolution/cache-invalidation.test.ts` ("drops a hook that was replaced on the same
+> chain"); changing this to accumulate is a behavior change, not a clarification.
+
 ### 5.7 `toResolved` and `toResolvedAsync` — explicit deps
 
 ```ts
@@ -1946,7 +1954,9 @@ Ten constraints, each taking configuration parameters and returning a predicate 
 >
 > **A slot name nobody declares:** `whenParentNamed`/`whenAnyAncestorNamed` expect a string, so a typo produces a
 > constraint that is never true and that nobody reports. `validate()` throws `UnreachableConstraintError` when no
-> binding anywhere in the container chain declares that slot name.
+> binding anywhere in the container chain declares that slot name. The requirement survives `when()` chaining: a
+> composed predicate carries both sides' requirements, so narrowing a helper-built constraint does not hide it from
+> `validate()`.
 
 The two negative forms returning `true` on absence are deliberate: "no parent is X" is trivially true when there is no
 parent at all. The two `…TaggedAll` forms are equivalent to AND-composing several individual criteria, but cost one

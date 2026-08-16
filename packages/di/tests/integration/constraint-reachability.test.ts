@@ -131,8 +131,39 @@ describe("container.validate() — a constraint waiting on a slot name", () => {
       .when(whenParentNamed("absent"))
       .when(() => true);
 
-    // Composition builds a new closure, so the requirement is no longer visible — the constraint
-    // is still unreachable, but reporting it is beyond what a predicate can carry.
+    // The composed closure carries both sides' requirements, so the unreachable name still reports.
+    expect(() => {
+      container.validate();
+    }).toThrow(UnreachableConstraintError);
+  });
+
+  it("sees a requirement contributed by either side of the composition", () => {
+    const loggerToken = token<string>("composed-requirement-late");
+
+    const container = Container.create();
+    container.bind(loggerToken).toConstantValue("default");
+    container
+      .bind(loggerToken)
+      .toConstantValue("constrained")
+      .when(() => true)
+      .when(whenAnyAncestorNamed("absent"));
+
+    expect(() => {
+      container.validate();
+    }).toThrow(UnreachableConstraintError);
+  });
+
+  it("accepts a composed chain whose required names are all declared", () => {
+    const loggerToken = token<string>("composed-requirement-satisfied");
+
+    const container = Container.create();
+    container.bind(loggerToken).toConstantValue("default").whenNamed("present");
+    container
+      .bind(loggerToken)
+      .toConstantValue("constrained")
+      .when(whenParentNamed("present"))
+      .when(whenAnyAncestorNamed("present"));
+
     expect(() => {
       container.validate();
     }).not.toThrow();

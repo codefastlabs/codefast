@@ -44,8 +44,47 @@ export function requiringAncestorSlotName(
 /**
  * The requirement a predicate carries, if it was built by a helper that records one.
  *
+ * @remarks A composed predicate may carry several; this answers the first. `validate()` reads
+ * {@link constraintRequirementsOf} so no recorded requirement is skipped.
+ *
  * @since 0.6.0
  */
 export function constraintRequirementOf(predicate: BindingConstraint): ConstraintRequirement | undefined {
-  return (predicate as { [CONSTRAINT_REQUIREMENT]?: ConstraintRequirement })[CONSTRAINT_REQUIREMENT];
+  return constraintRequirementsOf(predicate)[0];
+}
+
+const NO_REQUIREMENTS: ReadonlyArray<ConstraintRequirement> = [];
+
+/**
+ * Every requirement a predicate carries — one from a helper, several from a composed chain.
+ */
+export function constraintRequirementsOf(predicate: BindingConstraint): ReadonlyArray<ConstraintRequirement> {
+  const payload = (
+    predicate as { [CONSTRAINT_REQUIREMENT]?: ConstraintRequirement | ReadonlyArray<ConstraintRequirement> }
+  )[CONSTRAINT_REQUIREMENT];
+  if (payload === undefined) {
+    return NO_REQUIREMENTS;
+  }
+  return Array.isArray(payload)
+    ? (payload as ReadonlyArray<ConstraintRequirement>)
+    : [payload as ConstraintRequirement];
+}
+
+/**
+ * Carries both sides' requirements onto a composed predicate, so chaining does not lose them.
+ */
+export function mergingConstraintRequirements(
+  composite: BindingConstraint,
+  left: BindingConstraint,
+  right: BindingConstraint,
+): BindingConstraint {
+  const merged = [...constraintRequirementsOf(left), ...constraintRequirementsOf(right)];
+  if (merged.length === 0) {
+    return composite;
+  }
+  Object.defineProperty(composite, CONSTRAINT_REQUIREMENT, {
+    value: merged.length === 1 ? merged[0] : merged,
+    enumerable: false,
+  });
+  return composite;
 }

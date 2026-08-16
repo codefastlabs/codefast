@@ -18,6 +18,7 @@ import type {
   TransientBindingBuilder,
 } from "#/core/binding";
 import { clearBindingFrame, createBinding, DEFAULT_BINDING_SLOT, refinableFields } from "#/core/binding";
+import { mergingConstraintRequirements } from "#/core/constraint-requirement";
 import type { BindingRegistry } from "#/core/registry";
 import type { BindingTag } from "#/core/tag";
 import { tagKeyMaskOf } from "#/core/tag";
@@ -220,7 +221,13 @@ export class BindingChain<Value>
     const binding = this.#registered();
     const previous = binding.predicate;
 
-    return this.#reslot(binding.slot, previous === undefined ? predicate : (ctx) => previous(ctx) && predicate(ctx));
+    if (previous === undefined) {
+      return this.#reslot(binding.slot, predicate);
+    }
+    // The composite carries both sides' requirements, so validate() still sees them.
+    const composed = mergingConstraintRequirements((ctx) => previous(ctx) && predicate(ctx), previous, predicate);
+
+    return this.#reslot(binding.slot, composed);
   }
 
   whenNamed(name: string): this {

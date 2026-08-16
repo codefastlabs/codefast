@@ -390,6 +390,77 @@ function buildInjectedNameInterpretedScenario(): BenchScenario {
   };
 }
 
+const injectedTaggedLeafToken = token<InjectedLeaf>("bench-cf-slot-injected-tagged-leaf");
+
+@injectable([
+  inject(injectedTaggedLeafToken, { tag: ENV_TAG.of("alpha") }),
+  inject(injectedTaggedLeafToken, { tag: ENV_TAG.of("beta") }),
+  inject(injectedTaggedLeafToken, { tag: ENV_TAG.of("gamma") }),
+  inject(injectedTaggedLeafToken, { tag: ENV_TAG.of("delta") }),
+])
+class InjectedTaggedRoot {
+  constructor(
+    readonly alpha: InjectedLeaf,
+    readonly beta: InjectedLeaf,
+    readonly gamma: InjectedLeaf,
+    readonly delta: InjectedLeaf,
+  ) {}
+}
+
+/** The named builder's shape with tags in the slots, so the two criteria kinds stay comparable. */
+function buildInjectedTaggedContainer(declinePlan: boolean): Container {
+  const container = Container.create();
+
+  for (const name of INJECTED_SLOT_NAMES) {
+    container.bind(injectedTaggedLeafToken).toConstantValue({ id: name }).whenTagged(ENV_TAG.of(name));
+  }
+  const binding = container.bind(InjectedTaggedRoot).toSelf().transient();
+
+  if (declinePlan) {
+    binding.onActivation((_ctx, instance) => instance);
+  }
+
+  return container;
+}
+
+function buildInjectedTagCompiledScenario(): BenchScenario {
+  const container = buildInjectedTaggedContainer(false);
+
+  container.resolve(InjectedTaggedRoot);
+
+  return {
+    id: "slot-injected-tag-compiled",
+    group: "slot-selection",
+    what: "resolve a class whose four dependencies each request a tag — the compiled plan's tagged dependency lane (codefast-only)",
+    batch: SLOT_RESOLVE_BATCH,
+    excludeFromAggregates: true,
+    sanity: () => container.resolve(InjectedTaggedRoot).alpha.id === "alpha",
+    build: () =>
+      batched(SLOT_RESOLVE_BATCH, () => {
+        container.resolve(InjectedTaggedRoot);
+      }),
+  };
+}
+
+function buildInjectedTagInterpretedScenario(): BenchScenario {
+  const container = buildInjectedTaggedContainer(true);
+
+  container.resolve(InjectedTaggedRoot);
+
+  return {
+    id: "slot-injected-tag-interpreted",
+    group: "slot-selection",
+    what: "the same four tagged dependencies with the class's plan declined — the interpreted dependency lane (codefast-only)",
+    batch: SLOT_RESOLVE_BATCH,
+    excludeFromAggregates: true,
+    sanity: () => container.resolve(InjectedTaggedRoot).delta.id === "delta",
+    build: () =>
+      batched(SLOT_RESOLVE_BATCH, () => {
+        container.resolve(InjectedTaggedRoot);
+      }),
+  };
+}
+
 /**
  * @since 0.6.0
  */
@@ -407,5 +478,7 @@ export function buildCodefastSlotSelectionScenarios(): ReadonlyArray<BenchScenar
     buildNamedParentOwnedScenario(),
     buildInjectedNameCompiledScenario(),
     buildInjectedNameInterpretedScenario(),
+    buildInjectedTagCompiledScenario(),
+    buildInjectedTagInterpretedScenario(),
   ];
 }
