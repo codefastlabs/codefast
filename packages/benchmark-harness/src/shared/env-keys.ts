@@ -6,6 +6,8 @@
 
 /**
  * Timing profile for the run: `fast`, `default`, or `full`.
+ *
+ * @since 0.6.0
  */
 export const BENCH_MODE_ENV_KEY = "BENCH_MODE";
 /**
@@ -65,6 +67,8 @@ export const BENCH_RESULTS_DIR_NAME = "bench-results";
 /**
  * Fewest trials that can carry a median: with two, the median is their mean and cannot separate a
  * change from noise.
+ *
+ * @since 0.6.0
  */
 export const MINIMUM_TRIAL_COUNT = 3;
 
@@ -90,6 +94,8 @@ type BenchEnvValueSpec =
  * @remarks `turboTasks` is required on user-facing keys because Turbo runs in strict env mode: a key
  * absent from a task's `passThroughEnv` is dropped for any run started from the repo root, which
  * looks exactly like the key having no effect.
+ *
+ * @since 0.6.0
  */
 export type BenchEnvSpec =
   | ({ readonly audience: "user"; readonly turboTasks: ReadonlyArray<string> } & BenchEnvValueSpec)
@@ -101,6 +107,8 @@ export type BenchEnvSpec =
  *
  * @remarks The single source for value parsing, which keys the parent strips before spawning, which
  * keys Turbo must pass through, and which spellings are rejected outright.
+ *
+ * @since 0.6.0
  */
 export const BENCH_ENV_SPECS: Readonly<Record<string, BenchEnvSpec>> = {
   BENCH_FAST: { audience: "retired", replacement: "BENCH_MODE=fast" },
@@ -116,12 +124,20 @@ export const BENCH_ENV_SPECS: Readonly<Record<string, BenchEnvSpec>> = {
 
 const BENCH_ENV_SPEC_ENTRIES: ReadonlyArray<readonly [string, BenchEnvSpec]> = Object.entries(BENCH_ENV_SPECS);
 
-/** Keys a person is meant to set. */
+/**
+ * Keys a person is meant to set.
+ *
+ * @since 0.6.0
+ */
 export const USER_BENCH_ENV_KEYS: ReadonlyArray<string> = BENCH_ENV_SPEC_ENTRIES.filter(
   ([, spec]) => spec.audience === "user",
 ).map(([key]) => key);
 
-/** Keys the parent sets per subprocess and strips from anything a child inherits. */
+/**
+ * Keys the parent sets per subprocess and strips from anything a child inherits.
+ *
+ * @since 0.6.0
+ */
 export const INTERNAL_BENCH_ENV_KEYS: ReadonlyArray<string> = BENCH_ENV_SPEC_ENTRIES.filter(
   ([, spec]) => spec.audience === "internal",
 ).map(([key]) => key);
@@ -141,6 +157,8 @@ function readNormalized(key: string): { normalizedValue: string; rawValue: strin
  * @remarks Throws on an unrecognised value rather than reading it as off: a profile that
  * silently fails to turn on yields numbers for a different run than the one asked for, and
  * nothing downstream can tell that apart from a real measurement.
+ *
+ * @since 0.6.0
  */
 export function isEnvFlagEnabled(key: string): boolean {
   const { normalizedValue, rawValue } = readNormalized(key);
@@ -158,6 +176,8 @@ export function isEnvFlagEnabled(key: string): boolean {
 /**
  * Bounds for {@link parseEnvInteger} when the key is owned by a suite rather than by
  * {@link BENCH_ENV_SPECS}.
+ *
+ * @since 0.6.0
  */
 export type IntegerEnvBounds = Readonly<{ min: number; max?: number | undefined }>;
 
@@ -181,6 +201,8 @@ function resolveIntegerBounds(key: string, bounds: IntegerEnvBounds | undefined)
  *
  * @param key - The environment variable to read.
  * @param bounds - Required for keys a suite owns; harness keys read theirs from the spec.
+ *
+ * @since 0.6.0
  */
 export function parseEnvInteger(key: string, bounds?: IntegerEnvBounds): number | undefined {
   const { min, max } = resolveIntegerBounds(key, bounds);
@@ -215,6 +237,8 @@ const DEFAULT_BENCH_MODE_VALUE = "default";
  *
  * @remarks One key with three values, rather than a flag per profile: the profiles are mutually
  * exclusive, so a flag pair can express a both-on state that has no meaning.
+ *
+ * @since 0.6.0
  */
 export function resolveBenchModeFromEnvironment(): BenchMode | undefined {
   const { normalizedValue, rawValue } = readNormalized(BENCH_MODE_ENV_KEY);
@@ -229,6 +253,8 @@ export function resolveBenchModeFromEnvironment(): BenchMode | undefined {
 
 /**
  * Options for {@link assertBenchEnvKeys}.
+ *
+ * @since 0.6.0
  */
 export type AssertBenchEnvKeysOptions = Readonly<{
   /** Set on a bench child, which legitimately receives the protocol keys from its parent. */
@@ -242,6 +268,8 @@ export type AssertBenchEnvKeysOptions = Readonly<{
  *
  * @remarks The values are validated strictly, so a misspelled *key* was the one remaining way to
  * ask for something and be ignored — `BENCH_MODEE=fast` selects nothing and says nothing.
+ *
+ * @since 0.6.0
  */
 export function assertBenchEnvKeys(options: AssertBenchEnvKeysOptions = {}): void {
   const { allowInternalKeys = false, extraKeys } = options;
@@ -269,6 +297,8 @@ export function assertBenchEnvKeys(options: AssertBenchEnvKeysOptions = {}): voi
  *
  * @returns `undefined` when nothing was requested, which means run everything — distinct from an
  * empty set, which would mean run nothing.
+ *
+ * @since 0.6.0
  */
 export function parseScenarioFilter(value: string | undefined): ReadonlySet<string> | undefined {
   if (value === undefined) {

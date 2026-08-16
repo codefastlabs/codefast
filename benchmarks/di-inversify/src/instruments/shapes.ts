@@ -14,12 +14,19 @@ import { batched } from "#/harness/batched";
 import { collectAllCodefastScenarios } from "#/scenarios/collect-codefast-scenarios";
 import type { AnyScenario } from "#/scenarios/types";
 
-/** The measured operation, plus how many logical operations one call of it performs. */
+/**
+ * The measured operation, plus how many logical operations one call of it performs.
+ *
+ * @since 0.6.0
+ */
 export interface PreparedShape {
   readonly batch: number;
   readonly run: () => void;
 }
 
+/**
+ * @since 0.6.0
+ */
 export interface InstrumentShape {
   readonly id: string;
   /** The bench row this measures, or `null` when the suite has none — `what` then says why. */
@@ -103,6 +110,9 @@ function preparePlainControl(): PreparedShape {
   return { batch, run: batched(batch, () => void container.resolve(PlainRoot)) };
 }
 
+/**
+ * @since 0.6.0
+ */
 export const INSTRUMENT_SHAPES: ReadonlyArray<InstrumentShape> = [
   fromRow("compiled-named", "slot-injected-name-compiled", "four named dependencies behind a compiled plan"),
   fromRow("interpreted-named", INTERPRETED_NAMED_ROW, "the same four with the class's plan declined"),
@@ -118,6 +128,9 @@ export const INSTRUMENT_SHAPES: ReadonlyArray<InstrumentShape> = [
   fromRow("fan-out", "fan-out-tree-depth-3-breadth-4", "the fan-out tree"),
 ];
 
+/**
+ * @since 0.6.0
+ */
 export function findShape(id: string): InstrumentShape {
   const shape = INSTRUMENT_SHAPES.find((candidate) => candidate.id === id);
 

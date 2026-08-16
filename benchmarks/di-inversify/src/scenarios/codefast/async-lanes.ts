@@ -153,6 +153,9 @@ function buildAsyncDiamondSharedLeafScenario(): AsyncBenchScenario {
   };
 }
 
+/**
+ * @since 0.6.0
+ */
 export function buildCodefastAsyncLaneScenarios(): ReadonlyArray<AsyncBenchScenario> {
   return [
     buildAsyncChainScenario(ASYNC_BRANCH_CHAIN, () => true),

@@ -23,6 +23,8 @@ const defineCard = (): string =>
 /**
  * Construction is per component definition where every other scenario is per render, so a ratio
  * here does not belong in the same geomean as the resolution rows.
+ *
+ * @since 0.6.0
  */
 export function buildTailwindVariantsNpmConstructScenarios(): ReadonlyArray<BenchScenario> {
   return [

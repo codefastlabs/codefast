@@ -12,6 +12,8 @@ const slots = codefastTvFn(slotsVariants, TV_CACHE_DISABLED) as (props: unknown)
 /**
  * Every other scenario's props repeat, so with the cache on they measure a lookup. These keep the
  * resolver itself under measurement, and have no counterpart in a library without the same switch.
+ *
+ * @since 0.6.0
  */
 export function buildCodefastUncachedScenarios(): ReadonlyArray<BenchScenario> {
   return [

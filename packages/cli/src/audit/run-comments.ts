@@ -43,6 +43,8 @@ interface ScannedFile {
  * Reports every comment off the repo's conventions: divider form (which `fix` rewrites), banned
  * content — document pointers, JSDoc types, tag misuse — `{@link}` targets nothing declares, and
  * every diagnostic the official TSDoc parser raises against a doc block's grammar.
+ *
+ * @since 0.6.0
  */
 export function runCommentAudit(
   fs: FilesystemPort,

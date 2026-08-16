@@ -184,6 +184,9 @@ function buildMultiDepsScenario(): BenchScenario {
   };
 }
 
+/**
+ * @since 0.6.0
+ */
 export function buildCodefastPlanEscapeScenarios(): ReadonlyArray<BenchScenario> {
   return [
     buildPlainDepsScenario(

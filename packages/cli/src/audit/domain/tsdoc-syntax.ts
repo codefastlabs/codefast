@@ -6,6 +6,8 @@ import { TSDocConfiguration, TSDocParser, TSDocTagDefinition, TSDocTagSyntaxKind
 
 /**
  * One grammar diagnostic from the TSDoc parser.
+ *
+ * @since 0.6.0
  */
 export interface TsdocSyntaxFinding {
   readonly line: number;
@@ -25,6 +27,8 @@ const docBlockPattern = /^[ \t]*\/\*\*[\s\S]*?\*\//gm;
 
 /**
  * Every TSDoc grammar diagnostic in a file's doc blocks, in source order.
+ *
+ * @since 0.6.0
  */
 export function scanTsdocSyntax(content: string): Array<TsdocSyntaxFinding> {
   const findings: Array<TsdocSyntaxFinding> = [];

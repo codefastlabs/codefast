@@ -150,5 +150,7 @@ const EMPTY_BINDINGS: ReadonlyArray<Binding<unknown>> = [];
  * Absent scoped entry — distinguishes it from a cached `undefined`.
  *
  * @remarks A `unique symbol`, so no value a caller could cache can ever equal it.
+ *
+ * @since 0.6.0
  */
 export const SCOPED_MISS: unique symbol = Symbol("di:scoped-miss");

@@ -1,5 +1,111 @@
 # @codefast/benchmark-harness
 
+## 0.6.0
+
+### Minor Changes
+
+- [#724](https://github.com/codefastlabs/codefast/pull/724) [`1a8c0f3`](https://github.com/codefastlabs/codefast/commit/1a8c0f3d001ce2501b7008689c30439fb8b85b5d) Thanks [@thevuong](https://github.com/thevuong)! - Replace the `BENCH_FAST`/`BENCH_FULL` flag pair with `BENCH_MODE`, and parse every on/off key strictly.
+
+  The suite's env surface spelled two different things the same way: `BENCH_TRIALS=3` meant three trials, `BENCH_FAST=1`
+  meant true. Reading a manifest could not tell them apart, and every flag was read as `process.env[key] === "1"`, so
+  `BENCH_FAST=true`, `=yes`, `=on`, or a value carrying whitespace from a CI file all evaluated to false with no warning —
+  the harness ran a profile nobody asked for and nothing downstream could tell that from a real measurement.
+  `BENCH_TRIALS` and `BENCH_ONLY` already reported bad input; the booleans were the only keys that failed quietly.
+
+  On/off keys now accept `1`, `true`, `yes` or `on` in any case and throw on anything else instead of reading it as off.
+  The timing profile is `BENCH_MODE=fast|default|full`: one key with three values, where a flag per profile could express
+  a both-on state that has no meaning and needed a documented tiebreak. `BENCH_FAST` and `BENCH_FULL` are no longer read
+  and now throw pointing at their replacement, rather than being an env var that sets nothing while looking like it
+  selected a profile.
+
+  The repo's Turbo config also ran in strict env mode without listing `BENCH_ONLY` or `BENCH_ISOLATE` in `passThroughEnv`,
+  so both were dropped for any run started from the root — `BENCH_ONLY=<id> pnpm bench:isolate`, the single-row recipe in
+  `BENCH_GUIDE.md`, silently benched the entire suite. Both keys now pass through.
+
+- [#724](https://github.com/codefastlabs/codefast/pull/724) [`8fb6921`](https://github.com/codefastlabs/codefast/commit/8fb6921cdb0e15a1414302ef46663f8af2abe8c8) Thanks [@thevuong](https://github.com/thevuong)! - Derive the whole `BENCH_*` surface from one spec map, and close the five ways it could still fail quietly.
+
+  Each key used to declare how it was read at the place it was read, which left four different disciplines in one
+  namespace: flags threw on a bad value, `BENCH_TRIALS` warned and substituted the default, and `BENCH_PORT` plus the
+  alloc instrument's `OPERATIONS` went through a bare `Number()` with no check at all. `BENCH_ENV_SPECS` now states each
+  key's accepted values, who may set it, and which Turbo tasks must pass it through; the parsers, the strip list and the
+  drift test all derive from it.
+
+  - `BENCH_LIST` was an internal protocol key on a shared channel: setting it in the shell put every measuring child into
+    discovery mode, and the run exited 0 with a well-formed empty comparison that also overwrote `latest.md`. The parent
+    now strips internal keys from every inherited child environment and sets them per subprocess, and setting one by hand
+    is rejected.
+  - Numeric keys take digits only and are range-checked. `BENCH_PORT=` and `BENCH_PORT=0` resolved to `listen(0)`, a
+    random port; `BENCH_ALLOC_OPERATIONS=abc` (formerly `OPERATIONS`) made the loop run zero times and the instrument
+    report an allocating shape as allocation-free. `BENCH_TRIALS` no longer accepts `3abc` as 3 or reads `1e9` as 1, and
+    an out-of-range value throws instead of being replaced by the default.
+  - An unknown `BENCH_*` key is rejected. With values validated strictly, a misspelled key was the last way to ask for
+    something and be ignored — `BENCH_MODEE=fast` selected nothing and said nothing.
+  - The `BENCH_ONLY` subject guard moves into the harness as `assertSubjectMeasuredSomething`. It existed only in the DI
+    suite, so a mistyped id in the tailwind-variants suite produced the same empty-but-successful report.
+  - A test asserts `turbo.json` passes through every user-facing key and nothing else. That drift is what made
+    `BENCH_ONLY` and `BENCH_ISOLATE` silently ineffective from the repo root, and it was invisible until someone read the
+    config.
+
+  `OPERATIONS` and `SHAPE` are renamed `BENCH_ALLOC_OPERATIONS` and `BENCH_ALLOC_SHAPE`, so every knob the benchmarks read
+  lives in one namespace and is covered by the unknown-key check.
+
+- [#724](https://github.com/codefastlabs/codefast/pull/724) [`33e5d80`](https://github.com/codefastlabs/codefast/commit/33e5d804ae9ac5c9cb18228248781f285b58feeb) Thanks [@thevuong](https://github.com/thevuong)! - Write the comparison as `report.json`, and add `bench:list` for scenario ids.
+
+  A run produced two artifacts: `observations.jsonl`, which is raw per-trial data and already ideal for a machine, and
+  `report.md`, which holds every conclusion. The conclusions existed nowhere else — `buildComparisonRows` and
+  `summarizeComparison` return full objects with ratios, win/parity/loss classification, per-group geomeans and
+  reliability verdicts, and the run handed them to a renderer and dropped them. Reading a ratio back therefore meant
+  parsing a fixed-width markdown table whose figures are rounded to three significant figures, with `†`/`‡` glyphs
+  encoding thresholds only the renderer knows — lossy enough that a few-percent move is not recoverable.
+
+  `buildComparisonDocument` serialises what was already computed. `report.json` (mirrored to `latest.json`) carries the
+  environment, each library at its measured version, every row at full precision with the reliability verdicts resolved to
+  booleans, and the head-to-head summaries. It carries a `schemaVersion`, because run directories are kept for historical
+  comparison and a silently reinterpreted field is the failure that guards against. Two of these files are a plain dict
+  join, so "did this row move between runs" no longer requires reimplementing the aggregate layer.
+
+  `pnpm bench:list` prints the scenario ids as JSON on stdout, with the libraries implementing each row. Asking a suite
+  what rows it has previously meant driving the `BENCH_LIST` protocol key against a child entry by hand and regexing the
+  framed payload out of its stdout. The parent's progress logging moves to stderr so stdout carries the document alone —
+  no framing markers, no last-line heuristic.
+
+  `discoverBenchScenarioIds` replaces the discovery spawn both isolated runners had inlined, and
+  `buildBenchRunOutputPaths`/`writeBenchRunArtifacts` replace the run-directory layout and the six write calls each suite
+  had its own copy of.
+
+- [#724](https://github.com/codefastlabs/codefast/pull/724) [`6613976`](https://github.com/codefastlabs/codefast/commit/661397662480dd403a18f3a3fcb4117fafb9c43b) Thanks [@thevuong](https://github.com/thevuong)! - Record how a run was invoked, and stop a narrowed run from becoming `latest.*`.
+
+  `latest.*` is a mirror of the newest run, and it carried nothing about how that run was produced. A run filtered to one
+  row overwrote it and was indistinguishable from a whole suite except by counting rows — which only helps a reader who
+  already knows how many rows the suite has. Since `latest.*` is what CI diffs and what a published figure is checked
+  against, a smoke or narrowed pass could quietly become the suite's published state.
+
+  `report.json` now opens with a `run` block: `runId`, `mode`, `isolated`, `scenarioFilter`, `trialCount`, and
+  `scenariosMeasured` against `scenariosAvailable`. A filtered run writes its own directory and does not mirror, saying so
+  on stdout. A smoke run still mirrors, because `run.mode` is enough to tell it apart from a publishable one. `runOrder`
+  moves inside the block, and both it and `scenarioFilter` are explicit `null` rather than absent — `JSON.stringify` drops
+  an undefined property, and a reader cannot tell a key meaning "no filter" from one the writer forgot.
+
+  The run directory's basename becomes `runId` and is stamped once by the parent, so a `latest.*` mirror joins back to its
+  directory exactly. It previously had to be matched by nearest timestamp, because the name came from the parent while the
+  document's own timestamp came from a child a second or so earlier.
+
+  A child now reports every scenario id it collected rather than only in discovery mode, which is what lets the parent
+  know the suite's full row count in every profile. `schemaVersion` is 2.
+
+- [#723](https://github.com/codefastlabs/codefast/pull/723) [`2545cdb`](https://github.com/codefastlabs/codefast/commit/2545cdbd8dd54f9a5382bb480373f179a7e3821a) Thanks [@thevuong](https://github.com/thevuong)! - Make `BENCH_ONLY` a scenario filter the parent honours, so one row can be benched through the full report.
+
+  `BENCH_ONLY` was documented child-side and worked only there: `bench:isolate` discovered every scenario id before the
+  filter was applied and then overwrote the variable per worker, so an outer value was ignored and the whole suite ran. It
+  now accepts a comma-separated list and is read by both isolated runners, which makes
+  `BENCH_ONLY=<id> pnpm bench:isolate` a single-row run that is still interleaved and still citable — the lane that
+  removes any reason to swap a prebuilt `dist` under the runner, which fails silently because the run rebuilds from source
+  before its first sample.
+
+  A library implementing none of the requested ids now measures nothing and reads `—` in the comparison, where it
+  previously threw `matched no collected scenario` and took every other library in the run down with it. Guarding against
+  a mistyped id moves to the suite, which is the only level that knows which library is the subject.
+
 ## 0.5.0
 
 ### Minor Changes

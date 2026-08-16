@@ -7,6 +7,8 @@ import { assertBenchEnvKeys } from "#/shared/env-keys";
  *
  * @remarks A row only some libraries have is legal, and it is what a `BENCH_ONLY` filter has to
  * account for — a library implementing none of the requested ids measures nothing rather than failing.
+ *
+ * @since 0.6.0
  */
 export interface BenchScenarioInventoryEntry {
   readonly id: string;
@@ -15,6 +17,8 @@ export interface BenchScenarioInventoryEntry {
 
 /**
  * Every scenario a suite collects, in report order.
+ *
+ * @since 0.6.0
  */
 export interface BenchScenarioInventory {
   readonly scenarioCount: number;
@@ -26,6 +30,8 @@ export interface BenchScenarioInventory {
  *
  * @param packageRootDirectory - The suite package the listing subprocesses spawn in.
  * @param configs - Subject first, so the inventory reads in report order rather than discovery order.
+ *
+ * @since 0.6.0
  */
 export async function buildBenchScenarioInventory(
   packageRootDirectory: string,
@@ -71,6 +77,8 @@ export async function buildBenchScenarioInventory(
  *
  * @remarks Discovery progress goes to stderr, so stdout is the JSON document alone and needs no
  * framing markers or last-line heuristic to read back.
+ *
+ * @since 0.6.0
  */
 export async function runBenchScenarioListingMain(
   packageRootDirectory: string,

@@ -117,6 +117,8 @@ export async function prepareLinkAudit(
  *
  * @remarks Defaults to the repo root: a divider convention that only holds inside one package
  * is not a convention.
+ *
+ * @since 0.6.0
  */
 export async function prepareCommentAudit(
   fs: FilesystemPort,

@@ -46,6 +46,8 @@ function markVerified(
  * @remarks Metadata cannot change once a class is defined, so re-checking per container would charge
  * every fresh container for a fact already established — a per-request child or a cold boot pays
  * that repeatedly.
+ *
+ * @since 0.6.0
  */
 export function verifyConstructorMetadata(
   reader: MetadataReader,
@@ -72,6 +74,8 @@ export function verifyConstructorMetadata(
  * resolve. Only what a consumer dereferences is checked: `params` and each entry's `token`.
  * `optional`/`multi` degrade to falsy without crashing, and `index` is decorative — dependencies are
  * consumed positionally.
+ *
+ * @since 0.6.0
  */
 export function assertConstructorMetadata(metadata: unknown, target: Constructor): ConstructorMetadata | undefined {
   if (metadata === undefined) {
@@ -103,7 +107,11 @@ export function assertConstructorMetadata(metadata: unknown, target: Constructor
   return metadata as ConstructorMetadata;
 }
 
-/** A reader's lifecycle metadata for a class, verified the first time this process asks. */
+/**
+ * A reader's lifecycle metadata for a class, verified the first time this process asks.
+ *
+ * @since 0.6.0
+ */
 export function verifyLifecycleMetadata(reader: MetadataReader, target: Constructor): LifecycleMetadata | undefined {
   const metadata = reader.getLifecycleMetadata(target);
   if (metadata === undefined || isVerified(verifiedLifecycleTargets, reader, target)) {
@@ -133,7 +141,11 @@ export function verifyLifecycleMetadata(reader: MetadataReader, target: Construc
   return metadata;
 }
 
-/** A reader's accessor metadata for a class, verified the first time this process asks. */
+/**
+ * A reader's accessor metadata for a class, verified the first time this process asks.
+ *
+ * @since 0.6.0
+ */
 export function verifyAccessorMetadata(
   reader: MetadataReader,
   target: Constructor,

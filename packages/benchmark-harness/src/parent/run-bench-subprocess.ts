@@ -275,6 +275,8 @@ function mergeIsolatedTrials(workerPayloads: ReadonlyArray<SubprocessPayload>): 
  *
  * @remarks Nothing is measured, so this is also the supported way to ask a suite what rows it has
  * without benching them — `BENCH_LIST` itself is a protocol key the parent owns.
+ *
+ * @since 0.6.0
  */
 export async function discoverBenchScenarioIds(
   parameters: RunBenchSubprocessParameters,

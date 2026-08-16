@@ -83,6 +83,9 @@ function buildClassChainScenario(descriptor: ScenarioDescriptor, depth: number, 
   };
 }
 
+/**
+ * @since 0.6.0
+ */
 export function buildCodefastPlanDepthScenarios(): ReadonlyArray<BenchScenario> {
   return [
     buildClassChainScenario(

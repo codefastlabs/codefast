@@ -68,6 +68,8 @@ export type LinkAuditResult = {
 
 /**
  * A section divider that does not match the repo's one allowed form. Always `--fix`-able.
+ *
+ * @since 0.6.0
  */
 export type DividerBreakage = {
   readonly line: number;
@@ -78,6 +80,8 @@ export type DividerBreakage = {
 
 /**
  * @see DividerBreakage
+ *
+ * @since 0.6.0
  */
 export type DividerFileBreakages = {
   readonly relativePath: string;
@@ -86,6 +90,8 @@ export type DividerFileBreakages = {
 
 /**
  * Outcome of one `audit comments` run. `fixedCount` stays `0` unless `--fix` was passed.
+ *
+ * @since 0.6.0
  */
 export type CommentAuditResult = {
   readonly files: Array<DividerFileBreakages>;

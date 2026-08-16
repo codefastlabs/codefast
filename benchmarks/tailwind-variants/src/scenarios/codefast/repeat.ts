@@ -33,6 +33,9 @@ function runSlotLoop(renderer: SlotsRenderer): void {
   }
 }
 
+/**
+ * @since 0.6.0
+ */
 export function buildCodefastRepeatScenarios(): ReadonlyArray<BenchScenario> {
   return [
     {

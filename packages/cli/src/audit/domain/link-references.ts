@@ -4,6 +4,8 @@
 
 /**
  * One `{@link}` occurrence found inside a comment.
+ *
+ * @since 0.6.0
  */
 export interface LinkReference {
   readonly line: number;
@@ -16,6 +18,8 @@ const commentLinePattern = /^[ \t]*(?:\/\/|\/\*|\*)/;
 
 /**
  * Every `{@link}` target in a file's comments, in source order.
+ *
+ * @since 0.6.0
  */
 export function scanLinkReferences(content: string): Array<LinkReference> {
   const references: Array<LinkReference> = [];
@@ -33,6 +37,8 @@ export function scanLinkReferences(content: string): Array<LinkReference> {
 
 /**
  * The identifier a declaration-style target must resolve through — `Foo.bar` resolves via `Foo`.
+ *
+ * @since 0.6.0
  */
 export function linkTargetHead(target: string): string {
   return target.split(/[.#]/, 1)[0]!;
@@ -40,6 +46,8 @@ export function linkTargetHead(target: string): string {
 
 /**
  * Whether a target names a file or URL rather than a declaration.
+ *
+ * @since 0.6.0
  */
 export function isPathLinkTarget(target: string): boolean {
   return (
@@ -52,6 +60,8 @@ export function isPathLinkTarget(target: string): boolean {
  *
  * @remarks A `{@link X}` occurrence itself mentions `X` once, so a target is orphaned when its
  * total mentions do not exceed its link occurrences — a rename removes every real mention.
+ *
+ * @since 0.6.0
  */
 export function countHeadMentions(contents: Iterable<string>, heads: ReadonlySet<string>): Map<string, number> {
   const counts = new Map<string, number>();

@@ -13,7 +13,11 @@ const RESOLUTION_SET_KEY: unique symbol = Symbol("di:resolution-set");
 export const RESOLUTION_SET_THRESHOLD = 32;
 type ResolutionStackWithSet = Array<ResolutionFrame> & { [RESOLUTION_SET_KEY]?: Set<BindingIdentifier> | undefined };
 
-/** The token names along a stack plus the frame that closed the cycle — built only to throw. */
+/**
+ * The token names along a stack plus the frame that closed the cycle — built only to throw.
+ *
+ * @since 0.6.0
+ */
 export function cycleNamesOf(resolutionStack: ReadonlyArray<ResolutionFrame>, closingName: string): Array<string> {
   const names = new Array<string>(resolutionStack.length + 1);
   for (let index = 0; index < resolutionStack.length; index += 1) {

@@ -1,5 +1,33 @@
 # @codefast/ui
 
+## 0.6.0
+
+### Patch Changes
+
+- [#701](https://github.com/codefastlabs/codefast/pull/701) [`710d533`](https://github.com/codefastlabs/codefast/commit/710d5332cff3244e6c1dbe9bb5e2bdccb9eec39c) Thanks [@thevuong](https://github.com/thevuong)! - `@codefast/tailwind-variants` now ships with no runtime dependencies of its own, matching what `tailwind-variants` has
+  always done. Two changes get it there.
+
+  `clsx` is gone, replaced by a flattener inside the package. It is deliberately identical, corners included: a `bigint`
+  contributes nothing despite being a `ClassValue`, and an object's keys are read with `for…in`, so an inherited
+  enumerable one counts. Verified by running the behaviour sweep — every configuration, every variant value, every slot,
+  with and without merging — against `main` and diffing: **zero difference across 118,505 outcomes**. The dependency was
+  only ever reached at compile time anyway, since resolution stopped calling it when the plan was introduced.
+
+  `ClassValue` is now declared here rather than re-exported from clsx, so the type survives the dependency leaving. Its
+  shape is unchanged except that `ClassDictionary` is `Record<string, unknown>` rather than clsx's `Record<string, any>` —
+  which means passing a **function** where a class value is expected is now a type error. It contributed nothing at
+  runtime either way.
+
+  `tailwind-merge` moves from a dependency to a **peer** (`>=3.0.0`). A consumer who pins their own version now gets one
+  copy at the version they chose, instead of a second one arriving underneath this package. Install it alongside —
+  `@codefast/ui` already does on your behalf.
+
+- [#700](https://github.com/codefastlabs/codefast/pull/700) [`8f48c7b`](https://github.com/codefastlabs/codefast/commit/8f48c7b81b8a1a1fcad8a6b62685381a2be48144) Thanks [@thevuong](https://github.com/thevuong)! - `ProgressCircle` no longer wraps its `progressCircleVariants(...)` call in `useMemo`. A variant function now remembers
+  what each selection resolved to, so the call already returns the same object for the same selection — the hook was
+  re-deriving a dependency array to guard a lookup.
+- Updated dependencies [[`ea48ae2`](https://github.com/codefastlabs/codefast/commit/ea48ae205305ee7913cf0ade11f3dc32f6cac874), [`fe7e9e4`](https://github.com/codefastlabs/codefast/commit/fe7e9e46c6f42b8ae0bc5070656e085a4fe60436), [`93b18ac`](https://github.com/codefastlabs/codefast/commit/93b18ac606e7fa6b5de95ca2679a38585c072e5c), [`710d533`](https://github.com/codefastlabs/codefast/commit/710d5332cff3244e6c1dbe9bb5e2bdccb9eec39c), [`d0dd326`](https://github.com/codefastlabs/codefast/commit/d0dd326e01d2bf3ecdf9283384bda22f07c2a6fe)]:
+  - @codefast/tailwind-variants@0.6.0
+
 ## 0.5.0
 
 ### Minor Changes

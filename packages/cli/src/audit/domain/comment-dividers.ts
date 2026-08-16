@@ -2,7 +2,11 @@
  * Recognises section dividers in source text and renders them in the one form the repo allows.
  */
 
-/** The column every divider's rule ends at — `oxfmt`'s `printWidth`, indentation included. */
+/**
+ * The column every divider's rule ends at — `oxfmt`'s `printWidth`, indentation included.
+ *
+ * @since 0.6.0
+ */
 export const DIVIDER_COLUMN = 120;
 
 const RULE_GLYPH = "─";
@@ -29,16 +33,22 @@ const MAX_TITLE_LENGTH = 60;
 
 /**
  * Which comment syntax a divider is written in.
+ *
+ * @since 0.6.0
  */
 export type DividerLanguage = "css" | "js";
 
 /**
  * Why a divider fails the convention. Both kinds are mechanical, so every report is one `--fix` away.
+ *
+ * @since 0.6.0
  */
 export type DividerDefectKind = "bad-width" | "legacy-form";
 
 /**
  * One divider found in a file, with the verdict on its form.
+ *
+ * @since 0.6.0
  */
 export interface DividerRegion {
   readonly startLine: number;
@@ -55,6 +65,8 @@ export interface DividerRegion {
  * @param indent - leading whitespace copied from the site, counted toward the column
  * @param title - the section name, already trimmed
  * @param language - which comment syntax to draw the divider in
+ *
+ * @since 0.6.0
  */
 export function renderDivider(indent: string, title: string, language: DividerLanguage): string {
   if (language === "css") {
@@ -70,6 +82,8 @@ export function renderDivider(indent: string, title: string, language: DividerLa
  *
  * @remarks A rule-framed comment that carries prose is a doc block, not a divider, and never
  * appears here — the two are different things and only one of them has a fixed form.
+ *
+ * @since 0.6.0
  */
 export function scanCommentDividers(content: string, language: DividerLanguage): Array<DividerRegion> {
   const lines = content.split(/\r?\n/);
@@ -89,6 +103,8 @@ export function scanCommentDividers(content: string, language: DividerLanguage):
 
 /**
  * Rewrites every off-convention divider into the canonical form.
+ *
+ * @since 0.6.0
  */
 export function applyCommentDividerFixes(
   content: string,

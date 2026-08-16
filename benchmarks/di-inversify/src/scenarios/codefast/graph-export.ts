@@ -93,6 +93,9 @@ function buildGenerateDependencyGraphScenario(): BenchScenario {
   };
 }
 
+/**
+ * @since 0.6.0
+ */
 export function buildCodefastGraphExportScenarios(): ReadonlyArray<BenchScenario> {
   return [buildGenerateDependencyGraphScenario()];
 }

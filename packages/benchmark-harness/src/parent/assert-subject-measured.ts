@@ -10,6 +10,8 @@ import type { TrialPayload } from "#/shared/protocol";
  *
  * @param subjectLibraryName - The library the suite is written to measure, named in the error.
  * @param subjectTrials - The subject's surviving trials; empty is the failure this guard names.
+ *
+ * @since 0.6.0
  */
 export function assertSubjectMeasuredSomething(
   subjectLibraryName: string,

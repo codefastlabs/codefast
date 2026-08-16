@@ -11,6 +11,8 @@ import type { ClassValue } from "#/types";
 /**
  * Classes a variant value contributes to named slots, each slot already resolved to its position
  * in the plan so that resolution distributes them by index rather than by key.
+ *
+ * @since 0.6.0
  */
 export interface SlotClassGroup {
   readonly classes: ReadonlyArray<string>;
@@ -19,6 +21,8 @@ export interface SlotClassGroup {
 
 /**
  * Flattened classes a compiled plan holds: one string, or one string per slot it names.
+ *
+ * @since 0.6.0
  */
 export type PlanClasses = SlotClassGroup | string;
 
@@ -27,6 +31,8 @@ export type PlanClasses = SlotClassGroup | string;
  *
  * @remarks Flattening each value separately matches flattening them together, because clsx joins
  * its arguments' contributions in order and drops the empty ones.
+ *
+ * @since 0.6.0
  */
 export const toClassText = (value: ClassValue): string => {
   return typeof value === "string" ? value : flattenClassValues([value]);
@@ -77,6 +83,8 @@ const toSlotClassGroup = (
  *
  * @remarks A `null` `slotIndexByName` says the configuration has no slots, so an object value is
  * clsx conditions rather than slot names.
+ *
+ * @since 0.6.0
  */
 export const toPlanClasses = (value: ClassValue, slotIndexByName: Record<string, number> | null): PlanClasses => {
   return slotIndexByName !== null && isSlotClassMap(value)
@@ -86,6 +94,8 @@ export const toPlanClasses = (value: ClassValue, slotIndexByName: Record<string,
 
 /**
  * The key a variant value selects inside its group, with booleans spelled as their group keys.
+ *
+ * @since 0.6.0
  */
 export const toVariantKey = (value: unknown): string | undefined => {
   if (value === true) {

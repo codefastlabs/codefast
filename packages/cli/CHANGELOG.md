@@ -1,5 +1,46 @@
 # @codefast/cli
 
+## 0.6.0
+
+### Minor Changes
+
+- [#698](https://github.com/codefastlabs/codefast/pull/698) [`9b24461`](https://github.com/codefastlabs/codefast/commit/9b24461ecaa3d64f3563880fcad1e21b73d9193c) Thanks [@thevuong](https://github.com/thevuong)! - `codefast audit links` — a read-only scan for markdown cross-references that resolve to nothing.
+
+  It reports three things: a relative path that does not exist, an in-document anchor with no matching heading or
+  `<a id>`, and an anchor into another document that the target does not offer. The third is why the command exists — a
+  wrong `#fragment` fails silently in a browser by scrolling to the top, so unlike a broken path it leaves no trace to
+  notice. Six such breakages had accumulated in this repo before anything looked.
+
+  External URLs are skipped as somebody else's to verify, and so are links inside fenced code, which are examples rather
+  than references. Exits non-zero when breakages remain, so it can gate CI; intentional exceptions go in
+  `audit.links.allowlist` as a bare target or `repo/relative/doc.md:target`.
+
+  The scan defaults to the repo root rather than a configured path. A link audit scoped to one package cannot see the
+  cross-package references, which are the ones most likely to rot.
+
+- [#727](https://github.com/codefastlabs/codefast/pull/727) [`c37da6f`](https://github.com/codefastlabs/codefast/commit/c37da6f671013dcf4307f031fd6518827d9a3a19) Thanks [@thevuong](https://github.com/thevuong)! - Teach `codefast audit comments` three TSDoc checks: a `{@link}` whose target has no mention outside links (a rename that
+  orphaned it), a `@param`/`@typeParam` missing the hyphen before its description, and a `@since` that is not the block's
+  last tag. The link check resolves against the scanned tree, so it runs on full-tree scans only.
+
+- [#727](https://github.com/codefastlabs/codefast/pull/727) [`5118ee2`](https://github.com/codefastlabs/codefast/commit/5118ee2517ec998ae7ded23112357bfcf3678e13) Thanks [@thevuong](https://github.com/thevuong)! - Enforce all-or-none `@param` coverage in `codefast audit comments`: a doc block naming any parameter must name every
+  parameter of that signature — a partial list reads as complete. The check parses the declaration's own parameter list,
+  skips destructured parameters it cannot match by name, and refuses to guess through wrapper calls like `useCallback`.
+
+- [#727](https://github.com/codefastlabs/codefast/pull/727) [`de713ad`](https://github.com/codefastlabs/codefast/commit/de713ad9b98df6e921982ce4228ca12cc2f8021c) Thanks [@thevuong](https://github.com/thevuong)! - Add `codefast audit comments`, which reports section dividers that are not in the repo's one allowed form and rewrites
+  them with `--fix`. A divider is a label and nothing else, so a rule-framed comment carrying prose is read as a doc block
+  and left alone; everything the audit does report is mechanical, which makes a red run one `--fix` from green.
+
+- [#727](https://github.com/codefastlabs/codefast/pull/727) [`5118ee2`](https://github.com/codefastlabs/codefast/commit/5118ee2517ec998ae7ded23112357bfcf3678e13) Thanks [@thevuong](https://github.com/thevuong)! - Run the official `@microsoft/tsdoc` parser over every doc block in `codefast audit comments`, reporting each grammar
+  diagnostic at its line — bare `@words`, unescaped braces, split code spans, indented fences — instead of approximating
+  the grammar with regexes. `@since` is registered as the repo's one custom tag.
+
+- [#727](https://github.com/codefastlabs/codefast/pull/727) [`fba2a39`](https://github.com/codefastlabs/codefast/commit/fba2a3992beb2e14ae3c1078fcdb4d45b6a124db) Thanks [@thevuong](https://github.com/thevuong)! - Teach `codefast audit comments` two content checks alongside the divider form: a comment that points at a repo document
+  (`see …*.md`) and JSDoc `{type}` payloads. Neither is `--fix`-able — the writer restates the invariant or lets the
+  declaration carry the type — so the report says which defects `--fix` covers.
+
+- [#727](https://github.com/codefastlabs/codefast/pull/727) [`5118ee2`](https://github.com/codefastlabs/codefast/commit/5118ee2517ec998ae7ded23112357bfcf3678e13) Thanks [@thevuong](https://github.com/thevuong)! - Teach `codefast audit comments` to catch a doc block detached from its declaration by a `//` run — TSDoc binds to the
+  nearest declaration, so the wedged comment silently orphans every tag above it.
+
 ## 0.5.0
 
 ### Patch Changes

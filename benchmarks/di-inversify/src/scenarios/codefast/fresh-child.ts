@@ -123,6 +123,9 @@ function buildFreshChildScenario(lane: FreshChildLane, resolvesPerChild: number)
   };
 }
 
+/**
+ * @since 0.6.0
+ */
 export function buildCodefastFreshChildScenarios(): ReadonlyArray<BenchScenario> {
   return FRESH_CHILD_LANES.flatMap((lane) =>
     RESOLVES_PER_CHILD.map((resolvesPerChild) => buildFreshChildScenario(lane, resolvesPerChild)),

@@ -21,6 +21,8 @@ type ConditionKind = typeof CONDITION_BOOLEAN | typeof CONDITION_LIST | typeof C
 /**
  * One `variant: value` test from a compound definition, with the configured default it falls
  * back to already resolved.
+ *
+ * @since 0.6.0
  */
 export interface CompoundCondition {
   readonly expected: unknown;
@@ -31,6 +33,8 @@ export interface CompoundCondition {
 
 /**
  * A compound variant reduced to the conditions to test and the classes to apply.
+ *
+ * @since 0.6.0
  */
 export interface CompoundPlanEntry {
   readonly classes: PlanClasses;
@@ -39,6 +43,8 @@ export interface CompoundPlanEntry {
 
 /**
  * A compound slot reduced to its conditions, its classes, and the slot positions they land on.
+ *
+ * @since 0.6.0
  */
 export interface CompoundSlotPlanEntry {
   readonly classes: string;
@@ -93,6 +99,8 @@ const compileConditions = (
  *
  * @remarks A `null` `slotIndexByName` says the configuration has no slots. `coerceMissingBoolean`
  * decides whether a boolean condition reads a value absent from both props and defaults as `false`.
+ *
+ * @since 0.6.0
  */
 export const compileCompoundVariants = <Variants extends VariantSchema>(
   compoundVariants: ReadonlyArray<CompoundVariant<Variants> | SlotCompoundVariant<Variants, never>> | undefined,
@@ -123,6 +131,8 @@ export const compileCompoundVariants = <Variants extends VariantSchema>(
 
 /**
  * Compile compound slots into condition lists paired with the slots they target.
+ *
+ * @since 0.6.0
  */
 export const compileCompoundSlots = <Variants extends VariantSchema>(
   compoundSlots: ReadonlyArray<CompoundSlot<Variants, never>> | undefined,
@@ -165,6 +175,8 @@ export const compileCompoundSlots = <Variants extends VariantSchema>(
  * Whether every condition holds, reading slot props first, then variant props, then the default.
  *
  * @remarks `slotProps` is `null` when the slot was called without props of its own.
+ *
+ * @since 0.6.0
  */
 export const matchesCompoundConditions = (
   conditions: ReadonlyArray<CompoundCondition>,
