@@ -1946,7 +1946,9 @@ Ten constraints, each taking configuration parameters and returning a predicate 
 >
 > **A slot name nobody declares:** `whenParentNamed`/`whenAnyAncestorNamed` expect a string, so a typo produces a
 > constraint that is never true and that nobody reports. `validate()` throws `UnreachableConstraintError` when no
-> binding anywhere in the container chain declares that slot name.
+> binding anywhere in the container chain declares that slot name. The requirement survives `when()` chaining: a
+> composed predicate carries both sides' requirements, so narrowing a helper-built constraint does not hide it from
+> `validate()`.
 
 The two negative forms returning `true` on absence are deliberate: "no parent is X" is trivially true when there is no
 parent at all. The two `…TaggedAll` forms are equivalent to AND-composing several individual criteria, but cost one

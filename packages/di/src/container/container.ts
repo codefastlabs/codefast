@@ -3,7 +3,7 @@ import { BindingChain } from "#/container/binding-builders";
 import type { Binding, BindingBuilder, BindToBuilder, ConstantBinding } from "#/core/binding";
 import { NO_INSTANCE } from "#/core/binding";
 import { effectiveBindingScope } from "#/core/binding-scope";
-import { constraintRequirementOf } from "#/core/constraint-requirement";
+import { constraintRequirementsOf } from "#/core/constraint-requirement";
 import type { AsyncModule, AsyncModuleBuilder, ModuleBuilder, SyncModule } from "#/core/module";
 import { isSyncModule, MODULE_SETUP } from "#/core/module";
 import { BindingRegistry } from "#/core/registry";
@@ -731,13 +731,15 @@ class DefaultContainer implements Container {
       if (predicate === undefined) {
         continue;
       }
-      const requirement = constraintRequirementOf(predicate);
-      if (requirement === undefined) {
+      const requirements = constraintRequirementsOf(predicate);
+      if (requirements.length === 0) {
         continue;
       }
       declaredSlotNames ??= this.#slotNamesInChain();
-      if (!declaredSlotNames.has(requirement.name)) {
-        throw new UnreachableConstraintError(tokenName(binding.token), requirement.name, requirement.helperName);
+      for (const requirement of requirements) {
+        if (!declaredSlotNames.has(requirement.name)) {
+          throw new UnreachableConstraintError(tokenName(binding.token), requirement.name, requirement.helperName);
+        }
       }
     }
   }
