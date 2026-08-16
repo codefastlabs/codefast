@@ -12,7 +12,7 @@ import { tokenName } from "#/core/token";
 import type { Constructor, ResolutionFrame, ResolveOptions } from "#/core/types";
 import { AsyncResolutionError } from "#/errors/errors";
 import type { DependencySlot } from "#/injection/resolve-options";
-import { injectionSlotToResolveOptions, isNameOnlyOptions, singleTagOnlyOf } from "#/injection/resolve-options";
+import { injectionSlotToResolveOptions, isNameOnlyOptions } from "#/injection/resolve-options";
 import type { ConstructorMetadata } from "#/metadata/metadata-types";
 
 // Past this depth a dependency escapes to the runtime path rather than inlining further —
@@ -270,7 +270,8 @@ export class InstantiationPlanCompiler {
         if (named !== null) {
           return this.#compileDepThunk(named, compileStack, depth, ancestors, options);
         }
-      } else if (singleTagOnlyOf(options) !== undefined) {
+      } else {
+        // The host owns the whole single-tag decision, including whether the options qualify.
         const tagged = this.#host.lookupPathIndependentTaggedEntry?.(token, options);
         if (tagged !== null && tagged !== undefined) {
           return this.#compileDepThunk(tagged, compileStack, depth, ancestors, options);
@@ -543,7 +544,8 @@ export class InstantiationPlanCompiler {
         if (named !== null) {
           return this.#compileAsyncDepThunk(named, compileStack, depth, ancestors, options);
         }
-      } else if (singleTagOnlyOf(options) !== undefined) {
+      } else {
+        // The host owns the whole single-tag decision, including whether the options qualify.
         const tagged = this.#host.lookupPathIndependentTaggedEntry?.(token, options);
         if (tagged !== null && tagged !== undefined) {
           return this.#compileAsyncDepThunk(tagged, compileStack, depth, ancestors, options);

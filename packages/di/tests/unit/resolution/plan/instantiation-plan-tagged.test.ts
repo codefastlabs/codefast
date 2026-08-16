@@ -178,6 +178,26 @@ describe("a tagged dependency inside a compiled plan", () => {
     expect(child.resolve(Root).driver).toBe("parent-primary");
   });
 
+  it("settles the tagged dependency on the async plan lane too", async () => {
+    const driverToken = token<string>("tagged-plan-async");
+
+    @injectable([inject(driverToken, { tag: Role.of("primary") })])
+    class Root {
+      constructor(readonly driver: string) {}
+    }
+
+    const container = Container.create();
+    container.bind(driverToken).toConstantValue("default-driver");
+    container.bind(driverToken).toConstantValue("primary-driver").whenTagged(Role.of("primary"));
+    container.bind(Root).toSelf().transient();
+
+    for (let index = 0; index < WARM_ITERATIONS; index += 1) {
+      await container.resolveAsync(Root);
+    }
+
+    expect((await container.resolveAsync(Root)).driver).toBe("primary-driver");
+  });
+
   it("keeps a two-tag dependency on the runtime path, resolved correctly", () => {
     const driverToken = token<string>("tagged-plan-two-tags");
 
