@@ -1,5 +1,13 @@
 # @codefast/benchmark-viewer
 
+## 0.6.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @codefast/benchmark-harness@0.6.2
+  - @codefast/tailwind-variants@0.6.2
+
 ## 0.6.1
 
 ### Patch Changes
