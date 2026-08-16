@@ -11,7 +11,7 @@
  *   plan-async-class-chain-8      an 8-step decorated class chain — a fully synchronous graph
  *                                 resolved through the async entry point
  */
-import type { Token } from "@codefast/di";
+import type { Constructor } from "@codefast/di";
 import { Container, injectable, token } from "@codefast/di";
 
 import type { ScenarioDescriptor } from "#/fixtures/scenario-parity";
@@ -72,7 +72,7 @@ function buildClassChainAsyncScenario(): AsyncBenchScenario {
     readonly depth = 0;
   }
 
-  let previousClass: Token<{ depth: number }> | (new () => { depth: number }) = Level0;
+  let previousClass: Constructor<{ depth: number }> = Level0;
   container.bind(Level0).toSelf().transient();
   for (let level = 1; level < ASYNC_CHAIN_DEPTH; level++) {
     const parent = previousClass;
@@ -89,7 +89,7 @@ function buildClassChainAsyncScenario(): AsyncBenchScenario {
     previousClass = LevelN;
   }
 
-  const rootClass = previousClass as new () => { depth: number };
+  const rootClass = previousClass;
   const expectedDepth = ASYNC_CHAIN_DEPTH - 1;
 
   return {
