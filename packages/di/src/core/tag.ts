@@ -95,22 +95,36 @@ export function tag<Value = unknown>(name: string): TagKey<Value> {
   const id = tagKeyCounter;
   const mask = (1 << (id % MASK_WIDTH)) as TagKeyMask;
   const interned = new Map<unknown, BindingTag<Value>>();
+  // One-entry cache in front of the intern map: an inline `.of()` at a call site usually repeats
+  // one value, and `Object.is` is the slot contract's own comparison, so a hit is exact — ±0 stay
+  // split and `NaN` hits itself, with no `internKeyFor` detour.
+  let lastValue: Value | undefined;
+  let lastPair: BindingTag<Value> | undefined;
 
   const key: TagKey<Value> = {
     name,
     id,
     mask,
     of(value: Value): BindingTag<Value> {
+      if (lastPair !== undefined && Object.is(value, lastValue)) {
+        return lastPair;
+      }
+
       const cacheKey = internKeyFor(value);
       const existing = interned.get(cacheKey);
 
       if (existing !== undefined) {
+        lastValue = value;
+        lastPair = existing;
+
         return existing;
       }
 
       const pair = { key, value, mask } as BindingTag<Value>;
 
       interned.set(cacheKey, pair);
+      lastValue = value;
+      lastPair = pair;
 
       return pair;
     },
