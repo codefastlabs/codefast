@@ -179,6 +179,30 @@ carry the types.**
   `ARCHITECTURE.md` as a rule, stated once. Scattered inline it becomes the sediment it was meant to prevent — and
   duplicating an architecture doc is what makes a package's comments read as accreted rather than designed.
 - **A module header is one sentence** naming what the module owns. Not a summary of its design.
+- **Section dividers have exactly one form, and it is one line.**
+
+  ```ts
+  // ── Component: Button ────────────────────────────────────────────────────────────────────────────────────────────────
+  ```
+
+  `//`, a space, `──` (U+2500 ×2), a space, the title, a space, then `─` padded so the line ends at **column 120** —
+  `printWidth`, counting indentation. CSS has no `//` and spells the same divider `/* ── Surfaces ──…── */`, ending at
+  the same column. Nothing else: not the three-line `/* ---- \n * Title \n * ---- */` banner, not `// ====`, not
+  `#region`. Two rule lines around a title carry no information the title does not, and a frame whose width nobody
+  checks drifts — this one is title-dependent, so `pnpm cli:audit:comments` checks it and `--fix` repads it. Nobody
+  counts dashes by hand. Everything the audit reports is mechanical, so a red run is always one `--fix` from green.
+
+- **A divider is not a doc block, and the rule reaches only the divider.** A divider is a label and nothing else: one
+  short noun phrase. The moment a comment carries prose — a module header naming what the file owns, an explanation
+  above a section — it is a doc block, whatever punctuation it happens to be drawn with, and neither this convention nor
+  `audit comments` says anything about its shape. That is why the audit reads a framed title as a divider to repad and a
+  framed paragraph as prose to leave alone. So: do not bolt a body onto a divider, and do not shave a doc block down to
+  fit one — write the divider, then the `/** … */` block under it, each doing its own job.
+- **A divider marks a family, not a symbol.** Use one only where a file renders several exported members of one family —
+  a component file with its sub-components, a theme stylesheet, an example script. A file with a single export gets
+  none, and the trees that carry none today (`di/src`, `tailwind-variants/src`, `cli/src`) stay that way; an outline the
+  editor already gives you is not worth a line of punctuation. The title is a noun phrase from the settled vocabulary —
+  `Component: X`, `Variant: X`, `Context: X`, `Props`, `Helpers`, `Exports` — never a sentence.
 - **Never put types in comments.** No `@param {string} x` / `@returns {T}` — TS already declares them, and a duplicated
   type just goes stale. Prefer omitting `@param`/`@returns` entirely. Add `@param name - …` (TSDoc style: a hyphen,
   **no** `{type}`) or `@typeParam T - …` only to document a non-obvious _meaning_ — units, an invariant, ownership — not
