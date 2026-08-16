@@ -4,9 +4,7 @@ import type { ComponentProps, JSX } from "react";
 import { Label } from "#/components/label";
 import { cn } from "#/lib/utils";
 
-/* -----------------------------------------------------------------------------
- * Component: RadioCards
- * -------------------------------------------------------------------------- */
+// ── Component: RadioCards ────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -20,9 +18,7 @@ function RadioCards(props: RadioCardsProps): JSX.Element {
   return <RadioGroupPrimitive.Root data-slot="radio-cards" {...props} />;
 }
 
-/* -----------------------------------------------------------------------------
- * Component: RadioCardsItem
- * -------------------------------------------------------------------------- */
+// ── Component: RadioCardsItem ────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -58,9 +54,7 @@ function RadioCardsItem({ children, className, ...props }: RadioCardsItemProps):
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Exports
- * -------------------------------------------------------------------------- */
+// ── Exports ──────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 export { RadioCards, RadioCardsItem };
 export type { RadioCardsItemProps, RadioCardsProps };

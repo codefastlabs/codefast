@@ -7,14 +7,14 @@
 
 import { Container, inject, injectable, optional, token } from "@codefast/di";
 
-// --- Tokens -----------------------------------------------------------------
+// ── Tokens ───────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 const ConfigToken = token<AppConfig>("AppConfig");
 const CacheToken = token<Cache>("Cache");
 const LoggerToken = token<Logger>("Logger");
 const UserServiceToken = token<UserService>("UserService");
 
-// --- Types ------------------------------------------------------------------
+// ── Types ────────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 interface AppConfig {
   dbUrl: string;
@@ -30,7 +30,7 @@ interface Logger {
   log(msg: string): void;
 }
 
-// --- Implementations --------------------------------------------------------
+// ── Implementations ──────────────────────────────────────────────────────────────────────────────────────────────────
 
 // @injectable declares constructor dependencies in order.
 // inject() marks a required dependency; optional() marks optional.
@@ -87,7 +87,7 @@ class UserService {
   }
 }
 
-// --- Container setup --------------------------------------------------------
+// ── Container setup ──────────────────────────────────────────────────────────────────────────────────────────────────
 
 const container = Container.create();
 
@@ -98,7 +98,7 @@ container.bind(Database).toSelf().singleton();
 container.bind(CacheToken).to(InMemoryCache).singleton();
 container.bind(UserServiceToken).to(UserService);
 
-// --- Usage ------------------------------------------------------------------
+// ── Usage ────────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 const userService = container.resolve(UserServiceToken);
 

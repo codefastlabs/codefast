@@ -13,7 +13,7 @@ import type {
 import type { BranchDepth, OwnedBranchStack } from "#/resolution/path/resolution-path";
 import { UNOWNED_BRANCH } from "#/resolution/path/resolution-path";
 
-// ── ResolutionContext implementation ──────────────────────────────────────────
+// ── ResolutionContext implementation ─────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0

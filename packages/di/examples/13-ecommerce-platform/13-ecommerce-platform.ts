@@ -82,7 +82,7 @@ import {
 } from "@codefast/di";
 
 // ============================================================================
-// ─── TOKENS ─────────────────────────────────────────────────────────────────
+// ── TOKENS ───────────────────────────────────────────────────────────────────────────────────────────────────────────
 // ============================================================================
 
 // Infrastructure
@@ -135,7 +135,7 @@ const AbTestServiceToken = token<AbTestService>("AbTestService"); // optional
 const CheckoutApplicationServiceToken = token<CheckoutApplicationService>("CheckoutApplicationService");
 
 // ============================================================================
-// ─── DOMAIN TYPES ───────────────────────────────────────────────────────────
+// ── DOMAIN TYPES ─────────────────────────────────────────────────────────────────────────────────────────────────────
 // ============================================================================
 
 interface AppConfig {
@@ -160,7 +160,7 @@ interface Logger {
   child(bindings: Record<string, unknown>): Logger;
 }
 
-// ---- Products ---------------------------------------------------------------
+// ── Products ─────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 interface Product {
   id: string;
@@ -198,7 +198,7 @@ interface PriceResult {
   appliedRules: Array<string>;
 }
 
-// ---- Cart -------------------------------------------------------------------
+// ── Cart ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 interface CartItem {
   productId: string;
@@ -228,7 +228,7 @@ interface CouponResult {
   reason?: string;
 }
 
-// ---- Orders -----------------------------------------------------------------
+// ── Orders ───────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 type OrderStatus =
   | "pending_payment"
@@ -285,7 +285,7 @@ interface ShippingQuote {
   cost: number;
 }
 
-// ---- Payments ---------------------------------------------------------------
+// ── Payments ─────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 type PaymentStatus = "pending" | "authorized" | "captured" | "failed" | "refunded";
 
@@ -299,7 +299,7 @@ interface PaymentIntent {
   metadata: Record<string, unknown>;
 }
 
-// ---- Users ------------------------------------------------------------------
+// ── Users ────────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 interface User {
   id: string;
@@ -332,7 +332,7 @@ interface UserSession {
   requestId: string;
 }
 
-// ---- Notifications ----------------------------------------------------------
+// ── Notifications ────────────────────────────────────────────────────────────────────────────────────────────────────
 
 interface NotificationPayload {
   userId: string;
@@ -350,7 +350,7 @@ interface NotificationResult {
   error?: string;
 }
 
-// ---- Analytics / A/B --------------------------------------------------------
+// ── Analytics / A/B ──────────────────────────────────────────────────────────────────────────────────────────────────
 
 interface TrackEvent {
   event: string;
@@ -365,10 +365,10 @@ interface AbVariant {
 }
 
 // ============================================================================
-// ─── INFRASTRUCTURE IMPLEMENTATIONS ─────────────────────────────────────────
+// ── INFRASTRUCTURE IMPLEMENTATIONS ───────────────────────────────────────────────────────────────────────────────────
 // ============================================================================
 
-// ---- Logger -----------------------------------------------------------------
+// ── Logger ───────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 class ConsoleLogger implements Logger {
   constructor(private readonly bindings: Record<string, unknown> = {}) {}
@@ -409,7 +409,7 @@ class EcommerceRootLogger extends ConsoleLogger {
   }
 }
 
-// ---- IdGenerator ------------------------------------------------------------
+// ── IdGenerator ──────────────────────────────────────────────────────────────────────────────────────────────────────
 
 @injectable()
 class UlidGenerator implements IdGenerator {
@@ -423,7 +423,7 @@ interface IdGenerator {
   generate(prefix?: string): string;
 }
 
-// ---- EventBus ---------------------------------------------------------------
+// ── EventBus ─────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 type EventHandler<T = unknown> = (event: T) => void | Promise<void>;
 
@@ -455,7 +455,7 @@ class InMemoryEventBus implements EventBus {
   }
 }
 
-// ---- Database ---------------------------------------------------------------
+// ── Database ─────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 interface Database {
   connect(): Promise<void>;
@@ -528,7 +528,7 @@ class MockDatabase implements Database {
   }
 }
 
-// ---- Redis ------------------------------------------------------------------
+// ── Redis ────────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 interface RedisClient {
   connect(): Promise<void>;
@@ -602,7 +602,7 @@ class MockRedis implements RedisClient {
   }
 }
 
-// ---- S3 Client --------------------------------------------------------------
+// ── S3 Client ────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 interface S3Client {
   getSignedUrl(key: string, expiresIn?: number): string;
@@ -625,7 +625,7 @@ class MockS3 implements S3Client {
   }
 }
 
-// ---- Elasticsearch ----------------------------------------------------------
+// ── Elasticsearch ────────────────────────────────────────────────────────────────────────────────────────────────────
 
 interface ElasticClient {
   index(indexName: string, id: string, document: unknown): Promise<void>;
@@ -661,7 +661,7 @@ class MockElastic implements ElasticClient {
 }
 
 // ============================================================================
-// ─── CATALOG DOMAIN ─────────────────────────────────────────────────────────
+// ── CATALOG DOMAIN ───────────────────────────────────────────────────────────────────────────────────────────────────
 // ============================================================================
 
 interface ProductRepository {
@@ -998,7 +998,7 @@ class ProductElasticsearchSearchService implements SearchService {
 }
 
 // ============================================================================
-// ─── CART DOMAIN ────────────────────────────────────────────────────────────
+// ── CART DOMAIN ──────────────────────────────────────────────────────────────────────────────────────────────────────
 // ============================================================================
 
 interface CartRepository {
@@ -1247,7 +1247,7 @@ class CouponManager implements CouponService {
 }
 
 // ============================================================================
-// ─── ORDER DOMAIN ────────────────────────────────────────────────────────────
+// ── ORDER DOMAIN ─────────────────────────────────────────────────────────────────────────────────────────────────────
 // ============================================================================
 
 interface OrderRepository {
@@ -1495,7 +1495,7 @@ class OrderManager implements OrderService {
 }
 
 // ============================================================================
-// ─── PAYMENT DOMAIN ─────────────────────────────────────────────────────────
+// ── PAYMENT DOMAIN ───────────────────────────────────────────────────────────────────────────────────────────────────
 // ============================================================================
 
 interface PaymentGateway {
@@ -1682,7 +1682,7 @@ class PaymentProcessor implements PaymentService {
 }
 
 // ============================================================================
-// ─── USER DOMAIN ─────────────────────────────────────────────────────────────
+// ── USER DOMAIN ──────────────────────────────────────────────────────────────────────────────────────────────────────
 // ============================================================================
 
 interface UserRepository {
@@ -1880,7 +1880,7 @@ class UserAccountService implements UserService {
 }
 
 // ============================================================================
-// ─── NOTIFICATION DOMAIN ────────────────────────────────────────────────────
+// ── NOTIFICATION DOMAIN ──────────────────────────────────────────────────────────────────────────────────────────────
 // ============================================================================
 
 interface NotificationChannel {
@@ -2248,7 +2248,7 @@ class CheckoutOrchestrator implements CheckoutApplicationService {
 }
 
 // ============================================================================
-// ─── ANALYTICS (optional integration) ───────────────────────────────────────
+// ── ANALYTICS (optional integration) ─────────────────────────────────────────────────────────────────────────────────
 // ============================================================================
 
 interface AnalyticsService {
@@ -2310,10 +2310,10 @@ class AbTestManager implements AbTestService {
 }
 
 // ============================================================================
-// ─── MODULES ─────────────────────────────────────────────────────────────────
+// ── MODULES ──────────────────────────────────────────────────────────────────────────────────────────────────────────
 // ============================================================================
 
-// ---- Infrastructure (async) -------------------------------------------------
+// ── Infrastructure (async) ───────────────────────────────────────────────────────────────────────────────────────────
 
 const InfrastructureModule = Module.createAsync("Infrastructure", async (builder) => {
   const config = await loadAppConfig();
@@ -2354,7 +2354,7 @@ const InfrastructureModule = Module.createAsync("Infrastructure", async (builder
   builder.bind(EventBusToken).to(InMemoryEventBus).singleton();
 });
 
-// ---- Catalog ----------------------------------------------------------------
+// ── Catalog ──────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 const CatalogModule = Module.create("Catalog", (builder) => {
   builder.bind(ProductRepoToken).to(ProductPostgresRepository).singleton();
@@ -2366,7 +2366,7 @@ const CatalogModule = Module.create("Catalog", (builder) => {
   builder.bind(SearchServiceToken).to(ProductElasticsearchSearchService).singleton();
 });
 
-// ---- Cart -------------------------------------------------------------------
+// ── Cart ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 const CartModule = Module.create("Cart", (builder) => {
   builder.import(CatalogModule);
@@ -2375,7 +2375,7 @@ const CartModule = Module.create("Cart", (builder) => {
   builder.bind(CartServiceToken).to(CartManager).singleton();
 });
 
-// ---- Orders -----------------------------------------------------------------
+// ── Orders ───────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 const ShippingModule = Module.create("Shipping", (builder) => {
   builder.bind(ShippingCarrierToken).to(FedExCarrier).whenNamed("fedex").singleton();
@@ -2390,7 +2390,7 @@ const OrderModule = Module.create("Orders", (builder) => {
   builder.bind(OrderServiceToken).to(OrderManager).singleton();
 });
 
-// ---- Payments ---------------------------------------------------------------
+// ── Payments ─────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 const PaymentModule = Module.create("Payments", (builder) => {
   builder.bind(PaymentGatewayToken).to(StripeGateway).whenNamed("stripe").singleton();
@@ -2399,7 +2399,7 @@ const PaymentModule = Module.create("Payments", (builder) => {
   builder.bind(PaymentServiceToken).to(PaymentProcessor).singleton();
 });
 
-// ---- Users ------------------------------------------------------------------
+// ── Users ────────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 const UserModule = Module.create("Users", (builder) => {
   builder.bind(UserRepoToken).to(UserPostgresRepository).singleton();
@@ -2409,7 +2409,7 @@ const UserModule = Module.create("Users", (builder) => {
   // SessionToken is scoped — bound per-request in child container
 });
 
-// ---- Notifications ----------------------------------------------------------
+// ── Notifications ────────────────────────────────────────────────────────────────────────────────────────────────────
 
 const NotificationModule = Module.create("Notifications", (builder) => {
   builder.bind(NotificationChannelToken).to(EmailChannel).whenNamed("email").singleton();
@@ -2418,14 +2418,14 @@ const NotificationModule = Module.create("Notifications", (builder) => {
   builder.bind(NotificationServiceToken).to(NotificationDispatcher).singleton();
 });
 
-// ---- Analytics (optional features) -----------------------------------------
+// ── Analytics (optional features) ────────────────────────────────────────────────────────────────────────────────────
 
 const AnalyticsModule = Module.create("Analytics", (builder) => {
   builder.bind(AnalyticsServiceToken).to(SegmentAnalyticsService).singleton();
   builder.bind(AbTestServiceToken).to(AbTestManager).singleton();
 });
 
-// ---- Root app module --------------------------------------------------------
+// ── Root app module ──────────────────────────────────────────────────────────────────────────────────────────────────
 
 const AppModule = Module.create("App", (builder) => {
   builder.import(CatalogModule, CartModule, OrderModule, UserModule, NotificationModule, AnalyticsModule);
@@ -2441,7 +2441,7 @@ const AppModule = Module.create("App", (builder) => {
 });
 
 // ============================================================================
-// ─── APPLICATION BOOTSTRAP & REQUEST HANDLING ───────────────────────────────
+// ── APPLICATION BOOTSTRAP & REQUEST HANDLING ─────────────────────────────────────────────────────────────────────────
 // ============================================================================
 
 async function bootstrap() {
@@ -2487,7 +2487,7 @@ async function bootstrap() {
   return container;
 }
 
-// ---- Per-request handler ----------------------------------------------------
+// ── Per-request handler ──────────────────────────────────────────────────────────────────────────────────────────────
 
 async function handleCheckoutRequest(
   rootContainer: ReturnType<typeof Container.create>,
@@ -2502,7 +2502,7 @@ async function handleCheckoutRequest(
 }
 
 // ============================================================================
-// ─── MAIN ────────────────────────────────────────────────────────────────────
+// ── MAIN ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
 // ============================================================================
 
 async function main(): Promise<void> {
@@ -2517,7 +2517,7 @@ async function main(): Promise<void> {
 
   platform.container = await bootstrap();
 
-  // ── Register user & simulate full customer journey ──────────────────────
+  // ── Register user & simulate full customer journey ─────────────────────────────────────────────────────────────────
 
   const userService = platform.container.resolve(UserServiceToken);
 
@@ -2558,19 +2558,19 @@ async function main(): Promise<void> {
   console.log("\n[Server] Processing 3 concurrent checkout requests...\n");
   await Promise.all(sessions.map((session) => handleCheckoutRequest(platform.container, session.requestId, session)));
 
-  // ── Browse catalog ─────────────────────────────────────────────────────
+  // ── Browse catalog ─────────────────────────────────────────────────────────────────────────────────────────────────
 
   console.log("\n[Catalog] Searching for 'running shoes'...");
   const searchService = platform.container.resolve(SearchServiceToken);
   const results = await searchService.search("running shoes", { brand: "Nike" });
   console.log(`[Catalog] Found ${results.length} results`);
 
-  // ── Dependency graph ──────────────────────────────────────────────────
+  // ── Dependency graph ───────────────────────────────────────────────────────────────────────────────────────────────
   const dot = toDotGraph(platform.container.generateDependencyGraph());
   const lineCount = dot.split("\n").length;
   console.log(`\n[Graph] Dependency graph: ${lineCount} lines (paste at graphviz.org to visualize)`);
 
-  // ── Container snapshot ────────────────────────────────────────────────
+  // ── Container snapshot ─────────────────────────────────────────────────────────────────────────────────────────────
   const snapshot = platform.container.inspect();
   console.log(`[Inspect] Total bindings registered: ${snapshot.ownBindings.length}`);
 
@@ -2585,7 +2585,7 @@ async function main(): Promise<void> {
 main().catch(console.error);
 
 // ============================================================================
-// ─── UTILITIES & FAKE DATA BUILDERS ─────────────────────────────────────────
+// ── UTILITIES & FAKE DATA BUILDERS ───────────────────────────────────────────────────────────────────────────────────
 // ============================================================================
 
 function delay(ms: number): Promise<void> {

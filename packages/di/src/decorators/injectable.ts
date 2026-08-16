@@ -4,7 +4,7 @@ import { normalizeToDescriptor } from "#/injection/descriptor";
 import { INJECTABLE_KEY } from "#/metadata/metadata-keys";
 import type { ParamMetadata } from "#/metadata/metadata-types";
 
-// ── AutoRegisterRegistry ──────────────────────────────────────────────────────
+// ── AutoRegisterRegistry ─────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -29,7 +29,7 @@ export function createAutoRegisterRegistry(): AutoRegisterRegistry {
   };
 }
 
-// ── InjectableOptions ─────────────────────────────────────────────────────────
+// ── InjectableOptions ────────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -39,7 +39,7 @@ export interface InjectableOptions {
   scope?: BindingScope | undefined;
 }
 
-// ── @injectable() ─────────────────────────────────────────────────────────────
+// ── @injectable() ────────────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * The parameters a constructor is handed, given what its `deps` declare.

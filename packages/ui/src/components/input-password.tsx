@@ -4,9 +4,7 @@ import { useCallback, useState } from "react";
 
 import { InputGroup, InputGroupButton, InputGroupInput } from "#/components/input-group";
 
-/* -----------------------------------------------------------------------------
- * Component: InputPassword
- * -------------------------------------------------------------------------- */
+// ── Component: InputPassword ─────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -42,9 +40,7 @@ function InputPassword({ className, disabled, readOnly, ...props }: InputPasswor
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Exports
- * -------------------------------------------------------------------------- */
+// ── Exports ──────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 export { InputPassword };
 export type { InputPasswordProps };

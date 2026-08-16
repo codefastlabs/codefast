@@ -15,7 +15,7 @@ import type {
 import type { ScopeManager } from "#/lifecycle/scope-manager";
 import { selectAllBindings } from "#/resolution/select/binding-select";
 
-// ── Public types ──────────────────────────────────────────────────────────────
+// ── Public types ─────────────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -41,7 +41,7 @@ export interface ContainerSnapshot {
   readonly isDisposed: boolean;
 }
 
-// ── Inspector ─────────────────────────────────────────────────────────────────
+// ── Inspector ────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0

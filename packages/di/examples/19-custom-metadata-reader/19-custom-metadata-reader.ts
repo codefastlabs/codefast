@@ -24,14 +24,14 @@ import {
 } from "@codefast/di";
 import type { ConstructorMetadata, Constructor, LifecycleMetadata, MetadataReader } from "@codefast/di";
 
-// ── Tokens ───────────────────────────────────────────────────────────────────
+// ── Tokens ───────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 const ConfigToken = token<Config>("Config");
 const LoggerToken = token<Logger>("Logger");
 const PoolToken = token<LegacyPool>("Pool");
 const ReportServiceToken = token<ReportService>("ReportService");
 
-// ── Interfaces ───────────────────────────────────────────────────────────────
+// ── Interfaces ───────────────────────────────────────────────────────────────────────────────────────────────────────
 
 interface Config {
   dsn: string;
@@ -41,7 +41,7 @@ interface Logger {
   log(message: string): void;
 }
 
-// ── Classes the container must wire ──────────────────────────────────────────
+// ── Classes the container must wire ──────────────────────────────────────────────────────────────────────────────────
 
 /**
  * Stands in for a class from a dependency: no decorators, and you cannot add any.
@@ -88,7 +88,7 @@ class ReportService {
   }
 }
 
-// ── The metadata tables ──────────────────────────────────────────────────────
+// ── The metadata tables ──────────────────────────────────────────────────────────────────────────────────────────────
 
 const constructorMetadata = new Map<Constructor, ConstructorMetadata>([
   [
@@ -126,9 +126,7 @@ class TableFirstMetadataReader implements MetadataReader {
   }
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// 1. Without a reader, an undecorated class is unresolvable
-// ─────────────────────────────────────────────────────────────────────────────
+// ── 1. Without a reader, an undecorated class is unresolvable ────────────────────────────────────────────────────────
 
 console.log("=== 1. The default reader only knows decorators ===");
 
@@ -238,9 +236,7 @@ try {
   }
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// 6. preDestroy from the table runs on dispose
-// ─────────────────────────────────────────────────────────────────────────────
+// ── 6. preDestroy from the table runs on dispose ─────────────────────────────────────────────────────────────────────
 
 console.log("\n=== 6. Teardown ===");
 

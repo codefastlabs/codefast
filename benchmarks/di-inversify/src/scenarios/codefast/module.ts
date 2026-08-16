@@ -20,7 +20,7 @@ import { Container, Module, token } from "@codefast/di";
 import { MODULE_LOAD_UNLOAD } from "#/fixtures/scenario-parity";
 import type { BenchScenario } from "#/scenarios/types";
 
-// ─── shared tokens ────────────────────────────────────────────────────────────
+// ── shared tokens ────────────────────────────────────────────────────────────────────────────────────────────────────
 
 interface ModuleConfig {
   readonly env: string;
@@ -43,7 +43,7 @@ const moduleLoggerToken = token<ModuleLogger>("bench-cf-mod-logger");
 const moduleDbToken = token<ModuleDb>("bench-cf-mod-db");
 const moduleServiceToken = token<ModuleService>("bench-cf-mod-service");
 
-// ─── scenario 1: module load → resolve → unload per iteration ─────────────────
+// ── scenario 1: module load → resolve → unload per iteration ─────────────────────────────────────────────────────────
 
 function buildModuleLoadUnloadScenario(): BenchScenario {
   const infraModule = Module.create("bench-infra", (builder) => {
@@ -97,7 +97,7 @@ function buildModuleLoadUnloadScenario(): BenchScenario {
   };
 }
 
-// ─── scenario 2: Container.fromModules cold start ─────────────────────────────
+// ── scenario 2: Container.fromModules cold start ─────────────────────────────────────────────────────────────────────
 
 function buildModuleColdFromModulesScenario(): BenchScenario {
   const infraModule = Module.create("bench-infra-cold", (builder) => {

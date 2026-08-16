@@ -11,7 +11,7 @@
 
 import { Container, inject, injectable, optional, token } from "@codefast/di";
 
-// --- Tokens -----------------------------------------------------------------
+// ── Tokens ───────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 const LoggerToken = token<Logger>("Logger");
 const AbstractLoggerToken = token<Logger>("AbstractLogger");
@@ -20,7 +20,7 @@ const MailerToken = token<Mailer>("Mailer");
 const NotifierToken = token<Notifier>("Notifier");
 const PluginToken = token<Plugin>("Plugin");
 
-// --- Types ------------------------------------------------------------------
+// ── Types ────────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 interface Logger {
   log(msg: string): void;
@@ -44,7 +44,7 @@ interface Plugin {
   run(): void;
 }
 
-// --- Implementations --------------------------------------------------------
+// ── Implementations ──────────────────────────────────────────────────────────────────────────────────────────────────
 
 class ConsoleLogger implements Logger {
   log(msg: string): void {

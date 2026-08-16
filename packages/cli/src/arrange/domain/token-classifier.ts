@@ -185,7 +185,7 @@ export function compositeSecondaryOrder(bareUtility: string): number {
 function classifyBareUtility(bareUtility: string): Bucket {
   const b = bareUtility;
 
-  // --- Existence: display roots, containment, named groups/peers ---
+  // ── Existence: display roots, containment, named groups/peers ──────────────────────────────────────────────────────
   if (/^@container(?:\/[a-z][a-z0-9-]*)?$/i.test(b)) {
     return "existence";
   }
@@ -205,7 +205,7 @@ function classifyBareUtility(bareUtility: string): Bucket {
     return "existence";
   }
 
-  // --- Position ---
+  // ── Position ───────────────────────────────────────────────────────────────────────────────────────────────────────
   if (/^(?:static|relative|absolute|fixed|sticky)$/.test(b)) {
     return "position";
   }
@@ -219,7 +219,7 @@ function classifyBareUtility(bareUtility: string): Bucket {
     return "position";
   }
 
-  // --- Layout ---
+  // ── Layout ─────────────────────────────────────────────────────────────────────────────────────────────────────────
   if (
     /^(?:flex|inline-flex|grid|inline-grid|subgrid|masonry)(?:$|-)/.test(b) ||
     /^(?:items|justify|justify-items|justify-self|content|self|place|place-content|place-items|place-self)-/.test(b) ||
@@ -233,7 +233,7 @@ function classifyBareUtility(bareUtility: string): Bucket {
     return "layout";
   }
 
-  // --- Sizing ---
+  // ── Sizing ─────────────────────────────────────────────────────────────────────────────────────────────────────────
   if (
     /^-?(?:w|h|min-w|max-w|min-h|max-h|size|aspect|shrink|grow|basis)-/.test(b) ||
     /^(?:shrink|grow)(?:$|-)/.test(b) ||
@@ -243,12 +243,12 @@ function classifyBareUtility(bareUtility: string): Bucket {
     return "sizing";
   }
 
-  // --- Spacing (margin / padding only; gap lives in layout) ---
+  // ── Spacing (margin / padding only; gap lives in layout) ───────────────────────────────────────────────────────────
   if (/^-?(?:p|px|py|pt|pb|pl|pr|ps|pe|m|mx|my|mt|mb|ml|mr|ms|me)-/.test(b)) {
     return "spacing";
   }
 
-  // --- Shape & border (no `outline-*` — see Shadow; outline paints in the overlay pass) ---
+  // ── Shape & border (no `outline-*` — see Shadow; outline paints in the overlay pass) ───────────────────────────────
   if (
     /^-?(?:rounded|border|ring|divide|inset-ring)(?:-|\/|$)/.test(b) ||
     /^(?:rounded|border|ring|divide|inset-ring)$/.test(b) ||
@@ -257,7 +257,7 @@ function classifyBareUtility(bareUtility: string): Bucket {
     return "shape";
   }
 
-  // --- Background & fill ---
+  // ── Background & fill ──────────────────────────────────────────────────────────────────────────────────────────────
   if (
     /^-?bg-/.test(b) ||
     /^(?:from|via|to)(?:-|\/|$)/.test(b) ||
@@ -268,7 +268,7 @@ function classifyBareUtility(bareUtility: string): Bucket {
     return "background";
   }
 
-  // --- Shadow & depth (includes `outline-*` — same paint phase as box-shadow overlay) ---
+  // ── Shadow & depth (includes `outline-*` — same paint phase as box-shadow overlay) ─────────────────────────────────
   if (
     /^-?(?:shadow|inset-shadow|drop-shadow|text-shadow)(?:-|\/|$)/.test(b) ||
     /^(?:shadow|inset-shadow)$/.test(b) ||
@@ -278,7 +278,7 @@ function classifyBareUtility(bareUtility: string): Bucket {
     return "shadow";
   }
 
-  // --- Typography ---
+  // ── Typography ─────────────────────────────────────────────────────────────────────────────────────────────────────
   if (
     /^-?(?:font|leading|tracking|list|indent|align|decoration|underline-offset|text-wrap|text-balance|text-pretty)-/.test(
       b,
@@ -294,7 +294,7 @@ function classifyBareUtility(bareUtility: string): Bucket {
     return "typography";
   }
 
-  // --- Composite & transforms (GPU / filter stack) ---
+  // ── Composite & transforms (GPU / filter stack) ────────────────────────────────────────────────────────────────────
   if (
     /^opacity(?:-|$)/.test(b) ||
     b.startsWith("mix-blend-") ||
@@ -319,12 +319,12 @@ function classifyBareUtility(bareUtility: string): Bucket {
     return "composite";
   }
 
-  // --- Motion ---
+  // ── Motion ─────────────────────────────────────────────────────────────────────────────────────────────────────────
   if (/^(?:transition|duration|ease|delay|animate)(?:-|$)/.test(b) || b.startsWith("ease-")) {
     return "motion";
   }
 
-  // --- Behavior & interaction ---
+  // ── Behavior & interaction ─────────────────────────────────────────────────────────────────────────────────────────
   if (
     /^(?:cursor|pointer-events|select|touch|scroll|scroll-m|scroll-p|overscroll|snap|resize|field-sizing|appearance|scheme|color-scheme|accent|caret)(?:-|$)/.test(
       b,

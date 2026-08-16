@@ -1,9 +1,7 @@
 import type { VariantProps } from "#/lib/utils";
 import { tv } from "#/lib/utils";
 
-/* -----------------------------------------------------------------------------
- * Variant: SidebarMenuButton
- * -------------------------------------------------------------------------- */
+// ── Variant: SidebarMenuButton ───────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -33,9 +31,7 @@ const sidebarMenuButtonVariants = tv({
  */
 type SidebarMenuButtonVariants = VariantProps<typeof sidebarMenuButtonVariants>;
 
-/* -----------------------------------------------------------------------------
- * Exports
- * -------------------------------------------------------------------------- */
+// ── Exports ──────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 export { sidebarMenuButtonVariants };
 export type { SidebarMenuButtonVariants };

@@ -28,7 +28,7 @@ import type { BenchScenario } from "#/scenarios/types";
 const OPTIONAL_GET = { optional: true } as const;
 const TARGET_TAG_GET = { tag: { key: "env", value: TARGET_TAG_VALUE } } as const;
 
-// ─── scenario 1: optional get — hit ──────────────────────────────────────────
+// ── scenario 1: optional get — hit ───────────────────────────────────────────────────────────────────────────────────
 
 const optionalHitId = Symbol("bench-inv-rp-optional-hit");
 
@@ -50,7 +50,7 @@ function buildGetOptionalHitScenario(): BenchScenario {
   };
 }
 
-// ─── scenario 2: optional get — miss ─────────────────────────────────────────
+// ── scenario 2: optional get — miss ──────────────────────────────────────────────────────────────────────────────────
 
 const optionalMissId = Symbol("bench-inv-rp-optional-miss");
 
@@ -71,7 +71,7 @@ function buildGetOptionalMissScenario(): BenchScenario {
   };
 }
 
-// ─── scenario 3: whenTagged binding selection ────────────────────────────────
+// ── scenario 3: whenTagged binding selection ─────────────────────────────────────────────────────────────────────────
 
 interface TaggedService {
   readonly env: string;

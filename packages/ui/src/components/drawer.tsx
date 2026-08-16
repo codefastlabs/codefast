@@ -5,9 +5,7 @@ import type { VariantProps } from "#/lib/utils";
 import { cn } from "#/lib/utils";
 import { buttonVariants } from "#/variants/button";
 
-/* -----------------------------------------------------------------------------
- * Component: Drawer
- * -------------------------------------------------------------------------- */
+// ── Component: Drawer ────────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -21,9 +19,7 @@ function Drawer({ shouldScaleBackground = true, ...props }: DrawerProps): JSX.El
   return <DrawerPrimitive.Root data-slot="drawer" shouldScaleBackground={shouldScaleBackground} {...props} />;
 }
 
-/* -----------------------------------------------------------------------------
- * Component: DrawerTrigger
- * -------------------------------------------------------------------------- */
+// ── Component: DrawerTrigger ─────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -37,9 +33,7 @@ function DrawerTrigger({ ...props }: DrawerTriggerProps): JSX.Element {
   return <DrawerPrimitive.Trigger data-slot="drawer-trigger" {...props} />;
 }
 
-/* -----------------------------------------------------------------------------
- * Component: DrawerContent
- * -------------------------------------------------------------------------- */
+// ── Component: DrawerContent ─────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -73,9 +67,7 @@ function DrawerContent({ children, className, ...props }: DrawerContentProps): J
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Component: DrawerHeader
- * -------------------------------------------------------------------------- */
+// ── Component: DrawerHeader ──────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -98,9 +90,7 @@ function DrawerHeader({ className, ...props }: DrawerHeaderProps): JSX.Element {
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Component: DrawerFooter
- * -------------------------------------------------------------------------- */
+// ── Component: DrawerFooter ──────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -114,9 +104,7 @@ function DrawerFooter({ className, ...props }: DrawerFooterProps): JSX.Element {
   return <div className={cn("mt-auto flex flex-col gap-2 p-4", className)} data-slot="drawer-footer" {...props} />;
 }
 
-/* -----------------------------------------------------------------------------
- * Component: DrawerTitle
- * -------------------------------------------------------------------------- */
+// ── Component: DrawerTitle ───────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -136,9 +124,7 @@ function DrawerTitle({ className, ...props }: DrawerTitleProps): JSX.Element {
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Component: DrawerDescription
- * -------------------------------------------------------------------------- */
+// ── Component: DrawerDescription ─────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -158,9 +144,7 @@ function DrawerDescription({ className, ...props }: DrawerDescriptionProps): JSX
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Component: DrawerClose
- * -------------------------------------------------------------------------- */
+// ── Component: DrawerClose ───────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -183,9 +167,7 @@ function DrawerClose({ className, size, variant, ...props }: DrawerCloseProps): 
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Exports
- * -------------------------------------------------------------------------- */
+// ── Exports ──────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 export {
   Drawer,

@@ -1,9 +1,7 @@
 import type { VariantProps } from "#/lib/utils";
 import { tv } from "#/lib/utils";
 
-/* -----------------------------------------------------------------------------
- * Style: NavigationMenuTrigger
- * -------------------------------------------------------------------------- */
+// ── Style: NavigationMenuTrigger ─────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -17,9 +15,7 @@ const navigationMenuTriggerVariants = tv({
  */
 type NavigationMenuTriggerVariants = VariantProps<typeof navigationMenuTriggerVariants>;
 
-/* -----------------------------------------------------------------------------
- * Exports
- * -------------------------------------------------------------------------- */
+// ── Exports ──────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 export { navigationMenuTriggerVariants };
 export type { NavigationMenuTriggerVariants };

@@ -23,13 +23,13 @@ import {
   token,
 } from "@codefast/di";
 
-// ── Tokens ───────────────────────────────────────────────────────────────────
+// ── Tokens ───────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 const ClockToken = token<Clock>("Clock");
 const TransportToken = token<Transport>("Transport");
 const RequestIdToken = token<string>("RequestId");
 
-// ── Interfaces ───────────────────────────────────────────────────────────────
+// ── Interfaces ───────────────────────────────────────────────────────────────────────────────────────────────────────
 
 interface Clock {
   now(): string;
@@ -39,7 +39,7 @@ interface Transport {
   send(message: string): void;
 }
 
-// ── Implementations ──────────────────────────────────────────────────────────
+// ── Implementations ──────────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * Constructor injection only, so the container never opens a context for it.
@@ -72,7 +72,7 @@ class Notifier {
   }
 }
 
-// ── Bootstrap ────────────────────────────────────────────────────────────────
+// ── Bootstrap ────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 const container = Container.create();
 
@@ -115,9 +115,7 @@ console.log("Notifier during @postConstruct:  ", notifier.contextDuringPostConst
 // @postConstruct runs after construction returns, so the context has already closed — the
 // accessors are set by then, which is what the hook actually needs.
 
-// ─────────────────────────────────────────────────────────────────────────────
-// 3. Constructing by hand with no context open
-// ─────────────────────────────────────────────────────────────────────────────
+// ── 3. Constructing by hand with no context open ─────────────────────────────────────────────────────────────────────
 
 console.log("\n=== 3. new Notifier() with no context ===");
 

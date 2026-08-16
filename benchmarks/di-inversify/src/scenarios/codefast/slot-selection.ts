@@ -59,7 +59,7 @@ function buildTaggedContainer(): Container {
   return container;
 }
 
-// ── 2×2: request form × literal placement ────────────────────────────────────
+// ── 2×2: request form × literal placement ────────────────────────────────────────────────────────────────────────────
 
 // One container behind all four, so the request shape is the only thing that differs.
 const matrixContainer = buildTaggedContainer();
@@ -134,7 +134,7 @@ function buildShorthandInlineScenario(): BenchScenario {
   };
 }
 
-// ── Zero-valued tag: the one value the index and the matcher disagree on ─────
+// ── Zero-valued tag: the one value the index and the matcher disagree on ─────────────────────────────────────────────
 
 interface NumberedService {
   readonly level: number;
@@ -167,7 +167,7 @@ function buildZeroValueScenario(): BenchScenario {
   };
 }
 
-// ── Name + tag: a request no single index can answer ─────────────────────────
+// ── Name + tag: a request no single index can answer ─────────────────────────────────────────────────────────────────
 
 const namedTaggedToken = token<TaggedService>("bench-cf-slot-named-tagged-service");
 const NAMED_TAG_NAME = "primary";
@@ -197,7 +197,7 @@ function buildNameAndTagScenario(): BenchScenario {
   };
 }
 
-// ── resolveAll over a tagged token ───────────────────────────────────────────
+// ── resolveAll over a tagged token ───────────────────────────────────────────────────────────────────────────────────
 
 function buildResolveAllScenario(): BenchScenario {
   const container = buildTaggedContainer();
@@ -222,7 +222,7 @@ function buildResolveAllScenario(): BenchScenario {
   };
 }
 
-// ── Tagged miss: the lane a failed slot request pays ─────────────────────────
+// ── Tagged miss: the lane a failed slot request pays ─────────────────────────────────────────────────────────────────
 
 const MISSING_TAGS: ReadonlyArray<BindingTag> = [ENV_TAG.of("no-such-env")];
 
@@ -248,7 +248,7 @@ function buildMissOptionalScenario(): BenchScenario {
   };
 }
 
-// ── Parent-owned slot: repeated resolves from a long-lived child ─────────────
+// ── Parent-owned slot: repeated resolves from a long-lived child ─────────────────────────────────────────────────────
 //
 // The child is built once, outside `batched`, on purpose: these price a warm chain walk against a
 // warm memo. A per-request child disposes before a second resolve reaches either — a different
@@ -312,7 +312,7 @@ function buildNamedParentOwnedScenario(): BenchScenario {
   };
 }
 
-// ── Injected slots: the lane every request-side row above misses ─────────────
+// ── Injected slots: the lane every request-side row above misses ─────────────────────────────────────────────────────
 
 interface InjectedLeaf {
   readonly id: string;

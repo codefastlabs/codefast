@@ -48,9 +48,7 @@
 
 import { Container, inject, injectable, Module, token } from "@codefast/di";
 
-// ============================================================================
-// Core contracts
-// ============================================================================
+// ── Core contracts ───────────────────────────────────────────────────────────────────────────────────────────────────
 
 const AppConfigToken = token<AppConfig>("AppConfig");
 const AppLoggerToken = token<AppLogger>("AppLogger");
@@ -62,9 +60,7 @@ const DocumentServiceToken = token<DocumentService>("DocumentService");
 // PluginToken is a multi-binding registry with one named slot per capability.
 const PluginToken = token<PluginDescriptor>("Plugin");
 
-// ============================================================================
-// Shared types
-// ============================================================================
+// ── Shared types ─────────────────────────────────────────────────────────────────────────────────────────────────────
 
 interface AppConfig {
   readonly env: "development" | "production";
@@ -123,9 +119,7 @@ const CoreModule = Module.create("Core", (builder) => {
   });
 });
 
-// ============================================================================
-// S3 Storage plugin
-// ============================================================================
+// ── S3 Storage plugin ────────────────────────────────────────────────────────────────────────────────────────────────
 
 class S3StorageProvider implements StorageProvider {
   readonly name = "s3";
@@ -179,9 +173,7 @@ const S3PluginModule = Module.createAsync("S3Plugin", async (builder) => {
     });
 });
 
-// ============================================================================
-// Analytics plugin — Segment-style batched event tracking
-// ============================================================================
+// ── Analytics plugin — Segment-style batched event tracking ──────────────────────────────────────────────────────────
 
 class SegmentAnalyticsProvider implements AnalyticsProvider {
   readonly name = "segment";
@@ -230,9 +222,7 @@ const AnalyticsPluginModule = Module.createAsync("AnalyticsPlugin", async (build
     });
 });
 
-// ============================================================================
-// Notification plugin — Slack webhooks
-// ============================================================================
+// ── Notification plugin — Slack webhooks ─────────────────────────────────────────────────────────────────────────────
 
 class SlackNotificationProvider implements NotificationProvider {
   readonly name = "slack";
@@ -344,9 +334,7 @@ const LocalStoragePluginModule = Module.createAsync("LocalStoragePlugin", async 
     .singleton();
 });
 
-// ============================================================================
-// Platform — the plugin host
-// ============================================================================
+// ── Platform — the plugin host ───────────────────────────────────────────────────────────────────────────────────────
 
 class Platform {
   private container!: Container;
@@ -465,15 +453,13 @@ class Platform {
   }
 }
 
-// ============================================================================
-// Main
-// ============================================================================
+// ── Main ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 async function main(): Promise<void> {
   const platform = new Platform();
   await platform.boot();
 
-  // --- Normal operation -------------------------------------------------------
+  // ── Normal operation ───────────────────────────────────────────────────────────────────────────────────────────────
   console.log("\n📋 Normal operation (S3 storage):");
   await platform.runWithDocumentService(async (documentService) => {
     const uploadedUrl = await documentService.uploadDocument(
@@ -489,7 +475,7 @@ async function main(): Promise<void> {
 
   await platform.flushAnalytics();
 
-  // --- Hot-swap storage plugin at runtime ------------------------------------
+  // ── Hot-swap storage plugin at runtime ─────────────────────────────────────────────────────────────────────────────
   // The analytics and notification plugins stay untouched.
   // DocumentService automatically gets the new storage backend.
   await platform.hotSwapStoragePlugin(LocalStoragePluginModule, {

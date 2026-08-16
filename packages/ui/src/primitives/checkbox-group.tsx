@@ -6,9 +6,7 @@ import { useControllableState } from "radix-ui/internal";
 import type { ComponentProps, JSX } from "react";
 import { useCallback } from "react";
 
-/* -----------------------------------------------------------------------------
- * Context: CheckboxGroup
- * --------------------------------------------------------------------------- */
+// ── Context: CheckboxGroup ───────────────────────────────────────────────────────────────────────────────────────────
 
 const CHECKBOX_GROUP_NAME = "CheckboxGroup";
 
@@ -70,9 +68,7 @@ interface CheckboxGroupContextValue {
 const [CheckboxGroupContextProvider, useCheckboxGroupContext] =
   createCheckboxGroupContext<CheckboxGroupContextValue>(CHECKBOX_GROUP_NAME);
 
-/* -----------------------------------------------------------------------------
- * Component: CheckboxGroup
- * --------------------------------------------------------------------------- */
+// ── Component: CheckboxGroup ─────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * Base props for the CheckboxGroup component
@@ -218,9 +214,7 @@ function CheckboxGroup({
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Component: CheckboxGroupItem
- * --------------------------------------------------------------------------- */
+// ── Component: CheckboxGroupItem ─────────────────────────────────────────────────────────────────────────────────────
 const ITEM_NAME = "CheckboxGroupItem";
 
 /**
@@ -300,9 +294,7 @@ function CheckboxGroupItem({
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Component: CheckboxGroupIndicator
- * --------------------------------------------------------------------------- */
+// ── Component: CheckboxGroupIndicator ────────────────────────────────────────────────────────────────────────────────
 
 /**
  * Props for the CheckboxGroupIndicator component
@@ -328,9 +320,7 @@ function CheckboxGroupIndicator({
   return <CheckboxPrimitive.Indicator {...checkboxScope} {...props} />;
 }
 
-/* -----------------------------------------------------------------------------
- * Exports
- * -------------------------------------------------------------------------- */
+// ── Exports ──────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 export {
   CheckboxGroup,

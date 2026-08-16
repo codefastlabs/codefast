@@ -11,9 +11,7 @@
 }
 
 @theme inline {
-  /* ----------------------------------------------------------------------
-   * Typography
-   * ---------------------------------------------------------------------- */
+  /* ── Typography ────────────────────────────────────────────────────────────────────────────────────────────────── */
 
   /* Bridge the app-owned raw vars into the font-* utilities; fall back to sane
      stacks so a consumer that forgets one degrades gracefully instead of
@@ -22,9 +20,7 @@
   --font-heading: var(--font-heading, var(--font-sans, ui-sans-serif, system-ui, sans-serif));
   --font-mono: var(--font-mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace);
 
-  /* ----------------------------------------------------------------------
-   * Surfaces & semantic colors
-   * ---------------------------------------------------------------------- */
+  /* ── Surfaces & semantic colors ────────────────────────────────────────────────────────────────────────────────── */
 
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -49,17 +45,13 @@
   --color-card: var(--card);
   --color-card-foreground: var(--card-foreground);
 
-  /* ----------------------------------------------------------------------
-   * Form & focus
-   * ---------------------------------------------------------------------- */
+  /* ── Form & focus ──────────────────────────────────────────────────────────────────────────────────────────────── */
 
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
 
-  /* ----------------------------------------------------------------------
-   * Sidebar
-   * ---------------------------------------------------------------------- */
+  /* ── Sidebar ───────────────────────────────────────────────────────────────────────────────────────────────────── */
 
   --color-sidebar: var(--sidebar);
   --color-sidebar-foreground: var(--sidebar-foreground);
@@ -70,9 +62,7 @@
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
 
-  /* ----------------------------------------------------------------------
-   * Charts
-   * ---------------------------------------------------------------------- */
+  /* ── Charts ────────────────────────────────────────────────────────────────────────────────────────────────────── */
 
   --color-chart-1: var(--chart-1);
   --color-chart-2: var(--chart-2);
@@ -80,9 +70,7 @@
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
 
-  /* ----------------------------------------------------------------------
-   * Radius scale — derived from --radius (6 = base unit)
-   * ---------------------------------------------------------------------- */
+  /* ── Radius scale — derived from --radius (6 = base unit) ──────────────────────────────────────────────────────── */
 
   --radius-xs: calc(var(--radius) * 2 / 6);
   --radius-sm: calc(var(--radius) * 4 / 6);

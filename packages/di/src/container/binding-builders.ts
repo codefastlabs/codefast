@@ -65,7 +65,7 @@ function trackBindingForModule(
   ids.push(id);
 }
 
-// ── Registration target ───────────────────────────────────────────────────────
+// ── Registration target ──────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * Where a chain registers, and on whose behalf.
@@ -81,7 +81,7 @@ export interface BindingRegistration {
   readonly moduleBindingIds: Array<BindingIdentifier> | undefined;
 }
 
-// ── BindingChain ──────────────────────────────────────────────────────────────
+// ── BindingChain ─────────────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * The one builder behind `bind()` and every `to*()` return type. Each interface exposes only the
@@ -132,7 +132,7 @@ export class BindingChain<Value>
     return this;
   }
 
-  // ── Registration ───────────────────────────────────────────────────────────
+  // ── Registration ───────────────────────────────────────────────────────────────────────────────────────────────────
 
   to(type: Constructor<Value>): BindingBuilder<Value> {
     return this.#register({ kind: "class", target: type, scope: "transient" });
@@ -185,7 +185,7 @@ export class BindingChain<Value>
     return this.#register({ kind: "alias", scope: "transient", target });
   }
 
-  // ── Refinement ─────────────────────────────────────────────────────────────
+  // ── Refinement ─────────────────────────────────────────────────────────────────────────────────────────────────────
 
   // Slot and predicate are what the registry indexes on, so a re-slot rebuilds the binding and
   // re-registers it — under the original id, keeping `id()` stable for the whole chain.
@@ -269,7 +269,7 @@ export class BindingChain<Value>
     return this.#registered().id;
   }
 
-  // ── Registry ───────────────────────────────────────────────────────────────
+  // ── Registry ───────────────────────────────────────────────────────────────────────────────────────────────────────
 
   /**
    * Register `binding`, first removing `previousId` when the chain is re-slotting.

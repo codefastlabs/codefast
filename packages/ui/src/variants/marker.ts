@@ -1,9 +1,7 @@
 import type { VariantProps } from "#/lib/utils";
 import { tv } from "#/lib/utils";
 
-/* -----------------------------------------------------------------------------
- * Variant: Marker
- * -------------------------------------------------------------------------- */
+// ── Variant: Marker ──────────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * Inline chat divider — plain label, centered separator rule, or bottom border.
@@ -30,9 +28,7 @@ const markerVariants = tv({
  */
 type MarkerVariants = VariantProps<typeof markerVariants>;
 
-/* -----------------------------------------------------------------------------
- * Exports
- * -------------------------------------------------------------------------- */
+// ── Exports ──────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 export { markerVariants };
 export type { MarkerVariants };

@@ -2,9 +2,7 @@ import { Context } from "radix-ui/internal";
 import type { ComponentProps, ReactNode } from "react";
 import { useId, useMemo } from "react";
 
-/* -----------------------------------------------------------------------------
- * Context: ProgressCircleProvider
- * --------------------------------------------------------------------------- */
+// ── Context: ProgressCircleProvider ──────────────────────────────────────────────────────────────────────────────────
 
 const PROGRESS_CIRCLE_PROVIDER_NAME = "ProgressCircleProvider";
 
@@ -111,9 +109,7 @@ const [createProgressCircleContext, createProgressCircleScope] =
 const [ProgressCircleContextProvider, useProgressCircleContext] =
   createProgressCircleContext<ProgressCircleContextValue>(PROGRESS_CIRCLE_PROVIDER_NAME);
 
-/* -----------------------------------------------------------------------------
- * Component: ProgressCircleProvider
- * --------------------------------------------------------------------------- */
+// ── Component: ProgressCircleProvider ────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -287,9 +283,7 @@ function ProgressCircleProvider({
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Component: ProgressCircle
- * --------------------------------------------------------------------------- */
+// ── Component: ProgressCircle ────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -307,9 +301,7 @@ function ProgressCircle({ __scopeProgressCircle, ...props }: ScopedProps<Progres
   return <div {...props} />;
 }
 
-/* -----------------------------------------------------------------------------
- * Component: ProgressCircleSVG
- * --------------------------------------------------------------------------- */
+// ── Component: ProgressCircleSVG ─────────────────────────────────────────────────────────────────────────────────────
 
 const PROGRESS_CIRCLE_SVG_NAME = "ProgressCircleSVG";
 
@@ -348,9 +340,7 @@ function ProgressCircleSVG({ __scopeProgressCircle, ...props }: ScopedProps<Prog
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Component: ProgressCircleTrack
- * --------------------------------------------------------------------------- */
+// ── Component: ProgressCircleTrack ───────────────────────────────────────────────────────────────────────────────────
 
 const PROGRESS_CIRCLE_TRACK_NAME = "ProgressCircleTrack";
 
@@ -385,9 +375,7 @@ function ProgressCircleTrack({ __scopeProgressCircle, ...props }: ScopedProps<Pr
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Component: ProgressCircleIndicator
- * --------------------------------------------------------------------------- */
+// ── Component: ProgressCircleIndicator ───────────────────────────────────────────────────────────────────────────────
 
 const PROGRESS_CIRCLE_INDICATOR_NAME = "ProgressCircleIndicator";
 
@@ -427,9 +415,7 @@ function ProgressCircleIndicator({
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Component: ProgressCircleValue
- * --------------------------------------------------------------------------- */
+// ── Component: ProgressCircleValue ───────────────────────────────────────────────────────────────────────────────────
 
 const PROGRESS_CIRCLE_VALUE_NAME = "ProgressCircleValue";
 
@@ -461,9 +447,7 @@ function ProgressCircleValue({
   return <div {...props}>{children ?? valueText}</div>;
 }
 
-/* -----------------------------------------------------------------------------
- * Helpers
- * -------------------------------------------------------------------------- */
+// ── Helpers ──────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * Clamps a value within a specified min/max range
@@ -477,9 +461,7 @@ function clamp(min: number, max: number, value: number): number {
   return Math.min(max, Math.max(min, value));
 }
 
-/* -----------------------------------------------------------------------------
- * Exports
- * -------------------------------------------------------------------------- */
+// ── Exports ──────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 export {
   createProgressCircleScope,

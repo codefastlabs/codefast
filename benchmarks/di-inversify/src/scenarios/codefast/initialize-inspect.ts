@@ -24,7 +24,7 @@ import { Container, token } from "@codefast/di";
 import { batched } from "#/harness/batched";
 import type { AsyncBenchScenario, BenchScenario } from "#/scenarios/types";
 
-// ─── scenario 1: initializeAsync warm-up ─────────────────────────────────────
+// ── scenario 1: initializeAsync warm-up ──────────────────────────────────────────────────────────────────────────────
 
 const ASYNC_SINGLETON_COUNT = 4;
 
@@ -61,7 +61,7 @@ function buildInitializeAsyncWarmupScenario(): AsyncBenchScenario {
   };
 }
 
-// ─── scenario 2: inspect snapshot ────────────────────────────────────────────
+// ── scenario 2: inspect snapshot ─────────────────────────────────────────────────────────────────────────────────────
 
 const INSPECT_BINDING_COUNT = 10;
 const INSPECT_BATCH = 20;
@@ -95,7 +95,7 @@ function buildInspectSnapshotScenario(): BenchScenario {
   };
 }
 
-// ─── scenario 3: lookupBindings single token ─────────────────────────────────
+// ── scenario 3: lookupBindings single token ──────────────────────────────────────────────────────────────────────────
 
 const LOOKUP_BATCH = 200;
 const LOOKUP_VARIANT_COUNT = 4;

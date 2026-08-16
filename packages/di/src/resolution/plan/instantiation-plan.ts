@@ -364,7 +364,7 @@ export class InstantiationPlanCompiler {
     return this.#compileEscapeThunk(binding.token, ancestors, "single", options);
   }
 
-  // ── The async lane ─────────────────────────────────────────────────────────
+  // ── The async lane ─────────────────────────────────────────────────────────────────────────────────────────────────
 
   /**
    * Compiles a transient binding whose graph is statically visible, for the async entry point.

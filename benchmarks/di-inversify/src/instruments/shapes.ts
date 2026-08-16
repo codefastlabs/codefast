@@ -66,7 +66,7 @@ function fromRow(id: string, row: string, what: string): InstrumentShape {
   return { id, row, what, prepare: () => prepareRow(row) };
 }
 
-// ── The one shape with no row: a control, not a claim ─────────────────────────
+// ── The one shape with no row: a control, not a claim ────────────────────────────────────────────────────────────────
 
 interface PlainLeaf {
   readonly id: string;

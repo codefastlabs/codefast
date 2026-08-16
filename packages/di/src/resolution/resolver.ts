@@ -159,7 +159,7 @@ export class DependencyResolver implements ResolverCallbacks {
     };
   }
 
-  // ── Binding lookup ─────────────────────────────────────────────────────────
+  // ── Binding lookup ─────────────────────────────────────────────────────────────────────────────────────────────────
 
   #findBinding(
     token: Token<unknown> | Constructor,
@@ -283,7 +283,7 @@ export class DependencyResolver implements ResolverCallbacks {
     return this.#candidateBindings(token, options, []);
   }
 
-  // ── Sync resolve ───────────────────────────────────────────────────────────
+  // ── Sync resolve ───────────────────────────────────────────────────────────────────────────────────────────────────
 
   resolveFromContext<Value>(token: Token<Value> | Constructor<Value>, resolutionStack: Array<ResolutionFrame>): Value {
     // Hot lane: own-registry fast default. Fall back to the chain-versioned memo
@@ -767,7 +767,7 @@ export class DependencyResolver implements ResolverCallbacks {
     return selectAllBindings(allBindings, options, this.#makeConstraintContext(resolutionStack, options));
   }
 
-  // ── Async resolve ──────────────────────────────────────────────────────────
+  // ── Async resolve ──────────────────────────────────────────────────────────────────────────────────────────────────
 
   resolveAsyncFromContext<Value>(
     token: Token<Value> | Constructor<Value>,
@@ -1125,7 +1125,7 @@ export class DependencyResolver implements ResolverCallbacks {
     return Promise.all(pending);
   }
 
-  // ── Helpers ────────────────────────────────────────────────────────────────
+  // ── Helpers ────────────────────────────────────────────────────────────────────────────────────────────────────────
 
   #allBindingsFromChain(token: Token<unknown> | Constructor): ReadonlyArray<Binding> {
     const ownBindings = this.#registry.getAll(token);
@@ -1376,7 +1376,7 @@ export class DependencyResolver implements ResolverCallbacks {
     }
   }
 
-  // ── The cascade lane ───────────────────────────────────────────────────────
+  // ── The cascade lane ───────────────────────────────────────────────────────────────────────────────────────────────
 
   /**
    * Entry for a request a factory makes from inside an open synchronous cascade.

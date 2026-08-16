@@ -8,9 +8,7 @@ import { buttonVariants } from "#/variants/button";
 import type { SheetContentVariants } from "#/variants/sheet";
 import { sheetContentVariants } from "#/variants/sheet";
 
-/* -----------------------------------------------------------------------------
- * Component: Sheet
- * -------------------------------------------------------------------------- */
+// ── Component: Sheet ─────────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -24,9 +22,7 @@ function Sheet({ ...props }: SheetProps): JSX.Element {
   return <SheetPrimitive.Root data-slot="sheet" {...props} />;
 }
 
-/* -----------------------------------------------------------------------------
- * Component: SheetTrigger
- * -------------------------------------------------------------------------- */
+// ── Component: SheetTrigger ──────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -40,9 +36,7 @@ function SheetTrigger({ ...props }: SheetTriggerProps): JSX.Element {
   return <SheetPrimitive.Trigger data-slot="sheet-trigger" {...props} />;
 }
 
-/* -----------------------------------------------------------------------------
- * Component: SheetContent
- * -------------------------------------------------------------------------- */
+// ── Component: SheetContent ──────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -94,9 +88,7 @@ function SheetContent({
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Component: SheetHeader
- * -------------------------------------------------------------------------- */
+// ── Component: SheetHeader ───────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -110,9 +102,7 @@ function SheetHeader({ className, ...props }: SheetHeaderProps): JSX.Element {
   return <div className={cn("flex shrink-0 flex-col gap-0.5 p-4", className)} data-slot="sheet-header" {...props} />;
 }
 
-/* -----------------------------------------------------------------------------
- * Component: SheetBody
- * -------------------------------------------------------------------------- */
+// ── Component: SheetBody ─────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * Optional scrollable region for long content. When used, the Header and Footer
@@ -130,9 +120,7 @@ function SheetBody({ className, ...props }: SheetBodyProps): JSX.Element {
   return <div className={cn("min-h-0 flex-1 overflow-y-auto px-4", className)} data-slot="sheet-body" {...props} />;
 }
 
-/* -----------------------------------------------------------------------------
- * Component: SheetFooter
- * -------------------------------------------------------------------------- */
+// ── Component: SheetFooter ───────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -148,9 +136,7 @@ function SheetFooter({ className, ...props }: SheetFooterProps): JSX.Element {
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Component: SheetTitle
- * -------------------------------------------------------------------------- */
+// ── Component: SheetTitle ────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -170,9 +156,7 @@ function SheetTitle({ className, ...props }: SheetTitleProps): JSX.Element {
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Component: SheetDescription
- * -------------------------------------------------------------------------- */
+// ── Component: SheetDescription ──────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -192,9 +176,7 @@ function SheetDescription({ className, ...props }: SheetDescriptionProps): JSX.E
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Component: SheetClose
- * -------------------------------------------------------------------------- */
+// ── Component: SheetClose ────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -213,9 +195,7 @@ function SheetClose({ className, size, variant, ...props }: SheetCloseProps): JS
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Exports
- * -------------------------------------------------------------------------- */
+// ── Exports ──────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 export {
   Sheet,

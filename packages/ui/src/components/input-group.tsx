@@ -10,9 +10,7 @@ import { cn } from "#/lib/utils";
 import type { InputGroupAddonVariants, InputGroupButtonVariants } from "#/variants/input-group";
 import { inputGroupAddonVariants, inputGroupButtonVariants, inputGroupVariants } from "#/variants/input-group";
 
-/* -----------------------------------------------------------------------------
- * Component: InputGroup
- * -------------------------------------------------------------------------- */
+// ── Component: InputGroup ────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -26,9 +24,7 @@ function InputGroup({ className, ...props }: InputGroupProps): JSX.Element {
   return <div className={inputGroupVariants({ className })} data-slot="input-group" role="group" {...props} />;
 }
 
-/* -----------------------------------------------------------------------------
- * Component: InputGroupAddon
- * -------------------------------------------------------------------------- */
+// ── Component: InputGroupAddon ───────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -63,9 +59,7 @@ function InputGroupAddon({ align = "inline-start", className, ...props }: InputG
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Component: InputGroupButton
- * -------------------------------------------------------------------------- */
+// ── Component: InputGroupButton ──────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -94,9 +88,7 @@ function InputGroupButton({
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Component: InputGroupText
- * -------------------------------------------------------------------------- */
+// ── Component: InputGroupText ────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -119,9 +111,7 @@ function InputGroupText({ className, ...props }: InputGroupTextProps): JSX.Eleme
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Component: InputGroupInput
- * -------------------------------------------------------------------------- */
+// ── Component: InputGroupInput ───────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -144,9 +134,7 @@ function InputGroupInput({ className, ...props }: InputGroupInputProps): JSX.Ele
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Component: InputGroupTextarea
- * -------------------------------------------------------------------------- */
+// ── Component: InputGroupTextarea ────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -169,9 +157,7 @@ function InputGroupTextarea({ className, ...props }: InputGroupTextareaProps): J
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Exports
- * -------------------------------------------------------------------------- */
+// ── Exports ──────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 export { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput, InputGroupText, InputGroupTextarea };
 

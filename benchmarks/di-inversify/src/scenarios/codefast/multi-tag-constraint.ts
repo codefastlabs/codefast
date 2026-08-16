@@ -23,7 +23,7 @@ import { ENV_TAG, TIER_TAG } from "#/fixtures/bench-tags";
 import { batched } from "#/harness/batched";
 import type { BenchScenario } from "#/scenarios/types";
 
-// ── scenario 1: multi-tag slot resolve ───────────────────────────────────────
+// ── scenario 1: multi-tag slot resolve ───────────────────────────────────────────────────────────────────────────────
 
 const MULTI_TAG_SLOT_BATCH = 300;
 
@@ -72,7 +72,7 @@ function buildMultiTagSlotResolveScenario(): BenchScenario {
   };
 }
 
-// ── scenario 2: multi-tag constraint resolve ──────────────────────────────────
+// ── scenario 2: multi-tag constraint resolve ─────────────────────────────────────────────────────────────────────────
 
 const MULTI_TAG_CONSTRAINT_BATCH = 200;
 
@@ -133,7 +133,7 @@ function buildMultiTagConstraintResolveScenario(): BenchScenario {
   };
 }
 
-// ── scenario 3: multi-tag selection at scale ──────────────────────────────────
+// ── scenario 3: multi-tag selection at scale ─────────────────────────────────────────────────────────────────────────
 
 const MULTI_TAG_SELECT_BATCH = 300;
 const SELECT_ENV_COUNT = 8;

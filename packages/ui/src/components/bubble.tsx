@@ -5,9 +5,7 @@ import { cn } from "#/lib/utils";
 import type { BubbleReactionsVariants, BubbleVariants } from "#/variants/bubble";
 import { bubbleReactionsVariants, bubbleVariants } from "#/variants/bubble";
 
-/* -----------------------------------------------------------------------------
- * Component: BubbleGroup
- * -------------------------------------------------------------------------- */
+// ── Component: BubbleGroup ───────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * Vertical stack of consecutive bubbles from one author.
@@ -23,9 +21,7 @@ function BubbleGroup({ className, ...props }: BubbleGroupProps): JSX.Element {
   return <div className={cn("flex min-w-0 flex-col gap-2", className)} data-slot="bubble-group" {...props} />;
 }
 
-/* -----------------------------------------------------------------------------
- * Component: Bubble
- * -------------------------------------------------------------------------- */
+// ── Component: Bubble ────────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * Chat bubble wrapper. `variant` colors the content; `align` sets the side.
@@ -51,9 +47,7 @@ function Bubble({ align = "start", className, variant = "default", ...props }: B
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Component: BubbleContent
- * -------------------------------------------------------------------------- */
+// ── Component: BubbleContent ─────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * The bubble's colored surface; render as a button/link with `asChild`.
@@ -82,9 +76,7 @@ function BubbleContent({ asChild = false, className, ...props }: BubbleContentPr
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Component: BubbleReactions
- * -------------------------------------------------------------------------- */
+// ── Component: BubbleReactions ───────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * Reaction pill overlapping a bubble corner.
@@ -108,9 +100,7 @@ function BubbleReactions({ align = "end", className, side = "bottom", ...props }
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Exports
- * -------------------------------------------------------------------------- */
+// ── Exports ──────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 export { Bubble, BubbleContent, BubbleGroup, BubbleReactions };
 export type { BubbleContentProps, BubbleGroupProps, BubbleProps, BubbleReactionsProps };

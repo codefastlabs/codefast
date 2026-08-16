@@ -5,9 +5,7 @@ import { Label } from "#/components/label";
 import { cn } from "#/lib/utils";
 import * as CheckboxGroupPrimitive from "#/primitives/checkbox-group";
 
-/* -----------------------------------------------------------------------------
- * Component: CheckboxCards
- * -------------------------------------------------------------------------- */
+// ── Component: CheckboxCards ─────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -21,9 +19,7 @@ function CheckboxCards(props: CheckboxCardsProps): JSX.Element {
   return <CheckboxGroupPrimitive.Root data-slot="checkbox-cards" {...props} />;
 }
 
-/* -----------------------------------------------------------------------------
- * Component: CheckboxCardsItem
- * -------------------------------------------------------------------------- */
+// ── Component: CheckboxCardsItem ─────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -65,9 +61,7 @@ function CheckboxCardsItem({ checkboxClassName, children, className, ...props }:
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Exports
- * -------------------------------------------------------------------------- */
+// ── Exports ──────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 export { CheckboxCards, CheckboxCardsItem };
 export type { CheckboxCardsItemProps, CheckboxCardsProps };

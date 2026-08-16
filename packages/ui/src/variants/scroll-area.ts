@@ -1,9 +1,7 @@
 import type { VariantProps } from "#/lib/utils";
 import { tv } from "#/lib/utils";
 
-/* -----------------------------------------------------------------------------
- * Variant: ScrollAreaScrollbar
- * -------------------------------------------------------------------------- */
+// ── Variant: ScrollAreaScrollbar ─────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -65,9 +63,7 @@ const scrollAreaScrollbarVariants = tv({
  */
 type ScrollAreaScrollbarVariants = VariantProps<typeof scrollAreaScrollbarVariants>;
 
-/* -----------------------------------------------------------------------------
- * Exports
- * -------------------------------------------------------------------------- */
+// ── Exports ──────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 export { scrollAreaScrollbarVariants };
 export type { ScrollAreaScrollbarVariants };

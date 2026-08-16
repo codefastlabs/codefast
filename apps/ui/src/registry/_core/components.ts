@@ -11,9 +11,7 @@
  */
 import { DEMO_BY_SLUG } from "#/registry/_core/demos";
 
-/* -------------------------------------------------------------------------- */
-/* Categories                                                                  */
-/* -------------------------------------------------------------------------- */
+// ── Categories ───────────────────────────────────────────────────────────────────────────────────────────────────────
 
 /** Descriptive taxonomy tag — surfaced as a badge / palette label, not a sort key. */
 export const CATEGORIES = [
@@ -52,9 +50,7 @@ export const CATEGORIES = [
 
 type CategoryId = (typeof CATEGORIES)[number]["id"];
 
-/* -------------------------------------------------------------------------- */
-/* Component metadata                                                          */
-/* -------------------------------------------------------------------------- */
+// ── Component metadata ───────────────────────────────────────────────────────────────────────────────────────────────
 
 /** Lifecycle maturity, surfaced as a badge on the detail page. */
 type ComponentStatus = "stable" | "beta" | "deprecated";
@@ -102,9 +98,7 @@ export interface ComponentMeta extends ComponentMetaInput {
   readonly isNew: boolean;
 }
 
-/* -------------------------------------------------------------------------- */
-/* Registry                                                                    */
-/* -------------------------------------------------------------------------- */
+// ── Registry ─────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 const metaModules = import.meta.glob<{ meta: ComponentMetaInput }>("../*/meta.ts", { eager: true });
 

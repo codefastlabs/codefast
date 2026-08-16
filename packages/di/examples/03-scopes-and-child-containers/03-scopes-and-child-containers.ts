@@ -8,14 +8,14 @@
 
 import { Container, inject, injectable, token } from "@codefast/di";
 
-// --- Tokens -----------------------------------------------------------------
+// ── Tokens ───────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 const AppDbToken = token<AppDatabase>("AppDatabase");
 const RequestContextToken = token<RequestContext>("RequestContext");
 const RequestLoggerToken = token<RequestLogger>("RequestLogger");
 const HandlerToken = token<RequestHandler>("RequestHandler");
 
-// --- Domain types -----------------------------------------------------------
+// ── Domain types ─────────────────────────────────────────────────────────────────────────────────────────────────────
 
 interface RequestContext {
   requestId: string;
@@ -68,7 +68,7 @@ class RequestHandler {
   }
 }
 
-// --- Root container (app-level singletons) ----------------------------------
+// ── Root container (app-level singletons) ────────────────────────────────────────────────────────────────────────────
 
 const rootContainer = Container.create();
 
@@ -89,7 +89,7 @@ rootContainer
   })
   .transient();
 
-// --- Simulate two HTTP requests --------------------------------------------
+// ── Simulate two HTTP requests ───────────────────────────────────────────────────────────────────────────────────────
 
 function handleRequest(requestId: string, userId: string, query: string): void {
   // Each request gets its own child container — scoped bindings are isolated

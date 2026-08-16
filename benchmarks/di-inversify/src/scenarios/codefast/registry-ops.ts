@@ -41,7 +41,7 @@ import {
 import { batched } from "#/harness/batched";
 import type { BenchScenario } from "#/scenarios/types";
 
-// ─── scenario 1: rebind hot-swap ─────────────────────────────────────────────
+// ── scenario 1: rebind hot-swap ──────────────────────────────────────────────────────────────────────────────────────
 
 const rebindToken = token<number>("bench-cf-ro-rebind");
 
@@ -73,7 +73,7 @@ function buildRebindHotSwapScenario(): BenchScenario {
   };
 }
 
-// ─── scenario 2: has — bound token ───────────────────────────────────────────
+// ── scenario 2: has — bound token ────────────────────────────────────────────────────────────────────────────────────
 
 const hasBoundToken = token<number>("bench-cf-ro-has-bound");
 
@@ -93,7 +93,7 @@ function buildHasBoundCheckScenario(): BenchScenario {
   };
 }
 
-// ─── scenario 3: hasOwn — unbound in child ────────────────────────────────────
+// ── scenario 3: hasOwn — unbound in child ────────────────────────────────────────────────────────────────────────────
 
 const hasOwnToken = token<number>("bench-cf-ro-has-own");
 
@@ -115,7 +115,7 @@ function buildHasOwnUnboundCheckScenario(): BenchScenario {
   };
 }
 
-// ─── scenario 4: container-level onActivation hook ───────────────────────────
+// ── scenario 4: container-level onActivation hook ────────────────────────────────────────────────────────────────────
 
 interface HookPayload {
   value: number;
@@ -158,7 +158,7 @@ function buildContainerLevelActivationHookScenario(): BenchScenario {
   };
 }
 
-// ─── scenario 5: scoped binding per child ─────────────────────────────────────
+// ── scenario 5: scoped binding per child ─────────────────────────────────────────────────────────────────────────────
 
 interface ScopedInstance {
   readonly id: number;

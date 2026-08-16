@@ -9,7 +9,7 @@ import { bindingSlotToResolveOptions } from "#/injection/resolve-options";
 import type { MetadataReader } from "#/metadata/metadata-types";
 import { matchesSlot } from "#/resolution/select/binding-select";
 
-// ── Types ─────────────────────────────────────────────────────────────────────
+// ── Types ────────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -58,7 +58,7 @@ export interface GraphOptions {
   readonly includeParent?: boolean | undefined;
 }
 
-// ── Builder ───────────────────────────────────────────────────────────────────
+// ── Builder ──────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 // Tokens are compared by object identity, and a name is free to repeat, so the graph mints its
 // own per-process key. Weakly held: a discarded token takes its key with it.

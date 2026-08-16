@@ -46,7 +46,7 @@ import { verifyingMetadataReader } from "#/metadata/verifying-metadata-reader";
 import { ROOT_BRANCH } from "#/resolution/path/resolution-path";
 import { DependencyResolver } from "#/resolution/resolver";
 
-// ── Container interface ────────────────────────────────────────────────────────
+// ── Container interface ──────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -133,7 +133,7 @@ const APPLY_BINDING_SCOPE: Record<BindingScope, (builder: BindingBuilder<unknown
   },
 };
 
-// ── DefaultContainer ──────────────────────────────────────────────────────────
+// ── DefaultContainer ─────────────────────────────────────────────────────────────────────────────────────────────────
 
 class DefaultContainer implements Container {
   #disposed = false;
@@ -231,7 +231,7 @@ class DefaultContainer implements Container {
     return this.#disposed;
   }
 
-  // ── Binding ──────────────────────────────────────────────────────────────
+  // ── Binding ────────────────────────────────────────────────────────────────────────────────────────────────────────
 
   bind<Value>(token: Token<Value> | Constructor<Value>): BindToBuilder<Value> {
     this.#assertNotDisposed();
@@ -366,7 +366,7 @@ class DefaultContainer implements Container {
     return this.#createBindToBuilder(token);
   }
 
-  // ── Module ────────────────────────────────────────────────────────────────
+  // ── Module ─────────────────────────────────────────────────────────────────────────────────────────────────────────
 
   load(...modules: Array<SyncModule>): void {
     this.#assertNotDisposed();
@@ -541,7 +541,7 @@ class DefaultContainer implements Container {
     return entries.length;
   }
 
-  // ── Lifecycle hooks ────────────────────────────────────────────────────────
+  // ── Lifecycle hooks ────────────────────────────────────────────────────────────────────────────────────────────────
 
   onActivation<Value>(token: Token<Value> | Constructor<Value>, handler: ActivationHandler<Value>): void {
     this.#assertNotDisposed();
@@ -553,7 +553,7 @@ class DefaultContainer implements Container {
     this.#lifecycle.registerDeactivation(token, handler);
   }
 
-  // ── Resolution ────────────────────────────────────────────────────────────
+  // ── Resolution ─────────────────────────────────────────────────────────────────────────────────────────────────────
 
   resolve<Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Value {
     this.#assertNotDisposed();
@@ -607,14 +607,14 @@ class DefaultContainer implements Container {
     return this.#resolver.resolveAllAsync(token, options, [], ROOT_BRANCH);
   }
 
-  // ── Child ─────────────────────────────────────────────────────────────────
+  // ── Child ──────────────────────────────────────────────────────────────────────────────────────────────────────────
 
   createChild(): Container {
     this.#assertNotDisposed();
     return new DefaultContainer(this);
   }
 
-  // ── Dispose ───────────────────────────────────────────────────────────────
+  // ── Dispose ────────────────────────────────────────────────────────────────────────────────────────────────────────
 
   dispose(): Promise<void> {
     // One teardown, shared: a second caller awaits the same run instead of returning early while
@@ -668,7 +668,7 @@ class DefaultContainer implements Container {
     throw new SyncDisposalNotSupportedError();
   }
 
-  // ── Initialization ────────────────────────────────────────────────────────
+  // ── Initialization ─────────────────────────────────────────────────────────────────────────────────────────────────
 
   async initializeAsync(): Promise<void> {
     this.#assertNotDisposed();
@@ -697,7 +697,7 @@ class DefaultContainer implements Container {
     }
   }
 
-  // ── Validate ──────────────────────────────────────────────────────────────
+  // ── Validate ───────────────────────────────────────────────────────────────────────────────────────────────────────
 
   validate(): void {
     this.#assertNotDisposed();
@@ -883,7 +883,7 @@ class DefaultContainer implements Container {
     return edges;
   }
 
-  // ── Introspection ─────────────────────────────────────────────────────────
+  // ── Introspection ──────────────────────────────────────────────────────────────────────────────────────────────────
 
   has(token: Token<unknown> | Constructor, options?: ResolveOptions): boolean {
     this.#assertNotDisposed();
@@ -915,7 +915,7 @@ class DefaultContainer implements Container {
     );
   }
 
-  // ── Internal ──────────────────────────────────────────────────────────────
+  // ── Internal ───────────────────────────────────────────────────────────────────────────────────────────────────────
 
   #assertNotDisposed(): void {
     if (this.#disposed) {
@@ -935,7 +935,7 @@ function throwCollected(errors: ReadonlyArray<unknown>, message: string): void {
   throw new AggregateError(errors, message);
 }
 
-// ── Container static ──────────────────────────────────────────────────────────
+// ── Container static ─────────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0

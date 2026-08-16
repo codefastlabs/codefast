@@ -3,9 +3,7 @@ import type { ComponentProps, JSX } from "react";
 
 import { cn } from "#/lib/utils";
 
-/* -----------------------------------------------------------------------------
- * Component: NativeSelect
- * -------------------------------------------------------------------------- */
+// ── Component: NativeSelect ──────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -39,9 +37,7 @@ function NativeSelect({ className, size = "default", ...props }: NativeSelectPro
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Component: NativeSelectOption
- * -------------------------------------------------------------------------- */
+// ── Component: NativeSelectOption ────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -57,9 +53,7 @@ function NativeSelectOption({ className, ...props }: NativeSelectOptionProps): J
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Component: NativeSelectOptGroup
- * -------------------------------------------------------------------------- */
+// ── Component: NativeSelectOptGroup ──────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -79,9 +73,7 @@ function NativeSelectOptGroup({ className, ...props }: NativeSelectOptGroupProps
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Exports
- * -------------------------------------------------------------------------- */
+// ── Exports ──────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 export { NativeSelect, NativeSelectOptGroup, NativeSelectOption };
 export type { NativeSelectOptGroupProps, NativeSelectOptionProps, NativeSelectProps };

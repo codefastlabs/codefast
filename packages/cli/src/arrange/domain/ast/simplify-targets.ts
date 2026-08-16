@@ -94,9 +94,7 @@ function buildMixedCnReplacement(call: DomainCallExpression, sourceText: string)
   return `cn(\n${lines.join("\n")}\n${baseIndent})`;
 }
 
-// ---------------------------------------------------------------------------
-// tv() array collector
-// ---------------------------------------------------------------------------
+// ── tv() array collector ─────────────────────────────────────────────────────────────────────────────────────────────
 
 function collectTvArrayEdits(
   obj: DomainObjectLiteralExpression,
@@ -128,9 +126,7 @@ function collectTvArrayEdits(
   }
 }
 
-// ---------------------------------------------------------------------------
-// Public collector
-// ---------------------------------------------------------------------------
+// ── Public collector ─────────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * Collect all simplify edits for a source file:

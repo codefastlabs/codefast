@@ -27,7 +27,7 @@ function classNameOf(instance: unknown): string | undefined {
   return constructor.name;
 }
 
-// ── inject() — dual-role ──────────────────────────────────────────────────────
+// ── inject() — dual-role ─────────────────────────────────────────────────────────────────────────────────────────────
 
 type ClassAccessorDecorator<This, Value> = (
   target: ClassAccessorDecoratorTarget<This, Value>,

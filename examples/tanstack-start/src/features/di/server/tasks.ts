@@ -9,9 +9,7 @@ import { createServerFn } from "@tanstack/react-start";
 
 import { ensureMapPolyfill } from "#/features/di/server/ensure-map-polyfill";
 
-/* ---------------------------------------------------------------------------
- * Domain model
- * ------------------------------------------------------------------------ */
+// ── Domain model ─────────────────────────────────────────────────────────────────────────────────────────────────────
 
 interface Task {
   id: string;
@@ -124,9 +122,7 @@ const MetricsExporterToken = token<MetricsExporter>("MetricsExporter");
 const TaskRepositoryToken = token<TaskRepository>("TaskRepository");
 const RequestContextToken = token<RequestContext>("RequestContext");
 
-/* ---------------------------------------------------------------------------
- * Infrastructure (singletons + a transient id generator)
- * ------------------------------------------------------------------------ */
+// ── Infrastructure (singletons + a transient id generator) ───────────────────────────────────────────────────────────
 
 @injectable()
 class SystemClock implements Clock {
@@ -231,9 +227,7 @@ class CompositeTaskValidator implements TaskValidation {
   }
 }
 
-/* ---------------------------------------------------------------------------
- * Repository (singleton — task state persists across requests)
- * ------------------------------------------------------------------------ */
+// ── Repository (singleton — task state persists across requests) ─────────────────────────────────────────────────────
 
 @injectable([ClockToken, ActivityLogToken])
 class InMemoryTaskRepository implements TaskRepository {
@@ -355,9 +349,7 @@ class TaskService {
 
 const TaskServiceToken = token<TaskService>("TaskService");
 
-/* ---------------------------------------------------------------------------
- * Modules — reusable bundles of bindings
- * ------------------------------------------------------------------------ */
+// ── Modules — reusable bundles of bindings ───────────────────────────────────────────────────────────────────────────
 
 const infrastructureModule = Module.create("infrastructure", (builder) => {
   builder.bind(ClockToken).to(SystemClock).singleton();
@@ -383,9 +375,7 @@ const domainModule = Module.create("domain", (builder) => {
   builder.bind(RequestContextToken).toConstantValue({ requestId: "bootstrap", receivedAt: "", recordTeardown: false });
 });
 
-/* ---------------------------------------------------------------------------
- * Composition root — built once per server process
- * ------------------------------------------------------------------------ */
+// ── Composition root — built once per server process ─────────────────────────────────────────────────────────────────
 
 let rootContainer: Container | undefined;
 
@@ -536,9 +526,7 @@ async function handleRequest(mutate?: (service: TaskService) => Array<string> | 
   };
 }
 
-/* ---------------------------------------------------------------------------
- * Input readers (TanStack Start server-fn input guards)
- * ------------------------------------------------------------------------ */
+// ── Input readers (TanStack Start server-fn input guards) ────────────────────────────────────────────────────────────
 
 /** Reads a title without throwing — lets the DI validators own the add-task error reporting. */
 function readTitle(input: unknown): string {

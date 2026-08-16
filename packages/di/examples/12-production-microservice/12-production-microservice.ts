@@ -36,9 +36,7 @@
 
 import { Container, Module, inject, injectable, token } from "@codefast/di";
 
-// ============================================================================
-// Tokens
-// ============================================================================
+// ── Tokens ───────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 const ServiceConfigToken = token<ServiceConfig>("ServiceConfig");
 const DatabasePoolToken = token<DatabasePool>("DatabasePool");
@@ -51,9 +49,7 @@ const JobRepositoryToken = token<JobRepository>("JobRepository");
 const JobServiceToken = token<JobService>("JobService");
 const MetricsCollectorToken = token<MetricsCollector>("MetricsCollector");
 
-// ============================================================================
-// Domain types
-// ============================================================================
+// ── Domain types ─────────────────────────────────────────────────────────────────────────────────────────────────────
 
 interface ServiceConfig {
   readonly port: number;
@@ -88,9 +84,7 @@ interface Job {
   readonly error?: string;
 }
 
-// ============================================================================
-// Infrastructure: DatabasePool
-// ============================================================================
+// ── Infrastructure: DatabasePool ─────────────────────────────────────────────────────────────────────────────────────
 
 interface DatabasePool {
   query<T>(sql: string, params?: Array<unknown>): Promise<Array<T>>;
@@ -144,9 +138,7 @@ class PostgresDatabasePool implements DatabasePool {
   }
 }
 
-// ============================================================================
-// Infrastructure: RedisClient
-// ============================================================================
+// ── Infrastructure: RedisClient ──────────────────────────────────────────────────────────────────────────────────────
 
 interface RedisClient {
   get(key: string): Promise<string | undefined>;
@@ -207,9 +199,7 @@ class StubRedisClient implements RedisClient {
   }
 }
 
-// ============================================================================
-// Infrastructure: JobQueue + JobWorker
-// ============================================================================
+// ── Infrastructure: JobQueue + JobWorker ─────────────────────────────────────────────────────────────────────────────
 
 interface JobQueue {
   enqueue(type: string, payload: unknown): Promise<Job>;
@@ -325,9 +315,7 @@ class PollingJobWorker implements JobWorker {
   }
 }
 
-// ============================================================================
-// Infrastructure: HealthRegistry
-// ============================================================================
+// ── Infrastructure: HealthRegistry ───────────────────────────────────────────────────────────────────────────────────
 
 interface HealthRegistry {
   register(name: string, check: () => Promise<HealthCheckResult>): void;
@@ -369,9 +357,7 @@ class ServiceHealthRegistry implements HealthRegistry {
   }
 }
 
-// ============================================================================
-// Infrastructure: HttpServer (simplified)
-// ============================================================================
+// ── Infrastructure: HttpServer (simplified) ──────────────────────────────────────────────────────────────────────────
 
 interface HttpServer {
   addRoute(method: string, path: string, handler: (req: MockRequest) => Promise<MockResponse>): void;
@@ -455,9 +441,7 @@ function matchRoute(pattern: string, path: string): Record<string, string> | nul
   return params;
 }
 
-// ============================================================================
-// Metrics collector
-// ============================================================================
+// ── Metrics collector ────────────────────────────────────────────────────────────────────────────────────────────────
 
 interface MetricsCollector {
   increment(metric: string, tags?: Record<string, string>): void;
@@ -486,9 +470,7 @@ class InMemoryMetricsCollector implements MetricsCollector {
   }
 }
 
-// ============================================================================
-// Domain: JobRepository + JobService
-// ============================================================================
+// ── Domain: JobRepository + JobService ───────────────────────────────────────────────────────────────────────────────
 
 interface JobRepository {
   create(type: string, payload: unknown): Promise<Job>;
@@ -564,9 +546,7 @@ class JobManager implements JobService {
   }
 }
 
-// ============================================================================
-// Modules
-// ============================================================================
+// ── Modules ──────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 const ConfigModule = Module.createAsync("Config", async (builder) => {
   // In production, read from process.env / secrets manager
@@ -759,9 +739,7 @@ const AppModule = Module.createAsync("App", async (builder) => {
   );
 });
 
-// ============================================================================
-// Bootstrap
-// ============================================================================
+// ── Bootstrap ────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 async function bootstrap(): Promise<void> {
   console.log("═══════════════════════════════════════════════════════════");
@@ -785,7 +763,7 @@ async function bootstrap(): Promise<void> {
   console.log("\n  ✅ Service ready — simulating traffic\n");
   console.log("═══════════════════════════════════════════════════════════\n");
 
-  // ── GET /health ─────────────────────────────────────────────────────────
+  // ── GET /health ────────────────────────────────────────────────────────────────────────────────────────────────────
   console.log("  → GET /health");
   const healthResponse = await httpServer.handle("GET", "/health");
   const healthReport = healthResponse.body as HealthReport;
@@ -797,7 +775,7 @@ async function bootstrap(): Promise<void> {
       .join("  "),
   );
 
-  // ── POST /jobs (enqueue email) ───────────────────────────────────────────
+  // ── POST /jobs (enqueue email) ─────────────────────────────────────────────────────────────────────────────────────
   console.log("\n  → POST /jobs (send_email)");
   const emailJobResponse = await httpServer.handle("POST", "/jobs", {
     type: "send_email",
@@ -810,7 +788,7 @@ async function bootstrap(): Promise<void> {
   const emailJobResult = emailJobResponse.body as { jobId: string; status: string };
   console.log(`  ← ${emailJobResponse.status} jobId=${emailJobResult.jobId} status=${emailJobResult.status}`);
 
-  // ── POST /jobs (generate report) ────────────────────────────────────────
+  // ── POST /jobs (generate report) ───────────────────────────────────────────────────────────────────────────────────
   console.log("\n  → POST /jobs (generate_report)");
   const reportJobResponse = await httpServer.handle("POST", "/jobs", {
     type: "generate_report",
@@ -822,7 +800,7 @@ async function bootstrap(): Promise<void> {
   // Wait for worker to process jobs
   await delay(150);
 
-  // ── GET /jobs/:id ────────────────────────────────────────────────────────
+  // ── GET /jobs/:id ──────────────────────────────────────────────────────────────────────────────────────────────────
   console.log(`\n  → GET /jobs/${emailJobResult.jobId}`);
   const jobStatusResponse = await httpServer.handle("GET", `/jobs/${emailJobResult.jobId}`);
   const jobStatus = jobStatusResponse.body as Job;
@@ -830,14 +808,14 @@ async function bootstrap(): Promise<void> {
     `  ← ${jobStatusResponse.status} status=${jobStatus.status} completedAt=${jobStatus.completedAt?.toISOString() ?? "pending"}`,
   );
 
-  // ── Metrics summary ──────────────────────────────────────────────────────
+  // ── Metrics summary ────────────────────────────────────────────────────────────────────────────────────────────────
   console.log("\n  📊 Metrics summary:");
   const metricsSummary = metricsCollector.summary();
   Object.entries(metricsSummary).forEach(([metricKey, metricValue]) => {
     console.log(`     ${metricKey}: ${metricValue}`);
   });
 
-  // ── Graceful shutdown ────────────────────────────────────────────────────
+  // ── Graceful shutdown ──────────────────────────────────────────────────────────────────────────────────────────────
   console.log("\n═══════════════════════════════════════════════════════════");
   console.log("  🛑 Initiating graceful shutdown...");
   console.log("═══════════════════════════════════════════════════════════");

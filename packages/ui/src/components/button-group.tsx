@@ -6,9 +6,7 @@ import { cn } from "#/lib/utils";
 import type { ButtonGroupVariants } from "#/variants/button-group";
 import { buttonGroupVariants } from "#/variants/button-group";
 
-/* -----------------------------------------------------------------------------
- * Component: ButtonGroup
- * -------------------------------------------------------------------------- */
+// ── Component: ButtonGroup ───────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -30,9 +28,7 @@ function ButtonGroup({ className, orientation, ...props }: ButtonGroupProps): JS
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Component: ButtonGroupText
- * -------------------------------------------------------------------------- */
+// ── Component: ButtonGroupText ───────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -58,9 +54,7 @@ function ButtonGroupText({ asChild = false, className, ...props }: ButtonGroupTe
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Component: ButtonGroupSeparator
- * -------------------------------------------------------------------------- */
+// ── Component: ButtonGroupSeparator ──────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -88,9 +82,7 @@ function ButtonGroupSeparator({
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Exports
- * -------------------------------------------------------------------------- */
+// ── Exports ──────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 export { ButtonGroup, ButtonGroupSeparator, ButtonGroupText };
 

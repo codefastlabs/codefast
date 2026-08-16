@@ -1,9 +1,7 @@
 import type { VariantProps } from "#/lib/utils";
 import { tv } from "#/lib/utils";
 
-/* -----------------------------------------------------------------------------
- * Variant: Bubble
- * -------------------------------------------------------------------------- */
+// ── Variant: Bubble ──────────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * Chat bubble surface. Variants paint the nested `bubble-content`, so the color
@@ -41,9 +39,7 @@ const bubbleVariants = tv({
  */
 type BubbleVariants = VariantProps<typeof bubbleVariants>;
 
-/* -----------------------------------------------------------------------------
- * Variant: BubbleReactions
- * -------------------------------------------------------------------------- */
+// ── Variant: BubbleReactions ─────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * Reaction pill anchored to a bubble corner.
@@ -73,9 +69,7 @@ const bubbleReactionsVariants = tv({
  */
 type BubbleReactionsVariants = VariantProps<typeof bubbleReactionsVariants>;
 
-/* -----------------------------------------------------------------------------
- * Exports
- * -------------------------------------------------------------------------- */
+// ── Exports ──────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 export { bubbleReactionsVariants, bubbleVariants };
 export type { BubbleReactionsVariants, BubbleVariants };

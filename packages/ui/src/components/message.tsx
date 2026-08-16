@@ -2,9 +2,7 @@ import type { ComponentProps, JSX } from "react";
 
 import { cn } from "#/lib/utils";
 
-/* -----------------------------------------------------------------------------
- * Component: MessageGroup
- * -------------------------------------------------------------------------- */
+// ── Component: MessageGroup ──────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * Vertical stack of related messages.
@@ -20,9 +18,7 @@ function MessageGroup({ className, ...props }: MessageGroupProps): JSX.Element {
   return <div className={cn("flex min-w-0 flex-col gap-2", className)} data-slot="message-group" {...props} />;
 }
 
-/* -----------------------------------------------------------------------------
- * Component: Message
- * -------------------------------------------------------------------------- */
+// ── Component: Message ───────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * A single message row. `align="end"` mirrors the row for the current author.
@@ -50,9 +46,7 @@ function Message({ align = "start", className, ...props }: MessageProps): JSX.El
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Component: MessageAvatar
- * -------------------------------------------------------------------------- */
+// ── Component: MessageAvatar ─────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * Author avatar; lifts above the footer when a message footer is present.
@@ -77,9 +71,7 @@ function MessageAvatar({ className, ...props }: MessageAvatarProps): JSX.Element
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Component: MessageContent
- * -------------------------------------------------------------------------- */
+// ── Component: MessageContent ────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * Column holding the message bubbles and metadata.
@@ -104,9 +96,7 @@ function MessageContent({ className, ...props }: MessageContentProps): JSX.Eleme
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Component: MessageHeader
- * -------------------------------------------------------------------------- */
+// ── Component: MessageHeader ─────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * Metadata above the bubbles (author, timestamp).
@@ -131,9 +121,7 @@ function MessageHeader({ className, ...props }: MessageHeaderProps): JSX.Element
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Component: MessageFooter
- * -------------------------------------------------------------------------- */
+// ── Component: MessageFooter ─────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * Metadata below the bubbles (status, reactions); aligns with the row.
@@ -158,9 +146,7 @@ function MessageFooter({ className, ...props }: MessageFooterProps): JSX.Element
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Exports
- * -------------------------------------------------------------------------- */
+// ── Exports ──────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 export { Message, MessageAvatar, MessageContent, MessageFooter, MessageGroup, MessageHeader };
 export type {

@@ -10,18 +10,14 @@
  *   in-data-side-left:   → ancestor with [data-side="left"]
  * ------------------------------------------------------------------------- */
 
-/* -------------------------------------------------------------------------
- * Theme
- * ------------------------------------------------------------------------- */
+/* ── Theme ───────────────────────────────────────────────────────────────────────────────────────────────────────── */
 
 /* Class-only — matches the token themes, which switch on `.dark` (no prefers-color-scheme arm).
    `@codefast/theme` always resolves the scheme to an explicit `.dark`/`.light` class (SSR included),
    so the OS media query is never the deciding factor and would only desync utilities from tokens. */
 @custom-variant dark (&:where(.dark, .dark *));
 
-/* -------------------------------------------------------------------------
- * Layout — orientation & placement (Radix Popper)
- * ------------------------------------------------------------------------- */
+/* ── Layout — orientation & placement (Radix Popper) ─────────────────────────────────────────────────────────────── */
 
 @custom-variant data-horizontal (&:where([data-orientation="horizontal"]));
 @custom-variant data-vertical (&:where([data-orientation="vertical"]));
@@ -103,9 +99,7 @@
   }
 }
 
-/* -------------------------------------------------------------------------
- * State — Radix-only (no boolean data-* equivalent)
- * ------------------------------------------------------------------------- */
+/* ── State — Radix-only (no boolean data-* equivalent) ───────────────────────────────────────────────────────────── */
 
 @custom-variant data-on (&:where([data-state="on"]));
 @custom-variant data-collapsed (&:where([data-state="collapsed"]));

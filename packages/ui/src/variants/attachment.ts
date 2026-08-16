@@ -1,9 +1,7 @@
 import type { VariantProps } from "#/lib/utils";
 import { tv } from "#/lib/utils";
 
-/* -----------------------------------------------------------------------------
- * Variant: Attachment
- * -------------------------------------------------------------------------- */
+// ── Variant: Attachment ──────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * File/media attachment card. Size drives padding for the media and content
@@ -36,9 +34,7 @@ const attachmentVariants = tv({
  */
 type AttachmentVariants = VariantProps<typeof attachmentVariants>;
 
-/* -----------------------------------------------------------------------------
- * Variant: AttachmentMedia
- * -------------------------------------------------------------------------- */
+// ── Variant: AttachmentMedia ─────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * Media thumbnail — an icon tile or a cover image that reacts to attachment
@@ -65,9 +61,7 @@ const attachmentMediaVariants = tv({
  */
 type AttachmentMediaVariants = VariantProps<typeof attachmentMediaVariants>;
 
-/* -----------------------------------------------------------------------------
- * Exports
- * -------------------------------------------------------------------------- */
+// ── Exports ──────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 export { attachmentMediaVariants, attachmentVariants };
 export type { AttachmentMediaVariants, AttachmentVariants };

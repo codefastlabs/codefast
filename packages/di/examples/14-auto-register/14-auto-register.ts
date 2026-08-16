@@ -23,7 +23,7 @@ import {
   type AutoRegisterRegistry,
 } from "@codefast/di";
 
-// ── Tokens ───────────────────────────────────────────────────────────────────
+// ── Tokens ───────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 const LoggerToken = token<Logger>("Logger");
 const ConfigToken = token<Config>("Config");
@@ -34,7 +34,7 @@ const UserServiceToken = token<UserService>("UserService");
 const OrderServiceToken = token<OrderService>("OrderService");
 const NotificationServiceToken = token<NotificationService>("NotificationService");
 
-// ── Interfaces ───────────────────────────────────────────────────────────────
+// ── Interfaces ───────────────────────────────────────────────────────────────────────────────────────────────────────
 
 interface Logger {
   log(msg: string): void;
@@ -74,7 +74,7 @@ interface NotificationService {
   send(to: string, message: string): void;
 }
 
-// ── Registries ───────────────────────────────────────────────────────────────
+// ── Registries ───────────────────────────────────────────────────────────────────────────────────────────────────────
 //
 // Separate registries per architectural layer keep concerns isolated.
 // You can also use a single global registry — pick what fits your project.
@@ -83,7 +83,7 @@ const infrastructureRegistry: AutoRegisterRegistry = createAutoRegisterRegistry(
 const domainRegistry: AutoRegisterRegistry = createAutoRegisterRegistry();
 const applicationRegistry: AutoRegisterRegistry = createAutoRegisterRegistry();
 
-// ── Infrastructure layer ──────────────────────────────────────────────────────
+// ── Infrastructure layer ─────────────────────────────────────────────────────────────────────────────────────────────
 //
 // These are heavy resources — singletons so they are created once.
 
@@ -124,7 +124,7 @@ class PostgresDatabase implements Database {
   }
 }
 
-// ── Domain layer ─────────────────────────────────────────────────────────────
+// ── Domain layer ─────────────────────────────────────────────────────────────────────────────────────────────────────
 
 @injectable([inject(DatabaseToken)], { autoRegister: domainRegistry, scope: "singleton" })
 class SqlUserRepository implements UserRepository {
@@ -160,7 +160,7 @@ class SqlOrderRepository implements OrderRepository {
   }
 }
 
-// ── Application layer ─────────────────────────────────────────────────────────
+// ── Application layer ────────────────────────────────────────────────────────────────────────────────────────────────
 
 @injectable([inject(UserRepositoryToken), inject(LoggerToken)], {
   autoRegister: applicationRegistry,
@@ -218,7 +218,7 @@ class EmailNotificationService implements NotificationService {
   }
 }
 
-// ── Token wiring map ──────────────────────────────────────────────────────────
+// ── Token wiring map ─────────────────────────────────────────────────────────────────────────────────────────────────
 //
 // loadAutoRegistered binds each Constructor to its token using Constructor itself
 // as the token. Since our tokens are symbol-based (not the class itself), we must
@@ -228,7 +228,7 @@ class EmailNotificationService implements NotificationService {
 // Strategy A (used here): loadAutoRegistered + manual token alias bindings.
 // Strategy B: use the class constructor as the token everywhere (skips aliases).
 
-// ── Bootstrap ─────────────────────────────────────────────────────────────────
+// ── Bootstrap ────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 const container = Container.create();
 
@@ -253,7 +253,7 @@ container.bind(UserServiceToken).to(UserManager).singleton();
 container.bind(OrderServiceToken).to(OrderProcessor).singleton();
 container.bind(NotificationServiceToken).to(EmailNotificationService).singleton();
 
-// ── Usage ─────────────────────────────────────────────────────────────────────
+// ── Usage ────────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 console.log("\n=== Bootstrapped via auto-register ===");
 
@@ -269,7 +269,7 @@ console.log("\n=== Querying ===");
 const aliceOrders = orderService.getUserOrders("u1");
 console.log(`Alice has ${aliceOrders.length} order(s)`);
 
-// ── Inspect the registry entries ──────────────────────────────────────────────
+// ── Inspect the registry entries ─────────────────────────────────────────────────────────────────────────────────────
 
 console.log("\n=== Registry entries ===");
 console.log(
@@ -285,7 +285,7 @@ console.log(
   applicationRegistry.entries().map((entry) => `${entry.target.name}(${entry.scope})`),
 );
 
-// ── Conditional registration ──────────────────────────────────────────────────
+// ── Conditional registration ─────────────────────────────────────────────────────────────────────────────────────────
 //
 // A common pattern: register different implementations based on environment.
 // Because registration happens at decorator-application time (module load), use

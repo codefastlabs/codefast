@@ -18,7 +18,7 @@
 
 import { Container, inject, injectable, Module, token } from "@codefast/di";
 
-// ── Mini test harness ─────────────────────────────────────────────────────────
+// ── Mini test harness ────────────────────────────────────────────────────────────────────────────────────────────────
 
 type TestFn = () => void | Promise<void>;
 const results: Array<{ name: string; passed: boolean; error?: unknown }> = [];
@@ -40,7 +40,7 @@ function assert(condition: boolean, message: string): void {
   }
 }
 
-// ── Domain ────────────────────────────────────────────────────────────────────
+// ── Domain ───────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 const LoggerToken = token<Logger>("Logger");
 const EmailServiceToken = token<EmailService>("EmailService");
@@ -71,7 +71,7 @@ interface OrderService {
   placeOrder(userId: string, amount: number): { orderId: string; transactionId: string };
 }
 
-// ── Real implementations ───────────────────────────────────────────────────────
+// ── Real implementations ─────────────────────────────────────────────────────────────────────────────────────────────
 
 @injectable([])
 class RealLogger implements Logger {
@@ -146,7 +146,7 @@ class OrderProcessor implements OrderService {
   }
 }
 
-// ── Stubs (for tests only) ────────────────────────────────────────────────────
+// ── Stubs (for tests only) ───────────────────────────────────────────────────────────────────────────────────────────
 
 class StubLogger implements Logger {
   messages: Array<string> = [];
@@ -196,7 +196,7 @@ class StubPaymentGateway implements PaymentGateway {
   }
 }
 
-// ── Shared module (real infra) ────────────────────────────────────────────────
+// ── Shared module (real infra) ───────────────────────────────────────────────────────────────────────────────────────
 
 const CoreModule = Module.create("Core", (builder) => {
   builder.bind(LoggerToken).to(RealLogger).singleton();
@@ -409,7 +409,7 @@ await test("incomplete container is detected by inspect() before validate()", as
   assert(snapshot.ownBindings.length === 1, "only OrderService is bound");
 });
 
-// ── Summary ───────────────────────────────────────────────────────────────────
+// ── Summary ──────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 const passed = results.filter((testResult) => testResult.passed).length;
 const failed = results.filter((testResult) => !testResult.passed).length;

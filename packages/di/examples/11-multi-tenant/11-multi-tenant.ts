@@ -40,9 +40,7 @@ import { randomBytes } from "node:crypto";
 
 import { Container, Module, inject, injectable, token } from "@codefast/di";
 
-// ============================================================================
-// Global types
-// ============================================================================
+// ── Global types ─────────────────────────────────────────────────────────────────────────────────────────────────────
 
 type TenantPlan = "free" | "pro" | "enterprise";
 
@@ -98,9 +96,7 @@ interface InviteService {
   sendInvite(email: string): Promise<{ inviteId: string }>;
 }
 
-// ============================================================================
-// Root-level tokens (shared across all tenants)
-// ============================================================================
+// ── Root-level tokens (shared across all tenants) ────────────────────────────────────────────────────────────────────
 
 const DatabasePoolToken = token<DatabasePool>("DatabasePool");
 const AppConfigToken = token<AppConfig>("AppConfig");
@@ -117,9 +113,7 @@ interface AppLogger {
   error(msg: string): void;
 }
 
-// ============================================================================
-// Tenant-scoped tokens (isolated per child container)
-// ============================================================================
+// ── Tenant-scoped tokens (isolated per child container) ──────────────────────────────────────────────────────────────
 
 const TenantContextToken = token<TenantContext>("TenantContext");
 const TenantDbToken = token<TenantDatabase>("TenantDatabase");
@@ -130,9 +124,7 @@ const RateLimiterToken = token<RateLimiter>("RateLimiter");
 const UserServiceToken = token<UserService>("UserService");
 const InviteServiceToken = token<InviteService>("InviteService");
 
-// ============================================================================
-// Shared infrastructure (root singletons)
-// ============================================================================
+// ── Shared infrastructure (root singletons) ──────────────────────────────────────────────────────────────────────────
 
 class PostgresConnectionPool implements DatabasePool {
   private totalQueriesExecuted = 0;
@@ -162,9 +154,7 @@ class PostgresConnectionPool implements DatabasePool {
   }
 }
 
-// ============================================================================
-// Tenant-scoped implementations
-// ============================================================================
+// ── Tenant-scoped implementations ────────────────────────────────────────────────────────────────────────────────────
 
 class TenantDatabaseConnection implements TenantDatabase {
   constructor(
@@ -371,9 +361,7 @@ class TenantInviteManager implements InviteService {
   }
 }
 
-// ============================================================================
-// Root module — shared infrastructure
-// ============================================================================
+// ── Root module — shared infrastructure ──────────────────────────────────────────────────────────────────────────────
 
 const InfrastructureModule = Module.createAsync("Infra", async (builder) => {
   builder.bind(AppConfigToken).toConstantValue({
@@ -493,7 +481,7 @@ async function main(): Promise<void> {
   const sharedDatabasePool = await rootContainer.resolveAsync(DatabasePoolToken);
   console.log("\n✅ Root container ready\n");
 
-  // ── Tenant A: free plan ─────────────────────────────────────────────────
+  // ── Tenant A: free plan ────────────────────────────────────────────────────────────────────────────────────────────
   console.log("════════════════════ Tenant A (free plan) ════════════════════");
   const tenantAContainer = createTenantContainer(
     rootContainer,
@@ -516,7 +504,7 @@ async function main(): Promise<void> {
     console.log(`  ⛔ Expected error: ${(err as Error).message}`);
   }
 
-  // ── Tenant B: pro plan ──────────────────────────────────────────────────
+  // ── Tenant B: pro plan ─────────────────────────────────────────────────────────────────────────────────────────────
   console.log("\n════════════════════ Tenant B (pro plan) ═════════════════════");
   const tenantBContainer = createTenantContainer(
     rootContainer,
@@ -535,7 +523,7 @@ async function main(): Promise<void> {
   const invite = await tenantBInviteService.sendInvite("dave@partner.com");
   console.log(`  ✅ Invite sent: ${invite.inviteId}`);
 
-  // ── Tenant C: enterprise plan ───────────────────────────────────────────
+  // ── Tenant C: enterprise plan ──────────────────────────────────────────────────────────────────────────────────────
   console.log("\n════════════════ Tenant C (enterprise plan) ══════════════════");
   const tenantCContainer = createTenantContainer(
     rootContainer,
@@ -556,7 +544,7 @@ async function main(): Promise<void> {
   await tenantCInviteService.sendInvite("eve@enterprise.com");
   await tenantCInviteService.sendInvite("frank@enterprise.com");
 
-  // ── Verify complete isolation ───────────────────────────────────────────
+  // ── Verify complete isolation ──────────────────────────────────────────────────────────────────────────────────────
   console.log("\n════════════════════ Isolation verification ══════════════════");
 
   // Same root pool is shared — no N+1 connection overhead.

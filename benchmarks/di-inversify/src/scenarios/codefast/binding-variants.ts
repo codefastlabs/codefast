@@ -31,7 +31,7 @@ import {
 import { batched } from "#/harness/batched";
 import type { BenchScenario } from "#/scenarios/types";
 
-// ─── scenario 1: toResolved explicit deps ─────────────────────────────────────
+// ── scenario 1: toResolved explicit deps ─────────────────────────────────────────────────────────────────────────────
 
 interface ResolvedDep {
   readonly id: string;
@@ -76,7 +76,7 @@ function buildToResolvedThreeDepsScenario(): BenchScenario {
   };
 }
 
-// ─── scenario 2: toAlias redirect ────────────────────────────────────────────
+// ── scenario 2: toAlias redirect ─────────────────────────────────────────────────────────────────────────────────────
 
 interface AbstractService {
   readonly name: string;
@@ -111,7 +111,7 @@ function buildToAliasRedirectScenario(): BenchScenario {
   };
 }
 
-// ─── scenario 3: toSelf singleton ─────────────────────────────────────────────
+// ── scenario 3: toSelf singleton ─────────────────────────────────────────────────────────────────────────────────────
 
 @injectable()
 class SelfBoundLeaf {

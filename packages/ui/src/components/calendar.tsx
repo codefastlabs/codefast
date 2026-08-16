@@ -8,9 +8,7 @@ import { Button } from "#/components/button";
 import { cn } from "#/lib/utils";
 import { buttonVariants } from "#/variants/button";
 
-/* -----------------------------------------------------------------------------
- * Component: Calendar
- * -------------------------------------------------------------------------- */
+// ── Component: Calendar ──────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -131,9 +129,7 @@ function Calendar({
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Component: CalendarChevron (internal)
- * -------------------------------------------------------------------------- */
+// ── Component: CalendarChevron (internal) ────────────────────────────────────────────────────────────────────────────
 
 function CalendarChevron({ className, orientation, ...props }: ComponentProps<typeof Chevron>): JSX.Element {
   if (orientation === "left") {
@@ -147,17 +143,13 @@ function CalendarChevron({ className, orientation, ...props }: ComponentProps<ty
   return <ChevronDownIcon className={cn("size-4", className)} {...props} />;
 }
 
-/* -----------------------------------------------------------------------------
- * Component: CalendarRoot (internal)
- * -------------------------------------------------------------------------- */
+// ── Component: CalendarRoot (internal) ───────────────────────────────────────────────────────────────────────────────
 
 function CalendarRoot({ rootRef, ...props }: ComponentProps<typeof Root>): JSX.Element {
   return <div ref={rootRef} data-slot="calendar" {...props} />;
 }
 
-/* -----------------------------------------------------------------------------
- * Component: CalendarWeekNumber (internal)
- * -------------------------------------------------------------------------- */
+// ── Component: CalendarWeekNumber (internal) ─────────────────────────────────────────────────────────────────────────
 
 function CalendarWeekNumber({ children, ...props }: ComponentProps<typeof WeekNumber>): JSX.Element {
   return (
@@ -167,9 +159,7 @@ function CalendarWeekNumber({ children, ...props }: ComponentProps<typeof WeekNu
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Component: CalendarDayButton
- * -------------------------------------------------------------------------- */
+// ── Component: CalendarDayButton ─────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -214,9 +204,7 @@ function CalendarDayButton({ className, day, locale, modifiers, ...props }: Cale
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Exports
- * -------------------------------------------------------------------------- */
+// ── Exports ──────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 export { Calendar, CalendarDayButton };
 export type { CalendarDayButtonProps, CalendarProps };

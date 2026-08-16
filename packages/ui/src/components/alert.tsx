@@ -4,9 +4,7 @@ import { cn } from "#/lib/utils";
 import type { AlertVariants } from "#/variants/alert";
 import { alertVariants } from "#/variants/alert";
 
-/* -----------------------------------------------------------------------------
- * Component: Alert
- * -------------------------------------------------------------------------- */
+// ── Component: Alert ─────────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -20,9 +18,7 @@ function Alert({ className, variant, ...props }: AlertProps): JSX.Element {
   return <div className={alertVariants({ className, variant })} data-slot="alert" role="alert" {...props} />;
 }
 
-/* -----------------------------------------------------------------------------
- * Component: AlertTitle
- * -------------------------------------------------------------------------- */
+// ── Component: AlertTitle ────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -45,9 +41,7 @@ function AlertTitle({ className, ...props }: AlertTitleProps): JSX.Element {
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Component: AlertDescription
- * -------------------------------------------------------------------------- */
+// ── Component: AlertDescription ──────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -70,9 +64,7 @@ function AlertDescription({ className, ...props }: AlertDescriptionProps): JSX.E
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Component: AlertAction
- * -------------------------------------------------------------------------- */
+// ── Component: AlertAction ───────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -86,9 +78,7 @@ function AlertAction({ className, ...props }: AlertActionProps): JSX.Element {
   return <div className={cn("absolute inset-e-2 top-2", className)} data-slot="alert-action" {...props} />;
 }
 
-/* -----------------------------------------------------------------------------
- * Exports
- * -------------------------------------------------------------------------- */
+// ── Exports ──────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 export { Alert, AlertAction, AlertDescription, AlertTitle };
 export type { AlertActionProps, AlertDescriptionProps, AlertProps, AlertTitleProps };

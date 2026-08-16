@@ -5,9 +5,7 @@ import { cn } from "#/lib/utils";
 import type { MarkerVariants } from "#/variants/marker";
 import { markerVariants } from "#/variants/marker";
 
-/* -----------------------------------------------------------------------------
- * Component: Marker
- * -------------------------------------------------------------------------- */
+// ── Component: Marker ────────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * Inline divider for a message feed — a date, unread line, or section label.
@@ -34,9 +32,7 @@ function Marker({ asChild = false, className, variant = "default", ...props }: M
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Component: MarkerIcon
- * -------------------------------------------------------------------------- */
+// ── Component: MarkerIcon ────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * Decorative leading icon for a marker.
@@ -59,9 +55,7 @@ function MarkerIcon({ className, ...props }: MarkerIconProps): JSX.Element {
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Component: MarkerContent
- * -------------------------------------------------------------------------- */
+// ── Component: MarkerContent ─────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * Marker label; centers between the rules in the `separator` variant.
@@ -86,9 +80,7 @@ function MarkerContent({ className, ...props }: MarkerContentProps): JSX.Element
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Exports
- * -------------------------------------------------------------------------- */
+// ── Exports ──────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 export { Marker, MarkerContent, MarkerIcon };
 export type { MarkerContentProps, MarkerIconProps, MarkerProps };

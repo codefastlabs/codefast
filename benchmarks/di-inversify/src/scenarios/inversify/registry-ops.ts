@@ -27,7 +27,7 @@ import {
 import { batched } from "#/harness/batched";
 import type { BenchScenario } from "#/scenarios/types";
 
-// ─── scenario 1: rebind hot-swap ─────────────────────────────────────────────
+// ── scenario 1: rebind hot-swap ──────────────────────────────────────────────────────────────────────────────────────
 
 const rebindId = Symbol("bench-inv-ro-rebind");
 
@@ -61,7 +61,7 @@ function buildRebindHotSwapScenario(): BenchScenario {
   };
 }
 
-// ─── scenario 2: isBound — bound identifier ──────────────────────────────────
+// ── scenario 2: isBound — bound identifier ───────────────────────────────────────────────────────────────────────────
 
 const hasBoundId = Symbol("bench-inv-ro-has-bound");
 
@@ -82,7 +82,7 @@ function buildIsBoundCheckScenario(): BenchScenario {
   };
 }
 
-// ─── scenario 3: isCurrentBound — unbound in child ───────────────────────────
+// ── scenario 3: isCurrentBound — unbound in child ────────────────────────────────────────────────────────────────────
 
 const hasOwnId = Symbol("bench-inv-ro-has-own");
 
@@ -105,7 +105,7 @@ function buildIsCurrentBoundCheckScenario(): BenchScenario {
   };
 }
 
-// ─── scenario 4: container-level onActivation hook ───────────────────────────
+// ── scenario 4: container-level onActivation hook ────────────────────────────────────────────────────────────────────
 
 interface HookPayload {
   value: number;
@@ -149,7 +149,7 @@ function buildContainerLevelActivationHookScenario(): BenchScenario {
   };
 }
 
-// ─── scenario 5: per-request child sharing ────────────────────────────────────
+// ── scenario 5: per-request child sharing ────────────────────────────────────────────────────────────────────────────
 //
 // inversify 8 has no per-child binding scope (`inRequestScope()` spans a single
 // `get()` call tree), so per-request sharing across several resolves is expressed

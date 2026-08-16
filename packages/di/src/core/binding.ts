@@ -13,7 +13,7 @@ import type {
 } from "#/core/types";
 import type { InjectableDependency, InjectionDescriptor, ResolvedDependencyValue } from "#/injection/descriptor";
 
-// ── BindingSlot ───────────────────────────────────────────────────────────────────
+// ── BindingSlot ──────────────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -71,7 +71,7 @@ export function bindingSlotToString(slot: BindingSlot): string {
   return parts.join(",");
 }
 
-// ── BindingBase ───────────────────────────────────────────────────────────────
+// ── BindingBase ──────────────────────────────────────────────────────────────────────────────────────────────────────
 
 interface BindingBase<Value> {
   readonly id: BindingIdentifier;
@@ -120,7 +120,7 @@ interface BindingLifecycleHooks<Value> {
   onDeactivation?(instance: Value): void | Promise<void>;
 }
 
-// ── Binding kinds ─────────────────────────────────────────────────────────────
+// ── Binding kinds ────────────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -218,7 +218,7 @@ type DistributiveOmit<Union, Keys extends PropertyKey> = Union extends unknown ?
  */
 export type PartialBinding<Value> = DistributiveOmit<Binding<Value>, BindingBaseKeys>;
 
-// ── ID generation ─────────────────────────────────────────────────────────────
+// ── ID generation ────────────────────────────────────────────────────────────────────────────────────────────────────
 
 let bindingIdCounter = 0;
 /**
@@ -228,7 +228,7 @@ export function generateBindingId(): BindingIdentifier {
   return String(++bindingIdCounter) as BindingIdentifier;
 }
 
-// ── Construction ──────────────────────────────────────────────────────────────
+// ── Construction ─────────────────────────────────────────────────────────────────────────────────────────────────────
 
 /** Every key any member declares — a bare `keyof` on a union gives only the shared ones. */
 type KeysOfUnion<Union> = Union extends unknown ? keyof Union : never;
@@ -341,7 +341,7 @@ export function clearBindingFrame<Value>(binding: Binding<Value>): void {
   (binding as MemoizedFrameField).frame = undefined;
 }
 
-// ── Builder interfaces ────────────────────────────────────────────────────────
+// ── Builder interfaces ───────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * Common slot-constraint + id methods shared by all concrete binding builders.

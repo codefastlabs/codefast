@@ -6,9 +6,7 @@ import { cn } from "#/lib/utils";
 import * as InputNumberPrimitive from "#/primitives/input-number";
 import { buttonVariants } from "#/variants/button";
 
-/* -----------------------------------------------------------------------------
- * Component: InputNumber
- * -------------------------------------------------------------------------- */
+// ── Component: InputNumber ───────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -44,9 +42,7 @@ function InputNumber({
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Component: InputNumberField
- * -------------------------------------------------------------------------- */
+// ── Component: InputNumberField ──────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.5.0-canary.6
@@ -75,9 +71,7 @@ function InputNumberField({ className, ...props }: InputNumberFieldProps): JSX.E
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Component: InputNumberStepper
- * -------------------------------------------------------------------------- */
+// ── Component: InputNumberStepper ────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.5.0-canary.6
@@ -123,9 +117,7 @@ function InputNumberStepper({ className, ...props }: InputNumberStepperProps): J
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Component: InputNumberIncrement
- * -------------------------------------------------------------------------- */
+// ── Component: InputNumberIncrement ──────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.5.0-canary.6
@@ -156,9 +148,7 @@ function InputNumberIncrement({ children, className, ...props }: InputNumberIncr
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Component: InputNumberDecrement
- * -------------------------------------------------------------------------- */
+// ── Component: InputNumberDecrement ──────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.5.0-canary.6
@@ -189,9 +179,7 @@ function InputNumberDecrement({ children, className, ...props }: InputNumberDecr
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Exports
- * -------------------------------------------------------------------------- */
+// ── Exports ──────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 export { InputNumber, InputNumberDecrement, InputNumberField, InputNumberIncrement, InputNumberStepper };
 export type {
