@@ -51,6 +51,34 @@ describe("scanCommentContent", () => {
     expect(scanCommentContent(source, "js")).toStrictEqual([]);
   });
 
+  it("flags a @param whose description is not separated by a hyphen", () => {
+    const source = ["/**", " * @param libraryName Dependency name keying node_modules.", " */"].join("\n");
+    const findings = scanCommentContent(source, "js");
+
+    expect(findings).toHaveLength(1);
+    expect(findings[0]).toMatchObject({ line: 2, defect: "param-hyphen" });
+  });
+
+  it("accepts the hyphenated TSDoc @param form", () => {
+    const source = ["/**", " * @param libraryName - Dependency name keying node_modules.", " */"].join("\n");
+
+    expect(scanCommentContent(source, "js")).toStrictEqual([]);
+  });
+
+  it("flags a @since followed by another tag", () => {
+    const source = ["/**", " * @since 1.0.0", " *", " * @remarks Late remark.", " */"].join("\n");
+    const findings = scanCommentContent(source, "js");
+
+    expect(findings).toHaveLength(1);
+    expect(findings[0]).toMatchObject({ line: 2, defect: "since-order" });
+  });
+
+  it("accepts @since as the last tag", () => {
+    const source = ["/**", " * @remarks Early remark.", " *", " * @since 1.0.0", " */"].join("\n");
+
+    expect(scanCommentContent(source, "js")).toStrictEqual([]);
+  });
+
   it("scans css block comments", () => {
     const source = ["/* see THEMING.md before adding a token */", "body { color: red; }"].join("\n");
 
