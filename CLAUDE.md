@@ -201,10 +201,9 @@ carry the types.**
   framed paragraph as prose to leave alone. So: do not bolt a body onto a divider, and do not shave a doc block down to
   fit one — write the divider, then the `/** … */` block under it, each doing its own job.
 - **A divider marks a family, not a symbol.** Use one only where a file renders several exported members of one family —
-  a component file with its sub-components, a theme stylesheet, an example script. A file with a single export gets
-  none, and the trees that carry none today (`di/src`, `tailwind-variants/src`, `cli/src`) stay that way; an outline the
-  editor already gives you is not worth a line of punctuation. The title is a noun phrase from the settled vocabulary —
-  `Component: X`, `Variant: X`, `Context: X`, `Props`, `Helpers`, `Exports` — never a sentence.
+  a component file with its sub-components, a theme stylesheet, an example script. A file with a single export gets none
+  — an outline the editor already gives you is not worth a line of punctuation. The title is a noun phrase from the
+  settled vocabulary — `Component: X`, `Variant: X`, `Context: X`, `Props`, `Helpers`, `Exports` — never a sentence.
 - **Never put types in comments.** No `@param {string} x` / `@returns {T}` — TS already declares them, and a duplicated
   type just goes stale (`cli:audit:comments` flags the `{type}` payload). Prefer omitting `@param`/`@returns` entirely.
   Add `@param name - …` (TSDoc style: a hyphen, **no** `{type}`) or `@typeParam T - …` only to document a non-obvious
@@ -224,13 +223,15 @@ carry the types.**
   after a blank line or under `@remarks`, in complete sentences — the summary stays self-sufficient, because most
   readers stop there.
 - **TSDoc block tags only when they add what the type can't:** `@remarks` (detail past the summary), `@example`,
-  `@deprecated <reason + replacement>`, `@see`, `@throws`, `@defaultValue`.
+  `@deprecated <reason + replacement>`, `@see`, `@throws`, `@defaultValue`. A `{@link X}` must keep resolving — the
+  audit reads a target with no mention outside links as a rename that orphaned it.
 - **Speak the API's vocabulary (Apple HIG terms).** In comments and names, **appearance** is the user's preference
   (Light / Dark / Auto) and **color scheme** is the resolved light/dark value applied — say "appearance" for the
   preference, "color scheme" for the resolved value, and avoid the legacy "theme" wording. Prefer `/** … */` doc blocks
   over `//` lines when the comment documents intent.
-- **`@since <version>` is generated** by `codefast tag` at release — never hand-write it, and never remove a released
-  one (the add-only tool would re-stamp it with the current version, destroying the true original).
+- **`@since <version>` is generated** by `codefast tag` at release — never hand-write it, never remove a released one
+  (the add-only tool would re-stamp it with the current version, destroying the true original), and it stays the block's
+  **last** tag: a `@remarks` added later goes above it, not below.
 - No commented-out code left behind; a `TODO`/`FIXME` must state why or link an issue.
 
 ## API naming (Swift API Design Guidelines, adapted to TS)
