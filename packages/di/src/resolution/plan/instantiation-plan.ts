@@ -126,12 +126,11 @@ export interface InstantiationPlanHost {
   ): InstantiationPlanDependencyEntry | null;
   /** The frame the interpreted path pushes for this binding, so escapes can replay it. */
   getResolutionFrame(binding: Binding): ResolutionFrame;
-  /** Runtime resolve for an escaped dependency, seeded with the ancestors above it. */
+  /** Runtime resolve for an escaped dependency, seeded with the ancestor frames above it. */
   resolveEscaped(
     token: Token<unknown> | Constructor,
     options: ResolveOptions | undefined,
     arity: EscapeArity,
-    resolutionPath: Array<string>,
     resolutionStack: Array<ResolutionFrame>,
   ): unknown;
   /** The async counterpart of {@link InstantiationPlanHost.resolveEscaped}, replaying the async dispatch. */
@@ -139,7 +138,6 @@ export interface InstantiationPlanHost {
     token: Token<unknown> | Constructor,
     options: ResolveOptions | undefined,
     arity: EscapeArity,
-    resolutionPath: Array<string>,
     resolutionStack: Array<ResolutionFrame>,
   ): Promise<unknown>;
 }
@@ -182,8 +180,7 @@ export class InstantiationPlanCompiler {
   ): () => unknown {
     const host = this.#host;
     const frames = ancestors.map((ancestor) => host.getResolutionFrame(ancestor));
-    const names = frames.map((frame) => frame.tokenName);
-    return () => host.resolveEscaped(token, options, arity, [...names], [...frames]);
+    return () => host.resolveEscaped(token, options, arity, [...frames]);
   }
 
   // A resolved binding declares its deps as explicit descriptors — same rules as
@@ -395,9 +392,8 @@ export class InstantiationPlanCompiler {
   ): AsyncNodeThunk {
     const host = this.#host;
     const frames = ancestors.map((ancestor) => host.getResolutionFrame(ancestor));
-    const names = frames.map((frame) => frame.tokenName);
     return {
-      run: () => host.resolveEscapedAsync(token, options, arity, [...names], [...frames]),
+      run: () => host.resolveEscapedAsync(token, options, arity, [...frames]),
       promiseShape: "always",
     };
   }

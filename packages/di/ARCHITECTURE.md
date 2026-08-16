@@ -193,15 +193,15 @@ object now answers every resolve of that slot and a constraint predicate is hand
 write through that reference would rewrite what the dependency asks for from then on. Frozen, the attempt throws where
 it is made.
 
-**The two array copies in `#compileEscapeThunk` are load-bearing.** This is a correctness invariant. Two mechanisms
-defeat any scheme that shares or lends those arrays:
+**The frame copy in `#compileEscapeThunk` is load-bearing.** This is a correctness invariant. Two mechanisms defeat any
+scheme that shares or lends that array:
 
 - The membership `Set` that `enterResolutionPath` attaches past `RESOLUTION_SET_THRESHOLD` lives on the **array
-  object**, so a lent array carries it into a lane that does not maintain it; `[...names]` hands the escape an array
+  object**, so a lent array carries it into a lane that does not maintain it; `[...frames]` hands the escape an array
   with no set at all, because a spread does not copy symbol-keyed properties.
 - A constraint predicate runs on a live seed **before any push**, at exactly the length a depth guard reads as idle, and
   can re-enter the same cached plan; one indexed write into a lent seed then survives forever, where the interpreted
-  lane's `rootPath` drains to zero after each top-level resolve and self-heals.
+  lane's `rootStack` drains to zero after each top-level resolve and self-heals.
 
 A poisoned frame changes which binding is selected — a wrong value, not just a wrong diagnostic. That's why this one is
 firm rather than a matter of taste; anything faster here has to keep both mechanisms from firing.
@@ -358,23 +358,22 @@ reports `CircularDependencyError` rather than recursing, and the flag is still r
 **Every path-based check keys on binding identity, never on a token's display name.** A display name is not unique — two
 `token("Config")` from different modules are distinct tokens, and a name-keyed check reported a false cycle for a
 legitimately acyclic chain that held both. `enterResolutionPath` and `extendResolutionBranch` compare `bindingId` read
-off the frame stack; the name array exists only so the error can print the chain. That makes the path/stack **lockstep**
-load-bearing: every site that grows one grows the other — `enterResolutionPath` pushes both itself, the branch helpers
-take one depth for both halves, the cascade pushes and pops both together, and an escape thunk copies a name array it
-derived from its frame array. A depth read off the path is therefore always a valid index into the paired stack.
+off the frame stack; the names an error or `ctx.resolutionPath` reports are **derived from the frames** at the moment
+they are asked for — no name array exists to keep in step. A hop pushes and pops one stack, the branch helper takes one
+depth, and an escape thunk copies one frame array; the error path pays the name materialization, not the hot path.
 
-`enterResolutionPath` scans the frames linearly while the path is short and attaches a membership `Set` of binding ids
+`enterResolutionPath` scans the frames linearly while the stack is short and attaches a membership `Set` of binding ids
 past `RESOLUTION_SET_THRESHOLD`, which is 32. That threshold switches a **data structure**, not a behaviour: both
 branches answer identically. (The 32 is a tuning constant from a depth sweep; re-sweeping it with the benchmark is cheap
 if the typical graph depth in real consumers shifts, or the collector's behaviour changes.)
 
 **The set is seeded from the stack, so it has to be able to notice that it has gone stale.** The frames already on the
-path when it attaches are handed no set and delete nothing on unwind, and the array outlives a resolve — the resolver
-lends one pair per resolver — so a set that survived the unwind would refuse bindings nobody is resolving. A live set
-mirrors the path exactly (ids on an acyclic path are unique); `enterResolutionPath` drops one whose size no longer
-matches the path's length, and the next deep frame rebuilds it. `tests/unit/resolution/path/resolution-path.test.ts`
-pins the three ways the seed becomes observable: a second resolve of the same deep graph, a sibling branch below the
-attach depth, and the entry point called directly.
+stack when it attaches are handed no set and delete nothing on unwind, and the array outlives a resolve — the resolver
+lends one stack — so a set that survived the unwind would refuse bindings nobody is resolving. A live set mirrors the
+stack exactly (ids on an acyclic path are unique); `enterResolutionPath` drops one whose size no longer matches the
+stack's length, and the next deep frame rebuilds it. `tests/unit/resolution/path/resolution-path.test.ts` pins the three
+ways the seed becomes observable: a second resolve of the same deep graph, a sibling branch below the attach depth, and
+the entry point called directly.
 
 > **Invariant (correctness).** A threshold here may choose an implementation; it must not choose a semantics. The
 > removed `DEEP_LANE_THRESHOLD` switched _lanes_, so it silently changed context identity, stack frames and promise
@@ -390,11 +389,10 @@ assumed to have neither property, and paid for a settle-scoped path on every lev
 It has both, for the requests that matter. **A factory's request for a dependency is made from its synchronous prefix**
 — `async ctx => await ctx.resolveAsync(dep)` calls `resolveAsync` before it awaits anything. So the chain of "who is
 resolving whom" at the moment of a request is the synchronous call stack, and a whole eight-level chain is built inside
-**one** synchronous cascade before any of it settles. While that cascade is open the resolver's own
-`#cascadePath`/`#cascadeStack` are the ancestor chain: pushed on factory-enter, popped when the factory returns **its
-promise** — not when that promise settles. Two cascades can never interleave, so `binding.inFlight` is exact path
-membership again, and every level shares one `AsyncCascadeContext`. Nothing is allocated per level, nothing observes its
-own settlement.
+**one** synchronous cascade before any of it settles. While that cascade is open the resolver's own `#cascadeStack` is
+the ancestor chain: pushed on factory-enter, popped when the factory returns **its promise** — not when that promise
+settles. Two cascades can never interleave, so `binding.inFlight` is exact path membership again, and every level shares
+one `AsyncCascadeContext`. Nothing is allocated per level, nothing observes its own settlement.
 
 That also removes a false positive rather than adding one. The shared settle-scoped path reported
 `Circular dependency detected: a → b → d → c → d` for a diamond — `A` awaiting `B` and `C` in parallel, both needing
@@ -441,29 +439,29 @@ every dependency, down to unwrapping a promise-valued constant and starting ever
 propagates. `tests/unit/resolution/plan/instantiation-plan-async.test.ts` pins the lane being active, the escape
 criteria, the late-hook invalidation, and those two exactness corners.
 
-## The sync context pool, and the arrays it lends
+## The sync context pool, and the stack it lends
 
 Pooling a resolution context by depth beat allocating one per level in measurement, which is why it's there. `reset()`
-writes five fields, and a pooled context outlives enough resolves to sit in **old space**, so each pointer write takes a
-write barrier — which is why three of the five (the resolver and the two arrays) are compared before they are stored.
-That comparison can only ever hit if the arrays are the same objects, so one pair is reused per resolver rather than
-minted per `container.resolve()` call. The same mechanism sets the price: a fresh array is in new space and needs no
-barrier to push a frame onto, while the shared pair pays one per push.
+writes a handful of fields, and a pooled context outlives enough resolves to sit in **old space**, so each pointer write
+takes a write barrier — which is why the resolver and the stack are compared before they are stored. That comparison can
+only ever hit if the stack is the same object, so one stack is reused per resolver rather than minted per
+`container.resolve()` call. The same mechanism sets the price: a fresh array is in new space and needs no barrier to
+push a frame onto, while the shared stack pays one per push.
 
 > **Invariant (lending protocol).** An empty `rootStack` _is_ the whole lending protocol — every sync lane pops what it
-> pushes, so a non-empty one means a resolve is holding the pair and the caller mints its own. A nested
-> `container.resolve()` inside a factory must therefore still see an empty path, and a resolve that throws must hand the
-> pair back; `tests/unit/resolution/in-flight-invariants.test.ts` pins both. If the pair ever leaks dirty the failure
-> mode is lost reuse (slower), never a wrong path — the protocol is built so that the correctness case can't break here.
+> pushes, so a non-empty one means a resolve is holding the stack and the caller mints its own. A nested
+> `container.resolve()` inside a factory must therefore still see an empty stack, and a resolve that throws must hand it
+> back; `tests/unit/resolution/in-flight-invariants.test.ts` pins both. If the stack ever leaks dirty the failure mode
+> is lost reuse (slower), never a wrong path — the protocol is built so that the correctness case can't break here.
 
-> **Invariant (correctness).** A pooled context is reused only for the array pair it already holds. The pools are keyed
-> by pair — one for the root pair, one for the cascade pair, each depth-indexed — and any other pair (a nested resolve's
-> minted arrays, an async level's snapshot) mints a context per call. A nested top-level resolve reaches the same depth
-> while the outer factory still holds that depth's pooled context — re-pointing it at the nested resolve's freshly
-> minted pair would leave the outer factory's `ctx` answering from the wrong path, so a `when()` predicate reading
-> `ctx.parent` selects the wrong binding. Keying the pools by pair holds this structurally, with one pointer compare on
-> the hot lane; asking the context whether it holds the requested arrays answered the same question but cost the acquire
-> its inlining. `tests/unit/resolution/context-pool-isolation.test.ts` pins the behaviour.
+> **Invariant (correctness).** A pooled context is reused only for the stack it already holds. The pools are keyed by
+> stack — one for the root stack, one for the cascade stack, each depth-indexed — and any other stack (a nested
+> resolve's minted array, an async level's snapshot) mints a context per call. A nested top-level resolve reaches the
+> same depth while the outer factory still holds that depth's pooled context — re-pointing it at the nested resolve's
+> freshly minted stack would leave the outer factory's `ctx` answering from the wrong path, so a `when()` predicate
+> reading `ctx.parent` selects the wrong binding. Keying the pools by stack holds this structurally, with one pointer
+> compare on the hot lane; asking the context whether it holds the requested array answered the same question but cost
+> the acquire its inlining. `tests/unit/resolution/context-pool-isolation.test.ts` pins the behaviour.
 
 ## A container defers most of itself
 

@@ -1,10 +1,10 @@
 /**
- * The cycle check keys on binding identity — two distinct tokens may share a display name — while
- * the path keeps names for the error message alone. The membership set `enterResolutionPath`
- * attaches past its threshold is an implementation of that check, never a second semantics: a graph
- * resolves the same whether or not it is deep enough to carry one. The set is seeded from the
- * stack, so the frames already on it are handed nothing to delete from on unwind — several tests
- * here are ways of observing that seed after those frames left.
+ * The cycle check keys on binding identity — two distinct tokens may share a display name — and the
+ * names an error prints are derived from the frames at the throw site. The membership set
+ * `enterResolutionPath` attaches past its threshold is an implementation of that check, never a
+ * second semantics: a graph resolves the same whether or not it is deep enough to carry one. The
+ * set is seeded from the stack, so the frames already on it are handed nothing to delete from on
+ * unwind — several tests here are ways of observing that seed after those frames left.
  */
 import { describe, expect, it } from "vitest";
 
@@ -200,63 +200,55 @@ describe("a path deep enough to carry a membership set", () => {
 
 describe("enterResolutionPath, called directly", () => {
   it("keys on binding identity in the linear lane, not on the display name", () => {
-    const path: Array<string> = [];
     const stack: Array<ResolutionFrame> = [];
 
-    enterResolutionPath(path, stack, frameOf("Dup", 1));
+    enterResolutionPath(stack, frameOf("Dup", 1));
 
-    expect(() => enterResolutionPath(path, stack, frameOf("Dup", 2))).not.toThrow();
-    expect(() => enterResolutionPath(path, stack, frameOf("renamed", 1))).toThrow(/Circular dependency/);
+    expect(() => enterResolutionPath(stack, frameOf("Dup", 2))).not.toThrow();
+    expect(() => enterResolutionPath(stack, frameOf("renamed", 1))).toThrow(/Circular dependency/);
   });
 
   it("keys on binding identity once the membership set carries the check", () => {
-    const path: Array<string> = [];
     const stack: Array<ResolutionFrame> = [];
 
     for (let index = 0; index < RESOLUTION_SET_THRESHOLD; index++) {
-      enterResolutionPath(path, stack, frameOf(`frame-${String(index)}`, index));
+      enterResolutionPath(stack, frameOf(`frame-${String(index)}`, index));
     }
 
-    expect(() => enterResolutionPath(path, stack, frameOf("frame-0", RESOLUTION_SET_THRESHOLD))).not.toThrow();
-    expect(() => enterResolutionPath(path, stack, frameOf("renamed", 0))).toThrow(/Circular dependency/);
+    expect(() => enterResolutionPath(stack, frameOf("frame-0", RESOLUTION_SET_THRESHOLD))).not.toThrow();
+    expect(() => enterResolutionPath(stack, frameOf("renamed", 0))).toThrow(/Circular dependency/);
   });
 
-  it("drops a set whose path has unwound past the depth it attached at", () => {
-    const path: Array<string> = [];
+  it("drops a set whose stack has unwound past the depth it attached at", () => {
     const stack: Array<ResolutionFrame> = [];
 
     for (let index = 0; index < RESOLUTION_SET_THRESHOLD; index++) {
-      enterResolutionPath(path, stack, frameOf(`frame-${String(index)}`, index));
+      enterResolutionPath(stack, frameOf(`frame-${String(index)}`, index));
     }
     // The first frame past the threshold is the one that attaches the set.
     const attachingFrame = frameOf("attaching-frame", RESOLUTION_SET_THRESHOLD);
-    const attached = enterResolutionPath(path, stack, attachingFrame);
+    const attached = enterResolutionPath(stack, attachingFrame);
 
     expect(attached).toBeInstanceOf(Set);
 
     // That frame unwinds knowing about the set; the seeded ones below it never did.
     stack.pop();
-    path.pop();
     attached?.delete(attachingFrame.bindingId);
-    while (path.length > 0) {
+    while (stack.length > 0) {
       stack.pop();
-      path.pop();
     }
 
-    expect(() => enterResolutionPath(path, stack, frameOf("frame-0", 0))).not.toThrow();
+    expect(() => enterResolutionPath(stack, frameOf("frame-0", 0))).not.toThrow();
   });
 });
 
 describe("extendResolutionBranch, called directly", () => {
   it("keys on binding identity, not on the display name", () => {
-    const path: Array<string> = [];
     const stack: Array<ResolutionFrame> = [];
 
-    enterResolutionPath(path, stack, frameOf("Dup", 1));
+    enterResolutionPath(stack, frameOf("Dup", 1));
 
-    expect(() => extendResolutionBranch(path, stack, UNOWNED_BRANCH, frameOf("Dup", 2))).not.toThrow();
-    expect(() => extendResolutionBranch(path, stack, UNOWNED_BRANCH, frameOf("renamed", 1))).toThrow(
-      /Circular dependency/,
-    );
+    expect(() => extendResolutionBranch(stack, UNOWNED_BRANCH, frameOf("Dup", 2))).not.toThrow();
+    expect(() => extendResolutionBranch(stack, UNOWNED_BRANCH, frameOf("renamed", 1))).toThrow(/Circular dependency/);
   });
 });

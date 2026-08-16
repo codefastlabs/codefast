@@ -214,7 +214,7 @@ class DefaultContainer implements Container {
   #readerForChild(): MetadataReader {
     if (this.#registry.getAll(MetadataReaderToken).length > 0) {
       try {
-        return this.#resolver.resolve(MetadataReaderToken, undefined, [], []);
+        return this.#resolver.resolve(MetadataReaderToken, undefined, []);
       } catch {
         // An unresolvable reader binding is not worth failing a child over.
       }
@@ -558,16 +558,16 @@ class DefaultContainer implements Container {
   resolve<Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Value {
     this.#assertNotDisposed();
     const rootStack = this.#resolver.rootStack;
-    // A resolve already holding the shared pair means this one is nested; it mints its own.
+    // A resolve already holding the shared stack means this one is nested; it mints its own.
     if (rootStack.length !== 0) {
       return options === undefined
-        ? this.#resolver.resolveFromContext(token, [], [])
-        : this.#resolver.resolve(token, options, [], []);
+        ? this.#resolver.resolveFromContext(token, [])
+        : this.#resolver.resolve(token, options, []);
     }
     if (options === undefined) {
-      return this.#resolver.resolveFromContext(token, this.#resolver.rootPath, rootStack);
+      return this.#resolver.resolveFromContext(token, rootStack);
     }
-    return this.#resolver.resolve(token, options, this.#resolver.rootPath, rootStack);
+    return this.#resolver.resolve(token, options, rootStack);
   }
 
   resolveAsync<Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Promise<Value> {
@@ -575,15 +575,15 @@ class DefaultContainer implements Container {
     if (options === undefined) {
       return this.#resolver.resolveAsyncFromRoot(token) as Promise<Value>;
     }
-    return this.#resolver.resolveAsync(token, options, [], [], ROOT_BRANCH);
+    return this.#resolver.resolveAsync(token, options, [], ROOT_BRANCH);
   }
 
   resolveOptional<Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Value | undefined {
     this.#assertNotDisposed();
     const rootStack = this.#resolver.rootStack;
     return rootStack.length === 0
-      ? this.#resolver.resolveOptional(token, options, this.#resolver.rootPath, rootStack)
-      : this.#resolver.resolveOptional(token, options, [], []);
+      ? this.#resolver.resolveOptional(token, options, rootStack)
+      : this.#resolver.resolveOptional(token, options, []);
   }
 
   resolveOptionalAsync<Value>(
@@ -591,20 +591,20 @@ class DefaultContainer implements Container {
     options?: ResolveOptions,
   ): Promise<Value | undefined> {
     this.#assertNotDisposed();
-    return this.#resolver.resolveOptionalAsync(token, options, [], [], ROOT_BRANCH);
+    return this.#resolver.resolveOptionalAsync(token, options, [], ROOT_BRANCH);
   }
 
   resolveAll<Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Array<Value> {
     this.#assertNotDisposed();
     const rootStack = this.#resolver.rootStack;
     return rootStack.length === 0
-      ? this.#resolver.resolveAll(token, options, this.#resolver.rootPath, rootStack)
-      : this.#resolver.resolveAll(token, options, [], []);
+      ? this.#resolver.resolveAll(token, options, rootStack)
+      : this.#resolver.resolveAll(token, options, []);
   }
 
   resolveAllAsync<Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Promise<Array<Value>> {
     this.#assertNotDisposed();
-    return this.#resolver.resolveAllAsync(token, options, [], [], ROOT_BRANCH);
+    return this.#resolver.resolveAllAsync(token, options, [], ROOT_BRANCH);
   }
 
   // ── Child ─────────────────────────────────────────────────────────────────
