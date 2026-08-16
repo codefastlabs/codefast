@@ -3,9 +3,7 @@ import type { ComponentProps, JSX } from "react";
 
 import { cn } from "#/lib/utils";
 
-/* -----------------------------------------------------------------------------
- * Component: TooltipProvider
- * -------------------------------------------------------------------------- */
+// ── Component: TooltipProvider ───────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -19,9 +17,7 @@ function TooltipProvider({ delayDuration = 0, ...props }: TooltipProviderProps):
   return <TooltipPrimitive.Provider data-slot="tooltip-provider" delayDuration={delayDuration} {...props} />;
 }
 
-/* -----------------------------------------------------------------------------
- * Component: Tooltip
- * -------------------------------------------------------------------------- */
+// ── Component: Tooltip ───────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -35,9 +31,7 @@ function Tooltip({ ...props }: TooltipProps): JSX.Element {
   return <TooltipPrimitive.Root data-slot="tooltip" {...props} />;
 }
 
-/* -----------------------------------------------------------------------------
- * Component: TooltipTrigger
- * -------------------------------------------------------------------------- */
+// ── Component: TooltipTrigger ────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -51,9 +45,7 @@ function TooltipTrigger({ ...props }: TooltipTriggerProps): JSX.Element {
   return <TooltipPrimitive.Trigger data-slot="tooltip-trigger" {...props} />;
 }
 
-/* -----------------------------------------------------------------------------
- * Component: TooltipContent
- * -------------------------------------------------------------------------- */
+// ── Component: TooltipContent ────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -82,9 +74,7 @@ function TooltipContent({ children, className, sideOffset = 0, ...props }: Toolt
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Component: TooltipArrow
- * -------------------------------------------------------------------------- */
+// ── Component: TooltipArrow ──────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -107,9 +97,7 @@ function TooltipArrow({ className, ...props }: TooltipArrowProps): JSX.Element {
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Exports
- * -------------------------------------------------------------------------- */
+// ── Exports ──────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 export { Tooltip, TooltipArrow, TooltipContent, TooltipProvider, TooltipTrigger };
 export type { TooltipArrowProps, TooltipContentProps, TooltipProps, TooltipProviderProps, TooltipTriggerProps };

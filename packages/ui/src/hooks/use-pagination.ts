@@ -44,7 +44,7 @@ const createRange = (start: number, end: number): Array<number> => {
 };
 
 /**
- * Compute a pagination structure for result sets.
+ * Computes a pagination structure for result sets.
  *
  * Returns a mixed array of page numbers and the `ELLIPSIS` marker representing
  * collapsed ranges. The shape adapts to the total pages and the requested

@@ -1,39 +1,38 @@
 /**
  * The async lane's central invariant is that a branch may only ever append to an array it minted
- * itself — a sync frame's path is one that frame will pop, and it may carry a membership `Set` this
+ * itself — a sync frame's stack is one that frame will pop, and it may carry a membership `Set` this
  * lane cannot keep true. The rule is a type rather than prose, so the compiler answers it:
- * `OwnedBranchPath` is minted only by `extendResolutionBranch`, and a `BranchDepth` cannot be a
+ * `OwnedBranchStack` is minted only by `extendResolutionBranch`, and a `BranchDepth` cannot be a
  * number that came from anywhere else.
  */
 import { expectTypeOf } from "expect-type";
 import { describe, expect, it } from "vitest";
 
-import type { ResolutionFrame } from "#/core/types";
+import { NO_TAG_KEYS } from "#/core/tag";
+import type { BindingIdentifier, ResolutionFrame } from "#/core/types";
 import type { ResolutionDiagnostics } from "#/errors/diagnostics";
-import type {
-  BranchDepth,
-  OwnedBranchDepth,
-  OwnedBranchPath,
-  OwnedBranchStack,
-} from "#/resolution/path/resolution-path";
-import {
-  branchDepthOf,
-  extendResolutionBranch,
-  extendResolutionStackBranch,
-  ROOT_BRANCH,
-} from "#/resolution/path/resolution-path";
+import type { BranchDepth, OwnedBranchDepth, OwnedBranchStack } from "#/resolution/path/resolution-path";
+import { branchDepthOf, extendResolutionBranch, ROOT_BRANCH } from "#/resolution/path/resolution-path";
 
-describe("only the lane's own helpers mint a branch", () => {
+function frameOf(name: string, id: number): ResolutionFrame {
+  return {
+    tokenName: name,
+    scope: "transient",
+    bindingId: String(id) as BindingIdentifier,
+    kind: "class",
+    slot: { name: undefined, tags: [], keyMask: NO_TAG_KEYS },
+  };
+}
+
+describe("only the lane's own helper mints a branch", () => {
   it("returns an owned branch, which a plain array is not", () => {
-    expectTypeOf(extendResolutionBranch).returns.toEqualTypeOf<OwnedBranchPath>();
-    expectTypeOf(extendResolutionStackBranch).returns.toEqualTypeOf<OwnedBranchStack>();
-    expectTypeOf<OwnedBranchPath>().toExtend<Array<string>>();
-    expectTypeOf<Array<string>>().not.toExtend<OwnedBranchPath>();
+    expectTypeOf(extendResolutionBranch).returns.toEqualTypeOf<OwnedBranchStack>();
+    expectTypeOf<OwnedBranchStack>().toExtend<Array<ResolutionFrame>>();
     expectTypeOf<Array<ResolutionFrame>>().not.toExtend<OwnedBranchStack>();
   });
 
-  it("takes any array to extend from, since an unowned one is copied", () => {
-    expectTypeOf(extendResolutionBranch).parameter(0).toEqualTypeOf<Array<string>>();
+  it("takes any stack to extend from, since an unowned one is copied", () => {
+    expectTypeOf(extendResolutionBranch).parameter(0).toEqualTypeOf<Array<ResolutionFrame>>();
   });
 });
 
@@ -55,13 +54,14 @@ describe("a branch depth cannot be an arbitrary number", () => {
   });
 
   it("only reads a depth off a branch that owns one", () => {
-    expectTypeOf(branchDepthOf).parameter(0).toEqualTypeOf<OwnedBranchPath>();
+    expectTypeOf(branchDepthOf).parameter(0).toEqualTypeOf<OwnedBranchStack>();
   });
 
   it("is the length the branch had when the level took it", () => {
-    const branch = extendResolutionBranch([], ROOT_BRANCH, "root");
+    const rootFrame = frameOf("root", 1);
+    const branch = extendResolutionBranch([], ROOT_BRANCH, rootFrame);
     expect(branchDepthOf(branch)).toBe(1);
-    expect(branchDepthOf(extendResolutionBranch(branch, branchDepthOf(branch), "child"))).toBe(2);
+    expect(branchDepthOf(extendResolutionBranch(branch, branchDepthOf(branch), frameOf("child", 2)))).toBe(2);
   });
 });
 

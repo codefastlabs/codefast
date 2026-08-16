@@ -1,6 +1,6 @@
 /**
  * Awilix — micro-benchmarks. Parallel structure to
- * {@link ../codefast/micro.ts}: identical `id`s, identical `batch` factors,
+ * `../codefast/micro.ts`: identical `id`s, identical `batch` factors,
  * identical pre-warm strategy. Awilix resolves by registration name with
  * the PROXY injection mode, so classes read their dependency off the cradle.
  */

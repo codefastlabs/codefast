@@ -6,9 +6,7 @@ import { cn } from "#/lib/utils";
 import type { AttachmentMediaVariants, AttachmentVariants } from "#/variants/attachment";
 import { attachmentMediaVariants, attachmentVariants } from "#/variants/attachment";
 
-/* -----------------------------------------------------------------------------
- * Component: Attachment
- * -------------------------------------------------------------------------- */
+// ── Component: Attachment ────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * File/media attachment card. `state` drives the upload lifecycle styling.
@@ -41,9 +39,7 @@ function Attachment({
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Component: AttachmentMedia
- * -------------------------------------------------------------------------- */
+// ── Component: AttachmentMedia ───────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * Thumbnail slot — an icon tile or a cover image.
@@ -66,9 +62,7 @@ function AttachmentMedia({ className, variant = "icon", ...props }: AttachmentMe
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Component: AttachmentContent
- * -------------------------------------------------------------------------- */
+// ── Component: AttachmentContent ─────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * Text column holding the title and description.
@@ -93,9 +87,7 @@ function AttachmentContent({ className, ...props }: AttachmentContentProps): JSX
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Component: AttachmentTitle
- * -------------------------------------------------------------------------- */
+// ── Component: AttachmentTitle ───────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * File name; shimmers while uploading or processing.
@@ -120,9 +112,7 @@ function AttachmentTitle({ className, ...props }: AttachmentTitleProps): JSX.Ele
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Component: AttachmentDescription
- * -------------------------------------------------------------------------- */
+// ── Component: AttachmentDescription ─────────────────────────────────────────────────────────────────────────────────
 
 /**
  * Secondary line (size, type); turns destructive on error.
@@ -147,9 +137,7 @@ function AttachmentDescription({ className, ...props }: AttachmentDescriptionPro
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Component: AttachmentActions
- * -------------------------------------------------------------------------- */
+// ── Component: AttachmentActions ─────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * Action cluster; floats to the top corner in the vertical orientation.
@@ -174,9 +162,7 @@ function AttachmentActions({ className, ...props }: AttachmentActionsProps): JSX
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Component: AttachmentAction
- * -------------------------------------------------------------------------- */
+// ── Component: AttachmentAction ──────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * A single action button; defaults to a ghost icon button.
@@ -200,9 +186,7 @@ function AttachmentAction({ className, size = "icon-xs", variant, ...props }: At
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Component: AttachmentTrigger
- * -------------------------------------------------------------------------- */
+// ── Component: AttachmentTrigger ─────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * Full-card overlay trigger for opening/previewing the attachment.
@@ -229,9 +213,7 @@ function AttachmentTrigger({ asChild = false, className, type, ...props }: Attac
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Component: AttachmentGroup
- * -------------------------------------------------------------------------- */
+// ── Component: AttachmentGroup ───────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * Horizontally scrollable row of attachments with snap and edge fade.
@@ -256,9 +238,7 @@ function AttachmentGroup({ className, ...props }: AttachmentGroupProps): JSX.Ele
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Exports
- * -------------------------------------------------------------------------- */
+// ── Exports ──────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 export {
   Attachment,

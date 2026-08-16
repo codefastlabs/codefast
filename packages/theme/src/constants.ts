@@ -1,8 +1,6 @@
 import type { Appearance, ColorScheme } from "#/appearance";
 
-/* -----------------------------------------------------------------------------
- * Public Constants
- * -------------------------------------------------------------------------- */
+// ── Public Constants ─────────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * Default appearance preference when no stored value exists.
@@ -32,9 +30,7 @@ export const DEFAULT_COLOR_SCHEME: ColorScheme = "dark";
  */
 export const STORAGE_KEY = "ui-appearance";
 
-/* -----------------------------------------------------------------------------
- * Internal Constants
- * -------------------------------------------------------------------------- */
+// ── Internal Constants ───────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * CSS media query for detecting dark mode preference.

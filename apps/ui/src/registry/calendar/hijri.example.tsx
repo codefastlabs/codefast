@@ -5,7 +5,7 @@ import { faIR } from "date-fns-jalali/locale";
 import { useState } from "react";
 
 /**
- * react-day-picker v10 (@daypicker/react) dropped the dedicated
+ * react-day-picker v10 (`@daypicker/react`) dropped the dedicated
  * `react-day-picker/persian` entry point. The Persian (Jalali) calendar is now
  * assembled by hand: a `DateLib` built from `date-fns-jalali` plus the
  * `dateLib` / `numerals` / `dir` / `locale` props forwarded to the calendar.

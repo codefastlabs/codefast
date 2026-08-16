@@ -14,9 +14,7 @@
 
 import { Container, inject, injectable, Module, toDotGraph, token } from "@codefast/di";
 
-// ============================================================================
-// Domain types
-// ============================================================================
+// ── Domain types ─────────────────────────────────────────────────────────────────────────────────────────────────────
 
 interface AppConfig {
   env: "development" | "production";
@@ -36,9 +34,7 @@ interface HttpResponse {
   body: unknown;
 }
 
-// ============================================================================
-// Tokens
-// ============================================================================
+// ── Tokens ───────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 const ConfigToken = token<AppConfig>("AppConfig");
 const DatabaseToken = token<Database>("Database");
@@ -48,9 +44,7 @@ const MiddlewareToken = token<Middleware>("Middleware");
 const RequestContextToken = token<HttpRequest>("RequestContext");
 const UserControllerToken = token<UserController>("UserController");
 
-// ============================================================================
-// Infrastructure
-// ============================================================================
+// ── Infrastructure ───────────────────────────────────────────────────────────────────────────────────────────────────
 
 class Database {
   private connected = false;
@@ -79,9 +73,7 @@ class Database {
   }
 }
 
-// ============================================================================
-// Repositories
-// ============================================================================
+// ── Repositories ─────────────────────────────────────────────────────────────────────────────────────────────────────
 
 interface User {
   id: string;
@@ -103,9 +95,7 @@ class UserPostgresRepository implements UserRepository {
   }
 }
 
-// ============================================================================
-// Services
-// ============================================================================
+// ── Services ─────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 interface AuthService {
   authenticate(token: string): Promise<User | undefined>;
@@ -129,9 +119,7 @@ class AuthManager implements AuthService {
   }
 }
 
-// ============================================================================
-// Middleware pipeline (multi-binding)
-// ============================================================================
+// ── Middleware pipeline (multi-binding) ──────────────────────────────────────────────────────────────────────────────
 
 interface Middleware {
   name: string;
@@ -201,9 +189,7 @@ class UserController {
   }
 }
 
-// ============================================================================
-// Modules
-// ============================================================================
+// ── Modules ──────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 const InfrastructureModule = Module.createAsync("Infra", async (builder) => {
   const config = await loadConfig();
@@ -256,9 +242,7 @@ const AppModule = Module.create("App", (builder) => {
   });
 });
 
-// ============================================================================
-// Application server
-// ============================================================================
+// ── Application server ───────────────────────────────────────────────────────────────────────────────────────────────
 
 async function createServer() {
   const container = await Container.fromModulesAsync(InfrastructureModule, AppModule);
@@ -298,9 +282,7 @@ async function createServer() {
   return { container, handleRequest };
 }
 
-// ============================================================================
-// Main
-// ============================================================================
+// ── Main ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 async function main(): Promise<void> {
   await using server = {
@@ -333,9 +315,7 @@ async function main(): Promise<void> {
   console.log(`\nDOT graph (${dotGraph.split("\n").length} lines, paste at graphviz.org)`);
 }
 
-// ============================================================================
-// Utilities
-// ============================================================================
+// ── Utilities ────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 function tick(): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, 5));

@@ -6,9 +6,7 @@ import { cn } from "#/lib/utils";
 import type { ScrollAreaScrollbarVariants } from "#/variants/scroll-area";
 import { scrollAreaScrollbarVariants } from "#/variants/scroll-area";
 
-/* -----------------------------------------------------------------------------
- * Context: ScrollArea
- * -------------------------------------------------------------------------- */
+// ── Context: ScrollArea ──────────────────────────────────────────────────────────────────────────────────────────────
 
 const SCROLL_AREA_NAME = "ScrollArea";
 
@@ -21,9 +19,7 @@ type ScrollAreaContextValue = Pick<ScrollAreaScrollbarVariants, "size">;
 const [ScrollAreaContextProvider, useScrollAreaContext] =
   createScrollAreaContext<ScrollAreaContextValue>(SCROLL_AREA_NAME);
 
-/* -----------------------------------------------------------------------------
- * Component: ScrollArea
- * -------------------------------------------------------------------------- */
+// ── Component: ScrollArea ────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -51,9 +47,7 @@ function ScrollArea({ __scopeScrollArea, children, className, size, ...props }: 
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Component: ScrollAreaScrollbar
- * -------------------------------------------------------------------------- */
+// ── Component: ScrollAreaScrollbar ───────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -87,9 +81,7 @@ function ScrollAreaScrollbar({
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Exports
- * -------------------------------------------------------------------------- */
+// ── Exports ──────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 export { ScrollArea, ScrollAreaScrollbar };
 export type { ScrollAreaProps, ScrollAreaScrollbarProps };

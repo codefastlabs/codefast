@@ -3,9 +3,7 @@ import type { ComponentProps, JSX } from "react";
 
 import { cn } from "#/lib/utils";
 
-/* -----------------------------------------------------------------------------
- * Component: HoverCard
- * -------------------------------------------------------------------------- */
+// ── Component: HoverCard ─────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -19,9 +17,7 @@ function HoverCard({ ...props }: HoverCardProps): JSX.Element {
   return <HoverCardPrimitive.Root data-slot="hover-card" {...props} />;
 }
 
-/* -----------------------------------------------------------------------------
- * Component: HoverCardTrigger
- * -------------------------------------------------------------------------- */
+// ── Component: HoverCardTrigger ──────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -35,9 +31,7 @@ function HoverCardTrigger({ ...props }: HoverCardTriggerProps): JSX.Element {
   return <HoverCardPrimitive.Trigger data-slot="hover-card-trigger" {...props} />;
 }
 
-/* -----------------------------------------------------------------------------
- * Component: HoverCardContent
- * -------------------------------------------------------------------------- */
+// ── Component: HoverCardContent ──────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -69,9 +63,7 @@ function HoverCardContent({
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Component: HoverCardArrow
- * -------------------------------------------------------------------------- */
+// ── Component: HoverCardArrow ────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -85,9 +77,7 @@ function HoverCardArrow({ className, ...props }: HoverCardArrowProps): JSX.Eleme
   return <HoverCardPrimitive.Arrow className={cn("fill-popover", className)} data-slot="hover-card-arrow" {...props} />;
 }
 
-/* -----------------------------------------------------------------------------
- * Exports
- * -------------------------------------------------------------------------- */
+// ── Exports ──────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 export { HoverCard, HoverCardArrow, HoverCardContent, HoverCardTrigger };
 export type { HoverCardArrowProps, HoverCardContentProps, HoverCardProps, HoverCardTriggerProps };

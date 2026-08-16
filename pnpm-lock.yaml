@@ -36,6 +36,9 @@ catalogs:
     '@hono/node-server':
       specifier: ^2.1.0
       version: 2.1.0
+    '@microsoft/tsdoc':
+      specifier: ^0.16.0
+      version: 0.16.0
     '@resvg/resvg-js':
       specifier: ^2.6.2
       version: 2.6.2
@@ -677,6 +680,9 @@ importers:
 
   packages/cli:
     dependencies:
+      '@microsoft/tsdoc':
+        specifier: 'catalog:'
+        version: 0.16.0
       commander:
         specifier: 'catalog:'
         version: 15.0.0
@@ -1700,6 +1706,9 @@ packages:
   '@manypkg/tools@2.1.2':
     resolution: {integrity: sha512-6QEf6yqFbETdwGITKq57aYoPfX/3K8XFNwsAlx0C1M7o8cb79sv1M3w+tWuWvIcSbNqrLF7OD7YpZMVVz335hQ==}
     engines: {node: '>=20.0.0'}
+
+  '@microsoft/tsdoc@0.16.0':
+    resolution: {integrity: sha512-xgAyonlVVS+q7Vc7qLW0UrJU7rSFcETRWsqdXZtjzRU8dF+6CkozTK4V4y1LwOX7j8r/vHphjDeMeGI4tNGeGA==}
 
   '@napi-rs/wasm-runtime@1.2.2':
     resolution: {integrity: sha512-JfB4kuJQjaoHuCTseIINHtHWeJnvgEcxjwA5t/Y00ZgaOO1Crz3fjT/p8kT28zA/Caz7oiUMn3d6H2yOVCVwuw==}
@@ -6898,6 +6907,8 @@ snapshots:
       jju: 1.4.0
       tinyglobby: 0.2.17
       yaml: 2.9.0
+
+  '@microsoft/tsdoc@0.16.0': {}
 
   '@napi-rs/wasm-runtime@1.2.2(@emnapi/core@1.11.2)(@emnapi/runtime@1.11.2)':
     dependencies:

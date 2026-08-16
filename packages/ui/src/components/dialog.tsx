@@ -5,9 +5,7 @@ import type { ComponentProps, JSX } from "react";
 import { Button } from "#/components/button";
 import { cn } from "#/lib/utils";
 
-/* -----------------------------------------------------------------------------
- * Component: Dialog
- * -------------------------------------------------------------------------- */
+// ── Component: Dialog ────────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -21,9 +19,7 @@ function Dialog({ ...props }: DialogProps): JSX.Element {
   return <DialogPrimitive.Root data-slot="dialog" {...props} />;
 }
 
-/* -----------------------------------------------------------------------------
- * Component: DialogTrigger
- * -------------------------------------------------------------------------- */
+// ── Component: DialogTrigger ─────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -37,9 +33,7 @@ function DialogTrigger({ ...props }: DialogTriggerProps): JSX.Element {
   return <DialogPrimitive.Trigger data-slot="dialog-trigger" {...props} />;
 }
 
-/* -----------------------------------------------------------------------------
- * Component: DialogContent
- * -------------------------------------------------------------------------- */
+// ── Component: DialogContent ─────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -82,9 +76,7 @@ function DialogContent({ children, className, showCloseButton = true, ...props }
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Component: DialogHeader
- * -------------------------------------------------------------------------- */
+// ── Component: DialogHeader ──────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -98,9 +90,7 @@ function DialogHeader({ className, ...props }: DialogHeaderProps): JSX.Element {
   return <div className={cn("flex shrink-0 flex-col gap-2", className)} data-slot="dialog-header" {...props} />;
 }
 
-/* -----------------------------------------------------------------------------
- * Component: DialogBody
- * -------------------------------------------------------------------------- */
+// ── Component: DialogBody ────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * Optional scrollable region for long content. When used, the Header and Footer
@@ -121,9 +111,7 @@ function DialogBody({ className, ...props }: DialogBodyProps): JSX.Element {
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Component: DialogFooter
- * -------------------------------------------------------------------------- */
+// ── Component: DialogFooter ──────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -155,9 +143,7 @@ function DialogFooter({ children, className, showCloseButton = false, ...props }
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Component: DialogTitle
- * -------------------------------------------------------------------------- */
+// ── Component: DialogTitle ───────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -177,9 +163,7 @@ function DialogTitle({ className, ...props }: DialogTitleProps): JSX.Element {
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Component: DialogDescription
- * -------------------------------------------------------------------------- */
+// ── Component: DialogDescription ─────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -202,9 +186,7 @@ function DialogDescription({ className, ...props }: DialogDescriptionProps): JSX
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Component: DialogClose
- * -------------------------------------------------------------------------- */
+// ── Component: DialogClose ───────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -218,9 +200,7 @@ function DialogClose({ ...props }: DialogCloseProps): JSX.Element {
   return <DialogPrimitive.Close data-slot="dialog-close" {...props} />;
 }
 
-/* -----------------------------------------------------------------------------
- * Exports
- * -------------------------------------------------------------------------- */
+// ── Exports ──────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 export {
   Dialog,

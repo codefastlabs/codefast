@@ -1,6 +1,6 @@
 /**
  * InversifyJS 8 — binding variant scenarios. Parallel to
- * {@link ../codefast/binding-variants.ts}.
+ * `../codefast/binding-variants.ts`.
  *
  * Inversify mapping:
  *   - `toResolved(factory, deps)` → `toResolvedValue(factory, [id, id, id])`
@@ -21,7 +21,7 @@ import {
 import { batched } from "#/harness/batched";
 import type { BenchScenario } from "#/scenarios/types";
 
-// ─── scenario 1: toResolvedValue explicit deps ────────────────────────────────
+// ── scenario 1: toResolvedValue explicit deps ────────────────────────────────────────────────────────────────────────
 
 interface ResolvedDep {
   readonly id: string;
@@ -71,7 +71,7 @@ function buildToResolvedThreeDepsScenario(): BenchScenario {
   };
 }
 
-// ─── scenario 2: toService redirect ──────────────────────────────────────────
+// ── scenario 2: toService redirect ───────────────────────────────────────────────────────────────────────────────────
 
 interface AbstractService {
   readonly name: string;
@@ -108,7 +108,7 @@ function buildToServiceRedirectScenario(): BenchScenario {
   };
 }
 
-// ─── scenario 3: toSelf singleton ─────────────────────────────────────────────
+// ── scenario 3: toSelf singleton ─────────────────────────────────────────────────────────────────────────────────────
 
 @injectable()
 class SelfBoundLeaf {

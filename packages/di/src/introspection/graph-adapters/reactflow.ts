@@ -36,9 +36,10 @@ export interface ReactFlowGraph {
 }
 
 /**
+ * Initial grid layout: React Flow expects concrete positions; viewers re-layout anyway.
+ *
  * @since 0.3.16-canary.0
  */
-// Initial grid layout: React Flow expects concrete positions; viewers re-layout anyway.
 const GRID_COLUMN_COUNT = 5;
 const GRID_CELL_WIDTH_PX = 200;
 const GRID_CELL_HEIGHT_PX = 100;

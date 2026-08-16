@@ -36,6 +36,19 @@ export class TokenNotBoundError extends DiError {
   }
 }
 
+// Options carry caller values a tag may hold — a bigint or a circular object must not make the
+// diagnostic itself throw and mask the real error.
+function describeResolveOptions(options: ResolveOptions): string {
+  try {
+    return (
+      JSON.stringify(options, (_key, value: unknown) => (typeof value === "bigint" ? `${String(value)}n` : value)) ??
+      "undefined"
+    );
+  } catch {
+    return "[unserializable options]";
+  }
+}
+
 /**
  * @since 0.3.16-canary.0
  */
@@ -46,7 +59,7 @@ export class NoMatchingBindingError extends DiError {
   readonly availableSlots: Array<string>;
 
   constructor(tokenName: string, options: ResolveOptions, availableSlots: Array<string>) {
-    const optionsString = JSON.stringify(options);
+    const optionsString = describeResolveOptions(options);
     const slotsStr = availableSlots.join(", ");
     super(`No binding for '${tokenName}' matching ${optionsString}. Available slots: [${slotsStr}].`);
     this.tokenName = tokenName;

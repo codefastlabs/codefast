@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 /**
- * Provide clipboard copy capability with a transient copied state.
+ * Provides clipboard copy capability with a transient copied state.
  *
  * Internally uses the Clipboard API when available and sets a temporary
  * `isCopied` flag for UI feedback. A custom callback may be invoked upon copy.

@@ -6,8 +6,7 @@ import { defineConfig } from "vitest/config";
  *   tests/integration/**  — multi-module / real-IO tests (none yet, pre-wired)
  *   tests/e2e/**          — end-to-end / subprocess tests (none yet, pre-wired)
  *   tests/types/**        — static type-only tests (none yet, pre-wired)
- *
- * See TESTING.md at the repo root for the full taxonomy.
+
  */
 export default defineConfig({
   // Vitest 4 resolves tests through the SSR pipeline; gate `#/` on `source`

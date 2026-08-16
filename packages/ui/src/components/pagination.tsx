@@ -5,9 +5,7 @@ import type { VariantProps } from "#/lib/utils";
 import { cn } from "#/lib/utils";
 import { buttonVariants } from "#/variants/button";
 
-/* -----------------------------------------------------------------------------
- * Component: Pagination
- * -------------------------------------------------------------------------- */
+// ── Component: Pagination ────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -28,9 +26,7 @@ function Pagination({ className, ...props }: PaginationProps): JSX.Element {
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Component: PaginationContent
- * -------------------------------------------------------------------------- */
+// ── Component: PaginationContent ─────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -44,9 +40,7 @@ function PaginationContent({ className, ...props }: PaginationContentProps): JSX
   return <ul className={cn("flex items-center gap-0.5", className)} data-slot="pagination-content" {...props} />;
 }
 
-/* -----------------------------------------------------------------------------
- * Component: PaginationItem
- * -------------------------------------------------------------------------- */
+// ── Component: PaginationItem ────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -60,9 +54,7 @@ function PaginationItem(props: PaginationItemProps): JSX.Element {
   return <li data-slot="pagination-item" {...props} />;
 }
 
-/* -----------------------------------------------------------------------------
- * Component: PaginationLink
- * -------------------------------------------------------------------------- */
+// ── Component: PaginationLink ────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -88,9 +80,7 @@ function PaginationLink({ children, className, isActive, size = "icon", ...props
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Component: PaginationPrevious
- * -------------------------------------------------------------------------- */
+// ── Component: PaginationPrevious ────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -118,9 +108,7 @@ function PaginationPrevious({ className, text = "Previous", ...props }: Paginati
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Component: PaginationNext
- * -------------------------------------------------------------------------- */
+// ── Component: PaginationNext ────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -148,9 +136,7 @@ function PaginationNext({ className, text = "Next", ...props }: PaginationNextPr
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Component: PaginationEllipsis
- * -------------------------------------------------------------------------- */
+// ── Component: PaginationEllipsis ────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -174,9 +160,7 @@ function PaginationEllipsis({ className, ...props }: PaginationEllipsisProps): J
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Exports
- * -------------------------------------------------------------------------- */
+// ── Exports ──────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 export {
   Pagination,

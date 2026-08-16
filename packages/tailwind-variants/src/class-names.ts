@@ -174,7 +174,7 @@ export const cn = (...classes: Array<ClassValue>): string => {
 const tailwindMergeFnByConfiguration = new WeakMap<ConfigExtension<string, string>, (classes: string) => string>();
 
 /**
- * Create a Tailwind merge function, extended when the caller supplies a configuration.
+ * Creates a Tailwind merge function, extended when the caller supplies a configuration.
  *
  * @since 0.3.16-canary.0
  */

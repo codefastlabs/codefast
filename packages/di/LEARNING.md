@@ -485,6 +485,10 @@ export const RESOLUTION_SET_THRESHOLD = 32;
 export function enterResolutionPath(resolutionPath: Array<string>, tokenDisplayName: string): Set<string> | undefined {
   const pathWithSet = resolutionPath as ResolutionPathWithSet;
   let resolutionSet = pathWithSet[RESOLUTION_SET_KEY];
+  if (resolutionSet !== undefined && resolutionSet.size !== resolutionPath.length) {
+    resolutionSet = undefined;
+    pathWithSet[RESOLUTION_SET_KEY] = undefined;
+  }
   if (resolutionSet === undefined && resolutionPath.length >= RESOLUTION_SET_THRESHOLD) {
     resolutionSet = new Set<string>(resolutionPath);
     pathWithSet[RESOLUTION_SET_KEY] = resolutionSet;
@@ -498,9 +502,12 @@ export function enterResolutionPath(resolutionPath: Array<string>, tokenDisplayN
 }
 ```
 
-The two branches answer _identically_ — the threshold switches the data structure, never the behaviour. (The value 32 is
-a tuning constant from a depth sweep; it's the kind of number worth re-measuring rather than trusting.) _Lesson: for
-small n a linear scan often beats a hash set; a threshold lets you have both without changing semantics._
+The two branches answer _identically_ — the threshold switches the data structure, never the behaviour. The size check
+at the top is what keeps that true: the frames already on the path when the set attaches are handed no set to delete
+from, so a set whose size disagrees with the path is holding unwound frames' names and gets dropped for the next deep
+frame to rebuild. (The value 32 is a tuning constant from a depth sweep; it's the kind of number worth re-measuring
+rather than trusting.) _Lesson: for small n a linear scan often beats a hash set; a threshold lets you have both without
+changing semantics._
 
 <a id="bitmask-subset-prefilter"></a>
 

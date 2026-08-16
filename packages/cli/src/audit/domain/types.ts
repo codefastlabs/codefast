@@ -65,3 +65,33 @@ export type LinkAuditResult = {
   readonly linkCount: number;
   readonly scannedFileCount: number;
 };
+
+/**
+ * A section divider that does not match the repo's one allowed form. Always `--fix`-able.
+ */
+export type DividerBreakage = {
+  readonly line: number;
+  /** The divider's opening line as written. */
+  readonly raw: string;
+  readonly reason: string;
+};
+
+/**
+ * @see DividerBreakage
+ */
+export type DividerFileBreakages = {
+  readonly relativePath: string;
+  readonly breakages: Array<DividerBreakage>;
+};
+
+/**
+ * Outcome of one `audit comments` run. `fixedCount` stays `0` unless `--fix` was passed.
+ */
+export type CommentAuditResult = {
+  readonly files: Array<DividerFileBreakages>;
+  readonly breakageCount: number;
+  readonly allowlistedCount: number;
+  readonly fixedCount: number;
+  readonly dividerCount: number;
+  readonly scannedFileCount: number;
+};

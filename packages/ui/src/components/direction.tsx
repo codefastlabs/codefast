@@ -1,9 +1,7 @@
 import * as Direction from "radix-ui/direction";
 import type { ComponentProps } from "react";
 
-/* -----------------------------------------------------------------------------
- * Component: DirectionProvider
- * -------------------------------------------------------------------------- */
+// ── Component: DirectionProvider ─────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.4.0-canary.4
@@ -24,9 +22,7 @@ function DirectionProvider({ dir, direction, children }: DirectionProviderProps)
  */
 const useDirection = Direction.useDirection;
 
-/* -----------------------------------------------------------------------------
- * Exports
- * -------------------------------------------------------------------------- */
+// ── Exports ──────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 export { DirectionProvider, useDirection };
 export type { DirectionProviderProps };

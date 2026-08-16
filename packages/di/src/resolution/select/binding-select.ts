@@ -5,7 +5,7 @@ import type { ConstraintContext, ResolveOptions } from "#/core/types";
 import { AmbiguousBindingError } from "#/errors/errors";
 
 /**
- * Select a single candidate from a list of bindings using slot matching + predicates.
+ * Selects a single candidate from a list of bindings using slot matching + predicates.
  * Returns undefined if no match, throws AmbiguousBindingError if multiple match.
  *
  * @since 0.3.16-canary.0
@@ -16,7 +16,7 @@ export function selectBinding(
   ctx: ConstraintContext,
   tokenDisplayName: string,
 ): Binding | undefined {
-  const candidates = filterBindings(bindings, options, ctx);
+  const candidates = filterBindings(bindings, options, ctx, true);
   if (candidates.length === 0) {
     return undefined;
   }
@@ -70,7 +70,7 @@ function mostSpecificByTagCount(candidates: ReadonlyArray<Binding>): Binding | u
 }
 
 /**
- * Select all candidates matching options + predicates.
+ * Selects all candidates matching options + predicates.
  *
  * @since 0.3.16-canary.0
  */
@@ -79,21 +79,38 @@ export function selectAllBindings(
   options: ResolveOptions | undefined,
   ctx: ConstraintContext,
 ): Array<Binding> {
-  return filterBindings(bindings, options, ctx, "all");
+  // `resolveAll` matches the slot only when the request carries a criterion; with none it takes
+  // every binding, where `resolve` would read an absent criterion as "the default slot".
+  return filterBindings(bindings, options, ctx, options !== undefined && hasSlotCriterion(options));
 }
 
+/**
+ * @param bindings - the token's candidates, in registration order
+ * @param options - the request's selection criteria, if any
+ * @param ctx - what the constraint predicates read
+ * @param requiresSlotMatch - `resolve` always matches the slot, where an absent criterion means
+ * "the default slot"; `resolveAll` matches only when the request carries one
+ */
 function filterBindings(
   bindings: ReadonlyArray<Binding>,
   options: ResolveOptions | undefined,
   ctx: ConstraintContext,
-  selectionMode: "single" | "all" = "single",
+  requiresSlotMatch: boolean,
 ): Array<Binding> {
-  // `resolveAll` with no slot criterion takes every binding; `resolve` always matches the slot,
-  // where an absent criterion means "the default slot".
-  const requiresSlotMatch = selectionMode === "single" || (options !== undefined && hasSlotCriterion(options));
   const result: Array<Binding> = [];
-  for (const binding of bindings) {
-    if ((!requiresSlotMatch || matchesSlot(binding.slot, options)) && matchesPredicate(binding, ctx)) {
+  // A predicate is user code that may rebind the token mid-walk, but the registry replaces a
+  // token's list on mutation instead of splicing it, so this walk keeps its own list — no copy.
+  for (let index = 0; index < bindings.length; index += 1) {
+    const binding = bindings[index]!;
+    if (requiresSlotMatch && !matchesSlot(binding.slot, options)) {
+      continue;
+    }
+    const predicate = binding.predicate;
+    if (predicate === undefined) {
+      result.push(binding);
+      continue;
+    }
+    if (predicate(ctx)) {
       result.push(binding);
     }
   }
@@ -186,11 +203,4 @@ function requestCarries(options: ResolveOptions | undefined, criterion: BindingT
   }
 
   return false;
-}
-
-function matchesPredicate(binding: Binding, ctx: ConstraintContext): boolean {
-  if (binding.predicate === undefined) {
-    return true;
-  }
-  return binding.predicate(ctx);
 }

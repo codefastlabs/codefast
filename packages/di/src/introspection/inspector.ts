@@ -13,9 +13,9 @@ import type {
   ResolveOptions,
 } from "#/core/types";
 import type { ScopeManager } from "#/lifecycle/scope-manager";
-import { selectBinding } from "#/resolution/select/binding-select";
+import { selectAllBindings } from "#/resolution/select/binding-select";
 
-// ── Public types ──────────────────────────────────────────────────────────────
+// ── Public types ─────────────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -41,7 +41,7 @@ export interface ContainerSnapshot {
   readonly isDisposed: boolean;
 }
 
-// ── Inspector ─────────────────────────────────────────────────────────────────
+// ── Inspector ────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -76,8 +76,10 @@ export class Inspector {
   has(token: Token<unknown> | Constructor, options?: ResolveOptions, parentHas?: () => boolean): boolean {
     const bindings = this.#registry.getAll(token);
     if (bindings.length > 0) {
+      // An existence probe answers ambiguity with `true` — several matches still exist; only
+      // resolution has to pick one.
       if (options !== undefined) {
-        if (selectBinding(bindings, options, this.#makeConstraintContext(options), tokenName(token)) !== undefined) {
+        if (selectAllBindings(bindings, options, this.#makeConstraintContext(options)).length > 0) {
           return true;
         }
       } else {
@@ -93,7 +95,7 @@ export class Inspector {
       return false;
     }
     if (options !== undefined) {
-      return selectBinding(bindings, options, this.#makeConstraintContext(options), tokenName(token)) !== undefined;
+      return selectAllBindings(bindings, options, this.#makeConstraintContext(options)).length > 0;
     }
     return true;
   }
@@ -109,6 +111,8 @@ export class Inspector {
   }
 
   #toSnapshot(binding: Binding): BindingSnapshot {
+    // Aliased, not copied: slot tags are frozen where they are built, so a caller's write throws
+    // instead of corrupting the registry — and the snapshot skips an allocation per binding.
     const slot: BindingSnapshot["slot"] =
       binding.slot.name !== undefined
         ? { name: binding.slot.name, tags: binding.slot.tags }

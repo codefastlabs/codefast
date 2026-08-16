@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 
 /**
- * Produce a smoothly animated numeric value in response to changes.
+ * Produces a smoothly animated numeric value in response to changes.
  *
  * Applies a time-based easing (easeOutQuad) between the current and target values
  * over the specified duration. When disabled, the value updates immediately.

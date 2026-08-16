@@ -1,7 +1,7 @@
 /**
  * Shared types for the arrange pipeline (Tailwind `cn()` / `tv()` tooling).
  *
- * **Render Pipeline Order** (see `packages/cli/README.md`): Existence → Position → Layout
+ * **Render Pipeline Order**: Existence → Position → Layout
  * → Sizing → Spacing → Shape → Background → Shadow → Typography → Composite → Motion
  * → Starting → Behavior → State → Selector.
  *

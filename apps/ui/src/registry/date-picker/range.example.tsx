@@ -5,7 +5,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@codefast/ui/popover";
 import { CalendarIcon } from "lucide-react";
 import { useState } from "react";
 
-/** Structural match for @daypicker/react's DateRange (kept local to avoid a transitive import). */
+/** Structural match for `@daypicker/react`'s DateRange (kept local to avoid a transitive import). */
 interface DateRange {
   from: Date | undefined;
   to?: Date | undefined;

@@ -12,7 +12,7 @@ export const PAN_PIXELS_X = 120;
 export const DISPERSION_IQR_ALERT = 0.25;
 
 /**
- * Compare Chart.js category-axis min/max after zoom/pan (fractional indices allowed).
+ * Compares Chart.js category-axis min/max after zoom/pan (fractional indices allowed).
  *
  * @since 0.3.16-canary.1
  */

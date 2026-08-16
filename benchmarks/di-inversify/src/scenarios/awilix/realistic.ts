@@ -1,7 +1,7 @@
 /**
  * Awilix — realistic-graph scenarios. Consumes the shared descriptor through
  * the awilix adapter so the same shape of work appears on every side of the
- * N-way table. Mirrors {@link ../codefast/realistic.ts}.
+ * N-way table. Mirrors `../codefast/realistic.ts`.
  */
 import { buildAwilixRealisticContainer, sanityCheckAwilixRealisticResolve } from "#/fixtures/awilix-adapter";
 import { REALISTIC_GRAPH } from "#/fixtures/realistic-graph";

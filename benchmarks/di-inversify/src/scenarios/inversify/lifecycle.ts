@@ -1,7 +1,7 @@
 /**
  * InversifyJS 8 — lifecycle-focused scenarios.
  *
- * Mirrors {@link ../codefast/lifecycle.ts} with equivalent IDs:
+ * Mirrors `../codefast/lifecycle.ts` with equivalent IDs:
  * - `lifecycle-post-construct-singleton`
  * - `lifecycle-pre-destroy-unbind`
  * - `binding-level-activation-hook`

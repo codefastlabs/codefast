@@ -156,9 +156,12 @@ Rules: **no tests under** `src/**`; no test files directly under `tests/` (must 
 
 ## Comments (TSDoc, not JSDoc)
 
-This is a **TypeScript** project, so doc comments are **TSDoc** — never JSDoc type syntax. The bar: **keep comments
-concise — one short, plain-English line per point; state the _why_/purpose, never restate _what_, and let the types
-carry the types.**
+This is a **TypeScript** project, so doc comments are **TSDoc** — never JSDoc type syntax — and TSDoc is a _grammar_,
+not a vibe: `cli:audit:comments` runs the official `@microsoft/tsdoc` parser over every doc block, so an `@word`,
+`{`/`}`, or `>` loose in prose is a red build. Backtick code-ish text (`` `@codefast/di` ``, `` `@injectable` ``,
+`` `{ tags: [pair] }` ``) rather than backslash-escaping it, and a code span cannot wrap across lines. The bar: **keep
+comments concise — one short, plain-English line per point; state the _why_/purpose, never restate _what_, and let the
+types carry the types.**
 
 - **Three lines is the cap.** One short line stating a block's purpose; three at the absolute most. A comment that wants
   more is telling you the detail belongs in the package's `ARCHITECTURE.md` (or the PR) — put the argument there, and
@@ -168,7 +171,9 @@ carry the types.**
   while the compiler stays silent — a `SPEC.md §4.8` survived in this repo long after §4.8 stopped existing. State the
   invariant in the comment; if one line will not hold it, the name above it is not saying enough. Discoverability of the
   design docs is a repo rule (below and in each package's `CONTRIBUTING.md`), not something to re-litigate at 30 call
-  sites. The reverse direction is fine and encouraged: a doc citing a source path or symbol.
+  sites. The reverse direction is fine and encouraged: a doc citing a source path or symbol. `pnpm cli:audit:comments`
+  flags `see …*.md` in any comment; naming a markdown file without pointing at it (a generator naming its own output)
+  stays legal.
 - **No numbers in source comments.** No benchmark figures, `ns/op` tables, percentages, byte counts or ratios. They
   cannot be re-verified where they sit, they go stale silently, and the method behind them is not there either. Numbers
   live with their method — a benchmark suite's `RESULTS.md`, or the commit. An `ARCHITECTURE.md` states what a shape
@@ -179,23 +184,60 @@ carry the types.**
   `ARCHITECTURE.md` as a rule, stated once. Scattered inline it becomes the sediment it was meant to prevent — and
   duplicating an architecture doc is what makes a package's comments read as accreted rather than designed.
 - **A module header is one sentence** naming what the module owns. Not a summary of its design.
+- **Section dividers have exactly one form, and it is one line.**
+
+  ```ts
+  // ── Component: Button ────────────────────────────────────────────────────────────────────────────────────────────────
+  ```
+
+  `//`, a space, `──` (U+2500 ×2), a space, the title, a space, then `─` padded so the line ends at **column 120** —
+  `printWidth`, counting indentation. CSS has no `//` and spells the same divider `/* ── Surfaces ──…── */`, ending at
+  the same column. Nothing else: not the three-line `/* ---- \n * Title \n * ---- */` banner, not `// ====`, not
+  `#region`. Two rule lines around a title carry no information the title does not, and a frame whose width nobody
+  checks drifts — this one is title-dependent, so `pnpm cli:audit:comments` checks it and `--fix` repads it. Nobody
+  counts dashes by hand. Everything the audit reports is mechanical, so a red run is always one `--fix` from green.
+
+- **A divider is not a doc block, and the rule reaches only the divider.** A divider is a label and nothing else: one
+  short noun phrase. The moment a comment carries prose — a module header naming what the file owns, an explanation
+  above a section — it is a doc block, whatever punctuation it happens to be drawn with, and neither this convention nor
+  `audit comments` says anything about its shape. That is why the audit reads a framed title as a divider to repad and a
+  framed paragraph as prose to leave alone. So: do not bolt a body onto a divider, and do not shave a doc block down to
+  fit one — write the divider, then the `/** … */` block under it, each doing its own job.
+- **A divider marks a family, not a symbol.** Use one only where a file renders several exported members of one family —
+  a component file with its sub-components, a theme stylesheet, an example script. A file with a single export gets none
+  — an outline the editor already gives you is not worth a line of punctuation. The title is a noun phrase from the
+  settled vocabulary — `Component: X`, `Variant: X`, `Context: X`, `Props`, `Helpers`, `Exports` — never a sentence.
 - **Never put types in comments.** No `@param {string} x` / `@returns {T}` — TS already declares them, and a duplicated
-  type just goes stale. Prefer omitting `@param`/`@returns` entirely. Add `@param name - …` (TSDoc style: a hyphen,
-  **no** `{type}`) or `@typeParam T - …` only to document a non-obvious _meaning_ — units, an invariant, ownership — not
-  the type.
+  type just goes stale (`cli:audit:comments` flags the `{type}` payload). Prefer omitting `@param`/`@returns` entirely.
+  Add `@param name - …` (TSDoc style: a hyphen, **no** `{type}`) or `@typeParam T - …` only to document a non-obvious
+  _meaning_ — units, an invariant, ownership — not the type. **All or none:** a block that names any parameter names
+  every parameter of that signature (audited) — a partial list reads as complete and misleads, and it is what editors
+  flag as "Parameter x is not described in TSDoc". The obvious siblings get one short fragment each; if that feels like
+  noise, the answer is no `@param` at all, with the one insight in prose.
 - **`//` comments state the _why_/purpose in one line** — a non-obvious decision, constraint, or gotcha (e.g.
   `// scoped to the client env — the nitro build sets its own codeSplitting`). If a competent reader could infer it from
   the code or the types, **delete it**; never narrate obvious lines.
-- **A doc comment on an exported symbol** leads with a one-line summary of intent/purpose (what it's _for_, not how it
-  works). Internal helpers get a comment only when non-obvious.
+- **Every exported declaration in `packages/*/src` carries a doc comment** — Swift's rule, adopted because it already
+  holds: the published packages sit at full coverage, and one undocumented export is a regression, not a style choice.
+  `apps/*` and `examples/*` are encouraged, not gated. Internal helpers get a comment only when non-obvious. Swift's
+  corollary is the sharper half: if the summary is hard to write in simple terms, redesign the API, not the sentence.
+- **A summary is one third-person sentence fragment, ending with a period** (Swift API Design Guidelines). A function's
+  summary states what it does and what it returns, omitting void effects —
+  `Creates a class resolver for a component without slots.`, `Resolves the monorepo root.` Anything that is not a
+  function is described by what it _is_: a noun phrase — `The column every divider's rule ends at.` Never an imperative
+  (`Create a resolver` instructs the reader instead of describing the API) and never `This function…`. Detail continues
+  after a blank line or under `@remarks`, in complete sentences — the summary stays self-sufficient, because most
+  readers stop there.
 - **TSDoc block tags only when they add what the type can't:** `@remarks` (detail past the summary), `@example`,
-  `@deprecated <reason + replacement>`, `@see`, `@throws`, `@defaultValue`.
+  `@deprecated <reason + replacement>`, `@see`, `@throws`, `@defaultValue`. A `{@link X}` must keep resolving — the
+  audit reads a target with no mention outside links as a rename that orphaned it.
 - **Speak the API's vocabulary (Apple HIG terms).** In comments and names, **appearance** is the user's preference
   (Light / Dark / Auto) and **color scheme** is the resolved light/dark value applied — say "appearance" for the
   preference, "color scheme" for the resolved value, and avoid the legacy "theme" wording. Prefer `/** … */` doc blocks
   over `//` lines when the comment documents intent.
-- **`@since <version>` is generated** by `codefast tag` at release — never hand-write it, and never remove a released
-  one (the add-only tool would re-stamp it with the current version, destroying the true original).
+- **`@since <version>` is generated** by `codefast tag` at release — never hand-write it, never remove a released one
+  (the add-only tool would re-stamp it with the current version, destroying the true original), and it stays the block's
+  **last** tag: a `@remarks` added later goes above it, not below.
 - No commented-out code left behind; a `TODO`/`FIXME` must state why or link an issue.
 
 ## API naming (Swift API Design Guidelines, adapted to TS)
@@ -250,16 +292,19 @@ _costs_, and whether a new idea beats it, is an empirical question the benchmark
 answers by re-running; numbers live there and in its `RESULTS.md` ledger, never in a source comment and never in
 ARCHITECTURE.
 
-`src/` groups by subsystem: the **model** at the root (`token`, `types`, `constructor-type`, `binding`, `registry`,
-`errors`, `module`), **`container/`** (container + the fluent binding chain), **`resolution/`** (the engine class plus
-its collaborators — lookup cache, class introspector, activation-need cache, instantiation-plan compiler,
-resolution-path cycle guard, scope, lifecycle, environment, binding selection, constraints), **`introspection/`**
-(inspector, dependency graph, graph adapters), plus `decorators/` and `metadata/`. The sync and async pipelines stay in
-one class because `#` private fields can't span files and both touch the same private state per hop; anything that
-doesn't is already extracted. Tests mirror these paths (`tests/unit/resolution/…`). `package.json#exports` is generated
-from `dist/` by `codefast mirror` — rerun it after moving/adding modules. Verify hot-path changes against
-`benchmarks/di-inversify` (`pnpm bench:isolate` for order-independent numbers, ≥3 trials, best-of across several
-processes) before assuming a refactor is free — and measure cold paths too, which the hot loops hide.
+`src/` groups by subsystem: **`core/`** is the model (`token`, `types`, `tag`, `constructor-type`, `binding`,
+`registry`, `module`), **`errors/`** the error taxonomy and its diagnostics, **`injection/`** the descriptor every
+dependency normalises to plus resolve options, **`ambient/`** the active container an `@inject` accessor reads,
+**`lifecycle/`** the per-container lifecycle and scope managers, **`container/`** the container + the fluent binding
+chain, **`resolution/`** the engine class plus its collaborators grouped by lane (`cache/` — binding lookup, class
+introspector, activation need; `path/` — the resolution-path cycle guard; `plan/` — the instantiation-plan compiler;
+`select/` — binding selection and constraints), and **`introspection/`** the inspector, dependency graph, and graph
+adapters, plus `decorators/` and `metadata/`. The sync and async pipelines stay in one class because `#` private fields
+can't span files and both touch the same private state per hop; anything that doesn't is already extracted. Tests mirror
+these paths (`tests/unit/resolution/…`). `package.json#exports` is generated from `dist/` by `codefast mirror` — rerun
+it after moving/adding modules. Verify hot-path changes against `benchmarks/di-inversify` (`pnpm bench:isolate` for
+order-independent numbers, ≥3 trials, best-of across several processes) before assuming a refactor is free — and measure
+cold paths too, which the hot loops hide.
 
 ## UI/component conventions (apps/ui and packages/ui)
 

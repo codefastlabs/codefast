@@ -180,7 +180,7 @@ function dynamicMaxGroups(tokenCount: number): number {
 }
 
 /**
- * Merge singleton groups (< MIN_GROUP_TOKENS tokens) into their nearest
+ * Merges singleton groups (fewer than `MIN_GROUP_TOKENS` tokens) into their nearest
  * neighbour. Prefers merging toward a bucket-compatible neighbor.
  *
  * Loop termination: each iteration either splices one element (shrinking the
@@ -259,7 +259,7 @@ function capMergePenalty(leftBucket: Bucket, rightBucket: Bucket): number {
 }
 
 /**
- * Merge adjacent groups until total count ≤ maxGroups.
+ * Merges adjacent groups until total count ≤ maxGroups.
  * Only merges pairs allowed by {@link bucketsMergeCompatible} — never glues incompatible
  * buckets (which previously defaulted to penalty 0 and merged layout+state when over cap).
  *

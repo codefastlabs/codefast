@@ -1,7 +1,7 @@
 /**
  * InversifyJS 8 — decorator-driven boot scenario.
  *
- * Mirrors {@link ../codefast/boot.ts}: each iteration builds a fresh
+ * Mirrors `../codefast/boot.ts`: each iteration builds a fresh
  * container, binds a decorated class graph, and resolves the root once.
  */
 import "reflect-metadata";

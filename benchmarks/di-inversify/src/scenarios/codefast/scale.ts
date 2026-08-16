@@ -1,5 +1,5 @@
 /**
- * @codefast/di — scale scenario.
+ * `@codefast/di` — scale scenario.
  *
  * The benchmark builds a large registry (512 bindings) and resolves the leaf
  * of a 512-step transient dependency chain on every measured iteration.

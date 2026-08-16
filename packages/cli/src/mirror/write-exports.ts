@@ -34,7 +34,7 @@ export async function writePackageJsonExportsAtomic(
   }
 
   /**
-   * Keep `./package.json` at the very end for aesthetics by default.
+   * Keeps `./package.json` at the very end for aesthetics by default.
    * If a catch-all `./*` exists, move `./package.json` before wildcards so it remains reachable.
    */
   function exportSpecifierRank(exportSpecifier: string, hasCatchAllWildcard: boolean): number {

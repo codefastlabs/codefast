@@ -3,16 +3,12 @@ import { defineConfig } from "oxfmt";
 import { ignorePatterns } from "#/oxc.shared";
 
 export default defineConfig({
-  // ---------------------------------------------------------------------------
-  // Layout
-  // ---------------------------------------------------------------------------
+  // ── Layout ─────────────────────────────────────────────────────────────────────────────────────────────────────────
   // endOfLine + insertFinalNewline live in .editorconfig (the single source —
   // oxfmt reads it), so only the non-default printWidth is set here.
   printWidth: 120,
 
-  // ---------------------------------------------------------------------------
-  // Code organization
-  // ---------------------------------------------------------------------------
+  // ── Code organization ──────────────────────────────────────────────────────────────────────────────────────────────
   // Deterministic import order (perfectionist-compatible algorithm). The repo
   // uses Node subpath imports ("#/") and "@/" aliases as internal modules.
   sortImports: {
@@ -29,9 +25,7 @@ export default defineConfig({
     functions: ["cn", "cva", "cx", "tv"],
   },
 
-  // ---------------------------------------------------------------------------
-  // Prose wrapping
-  // ---------------------------------------------------------------------------
+  // ── Prose wrapping ─────────────────────────────────────────────────────────────────────────────────────────────────
   // Markdown only — proseWrap also governs YAML, where it would reflow a workflow's
   // folded block scalars. CHANGELOG.md is exempt: `changeset version` rewrites it in a
   // bot commit that runs no git hooks, so a prose rule there fails the release PR's gate.
@@ -43,8 +37,6 @@ export default defineConfig({
     },
   ],
 
-  // ---------------------------------------------------------------------------
-  // Ignored paths (shared with oxlint — see oxc.shared.ts)
-  // ---------------------------------------------------------------------------
+  // ── Ignored paths (shared with oxlint — see oxc.shared.ts) ─────────────────────────────────────────────────────────
   ignorePatterns,
 });

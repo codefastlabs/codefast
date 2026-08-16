@@ -271,6 +271,25 @@ describe("initializeAsync", () => {
     await expect(container.initializeAsync()).resolves.toBeUndefined();
     expect(container.resolve(constantToken)).toBe("value");
   });
+
+  it("warms a constant whose only activation handler is container-level", async () => {
+    const constantToken = token<string>("eager-constant-container-hook");
+    const activated: Array<string> = [];
+
+    const container = Container.create();
+    container.bind(constantToken).toConstantValue("value");
+    container.onActivation(constantToken, (_ctx, instance) => {
+      activated.push(instance);
+      return `${instance}!`;
+    });
+
+    await container.initializeAsync();
+
+    // The hook ran during warm-up, and its result is what a later resolve reads.
+    expect(activated).toEqual(["value"]);
+    expect(container.resolve(constantToken)).toBe("value!");
+    expect(activated).toEqual(["value"]);
+  });
 });
 
 describe("disposed container", () => {

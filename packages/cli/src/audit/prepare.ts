@@ -18,7 +18,7 @@ export type RtlAuditCommandPrelude = {
 };
 
 /**
- * Load config and resolve the scan target for `audit rtl`.
+ * Loads config and resolves the scan target for `audit rtl`.
  *
  * @since 1.0.0-canary.7
  */
@@ -72,7 +72,7 @@ export async function prepareRtlAudit(
 }
 
 /**
- * Load config and resolve the scan target for `audit links`.
+ * Loads config and resolves the scan target for `audit links`.
  *
  * @remarks Defaults to the repo root rather than a configured path: a link audit that only covers one
  * package cannot see the cross-package references that are the ones most likely to rot.
@@ -109,5 +109,44 @@ export async function prepareLinkAudit(
     rootDir,
     targetPath: fs.canonicalPathSync(targetPath),
     allowlist: linksConfig.allowlist ?? [],
+  });
+}
+
+/**
+ * Loads config and resolves the scan target for `audit comments`.
+ *
+ * @remarks Defaults to the repo root: a divider convention that only holds inside one package
+ * is not a convention.
+ */
+export async function prepareCommentAudit(
+  fs: FilesystemPort,
+  args: {
+    readonly currentWorkingDirectory: string;
+    readonly rawTarget: string | undefined;
+  },
+): Promise<Result<RtlAuditCommandPrelude, AppError>> {
+  let rootDir: string;
+  try {
+    rootDir = fs.canonicalPathSync(findRepoRoot(args.currentWorkingDirectory, fs));
+  } catch (caughtError: unknown) {
+    return err(new AppError("INFRA_FAILURE", messageFrom(caughtError), caughtError));
+  }
+
+  const loadedOutcome = await loadCodefastConfig(rootDir, fs);
+  if (!loadedOutcome.ok) {
+    return loadedOutcome;
+  }
+  const commentsConfig = loadedOutcome.value.config.audit?.comments ?? {};
+
+  const targetPath =
+    args.rawTarget === undefined ? rootDir : resolveRepoRelativePath(args.currentWorkingDirectory, args.rawTarget);
+  if (!fs.existsSync(targetPath)) {
+    return err(new AppError("NOT_FOUND", `Not found: ${targetPath}`));
+  }
+
+  return ok({
+    rootDir,
+    targetPath: fs.canonicalPathSync(targetPath),
+    allowlist: commentsConfig.allowlist ?? [],
   });
 }

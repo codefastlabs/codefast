@@ -158,7 +158,7 @@ function getStateAttributes<TState extends RenderState>(
 }
 
 /**
- * Resolve a component's `render` prop: a default element, a render function, or
+ * Resolves a component's `render` prop: a default element, a render function, or
  * a cloned element, merging computed state attributes and props/refs/handlers.
  *
  * @since 0.5.0-canary.3

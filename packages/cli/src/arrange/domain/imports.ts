@@ -29,7 +29,7 @@ function sourceFileImportsCn(sourceFile: DomainSourceFile): boolean {
 }
 
 /**
- * Resolve the module specifier used when injecting a `cn` import into a file.
+ * Resolves the module specifier used when injecting a `cn` import into a file.
  */
 function cnModuleSpecifierForFile(filePath: string, override?: string): string {
   void filePath;

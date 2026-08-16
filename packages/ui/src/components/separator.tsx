@@ -5,9 +5,7 @@ import { cn } from "#/lib/utils";
 import type { SeparatorVariants } from "#/variants/separator";
 import { separatorVariants } from "#/variants/separator";
 
-/* -----------------------------------------------------------------------------
- * Component: Separator
- * -------------------------------------------------------------------------- */
+// ── Component: Separator ─────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -30,9 +28,7 @@ function Separator({ align, className, decorative = true, orientation, ...props 
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Component: SeparatorItem
- * -------------------------------------------------------------------------- */
+// ── Component: SeparatorItem ─────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -52,9 +48,7 @@ function SeparatorItem({ className, ...props }: SeparatorItemProps): JSX.Element
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Exports
- * -------------------------------------------------------------------------- */
+// ── Exports ──────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 export { Separator, SeparatorItem };
 export type { SeparatorItemProps, SeparatorProps };

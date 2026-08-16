@@ -14,9 +14,7 @@ function toScriptSafe(value: unknown): string {
 const APPEARANCE_REMOVE_ARGS = appearances.map((s) => toScriptSafe(s)).join(",");
 const APPEARANCE_VALID_CHECK = appearances.map((s) => `s===${toScriptSafe(s)}`).join("||");
 
-/* -----------------------------------------------------------------------------
- * Props
- * -------------------------------------------------------------------------- */
+// ── Props ────────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.5.0-canary.2
@@ -39,9 +37,7 @@ export type AppearanceScriptProps = {
   readonly storageKey?: string;
 };
 
-/* -----------------------------------------------------------------------------
- * Component
- * -------------------------------------------------------------------------- */
+// ── Component ────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * Inline script that prevents Flash of Unstyled Content (FOUC).

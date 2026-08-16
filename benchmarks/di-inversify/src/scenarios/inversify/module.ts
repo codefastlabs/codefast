@@ -1,6 +1,6 @@
 /**
  * InversifyJS 8 — module system scenarios. Parallel to
- * {@link ../codefast/module.ts}.
+ * `../codefast/module.ts`.
  *
  * Inversify mapping:
  *   - `Module.create(name, setup)` → `new ContainerModule(({ bind }) => { ... })`
@@ -19,7 +19,7 @@ import { Container, ContainerModule } from "inversify";
 import { MODULE_LOAD_UNLOAD } from "#/fixtures/scenario-parity";
 import type { BenchScenario } from "#/scenarios/types";
 
-// ─── shared identifiers ───────────────────────────────────────────────────────
+// ── shared identifiers ───────────────────────────────────────────────────────────────────────────────────────────────
 
 interface ModuleConfig {
   readonly env: string;
@@ -42,7 +42,7 @@ const moduleLoggerId = Symbol("bench-inv-mod-logger");
 const moduleDbId = Symbol("bench-inv-mod-db");
 const moduleServiceId = Symbol("bench-inv-mod-service");
 
-// ─── scenario 1: module load → resolve → unload per iteration ─────────────────
+// ── scenario 1: module load → resolve → unload per iteration ─────────────────────────────────────────────────────────
 
 function buildModuleLoadUnloadScenario(): BenchScenario {
   const infraModule = new ContainerModule(({ bind }) => {

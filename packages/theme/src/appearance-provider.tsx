@@ -62,7 +62,7 @@ function createAppearanceChannel(): BroadcastChannel | null {
 }
 
 /**
- * Read + validate the persisted preference from localStorage. Returns null when unavailable
+ * Reads and validates the persisted preference from localStorage. Returns null when unavailable
  * (SSR, private mode) or when the stored value is not a recognised appearance.
  */
 function readAppearanceFromStorage(storageKey: string): Appearance | null {
@@ -79,9 +79,7 @@ function readAppearanceFromStorage(storageKey: string): Appearance | null {
   }
 }
 
-/* -----------------------------------------------------------------------------
- * Props
- * -------------------------------------------------------------------------- */
+// ── Props ────────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.5.0-canary.2
@@ -127,9 +125,7 @@ export type AppearanceProviderProps = {
   readonly storageKey?: string;
 };
 
-/* -----------------------------------------------------------------------------
- * Component
- * -------------------------------------------------------------------------- */
+// ── Component ────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * Provider component for appearance state management.

@@ -1,7 +1,7 @@
 /**
  * InversifyJS 8 — scale scenario.
  *
- * Mirrors {@link ../codefast/scale.ts}: 512 bindings with a deep transient
+ * Mirrors `../codefast/scale.ts`: 512 bindings with a deep transient
  * chain resolved from leaf to root each iteration.
  */
 import "reflect-metadata";

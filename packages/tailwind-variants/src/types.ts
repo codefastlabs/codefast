@@ -5,7 +5,7 @@
 import type { ConfigExtension } from "tailwind-merge";
 
 /**
- * Convert string boolean values to actual boolean types.
+ * Converts string boolean values to actual boolean types.
  *
  * This utility type converts string representations of booleans ("true", "false")
  * to actual boolean types, while preserving existing boolean types.
@@ -15,7 +15,7 @@ import type { ConfigExtension } from "tailwind-merge";
 export type VariantValue<Key> = Key extends "false" | "true" ? boolean : Key extends boolean ? Key : Key;
 
 /**
- * Check if a variant group supports boolean values.
+ * Checks whether a variant group supports boolean values.
  *
  * This utility type determines whether a variant group has boolean keys
  * ("true" or "false"), indicating it supports boolean variant values.
@@ -29,7 +29,7 @@ export type HasBooleanVariant<Group extends Record<string, unknown>> = "true" ex
     : false;
 
 /**
- * Extract variant props from a component or variant function.
+ * Extracts variant props from a component or variant function.
  *
  * This utility type extracts the variant properties from a component or
  * variant function, including className and class properties, while
@@ -218,7 +218,7 @@ export interface SlotVariantConfig<Variants extends VariantSchema, Slots extends
  */
 export interface TailwindVariantsOptions {
   /**
-   * Answer a repeated variant selection from what the resolver already produced.
+   * Answers a repeated variant selection from what the resolver already produced.
    *
    * @remarks Turn this off for a component whose selections are effectively unique per call, where
    * the store would fill with entries nothing reads again.

@@ -5,9 +5,7 @@ import { Button } from "#/components/button";
 import type { ButtonProps } from "#/components/button";
 import { cn } from "#/lib/utils";
 
-/* -----------------------------------------------------------------------------
- * Component: AlertDialog
- * -------------------------------------------------------------------------- */
+// ── Component: AlertDialog ───────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -21,9 +19,7 @@ function AlertDialog({ ...props }: AlertDialogProps): JSX.Element {
   return <AlertDialogPrimitive.Root data-slot="alert-dialog" {...props} />;
 }
 
-/* -----------------------------------------------------------------------------
- * Component: AlertDialogTrigger
- * -------------------------------------------------------------------------- */
+// ── Component: AlertDialogTrigger ────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -37,9 +33,7 @@ function AlertDialogTrigger({ ...props }: AlertDialogTriggerProps): JSX.Element 
   return <AlertDialogPrimitive.Trigger data-slot="alert-dialog-trigger" {...props} />;
 }
 
-/* -----------------------------------------------------------------------------
- * Component: AlertDialogContent
- * -------------------------------------------------------------------------- */
+// ── Component: AlertDialogContent ────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -73,9 +67,7 @@ function AlertDialogContent({ className, size = "default", ...props }: AlertDial
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Component: AlertDialogHeader
- * -------------------------------------------------------------------------- */
+// ── Component: AlertDialogHeader ─────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -98,9 +90,7 @@ function AlertDialogHeader({ className, ...props }: AlertDialogHeaderProps): JSX
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Component: AlertDialogMedia
- * -------------------------------------------------------------------------- */
+// ── Component: AlertDialogMedia ──────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -123,9 +113,7 @@ function AlertDialogMedia({ className, ...props }: AlertDialogMediaProps): JSX.E
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Component: AlertDialogBody
- * -------------------------------------------------------------------------- */
+// ── Component: AlertDialogBody ───────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * Optional scrollable region for long content. When used, the Header and Footer
@@ -149,9 +137,7 @@ function AlertDialogBody({ className, ...props }: AlertDialogBodyProps): JSX.Ele
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Component: AlertDialogFooter
- * -------------------------------------------------------------------------- */
+// ── Component: AlertDialogFooter ─────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -174,9 +160,7 @@ function AlertDialogFooter({ className, ...props }: AlertDialogFooterProps): JSX
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Component: AlertDialogTitle
- * -------------------------------------------------------------------------- */
+// ── Component: AlertDialogTitle ──────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -199,9 +183,7 @@ function AlertDialogTitle({ className, ...props }: AlertDialogTitleProps): JSX.E
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Component: AlertDialogDescription
- * -------------------------------------------------------------------------- */
+// ── Component: AlertDialogDescription ────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -224,9 +206,7 @@ function AlertDialogDescription({ className, ...props }: AlertDialogDescriptionP
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Component: AlertDialogAction
- * -------------------------------------------------------------------------- */
+// ── Component: AlertDialogAction ─────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -245,9 +225,7 @@ function AlertDialogAction({ size = "default", variant = "default", ...props }: 
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Component: AlertDialogCancel
- * -------------------------------------------------------------------------- */
+// ── Component: AlertDialogCancel ─────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -266,9 +244,7 @@ function AlertDialogCancel({ size = "default", variant = "outline", ...props }: 
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Exports
- * -------------------------------------------------------------------------- */
+// ── Exports ──────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 export {
   AlertDialog,

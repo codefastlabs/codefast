@@ -8,7 +8,7 @@
 
 import { Container, inject, injectable, Module, token } from "@codefast/di";
 
-// --- Tokens -----------------------------------------------------------------
+// ── Tokens ───────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 const ConfigToken = token<Config>("Config");
 const LoggerToken = token<Logger>("Logger");
@@ -16,7 +16,7 @@ const EmailServiceToken = token<EmailService>("EmailService");
 const AuthServiceToken = token<AuthService>("AuthService");
 const AppToken = token<App>("App");
 
-// --- Types ------------------------------------------------------------------
+// ── Types ────────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 interface Config {
   smtpHost: string;
@@ -28,7 +28,7 @@ interface Logger {
   error(msg: string): void;
 }
 
-// --- Implementations --------------------------------------------------------
+// ── Implementations ──────────────────────────────────────────────────────────────────────────────────────────────────
 
 @injectable([inject(ConfigToken), inject(LoggerToken)])
 class EmailService {
@@ -69,7 +69,7 @@ class App {
   }
 }
 
-// --- Modules ----------------------------------------------------------------
+// ── Modules ──────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 // CoreModule: shared primitives (config + logger) — can be imported by others
 const CoreModule = Module.create("Core", (builder) => {
@@ -102,7 +102,7 @@ const AppModule = Module.create("App", (builder) => {
   builder.bind(AppToken).to(App);
 });
 
-// --- Bootstrap --------------------------------------------------------------
+// ── Bootstrap ────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 const container = Container.fromModules(AppModule);
 

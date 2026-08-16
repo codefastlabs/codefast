@@ -15,6 +15,87 @@ than the ratios on it.
 (`65443f167`) landed, on a freshly rebuilt `dist`. 78 of the run's cells carried a per-trial IQR above 5%, so single
 rows from it are read through the aggregates, not alone.
 
+## 2026-08-12 — 35 coverage rows, their first baselines, and the defect one of them found
+
+The suite went from 68 rows to 103. Every new row is `@codefast/di`-only, so **no published head-to-head figure moves**:
+the same isolated interleaved profile reads 45 / 0 / 0 against inversify at median 2.23× and geomean 2.65× — inside the
+band the fifteen runs before it set (median 2.13–2.30, geomean 2.62–2.73) — with the group geomeans unchanged too. The
+run carried 76 cells above 5% per-trial IQR, so what follows are first baselines, not settled figures.
+
+The rows exist because each names a branch no row executed. Two new groups hold them: `resolution` for the engine lanes
+(compiled plans, escapes, the depth thresholds, the context pool, the accessor channel) and the existing groups for the
+rest.
+
+| Family                                               | First reading                                                                    |
+| ---------------------------------------------------- | -------------------------------------------------------------------------------- |
+| Plan escapes, against the no-escape control          | factory **7.2×** · scoped **4.0×** · optional **9.9×** · multi/hooked **13.2×**  |
+| A compiled plan, against the same graph interpreted  | **4.37×** at depth 24, **2.30×** at depth 40                                     |
+| Crossing the compiler's depth limit                  | **3.99×** for 1.67× the depth, where the interpreted lane pays **2.10×**         |
+| The async cascade→branch ladder                      | 400 ns (no crossing) → 521 ns (one) → 725 ns (every level) ≈ **46 ns per level** |
+| The context pool's miss (nested `container.resolve`) | **1.17×**, both cells noisy                                                      |
+| Bind, per binding, over 128 tokens                   | 216 ns plain · 454 ns refined — the refinement is **2.1×** the registration      |
+| `Container.create()` / `createChild()`, empty        | **122 ns** each, level with one another                                          |
+| Teardown of 100 materialized singletons              | 9.0 µs, ~**90 ns** per deactivation                                              |
+
+Two of those cross-check a figure this page already carried. `plan-deps-inlined` reads 24.5M hz/op against
+`slot-injected-name-compiled`'s 24.8M — a plan whose four named dependencies were settled at compile time lands exactly
+on the criteria-free plan of the same arity, which is what that change claimed. And the six `fresh-child-*` rows
+reproduce an ad-hoc N-table measured independently of the suite. Per cycle of create, resolve N times, tear down —
+no-options 210 → 258 ns, name-only 227 → 299 ns, single-tag 206 → 320 ns from N=1 to N=4: the tagged lane is the
+**cheapest** at N=1 and the dearest by N=4, putting the crossover at **N≈2–3** where the ad-hoc measurement put N=2.
+
+The 2×2 also separates the cliff from the depth. Compiled, going 24 → 40 levels costs **3.99×** for 1.67× the depth;
+interpreted, the same step costs **2.10×** — near-linear, because that lane has no limit to cross. What the deep row
+pays is the compiler stopping, not the depth.
+
+### The defect one of them found, and its fix
+
+`interpreted-class-chain-40` failed its own `sanity()` on the run that introduced it, because the engine was wrong on
+that shape rather than slow: **a sync resolution deeper than `RESOLUTION_SET_THRESHOLD` that runs on the interpreted
+path answered its first resolve and threw `CircularDependencyError` on every later one.** Reproduced outside the harness
+on a 40-level transient class chain whose deepest binding carries an activation hook (three resolves:
+`39 | THREW | THREW`); the same chain at depth 24 was fine, and at depth 40 with the plan compiled was fine.
+
+The mechanism was the one [`packages/di/ARCHITECTURE.md`](../../packages/di/ARCHITECTURE.md) described as unobservable:
+`enterResolutionPath` attaches a membership set built from the path once the path is deep enough, and returns it, so the
+frames that pushed **before** the attach hold `undefined` and delete nothing on unwind. The set lives on the array, and
+the resolver lends one array per resolver — so a later resolve read a set holding a drained path's names and refused any
+token still in it. `[...names]` in the compiled lane's escape thunk is what hid it there, since a spread drops
+symbol-keyed properties; nothing hid it on the interpreted lane. A sibling branch below the attach depth hit the same
+set **within** one resolve, so this was never only a cross-resolve fault.
+
+The fix drops a set whose size no longer matches the path's length and lets the next deep frame rebuild it. Paired A/B
+of the two builds, source swapped per side, `BENCH_ONLY` through `bench:isolate`, **six** passes so old-first and
+new-first balance 3/3, each pass's ratios divided by that pass's competitor median — inversify, awilix and tsyringe run
+identical code on both sides, so their ratios are the session's drift and nothing else. Beside it, an **A/A control**:
+the same rows, the same six-pass protocol, the same build in both slots.
+
+| Row                               |   A/B |   A/A | A/B passes    |
+| --------------------------------- | ----: | ----: | ------------- |
+| `interpreted-class-chain-24`      | 0.965 | 0.971 | 0.926 … 0.985 |
+| `container-level-activation-hook` | 0.988 | 0.994 | 0.974 … 1.025 |
+| `scale-deep-transient-chain-512`  | 0.992 | 0.994 | 0.883 … 1.083 |
+| `constant-resolve`                | 0.993 | 1.015 | 0.811 … 1.008 |
+| `transient-class-1-dep`           | 1.003 | 0.993 | 0.982 … 1.064 |
+| `realistic-graph-resolve-root`    | 1.013 | 1.016 | 0.946 … 1.031 |
+| `scale-mid-transient-chain-32`    | 1.014 | 0.994 | 0.969 … 1.434 |
+| `fan-out-tree-depth-3-breadth-4`  | 1.041 | 1.052 | 0.935 … 1.137 |
+
+**The A/B is indistinguishable from the A/A, which is the whole claim.** Forty-eight paired cells each: median 0.9970
+against the control's 1.0017, and every row's A/B median sits within 2.2 points of its own A/A median. The rows that
+look like they moved reproduce that move on identical builds — `fan-out-tree-depth-3-breadth-4` reads 1.05 in the
+control, `interpreted-class-chain-24` reads 0.97 there. Read the first table alone and the deep interpreted row, which
+pays the added comparison on every frame without ever attaching a set, looks like a 3.5% cost; the control says that
+number is the slot, not the change. `constant-resolve` swung to **1.224 in one A/A pass** on identical code, which is
+what this suite's noise looks like when nothing at all has happened.
+
+**Every pass carried a canary, rather than the swap being proven once afterwards.** `interpreted-class-chain-40` is a
+row the old build cannot run: it fails its sanity check there and measures on the new build. The driver asserts both
+that and the rebuilt `dist` marker on each of the twelve side-runs, and aborts the whole A/B if either disagrees with
+the side it claims to be — because a swap that silently fails to land reports parity on every row, which is exactly what
+this change would otherwise want to be true. All twelve passed. That row is absent from the table for the same reason it
+works as a canary.
+
 ## 2026-08-01 — fairness fixes supersede every aggregate below
 
 A fairness audit changed the harness and several fixtures, so **the suite aggregates on this page predate the current

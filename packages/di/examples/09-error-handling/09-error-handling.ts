@@ -9,7 +9,7 @@
  * - NoMatchingBindingError — name/tag hint matches nothing
  * - AsyncResolutionError — sync resolve() on async binding
  * - CircularDependencyError — A → B → A cycle
- * - MissingMetadataError — .to() / .toSelf() without @injectable
+ * - MissingMetadataError — .to() / .toSelf() without `@injectable`
  * - ScopeViolationError  — container.validate() detects captive dependency
  * - AsyncModuleLoadError — load() called with AsyncModule
  */
@@ -29,7 +29,7 @@ import {
   TokenNotBoundError,
 } from "@codefast/di";
 
-// --- Helpers ----------------------------------------------------------------
+// ── Helpers ──────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 function section(title: string): void {
   console.log(`\n${"=".repeat(60)}`);
@@ -44,7 +44,7 @@ function logCaughtError(label: string, error: unknown): void {
   }
 }
 
-// --- Tokens -----------------------------------------------------------------
+// ── Tokens ───────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 const LoggerToken = token<Logger>("Logger");
 const ServiceAToken = token<CircularServiceA>("ServiceA");
@@ -55,9 +55,7 @@ interface Logger {
   log(msg: string): void;
 }
 
-// ============================================================================
-// 1. TokenNotBoundError
-// ============================================================================
+// ── 1. TokenNotBoundError ────────────────────────────────────────────────────────────────────────────────────────────
 
 section("1. TokenNotBoundError");
 
@@ -74,9 +72,7 @@ try {
 const optionalLogger = emptyContainer.resolveOptional(LoggerToken);
 console.log("resolveOptional on unbound:", optionalLogger); // undefined
 
-// ============================================================================
-// 2. NoMatchingBindingError
-// ============================================================================
+// ── 2. NoMatchingBindingError ────────────────────────────────────────────────────────────────────────────────────────
 
 section("2. NoMatchingBindingError");
 
@@ -94,9 +90,7 @@ try {
   console.log("  Is NoMatchingBindingError:", error instanceof NoMatchingBindingError);
 }
 
-// ============================================================================
-// 3. AsyncResolutionError
-// ============================================================================
+// ── 3. AsyncResolutionError ──────────────────────────────────────────────────────────────────────────────────────────
 
 section("3. AsyncResolutionError");
 
@@ -126,9 +120,7 @@ try {
 const asyncDatabase = await asyncBindingContainer.resolveAsync(DatabaseToken);
 console.log("resolveAsync succeeded:", asyncDatabase instanceof Database);
 
-// ============================================================================
-// 4. CircularDependencyError
-// ============================================================================
+// ── 4. CircularDependencyError ───────────────────────────────────────────────────────────────────────────────────────
 
 section("4. CircularDependencyError");
 
@@ -156,9 +148,7 @@ try {
   }
 }
 
-// ============================================================================
-// 5. MissingMetadataError
-// ============================================================================
+// ── 5. MissingMetadataError ──────────────────────────────────────────────────────────────────────────────────────────
 
 section("5. MissingMetadataError");
 
@@ -184,9 +174,7 @@ missingMetadataContainer.rebind(UnmarkedToken).toDynamic((ctx) => new UnmarkedSe
 const repairedService = missingMetadataContainer.resolve(UnmarkedToken);
 console.log("  Fixed with toDynamic:", repairedService instanceof UnmarkedService);
 
-// ============================================================================
-// 6. ScopeViolationError
-// ============================================================================
+// ── 6. ScopeViolationError ───────────────────────────────────────────────────────────────────────────────────────────
 
 section("6. ScopeViolationError — captive dependency");
 
@@ -219,9 +207,7 @@ try {
   console.log("  Is ScopeViolationError:", error instanceof ScopeViolationError);
 }
 
-// ============================================================================
-// 7. AsyncModuleLoadError
-// ============================================================================
+// ── 7. AsyncModuleLoadError ──────────────────────────────────────────────────────────────────────────────────────────
 
 section("7. AsyncModuleLoadError");
 

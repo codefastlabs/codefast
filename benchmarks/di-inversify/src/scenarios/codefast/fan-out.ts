@@ -1,5 +1,5 @@
 /**
- * @codefast/di — fan-out scenarios: the transient resolution tree plus the `resolveAll()` rows.
+ * `@codefast/di` — fan-out scenarios: the transient resolution tree plus the `resolveAll()` rows.
  *
  * `resolve-all-strategies-*` fan-out: measures `resolveAll()` on N `toConstantValue`
  * registrations for the same service id, **without** a name or tag (no disambiguation
@@ -8,7 +8,7 @@
  * Inversify: N `.bind(TOKEN).toConstantValue(i).when(() => true)` registrations on the
  * same identifier; `getAll` returns all N.
  *
- * @codefast/di: the default (unnamed) slot is **last-wins**, so you cannot model N
+ * `@codefast/di`: the default (unnamed) slot is **last-wins**, so you cannot model N
  * unqualified `toConstantValue` the same way as Inversify without a different
  * multi-registration strategy. We use the library’s **constraint-only** slot (`.when(() => true)`)
  * so each of the N `toConstantValue` lines remains a distinct multi-binding — same as the

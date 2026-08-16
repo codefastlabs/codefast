@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 /**
- * Parent harness: rebuild @codefast/tailwind-variants, run each library bench in its own subprocess
- * (order: @codefast/tailwind-variants → tailwind-variants → class-variance-authority), then emit one
- * report with @codefast/tailwind-variants as the pivot.
+ * Parent harness: rebuild `@codefast/tailwind-variants`, run each library bench in its own subprocess
+ * (order: `@codefast/tailwind-variants` → tailwind-variants → class-variance-authority), then emit one
+ * report with `@codefast/tailwind-variants` as the pivot.
  */
 import { spawnSync } from "node:child_process";
 import { dirname, join } from "node:path";

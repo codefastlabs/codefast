@@ -9,13 +9,13 @@ import { bindingSlotToResolveOptions } from "#/injection/resolve-options";
 import type { MetadataReader } from "#/metadata/metadata-types";
 import { matchesSlot } from "#/resolution/select/binding-select";
 
-// ── Types ─────────────────────────────────────────────────────────────────────
+// ── Types ────────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
- * @since 0.3.16-canary.0
- *
  * @remarks `kind`/`scope` are `"unbound"` for the placeholder node an optional, currently
  * unsatisfied dependency points at.
+ *
+ * @since 0.3.16-canary.0
  */
 export interface GraphNode {
   readonly id: string;
@@ -28,10 +28,10 @@ export interface GraphNode {
 }
 
 /**
- * @since 0.3.16-canary.0
- *
  * @remarks `label` is presentation, assembled for the adapters; read `optional` and `slotName`
  * rather than parsing it.
+ *
+ * @since 0.3.16-canary.0
  */
 export interface GraphEdge {
   readonly from: string;
@@ -58,7 +58,7 @@ export interface GraphOptions {
   readonly includeParent?: boolean | undefined;
 }
 
-// ── Builder ───────────────────────────────────────────────────────────────────
+// ── Builder ──────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 // Tokens are compared by object identity, and a name is free to repeat, so the graph mints its
 // own per-process key. Weakly held: a discarded token takes its key with it.

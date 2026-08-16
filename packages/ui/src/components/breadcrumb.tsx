@@ -4,9 +4,7 @@ import type { ComponentProps, JSX } from "react";
 
 import { cn } from "#/lib/utils";
 
-/* -----------------------------------------------------------------------------
- * Component: Breadcrumb
- * -------------------------------------------------------------------------- */
+// ── Component: Breadcrumb ────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -20,9 +18,7 @@ function Breadcrumb({ ...props }: BreadcrumbProps): JSX.Element {
   return <nav aria-label="breadcrumb" data-slot="breadcrumb" {...props} />;
 }
 
-/* -----------------------------------------------------------------------------
- * Component: BreadcrumbList
- * -------------------------------------------------------------------------- */
+// ── Component: BreadcrumbList ────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -42,9 +38,7 @@ function BreadcrumbList({ className, ...props }: BreadcrumbListProps): JSX.Eleme
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Component: BreadcrumbItem
- * -------------------------------------------------------------------------- */
+// ── Component: BreadcrumbItem ────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -58,9 +52,7 @@ function BreadcrumbItem({ className, ...props }: BreadcrumbItemProps): JSX.Eleme
   return <li className={cn("inline-flex items-center gap-1", className)} data-slot="breadcrumb-item" {...props} />;
 }
 
-/* -----------------------------------------------------------------------------
- * Component: BreadcrumbLink
- * -------------------------------------------------------------------------- */
+// ── Component: BreadcrumbLink ────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -84,9 +76,7 @@ function BreadcrumbLink({ asChild, className, ...props }: BreadcrumbLinkProps): 
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Component: BreadcrumbPage
- * -------------------------------------------------------------------------- */
+// ── Component: BreadcrumbPage ────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -109,9 +99,7 @@ function BreadcrumbPage({ className, ...props }: BreadcrumbPageProps): JSX.Eleme
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Component: BreadcrumbSeparator
- * -------------------------------------------------------------------------- */
+// ── Component: BreadcrumbSeparator ───────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -135,9 +123,7 @@ function BreadcrumbSeparator({ children, className, ...props }: BreadcrumbSepara
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Component: BreadcrumbEllipsis
- * -------------------------------------------------------------------------- */
+// ── Component: BreadcrumbEllipsis ────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -162,9 +148,7 @@ function BreadcrumbEllipsis({ className, ...props }: BreadcrumbEllipsisProps): J
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Exports
- * -------------------------------------------------------------------------- */
+// ── Exports ──────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 export {
   Breadcrumb,

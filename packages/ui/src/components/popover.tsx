@@ -3,9 +3,7 @@ import type { ComponentProps, JSX } from "react";
 
 import { cn } from "#/lib/utils";
 
-/* -----------------------------------------------------------------------------
- * Component: Popover
- * -------------------------------------------------------------------------- */
+// ── Component: Popover ───────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -19,9 +17,7 @@ function Popover({ ...props }: PopoverProps): JSX.Element {
   return <PopoverPrimitive.Root data-slot="popover" {...props} />;
 }
 
-/* -----------------------------------------------------------------------------
- * Component: PopoverTrigger
- * -------------------------------------------------------------------------- */
+// ── Component: PopoverTrigger ────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -35,9 +31,7 @@ function PopoverTrigger({ ...props }: PopoverTriggerProps): JSX.Element {
   return <PopoverPrimitive.Trigger data-slot="popover-trigger" {...props} />;
 }
 
-/* -----------------------------------------------------------------------------
- * Component: PopoverAnchor
- * -------------------------------------------------------------------------- */
+// ── Component: PopoverAnchor ─────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -51,9 +45,7 @@ function PopoverAnchor({ ...props }: PopoverAnchorProps): JSX.Element {
   return <PopoverPrimitive.Anchor data-slot="popover-anchor" {...props} />;
 }
 
-/* -----------------------------------------------------------------------------
- * Component: PopoverContent
- * -------------------------------------------------------------------------- */
+// ── Component: PopoverContent ────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -80,9 +72,7 @@ function PopoverContent({ align = "center", className, sideOffset = 4, ...props 
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Component: PopoverArrow
- * -------------------------------------------------------------------------- */
+// ── Component: PopoverArrow ──────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -96,9 +86,7 @@ function PopoverArrow({ className, ...props }: PopoverArrowProps): JSX.Element {
   return <PopoverPrimitive.Arrow className={cn("fill-popover", className)} data-slot="popover-arrow" {...props} />;
 }
 
-/* -----------------------------------------------------------------------------
- * Component: PopoverHeader
- * -------------------------------------------------------------------------- */
+// ── Component: PopoverHeader ─────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -112,9 +100,7 @@ function PopoverHeader({ className, ...props }: PopoverHeaderProps): JSX.Element
   return <div className={cn("flex flex-col gap-0.5 text-sm", className)} data-slot="popover-header" {...props} />;
 }
 
-/* -----------------------------------------------------------------------------
- * Component: PopoverTitle
- * -------------------------------------------------------------------------- */
+// ── Component: PopoverTitle ──────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -128,9 +114,7 @@ function PopoverTitle({ className, ...props }: PopoverTitleProps): JSX.Element {
   return <div className={cn("font-medium", className)} data-slot="popover-title" {...props} />;
 }
 
-/* -----------------------------------------------------------------------------
- * Component: PopoverDescription
- * -------------------------------------------------------------------------- */
+// ── Component: PopoverDescription ────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -144,9 +128,7 @@ function PopoverDescription({ className, ...props }: PopoverDescriptionProps): J
   return <p className={cn("text-muted-foreground", className)} data-slot="popover-description" {...props} />;
 }
 
-/* -----------------------------------------------------------------------------
- * Exports
- * -------------------------------------------------------------------------- */
+// ── Exports ──────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 export {
   Popover,

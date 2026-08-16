@@ -35,7 +35,7 @@ export const INSTALL_STEPS = [
   },
 ] as const;
 
-/** Popular theme palettes shipped with @codefast/ui. */
+/** Popular theme palettes shipped with `@codefast/ui`. */
 export const FEATURED_THEMES = ["neutral", "sky", "zinc", "slate", "stone", "blue", "violet", "rose"] as const;
 
 export const THEME_SNIPPET = (theme: string) =>

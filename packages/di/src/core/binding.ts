@@ -13,7 +13,7 @@ import type {
 } from "#/core/types";
 import type { InjectableDependency, InjectionDescriptor, ResolvedDependencyValue } from "#/injection/descriptor";
 
-// ── BindingSlot ───────────────────────────────────────────────────────────────────
+// ── BindingSlot ──────────────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -48,9 +48,15 @@ export function bindingSlotEquals(left: BindingSlot, right: BindingSlot): boolea
 export const NO_INSTANCE: unique symbol = Symbol("di:no-instance");
 
 /**
+ * The slot every unconstrained binding shares.
+ *
+ * @remarks Tags are frozen where they are built (here and in the builder's re-tag), never per
+ * binding: frames and snapshots alias the array, so a caller's write throws instead of corrupting
+ * the registry.
+ *
  * @since 0.3.16-canary.0
  */
-export const DEFAULT_BINDING_SLOT: BindingSlot = { name: undefined, tags: [], keyMask: NO_TAG_KEYS };
+export const DEFAULT_BINDING_SLOT: BindingSlot = { name: undefined, tags: Object.freeze([]), keyMask: NO_TAG_KEYS };
 
 /**
  * @since 0.3.16-canary.0
@@ -69,7 +75,7 @@ export function bindingSlotToString(slot: BindingSlot): string {
   return parts.join(",");
 }
 
-// ── BindingBase ───────────────────────────────────────────────────────────────
+// ── BindingBase ──────────────────────────────────────────────────────────────────────────────────────────────────────
 
 interface BindingBase<Value> {
   readonly id: BindingIdentifier;
@@ -118,7 +124,7 @@ interface BindingLifecycleHooks<Value> {
   onDeactivation?(instance: Value): void | Promise<void>;
 }
 
-// ── Binding kinds ─────────────────────────────────────────────────────────────
+// ── Binding kinds ────────────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -216,7 +222,7 @@ type DistributiveOmit<Union, Keys extends PropertyKey> = Union extends unknown ?
  */
 export type PartialBinding<Value> = DistributiveOmit<Binding<Value>, BindingBaseKeys>;
 
-// ── ID generation ─────────────────────────────────────────────────────────────
+// ── ID generation ────────────────────────────────────────────────────────────────────────────────────────────────────
 
 let bindingIdCounter = 0;
 /**
@@ -226,7 +232,7 @@ export function generateBindingId(): BindingIdentifier {
   return String(++bindingIdCounter) as BindingIdentifier;
 }
 
-// ── Construction ──────────────────────────────────────────────────────────────
+// ── Construction ─────────────────────────────────────────────────────────────────────────────────────────────────────
 
 /** Every key any member declares — a bare `keyof` on a union gives only the shared ones. */
 type KeysOfUnion<Union> = Union extends unknown ? keyof Union : never;
@@ -261,6 +267,9 @@ type BindingFieldSuperset = {
  * hidden class. Reordering the fields, or adding a second site, gives that up.
  *
  * @param source - the kind-specific payload, or an existing binding to re-slot
+ * @param token - the key requests resolve the binding by
+ * @param slot - the name + tags a request must match to select this binding
+ * @param predicate - a custom constraint, or `undefined` for none
  * @param id - reuse a caller's id to keep a fluent chain's `id()` stable across refinements
  *
  * @since 0.5.0-canary.8
@@ -278,7 +287,8 @@ export function createBinding<Value>(
     id,
     inFlight: false,
     frame: undefined,
-    instance: fields.instance ?? NO_INSTANCE,
+    // An `in` probe, not `??`: a re-slotted singleton may legitimately hold a cached `undefined`.
+    instance: "instance" in fields ? fields.instance : NO_INSTANCE,
     token,
     slot,
     predicate,
@@ -338,7 +348,7 @@ export function clearBindingFrame<Value>(binding: Binding<Value>): void {
   (binding as MemoizedFrameField).frame = undefined;
 }
 
-// ── Builder interfaces ────────────────────────────────────────────────────────
+// ── Builder interfaces ───────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * Common slot-constraint + id methods shared by all concrete binding builders.

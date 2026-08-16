@@ -1,20 +1,7 @@
 import path from "node:path";
 
 import type { FilesystemPort } from "#/core/filesystem/port";
-
-const defaultSkipDirectoryNames = new Set([
-  "node_modules",
-  "dist",
-  ".git",
-  ".turbo",
-  ".next",
-  ".cache",
-  "out",
-  "build",
-  "coverage",
-  ".vercel",
-  ".output",
-]);
+import { defaultSkipDirectoryNames } from "#/core/workspace/skip-directories";
 
 /**
  * @since 0.3.16-canary.0

@@ -7,13 +7,13 @@
 
 import { Container, token } from "@codefast/di";
 
-// --- Tokens -----------------------------------------------------------------
+// ── Tokens ───────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 const GreeterToken = token<Greeter>("Greeter");
 const MessageToken = token<string>("Message");
 const CounterToken = token<Counter>("Counter");
 
-// --- Interfaces & classes ---------------------------------------------------
+// ── Interfaces & classes ─────────────────────────────────────────────────────────────────────────────────────────────
 
 interface Greeter {
   greet(name: string): string;
@@ -39,7 +39,7 @@ class Counter {
   }
 }
 
-// --- Container setup --------------------------------------------------------
+// ── Container setup ──────────────────────────────────────────────────────────────────────────────────────────────────
 
 const container = Container.create();
 
@@ -62,7 +62,7 @@ container
   .toDynamic(() => new Counter())
   .transient();
 
-// --- Resolution -------------------------------------------------------------
+// ── Resolution ───────────────────────────────────────────────────────────────────────────────────────────────────────
 
 const greeter = container.resolve(GreeterToken);
 console.log(greeter.greet("Alice")); // Good day, Alice.

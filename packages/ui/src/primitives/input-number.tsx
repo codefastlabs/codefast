@@ -16,9 +16,7 @@ import { useCallback, useEffect, useMemo, useRef } from "react";
 import * as InputPrimitive from "#/primitives/input";
 import { createInputScope } from "#/primitives/input";
 
-/* -----------------------------------------------------------------------------
- * Context: InputNumber
- * -------------------------------------------------------------------------- */
+// ── Context: InputNumber ─────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * The name of the InputNumber component constant.
@@ -143,9 +141,7 @@ interface InputNumberContextValue {
 const [InputNumberContextProvider, useInputNumberContext] =
   createInputNumberContext<InputNumberContextValue>(NUMBER_INPUT_NAME);
 
-/* -----------------------------------------------------------------------------
- * Component: InputNumber
- * -------------------------------------------------------------------------- */
+// ── Component: InputNumber ───────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * Props for the main InputNumber component.
@@ -386,9 +382,7 @@ function InputNumber(numberInputProps: ScopedProps<InputNumberProps>): JSX.Eleme
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Component: InputNumberField
- * -------------------------------------------------------------------------- */
+// ── Component: InputNumberField ──────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * The name of the InputNumberField component constant.
@@ -711,9 +705,7 @@ function InputNumberField({
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Component: NumberStepperButton
- * -------------------------------------------------------------------------- */
+// ── Component: NumberStepperButton ───────────────────────────────────────────────────────────────────────────────────
 
 /**
  * The name of the NumberStepperButton component constant.
@@ -853,9 +845,7 @@ function NumberStepperButton({
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Component: InputNumberIncrementButton
- * -------------------------------------------------------------------------- */
+// ── Component: InputNumberIncrementButton ────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -869,9 +859,7 @@ function InputNumberIncrementButton(props: InputNumberIncrementButtonProps): JSX
   return <NumberStepperButton operation="increment" {...props} />;
 }
 
-/* -----------------------------------------------------------------------------
- * Component: InputNumberDecrementButton
- * -------------------------------------------------------------------------- */
+// ── Component: InputNumberDecrementButton ────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -885,9 +873,7 @@ function InputNumberDecrementButton(props: InputNumberDecrementButtonProps): JSX
   return <NumberStepperButton operation="decrement" {...props} />;
 }
 
-/* -----------------------------------------------------------------------------
- * Utility Functions
- * -------------------------------------------------------------------------- */
+// ── Utility Functions ────────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * Chains multiple callbacks into a single function
@@ -1022,9 +1008,7 @@ function roundToStep(value: number, step: number): number {
   return Number(value.toFixed(fractionDigits));
 }
 
-/* -----------------------------------------------------------------------------
- * Exports
- * -------------------------------------------------------------------------- */
+// ── Exports ──────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 export {
   createInputNumberScope,

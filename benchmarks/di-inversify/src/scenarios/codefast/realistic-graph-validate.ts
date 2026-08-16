@@ -2,7 +2,7 @@
  * `realistic-graph-validate` (codefast-only):
  * Measures the cost of calling `container.validate()` repeatedly on a fixed, already
  * built graph. `validate()` runs the full `validateScopeRules` pass on each call;
- * @codefast/di does **not** epoch-memoize explicit `validate()`. (The dev-only
+ * `@codefast/di` does **not** epoch-memoize explicit `validate()`. (The dev-only
  * `maybeRunDevValidationOnce` hook on `resolve` is separate.) There is no unbind or
  * registry mutation between the hot-loop calls; this is repeated worst-case static
  * validation work on a warm graph.

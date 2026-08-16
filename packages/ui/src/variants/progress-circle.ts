@@ -1,9 +1,7 @@
 import type { VariantProps } from "#/lib/utils";
 import { tv } from "#/lib/utils";
 
-/* -----------------------------------------------------------------------------
- * Variant: ProgressCircle
- * -------------------------------------------------------------------------- */
+// ── Variant: ProgressCircle ──────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -38,9 +36,7 @@ const progressCircleVariants = tv({
  */
 type ProgressCircleVariants = VariantProps<typeof progressCircleVariants>;
 
-/* -----------------------------------------------------------------------------
- * Exports
- * -------------------------------------------------------------------------- */
+// ── Exports ──────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 export { progressCircleVariants };
 export type { ProgressCircleVariants };

@@ -137,12 +137,28 @@ export const codefastAuditLinksConfigSchema = z
 export type CodefastAuditLinksConfig = z.infer<typeof codefastAuditLinksConfigSchema>;
 
 /**
+ * Comment-divider audit defaults — the scan always starts at the repo root, so only exceptions are configured.
+ */
+export const codefastAuditCommentsConfigSchema = z
+  .object({
+    /** Divider lines as written, or `repo/relative/path.ts:<divider>` entries, to ignore. */
+    allowlist: z.array(z.string()).optional(),
+  })
+  .strict();
+
+/**
+ * @see codefastAuditCommentsConfigSchema
+ */
+export type CodefastAuditCommentsConfig = z.infer<typeof codefastAuditCommentsConfigSchema>;
+
+/**
  * @since 0.3.16-canary.0
  */
 export const codefastAuditConfigSchema = z
   .object({
     rtl: codefastAuditRtlConfigSchema.optional(),
     links: codefastAuditLinksConfigSchema.optional(),
+    comments: codefastAuditCommentsConfigSchema.optional(),
   })
   .strict();
 

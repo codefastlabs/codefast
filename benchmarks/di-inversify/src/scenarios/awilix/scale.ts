@@ -1,5 +1,5 @@
 /**
- * Awilix — scale scenario. Mirrors {@link ../codefast/scale.ts}: a deep
+ * Awilix — scale scenario. Mirrors `../codefast/scale.ts`: a deep
  * transient chain resolved from leaf to root each iteration.
  */
 import type { AwilixContainer } from "awilix";

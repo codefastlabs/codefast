@@ -14,7 +14,7 @@ import { tag } from "#/core/tag";
 
 const PROVIDER_TAG = tag<"local" | "s3">("provider");
 
-// --- Tokens -----------------------------------------------------------------
+// ── Tokens ───────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 const LoggerToken = token<Logger>("Logger");
 const PaymentLoggerToken = token<Logger>("PaymentLogger");
@@ -25,7 +25,7 @@ const EventHandlerToken = token<EventHandler>("EventHandler");
 const OrderServiceToken = token<OrderService>("OrderService");
 const PaymentServiceToken = token<PaymentService>("PaymentService");
 
-// --- Interfaces -------------------------------------------------------------
+// ── Interfaces ───────────────────────────────────────────────────────────────────────────────────────────────────────
 
 interface Logger {
   source: string;
@@ -51,7 +51,7 @@ interface PaymentService {
   processPayment(orderId: string): void;
 }
 
-// --- Named bindings ---------------------------------------------------------
+// ── Named bindings ───────────────────────────────────────────────────────────────────────────────────────────────────
 // Use inject(token, { name }) / container.resolve(token, { name })
 
 const consoleLogger: Logger = {
@@ -71,7 +71,7 @@ const silentLogger: Logger = {
   },
 };
 
-// --- Tagged bindings --------------------------------------------------------
+// ── Tagged bindings ──────────────────────────────────────────────────────────────────────────────────────────────────
 
 class S3Storage implements Storage {
   provider = "s3";
@@ -97,7 +97,7 @@ class LocalStorage implements Storage {
   }
 }
 
-// --- Constraint-aware dependencies ------------------------------------------
+// ── Constraint-aware dependencies ────────────────────────────────────────────────────────────────────────────────────
 // OrderService uses parent-aware constraint; PaymentService uses named hint.
 
 @injectable([inject(LoggerToken), inject(S3StorageToken)])
@@ -130,7 +130,7 @@ class PaymentProcessor implements PaymentService {
   }
 }
 
-// --- Multi-binding (event handlers) -----------------------------------------
+// ── Multi-binding (event handlers) ───────────────────────────────────────────────────────────────────────────────────
 
 class LogEventHandler implements EventHandler {
   name = "log";
@@ -153,7 +153,7 @@ class AlertEventHandler implements EventHandler {
   }
 }
 
-// --- Container setup --------------------------------------------------------
+// ── Container setup ──────────────────────────────────────────────────────────────────────────────────────────────────
 
 const namedContainer = Container.create();
 
@@ -185,7 +185,7 @@ appContainer.bind(EventHandlerToken).to(LogEventHandler).whenNamed("log");
 appContainer.bind(EventHandlerToken).to(MetricsEventHandler).whenNamed("metrics");
 appContainer.bind(EventHandlerToken).to(AlertEventHandler).whenNamed("alert");
 
-// --- Usage ------------------------------------------------------------------
+// ── Usage ────────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 console.log("=== Named bindings ===");
 const consoleLoggerInstance = namedContainer.resolve(LoggerToken, { name: "console" });

@@ -15,7 +15,7 @@
 
 import { Container, inject, injectable, Module, toCytoscapeGraph, toDotGraph, token, tokenName } from "@codefast/di";
 
-// ── Tokens ───────────────────────────────────────────────────────────────────
+// ── Tokens ───────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 const LoggerToken = token<Logger>("Logger");
 const ConfigToken = token<Config>("Config");
@@ -24,7 +24,7 @@ const DatabaseToken = token<Database>("Database");
 const UserServiceToken = token<UserService>("UserService");
 const AnalyticsToken = token<Analytics>("Analytics");
 
-// ── Interfaces ───────────────────────────────────────────────────────────────
+// ── Interfaces ───────────────────────────────────────────────────────────────────────────────────────────────────────
 
 interface Logger {
   log(msg: string): void;
@@ -52,7 +52,7 @@ interface Analytics {
   track(event: string): void;
 }
 
-// ── Implementations ───────────────────────────────────────────────────────────
+// ── Implementations ──────────────────────────────────────────────────────────────────────────────────────────────────
 
 @injectable([])
 class ConsoleLogger implements Logger {
@@ -116,7 +116,7 @@ class SegmentAnalytics implements Analytics {
   }
 }
 
-// ── Modules ───────────────────────────────────────────────────────────────────
+// ── Modules ──────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 const InfraModule = Module.create("Infra", (builder) => {
   builder.bind(LoggerToken).to(ConsoleLogger).singleton();
@@ -130,7 +130,7 @@ const AppModule = Module.create("App", (builder) => {
   builder.bind(AnalyticsToken).to(SegmentAnalytics).singleton();
 });
 
-// ── Bootstrap ─────────────────────────────────────────────────────────────────
+// ── Bootstrap ────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 const container = Container.fromModules(InfraModule, AppModule);
 
@@ -161,9 +161,7 @@ for (const binding of snapshot.ownBindings) {
   console.log(`  ${binding.tokenName.padEnd(16)} kind=${binding.kind.padEnd(10)} scope=${binding.scope}${slotInfo}`);
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// 2. container.lookupBindings() — narrow to a specific token
-// ─────────────────────────────────────────────────────────────────────────────
+// ── 2. container.lookupBindings() — narrow to a specific token ───────────────────────────────────────────────────────
 
 console.log("\n=== lookupBindings for LoggerToken ===");
 const loggerBindings = container.lookupBindings(LoggerToken);
@@ -171,9 +169,7 @@ for (const binding of loggerBindings) {
   console.log(`  kind=${binding.kind}, scope=${binding.scope}, id=${binding.id}`);
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// 3. container.has() / hasOwn() — existence checks
-// ─────────────────────────────────────────────────────────────────────────────
+// ── 3. container.has() / hasOwn() — existence checks ─────────────────────────────────────────────────────────────────
 
 console.log("\n=== has() / hasOwn() ===");
 

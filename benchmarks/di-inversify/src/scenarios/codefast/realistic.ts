@@ -1,5 +1,5 @@
 /**
- * @codefast/di — realistic-graph scenarios. These are the *headline*
+ * `@codefast/di` — realistic-graph scenarios. These are the *headline*
  * comparison rows: they consume the shared descriptor and wire it through
  * codefast's own factory-binding API, so the same shape of work appears
  * on both sides of the table.

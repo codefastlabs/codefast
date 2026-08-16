@@ -4,9 +4,7 @@ import type { ComponentProps, JSX } from "react";
 import { cn } from "#/lib/utils";
 import * as CheckboxGroupPrimitive from "#/primitives/checkbox-group";
 
-/* -----------------------------------------------------------------------------
- * Component: CheckboxGroup
- * -------------------------------------------------------------------------- */
+// ── Component: CheckboxGroup ─────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -20,9 +18,7 @@ function CheckboxGroup({ className, ...props }: CheckboxGroupProps): JSX.Element
   return <CheckboxGroupPrimitive.Root className={cn("grid gap-2", className)} data-slot="checkbox-group" {...props} />;
 }
 
-/* -----------------------------------------------------------------------------
- * Component: CheckboxGroupItem
- * -------------------------------------------------------------------------- */
+// ── Component: CheckboxGroupItem ─────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -53,9 +49,7 @@ function CheckboxGroupItem({ className, ...props }: CheckboxGroupItemProps): JSX
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Exports
- * -------------------------------------------------------------------------- */
+// ── Exports ──────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 export { CheckboxGroup, CheckboxGroupItem };
 export type { CheckboxGroupItemProps, CheckboxGroupProps };

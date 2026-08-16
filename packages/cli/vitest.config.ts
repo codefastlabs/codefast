@@ -3,7 +3,7 @@ import { defineConfig } from "vitest/config";
 /**
  * CLI: Node profile (no DI decorators).
  *
- * Test taxonomy (see TESTING.md):
+ * Test taxonomy:
  *   tests/unit/**         — unit tests
  *   tests/integration/**  — pre-wired (no integration tests yet)
  *   tests/e2e/**          — pre-wired (none yet)

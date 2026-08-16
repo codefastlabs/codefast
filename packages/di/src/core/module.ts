@@ -2,7 +2,7 @@ import type { BindToBuilder } from "#/core/binding";
 import type { Token } from "#/core/token";
 import type { Constructor } from "#/core/types";
 
-// ── Branded types (runtime symbols for branding) ─────────────────────────────
+// ── Branded types (runtime symbols for branding) ─────────────────────────────────────────────────────────────────────
 
 const SYNC_MODULE_BRAND: unique symbol = Symbol("di:sync-module");
 const ASYNC_MODULE_BRAND: unique symbol = Symbol("di:async-module");
@@ -33,7 +33,7 @@ export interface AsyncModule {
   readonly [MODULE_SETUP]: (builder: AsyncModuleBuilder) => Promise<void>;
 }
 
-// ── Builder interfaces ────────────────────────────────────────────────────────
+// ── Builder interfaces ───────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -51,7 +51,7 @@ export interface AsyncModuleBuilder {
   import(...modules: Array<SyncModule | AsyncModule>): void;
 }
 
-// ── Static factories ──────────────────────────────────────────────────────────
+// ── Static factories ─────────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -79,7 +79,7 @@ export const AsyncModule = {
   },
 };
 
-// ── Module — unified API ──────────────────────────────────────────────────────
+// ── Module — unified API ─────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -97,5 +97,5 @@ export const Module = {
  * @since 0.3.16-canary.0
  */
 export function isSyncModule(module: SyncModule | AsyncModule): module is SyncModule {
-  return (module as SyncModule)[SYNC_MODULE_BRAND];
+  return (module as Partial<SyncModule>)[SYNC_MODULE_BRAND] === true;
 }

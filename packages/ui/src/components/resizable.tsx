@@ -3,9 +3,7 @@ import * as ResizablePrimitive from "react-resizable-panels";
 
 import { cn } from "#/lib/utils";
 
-/* -----------------------------------------------------------------------------
- * Component: ResizableGroup
- * -------------------------------------------------------------------------- */
+// ── Component: ResizableGroup ────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -25,9 +23,7 @@ function ResizableGroup({ className, ...props }: ResizableGroupProps): JSX.Eleme
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Component: ResizablePanel
- * -------------------------------------------------------------------------- */
+// ── Component: ResizablePanel ────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -41,9 +37,7 @@ function ResizablePanel({ ...props }: ResizablePanelProps): JSX.Element {
   return <ResizablePrimitive.Panel data-slot="resizable-panel" {...props} />;
 }
 
-/* -----------------------------------------------------------------------------
- * Component: ResizableSeparator
- * -------------------------------------------------------------------------- */
+// ── Component: ResizableSeparator ────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -70,9 +64,7 @@ function ResizableSeparator({ className, withHandle, ...props }: ResizableSepara
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Exports
- * -------------------------------------------------------------------------- */
+// ── Exports ──────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 export { ResizableGroup, ResizablePanel, ResizableSeparator };
 export type { ResizableGroupProps, ResizablePanelProps, ResizableSeparatorProps };

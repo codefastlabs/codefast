@@ -17,7 +17,7 @@ import type { BenchScenario } from "#/scenarios/types";
 export type ScenarioDescriptor = Pick<BenchScenario, "id" | "group" | "what"> &
   Partial<Pick<BenchScenario, "excludeFromAggregates">>;
 
-// ─── micro ───────────────────────────────────────────────────────────────────
+// ── micro ────────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.5.0-canary.7
@@ -68,7 +68,7 @@ export const NAMED_CONSTANT_GET = {
   what: "resolve a named constant from a 3-candidate set",
 } as const satisfies ScenarioDescriptor;
 
-// ─── realistic ───────────────────────────────────────────────────────────────
+// ── realistic ────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.5.0-canary.7
@@ -104,7 +104,7 @@ export const REALISTIC_GRAPH_RESOLVED_ROOT = {
   what: "resolve the transient root of the 10-node graph bound via explicit-deps factories (each library's compiled path)",
 } as const satisfies ScenarioDescriptor;
 
-// ─── fan-out ─────────────────────────────────────────────────────────────────
+// ── fan-out ──────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.5.0-canary.7
@@ -142,7 +142,7 @@ export function resolveAllNamedDescriptor(namedCount: number): ScenarioDescripto
   };
 }
 
-// ─── async ───────────────────────────────────────────────────────────────────
+// ── async ────────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.5.0-canary.7
@@ -182,7 +182,7 @@ export function asyncFanoutConcurrentDescriptor(concurrency: number): ScenarioDe
   };
 }
 
-// ─── lifecycle ───────────────────────────────────────────────────────────────
+// ── lifecycle ────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.5.0-canary.7
@@ -207,7 +207,7 @@ export const LIFECYCLE_PRE_DESTROY_UNBIND = {
   what: "unbind singleton and run onDeactivation + @preDestroy lifecycle",
 } as const satisfies ScenarioDescriptor;
 
-// ─── scope ───────────────────────────────────────────────────────────────────
+// ── scope ────────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.5.0-canary.7
@@ -236,7 +236,7 @@ export const CHILD_REQUEST_LIFECYCLE_CREATE_RESOLVE_DISPOSE = {
   what: "create per-request child container, resolve from grandchild depth-2, then unbind/dispose",
 } as const satisfies ScenarioDescriptor;
 
-// ─── scale ───────────────────────────────────────────────────────────────────
+// ── scale ────────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.5.0-canary.7
@@ -269,7 +269,7 @@ export const SCALE_MID_TRANSIENT_CHAIN_32 = {
   what: "resolve a 32-step transient chain (deep-lane handoff depth — resolver's weakest transient band)",
 } as const satisfies ScenarioDescriptor;
 
-// ─── boot ────────────────────────────────────────────────────────────────────
+// ── boot ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.5.0-canary.7
@@ -289,7 +289,7 @@ export const BOOT_DECORATED_CONTAINER_BUILD_AND_RESOLVE = {
   what: "create container, bind decorated graph, resolve root once",
 } as const satisfies ScenarioDescriptor;
 
-// ─── production ──────────────────────────────────────────────────────────────
+// ── production ───────────────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.5.0-canary.7
@@ -335,7 +335,7 @@ export const PRODUCTION_EVENT_BUS_DISPATCH = {
   what: `resolveAll() ${String(EVENT_HANDLER_COUNT)} singleton event handlers then dispatch event to each`,
 } as const satisfies ScenarioDescriptor;
 
-// ─── registry-ops ────────────────────────────────────────────────────────────
+// ── registry-ops ─────────────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.5.0-canary.7
@@ -411,7 +411,7 @@ export const SCOPED_BINDING_PER_CHILD = {
   what: "resolve .scoped() binding from a fresh child container each iteration — fresh instance per child",
 } as const satisfies ScenarioDescriptor;
 
-// ─── resolution-patterns ─────────────────────────────────────────────────────
+// ── resolution-patterns ──────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.5.0-canary.7
@@ -461,7 +461,7 @@ export const TAGGED_BINDING_RESOLVE = {
   what: `resolve(token, { tags: [["env","${TARGET_TAG_VALUE}"]] }) from ${String(TAGGED_ENVS.length)}-variant tagged set`,
 } as const satisfies ScenarioDescriptor;
 
-// ─── binding-variants ────────────────────────────────────────────────────────
+// ── binding-variants ─────────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.5.0-canary.7
@@ -503,7 +503,7 @@ export const TO_SELF_BINDING = {
   what: "resolve singleton bound via toSelf() — class constructor is the token (cache hit)",
 } as const satisfies ScenarioDescriptor;
 
-// ─── failure ─────────────────────────────────────────────────────────────────
+// ── failure ──────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.5.0-canary.7

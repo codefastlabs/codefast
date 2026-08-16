@@ -6,12 +6,12 @@
  * - toAlias: redirect one token to another
  * - BindingIdentifier + .id(): targeted unbind in multi-binding
  * - rebind(): replace a binding atomically
- * - Plain tokens directly in @injectable (no inject() wrapper needed)
+ * - Plain tokens directly in `@injectable` (no inject() wrapper needed)
  */
 
 import { Container, inject, injectable, optional, token } from "@codefast/di";
 
-// --- Tokens -----------------------------------------------------------------
+// ── Tokens ───────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 const LoggerToken = token<Logger>("Logger");
 const AbstractLoggerToken = token<Logger>("AbstractLogger");
@@ -20,7 +20,7 @@ const MailerToken = token<Mailer>("Mailer");
 const NotifierToken = token<Notifier>("Notifier");
 const PluginToken = token<Plugin>("Plugin");
 
-// --- Types ------------------------------------------------------------------
+// ── Types ────────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 interface Logger {
   log(msg: string): void;
@@ -44,7 +44,7 @@ interface Plugin {
   run(): void;
 }
 
-// --- Implementations --------------------------------------------------------
+// ── Implementations ──────────────────────────────────────────────────────────────────────────────────────────────────
 
 class ConsoleLogger implements Logger {
   log(msg: string): void {

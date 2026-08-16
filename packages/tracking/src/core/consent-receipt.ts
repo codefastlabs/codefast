@@ -11,7 +11,7 @@ export type ConsentReceiptEventType = "give" | "update" | "withdraw";
 
 /**
  * How the decision was expressed — the "how" dimension a demonstrable-consent record must
- * capture (GDPR Art. 7(1); EDPB 05/2020 §5.1). See spec/spec-consent-receipts.md.
+ * capture (GDPR Art. 7(1); EDPB 05/2020 §5.1).
  *
  * @since 1.0.0-canary.7
  */

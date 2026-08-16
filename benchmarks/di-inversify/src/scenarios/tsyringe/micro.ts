@@ -1,6 +1,6 @@
 /**
  * tsyringe — micro-benchmarks. Parallel structure to
- * {@link ../codefast/micro.ts}: identical `id`s, identical `batch` factors,
+ * `../codefast/micro.ts`: identical `id`s, identical `batch` factors,
  * identical pre-warm strategy. Each scenario resolves from a fresh child
  * container so registrations never leak into the shared root container.
  */

@@ -94,9 +94,7 @@ function buildMixedCnReplacement(call: DomainCallExpression, sourceText: string)
   return `cn(\n${lines.join("\n")}\n${baseIndent})`;
 }
 
-// ---------------------------------------------------------------------------
-// tv() array collector
-// ---------------------------------------------------------------------------
+// ── tv() array collector ─────────────────────────────────────────────────────────────────────────────────────────────
 
 function collectTvArrayEdits(
   obj: DomainObjectLiteralExpression,
@@ -128,16 +126,14 @@ function collectTvArrayEdits(
   }
 }
 
-// ---------------------------------------------------------------------------
-// Public collector
-// ---------------------------------------------------------------------------
+// ── Public collector ─────────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
- * Collect all simplify edits for a source file:
+ * Collects all simplify edits for a source file:
  * - Arrays of pure string literals inside tv() slots → flat string
  * - cn() calls whose every argument is a static string literal → flat string (unwrap cn)
  * - cn() calls with mixed static + dynamic args → merge adjacent statics into one string
- * - JSX className={cn(...all-static...)} → className="flat string"
+ * - JSX `className={cn(...all-static...)}` → `className="flat string"`
  *
  * @since 0.3.16-canary.0
  */

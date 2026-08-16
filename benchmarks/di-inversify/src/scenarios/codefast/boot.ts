@@ -1,5 +1,5 @@
 /**
- * @codefast/di — decorator-driven boot scenario.
+ * `@codefast/di` — decorator-driven boot scenario.
  *
  * Each measured iteration builds a fresh container, registers a small
  * decorator-based class graph, and resolves the root once.

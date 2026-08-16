@@ -1,11 +1,9 @@
 import type { ColorScheme } from "#/appearance";
 
-/* -----------------------------------------------------------------------------
- * DOM Utilities
- * -------------------------------------------------------------------------- */
+// ── DOM Utilities ────────────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
- * Apply a color scheme to the DOM by updating the `<html>` element.
+ * Applies a color scheme to the DOM by updating the `<html>` element.
  *
  * Updates both:
  * - CSS class (for Tailwind's `dark:` variants)

@@ -66,6 +66,7 @@
     "test:watch": "vitest"
   },
   "dependencies": {
+    "@microsoft/tsdoc": "catalog:",
     "commander": "catalog:",
     "jiti": "catalog:",
     "oxc-parser": "catalog:",

@@ -6,7 +6,7 @@ import { defineConfig } from "vitest/config";
  * the react/ subpath needs jsdom + React Testing Library) — jsdom covers all three since
  * it only adds globals, it never removes Node's.
  *
- * Test taxonomy (see TESTING.md):
+ * Test taxonomy:
  *   tests/unit/**         — core/client/server/react unit tests
  *   tests/integration/**  — pre-wired (none yet)
  *   tests/e2e/**          — pre-wired (none yet)

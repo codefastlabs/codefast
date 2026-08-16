@@ -11,7 +11,7 @@ interface LazyVisibleProps {
   /**
    * Placeholder rendered before the children mount. LazyVisible injects the
    * IntersectionObserver target `ref` into it, so it must forward `ref` to its
-   * outermost DOM node (PreviewSkeleton and the @codefast/ui primitives already do).
+   * outermost DOM node (PreviewSkeleton and the `@codefast/ui` primitives already do).
    * Defaults to a {@link PreviewSkeleton} sized by `minHeight`.
    */
   fallback?: ReactElement<{ ref?: Ref<HTMLDivElement> }>;

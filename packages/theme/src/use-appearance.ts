@@ -3,9 +3,7 @@ import { use } from "react";
 import type { AppearanceContextValue } from "#/appearance";
 import { AppearanceContext } from "#/appearance-context";
 
-/* -----------------------------------------------------------------------------
- * Hook
- * -------------------------------------------------------------------------- */
+// ── Hook ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * Hook to access appearance context.

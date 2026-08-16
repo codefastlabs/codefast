@@ -3,7 +3,7 @@ import { defineConfig } from "vitest/config";
 
 /**
  * UI test suite — primitives + hooks under jsdom + the Vite React plugin.
- * Files: tests/{unit,integration,e2e,types}/**.test.ts?(x)
+ * Files: `tests/{unit,integration,e2e,types}/**.test.ts?(x)`
  */
 export default defineConfig({
   plugins: [react()],

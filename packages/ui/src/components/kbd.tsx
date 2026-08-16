@@ -2,9 +2,7 @@ import type { ComponentProps, JSX } from "react";
 
 import { cn } from "#/lib/utils";
 
-/* -----------------------------------------------------------------------------
- * Component: Kbd
- * -------------------------------------------------------------------------- */
+// ── Component: Kbd ───────────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -39,9 +37,7 @@ function KbdGroup({ className, ...props }: KbdGroupProps): JSX.Element {
   return <kbd className={cn("inline-flex items-center gap-1", className)} data-slot="kbd-group" {...props} />;
 }
 
-/* -----------------------------------------------------------------------------
- * Exports
- * -------------------------------------------------------------------------- */
+// ── Exports ──────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 export { Kbd, KbdGroup };
 export type { KbdGroupProps, KbdProps };

@@ -6,9 +6,7 @@ import * as ProgressCirclePrimitive from "#/primitives/progress-circle";
 import type { ProgressCircleVariants } from "#/variants/progress-circle";
 import { progressCircleVariants } from "#/variants/progress-circle";
 
-/* -------------------------------------------------------------------------------------------------
- * Component: ProgressCircle
- * ----------------------------------------------------------------------------------------------- */
+// ── Component: ProgressCircle ────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -145,9 +143,7 @@ function ProgressCircle({
 
 ProgressCircle.displayName = "ProgressCircle";
 
-/* -----------------------------------------------------------------------------
- * Helpers
- * -------------------------------------------------------------------------- */
+// ── Helpers ──────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * Maps size variants to actual pixel sizes
@@ -177,9 +173,7 @@ const getStrokeWidth = (thickness: ProgressCircleVariants["thickness"], size: nu
   return thickness ? thicknessMap[thickness] : Math.max(3, size * 0.05);
 };
 
-/* -----------------------------------------------------------------------------
- * Exports
- * -------------------------------------------------------------------------- */
+// ── Exports ──────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 export { ProgressCircle };
 export type { ProgressCircleProps };

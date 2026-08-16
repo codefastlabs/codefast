@@ -1,12 +1,10 @@
 import type { Appearance, ColorScheme } from "#/appearance";
 import { DEFAULT_COLOR_SCHEME, MEDIA } from "#/constants";
 
-/* -----------------------------------------------------------------------------
- * Color Scheme Resolution
- * -------------------------------------------------------------------------- */
+// ── Color Scheme Resolution ──────────────────────────────────────────────────────────────────────────────────────────
 
 /**
- * Detect the OS color scheme preference.
+ * Detects the OS color scheme preference.
  *
  * Uses `matchMedia()` to query the `prefers-color-scheme` media feature.
  * Returns {@link DEFAULT_COLOR_SCHEME} during SSR since `window` is unavailable.
@@ -24,7 +22,7 @@ export function getSystemColorScheme(): ColorScheme {
 }
 
 /**
- * Resolve an appearance preference to the color scheme to apply.
+ * Resolves an appearance preference to the color scheme to apply.
  *
  * - 'light' → 'light'
  * - 'dark' → 'dark'

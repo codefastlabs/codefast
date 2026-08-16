@@ -9,11 +9,12 @@
  * browser-side surface (tracker, consent runtime, React bindings, client destinations).
  * Server-only lanes are their own subpaths and never belong here — `@codefast/tracking/server/*`
  * and `@codefast/tracking/adapters/*` (deny them in the client environment via
- * `SERVER_ONLY_SUBPATHS`). The Vercel destination stays on `@codefast/tracking/destinations/
- * vercel-analytics` so its `@vercel/analytics` peer is only pulled in when used.
+ * `SERVER_ONLY_SUBPATHS`). The Vercel destination stays on
+ * `@codefast/tracking/destinations/vercel-analytics` so its `@vercel/analytics` peer is only
+ * pulled in when used.
  */
 
-// ── Core (isomorphic) ───────────────────────────────────────────────────────────────
+// ── Core (isomorphic) ────────────────────────────────────────────────────────────────────────────────────────────────
 export type {
   ConsentCategory,
   ConsentDecision,
@@ -64,7 +65,7 @@ export { generateEventId } from "#/core/event-id";
 
 export type { TrackedEvent } from "#/core/tracked-event";
 
-// ── Client ──────────────────────────────────────────────────────────────────────────
+// ── Client ───────────────────────────────────────────────────────────────────────────────────────────────────────────
 export type { CmpConsentSignal, CmpStatus, ReconcileAdFrameworkConsentOptions } from "#/client/ad-framework-consent";
 export { hasGppApi, hasTcfApi, reconcileAdFrameworkConsent } from "#/client/ad-framework-consent";
 
@@ -97,7 +98,7 @@ export { createIsAnalyticsAllowed } from "#/client/is-analytics-allowed";
 export type { ServerPersistedAnonymousIdOptions } from "#/client/server-persisted-anonymous-id";
 export { createServerPersistedAnonymousId } from "#/client/server-persisted-anonymous-id";
 
-// ── React ───────────────────────────────────────────────────────────────────────────
+// ── React ────────────────────────────────────────────────────────────────────────────────────────────────────────────
 export type {
   ConsentBannerAcceptProps,
   ConsentBannerActionsProps,
@@ -136,7 +137,7 @@ export { useGoogleConsentSync } from "#/react/use-google-consent-sync";
 
 export { useInitialConsent } from "#/react/use-initial-consent";
 
-// ── Destinations (client-lane; Vercel stays on its own subpath) ───────────────────────
+// ── Destinations (client-lane; Vercel stays on its own subpath) ──────────────────────────────────────────────────────
 export type { AdConsentState } from "#/destinations/ad-consent";
 export { toAdConsentState } from "#/destinations/ad-consent";
 

@@ -1,9 +1,7 @@
 import type { VariantProps } from "#/lib/utils";
 import { tv } from "#/lib/utils";
 
-/* -----------------------------------------------------------------------------
- * Variant: SheetContent
- * -------------------------------------------------------------------------- */
+// ── Variant: SheetContent ────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -29,9 +27,7 @@ const sheetContentVariants = tv({
  */
 type SheetContentVariants = VariantProps<typeof sheetContentVariants>;
 
-/* -----------------------------------------------------------------------------
- * Exports
- * -------------------------------------------------------------------------- */
+// ── Exports ──────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 export { sheetContentVariants };
 export type { SheetContentVariants };

@@ -5,9 +5,7 @@ import type { ComponentProps, JSX } from "react";
 import { cn } from "#/lib/utils";
 import { navigationMenuTriggerVariants } from "#/variants/navigation-menu";
 
-/* -----------------------------------------------------------------------------
- * Component: NavigationMenu
- * -------------------------------------------------------------------------- */
+// ── Component: NavigationMenu ────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -33,9 +31,7 @@ function NavigationMenu({ children, className, viewport = true, ...props }: Navi
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Component: NavigationMenuList
- * -------------------------------------------------------------------------- */
+// ── Component: NavigationMenuList ────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -58,9 +54,7 @@ function NavigationMenuList({ children, className, ...props }: NavigationMenuLis
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Component: NavigationMenuItem
- * -------------------------------------------------------------------------- */
+// ── Component: NavigationMenuItem ────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -76,9 +70,7 @@ function NavigationMenuItem({ className, ...props }: NavigationMenuItemProps): J
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Component: NavigationMenuTrigger
- * -------------------------------------------------------------------------- */
+// ── Component: NavigationMenuTrigger ─────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -104,9 +96,7 @@ function NavigationMenuTrigger({ children, className, ...props }: NavigationMenu
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Component: NavigationMenuContent
- * -------------------------------------------------------------------------- */
+// ── Component: NavigationMenuContent ─────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -129,9 +119,7 @@ function NavigationMenuContent({ className, ...props }: NavigationMenuContentPro
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Component: NavigationMenuLink
- * -------------------------------------------------------------------------- */
+// ── Component: NavigationMenuLink ────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -154,9 +142,7 @@ function NavigationMenuLink({ className, ...props }: NavigationMenuLinkProps): J
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Component: NavigationMenuViewport
- * -------------------------------------------------------------------------- */
+// ── Component: NavigationMenuViewport ────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.4.0-canary.4
@@ -181,9 +167,7 @@ function NavigationMenuViewport({ className, ...props }: NavigationMenuViewportP
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Component: NavigationMenuIndicator
- * -------------------------------------------------------------------------- */
+// ── Component: NavigationMenuIndicator ───────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.4.0-canary.4
@@ -208,9 +192,7 @@ function NavigationMenuIndicator({ className, ...props }: NavigationMenuIndicato
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Exports
- * -------------------------------------------------------------------------- */
+// ── Exports ──────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 export {
   NavigationMenu,

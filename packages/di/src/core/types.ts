@@ -13,14 +13,14 @@ export type { BindingTag, TagKey, TagKeyMask } from "#/core/tag";
  */
 export type DependencyKey = Token<unknown> | Constructor;
 
-// ── BindingScope ────────────────────────────────────────────────────────────
+// ── BindingScope ─────────────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
  */
 export type BindingScope = "singleton" | "transient" | "scoped";
 
-// ── BindingIdentifier ────────────────────────────────────────────────────────
+// ── BindingIdentifier ────────────────────────────────────────────────────────────────────────────────────────────────
 
 declare const BINDING_ID_BRAND: unique symbol;
 /**
@@ -28,14 +28,14 @@ declare const BINDING_ID_BRAND: unique symbol;
  */
 export type BindingIdentifier = string & { readonly [BINDING_ID_BRAND]: true };
 
-// ── BindingKind ───────────────────────────────────────────────────────────────
+// ── BindingKind ──────────────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
  */
 export type BindingKind = "class" | "dynamic" | "dynamic-async" | "resolved" | "resolved-async" | "constant" | "alias";
 
-// ── Handlers ─────────────────────────────────────────────────────────────────
+// ── Handlers ─────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -47,7 +47,7 @@ export type ActivationHandler<Value> = (ctx: ResolutionContext, instance: Value)
  */
 export type DeactivationHandler<Value> = (instance: Value) => void | Promise<void>;
 
-// ── ResolveOptions ────────────────────────────────────────────────────────────
+// ── ResolveOptions ───────────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -64,7 +64,7 @@ export interface ResolveOptions {
   tags?: ReadonlyArray<BindingTag> | undefined;
 }
 
-// ── ResolutionFrame ──────────────────────────────────────────────────────
+// ── ResolutionFrame ──────────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -81,7 +81,7 @@ export interface ResolutionFrame {
   };
 }
 
-// ── ConstraintContext ─────────────────────────────────────────────────────────
+// ── ConstraintContext ────────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -91,7 +91,8 @@ export interface ConstraintContext {
   readonly resolutionStack: ReadonlyArray<ResolutionFrame>;
   readonly parent: ResolutionFrame | undefined;
   readonly ancestors: ReadonlyArray<ResolutionFrame>;
-  readonly currentResolveOptions: ResolveOptions | undefined;
+  /** Readonly because one frozen object answers every resolve of a slot — a write would throw. */
+  readonly currentResolveOptions: Readonly<ResolveOptions> | undefined;
 }
 
 /**
@@ -99,7 +100,7 @@ export interface ConstraintContext {
  */
 export type BindingConstraint = (ctx: ConstraintContext) => boolean;
 
-// ── ResolutionContext ─────────────────────────────────────────────────────────
+// ── ResolutionContext ────────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -117,7 +118,7 @@ export interface ResolutionContext {
   readonly graph: ConstraintContext;
 }
 
-// ── TokenValue ────────────────────────────────────────────────────────────────
+// ── TokenValue ───────────────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0

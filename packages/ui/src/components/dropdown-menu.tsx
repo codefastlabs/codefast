@@ -4,9 +4,7 @@ import type { ComponentProps, JSX } from "react";
 
 import { cn } from "#/lib/utils";
 
-/* -----------------------------------------------------------------------------
- * Component: DropdownMenu
- * -------------------------------------------------------------------------- */
+// ── Component: DropdownMenu ──────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -20,9 +18,7 @@ function DropdownMenu({ ...props }: DropdownMenuProps): JSX.Element {
   return <DropdownMenuPrimitive.Root data-slot="dropdown-menu" {...props} />;
 }
 
-/* -----------------------------------------------------------------------------
- * Component: DropdownMenuTrigger
- * -------------------------------------------------------------------------- */
+// ── Component: DropdownMenuTrigger ───────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -36,9 +32,7 @@ function DropdownMenuTrigger({ ...props }: DropdownMenuTriggerProps): JSX.Elemen
   return <DropdownMenuPrimitive.Trigger data-slot="dropdown-menu-trigger" {...props} />;
 }
 
-/* -----------------------------------------------------------------------------
- * Component: DropdownMenuGroup
- * -------------------------------------------------------------------------- */
+// ── Component: DropdownMenuGroup ─────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -52,9 +46,7 @@ function DropdownMenuGroup({ ...props }: DropdownMenuGroupProps): JSX.Element {
   return <DropdownMenuPrimitive.Group data-slot="dropdown-menu-group" {...props} />;
 }
 
-/* -----------------------------------------------------------------------------
- * Component: DropdownMenuSub
- * -------------------------------------------------------------------------- */
+// ── Component: DropdownMenuSub ───────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -68,9 +60,7 @@ function DropdownMenuSub({ ...props }: DropdownMenuSubProps): JSX.Element {
   return <DropdownMenuPrimitive.Sub data-slot="dropdown-menu-sub" {...props} />;
 }
 
-/* -----------------------------------------------------------------------------
- * Component: DropdownMenuRadioGroup
- * -------------------------------------------------------------------------- */
+// ── Component: DropdownMenuRadioGroup ────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -84,9 +74,7 @@ function DropdownMenuRadioGroup({ ...props }: DropdownMenuRadioGroupProps): JSX.
   return <DropdownMenuPrimitive.RadioGroup data-slot="dropdown-menu-radio-group" {...props} />;
 }
 
-/* -----------------------------------------------------------------------------
- * Component: DropdownMenuSubTrigger
- * -------------------------------------------------------------------------- */
+// ── Component: DropdownMenuSubTrigger ────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -115,9 +103,7 @@ function DropdownMenuSubTrigger({ children, className, inset, ...props }: Dropdo
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Component: DropdownMenuSubContent
- * -------------------------------------------------------------------------- */
+// ── Component: DropdownMenuSubContent ────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -142,9 +128,7 @@ function DropdownMenuSubContent({ className, ...props }: DropdownMenuSubContentP
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Component: DropdownMenuContent
- * -------------------------------------------------------------------------- */
+// ── Component: DropdownMenuContent ───────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -176,9 +160,7 @@ function DropdownMenuContent({
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Component: DropdownMenuItem
- * -------------------------------------------------------------------------- */
+// ── Component: DropdownMenuItem ──────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -206,9 +188,7 @@ function DropdownMenuItem({ className, inset, variant = "default", ...props }: D
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Component: DropdownMenuCheckboxItem
- * -------------------------------------------------------------------------- */
+// ── Component: DropdownMenuCheckboxItem ──────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -251,9 +231,7 @@ function DropdownMenuCheckboxItem({
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Component: DropdownMenuRadioItem
- * -------------------------------------------------------------------------- */
+// ── Component: DropdownMenuRadioItem ─────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -289,9 +267,7 @@ function DropdownMenuRadioItem({ children, className, inset, ...props }: Dropdow
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Component: DropdownMenuLabel
- * -------------------------------------------------------------------------- */
+// ── Component: DropdownMenuLabel ─────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -314,9 +290,7 @@ function DropdownMenuLabel({ className, inset, ...props }: DropdownMenuLabelProp
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Component: DropdownMenuSeparator
- * -------------------------------------------------------------------------- */
+// ── Component: DropdownMenuSeparator ─────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -336,9 +310,7 @@ function DropdownMenuSeparator({ className, ...props }: DropdownMenuSeparatorPro
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Component: DropdownMenuShortcut
- * -------------------------------------------------------------------------- */
+// ── Component: DropdownMenuShortcut ──────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -361,9 +333,7 @@ function DropdownMenuShortcut({ className, ...props }: DropdownMenuShortcutProps
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Component: DropdownMenuArrow
- * -------------------------------------------------------------------------- */
+// ── Component: DropdownMenuArrow ─────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -379,9 +349,7 @@ function DropdownMenuArrow({ className, ...props }: DropdownMenuArrowProps): JSX
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Exports
- * -------------------------------------------------------------------------- */
+// ── Exports ──────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 export {
   DropdownMenu,

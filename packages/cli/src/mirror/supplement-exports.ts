@@ -199,7 +199,7 @@ export async function supplementExportsInPackageJson(
 }
 
 /**
- * Build a `resolveSourcePath` closure that checks the filesystem for `.tsx` before
+ * Builds a `resolveSourcePath` closure that checks the filesystem for `.tsx` before
  * falling back to `.ts`. Mirrors the logic used in normal (non-custom) mode.
  *
  * @since 0.3.16-canary.0

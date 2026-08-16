@@ -1,7 +1,7 @@
 /**
  * tsyringe adapter for the shared realistic-graph descriptor.
  *
- * Mirrors {@link ../fixtures/inversify-adapter.ts}: same node identities,
+ * Mirrors `../fixtures/inversify-adapter.ts`: same node identities,
  * same factory semantics, same scope mapping. tsyringe factory providers
  * don't cache, so singleton nodes wrap their factory in `instanceCachingFactory`
  * while transient nodes use a plain `useFactory` — keeping the graph

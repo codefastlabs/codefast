@@ -10,7 +10,7 @@ import { token } from "#/core/token";
 import type { BindingIdentifier } from "#/core/types";
 import type { DiagnosableContainer } from "#/errors/diagnostics";
 import { RESOLUTION_DIAGNOSTICS } from "#/errors/diagnostics";
-import { ScopeManager } from "#/lifecycle/scope-manager";
+import { SCOPED_MISS, ScopeManager } from "#/lifecycle/scope-manager";
 
 function scopedInstanceCount(container: unknown): number {
   return (container as DiagnosableContainer)[RESOLUTION_DIAGNOSTICS]().scopedInstanceCount;
@@ -30,11 +30,11 @@ describe("ScopeManager scoped entries", () => {
   it("deleteScoped releases a cached entry and is a no-op for unknown ids", () => {
     const scope = new ScopeManager(true);
     scope.setScoped(FIRST_BINDING, { alive: true });
-    expect(scope.hasScoped(FIRST_ID)).toBe(true);
+    expect(scope.readScoped(FIRST_ID)).toEqual({ alive: true });
     expect(scope.scopedCount).toBe(1);
 
     scope.deleteScoped(FIRST_ID);
-    expect(scope.hasScoped(FIRST_ID)).toBe(false);
+    expect(scope.readScoped(FIRST_ID)).toBe(SCOPED_MISS);
     expect(scope.scopedCount).toBe(0);
 
     scope.deleteScoped(UNSEEN_ID);

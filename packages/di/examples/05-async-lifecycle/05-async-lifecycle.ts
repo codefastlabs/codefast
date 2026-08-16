@@ -11,14 +11,14 @@
 
 import { Container, inject, injectable, Module, token } from "@codefast/di";
 
-// --- Tokens -----------------------------------------------------------------
+// ── Tokens ───────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 const ConfigToken = token<Config>("Config");
 const DatabaseToken = token<Database>("Database");
 const CacheToken = token<Cache>("Cache");
 const AppToken = token<App>("App");
 
-// --- Domain -----------------------------------------------------------------
+// ── Domain ───────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 interface Config {
   dbUrl: string;
@@ -90,7 +90,7 @@ class App {
   }
 }
 
-// --- AsyncModule ------------------------------------------------------------
+// ── AsyncModule ──────────────────────────────────────────────────────────────────────────────────────────────────────
 
 const InfrastructureModule = Module.createAsync("Infra", async (builder) => {
   // Async module setup — fetch config from "remote" source
@@ -139,7 +139,7 @@ const AppModule = Module.create("App", (builder) => {
   builder.bind(AppToken).to(App).singleton();
 });
 
-// --- Bootstrap & teardown ---------------------------------------------------
+// ── Bootstrap & teardown ─────────────────────────────────────────────────────────────────────────────────────────────
 
 async function main(): Promise<void> {
   // await using — container.dispose() is called automatically at scope exit
@@ -169,7 +169,7 @@ async function main(): Promise<void> {
   // (handled automatically by `await using`)
 }
 
-// --- Utilities --------------------------------------------------------------
+// ── Utilities ────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 function delay(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));

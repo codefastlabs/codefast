@@ -3,9 +3,7 @@ import { Context } from "radix-ui/internal";
 import type { ComponentProps, JSX, PointerEventHandler, PropsWithChildren, ReactNode, RefObject } from "react";
 import { useRef } from "react";
 
-/* -----------------------------------------------------------------------------
- * Component: Input
- * -------------------------------------------------------------------------- */
+// ── Component: Input ─────────────────────────────────────────────────────────────────────────────────────────────────
 
 const INPUT_NAME = "Input";
 
@@ -188,9 +186,7 @@ function Input(inputProps: ScopedProps<InputProps>): JSX.Element {
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Component: InputField
- * -------------------------------------------------------------------------- */
+// ── Component: InputField ────────────────────────────────────────────────────────────────────────────────────────────
 
 const INPUT_FIELD_NAME = "InputField";
 
@@ -218,9 +214,7 @@ function InputField({ __scopeInput, ...props }: ScopedProps<InputFieldProps>): J
   return <input ref={composedInputRef} disabled={disabled} readOnly={readOnly} type="text" {...props} />;
 }
 
-/* -----------------------------------------------------------------------------
- * Exports
- * -------------------------------------------------------------------------- */
+// ── Exports ──────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 export { createInputScope, InputField as Field, Input, InputField, Input as Root };
 

@@ -1,7 +1,7 @@
 /**
  * Awilix adapter for the shared realistic-graph descriptor.
  *
- * Mirrors {@link ../fixtures/inversify-adapter.ts}: same node identities,
+ * Mirrors `../fixtures/inversify-adapter.ts`: same node identities,
  * same factory semantics via `asFunction`, same scope mapping. Awilix is
  * decorator-free, so the graph is wired with plain factory registrations —
  * keeping the shape of work identical to every other adapter.

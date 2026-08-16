@@ -224,7 +224,9 @@ export function buildComparisonRows(
 /**
  * Classifies one competitor's column into wins / parities / losses for the pivot.
  *
+ * @param rows - the pivot's rows, one competitor cell each per competitor
  * @param competitorIndex - position in the competitor array the rows were built from
+ * @param competitorReport - the competitor's own report, read for rows the pivot lacks
  *
  * @since 0.5.0-canary.9
  */
@@ -346,6 +348,8 @@ function collectGroupOrder(rows: ReadonlyArray<ComparisonScenarioRow>): Array<st
 }
 
 /**
+ * @param headerCells - one cell per column, labels first
+ * @param dataRows - one cell list per row, in header order
  * @param labelColumnCount - how many leading columns hold labels; every column past them
  * carries a number and lines up on the right
  */
@@ -365,6 +369,8 @@ function buildMarkdownTableLines(
 /**
  * One row per competitor, so the summary stays the same height whatever the table is wide.
  *
+ * @param pivot - the suite's subject, named in the header column
+ * @param summaries - one head-to-head verdict per competitor, in report order
  * @param pivotScenarioCount - denominator of the coverage column, exposing a competitor that
  * implements only part of the suite
  */

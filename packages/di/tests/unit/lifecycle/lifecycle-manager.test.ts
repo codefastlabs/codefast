@@ -1,6 +1,6 @@
 /**
  * Deactivation-side lifecycle semantics: binding-level and container-level
- * handlers plus @preDestroy, across unbind and dispose.
+ * handlers plus `@preDestroy`, across unbind and dispose.
  */
 import { describe, expect, it } from "vitest";
 

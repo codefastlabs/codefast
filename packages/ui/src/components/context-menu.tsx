@@ -4,9 +4,7 @@ import type { ComponentProps, JSX } from "react";
 
 import { cn } from "#/lib/utils";
 
-/* -----------------------------------------------------------------------------
- * Component: ContextMenu
- * -------------------------------------------------------------------------- */
+// ── Component: ContextMenu ───────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -20,9 +18,7 @@ function ContextMenu({ ...props }: ContextMenuProps): JSX.Element {
   return <ContextMenuPrimitive.Root data-slot="context-menu" {...props} />;
 }
 
-/* -----------------------------------------------------------------------------
- * Component: ContextMenuTrigger
- * -------------------------------------------------------------------------- */
+// ── Component: ContextMenuTrigger ────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -42,9 +38,7 @@ function ContextMenuTrigger({ className, ...props }: ContextMenuTriggerProps): J
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Component: ContextMenuGroup
- * -------------------------------------------------------------------------- */
+// ── Component: ContextMenuGroup ──────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -58,9 +52,7 @@ function ContextMenuGroup({ ...props }: ContextMenuGroupProps): JSX.Element {
   return <ContextMenuPrimitive.Group data-slot="context-menu-group" {...props} />;
 }
 
-/* -----------------------------------------------------------------------------
- * Component: ContextMenuSub
- * -------------------------------------------------------------------------- */
+// ── Component: ContextMenuSub ────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -74,9 +66,7 @@ function ContextMenuSub({ ...props }: ContextMenuSubProps): JSX.Element {
   return <ContextMenuPrimitive.Sub data-slot="context-menu-sub" {...props} />;
 }
 
-/* -----------------------------------------------------------------------------
- * Component: ContextMenuRadioGroup
- * -------------------------------------------------------------------------- */
+// ── Component: ContextMenuRadioGroup ─────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -90,9 +80,7 @@ function ContextMenuRadioGroup({ ...props }: ContextMenuRadioGroupProps): JSX.El
   return <ContextMenuPrimitive.RadioGroup data-slot="context-menu-radio-group" {...props} />;
 }
 
-/* -----------------------------------------------------------------------------
- * Component: ContextMenuSubTrigger
- * -------------------------------------------------------------------------- */
+// ── Component: ContextMenuSubTrigger ─────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -121,9 +109,7 @@ function ContextMenuSubTrigger({ children, className, inset, ...props }: Context
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Component: ContextMenuSubContent
- * -------------------------------------------------------------------------- */
+// ── Component: ContextMenuSubContent ─────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -146,9 +132,7 @@ function ContextMenuSubContent({ className, ...props }: ContextMenuSubContentPro
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Component: ContextMenuContent
- * -------------------------------------------------------------------------- */
+// ── Component: ContextMenuContent ────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -173,9 +157,7 @@ function ContextMenuContent({ className, ...props }: ContextMenuContentProps): J
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Component: ContextMenuItem
- * -------------------------------------------------------------------------- */
+// ── Component: ContextMenuItem ───────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -203,9 +185,7 @@ function ContextMenuItem({ className, inset, variant = "default", ...props }: Co
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Component: ContextMenuCheckboxItem
- * -------------------------------------------------------------------------- */
+// ── Component: ContextMenuCheckboxItem ───────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -245,9 +225,7 @@ function ContextMenuCheckboxItem({
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Component: ContextMenuRadioItem
- * -------------------------------------------------------------------------- */
+// ── Component: ContextMenuRadioItem ──────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -280,9 +258,7 @@ function ContextMenuRadioItem({ children, className, inset, ...props }: ContextM
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Component: ContextMenuLabel
- * -------------------------------------------------------------------------- */
+// ── Component: ContextMenuLabel ──────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -305,9 +281,7 @@ function ContextMenuLabel({ className, inset, ...props }: ContextMenuLabelProps)
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Component: ContextMenuSeparator
- * -------------------------------------------------------------------------- */
+// ── Component: ContextMenuSeparator ──────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -327,9 +301,7 @@ function ContextMenuSeparator({ className, ...props }: ContextMenuSeparatorProps
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Component: ContextMenuShortcut
- * -------------------------------------------------------------------------- */
+// ── Component: ContextMenuShortcut ───────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -352,9 +324,7 @@ function ContextMenuShortcut({ className, ...props }: ContextMenuShortcutProps):
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Component: ContextMenuArrow
- * -------------------------------------------------------------------------- */
+// ── Component: ContextMenuArrow ──────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -370,9 +340,7 @@ function ContextMenuArrow({ className, ...props }: ContextMenuArrowProps): JSX.E
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Exports
- * -------------------------------------------------------------------------- */
+// ── Exports ──────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 export {
   ContextMenu,

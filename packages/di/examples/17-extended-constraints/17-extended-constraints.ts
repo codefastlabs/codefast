@@ -43,7 +43,7 @@ const REGION_TAG = tag<"eu" | "us">("region");
 const TENANT_TAG = tag<"enterprise" | "starter">("tenant");
 const TIER_TAG = tag<"free" | "paid">("tier");
 
-// ── Shared logger interface ───────────────────────────────────────────────────
+// ── Shared logger interface ──────────────────────────────────────────────────────────────────────────────────────────
 
 interface Logger {
   source: string;
@@ -417,9 +417,7 @@ tenantContainer
 console.log("Starter tenant:");
 tenantContainer.resolve(AnalyticsDashboardToken, { tags: [TENANT_TAG.of("starter")] }).open(); // [starter audit] report.generated
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Quick reference — when to use each constraint
-// ─────────────────────────────────────────────────────────────────────────────
+// ── Quick reference — when to use each constraint ────────────────────────────────────────────────────────────────────
 //
 //  whenParentIs(T)              — inject different impl per immediate consumer
 //  whenNoParentIs(T)            — default impl for everyone except one consumer

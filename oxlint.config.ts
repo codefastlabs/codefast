@@ -7,9 +7,7 @@ export default defineConfig({
     builtin: true,
   },
 
-  // ---------------------------------------------------------------------------
-  // Plugins & categories
-  // ---------------------------------------------------------------------------
+  // ── Plugins & categories ───────────────────────────────────────────────────────────────────────────────────────────
   // Built-in plugins relevant to this monorepo: TypeScript libraries (di,
   // tailwind-variants, cli), React 19 UI packages (ui, theme, benchmark-viewer),
   // TanStack Start apps (apps/ui docs site, examples/* consumers), and vitest test suites.
@@ -20,9 +18,7 @@ export default defineConfig({
     correctness: "error",
   },
 
-  // ---------------------------------------------------------------------------
-  // Linter behavior
-  // ---------------------------------------------------------------------------
+  // ── Linter behavior ────────────────────────────────────────────────────────────────────────────────────────────────
   options: {
     // Warnings fail CI — policy lives here instead of only in CLI flags.
     denyWarnings: true,
@@ -32,9 +28,7 @@ export default defineConfig({
     typeAware: true,
   },
 
-  // ---------------------------------------------------------------------------
-  // Project-wide rules (beyond category defaults)
-  // ---------------------------------------------------------------------------
+  // ── Project-wide rules (beyond category defaults) ──────────────────────────────────────────────────────────────────
   rules: {
     // React hooks contracts.
     "react/rules-of-hooks": "error",
@@ -57,9 +51,7 @@ export default defineConfig({
     curly: ["error", "all"],
   },
 
-  // ---------------------------------------------------------------------------
-  // Scoped exceptions
-  // ---------------------------------------------------------------------------
+  // ── Scoped exceptions ──────────────────────────────────────────────────────────────────────────────────────────────
   overrides: [
     {
       files: ["**/*.test.{ts,tsx,mts,cts,js,jsx,mjs,cjs}"],
@@ -109,17 +101,13 @@ export default defineConfig({
     },
   ],
 
-  // ---------------------------------------------------------------------------
-  // Plugin settings
-  // ---------------------------------------------------------------------------
+  // ── Plugin settings ────────────────────────────────────────────────────────────────────────────────────────────────
   settings: {
     react: {
       version: "19.2",
     },
   },
 
-  // ---------------------------------------------------------------------------
-  // Ignored paths (shared with oxfmt — see oxc.shared.ts)
-  // ---------------------------------------------------------------------------
+  // ── Ignored paths (shared with oxfmt — see oxc.shared.ts) ──────────────────────────────────────────────────────────
   ignorePatterns,
 });

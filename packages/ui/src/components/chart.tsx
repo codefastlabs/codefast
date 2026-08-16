@@ -7,17 +7,13 @@ import type { NameType, Payload, ValueType } from "recharts/types/component/Defa
 
 import { cn } from "#/lib/utils";
 
-/* -----------------------------------------------------------------------------
- * Type Definitions and Utilities
- * -------------------------------------------------------------------------- */
+// ── Type Definitions and Utilities ───────────────────────────────────────────────────────────────────────────────────
 
 type ExtractProps<T> = T extends (props: infer P) => ReactNode ? P : never;
 
 type MakeOptional<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
 
-/* -----------------------------------------------------------------------------
- * Chart Configuration and Theme Constants
- * --------------------------------------------------------------------------- */
+// ── Chart Configuration and Theme Constants ──────────────────────────────────────────────────────────────────────────
 
 const THEMES = { dark: ".dark", light: "" } as const;
 
@@ -34,9 +30,7 @@ type ChartConfig = Record<
   } & ({ color?: never; theme: Record<keyof typeof THEMES, string> } | { color?: string; theme?: never })
 >;
 
-/* -----------------------------------------------------------------------------
- * Context: ChartProvider
- * --------------------------------------------------------------------------- */
+// ── Context: ChartProvider ───────────────────────────────────────────────────────────────────────────────────────────
 
 const CHART_PROVIDER_NAME = "ChartProvider";
 
@@ -56,9 +50,7 @@ const [createChartContext, createChartScope] = Context.createContextScope(CHART_
 
 const [ChartContextProvider, useChartContext] = createChartContext<ChartContextValue>(CHART_PROVIDER_NAME);
 
-/* -----------------------------------------------------------------------------
- * Component: Chart
- * -------------------------------------------------------------------------- */
+// ── Component: Chart ─────────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -107,9 +99,7 @@ function ChartContainer({
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Component: ChartStyle
- * -------------------------------------------------------------------------- */
+// ── Component: ChartStyle ────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -138,9 +128,7 @@ function ChartStyle({ config, id }: ChartStyleProps): ReactNode {
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Component: ChartTooltip
- * -------------------------------------------------------------------------- */
+// ── Component: ChartTooltip ──────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -152,9 +140,7 @@ type ChartTooltipProps<TValue extends ValueType, TName extends NameType> = Toolt
  */
 const ChartTooltip = RechartsPrimitive.Tooltip;
 
-/* -----------------------------------------------------------------------------
- * Component: ChartTooltipContent
- * -------------------------------------------------------------------------- */
+// ── Component: ChartTooltipContent ───────────────────────────────────────────────────────────────────────────────────
 
 const CHART_TOOLTIP_CONTENT_NAME = "ChartTooltipContent";
 
@@ -309,9 +295,7 @@ function ChartTooltipContent<TValue extends ValueType, TName extends NameType>({
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Component: ChartLegend
- * -------------------------------------------------------------------------- */
+// ── Component: ChartLegend ───────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -323,9 +307,7 @@ type ChartLegendProps = ComponentProps<typeof RechartsPrimitive.Legend>;
  */
 const ChartLegend: typeof RechartsPrimitive.Legend = RechartsPrimitive.Legend;
 
-/* -----------------------------------------------------------------------------
- * Component: ChartLegendContent
- * -------------------------------------------------------------------------- */
+// ── Component: ChartLegendContent ────────────────────────────────────────────────────────────────────────────────────
 
 const CHART_LEGEND_CONTENT_NAME = "ChartLegendContent";
 
@@ -391,9 +373,7 @@ function ChartLegendContent({
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Helpers
- * -------------------------------------------------------------------------- */
+// ── Helpers ──────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * Type guard to check if an unknown value is a record with string keys
@@ -511,9 +491,7 @@ function generateChartStyles(id: string, colorConfig: Array<[string, ChartConfig
     .join("\n\n");
 }
 
-/* -----------------------------------------------------------------------------
- * Exports
- * -------------------------------------------------------------------------- */
+// ── Exports ──────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 export type {
   ChartConfig,

@@ -1,5 +1,5 @@
 /**
- * @codefast/di — resolution pattern scenarios.
+ * `@codefast/di` — resolution pattern scenarios.
  *
  * Exercises resolution APIs that have no coverage elsewhere:
  *
@@ -33,7 +33,7 @@ import {
 import { batched } from "#/harness/batched";
 import type { BenchScenario } from "#/scenarios/types";
 
-// ─── scenario 1: resolveOptional — hit ───────────────────────────────────────
+// ── scenario 1: resolveOptional — hit ────────────────────────────────────────────────────────────────────────────────
 
 const optionalHitToken = token<number>("bench-cf-rp-optional-hit");
 
@@ -53,7 +53,7 @@ function buildResolveOptionalHitScenario(): BenchScenario {
   };
 }
 
-// ─── scenario 2: resolveOptional — miss ──────────────────────────────────────
+// ── scenario 2: resolveOptional — miss ───────────────────────────────────────────────────────────────────────────────
 
 const optionalMissToken = token<string>("bench-cf-rp-optional-miss");
 
@@ -73,7 +73,7 @@ function buildResolveOptionalMissScenario(): BenchScenario {
   };
 }
 
-// ─── scenario 3: whenTagged binding selection ────────────────────────────────
+// ── scenario 3: whenTagged binding selection ─────────────────────────────────────────────────────────────────────────
 
 interface TaggedService {
   readonly env: string;

@@ -21,6 +21,9 @@ export class BindingRegistry {
   // Fast lookup for a slot carrying exactly one tag — keyed by the interned criterion itself, so
   // the (key, value) pair is one hash rather than two. Unallocated until a tagged binding lands.
   #simpleTagged: Map<DependencyKey, Map<BindingTag, Binding>> | undefined;
+  // Name-less slots with two or more tags, bucketed by their FIRST criterion. A matching slot's
+  // every tag is in the request, so walking the request's buckets finds each candidate exactly once.
+  #multiTagged: Map<DependencyKey, Map<BindingTag, Array<Binding>>> | undefined;
 
   // Set on the first constant registered and never cleared. Teardown only needs the negative answer
   // to be exact, and that is what lets a container holding no constant skip its sweep entirely.
@@ -45,7 +48,7 @@ export class BindingRegistry {
   }
 
   /**
-   * Add or replace binding using slot-aware last-wins. Returns the displaced binding, if any.
+   * Adds or replaces a binding using slot-aware last-wins. Returns the displaced binding, if any.
    *
    * @remarks The binding is stored by reference — it must come from `createBinding`, which is
    * what guarantees the single hidden class the resolver's hot reads depend on.
@@ -56,29 +59,39 @@ export class BindingRegistry {
       this.#heldConstantBinding = true;
     }
     const key: DependencyKey = binding.token;
-    // Eager, not computed: a bind is usually the token's first, so the fallback is usually the
-    // one that gets stored — and the computed form would add a call to allocating it anyway.
-    const bindingsForToken = this.#bindings.getOrInsert(key, []);
+    // Copy-on-write: a selection may be walking the current list inside a `when()` predicate, so
+    // mutation replaces the array and never splices one that has been handed out.
+    const bindingsForToken = this.#bindings.get(key);
 
     // Only apply last-wins for slot-based bindings (not predicate-only)
     let displacedBinding: Binding | undefined;
-    if (!isPurePredicateBinding(binding)) {
-      const existingIndex = bindingsForToken.findIndex(
-        (candidate) => !isPurePredicateBinding(candidate) && bindingSlotEquals(candidate.slot, binding.slot),
-      );
-      if (existingIndex !== -1) {
-        displacedBinding = bindingsForToken[existingIndex]!;
-        this.#byId.delete(displacedBinding.id);
-        bindingsForToken.splice(existingIndex, 1);
-        this.#deindexSimpleNamedBinding(key, displacedBinding);
-        this.#deindexSimpleTaggedBinding(key, displacedBinding);
+    let nextBindings: Array<Binding>;
+    if (bindingsForToken === undefined) {
+      nextBindings = [binding];
+    } else {
+      if (!isPurePredicateBinding(binding)) {
+        const existingIndex = bindingsForToken.findIndex(
+          (candidate) => !isPurePredicateBinding(candidate) && bindingSlotEquals(candidate.slot, binding.slot),
+        );
+        if (existingIndex !== -1) {
+          displacedBinding = bindingsForToken[existingIndex]!;
+          this.#byId.delete(displacedBinding.id);
+          this.#deindexSimpleNamedBinding(key, displacedBinding);
+          this.#deindexSimpleTaggedBinding(key, displacedBinding);
+          this.#deindexMultiTaggedBinding(key, displacedBinding);
+        }
       }
+      nextBindings =
+        displacedBinding === undefined
+          ? [...bindingsForToken, binding]
+          : [...bindingsForToken.filter((candidate) => candidate !== displacedBinding), binding];
     }
 
-    bindingsForToken.push(binding);
+    this.#bindings.set(key, nextBindings);
     this.#byId.set(binding.id, binding);
     this.#indexSimpleNamedBinding(key, binding);
     this.#indexSimpleTaggedBinding(key, binding);
+    this.#indexMultiTaggedBinding(key, binding);
     this.#refreshFastDefaultForToken(key);
     return displacedBinding;
   }
@@ -91,6 +104,7 @@ export class BindingRegistry {
     this.#bindings.delete(key);
     this.#simpleNamed?.delete(key);
     this.#simpleTagged?.delete(key);
+    this.#multiTagged?.delete(key);
     this.#fastDefault.delete(key);
     for (const binding of bindingsForToken) {
       this.#byId.delete(binding.id);
@@ -110,17 +124,19 @@ export class BindingRegistry {
     const bindingsForToken = this.#bindings.get(key);
     if (bindingsForToken !== undefined) {
       const bindingIndex = bindingsForToken.findIndex((candidate) => candidate.id === id);
-      if (bindingIndex !== -1) {
-        bindingsForToken.splice(bindingIndex, 1);
-      }
+      // Copy-on-write, like `add`: a walk holding the current array must not lose its place.
+      const remaining = bindingIndex === -1 ? bindingsForToken : bindingsForToken.toSpliced(bindingIndex, 1);
       this.#deindexSimpleNamedBinding(key, binding);
       this.#deindexSimpleTaggedBinding(key, binding);
-      if (bindingsForToken.length === 0) {
+      this.#deindexMultiTaggedBinding(key, binding);
+      if (remaining.length === 0) {
         this.#bindings.delete(key);
         this.#simpleNamed?.delete(key);
         this.#simpleTagged?.delete(key);
+        this.#multiTagged?.delete(key);
         this.#fastDefault.delete(key);
       } else {
+        this.#bindings.set(key, remaining);
         this.#refreshFastDefaultForToken(key);
       }
     }
@@ -161,8 +177,23 @@ export class BindingRegistry {
     this.#byId.clear();
     this.#simpleNamed?.clear();
     this.#simpleTagged?.clear();
+    this.#multiTagged?.clear();
     this.#fastDefault.clear();
     return all;
+  }
+
+  /** Whether a slot-based binding currently occupies `binding`'s slot, so adding it would displace. */
+  hasSlotOccupant(binding: Binding): boolean {
+    if (isPurePredicateBinding(binding)) {
+      return false;
+    }
+    const candidates = this.#bindings.get(binding.token);
+    if (candidates === undefined) {
+      return false;
+    }
+    return candidates.some(
+      (candidate) => !isPurePredicateBinding(candidate) && bindingSlotEquals(candidate.slot, binding.slot),
+    );
   }
 
   getSimpleNamed(token: Token<unknown> | Constructor, name: string): Binding | undefined {
@@ -177,6 +208,16 @@ export class BindingRegistry {
    */
   getSimpleTagged(token: Token<unknown> | Constructor, criterion: BindingTag): Binding | undefined {
     return this.#simpleTagged?.get(token)?.get(criterion);
+  }
+
+  /**
+   * The multi-tag bindings whose slot's first criterion is `criterion`.
+   *
+   * @remarks A prefilter, not an answer: a bucket member's remaining tags still have to be matched
+   * against the request — first-criterion bucketing only guarantees each candidate appears once.
+   */
+  getMultiTagged(token: Token<unknown> | Constructor, criterion: BindingTag): ReadonlyArray<Binding> | undefined {
+    return this.#multiTagged?.get(token)?.get(criterion);
   }
 
   getFastDefault(token: Token<unknown> | Constructor): Binding | undefined {
@@ -212,6 +253,32 @@ export class BindingRegistry {
       if (byCriterion.size === 0) {
         this.#simpleTagged!.delete(tokenKey);
       }
+    }
+  }
+
+  #indexMultiTaggedBinding(tokenKey: DependencyKey, binding: Binding): void {
+    const firstCriterion = multiTagFirstOf(binding);
+    if (firstCriterion === undefined) {
+      return;
+    }
+    const buckets = (this.#multiTagged ??= new Map()).getOrInsert(tokenKey, new Map<BindingTag, Array<Binding>>());
+    buckets.getOrInsert(firstCriterion, []).push(binding);
+  }
+
+  #deindexMultiTaggedBinding(tokenKey: DependencyKey, binding: Binding): void {
+    const firstCriterion = multiTagFirstOf(binding);
+    if (firstCriterion === undefined) {
+      return;
+    }
+    const bucket = this.#multiTagged?.get(tokenKey)?.get(firstCriterion);
+    if (bucket === undefined) {
+      return;
+    }
+    const bindingIndex = bucket.findIndex((candidate) => candidate.id === binding.id);
+    // Spliced in place: nothing walks a bucket while user code runs — candidates are gathered
+    // into their own array before any predicate is evaluated.
+    if (bindingIndex !== -1) {
+      bucket.splice(bindingIndex, 1);
     }
   }
 
@@ -251,9 +318,14 @@ export class BindingRegistry {
     this.#fastDefault.delete(tokenKey);
   }
 
-  /** Whether the deferred table behind `#simpleNamed` has had to be built. */
-  get isBuilt(): boolean {
+  /** Whether the deferred named-slot index has had to be built. */
+  get isNamedIndexBuilt(): boolean {
     return this.#simpleNamed !== undefined;
+  }
+
+  /** Whether the deferred tagged-slot index has had to be built. */
+  get isTaggedIndexBuilt(): boolean {
+    return this.#simpleTagged !== undefined;
   }
 }
 
@@ -272,6 +344,12 @@ function simpleNameOf(binding: Binding): string | undefined {
 function simpleTagOf(binding: Binding): BindingTag | undefined {
   const { name, tags } = binding.slot;
   return name === undefined && tags.length === 1 ? tags[0] : undefined;
+}
+
+/** The first criterion a multi-tag slot is bucketed under, or `undefined` for any other shape. */
+function multiTagFirstOf(binding: Binding): BindingTag | undefined {
+  const { name, tags } = binding.slot;
+  return name === undefined && tags.length >= 2 ? tags[0] : undefined;
 }
 
 /** A binding nothing has to be matched against: the default slot, no predicate. */

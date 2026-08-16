@@ -40,7 +40,7 @@ function buildNodeId(level: number, slot: number): string {
  * - level 0: 1 root
  * - level 1: 4 middle nodes
  * - level 2: 16 leaf nodes
- * => 21 total nodes.
+ * → 21 total nodes.
  */
 function buildFanOutTreeDescriptor(depth: number, breadth: number): GraphDescriptor {
   ensureTreeShapeIsValid(depth, breadth);

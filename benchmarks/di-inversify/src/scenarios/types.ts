@@ -29,7 +29,8 @@ type ScenarioGroup =
   | "failure"
   | "production"
   | "introspection"
-  | "slot-selection";
+  | "slot-selection"
+  | "resolution";
 
 /**
  * @since 0.3.16-canary.0

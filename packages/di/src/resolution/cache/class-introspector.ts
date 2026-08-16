@@ -4,16 +4,41 @@
  * @remarks Metadata cannot change once a class is defined, so nothing here needs version stamping.
  */
 
-import { runWithContainer } from "#/ambient/active-container";
+import { runWithAmbientResolution } from "#/ambient/active-container";
+import type { AmbientResolution } from "#/ambient/active-container";
 import type { Container } from "#/container/container";
 import type { ConstructorInvocation } from "#/core/constructor-type";
 import type { Constructor } from "#/core/types";
 import { InvalidMetadataError } from "#/errors/errors";
-import type { ConstructorMetadata, MetadataReader } from "#/metadata/metadata-types";
+import type { InjectionDescriptor } from "#/injection/descriptor";
+import type { ConstructorMetadata, LifecycleMetadata, MetadataReader } from "#/metadata/metadata-types";
 
 // Verified pairs, not verified classes: two readers may disagree about the same class, and a reader
 // that goes out of scope takes its record with it.
 const verifiedTargets = new WeakMap<MetadataReader, WeakSet<Constructor>>();
+const verifiedLifecycleTargets = new WeakMap<MetadataReader, WeakSet<Constructor>>();
+const verifiedAccessorTargets = new WeakMap<MetadataReader, WeakSet<Constructor>>();
+
+function isVerified(
+  cache: WeakMap<MetadataReader, WeakSet<Constructor>>,
+  reader: MetadataReader,
+  target: Constructor,
+): boolean {
+  return cache.get(reader)?.has(target) ?? false;
+}
+
+function markVerified(
+  cache: WeakMap<MetadataReader, WeakSet<Constructor>>,
+  reader: MetadataReader,
+  target: Constructor,
+): void {
+  let verified = cache.get(reader);
+  if (verified === undefined) {
+    verified = new WeakSet();
+    cache.set(reader, verified);
+  }
+  verified.add(target);
+}
 
 /**
  * A reader's constructor metadata for a class, verified the first time this process asks.
@@ -30,16 +55,11 @@ export function verifyConstructorMetadata(
   if (metadata === undefined) {
     return undefined;
   }
-  let verified = verifiedTargets.get(reader);
-  if (verified !== undefined && verified.has(target)) {
+  if (isVerified(verifiedTargets, reader, target)) {
     return metadata;
   }
   assertConstructorMetadata(metadata, target);
-  if (verified === undefined) {
-    verified = new WeakSet();
-    verifiedTargets.set(reader, verified);
-  }
-  verified.add(target);
+  markVerified(verifiedTargets, reader, target);
 
   return metadata;
 }
@@ -81,6 +101,78 @@ export function assertConstructorMetadata(metadata: unknown, target: Constructor
   }
 
   return metadata as ConstructorMetadata;
+}
+
+/** A reader's lifecycle metadata for a class, verified the first time this process asks. */
+export function verifyLifecycleMetadata(reader: MetadataReader, target: Constructor): LifecycleMetadata | undefined {
+  const metadata = reader.getLifecycleMetadata(target);
+  if (metadata === undefined || isVerified(verifiedLifecycleTargets, reader, target)) {
+    return metadata;
+  }
+  if (typeof metadata !== "object" || metadata === null) {
+    throw new InvalidMetadataError(target.name, `lifecycle metadata: expected an object, received ${typeof metadata}`);
+  }
+  for (const phase of ["postConstruct", "preDestroy"] as const) {
+    const methods: unknown = Reflect.get(metadata, phase);
+    if (methods === undefined) {
+      continue;
+    }
+    if (!Array.isArray(methods)) {
+      throw new InvalidMetadataError(target.name, `lifecycle metadata: ${phase} is not an array`);
+    }
+    for (const [position, name] of methods.entries()) {
+      if (typeof name !== "string") {
+        throw new InvalidMetadataError(
+          target.name,
+          `lifecycle metadata: ${phase}[${String(position)}] is not a string`,
+        );
+      }
+    }
+  }
+  markVerified(verifiedLifecycleTargets, reader, target);
+  return metadata;
+}
+
+/** A reader's accessor metadata for a class, verified the first time this process asks. */
+export function verifyAccessorMetadata(
+  reader: MetadataReader,
+  target: Constructor,
+): ReadonlyArray<{ readonly key: string | symbol; readonly descriptor: InjectionDescriptor }> | undefined {
+  const metadata = reader.getAccessorMetadata?.(target);
+  if (metadata === undefined || isVerified(verifiedAccessorTargets, reader, target)) {
+    return metadata;
+  }
+  if (!Array.isArray(metadata)) {
+    throw new InvalidMetadataError(target.name, "accessor metadata: expected an array");
+  }
+  for (const [position, entry] of metadata.entries()) {
+    if (typeof entry !== "object" || entry === null) {
+      throw new InvalidMetadataError(target.name, `accessor metadata: [${String(position)}] is not an object`);
+    }
+    const key: unknown = Reflect.get(entry, "key");
+    if (typeof key !== "string" && typeof key !== "symbol") {
+      throw new InvalidMetadataError(
+        target.name,
+        `accessor metadata: [${String(position)}].key is not a string or symbol`,
+      );
+    }
+    const descriptor: unknown = Reflect.get(entry, "descriptor");
+    if (typeof descriptor !== "object" || descriptor === null) {
+      throw new InvalidMetadataError(
+        target.name,
+        `accessor metadata: [${String(position)}].descriptor is not an object`,
+      );
+    }
+    const dependency: unknown = Reflect.get(descriptor, "token");
+    if (typeof dependency !== "object" && typeof dependency !== "function") {
+      throw new InvalidMetadataError(
+        target.name,
+        `accessor metadata: [${String(position)}].descriptor.token is not a token or a class`,
+      );
+    }
+  }
+  markVerified(verifiedAccessorTargets, reader, target);
+  return metadata;
 }
 
 /**
@@ -137,11 +229,11 @@ export class ClassIntrospector {
     return needsActiveContainer;
   }
 
-  instantiate(target: Constructor, deps: Array<unknown>): unknown {
+  instantiate(target: Constructor, deps: Array<unknown>, resolution?: AmbientResolution): unknown {
     const invokable = target as ConstructorInvocation;
     if (!this.needsActiveContainer(target)) {
       return new invokable(...deps);
     }
-    return runWithContainer(this.#container, () => new invokable(...deps));
+    return runWithAmbientResolution(this.#container, resolution, () => new invokable(...deps));
   }
 }

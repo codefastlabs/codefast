@@ -46,7 +46,7 @@ import { verifyingMetadataReader } from "#/metadata/verifying-metadata-reader";
 import { ROOT_BRANCH } from "#/resolution/path/resolution-path";
 import { DependencyResolver } from "#/resolution/resolver";
 
-// ── Container interface ────────────────────────────────────────────────────────
+// ── Container interface ──────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -133,10 +133,12 @@ const APPLY_BINDING_SCOPE: Record<BindingScope, (builder: BindingBuilder<unknown
   },
 };
 
-// ── DefaultContainer ──────────────────────────────────────────────────────────
+// ── DefaultContainer ─────────────────────────────────────────────────────────────────────────────────────────────────
 
 class DefaultContainer implements Container {
   #disposed = false;
+  // The one teardown run — every dispose() call returns it once it exists.
+  #disposePromise: Promise<void> | undefined;
   readonly #registry: BindingRegistry;
   readonly #scope: ScopeManager;
   readonly #lifecycle: LifecycleManager;
@@ -177,13 +179,16 @@ class DefaultContainer implements Container {
     if (this.#moduleRefs !== undefined || this.#moduleBindingIds !== undefined) {
       builtSubsystems.push("container.moduleTables");
     }
-    if (this.#registry.isBuilt) {
+    if (this.#registry.isNamedIndexBuilt) {
       builtSubsystems.push("registry.namedIndex");
     }
-    if (this.#scope.isBuilt) {
+    if (this.#registry.isTaggedIndexBuilt) {
+      builtSubsystems.push("registry.taggedIndex");
+    }
+    if (this.#scope.isScopedCacheBuilt) {
       builtSubsystems.push("scope.scoped");
     }
-    if (this.#lifecycle.isBuilt) {
+    if (this.#lifecycle.isActivationTableBuilt) {
       builtSubsystems.push("lifecycle.activationHooks");
     }
     return { ...this.#resolver.describeCaches(), scopedInstanceCount: this.#scope.scopedCount, builtSubsystems };
@@ -209,7 +214,7 @@ class DefaultContainer implements Container {
   #readerForChild(): MetadataReader {
     if (this.#registry.getAll(MetadataReaderToken).length > 0) {
       try {
-        return this.#resolver.resolve(MetadataReaderToken, undefined, [], []);
+        return this.#resolver.resolve(MetadataReaderToken, undefined, []);
       } catch {
         // An unresolvable reader binding is not worth failing a child over.
       }
@@ -226,7 +231,7 @@ class DefaultContainer implements Container {
     return this.#disposed;
   }
 
-  // ── Binding ──────────────────────────────────────────────────────────────
+  // ── Binding ────────────────────────────────────────────────────────────────────────────────────────────────────────
 
   bind<Value>(token: Token<Value> | Constructor<Value>): BindToBuilder<Value> {
     this.#assertNotDisposed();
@@ -235,13 +240,14 @@ class DefaultContainer implements Container {
 
   /** The registration every non-module chain shares, so `bind()` allocates only the builder. */
   #ownRegistration(): BindingRegistration {
-    return (this.#registration ??= { registry: this.#registry, moduleBindingIds: undefined });
+    return (this.#registration ??= { registry: this.#registry, scope: this.#scope, moduleBindingIds: undefined });
   }
 
   /** One registration per module load, holding that module's id list directly. */
   #moduleRegistration(moduleRef: object): BindingRegistration {
     return {
       registry: this.#registry,
+      scope: this.#scope,
       moduleBindingIds: (this.#moduleBindingIds ??= new Map()).getOrInsert(moduleRef, []),
     };
   }
@@ -298,35 +304,56 @@ class DefaultContainer implements Container {
     );
   }
 
-  #unbindSync(tokenOrId: Token<unknown> | Constructor | BindingIdentifier): void {
-    const reader = this.#getMetadataReader();
-    for (const [binding, instance] of this.#collectDeactivationPairs(tokenOrId)) {
-      this.#lifecycle.runDeactivationSync(binding, instance, reader);
+  /** Runs every pair's deactivation even when one throws, then reports what threw. */
+  #deactivatePairsSync(pairs: ReadonlyArray<[Binding, unknown]>): void {
+    if (pairs.length === 0) {
+      return;
     }
+    const reader = this.#getMetadataReader();
+    const errors: Array<unknown> = [];
+    for (const [binding, instance] of pairs) {
+      try {
+        this.#lifecycle.runDeactivationSync(binding, instance, reader);
+      } catch (error) {
+        errors.push(error);
+      }
+    }
+    throwCollected(errors, "unbind completed, but deactivation hooks threw");
+  }
+
+  async #deactivatePairs(pairs: ReadonlyArray<[Binding, unknown]>): Promise<void> {
+    if (pairs.length === 0) {
+      return;
+    }
+    const reader = this.#getMetadataReader();
+    const errors: Array<unknown> = [];
+    for (const [binding, instance] of pairs) {
+      try {
+        await this.#lifecycle.runDeactivation(binding, instance, reader);
+      } catch (error) {
+        errors.push(error);
+      }
+    }
+    throwCollected(errors, "unbind completed, but deactivation hooks threw");
+  }
+
+  #unbindSync(tokenOrId: Token<unknown> | Constructor | BindingIdentifier): void {
+    this.#deactivatePairsSync(this.#collectDeactivationPairs(tokenOrId));
   }
 
   async unbindAsync(tokenOrId: Token<unknown> | Constructor | BindingIdentifier): Promise<void> {
     this.#assertNotDisposed();
-    const reader = this.#getMetadataReader();
-    for (const [binding, instance] of this.#collectDeactivationPairs(tokenOrId)) {
-      await this.#lifecycle.runDeactivation(binding, instance, reader);
-    }
+    await this.#deactivatePairs(this.#collectDeactivationPairs(tokenOrId));
   }
 
   unbindAll(): void {
     this.#assertNotDisposed();
-    const reader = this.#getMetadataReader();
-    for (const [binding, instance] of this.#drainSingletons(this.#registry.clear())) {
-      this.#lifecycle.runDeactivationSync(binding, instance, reader);
-    }
+    this.#deactivatePairsSync(this.#drainSingletons(this.#registry.clear()));
   }
 
   async unbindAllAsync(): Promise<void> {
     this.#assertNotDisposed();
-    const reader = this.#getMetadataReader();
-    for (const [binding, instance] of this.#drainSingletons(this.#registry.clear())) {
-      await this.#lifecycle.runDeactivation(binding, instance, reader);
-    }
+    await this.#deactivatePairs(this.#drainSingletons(this.#registry.clear()));
   }
 
   rebind<Value>(token: Token<Value> | Constructor<Value>): BindToBuilder<Value> {
@@ -339,7 +366,7 @@ class DefaultContainer implements Container {
     return this.#createBindToBuilder(token);
   }
 
-  // ── Module ────────────────────────────────────────────────────────────────
+  // ── Module ─────────────────────────────────────────────────────────────────────────────────────────────────────────
 
   load(...modules: Array<SyncModule>): void {
     this.#assertNotDisposed();
@@ -362,15 +389,41 @@ class DefaultContainer implements Container {
       }
       moduleRefs.set(moduleRef, 1);
       const builder = this.#createModuleBuilder(moduleRef);
-      module[MODULE_SETUP](builder);
+      try {
+        module[MODULE_SETUP](builder);
+      } catch (error) {
+        throw this.#rollbackFailedLoadSync(moduleRef, error);
+      }
     }
   }
 
   async loadAsync(...modules: Array<SyncModule | AsyncModule>): Promise<void> {
     this.#assertNotDisposed();
-    for (const module of modules) {
+    // Deduped by identity like the sync lane, so `loadAsync(m, m)` ref-counts once.
+    for (const module of new Set(modules)) {
       await this.#loadOneModuleAsync(module);
     }
+  }
+
+  /** Undo a failed load — bindings registered before the throw and the ref-count both roll back. */
+  #rollbackFailedLoadSync(moduleRef: object, cause: unknown): unknown {
+    const pairs = this.#removeModuleBindings(moduleRef);
+    try {
+      this.#deactivatePairsSync(pairs);
+    } catch (rollbackError) {
+      return new AggregateError([cause, rollbackError], "module load failed, and rolling it back threw too");
+    }
+    return cause;
+  }
+
+  async #rollbackFailedLoad(moduleRef: object, cause: unknown): Promise<unknown> {
+    const pairs = this.#removeModuleBindings(moduleRef);
+    try {
+      await this.#deactivatePairs(pairs);
+    } catch (rollbackError) {
+      return new AggregateError([cause, rollbackError], "module load failed, and rolling it back threw too");
+    }
+    return cause;
   }
 
   async #loadOneModuleAsync(module: SyncModule | AsyncModule): Promise<void> {
@@ -385,14 +438,25 @@ class DefaultContainer implements Container {
 
     if (isSyncModule(module)) {
       const builder = this.#createModuleBuilder(moduleRef);
-      module[MODULE_SETUP](builder);
+      try {
+        module[MODULE_SETUP](builder);
+      } catch (error) {
+        throw this.#rollbackFailedLoadSync(moduleRef, error);
+      }
     } else {
       const importPromises: Array<Promise<void>> = [];
       const builder = this.#createAsyncModuleBuilder(moduleRef, importPromises);
-      await module[MODULE_SETUP](builder);
-      // Await nested async imports triggered inside the setup callback
-      if (importPromises.length > 0) {
-        await Promise.all(importPromises);
+      try {
+        await module[MODULE_SETUP](builder);
+        // Await nested async imports triggered inside the setup callback
+        if (importPromises.length > 0) {
+          await Promise.all(importPromises);
+        }
+      } catch (error) {
+        // Nested imports may still be registering — let them settle before rolling back, so no
+        // registration lands after the rejection and none becomes an unhandled rejection.
+        await Promise.allSettled(importPromises);
+        throw await this.#rollbackFailedLoad(moduleRef, error);
       }
     }
   }
@@ -433,30 +497,20 @@ class DefaultContainer implements Container {
     this.#moduleRefs?.delete(ref);
     const ids = this.#moduleBindingIds?.get(ref) ?? [];
     this.#moduleBindingIds?.delete(ref);
-    const pairs: Array<[Binding, unknown]> = [];
+    const removed: Array<Binding> = [];
     for (const id of ids) {
-      const binding = this.#registry.getById(id);
+      const binding = this.#registry.removeById(id);
       if (binding !== undefined) {
-        this.#registry.removeById(id);
-        if (binding.instance !== NO_INSTANCE) {
-          pairs.push([binding, binding.instance]);
-          this.#scope.deleteSingleton(binding);
-        } else if (this.#owesConstantDeactivation(binding)) {
-          pairs.push([binding, binding.value]);
-        }
-        this.#scope.deleteScoped(binding.id);
+        removed.push(binding);
       }
     }
-    return pairs;
+    return this.#drainSingletons(removed);
   }
 
   #unloadModuleSync(ref: object): void {
     const count = this.#moduleRefs?.get(ref) ?? 0;
     if (count <= 1) {
-      const reader = this.#getMetadataReader();
-      for (const [binding, instance] of this.#removeModuleBindings(ref)) {
-        this.#lifecycle.runDeactivationSync(binding, instance, reader);
-      }
+      this.#deactivatePairsSync(this.#removeModuleBindings(ref));
     } else {
       this.#moduleRefs!.set(ref, count - 1);
     }
@@ -472,10 +526,7 @@ class DefaultContainer implements Container {
   async #unloadModuleAsync(ref: object): Promise<void> {
     const count = this.#moduleRefs?.get(ref) ?? 0;
     if (count <= 1) {
-      const reader = this.#getMetadataReader();
-      for (const [binding, instance] of this.#removeModuleBindings(ref)) {
-        await this.#lifecycle.runDeactivation(binding, instance, reader);
-      }
+      await this.#deactivatePairs(this.#removeModuleBindings(ref));
     } else {
       this.#moduleRefs!.set(ref, count - 1);
     }
@@ -490,7 +541,7 @@ class DefaultContainer implements Container {
     return entries.length;
   }
 
-  // ── Lifecycle hooks ────────────────────────────────────────────────────────
+  // ── Lifecycle hooks ────────────────────────────────────────────────────────────────────────────────────────────────
 
   onActivation<Value>(token: Token<Value> | Constructor<Value>, handler: ActivationHandler<Value>): void {
     this.#assertNotDisposed();
@@ -502,21 +553,21 @@ class DefaultContainer implements Container {
     this.#lifecycle.registerDeactivation(token, handler);
   }
 
-  // ── Resolution ────────────────────────────────────────────────────────────
+  // ── Resolution ─────────────────────────────────────────────────────────────────────────────────────────────────────
 
   resolve<Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Value {
     this.#assertNotDisposed();
     const rootStack = this.#resolver.rootStack;
-    // A resolve already holding the shared pair means this one is nested; it mints its own.
+    // A resolve already holding the shared stack means this one is nested; it mints its own.
     if (rootStack.length !== 0) {
       return options === undefined
-        ? this.#resolver.resolveFromContext(token, [], [])
-        : this.#resolver.resolve(token, options, [], []);
+        ? this.#resolver.resolveFromContext(token, [])
+        : this.#resolver.resolve(token, options, []);
     }
     if (options === undefined) {
-      return this.#resolver.resolveFromContext(token, this.#resolver.rootPath, rootStack);
+      return this.#resolver.resolveFromContext(token, rootStack);
     }
-    return this.#resolver.resolve(token, options, this.#resolver.rootPath, rootStack);
+    return this.#resolver.resolve(token, options, rootStack);
   }
 
   resolveAsync<Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Promise<Value> {
@@ -524,15 +575,15 @@ class DefaultContainer implements Container {
     if (options === undefined) {
       return this.#resolver.resolveAsyncFromRoot(token) as Promise<Value>;
     }
-    return this.#resolver.resolveAsync(token, options, [], [], ROOT_BRANCH);
+    return this.#resolver.resolveAsync(token, options, [], ROOT_BRANCH);
   }
 
   resolveOptional<Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Value | undefined {
     this.#assertNotDisposed();
     const rootStack = this.#resolver.rootStack;
     return rootStack.length === 0
-      ? this.#resolver.resolveOptional(token, options, this.#resolver.rootPath, rootStack)
-      : this.#resolver.resolveOptional(token, options, [], []);
+      ? this.#resolver.resolveOptional(token, options, rootStack)
+      : this.#resolver.resolveOptional(token, options, []);
   }
 
   resolveOptionalAsync<Value>(
@@ -540,55 +591,73 @@ class DefaultContainer implements Container {
     options?: ResolveOptions,
   ): Promise<Value | undefined> {
     this.#assertNotDisposed();
-    return this.#resolver.resolveOptionalAsync(token, options, [], [], ROOT_BRANCH);
+    return this.#resolver.resolveOptionalAsync(token, options, [], ROOT_BRANCH);
   }
 
   resolveAll<Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Array<Value> {
     this.#assertNotDisposed();
     const rootStack = this.#resolver.rootStack;
     return rootStack.length === 0
-      ? this.#resolver.resolveAll(token, options, this.#resolver.rootPath, rootStack)
-      : this.#resolver.resolveAll(token, options, [], []);
+      ? this.#resolver.resolveAll(token, options, rootStack)
+      : this.#resolver.resolveAll(token, options, []);
   }
 
   resolveAllAsync<Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Promise<Array<Value>> {
     this.#assertNotDisposed();
-    return this.#resolver.resolveAllAsync(token, options, [], [], ROOT_BRANCH);
+    return this.#resolver.resolveAllAsync(token, options, [], ROOT_BRANCH);
   }
 
-  // ── Child ─────────────────────────────────────────────────────────────────
+  // ── Child ──────────────────────────────────────────────────────────────────────────────────────────────────────────
 
   createChild(): Container {
     this.#assertNotDisposed();
     return new DefaultContainer(this);
   }
 
-  // ── Dispose ───────────────────────────────────────────────────────────────
+  // ── Dispose ────────────────────────────────────────────────────────────────────────────────────────────────────────
 
-  async dispose(): Promise<void> {
-    if (this.#disposed) {
-      return;
-    }
+  dispose(): Promise<void> {
+    // One teardown, shared: a second caller awaits the same run instead of returning early while
+    // hooks from the first are still executing.
+    return (this.#disposePromise ??= this.#runDispose());
+  }
+
+  async #runDispose(): Promise<void> {
     this.#disposed = true;
+    // Refuses new materializations immediately; in-flight ones are drained just below.
+    this.#scope.markClosed();
+    await this.#scope.settleInflight();
 
-    // Deactivate all singletons in this container (own only)
     const reader = this.#getMetadataReader();
+    const errors: Array<unknown> = [];
     // Iterate a copy: a deactivation handler is user code, and the live list is what
-    // materializing or dropping a singleton mutates.
-    for (const binding of this.#scope.cachedSingletons().slice()) {
-      await this.#lifecycle.runDeactivation(binding, binding.instance, reader);
+    // materializing or dropping a singleton mutates. Reverse materialization order, so a
+    // dependent tears down before the dependencies it may still reach through.
+    const cached = this.#scope.cachedSingletons().slice();
+    for (let index = cached.length - 1; index >= 0; index -= 1) {
+      const binding = cached[index]!;
+      try {
+        await this.#lifecycle.runDeactivation(binding, binding.instance, reader);
+      } catch (error) {
+        errors.push(error);
+      }
     }
     // A constant never reaches the singleton cache unless activation put it there, so its hook is
     // owed from the registry instead — and only a container that has held one pays for looking.
     if (this.#registry.hasHeldConstantBinding) {
       for (const binding of this.#registry.allBindings()) {
         if (binding.instance === NO_INSTANCE && this.#owesConstantDeactivation(binding)) {
-          await this.#lifecycle.runDeactivation(binding, binding.value, reader);
+          try {
+            await this.#lifecycle.runDeactivation(binding, binding.value, reader);
+          } catch (error) {
+            errors.push(error);
+          }
         }
       }
     }
 
     this.#scope.clearAll();
+    throwCollected(errors, "dispose() completed, but deactivation hooks threw");
   }
 
   [Symbol.asyncDispose](): Promise<void> {
@@ -599,7 +668,7 @@ class DefaultContainer implements Container {
     throw new SyncDisposalNotSupportedError();
   }
 
-  // ── Initialization ────────────────────────────────────────────────────────
+  // ── Initialization ─────────────────────────────────────────────────────────────────────────────────────────────────
 
   async initializeAsync(): Promise<void> {
     this.#assertNotDisposed();
@@ -613,8 +682,13 @@ class DefaultContainer implements Container {
         if (binding.predicate !== undefined) {
           continue;
         }
-        // Has activation — need to resolve
-        if (binding.kind === "constant" && binding.onActivation === undefined) {
+        // A constant is already its own instance, so only an activation hook gives the warm-up
+        // something to run — and a container-level hook counts as one just as a per-binding hook does.
+        if (
+          binding.kind === "constant" &&
+          binding.onActivation === undefined &&
+          !this.#lifecycle.hasActivationHandlers(binding.token)
+        ) {
           continue;
         }
         const slotOptions = bindingSlotToResolveOptions(binding.slot);
@@ -623,7 +697,7 @@ class DefaultContainer implements Container {
     }
   }
 
-  // ── Validate ──────────────────────────────────────────────────────────────
+  // ── Validate ───────────────────────────────────────────────────────────────────────────────────────────────────────
 
   validate(): void {
     this.#assertNotDisposed();
@@ -809,7 +883,7 @@ class DefaultContainer implements Container {
     return edges;
   }
 
-  // ── Introspection ─────────────────────────────────────────────────────────
+  // ── Introspection ──────────────────────────────────────────────────────────────────────────────────────────────────
 
   has(token: Token<unknown> | Constructor, options?: ResolveOptions): boolean {
     this.#assertNotDisposed();
@@ -841,7 +915,7 @@ class DefaultContainer implements Container {
     );
   }
 
-  // ── Internal ──────────────────────────────────────────────────────────────
+  // ── Internal ───────────────────────────────────────────────────────────────────────────────────────────────────────
 
   #assertNotDisposed(): void {
     if (this.#disposed) {
@@ -850,7 +924,18 @@ class DefaultContainer implements Container {
   }
 }
 
-// ── Container static ──────────────────────────────────────────────────────────
+/** Reports collected hook failures once teardown finished: the one error as itself, several aggregated. */
+function throwCollected(errors: ReadonlyArray<unknown>, message: string): void {
+  if (errors.length === 0) {
+    return;
+  }
+  if (errors.length === 1) {
+    throw errors[0];
+  }
+  throw new AggregateError(errors, message);
+}
+
+// ── Container static ─────────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0

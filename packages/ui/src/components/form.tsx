@@ -9,9 +9,7 @@ import { Controller, FormProvider, useFormContext, useFormState } from "react-ho
 import { Label } from "#/components/label";
 import { cn } from "#/lib/utils";
 
-/* -----------------------------------------------------------------------------
- * Component: Form
- * -------------------------------------------------------------------------- */
+// ── Component: Form ──────────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -23,9 +21,7 @@ type FormProps = ComponentProps<typeof FormProvider>;
  */
 const Form: typeof FormProvider = FormProvider;
 
-/* -----------------------------------------------------------------------------
- * Context: FormField
- * -------------------------------------------------------------------------- */
+// ── Context: FormField ───────────────────────────────────────────────────────────────────────────────────────────────
 
 const FORM_FIELD_NAME = "FormField";
 
@@ -73,9 +69,7 @@ function useFormItem(
   };
 }
 
-/* -----------------------------------------------------------------------------
- * Component: FormField
- * -------------------------------------------------------------------------- */
+// ── Component: FormField ─────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -101,9 +95,7 @@ function FormField<
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Context: FormItem
- * -------------------------------------------------------------------------- */
+// ── Context: FormItem ────────────────────────────────────────────────────────────────────────────────────────────────
 
 const FORM_ITEM_NAME = "FormItem";
 
@@ -113,9 +105,7 @@ interface FormItemContextValue {
 
 const [FormItemContextProvider, useFormItemContext] = createFormFieldContext<FormItemContextValue>(FORM_ITEM_NAME);
 
-/* -----------------------------------------------------------------------------
- * Component: FormItem
- * -------------------------------------------------------------------------- */
+// ── Component: FormItem ──────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -135,9 +125,7 @@ function FormItem({ __scopeFormField, className, ...props }: ScopedProps<FormIte
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Component: FormLabel
- * -------------------------------------------------------------------------- */
+// ── Component: FormLabel ─────────────────────────────────────────────────────────────────────────────────────────────
 
 const FORM_LABEL_NAME = "FormLabel";
 
@@ -155,9 +143,7 @@ function FormLabel({ __scopeFormField, ...props }: ScopedProps<FormLabelProps>):
   return <Label data-invalid={error ? true : undefined} data-slot="form-label" htmlFor={formItemId} {...props} />;
 }
 
-/* -----------------------------------------------------------------------------
- * Component: FormControl
- * -------------------------------------------------------------------------- */
+// ── Component: FormControl ───────────────────────────────────────────────────────────────────────────────────────────
 
 const FORM_CONTROL_NAME = "FormControl";
 
@@ -183,9 +169,7 @@ function FormControl({ __scopeFormField, ...props }: ScopedProps<FormControlProp
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Component: FormDescription
- * -------------------------------------------------------------------------- */
+// ── Component: FormDescription ───────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -208,9 +192,7 @@ function FormDescription({ __scopeFormField, className, ...props }: ScopedProps<
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Component: FormMessage
- * -------------------------------------------------------------------------- */
+// ── Component: FormMessage ───────────────────────────────────────────────────────────────────────────────────────────
 
 const FORM_MESSAGE_NAME = "FormMessage";
 
@@ -242,9 +224,7 @@ function FormMessage({ __scopeFormField, children, className, ...props }: Scoped
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Exports
- * -------------------------------------------------------------------------- */
+// ── Exports ──────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 export type {
   FormControlProps,

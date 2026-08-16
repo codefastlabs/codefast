@@ -4,9 +4,7 @@ import type { ComponentProps, JSX } from "react";
 
 import { cn } from "#/lib/utils";
 
-/* -----------------------------------------------------------------------------
- * Component: Accordion
- * -------------------------------------------------------------------------- */
+// ── Component: Accordion ─────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -20,9 +18,7 @@ function Accordion({ className, ...props }: AccordionProps): JSX.Element {
   return <AccordionPrimitive.Root className={cn("flex w-full flex-col", className)} data-slot="accordion" {...props} />;
 }
 
-/* -----------------------------------------------------------------------------
- * Component: AccordionItem
- * -------------------------------------------------------------------------- */
+// ── Component: AccordionItem ─────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -38,9 +34,7 @@ function AccordionItem({ className, ...props }: AccordionItemProps): JSX.Element
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Component: AccordionTrigger
- * -------------------------------------------------------------------------- */
+// ── Component: AccordionTrigger ──────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -75,9 +69,7 @@ function AccordionTrigger({ children, className, ...props }: AccordionTriggerPro
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Component: AccordionContent
- * -------------------------------------------------------------------------- */
+// ── Component: AccordionContent ──────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -106,9 +98,7 @@ function AccordionContent({ children, className, ...props }: AccordionContentPro
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Exports
- * -------------------------------------------------------------------------- */
+// ── Exports ──────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 export { Accordion, AccordionContent, AccordionItem, AccordionTrigger };
 export type { AccordionContentProps, AccordionItemProps, AccordionProps, AccordionTriggerProps };

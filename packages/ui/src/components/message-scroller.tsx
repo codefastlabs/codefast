@@ -15,9 +15,7 @@ import {
   useMessageScrollerVisibility,
 } from "#/primitives/message-scroller";
 
-/* -----------------------------------------------------------------------------
- * Component: MessageScrollerProvider
- * -------------------------------------------------------------------------- */
+// ── Component: MessageScrollerProvider ───────────────────────────────────────────────────────────────────────────────
 
 /**
  * Owns scroll behavior for a transcript. Renders no DOM; wrap the frame.
@@ -33,9 +31,7 @@ function MessageScrollerProvider(props: MessageScrollerProviderProps): JSX.Eleme
   return <MessageScrollerProviderPrimitive {...props} />;
 }
 
-/* -----------------------------------------------------------------------------
- * Component: MessageScroller
- * -------------------------------------------------------------------------- */
+// ── Component: MessageScroller ───────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * Frame for a chat transcript scroller; must sit inside a provider.
@@ -57,9 +53,7 @@ function MessageScroller({ className, ...props }: MessageScrollerProps): JSX.Ele
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Component: MessageScrollerViewport
- * -------------------------------------------------------------------------- */
+// ── Component: MessageScrollerViewport ───────────────────────────────────────────────────────────────────────────────
 
 /**
  * Scrollable viewport; fades its bottom edge and hides the bar while autoscrolling.
@@ -84,9 +78,7 @@ function MessageScrollerViewport({ className, ...props }: MessageScrollerViewpor
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Component: MessageScrollerContent
- * -------------------------------------------------------------------------- */
+// ── Component: MessageScrollerContent ────────────────────────────────────────────────────────────────────────────────
 
 /**
  * Column holding the transcript rows.
@@ -108,9 +100,7 @@ function MessageScrollerContent({ className, ...props }: MessageScrollerContentP
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Component: MessageScrollerItem
- * -------------------------------------------------------------------------- */
+// ── Component: MessageScrollerItem ───────────────────────────────────────────────────────────────────────────────────
 
 /**
  * One transcript row; opts into content-visibility for long feeds.
@@ -133,9 +123,7 @@ function MessageScrollerItem({ className, isScrollAnchor = false, ...props }: Me
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Component: MessageScrollerButton
- * -------------------------------------------------------------------------- */
+// ── Component: MessageScrollerButton ─────────────────────────────────────────────────────────────────────────────────
 
 /**
  * Scroll-to-edge control; hides itself when there is no overflow that way.
@@ -181,9 +169,7 @@ function MessageScrollerButton({
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Exports
- * -------------------------------------------------------------------------- */
+// ── Exports ──────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 export {
   MessageScroller,

@@ -71,6 +71,23 @@ describe("compiled plans are actually compiled", () => {
     }
     expect(diagnose(container).compiledPlanCount).toBeGreaterThan(0);
   });
+
+  it("compiles in a child for a binding its parent owns", () => {
+    @injectable()
+    class ParentOwned {}
+
+    const parent = Container.create();
+    parent.bind(ParentOwned).toSelf().transient();
+    const child = parent.createChild();
+
+    for (let index = 0; index < WARM_ITERATIONS; index += 1) {
+      child.resolve(ParentOwned);
+    }
+
+    // The owner settles the postConstruct answer, the child compiles the plan that reads it. Held
+    // per container, the child's copy stays unknown forever and it recompiles on every resolve.
+    expect(diagnose(child).compiledPlanCount).toBeGreaterThan(0);
+  });
 });
 
 describe("resolution contexts come from a pool", () => {

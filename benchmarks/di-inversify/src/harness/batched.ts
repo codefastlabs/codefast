@@ -9,11 +9,13 @@
  * tinybench's throughput by this number to get the per-operation rate.
  *
  * @example
+ * ```ts
  * {
  *   id: "constant-resolve",
  *   batch: 1000,
  *   build: () => batched(1000, () => container.resolve(token)),
  * }
+ * ```
  *
  * @since 0.3.16-canary.0
  */

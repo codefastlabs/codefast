@@ -6,9 +6,7 @@ import type { VariantProps } from "#/lib/utils";
 import { cn } from "#/lib/utils";
 import { toggleVariants } from "#/variants/toggle";
 
-/* -----------------------------------------------------------------------------
- * Context: ToggleGroup
- * -------------------------------------------------------------------------- */
+// ── Context: ToggleGroup ─────────────────────────────────────────────────────────────────────────────────────────────
 
 const TOGGLE_GROUP_NAME = "ToggleGroup";
 
@@ -27,9 +25,7 @@ const [ToggleGroupProvider, useToggleGroupContext] = createToggleGroupContext<
   }
 >(TOGGLE_GROUP_NAME);
 
-/* -----------------------------------------------------------------------------
- * Component: ToggleGroup
- * -------------------------------------------------------------------------- */
+// ── Component: ToggleGroup ───────────────────────────────────────────────────────────────────────────────────────────
 
 /**
  * @since 0.3.16-canary.0
@@ -83,9 +79,7 @@ function ToggleGroup({
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Component: ToggleGroupItem
- * -------------------------------------------------------------------------- */
+// ── Component: ToggleGroupItem ───────────────────────────────────────────────────────────────────────────────────────
 
 const TOGGLE_GROUP_ITEM_NAME = "ToggleGroupItem";
 
@@ -129,9 +123,7 @@ function ToggleGroupItem({
   );
 }
 
-/* -----------------------------------------------------------------------------
- * Exports
- * -------------------------------------------------------------------------- */
+// ── Exports ──────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 export { ToggleGroup, ToggleGroupItem };
 export type { ToggleGroupItemProps, ToggleGroupProps };

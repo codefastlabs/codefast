@@ -224,8 +224,8 @@ export class LifecycleManager {
     }
   }
 
-  /** Whether the deferred table behind `#activationHooks` has had to be built. */
-  get isBuilt(): boolean {
+  /** Whether the deferred activation-hook table has had to be built. */
+  get isActivationTableBuilt(): boolean {
     return this.#activationHooks !== undefined;
   }
 }

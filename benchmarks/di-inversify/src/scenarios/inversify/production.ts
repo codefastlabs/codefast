@@ -1,6 +1,6 @@
 /**
  * InversifyJS 8 — production-shaped scenarios. Parallel to
- * {@link ../codefast/production.ts}.
+ * `../codefast/production.ts`.
  *
  * Inversify-specific mapping:
  *   - `Container.create()` → `new Container({ jitless: false })`
@@ -27,7 +27,7 @@ import {
 import { batched } from "#/harness/batched";
 import type { BenchScenario } from "#/scenarios/types";
 
-// ─── scenario 1: HTTP request pipeline ───────────────────────────────────────
+// ── scenario 1: HTTP request pipeline ────────────────────────────────────────────────────────────────────────────────
 
 interface HttpConfig {
   readonly env: string;
@@ -132,7 +132,7 @@ function buildProductionHttpHandlerScenario(): BenchScenario {
   };
 }
 
-// ─── scenario 2: Repository + Unit of Work ────────────────────────────────────
+// ── scenario 2: Repository + Unit of Work ────────────────────────────────────────────────────────────────────────────
 
 interface DbPool {
   acquire(): string;
@@ -223,7 +223,7 @@ function buildProductionUnitOfWorkScenario(): BenchScenario {
   };
 }
 
-// ─── scenario 3: Event bus dispatcher ─────────────────────────────────────────
+// ── scenario 3: Event bus dispatcher ─────────────────────────────────────────────────────────────────────────────────
 
 interface EventHandler {
   handle(event: string): void;
