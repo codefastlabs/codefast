@@ -16,6 +16,8 @@ import type { InjectableDependency, InjectionDescriptor, ResolvedDependencyValue
 // ── BindingSlot ──────────────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
+ * The name-plus-tags coordinate a binding registers under and a request matches against.
+ *
  * @since 0.3.16-canary.0
  */
 export interface BindingSlot {
@@ -26,6 +28,8 @@ export interface BindingSlot {
 }
 
 /**
+ * Returns whether two slots carry the same name and tag set, in any tag order.
+ *
  * @since 0.3.16-canary.0
  */
 export function bindingSlotEquals(left: BindingSlot, right: BindingSlot): boolean {
@@ -59,6 +63,8 @@ export const NO_INSTANCE: unique symbol = Symbol("di:no-instance");
 export const DEFAULT_BINDING_SLOT: BindingSlot = { name: undefined, tags: Object.freeze([]), keyMask: NO_TAG_KEYS };
 
 /**
+ * Formats a slot for diagnostics — `default`, or its `name:`/`tag:` parts.
+ *
  * @since 0.3.16-canary.0
  */
 export function bindingSlotToString(slot: BindingSlot): string {
@@ -127,6 +133,8 @@ interface BindingLifecycleHooks<Value> {
 // ── Binding kinds ────────────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
+ * A binding that instantiates a constructor.
+ *
  * @since 0.3.16-canary.0
  */
 export interface ClassBinding<Value> extends BindingBase<Value>, BindingLifecycleHooks<Value> {
@@ -136,6 +144,8 @@ export interface ClassBinding<Value> extends BindingBase<Value>, BindingLifecycl
 }
 
 /**
+ * A binding that computes its value with a synchronous factory.
+ *
  * @since 0.3.16-canary.0
  */
 export interface DynamicBinding<Value> extends BindingBase<Value>, BindingLifecycleHooks<Value> {
@@ -145,6 +155,8 @@ export interface DynamicBinding<Value> extends BindingBase<Value>, BindingLifecy
 }
 
 /**
+ * A binding whose factory returns a promise of the value.
+ *
  * @since 0.3.16-canary.0
  */
 export interface DynamicAsyncBinding<Value> extends BindingBase<Value>, BindingLifecycleHooks<Value> {
@@ -154,6 +166,8 @@ export interface DynamicAsyncBinding<Value> extends BindingBase<Value>, BindingL
 }
 
 /**
+ * A binding whose factory is called with its declared dependencies already resolved.
+ *
  * @since 0.3.16-canary.0
  */
 export interface ResolvedBinding<Value> extends BindingBase<Value>, BindingLifecycleHooks<Value> {
@@ -164,6 +178,8 @@ export interface ResolvedBinding<Value> extends BindingBase<Value>, BindingLifec
 }
 
 /**
+ * The async form of {@link ResolvedBinding} — the factory returns a promise.
+ *
  * @since 0.3.16-canary.0
  */
 export interface ResolvedAsyncBinding<Value> extends BindingBase<Value>, BindingLifecycleHooks<Value> {
@@ -174,6 +190,8 @@ export interface ResolvedAsyncBinding<Value> extends BindingBase<Value>, Binding
 }
 
 /**
+ * A binding that hands out one fixed value, so its scope is always `singleton`.
+ *
  * @since 0.3.16-canary.0
  */
 export interface ConstantBinding<Value> extends BindingBase<Value>, BindingLifecycleHooks<Value> {
@@ -183,6 +201,8 @@ export interface ConstantBinding<Value> extends BindingBase<Value>, BindingLifec
 }
 
 /**
+ * A binding that defers to whatever binding its target token selects.
+ *
  * @since 0.3.16-canary.0
  */
 export interface AliasBinding<Value> extends BindingBase<Value> {
@@ -198,6 +218,8 @@ export interface AliasBinding<Value> extends BindingBase<Value> {
 }
 
 /**
+ * Every binding shape the engine resolves, discriminated by `kind`.
+ *
  * @since 0.3.16-canary.0
  */
 export type Binding<Value = unknown> =
@@ -226,6 +248,8 @@ export type PartialBinding<Value> = DistributiveOmit<Binding<Value>, BindingBase
 
 let bindingIdCounter = 0;
 /**
+ * Returns a process-unique identifier for a new binding.
+ *
  * @since 0.3.16-canary.0
  */
 export function generateBindingId(): BindingIdentifier {
@@ -364,6 +388,8 @@ export interface SlotConstrainedBuilder {
 }
 
 /**
+ * The `to*` step of the fluent chain, choosing what a token resolves to.
+ *
  * @since 0.3.16-canary.0
  */
 export interface BindToBuilder<Value> {
@@ -384,6 +410,8 @@ export interface BindToBuilder<Value> {
 }
 
 /**
+ * The scope-selection step of the fluent chain.
+ *
  * @since 0.3.16-canary.0
  */
 export interface BindingBuilder<Value> extends SlotConstrainedBuilder {
@@ -393,6 +421,8 @@ export interface BindingBuilder<Value> extends SlotConstrainedBuilder {
 }
 
 /**
+ * The fluent chain for a constant — lifecycle hooks only, since the scope is fixed.
+ *
  * @since 0.3.16-canary.0
  */
 export interface ConstantBindingBuilder<Value> extends SlotConstrainedBuilder {
@@ -401,11 +431,15 @@ export interface ConstantBindingBuilder<Value> extends SlotConstrainedBuilder {
 }
 
 /**
+ * The fluent chain for an alias — slot constraints only, since scoping belongs to the target.
+ *
  * @since 0.3.16-canary.0
  */
 export interface AliasBindingBuilder extends SlotConstrainedBuilder {}
 
 /**
+ * The fluent chain after `singleton()`, where both lifecycle hooks stay available.
+ *
  * @since 0.3.16-canary.0
  */
 export interface SingletonBindingBuilder<Value> {
@@ -415,6 +449,8 @@ export interface SingletonBindingBuilder<Value> {
 }
 
 /**
+ * The fluent chain after `transient()`, where activation is the one lifecycle hook offered.
+ *
  * @since 0.3.16-canary.0
  */
 export interface TransientBindingBuilder<Value> {
@@ -423,11 +459,15 @@ export interface TransientBindingBuilder<Value> {
 }
 
 /**
+ * The fluent chain after `scoped()`, sharing the `transient()` surface.
+ *
  * @since 0.3.16-canary.0
  */
 export interface ScopedBindingBuilder<Value> extends TransientBindingBuilder<Value> {}
 
 /**
+ * The fluent chain a constant enters once a lifecycle hook is added.
+ *
  * @since 0.3.16-canary.0
  */
 export interface SingletonLifecycleBuilder<Value> {
