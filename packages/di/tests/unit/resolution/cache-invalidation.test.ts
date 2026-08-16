@@ -350,6 +350,19 @@ describe("the tagged-lookup memo", () => {
     expect(container.resolve(configToken, { tag: Env.of("prod") })).toBe(11);
   });
 
+  it("two criteria alternating on one child stay correct as the memo's map fills", () => {
+    const configToken = token<number>("config");
+    const root = Container.create();
+    root.bind(configToken).toConstantValue(1).whenTagged(Env.of("prod"));
+    root.bind(configToken).toConstantValue(2).whenTagged(Env.of("dev"));
+    const child = root.createChild();
+
+    for (let index = 0; index < WARM_ITERATIONS; index += 1) {
+      expect(child.resolve(configToken, { tag: Env.of("prod") })).toBe(1);
+      expect(child.resolve(configToken, { tag: Env.of("dev") })).toBe(2);
+    }
+  });
+
   it("a warmed +0 criterion does not answer a -0 request", () => {
     const configToken = token<number>("config");
     const container = Container.create();
