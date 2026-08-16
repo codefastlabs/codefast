@@ -133,9 +133,61 @@ function buildMultiTagConstraintResolveScenario(): BenchScenario {
   };
 }
 
+// ── scenario 3: multi-tag selection at scale ──────────────────────────────────
+
+const MULTI_TAG_SELECT_BATCH = 300;
+const SELECT_ENV_COUNT = 8;
+const SELECT_TIER_COUNT = 4;
+
+const selectServiceToken = token<SlottedService>("bench-cf-mt-select-service");
+
+/** The 4-variant row prices the matching loop; this one prices selection over a wide variant set. */
+function buildMultiTagSelectAtScaleScenario(): BenchScenario {
+  const container = Container.create();
+
+  for (let envIndex = 0; envIndex < SELECT_ENV_COUNT; envIndex++) {
+    for (let tierIndex = 0; tierIndex < SELECT_TIER_COUNT; tierIndex++) {
+      container
+        .bind(selectServiceToken)
+        .toConstantValue({ env: `env-${String(envIndex)}`, tier: `tier-${String(tierIndex)}` })
+        .whenTagged(ENV_TAG.of(`env-${String(envIndex)}`))
+        .whenTagged(TIER_TAG.of(`tier-${String(tierIndex)}`));
+    }
+  }
+
+  const variantCount = SELECT_ENV_COUNT * SELECT_TIER_COUNT;
+  const targetTags: ReadonlyArray<BindingTag> = [
+    ENV_TAG.of(`env-${String(SELECT_ENV_COUNT - 1)}`),
+    TIER_TAG.of(`tier-${String(SELECT_TIER_COUNT - 1)}`),
+  ];
+
+  container.resolve(selectServiceToken, { tags: targetTags });
+
+  return {
+    id: `multi-tag-select-${String(variantCount)}`,
+    group: "micro",
+    what: `resolve(token, { tags }) selecting one of ${String(variantCount)} two-tag variants under one token (codefast-only)`,
+    batch: MULTI_TAG_SELECT_BATCH,
+    sanity: () => {
+      const result = container.resolve(selectServiceToken, { tags: targetTags });
+      return (
+        result.env === `env-${String(SELECT_ENV_COUNT - 1)}` && result.tier === `tier-${String(SELECT_TIER_COUNT - 1)}`
+      );
+    },
+    build: () =>
+      batched(MULTI_TAG_SELECT_BATCH, () => {
+        container.resolve(selectServiceToken, { tags: targetTags });
+      }),
+  };
+}
+
 /**
  * @since 0.3.16-canary.0
  */
 export function buildCodefastMultiTagScenarios(): ReadonlyArray<BenchScenario> {
-  return [buildMultiTagSlotResolveScenario(), buildMultiTagConstraintResolveScenario()];
+  return [
+    buildMultiTagSlotResolveScenario(),
+    buildMultiTagConstraintResolveScenario(),
+    buildMultiTagSelectAtScaleScenario(),
+  ];
 }
