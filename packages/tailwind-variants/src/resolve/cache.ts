@@ -18,7 +18,7 @@ export interface ResolutionCache<Value> {
 }
 
 /**
- * Create a cache for one resolver.
+ * Creates a cache for one resolver.
  */
 export const createResolutionCache = <Value>(): ResolutionCache<Value> => {
   let current = new Map<number | string, Value>();

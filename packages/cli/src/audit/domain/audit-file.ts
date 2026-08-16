@@ -31,7 +31,7 @@ export function hasRtlCompanion(fileTokens: ReadonlyArray<RtlClassToken>, expect
 }
 
 /**
- * Detect physical-direction Tailwind classes that should be logical or rtl:-paired.
+ * Detects physical-direction Tailwind classes that should be logical or rtl:-paired.
  *
  * @since 1.0.0-canary.7
  */

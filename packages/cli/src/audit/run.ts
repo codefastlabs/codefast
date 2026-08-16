@@ -9,7 +9,7 @@ import { err, ok } from "#/core/result";
 import { walkTsxFiles } from "#/core/workspace/typescript-walk";
 
 /**
- * Scan a target path for physical-direction Tailwind class violations.
+ * Scans a target path for physical-direction Tailwind class violations.
  *
  * @since 1.0.0-canary.7
  */

@@ -4,7 +4,7 @@ import { defineConfig } from "vitest/config";
 /**
  * DI: Node + Stage 3 decorators.
  *
- * Test taxonomy (see TESTING.md):
+ * Test taxonomy:
  *   tests/unit/**         — isolated unit tests
  *   tests/integration/**  — multi-module decorator/lifecycle integration; the
  *                           accessor-e2e.script.ts subprocess it drives is a SUPPORT

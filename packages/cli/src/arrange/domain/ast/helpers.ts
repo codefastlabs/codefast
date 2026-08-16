@@ -50,7 +50,7 @@ function moduleLooksLikeCnTvReexport(moduleSpecifier: string): boolean {
 }
 
 /**
- * Build a set of local binding names that are imported from a known cn/tv
+ * Builds a set of local binding names that are imported from a known cn/tv
  * module in `sourceFile`.
  *
  * @since 0.3.16-canary.0

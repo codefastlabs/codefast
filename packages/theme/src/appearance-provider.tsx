@@ -62,7 +62,7 @@ function createAppearanceChannel(): BroadcastChannel | null {
 }
 
 /**
- * Read + validate the persisted preference from localStorage. Returns null when unavailable
+ * Reads and validates the persisted preference from localStorage. Returns null when unavailable
  * (SSR, private mode) or when the stored value is not a recognised appearance.
  */
 function readAppearanceFromStorage(storageKey: string): Appearance | null {

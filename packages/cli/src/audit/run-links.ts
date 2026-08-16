@@ -9,7 +9,7 @@ import { err, ok } from "#/core/result";
 import { walkMarkdownFiles } from "#/core/workspace/markdown-walk";
 
 /**
- * Report markdown links that point at nothing — a missing path, or an anchor the target does not offer.
+ * Reports markdown links that point at nothing — a missing path, or an anchor the target does not offer.
  *
  * @since 0.5.0
  */

@@ -1,7 +1,7 @@
 import type { RtlClassToken } from "#/audit/domain/types";
 
 /**
- * Split a class token into [variant, value, modifier], colon/slash-aware of
+ * Splits a class token into [variant, value, modifier], colon/slash-aware of
  * brackets and parens (arbitrary values like data-[side=left] or calc(...)).
  *
  * @since 1.0.0-canary.7
@@ -47,7 +47,7 @@ export function splitClassName(token: string): [string | null, string, string | 
 }
 
 /**
- * Extract string/template literal contents with their line numbers.
+ * Extracts string/template literal contents with their line numbers.
  *
  * @since 1.0.0-canary.7
  */

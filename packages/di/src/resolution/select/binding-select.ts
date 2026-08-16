@@ -5,7 +5,7 @@ import type { ConstraintContext, ResolveOptions } from "#/core/types";
 import { AmbiguousBindingError } from "#/errors/errors";
 
 /**
- * Select a single candidate from a list of bindings using slot matching + predicates.
+ * Selects a single candidate from a list of bindings using slot matching + predicates.
  * Returns undefined if no match, throws AmbiguousBindingError if multiple match.
  *
  * @since 0.3.16-canary.0
@@ -70,7 +70,7 @@ function mostSpecificByTagCount(candidates: ReadonlyArray<Binding>): Binding | u
 }
 
 /**
- * Select all candidates matching options + predicates.
+ * Selects all candidates matching options + predicates.
  *
  * @since 0.3.16-canary.0
  */

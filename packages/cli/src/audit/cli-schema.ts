@@ -73,7 +73,7 @@ export const commentAuditRunRequestSchema: z.ZodType<CommentAuditRunRequest> = z
 });
 
 /**
- * Resolve a path that may be absolute or relative to `rootDir`.
+ * Resolves a path that may be absolute or relative to `rootDir`.
  *
  * @since 1.0.0-canary.7
  */

@@ -3,7 +3,7 @@ import { defineConfig } from "vitest/config";
 /**
  * tailwind-variants: pure Node; tests under `tests/`, implementation under `src/`.
  *
- * Test taxonomy (see TESTING.md):
+ * Test taxonomy:
  *   tests/unit/**         — runtime unit tests
  *   tests/integration/**  — pre-wired (none yet)
  *   tests/e2e/**          — pre-wired (none yet)

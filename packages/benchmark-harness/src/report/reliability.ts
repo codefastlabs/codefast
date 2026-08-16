@@ -5,7 +5,7 @@
  *
  * @remarks
  * A per-row IQR measures spread within one run and cannot see this, so it must not be
- * read as a confidence signal on its own. See `benchmarks/di-inversify/RESULTS.md`.
+ * read as a confidence signal on its own; cross-run spread lives in the suite's results ledger.
  *
  * @since 0.5.0-canary.9
  */

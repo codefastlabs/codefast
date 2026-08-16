@@ -48,7 +48,7 @@ export class BindingRegistry {
   }
 
   /**
-   * Add or replace binding using slot-aware last-wins. Returns the displaced binding, if any.
+   * Adds or replaces a binding using slot-aware last-wins. Returns the displaced binding, if any.
    *
    * @remarks The binding is stored by reference — it must come from `createBinding`, which is
    * what guarantees the single hidden class the resolver's hot reads depend on.

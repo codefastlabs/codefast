@@ -18,7 +18,7 @@ export type RtlAuditCommandPrelude = {
 };
 
 /**
- * Load config and resolve the scan target for `audit rtl`.
+ * Loads config and resolves the scan target for `audit rtl`.
  *
  * @since 1.0.0-canary.7
  */
@@ -72,7 +72,7 @@ export async function prepareRtlAudit(
 }
 
 /**
- * Load config and resolve the scan target for `audit links`.
+ * Loads config and resolves the scan target for `audit links`.
  *
  * @remarks Defaults to the repo root rather than a configured path: a link audit that only covers one
  * package cannot see the cross-package references that are the ones most likely to rot.
@@ -113,7 +113,7 @@ export async function prepareLinkAudit(
 }
 
 /**
- * Load config and resolve the scan target for `audit comments`.
+ * Loads config and resolves the scan target for `audit comments`.
  *
  * @remarks Defaults to the repo root: a divider convention that only holds inside one package
  * is not a convention.

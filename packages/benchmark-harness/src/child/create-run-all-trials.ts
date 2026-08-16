@@ -13,7 +13,7 @@ import {
 import type { ScenarioTrialResult, TrialPayload } from "#/shared/protocol";
 
 /**
- * Keep GC sampling in full mode, but reduce forced collection pressure so
+ * Keeps GC sampling in full mode, but reduces forced collection pressure so
  * long-running suites do not balloon due to GC-heavy beforeEach hooks.
  */
 const FULL_MODE_SAMPLE_GC_STRIDE = 100;

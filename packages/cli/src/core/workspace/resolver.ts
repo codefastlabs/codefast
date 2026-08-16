@@ -10,7 +10,7 @@ import { createAnyGlobMatcher } from "#/core/glob";
 import { logger } from "#/core/logger";
 
 /**
- * Resolve the monorepo root (directory containing `pnpm-workspace.yaml`).
+ * Resolves the monorepo root (directory containing `pnpm-workspace.yaml`).
  *
  * @since 0.3.16-canary.0
  */

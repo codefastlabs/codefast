@@ -461,7 +461,7 @@ function describeBindings(container: Container): Array<BindingInfo> {
 }
 
 /**
- * Run one operation inside a fresh per-request child container. Singletons (repository, activity
+ * Runs one operation inside a fresh per-request child container. Singletons (repository, activity
  * log) stay on the root; each request gets its own `RequestContext` and `TaskService`. The child is
  * disposed (async) once the request is handled, firing the service's `@preDestroy` hook.
  */

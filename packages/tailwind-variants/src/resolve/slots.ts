@@ -245,7 +245,7 @@ const resolveSlot = (
 };
 
 /**
- * Create one class resolver per slot, sharing a single resolution of the variant props.
+ * Creates one class resolver per slot, sharing a single resolution of the variant props.
  *
  * @since 0.3.16-canary.0
  */

@@ -4,7 +4,7 @@ import { defineConfig } from "vitest/config";
 /**
  * Theme: React + jsdom; global browser mocks live in vitest.setup.ts.
  *
- * Test taxonomy (see TESTING.md):
+ * Test taxonomy:
  *   tests/unit/**         — unit tests (currently the only category in use)
  *   tests/integration/**  — pre-wired (none yet)
  *   tests/e2e/**          — pre-wired (none yet)

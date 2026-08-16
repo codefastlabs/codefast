@@ -129,7 +129,7 @@ function collectTvArrayEdits(
 // ── Public collector ─────────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
- * Collect all simplify edits for a source file:
+ * Collects all simplify edits for a source file:
  * - Arrays of pure string literals inside tv() slots → flat string
  * - cn() calls whose every argument is a static string literal → flat string (unwrap cn)
  * - cn() calls with mixed static + dynamic args → merge adjacent statics into one string

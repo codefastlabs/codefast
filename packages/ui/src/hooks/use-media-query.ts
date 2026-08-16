@@ -58,7 +58,7 @@ export function useMediaQuery(query: string): boolean {
     mediaQueryList.addEventListener("change", onChange);
 
     /**
-     * Remove the event listener on unmount or when the query changes.
+     * Removes the event listener on unmount or when the query changes.
      */
     return (): void => {
       mediaQueryList.removeEventListener("change", onChange);

@@ -8,7 +8,7 @@ import type { VariantPlan } from "#/compile/plan";
 import type { ClassValue } from "#/types";
 
 /**
- * Resolve classes for a configuration without slots, appending `customClasses` last so the
+ * Resolves classes for a configuration without slots, appending `customClasses` last so the
  * caller's `className`/`class` outranks the configuration.
  *
  * @remarks Such a configuration compiles every class value to a string, so the plan's per-slot form

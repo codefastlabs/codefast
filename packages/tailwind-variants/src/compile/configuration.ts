@@ -44,7 +44,7 @@ export const hasExtendConfig = <Variants extends VariantSchema, Slots extends Sl
 };
 
 /**
- * Merge one variant group over another, where two slot maps for the same value combine per slot
+ * Merges one variant group over another, where two slot maps for the same value combine per slot
  * and anything else is replaced outright.
  *
  * @since 0.3.16-canary.0

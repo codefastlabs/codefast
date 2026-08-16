@@ -1,5 +1,5 @@
 /**
- * Merge flags passed explicitly to `tv` so behaviour does not depend on package defaults.
+ * Merges flags passed explicitly to `tv` so behaviour does not depend on package defaults.
  *
  * @since 0.3.16-canary.0
  */

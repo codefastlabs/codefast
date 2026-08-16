@@ -50,7 +50,7 @@ export interface DividerRegion {
 }
 
 /**
- * Render a divider in the canonical form.
+ * Renders a divider in the canonical form.
  *
  * @param title - the section name, already trimmed
  */
@@ -86,7 +86,7 @@ export function scanCommentDividers(content: string, language: DividerLanguage):
 }
 
 /**
- * Rewrite every off-convention divider into the canonical form.
+ * Rewrites every off-convention divider into the canonical form.
  */
 export function applyCommentDividerFixes(
   content: string,

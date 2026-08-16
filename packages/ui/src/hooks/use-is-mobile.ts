@@ -1,7 +1,7 @@
 import { useMediaQuery } from "#/hooks/use-media-query";
 
 /**
- * Determine whether the current viewport should be treated as mobile.
+ * Determines whether the current viewport should be treated as mobile.
  *
  * Uses {@link useMediaQuery} to evaluate a max-width media query derived from the
  * provided breakpoint. By default, widths below 768px are considered mobile.

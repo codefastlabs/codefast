@@ -243,7 +243,7 @@ export interface GenerateExportsOptions {
 }
 
 /**
- * Compute `package.json#exports` from a built `dist/` tree. No logging; no writes.
+ * Computes `package.json#exports` from a built `dist/` tree. No logging; no writes.
  *
  * @since 0.3.16-canary.0
  */

@@ -272,7 +272,7 @@ export class BindingChain<Value>
   // ── Registry ───────────────────────────────────────────────────────────────────────────────────────────────────────
 
   /**
-   * Register `binding`, first removing `previousId` when the chain is re-slotting.
+   * Registers `binding`, first removing `previousId` when the chain is re-slotting.
    *
    * @remarks A `when*()` that follows `to*()` re-slots an already-live binding and can displace one
    * the final shape would never conflict with. Those stay parked in `#displacedByChain` until the

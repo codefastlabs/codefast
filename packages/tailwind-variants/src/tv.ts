@@ -56,7 +56,7 @@ const toCustomClassKey = (customClasses: ClassValue): string | null => {
 };
 
 /**
- * Create a class resolver for a component without slots.
+ * Creates a class resolver for a component without slots.
  *
  * @since 0.3.16-canary.0
  */
@@ -66,7 +66,7 @@ export function tv<Variants extends VariantSchema = Record<never, never>>(
 ): VariantResolver<Variants, Record<string, never>>;
 
 /**
- * Create a class resolver for a component whose slots carry all of its styling.
+ * Creates a class resolver for a component whose slots carry all of its styling.
  *
  * @since 0.3.16-canary.0
  */
@@ -76,7 +76,7 @@ export function tv<Slots extends SlotSchema>(
 ): VariantResolver<Record<string, never>, Slots>;
 
 /**
- * Create a class resolver for a component with both variants and slots.
+ * Creates a class resolver for a component with both variants and slots.
  *
  * @since 0.3.16-canary.0
  */
@@ -86,7 +86,7 @@ export function tv<Variants extends VariantSchema, Slots extends SlotSchema>(
 ): VariantResolver<Variants, Slots>;
 
 /**
- * Create a class resolver that extends another resolver's configuration.
+ * Creates a class resolver that extends another resolver's configuration.
  *
  * @since 0.3.16-canary.0
  */
@@ -224,7 +224,7 @@ export function tv<Variants extends VariantSchema, Slots extends SlotSchema>(
 }
 
 /**
- * Create a `tv` and a `cn` that share one set of options, so components need not repeat them.
+ * Creates a `tv` and a `cn` that share one set of options, so components need not repeat them.
  *
  * @since 0.3.16-canary.0
  */
@@ -232,25 +232,25 @@ export function createTV(globalConfiguration: TailwindVariantsOptions = {}): Tai
   const { twMerge: shouldMergeClasses = true, twMergeConfig } = globalConfiguration;
   const tailwindMergeFn = createTailwindMergeFn(twMergeConfig);
 
-  /** Create a class resolver for a component without slots. */
+  /** Creates a class resolver for a component without slots. */
   function tvFactory<Variants extends VariantSchema = Record<never, never>>(
     configuration: VariantConfig<Variants>,
     localConfiguration?: TailwindVariantsOptions,
   ): VariantResolver<Variants, Record<string, never>>;
 
-  /** Create a class resolver for a component whose slots carry all of its styling. */
+  /** Creates a class resolver for a component whose slots carry all of its styling. */
   function tvFactory<Slots extends SlotSchema>(
     configuration: SlotVariantConfig<Record<string, never>, Slots>,
     localConfiguration?: TailwindVariantsOptions,
   ): VariantResolver<Record<string, never>, Slots>;
 
-  /** Create a class resolver for a component with both variants and slots. */
+  /** Creates a class resolver for a component with both variants and slots. */
   function tvFactory<Variants extends VariantSchema, Slots extends SlotSchema>(
     configuration: SlotVariantConfig<Variants, Slots>,
     localConfiguration?: TailwindVariantsOptions,
   ): VariantResolver<Variants, Slots>;
 
-  /** Create a class resolver that extends another resolver's configuration. */
+  /** Creates a class resolver that extends another resolver's configuration. */
   function tvFactory<
     BaseVariants extends VariantSchema,
     ExtensionVariants extends VariantSchema,
