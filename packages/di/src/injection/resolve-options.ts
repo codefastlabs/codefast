@@ -93,6 +93,8 @@ interface SlotWithMemoizedOptions {
  *
  * @remarks A slot carrying no criterion answers from its two fields, so the common shape never
  * reaches the memo.
+ *
+ * @since 0.6.0
  */
 export function resolveOptionsForSlot(injectionSlot: DependencySlot): ResolveOptions | undefined {
   const { name, tags } = injectionSlot;

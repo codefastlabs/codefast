@@ -15,6 +15,8 @@ import {
  *
  * @remarks Bumped whenever a field changes meaning or leaves — run directories are kept for
  * historical comparison, and a silently reinterpreted field is the failure this exists to prevent.
+ *
+ * @since 0.6.0
  */
 export const COMPARISON_DOCUMENT_SCHEMA_VERSION = 2;
 
@@ -23,6 +25,8 @@ export const COMPARISON_DOCUMENT_SCHEMA_VERSION = 2;
  *
  * @remarks Without this a filtered run is indistinguishable from a whole suite except by row count,
  * which only helps a reader who already knows how many rows the suite has.
+ *
+ * @since 0.6.0
  */
 export interface ComparisonDocumentRun {
   /** Basename of this run's directory — the exact key joining a `latest.*` mirror to its run. */
@@ -46,6 +50,8 @@ export interface ComparisonDocumentRun {
 
 /**
  * What a suite has to supply; the rest of {@link ComparisonDocumentRun} comes from the environment.
+ *
+ * @since 0.6.0
  */
 export interface ComparisonDocumentRunInput {
   readonly runId: string;
@@ -56,6 +62,8 @@ export interface ComparisonDocumentRunInput {
 
 /**
  * Machine and runtime the whole run shared.
+ *
+ * @since 0.6.0
  */
 export interface ComparisonDocumentEnvironment {
   readonly nodeVersion: string;
@@ -71,6 +79,8 @@ export interface ComparisonDocumentEnvironment {
 
 /**
  * One library that took part, at the version it was measured at.
+ *
+ * @since 0.6.0
  */
 export interface ComparisonDocumentLibrary {
   readonly libraryName: string;
@@ -85,6 +95,8 @@ export interface ComparisonDocumentLibrary {
  *
  * @remarks The markdown report spends these as `†`/`‡` glyphs against thresholds only the renderer
  * knows; here they are booleans, so a reader never has to reproduce a threshold to filter on it.
+ *
+ * @since 0.6.0
  */
 export interface ComparisonDocumentCell {
   readonly displayName: string;
@@ -98,6 +110,8 @@ export interface ComparisonDocumentCell {
 
 /**
  * One scenario row at full precision, as opposed to the markdown table's rounded figures.
+ *
+ * @since 0.6.0
  */
 export interface ComparisonDocumentScenario {
   readonly id: string;
@@ -118,6 +132,8 @@ export interface ComparisonDocumentScenario {
  *
  * @remarks Every figure here already existed on the way to `report.md`; the markdown keeps only a
  * rounded, glyph-annotated projection of it, which is lossy for a ratio and awkward to read back.
+ *
+ * @since 0.6.0
  */
 export interface ComparisonDocument {
   readonly schemaVersion: number;
@@ -145,6 +161,8 @@ function toDocumentLibrary(library: ComparisonLibrary): ComparisonDocumentLibrar
  * @param pivot - The suite's subject; its fingerprint stamps the document.
  * @param competitors - Every other measured library, in report order.
  * @param run - Identity and scheduling the parent knows; the profile and filter come from the env.
+ *
+ * @since 0.6.0
  */
 export function buildComparisonDocument(
   pivot: ComparisonLibrary,

@@ -11,6 +11,8 @@ const GENERATION_LIMIT = 128;
 
 /**
  * A store whose values are never `undefined`, so a miss and a stored value stay distinguishable.
+ *
+ * @since 0.6.0
  */
 export interface ResolutionCache<Value> {
   get: (key: number | string) => Value | undefined;
@@ -19,6 +21,8 @@ export interface ResolutionCache<Value> {
 
 /**
  * Creates a cache for one resolver.
+ *
+ * @since 0.6.0
  */
 export const createResolutionCache = <Value>(): ResolutionCache<Value> => {
   let current = new Map<number | string, Value>();

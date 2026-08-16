@@ -96,6 +96,8 @@ export function formatLinkAuditJsonOutput(result: LinkAuditResult, rootDir: stri
 
 /**
  * Exit `1` when any non-allowlisted divider still breaks the convention.
+ *
+ * @since 0.6.0
  */
 export function exitCodeForCommentAuditResult(result: CommentAuditResult): number {
   return result.breakageCount > 0 ? CLI_EXIT_GENERAL_ERROR : CLI_EXIT_SUCCESS;
@@ -103,6 +105,8 @@ export function exitCodeForCommentAuditResult(result: CommentAuditResult): numbe
 
 /**
  * Human-readable comment-divider report.
+ *
+ * @since 0.6.0
  */
 export function presentCommentAuditResult(result: CommentAuditResult): void {
   for (const file of result.files) {
@@ -128,6 +132,8 @@ export function presentCommentAuditResult(result: CommentAuditResult): void {
 
 /**
  * Machine-readable comment-divider summary for `--json`.
+ *
+ * @since 0.6.0
  */
 export function formatCommentAuditJsonOutput(result: CommentAuditResult, rootDir: string): string {
   return JSON.stringify({

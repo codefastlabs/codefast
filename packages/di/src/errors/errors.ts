@@ -164,6 +164,8 @@ export class ScopeViolationError extends DiError {
  * @remarks Reported where the list is passed rather than where it fails to match, because it does
  * not fail to match — "carries all of no criteria" holds for any ancestor, so the constraint quietly
  * becomes a weaker one that still outranks an unconstrained binding.
+ *
+ * @since 0.6.0
  */
 export class EmptyTagCriteriaError extends DiError {
   readonly code = "EMPTY_TAG_CRITERIA";
@@ -183,6 +185,8 @@ export class EmptyTagCriteriaError extends DiError {
  * @remarks A name is a bare string, so a typo produces a constraint that is never satisfied and
  * never reported. Reported by `validate()` rather than at bind time, because the binding carrying
  * the name may be registered after the constraint is built.
+ *
+ * @since 0.6.0
  */
 export class UnreachableConstraintError extends DiError {
   readonly code = "UNREACHABLE_CONSTRAINT";
@@ -206,6 +210,8 @@ export class UnreachableConstraintError extends DiError {
  * @remarks Hooks are keyed by token identity, which makes a class that is only ever a `to()` target
  * look like a token and match nothing. Reported by `validate()` rather than at registration, because
  * binding after registering the hook is a supported order.
+ *
+ * @since 0.6.0
  */
 export class UnreachableLifecycleHookError extends DiError {
   readonly code = "UNREACHABLE_LIFECYCLE_HOOK";
@@ -227,6 +233,8 @@ export class UnreachableLifecycleHookError extends DiError {
  * @remarks Separate from {@link MissingMetadataError}: absent metadata is a class the container was
  * never told about, while invalid metadata is a reader that answered wrongly. Covers both the
  * constructor answer and the lifecycle one, since only the `reason` differs.
+ *
+ * @since 0.6.0
  */
 export class InvalidMetadataError extends DiError {
   readonly code = "INVALID_METADATA";
@@ -384,6 +392,8 @@ export class SelfBindingRequiresClassError extends DiError {
  * @remarks Instance-only by construction: `@inject` resolves through the container active while an
  * instance is built, and `@postConstruct`/`@preDestroy` bracket one instance's lifecycle. A static
  * member belongs to the class, which no container constructs.
+ *
+ * @since 0.6.0
  */
 export class StaticMemberDecoratorError extends DiError {
   readonly code = "STATIC_MEMBER_DECORATOR";

@@ -165,7 +165,11 @@ export function matchesSlot(slot: BindingSlot, options: ResolveOptions | undefin
   return true;
 }
 
-/** The key set a request covers, across both spellings the shorthand folds into one. */
+/**
+ * The key set a request covers, across both spellings the shorthand folds into one.
+ *
+ * @since 0.6.0
+ */
 export function requestedTagKeyMask(options: ResolveOptions | undefined): TagKeyMask {
   if (options === undefined) {
     return NO_TAG_KEYS;

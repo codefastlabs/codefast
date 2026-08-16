@@ -19,6 +19,8 @@ export function writeMarkdownFile(outputPath: string, markdown: string): void {
  *
  * @remarks Indented so a run directory stays diffable between runs, which is most of why the file
  * is written at all.
+ *
+ * @since 0.6.0
  */
 export function writeJsonFile(outputPath: string, value: unknown): void {
   mkdirSync(dirname(outputPath), { recursive: true });

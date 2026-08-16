@@ -138,6 +138,8 @@ export type CodefastAuditLinksConfig = z.infer<typeof codefastAuditLinksConfigSc
 
 /**
  * Comment-divider audit defaults — the scan always starts at the repo root, so only exceptions are configured.
+ *
+ * @since 0.6.0
  */
 export const codefastAuditCommentsConfigSchema = z
   .object({
@@ -148,6 +150,8 @@ export const codefastAuditCommentsConfigSchema = z
 
 /**
  * @see codefastAuditCommentsConfigSchema
+ *
+ * @since 0.6.0
  */
 export type CodefastAuditCommentsConfig = z.infer<typeof codefastAuditCommentsConfigSchema>;
 

@@ -132,6 +132,9 @@ function buildAliasCycleDetectedScenario(): BenchScenario {
   };
 }
 
+/**
+ * @since 0.6.0
+ */
 export function buildCodefastAliasScenarios(): ReadonlyArray<BenchScenario> {
   return [buildAliasChainScenario(), buildAliasParentOwnedTerminalScenario(), buildAliasCycleDetectedScenario()];
 }

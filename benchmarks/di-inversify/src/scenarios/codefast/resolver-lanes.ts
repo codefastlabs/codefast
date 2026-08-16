@@ -97,6 +97,9 @@ function buildAccessorInjectionScenario(): BenchScenario {
   };
 }
 
+/**
+ * @since 0.6.0
+ */
 export function buildCodefastResolverLaneScenarios(): ReadonlyArray<BenchScenario> {
   return [
     buildFactoryResolveScenario(NESTED_CONTEXT_RESOLVE, false),

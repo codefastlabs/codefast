@@ -7,6 +7,8 @@ import type { Fingerprint, TrialPayload } from "#/shared/protocol";
 
 /**
  * Where one run's artifacts go: a timestamped directory, mirrored to stable `latest.*` names.
+ *
+ * @since 0.6.0
  */
 export interface BenchRunOutputPaths {
   /** Run-directory basename, carried into the document so a `latest.*` mirror joins back exactly. */
@@ -25,6 +27,8 @@ export interface BenchRunOutputPaths {
  *
  * @remarks Every run is date-stamped so historical comparisons are never clobbered; the `latest.*`
  * mirror gives CI and cross-run tooling a stable filename to diff against.
+ *
+ * @since 0.6.0
  */
 export function buildBenchRunOutputPaths(packageRootDirectory: string): BenchRunOutputPaths {
   // One stamp for the directory name and the document, so the two cannot disagree — the fingerprint's
@@ -47,6 +51,8 @@ export function buildBenchRunOutputPaths(packageRootDirectory: string): BenchRun
 /**
  * @remarks `comparisonDocument` is the same comparison `markdown` renders — the markdown rounds every
  * ratio and spends its reliability verdicts as glyphs, so it does not read back.
+ *
+ * @since 0.6.0
  */
 export interface WriteBenchRunArtifactsParameters {
   readonly paths: BenchRunOutputPaths;
@@ -65,6 +71,8 @@ export interface WriteBenchRunArtifactsParameters {
  * @remarks A narrowed run does not mirror. `latest.*` is what CI diffs and what a published figure is
  * checked against, so it has to mean the whole suite — a run filtered to a row or two would overwrite
  * it with something that looks complete and is not.
+ *
+ * @since 0.6.0
  */
 export function writeBenchRunArtifacts(parameters: WriteBenchRunArtifactsParameters): void {
   const { paths, markdown, comparisonDocument, librariesForJsonl } = parameters;

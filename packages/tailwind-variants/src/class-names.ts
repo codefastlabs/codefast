@@ -57,6 +57,8 @@ const flattenClassValue = (value: ClassValue): string => {
 
 /**
  * Flatten every class value a caller passed, dropping the ones that contribute nothing.
+ *
+ * @since 0.6.0
  */
 export const flattenClassValues = (classes: ReadonlyArray<ClassValue>): string => {
   let text = "";

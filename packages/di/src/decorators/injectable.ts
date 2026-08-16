@@ -71,6 +71,9 @@ export function injectable<const Deps extends ReadonlyArray<InjectableDependency
   options?: InjectableOptions,
 ): (target: abstract new (...args: InjectedParameters<Deps>) => unknown, context: ClassDecoratorContext) => void;
 
+/**
+ * @since 0.6.0
+ */
 export function injectable(
   deps?: ReadonlyArray<InjectableDependency>,
   options?: InjectableOptions,

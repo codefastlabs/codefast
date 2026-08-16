@@ -52,6 +52,8 @@ export const linkAuditRunRequestSchema: z.ZodType<LinkAuditRunRequest> = z.objec
 
 /**
  * Resolved request for a single comment-divider audit run.
+ *
+ * @since 0.6.0
  */
 export type CommentAuditRunRequest = {
   readonly rootDir: string;
@@ -63,6 +65,8 @@ export type CommentAuditRunRequest = {
 
 /**
  * Zod schema for {@link CommentAuditRunRequest}.
+ *
+ * @since 0.6.0
  */
 export const commentAuditRunRequestSchema: z.ZodType<CommentAuditRunRequest> = z.object({
   rootDir: z.string().min(1),

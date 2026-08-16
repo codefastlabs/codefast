@@ -404,6 +404,8 @@ export const CONTAINER_LEVEL_ACTIVATION_HOOK = {
  * @remarks
  * Shares `ACTIVATION_HOOK_BATCH` with the container-level row on purpose: the pair is only
  * readable side by side if the two dispatch lanes are measured at the same workload factor.
+ *
+ * @since 0.6.0
  */
 export const BINDING_LEVEL_ACTIVATION_HOOK = {
   id: "binding-level-activation-hook",

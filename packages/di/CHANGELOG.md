@@ -1,5 +1,620 @@
 # @codefast/di
 
+## 0.6.0
+
+### Minor Changes
+
+- [#727](https://github.com/codefastlabs/codefast/pull/727) [`9182664`](https://github.com/codefastlabs/codefast/commit/91826641f284ebf8e7bfcdbdcb3aaf73f77381cb) Thanks [@thevuong](https://github.com/thevuong)! - perf(di): compile statically-visible graphs entering resolveAsync into async plans
+
+  A transient `class`/`resolved`/`resolved-async` binding resolved by `resolveAsync` at a true root (no open cascade) now
+  compiles once into a plan, like the sync lane has always done — the graph is declared up front, so nothing about it
+  needs per-level bookkeeping. A fully synchronous subtree executes without touching a promise; nodes that may yield one
+  await their dependencies together, exactly as the interpreted path does (promise-valued constants unwrap, siblings start
+  before the first rejection propagates). `dynamic-async` factories stay opaque and keep the cascade lane. Escapes replay
+  the async dispatch seeded with the plan's ancestors, so cycles, criteria and hooks behave as if nothing had compiled.
+  Diagnostics gain `compiledAsyncPlanCount`.
+
+- [#690](https://github.com/codefastlabs/codefast/pull/690) [`ed1387c`](https://github.com/codefastlabs/codefast/commit/ed1387c7be719ece9a271993834dd23347b5bf6e) Thanks [@thevuong](https://github.com/thevuong)! - Fix `toResolved` bindings on the async path, and tighten the type surface.
+
+  `bind(T).toResolved(factory, deps)` threw `InternalError: resolved binding requires resolution context` from every async
+  entry point — `resolveAsync`, `resolveAllAsync`, `resolveOptionalAsync`, and any `toDynamicAsync` factory awaiting one.
+  `requiresResolutionContext()` answers only for the two factory kinds that are handed a context, so a `resolved` binding
+  legitimately arrives with none; the guard that rejected it never read the context it demanded. The sync lane never had
+  it.
+
+  Type-surface changes, all verified type-identical or strictly wider:
+
+  - Optional properties on the public option bags — `ResolveOptions`, `InjectOptions`, `InjectableOptions`, `GraphOptions`
+    — are now `?: T | undefined`. Under `exactOptionalPropertyTypes` the old `?: T` rejected a caller holding
+    `T | undefined`, which is the shape a real call site has.
+  - `BindingConstraint` is exported: the `(ctx: ConstraintContext) => boolean` that `when()` takes and every `when*`
+    helper returns now has a name instead of fourteen inline spellings.
+  - `ParamMetadata` and `InjectionDescriptor` extend `DependencySlot`, and the dependency-graph builder uses it directly,
+    so the one shape both dependency sources normalise to is enforced by the compiler rather than by four declarations
+    that happened to match.
+  - `PartialBinding` is derived from `Binding` by a distributive `Omit`, so a new binding kind cannot join one union and
+    miss the other.
+  - The inert `const` modifier is gone from type parameters inferred from a token rather than a literal; the four on
+    `toResolved`/`toResolvedAsync`, where `deps` is an array literal, stay.
+
+- [#703](https://github.com/codefastlabs/codefast/pull/703) [`4ceccf2`](https://github.com/codefastlabs/codefast/commit/4ceccf2656ca626215093b85c4111ef8e195c1fd) Thanks [@thevuong](https://github.com/thevuong)! - A chain's `when()` calls now narrow rather than replace. SPEC defines a candidate as a binding that passes **all** of a
+  chain's `when(ctx)` predicates, and §5.4 describes a binding as carrying "one or several constraints combined"; the
+  chain's type says the same by returning `this`. Only the implementation disagreed, and it did so silently — `#reslot`
+  overwrote the predicate field, so the first condition was discarded and never called.
+
+  The consequence was worse than a binding being more permissive than written. Specificity prefers a binding that carries
+  a predicate, so a discarded first condition made the constrained binding beat the default one:
+
+  ```ts
+  container
+    .bind(Logger)
+    .to(ConsoleLogger)
+    .when((ctx) => ctx.parent !== undefined) // never consulted
+    .when((ctx) => ctx.parent?.scope === "singleton");
+  ```
+
+  Nothing reported it — not at bind time, not at resolve time, not from `validate()`. A service that should have received
+  the default logger received the constrained one instead.
+
+  `whenTagged()` already accumulated, which is what made this a trap rather than a quirk: two adjacent methods with the
+  same chaining syntax and the same `this` return type, one combining and one replacing.
+
+  Binding-level `onActivation()` and `onDeactivation()` keep replacing. That reading is pinned by a test and is reasonable
+  for reconfiguring a chain held in a variable, even though the chained spelling reads as combination and the
+  container-level hooks accumulate. Changing it is a separate decision from this one.
+
+- [#708](https://github.com/codefastlabs/codefast/pull/708) [`957f438`](https://github.com/codefastlabs/codefast/commit/957f4385612d068162e82f134ec8d995e0819834) Thanks [@thevuong](https://github.com/thevuong)! - A compiled plan now settles a name-only dependency at compile time instead of escaping to the runtime for it. A
+  dependency escaped as soon as it carried any criterion, before anything tried to look it up — yet `whenNamed` writes the
+  binding's slot name rather than a predicate, so a name-only request is usually a plain hit in the registry's named
+  index, and that index is already memoized on the same registry version the plan cache is keyed on. Four named constants
+  injected into one class stop escaping and become four `() => value` thunks.
+
+  The row that measures exactly that shape, `slot-injected-name-compiled`, reads **4.06×** the previous build, paired and
+  alternating over twelve passes with every pass above 3.87×, while its interpreted twin and eleven control rows hold
+  parity. Allocation on the same shape falls from 1260 to 366 scavenges per 2M resolves — level with the criteria-free
+  plan of the same arity, so the compiled lane no longer allocates more than the interpreted path it exists to beat.
+
+  Selection is only baked in when it cannot depend on the resolution path: the candidate must carry no predicate and its
+  slot must match the request. A predicate reads the path, so it stays the runtime's to evaluate, and anything else — a
+  tag, a miss, an ambiguous name — escapes exactly as before.
+
+  `InstantiationPlanHost` gains `lookupPathIndependentNamedEntry`. **Breaking** for anything implementing that interface
+  directly, which the package exposes on the `./resolution/plan/instantiation-plan` subpath.
+
+- [#704](https://github.com/codefastlabs/codefast/pull/704) [`44dd4a3`](https://github.com/codefastlabs/codefast/commit/44dd4a3cfa886fdf43debc708d6ede9505d71ea5) Thanks [@thevuong](https://github.com/thevuong)! - `toConstantValue(...).onDeactivation(...)` now runs, and `validate()` reports a hook that can never run.
+
+  SPEC §3.4 names `toConstantValue` as one of the two things deactivation applies to ("treat as singleton"), and
+  `ConstantBindingBuilder` offers `onDeactivation` in the type. The hook was never called.
+
+  What made it hard to spot is that it worked whenever an activation hook happened to sit beside it:
+
+  ```ts
+  container
+    .bind(Pool)
+    .toConstantValue(pool)
+    .onDeactivation((p) => p.end()); // silent
+  container
+    .bind(Pool)
+    .toConstantValue(pool)
+    .onActivation((_ctx, p) => p) // unrelated
+    .onDeactivation((p) => p.end()); // now it fires
+  ```
+
+  The resolver's plain-constant fast path returns `binding.value` with no pipeline, and it decides that on activation
+  alone — but the step it skips is what records the binding as a cached singleton, and that recording is what teardown
+  iterates. An activation hook disables the fast path, so the deactivation starts working for a reason that has nothing to
+  do with it. `dispose()`, `unbind()`, `unbindAll()` and module `unload()` were all affected.
+
+  Teardown now finds a constant through the registry instead of relying on that recording. A container that has never held
+  a constant skips the sweep, so teardown cost is unchanged where there is nothing to find.
+
+  **A constant deactivates whether or not anything resolved it.** A singleton only exists after its first resolve, so an
+  unresolved one has nothing to deactivate; a constant is the opposite — the value is handed in at bind time and exists
+  from then on. Making the hook depend on whether someone happened to resolve it would make teardown depend on resolution
+  order. If the value was activated, the hook receives the activated value rather than the bound one.
+
+  ### `validate()` reports an unreachable hook
+
+  Container-level hooks are keyed by token identity, so a class used only as an implementation target matches nothing:
+
+  ```ts
+  container.bind(LoggerToken).to(ConsoleLogger);
+  container.onDeactivation(ConsoleLogger, (l) => l.flush()); // keyed by the class — never runs
+  ```
+
+  `validate()` now throws `UnreachableLifecycleHookError` when a container-level hook's token is bound in neither this
+  container nor any ancestor. Registering a hook before its binding stays valid — the check runs at `validate()`, not at
+  registration — and a hook for a parent-owned token is accepted, since the child resolves through it.
+
+  ### Not changed
+
+  `transient`, `scoped` and `toAlias` bindings still have no deactivation, and this is not a gap:
+  `TransientBindingBuilder`, `ScopedBindingBuilder` and `AliasBindingBuilder` do not expose `onDeactivation` at all, so
+  the compiler rejects it. They appear to accept one only under a runtime that skips type-checking.
+
+- [#706](https://github.com/codefastlabs/codefast/pull/706) [`8dfac73`](https://github.com/codefastlabs/codefast/commit/8dfac73fd4278c94bfe20f1554ce3f06c62445ac) Thanks [@thevuong](https://github.com/thevuong)! - Two constraints that could never hold are now reported instead of quietly resolving to the default binding.
+
+  `whenParentTaggedAll([])` reads as a requirement but matches every parent — "carries all of no criteria" is vacuously
+  true, so the constraint silently weakens to "has a parent at all", and specificity still ranks it above an unconstrained
+  binding. Both `…TaggedAll` helpers now throw `EmptyTagCriteriaError` at the call site. An empty list is what a filtered
+  array or an absent config produces, which is exactly when nobody is watching.
+
+  `whenParentNamed("typo")` waits on a bare string, so a misspelling produces a constraint nothing can satisfy, with no
+  error at bind time, at resolve time, or from `validate()`. The name helpers now record what they wait for on the
+  predicate itself, and `validate()` throws `UnreachableConstraintError` when no binding in the container or its ancestors
+  declares that slot name.
+
+  Neither touches resolution: the criteria check runs where the helper is called, and the name check runs inside
+  `validate()`. The requirement rides on the predicate under a symbol that resolution never reads.
+
+  One limit, stated because it is easy to assume otherwise: chaining `.when(whenParentNamed("x")).when(other)` composes a
+  new closure, and the requirement does not survive that. The constraint is still unreachable; `validate()` just cannot
+  see it.
+
+- [#681](https://github.com/codefastlabs/codefast/pull/681) [`4a29f20`](https://github.com/codefastlabs/codefast/commit/4a29f2086dd7ad8e9d3a1e429470776478af668c) Thanks [@thevuong](https://github.com/thevuong)! - A custom `MetadataReader` can now actually reach resolution, and the ambient container is public API:
+
+  - **`Container.create({ metadataReader })`** — new `ContainerOptions`. A container hands its reader to the resolver it
+    builds in its constructor, so a `MetadataReaderToken` binding on that same container was always too late: resolution
+    kept the decorator reader and any undecorated class threw `MissingMetadataError`, while
+    `validate()`/`inspect()`/`generateDependencyGraph()` re-read the token and honoured it — the two halves disagreed. The
+    option is in place before the resolver exists and is inherited by children; the binding path still works in its one
+    working shape (bound on a parent, used from a child).
+  - **One container, one reader.** That asymmetry is gone rather than documented: a container now answers every question —
+    resolve, `validate()`, `inspect()`, `generateDependencyGraph()`, `unbind*` — with the reader its resolver was built
+    with, so introspection cannot describe a class differently from how it is instantiated. As a side effect those paths
+    no longer re-scan the registry for `MetadataReaderToken` on every call.
+  - **`runWithContainer` / `getActiveContainer` are exported from the root entry**, alongside the metadata pieces needed
+    to write a reader without reaching for subpaths: `defaultMetadataReader`, `SymbolMetadataReader`, and the
+    `ConstructorMetadata` / `LifecycleMetadata` / `ParamMetadata` types. `toMermaidGraph` joins the other graph adapters
+    on the barrel.
+  - **A `MetadataReader`'s answer is verified, not trusted.** The seam returned `ConstructorMetadata` by cast, so a
+    hand-written reader that forgot `params` produced a bare `TypeError` from the plan compiler — no `code`, no class name
+    — while `validate()` passed the same container because its cold path defended with `?? []`. New `InvalidMetadataError`
+    names the class and the defect. A supplied reader is wrapped once at container construction so resolve, `validate()`
+    and `generateDependencyGraph()` all see verified answers; the decorator reader writes the metadata it later reads, so
+    a container that supplies none is left on the path it always took.
+  - **Fix: `MissingContainerContextError` named the accessor where it meant the class.** Constructing a class with
+    `@inject` accessors outside a container context reported `Class 'clock' … container.resolve(clock)` instead of the
+    class it was told to name (SPEC §7.5 already specified the class). The error now carries
+    `className: string | undefined` and `accessorName: string | symbol` instead of a single flattened `targetName`, and
+    phrases itself accordingly — the word "Class" leaves the sentence when there is no class to name. **Breaking:**
+    `targetName` is gone from this error.
+  - New examples `18-ambient-container` and `19-custom-metadata-reader`; SPEC §6.1, §6.11, §7.4 and §7.5 updated.
+
+- [#727](https://github.com/codefastlabs/codefast/pull/727) [`4d472a6`](https://github.com/codefastlabs/codefast/commit/4d472a68b5629f2fba034dae95f302c5db5cb437) Thanks [@thevuong](https://github.com/thevuong)! - fix(di)!: keep a factory's ctx on its own resolution path across a nested top-level resolve
+
+  The depth-indexed sync context pool reused a pooled context by resetting it onto whatever array pair the next
+  acquisition carried. A nested `container.resolve()` inside a factory mints its own path arrays and reaches the same
+  depth as the frame still holding that pooled context, so the outer factory's `ctx` was silently re-pointed at the nested
+  resolve's arrays — `ctx.resolve` then evaluated `when()` predicates against an empty ancestor chain and selected the
+  wrong binding, and `ctx.graph` reported an empty path. A pooled context is now reused only for the array pair it already
+  holds; a mismatch mints a fresh context, and only the resolver's two stable pairs may claim a pool slot.
+
+  Breaking (type/API surface, no behavioral change for correct programs):
+
+  - `ConstraintContext.currentResolveOptions` is now `Readonly<ResolveOptions>` — the object was already frozen at
+    runtime, so a write through it always threw; it is now a compile error.
+  - `ScopeManager.hasScoped`/`getScoped` are removed — dead since `readScoped` replaced the two-read shape.
+  - Diagnostics getters renamed for role: `BindingRegistry.isBuilt` → `isNamedIndexBuilt`/`isTaggedIndexBuilt` (the tagged
+    index was previously unobservable), `ScopeManager.isBuilt` → `isScopedCacheBuilt`, `LifecycleManager.isBuilt` →
+    `isActivationTableBuilt`. `builtSubsystems` now also reports `registry.taggedIndex`.
+  - `TagKeyMask` is exported from the package root.
+
+- [#680](https://github.com/codefastlabs/codefast/pull/680) [`c415c6b`](https://github.com/codefastlabs/codefast/commit/c415c6bd9466421419fd7d97445fb29f76257d95) Thanks [@thevuong](https://github.com/thevuong)! - `generateDependencyGraph` now tells the whole wiring story instead of an approximation of it:
+
+  - **Optional dependencies are visible.** A bound optional dependency's edge carries an `optional` label; an unbound one
+    now points at an `unbound:<token>` placeholder node (`kind`/`scope`: `"unbound"`) instead of silently disappearing —
+    "optional and absent" is no longer indistinguishable from "not a dependency".
+  - **Multi-bindings fan out.** An `injectAll(...)` dependency draws an edge to every binding of the token, not just the
+    first.
+  - **Class-constructor edges use slot labels.** A named or tagged constructor dependency is labeled `name:...`/`tag:...`
+    like resolved-factory deps always were, and edge targets are filtered with the same slot-matching rules resolution
+    uses (`matchesSlot`, SPEC §6.9) — an unnamed request no longer draws an edge to a named binding it could never
+    resolve.
+  - **`includeParent` connects across the chain.** A child binding whose dependency is satisfied by the parent now gets
+    its edge (own bindings still shadow the parent, mirroring resolution's upward walk).
+
+  `GraphNode["scope"]` widens from `BindingScope` to `BindingScope | "unbound"` for the placeholder nodes.
+
+- [#727](https://github.com/codefastlabs/codefast/pull/727) [`a4377ff`](https://github.com/codefastlabs/codefast/commit/a4377ff1a2afd5c83a865ce38a93a8573582ffb6) Thanks [@thevuong](https://github.com/thevuong)! - **Breaking:** removed `isToken()`. The guard tested for an object carrying a string `name`, which every `Token` has but
+  so does anything else — an `InjectionDescriptor` that named its slot passed it, as did any plain `{ name }` object. A
+  `Token` is a branded structural type with nothing to check at runtime, so the predicate could not be made sound; it
+  narrowed to `Token<unknown>` on evidence that did not support the claim. Nothing in the package used it.
+
+  Discriminating a declared dependency is what `isInjectionDescriptor()` is for, and it stays. Code that called
+  `isToken(x)` to tell a token from a class wants `typeof x === "function"` instead.
+
+- [#690](https://github.com/codefastlabs/codefast/pull/690) [`f4b1aa6`](https://github.com/codefastlabs/codefast/commit/f4b1aa6335f535574eae5cf559b81a568f5a7a30) Thanks [@thevuong](https://github.com/thevuong)! - Report the failures that were being swallowed or mislabelled, and derive the types the build emits.
+
+  `@codefast/di`:
+
+  - `@inject`, `@postConstruct` and `@preDestroy` on a static member now throw `StaticMemberDecoratorError` instead of
+    `InternalError`. All three act on one instance, so this is caller misuse — and `InternalError` means the library
+    broke, which sent anyone catching it to file a bug against their own mistake. SPEC §10 already recorded that mistake
+    for predicate ambiguity.
+  - `AsyncResolutionError` names the token the caller asked for and the token whose factory is async, which is what SPEC
+    has always specified. Every throw site passed the same token twice, so the message read "Token 'X' requires async
+    resolution because 'X' in its dependency chain has an async factory"; a `resolve(App)` that fails on an async
+    `Database` now says so. `asyncSourceToken` defaults to `tokenName` for the case where the requested binding is itself
+    the source.
+  - A `MetadataReader` that names a `@postConstruct`/`@preDestroy` method the instance does not have raises
+    `InvalidMetadataError` instead of skipping the hook — a hook that silently never runs is the failure a caller cannot
+    see. `InvalidMetadataError`'s message no longer says "constructor", since it now covers both answers; the specifics
+    moved into `reason`.
+  - `MissingScopeContextError` from `ScopeManager` names its token instead of `"(unknown)"`, and the scoped read takes one
+    map lookup where it took two.
+  - `Token`, `Constructor` and `InjectionDescriptor` declare `out Value`, so the compiler checks the covariance the engine
+    already relied on.
+
+  Repo-wide: `isolatedDeclarations` is on for every package that emits declarations, so a public type can always be
+  written down from the source file alone. `allowJs` is gone from the shared base config — no package has JavaScript
+  sources. `@codefast/theme` and `@codefast/tracking` gained explicit annotations on four exported constants to satisfy
+  it; the emitted types are unchanged. `@codefast/ui` and `@codefast/benchmark-viewer` opt out for reasons recorded in
+  their configs.
+
+- [#727](https://github.com/codefastlabs/codefast/pull/727) [`50448de`](https://github.com/codefastlabs/codefast/commit/50448defd0c94bffe9b824afef46aa42d80114e2) Thanks [@thevuong](https://github.com/thevuong)! - perf(di)!: freeze slot tags where they are built so snapshots alias instead of copy
+
+  `BindingSnapshot.slot.tags` is now the binding's own frozen array rather than a fresh copy per snapshot per binding —
+  `lookupBindings()`/`inspect()` skip an allocation per binding, reclaiming the cost the defensive copy had added. The
+  array is frozen at its two construction sites (the default slot and the builder's re-tag), so the registry stays
+  uncorruptible.
+
+  Breaking: mutating a snapshot's `tags` array — already a type error against `ReadonlyArray` — now throws `TypeError` at
+  runtime instead of silently editing a private copy.
+
+- [`08a5f2d`](https://github.com/codefastlabs/codefast/commit/08a5f2d6425960d7674b257196962009ab6279dd) Thanks [@thevuong](https://github.com/thevuong)! - Publish every module as an entry point again — the sole-consumer repo prefers full access over encapsulation. The 0.5.0
+  surface reduction (13 subpaths) is reverted: `resolution/*`, `registry`, `container/*`, `binding`, `constructor-type`,
+  and the `metadata` internals are entry points once more. Introspection modules keep the flat specifiers they have always
+  shipped under (`./inspector`, `./dependency-graph`, `./graph-adapters/*`).
+
+- [#680](https://github.com/codefastlabs/codefast/pull/680) [`c415c6b`](https://github.com/codefastlabs/codefast/commit/c415c6bd9466421419fd7d97445fb29f76257d95) Thanks [@thevuong](https://github.com/thevuong)! - The dependency graph states its facts as fields instead of hiding them in a display string. `GraphEdge` gains
+  `optional: boolean` and `slotName?: string`, so a consumer reads what an edge means rather than parsing `label` (which
+  stays, as the string the adapters render). `GraphNode` gains `tokenKey`: two tokens that share a display name are now
+  distinguishable, and the same token keeps its key across graphs from the same process — enough to key a view by, which
+  `tokenName` never was.
+
+  `GraphNode["kind"]` is now `BindingKind | "unbound"` instead of a bare `string`, alongside the already-widened `scope`,
+  and the React Flow and Cytoscape adapters carry those same unions (plus `tokenKey`, `optional`, `slotName`) instead of
+  flattening them to `string` — a consumer can narrow on them now. SPEC.md now documents what the graph does and does not
+  represent: unbound optional placeholders, omitted required-but-unbound deps, `injectAll` fan-out, slot-filtered targets,
+  unevaluated predicates, and parent shadowing under `includeParent`.
+
+- [#688](https://github.com/codefastlabs/codefast/pull/688) [`3112841`](https://github.com/codefastlabs/codefast/commit/31128417f8ac1212c2861df0e1270ba818324e31) Thanks [@thevuong](https://github.com/thevuong)! - `inject()`, `optional()` and `injectAll()` accept the single-tag shorthand. `container.resolve(Token, { tag: pair })`
+  has always been valid while `inject(Token, { tag: pair })` was a compile error, so the same request had two vocabularies
+  depending on whether you were asking a container or declaring a dependency — and the one a constructor dependency had to
+  use was the longer one.
+
+  `InjectOptions` gains `tag`, and that is the whole surface change. Nothing downstream learns a second spelling: the
+  shorthand is folded into `tags` where the descriptor is built, so `InjectionDescriptor`, `ParamMetadata`, the plan
+  compiler and the dependency graph keep seeing exactly one tag list. Passing both is a request for every pair across the
+  two, which is what the matcher already did with them.
+
+  While that path was open: an `@inject` accessor was rebuilding its resolve options on **every constructed instance**,
+  from the raw options rather than from the descriptor. It now derives them once, from the descriptor — so the accessor
+  honours the shorthand for free, and stops allocating per instance.
+
+  Measured against the previous build on the bind and boot rows, paired and alternating: parity everywhere, controls
+  clean.
+
+- [#702](https://github.com/codefastlabs/codefast/pull/702) [`22a02b8`](https://github.com/codefastlabs/codefast/commit/22a02b8604e932550474297c8d86fed161385237) Thanks [@thevuong](https://github.com/thevuong)! - What a constructor and a factory are handed is now checked against what they declare.
+
+  `@injectable([...])` had no relation to the class it decorated. Deps in the wrong order compiled and injected the wrong
+  dependency; a deps array one short compiled and handed a parameter `undefined`; `injectAll()` handed an array to a
+  parameter declaring one value, and `optional()` handed `undefined` to one that did not admit it. Every case failed
+  silently — resolution succeeded, the object was built, and the wrong value was already inside it.
+
+  The decorator now infers its deps and requires the class to match:
+
+  ```ts
+  @injectable([ConfigToken, LoggerToken]) // Property 'log' is missing in type 'Config'
+  class Service {
+    constructor(
+      readonly logger: Logger,
+      readonly config: Config,
+    ) {}
+  }
+  ```
+
+  `@injectable()` and `@injectable([])` are unchanged — a separate overload keeps the no-dependency form as loose as it
+  was, for classes that inject through properties.
+
+  One mismatch still compiles: a deps array **longer** than the constructor, because a class taking fewer parameters
+  satisfies a constructor type taking more. The surplus dependency is resolved and discarded rather than misplaced, which
+  makes it the least harmful of the four.
+
+  Alongside it, a hand-written `InjectionDescriptor` no longer lies to a `toResolved` factory.
+  `{ token: Plugin, multi: true }` said `Plugin` and delivered `Array<Plugin>`; `optional: true` said `Plugin` and could
+  deliver `undefined`. `ResolvedDependencyValue` reads the flags before the descriptor's own type parameter, so both now
+  say what they do. `injectAll()` and `optional()` were already correct and are untouched.
+
+  The tightening found real looseness in `examples/17-extended-constraints` immediately: thirteen tokens were declared by
+  structural shape — `token<{ score(): string }>` — while the constructors receiving them declared the concrete class,
+  which has private members and is therefore a different type. Every one of those tokens is bound to exactly that class,
+  so they now say so.
+
+- [#680](https://github.com/codefastlabs/codefast/pull/680) [`c415c6b`](https://github.com/codefastlabs/codefast/commit/c415c6bd9466421419fd7d97445fb29f76257d95) Thanks [@thevuong](https://github.com/thevuong)! - New `toMermaidGraph` adapter (`@codefast/di/graph-adapters/mermaid`): renders a container graph as Mermaid
+  `flowchart TD` source — viewable anywhere Mermaid renders (GitHub markdown, docs tooling, mermaid.live) with no extra
+  library. Parent-chain nodes and unbound-optional placeholders carry dashed `classDef`s; `toDotGraph` now also dashes
+  unbound placeholders, not just parent nodes.
+
+- [#727](https://github.com/codefastlabs/codefast/pull/727) [`def51b4`](https://github.com/codefastlabs/codefast/commit/def51b4dea15700b8ad7add488247f2d34147f41) Thanks [@thevuong](https://github.com/thevuong)! - perf(di)!: derive resolution-path names from frames instead of carrying a second array
+
+  Every hop used to push and pop two lockstep arrays — token names for error messages and frames for cycle detection. The
+  name array is gone: cycle guards, branch extension, escapes, contexts and the cascade carry only the frame stack, and
+  the names an error or `ctx.graph.resolutionPath` reports are derived from the frames at the moment they are asked for.
+  Hot lanes pay one push/pop per hop instead of two; only error paths pay the name materialization.
+
+  Breaking (internal-module surface; the root export is unchanged):
+
+  - `ResolverCallbacks` and the resolution-path helpers take only the frame stack — `enterResolutionPath(stack, frame)`,
+    `extendResolutionBranch(stack, depth, frame)`; `OwnedBranchPath` and `extendResolutionStackBranch` are gone
+    (`OwnedBranchStack` is the one brand).
+  - `DependencyResolver.rootPath` is gone; the lending protocol reads `rootStack` alone.
+  - `ConstraintContext.resolutionPath` is now derived per read from `resolutionStack` — contents are identical, but it is
+    no longer the same array object across reads.
+
+- [#708](https://github.com/codefastlabs/codefast/pull/708) [`801c749`](https://github.com/codefastlabs/codefast/commit/801c7496ec0d7899c98d94bbbb9677005710f91b) Thanks [@thevuong](https://github.com/thevuong)! - A dependency slot that carries a name or a tag no longer rebuilds its `ResolveOptions` on every hop. The criteria are
+  fixed when the slot is declared, so the derived options are too; they are now built once and memoized on the slot
+  itself, which is sound to share across containers because they derive from the slot alone. A slot carrying no criterion
+  answers from its two fields without calling the builder at all, so the common shape never reaches the memo. A frozen
+  slot — which a custom `MetadataReader` may hand out — keeps rebuilding rather than throwing.
+
+  The memoized object is frozen, because sharing it has a consequence: a constraint predicate is handed it as
+  `currentResolveOptions`, and `ResolveOptions` declares mutable fields, so a write through that reference would rewrite
+  what the dependency asks for on every later resolve. Frozen, the attempt throws where it is made. Paired A/B over six
+  rows and twelve passes puts the freeze inside noise — the control that cannot be affected by it moved as much as the row
+  that can.
+
+  `resolveOptionsForSlot` and the `DependencySlot` type are exported, so the memoizing form is reachable and the slot it
+  takes has a name a consumer can write down.
+
+  This is an allocation change, not a throughput one, and the distinction is worth stating because only one lane ever
+  paid. A compiled plan already derives a criteria-carrying param's options at compile time and captures them in its
+  escape thunk; the interpreted path had no such moment, so it minted an options object per hop, per resolve. Counted as
+  scavenges per 2M resolves under a 1 MB young generation
+  (`pnpm --filter @codefast/benchmark-di-inversify instrument:alloc`), a four-named-dependency class whose plan is
+  declined went 870 → 442, landing exactly on the criteria-free control's 443, while the compiled lane sat at 1260 on both
+  builds. A paired benchmark A/B across all 65 rows reads flat — correctly, since none of them injected a
+  criteria-carrying dependency until two rows were added for the lane.
+
+- [#690](https://github.com/codefastlabs/codefast/pull/690) [`3bcb204`](https://github.com/codefastlabs/codefast/commit/3bcb2041e6e154b5fbd3a55a75161a614ce96b77) Thanks [@thevuong](https://github.com/thevuong)! - `src/` is reorganised by dependency direction, temperature and lane. **Breaking for deep subpath imports only** — the
+  root entry `@codefast/di` and the four `@codefast/di/graph-adapters/*` specifiers are unchanged, and nothing else in
+  this repo imported a deep specifier.
+
+  - **`core/`** now holds the model — `token`, `types`, `constructor-type`, `binding`, `binding-scope`, `registry`,
+    `module` — instead of sitting loose beside `index.ts`, so the layering the architecture test enforces is visible in
+    the tree rather than only in prose.
+  - **`errors/`** separates the taxonomy from its diagnostics. The hot path imports error constructors and nothing else;
+    message building belongs behind the throw, which is what the measured cost of a deeper throw site already said.
+  - **`injection/`** is new, and it closes a real inversion: `core/binding.ts` and `metadata/metadata-types.ts` imported
+    `InjectionDescriptor` from `decorators/inject.ts` — the model depending on a decorator module, which passed the
+    layering test only because the imports are type-only. The descriptor, its normalisers and the two pure builders
+    (`optional`, `injectAll`) now live at the model layer; `decorators/inject.ts` keeps the one symbol that is actually a
+    decorator. `resolve-options` moves alongside, so `DependencySlot` and the descriptor it derives from are in one place.
+  - **`ambient/`** takes the module-global active container out of `resolution/environment.ts`, which had been carrying
+    three unrelated jobs. The remainder is renamed `resolution/context.ts`, which is what it is.
+  - **`lifecycle/`** promotes `LifecycleManager` and `ScopeManager` out of `resolution/`, and
+    **`resolution/{cache,path,plan,select}/`** groups the engine's collaborators by the lane each one serves.
+
+  Renamed specifiers: `./binding`, `./constructor-type`, `./module`, `./registry`, `./token`, `./types` → `./core/*`;
+  `./errors` → `./errors/errors`; `./resolution/binding-scope` → `./core/binding-scope`; `./resolution/diagnostics` →
+  `./errors/diagnostics`; `./resolution/lifecycle` → `./lifecycle/lifecycle-manager`; `./resolution/scope` →
+  `./lifecycle/scope-manager`; `./resolution/resolve-options` → `./injection/resolve-options`;
+  `./resolution/{activation-need,binding-lookup-cache,class-introspector}` → `./resolution/cache/*`;
+  `./resolution/resolution-path` → `./resolution/path/resolution-path`; `./resolution/instantiation-plan` →
+  `./resolution/plan/instantiation-plan`; `./resolution/{binding-select,constraints}` → `./resolution/select/*`;
+  `./resolution/environment` → `./resolution/context`.
+
+  No behaviour changes. Measured as a paired, alternating, per-scenario A/B against the pre-move build over thirteen
+  scenarios: every median inside the A/A control's own spread, and the one row that looked down at three passes
+  (`fan-out-tree-depth-3-breadth-4`, 0.966) came back at 0.993 over seven passes against an A/A median of 0.991 on the
+  same row.
+
+  `tests/unit/architecture.test.ts` gains a check that ARCHITECTURE.md's backticked `tests/…` citations point at files
+  that exist — the existing link check only saw `](src/…)` links, so a moved test file could invalidate a citation
+  silently.
+
+  Three re-declared types are now derived, which is structurally identical and breaks nothing: `buildResolutionFrame`'s
+  `slot` parameter is `ResolutionFrame["slot"]` rather than a hand-written shape that had lost both `readonly` modifiers,
+  inlined `BindingTag`'s definition and dropped its tuple labels; `injectionSlotToResolveOptions` takes
+  `Pick<DependencySlot, "name" | "tags">`; and the descriptor's `tags` no longer carries `any` from
+  `PropertyDescriptor.value` into a cast that looked checked.
+
+- [#688](https://github.com/codefastlabs/codefast/pull/688) [`c3403a0`](https://github.com/codefastlabs/codefast/commit/c3403a037f2ab7a9e3cdab15d33c1be2eacadcb4) Thanks [@thevuong](https://github.com/thevuong)! - A `resolve` whose tags match several bindings now takes the one declaring the most tags, instead of throwing
+  `AmbiguousBindingError`.
+
+  Tags on a binding are its own conditions, not a filter the request must match exactly, so naming more tags satisfies
+  more bindings rather than fewer. Given `whenTagged(Fuel.of("petrol"))` and a specialisation
+  `whenTagged(Fuel.of("petrol")).whenTagged(Size.of("v8"))`, a request for `{fuel}` skipped the specialisation — it also
+  requires `size` — and a request for `{fuel, size}` satisfied both and was ambiguous. No request reached the
+  specialisation at all, so declaring one was pointless.
+
+  That is the dispatch model, the same one routing, media queries and overload resolution use, and every one of those
+  pairs it with a most-specific-wins rule for exactly this reason. This adds the rule that was missing: a candidate
+  declaring more tags than every other is the more specific match. `{fuel}` now resolves the general binding and
+  `{fuel, size}` the specialisation, which is what both the filter reading and the dispatch reading of tags predict.
+
+  Selection order is predicate first, then tag count, then throw. Predicate keeps its precedence because it is the older
+  rule and re-ordering would re-decide resolutions that already succeed; with this order, every call that resolved before
+  resolves to the same binding, and only calls that previously threw can now return. An equal tag count is still genuinely
+  ambiguous — `{fuel:petrol}` against `{size:v8}` with both tags requested has no more specific side — and `resolveAll` is
+  untouched, since specificity only applies where one binding must be chosen.
+
+  The new comparison sits on the branch that used to throw, so no successful resolve reaches it. Paired A/B over three
+  passes, alternating order, per-scenario isolation: the four rows whose requests reach candidate selection and two
+  controls all land in parity, 0.986×–1.040× against a control spread of 0.993×–1.018×.
+
+- [#691](https://github.com/codefastlabs/codefast/pull/691) [`02ea054`](https://github.com/codefastlabs/codefast/commit/02ea0542e4c99b5cf0e59c70ac11673aff85dcee) Thanks [@thevuong](https://github.com/thevuong)! - Replace the `[string, unknown]` tag tuple with a `tag()` factory whose criteria are interned.
+
+  A tag key is declared once and mints its own criteria:
+
+  ```ts
+  const Region = tag<"eu" | "us">("region");
+  container.bind(Storage).to(S3).whenTagged(Region.of("eu"));
+  container.resolve(Storage, { tag: Region.of("eu") });
+  ```
+
+  The value type is now checked at both ends, so a bind site and a resolve site cannot drift apart — previously the key
+  was a bare string and the value was `unknown`, and a typo was a runtime `NoMatchingBindingError` rather than a compile
+  error. `whenTagged` takes the criterion instead of `(key, value)`, which makes it the same shape a request carries.
+
+  This is not a compatible change: `BindingTag` is an interned, branded object rather than a tuple, and nothing outside
+  `TagKey.of()` can construct one. `whenTagged`, `whenParentTagged`, `whenAnyAncestorTagged`, `whenParentTaggedAll`,
+  `whenAnyAncestorTaggedAll`, `ResolveOptions.tag/tags` and `InjectOptions.tag/tags` all take criteria now.
+
+  Interning is what pays for it, and it pays twice:
+
+  - **The registry indexes tagged bindings by the criterion**, not by key-then-value, which removes a hash level and —
+    because equal criteria are one object — makes the index exact. The value re-check that existed only to correct a
+    `Map`'s SameValueZero treatment of `±0` is gone; the intern cache splits those two under a private symbol instead, so
+    `Object.is` (SPEC §3.5) still holds.
+  - **The multi-tag lane prefilters on a key mask.** Each key carries a bit, each slot and request the OR of theirs, so a
+    slot whose keys the request does not cover is rejected by one AND and one compare before any criterion is read. Bits
+    wrap every 32 keys; a shared bit is a false positive identity then rejects, never a false negative.
+
+  Measured with `di:bench:isolate` against the previous build, `@codefast/di` hz/op:
+
+  | Row                            | Before |        After |
+  | ------------------------------ | -----: | -----------: |
+  | `slot-tag-miss-optional`       |  13.3M | 19.8M (+48%) |
+  | `slot-tag-shorthand-hoisted`   |  38.9M | 49.8M (+28%) |
+  | `tagged-binding-resolve`       |  38.1M | 48.4M (+27%) |
+  | `multi-tag-slot-resolve`       |  10.9M | 13.8M (+27%) |
+  | `slot-tag-resolve-all`         |  38.2M | 46.5M (+22%) |
+  | `multi-tag-constraint-resolve` |   6.9M |  8.1M (+18%) |
+
+  Five control rows the change does not touch moved between −3.3% and +3.0%, and the head-to-head aggregate held at 44
+  wins / 0 parity / 0 losses against inversify 8.2.3. Three new `mask-*` rows price the prefilter directly: reject-heavy,
+  admit-then-decide, and the shared-bit collision.
+
+  One thing interning did **not** buy: an inline `Region.of(v)` is still slower than a hoisted criterion (+2–3% against
+  +25–28%), because `.of()` reads the intern map on every call. The gap between the inline and hoisted rows widened rather
+  than closed.
+
+### Patch Changes
+
+- [#727](https://github.com/codefastlabs/codefast/pull/727) [`09e85b8`](https://github.com/codefastlabs/codefast/commit/09e85b87a80143d60c90240ea79de583c0f1ffb2) Thanks [@thevuong](https://github.com/thevuong)! - Fix a batch of correctness bugs found by a full engine audit:
+
+  - Subclass decorators no longer pollute the base class's metadata: defining a decorated subclass used to make the base
+    unresolvable and silently dropped the subclass's own hooks and accessors. Lifecycle and accessor metadata now
+    aggregate over the base chain (postConstruct base-first, preDestroy derived-first); constructor metadata stays opt-in
+    per class.
+  - A dependency cycle through an `@inject` accessor now throws `CircularDependencyError` instead of overflowing the
+    stack.
+  - A held fluent chain refined after later registry writes can no longer undo an `unbind` or destroy a newer binding; a
+    scope refinement evicts the instance cached under the old scope, and a re-slot no longer double-deactivates or re-runs
+    the factory of a cached `undefined` singleton.
+  - `resolveAll`/`resolveAllAsync` materialize a parent-owned singleton at the parent, so a child override no longer leaks
+    into the shared instance and `child.dispose()` no longer destroys it.
+  - Concurrent async resolves of one scoped binding construct one instance; a sync resolve during an in-flight async
+    singleton materialization refuses with `AsyncResolutionError` instead of silently double-constructing.
+  - Container-level activation hooks fire per the binding's owner, matching the SPEC, including through compiled plans.
+  - Teardown survives throwing hooks (every remaining hook still runs, failures are reported), drains in-flight async
+    materializations, deactivates dependents before dependencies, and a disposed parent no longer serves or
+    re-materializes singletons through live children. A module whose setup throws rolls back, so a retry load works.
+  - DOT/Mermaid graph adapters escape token names; `has()`/`hasOwn()` answer ambiguity with `true`; binding snapshots no
+    longer alias live registry state; `NoMatchingBindingError` survives bigint and circular tag values; the verifying
+    metadata reader checks lifecycle and accessor answers; `resolveOptional` evaluates `when()` predicates once
+    (measurably faster on the hit path).
+
+- [#727](https://github.com/codefastlabs/codefast/pull/727) [`7a103f0`](https://github.com/codefastlabs/codefast/commit/7a103f05b1306f9889f218753a26bc814fc05de3) Thanks [@thevuong](https://github.com/thevuong)! - Let a child container compile an instantiation plan for a transient class binding its parent owns. The plan compiler
+  refuses to decide until a runtime resolve has read the class's lifecycle metadata, but that discovery was recorded on
+  the owner's introspector while the compiler consulted the introspector of whichever resolver was doing the resolving.
+  Where those differ, the child's answer stayed unknown forever: it recompiled the plan on every single resolve and threw
+  the result away each time, falling back to the interpreted path. The resolving side now settles its own answer after
+  instantiating a class binding another container owns.
+
+  Measured against `benchmarks/di-inversify` (fast profile, isolated, best-of-3 per side): median 1.003×, geomean 1.005×
+  over 103 scenarios, with no reproducible regression on a path the change touches.
+
+- [#727](https://github.com/codefastlabs/codefast/pull/727) [`27020d1`](https://github.com/codefastlabs/codefast/commit/27020d159652ad71f7afe371e29cda1f17097739) Thanks [@thevuong](https://github.com/thevuong)! - perf(di): make token binding lists copy-on-write so selection drops its snapshot
+
+  The registry now replaces a token's binding list on `add`/`removeById` instead of splicing it in place, so a selection
+  walking the list while a `when()` predicate rebinds the token keeps its own pre-mutation array by construction. The
+  defensive per-selection copy in binding selection is gone — predicate-bearing `resolveAll` fan-outs no longer pay an
+  allocation per call. Observable behavior is unchanged: the mid-selection-rebind pin test passes as written.
+
+- [#727](https://github.com/codefastlabs/codefast/pull/727) [`7feb085`](https://github.com/codefastlabs/codefast/commit/7feb0853292d347d2ea0e7b57d044226e91ca349) Thanks [@thevuong](https://github.com/thevuong)! - Key the resolution-path cycle guard on binding identity instead of token display names. Two distinct tokens created with
+  the same name (say, two `token("Config")` from different modules) on one dependency chain used to throw a false
+  `CircularDependencyError` for a legitimately acyclic graph — on the sync lane, on the deep-path membership set, and on
+  the async branch lane alike. The guard now compares binding ids read off the resolution frame stack, which moves in
+  lockstep with the path; the display-name array is kept solely for the error message, so a real cycle still reports the
+  same readable chain.
+
+- [#727](https://github.com/codefastlabs/codefast/pull/727) [`e337290`](https://github.com/codefastlabs/codefast/commit/e3372904e67990ea7f5a91e4f7ae014326b7026a) Thanks [@thevuong](https://github.com/thevuong)! - Warm constants whose only activation handler is container-level during `initializeAsync()`. A `toConstantValue` binding
+  carrying a per-binding `onActivation` was already resolved and cached by the warm-up, but one whose hook was registered
+  through `container.onActivation(token, …)` was skipped — so the hook first ran on whichever request happened to resolve
+  the token, exactly the lazy-init latency `initializeAsync()` exists to remove. The skip now tests both hook channels,
+  matching how the resolver's own plain-constant fast path decides the same question.
+
+  Also tightens `isSyncModule()`, which read a brand field directly and so returned `undefined` rather than `false` for an
+  async module despite declaring a boolean type predicate, and corrects the `Promise` type assertion on the parent-owned
+  singleton lane of `resolveAsync`.
+
+- [#727](https://github.com/codefastlabs/codefast/pull/727) [`839efbb`](https://github.com/codefastlabs/codefast/commit/839efbb2318d80acca76b8a02846c30f2ca3306c) Thanks [@thevuong](https://github.com/thevuong)! - perf(di): index multi-tag slots by their first criterion for subset selection
+
+  A name-less multi-tag `resolve` over a wide variant set no longer scans the token's whole binding list: multi-tag slots
+  are bucketed under their first criterion, and since a matching slot's every tag is in the request, walking the request's
+  buckets (plus the single-tag index) finds each candidate exactly once — no dedup set, no extra per-resolve allocation.
+  The lane engages only past a size threshold on the token's list (under it the generic scan is cheaper) and serves
+  `resolve` only, so `resolveAll` keeps its result order. Selection semantics — subsets, specificity, predicates,
+  ambiguity — are unchanged.
+
+- [#727](https://github.com/codefastlabs/codefast/pull/727) [`5d5fe67`](https://github.com/codefastlabs/codefast/commit/5d5fe67d0d8480314fa6a45b40696a57856cf05f) Thanks [@thevuong](https://github.com/thevuong)! - Trim the `resolveAll` selection path so it fits V8's cumulative inlining budget. The chain from `resolveAll` down to the
+  per-candidate resolve summed to roughly 1040 bytes of bytecode against a 920-byte budget, so TurboFan stopped inlining
+  partway through it. Three changes cut about 100 of those bytes without changing behaviour: `filterBindings` takes the
+  slot-match decision from its caller instead of deriving it, the per-candidate predicate is read once rather than twice,
+  and building a non-root `ConstraintContext` moved to its own function so a selection inlines the test and not the object
+  literal.
+
+  Measured against `benchmarks/di-inversify` (default isolated profile, source-swapped, six alternating paired passes,
+  median per row): `production-event-bus-dispatch` 1.058×, `resolve-all-strategies-10` 1.045×,
+  `resolve-all-strategies-100` 1.034×. `constant-resolve` and `resolve-all-named-64` read slightly under parity, both on
+  rows fast enough that the suite's own guidance says not to read them alone; neither is on the path this touches.
+
+- [#688](https://github.com/codefastlabs/codefast/pull/688) [`6dcb736`](https://github.com/codefastlabs/codefast/commit/6dcb736a561c527b14b1153a2a4b79d84d28ce79) Thanks [@thevuong](https://github.com/thevuong)! - `resolve(token, { tag: pair })` now reaches the registry's tagged index, which its own documentation had always claimed
+  it did. It never had: `singleTagOnlyOf` treated the presence of `tag` as a reason to give up on the fast lane, so the
+  shorthand — the form `README` reaches for and `ResolveOptions` advertised as the fast one — was the only spelling
+  excluded from it, and fell through to full candidate selection instead. Results were never wrong, only slower. Measured
+  paired against the previous build, alternating order, five passes, medians: **2.42×** on a single-tag resolve with the
+  pair hoisted and **2.38×** with it written inline, every pass agreeing; `{ tags: [pair] }` and the
+  `tagged-binding-resolve` row hold at parity, controls clean.
+
+  A request that carries a tag from both sources at once still declines the index, because two tags requested is not
+  something a one-tag index can answer without skipping the ambiguity check the full path would have run.
+
+  SPEC §3.5 now states the rule this fixes as normative — a fast path serving `tags: [pair]` must serve `tag: pair` — so
+  the two spellings cannot drift into different lanes again, and `tests/unit/resolution/tag-shorthand-parity.test.ts` pins
+  both the lane and the result equality across the value kinds `Object.is` and a `Map`'s SameValueZero disagree on.
+  `ResolveOptions.tag` and the README also stop implying the two forms differ in speed, and say what actually
+  distinguishes them: only `tags` expresses more than one tag, and only `tags` exists on `InjectOptions`.
+
+- [#688](https://github.com/codefastlabs/codefast/pull/688) [`bbc111b`](https://github.com/codefastlabs/codefast/commit/bbc111b61611c1e62924503c6be713a96579dca8) Thanks [@thevuong](https://github.com/thevuong)! - `resolveAll(token, { tag })` reads the tagged index instead of scanning every binding under the token. `resolveAll` has
+  had a fast lane for a name-only request since the name index existed; the identical shape for a one-tag request was
+  missing, for a reason that had expired. `simpleTagOf` kept predicate-bearing bindings out of the tag index, justified by
+  the index being "read without a re-check" — which stopped being true when the `±0` fix gave every indexed hit a
+  re-check. With the premise gone the exclusion was vestigial, and it was the only thing keeping `resolveAll` off the
+  index.
+
+  Both lanes that read the index now evaluate the predicate on what they find, exactly as the name lane always has, so an
+  indexed hit whose `when()` refuses still cannot reach a caller.
+
+  Worth **1.72×** on a `resolveAll` over a tagged token, nine passes and every one positive, landing that row at the
+  throughput the equivalent name lane already had. Single-tag `resolve`, the name lanes, and the sync controls hold.
+
+  One row moves the other way and is recorded rather than explained: `resolveAll` with no options over a hundred
+  pure-predicate bindings measures **0.95×**, nine passes inside a one-percent spread. It has no causal path — that
+  request leaves candidate selection at its first test and never reaches the index or any new code — and the obvious
+  remedy, keeping the caller its original size, did not move it. It reads as a code-layout effect; the experiment that
+  would confirm that has not been run yet.
+
+- [#727](https://github.com/codefastlabs/codefast/pull/727) [`bda71f7`](https://github.com/codefastlabs/codefast/commit/bda71f7a2d1121f1abc8d6e575d6779ef5085117) Thanks [@thevuong](https://github.com/thevuong)! - Stop a deep synchronous resolution from reporting a circular dependency that is not there. The membership set the
+  resolution path attaches past `RESOLUTION_SET_THRESHOLD` is seeded from the path, and the frames already on it are
+  handed no set to delete from on unwind — so the set outlived the resolve it was built for, on an array the resolver
+  reuses. A graph resolved on the interpreted path deeper than that threshold answered its first resolve and threw
+  `CircularDependencyError` on every later one, and a sibling branch below the attach depth threw within a single resolve.
+  The set is now dropped as soon as it stops mirroring the path, and rebuilt by the next frame that needs one.
+
 ## 0.5.0
 
 ### Minor Changes

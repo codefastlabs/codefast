@@ -158,7 +158,11 @@ function buildMaskCollisionScenario(): BenchScenario {
   };
 }
 
-/** The three key-mask rows, in the order the doc comment above introduces them. */
+/**
+ * The three key-mask rows, in the order the doc comment above introduces them.
+ *
+ * @since 0.6.0
+ */
 export function buildCodefastTagKeyMaskScenarios(): ReadonlyArray<BenchScenario> {
   return [buildMaskRejectWideCatalogScenario(), buildMaskAcceptTwoOfFourScenario(), buildMaskCollisionScenario()];
 }

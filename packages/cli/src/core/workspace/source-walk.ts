@@ -8,6 +8,8 @@ import { defaultSkipDirectoryNames } from "#/core/workspace/skip-directories";
  *
  * @remarks Emitted declarations are excluded: they carry whatever the compiler copied over,
  * and rewriting them would be undone by the next build.
+ *
+ * @since 0.6.0
  */
 export function walkSourceFiles(rootDirectoryPath: string, fs: FilesystemPort): Array<string> {
   const result: Array<string> = [];
@@ -17,6 +19,8 @@ export function walkSourceFiles(rootDirectoryPath: string, fs: FilesystemPort): 
 
 /**
  * Which comment syntax a path is written in, or `null` when the convention does not cover it.
+ *
+ * @since 0.6.0
  */
 export function sourceCommentLanguage(filePath: string): "css" | "js" | null {
   if (filePath.endsWith(".d.ts")) {

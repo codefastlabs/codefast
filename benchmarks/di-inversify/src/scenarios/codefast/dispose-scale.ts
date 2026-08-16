@@ -78,6 +78,9 @@ function buildDisposeScaleScenario(descriptor: ScenarioDescriptor, tearDown: boo
   };
 }
 
+/**
+ * @since 0.6.0
+ */
 export function buildCodefastDisposeScaleScenarios(): ReadonlyArray<BenchScenario> {
   return [
     buildDisposeScaleScenario(MATERIALIZE_SINGLETONS, false),

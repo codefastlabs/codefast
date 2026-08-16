@@ -98,6 +98,9 @@ function buildResolveOptionalAsyncMissScenario(): AsyncBenchScenario {
   };
 }
 
+/**
+ * @since 0.6.0
+ */
 export function buildCodefastAsyncEntryPointScenarios(): ReadonlyArray<AsyncBenchScenario> {
   return [buildResolveAllAsyncScenario(), buildResolveOptionalAsyncMissScenario()];
 }

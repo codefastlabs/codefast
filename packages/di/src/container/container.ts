@@ -98,6 +98,8 @@ export interface Container {
 
 /**
  * What a container has to be told before it exists, as opposed to what it can be bound later.
+ *
+ * @since 0.6.0
  */
 export interface ContainerOptions {
   /**

@@ -109,6 +109,9 @@ function buildClassChainAsyncScenario(): AsyncBenchScenario {
   };
 }
 
+/**
+ * @since 0.6.0
+ */
 export function buildCodefastAsyncPlanScenarios(): ReadonlyArray<AsyncBenchScenario> {
   return [buildResolvedAsyncChainScenario(), buildClassChainAsyncScenario()];
 }

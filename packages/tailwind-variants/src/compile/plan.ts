@@ -28,6 +28,8 @@ const hasBooleanVariantValues = (variantGroup: Record<string, unknown>): boolean
 
 /**
  * One variant group with the classes its default selects already resolved.
+ *
+ * @since 0.6.0
  */
 export interface VariantPlanEntry {
   readonly defaultClasses: PlanClasses | undefined;
@@ -37,6 +39,8 @@ export interface VariantPlanEntry {
 
 /**
  * One slot with the classes it starts from. `base` is always position zero.
+ *
+ * @since 0.6.0
  */
 export interface SlotPlanEntry {
   readonly classes: string;
@@ -45,6 +49,8 @@ export interface SlotPlanEntry {
 
 /**
  * A configuration reduced to what resolution actually reads.
+ *
+ * @since 0.6.0
  */
 export interface VariantPlan {
   readonly base: string;
@@ -172,6 +178,8 @@ const compileSlotEntries = (slotDefinitions: SlotSchema, baseClasses: ClassValue
 
 /**
  * Compile a merged configuration into the plan resolution runs against.
+ *
+ * @since 0.6.0
  */
 export const compileVariantPlan = (
   configuration: SlotVariantConfig<VariantSchema, SlotSchema> | VariantConfig<VariantSchema>,

@@ -155,48 +155,72 @@ export const EXTREME_SLOTS_WITH_MERGE = {
   what: "Many slots with tailwind-merge on tv",
 } as const satisfies ScenarioDescriptor;
 
+/**
+ * @since 0.6.0
+ */
 export const REPEAT_SIMPLE_WITHOUT_MERGE = {
   id: "repeat-simple-without-merge",
   group: "repeat-simple",
   what: "Simple button variants, 3 selections repeated, without tailwind-merge",
 } as const satisfies ScenarioDescriptor;
 
+/**
+ * @since 0.6.0
+ */
 export const REPEAT_SIMPLE_WITH_MERGE = {
   id: "repeat-simple-with-merge",
   group: "repeat-simple",
   what: "Simple button variants, 3 selections repeated, with tailwind-merge on tv",
 } as const satisfies ScenarioDescriptor;
 
+/**
+ * @since 0.6.0
+ */
 export const REPEAT_SLOTS_WITHOUT_MERGE = {
   id: "repeat-slots-without-merge",
   group: "repeat-slots",
   what: "Slots, 3 selections repeated, without tailwind-merge",
 } as const satisfies ScenarioDescriptor;
 
+/**
+ * @since 0.6.0
+ */
 export const REPEAT_SLOTS_WITH_MERGE = {
   id: "repeat-slots-with-merge",
   group: "repeat-slots",
   what: "Slots, 3 selections repeated, with tailwind-merge on tv",
 } as const satisfies ScenarioDescriptor;
 
+/**
+ * @since 0.6.0
+ */
 export const UNCACHED_SIMPLE_WITH_MERGE = {
   id: "uncached-simple-with-merge",
   group: "uncached",
   what: "Control, not a comparison: simple variants with the resolution cache off, so the plan walk stays measured",
 } as const satisfies ScenarioDescriptor;
 
+/**
+ * @since 0.6.0
+ */
 export const UNCACHED_SLOTS_WITH_MERGE = {
   id: "uncached-slots-with-merge",
   group: "uncached",
   what: "Control, not a comparison: slots with the resolution cache off, so the plan walk stays measured",
 } as const satisfies ScenarioDescriptor;
 
+/**
+ * @since 0.6.0
+ */
 export const CONSTRUCT_SIMPLE = {
   id: "construct-simple",
   group: "construct",
   what: "Define a button component and render it once (per definition, not per render — off the aggregates)",
 } as const satisfies ScenarioDescriptor;
 
+/**
+ * @since 0.6.0
+ */
 export const CONSTRUCT_SLOTS = {
   id: "construct-slots",
   group: "construct",

@@ -120,6 +120,9 @@ function buildBindPathScenario(descriptor: ScenarioDescriptor, refine: boolean):
   };
 }
 
+/**
+ * @since 0.6.0
+ */
 export function buildCodefastColdBootScenarios(): ReadonlyArray<BenchScenario> {
   return [
     buildContainerCreateScenario(),

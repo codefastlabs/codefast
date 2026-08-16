@@ -5,6 +5,8 @@
 /**
  * Why a comment's content fails the convention. None is mechanical — the writer restates the
  * invariant, lets the type carry the type, or moves the tag.
+ *
+ * @since 0.6.0
  */
 export type CommentContentDefectKind =
   | "detached-doc"
@@ -17,6 +19,8 @@ export type CommentContentDefectKind =
 
 /**
  * One banned fragment found inside a comment.
+ *
+ * @since 0.6.0
  */
 export interface CommentContentFinding {
   readonly line: number;
@@ -44,6 +48,8 @@ const directiveLinePattern = /^[ \t]*\/\/[ \t]*(?:oxlint-|eslint-|@ts-|prettier-
 
 /**
  * Scans a source file's comments for banned content, in source order.
+ *
+ * @since 0.6.0
  */
 export function scanCommentContent(content: string, language: "css" | "js"): Array<CommentContentFinding> {
   const findings: Array<CommentContentFinding> = [];
