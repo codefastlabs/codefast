@@ -156,9 +156,12 @@ Rules: **no tests under** `src/**`; no test files directly under `tests/` (must 
 
 ## Comments (TSDoc, not JSDoc)
 
-This is a **TypeScript** project, so doc comments are **TSDoc** — never JSDoc type syntax. The bar: **keep comments
-concise — one short, plain-English line per point; state the _why_/purpose, never restate _what_, and let the types
-carry the types.**
+This is a **TypeScript** project, so doc comments are **TSDoc** — never JSDoc type syntax — and TSDoc is a _grammar_,
+not a vibe: `cli:audit:comments` runs the official `@microsoft/tsdoc` parser over every doc block, so an `@word`,
+`{`/`}`, or `>` loose in prose is a red build. Backtick code-ish text (`` `@codefast/di` ``, `` `@injectable` ``,
+`` `{ tags: [pair] }` ``) rather than backslash-escaping it, and a code span cannot wrap across lines. The bar: **keep
+comments concise — one short, plain-English line per point; state the _why_/purpose, never restate _what_, and let the
+types carry the types.**
 
 - **Three lines is the cap.** One short line stating a block's purpose; three at the absolute most. A comment that wants
   more is telling you the detail belongs in the package's `ARCHITECTURE.md` (or the PR) — put the argument there, and
@@ -207,7 +210,10 @@ carry the types.**
 - **Never put types in comments.** No `@param {string} x` / `@returns {T}` — TS already declares them, and a duplicated
   type just goes stale (`cli:audit:comments` flags the `{type}` payload). Prefer omitting `@param`/`@returns` entirely.
   Add `@param name - …` (TSDoc style: a hyphen, **no** `{type}`) or `@typeParam T - …` only to document a non-obvious
-  _meaning_ — units, an invariant, ownership — not the type.
+  _meaning_ — units, an invariant, ownership — not the type. **All or none:** a block that names any parameter names
+  every parameter of that signature (audited) — a partial list reads as complete and misleads, and it is what editors
+  flag as "Parameter x is not described in TSDoc". The obvious siblings get one short fragment each; if that feels like
+  noise, the answer is no `@param` at all, with the one insight in prose.
 - **`//` comments state the _why_/purpose in one line** — a non-obvious decision, constraint, or gotcha (e.g.
   `// scoped to the client env — the nitro build sets its own codeSplitting`). If a competent reader could infer it from
   the code or the types, **delete it**; never narrate obvious lines.
