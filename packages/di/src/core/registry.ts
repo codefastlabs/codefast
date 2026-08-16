@@ -21,6 +21,9 @@ export class BindingRegistry {
   // Fast lookup for a slot carrying exactly one tag — keyed by the interned criterion itself, so
   // the (key, value) pair is one hash rather than two. Unallocated until a tagged binding lands.
   #simpleTagged: Map<DependencyKey, Map<BindingTag, Binding>> | undefined;
+  // Name-less slots with two or more tags, bucketed by their FIRST criterion. A matching slot's
+  // every tag is in the request, so walking the request's buckets finds each candidate exactly once.
+  #multiTagged: Map<DependencyKey, Map<BindingTag, Array<Binding>>> | undefined;
 
   // Set on the first constant registered and never cleared. Teardown only needs the negative answer
   // to be exact, and that is what lets a container holding no constant skip its sweep entirely.
@@ -75,6 +78,7 @@ export class BindingRegistry {
           this.#byId.delete(displacedBinding.id);
           this.#deindexSimpleNamedBinding(key, displacedBinding);
           this.#deindexSimpleTaggedBinding(key, displacedBinding);
+          this.#deindexMultiTaggedBinding(key, displacedBinding);
         }
       }
       nextBindings =
@@ -87,6 +91,7 @@ export class BindingRegistry {
     this.#byId.set(binding.id, binding);
     this.#indexSimpleNamedBinding(key, binding);
     this.#indexSimpleTaggedBinding(key, binding);
+    this.#indexMultiTaggedBinding(key, binding);
     this.#refreshFastDefaultForToken(key);
     return displacedBinding;
   }
@@ -99,6 +104,7 @@ export class BindingRegistry {
     this.#bindings.delete(key);
     this.#simpleNamed?.delete(key);
     this.#simpleTagged?.delete(key);
+    this.#multiTagged?.delete(key);
     this.#fastDefault.delete(key);
     for (const binding of bindingsForToken) {
       this.#byId.delete(binding.id);
@@ -122,10 +128,12 @@ export class BindingRegistry {
       const remaining = bindingIndex === -1 ? bindingsForToken : bindingsForToken.toSpliced(bindingIndex, 1);
       this.#deindexSimpleNamedBinding(key, binding);
       this.#deindexSimpleTaggedBinding(key, binding);
+      this.#deindexMultiTaggedBinding(key, binding);
       if (remaining.length === 0) {
         this.#bindings.delete(key);
         this.#simpleNamed?.delete(key);
         this.#simpleTagged?.delete(key);
+        this.#multiTagged?.delete(key);
         this.#fastDefault.delete(key);
       } else {
         this.#bindings.set(key, remaining);
@@ -169,6 +177,7 @@ export class BindingRegistry {
     this.#byId.clear();
     this.#simpleNamed?.clear();
     this.#simpleTagged?.clear();
+    this.#multiTagged?.clear();
     this.#fastDefault.clear();
     return all;
   }
@@ -199,6 +208,16 @@ export class BindingRegistry {
    */
   getSimpleTagged(token: Token<unknown> | Constructor, criterion: BindingTag): Binding | undefined {
     return this.#simpleTagged?.get(token)?.get(criterion);
+  }
+
+  /**
+   * The multi-tag bindings whose slot's first criterion is `criterion`.
+   *
+   * @remarks A prefilter, not an answer: a bucket member's remaining tags still have to be matched
+   * against the request — first-criterion bucketing only guarantees each candidate appears once.
+   */
+  getMultiTagged(token: Token<unknown> | Constructor, criterion: BindingTag): ReadonlyArray<Binding> | undefined {
+    return this.#multiTagged?.get(token)?.get(criterion);
   }
 
   getFastDefault(token: Token<unknown> | Constructor): Binding | undefined {
@@ -234,6 +253,32 @@ export class BindingRegistry {
       if (byCriterion.size === 0) {
         this.#simpleTagged!.delete(tokenKey);
       }
+    }
+  }
+
+  #indexMultiTaggedBinding(tokenKey: DependencyKey, binding: Binding): void {
+    const firstCriterion = multiTagFirstOf(binding);
+    if (firstCriterion === undefined) {
+      return;
+    }
+    const buckets = (this.#multiTagged ??= new Map()).getOrInsert(tokenKey, new Map<BindingTag, Array<Binding>>());
+    buckets.getOrInsert(firstCriterion, []).push(binding);
+  }
+
+  #deindexMultiTaggedBinding(tokenKey: DependencyKey, binding: Binding): void {
+    const firstCriterion = multiTagFirstOf(binding);
+    if (firstCriterion === undefined) {
+      return;
+    }
+    const bucket = this.#multiTagged?.get(tokenKey)?.get(firstCriterion);
+    if (bucket === undefined) {
+      return;
+    }
+    const bindingIndex = bucket.findIndex((candidate) => candidate.id === binding.id);
+    // Spliced in place: nothing walks a bucket while user code runs — candidates are gathered
+    // into their own array before any predicate is evaluated.
+    if (bindingIndex !== -1) {
+      bucket.splice(bindingIndex, 1);
     }
   }
 
@@ -299,6 +344,12 @@ function simpleNameOf(binding: Binding): string | undefined {
 function simpleTagOf(binding: Binding): BindingTag | undefined {
   const { name, tags } = binding.slot;
   return name === undefined && tags.length === 1 ? tags[0] : undefined;
+}
+
+/** The first criterion a multi-tag slot is bucketed under, or `undefined` for any other shape. */
+function multiTagFirstOf(binding: Binding): BindingTag | undefined {
+  const { name, tags } = binding.slot;
+  return name === undefined && tags.length >= 2 ? tags[0] : undefined;
 }
 
 /** A binding nothing has to be matched against: the default slot, no predicate. */

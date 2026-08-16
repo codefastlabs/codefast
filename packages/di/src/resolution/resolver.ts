@@ -3,6 +3,7 @@ import type { Container } from "#/container/container";
 import type { Binding, ConstantBinding, DynamicAsyncBinding, DynamicBinding } from "#/core/binding";
 import { NO_INSTANCE } from "#/core/binding";
 import type { BindingRegistry } from "#/core/registry";
+import { NO_TAG_KEYS } from "#/core/tag";
 import type { Token } from "#/core/token";
 import { tokenName } from "#/core/token";
 import type {
@@ -53,7 +54,10 @@ import {
   UNOWNED_BRANCH,
 } from "#/resolution/path/resolution-path";
 import { InstantiationPlanCompiler, PLAN_RETRY } from "#/resolution/plan/instantiation-plan";
-import { matchesSlot, selectAllBindings, selectBinding } from "#/resolution/select/binding-select";
+import { matchesSlot, requestedTagKeyMask, selectAllBindings, selectBinding } from "#/resolution/select/binding-select";
+
+// Where a multi-tag resolve switches from scanning the token's list to walking the tag indexes.
+const MULTI_TAG_INDEX_THRESHOLD = 8;
 
 const EMPTY_STRING_LIST: ReadonlyArray<string> = [];
 const EMPTY_FRAME_LIST: ReadonlyArray<ResolutionFrame> = [];
@@ -186,6 +190,24 @@ export class DependencyResolver implements ResolverCallbacks {
         if (tagged !== undefined && this.#satisfiesPredicate(tagged, options, resolutionPath, resolutionStack)) {
           return { binding: tagged, owner: this };
         }
+      } else if (
+        options.name === undefined &&
+        // A threshold switches the data structure, never the semantics: under it the generic scan
+        // below beats walking the indexes, and both paths answer identically. Sized first, so a
+        // small list pays one length read and nothing else.
+        this.#registry.getAll(token).length > MULTI_TAG_INDEX_THRESHOLD &&
+        requestedTagKeyMask(options) !== NO_TAG_KEYS
+      ) {
+        // A name-less multi-tag request matches only name-less tagged slots, and every such slot
+        // lives in one of the two tag indexes — so their union is the whole candidate set and the
+        // token's full list never needs scanning. Selection still owns predicates and specificity.
+        const selected = this.#selectMultiTagged(token, options, resolutionPath, resolutionStack);
+        if (selected !== undefined) {
+          return { binding: selected, owner: this };
+        }
+        return this.#parent === undefined
+          ? undefined
+          : this.#parent.#findBinding(token, options, resolutionPath, resolutionStack);
       }
     }
 
@@ -1334,6 +1356,57 @@ export class DependencyResolver implements ResolverCallbacks {
       return ROOT_CONSTRAINT_CONTEXT;
     }
     return buildConstraintContext(resolutionPath, resolutionStack, options);
+  }
+
+  /** Selection for a name-less multi-tag request, over the union of the two tag indexes. */
+  #selectMultiTagged(
+    token: Token<unknown> | Constructor,
+    options: ResolveOptions,
+    resolutionPath: Array<string>,
+    resolutionStack: Array<ResolutionFrame>,
+  ): Binding | undefined {
+    const candidates: Array<Binding> = [];
+    this.#gatherTagCandidates(token, options.tag, candidates);
+    const listed = options.tags;
+    if (listed !== undefined) {
+      for (let index = 0; index < listed.length; index += 1) {
+        this.#gatherTagCandidates(token, listed[index], candidates);
+      }
+    }
+    if (candidates.length === 0) {
+      return undefined;
+    }
+    return selectBinding(
+      candidates,
+      options,
+      this.#makeConstraintContext(resolutionPath, resolutionStack, options),
+      tokenName(token),
+    );
+  }
+
+  /** One request criterion's candidates: its exact single-tag binding, plus its first-tag bucket. */
+  #gatherTagCandidates(
+    token: Token<unknown> | Constructor,
+    criterion: BindingTag | undefined,
+    out: Array<Binding>,
+  ): void {
+    if (criterion === undefined) {
+      return;
+    }
+    // The includes probes only guard a request repeating a criterion across its two spellings.
+    const single = this.#registry.getSimpleTagged(token, criterion);
+    if (single !== undefined && !out.includes(single)) {
+      out.push(single);
+    }
+    const bucket = this.#registry.getMultiTagged(token, criterion);
+    if (bucket !== undefined) {
+      for (let index = 0; index < bucket.length; index += 1) {
+        const candidate = bucket[index]!;
+        if (!out.includes(candidate)) {
+          out.push(candidate);
+        }
+      }
+    }
   }
 
   #matchesBindingFast(

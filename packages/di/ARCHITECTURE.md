@@ -296,12 +296,20 @@ long after the reason had stopped being true. The restriction outlived the fact.
 by `tests/unit/resolution/select/tagged-selection.test.ts`, so the failure that stale reasoning could have caused — an
 indexed hit reaching a caller past a predicate that refused it — can't land quietly.
 
-The multi-tag case currently has **no** index, and this is a limitation to understand rather than a decision to defend:
-a request carrying several tags matches every binding whose tags are a **subset** of them, so `[A]`, `[B]` and `[A,B]`
-all answer a request for `[A,B]`. A `Map` can't resolve that in one lookup, and the shapes that get close each need
-either a per-resolve allocation (where the cost today is a handful of comparisons) or the tag values stringified (which
-the `Object.is` rule in [SPEC](SPEC.md#resolve-options) rules out). If someone finds a data structure that does the
-subset query without those costs, that's a genuine improvement, not a violation.
+The multi-tag case is a **subset query** — a request carrying several tags matches every binding whose tags are a subset
+of them, so `[A]`, `[B]` and `[A,B]` all answer a request for `[A,B]` — which no single `Map` lookup can serve. The
+index that serves it buckets every name-less multi-tag slot under its **first** criterion: a matching slot's every tag
+is in the request, its first tag included, so walking the request's few buckets (plus the single-tag index under each
+request criterion) finds each candidate **exactly once** — no dedup set, no per-resolve allocation beyond the candidate
+list selection was already building, and no stringified tag values (the `Object.is` rule in
+[SPEC](SPEC.md#resolve-options) still holds; buckets are keyed by the interned criterion).
+
+Two deliberate bounds on that lane. It serves **`resolve` only** — `resolveAll` keeps the full scan, because its result
+order follows the token's list and bucket order would reorder it. And it engages only past a **size threshold** on the
+token's list: under it the generic scan is cheaper than the bucket walk, so the threshold switches the data structure,
+never the semantics — both paths answer identically, which `tests/unit/resolution/select/multi-tag-selection.test.ts`
+pins along with the subset, specificity, predicate and index-invalidation behavior. The residual cost on a small list is
+one length read.
 
 **A hash lookup a loop repeats can benefit from an inline cache.** `LifecycleManager.activationHandlersFor()` keeps a
 one-entry token→hooks cache in front of its map, invalidated by `registerActivation`, because a resolve loop asks about
