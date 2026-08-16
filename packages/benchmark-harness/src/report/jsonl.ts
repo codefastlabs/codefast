@@ -1,7 +1,7 @@
 import type { Fingerprint, ScenarioTrialResult } from "#/shared/protocol";
 
 /**
- * One serialised observation line in bench `observations.jsonl` ({@link writeBenchJsonlRun} output).
+ * One serialised observation line in bench `observations.jsonl` ({@link writeJsonlRun} output).
  *
  * @since 0.3.16-canary.0
  */

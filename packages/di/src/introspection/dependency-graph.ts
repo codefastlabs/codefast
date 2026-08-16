@@ -12,10 +12,10 @@ import { matchesSlot } from "#/resolution/select/binding-select";
 // ── Types ────────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
- * @since 0.3.16-canary.0
- *
  * @remarks `kind`/`scope` are `"unbound"` for the placeholder node an optional, currently
  * unsatisfied dependency points at.
+ *
+ * @since 0.3.16-canary.0
  */
 export interface GraphNode {
   readonly id: string;
@@ -28,10 +28,10 @@ export interface GraphNode {
 }
 
 /**
- * @since 0.3.16-canary.0
- *
  * @remarks `label` is presentation, assembled for the adapters; read `optional` and `slotName`
  * rather than parsing it.
+ *
+ * @since 0.3.16-canary.0
  */
 export interface GraphEdge {
   readonly from: string;
