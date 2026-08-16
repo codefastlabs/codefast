@@ -5,6 +5,7 @@ import { buildCodefastAliasScenarios } from "#/scenarios/codefast/alias";
 import { buildCodefastAsyncScenarios } from "#/scenarios/codefast/async";
 import { buildCodefastAsyncEntryPointScenarios } from "#/scenarios/codefast/async-entry-points";
 import { buildCodefastAsyncLaneScenarios } from "#/scenarios/codefast/async-lanes";
+import { buildCodefastAsyncPlanScenarios } from "#/scenarios/codefast/async-plan";
 import { buildCodefastBindingVariantScenarios } from "#/scenarios/codefast/binding-variants";
 import { buildCodefastBootScenarios } from "#/scenarios/codefast/boot";
 import { buildCodefastColdBootScenarios } from "#/scenarios/codefast/cold-boot";
@@ -44,6 +45,7 @@ export function collectAllCodefastScenarios(): ReadonlyArray<AnyScenario> {
     ...buildCodefastFanOutScenarios(),
     ...buildCodefastAsyncScenarios(),
     ...buildCodefastAsyncLaneScenarios(),
+    ...buildCodefastAsyncPlanScenarios(),
     ...buildCodefastAsyncEntryPointScenarios(),
     ...buildCodefastLifecycleScenarios(),
     ...buildCodefastScopeScenarios(),
