@@ -179,8 +179,10 @@ export class InstantiationPlanCompiler {
   /**
    * Re-entry into the runtime resolver for a dependency the plan can't see through.
    *
-   * The ancestors are fixed at compile time, so the seeds are built once; each call copies
-   * them because the resolver pushes and pops on the arrays it is given.
+   * The ancestors are fixed at compile time, so the seed is built once and lent per call — the
+   * root-stack rule one level down: every sync lane pops what it pushes, so the owned array still
+   * holds exactly the seed when a call returns. A reentrant call finds it claimed and mints its
+   * own copy; a return that did not restore the length hands nothing back, so the next call mints.
    */
   #compileEscapeThunk(
     token: Token<unknown> | Constructor,
@@ -190,7 +192,19 @@ export class InstantiationPlanCompiler {
   ): () => unknown {
     const host = this.#host;
     const frames = ancestors.map((ancestor) => host.getResolutionFrame(ancestor));
-    return () => host.resolveEscaped(token, options, arity, [...frames]);
+    const depth = frames.length;
+    let owned: Array<ResolutionFrame> | undefined = [...frames];
+    return () => {
+      const stack = owned ?? [...frames];
+      owned = undefined;
+      try {
+        return host.resolveEscaped(token, options, arity, stack);
+      } finally {
+        if (stack.length === depth) {
+          owned = stack;
+        }
+      }
+    };
   }
 
   // A resolved binding declares its deps as explicit descriptors — same rules as
