@@ -168,7 +168,9 @@ carry the types.**
   while the compiler stays silent — a `SPEC.md §4.8` survived in this repo long after §4.8 stopped existing. State the
   invariant in the comment; if one line will not hold it, the name above it is not saying enough. Discoverability of the
   design docs is a repo rule (below and in each package's `CONTRIBUTING.md`), not something to re-litigate at 30 call
-  sites. The reverse direction is fine and encouraged: a doc citing a source path or symbol.
+  sites. The reverse direction is fine and encouraged: a doc citing a source path or symbol. `pnpm cli:audit:comments`
+  flags `see …*.md` in any comment; naming a markdown file without pointing at it (a generator naming its own output)
+  stays legal.
 - **No numbers in source comments.** No benchmark figures, `ns/op` tables, percentages, byte counts or ratios. They
   cannot be re-verified where they sit, they go stale silently, and the method behind them is not there either. Numbers
   live with their method — a benchmark suite's `RESULTS.md`, or the commit. An `ARCHITECTURE.md` states what a shape
@@ -204,14 +206,23 @@ carry the types.**
   editor already gives you is not worth a line of punctuation. The title is a noun phrase from the settled vocabulary —
   `Component: X`, `Variant: X`, `Context: X`, `Props`, `Helpers`, `Exports` — never a sentence.
 - **Never put types in comments.** No `@param {string} x` / `@returns {T}` — TS already declares them, and a duplicated
-  type just goes stale. Prefer omitting `@param`/`@returns` entirely. Add `@param name - …` (TSDoc style: a hyphen,
-  **no** `{type}`) or `@typeParam T - …` only to document a non-obvious _meaning_ — units, an invariant, ownership — not
-  the type.
+  type just goes stale (`cli:audit:comments` flags the `{type}` payload). Prefer omitting `@param`/`@returns` entirely.
+  Add `@param name - …` (TSDoc style: a hyphen, **no** `{type}`) or `@typeParam T - …` only to document a non-obvious
+  _meaning_ — units, an invariant, ownership — not the type.
 - **`//` comments state the _why_/purpose in one line** — a non-obvious decision, constraint, or gotcha (e.g.
   `// scoped to the client env — the nitro build sets its own codeSplitting`). If a competent reader could infer it from
   the code or the types, **delete it**; never narrate obvious lines.
-- **A doc comment on an exported symbol** leads with a one-line summary of intent/purpose (what it's _for_, not how it
-  works). Internal helpers get a comment only when non-obvious.
+- **Every exported declaration in `packages/*/src` carries a doc comment** — Swift's rule, adopted because it already
+  holds: the published packages sit at full coverage, and one undocumented export is a regression, not a style choice.
+  `apps/*` and `examples/*` are encouraged, not gated. Internal helpers get a comment only when non-obvious. Swift's
+  corollary is the sharper half: if the summary is hard to write in simple terms, redesign the API, not the sentence.
+- **A summary is one third-person sentence fragment, ending with a period** (Swift API Design Guidelines). A function's
+  summary states what it does and what it returns, omitting void effects —
+  `Creates a class resolver for a component without slots.`, `Resolves the monorepo root.` Anything that is not a
+  function is described by what it _is_: a noun phrase — `The column every divider's rule ends at.` Never an imperative
+  (`Create a resolver` instructs the reader instead of describing the API) and never `This function…`. Detail continues
+  after a blank line or under `@remarks`, in complete sentences — the summary stays self-sufficient, because most
+  readers stop there.
 - **TSDoc block tags only when they add what the type can't:** `@remarks` (detail past the summary), `@example`,
   `@deprecated <reason + replacement>`, `@see`, `@throws`, `@defaultValue`.
 - **Speak the API's vocabulary (Apple HIG terms).** In comments and names, **appearance** is the user's preference
