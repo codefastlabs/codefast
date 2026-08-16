@@ -15,6 +15,135 @@ than the ratios on it.
 (`65443f167`) landed, on a freshly rebuilt `dist`. 78 of the run's cells carried a per-trial IQR above 5%, so single
 rows from it are read through the aggregates, not alone.
 
+## 2026-08-16 — two open questions run to an answer, no engine change
+
+Both items the 0.6.0 changelog and ARCHITECTURE left open as unrun measurements, on the same machine as the sections
+below, default isolated profile, 3 trials per run.
+
+### The `resolve-all-strategies-100` 0.95× reads as layout, and layout produces effects that size on this row
+
+The experiment the `resolveAll`-tag-index changeset said had not been run: two semantically neutral perturbations of
+`binding-select.ts` — moving `mostSpecificByTagCount` below `filterBindings` (V1), and appending a dead, never-called
+function of the changed code's size (V2) — each measured paired against unperturbed HEAD over four alternating passes,
+beside a four-pass A/A floor, on `resolve-all-strategies-100` and `-10` (driver: apply patch → `BENCH_ONLY` isolate run
+→ revert, order swapped per pass).
+
+| Comparison       | strategies-100 median |                        passes |
+| ---------------- | --------------------: | ----------------------------: |
+| A/A floor        |                1.0036 | 0.976 · 1.000 · 1.008 · 1.014 |
+| V1 (reorder)     |                1.0154 | 0.969 · 1.015 · 1.016 · 1.040 |
+| V2 (dead weight) |                1.0142 | 0.976 · 1.010 · 1.019 · 1.041 |
+
+A layout-neutral edit moves a single pass by up to ±4% and a four-pass median by ~1.5%, against a floor whose own passes
+spread ±2% — so an effect the size of the recorded 0.95× is within what code placement alone produces here, and there is
+no consistent deficit on HEAD to recover: the row reads 1.03× against inversify in the current full-suite ledger. The
+direct historical re-measure (`bbc111b` against its parent, on today's machine) is closed off twice over — the diff no
+longer reverse-applies across the 0.6.0 source reorganisation, and that era's `src` does not build under HEAD's
+`tsconfig` (`isolatedDeclarations` arrived later). Recorded as layout sensitivity; no engine change warranted. The claim
+stands to be reopened only by a full run putting the row below parity consistently.
+
+### A one-entry cache in front of `TagKey.of()` is worth ~7% inline, and the controls prove the swap was live
+
+The 0.6.0 tag-interning changeset recorded that an inline `.of(v)` stays behind a hoisted criterion because every call
+reads the intern map. A one-entry cache in front of it — `Object.is` on the raw value, so ±0 stay split and `NaN` hits
+itself with no `internKeyFor` detour — measured paired over six alternating passes (source swap, isolate runner, 453
+unit tests green under the patch first):
+
+| Row                          | Median |                                        passes |
+| ---------------------------- | -----: | --------------------------------------------: |
+| `slot-tag-shorthand-inline`  | 1.0735 | 1.040 · 1.049 · 1.050 · 1.097 · 1.106 · 1.124 |
+| `slot-tag-array-inline`      | 1.0672 | 0.971 · 1.061 · 1.066 · 1.068 · 1.104 · 1.120 |
+| `slot-tag-shorthand-hoisted` | 0.9986 |                       0.984–1.017, all parity |
+| `slot-tag-array-hoisted`     | 1.0021 |                         0.963–1.078, no trend |
+| `tagged-binding-resolve`     | 1.0117 |                         0.989–1.097, no trend |
+| `slot-tag-zero-value`        | 1.0175 |           0.799–1.139 — this row's usual band |
+
+Eleven of the twelve target passes are positive on rows whose A/A floor is the suite's widest, while the hoisted
+controls — which never call `.of()` in the loop — sit at parity, which doubles as the liveness proof for the source
+swap. Kept: the inline gap the interning changeset left open narrows by about a third; hoisted stays the fast spelling,
+as it must — it pays zero calls.
+
+### The single-tag chain walk leaves ~2× on the table warm; the memo's fresh cost is bounded
+
+ARCHITECTURE's open design question ("the fresh-vs-warm measurement is what would settle it"), run. Three isolated runs
+put `slot-tag-parent-owned` at 25.3 / 26.7 / 26.8M hz/op against `slot-name-parent-owned` at 53.0 / 53.4 / 54.6M — the
+memoized name lane answers the same parent-owned shape at **~2.1×** the unmemoized tag lane, stable across runs (both
+cells carry >5% within-run IQR; the between-run medians do not move). The same session's `fresh-child` matrix: n1
+default 4.32M · name 4.10M · tag 4.44M; n4 default 3.62M · name 3.16M · tag 2.84M hz/op — per-container memo state costs
+~5–8% at duty cycle 1 and amortizes before N=4, consistent with the crossover at N≈2–3 the 2026-08-12 section recorded.
+Settled: a tagged chain-walk memo shaped like `namedEntry` is justified; its implementation A/B should cite this section
+as the baseline, with `fresh-child-tag-n1` as the must-hold row.
+
+### The tagged chain-walk memo, landed — and the must-hold row is why it has a front entry
+
+Two shapes were measured, six paired alternating passes each, same rows both times. The first (`taggedEntry` exactly
+mirroring `namedEntry`) won every warm row and failed its own gate: `fresh-child-tag-n1` read **0.861** (all six passes
+negative) — the inner-map allocation on a child that resolves once and dies. The second defers that map behind a
+one-entry front, written only when a second distinct `(token, tag)` shape appears:
+
+| Row                          | Mirror-only |                         Front-entry |
+| ---------------------------- | ----------: | ----------------------------------: |
+| `slot-tag-parent-owned`      |       1.903 |        **2.783** (2.725–2.945, 6/6) |
+| `slot-tag-shorthand-hoisted` |       1.460 |                           **2.145** |
+| `tagged-binding-resolve`     |       1.367 |      **1.978** — a head-to-head row |
+| `fresh-child-tag-n4`         |       1.051 |                           **1.236** |
+| `fresh-child-tag-n1`         |       0.861 | **0.981** (0.933–1.072) — must-hold |
+| `slot-name-parent-owned`     |       1.004 |              0.999 — control, holds |
+| `multi-tag-slot-resolve`     |       0.994 |              1.002 — control, holds |
+
+The single-tag lane lands where the named lane sits, as the 2×-gap measurement above predicted, and the local constant
+rows ride the same fast lane. Correctness is pinned by seven new tests in
+`tests/unit/resolution/cache-invalidation.test.ts`: rebind/unbind invalidation in both request spellings, a parent-level
+rebind observed from a child, a predicate beside the tag evaluated on every resolve, a late container-level activation
+hook honored, and a warmed `+0` criterion refusing a `-0` request.
+
+### Compile-time tagged selection lands where the named settlement predicted
+
+The named settlement's rule, extended to the tagged lane now that the chain-walk memo gives the compiler a
+path-independent lookup to ask: a dependency carrying one tag and nothing else, whose candidate carries no predicate and
+whose slot the request satisfies, is settled at compile time instead of escaping. Two new rows mirror the named pair
+(`slot-injected-tag-compiled` / `-interpreted` — four tagged constants injected into one class, plan compiled against
+plan declined); measured paired over six alternating passes against the memo-and-`of()`-cache baseline:
+
+| Row                             |    Median |                        passes |
+| ------------------------------- | --------: | ----------------------------: |
+| `slot-injected-tag-compiled`    | **4.333** | 4.125–4.608, all six positive |
+| `slot-injected-tag-interpreted` |     1.005 |                       control |
+| `slot-injected-name-compiled`   |     0.990 |                       control |
+| `plan-deps-inlined`             |     1.008 |                       control |
+| `realistic-graph-resolve-root`  |     1.008 |                       control |
+
+The row goes 5.76M → 24.96M hz/op — landing exactly on `slot-injected-name-compiled` (~25M in the same session) and on
+`plan-deps-inlined`'s criteria-free plan of the same arity, which is what "the criterion was the only reason it escaped"
+predicts. `InstantiationPlanHost.lookupPathIndependentTaggedEntry` is **optional**, so a host predating it stays valid
+and simply keeps escaping — the named twin's landing as a required member is what made that changeset a breaking one.
+Eight tests mirror the named settlement's pins, plus one holding a two-tag dependency on the runtime path.
+
+### A sync escape lends its seed stack instead of copying it, and identity is most of the win
+
+`#compileEscapeThunk` minted `[...frames]` per call because the resolver pushes and pops on the array it is given — but
+every sync lane pops what it pushes, so the owned array still holds exactly the seed when a call returns. The thunk now
+lends one array, the root-stack rule one level down: a claimed or dirty return drops it and the next call mints.
+Re-entering the same thunk without a genuine cycle turned out to be impossible — every route back to the same plan node
+crosses a binding that is still in flight — so the claimed branch is a one-compare defence, not a hot case; a throwing
+escape leaving the thunk reusable is pinned by a new test.
+
+| Row                            |    Median |                         passes |
+| ------------------------------ | --------: | -----------------------------: |
+| `plan-escape-factory-dep`      | **1.409** |               1.331–1.460, 6/6 |
+| `plan-escape-scoped-dep`       | **1.233** |                            6/6 |
+| `plan-escape-optional-dep`     | **1.139** |                            6/6 |
+| `plan-escape-hooked-dep`       | **1.124** |                            6/6 |
+| `plan-escape-multi-dep`        | **1.107** |                            6/6 |
+| `plan-deps-inlined`            |     1.004 |                        control |
+| `realistic-graph-resolve-root` |     1.031 | its root plan does escape once |
+
+Larger than an allocation alone explains, and the mechanism is the context pool: a pooled resolution context is reused
+only for the array pair it already holds, so a fresh array per escape forced a fresh context per escape — the lent array
+keeps its identity across calls and the pool starts hitting, the same mechanism the 0.5.0 root-pair change was worth
+1.7× through. The async escape lane keeps copying: it lives across awaits, where "the call returned" and "the stack is
+free" are different moments.
+
 ## 2026-08-12 — 35 coverage rows, their first baselines, and the defect one of them found
 
 The suite went from 68 rows to 103. Every new row is `@codefast/di`-only, so **no published head-to-head figure moves**:
