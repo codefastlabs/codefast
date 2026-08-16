@@ -7,10 +7,11 @@
 import { describe, expect, it } from "vitest";
 
 import { Container } from "#/container/container";
+import { tag } from "#/core/tag";
 import { token } from "#/core/token";
 import { injectable } from "#/decorators/injectable";
 import { postConstruct } from "#/decorators/lifecycle-decorators";
-import { TokenNotBoundError } from "#/errors/errors";
+import { NoMatchingBindingError, TokenNotBoundError } from "#/errors/errors";
 
 const WARM_ITERATIONS = 5;
 
@@ -261,6 +262,102 @@ describe("resolved-kind plans and the named-lookup memo", () => {
 
     root.bind(configToken).toConstantValue(9).whenNamed("slot");
     expect(child.resolve(configToken, { name: "slot" })).toBe(9);
+  });
+});
+
+describe("the tagged-lookup memo", () => {
+  const Env = tag<string>("cache-invalidation-env");
+  const Level = tag<number>("cache-invalidation-level");
+
+  it("a warmed tagged constant observes rebind, in both request spellings", () => {
+    const configToken = token<number>("config");
+    const container = Container.create();
+    container.bind(configToken).toConstantValue(0);
+    container.bind(configToken).toConstantValue(1).whenTagged(Env.of("prod"));
+    warm(() => container.resolve(configToken, { tags: [Env.of("prod")] }));
+    expect(container.resolve(configToken, { tags: [Env.of("prod")] })).toBe(1);
+    expect(container.resolve(configToken, { tag: Env.of("prod") })).toBe(1);
+
+    container.bind(configToken).toConstantValue(2).whenTagged(Env.of("prod"));
+    expect(container.resolve(configToken, { tags: [Env.of("prod")] })).toBe(2);
+    expect(container.resolve(configToken, { tag: Env.of("prod") })).toBe(2);
+    expect(container.resolve(configToken)).toBe(0);
+  });
+
+  it("unbind makes a warmed tagged token throw TokenNotBoundError", () => {
+    const configToken = token<number>("config");
+    const container = Container.create();
+    container.bind(configToken).toConstantValue(1).whenTagged(Env.of("prod"));
+    warm(() => container.resolve(configToken, { tag: Env.of("prod") }));
+
+    container.unbind(configToken);
+    expect(() => container.resolve(configToken, { tag: Env.of("prod") })).toThrow(TokenNotBoundError);
+  });
+
+  it("a tagged singleton resolves through the memo after first materialization", () => {
+    let factoryCalls = 0;
+    const serviceToken = token<number>("service");
+    const container = Container.create();
+    container
+      .bind(serviceToken)
+      .toDynamic(() => {
+        factoryCalls += 1;
+        return 7;
+      })
+      .whenTagged(Env.of("prod"))
+      .singleton();
+
+    warm(() => container.resolve(serviceToken, { tag: Env.of("prod") }));
+    expect(factoryCalls).toBe(1);
+    expect(container.resolve(serviceToken, { tag: Env.of("prod") })).toBe(7);
+  });
+
+  it("a tagged binding resolved from a child observes a parent-level rebind", () => {
+    const configToken = token<number>("config");
+    const root = Container.create();
+    root.bind(configToken).toConstantValue(1).whenTagged(Env.of("prod"));
+    const child = root.createChild();
+    warm(() => child.resolve(configToken, { tag: Env.of("prod") }));
+
+    root.bind(configToken).toConstantValue(9).whenTagged(Env.of("prod"));
+    expect(child.resolve(configToken, { tag: Env.of("prod") })).toBe(9);
+  });
+
+  it("a predicate beside the tag keeps being evaluated after warming", () => {
+    const configToken = token<number>("config");
+    const container = Container.create();
+    let admitted = true;
+    container
+      .bind(configToken)
+      .toConstantValue(1)
+      .whenTagged(Env.of("prod"))
+      .when(() => admitted);
+    warm(() => container.resolve(configToken, { tag: Env.of("prod") }));
+    expect(container.resolve(configToken, { tag: Env.of("prod") })).toBe(1);
+
+    admitted = false;
+    expect(() => container.resolve(configToken, { tag: Env.of("prod") })).toThrow(NoMatchingBindingError);
+  });
+
+  it("a container-level activation hook added after warming runs on the next resolve", () => {
+    const configToken = token<number>("config");
+    const container = Container.create();
+    container.bind(configToken).toConstantValue(1).whenTagged(Env.of("prod"));
+    warm(() => container.resolve(configToken, { tag: Env.of("prod") }));
+    expect(container.resolve(configToken, { tag: Env.of("prod") })).toBe(1);
+
+    container.onActivation(configToken, (_ctx, value) => (value as number) + 10);
+    expect(container.resolve(configToken, { tag: Env.of("prod") })).toBe(11);
+  });
+
+  it("a warmed +0 criterion does not answer a -0 request", () => {
+    const configToken = token<number>("config");
+    const container = Container.create();
+    container.bind(configToken).toConstantValue(1).whenTagged(Level.of(0));
+    warm(() => container.resolve(configToken, { tag: Level.of(0) }));
+
+    expect(container.resolve(configToken, { tag: Level.of(0) })).toBe(1);
+    expect(() => container.resolve(configToken, { tag: Level.of(-0) })).toThrow(NoMatchingBindingError);
   });
 });
 

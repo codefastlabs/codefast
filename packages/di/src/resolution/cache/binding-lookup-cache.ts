@@ -6,6 +6,7 @@
  */
 import type { Binding } from "#/core/binding";
 import type { BindingRegistry } from "#/core/registry";
+import type { BindingTag } from "#/core/tag";
 import type { Token } from "#/core/token";
 import type { Constructor } from "#/core/types";
 
@@ -34,6 +35,8 @@ export const ALIAS_HOP_LIMIT = 32;
  */
 const newNameToEntryMap = <Owner>(): Map<string, DefaultLookupEntry<Owner> | null> => new Map();
 
+const newTagToEntryMap = <Owner>(): Map<BindingTag, DefaultLookupEntry<Owner> | null> => new Map();
+
 /**
  * @since 0.5.0-canary.9
  */
@@ -47,6 +50,14 @@ export class BindingLookupCache<Owner> {
   #lastEntry: DefaultLookupEntry<Owner> | null = null;
   readonly #byTokenAndName = new Map<Token<unknown> | Constructor, Map<string, DefaultLookupEntry<Owner> | null>>();
   #namedVersion = -1;
+  readonly #byTokenAndTag = new Map<Token<unknown> | Constructor, Map<BindingTag, DefaultLookupEntry<Owner> | null>>();
+  #taggedVersion = -1;
+  // One entry in front of the tag map, and the map is not written until a second distinct request
+  // shape appears: a per-request child usually asks one (token, tag) once, and the inner-map
+  // allocation was that shape's whole regression when this memo landed.
+  #lastTagToken: Token<unknown> | Constructor | undefined;
+  #lastTag: BindingTag | undefined;
+  #lastTaggedEntry: DefaultLookupEntry<Owner> | null = null;
 
   readonly #registry: BindingRegistry;
   readonly #owner: Owner;
@@ -105,6 +116,37 @@ export class BindingLookupCache<Owner> {
     return entry;
   }
 
+  /** `null` when the tag's shape needs the full selection path. */
+  taggedEntry(token: Token<unknown> | Constructor, tag: BindingTag): DefaultLookupEntry<Owner> | null {
+    const version = this.chainVersion();
+    if (version !== this.#taggedVersion) {
+      this.#byTokenAndTag.clear();
+      this.#taggedVersion = version;
+      this.#lastTagToken = undefined;
+      this.#lastTag = undefined;
+    } else if (token === this.#lastTagToken && tag === this.#lastTag) {
+      return this.#lastTaggedEntry;
+    }
+    let entry: DefaultLookupEntry<Owner> | null | undefined;
+    if (this.#lastTagToken === undefined) {
+      // First shape this cache generation sees: answer from the walk and defer the map entirely.
+      entry = this.#findTaggedInChain(token, tag);
+    } else {
+      // Keyed by the criterion object itself: criteria are interned, so identity is the slot
+      // contract's own `Object.is` — the same exactness the registry's tagged index relies on.
+      const byTag = this.#byTokenAndTag.getOrInsertComputed(token, newTagToEntryMap);
+      entry = byTag.get(tag);
+      if (entry === undefined) {
+        entry = this.#findTaggedInChain(token, tag);
+        byTag.set(tag, entry);
+      }
+    }
+    this.#lastTagToken = token;
+    this.#lastTag = tag;
+    this.#lastTaggedEntry = entry;
+    return entry;
+  }
+
   #foldAliases(token: Token<unknown> | Constructor): DefaultLookupEntry<Owner> | null {
     let current = token;
     for (let hop = 0; hop < ALIAS_HOP_LIMIT; hop += 1) {
@@ -145,5 +187,20 @@ export class BindingLookupCache<Owner> {
       return null;
     }
     return this.#parent === undefined ? null : this.#parent.#findNamedInChain(token, name);
+  }
+
+  #findTaggedInChain(token: Token<unknown> | Constructor, tag: BindingTag): DefaultLookupEntry<Owner> | null {
+    const tagged = this.#registry.getSimpleTagged(token, tag);
+    if (tagged !== undefined) {
+      // Predicates need a live context; aliases carry options through the full path.
+      if (tagged.predicate !== undefined || tagged.kind === "alias") {
+        return null;
+      }
+      return { binding: tagged, owner: this.#owner };
+    }
+    if (this.#registry.has(token)) {
+      return null;
+    }
+    return this.#parent === undefined ? null : this.#parent.#findTaggedInChain(token, tag);
   }
 }

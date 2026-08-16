@@ -509,6 +509,22 @@ export class DependencyResolver implements ResolverCallbacks {
         }
         // Everything else keeps the full path (context, activation, guards).
       }
+    } else if (options !== undefined) {
+      // Single-tag fast lane: the named lane's tagged twin, memoizing the chain walk.
+      const singleTag = singleTagOnlyOf(options);
+      if (singleTag !== undefined) {
+        const taggedEntry = this.#lookup.taggedEntry(token, singleTag);
+        if (taggedEntry !== null) {
+          const taggedBinding = taggedEntry.binding;
+          if (taggedEntry.owner.#isPlainConstant(taggedBinding)) {
+            return taggedBinding.value as Value;
+          }
+          if (taggedBinding.scope === "singleton" && taggedBinding.instance !== NO_INSTANCE) {
+            return taggedBinding.instance as Value;
+          }
+          // Everything else keeps the full path (context, activation, guards).
+        }
+      }
     }
 
     const { binding, owner } = this.#requireBinding(token, options, resolutionStack);
