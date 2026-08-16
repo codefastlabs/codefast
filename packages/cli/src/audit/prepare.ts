@@ -111,3 +111,42 @@ export async function prepareLinkAudit(
     allowlist: linksConfig.allowlist ?? [],
   });
 }
+
+/**
+ * Load config and resolve the scan target for `audit comments`.
+ *
+ * @remarks Defaults to the repo root: a divider convention that only holds inside one package
+ * is not a convention.
+ */
+export async function prepareCommentAudit(
+  fs: FilesystemPort,
+  args: {
+    readonly currentWorkingDirectory: string;
+    readonly rawTarget: string | undefined;
+  },
+): Promise<Result<RtlAuditCommandPrelude, AppError>> {
+  let rootDir: string;
+  try {
+    rootDir = fs.canonicalPathSync(findRepoRoot(args.currentWorkingDirectory, fs));
+  } catch (caughtError: unknown) {
+    return err(new AppError("INFRA_FAILURE", messageFrom(caughtError), caughtError));
+  }
+
+  const loadedOutcome = await loadCodefastConfig(rootDir, fs);
+  if (!loadedOutcome.ok) {
+    return loadedOutcome;
+  }
+  const commentsConfig = loadedOutcome.value.config.audit?.comments ?? {};
+
+  const targetPath =
+    args.rawTarget === undefined ? rootDir : resolveRepoRelativePath(args.currentWorkingDirectory, args.rawTarget);
+  if (!fs.existsSync(targetPath)) {
+    return err(new AppError("NOT_FOUND", `Not found: ${targetPath}`));
+  }
+
+  return ok({
+    rootDir,
+    targetPath: fs.canonicalPathSync(targetPath),
+    allowlist: commentsConfig.allowlist ?? [],
+  });
+}

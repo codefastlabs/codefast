@@ -51,6 +51,28 @@ export const linkAuditRunRequestSchema: z.ZodType<LinkAuditRunRequest> = z.objec
 });
 
 /**
+ * Resolved request for a single comment-divider audit run.
+ */
+export type CommentAuditRunRequest = {
+  readonly rootDir: string;
+  readonly targetPath: string;
+  readonly allowlist?: ReadonlyArray<string> | undefined;
+  readonly fix: boolean;
+  readonly json: boolean;
+};
+
+/**
+ * Zod schema for {@link CommentAuditRunRequest}.
+ */
+export const commentAuditRunRequestSchema: z.ZodType<CommentAuditRunRequest> = z.object({
+  rootDir: z.string().min(1),
+  targetPath: z.string().min(1),
+  allowlist: z.array(z.string()).optional(),
+  fix: z.boolean(),
+  json: z.boolean(),
+});
+
+/**
  * Resolve a path that may be absolute or relative to `rootDir`.
  *
  * @since 1.0.0-canary.7

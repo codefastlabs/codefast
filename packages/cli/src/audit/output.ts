@@ -1,4 +1,4 @@
-import type { LinkAuditResult, RtlAuditResult } from "#/audit/domain/types";
+import type { CommentAuditResult, LinkAuditResult, RtlAuditResult } from "#/audit/domain/types";
 import { CLI_EXIT_GENERAL_ERROR, CLI_EXIT_SUCCESS } from "#/core/exit-codes";
 import { logger } from "#/core/logger";
 
@@ -92,4 +92,52 @@ export function formatLinkAuditJsonOutput(result: LinkAuditResult, rootDir: stri
     cwd: rootDir,
     result,
   });
+}
+
+/**
+ * Exit `1` when any non-allowlisted divider still breaks the convention.
+ */
+export function exitCodeForCommentAuditResult(result: CommentAuditResult): number {
+  return result.breakageCount > 0 ? CLI_EXIT_GENERAL_ERROR : CLI_EXIT_SUCCESS;
+}
+
+/**
+ * Human-readable comment-divider report.
+ */
+export function presentCommentAuditResult(result: CommentAuditResult): void {
+  for (const file of result.files) {
+    logger.out(`\n${file.relativePath}`);
+    for (const { line, raw, reason } of file.breakages) {
+      logger.out(`  ${line}: ${truncate(raw)} → ${reason}`);
+    }
+  }
+
+  const allowlistSuffix = result.allowlistedCount > 0 ? ` (${result.allowlistedCount} allowlisted)` : "";
+  if (result.fixedCount > 0) {
+    logger.out(`\n✎ Rewrote ${result.fixedCount} divider(s)`);
+  }
+
+  if (result.breakageCount > 0) {
+    logger.out(`\n✖ ${result.breakageCount} divider(s) off convention${allowlistSuffix} — rerun with --fix`);
+  } else {
+    logger.out(
+      `✓ ${result.dividerCount} divider(s) across ${result.scannedFileCount} file(s) match the convention${allowlistSuffix}`,
+    );
+  }
+}
+
+/**
+ * Machine-readable comment-divider summary for `--json`.
+ */
+export function formatCommentAuditJsonOutput(result: CommentAuditResult, rootDir: string): string {
+  return JSON.stringify({
+    schemaVersion: 1 as const,
+    ok: result.breakageCount === 0,
+    cwd: rootDir,
+    result,
+  });
+}
+
+function truncate(raw: string): string {
+  return raw.length <= 60 ? raw : `${raw.slice(0, 57)}…`;
 }

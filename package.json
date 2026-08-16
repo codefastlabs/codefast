@@ -22,6 +22,7 @@
     "cli:arrange:preview": "pnpm run codefast arrange --dry-run",
     "cli:arrange:simplify": "pnpm run codefast arrange simplify",
     "cli:arrange:simplify:preview": "pnpm run codefast arrange simplify --dry-run",
+    "cli:audit:comments": "pnpm run codefast audit comments",
     "cli:audit:links": "pnpm run codefast audit links",
     "cli:audit:rtl": "pnpm run codefast audit rtl",
     "cli:mirror": "pnpm run codefast mirror",
