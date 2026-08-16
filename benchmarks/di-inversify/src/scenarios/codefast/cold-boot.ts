@@ -1,5 +1,5 @@
 /**
- * @codefast/di — the cold path, unbundled from a resolve (codefast-only).
+ * `@codefast/di` — the cold path, unbundled from a resolve (codefast-only).
  *
  * Every cold row the suite has bundles container construction, binding and a resolve into one
  * iteration, so none of them can attribute a change to one of the three. A container defers eleven

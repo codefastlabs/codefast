@@ -1,5 +1,5 @@
 /**
- * @codefast/di — two engine lanes taken when the fast shape does not apply (codefast-only).
+ * `@codefast/di` — two engine lanes taken when the fast shape does not apply (codefast-only).
  *
  * The first pair is the sync context pool's lending protocol. A resolve borrows one pooled path/stack
  * pair per resolver, and an empty root stack is the whole protocol: a factory that asks its own

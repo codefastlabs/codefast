@@ -48,10 +48,14 @@ export function bindingSlotEquals(left: BindingSlot, right: BindingSlot): boolea
 export const NO_INSTANCE: unique symbol = Symbol("di:no-instance");
 
 /**
+ * The slot every unconstrained binding shares.
+ *
+ * @remarks Tags are frozen where they are built (here and in the builder's re-tag), never per
+ * binding: frames and snapshots alias the array, so a caller's write throws instead of corrupting
+ * the registry.
+ *
  * @since 0.3.16-canary.0
  */
-// Tags are frozen where they are built (here and in the builder's re-tag), never per binding:
-// frames and snapshots alias the array, so a caller's write throws instead of corrupting the registry.
 export const DEFAULT_BINDING_SLOT: BindingSlot = { name: undefined, tags: Object.freeze([]), keyMask: NO_TAG_KEYS };
 
 /**
@@ -263,6 +267,9 @@ type BindingFieldSuperset = {
  * hidden class. Reordering the fields, or adding a second site, gives that up.
  *
  * @param source - the kind-specific payload, or an existing binding to re-slot
+ * @param token - the key requests resolve the binding by
+ * @param slot - the name + tags a request must match to select this binding
+ * @param predicate - a custom constraint, or `undefined` for none
  * @param id - reuse a caller's id to keep a fluent chain's `id()` stable across refinements
  *
  * @since 0.5.0-canary.8

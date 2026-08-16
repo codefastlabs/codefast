@@ -90,7 +90,7 @@ describe("async chains", () => {
 });
 
 describe("concurrent branches of one async chain", () => {
-  /** A -> (B, C) in parallel, both -> D. Two siblings sharing a dependency is not a cycle. */
+  /** A → (B, C) in parallel, both → D. Two siblings sharing a dependency is not a cycle. */
   function buildDiamondContainer(): { container: Container; rootToken: ReturnType<typeof token<number>> } {
     const sharedToken = token<number>("branch-shared");
     const leftToken = token<number>("branch-left");

@@ -142,6 +142,8 @@ function toDocumentLibrary(library: ComparisonLibrary): ComparisonDocumentLibrar
 /**
  * Serialises the comparison the console and markdown reports render.
  *
+ * @param pivot - The suite's subject; its fingerprint stamps the document.
+ * @param competitors - Every other measured library, in report order.
  * @param run - Identity and scheduling the parent knows; the profile and filter come from the env.
  */
 export function buildComparisonDocument(

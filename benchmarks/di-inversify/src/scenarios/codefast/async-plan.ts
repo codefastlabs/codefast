@@ -1,5 +1,5 @@
 /**
- * @codefast/di — statically-visible graphs entering through `resolveAsync` (codefast-only).
+ * `@codefast/di` — statically-visible graphs entering through `resolveAsync` (codefast-only).
  *
  * The async rows elsewhere are `toDynamicAsync` chains, whose factories are opaque — no compiler can
  * see through them. These two rows are the opposite shape: every dependency is declared up front

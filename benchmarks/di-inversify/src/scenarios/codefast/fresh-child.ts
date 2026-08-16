@@ -1,5 +1,5 @@
 /**
- * @codefast/di — the criteria lanes measured from a **fresh** child container (codefast-only).
+ * `@codefast/di` — the criteria lanes measured from a **fresh** child container (codefast-only).
  *
  * `slot-tag-parent-owned` and `slot-name-parent-owned` resolve from a child built once, so they read
  * a warm chain walk against a warm memo. A memo is not paid for there: it is paid for on the first

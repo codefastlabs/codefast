@@ -1,5 +1,5 @@
 /**
- * @codefast/di — a rebind read from the far end of a container chain (codefast-only).
+ * `@codefast/di` — a rebind read from the far end of a container chain (codefast-only).
  *
  * `rebind-hot-swap` rebinds and resolves on one container, where the lookup cache has one version to
  * compare. A child's cache is stamped with the summed versions of every registry up its chain, which

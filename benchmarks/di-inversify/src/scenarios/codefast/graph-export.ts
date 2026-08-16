@@ -1,5 +1,5 @@
 /**
- * @codefast/di — `generateDependencyGraph()`, the last public introspection entry with no row.
+ * `@codefast/di` — `generateDependencyGraph()`, the last public introspection entry with no row.
  *
  * `inspect-snapshot` and `lookup-bindings` read the registry; the graph walks it and derives edges
  * from every binding's declared dependencies, which is a different traversal and the one the graph
@@ -43,7 +43,7 @@ const GRAPH_SPECS: ReadonlyArray<NodeSpec> = [
 
 const DECLARED_EDGE_COUNT = GRAPH_SPECS.reduce((total, spec) => total + spec.dependsOn.length, 0);
 
-/** Declares its dependencies for the edge walk; an @injectable class may declare more than it takes. */
+/** Declares its dependencies for the edge walk; an `@injectable` class may declare more than it takes. */
 function buildNodeClass(nodeId: string, depTokens: ReadonlyArray<Token<GraphNode>>): Constructor<GraphNode> {
   @injectable(depTokens)
   class GraphLevel implements GraphNode {

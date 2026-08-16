@@ -1,5 +1,5 @@
 /**
- * @codefast/di — teardown at a scale where enumeration shows up (codefast-only).
+ * `@codefast/di` — teardown at a scale where enumeration shows up (codefast-only).
  *
  * `lifecycle-pre-destroy-unbind` tears down one singleton, so it prices the deactivation call and
  * nothing about finding what to deactivate. A singleton's instance lives on its binding, and the
@@ -7,7 +7,7 @@
  * walking it, which one instance cannot show. These two rows differ by exactly that walk:
  *
  *   materialize-100-singletons    create, bind 100, resolve all 100
- *   unbind-all-100-singletons     the same, then unbindAll() — 100 @preDestroy calls
+ *   unbind-all-100-singletons     the same, then unbindAll() — 100 `@preDestroy` calls
  */
 import { Container, preDestroy, token } from "@codefast/di";
 

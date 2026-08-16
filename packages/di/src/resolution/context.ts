@@ -156,8 +156,10 @@ export class AsyncLevelContext implements ResolutionContext {
   readonly #branchDepth: BranchDepth;
 
   /**
+   * @param resolver - the engine callbacks every request on this level goes through
    * @param resolutionStack - this level's own branch; the depth is read off it rather than passed,
    * so the two cannot disagree about where this level sits
+   * @param currentOptions - the options of the request that opened this level, if any
    */
   constructor(
     resolver: ResolverCallbacks,

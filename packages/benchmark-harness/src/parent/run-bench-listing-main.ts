@@ -24,6 +24,7 @@ export interface BenchScenarioInventory {
 /**
  * Discovers each library's scenario ids and unions them, first config's order first.
  *
+ * @param packageRootDirectory - The suite package the listing subprocesses spawn in.
  * @param configs - Subject first, so the inventory reads in report order rather than discovery order.
  */
 export async function buildBenchScenarioInventory(

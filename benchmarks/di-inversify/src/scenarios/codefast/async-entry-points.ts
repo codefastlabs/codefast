@@ -1,5 +1,5 @@
 /**
- * @codefast/di — the two public resolve entry points with no row of their own (codefast-only).
+ * `@codefast/di` — the two public resolve entry points with no row of their own (codefast-only).
  *
  * Four of the six are measured elsewhere (`resolve`, `resolveAsync`, `resolveOptional`,
  * `resolveAll`). These are the remaining pair, and neither is a spelling of a measured one:

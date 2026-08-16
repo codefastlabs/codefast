@@ -1,5 +1,5 @@
 /**
- * @codefast/di — the two depth thresholds the engine crosses, priced apart (codefast-only).
+ * `@codefast/di` — the two depth thresholds the engine crosses, priced apart (codefast-only).
  *
  * `scale-mid-transient-chain-32` and `scale-deep-transient-chain-512` are `toDynamic` chains, so they
  * run the transient-dynamic lane and its `binding.inFlight` flag: they never compile a plan and never

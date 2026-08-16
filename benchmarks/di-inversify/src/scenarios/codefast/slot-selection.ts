@@ -1,5 +1,5 @@
 /**
- * @codefast/di — slot-selection lanes (codefast-only, paired-A/B instrumentation).
+ * `@codefast/di` — slot-selection lanes (codefast-only, paired-A/B instrumentation).
  *
  * These rows make `#findBinding`'s slot lanes measurable. They are **not** competitive rows: every
  * one carries `excludeFromAggregates` so that promoting one to a head-to-head pair later is a
@@ -8,9 +8,9 @@
  * The first four form a 2×2 over (request form × where the tag literal lives), which is what
  * separates two costs the existing `tagged-binding-resolve` row cannot tell apart:
  *
- *                        hoisted literal        inline literal
- *   { tags: [pair] }     slot-tag-array-hoisted     slot-tag-array-inline
- *   { tag: pair }        slot-tag-shorthand-hoisted slot-tag-shorthand-inline
+ *                          hoisted literal            inline literal
+ *   `{ tags: [pair] }`     slot-tag-array-hoisted     slot-tag-array-inline
+ *   `{ tag: pair }`        slot-tag-shorthand-hoisted slot-tag-shorthand-inline
  *
  *   - across a row  → the lane, which both spellings of a single tag must share: both reach the
  *     registry's tagged index, so a gap opening here is that equivalence breaking.

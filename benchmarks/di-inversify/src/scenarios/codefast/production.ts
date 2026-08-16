@@ -1,5 +1,5 @@
 /**
- * @codefast/di — production-shaped scenarios.
+ * `@codefast/di` — production-shaped scenarios.
  *
  * Three archetypes drawn from real application patterns that DI containers
  * encounter in production Node.js backends:

@@ -1,5 +1,5 @@
 /**
- * @codefast/di — lifecycle-focused scenarios.
+ * `@codefast/di` — lifecycle-focused scenarios.
  *
  * These rows exercise hot paths tied to lifecycle decorators and deactivation:
  * - `lifecycle-post-construct-singleton`: singleton resolve with `@postConstruct`.

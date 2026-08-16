@@ -1,5 +1,5 @@
 /**
- * @codefast/di — initialization and introspection scenarios (codefast-only).
+ * `@codefast/di` — initialization and introspection scenarios (codefast-only).
  *
  * These APIs have no InversifyJS equivalent, so the comparison table shows "—"
  * on the inversify column.  They still provide useful regression protection for

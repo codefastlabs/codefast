@@ -1,9 +1,9 @@
 /**
- * @codefast/di — child-container scope scenarios.
+ * `@codefast/di` — child-container scope scenarios.
  *
  * This package keeps only the production-shaped scope row:
  *   - `child-depth-2-resolve` — resolve from a grandchild.
- *     Shape: app container -> per-request child -> one nested child.
+ *     Shape: app container → per-request child → one nested child.
  */
 import { Container, token } from "@codefast/di";
 

@@ -52,7 +52,9 @@ export interface DividerRegion {
 /**
  * Renders a divider in the canonical form.
  *
+ * @param indent - leading whitespace copied from the site, counted toward the column
  * @param title - the section name, already trimmed
+ * @param language - which comment syntax to draw the divider in
  */
 export function renderDivider(indent: string, title: string, language: DividerLanguage): string {
   if (language === "css") {

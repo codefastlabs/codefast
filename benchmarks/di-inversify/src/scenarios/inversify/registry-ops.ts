@@ -1,6 +1,6 @@
 /**
  * InversifyJS 8 — registry operation scenarios. Parallel to
- * {@link ../codefast/registry-ops.ts}.
+ * `../codefast/registry-ops.ts`.
  *
  * Inversify mapping:
  *   - `container.rebind(token)` → `container.rebind(id)` (sync, same semantics)

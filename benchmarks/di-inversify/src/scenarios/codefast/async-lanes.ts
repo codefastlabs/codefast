@@ -1,5 +1,5 @@
 /**
- * @codefast/di — the async lanes the existing async rows never reach (codefast-only).
+ * `@codefast/di` — the async lanes the existing async rows never reach (codefast-only).
  *
  * Every row in `async.ts` requests its dependency from a factory's **synchronous prefix**, which is
  * the one shape the cascade lane serves: the ancestor chain is the live call stack, so nothing is
@@ -50,6 +50,7 @@ const ASYNC_DIAMOND_SHARED_LEAF = {
  * An eight-level async chain whose factories request their dependency either from the synchronous
  * prefix (cascade) or from a continuation (branch), per level.
  *
+ * @param descriptor - the row identity the scenario reports under
  * @param requestsAfterAwait - given a level's index, whether that factory awaits before requesting
  */
 function buildAsyncChainScenario(

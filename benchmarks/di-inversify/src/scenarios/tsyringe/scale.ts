@@ -1,5 +1,5 @@
 /**
- * tsyringe — scale scenario. Mirrors {@link ../codefast/scale.ts}: a deep
+ * tsyringe — scale scenario. Mirrors `../codefast/scale.ts`: a deep
  * transient chain resolved from leaf to root each iteration. tsyringe factory
  * providers don't cache, so every chain step is transient by construction.
  */

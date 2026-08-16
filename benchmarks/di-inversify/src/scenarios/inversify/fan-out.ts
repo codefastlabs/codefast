@@ -4,7 +4,7 @@
  * `resolve-all-strategies-*` fan-out: measures `getAll()` (Inversify) on N
  * `toConstantValue` bindings to the same service id — **no** `whenNamed` / tag
  * qualifiers. Parallels codefast’s `resolveAll` on the same N-fold multi-binding
- * (see the comment in the codefast `fan-out.ts` module for how @codefast/di’s
+ * (see the comment in the codefast `fan-out.ts` module for how `@codefast/di`’s
  * default last-wins slot is bridged to N retained registrations).
  */
 import "reflect-metadata";

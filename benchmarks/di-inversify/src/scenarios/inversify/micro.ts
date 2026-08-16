@@ -1,6 +1,6 @@
 /**
  * InversifyJS 8 — micro-benchmarks. Parallel structure to
- * {@link ../codefast/micro.ts}: identical `id`s, identical `batch` factors,
+ * `../codefast/micro.ts`: identical `id`s, identical `batch` factors,
  * identical pre-warm strategy. The two modules differ only in which
  * library they call — that is the whole point of the side-by-side report.
  */

@@ -1,5 +1,5 @@
 /**
- * @codefast/di — resolution pattern scenarios.
+ * `@codefast/di` — resolution pattern scenarios.
  *
  * Exercises resolution APIs that have no coverage elsewhere:
  *

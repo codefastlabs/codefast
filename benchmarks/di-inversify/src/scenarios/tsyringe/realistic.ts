@@ -1,7 +1,7 @@
 /**
  * tsyringe — realistic-graph scenarios. Consumes the shared descriptor through
  * the tsyringe adapter so the same shape of work appears on every side of the
- * N-way table. Mirrors {@link ../codefast/realistic.ts}.
+ * N-way table. Mirrors `../codefast/realistic.ts`.
  */
 import "reflect-metadata";
 import { REALISTIC_GRAPH } from "#/fixtures/realistic-graph";

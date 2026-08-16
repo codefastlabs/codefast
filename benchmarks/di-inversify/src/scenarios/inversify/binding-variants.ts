@@ -1,6 +1,6 @@
 /**
  * InversifyJS 8 — binding variant scenarios. Parallel to
- * {@link ../codefast/binding-variants.ts}.
+ * `../codefast/binding-variants.ts`.
  *
  * Inversify mapping:
  *   - `toResolved(factory, deps)` → `toResolvedValue(factory, [id, id, id])`

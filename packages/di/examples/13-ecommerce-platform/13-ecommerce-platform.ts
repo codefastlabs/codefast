@@ -6,7 +6,7 @@ import { toDotGraph } from "@codefast/di";
  * DI feature in a domain-rich context:
  *
  *   Domain Contexts (Bounded Contexts / DDD):
- *   ```text
+ * ```text
  *   ├── Catalog       — products, categories, inventory, pricing rules
  *   ├── Cart          — shopping cart (scoped per request/session)
  *   ├── Orders        — order lifecycle, fulfillment, shipping
@@ -15,20 +15,20 @@ import { toDotGraph } from "@codefast/di";
  *   ├── Notifications — email, SMS, push (multi-binding pipeline)
  *   ├── Search        — Elasticsearch adapter, facets, ranking
  *   └── Analytics     — event tracking, conversion funnel, A/B tests
- *   ```
+ * ```
  *
  *   Infrastructure:
- *   ```text
+ * ```text
  *   ├── PostgreSQL     — main data store (async activation, pooled)
  *   ├── Redis          — session, cart, rate-limiting, pub/sub
  *   ├── S3             — media/images
  *   ├── Elasticsearch  — search index
  *   ├── Email (SES)    — transactional email
  *   └── SMS (Twilio)   — order status alerts
- *   ```
+ * ```
  *
  *   DI Features Exercised:
- *   ```text
+ * ```text
  *   ✅ Module.create / Module.createAsync for every bounded context
  *   ✅ Async onActivation / onDeactivation for infrastructure lifecycle
  *   ✅ singleton / transient / scoped — correctly applied per service
@@ -40,17 +40,17 @@ import { toDotGraph } from "@codefast/di";
  *   ✅ container.validate() scope-rule check before serving traffic
  *   ✅ container.initializeAsync() eager singleton warm-up
  *   ✅ await using for guaranteed graceful shutdown
- *   ✅ @injectable + @inject decorators throughout
- *   ✅ @postConstruct for cache warm-up
- *   ✅ @preDestroy for resource cleanup
+ *   ✅ `@injectable` + `@inject` decorators throughout
+ *   ✅ `@postConstruct` for cache warm-up
+ *   ✅ `@preDestroy` for resource cleanup
  *   ✅ module.import() diamond-dedup (infrastructure modules imported by many contexts)
  *   ✅ whenParentIs constraint for context-aware logger injection
  *   ✅ toDotGraph(container.generateDependencyGraph(...)) for architecture visualization
  *   ✅ resolveOptional for optional A/B test service
- *   ```
+ * ```
  *
  *   Scenario walkthrough (main()):
- *   ```text
+ * ```text
  *   1.  Bootstrap infrastructure (DB, Redis, S3, ES) — async modules
  *   2.  Load all domain modules
  *   3.  Warm up singletons (catalog cache, pricing rules)
@@ -67,7 +67,7 @@ import { toDotGraph } from "@codefast/di";
  *       i. Loyalty points awarded
  *       j. Analytics event emitted
  *   6.  Graceful shutdown via await using — all connections closed in order
- *   ```
+ * ```
  */
 import {
   Container,

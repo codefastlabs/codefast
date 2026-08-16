@@ -133,7 +133,7 @@ function collectTvArrayEdits(
  * - Arrays of pure string literals inside tv() slots → flat string
  * - cn() calls whose every argument is a static string literal → flat string (unwrap cn)
  * - cn() calls with mixed static + dynamic args → merge adjacent statics into one string
- * - JSX className={cn(...all-static...)} → className="flat string"
+ * - JSX `className={cn(...all-static...)}` → `className="flat string"`
  *
  * @since 0.3.16-canary.0
  */

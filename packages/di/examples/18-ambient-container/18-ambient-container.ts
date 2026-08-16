@@ -5,8 +5,8 @@
  * how to open that context by hand for instances the container does not construct.
  *
  * Covers:
- * - @inject() accessor           → property injection instead of constructor parameters
- * - @inject(Token, { name })     → a named slot on an accessor
+ * - `@inject()` accessor           → property injection instead of constructor parameters
+ * - `@inject(Token, { name })`     → a named slot on an accessor
  * - getActiveContainer()         → the container currently constructing, or undefined
  * - runWithContainer()           → open a context around code that constructs by hand
  * - MissingContainerContextError → what an accessor throws with no context open

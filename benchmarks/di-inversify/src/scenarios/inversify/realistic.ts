@@ -1,6 +1,6 @@
 /**
  * InversifyJS 8 — realistic-graph scenarios. Parallel to
- * {@link ../codefast/realistic.ts}. The `realistic-graph-validate`
+ * `../codefast/realistic.ts`. The `realistic-graph-validate`
  * scenario is intentionally absent: inversify has no equivalent static
  * scope-rule validator, so forcing it to run an ad-hoc impl would
  * measure "harness-invented code" rather than the library.

@@ -85,6 +85,9 @@ export function selectAllBindings(
 }
 
 /**
+ * @param bindings - the token's candidates, in registration order
+ * @param options - the request's selection criteria, if any
+ * @param ctx - what the constraint predicates read
  * @param requiresSlotMatch - `resolve` always matches the slot, where an absent criterion means
  * "the default slot"; `resolveAll` matches only when the request carries one
  */

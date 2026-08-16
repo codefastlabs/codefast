@@ -1,5 +1,5 @@
 /**
- * @codefast/di — the alias shapes past a single hop (codefast-only).
+ * `@codefast/di` — the alias shapes past a single hop (codefast-only).
  *
  * `to-alias-redirect` measures one hop to a cached singleton in the same container. Two properties of
  * the alias lane it cannot see: the walk is iterative, so hops compound; and an alias terminal may be

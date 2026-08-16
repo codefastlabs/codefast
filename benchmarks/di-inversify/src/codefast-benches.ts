@@ -1,5 +1,5 @@
 /**
- * @codefast/di bench subprocess entry point.
+ * `@codefast/di` bench subprocess entry point.
  *
  * Responsibilities:
  * - Gather scenarios from every `scenarios/codefast/*.ts` module.
@@ -9,8 +9,8 @@
  *   parent harness can parse it unambiguously.
  *
  * Must run under `tsconfig.codefast.json` — Stage 3 decorators + emit
- * `Symbol.metadata`. The parent spawns it with `NODE_OPTIONS=--expose-gc
- * --no-warnings NODE_ENV=production`.
+ * `Symbol.metadata`. The parent spawns it with
+ * `NODE_OPTIONS=--expose-gc --no-warnings NODE_ENV=production`.
  */
 import { BENCHMARK_SUITE_DEFAULT_BENCH_OPTIONS } from "@codefast/benchmark-harness/child/bench-options";
 import {

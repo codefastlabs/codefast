@@ -1,5 +1,5 @@
 /**
- * @codefast/di — multi-tag scenarios (codefast-only).
+ * `@codefast/di` — multi-tag scenarios (codefast-only).
  *
  * InversifyJS 8's `GetOptions` only accepts a single `tag: { key, value }` pair,
  * so there is no head-to-head inversify equivalent. Both scenarios show "—" on the

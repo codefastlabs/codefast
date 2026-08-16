@@ -27,7 +27,7 @@
  *   └── AppLoggerToken      → base logger
  *
  *   tenantContainer (child, one per request)
- *   ├── TenantContextToken  → { tenantId, plan, dbSchema }
+ *   ├── TenantContextToken  → `{ tenantId, plan, dbSchema }`
  *   ├── TenantDbToken       → TenantDatabase (wraps pool, namespaced to schema)
  *   ├── TenantCacheToken    → TenantCache (key-prefixed Redis stub)
  *   ├── TenantLoggerToken   → logger with tenantId in every line

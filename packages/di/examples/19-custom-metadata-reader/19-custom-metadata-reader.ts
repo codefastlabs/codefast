@@ -6,9 +6,9 @@
  *
  * Covers:
  * - MetadataReader                        → the interface the resolver reads class wiring through
- * - Container.create({ metadataReader })  → install your own reader
+ * - `Container.create({ metadataReader })`  → install your own reader
  * - defaultMetadataReader                 → delegate to it so decorated classes keep working
- * - getConstructorMetadata                → constructor parameters without @injectable
+ * - getConstructorMetadata                → constructor parameters without `@injectable`
  * - getLifecycleMetadata                  → postConstruct / preDestroy without decorators
  * - MetadataReaderToken                   → the binding path, and the one shape of it that works
  */

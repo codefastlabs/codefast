@@ -1,12 +1,12 @@
 /**
  * Example 14 — Auto-Register Registry
  *
- * Shows how to use createAutoRegisterRegistry + @injectable autoRegister option
+ * Shows how to use createAutoRegisterRegistry + `@injectable` autoRegister option
  * to bulk-register decorated classes without calling container.bind() manually.
  *
  * Pattern:
  *   1. Create a registry (one per layer or one global).
- *   2. Decorate each class with @injectable([...], { autoRegister: registry, scope }).
+ *   2. Decorate each class with `@injectable([...], { autoRegister: registry, scope })`.
  *   3. Call container.loadAutoRegistered(registry) once at bootstrap — the container
  *      binds every registered class in the order they were decorated.
  *

@@ -1,6 +1,6 @@
 /**
  * InversifyJS 8 — module system scenarios. Parallel to
- * {@link ../codefast/module.ts}.
+ * `../codefast/module.ts`.
  *
  * Inversify mapping:
  *   - `Module.create(name, setup)` → `new ContainerModule(({ bind }) => { ... })`

@@ -1,5 +1,5 @@
 /**
- * @codefast/di — registry operation scenarios.
+ * `@codefast/di` — registry operation scenarios.
  *
  * Exercises container mutation and introspection APIs not covered elsewhere:
  *

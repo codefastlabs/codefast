@@ -1,5 +1,5 @@
 /**
- * Shared scenario typing for @codefast/tailwind-variants, tailwind-variants (npm),
+ * Shared scenario typing for `@codefast/tailwind-variants`, tailwind-variants (npm),
  * and class-variance-authority bench subprocesses.
  *
  * Matching `id` values align rows in each comparison report.

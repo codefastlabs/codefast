@@ -180,7 +180,7 @@ function dynamicMaxGroups(tokenCount: number): number {
 }
 
 /**
- * Merges singleton groups (< MIN_GROUP_TOKENS tokens) into their nearest
+ * Merges singleton groups (fewer than `MIN_GROUP_TOKENS` tokens) into their nearest
  * neighbour. Prefers merging toward a bucket-compatible neighbor.
  *
  * Loop termination: each iteration either splices one element (shrinking the

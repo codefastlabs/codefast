@@ -179,6 +179,7 @@ function resolveIntegerBounds(key: string, bounds: IntegerEnvBounds | undefined)
  * like `3abc`, an exponent `parseInt` truncates to a different number, a fraction, or an
  * out-of-range port. Each of those otherwise reaches a benchmark as a plausible figure.
  *
+ * @param key - The environment variable to read.
  * @param bounds - Required for keys a suite owns; harness keys read theirs from the spec.
  */
 export function parseEnvInteger(key: string, bounds?: IntegerEnvBounds): number | undefined {

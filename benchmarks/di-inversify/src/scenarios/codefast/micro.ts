@@ -1,5 +1,5 @@
 /**
- * @codefast/di — micro-benchmarks. One operation per declared scenario,
+ * `@codefast/di` — micro-benchmarks. One operation per declared scenario,
  * batched so tinybench's `performance.now()` (μs resolution) sees a
  * workload long enough to be measured meaningfully.
  *

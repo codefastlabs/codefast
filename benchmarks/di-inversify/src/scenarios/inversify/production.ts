@@ -1,6 +1,6 @@
 /**
  * InversifyJS 8 — production-shaped scenarios. Parallel to
- * {@link ../codefast/production.ts}.
+ * `../codefast/production.ts`.
  *
  * Inversify-specific mapping:
  *   - `Container.create()` → `new Container({ jitless: false })`

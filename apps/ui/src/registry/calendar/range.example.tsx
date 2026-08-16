@@ -2,7 +2,7 @@ import { Calendar } from "@codefast/ui/calendar";
 import { Card, CardContent } from "@codefast/ui/card";
 import * as React from "react";
 
-/** Structural match for @daypicker/react's DateRange (kept local to avoid a transitive import). */
+/** Structural match for `@daypicker/react`'s DateRange (kept local to avoid a transitive import). */
 interface DateRange {
   from: Date | undefined;
   to?: Date | undefined;

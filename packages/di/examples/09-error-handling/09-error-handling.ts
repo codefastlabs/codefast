@@ -9,7 +9,7 @@
  * - NoMatchingBindingError — name/tag hint matches nothing
  * - AsyncResolutionError — sync resolve() on async binding
  * - CircularDependencyError — A → B → A cycle
- * - MissingMetadataError — .to() / .toSelf() without @injectable
+ * - MissingMetadataError — .to() / .toSelf() without `@injectable`
  * - ScopeViolationError  — container.validate() detects captive dependency
  * - AsyncModuleLoadError — load() called with AsyncModule
  */

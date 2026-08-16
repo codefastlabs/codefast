@@ -1,7 +1,7 @@
 /**
  * InversifyJS 8 adapter for the shared realistic-graph descriptor.
  *
- * Mirrors {@link ../fixtures/codefast-adapter.ts}: same node identities,
+ * Mirrors `../fixtures/codefast-adapter.ts`: same node identities,
  * same factory semantics via `toDynamicValue`, same scope mapping. The
  * two adapters are the only library-coupled files in the fixture set —
  * everything downstream (scenarios, harness) stays library-agnostic.

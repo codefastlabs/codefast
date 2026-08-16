@@ -6,7 +6,7 @@
  * - toAlias: redirect one token to another
  * - BindingIdentifier + .id(): targeted unbind in multi-binding
  * - rebind(): replace a binding atomically
- * - Plain tokens directly in @injectable (no inject() wrapper needed)
+ * - Plain tokens directly in `@injectable` (no inject() wrapper needed)
  */
 
 import { Container, inject, injectable, optional, token } from "@codefast/di";

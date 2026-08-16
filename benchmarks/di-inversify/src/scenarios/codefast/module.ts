@@ -1,5 +1,5 @@
 /**
- * @codefast/di — module system scenarios.
+ * `@codefast/di` — module system scenarios.
  *
  * Exercises `Module.create` / `container.load` / `container.unload` — the
  * primary app-organisation mechanism for grouping related bindings.  These

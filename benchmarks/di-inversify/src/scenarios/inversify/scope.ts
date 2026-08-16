@@ -1,6 +1,6 @@
 /**
  * InversifyJS 8 — child-container scope scenarios. Parallel to
- * {@link ../codefast/scope.ts}.
+ * `../codefast/scope.ts`.
  *
  * `new Container({ parent: ... })` is inversify's way of spelling
  * `codefast.createChild()`. Resolution cascades to the parent on a miss,

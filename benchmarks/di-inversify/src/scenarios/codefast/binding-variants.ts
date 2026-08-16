@@ -1,5 +1,5 @@
 /**
- * @codefast/di — binding variant scenarios.
+ * `@codefast/di` — binding variant scenarios.
  *
  * Exercises three binding APIs that have no coverage elsewhere:
  *

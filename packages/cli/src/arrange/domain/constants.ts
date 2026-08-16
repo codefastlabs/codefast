@@ -158,7 +158,7 @@ export const COMPATIBLE_BUCKET_SETS: ReadonlyArray<ReadonlySet<Bucket>> = [
 /**
  * Responsive / variant prefix — Tailwind v4 aware.
  *
- * v3: sm: md: … — v4: @sm:, @min-[600px]:, @[480px]:, named @md/sidebar:,
+ * v3: sm: md: … — v4: `@sm:`, `@min-[600px]:`, `@[480px]:`, named `@md/sidebar:`,
  * viewport md/sidebar:, min-[100px]: / max-[100px]:, …
  *
  * @since 0.3.16-canary.0

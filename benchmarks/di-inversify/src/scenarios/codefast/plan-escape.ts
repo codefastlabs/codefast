@@ -1,5 +1,5 @@
 /**
- * @codefast/di — what each kind of plan escape costs (codefast-only).
+ * `@codefast/di` — what each kind of plan escape costs (codefast-only).
  *
  * A compiled plan is a nested-constructor closure with no per-resolve bookkeeping. A dependency the
  * compiler cannot see through does not sink the plan: it compiles to an escape — a re-entry into the

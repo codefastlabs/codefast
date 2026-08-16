@@ -1,6 +1,6 @@
 /**
  * InversifyJS 8 — resolution pattern scenarios. Parallel to
- * {@link ../codefast/resolution-patterns.ts}.
+ * `../codefast/resolution-patterns.ts`.
  *
  * Inversify mapping:
  *   - `resolveOptional(token)` → `container.get(id, { optional: true })`

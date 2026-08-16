@@ -1,5 +1,5 @@
 /**
- * Central list of all @codefast/di bench scenarios. Used by the bench subprocess.
+ * Central list of all `@codefast/di` bench scenarios. Used by the bench subprocess.
  */
 import { buildCodefastAliasScenarios } from "#/scenarios/codefast/alias";
 import { buildCodefastAsyncScenarios } from "#/scenarios/codefast/async";

@@ -1,5 +1,5 @@
 /**
- * @codefast/di — the multi-tag lane's key-mask prefilter (codefast-only).
+ * `@codefast/di` — the multi-tag lane's key-mask prefilter (codefast-only).
  *
  * A slot matches only if the request carries **every** key the slot declares, which is a subset test
  * a `Map` cannot answer in one lookup. The lane therefore ORs each slot's tag keys into one word and
