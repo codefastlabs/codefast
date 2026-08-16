@@ -36,14 +36,16 @@ describe("has and hasOwn as existence probes", () => {
 });
 
 describe("binding snapshots", () => {
-  it("hands out a copied tag list, so mutating it cannot corrupt the registry", () => {
+  it("hands out a frozen tag list, so mutating it throws instead of corrupting the registry", () => {
     const serviceToken = token<string>("inspector.snapshot");
     const regionTag = tag<string>("region");
     const container = Container.create();
     container.bind(serviceToken).toConstantValue("eu-value").whenTagged(regionTag.of("eu"));
 
     const [snapshot] = container.lookupBindings(serviceToken);
-    (snapshot!.slot.tags as Array<unknown>).length = 0;
+    expect(() => {
+      (snapshot!.slot.tags as Array<unknown>).length = 0;
+    }).toThrow(TypeError);
 
     expect(container.resolve(serviceToken, { tags: [regionTag.of("eu")] })).toBe("eu-value");
     const [fresh] = container.lookupBindings(serviceToken);

@@ -50,7 +50,9 @@ export const NO_INSTANCE: unique symbol = Symbol("di:no-instance");
 /**
  * @since 0.3.16-canary.0
  */
-export const DEFAULT_BINDING_SLOT: BindingSlot = { name: undefined, tags: [], keyMask: NO_TAG_KEYS };
+// Tags are frozen where they are built (here and in the builder's re-tag), never per binding:
+// frames and snapshots alias the array, so a caller's write throws instead of corrupting the registry.
+export const DEFAULT_BINDING_SLOT: BindingSlot = { name: undefined, tags: Object.freeze([]), keyMask: NO_TAG_KEYS };
 
 /**
  * @since 0.3.16-canary.0

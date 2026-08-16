@@ -111,11 +111,12 @@ export class Inspector {
   }
 
   #toSnapshot(binding: Binding): BindingSnapshot {
-    // Copied, not aliased: a snapshot must not hand out the live array the resolver matches on.
+    // Aliased, not copied: slot tags are frozen where they are built, so a caller's write throws
+    // instead of corrupting the registry — and the snapshot skips an allocation per binding.
     const slot: BindingSnapshot["slot"] =
       binding.slot.name !== undefined
-        ? { name: binding.slot.name, tags: [...binding.slot.tags] }
-        : { tags: [...binding.slot.tags] };
+        ? { name: binding.slot.name, tags: binding.slot.tags }
+        : { tags: binding.slot.tags };
     return {
       tokenName: tokenName(binding.token),
       kind: binding.kind,

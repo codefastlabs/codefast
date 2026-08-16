@@ -46,7 +46,8 @@ function updateSlotTag(slot: BindingSlot, criterion: BindingTag): BindingSlot {
   } else {
     tags[existingIndex] = criterion;
   }
-  return { ...slot, tags, keyMask: tagKeyMaskOf(tags) };
+  // Frozen like DEFAULT_BINDING_SLOT's list: frames and snapshots alias a slot's tags.
+  return { ...slot, tags: Object.freeze(tags), keyMask: tagKeyMaskOf(tags) };
 }
 
 /** Record a module's binding id, dropping the id the chain re-slotted away from. */
