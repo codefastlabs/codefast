@@ -11,6 +11,7 @@ import {
   linkTargetHead,
   scanLinkReferences,
 } from "#/audit/domain/link-references";
+import { scanTsdocSyntax } from "#/audit/domain/tsdoc-syntax";
 import type { CommentAuditResult, DividerBreakage, DividerFileBreakages } from "#/audit/domain/types";
 import { AppError, messageFrom } from "#/core/errors";
 import type { FilesystemPort } from "#/core/filesystem/port";
@@ -21,9 +22,11 @@ import { sourceCommentLanguage, walkSourceFiles } from "#/core/workspace/source-
 const reasonByDefect: Record<CommentContentDefectKind | DividerDefectKind | "dead-link", string> = {
   "bad-width": `rule does not end at column ${DIVIDER_COLUMN}`,
   "dead-link": "{@link} target has no mention outside links — likely renamed",
+  "detached-doc": "// run separates a doc block from its declaration — merge it into the block",
   "doc-pointer": "comment points at a document — state the invariant here instead",
   "jsdoc-type": "JSDoc {type} syntax — the declaration already carries the type",
   "legacy-form": "legacy divider form",
+  "param-coverage": "a block naming any parameter must name them all — a partial list reads as complete",
   "param-hyphen": "TSDoc separates the name from its description with ' - '",
   "since-order": "@since is stamped at release and stays the block's last tag",
 };
@@ -37,7 +40,8 @@ interface ScannedFile {
 
 /**
  * Reports every comment off the repo's conventions: divider form (which `fix` rewrites), banned
- * content — document pointers, JSDoc types, tag misuse — and `{@link}` targets nothing declares.
+ * content — document pointers, JSDoc types, tag misuse — `{@link}` targets nothing declares, and
+ * every diagnostic the official TSDoc parser raises against a doc block's grammar.
  */
 export function runCommentAudit(
   fs: FilesystemPort,
@@ -96,6 +100,15 @@ export function runCommentAudit(
           continue;
         }
         breakages.push({ line: finding.line, raw: finding.raw, reason: reasonByDefect[finding.defect] });
+      }
+      if (language === "js") {
+        for (const finding of scanTsdocSyntax(content)) {
+          if (allowlist.has(finding.raw) || allowlist.has(`${relativePath}:${finding.raw}`)) {
+            allowlistedCount++;
+            continue;
+          }
+          breakages.push({ line: finding.line, raw: finding.raw, reason: finding.reason });
+        }
       }
       if (breakages.length > 0) {
         perFile.set(relativePath, breakages);

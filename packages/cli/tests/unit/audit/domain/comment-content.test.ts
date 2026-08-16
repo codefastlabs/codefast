@@ -79,6 +79,63 @@ describe("scanCommentContent", () => {
     expect(scanCommentContent(source, "js")).toStrictEqual([]);
   });
 
+  it("flags a // run wedged between a doc block and its declaration", () => {
+    const source = [
+      "/**",
+      " * @since 1.0.0",
+      " */",
+      "// An implementation note that detaches the block above.",
+      "export const GRID = 5;",
+    ].join("\n");
+    const findings = scanCommentContent(source, "js");
+
+    expect(findings).toHaveLength(1);
+    expect(findings[0]).toMatchObject({ line: 4, defect: "detached-doc" });
+  });
+
+  it("accepts a // comment that has no doc block above it", () => {
+    const source = ["// A plain implementation note.", "export const GRID = 5;"].join("\n");
+
+    expect(scanCommentContent(source, "js")).toStrictEqual([]);
+  });
+
+  it("flags a block naming one parameter while the signature has more", () => {
+    const source = [
+      "/**",
+      " * @param title - the section name",
+      " */",
+      "export function render(indent: string, title: string, language: Language): string {",
+    ].join("\n");
+    const findings = scanCommentContent(source, "js");
+
+    expect(findings).toHaveLength(1);
+    expect(findings[0]).toMatchObject({ defect: "param-coverage", raw: "@param missing: indent, language" });
+  });
+
+  it("accepts a complete @param list and skips destructured parameters", () => {
+    const source = [
+      "/**",
+      " * @param locale - BCP 47 tag the formatter renders in",
+      " */",
+      "function formatValue({ value, precision }: Options, locale: string): string {",
+    ].join("\n");
+
+    expect(scanCommentContent(source, "js")).toStrictEqual([]);
+  });
+
+  it("never guesses through a wrapper call around the signature", () => {
+    const source = [
+      "/**",
+      " * @param event - the blur event",
+      " */",
+      "const handleBlur = useCallback<FocusEventHandler>((event, extra) => {},",
+      "  [deps],",
+      ");",
+    ].join("\n");
+
+    expect(scanCommentContent(source, "js")).toStrictEqual([]);
+  });
+
   it("scans css block comments", () => {
     const source = ["/* see THEMING.md before adding a token */", "body { color: red; }"].join("\n");
 
