@@ -25,6 +25,8 @@ export const RESOLUTION_DIAGNOSTICS: unique symbol = Symbol("di:resolution-diagn
 export interface ResolutionDiagnostics {
   /** Bindings with a compiled instantiation plan. */
   readonly compiledPlanCount: number;
+  /** Bindings with a compiled async instantiation plan. */
+  readonly compiledAsyncPlanCount: number;
   /** Contexts held by the depth-indexed sync pool. */
   readonly syncContextPoolSize: number;
   /** Scoped instances currently cached by this container's scope manager. */

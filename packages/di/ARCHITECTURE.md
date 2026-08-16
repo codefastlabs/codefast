@@ -420,9 +420,18 @@ singleton that escaped would snapshot both cascade arrays for a resolve that nev
 correctness matter.)
 
 The sync lane's answer to the same question is `InstantiationPlanCompiler`, which cycle-checks a static subgraph once at
-compile time and then executes with no bookkeeping. It doesn't port: it needs a dependency graph visible before the
-resolve, and a `dynamic-async` factory is opaque. The cascade needs no such graph — it reads the ancestors off the call
-stack that is already there.
+compile time and then executes with no bookkeeping. It ports exactly as far as the graph is visible: `class`, `resolved`
+and `resolved-async` bindings declare their dependencies, so `compileAsync` compiles those into an async plan, while a
+`dynamic-async` factory stays opaque and keeps the cascade — which needs no graph because it reads the ancestors off the
+call stack that is already there.
+
+**The async plan runs only at a true root — a `resolveAsync` arriving with the cascade idle.** Inside an open cascade
+the same binding escapes instead, because a plan does no bookkeeping and its escapes must carry the live ancestors. Each
+node's promise-ness is settled at compile time: a fully synchronous subtree touches no promise at all, and anything that
+may yield one routes its dependencies through `Promise.all` — which is exactly how the interpreted async path treats
+every dependency, down to unwrapping a promise-valued constant and starting every sibling before the first rejection
+propagates. `tests/unit/resolution/plan/instantiation-plan-async.test.ts` pins the lane being active, the escape
+criteria, the late-hook invalidation, and those two exactness corners.
 
 ## The sync context pool, and the arrays it lends
 

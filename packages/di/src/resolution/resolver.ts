@@ -93,6 +93,10 @@ export class DependencyResolver implements ResolverCallbacks {
   readonly #classPlanByBindingId = new Map<BindingIdentifier, (() => unknown) | null>();
   #classPlanRegistryVersion = -1;
   #classPlanActivationVersion = -1;
+  // The async lane's plans, stamped and invalidated apart so neither lane pays the other's misses.
+  readonly #asyncPlanByBindingId = new Map<BindingIdentifier, (() => unknown) | null>();
+  #asyncPlanRegistryVersion = -1;
+  #asyncPlanActivationVersion = -1;
 
   readonly #registry: BindingRegistry;
   readonly #scope: ScopeManager;
@@ -131,15 +135,25 @@ export class DependencyResolver implements ResolverCallbacks {
   }
 
   /** Structural counts for the {@link ResolutionDiagnostics} a container reports. */
-  describeCaches(): Pick<ResolutionDiagnostics, "compiledPlanCount" | "syncContextPoolSize"> {
+  describeCaches(): Pick<
+    ResolutionDiagnostics,
+    "compiledPlanCount" | "compiledAsyncPlanCount" | "syncContextPoolSize"
+  > {
     let compiledPlanCount = 0;
     for (const plan of this.#classPlanByBindingId.values()) {
       if (plan !== null) {
         compiledPlanCount += 1;
       }
     }
+    let compiledAsyncPlanCount = 0;
+    for (const plan of this.#asyncPlanByBindingId.values()) {
+      if (plan !== null) {
+        compiledAsyncPlanCount += 1;
+      }
+    }
     return {
       compiledPlanCount,
+      compiledAsyncPlanCount,
       syncContextPoolSize: this.#syncResolutionContextPool.length,
     };
   }
@@ -442,7 +456,44 @@ export class DependencyResolver implements ResolverCallbacks {
       }
       return this.resolve(token, options, resolutionPath, resolutionStack);
     },
+    // Dispatches exactly as #resolveDepAsync does, for the async lane's escapes.
+    resolveEscapedAsync: (token, options, arity, resolutionPath, resolutionStack) => {
+      if (arity === "all") {
+        return this.resolveAllAsync(token, options, resolutionPath, resolutionStack, UNOWNED_BRANCH);
+      }
+      if (arity === "optional") {
+        return this.resolveOptionalAsync(token, options, resolutionPath, resolutionStack, UNOWNED_BRANCH);
+      }
+      if (options === undefined) {
+        return this.resolveAsyncFromContext(token, resolutionPath, resolutionStack, UNOWNED_BRANCH);
+      }
+      return this.resolveAsync(token, options, resolutionPath, resolutionStack, UNOWNED_BRANCH);
+    },
   });
+
+  /** The async lane's plan for a statically-visible transient binding, mirroring the sync getter. */
+  #getAsyncInstantiationPlan(
+    binding: Binding & { kind: "class" | "resolved" | "resolved-async" },
+  ): (() => unknown) | null {
+    const registryVersion = this.#lookup.chainVersion();
+    const activationVersion = this.#chainActivationVersion();
+    if (registryVersion !== this.#asyncPlanRegistryVersion || activationVersion !== this.#asyncPlanActivationVersion) {
+      this.#asyncPlanByBindingId.clear();
+      this.#asyncPlanRegistryVersion = registryVersion;
+      this.#asyncPlanActivationVersion = activationVersion;
+    }
+    const cached = this.#asyncPlanByBindingId.get(binding.id);
+    if (cached !== undefined) {
+      return cached;
+    }
+    const compiled = this.#planCompiler.compileAsync(binding);
+    if (compiled === PLAN_RETRY) {
+      // Lifecycle metadata not discovered yet — the fallback resolve discovers it; retry then.
+      return null;
+    }
+    this.#asyncPlanByBindingId.set(binding.id, compiled);
+    return compiled;
+  }
 
   resolve<Value>(
     token: Token<Value> | Constructor<Value>,
@@ -1407,10 +1458,41 @@ export class DependencyResolver implements ResolverCallbacks {
       if (fastBinding.scope === "singleton" && fastBinding.instance !== NO_INSTANCE) {
         return Promise.resolve(fastBinding.instance);
       }
+      const planned = this.#plannedCascadeAnswer(fastBinding);
+      if (planned !== null) {
+        return planned;
+      }
     }
     // Anything else leaves the cascade lane for good, seeded with a snapshot of the ancestors it
     // accumulated — so a cycle across the boundary is still on one path.
     return this.resolveAsyncFromContext(token, [...this.#cascadePath], [...this.#cascadeStack], UNOWNED_BRANCH);
+  }
+
+  /**
+   * A statically-visible transient graph at a true root answers from its compiled async plan.
+   *
+   * @remarks Kept out of the dispatcher so its size stays inlinable. Inside an open cascade the
+   * graph must escape instead, so its escapes carry the live ancestors — hence the idle gate.
+   */
+  #plannedCascadeAnswer(fastBinding: Binding): Promise<unknown> | null {
+    if (
+      this.#cascadePath.length !== 0 ||
+      fastBinding.scope !== "transient" ||
+      (fastBinding.kind !== "class" && fastBinding.kind !== "resolved" && fastBinding.kind !== "resolved-async")
+    ) {
+      return null;
+    }
+    const plan = this.#getAsyncInstantiationPlan(fastBinding);
+    if (plan === null) {
+      return null;
+    }
+    try {
+      const planned = plan();
+      return planned instanceof Promise ? planned : Promise.resolve(planned);
+    } catch (planError) {
+      // The interpreted lane is async, so a sync throw is a rejection there too.
+      return Promise.reject(planError);
+    }
   }
 
   #resolveTransientDynamicAsyncCascade(
