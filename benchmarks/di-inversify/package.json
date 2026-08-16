@@ -1,6 +1,6 @@
 {
   "name": "@codefast/benchmark-di-inversify",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "private": true,
   "description": "Head-to-head tinybench harness: @codefast/di vs InversifyJS v8 (full suite) plus Awilix and tsyringe (core subset)",
   "keywords": [

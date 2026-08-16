@@ -1,5 +1,12 @@
 # @codefast/ui
 
+## 0.6.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @codefast/tailwind-variants@0.6.1
+
 ## 0.6.0
 
 ### Patch Changes

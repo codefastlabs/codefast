@@ -1,5 +1,102 @@
 # @codefast/di
 
+## 0.6.1
+
+### Patch Changes
+
+- [#729](https://github.com/codefastlabs/codefast/pull/729) [`a8fff29`](https://github.com/codefastlabs/codefast/commit/a8fff29aac58b6e60595de35a613795087b055ab) Thanks [@thevuong](https://github.com/thevuong)! - perf(di): settle a single-tag dependency at compile time, the named settlement's rule on the tagged lane
+
+  A compiled plan settled a name-only dependency ahead of time and still escaped a tag-only one, though the tagged lane
+  now has everything the named rule needs: criteria are interned so an index hit is exact, and the chain-walk memo gives
+  the compiler a path-independent lookup to ask. A dependency carrying one tag and nothing else, whose candidate carries
+  no predicate and whose slot the request satisfies, now compiles to a plain dep thunk; a predicate, a second tag, a name,
+  a miss — anything whose selection could read the resolution path — escapes exactly as before, on both the sync and async
+  plan lanes.
+
+  `InstantiationPlanHost` gains `lookupPathIndependentTaggedEntry`, deliberately **optional** where the named twin's
+  arrival was a breaking change: a host that does not provide it stays a valid host, and a compiler given none simply
+  escapes the dependency, which is the pre-settlement behavior.
+
+  Measured paired against the previous build, six alternating passes: the new `slot-injected-tag-compiled` row — four
+  tagged constants injected into one class, mirroring the named pair — reads **4.33×** (every pass 4.13–4.61), going 5.76M
+  → 24.96M hz/op and landing exactly where `slot-injected-name-compiled` and the criteria-free `plan-deps-inlined` sit,
+  which is what "the criterion was the only reason it escaped" predicts. The interpreted twin and three controls hold
+  parity. Eight tests mirror the named settlement's pins — the baked answer tracks rebinds, a predicate keeps runtime
+  selection, an opaque factory's escape replays the tag — plus one holding a two-tag dependency on the runtime path.
+
+- [#729](https://github.com/codefastlabs/codefast/pull/729) [`a60bcf8`](https://github.com/codefastlabs/codefast/commit/a60bcf80deeda3964b0bf2e8a6d30aeeb6dc39ab) Thanks [@thevuong](https://github.com/thevuong)! - fix(di): a `when()` chain no longer hides a helper's requirement from `validate()`
+
+  `.when(whenParentNamed("x")).when(other)` composes one closure out of two predicates, and the composition dropped the
+  unreachability requirement the name helper had recorded — the constraint stayed impossible to satisfy, `validate()` just
+  could not see it, a limit the previous changeset stated outright. SPEC's rule carries no such carve-out: `validate()`
+  throws `UnreachableConstraintError` when no binding declares the slot name a constraint waits for, composed or not.
+
+  The composition site now merges both sides' requirements onto the composite predicate, and `validate()` reads the full
+  list, so a requirement survives any number of `when()` narrowings and either side of the chain can contribute one.
+  `constraintRequirementOf` keeps its shape and answers the first recorded requirement; the plural
+  `constraintRequirementsOf` is the reader `validate()` uses. A container that previously validated clean can now throw —
+  that is the documented rule holding where it silently did not.
+
+- [#729](https://github.com/codefastlabs/codefast/pull/729) [`0ee3290`](https://github.com/codefastlabs/codefast/commit/0ee329099359352ed8870d4f8bcfcbb8f2a55126) Thanks [@thevuong](https://github.com/thevuong)! - perf(di): lend a sync escape's seed stack instead of copying it per call
+
+  A compiled plan's escape re-enters the runtime resolver seeded with its ancestor frames, and minted a fresh
+  `[...frames]` on every call because the resolver pushes and pops on the array it is given. Every sync lane pops what it
+  pushes, so the owned array still holds exactly the seed when a call returns — the thunk now lends one array, the
+  resolver's own root-stack rule one level down. A dirty return (length not restored) drops the array and the next call
+  mints; re-entering the same thunk without a genuine cycle is impossible — every route back to the same plan node crosses
+  a binding that is still in flight — so the claimed branch is a one-compare defence rather than a hot case. The async
+  escape lane keeps copying: it lives across awaits, where "the call returned" and "the stack is free" are different
+  moments.
+
+  The win is bigger than removing one small allocation, and the mechanism is the context pool: a pooled resolution context
+  is reused only for the array pair it already holds, so a fresh array per escape forced a fresh context per escape — the
+  lent array keeps its identity across calls and the pool starts hitting. Measured paired against the previous build, six
+  alternating passes, all five escape rows positive in every pass: `plan-escape-factory-dep` **1.41×** (1.331–1.460),
+  `plan-escape-scoped-dep` **1.23×**, `plan-escape-optional-dep` **1.14×**, `plan-escape-hooked-dep` **1.12×**,
+  `plan-escape-multi-dep` **1.11×**; the no-escape `plan-deps-inlined` control holds parity and
+  `realistic-graph-resolve-root`, whose root plan escapes once for a singleton materialization, reads 1.03×. A new test
+  pins that a throwing escape leaves the thunk reusable.
+
+- [#729](https://github.com/codefastlabs/codefast/pull/729) [`12186d6`](https://github.com/codefastlabs/codefast/commit/12186d698b57a491a7b99d63750ff83199772f35) Thanks [@thevuong](https://github.com/thevuong)! - perf(di): a one-entry cache in front of `TagKey.of()`, narrowing the inline-criterion gap
+
+  The tag-interning changeset recorded that an inline `.of(v)` stayed behind a hoisted criterion because every call reads
+  the intern map, and that the gap had widened rather than closed. An inline call site usually repeats one value, so
+  `of()` now keeps its last `(value, pair)` and answers a repeat before touching `internKeyFor` or the map. The check is
+  `Object.is` — the comparison the slot contract already defines — so ±0 stay distinct and `NaN` hits itself, with no
+  special-casing.
+
+  Measured paired against the previous build, six alternating passes on rows whose A/A floor is the suite's widest:
+  `slot-tag-shorthand-inline` **1.07×** (six of six passes positive, 1.040–1.124) and `slot-tag-array-inline` **1.07×**
+  (five of six), while both hoisted rows — which never call `.of()` in the loop — sit at parity, doubling as the proof the
+  source swap was live. Hoisted stays the fast spelling, as it must: it pays zero calls.
+
+- [#729](https://github.com/codefastlabs/codefast/pull/729) [`aa76f4d`](https://github.com/codefastlabs/codefast/commit/aa76f4d0559004337f4c0a0aa89b434c26a78d3c) Thanks [@thevuong](https://github.com/thevuong)! - perf(di): memoize the single-tag chain walk, with a deferred map so a per-request child does not pay for it
+
+  A single-tag `resolve` was the one criteria lane that consulted each container's tag index on the way up on **every**
+  call — `defaultEntry` and `namedEntry` already memoized their walks, and ARCHITECTURE carried the question as open,
+  waiting on a fresh-vs-warm measurement. That measurement (RESULTS.md, 2026-08-16): the memoized name lane answered the
+  same parent-owned shape at ~2.1× the unmemoized tag lane, warm; the memo's per-container state cost ~5–8% at duty cycle
+  1 and amortized before N=4.
+
+  `BindingLookupCache` gains `taggedEntry(token, tag)` — chain-versioned like `namedEntry`, `null` meaning "this shape
+  needs full selection", predicate- and alias-carrying hits declined so a `when()` is still evaluated on every resolve —
+  and `resolve()` gains the tagged twin of its name-only fast lane, dispatching just the shapes whose semantics involve no
+  resolution context (plain constants, cached singletons). The memo key is the criterion object itself: interning makes
+  identity the slot contract's own `Object.is`, so ±0 stay split and no indexed hit needs a value re-check.
+
+  The first cut mirrored `namedEntry` exactly and failed its own gate: `fresh-child-tag-n1` — one tagged resolve inside a
+  child that then dies — read 0.861 across six negative passes, and the whole cost was the inner-map allocation on a
+  container that never asks twice. So the first `(token, tag)` shape a cache generation sees is answered from the walk and
+  parked in a one-entry front; the map is not written until a second distinct shape appears, and an alternating pair
+  converges after one extra walk per key.
+
+  Measured paired against the previous build, six alternating passes, medians: `slot-tag-parent-owned` **2.78×** (every
+  pass 2.73–2.95), `slot-tag-shorthand-hoisted` **2.14×**, `tagged-binding-resolve` **1.98×** (a head-to-head row),
+  `fresh-child-tag-n4` **1.24×**, with the must-hold `fresh-child-tag-n1` at 0.98 (0.933–1.072, inside that row's floor)
+  and the name-lane and multi-tag controls at parity. Seven new tests pin the memo's invalidation and its refusals:
+  rebind/unbind in both request spellings, a parent rebind observed from a child, a predicate beside the tag, a late
+  container-level activation hook, and a warmed `+0` criterion refusing `-0`.
+
 ## 0.6.0
 
 ### Minor Changes
