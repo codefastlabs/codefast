@@ -118,10 +118,10 @@ export function presentCommentAuditResult(result: CommentAuditResult): void {
   }
 
   if (result.breakageCount > 0) {
-    logger.out(`\n✖ ${result.breakageCount} divider(s) off convention${allowlistSuffix} — rerun with --fix`);
+    logger.out(`\n✖ ${result.breakageCount} comment issue(s)${allowlistSuffix} — --fix rewrites divider forms`);
   } else {
     logger.out(
-      `✓ ${result.dividerCount} divider(s) across ${result.scannedFileCount} file(s) match the convention${allowlistSuffix}`,
+      `✓ ${result.dividerCount} divider(s) across ${result.scannedFileCount} file(s), no banned comment content${allowlistSuffix}`,
     );
   }
 }

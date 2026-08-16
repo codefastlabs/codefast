@@ -1,5 +1,7 @@
 import path from "node:path";
 
+import type { CommentContentDefectKind } from "#/audit/domain/comment-content";
+import { scanCommentContent } from "#/audit/domain/comment-content";
 import type { DividerDefectKind } from "#/audit/domain/comment-dividers";
 import { applyCommentDividerFixes, DIVIDER_COLUMN, scanCommentDividers } from "#/audit/domain/comment-dividers";
 import type { CommentAuditResult, DividerBreakage, DividerFileBreakages } from "#/audit/domain/types";
@@ -9,13 +11,16 @@ import type { Result } from "#/core/result";
 import { err, ok } from "#/core/result";
 import { sourceCommentLanguage, walkSourceFiles } from "#/core/workspace/source-walk";
 
-const reasonByDefect: Record<DividerDefectKind, string> = {
+const reasonByDefect: Record<CommentContentDefectKind | DividerDefectKind, string> = {
   "bad-width": `rule does not end at column ${DIVIDER_COLUMN}`,
+  "doc-pointer": "comment points at a document — state the invariant here instead",
+  "jsdoc-type": "JSDoc {type} syntax — the declaration already carries the type",
   "legacy-form": "legacy divider form",
 };
 
 /**
- * Report — and with `fix`, rewrite — every section divider that is not in the repo's one allowed form.
+ * Reports every comment off the repo's conventions: divider form (which `fix` rewrites) and
+ * banned content — document pointers and JSDoc type syntax — which only a person can restate.
  */
 export function runCommentAudit(
   fs: FilesystemPort,
@@ -68,6 +73,14 @@ export function runCommentAudit(
         }
         breakages.push({ line: region.startLine, raw: region.raw, reason: reasonByDefect[region.defect] });
       }
+      for (const finding of scanCommentContent(content, language)) {
+        if (allowlist.has(finding.raw) || allowlist.has(`${relativePath}:${finding.raw}`)) {
+          allowlistedCount++;
+          continue;
+        }
+        breakages.push({ line: finding.line, raw: finding.raw, reason: reasonByDefect[finding.defect] });
+      }
+      breakages.sort((a, b) => a.line - b.line);
 
       if (breakages.length === 0) {
         continue;
