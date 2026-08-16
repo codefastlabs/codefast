@@ -29,6 +29,7 @@ const reasonByDefect: Record<CommentContentDefectKind | DividerDefectKind | "dea
   "param-coverage": "a block naming any parameter must name them all — a partial list reads as complete",
   "param-hyphen": "TSDoc separates the name from its description with ' - '",
   "since-order": "@since is stamped at release and stays the block's last tag",
+  "stacked-doc": "// run stacked above a doc block — fold it into the block",
 };
 
 interface ScannedFile {

@@ -12,7 +12,8 @@ export type CommentContentDefectKind =
   | "jsdoc-type"
   | "param-coverage"
   | "param-hyphen"
-  | "since-order";
+  | "since-order"
+  | "stacked-doc";
 
 /**
  * One banned fragment found inside a comment.
@@ -37,6 +38,9 @@ const blockLinePattern = /^[ \t]*(?:\/\*|\*)/;
 const docBlockClosePattern = /^[ \t]*(?:\*.*)?\*\/[ \t]*$/;
 const paramTagPattern = /^\s*\*\s*@param\s+([\w.$]+)/;
 const declarationPattern = /^[ \t]*(?:export|const|let|var|function|class|interface|type|enum|async|declare)\b/;
+// A divider or a tooling directive above a doc block is not a stacked note.
+const dividerLinePattern = /^[ \t]*\/\/[ \t]*[-=─_*~#]{2,}/;
+const directiveLinePattern = /^[ \t]*\/\/[ \t]*(?:oxlint-|eslint-|@ts-|prettier-)/;
 
 /**
  * Scans a source file's comments for banned content, in source order.
@@ -53,6 +57,21 @@ export function scanCommentContent(content: string, language: "css" | "js"): Arr
     const trimmed = line.trim();
     // Only a line-leading `/*` opens a block — a marker inside code or a string literal does not.
     const opensBlock = trimmed.startsWith("/*") && !trimmed.includes("*/");
+    // A `//` run stacked directly above a doc block reads as a second doc — it belongs inside.
+    if (language === "js" && !insideBlock && trimmed.startsWith("/**")) {
+      let runStart = index;
+      while (
+        runStart > 0 &&
+        lineCommentPattern.test(lines[runStart - 1]!) &&
+        !dividerLinePattern.test(lines[runStart - 1]!) &&
+        !directiveLinePattern.test(lines[runStart - 1]!)
+      ) {
+        runStart--;
+      }
+      if (runStart < index) {
+        findings.push({ line: runStart + 1, raw: lines[runStart]!.trim().slice(0, 80), defect: "stacked-doc" });
+      }
+    }
     const isComment =
       insideBlock ||
       opensBlock ||

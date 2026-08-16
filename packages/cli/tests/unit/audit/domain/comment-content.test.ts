@@ -19,6 +19,7 @@ describe("scanCommentContent", () => {
   it("allows naming a markdown file without pointing at it", () => {
     const source = [
       "// Every figure here already existed on the way to `report.md`.",
+      "const report = 1;",
       "/** Bare link targets or `repo/relative/doc.md:target` entries to ignore. */",
     ].join("\n");
 
@@ -97,6 +98,56 @@ describe("scanCommentContent", () => {
     const source = ["// A plain implementation note.", "export const GRID = 5;"].join("\n");
 
     expect(scanCommentContent(source, "js")).toStrictEqual([]);
+  });
+
+  it("flags a // run stacked directly above a doc block, at the run's first line", () => {
+    const source = [
+      "const before = 1;",
+      "// Shared mutable ref bag for one scroller, closed over by both the",
+      "// controller and the commands.",
+      "/**",
+      " * @since 1.0.0",
+      " */",
+      "export const REFS = {};",
+    ].join("\n");
+    const findings = scanCommentContent(source, "js");
+
+    expect(findings).toHaveLength(1);
+    expect(findings[0]).toMatchObject({ line: 2, defect: "stacked-doc" });
+  });
+
+  it("flags a note stacked on a single-line doc block", () => {
+    const source = ["// Default margin for programmatic targets.", "/** @since 1.0.0 */", "const MARGIN = 0;"].join(
+      "\n",
+    );
+    const findings = scanCommentContent(source, "js");
+
+    expect(findings).toHaveLength(1);
+    expect(findings[0]).toMatchObject({ line: 1, defect: "stacked-doc" });
+  });
+
+  it("leaves a divider above a doc block alone and stops a run at one", () => {
+    const clean = ["// ── Helpers ──", "/** The helper family. */", "const help = 1;"].join("\n");
+    const mixed = ["// ── Helpers ──", "// Rounds toward the nearest anchor.", "/** @since 1.0.0 */"].join("\n");
+
+    expect(scanCommentContent(clean, "js")).toStrictEqual([]);
+    expect(scanCommentContent(mixed, "js")).toMatchObject([{ line: 2, defect: "stacked-doc" }]);
+  });
+
+  it("leaves a tooling directive above a doc block alone", () => {
+    const source = ["// oxlint-disable-next-line no-explicit-any", "/** The escape hatch. */", "const x = 1;"].join(
+      "\n",
+    );
+
+    expect(scanCommentContent(source, "js")).toStrictEqual([]);
+  });
+
+  it("does not treat a blank-separated note or a plain block comment as stacked", () => {
+    const blankSeparated = ["// A note about the group below.", "", "/** The first member. */"].join("\n");
+    const plainBlock = ["// note", "/* not a doc block */", "const x = 1;"].join("\n");
+
+    expect(scanCommentContent(blankSeparated, "js")).toStrictEqual([]);
+    expect(scanCommentContent(plainBlock, "js")).toStrictEqual([]);
   });
 
   it("flags a block naming one parameter while the signature has more", () => {
