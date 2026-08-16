@@ -57,6 +57,8 @@ const NO_REQUIREMENTS: ReadonlyArray<ConstraintRequirement> = [];
 
 /**
  * Every requirement a predicate carries — one from a helper, several from a composed chain.
+ *
+ * @since 0.6.1
  */
 export function constraintRequirementsOf(predicate: BindingConstraint): ReadonlyArray<ConstraintRequirement> {
   const payload = (
@@ -72,6 +74,8 @@ export function constraintRequirementsOf(predicate: BindingConstraint): Readonly
 
 /**
  * Carries both sides' requirements onto a composed predicate, so chaining does not lose them.
+ *
+ * @since 0.6.1
  */
 export function mergingConstraintRequirements(
   composite: BindingConstraint,
