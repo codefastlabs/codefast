@@ -436,6 +436,18 @@ export class DependencyResolver implements ResolverCallbacks {
       }
       return { binding: entry.binding };
     },
+    // The named rule verbatim, on the single-tag lane's memo.
+    lookupPathIndependentTaggedEntry: (token, options) => {
+      const singleTag = singleTagOnlyOf(options);
+      if (singleTag === undefined) {
+        return null;
+      }
+      const entry = this.#lookup.taggedEntry(token, singleTag);
+      if (entry === null || entry.binding.predicate !== undefined || !matchesSlot(entry.binding.slot, options)) {
+        return null;
+      }
+      return { binding: entry.binding };
+    },
     getResolutionFrame: (binding) => this.#getResolutionFrame(binding),
     // Dispatches exactly as #resolveDep does, so an escaped dep is indistinguishable
     // from the same dep on a fully interpreted resolve.

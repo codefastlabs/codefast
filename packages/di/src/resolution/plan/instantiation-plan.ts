@@ -12,7 +12,7 @@ import { tokenName } from "#/core/token";
 import type { Constructor, ResolutionFrame, ResolveOptions } from "#/core/types";
 import { AsyncResolutionError } from "#/errors/errors";
 import type { DependencySlot } from "#/injection/resolve-options";
-import { injectionSlotToResolveOptions, isNameOnlyOptions } from "#/injection/resolve-options";
+import { injectionSlotToResolveOptions, isNameOnlyOptions, singleTagOnlyOf } from "#/injection/resolve-options";
 import type { ConstructorMetadata } from "#/metadata/metadata-types";
 
 // Past this depth a dependency escapes to the runtime path rather than inlining further —
@@ -123,6 +123,16 @@ export interface InstantiationPlanHost {
   lookupPathIndependentNamedEntry(
     token: Token<unknown> | Constructor,
     options: ResolveOptions & { name: string },
+  ): InstantiationPlanDependencyEntry | null;
+  /**
+   * The named lookup's single-tag twin, or `null` under the same rule.
+   *
+   * @remarks Optional so a host predating it stays a valid host — a compiler given none simply
+   * escapes the dependency, which is exactly the pre-settlement behavior.
+   */
+  lookupPathIndependentTaggedEntry?(
+    token: Token<unknown> | Constructor,
+    options: ResolveOptions,
   ): InstantiationPlanDependencyEntry | null;
   /** The frame the interpreted path pushes for this binding, so escapes can replay it. */
   getResolutionFrame(binding: Binding): ResolutionFrame;
@@ -245,6 +255,11 @@ export class InstantiationPlanCompiler {
         const named = this.#host.lookupPathIndependentNamedEntry(token, options);
         if (named !== null) {
           return this.#compileDepThunk(named, compileStack, depth, ancestors, options);
+        }
+      } else if (singleTagOnlyOf(options) !== undefined) {
+        const tagged = this.#host.lookupPathIndependentTaggedEntry?.(token, options);
+        if (tagged !== null && tagged !== undefined) {
+          return this.#compileDepThunk(tagged, compileStack, depth, ancestors, options);
         }
       }
       return this.#compileEscapeThunk(token, ancestors, "single", options);
@@ -513,6 +528,11 @@ export class InstantiationPlanCompiler {
         const named = this.#host.lookupPathIndependentNamedEntry(token, options);
         if (named !== null) {
           return this.#compileAsyncDepThunk(named, compileStack, depth, ancestors, options);
+        }
+      } else if (singleTagOnlyOf(options) !== undefined) {
+        const tagged = this.#host.lookupPathIndependentTaggedEntry?.(token, options);
+        if (tagged !== null && tagged !== undefined) {
+          return this.#compileAsyncDepThunk(tagged, compileStack, depth, ancestors, options);
         }
       }
       return this.#compileAsyncEscapeThunk(token, ancestors, "single", options);
