@@ -67,8 +67,33 @@ const rejectedDeclarations = (): void => {
     constructor(readonly config: Config) {}
   }
 
-  void [Swapped, TooFew, WrongMulti, WrongOptional];
+  // @ts-expect-error — one dependency more than the constructor takes
+  @injectable([LoggerToken, ConfigToken])
+  class Surplus {
+    constructor(readonly logger: Logger) {}
+  }
+
+  void [Swapped, TooFew, WrongMulti, WrongOptional, Surplus];
 };
+
+// Arity admits what the constructor admits: an optional trailing parameter and a rest parameter
+// both compile, so the exact-arity rule rejects only a surplus the class could never receive.
+@injectable([LoggerToken, ConfigToken])
+class TrailingOptional {
+  constructor(
+    readonly logger: Logger,
+    readonly config?: Config,
+  ) {}
+}
+
+@injectable([LoggerToken, ConfigToken])
+class RestParameters {
+  constructor(...args: Array<unknown>) {
+    void args;
+  }
+}
+
+void [TrailingOptional, RestParameters];
 
 describe("injection declarations are checked against what receives them", () => {
   it("holds the rejections above to the compiler, never to the runtime", () => {

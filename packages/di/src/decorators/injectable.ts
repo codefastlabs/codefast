@@ -60,16 +60,27 @@ export function injectable(): (target: unknown, context: ClassDecoratorContext) 
 
 /**
  * @remarks Declaring dependencies constrains the class: the decorator only accepts one whose
- * constructor takes exactly what `deps` resolve to, in that order. A class taking fewer parameters
- * than `deps` declares still satisfies it, which is the one mismatch TypeScript's arity rules let
- * through — the surplus dependency is resolved and discarded.
+ * constructor takes exactly what `deps` resolve to, in that order — including arity, so a literal
+ * deps list longer than the constructor is a compile error rather than a resolved-and-discarded
+ * value. Optional trailing parameters admit every arity they declare, and a rest parameter admits
+ * any list. A deps *array* — one whose length the compiler cannot know — skips the arity check,
+ * which is also the deliberate spelling for declaring more dependencies than the constructor
+ * takes, e.g. for the dependency graph's edges.
  *
  * @since 0.3.16-canary.0
  */
 export function injectable<const Deps extends ReadonlyArray<InjectableDependency>>(
   deps: Deps,
   options?: InjectableOptions,
-): (target: abstract new (...args: InjectedParameters<Deps>) => unknown, context: ClassDecoratorContext) => void;
+): <Target extends abstract new (...args: InjectedParameters<Deps>) => unknown>(
+  target: Target &
+    (number extends Deps["length"]
+      ? unknown
+      : Deps["length"] extends ConstructorParameters<Target>["length"]
+        ? unknown
+        : never),
+  context: ClassDecoratorContext,
+) => void;
 
 /**
  * @since 0.6.0

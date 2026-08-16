@@ -1435,6 +1435,13 @@ TC39 Decorator Stage 3 **does not support parameter decorators** (TS1206). `@inj
 available with `experimentalDecorators: true` (legacy). The solution: `@injectable()` takes a **deps array** that
 declares the constructor order explicitly — the same pattern as Angular Ivy.
 
+The deps array is checked against the constructor at compile time, in both directions: each element's resolved value
+must match its parameter (order, `optional`, `injectAll`), and for a **literal deps tuple the arity must match exactly**
+— a list longer than the constructor is rejected rather than resolved and discarded. Optional trailing parameters admit
+every arity they declare, and a rest parameter admits any list. A deps array whose length the compiler cannot know skips
+the arity check; that spelling is also how a class deliberately declares more dependencies than its constructor takes
+(for the dependency graph's edges), and the surplus values are resolved and discarded.
+
 ```ts
 import { injectable, inject, injectAll, optional } from "@codefast/di";
 
