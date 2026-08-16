@@ -95,11 +95,10 @@ function filterBindings(
   requiresSlotMatch: boolean,
 ): Array<Binding> {
   const result: Array<Binding> = [];
-  // Snapshot lazily, right before the first predicate runs: a predicate is user code that may
-  // rebind the very token being selected, and a mid-selection splice must not skip candidates.
-  let stable: ReadonlyArray<Binding> = bindings;
-  for (let index = 0; index < stable.length; index += 1) {
-    const binding = stable[index]!;
+  // A predicate is user code that may rebind the token mid-walk, but the registry replaces a
+  // token's list on mutation instead of splicing it, so this walk keeps its own list — no copy.
+  for (let index = 0; index < bindings.length; index += 1) {
+    const binding = bindings[index]!;
     if (requiresSlotMatch && !matchesSlot(binding.slot, options)) {
       continue;
     }
@@ -107,9 +106,6 @@ function filterBindings(
     if (predicate === undefined) {
       result.push(binding);
       continue;
-    }
-    if (stable === bindings) {
-      stable = bindings.slice();
     }
     if (predicate(ctx)) {
       result.push(binding);

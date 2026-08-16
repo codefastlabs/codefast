@@ -56,26 +56,34 @@ export class BindingRegistry {
       this.#heldConstantBinding = true;
     }
     const key: DependencyKey = binding.token;
-    // Eager, not computed: a bind is usually the token's first, so the fallback is usually the
-    // one that gets stored — and the computed form would add a call to allocating it anyway.
-    const bindingsForToken = this.#bindings.getOrInsert(key, []);
+    // Copy-on-write: a selection may be walking the current list inside a `when()` predicate, so
+    // mutation replaces the array and never splices one that has been handed out.
+    const bindingsForToken = this.#bindings.get(key);
 
     // Only apply last-wins for slot-based bindings (not predicate-only)
     let displacedBinding: Binding | undefined;
-    if (!isPurePredicateBinding(binding)) {
-      const existingIndex = bindingsForToken.findIndex(
-        (candidate) => !isPurePredicateBinding(candidate) && bindingSlotEquals(candidate.slot, binding.slot),
-      );
-      if (existingIndex !== -1) {
-        displacedBinding = bindingsForToken[existingIndex]!;
-        this.#byId.delete(displacedBinding.id);
-        bindingsForToken.splice(existingIndex, 1);
-        this.#deindexSimpleNamedBinding(key, displacedBinding);
-        this.#deindexSimpleTaggedBinding(key, displacedBinding);
+    let nextBindings: Array<Binding>;
+    if (bindingsForToken === undefined) {
+      nextBindings = [binding];
+    } else {
+      if (!isPurePredicateBinding(binding)) {
+        const existingIndex = bindingsForToken.findIndex(
+          (candidate) => !isPurePredicateBinding(candidate) && bindingSlotEquals(candidate.slot, binding.slot),
+        );
+        if (existingIndex !== -1) {
+          displacedBinding = bindingsForToken[existingIndex]!;
+          this.#byId.delete(displacedBinding.id);
+          this.#deindexSimpleNamedBinding(key, displacedBinding);
+          this.#deindexSimpleTaggedBinding(key, displacedBinding);
+        }
       }
+      nextBindings =
+        displacedBinding === undefined
+          ? [...bindingsForToken, binding]
+          : [...bindingsForToken.filter((candidate) => candidate !== displacedBinding), binding];
     }
 
-    bindingsForToken.push(binding);
+    this.#bindings.set(key, nextBindings);
     this.#byId.set(binding.id, binding);
     this.#indexSimpleNamedBinding(key, binding);
     this.#indexSimpleTaggedBinding(key, binding);
@@ -110,17 +118,17 @@ export class BindingRegistry {
     const bindingsForToken = this.#bindings.get(key);
     if (bindingsForToken !== undefined) {
       const bindingIndex = bindingsForToken.findIndex((candidate) => candidate.id === id);
-      if (bindingIndex !== -1) {
-        bindingsForToken.splice(bindingIndex, 1);
-      }
+      // Copy-on-write, like `add`: a walk holding the current array must not lose its place.
+      const remaining = bindingIndex === -1 ? bindingsForToken : bindingsForToken.toSpliced(bindingIndex, 1);
       this.#deindexSimpleNamedBinding(key, binding);
       this.#deindexSimpleTaggedBinding(key, binding);
-      if (bindingsForToken.length === 0) {
+      if (remaining.length === 0) {
         this.#bindings.delete(key);
         this.#simpleNamed?.delete(key);
         this.#simpleTagged?.delete(key);
         this.#fastDefault.delete(key);
       } else {
+        this.#bindings.set(key, remaining);
         this.#refreshFastDefaultForToken(key);
       }
     }

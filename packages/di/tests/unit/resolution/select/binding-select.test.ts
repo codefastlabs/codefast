@@ -13,8 +13,8 @@ describe("candidate list stability under a mutating predicate", () => {
     const container = Container.create();
     const evaluated: Array<string> = [];
 
-    // The registry holds one live array per token, and `unbind` splices it. Removing the entry the
-    // walk is standing on shifts every later candidate down one slot.
+    // The registry replaces a token's list on mutation (copy-on-write), so an unbind mid-walk
+    // must not shift the walk — every candidate registered when selection began stays offered.
     let alreadyUnbound = false;
     const firstId = container
       .bind(serviceToken)

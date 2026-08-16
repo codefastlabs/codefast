@@ -82,6 +82,12 @@ bindings in a process share one V8 hidden class. Mixed binding kinds otherwise m
 (`kind`/`scope`/`factory`) megamorphic. The registry therefore stores what it is handed **by reference** rather than
 re-copying it.
 
+> **Invariant (correctness).** A token's binding **list** is copy-on-write: `add` and `removeById` replace the array and
+> never splice one that has been handed out. Selection walks the registry's own list while running `when()` predicates —
+> user code free to rebind the very token mid-walk — and the walk keeping its pre-mutation array is what lets every
+> candidate registered at selection start still get its predicate, with no defensive copy on the read side.
+> `tests/unit/resolution/select/binding-select.test.ts` pins the observable half.
+
 > **Convention (performance-load-bearing).** Bindings are constructed through `createBinding()`, keeping the literal's
 > key order intact, so the single-hidden-class property holds. Constructing a binding with a bare object literal, or
 > reordering the keys, quietly gives that binding a different hidden class and makes the hot reads megamorphic — it
@@ -242,10 +248,11 @@ ambiguity to report.
 call; `getOrInsertComputed` calls a function only on a miss. So the choice follows which case dominates.
 `BindingLookupCache.namedEntry()` runs on every named resolve and almost always hits a long-lived container, so it takes
 the computed form with the factory hoisted to module scope, so no closure is allocated per call either. The registry's
-`add()` and index insertions are the mirror image: a bind is usually the token's first, so the fallback is usually the
-value that gets stored, and the eager form wins. Both forms are in the tree on purpose. (Note that "almost always hits"
-is a claim about a long-lived container; it inverts in a per-request one, where every first resolve of a named token
-buys a map it won't read again — worth measuring fresh vs warm if you revisit this.)
+index insertions are the mirror image: a bind is usually the token's first, so the fallback is usually the value that
+gets stored, and the eager form wins. (`add()` itself no longer upserts — its list is copy-on-write, so it always builds
+the next array.) Both forms are in the tree on purpose. (Note that "almost always hits" is a claim about a long-lived
+container; it inverts in a per-request one, where every first resolve of a named token buys a map it won't read again —
+worth measuring fresh vs warm if you revisit this.)
 
 **A criterion is interned, so the index can be keyed by it.** A tag key is minted by `tag()` and its criteria by
 `TagKey.of()`, which caches one object per value — so `Object.is` equality
