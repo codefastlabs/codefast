@@ -200,8 +200,9 @@ export const extremeVariants = {
   },
 };
 
-// Generate extreme test props covering many combinations
 /**
+ * Extreme test props covering many prop combinations.
+ *
  * @since 0.3.16-canary.0
  */
 export const extremeTestProps = [
@@ -248,8 +249,9 @@ export const extremeTestProps = [
   },
 ];
 
-// Slots variant for extreme testing
 /**
+ * Slots variant config for extreme testing.
+ *
  * @since 0.3.16-canary.0
  */
 export const extremeSlotsVariants = {

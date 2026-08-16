@@ -15,10 +15,11 @@ import type {
   MessageScrollerVisibilityStore,
 } from "#/lib/message-scroller/types";
 
-// Shared mutable ref bag for one MessageScroller, closed over by both the
-// controller and the commands so writes are visible across them without prop
-// threading. stateStore and visibilityStore fan out via useSyncExternalStore.
 /**
+ * Shared mutable ref bag for one MessageScroller, closed over by both the
+ * controller and the commands so writes are visible across them without prop
+ * threading. stateStore and visibilityStore fan out via useSyncExternalStore.
+ *
  * @since 0.5.0-canary.3
  */
 type MessageScrollerRefs = {
@@ -59,9 +60,10 @@ type MessageScrollerRefs = {
   handledScrollAnchorsRef: RefObject<WeakSet<HTMLElement>>;
 };
 
-// Builds the per-instance ref bag: the two external stores constructed once, and
-// the latest prop values mirrored onto refs each render so callbacks stay stable.
 /**
+ * Builds the per-instance ref bag: the two external stores constructed once, and
+ * the latest prop values mirrored onto refs each render so callbacks stay stable.
+ *
  * @since 0.5.0-canary.3
  */
 function useMessageScrollerRefs({

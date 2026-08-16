@@ -93,9 +93,10 @@ export const REALISTIC_GRAPH_COLD_RESOLVE = {
   what: "build a fresh container, bind 10 nodes, resolve root once (cold start)",
 } as const satisfies ScenarioDescriptor;
 
-// Explicit-deps factories are the shape both libraries compile ahead of time (codefast's
-// instantiation plans, inversify's plan tree + codegen resolvers) — the best-vs-best row.
 /**
+ * The best-vs-best realistic row: explicit-deps factories are the shape both libraries compile
+ * ahead of time (codefast's instantiation plans, inversify's plan tree + codegen resolvers).
+ *
  * @since 0.5.0-canary.9
  */
 export const REALISTIC_GRAPH_RESOLVED_ROOT = {
@@ -243,10 +244,13 @@ export const CHILD_REQUEST_LIFECYCLE_CREATE_RESOLVE_DISPOSE = {
  */
 export const SCALE_CHAIN_SIZE = 512;
 
-// Mid-depth chain: the transient-dynamic deep-lane only amortizes its shared-context
-// machinery past ~depth 100, so ~32 (the deep-lane handoff) is where the resolver is
-// weakest vs inversify. Measured explicitly so the report can't hide it behind depth 512.
 /**
+ * The mid-depth chain size, measured explicitly so the report can't hide it behind depth 512.
+ *
+ * @remarks
+ * The transient-dynamic deep-lane only amortizes its shared-context machinery past ~depth 100,
+ * so ~32 (the deep-lane handoff) is where the resolver is weakest vs inversify.
+ *
  * @since 0.5.0-canary.7
  */
 export const SCALE_MID_CHAIN_SIZE = 32;
@@ -394,8 +398,13 @@ export const CONTAINER_LEVEL_ACTIVATION_HOOK = {
   what: "resolve transient through a container.onActivation() hook — measures hook dispatch overhead",
 } as const satisfies ScenarioDescriptor;
 
-// Shares ACTIVATION_HOOK_BATCH with the container-level row on purpose: the pair is only readable
-// side by side if the two dispatch lanes are measured at the same workload factor.
+/**
+ * The binding-level counterpart of `CONTAINER_LEVEL_ACTIVATION_HOOK`.
+ *
+ * @remarks
+ * Shares `ACTIVATION_HOOK_BATCH` with the container-level row on purpose: the pair is only
+ * readable side by side if the two dispatch lanes are measured at the same workload factor.
+ */
 export const BINDING_LEVEL_ACTIVATION_HOOK = {
   id: "binding-level-activation-hook",
   group: "lifecycle",
@@ -515,12 +524,13 @@ export const MISCONFIGURED_MISSING_BINDING = {
 } as const satisfies ScenarioDescriptor;
 
 /**
+ * The 3-node circular-dependency failure row.
+ *
+ * @remarks
+ * Excluded from aggregates: the sides do incomparable work per op — codefast throws on the third
+ * factory entry while inversify re-enters the user factory hundreds of times before its own error.
+ *
  * @since 0.5.0-canary.7
- */
-// Excluded from aggregates: the sides do incomparable work per op — codefast throws on the third
-// factory entry while inversify re-enters the user factory hundreds of times before its own error.
-/**
- * @since 0.5.0-canary.9
  */
 export const CIRCULAR_DEPENDENCY_3 = {
   id: "circular-dependency-3",

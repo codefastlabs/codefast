@@ -38,9 +38,10 @@ const SIDEBAR_PROVIDER_NAME = "SidebarProvider";
 
 const [SidebarContextProvider, useSidebarContext] = Context.createContext<SidebarContextValue>(SIDEBAR_PROVIDER_NAME);
 
-// Explicit signature so the emitted declaration names only SidebarContextValue,
-// not react-context's un-exportable return type (TS4023 under isolated declarations).
 /**
+ * Explicit signature so the emitted declaration names only SidebarContextValue,
+ * not react-context's un-exportable return type (TS4023 under isolated declarations).
+ *
  * @since 1.0.0-canary.7
  */
 const useSidebar: (consumerName: string) => SidebarContextValue = useSidebarContext;

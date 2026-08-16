@@ -29,11 +29,13 @@ export function indexOfFirstVariantColon(text: string): number {
   return -1;
 }
 
-// Strip all variant prefixes to get the bare utility name.
-// e.g. "hover:dark:md:text-sm" → "text-sm"
-// e.g. "@min-[600px]:flex" → "flex"
-// e.g. "[&_a:hover]:text-red-500" → "text-red-500"
 /**
+ * Strips every variant prefix off a token, leaving the bare utility name.
+ *
+ * @remarks
+ * `"hover:dark:md:text-sm"` → `"text-sm"`, `"@min-[600px]:flex"` → `"flex"`,
+ * `"[&_a:hover]:text-red-500"` → `"text-red-500"`.
+ *
  * @since 0.3.16-canary.0
  */
 export function stripVariants(token: string): string {
