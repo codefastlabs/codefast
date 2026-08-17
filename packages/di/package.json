@@ -89,6 +89,11 @@
       "types": "./dist/core/constructor-type.d.ts",
       "import": "./dist/core/constructor-type.js"
     },
+    "./core/map-upsert": {
+      "source": "./src/core/map-upsert.ts",
+      "types": "./dist/core/map-upsert.d.ts",
+      "import": "./dist/core/map-upsert.js"
+    },
     "./core/module": {
       "source": "./src/core/module.ts",
       "types": "./dist/core/module.d.ts",
@@ -290,6 +295,6 @@
     "vitest": "catalog:"
   },
   "engines": {
-    "node": ">=26.0.0"
+    "node": ">=24.0.0"
   }
 }

@@ -11,8 +11,10 @@ changes.
 
 Ground rules that bite in this package specifically:
 
-- **Node ≥ 26 required** — the resolver uses native `Map.prototype.getOrInsert`. `engines.node` is `>=26`; examples
-  polyfill it by hand to still run on Node 24.
+- **Node ≥ 24** — `engines.node` is `>=24`, and the package keeps its own `Map` upsert helpers
+  ([`core/map-upsert.ts`](./src/core/map-upsert.ts)) to hold that floor. Calling the platform's ES2025
+  `Map.prototype.getOrInsert` instead would raise it to 26, which the serverless runtimes this package deploys to do not
+  offer.
 - `exactOptionalPropertyTypes` is on — an optional prop that may receive an explicit value is typed `?: T | undefined`.
 - The sync and async resolve pipelines live in **one class** (`resolution/resolver.ts`) because `#` private fields
   cannot span files and both pipelines touch the same private state on every hop. Everything that does _not_ need that

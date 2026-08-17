@@ -244,15 +244,19 @@ rather than growing an empty list (a name matches at most once per registry, so 
 treats a lone candidate as its own selection — matching it _is_ the decision, with no specificity to weigh and no
 ambiguity to report.
 
-**An upsert's fallback is eager or computed by hit rate.** `Map.prototype.getOrInsert` evaluates its fallback on every
-call; `getOrInsertComputed` calls a function only on a miss. So the choice follows which case dominates.
+**An upsert's fallback is eager or computed by hit rate.** The package's own upsert helpers
+([`core/map-upsert.ts`](src/core/map-upsert.ts)) come in both forms: `getOrInsert` takes a fallback the caller has
+already evaluated, `getOrInsertComputed` calls a factory only on a miss. So the choice follows which case dominates.
 `BindingLookupCache.namedEntry()` runs on every named resolve and almost always hits a long-lived container, so it takes
 the computed form with the factory hoisted to module scope, so no closure is allocated per call either. The registry's
 index insertions are the mirror image: a bind is usually the token's first, so the fallback is usually the value that
 gets stored, and the eager form wins. (`add()` itself no longer upserts — its list is copy-on-write, so it always builds
-the next array.) Both forms are in the tree on purpose. (Note that "almost always hits" is a claim about a long-lived
-container; it inverts in a per-request one, where every first resolve of a named token buys a map it won't read again —
-worth measuring fresh vs warm if you revisit this.)
+the next array.) Both forms are in the tree on purpose, and they stay the package's own rather than the platform's
+ES2025 `Map` methods, which would move the Node floor to 26 for two call shapes a local helper already covers. A lazily
+allocated index also writes `this.#field ??= new Map()` as its own statement before the upsert reads the field: folded
+into the argument, that expression types as `Map<any, any>` and silently drops the key and value types at the call site.
+(Note that "almost always hits" is a claim about a long-lived container; it inverts in a per-request one, where every
+first resolve of a named token buys a map it won't read again — worth measuring fresh vs warm if you revisit this.)
 
 **A criterion is interned, so the index can be keyed by it.** A tag key is minted by `tag()` and its criteria by
 `TagKey.of()`, which caches one object per value — so `Object.is` equality

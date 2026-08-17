@@ -22,9 +22,8 @@ Lightweight, type-safe dependency injection for modern TypeScript — built on T
 
 ## Requirements
 
-- **Node.js 26 or later — required.** The container uses the native `Map.prototype.getOrInsert` and
-  `Map.prototype.getOrInsertComputed` (ES2025), which ship in Node 26+. On older Node versions the package throws at
-  runtime.
+- **Node.js 24 or later — required**, matching the monorepo's own floor (`engines.node` is `>=24`). Nothing the
+  container calls is newer than that, so a Node 24 serverless runtime needs no polyfill.
 - **TypeScript 5.2+** with native Stage 3 decorators — leave `experimentalDecorators` **off** (it is off by default).
 
 ## Installation

@@ -4,6 +4,7 @@ import type { Binding, BindingBuilder, BindToBuilder, ConstantBinding } from "#/
 import { NO_INSTANCE } from "#/core/binding";
 import { effectiveBindingScope } from "#/core/binding-scope";
 import { constraintRequirementsOf } from "#/core/constraint-requirement";
+import { getOrInsert } from "#/core/map-upsert";
 import type { AsyncModule, AsyncModuleBuilder, ModuleBuilder, SyncModule } from "#/core/module";
 import { isSyncModule, MODULE_SETUP } from "#/core/module";
 import { BindingRegistry } from "#/core/registry";
@@ -247,10 +248,11 @@ class DefaultContainer implements Container {
 
   /** One registration per module load, holding that module's id list directly. */
   #moduleRegistration(moduleRef: object): BindingRegistration {
+    this.#moduleBindingIds ??= new Map();
     return {
       registry: this.#registry,
       scope: this.#scope,
-      moduleBindingIds: (this.#moduleBindingIds ??= new Map()).getOrInsert(moduleRef, []),
+      moduleBindingIds: getOrInsert(this.#moduleBindingIds, moduleRef, []),
     };
   }
 

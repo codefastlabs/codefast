@@ -1,5 +1,6 @@
 import type { Binding } from "#/core/binding";
 import { bindingSlotEquals, bindingSlotToString } from "#/core/binding";
+import { getOrInsert } from "#/core/map-upsert";
 import type { BindingTag } from "#/core/tag";
 import type { Token } from "#/core/token";
 import type { BindingIdentifier, Constructor, DependencyKey } from "#/core/types";
@@ -235,7 +236,8 @@ export class BindingRegistry {
     if (criterion === undefined) {
       return;
     }
-    const byCriterion = (this.#simpleTagged ??= new Map()).getOrInsert(tokenKey, new Map<BindingTag, Binding>());
+    this.#simpleTagged ??= new Map();
+    const byCriterion = getOrInsert(this.#simpleTagged, tokenKey, new Map<BindingTag, Binding>());
     byCriterion.set(criterion, binding);
   }
 
@@ -261,8 +263,9 @@ export class BindingRegistry {
     if (firstCriterion === undefined) {
       return;
     }
-    const buckets = (this.#multiTagged ??= new Map()).getOrInsert(tokenKey, new Map<BindingTag, Array<Binding>>());
-    buckets.getOrInsert(firstCriterion, []).push(binding);
+    this.#multiTagged ??= new Map();
+    const buckets = getOrInsert(this.#multiTagged, tokenKey, new Map<BindingTag, Array<Binding>>());
+    getOrInsert(buckets, firstCriterion, []).push(binding);
   }
 
   #deindexMultiTaggedBinding(tokenKey: DependencyKey, binding: Binding): void {
@@ -287,7 +290,8 @@ export class BindingRegistry {
     if (name === undefined) {
       return;
     }
-    const bindingsByName = (this.#simpleNamed ??= new Map()).getOrInsert(tokenKey, new Map<string, Binding>());
+    this.#simpleNamed ??= new Map();
+    const bindingsByName = getOrInsert(this.#simpleNamed, tokenKey, new Map<string, Binding>());
     bindingsByName.set(name, binding);
   }
 
