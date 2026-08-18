@@ -4,13 +4,17 @@
  * Returns the value stored under a key, inserting the given fallback first when the key is absent.
  *
  * @remarks The caller evaluates the fallback either way, so this form fits an insertion that usually
- * misses. A map that stores `undefined` is unsupported — a stored `undefined` reads as absent.
+ * misses. Absence is one `get`, which is why the value type excludes `undefined`.
  *
  * @param map - mutated in place on a miss
  * @param key - looked up by the map's own key equality
  * @param value - stored and returned when the key is absent
  */
-export function getOrInsert<Key, Value>(map: Map<Key, Value>, key: NoInfer<Key>, value: NoInfer<Value>): Value {
+export function getOrInsert<Key, Value extends {} | null>(
+  map: Map<Key, Value>,
+  key: NoInfer<Key>,
+  value: NoInfer<Value>,
+): Value {
   const existing = map.get(key);
   if (existing !== undefined) {
     return existing;
@@ -30,7 +34,7 @@ export function getOrInsert<Key, Value>(map: Map<Key, Value>, key: NoInfer<Key>,
  * @param key - looked up by the map's own key equality, and handed to the factory
  * @param create - called only on a miss
  */
-export function getOrInsertComputed<Key, Value>(
+export function getOrInsertComputed<Key, Value extends {} | null>(
   map: Map<Key, Value>,
   key: NoInfer<Key>,
   create: (key: NoInfer<Key>) => NoInfer<Value>,
