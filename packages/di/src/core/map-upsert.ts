@@ -9,6 +9,8 @@
  * @param map - mutated in place on a miss
  * @param key - looked up by the map's own key equality
  * @param value - stored and returned when the key is absent
+ *
+ * @since 0.7.0
  */
 export function getOrInsert<Key, Value extends {} | null>(
   map: Map<Key, Value>,
@@ -33,6 +35,8 @@ export function getOrInsert<Key, Value extends {} | null>(
  * @param map - mutated in place on a miss
  * @param key - looked up by the map's own key equality, and handed to the factory
  * @param create - called only on a miss
+ *
+ * @since 0.7.0
  */
 export function getOrInsertComputed<Key, Value extends {} | null>(
   map: Map<Key, Value>,
