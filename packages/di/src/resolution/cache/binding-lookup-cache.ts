@@ -5,6 +5,7 @@
  * the container hierarchy again.
  */
 import type { Binding } from "#/core/binding";
+import { getOrInsertComputed } from "#/core/map-upsert";
 import type { BindingRegistry } from "#/core/registry";
 import type { BindingTag } from "#/core/tag";
 import type { Token } from "#/core/token";
@@ -105,9 +106,9 @@ export class BindingLookupCache<Owner> {
       this.#byTokenAndName.clear();
       this.#namedVersion = version;
     }
-    // Computed, not eager: this runs on every named resolve, and `getOrInsert(token, new Map())`
-    // would allocate a Map per call only to discard it on the hit that follows.
-    const byName = this.#byTokenAndName.getOrInsertComputed(token, newNameToEntryMap);
+    // Computed, not eager: this runs on every named resolve, and the eager form would allocate a
+    // Map per call only to discard it on the hit that follows.
+    const byName = getOrInsertComputed(this.#byTokenAndName, token, newNameToEntryMap);
     let entry = byName.get(name);
     if (entry === undefined) {
       entry = this.#findNamedInChain(token, name);
@@ -134,7 +135,7 @@ export class BindingLookupCache<Owner> {
     } else {
       // Keyed by the criterion object itself: criteria are interned, so identity is the slot
       // contract's own `Object.is` — the same exactness the registry's tagged index relies on.
-      const byTag = this.#byTokenAndTag.getOrInsertComputed(token, newTagToEntryMap);
+      const byTag = getOrInsertComputed(this.#byTokenAndTag, token, newTagToEntryMap);
       entry = byTag.get(tag);
       if (entry === undefined) {
         entry = this.#findTaggedInChain(token, tag);

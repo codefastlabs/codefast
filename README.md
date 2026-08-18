@@ -89,7 +89,7 @@ confusing, a prop feels awkward, or a component is missing,
 | [`@codefast/tailwind-variants`](packages/tailwind-variants) | Type-safe variant styling API — a faster drop-in replacement for `tailwind-variants`            |
 | [`@codefast/theme`](packages/theme)                         | Appearance management for React 19 — optimistic updates, cross-tab sync, FOUC-free SSR          |
 | [`@codefast/tracking`](packages/tracking)                   | Consent-gated, type-safe event tracking for TanStack Start over a Standard Schema event catalog |
-| [`@codefast/di`](packages/di)                               | Lightweight dependency-injection primitives for TypeScript (requires Node ≥ 26)                 |
+| [`@codefast/di`](packages/di)                               | Lightweight dependency-injection primitives for TypeScript                                      |
 | [`@codefast/cli`](packages/cli)                             | Developer CLI for the monorepo (`arrange`, `mirror`, `tag`)                                     |
 | [`@codefast/typescript-config`](packages/typescript-config) | Shared TypeScript configuration presets                                                         |
 
@@ -105,7 +105,7 @@ confusing, a prop feels awkward, or a component is missing,
 
 ### Prerequisites
 
-- **Node.js** ≥ 24 (≥ 26 to work on `@codefast/di`)
+- **Node.js** ≥ 24
 - **pnpm** 11 (pinned via `packageManager`)
 
 ### Setup

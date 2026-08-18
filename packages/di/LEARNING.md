@@ -741,12 +741,13 @@ per-call objects that could be per-slot, per-container, or constant._
 
 <a id="eager-vs-lazy-upsert"></a>
 
-**`getOrInsert` vs `getOrInsertComputed`, chosen by hit rate.** Node ≥ 26's `Map` upsert methods come in eager and lazy
-forms. The registry's `add()` uses the eager `getOrInsert` because a bind is usually a token's first (the fallback value
-is usually what gets stored); `namedEntry()` uses the lazy `getOrInsertComputed` with a module-scope factory so no
-closure is allocated on the common hit ([`registry.ts`](src/core/registry.ts),
-[`binding-lookup-cache.ts`](src/resolution/cache/binding-lookup-cache.ts)). _Lesson: eager-vs-lazy isn't a style choice;
-pick it from which branch dominates._
+**`getOrInsert` vs `getOrInsertComputed`, chosen by hit rate.** The package's own `Map` upsert helpers
+([`map-upsert.ts`](src/core/map-upsert.ts)) come in eager and lazy forms — its own, because the ES2025 methods they
+stand in for would raise the package's Node floor. The registry's index insertions use the eager `getOrInsert` because a
+bind is usually a token's first (the fallback value is usually what gets stored); `namedEntry()` uses the lazy
+`getOrInsertComputed` with a module-scope factory so no closure is allocated on the common hit
+([`registry.ts`](src/core/registry.ts), [`binding-lookup-cache.ts`](src/resolution/cache/binding-lookup-cache.ts)).
+_Lesson: eager-vs-lazy isn't a style choice; pick it from which branch dominates._
 
 <a id="dispatcher-ordering"></a>
 

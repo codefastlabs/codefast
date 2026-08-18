@@ -15,6 +15,37 @@ than the ratios on it.
 (`65443f167`) landed, on a freshly rebuilt `dist`. 78 of the run's cells carried a per-trial IQR above 5%, so single
 rows from it are read through the aggregates, not alone.
 
+## 2026-08-17 — dropping the ES2025 `Map` upsert methods costs nothing, and pays on the named lane
+
+The Node-floor change replaced `Map.prototype.getOrInsert` / `getOrInsertComputed` with the package's own
+[`core/map-upsert`](../../packages/di/src/core/map-upsert.ts) at nine call sites — seven cold (registry index
+insertions, lifecycle hook registration, module registration) and two on the named/tagged lookup lane. Measured paired
+and alternating over four passes (source swap, `BENCH_ONLY` isolate runner, order swapped each pass), against a
+four-pass A/A floor on the same rows in the same session. Both sides ran on Node 26.1.0 — the only runtime where the old
+side runs at all, which is the point of the change.
+
+Eight rows, picked to cover both lanes: the named and tagged lookup entries, a compiled slot resolve, a fresh
+per-request child, bulk bind, cold module load, and container activation-hook registration.
+
+| Row                               | A/B median |                    A/B passes | A/A median | A/A spread |
+| --------------------------------- | ---------: | ----------------------------: | ---------: | ---------: |
+| `named-constant-get`              |      1.139 | 1.076 · 1.137 · 1.140 · 1.162 |      0.987 |      0.043 |
+| `bind-128-refined`                |      1.150 | 0.923 · 1.143 · 1.158 · 1.268 |      1.042 |      0.303 |
+| `container-level-activation-hook` |      1.034 | 0.999 · 1.007 · 1.060 · 1.122 |      1.002 |      0.087 |
+| `module-cold-from-modules`        |      1.021 | 0.999 · 1.007 · 1.036 · 1.039 |      0.995 |      0.120 |
+| `tagged-binding-resolve`          |      1.011 | 0.997 · 1.008 · 1.014 · 1.032 |      0.992 |      0.023 |
+| `multi-tag-slot-resolve`          |      1.011 | 0.996 · 1.010 · 1.011 · 1.065 |      1.018 |      0.051 |
+| `fresh-child-tag-n4`              |      1.006 | 0.990 · 0.998 · 1.013 · 1.067 |      1.015 |      0.088 |
+| `slot-injected-name-compiled`     |      1.000 | 0.973 · 0.999 · 1.002 · 1.008 |      0.999 |      0.037 |
+
+**One row moves, and only one may be cited.** `named-constant-get` — the row that runs `namedEntry()`, so the row the
+computed upsert sits on — clears its own floor by a wide margin: every A/B pass lands above every A/A pass, and the two
+bands do not touch — both sides carry a per-trial IQR flag on this row, which is exactly what the floor is there to
+bound. A local helper being faster than the platform method it replaces is consistent with a small JS function inlining
+where a newly shipped builtin does not, and it is the direction that matters here: the floor change buys throughput
+rather than paying for it. `bind-128-refined` reads 1.150 and must **not** be cited — its A/A floor spreads 0.303 across
+passes, wider than the effect, so that row cannot resolve one. Everything else is parity inside its floor.
+
 ## 2026-08-16 — two open questions run to an answer, no engine change
 
 Both items the 0.6.0 changelog and ARCHITECTURE left open as unrun measurements, on the same machine as the sections

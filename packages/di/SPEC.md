@@ -2632,7 +2632,8 @@ export type { ScopeViolationDetails } from "#/errors/errors";
 
 ### 11.2 `package.json`
 
-ESM-only. `engines.node >= 26.0.0` — the core uses native `Map.prototype.getOrInsert` (available only from Node 26).
+ESM-only. `engines.node >= 24.0.0` — the monorepo's floor, held by the package's own `core/map-upsert` helpers instead
+of the ES2025 `Map.prototype.getOrInsert`, which would raise it to 26.
 
 Each public subpath is a conditional entry: `source` → `src` for dev/test inside the repo (gated on the `source`
 condition), `types`/`import` → `dist` for consumers. The whole `exports` map is **generated automatically by
@@ -2670,7 +2671,7 @@ shape of an entry).
   },
   "files": ["dist", "src", "CHANGELOG.md", "README.md", "LICENSE"],
   "engines": {
-    "node": ">=26.0.0"
+    "node": ">=24.0.0"
   }
 }
 ```
@@ -3010,14 +3011,14 @@ is examined along three axes: **learned from v8**, **improved over v8**, **not a
 
 #### Setup and requirements
 
-| Aspect             | InversifyJS v8                                                | `@codefast/di`                                     |
-| ------------------ | ------------------------------------------------------------- | -------------------------------------------------- |
-| Installation       | `npm install inversify reflect-metadata`                      | `npm install @codefast/di`                         |
-| reflect-metadata   | Required — `import 'reflect-metadata'` at the entry point     | Not needed — zero dependencies                     |
-| tsconfig flags     | `experimentalDecorators: true`, `emitDecoratorMetadata: true` | No special flags needed                            |
-| Decorator standard | Legacy TC39 Stage 1 (experimentalDecorators)                  | TC39 Stage 3 (`Symbol.metadata`, TypeScript 5.9+)  |
-| Module format      | ESM-only                                                      | ESM-only                                           |
-| Minimum Node.js    | Node ≥ 20.19.0                                                | Node ≥ 26.0.0 (native `Map.prototype.getOrInsert`) |
+| Aspect             | InversifyJS v8                                                | `@codefast/di`                                    |
+| ------------------ | ------------------------------------------------------------- | ------------------------------------------------- |
+| Installation       | `npm install inversify reflect-metadata`                      | `npm install @codefast/di`                        |
+| reflect-metadata   | Required — `import 'reflect-metadata'` at the entry point     | Not needed — zero dependencies                    |
+| tsconfig flags     | `experimentalDecorators: true`, `emitDecoratorMetadata: true` | No special flags needed                           |
+| Decorator standard | Legacy TC39 Stage 1 (experimentalDecorators)                  | TC39 Stage 3 (`Symbol.metadata`, TypeScript 5.9+) |
+| Module format      | ESM-only                                                      | ESM-only                                          |
+| Minimum Node.js    | Node ≥ 20.19.0                                                | Node ≥ 24.0.0                                     |
 
 #### Binding API
 

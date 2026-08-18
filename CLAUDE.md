@@ -4,10 +4,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Overview
 
-CodeFast is a **pnpm workspaces + Turborepo** monorepo (Node ≥ 24, pnpm 11; `@codefast/di` alone requires Node ≥ 26 for
-native `Map.prototype.getOrInsert`/`getOrInsertComputed`) publishing the `@codefast/*` packages. The flagship is
-`@codefast/ui`, a Radix-based, Tailwind CSS 4 component library. `apps/ui` is a TanStack Start showcase site that
-consumes the packages.
+CodeFast is a **pnpm workspaces + Turborepo** monorepo (Node ≥ 24, pnpm 11 — every package holds that one floor, `di`
+included, which is why it keeps its own `Map` upsert helpers instead of the ES2025 methods) publishing the `@codefast/*`
+packages. The flagship is `@codefast/ui`, a Radix-based, Tailwind CSS 4 component library. `apps/ui` is a TanStack Start
+showcase site that consumes the packages.
 
 ## Toolchain (non-standard — read before assuming)
 
@@ -274,7 +274,7 @@ point of use beats brevity, and every word must convey information:
 | `packages/ui`                | `@codefast/ui` — Radix + Tailwind component library; per-component subpath exports (`./button`, etc.) |
 | `packages/tailwind-variants` | Type-safe variant styling API (faster `tailwind-variants` replacement); used by `ui`                  |
 | `packages/theme`             | Theme management using React 19 features (optimistic updates, cross-tab sync)                         |
-| `packages/di`                | Lightweight dependency-injection primitives (requires Node ≥ 26)                                      |
+| `packages/di`                | Lightweight dependency-injection primitives                                                           |
 | `packages/tracking`          | Consent-gated, type-safe event tracking for TanStack Start over a Standard Schema event catalog       |
 | `packages/cli`               | `codefast` CLI — subcommands `arrange`, `audit`, `mirror`, `tag` (run via `pnpm run codefast <cmd>`)  |
 | `packages/typescript-config` | Shared tsconfig presets                                                                               |
@@ -293,18 +293,19 @@ answers by re-running; numbers live there and in its `RESULTS.md` ledger, never 
 ARCHITECTURE.
 
 `src/` groups by subsystem: **`core/`** is the model (`token`, `types`, `tag`, `constructor-type`, `binding`,
-`registry`, `module`), **`errors/`** the error taxonomy and its diagnostics, **`injection/`** the descriptor every
-dependency normalises to plus resolve options, **`ambient/`** the active container an `@inject` accessor reads,
-**`lifecycle/`** the per-container lifecycle and scope managers, **`container/`** the container + the fluent binding
-chain, **`resolution/`** the engine class plus its collaborators grouped by lane (`cache/` — binding lookup, class
-introspector, activation need; `path/` — the resolution-path cycle guard; `plan/` — the instantiation-plan compiler;
-`select/` — binding selection and constraints), and **`introspection/`** the inspector, dependency graph, and graph
-adapters, plus `decorators/` and `metadata/`. The sync and async pipelines stay in one class because `#` private fields
-can't span files and both touch the same private state per hop; anything that doesn't is already extracted. Tests mirror
-these paths (`tests/unit/resolution/…`). `package.json#exports` is generated from `dist/` by `codefast mirror` — rerun
-it after moving/adding modules. Verify hot-path changes against `benchmarks/di-inversify` (`pnpm bench:isolate` for
-order-independent numbers, ≥3 trials, best-of across several processes) before assuming a refactor is free — and measure
-cold paths too, which the hot loops hide.
+`registry`, `module`, plus the `map-upsert` helpers every index allocates through), **`errors/`** the error taxonomy and
+its diagnostics, **`injection/`** the descriptor every dependency normalises to plus resolve options, **`ambient/`** the
+active container an `@inject` accessor reads, **`lifecycle/`** the per-container lifecycle and scope managers,
+**`container/`** the container + the fluent binding chain, **`resolution/`** the engine class plus its collaborators
+grouped by lane (`cache/` — binding lookup, class introspector, activation need; `path/` — the resolution-path cycle
+guard; `plan/` — the instantiation-plan compiler; `select/` — binding selection and constraints), and
+**`introspection/`** the inspector, dependency graph, and graph adapters, plus `decorators/` and `metadata/`. The sync
+and async pipelines stay in one class because `#` private fields can't span files and both touch the same private state
+per hop; anything that doesn't is already extracted. Tests mirror these paths (`tests/unit/resolution/…`).
+`package.json#exports` is generated from `dist/` by `codefast mirror` — rerun it after moving/adding modules. Verify
+hot-path changes against `benchmarks/di-inversify` (`pnpm bench:isolate` for order-independent numbers, ≥3 trials,
+best-of across several processes) before assuming a refactor is free — and measure cold paths too, which the hot loops
+hide.
 
 ## UI/component conventions (apps/ui and packages/ui)
 
