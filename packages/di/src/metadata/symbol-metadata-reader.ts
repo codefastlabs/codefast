@@ -73,7 +73,7 @@ export class SymbolMetadataReader implements MetadataReader {
         preDestroy: mergeUniqueNames(buckets.map((bucket) => bucket.preDestroy).reverse()),
       };
     }
-    (this.#lifecycleByClass ??= new WeakMap()).set(target, merged);
+    (this.#lifecycleByClass ??= new WeakMap<Constructor, LifecycleMetadata | null>()).set(target, merged);
     return merged ?? undefined;
   }
 
@@ -96,7 +96,7 @@ export class SymbolMetadataReader implements MetadataReader {
     } else {
       merged = buckets.flat();
     }
-    (this.#accessorsByClass ??= new WeakMap()).set(target, merged);
+    (this.#accessorsByClass ??= new WeakMap<Constructor, ReadonlyArray<AccessorEntry> | null>()).set(target, merged);
     return merged ?? undefined;
   }
 }

@@ -210,7 +210,10 @@ export class ClassIntrospector {
       return cached === null ? undefined : cached;
     }
     const metadata = this.#reader.getConstructorMetadata(target);
-    (this.#constructorMetadata ??= new WeakMap()).set(target, metadata ?? null);
+    (this.#constructorMetadata ??= new WeakMap<Constructor, ConstructorMetadata | null>()).set(
+      target,
+      metadata ?? null,
+    );
     return metadata;
   }
 
@@ -225,7 +228,7 @@ export class ClassIntrospector {
 
   discoverPostConstruct(target: Constructor): void {
     const lifecycle = this.#reader.getLifecycleMetadata(target);
-    (this.#hasPostConstruct ??= new WeakMap()).set(
+    (this.#hasPostConstruct ??= new WeakMap<Constructor, boolean>()).set(
       target,
       lifecycle !== undefined && lifecycle.postConstruct !== undefined && lifecycle.postConstruct.length > 0,
     );
@@ -236,7 +239,7 @@ export class ClassIntrospector {
     let needsActiveContainer = this.#needsActiveContainer?.get(target);
     if (needsActiveContainer === undefined) {
       needsActiveContainer = (this.#reader.getAccessorMetadata?.(target)?.length ?? 0) > 0;
-      (this.#needsActiveContainer ??= new WeakMap()).set(target, needsActiveContainer);
+      (this.#needsActiveContainer ??= new WeakMap<Constructor, boolean>()).set(target, needsActiveContainer);
     }
     return needsActiveContainer;
   }

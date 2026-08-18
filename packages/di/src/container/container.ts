@@ -385,7 +385,7 @@ class DefaultContainer implements Container {
         throw new AsyncModuleLoadError(module.name);
       }
       const moduleRef = module as object;
-      const moduleRefs = (this.#moduleRefs ??= new Map());
+      const moduleRefs = (this.#moduleRefs ??= new Map<object, number>());
       const existing = moduleRefs.get(moduleRef);
       if (existing !== undefined) {
         moduleRefs.set(moduleRef, existing + 1);
@@ -432,7 +432,7 @@ class DefaultContainer implements Container {
 
   async #loadOneModuleAsync(module: SyncModule | AsyncModule): Promise<void> {
     const moduleRef = module as object;
-    const moduleRefs = (this.#moduleRefs ??= new Map());
+    const moduleRefs = (this.#moduleRefs ??= new Map<object, number>());
     const existing = moduleRefs.get(moduleRef);
     if (existing !== undefined) {
       moduleRefs.set(moduleRef, existing + 1);

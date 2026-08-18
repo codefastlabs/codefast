@@ -84,7 +84,7 @@ export class ScopeManager {
   }
 
   setInflight(id: BindingIdentifier, promise: Promise<unknown>): void {
-    (this.#inflight ??= new Map()).set(id, promise);
+    (this.#inflight ??= new Map<BindingIdentifier, Promise<unknown>>()).set(id, promise);
   }
 
   clearInflight(id: BindingIdentifier): void {
@@ -114,7 +114,7 @@ export class ScopeManager {
     if (!this.isChild) {
       throw new MissingScopeContextError(tokenName(binding.token));
     }
-    (this.#scoped ??= new Map()).set(binding.id, instance);
+    (this.#scoped ??= new Map<BindingIdentifier, unknown>()).set(binding.id, instance);
   }
 
   /** Releases a removed binding's scoped instance. A scoped instance has no deactivation. */
