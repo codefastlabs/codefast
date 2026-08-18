@@ -3,6 +3,7 @@
   "extends": "@codefast/typescript-config/library.json",
   "compilerOptions": {
     "customConditions": ["source"],
+    "lib": ["ES2024", "ESNext.Decorators"],
     "experimentalDecorators": false,
     "exactOptionalPropertyTypes": true,
     "noFallthroughCasesInSwitch": true,
