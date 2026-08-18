@@ -13,6 +13,9 @@ Measured, not assumed. Paired alternating A/B against the previous build (source
 `named-constant-get` clearing its floor at 1.14× — consistent with a small local helper inlining where a newly shipped
 builtin does not. The table and the row that must not be cited are in the suite's `RESULTS.md`.
 
-Also closes a latent typing hole the method form hid: a lazily allocated index now writes `this.#field ??= new Map()` as
-its own statement, because folding that assignment into an argument types as `Map<any, any>` and dropped the key and
-value types at the call site.
+Also closes a latent typing hole the method form hid. TypeScript does not contextually type the right-hand side of
+`??=`, so a bare `new Map()` there is `Map<any, any>` and every read through the field goes unchecked; every lazily
+allocated index in the package now spells its type arguments. Both helpers additionally constrain their value type to
+exclude `undefined`, since they read absence with one `get` — a map that stores `undefined` needs a `has` and is a
+compile error here rather than a silent overwrite. `packages/di` also pins `lib` to `["ES2024", "ESNext.Decorators"]`,
+so the Node floor is now a compile error to break rather than a note in CONTRIBUTING.
