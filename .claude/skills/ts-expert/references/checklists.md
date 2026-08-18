@@ -19,8 +19,9 @@ Default to AUTO-FIX.
 Usually PROPOSE. The compiler version never gates these — `lib` and the runtime do, so confirm both before suggesting
 one.
 
-- `Map.getOrInsert` / `WeakMap.getOrInsert` over manual `has()` + `set()` — needs Node ≥ 26, so **never** in
-  `packages/di`, whose floor is 24 and which keeps its own `core/map-upsert` helpers for exactly this reason.
+- `Map.getOrInsert` / `WeakMap.getOrInsert` over manual `has()` + `set()` — needs Node ≥ 26, so **never** anywhere in
+  this repo: every package declares `engines.node >= 24.0.0`. `packages/di` keeps its own `core/map-upsert` helpers for
+  exactly this reason; propose those, not the platform methods.
 - `RegExp.escape()` over hand-rolled escaping.
 - Temporal over `Date` arithmetic.
 - `using` / `await using` for connections, file handles, listeners.
