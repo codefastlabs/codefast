@@ -142,6 +142,27 @@ changes are `minor` during 0.x.
 
 Versioning and publishing are owned by CI; do not run the release commands locally.
 
+### A brand-new package needs one manual publish first
+
+CI authenticates to npm with [OIDC trusted publishing](https://docs.npmjs.com/trusted-publishers), not an `NPM_TOKEN`. A
+trusted publisher is configured **per package** on npmjs.com and the package must already exist there, so the **first**
+version of a new `@codefast/*` package cannot go through CI — publishing an initial version over OIDC is
+[not yet supported](https://github.com/npm/cli/issues/8544). This is the one sanctioned exception to "never publish
+locally". Bootstrap it once:
+
+1. Publish the first version from a machine logged in to npm (needs your 2FA):
+
+   ```bash
+   pnpm build:packages
+   pnpm --filter @codefast/<name> publish --access public
+   ```
+
+2. On npmjs.com open the new package → **Settings** → **Trusted Publisher** → **GitHub Actions**, set org
+   `codefastlabs`, repo `codefast`, workflow `release.yml`, tick **Allow npm publish**, and save.
+
+Do this **before** the package's first changeset reaches `main`: the whole fixed group publishes together, so an
+unconfigured new member fails the release run.
+
 ## The gate before you open a PR
 
 ```bash

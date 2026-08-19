@@ -26,7 +26,11 @@ description:
   ```
 
 - Publishing is **CI's job** (`.github/workflows/release.yml`, where `changesets/action` runs `npx changeset publish`)
-  when a change under `.changeset/**` lands on `main`. Never publish by hand from a local machine.
+  when a change under `.changeset/**` lands on `main`. Never publish by hand from a local machine — the one exception is
+  bootstrapping a brand-new package (see below).
+- CI authenticates to npm with **OIDC trusted publishing**, not an `NPM_TOKEN` (`changesets/action` v2 dropped the
+  token-to-`.npmrc` handling). The release job has `id-token: write`, and each published package has a trusted publisher
+  on npmjs.com pinned to org `codefastlabs`, repo `codefast`, workflow `release.yml`, permission `npm publish`.
 - CI publishes in **two steps**: pushing a changeset to `main` makes `changesets/action` **not publish immediately**,
   but open the release PR `chore: release new version` (branch `changeset-release/main`) carrying the version bump.
   **Merging that PR** is what makes the next run `changeset publish` to npm.
@@ -86,6 +90,26 @@ leaving them in the root. An almost-empty `.changeset/` during canary is therefo
 changesets were lost — `@changesets/read` still reads that folder, exposing each one under the id `pre/<name>`, which is
 also the form recorded in `pre.json.changesets`. Clearing `pre.json.changesets` re-applies them from where they sit; no
 files need moving back.
+
+## Adding a brand-new package (first publish + trusted publishing)
+
+A trusted publisher is configured **per package** on npmjs.com and can only be added **after the package exists** there;
+npm does not yet support publishing an initial version over OIDC (`npm/cli#8544`). So a new `@codefast/*` package needs
+a one-time manual bootstrap, and it must happen **before** the package's first changeset reaches `main` — the fixed
+group publishes together, so an unconfigured new member fails the whole release run.
+
+1. Publish the first version from a machine logged in to npm (needs 2FA — cannot be automated):
+
+   ```bash
+   pnpm build:packages
+   pnpm --filter @codefast/<name> publish --access public
+   ```
+
+2. On npmjs.com: package → **Settings** → **Trusted Publisher** → **GitHub Actions** → org `codefastlabs`, repo
+   `codefast`, workflow `release.yml`, tick **Allow npm publish** → **Set up connection** (enter 2FA).
+
+From then on CI releases it via OIDC like the rest. There is no org-level trusted publisher, so this repeats for every
+new published package.
 
 ## Checklist before merging a release
 
