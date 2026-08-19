@@ -1,5 +1,14 @@
 # @codefast/benchmark-di-inversify
 
+## 0.7.0
+
+### Patch Changes
+
+- Updated dependencies [[`cafd7ad`](https://github.com/codefastlabs/codefast/commit/cafd7adcb41c3a112c7423a10f72b2856c233f01)]:
+  - @codefast/di@0.7.0
+  - @codefast/benchmark-harness@0.7.0
+  - @codefast/benchmark-viewer@0.7.0
+
 ## 0.6.2
 
 ### Patch Changes

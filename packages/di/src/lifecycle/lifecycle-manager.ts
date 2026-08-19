@@ -1,4 +1,5 @@
 import type { Binding } from "#/core/binding";
+import { getOrInsert } from "#/core/map-upsert";
 import type { Token } from "#/core/token";
 import { tokenName } from "#/core/token";
 import type {
@@ -30,7 +31,8 @@ export class LifecycleManager {
     this.#activationVersion += 1;
     this.#cachedToken = undefined;
     this.#cachedHooks = undefined;
-    const list = (this.#activationHooks ??= new Map()).getOrInsert(token, []);
+    this.#activationHooks ??= new Map();
+    const list = getOrInsert(this.#activationHooks, token, []);
     list.push(handler as ActivationHandler<unknown>);
   }
 
@@ -62,7 +64,8 @@ export class LifecycleManager {
   }
 
   registerDeactivation<Value>(token: Token<Value> | Constructor<Value>, handler: DeactivationHandler<Value>): void {
-    const list = (this.#deactivationHooks ??= new Map()).getOrInsert(token, []);
+    this.#deactivationHooks ??= new Map();
+    const list = getOrInsert(this.#deactivationHooks, token, []);
     list.push(handler as DeactivationHandler<unknown>);
   }
 

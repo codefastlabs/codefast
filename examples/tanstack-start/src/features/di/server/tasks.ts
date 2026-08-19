@@ -7,8 +7,6 @@ import { toReactFlowGraph } from "@codefast/di/graph-adapters/reactflow";
 import type { ReactFlowGraph } from "@codefast/di/graph-adapters/reactflow";
 import { createServerFn } from "@tanstack/react-start";
 
-import { ensureMapPolyfill } from "#/features/di/server/ensure-map-polyfill";
-
 // ── Domain model ─────────────────────────────────────────────────────────────────────────────────────────────────────
 
 interface Task {
@@ -379,12 +377,8 @@ const domainModule = Module.create("domain", (builder) => {
 
 let rootContainer: Container | undefined;
 
-async function getRootContainer(): Promise<Container> {
+function getRootContainer(): Container {
   if (!rootContainer) {
-    // The polyfill has to be in place before the first container exists, and this is the only
-    // place one is built — so a call site cannot forget it.
-    await ensureMapPolyfill();
-
     const container = Container.fromModules(infrastructureModule, validationModule, domainModule);
 
     // Detect captive dependencies (e.g. a singleton depending on a scoped binding) up front.
@@ -466,7 +460,7 @@ function describeBindings(container: Container): Array<BindingInfo> {
  * disposed (async) once the request is handled, firing the service's `@preDestroy` hook.
  */
 async function handleRequest(mutate?: (service: TaskService) => Array<string> | void): Promise<BoardSnapshot> {
-  const root = await getRootContainer();
+  const root = getRootContainer();
   const request = root.createChild();
   const context: RequestContext = {
     requestId: globalThis.crypto.randomUUID().slice(0, 8),
@@ -575,7 +569,7 @@ export const removeTaskServerFn = createServerFn({ method: "POST" })
 export const setMetricsServerFn = createServerFn({ method: "POST" })
   .validator((input: unknown): { enabled: boolean } => ({ enabled: readEnabled(input) }))
   .handler(async ({ data }): Promise<BoardSnapshot> => {
-    const root = await getRootContainer();
+    const root = getRootContainer();
     const log = root.resolve(ActivityLogToken);
     const bound = root.resolveOptional(MetricsExporterToken) !== undefined;
 
@@ -593,7 +587,7 @@ export const setMetricsServerFn = createServerFn({ method: "POST" })
 // Demonstrates `rebind`: swap the singleton repository implementation at runtime, clearing state
 // without touching any consumer of TaskRepositoryToken (ActivityLog stays put).
 export const resetBoardServerFn = createServerFn({ method: "POST" }).handler(async (): Promise<BoardSnapshot> => {
-  const root = await getRootContainer();
+  const root = getRootContainer();
   const log = root.resolve(ActivityLogToken);
 
   root.rebind(TaskRepositoryToken).to(InMemoryTaskRepository).singleton();

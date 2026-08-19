@@ -5,7 +5,6 @@ import type { Container } from "@codefast/di";
 import { Container as DiContainer, DiError, token } from "@codefast/di";
 import { createServerFn } from "@tanstack/react-start";
 
-import { ensureMapPolyfill } from "#/features/di/server/ensure-map-polyfill";
 import type { BootReport } from "#/features/inspector/server/boot";
 import { bindPricingConfig, warmAndReport } from "#/features/inspector/server/boot";
 import type { CatalogEntry } from "#/features/inspector/server/catalog";
@@ -99,8 +98,6 @@ function bindInfrastructure(container: Container): void {
 
 /** The application container: built and warmed once, holding everything a request selects from. */
 async function buildRoot(): Promise<Root> {
-  await ensureMapPolyfill();
-
   const container = DiContainer.create();
 
   bindInfrastructure(container);
