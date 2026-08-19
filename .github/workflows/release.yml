@@ -65,14 +65,19 @@ jobs:
           git config user.name "Vuong Phan"
           git config user.email "13298232+thevuong@users.noreply.github.com"
 
+      # v2 of changesets/action dropped the NPM_TOKEN-to-.npmrc handling, so pnpm publish needs auth wired up here.
+      - name: Configure npm authentication
+        run: printf '//registry.npmjs.org/:_authToken=${NPM_TOKEN}\n' > "$HOME/.npmrc"
+
       - name: Version and publish
         uses: changesets/action@v2.1.0
         with:
-          version: pnpm run version-packages
-          publish: npx changeset publish
-          commit: "chore: update versions for release"
-          title: "chore: release new version"
-          setupGitUser: false
+          version-script: pnpm run version-packages
+          publish-script: npx changeset publish
+          commit-message: "chore: update versions for release"
+          pr-title: "chore: release new version"
+          # Keep the Git CLI so release commits keep the identity set above; v2 defaults to GitHub-API pushes.
+          push-with-git-cli: true
+          github-token: ${{ secrets.GH_TOKEN || secrets.GITHUB_TOKEN }}
         env:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN || secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
