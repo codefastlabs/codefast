@@ -24,7 +24,7 @@ import {
 } from "@codefast/di";
 import type { ConstructorMetadata, Constructor, LifecycleMetadata, MetadataReader } from "@codefast/di";
 
-import { item, section } from "#/examples/support/log";
+import { item, ok, section } from "#/examples/support/log";
 
 // ── Tokens ───────────────────────────────────────────────────────────────────────────────────────────────────────────
 
@@ -183,7 +183,7 @@ console.log(app.resolve(ReportServiceToken).run());
 section("4. Static checks see the table too");
 
 app.validate();
-console.log("validate(): no missing or scope-violating bindings");
+ok("validate(): no missing or scope-violating bindings");
 
 const graph = app.generateDependencyGraph();
 
@@ -234,7 +234,7 @@ try {
   tooLate.resolve(PoolToken);
 } catch (error) {
   if (error instanceof MissingMetadataError) {
-    console.log("bound on itself:            throws", error.code);
+    item("bound on itself", `throws ${error.code}`);
   }
 }
 
