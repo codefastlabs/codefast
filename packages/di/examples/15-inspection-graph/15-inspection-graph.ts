@@ -15,6 +15,8 @@
 
 import { Container, inject, injectable, Module, toCytoscapeGraph, toDotGraph, token, tokenName } from "@codefast/di";
 
+import { item, ok, section } from "../support/log";
+
 // ── Tokens ───────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 const LoggerToken = token<Logger>("Logger");
@@ -142,13 +144,13 @@ container.resolve(AnalyticsToken);
 // 1. container.inspect() — full snapshot of the container state
 // ─────────────────────────────────────────────────────────────────────────────
 
-console.log("=== ContainerSnapshot ===");
+section("ContainerSnapshot");
 const snapshot = container.inspect();
 
-console.log("hasParent:           ", snapshot.hasParent);
-console.log("isDisposed:          ", snapshot.isDisposed);
-console.log("cachedSingletonCount:", snapshot.cachedSingletonCount);
-console.log("ownBindings count:   ", snapshot.ownBindings.length);
+item("hasParent", snapshot.hasParent);
+item("isDisposed", snapshot.isDisposed);
+item("cachedSingletonCount", snapshot.cachedSingletonCount);
+item("ownBindings count", snapshot.ownBindings.length);
 
 console.log("\n--- All bindings ---");
 for (const binding of snapshot.ownBindings) {
@@ -163,7 +165,7 @@ for (const binding of snapshot.ownBindings) {
 
 // ── 2. container.lookupBindings() — narrow to a specific token ───────────────────────────────────────────────────────
 
-console.log("\n=== lookupBindings for LoggerToken ===");
+section("lookupBindings for LoggerToken");
 const loggerBindings = container.lookupBindings(LoggerToken);
 for (const binding of loggerBindings) {
   console.log(`  kind=${binding.kind}, scope=${binding.scope}, id=${binding.id}`);
@@ -171,49 +173,49 @@ for (const binding of loggerBindings) {
 
 // ── 3. container.has() / hasOwn() — existence checks ─────────────────────────────────────────────────────────────────
 
-console.log("\n=== has() / hasOwn() ===");
+section("has() / hasOwn()");
 
 const UnboundToken = token<unknown>("Unbound");
 
-console.log("has(LoggerToken):   ", container.has(LoggerToken)); // true
-console.log("has(UnboundToken):  ", container.has(UnboundToken)); // false
-console.log("hasOwn(LoggerToken):", container.hasOwn(LoggerToken)); // true
+item("has(LoggerToken)", container.has(LoggerToken)); // true
+item("has(UnboundToken)", container.has(UnboundToken)); // false
+item("hasOwn(LoggerToken)", container.hasOwn(LoggerToken)); // true
 
 // Named / tagged existence checks
 const PluginToken = token<{ name: string }>("Plugin");
 container.bind(PluginToken).toConstantValue({ name: "alpha" }).whenNamed("alpha");
 container.bind(PluginToken).toConstantValue({ name: "beta" }).whenNamed("beta");
 
-console.log("has(PluginToken, {name:'alpha'}):", container.has(PluginToken, { name: "alpha" })); // true
-console.log("has(PluginToken, {name:'gamma'}):", container.has(PluginToken, { name: "gamma" })); // false
+item("has(PluginToken, {name:'alpha'})", container.has(PluginToken, { name: "alpha" })); // true
+item("has(PluginToken, {name:'gamma'})", container.has(PluginToken, { name: "gamma" })); // false
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 4. Inspecting a child container
 //    - hasOwn() checks only the child; has() walks up to the parent.
 // ─────────────────────────────────────────────────────────────────────────────
 
-console.log("\n=== Child container inspection ===");
+section("Child container inspection");
 
 const RequestScopedToken = token<{ requestId: string }>("RequestScoped");
 const childContainer = container.createChild();
 childContainer.bind(RequestScopedToken).toConstantValue({ requestId: "req-42" });
 
 const childSnapshot = childContainer.inspect();
-console.log("child hasParent:         ", childSnapshot.hasParent);
-console.log("child ownBindings count: ", childSnapshot.ownBindings.length);
+item("child hasParent", childSnapshot.hasParent);
+item("child ownBindings count", childSnapshot.ownBindings.length);
 
 // has() finds tokens in parent; hasOwn() does not.
-console.log("child.has(LoggerToken):    ", childContainer.has(LoggerToken)); // true (from parent)
-console.log("child.hasOwn(LoggerToken): ", childContainer.hasOwn(LoggerToken)); // false (not in child)
-console.log("child.has(RequestScopedToken):    ", childContainer.has(RequestScopedToken)); // true
-console.log("child.hasOwn(RequestScopedToken): ", childContainer.hasOwn(RequestScopedToken)); // true
+item("child.has(LoggerToken)", childContainer.has(LoggerToken)); // true (from parent)
+item("child.hasOwn(LoggerToken)", childContainer.hasOwn(LoggerToken)); // false (not in child)
+item("child.has(RequestScopedToken)", childContainer.has(RequestScopedToken)); // true
+item("child.hasOwn(RequestScopedToken)", childContainer.hasOwn(RequestScopedToken)); // true
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 5. generateDependencyGraph() + toDotGraph()
 //    Produces a Graphviz DOT string you can paste into https://graphviz.online
 // ─────────────────────────────────────────────────────────────────────────────
 
-console.log("\n=== Dependency graph (DOT) ===");
+section("Dependency graph (DOT)");
 const graph = container.generateDependencyGraph();
 console.log(`Graph nodes: ${graph.nodes.length}, edges: ${graph.edges.length}`);
 
@@ -225,7 +227,7 @@ console.log("\n" + dot);
 //    Drop the returned array into <CytoscapeComponent elements={elements} />
 // ─────────────────────────────────────────────────────────────────────────────
 
-console.log("\n=== Dependency graph (Cytoscape.js) ===");
+section("Dependency graph (Cytoscape.js)");
 const cytoscapeElements = toCytoscapeGraph(graph);
 const nodeElements = cytoscapeElements.filter((element) => !("source" in element.data));
 const edgeElements = cytoscapeElements.filter((element) => "source" in element.data);
@@ -245,12 +247,12 @@ for (const element of nodeElements.slice(0, 3)) {
 //    A real app could log this during startup to catch missing bindings early.
 // ─────────────────────────────────────────────────────────────────────────────
 
-console.log("\n=== Startup audit ===");
+section("Startup audit");
 
 function auditContainer(targetContainer: typeof container, requiredTokens: Array<ReturnType<typeof token>>): void {
   const missingTokens = requiredTokens.filter((requiredToken) => !targetContainer.has(requiredToken));
   if (missingTokens.length === 0) {
-    console.log("All required tokens are bound ✓");
+    ok("All required tokens are bound");
   } else {
     for (const missingToken of missingTokens) {
       console.warn(`Missing binding for token: ${tokenName(missingToken)}`);

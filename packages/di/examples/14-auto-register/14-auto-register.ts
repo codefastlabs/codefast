@@ -23,6 +23,8 @@ import {
   type AutoRegisterRegistry,
 } from "@codefast/di";
 
+import { section } from "../support/log";
+
 // ── Tokens ───────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 const LoggerToken = token<Logger>("Logger");
@@ -255,7 +257,7 @@ container.bind(NotificationServiceToken).to(EmailNotificationService).singleton(
 
 // ── Usage ────────────────────────────────────────────────────────────────────────────────────────────────────────────
 
-console.log("\n=== Bootstrapped via auto-register ===");
+section("Bootstrapped via auto-register");
 
 const userService = container.resolve(UserServiceToken);
 userService.createUser("u1", "Alice");
@@ -265,13 +267,13 @@ const orderService = container.resolve(OrderServiceToken);
 orderService.placeOrder("u1", 99.99);
 orderService.placeOrder("u2", 45.0);
 
-console.log("\n=== Querying ===");
+section("Querying");
 const aliceOrders = orderService.getUserOrders("u1");
 console.log(`Alice has ${aliceOrders.length} order(s)`);
 
 // ── Inspect the registry entries ─────────────────────────────────────────────────────────────────────────────────────
 
-console.log("\n=== Registry entries ===");
+section("Registry entries");
 console.log(
   "Infrastructure:",
   infrastructureRegistry.entries().map((entry) => `${entry.target.name}(${entry.scope})`),
@@ -321,7 +323,7 @@ envContainer.loadAutoRegistered(envRegistry);
 const NotificationServiceImpl = isProduction ? ProdNotificationService : DevNotificationService;
 envContainer.bind(NotificationServiceToken).to(NotificationServiceImpl).singleton();
 
-console.log("\n=== Conditional (env-based) registry ===");
+section("Conditional (env-based) registry");
 console.log(
   "Env registry entries:",
   envRegistry.entries().map((entry) => entry.target.name),

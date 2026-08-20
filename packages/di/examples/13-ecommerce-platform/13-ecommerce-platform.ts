@@ -81,6 +81,8 @@ import {
   token,
 } from "@codefast/di";
 
+import { banner } from "../support/log";
+
 // ============================================================================
 // ── TOKENS ───────────────────────────────────────────────────────────────────────────────────────────────────────────
 // ============================================================================
@@ -2445,9 +2447,7 @@ const AppModule = Module.create("App", (builder) => {
 // ============================================================================
 
 async function bootstrap() {
-  console.log("\n╔══════════════════════════════════════════════════╗");
-  console.log("║  🛒  E-Commerce Platform — DI Bootstrap          ║");
-  console.log("╚══════════════════════════════════════════════════╝\n");
+  banner("🛒 E-Commerce Platform — DI Bootstrap");
 
   // 1. Build root container from async infrastructure + all domain modules
   const container = await Container.fromModulesAsync(InfrastructureModule, PaymentModule, AppModule);

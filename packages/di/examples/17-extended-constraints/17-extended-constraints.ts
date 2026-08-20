@@ -38,6 +38,8 @@ import {
   tag,
 } from "@codefast/di";
 
+import { section } from "../support/log";
+
 const BACKEND_TAG = tag<"memcached" | "redis">("backend");
 const REGION_TAG = tag<"eu" | "us">("region");
 const TENANT_TAG = tag<"enterprise" | "starter">("tenant");
@@ -61,7 +63,7 @@ function makeLogger(source: string): Logger {
 //    get the "verbose" logger; everyone else gets the "silent" one.
 // ─────────────────────────────────────────────────────────────────────────────
 
-console.log("=== 1. whenParentIs / whenNoParentIs ===\n");
+section("1. whenParentIs / whenNoParentIs");
 
 const LoggerToken = token<Logger>("Logger");
 const OrderServiceToken = token<OrderService>("OrderService");
@@ -113,7 +115,7 @@ parentIsContainer.resolve(BillingServiceToken).run(); // [silent]  processing bi
 //    contains PaymentOrchestrator, so Logger receives "standard".
 // ─────────────────────────────────────────────────────────────────────────────
 
-console.log("\n=== 2. whenAnyAncestorIs / whenNoAncestorIs ===\n");
+section("2. whenAnyAncestorIs / whenNoAncestorIs");
 
 const RiskScorerToken = token<RiskScorer>("RiskScorer");
 const FraudCheckerToken = token<FraudChecker>("FraudChecker");
@@ -203,7 +205,7 @@ ancestorIsContainer.resolve(BillingOrchestratorToken).run(); // [standard] build
 //    direct parent but further up the chain, the constraint still fires.
 // ─────────────────────────────────────────────────────────────────────────────
 
-console.log("\n=== 3. whenParentNamed / whenAnyAncestorNamed ===\n");
+section("3. whenParentNamed / whenAnyAncestorNamed");
 
 const DataSourceToken = token<DataSource>("DataSource");
 const QueryRunnerToken = token<QueryRunner>("QueryRunner");
@@ -260,7 +262,7 @@ namedContainer.resolve(QueryRunnerToken).execute(); // [replica-logger] connecte
 //    tag in the list to be present (AND semantics).
 // ─────────────────────────────────────────────────────────────────────────────
 
-console.log("\n=== 4. whenParentTagged / whenParentTaggedAll ===\n");
+section("4. whenParentTagged / whenParentTaggedAll");
 
 interface CacheAdapter {
   backend: string;
@@ -341,7 +343,7 @@ taggedContainer.resolve(ProductCacheToken, { tags: [BACKEND_TAG.of("memcached")]
 //    ancestor frame — not spread across different ancestor nodes.
 // ─────────────────────────────────────────────────────────────────────────────
 
-console.log("\n=== 5. whenAnyAncestorTagged / whenAnyAncestorTaggedAll ===\n");
+section("5. whenAnyAncestorTagged / whenAnyAncestorTaggedAll");
 
 interface AuditLogger {
   tier: string;

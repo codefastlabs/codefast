@@ -40,6 +40,8 @@ import { randomBytes } from "node:crypto";
 
 import { Container, Module, inject, injectable, token } from "@codefast/di";
 
+import { caughtError, item, section } from "../support/log";
+
 // ── Global types ─────────────────────────────────────────────────────────────────────────────────────────────────────
 
 type TenantPlan = "free" | "pro" | "enterprise";
@@ -482,7 +484,7 @@ async function main(): Promise<void> {
   console.log("\n✅ Root container ready\n");
 
   // ── Tenant A: free plan ────────────────────────────────────────────────────────────────────────────────────────────
-  console.log("════════════════════ Tenant A (free plan) ════════════════════");
+  section("Tenant A (free plan)");
   const tenantAContainer = createTenantContainer(
     rootContainer,
     {
@@ -501,11 +503,11 @@ async function main(): Promise<void> {
   try {
     await tenantAInviteService.sendInvite("bob@external.com");
   } catch (err) {
-    console.log(`  ⛔ Expected error: ${(err as Error).message}`);
+    caughtError("Expected error", err);
   }
 
   // ── Tenant B: pro plan ─────────────────────────────────────────────────────────────────────────────────────────────
-  console.log("\n════════════════════ Tenant B (pro plan) ═════════════════════");
+  section("Tenant B (pro plan)");
   const tenantBContainer = createTenantContainer(
     rootContainer,
     {
@@ -524,7 +526,7 @@ async function main(): Promise<void> {
   console.log(`  ✅ Invite sent: ${invite.inviteId}`);
 
   // ── Tenant C: enterprise plan ──────────────────────────────────────────────────────────────────────────────────────
-  console.log("\n════════════════ Tenant C (enterprise plan) ══════════════════");
+  section("Tenant C (enterprise plan)");
   const tenantCContainer = createTenantContainer(
     rootContainer,
     {
@@ -545,7 +547,7 @@ async function main(): Promise<void> {
   await tenantCInviteService.sendInvite("frank@enterprise.com");
 
   // ── Verify complete isolation ──────────────────────────────────────────────────────────────────────────────────────
-  console.log("\n════════════════════ Isolation verification ══════════════════");
+  section("Isolation verification");
 
   // Same root pool is shared — no N+1 connection overhead.
   // Use the already-resolved sharedDatabasePool (resolved earlier as async).
@@ -557,15 +559,15 @@ async function main(): Promise<void> {
   // Each tenant has its own cache namespace — writes don't bleed across tenants
   const tenantACache = tenantAContainer.resolve(TenantCacheToken);
   const tenantBCache = tenantBContainer.resolve(TenantCacheToken);
-  console.log(`  Tenant A cache === Tenant B cache: ${tenantACache === tenantBCache}`); // false
+  item("Tenant A cache === Tenant B cache", tenantACache === tenantBCache); // false
 
   // Each tenant's UserService is a distinct instance
   const tenantAUserService2 = tenantAContainer.resolve(UserServiceToken);
   const tenantBUserService2 = tenantBContainer.resolve(UserServiceToken);
-  console.log(`  Tenant A UserService === Tenant B UserService: ${tenantAUserService2 === tenantBUserService2}`); // false
+  item("Tenant A UserService === Tenant B UserService", tenantAUserService2 === tenantBUserService2); // false
 
   // Within the same tenant container, the same scoped instance is reused
-  console.log(`  Tenant A UserService scoped identity: ${tenantAUserService === tenantAUserService2}`); // true
+  item("Tenant A UserService scoped identity", tenantAUserService === tenantAUserService2); // true
 
   // rootContainer.dispose() at scope exit fires pool.close()
 }

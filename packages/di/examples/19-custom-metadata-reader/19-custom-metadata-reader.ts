@@ -24,6 +24,8 @@ import {
 } from "@codefast/di";
 import type { ConstructorMetadata, Constructor, LifecycleMetadata, MetadataReader } from "@codefast/di";
 
+import { item, section } from "../support/log";
+
 // ── Tokens ───────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 const ConfigToken = token<Config>("Config");
@@ -128,7 +130,7 @@ class TableFirstMetadataReader implements MetadataReader {
 
 // ── 1. Without a reader, an undecorated class is unresolvable ────────────────────────────────────────────────────────
 
-console.log("=== 1. The default reader only knows decorators ===");
+section("1. The default reader only knows decorators");
 
 const plainContainer = Container.create();
 
@@ -140,8 +142,8 @@ try {
   plainContainer.resolve(PoolToken);
 } catch (error) {
   if (error instanceof MissingMetadataError) {
-    console.log("code:   ", error.code);
-    console.log("message:", error.message);
+    item("code", error.code);
+    item("message", error.message);
   }
 }
 
@@ -151,7 +153,7 @@ try {
 //    so an option is the one source that is already in place by then.
 // ─────────────────────────────────────────────────────────────────────────────
 
-console.log("\n=== 2. Container.create({ metadataReader }) ===");
+section("2. Container.create({ metadataReader })");
 
 const app = Container.create({ metadataReader: new TableFirstMetadataReader() });
 
@@ -162,14 +164,14 @@ app.bind(ReportServiceToken).to(ReportService).singleton();
 
 const pool = app.resolve(PoolToken);
 
-console.log("constructor params came from the table:", pool.config.dsn);
-console.log("postConstruct ran open():              ", pool.opened);
+item("constructor params came from the table", pool.config.dsn);
+item("postConstruct ran open()", pool.opened);
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 3. Decorated classes still resolve — that is what the fallback buys
 // ─────────────────────────────────────────────────────────────────────────────
 
-console.log("\n=== 3. Decorated classes are unaffected ===");
+section("3. Decorated classes are unaffected");
 
 console.log(app.resolve(ReportServiceToken).run());
 
@@ -178,7 +180,7 @@ console.log(app.resolve(ReportServiceToken).run());
 //    One container has one reader, so tooling cannot disagree with resolution.
 // ─────────────────────────────────────────────────────────────────────────────
 
-console.log("\n=== 4. Static checks see the table too ===");
+section("4. Static checks see the table too");
 
 app.validate();
 console.log("validate(): no missing or scope-violating bindings");
@@ -199,14 +201,14 @@ for (const edge of graph.edges) {
 //    has to predate the container that uses it.
 // ─────────────────────────────────────────────────────────────────────────────
 
-console.log("\n=== 5. Inheritance, and the token path ===");
+section("5. Inheritance, and the token path");
 
 const request = app.createChild();
 
 request.bind(ConfigToken).toConstantValue({ dsn: "postgres://localhost/replica" });
 request.bind(PoolToken).to(LegacyPool).singleton();
 
-console.log("child inherited the reader:", request.resolve(PoolToken).config.dsn);
+item("child inherited the reader", request.resolve(PoolToken).config.dsn);
 
 const readerRoot = Container.create();
 
@@ -218,7 +220,7 @@ boundChild.bind(ConfigToken).toConstantValue({ dsn: "postgres://localhost/bound"
 boundChild.bind(LoggerToken).toConstantValue({ log: (message) => console.log(`  [log] ${message}`) });
 boundChild.bind(PoolToken).to(LegacyPool).singleton();
 
-console.log("bound in the parent:       ", boundChild.resolve(PoolToken).config.dsn);
+item("bound in the parent", boundChild.resolve(PoolToken).config.dsn);
 
 // The same binding on the container that needs it is too late — prefer the option.
 const tooLate = Container.create();
@@ -238,7 +240,7 @@ try {
 
 // ── 6. preDestroy from the table runs on dispose ─────────────────────────────────────────────────────────────────────
 
-console.log("\n=== 6. Teardown ===");
+section("6. Teardown");
 
 await app.dispose();
-console.log("preDestroy ran close():", pool.closed);
+item("preDestroy ran close()", pool.closed);

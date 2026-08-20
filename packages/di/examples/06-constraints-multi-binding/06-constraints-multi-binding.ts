@@ -12,6 +12,8 @@ import { Container, inject, injectable, token, whenParentIs } from "@codefast/di
 
 import { tag } from "#/core/tag";
 
+import { item, section } from "../support/log";
+
 const PROVIDER_TAG = tag<"local" | "s3">("provider");
 
 // ── Tokens ───────────────────────────────────────────────────────────────────────────────────────────────────────────
@@ -187,26 +189,26 @@ appContainer.bind(EventHandlerToken).to(AlertEventHandler).whenNamed("alert");
 
 // ── Usage ────────────────────────────────────────────────────────────────────────────────────────────────────────────
 
-console.log("=== Named bindings ===");
+section("Named bindings");
 const consoleLoggerInstance = namedContainer.resolve(LoggerToken, { name: "console" });
 const fileLoggerInstance = namedContainer.resolve(LoggerToken, { name: "file" });
 consoleLoggerInstance.log("hello from console");
 fileLoggerInstance.log("hello from file");
 
-console.log("\n=== Tagged bindings ===");
+section("Tagged bindings");
 const s3Storage = appContainer.resolve(StorageToken, { tags: [PROVIDER_TAG.of("s3")] });
 const localStorageInstance = appContainer.resolve(StorageToken, { tags: [PROVIDER_TAG.of("local")] });
-console.log("s3Storage.provider:", s3Storage.provider);
-console.log("localStorage.provider:", localStorageInstance.provider);
+item("s3Storage.provider", s3Storage.provider);
+item("localStorage.provider", localStorageInstance.provider);
 
-console.log("\n=== Constraint-based (parent-aware) ===");
+section("Constraint-based (parent-aware)");
 const orderService = appContainer.resolve(OrderServiceToken);
 orderService.createOrder("ORD-1");
 
 const paymentService = appContainer.resolve(PaymentServiceToken);
 paymentService.processPayment("ORD-1");
 
-console.log("\n=== Multi-binding ===");
+section("Multi-binding");
 const eventHandlers = appContainer.resolveAll(EventHandlerToken);
 console.log(`Resolved ${eventHandlers.length} handlers`);
 

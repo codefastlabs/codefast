@@ -8,6 +8,8 @@
 
 import { Container, inject, injectable, token } from "@codefast/di";
 
+import { item, section } from "../support/log";
+
 // ── Tokens ───────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 const AppDbToken = token<AppDatabase>("AppDatabase");
@@ -104,20 +106,21 @@ function handleRequest(requestId: string, userId: string, query: string): void {
 
   // Re-resolve within the same request scope — scoped instances are reused
   const secondHandlerResolve = requestContainer.resolve(HandlerToken);
-  console.log("Same Handler instance:", handler === secondHandlerResolve); // true
+  item("Same Handler instance", handler === secondHandlerResolve); // true
   const firstLoggerResolve = requestContainer.resolve(RequestLoggerToken);
   const secondLoggerResolve = requestContainer.resolve(RequestLoggerToken);
-  console.log("Same RequestLogger instance:", firstLoggerResolve === secondLoggerResolve); // true
+  item("Same RequestLogger instance", firstLoggerResolve === secondLoggerResolve); // true
 }
 
-console.log("=== Request A ===");
+section("Request A");
 handleRequest("req-001", "user-42", "SELECT * FROM orders");
 
-console.log("\n=== Request B ===");
+section("Request B");
 handleRequest("req-002", "user-99", "SELECT * FROM products");
 
 // AppDatabase was only ever created once (singleton across all requests)
 const firstDatabaseResolve = rootContainer.resolve(AppDbToken);
 const secondDatabaseResolve = rootContainer.resolve(AppDbToken);
-console.log("\nSame AppDatabase instance:", firstDatabaseResolve === secondDatabaseResolve); // true
-console.log("Database instanceId:", firstDatabaseResolve.instanceId); // 1
+section("Cross-request singleton");
+item("Same AppDatabase instance", firstDatabaseResolve === secondDatabaseResolve); // true
+item("Database instanceId", firstDatabaseResolve.instanceId); // 1

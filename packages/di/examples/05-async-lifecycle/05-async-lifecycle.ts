@@ -11,6 +11,8 @@
 
 import { Container, inject, injectable, Module, token } from "@codefast/di";
 
+import { item } from "../support/log";
+
 // ── Tokens ───────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 const ConfigToken = token<Config>("Config");
@@ -162,8 +164,8 @@ async function main(): Promise<void> {
     container.resolveAsync(DatabaseToken),
   ]);
 
-  console.log("Same Database instance (parallel resolve):", firstDatabaseResolve === secondDatabaseResolve); // true
-  console.log("Database connected:", firstDatabaseResolve.isConnected()); // true
+  item("Same Database instance (parallel resolve)", firstDatabaseResolve === secondDatabaseResolve); // true
+  item("Database connected", firstDatabaseResolve.isConnected()); // true
 
   // container.dispose() fires all onDeactivation hooks in reverse order
   // (handled automatically by `await using`)
