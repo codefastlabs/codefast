@@ -194,18 +194,15 @@ ancestorIsContainer.resolve(PaymentOrchestratorToken).run(); // [audit]    scori
 ancestorIsContainer.resolve(BillingOrchestratorToken).run(); // [standard] building invoice
 
 // ─────────────────────────────────────────────────────────────────────────────
-// 3. whenParentNamed / whenAnyAncestorNamed
+// 3. whenParentNamed
 //
 //    Scenario: a DataSource token has two named bindings ("primary", "replica").
 //    A QueryRunner also uses DataSource — its binding is resolved with name
 //    "replica". The Logger injected into DataSource uses whenParentNamed to
 //    distinguish which DataSource instance is being constructed.
-//
-//    whenAnyAncestorNamed goes deeper: even when the named binding is not the
-//    direct parent but further up the chain, the constraint still fires.
 // ─────────────────────────────────────────────────────────────────────────────
 
-section("3. whenParentNamed / whenAnyAncestorNamed");
+section("3. whenParentNamed");
 
 const DataSourceToken = token<DataSource>("DataSource");
 const QueryRunnerToken = token<QueryRunner>("QueryRunner");

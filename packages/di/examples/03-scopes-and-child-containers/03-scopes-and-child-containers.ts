@@ -104,12 +104,12 @@ function handleRequest(requestId: string, userId: string, query: string): void {
 
   console.log("Result:", result);
 
-  // Re-resolve within the same request scope — scoped instances are reused
+  // Re-resolve within the same request scope: the transient Handler differs, the scoped logger is reused
   const secondHandlerResolve = requestContainer.resolve(HandlerToken);
-  item("Same Handler instance", handler === secondHandlerResolve); // true
+  item("Same Handler instance", handler === secondHandlerResolve); // false — HandlerToken is transient
   const firstLoggerResolve = requestContainer.resolve(RequestLoggerToken);
   const secondLoggerResolve = requestContainer.resolve(RequestLoggerToken);
-  item("Same RequestLogger instance", firstLoggerResolve === secondLoggerResolve); // true
+  item("Same RequestLogger instance", firstLoggerResolve === secondLoggerResolve); // true — scoped, reused within the request
 }
 
 section("Request A");

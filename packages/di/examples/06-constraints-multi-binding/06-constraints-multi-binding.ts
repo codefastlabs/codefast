@@ -99,7 +99,7 @@ class LocalStorage implements Storage {
 }
 
 // ── Constraint-aware dependencies ────────────────────────────────────────────────────────────────────────────────────
-// OrderService uses parent-aware constraint; PaymentService uses named hint.
+// OrderService uses a parent-aware constraint; PaymentService uses a dedicated logger token.
 
 @injectable([inject(LoggerToken), inject(S3StorageToken)])
 class OrderManager implements OrderService {

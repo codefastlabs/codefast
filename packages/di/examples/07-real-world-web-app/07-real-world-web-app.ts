@@ -2,11 +2,10 @@
  * Example 07 — Real-world Web App
  *
  * A complete scenario combining all features:
- * - AsyncModule for infrastructure (DB, cache)
+ * - AsyncModule for infrastructure (DB)
  * - Modules for domain layers (repositories, services, controllers)
  * - Scoped child containers per HTTP request
  * - Lifecycle hooks (connect / disconnect)
- * - Named bindings for environment-specific overrides
  * - resolveAll for middleware pipeline
  * - Container validation before serving traffic
  * - Graceful shutdown with await using
