@@ -11,8 +11,7 @@
 import { Container, inject, injectable, token, whenParentIs } from "@codefast/di";
 
 import { tag } from "#/core/tag";
-
-import { item, section } from "../support/log";
+import { item, section } from "#/examples/support/log";
 
 const PROVIDER_TAG = tag<"local" | "s3">("provider");
 

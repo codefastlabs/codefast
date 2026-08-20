@@ -29,7 +29,7 @@ import {
   TokenNotBoundError,
 } from "@codefast/di";
 
-import { caughtError, item, ok, section } from "../support/log";
+import { caughtError, item, ok, section } from "#/examples/support/log";
 
 // ── Tokens ───────────────────────────────────────────────────────────────────────────────────────────────────────────
 

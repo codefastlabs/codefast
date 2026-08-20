@@ -15,7 +15,7 @@
 
 import { Container, inject, injectable, Module, toCytoscapeGraph, toDotGraph, token, tokenName } from "@codefast/di";
 
-import { item, ok, section } from "../support/log";
+import { item, ok, section } from "#/examples/support/log";
 
 // ── Tokens ───────────────────────────────────────────────────────────────────────────────────────────────────────────
 

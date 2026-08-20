@@ -40,7 +40,7 @@ import { randomBytes } from "node:crypto";
 
 import { Container, Module, inject, injectable, token } from "@codefast/di";
 
-import { caughtError, item, section } from "../support/log";
+import { caughtError, item, section } from "#/examples/support/log";
 
 // ── Global types ─────────────────────────────────────────────────────────────────────────────────────────────────────
 

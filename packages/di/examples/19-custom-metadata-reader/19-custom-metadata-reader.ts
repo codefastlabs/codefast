@@ -24,7 +24,7 @@ import {
 } from "@codefast/di";
 import type { ConstructorMetadata, Constructor, LifecycleMetadata, MetadataReader } from "@codefast/di";
 
-import { item, section } from "../support/log";
+import { item, section } from "#/examples/support/log";
 
 // ── Tokens ───────────────────────────────────────────────────────────────────────────────────────────────────────────
 

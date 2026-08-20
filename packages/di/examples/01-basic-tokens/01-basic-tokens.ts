@@ -7,7 +7,7 @@
 
 import { Container, token } from "@codefast/di";
 
-import { item } from "../support/log";
+import { item } from "#/examples/support/log";
 
 // ── Tokens ───────────────────────────────────────────────────────────────────────────────────────────────────────────
 

@@ -36,7 +36,7 @@
 
 import { Container, Module, inject, injectable, token } from "@codefast/di";
 
-import { banner } from "../support/log";
+import { banner } from "#/examples/support/log";
 
 // ── Tokens ───────────────────────────────────────────────────────────────────────────────────────────────────────────
 

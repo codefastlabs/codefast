@@ -23,7 +23,7 @@ import {
   type AutoRegisterRegistry,
 } from "@codefast/di";
 
-import { section } from "../support/log";
+import { section } from "#/examples/support/log";
 
 // ── Tokens ───────────────────────────────────────────────────────────────────────────────────────────────────────────
 

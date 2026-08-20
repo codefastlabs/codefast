@@ -8,7 +8,7 @@
 
 import { Container, inject, injectable, Module, token } from "@codefast/di";
 
-import { item } from "../support/log";
+import { item } from "#/examples/support/log";
 
 // ── Tokens ───────────────────────────────────────────────────────────────────────────────────────────────────────────
 

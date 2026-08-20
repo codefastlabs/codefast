@@ -36,6 +36,13 @@
       "./tests/*/index.ts",
       "./tests/*/index.tsx"
     ],
+    "#/examples/*": [
+      "./examples/*",
+      "./examples/*.ts",
+      "./examples/*.tsx",
+      "./examples/*/index.ts",
+      "./examples/*/index.tsx"
+    ],
     "#/*": {
       "source": [
         "./src/*",

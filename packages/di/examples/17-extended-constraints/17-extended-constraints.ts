@@ -38,7 +38,7 @@ import {
   tag,
 } from "@codefast/di";
 
-import { section } from "../support/log";
+import { section } from "#/examples/support/log";
 
 const BACKEND_TAG = tag<"memcached" | "redis">("backend");
 const REGION_TAG = tag<"eu" | "us">("region");

@@ -18,7 +18,7 @@
 
 import { Container, inject, injectable, Module, token } from "@codefast/di";
 
-import { fail, ok, section } from "../support/log";
+import { fail, ok, section } from "#/examples/support/log";
 
 // ── Mini test harness ────────────────────────────────────────────────────────────────────────────────────────────────
 
