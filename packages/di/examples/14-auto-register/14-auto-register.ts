@@ -190,6 +190,9 @@ class UserManager implements UserService {
   scope: "singleton",
 })
 class OrderProcessor implements OrderService {
+  // The singleton holds the sequence, so ids stay unique even within one millisecond.
+  private orderSeq = 0;
+
   constructor(
     private readonly orderRepository: OrderRepository,
     private readonly userService: UserService,
@@ -205,7 +208,7 @@ class OrderProcessor implements OrderService {
     if (user === undefined) {
       throw new Error(`User ${userId} not found`);
     }
-    const order = { id: `ord-${Date.now()}`, userId, total };
+    const order = { id: `ord-${Date.now()}-${(++this.orderSeq).toString().padStart(4, "0")}`, userId, total };
     this.orderRepository.save(order);
     this.notificationService.send(userId, `Order placed: $${total}`);
   }

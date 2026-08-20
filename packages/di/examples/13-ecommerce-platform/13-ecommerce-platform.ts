@@ -1509,14 +1509,18 @@ interface PaymentGateway {
 }
 
 // Multi-binding: Stripe (primary)
-@injectable([inject(AppConfigToken), inject(LoggerToken)])
+@injectable([inject(AppConfigToken), inject(LoggerToken), inject(IdGeneratorToken)])
 class StripeGateway implements PaymentGateway {
   gatewayId = "stripe";
   displayName = "Stripe";
   private readonly log: Logger;
   private readonly apiKey: string;
 
-  constructor(appConfig: AppConfig, logger: Logger) {
+  constructor(
+    appConfig: AppConfig,
+    logger: Logger,
+    private readonly idGenerator: IdGenerator,
+  ) {
     this.apiKey = appConfig.stripeKey;
     this.log = logger.child({ gateway: "stripe" });
   }
@@ -1525,13 +1529,13 @@ class StripeGateway implements PaymentGateway {
     await delay(15);
     this.log.info("stripe charge", { amount, currency, orderId });
     return {
-      id: `pi_stripe_${Date.now()}`,
+      id: this.idGenerator.generate("pi_stripe_"),
       gateway: this.gatewayId,
       amount,
       currency,
       status: "captured",
       orderId,
-      metadata: { stripePaymentIntentId: `pi_${Date.now()}` },
+      metadata: { stripePaymentIntentId: this.idGenerator.generate("pi_") },
     };
   }
 
