@@ -15,7 +15,7 @@
 
 import { Container, inject, injectable, Module, toCytoscapeGraph, toDotGraph, token, tokenName } from "@codefast/di";
 
-import { item, ok, section } from "#/examples/support/log";
+import { item, ok, section, step } from "#/examples/support/log";
 
 // ── Tokens ───────────────────────────────────────────────────────────────────────────────────────────────────────────
 
@@ -152,7 +152,7 @@ item("isDisposed", snapshot.isDisposed);
 item("cachedSingletonCount", snapshot.cachedSingletonCount);
 item("ownBindings count", snapshot.ownBindings.length);
 
-console.log("\n--- All bindings ---");
+step("All bindings");
 for (const binding of snapshot.ownBindings) {
   const slotInfo =
     binding.slot.name !== undefined

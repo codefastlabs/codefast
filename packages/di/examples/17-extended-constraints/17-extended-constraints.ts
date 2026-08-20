@@ -38,7 +38,7 @@ import {
   tag,
 } from "@codefast/di";
 
-import { section } from "#/examples/support/log";
+import { section, step } from "#/examples/support/log";
 
 const BACKEND_TAG = tag<"memcached" | "redis">("backend");
 const REGION_TAG = tag<"eu" | "us">("region");
@@ -409,14 +409,14 @@ tenantContainer
 
 tenantContainer.bind(AnalyticsDashboardToken).to(AnalyticsDashboard).whenTagged(TENANT_TAG.of("starter")).singleton();
 
-console.log("Enterprise tenant:");
+step("Enterprise tenant");
 tenantContainer
   .resolve(AnalyticsDashboardToken, {
     tags: [TENANT_TAG.of("enterprise"), TIER_TAG.of("paid")],
   })
   .open(); // [ENTERPRISE AUDIT] report.generated
 
-console.log("Starter tenant:");
+step("Starter tenant");
 tenantContainer.resolve(AnalyticsDashboardToken, { tags: [TENANT_TAG.of("starter")] }).open(); // [starter audit] report.generated
 
 // ── Quick reference — when to use each constraint ────────────────────────────────────────────────────────────────────

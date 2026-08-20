@@ -8,7 +8,7 @@
 
 import { Container, inject, injectable, Module, token } from "@codefast/di";
 
-import { item } from "#/examples/support/log";
+import { item, step } from "#/examples/support/log";
 
 // ── Tokens ───────────────────────────────────────────────────────────────────────────────────────────────────────────
 
@@ -128,10 +128,10 @@ const ExtraModule = Module.create("Extra", (builder) => {
 });
 
 container.load(ExtraModule);
-console.log("Module loaded dynamically");
+step("Module loaded dynamically");
 
 container.unload(ExtraModule);
-console.log("Module unloaded");
+step("Module unloaded");
 
 // Introspect: see all active bindings
 const containerSnapshot = container.inspect();
