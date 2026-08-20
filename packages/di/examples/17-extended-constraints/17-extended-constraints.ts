@@ -27,6 +27,7 @@ import {
   injectable,
   token,
   whenAnyAncestorIs,
+  whenAnyAncestorNamed,
   whenAnyAncestorTagged,
   whenAnyAncestorTaggedAll,
   whenNoAncestorIs,
@@ -194,15 +195,18 @@ ancestorIsContainer.resolve(PaymentOrchestratorToken).run(); // [audit]    scori
 ancestorIsContainer.resolve(BillingOrchestratorToken).run(); // [standard] building invoice
 
 // ─────────────────────────────────────────────────────────────────────────────
-// 3. whenParentNamed
+// 3. whenParentNamed / whenAnyAncestorNamed
 //
 //    Scenario: a DataSource token has two named bindings ("primary", "replica").
 //    A QueryRunner also uses DataSource — its binding is resolved with name
 //    "replica". The Logger injected into DataSource uses whenParentNamed to
 //    distinguish which DataSource instance is being constructed.
+//
+//    whenAnyAncestorNamed reaches past the direct parent: a Logger two levels
+//    below a named ConnectionPool still selects by that ancestor's name.
 // ─────────────────────────────────────────────────────────────────────────────
 
-section("3. whenParentNamed");
+section("3. whenParentNamed / whenAnyAncestorNamed");
 
 const DataSourceToken = token<DataSource>("DataSource");
 const QueryRunnerToken = token<QueryRunner>("QueryRunner");
@@ -249,6 +253,44 @@ namedContainer.resolve(DataSourceToken, { name: "replica" }).connect(); // [repl
 // QueryRunner resolves the DataSource named "replica".
 // The Logger inside that DataSource sees parent.slot.name === "replica".
 namedContainer.resolve(QueryRunnerToken).execute(); // [replica-logger] connected
+
+// whenAnyAncestorNamed reaches past the direct parent: the audit channel is
+// chosen from the named ConnectionPool two levels up, even though the Logger's
+// immediate parent (HealthProbe) carries no name.
+const ConnectionPoolToken = token<ConnectionPool>("ConnectionPool");
+const HealthProbeToken = token<HealthProbe>("HealthProbe");
+
+@injectable([inject(HealthProbeToken)])
+class ConnectionPool {
+  constructor(private readonly probe: HealthProbe) {}
+
+  ping(): void {
+    this.probe.check();
+  }
+}
+
+@injectable([inject(LoggerToken)])
+class HealthProbe {
+  constructor(private readonly logger: Logger) {}
+
+  check(): void {
+    this.logger.log("health ok");
+  }
+}
+
+const ancestorContainer = Container.create();
+
+ancestorContainer.bind(LoggerToken).toConstantValue(makeLogger("primary-audit")).when(whenAnyAncestorNamed("primary"));
+
+ancestorContainer.bind(LoggerToken).toConstantValue(makeLogger("replica-audit")).when(whenAnyAncestorNamed("replica"));
+
+// Transient so each resolve rebuilds the chain and re-selects the logger by ancestor.
+ancestorContainer.bind(ConnectionPoolToken).to(ConnectionPool).whenNamed("primary").transient();
+ancestorContainer.bind(ConnectionPoolToken).to(ConnectionPool).whenNamed("replica").transient();
+ancestorContainer.bind(HealthProbeToken).to(HealthProbe).transient();
+
+ancestorContainer.resolve(ConnectionPoolToken, { name: "primary" }).ping(); // [primary-audit] health ok
+ancestorContainer.resolve(ConnectionPoolToken, { name: "replica" }).ping(); // [replica-audit] health ok
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 4. whenParentTagged / whenParentTaggedAll
