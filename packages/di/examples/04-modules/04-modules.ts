@@ -8,6 +8,8 @@
 
 import { Container, inject, injectable, Module, token } from "@codefast/di";
 
+import { item, step } from "#/examples/support/log";
+
 // ── Tokens ───────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 const ConfigToken = token<Config>("Config");
@@ -117,7 +119,7 @@ emailService.send("bob@example.com", "Welcome");
 authService.issueToken("user-2");
 const firstLoggerResolve = container.resolve(LoggerToken);
 const secondLoggerResolve = container.resolve(LoggerToken);
-console.log("Shared Logger:", firstLoggerResolve === secondLoggerResolve); // true
+item("Shared Logger", firstLoggerResolve === secondLoggerResolve); // true
 
 // You can also load/unload modules dynamically after container creation
 const ExtraModule = Module.create("Extra", (builder) => {
@@ -126,11 +128,11 @@ const ExtraModule = Module.create("Extra", (builder) => {
 });
 
 container.load(ExtraModule);
-console.log("Module loaded dynamically");
+step("Module loaded dynamically");
 
 container.unload(ExtraModule);
-console.log("Module unloaded");
+step("Module unloaded");
 
 // Introspect: see all active bindings
 const containerSnapshot = container.inspect();
-console.log("Active binding count:", containerSnapshot.ownBindings.length);
+item("Active binding count", containerSnapshot.ownBindings.length);

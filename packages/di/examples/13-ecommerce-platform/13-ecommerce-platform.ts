@@ -81,6 +81,8 @@ import {
   token,
 } from "@codefast/di";
 
+import { banner } from "#/examples/support/log";
+
 // ============================================================================
 // ── TOKENS ───────────────────────────────────────────────────────────────────────────────────────────────────────────
 // ============================================================================
@@ -1507,14 +1509,18 @@ interface PaymentGateway {
 }
 
 // Multi-binding: Stripe (primary)
-@injectable([inject(AppConfigToken), inject(LoggerToken)])
+@injectable([inject(AppConfigToken), inject(LoggerToken), inject(IdGeneratorToken)])
 class StripeGateway implements PaymentGateway {
   gatewayId = "stripe";
   displayName = "Stripe";
   private readonly log: Logger;
   private readonly apiKey: string;
 
-  constructor(appConfig: AppConfig, logger: Logger) {
+  constructor(
+    appConfig: AppConfig,
+    logger: Logger,
+    private readonly idGenerator: IdGenerator,
+  ) {
     this.apiKey = appConfig.stripeKey;
     this.log = logger.child({ gateway: "stripe" });
   }
@@ -1523,13 +1529,13 @@ class StripeGateway implements PaymentGateway {
     await delay(15);
     this.log.info("stripe charge", { amount, currency, orderId });
     return {
-      id: `pi_stripe_${Date.now()}`,
+      id: this.idGenerator.generate("pi_stripe_"),
       gateway: this.gatewayId,
       amount,
       currency,
       status: "captured",
       orderId,
-      metadata: { stripePaymentIntentId: `pi_${Date.now()}` },
+      metadata: { stripePaymentIntentId: this.idGenerator.generate("pi_") },
     };
   }
 
@@ -2445,9 +2451,7 @@ const AppModule = Module.create("App", (builder) => {
 // ============================================================================
 
 async function bootstrap() {
-  console.log("\n╔══════════════════════════════════════════════════╗");
-  console.log("║  🛒  E-Commerce Platform — DI Bootstrap          ║");
-  console.log("╚══════════════════════════════════════════════════╝\n");
+  banner("🛒 E-Commerce Platform — DI Bootstrap");
 
   // 1. Build root container from async infrastructure + all domain modules
   const container = await Container.fromModulesAsync(InfrastructureModule, PaymentModule, AppModule);

@@ -27,6 +27,7 @@ import {
   injectable,
   token,
   whenAnyAncestorIs,
+  whenAnyAncestorNamed,
   whenAnyAncestorTagged,
   whenAnyAncestorTaggedAll,
   whenNoAncestorIs,
@@ -37,6 +38,8 @@ import {
   whenParentTaggedAll,
   tag,
 } from "@codefast/di";
+
+import { section, step } from "#/examples/support/log";
 
 const BACKEND_TAG = tag<"memcached" | "redis">("backend");
 const REGION_TAG = tag<"eu" | "us">("region");
@@ -61,7 +64,7 @@ function makeLogger(source: string): Logger {
 //    get the "verbose" logger; everyone else gets the "silent" one.
 // ─────────────────────────────────────────────────────────────────────────────
 
-console.log("=== 1. whenParentIs / whenNoParentIs ===\n");
+section("1. whenParentIs / whenNoParentIs");
 
 const LoggerToken = token<Logger>("Logger");
 const OrderServiceToken = token<OrderService>("OrderService");
@@ -113,7 +116,7 @@ parentIsContainer.resolve(BillingServiceToken).run(); // [silent]  processing bi
 //    contains PaymentOrchestrator, so Logger receives "standard".
 // ─────────────────────────────────────────────────────────────────────────────
 
-console.log("\n=== 2. whenAnyAncestorIs / whenNoAncestorIs ===\n");
+section("2. whenAnyAncestorIs / whenNoAncestorIs");
 
 const RiskScorerToken = token<RiskScorer>("RiskScorer");
 const FraudCheckerToken = token<FraudChecker>("FraudChecker");
@@ -199,11 +202,11 @@ ancestorIsContainer.resolve(BillingOrchestratorToken).run(); // [standard] build
 //    "replica". The Logger injected into DataSource uses whenParentNamed to
 //    distinguish which DataSource instance is being constructed.
 //
-//    whenAnyAncestorNamed goes deeper: even when the named binding is not the
-//    direct parent but further up the chain, the constraint still fires.
+//    whenAnyAncestorNamed reaches past the direct parent: a Logger two levels
+//    below a named ConnectionPool still selects by that ancestor's name.
 // ─────────────────────────────────────────────────────────────────────────────
 
-console.log("\n=== 3. whenParentNamed / whenAnyAncestorNamed ===\n");
+section("3. whenParentNamed / whenAnyAncestorNamed");
 
 const DataSourceToken = token<DataSource>("DataSource");
 const QueryRunnerToken = token<QueryRunner>("QueryRunner");
@@ -251,6 +254,44 @@ namedContainer.resolve(DataSourceToken, { name: "replica" }).connect(); // [repl
 // The Logger inside that DataSource sees parent.slot.name === "replica".
 namedContainer.resolve(QueryRunnerToken).execute(); // [replica-logger] connected
 
+// whenAnyAncestorNamed reaches past the direct parent: the audit channel is
+// chosen from the named ConnectionPool two levels up, even though the Logger's
+// immediate parent (HealthProbe) carries no name.
+const ConnectionPoolToken = token<ConnectionPool>("ConnectionPool");
+const HealthProbeToken = token<HealthProbe>("HealthProbe");
+
+@injectable([inject(HealthProbeToken)])
+class ConnectionPool {
+  constructor(private readonly probe: HealthProbe) {}
+
+  ping(): void {
+    this.probe.check();
+  }
+}
+
+@injectable([inject(LoggerToken)])
+class HealthProbe {
+  constructor(private readonly logger: Logger) {}
+
+  check(): void {
+    this.logger.log("health ok");
+  }
+}
+
+const ancestorContainer = Container.create();
+
+ancestorContainer.bind(LoggerToken).toConstantValue(makeLogger("primary-audit")).when(whenAnyAncestorNamed("primary"));
+
+ancestorContainer.bind(LoggerToken).toConstantValue(makeLogger("replica-audit")).when(whenAnyAncestorNamed("replica"));
+
+// Transient so each resolve rebuilds the chain and re-selects the logger by ancestor.
+ancestorContainer.bind(ConnectionPoolToken).to(ConnectionPool).whenNamed("primary").transient();
+ancestorContainer.bind(ConnectionPoolToken).to(ConnectionPool).whenNamed("replica").transient();
+ancestorContainer.bind(HealthProbeToken).to(HealthProbe).transient();
+
+ancestorContainer.resolve(ConnectionPoolToken, { name: "primary" }).ping(); // [primary-audit] health ok
+ancestorContainer.resolve(ConnectionPoolToken, { name: "replica" }).ping(); // [replica-audit] health ok
+
 // ─────────────────────────────────────────────────────────────────────────────
 // 4. whenParentTagged / whenParentTaggedAll
 //
@@ -260,7 +301,7 @@ namedContainer.resolve(QueryRunnerToken).execute(); // [replica-logger] connecte
 //    tag in the list to be present (AND semantics).
 // ─────────────────────────────────────────────────────────────────────────────
 
-console.log("\n=== 4. whenParentTagged / whenParentTaggedAll ===\n");
+section("4. whenParentTagged / whenParentTaggedAll");
 
 interface CacheAdapter {
   backend: string;
@@ -341,7 +382,7 @@ taggedContainer.resolve(ProductCacheToken, { tags: [BACKEND_TAG.of("memcached")]
 //    ancestor frame — not spread across different ancestor nodes.
 // ─────────────────────────────────────────────────────────────────────────────
 
-console.log("\n=== 5. whenAnyAncestorTagged / whenAnyAncestorTaggedAll ===\n");
+section("5. whenAnyAncestorTagged / whenAnyAncestorTaggedAll");
 
 interface AuditLogger {
   tier: string;
@@ -407,14 +448,14 @@ tenantContainer
 
 tenantContainer.bind(AnalyticsDashboardToken).to(AnalyticsDashboard).whenTagged(TENANT_TAG.of("starter")).singleton();
 
-console.log("Enterprise tenant:");
+step("Enterprise tenant");
 tenantContainer
   .resolve(AnalyticsDashboardToken, {
     tags: [TENANT_TAG.of("enterprise"), TIER_TAG.of("paid")],
   })
   .open(); // [ENTERPRISE AUDIT] report.generated
 
-console.log("Starter tenant:");
+step("Starter tenant");
 tenantContainer.resolve(AnalyticsDashboardToken, { tags: [TENANT_TAG.of("starter")] }).open(); // [starter audit] report.generated
 
 // ── Quick reference — when to use each constraint ────────────────────────────────────────────────────────────────────

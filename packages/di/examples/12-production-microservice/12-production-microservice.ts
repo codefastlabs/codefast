@@ -36,6 +36,8 @@
 
 import { Container, Module, inject, injectable, token } from "@codefast/di";
 
+import { banner } from "#/examples/support/log";
+
 // ── Tokens ───────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 const ServiceConfigToken = token<ServiceConfig>("ServiceConfig");
@@ -742,9 +744,7 @@ const AppModule = Module.createAsync("App", async (builder) => {
 // ── Bootstrap ────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 async function bootstrap(): Promise<void> {
-  console.log("═══════════════════════════════════════════════════════════");
-  console.log("  🏗  Bootstrapping job-service v1.5.0");
-  console.log("═══════════════════════════════════════════════════════════\n");
+  banner("🏗 Bootstrapping job-service v1.5.0");
 
   // await using: container.dispose() fires automatically when main() returns
   await using serviceContainer = await Container.fromModulesAsync(AppModule);
@@ -816,9 +816,7 @@ async function bootstrap(): Promise<void> {
   });
 
   // ── Graceful shutdown ──────────────────────────────────────────────────────────────────────────────────────────────
-  console.log("\n═══════════════════════════════════════════════════════════");
-  console.log("  🛑 Initiating graceful shutdown...");
-  console.log("═══════════════════════════════════════════════════════════");
+  banner("🛑 Initiating graceful shutdown...");
   // container.dispose() called automatically by `await using`:
   // Deactivation order (reverse of activation):
   //   HttpServer.stop() → JobWorker.stop() → Redis.quit() → Database.close()

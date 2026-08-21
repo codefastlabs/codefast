@@ -11,6 +11,8 @@
 
 import { Container, inject, injectable, optional, token } from "@codefast/di";
 
+import { item, section } from "#/examples/support/log";
+
 // ── Tokens ───────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 const LoggerToken = token<Logger>("Logger");
@@ -103,7 +105,7 @@ container.bind(AbstractLoggerToken).toAlias(LoggerToken);
 
 const concreteLogger = container.resolve(LoggerToken);
 const aliasedLogger = container.resolve(AbstractLoggerToken);
-console.log("toAlias — same instance:", concreteLogger === aliasedLogger); // true
+item("toAlias — same instance", concreteLogger === aliasedLogger); // true
 
 // ============================================================================
 // 3. Plain tokens in @injectable — no inject() wrapper required
@@ -173,25 +175,25 @@ pluginContainer
   .toConstantValue({ name: "audit", run: () => console.log("[AuditPlugin] running") })
   .whenNamed("audit");
 
-console.log("\n--- All plugins ---");
+section("All plugins");
 const allPlugins = pluginContainer.resolveAll(PluginToken);
-console.log("Count:", allPlugins.length); // 3
+item("Count", allPlugins.length); // 3
 allPlugins.forEach((plugin) => plugin.run());
 
 // Remove only the metrics plugin — other bindings unaffected
 pluginContainer.unbind(metricsPluginId);
 
-console.log("\n--- After unbinding MetricsPlugin ---");
+section("After unbinding MetricsPlugin");
 const remainingPlugins = pluginContainer.resolveAll(PluginToken);
-console.log("Count:", remainingPlugins.length); // 2
+item("Count", remainingPlugins.length); // 2
 remainingPlugins.forEach((plugin) => plugin.run());
 
 // Remove the log plugin by its specific id — audit plugin still intact
 pluginContainer.unbind(logPluginId);
 
-console.log("\n--- After unbinding LogPlugin ---");
+section("After unbinding LogPlugin");
 const finalPlugins = pluginContainer.resolveAll(PluginToken);
-console.log("Count:", finalPlugins.length); // 1
+item("Count", finalPlugins.length); // 1
 finalPlugins.forEach((plugin) => plugin.run());
 
 // ============================================================================
@@ -201,7 +203,7 @@ finalPlugins.forEach((plugin) => plugin.run());
 //    fresh BindingBuilder. Useful for overriding in tests or hot-reload.
 // ============================================================================
 
-console.log("\n--- rebind: swap logger ---");
+section("rebind: swap logger");
 const rebindContainer = Container.create();
 rebindContainer.bind(LoggerToken).toConstantValue(new ConsoleLogger());
 
@@ -213,4 +215,4 @@ rebindContainer.rebind(LoggerToken).toConstantValue(new FileLogger());
 
 const logAfter = rebindContainer.resolve(LoggerToken);
 logAfter.log("after rebind");
-console.log("Different instance after rebind:", logBefore !== logAfter); // true
+item("Different instance after rebind", logBefore !== logAfter); // true

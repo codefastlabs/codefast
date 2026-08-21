@@ -7,6 +7,8 @@
 
 import { Container, inject, injectable, optional, token } from "@codefast/di";
 
+import { item } from "#/examples/support/log";
+
 // ── Tokens ───────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 const ConfigToken = token<AppConfig>("AppConfig");
@@ -108,4 +110,4 @@ console.log(userService.findUser("42")); // cache hit
 // Verify singleton — same Database instance across resolutions
 const firstDatabaseResolve = container.resolve(Database);
 const secondDatabaseResolve = container.resolve(Database);
-console.log("Same Database singleton:", firstDatabaseResolve === secondDatabaseResolve); // true
+item("Same Database singleton", firstDatabaseResolve === secondDatabaseResolve); // true

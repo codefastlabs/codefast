@@ -18,6 +18,8 @@
 
 import { Container, inject, injectable, Module, token } from "@codefast/di";
 
+import { fail, ok, section } from "#/examples/support/log";
+
 // ── Mini test harness ────────────────────────────────────────────────────────────────────────────────────────────────
 
 type TestFn = () => void | Promise<void>;
@@ -27,10 +29,10 @@ async function test(name: string, fn: TestFn): Promise<void> {
   try {
     await fn();
     results.push({ name, passed: true });
-    console.log(`  ✓ ${name}`);
+    ok(name);
   } catch (error) {
     results.push({ name, passed: false, error });
-    console.error(`  ✗ ${name}:`, error instanceof Error ? error.message : error);
+    fail(name);
   }
 }
 
@@ -213,7 +215,7 @@ const CoreModule = Module.create("Core", (builder) => {
 // No shared state, no teardown needed.
 // ─────────────────────────────────────────────────────────────────────────────
 
-console.log("\n=== Pattern A: Fresh container per test ===");
+section("Pattern A: Fresh container per test");
 
 await test("places order and sends confirmation email", async () => {
   const stubUser = new StubUserService().seed("u1", "alice@example.com");
@@ -265,7 +267,7 @@ await test("throws when user is not found", async () => {
 // adding the new one, so stale bindings cannot leak into the test.
 // ─────────────────────────────────────────────────────────────────────────────
 
-console.log("\n=== Pattern B: rebind() for targeted override ===");
+section("Pattern B: rebind() for targeted override");
 
 await test("payment failure causes placeOrder to throw", async () => {
   const testContainer = Container.fromModules(CoreModule);
@@ -294,7 +296,7 @@ await test("payment failure causes placeOrder to throw", async () => {
 // shadows specific tokens. The parent is never mutated.
 // ─────────────────────────────────────────────────────────────────────────────
 
-console.log("\n=== Pattern C: child container override ===");
+section("Pattern C: child container override");
 
 // Production container — built once, never touched by tests.
 const productionContainer = Container.fromModules(CoreModule);
@@ -353,7 +355,7 @@ await test("two independent child containers do not share state", async () => {
 // for each stub. This is cleaner than a separate override module.
 // ─────────────────────────────────────────────────────────────────────────────
 
-console.log("\n=== Pattern D: factory helper with rebind ===");
+section("Pattern D: factory helper with rebind");
 
 function buildTestContainer(
   stubUser: StubUserService,
@@ -387,7 +389,7 @@ await test("module override replaces all three stubs", async () => {
 // startup to surface missing / mismatched bindings before the first request.
 // ─────────────────────────────────────────────────────────────────────────────
 
-console.log("\n=== Pattern E: validate() for wiring checks ===");
+section("Pattern E: validate() for wiring checks");
 
 await test("validate passes on a correctly wired container", async () => {
   const testContainer = Container.fromModules(CoreModule);

@@ -7,6 +7,16 @@ file you can run with `tsx` or `ts-node`.
 npx tsx examples/01-basic-tokens/01-basic-tokens.ts
 ```
 
+Run every example in sequence with a per-example PASS/FAIL summary:
+
+```sh
+pnpm run examples
+```
+
+The examples share a small tiered console helper (`examples/support/log.ts`) — `banner` → `section` → `step`, plus the
+leaf markers `item`, `ok`, `fail`, and `caughtError` — so their scaffolding output reads consistently while each keeps
+its own domain logging.
+
 ---
 
 ## Prerequisites

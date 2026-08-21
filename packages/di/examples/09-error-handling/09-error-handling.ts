@@ -29,20 +29,7 @@ import {
   TokenNotBoundError,
 } from "@codefast/di";
 
-// ── Helpers ──────────────────────────────────────────────────────────────────────────────────────────────────────────
-
-function section(title: string): void {
-  console.log(`\n${"=".repeat(60)}`);
-  console.log(`  ${title}`);
-  console.log("=".repeat(60));
-}
-
-function logCaughtError(label: string, error: unknown): void {
-  if (error instanceof Error) {
-    const code = "code" in error ? ` [${String(error.code)}]` : "";
-    console.log(`✓ ${label}${code}: ${error.message}`);
-  }
-}
+import { caughtError, item, ok, section } from "#/examples/support/log";
 
 // ── Tokens ───────────────────────────────────────────────────────────────────────────────────────────────────────────
 
@@ -64,13 +51,13 @@ const emptyContainer = Container.create();
 try {
   emptyContainer.resolve(LoggerToken);
 } catch (error) {
-  logCaughtError("resolve unbound token", error);
-  console.log("  Is TokenNotBoundError:", error instanceof TokenNotBoundError);
+  caughtError("resolve unbound token", error);
+  item("Is TokenNotBoundError", error instanceof TokenNotBoundError);
 }
 
 // resolveOptional never throws — returns undefined instead
 const optionalLogger = emptyContainer.resolveOptional(LoggerToken);
-console.log("resolveOptional on unbound:", optionalLogger); // undefined
+item("resolveOptional on unbound", optionalLogger); // undefined
 
 // ── 2. NoMatchingBindingError ────────────────────────────────────────────────────────────────────────────────────────
 
@@ -86,8 +73,8 @@ try {
   // Binding exists for name "console" but not "file"
   namedBindingContainer.resolve(LoggerToken, { name: "file" });
 } catch (error) {
-  logCaughtError("resolve with non-matching name hint", error);
-  console.log("  Is NoMatchingBindingError:", error instanceof NoMatchingBindingError);
+  caughtError("resolve with non-matching name hint", error);
+  item("Is NoMatchingBindingError", error instanceof NoMatchingBindingError);
 }
 
 // ── 3. AsyncResolutionError ──────────────────────────────────────────────────────────────────────────────────────────
@@ -112,13 +99,13 @@ try {
   // resolve() is sync — cannot await the async factory
   asyncBindingContainer.resolve(DatabaseToken);
 } catch (error) {
-  logCaughtError("sync resolve on async binding", error);
-  console.log("  Is AsyncResolutionError:", error instanceof AsyncResolutionError);
+  caughtError("sync resolve on async binding", error);
+  item("Is AsyncResolutionError", error instanceof AsyncResolutionError);
 }
 
 // Correct: use resolveAsync()
 const asyncDatabase = await asyncBindingContainer.resolveAsync(DatabaseToken);
-console.log("resolveAsync succeeded:", asyncDatabase instanceof Database);
+item("resolveAsync succeeded", asyncDatabase instanceof Database);
 
 // ── 4. CircularDependencyError ───────────────────────────────────────────────────────────────────────────────────────
 
@@ -139,12 +126,12 @@ circularContainer.bind(ServiceBToken).toDynamic((ctx) => new CircularServiceB(ct
 try {
   circularContainer.resolve(ServiceAToken);
 } catch (error) {
-  logCaughtError("circular dependency A → B → A", error);
-  console.log("  Is CircularDependencyError:", error instanceof CircularDependencyError);
+  caughtError("circular dependency A → B → A", error);
+  item("Is CircularDependencyError", error instanceof CircularDependencyError);
 
   if (error instanceof CircularDependencyError) {
     // .cycle shows the full dependency path
-    console.log("  Cycle path:", error.cycle?.join(" → "));
+    item("Cycle path", error.cycle?.join(" → "));
   }
 }
 
@@ -165,14 +152,14 @@ missingMetadataContainer.bind(UnmarkedToken).to(UnmarkedService); // no @injecta
 try {
   missingMetadataContainer.resolve(UnmarkedToken);
 } catch (error) {
-  logCaughtError("resolve class without @injectable", error);
-  console.log("  Is MissingMetadataError:", error instanceof MissingMetadataError);
+  caughtError("resolve class without @injectable", error);
+  item("Is MissingMetadataError", error instanceof MissingMetadataError);
 }
 
 // Fix: add @injectable, or use toDynamic / toResolved instead
 missingMetadataContainer.rebind(UnmarkedToken).toDynamic((ctx) => new UnmarkedService(ctx.resolve(LoggerToken)));
 const repairedService = missingMetadataContainer.resolve(UnmarkedToken);
-console.log("  Fixed with toDynamic:", repairedService instanceof UnmarkedService);
+item("Fixed with toDynamic", repairedService instanceof UnmarkedService);
 
 // ── 6. ScopeViolationError ───────────────────────────────────────────────────────────────────────────────────────────
 
@@ -203,8 +190,8 @@ try {
   // validate() checks the dependency graph for scope violations
   scopeViolationContainer.validate();
 } catch (error) {
-  logCaughtError("singleton depends on scoped (captive dependency)", error);
-  console.log("  Is ScopeViolationError:", error instanceof ScopeViolationError);
+  caughtError("singleton depends on scoped (captive dependency)", error);
+  item("Is ScopeViolationError", error instanceof ScopeViolationError);
 }
 
 // ── 7. AsyncModuleLoadError ──────────────────────────────────────────────────────────────────────────────────────────
@@ -222,10 +209,10 @@ try {
   // load() only accepts sync modules — must use loadAsync() for AsyncModule
   asyncModuleContainer.load(AsyncDatabaseModule as never);
 } catch (error) {
-  logCaughtError("load() called with AsyncModule", error);
-  console.log("  Is AsyncModuleLoadError:", error instanceof AsyncModuleLoadError);
+  caughtError("load() called with AsyncModule", error);
+  item("Is AsyncModuleLoadError", error instanceof AsyncModuleLoadError);
 }
 
 // Correct: use loadAsync()
 await asyncModuleContainer.loadAsync(AsyncDatabaseModule);
-console.log("loadAsync succeeded");
+ok("loadAsync succeeded");

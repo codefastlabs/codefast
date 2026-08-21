@@ -7,6 +7,8 @@
 
 import { Container, token } from "@codefast/di";
 
+import { item } from "#/examples/support/log";
+
 // ── Tokens ───────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 const GreeterToken = token<Greeter>("Greeter");
@@ -71,21 +73,21 @@ console.log(greeter.greet("Bob")); // Good day, Bob.
 // Singleton: same instance on every resolve
 const firstGreeter = container.resolve(GreeterToken);
 const secondGreeter = container.resolve(GreeterToken);
-console.log("Same greeter instance:", firstGreeter === secondGreeter); // true
+item("Same greeter instance", firstGreeter === secondGreeter); // true
 
 // Transient: fresh instance on every resolve
 const counterAlpha = container.resolve(CounterToken);
 const counterBeta = container.resolve(CounterToken);
 counterAlpha.increment();
-console.log("counterAlpha count:", counterAlpha.value()); // 1
-console.log("counterBeta count:", counterBeta.value()); // 0  (different instance)
-console.log("Different counter instances:", counterAlpha !== counterBeta); // true
+item("counterAlpha count", counterAlpha.value()); // 1
+item("counterBeta count", counterBeta.value()); // 0  (different instance)
+item("Different counter instances", counterAlpha !== counterBeta); // true
 
 // resolveOptional — returns undefined instead of throwing for unbound tokens
 const LogToken = token<string>("Log");
 const log = container.resolveOptional(LogToken);
-console.log("Optional unbound token:", log); // undefined
+item("Optional unbound token", log); // undefined
 
 // has — existence check without resolution
-console.log("has MessageToken:", container.has(MessageToken)); // true
-console.log("has LogToken:", container.has(LogToken)); // false
+item("has MessageToken", container.has(MessageToken)); // true
+item("has LogToken", container.has(LogToken)); // false
