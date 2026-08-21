@@ -39,12 +39,12 @@ const NotificationServiceToken = token<NotificationService>("NotificationService
 // ── Interfaces ───────────────────────────────────────────────────────────────────────────────────────────────────────
 
 interface Logger {
-  log(msg: string): void;
-  warn(msg: string): void;
+  log(message: string): void;
+  warn(message: string): void;
 }
 
 interface Config {
-  dbUrl: string;
+  databaseUrl: string;
   appName: string;
 }
 
@@ -63,12 +63,12 @@ interface OrderRepository {
 }
 
 interface UserService {
-  getUser(id: string): { id: string; name: string } | undefined;
+  user(id: string): { id: string; name: string } | undefined;
   createUser(id: string, name: string): void;
 }
 
 interface OrderService {
-  getUserOrders(userId: string): Array<{ id: string; userId: string; total: number }>;
+  userOrders(userId: string): Array<{ id: string; userId: string; total: number }>;
   placeOrder(userId: string, total: number): void;
 }
 
@@ -92,19 +92,19 @@ const applicationRegistry: AutoRegisterRegistry = createAutoRegisterRegistry();
 // ConsoleLogger has no dependencies, so the deps array is empty.
 @injectable([], { autoRegister: infrastructureRegistry, scope: "singleton" })
 class ConsoleLogger implements Logger {
-  log(msg: string): void {
-    console.log(`[LOG]  ${msg}`);
+  log(message: string): void {
+    console.log(`[LOG]  ${message}`);
   }
 
-  warn(msg: string): void {
-    console.warn(`[WARN] ${msg}`);
+  warn(message: string): void {
+    console.warn(`[WARN] ${message}`);
   }
 }
 
 // AppConfig has no dependencies either.
 @injectable([], { autoRegister: infrastructureRegistry, scope: "singleton" })
 class AppConfig implements Config {
-  readonly dbUrl = "postgres://localhost/myapp";
+  readonly databaseUrl = "postgres://localhost/myapp";
   readonly appName = "MyApp";
 }
 
@@ -117,7 +117,7 @@ class PostgresDatabase implements Database {
     private readonly logger: Logger,
     private readonly config: Config,
   ) {
-    logger.log(`Database connected to ${config.dbUrl}`);
+    logger.log(`Database connected to ${config.databaseUrl}`);
   }
 
   query(sql: string): Array<string> {
@@ -132,15 +132,15 @@ class PostgresDatabase implements Database {
 class SqlUserRepository implements UserRepository {
   private readonly users = new Map<string, { id: string; name: string }>();
 
-  constructor(private readonly db: Database) {}
+  constructor(private readonly database: Database) {}
 
   findById(id: string): { id: string; name: string } | undefined {
-    this.db.query(`SELECT * FROM users WHERE id = '${id}'`);
+    this.database.query(`SELECT * FROM users WHERE id = '${id}'`);
     return this.users.get(id);
   }
 
   save(user: { id: string; name: string }): void {
-    this.db.query(`INSERT INTO users VALUES ('${user.id}', '${user.name}')`);
+    this.database.query(`INSERT INTO users VALUES ('${user.id}', '${user.name}')`);
     this.users.set(user.id, user);
   }
 }
@@ -149,15 +149,15 @@ class SqlUserRepository implements UserRepository {
 class SqlOrderRepository implements OrderRepository {
   private readonly orders: Array<{ id: string; userId: string; total: number }> = [];
 
-  constructor(private readonly db: Database) {}
+  constructor(private readonly database: Database) {}
 
   findByUserId(userId: string): Array<{ id: string; userId: string; total: number }> {
-    this.db.query(`SELECT * FROM orders WHERE user_id = '${userId}'`);
+    this.database.query(`SELECT * FROM orders WHERE user_id = '${userId}'`);
     return this.orders.filter((order) => order.userId === userId);
   }
 
   save(order: { id: string; userId: string; total: number }): void {
-    this.db.query(`INSERT INTO orders VALUES ('${order.id}', '${order.userId}', ${order.total})`);
+    this.database.query(`INSERT INTO orders VALUES ('${order.id}', '${order.userId}', ${order.total})`);
     this.orders.push(order);
   }
 }
@@ -174,7 +174,7 @@ class UserManager implements UserService {
     private readonly logger: Logger,
   ) {}
 
-  getUser(id: string): { id: string; name: string } | undefined {
+  user(id: string): { id: string; name: string } | undefined {
     this.logger.log(`Getting user ${id}`);
     return this.userRepository.findById(id);
   }
@@ -199,12 +199,12 @@ class OrderProcessor implements OrderService {
     private readonly notificationService: NotificationService,
   ) {}
 
-  getUserOrders(userId: string): Array<{ id: string; userId: string; total: number }> {
+  userOrders(userId: string): Array<{ id: string; userId: string; total: number }> {
     return this.orderRepository.findByUserId(userId);
   }
 
   placeOrder(userId: string, total: number): void {
-    const user = this.userService.getUser(userId);
+    const user = this.userService.user(userId);
     if (user === undefined) {
       throw new Error(`User ${userId} not found`);
     }
@@ -271,7 +271,7 @@ orderService.placeOrder("u1", 99.99);
 orderService.placeOrder("u2", 45.0);
 
 section("Querying");
-const aliceOrders = orderService.getUserOrders("u1");
+const aliceOrders = orderService.userOrders("u1");
 console.log(`Alice has ${aliceOrders.length} order(s)`);
 
 // ── Inspect the registry entries ─────────────────────────────────────────────────────────────────────────────────────
@@ -323,8 +323,8 @@ envContainer.bind(LoggerToken).to(ConsoleLogger).singleton();
 envContainer.loadAutoRegistered(envRegistry);
 
 // Bind the interface token to whichever concrete class was auto-registered.
-const NotificationServiceImpl = isProduction ? ProdNotificationService : DevNotificationService;
-envContainer.bind(NotificationServiceToken).to(NotificationServiceImpl).singleton();
+const SelectedNotificationService = isProduction ? ProdNotificationService : DevNotificationService;
+envContainer.bind(NotificationServiceToken).to(SelectedNotificationService).singleton();
 
 section("Conditional (env-based) registry");
 console.log(

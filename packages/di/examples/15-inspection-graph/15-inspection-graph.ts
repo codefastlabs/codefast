@@ -29,11 +29,11 @@ const AnalyticsToken = token<Analytics>("Analytics");
 // ── Interfaces ───────────────────────────────────────────────────────────────────────────────────────────────────────
 
 interface Logger {
-  log(msg: string): void;
+  log(message: string): void;
 }
 
 interface Config {
-  dbUrl: string;
+  databaseUrl: string;
   env: "development" | "production";
 }
 
@@ -47,7 +47,7 @@ interface Database {
 }
 
 interface UserService {
-  getUser(id: string): string;
+  user(id: string): string;
 }
 
 interface Analytics {
@@ -58,8 +58,8 @@ interface Analytics {
 
 @injectable([])
 class ConsoleLogger implements Logger {
-  log(msg: string): void {
-    console.log(`[log] ${msg}`);
+  log(message: string): void {
+    console.log(`[log] ${message}`);
   }
 }
 
@@ -71,7 +71,7 @@ class PostgresDatabase implements Database {
   ) {}
 
   query(sql: string): Array<string> {
-    this.logger.log(`Query on ${this.config.dbUrl}: ${sql}`);
+    this.logger.log(`Query on ${this.config.databaseUrl}: ${sql}`);
     return [];
   }
 }
@@ -95,16 +95,16 @@ class RedisCache implements Cache {
 @injectable([inject(DatabaseToken), inject(CacheToken)])
 class UserManager implements UserService {
   constructor(
-    private readonly db: Database,
+    private readonly database: Database,
     private readonly cache: Cache,
   ) {}
 
-  getUser(id: string): string {
+  user(id: string): string {
     const cached = this.cache.get(id);
     if (cached !== undefined) {
       return cached;
     }
-    this.db.query(`SELECT name FROM users WHERE id = '${id}'`);
+    this.database.query(`SELECT name FROM users WHERE id = '${id}'`);
     return `User(${id})`;
   }
 }
@@ -122,7 +122,7 @@ class SegmentAnalytics implements Analytics {
 
 const InfraModule = Module.create("Infra", (builder) => {
   builder.bind(LoggerToken).to(ConsoleLogger).singleton();
-  builder.bind(ConfigToken).toConstantValue({ dbUrl: "postgres://localhost/app", env: "development" });
+  builder.bind(ConfigToken).toConstantValue({ databaseUrl: "postgres://localhost/app", env: "development" });
   builder.bind(CacheToken).to(RedisCache).singleton();
   builder.bind(DatabaseToken).to(PostgresDatabase).singleton();
 });

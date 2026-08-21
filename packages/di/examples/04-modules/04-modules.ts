@@ -26,8 +26,8 @@ interface Config {
 }
 
 interface Logger {
-  info(msg: string): void;
-  error(msg: string): void;
+  info(message: string): void;
+  error(message: string): void;
 }
 
 // ── Implementations ──────────────────────────────────────────────────────────────────────────────────────────────────
@@ -81,8 +81,8 @@ const CoreModule = Module.create("Core", (builder) => {
   });
 
   builder.bind(LoggerToken).toConstantValue({
-    info: (msg) => console.log(`[INFO] ${msg}`),
-    error: (msg) => console.error(`[ERROR] ${msg}`),
+    info: (message) => console.log(`[INFO] ${message}`),
+    error: (message) => console.error(`[ERROR] ${message}`),
   });
 });
 

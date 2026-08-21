@@ -22,12 +22,12 @@ import { fail, ok, section } from "#/examples/support/log";
 
 // ── Mini test harness ────────────────────────────────────────────────────────────────────────────────────────────────
 
-type TestFn = () => void | Promise<void>;
+type TestBody = () => void | Promise<void>;
 const results: Array<{ name: string; passed: boolean; error?: unknown }> = [];
 
-async function test(name: string, fn: TestFn): Promise<void> {
+async function test(name: string, run: TestBody): Promise<void> {
   try {
-    await fn();
+    await run();
     results.push({ name, passed: true });
     ok(name);
   } catch (error) {
@@ -52,7 +52,7 @@ const OrderServiceToken = token<OrderService>("OrderService");
 
 interface Logger {
   messages: Array<string>;
-  log(msg: string): void;
+  log(message: string): void;
 }
 
 interface EmailService {
@@ -79,8 +79,8 @@ interface OrderService {
 class RealLogger implements Logger {
   messages: Array<string> = [];
 
-  log(msg: string): void {
-    this.messages.push(msg);
+  log(message: string): void {
+    this.messages.push(message);
   }
 }
 
@@ -153,8 +153,8 @@ class OrderProcessor implements OrderService {
 class StubLogger implements Logger {
   messages: Array<string> = [];
 
-  log(msg: string): void {
-    this.messages.push(msg);
+  log(message: string): void {
+    this.messages.push(message);
   }
 }
 
@@ -357,7 +357,7 @@ await test("two independent child containers do not share state", async () => {
 
 section("Pattern D: factory helper with rebind");
 
-function buildTestContainer(
+function createTestContainer(
   stubUser: StubUserService,
   stubPayment: StubPaymentGateway,
 ): { container: ReturnType<typeof Container.create>; stubEmail: StubEmailService } {
@@ -372,7 +372,7 @@ function buildTestContainer(
 await test("module override replaces all three stubs", async () => {
   const stubUser = new StubUserService().seed("u1", "alice@example.com");
   const stubPayment = new StubPaymentGateway();
-  const { container: testContainer, stubEmail } = buildTestContainer(stubUser, stubPayment);
+  const { container: testContainer, stubEmail } = createTestContainer(stubUser, stubPayment);
 
   const orderService = testContainer.resolve(OrderServiceToken);
   orderService.placeOrder("u1", 75);

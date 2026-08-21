@@ -19,7 +19,7 @@ const UserServiceToken = token<UserService>("UserService");
 // ── Types ────────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 interface AppConfig {
-  dbUrl: string;
+  databaseUrl: string;
   isDebug: boolean;
 }
 
@@ -29,7 +29,7 @@ interface Cache {
 }
 
 interface Logger {
-  log(msg: string): void;
+  log(message: string): void;
 }
 
 // ── Implementations ──────────────────────────────────────────────────────────────────────────────────────────────────
@@ -41,8 +41,8 @@ class Database {
   readonly url: string;
 
   constructor(config: AppConfig, logger?: Logger) {
-    this.url = config.dbUrl;
-    logger?.log(`Database connected to ${config.dbUrl}`);
+    this.url = config.databaseUrl;
+    logger?.log(`Database connected to ${config.databaseUrl}`);
   }
 }
 
@@ -93,8 +93,8 @@ class UserService {
 
 const container = Container.create();
 
-container.bind(ConfigToken).toConstantValue({ dbUrl: "postgres://localhost/app", isDebug: true });
-container.bind(LoggerToken).toConstantValue({ log: (msg) => console.log(msg) });
+container.bind(ConfigToken).toConstantValue({ databaseUrl: "postgres://localhost/app", isDebug: true });
+container.bind(LoggerToken).toConstantValue({ log: (message) => console.log(message) });
 
 container.bind(Database).toSelf().singleton();
 container.bind(CacheToken).to(InMemoryCache).singleton();

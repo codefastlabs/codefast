@@ -48,6 +48,8 @@
 
 import { Container, inject, injectable, Module, token } from "@codefast/di";
 
+import { ok, section } from "#/examples/support/log";
+
 // ── Core contracts ───────────────────────────────────────────────────────────────────────────────────────────────────
 
 const AppConfigToken = token<AppConfig>("AppConfig");
@@ -71,8 +73,8 @@ interface AppConfig {
 }
 
 interface AppLogger {
-  info(msg: string): void;
-  warn(msg: string): void;
+  info(message: string): void;
+  warn(message: string): void;
 }
 
 interface StorageProvider {
@@ -114,8 +116,8 @@ const CoreModule = Module.create("Core", (builder) => {
   });
 
   builder.bind(AppLoggerToken).toConstantValue({
-    info: (msg) => console.log(`  [INFO]  ${msg}`),
-    warn: (msg) => console.log(`  [WARN]  ${msg}`),
+    info: (message) => console.log(`  [INFO]  ${message}`),
+    warn: (message) => console.log(`  [WARN]  ${message}`),
   });
 });
 
@@ -160,9 +162,9 @@ const S3PluginModule = Module.createAsync("S3Plugin", async (builder) => {
 
   builder
     .bind(StorageToken)
-    .toDynamicAsync(async (ctx) => {
-      const config = ctx.resolve(AppConfigToken);
-      const logger = ctx.resolve(AppLoggerToken);
+    .toDynamicAsync(async (context) => {
+      const config = context.resolve(AppConfigToken);
+      const logger = context.resolve(AppLoggerToken);
       await simulateLatency(20);
       logger.info(`[S3Plugin] initialised in region ${config.region}`);
       return new S3StorageProvider(config.s3Bucket, config.region, logger);
@@ -209,9 +211,9 @@ const AnalyticsPluginModule = Module.createAsync("AnalyticsPlugin", async (build
 
   builder
     .bind(AnalyticsToken)
-    .toDynamicAsync(async (ctx) => {
-      const config = ctx.resolve(AppConfigToken);
-      const logger = ctx.resolve(AppLoggerToken);
+    .toDynamicAsync(async (context) => {
+      const config = context.resolve(AppConfigToken);
+      const logger = context.resolve(AppLoggerToken);
       await simulateLatency(10);
       logger.info("[AnalyticsPlugin] initialised");
       return new SegmentAnalyticsProvider(config.analyticsKey, logger);
@@ -243,9 +245,9 @@ const SlackPluginModule = Module.createAsync("SlackPlugin", async (builder) => {
 
   builder
     .bind(NotificationToken)
-    .toDynamicAsync(async (ctx) => {
-      const config = ctx.resolve(AppConfigToken);
-      const logger = ctx.resolve(AppLoggerToken);
+    .toDynamicAsync(async (context) => {
+      const config = context.resolve(AppConfigToken);
+      const logger = context.resolve(AppLoggerToken);
       logger.info("[SlackPlugin] initialised");
       return new SlackNotificationProvider(config.slackWebhook, logger);
     })
@@ -326,8 +328,8 @@ const LocalStoragePluginModule = Module.createAsync("LocalStoragePlugin", async 
 
   builder
     .bind(StorageToken)
-    .toDynamicAsync(async (ctx) => {
-      const logger = ctx.resolve(AppLoggerToken);
+    .toDynamicAsync(async (context) => {
+      const logger = context.resolve(AppLoggerToken);
       logger.info("[LocalStoragePlugin] initialised");
       return new LocalStorageProvider(logger);
     })
@@ -340,7 +342,7 @@ class Platform {
   private container!: Container;
 
   async boot(): Promise<void> {
-    console.log("\n🚀 Booting platform...");
+    section("🚀 Booting platform");
 
     // Load infrastructure modules — CoreModule deduped across all three
     this.container = await Container.fromModulesAsync(
@@ -383,18 +385,18 @@ class Platform {
     // Register DocumentService — resolves via async tokens, so use toDynamicAsync
     this.container
       .bind(DocumentServiceToken)
-      .toDynamicAsync(async (ctx) => {
-        const storage = await ctx.resolveAsync(StorageToken);
-        const analytics = await ctx.resolveAsync(AnalyticsToken);
-        const notifications = await ctx.resolveAsync(NotificationToken);
-        const logger = ctx.resolve(AppLoggerToken);
+      .toDynamicAsync(async (context) => {
+        const storage = await context.resolveAsync(StorageToken);
+        const analytics = await context.resolveAsync(AnalyticsToken);
+        const notifications = await context.resolveAsync(NotificationToken);
+        const logger = context.resolve(AppLoggerToken);
         return new DocumentOrchestrator(storage, analytics, notifications, logger);
       })
       .singleton();
 
     // Print loaded plugins — resolveAll reads all three container.bind() entries
     const loadedPlugins = this.container.resolveAll(PluginToken);
-    console.log(`\n✅ ${loadedPlugins.length} plugin(s) loaded:`);
+    ok(`${loadedPlugins.length} plugin(s) loaded`);
     for (const pluginDescriptor of loadedPlugins) {
       console.log(
         `   • ${pluginDescriptor.name} v${pluginDescriptor.version} [${pluginDescriptor.capabilities.join(", ")}]`,
@@ -402,7 +404,9 @@ class Platform {
     }
   }
 
-  async runWithDocumentService<T>(callback: (documentService: DocumentService) => Promise<T>): Promise<T> {
+  async runWithDocumentService<Result>(
+    callback: (documentService: DocumentService) => Promise<Result>,
+  ): Promise<Result> {
     const documentService = await this.container.resolveAsync(DocumentServiceToken);
     return callback(documentService);
   }
@@ -411,7 +415,7 @@ class Platform {
     newPluginModule: Awaited<ReturnType<typeof Module.createAsync>>,
     newDescriptor: PluginDescriptor,
   ): Promise<void> {
-    console.log(`\n🔄 Hot-swapping storage plugin → ${newDescriptor.name}...`);
+    section(`🔄 Hot-swapping storage plugin → ${newDescriptor.name}...`);
 
     // Unload old plugin — fires onDeactivation (closes S3 connection pool)
     await this.container.unloadAsync(S3PluginModule);
@@ -419,11 +423,11 @@ class Platform {
     // Re-register DocumentService without the old storage singleton
     this.container
       .rebind(DocumentServiceToken)
-      .toDynamicAsync(async (ctx) => {
-        const storage = await ctx.resolveAsync(StorageToken);
-        const analytics = await ctx.resolveAsync(AnalyticsToken);
-        const notifications = await ctx.resolveAsync(NotificationToken);
-        const logger = ctx.resolve(AppLoggerToken);
+      .toDynamicAsync(async (context) => {
+        const storage = await context.resolveAsync(StorageToken);
+        const analytics = await context.resolveAsync(AnalyticsToken);
+        const notifications = await context.resolveAsync(NotificationToken);
+        const logger = context.resolve(AppLoggerToken);
         return new DocumentOrchestrator(storage, analytics, notifications, logger);
       })
       .singleton();
@@ -447,9 +451,9 @@ class Platform {
   }
 
   async shutdown(): Promise<void> {
-    console.log("\n🛑 Shutting down platform...");
+    section("🛑 Shutting down platform");
     await this.container.dispose(); // fires all onDeactivation hooks
-    console.log("✅ Platform shutdown complete");
+    ok("Platform shutdown complete");
   }
 }
 
@@ -460,7 +464,7 @@ async function main(): Promise<void> {
   await platform.boot();
 
   // ── Normal operation ───────────────────────────────────────────────────────────────────────────────────────────────
-  console.log("\n📋 Normal operation (S3 storage):");
+  section("📋 Normal operation (S3 storage)");
   await platform.runWithDocumentService(async (documentService) => {
     const uploadedUrl = await documentService.uploadDocument(
       "user-123",
@@ -484,7 +488,7 @@ async function main(): Promise<void> {
     capabilities: ["storage"],
   });
 
-  console.log("\n📋 Operation after hot-swap (LocalStorage):");
+  section("📋 Operation after hot-swap (LocalStorage)");
   await platform.runWithDocumentService(async (documentService) => {
     const uploadedUrl = await documentService.uploadDocument(
       "user-456",

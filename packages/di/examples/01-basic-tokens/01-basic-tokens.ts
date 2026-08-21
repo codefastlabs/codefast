@@ -48,11 +48,11 @@ const container = Container.create();
 // 1. toConstantValue — fixed primitive
 container.bind(MessageToken).toConstantValue("Good day");
 
-// 2. toDynamic — sync factory; can resolve other tokens via ctx
+// 2. toDynamic — sync factory; can resolve other tokens via context
 container
   .bind(GreeterToken)
-  .toDynamic((ctx) => {
-    const message = ctx.resolve(MessageToken);
+  .toDynamic((context) => {
+    const message = context.resolve(MessageToken);
     return new FormalGreeter(message);
   })
   .singleton();

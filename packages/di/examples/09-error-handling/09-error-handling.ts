@@ -39,7 +39,7 @@ const ServiceBToken = token<CircularServiceB>("ServiceB");
 const DatabaseToken = token<Database>("Database");
 
 interface Logger {
-  log(msg: string): void;
+  log(message: string): void;
 }
 
 // ── 1. TokenNotBoundError ────────────────────────────────────────────────────────────────────────────────────────────
@@ -120,8 +120,8 @@ class CircularServiceB {
 }
 
 const circularContainer = Container.create();
-circularContainer.bind(ServiceAToken).toDynamic((ctx) => new CircularServiceA(ctx.resolve(ServiceBToken)));
-circularContainer.bind(ServiceBToken).toDynamic((ctx) => new CircularServiceB(ctx.resolve(ServiceAToken)));
+circularContainer.bind(ServiceAToken).toDynamic((context) => new CircularServiceA(context.resolve(ServiceBToken)));
+circularContainer.bind(ServiceBToken).toDynamic((context) => new CircularServiceB(context.resolve(ServiceAToken)));
 
 try {
   circularContainer.resolve(ServiceAToken);
@@ -157,7 +157,9 @@ try {
 }
 
 // Fix: add @injectable, or use toDynamic / toResolved instead
-missingMetadataContainer.rebind(UnmarkedToken).toDynamic((ctx) => new UnmarkedService(ctx.resolve(LoggerToken)));
+missingMetadataContainer
+  .rebind(UnmarkedToken)
+  .toDynamic((context) => new UnmarkedService(context.resolve(LoggerToken)));
 const repairedService = missingMetadataContainer.resolve(UnmarkedToken);
 item("Fixed with toDynamic", repairedService instanceof UnmarkedService);
 
