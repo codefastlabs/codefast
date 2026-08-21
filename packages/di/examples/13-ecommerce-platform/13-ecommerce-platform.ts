@@ -98,20 +98,20 @@ const EventBusToken = token<EventBus>("EventBus");
 const IdGeneratorToken = token<IdGenerator>("IdGenerator");
 
 // Catalog
-const ProductRepoToken = token<ProductRepository>("ProductRepository");
-const CategoryRepoToken = token<CategoryRepository>("CategoryRepository");
+const ProductRepositoryToken = token<ProductRepository>("ProductRepository");
+const CategoryRepositoryToken = token<CategoryRepository>("CategoryRepository");
 const InventoryServiceToken = token<InventoryService>("InventoryService");
 const PricingServiceToken = token<PricingService>("PricingService");
 const CatalogServiceToken = token<CatalogService>("CatalogService");
 const SearchServiceToken = token<SearchService>("SearchService");
 
 // Cart
-const CartRepoToken = token<CartRepository>("CartRepository");
+const CartRepositoryToken = token<CartRepository>("CartRepository");
 const CartServiceToken = token<CartService>("CartService");
 const CouponServiceToken = token<CouponService>("CouponService");
 
 // Orders
-const OrderRepoToken = token<OrderRepository>("OrderRepository");
+const OrderRepositoryToken = token<OrderRepository>("OrderRepository");
 const OrderServiceToken = token<OrderService>("OrderService");
 const FulfillmentServiceToken = token<FulfillmentService>("FulfillmentService");
 const ShippingCarrierToken = token<ShippingCarrier>("ShippingCarrier"); // multi-binding
@@ -121,9 +121,9 @@ const PaymentGatewayToken = token<PaymentGateway>("PaymentGateway"); // multi-bi
 const PaymentServiceToken = token<PaymentService>("PaymentService");
 
 // Users
-const UserRepoToken = token<UserRepository>("UserRepository");
+const UserRepositoryToken = token<UserRepository>("UserRepository");
 const UserServiceToken = token<UserService>("UserService");
-const AddressRepoToken = token<AddressRepository>("AddressRepository");
+const AddressRepositoryToken = token<AddressRepository>("AddressRepository");
 const LoyaltyServiceToken = token<LoyaltyService>("LoyaltyService");
 const SessionToken = token<UserSession>("UserSession"); // scoped
 
@@ -142,7 +142,7 @@ const CheckoutApplicationServiceToken = token<CheckoutApplicationService>("Check
 
 interface AppConfig {
   readonly env: "development" | "staging" | "production";
-  readonly dbUrl: string;
+  readonly databaseUrl: string;
   readonly redisUrl: string;
   readonly s3Bucket: string;
   readonly esUrl: string;
@@ -156,9 +156,9 @@ interface AppConfig {
 }
 
 interface Logger {
-  info(msg: string, meta?: Record<string, unknown>): void;
-  warn(msg: string, meta?: Record<string, unknown>): void;
-  error(msg: string, err?: unknown, meta?: Record<string, unknown>): void;
+  info(message: string, metadata?: Record<string, unknown>): void;
+  warn(message: string, metadata?: Record<string, unknown>): void;
+  error(message: string, error?: unknown, metadata?: Record<string, unknown>): void;
   child(bindings: Record<string, unknown>): Logger;
 }
 
@@ -375,28 +375,28 @@ interface AbVariant {
 class ConsoleLogger implements Logger {
   constructor(private readonly bindings: Record<string, unknown> = {}) {}
 
-  info(msg: string, meta?: Record<string, unknown>): void {
-    this.format("INFO", msg, meta);
+  info(message: string, metadata?: Record<string, unknown>): void {
+    this.format("INFO", message, metadata);
   }
 
-  warn(msg: string, meta?: Record<string, unknown>): void {
-    this.format("WARN", msg, meta);
+  warn(message: string, metadata?: Record<string, unknown>): void {
+    this.format("WARN", message, metadata);
   }
 
-  error(msg: string, _err?: unknown, meta?: Record<string, unknown>): void {
-    this.format("ERROR", msg, meta);
+  error(message: string, _error?: unknown, metadata?: Record<string, unknown>): void {
+    this.format("ERROR", message, metadata);
   }
 
   child(bindings: Record<string, unknown>): Logger {
     return new ConsoleLogger({ ...this.bindings, ...bindings });
   }
 
-  private format(level: string, msg: string, meta?: Record<string, unknown>): void {
+  private format(level: string, message: string, metadata?: Record<string, unknown>): void {
     const line = {
       level,
-      msg,
+      msg: message,
       ...this.bindings,
-      ...meta,
+      ...metadata,
       ts: new Date().toISOString(),
     };
     console.log(JSON.stringify(line));
@@ -427,11 +427,11 @@ interface IdGenerator {
 
 // ── EventBus ─────────────────────────────────────────────────────────────────────────────────────────────────────────
 
-type EventHandler<T = unknown> = (event: T) => void | Promise<void>;
+type EventHandler<Event = unknown> = (event: Event) => void | Promise<void>;
 
 interface EventBus {
-  publish<T>(topic: string, event: T): Promise<void>;
-  subscribe<T>(topic: string, handler: EventHandler<T>): void;
+  publish<Event>(topic: string, event: Event): Promise<void>;
+  subscribe<Event>(topic: string, handler: EventHandler<Event>): void;
 }
 
 @injectable([inject(LoggerToken)])
@@ -443,14 +443,14 @@ class InMemoryEventBus implements EventBus {
     this.log = logger.child({ service: "EventBus" });
   }
 
-  subscribe<T>(topic: string, handler: EventHandler<T>): void {
+  subscribe<Event>(topic: string, handler: EventHandler<Event>): void {
     if (!this.handlers.has(topic)) {
       this.handlers.set(topic, []);
     }
     this.handlers.get(topic)!.push(handler as EventHandler);
   }
 
-  async publish<T>(topic: string, event: T): Promise<void> {
+  async publish<Event>(topic: string, event: Event): Promise<void> {
     const handlers = this.handlers.get(topic) ?? [];
     this.log.info("event published", { topic, handlerCount: handlers.length });
     await Promise.all(handlers.map((handler) => Promise.resolve(handler(event))));
@@ -461,9 +461,9 @@ class InMemoryEventBus implements EventBus {
 
 interface Database {
   connect(): Promise<void>;
-  query<T>(sql: string, params?: Array<unknown>): Promise<Array<T>>;
-  execute(sql: string, params?: Array<unknown>): Promise<{ rowCount: number }>;
-  transaction<T>(fn: (db: Database) => Promise<T>): Promise<T>;
+  query<Row>(sql: string, parameters?: Array<unknown>): Promise<Array<Row>>;
+  execute(sql: string, parameters?: Array<unknown>): Promise<{ rowCount: number }>;
+  transaction<Result>(run: (database: Database) => Promise<Result>): Promise<Result>;
   healthCheck(): Promise<boolean>;
   close(): Promise<void>;
 }
@@ -477,7 +477,7 @@ class MockDatabase implements Database {
 
   constructor(logger: Logger, appConfig: AppConfig) {
     this.log = logger.child({ service: "Database" });
-    this.url = appConfig.dbUrl;
+    this.url = appConfig.databaseUrl;
   }
 
   async connect(): Promise<void> {
@@ -492,30 +492,30 @@ class MockDatabase implements Database {
     this.log.info("connection pool closed");
   }
 
-  async query<T>(sql: string, params?: Array<unknown>): Promise<Array<T>> {
+  async query<Row>(sql: string, parameters?: Array<unknown>): Promise<Array<Row>> {
     this.ensureConnected();
     await delay(2);
     this.queryCount++;
-    this.log.info("query", { sql: sql.substring(0, 60), paramCount: params?.length ?? 0 });
-    return [] as Array<T>;
+    this.log.info("query", { sql: sql.substring(0, 60), paramCount: parameters?.length ?? 0 });
+    return [] as Array<Row>;
   }
 
-  async execute(sql: string, params?: Array<unknown>): Promise<{ rowCount: number }> {
+  async execute(sql: string, parameters?: Array<unknown>): Promise<{ rowCount: number }> {
     this.ensureConnected();
     await delay(2);
-    this.log.info("execute", { sql: sql.substring(0, 60), paramCount: params?.length ?? 0 });
+    this.log.info("execute", { sql: sql.substring(0, 60), paramCount: parameters?.length ?? 0 });
     return { rowCount: 1 };
   }
 
-  async transaction<T>(fn: (db: Database) => Promise<T>): Promise<T> {
+  async transaction<Result>(run: (database: Database) => Promise<Result>): Promise<Result> {
     this.log.info("BEGIN");
     try {
-      const result = await fn(this);
+      const result = await run(this);
       this.log.info("COMMIT");
       return result;
-    } catch (err) {
+    } catch (error) {
       this.log.warn("ROLLBACK");
-      throw err;
+      throw error;
     }
   }
 
@@ -607,7 +607,7 @@ class MockRedis implements RedisClient {
 // ── S3 Client ────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 interface S3Client {
-  getSignedUrl(key: string, expiresIn?: number): string;
+  signedUrl(key: string, expiresIn?: number): string;
   upload(key: string, data: Buffer): Promise<void>;
 }
 
@@ -618,7 +618,7 @@ class MockS3 implements S3Client {
   constructor(appConfig: AppConfig) {
     this.bucket = appConfig.s3Bucket;
   }
-  getSignedUrl(key: string): string {
+  signedUrl(key: string): string {
     return `https://cdn.example.com/${this.bucket}/${key}`;
   }
   async upload(key: string, _data: Buffer): Promise<void> {
@@ -631,7 +631,7 @@ class MockS3 implements S3Client {
 
 interface ElasticClient {
   index(indexName: string, id: string, document: unknown): Promise<void>;
-  search<T>(indexName: string, searchQuery: unknown): Promise<Array<T>>;
+  search<Hit>(indexName: string, searchQuery: unknown): Promise<Array<Hit>>;
   healthCheck(): Promise<boolean>;
 }
 
@@ -651,10 +651,10 @@ class MockElastic implements ElasticClient {
     this.indices.get(indexName)!.set(id, document);
   }
 
-  async search<T>(indexName: string, searchQuery: unknown): Promise<Array<T>> {
+  async search<Hit>(indexName: string, searchQuery: unknown): Promise<Array<Hit>> {
     this.log.info("search", { index: indexName, query: searchQuery });
     await delay(5);
-    return [] as Array<T>;
+    return [] as Array<Hit>;
   }
 
   async healthCheck(): Promise<boolean> {
@@ -680,35 +680,35 @@ class ProductPostgresRepository implements ProductRepository {
   private readonly log: Logger;
 
   constructor(
-    private readonly db: Database,
+    private readonly database: Database,
     logger: Logger,
   ) {
     this.log = logger.child({ repo: "ProductRepository" });
   }
 
   async findById(id: string): Promise<Product | undefined> {
-    const rows = await this.db.query<Product>("SELECT * FROM products WHERE id = $1 AND active = true", [id]);
+    const rows = await this.database.query<Product>("SELECT * FROM products WHERE id = $1 AND active = true", [id]);
     return rows[0] ?? makeFakeProduct(id);
   }
 
   async findBySku(sku: string): Promise<Product | undefined> {
-    const rows = await this.db.query<Product>("SELECT * FROM products WHERE sku = $1", [sku]);
+    const rows = await this.database.query<Product>("SELECT * FROM products WHERE sku = $1", [sku]);
     return rows[0] ?? makeFakeProduct(`prod-sku-${sku}`);
   }
 
   async findByCategory(categoryId: string, limit = 20): Promise<Array<Product>> {
-    await this.db.query("SELECT * FROM products WHERE category_id=$1 LIMIT $2", [categoryId, limit]);
+    await this.database.query("SELECT * FROM products WHERE category_id=$1 LIMIT $2", [categoryId, limit]);
     return [makeFakeProduct("p1"), makeFakeProduct("p2")];
   }
 
   async search(query: string): Promise<Array<Product>> {
     this.log.info("db search", { query });
-    await this.db.query("SELECT * FROM products WHERE to_tsvector(name) @@ plainto_tsquery($1)", [query]);
+    await this.database.query("SELECT * FROM products WHERE to_tsvector(name) @@ plainto_tsquery($1)", [query]);
     return [makeFakeProduct("search-result-1"), makeFakeProduct("search-result-2")];
   }
 
   async save(product: Product): Promise<Product> {
-    await this.db.execute(
+    await this.database.execute(
       "INSERT INTO products(id, sku, name, base_price) VALUES ($1,$2,$3,$4) ON CONFLICT(id) DO UPDATE SET name=$3",
       [product.id, product.sku, product.name, product.basePrice],
     );
@@ -716,7 +716,7 @@ class ProductPostgresRepository implements ProductRepository {
   }
 
   async listActive(limit = 50, offset = 0): Promise<Array<Product>> {
-    await this.db.query("SELECT * FROM products WHERE active=true LIMIT $1 OFFSET $2", [limit, offset]);
+    await this.database.query("SELECT * FROM products WHERE active=true LIMIT $1 OFFSET $2", [limit, offset]);
     return [makeFakeProduct("featured-1"), makeFakeProduct("featured-2"), makeFakeProduct("featured-3")];
   }
 }
@@ -729,20 +729,20 @@ interface CategoryRepository {
 
 @injectable([inject(DatabaseToken)])
 class CategoryPostgresRepository implements CategoryRepository {
-  constructor(private readonly db: Database) {}
+  constructor(private readonly database: Database) {}
 
   async findById(id: string): Promise<Category | undefined> {
-    await this.db.query("SELECT * FROM categories WHERE id=$1", [id]);
+    await this.database.query("SELECT * FROM categories WHERE id=$1", [id]);
     return { id, name: "Running Shoes", slug: "running-shoes", parentId: "sports" };
   }
 
   async findBySlug(slug: string): Promise<Category | undefined> {
-    await this.db.query("SELECT * FROM categories WHERE slug=$1", [slug]);
+    await this.database.query("SELECT * FROM categories WHERE slug=$1", [slug]);
     return { id: "cat-001", name: slug, slug, parentId: null };
   }
 
   async listAll(): Promise<Array<Category>> {
-    await this.db.query("SELECT * FROM categories ORDER BY name");
+    await this.database.query("SELECT * FROM categories ORDER BY name");
     return [
       { id: "cat-sports", name: "Sports", slug: "sports", parentId: null },
       { id: "cat-shoes", name: "Shoes", slug: "shoes", parentId: "cat-sports" },
@@ -751,7 +751,7 @@ class CategoryPostgresRepository implements CategoryRepository {
 }
 
 interface InventoryService {
-  getAvailable(productId: string): Promise<number>;
+  availableItems(productId: string): Promise<number>;
   reserve(productId: string, quantity: number): Promise<boolean>;
   release(productId: string, quantity: number): Promise<void>;
   isInStock(productId: string, quantity?: number): Promise<boolean>;
@@ -762,19 +762,19 @@ class InventoryManager implements InventoryService {
   private readonly log: Logger;
 
   constructor(
-    private readonly db: Database,
+    private readonly database: Database,
     private readonly cache: RedisClient,
     logger: Logger,
   ) {
     this.log = logger.child({ service: "InventoryService" });
   }
 
-  async getAvailable(productId: string): Promise<number> {
+  async availableItems(productId: string): Promise<number> {
     const cached = await this.cache.get(`inv:${productId}`);
     if (cached) {
       return Number(cached);
     }
-    await this.db.query<InventoryEntry>(
+    await this.database.query<InventoryEntry>(
       "SELECT product_id, warehouse_id, quantity, reserved FROM inventory WHERE product_id=$1",
       [productId],
     );
@@ -794,27 +794,27 @@ class InventoryManager implements InventoryService {
 
   async reserve(productId: string, quantity: number): Promise<boolean> {
     this.log.info("reserving inventory", { productId, quantity });
-    await this.db.execute("UPDATE inventory SET reserved=reserved+$1 WHERE product_id=$2 AND quantity-reserved>=$1", [
-      quantity,
-      productId,
-    ]);
+    await this.database.execute(
+      "UPDATE inventory SET reserved=reserved+$1 WHERE product_id=$2 AND quantity-reserved>=$1",
+      [quantity, productId],
+    );
     await this.cache.del(`inv:${productId}`);
     return true;
   }
 
   async release(productId: string, quantity: number): Promise<void> {
-    await this.db.execute("UPDATE inventory SET reserved=reserved-$1 WHERE product_id=$2", [quantity, productId]);
+    await this.database.execute("UPDATE inventory SET reserved=reserved-$1 WHERE product_id=$2", [quantity, productId]);
     await this.cache.del(`inv:${productId}`);
   }
 
   async isInStock(productId: string, quantity = 1): Promise<boolean> {
-    return (await this.getAvailable(productId)) >= quantity;
+    return (await this.availableItems(productId)) >= quantity;
   }
 }
 
 interface PricingService {
-  getPrice(productId: string, userId?: string): Promise<PriceResult>;
-  getBulkPrices(productIds: Array<string>, userId?: string): Promise<Map<string, PriceResult>>;
+  price(productId: string, userId?: string): Promise<PriceResult>;
+  bulkPrices(productIds: Array<string>, userId?: string): Promise<Map<string, PriceResult>>;
   applyCoupon(cart: Cart, couponCode: string): Promise<CouponResult>;
 }
 
@@ -823,7 +823,7 @@ class PricingManager implements PricingService {
   private readonly log: Logger;
 
   constructor(
-    private readonly db: Database,
+    private readonly database: Database,
     private readonly cache: RedisClient,
     logger: Logger,
   ) {
@@ -833,7 +833,7 @@ class PricingManager implements PricingService {
   @postConstruct()
   async warmUpPricingRules(): Promise<void> {
     this.log.info("warming up pricing rules cache...");
-    await this.db.query("SELECT * FROM pricing_rules WHERE active=true");
+    await this.database.query("SELECT * FROM pricing_rules WHERE active=true");
     await this.cache.set("pricing:rules:loaded", "true", 3600);
     this.log.info("pricing rules cached");
   }
@@ -844,14 +844,14 @@ class PricingManager implements PricingService {
     await this.cache.del("pricing:rules:loaded");
   }
 
-  async getPrice(productId: string, userId?: string): Promise<PriceResult> {
+  async price(productId: string, userId?: string): Promise<PriceResult> {
     const cacheKey = `price:${productId}:${userId ?? "guest"}`;
     const cached = await this.cache.get(cacheKey);
     if (cached) {
       return JSON.parse(cached) as PriceResult;
     }
 
-    await this.db.query(
+    await this.database.query(
       "SELECT base_price, discount_rules FROM products LEFT JOIN pricing_rules ON ... WHERE product_id=$1",
       [productId],
     );
@@ -861,22 +861,22 @@ class PricingManager implements PricingService {
     const userTierDiscount = userId ? 10 : 0;
     const finalPrice = Math.round(basePrice * (1 - userTierDiscount / 100));
 
-    const result: PriceResult = {
+    const priceResult: PriceResult = {
       productId,
       originalPrice: basePrice,
       finalPrice,
       discountPercent: userTierDiscount,
       appliedRules: userTierDiscount ? ["LOYALTY_TIER_DISCOUNT"] : [],
     };
-    await this.cache.set(cacheKey, JSON.stringify(result), 300);
-    return result;
+    await this.cache.set(cacheKey, JSON.stringify(priceResult), 300);
+    return priceResult;
   }
 
-  async getBulkPrices(productIds: Array<string>, userId?: string): Promise<Map<string, PriceResult>> {
+  async bulkPrices(productIds: Array<string>, userId?: string): Promise<Map<string, PriceResult>> {
     const prices = new Map<string, PriceResult>();
     await Promise.all(
       productIds.map(async (productId) => {
-        prices.set(productId, await this.getPrice(productId, userId));
+        prices.set(productId, await this.price(productId, userId));
       }),
     );
     return prices;
@@ -884,7 +884,7 @@ class PricingManager implements PricingService {
 
   async applyCoupon(cart: Cart, couponCode: string): Promise<CouponResult> {
     this.log.info("applying coupon", { couponCode, cartId: cart.id });
-    await this.db.query("SELECT * FROM coupons WHERE code=$1 AND active=true AND expires_at>NOW()", [couponCode]);
+    await this.database.query("SELECT * FROM coupons WHERE code=$1 AND active=true AND expires_at>NOW()", [couponCode]);
 
     // Simulate: WELCOME20 = 20% off, SAVE10 = $10 off
     if (couponCode === "WELCOME20") {
@@ -898,15 +898,15 @@ class PricingManager implements PricingService {
 }
 
 interface CatalogService {
-  getProductById(productId: string): Promise<Product | undefined>;
+  productById(productId: string): Promise<Product | undefined>;
   listFeaturedProducts(): Promise<Array<Product & { price: PriceResult }>>;
-  getCategoryBySlug(categorySlug: string): Promise<Category | undefined>;
+  categoryBySlug(categorySlug: string): Promise<Category | undefined>;
   listAllCategories(): Promise<Array<Category>>;
 }
 
 @injectable([
-  inject(ProductRepoToken),
-  inject(CategoryRepoToken),
+  inject(ProductRepositoryToken),
+  inject(CategoryRepositoryToken),
   inject(PricingServiceToken),
   inject(InventoryServiceToken),
   inject(LoggerToken),
@@ -924,7 +924,7 @@ class CatalogManager implements CatalogService {
     this.log = logger.child({ service: "CatalogService" });
   }
 
-  async getProductById(productId: string): Promise<Product | undefined> {
+  async productById(productId: string): Promise<Product | undefined> {
     const product = await this.products.findById(productId);
     if (product) {
       const isInStock = await this.inventory.isInStock(productId);
@@ -935,11 +935,11 @@ class CatalogManager implements CatalogService {
 
   async listFeaturedProducts(): Promise<Array<Product & { price: PriceResult }>> {
     const featuredProducts = await this.products.listActive(6);
-    const prices = await this.pricing.getBulkPrices(featuredProducts.map((product) => product.id));
+    const prices = await this.pricing.bulkPrices(featuredProducts.map((product) => product.id));
     return featuredProducts.map((product) => ({ ...product, price: prices.get(product.id)! }));
   }
 
-  async getCategoryBySlug(categorySlug: string): Promise<Category | undefined> {
+  async categoryBySlug(categorySlug: string): Promise<Category | undefined> {
     return this.categories.findBySlug(categorySlug);
   }
 
@@ -957,7 +957,7 @@ interface SearchService {
   indexProduct(product: Product): Promise<void>;
 }
 
-@injectable([inject(ElasticToken), inject(ProductRepoToken), inject(LoggerToken)])
+@injectable([inject(ElasticToken), inject(ProductRepositoryToken), inject(LoggerToken)])
 class ProductElasticsearchSearchService implements SearchService {
   private readonly log: Logger;
 
@@ -1053,7 +1053,7 @@ class CartRedisRepository implements CartRepository {
 }
 
 interface CartService {
-  getOrCreateCart(session: UserSession): Promise<Cart>;
+  findOrCreateCart(session: UserSession): Promise<Cart>;
   addItem(cartId: string, productId: string, quantity: number): Promise<Cart>;
   removeItem(cartId: string, productId: string): Promise<Cart>;
   updateQuantity(cartId: string, productId: string, quantity: number): Promise<Cart>;
@@ -1063,8 +1063,8 @@ interface CartService {
 }
 
 @injectable([
-  inject(CartRepoToken),
-  inject(ProductRepoToken),
+  inject(CartRepositoryToken),
+  inject(ProductRepositoryToken),
   inject(PricingServiceToken),
   inject(InventoryServiceToken),
   inject(CouponServiceToken),
@@ -1075,8 +1075,8 @@ class CartManager implements CartService {
   private readonly log: Logger;
 
   constructor(
-    private readonly cartRepo: CartRepository,
-    private readonly productRepo: ProductRepository,
+    private readonly cartRepository: CartRepository,
+    private readonly productRepository: ProductRepository,
     private readonly pricing: PricingService,
     private readonly inventory: InventoryService,
     private readonly couponService: CouponService,
@@ -1086,15 +1086,15 @@ class CartManager implements CartService {
     this.log = logger.child({ service: "CartService" });
   }
 
-  async getOrCreateCart(session: UserSession): Promise<Cart> {
+  async findOrCreateCart(session: UserSession): Promise<Cart> {
     if (session.cartId) {
-      const existing = await this.cartRepo.findById(session.cartId);
+      const existing = await this.cartRepository.findById(session.cartId);
       if (existing) {
         return existing;
       }
     }
     if (session.userId) {
-      const userCart = await this.cartRepo.findByUserId(session.userId);
+      const userCart = await this.cartRepository.findByUserId(session.userId);
       if (userCart) {
         return userCart;
       }
@@ -1111,12 +1111,15 @@ class CartManager implements CartService {
       createdAt: new Date(),
       updatedAt: new Date(),
     };
-    return this.cartRepo.save(newCart);
+    return this.cartRepository.save(newCart);
   }
 
   async addItem(cartId: string, productId: string, quantity: number): Promise<Cart> {
     this.log.info("adding item to cart", { cartId, productId, quantity });
-    const [cart, product] = await Promise.all([this.cartRepo.findById(cartId), this.productRepo.findById(productId)]);
+    const [cart, product] = await Promise.all([
+      this.cartRepository.findById(cartId),
+      this.productRepository.findById(productId),
+    ]);
     if (!cart) {
       throw new Error(`Cart ${cartId} not found`);
     }
@@ -1129,7 +1132,7 @@ class CartManager implements CartService {
       throw new Error(`Insufficient inventory for ${productId}`);
     }
 
-    const priceResult = await this.pricing.getPrice(productId, cart.userId ?? undefined);
+    const priceResult = await this.pricing.price(productId, cart.userId ?? undefined);
     const existingCartLine = cart.items.find((cartLine) => cartLine.productId === productId);
 
     let updatedItems: Array<CartItem>;
@@ -1157,15 +1160,15 @@ class CartManager implements CartService {
       ];
     }
 
-    return this.cartRepo.save(this.recalculate({ ...cart, items: updatedItems }));
+    return this.cartRepository.save(this.recalculate({ ...cart, items: updatedItems }));
   }
 
   async removeItem(cartId: string, productId: string): Promise<Cart> {
-    const cart = await this.cartRepo.findById(cartId);
+    const cart = await this.cartRepository.findById(cartId);
     if (!cart) {
       throw new Error(`Cart ${cartId} not found`);
     }
-    return this.cartRepo.save(
+    return this.cartRepository.save(
       this.recalculate({
         ...cart,
         items: cart.items.filter((cartLine) => cartLine.productId !== productId),
@@ -1174,14 +1177,14 @@ class CartManager implements CartService {
   }
 
   async updateQuantity(cartId: string, productId: string, quantity: number): Promise<Cart> {
-    const cart = await this.cartRepo.findById(cartId);
+    const cart = await this.cartRepository.findById(cartId);
     if (!cart) {
       throw new Error(`Cart ${cartId} not found`);
     }
     if (quantity <= 0) {
       return this.removeItem(cartId, productId);
     }
-    return this.cartRepo.save(
+    return this.cartRepository.save(
       this.recalculate({
         ...cart,
         items: cart.items.map((cartLine) =>
@@ -1194,25 +1197,25 @@ class CartManager implements CartService {
   }
 
   async applyCoupon(cartId: string, couponCode: string): Promise<Cart> {
-    const cart = await this.cartRepo.findById(cartId);
+    const cart = await this.cartRepository.findById(cartId);
     if (!cart) {
       throw new Error(`Cart ${cartId} not found`);
     }
-    const result = await this.couponService.validate(couponCode, cart);
-    if (!result.isValid) {
-      throw new Error(result.reason ?? "Invalid coupon");
+    const couponResult = await this.couponService.validate(couponCode, cart);
+    if (!couponResult.isValid) {
+      throw new Error(couponResult.reason ?? "Invalid coupon");
     }
-    return this.cartRepo.save(
+    return this.cartRepository.save(
       this.recalculate({
         ...cart,
         couponCode,
-        discountAmount: result.discountAmount,
+        discountAmount: couponResult.discountAmount,
       }),
     );
   }
 
   async reserveInventoryForCheckout(cartId: string): Promise<Cart> {
-    const cart = await this.cartRepo.findById(cartId);
+    const cart = await this.cartRepository.findById(cartId);
     if (!cart) {
       throw new Error(`Cart ${cartId} not found`);
     }
@@ -1226,7 +1229,7 @@ class CartManager implements CartService {
   }
 
   async clearCart(cartId: string): Promise<void> {
-    await this.cartRepo.delete(cartId);
+    await this.cartRepository.delete(cartId);
   }
 
   private recalculate(cart: Cart): Cart {
@@ -1256,7 +1259,7 @@ interface OrderRepository {
   findById(id: string): Promise<Order | undefined>;
   findByUserId(userId: string): Promise<Array<Order>>;
   save(order: Order): Promise<Order>;
-  updateStatus(id: string, status: OrderStatus, meta?: Partial<Order>): Promise<Order>;
+  updateStatus(id: string, status: OrderStatus, metadata?: Partial<Order>): Promise<Order>;
 }
 
 @injectable([inject(DatabaseToken), inject(LoggerToken)])
@@ -1264,24 +1267,24 @@ class OrderPostgresRepository implements OrderRepository {
   private readonly log: Logger;
 
   constructor(
-    private readonly db: Database,
+    private readonly database: Database,
     logger: Logger,
   ) {
     this.log = logger.child({ repo: "OrderRepository" });
   }
 
   async findById(id: string): Promise<Order | undefined> {
-    await this.db.query("SELECT * FROM orders WHERE id=$1", [id]);
+    await this.database.query("SELECT * FROM orders WHERE id=$1", [id]);
     return makeFakeOrder(id);
   }
 
   async findByUserId(userId: string): Promise<Array<Order>> {
-    await this.db.query("SELECT * FROM orders WHERE user_id=$1 ORDER BY created_at DESC", [userId]);
+    await this.database.query("SELECT * FROM orders WHERE user_id=$1 ORDER BY created_at DESC", [userId]);
     return [makeFakeOrder("ord-001")];
   }
 
   async save(order: Order): Promise<Order> {
-    await this.db.transaction(async (transactionDatabase) => {
+    await this.database.transaction(async (transactionDatabase) => {
       await transactionDatabase.execute(
         "INSERT INTO orders(id,user_id,status,total) VALUES($1,$2,$3,$4) ON CONFLICT(id) DO UPDATE SET status=$3",
         [order.id, order.userId, order.status, order.total],
@@ -1299,21 +1302,21 @@ class OrderPostgresRepository implements OrderRepository {
     return order;
   }
 
-  async updateStatus(id: string, status: OrderStatus, meta?: Partial<Order>): Promise<Order> {
-    await this.db.execute("UPDATE orders SET status=$1, tracking_number=$2, updated_at=NOW() WHERE id=$3", [
+  async updateStatus(id: string, status: OrderStatus, metadata?: Partial<Order>): Promise<Order> {
+    await this.database.execute("UPDATE orders SET status=$1, tracking_number=$2, updated_at=NOW() WHERE id=$3", [
       status,
-      meta?.trackingNumber ?? null,
+      metadata?.trackingNumber ?? null,
       id,
     ]);
     this.log.info("order status updated", { orderId: id, status });
-    return { ...makeFakeOrder(id), status, ...meta } as Order;
+    return { ...makeFakeOrder(id), status, ...metadata } as Order;
   }
 }
 
 interface ShippingCarrier {
   carrierId: string;
   carrierName: string;
-  getQuote(address: ShippingAddress, items: Array<OrderItem>): Promise<ShippingQuote>;
+  quote(address: ShippingAddress, items: Array<OrderItem>): Promise<ShippingQuote>;
   createShipment(orderId: string, address: ShippingAddress): Promise<string>; // trackingNumber
 }
 
@@ -1323,7 +1326,7 @@ class FedExCarrier implements ShippingCarrier {
   carrierId = "fedex";
   carrierName = "FedEx";
 
-  async getQuote(address: ShippingAddress, items: Array<OrderItem>): Promise<ShippingQuote> {
+  async quote(address: ShippingAddress, items: Array<OrderItem>): Promise<ShippingQuote> {
     await delay(8);
     const weight = items.reduce((totalQuantity, orderItem) => totalQuantity + orderItem.quantity, 0);
     return {
@@ -1347,7 +1350,7 @@ class UpsCarrier implements ShippingCarrier {
   carrierId = "ups";
   carrierName = "UPS";
 
-  async getQuote(address: ShippingAddress, items: Array<OrderItem>): Promise<ShippingQuote> {
+  async quote(address: ShippingAddress, items: Array<OrderItem>): Promise<ShippingQuote> {
     await delay(8);
     const weight = items.reduce((totalQuantity, orderItem) => totalQuantity + orderItem.quantity, 0);
     return {
@@ -1371,7 +1374,7 @@ class DhlCarrier implements ShippingCarrier {
   carrierId = "dhl";
   carrierName = "DHL Express";
 
-  async getQuote(_address: ShippingAddress, _items: Array<OrderItem>): Promise<ShippingQuote> {
+  async quote(_address: ShippingAddress, _items: Array<OrderItem>): Promise<ShippingQuote> {
     await delay(8);
     return {
       carrierId: this.carrierId,
@@ -1394,12 +1397,12 @@ interface FulfillmentService {
   createShipment(orderId: string, carrierId: string, address: ShippingAddress): Promise<string>;
 }
 
-@injectable([inject(OrderRepoToken), injectAll(ShippingCarrierToken), inject(LoggerToken)])
+@injectable([inject(OrderRepositoryToken), injectAll(ShippingCarrierToken), inject(LoggerToken)])
 class ShippingFulfillmentService implements FulfillmentService {
   private readonly log: Logger;
 
   constructor(
-    private readonly orderRepo: OrderRepository,
+    private readonly orderRepository: OrderRepository,
     private readonly carriers: Array<ShippingCarrier>, // resolveAll — all registered carriers
     logger: Logger,
   ) {
@@ -1408,11 +1411,11 @@ class ShippingFulfillmentService implements FulfillmentService {
 
   async fulfill(order: Order): Promise<Order> {
     this.log.info("fulfilling order", { orderId: order.id });
-    return this.orderRepo.updateStatus(order.id, "processing");
+    return this.orderRepository.updateStatus(order.id, "processing");
   }
 
   async listShippingQuotes(address: ShippingAddress, items: Array<OrderItem>): Promise<Array<ShippingQuote>> {
-    const shippingQuotes = await Promise.all(this.carriers.map((carrier) => carrier.getQuote(address, items)));
+    const shippingQuotes = await Promise.all(this.carriers.map((carrier) => carrier.quote(address, items)));
     return shippingQuotes.toSorted((leftQuote, rightQuote) => leftQuote.cost - rightQuote.cost);
   }
 
@@ -1422,7 +1425,7 @@ class ShippingFulfillmentService implements FulfillmentService {
       throw new Error(`Unknown carrier: ${carrierId}`);
     }
     const trackingNumber = await selectedCarrier.createShipment(orderId, address);
-    await this.orderRepo.updateStatus(orderId, "shipped", { trackingNumber });
+    await this.orderRepository.updateStatus(orderId, "shipped", { trackingNumber });
     this.log.info("order shipped", { orderId, carrierId, tracking: trackingNumber });
     return trackingNumber;
   }
@@ -1430,13 +1433,13 @@ class ShippingFulfillmentService implements FulfillmentService {
 
 interface OrderService {
   createFromCart(cart: Cart, userId: string, address: ShippingAddress, shippingCost: number): Promise<Order>;
-  getOrder(id: string): Promise<Order | undefined>;
-  getUserOrders(userId: string): Promise<Array<Order>>;
+  order(id: string): Promise<Order | undefined>;
+  userOrders(userId: string): Promise<Array<Order>>;
   cancelOrder(id: string): Promise<Order>;
 }
 
 @injectable([
-  inject(OrderRepoToken),
+  inject(OrderRepositoryToken),
   inject(FulfillmentServiceToken),
   inject(EventBusToken),
   inject(LoggerToken),
@@ -1446,7 +1449,7 @@ class OrderManager implements OrderService {
   private readonly log: Logger;
 
   constructor(
-    private readonly orderRepo: OrderRepository,
+    private readonly orderRepository: OrderRepository,
     private readonly fulfillment: FulfillmentService,
     private readonly eventBus: EventBus,
     logger: Logger,
@@ -1475,22 +1478,22 @@ class OrderManager implements OrderService {
       updatedAt: new Date(),
     };
 
-    const saved = await this.orderRepo.save(order);
+    const saved = await this.orderRepository.save(order);
     await this.eventBus.publish("order.created", { orderId: saved.id, userId, total: saved.total });
     this.log.info("order created", { orderId: saved.id, total: saved.total });
     return saved;
   }
 
-  async getOrder(id: string): Promise<Order | undefined> {
-    return this.orderRepo.findById(id);
+  async order(id: string): Promise<Order | undefined> {
+    return this.orderRepository.findById(id);
   }
 
-  async getUserOrders(userId: string): Promise<Array<Order>> {
-    return this.orderRepo.findByUserId(userId);
+  async userOrders(userId: string): Promise<Array<Order>> {
+    return this.orderRepository.findByUserId(userId);
   }
 
   async cancelOrder(id: string): Promise<Order> {
-    const order = await this.orderRepo.updateStatus(id, "cancelled");
+    const order = await this.orderRepository.updateStatus(id, "cancelled");
     await this.eventBus.publish("order.cancelled", { orderId: id });
     return order;
   }
@@ -1503,7 +1506,7 @@ class OrderManager implements OrderService {
 interface PaymentGateway {
   gatewayId: string;
   displayName: string;
-  charge(amount: number, currency: string, orderId: string, meta?: Record<string, unknown>): Promise<PaymentIntent>;
+  charge(amount: number, currency: string, orderId: string, metadata?: Record<string, unknown>): Promise<PaymentIntent>;
   refund(paymentId: string, amount?: number): Promise<boolean>;
   supports(currency: string): boolean;
 }
@@ -1620,13 +1623,13 @@ interface PaymentService {
   listSupportedGateways(currency: string): Array<PaymentGateway>;
 }
 
-@injectable([injectAll(PaymentGatewayToken), inject(OrderRepoToken), inject(EventBusToken), inject(LoggerToken)])
+@injectable([injectAll(PaymentGatewayToken), inject(OrderRepositoryToken), inject(EventBusToken), inject(LoggerToken)])
 class PaymentProcessor implements PaymentService {
   private readonly log: Logger;
 
   constructor(
     private readonly gateways: Array<PaymentGateway>, // resolveAll — all gateways
-    private readonly orderRepo: OrderRepository,
+    private readonly orderRepository: OrderRepository,
     private readonly eventBus: EventBus,
     logger: Logger,
   ) {
@@ -1653,20 +1656,20 @@ class PaymentProcessor implements PaymentService {
     let intent: PaymentIntent;
     try {
       intent = await selectedGateway.charge(order.total, order.currency, order.id);
-    } catch (err) {
-      this.log.error("payment failed, attempting fallback", err, { orderId: order.id });
+    } catch (error) {
+      this.log.error("payment failed, attempting fallback", error, { orderId: order.id });
       // Auto-fallback: try next supported gateway
       const fallbackGateway = this.gateways.find(
         (gateway) => gateway.gatewayId !== gatewayId && gateway.supports(order.currency),
       );
       if (!fallbackGateway) {
-        throw err;
+        throw error;
       }
       this.log.info("retrying with fallback gateway", { fallback: fallbackGateway.gatewayId });
       intent = await fallbackGateway.charge(order.total, order.currency, order.id);
     }
 
-    await this.orderRepo.updateStatus(order.id, "payment_confirmed", {
+    await this.orderRepository.updateStatus(order.id, "payment_confirmed", {
       paymentId: intent.id,
     } as Partial<Order>);
     await this.eventBus.publish("payment.completed", {
@@ -1703,7 +1706,7 @@ class UserPostgresRepository implements UserRepository {
   private readonly log: Logger;
 
   constructor(
-    private readonly db: Database,
+    private readonly database: Database,
     private readonly cache: RedisClient,
     logger: Logger,
   ) {
@@ -1715,19 +1718,19 @@ class UserPostgresRepository implements UserRepository {
     if (cached) {
       return JSON.parse(cached) as User;
     }
-    await this.db.query("SELECT * FROM users WHERE id=$1", [id]);
+    await this.database.query("SELECT * FROM users WHERE id=$1", [id]);
     const user = makeFakeUser(id);
     await this.cache.set(`user:${id}`, JSON.stringify(user), 600);
     return user;
   }
 
   async findByEmail(email: string): Promise<User | undefined> {
-    await this.db.query("SELECT * FROM users WHERE email=$1", [email]);
+    await this.database.query("SELECT * FROM users WHERE email=$1", [email]);
     return makeFakeUser("user-found-by-email");
   }
 
   async save(user: User): Promise<User> {
-    await this.db.execute(
+    await this.database.execute(
       "INSERT INTO users(id,email,full_name,tier) VALUES($1,$2,$3,$4) ON CONFLICT(id) DO UPDATE SET full_name=$3",
       [user.id, user.email, user.fullName, user.tier],
     );
@@ -1737,7 +1740,7 @@ class UserPostgresRepository implements UserRepository {
   }
 
   async updateLoyaltyPoints(userId: string, delta: number): Promise<number> {
-    await this.db.execute("UPDATE users SET loyalty_points=loyalty_points+$1 WHERE id=$2", [delta, userId]);
+    await this.database.execute("UPDATE users SET loyalty_points=loyalty_points+$1 WHERE id=$2", [delta, userId]);
     await this.cache.del(`user:${userId}`);
     this.log.info("loyalty points updated", { userId, delta });
     return delta; // simplified: return new total
@@ -1752,15 +1755,15 @@ interface AddressRepository {
 
 @injectable([inject(DatabaseToken)])
 class AddressPostgresRepository implements AddressRepository {
-  constructor(private readonly db: Database) {}
+  constructor(private readonly database: Database) {}
 
   async findByUserId(userId: string): Promise<Array<Address>> {
-    await this.db.query("SELECT * FROM addresses WHERE user_id=$1", [userId]);
+    await this.database.query("SELECT * FROM addresses WHERE user_id=$1", [userId]);
     return [makeFakeAddress("addr-001", userId)];
   }
 
   async save(address: Address): Promise<Address> {
-    await this.db.execute(
+    await this.database.execute(
       "INSERT INTO addresses(id,user_id,full_name,address_line1,city,country) VALUES($1,$2,$3,$4,$5,$6)",
       [address.id, address.userId, address.fullName, address.addressLine1, address.city, address.country],
     );
@@ -1768,17 +1771,17 @@ class AddressPostgresRepository implements AddressRepository {
   }
 
   async setDefault(addressId: string, userId: string): Promise<void> {
-    await this.db.execute("UPDATE addresses SET is_default=(id=$1) WHERE user_id=$2", [addressId, userId]);
+    await this.database.execute("UPDATE addresses SET is_default=(id=$1) WHERE user_id=$2", [addressId, userId]);
   }
 }
 
 interface LoyaltyService {
   awardPoints(userId: string, orderTotal: number): Promise<number>;
   redeemPoints(userId: string, points: number): Promise<boolean>;
-  getBalance(userId: string): Promise<number>;
+  balance(userId: string): Promise<number>;
 }
 
-@injectable([inject(UserRepoToken), inject(AppConfigToken), inject(LoggerToken)])
+@injectable([inject(UserRepositoryToken), inject(AppConfigToken), inject(LoggerToken)])
 class LoyaltyManager implements LoyaltyService {
   private readonly log: Logger;
 
@@ -1807,7 +1810,7 @@ class LoyaltyManager implements LoyaltyService {
     return true;
   }
 
-  async getBalance(userId: string): Promise<number> {
+  async balance(userId: string): Promise<number> {
     const user = await this.users.findById(userId);
     return user?.loyaltyPoints ?? 0;
   }
@@ -1816,14 +1819,14 @@ class LoyaltyManager implements LoyaltyService {
 interface UserService {
   register(email: string, fullName: string): Promise<User>;
   authenticate(email: string): Promise<User | undefined>;
-  getUserProfile(userId: string): Promise<User | undefined>;
+  userProfile(userId: string): Promise<User | undefined>;
   listUserAddresses(userId: string): Promise<Array<Address>>;
   addUserAddress(userId: string, addressInput: Omit<Address, "id" | "userId" | "isDefault">): Promise<Address>;
 }
 
 @injectable([
-  inject(UserRepoToken),
-  inject(AddressRepoToken),
+  inject(UserRepositoryToken),
+  inject(AddressRepositoryToken),
   inject(EventBusToken),
   inject(LoggerToken),
   inject(IdGeneratorToken),
@@ -1866,7 +1869,7 @@ class UserAccountService implements UserService {
     return this.users.findByEmail(email);
   }
 
-  async getUserProfile(userId: string): Promise<User | undefined> {
+  async userProfile(userId: string): Promise<User | undefined> {
     return this.users.findById(userId);
   }
 
@@ -2096,12 +2099,12 @@ class CheckoutOrchestrator implements CheckoutApplicationService {
     if (!this.abTestService) {
       return;
     }
-    const experimentVariant = await this.abTestService.getVariant(this.session.userId, "checkout_redesign_2024");
+    const experimentVariant = await this.abTestService.variant(this.session.userId, "checkout_redesign_2024");
     checkoutLog.info("a/b variant", { variant: experimentVariant.variant });
   }
 
   private async loadCartAndAddFeaturedItems(checkoutLog: Logger): Promise<Cart> {
-    let activeCart = await this.cartService.getOrCreateCart(this.session);
+    let activeCart = await this.cartService.findOrCreateCart(this.session);
     checkoutLog.info("cart loaded", { cartId: activeCart.id, itemCount: activeCart.items.length });
 
     const featuredProducts = await this.catalogService.listFeaturedProducts();
@@ -2121,8 +2124,8 @@ class CheckoutOrchestrator implements CheckoutApplicationService {
         discount: cartWithCoupon.discountAmount,
       });
       return cartWithCoupon;
-    } catch (err) {
-      checkoutLog.warn("coupon failed", { err });
+    } catch (error) {
+      checkoutLog.warn("coupon failed", { err: error });
       return cart;
     }
   }
@@ -2131,7 +2134,7 @@ class CheckoutOrchestrator implements CheckoutApplicationService {
     customer: User | undefined;
     shippingAddress: ShippingAddress;
   }> {
-    const customer = await this.userService.getUserProfile(this.session.userId);
+    const customer = await this.userService.userProfile(this.session.userId);
     const userAddresses = await this.userService.listUserAddresses(this.session.userId);
     return { customer, shippingAddress: userAddresses[0]! };
   }
@@ -2280,7 +2283,7 @@ class SegmentAnalyticsService implements AnalyticsService {
 }
 
 interface AbTestService {
-  getVariant(userId: string, experimentId: string): Promise<AbVariant>;
+  variant(userId: string, experimentId: string): Promise<AbVariant>;
   track(userId: string, experimentId: string, hasConverted: boolean): Promise<void>;
 }
 
@@ -2295,7 +2298,7 @@ class AbTestManager implements AbTestService {
     this.log = logger.child({ service: "AbTest" });
   }
 
-  async getVariant(userId: string, experimentId: string): Promise<AbVariant> {
+  async variant(userId: string, experimentId: string): Promise<AbVariant> {
     const key = `ab:${experimentId}:${userId}`;
     const cached = await this.redis.get(key);
     if (cached) {
@@ -2304,10 +2307,10 @@ class AbTestManager implements AbTestService {
     // Deterministic assignment based on userId hash
     const variants = ["control", "treatment_a", "treatment_b"] as const;
     const variant = variants[userId.charCodeAt(userId.length - 1) % 3]!;
-    const result: AbVariant = { experimentId, variant };
-    await this.redis.set(key, JSON.stringify(result), 86400 * 30);
+    const abVariant: AbVariant = { experimentId, variant };
+    await this.redis.set(key, JSON.stringify(abVariant), 86400 * 30);
     this.log.info("variant assigned", { userId, experimentId, variant });
-    return result;
+    return abVariant;
   }
 
   async track(userId: string, experimentId: string, hasConverted: boolean): Promise<void> {
@@ -2332,7 +2335,7 @@ const InfrastructureModule = Module.createAsync("Infrastructure", async (builder
     .bind(DatabaseToken)
     .to(MockDatabase)
     .singleton()
-    .onActivation(async (_ctx, database) => {
+    .onActivation(async (_context, database) => {
       await database.connect();
       return database;
     })
@@ -2345,7 +2348,7 @@ const InfrastructureModule = Module.createAsync("Infrastructure", async (builder
     .bind(RedisToken)
     .to(MockRedis)
     .singleton()
-    .onActivation(async (_ctx, redisClient) => {
+    .onActivation(async (_context, redisClient) => {
       await redisClient.connect();
       return redisClient;
     })
@@ -2363,8 +2366,8 @@ const InfrastructureModule = Module.createAsync("Infrastructure", async (builder
 // ── Catalog ──────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 const CatalogModule = Module.create("Catalog", (builder) => {
-  builder.bind(ProductRepoToken).to(ProductPostgresRepository).singleton();
-  builder.bind(CategoryRepoToken).to(CategoryPostgresRepository).singleton();
+  builder.bind(ProductRepositoryToken).to(ProductPostgresRepository).singleton();
+  builder.bind(CategoryRepositoryToken).to(CategoryPostgresRepository).singleton();
   builder.bind(InventoryServiceToken).to(InventoryManager).singleton();
   builder.bind(PricingServiceToken).to(PricingManager).singleton();
   // @postConstruct handles cache warm-up; @preDestroy handles flush
@@ -2376,7 +2379,7 @@ const CatalogModule = Module.create("Catalog", (builder) => {
 
 const CartModule = Module.create("Cart", (builder) => {
   builder.import(CatalogModule);
-  builder.bind(CartRepoToken).to(CartRedisRepository).singleton();
+  builder.bind(CartRepositoryToken).to(CartRedisRepository).singleton();
   builder.bind(CouponServiceToken).to(CouponManager).singleton();
   builder.bind(CartServiceToken).to(CartManager).singleton();
 });
@@ -2391,7 +2394,7 @@ const ShippingModule = Module.create("Shipping", (builder) => {
 
 const OrderModule = Module.create("Orders", (builder) => {
   builder.import(ShippingModule);
-  builder.bind(OrderRepoToken).to(OrderPostgresRepository).singleton();
+  builder.bind(OrderRepositoryToken).to(OrderPostgresRepository).singleton();
   builder.bind(FulfillmentServiceToken).to(ShippingFulfillmentService).singleton();
   builder.bind(OrderServiceToken).to(OrderManager).singleton();
 });
@@ -2408,8 +2411,8 @@ const PaymentModule = Module.create("Payments", (builder) => {
 // ── Users ────────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 const UserModule = Module.create("Users", (builder) => {
-  builder.bind(UserRepoToken).to(UserPostgresRepository).singleton();
-  builder.bind(AddressRepoToken).to(AddressPostgresRepository).singleton();
+  builder.bind(UserRepositoryToken).to(UserPostgresRepository).singleton();
+  builder.bind(AddressRepositoryToken).to(AddressPostgresRepository).singleton();
   builder.bind(LoyaltyServiceToken).to(LoyaltyManager).singleton();
   builder.bind(UserServiceToken).to(UserAccountService).singleton();
   // SessionToken is scoped — bound per-request in child container
@@ -2477,8 +2480,8 @@ async function bootstrap() {
 
   eventBus.subscribe<{ orderId: string; userId: string }>("order.created", async ({ orderId, userId }) => {
     const [order, user] = await Promise.all([
-      container.resolve(OrderServiceToken).getOrder(orderId),
-      userService.getUserProfile(userId),
+      container.resolve(OrderServiceToken).order(orderId),
+      userService.userProfile(userId),
     ]);
     if (order && user) {
       await notificationService.sendOrderConfirmationNotification(order, user);
@@ -2600,7 +2603,7 @@ async function loadAppConfig(): Promise<AppConfig> {
   await delay(5);
   return {
     env: "development",
-    dbUrl: "postgres://localhost:5432/ecommerce_dev",
+    databaseUrl: "postgres://localhost:5432/ecommerce_dev",
     redisUrl: "redis://localhost:6379",
     s3Bucket: "ecommerce-media-dev",
     esUrl: "http://localhost:9200",

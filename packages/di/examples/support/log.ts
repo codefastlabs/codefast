@@ -4,7 +4,7 @@
  * @remarks
  * The layers, from outermost to innermost: `banner` for an example's bootstrap
  * heading, `section` for a phase within it, `step` for an action under a phase,
- * then the leaf lines — `item`, `detail`, `ok`, `fail`, and `caughtError`.
+ * then the leaf lines — `item`, `ok`, `fail`, and `caughtError`.
  */
 
 // ── Console: tiered output ───────────────────────────────────────────────────────────────────────────────────────────
@@ -18,7 +18,12 @@ function format(value: unknown): string {
   }
 
   if (typeof value === "object" && value !== null) {
-    return JSON.stringify(value);
+    try {
+      return JSON.stringify(value);
+    } catch {
+      // Circular graphs and BigInt fields make JSON.stringify throw; fall back to a safe tag.
+      return Object.prototype.toString.call(value);
+    }
   }
 
   return String(value);
@@ -43,11 +48,6 @@ export function step(message: string): void {
 /** Prints an indented label and its value. */
 export function item(label: string, value: unknown): void {
   console.log(`  ${label}: ${format(value)}`);
-}
-
-/** Prints an indented free-form detail line. */
-export function detail(message: string): void {
-  console.log(`    ${message}`);
 }
 
 /** Prints an indented success marker. */

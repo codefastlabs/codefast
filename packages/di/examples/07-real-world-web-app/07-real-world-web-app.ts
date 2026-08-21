@@ -17,7 +17,7 @@ import { Container, inject, injectable, Module, toDotGraph, token } from "@codef
 
 interface AppConfig {
   env: "development" | "production";
-  dbUrl: string;
+  databaseUrl: string;
   jwtSecret: string;
 }
 
@@ -62,13 +62,13 @@ class Database {
     console.log(`[DB] disconnected`);
   }
 
-  async query<T>(sql: string, params?: Array<unknown>): Promise<Array<T>> {
+  async query<Row>(sql: string, parameters?: Array<unknown>): Promise<Array<Row>> {
     if (!this.connected) {
       throw new Error("Database not connected");
     }
     await tick();
-    console.log(`  [DB] ${sql}${params?.length ? ` (${params.length} params)` : ""}`);
-    return [] as Array<T>;
+    console.log(`  [DB] ${sql}${parameters?.length ? ` (${parameters.length} params)` : ""}`);
+    return [] as Array<Row>;
   }
 }
 
@@ -122,17 +122,17 @@ class AuthManager implements AuthService {
 
 interface Middleware {
   name: string;
-  process(req: HttpRequest, next: () => Promise<HttpResponse>): Promise<HttpResponse>;
+  process(request: HttpRequest, next: () => Promise<HttpResponse>): Promise<HttpResponse>;
 }
 
 class LoggingMiddleware implements Middleware {
   name = "logging";
 
-  async process(req: HttpRequest, next: () => Promise<HttpResponse>): Promise<HttpResponse> {
+  async process(request: HttpRequest, next: () => Promise<HttpResponse>): Promise<HttpResponse> {
     const start = Date.now();
-    console.log(`→ ${req.method} ${req.path} [${req.requestId}]`);
+    console.log(`→ ${request.method} ${request.path} [${request.requestId}]`);
     const response = await next();
-    console.log(`← ${response.status} (${Date.now() - start}ms) [${req.requestId}]`);
+    console.log(`← ${response.status} (${Date.now() - start}ms) [${request.requestId}]`);
     return response;
   }
 }
@@ -143,8 +143,8 @@ class AuthMiddleware implements Middleware {
 
   constructor(private readonly authService: AuthService) {}
 
-  async process(req: HttpRequest, next: () => Promise<HttpResponse>): Promise<HttpResponse> {
-    const authHeader = req.headers["authorization"];
+  async process(request: HttpRequest, next: () => Promise<HttpResponse>): Promise<HttpResponse> {
+    const authHeader = request.headers["authorization"];
 
     if (!authHeader) {
       return { status: 401, body: { error: "Unauthorized" } };
@@ -172,7 +172,7 @@ class UserController {
     private readonly authService: AuthService,
   ) {}
 
-  async getProfile(): Promise<HttpResponse> {
+  async profile(): Promise<HttpResponse> {
     const token = this.httpRequest.headers["authorization"] ?? "";
     const user = await this.authService.authenticate(token);
 
@@ -196,12 +196,12 @@ const InfrastructureModule = Module.createAsync("Infra", async (builder) => {
 
   builder
     .bind(DatabaseToken)
-    .toDynamicAsync(async (ctx) => {
-      const appConfig = ctx.resolve(ConfigToken);
-      return new Database(appConfig.dbUrl);
+    .toDynamicAsync(async (context) => {
+      const appConfig = context.resolve(ConfigToken);
+      return new Database(appConfig.databaseUrl);
     })
     .singleton()
-    .onActivation(async (_ctx, database) => {
+    .onActivation(async (_context, database) => {
       await database.connect();
       return database;
     })
@@ -253,11 +253,11 @@ async function createServer() {
   container.validate();
   console.log("[Server] container validated, ready to serve\n");
 
-  async function handleRequest(req: HttpRequest): Promise<HttpResponse> {
+  async function handleRequest(request: HttpRequest): Promise<HttpResponse> {
     // Each request gets its own scoped child container
     const requestContainer = container.createChild();
 
-    requestContainer.bind(RequestContextToken).toConstantValue(req);
+    requestContainer.bind(RequestContextToken).toConstantValue(request);
 
     // Collect middleware pipeline
     const middlewarePipeline = requestContainer.resolveAll(MiddlewareToken);
@@ -268,10 +268,10 @@ async function createServer() {
         if (index >= middlewarePipeline.length) {
           // Reached end of middleware: resolve and call controller
           const controller = requestContainer.resolve(UserControllerToken);
-          return controller.getProfile();
+          return controller.profile();
         }
 
-        return middlewarePipeline[index]!.process(req, dispatch(index + 1));
+        return middlewarePipeline[index]!.process(request, dispatch(index + 1));
       };
     };
 
@@ -322,7 +322,7 @@ function tick(): Promise<void> {
 
 async function loadConfig(): Promise<AppConfig> {
   await tick();
-  return { env: "development", dbUrl: "postgres://localhost/app", jwtSecret: "dev-secret" };
+  return { env: "development", databaseUrl: "postgres://localhost/app", jwtSecret: "dev-secret" };
 }
 
 main().catch(console.error);

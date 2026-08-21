@@ -23,7 +23,7 @@ const AppToken = token<App>("App");
 // ── Domain ───────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 interface Config {
-  dbUrl: string;
+  databaseUrl: string;
   cacheUrl: string;
 }
 
@@ -104,13 +104,13 @@ const DatabaseModule = Module.create("Database", (builder) => {
   // toDynamicAsync: async factory with access to ResolutionContext
   builder
     .bind(DatabaseToken)
-    .toDynamicAsync(async (ctx) => {
-      const config = ctx.resolve(ConfigToken);
-      return new Database(config.dbUrl);
+    .toDynamicAsync(async (context) => {
+      const config = context.resolve(ConfigToken);
+      return new Database(config.databaseUrl);
     })
     .singleton()
     // onActivation: called after instance is created; can be async
-    .onActivation(async (_ctx, database) => {
+    .onActivation(async (_context, database) => {
       await database.connect();
       return database; // must return the (possibly transformed) instance
     })
@@ -123,12 +123,12 @@ const DatabaseModule = Module.create("Database", (builder) => {
 const CacheModule = Module.create("Cache", (builder) => {
   builder
     .bind(CacheToken)
-    .toDynamicAsync(async (ctx) => {
-      const config = ctx.resolve(ConfigToken);
+    .toDynamicAsync(async (context) => {
+      const config = context.resolve(ConfigToken);
       return new Cache(config.cacheUrl);
     })
     .singleton()
-    .onActivation(async (_ctx, cache) => {
+    .onActivation(async (_context, cache) => {
       await cache.start();
       return cache;
     })
@@ -179,7 +179,7 @@ function delay(ms: number): Promise<void> {
 
 async function fetchConfig(): Promise<Config> {
   await delay(5); // simulate remote fetch
-  return { dbUrl: "postgres://localhost/prod", cacheUrl: "redis://localhost:6379" };
+  return { databaseUrl: "postgres://localhost/prod", cacheUrl: "redis://localhost:6379" };
 }
 
 main().catch(console.error);

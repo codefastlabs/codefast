@@ -27,8 +27,8 @@
  *   └── AppLoggerToken      → base logger
  *
  *   tenantContainer (child, one per request)
- *   ├── TenantContextToken  → `{ tenantId, plan, dbSchema }`
- *   ├── TenantDbToken       → TenantDatabase (wraps pool, namespaced to schema)
+ *   ├── TenantContextToken  → `{ tenantId, plan, databaseSchema }`
+ *   ├── TenantDatabaseToken       → TenantDatabase (wraps pool, namespaced to schema)
  *   ├── TenantCacheToken    → TenantCache (key-prefixed Redis stub)
  *   ├── TenantLoggerToken   → logger with tenantId in every line
  *   ├── FeatureFlagsToken   → plan-gated feature set
@@ -49,28 +49,28 @@ type TenantPlan = "free" | "pro" | "enterprise";
 interface TenantContext {
   readonly tenantId: string;
   readonly plan: TenantPlan;
-  readonly dbSchema: string;
+  readonly databaseSchema: string;
 }
 
 interface DatabasePool {
-  query<T>(schema: string, sql: string, params?: Array<unknown>): Promise<Array<T>>;
+  query<Row>(schema: string, sql: string, parameters?: Array<unknown>): Promise<Array<Row>>;
   stats(): { activeConnections: number; idleConnections: number };
 }
 
 interface TenantDatabase {
-  query<T>(sql: string, params?: Array<unknown>): Promise<Array<T>>;
+  query<Row>(sql: string, parameters?: Array<unknown>): Promise<Array<Row>>;
 }
 
 interface TenantCache {
-  get<T>(key: string): Promise<T | undefined>;
-  set<T>(key: string, value: T, ttlSeconds?: number): Promise<void>;
+  get<Value>(key: string): Promise<Value | undefined>;
+  set<Value>(key: string, value: Value, ttlSeconds?: number): Promise<void>;
   invalidate(pattern: string): Promise<void>;
 }
 
 interface TenantLogger {
-  info(msg: string, meta?: Record<string, unknown>): void;
-  warn(msg: string, meta?: Record<string, unknown>): void;
-  error(msg: string, meta?: Record<string, unknown>): void;
+  info(message: string, metadata?: Record<string, unknown>): void;
+  warn(message: string, metadata?: Record<string, unknown>): void;
+  error(message: string, metadata?: Record<string, unknown>): void;
 }
 
 interface FeatureFlags {
@@ -105,20 +105,20 @@ const AppConfigToken = token<AppConfig>("AppConfig");
 const AppLoggerToken = token<AppLogger>("AppLogger");
 
 interface AppConfig {
-  defaultDbUrl: string;
+  defaultDatabaseUrl: string;
   redisUrl: string;
   maxConnectionsPerTenant: number;
 }
 
 interface AppLogger {
-  info(msg: string): void;
-  error(msg: string): void;
+  info(message: string): void;
+  error(message: string): void;
 }
 
 // ── Tenant-scoped tokens (isolated per child container) ──────────────────────────────────────────────────────────────
 
 const TenantContextToken = token<TenantContext>("TenantContext");
-const TenantDbToken = token<TenantDatabase>("TenantDatabase");
+const TenantDatabaseToken = token<TenantDatabase>("TenantDatabase");
 const TenantCacheToken = token<TenantCache>("TenantCache");
 const TenantLoggerToken = token<TenantLogger>("TenantLogger");
 const FeatureFlagsToken = token<FeatureFlags>("FeatureFlags");
@@ -138,12 +138,12 @@ class PostgresConnectionPool implements DatabasePool {
     console.log(`    [Pool] initialised (max ${maxConnections} connections) → ${connectionString}`);
   }
 
-  async query<T>(schema: string, sql: string, params?: Array<unknown>): Promise<Array<T>> {
+  async query<Row>(schema: string, sql: string, parameters?: Array<unknown>): Promise<Array<Row>> {
     this.totalQueriesExecuted++;
     await delay(5);
     // Stub: return empty result with a log entry
-    console.log(`    [Pool] schema=${schema} sql="${sql}" params=${JSON.stringify(params ?? [])}`);
-    return [] as Array<T>;
+    console.log(`    [Pool] schema=${schema} sql="${sql}" params=${JSON.stringify(parameters ?? [])}`);
+    return [] as Array<Row>;
   }
 
   stats(): { activeConnections: number; idleConnections: number } {
@@ -165,9 +165,9 @@ class TenantDatabaseConnection implements TenantDatabase {
     private readonly tenantLogger: TenantLogger,
   ) {}
 
-  async query<T>(sql: string, params?: Array<unknown>): Promise<Array<T>> {
-    this.tenantLogger.info(`db.query`, { sql, params });
-    return this.pool.query<T>(this.schema, sql, params);
+  async query<Row>(sql: string, parameters?: Array<unknown>): Promise<Array<Row>> {
+    this.tenantLogger.info(`db.query`, { sql, params: parameters });
+    return this.pool.query<Row>(this.schema, sql, parameters);
   }
 }
 
@@ -183,16 +183,16 @@ class NamespacedRedisCache implements TenantCache {
     return `${this.keyPrefix}:${key}`;
   }
 
-  async get<T>(key: string): Promise<T | undefined> {
+  async get<Value>(key: string): Promise<Value | undefined> {
     const entry = this.store.get(this.fullKey(key));
     if (!entry || Date.now() > entry.expiresAt) {
       return undefined;
     }
     this.tenantLogger.info(`cache.hit`, { key });
-    return entry.value as T;
+    return entry.value as Value;
   }
 
-  async set<T>(key: string, value: T, ttlSeconds = 300): Promise<void> {
+  async set<Value>(key: string, value: Value, ttlSeconds = 300): Promise<void> {
     this.store.set(this.fullKey(key), { value, expiresAt: Date.now() + ttlSeconds * 1000 });
     this.tenantLogger.info(`cache.set`, { key, ttlSeconds });
   }
@@ -275,7 +275,7 @@ class PlanRateLimiter implements RateLimiter {
 // ============================================================================
 
 @injectable([
-  inject(TenantDbToken),
+  inject(TenantDatabaseToken),
   inject(TenantCacheToken),
   inject(TenantLoggerToken),
   inject(FeatureFlagsToken),
@@ -327,7 +327,7 @@ class TenantUserManager implements UserService {
 }
 
 @injectable([
-  inject(TenantDbToken),
+  inject(TenantDatabaseToken),
   inject(TenantLoggerToken),
   inject(FeatureFlagsToken),
   inject(RateLimiterToken),
@@ -367,21 +367,21 @@ class TenantInviteManager implements InviteService {
 
 const InfrastructureModule = Module.createAsync("Infra", async (builder) => {
   builder.bind(AppConfigToken).toConstantValue({
-    defaultDbUrl: "postgres://localhost:5432/saas",
+    defaultDatabaseUrl: "postgres://localhost:5432/saas",
     redisUrl: "redis://localhost:6379",
     maxConnectionsPerTenant: 10,
   });
 
   builder.bind(AppLoggerToken).toConstantValue({
-    info: (msg) => console.log(`  [APP]   ${msg}`),
-    error: (msg) => console.error(`  [APP]   ${msg}`),
+    info: (message) => console.log(`  [APP]   ${message}`),
+    error: (message) => console.error(`  [APP]   ${message}`),
   });
 
   builder
     .bind(DatabasePoolToken)
-    .toDynamicAsync(async (ctx) => {
-      const config = ctx.resolve(AppConfigToken);
-      return new PostgresConnectionPool(config.defaultDbUrl, config.maxConnectionsPerTenant);
+    .toDynamicAsync(async (context) => {
+      const config = context.resolve(AppConfigToken);
+      return new PostgresConnectionPool(config.defaultDatabaseUrl, config.maxConnectionsPerTenant);
     })
     .singleton()
     .onDeactivation(async (pool) => {
@@ -412,13 +412,16 @@ function createTenantContainer(
   // Tenant-scoped logger — enriches every log line with tenantId + plan
   tenantContainer
     .bind(TenantLoggerToken)
-    .toDynamic((ctx) => {
-      const { tenantId, plan } = ctx.resolve(TenantContextToken);
+    .toDynamic((context) => {
+      const { tenantId, plan } = context.resolve(TenantContextToken);
       const prefix = `[${tenantId}/${plan}]`;
       return {
-        info: (msg, meta) => console.log(`  ${prefix} INFO  ${msg}`, meta ? JSON.stringify(meta) : ""),
-        warn: (msg, meta) => console.log(`  ${prefix} WARN  ${msg}`, meta ? JSON.stringify(meta) : ""),
-        error: (msg, meta) => console.error(`  ${prefix} ERROR ${msg}`, meta ? JSON.stringify(meta) : ""),
+        info: (message, metadata) =>
+          console.log(`  ${prefix} INFO  ${message}`, metadata ? JSON.stringify(metadata) : ""),
+        warn: (message, metadata) =>
+          console.log(`  ${prefix} WARN  ${message}`, metadata ? JSON.stringify(metadata) : ""),
+        error: (message, metadata) =>
+          console.error(`  ${prefix} ERROR ${message}`, metadata ? JSON.stringify(metadata) : ""),
       };
     })
     .scoped();
@@ -426,20 +429,20 @@ function createTenantContainer(
   // Tenant database connection — wraps the shared pool with tenant's schema.
   // sharedDatabasePool is captured in the closure — no async resolution needed.
   tenantContainer
-    .bind(TenantDbToken)
-    .toDynamic((ctx) => {
-      const { dbSchema } = ctx.resolve(TenantContextToken);
-      const tenantLogger = ctx.resolve(TenantLoggerToken);
-      return new TenantDatabaseConnection(sharedDatabasePool, dbSchema, tenantLogger);
+    .bind(TenantDatabaseToken)
+    .toDynamic((context) => {
+      const { databaseSchema } = context.resolve(TenantContextToken);
+      const tenantLogger = context.resolve(TenantLoggerToken);
+      return new TenantDatabaseConnection(sharedDatabasePool, databaseSchema, tenantLogger);
     })
     .scoped();
 
   // Namespaced cache — each tenant's keys are prefixed with tenantId
   tenantContainer
     .bind(TenantCacheToken)
-    .toDynamic((ctx) => {
-      const { tenantId } = ctx.resolve(TenantContextToken);
-      const tenantLogger = ctx.resolve(TenantLoggerToken);
+    .toDynamic((context) => {
+      const { tenantId } = context.resolve(TenantContextToken);
+      const tenantLogger = context.resolve(TenantLoggerToken);
       return new NamespacedRedisCache(`tenant:${tenantId}`, tenantLogger);
     })
     .scoped();
@@ -447,8 +450,8 @@ function createTenantContainer(
   // Feature flags — gated by plan
   tenantContainer
     .bind(FeatureFlagsToken)
-    .toDynamic((ctx) => {
-      const { plan } = ctx.resolve(TenantContextToken);
+    .toDynamic((context) => {
+      const { plan } = context.resolve(TenantContextToken);
       return new PlanFeatureFlags(plan);
     })
     .scoped();
@@ -456,9 +459,9 @@ function createTenantContainer(
   // Rate limiter — quota per plan
   tenantContainer
     .bind(RateLimiterToken)
-    .toDynamic((ctx) => {
-      const { plan } = ctx.resolve(TenantContextToken);
-      const tenantLogger = ctx.resolve(TenantLoggerToken);
+    .toDynamic((context) => {
+      const { plan } = context.resolve(TenantContextToken);
+      const tenantLogger = context.resolve(TenantLoggerToken);
       return new PlanRateLimiter(plan, tenantLogger);
     })
     .scoped();
@@ -490,7 +493,7 @@ async function main(): Promise<void> {
     {
       tenantId: "tenant_acme",
       plan: "free",
-      dbSchema: "acme",
+      databaseSchema: "acme",
     },
     sharedDatabasePool,
   );
@@ -502,8 +505,8 @@ async function main(): Promise<void> {
   const tenantAInviteService = tenantAContainer.resolve(InviteServiceToken);
   try {
     await tenantAInviteService.sendInvite("bob@external.com");
-  } catch (err) {
-    caughtError("Expected error", err);
+  } catch (error) {
+    caughtError("Expected error", error);
   }
 
   // ── Tenant B: pro plan ─────────────────────────────────────────────────────────────────────────────────────────────
@@ -513,7 +516,7 @@ async function main(): Promise<void> {
     {
       tenantId: "tenant_globex",
       plan: "pro",
-      dbSchema: "globex",
+      databaseSchema: "globex",
     },
     sharedDatabasePool,
   );
@@ -532,7 +535,7 @@ async function main(): Promise<void> {
     {
       tenantId: "tenant_umbrella",
       plan: "enterprise",
-      dbSchema: "umbrella",
+      databaseSchema: "umbrella",
     },
     sharedDatabasePool,
   );

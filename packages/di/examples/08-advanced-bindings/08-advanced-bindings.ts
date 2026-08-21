@@ -2,7 +2,7 @@
  * Example 08 — Advanced Bindings
  *
  * Covers the binding strategies and management patterns missing from earlier examples:
- * - toResolved: typed deps array, no ctx object needed
+ * - toResolved: typed deps array, no context object needed
  * - toAlias: redirect one token to another
  * - BindingIdentifier + .id(): targeted unbind in multi-binding
  * - rebind(): replace a binding atomically
@@ -25,7 +25,7 @@ const PluginToken = token<Plugin>("Plugin");
 // ── Types ────────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 interface Logger {
-  log(msg: string): void;
+  log(message: string): void;
 }
 
 interface Config {
@@ -38,7 +38,7 @@ interface Mailer {
 }
 
 interface Notifier {
-  notify(msg: string): void;
+  notify(message: string): void;
 }
 
 interface Plugin {
@@ -49,14 +49,14 @@ interface Plugin {
 // ── Implementations ──────────────────────────────────────────────────────────────────────────────────────────────────
 
 class ConsoleLogger implements Logger {
-  log(msg: string): void {
-    console.log(`[console] ${msg}`);
+  log(message: string): void {
+    console.log(`[console] ${message}`);
   }
 }
 
 class FileLogger implements Logger {
-  log(msg: string): void {
-    console.log(`[file] ${msg}`);
+  log(message: string): void {
+    console.log(`[file] ${message}`);
   }
 }
 
@@ -72,7 +72,7 @@ class SmtpMailer implements Mailer {
 }
 
 // ============================================================================
-// 1. toResolved — typed deps array, no ctx object
+// 1. toResolved — typed deps array, no context object
 //
 //    Use when deps are simple tokens; cleaner than toDynamic for this case.
 //    TypeScript infers factory param types from the deps array automatically.
@@ -83,7 +83,7 @@ const container = Container.create();
 container.bind(LoggerToken).toConstantValue(new ConsoleLogger());
 container.bind(ConfigToken).toConstantValue({ smtpHost: "smtp.example.com", env: "development" });
 
-// toResolved: factory + deps array — no ctx, no manual resolve()
+// toResolved: factory + deps array — no context, no manual resolve()
 container.bind(MailerToken).toResolved(
   (logger, config) => new SmtpMailer(logger, config),
   // `as const` tells TypeScript to treat the array as a tuple so it can
@@ -122,8 +122,8 @@ class PlainNotifier implements Notifier {
     private readonly config: Config,
   ) {}
 
-  notify(msg: string): void {
-    this.logger.log(`[${this.config.env}] ${msg}`);
+  notify(message: string): void {
+    this.logger.log(`[${this.config.env}] ${message}`);
   }
 }
 

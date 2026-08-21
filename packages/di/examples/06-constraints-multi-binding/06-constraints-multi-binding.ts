@@ -30,7 +30,7 @@ const PaymentServiceToken = token<PaymentService>("PaymentService");
 
 interface Logger {
   source: string;
-  log(msg: string): void;
+  log(message: string): void;
 }
 
 interface Storage {
@@ -57,12 +57,12 @@ interface PaymentService {
 
 const consoleLogger: Logger = {
   source: "console",
-  log: (msg) => console.log(`[console] ${msg}`),
+  log: (message) => console.log(`[console] ${message}`),
 };
 
 const fileLogger: Logger = {
   source: "file",
-  log: (msg) => console.log(`[file] writing: ${msg}`),
+  log: (message) => console.log(`[file] writing: ${message}`),
 };
 
 const silentLogger: Logger = {

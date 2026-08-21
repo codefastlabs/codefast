@@ -89,7 +89,7 @@ interface Job {
 // ── Infrastructure: DatabasePool ─────────────────────────────────────────────────────────────────────────────────────
 
 interface DatabasePool {
-  query<T>(sql: string, params?: Array<unknown>): Promise<Array<T>>;
+  query<Row>(sql: string, parameters?: Array<unknown>): Promise<Array<Row>>;
   healthCheck(): Promise<HealthCheckResult>;
   close(): Promise<void>;
 }
@@ -113,15 +113,15 @@ class PostgresDatabasePool implements DatabasePool {
     return pool;
   }
 
-  async query<T>(sql: string, params?: Array<unknown>): Promise<Array<T>> {
+  async query<Row>(sql: string, parameters?: Array<unknown>): Promise<Array<Row>> {
     if (!this.connected) {
       throw new Error("Database pool is closed");
     }
     this.queryCount++;
     await delay(5);
-    const paramInfo = params?.length ? ` [$${params.join(", $")}]` : "";
-    console.log(`    [DB] query #${this.queryCount}: ${sql.slice(0, 60)}${paramInfo}`);
-    return [] as Array<T>;
+    const parameterInfo = parameters?.length ? ` [$${parameters.join(", $")}]` : "";
+    console.log(`    [DB] query #${this.queryCount}: ${sql.slice(0, 60)}${parameterInfo}`);
+    return [] as Array<Row>;
   }
 
   async healthCheck(): Promise<HealthCheckResult> {
@@ -205,7 +205,7 @@ class StubRedisClient implements RedisClient {
 
 interface JobQueue {
   enqueue(type: string, payload: unknown): Promise<Job>;
-  getJob(id: string): Promise<Job | undefined>;
+  job(id: string): Promise<Job | undefined>;
   size(): number;
 }
 
@@ -239,7 +239,7 @@ class InMemoryJobQueue implements JobQueue {
     return job;
   }
 
-  async getJob(id: string): Promise<Job | undefined> {
+  async job(id: string): Promise<Job | undefined> {
     return this.jobs.get(id);
   }
 
@@ -292,10 +292,10 @@ class PollingJobWorker implements JobWorker {
       this.queue.updateJob(job.id, { status: "completed", completedAt: new Date() });
       this.processed++;
       console.log(`    [Worker] completed job ${job.id} (type: ${job.type})`);
-    } catch (err) {
+    } catch (error) {
       this.queue.updateJob(job.id, {
         status: "failed",
-        error: err instanceof Error ? err.message : "unknown",
+        error: error instanceof Error ? error.message : "unknown",
       });
     }
   }
@@ -362,7 +362,7 @@ class ServiceHealthRegistry implements HealthRegistry {
 // ── Infrastructure: HttpServer (simplified) ──────────────────────────────────────────────────────────────────────────
 
 interface HttpServer {
-  addRoute(method: string, path: string, handler: (req: MockRequest) => Promise<MockResponse>): void;
+  addRoute(method: string, path: string, handler: (request: MockRequest) => Promise<MockResponse>): void;
   handle(method: string, path: string, body?: unknown): Promise<MockResponse>;
   start(): void;
   stop(): Promise<void>;
@@ -372,7 +372,7 @@ interface MockRequest {
   method: string;
   path: string;
   body?: unknown;
-  params: Record<string, string>;
+  parameters: Record<string, string>;
 }
 
 interface MockResponse {
@@ -381,10 +381,10 @@ interface MockResponse {
 }
 
 class MockHttpServer implements HttpServer {
-  private readonly routes = new Map<string, (req: MockRequest) => Promise<MockResponse>>();
+  private readonly routes = new Map<string, (request: MockRequest) => Promise<MockResponse>>();
   private running = false;
 
-  addRoute(method: string, path: string, handler: (req: MockRequest) => Promise<MockResponse>): void {
+  addRoute(method: string, path: string, handler: (request: MockRequest) => Promise<MockResponse>): void {
     this.routes.set(`${method} ${path}`, handler);
   }
 
@@ -392,7 +392,7 @@ class MockHttpServer implements HttpServer {
     // exact match first, then parameterised match
     const exactHandler = this.routes.get(`${method} ${path}`);
     if (exactHandler) {
-      return exactHandler({ method, path, body, params: {} });
+      return exactHandler({ method, path, body, parameters: {} });
     }
 
     for (const [routeKey, routeHandler] of this.routes) {
@@ -403,9 +403,9 @@ class MockHttpServer implements HttpServer {
       if (routeMethod !== method) {
         continue;
       }
-      const params = matchRoute(routePath, path);
-      if (params) {
-        return routeHandler({ method, path, body, params });
+      const parameters = matchRoute(routePath, path);
+      if (parameters) {
+        return routeHandler({ method, path, body, parameters });
       }
     }
 
@@ -430,17 +430,17 @@ function matchRoute(pattern: string, path: string): Record<string, string> | nul
   if (patternParts.length !== pathParts.length) {
     return null;
   }
-  const params: Record<string, string> = {};
+  const parameters: Record<string, string> = {};
   for (let i = 0; i < patternParts.length; i++) {
     const patternPart = patternParts[i] ?? "";
     const pathPart = pathParts[i] ?? "";
     if (patternPart.startsWith(":")) {
-      params[patternPart.slice(1)] = pathPart;
+      parameters[patternPart.slice(1)] = pathPart;
     } else if (patternPart !== pathPart) {
       return null;
     }
   }
-  return params;
+  return parameters;
 }
 
 // ── Metrics collector ────────────────────────────────────────────────────────────────────────────────────────────────
@@ -495,7 +495,7 @@ class JobQueueBackedRepository implements JobRepository {
   async findById(id: string): Promise<Job | undefined> {
     // Queue is the live source of truth — worker updates happen here in real time.
     // Redis holds only the initial snapshot; checking it first would return stale status.
-    const liveJob = await this.queue.getJob(id);
+    const liveJob = await this.queue.job(id);
     if (liveJob) {
       return liveJob;
     }
@@ -510,8 +510,8 @@ class JobQueueBackedRepository implements JobRepository {
 
 interface JobService {
   enqueueEmailJob(to: string, subject: string, body: string): Promise<Job>;
-  enqueueReportJob(reportType: string, params: Record<string, unknown>): Promise<Job>;
-  getJobStatus(id: string): Promise<Job | undefined>;
+  enqueueReportJob(reportType: string, parameters: Record<string, unknown>): Promise<Job>;
+  jobStatus(id: string): Promise<Job | undefined>;
 }
 
 @injectable([inject(JobRepositoryToken), inject(MetricsCollectorToken), inject(DatabasePoolToken)])
@@ -536,14 +536,14 @@ class JobManager implements JobService {
     return job;
   }
 
-  async enqueueReportJob(reportType: string, params: Record<string, unknown>): Promise<Job> {
-    const job = await this.repository.create("generate_report", { reportType, params });
+  async enqueueReportJob(reportType: string, parameters: Record<string, unknown>): Promise<Job> {
+    const job = await this.repository.create("generate_report", { reportType, params: parameters });
     this.metrics.increment("jobs.enqueued", { type: "generate_report" });
     console.log(`    [JobService] enqueued report job ${job.id} (${reportType})`);
     return job;
   }
 
-  async getJobStatus(id: string): Promise<Job | undefined> {
+  async jobStatus(id: string): Promise<Job | undefined> {
     return this.repository.findById(id);
   }
 }
@@ -567,8 +567,8 @@ const DatabaseModule = Module.createAsync("Database", async (builder) => {
 
   builder
     .bind(DatabasePoolToken)
-    .toDynamicAsync(async (ctx) => {
-      const config = ctx.resolve(ServiceConfigToken);
+    .toDynamicAsync(async (context) => {
+      const config = context.resolve(ServiceConfigToken);
       console.log("    [DB] connecting...");
       const pool = await PostgresDatabasePool.connect(config.databaseUrl, 20);
       console.log("    [DB] connected ✓");
@@ -585,8 +585,8 @@ const RedisModule = Module.createAsync("Redis", async (builder) => {
 
   builder
     .bind(RedisClientToken)
-    .toDynamicAsync(async (ctx) => {
-      const config = ctx.resolve(ServiceConfigToken);
+    .toDynamicAsync(async (context) => {
+      const config = context.resolve(ServiceConfigToken);
       console.log("    [Redis] connecting...");
       const client = await StubRedisClient.connect(config.redisUrl);
       console.log("    [Redis] connected ✓");
@@ -608,13 +608,13 @@ const WorkerModule = Module.createAsync("Worker", async (builder) => {
 
   builder
     .bind(JobWorkerToken)
-    .toDynamic((ctx) => {
-      const config = ctx.resolve(ServiceConfigToken);
-      const queue = ctx.resolve(JobQueueToken) as InMemoryJobQueue;
+    .toDynamic((context) => {
+      const config = context.resolve(ServiceConfigToken);
+      const queue = context.resolve(JobQueueToken) as InMemoryJobQueue;
       return new PollingJobWorker(queue, config.workerConcurrency);
     })
     .singleton()
-    .onActivation((_ctx, worker) => {
+    .onActivation((_context, worker) => {
       worker.start();
       return worker;
     })
@@ -638,19 +638,19 @@ const HealthModule = Module.createAsync("Health", async (builder) => {
   // and resolveAsync so the sync resolver is never called on async bindings.
   builder
     .bind(HealthRegistryToken)
-    .toDynamicAsync(async (ctx) => {
-      const config = ctx.resolve(ServiceConfigToken);
+    .toDynamicAsync(async (context) => {
+      const config = context.resolve(ServiceConfigToken);
       const registry = new ServiceHealthRegistry(config);
 
       // Resolve async infrastructure deps via resolveAsync
-      const databasePool = await ctx.resolveAsync(DatabasePoolToken);
-      const redisClient = await ctx.resolveAsync(RedisClientToken);
+      const databasePool = await context.resolveAsync(DatabasePoolToken);
+      const redisClient = await context.resolveAsync(RedisClientToken);
 
       registry.register("database", () => databasePool.healthCheck());
       registry.register("redis", () => redisClient.healthCheck());
       registry.register("worker", async () => {
-        const worker = ctx.resolve(JobWorkerToken);
-        const queue = ctx.resolve(JobQueueToken);
+        const worker = context.resolve(JobWorkerToken);
+        const queue = context.resolve(JobQueueToken);
         return {
           status: "healthy",
           latencyMs: 0,
@@ -671,9 +671,9 @@ const HttpModule = Module.createAsync("Http", async (builder) => {
   // and resolve its async deps via resolveAsync before wiring routes.
   builder
     .bind(HttpServerToken)
-    .toDynamicAsync(async (ctx) => {
-      const healthRegistry = await ctx.resolveAsync(HealthRegistryToken);
-      const jobService = await ctx.resolveAsync(JobServiceToken);
+    .toDynamicAsync(async (context) => {
+      const healthRegistry = await context.resolveAsync(HealthRegistryToken);
+      const jobService = await context.resolveAsync(JobServiceToken);
       const server = new MockHttpServer();
 
       // GET /health
@@ -686,8 +686,8 @@ const HttpModule = Module.createAsync("Http", async (builder) => {
       });
 
       // POST /jobs
-      server.addRoute("POST", "/jobs", async (req) => {
-        const { type, payload } = req.body as { type: string; payload: Record<string, unknown> };
+      server.addRoute("POST", "/jobs", async (request) => {
+        const { type, payload } = request.body as { type: string; payload: Record<string, unknown> };
         let job: Job;
         if (type === "send_email") {
           const emailPayload = payload as { to: string; subject: string; body: string };
@@ -699,9 +699,9 @@ const HttpModule = Module.createAsync("Http", async (builder) => {
       });
 
       // GET /jobs/:id
-      server.addRoute("GET", "/jobs/:id", async (req) => {
-        const jobId = req.params["id"] ?? "";
-        const jobRecord = await jobService.getJobStatus(jobId);
+      server.addRoute("GET", "/jobs/:id", async (request) => {
+        const jobId = request.parameters["id"] ?? "";
+        const jobRecord = await jobService.jobStatus(jobId);
         if (!jobRecord) {
           return { status: 404, body: { error: "Job not found" } };
         }
@@ -711,7 +711,7 @@ const HttpModule = Module.createAsync("Http", async (builder) => {
       return server;
     })
     .singleton()
-    .onActivation((_ctx, server) => {
+    .onActivation((_context, server) => {
       server.start();
       return server;
     })

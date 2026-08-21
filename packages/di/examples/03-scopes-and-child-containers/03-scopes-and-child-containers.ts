@@ -12,7 +12,7 @@ import { item, section } from "#/examples/support/log";
 
 // ── Tokens ───────────────────────────────────────────────────────────────────────────────────────────────────────────
 
-const AppDbToken = token<AppDatabase>("AppDatabase");
+const AppDatabaseToken = token<AppDatabase>("AppDatabase");
 const RequestContextToken = token<RequestContext>("RequestContext");
 const RequestLoggerToken = token<RequestLogger>("RequestLogger");
 const HandlerToken = token<RequestHandler>("RequestHandler");
@@ -47,8 +47,8 @@ class RequestLogger {
     console.log(`[RequestLogger] created for request ${requestContext.requestId}`);
   }
 
-  log(msg: string): void {
-    console.log(`[${this.requestContext.requestId}/${this.requestContext.userId}] ${msg}`);
+  log(message: string): void {
+    console.log(`[${this.requestContext.requestId}/${this.requestContext.userId}] ${message}`);
   }
 }
 
@@ -74,7 +74,7 @@ class RequestHandler {
 
 const rootContainer = Container.create();
 
-rootContainer.bind(AppDbToken).to(AppDatabase).singleton();
+rootContainer.bind(AppDatabaseToken).to(AppDatabase).singleton();
 rootContainer.bind(RequestContextToken).toConstantValue({
   requestId: "bootstrap",
   userId: "system",
@@ -84,9 +84,9 @@ rootContainer.bind(RequestLoggerToken).to(RequestLogger).scoped();
 // HandlerToken is explicitly transient — new per resolution
 rootContainer
   .bind(HandlerToken)
-  .toDynamic((ctx) => {
-    const database = ctx.resolve(AppDbToken);
-    const logger = ctx.resolve(RequestLoggerToken);
+  .toDynamic((context) => {
+    const database = context.resolve(AppDatabaseToken);
+    const logger = context.resolve(RequestLoggerToken);
     return new RequestHandler(database, logger);
   })
   .transient();
@@ -119,8 +119,8 @@ section("Request B");
 handleRequest("req-002", "user-99", "SELECT * FROM products");
 
 // AppDatabase was only ever created once (singleton across all requests)
-const firstDatabaseResolve = rootContainer.resolve(AppDbToken);
-const secondDatabaseResolve = rootContainer.resolve(AppDbToken);
+const firstDatabaseResolve = rootContainer.resolve(AppDatabaseToken);
+const secondDatabaseResolve = rootContainer.resolve(AppDatabaseToken);
 section("Cross-request singleton");
 item("Same AppDatabase instance", firstDatabaseResolve === secondDatabaseResolve); // true
 item("Database instanceId", firstDatabaseResolve.instanceId); // 1

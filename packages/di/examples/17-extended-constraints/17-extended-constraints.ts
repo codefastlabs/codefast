@@ -50,11 +50,11 @@ const TIER_TAG = tag<"free" | "paid">("tier");
 
 interface Logger {
   source: string;
-  log(msg: string): void;
+  log(message: string): void;
 }
 
 function makeLogger(source: string): Logger {
-  return { source, log: (msg) => console.log(`[${source}] ${msg}`) };
+  return { source, log: (message) => console.log(`[${source}] ${message}`) };
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -241,7 +241,7 @@ namedContainer.bind(LoggerToken).toConstantValue(makeLogger("replica-logger")).w
 namedContainer
   .bind(LoggerToken)
   .toConstantValue(makeLogger("default-logger"))
-  .when((ctx) => ctx.parent === undefined || ctx.parent.slot.name === undefined);
+  .when((context) => context.parent === undefined || context.parent.slot.name === undefined);
 
 namedContainer.bind(DataSourceToken).to(DataSource).whenNamed("primary").singleton();
 namedContainer.bind(DataSourceToken).to(DataSource).whenNamed("replica").singleton();
@@ -319,7 +319,7 @@ class SessionStore {
     console.log(`SessionStore using ${cache.backend}`);
   }
 
-  getSession(id: string): string | undefined {
+  session(id: string): string | undefined {
     return this.cache.read(`session:${id}`);
   }
 }
@@ -331,7 +331,7 @@ class ProductCache {
     console.log(`ProductCache using ${cache.backend}`);
   }
 
-  getProduct(id: string): string | undefined {
+  product(id: string): string | undefined {
     return this.cache.read(`product:${id}`);
   }
 }
