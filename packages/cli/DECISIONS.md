@@ -1,4 +1,4 @@
-# SPEC.md — Refactor: `@codefast/cli`
+# Decision: refactoring `@codefast/cli`
 
 > **Architectural critique and a major, backward-incompatible improvement spec.** Goal: cut the file count by ~60%,
 > delete every ceremony layer, and keep all pure domain logic intact.
@@ -519,5 +519,5 @@ After the refactor, any new developer can read `cli.ts` and understand the whole
 tracing through 8 layers of DI container to find where `console.log` is called.
 
 **Applied:** the current `src/` layout matches the spirit of §3; the operational document is
-[ARCHITECTURE.md](./ARCHITECTURE.md). This SPEC now serves as the **decision history** (why it changed) and a **closed
-checklist** (§7).
+[ARCHITECTURE.md](./ARCHITECTURE.md). This document now serves as the **decision history** (why it changed) and a
+**closed checklist** (§7).
