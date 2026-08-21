@@ -53,6 +53,14 @@ A record of what was chosen and why. Never edit the old content; if a decision c
 | ------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
 | [`github-project-maintenance.md`](runbooks/github-project-maintenance.md) | Changing the board's fields / workflows / views without breaking the configuration |
 
+## reports/ — snapshots of one moment
+
+Never updated once written; a later snapshot joins it rather than replacing it.
+
+| File                                                                       | Content                                                                     |
+| -------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| [`documentation-audit-2026-08.md`](reports/documentation-audit-2026-08.md) | Classification of every authored `.md` by type, and the corrections applied |
+
 ---
 
 ## Documents that live inside a package
@@ -64,6 +72,8 @@ A document that concerns exactly one package stays in that package rather than m
 - `packages/di/LEARNING.md` — a guided read of the patterns, algorithms, and TypeScript/performance techniques the
   engine applies, for someone learning from the codebase
 - `packages/tracking/spec/` — the behavioural contract
+- `packages/*/DECISIONS.md` — a settled design/architecture decision for that package (the package-local mirror of
+  `decisions/` above): `packages/cli/DECISIONS.md`, `packages/tailwind-variants/DECISIONS.md`
 - `packages/*/README.md`, `packages/*/CHANGELOG.md`
 
 `docs/` is for documents that cut across several packages, or that are about the infrastructure around the repo (the
