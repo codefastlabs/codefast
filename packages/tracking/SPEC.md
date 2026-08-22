@@ -14,9 +14,10 @@ Each document is named for the identifier it is cited by — `spec-consent §3` 
 - [spec/spec-tracker.md](spec/spec-tracker.md) — the tracking pipeline.
 - [spec/spec-destinations.md](spec/spec-destinations.md) — destination interface and reference destinations.
 - [spec/spec-server-lane.md](spec/spec-server-lane.md) — initial-consent resolution over shared/cached HTML.
+- [spec/spec-security.md](spec/spec-security.md) — Security & Privacy Considerations, consolidated across all documents.
 
 Each document ends with a prose Conformance section, projected into machine-readable vectors under
 [spec/vectors/](spec/vectors/README.md) so an implementation in any language can run them. This package ships **no
 runner for them** — `tests/unit/**` implements the same contract independently, so a vector and a unit test agreeing is
-evidence, not a tautology. The index above lists the six core documents; four commercial-scope extensions and
-`spec-security` sit alongside them.
+evidence, not a tautology. The index above lists the seven core documents; four commercial-scope extensions sit
+alongside them.

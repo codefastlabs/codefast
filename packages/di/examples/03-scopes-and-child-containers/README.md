@@ -78,7 +78,7 @@ A child container:
 ### Root container (app lifetime)
 
 ```ts
-rootContainer.bind(AppDbToken).to(AppDatabase).singleton(); // one db for all requests
+rootContainer.bind(AppDatabaseToken).to(AppDatabase).singleton(); // one db for all requests
 rootContainer.bind(RequestLoggerToken).to(RequestLogger).scoped(); // one per child
 ```
 

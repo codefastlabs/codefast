@@ -1,6 +1,6 @@
 # Example 06 — Constraints & Multi-binding
 
-**Concepts:** `whenNamed()`, `whenTagged()`, `when()` + `whenParentIs`, `resolveAll()`, `resolveAll` for event fans-out
+**Concepts:** `whenNamed()`, `whenTagged()`, `when()` + `whenParentIs`, `resolveAll()` for event fan-out
 
 ---
 
@@ -98,10 +98,12 @@ makes it match more bindings rather than fewer.
 
 ## Parent-aware constraints (`whenParentIs`)
 
-On the root entry, or narrowly from the module that owns them:
+Import `whenParentIs` from either the main entry or the tree-shakeable subpath:
 
 ```ts
+// either the main entry (used by this example)…
 import { whenParentIs } from "@codefast/di";
+// …or the tree-shakeable subpath
 import { whenParentIs } from "@codefast/di/resolution/select/constraints";
 ```
 

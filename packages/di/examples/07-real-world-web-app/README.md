@@ -1,7 +1,7 @@
 # Example 07 — Real-world Web App
 
 **Concepts:** All features combined — `AsyncModule`, scoped child containers per request, lifecycle hooks, named
-environment overrides, `resolveAll` middleware pipeline, `validate()`, `await using`, dependency graph export
+multi-bindings (`whenNamed`), `resolveAll` middleware pipeline, `validate()`, `await using`, dependency graph export
 
 ---
 
@@ -62,7 +62,7 @@ sequenceDiagram
     App->>ChildContainer: bind(RequestContextToken, { requestId, userId })
     App->>ChildContainer: resolveAll(MiddlewareToken) → pipeline
     loop each middleware
-        App->>ChildContainer: middleware.handle(req, res)
+        App->>ChildContainer: middleware.process(req, next)
     end
     App->>ChildContainer: resolve(UserControllerToken)
     ChildContainer-->>App: controller
@@ -77,7 +77,7 @@ Container.fromModulesAsync(
   InfraModule,      ← AsyncModule: config, DB (async connect), cache
   RepositoryModule, ← SyncModule: user repo, product repo
   ServiceModule,    ← SyncModule: auth, order, notification services
-  MiddlewareModule, ← SyncModule: auth, logging, rate-limit (multi-binding)
+  MiddlewareModule, ← SyncModule: logging, auth (multi-binding)
   ControllerModule  ← SyncModule: user controller, product controller
 )
 ```
@@ -106,28 +106,33 @@ builder
 ### Middleware pipeline: multi-binding + `resolveAll`
 
 ```ts
-// Three separate named bindings under MiddlewareToken
-builder.bind(MiddlewareToken).to(AuthMiddleware).whenNamed("auth");
+// Two separate named bindings under MiddlewareToken
 builder.bind(MiddlewareToken).to(LoggingMiddleware).whenNamed("logging");
-builder.bind(MiddlewareToken).to(RateLimitMiddleware).whenNamed("rateLimit");
+builder.bind(MiddlewareToken).to(AuthMiddleware).whenNamed("auth");
 
-// Dispatch a request through the full pipeline
-const middlewares = container.resolveAll(MiddlewareToken);
-for (const mw of middlewares) {
-  await mw.handle(request, response);
-}
+// Resolve the pipeline, then build a next() chain through it
+const pipeline = container.resolveAll(MiddlewareToken);
+const dispatch =
+  (index: number): (() => Promise<HttpResponse>) =>
+  async () => {
+    if (index >= pipeline.length) {
+      return controller.profile(); // end of chain: call the controller
+    }
+    return pipeline[index]!.process(request, dispatch(index + 1));
+  };
+await dispatch(0)();
 ```
 
 ### Per-request scoped container
 
 ```ts
-async function handleHttpRequest(raw: HttpRequest): Promise<HttpResponse> {
-  const requestContainer = appContainer.createChild();
-  requestContainer.bind(RequestContextToken).toConstantValue(raw);
+async function handleRequest(request: HttpRequest): Promise<HttpResponse> {
+  const requestContainer = container.createChild();
+  requestContainer.bind(RequestContextToken).toConstantValue(request);
 
   // Scoped bindings get their own instance per child container
-  const controller = await requestContainer.resolveAsync(UserControllerToken);
-  return controller.handle(raw);
+  const controller = requestContainer.resolve(UserControllerToken);
+  return controller.profile();
 }
 ```
 
@@ -162,18 +167,6 @@ import { toDotGraph } from "@codefast/di";
 const graph = container.generateDependencyGraph();
 const dot = toDotGraph(graph);
 // Paste into https://graphviz.online to visualize the full wiring
-```
-
----
-
-## Named bindings for environment overrides
-
-```ts
-// Bind a real SMTP mailer for production, a stub for development
-builder.bind(MailerToken).to(SmtpMailer).whenNamed("production").singleton();
-builder.bind(MailerToken).to(StubMailer).whenNamed("development").singleton();
-
-const mailer = container.resolve(MailerToken, { name: config.env });
 ```
 
 ---

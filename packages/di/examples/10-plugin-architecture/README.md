@@ -1,6 +1,6 @@
 # Example 10 — Plugin Architecture
 
-**Concepts:** `Module.createAsync`, `container.load()` / `container.unload()`, named multi-binding slots,
+**Concepts:** `Module.createAsync`, `container.loadAsync()` / `container.unloadAsync()`, named multi-binding slots,
 `onDeactivation` for resource cleanup, diamond deduplication across plugins
 
 ---
@@ -24,8 +24,8 @@ graph TB
 
         subgraph Plugins["Plugin Modules (hot-swappable)"]
             S3["S3PluginModule\nStorageToken\nonDeactivation: closePool()"]
-            Seg["SegmentModule\nAnalyticsToken\nonDeactivation: flush()"]
-            Slack["SlackModule\nNotificationToken\nonDeactivation: drain()"]
+            Seg["AnalyticsPluginModule\nAnalyticsToken\nonDeactivation: flush()"]
+            Slack["SlackPluginModule\nNotificationToken\nonDeactivation: drain()"]
         end
 
         subgraph Registry["Named Plugin Registry"]
@@ -52,17 +52,16 @@ sequenceDiagram
     participant App
     participant Container
 
-    App->>Container: loadAsync(SegmentModule)
-    Note over Container: SegmentAnalytics bound to AnalyticsToken
+    Note over Container: S3PluginModule bound to StorageToken (from boot)
 
-    App->>Container: unload(SegmentModule)
-    Note over Container: onDeactivation → flush() called
+    App->>Container: unloadAsync(S3PluginModule)
+    Note over Container: onDeactivation → closeConnectionPool() called
 
-    App->>Container: loadAsync(AmplitudeModule)
-    Note over Container: AmplitudeAnalytics now bound to AnalyticsToken
+    App->>Container: loadAsync(LocalStoragePluginModule)
+    Note over Container: LocalStorageProvider now bound to StorageToken
 
-    App->>Container: resolve(DocumentServiceToken)
-    Note over Container: DocumentService gets AmplitudeAnalytics — no code change
+    App->>Container: resolveAsync(DocumentServiceToken)
+    Note over Container: DocumentService gets LocalStorageProvider — no code change
 ```
 
 ## The core insight: modules as plugins
@@ -114,19 +113,25 @@ plugins.forEach((p) => console.log(p.name)); // "s3", "segment", ...
 
 ## Hot-swap at runtime
 
-`load` and `unload` work after the container is created:
+`loadAsync` and `unloadAsync` work after the container is created:
 
 ```ts
-// Swap the analytics plugin at runtime
-container.unload(SegmentAnalyticsModule);
-await container.loadAsync(AmplitudeAnalyticsModule);
+// Swap the storage plugin at runtime: S3 → LocalStorage
+await container.unloadAsync(S3PluginModule); // fires onDeactivation → closeConnectionPool()
 
-// DocumentService now uses the Amplitude provider — zero code change
-const doc = container.resolve(DocumentServiceToken);
-await doc.process("quarterly-report");
+// Rebuild the DocumentService singleton so it picks up the new storage binding
+container.rebind(DocumentServiceToken).toDynamicAsync(/* same async factory */).singleton();
+
+await container.loadAsync(LocalStoragePluginModule);
+await container.resolveAsync(StorageToken); // warm the new storage singleton
+
+// DocumentService now uses the LocalStorage provider — zero code change to the class
+const documentService = await container.resolveAsync(DocumentServiceToken);
+await documentService.uploadDocument("user-456", "memo.txt", "Meeting notes: launch date confirmed");
 ```
 
-`onDeactivation` fires when the old module is unloaded — connection pools are drained, flush queues emptied.
+`onDeactivation` fires when the old module is unloaded — the S3 connection pool is closed before the new plugin takes
+over.
 
 ---
 

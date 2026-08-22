@@ -159,7 +159,7 @@ validate the id is exactly UUID-shaped, so a public endpoint can never echo atta
 ## Google tag (advanced Consent Mode)
 
 `<GtagConsentBootstrap config={consentConfig} defaultConsent={...} gaMeasurementId="G-…" />`
-(`@codefast/tracking/react/use-initial-consent`) renders the pre-hydration inline script: Consent Mode v2 `default`
+(`@codefast/tracking/react/gtag-consent-bootstrap`) renders the pre-hydration inline script: Consent Mode v2 `default`
 first (stored decision wins over the baked fallback), then gtag.js always loads so cookieless pings and consent modeling
 can run even when storage is denied. Page views are gtag's own job (`config` + Enhanced Measurement) — the destination
 only forwards catalog events. Runtime changes go through `useGoogleConsentSync`/`updateGoogleConsent`.

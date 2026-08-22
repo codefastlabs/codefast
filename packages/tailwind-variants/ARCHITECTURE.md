@@ -4,8 +4,8 @@ The source of truth for why this package is shaped the way it is. Read it before
 or `src/resolve/` — several shapes there look simplifiable and are not.
 
 For why the package exists at all — the comparison against `tailwind-variants` and `cva`, and the type-inference
-trade-offs that settled the API — see [RFC.md](./RFC.md), which is a historical design record rather than a description
-of the current code.
+trade-offs that settled the API — see [DECISIONS.md](./DECISIONS.md), which is a historical design record rather than a
+description of the current code.
 
 ## The one idea
 

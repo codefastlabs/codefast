@@ -48,8 +48,8 @@ graph TD
 @injectable([inject(ConfigToken), optional(LoggerToken)])
 class Database {
   constructor(config: AppConfig, logger?: Logger) {
-    this.url = config.dbUrl;
-    logger?.log(`Database connected to ${config.dbUrl}`);
+    this.url = config.databaseUrl;
+    logger?.log(`Database connected to ${config.databaseUrl}`);
   }
 }
 ```

@@ -1,4 +1,4 @@
-# spec-data-subject-rights — DSR Obligations for the Anonymous Id
+# spec-data-subject-rights — DSR Obligations for the Pseudonymous Id
 
 The key words MUST, MUST NOT, SHOULD, SHOULD NOT, and MAY are to be interpreted as described in RFC 2119.
 

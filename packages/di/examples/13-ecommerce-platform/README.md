@@ -1,8 +1,8 @@
 # Example 13 — E-Commerce Platform
 
-**Concepts:** All DI features combined in a domain-rich context — bounded contexts as modules, `@postConstruct`,
-`@preDestroy`, `injectAll`, `optional`, multi-gateway payment, notification pipeline, per-request scoped cart,
-`resolveOptional` for A/B testing
+**Concepts:** All DI features combined in a domain-rich context — bounded contexts as modules, `@postConstruct()`,
+`@preDestroy()`, `injectAll`, `optional`, multi-gateway payment, notification pipeline, per-request scoped cart,
+`optional` for A/B testing
 
 ---
 
@@ -30,7 +30,7 @@ graph TB
     end
 
     subgraph domain["Domain Modules"]
-        Catalog["Catalog\n(products, pricing)\n@postConstruct: warmCache"]
+        Catalog["Catalog\n(products, pricing)\n@postConstruct(): warmCache"]
         Cart["Cart\n◆ scoped per request"]
         Orders["Orders\n(lifecycle, fulfillment)"]
         Payments["Payments\n(multi-gateway fallback)"]
@@ -90,21 +90,21 @@ AnalyticsModule (SyncModule, optional integration)
 
 ---
 
-## Decorators: `@postConstruct` and `@preDestroy`
+## Decorators: `@postConstruct()` and `@preDestroy()`
 
 For classes that need lifecycle callbacks without binding-level hooks:
 
 ```ts
 @injectable([inject(DatabaseToken), inject(CacheToken)])
 class CatalogService {
-  @postConstruct
+  @postConstruct()
   async warmUpCache(): Promise<void> {
     // Called automatically after construction, before first resolve() returns
     const products = await this.db.query("SELECT * FROM products LIMIT 100");
     for (const p of products) this.cache.set(`product:${p.id}`, p);
   }
 
-  @preDestroy
+  @preDestroy()
   async flushCache(): Promise<void> {
     // Called automatically during container.dispose()
     await this.cache.flush();
@@ -112,7 +112,7 @@ class CatalogService {
 }
 ```
 
-`@postConstruct` and `@preDestroy` are method decorators — no binding-level `.onActivation()` / `.onDeactivation()`
+`@postConstruct()` and `@preDestroy()` are method decorators — no binding-level `.onActivation()` / `.onDeactivation()`
 needed when the logic belongs to the class itself.
 
 ---
@@ -146,12 +146,12 @@ payment fallback and for the notification pipeline.
 
 ```ts
 // Three notification channels under one token
-builder.bind(NotificationToken).to(EmailNotifier).whenNamed("email").singleton();
-builder.bind(NotificationToken).to(SmsNotifier).whenNamed("sms").singleton();
-builder.bind(NotificationToken).to(PushNotifier).whenNamed("push").singleton();
+builder.bind(NotificationChannelToken).to(EmailChannel).whenNamed("email").singleton();
+builder.bind(NotificationChannelToken).to(SmsChannel).whenNamed("sms").singleton();
+builder.bind(NotificationChannelToken).to(PushChannel).whenNamed("push").singleton();
 
 // Orchestrator injects all three
-@injectable([injectAll(NotificationToken)])
+@injectable([injectAll(NotificationChannelToken)])
 class NotificationDispatcher {
   async dispatch(event: OrderEvent): Promise<void> {
     await Promise.all(this.channels.map((ch) => ch.send(event)));
@@ -228,5 +228,5 @@ class SearchController {
   - Async lifecycle → **Example 05**
   - Multi-binding / `resolveAll` → **Example 06**
   - Scoped containers → **Example 03**
-  - `@postConstruct` / `@preDestroy` → covered here and in Example 05
+  - `@postConstruct()` / `@preDestroy()` → covered here and in Example 05
   - Testing this architecture → **Example 16**

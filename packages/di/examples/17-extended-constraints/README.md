@@ -10,7 +10,7 @@
 Example 06 introduced `whenParentIs`. This example covers the complete constraint family, showing when each predicate is
 the right choice with a focused scenario per constraint.
 
-All constraints are imported from a tree-shakeable subpath:
+All constraints are exported from the main `@codefast/di` entry, which is what this example imports:
 
 ```ts
 import {
@@ -24,8 +24,11 @@ import {
   whenParentTaggedAll,
   whenAnyAncestorTagged,
   whenAnyAncestorTaggedAll,
-} from "@codefast/di/resolution/select/constraints";
+} from "@codefast/di";
 ```
+
+They are also available from a tree-shakeable subpath, `@codefast/di/resolution/select/constraints`, if you want to
+import only the constraint family.
 
 ---
 

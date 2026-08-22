@@ -14,15 +14,15 @@ The key words MUST, MUST NOT, SHOULD, SHOULD NOT, and MAY are to be interpreted 
 The four-value model fails commercially in ways that create direct legal exposure. In ranked order of risk:
 
 1. **`us` as one bucket is the top risk.** US privacy law is state-level, not federal: 20+ states have in-force
-   comprehensive laws with _divergent_ rules. As of 2026-01-01, roughly **a dozen states legally mandate honoring a
-   universal opt-out signal (GPC)** — CA, CO, CT, DE, MD, MN, NE, NH, NJ, OR, TX — while others (VA, UT) do not (this
-   count is a moving target: **Montana was dropped** after 2025 SB 297 repealed its mandate, verified against primary
-   text; **Maryland**'s "may utilize" wording may be permissive rather than a mandate — see §3). Sensitive-data handling
+   comprehensive laws with _divergent_ rules. As of 2026-01-01, roughly **11 states legally mandate honoring a universal
+   opt-out signal (GPC)** — CA, CO, CT, DE, MD, MN, NE, NH, NJ, OR, TX — while others (VA, UT) do not (this count is a
+   moving target: **Montana was dropped** after 2025 SB 297 repealed its mandate, verified against primary text;
+   **Maryland**'s "may utilize" wording may be permissive rather than a mandate — see §3). Sensitive-data handling
    splits opt-out-to-limit (CA) vs opt-in (VA/CO/CT/TX/OR/MT). A single `us` rule cannot encode this, and missing GPC in
    a mandate state is an active enforcement target (California AG, Sephora settlement
    $1.2M, 2022-08-24; CPPA Todd Snyder order $345,178, effective 2025-05-01).
-2. **No universal-opt-out-signal handling exists at all.** GPC binds in roughly a dozen US states; California from
-   2026-01-01 additionally requires a _visible confirmation_ that the signal was processed (11 CCR §7025).
+2. **No universal-opt-out-signal handling exists at all.** GPC binds in roughly 11 US states; California from 2026-01-01
+   additionally requires a _visible confirmation_ that the signal was processed (11 CCR §7025).
 3. **Washington's health-data law (MHMDA) is entirely unmodeled** — opt-in for "consumer health data," a 2,000-ft
    geofence ban, and a **private right of action** (the highest per-incident litigation exposure of any US regime).
 4. **`other` fails open, backwards.** Brazil, China, South Korea, India, and Quebec are largely opt-in; the
@@ -194,6 +194,6 @@ additionally carry a `dataLocalization` constraint.
 Every row flagged **UNCERTAIN** above, plus: EU member-state minors' ages; UK DUAA 2025 analytics-exception scope; Swiss
 analytics opt-out latitude where GDPR also applies; Brazil legitimate-interest-for-analytics; Quebec §8.1
 interpretation; Vietnam PDPL implementing detail; India DPDP staging; Japan/Australia pending reforms; and the exact
-per-state effective dates and the 12-state GPC list (verify against each state's own AG/legislature page before this
+per-state effective dates and the 11-state GPC list (verify against each state's own AG/legislature page before this
 becomes normative). Several US precise-geolocation radii (CA/CO 1,850 ft vs VA/CT/TX 1,750 ft) and the Colorado 2025
 amendment's bill number need direct statutory confirmation.

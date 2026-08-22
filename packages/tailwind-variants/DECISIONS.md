@@ -1,4 +1,4 @@
-# RFC: Tailwind Variants (TV) - Type-Safe Variant API for Tailwind CSS
+# Decision: Tailwind Variants (TV) — Type-Safe Variant API for Tailwind CSS
 
 > **Status:** accepted and implemented. Written 2025-09-14; `tv()`, slots, `extend`, compound variants, `cn`/`cx` and
 > `createTV` have all shipped in `@codefast/tailwind-variants`.

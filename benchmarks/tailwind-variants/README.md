@@ -18,16 +18,18 @@ From the repo root: `pnpm bench` runs every suite; filter with
 `pnpm --filter @codefast/benchmark-tailwind-variants bench`. The parent rebuilds `@codefast/tailwind-variants` first, so
 a run measures the working tree.
 
-| Command                               | What changes                                                           |
-| ------------------------------------- | ---------------------------------------------------------------------- |
-| `pnpm bench`                          | Default profile, 3 trials per scenario                                 |
-| `pnpm bench:fast`                     | Smoke profile — shorter windows. For "did I break it", not for a claim |
-| `pnpm bench:full`                     | `--expose-gc` for every library                                        |
-| `pnpm bench:verbose`                  | Per-trial detail on stdout                                             |
-| `pnpm bench:serve`                    | Serves the run history in a browser                                    |
-| `pnpm bench:codefast`                 | One library's child process directly                                   |
-| `pnpm bench:tailwind-variants`        | ″                                                                      |
-| `pnpm bench:class-variance-authority` | ″                                                                      |
+| Command                               | What changes                                                                           |
+| ------------------------------------- | -------------------------------------------------------------------------------------- |
+| `pnpm bench`                          | Default profile, 3 trials per scenario                                                 |
+| `pnpm bench:fast`                     | Smoke profile — shorter windows. For "did I break it", not for a claim                 |
+| `pnpm bench:full`                     | `--expose-gc` for every library                                                        |
+| `pnpm bench:isolate`                  | Isolated profile — one subprocess per scenario, libraries interleaved (citable ratios) |
+| `pnpm bench:list`                     | List the scenarios without running them                                                |
+| `pnpm bench:verbose`                  | Per-trial detail on stdout                                                             |
+| `pnpm bench:serve`                    | Serves the run history in a browser                                                    |
+| `pnpm bench:codefast`                 | One library's child process directly                                                   |
+| `pnpm bench:tailwind-variants`        | ″                                                                                      |
+| `pnpm bench:class-variance-authority` | ″                                                                                      |
 
 Runs land in `bench-results/` (git-ignored): a timestamped `report.md` plus `observations.jsonl`, mirrored to
 `latest.md` / `latest.jsonl`.

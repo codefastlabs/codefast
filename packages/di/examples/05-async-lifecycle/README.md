@@ -1,7 +1,7 @@
 # Example 05 — Async Factories, Lifecycle Hooks & Disposal
 
-**Concepts:** `toDynamicAsync`, `toResolvedAsync`, `onActivation`, `onDeactivation`, `Module.createAsync`,
-`Container.fromModulesAsync`, `initializeAsync`, `resolveAsync`, `await using`
+**Concepts:** `toDynamicAsync`, `onActivation`, `onDeactivation`, `Module.createAsync`, `Container.fromModulesAsync`,
+`initializeAsync`, `resolveAsync`, `await using`
 
 ---
 
@@ -59,7 +59,7 @@ builder
   .bind(DatabaseToken)
   .toDynamicAsync(async (ctx) => {
     const config = ctx.resolve(ConfigToken); // sync deps resolved normally
-    return new Database(config.dbUrl); // async construction
+    return new Database(config.databaseUrl); // async construction
   })
   .singleton();
 ```

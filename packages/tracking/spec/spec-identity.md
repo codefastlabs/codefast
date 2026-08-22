@@ -7,7 +7,7 @@ The key words MUST, MUST NOT, SHOULD, and MAY are to be interpreted as described
 - The anonymous id identifies a **browser/device**, not a person. Its only valid shape is a random UUID (RFC 4122),
   pattern `^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$` (case-insensitive).
 - **The client mints; the server never does.** Minting happens lazily, only at the moment an event is actually allowed
-  to send (spec-tracker §3) — never at library init, never as an import/startup side effect, never while the consent
+  to send (spec-tracker §2) — never at library init, never as an import/startup side effect, never while the consent
   gate is closed.
 - The server's only roles are to **persist/prolong** an id the client hands it and to **expire** it on withdrawal.
 

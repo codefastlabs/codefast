@@ -67,8 +67,8 @@ Requires React 19 and Tailwind CSS 4. See [codefastlabs.com](https://codefastlab
 CodeFast stays on **0.x**, and there is no 1.0 planned. These packages are built for the maintainer's own projects
 first, so the version number is release bookkeeping rather than a compatibility promise — staying on 0.x is what keeps
 breaking changes cheap enough to actually make. In practice that means **breaking changes ship as minor versions**. On
-`0.x` the default `^0.5.0` range already holds you inside `0.5.x`, so one never arrives unasked — read the
-[changelog](https://github.com/codefastlabs/codefast/releases) before you widen it.
+`0.x` the caret range npm installs by default holds you inside the current minor, so one never arrives unasked — read
+the [changelog](https://github.com/codefastlabs/codefast/releases) before you widen it.
 
 Install the default `latest` — the documentation site tracks it:
 
@@ -90,7 +90,7 @@ confusing, a prop feels awkward, or a component is missing,
 | [`@codefast/theme`](packages/theme)                         | Appearance management for React 19 — optimistic updates, cross-tab sync, FOUC-free SSR          |
 | [`@codefast/tracking`](packages/tracking)                   | Consent-gated, type-safe event tracking for TanStack Start over a Standard Schema event catalog |
 | [`@codefast/di`](packages/di)                               | Lightweight dependency-injection primitives for TypeScript                                      |
-| [`@codefast/cli`](packages/cli)                             | Developer CLI for the monorepo (`arrange`, `mirror`, `tag`)                                     |
+| [`@codefast/cli`](packages/cli)                             | Developer CLI for the monorepo (`arrange`, `audit`, `mirror`, `tag`)                            |
 | [`@codefast/typescript-config`](packages/typescript-config) | Shared TypeScript configuration presets                                                         |
 
 ## Repository Layout
@@ -98,7 +98,7 @@ confusing, a prop feels awkward, or a component is missing,
 | Path                                                 | Role                                                                                                                        |
 | ---------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
 | [`apps/ui`](apps/ui)                                 | Docs and showcase site behind [codefastlabs.com](https://codefastlabs.com) (TanStack Start), consuming local package source |
-| [`examples/tanstack-start`](examples/tanstack-start) | Consumer smoke test — installs the published `@codefast/*` packages from npm                                                |
+| [`examples/tanstack-start`](examples/tanstack-start) | Consumer smoke test — runs the packages' built `dist/` via `workspace:*` links                                              |
 | [`benchmarks/`](benchmarks)                          | Benchmark suites comparing `@codefast/*` against upstream libraries (`pnpm bench`)                                          |
 
 ## Development

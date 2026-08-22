@@ -54,10 +54,9 @@ sequenceDiagram
 
 ```mermaid
 graph LR
-    ConfigModule --> DatabaseModule & RedisModule
-    DatabaseModule & RedisModule --> JobModule
-    JobModule & DatabaseModule & RedisModule --> HealthModule
-    HealthModule & JobModule --> HttpModule
+    ConfigModule --> DatabaseModule & RedisModule & WorkerModule & HealthModule & HttpModule
+    HealthModule --> HttpModule
+    DatabaseModule & RedisModule & MetricsModule --> ServiceModule
 ```
 
 ## The problem DI solves here
@@ -85,7 +84,7 @@ await using container = await Container.fromModulesAsync(
   ConfigModule,
   DatabaseModule,
   RedisModule,
-  JobModule,
+  WorkerModule,
   HealthModule,
   HttpModule,
 );
@@ -103,7 +102,7 @@ The container resolves each module's dependencies automatically and in the corre
 1. ConfigModule     → load config from environment
 2. DatabaseModule   → open PostgreSQL pool (onActivation: health check)
 3. RedisModule      → open Redis connection (onActivation: PING)
-4. JobModule        → start background worker (onActivation: begin polling)
+4. WorkerModule     → start background worker (onActivation: begin polling)
 5. HealthModule     → register DB + Redis health checks
 6. HttpModule       → register routes, start HTTP server (onActivation: listen)
 ```
@@ -130,18 +129,34 @@ builder
 
 ---
 
-## Health registry: multi-binding pattern
+## Health registry: one registry, named checks
 
-All health checks are registered under a single `HealthCheckToken` and collected at query time:
+A single `HealthRegistryToken` is bound to a `ServiceHealthRegistry` singleton. Its async factory resolves each
+infrastructure dependency and registers a named check against it — there is no per-check token and no `resolveAll`:
 
 ```ts
-// Each infrastructure module registers its own health check
-builder.bind(HealthCheckToken).toConstantValue(dbHealthCheck).whenNamed("database");
-builder.bind(HealthCheckToken).toConstantValue(redisHealthCheck).whenNamed("redis");
+builder
+  .bind(HealthRegistryToken)
+  .toDynamicAsync(async (context) => {
+    const registry = new ServiceHealthRegistry(context.resolve(ServiceConfigToken));
 
-// Health endpoint aggregates all checks
-const checks = container.resolveAll(HealthCheckToken);
-const results = await Promise.all(checks.map((c) => c.run()));
+    const databasePool = await context.resolveAsync(DatabasePoolToken);
+    const redisClient = await context.resolveAsync(RedisClientToken);
+
+    registry.register("database", () => databasePool.healthCheck());
+    registry.register("redis", () => redisClient.healthCheck());
+    registry.register("worker", async () => {
+      const worker = context.resolve(JobWorkerToken);
+      const queue = context.resolve(JobQueueToken);
+      return { status: "healthy", latencyMs: 0, detail: `processed=${worker.processedCount()} queued=${queue.size()}` };
+    });
+
+    return registry;
+  })
+  .singleton();
+
+// The GET /health route aggregates every registered check.
+const report = await healthRegistry.runChecks();
 ```
 
 ---
@@ -151,17 +166,23 @@ const results = await Promise.all(checks.map((c) => c.run()));
 ```ts
 builder
   .bind(JobWorkerToken)
-  .toDynamicAsync(async (ctx) => new JobWorker(ctx.resolve(JobQueueToken)))
+  .toDynamic((context) => {
+    const config = context.resolve(ServiceConfigToken);
+    const queue = context.resolve(JobQueueToken) as InMemoryJobQueue;
+    return new PollingJobWorker(queue, config.workerConcurrency);
+  })
   .singleton()
-  .onActivation(async (_ctx, worker) => {
-    await worker.start();
+  .onActivation((_context, worker) => {
+    worker.start(); // begin polling — start() is synchronous
     return worker;
   })
   .onDeactivation(async (worker) => {
-    await worker.stop(); // stop accepting new jobs
-    await worker.drain(); // wait for in-flight jobs to complete
+    await worker.stop(); // stops polling, then drains remaining jobs in-line
   });
 ```
+
+There is no separate `drain()` method — `stop()` clears the polling interval and then processes every remaining queued
+job before returning.
 
 ---
 

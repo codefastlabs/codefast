@@ -1,35 +1,25 @@
 # @examples/tanstack-start
 
-A [TanStack Start](https://tanstack.com/start) app that demonstrates the `@codefast/*` libraries **as published on npm**
-— a smoke test for the real shipped artifacts. It's the TanStack Start entry under `examples/*`; sibling examples cover
-other React frameworks.
+A [TanStack Start](https://tanstack.com/start) app that exercises the `@codefast/*` libraries the way a real consumer
+does — against their **built `dist/`**, not their source. It's the TanStack Start entry under `examples/*`; sibling
+examples cover other React frameworks.
 
 ## What makes this different from `apps/ui`
 
-`apps/ui` (the docs site) consumes the packages through `workspace:*` links (their in-repo source). This app instead
-depends on the **registry-published** versions, referenced through the catalog so all examples share one pin:
+Both consume the packages through `workspace:*` links:
 
 ```jsonc
 // package.json
-"@codefast/ui": "catalog:",
-"@codefast/theme": "catalog:",
-"@codefast/tailwind-variants": "catalog:",
-"@codefast/di": "catalog:"
+"@codefast/ui": "workspace:*",
+"@codefast/theme": "workspace:*",
+"@codefast/tailwind-variants": "workspace:*",
+"@codefast/di": "workspace:*"
 ```
 
-The catalog entries (in the root `pnpm-workspace.yaml`) pin the published versions, e.g. `"@codefast/ui": ^0.4.0`. Two
-repo settings make pnpm fetch these from the registry rather than linking the local `packages/*`:
-
-- `.npmrc` → `link-workspace-packages=false`, so a non-`workspace:` spec (incl. `catalog:`) resolves from npm even when
-  a matching workspace package exists.
-- `catalogMode: manual`, so the catalog is not enforced repo-wide.
-
-Because the `@codefast/*` deps go through the catalog, Changesets leaves them alone on release (it doesn't rewrite
-`catalog:` specs or catalog entries) — so a canary version bump can't break this app's install. To track a newer
-published release, bump the catalog entries by hand.
-
-`vite.config.ts` deliberately omits the dev-only `source` resolve condition that `apps/ui` uses, so what runs here is
-the packages' built `dist/`, not their `src/`.
+The difference is which lane the link resolves to. `apps/ui` (the docs site) sets the dev-only `source` resolve
+condition, so it runs the packages' in-repo `src/`. This app's `vite.config.ts` deliberately omits that condition, so
+the same `workspace:*` links resolve to each package's built `dist/` — the exact artifact a published install would run.
+That makes it a smoke test of the shipped output, catching build/export problems that source-mode `apps/ui` never sees.
 
 It also adds `@rolldown/plugin-babel` with `@babel/plugin-proposal-decorators`: `@codefast/di` uses TC39 Stage 3
 decorators (`@injectable`, `@postConstruct`). Vite 8 bundles with Rolldown (oxc), whose built-in decorator transform

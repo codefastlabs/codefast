@@ -285,12 +285,15 @@ point of use beats brevity, and every word must convey information:
 
 ### `packages/di` layout
 
-**One design doc, plus the benchmark suite.** [`ARCHITECTURE.md`](packages/di/ARCHITECTURE.md) is the source of truth
-for _what the shape is and what it guarantees_: the layering, the invariants each hot path depends on, and which shapes
-that look simplifiable are load-bearing — worth reading before changing anything under `resolution/`. What a shape
-_costs_, and whether a new idea beats it, is an empirical question the benchmark suite (`benchmarks/di-inversify`)
-answers by re-running; numbers live there and in its `RESULTS.md` ledger, never in a source comment and never in
-ARCHITECTURE.
+**A contract doc, a design doc, and the benchmark suite.** [`SPEC.md`](packages/di/SPEC.md) is the external behavioural
+contract callers rely on — public API, semantics, errors, roadmap; [`ARCHITECTURE.md`](packages/di/ARCHITECTURE.md) is
+the source of truth for _what the internal shape is and what it guarantees_: the layering, the invariants each hot path
+depends on, and which shapes that look simplifiable are load-bearing — worth reading before changing anything under
+`resolution/`. The two cross-link at their seams and neither is generated from the other;
+[`LEARNING.md`](packages/di/LEARNING.md) is a guided read of the techniques the engine applies, not an authoritative
+doc. What a shape _costs_, and whether a new idea beats it, is an empirical question the benchmark suite
+(`benchmarks/di-inversify`) answers by re-running; numbers live there and in its `RESULTS.md` ledger, never in a source
+comment and never in ARCHITECTURE.
 
 `src/` groups by subsystem: **`core/`** is the model (`token`, `types`, `tag`, `constructor-type`, `binding`,
 `registry`, `module`, plus the `map-upsert` helpers every index allocates through), **`errors/`** the error taxonomy and
