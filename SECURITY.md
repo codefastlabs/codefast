@@ -18,9 +18,9 @@ assessed, and credit in the advisory unless you ask to remain anonymous.
 
 ## Supported versions
 
-All `@codefast/*` packages version together as one group, so a security fix ships across the whole group in a single
-release. The project is **0.x with no planned 1.0**, so fixes are not backported to older lines — they land in the next
-release on npm's `latest` tag, which is the line the documentation site tracks. Install `latest` and stay current.
+Each `@codefast/*` package versions on its own track, so a security fix ships in the affected package's next release.
+The packages are all on **0.x**, and fixes are not backported to older lines — they land in the next release on npm's
+`latest` tag, which is the line the documentation site tracks. Install `latest` and stay current.
 
 | Line                                     | Supported                                     |
 | ---------------------------------------- | --------------------------------------------- |

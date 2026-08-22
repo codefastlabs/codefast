@@ -24,8 +24,8 @@ pnpm add @codefast/theme
 # yarn add @codefast/theme
 ```
 
-Requires `react` and `react-dom` version 19 or later as peer dependencies. Published on `0.x` with no 1.0 planned —
-breaking changes ship as minor versions.
+Requires `react` and `react-dom` version 19 or later as peer dependencies. Published on `0.x` and versioned on its own
+track — breaking changes ship as minor versions.
 
 ## Quick Start
 

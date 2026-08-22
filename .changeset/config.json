@@ -8,7 +8,7 @@
   ],
   "baseBranch": "main",
   "commit": false,
-  "fixed": [["@codefast/*"]],
+  "fixed": [],
   "linked": [],
   "access": "public",
   "updateInternalDependencies": "patch",

@@ -17,7 +17,7 @@ Lightweight, type-safe dependency injection for modern TypeScript — built on T
 - **Modules.** Bundle bindings into reusable units; load, unload, and compose them across containers.
 - **Async-aware.** Async factories, deduped async singleton construction, and `await using` disposal.
 
-> Published on `0.x`, deliberately and with no 1.0 planned — breaking changes ship as minor versions, which is what
+> Published on `0.x` and versioned on its own track — while it is there, breaking changes ship as minor versions, which
 > keeps them cheap. Pin the minor if you need stability.
 
 ## Requirements

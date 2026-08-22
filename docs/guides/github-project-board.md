@@ -25,7 +25,7 @@ only affects the status of the issue it is linked to, and never appears as a car
 | `Status`  | single-select | The stage in the workflow — see §3                                                                          |
 | `Package` | single-select | `ui` · `di` · `tailwind-variants` · `theme` · `tracking` · `cli` · `benchmark` · `apps/ui` · `repo-tooling` |
 | `Kind`    | single-select | `feat` · `fix` · `perf` · `docs` · `dx` · `chore` · `idea` · `learn`                                        |
-| `Target`  | text          | **Which downstream project needs this.** Not a version milestone — the repo has no 1.0 milestone            |
+| `Target`  | text          | **Which downstream project needs this.** Not a version milestone — versions are per package                 |
 
 `Package` is the most important field: the standing question in a monorepo is _"what is still outstanding in which
 package"_, and three of the four views group by it.

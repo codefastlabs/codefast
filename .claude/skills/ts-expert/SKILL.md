@@ -95,7 +95,7 @@ Beyond what CLAUDE.md and `oxlint.config.ts` already enforce:
    otherwise, in which case follow the code.
 4. `readonly` by default on object properties and array parameters, unless it fights local style.
 5. Never trade type safety for convenience.
-6. **Breaking changes are cheap here — reshape a public API when that is the right fix.** The `@codefast/*` group is
-   pinned at 0.x with no planned 1.0, and a breaking change ships as a `minor`. Still name it in the summary so a
-   changeset gets written; never author a `major`.
+6. **Breaking changes are cheap here — reshape a public API when that is the right fix.** Each `@codefast/*` package is
+   on 0.x and versions on its own track, so while it is there a breaking change ships as a `minor`. Still name it in the
+   summary so a changeset gets written; a `major` is a deliberate 1.0 for that one package, not a default.
 7. Flag every new npm dependency in the summary; never add one silently.
