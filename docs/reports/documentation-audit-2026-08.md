@@ -99,6 +99,47 @@ only joined by a newer audit.
 - Corrected the spec count and added the missing `spec-security` bullet in
   [`tracking/SPEC.md`](../../packages/tracking/SPEC.md).
 
+## Content sweep — every authored doc read against its code
+
+After the classification pass, all 75 authored documents were read in full and cross-checked against the code,
+`package.json` exports, and the real tooling. Corrections applied:
+
+**Repo-level & policy**
+
+- [`SECURITY.md`](../../SECURITY.md) — the supported-versions table and "canary-first" framing were stale (claimed
+  `latest 0.4.0` / canary `0.5.0-canary.x`); rewritten to the real 0.x-on-`latest` model (all packages are 0.7.0, not in
+  canary mode), and the false "`@codefast/tracking` has no stable release" line removed.
+- [`README.md`](../../README.md) — the version-range example was de-hardcoded, `audit` added to the CLI command list,
+  and the examples row corrected (it runs the built `dist/` via `workspace:*`, not "published packages from npm").
+- [`apps/ui/README.md`](../../apps/ui/README.md) — was the generic TanStack Start starter template (with a dangerous
+  "delete demo files" note and `npm` commands); rewritten to describe the actual showcase site, keeping the real
+  Testing/Analytics/Consent/ISR content.
+
+**Package & benchmark READMEs**
+
+- [`packages/cli/README.md`](../../packages/cli/README.md) — `dist/bin.mjs` → `dist/bin.js`; documented the
+  `audit comments` subcommand.
+- [`packages/tracking/README.md`](../../packages/tracking/README.md) — `GtagConsentBootstrap` pointed at the wrong
+  subpath.
+- [`packages/ui/README.md`](../../packages/ui/README.md) — stale `^0.5.0` range de-hardcoded.
+- [`packages/typescript-config/README.md`](../../packages/typescript-config/README.md) — documented the fifth preset,
+  `library-build.json`.
+- [`benchmarks/tailwind-variants/README.md`](../../benchmarks/tailwind-variants/README.md) — added the missing
+  `bench:isolate` / `bench:list` rows.
+- [`examples/tanstack-start/README.md`](../../examples/tanstack-start/README.md) — premise corrected: it consumes
+  packages via `workspace:*` (not a catalog of published versions), differing from `apps/ui` only by omitting the
+  dev-only `source` resolve condition.
+
+**`@codefast/di` example READMEs** — ten of the nineteen had drifted from their code (wrong token/method/import names, a
+non-existent middleware, a hot-swap narrative describing the wrong plugin, decorators shown without their required
+parentheses); each was re-aligned to its `.ts` after verifying against the source (examples 02, 03, 05, 06, 07, 10, 11,
+12, 13, 17).
+
+**`packages/tracking/spec`** — spec version `1.0.0` → `1.0.3`; the "every document has a Conformance section" claim
+narrowed to exclude the `spec-security` consolidation doc; the `spec-data-subject-rights` title's "Anonymous" →
+"Pseudonymous" (its own thesis); a `spec-identity` → `spec-tracker` cross-reference corrected `§3` → `§2`; and the GPC
+state count reconciled to 11 (the pre-Montana-removal "12" / "a dozen" leftovers).
+
 ## Deliberately left unchanged
 
 - **`cli/DECISIONS.md` §1 "a CLI tool with 3 commands"** — this sits in the section the document flags as pre-refactor
@@ -107,3 +148,8 @@ only joined by a newer audit.
 - **`benchmarks/di-inversify/RESULTS.md` environment header pinning `@codefast/di 0.5.0-canary.8`** — the header is
   bound to the dated "last full re-measure" (2026-07-31). A newer full re-measure should add a new dated environment
   block rather than overwrite this one.
+- **`spec-regions.md` "20+/20 comprehensive laws" hedge** — a moving target the document already flags for counsel; only
+  the internally-contradictory GPC count was reconciled.
+- **RFC-2119 keyword list variance across the spec docs** — cosmetic (the core docs omit `SHOULD NOT`, which they never
+  use).
+- **The core specs' absent per-doc Status line** — an intentional extension-doc-only convention, per the spec index.
