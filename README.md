@@ -62,13 +62,14 @@ export function MyPage() {
 
 Requires React 19 and Tailwind CSS 4. See [codefastlabs.com](https://codefastlabs.com) for per-component documentation.
 
-## Status: 0.x, on purpose
+## Status: 0.x, versioned per package
 
-CodeFast stays on **0.x**, and there is no 1.0 planned. These packages are built for the maintainer's own projects
-first, so the version number is release bookkeeping rather than a compatibility promise — staying on 0.x is what keeps
-breaking changes cheap enough to actually make. In practice that means **breaking changes ship as minor versions**. On
-`0.x` the caret range npm installs by default holds you inside the current minor, so one never arrives unasked — read
-the [changelog](https://github.com/codefastlabs/codefast/releases) before you widen it.
+Every package is on **0.x**, and each one moves on its own version track — releasing one leaves the others at their
+current versions, so a version number describes the package that carries it. These packages are built for the
+maintainer's own projects first, so a 1.0 is a per-package call, taken when that package's API is worth committing to:
+none is scheduled, and none is ruled out. While a package is on 0.x, **breaking changes ship as minor versions** — the
+caret range npm installs by default holds you inside the current minor, so one never arrives unasked — read the
+[changelog](https://github.com/codefastlabs/codefast/releases) before you widen it.
 
 Install the default `latest` — the documentation site tracks it:
 

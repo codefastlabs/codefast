@@ -6,8 +6,9 @@ Thanks for helping out. This file covers the repo-wide workflow; `@codefast/di` 
 
 Participation is governed by the [Code of Conduct](CODE_OF_CONDUCT.md).
 
-CodeFast stays on **0.x** with no 1.0 planned — breaking changes ship as minor versions, which is what keeps them cheap
-enough to make. The API surface never "locks", so feedback on a name or a shape is worth raising whenever you hit it.
+CodeFast is on **0.x**, and each package versions independently — while a package is on 0.x its breaking changes ship as
+minor versions, which is what keeps them cheap enough to make. The API surface never "locks", so feedback on a name or a
+shape is worth raising whenever you hit it.
 
 ## The toolchain is non-standard — read this first
 
@@ -136,9 +137,9 @@ Add one whenever a published package changes:
 pnpm exec changeset
 ```
 
-All `@codefast/*` are a single `fixed` group and version together at the **highest** bump any changeset requests.
-**While on 0.x, never author a `major`** — one major on one package would bump the whole group to 1.0.0. Breaking
-changes are `minor` during 0.x.
+Every `@codefast/*` package versions **independently** — there is no `fixed` group, so a changeset bumps only the
+packages it names plus their dependents. **While a package is on 0.x, ship a breaking change as a `minor`**; a `major`
+is a deliberate 1.0 for that one package, and no edit undoes it once versioned.
 
 Versioning and publishing are owned by CI; do not run the release commands locally.
 
@@ -160,8 +161,8 @@ locally". Bootstrap it once:
 2. On npmjs.com open the new package → **Settings** → **Trusted Publisher** → **GitHub Actions**, set org
    `codefastlabs`, repo `codefast`, workflow `release.yml`, tick **Allow npm publish**, and save.
 
-Do this **before** the package's first changeset reaches `main`: the whole fixed group publishes together, so an
-unconfigured new member fails the release run.
+Do this **before** the package's first changeset reaches `main`: the release run publishes every package a changeset
+bumps, so an unconfigured new member fails it.
 
 ## The gate before you open a PR
 

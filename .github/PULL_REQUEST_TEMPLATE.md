@@ -37,8 +37,8 @@ happened is usually the reusable part.
 
 ## Checklist
 
-- [ ] Changeset added (`pnpm exec changeset`) if a published package changed — `minor` at most, never `major` while on
-      0.x
+- [ ] Changeset added (`pnpm exec changeset`) if a published package changed — `minor` for a breaking change while the
+      package is on 0.x; a `major` is a deliberate 1.0 for that one package, so ask first
 - [ ] Tests live under exactly one of `tests/{unit,integration,e2e,types}/**`, mirroring the `src/` path
 - [ ] No hand-written `@since` tags (`git diff | grep -E '^\+.*@since'` is empty — `codefast tag` stamps them at
       release)

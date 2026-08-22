@@ -111,8 +111,8 @@ not change `Target`.
 
 ### 2.8 `Target` means a downstream project, not a version milestone
 
-This is an **internal project with no planned 1.0** — the version number is Changesets bookkeeping, not a compatibility
-promise to third parties.
+This is an **internal-first project**, and each package versions independently — so a 1.0 would be one package's own
+decision, never a repo-wide milestone a board field could track.
 
 So the right question each release is not _"are we at 1.0 yet"_ but _"which downstream project is waiting on what"_.
 `Target` answers that one.

@@ -359,15 +359,13 @@ In pre mode, a versioned changeset's `.md` file is **moved into `.changeset/pre/
 empty `.changeset/` root during canary is expected and is not a sign that changesets went missing — they are still read
 from there, under the id `pre/<name>`.
 
-**Never author a `major` changeset.** All `@codefast/*` are one `fixed` group (`.changeset/config.json`), so the group
-versions together at the **highest** bump any changeset requests — a single `major` (even on one package like
-`@codefast/tracking`) bumps the **whole group** `0.x → 1.0.0`. Breaking changes are `minor`. The group spans the four
-private `@codefast/benchmark-*` too, which is why the config sets `privatePackages.version: true` — the group's floor is
-the highest version across every member, so a member left unversioned can pin the group where `changeset version` cannot
-reach it.
+**Each package versions on its own track.** `.changeset/config.json` declares no `fixed` group, so a changeset bumps
+only the packages it names plus whatever depends on them (`updateInternalDependencies: "patch"`), and a version number
+describes the package carrying it. The config sets `privatePackages.version: true` so the four private
+`@codefast/benchmark-*` are versioned and changelogged (Changesets 3.0 defaults it to `false`).
 
-**There is no planned 1.0.** These packages are consumed internally by the maintainer's own projects, so the version
-number is Changesets bookkeeping, not a compatibility promise to third parties — staying on 0.x is what keeps breaking
-changes cheap, and one stray `major` throws that away permanently. Once a wrong major has been versioned, editing
-changesets alone can't undo it — the bump is already baked into every `package.json` (plus `pre.json` when in pre mode);
-the reset recipe is in the `release` skill.
+**A `major` is one package's own call.** It takes that package to 1.0 and leaves the rest where they are — reach for one
+when the package's API is worth committing to, none scheduled and none ruled out. While a package is on 0.x, prefer
+`minor` for a breaking change, which is what keeps breaking changes cheap. A bump is irreversible once versioned —
+editing changesets can't undo what is already baked into `package.json` (plus `pre.json` in pre mode); the reset recipe
+is in the `release` skill.

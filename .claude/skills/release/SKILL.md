@@ -10,11 +10,10 @@ description:
 
 ## Ground rules
 
-- Every `@codefast/*` package is in the `fixed` group (`.changeset/config.json`) — **they version together**, and that
-  includes the four private `@codefast/benchmark-*`. The lockstep depends on `privatePackages.version: true` in the
-  config: Changesets 3.0 defaults it to `false`, which freezes the private members while the published seven climb — and
-  since the group's floor is the highest version across **all** members, a private one left behind can anchor the group
-  without `changeset version` being able to move it. `@apps/ui` is in `ignore` and never needs a changeset.
+- Every `@codefast/*` package versions **independently** — `.changeset/config.json` declares no `fixed` group, so a
+  changeset bumps only the packages it names, plus their dependents via `updateInternalDependencies: "patch"`.
+  `privatePackages.version: true` is set so the four private `@codefast/benchmark-*` are versioned and changelogged
+  (Changesets 3.0 defaults it to `false`). `@apps/ui` is in `ignore` and never needs a changeset.
 - **Do not run `pnpm changeset add`** (an interactive TUI). Write the `.changeset/<kebab-case>.md` file yourself:
 
   ```md
@@ -35,21 +34,23 @@ description:
   but open the release PR `chore: release new version` (branch `changeset-release/main`) carrying the version bump.
   **Merging that PR** is what makes the next run `changeset publish` to npm.
 
-## ⚠️ While on 0.x: never write a `major` changeset
+## A `major` bumps only the package it names
 
-Because the `fixed` group versions together at the **highest bump**, a single `major` (even on one package such as
-`@codefast/tracking`) pushes **the whole group** `0.x → 1.0.0`. A breaking change in 0.x must be a `minor`. If a wrong
-major has already been versioned or published in canary, **editing changesets alone cannot undo it** (the bump is baked
-into `package.json` + `pre.json`) — use the reset recipe below.
+A 1.0 is a per-package decision: a `major` takes that one package to 1.0 and leaves the rest where they are. Reach for
+one only when that package's API is worth committing to — ask first — and while a package is on 0.x prefer `minor` for a
+breaking change, which is what keeps breaking changes cheap. Any bump is irreversible once versioned or published in
+canary: **editing changesets alone cannot undo it** (the bump is baked into `package.json` + `pre.json`) — use the reset
+recipe below.
 
 ## Resetting canary back to 0.x after a wrong version jump (verified)
 
 1. Lower the incorrect changesets from `major` to `minor`.
-2. Reset **every** `@codefast/*` package.json — including the two under `benchmarks/*` (`benchmark-di-inversify`,
-   `benchmark-tailwind-variants`), not just `packages/*`. Miss them and the fixed group stays anchored high.
-3. Set the base package.json to the **most recently published** canary of the line you want to continue (e.g.
-   `0.5.0-canary.5`) so CI computes the next one as `.6` — the counter is (max prerelease in the group) + 1, so you must
-   avoid numbers already published.
+2. Reset the `package.json` of every package the wrong bump reached — `git diff` is the authoritative list, not the
+   changeset's, since `updateInternalDependencies` drags dependents along, including the two under `benchmarks/*`
+   (`benchmark-di-inversify`, `benchmark-tailwind-variants`).
+3. Set each one back to the **most recently published** canary of the line you want to continue (e.g. `0.5.0-canary.5`)
+   so CI computes the next as `.6` — the counter is that package's max published prerelease + 1, so avoid numbers
+   already published.
 4. Clear `pre.json.changesets` (`[]`) so the changeset set re-applies from that base.
 5. Commit → push → merge the release PR → CI publishes.
 6. A 1.x that was already published cannot be removed; `npm deprecate` those.
@@ -95,8 +96,8 @@ files need moving back.
 
 A trusted publisher is configured **per package** on npmjs.com and can only be added **after the package exists** there;
 npm does not yet support publishing an initial version over OIDC (`npm/cli#8544`). So a new `@codefast/*` package needs
-a one-time manual bootstrap, and it must happen **before** the package's first changeset reaches `main` — the fixed
-group publishes together, so an unconfigured new member fails the whole release run.
+a one-time manual bootstrap, and it must happen **before** the package's first changeset reaches `main` — the release
+run publishes every package a changeset bumps, so an unconfigured new member fails it.
 
 1. Publish the first version from a machine logged in to npm (needs 2FA — cannot be automated):
 
@@ -114,5 +115,5 @@ new published package.
 ## Checklist before merging a release
 
 - `pnpm run verify` is green (build packages + lint + format + check-types + test:coverage).
-- The changeset states the right bump level (patch/minor/major) — remember the fixed group, so the highest level applies
-  to everything.
+- The changeset states the right bump level (patch/minor/major) and names every package that changed — nothing else is
+  bumped for it.
