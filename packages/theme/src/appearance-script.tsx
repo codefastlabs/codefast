@@ -1,6 +1,6 @@
 import type { JSX } from "react";
 
-import { appearances } from "#/appearance";
+import { appearances, appearanceSchema } from "#/appearance";
 import type { Appearance } from "#/appearance";
 import { DEFAULT_APPEARANCE, MEDIA, STORAGE_KEY } from "#/constants";
 
@@ -24,17 +24,17 @@ export type AppearanceScriptProps = {
    * Fallback preference when the storage entry is absent or unrecognised.
    * Defaults to {@link DEFAULT_APPEARANCE}.
    */
-  readonly appearance?: Appearance;
+  readonly appearance?: Appearance | undefined;
   /**
    * CSP nonce applied to the inline script element.
    */
-  readonly nonce?: string;
+  readonly nonce?: string | undefined;
   /**
    * `localStorage` key the script reads before first paint — a recognised value (`"light"`,
    * `"dark"`, or `"automatic"`) wins over `appearance`.
    * Defaults to {@link STORAGE_KEY}; pair with `<AppearanceProvider>` using the **same key**.
    */
-  readonly storageKey?: string;
+  readonly storageKey?: string | undefined;
 };
 
 // ── Component ────────────────────────────────────────────────────────────────────────────────────────────────────────
@@ -72,10 +72,13 @@ export function AppearanceScript({
   storageKey = STORAGE_KEY,
   appearance = DEFAULT_APPEARANCE,
 }: AppearanceScriptProps): JSX.Element {
+  // Guard against invalid values bypassing TypeScript so the fallback matches AppearanceProvider.
+  const safeAppearance = appearanceSchema.safeParse(appearance).success ? appearance : DEFAULT_APPEARANCE;
+
   // toScriptSafe = JSON.stringify + escape <>/  so </script> cannot break out of the tag.
   // The script reads localStorage before first paint so the stored preference applies
   // without FOUC; an absent or invalid entry falls back to fb.
-  const appearanceScript = `(function(){try{var sk=${toScriptSafe(storageKey)},fb=${toScriptSafe(appearance)},s=localStorage.getItem(sk),appearance=(${APPEARANCE_VALID_CHECK})?s:fb,colorScheme=appearance;"automatic"===appearance&&(colorScheme=window.matchMedia(${toScriptSafe(MEDIA)}).matches?"dark":"light"),document.documentElement.classList.remove(${APPEARANCE_REMOVE_ARGS}),document.documentElement.classList.add(colorScheme),document.documentElement.style.colorScheme=colorScheme,document.documentElement.dataset.appearance=appearance}catch(e){}})()`;
+  const appearanceScript = `(function(){try{var sk=${toScriptSafe(storageKey)},fb=${toScriptSafe(safeAppearance)},s=localStorage.getItem(sk),appearance=(${APPEARANCE_VALID_CHECK})?s:fb,colorScheme=appearance;"automatic"===appearance&&(colorScheme=window.matchMedia(${toScriptSafe(MEDIA)}).matches?"dark":"light"),document.documentElement.classList.remove(${APPEARANCE_REMOVE_ARGS}),document.documentElement.classList.add(colorScheme),document.documentElement.style.colorScheme=colorScheme,document.documentElement.dataset.appearance=appearance}catch(e){}})()`;
   const nonceProps = nonce === undefined ? {} : { nonce };
 
   return <script dangerouslySetInnerHTML={{ __html: appearanceScript }} suppressHydrationWarning {...nonceProps} />;

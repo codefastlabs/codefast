@@ -50,7 +50,7 @@ export type ColorScheme = Exclude<Appearance, "automatic">;
  *
  * @since 0.5.0-canary.2
  */
-export const appearances: Array<Appearance> = appearanceSchema.options;
+export const appearances: ReadonlyArray<Appearance> = appearanceSchema.options;
 
 /**
  * Shape of the context value provided by AppearanceProvider.
