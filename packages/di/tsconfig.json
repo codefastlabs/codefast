@@ -7,10 +7,8 @@
     "experimentalDecorators": false,
     "exactOptionalPropertyTypes": true,
     "noFallthroughCasesInSwitch": true,
-    "noImplicitOverride": true,
     "noImplicitReturns": true,
     "noUncheckedSideEffectImports": true,
-    "verbatimModuleSyntax": true,
     "types": ["node", "vitest/globals"]
   },
   "include": ["**/*.ts"],

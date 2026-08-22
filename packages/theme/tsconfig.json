@@ -3,9 +3,7 @@
   "compilerOptions": {
     "customConditions": ["source"],
     "exactOptionalPropertyTypes": true,
-    "noImplicitOverride": true,
-    "types": ["node", "vitest/globals"],
-    "verbatimModuleSyntax": true
+    "types": ["node", "vitest/globals"]
   },
   "include": ["**/*.ts", "**/*.tsx"],
   "exclude": ["node_modules", "dist", ".turbo", "coverage"]
