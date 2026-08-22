@@ -31,8 +31,8 @@ pnpm add @codefast/ui
 Or the equivalent with your package manager: `npm install @codefast/ui`, `yarn add @codefast/ui`, or
 `bun add @codefast/ui`.
 
-The package stays on `0.x` with no 1.0 planned, so breaking changes ship as minor versions — the default `^0.5.0` range
-holds you inside `0.5.x` until you widen it.
+The package stays on `0.x` with no 1.0 planned, so breaking changes ship as minor versions — the caret range npm
+installs by default holds you inside the current minor until you widen it.
 
 ## Quick Start
 

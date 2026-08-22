@@ -1,7 +1,8 @@
 # @codefast/cli
 
 Developer CLI for the [Codefast monorepo](https://github.com/codefastlabs/codefast) — `arrange` Tailwind class strings,
-`audit` source conventions (RTL), `mirror` export maps from `dist/`, and `tag` exported APIs with `@since`.
+`audit` source conventions (RTL, markdown links, comment dividers), `mirror` export maps from `dist/`, and `tag`
+exported APIs with `@since`.
 
 [![npm version](https://img.shields.io/npm/v/@codefast/cli)](https://www.npmjs.com/package/@codefast/cli)
 [![license](https://img.shields.io/npm/l/@codefast/cli)](https://github.com/codefastlabs/codefast/blob/main/LICENSE)
@@ -15,9 +16,9 @@ general-purpose product.
 Inside the Codefast monorepo, the CLI runs from its built output via root `package.json` scripts:
 
 ```bash
-pnpm --filter @codefast/cli build   # produce dist/bin.mjs first
+pnpm --filter @codefast/cli build   # produce dist/bin.js first
 
-pnpm run codefast <command>         # generic entry: node ./packages/cli/dist/bin.mjs
+pnpm run codefast <command>         # generic entry: node ./packages/cli/dist/bin.js
 
 # Convenience wrappers
 pnpm run cli:arrange                # codefast arrange
@@ -29,6 +30,7 @@ pnpm run cli:mirror                 # codefast mirror
 pnpm run cli:mirror:preview         # codefast mirror --dry-run
 pnpm run cli:audit:rtl              # codefast audit rtl
 pnpm run cli:audit:links            # codefast audit links
+pnpm run cli:audit:comments         # codefast audit comments
 ```
 
 Standalone install (Node >= 24):
@@ -148,6 +150,24 @@ codefast audit links --json                # machine-readable summary
 
 Configure intentional exceptions via `audit.links.allowlist` in `codefast.config` — each entry is a bare link target or
 `repo/relative/doc.md:target`.
+
+## audit comments
+
+Scans source doc comments for the repo's comment conventions — chiefly section dividers that are not in the one allowed
+form. Everything it reports is mechanical, so `--fix` rewrites every fixable divider in place and a red run is one
+`--fix` from green. Exits non-zero when unfixable issues remain so it can gate CI.
+
+```bash
+codefast audit comments                    # whole repo
+codefast audit comments packages/di/src    # explicit target
+codefast audit comments --fix              # rewrite fixable dividers in place
+codefast audit comments --json             # machine-readable summary
+```
+
+| Flag     | Description                                                   |
+| -------- | ------------------------------------------------------------- |
+| `--fix`  | Rewrite every mechanically fixable divider in place.          |
+| `--json` | Print one JSON summary on stdout (suppresses human progress). |
 
 ## `tag`
 

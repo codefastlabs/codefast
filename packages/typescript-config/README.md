@@ -1,7 +1,7 @@
 # @codefast/typescript-config
 
-Shared TypeScript configuration presets — one strict, bundler-first base plus focused variants for libraries, React, and
-Next.js.
+Shared TypeScript configuration presets — one strict, bundler-first base, focused variants for libraries, React, and
+Next.js, and a build overlay that turns on `.d.ts` emit.
 
 [![npm version](https://img.shields.io/npm/v/@codefast/typescript-config)](https://www.npmjs.com/package/@codefast/typescript-config)
 [![license](https://img.shields.io/npm/l/@codefast/typescript-config)](https://github.com/codefastlabs/codefast/blob/main/LICENSE)
@@ -69,12 +69,13 @@ Options you set locally always win, so overriding a preset value is a one-line c
 
 ## Presets
 
-| Preset         | Extends     | Purpose                                                                                   |
-| -------------- | ----------- | ----------------------------------------------------------------------------------------- |
-| `base.json`    | —           | Strict, bundler-first baseline: ESNext target/module, DOM + ESNext libs, type-check only. |
-| `library.json` | `base.json` | Headless packages: drops the DOM libs so reliance on browser globals is a type error.     |
-| `react.json`   | `base.json` | React 17+ automatic JSX transform (`jsx: "react-jsx"`) — no `React` import needed.        |
-| `next.json`    | `base.json` | Next.js apps: `jsx: "preserve"`, incremental builds, and the `next` TypeScript plugin.    |
+| Preset               | Extends     | Purpose                                                                                                                                                    |
+| -------------------- | ----------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `base.json`          | —           | Strict, bundler-first baseline: ESNext target/module, DOM + ESNext libs, type-check only.                                                                  |
+| `library.json`       | `base.json` | Headless packages: drops the DOM libs so reliance on browser globals is a type error.                                                                      |
+| `react.json`         | `base.json` | React 17+ automatic JSX transform (`jsx: "react-jsx"`) — no `React` import needed.                                                                         |
+| `next.json`          | `base.json` | Next.js apps: `jsx: "preserve"`, incremental builds, and the `next` TypeScript plugin.                                                                     |
+| `library-build.json` | (overlay)   | Build-emit overrides layered over `library.json` in a build config: `noEmit: false`, `.d.ts` via `isolatedDeclarations`, plus declaration and source maps. |
 
 ## Notable compiler options
 
