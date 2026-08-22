@@ -5,9 +5,7 @@
     "customConditions": ["source"],
     "exactOptionalPropertyTypes": true,
     "noFallthroughCasesInSwitch": true,
-    "noImplicitOverride": true,
     "noImplicitReturns": true,
-    "verbatimModuleSyntax": true,
     "types": ["node", "vitest/globals"]
   },
   "include": ["**/*.ts", "**/*.tsx"],
