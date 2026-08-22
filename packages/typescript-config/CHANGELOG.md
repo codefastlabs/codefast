@@ -1,5 +1,17 @@
 # @codefast/typescript-config
 
+## 0.8.0
+
+### Minor Changes
+
+- [#746](https://github.com/codefastlabs/codefast/pull/746) [`3dc0808`](https://github.com/codefastlabs/codefast/commit/3dc0808674b23f8ec0f869600b2c44478d91ccda) Thanks [@thevuong](https://github.com/thevuong)! - chore(typescript-config): hoist noImplicitOverride and verbatimModuleSyntax into the base preset
+
+  Both flags were copy-pasted across five workspace tsconfigs and were absent from the shared preset. They now live in
+  `base.json`, so every workspace inherits them and the redundant per-package copies are removed. Enabling them repo-wide
+  was verified to produce zero new type errors. `exactOptionalPropertyTypes` is intentionally left per-package: turning it
+  on everywhere surfaces mostly-benign errors in the component/CLI packages, so it stays opt-in for the logic-heavy
+  packages that benefit from it.
+
 ## 0.7.0
 
 ## 0.6.2
