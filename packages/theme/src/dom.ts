@@ -12,6 +12,10 @@ import type { ColorScheme } from "#/appearance";
  * @since 0.3.16-canary.0
  */
 export function applyColorScheme(colorScheme: ColorScheme): void {
+  if (typeof globalThis.window === "undefined") {
+    return;
+  }
+
   const root = window.document.documentElement;
 
   root.classList.remove("light", "dark", "automatic");

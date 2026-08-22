@@ -91,24 +91,24 @@ export type AppearanceProviderProps = {
    * Prevents jarring color animations when switching appearances.
    * Default: false
    */
-  readonly disableTransition?: boolean;
+  readonly disableTransition?: boolean | undefined;
   /**
    * CSP nonce for inline styles when `disableTransition` is enabled.
    */
-  readonly nonce?: string;
+  readonly nonce?: string | undefined;
   /**
    * Custom async persistence for appearance changes; replaces the `localStorage` auto-persist.
    */
-  readonly persistAppearance?: (value: Appearance) => Promise<void>;
+  readonly persistAppearance?: ((value: Appearance) => Promise<void>) | undefined;
   /**
    * Callback invoked when `persistAppearance` rejects.
    */
-  readonly onPersistError?: (error: unknown, attemptedAppearance: Appearance) => void;
+  readonly onPersistError?: ((error: unknown, attemptedAppearance: Appearance) => void) | undefined;
   /**
    * Fallback preference when storage has no valid entry — also what SSR renders.
    * Defaults to {@link DEFAULT_APPEARANCE}.
    */
-  readonly appearance?: Appearance;
+  readonly appearance?: Appearance | undefined;
   /**
    * `localStorage` key the preference is restored from and persisted under.
    * Defaults to {@link STORAGE_KEY}; pair with `<AppearanceScript>` using the **same key**.
@@ -122,7 +122,7 @@ export type AppearanceProviderProps = {
    * prop. For a returning visitor whose stored preference differs, components that render
    * preference-dependent markup hydrate-reconcile once; gate them behind a mounted flag to avoid that.
    */
-  readonly storageKey?: string;
+  readonly storageKey?: string | undefined;
 };
 
 // ── Component ────────────────────────────────────────────────────────────────────────────────────────────────────────
@@ -294,8 +294,10 @@ export function AppearanceProvider({
         return;
       }
 
-      // Store the cleanup; it will be called after applyColorScheme runs in the colorScheme effect
+      // Store the cleanup; it will be called after applyColorScheme runs in the colorScheme effect.
+      // Flush any pending suppression first so an overlapping call cannot orphan its injected <style>.
       if (disableTransition) {
+        enableTransitionsRef.current?.();
         enableTransitionsRef.current = suppressTransitions(nonce);
       }
 
