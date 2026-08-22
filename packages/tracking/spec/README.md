@@ -1,6 +1,6 @@
 # Consent-Gated Event Tracking — Specification
 
-Status: active. **Spec version 1.0.0** ([CHANGELOG](CHANGELOG.md)). Language-neutral specification of the tracking
+Status: active. **Spec version 1.0.3** ([CHANGELOG](CHANGELOG.md)). Language-neutral specification of the tracking
 system implemented by `@codefast/tracking`. Any conforming implementation — in any modern language, on any client/server
 pairing — must satisfy the normative documents below; the TypeScript package is the reference implementation.
 
@@ -29,12 +29,13 @@ The key words MUST, MUST NOT, SHOULD, SHOULD NOT, and MAY are to be interpreted 
 | [spec-ad-consent-frameworks.md](spec-ad-consent-frameworks.md) | IAB TCF / GPP interop for programmatic advertising (read an external CMP, don't be one)     |
 | [spec-data-subject-rights.md](spec-data-subject-rights.md)     | DSR obligations for the pseudonymous id: delegate to destinations, keep the surface minimal |
 
-Each document ends with a Conformance section of language-neutral test vectors (JSON input → JSON output) that an
-implementation can turn into its own test suite. Machine-readable projections of every vector live in
-[vectors/](vectors/README.md) (one `*.json` per document, validated by `vector.schema.json`) so a conformance suite can
-be run directly, in any language, without transcribing prose. The extension documents additionally cite the governing
-legal instrument or industry spec for every normative claim, with access dates, and flag items needing legal-counsel
-review — they are an engineering specification, not legal advice.
+Each document that defines rules ends with a Conformance section of language-neutral test vectors (JSON input → JSON
+output) that an implementation can turn into its own test suite; `spec-security` is the exception — it consolidates
+cross-cutting considerations whose normative home, and vectors, stay in the other documents. Machine-readable
+projections of every vector live in [vectors/](vectors/README.md) (one `*.json` per rule-defining document, validated by
+`vector.schema.json`) so a conformance suite can be run directly, in any language, without transcribing prose. The
+extension documents additionally cite the governing legal instrument or industry spec for every normative claim, with
+access dates, and flag items needing legal-counsel review — they are an engineering specification, not legal advice.
 
 ## Goals
 
