@@ -65,7 +65,7 @@ With DI — bind tenant context once on the child container; every downstream se
 
 ```ts
 // With DI — bind once, inject everywhere
-tenantContainer.bind(TenantContextToken).toConstantValue({ tenantId, plan, dbSchema });
+tenantContainer.bind(TenantContextToken).toConstantValue({ tenantId, plan, databaseSchema });
 const userService = tenantContainer.resolve(UserServiceToken);
 await userService.listUsers(); // all tenant deps resolved automatically
 ```
@@ -81,13 +81,13 @@ rootContainer (singleton lifetime)
 └── AppLoggerToken      → base logger
 
 tenantContainer (child, one per request)
-├── TenantContextToken  → { tenantId, plan, dbSchema }   ← bound here
-├── TenantDbToken       → namespaced to tenant schema    ← scoped
-├── TenantCacheToken    → key-prefixed per tenant        ← scoped
-├── TenantLoggerToken   → enriched with tenantId         ← scoped
-├── FeatureFlagsToken   → plan-gated feature set         ← scoped
-├── RateLimiterToken    → per-plan quota                 ← scoped
-└── UserServiceToken    → uses all of the above          ← scoped
+├── TenantContextToken   → { tenantId, plan, databaseSchema }   ← bound here
+├── TenantDatabaseToken  → namespaced to tenant schema          ← scoped
+├── TenantCacheToken     → key-prefixed per tenant              ← scoped
+├── TenantLoggerToken    → enriched with tenantId               ← scoped
+├── FeatureFlagsToken    → plan-gated feature set               ← scoped
+├── RateLimiterToken     → per-plan quota                       ← scoped
+└── UserServiceToken     → uses all of the above                ← scoped
 ```
 
 ---
@@ -95,18 +95,69 @@ tenantContainer (child, one per request)
 ## Creating a tenant child container
 
 ```ts
-function createTenantContainer(context: TenantContext): Container {
+function createTenantContainer(
+  rootContainer: Container,
+  tenantContext: TenantContext,
+  // Resolved once at boot (async singleton) and captured as a plain value,
+  // so the sync tenant bindings never trigger async resolution.
+  sharedDatabasePool: DatabasePool,
+): Container {
   const tenantContainer = rootContainer.createChild();
 
-  tenantContainer.bind(TenantContextToken).toConstantValue(context);
+  // Tenant identity — everything downstream derives from this one binding.
+  // toConstantValue is a fixed value; the child container is what scopes it.
+  tenantContainer.bind(TenantContextToken).toConstantValue(tenantContext);
 
-  // Scoped services resolve their tenant context from the child container
-  tenantContainer.bind(TenantDbToken).to(TenantDatabase).scoped();
-  tenantContainer.bind(TenantCacheToken).to(TenantCache).scoped();
-  tenantContainer.bind(TenantLoggerToken).to(ContextLogger).scoped();
-  tenantContainer.bind(FeatureFlagsToken).to(PlanFeatureFlags).scoped();
-  tenantContainer.bind(RateLimiterToken).to(PlanRateLimiter).scoped();
-  tenantContainer.bind(UserServiceToken).to(UserManager).scoped();
+  // Each scoped service is built by a dynamic factory that resolves the
+  // tenant context (and any sibling services) from the child container.
+  tenantContainer
+    .bind(TenantLoggerToken)
+    .toDynamic((context) => {
+      // No logger class — the factory returns a plain object literal.
+      const { tenantId, plan } = context.resolve(TenantContextToken);
+      const prefix = `[${tenantId}/${plan}]`;
+      return {
+        info: (message, metadata) => console.log(`  ${prefix} INFO  ${message}`, metadata ?? ""),
+        warn: (message, metadata) => console.log(`  ${prefix} WARN  ${message}`, metadata ?? ""),
+        error: (message, metadata) => console.error(`  ${prefix} ERROR ${message}`, metadata ?? ""),
+      };
+    })
+    .scoped();
+
+  tenantContainer
+    .bind(TenantDatabaseToken)
+    .toDynamic((context) => {
+      const { databaseSchema } = context.resolve(TenantContextToken);
+      const tenantLogger = context.resolve(TenantLoggerToken);
+      return new TenantDatabaseConnection(sharedDatabasePool, databaseSchema, tenantLogger);
+    })
+    .scoped();
+
+  tenantContainer
+    .bind(TenantCacheToken)
+    .toDynamic((context) => {
+      const { tenantId } = context.resolve(TenantContextToken);
+      const tenantLogger = context.resolve(TenantLoggerToken);
+      return new NamespacedRedisCache(`tenant:${tenantId}`, tenantLogger);
+    })
+    .scoped();
+
+  tenantContainer
+    .bind(FeatureFlagsToken)
+    .toDynamic((context) => new PlanFeatureFlags(context.resolve(TenantContextToken).plan))
+    .scoped();
+
+  tenantContainer
+    .bind(RateLimiterToken)
+    .toDynamic((context) => {
+      const { plan } = context.resolve(TenantContextToken);
+      return new PlanRateLimiter(plan, context.resolve(TenantLoggerToken));
+    })
+    .scoped();
+
+  // Domain services — plain class bindings that read everything from the tokens above.
+  tenantContainer.bind(UserServiceToken).to(TenantUserManager).scoped();
+  tenantContainer.bind(InviteServiceToken).to(TenantInviteManager).scoped();
 
   return tenantContainer;
 }
@@ -117,32 +168,71 @@ function createTenantContainer(context: TenantContext): Container {
 ## Plan-gated feature flags
 
 ```ts
-@injectable([inject(TenantContextToken)])
+// Undecorated — instantiated by the FeatureFlagsToken factory, which passes
+// in the tenant's plan (resolved from TenantContext), not the whole context.
 class PlanFeatureFlags implements FeatureFlags {
-  private readonly enabledSet: Set<string>;
+  private static readonly PLAN_FLAGS: Record<TenantPlan, Array<string>> = {
+    free: ["basic_auth", "file_upload"],
+    pro: ["basic_auth", "file_upload", "api_access", "webhooks", "advanced_analytics"],
+    enterprise: [
+      "basic_auth",
+      "file_upload",
+      "api_access",
+      "webhooks",
+      "advanced_analytics",
+      "sso",
+      "audit_logs",
+      "custom_domain",
+      "priority_support",
+    ],
+  };
 
-  constructor(context: TenantContext) {
-    this.enabledSet = new Set(PLAN_FEATURES[context.plan]);
-  }
+  constructor(private readonly plan: TenantPlan) {}
 
   isEnabled(flag: string): boolean {
-    return this.enabledSet.has(flag);
+    return PlanFeatureFlags.PLAN_FLAGS[this.plan].includes(flag);
+  }
+
+  enabledFlags(): Array<string> {
+    return PlanFeatureFlags.PLAN_FLAGS[this.plan];
   }
 }
 ```
 
-`PLAN_FEATURES` maps `"free" | "pro" | "enterprise"` to a list of enabled flag names. The flags object is automatically
-different for each tenant because `TenantContext` is tenant-specific.
+The private static `PLAN_FLAGS` maps each plan (`"free" | "pro" | "enterprise"`) to its list of enabled flag names. The
+flags differ per tenant because the `FeatureFlagsToken` factory constructs `PlanFeatureFlags` with the plan from that
+tenant's `TenantContext`.
 
 ---
 
 ## Per-plan rate limiting
 
 ```ts
-@injectable([inject(TenantContextToken)])
+// Undecorated — the RateLimiterToken factory passes in the plan and the
+// tenant logger. Quotas are keyed by plan; usage is tracked per operation.
 class PlanRateLimiter implements RateLimiter {
-  constructor(context: TenantContext) {
-    this.quotas = PLAN_QUOTAS[context.plan]; // different limits per plan
+  private static readonly QUOTAS: Record<TenantPlan, Record<string, number>> = {
+    free: { api_call: 100, file_upload: 10, invite: 3 },
+    pro: { api_call: 10_000, file_upload: 500, invite: 50 },
+    enterprise: { api_call: Infinity, file_upload: Infinity, invite: Infinity },
+  };
+
+  private readonly usage = new Map<string, number>();
+
+  constructor(
+    private readonly plan: TenantPlan,
+    private readonly tenantLogger: TenantLogger,
+  ) {}
+
+  checkQuota(operation: string): boolean {
+    const quota = PlanRateLimiter.QUOTAS[this.plan][operation] ?? 0;
+    const used = this.usage.get(operation) ?? 0;
+    if (used >= quota) {
+      this.tenantLogger.warn(`rate_limit.exceeded`, { operation, quota, used });
+      return false;
+    }
+    this.usage.set(operation, used + 1);
+    return true;
   }
 }
 ```
@@ -154,12 +244,12 @@ Each tenant container gets its own `RateLimiter` instance — quotas are never s
 ## Two tenants, fully isolated
 
 ```ts
-const freeContainer = createTenantContainer({ tenantId: "acme", plan: "free", dbSchema: "t_acme" });
-const proContainer = createTenantContainer({ tenantId: "beta", plan: "pro", dbSchema: "t_beta" });
+const freeContainer = createTenantContainer({ tenantId: "acme", plan: "free", databaseSchema: "t_acme" });
+const proContainer = createTenantContainer({ tenantId: "beta", plan: "pro", databaseSchema: "t_beta" });
 const entContainer = createTenantContainer({
   tenantId: "corp",
   plan: "enterprise",
-  dbSchema: "t_corp",
+  databaseSchema: "t_corp",
 });
 
 // Each resolves a fully isolated UserService — different db, cache, logger, flags
