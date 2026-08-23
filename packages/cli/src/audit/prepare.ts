@@ -117,6 +117,8 @@ export async function prepareLinkAudit(
  *
  * @remarks Defaults to the repo root: the import policy is repo-wide, and generated or vendored
  * trees are already excluded by the shared walk.
+ *
+ * @since 0.8.0
  */
 export async function prepareReactAudit(
   fs: FilesystemPort,

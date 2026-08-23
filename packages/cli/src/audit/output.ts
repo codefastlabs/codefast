@@ -96,6 +96,8 @@ export function formatLinkAuditJsonOutput(result: LinkAuditResult, rootDir: stri
 
 /**
  * Exit `1` when any non-allowlisted React import-policy violation remains.
+ *
+ * @since 0.8.0
  */
 export function exitCodeForReactAuditResult(result: ReactAuditResult): number {
   return result.violationCount > 0 ? CLI_EXIT_GENERAL_ERROR : CLI_EXIT_SUCCESS;
@@ -103,6 +105,8 @@ export function exitCodeForReactAuditResult(result: ReactAuditResult): number {
 
 /**
  * Human-readable React import-policy report.
+ *
+ * @since 0.8.0
  */
 export function presentReactAuditResult(result: ReactAuditResult): void {
   for (const file of result.files) {
@@ -125,6 +129,8 @@ export function presentReactAuditResult(result: ReactAuditResult): void {
 
 /**
  * Machine-readable React import-policy summary for `--json`.
+ *
+ * @since 0.8.0
  */
 export function formatReactAuditJsonOutput(result: ReactAuditResult, rootDir: string): string {
   return JSON.stringify({

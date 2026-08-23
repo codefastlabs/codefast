@@ -4,6 +4,8 @@
 
 /**
  * One impossible `@since` stamp found in a file's comments.
+ *
+ * @since 0.8.0
  */
 export interface SinceVersionFinding {
   readonly line: number;
@@ -35,6 +37,8 @@ function parseVersion(value: string): ParsedVersion | null {
 /**
  * Compares two SemVer strings by precedence — positive when `left` is greater,
  * null when either side is not a SemVer version.
+ *
+ * @since 0.8.0
  */
 export function compareVersionPrecedence(left: string, right: string): number | null {
   const a = parseVersion(left);
@@ -80,6 +84,8 @@ export function compareVersionPrecedence(left: string, right: string): number | 
 /**
  * Scans a file's comments for `@since` tags stamped above the package's current
  * version — a release that has not happened, so the stamp cannot be true.
+ *
+ * @since 0.8.0
  */
 export function scanImpossibleSinceTags(content: string, packageVersion: string): Array<SinceVersionFinding> {
   if (parseVersion(packageVersion) === null) {

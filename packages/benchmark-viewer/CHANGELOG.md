@@ -1,5 +1,15 @@
 # @codefast/benchmark-viewer
 
+## 0.7.1
+
+### Patch Changes
+
+- [#748](https://github.com/codefastlabs/codefast/pull/748) [`bde6d1b`](https://github.com/codefastlabs/codefast/commit/bde6d1b46f55f65039f8a3c8e062693fe328952a) Thanks [@thevuong](https://github.com/thevuong)! - Derive client-only view state without effect setState: the footer clocks and palette shortcut hint gate on a shared
+  hydration hook, the palette highlight becomes one epoch-tagged state with a derived index, and the chart drops its
+  sync-callback ref indirection.
+- Updated dependencies [[`bde6d1b`](https://github.com/codefastlabs/codefast/commit/bde6d1b46f55f65039f8a3c8e062693fe328952a)]:
+  - @codefast/benchmark-harness@0.7.1
+
 ## 0.7.0
 
 ### Patch Changes

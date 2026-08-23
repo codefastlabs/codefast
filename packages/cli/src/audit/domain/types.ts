@@ -48,6 +48,8 @@ export type RtlAuditResult = {
 /**
  * A React import-policy violation: a namespace/default `React` import, or an implicit
  * `React.*` UMD-global type reference.
+ *
+ * @since 0.8.0
  */
 export type ReactImportViolation = {
   readonly line: number;
@@ -58,6 +60,8 @@ export type ReactImportViolation = {
 
 /**
  * The React import-policy violations found in one file.
+ *
+ * @since 0.8.0
  */
 export type ReactImportFileViolations = {
   readonly relativePath: string;
@@ -66,6 +70,8 @@ export type ReactImportFileViolations = {
 
 /**
  * Outcome of one `audit react` run.
+ *
+ * @since 0.8.0
  */
 export type ReactAuditResult = {
   readonly files: Array<ReactImportFileViolations>;

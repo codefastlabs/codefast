@@ -1,5 +1,20 @@
 # @codefast/cli
 
+## 0.8.0
+
+### Minor Changes
+
+- [#750](https://github.com/codefastlabs/codefast/pull/750) [`c868dfd`](https://github.com/codefastlabs/codefast/commit/c868dfd5ce28434c88c33ae7ddd9c2017faa37e4) Thanks [@thevuong](https://github.com/thevuong)! - New `audit react` subcommand enforcing the repo's React import policy: flags `import * as React` and default `React`
+  imports (type-only included), plus implicit `React.*` UMD-global type references — the variant both `tsc` and the linter
+  accept silently through `export as namespace React` in `@types/react`. Configurable via `audit.react.allowlist` in
+  `codefast.config`; exits non-zero on violations so it can gate CI. The shared workspace walk also skips `.tanstack` and
+  `.nitro`, keeping TanStack/Nitro build caches out of every scan.
+
+- [#748](https://github.com/codefastlabs/codefast/pull/748) [`bde6d1b`](https://github.com/codefastlabs/codefast/commit/bde6d1b46f55f65039f8a3c8e062693fe328952a) Thanks [@thevuong](https://github.com/thevuong)! - `audit comments` gains a `since-impossible` rule: an `@since` tag naming a version above the owning package's current
+  version (compared by SemVer precedence, prerelease-aware) now fails the audit, so a stamp minted from a wrong
+  `package.json` version dies in CI instead of fossilizing. The tag subcommand's version lookup moves into
+  `core/workspace` so both subcommands share one implementation.
+
 ## 0.7.0
 
 ## 0.6.2

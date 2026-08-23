@@ -8,6 +8,8 @@ const emptySubscribe = (): (() => void) => () => {};
  * Client-only UI (a restored preference, viewport readouts) must match the server
  * markup on the first paint to avoid a hydration mismatch, so components gate on
  * this flag instead of a mount effect.
+ *
+ * @since 0.8.0
  */
 function useHasHydrated(): boolean {
   return useSyncExternalStore(

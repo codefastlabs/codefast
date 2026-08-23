@@ -1,5 +1,12 @@
 # @codefast/theme
 
+## 0.8.1
+
+### Patch Changes
+
+- [#748](https://github.com/codefastlabs/codefast/pull/748) [`bde6d1b`](https://github.com/codefastlabs/codefast/commit/bde6d1b46f55f65039f8a3c8e062693fe328952a) Thanks [@thevuong](https://github.com/thevuong)! - Mirror the committed appearance ref in a layout effect so a programmatic `setAppearance` landing before the passive
+  flush compares against the just-committed appearance instead of the previous one.
+
 ## 0.8.0
 
 ### Minor Changes

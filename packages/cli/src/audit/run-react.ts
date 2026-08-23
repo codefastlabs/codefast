@@ -10,6 +10,8 @@ import { walkTsxFiles } from "#/core/workspace/typescript-walk";
 
 /**
  * Scans a target path for React import-policy violations.
+ *
+ * @since 0.8.0
  */
 export function runReactAudit(
   fs: FilesystemPort,
