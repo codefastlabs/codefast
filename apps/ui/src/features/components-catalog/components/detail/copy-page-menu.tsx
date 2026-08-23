@@ -11,7 +11,7 @@ import { useCopyToClipboard } from "@codefast/ui/hooks/use-copy-to-clipboard";
 import { cn } from "@codefast/ui/lib/utils";
 import { CheckIcon, ChevronDownIcon, CopyIcon, ExternalLinkIcon, FileTextIcon } from "lucide-react";
 import type { ComponentProps } from "react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import { buildComponentMarkdown } from "#/features/components-catalog/lib/component-markdown";
 import { track } from "#/features/tracking/lib/tracking";
@@ -32,7 +32,8 @@ interface CopyPageMenuProps extends Omit<ComponentProps<typeof ButtonGroup>, "ch
  * so the button is never empty.
  */
 export function CopyPageMenu({ component, className, ...props }: CopyPageMenuProps) {
-  const [markdown, setMarkdown] = useState(() => buildComponentMarkdown(component));
+  const [doc, setDoc] = useState<Awaited<ReturnType<typeof loadDoc>> | undefined>(undefined);
+  const [docComponent, setDocComponent] = useState(component);
   const pendingVariantRef = useRef<CopyPageVariant>("markdown");
   const { copyToClipboard, isCopied } = useCopyToClipboard({
     onCopy: () => {
@@ -40,14 +41,18 @@ export function CopyPageMenu({ component, className, ...props }: CopyPageMenuPro
     },
   });
 
+  // Drop the enriched doc when the component changes — reset during render, not in an effect.
+  if (docComponent !== component) {
+    setDocComponent(component);
+    setDoc(undefined);
+  }
+
   useEffect(() => {
     let active = true;
 
-    setMarkdown(buildComponentMarkdown(component));
-
-    void loadDoc(component.slug).then((doc) => {
+    void loadDoc(component.slug).then((loaded) => {
       if (active) {
-        setMarkdown(buildComponentMarkdown(component, doc));
+        setDoc(loaded);
       }
     });
 
@@ -55,6 +60,9 @@ export function CopyPageMenu({ component, className, ...props }: CopyPageMenuPro
       active = false;
     };
   }, [component]);
+
+  // Built synchronously from metadata, enriched once the doc chunk loads — so it is never empty.
+  const markdown = useMemo(() => buildComponentMarkdown(component, doc), [component, doc]);
 
   // Relative for "View as Markdown" so it opens the page on the current origin
   // (localhost in dev); absolute (production host) for the LLM hand-off, since a

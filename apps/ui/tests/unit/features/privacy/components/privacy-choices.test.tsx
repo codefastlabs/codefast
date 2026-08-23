@@ -47,7 +47,7 @@ vi.mock(import("@codefast/tracking/destinations/google-analytics"), async (impor
   ...(await importOriginal()),
   clearGoogleAnalyticsCookies,
 }));
-vi.mock("#/hooks/use-has-hydrated", () => ({ useHasHydrated }));
+vi.mock("@codefast/ui/hooks/use-has-hydrated", () => ({ useHasHydrated }));
 
 beforeEach(() => {
   clearAnonymousId.mockClear();

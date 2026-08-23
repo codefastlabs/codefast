@@ -1,3 +1,5 @@
+import { createElement } from "react";
+
 import { EXAMPLE_COMPONENT_BY_REF, getLoadedExampleComponent } from "#/registry/_core/examples";
 import type { SourceRef } from "#/registry/_core/types";
 
@@ -13,13 +15,14 @@ interface ExampleLiveProps {
  * `React.lazy` handle hydrates the server-rendered preview in place (wrap in `<Suspense>`).
  */
 export function ExampleLive({ source }: ExampleLiveProps) {
-  const Loaded = getLoadedExampleComponent(source);
+  // Registry components are stable module-level references retrieved by ref, not defined here.
+  const loaded = getLoadedExampleComponent(source);
 
-  if (Loaded) {
-    return <Loaded />;
+  if (loaded) {
+    return createElement(loaded);
   }
 
-  const Lazy = EXAMPLE_COMPONENT_BY_REF.get(source);
+  const lazy = EXAMPLE_COMPONENT_BY_REF.get(source);
 
-  return Lazy ? <Lazy /> : null;
+  return lazy ? createElement(lazy) : null;
 }

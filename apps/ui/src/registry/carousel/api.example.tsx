@@ -5,21 +5,34 @@ import * as React from "react";
 
 export function CarouselDApiDemo() {
   const [api, setApi] = React.useState<CarouselApi>();
-  const [current, setCurrent] = React.useState(0);
-  const [count, setCount] = React.useState(0);
 
-  React.useEffect(() => {
-    if (!api) {
-      return;
-    }
+  // Subscribe to the embla instance and read its state directly — the idiomatic way to
+  // reflect an external mutable source in React, with no state-syncing effect.
+  const subscribe = React.useCallback(
+    (onChange: () => void) => {
+      if (!api) {
+        return () => {};
+      }
 
-    setCount(api.scrollSnapList().length);
-    setCurrent(api.selectedScrollSnap() + 1);
+      api.on("reInit", onChange).on("select", onChange);
 
-    api.on("select", () => {
-      setCurrent(api.selectedScrollSnap() + 1);
-    });
-  }, [api]);
+      return () => {
+        api.off("reInit", onChange).off("select", onChange);
+      };
+    },
+    [api],
+  );
+
+  const count = React.useSyncExternalStore(
+    subscribe,
+    () => (api ? api.scrollSnapList().length : 0),
+    () => 0,
+  );
+  const current = React.useSyncExternalStore(
+    subscribe,
+    () => (api ? api.selectedScrollSnap() + 1 : 0),
+    () => 0,
+  );
 
   return (
     <div className="mx-auto max-w-40 sm:max-w-xs">
