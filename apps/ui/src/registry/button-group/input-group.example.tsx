@@ -3,10 +3,10 @@ import { ButtonGroup } from "@codefast/ui/button-group";
 import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from "@codefast/ui/input-group";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@codefast/ui/tooltip";
 import { AudioLinesIcon, PlusIcon } from "lucide-react";
-import * as React from "react";
+import { useState } from "react";
 
 export function ButtonGroupInputGroup() {
-  const [voiceEnabled, setVoiceEnabled] = React.useState(false);
+  const [voiceEnabled, setVoiceEnabled] = useState(false);
 
   return (
     <TooltipProvider>

@@ -13,7 +13,7 @@ import {
 } from "@codefast/ui/message-scroller";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@codefast/ui/tooltip";
 import { RotateCwIcon } from "lucide-react";
-import * as React from "react";
+import { useState } from "react";
 
 type GroupChatItem =
   | {
@@ -108,8 +108,8 @@ function GroupChatMarker({
 }
 
 export function MessageScrollerGroupChat() {
-  const [demoKey, setDemoKey] = React.useState(0);
-  const [rockyTurn, setRockyTurn] = React.useState<"idle" | "marker" | "message">("idle");
+  const [demoKey, setDemoKey] = useState(0);
+  const [rockyTurn, setRockyTurn] = useState<"idle" | "marker" | "message">("idle");
   const items =
     rockyTurn === "message"
       ? [...INITIAL_ITEMS, ROCKY_MARKER, ROCKY_MESSAGE]

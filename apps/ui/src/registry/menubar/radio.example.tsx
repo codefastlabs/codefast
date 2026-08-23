@@ -8,11 +8,11 @@ import {
   MenubarSeparator,
   MenubarTrigger,
 } from "@codefast/ui/menubar";
-import * as React from "react";
+import { useState } from "react";
 
 export function MenubarRadio() {
-  const [user, setUser] = React.useState("benoit");
-  const [theme, setTheme] = React.useState("system");
+  const [user, setUser] = useState("benoit");
+  const [theme, setTheme] = useState("system");
 
   return (
     <Menubar className="w-72">

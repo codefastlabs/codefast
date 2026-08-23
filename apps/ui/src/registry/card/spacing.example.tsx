@@ -3,7 +3,7 @@ import { Card, CardAction, CardContent, CardDescription, CardFooter, CardHeader,
 import { Input } from "@codefast/ui/input";
 import { Label } from "@codefast/ui/label";
 import { ToggleGroup, ToggleGroupItem } from "@codefast/ui/toggle-group";
-import * as React from "react";
+import { useState } from "react";
 
 const spacingOptions = [
   {
@@ -29,7 +29,7 @@ const spacingOptions = [
 ];
 
 export function CardSpacing() {
-  const [spacing, setSpacing] = React.useState("4");
+  const [spacing, setSpacing] = useState("4");
   const selectedSpacing = spacingOptions.find((option) => option.value === spacing);
 
   return (

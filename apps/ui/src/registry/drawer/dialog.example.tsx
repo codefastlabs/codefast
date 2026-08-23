@@ -21,10 +21,11 @@ import { useMediaQuery } from "@codefast/ui/hooks/use-media-query";
 import { Input } from "@codefast/ui/input";
 import { Label } from "@codefast/ui/label";
 import { cn } from "@codefast/ui/lib/utils";
-import * as React from "react";
+import { useState } from "react";
+import type { ComponentProps } from "react";
 
 export function DrawerDialogDemo() {
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
   const isDesktop = useMediaQuery("(min-width: 768px)");
 
   if (isDesktop) {
@@ -65,7 +66,7 @@ export function DrawerDialogDemo() {
   );
 }
 
-function ProfileForm({ className }: React.ComponentProps<"form">) {
+function ProfileForm({ className }: ComponentProps<"form">) {
   return (
     <form className={cn("grid items-start gap-6", className)}>
       <div className="grid gap-3">

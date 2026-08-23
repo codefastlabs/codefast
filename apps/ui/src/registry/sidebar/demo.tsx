@@ -54,7 +54,8 @@ import {
   SquareTerminal,
   Trash2,
 } from "lucide-react";
-import * as React from "react";
+import { useState } from "react";
+import type { ComponentProps, ElementType } from "react";
 
 // This is sample data.
 const data = {
@@ -191,12 +192,12 @@ function TeamSwitcher({
 }: {
   teams: Array<{
     name: string;
-    logo: React.ElementType;
+    logo: ElementType;
     plan: string;
   }>;
 }) {
   const { isMobile } = useSidebar("AppSidebar");
-  const [activeTeam, setActiveTeam] = React.useState(teams[0]);
+  const [activeTeam, setActiveTeam] = useState(teams[0]);
 
   if (!activeTeam) {
     return null;
@@ -261,7 +262,7 @@ function NavMain({
   items: Array<{
     title: string;
     url: string;
-    icon?: React.ElementType;
+    icon?: ElementType;
     isActive?: boolean;
     items?: Array<{
       title: string;
@@ -310,7 +311,7 @@ function NavProjects({
   projects: Array<{
     name: string;
     url: string;
-    icon: React.ElementType;
+    icon: ElementType;
   }>;
 }) {
   const { isMobile } = useSidebar("AppSidebar");
@@ -458,7 +459,7 @@ function NavUser({
   );
 }
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>) {
   return (
     <SidebarProvider className="h-96 min-h-0 w-full overflow-hidden rounded-xl border [contain:layout] [&_[data-slot=sidebar-container]]:h-full">
       <Sidebar collapsible="icon" {...props}>

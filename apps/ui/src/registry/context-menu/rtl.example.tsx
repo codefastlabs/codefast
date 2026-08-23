@@ -15,7 +15,7 @@ import {
   ContextMenuTrigger,
 } from "@codefast/ui/context-menu";
 import { ArrowLeftIcon, ArrowRightIcon, RotateCwIcon } from "lucide-react";
-import * as React from "react";
+import { useState } from "react";
 
 import type { Translations } from "#/features/components-catalog/components/detail/language";
 import { useTranslation } from "#/features/components-catalog/components/detail/language-context";
@@ -91,7 +91,7 @@ const translations: Translations = {
 
 export function ContextMenuRtl() {
   const { t, dir, language } = useTranslation(translations, "ar");
-  const [people, setPeople] = React.useState("pedro");
+  const [people, setPeople] = useState("pedro");
 
   return (
     <ContextMenu>

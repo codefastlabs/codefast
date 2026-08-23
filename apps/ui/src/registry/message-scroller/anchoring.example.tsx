@@ -13,7 +13,7 @@ import {
 } from "@codefast/ui/message-scroller";
 import { ToggleGroup, ToggleGroupItem } from "@codefast/ui/toggle-group";
 import { ArrowUpIcon, MessageCircleDashedIcon, RotateCwIcon } from "lucide-react";
-import * as React from "react";
+import { useState } from "react";
 
 type AnchorRole = "user" | "assistant";
 
@@ -57,8 +57,8 @@ const SCRIPTED_MESSAGES: Array<ChatMessage> = [
 ];
 
 export function MessageScrollerAnchoring() {
-  const [anchorRole, setAnchorRole] = React.useState<AnchorRole>("user");
-  const [count, setCount] = React.useState(0);
+  const [anchorRole, setAnchorRole] = useState<AnchorRole>("user");
+  const [count, setCount] = useState(0);
   const messages = SCRIPTED_MESSAGES.slice(0, count);
   const nextMessage = SCRIPTED_MESSAGES[count];
 

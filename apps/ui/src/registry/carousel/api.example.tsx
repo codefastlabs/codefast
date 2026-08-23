@@ -1,14 +1,14 @@
 import { Card, CardContent } from "@codefast/ui/card";
 import type { CarouselApi } from "@codefast/ui/carousel";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@codefast/ui/carousel";
-import * as React from "react";
+import { useCallback, useState, useSyncExternalStore } from "react";
 
 export function CarouselDApiDemo() {
-  const [api, setApi] = React.useState<CarouselApi>();
+  const [api, setApi] = useState<CarouselApi>();
 
   // Subscribe to the embla instance and read its state directly — the idiomatic way to
   // reflect an external mutable source in React, with no state-syncing effect.
-  const subscribe = React.useCallback(
+  const subscribe = useCallback(
     (onChange: () => void) => {
       if (!api) {
         return () => {};
@@ -23,12 +23,12 @@ export function CarouselDApiDemo() {
     [api],
   );
 
-  const count = React.useSyncExternalStore(
+  const count = useSyncExternalStore(
     subscribe,
     () => (api ? api.scrollSnapList().length : 0),
     () => 0,
   );
-  const current = React.useSyncExternalStore(
+  const current = useSyncExternalStore(
     subscribe,
     () => (api ? api.selectedScrollSnap() + 1 : 0),
     () => 0,

@@ -8,11 +8,11 @@ import {
   ContextMenuSeparator,
   ContextMenuTrigger,
 } from "@codefast/ui/context-menu";
-import * as React from "react";
+import { useState } from "react";
 
 export function ContextMenuRadio() {
-  const [user, setUser] = React.useState("pedro");
-  const [theme, setTheme] = React.useState("light");
+  const [user, setUser] = useState("pedro");
+  const [theme, setTheme] = useState("light");
 
   return (
     <ContextMenu>

@@ -174,6 +174,22 @@ export const codefastAuditCommentsConfigSchema = z
 export type CodefastAuditCommentsConfig = z.infer<typeof codefastAuditCommentsConfigSchema>;
 
 /**
+ * React import-policy audit defaults — the scan always starts at the repo root, so only
+ * exceptions are configured.
+ */
+export const codefastAuditReactConfigSchema = z
+  .object({
+    /** Offending source text as written, or `repo/relative/path.tsx:<text>` entries, to ignore. */
+    allowlist: z.array(z.string()).optional(),
+  })
+  .strict();
+
+/**
+ * The validated `audit react` configuration.
+ */
+export type CodefastAuditReactConfig = z.infer<typeof codefastAuditReactConfigSchema>;
+
+/**
  * Zod schema grouping the per-audit configurations under `audit`.
  *
  * @since 0.3.16-canary.0
@@ -183,6 +199,7 @@ export const codefastAuditConfigSchema = z
     rtl: codefastAuditRtlConfigSchema.optional(),
     links: codefastAuditLinksConfigSchema.optional(),
     comments: codefastAuditCommentsConfigSchema.optional(),
+    react: codefastAuditReactConfigSchema.optional(),
   })
   .strict();
 

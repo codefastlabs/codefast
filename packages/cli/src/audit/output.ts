@@ -1,4 +1,4 @@
-import type { CommentAuditResult, LinkAuditResult, RtlAuditResult } from "#/audit/domain/types";
+import type { CommentAuditResult, LinkAuditResult, ReactAuditResult, RtlAuditResult } from "#/audit/domain/types";
 import { CLI_EXIT_GENERAL_ERROR, CLI_EXIT_SUCCESS } from "#/core/exit-codes";
 import { logger } from "#/core/logger";
 
@@ -89,6 +89,47 @@ export function formatLinkAuditJsonOutput(result: LinkAuditResult, rootDir: stri
   return JSON.stringify({
     schemaVersion: 1 as const,
     ok: result.breakageCount === 0,
+    cwd: rootDir,
+    result,
+  });
+}
+
+/**
+ * Exit `1` when any non-allowlisted React import-policy violation remains.
+ */
+export function exitCodeForReactAuditResult(result: ReactAuditResult): number {
+  return result.violationCount > 0 ? CLI_EXIT_GENERAL_ERROR : CLI_EXIT_SUCCESS;
+}
+
+/**
+ * Human-readable React import-policy report.
+ */
+export function presentReactAuditResult(result: ReactAuditResult): void {
+  for (const file of result.files) {
+    logger.out(`\n${file.relativePath}`);
+    for (const { line, raw, reason } of file.violations) {
+      logger.out(`  ${line}: ${raw} → ${reason}`);
+    }
+  }
+
+  const allowlistSuffix = result.allowlistedCount > 0 ? ` (${result.allowlistedCount} allowlisted)` : "";
+
+  if (result.violationCount > 0) {
+    logger.out(`\n✖ ${result.violationCount} React import violation(s)${allowlistSuffix}`);
+  } else {
+    logger.out(
+      `✓ No namespace/default React imports or React.* UMD globals across ${result.scannedFileCount} file(s)${allowlistSuffix}`,
+    );
+  }
+}
+
+/**
+ * Machine-readable React import-policy summary for `--json`.
+ */
+export function formatReactAuditJsonOutput(result: ReactAuditResult, rootDir: string): string {
+  return JSON.stringify({
+    schemaVersion: 1 as const,
+    ok: result.violationCount === 0,
     cwd: rootDir,
     result,
   });

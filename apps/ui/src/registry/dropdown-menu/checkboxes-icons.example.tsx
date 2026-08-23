@@ -8,10 +8,10 @@ import {
   DropdownMenuTrigger,
 } from "@codefast/ui/dropdown-menu";
 import { BellIcon, MailIcon, MessageSquareIcon } from "lucide-react";
-import * as React from "react";
+import { useState } from "react";
 
 export function DropdownMenuCheckboxesIcons() {
-  const [notifications, setNotifications] = React.useState({
+  const [notifications, setNotifications] = useState({
     email: true,
     sms: false,
     push: true,

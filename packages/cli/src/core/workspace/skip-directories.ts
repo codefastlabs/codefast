@@ -15,4 +15,6 @@ export const defaultSkipDirectoryNames: ReadonlySet<string> = new Set([
   "coverage",
   ".vercel",
   ".output",
+  ".tanstack",
+  ".nitro",
 ]);

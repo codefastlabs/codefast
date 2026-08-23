@@ -153,6 +153,10 @@ Rules: **no tests under** `src/**`; no test files directly under `tests/` (must 
   `next dev` answers 500 (`Unknown module type`) while `next build` stays green, and the fix — `transpilePackages` — is
   theirs to discover. Nothing enables `source` unless asked, which is the whole point.
 - Keep `import type` separate — never merge type imports into value imports.
+- **React imports are named-only.** `import * as React` and default `React` imports (value or type) are banned, and so
+  is the implicit `React.*` UMD-global type reference (`e: React.FormEvent` with no import — tsc accepts it silently).
+  Two-layer enforcement, no jsPlugins: oxlint's built-in `no-restricted-imports` catches the import forms in-editor, and
+  `pnpm cli:audit:react` (the `codefast` CLI, gating CI) catches everything including the UMD global.
 
 ## Comments (TSDoc, not JSDoc)
 

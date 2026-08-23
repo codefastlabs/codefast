@@ -1,6 +1,6 @@
 import { Calendar } from "@codefast/ui/calendar";
 import { Card, CardContent } from "@codefast/ui/card";
-import * as React from "react";
+import { useState } from "react";
 
 /** Structural match for `@daypicker/react`'s DateRange (kept local to avoid a transitive import). */
 interface DateRange {
@@ -17,7 +17,7 @@ function addDays(date: Date, days: number): Date {
 const initialFrom = new Date(new Date().getFullYear(), 0, 12);
 
 export function CalendarRange() {
-  const [dateRange, setDateRange] = React.useState<DateRange | undefined>({
+  const [dateRange, setDateRange] = useState<DateRange | undefined>({
     from: initialFrom,
     to: addDays(initialFrom, 30),
   });

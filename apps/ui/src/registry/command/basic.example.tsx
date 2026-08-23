@@ -8,10 +8,10 @@ import {
   CommandItem,
   CommandList,
 } from "@codefast/ui/command";
-import * as React from "react";
+import { useState } from "react";
 
 export function CommandBasic() {
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
 
   return (
     <div className="flex flex-col gap-4">

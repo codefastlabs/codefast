@@ -24,7 +24,7 @@ import {
   TagIcon,
   Trash2Icon,
 } from "lucide-react";
-import * as React from "react";
+import { useState } from "react";
 
 import type { Translations } from "#/features/components-catalog/components/detail/language";
 import { useTranslation } from "#/features/components-catalog/components/detail/language-context";
@@ -82,7 +82,7 @@ const translations: Translations = {
 
 export function ButtonGroupRtl() {
   const { dir, t, language } = useTranslation(translations, "ar");
-  const [label, setLabel] = React.useState("personal");
+  const [label, setLabel] = useState("personal");
 
   return (
     <div dir={dir}>

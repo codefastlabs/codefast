@@ -14,7 +14,7 @@ import {
 import { toast } from "@codefast/ui/sonner";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@codefast/ui/tooltip";
 import { RotateCwIcon } from "lucide-react";
-import * as React from "react";
+import { useState } from "react";
 
 interface Turn {
   id: string;
@@ -58,8 +58,8 @@ const HISTORY: Array<Turn> = [
 const INITIAL_VISIBLE_COUNT = 5;
 
 export function MessageScrollerLoadHistory() {
-  const [demoKey, setDemoKey] = React.useState(0);
-  const [visibleCount, setVisibleCount] = React.useState(INITIAL_VISIBLE_COUNT);
+  const [demoKey, setDemoKey] = useState(0);
+  const [visibleCount, setVisibleCount] = useState(INITIAL_VISIBLE_COUNT);
   const visibleMessages = HISTORY.slice(-visibleCount);
   const canLoadHistory = visibleCount < HISTORY.length;
 

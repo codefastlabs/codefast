@@ -46,6 +46,35 @@ export type RtlAuditResult = {
 };
 
 /**
+ * A React import-policy violation: a namespace/default `React` import, or an implicit
+ * `React.*` UMD-global type reference.
+ */
+export type ReactImportViolation = {
+  readonly line: number;
+  /** The offending source text — the import statement or the qualified type name. */
+  readonly raw: string;
+  readonly reason: string;
+};
+
+/**
+ * The React import-policy violations found in one file.
+ */
+export type ReactImportFileViolations = {
+  readonly relativePath: string;
+  readonly violations: Array<ReactImportViolation>;
+};
+
+/**
+ * Outcome of one `audit react` run.
+ */
+export type ReactAuditResult = {
+  readonly files: Array<ReactImportFileViolations>;
+  readonly violationCount: number;
+  readonly allowlistedCount: number;
+  readonly scannedFileCount: number;
+};
+
+/**
  * A broken link or anchor found by the link audit.
  *
  * @since 0.5.0

@@ -1,5 +1,5 @@
 import { render, screen } from "@testing-library/react";
-import type React from "react";
+import type { ReactElement } from "react";
 
 import type { Appearance } from "#/appearance";
 import { AppearanceContext } from "#/appearance-context";
@@ -13,7 +13,7 @@ describe("AppearanceContext", () => {
   test("should have null as default value", () => {
     // Render a component that consumes the context without a provider
     // Using React 19's use() would throw, so we test via Provider
-    const TestConsumer = (): React.ReactElement => {
+    const TestConsumer = (): ReactElement => {
       return (
         <AppearanceContext.Consumer>
           {(value) => <span data-testid="value">{value === null ? "null" : "unexpected"}</span>}
@@ -34,7 +34,7 @@ describe("AppearanceContext", () => {
       appearance: "dark" as const,
     };
 
-    const TestConsumer = (): React.ReactElement => {
+    const TestConsumer = (): ReactElement => {
       return (
         <AppearanceContext.Consumer>
           {(value) => (

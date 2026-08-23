@@ -11,7 +11,7 @@ import {
   SidebarProvider,
 } from "@codefast/ui/sidebar";
 import { FrameIcon, LifeBuoyIcon, MapIcon, PieChartIcon, SendIcon } from "lucide-react";
-import * as React from "react";
+import { useEffect, useState } from "react";
 
 const projects = [
   {
@@ -85,9 +85,9 @@ function NavProjectsSkeleton() {
 }
 
 function NavProjects() {
-  const [data, setData] = React.useState<typeof projects | undefined>(undefined);
+  const [data, setData] = useState<typeof projects | undefined>(undefined);
 
-  React.useEffect(() => {
+  useEffect(() => {
     let active = true;
 
     void fetchProjects().then((result) => {

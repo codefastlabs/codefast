@@ -10,7 +10,8 @@ import {
   DrawerTrigger,
 } from "@codefast/ui/drawer";
 import { Minus, Plus } from "lucide-react";
-import * as React from "react";
+import { useState } from "react";
+import type { CSSProperties } from "react";
 import { Bar, BarChart, ResponsiveContainer, XAxis } from "recharts";
 
 import type { Translations } from "#/features/components-catalog/components/detail/language";
@@ -105,7 +106,7 @@ const translations: Translations = {
 
 export function DrawerRtl() {
   const { dir, locale, language, t } = useTranslation(translations, "ar");
-  const [goal, setGoal] = React.useState(350);
+  const [goal, setGoal] = useState(350);
 
   function onClick(adjustment: number) {
     setGoal(Math.max(200, Math.min(400, goal + adjustment)));
@@ -165,7 +166,7 @@ export function DrawerRtl() {
                     style={
                       {
                         fill: "var(--chart-2)",
-                      } as React.CSSProperties
+                      } as CSSProperties
                     }
                   />
                 </BarChart>

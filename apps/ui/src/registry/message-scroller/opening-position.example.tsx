@@ -11,7 +11,7 @@ import {
   useMessageScroller,
 } from "@codefast/ui/message-scroller";
 import { Tabs, TabsList, TabsTrigger } from "@codefast/ui/tabs";
-import * as React from "react";
+import { useLayoutEffect, useState } from "react";
 
 type Position = "start" | "end" | "last-anchor";
 
@@ -53,7 +53,7 @@ const POSITIONS: Array<{ value: Position; label: string }> = [
 function OpeningPositionScroller({ position, positionKey }: { position: Position; positionKey: number }) {
   const { scrollToEnd, scrollToMessage, scrollToStart } = useMessageScroller();
 
-  React.useLayoutEffect(() => {
+  useLayoutEffect(() => {
     const frame = requestAnimationFrame(() => {
       if (position === "start") {
         scrollToStart({ behavior: "auto" });
@@ -112,8 +112,8 @@ function OpeningPositionScroller({ position, positionKey }: { position: Position
 }
 
 export function MessageScrollerOpeningPosition() {
-  const [positionKey, setPositionKey] = React.useState(0);
-  const [position, setPosition] = React.useState<Position>("last-anchor");
+  const [positionKey, setPositionKey] = useState(0);
+  const [position, setPosition] = useState<Position>("last-anchor");
 
   return (
     <div className="relative flex flex-col gap-4">

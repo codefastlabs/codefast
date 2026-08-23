@@ -1,9 +1,9 @@
 import { Label } from "@codefast/ui/label";
 import { Slider } from "@codefast/ui/slider";
-import * as React from "react";
+import { useState } from "react";
 
 export function SliderControlled() {
-  const [value, setValue] = React.useState([0.3, 0.7]);
+  const [value, setValue] = useState([0.3, 0.7]);
 
   return (
     <div className="mx-auto grid w-full max-w-xs gap-3">

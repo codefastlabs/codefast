@@ -77,6 +77,26 @@ export const commentAuditRunRequestSchema: z.ZodType<CommentAuditRunRequest> = z
 });
 
 /**
+ * Resolved request for a single React import-policy audit run.
+ */
+export type ReactAuditRunRequest = {
+  readonly rootDir: string;
+  readonly targetPath: string;
+  readonly allowlist?: ReadonlyArray<string> | undefined;
+  readonly json: boolean;
+};
+
+/**
+ * Zod schema for {@link ReactAuditRunRequest}.
+ */
+export const reactAuditRunRequestSchema: z.ZodType<ReactAuditRunRequest> = z.object({
+  rootDir: z.string().min(1),
+  targetPath: z.string().min(1),
+  allowlist: z.array(z.string()).optional(),
+  json: z.boolean(),
+});
+
+/**
  * Resolves a path that may be absolute or relative to `rootDir`.
  *
  * @since 0.5.0-canary.6

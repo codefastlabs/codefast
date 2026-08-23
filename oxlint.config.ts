@@ -39,6 +39,21 @@ export default defineConfig({
     "typescript/consistent-type-imports": ["error", { prefer: "type-imports", fixStyle: "separate-type-imports" }],
     "typescript/no-explicit-any": "warn",
 
+    // House style: React members are imported by name — never a namespace or default
+    // `React` import. The implicit `React.*` UMD global is caught by `codefast audit react`.
+    "no-restricted-imports": [
+      "error",
+      {
+        paths: [
+          {
+            name: "react",
+            importNames: ["default"],
+            message: 'Import React members by name: import { useState } / import type { ComponentProps } from "react".',
+          },
+        ],
+      },
+    ],
+
     // Type-aware promise safety (requires `typeAware: true`).
     "typescript/no-floating-promises": "error",
     "typescript/no-misused-promises": "error",

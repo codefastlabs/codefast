@@ -35,10 +35,10 @@ import {
   ZoomInIcon,
   ZoomOutIcon,
 } from "lucide-react";
-import * as React from "react";
+import { useState } from "react";
 
 export function CommandManyItems() {
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
 
   return (
     <div className="flex flex-col gap-4">

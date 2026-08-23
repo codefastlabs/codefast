@@ -9,10 +9,10 @@ import {
   DropdownMenuTrigger,
 } from "@codefast/ui/dropdown-menu";
 import { Building2Icon, CreditCardIcon, WalletIcon } from "lucide-react";
-import * as React from "react";
+import { useState } from "react";
 
 export function DropdownMenuRadioIcons() {
-  const [paymentMethod, setPaymentMethod] = React.useState("card");
+  const [paymentMethod, setPaymentMethod] = useState("card");
 
   return (
     <DropdownMenu>

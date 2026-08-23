@@ -42,15 +42,15 @@ import {
   SunIcon,
   UserIcon,
 } from "lucide-react";
-import * as React from "react";
+import { useState } from "react";
 
 export function DropdownMenuComplex() {
-  const [notifications, setNotifications] = React.useState({
+  const [notifications, setNotifications] = useState({
     email: true,
     sms: false,
     push: true,
   });
-  const [theme, setTheme] = React.useState("light");
+  const [theme, setTheme] = useState("light");
 
   return (
     <DropdownMenu>

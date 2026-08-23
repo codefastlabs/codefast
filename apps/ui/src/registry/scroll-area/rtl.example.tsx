@@ -1,6 +1,6 @@
 import { ScrollArea } from "@codefast/ui/scroll-area";
 import { Separator } from "@codefast/ui/separator";
-import * as React from "react";
+import { Fragment } from "react";
 
 import type { Translations } from "#/features/components-catalog/components/detail/language";
 import { useTranslation } from "#/features/components-catalog/components/detail/language-context";
@@ -36,10 +36,10 @@ export function ScrollAreaRtl() {
       <div className="p-4">
         <h4 className="mb-4 text-sm leading-none font-medium">{t.tags}</h4>
         {tags.map((tag) => (
-          <React.Fragment key={tag}>
+          <Fragment key={tag}>
             <div className="text-sm">{tag}</div>
             <Separator className="my-2" />
-          </React.Fragment>
+          </Fragment>
         ))}
       </div>
     </ScrollArea>

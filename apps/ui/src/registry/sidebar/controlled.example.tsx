@@ -20,7 +20,7 @@ import {
   PieChartIcon,
   SendIcon,
 } from "lucide-react";
-import * as React from "react";
+import { useState } from "react";
 
 const projects = [
   {
@@ -51,7 +51,7 @@ const projects = [
 ];
 
 export function SidebarControlledExample() {
-  const [open, setOpen] = React.useState(true);
+  const [open, setOpen] = useState(true);
 
   return (
     <SidebarProvider

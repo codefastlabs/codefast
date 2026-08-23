@@ -1,11 +1,11 @@
 import { Card, CardContent } from "@codefast/ui/card";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@codefast/ui/carousel";
 import Autoplay from "embla-carousel-autoplay";
-import * as React from "react";
+import { useState } from "react";
 
 export function CarouselPlugin() {
   // Lazy state init keeps one Autoplay instance stable across renders without reading a ref during render.
-  const [plugin] = React.useState(() => Autoplay({ delay: 2000, stopOnInteraction: true }));
+  const [plugin] = useState(() => Autoplay({ delay: 2000, stopOnInteraction: true }));
 
   return (
     <Carousel

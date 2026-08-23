@@ -64,6 +64,11 @@ jobs:
       - name: Verify Documentation Cross-References
         run: pnpm cli:audit:links
 
+      # oxlint bans namespace/default React imports natively, but an implicit `React.*`
+      # UMD-global type reference passes both lint and tsc — only this audit sees it.
+      - name: Verify React Import Policy
+        run: pnpm cli:audit:react
+
       - name: Execute Automated Tests with Coverage
         if: ${{ inputs.run-tests }}
         run: npx turbo run test:coverage --filter="./packages/**"

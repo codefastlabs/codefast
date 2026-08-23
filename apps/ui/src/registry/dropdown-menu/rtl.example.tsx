@@ -16,7 +16,7 @@ import {
   DropdownMenuTrigger,
 } from "@codefast/ui/dropdown-menu";
 import { CreditCardIcon, SettingsIcon, UserIcon } from "lucide-react";
-import * as React from "react";
+import { useState } from "react";
 
 import type { Translations } from "#/features/components-catalog/components/detail/language";
 import { useTranslation } from "#/features/components-catalog/components/detail/language-context";
@@ -116,10 +116,10 @@ const translations: Translations = {
 
 export function DropdownMenuRtl() {
   const { dir, language, t } = useTranslation(translations, "ar");
-  const [showStatusBar, setShowStatusBar] = React.useState(true);
-  const [showActivityBar, setShowActivityBar] = React.useState(false);
-  const [showPanel, setShowPanel] = React.useState(false);
-  const [position, setPosition] = React.useState("bottom");
+  const [showStatusBar, setShowStatusBar] = useState(true);
+  const [showActivityBar, setShowActivityBar] = useState(false);
+  const [showPanel, setShowPanel] = useState(false);
+  const [position, setPosition] = useState("bottom");
 
   return (
     <DropdownMenu>

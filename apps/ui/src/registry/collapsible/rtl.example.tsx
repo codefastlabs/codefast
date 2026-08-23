@@ -1,7 +1,7 @@
 import { Button } from "@codefast/ui/button";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@codefast/ui/collapsible";
 import { ChevronsUpDown } from "lucide-react";
-import * as React from "react";
+import { useState } from "react";
 
 import type { Translations } from "#/features/components-catalog/components/detail/language";
 import { useTranslation } from "#/features/components-catalog/components/detail/language-context";
@@ -47,7 +47,7 @@ const translations: Translations = {
 
 export function CollapsibleRtl() {
   const { dir, t } = useTranslation(translations, "ar");
-  const [isOpen, setIsOpen] = React.useState(false);
+  const [isOpen, setIsOpen] = useState(false);
 
   return (
     <Collapsible open={isOpen} onOpenChange={setIsOpen} className="flex w-87.5 flex-col gap-2" dir={dir}>

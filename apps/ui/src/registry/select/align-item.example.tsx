@@ -1,10 +1,10 @@
 import { Field, FieldContent, FieldDescription, FieldGroup, FieldLabel } from "@codefast/ui/field";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@codefast/ui/select";
 import { Switch } from "@codefast/ui/switch";
-import * as React from "react";
+import { useState } from "react";
 
 export function SelectAlignItem() {
-  const [alignItemWithTrigger, setAlignItemWithTrigger] = React.useState(true);
+  const [alignItemWithTrigger, setAlignItemWithTrigger] = useState(true);
 
   return (
     <FieldGroup className="w-full max-w-xs">

@@ -1,8 +1,8 @@
 # @codefast/cli
 
 Developer CLI for the [Codefast monorepo](https://github.com/codefastlabs/codefast) — `arrange` Tailwind class strings,
-`audit` source conventions (RTL, markdown links, comment dividers), `mirror` export maps from `dist/`, and `tag`
-exported APIs with `@since`.
+`audit` source conventions (RTL, markdown links, comment dividers, React imports), `mirror` export maps from `dist/`,
+and `tag` exported APIs with `@since`.
 
 [![npm version](https://img.shields.io/npm/v/@codefast/cli)](https://www.npmjs.com/package/@codefast/cli)
 [![license](https://img.shields.io/npm/l/@codefast/cli)](https://github.com/codefastlabs/codefast/blob/main/LICENSE)
@@ -31,6 +31,7 @@ pnpm run cli:mirror:preview         # codefast mirror --dry-run
 pnpm run cli:audit:rtl              # codefast audit rtl
 pnpm run cli:audit:links            # codefast audit links
 pnpm run cli:audit:comments         # codefast audit comments
+pnpm run cli:audit:react            # codefast audit react
 ```
 
 Standalone install (Node >= 24):
@@ -168,6 +169,26 @@ codefast audit comments --json             # machine-readable summary
 | -------- | ------------------------------------------------------------- |
 | `--fix`  | Rewrite every mechanically fixable divider in place.          |
 | `--json` | Print one JSON summary on stdout (suppresses human progress). |
+
+## `audit react`
+
+Read-only scan enforcing the repo's React import policy: members are imported by name. Flags `import * as React` and
+default `React` imports (type-only included), plus the sneakiest variant — an implicit `React.*` UMD-global type
+reference (`e: React.FormEvent` with no import), which both `tsc` and the linter accept silently through the
+`export as namespace React` declaration in `@types/react`. Exits non-zero when violations remain so it can gate CI.
+
+```bash
+codefast audit react                       # whole repo
+codefast audit react apps/ui/src           # explicit target
+codefast audit react --json                # machine-readable summary
+```
+
+| Flag     | Description                       |
+| -------- | --------------------------------- |
+| `--json` | Print one JSON summary on stdout. |
+
+Configure intentional exceptions via `audit.react.allowlist` in `codefast.config` — each entry is the offending source
+text as written or `repo/relative/path.tsx:<text>`.
 
 ## `tag`
 
