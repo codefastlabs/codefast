@@ -117,9 +117,8 @@ export function ChartPanel({
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const chartRef = useRef<Chart | null>(null);
   const initialCategoryViewRef = useRef<{ max: number; min: number } | null>(null);
-  const syncToolbarRef = useRef<(() => void) | undefined>(undefined);
 
-  const [toolbarDisabled, setToolbarDisabled] = useState<ChartToolbarDisabled>(ALL_TOOLBAR_DISABLED);
+  const [chartToolbarDisabled, setChartToolbarDisabled] = useState<ChartToolbarDisabled>(ALL_TOOLBAR_DISABLED);
 
   const primaryLib = useMemo(
     () => orderedLibraries.find((lib) => lib.isPrimary) ?? orderedLibraries[0],
@@ -128,6 +127,8 @@ export function ChartPanel({
   const compareLibs = useMemo(() => orderedLibraries.filter((lib) => !lib.isPrimary), [orderedLibraries]);
 
   const hasData = scenario !== null && runIndices.length > 0;
+  // Fully disabled without data; with data it mirrors the built chart's zoom/pan state.
+  const toolbarDisabled = hasData ? chartToolbarDisabled : ALL_TOOLBAR_DISABLED;
   const emptyReason = getEmptyReason(scenario, runIndices, runs);
 
   const syncToolbarFromChart = useCallback(() => {
@@ -135,13 +136,11 @@ export function ChartPanel({
     const initial = initialCategoryViewRef.current;
     const plottedRunCount = runIndices.length;
     if (!chart || !hasData || !initial || plottedRunCount < 2) {
-      setToolbarDisabled(ALL_TOOLBAR_DISABLED);
+      setChartToolbarDisabled(ALL_TOOLBAR_DISABLED);
       return;
     }
-    setToolbarDisabled(computeChartToolbarDisabled(chart, initial, plottedRunCount));
+    setChartToolbarDisabled(computeChartToolbarDisabled(chart, initial, plottedRunCount));
   }, [hasData, runIndices.length]);
-
-  syncToolbarRef.current = syncToolbarFromChart;
 
   // Build and update chart imperatively
   useEffect(() => {
@@ -158,7 +157,6 @@ export function ChartPanel({
       chartRef.current?.destroy();
       chartRef.current = null;
       initialCategoryViewRef.current = null;
-      setToolbarDisabled(ALL_TOOLBAR_DISABLED);
       return;
     }
 
@@ -369,7 +367,7 @@ export function ChartPanel({
               mode: "x",
               onPanComplete: ({ chart: panChart }) => {
                 chartRef.current = panChart;
-                queueMicrotask(() => syncToolbarRef.current?.());
+                queueMicrotask(syncToolbarFromChart);
               },
             },
             zoom: {
@@ -379,7 +377,7 @@ export function ChartPanel({
               drag: { enabled: false },
               onZoomComplete: ({ chart: zoomChart }) => {
                 chartRef.current = zoomChart;
-                queueMicrotask(() => syncToolbarRef.current?.());
+                queueMicrotask(syncToolbarFromChart);
               },
             },
             limits: {},
@@ -391,14 +389,14 @@ export function ChartPanel({
 
     requestAnimationFrame(() => {
       chartRef.current?.resize();
-      syncToolbarRef.current?.();
+      syncToolbarFromChart();
     });
 
     return () => {
       chartRef.current?.destroy();
       chartRef.current = null;
       initialCategoryViewRef.current = null;
-      setToolbarDisabled(ALL_TOOLBAR_DISABLED);
+      setChartToolbarDisabled(ALL_TOOLBAR_DISABLED);
     };
   }, [
     scenario,
@@ -411,6 +409,7 @@ export function ChartPanel({
     showRatio,
     primaryLib,
     compareLibs,
+    syncToolbarFromChart,
   ]);
 
   // Window resize → chart resize
@@ -428,12 +427,12 @@ export function ChartPanel({
         scheduled = false;
         chartRef.current?.resize();
         chartRef.current?.update("none");
-        syncToolbarRef.current?.();
+        syncToolbarFromChart();
       });
     };
     window.addEventListener("resize", onResize);
     return () => window.removeEventListener("resize", onResize);
-  }, []);
+  }, [syncToolbarFromChart]);
 
   // Open display details on desktop
   const displayDetailsRef = useRef<HTMLDetailsElement>(null);

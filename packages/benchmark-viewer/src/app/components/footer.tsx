@@ -1,22 +1,20 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
+import { useHasHydrated } from "#/app/hooks/use-has-hydrated";
 import { formatLocal } from "#/app/lib/format";
 
 /**
- * Formats `generatedAtIso` with the viewer's locale/TZ after mount only,
+ * Formats `generatedAtIso` with the viewer's locale/TZ after hydration only,
  * avoiding SSR vs hydration mismatches from `toLocaleString`.
  *
  * @since 0.3.16-canary.1
  */
 export function ClientSnapshotClock({ iso }: { readonly iso: string }) {
-  const [text, setText] = useState<string | null>(null);
-  useEffect(() => {
-    setText(formatLocal(iso, iso));
-  }, [iso]);
-  if (text === null) {
+  const hydrated = useHasHydrated();
+  if (!hydrated) {
     return null;
   }
-  return <> Data snapshot {text} (server clock).</>;
+  return <> Data snapshot {formatLocal(iso, iso)} (server clock).</>;
 }
 
 /**
@@ -25,12 +23,10 @@ export function ClientSnapshotClock({ iso }: { readonly iso: string }) {
  * @since 0.3.16-canary.1
  */
 export function ClientPageOpenedClock() {
-  const [text, setText] = useState<string | null>(null);
-  useEffect(() => {
-    setText(formatLocal(new Date().toISOString(), ""));
-  }, []);
-  if (text === null) {
+  const [openedIso] = useState(() => new Date().toISOString());
+  const hydrated = useHasHydrated();
+  if (!hydrated) {
     return null;
   }
-  return <> Page opened {text} (local).</>;
+  return <> Page opened {formatLocal(openedIso, "")} (local).</>;
 }
