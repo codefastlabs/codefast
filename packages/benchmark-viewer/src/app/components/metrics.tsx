@@ -1,4 +1,5 @@
 import { tv } from "@codefast/tailwind-variants";
+import type { CSSProperties } from "react";
 
 import { fmtHz } from "#/app/lib/format";
 import type { MetaItem, MetricCardProps, MetricsResult } from "#/app/lib/metrics";
@@ -99,7 +100,7 @@ function MetricCard({ label, value, meta, accentColor, isRatio }: MetricCardProp
         { "[--color-bh-metric-accent:var(--color-bh-ratio-accent)]": isRatio },
       )}
       role="group"
-      style={accentColor ? ({ "--color-bh-metric-accent": accentColor } as React.CSSProperties) : undefined}
+      style={accentColor ? ({ "--color-bh-metric-accent": accentColor } as CSSProperties) : undefined}
     >
       <div className="text-bh-metric-accent mb-[0.4rem] text-[0.625rem] font-semibold tracking-[0.09em] uppercase">
         {label}

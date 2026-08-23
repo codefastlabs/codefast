@@ -50,7 +50,7 @@ import {
   SquareTerminal,
   Trash2,
 } from "lucide-react";
-import * as React from "react";
+import type { ElementType } from "react";
 
 import type { Translations } from "#/features/components-catalog/components/detail/language";
 import { useTranslation } from "#/features/components-catalog/components/detail/language-context";
@@ -249,14 +249,14 @@ function SidebarContentInner({
   navMain: Array<{
     title: string;
     url: string;
-    icon?: React.ElementType;
+    icon?: ElementType;
     isActive?: boolean;
     items?: Array<{ title: string; url: string }>;
   }>;
   projects: Array<{
     name: string;
     url: string;
-    icon: React.ElementType;
+    icon: ElementType;
   }>;
   user: {
     name: string;

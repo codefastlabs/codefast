@@ -2,11 +2,11 @@ import { useCopyToClipboard } from "@codefast/ui/hooks/use-copy-to-clipboard";
 import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from "@codefast/ui/input-group";
 import { Popover, PopoverContent, PopoverTrigger } from "@codefast/ui/popover";
 import { CheckIcon, CopyIcon, InfoIcon, StarIcon } from "lucide-react";
-import * as React from "react";
+import { useState } from "react";
 
 export function InputGroupButtonExample() {
   const { copyToClipboard, isCopied } = useCopyToClipboard();
-  const [isFavorite, setIsFavorite] = React.useState(false);
+  const [isFavorite, setIsFavorite] = useState(false);
 
   return (
     <div className="grid w-full max-w-sm gap-6">

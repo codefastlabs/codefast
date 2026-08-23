@@ -3,7 +3,7 @@ import { ButtonGroup } from "@codefast/ui/button-group";
 import { Input } from "@codefast/ui/input";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger } from "@codefast/ui/select";
 import { ArrowRightIcon } from "lucide-react";
-import * as React from "react";
+import { useState } from "react";
 
 const CURRENCIES = [
   {
@@ -21,7 +21,7 @@ const CURRENCIES = [
 ];
 
 export function ButtonGroupSelect() {
-  const [currency, setCurrency] = React.useState("$");
+  const [currency, setCurrency] = useState("$");
 
   return (
     <ButtonGroup>

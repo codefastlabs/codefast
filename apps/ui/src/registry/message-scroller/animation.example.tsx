@@ -14,7 +14,7 @@ import {
 } from "@codefast/ui/message-scroller";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@codefast/ui/select";
 import { ArrowUpIcon, MessageCircleDashedIcon, RotateCwIcon } from "lucide-react";
-import * as React from "react";
+import { useState } from "react";
 
 type AnimationId = "fade" | "pop" | "tilt";
 
@@ -81,8 +81,8 @@ function getAnimationClassName(preset: AnimationId): string {
 }
 
 export function MessageScrollerAnimation() {
-  const [presetId, setPresetId] = React.useState<AnimationId>("fade");
-  const [count, setCount] = React.useState(0);
+  const [presetId, setPresetId] = useState<AnimationId>("fade");
+  const [count, setCount] = useState(0);
   const messages = SCRIPTED_MESSAGES.slice(0, count);
   const nextMessage = SCRIPTED_MESSAGES[count];
   const preset = PRESETS.find((item) => item.id === presetId) ?? PRESETS[0]!;

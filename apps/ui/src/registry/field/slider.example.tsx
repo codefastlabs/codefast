@@ -1,9 +1,9 @@
 import { Field, FieldDescription, FieldTitle } from "@codefast/ui/field";
 import { Slider } from "@codefast/ui/slider";
-import * as React from "react";
+import { useState } from "react";
 
 export function FieldSlider() {
-  const [value, setValue] = React.useState([200, 800]);
+  const [value, setValue] = useState([200, 800]);
 
   return (
     <Field className="w-full max-w-xs">

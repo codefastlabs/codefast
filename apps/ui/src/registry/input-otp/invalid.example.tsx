@@ -1,8 +1,8 @@
 import { InputOTP, InputOTPGroup, InputOTPSeparator, InputOTPSlot } from "@codefast/ui/input-otp";
-import * as React from "react";
+import { useState } from "react";
 
 export function InputOTPInvalid() {
-  const [value, setValue] = React.useState("000000");
+  const [value, setValue] = useState("000000");
 
   return (
     <InputOTP maxLength={6} value={value} onChange={setValue}>

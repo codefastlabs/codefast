@@ -1,6 +1,6 @@
 import { act, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import type React from "react";
+import type { ReactElement } from "react";
 import { renderToString } from "react-dom/server";
 
 import type { Appearance } from "#/appearance";
@@ -70,7 +70,7 @@ describe("AppearanceProvider", () => {
 
   describe("color scheme context", () => {
     test("should provide initial color scheme via context", () => {
-      const TestConsumer = (): React.ReactElement => {
+      const TestConsumer = (): ReactElement => {
         const { appearance } = useAppearance();
 
         return <span data-testid="appearance">{appearance}</span>;
@@ -86,7 +86,7 @@ describe("AppearanceProvider", () => {
     });
 
     test("should provide resolved color scheme for explicit schemes", () => {
-      const TestConsumer = (): React.ReactElement => {
+      const TestConsumer = (): ReactElement => {
         const { colorScheme } = useAppearance();
 
         return <span data-testid="resolved">{colorScheme}</span>;
@@ -104,7 +104,7 @@ describe("AppearanceProvider", () => {
     test('should resolve "automatic" color scheme to OS preference (light)', () => {
       mockMatchMedia(() => createMockMediaQueryList(false, ""));
 
-      const TestConsumer = (): React.ReactElement => {
+      const TestConsumer = (): ReactElement => {
         const { colorScheme, appearance } = useAppearance();
 
         return (
@@ -128,7 +128,7 @@ describe("AppearanceProvider", () => {
     test('should resolve "automatic" color scheme to OS preference (dark)', () => {
       mockMatchMedia((query) => createMockMediaQueryList(query === "(prefers-color-scheme: dark)", query));
 
-      const TestConsumer = (): React.ReactElement => {
+      const TestConsumer = (): ReactElement => {
         const { colorScheme } = useAppearance();
 
         return <span data-testid="resolved">{colorScheme}</span>;
@@ -144,7 +144,7 @@ describe("AppearanceProvider", () => {
     });
 
     test("should provide isPending as false initially", () => {
-      const TestConsumer = (): React.ReactElement => {
+      const TestConsumer = (): ReactElement => {
         const { isPending } = useAppearance();
 
         return <span data-testid="pending">{String(isPending)}</span>;
@@ -160,7 +160,7 @@ describe("AppearanceProvider", () => {
     });
 
     test("should provide setAppearance function", () => {
-      const TestConsumer = (): React.ReactElement => {
+      const TestConsumer = (): ReactElement => {
         const { setAppearance } = useAppearance();
 
         return <span data-testid="hasSetAppearance">{typeof setAppearance}</span>;
@@ -221,7 +221,7 @@ describe("AppearanceProvider", () => {
       const user = userEvent.setup();
       const mockPersistAppearance = vi.fn(async (_appearance: Appearance) => {});
 
-      const TestConsumer = (): React.ReactElement => {
+      const TestConsumer = (): ReactElement => {
         const { setAppearance } = useAppearance();
 
         return (
@@ -253,7 +253,7 @@ describe("AppearanceProvider", () => {
       const user = userEvent.setup();
       const mockPersistAppearance = vi.fn(async (_appearance: Appearance) => {});
 
-      const TestConsumer = (): React.ReactElement => {
+      const TestConsumer = (): ReactElement => {
         const { setAppearance, appearance } = useAppearance();
 
         return (
@@ -287,7 +287,7 @@ describe("AppearanceProvider", () => {
 
   describe("SSR", () => {
     test('resolves "automatic" to DEFAULT_COLOR_SCHEME during SSR', () => {
-      const TestConsumer = (): React.ReactElement => {
+      const TestConsumer = (): ReactElement => {
         const { colorScheme } = useAppearance();
 
         return <span data-testid="resolved">{colorScheme}</span>;
@@ -305,7 +305,7 @@ describe("AppearanceProvider", () => {
 
   describe("appearance prop", () => {
     test("defaults to DEFAULT_APPEARANCE when omitted", () => {
-      const TestConsumer = (): React.ReactElement => {
+      const TestConsumer = (): ReactElement => {
         const { appearance } = useAppearance();
 
         return <span data-testid="appearance-label">{appearance}</span>;
@@ -321,7 +321,7 @@ describe("AppearanceProvider", () => {
     });
 
     test("ignores invalid appearance prop and falls back to DEFAULT_APPEARANCE", () => {
-      const TestConsumer = (): React.ReactElement => {
+      const TestConsumer = (): ReactElement => {
         const { appearance } = useAppearance();
 
         return <span data-testid="appearance-label">{appearance}</span>;
@@ -354,7 +354,7 @@ describe("AppearanceProvider", () => {
         )
         .mockResolvedValue(undefined);
 
-      const TestConsumer = (): React.ReactElement => {
+      const TestConsumer = (): ReactElement => {
         const { setAppearance, appearance } = useAppearance();
 
         return (
@@ -466,7 +466,7 @@ describe("AppearanceProvider", () => {
     });
 
     test("updates color scheme when another tab posts a different preference", async () => {
-      const TestConsumer = (): React.ReactElement => {
+      const TestConsumer = (): ReactElement => {
         const { appearance } = useAppearance();
 
         return <span data-testid="appearance-label">{appearance}</span>;
@@ -494,7 +494,7 @@ describe("AppearanceProvider", () => {
     });
 
     test("ignores BroadcastChannel message with invalid color scheme value", async () => {
-      const TestConsumer = (): React.ReactElement => {
+      const TestConsumer = (): ReactElement => {
         const { appearance } = useAppearance();
 
         return <span data-testid="appearance-label">{appearance}</span>;
@@ -520,7 +520,7 @@ describe("AppearanceProvider", () => {
     });
 
     test("ignores BroadcastChannel message when preference matches current", async () => {
-      const TestConsumer = (): React.ReactElement => {
+      const TestConsumer = (): ReactElement => {
         const { appearance } = useAppearance();
 
         return <span data-testid="appearance-label">{appearance}</span>;
@@ -594,7 +594,7 @@ describe("AppearanceProvider", () => {
       });
       const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
-      const TestConsumer = (): React.ReactElement => {
+      const TestConsumer = (): ReactElement => {
         const { setAppearance, appearance } = useAppearance();
 
         return (
@@ -638,7 +638,7 @@ describe("AppearanceProvider", () => {
       });
       const onPersistError = vi.fn();
 
-      const TestConsumer = (): React.ReactElement => {
+      const TestConsumer = (): ReactElement => {
         const { setAppearance, appearance } = useAppearance();
 
         return (
@@ -685,7 +685,7 @@ describe("AppearanceProvider", () => {
     test("restores the persisted preference from the initial render", () => {
       window.localStorage.setItem("ui-appearance", "dark");
 
-      const TestConsumer = (): React.ReactElement => {
+      const TestConsumer = (): ReactElement => {
         const { appearance } = useAppearance();
 
         return <span data-testid="appearance-label">{appearance}</span>;
@@ -704,7 +704,7 @@ describe("AppearanceProvider", () => {
     test("defaults storageKey to STORAGE_KEY when omitted", async () => {
       const user = userEvent.setup();
 
-      const TestConsumer = (): React.ReactElement => {
+      const TestConsumer = (): ReactElement => {
         const { setAppearance } = useAppearance();
 
         return (
@@ -736,7 +736,7 @@ describe("AppearanceProvider", () => {
     test("auto-persists changes to localStorage when no persistAppearance is given", async () => {
       const user = userEvent.setup();
 
-      const TestConsumer = (): React.ReactElement => {
+      const TestConsumer = (): ReactElement => {
         const { setAppearance } = useAppearance();
 
         return (
@@ -769,7 +769,7 @@ describe("AppearanceProvider", () => {
       const user = userEvent.setup();
       const persistAppearance = vi.fn(async (_value: Appearance) => {});
 
-      const TestConsumer = (): React.ReactElement => {
+      const TestConsumer = (): ReactElement => {
         const { setAppearance } = useAppearance();
 
         return (
@@ -819,7 +819,7 @@ describe("AppearanceProvider", () => {
     });
 
     test("syncs across tabs via the storage event", async () => {
-      const TestConsumer = (): React.ReactElement => {
+      const TestConsumer = (): ReactElement => {
         const { appearance } = useAppearance();
 
         return <span data-testid="appearance-label">{appearance}</span>;
@@ -843,7 +843,7 @@ describe("AppearanceProvider", () => {
     });
 
     test("ignores storage events for other keys or invalid values", async () => {
-      const TestConsumer = (): React.ReactElement => {
+      const TestConsumer = (): ReactElement => {
         const { appearance } = useAppearance();
 
         return <span data-testid="appearance-label">{appearance}</span>;

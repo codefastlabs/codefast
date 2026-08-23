@@ -1,3 +1,4 @@
+import type { RefObject } from "react";
 import { useEffect, useEffectEvent, useRef, useState } from "react";
 
 import type { ViewState } from "#/app/lib/hash";
@@ -38,7 +39,7 @@ interface CommandPaletteOptions {
 export interface CommandPaletteHandle {
   isOpen: boolean;
   query: string;
-  inputRef: React.RefObject<HTMLInputElement | null>;
+  inputRef: RefObject<HTMLInputElement | null>;
   setQuery: (query: string) => void;
   close: () => void;
   handleCommand: (id: string) => void;

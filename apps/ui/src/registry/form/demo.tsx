@@ -1,12 +1,13 @@
 import { Button } from "@codefast/ui/button";
 import { Field, FieldDescription, FieldLabel } from "@codefast/ui/field";
 import { Input } from "@codefast/ui/input";
+import type { FormEvent } from "react";
 import { useState } from "react";
 
 export function FormDemo() {
   const [submitted, setSubmitted] = useState(false);
 
-  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setSubmitted(true);
     setTimeout(() => {

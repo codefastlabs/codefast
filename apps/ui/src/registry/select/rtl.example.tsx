@@ -8,7 +8,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@codefast/ui/select";
-import * as React from "react";
+import { useState } from "react";
 
 import type { Translations } from "#/features/components-catalog/components/detail/language";
 import { useTranslation } from "#/features/components-catalog/components/detail/language-context";
@@ -66,7 +66,7 @@ const translations: Translations = {
 
 export function SelectRtl() {
   const { dir, t, language } = useTranslation(translations, "ar");
-  const [selectedFruit, setSelectedFruit] = React.useState<string>("");
+  const [selectedFruit, setSelectedFruit] = useState<string>("");
 
   const fruits = [
     { label: t.apple, value: "apple" },

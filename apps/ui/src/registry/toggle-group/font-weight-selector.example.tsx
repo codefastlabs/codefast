@@ -1,9 +1,9 @@
 import { Field, FieldDescription, FieldLabel } from "@codefast/ui/field";
 import { ToggleGroup, ToggleGroupItem } from "@codefast/ui/toggle-group";
-import * as React from "react";
+import { useState } from "react";
 
 export function ToggleGroupFontWeightSelector() {
-  const [fontWeight, setFontWeight] = React.useState("normal");
+  const [fontWeight, setFontWeight] = useState("normal");
   return (
     <Field>
       <FieldLabel>Font Weight</FieldLabel>

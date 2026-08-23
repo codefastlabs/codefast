@@ -29,7 +29,7 @@ import {
 } from "@tanstack/react-table";
 import type { ColumnDef, ColumnFiltersState, ColumnVisibilityState, SortingState } from "@tanstack/react-table";
 import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react";
-import * as React from "react";
+import { useState } from "react";
 
 const data: Array<Payment> = [
   {
@@ -171,10 +171,10 @@ export const columns: Array<ColumnDef<typeof features, Payment>> = [
 ];
 
 export function DataTableDemo() {
-  const [sorting, setSorting] = React.useState<SortingState>([]);
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
-  const [columnVisibility, setColumnVisibility] = React.useState<ColumnVisibilityState>({});
-  const [rowSelection, setRowSelection] = React.useState({});
+  const [sorting, setSorting] = useState<SortingState>([]);
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [columnVisibility, setColumnVisibility] = useState<ColumnVisibilityState>({});
+  const [rowSelection, setRowSelection] = useState({});
 
   const table = useTable({
     features,

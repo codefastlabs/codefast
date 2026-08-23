@@ -9,12 +9,12 @@ import {
   CommandShortcut,
 } from "@codefast/ui/command";
 import { Calculator, Calendar, CreditCard, Settings, Smile, User } from "lucide-react";
-import * as React from "react";
+import { useEffect, useState } from "react";
 
 export function CommandDialogDemo() {
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const down = (e: KeyboardEvent) => {
       if (e.key === "j" && (e.metaKey || e.ctrlKey)) {
         e.preventDefault();

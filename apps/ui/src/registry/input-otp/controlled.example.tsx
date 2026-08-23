@@ -1,8 +1,8 @@
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@codefast/ui/input-otp";
-import * as React from "react";
+import { useState } from "react";
 
 export function InputOTPControlled() {
-  const [value, setValue] = React.useState("");
+  const [value, setValue] = useState("");
 
   return (
     <div className="space-y-2">

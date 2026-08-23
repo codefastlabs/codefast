@@ -1,5 +1,5 @@
 import { cn } from "@codefast/ui/lib/utils";
-import * as React from "react";
+import type { CSSProperties, ComponentProps } from "react";
 
 export function ChartTooltipDemo() {
   return (
@@ -129,7 +129,7 @@ function TooltipDemo({
   }>;
   nameKey?: string;
   labelKey?: string;
-} & React.ComponentProps<"div">) {
+} & ComponentProps<"div">) {
   const tooltipLabel = hideLabel ? null : <div className="font-medium">{label}</div>;
 
   if (!payload?.length) {
@@ -171,7 +171,7 @@ function TooltipDemo({
                       {
                         "--color-bg": indicatorColor,
                         "--color-border": indicatorColor,
-                      } as React.CSSProperties
+                      } as CSSProperties
                     }
                   />
                 )}

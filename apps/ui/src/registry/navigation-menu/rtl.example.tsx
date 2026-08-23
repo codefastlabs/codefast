@@ -7,7 +7,7 @@ import {
   NavigationMenuTrigger,
 } from "@codefast/ui/navigation-menu";
 import { navigationMenuTriggerVariants } from "@codefast/ui/variants/navigation-menu";
-import * as React from "react";
+import type { ComponentPropsWithoutRef } from "react";
 
 import type { Translations } from "#/features/components-catalog/components/detail/language";
 import { useTranslation } from "#/features/components-catalog/components/detail/language-context";
@@ -189,7 +189,7 @@ export function NavigationMenuRtl() {
   );
 }
 
-function ListItem({ title, children, href, ...props }: React.ComponentPropsWithoutRef<"li"> & { href: string }) {
+function ListItem({ title, children, href, ...props }: ComponentPropsWithoutRef<"li"> & { href: string }) {
   return (
     <li {...props}>
       <NavigationMenuLink asChild>

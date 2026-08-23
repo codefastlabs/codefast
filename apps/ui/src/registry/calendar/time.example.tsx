@@ -3,12 +3,10 @@ import { Card, CardContent, CardFooter } from "@codefast/ui/card";
 import { Field, FieldGroup, FieldLabel } from "@codefast/ui/field";
 import { InputGroup, InputGroupAddon, InputGroupInput } from "@codefast/ui/input-group";
 import { Clock2Icon } from "lucide-react";
-import * as React from "react";
+import { useState } from "react";
 
 export function CalendarWithTime() {
-  const [date, setDate] = React.useState<Date | undefined>(
-    new Date(new Date().getFullYear(), new Date().getMonth(), 12),
-  );
+  const [date, setDate] = useState<Date | undefined>(new Date(new Date().getFullYear(), new Date().getMonth(), 12));
 
   return (
     <Card size="sm" className="mx-auto w-fit">

@@ -1,6 +1,5 @@
 import { render, renderHook, screen } from "@testing-library/react";
-import type React from "react";
-import type { ReactNode } from "react";
+import type { ReactElement, ReactNode } from "react";
 
 import type { Appearance, AppearanceContextValue } from "#/appearance";
 import { AppearanceContext } from "#/appearance-context";
@@ -101,7 +100,7 @@ describe("useAppearance Hook", () => {
         appearance: "dark",
       };
 
-      const TestComponent = (): React.ReactElement => {
+      const TestComponent = (): ReactElement => {
         const { isPending, colorScheme, appearance } = useAppearance();
 
         return (

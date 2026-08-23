@@ -4,10 +4,10 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@codefast/u
 import { Field, FieldGroup, FieldLabel } from "@codefast/ui/field";
 import { Input } from "@codefast/ui/input";
 import { MaximizeIcon, MinimizeIcon } from "lucide-react";
-import * as React from "react";
+import { useState } from "react";
 
 export function CollapsibleSettings() {
-  const [isOpen, setIsOpen] = React.useState(false);
+  const [isOpen, setIsOpen] = useState(false);
 
   return (
     <Card className="mx-auto w-full max-w-xs" size="sm">

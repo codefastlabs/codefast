@@ -1,6 +1,6 @@
 import { Checkbox } from "@codefast/ui/checkbox";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@codefast/ui/table";
-import * as React from "react";
+import { useState } from "react";
 
 const tableData = [
   {
@@ -30,7 +30,7 @@ const tableData = [
 ];
 
 export function CheckboxInTable() {
-  const [selectedRows, setSelectedRows] = React.useState<Set<string>>(new Set(["1"]));
+  const [selectedRows, setSelectedRows] = useState<Set<string>>(new Set(["1"]));
 
   const allSelected = selectedRows.size === tableData.length;
   const someSelected = selectedRows.size > 0 && !allSelected;

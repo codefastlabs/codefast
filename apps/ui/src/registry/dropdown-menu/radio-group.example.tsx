@@ -8,10 +8,10 @@ import {
   DropdownMenuRadioItem,
   DropdownMenuTrigger,
 } from "@codefast/ui/dropdown-menu";
-import * as React from "react";
+import { useState } from "react";
 
 export function DropdownMenuRadioGroupDemo() {
-  const [position, setPosition] = React.useState("bottom");
+  const [position, setPosition] = useState("bottom");
 
   return (
     <DropdownMenu>

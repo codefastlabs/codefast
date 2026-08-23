@@ -21,7 +21,7 @@ import {
 import { Slider } from "@codefast/ui/slider";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@codefast/ui/tooltip";
 import { ArrowUpIcon, GlobeIcon, ImageIcon, PaperclipIcon, PlusIcon, RotateCwIcon, TelescopeIcon } from "lucide-react";
-import * as React from "react";
+import { useState } from "react";
 
 interface Turn {
   id: string;
@@ -66,9 +66,9 @@ const TRANSCRIPT: Array<Turn> = [
 ];
 
 export function MessageScrollerPreviousContext() {
-  const [demoKey, setDemoKey] = React.useState(0);
-  const [peek, setPeek] = React.useState(DEFAULT_PEEK);
-  const [count, setCount] = React.useState(INITIAL_COUNT);
+  const [demoKey, setDemoKey] = useState(0);
+  const [peek, setPeek] = useState(DEFAULT_PEEK);
+  const [count, setCount] = useState(INITIAL_COUNT);
   const messages = TRANSCRIPT.slice(0, count);
   const nextMessage = TRANSCRIPT[count];
 

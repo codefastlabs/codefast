@@ -30,7 +30,7 @@ import {
   RotateCwIcon,
   TelescopeIcon,
 } from "lucide-react";
-import * as React from "react";
+import { useState } from "react";
 
 interface Turn {
   id: string;
@@ -82,7 +82,7 @@ const TRANSCRIPT: Array<Turn> = [
 ];
 
 export function MessageScrollerDemo() {
-  const [count, setCount] = React.useState(TRANSCRIPT.length);
+  const [count, setCount] = useState(TRANSCRIPT.length);
   const messages = TRANSCRIPT.slice(0, count);
   const nextMessage = TRANSCRIPT[count];
 

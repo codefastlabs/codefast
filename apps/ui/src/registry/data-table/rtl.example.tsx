@@ -30,7 +30,7 @@ import {
 } from "@tanstack/react-table";
 import type { ColumnDef, ColumnFiltersState, ColumnVisibilityState, SortingState } from "@tanstack/react-table";
 import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react";
-import * as React from "react";
+import { useMemo, useState } from "react";
 
 import type { Translations } from "#/features/components-catalog/components/detail/language";
 import { useTranslation } from "#/features/components-catalog/components/detail/language-context";
@@ -197,12 +197,12 @@ const features = tableFeatures({
 
 export function DataTableRtl() {
   const { t, dir, language } = useTranslation(translations, "ar");
-  const [sorting, setSorting] = React.useState<SortingState>([]);
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
-  const [columnVisibility, setColumnVisibility] = React.useState<ColumnVisibilityState>({});
-  const [rowSelection, setRowSelection] = React.useState({});
+  const [sorting, setSorting] = useState<SortingState>([]);
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [columnVisibility, setColumnVisibility] = useState<ColumnVisibilityState>({});
+  const [rowSelection, setRowSelection] = useState({});
 
-  const columns: Array<ColumnDef<typeof features, Payment>> = React.useMemo(
+  const columns: Array<ColumnDef<typeof features, Payment>> = useMemo(
     () => [
       {
         id: "select",

@@ -14,7 +14,7 @@ import {
   MenubarSubTrigger,
   MenubarTrigger,
 } from "@codefast/ui/menubar";
-import * as React from "react";
+import { useState } from "react";
 
 import type { Translations } from "#/features/components-catalog/components/detail/language";
 import { useTranslation } from "#/features/components-catalog/components/detail/language-context";
@@ -138,7 +138,7 @@ const translations: Translations = {
 
 export function MenubarRtl() {
   const { dir, t, language } = useTranslation(translations, "ar");
-  const [profile, setProfile] = React.useState("benoit");
+  const [profile, setProfile] = useState("benoit");
 
   return (
     <Menubar className="w-72" dir={dir}>
