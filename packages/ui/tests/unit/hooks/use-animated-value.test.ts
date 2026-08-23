@@ -226,6 +226,47 @@ describe("useAnimatedValue", () => {
     expect(result.current).toBe(200);
   });
 
+  test("eases from the shown value when animated flips from false to true", () => {
+    const { rerender, result } = renderHook(
+      ({ animated, duration, targetValue }) => useAnimatedValue(targetValue, duration, animated),
+      { initialProps: { animated: false, duration: 1000, targetValue: 0 } },
+    );
+
+    // Target moves while animation is off — the shown value tracks it directly
+    rerender({ animated: false, duration: 1000, targetValue: 50 });
+
+    expect(result.current).toBe(50);
+
+    // Re-enabling animation must not snap back to the pre-move value or replay an animation
+    rerender({ animated: true, duration: 1000, targetValue: 50 });
+
+    expect(result.current).toBe(50);
+    expect(requestAnimationFrameMock).not.toHaveBeenCalled();
+
+    // A later target change eases from the shown value, not from a stale one
+    rerender({ animated: true, duration: 1000, targetValue: 100 });
+
+    act(() => {
+      if (animationFrameCallback) {
+        currentTime = 500;
+        animationFrameCallback(currentTime);
+      }
+    });
+
+    // Mid-animation the value sits between the shown start (50) and the target (100)
+    expect(result.current).toBeGreaterThan(50);
+    expect(result.current).toBeLessThan(100);
+
+    act(() => {
+      if (animationFrameCallback) {
+        currentTime = 1000;
+        animationFrameCallback(currentTime);
+      }
+    });
+
+    expect(result.current).toBe(100);
+  });
+
   test("changes duration during animation", () => {
     const { rerender, result } = renderHook(
       ({ animated, duration, targetValue }) => useAnimatedValue(targetValue, duration, animated),

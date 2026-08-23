@@ -22,7 +22,6 @@ import type {
   MessageScrollerRegisterMessage,
   MessageScrollerViewportProps,
 } from "#/lib/message-scroller/types";
-import { useLatest } from "#/lib/message-scroller/utils";
 import { composeRefs, mergeProps, useRender } from "#/lib/use-render";
 
 const MessageScrollerContext = createContext<MessageScrollerContextValue | null>(null);
@@ -150,7 +149,10 @@ function MessageScrollerViewport({
     viewportRef,
   } = useMessageScrollerContext();
 
-  preserveScrollOnPrependRef.current = preserveScrollOnPrepend;
+  // Layout effect, not passive: the MutationObserver reads this ref in the same commit's microtask.
+  useLayoutEffect(() => {
+    preserveScrollOnPrependRef.current = preserveScrollOnPrepend;
+  }, [preserveScrollOnPrependRef, preserveScrollOnPrepend]);
 
   const setViewportRef = useCallback(
     (element: HTMLDivElement | null) => {
@@ -335,7 +337,6 @@ function MessageScrollerButton({
   ...props
 }: MessageScrollerButtonProps) {
   const { scrollToEnd, scrollToStart, stateStore } = useMessageScrollerContext();
-  const onClickRef = useLatest(onClick);
   const subscribe = useCallback((listener: () => void) => stateStore.subscribe(listener), [stateStore]);
   const getSnapshot = useCallback(() => {
     const state = stateStore.getSnapshot();
@@ -350,7 +351,7 @@ function MessageScrollerButton({
         return;
       }
 
-      onClickRef.current?.(event);
+      onClick?.(event);
 
       if (!event.defaultPrevented) {
         event.currentTarget.blur();
@@ -362,7 +363,7 @@ function MessageScrollerButton({
         }
       }
     },
-    [behavior, direction, isActive, onClickRef, scrollToEnd, scrollToStart],
+    [behavior, direction, isActive, onClick, scrollToEnd, scrollToStart],
   );
 
   return useRender({

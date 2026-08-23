@@ -1,6 +1,7 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import type { RefObject } from "react";
 
+import { useLatest } from "#/hooks/use-latest";
 import {
   areScrollStatesEqual,
   createMessageScrollerStore,
@@ -62,7 +63,7 @@ type MessageScrollerRefs = {
 
 /**
  * Builds the per-instance ref bag: the two external stores constructed once, and
- * the latest prop values mirrored onto refs each render so callbacks stay stable.
+ * the latest prop values mirrored onto refs at commit so callbacks stay stable.
  *
  * @since 0.5.0-canary.3
  */
@@ -77,11 +78,11 @@ function useMessageScrollerRefs({
   scrollMargin: number;
   scrollPreviousItemPeek: number;
 }): MessageScrollerRefs {
-  const autoScrollRef = useRef(autoScroll);
+  const autoScrollRef = useLatest(autoScroll);
   const autoscrollingRef = useRef(false);
   const contentRef = useRef<HTMLDivElement | null>(null);
   const defaultScrollPositionAppliedRef = useRef(false);
-  const scrollEdgeThresholdRef = useRef(scrollEdgeThreshold);
+  const scrollEdgeThresholdRef = useLatest(scrollEdgeThreshold);
   const itemCountRef = useRef(0);
   const firstItemRef = useRef<HTMLElement | null>(null);
   const modeRef = useRef<MessageScrollerMode>(autoScroll ? "following-bottom" : "free-scrolling");
@@ -99,38 +100,26 @@ function useMessageScrollerRefs({
   // The turn held at the reading line so a reply streaming in below it can re-pin
   // it instead of letting scrollTop clamp it loose.
   const streamingTurnRef = useRef<HTMLElement | null>(null);
-  const scrollPreviousItemPeekRef = useRef(scrollPreviousItemPeek);
+  const scrollPreviousItemPeekRef = useLatest(scrollPreviousItemPeek);
   const preserveScrollOnPrependRef = useRef(true);
   const rootRef = useRef<HTMLDivElement | null>(null);
-  const scrollMarginRef = useRef(scrollMargin);
+  const scrollMarginRef = useLatest(scrollMargin);
   const pendingScrollFrameRef = useRef<number | null>(null);
   const spacerGapRef = useRef(0);
   const spacerHeightRef = useRef(0);
   const spacerRef = useRef<HTMLDivElement | null>(null);
   const stateFrameRef = useRef<number | null>(null);
-  const stateStoreRef = useRef<MessageScrollerStore<MessageScrollerScrollable> | null>(null);
+  // Stores are created once via lazy state init — never reassigned, so they outlive every render.
+  const [stateStore] = useState<MessageScrollerStore<MessageScrollerScrollable>>(() =>
+    createMessageScrollerStore(EMPTY_MESSAGE_SCROLLER_SCROLLABLE, areScrollStatesEqual),
+  );
   const autoscrollingTimeoutRef = useRef<number | null>(null);
   const viewportRef = useRef<HTMLDivElement | null>(null);
   const visibilityFrameRef = useRef<number | null>(null);
   const visibilityObserverRef = useRef<IntersectionObserver | null>(null);
-  const visibilityStoreRef = useRef<MessageScrollerVisibilityStore | null>(null);
+  const [visibilityStore] = useState<MessageScrollerVisibilityStore>(() => createMessageScrollerVisibilityStore());
   const visibleMessageIdsRef = useRef(new Set<string>());
   const handledScrollAnchorsRef = useRef(new WeakSet<HTMLElement>());
-
-  if (stateStoreRef.current === null) {
-    stateStoreRef.current = createMessageScrollerStore(EMPTY_MESSAGE_SCROLLER_SCROLLABLE, areScrollStatesEqual);
-  }
-
-  if (visibilityStoreRef.current === null) {
-    visibilityStoreRef.current = createMessageScrollerVisibilityStore();
-  }
-
-  // Track the latest prop values on every render so callbacks read fresh values
-  // without being recreated (the useLatest pattern).
-  autoScrollRef.current = autoScroll;
-  scrollEdgeThresholdRef.current = scrollEdgeThreshold;
-  scrollMarginRef.current = scrollMargin;
-  scrollPreviousItemPeekRef.current = scrollPreviousItemPeek;
 
   return {
     autoScrollRef,
@@ -155,11 +144,11 @@ function useMessageScrollerRefs({
     spacerHeightRef,
     spacerRef,
     stateFrameRef,
-    stateStore: stateStoreRef.current,
+    stateStore,
     viewportRef,
     visibilityFrameRef,
     visibilityObserverRef,
-    visibilityStore: visibilityStoreRef.current,
+    visibilityStore,
     visibleMessageIdsRef,
     handledScrollAnchorsRef,
   };
