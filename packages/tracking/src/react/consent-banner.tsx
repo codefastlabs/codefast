@@ -1,7 +1,7 @@
 "use client";
 
 import type { ComponentProps, Dispatch, ReactNode, SetStateAction } from "react";
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useState } from "react";
 
 import type { ConsentCategory, ConsentDecision } from "#/core/consent";
 import type { UseConsentResult } from "#/react/use-consent";
@@ -49,18 +49,16 @@ export interface ConsentBannerProps extends ComponentProps<"section"> {
  * @since 0.5.0-canary.4
  */
 export function ConsentBanner({ children, consent, open, ...props }: ConsentBannerProps): ReactNode {
-  const [pending, setPending] = useState<ConsentDecision | undefined>(undefined);
-
   const isVisible = open ?? consent.isPromptNeeded;
 
-  // Closing must reset the layer — a reopened banner starts at the prompt, not mid-preferences.
-  useEffect(() => {
-    if (!isVisible) {
-      setPending(undefined);
-    }
-  }, [isVisible]);
+  const [pending, setPending] = useState<ConsentDecision | undefined>(undefined);
 
   if (!isVisible) {
+    // Closing resets the layer — a reopened banner starts at the prompt, not mid-preferences.
+    if (pending !== undefined) {
+      setPending(undefined);
+    }
+
     return null;
   }
 
