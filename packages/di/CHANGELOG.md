@@ -1,5 +1,11 @@
 # @codefast/di
 
+## 0.7.1
+
+### Patch Changes
+
+- [#748](https://github.com/codefastlabs/codefast/pull/748) [`bde6d1b`](https://github.com/codefastlabs/codefast/commit/bde6d1b46f55f65039f8a3c8e062693fe328952a) Thanks [@thevuong](https://github.com/thevuong)! - Add a summary to every exported declaration whose doc block carried only an `@since` tag.
+
 ## 0.7.0
 
 ### Minor Changes

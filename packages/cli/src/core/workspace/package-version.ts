@@ -5,6 +5,8 @@ import type { FilesystemPort } from "#/core/filesystem/port";
 /**
  * Finds the `version` of the nearest enclosing `package.json`, or null when the first
  * one found declares none (the private workspace root is version-less by design).
+ *
+ * @since 0.8.0
  */
 function findNearestPackageVersion(fs: FilesystemPort, targetPath: string): string | null {
   const resolved = path.resolve(targetPath);

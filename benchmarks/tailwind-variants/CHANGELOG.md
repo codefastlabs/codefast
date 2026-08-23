@@ -1,5 +1,13 @@
 # @codefast/benchmark-tailwind-variants
 
+## 0.7.1
+
+### Patch Changes
+
+- Updated dependencies [[`bde6d1b`](https://github.com/codefastlabs/codefast/commit/bde6d1b46f55f65039f8a3c8e062693fe328952a), [`bde6d1b`](https://github.com/codefastlabs/codefast/commit/bde6d1b46f55f65039f8a3c8e062693fe328952a)]:
+  - @codefast/benchmark-viewer@0.7.1
+  - @codefast/benchmark-harness@0.7.1
+
 ## 0.7.0
 
 ### Patch Changes

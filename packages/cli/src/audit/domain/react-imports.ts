@@ -23,6 +23,8 @@ function isIdentifierNamed(node: unknown, name: string): boolean {
  * @remarks Three violation kinds: `import * as React`, a default `React` import (type-only
  * included), and — only when no import binds `React` — an implicit `React.*` UMD-global type
  * reference, which tsc accepts silently through the `export as namespace React` in `@types/react`.
+ *
+ * @since 0.8.0
  */
 export function auditReactImportSource(filePath: string, sourceText: string): Array<ReactImportViolation> {
   const { program } = parseSync(filePath, sourceText);

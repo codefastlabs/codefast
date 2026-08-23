@@ -176,6 +176,8 @@ export type CodefastAuditCommentsConfig = z.infer<typeof codefastAuditCommentsCo
 /**
  * React import-policy audit defaults — the scan always starts at the repo root, so only
  * exceptions are configured.
+ *
+ * @since 0.8.0
  */
 export const codefastAuditReactConfigSchema = z
   .object({
@@ -186,6 +188,8 @@ export const codefastAuditReactConfigSchema = z
 
 /**
  * The validated `audit react` configuration.
+ *
+ * @since 0.8.0
  */
 export type CodefastAuditReactConfig = z.infer<typeof codefastAuditReactConfigSchema>;
 
