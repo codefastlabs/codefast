@@ -1,5 +1,6 @@
 import type { ReactFlowGraph } from "@codefast/di/graph-adapters/reactflow";
 import { useAppearance } from "@codefast/theme";
+import { useHasHydrated } from "@codefast/ui/hooks/use-has-hydrated";
 import { Background, Controls, MarkerType, Position, ReactFlow, ReactFlowProvider } from "@xyflow/react";
 import type { Edge } from "@xyflow/react";
 import type { ReactElement } from "react";
@@ -126,28 +127,13 @@ function DependencyGraphCanvas({ nodes, edges, showShadowed }: DependencyGraphPr
     [prepared, positions, slotNames],
   );
 
-  // React Flow re-renders a node when its `data` identity changes, so nodes whose dimmed/selected
-  // flags did not move keep the exact object they already had. A new base invalidates the cache.
-  const nodeCacheRef = useRef<{ base: Array<DiNode>; byId: Map<string, DiNode> }>({ base: [], byId: new Map() });
-
+  // Data objects are rebuilt on every flag change; DiServiceNode's memo comparator keeps
+  // nodes whose fields did not move from re-rendering.
   const flowNodes: Array<DiNode | LaneNode> = useMemo(() => {
-    if (nodeCacheRef.current.base !== baseNodes) {
-      nodeCacheRef.current = { base: baseNodes, byId: new Map() };
-    }
-
-    const cache = nodeCacheRef.current.byId;
     const diNodes = baseNodes.map((node) => {
       const dimmed = highlighted !== undefined && !highlighted.has(node.id);
       const selected = node.id === selectedId;
-      const cached = cache.get(node.id);
-
-      if (cached !== undefined && cached.data.dimmed === dimmed && cached.data.selected === selected) {
-        return cached;
-      }
-
       const next: DiNode = { ...node, data: { ...node.data, dimmed, selected } };
-
-      cache.set(node.id, next);
 
       return next;
     });
@@ -238,13 +224,9 @@ function DependencyGraphCanvas({ nodes, edges, showShadowed }: DependencyGraphPr
  * touches browser-only layout APIs.
  */
 export function DependencyGraph({ nodes, edges, showShadowed }: DependencyGraphProps): ReactElement {
-  const [mounted, setMounted] = useState(false);
+  const hydrated = useHasHydrated();
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  if (!mounted) {
+  if (!hydrated) {
     return <div aria-hidden className="h-[32rem] rounded-md bg-muted" />;
   }
 

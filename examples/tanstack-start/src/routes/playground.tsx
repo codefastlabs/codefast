@@ -1,7 +1,7 @@
 import { useAppearance } from "@codefast/theme";
 import { Badge } from "@codefast/ui/badge";
+import { useHasHydrated } from "@codefast/ui/hooks/use-has-hydrated";
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
 
 import { Callout } from "#/components/callout";
 import { DemoSection } from "#/components/demo-section";
@@ -26,11 +26,7 @@ const PACKAGES = [
 
 function PlaygroundPage() {
   const { appearance, colorScheme } = useAppearance();
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  const hydrated = useHasHydrated();
 
   return (
     <div className="space-y-12">
@@ -45,7 +41,7 @@ function PlaygroundPage() {
       </header>
 
       <Callout tone="info">
-        {mounted
+        {hydrated
           ? `Active appearance: ${appearance} (resolved ${colorScheme}). The sections below react live to your input and viewport.`
           : "Resolving your appearance and viewport…"}
       </Callout>
