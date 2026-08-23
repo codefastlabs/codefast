@@ -11,26 +11,31 @@ import {
   linkTargetHead,
   scanLinkReferences,
 } from "#/audit/domain/link-references";
+import { scanImpossibleSinceTags } from "#/audit/domain/since-versions";
 import { scanTsdocSyntax } from "#/audit/domain/tsdoc-syntax";
 import type { CommentAuditResult, DividerBreakage, DividerFileBreakages } from "#/audit/domain/types";
 import { AppError, messageFrom } from "#/core/errors";
 import type { FilesystemPort } from "#/core/filesystem/port";
 import type { Result } from "#/core/result";
 import { err, ok } from "#/core/result";
+import { findNearestPackageVersion } from "#/core/workspace/package-version";
 import { sourceCommentLanguage, walkSourceFiles } from "#/core/workspace/source-walk";
 
-const reasonByDefect: Record<CommentContentDefectKind | DividerDefectKind | "dead-link", string> = {
-  "bad-width": `rule does not end at column ${DIVIDER_COLUMN}`,
-  "dead-link": "{@link} target has no mention outside links — likely renamed",
-  "detached-doc": "// run separates a doc block from its declaration — merge it into the block",
-  "doc-pointer": "comment points at a document — state the invariant here instead",
-  "jsdoc-type": "JSDoc {type} syntax — the declaration already carries the type",
-  "legacy-form": "legacy divider form",
-  "param-coverage": "a block naming any parameter must name them all — a partial list reads as complete",
-  "param-hyphen": "TSDoc separates the name from its description with ' - '",
-  "since-order": "@since is stamped at release and stays the block's last tag",
-  "stacked-doc": "// run stacked above a doc block — fold it into the block",
-};
+const reasonByDefect: Record<CommentContentDefectKind | DividerDefectKind | "dead-link" | "since-impossible", string> =
+  {
+    "bad-width": `rule does not end at column ${DIVIDER_COLUMN}`,
+    "dead-link": "{@link} target has no mention outside links — likely renamed",
+    "detached-doc": "// run separates a doc block from its declaration — merge it into the block",
+    "doc-pointer": "comment points at a document — state the invariant here instead",
+    "jsdoc-type": "JSDoc {type} syntax — the declaration already carries the type",
+    "legacy-form": "legacy divider form",
+    "param-coverage": "a block naming any parameter must name them all — a partial list reads as complete",
+    "param-hyphen": "TSDoc separates the name from its description with ' - '",
+    "since-impossible":
+      "@since names a version the package has not reached — set it to the release that shipped the symbol",
+    "since-order": "@since is stamped at release and stays the block's last tag",
+    "stacked-doc": "// run stacked above a doc block — fold it into the block",
+  };
 
 interface ScannedFile {
   readonly absolutePath: string;
@@ -61,6 +66,7 @@ export function runCommentAudit(
     const filesToScan = collectScanPaths(fs, targetPath);
     const perFile = new Map<string, Array<DividerBreakage>>();
     const scanned: Array<ScannedFile> = [];
+    const versionByDirectory = new Map<string, string | null>();
     let allowlistedCount = 0;
     let fixedCount = 0;
     let dividerCount = 0;
@@ -103,6 +109,16 @@ export function runCommentAudit(
           continue;
         }
         breakages.push({ line: finding.line, raw: finding.raw, reason: reasonByDefect[finding.defect] });
+      }
+      const packageVersion = nearestVersion(fs, absolutePath, versionByDirectory);
+      if (packageVersion !== null) {
+        for (const finding of scanImpossibleSinceTags(content, packageVersion)) {
+          if (allowlist.has(finding.raw) || allowlist.has(`${relativePath}:${finding.raw}`)) {
+            allowlistedCount++;
+            continue;
+          }
+          breakages.push({ line: finding.line, raw: finding.raw, reason: reasonByDefect["since-impossible"] });
+        }
       }
       if (language === "js") {
         for (const finding of scanTsdocSyntax(content)) {
@@ -194,6 +210,18 @@ function appendDeadLinkBreakages(
     }
   }
   return allowlisted;
+}
+
+// One package.json walk per directory — sibling files share the answer.
+function nearestVersion(fs: FilesystemPort, absolutePath: string, cache: Map<string, string | null>): string | null {
+  const directory = path.dirname(absolutePath);
+  const cached = cache.get(directory);
+  if (cached !== undefined) {
+    return cached;
+  }
+  const version = findNearestPackageVersion(fs, directory);
+  cache.set(directory, version);
+  return version;
 }
 
 function collectScanPaths(fs: FilesystemPort, targetPath: string): Array<string> {
