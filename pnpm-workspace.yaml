@@ -9,6 +9,12 @@ allowBuilds:
   esbuild: true
   simple-git-hooks: true
 
+# rolldown 1.2.5 splits the SSR build into circular chunks that call a hoisted function
+# before its `__name` helper is assigned — apps/ui prerender dies with "__name$N is not
+# a function". Drop once https://github.com/rolldown/rolldown/issues/10747 is fixed.
+overrides:
+  rolldown: 1.2.4
+
 catalog:
   "@babel/core": ^8.0.1
   "@babel/plugin-proposal-decorators": 8.0.2
