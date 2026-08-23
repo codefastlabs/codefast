@@ -23,6 +23,8 @@ import { cn } from "#/app/lib/utils";
 import type { EmbeddedViewerPayload } from "#/types";
 
 /**
+ * Renders the whole bench history viewer page, wiring its data hooks into the panel components.
+ *
  * @since 0.3.16-canary.1
  */
 export function App({ initialPayload }: { initialPayload?: EmbeddedViewerPayload }) {

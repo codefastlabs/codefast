@@ -392,6 +392,8 @@ function chunkIsOnlyEaseTimingMotion(groupStr: string): boolean {
 }
 
 /**
+ * Partitions a class string into render-pipeline-ordered groups, one per suggested `cn()` argument.
+ *
  * @since 0.3.16-canary.0
  */
 export function suggestCnGroups(classString: string): Array<string> {

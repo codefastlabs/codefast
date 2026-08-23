@@ -14,6 +14,8 @@ import { collectGroupTargets, planGroupEditForTarget, targetReplaceStart } from 
 import type { GroupFileResult, PlannedGroupEdit } from "#/arrange/domain/types";
 
 /**
+ * A planned replacement unwrapping one `cn()` call nested in `tv({ ... })`.
+ *
  * @since 0.3.16-canary.0
  */
 export type GroupFileUnwrapPlan = {
@@ -32,6 +34,8 @@ type GroupFileUnwrapState = {
 };
 
 /**
+ * The complete per-file plan of unwrap and grouping edits, plus the totals reported for them.
+ *
  * @since 0.3.16-canary.0
  */
 export type GroupFileWorkPlan = {
@@ -65,6 +69,8 @@ function toUnwrapPlans(
 }
 
 /**
+ * Builds the unwrap phase's state — cn-in-tv calls, their replacements, and the text after unwrapping.
+ *
  * @since 0.3.16-canary.0
  */
 export function buildGroupFileUnwrapState(domainSfInitial: DomainSourceFile, sourceText: string): GroupFileUnwrapState {
@@ -149,6 +155,8 @@ export function tryBuildGroupFileWorkPlan(input: {
 }
 
 /**
+ * Creates the empty per-file result for a dry run with nothing to edit.
+ *
  * @since 0.3.16-canary.0
  */
 export function groupFileDryRunNoEdits(filePath: string): GroupFileResult {
@@ -156,6 +164,8 @@ export function groupFileDryRunNoEdits(filePath: string): GroupFileResult {
 }
 
 /**
+ * Derives the preview-mode per-file result from a work plan's report total.
+ *
  * @since 0.3.16-canary.0
  */
 export function groupFilePreviewTotals(work: GroupFileWorkPlan): GroupFileResult {
@@ -167,6 +177,8 @@ export function groupFilePreviewTotals(work: GroupFileWorkPlan): GroupFileResult
 }
 
 /**
+ * Applies a work plan's grouping edits to the unwrapped text and returns the merged file body.
+ *
  * @since 0.3.16-canary.0
  */
 export function mergeGroupFileBodyText(work: GroupFileWorkPlan): string {
@@ -181,6 +193,8 @@ export function mergeGroupFileBodyText(work: GroupFileWorkPlan): string {
 }
 
 /**
+ * Checks whether any planned edit rewrites a JSX `className` into a `cn()` call.
+ *
  * @since 0.3.16-canary.0
  */
 export function groupFileEditsTouchJsxCn(work: GroupFileWorkPlan): boolean {
@@ -188,6 +202,8 @@ export function groupFileEditsTouchJsxCn(work: GroupFileWorkPlan): boolean {
 }
 
 /**
+ * Counts the edits a work plan writes in apply mode — unwraps plus grouping replacements.
+ *
  * @since 0.3.16-canary.0
  */
 export function countPersistedGroupFileEdits(work: GroupFileWorkPlan): number {
@@ -195,6 +211,8 @@ export function countPersistedGroupFileEdits(work: GroupFileWorkPlan): number {
 }
 
 /**
+ * Checks whether a work plan has no edit sites and no skipped cn-in-tv calls to report.
+ *
  * @since 0.3.16-canary.0
  */
 export function groupFileWorkHasNothingToReport(work: GroupFileWorkPlan): boolean {

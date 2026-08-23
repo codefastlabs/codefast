@@ -6,6 +6,8 @@ import type { DistFilesystem } from "#/mirror/domain/dist-filesystem";
 import { normalizePath } from "#/mirror/domain/path-normalizer";
 
 /**
+ * Creates the `DistFilesystem` the mirror scan uses, backed by a `FilesystemPort`.
+ *
  * @since 0.3.16-canary.0
  */
 export function createMirrorDistFilesystem(fs: FilesystemPort): DistFilesystem {

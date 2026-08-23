@@ -21,6 +21,8 @@ import { escapeTsStringLiteralContent } from "#/arrange/domain/source-text-forma
 import { indentOfLineContaining } from "#/core/source-text-edit";
 
 /**
+ * A planned text replacement produced by the simplify pass.
+ *
  * @since 0.3.16-canary.0
  */
 export type PlannedSimplifyEdit = {

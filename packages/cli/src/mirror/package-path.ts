@@ -7,6 +7,8 @@ import { err, ok } from "#/core/result";
 import { normalizePath } from "#/mirror/domain/path-normalizer";
 
 /**
+ * Resolves the optional positional package argument to a root-relative path, or `undefined` when absent.
+ *
  * @since 0.3.16-canary.0
  */
 export function resolveMirrorPackageFromCliArg(
@@ -34,6 +36,8 @@ export function resolveMirrorPackageFromCliArg(
 }
 
 /**
+ * Resolves a package filter to a root-relative path, rejecting anything outside the monorepo root.
+ *
  * @since 0.3.16-canary.0
  */
 export function resolvePackageFilterUnderRoot(

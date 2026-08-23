@@ -21,6 +21,8 @@ import { syncExportsForWorkspacePackage } from "#/mirror/sync-workspace-package"
 export type { MirrorSyncExecutionInput, MirrorSyncProgressListener, MirrorSyncRunRequest } from "#/mirror/sync-types";
 
 /**
+ * Runs the mirror sync across the targeted packages and returns the aggregate stats.
+ *
  * @since 0.3.16-canary.0
  */
 export async function runMirrorSync(

@@ -3,6 +3,8 @@ import { createCookieAnonymousId } from "#/client/cookie-anonymous-id";
 import { readCookieValue } from "#/core/cookie";
 
 /**
+ * Options for `createServerPersistedAnonymousId`.
+ *
  * @since 1.0.0-canary.6
  */
 export interface ServerPersistedAnonymousIdOptions {

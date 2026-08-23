@@ -3,6 +3,8 @@ import type { DomainJsxAttribute } from "#/arrange/domain/ast/ast-node";
 import type { JsxClassNameStatic } from "#/arrange/domain/types";
 
 /**
+ * Extracts the static literal of a JSX `className` attribute, or `undefined` when it is not static.
+ *
  * @since 0.3.16-canary.0
  */
 export function jsxClassNameStaticLiteral(jsxClassNameAttribute: DomainJsxAttribute): JsxClassNameStatic | undefined {

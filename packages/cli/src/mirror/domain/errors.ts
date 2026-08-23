@@ -1,4 +1,6 @@
 /**
+ * The error codes a mirror run can fail with.
+ *
  * @since 0.3.16-canary.0
  */
 export const MirrorErrorCode = {
@@ -7,11 +9,15 @@ export const MirrorErrorCode = {
 } as const;
 
 /**
+ * The union of `MirrorErrorCode` values.
+ *
  * @since 0.3.16-canary.0
  */
 export type MirrorErrorCode = (typeof MirrorErrorCode)[keyof typeof MirrorErrorCode];
 
 /**
+ * An `Error` carrying a `MirrorErrorCode` for mirror-specific failures.
+ *
  * @since 0.3.16-canary.0
  */
 export class MirrorError extends Error {

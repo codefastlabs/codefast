@@ -25,6 +25,8 @@ function recordLifecycleMethod(phase: "postConstruct" | "preDestroy"): MethodDec
 }
 
 /**
+ * Marks an instance method to run after the container constructs and wires the instance.
+ *
  * @since 0.3.16-canary.0
  */
 export function postConstruct(): MethodDecorator {
@@ -32,6 +34,8 @@ export function postConstruct(): MethodDecorator {
 }
 
 /**
+ * Marks an instance method to run when the instance's container or scope is disposed.
+ *
  * @since 0.3.16-canary.0
  */
 export function preDestroy(): MethodDecorator {

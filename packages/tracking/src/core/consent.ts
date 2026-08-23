@@ -1,9 +1,13 @@
 /**
+ * The privacy-law region a visitor's consent defaults are resolved for.
+ *
  * @since 0.5.0-canary.4
  */
 export type ConsentRegion = "eu" | "other" | "us" | "vn";
 
 /**
+ * Every consent region, in a stable order shared by guards and iteration.
+ *
  * @since 1.0.0-canary.6
  */
 export const CONSENT_REGIONS: ReadonlyArray<ConsentRegion> = ["eu", "other", "us", "vn"];
@@ -18,6 +22,8 @@ export function isConsentRegion(value: unknown): value is ConsentRegion {
 }
 
 /**
+ * Whether a region requires explicit opt-in before tracking or defaults to opt-out.
+ *
  * @since 0.5.0-canary.4
  */
 export type ConsentMode = "opt-in" | "opt-out";
@@ -53,6 +59,8 @@ export function resolveConsentMode(region: ConsentRegion): ConsentMode {
 export type ConsentCategory = "ads" | "analytics";
 
 /**
+ * Every consent category, in a stable order shared by guards and iteration.
+ *
  * @since 0.5.0-canary.4
  */
 export const CONSENT_CATEGORIES: ReadonlyArray<ConsentCategory> = ["ads", "analytics"];
@@ -113,6 +121,8 @@ export function isConsentRecord(value: unknown): value is ConsentRecord {
 }
 
 /**
+ * Options for `resolveDefaultConsent`.
+ *
  * @since 1.0.0-canary.6
  */
 export interface ResolveDefaultConsentOptions {
@@ -257,6 +267,8 @@ export function readStoredDecision(storage: ConsentStorage, policyVersion: strin
 }
 
 /**
+ * Options for `resolveEffectiveConsent`.
+ *
  * @since 1.0.0-canary.6
  */
 export interface ResolveEffectiveConsentOptions {

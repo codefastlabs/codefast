@@ -37,6 +37,8 @@ export interface TiktokEventPayload {
 }
 
 /**
+ * Options for `createTiktokDestination`.
+ *
  * @since 1.0.0-canary.7
  */
 export interface TiktokDestinationOptions {

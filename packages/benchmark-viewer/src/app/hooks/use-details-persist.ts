@@ -9,6 +9,8 @@ const ITEMS = [
 ] as const;
 
 /**
+ * Persists the open/closed state of the page's details sections in localStorage.
+ *
  * @since 0.3.16-canary.3
  */
 export function useDetailsPersist(payload: EmbeddedViewerPayload | null): void {

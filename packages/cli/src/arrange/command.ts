@@ -28,6 +28,8 @@ import { logger } from "#/core/logger";
 import { parseWithSchema } from "#/core/schema-parse";
 
 /**
+ * Creates the `arrange` command and its subcommands.
+ *
  * @since 0.3.16-canary.0
  */
 export function createArrangeCommand(): Command {

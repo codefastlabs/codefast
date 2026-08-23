@@ -51,6 +51,8 @@ function toPackageTargetCandidate(fs: FilesystemPort, rootDir: string, packageDi
 }
 
 /**
+ * Resolves the candidate targets for a tag run: the explicit target, or the discovered workspace packages.
+ *
  * @since 0.3.16-canary.0
  */
 export async function resolveTagTargetCandidates(

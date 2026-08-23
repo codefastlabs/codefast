@@ -9,6 +9,8 @@ import type { Result } from "#/core/result";
 import { err, ok } from "#/core/result";
 
 /**
+ * Scans a directory's arrange targets and returns the accumulated analyze report.
+ *
  * @since 0.3.16-canary.0
  */
 export function analyzeDirectory(fs: FilesystemPort, analyzeRootPath: string): Result<AnalyzeReport, AppError> {

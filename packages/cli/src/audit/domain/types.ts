@@ -1,4 +1,6 @@
 /**
+ * A class token parsed from a source string literal, split into variant, value, and modifier.
+ *
  * @since 1.0.0-canary.7
  */
 export type RtlClassToken = {
@@ -11,6 +13,8 @@ export type RtlClassToken = {
 };
 
 /**
+ * A physical class occurrence the RTL audit flags, with its suggested logical replacement.
+ *
  * @since 1.0.0-canary.7
  */
 export type RtlViolation = {
@@ -20,6 +24,8 @@ export type RtlViolation = {
 };
 
 /**
+ * The RTL violations found in one file.
+ *
  * @since 1.0.0-canary.7
  */
 export type RtlFileViolations = {
@@ -28,6 +34,8 @@ export type RtlFileViolations = {
 };
 
 /**
+ * Outcome of one `audit rtl` run.
+ *
  * @since 1.0.0-canary.7
  */
 export type RtlAuditResult = {
@@ -38,6 +46,8 @@ export type RtlAuditResult = {
 };
 
 /**
+ * A broken link or anchor found by the link audit.
+ *
  * @since 0.5.0
  */
 export type LinkBreakage = {
@@ -48,6 +58,8 @@ export type LinkBreakage = {
 };
 
 /**
+ * The link breakages found in one markdown file.
+ *
  * @since 0.5.0
  */
 export type LinkFileBreakages = {
@@ -56,6 +68,8 @@ export type LinkFileBreakages = {
 };
 
 /**
+ * Outcome of one `audit links` run.
+ *
  * @since 0.5.0
  */
 export type LinkAuditResult = {

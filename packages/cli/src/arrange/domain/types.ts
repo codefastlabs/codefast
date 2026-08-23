@@ -18,6 +18,8 @@ import type { GroupFileWorkPlan } from "#/arrange/domain/grouping-service";
 import type { CodefastConfig } from "#/core/config/schema";
 
 /**
+ * The render-pipeline bucket a Tailwind token classifies into.
+ *
  * @since 0.3.16-canary.0
  */
 export type Bucket =
@@ -50,6 +52,8 @@ export type Bucket =
 export type TailwindClassLiteral = DomainTailwindClassLiteral;
 
 /**
+ * Options controlling which literals a class-expression walk visits.
+ *
  * @since 0.3.16-canary.0
  */
 export type ForEachStringLiteralInClassExpressionOptions = {
@@ -62,6 +66,8 @@ export type ForEachStringLiteralInClassExpressionOptions = {
 };
 
 /**
+ * A static JSX `className` literal paired with the node to replace.
+ *
  * @since 0.3.16-canary.0
  */
 export type JsxClassNameStatic = {
@@ -101,6 +107,8 @@ export type StringNode = {
 };
 
 /**
+ * A groupable class surface — a `cn()` argument slot or a static JSX `className`.
+ *
  * @since 0.3.16-canary.0
  */
 export type GroupTarget =
@@ -113,6 +121,8 @@ export type GroupTarget =
     };
 
 /**
+ * A planned text replacement for one grouped class surface.
+ *
  * @since 0.3.16-canary.0
  */
 export type PlannedGroupEdit = {
@@ -130,6 +140,8 @@ export type PlannedGroupEdit = {
 };
 
 /**
+ * The accumulated findings of an `arrange analyze` run.
+ *
  * @since 0.3.16-canary.0
  */
 export type AnalyzeReport = {
@@ -163,6 +175,8 @@ export type AnalyzeReport = {
 };
 
 /**
+ * The per-file outcome of a grouping pass.
+ *
  * @since 0.3.16-canary.0
  */
 export type GroupFileResult = {
@@ -181,6 +195,8 @@ export type GroupFileResult = {
 };
 
 /**
+ * The options a per-file grouping pass runs with.
+ *
  * @since 0.3.16-canary.0
  */
 export type ArrangeGroupFileOptions = {
@@ -190,6 +206,8 @@ export type ArrangeGroupFileOptions = {
 };
 
 /**
+ * The aggregate outcome of an `arrange` run across files.
+ *
  * @since 0.3.16-canary.0
  */
 export type ArrangeRunResult = {
@@ -203,6 +221,8 @@ export type ArrangeRunResult = {
 };
 
 /**
+ * The formatted lines `arrange group` prints for a suggested grouping.
+ *
  * @since 0.3.16-canary.0
  */
 export type ArrangeSuggestGroupsOutput = {
@@ -211,6 +231,8 @@ export type ArrangeSuggestGroupsOutput = {
 };
 
 /**
+ * The resolved target, workspace root, and loaded config an arrange run starts from.
+ *
  * @since 0.3.16-canary.0
  */
 export type ArrangeTargetWorkspaceAndConfig = {

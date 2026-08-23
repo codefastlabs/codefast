@@ -13,6 +13,8 @@ import { AsyncActivationError, AsyncDeactivationError, InvalidMetadataError } fr
 import type { MetadataReader } from "#/metadata/metadata-types";
 
 /**
+ * One container's registry of container-level activation and deactivation hooks, keyed by token.
+ *
  * @since 0.3.16-canary.0
  */
 export class LifecycleManager {

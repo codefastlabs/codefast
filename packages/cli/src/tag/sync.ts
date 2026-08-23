@@ -19,6 +19,8 @@ import { resolveTagTargetCandidates } from "#/tag/target-candidates";
 import { runTagOnTarget } from "#/tag/target-runner";
 
 /**
+ * The inputs a tag run is invoked with.
+ *
  * @since 0.3.16-canary.0
  */
 export type TagSyncRunRequest = {
@@ -31,6 +33,8 @@ export type TagSyncRunRequest = {
 };
 
 /**
+ * A run request paired with an optional progress listener.
+ *
  * @since 0.3.16-canary.0
  */
 export type TagSyncExecutionInput = TagSyncRunRequest & {
@@ -38,6 +42,8 @@ export type TagSyncExecutionInput = TagSyncRunRequest & {
 };
 
 /**
+ * Runs the tag sync across the selected targets and returns the aggregate result.
+ *
  * @since 0.3.16-canary.0
  */
 export async function runTagSync(

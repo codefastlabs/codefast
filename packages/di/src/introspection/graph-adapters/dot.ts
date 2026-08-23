@@ -7,6 +7,8 @@ function escapeDotString(value: string): string {
 }
 
 /**
+ * Renders a container's dependency graph as Graphviz DOT source.
+ *
  * @since 0.3.16-canary.0
  */
 export function toDotGraph(graph: ContainerGraphJson): string {

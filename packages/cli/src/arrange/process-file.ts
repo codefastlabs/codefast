@@ -14,6 +14,8 @@ import { parseDomainSourceFile } from "#/arrange/source-parse";
 import type { FilesystemPort } from "#/core/filesystem/port";
 
 /**
+ * Runs the grouping pipeline on one file — preview or write — and returns its per-file result.
+ *
  * @since 0.3.16-canary.0
  */
 export function processArrangeGroupFile(

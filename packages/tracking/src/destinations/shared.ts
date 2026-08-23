@@ -1,4 +1,6 @@
 /**
+ * A primitive value every destination accepts as an event parameter.
+ *
  * @since 1.0.0-canary.6
  */
 export type FlatPropertyValue = boolean | number | string;
@@ -16,6 +18,8 @@ interface FlattenEventPropsOptions {
  */
 export function flattenEventProps(properties: Record<string, unknown>): Record<string, FlatPropertyValue>;
 /**
+ * Flattens event properties while also passing `null` through for destinations that accept it.
+ *
  * @since 1.0.0-canary.6
  */
 export function flattenEventProps(
@@ -23,6 +27,8 @@ export function flattenEventProps(
   options: { allowNull: true },
 ): Record<string, FlatPropertyValue | null>;
 /**
+ * Shared implementation backing both overloads.
+ *
  * @since 1.0.0-canary.6
  */
 export function flattenEventProps(

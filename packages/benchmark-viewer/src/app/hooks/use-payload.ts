@@ -18,6 +18,8 @@ async function fetchPayload(limit: number): Promise<EmbeddedViewerPayload> {
 }
 
 /**
+ * Manages the viewer payload: server fetches, reload and load-older-runs callbacks, and error state.
+ *
  * @since 0.3.16-canary.3
  */
 export function useBenchPayload({ initialPayload, onReloadError }: BenchPayloadOptions) {

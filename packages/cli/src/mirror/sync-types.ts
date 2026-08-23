@@ -1,6 +1,8 @@
 import type { GlobalStats, PackageStats, WorkspaceMultiDiscoverySource } from "#/mirror/domain/types";
 
 /**
+ * The inputs a mirror run is invoked with.
+ *
  * @since 0.3.16-canary.0
  */
 export type MirrorSyncRunRequest = {
@@ -12,6 +14,8 @@ export type MirrorSyncRunRequest = {
 };
 
 /**
+ * Callbacks a mirror run invokes as it progresses through packages.
+ *
  * @since 0.3.16-canary.0
  */
 export type MirrorSyncProgressListener = {
@@ -26,6 +30,8 @@ export type MirrorSyncProgressListener = {
 };
 
 /**
+ * A run request paired with an optional progress listener.
+ *
  * @since 0.3.16-canary.0
  */
 export type MirrorSyncExecutionInput = MirrorSyncRunRequest & {

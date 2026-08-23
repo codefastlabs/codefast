@@ -8,6 +8,8 @@ import type { CodefastConfig } from "#/core/config/schema";
 import type { FilesystemPort } from "#/core/filesystem/port";
 
 /**
+ * A loaded config together with its schema warnings and the path it was read from.
+ *
  * @since 0.3.16-canary.0
  */
 export type LoadConfigPayload = {
@@ -100,6 +102,8 @@ async function loadOnce(startDir: string, fs: FilesystemPort): Promise<LoadConfi
 }
 
 /**
+ * Loads and caches the config payload for a directory, sharing one load per resolved path.
+ *
  * @since 0.3.16-canary.0
  */
 export function loadConfigPayload(startDir: string, fs: FilesystemPort): Promise<LoadConfigPayload> {

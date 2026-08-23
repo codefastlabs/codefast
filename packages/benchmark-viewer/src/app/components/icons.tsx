@@ -22,6 +22,8 @@ function Icon({ ...props }: IconProps) {
 // ── Brand ────────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
+ * Renders the viewer's rising-bars logo mark with its gradient fills.
+ *
  * @since 0.3.16-canary.3
  */
 export function AppLogoIcon(props: IconProps) {
@@ -57,6 +59,8 @@ export function AppLogoIcon(props: IconProps) {
 // ── Navigation ───────────────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
+ * Renders a downward chevron icon.
+ *
  * @since 0.3.16-canary.3
  */
 export function ChevronDownIcon(props: IconProps) {
@@ -68,6 +72,8 @@ export function ChevronDownIcon(props: IconProps) {
 }
 
 /**
+ * Renders an upward chevron icon.
+ *
  * @since 0.3.16-canary.3
  */
 export function ChevronUpIcon(props: IconProps) {
@@ -79,6 +85,8 @@ export function ChevronUpIcon(props: IconProps) {
 }
 
 /**
+ * Renders a leftward chevron icon.
+ *
  * @since 0.3.16-canary.3
  */
 export function ChevronLeftIcon(props: IconProps) {
@@ -90,6 +98,8 @@ export function ChevronLeftIcon(props: IconProps) {
 }
 
 /**
+ * Renders a rightward chevron icon.
+ *
  * @since 0.3.16-canary.3
  */
 export function ChevronRightIcon(props: IconProps) {
@@ -103,6 +113,8 @@ export function ChevronRightIcon(props: IconProps) {
 // ── Actions ──────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
+ * Renders a clockwise refresh-arrows icon.
+ *
  * @since 0.3.16-canary.3
  */
 export function RefreshCwIcon(props: IconProps) {
@@ -115,6 +127,8 @@ export function RefreshCwIcon(props: IconProps) {
 }
 
 /**
+ * Renders a download-to-tray icon.
+ *
  * @since 0.3.16-canary.3
  */
 export function DownloadIcon(props: IconProps) {
@@ -128,6 +142,8 @@ export function DownloadIcon(props: IconProps) {
 }
 
 /**
+ * Renders a chain-link icon.
+ *
  * @since 0.3.16-canary.3
  */
 export function LinkIcon(props: IconProps) {
@@ -140,6 +156,8 @@ export function LinkIcon(props: IconProps) {
 }
 
 /**
+ * Renders a close cross icon.
+ *
  * @since 0.3.16-canary.3
  */
 export function XIcon(props: IconProps) {
@@ -152,6 +170,8 @@ export function XIcon(props: IconProps) {
 }
 
 /**
+ * Renders a magnifier-with-minus icon for resetting chart zoom.
+ *
  * @since 0.3.16-canary.3
  */
 export function ZoomResetIcon(props: IconProps) {
@@ -167,6 +187,8 @@ export function ZoomResetIcon(props: IconProps) {
 // ── Search & filter ──────────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
+ * Renders a magnifying-glass icon.
+ *
  * @since 0.3.16-canary.3
  */
 export function SearchIcon(props: IconProps) {
@@ -179,6 +201,8 @@ export function SearchIcon(props: IconProps) {
 }
 
 /**
+ * Renders a filter funnel icon.
+ *
  * @since 0.3.16-canary.3
  */
 export function FunnelIcon(props: IconProps) {
@@ -192,6 +216,8 @@ export function FunnelIcon(props: IconProps) {
 // ── Data & metrics ───────────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
+ * Renders a bar-chart icon with dotted column tops.
+ *
  * @since 0.3.16-canary.3
  */
 export function BarChartIcon(props: IconProps) {
@@ -208,6 +234,8 @@ export function BarChartIcon(props: IconProps) {
 }
 
 /**
+ * Renders a speedometer gauge icon.
+ *
  * @since 0.3.16-canary.3
  */
 export function GaugeIcon(props: IconProps) {
@@ -224,6 +252,8 @@ export function GaugeIcon(props: IconProps) {
 }
 
 /**
+ * Renders a lightning-bolt icon.
+ *
  * @since 0.3.16-canary.3
  */
 export function BoltIcon(props: IconProps) {
@@ -235,6 +265,8 @@ export function BoltIcon(props: IconProps) {
 }
 
 /**
+ * Renders a rising trend-line icon.
+ *
  * @since 0.3.16-canary.3
  */
 export function TrendingUpIcon(props: IconProps) {
@@ -247,6 +279,8 @@ export function TrendingUpIcon(props: IconProps) {
 }
 
 /**
+ * Renders a two-by-two grid icon.
+ *
  * @since 0.3.16-canary.3
  */
 export function Grid2x2Icon(props: IconProps) {
@@ -261,6 +295,8 @@ export function Grid2x2Icon(props: IconProps) {
 }
 
 /**
+ * Renders a table-grid icon.
+ *
  * @since 0.3.16-canary.3
  */
 export function TableIcon(props: IconProps) {
@@ -275,6 +311,8 @@ export function TableIcon(props: IconProps) {
 }
 
 /**
+ * Renders a clock-face icon.
+ *
  * @since 0.3.16-canary.3
  */
 export function ClockIcon(props: IconProps) {
@@ -289,6 +327,8 @@ export function ClockIcon(props: IconProps) {
 // ── Status & feedback ────────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
+ * Renders a warning-triangle icon.
+ *
  * @since 0.3.16-canary.3
  */
 export function TriangleAlertIcon(props: IconProps) {
@@ -302,6 +342,8 @@ export function TriangleAlertIcon(props: IconProps) {
 }
 
 /**
+ * Renders a check-mark-in-circle icon.
+ *
  * @since 0.3.16-canary.3
  */
 export function CircleCheckIcon(props: IconProps) {
@@ -314,6 +356,8 @@ export function CircleCheckIcon(props: IconProps) {
 }
 
 /**
+ * Renders an info-in-circle icon.
+ *
  * @since 0.3.16-canary.3
  */
 export function InfoIcon(props: IconProps) {
@@ -329,6 +373,8 @@ export function InfoIcon(props: IconProps) {
 // ── UI chrome ────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
+ * Renders a keyboard icon.
+ *
  * @since 0.3.16-canary.3
  */
 export function KeyboardIcon(props: IconProps) {
@@ -348,6 +394,8 @@ export function KeyboardIcon(props: IconProps) {
 }
 
 /**
+ * Renders the command-palette glyph.
+ *
  * @since 0.3.16-canary.3
  */
 export function CommandIcon(props: IconProps) {

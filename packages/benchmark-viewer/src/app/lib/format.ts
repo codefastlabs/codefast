@@ -1,4 +1,6 @@
 /**
+ * Formats a run's ISO timestamp as a short local date-time, falling back to the folder name.
+ *
  * @since 0.3.16-canary.1
  */
 export function formatLocal(timestampIso: string | undefined, fallbackFolder: string): string {
@@ -13,6 +15,8 @@ export function formatLocal(timestampIso: string | undefined, fallbackFolder: st
 }
 
 /**
+ * Formats an hz/op value with thousands separators, or an em dash when absent.
+ *
  * @since 0.3.16-canary.1
  */
 export function fmtHz(hz: number | null | undefined): string {
@@ -23,6 +27,8 @@ export function fmtHz(hz: number | null | undefined): string {
 }
 
 /**
+ * Formats the signed percentage change between two hz values, or an em dash when either is unusable.
+ *
  * @since 0.3.16-canary.1
  */
 export function fmtPctChange(from: number | null, to: number | null): string {
@@ -34,6 +40,8 @@ export function fmtPctChange(from: number | null, to: number | null): string {
 }
 
 /**
+ * Normalises text for case-insensitive search matching.
+ *
  * @since 0.3.16-canary.1
  */
 export function searchNorm(text: string): string {
@@ -41,6 +49,8 @@ export function searchNorm(text: string): string {
 }
 
 /**
+ * Builds the low/medium/high spread suffix for an IQR fraction, or an empty string when absent.
+ *
  * @since 0.3.16-canary.1
  */
 export function spreadTierLabel(fraction: number | null | undefined): string {
@@ -57,6 +67,8 @@ export function spreadTierLabel(fraction: number | null | undefined): string {
 }
 
 /**
+ * Escapes HTML-significant characters for safe interpolation into markup.
+ *
  * @since 0.3.16-canary.1
  */
 export function escHtml(text: string): string {
@@ -64,6 +76,8 @@ export function escHtml(text: string): string {
 }
 
 /**
+ * Reports whether the browser platform is Mac-like, so shortcut hints show ⌘ instead of Ctrl.
+ *
  * @since 0.3.16-canary.1
  */
 export function isMacLikePlatform(): boolean {

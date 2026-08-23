@@ -4,6 +4,8 @@ import type { GtagConsentBootstrapOptions } from "#/destinations/google-analytic
 import { buildGtagConsentBootstrapScript } from "#/destinations/google-analytics";
 
 /**
+ * Props for {@link GtagConsentBootstrap}.
+ *
  * @since 1.0.0-canary.6
  */
 export interface GtagConsentBootstrapProps

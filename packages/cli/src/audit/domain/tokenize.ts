@@ -61,6 +61,8 @@ export function* stringLiterals(content: string): Generator<{ text: string; line
 }
 
 /**
+ * Collects the parsed class tokens from every string literal in a file's content.
+ *
  * @since 1.0.0-canary.7
  */
 export function collectTokens(content: string): Array<RtlClassToken> {

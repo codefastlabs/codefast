@@ -19,6 +19,8 @@ export interface InitialConsentSnapshot {
 }
 
 /**
+ * Options for `createInitialConsentStore`.
+ *
  * @since 1.0.0-canary.6
  */
 export interface InitialConsentStoreOptions {

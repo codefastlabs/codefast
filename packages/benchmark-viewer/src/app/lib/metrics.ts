@@ -4,6 +4,8 @@ import { fmtHz, fmtPctChange } from "#/app/lib/format";
 import type { EmbeddedLibraryMeta, EmbeddedScenarioSeries } from "#/types";
 
 /**
+ * Returns the median of the finite positive numbers in a list, or null when none remain.
+ *
  * @since 0.3.16-canary.1
  */
 export function medianNumeric(values: Array<number | null | undefined>): number | null {
@@ -18,6 +20,8 @@ export function medianNumeric(values: Array<number | null | undefined>): number 
 }
 
 /**
+ * Returns the ratio of two hz values, or null when either is missing or non-positive.
+ *
  * @since 0.3.16-canary.1
  */
 export function ratioFrom(
@@ -60,6 +64,8 @@ export type MetaItem =
   | { type: "iqr-table"; rows: Array<{ libName: string; iqrLabel: string }> };
 
 /**
+ * The label, value, meta lines, and accent styling one MetricCard renders.
+ *
  * @since 0.3.16-canary.1
  */
 export interface MetricCardProps {
@@ -71,6 +77,8 @@ export interface MetricCardProps {
 }
 
 /**
+ * The metric cards, dispersion flag, and footnote built for the selected scenario.
+ *
  * @since 0.3.16-canary.1
  */
 export interface MetricsResult {
@@ -80,6 +88,8 @@ export interface MetricsResult {
 }
 
 /**
+ * One scenario's row in the latest-run snapshot table: hz cells plus ratio cells.
+ *
  * @since 0.3.16-canary.1
  */
 export interface SnapshotRow {
@@ -90,6 +100,8 @@ export interface SnapshotRow {
 }
 
 /**
+ * The scenario, run filters, and library ordering buildMetrics summarises from.
+ *
  * @since 0.3.16-canary.3
  */
 export interface BuildMetricsOptions {
@@ -105,6 +117,8 @@ export interface BuildMetricsOptions {
 }
 
 /**
+ * Builds the metric cards, dispersion flag, and footnote for one scenario's filtered runs.
+ *
  * @since 0.3.16-canary.1
  */
 export function buildMetrics({
@@ -256,6 +270,8 @@ export function buildMetrics({
 }
 
 /**
+ * Builds one scenario's snapshot-table row from the chronologically last run.
+ *
  * @since 0.3.16-canary.1
  */
 export function buildSnapshotRow(

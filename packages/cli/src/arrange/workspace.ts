@@ -9,6 +9,8 @@ import { err, ok } from "#/core/result";
 import { findRepoRoot } from "#/core/workspace/resolver";
 
 /**
+ * Resolves the arrange target, repo root, and loaded config an arrange run needs.
+ *
  * @since 0.3.16-canary.0
  */
 export async function prepareArrangeWorkspace(

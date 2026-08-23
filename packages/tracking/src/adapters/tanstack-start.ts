@@ -16,6 +16,8 @@ import type { ReceiptStore } from "#/server/consent-receipt-store";
 import { resolveInitialConsent } from "#/server/initial-consent";
 
 /**
+ * Options for `resolveInitialConsentFromRequest`.
+ *
  * @since 1.0.0-canary.7
  */
 export interface InitialConsentFromRequestOptions {
@@ -92,6 +94,8 @@ export interface ConsentReceiptAck {
 }
 
 /**
+ * Options for `recordConsentReceiptFromRequest`.
+ *
  * @since 1.0.0-canary.7
  */
 export interface RecordConsentReceiptFromRequestOptions {

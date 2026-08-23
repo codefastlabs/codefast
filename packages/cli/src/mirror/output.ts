@@ -6,6 +6,8 @@ import type { MirrorSyncProgressListener } from "#/mirror/sync-types";
 const cliLogger: CliLoggerLike = logger;
 
 /**
+ * A progress listener that renders mirror run events through the CLI reporter.
+ *
  * @since 0.3.16-canary.0
  */
 export class MirrorSyncProgressPresenter implements MirrorSyncProgressListener {

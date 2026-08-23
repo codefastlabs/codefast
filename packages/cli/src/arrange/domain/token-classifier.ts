@@ -363,6 +363,8 @@ function isArbitraryParentSelectorStateToken(token: string): boolean {
 }
 
 /**
+ * Classifies a Tailwind token into its render-pipeline bucket.
+ *
  * @since 0.3.16-canary.0
  */
 export function classifyToken(token: string): Bucket {
@@ -489,6 +491,8 @@ function normalizeSelectorVariantLayer(layer: string): string {
 }
 
 /**
+ * Checks whether two buckets may share one group in a suggested partition.
+ *
  * @since 0.3.16-canary.0
  */
 export function bucketsCompatible(a: Bucket, b: Bucket): boolean {

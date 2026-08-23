@@ -99,6 +99,8 @@ export const PHYSICAL_SIDE_VARIANT =
 export const DIRECTION_RESOLVED_VARIANT = /data-\[motion[=^]/;
 
 /**
+ * The physical slide-animation class prefixes the RTL audit inspects.
+ *
  * @since 1.0.0-canary.7
  */
 export const SLIDE_PREFIXES = [

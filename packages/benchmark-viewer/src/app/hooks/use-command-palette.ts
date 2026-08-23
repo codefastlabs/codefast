@@ -4,6 +4,8 @@ import type { ViewState } from "#/app/lib/hash";
 import type { EmbeddedScenarioSeries } from "#/types";
 
 /**
+ * The command palette's built-in actions, in display order.
+ *
  * @since 0.3.16-canary.3
  */
 export const PALETTE_ACTIONS = [
@@ -29,6 +31,8 @@ interface CommandPaletteOptions {
 }
 
 /**
+ * The open state, query, and callbacks the command palette UI is driven by.
+ *
  * @since 0.3.16-canary.3
  */
 export interface CommandPaletteHandle {
@@ -41,6 +45,8 @@ export interface CommandPaletteHandle {
 }
 
 /**
+ * Binds the global palette shortcut and returns the state and handlers the command palette renders from.
+ *
  * @since 0.3.16-canary.3
  */
 export function useCommandPalette({

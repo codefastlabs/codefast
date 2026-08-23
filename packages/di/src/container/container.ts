@@ -50,6 +50,8 @@ import { DependencyResolver } from "#/resolution/resolver";
 // ── Container interface ──────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
+ * The public surface: binding, resolving, modules, lifecycle hooks, child scopes, and disposal.
+ *
  * @since 0.3.16-canary.0
  */
 export interface Container {
@@ -114,6 +116,8 @@ export interface ContainerOptions {
 }
 
 /**
+ * The factory surface the `Container` companion object exposes.
+ *
  * @since 0.3.16-canary.0
  */
 export interface ContainerStatic {
@@ -944,6 +948,8 @@ function throwCollected(errors: ReadonlyArray<unknown>, message: string): void {
 // ── Container static ─────────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
+ * The companion factory that creates containers, empty or preloaded from modules.
+ *
  * @since 0.3.16-canary.0
  */
 export const Container: ContainerStatic = {

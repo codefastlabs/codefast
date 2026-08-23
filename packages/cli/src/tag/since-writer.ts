@@ -49,6 +49,8 @@ function identifierName(node: unknown): string | undefined {
 }
 
 /**
+ * The writer that adds missing `@since` tags to a file's exported declarations.
+ *
  * @since 0.3.16-canary.0
  */
 export class TagSinceWriter {

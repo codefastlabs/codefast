@@ -10,6 +10,8 @@ export const globalCliCommanderOptionsSchema = z.object({
 });
 
 /**
+ * The validated global CLI options shared by every subcommand.
+ *
  * @since 0.3.16-canary.0
  */
 export type GlobalCliOptions = z.infer<typeof globalCliCommanderOptionsSchema>;

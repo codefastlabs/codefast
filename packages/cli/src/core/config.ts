@@ -7,6 +7,8 @@ import type { Result } from "#/core/result";
 import { err, ok } from "#/core/result";
 
 /**
+ * Loads the `codefast.config.js` for a workspace root, reporting schema warnings along the way.
+ *
  * @since 0.3.16-canary.0
  */
 export async function loadCodefastConfig(

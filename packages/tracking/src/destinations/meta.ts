@@ -41,6 +41,8 @@ export interface MetaEventPayload {
 }
 
 /**
+ * Options for `createMetaDestination`.
+ *
  * @since 1.0.0-canary.7
  */
 export interface MetaDestinationOptions {

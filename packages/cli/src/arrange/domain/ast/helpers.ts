@@ -119,6 +119,8 @@ export function isCnOrTvIdentifier(
 }
 
 /**
+ * Resolves a property assignment's name text, or `undefined` for computed names.
+ *
  * @since 0.3.16-canary.0
  */
 export function propertyAssignmentNameText(prop: DomainPropertyAssignment): string | undefined {
@@ -132,6 +134,8 @@ export function propertyAssignmentNameText(prop: DomainPropertyAssignment): stri
 }
 
 /**
+ * Resolves the one-based line number a node starts on.
+ *
  * @since 0.3.16-canary.0
  */
 export function lineOf(sourceFile: DomainSourceFile, node: DomainAstNode): number {

@@ -5,6 +5,8 @@ import type { FilesystemPort } from "#/core/filesystem/port";
 const packageJsonFileName = "package.json";
 
 /**
+ * Resolves the arrange target to a canonical path, defaulting to the nearest package directory.
+ *
  * @since 0.3.16-canary.0
  */
 export function resolveArrangeTargetPath(

@@ -4,6 +4,8 @@ import type { Destination } from "#/core/destination";
 import { flattenEventProps } from "#/destinations/shared";
 
 /**
+ * Options for `createVercelAnalyticsDestination`.
+ *
  * @since 1.0.0-canary.6
  */
 export interface VercelAnalyticsDestinationOptions {

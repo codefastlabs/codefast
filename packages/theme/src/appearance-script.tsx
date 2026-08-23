@@ -17,6 +17,8 @@ const APPEARANCE_VALID_CHECK = appearances.map((s) => `s===${toScriptSafe(s)}`).
 // ── Props ────────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
+ * Props for {@link AppearanceScript}.
+ *
  * @since 0.5.0-canary.2
  */
 export type AppearanceScriptProps = {

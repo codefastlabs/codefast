@@ -4,6 +4,8 @@ interface PageHeaderProps {
 }
 
 /**
+ * Renders the page title, copy-link button, and the collapsible how-to-read primer.
+ *
  * @since 0.3.16-canary.3
  */
 export function PageHeader({ title, onCopyLink }: PageHeaderProps) {

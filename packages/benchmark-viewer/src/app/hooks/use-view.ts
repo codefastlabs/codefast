@@ -4,6 +4,8 @@ import type { ViewState } from "#/app/lib/hash";
 import type { EmbeddedViewerPayload } from "#/types";
 
 /**
+ * Holds the chart view state and returns it with a callback for partial patches.
+ *
  * @since 0.3.16-canary.1
  */
 export function useViewState(initialPayload: EmbeddedViewerPayload | undefined) {

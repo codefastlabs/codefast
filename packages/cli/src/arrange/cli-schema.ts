@@ -1,6 +1,8 @@
 import { z } from "zod";
 
 /**
+ * The request payload for `arrange analyze`.
+ *
  * @since 0.3.16-canary.0
  */
 export type ArrangeAnalyzeDirectoryRequest = {
@@ -8,6 +10,8 @@ export type ArrangeAnalyzeDirectoryRequest = {
 };
 
 /**
+ * The request payload for a top-level `arrange` run.
+ *
  * @since 0.3.16-canary.0
  */
 export type ArrangeSyncRunRequest = {
@@ -20,6 +24,8 @@ export type ArrangeSyncRunRequest = {
 };
 
 /**
+ * The request payload for `arrange group`.
+ *
  * @since 0.3.16-canary.0
  */
 export type ArrangeSuggestGroupsRequest = {
@@ -29,6 +35,8 @@ export type ArrangeSuggestGroupsRequest = {
 };
 
 /**
+ * The `zod` schema validating an `arrange analyze` request.
+ *
  * @since 0.3.16-canary.0
  */
 export const arrangeAnalyzeDirectoryRequestSchema: z.ZodType<ArrangeAnalyzeDirectoryRequest> = z.object({
@@ -36,6 +44,8 @@ export const arrangeAnalyzeDirectoryRequestSchema: z.ZodType<ArrangeAnalyzeDirec
 });
 
 /**
+ * The `zod` schema validating an `arrange` run request.
+ *
  * @since 0.3.16-canary.0
  */
 export const arrangeSyncRunRequestSchema: z.ZodType<ArrangeSyncRunRequest> = z.object({
@@ -48,6 +58,8 @@ export const arrangeSyncRunRequestSchema: z.ZodType<ArrangeSyncRunRequest> = z.o
 });
 
 /**
+ * The `zod` schema validating an `arrange group` request.
+ *
  * @since 0.3.16-canary.0
  */
 export const arrangeSuggestGroupsRequestSchema: z.ZodType<ArrangeSuggestGroupsRequest> = z.object({

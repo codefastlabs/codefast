@@ -23,6 +23,8 @@ function listenLoopback(server: Server, port: number): Promise<void> {
 }
 
 /**
+ * The bench server options plus the port to try binding first.
+ *
  * @since 0.3.16-canary.0
  */
 export interface StartBenchServerOptions extends BenchServerOptions {
@@ -30,6 +32,8 @@ export interface StartBenchServerOptions extends BenchServerOptions {
 }
 
 /**
+ * Creates the bench server and binds it to the first free loopback port at or above the preferred one.
+ *
  * @since 0.3.16-canary.0
  */
 export async function startBenchServer({ preferredPort, ...serverOptions }: StartBenchServerOptions): Promise<void> {

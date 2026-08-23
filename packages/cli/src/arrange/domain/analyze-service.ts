@@ -30,6 +30,8 @@ function previewText(text: string): string {
 }
 
 /**
+ * Creates a zeroed analyze report ready for accumulation.
+ *
  * @since 0.3.16-canary.0
  */
 export function createEmptyAnalyzeReport(): AnalyzeReport {

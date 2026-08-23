@@ -7,6 +7,8 @@ import type { Chart } from "chart.js";
 import { CHART_CATEGORY_VIEW_EPS, CHART_MIN_X_SPAN_FOR_ZOOM_IN } from "#/app/lib/constants";
 
 /**
+ * The disabled flag for each chart toolbar control at the current zoom/pan window.
+ *
  * @since 0.3.16-canary.1
  */
 export interface ChartToolbarDisabled {
@@ -18,6 +20,8 @@ export interface ChartToolbarDisabled {
 }
 
 /**
+ * The toolbar state with every control disabled, used when the chart cannot zoom or pan.
+ *
  * @since 0.3.16-canary.1
  */
 export const ALL_TOOLBAR_DISABLED: ChartToolbarDisabled = {
@@ -60,6 +64,8 @@ export function categoryXScaleWindow(pointCount: number): { max: number; min: nu
 }
 
 /**
+ * Computes which toolbar controls to disable from the chart's current x-scale window.
+ *
  * @since 0.3.16-canary.1
  */
 export function computeChartToolbarDisabled(

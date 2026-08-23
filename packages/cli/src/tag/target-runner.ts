@@ -7,6 +7,8 @@ import { TagSinceWriter } from "#/tag/since-writer";
 import { resolveNearestPackageVersion } from "#/tag/version-resolver";
 
 /**
+ * Stamps `@since` tags across one target's TypeScript files and returns the run result.
+ *
  * @since 0.3.16-canary.0
  */
 export function runTagOnTarget(fs: FilesystemPort, targetPath: string, opts: TagRunOptions): TagRunResult {

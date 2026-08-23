@@ -78,6 +78,8 @@ async function defaultTransport(request: { body: string; url: string }): Promise
 }
 
 /**
+ * Options for `sendMeasurementProtocolEvents`.
+ *
  * @since 1.0.0-canary.7
  */
 export interface SendMeasurementProtocolEventsOptions {

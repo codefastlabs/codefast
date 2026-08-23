@@ -2,6 +2,8 @@ import { writeBrowserCookie } from "#/client/browser-cookie";
 import { ONE_YEAR_IN_SECONDS, readCookieValue } from "#/core/cookie";
 
 /**
+ * Options for `createCookieAnonymousId`.
+ *
  * @since 1.0.0-canary.6
  */
 export interface CookieAnonymousIdOptions {
@@ -12,6 +14,8 @@ export interface CookieAnonymousIdOptions {
 }
 
 /**
+ * A cookie-backed anonymous id handle: lazy minting, expiry refresh, and clearing on withdrawal.
+ *
  * @since 1.0.0-canary.6
  */
 export interface CookieAnonymousId {

@@ -30,6 +30,8 @@ import {
 } from "#/core/source-text-edit";
 
 /**
+ * Resolves the source position where a group target's replacement begins.
+ *
  * @since 0.3.16-canary.0
  */
 export function targetReplaceStart(target: GroupTarget): number {
@@ -62,6 +64,8 @@ function collectLongJsxClassNameTargets(sourceFile: DomainSourceFile): Array<Gro
 }
 
 /**
+ * Collects a file's group targets — `cn()` / `tv()` slots, plus long JSX `className` literals in `.tsx`.
+ *
  * @since 0.3.16-canary.0
  */
 export function collectGroupTargets(sourceFile: DomainSourceFile, filePath: string): Array<GroupTarget> {
@@ -125,6 +129,8 @@ function formatCnCallReplacement(stringNode: StringNode, sourceText: string, wit
 }
 
 /**
+ * Plans the grouped replacement for one target, or `undefined` when regrouping would change nothing.
+ *
  * @since 0.3.16-canary.0
  */
 export function planGroupEditForTarget(

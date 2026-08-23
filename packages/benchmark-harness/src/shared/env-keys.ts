@@ -11,10 +11,14 @@
  */
 export const BENCH_MODE_ENV_KEY = "BENCH_MODE";
 /**
+ * When enabled, forwards each child's stdout lines through the parent's output.
+ *
  * @since 0.3.16-canary.0
  */
 export const BENCH_VERBOSE_ENV_KEY = "BENCH_VERBOSE";
 /**
+ * Port the benchmark results viewer (`bench:serve`) listens on.
+ *
  * @since 0.3.16-canary.0
  */
 export const BENCH_PORT_ENV_KEY = "BENCH_PORT";

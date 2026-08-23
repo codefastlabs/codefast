@@ -4,6 +4,8 @@ const yellowAnsi = "\x1b[33m";
 const resetAnsi = "\x1b[0m";
 
 /**
+ * Prints each config schema warning as a highlighted line.
+ *
  * @since 0.3.16-canary.0
  */
 export function reportSchemaWarnings(warnings: ReadonlyArray<string>): void {

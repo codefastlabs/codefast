@@ -7,6 +7,8 @@ import type { BindingConstraint, Constructor } from "#/core/types";
 import { EmptyTagCriteriaError } from "#/errors/errors";
 
 /**
+ * Matches when the direct parent frame resolves the given token.
+ *
  * @since 0.3.16-canary.0
  */
 export function whenParentIs(token: Token<unknown> | Constructor): BindingConstraint {
@@ -16,6 +18,8 @@ export function whenParentIs(token: Token<unknown> | Constructor): BindingConstr
 }
 
 /**
+ * Matches when there is no direct parent frame, or it resolves a different token.
+ *
  * @since 0.3.16-canary.0
  */
 export function whenNoParentIs(token: Token<unknown> | Constructor): BindingConstraint {
@@ -25,6 +29,8 @@ export function whenNoParentIs(token: Token<unknown> | Constructor): BindingCons
 }
 
 /**
+ * Matches when at least one ancestor frame resolves the given token.
+ *
  * @since 0.3.16-canary.0
  */
 export function whenAnyAncestorIs(token: Token<unknown> | Constructor): BindingConstraint {
@@ -34,6 +40,8 @@ export function whenAnyAncestorIs(token: Token<unknown> | Constructor): BindingC
 }
 
 /**
+ * Matches when no ancestor frame resolves the given token.
+ *
  * @since 0.3.16-canary.0
  */
 export function whenNoAncestorIs(token: Token<unknown> | Constructor): BindingConstraint {
@@ -43,6 +51,8 @@ export function whenNoAncestorIs(token: Token<unknown> | Constructor): BindingCo
 }
 
 /**
+ * Matches when the direct parent slot carries the given name.
+ *
  * @since 0.3.16-canary.0
  */
 export function whenParentNamed(name: string): BindingConstraint {
@@ -54,6 +64,8 @@ export function whenParentNamed(name: string): BindingConstraint {
 }
 
 /**
+ * Matches when at least one ancestor slot carries the given name.
+ *
  * @since 0.3.16-canary.0
  */
 export function whenAnyAncestorNamed(name: string): BindingConstraint {
@@ -65,6 +77,8 @@ export function whenAnyAncestorNamed(name: string): BindingConstraint {
 }
 
 /**
+ * Matches when the direct parent slot carries the given tag pair.
+ *
  * @since 0.3.16-canary.0
  */
 export function whenParentTagged(criterion: BindingTag): BindingConstraint {
@@ -73,6 +87,8 @@ export function whenParentTagged(criterion: BindingTag): BindingConstraint {
 }
 
 /**
+ * Matches when at least one ancestor slot carries the given tag pair.
+ *
  * @since 0.3.16-canary.0
  */
 export function whenAnyAncestorTagged(criterion: BindingTag): BindingConstraint {

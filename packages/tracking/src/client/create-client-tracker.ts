@@ -62,6 +62,8 @@ function eraseInDestination(destination: Destination, id: string): void {
 }
 
 /**
+ * Options for `createClientTracker`.
+ *
  * @since 0.5.0-canary.4
  */
 export interface ClientTrackerOptions<Catalog extends EventCatalog> {
@@ -92,6 +94,8 @@ export interface ClientTrackerOptions<Catalog extends EventCatalog> {
 }
 
 /**
+ * A client-side tracker delivering catalog-validated events to destinations, plus erasure on withdrawal.
+ *
  * @since 0.5.0-canary.4
  */
 export interface ClientTracker<Catalog extends EventCatalog> {
@@ -108,6 +112,8 @@ export interface ClientTracker<Catalog extends EventCatalog> {
 }
 
 /**
+ * Creates a consent-gated tracker that validates each event against the catalog and fans it out to destinations.
+ *
  * @since 0.5.0-canary.4
  */
 export function createClientTracker<Catalog extends EventCatalog>(

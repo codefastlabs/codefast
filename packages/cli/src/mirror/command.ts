@@ -15,6 +15,8 @@ import { prepareMirrorSync } from "#/mirror/prepare";
 import { runMirrorSync } from "#/mirror/sync";
 
 /**
+ * Creates the `mirror` subcommand, which writes `package.json#exports` from `dist/`.
+ *
  * @since 0.3.16-canary.0
  */
 export function createMirrorCommand(): Command {

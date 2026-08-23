@@ -90,6 +90,8 @@ function createZeroedScenarioTrialResult(scenario: AnyBenchScenario, hzPerIterat
 export type { BenchMode };
 
 /**
+ * Parameters for {@link createRunAllTrials}.
+ *
  * @since 0.3.16-canary.0
  */
 export type CreateRunAllTrialsParameters = Readonly<{
@@ -110,6 +112,8 @@ export type CreateRunAllTrialsParameters = Readonly<{
 }>;
 
 /**
+ * Runner that measures every scenario across the configured trials and returns one payload per trial.
+ *
  * @since 0.3.16-canary.0
  */
 export type RunAllTrials = (

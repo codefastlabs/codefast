@@ -3,6 +3,8 @@ import { resolveEffectiveConsent } from "#/core/consent";
 import type { ConsentConfig } from "#/core/consent-config";
 
 /**
+ * Options for `createIsAnalyticsAllowed`.
+ *
  * @since 1.0.0-canary.6
  */
 export interface IsAnalyticsAllowedOptions {

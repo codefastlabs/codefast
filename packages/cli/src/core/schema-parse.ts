@@ -19,6 +19,8 @@ function formatSchemaIssues(issues: ReadonlyArray<SchemaIssue>): string {
 }
 
 /**
+ * Parses an input against a Zod schema and returns a `Result` with the value or a validation `AppError`.
+ *
  * @since 0.3.16-canary.0
  */
 export function parseWithSchema<Value>(schema: ZodType<Value>, input: unknown): Result<Value, AppError> {

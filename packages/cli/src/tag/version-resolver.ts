@@ -5,6 +5,8 @@ import type { FilesystemPort } from "#/core/filesystem/port";
 const packageJsonFileName = "package.json";
 
 /**
+ * Returns the `version` of the nearest enclosing `package.json` above a target path.
+ *
  * @since 0.3.16-canary.0
  */
 export function resolveNearestPackageVersion(fs: FilesystemPort, targetPath: string): string {

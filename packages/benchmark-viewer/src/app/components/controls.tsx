@@ -69,6 +69,8 @@ interface ChartControlPanelProps {
 }
 
 /**
+ * Renders the sticky chart-data bar: reload, scenario picker, environment filter, and run window.
+ *
  * @since 0.3.16-canary.3
  */
 export function ChartControlPanel({

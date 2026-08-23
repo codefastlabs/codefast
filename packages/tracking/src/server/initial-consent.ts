@@ -3,6 +3,8 @@ import { resolveConsentMode, resolveDefaultConsent, STRICTEST_INITIAL_CONSENT } 
 import { resolveRegionFromCountryCode } from "#/server/region";
 
 /**
+ * Options for `resolveInitialConsent`.
+ *
  * @since 1.0.0-canary.6
  */
 export interface InitialConsentOptions {

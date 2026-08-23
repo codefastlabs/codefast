@@ -16,6 +16,8 @@ import { UNOWNED_BRANCH } from "#/resolution/path/resolution-path";
 // ── ResolutionContext implementation ─────────────────────────────────────────────────────────────────────────────────
 
 /**
+ * The engine surface a resolution context calls back into to resolve further dependencies.
+ *
  * @since 0.3.16-canary.0
  */
 export interface ResolverCallbacks {
@@ -60,6 +62,8 @@ export interface ResolverCallbacks {
 }
 
 /**
+ * The `ResolutionContext` handed to factories and hooks, backed by the engine's callbacks.
+ *
  * @since 0.3.16-canary.0
  */
 export class DefaultResolutionContext implements ResolutionContext {
@@ -312,6 +316,8 @@ class DefaultConstraintContext implements ConstraintContext {
 }
 
 /**
+ * Creates the resolution-stack frame for one in-flight resolve.
+ *
  * @since 0.3.16-canary.0
  */
 export function buildResolutionFrame(

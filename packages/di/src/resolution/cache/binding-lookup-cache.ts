@@ -39,6 +39,8 @@ const newNameToEntryMap = <Owner>(): Map<string, DefaultLookupEntry<Owner> | nul
 const newTagToEntryMap = <Owner>(): Map<BindingTag, DefaultLookupEntry<Owner> | null> => new Map();
 
 /**
+ * A version-stamped cache of binding lookups by token, name, and tag across the container chain.
+ *
  * @since 0.5.0-canary.9
  */
 export class BindingLookupCache<Owner> {

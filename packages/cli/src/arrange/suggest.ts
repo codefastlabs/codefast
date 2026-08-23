@@ -4,6 +4,8 @@ import { formatArray, formatCnCall } from "#/arrange/domain/source-text-formatte
 import type { ArrangeSuggestGroupsOutput } from "#/arrange/domain/types";
 
 /**
+ * Formats the suggested grouping for an inline class string as `arrange group` output lines.
+ *
  * @since 0.3.16-canary.0
  */
 export function suggestCnGroupsFromCli(request: ArrangeSuggestGroupsRequest): ArrangeSuggestGroupsOutput {

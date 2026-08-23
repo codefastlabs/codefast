@@ -6,6 +6,8 @@
 export type CliFileEncoding = "utf8";
 
 /**
+ * A directory listing entry with its name, parent path, and kind predicates.
+ *
  * @since 0.3.16-canary.0
  */
 export interface DirectoryEntry {
@@ -16,6 +18,8 @@ export interface DirectoryEntry {
 }
 
 /**
+ * The filesystem operations a CLI flow depends on, swappable for tests.
+ *
  * @since 0.3.16-canary.0
  */
 export interface FilesystemPort {

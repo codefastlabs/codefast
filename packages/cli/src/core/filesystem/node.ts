@@ -5,6 +5,8 @@ import path from "node:path";
 import type { CliFileEncoding, DirectoryEntry, FilesystemPort } from "#/core/filesystem/port";
 
 /**
+ * The `FilesystemPort` implementation backed by Node's real filesystem.
+ *
  * @since 0.3.16-canary.0
  */
 export const nodeFilesystem: FilesystemPort = {

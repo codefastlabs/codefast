@@ -31,6 +31,8 @@ export function isValidAnonymousId(value: string): boolean {
 }
 
 /**
+ * Options for persisting a client-minted anonymous id via a server `Set-Cookie`.
+ *
  * @since 1.0.0-canary.6
  */
 export interface AnonymousIdCookieOptions {

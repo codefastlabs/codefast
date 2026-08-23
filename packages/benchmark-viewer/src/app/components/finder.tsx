@@ -7,6 +7,8 @@ interface FindPanelProps {
 }
 
 /**
+ * Renders the scenario search input and group filter.
+ *
  * @since 0.3.16-canary.1
  */
 export function FindPanel({ search, group, uniqueGroups, onSearchChange, onGroupChange }: FindPanelProps) {

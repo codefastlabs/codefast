@@ -12,6 +12,8 @@
 const ADMIN_API_ORIGIN = "https://analyticsadmin.googleapis.com";
 
 /**
+ * The URL and body of an Admin API `submitUserDeletion` call, ready for an authenticated transport.
+ *
  * @since 1.0.0-canary.7
  */
 export interface Ga4UserDeletionRequest {
@@ -60,6 +62,8 @@ async function defaultTransport(request: {
 }
 
 /**
+ * Options for `submitGa4UserDeletion`.
+ *
  * @since 1.0.0-canary.7
  */
 export interface SubmitGa4UserDeletionOptions {

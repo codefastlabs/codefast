@@ -3,6 +3,8 @@ import type { ComponentProps } from "react";
 import { cn } from "#/app/lib/utils";
 
 /**
+ * Renders a KPI card surface with the shared border, blur, and hover treatment.
+ *
  * @since 0.3.16-canary.3
  */
 export function KpiCard({ className, ...props }: ComponentProps<"div">) {
@@ -18,6 +20,8 @@ export function KpiCard({ className, ...props }: ComponentProps<"div">) {
 }
 
 /**
+ * Renders a KPI card's uppercase label line.
+ *
  * @since 0.3.16-canary.3
  */
 export function KpiCardLabel({ className, ...props }: ComponentProps<"div">) {
@@ -30,6 +34,8 @@ export function KpiCardLabel({ className, ...props }: ComponentProps<"div">) {
 }
 
 /**
+ * Renders a KPI card's primary value line.
+ *
  * @since 0.3.16-canary.3
  */
 export function KpiCardValue({ className, ...props }: ComponentProps<"div">) {

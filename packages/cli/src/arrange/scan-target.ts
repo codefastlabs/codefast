@@ -17,6 +17,8 @@ function isTestFile(filePath: string): boolean {
 }
 
 /**
+ * Lists the files an arrange run visits — a directory's non-test `.ts`/`.tsx` files, or the single target.
+ *
  * @since 0.3.16-canary.0
  */
 export function scanArrangeTargets(fs: FilesystemPort, targetPath: string): Array<string> {

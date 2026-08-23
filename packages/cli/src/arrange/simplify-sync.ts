@@ -7,6 +7,8 @@ import type { Result } from "#/core/result";
 import { ok } from "#/core/result";
 
 /**
+ * Runs the simplify pass over every target file and returns the aggregated result.
+ *
  * @since 0.3.16-canary.0
  */
 export async function runArrangeSimplify(

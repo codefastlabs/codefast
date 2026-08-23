@@ -7,6 +7,8 @@ import type { ConsentStorage, InitialConsent } from "#/core/consent";
 import type { ConsentConfig } from "#/core/consent-config";
 
 /**
+ * Options for `createConsentRuntime`.
+ *
  * @since 1.0.0-canary.6
  */
 export interface ConsentRuntimeOptions {

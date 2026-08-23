@@ -46,6 +46,8 @@ interface CommandPaletteProps {
 }
 
 /**
+ * Modal action launcher: filters the given actions by query and runs one via click or keyboard.
+ *
  * @since 0.3.16-canary.1
  */
 export function CommandPalette({

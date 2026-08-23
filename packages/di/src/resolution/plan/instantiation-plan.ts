@@ -161,6 +161,8 @@ export interface InstantiationPlanHost {
 export type EscapeArity = "all" | "optional" | "single";
 
 /**
+ * The compiler that flattens a class or resolved binding's dependencies into an instantiation plan.
+ *
  * @since 0.3.16-canary.1
  */
 export class InstantiationPlanCompiler {

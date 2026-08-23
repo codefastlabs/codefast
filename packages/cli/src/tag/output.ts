@@ -13,6 +13,8 @@ type TagProgressEvent =
   | { type: "target-completed"; target: TagResolvedTarget; result: TagTargetExecutionResult };
 
 /**
+ * A progress listener that prints a line as each tag target starts and completes.
+ *
  * @since 0.3.16-canary.0
  */
 export class TagSyncProgressPresenter implements TagProgressListener {
@@ -44,6 +46,8 @@ const colors = {
 } as const;
 
 /**
+ * Prints a tag run's target table, warnings, and summary, and returns the exit code.
+ *
  * @since 0.3.16-canary.0
  */
 export function presentTagSyncResult(result: TagSyncResult, rootDir: string): number {

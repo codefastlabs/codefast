@@ -83,6 +83,8 @@ function readAppearanceFromStorage(storageKey: string): Appearance | null {
 // ── Props ────────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
+ * Props for {@link AppearanceProvider}.
+ *
  * @since 0.5.0-canary.2
  */
 export type AppearanceProviderProps = {

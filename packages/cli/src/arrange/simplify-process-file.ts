@@ -6,6 +6,8 @@ import type { FilesystemPort } from "#/core/filesystem/port";
 import { applyEditsDescending } from "#/core/source-text-edit";
 
 /**
+ * Runs the simplify pass on one file — flattening class expressions and pruning an unused `cn` import.
+ *
  * @since 0.3.16-canary.0
  */
 export function processArrangeSimplifyFile(

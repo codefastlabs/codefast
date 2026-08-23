@@ -4,6 +4,8 @@ import type { FilesystemPort } from "#/core/filesystem/port";
 import { defaultSkipDirectoryNames } from "#/core/workspace/skip-directories";
 
 /**
+ * Recursively collects the `.ts`/`.tsx` file paths under a root, skipping `.d.ts` and skip-listed directories.
+ *
  * @since 0.3.16-canary.0
  */
 export function walkTsxFiles(rootDirectoryPath: string, fs: FilesystemPort): Array<string> {

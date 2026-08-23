@@ -71,6 +71,8 @@ const ROOT_CONSTRAINT_CONTEXT = {
 };
 
 /**
+ * The resolution engine driving binding selection, instantiation, scoping, and lifecycle hooks.
+ *
  * @since 0.3.16-canary.0
  */
 export class DependencyResolver implements ResolverCallbacks {

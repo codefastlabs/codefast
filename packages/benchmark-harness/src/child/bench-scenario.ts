@@ -19,6 +19,8 @@ export interface BenchScenario {
 }
 
 /**
+ * Scenario variant whose built operation is awaited on every iteration.
+ *
  * @since 0.3.16-canary.0
  */
 export interface AsyncBenchScenario extends Omit<BenchScenario, "kind" | "build"> {
@@ -27,11 +29,15 @@ export interface AsyncBenchScenario extends Omit<BenchScenario, "kind" | "build"
 }
 
 /**
+ * Union of the sync and async scenario shapes.
+ *
  * @since 0.3.16-canary.0
  */
 export type AnyBenchScenario = BenchScenario | AsyncBenchScenario;
 
 /**
+ * Narrows a scenario to {@link AsyncBenchScenario}.
+ *
  * @since 0.3.16-canary.0
  */
 export function isAsyncScenario(scenario: AnyBenchScenario): scenario is AsyncBenchScenario {

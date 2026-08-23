@@ -1,6 +1,8 @@
 import type { EmbeddedViewerPayload } from "#/types";
 
 /**
+ * The client view state synced to the URL hash: filters, selected scenario, and display toggles.
+ *
  * @since 0.3.16-canary.1
  */
 export interface ViewState {
@@ -15,6 +17,8 @@ export interface ViewState {
 }
 
 /**
+ * The URL-hash parameter name for each ViewState field.
+ *
  * @since 0.3.16-canary.1
  */
 export const HASH_KEYS = {
@@ -29,6 +33,8 @@ export const HASH_KEYS = {
 };
 
 /**
+ * Serialises a view state into the URL hash string, omitting default-valued filters.
+ *
  * @since 0.3.16-canary.1
  */
 export function buildHash(view: ViewState): string {
@@ -55,6 +61,8 @@ export function buildHash(view: ViewState): string {
 }
 
 /**
+ * Parses a URL hash into a partial view state, dropping values the payload cannot satisfy.
+ *
  * @since 0.3.16-canary.1
  */
 export function parseHash(raw: string, payload: EmbeddedViewerPayload): Partial<ViewState> {

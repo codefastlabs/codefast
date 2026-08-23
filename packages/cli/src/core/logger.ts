@@ -1,6 +1,8 @@
 import process from "node:process";
 
 /**
+ * The CLI's line-oriented writer for stdout and stderr.
+ *
  * @since 0.3.16-canary.0
  */
 export const logger = {

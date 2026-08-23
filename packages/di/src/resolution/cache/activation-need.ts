@@ -11,6 +11,8 @@ import type { LifecycleManager } from "#/lifecycle/lifecycle-manager";
 import type { ClassIntrospector } from "#/resolution/cache/class-introspector";
 
 /**
+ * A per-binding cache of whether activation work — hooks or `@postConstruct` — is needed on resolve.
+ *
  * @since 0.5.0-canary.8
  */
 export class ActivationNeedCache {

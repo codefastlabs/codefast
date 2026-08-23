@@ -139,6 +139,8 @@ export function dropCnImportIfUnused(sourceFile: DomainSourceFile): string {
 }
 
 /**
+ * Returns the source text with a `cn` import present, adding one when the file lacks it.
+ *
  * @since 0.3.16-canary.0
  */
 export function ensureCnImport(sourceFile: DomainSourceFile, cnImportOverride?: string): string {

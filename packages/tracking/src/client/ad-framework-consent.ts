@@ -29,6 +29,8 @@ export interface CmpConsentSignal {
 }
 
 /**
+ * Options for `reconcileAdFrameworkConsent`.
+ *
  * @since 1.0.0-canary.7
  */
 export interface ReconcileAdFrameworkConsentOptions {

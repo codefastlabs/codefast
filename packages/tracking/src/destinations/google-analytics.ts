@@ -53,6 +53,8 @@ function gtagScriptSrc(gaMeasurementId: string, dataLayerName: string): string {
 }
 
 /**
+ * Options for `ensureGtag`.
+ *
  * @since 1.0.0-canary.6
  */
 export interface EnsureGtagOptions {
@@ -88,6 +90,8 @@ export function ensureGtag(options: EnsureGtagOptions = {}): GtagFunction | unde
 }
 
 /**
+ * Options for `loadGtagScript`.
+ *
  * @since 1.0.0-canary.6
  */
 export interface LoadGtagScriptOptions {
@@ -186,6 +190,8 @@ export function updateGoogleConsent(decision: ConsentDecision, options: EnsureGt
 }
 
 /**
+ * Options for `buildGtagConsentBootstrapScript`.
+ *
  * @since 1.0.0-canary.6
  */
 export interface GtagConsentBootstrapOptions {
@@ -259,6 +265,8 @@ export function buildGtagConsentBootstrapScript(options: GtagConsentBootstrapOpt
 }
 
 /**
+ * Options for `createGoogleAnalyticsDestination`.
+ *
  * @since 0.5.0-canary.4
  */
 export interface GoogleAnalyticsDestinationOptions {

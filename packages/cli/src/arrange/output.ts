@@ -8,6 +8,8 @@ import type { AnalyzeReport, ArrangeRunResult, PlannedGroupEdit } from "#/arrang
 import { logger } from "#/core/logger";
 
 /**
+ * Prints the human-readable summary of an `arrange analyze` report.
+ *
  * @since 0.3.16-canary.0
  */
 export function printAnalyzeReport(resolvedTargetPath: string, report: AnalyzeReport): void {
@@ -60,6 +62,8 @@ export function printAnalyzeReport(resolvedTargetPath: string, report: AnalyzeRe
 }
 
 /**
+ * Prints the totals and follow-up hints for an `arrange` run.
+ *
  * @since 0.3.16-canary.0
  */
 export function printSyncResult(result: ArrangeRunResult, write: boolean): void {
@@ -81,6 +85,8 @@ export function printSyncResult(result: ArrangeRunResult, write: boolean): void 
 }
 
 /**
+ * Prints the totals for an `arrange simplify` run.
+ *
  * @since 0.3.16-canary.0
  */
 export function printSimplifyResult(result: ArrangeRunResult, write: boolean): void {
@@ -95,6 +101,8 @@ export function printSimplifyResult(result: ArrangeRunResult, write: boolean): v
 }
 
 /**
+ * Prints the per-file preview of a work plan's unwrap and grouping edits.
+ *
  * @since 0.3.16-canary.0
  */
 export function printGroupFilePreviewFromWork(work: GroupFileWorkPlan): void {

@@ -26,6 +26,8 @@ import type {
 // ── Run scanning ─────────────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
+ * One run directory's folder name and its raw JSONL observation lines.
+ *
  * @since 0.3.16-canary.0
  */
 export interface RunLines {
@@ -34,6 +36,8 @@ export interface RunLines {
 }
 
 /**
+ * The raw runs read from the bench results directory, with overflow and warning info.
+ *
  * @since 0.3.16-canary.0
  */
 export interface ListRawRunsResult {
@@ -59,6 +63,8 @@ async function readRunDirectory(runDirPath: string, folderName: string): Promise
 }
 
 /**
+ * Reads the newest run directories' JSONL lines from the bench results directory, up to the run cap.
+ *
  * @since 0.3.16-canary.0
  */
 export async function listRawRuns(benchResultsDir: string, maxRuns?: number): Promise<ListRawRunsResult> {
@@ -245,6 +251,8 @@ function hzIqrFractionLookup(index: ReadonlyMap<string, AggregatedScenarioResult
 }
 
 /**
+ * Builds the viewer payload from raw run lines: library metadata, run metadata, and per-scenario series.
+ *
  * @since 0.3.16-canary.0
  */
 export function buildEmbeddedPayload(

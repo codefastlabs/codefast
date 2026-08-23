@@ -6,6 +6,8 @@ import { updateGoogleConsent } from "#/destinations/google-analytics";
 import type { UseConsentResult } from "#/react/use-consent";
 
 /**
+ * Options for `useGoogleConsentSync`.
+ *
  * @since 1.0.0-canary.6
  */
 export interface UseGoogleConsentSyncOptions {

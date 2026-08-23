@@ -39,6 +39,8 @@ function Document({ pageTitle, payloadJson, payload }: DocumentProps) {
 }
 
 /**
+ * Renders the full viewer HTML document to a byte stream, embedding the payload JSON for hydration.
+ *
  * @since 0.3.16-canary.1
  */
 export async function renderDocument(

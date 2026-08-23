@@ -26,6 +26,8 @@ function useConsentBannerContext(part: string): ConsentBannerContextValue {
 }
 
 /**
+ * Props for {@link ConsentBanner}.
+ *
  * @since 0.5.0-canary.4
  */
 export interface ConsentBannerProps extends ComponentProps<"section"> {
@@ -77,11 +79,15 @@ export function ConsentBanner({ children, consent, open, ...props }: ConsentBann
 }
 
 /**
+ * Props for {@link ConsentBannerTitle}.
+ *
  * @since 0.5.0-canary.5
  */
 export interface ConsentBannerTitleProps extends ComponentProps<"h2"> {}
 
 /**
+ * Renders the banner's heading.
+ *
  * @since 0.5.0-canary.5
  */
 export function ConsentBannerTitle({ children, ...props }: ConsentBannerTitleProps): ReactNode {
@@ -93,6 +99,8 @@ export function ConsentBannerTitle({ children, ...props }: ConsentBannerTitlePro
 }
 
 /**
+ * Props for {@link ConsentBannerDescription}.
+ *
  * @since 0.5.0-canary.5
  */
 export interface ConsentBannerDescriptionProps extends ComponentProps<"p"> {}
@@ -107,11 +115,15 @@ export function ConsentBannerDescription(props: ConsentBannerDescriptionProps): 
 }
 
 /**
+ * Props for {@link ConsentBannerActions}.
+ *
  * @since 0.5.0-canary.5
  */
 export interface ConsentBannerActionsProps extends ComponentProps<"div"> {}
 
 /**
+ * Renders the container grouping the banner's action buttons.
+ *
  * @since 0.5.0-canary.5
  */
 export function ConsentBannerActions(props: ConsentBannerActionsProps): ReactNode {
@@ -119,6 +131,8 @@ export function ConsentBannerActions(props: ConsentBannerActionsProps): ReactNod
 }
 
 /**
+ * Props for {@link ConsentBannerAccept}.
+ *
  * @since 0.5.0-canary.5
  */
 export interface ConsentBannerAcceptProps extends Omit<ComponentProps<"button">, "type"> {}
@@ -148,11 +162,15 @@ export function ConsentBannerAccept({ onClick, ...props }: ConsentBannerAcceptPr
 }
 
 /**
+ * Props for {@link ConsentBannerReject}.
+ *
  * @since 0.5.0-canary.5
  */
 export interface ConsentBannerRejectProps extends Omit<ComponentProps<"button">, "type"> {}
 
 /**
+ * Denies every category via the consent hook's `denyAll` — rejecting stays as easy as accepting.
+ *
  * @since 0.5.0-canary.5
  */
 export function ConsentBannerReject({ onClick, ...props }: ConsentBannerRejectProps): ReactNode {
@@ -175,6 +193,8 @@ export function ConsentBannerReject({ onClick, ...props }: ConsentBannerRejectPr
 }
 
 /**
+ * Props for {@link ConsentBannerCustomize}.
+ *
  * @since 0.5.0-canary.5
  */
 export interface ConsentBannerCustomizeProps extends Omit<ComponentProps<"button">, "type"> {}
@@ -209,6 +229,8 @@ export function ConsentBannerCustomize({ onClick, ...props }: ConsentBannerCusto
 }
 
 /**
+ * Props for {@link ConsentBannerPreferences}.
+ *
  * @since 0.5.0-canary.5
  */
 export interface ConsentBannerPreferencesProps extends ComponentProps<"div"> {}
@@ -229,6 +251,8 @@ export function ConsentBannerPreferences(props: ConsentBannerPreferencesProps): 
 }
 
 /**
+ * Props for {@link ConsentBannerCategory}.
+ *
  * @since 0.5.0-canary.5
  */
 export interface ConsentBannerCategoryProps extends ComponentProps<"label"> {
@@ -263,6 +287,8 @@ export function ConsentBannerCategory({ category, children, ...props }: ConsentB
 }
 
 /**
+ * Props for {@link ConsentBannerSave}.
+ *
  * @since 0.5.0-canary.5
  */
 export interface ConsentBannerSaveProps extends Omit<ComponentProps<"button">, "type"> {}
@@ -296,6 +322,8 @@ export function ConsentBannerSave({ onClick, ...props }: ConsentBannerSaveProps)
 }
 
 /**
+ * Props for {@link ConsentToggle}.
+ *
  * @since 0.5.0-canary.4
  */
 export interface ConsentToggleProps extends Omit<ComponentProps<"button">, "children" | "onClick" | "type"> {

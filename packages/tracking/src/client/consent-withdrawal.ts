@@ -1,6 +1,8 @@
 import type { ConsentDecision } from "#/core/consent";
 
 /**
+ * Options for `createConsentWithdrawalHandler`.
+ *
  * @since 1.0.0-canary.6
  */
 export interface ConsentWithdrawalHandlerOptions {

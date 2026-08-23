@@ -10,6 +10,8 @@ interface HashSyncOptions {
 }
 
 /**
+ * Applies the URL hash to the view on first payload load and mirrors view changes back, debounced.
+ *
  * @since 0.3.16-canary.3
  */
 export function useHashSync({ payload, view, patchView }: HashSyncOptions) {

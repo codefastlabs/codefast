@@ -20,6 +20,8 @@ let activeContainer: Container | undefined;
 let activeResolution: AmbientResolution | undefined;
 
 /**
+ * Runs a callback with the given container installed as the ambient one and returns its result.
+ *
  * @since 0.3.16-canary.0
  */
 export function runWithContainer<Result>(container: Container, fn: () => Result): Result {
@@ -49,6 +51,8 @@ export function runWithAmbientResolution<Result>(
 }
 
 /**
+ * Returns the ambient container for the construction in flight, if one is installed.
+ *
  * @since 0.3.16-canary.0
  */
 export function getActiveContainer(): Container | undefined {

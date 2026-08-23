@@ -1,6 +1,8 @@
 import type { AppError } from "#/core/errors";
 
 /**
+ * Formats an `AppError` as a `[CODE] message` line for CLI output.
+ *
  * @since 0.3.16-canary.0
  */
 export function formatAppError(error: AppError): string {

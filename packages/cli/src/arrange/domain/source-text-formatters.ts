@@ -1,6 +1,8 @@
 import { indentOfLineContaining } from "#/core/source-text-edit";
 
 /**
+ * Escapes backslashes and double quotes for embedding in a double-quoted TypeScript string literal.
+ *
  * @since 0.3.16-canary.0
  */
 export function escapeTsStringLiteralContent(group: string): string {
@@ -42,6 +44,8 @@ function formatCnArguments(
 }
 
 /**
+ * Formats grouped class strings as a multiline `cn(...)` call.
+ *
  * @since 0.3.16-canary.0
  */
 export function formatCnCall(groups: Array<string>, options?: { trailingClassName?: boolean }): string {
@@ -63,6 +67,8 @@ export function formatCnCall(groups: Array<string>, options?: { trailingClassNam
 }
 
 /**
+ * Formats grouped class strings as a multiline array literal.
+ *
  * @since 0.3.16-canary.0
  */
 export function formatArray(groups: Array<string>): string {
@@ -100,6 +106,8 @@ export function formatArrayElementsAsSiblingLines(groups: Array<string>, continu
 }
 
 /**
+ * Formats grouped class strings as a JSX attribute value wrapping a multiline `cn(...)` call.
+ *
  * @since 0.3.16-canary.0
  */
 export function formatJsxCnAttributeValue(groups: Array<string>, source: string, valueNodeStart: number): string {

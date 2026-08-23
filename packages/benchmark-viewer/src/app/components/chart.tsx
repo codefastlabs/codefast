@@ -48,6 +48,8 @@ function ChartTd({ className, ...props }: ComponentProps<"td">) {
 }
 
 /**
+ * The data, display flags, and callbacks ChartPanel renders one scenario's run history from.
+ *
  * @since 0.3.16-canary.1
  */
 export interface ChartPanelProps {
@@ -93,6 +95,8 @@ function buildChartSubtitle(
 }
 
 /**
+ * Renders the run-history line chart for one scenario, with its zoom/pan toolbar and details table.
+ *
  * @since 0.3.16-canary.1
  */
 export function ChartPanel({

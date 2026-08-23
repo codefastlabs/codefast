@@ -2,6 +2,8 @@ import { CLI_EXIT_GENERAL_ERROR, CLI_EXIT_SUCCESS } from "#/core/exit-codes";
 import type { TagSyncResult } from "#/tag/domain/types";
 
 /**
+ * Maps a tag run's result to the process exit code.
+ *
  * @since 0.3.16-canary.0
  */
 export function exitCodeForTagSyncResult(result: TagSyncResult): number {

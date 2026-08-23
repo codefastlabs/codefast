@@ -5,6 +5,8 @@ import type { BindingIdentifier } from "#/core/types";
 import { MissingScopeContextError } from "#/errors/errors";
 
 /**
+ * One container's instance caches — singletons, in-flight async creations, and the scoped cache.
+ *
  * @since 0.3.16-canary.0
  */
 export class ScopeManager {
