@@ -10,7 +10,7 @@ import { flattenEventProps } from "#/destinations/shared";
  * country `1` (USA) / state `1000` (California) are documented codes (spec-destinations §5).
  * `[]` applies no restriction.
  *
- * @since 1.0.0-canary.7
+ * @since 0.5.0-canary.6
  */
 export interface MetaDataProcessingOptions {
   country: number;
@@ -21,7 +21,7 @@ export interface MetaDataProcessingOptions {
 /**
  * Maps a `ConsentDecision` to Meta's `dataProcessingOptions`: LDU when `ads` is denied.
  *
- * @since 1.0.0-canary.7
+ * @since 0.5.0-canary.6
  */
 export function toMetaDataProcessingOptions(decision: ConsentDecision): MetaDataProcessingOptions {
   return toAdConsentState(decision).limitedDataUse
@@ -32,7 +32,7 @@ export function toMetaDataProcessingOptions(decision: ConsentDecision): MetaData
 /**
  * The mapped per-event payload handed to a Meta transport (Pixel `fbq` or a CAPI request).
  *
- * @since 1.0.0-canary.7
+ * @since 0.5.0-canary.6
  */
 export interface MetaEventPayload {
   dataProcessingOptions: MetaDataProcessingOptions;
@@ -43,7 +43,7 @@ export interface MetaEventPayload {
 /**
  * Options for `createMetaDestination`.
  *
- * @since 1.0.0-canary.7
+ * @since 0.5.0-canary.6
  */
 export interface MetaDestinationOptions {
   /**
@@ -70,7 +70,7 @@ export interface MetaDestinationOptions {
  * are the integrator's to supply. `consentRequirement` stays `"required"`: an ad sink is
  * never exempt.
  *
- * @since 1.0.0-canary.7
+ * @since 0.5.0-canary.6
  */
 export function createMetaDestination(options: MetaDestinationOptions): Destination {
   // Erasure halts delivery for the rest of the session — Meta has no per-visitor deletion API.

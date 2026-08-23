@@ -18,7 +18,7 @@ import { resolveInitialConsent } from "#/server/initial-consent";
 /**
  * Options for `resolveInitialConsentFromRequest`.
  *
- * @since 1.0.0-canary.7
+ * @since 0.5.0-canary.6
  */
 export interface InitialConsentFromRequestOptions {
   /**
@@ -40,7 +40,7 @@ export interface InitialConsentFromRequestOptions {
  * Server-only: deny this subpath in the client environment via Start's `importProtection`
  * — the compiler already strips it with stubbed handler bodies.
  *
- * @since 1.0.0-canary.6
+ * @since 0.5.0-canary.6
  */
 export function resolveInitialConsentFromRequest(options: InitialConsentFromRequestOptions): InitialConsent {
   setResponseHeader("cache-control", "private, no-store");
@@ -59,7 +59,7 @@ export function resolveInitialConsentFromRequest(options: InitialConsentFromRequ
  * `resolveAnonymousIdCookie`: a non-UUID id throws, so this can safely back a public server
  * function without echoing attacker input into a header.
  *
- * @since 1.0.0-canary.6
+ * @since 0.5.0-canary.6
  */
 export function setAnonymousIdResponseCookie(options: AnonymousIdCookieOptions): void {
   const { name, value, ...attributes } = resolveAnonymousIdCookie({
@@ -74,7 +74,7 @@ export function setAnonymousIdResponseCookie(options: AnonymousIdCookieOptions):
 /**
  * Expires the anonymous-id cookie on the current response — the server half of a consent withdrawal.
  *
- * @since 1.0.0-canary.6
+ * @since 0.5.0-canary.6
  */
 export function clearAnonymousIdResponseCookie(cookieName: string): void {
   const { name, ...attributes } = resolveClearAnonymousIdCookie(cookieName);
@@ -86,7 +86,7 @@ export function clearAnonymousIdResponseCookie(cookieName: string): void {
  * The client-visible acknowledgement of a recorded receipt — deliberately minimal so the
  * stored PII (`subjectId`, `ipCoarse`) is never echoed back over the wire.
  *
- * @since 1.0.0-canary.7
+ * @since 0.5.0-canary.6
  */
 export interface ConsentReceiptAck {
   receiptId: string;
@@ -96,7 +96,7 @@ export interface ConsentReceiptAck {
 /**
  * Options for `recordConsentReceiptFromRequest`.
  *
- * @since 1.0.0-canary.7
+ * @since 0.5.0-canary.6
  */
 export interface RecordConsentReceiptFromRequestOptions {
   input: ConsentReceiptInput;
@@ -117,7 +117,7 @@ export interface RecordConsentReceiptFromRequestOptions {
  * @throws Error when `input` fails {@link isConsentReceiptInput} (including a body that
  * carries an `ip`/`ipCoarse` field — the server owns IP derivation).
  *
- * @since 1.0.0-canary.7
+ * @since 0.5.0-canary.6
  */
 export async function recordConsentReceiptFromRequest(
   options: RecordConsentReceiptFromRequestOptions,

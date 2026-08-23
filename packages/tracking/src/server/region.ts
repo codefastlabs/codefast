@@ -3,7 +3,7 @@ import type { ConsentRegion } from "#/core/consent";
 /**
  * EU member states — GDPR opt-in via `resolveConsentMode("eu")`.
  *
- * @since 1.0.0-canary.6
+ * @since 0.5.0-canary.6
  */
 export const EU_COUNTRY_CODES: ReadonlySet<string> = new Set([
   "AT",
@@ -42,7 +42,7 @@ export const EU_COUNTRY_CODES: ReadonlySet<string> = new Set([
  * Restricted edge runtimes that cannot import this package should duplicate these codes
  * and keep a sync test against this export.
  *
- * @since 1.0.0-canary.6
+ * @since 0.5.0-canary.6
  */
 export const OPT_IN_EQUIVALENT_COUNTRY_CODES: ReadonlySet<string> = new Set(["GB", "IS", "LI", "NO"]);
 

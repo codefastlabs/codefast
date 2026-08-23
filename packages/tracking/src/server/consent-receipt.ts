@@ -4,7 +4,7 @@ import type { ConsentReceipt, ConsentReceiptInput } from "#/core/consent-receipt
  * The receipt information-structure version this builder emits (ISO/IEC TS 27560-shaped).
  * Bump when the receipt field set changes; stored receipts carry it so a reader can migrate.
  *
- * @since 1.0.0-canary.7
+ * @since 0.5.0-canary.6
  */
 export const RECEIPT_SCHEMA_VERSION = "1.0.0";
 
@@ -17,7 +17,7 @@ const IPV4_PATTERN = /^(\d{1,3}\.){3}\d{1,3}$/;
  * a controller may widen it under counsel, but the builder never returns a full address.
  * Returns `undefined` for a missing or malformed input rather than storing a bad value.
  *
- * @since 1.0.0-canary.7
+ * @since 0.5.0-canary.6
  */
 export function coarsenIp(ip: string | null | undefined): string | undefined {
   if (!ip) {
@@ -58,7 +58,7 @@ export function coarsenIp(ip: string | null | undefined): string | undefined {
  * function to stamp an `integrityKey`, letting a client prove its state matches the stored
  * original (spec-consent-receipts §5). Omit it and receipts carry no integrity key.
  *
- * @since 1.0.0-canary.7
+ * @since 0.5.0-canary.6
  */
 export interface BuildConsentReceiptOptions {
   input: ConsentReceiptInput;
@@ -72,7 +72,7 @@ export interface BuildConsentReceiptOptions {
  * (`receiptId`, `timestamp`, coarsened IP, optional `integrityKey`). Pure except for the
  * id/clock it stamps — pass those in via a seam if a deterministic build is needed.
  *
- * @since 1.0.0-canary.7
+ * @since 0.5.0-canary.6
  */
 export function buildConsentReceipt(options: BuildConsentReceiptOptions): ConsentReceipt {
   const base: Omit<ConsentReceipt, "integrityKey"> = {

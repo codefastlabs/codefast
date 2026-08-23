@@ -35,7 +35,7 @@ export function defineEventCatalog<Catalog extends EventCatalog>(catalog: Catalo
  * @throws Error when validation reports issues, or when the schema validates asynchronously —
  * tracking sits on synchronous call paths, so async schemas are unsupported by design.
  *
- * @since 1.0.0-canary.6
+ * @since 0.5.0-canary.6
  */
 export function assertValidEventProperties(schema: StandardSchemaV1, eventName: string, properties: unknown): unknown {
   const result = schema["~standard"].validate(properties);

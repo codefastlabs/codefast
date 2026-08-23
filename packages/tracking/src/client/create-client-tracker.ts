@@ -9,7 +9,7 @@ import type { TrackedEvent } from "#/core/tracked-event";
 /**
  * Context handed to {@link ClientTrackerOptions.onDeliveryError} for one failed delivery.
  *
- * @since 1.0.0-canary.7
+ * @since 0.5.0-canary.6
  */
 export interface DeliveryErrorContext {
   destination: Destination;

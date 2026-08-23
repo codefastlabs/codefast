@@ -5,7 +5,7 @@ import { logger } from "#/core/logger";
 /**
  * Exit `1` when any non-allowlisted violation remains.
  *
- * @since 1.0.0-canary.7
+ * @since 0.5.0-canary.6
  */
 export function exitCodeForRtlAuditResult(result: RtlAuditResult): number {
   return result.violationCount > 0 ? CLI_EXIT_GENERAL_ERROR : CLI_EXIT_SUCCESS;
@@ -14,7 +14,7 @@ export function exitCodeForRtlAuditResult(result: RtlAuditResult): number {
 /**
  * Human-readable RTL audit report (matches the former packages/ui script shape).
  *
- * @since 1.0.0-canary.7
+ * @since 0.5.0-canary.6
  */
 export function presentRtlAuditResult(result: RtlAuditResult): void {
   for (const file of result.files) {
@@ -36,7 +36,7 @@ export function presentRtlAuditResult(result: RtlAuditResult): void {
 /**
  * Machine-readable RTL audit summary for `--json`.
  *
- * @since 1.0.0-canary.7
+ * @since 0.5.0-canary.6
  */
 export function formatRtlAuditJsonOutput(result: RtlAuditResult, rootDir: string): string {
   return JSON.stringify({

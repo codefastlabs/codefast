@@ -14,7 +14,7 @@ const ADMIN_API_ORIGIN = "https://analyticsadmin.googleapis.com";
 /**
  * The URL and body of an Admin API `submitUserDeletion` call, ready for an authenticated transport.
  *
- * @since 1.0.0-canary.7
+ * @since 0.5.0-canary.6
  */
 export interface Ga4UserDeletionRequest {
   body: { clientId: string };
@@ -29,7 +29,7 @@ export interface Ga4UserDeletionRequest {
  *
  * @param options - `propertyId` is the numeric GA4 property (no `properties/` prefix).
  *
- * @since 1.0.0-canary.7
+ * @since 0.5.0-canary.6
  */
 export function buildGa4UserDeletionRequest(options: { clientId: string; propertyId: string }): Ga4UserDeletionRequest {
   return {
@@ -41,7 +41,7 @@ export function buildGa4UserDeletionRequest(options: { clientId: string; propert
 /**
  * The one network primitive the sender needs — injected so the package ships no HTTP client.
  *
- * @since 1.0.0-canary.7
+ * @since 0.5.0-canary.6
  */
 export type Ga4UserDeletionTransport = (request: {
   body: string;
@@ -64,7 +64,7 @@ async function defaultTransport(request: {
 /**
  * Options for `submitGa4UserDeletion`.
  *
- * @since 1.0.0-canary.7
+ * @since 0.5.0-canary.6
  */
 export interface SubmitGa4UserDeletionOptions {
   /** A bearer token for the `https://www.googleapis.com/auth/analytics.edit` scope — the caller owns OAuth. */
@@ -81,7 +81,7 @@ export interface SubmitGa4UserDeletionOptions {
  * next run; it does **not** reach previously-aggregated reports or BigQuery exports
  * (spec-data-subject-rights §3).
  *
- * @since 1.0.0-canary.7
+ * @since 0.5.0-canary.6
  */
 export async function submitGa4UserDeletion(options: SubmitGa4UserDeletionOptions): Promise<void> {
   const request = buildGa4UserDeletionRequest({ clientId: options.clientId, propertyId: options.propertyId });

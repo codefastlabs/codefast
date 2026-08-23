@@ -5,7 +5,7 @@ import type { ConsentConfig } from "#/core/consent-config";
 /**
  * Options for `createIsAnalyticsAllowed`.
  *
- * @since 1.0.0-canary.6
+ * @since 0.5.0-canary.6
  */
 export interface IsAnalyticsAllowedOptions {
   /** Must be the same object `useConsent` receives — one config, every surface. */
@@ -25,7 +25,7 @@ export interface IsAnalyticsAllowedOptions {
  * Non-React mirror of `useConsent`'s `isAnalyticsAllowed` — pass the returned function as
  * `createClientTracker({ isAnalyticsAllowed })` so the pipeline and the banner share one rule.
  *
- * @since 1.0.0-canary.6
+ * @since 0.5.0-canary.6
  */
 export function createIsAnalyticsAllowed(options: IsAnalyticsAllowedOptions): () => boolean {
   const { config, getMode, storage } = options;

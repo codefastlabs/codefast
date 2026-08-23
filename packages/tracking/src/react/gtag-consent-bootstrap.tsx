@@ -6,7 +6,7 @@ import { buildGtagConsentBootstrapScript } from "#/destinations/google-analytics
 /**
  * Props for {@link GtagConsentBootstrap}.
  *
- * @since 1.0.0-canary.6
+ * @since 0.5.0-canary.6
  */
 export interface GtagConsentBootstrapProps
   extends
@@ -19,7 +19,7 @@ export interface GtagConsentBootstrapProps
  * only sets the attribute on the host script — the generated source also stamps it onto
  * the injected gtag.js tag when `nonce` is provided.
  *
- * @since 1.0.0-canary.6
+ * @since 0.5.0-canary.6
  */
 export function GtagConsentBootstrap({
   config,

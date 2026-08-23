@@ -9,7 +9,7 @@ import { findRepoRoot } from "#/core/workspace/resolver";
 /**
  * Shared prelude for `audit rtl`: repo root and the canonicalized scan target with its allowlist.
  *
- * @since 1.0.0-canary.7
+ * @since 0.5.0-canary.6
  */
 export type RtlAuditCommandPrelude = {
   readonly rootDir: string;
@@ -20,7 +20,7 @@ export type RtlAuditCommandPrelude = {
 /**
  * Loads config and resolves the scan target for `audit rtl`.
  *
- * @since 1.0.0-canary.7
+ * @since 0.5.0-canary.6
  */
 export async function prepareRtlAudit(
   fs: FilesystemPort,

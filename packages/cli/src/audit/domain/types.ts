@@ -1,7 +1,7 @@
 /**
  * A class token parsed from a source string literal, split into variant, value, and modifier.
  *
- * @since 1.0.0-canary.7
+ * @since 0.5.0-canary.6
  */
 export type RtlClassToken = {
   readonly raw: string;
@@ -15,7 +15,7 @@ export type RtlClassToken = {
 /**
  * A physical class occurrence the RTL audit flags, with its suggested logical replacement.
  *
- * @since 1.0.0-canary.7
+ * @since 0.5.0-canary.6
  */
 export type RtlViolation = {
   readonly line: number;
@@ -26,7 +26,7 @@ export type RtlViolation = {
 /**
  * The RTL violations found in one file.
  *
- * @since 1.0.0-canary.7
+ * @since 0.5.0-canary.6
  */
 export type RtlFileViolations = {
   readonly relativePath: string;
@@ -36,7 +36,7 @@ export type RtlFileViolations = {
 /**
  * Outcome of one `audit rtl` run.
  *
- * @since 1.0.0-canary.7
+ * @since 0.5.0-canary.6
  */
 export type RtlAuditResult = {
   readonly files: Array<RtlFileViolations>;

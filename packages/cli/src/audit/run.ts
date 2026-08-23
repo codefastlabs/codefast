@@ -11,7 +11,7 @@ import { walkTsxFiles } from "#/core/workspace/typescript-walk";
 /**
  * Scans a target path for physical-direction Tailwind class violations.
  *
- * @since 1.0.0-canary.7
+ * @since 0.5.0-canary.6
  */
 export function runRtlAudit(
   fs: FilesystemPort,

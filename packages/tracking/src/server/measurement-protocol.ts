@@ -3,7 +3,7 @@ import type { ConsentDecision } from "#/core/consent";
 /**
  * A GA4 event for the Measurement Protocol. `params` are flat scalars — GA4 rejects nested values and booleans.
  *
- * @since 1.0.0-canary.7
+ * @since 0.5.0-canary.6
  */
 export interface MeasurementProtocolEvent {
   name: string;
@@ -13,7 +13,7 @@ export interface MeasurementProtocolEvent {
 /**
  * The GA4 MP `consent` object — the two ad-consent signals the payload accepts.
  *
- * @since 1.0.0-canary.7
+ * @since 0.5.0-canary.6
  */
 export interface MeasurementProtocolConsent {
   ad_personalization: "DENIED" | "GRANTED";
@@ -23,7 +23,7 @@ export interface MeasurementProtocolConsent {
 /**
  * Maps the package `ConsentDecision` to GA4 MP consent signals — `ads` drives both ad fields.
  *
- * @since 1.0.0-canary.7
+ * @since 0.5.0-canary.6
  */
 export function toMeasurementProtocolConsent(decision: ConsentDecision): MeasurementProtocolConsent {
   const state = decision.ads ? "GRANTED" : "DENIED";
@@ -38,7 +38,7 @@ export function toMeasurementProtocolConsent(decision: ConsentDecision): Measure
  * Measurement Protocol reference, so anything that doesn't parse returns `undefined` rather
  * than sending a malformed id.
  *
- * @since 1.0.0-canary.7
+ * @since 0.5.0-canary.6
  */
 export function extractGaClientId(gaCookieValue: string | undefined): string | undefined {
   if (!gaCookieValue) {
@@ -57,7 +57,7 @@ export function extractGaClientId(gaCookieValue: string | undefined): string | u
 /**
  * The one network primitive the sender needs — injected so the package ships no HTTP client.
  *
- * @since 1.0.0-canary.7
+ * @since 0.5.0-canary.6
  */
 export type MeasurementProtocolTransport = (request: { body: string; url: string }) => Promise<void>;
 
@@ -80,7 +80,7 @@ async function defaultTransport(request: { body: string; url: string }): Promise
 /**
  * Options for `sendMeasurementProtocolEvents`.
  *
- * @since 1.0.0-canary.7
+ * @since 0.5.0-canary.6
  */
 export interface SendMeasurementProtocolEventsOptions {
   /** GA4 **API Secret** — read server-side from config, never a client-exposed var. */
@@ -101,7 +101,7 @@ export interface SendMeasurementProtocolEventsOptions {
  *
  * @see https://developers.google.com/analytics/devguides/collection/protocol/ga4/sending-events
  *
- * @since 1.0.0-canary.7
+ * @since 0.5.0-canary.6
  */
 export async function sendMeasurementProtocolEvents(options: SendMeasurementProtocolEventsOptions): Promise<void> {
   const origin = options.endpointOrigin ?? DEFAULT_ENDPOINT_ORIGIN;

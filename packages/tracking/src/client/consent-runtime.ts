@@ -9,7 +9,7 @@ import type { ConsentConfig } from "#/core/consent-config";
 /**
  * Options for `createConsentRuntime`.
  *
- * @since 1.0.0-canary.6
+ * @since 0.5.0-canary.6
  */
 export interface ConsentRuntimeOptions {
   config: ConsentConfig;
@@ -33,7 +33,7 @@ export interface ConsentRuntimeOptions {
  * it once at module scope and every surface (banner hook, tracker gate, privacy page)
  * shares the same storage and region resolution by construction.
  *
- * @since 1.0.0-canary.6
+ * @since 0.5.0-canary.6
  */
 export interface ConsentRuntime {
   config: ConsentConfig;
@@ -56,7 +56,7 @@ export interface ConsentRuntime {
  * `localStorage`-backed decision storage, the initial-consent store over the app's
  * server lane, and the non-React analytics gate wired to that store's resolved mode.
  *
- * @since 1.0.0-canary.6
+ * @since 0.5.0-canary.6
  */
 export function createConsentRuntime(options: ConsentRuntimeOptions): ConsentRuntime {
   const { config } = options;

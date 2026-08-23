@@ -4,7 +4,7 @@ import type { RtlClassToken } from "#/audit/domain/types";
  * Splits a class token into [variant, value, modifier], colon/slash-aware of
  * brackets and parens (arbitrary values like data-[side=left] or calc(...)).
  *
- * @since 1.0.0-canary.7
+ * @since 0.5.0-canary.6
  */
 export function splitClassName(token: string): [string | null, string, string | null] {
   const segments: Array<string> = [];
@@ -49,7 +49,7 @@ export function splitClassName(token: string): [string | null, string, string | 
 /**
  * Extracts string/template literal contents with their line numbers.
  *
- * @since 1.0.0-canary.7
+ * @since 0.5.0-canary.6
  */
 export function* stringLiterals(content: string): Generator<{ text: string; line: number }> {
   const pattern = /"([^"\n]*)"|'([^'\n]*)'|`([^`]*)`/g;
@@ -63,7 +63,7 @@ export function* stringLiterals(content: string): Generator<{ text: string; line
 /**
  * Collects the parsed class tokens from every string literal in a file's content.
  *
- * @since 1.0.0-canary.7
+ * @since 0.5.0-canary.6
  */
 export function collectTokens(content: string): Array<RtlClassToken> {
   const tokens: Array<RtlClassToken> = [];

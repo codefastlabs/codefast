@@ -13,7 +13,7 @@
  * });
  * ```
  *
- * @since 1.0.0-canary.6
+ * @since 0.5.0-canary.6
  */
 export const SERVER_ONLY_SUBPATHS: ReadonlyArray<string> = [
   "@codefast/tracking/server",

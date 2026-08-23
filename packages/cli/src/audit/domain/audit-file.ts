@@ -15,7 +15,7 @@ import type { RtlClassToken, RtlViolation } from "#/audit/domain/types";
  * token whose variants include `rtl` and whose value matches. Variant order
  * differs between authors, so this stays deliberately loose.
  *
- * @since 1.0.0-canary.7
+ * @since 0.5.0-canary.6
  */
 export function hasRtlCompanion(fileTokens: ReadonlyArray<RtlClassToken>, expectedValue: string): boolean {
   return fileTokens.some(({ variant, value }) => {
@@ -33,7 +33,7 @@ export function hasRtlCompanion(fileTokens: ReadonlyArray<RtlClassToken>, expect
 /**
  * Detects physical-direction Tailwind classes that should be logical or rtl:-paired.
  *
- * @since 1.0.0-canary.7
+ * @since 0.5.0-canary.6
  */
 export function auditFileContent(content: string): Array<RtlViolation> {
   const tokens = collectTokens(content);
