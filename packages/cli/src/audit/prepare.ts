@@ -113,6 +113,45 @@ export async function prepareLinkAudit(
 }
 
 /**
+ * Loads config and resolves the scan target for `audit react`.
+ *
+ * @remarks Defaults to the repo root: the import policy is repo-wide, and generated or vendored
+ * trees are already excluded by the shared walk.
+ */
+export async function prepareReactAudit(
+  fs: FilesystemPort,
+  args: {
+    readonly currentWorkingDirectory: string;
+    readonly rawTarget: string | undefined;
+  },
+): Promise<Result<RtlAuditCommandPrelude, AppError>> {
+  let rootDir: string;
+  try {
+    rootDir = fs.canonicalPathSync(findRepoRoot(args.currentWorkingDirectory, fs));
+  } catch (caughtError: unknown) {
+    return err(new AppError("INFRA_FAILURE", messageFrom(caughtError), caughtError));
+  }
+
+  const loadedOutcome = await loadCodefastConfig(rootDir, fs);
+  if (!loadedOutcome.ok) {
+    return loadedOutcome;
+  }
+  const reactConfig = loadedOutcome.value.config.audit?.react ?? {};
+
+  const targetPath =
+    args.rawTarget === undefined ? rootDir : resolveRepoRelativePath(args.currentWorkingDirectory, args.rawTarget);
+  if (!fs.existsSync(targetPath)) {
+    return err(new AppError("NOT_FOUND", `Not found: ${targetPath}`));
+  }
+
+  return ok({
+    rootDir,
+    targetPath: fs.canonicalPathSync(targetPath),
+    allowlist: reactConfig.allowlist ?? [],
+  });
+}
+
+/**
  * Loads config and resolves the scan target for `audit comments`.
  *
  * @remarks Defaults to the repo root: a divider convention that only holds inside one package
