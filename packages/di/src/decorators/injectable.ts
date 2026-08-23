@@ -7,6 +7,8 @@ import type { ParamMetadata } from "#/metadata/metadata-types";
 // ── AutoRegisterRegistry ─────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
+ * The collector `@injectable` registers a class into, for a container to bind later.
+ *
  * @since 0.3.16-canary.0
  */
 export interface AutoRegisterRegistry {
@@ -15,6 +17,8 @@ export interface AutoRegisterRegistry {
 }
 
 /**
+ * Creates an empty auto-register registry.
+ *
  * @since 0.3.16-canary.0
  */
 export function createAutoRegisterRegistry(): AutoRegisterRegistry {
@@ -32,6 +36,8 @@ export function createAutoRegisterRegistry(): AutoRegisterRegistry {
 // ── InjectableOptions ────────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
+ * Auto-registration options `@injectable` accepts alongside its deps list.
+ *
  * @since 0.3.16-canary.0
  */
 export interface InjectableOptions {
@@ -83,6 +89,8 @@ export function injectable<const Deps extends ReadonlyArray<InjectableDependency
 ) => void;
 
 /**
+ * Writes the declared dependencies into the class's metadata and optionally auto-registers it.
+ *
  * @since 0.6.0
  */
 export function injectable(

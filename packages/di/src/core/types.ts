@@ -16,6 +16,8 @@ export type DependencyKey = Token<unknown> | Constructor;
 // ── BindingScope ─────────────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
+ * The lifetime a binding's instances are cached under.
+ *
  * @since 0.3.16-canary.0
  */
 export type BindingScope = "singleton" | "transient" | "scoped";
@@ -24,6 +26,8 @@ export type BindingScope = "singleton" | "transient" | "scoped";
 
 declare const BINDING_ID_BRAND: unique symbol;
 /**
+ * A branded string that uniquely identifies one binding.
+ *
  * @since 0.3.16-canary.0
  */
 export type BindingIdentifier = string & { readonly [BINDING_ID_BRAND]: true };
@@ -31,6 +35,8 @@ export type BindingIdentifier = string & { readonly [BINDING_ID_BRAND]: true };
 // ── BindingKind ──────────────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
+ * The strategy a binding produces values with, set by the `to*()` call that created it.
+ *
  * @since 0.3.16-canary.0
  */
 export type BindingKind = "class" | "dynamic" | "dynamic-async" | "resolved" | "resolved-async" | "constant" | "alias";
@@ -38,11 +44,15 @@ export type BindingKind = "class" | "dynamic" | "dynamic-async" | "resolved" | "
 // ── Handlers ─────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
+ * A hook that runs after an instance is created and returns the instance to hand out.
+ *
  * @since 0.3.16-canary.0
  */
 export type ActivationHandler<Value> = (ctx: ResolutionContext, instance: Value) => Value | Promise<Value>;
 
 /**
+ * A hook that runs when a cached instance is released from its scope.
+ *
  * @since 0.3.16-canary.0
  */
 export type DeactivationHandler<Value> = (instance: Value) => void | Promise<void>;
@@ -50,6 +60,8 @@ export type DeactivationHandler<Value> = (instance: Value) => void | Promise<voi
 // ── ResolveOptions ───────────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
+ * Slot-selection criteria — a name and tags — that narrow which binding a resolve call matches.
+ *
  * @since 0.3.16-canary.0
  */
 export interface ResolveOptions {
@@ -67,6 +79,8 @@ export interface ResolveOptions {
 // ── ResolutionFrame ──────────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
+ * One entry of the resolution stack: the token, scope, binding, and slot being resolved.
+ *
  * @since 0.3.16-canary.0
  */
 export interface ResolutionFrame {
@@ -84,6 +98,8 @@ export interface ResolutionFrame {
 // ── ConstraintContext ────────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
+ * The resolution-time view — path, stack, parent, and ancestors — a `BindingConstraint` inspects.
+ *
  * @since 0.3.16-canary.0
  */
 export interface ConstraintContext {
@@ -105,6 +121,8 @@ export type BindingConstraint = (ctx: ConstraintContext) => boolean;
 // ── ResolutionContext ────────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
+ * The container view a dynamic factory or activation handler resolves further dependencies through.
+ *
  * @since 0.3.16-canary.0
  */
 export interface ResolutionContext {
@@ -123,6 +141,8 @@ export interface ResolutionContext {
 // ── TokenValue ───────────────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
+ * The value type a token or class constructor resolves to.
+ *
  * @since 0.3.16-canary.0
  */
 export type TokenValue<Type> =

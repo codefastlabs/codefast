@@ -13,6 +13,8 @@ export interface BenchLibraryConfig {
 }
 
 /**
+ * Options for the bench history server: results directory, port, title, libraries, and run cap.
+ *
  * @since 0.3.16-canary.0
  */
 export interface BenchServerOptions {
@@ -37,6 +39,8 @@ export interface BenchServerOptions {
 // ---------------------------------------------------------------------------
 
 /**
+ * Identity and display metadata for one tracked library in the payload.
+ *
  * @since 0.3.16-canary.0
  */
 export interface EmbeddedLibraryMeta {
@@ -46,6 +50,8 @@ export interface EmbeddedLibraryMeta {
 }
 
 /**
+ * The version and GC-exposure flag recorded for one library in one run.
+ *
  * @since 0.3.16-canary.0
  */
 export interface EmbeddedRunLibraryVersion {
@@ -55,6 +61,8 @@ export interface EmbeddedRunLibraryVersion {
 }
 
 /**
+ * Environment and timing metadata for one saved benchmark run.
+ *
  * @since 0.3.16-canary.0
  */
 export interface EmbeddedRun {
@@ -85,6 +93,8 @@ export interface EmbeddedLibraryRunData {
 }
 
 /**
+ * One scenario's per-library time series across all runs in the payload.
+ *
  * @since 0.3.16-canary.0
  */
 export interface EmbeddedScenarioSeries {
@@ -96,6 +106,8 @@ export interface EmbeddedScenarioSeries {
 }
 
 /**
+ * The full JSON snapshot the browser client renders: libraries, runs, and scenario series.
+ *
  * @since 0.3.16-canary.0
  */
 export interface EmbeddedViewerPayload {

@@ -8,6 +8,8 @@
 export type AppErrorCode = "NOT_FOUND" | "VALIDATION_ERROR" | "INFRA_FAILURE";
 
 /**
+ * A coded application error carried in `Result` values rather than thrown.
+ *
  * @since 0.3.16-canary.0
  */
 export class AppError {

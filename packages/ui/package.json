@@ -414,10 +414,20 @@
       "types": "./dist/hooks/use-copy-to-clipboard.d.ts",
       "import": "./dist/hooks/use-copy-to-clipboard.js"
     },
+    "./hooks/use-has-hydrated": {
+      "source": "./src/hooks/use-has-hydrated.ts",
+      "types": "./dist/hooks/use-has-hydrated.d.ts",
+      "import": "./dist/hooks/use-has-hydrated.js"
+    },
     "./hooks/use-is-mobile": {
       "source": "./src/hooks/use-is-mobile.ts",
       "types": "./dist/hooks/use-is-mobile.d.ts",
       "import": "./dist/hooks/use-is-mobile.js"
+    },
+    "./hooks/use-latest": {
+      "source": "./src/hooks/use-latest.ts",
+      "types": "./dist/hooks/use-latest.d.ts",
+      "import": "./dist/hooks/use-latest.js"
     },
     "./hooks/use-media-query": {
       "source": "./src/hooks/use-media-query.ts",
@@ -463,11 +473,6 @@
       "source": "./src/lib/message-scroller/types.ts",
       "types": "./dist/lib/message-scroller/types.d.ts",
       "import": "./dist/lib/message-scroller/types.js"
-    },
-    "./lib/message-scroller/utils": {
-      "source": "./src/lib/message-scroller/utils.ts",
-      "types": "./dist/lib/message-scroller/utils.d.ts",
-      "import": "./dist/lib/message-scroller/utils.js"
     },
     "./lib/use-render": {
       "source": "./src/lib/use-render.ts",

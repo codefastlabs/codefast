@@ -1,6 +1,8 @@
 import type { BindingIdentifier, BindingScope, ResolveOptions } from "#/core/types";
 
 /**
+ * Base class for every error the library throws, each carrying a machine-readable `code`.
+ *
  * @since 0.3.16-canary.0
  */
 export abstract class DiError extends Error {
@@ -13,6 +15,8 @@ export abstract class DiError extends Error {
 }
 
 /**
+ * An internal assertion failure — a library bug, never caller misuse.
+ *
  * @since 0.3.16-canary.0
  */
 export class InternalError extends DiError {
@@ -24,6 +28,8 @@ export class InternalError extends DiError {
 }
 
 /**
+ * A token with no binding at all, even after walking the parent container chain.
+ *
  * @since 0.3.16-canary.0
  */
 export class TokenNotBoundError extends DiError {
@@ -50,6 +56,8 @@ function describeResolveOptions(options: ResolveOptions): string {
 }
 
 /**
+ * A token that has bindings, none of whose slots match the given `ResolveOptions`.
+ *
  * @since 0.3.16-canary.0
  */
 export class NoMatchingBindingError extends DiError {
@@ -69,6 +77,8 @@ export class NoMatchingBindingError extends DiError {
 }
 
 /**
+ * Two or more candidate bindings that matched without the more-specific rule deciding a winner.
+ *
  * @since 0.3.16-canary.0
  */
 export class AmbiguousBindingError extends DiError {
@@ -86,6 +96,8 @@ export class AmbiguousBindingError extends DiError {
 }
 
 /**
+ * A dependency cycle detected along the resolution path, alias chains included.
+ *
  * @since 0.3.16-canary.0
  */
 export class CircularDependencyError extends DiError {
@@ -99,6 +111,8 @@ export class CircularDependencyError extends DiError {
 }
 
 /**
+ * A sync `resolve()` of a token whose factory — or a dependency's factory — is async.
+ *
  * @since 0.3.16-canary.0
  */
 export class AsyncResolutionError extends DiError {
@@ -120,6 +134,8 @@ export class AsyncResolutionError extends DiError {
 }
 
 /**
+ * A sync `unbind()` of a binding whose `onDeactivation` handler is async.
+ *
  * @since 0.3.16-canary.0
  */
 export class AsyncDeactivationError extends DiError {
@@ -133,6 +149,8 @@ export class AsyncDeactivationError extends DiError {
 }
 
 /**
+ * The tokens, scopes, and resolution path describing a captive-dependency violation.
+ *
  * @since 0.3.16-canary.0
  */
 export interface ScopeViolationDetails {
@@ -144,6 +162,8 @@ export interface ScopeViolationDetails {
 }
 
 /**
+ * A captive dependency — a longer-lived binding depending on a shorter-lived one.
+ *
  * @since 0.3.16-canary.0
  */
 export class ScopeViolationError extends DiError {
@@ -251,6 +271,8 @@ export class InvalidMetadataError extends DiError {
 }
 
 /**
+ * A class the container must construct but that carries no `@injectable()` metadata.
+ *
  * @since 0.3.16-canary.0
  */
 export class MissingMetadataError extends DiError {
@@ -266,6 +288,8 @@ export class MissingMetadataError extends DiError {
 }
 
 /**
+ * A sync `load()` given a module that needs async setup.
+ *
  * @since 0.3.16-canary.0
  */
 export class AsyncModuleLoadError extends DiError {
@@ -279,6 +303,8 @@ export class AsyncModuleLoadError extends DiError {
 }
 
 /**
+ * A synchronous disposal attempt on a container whose `onDeactivation` handlers may be async.
+ *
  * @since 0.3.16-canary.0
  */
 export class SyncDisposalNotSupportedError extends DiError {
@@ -292,6 +318,8 @@ export class SyncDisposalNotSupportedError extends DiError {
 }
 
 /**
+ * A `scoped` binding resolved from a container with no child scope context.
+ *
  * @since 0.3.16-canary.0
  */
 export class MissingScopeContextError extends DiError {
@@ -355,6 +383,8 @@ export class ChainNotRegisteredError extends DiError {
 }
 
 /**
+ * A `rebind()` of a token that has no own binding in this container.
+ *
  * @since 0.3.16-canary.0
  */
 export class RebindUnboundTokenError extends DiError {
@@ -410,6 +440,8 @@ export class StaticMemberDecoratorError extends DiError {
 }
 
 /**
+ * An operation attempted on a container that has already been disposed.
+ *
  * @since 0.3.16-canary.0
  */
 export class DisposedContainerError extends DiError {
@@ -421,6 +453,8 @@ export class DisposedContainerError extends DiError {
 }
 
 /**
+ * A `@postConstruct` or `onActivation` hook that returned a `Promise` on a sync resolution path.
+ *
  * @since 0.3.16-canary.0
  */
 export class AsyncActivationError extends DiError {

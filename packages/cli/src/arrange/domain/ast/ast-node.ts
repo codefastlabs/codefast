@@ -33,6 +33,8 @@ export enum DomainSyntaxKind {
 }
 
 /**
+ * The binary operators the domain AST distinguishes.
+ *
  * @since 0.3.16-canary.0
  */
 export enum DomainBinaryOperator {
@@ -41,6 +43,8 @@ export enum DomainBinaryOperator {
 }
 
 /**
+ * The pure-domain counterpart of a parsed source file.
+ *
  * @since 0.3.16-canary.0
  */
 export interface DomainSourceFile {
@@ -57,6 +61,8 @@ interface DomainNodeBase {
 }
 
 /**
+ * A node kind the translator does not model, retained only for its children.
+ *
  * @since 0.3.16-canary.0
  */
 export interface DomainUnknownAstNode extends DomainNodeBase {
@@ -65,6 +71,8 @@ export interface DomainUnknownAstNode extends DomainNodeBase {
 }
 
 /**
+ * An identifier node.
+ *
  * @since 0.3.16-canary.0
  */
 export interface DomainIdentifier extends DomainNodeBase {
@@ -73,6 +81,8 @@ export interface DomainIdentifier extends DomainNodeBase {
 }
 
 /**
+ * A string literal node.
+ *
  * @since 0.3.16-canary.0
  */
 export interface DomainStringLiteral extends DomainNodeBase {
@@ -81,6 +91,8 @@ export interface DomainStringLiteral extends DomainNodeBase {
 }
 
 /**
+ * A template literal without substitutions.
+ *
  * @since 0.3.16-canary.0
  */
 export interface DomainNoSubstitutionTemplateLiteral extends DomainNodeBase {
@@ -89,6 +101,8 @@ export interface DomainNoSubstitutionTemplateLiteral extends DomainNodeBase {
 }
 
 /**
+ * An `import` declaration node.
+ *
  * @since 0.3.16-canary.0
  */
 export interface DomainImportDeclaration extends DomainNodeBase {
@@ -98,6 +112,8 @@ export interface DomainImportDeclaration extends DomainNodeBase {
 }
 
 /**
+ * The clause of an import declaration — default name plus named or namespace bindings.
+ *
  * @since 0.3.16-canary.0
  */
 export interface DomainImportClause extends DomainNodeBase {
@@ -108,6 +124,8 @@ export interface DomainImportClause extends DomainNodeBase {
 }
 
 /**
+ * The named-bindings list of an import clause.
+ *
  * @since 0.3.16-canary.0
  */
 export interface DomainNamedImports extends DomainNodeBase {
@@ -116,6 +134,8 @@ export interface DomainNamedImports extends DomainNodeBase {
 }
 
 /**
+ * A namespace (`* as name`) import binding.
+ *
  * @since 0.3.16-canary.0
  */
 export interface DomainNamespaceImport extends DomainNodeBase {
@@ -124,6 +144,8 @@ export interface DomainNamespaceImport extends DomainNodeBase {
 }
 
 /**
+ * A single named-import specifier.
+ *
  * @since 0.3.16-canary.0
  */
 export interface DomainImportSpecifier extends DomainNodeBase {
@@ -133,6 +155,8 @@ export interface DomainImportSpecifier extends DomainNodeBase {
 }
 
 /**
+ * A call expression node.
+ *
  * @since 0.3.16-canary.0
  */
 export interface DomainCallExpression extends DomainNodeBase {
@@ -142,6 +166,8 @@ export interface DomainCallExpression extends DomainNodeBase {
 }
 
 /**
+ * A property access (`object.name`) node.
+ *
  * @since 0.3.16-canary.0
  */
 export interface DomainPropertyAccessExpression extends DomainNodeBase {
@@ -151,6 +177,8 @@ export interface DomainPropertyAccessExpression extends DomainNodeBase {
 }
 
 /**
+ * An object literal node.
+ *
  * @since 0.3.16-canary.0
  */
 export interface DomainObjectLiteralExpression extends DomainNodeBase {
@@ -159,6 +187,8 @@ export interface DomainObjectLiteralExpression extends DomainNodeBase {
 }
 
 /**
+ * A `name: value` property inside an object literal.
+ *
  * @since 0.3.16-canary.0
  */
 export interface DomainPropertyAssignment extends DomainNodeBase {
@@ -168,6 +198,8 @@ export interface DomainPropertyAssignment extends DomainNodeBase {
 }
 
 /**
+ * An array literal node.
+ *
  * @since 0.3.16-canary.0
  */
 export interface DomainArrayLiteralExpression extends DomainNodeBase {
@@ -176,6 +208,8 @@ export interface DomainArrayLiteralExpression extends DomainNodeBase {
 }
 
 /**
+ * A spread (`...expression`) element node.
+ *
  * @since 0.3.16-canary.0
  */
 export interface DomainSpreadElement extends DomainNodeBase {
@@ -184,6 +218,8 @@ export interface DomainSpreadElement extends DomainNodeBase {
 }
 
 /**
+ * A parenthesized expression node.
+ *
  * @since 0.3.16-canary.0
  */
 export interface DomainParenthesizedExpression extends DomainNodeBase {
@@ -192,6 +228,8 @@ export interface DomainParenthesizedExpression extends DomainNodeBase {
 }
 
 /**
+ * An `as` type-assertion node.
+ *
  * @since 0.3.16-canary.0
  */
 export interface DomainAsExpression extends DomainNodeBase {
@@ -200,6 +238,8 @@ export interface DomainAsExpression extends DomainNodeBase {
 }
 
 /**
+ * A `satisfies` expression node.
+ *
  * @since 0.3.16-canary.0
  */
 export interface DomainSatisfiesExpression extends DomainNodeBase {
@@ -208,6 +248,8 @@ export interface DomainSatisfiesExpression extends DomainNodeBase {
 }
 
 /**
+ * A non-null assertion (`expression!`) node.
+ *
  * @since 0.3.16-canary.0
  */
 export interface DomainNonNullExpression extends DomainNodeBase {
@@ -216,6 +258,8 @@ export interface DomainNonNullExpression extends DomainNodeBase {
 }
 
 /**
+ * A ternary conditional node.
+ *
  * @since 0.3.16-canary.0
  */
 export interface DomainConditionalExpression extends DomainNodeBase {
@@ -226,6 +270,8 @@ export interface DomainConditionalExpression extends DomainNodeBase {
 }
 
 /**
+ * A binary expression node.
+ *
  * @since 0.3.16-canary.0
  */
 export interface DomainBinaryExpression extends DomainNodeBase {
@@ -236,6 +282,8 @@ export interface DomainBinaryExpression extends DomainNodeBase {
 }
 
 /**
+ * An expression statement node.
+ *
  * @since 0.3.16-canary.0
  */
 export interface DomainExpressionStatement extends DomainNodeBase {
@@ -244,6 +292,8 @@ export interface DomainExpressionStatement extends DomainNodeBase {
 }
 
 /**
+ * A JSX attribute node.
+ *
  * @since 0.3.16-canary.0
  */
 export interface DomainJsxAttribute extends DomainNodeBase {
@@ -253,6 +303,8 @@ export interface DomainJsxAttribute extends DomainNodeBase {
 }
 
 /**
+ * A JSX expression container node.
+ *
  * @since 0.3.16-canary.0
  */
 export interface DomainJsxExpression extends DomainNodeBase {
@@ -261,6 +313,8 @@ export interface DomainJsxExpression extends DomainNodeBase {
 }
 
 /**
+ * The union of every node shape the domain AST models.
+ *
  * @since 0.3.16-canary.0
  */
 export type DomainAstNode =
@@ -290,11 +344,15 @@ export type DomainAstNode =
   | DomainJsxExpression;
 
 /**
+ * A literal node that can carry a Tailwind class string.
+ *
  * @since 0.3.16-canary.0
  */
 export type DomainTailwindClassLiteral = DomainStringLiteral | DomainNoSubstitutionTemplateLiteral;
 
 /**
+ * Narrows a node to `DomainIdentifier`.
+ *
  * @since 0.3.16-canary.0
  */
 export function isDomainIdentifier(node: DomainAstNode): node is DomainIdentifier {
@@ -302,6 +360,8 @@ export function isDomainIdentifier(node: DomainAstNode): node is DomainIdentifie
 }
 
 /**
+ * Narrows a node to `DomainStringLiteral`.
+ *
  * @since 0.3.16-canary.0
  */
 export function isDomainStringLiteral(node: DomainAstNode): node is DomainStringLiteral {
@@ -313,6 +373,8 @@ function isDomainNoSubstitutionTemplateLiteral(node: DomainAstNode): node is Dom
 }
 
 /**
+ * Narrows a node to a literal that can carry Tailwind classes.
+ *
  * @since 0.3.16-canary.0
  */
 export function isDomainTailwindClassLiteral(node: DomainAstNode): node is DomainTailwindClassLiteral {
@@ -320,6 +382,8 @@ export function isDomainTailwindClassLiteral(node: DomainAstNode): node is Domai
 }
 
 /**
+ * Narrows a node to `DomainImportDeclaration`.
+ *
  * @since 0.3.16-canary.0
  */
 export function isDomainImportDeclaration(node: DomainAstNode): node is DomainImportDeclaration {
@@ -327,6 +391,8 @@ export function isDomainImportDeclaration(node: DomainAstNode): node is DomainIm
 }
 
 /**
+ * Narrows a node to `DomainNamedImports`.
+ *
  * @since 0.3.16-canary.0
  */
 export function isDomainNamedImports(node: DomainAstNode): node is DomainNamedImports {
@@ -334,6 +400,8 @@ export function isDomainNamedImports(node: DomainAstNode): node is DomainNamedIm
 }
 
 /**
+ * Narrows a node to `DomainNamespaceImport`.
+ *
  * @since 0.3.16-canary.0
  */
 export function isDomainNamespaceImport(node: DomainAstNode): node is DomainNamespaceImport {
@@ -341,6 +409,8 @@ export function isDomainNamespaceImport(node: DomainAstNode): node is DomainName
 }
 
 /**
+ * Narrows a node to `DomainCallExpression`.
+ *
  * @since 0.3.16-canary.0
  */
 export function isDomainCallExpression(node: DomainAstNode): node is DomainCallExpression {
@@ -348,6 +418,8 @@ export function isDomainCallExpression(node: DomainAstNode): node is DomainCallE
 }
 
 /**
+ * Narrows a node to `DomainObjectLiteralExpression`.
+ *
  * @since 0.3.16-canary.0
  */
 export function isDomainObjectLiteralExpression(node: DomainAstNode): node is DomainObjectLiteralExpression {
@@ -355,6 +427,8 @@ export function isDomainObjectLiteralExpression(node: DomainAstNode): node is Do
 }
 
 /**
+ * Narrows a node to `DomainPropertyAssignment`.
+ *
  * @since 0.3.16-canary.0
  */
 export function isDomainPropertyAssignment(node: DomainAstNode): node is DomainPropertyAssignment {
@@ -362,6 +436,8 @@ export function isDomainPropertyAssignment(node: DomainAstNode): node is DomainP
 }
 
 /**
+ * Narrows a node to `DomainArrayLiteralExpression`.
+ *
  * @since 0.3.16-canary.0
  */
 export function isDomainArrayLiteralExpression(node: DomainAstNode): node is DomainArrayLiteralExpression {
@@ -369,6 +445,8 @@ export function isDomainArrayLiteralExpression(node: DomainAstNode): node is Dom
 }
 
 /**
+ * Narrows a node to `DomainSpreadElement`.
+ *
  * @since 0.3.16-canary.0
  */
 export function isDomainSpreadElement(node: DomainAstNode): node is DomainSpreadElement {
@@ -376,6 +454,8 @@ export function isDomainSpreadElement(node: DomainAstNode): node is DomainSpread
 }
 
 /**
+ * Narrows a node to `DomainPropertyAccessExpression`.
+ *
  * @since 0.3.16-canary.0
  */
 export function isDomainPropertyAccessExpression(node: DomainAstNode): node is DomainPropertyAccessExpression {
@@ -383,6 +463,8 @@ export function isDomainPropertyAccessExpression(node: DomainAstNode): node is D
 }
 
 /**
+ * Narrows a node to `DomainJsxAttribute`.
+ *
  * @since 0.3.16-canary.0
  */
 export function isDomainJsxAttribute(node: DomainAstNode): node is DomainJsxAttribute {
@@ -390,6 +472,8 @@ export function isDomainJsxAttribute(node: DomainAstNode): node is DomainJsxAttr
 }
 
 /**
+ * Narrows a node to `DomainJsxExpression`.
+ *
  * @since 0.3.16-canary.0
  */
 export function isDomainJsxExpression(node: DomainAstNode): node is DomainJsxExpression {
@@ -397,6 +481,8 @@ export function isDomainJsxExpression(node: DomainAstNode): node is DomainJsxExp
 }
 
 /**
+ * Visits each direct child of a domain node.
+ *
  * @since 0.3.16-canary.0
  */
 export function forEachDomainChild(node: DomainAstNode, visit: (child: DomainAstNode) => void): void {
@@ -496,6 +582,8 @@ export function forEachDomainChild(node: DomainAstNode, visit: (child: DomainAst
 }
 
 /**
+ * Resolves the one-based line number of a position in source text.
+ *
  * @since 0.3.16-canary.0
  */
 export function lineOfSourcePosition(sourceText: string, pos: number): number {

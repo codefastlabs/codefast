@@ -3,7 +3,9 @@ import { resolveConsentMode, resolveDefaultConsent, STRICTEST_INITIAL_CONSENT } 
 import { resolveRegionFromCountryCode } from "#/server/region";
 
 /**
- * @since 1.0.0-canary.6
+ * Options for `resolveInitialConsent`.
+ *
+ * @since 0.5.0-canary.6
  */
 export interface InitialConsentOptions {
   /** ISO 3166-1 alpha-2 from the geo header; missing → the strictest opt-in default. */
@@ -24,7 +26,7 @@ export interface InitialConsentOptions {
  * {@link STRICTEST_INITIAL_CONSENT} instead of `"other"`'s opt-out. Conflating the two
  * would grant analytics by default to every visitor, EU included, on a geo-less host.
  *
- * @since 1.0.0-canary.6
+ * @since 0.5.0-canary.6
  */
 export function resolveInitialConsent(options: InitialConsentOptions): InitialConsent {
   if (!options.countryCode) {

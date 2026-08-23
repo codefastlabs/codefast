@@ -8,6 +8,8 @@ const afterWriteHookSchema = z.custom<(ctx: { files: Array<string> }) => void | 
 );
 
 /**
+ * A config hook invoked with the written file paths after a command rewrites files.
+ *
  * @since 0.3.16-canary.0
  */
 export type CodefastAfterWriteHook = z.infer<typeof afterWriteHookSchema>;
@@ -54,6 +56,8 @@ export const mirrorPackageConfigSchema = z
   .strict();
 
 /**
+ * The validated per-package `mirror` configuration.
+ *
  * @since 0.3.16-canary.0
  */
 export type MirrorPackageConfig = z.infer<typeof mirrorPackageConfigSchema>;
@@ -67,11 +71,15 @@ export type MirrorPackageConfig = z.infer<typeof mirrorPackageConfigSchema>;
 export const mirrorConfigSchema = z.record(z.string(), z.union([z.literal(false), mirrorPackageConfigSchema]));
 
 /**
+ * The validated `mirror` configuration, keyed by package name.
+ *
  * @since 0.3.16-canary.0
  */
 export type MirrorConfig = z.infer<typeof mirrorConfigSchema>;
 
 /**
+ * Zod schema for the `tag` command's configuration.
+ *
  * @since 0.3.16-canary.0
  */
 export const codefastTagConfigSchema = z
@@ -82,11 +90,15 @@ export const codefastTagConfigSchema = z
   .strict();
 
 /**
+ * The validated `tag` command configuration.
+ *
  * @since 0.3.16-canary.0
  */
 export type CodefastTagConfig = z.infer<typeof codefastTagConfigSchema>;
 
 /**
+ * Zod schema for the `arrange` command's configuration.
+ *
  * @since 0.3.16-canary.0
  */
 export const codefastArrangeConfigSchema = z
@@ -96,6 +108,8 @@ export const codefastArrangeConfigSchema = z
   .strict();
 
 /**
+ * The validated `arrange` command configuration.
+ *
  * @since 0.3.16-canary.0
  */
 export type CodefastArrangeConfig = z.infer<typeof codefastArrangeConfigSchema>;
@@ -115,6 +129,8 @@ export const codefastAuditRtlConfigSchema = z
   .strict();
 
 /**
+ * The validated `audit rtl` configuration.
+ *
  * @since 0.3.16-canary.0
  */
 export type CodefastAuditRtlConfig = z.infer<typeof codefastAuditRtlConfigSchema>;
@@ -132,6 +148,8 @@ export const codefastAuditLinksConfigSchema = z
   .strict();
 
 /**
+ * The validated `audit links` configuration.
+ *
  * @since 0.5.0
  */
 export type CodefastAuditLinksConfig = z.infer<typeof codefastAuditLinksConfigSchema>;
@@ -156,6 +174,8 @@ export const codefastAuditCommentsConfigSchema = z
 export type CodefastAuditCommentsConfig = z.infer<typeof codefastAuditCommentsConfigSchema>;
 
 /**
+ * Zod schema grouping the per-audit configurations under `audit`.
+ *
  * @since 0.3.16-canary.0
  */
 export const codefastAuditConfigSchema = z
@@ -167,6 +187,8 @@ export const codefastAuditConfigSchema = z
   .strict();
 
 /**
+ * The validated `audit` configuration.
+ *
  * @since 0.3.16-canary.0
  */
 export type CodefastAuditConfig = z.infer<typeof codefastAuditConfigSchema>;
@@ -186,6 +208,8 @@ export const codefastConfigRootSchema = z
   .strict();
 
 /**
+ * The validated root `codefast.config` shape.
+ *
  * @since 0.3.16-canary.0
  */
 export type CodefastConfig = z.infer<typeof codefastConfigRootSchema>;

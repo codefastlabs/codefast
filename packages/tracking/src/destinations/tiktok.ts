@@ -10,7 +10,7 @@ import { flattenEventProps } from "#/destinations/shared";
  * transmission gate (`ttq.grantConsent()`/`revokeConsent()`) follows `analytics` and is the
  * tracker's job; this models the `ads`-driven LDU lever.
  *
- * @since 1.0.0-canary.7
+ * @since 0.5.0-canary.6
  */
 export interface TiktokConsent {
   limited_data_use: boolean;
@@ -19,7 +19,7 @@ export interface TiktokConsent {
 /**
  * Maps a `ConsentDecision` to TikTok's LDU boolean — on when `ads` is denied.
  *
- * @since 1.0.0-canary.7
+ * @since 0.5.0-canary.6
  */
 export function toTiktokConsent(decision: ConsentDecision): TiktokConsent {
   return { limited_data_use: toAdConsentState(decision).limitedDataUse };
@@ -28,7 +28,7 @@ export function toTiktokConsent(decision: ConsentDecision): TiktokConsent {
 /**
  * The mapped per-event payload handed to a TikTok transport (`ttq.track` / Events API).
  *
- * @since 1.0.0-canary.7
+ * @since 0.5.0-canary.6
  */
 export interface TiktokEventPayload {
   consent: TiktokConsent;
@@ -37,7 +37,9 @@ export interface TiktokEventPayload {
 }
 
 /**
- * @since 1.0.0-canary.7
+ * Options for `createTiktokDestination`.
+ *
+ * @since 0.5.0-canary.6
  */
 export interface TiktokDestinationOptions {
   /** Erasure cookie-clear seam — TikTok exposes no per-visitor deletion API, so erasure is cookie-clear + stop-send (DSR-V4). */
@@ -58,7 +60,7 @@ export interface TiktokDestinationOptions {
  * only — the pixel id and `ttq` transport are the integrator's. `consentRequirement` stays
  * `"required"`.
  *
- * @since 1.0.0-canary.7
+ * @since 0.5.0-canary.6
  */
 export function createTiktokDestination(options: TiktokDestinationOptions): Destination {
   let stopped = false;

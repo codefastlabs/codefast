@@ -1,9 +1,9 @@
 import { DEFAULT_APPEARANCE, useAppearance } from "@codefast/theme";
 import type { Appearance } from "@codefast/theme";
 import { Button } from "@codefast/ui/button";
+import { useHasHydrated } from "@codefast/ui/hooks/use-has-hydrated";
 import { Monitor, Moon, Sun } from "lucide-react";
 import type { ComponentProps, ReactElement } from "react";
-import { useEffect, useState } from "react";
 
 type AppearanceToggleProps = Omit<ComponentProps<typeof Button>, "children" | "onClick" | "size" | "variant">;
 
@@ -21,17 +21,13 @@ export function AppearanceToggle(props: AppearanceToggleProps): ReactElement {
   const next = SEQUENCE[(SEQUENCE.indexOf(appearance) + 1) % SEQUENCE.length] ?? "light";
 
   /**
-   * Labels render the SSR fallback until mount: hydration never patches mismatched attributes,
+   * Labels render the SSR fallback until hydration: hydration never patches mismatched attributes,
    * so an attribute derived from the localStorage-restored appearance would stay stale.
    */
-  const [mounted, setMounted] = useState(false);
+  const hydrated = useHasHydrated();
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  const shown = mounted ? appearance : DEFAULT_APPEARANCE;
-  const shownNext = mounted ? next : "light";
+  const shown = hydrated ? appearance : DEFAULT_APPEARANCE;
+  const shownNext = hydrated ? next : "light";
 
   return (
     <Button

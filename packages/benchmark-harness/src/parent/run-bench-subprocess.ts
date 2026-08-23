@@ -16,6 +16,8 @@ import type { SubprocessPayload, TrialPayload } from "#/shared/protocol";
 const HEARTBEAT_SILENCE_MS = 10_000;
 
 /**
+ * Failure of a bench subprocess, carrying the exit code the child ended with.
+ *
  * @since 0.3.16-canary.0
  */
 export class SubprocessExecutionError extends Error {
@@ -88,6 +90,8 @@ function createStreamLineForwarder(
 }
 
 /**
+ * Parameters for {@link runBenchSubprocess}.
+ *
  * @since 0.3.16-canary.0
  */
 export type RunBenchSubprocessParameters = Readonly<{

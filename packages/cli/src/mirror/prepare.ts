@@ -10,6 +10,8 @@ import type { MirrorSyncCommandPrelude } from "#/mirror/domain/types";
 import { resolveMirrorPackageFromCliArg } from "#/mirror/package-path";
 
 /**
+ * Resolves the repo root, config, and package filter into the prelude a mirror run starts from.
+ *
  * @since 0.3.16-canary.0
  */
 export async function prepareMirrorSync(

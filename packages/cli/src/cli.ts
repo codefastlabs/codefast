@@ -23,6 +23,8 @@ function readVersion(): string {
 }
 
 /**
+ * Runs the `codefast` CLI over the given argv and returns the process exit code.
+ *
  * @since 0.3.16-canary.0
  */
 export async function runCli(argv: Array<string>): Promise<number> {

@@ -40,6 +40,30 @@ describe("runCommentAudit", () => {
     expect(contents.get(path.normalize(filePath))).toContain("// ── Component: Button ──");
   });
 
+  it("flags an @since stamped above the package version and accepts one at or below it", () => {
+    const stampedHigh = ["/**", " * Does a thing.", " *", " * @since 9.0.0", " */"].join("\n");
+    const stampedOk = ["/**", " * Does a thing.", " *", " * @since 0.5.0-canary.6", " */"].join("\n");
+    const { fs } = createSourceTestFilesystem({
+      [path.join(rootDir, "package.json")]: '{"version":"0.7.0"}',
+      [path.join(srcDir, "high.ts")]: `${stampedHigh}\nexport const a = 1;`,
+      [path.join(srcDir, "ok.ts")]: `${stampedOk}\nexport const b = 2;`,
+    });
+
+    const outcome = runCommentAudit(fs, { rootDir, targetPath: rootDir, allowlist: [], fix: false });
+
+    expect(outcome.ok).toBe(true);
+    if (!outcome.ok) {
+      return;
+    }
+    expect(outcome.value.files).toHaveLength(1);
+    expect(outcome.value.files[0]?.relativePath).toBe("src/high.ts");
+    expect(outcome.value.files[0]?.breakages[0]).toMatchObject({
+      line: 4,
+      raw: "@since 9.0.0",
+      reason: "@since names a version the package has not reached — set it to the release that shipped the symbol",
+    });
+  });
+
   it("routes content, grammar, and css findings through with their own reasons", () => {
     const docPointer = ["/**", " * Field order is fixed; see ARCHITECTURE.md for why.", " */"].join("\n");
     const bareAtWord = ["/**", " * Benchmarks @codefast/di against upstream.", " */"].join("\n");

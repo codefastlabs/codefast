@@ -6,6 +6,8 @@ import { logger } from "#/core/logger";
 const translator = new TypeScriptAstTranslator();
 
 /**
+ * Parses source text into a domain source file via the shared `oxc-parser` translator.
+ *
  * @since 0.3.16-canary.0
  */
 export function parseDomainSourceFile(filePath: string, sourceText: string): DomainSourceFile {

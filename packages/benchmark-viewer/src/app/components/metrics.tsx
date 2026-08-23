@@ -58,6 +58,8 @@ function renderMetaItem(item: MetaItem) {
 }
 
 /**
+ * Renders the selected scenario's metric cards with its scenario chip and footnote.
+ *
  * @since 0.3.16-canary.1
  */
 export function MetricsPanel({ currentScenario, runIndices, metricsData }: MetricsPanelProps) {

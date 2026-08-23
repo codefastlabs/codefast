@@ -43,6 +43,8 @@ export interface GraphEdge {
 }
 
 /**
+ * A container's dependency graph as plain JSON — nodes, edges, and whether the parent is included.
+ *
  * @since 0.3.16-canary.0
  */
 export interface ContainerGraphJson {
@@ -52,6 +54,8 @@ export interface ContainerGraphJson {
 }
 
 /**
+ * Options controlling what a dependency graph includes.
+ *
  * @since 0.3.16-canary.0
  */
 export interface GraphOptions {
@@ -255,6 +259,8 @@ function addRegistryBindings(
 }
 
 /**
+ * Builds the JSON dependency graph of a registry's bindings, optionally including the parent's.
+ *
  * @since 0.3.16-canary.0
  */
 export function buildDependencyGraph(

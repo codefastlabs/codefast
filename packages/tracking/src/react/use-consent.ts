@@ -7,6 +7,8 @@ import { CONSENT_CATEGORIES, createConsentDecision, readStoredDecision, resolveD
 import type { ConsentConfig } from "#/core/consent-config";
 
 /**
+ * Options for `useConsent`.
+ *
  * @since 0.5.0-canary.4
  */
 export interface UseConsentOptions {
@@ -20,6 +22,8 @@ export interface UseConsentOptions {
 }
 
 /**
+ * The live consent state and decision actions returned by `useConsent`.
+ *
  * @since 0.5.0-canary.4
  */
 export interface UseConsentResult {

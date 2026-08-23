@@ -1,6 +1,8 @@
 import { useMemo } from "react";
 
 /**
+ * Options for {@link usePagination}.
+ *
  * @since 0.3.16-canary.0
  */
 export interface UsePaginationOptions {

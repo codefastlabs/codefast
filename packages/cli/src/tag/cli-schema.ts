@@ -3,6 +3,8 @@ import { z } from "zod";
 import type { TagSyncRunRequest } from "#/tag/sync";
 
 /**
+ * Zod schema validating a `TagSyncRunRequest`.
+ *
  * @since 0.3.16-canary.0
  */
 export const tagSyncRunRequestSchema: z.ZodType<TagSyncRunRequest> = z.object({

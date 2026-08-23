@@ -9,6 +9,8 @@ interface KpiGridProps {
 }
 
 /**
+ * Renders the overview KPI cards: run count, scenario count, newest run, and library builds.
+ *
  * @since 0.3.16-canary.3
  */
 export function KpiGrid({ runCount, scenarioCount, latestRun }: KpiGridProps) {

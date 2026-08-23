@@ -18,6 +18,8 @@ import {
 import { emitSubprocessPayload } from "#/shared/protocol";
 
 /**
+ * Parameters for {@link runBenchmarkChildMain}.
+ *
  * @since 0.3.16-canary.0
  */
 export type RunBenchmarkChildMainParameters = Readonly<{

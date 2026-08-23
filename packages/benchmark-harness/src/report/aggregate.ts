@@ -23,6 +23,8 @@ export interface AggregatedScenarioResult {
 }
 
 /**
+ * One library's aggregated results across all trials.
+ *
  * @since 0.3.16-canary.0
  */
 export interface LibraryReport {
@@ -73,6 +75,8 @@ function aggregateTrialsForScenario(
 }
 
 /**
+ * Collapses per-trial payloads into a {@link LibraryReport} with one aggregated row per scenario.
+ *
  * @since 0.3.16-canary.0
  */
 export function buildLibraryReport(

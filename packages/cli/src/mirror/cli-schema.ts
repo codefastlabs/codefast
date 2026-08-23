@@ -3,6 +3,8 @@ import { z } from "zod";
 import type { MirrorSyncRunRequest } from "#/mirror/sync-types";
 
 /**
+ * Zod schema validating a `MirrorSyncRunRequest`.
+ *
  * @since 0.3.16-canary.0
  */
 export const mirrorSyncRunRequestSchema: z.ZodType<MirrorSyncRunRequest> = z.object({

@@ -16,6 +16,8 @@ const ASYNC_MODULE_BRAND: unique symbol = Symbol("di:async-module");
 export const MODULE_SETUP: unique symbol = Symbol("di:module-setup");
 
 /**
+ * A named, reusable group of bindings a container applies synchronously via `load()`.
+ *
  * @since 0.3.16-canary.0
  */
 export interface SyncModule {
@@ -25,6 +27,8 @@ export interface SyncModule {
 }
 
 /**
+ * A named group of bindings whose setup is async, applied via `loadAsync()`.
+ *
  * @since 0.3.16-canary.0
  */
 export interface AsyncModule {
@@ -36,6 +40,8 @@ export interface AsyncModule {
 // ── Builder interfaces ───────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
+ * The binding surface a sync module's setup callback receives.
+ *
  * @since 0.3.16-canary.0
  */
 export interface ModuleBuilder {
@@ -44,6 +50,8 @@ export interface ModuleBuilder {
 }
 
 /**
+ * The binding surface an async module's setup callback receives; its `import` accepts async modules too.
+ *
  * @since 0.3.16-canary.0
  */
 export interface AsyncModuleBuilder {
@@ -54,6 +62,8 @@ export interface AsyncModuleBuilder {
 // ── Static factories ─────────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
+ * The companion factory that creates `SyncModule` values.
+ *
  * @since 0.3.16-canary.0
  */
 export const SyncModule = {
@@ -67,6 +77,8 @@ export const SyncModule = {
 };
 
 /**
+ * The companion factory that creates `AsyncModule` values.
+ *
  * @since 0.3.16-canary.0
  */
 export const AsyncModule = {
@@ -82,6 +94,8 @@ export const AsyncModule = {
 // ── Module — unified API ─────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
+ * The unified module factory — `create` for sync modules, `createAsync` for async ones.
+ *
  * @since 0.3.16-canary.0
  */
 export const Module = {
@@ -94,6 +108,8 @@ export const Module = {
 };
 
 /**
+ * Narrows a module union to `SyncModule` by checking its brand.
+ *
  * @since 0.3.16-canary.0
  */
 export function isSyncModule(module: SyncModule | AsyncModule): module is SyncModule {

@@ -1,6 +1,8 @@
 import type { ContainerGraphJson, GraphNode } from "#/introspection/dependency-graph";
 
 /**
+ * A dependency-graph node in Cytoscape's element format.
+ *
  * @since 0.3.16-canary.0
  */
 export interface CytoscapeNode {
@@ -15,6 +17,8 @@ export interface CytoscapeNode {
 }
 
 /**
+ * A dependency-graph edge in Cytoscape's element format.
+ *
  * @since 0.3.16-canary.0
  */
 export interface CytoscapeEdge {
@@ -29,11 +33,15 @@ export interface CytoscapeEdge {
 }
 
 /**
+ * The flat node-and-edge list Cytoscape takes as its `elements` input.
+ *
  * @since 0.3.16-canary.0
  */
 export type CytoscapeElements = ReadonlyArray<CytoscapeNode | CytoscapeEdge>;
 
 /**
+ * Converts a container's dependency graph into Cytoscape's element list.
+ *
  * @since 0.3.16-canary.0
  */
 export function toCytoscapeGraph(graph: ContainerGraphJson): CytoscapeElements {

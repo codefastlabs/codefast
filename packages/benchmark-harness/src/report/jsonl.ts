@@ -55,6 +55,8 @@ export function jsonlBenchObservationRowToFingerprint(row: JsonlBenchObservation
 }
 
 /**
+ * Maps JSONL flattened fields onto a {@link ScenarioTrialResult}.
+ *
  * @since 0.3.16-canary.0
  */
 export function jsonlBenchObservationRowToScenarioTrialResult(row: JsonlBenchObservationRow): ScenarioTrialResult {

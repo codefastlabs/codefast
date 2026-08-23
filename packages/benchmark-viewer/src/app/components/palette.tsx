@@ -2,6 +2,7 @@ import { tv } from "@codefast/tailwind-variants";
 import type { KeyboardEvent as ReactKeyboardEvent, RefObject } from "react";
 import { useEffect, useMemo, useRef, useState } from "react";
 
+import { useHasHydrated } from "#/app/hooks/use-has-hydrated";
 import { isMacLikePlatform } from "#/app/lib/format";
 import { cn } from "#/app/lib/utils";
 
@@ -19,15 +20,11 @@ const paletteItem = tv({
   },
 });
 
-/** Matches SSR (no navigator): Ctrl+K until mount, then ⌘K on mac-like clients. */
+/** Matches SSR (no navigator): Ctrl+K until hydration, then ⌘K on mac-like clients. */
 function PaletteShortcutHint() {
-  const [useMacKeys, setUseMacKeys] = useState(false);
+  const hydrated = useHasHydrated();
 
-  useEffect(() => {
-    setUseMacKeys(isMacLikePlatform());
-  }, []);
-
-  const label = useMacKeys ? "⌘K" : "Ctrl+K";
+  const label = hydrated && isMacLikePlatform() ? "⌘K" : "Ctrl+K";
 
   return (
     <>
@@ -49,6 +46,8 @@ interface CommandPaletteProps {
 }
 
 /**
+ * Modal action launcher: filters the given actions by query and runs one via click or keyboard.
+ *
  * @since 0.3.16-canary.1
  */
 export function CommandPalette({
@@ -60,9 +59,8 @@ export function CommandPalette({
   onClose,
   onAction,
 }: CommandPaletteProps) {
-  const [highlightedIndex, setHighlightedIndex] = useState(0);
-  const highlightedIndexRef = useRef(0);
-  highlightedIndexRef.current = highlightedIndex;
+  // An arrow-key highlight, tagged with the result set it was made for; null while unset.
+  const [highlight, setHighlight] = useState<{ epoch: string; index: number } | null>(null);
   const itemRefs = useRef<Array<HTMLButtonElement | null>>([]);
 
   const filtered = useMemo(
@@ -74,12 +72,13 @@ export function CommandPalette({
   /** When this string changes, the filtered result set changed — reset highlight (not on arrow-key-only updates). */
   const filterEpoch = useMemo(() => `${query}\0${filtered.map((action) => action.id).join("\0")}`, [filtered, query]);
 
-  useEffect(() => {
-    if (!isOpen) {
-      return;
-    }
-    setHighlightedIndex(filtered.length === 0 ? -1 : 0);
-  }, [filterEpoch, filtered.length, isOpen]);
+  // A closed palette holds no highlight, so reopening starts back at the first action.
+  if (!isOpen && highlight !== null) {
+    setHighlight(null);
+  }
+
+  // A highlight made for another result set no longer applies — fall back to the first action.
+  const highlightedIndex = highlight?.epoch === filterEpoch ? highlight.index : filtered.length === 0 ? -1 : 0;
 
   // useEffect is sufficient here — scrollIntoView is a visual side effect that
   // does not need to run synchronously before the browser paints, and useLayoutEffect
@@ -99,16 +98,13 @@ export function CommandPalette({
   }
 
   function moveHighlight(delta: number) {
-    setHighlightedIndex((prev) => {
-      const actionCount = filtered.length;
-      if (actionCount === 0) {
-        return -1;
-      }
-      const currentIndex = prev < 0 ? 0 : prev;
-      let nextIndex = currentIndex + delta;
-      nextIndex = ((nextIndex % actionCount) + actionCount) % actionCount;
-      return nextIndex;
-    });
+    const actionCount = filtered.length;
+    if (actionCount === 0) {
+      return;
+    }
+    const currentIndex = highlightedIndex < 0 ? 0 : highlightedIndex;
+    const nextIndex = (((currentIndex + delta) % actionCount) + actionCount) % actionCount;
+    setHighlight({ epoch: filterEpoch, index: nextIndex });
   }
 
   function handleDialogKeyDownCapture(e: ReactKeyboardEvent<HTMLDivElement>) {
@@ -139,7 +135,7 @@ export function CommandPalette({
         return;
       }
       e.preventDefault();
-      const activeIndex = highlightedIndexRef.current < 0 ? 0 : highlightedIndexRef.current;
+      const activeIndex = highlightedIndex < 0 ? 0 : highlightedIndex;
       handleActivateIndex(activeIndex);
     }
   }
@@ -210,7 +206,7 @@ export function CommandPalette({
                   className={paletteItem({ active: actionIndex === highlightedIndex })}
                   id={`command-palette-opt-${action.id}`}
                   onClick={() => onAction(action.id)}
-                  onMouseEnter={() => setHighlightedIndex(actionIndex)}
+                  onMouseEnter={() => setHighlight({ epoch: filterEpoch, index: actionIndex })}
                   ref={(button) => {
                     itemRefs.current[actionIndex] = button;
                   }}

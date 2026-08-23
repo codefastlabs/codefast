@@ -11,7 +11,7 @@ const COOKIE_NAME_PATTERN = /^[\w-]+$/;
  *
  * @throws Error when `cookieName` is not a valid token.
  *
- * @since 1.0.0-canary.7
+ * @since 0.5.0-canary.6
  */
 export function assertValidAnonymousIdCookieName(cookieName: string): void {
   if (!COOKIE_NAME_PATTERN.test(cookieName)) {
@@ -24,14 +24,16 @@ export function assertValidAnonymousIdCookieName(cookieName: string): void {
  * writes its input into a `Set-Cookie`, so only an exactly-UUID-shaped value may pass —
  * anything else is a header-injection attempt or corruption, never a valid id.
  *
- * @since 1.0.0-canary.6
+ * @since 0.5.0-canary.6
  */
 export function isValidAnonymousId(value: string): boolean {
   return UUID_PATTERN.test(value);
 }
 
 /**
- * @since 1.0.0-canary.6
+ * Options for persisting a client-minted anonymous id via a server `Set-Cookie`.
+ *
+ * @since 0.5.0-canary.6
  */
 export interface AnonymousIdCookieOptions {
   /** Cookie name — must match what the client tracker reads. */
@@ -56,7 +58,7 @@ export interface AnonymousIdCookieOptions {
  *
  * @throws Error when `id` is not UUID-shaped or `cookieName` is not a valid token.
  *
- * @since 1.0.0-canary.6
+ * @since 0.5.0-canary.6
  */
 export function resolveAnonymousIdCookie(options: AnonymousIdCookieOptions): {
   maxAge: number;
@@ -89,7 +91,7 @@ export function resolveAnonymousIdCookie(options: AnonymousIdCookieOptions): {
  *
  * @throws Error when `cookieName` is not a valid token.
  *
- * @since 1.0.0-canary.6
+ * @since 0.5.0-canary.6
  */
 export function resolveClearAnonymousIdCookie(cookieName: string): {
   name: string;

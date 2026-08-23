@@ -34,6 +34,8 @@ interface SnapshotSectionProps {
 }
 
 /**
+ * Renders the collapsible table of the newest run's throughput and ratios per scenario.
+ *
  * @since 0.3.16-canary.3
  */
 export function SnapshotSection({

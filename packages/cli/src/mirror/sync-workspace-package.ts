@@ -12,6 +12,8 @@ import { buildSourcePathResolver, supplementExportsInPackageJson } from "#/mirro
 import { writePackageJsonExportsAtomic } from "#/mirror/write-exports";
 
 /**
+ * Regenerates one package's `package.json#exports` from its `dist/` and returns the package's stats.
+ *
  * @since 0.3.16-canary.0
  */
 export async function syncExportsForWorkspacePackage(

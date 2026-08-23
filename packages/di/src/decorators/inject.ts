@@ -35,6 +35,8 @@ type ClassAccessorDecorator<This, Value> = (
 ) => ClassAccessorDecoratorResult<This, Value> | void;
 
 /**
+ * Creates a dual-role value: an injection descriptor that also works as a class accessor decorator.
+ *
  * @since 0.3.16-canary.0
  */
 export function inject<Value>(

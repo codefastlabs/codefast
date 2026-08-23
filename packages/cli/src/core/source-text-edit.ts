@@ -15,6 +15,8 @@ function lineStartIndexContaining(source: string, pos: number): number {
 }
 
 /**
+ * Returns the leading whitespace of the line containing a position.
+ *
  * @since 0.3.16-canary.0
  */
 export function indentOfLineContaining(source: string, pos: number): string {
@@ -35,6 +37,8 @@ export function indentOfLineContaining(source: string, pos: number): string {
 }
 
 /**
+ * Returns the text from the start of a position's line up to that position.
+ *
  * @since 0.3.16-canary.0
  */
 export function textPrefixFromLineStartToPosition(source: string, pos: number): string {
@@ -43,6 +47,8 @@ export function textPrefixFromLineStartToPosition(source: string, pos: number): 
 }
 
 /**
+ * Extends a token's end position past any whitespace-separated trailing comma.
+ *
  * @since 0.3.16-canary.0
  */
 export function endAfterOptionalCommaFollowingInSource(source: string, tokenEnd: number): number {
@@ -62,6 +68,8 @@ export function endAfterOptionalCommaFollowingInSource(source: string, tokenEnd:
 }
 
 /**
+ * Applies non-overlapping text edits from the highest offset down and returns the edited source.
+ *
  * @since 0.3.16-canary.0
  */
 export function applyEditsDescending(sourceText: string, edits: ReadonlyArray<SourceTextEdit>): string {

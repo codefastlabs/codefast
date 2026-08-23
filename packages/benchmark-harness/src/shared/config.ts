@@ -13,6 +13,8 @@ export interface BenchSubprocessConfig {
 }
 
 /**
+ * Resolves the label reports show for a library, preferring `displayName` over `libraryName`.
+ *
  * @since 0.3.16-canary.0
  */
 export function resolveDisplayName(config: BenchSubprocessConfig): string {

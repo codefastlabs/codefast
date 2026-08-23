@@ -26,6 +26,25 @@ export interface DiNodeData extends Record<string, unknown> {
 
 export type DiNode = Node<DiNodeData, "di">;
 
+/**
+ * Compares the two renders' `data` by field — the graph rebuilds every node's data object
+ * on each highlight/selection change, so identity alone would defeat the memo.
+ */
+function areDiNodePropsEqual(previous: NodeProps<DiNode>, next: NodeProps<DiNode>): boolean {
+  const previousData = previous.data;
+  const nextData = next.data;
+
+  if (previousData === nextData) {
+    return true;
+  }
+
+  const keys = Object.keys(nextData);
+
+  return (
+    keys.length === Object.keys(previousData).length && keys.every((key) => Object.is(previousData[key], nextData[key]))
+  );
+}
+
 /** One binding on the graph canvas: token, slot, and the scope swatch that colors its lifetime. */
 export const DiServiceNode = memo(function DiServiceNode({ data }: NodeProps<DiNode>): ReactElement {
   return (
@@ -61,4 +80,4 @@ export const DiServiceNode = memo(function DiServiceNode({ data }: NodeProps<DiN
       ) : null}
     </div>
   );
-});
+}, areDiNodePropsEqual);

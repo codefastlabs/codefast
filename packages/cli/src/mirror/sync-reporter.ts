@@ -9,11 +9,15 @@ import type {
 } from "#/mirror/domain/types";
 
 /**
+ * Whether a run targets a single package or the discovered workspace set.
+ *
  * @since 0.3.16-canary.0
  */
 export type MirrorProcessingModeInput = { kind: "single" } | { kind: "multi"; source: WorkspaceMultiDiscoverySource };
 
 /**
+ * The stdout/stderr line-writer shape the reporter prints through.
+ *
  * @since 0.3.16-canary.0
  */
 export type CliLoggerLike = {
@@ -22,6 +26,8 @@ export type CliLoggerLike = {
 };
 
 /**
+ * The rendering surface for every message a mirror run prints.
+ *
  * @since 0.3.16-canary.0
  */
 export interface MirrorSyncReporterPort {

@@ -5,7 +5,7 @@ import { z } from "zod";
 /**
  * Resolved request for a single RTL audit run.
  *
- * @since 1.0.0-canary.7
+ * @since 0.5.0-canary.6
  */
 export type RtlAuditRunRequest = {
   readonly rootDir: string;
@@ -17,7 +17,7 @@ export type RtlAuditRunRequest = {
 /**
  * Zod schema for {@link RtlAuditRunRequest}.
  *
- * @since 1.0.0-canary.7
+ * @since 0.5.0-canary.6
  */
 export const rtlAuditRunRequestSchema: z.ZodType<RtlAuditRunRequest> = z.object({
   rootDir: z.string().min(1),
@@ -79,7 +79,7 @@ export const commentAuditRunRequestSchema: z.ZodType<CommentAuditRunRequest> = z
 /**
  * Resolves a path that may be absolute or relative to `rootDir`.
  *
- * @since 1.0.0-canary.7
+ * @since 0.5.0-canary.6
  */
 export function resolveRepoRelativePath(rootDir: string, maybeRelative: string): string {
   return path.isAbsolute(maybeRelative) ? path.resolve(maybeRelative) : path.resolve(rootDir, maybeRelative);

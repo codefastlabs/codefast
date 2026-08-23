@@ -5,7 +5,7 @@ import { isConsentDecision } from "#/core/consent";
  * Which consent event a receipt records. Receipts are append-only: an `update` or
  * `withdraw` is a new receipt referencing the prior one, never a mutation.
  *
- * @since 1.0.0-canary.7
+ * @since 0.5.0-canary.6
  */
 export type ConsentReceiptEventType = "give" | "update" | "withdraw";
 
@@ -13,7 +13,7 @@ export type ConsentReceiptEventType = "give" | "update" | "withdraw";
  * How the decision was expressed — the "how" dimension a demonstrable-consent record must
  * capture (GDPR Art. 7(1); EDPB 05/2020 §5.1).
  *
- * @since 1.0.0-canary.7
+ * @since 0.5.0-canary.6
  */
 export type ConsentReceiptMethod = "banner-accept" | "banner-reject" | "granular" | "gpc-signal" | "withdrawal";
 
@@ -21,7 +21,7 @@ export type ConsentReceiptMethod = "banner-accept" | "banner-reject" | "granular
  * What kind of identifier links the receipt to a subject. A cookie-only visitor uses a
  * pseudonymous `cookie` id — the receipt is still valid proof.
  *
- * @since 1.0.0-canary.7
+ * @since 0.5.0-canary.6
  */
 export type ConsentReceiptSubjectIdType = "cookie" | "email-hash" | "userId";
 
@@ -29,7 +29,7 @@ export type ConsentReceiptSubjectIdType = "cookie" | "email-hash" | "userId";
  * The caller-supplied fields of a consent receipt. Deliberately carries **no IP** — the
  * server derives a coarsened one from the connection so a full IP never transits the body.
  *
- * @since 1.0.0-canary.7
+ * @since 0.5.0-canary.6
  */
 export interface ConsentReceiptInput {
   decision: ConsentDecision;
@@ -55,7 +55,7 @@ export interface ConsentReceiptInput {
  * The record is append-only; never mutate a stored receipt. `ipCoarse` is truncated at
  * write time and MUST NOT be a full IP.
  *
- * @since 1.0.0-canary.7
+ * @since 0.5.0-canary.6
  */
 export interface ConsentReceipt extends ConsentReceiptInput {
   /** Coarsened/pseudonymized IP, or absent — never a full address. */
@@ -86,7 +86,7 @@ const RECEIPT_SUBJECT_ID_TYPES: ReadonlySet<ConsentReceiptSubjectIdType> = new S
  * Guards a receipt input received from an untrusted client. Rejects a body carrying an
  * `ip`/`ipCoarse` field so a full address can never be persisted from caller input.
  *
- * @since 1.0.0-canary.7
+ * @since 0.5.0-canary.6
  */
 export function isConsentReceiptInput(value: unknown): value is ConsentReceiptInput {
   if (typeof value !== "object" || value === null) {

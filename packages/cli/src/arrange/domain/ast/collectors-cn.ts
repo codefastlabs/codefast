@@ -9,6 +9,8 @@ import { MAX_CLASS_EXPR_DEPTH } from "#/arrange/domain/constants";
 import type { ForEachStringLiteralInClassExpressionOptions, TailwindClassLiteral } from "#/arrange/domain/types";
 
 /**
+ * Visits every static class literal reachable inside a class expression.
+ *
  * @since 0.3.16-canary.0
  */
 export function forEachStringLiteralInClassExpression(
@@ -67,6 +69,8 @@ export function forEachStringLiteralInClassExpression(
 }
 
 /**
+ * Checks whether a literal sits directly inside an array literal, where splitting it apart is unsafe.
+ *
  * @since 0.3.16-canary.0
  */
 export function isUnsafeLiteralForCnStyleApplySplit(classLiteral: TailwindClassLiteral): boolean {
@@ -74,6 +78,8 @@ export function isUnsafeLiteralForCnStyleApplySplit(classLiteral: TailwindClassL
 }
 
 /**
+ * The walk options for building the `cn` apply pool — conditional branches are never descended into.
+ *
  * @since 0.3.16-canary.0
  */
 export const CN_APPLY_LITERAL_WALK_OPTS: ForEachStringLiteralInClassExpressionOptions = {
@@ -81,6 +87,8 @@ export const CN_APPLY_LITERAL_WALK_OPTS: ForEachStringLiteralInClassExpressionOp
 };
 
 /**
+ * Collects the static class literals in `cn()` arguments that are safe to regroup.
+ *
  * @since 0.3.16-canary.0
  */
 export function collectUnconditionalTailwindLiteralsFromCnArguments(

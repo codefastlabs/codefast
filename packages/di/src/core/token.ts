@@ -3,6 +3,8 @@ import type { Constructor } from "#/core/constructor-type";
 declare const TOKEN_BRAND: unique symbol;
 
 /**
+ * A branded identifier carrying the value type its bindings resolve to.
+ *
  * @since 0.3.16-canary.0
  */
 export interface Token<out Value> {
@@ -11,6 +13,8 @@ export interface Token<out Value> {
 }
 
 /**
+ * Creates a named `Token` for the given value type.
+ *
  * @since 0.3.16-canary.0
  */
 export function token<Value>(name: string): Token<Value> {
@@ -18,6 +22,8 @@ export function token<Value>(name: string): Token<Value> {
 }
 
 /**
+ * Returns the display name of a token or class used as a dependency key.
+ *
  * @since 0.3.16-canary.0
  */
 export function tokenName(dependency: Token<unknown> | Constructor): string {

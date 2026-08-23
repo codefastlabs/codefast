@@ -1,7 +1,7 @@
 /**
  * Default lifetime shared by the anonymous-id and consent cookies — one year.
  *
- * @since 1.0.0-canary.6
+ * @since 0.5.0-canary.6
  */
 export const ONE_YEAR_IN_SECONDS: number = 60 * 60 * 24 * 365;
 
@@ -10,7 +10,7 @@ export const ONE_YEAR_IN_SECONDS: number = 60 * 60 * 24 * 365;
  * `document.cookie`, which share the `name=value; name2=value2` wire format — or
  * `undefined` when absent. The name must match exactly; a longer prefix sibling is ignored.
  *
- * @since 1.0.0-canary.6
+ * @since 0.5.0-canary.6
  */
 export function readCookieValue(cookieString: string | null | undefined, cookieName: string): string | undefined {
   if (!cookieString) {

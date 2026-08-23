@@ -13,6 +13,8 @@ interface DerivedPayloadOptions {
 }
 
 /**
+ * Filtered, ordered, and aggregated data derived from the payload and the current view.
+ *
  * @since 0.3.16-canary.3
  */
 export interface DerivedPayload {
@@ -35,6 +37,8 @@ export interface DerivedPayload {
 }
 
 /**
+ * Derives library order, filtered scenarios and runs, metrics, and snapshot rows from the payload and view.
+ *
  * @since 0.3.16-canary.3
  */
 export function useDerivedPayload({ payload, view, patchView }: DerivedPayloadOptions): DerivedPayload {

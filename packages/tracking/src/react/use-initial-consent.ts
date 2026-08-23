@@ -10,7 +10,7 @@ import type { InitialConsentSnapshot, InitialConsentStore } from "#/client/initi
  * answers. SSR and the first client render read the strictest snapshot, so hydration can
  * never mismatch on region.
  *
- * @since 1.0.0-canary.6
+ * @since 0.5.0-canary.6
  */
 export function useInitialConsent(store: InitialConsentStore): InitialConsentSnapshot {
   // Post-hydration safety net — idempotent with an earlier, pre-hydration kick.

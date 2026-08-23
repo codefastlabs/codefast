@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
 /**
+ * The current toast message and the callback that shows a new one.
+ *
  * @since 0.3.16-canary.3
  */
 export interface ToastHandle {
@@ -11,6 +13,8 @@ export interface ToastHandle {
 const TOAST_DURATION_MS = 3500;
 
 /**
+ * Manages a single auto-dismissing toast message and returns it with its show callback.
+ *
  * @since 0.3.16-canary.3
  */
 export function useToast(): ToastHandle {

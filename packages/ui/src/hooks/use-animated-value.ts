@@ -29,13 +29,17 @@ export function useAnimatedValue(targetValue: null | number, duration: number, a
   // Prevent stale closures inside RAF loop
   const animatedValueRef = useRef(actualTargetValue);
 
-  useEffect(() => {
-    animatedValueRef.current = animatedValue;
-  }, [animatedValue]);
+  // Animate only when asked and there is a positive window; otherwise the target is shown directly.
+  const shouldAnimate = animated === true && duration > 0;
+
+  // Pin the state to the target while animation is off, so re-enabling eases from the shown value.
+  if (!shouldAnimate && animatedValue !== actualTargetValue) {
+    setAnimatedValue(actualTargetValue);
+  }
 
   useEffect(() => {
-    if (!animated) {
-      setAnimatedValue(actualTargetValue);
+    if (!shouldAnimate) {
+      animatedValueRef.current = actualTargetValue;
 
       return;
     }
@@ -46,14 +50,12 @@ export function useAnimatedValue(targetValue: null | number, duration: number, a
     // Total delta across the animation
     const valueRange = actualTargetValue - currentValue;
 
-    // Start timestamp
-    const startTime = performance.now();
-
-    if (duration <= 0 || valueRange === 0) {
-      setAnimatedValue(actualTargetValue);
-
+    if (valueRange === 0) {
       return;
     }
+
+    // Start timestamp
+    const startTime = performance.now();
 
     // requestAnimationFrame id for cleanup
     let animationFrame: number;
@@ -64,6 +66,7 @@ export function useAnimatedValue(targetValue: null | number, duration: number, a
       const elapsedTime = currentTime - startTime;
 
       if (elapsedTime >= duration) {
+        animatedValueRef.current = actualTargetValue;
         setAnimatedValue(actualTargetValue);
       } else {
         // Linear progress (0..1)
@@ -75,6 +78,7 @@ export function useAnimatedValue(targetValue: null | number, duration: number, a
         // Interpolated value
         const nextValue = currentValue + valueRange * easeProgress;
 
+        animatedValueRef.current = nextValue;
         setAnimatedValue(nextValue);
         animationFrame = requestAnimationFrame(animateValue);
       }
@@ -85,7 +89,7 @@ export function useAnimatedValue(targetValue: null | number, duration: number, a
     return (): void => {
       cancelAnimationFrame(animationFrame);
     };
-  }, [actualTargetValue, duration, animated]);
+  }, [actualTargetValue, duration, shouldAnimate]);
 
   return Math.round(animatedValue);
 }

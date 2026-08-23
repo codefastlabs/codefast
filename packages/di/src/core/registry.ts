@@ -6,6 +6,8 @@ import type { Token } from "#/core/token";
 import type { BindingIdentifier, Constructor, DependencyKey } from "#/core/types";
 
 /**
+ * One container's binding store, indexed by token, binding id, and slot for fast lookup.
+ *
  * @since 0.3.16-canary.0
  */
 export class BindingRegistry {

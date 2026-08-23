@@ -6,6 +6,8 @@ import type { ConstructorMetadata, LifecycleMetadata, MetadataReader } from "#/m
 type AccessorEntry = { readonly key: string | symbol; readonly descriptor: InjectionDescriptor };
 
 /**
+ * The default `MetadataReader`, reading decorator metadata stored under `Symbol.metadata`.
+ *
  * @since 0.3.16-canary.0
  */
 export class SymbolMetadataReader implements MetadataReader {
@@ -117,6 +119,8 @@ function mergeUniqueNames(lists: Array<ReadonlyArray<string>>): Array<string> {
 }
 
 /**
+ * The shared reader a container falls back to when given no custom `MetadataReader`.
+ *
  * @since 0.3.16-canary.0
  */
 export const defaultMetadataReader: SymbolMetadataReader = new SymbolMetadataReader();

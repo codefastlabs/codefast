@@ -1,9 +1,9 @@
 import { hasGlobalPrivacyControlSignal } from "@codefast/tracking/client/gpc";
+import { useHasHydrated } from "@codefast/ui/hooks/use-has-hydrated";
 import { Switch } from "@codefast/ui/switch";
 import type { ReactNode } from "react";
 
 import { useSiteConsent } from "#/features/tracking/lib/site-consent";
-import { useHasHydrated } from "#/hooks/use-has-hydrated";
 
 /**
  * The interactive "Your privacy choices" panel on `/privacy`: a switch over the site's

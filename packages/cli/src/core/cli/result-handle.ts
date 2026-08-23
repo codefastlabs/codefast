@@ -23,6 +23,8 @@ function exitCodeForAppError(error: AppError): number {
 }
 
 /**
+ * Narrows a `Result` by invoking `onSuccess` on success, or reporting the error and setting the exit code.
+ *
  * @since 0.3.16-canary.0
  */
 export function handleResult<Value>(
@@ -47,6 +49,8 @@ export function handleResult<Value>(
 }
 
 /**
+ * Narrows a `Result`, reporting a failure and setting the exit code, or logging an optional success message.
+ *
  * @since 0.3.16-canary.0
  */
 export function consumeCliAppError<Value>(
@@ -73,6 +77,8 @@ export function consumeCliAppError<Value>(
 }
 
 /**
+ * Awaits a `Result`, hands a success to `onSuccess`, and records the returned exit code on the process.
+ *
  * @since 0.3.16-canary.0
  */
 export async function runCliResultAsync<Value>(

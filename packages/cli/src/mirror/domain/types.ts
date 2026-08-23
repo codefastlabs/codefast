@@ -2,6 +2,8 @@ import type { GlobalCliOptions } from "#/core/cli/global-options";
 import type { CodefastConfig } from "#/core/config/schema";
 
 /**
+ * One conditional exports entry, keyed by resolution condition.
+ *
  * @since 0.3.16-canary.0
  */
 export interface ExportEntry {
@@ -18,6 +20,8 @@ export interface ExportEntry {
  */
 export type ExportMapData = Record<string, ExportEntry | string>;
 /**
+ * The pre-transform `dist/` path for each generated export specifier.
+ *
  * @since 0.3.16-canary.0
  */
 export type ExportOriginalPathBySpecifier = Record<string, string>;
@@ -30,6 +34,8 @@ interface DistModuleFiles {
 }
 
 /**
+ * A `dist/` module path together with the build files found for it.
+ *
  * @since 0.3.16-canary.0
  */
 export interface DistModule {
@@ -38,6 +44,8 @@ export interface DistModule {
 }
 
 /**
+ * The identifying metadata mirror reads from a package's manifest.
+ *
  * @since 0.3.16-canary.0
  */
 export interface MirrorPackageMeta {
@@ -56,6 +64,8 @@ export type PackageJsonShape = {
 };
 
 /**
+ * A generated exports map with its specifier origins and asset counts.
+ *
  * @since 0.3.16-canary.0
  */
 export interface GenerateExportsResult {
@@ -66,6 +76,8 @@ export interface GenerateExportsResult {
 }
 
 /**
+ * Per-package outcome of a mirror run, as reported in progress and JSON output.
+ *
  * @since 0.3.16-canary.0
  */
 export interface PackageStats {
@@ -94,6 +106,8 @@ export interface MirrorDistAssetCounts {
 }
 
 /**
+ * Aggregate totals across every package in a mirror run.
+ *
  * @since 0.3.16-canary.0
  */
 export interface GlobalStats {
@@ -115,6 +129,8 @@ export interface GlobalStats {
 export type WorkspaceMultiDiscoverySource = "default-patterns" | "pnpm-workspace-yaml" | "declared-empty";
 
 /**
+ * The workspace package paths found for a mirror run and how they were discovered.
+ *
  * @since 0.3.16-canary.0
  */
 export type FindWorkspacePackagesResult = {
@@ -123,6 +139,8 @@ export type FindWorkspacePackagesResult = {
 };
 
 /**
+ * Everything the `mirror` action needs resolved before a run: globals, root, config, and filter.
+ *
  * @since 0.3.16-canary.0
  */
 export interface MirrorSyncCommandPrelude {

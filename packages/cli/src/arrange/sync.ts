@@ -26,6 +26,8 @@ async function runOnAfterWriteHook(
 }
 
 /**
+ * Runs the grouping pipeline over every target file and returns the aggregated result.
+ *
  * @since 0.3.16-canary.0
  */
 export async function runArrangeSync(

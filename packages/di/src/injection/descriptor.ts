@@ -4,6 +4,8 @@ import type { BindingTag, Constructor, TokenValue } from "#/core/types";
 import type { DependencySlot } from "#/injection/resolve-options";
 
 /**
+ * Slot-selection options — a name and tags — a declared dependency narrows its binding with.
+ *
  * @since 0.3.16-canary.0
  */
 export interface InjectOptions {
@@ -31,6 +33,8 @@ export interface InjectionDescriptor<out Value = unknown> extends DependencySlot
 }
 
 /**
+ * A dependency as declared: a bare token, a class, or a full injection descriptor.
+ *
  * @since 0.3.16-canary.0
  */
 export type InjectableDependency<Value = unknown> = Token<Value> | Constructor<Value> | InjectionDescriptor<Value>;
@@ -60,6 +64,8 @@ export type ResolvedDependencyValue<Dependency> = Dependency extends { readonly 
 type DescribedValue<Dependency> = Dependency extends InjectionDescriptor<infer Value> ? Value : TokenValue<Dependency>;
 
 /**
+ * Returns whether the value is an `InjectionDescriptor`, dual-role `inject()` functions included.
+ *
  * @since 0.3.16-canary.0
  */
 export function isInjectionDescriptor(value: unknown): value is InjectionDescriptor {
@@ -81,6 +87,8 @@ export function isInjectionDescriptor(value: unknown): value is InjectionDescrip
 }
 
 /**
+ * Normalises a declared dependency to a plain `InjectionDescriptor`.
+ *
  * @since 0.3.16-canary.0
  */
 export function normalizeToDescriptor(dependency: InjectableDependency): InjectionDescriptor {
@@ -172,6 +180,8 @@ export function buildInjectionDescriptor<Value>(
 }
 
 /**
+ * Creates a descriptor that resolves to `undefined` instead of throwing when no binding matches.
+ *
  * @since 0.3.16-canary.0
  */
 export function optional<Value>(
@@ -189,6 +199,8 @@ export function optional<Value>(
 }
 
 /**
+ * Creates a descriptor that resolves every matching binding for the token into an array.
+ *
  * @since 0.3.16-canary.0
  */
 export function injectAll<Value>(

@@ -15,6 +15,8 @@ export interface ParamMetadata extends DependencySlot {
 }
 
 /**
+ * A class's declared constructor dependencies, as a `MetadataReader` reports them.
+ *
  * @since 0.3.16-canary.0
  */
 export interface ConstructorMetadata {
@@ -22,6 +24,8 @@ export interface ConstructorMetadata {
 }
 
 /**
+ * The `postConstruct` and `preDestroy` method names a class declares.
+ *
  * @since 0.3.16-canary.0
  */
 export interface LifecycleMetadata {
@@ -40,6 +44,8 @@ export interface MutableLifecycleMetadata {
 }
 
 /**
+ * The port a container reads class metadata through — constructor deps, lifecycle, and accessors.
+ *
  * @since 0.3.16-canary.0
  */
 export interface MetadataReader {

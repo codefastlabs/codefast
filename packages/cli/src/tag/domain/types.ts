@@ -1,6 +1,8 @@
 import type { CodefastConfig } from "#/core/config/schema";
 
 /**
+ * Per-file outcome of a tag run.
+ *
  * @since 0.3.16-canary.0
  */
 export type TagFileResult = {
@@ -10,6 +12,8 @@ export type TagFileResult = {
 };
 
 /**
+ * Outcome of tagging one target: the version stamped and the per-file tallies.
+ *
  * @since 0.3.16-canary.0
  */
 export type TagRunResult = {
@@ -21,6 +25,8 @@ export type TagRunResult = {
 };
 
 /**
+ * Options for one target's tag run.
+ *
  * @since 0.3.16-canary.0
  */
 export type TagRunOptions = {
@@ -30,6 +36,8 @@ export type TagRunOptions = {
 type TagTargetCandidateSource = "explicit-target" | "workspace-package" | "repo-src-fallback";
 
 /**
+ * How a resolved tag target was chosen.
+ *
  * @since 0.3.16-canary.0
  */
 export type TagTargetSource =
@@ -39,6 +47,8 @@ export type TagTargetSource =
   | "repo-src-fallback";
 
 /**
+ * A candidate path a tag run may resolve into a target.
+ *
  * @since 0.3.16-canary.0
  */
 export type TagTargetCandidate = {
@@ -50,6 +60,8 @@ export type TagTargetCandidate = {
 };
 
 /**
+ * A directory or file a tag run will stamp, with its owning package when known.
+ *
  * @since 0.3.16-canary.0
  */
 export type TagResolvedTarget = {
@@ -61,6 +73,8 @@ export type TagResolvedTarget = {
 };
 
 /**
+ * One target's execution outcome, carrying either its run result or its error.
+ *
  * @since 0.3.16-canary.0
  */
 export type TagTargetExecutionResult = {
@@ -71,6 +85,8 @@ export type TagTargetExecutionResult = {
 };
 
 /**
+ * Callbacks a tag run invokes as each target starts and completes.
+ *
  * @since 0.3.16-canary.0
  */
 export interface TagProgressListener {
@@ -79,6 +95,8 @@ export interface TagProgressListener {
 }
 
 /**
+ * Aggregate outcome of a tag run across every selected target.
+ *
  * @since 0.3.16-canary.0
  */
 export type TagSyncResult = {
@@ -96,6 +114,8 @@ export type TagSyncResult = {
 };
 
 /**
+ * Everything the `tag` action needs resolved before a run: root, config, and target path.
+ *
  * @since 0.3.16-canary.0
  */
 export interface TagCommandPrelude {

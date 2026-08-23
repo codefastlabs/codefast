@@ -18,6 +18,8 @@ import { selectAllBindings } from "#/resolution/select/binding-select";
 // ── Public types ─────────────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
+ * A read-only view of one binding: token, kind, scope, slot, and id.
+ *
  * @since 0.3.16-canary.0
  */
 export interface BindingSnapshot {
@@ -32,6 +34,8 @@ export interface BindingSnapshot {
 }
 
 /**
+ * A read-only view of one container's own bindings and state.
+ *
  * @since 0.3.16-canary.0
  */
 export interface ContainerSnapshot {
@@ -44,6 +48,8 @@ export interface ContainerSnapshot {
 // ── Inspector ────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
+ * The read-only introspection surface behind a container's `inspect()`.
+ *
  * @since 0.3.16-canary.0
  */
 export class Inspector {

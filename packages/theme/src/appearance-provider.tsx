@@ -4,6 +4,7 @@ import {
   useCallback,
   useEffect,
   useEffectEvent,
+  useLayoutEffect,
   useMemo,
   useOptimistic,
   useRef,
@@ -82,6 +83,8 @@ function readAppearanceFromStorage(storageKey: string): Appearance | null {
 // ── Props ────────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
+ * Props for {@link AppearanceProvider}.
+ *
  * @since 0.5.0-canary.2
  */
 export type AppearanceProviderProps = {
@@ -174,7 +177,11 @@ export function AppearanceProvider({
   // Stable ref so setAppearance does not re-create every time the committed appearance changes
   const committedAppearanceRef = useRef(appearance);
 
-  committedAppearanceRef.current = appearance;
+  // Layout effect, not passive: a setAppearance call can land before the passive flush and
+  // must compare against the just-committed appearance, not the previous one.
+  useLayoutEffect(() => {
+    committedAppearanceRef.current = appearance;
+  }, [appearance]);
 
   // Shared BroadcastChannel — reused by the setAppearance sender instead of opening a new one per call
   const channelRef = useRef<BroadcastChannel | null>(null);

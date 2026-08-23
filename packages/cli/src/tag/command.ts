@@ -15,6 +15,8 @@ import { prepareTagSync } from "#/tag/prepare";
 import { runTagSync } from "#/tag/sync";
 
 /**
+ * Creates the `tag` subcommand, which stamps `@since` tags on exported declarations.
+ *
  * @since 0.3.16-canary.0
  */
 export function createTagCommand(): Command {

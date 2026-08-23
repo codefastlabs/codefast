@@ -117,6 +117,8 @@ function getExportSortGroup(
 }
 
 /**
+ * Creates a transform that strips a configured prefix from export paths, or `null` when none is set.
+ *
  * @since 0.3.16-canary.0
  */
 export function createPathTransform(strip: string | undefined): ((pathString: string) => string) | null {
@@ -222,6 +224,8 @@ async function generateCssExports(
 }
 
 /**
+ * Options shaping the conditions and specifiers of a generated exports map.
+ *
  * @since 0.3.16-canary.3
  */
 export interface GenerateExportsOptions {
@@ -277,6 +281,8 @@ function createExcludeMatcher(patterns: ReadonlyArray<string> | undefined): (spe
 }
 
 /**
+ * Generates a package's `package.json#exports` map from its `dist/` contents.
+ *
  * @since 0.5.0-canary.8
  */
 export async function generateExports(

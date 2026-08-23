@@ -12,6 +12,8 @@
 
 export const BENCH_RESULT_JSON_START = "BENCH_RESULT_JSON_START";
 /**
+ * Marker line closing the framed JSON payload on child stdout.
+ *
  * @since 0.3.16-canary.0
  */
 export const BENCH_RESULT_JSON_END = "BENCH_RESULT_JSON_END";
@@ -75,6 +77,8 @@ export interface Fingerprint {
 }
 
 /**
+ * The complete result one bench subprocess emits to its parent.
+ *
  * @since 0.3.16-canary.0
  */
 export interface SubprocessPayload {

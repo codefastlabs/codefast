@@ -31,6 +31,8 @@ type StringNodeVisitor = (
 ) => void;
 
 /**
+ * Visits every class literal reachable inside a `tv({ ... })` object, including `cn()` arguments.
+ *
  * @since 0.3.16-canary.0
  */
 export function traverseTvObject(
@@ -114,6 +116,8 @@ export function traverseTvObject(
 }
 
 /**
+ * Collects the `cn()` calls nested inside a `tv({ ... })` object.
+ *
  * @since 0.3.16-canary.0
  */
 export function collectCnCallsInsideTv(
@@ -165,6 +169,8 @@ export function collectCnCallsInsideTv(
 }
 
 /**
+ * Collects every `cn()` call nested inside any `tv()` call in a source file.
+ *
  * @since 0.3.16-canary.0
  */
 export function listAllCnCallsInsideTvInSourceFile(
@@ -209,6 +215,8 @@ function makeStringNode(
 }
 
 /**
+ * Joins a slot's literals into one space-separated class string.
+ *
  * @since 0.3.16-canary.0
  */
 export function slotClassString(stringNode: StringNode): string {
@@ -362,6 +370,8 @@ function collectTvSlots(
 }
 
 /**
+ * Collects every groupable `cn()` / `tv()` string slot in a source file.
+ *
  * @since 0.3.16-canary.0
  */
 export function collectGroupableStringNodes(sourceFile: DomainSourceFile): Array<StringNode> {

@@ -6,7 +6,9 @@ import { updateGoogleConsent } from "#/destinations/google-analytics";
 import type { UseConsentResult } from "#/react/use-consent";
 
 /**
- * @since 1.0.0-canary.6
+ * Options for `useGoogleConsentSync`.
+ *
+ * @since 0.5.0-canary.6
  */
 export interface UseGoogleConsentSyncOptions {
   /**
@@ -21,7 +23,7 @@ export interface UseGoogleConsentSyncOptions {
  * decision exists (including cross-tab / privacy-page saves), and optionally loads gtag
  * when analytics is effective. Mount once on a page-wide surface (e.g. the footer gate).
  *
- * @since 1.0.0-canary.6
+ * @since 0.5.0-canary.6
  */
 export function useGoogleConsentSync(consent: UseConsentResult, options: UseGoogleConsentSyncOptions = {}): void {
   const { loadGtagScript } = options;

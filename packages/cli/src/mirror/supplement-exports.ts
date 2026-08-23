@@ -130,6 +130,8 @@ function buildSupplementedEntry(
 }
 
 /**
+ * The export specifiers a preserve-mode run added conditions to.
+ *
  * @since 0.3.16-canary.3
  */
 export type SupplementResult = {
@@ -137,6 +139,8 @@ export type SupplementResult = {
 };
 
 /**
+ * Adds missing conditions to a package's existing exports map and returns the specifiers it touched.
+ *
  * @since 0.3.16-canary.0
  */
 export async function supplementExportsInPackageJson(

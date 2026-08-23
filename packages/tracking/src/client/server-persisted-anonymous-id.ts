@@ -3,7 +3,9 @@ import { createCookieAnonymousId } from "#/client/cookie-anonymous-id";
 import { readCookieValue } from "#/core/cookie";
 
 /**
- * @since 1.0.0-canary.6
+ * Options for `createServerPersistedAnonymousId`.
+ *
+ * @since 0.5.0-canary.6
  */
 export interface ServerPersistedAnonymousIdOptions {
   /** Server round-trip that expires the cookie via `Set-Cookie` — the server half of `clear()`. */
@@ -28,7 +30,7 @@ export interface ServerPersistedAnonymousIdOptions {
  * its full max-age. Same optimistic `document.cookie` write first, so the current event
  * never waits on the round-trip and a failed `persist` degrades to today's behavior.
  *
- * @since 1.0.0-canary.6
+ * @since 0.5.0-canary.6
  */
 export function createServerPersistedAnonymousId(options: ServerPersistedAnonymousIdOptions): CookieAnonymousId {
   const { clearOnServer, cookieName, maxAgeSeconds, persist } = options;

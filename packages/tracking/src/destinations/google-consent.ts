@@ -4,7 +4,7 @@ import { CONSENT_CATEGORIES } from "#/core/consent";
 /**
  * gtag.js/gtm.js's default queue-array name — shared so the gtag and GTM helpers cannot disagree.
  *
- * @since 1.0.0-canary.6
+ * @since 0.5.0-canary.6
  */
 export const DEFAULT_DATA_LAYER_NAME = "dataLayer";
 
@@ -14,7 +14,7 @@ type GoogleConsentState = "denied" | "granted";
  * Consent Mode v2 params issued via `gtag('consent', …)` — shared by the gtag and GTM
  * bootstraps so signal mapping cannot drift between them.
  *
- * @since 1.0.0-canary.6
+ * @since 0.5.0-canary.6
  */
 export interface GoogleConsentParams {
   ad_personalization: GoogleConsentState;
@@ -44,7 +44,7 @@ type GoogleConsentSignal = keyof typeof GOOGLE_CONSENT_SIGNAL_CATEGORIES;
 /**
  * Maps a package `ConsentDecision` onto Consent Mode v2's four storage signals.
  *
- * @since 1.0.0-canary.6
+ * @since 0.5.0-canary.6
  */
 export function toGoogleConsentParams(decision: ConsentDecision): GoogleConsentParams {
   // Derived from the signal map (not hand-written per signal) so the runtime params and
@@ -79,7 +79,9 @@ function consentSignalAssignmentsExpression(): string {
 }
 
 /**
- * @since 1.0.0-canary.6
+ * Options for `buildGoogleConsentBootstrapPreamble`.
+ *
+ * @since 0.5.0-canary.6
  */
 export interface GoogleConsentBootstrapPreambleOptions {
   /** localStorage key holding the package's `ConsentRecord`. */
@@ -96,7 +98,7 @@ export interface GoogleConsentBootstrapPreambleOptions {
  * "default" signal. The builders append only their tag-specific tail, so the consent
  * logic cannot drift between them.
  *
- * @since 1.0.0-canary.6
+ * @since 0.5.0-canary.6
  */
 export function buildGoogleConsentBootstrapPreamble(options: GoogleConsentBootstrapPreambleOptions): string {
   const dataLayerAccess = `window[${JSON.stringify(options.dataLayerName)}]`;
@@ -120,7 +122,7 @@ export function buildGoogleConsentBootstrapPreamble(options: GoogleConsentBootst
 /**
  * Reads or creates a named `window[dataLayerName]` queue array.
  *
- * @since 1.0.0-canary.6
+ * @since 0.5.0-canary.6
  */
 export function ensureDataLayer(dataLayerName: string): Array<unknown> | undefined {
   if (typeof window === "undefined") {
@@ -149,7 +151,7 @@ function isGa4EventName(name: string): boolean {
 /**
  * Warns and returns `false` when `eventName` would be rejected by GA4.
  *
- * @since 1.0.0-canary.6
+ * @since 0.5.0-canary.6
  */
 export function warnUnlessGa4EventName(destinationName: string, eventName: string): boolean {
   if (isGa4EventName(eventName)) {

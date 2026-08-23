@@ -66,6 +66,8 @@ function nodeName(node: OxcNode): string {
 }
 
 /**
+ * The translator mapping the `oxc-parser` ESTree AST to the arrange domain AST.
+ *
  * @since 0.3.16-canary.0
  */
 export class TypeScriptAstTranslator {

@@ -1,6 +1,8 @@
 import type { ContainerGraphJson, GraphNode } from "#/introspection/dependency-graph";
 
 /**
+ * A dependency-graph node in React Flow's node format.
+ *
  * @since 0.3.16-canary.0
  */
 export interface ReactFlowNode {
@@ -16,6 +18,8 @@ export interface ReactFlowNode {
 }
 
 /**
+ * A dependency-graph edge in React Flow's edge format.
+ *
  * @since 0.3.16-canary.0
  */
 export interface ReactFlowEdge {
@@ -28,6 +32,8 @@ export interface ReactFlowEdge {
 }
 
 /**
+ * The nodes-and-edges pair a React Flow viewer renders.
+ *
  * @since 0.3.16-canary.0
  */
 export interface ReactFlowGraph {
@@ -45,6 +51,8 @@ const GRID_CELL_WIDTH_PX = 200;
 const GRID_CELL_HEIGHT_PX = 100;
 
 /**
+ * Converts a container's dependency graph into React Flow nodes and edges on an initial grid.
+ *
  * @since 0.5.0-canary.7
  */
 export function toReactFlowGraph(graph: ContainerGraphJson): ReactFlowGraph {

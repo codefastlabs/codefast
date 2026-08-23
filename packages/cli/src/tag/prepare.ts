@@ -8,6 +8,8 @@ import type { TagCommandPrelude } from "#/tag/domain/types";
 import { resolveProvidedTagTargetPath } from "#/tag/resolve-target-path";
 
 /**
+ * Resolves the repo root, config, and optional target path into the prelude a tag run starts from.
+ *
  * @since 0.3.16-canary.0
  */
 export async function prepareTagSync(

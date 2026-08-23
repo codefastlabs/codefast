@@ -6,8 +6,11 @@ export function ProgressCircleAnimated() {
   const [value, setValue] = useState(0);
   const [running, setRunning] = useState(false);
 
+  // Derive the live state so completion stops the interval via cleanup — no state-syncing effect.
+  const isRunning = running && value < 100;
+
   useEffect(() => {
-    if (!running) {
+    if (!isRunning) {
       return;
     }
 
@@ -18,13 +21,7 @@ export function ProgressCircleAnimated() {
     return () => {
       clearInterval(id);
     };
-  }, [running]);
-
-  useEffect(() => {
-    if (value >= 100) {
-      setRunning(false);
-    }
-  }, [value]);
+  }, [isRunning]);
 
   return (
     <div className="flex flex-col items-center gap-4">

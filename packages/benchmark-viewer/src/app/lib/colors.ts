@@ -1,4 +1,6 @@
 /**
+ * The border, band-fill, and text colors assigned to one library's series.
+ *
  * @since 0.3.16-canary.1
  */
 export interface PaletteEntry {
@@ -8,6 +10,8 @@ export interface PaletteEntry {
 }
 
 /**
+ * The color palette cycled across libraries in charts, metrics, and tables.
+ *
  * @since 0.3.16-canary.1
  */
 export const PALETTE: ReadonlyArray<PaletteEntry> = [
@@ -19,6 +23,8 @@ export const PALETTE: ReadonlyArray<PaletteEntry> = [
 ];
 
 /**
+ * The line colors cycled across primary-÷-compare ratio series on the chart.
+ *
  * @since 0.3.16-canary.1
  */
 export const RATIO_COLORS = ["#fbbf77", "#f472b6", "#a78bfa", "#34d399"] as const;

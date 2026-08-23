@@ -188,6 +188,8 @@ export function verifyAccessorMetadata(
 }
 
 /**
+ * A per-class cache of constructor metadata and the activation facts derived from it.
+ *
  * @since 0.5.0-canary.8
  */
 export class ClassIntrospector {

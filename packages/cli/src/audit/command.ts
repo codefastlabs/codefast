@@ -28,7 +28,7 @@ import { parseWithSchema } from "#/core/schema-parse";
  * Top-level `audit` command — the source scans. Every one of them reports by default; only
  * `comments --fix` writes, and only where the rewrite discards nothing a person wrote.
  *
- * @since 1.0.0-canary.7
+ * @since 0.5.0-canary.6
  */
 export function createAuditCommand(): Command {
   const cmd = new Command("audit").description("Source audits").enablePositionalOptions();
