@@ -67,7 +67,7 @@ jobs:
 
       # No npm token: pnpm publish authenticates to npm via OIDC trusted publishing, using the job's id-token permission.
       - name: Version and publish
-        uses: changesets/action@v2.1.0
+        uses: changesets/action@v2.1.1
         with:
           version-script: pnpm run version-packages
           publish-script: npx changeset publish
