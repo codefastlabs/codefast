@@ -8,6 +8,7 @@ import {
   getNewScrollAnchor,
   getUnanchoredScrollAnchor,
 } from "#/lib/message-scroller/geometry";
+import { createDomRect } from "#/tests/unit/support/dom-rect";
 
 // jsdom does not compute layout, so each element's rect, scroll position, and
 // dimensions are stubbed directly. Rects are expressed in viewport (client)
@@ -56,18 +57,7 @@ function stubComputedStyle() {
 }
 
 function setRect(element: HTMLElement, rect: RectInput) {
-  element.getBoundingClientRect = () =>
-    ({
-      top: rect.top,
-      bottom: rect.top + rect.height,
-      height: rect.height,
-      left: 0,
-      right: 0,
-      width: 0,
-      x: 0,
-      y: rect.top,
-      toJSON: () => ({}),
-    }) as DOMRect;
+  element.getBoundingClientRect = () => createDomRect(rect.top, rect.height);
 }
 
 function setClientHeight(element: HTMLElement, height: number) {

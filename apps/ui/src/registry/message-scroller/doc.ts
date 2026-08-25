@@ -124,6 +124,7 @@ export const messageScrollerDoc: ComponentDoc = {
   ],
   features: [
     "autoScroll follows new content at the bottom only while the reader is already there — any deliberate scroll or wheel input releases follow-bottom so they're never yanked back down.",
+    "autoScroll composes with turn anchoring: a newly anchored turn holds at the reading line while the reply streams in below it, and follow-bottom takes over once the reply fills the viewport.",
     'isScrollAnchor on a MessageScrollerItem marks a turn boundary that streaming or appended content anchors against, and that defaultScrollPosition="last-anchor" restores to.',
     "preserveScrollOnPrepend (default true) keeps the first visible row stable when older history is prepended above it.",
     "Exposes imperative commands (useMessageScroller()) and live state hooks (useMessageScrollerScrollable, useMessageScrollerVisibility) for building custom jump-to or outline UIs.",
@@ -221,8 +222,8 @@ export const messageScrollerDoc: ComponentDoc = {
         },
         {
           name: "useMessageScrollerScrollable()",
-          type: "{ start, end }",
-          description: "Which edges can still scroll.",
+          type: "{ start, end, following }",
+          description: "Which edges can still scroll, and whether follow-output is engaged.",
         },
         {
           name: "useMessageScrollerVisibility()",
