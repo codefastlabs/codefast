@@ -238,7 +238,7 @@ export function MessageScrollerPreviousContext() {
                     </DropdownMenuContent>
                   </DropdownMenu>
                   <div className="flex w-28 items-center gap-2">
-                    <span className="text-xs text-ui-muted tabular-nums">{peek}px</span>
+                    <span className="text-xs whitespace-nowrap text-ui-muted tabular-nums">{peek}px</span>
                     <Slider
                       aria-label="Previous context peek"
                       disabled={isStreaming}
