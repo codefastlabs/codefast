@@ -570,4 +570,80 @@ describe("useMessageScrollerController follow mode", () => {
     expect(rendered.state().end).toBe(true);
     expect(rendered.button().dataset.active).toBe("true");
   });
+
+  test("releases follow and surfaces the gap when autoScroll turns off", async () => {
+    const rendered = await renderScroller({
+      autoScroll: true,
+      messages: [
+        { id: "message-1", height: 80 },
+        { id: "message-2", height: 80 },
+        { id: "message-3", height: 80 },
+      ],
+    });
+
+    expect(rendered.viewport().scrollTop).toBe(140);
+    expect(rendered.state().following).toBe(true);
+
+    // The prop flips off while the reader sits at the bottom: follow must drop
+    // so a later append opens a real gap the button can advertise.
+    await rendered.rerender(
+      [
+        { id: "message-1", height: 80 },
+        { id: "message-2", height: 80 },
+        { id: "message-3", height: 80 },
+        { id: "message-4", height: 80 },
+      ],
+      { autoScroll: false },
+    );
+
+    expect(rendered.state().following).toBe(false);
+    expect(rendered.viewport().scrollTop).toBe(140);
+    expect(rendered.state().end).toBe(true);
+    expect(rendered.button().dataset.active).toBe("true");
+  });
+
+  test("re-arms follow after the anchored turn unmounts", async () => {
+    const rendered = await renderScroller({
+      autoScroll: true,
+      messages: [
+        { id: "message-1", height: 80 },
+        { id: "message-2", height: 80 },
+        { id: "message-3", height: 80 },
+      ],
+    });
+
+    await rendered.rerender([
+      { id: "message-1", height: 80 },
+      { id: "message-2", height: 80 },
+      { id: "message-3", height: 80 },
+      { id: "message-4", height: 20, isScrollAnchor: true },
+    ]);
+
+    expect(rendered.message("message-4").getBoundingClientRect().top).toBe(64);
+
+    // The anchored turn is removed (regenerate/delete) while the hold is live.
+    await rendered.rerender([
+      { id: "message-1", height: 80 },
+      { id: "message-2", height: 80 },
+      { id: "message-3", height: 80 },
+    ]);
+    await triggerResize(rendered.content());
+
+    // The hold dropped rather than sticking, so parking at the live edge
+    // re-arms follow and the next append is chased.
+    rendered.viewport().scrollTop = 140;
+    await act(async () => {
+      rendered.viewport().dispatchEvent(new Event("scroll", { bubbles: true }));
+    });
+
+    await rendered.rerender([
+      { id: "message-1", height: 80 },
+      { id: "message-2", height: 80 },
+      { id: "message-3", height: 80 },
+      { id: "message-5", height: 80 },
+    ]);
+
+    expect(rendered.viewport().scrollTop).toBe(220);
+    expect(rendered.state().following).toBe(true);
+  });
 });
