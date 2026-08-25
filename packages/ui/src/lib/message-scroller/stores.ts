@@ -62,7 +62,7 @@ function createMessageScrollerVisibilityStore(): MessageScrollerVisibilityStore 
  * @since 0.5.0-canary.3
  */
 function areScrollStatesEqual(current: MessageScrollerScrollable, next: MessageScrollerScrollable) {
-  return current.start === next.start && current.end === next.end;
+  return current.start === next.start && current.end === next.end && current.following === next.following;
 }
 
 /**

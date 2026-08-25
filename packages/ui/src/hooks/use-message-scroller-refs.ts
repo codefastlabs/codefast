@@ -32,6 +32,7 @@ type MessageScrollerRefs = {
   defaultScrollPositionAppliedRef: RefObject<boolean>;
   firstItemRef: RefObject<HTMLElement | null>;
   itemCountRef: RefObject<number>;
+  lastScrollTopRef: RefObject<number>;
   messageElementsRef: RefObject<Map<string, HTMLElement>>;
   modeRef: RefObject<MessageScrollerMode>;
   pendingScrollFrameRef: RefObject<number | null>;
@@ -85,6 +86,9 @@ function useMessageScrollerRefs({
   const scrollEdgeThresholdRef = useLatest(scrollEdgeThreshold);
   const itemCountRef = useRef(0);
   const firstItemRef = useRef<HTMLElement | null>(null);
+  // The scrollTop seen by the previous state commit, so follow-release can tell
+  // a reader scrolling up from content growing past the live edge.
+  const lastScrollTopRef = useRef(0);
   const modeRef = useRef<MessageScrollerMode>(autoScroll ? "following-bottom" : "free-scrolling");
   const messageElementsRef = useRef(new Map<string, HTMLElement>());
   const pendingScrollToMessageRef = useRef<{
@@ -130,6 +134,7 @@ function useMessageScrollerRefs({
     defaultScrollPositionAppliedRef,
     firstItemRef,
     itemCountRef,
+    lastScrollTopRef,
     messageElementsRef,
     modeRef,
     pendingScrollFrameRef,

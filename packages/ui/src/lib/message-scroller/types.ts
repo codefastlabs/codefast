@@ -104,16 +104,25 @@ type MessageScrollerScrollOptions = {
 };
 
 /**
- * Scroll snapshot from useMessageScrollerScrollable: which edges the viewport can
+ * The raw geometry half of the scroll snapshot: which edges the viewport can
  * still scroll toward.
- *
- * @since 0.5.0-canary.3
  */
-type MessageScrollerScrollable = {
+type MessageScrollerScrollEdges = {
   // The viewport can scroll toward the start (content is hidden above).
   start: boolean;
   // The viewport can scroll toward the end (content is hidden below).
   end: boolean;
+};
+
+/**
+ * Scroll snapshot from useMessageScrollerScrollable: the reachable edges plus
+ * whether follow-output is engaged.
+ *
+ * @since 0.5.0-canary.3
+ */
+type MessageScrollerScrollable = MessageScrollerScrollEdges & {
+  // Follow-output is engaged and already closing any gap toward the end.
+  following: boolean;
 };
 
 /**
@@ -256,9 +265,9 @@ type MessageScrollerRegisterMessage = (
  */
 type MessageScrollerContextValue = {
   handleContentChange: () => void;
-  handleResize: () => void;
   observeVisibility: () => void;
   preserveScrollOnPrependRef: RefObject<boolean>;
+  scheduleResize: () => void;
   scrollToEnd: (options?: MessageScrollerScrollOptions) => boolean;
   scrollToMessage: (messageId: string, options?: MessageScrollerScrollOptions) => boolean;
   scrollToStart: (options?: MessageScrollerScrollOptions) => boolean;
@@ -283,6 +292,7 @@ type MessageScrollerContextValue = {
 const EMPTY_MESSAGE_SCROLLER_SCROLLABLE: MessageScrollerScrollable = {
   start: false,
   end: false,
+  following: false,
 };
 
 /**
@@ -327,6 +337,7 @@ export type {
   MessageScrollerProviderProps,
   MessageScrollerRegisterMessage,
   MessageScrollerScrollAlign,
+  MessageScrollerScrollEdges,
   MessageScrollerScrollOptions,
   MessageScrollerScrollable,
   MessageScrollerStore,

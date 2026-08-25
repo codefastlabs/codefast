@@ -4,8 +4,8 @@ import {
   SCROLL_POSITION_EPSILON,
 } from "#/lib/message-scroller/types";
 import type {
-  MessageScrollerScrollable,
   MessageScrollerScrollAlign,
+  MessageScrollerScrollEdges,
   MessageScrollerVisibilityState,
 } from "#/lib/message-scroller/types";
 
@@ -22,7 +22,7 @@ function getMessageScrollerScrollable({
   scrollEdgeThreshold: number;
   spacer: HTMLElement | null;
   viewport: HTMLElement | null;
-}): MessageScrollerScrollable {
+}): MessageScrollerScrollEdges {
   if (!viewport || !content) {
     return EMPTY_MESSAGE_SCROLLER_SCROLLABLE;
   }

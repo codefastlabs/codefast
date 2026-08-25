@@ -31,6 +31,7 @@ import type {
   MessageScrollerContextValue,
   MessageScrollerProviderProps,
   MessageScrollerRegisterMessage,
+  MessageScrollerScrollEdges,
   MessageScrollerScrollable,
 } from "#/lib/message-scroller/types";
 
@@ -78,6 +79,7 @@ function useMessageScrollerController({
     defaultScrollPositionAppliedRef,
     firstItemRef,
     itemCountRef,
+    lastScrollTopRef,
     messageElementsRef,
     modeRef,
     pendingScrollFrameRef,
@@ -89,6 +91,7 @@ function useMessageScrollerController({
     scrollMarginRef,
     scrollPreviousItemPeekRef,
     spacerGapRef,
+    spacerHeightRef,
     spacerRef,
     stateFrameRef,
     stateStore,
@@ -101,6 +104,8 @@ function useMessageScrollerController({
   } = refs;
 
   const previousDefaultScrollPositionRef = useRef(defaultScrollPosition);
+  const previousViewportHeightRef = useRef(0);
+  const resizeFrameRef = useRef<number | null>(null);
 
   if (previousDefaultScrollPositionRef.current !== defaultScrollPosition) {
     previousDefaultScrollPositionRef.current = defaultScrollPosition;
@@ -125,29 +130,70 @@ function useMessageScrollerController({
       }
 
       element.toggleAttribute("data-autoscrolling", autoScrolling);
+      element.toggleAttribute("data-following", state.following);
     }
   }, []);
 
-  // Owns the one follow-bottom transition: arm at the bottom, release on any
-  // scroll away (including a scrollbar drag), suppressed during a programmatic
-  // scroll so the auto-scroll animation cannot release itself.
-  const reconcileFollowMode = useCallback((scrollable: MessageScrollerScrollable) => {
-    if (autoScrollRef.current && !scrollable.end && modeRef.current !== "settling-jump") {
+  // Owns the one follow-bottom transition: arm at the bottom, release on a
+  // reader's real scroll up, and drop the mode whenever autoScroll is off so
+  // the published follow state can never outlive the prop.
+  const reconcileFollowMode = useCallback((scrollable: MessageScrollerScrollEdges) => {
+    const scrollTop = viewportRef.current?.scrollTop ?? 0;
+    // Content growing past the live edge also reads as "not at the end", but
+    // only a reader moves scrollTop up — releasing on growth would drop follow
+    // before the frame-coalesced resize handler has caught it up.
+    const scrolledUp = scrollTop < lastScrollTopRef.current - SCROLL_POSITION_EPSILON;
+
+    if (!autoScrollRef.current) {
+      if (modeRef.current === "following-bottom") {
+        modeRef.current = "free-scrolling";
+      }
+
+      lastScrollTopRef.current = scrollTop;
+      return;
+    }
+
+    // The tail spacer makes a freshly anchored turn read as "at the end";
+    // arming there would let the first streamed chunk yank the reader off the
+    // anchor, so the hold hands off to following in the resize pass instead.
+    if (!scrollable.end && modeRef.current !== "settling-jump" && modeRef.current !== "anchored-to-message") {
       modeRef.current = "following-bottom";
-    } else if (modeRef.current === "following-bottom" && scrollable.end && !autoscrollingRef.current) {
+      lastScrollTopRef.current = scrollTop;
+      return;
+    }
+
+    if (modeRef.current === "following-bottom" && scrollable.end && scrolledUp && !autoscrollingRef.current) {
       modeRef.current = "free-scrolling";
+      lastScrollTopRef.current = scrollTop;
+      return;
+    }
+
+    // The baseline advances only outside autoscroll suppression and only
+    // downward, so a suppressed or sub-epsilon upward drag keeps accumulating
+    // toward a release instead of being consumed commit by commit.
+    if (!autoscrollingRef.current && scrollTop > lastScrollTopRef.current) {
+      lastScrollTopRef.current = scrollTop;
     }
   }, []);
 
   const commitScrollState = useCallback(() => {
-    const nextState = getMessageScrollerScrollable({
+    const nextEdges = getMessageScrollerScrollable({
       content: contentRef.current,
       scrollEdgeThreshold: scrollEdgeThresholdRef.current,
       spacer: spacerRef.current,
       viewport: viewportRef.current,
     });
 
-    reconcileFollowMode(nextState);
+    reconcileFollowMode(nextEdges);
+
+    // The edges publish raw geometry; follow-output rides alongside so a
+    // consumer (the end button) can stay quiet while the gap is already being
+    // closed, without masking the real end state.
+    const nextState: MessageScrollerScrollable = {
+      ...nextEdges,
+      following: modeRef.current === "following-bottom",
+    };
+
     writeStateAttributes(nextState);
     stateStore.setSnapshot(nextState);
   }, [reconcileFollowMode, stateStore, writeStateAttributes]);
@@ -422,6 +468,13 @@ function useMessageScrollerController({
   ]);
 
   const handleResize = useCallback(() => {
+    const viewportHeight = viewportRef.current?.clientHeight ?? 0;
+    // A shrinking viewport consumes tail spacer without any reply growth, so
+    // the anchor hold must survive it instead of handing off to the live edge.
+    const viewportShrank = viewportHeight < previousViewportHeightRef.current;
+
+    previousViewportHeightRef.current = viewportHeight;
+
     if (modeRef.current === "following-bottom" && autoScrollRef.current) {
       scrollToEnd({ behavior: "auto" });
       return;
@@ -430,13 +483,37 @@ function useMessageScrollerController({
     // Hold the anchored turn in place as content below it resizes (a reply
     // streaming in, or a transient marker collapsing) — otherwise the shrinking
     // content lets the browser clamp scrollTop and the turn drops.
-    if (reanchorToAnchoredMessage()) {
+    if (reanchorToAnchoredMessage({ followOnSpacerConsumed: !viewportShrank })) {
       return;
     }
 
     scheduleStateCommit();
     scheduleVisibilitySync();
   }, [reanchorToAnchoredMessage, scheduleStateCommit, scheduleVisibilitySync, scrollToEnd]);
+
+  // Runs the resize pass synchronously only when no spacer write can occur;
+  // otherwise it coalesces onto one shared frame, since resizing the observed
+  // spacer during ResizeObserver delivery fires the loop-completed error.
+  const scheduleResize = useCallback(() => {
+    if (modeRef.current !== "anchored-to-message" && spacerHeightRef.current === 0) {
+      if (resizeFrameRef.current !== null) {
+        window.cancelAnimationFrame(resizeFrameRef.current);
+        resizeFrameRef.current = null;
+      }
+
+      handleResize();
+      return;
+    }
+
+    if (resizeFrameRef.current !== null) {
+      return;
+    }
+
+    resizeFrameRef.current = window.requestAnimationFrame(() => {
+      resizeFrameRef.current = null;
+      handleResize();
+    });
+  }, [handleResize]);
 
   const observeVisibility = useCallback(() => {
     const viewport = viewportRef.current;
@@ -562,9 +639,9 @@ function useMessageScrollerController({
   const context = useMemo<MessageScrollerContextValue>(
     () => ({
       handleContentChange,
-      handleResize,
       observeVisibility,
       preserveScrollOnPrependRef,
+      scheduleResize,
       scrollToEnd,
       scrollToMessage,
       scrollToStart,
@@ -581,8 +658,8 @@ function useMessageScrollerController({
     }),
     [
       handleContentChange,
-      handleResize,
       observeVisibility,
+      scheduleResize,
       scrollToEnd,
       scrollToMessage,
       scrollToStart,
@@ -625,6 +702,11 @@ function useMessageScrollerController({
       if (pendingScrollFrameRef.current !== null) {
         window.cancelAnimationFrame(pendingScrollFrameRef.current);
         pendingScrollFrameRef.current = null;
+      }
+
+      if (resizeFrameRef.current !== null) {
+        window.cancelAnimationFrame(resizeFrameRef.current);
+        resizeFrameRef.current = null;
       }
 
       visibilityObserverRef.current?.disconnect();

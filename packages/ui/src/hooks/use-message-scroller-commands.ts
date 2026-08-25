@@ -222,17 +222,56 @@ function useMessageScrollerCommands({
     [scheduleVisibilitySync, scrollToPosition, setTailSpacerHeight],
   );
 
-  const reanchorToAnchoredMessage = useCallback(() => {
-    const element = streamingTurnRef.current;
+  const reanchorToAnchoredMessage = useCallback(
+    ({ followOnSpacerConsumed = false }: { followOnSpacerConsumed?: boolean } = {}) => {
+      if (modeRef.current !== "anchored-to-message") {
+        return false;
+      }
 
-    if (!element || !element.isConnected || modeRef.current !== "anchored-to-message") {
-      return false;
-    }
+      const element = streamingTurnRef.current;
 
-    // Re-run the placement so the tail spacer is recomputed for the new content
-    // height and the turn is held at the reading line.
-    return scrollToElement(element, { align: "start" }, { keepPreviousPeek: true });
-  }, [scrollToElement]);
+      if (!element || !element.isConnected) {
+        // An unmounted anchor can never re-place; drop the hold so the follow
+        // arm is not blocked by a mode nothing else exits.
+        streamingTurnRef.current = null;
+        modeRef.current = "free-scrolling";
+
+        return false;
+      }
+
+      const content = contentRef.current;
+      const viewport = viewportRef.current;
+
+      // The reply streaming below the anchor consumes the tail spacer as it
+      // grows; once the placement would need none, the reader is at the live
+      // edge and the hold hands off to follow-bottom in one scroll command.
+      if (
+        followOnSpacerConsumed &&
+        autoScrollRef.current &&
+        spacerHeightRef.current > 0 &&
+        content &&
+        viewport &&
+        content.contains(element)
+      ) {
+        const scrollTop = getElementScrollTop({
+          align: "start",
+          element,
+          scrollMargin: scrollMarginRef.current + scrollPreviousItemPeekRef.current,
+          spacer: spacerRef.current,
+          viewport,
+        });
+
+        if (getTailSpacerHeight({ content, scrollTop, spacer: spacerRef.current, viewport }) <= 0) {
+          return scrollToEnd({ behavior: "auto" });
+        }
+      }
+
+      // Re-run the placement so the tail spacer is recomputed for the new content
+      // height and the turn is held at the reading line.
+      return scrollToElement(element, { align: "start" }, { keepPreviousPeek: true });
+    },
+    [scrollToElement, scrollToEnd],
+  );
 
   // The target row may not be mounted yet (e.g. an async-loaded transcript).
   // When it is missing the request is queued in pendingScrollToMessageRef and

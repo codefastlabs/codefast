@@ -141,8 +141,8 @@ function MessageScrollerViewport({
   ...props
 }: MessageScrollerViewportProps) {
   const {
-    handleResize,
     preserveScrollOnPrependRef,
+    scheduleResize,
     setViewportElement,
     syncAfterScroll,
     userScrollIntent,
@@ -192,12 +192,14 @@ function MessageScrollerViewport({
       return;
     }
 
-    const observer = new ResizeObserver(handleResize);
+    // scheduleResize self-coalesces, deferring any pass that would resize the
+    // observed spacer out of ResizeObserver delivery.
+    const observer = new ResizeObserver(scheduleResize);
 
     observer.observe(viewport);
 
     return () => observer.disconnect();
-  }, [handleResize, viewportRef]);
+  }, [scheduleResize, viewportRef]);
 
   return (
     // The viewport defaults to role="region"; the scroll/key handlers back that landmark.
@@ -229,7 +231,7 @@ function MessageScrollerContent({
   spacerClassName,
   ...props
 }: MessageScrollerContentProps) {
-  const { handleContentChange, handleResize, setContentElement, setSpacerElement } = useMessageScrollerContext();
+  const { handleContentChange, scheduleResize, setContentElement, setSpacerElement } = useMessageScrollerContext();
   const contentRef = useRef<HTMLDivElement | null>(null);
 
   const setContentRef = useCallback(
@@ -270,12 +272,14 @@ function MessageScrollerContent({
       return;
     }
 
-    const observer = new ResizeObserver(handleResize);
+    // scheduleResize self-coalesces, deferring any pass that would resize the
+    // spacer inside this observed element out of ResizeObserver delivery.
+    const observer = new ResizeObserver(scheduleResize);
 
     observer.observe(content);
 
     return () => observer.disconnect();
-  }, [handleResize]);
+  }, [scheduleResize]);
 
   return (
     <div ref={setContentRef} role={role ?? "log"} aria-relevant={ariaRelevant ?? "additions"} {...props}>
@@ -341,7 +345,13 @@ function MessageScrollerButton({
   const getSnapshot = useCallback(() => {
     const state = stateStore.getSnapshot();
 
-    return direction === "start" ? state.start : state.end;
+    if (direction === "start") {
+      return state.start;
+    }
+
+    // Follow-output is already closing any end gap; advertising it would
+    // strobe the button once per streamed chunk.
+    return state.end && !state.following;
   }, [direction, stateStore]);
   const isActive = useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
 
