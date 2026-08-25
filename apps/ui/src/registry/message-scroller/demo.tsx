@@ -10,6 +10,7 @@ import {
 } from "@codefast/ui/dropdown-menu";
 import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@codefast/ui/empty";
 import { InputGroup, InputGroupAddon, InputGroupButton } from "@codefast/ui/input-group";
+import { cn } from "@codefast/ui/lib/utils";
 import { Message, MessageContent } from "@codefast/ui/message";
 import {
   MessageScroller,
@@ -30,13 +31,16 @@ import {
   RotateCwIcon,
   TelescopeIcon,
 } from "lucide-react";
-import { useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 interface Turn {
   id: string;
   role: "user" | "assistant";
   text: string;
 }
+
+const STREAM_DELAY_MS = 20;
+const THINK_DELAY_MS = 1000;
 
 const TRANSCRIPT: Array<Turn> = [
   {
@@ -82,9 +86,44 @@ const TRANSCRIPT: Array<Turn> = [
 ];
 
 export function MessageScrollerDemo() {
-  const [count, setCount] = useState(TRANSCRIPT.length);
-  const messages = TRANSCRIPT.slice(0, count);
-  const nextMessage = TRANSCRIPT[count];
+  const [messages, setMessages] = useState<Array<Turn>>(TRANSCRIPT);
+  const [isStreaming, setIsStreaming] = useState(false);
+  const thinkTimeoutRef = useRef<number | null>(null);
+  const streamIntervalRef = useRef<number | null>(null);
+  const nextMessage = TRANSCRIPT.find((turn, index) => index >= messages.length && turn.role === "user");
+
+  const clearStreamTimers = useCallback(() => {
+    if (thinkTimeoutRef.current !== null) {
+      window.clearTimeout(thinkTimeoutRef.current);
+      thinkTimeoutRef.current = null;
+    }
+
+    if (streamIntervalRef.current !== null) {
+      window.clearInterval(streamIntervalRef.current);
+      streamIntervalRef.current = null;
+    }
+  }, []);
+
+  useEffect(() => clearStreamTimers, [clearStreamTimers]);
+
+  const streamAssistantTurn = (turn: Turn) => {
+    // Chunks keep their trailing whitespace so joining them reproduces the text.
+    const chunks = turn.text.split(/(?<=\s)/);
+    let visible = 0;
+
+    setMessages((current) => [...current, { ...turn, text: "" }]);
+    streamIntervalRef.current = window.setInterval(() => {
+      visible += 1;
+      const text = chunks.slice(0, visible).join("");
+
+      setMessages((current) => [...current.slice(0, -1), { ...turn, text }]);
+
+      if (visible >= chunks.length) {
+        clearStreamTimers();
+        setIsStreaming(false);
+      }
+    }, STREAM_DELAY_MS);
+  };
 
   return (
     <MessageScrollerProvider autoScroll>
@@ -98,11 +137,13 @@ export function MessageScrollerDemo() {
                 <TooltipTrigger asChild>
                   <Button
                     aria-label="Reset conversation"
-                    disabled={count === 0}
+                    disabled={messages.length === 0}
                     size="icon"
                     variant="outline"
                     onClick={() => {
-                      setCount(0);
+                      clearStreamTimers();
+                      setIsStreaming(false);
+                      setMessages([]);
                     }}
                   >
                     <RotateCwIcon />
@@ -130,7 +171,7 @@ export function MessageScrollerDemo() {
             ) : (
               <MessageScroller>
                 <MessageScrollerViewport>
-                  <MessageScrollerContent className="p-6">
+                  <MessageScrollerContent aria-busy={isStreaming} className="p-6">
                     {messages.map((message) => {
                       const isUser = message.role === "user";
 
@@ -168,16 +209,28 @@ export function MessageScrollerDemo() {
               onSubmit={(event) => {
                 event.preventDefault();
 
-                if (!nextMessage) {
+                if (!nextMessage || isStreaming) {
                   return;
                 }
 
-                setCount((value) => value + 1);
+                const assistantTurn = TRANSCRIPT[TRANSCRIPT.indexOf(nextMessage) + 1];
+
+                setMessages((current) => [...current, nextMessage]);
+
+                if (!assistantTurn) {
+                  return;
+                }
+
+                setIsStreaming(true);
+                thinkTimeoutRef.current = window.setTimeout(() => {
+                  thinkTimeoutRef.current = null;
+                  streamAssistantTurn(assistantTurn);
+                }, THINK_DELAY_MS);
               }}
             >
               <InputGroup>
                 <div className="h-14 w-full px-3 py-2.5">
-                  <span className="line-clamp-2 text-ui-fg">
+                  <span className={cn("line-clamp-2 text-ui-fg", isStreaming && "opacity-60")}>
                     {nextMessage ? (
                       nextMessage.text
                     ) : (
@@ -214,7 +267,7 @@ export function MessageScrollerDemo() {
                   </DropdownMenu>
                   <InputGroupButton
                     className="ml-auto"
-                    disabled={!nextMessage}
+                    disabled={!nextMessage || isStreaming}
                     size="icon-sm"
                     type="submit"
                     variant="default"
@@ -228,7 +281,7 @@ export function MessageScrollerDemo() {
           </CardFooter>
         </Card>
         <div className="px-0.5 text-center text-xs text-ui-muted">
-          Demo is read only. Press send to reveal each turn.
+          Streaming is simulated. Reset, then press send to play each turn.
         </div>
       </div>
     </MessageScrollerProvider>

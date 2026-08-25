@@ -9,7 +9,7 @@ import {
 
 export function MessageScrollerUsage() {
   return (
-    <MessageScrollerProvider autoScroll defaultScrollPosition="end">
+    <MessageScrollerProvider defaultScrollPosition="end">
       <MessageScroller className="h-72 rounded-lg border">
         <MessageScrollerViewport>
           <MessageScrollerContent>

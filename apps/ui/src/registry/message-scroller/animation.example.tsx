@@ -14,7 +14,7 @@ import {
 } from "@codefast/ui/message-scroller";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@codefast/ui/select";
 import { ArrowUpIcon, MessageCircleDashedIcon, RotateCwIcon } from "lucide-react";
-import { useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 type AnimationId = "fade" | "pop" | "tilt";
 
@@ -28,6 +28,9 @@ interface ChatMessage {
   role: "user" | "assistant";
   text: string;
 }
+
+const STREAM_DELAY_MS = 15;
+const THINK_DELAY_MS = 1000;
 
 const PRESETS: Array<AnimationPreset> = [
   { id: "fade", name: "Fade" },
@@ -82,10 +85,45 @@ function getAnimationClassName(preset: AnimationId): string {
 
 export function MessageScrollerAnimation() {
   const [presetId, setPresetId] = useState<AnimationId>("fade");
-  const [count, setCount] = useState(0);
-  const messages = SCRIPTED_MESSAGES.slice(0, count);
-  const nextMessage = SCRIPTED_MESSAGES[count];
+  const [messages, setMessages] = useState<Array<ChatMessage>>([]);
+  const [isStreaming, setIsStreaming] = useState(false);
+  const thinkTimeoutRef = useRef<number | null>(null);
+  const streamIntervalRef = useRef<number | null>(null);
+  const nextMessage = SCRIPTED_MESSAGES.find((turn, index) => index >= messages.length && turn.role === "user");
   const preset = PRESETS.find((item) => item.id === presetId) ?? PRESETS[0]!;
+
+  const clearStreamTimers = useCallback(() => {
+    if (thinkTimeoutRef.current !== null) {
+      window.clearTimeout(thinkTimeoutRef.current);
+      thinkTimeoutRef.current = null;
+    }
+
+    if (streamIntervalRef.current !== null) {
+      window.clearInterval(streamIntervalRef.current);
+      streamIntervalRef.current = null;
+    }
+  }, []);
+
+  useEffect(() => clearStreamTimers, [clearStreamTimers]);
+
+  const streamAssistantTurn = (turn: ChatMessage) => {
+    // Chunks keep their trailing whitespace so joining them reproduces the text.
+    const chunks = turn.text.split(/(?<=\s)/);
+    let visible = 0;
+
+    setMessages((current) => [...current, { ...turn, text: "" }]);
+    streamIntervalRef.current = window.setInterval(() => {
+      visible += 1;
+      const text = chunks.slice(0, visible).join("");
+
+      setMessages((current) => [...current.slice(0, -1), { ...turn, text }]);
+
+      if (visible >= chunks.length) {
+        clearStreamTimers();
+        setIsStreaming(false);
+      }
+    }, STREAM_DELAY_MS);
+  };
 
   return (
     <div className="relative flex flex-col gap-4">
@@ -98,12 +136,14 @@ export function MessageScrollerAnimation() {
           <CardAction className="flex items-center gap-2">
             <Button
               aria-label="Reset animated messages"
-              disabled={count === 0}
+              disabled={messages.length === 0}
               size="icon"
               type="button"
               variant="outline"
               onClick={() => {
-                setCount(0);
+                clearStreamTimers();
+                setIsStreaming(false);
+                setMessages([]);
               }}
             >
               <RotateCwIcon />
@@ -125,7 +165,7 @@ export function MessageScrollerAnimation() {
             <MessageScrollerProvider>
               <MessageScroller>
                 <MessageScrollerViewport>
-                  <MessageScrollerContent className="p-6">
+                  <MessageScrollerContent aria-busy={isStreaming} className="p-6">
                     {messages.map((message) => {
                       const isUser = message.role === "user";
 
@@ -173,15 +213,27 @@ export function MessageScrollerAnimation() {
           </Select>
           <Button
             className="ml-auto"
-            disabled={!nextMessage}
+            disabled={!nextMessage || isStreaming}
             size="icon"
             type="button"
             onClick={() => {
-              if (!nextMessage) {
+              if (!nextMessage || isStreaming) {
                 return;
               }
 
-              setCount((value) => value + 1);
+              const assistantTurn = SCRIPTED_MESSAGES[SCRIPTED_MESSAGES.indexOf(nextMessage) + 1];
+
+              setMessages((current) => [...current, nextMessage]);
+
+              if (!assistantTurn) {
+                return;
+              }
+
+              setIsStreaming(true);
+              thinkTimeoutRef.current = window.setTimeout(() => {
+                thinkTimeoutRef.current = null;
+                streamAssistantTurn(assistantTurn);
+              }, THINK_DELAY_MS);
             }}
           >
             <ArrowUpIcon />
