@@ -106,6 +106,8 @@ type MessageScrollerScrollOptions = {
 /**
  * The raw geometry half of the scroll snapshot: which edges the viewport can
  * still scroll toward.
+ *
+ * @since 0.9.0
  */
 type MessageScrollerScrollEdges = {
   // The viewport can scroll toward the start (content is hidden above).
