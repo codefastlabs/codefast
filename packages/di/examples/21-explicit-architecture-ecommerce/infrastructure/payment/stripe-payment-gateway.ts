@@ -20,7 +20,7 @@ export class StripePaymentGateway implements PaymentGateway {
   async charge(orderId: OrderId, amount: Money): Promise<PaymentIntent> {
     await new Promise((resolve) => setTimeout(resolve, 15));
     this.#seq += 1;
-    console.log(`    [stripe] charge ${amount.toString()} for ${orderId} (key ${this.apiKey.slice(0, 7)}…)`);
+    console.log(`    [stripe] charge ${amount.toString()} for ${orderId}`);
 
     return {
       id: `pi_stripe_${String(this.#seq).padStart(6, "0")}`,
