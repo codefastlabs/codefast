@@ -37,6 +37,8 @@ export default defineConfig({
     // House style: generic array syntax (Array<T>), separate `import type`.
     "typescript/array-type": ["error", { default: "generic" }],
     "typescript/consistent-type-imports": ["error", { prefer: "type-imports", fixStyle: "separate-type-imports" }],
+    // Forbid inline `type` specifiers (`import { a, type B }`) — a top-level `import type` must be its own statement.
+    "import/consistent-type-specifier-style": ["error", "prefer-top-level"],
     "typescript/no-explicit-any": "warn",
 
     // House style: React members are imported by name — never a namespace or default

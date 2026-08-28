@@ -14,14 +14,8 @@
  * calls when a large number of services share the same wiring strategy.
  */
 
-import {
-  Container,
-  createAutoRegisterRegistry,
-  inject,
-  injectable,
-  token,
-  type AutoRegisterRegistry,
-} from "@codefast/di";
+import { Container, createAutoRegisterRegistry, inject, injectable, token } from "@codefast/di";
+import type { AutoRegisterRegistry } from "@codefast/di";
 
 import { section } from "#/examples/support/log";
 

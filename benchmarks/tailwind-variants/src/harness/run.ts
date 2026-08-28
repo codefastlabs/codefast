@@ -20,7 +20,8 @@ import {
   runBenchSubprocess,
   runBenchSubprocessesInterleaved,
 } from "@codefast/benchmark-harness/parent/run-bench-subprocess";
-import { buildLibraryReport, type LibraryReport } from "@codefast/benchmark-harness/report/aggregate";
+import { buildLibraryReport } from "@codefast/benchmark-harness/report/aggregate";
+import type { LibraryReport } from "@codefast/benchmark-harness/report/aggregate";
 import type { ComparisonLibrary } from "@codefast/benchmark-harness/report/comparison";
 import {
   renderComparisonConsoleReport,

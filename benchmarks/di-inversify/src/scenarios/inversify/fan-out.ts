@@ -14,9 +14,8 @@ import {
   FAN_OUT_TREE_DEPTH_3_BREADTH_4,
   RESOLVE_ALL_NAMED_COUNTS,
   RESOLVE_ALL_STRATEGY_COUNTS,
-  type ResolveAllNamedCount,
-  type ResolveAllStrategyCount,
 } from "#/fixtures/fan-out-descriptor";
+import type { ResolveAllNamedCount, ResolveAllStrategyCount } from "#/fixtures/fan-out-descriptor";
 import { buildInversifyRealisticContainer } from "#/fixtures/inversify-adapter";
 import {
   FAN_OUT_TREE,
