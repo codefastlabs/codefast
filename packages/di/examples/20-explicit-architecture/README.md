@@ -4,8 +4,10 @@ Every other example lives in a single file to keep one concept in view. This one
 directory, because the lesson **is** the structure: how `@codefast/di` wires an application whose domain never imports
 the framework.
 
-The scenario is a small banking service — open an account, deposit, transfer, and watch the domain refuse an overdraft —
-modelled with Hexagonal / Onion / Clean layering (what Herberto Graça named _Explicit Architecture_).
+The scenario is a private bank clearing a large transfer against a closing settlement window: a `LargeTransferAttempted`
+event fans out to four subscribers (audit, metrics, fraud, compliance), the domain refuses the overdraft that follows,
+and a frozen clock replays the exact instant — modelled with Hexagonal / Onion / Clean layering (what Herberto Graça
+named _Explicit Architecture_).
 
 ```sh
 npx tsx examples/20-explicit-architecture/20-explicit-architecture.ts
@@ -63,7 +65,9 @@ Dependencies point **inward**. An inner ring may not name an outer one. The clas
 │   ├── sequential-id-generator.ts
 │   ├── fan-out-event-publisher.ts       # injectAll(EventHandlerToken) → every subscriber
 │   ├── audit-log-handler.ts
-│   └── metrics-handler.ts
+│   ├── metrics-handler.ts
+│   ├── fraud-engine-handler.ts
+│   └── compliance-log-handler.ts
 ├── primary/                     # driving adapter — @injectable, enters through an inbound port
 │   └── banking-controller.ts
 ├── composition/                 # the composition root
@@ -112,17 +116,17 @@ an example (or a consumer) has to add.
 
 ## Which `@codefast/di` feature plays which architectural role
 
-| Architectural concept                | `@codefast/di` mechanism                         |
-| ------------------------------------ | ------------------------------------------------ |
-| Port (interface + identity)          | an interface plus a `token<Interface>()`         |
-| Adapter (a concrete implementation)  | an `@injectable` class bound with `.to()`        |
-| Declaring a class's dependencies     | `@injectable([inject(Token), …])`                |
-| Two adapters on one port (fan-out)   | two `whenNamed` slots + `injectAll` / resolveAll |
-| Bounded module / layer               | `Module.create` + `builder.import`               |
-| Unit of work per request             | `scoped()` binding + `createChild()`             |
-| Wire-up check before serving traffic | `container.validate()`                           |
-| Swap an adapter in a test            | `container.rebind(token)`                        |
-| Seeing the dependency rule           | `generateDependencyGraph()` + `toDotGraph()`     |
+| Architectural concept                  | `@codefast/di` mechanism                             |
+| -------------------------------------- | ---------------------------------------------------- |
+| Port (interface + identity)            | an interface plus a `token<Interface>()`             |
+| Adapter (a concrete implementation)    | an `@injectable` class bound with `.to()`            |
+| Declaring a class's dependencies       | `@injectable([inject(Token), …])`                    |
+| Many subscribers on one port (fan-out) | one `whenNamed` slot each + `injectAll` / resolveAll |
+| Bounded module / layer                 | `Module.create` + `builder.import`                   |
+| Unit of work per request               | `scoped()` binding + `createChild()`                 |
+| Wire-up check before serving traffic   | `container.validate()`                               |
+| Swap an adapter in a test              | `container.rebind(token)`                            |
+| Seeing the dependency rule             | `generateDependencyGraph()` + `toDotGraph()`         |
 
 ## Is this too many files?
 

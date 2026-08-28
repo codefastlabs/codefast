@@ -10,9 +10,16 @@ import {
 } from "#/examples/20-explicit-architecture/application/ports/events.port";
 import { IdGeneratorToken } from "#/examples/20-explicit-architecture/application/ports/id-generator.port";
 import { RequestContextToken } from "#/examples/20-explicit-architecture/application/ports/request-context.port";
-import { AuditLogToken, MetricsToken } from "#/examples/20-explicit-architecture/composition/tokens";
+import {
+  AuditLogToken,
+  ComplianceToken,
+  FraudEngineToken,
+  MetricsToken,
+} from "#/examples/20-explicit-architecture/composition/tokens";
 import { AuditLogHandler } from "#/examples/20-explicit-architecture/infrastructure/audit-log-handler";
+import { ComplianceLogHandler } from "#/examples/20-explicit-architecture/infrastructure/compliance-log-handler";
 import { FanOutEventPublisher } from "#/examples/20-explicit-architecture/infrastructure/fan-out-event-publisher";
+import { FraudEngineHandler } from "#/examples/20-explicit-architecture/infrastructure/fraud-engine-handler";
 import { InMemoryAccountRepository } from "#/examples/20-explicit-architecture/infrastructure/in-memory-account-repository";
 import { MetricsHandler } from "#/examples/20-explicit-architecture/infrastructure/metrics-handler";
 import { SequentialIdGenerator } from "#/examples/20-explicit-architecture/infrastructure/sequential-id-generator";
@@ -31,6 +38,8 @@ export const infrastructureModule = Module.create("Infrastructure", (builder) =>
   // single resolveAll(EventHandlerToken) — driven by injectAll on the publisher — reaches both instances.
   builder.bind(AuditLogToken).to(AuditLogHandler).singleton();
   builder.bind(MetricsToken).to(MetricsHandler).singleton();
+  builder.bind(FraudEngineToken).to(FraudEngineHandler).singleton();
+  builder.bind(ComplianceToken).to(ComplianceLogHandler).singleton();
   builder
     .bind(EventHandlerToken)
     .toDynamic((ctx) => ctx.resolve(AuditLogToken))
@@ -40,6 +49,16 @@ export const infrastructureModule = Module.create("Infrastructure", (builder) =>
     .bind(EventHandlerToken)
     .toDynamic((ctx) => ctx.resolve(MetricsToken))
     .whenNamed("metrics")
+    .singleton();
+  builder
+    .bind(EventHandlerToken)
+    .toDynamic((ctx) => ctx.resolve(FraudEngineToken))
+    .whenNamed("fraud")
+    .singleton();
+  builder
+    .bind(EventHandlerToken)
+    .toDynamic((ctx) => ctx.resolve(ComplianceToken))
+    .whenNamed("compliance")
     .singleton();
 
   builder.bind(EventPublisherToken).to(FanOutEventPublisher).singleton();

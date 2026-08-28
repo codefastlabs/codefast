@@ -8,9 +8,11 @@
  * `@injectable` / `inject`, so `@codefast/di` reaches every ring except the innermost: the `domain`
  * stays framework-free. The container is the composition root and lives at the edge.
  *
- * The scenario is a tiny banking service: open accounts, deposit, transfer, and watch the domain
- * refuse an overdraft. It exercises `@injectable` constructor injection, `injectAll` fan-out, modules,
- * singleton and scoped lifetimes, `validate`, `rebind` for test doubles, and `generateDependencyGraph`.
+ * The scenario is a private bank clearing a large transfer against a closing settlement window: one
+ * `LargeTransferAttempted` event fans out to four subscribers (audit, metrics, fraud, compliance), the
+ * domain refuses the overdraft that follows, and a frozen clock replays the exact instant. It exercises
+ * `@injectable` constructor injection, `injectAll` fan-out, modules, singleton and scoped lifetimes,
+ * `validate`, `rebind` for test doubles, and `generateDependencyGraph`.
  */
 
 import { toDotGraph } from "@codefast/di";
@@ -24,6 +26,8 @@ import { buildContainer } from "#/examples/20-explicit-architecture/composition/
 import {
   AuditLogToken,
   BankingControllerToken,
+  ComplianceToken,
+  FraudEngineToken,
   MetricsToken,
 } from "#/examples/20-explicit-architecture/composition/tokens";
 import { toAccountId } from "#/examples/20-explicit-architecture/domain/account-id";
@@ -42,42 +46,39 @@ class FixedClock implements Clock {
 
 // ── Scenario ─────────────────────────────────────────────────────────────────────────────────────────────────────────
 
-banner("Example 20 — Explicit Architecture (Ports & Adapters)");
+banner("Example 20 — Meridian Private Bank: the closing-window transfer");
 
 section("Composition root — adapters wired to ports, validated at the edge");
 const container = buildContainer();
 ok("container.validate() passed — every port has a compatible adapter");
 
-section("Driving the app through a primary adapter");
+section("Open the client account and the settlement account");
 const bank = container.resolve(BankingControllerToken);
-const alice = bank.open("Alice", "USD");
-const bob = bank.open("Bob", "USD");
-item("opened account for Alice", alice);
-item("opened account for Bob", bob);
+const client = bank.open("Nadia Okonkwo", "USD");
+const settlement = bank.open("Meridian Settlement", "USD");
+bank.deposit(client, 50_000_000, "USD");
+step("client funded with USD 50,000,000.00");
 
-bank.deposit(alice, 100, "USD");
-step("Alice deposited USD 100.00");
-bank.transfer(alice, bob, 30, "USD");
-step("transferred USD 30.00 from Alice to Bob");
-
+section("Request 1 — the USD 48,000,000 transfer clears before the window closes");
+bank.transfer(client, settlement, 48_000_000, "USD");
 const accounts = container.resolve(AccountRepositoryToken);
-item("Alice balance", accounts.findById(toAccountId(alice))?.balance.toString());
-item("Bob balance", accounts.findById(toAccountId(bob))?.balance.toString());
+item("client balance", accounts.findById(toAccountId(client))?.balance.toString());
+item("settlement balance", accounts.findById(toAccountId(settlement))?.balance.toString());
 
-section("Domain invariant — the aggregate refuses an overdraft, not the database");
+section("Request 2 — a second large transfer overdraws; the DOMAIN refuses it, not the database");
 try {
-  bank.transfer(bob, alice, 999, "USD");
+  bank.transfer(client, settlement, 5_000_000, "USD");
 } catch (error) {
-  caughtError("overdraft refused", error);
+  caughtError("second transfer refused", error);
 }
 
-section("Outbound fan-out — one event, many adapters (injectAll)");
-const audit = container.resolve(AuditLogToken);
-const metrics = container.resolve(MetricsToken);
-item("audit trail", audit.entries);
-item("events counted by the metrics adapter", metrics.total);
+section("Outbound fan-out — one attempt, four adapters (injectAll)");
+item("audit trail", container.resolve(AuditLogToken).entries);
+item("events counted by metrics", container.resolve(MetricsToken).total);
+item("large transfers flagged by fraud", container.resolve(FraudEngineToken).flagged);
+item("compliance ledger", container.resolve(ComplianceToken).movements);
 
-section("Per-request scope — one unit of work per child container");
+section("Per-request scope — one correlation id per request, for later investigation");
 const request1 = container.createChild();
 const request2 = container.createChild();
 item("request 1, resolved twice (scoped → identical)", [
@@ -86,13 +87,12 @@ item("request 1, resolved twice (scoped → identical)", [
 ]);
 item("request 2 (a separate child → its own value)", request2.resolve(RequestContextToken).requestId);
 
-section("Testability — swap infrastructure without touching domain or use cases");
-const underTest = buildContainer();
-underTest.rebind(ClockToken).toConstantValue(new FixedClock(new Date("2020-01-01T00:00:00.000Z")));
-underTest.rebind(IdGeneratorToken).toConstantValue({ next: () => toAccountId("test-0001") });
-const testBank = underTest.resolve(BankingControllerToken);
-item("id minted by the stubbed generator", testBank.open("Test", "USD"));
-ok("the same OpenAccount use case ran against stub adapters — zero domain changes");
+section("Replay the incident — freeze the clock and stub the ids, swapping only the adapters");
+const replay = buildContainer();
+replay.rebind(ClockToken).toConstantValue(new FixedClock(new Date("2029-08-14T01:59:47.000Z")));
+replay.rebind(IdGeneratorToken).toConstantValue({ next: () => toAccountId("acc-replay-1") });
+item("id minted by the stubbed generator", replay.resolve(BankingControllerToken).open("Replay", "USD"));
+ok("the same use cases ran against a frozen clock — zero domain changes");
 
 section("The dependency rule, made visible");
 step("The domain ring never imports @codefast/di, even though the outer rings are decorated. Prove it:");

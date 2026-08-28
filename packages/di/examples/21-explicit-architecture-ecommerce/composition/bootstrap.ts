@@ -1,4 +1,4 @@
-/** The runnable entry — seeds the catalog, drives the app over HTTP and CLI, and shows the dependency graph. */
+/** The runnable entry — NeonCart's Black Friday drop, driven over HTTP and the warehouse CLI. */
 
 import { toDotGraph } from "@codefast/di";
 
@@ -14,19 +14,19 @@ import { CheckoutControllerToken } from "#/examples/21-explicit-architecture-eco
 import { HttpServerToken } from "#/examples/21-explicit-architecture-ecommerce/presentation/http/server";
 import { banner, item, ok, section, step } from "#/examples/support/log";
 
-/** Boots the container and walks a full checkout through every driving adapter. */
+/** Boots the container and races a limited-stock drop through both driving adapters. */
 export async function bootstrap(): Promise<void> {
-  banner("Example 21 — Explicit Architecture (E-commerce)");
+  banner("Example 21 — NeonCart: Black Friday, the 47-second window");
 
   section("Composition root — validate the wiring");
   const container = createContainer();
   ok("container.validate() passed — every port has a compatible adapter");
 
-  section("Seed the catalog through the repository port");
+  section("Seed the drop — only 3 pairs of Void Runner X exist worldwide");
   const products = container.resolve(ProductRepositoryToken);
-  await products.save(Product.list(toProductId("p_keyboard"), "Mechanical Keyboard", Money.of(89, "USD"), 5));
-  await products.save(Product.list(toProductId("p_mouse"), "Wireless Mouse", Money.of(45, "USD"), 8));
-  step("2 products seeded");
+  await products.save(Product.list(toProductId("void_runner_x"), "Void Runner X", Money.of(2400, "USD"), 3));
+  await products.save(Product.list(toProductId("prism_hoodie"), "Prism Hoodie", Money.of(120, "USD"), 50));
+  step("catalog seeded — Void Runner X stock: 3");
 
   section("Wire HTTP routes onto the server");
   const server = container.resolve(HttpServerToken);
@@ -34,37 +34,39 @@ export async function bootstrap(): Promise<void> {
   container.resolve(CheckoutControllerToken).register(server);
   ok("catalog + checkout routes registered");
 
-  section("Drive the app over HTTP");
-  const list = await server.handle("GET", "/products");
-  item("GET /products → status", list.status);
-  item("GET /products/p_keyboard → body", (await server.handle("GET", "/products/p_keyboard")).body);
-  const checkout = await server.handle("POST", "/checkout", {
-    customerEmail: "alice@example.com",
-    currency: "USD",
-    items: [{ productId: "p_keyboard", quantity: 2 }],
-  });
-  item("POST /checkout → status", checkout.status);
-  item("POST /checkout → body", checkout.body);
+  section("Browse the drop over HTTP");
+  item("GET /products → status", (await server.handle("GET", "/products")).status);
+  item("GET /products/void_runner_x → body", (await server.handle("GET", "/products/void_runner_x")).body);
 
-  section("Domain invariant — overselling is refused, mapped to 422");
-  const oversell = await server.handle("POST", "/checkout", {
-    customerEmail: "alice@example.com",
+  section("Shopper A buys 1 over HTTP — success fans out to email + SMS + Discord");
+  const first = await server.handle("POST", "/checkout", {
+    customerEmail: "aria@shopper.example",
     currency: "USD",
-    items: [{ productId: "p_mouse", quantity: 999 }],
+    items: [{ productId: "void_runner_x", quantity: 1 }],
   });
-  item("oversell → status", oversell.status);
-  item("oversell → body", oversell.body);
+  item("POST /checkout → status", first.status);
+  item("POST /checkout → body", first.body);
 
-  section("Same use case, a different driving adapter — CLI");
+  section("Warehouse holds the last 2 for a VIP — the SAME use case, over the CLI");
   await container
     .resolve(PlaceOrderCommandCliToken)
-    .run("bob@example.com", "EUR", [{ productId: "p_mouse", quantity: 1 }]);
+    .run("vip-desk@neoncart.internal", "USD", [{ productId: "void_runner_x", quantity: 2 }]);
+  step("Void Runner X stock is now 0");
 
-  section("Per-request scope — one correlation id per request");
-  const request1 = container.createChild();
-  const request2 = container.createChild();
-  item("request 1", request1.resolve(RequestContextToken).correlationId);
-  item("request 2", request2.resolve(RequestContextToken).correlationId);
+  section("Shopper B is 47 seconds too late — the DOMAIN refuses the oversell, mapped to 422");
+  const late = await server.handle("POST", "/checkout", {
+    customerEmail: "ben@shopper.example",
+    currency: "USD",
+    items: [{ productId: "void_runner_x", quantity: 1 }],
+  });
+  item("POST /checkout → status", late.status);
+  item("POST /checkout → body", late.body);
+
+  section("Who took the last pair? — one correlation id per request, for the audit trail");
+  const requestA = container.createChild();
+  const requestB = container.createChild();
+  item("shopper A's request", requestA.resolve(RequestContextToken).correlationId);
+  item("shopper B's request", requestB.resolve(RequestContextToken).correlationId);
 
   section("The dependency rule, made visible");
   step("Decorated classes import @codefast/di, but the domain ring never does. Prove it:");

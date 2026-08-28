@@ -43,7 +43,7 @@ grep -rl "@codefast/di" domain   # → no matches
 ├── infrastructure/             # driven adapters — implement the ports
 │   ├── persistence/            #   in-memory (demo) + postgres (prod) + a mock pool
 │   ├── payment/                #   Stripe + PayPal gateways
-│   ├── notification/           #   email + SMS senders
+│   ├── notification/           #   email + SMS + Discord senders
 │   ├── system/                 #   clock + id generator
 │   └── config/                 #   env config
 ├── presentation/               # driving adapters
@@ -122,10 +122,12 @@ if (config.database === "postgres") {
 
 ## What the run shows
 
-The bootstrap seeds a catalog, wires the HTTP routes, then drives the same `PlaceOrder` use case through two different
-driving adapters — an HTTP `POST /checkout` and a CLI command — proving the use case is transport-agnostic. It selects a
-payment gateway by currency, fans a confirmation out to every notification channel, refuses an oversell at the domain
-boundary (mapped to `422`), and resolves a fresh request-scoped correlation id per child container.
+The bootstrap runs NeonCart's Black Friday drop: only three pairs of "Void Runner X" exist. A shopper buys one over the
+HTTP `POST /checkout`; the warehouse holds the last two for a VIP over the **CLI** — the same `PlaceOrder` use case
+behind a second transport, proving it is transport-agnostic; then a late shopper's order is refused at the domain
+boundary (`OutOfStockError` → `422`). Each success selects a payment gateway by currency and fans a confirmation out to
+every notification channel (email + SMS + Discord), and every request carries its own scoped correlation id for the
+audit trail.
 
 ## Is this too many files?
 

@@ -10,6 +10,7 @@ import { PaymentGatewayToken } from "#/examples/21-explicit-architecture-ecommer
 import { ProductRepositoryToken } from "#/examples/21-explicit-architecture-ecommerce/application/ports/product-repository";
 import { UnitOfWorkToken } from "#/examples/21-explicit-architecture-ecommerce/application/ports/unit-of-work";
 import { loadEnvConfig } from "#/examples/21-explicit-architecture-ecommerce/infrastructure/config/env-config";
+import { DiscordNotificationSender } from "#/examples/21-explicit-architecture-ecommerce/infrastructure/notification/discord-notification-sender";
 import { EmailNotificationSender } from "#/examples/21-explicit-architecture-ecommerce/infrastructure/notification/email-notification-sender";
 import { SmsNotificationSender } from "#/examples/21-explicit-architecture-ecommerce/infrastructure/notification/sms-notification-sender";
 import { PayPalPaymentGateway } from "#/examples/21-explicit-architecture-ecommerce/infrastructure/payment/paypal-payment-gateway";
@@ -55,6 +56,7 @@ export const infrastructureModule = Module.create("Infrastructure", (builder) =>
 
   builder.bind(NotificationSenderToken).to(EmailNotificationSender).whenNamed("email").singleton();
   builder.bind(NotificationSenderToken).to(SmsNotificationSender).whenNamed("sms").singleton();
+  builder.bind(NotificationSenderToken).to(DiscordNotificationSender).whenNamed("discord").singleton();
 
   builder
     .bind(RequestContextToken)

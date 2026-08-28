@@ -16,6 +16,9 @@ import { toAccountId } from "#/examples/20-explicit-architecture/domain/account-
 import { AccountNotFoundError } from "#/examples/20-explicit-architecture/domain/errors";
 import { Money } from "#/examples/20-explicit-architecture/domain/money";
 
+// The threshold, in minor units, above which a transfer is announced for fraud and compliance review.
+const LARGE_TRANSFER_THRESHOLD_MINOR = 100_000_000;
+
 /** Withdraws from the source account and deposits into the target, then records the transfer. */
 @injectable([inject(AccountRepositoryToken), inject(ClockToken), inject(EventPublisherToken)])
 export class TransferMoney implements TransferMoneyUseCase {
@@ -39,6 +42,19 @@ export class TransferMoney implements TransferMoneyUseCase {
     }
 
     const amount = Money.of(command.amountMajor, command.currency);
+
+    // A large movement is announced the moment it is attempted — even if the withdraw below then
+    // fails on insufficient funds, fraud and compliance still see the attempt.
+    if (amount.amountMinor >= LARGE_TRANSFER_THRESHOLD_MINOR) {
+      this.events.publish({
+        type: "LargeTransferAttempted",
+        fromAccountId: from.id,
+        toAccountId: to.id,
+        amountMinor: amount.amountMinor,
+        currency: amount.currency,
+        at: this.clock.now(),
+      });
+    }
 
     from.withdraw(amount);
     to.deposit(amount);

@@ -32,5 +32,15 @@ export interface MoneyTransferred {
   at: Date;
 }
 
+/** Emitted when a transfer above the large-transfer threshold is attempted, before it settles. */
+export interface LargeTransferAttempted {
+  type: "LargeTransferAttempted";
+  fromAccountId: AccountId;
+  toAccountId: AccountId;
+  amountMinor: number;
+  currency: string;
+  at: Date;
+}
+
 /** The closed set of events the domain publishes. */
-export type DomainEvent = AccountOpened | MoneyDeposited | MoneyTransferred;
+export type DomainEvent = AccountOpened | MoneyDeposited | MoneyTransferred | LargeTransferAttempted;
