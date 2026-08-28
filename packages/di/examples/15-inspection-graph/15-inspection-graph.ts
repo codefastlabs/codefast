@@ -78,17 +78,17 @@ class PostgresDatabase implements Database {
 
 @injectable([inject(LoggerToken)])
 class RedisCache implements Cache {
-  private readonly store = new Map<string, string>();
+  readonly #store = new Map<string, string>();
 
   constructor(private readonly logger: Logger) {}
 
   get(key: string): string | undefined {
-    return this.store.get(key);
+    return this.#store.get(key);
   }
 
   set(key: string, value: string): void {
     this.logger.log(`Cache set: ${key}`);
-    this.store.set(key, value);
+    this.#store.set(key, value);
   }
 }
 

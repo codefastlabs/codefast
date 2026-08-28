@@ -181,7 +181,7 @@ class ScopedService {
 
 @injectable([inject(ScopedServiceToken)])
 class SingletonConsumer {
-  constructor(readonly scoped: ScopedService) {}
+  constructor(private readonly scoped: ScopedService) {}
 }
 
 const scopeViolationContainer = Container.create();

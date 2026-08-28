@@ -10,13 +10,8 @@ import "reflect-metadata";
 import type { Container as InversifyContainerType, ServiceIdentifier } from "inversify";
 import { Container } from "inversify";
 
-import {
-  assertGraphIsWellFormed,
-  type GraphDescriptor,
-  type NodeDescriptor,
-  type RealisticNode,
-  topologicallyOrderedNodeIds,
-} from "#/fixtures/realistic-graph";
+import { assertGraphIsWellFormed, topologicallyOrderedNodeIds } from "#/fixtures/realistic-graph";
+import type { GraphDescriptor, NodeDescriptor, RealisticNode } from "#/fixtures/realistic-graph";
 
 /**
  * A built container plus every service identifier, retained so sanity

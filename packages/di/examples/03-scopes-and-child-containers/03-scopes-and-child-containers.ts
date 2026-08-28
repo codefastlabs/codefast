@@ -27,11 +27,11 @@ interface RequestContext {
 // Singleton — shared across all requests
 @injectable()
 class AppDatabase {
-  private static instanceCount = 0;
+  static #instanceCount = 0;
   readonly instanceId: number;
 
   constructor() {
-    this.instanceId = ++AppDatabase.instanceCount;
+    this.instanceId = ++AppDatabase.#instanceCount;
     console.log(`[AppDatabase] instance #${this.instanceId} created`);
   }
 
@@ -54,14 +54,14 @@ class RequestLogger {
 
 // Transient — new instance on every resolution
 class RequestHandler {
-  private static instanceCount = 0;
+  static #instanceCount = 0;
   readonly instanceId: number;
 
   constructor(
     private readonly database: AppDatabase,
     private readonly logger: RequestLogger,
   ) {
-    this.instanceId = ++RequestHandler.instanceCount;
+    this.instanceId = ++RequestHandler.#instanceCount;
   }
 
   handle(query: string): string {

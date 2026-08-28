@@ -12,13 +12,8 @@
 import type { Container as CodefastContainer, Token } from "@codefast/di";
 import { Container, token } from "@codefast/di";
 
-import {
-  assertGraphIsWellFormed,
-  type GraphDescriptor,
-  type NodeDescriptor,
-  type RealisticNode,
-  topologicallyOrderedNodeIds,
-} from "#/fixtures/realistic-graph";
+import { assertGraphIsWellFormed, topologicallyOrderedNodeIds } from "#/fixtures/realistic-graph";
+import type { GraphDescriptor, NodeDescriptor, RealisticNode } from "#/fixtures/realistic-graph";
 
 /**
  * A built container plus every token, retained so scenarios can resolve

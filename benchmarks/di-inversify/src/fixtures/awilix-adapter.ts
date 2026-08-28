@@ -9,13 +9,8 @@
 import type { AwilixContainer } from "awilix";
 import { asFunction, createContainer, InjectionMode, Lifetime } from "awilix";
 
-import {
-  assertGraphIsWellFormed,
-  type GraphDescriptor,
-  type NodeDescriptor,
-  type RealisticNode,
-  topologicallyOrderedNodeIds,
-} from "#/fixtures/realistic-graph";
+import { assertGraphIsWellFormed, topologicallyOrderedNodeIds } from "#/fixtures/realistic-graph";
+import type { GraphDescriptor, NodeDescriptor, RealisticNode } from "#/fixtures/realistic-graph";
 
 /**
  * A built container plus every registration name, retained so sanity checks

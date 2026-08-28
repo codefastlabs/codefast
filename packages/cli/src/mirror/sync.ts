@@ -6,7 +6,8 @@ import { messageFrom } from "#/core/errors";
 import type { FilesystemPort } from "#/core/filesystem/port";
 import type { Result } from "#/core/result";
 import { err, ok } from "#/core/result";
-import { listWorkspacePackageDirectories, type WorkspacePackageLayoutOutcome } from "#/core/workspace/resolver";
+import { listWorkspacePackageDirectories } from "#/core/workspace/resolver";
+import type { WorkspacePackageLayoutOutcome } from "#/core/workspace/resolver";
 import { normalizePath } from "#/mirror/domain/path-normalizer";
 import type {
   FindWorkspacePackagesResult,

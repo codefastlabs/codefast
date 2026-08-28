@@ -48,7 +48,7 @@ class Database {
 
 @injectable([inject(ConfigToken)])
 class InMemoryCache implements Cache {
-  private readonly store = new Map<string, string>();
+  readonly #store = new Map<string, string>();
 
   constructor(config: AppConfig) {
     if (config.isDebug) {
@@ -57,11 +57,11 @@ class InMemoryCache implements Cache {
   }
 
   get(key: string): string | undefined {
-    return this.store.get(key);
+    return this.#store.get(key);
   }
 
   set(key: string, value: string): void {
-    this.store.set(key, value);
+    this.#store.set(key, value);
   }
 }
 

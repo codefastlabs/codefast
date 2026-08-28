@@ -30,14 +30,16 @@ import {
   runBenchSubprocess,
   runBenchSubprocessesInterleaved,
 } from "@codefast/benchmark-harness/parent/run-bench-subprocess";
-import { buildLibraryReport, type LibraryReport } from "@codefast/benchmark-harness/report/aggregate";
+import { buildLibraryReport } from "@codefast/benchmark-harness/report/aggregate";
+import type { LibraryReport } from "@codefast/benchmark-harness/report/aggregate";
 import type { ComparisonLibrary } from "@codefast/benchmark-harness/report/comparison";
 import {
   renderComparisonConsoleReport,
   renderComparisonMarkdownReport,
 } from "@codefast/benchmark-harness/report/comparison";
 import { buildComparisonDocument } from "@codefast/benchmark-harness/report/comparison-document";
-import { type BenchSubprocessConfig, resolveDisplayName } from "@codefast/benchmark-harness/shared/config";
+import { resolveDisplayName } from "@codefast/benchmark-harness/shared/config";
+import type { BenchSubprocessConfig } from "@codefast/benchmark-harness/shared/config";
 import {
   assertBenchEnvKeys,
   BENCH_VERBOSE_ENV_KEY,

@@ -11,13 +11,8 @@ import "reflect-metadata";
 import type { DependencyContainer } from "tsyringe";
 import { container as rootContainer, instanceCachingFactory } from "tsyringe";
 
-import {
-  assertGraphIsWellFormed,
-  type GraphDescriptor,
-  type NodeDescriptor,
-  type RealisticNode,
-  topologicallyOrderedNodeIds,
-} from "#/fixtures/realistic-graph";
+import { assertGraphIsWellFormed, topologicallyOrderedNodeIds } from "#/fixtures/realistic-graph";
+import type { GraphDescriptor, NodeDescriptor, RealisticNode } from "#/fixtures/realistic-graph";
 
 /**
  * A built child container plus every registration token, retained so sanity

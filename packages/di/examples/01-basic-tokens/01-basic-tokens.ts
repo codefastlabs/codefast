@@ -30,14 +30,14 @@ class FormalGreeter implements Greeter {
 }
 
 class Counter {
-  private count = 0;
+  #count = 0;
 
   increment(): number {
-    return ++this.count;
+    return ++this.#count;
   }
 
   value(): number {
-    return this.count;
+    return this.#count;
   }
 }
 

@@ -1,9 +1,11 @@
 import { useEffect, useMemo } from "react";
 
-import { type PaletteEntry, PALETTE } from "#/app/lib/colors";
+import { PALETTE } from "#/app/lib/colors";
+import type { PaletteEntry } from "#/app/lib/colors";
 import { searchNorm } from "#/app/lib/format";
-import { type ViewState } from "#/app/lib/hash";
-import { buildMetrics, buildSnapshotRow, type MetricsResult, type SnapshotRow } from "#/app/lib/metrics";
+import type { ViewState } from "#/app/lib/hash";
+import { buildMetrics, buildSnapshotRow } from "#/app/lib/metrics";
+import type { MetricsResult, SnapshotRow } from "#/app/lib/metrics";
 import type { EmbeddedLibraryMeta, EmbeddedRun, EmbeddedScenarioSeries, EmbeddedViewerPayload } from "#/types";
 
 interface DerivedPayloadOptions {

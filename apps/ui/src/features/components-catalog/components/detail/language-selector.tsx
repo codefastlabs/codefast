@@ -2,7 +2,8 @@ import { cn } from "@codefast/ui/lib/utils";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@codefast/ui/select";
 import type { ReactNode } from "react";
 
-import { type Language, languageOptions } from "#/features/components-catalog/components/detail/language";
+import { languageOptions } from "#/features/components-catalog/components/detail/language";
+import type { Language } from "#/features/components-catalog/components/detail/language";
 
 export interface LanguageSelectorProps {
   value: Language;

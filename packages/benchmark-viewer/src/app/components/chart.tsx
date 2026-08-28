@@ -1,15 +1,18 @@
-import { Chart, type ChartDataset } from "chart.js";
-import { type ComponentProps, type RefObject, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Chart } from "chart.js";
+import type { ChartDataset } from "chart.js";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import type { ComponentProps, RefObject } from "react";
 
 import { ChevronDownIcon } from "#/app/components/icons";
 import {
   ALL_TOOLBAR_DISABLED,
   categoryXScaleWindow,
-  type ChartToolbarDisabled,
   computeChartToolbarDisabled,
   computeInitialCategoryWindow,
 } from "#/app/lib/chart-view";
-import { type PaletteEntry, PAN_PIXELS_X, RATIO_COLORS, ZOOM_STEP_X } from "#/app/lib/colors";
+import type { ChartToolbarDisabled } from "#/app/lib/chart-view";
+import { PAN_PIXELS_X, RATIO_COLORS, ZOOM_STEP_X } from "#/app/lib/colors";
+import type { PaletteEntry } from "#/app/lib/colors";
 import { formatLocal, isMacLikePlatform, spreadTierLabel } from "#/app/lib/format";
 import { ratioFrom } from "#/app/lib/metrics";
 import { CHART_SKIP_TARGET_ID } from "#/app/lib/skip-chart";
