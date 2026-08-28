@@ -46,24 +46,24 @@ const UserControllerToken = token<UserController>("UserController");
 // ── Infrastructure ───────────────────────────────────────────────────────────────────────────────────────────────────
 
 class Database {
-  private connected = false;
+  #connected = false;
 
-  constructor(readonly url: string) {}
+  constructor(private readonly url: string) {}
 
   async connect(): Promise<void> {
     await tick();
-    this.connected = true;
+    this.#connected = true;
     console.log(`[DB] connected: ${this.url}`);
   }
 
   async disconnect(): Promise<void> {
     await tick();
-    this.connected = false;
+    this.#connected = false;
     console.log(`[DB] disconnected`);
   }
 
   async query<Row>(sql: string, parameters?: Array<unknown>): Promise<Array<Row>> {
-    if (!this.connected) {
+    if (!this.#connected) {
       throw new Error("Database not connected");
     }
     await tick();

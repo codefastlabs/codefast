@@ -95,48 +95,47 @@ interface DatabasePool {
 }
 
 class PostgresDatabasePool implements DatabasePool {
-  private connected = false;
-  private queryCount = 0;
-  private readonly connectedAt: Date;
+  #connected = false;
+  #connectedAt = 0;
+  #queryCount = 0;
 
   constructor(
     private readonly connectionString: string,
     private readonly maxConnections: number,
-  ) {
-    this.connectedAt = new Date();
-  }
+  ) {}
 
   static async connect(connectionString: string, maxConnections: number): Promise<PostgresDatabasePool> {
     const pool = new PostgresDatabasePool(connectionString, maxConnections);
     await delay(30); // simulate connection handshake
-    pool.connected = true;
+    pool.#connected = true;
+    pool.#connectedAt = Date.now();
     return pool;
   }
 
   async query<Row>(sql: string, parameters?: Array<unknown>): Promise<Array<Row>> {
-    if (!this.connected) {
+    if (!this.#connected) {
       throw new Error("Database pool is closed");
     }
-    this.queryCount++;
+    this.#queryCount++;
     await delay(5);
     const parameterInfo = parameters?.length ? ` [$${parameters.join(", $")}]` : "";
-    console.log(`    [DB] query #${this.queryCount}: ${sql.slice(0, 60)}${parameterInfo}`);
+    console.log(`    [DB] query #${this.#queryCount}: ${sql.slice(0, 60)}${parameterInfo}`);
     return [] as Array<Row>;
   }
 
   async healthCheck(): Promise<HealthCheckResult> {
     const start = Date.now();
-    if (!this.connected) {
+    if (!this.#connected) {
       return { status: "unhealthy", latencyMs: 0, detail: "pool closed" };
     }
     await delay(2);
-    return { status: "healthy", latencyMs: Date.now() - start };
+    return { status: "healthy", latencyMs: Date.now() - start, detail: `up ${Date.now() - this.#connectedAt}ms` };
   }
 
   async close(): Promise<void> {
     await delay(20);
-    this.connected = false;
-    console.log(`    [DB] pool closed after ${this.queryCount} queries`);
+    this.#connected = false;
+    console.log(`    [DB] pool closed after ${this.#queryCount} queries`);
   }
 }
 
@@ -151,44 +150,44 @@ interface RedisClient {
 }
 
 class StubRedisClient implements RedisClient {
-  private connected = true;
-  private readonly store = new Map<string, { value: string; expiresAt?: number }>();
-  private readonly url: string;
+  #connected = true;
+  readonly #store = new Map<string, { value: string; expiresAt?: number }>();
+  readonly #url: string;
 
   private constructor(url: string) {
-    this.url = url;
+    this.#url = url;
   }
 
   static async connect(redisUrl: string): Promise<StubRedisClient> {
     await delay(15);
     const client = new StubRedisClient(redisUrl);
-    console.log(`    [Redis] connected to ${client.url}`);
+    console.log(`    [Redis] connected to ${client.#url}`);
     return client;
   }
 
   async get(key: string): Promise<string | undefined> {
-    const entry = this.store.get(key);
+    const entry = this.#store.get(key);
     if (!entry) {
       return undefined;
     }
     if (entry.expiresAt && Date.now() > entry.expiresAt) {
-      this.store.delete(key);
+      this.#store.delete(key);
       return undefined;
     }
     return entry.value;
   }
 
   async set(key: string, value: string, exSeconds?: number): Promise<void> {
-    this.store.set(key, exSeconds !== undefined ? { value, expiresAt: Date.now() + exSeconds * 1000 } : { value });
+    this.#store.set(key, exSeconds !== undefined ? { value, expiresAt: Date.now() + exSeconds * 1000 } : { value });
   }
 
   async del(key: string): Promise<void> {
-    this.store.delete(key);
+    this.#store.delete(key);
   }
 
   async healthCheck(): Promise<HealthCheckResult> {
     const start = Date.now();
-    if (!this.connected) {
+    if (!this.#connected) {
       return { status: "unhealthy", latencyMs: 0, detail: "disconnected" };
     }
     await delay(1);
@@ -196,7 +195,7 @@ class StubRedisClient implements RedisClient {
   }
 
   async quit(): Promise<void> {
-    this.connected = false;
+    this.#connected = false;
     console.log("    [Redis] connection closed");
   }
 }
@@ -218,12 +217,12 @@ interface JobWorker {
 type JobHandler = (job: Job) => Promise<void>;
 
 class InMemoryJobQueue implements JobQueue {
-  private readonly jobs = new Map<string, Job>();
-  private readonly pending: Array<Job> = [];
-  private readonly handlers = new Map<string, JobHandler>();
+  readonly #jobs = new Map<string, Job>();
+  readonly #pending: Array<Job> = [];
+  readonly #handlers = new Map<string, JobHandler>();
 
   registerHandler(type: string, handler: JobHandler): void {
-    this.handlers.set(type, handler);
+    this.#handlers.set(type, handler);
   }
 
   async enqueue(type: string, payload: unknown): Promise<Job> {
@@ -234,35 +233,35 @@ class InMemoryJobQueue implements JobQueue {
       status: "pending",
       createdAt: new Date(),
     };
-    this.jobs.set(job.id, job);
-    this.pending.push(job);
+    this.#jobs.set(job.id, job);
+    this.#pending.push(job);
     return job;
   }
 
   async job(id: string): Promise<Job | undefined> {
-    return this.jobs.get(id);
+    return this.#jobs.get(id);
   }
 
   size(): number {
-    return this.pending.length;
+    return this.#pending.length;
   }
 
   dequeue(): Job | undefined {
-    return this.pending.shift();
+    return this.#pending.shift();
   }
 
   updateJob(id: string, updates: Partial<Job>): void {
-    const existingJob = this.jobs.get(id);
+    const existingJob = this.#jobs.get(id);
     if (existingJob) {
-      this.jobs.set(id, { ...existingJob, ...updates });
+      this.#jobs.set(id, { ...existingJob, ...updates });
     }
   }
 }
 
 class PollingJobWorker implements JobWorker {
-  private running = false;
-  private processed = 0;
-  private pollingInterval: ReturnType<typeof setInterval> | undefined;
+  #running = false;
+  #processed = 0;
+  #pollingInterval: ReturnType<typeof setInterval> | undefined;
 
   constructor(
     private readonly queue: InMemoryJobQueue,
@@ -270,15 +269,15 @@ class PollingJobWorker implements JobWorker {
   ) {}
 
   start(): void {
-    this.running = true;
-    this.pollingInterval = setInterval(() => {
-      void this.poll();
+    this.#running = true;
+    this.#pollingInterval = setInterval(() => {
+      void this.#poll();
     }, 50);
     console.log(`    [Worker] started (concurrency: ${this.concurrency})`);
   }
 
-  private async poll(): Promise<void> {
-    if (!this.running) {
+  async #poll(): Promise<void> {
+    if (!this.#running) {
       return;
     }
     const job = this.queue.dequeue();
@@ -290,7 +289,7 @@ class PollingJobWorker implements JobWorker {
     try {
       await delay(20); // simulate job processing
       this.queue.updateJob(job.id, { status: "completed", completedAt: new Date() });
-      this.processed++;
+      this.#processed++;
       console.log(`    [Worker] completed job ${job.id} (type: ${job.type})`);
     } catch (error) {
       this.queue.updateJob(job.id, {
@@ -301,19 +300,19 @@ class PollingJobWorker implements JobWorker {
   }
 
   async stop(): Promise<void> {
-    this.running = false;
-    if (this.pollingInterval) {
-      clearInterval(this.pollingInterval);
+    this.#running = false;
+    if (this.#pollingInterval) {
+      clearInterval(this.#pollingInterval);
     }
     // Drain remaining jobs
     while (this.queue.size() > 0) {
-      await this.poll();
+      await this.#poll();
     }
-    console.log(`    [Worker] stopped after processing ${this.processed} jobs`);
+    console.log(`    [Worker] stopped after processing ${this.#processed} jobs`);
   }
 
   processedCount(): number {
-    return this.processed;
+    return this.#processed;
   }
 }
 
@@ -325,19 +324,19 @@ interface HealthRegistry {
 }
 
 class ServiceHealthRegistry implements HealthRegistry {
-  private readonly checks = new Map<string, () => Promise<HealthCheckResult>>();
-  private readonly startedAt = Date.now();
+  readonly #checks = new Map<string, () => Promise<HealthCheckResult>>();
+  readonly #startedAt = Date.now();
 
   constructor(private readonly config: ServiceConfig) {}
 
   register(name: string, check: () => Promise<HealthCheckResult>): void {
-    this.checks.set(name, check);
+    this.#checks.set(name, check);
   }
 
   async runChecks(): Promise<HealthReport> {
     const results: Record<string, HealthCheckResult> = {};
     await Promise.all(
-      Array.from(this.checks.entries()).map(async ([name, check]) => {
+      Array.from(this.#checks.entries()).map(async ([name, check]) => {
         results[name] = await check();
       }),
     );
@@ -353,7 +352,7 @@ class ServiceHealthRegistry implements HealthRegistry {
       status: overallStatus,
       service: this.config.serviceName,
       version: this.config.version,
-      uptimeSeconds: Math.round((Date.now() - this.startedAt) / 1000),
+      uptimeSeconds: Math.round((Date.now() - this.#startedAt) / 1000),
       checks: results,
     };
   }
@@ -381,21 +380,25 @@ interface MockResponse {
 }
 
 class MockHttpServer implements HttpServer {
-  private readonly routes = new Map<string, (request: MockRequest) => Promise<MockResponse>>();
-  private running = false;
+  #running = false;
+  readonly #routes = new Map<string, (request: MockRequest) => Promise<MockResponse>>();
 
   addRoute(method: string, path: string, handler: (request: MockRequest) => Promise<MockResponse>): void {
-    this.routes.set(`${method} ${path}`, handler);
+    this.#routes.set(`${method} ${path}`, handler);
   }
 
   async handle(method: string, path: string, body?: unknown): Promise<MockResponse> {
+    if (!this.#running) {
+      return { status: 503, body: { error: "Service Unavailable" } };
+    }
+
     // exact match first, then parameterised match
-    const exactHandler = this.routes.get(`${method} ${path}`);
+    const exactHandler = this.#routes.get(`${method} ${path}`);
     if (exactHandler) {
       return exactHandler({ method, path, body, parameters: {} });
     }
 
-    for (const [routeKey, routeHandler] of this.routes) {
+    for (const [routeKey, routeHandler] of this.#routes) {
       // Use space as separator — colon is reserved for :param segments
       const spaceIndex = routeKey.indexOf(" ");
       const routeMethod = routeKey.slice(0, spaceIndex);
@@ -413,12 +416,12 @@ class MockHttpServer implements HttpServer {
   }
 
   start(): void {
-    this.running = true;
+    this.#running = true;
     console.log(`    [HTTP] server listening (mock)`);
   }
 
   async stop(): Promise<void> {
-    this.running = false;
+    this.#running = false;
     await delay(10);
     console.log("    [HTTP] server stopped");
   }
@@ -452,7 +455,7 @@ interface MetricsCollector {
 }
 
 class InMemoryMetricsCollector implements MetricsCollector {
-  private readonly counters = new Map<string, number>();
+  readonly #counters = new Map<string, number>();
 
   increment(metric: string, tags?: Record<string, string>): void {
     const key = tags
@@ -460,15 +463,15 @@ class InMemoryMetricsCollector implements MetricsCollector {
           .map(([k, v]) => `${k}="${v}"`)
           .join(",")}}`
       : metric;
-    this.counters.set(key, (this.counters.get(key) ?? 0) + 1);
+    this.#counters.set(key, (this.#counters.get(key) ?? 0) + 1);
   }
 
   gauge(metric: string, value: number): void {
-    this.counters.set(metric, value);
+    this.#counters.set(metric, value);
   }
 
   summary(): Record<string, number> {
-    return Object.fromEntries(this.counters);
+    return Object.fromEntries(this.#counters);
   }
 }
 

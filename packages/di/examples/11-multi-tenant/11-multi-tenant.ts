@@ -129,7 +129,7 @@ const InviteServiceToken = token<InviteService>("InviteService");
 // ── Shared infrastructure (root singletons) ──────────────────────────────────────────────────────────────────────────
 
 class PostgresConnectionPool implements DatabasePool {
-  private totalQueriesExecuted = 0;
+  #totalQueriesExecuted = 0;
 
   constructor(
     private readonly connectionString: string,
@@ -139,7 +139,7 @@ class PostgresConnectionPool implements DatabasePool {
   }
 
   async query<Row>(schema: string, sql: string, parameters?: Array<unknown>): Promise<Array<Row>> {
-    this.totalQueriesExecuted++;
+    this.#totalQueriesExecuted++;
     await delay(5);
     // Stub: return empty result with a log entry
     console.log(`    [Pool] schema=${schema} sql="${sql}" params=${JSON.stringify(parameters ?? [])}`);
@@ -152,7 +152,7 @@ class PostgresConnectionPool implements DatabasePool {
 
   async close(): Promise<void> {
     await delay(10);
-    console.log(`    [Pool] closed after ${this.totalQueriesExecuted} total queries`);
+    console.log(`    [Pool] closed after ${this.#totalQueriesExecuted} total queries`);
   }
 }
 
@@ -172,19 +172,19 @@ class TenantDatabaseConnection implements TenantDatabase {
 }
 
 class NamespacedRedisCache implements TenantCache {
-  private readonly store = new Map<string, { value: unknown; expiresAt: number }>();
+  readonly #store = new Map<string, { value: unknown; expiresAt: number }>();
 
   constructor(
     private readonly keyPrefix: string,
     private readonly tenantLogger: TenantLogger,
   ) {}
 
-  private fullKey(key: string): string {
+  #fullKey(key: string): string {
     return `${this.keyPrefix}:${key}`;
   }
 
   async get<Value>(key: string): Promise<Value | undefined> {
-    const entry = this.store.get(this.fullKey(key));
+    const entry = this.#store.get(this.#fullKey(key));
     if (!entry || Date.now() > entry.expiresAt) {
       return undefined;
     }
@@ -193,16 +193,16 @@ class NamespacedRedisCache implements TenantCache {
   }
 
   async set<Value>(key: string, value: Value, ttlSeconds = 300): Promise<void> {
-    this.store.set(this.fullKey(key), { value, expiresAt: Date.now() + ttlSeconds * 1000 });
+    this.#store.set(this.#fullKey(key), { value, expiresAt: Date.now() + ttlSeconds * 1000 });
     this.tenantLogger.info(`cache.set`, { key, ttlSeconds });
   }
 
   async invalidate(pattern: string): Promise<void> {
-    const prefix = this.fullKey(pattern);
+    const prefix = this.#fullKey(pattern);
     let deletedCount = 0;
-    for (const cachedKey of this.store.keys()) {
+    for (const cachedKey of this.#store.keys()) {
       if (cachedKey.startsWith(prefix)) {
-        this.store.delete(cachedKey);
+        this.#store.delete(cachedKey);
         deletedCount++;
       }
     }
@@ -211,7 +211,7 @@ class NamespacedRedisCache implements TenantCache {
 }
 
 class PlanFeatureFlags implements FeatureFlags {
-  private static readonly PLAN_FLAGS: Record<TenantPlan, Array<string>> = {
+  static readonly #PLAN_FLAGS: Record<TenantPlan, Array<string>> = {
     free: ["basic_auth", "file_upload"],
     pro: ["basic_auth", "file_upload", "api_access", "webhooks", "advanced_analytics"],
     enterprise: [
@@ -230,22 +230,22 @@ class PlanFeatureFlags implements FeatureFlags {
   constructor(private readonly plan: TenantPlan) {}
 
   isEnabled(flag: string): boolean {
-    return PlanFeatureFlags.PLAN_FLAGS[this.plan].includes(flag);
+    return PlanFeatureFlags.#PLAN_FLAGS[this.plan].includes(flag);
   }
 
   enabledFlags(): Array<string> {
-    return PlanFeatureFlags.PLAN_FLAGS[this.plan];
+    return PlanFeatureFlags.#PLAN_FLAGS[this.plan];
   }
 }
 
 class PlanRateLimiter implements RateLimiter {
-  private static readonly QUOTAS: Record<TenantPlan, Record<string, number>> = {
+  static readonly #QUOTAS: Record<TenantPlan, Record<string, number>> = {
     free: { api_call: 100, file_upload: 10, invite: 3 },
     pro: { api_call: 10_000, file_upload: 500, invite: 50 },
     enterprise: { api_call: Infinity, file_upload: Infinity, invite: Infinity },
   };
 
-  private readonly usage = new Map<string, number>();
+  readonly #usage = new Map<string, number>();
 
   constructor(
     private readonly plan: TenantPlan,
@@ -253,19 +253,19 @@ class PlanRateLimiter implements RateLimiter {
   ) {}
 
   checkQuota(operation: string): boolean {
-    const quota = PlanRateLimiter.QUOTAS[this.plan][operation] ?? 0;
-    const used = this.usage.get(operation) ?? 0;
+    const quota = PlanRateLimiter.#QUOTAS[this.plan][operation] ?? 0;
+    const used = this.#usage.get(operation) ?? 0;
     if (used >= quota) {
       this.tenantLogger.warn(`rate_limit.exceeded`, { operation, quota, used });
       return false;
     }
-    this.usage.set(operation, used + 1);
+    this.#usage.set(operation, used + 1);
     return true;
   }
 
   remaining(operation: string): number {
-    const quota = PlanRateLimiter.QUOTAS[this.plan][operation] ?? 0;
-    const used = this.usage.get(operation) ?? 0;
+    const quota = PlanRateLimiter.#QUOTAS[this.plan][operation] ?? 0;
+    const used = this.#usage.get(operation) ?? 0;
     return Math.max(0, quota === Infinity ? Infinity : quota - used);
   }
 }

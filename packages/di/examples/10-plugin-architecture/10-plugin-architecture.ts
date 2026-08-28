@@ -125,7 +125,7 @@ const CoreModule = Module.create("Core", (builder) => {
 
 class S3StorageProvider implements StorageProvider {
   readonly name = "s3";
-  private readonly store = new Map<string, string>();
+  readonly #store = new Map<string, string>();
 
   constructor(
     private readonly bucket: string,
@@ -135,7 +135,7 @@ class S3StorageProvider implements StorageProvider {
 
   async upload(key: string, data: string): Promise<string> {
     await simulateLatency(15);
-    this.store.set(key, data);
+    this.#store.set(key, data);
     const publicUrl = `https://${this.bucket}.s3.${this.region}.amazonaws.com/${key}`;
     this.logger.info(`[S3] uploaded → s3://${this.bucket}/${key}`);
     return publicUrl;
@@ -143,7 +143,7 @@ class S3StorageProvider implements StorageProvider {
 
   async download(key: string): Promise<string> {
     await simulateLatency(10);
-    const storedData = this.store.get(key);
+    const storedData = this.#store.get(key);
     if (!storedData) {
       throw new Error(`S3: key not found: ${key}`);
     }
@@ -179,7 +179,7 @@ const S3PluginModule = Module.createAsync("S3Plugin", async (builder) => {
 
 class SegmentAnalyticsProvider implements AnalyticsProvider {
   readonly name = "segment";
-  private readonly eventQueue: Array<{ event: string; properties?: Record<string, unknown> }> = [];
+  readonly #eventQueue: Array<{ event: string; properties?: Record<string, unknown> }> = [];
 
   constructor(
     private readonly apiKey: string,
@@ -187,17 +187,17 @@ class SegmentAnalyticsProvider implements AnalyticsProvider {
   ) {}
 
   track(event: string, properties?: Record<string, unknown>): void {
-    this.eventQueue.push(properties !== undefined ? { event, properties } : { event });
-    this.logger.info(`[Segment] queued "${event}" (queue: ${this.eventQueue.length})`);
+    this.#eventQueue.push(properties !== undefined ? { event, properties } : { event });
+    this.logger.info(`[Segment] queued "${event}" (queue: ${this.#eventQueue.length})`);
   }
 
   async flush(): Promise<void> {
-    if (this.eventQueue.length === 0) {
+    if (this.#eventQueue.length === 0) {
       return;
     }
     await simulateLatency(30);
-    this.logger.info(`[Segment] flushed ${this.eventQueue.length} events`);
-    this.eventQueue.length = 0;
+    this.logger.info(`[Segment] flushed ${this.#eventQueue.length} events`);
+    this.#eventQueue.length = 0;
   }
 
   async shutdown(): Promise<void> {
@@ -304,18 +304,18 @@ class DocumentOrchestrator implements DocumentService {
 
 class LocalStorageProvider implements StorageProvider {
   readonly name = "local";
-  private readonly store = new Map<string, string>();
+  readonly #store = new Map<string, string>();
 
   constructor(private readonly logger: AppLogger) {}
 
   async upload(key: string, data: string): Promise<string> {
-    this.store.set(key, data);
+    this.#store.set(key, data);
     this.logger.info(`[LocalStorage] stored "${key}" in memory`);
     return `local://${key}`;
   }
 
   async download(key: string): Promise<string> {
-    const storedData = this.store.get(key);
+    const storedData = this.#store.get(key);
     if (!storedData) {
       throw new Error(`LocalStorage: key not found: ${key}`);
     }
@@ -339,13 +339,13 @@ const LocalStoragePluginModule = Module.createAsync("LocalStoragePlugin", async 
 // ── Platform — the plugin host ───────────────────────────────────────────────────────────────────────────────────────
 
 class Platform {
-  private container!: Container;
+  #container!: Container;
 
   async boot(): Promise<void> {
     section("🚀 Booting platform");
 
     // Load infrastructure modules — CoreModule deduped across all three
-    this.container = await Container.fromModulesAsync(
+    this.#container = await Container.fromModulesAsync(
       CoreModule,
       S3PluginModule,
       AnalyticsPluginModule,
@@ -353,11 +353,11 @@ class Platform {
     );
 
     // Eagerly warm up all singletons before serving traffic
-    await this.container.initializeAsync();
-    this.container.validate();
+    await this.#container.initializeAsync();
+    this.#container.validate();
 
     // Register plugin descriptors directly on the container with named slots.
-    this.container
+    this.#container
       .bind(PluginToken)
       .toConstantValue({
         name: "S3StoragePlugin",
@@ -365,7 +365,7 @@ class Platform {
         capabilities: ["storage"],
       })
       .whenNamed("storage");
-    this.container
+    this.#container
       .bind(PluginToken)
       .toConstantValue({
         name: "SegmentAnalyticsPlugin",
@@ -373,7 +373,7 @@ class Platform {
         capabilities: ["analytics"],
       })
       .whenNamed("analytics");
-    this.container
+    this.#container
       .bind(PluginToken)
       .toConstantValue({
         name: "SlackNotificationPlugin",
@@ -383,7 +383,7 @@ class Platform {
       .whenNamed("notifications");
 
     // Register DocumentService — resolves via async tokens, so use toDynamicAsync
-    this.container
+    this.#container
       .bind(DocumentServiceToken)
       .toDynamicAsync(async (context) => {
         const storage = await context.resolveAsync(StorageToken);
@@ -395,7 +395,7 @@ class Platform {
       .singleton();
 
     // Print loaded plugins — resolveAll reads all three container.bind() entries
-    const loadedPlugins = this.container.resolveAll(PluginToken);
+    const loadedPlugins = this.#container.resolveAll(PluginToken);
     ok(`${loadedPlugins.length} plugin(s) loaded`);
     for (const pluginDescriptor of loadedPlugins) {
       console.log(
@@ -407,7 +407,7 @@ class Platform {
   async runWithDocumentService<Result>(
     callback: (documentService: DocumentService) => Promise<Result>,
   ): Promise<Result> {
-    const documentService = await this.container.resolveAsync(DocumentServiceToken);
+    const documentService = await this.#container.resolveAsync(DocumentServiceToken);
     return callback(documentService);
   }
 
@@ -418,10 +418,10 @@ class Platform {
     section(`🔄 Hot-swapping storage plugin → ${newDescriptor.name}...`);
 
     // Unload old plugin — fires onDeactivation (closes S3 connection pool)
-    await this.container.unloadAsync(S3PluginModule);
+    await this.#container.unloadAsync(S3PluginModule);
 
     // Re-register DocumentService without the old storage singleton
-    this.container
+    this.#container
       .rebind(DocumentServiceToken)
       .toDynamicAsync(async (context) => {
         const storage = await context.resolveAsync(StorageToken);
@@ -433,26 +433,26 @@ class Platform {
       .singleton();
 
     // Load new storage plugin and warm up only its singleton
-    await this.container.loadAsync(newPluginModule);
-    await this.container.resolveAsync(StorageToken);
+    await this.#container.loadAsync(newPluginModule);
+    await this.#container.resolveAsync(StorageToken);
 
     // Register new descriptor in the same named slot to replace old storage descriptor.
-    this.container.bind(PluginToken).toConstantValue(newDescriptor).whenNamed("storage");
+    this.#container.bind(PluginToken).toConstantValue(newDescriptor).whenNamed("storage");
 
-    const activePlugins = this.container.resolveAll(PluginToken);
+    const activePlugins = this.#container.resolveAll(PluginToken);
     console.log(
       `   Active plugins (${activePlugins.length}): ${activePlugins.map((pluginDescriptor) => pluginDescriptor.name).join(", ")}`,
     );
   }
 
   async flushAnalytics(): Promise<void> {
-    const analyticsProvider = await this.container.resolveAsync(AnalyticsToken);
+    const analyticsProvider = await this.#container.resolveAsync(AnalyticsToken);
     await analyticsProvider.flush();
   }
 
   async shutdown(): Promise<void> {
     section("🛑 Shutting down platform");
-    await this.container.dispose(); // fires all onDeactivation hooks
+    await this.#container.dispose(); // fires all onDeactivation hooks
     ok("Platform shutdown complete");
   }
 }

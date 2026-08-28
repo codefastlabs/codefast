@@ -98,7 +98,7 @@ class SmtpEmailService implements EmailService {
 
 @injectable([inject(LoggerToken)])
 class DatabaseUserService implements UserService {
-  private readonly users = new Map([
+  readonly #users = new Map([
     ["u1", { id: "u1", email: "alice@example.com" }],
     ["u2", { id: "u2", email: "bob@example.com" }],
   ]);
@@ -107,7 +107,7 @@ class DatabaseUserService implements UserService {
 
   findUser(id: string): { id: string; email: string } | undefined {
     this.logger.log(`findUser(${id})`);
-    return this.users.get(id);
+    return this.#users.get(id);
   }
 }
 
@@ -167,30 +167,30 @@ class StubEmailService implements EmailService {
 }
 
 class StubUserService implements UserService {
-  private readonly fixture = new Map<string, { id: string; email: string }>();
+  readonly #fixture = new Map<string, { id: string; email: string }>();
 
   seed(id: string, email: string): this {
-    this.fixture.set(id, { id, email });
+    this.#fixture.set(id, { id, email });
     return this;
   }
 
   findUser(id: string): { id: string; email: string } | undefined {
-    return this.fixture.get(id);
+    return this.#fixture.get(id);
   }
 }
 
 class StubPaymentGateway implements PaymentGateway {
   capturedPayments: Array<{ userId: string; amount: number }> = [];
-  private shouldFail = false;
+  #shouldFail = false;
 
   failNextCharge(): this {
-    this.shouldFail = true;
+    this.#shouldFail = true;
     return this;
   }
 
   charge(userId: string, amount: number): { success: boolean; transactionId: string } {
-    if (this.shouldFail) {
-      this.shouldFail = false;
+    if (this.#shouldFail) {
+      this.#shouldFail = false;
       return { success: false, transactionId: "" };
     }
     this.capturedPayments.push({ userId, amount });

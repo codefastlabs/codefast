@@ -76,25 +76,25 @@ const silentLogger: Logger = {
 
 class S3Storage implements Storage {
   provider = "s3";
-  private store = new Map<string, string>();
+  #store = new Map<string, string>();
   write(key: string, data: string): void {
-    this.store.set(key, data);
+    this.#store.set(key, data);
     console.log(`[S3] wrote ${key}`);
   }
   read(key: string): string | undefined {
-    return this.store.get(key);
+    return this.#store.get(key);
   }
 }
 
 class LocalStorage implements Storage {
   provider = "local";
-  private store = new Map<string, string>();
+  #store = new Map<string, string>();
   write(key: string, data: string): void {
-    this.store.set(key, data);
+    this.#store.set(key, data);
     console.log(`[Local] wrote ${key}`);
   }
   read(key: string): string | undefined {
-    return this.store.get(key);
+    return this.#store.get(key);
   }
 }
 

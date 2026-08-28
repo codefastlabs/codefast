@@ -130,35 +130,35 @@ class PostgresDatabase implements Database {
 
 @injectable([inject(DatabaseToken)], { autoRegister: domainRegistry, scope: "singleton" })
 class SqlUserRepository implements UserRepository {
-  private readonly users = new Map<string, { id: string; name: string }>();
+  readonly #users = new Map<string, { id: string; name: string }>();
 
   constructor(private readonly database: Database) {}
 
   findById(id: string): { id: string; name: string } | undefined {
     this.database.query(`SELECT * FROM users WHERE id = '${id}'`);
-    return this.users.get(id);
+    return this.#users.get(id);
   }
 
   save(user: { id: string; name: string }): void {
     this.database.query(`INSERT INTO users VALUES ('${user.id}', '${user.name}')`);
-    this.users.set(user.id, user);
+    this.#users.set(user.id, user);
   }
 }
 
 @injectable([inject(DatabaseToken)], { autoRegister: domainRegistry, scope: "singleton" })
 class SqlOrderRepository implements OrderRepository {
-  private readonly orders: Array<{ id: string; userId: string; total: number }> = [];
+  readonly #orders: Array<{ id: string; userId: string; total: number }> = [];
 
   constructor(private readonly database: Database) {}
 
   findByUserId(userId: string): Array<{ id: string; userId: string; total: number }> {
     this.database.query(`SELECT * FROM orders WHERE user_id = '${userId}'`);
-    return this.orders.filter((order) => order.userId === userId);
+    return this.#orders.filter((order) => order.userId === userId);
   }
 
   save(order: { id: string; userId: string; total: number }): void {
     this.database.query(`INSERT INTO orders VALUES ('${order.id}', '${order.userId}', ${order.total})`);
-    this.orders.push(order);
+    this.#orders.push(order);
   }
 }
 
@@ -191,7 +191,7 @@ class UserManager implements UserService {
 })
 class OrderProcessor implements OrderService {
   // The singleton holds the sequence, so ids stay unique even within one millisecond.
-  private orderSeq = 0;
+  #orderSeq = 0;
 
   constructor(
     private readonly orderRepository: OrderRepository,
@@ -208,7 +208,7 @@ class OrderProcessor implements OrderService {
     if (user === undefined) {
       throw new Error(`User ${userId} not found`);
     }
-    const order = { id: `ord-${Date.now()}-${(++this.orderSeq).toString().padStart(4, "0")}`, userId, total };
+    const order = { id: `ord-${Date.now()}-${(++this.#orderSeq).toString().padStart(4, "0")}`, userId, total };
     this.orderRepository.save(order);
     this.notificationService.send(userId, `Order placed: $${total}`);
   }

@@ -28,28 +28,28 @@ interface Config {
 }
 
 class Database {
-  private connected = false;
+  #connected = false;
 
-  constructor(readonly url: string) {}
+  constructor(private readonly url: string) {}
 
   async connect(): Promise<void> {
     await delay(20); // simulate async
-    this.connected = true;
+    this.#connected = true;
     console.log(`[Database] connected to ${this.url}`);
   }
 
   async disconnect(): Promise<void> {
     await delay(10);
-    this.connected = false;
+    this.#connected = false;
     console.log(`[Database] disconnected`);
   }
 
   isConnected(): boolean {
-    return this.connected;
+    return this.#connected;
   }
 
   query(sql: string): string {
-    if (!this.connected) {
+    if (!this.#connected) {
       throw new Error("Not connected");
     }
     return `result(${sql})`;
@@ -57,25 +57,31 @@ class Database {
 }
 
 class Cache {
-  private isStarted = false;
-  private readonly store = new Map<string, string>();
+  #isStarted = false;
+  readonly #store = new Map<string, string>();
 
-  constructor(readonly url: string) {}
+  constructor(private readonly url: string) {}
 
   async start(): Promise<void> {
+    if (this.#isStarted) {
+      return;
+    }
     await delay(10);
-    this.isStarted = true;
+    this.#isStarted = true;
     console.log(`[Cache] started at ${this.url}`);
   }
 
   async stop(): Promise<void> {
+    if (!this.#isStarted) {
+      return;
+    }
     await delay(5);
-    this.isStarted = false;
+    this.#isStarted = false;
     console.log(`[Cache] stopped`);
   }
 
   get(key: string): string | undefined {
-    return this.store.get(key);
+    return this.#store.get(key);
   }
 }
 
