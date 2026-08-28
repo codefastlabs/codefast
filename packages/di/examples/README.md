@@ -57,6 +57,7 @@ its own domain logging.
 | 17  | [17-extended-constraints](./17-extended-constraints)               | Full constraint family: `whenAnyAncestorIs`, `whenParentNamed`, `whenParentTaggedAll`, … |
 | 18  | [18-ambient-container](./18-ambient-container)                     | `@inject()` accessor injection, `getActiveContainer()`, `runWithContainer()`             |
 | 19  | [19-custom-metadata-reader](./19-custom-metadata-reader)           | `MetadataReader`, `MetadataReaderToken` — wiring classes that carry no decorators        |
+| 20  | [20-explicit-architecture](./20-explicit-architecture)             | Multi-file Ports & Adapters app; `@injectable` wiring with a framework-free domain       |
 
 ---
 
@@ -71,6 +72,7 @@ Everything else builds on top of them.
 
 - Selecting between multiple implementations → `06`, `17`
 - Structuring a real application → `07`, `10`, `11`, `12`, `13`
+- Keeping the DI container out of your domain (Explicit / Hexagonal Architecture) → `20`
 - Advanced binding strategies → `08`
 - Error diagnosis → `09`
 - Reducing boilerplate → `14`
