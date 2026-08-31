@@ -434,6 +434,12 @@ Scope **always** comes after `when*` in the chain ([see 2.4](#chain-order)). The
 `transient` — but the `on*()` lifecycle hooks are **only available after scope() is called** explicitly. If you do not
 need lifecycle hooks, you can skip `scope()` and take the transient default.
 
+> **Why `transient` is the default:** it is the safest row of the matrix below — a `transient` consumer may depend on
+> any scope without a captive dependency, so the default can never introduce a violation on its own. It is also a fixed
+> constant inlined at each `to*()`, never a container-level setting: `bind(X).to(Y)` means the same thing in every file,
+> which keeps with the no-hidden-behaviour principle. Reach for `singleton()` or `scoped()` explicitly the moment a
+> binding needs shared state or a lifecycle.
+
 **Scope validation matrix — captive dependency:**
 
 | Consumer ╲ Dependency | `singleton` | `scoped`     | `transient`  |
