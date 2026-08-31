@@ -17,6 +17,8 @@ import type { InjectionIdentifier } from "#/types";
  *
  * @typeParam Backend - The spy type the mock factory produces; it flows into every `Mocked` member,
  * `mocks.get`, and the `.stub` callback, so `() => vi.fn()` yields Vitest's own mock typing.
+ *
+ * @since 0.1.0
  */
 export interface TestBedOptions<Backend extends MockFunction = Spy> {
   /** Spy factory each auto-mock property is materialized with; defaults to the built-in spy. */
@@ -31,6 +33,8 @@ export interface TestBedOptions<Backend extends MockFunction = Spy> {
  * @typeParam Dependency - The dependency's value type.
  * @typeParam Owner - The builder the chain returns to.
  * @typeParam Backend - The spy type the bed's mock factory produces.
+ *
+ * @since 0.1.0
  */
 export interface MockOverrideBuilder<Dependency, Owner, Backend extends MockFunction = Spy> {
   /**
@@ -54,6 +58,8 @@ export interface MockOverrideBuilder<Dependency, Owner, Backend extends MockFunc
 
 /**
  * What a builder's prepare step hands the compile template: the container and the bound mock entries.
+ *
+ * @since 0.1.0
  */
 export interface PreparedBed {
   readonly container: Container;
@@ -69,6 +75,8 @@ export interface PreparedBed {
  *
  * @typeParam Class - The class under test.
  * @typeParam Backend - The spy type the bed's mock factory produces.
+ *
+ * @since 0.1.0
  */
 export abstract class BedBuilder<Class, Backend extends MockFunction = Spy> {
   protected readonly target: Constructor<Class>;

@@ -8,6 +8,8 @@ import { createSpy } from "#/mocking/spy";
  *
  * @remarks Deliberately structural so any backend qualifies: the built-in {@link Spy}, a Vitest
  * `vi.fn()`, a `jest.fn()`, or a Sinon stub all satisfy it.
+ *
+ * @since 0.1.0
  */
 export type MockFunction = (...args: ReadonlyArray<unknown>) => unknown;
 
@@ -20,10 +22,14 @@ export type MockFunction = (...args: ReadonlyArray<unknown>) => unknown;
  * with no adapter package and no module augmentation.
  *
  * @typeParam Backend - The spy type one factory call produces; defaults to the loose callable.
+ *
+ * @since 0.1.0
  */
 export type MockFactory<Backend extends MockFunction = MockFunction> = () => Backend;
 
 /**
  * The default `MockFactory` — one built-in {@link Spy} per call, with no test-framework dependency.
+ *
+ * @since 0.1.0
  */
 export const defaultMockFactory: MockFactory<Spy> = () => createSpy();

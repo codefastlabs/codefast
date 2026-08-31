@@ -17,6 +17,8 @@ import type { Spy } from "#/mocking/spy";
  * A lookup from a dependency's token or class to the mock the unit was built with.
  *
  * @typeParam Backend - The spy type the bed's mock factory produces.
+ *
+ * @since 0.1.0
  */
 export interface UnitReference<Backend extends MockFunction = Spy> {
   /**
@@ -44,6 +46,8 @@ export interface UnitReference<Backend extends MockFunction = Spy> {
  *
  * @typeParam Class - The class under test.
  * @typeParam Backend - The spy type the bed's mock factory produces.
+ *
+ * @since 0.1.0
  */
 export interface UnitTestBed<Class, Backend extends MockFunction = Spy> extends AsyncDisposable {
   readonly unit: Class;
@@ -59,6 +63,8 @@ export interface UnitTestBed<Class, Backend extends MockFunction = Spy> extends 
  *
  * @typeParam Class - The class under test.
  * @typeParam Backend - The spy type the bed's mock factory produces.
+ *
+ * @since 0.1.0
  */
 export interface SociableUnitTestBed<Class, Backend extends MockFunction = Spy> extends UnitTestBed<Class, Backend> {
   /**
@@ -71,6 +77,8 @@ export interface SociableUnitTestBed<Class, Backend extends MockFunction = Spy> 
 
 /**
  * Wraps a compiled bed with access to its exposed real collaborators.
+ *
+ * @since 0.1.0
  */
 export function createSociableUnitTestBed<Class, Backend extends MockFunction = Spy>(
   bed: UnitTestBed<Class, Backend>,
@@ -97,6 +105,8 @@ export function createSociableUnitTestBed<Class, Backend extends MockFunction = 
 
 /**
  * Assembles a {@link UnitTestBed} around an instantiated unit and its bound mock entries.
+ *
+ * @since 0.1.0
  */
 export function createUnitTestBed<Class, Backend extends MockFunction = Spy>(
   unit: Class,

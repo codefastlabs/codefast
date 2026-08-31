@@ -12,6 +12,8 @@ import type { SolitaryTestBedBuilder } from "#/test-bed/solitary-builder";
 
 /**
  * The factory surface for building isolated units under test.
+ *
+ * @since 0.1.0
  */
 export interface TestBedStatic {
   /**
@@ -43,6 +45,8 @@ export interface TestBedStatic {
  *
  * @remarks `solitary` and `sociable` record the target and options only; nothing is instantiated
  * until `compile()`.
+ *
+ * @since 0.1.0
  */
 export const TestBed: TestBedStatic = {
   solitary<Class, Backend extends MockFunction = Spy>(

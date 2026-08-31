@@ -18,6 +18,8 @@ import type { InjectionIdentifier } from "#/types";
  *
  * @typeParam Class - The class under test.
  * @typeParam Backend - The spy type the bed's mock factory produces.
+ *
+ * @since 0.1.0
  */
 export interface SolitaryTestBedBuilder<Class, Backend extends MockFunction = Spy> {
   /** Replaces the auto-mock for one dependency with a hand-written stub or a concrete value. */
@@ -36,6 +38,8 @@ export interface SolitaryTestBedBuilder<Class, Backend extends MockFunction = Sp
  *
  * @typeParam Class - The class under test.
  * @typeParam Backend - The spy type the bed's mock factory produces.
+ *
+ * @since 0.1.0
  */
 export class SolitaryBuilder<Class, Backend extends MockFunction = Spy>
   extends BedBuilder<Class, Backend>

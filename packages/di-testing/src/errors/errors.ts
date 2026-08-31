@@ -5,6 +5,8 @@
  *
  * @remarks Mirrors `@codefast/di`'s own `DiError` shape rather than extending it, so a caller can
  * catch testing-setup failures separately from resolution failures.
+ *
+ * @since 0.1.0
  */
 export abstract class TestingError extends Error {
   abstract readonly code: string;
@@ -17,6 +19,8 @@ export abstract class TestingError extends Error {
 
 /**
  * A scanned class takes constructor parameters but carries no `@injectable` metadata.
+ *
+ * @since 0.1.0
  */
 export class NotInjectableError extends TestingError {
   readonly code = "NOT_INJECTABLE";
@@ -35,6 +39,8 @@ export class NotInjectableError extends TestingError {
  *
  * @remarks Almost always a typo or a stale token reference; failing loudly beats silently binding an
  * unused constant or returning `undefined`.
+ *
+ * @since 0.1.0
  */
 export class UndeclaredDependencyError extends TestingError {
   readonly code = "UNDECLARED_DEPENDENCY";
@@ -48,7 +54,11 @@ export class UndeclaredDependencyError extends TestingError {
   }
 }
 
-/** What a sealed entry was supplied with, naming the one cause a lookup error should report. */
+/**
+ * What a sealed entry was supplied with, naming the one cause a lookup error should report.
+ *
+ * @since 0.1.0
+ */
 export type SealedCause = "value" | "absent" | "all" | "exposed";
 
 const SEALED_MESSAGES: Readonly<Record<SealedCause, string>> = {
@@ -63,6 +73,8 @@ const SEALED_MESSAGES: Readonly<Record<SealedCause, string>> = {
  *
  * @remarks `.using()`, `.absent()`, and `.usingAll()` seal the value, and an exposed class is real —
  * none of them carries a mock surface, so handing them back typed as `Mocked` would lie.
+ *
+ * @since 0.1.0
  */
 export class SealedDependencyError extends TestingError {
   readonly code = "SEALED_DEPENDENCY";
@@ -77,6 +89,8 @@ export class SealedDependencyError extends TestingError {
 /**
  * An override whose shape does not fit the slot it targets — `.absent()` on a required dependency,
  * or `.usingAll()` where no unconstrained `injectAll()` slot exists.
+ *
+ * @since 0.1.0
  */
 export class OverrideMismatchError extends TestingError {
   readonly code = "OVERRIDE_MISMATCH";
@@ -91,6 +105,8 @@ export class OverrideMismatchError extends TestingError {
 /**
  * A sociable bed's exposure could not be honoured — the class is unreachable, already the unit, or
  * was asked for without having been exposed.
+ *
+ * @since 0.1.0
  */
 export class ExposureError extends TestingError {
   readonly code = "EXPOSURE";
