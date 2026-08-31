@@ -46,7 +46,7 @@ catalog:
   "@types/node": ^26.2.0
   "@types/picomatch": ^4.0.3
   "@types/react": ^19.2.18
-  "@types/react-dom": ^19.2.4
+  "@types/react-dom": ^19.2.5
   "@unpic/react": ^1.0.2
   "@vercel/analytics": ^2.0.1
   "@vitejs/plugin-react": ^6.1.0
