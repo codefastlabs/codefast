@@ -18,6 +18,7 @@
     "preview": "vite preview --port 3001",
     "check-types": "tsc --noEmit",
     "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
     "test:unit": "vitest run tests/unit",
     "test:watch": "vitest"
   },
@@ -45,6 +46,7 @@
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
     "@vitejs/plugin-react": "catalog:",
+    "@vitest/coverage-v8": "catalog:",
     "babel-plugin-react-compiler": "catalog:",
     "nitro": "catalog:",
     "typescript": "catalog:",
