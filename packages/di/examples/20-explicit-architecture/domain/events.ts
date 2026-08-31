@@ -22,6 +22,15 @@ export interface MoneyDeposited {
   at: Date;
 }
 
+/** Emitted when funds are removed from an account. */
+export interface MoneyWithdrawn {
+  type: "MoneyWithdrawn";
+  accountId: AccountId;
+  amountMinor: number;
+  currency: string;
+  at: Date;
+}
+
 /** Emitted when funds move between two accounts. */
 export interface MoneyTransferred {
   type: "MoneyTransferred";
@@ -43,4 +52,4 @@ export interface LargeTransferAttempted {
 }
 
 /** The closed set of events the domain publishes. */
-export type DomainEvent = AccountOpened | MoneyDeposited | MoneyTransferred | LargeTransferAttempted;
+export type DomainEvent = AccountOpened | MoneyDeposited | MoneyWithdrawn | MoneyTransferred | LargeTransferAttempted;

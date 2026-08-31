@@ -9,10 +9,12 @@
  * stays framework-free. The container is the composition root and lives at the edge.
  *
  * The scenario is a private bank clearing a large transfer against a closing settlement window: one
- * `LargeTransferAttempted` event fans out to four subscribers (audit, metrics, fraud, compliance), the
- * domain refuses the overdraft that follows, and a frozen clock replays the exact instant. It exercises
- * `@injectable` constructor injection, `injectAll` fan-out, modules, singleton and scoped lifetimes,
- * `validate`, `rebind` for test doubles, and `generateDependencyGraph`.
+ * `LargeTransferAttempted` event fans out to four subscribers (audit, metrics, fraud, compliance), a
+ * branch withdrawal draws the balance down, and then the domain refuses three operations the rules
+ * forbid — an over-limit withdrawal, a deposit to an account that was never opened, and a cross-currency
+ * transfer — before a frozen clock replays the exact instant. It exercises `@injectable` constructor
+ * injection, `injectAll` fan-out, modules, singleton and scoped lifetimes, `validate`, `rebind` for test
+ * doubles, and `generateDependencyGraph`.
  */
 
 import { toDotGraph } from "@codefast/di";
@@ -72,7 +74,29 @@ try {
   caughtError("second transfer refused", error);
 }
 
-section("Outbound fan-out — one attempt, four adapters (injectAll)");
+section("Request 3 — the client draws USD 1,000,000 in cash; the balance updates through the same ports");
+bank.withdraw(client, 1_000_000, "USD");
+item("client balance after withdrawal", accounts.findById(toAccountId(client))?.balance.toString());
+
+section("Three operations the DOMAIN refuses — the rules live in the core, not the adapters");
+try {
+  bank.withdraw(client, 999_000_000, "USD");
+} catch (error) {
+  caughtError("over-limit withdrawal refused", error);
+}
+try {
+  bank.deposit("acc-9999", 1000, "USD");
+} catch (error) {
+  caughtError("deposit to an unopened account refused", error);
+}
+const euroVault = bank.open("Meridian Euro Vault", "EUR");
+try {
+  bank.transfer(client, euroVault, 100, "EUR");
+} catch (error) {
+  caughtError("cross-currency transfer refused", error);
+}
+
+section("Outbound fan-out — every attempt above, four adapters (injectAll)");
 item("audit trail", container.resolve(AuditLogToken).entries);
 item("events counted by metrics", container.resolve(MetricsToken).total);
 item("large transfers flagged by fraud", container.resolve(FraudEngineToken).flagged);

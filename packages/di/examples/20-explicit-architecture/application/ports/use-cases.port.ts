@@ -19,6 +19,13 @@ export interface DepositMoneyCommand {
   currency: string;
 }
 
+/** Instruction to remove funds from an account. */
+export interface WithdrawMoneyCommand {
+  accountId: string;
+  amountMajor: number;
+  currency: string;
+}
+
 /** Instruction to move funds between two accounts. */
 export interface TransferMoneyCommand {
   fromAccountId: string;
@@ -39,6 +46,11 @@ export interface DepositMoneyUseCase {
   execute(command: DepositMoneyCommand): void;
 }
 
+/** Removes funds from an existing account, refusing to overdraw it. */
+export interface WithdrawMoneyUseCase {
+  execute(command: WithdrawMoneyCommand): void;
+}
+
 /** Moves funds from one account to another. */
 export interface TransferMoneyUseCase {
   execute(command: TransferMoneyCommand): void;
@@ -51,6 +63,9 @@ export const OpenAccountUseCaseToken = token<OpenAccountUseCase>("OpenAccountUse
 
 /** The injection token that names the deposit-money use case. */
 export const DepositMoneyUseCaseToken = token<DepositMoneyUseCase>("DepositMoneyUseCase");
+
+/** The injection token that names the withdraw-money use case. */
+export const WithdrawMoneyUseCaseToken = token<WithdrawMoneyUseCase>("WithdrawMoneyUseCase");
 
 /** The injection token that names the transfer-money use case. */
 export const TransferMoneyUseCaseToken = token<TransferMoneyUseCase>("TransferMoneyUseCase");
