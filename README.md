@@ -91,6 +91,7 @@ confusing, a prop feels awkward, or a component is missing,
 | [`@codefast/theme`](packages/theme)                         | Appearance management for React 19 — optimistic updates, cross-tab sync, FOUC-free SSR          |
 | [`@codefast/tracking`](packages/tracking)                   | Consent-gated, type-safe event tracking for TanStack Start over a Standard Schema event catalog |
 | [`@codefast/di`](packages/di)                               | Lightweight dependency-injection primitives for TypeScript                                      |
+| [`@codefast/di-testing`](packages/di-testing)               | Solitary and sociable auto-mocking test beds for `@codefast/di`                                 |
 | [`@codefast/cli`](packages/cli)                             | Developer CLI for the monorepo (`arrange`, `audit`, `mirror`, `tag`)                            |
 | [`@codefast/typescript-config`](packages/typescript-config) | Shared TypeScript configuration presets                                                         |
 

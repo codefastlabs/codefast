@@ -279,7 +279,7 @@ point of use beats brevity, and every word must convey information:
 | `packages/tailwind-variants` | Type-safe variant styling API (faster `tailwind-variants` replacement); used by `ui`                  |
 | `packages/theme`             | Theme management using React 19 features (optimistic updates, cross-tab sync)                         |
 | `packages/di`                | Lightweight dependency-injection primitives                                                           |
-| `packages/di-testing`        | Solitary auto-mocking test beds for `@codefast/di` (`TestBed.solitary`)                               |
+| `packages/di-testing`        | Solitary and sociable auto-mocking test beds for `@codefast/di` (`TestBed.solitary`/`.sociable`)      |
 | `packages/tracking`          | Consent-gated, type-safe event tracking for TanStack Start over a Standard Schema event catalog       |
 | `packages/cli`               | `codefast` CLI — subcommands `arrange`, `audit`, `mirror`, `tag` (run via `pnpm run codefast <cmd>`)  |
 | `packages/typescript-config` | Shared tsconfig presets                                                                               |

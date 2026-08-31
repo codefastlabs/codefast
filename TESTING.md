@@ -92,6 +92,7 @@ Root `pnpm test:e2e` runs every package that defines the script — use it for f
 | `@codefast/benchmark-viewer`  | yes  |      —      |  —  |  —   |
 | `@codefast/cli`               | yes  |      —      |  —  |  —   |
 | `@codefast/di`                | yes  |     yes     |  —  | yes  |
+| `@codefast/di-testing`        | yes  |      —      |  —  | yes  |
 | `@codefast/tailwind-variants` | yes  |      —      |  —  | yes  |
 | `@codefast/theme`             | yes  |      —      |  —  |  —   |
 | `@codefast/tracking`          | yes  |      —      |  —  |  —   |
